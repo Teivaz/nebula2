@@ -1,6 +1,12 @@
 Nebula2 Compile Instructions
 ============================
 15-Mar-03   floh    created
+13-Feb-04   leaf    added "out of date" note
+
+NOTE: The text files here are out of date, the latest documentation is within 
+the Doxygen generated docs. An online link to the latest compiling docs is here:
+
+http://nebuladevice.sourceforge.net/doc2/doxydoc/nebula2/html/Nebula2Compiling.html
 
 NOTE:
 
