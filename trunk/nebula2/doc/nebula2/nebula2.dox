@@ -7,20 +7,20 @@ Nebula2 is the next step in the evolution, fully unleashing the power of program
 
 @section Nebula2IntroFeatures Features
 
-  - Shader Based Graphics: Nebula2 is 'shader-centric', all render state is handled
+  - <b>Shader Based Graphics</b>: Nebula2 is 'shader-centric', all render state is handled
     by the shaders. It's possible to render many effects without changing any C++
     code, just by writing new shaders. Shader parameters can be created and altered
     from the in-game console. The DX9 implementation uses Direct3D Effect Files.
     
-  - Animation: Many things can be animated in Nebula2, shader parameters,
+  - <b>Animation</b>: Many things can be animated in Nebula2, shader parameters,
     position, rotation, scale. The animations can be driven by time or any other 
     variable of your choosing and you can choose from step, linear and quaternion
     slerp interpolation.
     
-  - Character Animation: Nebula2 has a high-performance skinned mesh renderer 
+  - <b>Character Animation</b>: Nebula2 has a high-performance skinned mesh renderer 
     with multiple animation clips per state and blending between different states.
 
-  - Hierarchical Object Name Space: Nebula2 objects live in a hierarchical tree
+  - <b>Hierarchical Object Name Space</b>: Nebula2 objects live in a hierarchical tree
     of named nodes similar to a file system hierarchy. An object name can be
     converted into a C++ pointer and a C++ pointer can be converted into a
     name at any time. Having named objects around is very convenient when
@@ -30,7 +30,7 @@ Nebula2 is the next step in the evolution, fully unleashing the power of program
     load/initialization time. During an objects lifetime, references to
     other objects are normally kept as cached C++ pointers.
 
-  - Scripting: Scripting in Nebula2 means sending script commands directly
+  - <b>Scripting</b>: Scripting in Nebula2 means sending script commands directly
     to C++ objects. Nebula2 objects come with 2 interfaces: their
     C++ interface for runtime efficiency, and a script interface
     for flexibility. The script interface is as close
@@ -43,12 +43,12 @@ Nebula2 is the next step in the evolution, fully unleashing the power of program
     classes. See @ref NebulaTwoScriptInterface for information on how to
     control Nebula from script.
     
-  - Networking: A running instance of Nebula2 can be controlled, via the script
+  - <b>Networking</b>: A running instance of Nebula2 can be controlled, via the script
     server, from another process on the local machine or another remote machine.
     This is mainly used for debugging, but other game orientated networking tools 
     are in development.
 
-  - Object Persistence: Nebula2 objects survive on disk as 
+  - <b>Object Persistence</b>: Nebula2 objects survive on disk as 
     scripts that contain exactly the sequence of script commands
     that would put a default object of that class into an exact clone
     of the object which created the script. Since the object persistency
@@ -64,7 +64,9 @@ Here are pointers to some of the different systems that make up Nebula2.
   - @ref NebulaKernel
   - @ref NebulaResourceSystem
   - @ref NebulaGraphicsSystem
+  - @ref NebulaInputSystem
   - @ref NebulaSceneSystem
+  - @ref NebulaParticleSystem
   
 @section Nebula2IntroCompiling Compiling
 
