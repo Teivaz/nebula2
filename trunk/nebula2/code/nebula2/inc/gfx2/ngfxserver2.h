@@ -6,6 +6,8 @@
 
     New generation gfx server, completely vertex and pixel shader based.
 
+    See also @ref N2ScriptInterface_ngfxserver2
+
     (C) 2002 RadonLabs GmbH
 */
 #ifndef N_ROOT_H

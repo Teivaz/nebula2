@@ -6,6 +6,8 @@
 
     A typed value in a named object. Technically, a nArg object
     wrapped into a nRoot.
+
+    See also @ref N2ScriptInterface_nenv
     
     (C) 2002 RadonLabs GmbH
 */

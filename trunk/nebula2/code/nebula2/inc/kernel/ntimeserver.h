@@ -4,7 +4,9 @@
 /**
     @class nTimeServer
 
-    nTimeServer provides a high resulotion time source.
+    nTimeServer provides a high resolution time source.
+
+    See also @ref N2ScriptInterface_ntimeserver
 
     (C) 2002 RadonLabs GmbH
 */
