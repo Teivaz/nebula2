@@ -1,48 +1,46 @@
 //--------------------------------------------------
-// noccludingfrustumvisitor.cc
+// noccludingspherevisitor.cc
 // (C) 2004 Gary Haussmann
 //--------------------------------------------------
 
-#include "spatialdb/noccludingfrustumvisitor.h"
+#include "spatialdb/noccludingspherevisitor.h"
 
-nOccludingFrustumVisitor::nOccludingFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform)
-: nVisibleFrustumVisitor(cameraprojection, cameratransform)
-{
-   // initialize the view frustum, matrix, etc.
-}
-
-nOccludingFrustumVisitor::~nOccludingFrustumVisitor()
+nOccludingSphereVisitor::nOccludingSphereVisitor(const sphere &viewsphere)
+: nVisibleSphereVisitor(viewsphere)
 {
 }
 
-void nOccludingFrustumVisitor::Reset()
+nOccludingSphereVisitor::~nOccludingSphereVisitor()
+{
+}
+
+void nOccludingSphereVisitor::Reset()
 {
   // clear out the occluders
   m_occluders.Clear();
 
-  nVisibleFrustumVisitor::Reset();
+  nVisibleSphereVisitor::Reset();
 }
 
-void nOccludingFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
+void nOccludingSphereVisitor::Visit(nSpatialSector *visitee, int recursedepth)
 {
     // bug out if we're hit the bottom of our allowed recursion
     if (recursedepth < 1)
         return;
 
-//    n_assert(visitee->GetOctree() != NULL);
-    nOctNode *rootnode = visitee->/*GetOctree()->*/GetRoot();
-    nFrustumClipper::result_info clipinfo;
-    nFrustumClipper frustum = m_viewfrustumstack.Back();
+    nOctNode *rootnode = visitee->GetRoot();
+    nSphereClipper::result_info clipinfo;
+    nSphereClipper sphereclip = m_sphereclipperstack.Back();
     // record the size of the occluder array before doing this sector
     int previousoccludersize = m_occluders.Size();
 
     // get up to 3 occluders for this sector
-    CollectOccluders(rootnode, frustum, clipinfo, 3);
+    CollectOccluders(rootnode, sphereclip, clipinfo, 3);
 
     // if in debug mode, render the view frustum and occluders
     if (m_gfxdebug)
     {
-        frustum.VisualizeFrustum(m_gfxdebug, vector4(1.0f,0.0f,1.0f,1.0f));
+        sphereclip.VisualizeSphere(m_gfxdebug, vector4(1.0f,1.0f,1.0f,0.5f));
         // draw the occluders
         for (nArray<nBBoxOccluder>::iterator bboxi = m_occluders.Begin(); bboxi != m_occluders.End(); bboxi++)
         {
@@ -52,7 +50,7 @@ void nOccludingFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
 
 
     // recursively descend the octree checking each node for clipping
-    CheckOctNode(rootnode, frustum, clipinfo, recursedepth);
+    CheckOctNode(rootnode, sphereclip, clipinfo, recursedepth);
 
     // wipe out any occluders added to the stack upon entering this sector
     while (m_occluders.Size() > previousoccludersize)
@@ -61,11 +59,11 @@ void nOccludingFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
     }
 }
 
-void nOccludingFrustumVisitor::CheckOctNode(nOctNode *testnode, nFrustumClipper &clipper, nFrustumClipper::result_info clipstatus, int recursivedepth)
+void nOccludingSphereVisitor::CheckOctNode(nOctNode *testnode, nSphereClipper &clipper, nSphereClipper::result_info clipstatus, int recursivedepth)
 {
     // if the node is totally enclosed, trivially accept all the children nodes.  otherwise, do a frustum clip test
     bbox3 nodebbox ( (testnode->minCorner + testnode->maxCorner)*0.5, (testnode->maxCorner - testnode->minCorner)*0.5);
-    if (clipstatus.active_planes != 0)
+    if (clipstatus.active_flag != 0)
     {
         clipstatus = clipper.TestBBox(nodebbox, clipstatus);
     }
@@ -85,7 +83,7 @@ void nOccludingFrustumVisitor::CheckOctNode(nOctNode *testnode, nFrustumClipper 
          oe = (nOctElement *) oe->GetSucc())
     {
         bbox3 thisbbox( (oe->minCorner + oe->maxCorner)*0.5, (oe->maxCorner - oe->minCorner)*0.5);
-        nFrustumClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
+        nSphereClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
         if (!ri.culled)
         {
             nSpatialElement *se = (nSpatialElement *)oe;
@@ -104,11 +102,11 @@ void nOccludingFrustumVisitor::CheckOctNode(nOctNode *testnode, nFrustumClipper 
 }
 
 // recursive collection of occluders in this octree
-int nOccludingFrustumVisitor::CollectOccluders(nOctNode *collectnode, nFrustumClipper &clipper, nFrustumClipper::result_info clipstatus, int maxoccluders)
+int nOccludingSphereVisitor::CollectOccluders(nOctNode *collectnode, nSphereClipper &clipper, nSphereClipper::result_info clipstatus, int maxoccluders)
 {
     // if the node is totally enclosed, trivially accept all the children nodes.  otherwise, do a frustum clip test
     bbox3 nodebbox ( (collectnode->minCorner + collectnode->maxCorner)*0.5, (collectnode->maxCorner - collectnode->minCorner)*0.5);
-    if (clipstatus.active_planes != 0)
+    if (clipstatus.active_flag != 0)
     {
         clipstatus = clipper.TestBBox(nodebbox, clipstatus);
     }
@@ -128,7 +126,7 @@ int nOccludingFrustumVisitor::CollectOccluders(nOctNode *collectnode, nFrustumCl
          oe = (nOctElement *) oe->GetSucc())
     {
         bbox3 thisbbox( (oe->minCorner + oe->maxCorner)*0.5, (oe->maxCorner - oe->minCorner)*0.5);
-        nFrustumClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
+        nSphereClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
         if (!ri.culled)
         {
             nSpatialElement *se = (nSpatialElement *)oe;
@@ -152,12 +150,12 @@ int nOccludingFrustumVisitor::CollectOccluders(nOctNode *collectnode, nFrustumCl
     return maxoccluders;
 }
 
-bool nOccludingFrustumVisitor::VisibilityTest(nSpatialElement *visitee)
+bool nOccludingSphereVisitor::VisibilityTest(nSpatialElement *visitee)
 {
-    // test against the current frustum clipper
-    nFrustumClipper &clipper = GetFrustumClipper();
+    // test against the current sphere clipper
+    nSphereClipper &clipper = GetSphereClipper();
 
-    nFrustumClipper::result_info in, out;
+    nSphereClipper::result_info in, out;
     bbox3 totest( (visitee->minCorner + visitee->maxCorner)*0.5, (visitee->maxCorner - visitee->minCorner)*0.5);
     out = clipper.TestBBox( totest, in);
     
@@ -165,7 +163,7 @@ bool nOccludingFrustumVisitor::VisibilityTest(nSpatialElement *visitee)
 }
 
 // checks that a given sphere is not blocked by any occluders
-bool nOccludingFrustumVisitor::IsOccluded(const sphere &testsphere)
+bool nOccludingSphereVisitor::IsOccluded(const sphere &testsphere)
 {
     // now check against all occluders as well
     for (nArray<nBBoxOccluder>::iterator occluderiter = m_occluders.Begin();
@@ -185,12 +183,12 @@ bool nOccludingFrustumVisitor::IsOccluded(const sphere &testsphere)
 
 }
 
-void nOccludingFrustumVisitor::EnterLocalSpace(matrix44 &warp)
+void nOccludingSphereVisitor::EnterLocalSpace(matrix44 &warp)
 {
     nVisibilityVisitor::EnterLocalSpace(warp);
 }
 
-void nOccludingFrustumVisitor::LeaveLocalSpace()
+void nOccludingSphereVisitor::LeaveLocalSpace()
 {
     nVisibilityVisitor::LeaveLocalSpace();
 }

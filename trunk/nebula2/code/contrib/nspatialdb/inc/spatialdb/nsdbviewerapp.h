@@ -162,8 +162,8 @@ private:
     float viewerVelocity;
     int screenshotID;
 
-    bool m_frustumclip, m_occludingfrustumclip;
-    bool m_sphereclip, m_occludingsphereclip;
+	// describes which view clipper we are currently using
+	enum { Frustum, OccludingFrustum, Sphere, OccludingSphere } CurrentClipState;
 
     // spatial db reference-just a sector, really
     nRef<nSpatialSector> m_rootsector;

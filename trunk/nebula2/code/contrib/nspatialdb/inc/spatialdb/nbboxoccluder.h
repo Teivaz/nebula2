@@ -260,8 +260,12 @@ void nBBoxOccluder::VisualizeBBox(nGfxServer2 *gfx2, const vector4 &color)
         sprayline[2] = m_debugverts[lix*2+1];
 
         // the radiating line parts
-        sprayline[0] = sprayline[1] * 2 - m_viewpoint;
-        sprayline[3] = sprayline[2] * 2 - m_viewpoint;
+        float sprayextrudedist = (sprayline[1] - sprayline[2]).len();
+        vector3 sprayvector1(sprayline[1] - m_viewpoint), sprayvector2(sprayline[2] - m_viewpoint);
+        sprayvector1.norm();
+        sprayvector2.norm();
+        sprayline[0] = sprayline[1] + sprayvector1 * sprayextrudedist;
+        sprayline[3] = sprayline[2] + sprayvector2 * sprayextrudedist;
         gfx2->DrawLines3d(sprayline, 4, color);
 
         // draw a plane normal in the center of the segment

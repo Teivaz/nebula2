@@ -4,9 +4,7 @@
 //  (C) 2004 Gary Haussmann
 //------------------------------------------------------------------------------
 #include "spatialdb/nsdbviewerapp.h"
-#include "spatialdb/nvisiblefrustumgenarray.h"
-#include "spatialdb/noccludingfrustumgenarray.h"
-#include "spatialdb/nvisiblespheregenarray.h"
+#include "spatialdb/ngenarrayvisitors.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
@@ -37,8 +35,8 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
 //    viewerAngles(defViewerAngles),
 //    viewerZoom(defViewerZoom),
     screenshotID(0),
-    m_frustumclip(false), m_occludingfrustumclip(true), m_sphereclip(false), m_occludingsphereclip(false),
-    m_viewcamera(0), m_activecamera(1), m_viscamera(1), m_testobjects(10,10)
+	CurrentClipState(nSDBViewerApp::OccludingFrustum),
+	m_viewcamera(0), m_activecamera(1), m_viscamera(1), m_testobjects(10,10)
 {
     // initialize test cameras
     markcameras[0].viewerAngles = polar2(n_deg2rad(-60.0f), n_deg2rad(45.f));
@@ -280,13 +278,12 @@ void nSDBViewerApp::Run()
             UpdateObjectMarks(); // mark visible objects by color
 //            const nVariable *globaltime = this->renderContext.GetVariable(timeHandle);
             // if no clipping is defined, render everything
-            bool renderall(!m_frustumclip & !m_sphereclip & !m_occludingfrustumclip);
             for (nArray<SDBTestObject *>::iterator objectiter = m_testobjects.Begin();
                                                  objectiter != m_testobjects.End();
                                                  objectiter++)
             {
                 SDBTestObject *curobject = *objectiter;
-                if ( renderall || (curobject->spatialmarkflags > 0) )
+                if ( (curobject->spatialmarkflags > 0) )
                 {
                     nVariable* var = curobject->renderc.GetVariable(timeHandle);
                     if (var)
@@ -330,21 +327,36 @@ void nSDBViewerApp::Run()
             matrix44 cameraxform0, identmatrix;
             identmatrix.ident();
             this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
+            this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
             nVisibleFrustumGenArray::VisibleElements dummyarray(10,10);
-            if (m_frustumclip)
+			if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
             {
                 nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, dummyarray);
                 generator.VisualizeDebug(this->refGfxServer.get());
-                this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
                 generator.Visit(m_rootsector.get(),3);
             }
-            if (m_occludingfrustumclip)
+            if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
             {
                 nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, dummyarray);
                 generator2.VisualizeDebug(this->refGfxServer.get());
-                this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
                 generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
             }
+			if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Sphere)
+			{
+		        // create a clipper
+				sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
+			    nVisibleSphereGenArray generator(cameraviewsphere, dummyarray);
+				generator.VisualizeDebug(this->refGfxServer.get());
+		        generator.nVisibleSphereVisitor::Visit(m_rootsector.get(),3);
+			}
+			if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingSphere)
+			{
+		        // create a clipper
+				sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
+			    nOccludingSphereGenArray generator(cameraviewsphere, dummyarray);
+				generator.VisualizeDebug(this->refGfxServer.get());
+		        generator.nOccludingSphereVisitor::Visit(m_rootsector.get(),3);
+			}
 
             this->refSceneServer->PresentScene();            // present the frame
         }
@@ -464,21 +476,15 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
         m_viscamera = 2;
     }
     
-    if (inputServer->GetButton("togglefrustum"))
+	if (inputServer->GetButton("changeclipstyle"))
     {
-        // cycle between frustum clip and occluding frustum clip
-        m_frustumclip = ! m_frustumclip;
-        m_occludingfrustumclip = !m_frustumclip;
-    }
-
-    if (inputServer->GetButton("togglesphere"))
-    {
-        m_sphereclip = ! m_sphereclip;
-    }
-
-    if (inputServer->GetButton("toggleoccludingsphere"))
-    {
-        m_occludingsphereclip = ! m_occludingsphereclip;
+		switch (CurrentClipState)
+		{
+		case nSDBViewerApp::Frustum: CurrentClipState = nSDBViewerApp::OccludingFrustum; break;
+		case nSDBViewerApp::OccludingFrustum: CurrentClipState = nSDBViewerApp::Sphere; break;
+		case nSDBViewerApp::Sphere: CurrentClipState = nSDBViewerApp::OccludingSphere; break;
+		case nSDBViewerApp::OccludingSphere: CurrentClipState = nSDBViewerApp::Frustum; break;
+		}
     }
 
     if (inputServer->GetButton("cycleviewcamera"))
@@ -500,6 +506,7 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
         if (m_viewcamera != 0)
             m_viewcamera = m_activecamera;
     }
+
 
     if (inputServer->GetButton("cycleviscamera"))
     {
@@ -730,7 +737,7 @@ void nSDBViewerApp::ResetTestObjects()
     // make some test objects!
     for (int tix=0; tix < numtestobjects; tix++)
     {
-        vector3 elementpos(  tix % gridfreq , (tix/gridfreq) % gridfreq, tix/(gridfreq*gridfreq) );
+        vector3 elementpos( tix % gridfreq , (tix/gridfreq) % gridfreq, tix/(gridfreq*gridfreq) );
         elementpos -= vector3((gridfreq-1)/2.0,(gridfreq-1)/2.0,(gridfreq-1)/2.0);
         elementpos *= (gridsize / gridfreq);
         float elementradius = 0.5 * sqrt(3.0); // radius of a sphere enclosing a unit cube centered on teh origin
@@ -791,6 +798,8 @@ void nSDBViewerApp::DeleteTestObjects()
 /// mark objects with the three cameras
 void nSDBViewerApp::UpdateObjectMarks()
 {
+	m_rootsector->BalanceTree();
+
 //    markcameras[1].viewerAngles.rho += 0.005f;
 //    markcameras[1].viewerAngles.theta += 0.01f;
     // clear out current marks
@@ -801,76 +810,42 @@ void nSDBViewerApp::UpdateObjectMarks()
         (*objectiter)->spatialmarkflags = 0;
     }
 
-    // create a visitor and generate a list of objects visible by camera 1
-    if (m_frustumclip)
+	// compute the stuff for an appropriate visitor
+    matrix44 cameraxform0;
+    markcameras[m_viscamera].GenerateTransform(cameraxform0);
+    sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
+    nVisibleFrustumGenArray::VisibleElements visiblearray(100,100);
+	nVisibleFrustumGenArray generator1(this->playcamera, cameraxform0, visiblearray);
+	nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, visiblearray);
+	nVisibleSphereGenArray generator3(cameraviewsphere, visiblearray);
+	nOccludingSphereGenArray generator4(cameraviewsphere, visiblearray);
+	switch (this->CurrentClipState)
+	{
+	case nSDBViewerApp::Frustum:
+			generator1.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
+		break;
+	case nSDBViewerApp::OccludingFrustum:
+			// create a clipper
+			generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
+		break;
+	case nSDBViewerApp::Sphere:
+			generator3.nVisibleSphereVisitor::Visit(m_rootsector.get(),3);
+		break;
+	case nSDBViewerApp::OccludingSphere:
+			generator4.nOccludingSphereVisitor::Visit(m_rootsector.get(),3);
+		break;
+	}
+
+    // mark all elements found
+    nVisibleFrustumGenArray::VisibleElements::iterator viselement;
+    for (viselement= visiblearray.Begin();
+        viselement != visiblearray.End();
+        viselement++)
     {
-        // create a viewmatrix for camera 0
-        matrix44 cameraxform0;
-        markcameras[m_viscamera].GenerateTransform(cameraxform0);
-        nVisibleFrustumGenArray::VisibleElements visiblearray(100,100);
-        nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visiblearray);
-
-        generator.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
-
-        // mark all elements found
-        nVisibleFrustumGenArray::VisibleElements::iterator viselement;
-        for (viselement= visiblearray.Begin();
-            viselement != visiblearray.End();
-            viselement++)
-        {
-            SDBTestObject *curobject = (SDBTestObject *)((*viselement)->GetPtr());
-            curobject->spatialmarkflags |= 1;
-        }
-
-        // clear out the list after we're done with it
-        generator.Reset();
+        SDBTestObject *curobject = (SDBTestObject *)((*viselement)->GetPtr());
+        curobject->spatialmarkflags |= 1;
     }
-    if (m_sphereclip)
-    {
-        // create a clipper
-        sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
-        nVisibleSphereGenArray::VisibleElements visiblearray(100,100);
-        nVisibleSphereGenArray generator(cameraviewsphere, visiblearray);
 
-        generator.nVisibleSphereVisitor::Visit(m_rootsector.get(),3);
-
-        // mark all elements found
-        nVisibleSphereGenArray::VisibleElements::iterator viselement;
-        for (viselement= visiblearray.Begin();
-            viselement != visiblearray.End();
-            viselement++)
-        {
-            SDBTestObject *curobject = (SDBTestObject *)((*viselement)->GetPtr());
-            curobject->spatialmarkflags |= 2;
-        }
-
-        // clear out the list after we're done with it
-        generator.Reset();
-    }
-    if (m_occludingfrustumclip)
-    {
-        // create a clipper
-        // create a viewmatrix for camera 0
-        matrix44 cameraxform0;
-        markcameras[m_viscamera].GenerateTransform(cameraxform0);
-        nOccludingFrustumGenArray::VisibleElements visiblearray(100,100);
-        nOccludingFrustumGenArray generator(this->playcamera, cameraxform0, visiblearray);
-
-        generator.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
-
-        // mark all elements found
-        nOccludingFrustumGenArray::VisibleElements::iterator viselement;
-        for (viselement= visiblearray.Begin();
-            viselement != visiblearray.End();
-            viselement++)
-        {
-            SDBTestObject *curobject = (SDBTestObject *)((*viselement)->GetPtr());
-            curobject->spatialmarkflags |= 4;
-        }
-
-        // clear out the list after we're done with it
-        generator.Reset();
-    }
 }
 
 void nSDBViewerApp::MoveObject(SDBTestObject *object, const vector3 &newpos)
