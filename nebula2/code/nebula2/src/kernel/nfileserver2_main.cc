@@ -175,32 +175,34 @@ nFileServer2::CleanupPathName(char* path)
 const char* 
 nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
 {
-    char pathBuf[N_MAXPATH];
+    char *pathBuf;
     char *colon;
-    strcpy(pathBuf,pathName);
+    pathBuf = (char*)n_malloc(bufSize);
+    n_strncpy2(pathBuf,pathName, bufSize);
     buf[0] = 0;
 
-    // suche Assign-Zeichen
-    colon = strchr(pathBuf,':');
-    if (colon)
+    // check for assigns
+    while ((colon = strchr(pathBuf,':')))
     {
         *colon++ = 0;
-        // suche Assign selbst
         if (strlen(pathBuf) > 1)
         {
             const char *replace = this->GetAssign(pathBuf);
             if (replace)
             {
-                strcpy(buf, replace);
-                strcat(buf, colon);
-                this->CleanupPathName(buf);
-                return buf;
+                n_strncpy2(buf, replace, bufSize);
+                n_strcat(buf, colon, bufSize);
+                n_strncpy2(pathBuf, buf, bufSize);
             }
         }
     }
-
-    // no or invalid assign in path, don't touch the path
-    n_strncpy2(buf, pathName, bufSize);
+    n_free(pathBuf);
+    
+    // no assigns, just do a copy.
+    if (0 == buf[0])
+    {
+        n_strncpy2(buf, pathName, bufSize);
+    }
     this->CleanupPathName(buf);
     return buf;
 }
