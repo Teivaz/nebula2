@@ -2,10 +2,15 @@
 #define N_VARIANT_H
 //------------------------------------------------------------------------------
 /**
-    An "any type" variable.
+    @class nVariant
+    @ingroup NebulaDataTypes
+    @brief An "any type" variable.
 
     Since the nVariant class has a rich set of assignment and cast operators,
     a variant variable can most of the time be used like a normal C++ variable.
+
+    @note This class should be considered experimental for now. It may merge
+    at least partially with nArg and/or nVariable.
     
     (C) 2004 RadonLabs GmbH.
 */

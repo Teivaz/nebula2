@@ -5,7 +5,7 @@
     @class nNode
     @ingroup NebulaDataTypes
 
-    Implement a node in a doubly linked list.
+    @brief Implement a node in a doubly linked list.
 
     (C) 2002 RadonLabs GmbH
 */

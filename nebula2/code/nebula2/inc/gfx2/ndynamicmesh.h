@@ -94,7 +94,6 @@ nDynamicMesh::IsValid() const
     same vertex components and usage flags.
     This method must be called whenever a call to IsValid() returns false.
 
-    @param  gfxServ             pointer to gfx server
     @param  primType            primitive type
     @param  vertexComponents    vertex component mask (see nMesh2)
     @param  usageFlags          usage flags (see nMesh2)

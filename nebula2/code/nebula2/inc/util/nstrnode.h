@@ -5,7 +5,7 @@
     @class nStrNode
     @ingroup NebulaDataTypes
 
-    A node in a nStrList.
+    @brief A node in a nStrList.
     
     (C) 2002 RadonLabs GmbH
 */

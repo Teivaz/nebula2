@@ -5,7 +5,7 @@
     @class nKeyArray
     @ingroup NebulaDataTypes
 
-    Implements growable array of key-pointer pairs. The array
+    @brief Implements growable array of key-pointer pairs. The array
     is kept sorted for fast bsearch() by key.
 
     (C) 2002 RadonLabs GmbH

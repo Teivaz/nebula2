@@ -5,11 +5,12 @@
     @class nIpolKeyArray
     @ingroup NebulaDataTypes
 
-    A Array for interpolation between keys, used by the animators
-    
-    for a linear interpolation the data type must have the function lerp(TYPE val0, TYPE val1, float lerp)
+    @brief A Array for interpolation between keys, used by the animators
+    for a linear interpolation the data type must have the function
+    lerp(TYPE val0, TYPE val1, float lerp)
 
     This file is licensed under the terms of the Nebula License.
+
     (C) 2004 Johannes Kellner
 */
 #include "kernel/ntypes.h"

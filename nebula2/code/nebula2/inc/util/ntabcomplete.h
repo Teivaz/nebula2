@@ -2,7 +2,8 @@
 #define N_TABCOMPLATE_H
 //------------------------------------------------------------------------------
 /**
-    A utility class for Tab completion.
+    @class nTabComplete
+    @brief A utility class for Tab completion.
 
     (C) 2004 RadonLabs GmbH
 */

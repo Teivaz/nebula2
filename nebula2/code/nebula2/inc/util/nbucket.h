@@ -5,8 +5,8 @@
     @class nBucket
     @ingroup NebulaDataTypes
 
-    A bucket contains a fixed-size array of nArray objects, each initialized
-    with a size of 0, and a grow size. Handy for bucket sorts.
+    @brief A bucket contains a fixed-size array of nArray objects,
+    each initialized with a size of 0, and a grow size. Handy for bucket sorts.
 
     (C) 2004 RadonLabs GmbH
 */

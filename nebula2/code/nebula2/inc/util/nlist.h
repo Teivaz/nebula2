@@ -5,7 +5,7 @@
     @class nList
     @ingroup NebulaDataTypes
 
-    Implement a doubly linked list.
+    @brief Implement a doubly linked list.
     
     (C) 2002 RadonLabs GmbH
 */

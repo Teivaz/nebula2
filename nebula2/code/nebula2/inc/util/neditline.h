@@ -5,7 +5,7 @@
     @class nEditLine
     @ingroup NebulaDataTypes
 
-    A line edit object.
+    @brief A line edit object.
 
     (C) 2003 RadonLabs GmbH
 */

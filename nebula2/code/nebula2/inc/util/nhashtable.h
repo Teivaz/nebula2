@@ -5,7 +5,7 @@
     @class nHashTable
     @ingroup NebulaDataTypes
 
-    Implements a simple string hash table.
+    @brief Implements a simple string hash table.
 
     (C) 2002 RadonLabs GmbH
 */

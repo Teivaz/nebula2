@@ -5,7 +5,7 @@
     @class nStack
     @ingroup NebulaDataTypes
 
-    A stack template class.
+    @brief A stack template class.
 
     (C) 2002 RadonLabs GmbH
 */

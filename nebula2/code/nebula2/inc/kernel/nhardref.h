@@ -245,11 +245,6 @@ nHardRef<TYPE>::resolve()
     name (if valid), or if a valid pointer has been resolved,
     dynamically build the name from the target object.
 
-    @param buf      externally provided buffer, size should be N_MAXPATH
-    @param bufSize  sizeof(buf)
-    @return         return pointer to buf, or NULL if target object has died(???)
-                    
-
     history:
     - 23-Jan-2001   floh    created
 */

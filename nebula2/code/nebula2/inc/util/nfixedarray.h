@@ -5,7 +5,7 @@
     @class nFixedArray
     @ingroup NebulaDataTypes
 
-    A fixed size, bounds checked array.
+    @brief A fixed size, bounds checked array.
     
     (C) 2004 RadonLabs GmbH
 */
