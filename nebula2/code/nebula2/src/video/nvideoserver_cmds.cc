@@ -31,12 +31,12 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("b_open_v",      'OPEN', n_open);
-    cl->AddCmd("v_close_v",     'CLOS', n_close);
-    cl->AddCmd("b_isopen_v",    'ISOP', n_isopen);
-    cl->AddCmd("b_playfile_s",  'PLFL', n_playfile);
-    cl->AddCmd("v_stop_v",      'STOP', n_stop);
-    cl->AddCmd("b_isplaying_v", 'ISPL', n_isplaying);
+    cl->AddCmd("b_open_v",              'OPEN', n_open);
+    cl->AddCmd("v_close_v",             'CLOS', n_close);
+    cl->AddCmd("b_isopen_v",            'ISOP', n_isopen);
+    cl->AddCmd("b_playfile_s",          'PLFL', n_playfile);
+    cl->AddCmd("v_stop_v",              'STOP', n_stop);
+    cl->AddCmd("b_isplaying_v",         'ISPL', n_isplaying);
     cl->AddCmd("v_setenablescaling_b",  'SESC', n_setenablescaling);
     cl->AddCmd("b_getenablescaling_v",  'GESC', n_getenablescaling);
     cl->EndCmds();

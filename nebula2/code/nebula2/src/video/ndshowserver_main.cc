@@ -5,22 +5,9 @@
 #include "video/ndshowserver.h"
 #include "kernel/nfileserver2.h"
 
+#include "gfx2/nd3d9server.h"
+
 nNebulaClass(nDShowServer, "nvideoserver");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    ndshowserver
-
-    @cppclass
-    nDShowServer
-    
-    @superclass
-    nvideoserver
-    
-    @classinfo
-    Docs needed.
-*/
 
 //------------------------------------------------------------------------------
 /**
@@ -96,89 +83,92 @@ nDShowServer::PlayFile(const char* filename)
 
     HRESULT hr;
 
-    // clear background
-    nGfxServer2::Instance()->BeginScene();
-    nGfxServer2::Instance()->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
-    nGfxServer2::Instance()->EndScene();
-    nGfxServer2::Instance()->PresentScene();
-
-    // mangle Nebula path into absolute path wide character string
-    wchar_t widePath[N_MAXPATH];
-    nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
-    mbstowcs(widePath, mangledPath.Get(), mangledPath.Length() + 1);
-
-    // create DirectShow filter graph
-    hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&this->graphBuilder);
-    if (FAILED(hr))
+    if(nGfxServer2::Instance()->BeginScene())
     {
-        n_error("nDShowServer: could not create DirectShow filter graph!");
-        return false;
+        // clear background
+        nGfxServer2::Instance()->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
+        nGfxServer2::Instance()->EndScene();
+        nGfxServer2::Instance()->PresentScene();
+
+        // mangle Nebula path into absolute path wide character string
+        wchar_t widePath[N_MAXPATH];
+        nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
+        mbstowcs(widePath, mangledPath.Get(), mangledPath.Length() + 1);
+
+        // create DirectShow filter graph
+        hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&this->graphBuilder);
+        if (FAILED(hr))
+        {
+            n_error("nDShowServer: could not create DirectShow filter graph!");
+            return false;
+        }
+
+        // create the filter graph for the file
+        hr = this->graphBuilder->RenderFile(widePath, NULL);
+        if (FAILED(hr))
+        {
+            n_error("nDShowServer::PlayFile(): could not render file '%s'", mangledPath);
+            return false;
+        }
+
+        // query required interfaces 
+        hr = this->graphBuilder->QueryInterface(IID_IMediaControl, (void**)&this->mediaControl);
+        n_assert(SUCCEEDED(hr));
+        hr = this->graphBuilder->QueryInterface(IID_IMediaEvent, (void**)&this->mediaEvent);
+        n_assert(SUCCEEDED(hr));
+        hr = this->graphBuilder->QueryInterface(IID_IVideoWindow, (void**) &this->videoWindow);
+        n_assert(SUCCEEDED(hr));
+        hr = this->graphBuilder->QueryInterface(IID_IBasicVideo, (void**) &this->basicVideo);
+
+        // compute video window size
+        OAHWND ownerHwnd = (OAHWND) this->refHwnd->GetI();
+        RECT rect;
+        GetClientRect((HWND)ownerHwnd, &rect);
+        LONG videoLeft, videoTop, videoWidth, videoHeight;
+        if (this->GetEnableScaling())
+        {
+            // scale to fullscreen....
+            videoLeft   = 0;
+            videoTop    = 0;
+            videoWidth  = rect.right;
+            videoHeight = rect.bottom;
+        }
+        else
+        {
+            // render video in original size, centered
+            hr = this->basicVideo->GetVideoSize(&videoWidth, &videoHeight);
+            n_assert(SUCCEEDED(hr));
+
+            // get public window handle, which has been initialized by the gfx subsystem
+            videoLeft = ((rect.right + rect.left) - videoWidth) / 2;
+            videoTop = ((rect.bottom + rect.top) - videoHeight) / 2;
+        }
+
+        // enable dialog box mode in gfx server
+        nGfxServer2::Instance()->EnterDialogBoxMode();
+
+        // setup video window
+        hr = this->videoWindow->put_AutoShow(OATRUE);
+        n_assert(SUCCEEDED(hr));
+        hr = this->videoWindow->put_Owner(ownerHwnd);
+        n_assert(SUCCEEDED(hr));
+        hr = this->videoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+        n_assert(SUCCEEDED(hr));
+        hr = this->videoWindow->SetWindowPosition(videoLeft, videoTop, videoWidth, videoHeight);
+        n_assert(SUCCEEDED(hr));
+        hr = this->videoWindow->put_MessageDrain(ownerHwnd);
+        n_assert(SUCCEEDED(hr));
+        hr = this->videoWindow->HideCursor(OATRUE);
+        n_assert(SUCCEEDED(hr));
+
+        // start playback
+        hr = this->mediaControl->Run();
+        n_assert(SUCCEEDED(hr));
+
+        this->firstFrame = true;
+        return nVideoServer::PlayFile(filename);
     }
-
-    // create the filter graph for the file
-    hr = this->graphBuilder->RenderFile(widePath, NULL);
-    if (FAILED(hr))
-    {
-        n_error("nDShowServer::PlayFile(): could not render file '%s'", mangledPath);
-        return false;
-    }
-
-    // query required interfaces
-    hr = this->graphBuilder->QueryInterface(IID_IMediaControl, (void**)&this->mediaControl);
-    n_assert(SUCCEEDED(hr));
-    hr = this->graphBuilder->QueryInterface(IID_IMediaEvent, (void**)&this->mediaEvent);
-    n_assert(SUCCEEDED(hr));
-    hr = this->graphBuilder->QueryInterface(IID_IVideoWindow, (void**) &this->videoWindow);
-    n_assert(SUCCEEDED(hr));
-    hr = this->graphBuilder->QueryInterface(IID_IBasicVideo, (void**) &this->basicVideo);
-
-    // compute video window size
-    OAHWND ownerHwnd = (OAHWND) this->refHwnd->GetI();
-    RECT rect;
-    GetClientRect((HWND)ownerHwnd, &rect);
-    LONG videoLeft, videoTop, videoWidth, videoHeight;
-    if (this->GetEnableScaling())
-    {
-        // scale to fullscreen....
-        videoLeft   = 0;
-        videoTop    = 0;
-        videoWidth  = rect.right;
-        videoHeight = rect.bottom;
-    }
-    else
-    {
-        // render video in original size, centered
-    hr = this->basicVideo->GetVideoSize(&videoWidth, &videoHeight);
-    n_assert(SUCCEEDED(hr));
-
-    // get public window handle, which has been initialized by the gfx subsystem
-        videoLeft = ((rect.right + rect.left) - videoWidth) / 2;
-        videoTop = ((rect.bottom + rect.top) - videoHeight) / 2;
-    }
-
-    // enable dialog box mode in gfx server
-    nGfxServer2::Instance()->EnterDialogBoxMode();
-
-    // setup video window
-    hr = this->videoWindow->put_AutoShow(OATRUE);
-    n_assert(SUCCEEDED(hr));
-    hr = this->videoWindow->put_Owner(ownerHwnd);
-    n_assert(SUCCEEDED(hr));
-    hr = this->videoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-    n_assert(SUCCEEDED(hr));
-    hr = this->videoWindow->SetWindowPosition(videoLeft, videoTop, videoWidth, videoHeight);
-    n_assert(SUCCEEDED(hr));
-    hr = this->videoWindow->put_MessageDrain(ownerHwnd);
-    n_assert(SUCCEEDED(hr));
-    hr = this->videoWindow->HideCursor(OATRUE);
-    n_assert(SUCCEEDED(hr));
-
-    // start playback
-    hr = this->mediaControl->Run();
-    n_assert(SUCCEEDED(hr));
-
-    this->firstFrame = true;
-    return nVideoServer::PlayFile(filename);
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -260,7 +250,9 @@ nDShowServer::Trigger()
                 inputEvent != 0;
                 inputEvent = this->refInputServer->NextEvent(inputEvent))
             {
-                if (inputEvent->GetType() == N_INPUT_KEY_DOWN)
+                if ((inputEvent->GetType() == N_INPUT_KEY_DOWN) &&
+                    ((inputEvent->GetKey() == N_KEY_ESCAPE) ||
+                     (inputEvent->GetKey() == N_KEY_SPACE)))
                 {
                     this->Stop();
                     break;
