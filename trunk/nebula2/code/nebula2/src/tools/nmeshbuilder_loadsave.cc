@@ -367,7 +367,7 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
 {
     n_assert(fileServer);
     n_assert(filename);
-
+ 
     // sort triangles by group id and create a group map
     this->SortTriangles();
     nArray<Group> groupMap;

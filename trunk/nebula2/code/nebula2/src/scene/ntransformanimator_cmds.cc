@@ -263,7 +263,7 @@ nTransformAnimator::SaveCmds(nPersistServer* ps)
         }
 
         //--- addeulerkey ---
-        numKeys = this->GetNumPosKeys();
+        numKeys = this->GetNumEulerKeys();
         for (curKey = 0; curKey < numKeys; curKey++)
         {
             float time;
@@ -278,7 +278,7 @@ nTransformAnimator::SaveCmds(nPersistServer* ps)
         }
 
         //--- addscalekey ---
-        numKeys = this->GetNumPosKeys();
+        numKeys = this->GetNumScaleKeys();
         for (curKey = 0; curKey < numKeys; curKey++)
         {
             float time;

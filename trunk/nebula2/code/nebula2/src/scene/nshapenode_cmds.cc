@@ -165,9 +165,13 @@ nShapeNode::SaveCmds(nPersistServer* ps)
         ps->PutCmd(cmd);
 
         //--- setmeshresourceloader ---
-        cmd = ps->GetCmd(this, 'SMRL');
-        cmd->In()->SetS(this->GetMeshResourceLoader());
-        ps->PutCmd(cmd);
+        const char* rlName = this->GetMeshResourceLoader();
+        if (rlName)
+        {
+            cmd = ps->GetCmd(this, 'SMRL');
+            cmd->In()->SetS(rlName);
+            ps->PutCmd(cmd);
+        }
 
         return true;
     }
