@@ -12,13 +12,7 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMATOR_H
 #include "scene/nanimator.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nAnimator
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nTransformAnimator : public nAnimator
@@ -107,7 +101,7 @@ void
 nTransformAnimator::AddPosKey(float time, const vector3& key)
 {
     Key newKey(time, key);
-    this->posArray.PushBack(newKey);
+    this->posArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +112,7 @@ void
 nTransformAnimator::AddEulerKey(float time, const vector3& key)
 {
     Key newKey(time, key);
-    this->eulerArray.PushBack(newKey);
+    this->eulerArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +123,7 @@ void
 nTransformAnimator::AddScaleKey(float time, const vector3& key)
 {
     Key newKey(time, key);
-    this->scaleArray.PushBack(newKey);
+    this->scaleArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
