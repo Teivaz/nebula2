@@ -18,8 +18,8 @@
 class TileIndexData {
 public:
     typedef unsigned char tileindex;
-    const static int maxtilebits = 8;
-    const static int maxtileindex = 1 << maxtilebits;
+    const static int maxtilebits;
+    const static int maxtileindex;
 
     TileIndexData() : m_bitmapxsize(0), m_bitmapysize(0), m_tileindices(NULL) 
     { n_assert(maxtilebits >= (sizeof(tileindex) * 8) ); };

@@ -132,7 +132,7 @@ bool nCLODSplat::LoadResource()
 
     // loop counters
     int vix;
-    unsigned int iix;
+    unsigned int iix, six;
 
     //
     // read in data from the terrain file
@@ -164,7 +164,7 @@ bool nCLODSplat::LoadResource()
     this->splattile.SetFixedSize(splatcount);
 
     unsigned int totalindexcount = indexcount;
-    for (unsigned int six=0; six < splatcount; six++)
+    for (six=0; six < splatcount; six++)
     {
         this->splattile[six] = this->terrainFile->GetInt();
         unsigned int splatsize = this->terrainFile->GetInt();
@@ -235,7 +235,7 @@ bool nCLODSplat::LoadResource()
     meshgroup.SetBoundingBox(this->boundbox);
 
     // setup the splat group info
-    for (unsigned int six=0; six < splatcount; six++)
+    for (six=0; six < splatcount; six++)
     {
         nMeshGroup &splatgroup = meshData->GetGroup(six+1);
         splatgroup.SetFirstVertex(0);
