@@ -101,9 +101,9 @@ public:
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
 
     /// set display mode
-    void SetDisplayMode(const nDisplayMode2& mode);
+    virtual void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
-    const nDisplayMode2& GetDisplayMode() const;
+    virtual const nDisplayMode2& GetDisplayMode() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
     /// get the current camera description
@@ -194,7 +194,14 @@ public:
     virtual void SetCursorVisibility(CursorVisibility type);
     /// get mouse cursor display status
     virtual CursorVisibility GetCursorVisibility() const;
-    
+
+    /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
+    virtual void EnterDialogBoxMode();
+    /// leave dialog box mode
+    virtual void LeaveDialogBoxMode();
+    /// return true if currently in dialog box mode
+    bool InDialogBoxMode() const;
+
     /// save a screen shot
     virtual bool SaveScreenshot(const char* filename);    
 
@@ -229,23 +236,13 @@ protected:
     int transformTopOfStack[NumTransformTypes];
     matrix44 transformStack[NumTransformTypes][MAX_TRANSFORMSTACKDEPTH];
     bool cursorDirty;
+    bool inDialogBoxMode;
 
 public:
     // note: this stuff is public because WinProcs may need to access it
     nDisplayMode2 displayMode;
     CursorVisibility cursorVisibility;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nDisplayMode2&
-nGfxServer2::GetDisplayMode() const
-{
-    return this->displayMode;
-}
-
 
 //------------------------------------------------------------------------------
 /**

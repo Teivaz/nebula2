@@ -22,9 +22,9 @@ nGfxServer2::nGfxServer2() :
     vertexRangeNum(0),
     indexRangeFirst(0),
     indexRangeNum(0),
-
     cursorVisibility(System),
-    cursorDirty(true)
+    cursorDirty(true),
+    inDialogBoxMode(false)
 {
     int i;
     for (i = 0; i < NumTransformTypes; i++)
@@ -122,7 +122,18 @@ nGfxServer2::NewRenderTarget(const char* rsrcName,
 void
 nGfxServer2::SetDisplayMode(const nDisplayMode2& mode)
 {
-    this->displayMode = mode;
+    n_error("nGfxServer2: Pure virtual function called!");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+const nDisplayMode2&
+nGfxServer2::GetDisplayMode() const
+{
+    n_error("nGfxServer2: Pure virtual function called!");
+    static nDisplayMode2 dummy;
+    return dummy;
 }
 
 //------------------------------------------------------------------------------
@@ -589,3 +600,36 @@ nGfxServer2::GetCursorVisibility() const
 {
     return this->cursorVisibility;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Enter dialog box mode.
+*/
+void
+nGfxServer2::EnterDialogBoxMode()
+{
+    n_assert(!this->inDialogBoxMode);
+    this->inDialogBoxMode = true;
+}
+
+//------------------------------------------------------------------------------^M
+/**
+    Leave dialog box mode.
+*/
+void
+nGfxServer2::LeaveDialogBoxMode()
+{
+    n_assert(this->inDialogBoxMode);
+    this->inDialogBoxMode = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if currently in dialog box mode.
+*/
+bool
+nGfxServer2::InDialogBoxMode() const
+{
+    return this->inDialogBoxMode;
+}
+
