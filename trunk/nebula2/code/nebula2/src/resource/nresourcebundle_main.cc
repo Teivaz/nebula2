@@ -12,26 +12,10 @@
 
 nNebulaClass(nResourceBundle, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nresourcebundle
-    
-    @cppclass
-    nResourceBundle
-
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
 nResourceBundle::nResourceBundle() :
-    refGfxServer("/sys/servers/gfx"),
     refAnimServer("/sys/servers/anim"),
     bundleResources(128, 128)
 {
@@ -181,7 +165,7 @@ nResourceBundle::LoadMesh(const char* resId,
     n_assert(dataSize > 0);
 
     // create a new mesh object
-    nMesh2* mesh = this->refGfxServer->NewMesh(resId);
+    nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resId);
     n_assert(mesh);
     if (!mesh->IsValid())
     {
@@ -244,7 +228,7 @@ nResourceBundle::LoadTexture(const char* resId,
     n_assert(dataSize > 0);
 
     // create a new animation object
-    nTexture2* tex = this->refGfxServer->NewTexture(resId);
+    nTexture2* tex = nGfxServer2::Instance()->NewTexture(resId);
     n_assert(tex);
     if (!tex->IsValid())
     {

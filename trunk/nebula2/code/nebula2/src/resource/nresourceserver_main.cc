@@ -8,21 +8,6 @@
 nNebulaClass(nResourceServer, "nroot");
 nResourceServer* nResourceServer::Singleton = 0;
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nresourceserver
-    
-    @cppclass
-    nResourceServer
-
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -127,7 +112,7 @@ nResourceServer::GetResourceId(const char* rsrcName, char* buf, int bufSize)
 nRoot*
 nResourceServer::GetResourcePool(nResource::Type rsrcType)
 {
-    switch(rsrcType)
+    switch (rsrcType)
     {
         case nResource::Mesh:              return this->meshPool.get();
         case nResource::Texture:           return this->texPool.get();
@@ -363,7 +348,7 @@ nResourceServer::StartLoaderThread()
     // give the thread sufficient stack size (2.5 MB) and a below
     // normal priority (the purpose of the thread is to guarantee 
     // a smooth framerate despite dynamic resource loading after all)
-    this->loaderThread = new nThread(LoaderThreadFunc, nThread::Normal, 2500000, ThreadWakeupFunc, 0, this);
+    this->loaderThread = n_new(nThread(LoaderThreadFunc, nThread::Normal, 2500000, ThreadWakeupFunc, 0, this));
 }
 
 //------------------------------------------------------------------------------
@@ -374,7 +359,7 @@ void
 nResourceServer::ShutdownLoaderThread()
 {
     n_assert(this->loaderThread);
-    delete this->loaderThread;
+    n_delete(this->loaderThread);
     this->loaderThread = 0;
 
     // clear the job list

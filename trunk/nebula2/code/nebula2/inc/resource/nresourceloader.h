@@ -27,10 +27,6 @@ public:
     nResourceLoader();
     /// destructor
     virtual ~nResourceLoader();
-
-    /// persistency
-    virtual bool SaveCmds(nPersistServer* persistServer);
-
     /// Primary load method, the one called by an nResource.
     virtual bool Load(const char *sFilename, nResource *callingResource);
 };
