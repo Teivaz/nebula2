@@ -49,6 +49,9 @@
 #define IDC_EDIT_SAMPLERATE             1044
 #define IDC_SPIN_SAMPLERATE             1045
 #define IDC_ADDJOINTNAME                1046
+#define IDC_EDIT_GEOM_SCALE             1047
+#define IDC_EDIT_GEOMSCALE              1047
+#define IDC_SPIN_GEOMSCALE              1048
 
 // Next default values for new objects
 // 
