@@ -24,7 +24,7 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     isOpen(false),
     isOverlayEnabled(true),
     camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
-    controlMode(Fly),
+    controlMode(Maya),
     defViewerPos(0.0f, 0.0f, 0.0f),
 //  defViewerAngles(n_deg2rad(90.0f), n_deg2rad(0.0f)),
     defViewerAngles(0,0),
@@ -39,16 +39,16 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     m_frustumclip(true), m_occludingfrustumclip(false), m_sphereclip(false), m_occludingsphereclip(false),
     m_viewcamera(0), m_activecamera(1), m_viscamera(1), m_testobjects(10,10)
 {
-    // initialize test camera
-    markcameras[0].viewerAngles = this->defViewerAngles;
+    // initialize test cameras
+    markcameras[0].viewerAngles = polar2(n_deg2rad(-60.0f), n_deg2rad(45.f));
     markcameras[0].viewerPos = this->defViewerPos;
     markcameras[0].viewerZoom = vector3(0,0,50.0f);
     markcameras[1].viewerAngles = this->defViewerAngles;
     markcameras[1].viewerPos = this->defViewerPos;
     markcameras[1].viewerZoom = this->defViewerZoom;
- /*   markcameras[2].viewerAngles = this->defViewerAngles;
-    markcameras[2].viewerPos = this->defViewerPos;
-    markcameras[2].viewerZoom = this->defViewerZoom;*/
+    markcameras[2].viewerAngles = this->defViewerAngles;
+    markcameras[2].viewerPos = this->defViewerPos + vector3(7.0f,0.0f,0.0f);;
+    markcameras[2].viewerZoom = this->defViewerZoom;
 }
 
 //------------------------------------------------------------------------------
@@ -173,6 +173,8 @@ nSDBViewerApp::Open()
         markcameras[camix].camerarc.AddVariable(nVariable(windHandle, wind));
         markcameras[camix].camerarc.SetRootNode(this->refCameraMarkerNode.get());
         this->refCameraMarkerNode->RenderContextCreated(&(markcameras[camix].camerarc));
+        matrix44 dummy;
+        markcameras[camix].GenerateTransform(dummy);
     }
 
     m_rootsector = (nSpatialSector *)kernelServer->New("nspatialsector", "/world/rootsector");
@@ -260,7 +262,6 @@ void nSDBViewerApp::Run()
             // render
             matrix44 cameravm;
             markcameras[m_viewcamera].GenerateTransform(cameravm);
-            cameravm.invert_simple();
 
             this->refSceneServer->BeginScene(cameravm);
 
@@ -296,14 +297,39 @@ void nSDBViewerApp::Run()
             // attach camera markers-note that camera transforms were updated in UpdateObjectMarks()
             for (int camix=0; camix < nSDBViewerApp::CAMERACOUNT; camix++)
             {
-                markcameras[camix].camerarc.SetFrameId(frameId);
-                this->refSceneServer->Attach(&(markcameras[camix].camerarc));
+                nRenderContext &camrc = markcameras[camix].camerarc;
+                camrc.SetFrameId(frameId);
+                // turn off lighting for all cameras but the active one
+                nFloat4 camlight = {0.f,0.f,0.f,1.0f};
+                if (camix == m_activecamera)
+                {   
+                    camlight.x = camlight.w = 1.0f;
+                    camlight.y = camlight.z = 1.0f;
+                }
+                nShaderParams &camparams = camrc.GetShaderOverrides();
+                nShaderArg shaderdiffuselight(camlight);
+                camparams.SetArg(nShaderState::MatDiffuse, shaderdiffuselight);
+                this->refSceneServer->Attach(&camrc);
+
             }
 
             this->refSceneServer->EndScene();
             this->refSceneServer->RenderScene();             // renders the 3d scene
             this->refGuiServer->Render();                    // do additional rendering before presenting the frame
             this->refConServer->Render();
+
+            // draw the visitor debug info
+            matrix44 cameraxform0, identmatrix;
+            this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
+            nVisibleFrustumGenArray::VisibleElements dummyarray(10,10);
+            nCamera2 newcamera(this->camera);
+            newcamera.SetFarPlane(40.f);
+            newcamera.SetNearPlane(2.0f);
+            nVisibleFrustumGenArray generator(newcamera, cameraxform0, dummyarray);
+            identmatrix.ident();
+            this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
+            generator.VisualizeDebug(this->refGfxServer.get());
+
 
             this->refSceneServer->PresentScene();            // present the frame
         }
@@ -362,6 +388,67 @@ nSDBViewerApp::HandleInput(float frameTime)
         this->refGfxServer->SaveScreenshot(filename.Get());
     }
 
+    this->HandleInputPlay(frameTime);
+    this->HandlePlaySwitch(frameTime);
+
+}
+
+/// handle movement of the 'play' objects using visibility
+void nSDBViewerApp::HandleInputPlay(float frameTime)
+{
+    nInputServer* inputServer = this->refInputServer.get();
+    
+    // process 'play' commands like move/turn for the active object
+
+    CameraDescription &playcamera = markcameras[m_activecamera];
+    const float turnspeed = 1.0f;
+    const float movespeed = 5.0f;
+
+    if (inputServer->GetButton("turnright"))
+    {
+        if (inputServer->GetButton("strafemode"))
+            playcamera.viewerPos += playcamera.viewMatrix.x_component() * movespeed * frameTime;
+        else
+            playcamera.viewerAngles.rho -= turnspeed * frameTime;
+    }
+
+    if (inputServer->GetButton("turnleft"))
+    {
+        if (inputServer->GetButton("strafemode"))
+            playcamera.viewerPos -= playcamera.viewMatrix.x_component() * movespeed * frameTime;
+        else
+            playcamera.viewerAngles.rho += turnspeed * frameTime;
+    }
+
+    if (inputServer->GetButton("moveforward"))
+    {
+        playcamera.viewerPos -= playcamera.viewMatrix.z_component() * movespeed * frameTime;
+    }
+    if (inputServer->GetButton("movebackward"))
+    {
+        playcamera.viewerPos += playcamera.viewMatrix.z_component() * movespeed * frameTime;
+    }
+
+    matrix44 dummy;
+    playcamera.GenerateTransform(dummy);
+    
+}
+/// handle state change--mainly switching play object
+void nSDBViewerApp::HandlePlaySwitch(float framtTime)
+{
+    nInputServer* inputServer = this->refInputServer.get();
+
+    if (inputServer->GetButton("activatecam1"))
+    {
+        m_activecamera = 1;
+        m_viscamera = 1;
+    }
+    if (inputServer->GetButton("activatecam2"))
+    {
+        m_activecamera = 2;
+        m_viscamera = 2;
+    }
+    
     if (inputServer->GetButton("togglefrustum"))
     {
         // cycle between frustum clip and occluding frustum clip
@@ -381,19 +468,28 @@ nSDBViewerApp::HandleInput(float frameTime)
 
     if (inputServer->GetButton("cycleviewcamera"))
     {
-        m_viewcamera = (m_viewcamera+1) % nSDBViewerApp::CAMERACOUNT;
+        // toggle between the chase cam and the active camera
+        if (m_viewcamera == m_activecamera)
+            m_viewcamera = 0;
+        else
+            m_viewcamera = m_activecamera;
     }
 
     if (inputServer->GetButton("cyclecontrolcamera"))
     {
         m_activecamera = (m_activecamera+1) % nSDBViewerApp::CAMERACOUNT;
+        // never switch keyboard control to the 'main' camera
+        if (m_activecamera == 0)
+            m_activecamera = 1;
+        // switch over view if it was on the control camera
+        if (m_viewcamera != 0)
+            m_viewcamera = m_activecamera;
     }
 
     if (inputServer->GetButton("cycleviscamera"))
     {
         m_viscamera = (m_viscamera+1) % nSDBViewerApp::CAMERACOUNT;
     }
-
 }
 
 //------------------------------------------------------------------------------
@@ -446,7 +542,7 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
         this->refConServer->Toggle();
     }
 
-    CameraDescription &controlcamera(this->markcameras[m_activecamera]);
+    CameraDescription &controlcamera(this->markcameras[0]);//m_viewcamera]);
 
     // handle viewer reset
     if (reset)
@@ -462,8 +558,8 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
     controlcamera.viewerPos += horiMoveVector + vertMoveVector;
 
     // handle viewer zoom
-    vector3 horiZoomMoveVector(-controlcamera.viewMatrix.z_component() * (-zoomHori) * zoomVelocity);
-    vector3 vertZoomMoveVector(-controlcamera.viewMatrix.z_component() * zoomVert * zoomVelocity);
+    vector3 horiZoomMoveVector(0,0, zoomHori * zoomVelocity);
+    vector3 vertZoomMoveVector(0,0, - zoomVert * zoomVelocity);
     controlcamera.viewerZoom += horiZoomMoveVector + vertZoomMoveVector ;
 
     // handle viewer rotation
@@ -473,10 +569,6 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
     // apply changes
     matrix44 dummy;
     controlcamera.GenerateTransform(dummy);
-/*    controlcamera.viewMatrix.translate(controlcamera.viewerZoom);
-    controlcamera.viewMatrix.rotate_x(controlcamera.viewerAngles.theta);
-    controlcamera.viewMatrix.rotate_z(controlcamera.viewerAngles.rho);
-    controlcamera.viewMatrix.translate(controlcamera.viewerPos);*/
 
     // switch controls?
     if (inputServer->GetButton("flycontrols"))
@@ -498,12 +590,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
         frameTime = 0.0001f;
     }
 
-    CameraDescription &controlcamera(this->markcameras[m_activecamera]);
-
-    // set speed
-    if (inputServer->GetButton("speed0")) this->viewerVelocity = 5.5f;
-    if (inputServer->GetButton("speed1")) this->viewerVelocity = -5.0f;
-    if (inputServer->GetButton("speed2")) this->viewerVelocity = 50.0f;
+    CameraDescription &controlcamera(this->markcameras[0]);//m_viewcamera]);
 
     // set predefined positions
     if (inputServer->GetButton("setpos0"))
@@ -548,7 +635,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
     // handle viewer move
     if (inputServer->GetButton("zoom"))
     {
-        controlcamera.viewerPos -= controlcamera.viewMatrix.z_component() * this->viewerVelocity * frameTime;
+        controlcamera.viewerPos -= vector3(0,0,1) * this->viewerVelocity * frameTime;
     }
 
     // handle viewer rotate
@@ -564,10 +651,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
     controlcamera.viewerAngles.rho   += lookHori * lookVelocity;
 
     // apply changes
-/*    controlcamera.viewMatrix.ident();
-    controlcamera.viewMatrix.rotate_x(controlcamera.viewerAngles.theta);
-    controlcamera.viewMatrix.rotate_z(controlcamera.viewerAngles.rho);
-    controlcamera.viewMatrix.translate(controlcamera.viewerPos);*/
+    controlcamera.viewerZoom = vector3(0.0f,0.0f,0.0f);
     matrix44 dummy;
     controlcamera.GenerateTransform(dummy);
 
@@ -650,7 +734,7 @@ void nSDBViewerApp::ResetTestObjects()
     // add two occluders for now
     for (int oix=0; oix < 2; oix++)
     {
-        vector3 elementpos(oix * 8 - 4, 4,0);
+        vector3 elementpos(oix * 8 - 4, oix * 4 - 4,0);
         float elementradius = 6.0;
         nSDBViewerApp::SDBTestObject *newobject = new SDBTestObject;
         m_rootsector->AddElement(&(newobject->occluderinfo) );
