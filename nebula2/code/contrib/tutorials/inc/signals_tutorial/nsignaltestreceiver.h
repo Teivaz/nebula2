@@ -16,7 +16,7 @@ public:
 
     bool Signaledbi(int par)
     {
-        n_printf("%s: %x %d\n", this->GetName(), par);
+        n_printf("%s: %x\n", this->GetName(), par);
         return true;
     }
 

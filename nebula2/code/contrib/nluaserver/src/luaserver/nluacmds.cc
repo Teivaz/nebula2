@@ -11,6 +11,7 @@
 #include "luaserver/nluaserver.h"
 #include "kernel/nfileserver2.h"
 #include "luaserver/ncmdprotolua.h"
+#include "signals/nsignalserver.h"
 
 #ifdef __VC__
     // VC6 has the most ignorant warnings...
@@ -848,6 +849,134 @@ int luacmd_PopCwd(lua_State* L)
       return 0;
     }
     nLuaServer::kernelServer->PopCwd();
+    return 0;
+}
+
+//--------------------------------------------------------------------
+//  luaobject_Emit()
+//--------------------------------------------------------------------
+int luaobject_Emit( lua_State *L )
+{
+    if (!lua_istable(L, 1))
+    {
+        n_message("On calling member functions make sure to use the ':' operator to access methods\n");
+        lua_settop(L, 0);
+        lua_pushnil(L);
+        return 1;
+    }
+
+    // find the object
+    nObject * obj = nLuaServer::UnpackThunkRoot(L, 1);
+    if( !obj )
+    {
+        n_printf( "Object not found in object:emit( ... )\n");
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    // check the parameters
+    if( lua_gettop(L)<2 || !lua_isstring(L, 2) )
+    {
+        n_printf( "Usage is object:emit( 'signal', ... )\n");
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    nString signal( lua_tostring(L, 2) );
+
+    // find the command
+    nCmdProto *cmd_proto = static_cast<nCmdProto *>( obj->GetClass()->FindSignalByName( signal.Get() ) );
+    if( !cmd_proto )
+    {
+        n_printf( "Signal not found in object:emit( '%s', ... )\n", signal.Get() );
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    // quit object from stack
+    lua_remove( L, 1 );
+
+    return _luaDispatch( L, obj, cmd_proto, false );
+}
+
+//--------------------------------------------------------------------
+//  luaobject_Post()
+//--------------------------------------------------------------------
+int luaobject_Post( lua_State *L )
+{
+    if (!lua_istable(L, 1))
+    {
+        n_message("On calling member functions make sure to use the ':' operator to access methods\n");
+        lua_settop(L, 0);
+        lua_pushnil(L);
+        return 1;
+    }
+
+    // find the object
+    nObject * obj = nLuaServer::UnpackThunkRoot(L, 1);
+    if( !obj )
+    {
+        n_printf( "Object not found in object:emit( ... )\n");
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    // check the parameters
+    if( lua_gettop(L)<3 || !lua_isnumber(L,2) || !lua_isstring(L, 3) )
+    {
+        n_printf( "Usage is object:post( time, 'signal', ... )\n");
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    double timeValue = lua_tonumber( L, 2 );
+    nString signal( lua_tostring(L, 3) );
+
+    // find the command in signal list or in regular command list
+    nCmdProto *cmd_proto = static_cast<nCmdProto *>( obj->GetClass()->FindSignalByName( signal.Get() ) );
+    if( !cmd_proto )
+    {
+        cmd_proto = static_cast<nCmdProto*>( obj->GetClass()->FindCmdByName( signal.Get() ) );
+        if( !cmd_proto )
+        {
+            n_printf( "Signal not found in object:emit( '%s', ... )\n", signal.Get() );
+            lua_settop(L, 0);
+            return 0;
+        }
+    }
+
+    // quit object from stack
+    lua_remove( L, 1 );
+
+    nCmd* cmd = cmd_proto->NewCmd();
+    n_assert(cmd);
+
+    if (!nLuaServer::StackToInArgs(L, cmd))
+    {
+        n_printf("Incorrect arguments for: %s\n", cmd_proto->GetProtoDef());
+        lua_settop(L, 0);
+        return 0;
+    }
+
+    lua_settop(L, 0);
+
+    // let signal server object handle the command
+    nSignalServer * signalServer = nSignalServer::Instance();
+    n_assert( signalServer );
+    if( signalServer )
+    {
+        if( ! signalServer->PostCmd( timeValue, obj, cmd) )
+        {
+            n_printf( "Post error, in object of class '%s', with signal '%s'", 
+                obj->GetClass()->GetName(), signal.Get() );
+            cmd_proto->RelCmd( cmd );
+        }
+    }
+    else
+    {
+        cmd_proto->RelCmd(cmd);
+    }
+
     return 0;
 }
 

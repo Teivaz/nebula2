@@ -53,7 +53,7 @@ extern PyObject* pythoncmd_Nprint(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_SetTrigger(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_RemoteGetAttr(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_BeginCmds(PyObject *self, PyObject *args); 
-extern PyObject* pythoncmd_AddCmds(PyObject *self, PyObject *args); 
+extern PyObject* pythoncmd_AddCmd(PyObject *self, PyObject *args); 
 extern PyObject* pythoncmd_EndCmds(PyObject *self, PyObject *args);
 extern PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args);
 
@@ -79,7 +79,7 @@ static PyMethodDef NebulaMethods[] = {
     {"exists",        pythoncmd_Exists, METH_VARARGS, NULL},
     {"nprint",        pythoncmd_Nprint, METH_VARARGS, NULL},  // Logging
     {"begincmds",     pythoncmd_BeginCmds, METH_VARARGS, NULL},
-    {"addcmds",       pythoncmd_AddCmds, METH_VARARGS, NULL},
+    {"addcmd",        pythoncmd_AddCmd, METH_VARARGS, NULL},
     {"endcmds",       pythoncmd_EndCmds, METH_VARARGS, NULL},
     {"setTrigger",    pythoncmd_SetTrigger, METH_VARARGS},   // Trigger callback
 

@@ -1029,18 +1029,18 @@ pythoncmd_BeginCmds(PyObject* /*self*/, PyObject *args)
 
 //-----------------------------------------------------------------------------
 /**
-    Implementation of 'addcmds' command for nCmdProtoPython.
+    Implementation of 'addcmd' command for nCmdProtoPython.
 
     06-Sep-04   Kim, H.W.    created
 */
 PyObject*
-pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
+pythoncmd_AddCmd(PyObject* /*self*/, PyObject *args)
 {
     char* className;
     char* cmdName;
     PyObject *result = NULL;
 
-    if (!PyArg_ParseTuple(args, "ss:addcmds", &className, &cmdName))
+    if (!PyArg_ParseTuple(args, "ss:addcmd", &className, &cmdName))
     {
         n_message("Usage: addcmd('classname', 'cmd def')");
         return result;
