@@ -46,7 +46,7 @@ PhysDemoApp::~PhysDemoApp()
 bool
 PhysDemoApp::Open()
 {
-    const char* result;
+    nString result;
 
     n_assert(!this->isOpen);
     n_assert(this->GetInputScript());
