@@ -668,7 +668,9 @@ nKernelServer::New(const char* className)
     this->Lock();
     nObject *obj = this->NewUnnamedObject(className);
     if (!obj) 
+    {
         n_error("nKernelServer: Couldn't create object of class '%s'.\n", className);
+    }
     this->Unlock();
     return obj;
 }
@@ -708,7 +710,9 @@ nKernelServer::NewNoFail(const char* className)
     this->Lock();
     nObject *obj = this->NewUnnamedObject(className);
     if (!obj)
+    {
         n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
+    }
     n_assert(obj);
     this->Unlock();
     return obj;
