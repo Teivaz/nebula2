@@ -309,8 +309,8 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 class MainFrame(wx.Frame):
 
     #--------------------------------------------------------------------------
-    def __init__(self, buildSys, title):
-        wx.Frame.__init__(self, None, -1, title, 
+    def __init__(self, buildSys, generatorName, workspaceNames):
+        wx.Frame.__init__(self, None, -1, 'Nebula 2 Build System', 
                           style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | 
                                   wx.CAPTION | wx.CLOSE_BOX |
                                   wx.CLIP_CHILDREN | wx.STATIC_BORDER)
@@ -320,7 +320,9 @@ class MainFrame(wx.Frame):
                                  wx.BITMAP_TYPE_ICO))
         finally:
             pass
-            
+        
+        self.defaultGeneratorName = generatorName
+        self.defaultWorkspaceNames = workspaceNames    
         self.progressDialog = None
         self.cancelProgressDlg = False
         self.buildSys = buildSys
@@ -361,14 +363,22 @@ class MainFrame(wx.Frame):
             self.generatorDesc[generatorName] = string.replace(
                                                     generator.description, 
                                                     '&', '&&')
-        self.generatorComboBox = wx.ComboBox(self.mainPanel, -1, '', 
+        generatorComboBoxVal = ''
+        generatorDescBoxVal = 'Please select a generator.'
+        if self.defaultGeneratorName in self.generatorDesc:
+            generatorComboBoxVal = self.defaultGeneratorName
+            generatorDescBoxVal = self.generatorDesc[self.defaultGeneratorName]
+        generatorNames = self.generatorDesc.keys()
+        generatorNames.sort()
+        self.generatorComboBox = wx.ComboBox(self.mainPanel, -1, 
+                                             generatorComboBoxVal, 
                                              (0, 0), (166, 20),
-                                             self.generatorDesc.keys(), 
+                                             generatorNames, 
                                              wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnSelectGenerator, 
                   self.generatorComboBox)
         self.generatorDescBox = wx.StaticText(self.mainPanel, -1, 
-                                              'Please select a generator.', 
+                                              generatorDescBoxVal, 
                                               (0, 0), (300, 40),
                                               wx.ST_NO_AUTORESIZE)
         
@@ -556,11 +566,21 @@ class MainFrame(wx.Frame):
     #--------------------------------------------------------------------------
     # Called when the list of available workspaces has been obtained.
     def OnWorkspaceListLoaded(self, evt):
-        if len(self.buildSys.workspaces) > 0:
-            self.workspaceListBox.InsertItems(self.buildSys.workspaces.keys(), 
-                                              0)
+        workspaceNames = self.buildSys.workspaces.keys()
+        workspaceNames.sort()
+        
+        # populate the list box
+        if len(workspaceNames) > 0:
+            self.workspaceListBox.InsertItems(workspaceNames, 0)
             self.workspaceListBox.SetSelection(0)
             self.OnSelectWorkspace(None)
+            
+        # tick the workspaces passed in via cmd line args
+        workspaceIdx = 0
+        for workspaceName in workspaceNames:
+            if workspaceName in self.defaultWorkspaceNames:
+                self.workspaceListBox.Check(workspaceIdx, True)
+            workspaceIdx += 1
             
         # re-enable controls we disabled previously
         self.selectAllWorkspacesBtn.Enable(True)
@@ -707,22 +727,27 @@ class MainFrame(wx.Frame):
 class MainApp(wx.App):
     
     #--------------------------------------------------------------------------
-    def __init__(self, buildSys, redirect = False, filename = None, 
-                 useBestVisual = False, clearSigInt = True):
+    def __init__(self, buildSys, generatorName, workspaceNames, 
+                 redirect = False, filename = None, useBestVisual = False, 
+                 clearSigInt = True):
         self.buildSys = buildSys
+        self.curGeneratorName = generatorName
+        self.curWorkspaceNames = workspaceNames
         wx.App.__init__(self, redirect, filename, useBestVisual, clearSigInt)
         
     #--------------------------------------------------------------------------
     def OnInit(self):
-        mainFrame = MainFrame(self.buildSys, 'Nebula 2 Build System')
+        mainFrame = MainFrame(self.buildSys, self.curGeneratorName, 
+                              self.curWorkspaceNames)
         self.SetTopWindow(mainFrame)
         mainFrame.CenterOnScreen()
         mainFrame.Show(True)
         return True
         
 #--------------------------------------------------------------------------
-def DisplayGUI(buildSys):
-    app = MainApp(buildSys, redirect=True, filename='gui.log')
+def DisplayGUI(buildSys, generatorName, workspaceNames):
+    app = MainApp(buildSys, generatorName, workspaceNames,
+                  redirect=True, filename='gui.log')
     app.MainLoop()
 
 #--------------------------------------------------------------------------

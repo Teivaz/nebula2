@@ -55,12 +55,9 @@ workspaces
     List the available workspaces.
 -listgenerators
     List the available build system generators.
--verbose
-    Print extra information (but not full debug
-    information). This is off by default but basic
-    information will still be printed.
--gui
-    Launches the GUI.
+-nogui
+    Stops the GUI from showing up, use this if you don't have wxPython
+    installed.
 """
 
 #--------------------------------------------------------------------------
@@ -123,20 +120,33 @@ def Profile(generatorName, workspaces):
     stats.print_stats()
 
 #--------------------------------------------------------------------------
-def LaunchGUI():
+def LaunchGUI(generatorName, workspaceNames):
     try:
         from buildsys3.gui import DisplayGUI
-    except ImportError:
-        print 'Error: Failed to import buildsys3.gui, is wxPython installed?'
+    except ImportError, err:
+        print 'Error: Failed to import buildsys3.gui'
+        print str(err)
     else:
         buildSys = BuildSys(updateDir, 'build.cfg.py')
-        DisplayGUI(buildSys)
+        DisplayGUI(buildSys, generatorName, workspaceNames)
+
+#--------------------------------------------------------------------------
+def WxPythonAvailable():
+    try:
+        import wx
+    except ImportError:
+        return False
+    else:
+        if wx.VERSION < (2, 5):
+            return False
+        return True
 
 #--------------------------------------------------------------------------
 def main():
     generatorName = ''
     doProfile = False
     workspaceList = []
+    useGUI = True
     numCmdLineArgs = len(sys.argv)
     if numCmdLineArgs > 1:
         i = 1
@@ -144,9 +154,8 @@ def main():
             if '-help' == sys.argv[i]:
                 PrintHelp()
                 return
-            elif '-gui' == sys.argv[i]:
-                LaunchGUI()
-                return
+            elif '-nogui' == sys.argv[i]:
+                useGUI = False
             elif '-build' == sys.argv[i]:
                 if (i + 1) < numCmdLineArgs:
                     i += 1
@@ -162,20 +171,28 @@ def main():
             elif '-listgenerators' == sys.argv[i]:
                 PrintGeneratorList()
                 return
-            elif '-verbose' == sys.argv[i]:
-                pass
             else:
                 workspaceList.append(sys.argv[i])
             i += 1
-    else:
-        # build everything for everything? naaah :)
-        print 'Clueless? Use update.py -help'
-        return
-
-    if doProfile:
-        Profile(generatorName, workspaceList)
-    else:
-        Build(generatorName, workspaceList)
+ 
+    if useGUI:
+        if WxPythonAvailable():
+            LaunchGUI(generatorName, workspaceList)
+        else:
+            print 'wxPython 2.5.x or later is required (2.5.3.1 recommended)' \
+                  ' to run the build system GUI.'
+            print 'Falling back to command line only interface.'
+            useGUI = False
+    
+    if not useGUI:
+        if numCmdLineArgs > 1:
+            if doProfile:
+                Profile(generatorName, workspaceList)
+            else:
+                Build(generatorName, workspaceList)
+        else:
+            # build everything for everything? naaah :)
+            print 'Clueless? Use update.py -help'
             
 
 
