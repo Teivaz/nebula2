@@ -111,7 +111,7 @@ nVariableServer::GetVariableAt(int index, const char*& varName, nFourCC& varFour
     @return             variable handle, or nVariable::InvalidHandle
 */
 nVariable::Handle
-nVariableServer::FindVariableHandleByName(const char* varName)
+nVariableServer::FindVariableHandleByName(const char* varName) const
 {
     n_assert(varName);
 
@@ -137,7 +137,7 @@ nVariableServer::FindVariableHandleByName(const char* varName)
     @return             variable handle, or nVariable::InvalidHandle
 */
 nVariable::Handle
-nVariableServer::FindVariableHandleByFourCC(nFourCC varFourCC)
+nVariableServer::FindVariableHandleByFourCC(nFourCC varFourCC) const
 {
     n_assert(0 != varFourCC);
 
