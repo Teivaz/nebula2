@@ -138,7 +138,8 @@ public:
     /// check if this string matches the given pattern
     bool MatchPattern(const nString& pattern) const;
     /// format string printf-style
-    void __cdecl Format(const char* fmtString, ...);
+    void __cdecl Format(const char* fmtString, ...)
+            __attribute__((format(printf,1,2)));
 
 protected:
     /// copy contents
