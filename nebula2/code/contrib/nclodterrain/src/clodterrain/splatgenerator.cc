@@ -6,6 +6,11 @@
  * Clodnodes is released under the terms of the Nebula License, in doc/source/license.txt.
  */
 
+#ifdef _MSC_VER
+#include <malloc.h>
+#else
+#include <alloca.h>
+#endif
 #include <math.h>
 #include "clodterrain/splatgenerator.h"
 
@@ -100,7 +105,7 @@ void SplatGenerator::emit_triangle(int i1, int i2, int i3)
     }
 
     // find all the tiles needed for this triangle
-    bool tileflags[TileIndexData::maxtileindex];
+    bool* tileflags = (bool*)alloca(TileIndexData::maxtileindex);
     chunkvertex &va = m_vertices[ai], &vr = m_vertices[ri], &vl = m_vertices[li];
     unsigned int numtiles = m_if->specifyTileIndices(va.x,va.y, vr.x,vr.y, vl.x,vl.y, tileflags);
 
@@ -209,11 +214,10 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
     // splat has very few actual triangles with textures, we waste a lot of fill drawing
     // in black areas, where we could be using a splat which covers more of the chunk, and
     // get more out of our fill rate.
+    nArray<splat>::iterator cursplat;
     nArray<splat>::iterator biggestsplat = m_splats.Begin();
     int biggestsplatsize = biggestsplat->indices.Size();
-    for (nArray<splat>::iterator cursplat = m_splats.Begin();
-                                 cursplat != m_splats.End();
-                                 cursplat++)
+    for (cursplat = m_splats.Begin(); cursplat != m_splats.End(); cursplat++)
     {
         int currentsplatsize = cursplat->indices.Size();
         if (currentsplatsize > biggestsplatsize)
@@ -231,9 +235,7 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
     // # of splats
     SI32SPEW(destfile, m_splats.Size());
     // describe each splat--the tile index and splat size
-    for (nArray<splat>::iterator cursplat = m_splats.Begin();
-                                 cursplat != m_splats.End();
-                                 cursplat++)
+    for (cursplat = m_splats.Begin(); cursplat != m_splats.End(); cursplat++)
     {
         nArray<int> curindices = cursplat->indices;
         SI32SPEW(destfile, cursplat->tileindex);
@@ -252,9 +254,7 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
     }
 
     // write out all the splats, as triangle lists
-    for (nArray<splat>::iterator cursplat = m_splats.Begin();
-                                 cursplat != m_splats.End();
-                                 cursplat++)
+    for (cursplat = m_splats.Begin(); cursplat != m_splats.End(); cursplat++)
     {
         nArray<int> curindices = cursplat->indices;
         for (nArray<int>::iterator idx = curindices.Begin();

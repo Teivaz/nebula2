@@ -6,6 +6,8 @@
 #include "clodterrain/tileindexdata.h"
 #include "clodterrain/heightfielddata.h"
 
+const int TileIndexData::maxtilebits = 8;
+const int TileIndexData::maxtileindex = 1 << TileIndexData::maxtilebits;
 
 TileIndexData::~TileIndexData()
 {
@@ -174,8 +176,8 @@ unsigned int TileIndexData::specifyTileIndices(int ax, int ay,
                                 bool *markarray)
 {
     // zero out the array and recursive call
-    for (int ix=0; ix < maxtileindex; ix++)
-        markarray[ix] = false;
+    for (int idx=0; idx < maxtileindex; idx++)
+        markarray[idx] = false;
 
     tileindices_recursive(ax,ay,rx,ry,lx,ly, markarray);
 
