@@ -306,7 +306,7 @@ public:
     /// optimize for t&l hardware vertex cache
     void Optimize();
     /// append mesh from mesh builder object
-    void Append(const nMeshBuilder& source);
+    int Append(const nMeshBuilder& source);
     /// copy from mesh builder object
     void Copy(const nMeshBuilder& source);
     /// compute the bounding box of the mesh, filtered by a group id
