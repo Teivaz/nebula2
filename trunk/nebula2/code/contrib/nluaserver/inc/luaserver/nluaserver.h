@@ -20,25 +20,10 @@
 */
 #include <string.h>
 
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_KERNELSERVER_H
 #include "kernel/nkernelserver.h"
-#endif
-
-#ifndef N_SCRIPTSERVER_H
 #include "kernel/nscriptserver.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nLuaServer
-#include "kernel/ndefdllclass.h"
 
 // Lua requires it's headers to be explicitly extern'd
 extern "C" {
