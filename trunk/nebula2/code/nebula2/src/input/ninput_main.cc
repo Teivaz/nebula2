@@ -256,14 +256,14 @@ nInputServer::~nInputServer()
     nInputMapping *im;
     while ((im = (nInputMapping *) (this->im_list.RemHead())))
     {
-        delete im;
+        n_delete(im);
     }
 
     // kill input states
     nInputState *is;
     while ((is = (nInputState *) (this->is_list.RemHead())))
     {
-        delete is;
+        n_delete(is);
     }
 
     n_assert(0 != Singleton);

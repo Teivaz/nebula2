@@ -10,7 +10,7 @@
 */
 nInputEvent *nInputServer::NewEvent(void)
 {
-    return n_new nInputEvent;
+    return n_new(nInputEvent);
 }
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ void nInputServer::ReleaseEvent(nInputEvent *e)
     {
         this->UnlinkEvent(e);
     }
-    n_delete e;
+    n_delete(e);
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void
 nInputServer::FlushEvents(void)
 {
     nInputEvent *e;
-    while ((e = (nInputEvent *) this->events.RemHead())) delete e;
+    while ((e = (nInputEvent *) this->events.RemHead())) n_delete(e);
 }
 
 //------------------------------------------------------------------------------

@@ -53,7 +53,7 @@ nInputMapping::ReleaseInputState(void)
     if (this->is->GetRef() <= 0) 
     {
         this->is->Remove();
-        delete this->is;
+        n_delete(this->is);
     }
     this->is = NULL;
 }
