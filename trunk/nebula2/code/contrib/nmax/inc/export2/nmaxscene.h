@@ -79,7 +79,8 @@ protected:
     INode* sceneRoot; 
 
     /// Nebula object name of the scene base object.
-    nString nohBase; 
+    //nString nohBase;
+    nSceneNode* exportRoot;
 
     /// array for exported nMaxMesh instances.
     nArray<nMaxMesh*> meshArray;
