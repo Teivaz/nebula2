@@ -29,8 +29,6 @@ public:
     virtual bool SaveCmds(nPersistServer *ps);
     /// called by app when new render context has been created for this object
     virtual void RenderContextCreated(nRenderContext* renderContext);
-    /// called by nSceneServer when object is attached to scene
-    virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// perform pre-instancing rending of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
