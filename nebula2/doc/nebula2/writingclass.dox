@@ -1,0 +1,198 @@
+/**
+    @page NebulaWritingClass Writing A New Class
+
+    This page discribes how to write a new Nebula class, especially nRoot derived.
+    So this shows how you make a class to be scriptable and support object persistence.
+    Also it is helpful to understand undergoing mechanism of Nebula object system.
+
+    First, we create a header file, 'nmyclass.h' and write a class which derive 
+    nRoot.
+    And declare a member functions. We will lately bind this member 
+    function with script interface to make it avaiable to be accessed via script.
+
+    @code
+    class nMyClass : public nRoot
+    {
+    public:
+        nMyClass();
+        virtual ~nMyClass();
+
+        int DoJob (char* str);
+
+        void SetFoo (bool b);
+        bool GetFoo () const;
+    };
+    @endcode
+
+    Next, we create a implementation file 'nmyclass_main.cc' and define 
+    nNebulaScriptClass macro for supporting scripting interface for this class.
+    
+    @note
+    The file extension of the implementation file should be used with '.cc'
+    The Nebula build system only identify '.cc' file extension for the 
+    implementation file.
+
+    @code
+    #include "mypackage/nmyclass.h"
+  
+    nNebulaScriptClass (nMyClass, "nroot");
+    @endcode
+
+    There are two kind of macro for nRoot derived class.
+    
+      - <b>nNebulaScriptClass</b>
+      - <b>nNebulaClass</b>
+
+    If the class derive nRoot class, one of the macro of above should be defined 
+    in implementation file. Saying other, you should define nNebulaScriptClass 
+    or nNebulaClass macro in the implemenation file. You should do not define 
+    none of the both. If the class needs scripting interface, so the class is
+    scriptable use <b>nNebulaScriptClass</b> macro and the class is not
+    scriptable, use <b>nNebulaClass</b> macro.
+
+    We also define contstructor and destructor for nMyClass.
+
+    @code
+    // constructor.
+    nMyClass::nMyClass()
+    {
+    }
+
+    // destructor.
+    nMyClass::~nMyClass()
+    {
+    }
+    @endcode
+
+    Please note that nRoot derived classes MUST ONLY HAVE THE DEFAULT
+    CONSTRUCTOR.
+
+    Next, we make script and persistence interface. Make 'nmyclass_cmds.cc'
+    implementation file for that.
+
+    The fist thing we do is define a function 'n_initcmds()' which should be 
+    called back from n_init() to register the script command for nMyClass with 
+    the kernel.
+    This function do bind c++ member function of a class with given script 
+    command.
+
+    The function which we want to make it to be scriptable is nMyClass::DoJob,
+    so 1) declare callback function for this script command then, 2) register
+    script command with it's name. 
+
+    @code
+    // callback function declaration.
+    static void n_dojob(void* slf, nCmd* cmd);
+    ...
+
+    void n_initcmds(nClass* cl)
+    {
+        cl->BeginCmds();
+
+        // register script command.
+        cl->AddCmds("i_dojob_s",  'DOJB', n_dojob);
+        cl->AddCmds("v_setfoo_b", 'SETF', n_setfoo);
+        cl->AddCmds("b_getfoo_v", 'GETF', n_getfoo);
+
+        cl->EndCmds();
+    }
+    ...
+    @endcode
+
+    You can use anything for the name of script command but it is prefer to 
+    use function name for the script command. So we use 'i_dojob_s" for
+    it's name. The second arguemnt of AddCmds(), 'DOJB' is internal identifier 
+    for this script command. Use whatever for this identifier, but be careful
+    do not use same identifier for your script commands and this identifier
+    should be consist of four capital characters.
+
+    A script command name is consist of three parts which are out-arguments, 
+    command name and in-arguments. So 'dojob' script command has 'i' for it's
+    out-argument and 's' for it's in-argument. This reprensent the type of
+    agrument and avaiable argument type like this:
+     
+      - v : void type
+      - i : integer type
+      - f : float type
+      - s : string type
+      - b : bool type
+    
+    A callback function for script command should be defined for static function.
+
+    See the callback function for 'dojob' script command.
+
+    @code
+    static void n_dojob(void* slf, nCmd* cmd)
+    {
+        // get in-argument. 
+        char* inArg = cmd->In()->GetS();
+
+        // call nMyClass::DoJob.
+        int ret = slf->DoJob(inArg);
+
+        // pass out-argument out.
+        cmd->Out()->SetI(ret);
+    }
+    @endcode
+
+    The first argument of callback function is class instance which the 
+    script command belong to, so this is nMyClass class instance. 
+    The second argument is in and out arguments for this script
+    command. Recall the arguments of nMyClass::DoJob(), which has one integer
+    type of out-argument and one string type of arguement. We can easily
+    get those argument by interfaces of nCmd. Call nCmd::In() for in-argument and
+    nCmd::Out() for out-argument.
+
+    Next, we make nMyClass to support object persistence.
+
+    Nebula support object persistence for the class which derive nRoot and 
+    if it is scriptable.
+
+    To make the class to support object persistency, we override SaveCmds().
+    
+    Declare SaveCmds of nMyClass in header file like this:
+
+    @code
+    class nMyClass : public nRoot
+    {
+    public:
+    ...
+        bool SaveCmds(nPersistServer* ps);
+    ...
+    };
+    @endcode
+
+    Define nMyClass::SaveCmds() function in 'nmyclass_cmds.cc' implementation 
+    file like this:
+
+    @code
+    bool nMyClass::SaveCmds(nPersistServer* ps)   
+    {
+        ...
+
+        nCmd* cmd;
+
+        cmd = ps->GetCmd(this, 'SETF');
+        cmd->In()->SetB(this->foo);
+        ps->PutCmd(cmd);
+
+        ...
+    }
+    @endcode
+
+    Things to do for object persistence is: 
+    
+      - Get command from nPersistServer by calling GetCmd(). 
+      - Pass appropriate argument for this command
+      - Put command back to nPersistServer.
+
+    That's all for object persistence. Now the object of nMyClass will be
+    saved out to script file whenever you call 'save' or 'saveas' in console
+    or script.
+
+    There are bunch of sources which give you more clear understand.
+
+    @see
+    nTransformNode and nShapeNode for working code.
+
+*/
