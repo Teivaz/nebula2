@@ -29,17 +29,17 @@
     -sel "nodename" 
     -psel "nodename"
     -puts 
-	-exit
+    -exit
         
 
     -TODO:
         @todo Client-Server behavior, ruby extensions like  tcl/tk
-	
-	- Known bugs:
+    
+    - Known bugs:
     
     @bug gets in ruby is recognized as a file operation and will cause an 
-	exception ! A workaround is to use the full qualified name and the command 
-	('mynode'.gets) 
+    exception ! A workaround is to use the full qualified name and the command 
+    ('mynode'.gets) 
 
 
     -18-Dec-03   Tom    created 
@@ -77,7 +77,7 @@ public:
     virtual bool RunCommand(nCmd *);
     virtual nString Prompt();
     
-    virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
+    virtual nFile* BeginWrite(const char* filename, nObject* obj);  
     virtual bool WriteComment(nFile *, const char *);
     virtual bool WriteBeginNewObject(nFile *, nRoot *, nRoot *);
     virtual bool WriteBeginNewObjectCmd(nFile *, nRoot *, nRoot *, nCmd *); 

@@ -114,7 +114,7 @@ nRubyServer::~nRubyServer()
 */
 //--------------------------------------------------------------------
 nFile* 
-nRubyServer::BeginWrite(const char* filename, nRoot* obj)
+nRubyServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
     n_assert(obj);
