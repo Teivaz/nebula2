@@ -4,55 +4,114 @@
 #   Nebula2 ChunkLOD terrain tools.
 #   (C) 2003 RadonLabs GmbH
 #-------------------------------------------------------------------------------
+beginmodule nct2toolscommon
+    setdir nct2tools
+    setfiles {
+        nbtfile
+        ntgafile
+        ngenterraintexture
+    }
+    setheaders {
+        nbtfile
+        ntgafile
+        ngenterraintexture
+    }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nmaketqt2
     setdir nct2tools
-    setfiles { nmaketqt2 ntqt2compressor ntqt2filemaker }
+    setfiles {
+        nmaketqt2
+        ntqt2compressor
+        ntqt2filemaker
+    }
+    setheaders {
+        ntqt2compressor
+        ntqt2filemaker
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nbttotga
     setdir nct2tools
-    setfiles { nbttotga }
+    setfiles {
+        nbttotga
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmaketerraintexture
     setdir nct2tools
-    setfiles { nmaketerraintexture }
+    setfiles {
+        nmaketerraintexture
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nchopbtfile
     setdir nct2tools
-    setfiles { nchopbtfile }
+    setfiles {
+        nchopbtfile
+    }
 endmodule
+#-------------------------------------------------------------------------------
+begintarget nct2toolscommon
+    settype lib
+    setmodules {
+        nct2toolscommon
+    }
+endtarget
 
 #===============================================================================
 begintarget nmaketqt2
     settype exe
-    setmodules { nmaketqt2 }
+    setmodules {
+        nmaketqt2
+    }
     settargetdeps {
-        nkernel nnebula ncterrain2 
+        nkernel
+        nnebula
+        ncterrain2
+        ndirect3d9
+        nct2toolscommon
     }
 endtarget
 #-------------------------------------------------------------------------------
 begintarget nbttotga
     settype exe
-    setmodules { nbttotga }
+    setmodules {
+        nbttotga
+    }
     settargetdeps {
-        nkernel nnebula ncterrain2
+        nkernel
+        nnebula
+        ncterrain2
+        ndirect3d9
+        nct2toolscommon
     }
 endtarget
 #-------------------------------------------------------------------------------
 begintarget nchopbtfile
     settype exe
-    setmodules { nchopbtfile }
+    setmodules {
+        nchopbtfile
+    }
     settargetdeps {
-        nkernel nnebula ncterrain2
+        nkernel
+        nnebula
+        ncterrain2
+        ndirect3d9
+        nct2toolscommon
     }
 endtarget
 #-------------------------------------------------------------------------------
 begintarget nmaketerraintexture
     settype exe
-    setmodules { nmaketerraintexture }
+    setmodules {
+        nmaketerraintexture
+    }
     settargetdeps {
-        nkernel nnebula ncterrain2
+        nkernel
+        nnebula
+        ncterrain2
+        ndirect3d9
+        nct2toolscommon
     }
 endtarget

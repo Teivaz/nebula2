@@ -6,8 +6,8 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "tools/nbtfile.h"
-#include "tools/ntgafile.h"
+#include "nct2tools/nbtfile.h"
+#include "nct2tools/ntgafile.h"
 #include "tools/ncmdlineargs.h"
 
 //------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ main(int argc, const char** argv)
                "-out      -- name of output tga file\n"
                "-size     -- size of tga file\n"
                "-nmap     -- generate normal map (otherwise height map)\n"
-               "-vscale   -- verticale scale (default is 10000)\n");
+               "-vscale   -- vertical scale (default is 10000)\n");
         return 5;
     }
 

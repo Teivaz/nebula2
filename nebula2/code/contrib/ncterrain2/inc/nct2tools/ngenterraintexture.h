@@ -11,8 +11,8 @@
     (C) 2003 RadonLabs GmbH
 */    
 #include "kernel/ntypes.h"
-#include "tools/ntgafile.h"
-#include "tools/nbtfile.h"
+#include "nct2tools/ntgafile.h"
+#include "nct2tools/nbtfile.h"
 #include "mathlib/polar.h"
 #include "tinyxml/tinyxml.h"
 #include "mathlib/noise.h"

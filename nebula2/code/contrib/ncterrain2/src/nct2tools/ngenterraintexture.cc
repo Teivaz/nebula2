@@ -2,7 +2,7 @@
 //  ngenterraintexture.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "tools/ngenterraintexture.h"
+#include "nct2tools/ngenterraintexture.h"
 #include "tinyxml/tinyxml.h"
 
 //------------------------------------------------------------------------------
