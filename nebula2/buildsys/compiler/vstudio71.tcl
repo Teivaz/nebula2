@@ -19,18 +19,19 @@
 set release_preprocessor_defs "WIN32;NDEBUG;NT_PLUGIN"
 set debug_preprocessor_defs "WIN32;_DEBUG;NT_PLUGIN"
 set neb_libpath_win32 "./code/nebula2/lib/win32_vc_i386"
+set targetuuids(0) 0
 
 #-----------------------------------------------------------------------------------------
 #  emit_vcproj_header $name $cid
 #-----------------------------------------------------------------------------------------
-proc emit_vcproj_header {name cid} {
-    puts $cid "<?xml version=\"1.0\" encoding = \"Windows-1252\"?>"
+proc emit_vcproj_header {name cid guid} {
+    puts $cid "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>"
     puts $cid "<VisualStudioProject"
     puts $cid "\tProjectType=\"Visual C++\""
     puts $cid "\tVersion=\"7.10\""
     puts $cid "\tName=\"$name\""
-    puts $cid "\tSccProjectName=\"\""
-    puts $cid "\tSccLocalPath=\"\">"
+    puts $cid "\tKeyword=\"Win32Proj\""
+    puts $cid "\tProjectGUID=\"$guid\">"
     puts $cid "\t<Platforms>"
     puts $cid "\t\t<Platform Name=\"Win32\"/>"
     puts $cid "\t</Platforms>"
@@ -103,30 +104,41 @@ proc emit_vcproj_config {name cid debug} {
     puts $cid "\t\t<Configuration"
     puts $cid "\t\t\tName=\"$confname\""
     puts $cid "\t\t\tOutputDirectory=\"$odir\""
-    puts $cid "\t\t\tIntermediateDirectory=\"$idir\""
+    puts $cid "\t\t\tIntermediateDirectory=\"$idir/$name\""
     puts $cid "\t\t\tConfigurationType=\"$typenumber\""
-    puts $cid "\t\t\tUseOfMFC=\"0\""
-    puts $cid "\t\t\tATLMinimizesCRunTimeLibraryUsage=\"FALSE\">"
+    puts $cid "\t\t\tCharacterSet=\"2\">"
     puts $cid "\t\t\t<Tool"
     puts $cid "\t\t\t\tName=\"VCCLCompilerTool\""
-    puts $cid "\t\t\t\tAdditionalOptions=\"\""
-    puts $cid "\t\t\t\tOptimization=\"0\""
     puts $cid "\t\t\t\tAdditionalIncludeDirectories=\"$inc_list\""
     puts $cid "\t\t\t\tPreprocessorDefinitions=\"__WIN32__;$def_list\""
-    puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
-    puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
-    puts $cid "\t\t\t\tRuntimeLibrary=\"1\""
-    puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
-    puts $cid "\t\t\t\tUsePrecompiledHeader=\"0\""
-    puts $cid "\t\t\t\tAssemblerListingLocation=\"$idir\\$name\""
-    puts $cid "\t\t\t\tObjectFile=\"$idir\\$name\\\""
-    puts $cid "\t\t\t\tProgramDataBaseFileName=\"$idir\\$name\""
-    puts $cid "\t\t\t\tWarningLevel=\"3\""
-    puts $cid "\t\t\t\tSuppressStartupBanner=\"TRUE\""
     if {$debug == 1} {
-        puts $cid "\t\t\t\tDebugInformationFormat=\"4\""
+        puts $cid "\t\t\t\tOptimization=\"0\""
+        puts $cid "\t\t\t\tStringPooling=\"TRUE\""
+        puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
+        puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
+        puts $cid "\t\t\t\tMinimalRebuild=\"TRUE\""
+        puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
+        puts $cid "\t\t\t\tRuntimeLibrary=\"1\""
+        puts $cid "\t\t\t\tUsePrecompiledHeader=\"0\""
+        #puts $cid "\t\t\t\tObjectFile=\"$idir\\$name\\\""
+        #puts $cid "\t\t\t\tProgramDataBaseFileName=\"$idir/$name.pdb\""
+        puts $cid "\t\t\t\tWarningLevel=\"3\""
+        #puts $cid "\t\t\t\tDetect64BitPortabilityProblems=\"FALSE\""
+        puts $cid "\t\t\t\tDebugInformationFormat=\"4\"/>"
+    } else {
+        puts $cid "\t\t\t\tStringPooling=\"TRUE\""
+        puts $cid "\t\t\t\tGlobalOptimizations=\"TRUE\""
+        puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
+        puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
+        puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
+        puts $cid "\t\t\t\tRuntimeLibrary=\"0\""
+        puts $cid "\t\t\t\tUsePrecompiledHeader=\"0\""
+        #puts $cid "\t\t\t\tObjectFile=\"$idir/$name/\""
+        puts $cid "\t\t\t\tWarningLevel=\"3\""
+        puts $cid "\t\t\t\tDetect64BitPortabilityProblems=\"FALSE\""
+        puts $cid "\t\t\t\tBufferSecurityCheck=\"FALSE\""
+        puts $cid "\t\t\t\tDebugInformationFormat=\"0\"/>"
     }
-    puts $cid "\t\t\t\tCompileAs=\"2\"/>"
     
     puts $cid "\t\t\t<Tool Name=\"VCCustomBuildTool\"/>"
 
@@ -143,13 +155,16 @@ proc emit_vcproj_config {name cid debug} {
         if {$debug == 1} {
             puts $cid "\t\t\t\tGenerateDebugInformation=\"TRUE\""
             puts $cid "\t\t\t\tLinkIncremental=\"2\""
+            puts $cid "\t\t\t\tProgramDatabaseFile=\"$idir/$name.pdb\""
         } else {
             puts $cid "\t\t\t\tLinkIncremental=\"1\""
+            puts $cid "\t\t\t\tOptimizeReferences=\"2\""
+            puts $cid "\t\t\t\tEnableCOMDATFolding=\"2\""
         }
-        puts $cid "\t\t\t\tSuppressStartupBanner=\"TRUE\""
         puts $cid "\t\t\t\tAdditionalLibraryDirectories=\"$lib_path;$idir\""
         puts $cid "\t\t\t\tModuleDefinitionFile=\"$moddeffile\""
-        puts $cid "\t\t\t\tProgramDatabaseFile=\"$idir\\$name.pdb\"/>"
+        puts $cid "\t\t\t\tSubSystem=\"0\""
+        puts $cid "\t\t\t\tTargetMachine=\"1\"/>"
     }
 
     # The other tools
@@ -198,14 +213,14 @@ proc emit_vcproj_files {name cid} {
             regsub -all "/" [pathto [getfilenamewithextension $sourcefile cc] ] "\\" relpath
             set rootname [file tail $sourcefile]
             puts $cid "\t\t\t<File"
-            puts $cid "\t\t\t\tRelativePath=\"$relpath\" FileType=\"0\" >"
+            puts $cid "\t\t\t\tRelativePath=\"$relpath\" >"
             puts $cid "\t\t\t\t<FileConfiguration Name=\"Debug|Win32\">"
-            puts $cid "\t\t\t\t\t<Tool Name=\"VCCLCompilerTool\" PreprocessorDefinitions=\"$more_syms\" CompileAs=\"$compileas\""
-            puts $cid "\t\t\t\t\t\tObjectFile=\"$idir\\win32d\\${module}_${rootname}.obj\" />"
+            puts $cid "\t\t\t\t\t<Tool Name=\"VCCLCompilerTool\" PreprocessorDefinitions=\"$more_syms\" CompileAs=\"$compileas\" />"
+            #puts $cid "\t\t\t\t\t\tObjectFile=\"$idir\\win32d\\${module}_${rootname}.obj\" />"
             puts $cid "\t\t\t\t</FileConfiguration>"
             puts $cid "\t\t\t\t<FileConfiguration Name=\"Release|Win32\">"
-            puts $cid "\t\t\t\t\t<Tool Name=\"VCCLCompilerTool\" PreprocessorDefinitions=\"$more_syms\" CompileAs=\"$compileas\""
-            puts $cid "\t\t\t\t\t\tObjectFile=\"$idir\\win32\\${module}_${rootname}.obj\" />"
+            puts $cid "\t\t\t\t\t<Tool Name=\"VCCLCompilerTool\" PreprocessorDefinitions=\"$more_syms\" CompileAs=\"$compileas\" />"
+            #puts $cid "\t\t\t\t\t\tObjectFile=\"$idir\\win32\\${module}_${rootname}.obj\" />"
             puts $cid "\t\t\t\t</FileConfiguration>"
             puts $cid "\t\t\t</File>"
         }
@@ -253,7 +268,7 @@ proc emit_vcproj_tail {cid} {
 #   gen_vcproj $name
 #   Creates a .vcproj file
 #-----------------------------------------------------------------------------------------
-proc gen_vcproj {name} {
+proc gen_vcproj {name guid} {
     global home
     global cur_workspacepath
     
@@ -262,7 +277,7 @@ proc gen_vcproj {name} {
     # write .vcproj file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.vcproj] w]
 
-    emit_vcproj_header $name $cid
+    emit_vcproj_header $name $cid $guid
     puts $cid "\t<Configurations>"
     emit_vcproj_config $name $cid 1
     emit_vcproj_config $name $cid 0
@@ -285,6 +300,7 @@ proc gen_sln { name } {
     global platform
     global home
     global cur_workspacepath
+    global targetuuids
     set targetuuids(0) 0
     
     puts "Generating Visual Studio .NET 2003 solution file $name.sln..."
@@ -355,6 +371,7 @@ proc gen_sln { name } {
 #   Generates the .sln and .vcproj file for all workspaces
 #-----------------------------------------------------------------------------------------
 proc generate {} {
+    global targetuuids
     
     puts "Looking for uuidgen...."
     if { [catch { exec uuidgen }] } {
@@ -379,7 +396,7 @@ proc generate {} {
         
         #create the project files
         foreach target [get_targets] {
-            gen_vcproj $target
+            gen_vcproj $target $targetuuids($target)
         }    
     }
 }
