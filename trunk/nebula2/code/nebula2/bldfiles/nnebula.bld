@@ -17,10 +17,10 @@ begintarget nnebula
         ninputserver nresourceloader nresourceserver nresource nresourcebundle
         nmesh2 ntexture2 nsurface nfont2 nshader2 ngfxserver2
         naudioserver3 nsound3 nlistener3 nsoundresource
-        nsceneserver nstdsceneserver
+        nsceneserver
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nshapenode nattachmentnode nanimator nvectoranimator
-        ntextureanimator nlightnode nspotlightnode
+        ntextureanimator nlightnode
         ntransformanimator nskinanimator nskinshapenode 
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
