@@ -91,138 +91,44 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         switch (type)
         {
             case Model:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 model(this->transform[Model]);
-				model.transpose();
-				shd->SetMatrix(nShaderState::Model, model);
-				
-				matrix44 invModel(this->transform[InvModel]);
-				invModel.transpose();
-                shd->SetMatrix(nShaderState::InvModel, invModel);
-                
-				matrix44 modelView(this->transform[ModelView]);
-				modelView.transpose();
-				shd->SetMatrix(nShaderState::ModelView, modelView);
-                
-				matrix44 invModelView(this->transform[InvModelView]);
-				invModelView.transpose();
-				shd->SetMatrix(nShaderState::InvModelView, invModelView);
-				#else
-				shd->SetMatrix(nShaderState::Model, this->transform[Model]);
+                shd->SetMatrix(nShaderState::Model, this->transform[Model]);
                 shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-				#endif
                 setMVP = true;
                 setEyePos = true;
                 setModelLightProjection = true;
-				}
                 break;
             
             case View:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 view(this->transform[View]);
-				view.transpose();
-				shd->SetMatrix(nShaderState::View, view);
-				
-				matrix44 invView(this->transform[InvView]);
-				invView.transpose();
-                shd->SetMatrix(nShaderState::InvView, invView);
-				
-				matrix44 modelView(this->transform[ModelView]);
-				modelView.transpose();
-				shd->SetMatrix(nShaderState::ModelView, modelView);
-				
-				matrix44 invModelView(this->transform[InvModelView]);
-				invModelView.transpose();
-                shd->SetMatrix(nShaderState::InvModelView, invModelView);
-				#else
                 shd->SetMatrix(nShaderState::View, this->transform[View]);
                 shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-				#endif
                 setMVP = true;
                 setEyePos = true;
-				}
                 break;
 
             case Projection:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 projection(this->transform[Projection]);
-				projection.transpose();
-				shd->SetMatrix(nShaderState::Projection, projection);
-				#else
                 shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
-				#endif
                 setMVP = true;
                 setModelLightProjection = true;
-				}
                 break;
 
             case Texture0:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 texture0(this->transform[Texture0]);
-				texture0.transpose();
-                shd->SetMatrix(nShaderState::TextureTransform0, texture0);
-				#else
-				shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
-				#endif
-				}
+                shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
                 break;
 
             case Texture1:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 transform1(this->transform[Texture1]);
-				transform1.transpose();
-				shd->SetMatrix(nShaderState::TextureTransform1, transform1);
-				#else
                 shd->SetMatrix(nShaderState::TextureTransform1, this->transform[Texture1]);
-				#endif
-				}
                 break;
 
             case Texture2:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 transform2(this->transform[Texture2]);
-				transform2.transpose();
-                shd->SetMatrix(nShaderState::TextureTransform2, transform2);
-				#else
-				shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
-				#endif
-				}
+                shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
                 break;
 
             case Texture3:
-				{
-				#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-				// 2004 SDK ffp - matrix bug workaround
-				// WARNING - this will be wrong when you use vertex shaders and dx7 HW
-				matrix44 transform3(this->transform[Texture3]);
-				transform3.transpose();
-                shd->SetMatrix(nShaderState::TextureTransform3, transform3);
-				#else
-				shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
-				#endif
-				}
+                shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
                 break;
 
             case Light:
@@ -911,7 +817,7 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
         }
 
         // invoke DrawPrimitive()
-	    hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
+        hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
     }
     instStream->Unlock();
