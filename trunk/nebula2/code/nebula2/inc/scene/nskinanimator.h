@@ -70,9 +70,9 @@ public:
     /// get name of an anim resource
     const char* GetAnim() const;
 
-    /// set channel name which delivers the current anim state index
+    /// set the nVariable name which delivers the current anim state index
     void SetStateChannel(const char* name);
-    /// get anim state channel name 
+    /// get anim state nVariable name 
     const char* GetStateChannel();
 
     /// begin anim state definition
