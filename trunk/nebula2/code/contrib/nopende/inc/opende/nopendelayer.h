@@ -85,13 +85,13 @@ void WorldImpulseToForce( dWorldID id, float stepsize, const vector3& impulse,
 inline
 void WorldSetAutoDisableFlag( dWorldID id, int do_auto_disable )
 {
-    dWorldSetAutoDisableFlag(id, do_auto_disable);
+    dWorldSetAutoDisableFlag( id, do_auto_disable );
 }
 
 inline 
 int WorldGetAutoDisableFlag( dWorldID id )
 {
-    return dWorldGetAutoDisableFlag(id);
+    return dWorldGetAutoDisableFlag( id );
 }
 
 inline
@@ -101,45 +101,45 @@ void WorldSetAutoDisableLinearThreshold( dWorldID id, float linear_threshold)
 }
 
 inline 
-float WorldGetAutoDisableLinearThreshold(dWorldID id)
+float WorldGetAutoDisableLinearThreshold( dWorldID id )
 {
-    return dWorldGetAutoDisableLinearThreshold(id);
+    return dWorldGetAutoDisableLinearThreshold( id );
 }
 
 inline 
-void WorldSetAutoDisableAngularThreshold(dWorldID id, float angular_threshold)
+void WorldSetAutoDisableAngularThreshold( dWorldID id, float angular_threshold )
 {
-    dWorldSetAutoDisableAngularThreshold(id, angular_threshold);
+    dWorldSetAutoDisableAngularThreshold( id, angular_threshold );
 }
 
 inline 
-float WorldGetAutoDisableAngularThreshold(dWorldID id)
+float WorldGetAutoDisableAngularThreshold( dWorldID id )
 {
-    return dWorldGetAutoDisableAngularThreshold(id);
+    return dWorldGetAutoDisableAngularThreshold( id );
 }
 
 inline
-void WorldSetAutoDisableSteps(dWorldID id, int steps)
+void WorldSetAutoDisableSteps( dWorldID id, int steps )
 {
-    dWorldSetAutoDisableSteps(id, steps);
+    dWorldSetAutoDisableSteps( id, steps );
 }
 
 inline 
-int WorldGetAutoDisableSteps(dWorldID id)
+int WorldGetAutoDisableSteps( dWorldID id )
 {
-    return dWorldGetAutoDisableSteps(id);
+    return dWorldGetAutoDisableSteps( id );
 }
 
 inline
-void WorldSetAutoDisableTime(dWorldID id, float time)
+void WorldSetAutoDisableTime( dWorldID id, float time )
 {
-    dWorldSetAutoDisableTime(id, time);
+    dWorldSetAutoDisableTime( id, time );
 }
 
 inline 
-float WorldGetAutoDisableTime(dWorldID id)
+float WorldGetAutoDisableTime( dWorldID id )
 {
-    return dWorldGetAutoDisableTime(id);
+    return dWorldGetAutoDisableTime( id );
 }
 
 inline

@@ -133,7 +133,7 @@ int nOpendeWorld::GetQuickStepNumIterations()
     n_assert( this->id && "nOpendeWorld::id not valid!" );
     return nOpende::WorldGetQuickStepNumIterations( this->id );
 }
-    
+        
 //----------------------------------------------------------------------------
 /**
 */      
