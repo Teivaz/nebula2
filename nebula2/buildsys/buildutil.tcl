@@ -144,7 +144,8 @@ proc findtargetbyname { tname} {
             return $i
         }
     }
-    puts "ERROR: target '$name' not defined!"
+    
+    puts "ERROR: target '$tname' not defined!"
     exit
 }
 

@@ -47,7 +47,7 @@ proc gen_ancestor {i} {
     foreach filename $mod($i,srcs) {
     
         # no cache hit, process files normally...
-        set cid [open [cleanpath $home/$filename.cc] r]
+        set cid [open [cleanpath $home/[getfilenamewithextension $filename cc] ] r]
         while {![eof $cid]} {
             set line [gets $cid]
 
@@ -298,7 +298,9 @@ proc fixworkspaces { } {
         # wspace(idx,tar#name#,#fields#)
         foreach tarname $wspace($i,targets) {
             set idx [findtargetbyname $tarname]
-            set wspace($i,$tarname,type)        $tar($idx,type)  
+            set wspace($i,$tarname,type)        $tar($idx,type)
+            set wspace($i,$tarname,rtti)        $tar($idx,rtti)  
+            set wspace($i,$tarname,exceptions)  $tar($idx,exceptions) 
             set wspace($i,$tarname,modules)        $tar($idx,mergedmods)
 
             set wspace($i,$tarname,libs_win32_release) $tar($idx,libs_win32_release)

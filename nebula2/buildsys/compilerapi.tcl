@@ -33,6 +33,8 @@
 #    test_tarplatform       $tarname $platform
 #    get_tarplatform        $tarname
 #    get_tardefs            $tarname
+#    get_rtti               $tarname
+#    get_exceptions         $tarname
 #    get_win32libs_release  $tarname
 #    get_win32libs_debug    $tarname
 #    get_linuxlibs          $tarname
@@ -53,8 +55,9 @@
 #    path_wspacetointer
 #
 #    get_incsearchdirs
-#    wrtie_pkgfiles
+#    write_pkgfiles
 #    pathto                 $pathfile
+#    addpkgs   
 #
 #----------------------------------------------------------------------------
 
@@ -333,6 +336,33 @@ proc get_tardefs {tarname} {
 }
 
 #----------------------------------------------------------------------------
+#  get_rtti
+#
+#  Returns true iff Runtime Type Identification should be activated for this
+#  target
+#
+#  In .bld file, write "setrtti true"
+#----------------------------------------------------------------------------
+proc get_rtti {tarname} {
+    global wspace
+    global cur_workspace
+    return $wspace($cur_workspace,$tarname,rtti)
+}
+
+#----------------------------------------------------------------------------
+#  get_exceptions
+#
+#  Returns true iff c++ exceptions should be supported for this target
+#
+#  In .bld file, write "setexceptions true"
+#----------------------------------------------------------------------------
+proc get_exceptions {tarname} {
+    global wspace
+    global cur_workspace
+    return $wspace($cur_workspace,$tarname,exceptions)
+}
+
+#----------------------------------------------------------------------------
 #  get_win32libs_release
 #
 #  Returns a full list of libnames to link in a win32 release build.  These
@@ -604,7 +634,7 @@ proc write_pkgfiles { } {
             set cid [open $dir/pkg_$target.cc w]
             
             puts $cid "//----------------------------------------------------------"
-            puts $cid "// pkg_nimagetool.cc"
+            puts $cid "// pkg_$target.cc"
             puts $cid "// MACHINE GENERATED, DON'T EDIT!"
             puts $cid "//----------------------------------------------------------"
             puts $cid "#include \"kernel/ntypes.h\""
@@ -691,11 +721,7 @@ proc write_pkgfiles { } {
             set mod($num_mods,srcs) $cur_workspacepath/pkg/pkg_$target
             set mod($num_mods,hdrs) ""
             incr num_mods
-            
-            #create a wspace/target entry for the mod
-            lappend wspace($cur_workspace,$target,modules) pkg_$target
         }
-        
     }
 }
 
@@ -709,7 +735,21 @@ proc pathto {pathfile} {
     return [findrelpath $cur_workspacepath $pathfile]
 }
 
-
+#----------------------------------------------------------------------------
+#  add_pkgs
+#  Add the pkg_ files to the module list
+#----------------------------------------------------------------------------
+proc add_pkgs {} {
+    global wspace
+    global num_wspaces
+    for {set i 0} {$i < $num_wspaces} {incr i} {
+        foreach target $wspace($i,targets) {
+            if {($wspace($i,$target,type) != "lib") && ([llength $wspace($i,$target,pakmods)] > 0)} {
+                lappend wspace($i,$target,modules) pkg_$target 
+            }
+        }
+    }
+}
 #----------------------------------------------------------------------------
 # EOF
 #----------------------------------------------------------------------------

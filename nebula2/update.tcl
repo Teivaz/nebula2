@@ -26,6 +26,7 @@ source $home/buildsys/loadbld.tcl
 source $home/buildsys/generatebld.tcl
 source $home/buildsys/validatebld.tcl
 source $home/buildsys/compilerapi.tcl
+source $home/buildsys/helperfunctions.tcl
 
 # generators
 set gen_list ""
@@ -62,7 +63,7 @@ dump_api_data generateapibld
 puts "\n**** Validating bld files"
  
 dump_api_data validatebld   
-
+add_pkgs
 
 puts "\n->Done loading bld files."
 #----------------------------------------------------------------------------
