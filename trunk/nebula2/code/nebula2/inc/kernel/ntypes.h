@@ -66,6 +66,7 @@ N_EXPORT char *n_strdup(const char *);
 N_EXPORT char *n_strncpy2(char *, const char *, size_t);
 N_EXPORT void *nn_malloc(size_t, const char *, int);
 N_EXPORT void *nn_calloc(size_t, size_t, const char *, int);
+N_EXPORT void *nn_realloc(void *, size_t, const char *, int);  
 N_EXPORT void n_free(void *);
 N_EXPORT bool n_strmatch(const char *, const char *);
 N_EXPORT void n_strcat(char *, const char *, size_t);
@@ -86,6 +87,7 @@ char *n_strdup(const char *);
 char *n_strncpy2(char *, const char *, size_t);
 void *nn_malloc(size_t, const char *, int);
 void *nn_calloc(size_t, size_t, const char *, int);
+void *nn_realloc(void *, size_t, const char *, int);
 void n_free(void *);
 bool n_strmatch(const char *, const char *);
 void n_strcat(char *, const char *, size_t);
@@ -100,10 +102,12 @@ void n_barf(const char *, const char *, int);
 #ifdef __STANDALONE__
 #define n_malloc(s) malloc(s)
 #define n_calloc(s,n) calloc(s,n)
+#define n_realloc(o,s) realloc(o,s)
 #define n_free(p) free(p)
 #else
 #define n_malloc(s) nn_malloc(s,__FILE__,__LINE__)
 #define n_calloc(s,n) nn_calloc(s,n,__FILE__,__LINE__)
+#define n_realloc(o,s) nn_realloc(o,s,__FILE__,__LINE__)
 #endif
 
 #ifdef new
