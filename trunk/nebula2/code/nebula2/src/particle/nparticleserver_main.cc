@@ -150,7 +150,7 @@ void nParticleServer::Trigger()
         while (emitterIter != this->emitterPool.End())
         {
             nParticleEmitter* emitter = *emitterIter;
-            if ( !emitter->IsAlive() || emitter->GetFatalException())
+            if (!emitter->IsAlive() || emitter->GetFatalException())
             {
                 n_delete(emitter);
                 // n_printf("nParticleServer: Deleting particle emitter!\n");
