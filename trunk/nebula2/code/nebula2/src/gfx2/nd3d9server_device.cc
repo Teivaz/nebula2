@@ -663,12 +663,11 @@ nD3D9Server::GetNumDepthBits() const
 //------------------------------------------------------------------------------
 /**
     Adjust gamma with given gamma, brightness and contrast.
-    Gamma, brightness and contrast can be specified with SetGamma(), SetBrightness()
-    and SetContrast(). 
-    (The default value of those are 0.8 for gamma, 0.8 for brightness and 0.7 for 
-    contrast)
-    If you want to change gamma, first call SetGamma() with given gamma value which
-    you want to change then call AdjustGamma() to apply the specified value.
+    The default values are 1.0 for gamma, and roughly 0.5 for brightness 
+    and contrast.
+    If you want to change one of these, first call 
+    SetGamma/Brightness/Contrast(), then call AdjustGamma() 
+    to apply the specified value.
 
     23-Aug-04    kims    created
 */

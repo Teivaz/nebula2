@@ -30,9 +30,9 @@ nGfxServer2::nGfxServer2() :
     cursorVisibility(System),
     cursorDirty(true),
     inDialogBoxMode(false),
-    gamma(0.8f),
-    brightness(0.8f),
-    contrast(0.7f)
+    gamma(1.0f),
+    brightness(65280.0/65535.0-0.5),
+    contrast(65280.0/65535.0-0.5)
 {
     n_assert(0 == Singleton);
     Singleton = this;
