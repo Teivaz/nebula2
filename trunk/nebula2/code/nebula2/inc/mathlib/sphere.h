@@ -1,8 +1,12 @@
 #ifndef N_SPHERE_H
 #define N_SPHERE_H
 //-------------------------------------------------------------------
-//  CLASS
-//  sphere - a sphere in 3d space
+/**
+    @class sphere
+    @ingroup NebulaMathDataTypes
+
+    a sphere in 3d space
+*/
 //-------------------------------------------------------------------
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShader2
+    @ingroup NebulaGraphicsSystem
 
     A shader object loads itself from a shader resource file, and contains
     everything to render a mesh and texture. It may be completely

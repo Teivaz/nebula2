@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nResource
+    @ingroup NebulaResourceSystem
 
     Super class for all resource classes. Resources are mostly loaded
     from a file, can be shared, and unloaded to free runtime space.

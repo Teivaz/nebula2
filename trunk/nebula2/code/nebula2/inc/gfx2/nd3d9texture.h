@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Texture
+    @ingroup NebulaD3D9GraphicsSystem
 
     Direct3D9 subclass for nTexture2.
 

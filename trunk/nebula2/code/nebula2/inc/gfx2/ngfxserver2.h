@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGfxServer2
+    @ingroup NebulaGraphicsSystem
 
     New generation gfx server, completely vertex and pixel shader based.
 

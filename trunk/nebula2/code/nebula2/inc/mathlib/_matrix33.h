@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _matrix33
+    @ingroup NebulaMathDataTypes
 
     A generic matrix33 class.
 

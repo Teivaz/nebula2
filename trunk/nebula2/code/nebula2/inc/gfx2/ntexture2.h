@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTexture2
+    @ingroup NebulaGraphicsSystem
 
     Contains image data used by the gfx api's texture samplers. Textures
     are normal named, shared resources which are usually loaded from disk.

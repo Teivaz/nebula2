@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nWireframeRenderer
+    @ingroup NebulaGraphicsSystem
 
     Renders a source mesh as wireframe through the global dynamic mesh.
     Requires the system shader file "wireframe.fx" to work.

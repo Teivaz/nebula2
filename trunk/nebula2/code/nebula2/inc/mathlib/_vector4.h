@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _vector4
+    @ingroup NebulaMathDataTypes
 
     A generic vector4 class.
 

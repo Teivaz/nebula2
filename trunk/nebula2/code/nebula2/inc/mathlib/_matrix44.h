@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _matrix44
+    @ingroup NebulaMathDataTypes
 
     Generic matrix44 class.
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class plane
+    @ingroup NebulaMathDataTypes
 
     A plane in 3d space.
 

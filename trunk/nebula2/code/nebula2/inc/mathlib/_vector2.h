@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _vector2
+    @ingroup NebulaMathDataTypes
 
     Generic vector2 class.
 

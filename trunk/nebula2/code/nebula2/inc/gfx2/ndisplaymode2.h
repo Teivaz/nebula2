@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDisplayMode2
+    @ingroup NebulaGraphicsSystem
 
     Contains display mode parameters.
 

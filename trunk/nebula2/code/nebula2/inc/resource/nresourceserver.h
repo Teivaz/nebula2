@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nResourceServer
+    @ingroup NebulaResourceSystem
 
     Central resource server. Creates and manages resource objects. Resources
     are objects which provide several types of data (or data streams) to 
