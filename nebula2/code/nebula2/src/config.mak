@@ -36,8 +36,11 @@ endif
 #---------------------------------------------------------------------
 ifeq ($(N_PLATFORM),__LINUX__)
     N_TARGETDIR = ../../../bin/linux/
-    N_OBJECTDIR = ../make/
 endif
+ifeq ($(N_PLATFORM),__WIN32__)
+    N_TARGETDIR = ../../../bin/win32/
+endif
+N_OBJECTDIR = ../make/
 
 #---------------------------------------------------------------------
 # N_COMPILER = __VC__, __GNUC__
@@ -99,6 +102,30 @@ else
 endif
 
 #---------------------------------------------------------------------
+ifeq ($(N_COMPILER),__VC__)
+# VisualC under Win32
+  RC          = rc
+  CC          = cl
+  TCL         = tclsh84
+  AR          = lib
+  LD          = link
+  DOCTOOL     = doxygen
+  IPATH_OPT   = /I
+  LPATH_OPT   = /LIBPATH:
+  TAR_OPT     =
+  LIB_OPT     =
+  EXE         = .exe
+  OBJ         = .obj
+  DLL_PRE     =
+  DLL_POST    = .dll
+  LIB_PRE     =
+  LIB_POST    = .lib
+  CC_OPT      = /Tp
+  OBJ_OPT     = /Fo
+  OUT_OPT     = /Fe
+  NOLINK_OPT  = /c
+  SYM_OPT     = /D
+endif
 ifeq ($(N_COMPILER),__GNUC__)
 # GCC in Linux
   ifeq ($(N_PLATFORM),__MACOSX__)
