@@ -5,7 +5,9 @@
 #-----------------------------------------------------------------------------
 beginmodule npythonserver
     setdir python
-    setfiles   { npythonobject npythonserver npythoncmds npythonrun ncmdprotopython }
+    setfiles {
+         npythonobject npythonserver npythoncmds npythonrun ncmdprotopython
+    }
     setheaders { npythonobject npythonserver ncmdprotopython }
 endmodule
 #-----------------------------------------------------------------------------
@@ -20,10 +22,23 @@ beginmodule nshpython
     setfiles { nshpython }
 endmodule
 #-----------------------------------------------------------------------------
+beginmodule pynebula
+    setdir pythontest
+    setfiles { pynebula }
+endmodule
+#-----------------------------------------------------------------------------
 begintarget pynebula
-    annotate "Dll for importing into Python"
+    annotate "Sample DLL for importing into Python"
     settype dll    
-    settargetdeps { nkernel nnebula npythonserver ndirect3d9 ndinput8 }
+    setmodules { pynebula }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndirect3d9
+        ndinput8
+        nnetwork
+        npythonserver
+    }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget nshpython

@@ -14,7 +14,7 @@
 
     (c) 2004 Kim, Hyoun Woo
 
-    nCmdProtoLua is licensed under the terms of the Nebula License
+    nCmdProtoPython is licensed under the terms of the Nebula License
 */
 
 #include "kernel/ncmdproto.h"
@@ -27,7 +27,6 @@ public:
     nCmdProtoPython(const nCmdProtoPython& rhs);
 
     bool Dispatch(void *, nCmd *);
-
 };
 //------------------------------------------------------------------------------
 #endif
