@@ -173,21 +173,21 @@ nMeshBuilder::VertexSorter(const void* elm0, const void* elm1)
 //------------------------------------------------------------------------------
 /**
     Cleanup the mesh. This removes redundant vertices and optionally record
-    the collaps history into a client-provided collapsMap. The collaps map
+    the collapse history into a client-provided collapseMap. The collaps map
     contains at each new vertex index the 'old' vertex indices which have
     been collapsed into the new vertex.
 
     30-Jan-03   floh    optimizations
 */
 void
-nMeshBuilder::Cleanup(nArray< nArray<int> >* collapsMap)
+nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
 {
     int numVertices = this->vertexArray.Size();
 
     // generate a index remapping table and sorted vertex array
-    int* indexMap = new int[numVertices];
-    int* sortMap  = new int[numVertices];
-    int* shiftMap = new int[numVertices];
+    int* indexMap = n_new int[numVertices];
+    int* sortMap  = n_new int[numVertices];
+    int* shiftMap = n_new int[numVertices];
     int i;
     for (i = 0; i < numVertices; i++)
     {
@@ -250,13 +250,13 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapsMap)
     // initialize the collaps map so that for each new (collapsed)
     // index it contains a list of old vertex indices which have been
     // collapsed into the new vertex 
-    if (collapsMap)
+    if (collapseMap)
     {
         for (i = 0; i < numVertices; i++)
         {
             int newIndex = indexMap[i];
             int collapsedIndex = newIndex - shiftMap[newIndex];
-            collapsMap->At(collapsedIndex).Append(i);
+            collapseMap->At(collapsedIndex).Append(i);
         }
     }
 
@@ -486,7 +486,7 @@ nMeshBuilder::CopyVertexComponents(Vertex::Component from, Vertex::Component to)
     this mesh.
 */
 void
-nMeshBuilder::InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapsMap, int compMask)
+nMeshBuilder::InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask)
 {
     int srcIndex;
     int srcNum = src.GetNumVertices();
@@ -494,10 +494,10 @@ nMeshBuilder::InflateCopyComponents(const nMeshBuilder& src, const nArray< nArra
     {
         const Vertex& srcVertex = src.GetVertexAt(srcIndex);
         int dstIndex;
-        int dstNum = collapsMap[srcIndex].Size();
+        int dstNum = collapseMap[srcIndex].Size();
         for (dstIndex = 0; dstIndex < dstNum; dstIndex++)
         {
-            Vertex& dstVertex = this->GetVertexAt(collapsMap[srcIndex][dstIndex]);
+            Vertex& dstVertex = this->GetVertexAt(collapseMap[srcIndex][dstIndex]);
             dstVertex.CopyComponentFromVertex(srcVertex, compMask);
 
         }

@@ -249,6 +249,8 @@ public:
     bool SaveN3d(nFileServer2* fileServer, const char* filename);
     /// load from (old-style) n3d file
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
+    /// load from wavefront object file
+    bool LoadObj(nFileServer2* fileServer, const char* filename);
     /// load OLD n3d2 file (saved before Dec-2003)
     bool LoadOldN3d2(nFileServer2* fileServer, const char* filename);
     /// load any of the above (use file extension for format decision)
@@ -297,7 +299,7 @@ public:
     /// transform vertices
     void Transform(const matrix44& m);
     /// remove redundant vertices
-    void Cleanup(nArray< nArray<int> >* collapsMap);
+    void Cleanup(nArray< nArray<int> >* collapseMap);
     /// build adjacency information (only works on clean meshes)
     void BuildAdjacency();
     /// optimize for t&l hardware vertex cache
@@ -330,8 +332,8 @@ private:
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
     /// qsort hook for sorting triangles by their group index
     static int __cdecl TriangleGroupSorter(const void* elm0, const void* elm1);
-    /// do an inflated component copy using a source mesh and a collapsMap
-    void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapsMap, int compMask);
+    /// do an inflated component copy using a source mesh and a collapseMap
+    void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask);
 
 public:
     nArray<Vertex>   vertexArray;
