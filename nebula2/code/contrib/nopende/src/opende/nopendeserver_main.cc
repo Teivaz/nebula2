@@ -37,7 +37,7 @@ nOpendeServer::~nOpendeServer()
         if ( 0 == mesh->GetRef() )
         {
             mesh->Remove();
-            delete mesh;
+            n_delete( mesh );
         }
     }
       
@@ -77,7 +77,7 @@ nOpendeTriMesh* nOpendeServer::NewTriMesh( const char* id,
     nOpendeTriMesh* mesh = (nOpendeTriMesh*)this->meshList.Find( id );
     if ( !mesh ) 
     {
-        mesh = n_new nOpendeTriMesh( id );
+        mesh = n_new( nOpendeTriMesh( id ) );
         this->meshList.AddTail( mesh );
     }
   
@@ -107,7 +107,7 @@ void nOpendeServer::DeleteTriMesh( const char* id )
         n_assert( (0 == mesh->GetRef()) && "TriMesh is still in use!" );
     
         mesh->Remove();
-        n_delete mesh;
+        n_delete( mesh );
     }
 }
 
@@ -132,7 +132,7 @@ void nOpendeServer::BeginSurfaces( int num )
     n_assert( !this->inBeginSurfaces );
     n_assert( num > 0 );
     this->inBeginSurfaces = true;
-    this->surfaceArray = new nOpendeSurface[num];
+    this->surfaceArray = n_new( nOpendeSurface[num] );
     this->numSurfaces = num;
 }
 
