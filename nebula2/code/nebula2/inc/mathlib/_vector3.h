@@ -46,6 +46,8 @@ public:
     void rotate(const _vector3& axis, float angle);
     /// inplace linear interpolation
     void lerp(const _vector3& v0, float lerpVal);
+    /// linear interpolation between v0 and v1
+    void lerp(const _vector3& v0, const _vector3& v1, float lerpVal);
     /// returns a vector orthogonal to self, not normalized
     _vector3 findortho() const;
     /// saturate components between 0 and 1
@@ -330,6 +332,18 @@ _vector3::lerp(const _vector3& v0, float lerpVal)
     x = v0.x + ((x - v0.x) * lerpVal);
     y = v0.y + ((y - v0.y) * lerpVal);
     z = v0.z + ((z - v0.z) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector3::lerp(const _vector3& v0, const _vector3& v1, float lerpVal)
+{
+    x = v0.x + ((v1.x - v0.x) * lerpVal);
+    y = v0.y + ((v1.y - v0.y) * lerpVal);
+    z = v0.z + ((v1.z - v0.z) * lerpVal);
 }
 
 //------------------------------------------------------------------------------

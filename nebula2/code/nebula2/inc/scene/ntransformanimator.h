@@ -13,6 +13,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
+#include "util/nipolkeyarray.h"
 
 //------------------------------------------------------------------------------
 class nTransformAnimator : public nAnimator
@@ -47,51 +48,21 @@ public:
     int GetNumScaleKeys() const;
     /// get scale key at index
     void GetScaleKeyAt(int index, float& time, vector3& key) const;
+    /// add a quaternion key
+    void AddQuatKey(float time, const quaternion& key);
+    /// get number of quaternion keys
+    int GetNumQuatKeys() const;
+    /// get scale key at index
+    void GetQuatKeyAt(int index, float& time, quaternion& key) const;
 
     static nKernelServer* kernelServer;
 
 private:
-    /// a private key class
-    class Key
-    {
-    public:
-        /// default constructor
-        Key();
-        /// constructor
-        Key(float t, const vector3& v);
-
-        float time;
-        vector3 value;
-    };
-
-    /// get an interpolated key
-    bool SampleKey(float time, const nArray<Key>& keyArray, vector3& result);
-
-    nArray<Key> posArray;
-    nArray<Key> eulerArray;
-    nArray<Key> scaleArray;
+    nIpolKeyArray<vector3> posArray;
+    nIpolKeyArray<vector3> eulerArray;
+    nIpolKeyArray<vector3> scaleArray;
+    nIpolKeyArray<quaternion> quatArray;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTransformAnimator::Key::Key() :
-    time(0.0f)
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTransformAnimator::Key::Key(float t, const vector3& v) :
-    time(t),
-    value(v)
-{
-    // empty
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -100,8 +71,7 @@ inline
 void
 nTransformAnimator::AddPosKey(float time, const vector3& key)
 {
-    Key newKey(time, key);
-    this->posArray.Append(newKey);
+    this->posArray.AddKey(time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -111,19 +81,27 @@ inline
 void
 nTransformAnimator::AddEulerKey(float time, const vector3& key)
 {
-    Key newKey(time, key);
-    this->eulerArray.Append(newKey);
+    this->eulerArray.AddKey(time, key);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 nTransformAnimator::AddScaleKey(float time, const vector3& key)
 {
-    Key newKey(time, key);
-    this->scaleArray.Append(newKey);
+    this->scaleArray.AddKey(time, key);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nTransformAnimator::AddQuatKey(float time, const quaternion& key)
+{
+    this->quatArray.AddKey(time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -133,7 +111,7 @@ inline
 int
 nTransformAnimator::GetNumPosKeys() const
 {
-    return this->posArray.Size();
+    return this->posArray.GetNumKeys();
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +121,7 @@ inline
 int
 nTransformAnimator::GetNumEulerKeys() const
 {
-    return this->eulerArray.Size();
+    return this->eulerArray.GetNumKeys();
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +131,17 @@ inline
 int
 nTransformAnimator::GetNumScaleKeys() const
 {
-    return this->scaleArray.Size();
+    return this->scaleArray.GetNumKeys();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nTransformAnimator::GetNumQuatKeys() const
+{
+    return this->quatArray.GetNumKeys();
 }
 
 //------------------------------------------------------------------------------
@@ -168,9 +156,7 @@ inline
 void
 nTransformAnimator::GetPosKeyAt(int index, float& time, vector3& key) const
 {
-    const Key& k = this->posArray[index];
-    time = k.time;
-    key  = k.value;
+    this->posArray.GetKeyAt(index, time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -185,9 +171,7 @@ inline
 void
 nTransformAnimator::GetEulerKeyAt(int index, float& time, vector3& key) const
 {
-    const Key& k = this->eulerArray[index];
-    time = k.time;
-    key  = k.value; 
+    this->eulerArray.GetKeyAt(index, time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -202,11 +186,23 @@ inline
 void
 nTransformAnimator::GetScaleKeyAt(int index, float& time, vector3& key) const
 {
-    const Key& k = this->scaleArray[index];
-    time = k.time;
-    key  = k.value;
+    this->scaleArray.GetKeyAt(index, time, key);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Obtain a quaternion key by its index.
+
+    @param  index   [in]    index of key to get
+    @param  time    [out]   the time stamp of the key
+    @param  key     [out]   the value of the key
+*/
+inline
+void
+nTransformAnimator::GetQuatKeyAt(int index, float& time, quaternion& key) const
+{
+    this->quatArray.GetKeyAt(index, time, key);
+}
 //------------------------------------------------------------------------------
 #endif
 

@@ -249,7 +249,7 @@ public:
         return true;
     };
 
-    //-- rotation interpolation, set this matrix to the -------------
+    //-- rotation interpolation, set this matrix to the -------------    
     //-- interpolated result of q0->q1 with l as interpolator -------
     void slerp(const quaternion& q0, const quaternion& q1, float l) 
     {
@@ -299,6 +299,11 @@ public:
         y = fScale1 * A.y + fScale2 * B.y;
         z = fScale1 * A.z + fScale2 * B.z;
         w = fScale1 * A.w + fScale2 * B.w;
+    };
+    
+    void lerp(const quaternion& q0, const quaternion& q1, float l)
+    {
+        slerp(q0, q1, l);
     };
 };
 
