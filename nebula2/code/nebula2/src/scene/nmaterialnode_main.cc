@@ -185,21 +185,6 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
     // transfer shader parameters en block
     shader->SetParams(this->shaderParams);
 
-    // apply texture shader variables to the shader
-    /*
-    int numTextureVariables = this->texNodeArray.Size();
-    int i;
-    for (i = 0; i < numTextureVariables; i++)
-    {
-        // check if the texture variable is actually used by the shader
-        TexNode& texNode = this->texNodeArray[i];
-        if (shader->IsParameterUsed(texNode.shaderParameter))
-        {
-            shader->SetTexture(texNode.shaderParameter, texNode.refTexture.get());
-        }
-    }
-    */
-
     // make shader current
     this->refGfxServer->SetShader(shader);
     return true;
