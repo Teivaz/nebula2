@@ -62,7 +62,7 @@
 #    get_libsearchdirs
 #    write_pkgfiles
 #    pathto                 $pathfile
-#    addpkgs
+#    add_pkgs
 #
 #----------------------------------------------------------------------------
 
@@ -831,7 +831,7 @@ proc add_pkgs { wslist } {
     for {set i 0} {$i < $num_wspaces} {incr i} {
         if {$wslist != ""} {
             if {[lsearch $wslist $wspace($i,name)] == -1} {
-                break
+                continue
             }
         }
         foreach target $wspace($i,targets) {
