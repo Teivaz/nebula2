@@ -90,7 +90,7 @@ nNpkFileServer::ParseDirectory(const char* dirName)
         if (!dir->IsEmpty()) do
         {
             const char* entryName = dir->GetEntryName();
-            nDirectory::nEntryType entryType = dir->GetEntryType();
+            nDirectory::EntryType entryType = dir->GetEntryType();
             if ((entryType == nDirectory::FILE) && this->CheckExtension(entryName, "npk"))
             {
                 n_printf("*** Reading npk file '%s'\n", entryName);

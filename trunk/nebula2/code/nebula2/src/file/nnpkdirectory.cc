@@ -168,7 +168,7 @@ nNpkDirectory::GetEntryName()
 //------------------------------------------------------------------------------
 /**
 */
-nDirectory::nEntryType 
+nDirectory::EntryType 
 nNpkDirectory::GetEntryType()
 {
     if (this->isNpkDir || this->npkEntryOverride)
@@ -236,7 +236,7 @@ nNpkDirectory::CheckNpkEntryOverride()
     this->npkEntryOverride = false;
 
     const char* entryName = nDirectory::GetEntryName();
-    nEntryType entryType  = nDirectory::GetEntryType();
+    EntryType entryType  = nDirectory::GetEntryType();
     if (this->npkFileServer->CheckExtension(entryName, "npk") && FILE == entryType)
     {
         // intercept!

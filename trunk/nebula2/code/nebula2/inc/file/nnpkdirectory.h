@@ -38,7 +38,7 @@ public:
 	/// get name of current entry
     virtual const char* GetEntryName();
 	/// get type of current entry
-    virtual nEntryType GetEntryType();
+    virtual EntryType GetEntryType();
 
 private:
     /// set to first npk entry

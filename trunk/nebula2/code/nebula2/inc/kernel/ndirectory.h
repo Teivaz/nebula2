@@ -25,7 +25,7 @@
 class nDirectory
 {
 public:
-    enum nEntryType
+    enum EntryType
     {
         FILE,
         DIRECTORY,
@@ -54,7 +54,7 @@ public:
     /// get name of current entry
     virtual const char* GetEntryName();
     /// get type of current entry
-    virtual nEntryType GetEntryType();
+    virtual EntryType GetEntryType();
 
 protected:
     nFileServer2* fs;
