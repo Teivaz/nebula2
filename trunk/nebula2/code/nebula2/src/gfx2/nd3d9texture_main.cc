@@ -296,7 +296,7 @@ nD3D9Texture::CreateRenderTarget()
 /**
     Create a d3d texture from a ntx file.
 
-    09-Sep-02   floh    support for cube map textures
+     - 09-Sep-02   floh    support for cube map textures
 */
 bool
 nD3D9Texture::LoadNtxFile()
