@@ -1,0 +1,1 @@
+nrubydemo -scriptserver nrubyserver -projdir home:../../../ -startup home:bin/startup.rb -stage home:bin/stdlight.rb -input home:bin/stdinput.rb -view home:bin/torus.rb

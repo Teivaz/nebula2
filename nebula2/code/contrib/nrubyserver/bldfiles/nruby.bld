@@ -1,0 +1,38 @@
+#===============================================================================
+#    nruby.bld
+#    ============
+#    nRubyServer class package definition
+#
+#    Modules:
+#	nrubyserver
+#    Targets:
+#	nruby
+#===============================================================================
+beginmodule nrubyserver
+    setdir ruby
+    setfiles { nrubyserver nrubyrun nrubycmds }
+    setheaders { nrubyserver }
+    setlibs_win32 { msvcrt-ruby18.lib }
+endmodule
+
+begintarget nruby
+    annotate "Nebula ruby script server"
+    settype lib
+    setmodules { nrubyserver }
+    settargetdeps { nkernel }
+endtarget
+
+begintarget nrubydemo
+    annotate "nViewer demo for ruby"
+    settype exe
+    setmodules { nviewer }
+    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nruby ntoollib }
+endtarget
+
+beginworkspace rubyserver
+    setbinarydir ./code/contrib/nrubyserver/bin/
+    settargets { nkernel nnebula ndirect3d9 ndinput8 ntoollib microtcl nruby nrubydemo }
+endworkspace
+#--------------------------------------------------------------------
+# EOF
+#--------------------------------------------------------------------
