@@ -20,8 +20,6 @@ public:
     virtual ~nGuiButton();
     /// Rendering.
     virtual bool Render();
-    /// handle mouse moved event
-    virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down event
     virtual bool OnButtonDown(const vector2& mousePos);
     /// handle button up event
