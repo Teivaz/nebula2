@@ -169,7 +169,6 @@ nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
 
     @param  sceneServer     pointer to the nSceneServer object
     @param  renderContext   pointer to the nRenderContext object
-    @param  caller          pointer to caller nSceneNode object, or 0 if called by nSceneServer
 */
 void
 nSceneNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
