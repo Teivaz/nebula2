@@ -2,7 +2,7 @@
 #include "mathlib/nmath.h"
 #include "kernel/nautoref.h"
 #include "kernel/nscriptserver.h"
-// the following are for CCSkinData
+// the following are for BBSkinData
 #include "scene/nskinshapenode.h"
 #include "variable/nvariableserver.h"
 #include "scene/nskinanimator.h"
@@ -10,7 +10,7 @@
 
 static nScriptServer * pScriptSrv = 0;
 
-float CCUtil::Normalize(float angleInRadians)
+float BBUtil::Normalize(float angleInRadians)
 {
 	while(0.0f > angleInRadians)
 	{
@@ -32,7 +32,7 @@ void InitScriptServer()
     n_assert( pScriptSrv );
 }
 
-void CCUtil::RunScript( const char* fileName )
+void BBUtil::RunScript( const char* fileName )
 {
     InitScriptServer( );
 	if( pScriptSrv && fileName )
@@ -42,7 +42,7 @@ void CCUtil::RunScript( const char* fileName )
 	}
 }
 
-void CCUtil::RunScriptFunction( const char* functionName )
+void BBUtil::RunScriptFunction( const char* functionName )
 {
     InitScriptServer( );
 	if( pScriptSrv && functionName )
@@ -52,13 +52,13 @@ void CCUtil::RunScriptFunction( const char* functionName )
 	}
 }
 
-bool CCUtil::ApproximatelyEqual( float lhs, float rhs ) 
+bool BBUtil::ApproximatelyEqual( float lhs, float rhs ) 
 {
 	const float FUDGE_FACTOR = 0.001f;
 	return lhs < rhs + FUDGE_FACTOR && lhs > rhs - FUDGE_FACTOR; 
 }
 
-void CCUtil::SaveStrCmd::operator() ( const char* strToSave, uint cmdId )
+void BBUtil::SaveStrCmd::operator() ( const char* strToSave, uint cmdId )
 {
     if( strToSave )
     {
@@ -68,14 +68,14 @@ void CCUtil::SaveStrCmd::operator() ( const char* strToSave, uint cmdId )
     }
 }
 
-CCSkinData::CCSkinData() :     
+BBSkinData::BBSkinData() :     
     m_pSkinAnimatorTimeVar( 0 ),
     m_pSkinAnimatorStateVar( 0 ),
     m_SpeedFactor( 1.0f )
 {
 }
 
-CCSkinData::~CCSkinData()
+BBSkinData::~BBSkinData()
 {
     if( m_pSkinAnimatorTimeVar )
     {
@@ -83,7 +83,7 @@ CCSkinData::~CCSkinData()
     }
 }
 
-void CCSkinData::Init( nRenderContext& renderContext )
+void BBSkinData::Init( nRenderContext& renderContext )
 {    
     nSceneNode* sceneNode = renderContext.GetRootNode();
     if( sceneNode->IsA( nKernelServer::Instance()->FindClass( "nskinshapenode" ) ) )
@@ -113,18 +113,18 @@ void CCSkinData::Init( nRenderContext& renderContext )
     }
 }
 
-void CCSkinData::SetState( int state )
+void BBSkinData::SetState( int state )
 {
     if( m_pSkinAnimatorStateVar )
         m_pSkinAnimatorStateVar->SetInt( state );
 }
 
-void CCSkinData::SetSpeedFactor( float factor )
+void BBSkinData::SetSpeedFactor( float factor )
 {
     m_SpeedFactor = factor;
 }
 
-void CCSkinData::StepTime( float dt )
+void BBSkinData::StepTime( float dt )
 {
     if( m_pSkinAnimatorTimeVar )
         m_pSkinAnimatorTimeVar->SetFloat( m_SpeedFactor * dt + m_pSkinAnimatorTimeVar->GetFloat() );

@@ -10,7 +10,7 @@ obstacleCamera =
     minHeightAboveGround = chaseCamera.minHeightAboveGround,
 
     path = gamePath..'/obstacleCamera',
-    class = 'ccchasecamera',
+    class = 'bbchasecamera',
     
     manipulatedLastTick = {}, -- a list of the objects we've made translucent, so we can make them untranslucent again when they are not longer in the way
     minAlpha = 0.3, -- how transparent the obstructing objects may become
@@ -47,9 +47,9 @@ obstacleCamera =
                 
             return pos[1], pos[2], pos[3]
         end
-        begincmds( 'cccamera', 1 )
-            addcmd( 'cccamera', 'v_DoManipulate_o' ) 
-        endcmds( 'cccamera' )	
+        begincmds( 'bbcamera', 1 )
+            addcmd( 'bbcamera', 'v_DoManipulate_o' ) 
+        endcmds( 'bbcamera' )	
         function obstacleCamera.object:DoManipulate( rootObj )
             --turns objects in our frustum semitransparent so they won't block the camera
             --but only after postprocessing the culling and removing (some) false positives

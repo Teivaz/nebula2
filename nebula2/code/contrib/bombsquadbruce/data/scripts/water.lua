@@ -24,7 +24,7 @@ function createWater()
         local waterName = 'water'
         loadmesh( waterName, 'Nature/water', 'water.n3d2', 'water.dds', getWaterInitFunc( water.rippleSpeed ) )
         sel( cwd )
-        selNew('ccwater', waterName )
+        selNew('bbwater', waterName )
             waterPath = getCwd()
             water.object = lookup( waterPath )
             water.object:setshapenode( modelsPath..'/'..waterName )

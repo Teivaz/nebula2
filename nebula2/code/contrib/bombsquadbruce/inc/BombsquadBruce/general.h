@@ -5,7 +5,7 @@ class nScriptServer;
 class nKernelServer;
 #include "mathlib/vector.h"
 #include "kernel/npersistserver.h"
-// the following is just for CCSkinData, which should maybe be in its own file, as its own class
+// the following is just for BBSkinData, which should maybe be in its own file, as its own class
 class nVariableServer;
 class nSkinAnimator;
 class nSceneNode;
@@ -25,11 +25,11 @@ static inline coord2 operator+( const coord2 & lhs, const coord2 & rhs )
 	return coord2( lhs.x + rhs.x, lhs.y + rhs.y );
 }
 
-class CCSkinData
+class BBSkinData
 {
 public:
-    CCSkinData();
-    ~CCSkinData();
+    BBSkinData();
+    ~BBSkinData();
     void Init( nRenderContext& renderContext );
     void SetState( int state );
     void StepTime( float dt );
@@ -43,7 +43,7 @@ private:
 };
 
 
-namespace CCUtil
+namespace BBUtil
 {
 	float Normalize( float angleInRadians );
     /// This runs a script *file* -- useful for stuff you want to be able to change while the game is running

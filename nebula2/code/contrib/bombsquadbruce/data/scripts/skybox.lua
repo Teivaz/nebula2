@@ -32,7 +32,7 @@ function createskybox(name)
         --  1. The skybox can only be as big as the far plane allows, which means it conceals distance objects, so that e.g. fog must be adjusted to the skybox distance
         --  2. The intersection of water plane and skybox is visible at the corners, where two straight water edges run together.  The solution to this would, presumably, be to use a skydome instead
     local cwd = psel()
-    selNew( 'ccshapenode', name )
+    selNew( 'bbshapenode', name )
         writeDebug( "scale = "..skybox.scale )
         call( 'setlockviewerxz', true ) -- don't lock y, because we want to interact naturally with the water horizon as noted above
         call( 'setposition',  0, water.level + skybox.horizonOffset, 0 ) -- keeps the horizon fixed at the water level

@@ -29,10 +29,10 @@ begintarget bombsquadBruce
         bbmobileactor
         bbwater
         bbsceneserver
-	bbcollision
-	bbengine
-	bbguibuttonlego
-	bbsound
+  bbcollision
+  bbengine
+  bbguibuttonlego
+  bbsound
         bbcullingmgr
     }
     settargetdeps {

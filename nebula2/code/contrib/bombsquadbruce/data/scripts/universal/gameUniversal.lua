@@ -128,10 +128,10 @@ function GameT:Init()
 end
     
 function GameT:Constructor()
-    begincmds( 'ccgame', 2 )
-    addcmd( 'ccgame', 'v_Run_v' )
-    addcmd( 'ccgame', 'v_RunScripts_sf' )
-    endcmds( 'ccgame' )
+    begincmds( 'bbgame', 2 )
+    addcmd( 'bbgame', 'v_Run_v' )
+    addcmd( 'bbgame', 'v_RunScripts_sf' )
+    endcmds( 'bbgame' )
 
     pin( self.object )
     function self.object.Run( obj )

@@ -8,7 +8,7 @@ mainRenderer = {
 -- the following method is "inherited" (from gameUniversal, GameT:Init()); don't rename it
 function mainRenderer:Init() 
 	local cwd = psel()
-	selNew ('ccrenderer', self.path )
+	selNew ('bbrenderer', self.path )
         camera.InitAll()
     sel( gamePath )
     call( 'setrenderer', self.path )

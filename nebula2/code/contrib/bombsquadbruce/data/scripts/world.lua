@@ -10,7 +10,7 @@ function world.Create()
     initScene()
 
 	local cwd = psel()
-	selNew( 'ccofmworld', worldPath )
+	selNew( 'bbofmworld', worldPath )
         world.object = lookup( getCwd() )
         world.object:setoncollisionscript( 'world.OnCollision()' )
         world.object:setmap( mapPath) -- also loads the map, so don't use it before this point

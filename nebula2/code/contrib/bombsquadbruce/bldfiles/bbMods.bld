@@ -11,52 +11,52 @@ endmodule
 beginmodule bbref
     setdir BombsquadBruce
     setfiles { }
-    setheaders { ccref }
+    setheaders { bbref }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbworld
     setdir BombsquadBruce
-    setfiles { ccworld_main ccworld_cmds }
-    setheaders { ccworld }
+    setfiles { bbworld_main bbworld_cmds }
+    setheaders { bbworld }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbgame
     setdir BombsquadBruce
-    setfiles { 	ccgame_cmds ccgame_main }
-    setheaders { ccgame }
+    setfiles {  bbgame_cmds bbgame_main }
+    setheaders { bbgame }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbcamera
     setdir BombsquadBruce
-    setfiles { cccamera_main cccamera_cmds }
-    setheaders { cccamera }
+    setfiles { bbcamera_main bbcamera_cmds }
+    setheaders { bbcamera }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbchasecamera
     setdir BombsquadBruce
-    setfiles { ccchasecamera_main ccchasecamera_cmds }
-    setheaders { ccchasecamera }
+    setfiles { bbchasecamera_main bbchasecamera_cmds }
+    setheaders { bbchasecamera }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbfreecamera
     setdir BombsquadBruce
-    setfiles { ccfreecamera_main ccfreecamera_cmds }
-    setheaders { ccfreecamera }
+    setfiles { bbfreecamera_main bbfreecamera_cmds }
+    setheaders { bbfreecamera }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbshapenode
     setdir BombsquadBruce
-    setfiles { ccshapenode_main ccshapenode_cmds }
-    setheaders { ccshapenode }
+    setfiles { bbshapenode_main bbshapenode_cmds }
+    setheaders { bbshapenode }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbrenderer
     setdir BombsquadBruce
     setfiles {
-        ccrenderer_main ccrenderer_cmds
+        bbrenderer_main bbrenderer_cmds
     }
     setheaders {
-        ccrenderer
+        bbrenderer
     }
 endmodule
 
@@ -64,90 +64,90 @@ endmodule
 beginmodule bbroot
     setdir BombsquadBruce
     setfiles {
-        ccroot_main ccroot_cmds
+        bbroot_main bbroot_cmds
     }
     setheaders {
-        ccroot
+        bbroot
     }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbactor
     setdir BombsquadBruce
     setfiles {
-        ccactor_main ccactor_cmds
+        bbactor_main bbactor_cmds
     }
     setheaders {
-        ccactor
+        bbactor
     }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbmobileactor
     setdir BombsquadBruce
     setfiles {
-        ccmobileactor_main ccmobileactor_cmds
+        bbmobileactor_main bbmobileactor_cmds
     }
     setheaders {
-        ccmobileactor
+        bbmobileactor
     }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbsceneserver
     setdir BombsquadBruce
     setfiles {
-        ccsceneserver_main ccsceneserver_cmds
+        bbsceneserver_main bbsceneserver_cmds
     }
     setheaders {
-        ccsceneserver
+        bbsceneserver
     }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbcollision
     setdir BombsquadBruce
     setfiles {
-        cccollision_main 
+        bbcollision_main 
     }
     setheaders {
-        cccollision
+        bbcollision
     }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule bbengine
     setdir BombsquadBruce
-    setfiles { ccengine_main ccengine_cmds ccmain.cpp }
-    setheaders { ccengine }
+    setfiles { bbengine_main bbengine_cmds bbmain.cpp }
+    setheaders { bbengine }
     setlibs_win32 { dxguid.lib dsound.lib winmm.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule bbguibuttonlego
     setdir BombsquadBruce/gui
-    setfiles { ccguibuttonlego_main ccguibuttonlego_cmds }
-    setheaders { ccguibuttonlego }
+    setfiles { bbguibuttonlego_main bbguibuttonlego_cmds }
+    setheaders { bbguibuttonlego }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule bbsound
-	setdir BombsquadBruce
-	setfiles { ccsound_main ccsound_cmds }
-	setheaders { ccsound }	
+  setdir BombsquadBruce
+  setfiles { bbsound_main bbsound_cmds }
+  setheaders { bbsound }  
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule bbcullingmgr
-	setdir BombsquadBruce
-	setfiles { cccullingmgr_main cccullingmgr_cmds }
-	setheaders { cccullingmgr }	
+  setdir BombsquadBruce
+  setfiles { bbcullingmgr_main bbcullingmgr_cmds }
+  setheaders { bbcullingmgr } 
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbofmworld
     setdir BombsquadBruce
-    setfiles { ccofmworld_main ccofmworld_cmds }
-    setheaders { ccofmworld }
+    setfiles { bbofmworld_main bbofmworld_cmds }
+    setheaders { bbofmworld }
 endmodule
 #--------------------------------------------------------------------
 beginmodule bbwater
     setdir BombsquadBruce
     setfiles {
-        ccwater_main ccwater_cmds
+        bbwater_main bbwater_cmds
     }
     setheaders {
-        ccwater
+        bbwater
     }
 endmodule

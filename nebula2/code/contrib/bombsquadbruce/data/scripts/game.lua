@@ -25,7 +25,7 @@ runscript( 'forest.lua' )
 
 -- ---------------------------------------------------------------------------
 assert( sel( gamePath ) == nil )
-new( 'ccgame', gamePath )
+new( 'bbgame', gamePath )
 
 game = 
     Instantiate( GameT, 
