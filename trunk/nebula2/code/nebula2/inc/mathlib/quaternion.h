@@ -143,28 +143,58 @@ public:
                        w * q.z + z * q.w + x * q.y - y * q.x);
     };
 
-    /// convert from two directions, must be unit vectors
-    void set_from_axes(const vector3& from, const vector3& to) 
+    /**
+        Create a rotation from one vector to an other. Works only with unit vectors.
+        
+        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for 
+        more information.
+        
+        @param from source unit vector 
+        @param to destination unit vector
+    */
+    void set_from_axes( const vector3& from, const vector3& to )
     {
-        float cosa = from % to;
-        if (cosa < -0.99999f )  // angle close to PI
+        vector3 c(from * to);
+        set(c.x, c.y, c.z, from % to);
+        w += 1.0f;      // reducing angle to halfangle
+        if( w <= TINY ) // angle close to PI
         {
-           vector3 vcross( 0, from.x, -from.y );
-           if ((from.z*from.z) > (from.y*from.y))
-                  vcross.set(-from.z, 0, from.x);
-           vcross.norm();
-           x = vcross.x; y = vcross.y; z = vcross.z;
-           w = 0.0f;
+            if ((from.z * from.z) > (from.x * from.x))
+                set(0, from.z, -from.y, w);
+                //from*vector3(1,0,0) 
+            else 
+                set(from.y, -from.x, 0, w);
+                //from*vector3(0,0,1) 
         }
-        else
+        normalize(); 
+    }
+
+    /**
+        Create a rotation from one vector to an other. Works with non unit vectors.
+        
+        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for 
+        more information.
+        
+        @param from source vector 
+        @param to destination vector
+    */
+    void set_from_axes2( const vector3& from, const vector3& to )
+    {
+        vector3 c(from * to);
+        set(c.x, c.y, c.z, from % to);
+        normalize();    // if "from" or "to" not unit, normalize quat
+        w += 1.0f;      // reducing angle to halfangle
+        if( w <= TINY ) // angle close to PI
         {
-           vector3 bisect(from + to);
-           bisect.norm();
-           vector3 bcross(from*bisect);
-           x = bcross.x; y = bcross.y; z = bcross.z;
-           w = from % bisect;
+            if ((from.z * from.z) > (from.x * from.x))
+                set(0, from.z, -from.y, w);
+                //from*vector3(1,0,0) 
+            else 
+                set(from.y, -from.x, 0, w);
+                //from*vector3(0,0,1) 
         }
-    };
+        normalize(); 
+    }
 
     //-- convert from euler angles ----------------------------------
     void set_rotate_axis_angle(const vector3& v, float a) {
