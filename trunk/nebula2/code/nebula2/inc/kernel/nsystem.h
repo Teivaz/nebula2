@@ -16,6 +16,11 @@
 // use MicroTcl?
 #define __MICROTCL__ (1)
 
+#define N_ADV_SIGNALS_ENABLED
+#if defined(_MSC_VER) && (_MSC_VER < 1301)
+#undef N_ADV_SIGNALS_ENABLED
+#endif
+
 #ifdef __WIN32__
 #undef __WIN32__
 #endif
