@@ -78,7 +78,7 @@ nIpcMiniServer::Poll()
                     this->CloseRcvrSocket();
                     connected = false;
                 }
-            #elif defined(__LINUX__)
+            #elif defined(__LINUX__) || defined(__MACOSX__)
                 if (errno == EWOULDBLOCK)
                 {
                     // no data pending, return immediately
