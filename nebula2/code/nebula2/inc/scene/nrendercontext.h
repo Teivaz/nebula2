@@ -13,6 +13,7 @@
 */
 #include "variable/nvariablecontext.h"
 #include "gfx2/nshaderparams.h"
+#include "kernel/nref.h"
 
 class nSceneNode;
 
