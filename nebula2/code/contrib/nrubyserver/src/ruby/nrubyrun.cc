@@ -246,17 +246,19 @@ bool nRubyServer::RunFunction(const char *funcName, const char*& result )
     Check for shutdown flag
 
     - 18-12-03   Tom    created
+	- 01-05-04   Tom	cleaned up
 */
 //--------------------------------------------------------------------
 bool nRubyServer::Trigger(void)
 {
-    if(!GetQuitRequested())
+    if(!GetQuitRequested() && !finished)
     {
-        if(finished)
-            this->SetQuitRequested(true);
-        return nScriptServer::Trigger();
+		return true;
     }
-    return true;
+	else
+	{
+		return false;
+	}
 }
 
 //--------------------------------------------------------------------

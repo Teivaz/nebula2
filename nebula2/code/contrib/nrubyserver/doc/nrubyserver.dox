@@ -2,7 +2,7 @@
 @defgroup RubyScriptServices nRubyServer Contribute Module
 @ingroup NebulaContribModules
 
-nruby version 0.5 06-FEB-2004
+nruby version 0.51 01-MAY-2004
 
 <h2>Introductions</h2>
 
@@ -12,12 +12,17 @@ take a look at www.3d-inferno.com.<br>
 See www.ruby-lang.org for further language features. This release only 
 has core ruby features without any extension libraries. <br>
 This is an example with the 1.8.0 version of ruby. For ruby infos have 
-a look at www.ruby-lang.org
+a look at www.ruby-lang.org.<p>
+Have fun.
+
+@ref nrubylicense 
 
 <h2>Requirements</h2>
 
 You will need ruby 1.8; make sure the ruby dll is in your path and that 
-your compiler can find the ruby includes and libs.
+your compiler can find the ruby includes and libs. If you need the unix
+or macos libraries of ruby go to www.ruby-lang.org but I think that does
+not make any sense as long Nebula 2 is Windows centric. 
 
 <h2>Installing</h2>
 
@@ -66,10 +71,18 @@ know the commands this node has just call getcmds and not as in tcl
 
     - psel <br>
          Returns the current working object
+    - exit <br>
+	 Exits nebula
+
+    - exists parm1 <br>
+	Returns true if the object parm1 exsists in the nebula hierarchy
+
 
 This should be all you need.
 
-If you need the Unix  or MacOS libraries of ruby go to www.ruby-lang.org <br>
-Have fun.
-
+<h2>Known bugs</h2>
+    - gets <br>
+	gets in ruby is recognized as a file operation and will cause an exception ! 
+        A workaround is to use the full qualified name and the command ('mynode'.gets)
+<br>
 */
