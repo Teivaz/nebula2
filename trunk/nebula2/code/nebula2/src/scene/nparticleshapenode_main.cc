@@ -141,17 +141,6 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
 
 //------------------------------------------------------------------------------
 /**
-    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
-    - 28-Jan-04     daniel  emitter setup moved to RenderTransform()
-*/
-void
-nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
-{
-    nShapeNode::Attach(sceneServer, renderContext);
-}
-
-//------------------------------------------------------------------------------
-/**
     Perform pre-instance-rendering of particle system.
     FIXME: check if this is the optimal setup for the new instance 
     rendering!
