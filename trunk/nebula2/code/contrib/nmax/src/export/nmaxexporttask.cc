@@ -52,63 +52,63 @@ nMaxExportTask::ReadConfig()
 	nString s;
 
     file->GetS(hd, 512);
-	s = hd; s.Strip("\r"); 
+	s = hd; s.Strip("\r\n"); 
     this->homeDir = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->animsAssign = s.Get();
 
     file->GetS(hd, 512);
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->animsPath = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->gfxlibAssign = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->gfxlibPath = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->guiAssign = s.Get();
     
 	file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->guiPath = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->lightsAssign = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->lightsPath = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->meshesAssign = s.Get();
 
     file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->meshesPath = s.Get();
 
 	file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->shadersAssign = s.Get();
 
 	file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->shadersPath = s.Get();
 
 	file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->texturesAssign = s.Get();
 
 	file->GetS(hd, 512); 
-	s = hd; s.Strip("\r");
+	s = hd; s.Strip("\r\n");
 	this->texturesPath = s.Get();
 
     file->Close();
