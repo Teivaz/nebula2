@@ -74,6 +74,18 @@ nStdSceneServer::DoRenderPath()
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
+    // apply lighting
+    // (NOTE: a more fine grained lighting model should set lights
+    // on a per-shape level(?) by implementing light links between
+    // lights and the shapes they are influencing
+    int numLights = this->lightArray.Size();
+    int i;
+    for (i = 0; i < numLights; i++)
+    {
+        const Group& lightGroup = this->groupArray[this->lightArray[0]];
+        lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
+    }
+
     // for each scene pass...
     uint numPasses = this->renderPath.GetNumPasses();
     uint passIndex;
