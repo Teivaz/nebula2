@@ -26,6 +26,11 @@ nMaxUtilityObj::~nMaxUtilityObj()
 
 //------------------------------------------------------------------------------
 /**
+    Create Nebula2 utility panel plugin to support options.
+
+    - 21-Mar-05 kims changed to check nMaxOptionParamMapDlg is correctly created.
+                     (used native 'new' instead of 'n_new' cause destroying its  
+                      instance is depends on 3dsmax side)
 */
 void nMaxUtilityObj::BeginEditParams(Interface* intf, IUtil* iutil)
 {
@@ -42,12 +47,23 @@ void nMaxUtilityObj::BeginEditParams(Interface* intf, IUtil* iutil)
 
     if (optionParamMap)
     {
-        optionParamMap->SetUserDlgProc(new nMaxOptionParamMapDlg);
+        ParamMapUserDlgProc* paramMapDlgProc = new nMaxOptionParamMapDlg();
+
+        if (paramMapDlgProc)
+        {
+            optionParamMap->SetUserDlgProc(paramMapDlgProc);
+        }
+        else
+        {
+            n_message("Failed to create option panel of utility.");
+            return;
+        }
     }
 }
 
 //------------------------------------------------------------------------------
 /**
+     Release created utility panel dialog when Nebula2 utility panel is closed.
 */
 void nMaxUtilityObj::EndEditParams(Interface* intf, IUtil* iutil)
 {
