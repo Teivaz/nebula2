@@ -9,17 +9,23 @@ beginmodule npythonserver
     setheaders { npythonobject npythonserver ncmdprotopython }
 endmodule
 #-----------------------------------------------------------------------------
-begintarget npython
+begintarget npythonserver
     settype lib
     setmodules { npythonserver }
     settargetdeps { nkernel nnebula microtcl }
 endtarget
 #-----------------------------------------------------------------------------
+begintarget pynebula
+    annotate "Dll for importing into Python"
+    settype dll    
+    settargetdeps { nkernel nnebula npythonserver ndirect3d9 ndinput8 }
+endtarget
+#-----------------------------------------------------------------------------
 begintarget nshpython
     annotate "Sample application: A Nebula2 console based interface using Python."
     settype exe
-    setmodules { nsh npythonserver }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl npython }
+    setmodules { nsh }
+    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl npythonserver }
 endtarget
 #-----------------------------------------------------------------------------
 beginworkspace pythonserver
@@ -33,7 +39,8 @@ beginworkspace pythonserver
         nremoteshell
         ndinput8 
         microtcl
-        npython
+        npythonserver
+        pynebula
     }
 endworkspace
 #-----------------------------------------------------------------------------

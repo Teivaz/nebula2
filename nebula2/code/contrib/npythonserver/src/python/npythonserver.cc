@@ -92,7 +92,7 @@ static PyMethodDef NebulaMethods[] = {
    Called implicitly to extend an external interpreter or
    called explicitly when embedding the interpreter.
 */
-void initnpython()
+__declspec(dllexport) void initpynebula()
 {
     PyObject *m, *d, *gd;
 
@@ -100,12 +100,12 @@ void initnpython()
      * is required for portability to Windows without requiring C++. */
     Nebula_Type.ob_type = &PyType_Type;
 
-    m = Py_InitModule("npython",  NebulaMethods);
+    m = Py_InitModule("pynebula",  NebulaMethods);
 
     /* Add some symbolic constants to the module */
     d = PyModule_GetDict(m);
-    Npy_ErrorObject = PyErr_NewException("npython.error", NULL, NULL);
-    PyDict_SetItemString(d, "Npython_Error", Npy_ErrorObject);
+    Npy_ErrorObject = PyErr_NewException("pynebula.error", NULL, NULL);
+    PyDict_SetItemString(d, "PyNebula_Error", Npy_ErrorObject);
 
     CreatedObjectsList_weakref_callback_ = PyDict_GetItemString(d, "__CreatedObjectsList_weakref_callback__");
 
@@ -169,23 +169,23 @@ nPythonServer::nPythonServer()
         Py_Initialize();
 
         // Explicitly initialize Nebula extensions
-        initnpython();
+        initpynebula();
     }
 
     // Store a handy reference to the nebula module
-    this->nmodule = PyImport_ImportModule("npython");
+    this->nmodule = PyImport_ImportModule("pynebula");
 
     // And store a handy reference to the main module
     this->main_module = PyImport_ImportModule("__main__");
 
     // Install a mechanism to redirect stdout
     PyRun_SimpleString("import sys\n"
-                       "import npython\n"
+                       "import pynebula\n"
                        "sys.oldstdout = sys.stdout\n"
                        "sys.oldstderr = sys.stderr\n"
                        "class nwriter:\n"
                        "  def write(self, text):\n"
-                       "    npython.nprint(text)\n"
+                       "    pynebula.nprint(text)\n"
                        "  def __del__(self):\n"
                        "    sys.stdout = sys.oldstdout\n"
                        "    sys.stderr = sys.oldstderr\n"
