@@ -1,37 +1,40 @@
 /**
     @defgroup NebulaGuiSystem Graphical User Interface
 
-    This section of the documentation covers the Nebula GUI system that 
+    This section of the documentation covers the Nebula GUI system that
     can be used to create an in-game graphical user interface.
 
     @section NebulaGuiSystemInitialize Initialization and Rendering
 
-    The first thing for initialization of the GUI system is to specify the root path
-    of the GUI system. This root path is where the created GUI widgets are live. 
-    It can be done by calling nGuiServer::SetRootPath member function.
-    If you do not explicitly set the root path, it will be set on @c'/res/gui' 
-    by default. 
-    And next, call nGuiServer::Open for initializing GUI system.
+    The first thing step in initalizing the GUI system is to specify the
+    root path of the GUI system. This root path is where the created GUI
+    widgets live.  It is set by calling nGuiServer::SetRootPath().
+    If you do not explicitly set the root path, it will be set on
+    @c '/res/gui' by default.
+
+    Next, call nGuiServer::Open() to initialize GUI system.
 
     @code
 guiServer->SetRootPath("/gui")
 guiServer->Open();
     @endcode
-   
-    nGuiServer::Open internally calls nScriptServer::RunScript and run the script
-    @c'OnGuiServerOpen'. So @cOnGuiServerOpen script should be provided before
-    nGuiServer::Open is called if you want to do some initial task for the GUI system.
-    @c'OnGuiServerClose' script can be called on nGuiServer::Close in the same manner.
 
-    Calling nGuiServer::Open internally create a default root window.
-    A created window will be loacated under this root window. The name of root window
-    which defaultly created by nGuiServer is @c'SystemRootWindow' and you can see this
-    window is located under the root path.
+    nGuiServer::Open() internally calls nScriptServer::RunScript() and runs
+    the script @c 'OnGuiServerOpen'. So the @c OnGuiServerOpen script
+    should be defined before nGuiServer::Open() is called if you want to do
+    some of your own initialization for the GUI system.
 
-    You can hide all windows by 0 to nGuiServer::SetRootWindow: 
+    The @c 'OnGuiServerClose' script is called by nGuiServer::Close() in
+    the same manner.
+
+    A default root window named @c 'SystemRootWindow' is created
+    by nGuiServer::Open(). All windows created by the programmer will
+    be located under this root window.
+
+    You can hide all windows by passing @c 0 to nGuiServer::SetRootWindow():
 
     @code
-guiServer->SetRootWindow(0);    
+guiServer->SetRootWindow(0);
     @endcode
 
     or with the script form:
@@ -41,13 +44,13 @@ guiServer->SetRootWindow(0);
 /sys/servers/gui>.setrootwindow ""
     @endverbatim
 
-    To render GUI windows, you should call nGuiServer::Trigger and nGuiServer::Render
-    in rendering loop.
+    To render GUI windows, you should call nGuiServer::Trigger() and
+    nGuiServer::Render() in your rendering loop.
 
     @code
-// render loop   
+// render loop
 ...
-guiServer->Trigger();   
+guiServer->Trigger();
 ...
 if (sceneServer->BeginScene(viewMatrix))
 {
@@ -60,30 +63,33 @@ if (sceneServer->BeginScene(viewMatrix))
 }
     @endcode
 
-    Do calling nGuiServer::Trigger like other Nebula servers. 
-    Call nGuiServer::Render after rendering the scene. This will render windows
-    and that will be shown on view.
+    Call nGuiServer::Trigger() as with all other Nebula servers.
+    Call nGuiServer::Render() after rendering the scene. This will
+    render the GUI on top of the rendered scene.
 
-    You should call nGusServer::Close when the application is closed.
+    You should call nGuiServer::Close() when the application is closed.
 
     @code
-guiServer->Close();   
+guiServer->Close();
     @endcode
 
     Lastly, release the GUI server by calling its Release() member function.
 
     @code
-guiServer->Release(); 
+guiServer->Release();
     @endcode
 
-    @section NebulaGuiSystemSkin Setting up Skin
+    @section NebulaGuiSystemSkin Setting up the Skin
 
-    To use GUI system, you should create its skin first. 
-    Usually it is good to create and define a skin onOnGuiServerOpen script.
-    (see startup.tcl in the directory '$nebula2/bin/' for it's example)
-    To do like that makes easy editable and changes of the defined skin.
+    To use GUI system, you should create its skin first.
+    Usually it is good to create and define a skin in the
+    @c OnGuiServerOpen script.  The default @c startup.tcl (and
+    the @c startup.lua scripts that come with some of the contribs)
+    provide examples of how to configure a skin.  The skin is defined
+    via script to make it easily editable.
 
-    You can create a skin by calling nGuiServer::NewSkin with a given skin name.
+    You can create a skin by calling nGuiServer::NewSkin() with a given
+    skin name.
 
     @code
 // 'system' is skin name.
@@ -97,15 +103,17 @@ skin->SetTexturePrefix("home:export/textures/system/");
 skin->SetTexturePostfix(".dds");
     @endcode
 
-    A Skin also need to be specifed its color when it is activate or 
-    inactivate.
+    A Skin also needs to specify its color for when it is active and
+    inactive.
 
     @code
 skin->SetActiveWindowColor(1.0, 1.0, 1.0, 0.9);
 skin->SetInactiveWindowColor(0.6, 0.6, 0.6, 0.6);
     @endcode
 
-    Finally, register brush to be used in the skin.
+    Finally, register brush to be used in the skin.  See nGuiSkin::AddBrush()
+    for more details on the arguments.
+
     @code
 skin->BeginBrushes()
 skin->AddBrush("titlebar", "skin",  0, 52, 43, 20, 1.0, 1.0, 1.0, 1.0)
@@ -115,14 +123,14 @@ skin->EndBrushes()
 
 
     @section NebulaGuiSystemCreateWindow Creating a Window
- 
-    This section provides a brief example of creating a window on console 
-    to make it easy to understand Nebula GUI system.
 
-    You can create a window by calling nGuiServer::NewWindow with a given 
-    class name.
+    This section provides a brief example of creating a window on console
+    to make it easier to understand Nebula GUI system.
 
-    Run nviewer.exe and type this on it's colsole:
+    You can create a window by calling nGuiServer::NewWindow() with a given
+    class name specifying the type of window to create.
+
+    Run @c nviewer.exe and type this on it's console:
 
     @verbatim
 />sel /sys/servers/gui
@@ -134,18 +142,17 @@ skin->EndBrushes()
     @code
 guiServer->NewWindow("nguiclientwindow", true);
     @endcode
-    
-    Above code create a window of nGuiClientWindow type under the root window.
-    ('SystemRootWindow' is the root window at this time)
-    The name of created window is automatically assigned by nGuiServer when
-    it is created by calling nGuiServer::NewWindow.
-    The first window has @c'window0' for its name and the second
-    has @c'window1'. All the next created windows will have it's name for this way.
-   
-    Created nGuiClientWindow type of window defaultly has Titlebar, CloseButton, 
-    SizeButton and Layout element. 
 
-    You can check this by typing @c'dir' command under created window:
+    The above code create a window of nGuiClientWindow type under the
+    root window, @c 'SystemRootWindow'.  The name of the created window
+    is automatically assigned by nGuiServer when it is created by
+    calling nGuiServer::NewWindow().  The first window is @c 'window0',
+    the second is @c 'window1', and so on.
+
+    Windows of the type nGuiClientWindow have Titlebar, CloseButton,
+    SizeButton and Layout elements by default.
+
+    You can check this by typing @c 'dir' command under the created window:
 
     @verbatim
 /gui/SystemRootWindow/window3>dir
@@ -153,8 +160,8 @@ TitleBar CloseButton SizeButton Layout
 /gui/SystemRootWindow/window3>
     @endverbatim
 
-    If you want to add a button or some other GUI elements for its child, 
-    you should create those widget under the Layout.
+    If you want to add a button or some other GUI element as a child of that
+    window, you must create those widgets under the Layout node.
 
     @verbatim
 /gui/SystemRootWindow/window3>sel Layout
@@ -179,7 +186,7 @@ TitleBar CloseButton SizeButton Layout
 nGuiButton* btn;
 btn = (nGuiButton*) kernelServer->New("nguibutton", "mybutton");
 
-// the brushes terminal_n, terminal_p and terminal_h should be 
+// the brushes terminal_n, terminal_p and terminal_h should be
 // aleady defined when a skin is created.
 btn->SetDefaultBrush("terminal_n");
 btn->SetPressedBrush("terminal_p");
@@ -193,19 +200,26 @@ layout->AttachPos(btn, nGuiFormLayout::Right, 1 * btnSize);
 btn->OnShow();
     @endcode
 
-    nGuiButton and derives classes have three states for its state. 
-    Normal, pressed and highlight are those.
-    When the button is created, you should specify all those three states
-    of the brush by calling nGuiButton::SetDefaultBrush, nGuiButton::SetPressedBrush 
-    and nGuiButton::SetHighlightBrush.
+    nGuiWidget and all classes that derived from it have four states:
+     - Normal
+     - Pressed
+     - Highlight
+     - Disabled
+
+    When the widget is created, you should specify all of the brush states
+    by calling:
+     - nGuiWidget::SetDefaultBrush()
+     - nGuiWidget::SetPressedBrush()
+     - nGuiWidget::SetHighlightBrush()
+     - nGuiWidget::SetDisabledBrush()
+
     If you do not that, the button will be not shown on the window.
 
-    nGuiFormLayout is used to provide flexible layout scheme.
-    It provides relative positioning of child elements.
-    The created 'mybutton' has its left, top and bottom edges aligned with the form.
+    nGuiFormLayout is used to provide a flexible layout scheme.
+    It provides relative positioning of child elements.  The created
+    @c 'mybutton' has its left, top and bottom edges aligned with the form.
     Its right edge is placed at 30% of the width of the form.
 
-    Call 'show' command(or call nGuiButton::OnShow) on the button to apply the 
-    changes.
-
+    Call the @c 'show' script method or the C++ method @c nGuiWidget::OnShow()
+    on the button to apply the changes.
 */
