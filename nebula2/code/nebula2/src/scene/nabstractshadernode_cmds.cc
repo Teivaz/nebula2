@@ -260,6 +260,13 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                     }
                     break;
 
+                case nShaderArg::Texture:
+                    cmd = ps->GetCmd(this, 'STXT');
+                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                    cmd->In()->SetS(param.GetTexture()->GetFilename().Get());
+                    ps->PutCmd(cmd);
+                    break;
+
                 default:
                     n_error("nAbstractShaderNode::SaveCmds(): Invalid variable type!\n");
                     break;

@@ -212,6 +212,9 @@ nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
 const char *
 nShapeNode::GetMeshResourceLoader()
 {
-    return this->refMeshResourceLoader.getname();
+    if (this->refMeshResourceLoader.isvalid())
+        return this->refMeshResourceLoader.getname();
+    else
+        return 0;
 }
 
