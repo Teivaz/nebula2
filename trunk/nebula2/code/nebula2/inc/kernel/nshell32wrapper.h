@@ -58,8 +58,8 @@ nShell32Wrapper::nShell32Wrapper() :
     }
     if (0 == this->shGetFolderPathFunc)
     {
-        n_error("Could not SHGetFolderPath() function.\n"
-                "Your Windows version is too old!");
+        n_error("Could not find SHGetFolderPath() function\n"
+                "because of unsupported Windows version!");
     }
 }
 
