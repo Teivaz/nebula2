@@ -120,7 +120,7 @@ __declspec(dllexport) void initpynebula()
     // If Python is calling this function as part of an import
     if (!nPythonServer::Instance) 
     {
-        nPythonServer::kernelServer = new nKernelServer();
+        nPythonServer::kernelServer = n_new(nKernelServer());
         n_assert(nPythonServer::kernelServer);
 
         nPythonServer *ps = (nPythonServer *) nPythonServer::kernelServer->Lookup("/sys/servers/script");
@@ -421,20 +421,20 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 
         switch(arg->GetType())
         {
-            case nArg::Type::Int:
+            case nArg::Int:
                 sprintf(buf,"%d",arg->GetI());
                 break;
 
-            case nArg::Type::Float:
+            case nArg::Float:
                 sprintf(buf,"%.6f",arg->GetF());
                 break;
 
-            case nArg::Type::String:
+            case nArg::String:
                 strPtr = arg->GetS();
                 if (strPtr != NULL)
                     strLen = strlen(strPtr);
                 else
-                    strLen = 0
+                    strLen = 0;
 
                 bufLen = sizeof(buf)-1;
             
@@ -453,17 +453,11 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
                 sprintf(buf, "%s'", strPtr);
                 break;
 
-            case nArg::Type::Bool:
+            case nArg::Bool:
                 sprintf(buf,"%s",(arg->GetB() ? "1" : "0"));
                 break;
 
-            /*
-            case nArg::ARGTYPE_CODE:
-                sprintf(buf," { %s }",arg->GetC());
-                break;
-            */
-
-            case nArg::Type::Object:
+            case nArg::Object:
                 {
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o)

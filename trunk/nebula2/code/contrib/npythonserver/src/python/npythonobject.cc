@@ -55,7 +55,7 @@ NebulaObject* NebulaObject_New(nRoot * nebulaObj)
         return NULL;
     self->internal_dict = NULL;
     self->in_weakreflist = NULL; 
-    self->nebula_object = n_new nRef<nRoot>;
+    self->nebula_object = n_new(nRef<nRoot>);
     n_assert(self->nebula_object);
     //self->nebula_object->initialize(NULL);
     self->nebula_object->SetPtr(NULL);
@@ -163,7 +163,7 @@ void NebulaObject_Dealloc(NebulaObject *self)
         n_printf("Internal Dictionary is NULL\n");
      
     if(self->nebula_object)
-        n_delete self->nebula_object;
+        n_delete(self->nebula_object);
 
     PyObject_Del(self);
 }
