@@ -656,11 +656,7 @@ nGuiServer::Render()
         int numPasses = shader->Begin(false);
         for (curPass = 0; curPass < numPasses; curPass++)
         {            
-			#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
 			shader->BeginPass(curPass);
-			#else
-			shader->Pass(curPass);
-			#endif
 
             // begin rendering to dynamic mesh
             this->curTexture = 0;
@@ -688,9 +684,7 @@ nGuiServer::Render()
 
             // finish dynamic mesh rendering
             this->dynMesh.End(this->curVertexIndex);
-			#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
 			shader->EndPass();
-			#endif
         }
         shader->End();
         gfxServer->PopTransform(nGfxServer2::Model);
