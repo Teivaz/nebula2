@@ -23,7 +23,7 @@ sel /sys/servers/file2
 
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
-        if {($featureSet =="dx9") || ($featureSet == "dx9flt")} {   
+        if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {   
             .setassign "shaders" "$home/data/shaders/2.0/"
             puts "Shader directory: $home/data/shaders/2.0"
         } else {
@@ -84,7 +84,7 @@ proc OnMapInput {} {
 }
 
 #-------------------------------------------------------------------------------
-#   This procedure ist called when the gui server is opened.
+#   This procedure is called when the gui server is opened.
 #-------------------------------------------------------------------------------
 proc OnGuiServerOpen {} {
 
