@@ -1,8 +1,5 @@
 #-------------------------------------------------------------------------------
-#   bin/startup.tcl
-#
-#   This is the central Nebula runtime startup script which is 
-#   used by various tools, like the Maya plugin or the viewer.
+#   bin/startup.py
 #
 #   The script mainly sets up assigns and Nebula variables.
 #
