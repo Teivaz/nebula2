@@ -32,7 +32,7 @@ public:
     /// start defining commands
     void BeginCmds();
     /// add a command to the class
-    void AddCmd(const char *proto_def, uint id, void (*)(void *, nCmd *));
+    void AddCmd(const char *proto_def, nFourCC id, void (*)(void *, nCmd *));
     /// finish defining commands
     void EndCmds();
     /// start defining script-side commands
@@ -48,7 +48,7 @@ public:
     /// find a script-side command by name
     nCmdProto *FindScriptCmdByName(const char *name);
     /// find a native command by fourcc code
-    nCmdProto* FindCmdById(uint id);
+    nCmdProto* FindCmdById(nFourCC id);
     /// get pointer to command list
     nHashList* GetCmdList() const;
     /// get super class of this class

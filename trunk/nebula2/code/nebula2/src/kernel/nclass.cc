@@ -123,7 +123,7 @@ nClass::BeginCmds(void)
     @param  cmd_proc    the command's stub function
 */
 void
-nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
+nClass::AddCmd(const char *proto_def, nFourCC id, void (*cmd_proc)(void *, nCmd *))
 {
     n_assert(proto_def);
     n_assert(id);
@@ -323,7 +323,7 @@ nCmdProto *nClass::FindScriptCmdByName(const char *name)
      - 18-Feb-00   floh    + cmd_table now nKeyArray
 */
 nCmdProto*
-nClass::FindCmdById(uint id)
+nClass::FindCmdById(nFourCC id)
 {
     // if the class has no commands, hand the request to the parent class.
     if (!this->cmdTable)
