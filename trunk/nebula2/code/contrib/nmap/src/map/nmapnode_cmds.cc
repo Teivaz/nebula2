@@ -254,8 +254,8 @@ n_getmeshusage(void* slf, nCmd* cmd)
 }
 //------------------------------------------------------------------------------
 /**
-    @param  fileServer  writes the nCmd object contents out to a file.
-    @return             success or failure
+    @param  ps  writes the nCmd object contents out to a file.
+    @return     success or failure
 */
 bool
 nMapNode::SaveCmds(nPersistServer* ps)
