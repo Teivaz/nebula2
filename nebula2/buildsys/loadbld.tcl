@@ -352,7 +352,7 @@ proc annotate {annotation} {
     if {$current_block == $wspace_block} {
         global wspace
         global num_wspaces
-        set wspace($num_tars,annotate) $annotation
+        set wspace($num_wspaces,annotate) $annotation
     } elseif {$current_block == $target_block} {
         global tar
         global num_tars
