@@ -755,6 +755,32 @@ nGfxServer2::BeginLines()
 //------------------------------------------------------------------------------
 /**
     Draw a 3d line strip using the current transforms. 
+
+    The following draws a unit cube with red lines.
+
+    @code
+    vector3 v[8];
+    v[0].set(0.5f, -0.5f, 0.5f);
+    v[1].set(0.5f, -0.5f, -0.5f);
+    v[2].set(-0.5f, -0.5f, -0.5f);
+    v[3].set(-0.5f, -0.5f, 0.5f);
+    v[4].set(0.5f, 0.5f, 0.5f);
+    v[5].set(0.5f, 0.5f, -0.5f);
+    v[6].set(-0.5f, 0.5f, -0.5f);
+    v[7].set(-0.5f, 0.5f, 0.5f);
+
+    vector3 cube[16] = {
+        v[1], v[0], v[4], v[5],
+        v[1], v[2], v[6], v[5],
+        v[3], v[2], v[6], v[7],
+        v[3], v[0], v[4], v[7]
+    };
+
+    nGfxServer2::Instance()->BeginLines();
+    nGfxServer2::Instance()->DrawLines3d(cube,   8, vector4(1.0f, 0.0f, 0.0f, 0.5f));
+    nGfxServer2::Instance()->DrawLines3d(cube+8, 8, vector4(1.0f, 0.0f, 0.0f, 0.5f));
+    nGfxServer2::Instance()->EndLines();
+    @endcode
 */
 void
 nGfxServer2::DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color)
