@@ -5,8 +5,8 @@
 #-----------------------------------------------------------------------------
 beginmodule npythonserver
     setdir python
-    setfiles   { npythonobject npythonserver npythoncmds npythonrun }
-    setheaders { npythonobject npythonserver }
+    setfiles   { npythonobject npythonserver npythoncmds npythonrun ncmdprotopython }
+    setheaders { npythonobject npythonserver ncmdprotopython }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget npython
