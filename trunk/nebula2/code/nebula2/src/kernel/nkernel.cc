@@ -54,7 +54,7 @@ n_error(const char* msg, ...)
         else
             vprintf(msg, argList);
     #else
-        vprintf(msg, arglist);
+        vprintf(msg, argList);
     #endif
     abort();
 };        
@@ -76,7 +76,7 @@ n_message(const char* msg, ...)
             nKernelServer::ks->GetLogHandler()->Message(msg, argList);
         }
     #else
-        vprintf(msg, arglist);
+        vprintf(msg, argList);
     #endif
 };        
 
