@@ -40,6 +40,13 @@
 #include "tools/ncmdlineargs.h"
 #endif
 
+nNebulaUsePackage(nnebula);
+nNebulaUsePackage(ndinput8);
+nNebulaUsePackage(ndirect3d9);
+nNebulaUsePackage(nopende);
+nNebulaUsePackage(ngui);
+nNebulaUsePackage(physdemo_core);
+
 //------------------------------------------------------------------------------
 /*
 */
@@ -106,6 +113,13 @@ main(int argc, const char** argv)
         nWin32LogHandler logHandler("PhysDemo");
         kernelServer.SetLogHandler(&logHandler);
     #endif
+
+    kernelServer.AddPackage(nnebula);
+    kernelServer.AddPackage(ndinput8);
+    kernelServer.AddPackage(ndirect3d9);
+    kernelServer.AddPackage(nopende);
+    kernelServer.AddPackage(ngui);
+    kernelServer.AddPackage(physdemo_core);
 
     // initialize a viewer app object
     PhysDemoApp physDemoApp(&kernelServer);

@@ -15,23 +15,20 @@ set oldCwd [psel]
 sel /sys/servers/file2
     set proj [.manglepath "proj:"]
     set home [.manglepath "home:"]
+    set nebhome [.manglepath "home:../../.."]
     
-    # stuff in data
-    .setassign "data" "home:export/"
-    .setassign "scripts"  "$proj/data/scripts"
-
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
         if {($featureSet =="dx9") || ($featureSet == "dx9flt")} {   
-            .setassign "shaders" "$home/data/shaders/2.0/"
-            puts "Shader directory: $home/data/shaders/2.0"
+            .setassign "shaders" "$nebhome/data/shaders/2.0/"
+            puts "Shader directory: $nebhome/data/shaders/2.0"
         } else {
-            .setassign "shaders" "$home/data/shaders/fixed/"
-            puts "Shader directory: $home/data/shaders/fixed"
+            .setassign "shaders" "$nebhome/data/shaders/fixed/"
+            puts "Shader directory: $nebhome/data/shaders/fixed"
         }
     } else {
-        .setassign "shaders" "$home/data/shaders/2.0/"
-        puts "Shader directory: $home/data/shaders/2.0"
+        .setassign "shaders" "$nebhome/data/shaders/2.0/"
+        puts "Shader directory: $nebhome/data/shaders/2.0"
     }
 
     # enable zFail shadow rendering
@@ -40,48 +37,16 @@ sel /sys/servers/file2
     }
     
     # stuff in export
-    .setassign "physics"  "$proj/export/physics/"
-    .setassign "meshes"   "data:meshes/"
-    .setassign "textures" "data:textures/"
-    .setassign "anims"    "$proj/export/anims/"
-    .setassign "shapes"   "data:shapedefs/"
-    .setassign "gfxlib"   "$proj/export/gfxlib/"
-    .setassign "lights"   "data:lightdefs/"
-    .setassign "levels"   "$proj/export/levels/"
+    .setassign "meshes"   "home:export/meshes/"
+    .setassign "textures" "home:export/textures/"
+    .setassign "gfxlib"   "$nebhome/gfxlib/"
+    .setassign "lights"   "home:export/lightdefs/"
+    .setassign "shapes"   "home:export/shapedefs/"
 
 #-------------------------------------------------------------------------------
 #   restore original directory
 #-------------------------------------------------------------------------------
 sel $oldCwd
-
-#-------------------------------------------------------------------------------
-#   OnMapInput is called back by nviewer when the input mapping should be
-#   defined.
-#-------------------------------------------------------------------------------
-proc OnMapInput {} {
-    set cwd [psel]
-    sel /sys/servers/input
-    .beginmap
-    .map "keyb0:space.down" "reset"
-    .map "keyb0:esc.down" "script:/sys/servers/gui.togglesystemgui"
-    .map "keyb0:f11.down" "console"
-    .map "keyb0:t.down" "script:/sys/servers/time.resettime"
-    .map "relmouse0:btn0.pressed" "look"
-    .map "relmouse0:btn1.pressed" "zoom"
-    .map "relmouse0:btn2.pressed" "pan"
-    .map "relmouse0:+zbtn.down"   "ScrollDown"
-    .map "relmouse0:-zbtn.down"   "ScrollUp"
-    .map "relmouse0:-x" "left"
-    .map "relmouse0:+x" "right"
-    .map "relmouse0:-y" "up"
-    .map "relmouse0:+y" "down"
-    .map "relmouse0:-z" "zoomIn"
-    .map "relmouse0:+z" "zoomOut"
-    .map "keyb0:f1.down" "mayacontrols"
-    .map "keyb0:f2.down" "flycontrols"
-    .endmap
-    sel $cwd
-}
 
 #-------------------------------------------------------------------------------
 #   This procedure is called when the gui server is opened.
@@ -106,7 +71,7 @@ proc OnGuiServerOpen {} {
     set skin [/sys/servers/gui.newskin system]
     sel $skin
     # set texture path pre- and postfix (NOTE: don't change path to textures:system!!!)
-    .settextureprefix "home:export/textures/system/"
+    .settextureprefix "home:../../../export/textures/system/"
     .settexturepostfix ".dds"
 
     # active and inactive window modulation color

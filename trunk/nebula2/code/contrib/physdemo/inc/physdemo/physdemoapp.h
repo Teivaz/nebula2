@@ -25,6 +25,7 @@
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
 #include "gui/nguitextlabel.h"
+#include "shadow/nshadowserver.h"
 
 #include "physdemo/simpleobject.h"
 
@@ -123,6 +124,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<nGuiServer> refGuiServer;
+    nRef<nShadowServer> refShadowServer;
 
     nString sceneFilename;
     nString projDir;
