@@ -58,6 +58,9 @@ nVectorAnimator::GetVectorName()
 //------------------------------------------------------------------------------
 /**
     Add a key to the animation key array.
+
+    @param time time in seconds.
+    @param key key values.
 */
 void
 nVectorAnimator::AddKey(float time, const vector4& key)
