@@ -27,6 +27,7 @@
 #include "scene/nattachmentnode.h"
 #include "scene/nskinshapenode.h"
 #include "scene/nshadowskinshapenode.h"
+#include "scene/nshadownode.h"
 #include "nature/nswingshapenode.h"
 
 //-----------------------------------------------------------------------------
@@ -236,6 +237,7 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
                 break;
             case 0:
             default:
+                this->meshType = None;
                 break;
             }
         }
@@ -384,6 +386,10 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
      
         nString nodename(inode->GetName());
 
+        //FIXME: in case of the shadow node, add '_shadow' postfix.
+        if (this->meshType == Shadow)
+            nodename += "_shadow";
+
         createdNode = this->CreateShapeNode(inode, nodename);
 
         nMeshBuilder* meshBuilder = (useIndivisualMesh ? &this->localMeshBuilder : globalMeshBuilder);
@@ -430,8 +436,12 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         //            nShapeNode child_material1
         nTransformNode* transformNode = 0;
 
-        nString transformNodeName;
-        transformNode = (nTransformNode*)CreateNebulaObject("ntransformnode", inode->GetName());
+        nString transformNodeName(inode->GetName());
+        //FIXME: in case of the shadow node, add '_shadow' postfix.
+        if (this->meshType == Shadow)
+            transformNodeName += "_shadow";
+
+        transformNode = (nTransformNode*)CreateNebulaObject("ntransformnode", transformNodeName.Get());
 
         bbox3 parentLocalBox;
 
@@ -440,6 +450,10 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             // create node name. we append material index to the end of the node name.
             nString nodename;
             nodename += inode->GetName();
+
+            if (this->meshType == Shadow)
+                nodename += "_shadow";
+
             nodename += "_";
             nodename.AppendInt(matIdx);
 
@@ -1118,27 +1132,49 @@ nArray<int> nMaxMesh::GetUsedMapChannels(Mesh* mesh)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxMesh::SetShapeGroup(nShapeNode* createdNode, int baseGroupIndex, int numMaterials)
+void nMaxMesh::SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int numMaterials)
 {
     if (this->IsSkinned() || this->IsPhysique())
     {
-        nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(createdNode);
+        if (this->meshType == Shape)
+        {
+            nSkinShapeNode *skinShapeNode = static_cast<nSkinShapeNode*>(createdNode);
 
-        if (numMaterials > 1)
-            skinShapeNode->SetSkinAnimator("../../skinanimator");
+            if (numMaterials > 1)
+                skinShapeNode->SetSkinAnimator("../../skinanimator");
+            else
+                skinShapeNode->SetSkinAnimator("../skinanimator");
+
+            // we don't need this for shadow skin shape node cause it dees not need to be paritioned.
+            nMaxSkinMeshData groupMesh;
+            groupMesh.node = skinShapeNode;
+            groupMesh.groupIndex = baseGroupIndex;
+            this->skinmeshArray.Append(groupMesh);
+        }
         else
-            skinShapeNode->SetSkinAnimator("../skinanimator");
+        if (this->meshType == Shadow)
+        {
+            nShadowSkinShapeNode *shadowSkinShapeNode = static_cast<nShadowSkinShapeNode*>(createdNode);
 
-        nMaxSkinMeshData groupMesh;
-        groupMesh.node       = skinShapeNode;
-        groupMesh.groupIndex = baseGroupIndex;
-
-        this->skinmeshArray.Append(groupMesh);
+            if (numMaterials > 1)
+                shadowSkinShapeNode->SetSkinAnimator("../../skinanimator");
+            else
+                shadowSkinShapeNode->SetSkinAnimator("../skinanimator");
+        }
     }
     else
     {
-        nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
-        shapeNode->SetGroupIndex(baseGroupIndex);
+        if (this->meshType == Shape)
+        {
+            nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
+            shapeNode->SetGroupIndex(baseGroupIndex);
+        }
+        else
+        if (this->meshType == Shadow)
+        {
+            nShadowNode *shadowNode = static_cast<nShadowNode*>(createdNode);
+            shadowNode->SetGroupIndex(baseGroupIndex);
+        }
     }
 }
 
@@ -1148,8 +1184,11 @@ void nMaxMesh::SetShapeGroup(nShapeNode* createdNode, int baseGroupIndex, int nu
     If each shape node uses its own mesh file, it set its node name for its mesh
     filename otherwise uses save name.
 
+    - 05-Mar-05 kims modified to export shadow node, 
+                     The face that nshadownode and nshapenode is not derived 
+                     from the same parent, ugly type casting was needed. Better idea?
 */
-void nMaxMesh::SetMeshFile(nShapeNode* shapeNode, nString &nodeName, bool useIndivisualMesh)
+void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName, bool useIndivisualMesh)
 {
     if (useIndivisualMesh)
     {
@@ -1169,26 +1208,63 @@ void nMaxMesh::SetMeshFile(nShapeNode* shapeNode, nString &nodeName, bool useInd
         this->localMeshBuilder.Optimize(); //TODO!
         this->localMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
 
-        if (shapeNode)
+        if (createdNode)
         {
             // specify shape node's name.
             nString meshname;
             meshname += nMaxOptions::Instance()->GetMeshesAssign();
             meshname += nMaxUtil::CorrectName(nodeName);
             meshname += nMaxOptions::Instance()->GetMeshFileType();
-            shapeNode->SetMesh(meshname.Get());
+
+            //shapeNode->SetMesh(meshname.Get());
+            if (this->meshType == Shadow)
+            {
+                if (this->IsSkinned() || this->IsPhysique())
+                {
+                    nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
+                    shadowSkinNode->SetMesh(meshname.Get());
+                }
+                else
+                {
+                    nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
+                    shadowNode->SetMesh(meshname.Get());
+                }
+            }
+            else
+            {
+                nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
+                shapeNode->SetMesh(meshname.Get());
+            }
         }
     }
     else
     {
-        if (shapeNode)
+        if (createdNode)
         {
             // specify shape node's name.
             nString meshname;
             meshname += nMaxOptions::Instance()->GetMeshesAssign();
             meshname += nMaxOptions::Instance()->GetSaveFileName();
             meshname += nMaxOptions::Instance()->GetMeshFileType();
-            shapeNode->SetMesh(meshname.Get());
+
+            if (this->meshType == Shadow)
+            {
+                if (this->IsSkinned() || this->IsPhysique())
+                {
+                    nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
+                    shadowSkinNode->SetMesh(meshname.Get());
+                }
+                else
+                {
+                    nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
+                    shadowNode->SetMesh(meshname.Get());
+                }
+            }
+            else
+            {
+                nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
+                shapeNode->SetMesh(meshname.Get());
+            }
         }
     }
 }
