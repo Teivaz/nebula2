@@ -159,6 +159,7 @@ proc set_outputpath {path} {
     global cur_workspace
     global wspace
     global home
+    global platform
 
     if {$wspace($cur_workspace,binarydir) == "" } {
         set cur_outputpath $path
@@ -167,15 +168,15 @@ proc set_outputpath {path} {
     }
 
     set dir [findrelpath $home $cur_outputpath]
-    if {[get_platform] == "win32"} {
+    if {$platform == "win32"} {
         check_makedir $dir/win32
         check_makedir $dir/win32d
     }
-    if {[get_platform] == "linux"} {
+    if {$platform == "linux"} {
         check_makedir $dir/linux
         check_makedir $dir/linuxd
     }
-    if {[get_platform] == "macosx"} {
+    if {$platform == "macosx"} {
         check_makedir $dir/macosx
         check_makedir $dir/macosxd
     }
@@ -208,6 +209,7 @@ proc set_interpath {path} {
     global cur_workspace
     global wspace
     global home
+    global platform
 
     #if {$wspace($cur_workspace,libdir) == "" } {
     #    set cur_interpath $path
@@ -217,15 +219,15 @@ proc set_interpath {path} {
     set cur_interpath $path
 
     set dir [findrelpath $home $cur_interpath]
-    if {[get_platform] == "win32"} {
+    if {$platform == "win32"} {
         check_makedir $dir/win32
         check_makedir $dir/win32d
     }
-    if {[get_platform] == "linux"} {
+    if {$platform == "linux"} {
         check_makedir $dir/linux
         check_makedir $dir/linuxd
     }
-    if {[get_platform] == "macosx"} {
+    if {$platform == "macosx"} {
         check_makedir $dir/macosx
         check_makedir $dir/macosxd
     }

@@ -351,12 +351,17 @@ proc test_platform {platform_list platform_test} {
 #  necessary.
 #--------------------------------------------------------------------
 proc check_makedir {path} {
+    global debug
     if {![file exists $path]} {
-        puts "-> Creating directory $path"
+        if { $debug } {
+			puts "-> Creating directory $path"
+		}
         file mkdir $path
     } else {
-        puts "-> Directory $path exists"
-    }
+		if { $debug } {
+			puts "-> Directory $path exists"
+		}
+    }	
 }
 
 
