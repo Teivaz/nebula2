@@ -31,7 +31,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nstdsceneserver
     setdir scene
-    setfiles { nstdsceneserver_main nstdsceneserver_cmds }
+    setfiles { nstdsceneserver_main }
     setheaders { nstdsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
