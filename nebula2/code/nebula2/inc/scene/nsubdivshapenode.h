@@ -24,7 +24,7 @@ public:
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
     /// perform pre-instancing rending of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry

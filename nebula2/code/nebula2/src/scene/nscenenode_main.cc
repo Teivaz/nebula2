@@ -230,7 +230,7 @@ nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
     which are constant for a complete instance set. 
 */
 bool
-nSceneNode::ApplyShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/)
+nSceneNode::ApplyShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/)
 {
     return false;
 }
@@ -243,7 +243,7 @@ nSceneNode::ApplyShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/)
     to instance.
 */
 bool
-nSceneNode::RenderShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
+nSceneNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     return false;
 }
@@ -313,7 +313,7 @@ nSceneNode::HasGeometry() const
     @param  fourcc  a fourcc code identifying the shader
 */
 bool
-nSceneNode::HasShader(uint /*fourcc*/) const
+nSceneNode::HasShader(nFourCC /*fourcc*/) const
 {
     return false;
 }

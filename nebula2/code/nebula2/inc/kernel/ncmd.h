@@ -26,7 +26,7 @@ public:
     /// get the cmd's prototype object
     nCmdProto* GetProto() const;
     /// get the cmd's fourcc code
-    uint GetId() const;
+    nFourCC GetId() const;
     /// get number of input args
     int GetNumInArgs() const;
     /// get number of output args
@@ -112,7 +112,7 @@ nCmd::GetProto() const
 /**
 */
 inline 
-uint 
+nFourCC 
 nCmd::GetId() const
 { 
     return this->cmdProto->GetId();

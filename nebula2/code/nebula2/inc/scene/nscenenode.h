@@ -56,7 +56,7 @@ public:
     /// return true if node provides geometry
     virtual bool HasGeometry() const;
     /// return true if node provides shader
-    virtual bool HasShader(uint fourcc) const;
+    virtual bool HasShader(nFourCC fourcc) const;
     /// return true if node provides lighting information
     virtual bool HasLight() const;
     /// return true if node provides shadow
@@ -68,9 +68,9 @@ public:
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
-    virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
     /// write light volume parameters into the provided shader params object
      virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
     /// perform pre-instancing rendering of shadow

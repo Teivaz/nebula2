@@ -120,7 +120,7 @@ nMaterialNode::UnloadResources()
     Find shader object associated with fourcc code.
 */
 nMaterialNode::ShaderEntry*
-nMaterialNode::FindShaderEntry(uint fourcc) const
+nMaterialNode::FindShaderEntry(nFourCC fourcc) const
 {
     int i;
     int numShaders = this->shaderArray.Size();
@@ -141,7 +141,7 @@ nMaterialNode::FindShaderEntry(uint fourcc) const
     Indicate to scene server that we provide a shader.
 */
 bool
-nMaterialNode::HasShader(uint fourcc) const
+nMaterialNode::HasShader(nFourCC fourcc) const
 {
     return (this->FindShaderEntry(fourcc) != 0);
 }
@@ -151,7 +151,7 @@ nMaterialNode::HasShader(uint fourcc) const
     Setup shader attributes before rendering instances of this scene node.
 */
 bool
-nMaterialNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
+nMaterialNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
 {
     n_assert(sceneServer);
     nGfxServer2* gfxServer = nGfxServer2::Instance();
@@ -197,7 +197,7 @@ nMaterialNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
     shader parameters which may change from instance to instance.
 */
 bool
-nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nMaterialNode::RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     nShader2* shader = nGfxServer2::Instance()->GetShader();
     nGfxServer2* gfxServer = nGfxServer2::Instance();
@@ -235,7 +235,7 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
 /**
 */
 void
-nMaterialNode::SetShader(uint fourcc, const char* name)
+nMaterialNode::SetShader(nFourCC fourcc, const char* name)
 {
     n_assert(name);
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
@@ -255,7 +255,7 @@ nMaterialNode::SetShader(uint fourcc, const char* name)
 /**
 */
 const char*
-nMaterialNode::GetShader(uint fourcc) const
+nMaterialNode::GetShader(nFourCC fourcc) const
 {
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
     if (shaderEntry)

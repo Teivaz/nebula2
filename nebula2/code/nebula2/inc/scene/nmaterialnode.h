@@ -41,27 +41,27 @@ public:
     virtual void UnloadResources();
 
     /// indicate to scene graph that we provide a surface shader
-    virtual bool HasShader(uint fourcc) const;
+    virtual bool HasShader(nFourCC fourcc) const;
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
-    virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
 
     /// set shader resource name
-    void SetShader(uint fourcc, const char* name);
+    void SetShader(nFourCC fourcc, const char* name);
     /// get shader resource name
-    const char* GetShader(uint fourcc) const;
+    const char* GetShader(nFourCC fourcc) const;
     /// get number of shaders
     int GetNumShaders() const;
     /// get shader at index
-    void GetShaderAt(int index, uint& fourcc, const char*& name) const;
+    void GetShaderAt(int index, nFourCC& fourcc, const char*& name) const;
     /// get pointer to shader object
-    nShader2* GetShaderObject(uint fourcc);
+    nShader2* GetShaderObject(nFourCC fourcc);
 
     /// get fourcc code from string
-    static uint StringToFourCC(const char* str);
+    static nFourCC StringToFourCC(const char* str);
     /// get string from fourcc code
-    static const char* FourCCToString(uint fourcc, char* buf, int bufSize);
+    static const char* FourCCToString(nFourCC fourcc, char* buf, int bufSize);
 
 protected:
     /// recursively append instance parameters to provided instance stream declaration
@@ -74,11 +74,11 @@ private:
         /// default constructor
         ShaderEntry();
         /// constructor
-        ShaderEntry(uint shaderFourCC, const char* shaderName);
+        ShaderEntry(nFourCC shaderFourCC, const char* shaderName);
         /// set fourcc code
-        void SetFourCC(uint shaderFourCC);
+        void SetFourCC(nFourCC shaderFourCC);
         /// get shader fourcc code
-        uint GetFourCC() const;
+        nFourCC GetFourCC() const;
         /// set shader name
         void SetName(const char* shaderName);
         /// get shader name
@@ -93,7 +93,7 @@ private:
         void Invalidate();
 
 
-        uint fourcc;
+        nFourCC fourcc;
         nString name;
         nRef<nShader2> refShader;
     };
@@ -103,7 +103,7 @@ private:
     /// unload the shader resource
     void UnloadShaders();
     /// find a shader entry by its fourcc code
-    ShaderEntry* FindShaderEntry(uint fourcc) const;
+    ShaderEntry* FindShaderEntry(nFourCC fourcc) const;
     /// checks if shader uses texture passed in param
     virtual bool IsTextureUsed(nShaderState::Param param);
 
@@ -130,7 +130,7 @@ nMaterialNode::GetNumShaders() const
 */
 inline
 void
-nMaterialNode::GetShaderAt(int index, uint& fourcc, const char*& name) const
+nMaterialNode::GetShaderAt(int index, nFourCC& fourcc, const char*& name) const
 {
     fourcc = this->shaderArray[index].GetFourCC();
     name   = this->shaderArray[index].GetName();
@@ -141,7 +141,7 @@ nMaterialNode::GetShaderAt(int index, uint& fourcc, const char*& name) const
     Convert a string to a fourcc code.
 */
 inline
-uint
+nFourCC
 nMaterialNode::StringToFourCC(const char* str)
 {
     n_assert(str);
@@ -161,7 +161,7 @@ nMaterialNode::StringToFourCC(const char* str)
 */
 inline
 const char*
-nMaterialNode::FourCCToString(uint fourcc, char* buf, int bufSize)
+nMaterialNode::FourCCToString(nFourCC fourcc, char* buf, int bufSize)
 {
     n_assert(bufSize >= 5);
     buf[0] = (fourcc)     & 0xff;
@@ -177,7 +177,7 @@ nMaterialNode::FourCCToString(uint fourcc, char* buf, int bufSize)
 */
 inline
 nShader2*
-nMaterialNode::GetShaderObject(uint fourcc)
+nMaterialNode::GetShaderObject(nFourCC fourcc)
 {
     if (!this->AreResourcesValid())
     {
@@ -205,7 +205,7 @@ nMaterialNode::ShaderEntry::ShaderEntry() :
 /**
 */
 inline
-nMaterialNode::ShaderEntry::ShaderEntry(uint shaderFourCC, const char* shaderName) :
+nMaterialNode::ShaderEntry::ShaderEntry(nFourCC shaderFourCC, const char* shaderName) :
     fourcc(shaderFourCC),
     name(shaderName)
 {
@@ -217,7 +217,7 @@ nMaterialNode::ShaderEntry::ShaderEntry(uint shaderFourCC, const char* shaderNam
 */
 inline
 void
-nMaterialNode::ShaderEntry::SetFourCC(uint shaderFourCC)
+nMaterialNode::ShaderEntry::SetFourCC(nFourCC shaderFourCC)
 {
     this->fourcc = shaderFourCC;
 }
@@ -226,7 +226,7 @@ nMaterialNode::ShaderEntry::SetFourCC(uint shaderFourCC)
 /**
 */
 inline
-uint
+nFourCC
 nMaterialNode::ShaderEntry::GetFourCC() const
 {
     return this->fourcc;
