@@ -657,10 +657,10 @@ n_endbrushes(void* slf, nCmd* cmd)
     Define the master volume.
 */
 static void
-n_setsoundvolume(void* slf, nCmd* cmd)
+n_setmastervolume(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    self->SetMasterVolume(cmd->In()->GetF());
+    self->SetSoundVolume(cmd->In()->GetF());
 }
 
 //-----------------------------------------------------------------------------
