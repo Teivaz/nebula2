@@ -14,7 +14,6 @@
     This module should be checked out to <tt>nebula2/code/contrib/nopenal</tt>,
     and run <tt>nebula2/update.tcl</tt>.
 
-    ...
 
     (c) 2004 Bang, Chang Kyu
 */
@@ -22,5 +21,15 @@
 /**
     @defgroup NOpenALDemoContribModule nOpenAL Demo
     @ingroup NOpenALContribModule
+    @brief A small example of how to use nOpenAL for positional audio and music.
+
+    <h2>Running the demo</h2>
+    The demo plays an ogg vorbis file; to make sure you are able to play
+    ogg vorbis, make sure the dll's in the nOpenAL dll directory are in your
+    path.  You can either add code/contrib/nopenal/dll to your path, or copy
+    the OpenAL dll's into your current path.  A good place to put them is
+    the same place as the nopenaldemo, which is typically bin/win32 or
+    bin/win32d in the nebula2 distribution.
+
 
 */
