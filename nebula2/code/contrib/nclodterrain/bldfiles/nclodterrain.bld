@@ -70,16 +70,16 @@ beginworkspace nchunklod
     setbinarydir ./bin/
     setlibdir ./code/contrib/lib/
     settargets {
+        nclododeviewer
         nkernel
         nnebula
         ndinput8
         ndirect3d9
         microtcl
         nlua
-    nclodterrain
-    nclododeviewer
-    nopende
-    ntoollib
+        nclodterrain
+        nopende
+        ntoollib
     }
 endworkspace
 #-----------------------------------------------------------------------------
