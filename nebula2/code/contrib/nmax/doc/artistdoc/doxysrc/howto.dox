@@ -1,0 +1,34 @@
+/**
+    @page NMaxHowto Howto
+
+    Please refer to the following pages for documentation on the plugin:
+
+    - @ref NMaxHowtoQuickStart
+    - @ref NMaxHowtoStaticScene 
+    - @ref NMaxHowtoGlobalOptions 
+    - @ref NMaxHowtoUsingMaterialEditor
+    - @ref NMaxPerMeshOptions
+    - @ref NMaxHowtoCharacters 
+    - @ref NMaxHowtoHierarchyNode 
+    - @ref NMaxHowtoShadows 
+    - @ref NMaxHowtoAnimations
+    - @ref NMaxHowtoExport
+    - @ref NMaxHowtoExpose
+    - @ref NMaxTerrainTools
+
+*/
+
+/**
+    @page NMaxHowtoHierarchyNode Hierarchy Nodes Howto
+
+*/
+
+/**
+    @page NMaxHowtoShadows Shadows Howto
+
+*/
+
+/**
+    @page NMaxTerrainTools Using Terrain Tools
+
+*/
