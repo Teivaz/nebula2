@@ -238,15 +238,6 @@ bool nCLODMesh::LoadResource()
             int i1 = indexdatabuffer[iix+1];
             int i2 = indexdatabuffer[iix+2];
 
-            // ignore skirt triangles.  We can find these since two vertices will
-            // have the same x & y values
-            short *v0 = vertexdatabuffer + i0*4;
-            short *v1 = vertexdatabuffer + i1*4;
-            short *v2 = vertexdatabuffer + i2 *4;
-            if ( ((v0[0] == v1[0]) && (v0[1] == v1[1])) ||
-                 ((v1[0] == v2[0]) && (v1[1] == v2[1])) ||
-                 ((v0[0] == v2[0]) && (v0[1] == v2[1])))
-                 continue;
             // when converting from tristrip to triangles, we need to reverse
             // the winding of every other triangle
             if (iix & 1)
