@@ -62,14 +62,15 @@ nGuiSlider2::OnShow()
     kernelServer->PushCwd(this);
 
     // get some brush sizes
-    this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowup_n");
     if (this->horizontal)
     {
+        this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowleft_n");
         this->SetMinSize(vector2(2.0f * this->arrowBtnSize.x, this->arrowBtnSize.y));
         this->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
     }
     else
     {
+        this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowup_n");
         this->SetMinSize(vector2(this->arrowBtnSize.x, 2.0f * this->arrowBtnSize.y));
         this->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
     }
