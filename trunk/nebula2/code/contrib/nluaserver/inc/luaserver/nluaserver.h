@@ -76,7 +76,6 @@ public:
     static void ListArgToTable(lua_State*, nArg*, bool);
 
 public:
-    nAutoRef<nFileServer2> ref_FileServer;
     static nLuaServer *Instance;
     nString classCacheName;
     nString thunkStoreName;

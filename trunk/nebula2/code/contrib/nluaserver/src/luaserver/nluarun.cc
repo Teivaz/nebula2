@@ -135,8 +135,7 @@ const char* nLuaServer::StackToString( lua_State* L, int bottom )
 //--------------------------------------------------------------------
 nString nLuaServer::Prompt()
 {
-    char buffer[N_MAXPATH];
-    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));       
+    nString prompt = kernelServer->GetCwd()->GetFullName();       
     prompt.Append("> ");
     return prompt;
 }
@@ -171,15 +170,13 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
 {
     n_assert(filename);
     
-    char buf[N_MAXPATH];
     int filesize;
     char *cmdbuf;
     bool retval;
     
-    nFileServer2* fileServer = this->ref_FileServer.get();
-    nFile* nfile = fileServer->NewFileObject();
-    fileServer->ManglePath(filename, buf, N_MAXPATH);
-    if (!nfile->Open(buf, "r"))
+    nFile* nfile = nFileServer2::Instance()->NewFileObject();
+    nString path = nFileServer2::Instance()->ManglePath(filename);
+    if (!nfile->Open(path.Get(), "r"))
     {
         result = 0;
         nfile->Release();

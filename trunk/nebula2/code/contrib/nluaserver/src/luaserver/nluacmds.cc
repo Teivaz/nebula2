@@ -611,17 +611,17 @@ int luacmd_Mangle(lua_State* L)
         lua_pushnil(L);
         return 1;
     }
-    nFileServer2* fs = nLuaServer::Instance->ref_FileServer.get();
-    char path[N_MAXPATH];
-    if (!fs->ManglePath(lua_tostring(L, -1), path, sizeof(path)))
+    
+    nString path = nFileServer2::Instance()->ManglePath(lua_tostring(L, -1));
+    if (path.IsEmpty())
     {
-        n_message("Failed to mangle %s",path);
+        n_message("Failed to mangle %s", path.Get());
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
     lua_settop(L, 0);
-    lua_pushstring(L, path);
+    lua_pushstring(L, path.Get());
     return 1;
 }
 

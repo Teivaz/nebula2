@@ -64,10 +64,9 @@ bool nCmdProtoLua::Dispatch(void* obj, nCmd* cmd)
     if (0 != lua_pcall(L, cmd->GetNumInArgs() + 1, cmd->GetNumOutArgs(), 0))
     {
         // error occured, display it
-        char buf[N_MAXPATH];
         n_error("LUA encountered an error (%s) while trying to call %s on %s",
                 lua_tostring(L, -1), cmd->GetProto()->GetName(),
-                ((nRoot*)obj)->GetFullName(buf, sizeof(buf)));
+                ((nRoot*)obj)->GetFullName().Get());
     }
     // put out-args into the cmd
     nLuaServer::StackToOutArgs(L, cmd);
