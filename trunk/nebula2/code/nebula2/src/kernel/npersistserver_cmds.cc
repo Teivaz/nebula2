@@ -15,7 +15,7 @@ static void n_getsaverclass(void*, nCmd*);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     npersistserver
 
     @superclass

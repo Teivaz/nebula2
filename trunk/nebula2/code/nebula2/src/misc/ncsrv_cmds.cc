@@ -14,7 +14,7 @@ static void n_unwatch(void *, nCmd *);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     nconserver
 
     @superclass
