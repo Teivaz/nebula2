@@ -4,8 +4,7 @@
 /**
     @class nSessionServer
     @ingroup Network
-
-    A session server manages all necessary information about a network
+    @brief A session server manages all necessary information about a network
     session, and eventually configures and opens the actual game network server.
 
     <h2>Session info broadcasting</h2>
