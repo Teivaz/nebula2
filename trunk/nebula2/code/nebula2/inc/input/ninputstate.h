@@ -23,53 +23,49 @@
 #endif
 
 //-------------------------------------------------------------------
-//  nInputState
-//  Keep single "button" and "slider" state and have a name. 
-//  21-Dec-99   floh    completely rewritten    
-//  29-Dec-99   floh    + ref_count
-//-------------------------------------------------------------------
-class nInputState : public nHashNode {
-    int ref_count;
+class nInputState : public nHashNode
+{
+    int refCount;
     bool  btn;
     float val;
 
 public:
-    nInputState(const char *_name) 
-        : nHashNode(_name)
+    nInputState(const char* name) 
+        : nHashNode(name),
+          refCount(0),
+          btn(false),
+          val(0.0f)
     {
-        ref_count = 0;
-        btn = false;
-        val = 0.0f;
     };
     ~nInputState() {
         // n_printf("~nInputState(%s)\n",this->GetName());
     };
     void AddRef(void) {
-        ref_count++;
+        this->refCount++;
     };
-    void RemRef(void) {
-        n_assert(this->ref_count > 0);
-        ref_count--;
+    void Release(void) {
+        n_assert(this->refCount > 0);
+        this->refCount--;
     };
-    int GetRef(void) {
-        return this->ref_count;
+    int GetRefCount(void) {
+        return this->refCount;
     };
     void SetButton(bool b) {
-        btn = b;
+        this->btn = b;
     };
     void SetSlider(float f) {
-        val = f;
+        this->val = f;
     };
     void AddSlider(float f) {
-        val += f;
-        if (val > 1.0f)      val = 1.0f;
-        else if (val < 0.0f) val = 0.0f;
+        this->val += f;
+        if (this->val > 1.0f)      this->val = 1.0f;
+        else if (this->val < 0.0f) this->val = 0.0f;
     };
     bool GetButton(void) {
-        return btn;
+        return this->btn;
     };
     float GetSlider(void) {
-        return val;
+        return this->val;
     };
     /// clear input state
     void Clear()
@@ -82,34 +78,35 @@ public:
 //-------------------------------------------------------------------
 /**
     @class nInputMapping
+    @ingroup NebulaInputSystem
 
-    Bind an input event to a named state. Automatically handle complex
+    @brief Bind an input event to a named state. Automatically handle complex
     mappings with .down, .up, .double, .long modifiers...
 */
 //-------------------------------------------------------------------
 class nInputServer;
 class nInputMapping : public nHashNode 
 {
-    nInputServer *iserv;    // pointer to input server
-    nInputEvent *ie;        // input event itself
-    nInputState *is;        // either bound to input state...
-    const char *cmd;        // ... or to script command
-    double down_tstamp;     // timestamp of last N_IMSTATE_DOWN
-    double cur_tstamp;      // timestamp at Trigger()
-    double longpressed_dt;  // delta t for '.long' modifier
-    double doubleclick_dt;  // delta t for '.double' modifier
+    nInputServer *iserv;    ///< pointer to input server
+    nInputEvent *ie;        ///< input event itself
+    nInputState *is;        ///< either bound to input state...
+    const char *cmd;        ///< ... or to script command
+    double down_tstamp;     ///< timestamp of last N_IMSTATE_DOWN
+    double cur_tstamp;      ///< timestamp at Trigger()
+    double longpressed_dt;  ///< delta t for '.long' modifier
+    double doubleclick_dt;  ///< delta t for '.double' modifier
     float slider_val;
 
-    bool state_valid;       // is state valid?
-    int state;              // combination of N_IMSTATE_* flags
-    int mask;               // combination of N_IMSTATE_* flags
+    bool state_valid;       ///< is state valid?
+    int state;              ///< combination of N_IMSTATE_* flags
+    int mask;               ///< combination of N_IMSTATE_* flags
 
-    int prev_flags;         // flags at previous trigger
-    int flags;              // current flags
+    int prev_flags;         ///< flags at previous trigger
+    int flags;              ///< current flags
     enum {
         N_IMF_KILLME        = (1<<0),
-        N_IMF_BTN_UP        = (1<<1),   // button released this frame
-        N_IMF_BTN_DOWN      = (1<<2),   // button down this frame
+        N_IMF_BTN_UP        = (1<<1),   ///< button released this frame
+        N_IMF_BTN_DOWN      = (1<<2),   ///< button down this frame
     };
 
 public:

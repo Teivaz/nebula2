@@ -49,8 +49,8 @@ void
 nInputMapping::ReleaseInputState(void)
 {
     n_assert(this->is);
-    this->is->RemRef();
-    if (this->is->GetRef() <= 0) 
+    this->is->Release();
+    if (this->is->GetRefCount() <= 0) 
     {
         this->is->Remove();
         n_delete(this->is);
