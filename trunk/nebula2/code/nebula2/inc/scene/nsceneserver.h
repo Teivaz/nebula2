@@ -35,7 +35,9 @@ public:
     virtual ~nSceneServer();
     /// return pointer to instance
     static nSceneServer* Instance();
-    
+
+    /// set the file name for the renderpath.xml file.
+    void SetRenderPathFilename(const nString& name);
     /// open the scene server
     bool Open();
     /// close the scene server;
