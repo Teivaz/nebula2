@@ -60,9 +60,11 @@ n_error(const char* msg, ...)
         else
         {
             vprintf(msg, argList);
+            fflush(stdout);
         }
     #else
         vprintf(msg, argList);
+        fflush(stdout);
     #endif
     abort();
 };        

@@ -49,6 +49,7 @@ nDefaultLogHandler::Error(const char* msg, va_list argList)
 {
     vprintf(msg, argList);
     this->PutLineBuffer(msg, argList);
+    fflush(stdout);
 }
 
 //------------------------------------------------------------------------------
