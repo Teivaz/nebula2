@@ -385,6 +385,7 @@ void nCLODTQTSplatterNode::generateTQTBlendTextures(nFile &destfile, int level, 
     unsigned int blendtex_stride = (tilemap->getXSize() / blendtex_dim);
     unsigned int blendtex_size = blendtex_stride+1; // 1 pixel overlap between chunks
     n_assert(blendtex_size <= m_chunktexsize);
+    n_assert(blendtex_stride*2 == m_chunktexsize);
     n_assert( (blendtex_stride * blendtex_dim + 1) == tilemap->getXSize() );
     
     bool *blendmarks = new bool[blendtex_size * blendtex_size];
@@ -404,10 +405,10 @@ void nCLODTQTSplatterNode::generateTQTBlendTextures(nFile &destfile, int level, 
         n_printf("generating blend textures for chunk %d\n", y + x*blendtex_dim);
 
         // dump index data into this array
-    /// given a rectangle and a tile index, marks user bitmap such that spots with that tile index are 1
-    // all other parts of the array are marked with 0
-    // note that the user array should be of size (x2-x1)*(y1-y2) bytes!
-    // @return the # of spots marked with 1
+        /// given a rectangle and a tile index, marks user bitmap such that spots with that tile index are 1
+        // all other parts of the array are marked with 0
+        // note that the user array should be of size (x2-x1)*(y1-y2) bytes!
+        // @return the # of spots marked with 1
         ILubyte *destdata = new ILubyte[m_chunktexsize * m_chunktexsize * 3];
         for (unsigned int tileindex=0; tileindex < m_maxtexindex; tileindex++)
         {
@@ -463,9 +464,9 @@ void nCLODTQTSplatterNode::pushImage(nFile &tqtfile, ILuint imagehandle, int til
     n_printf("writing image %d\n", tile_index);
 
     ilBindImage(imagehandle);
-    char buffer[100];
-    sprintf(buffer,"testimg%d.bmp", tile_index);
-    ilSave(IL_BMP, buffer);
+//    char buffer[100];
+//    sprintf(buffer,"testimg%d.bmp", tile_index);
+//    ilSave(IL_BMP, buffer);
 
     ILubyte *imagecopy = ilGetData();
 
@@ -515,7 +516,7 @@ void nCLODTQTSplatterNode::pushImages(nFile &tqtfile, unsigned int numimages, IL
         ilBindImage(imagehandles[imageindex]);
         char buffer[100];
         sprintf(buffer,"testimg%d-%d.bmp", node_index, imageindex);
-        ilSave(IL_BMP, buffer);
+//        ilSave(IL_BMP, buffer);
 
         tqtfile.PutInt(imageindex);
         tqtfile.PutInt(image_size);
@@ -549,7 +550,7 @@ void nCLODTQTSplatterNode::pushBlendImages(nFile &tqtfile, unsigned int numimage
 {
     n_printf("writing %d images for chunk %d\n", numimages, node_index);
 
-    int image_size = (m_chunktexsize * m_chunktexsize)/8;
+    int image_size = (m_chunktexsize * m_chunktexsize);
     unsigned char *imgdata = new unsigned char [image_size];
     
 //  ilSave(IL_BMP, "testimg.bmp");
@@ -573,23 +574,35 @@ void nCLODTQTSplatterNode::pushBlendImages(nFile &tqtfile, unsigned int numimage
         ilBindImage(imagehandles[imageindex]);
         char buffer[100];
         sprintf(buffer,"testimg%d-%d.bmp", node_index, imageindex);
-        ilSave(IL_BMP, buffer);
+//        ilSave(IL_BMP, buffer);
 
         ILubyte *imagecopy = ilGetData();
 
-        int curbit = 0;
+//        int curtexel=0; // we write out a chunk header every 16 texels
         ILubyte curbyteval = 0, *curbyte = imgdata;
         for (unsigned int i=0; i < m_chunktexsize * m_chunktexsize; i++)
         {
-            if (imagecopy[i*3] & 1)
+            // write out a chunk header if needed
+/*            if (curtexel % 16 == 0)
+            {
+                // color_0 = white
+                *curbyte++ = 0xff;
+                *curbyte++ = 0xff;
+                // color_1 = black
+                *curbyte++ = 0;
+                *curbyte++ = 0;
+            }*/
+
+/*            if (imagecopy[i*3] & 1)
                 curbyteval |= 1;
-            if (curbit % 8 == 7)
+            if (curtexel % 4 == 3)
             {
                 *curbyte++ = curbyteval;
                 curbyteval = 0;
             }
-            curbyteval <<= 1;
-            curbit++;
+            curbyteval <<= 2;
+            curtexel++;*/
+            *curbyte++ = imagecopy[i*3];
         }
 
         tqtfile.Write(imgdata, image_size);
@@ -604,7 +617,3 @@ void nCLODTQTSplatterNode::pushBlendImages(nFile &tqtfile, unsigned int numimage
     
     delete [] imgdata;
 }
-
-
-
-
