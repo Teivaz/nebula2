@@ -812,9 +812,9 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
             // Otherwise, update the position
             else
             {
-                nShapeNode *shapeNode = obj->refRootShapeNode.get();
-                shapeNode->SetPosition(obj->refPhysBody->GetPosition());
-                shapeNode->SetQuat(obj->refPhysBody->GetQuaternion());
+                curObj->Transform.settranslation(curObj->refPhysBody->GetPosition());
+                curObj->Transform.setquatrotation(curObj->refPhysBody->GetQuaternion());
+                curObj->renderContext.SetTransform(curObj->Transform.getmatrix());
 
                 // if the floaty text is initialized, update its position
                 if (curObj->refFloatyText.isvalid())
