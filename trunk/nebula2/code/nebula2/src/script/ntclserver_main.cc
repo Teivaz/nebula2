@@ -186,6 +186,8 @@ nTclServer::InitAsExtension(Tcl_Interp *extInterp)
 //------------------------------------------------------------------------------
 /**
     Begin writing a persistent object.
+    
+    27-Feb-04   cubejk  check for already existing file and delete before creating the new
 */
 nFile* 
 nTclServer::BeginWrite(const char* filename, nRoot* obj)
@@ -194,6 +196,13 @@ nTclServer::BeginWrite(const char* filename, nRoot* obj)
     n_assert(obj);
 
     this->indentLevel = 0;
+
+    //check if the file already exist
+    if (kernelServer->GetFileServer()->FileExists(filename))
+    {
+        //delete the old file before writing the new
+        kernelServer->GetFileServer()->DeleteFile(filename);
+    }
 
     nFile* file = kernelServer->GetFileServer()->NewFileObject();
     n_assert(file);
