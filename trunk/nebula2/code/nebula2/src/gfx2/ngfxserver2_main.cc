@@ -183,7 +183,7 @@ bool
 nGfxServer2::Trigger()
 {
 #if defined(N_DO_STATS)
-    if (this->totalFrames++ == 9)
+    if (++this->totalFrames == 10)
     {
         double curTime = kernelServer->GetTimeServer()->GetTime();
         double frameTime = curTime - this->timeStamp;
