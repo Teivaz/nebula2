@@ -73,6 +73,18 @@ beginmodule nconserver
     setheaders { nconserver }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nprefserver
+    setdir misc
+    setfiles { nprefserver_main nprefserver_cmds }
+    setheaders { nprefserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nwin32prefserver
+    setdir misc
+    setfiles { nwin32prefserver_main }
+    setheaders { nwin32prefserver }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nipc
     setdir kernel
     setfiles {

@@ -84,8 +84,37 @@ nSwingShapeNode::ComputeAngle(const vector3& pos, nTime time) const
 
 //------------------------------------------------------------------------------
 /**
-    This computes the Swing rotation matrix and bounding box parameters needed by
-    the shaders which implement swinging geometry.
+    Set pre-instancing attribute of shader.
+*/
+bool
+nSwingShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
+{
+    if (nMaterialNode::ApplyShader(fourcc, sceneServer))
+    {
+        nShader2* shader = nGfxServer2::Instance()->GetShader();
+        n_assert(shader);
+
+        // set bounding box parameters
+        if (shader->IsParameterUsed(nShaderState::BoxMinPos))
+        {
+            shader->SetVector3(nShaderState::BoxMinPos, this->localBox.vmin);
+        }
+        if (shader->IsParameterUsed(nShaderState::BoxMaxPos))
+        {
+            shader->SetVector3(nShaderState::BoxMaxPos, this->localBox.vmax);
+        }
+        if (shader->IsParameterUsed(nShaderState::BoxCenter))
+        {
+            shader->SetVector3(nShaderState::BoxCenter, this->localBox.center());
+        }
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set per-instance-attribute of shader.
 */
 bool
 nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
