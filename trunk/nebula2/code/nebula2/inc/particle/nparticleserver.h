@@ -31,7 +31,8 @@ private:
     typedef nArray<float> FloatRandomPool;
     typedef nArray<int> IntRandomPool;
 
-    enum {
+    enum 
+    {
         MaxParticles = 10000,       // maximum number of particles in the world
         FloatRandomCount = 65536,   // number of floats in the float random pool
         IntRandomCount = 512,       // number of ints in the int random pool
@@ -41,10 +42,14 @@ public:
     nParticleServer();
     /// destructor
     virtual ~nParticleServer();
-
+    /// get server instance
+    static nParticleServer* Instance();
+    /// enable/disable particle subsystem
+    void SetEnabled(bool b);
+    /// is currently enabled?
+    bool IsEnabled() const;
     /// Update particles and emitters, delete unused emitters
     void Trigger();
-
     /// get particle emitter by its key
     nParticleEmitter* GetParticleEmitter(int key);
     /// create a new particle emitter
@@ -66,14 +71,17 @@ public:
     /// pseudo random vector
     vector3 PseudoRandomVector3(int key);
 
-protected:
+private:
+    static nParticleServer* Singleton;
+
+    bool enabled;
     EmitterPool        emitterPool;         // stores all used emitters
     ParticlePool       particlePool;        // stores all particles in the world
     FreeParticlePool   freeParticlePool;    // points to all free particles in particlePool
     FloatRandomPool    floatRandomPool;
     IntRandomPool      intRandomPool;
     vector3            globalAccel;
-private:
+
     #ifdef __NEBULA_STATS__
     friend class nParticleEmitter;
     nWatched numEmitters;           ///< number of emitters known to the particle server
@@ -84,6 +92,36 @@ private:
     #endif
 };
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nParticleServer*
+nParticleServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nParticleServer::SetEnabled(bool b)
+{
+    this->enabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticleServer::IsEnabled() const
+{
+    return this->enabled;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -176,3 +214,4 @@ nParticleServer::TakeBackParticle(nParticle* particle)
 
 //------------------------------------------------------------------------------
 #endif    
+

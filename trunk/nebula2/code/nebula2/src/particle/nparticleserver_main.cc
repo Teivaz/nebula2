@@ -7,33 +7,20 @@
 #include <stdlib.h>
 #include <time.h>
 
-nNebulaClass(nParticleServer, "nroot");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nparticleserver
-    
-    @cppclass
-    nParticleServer
-
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
+nNebulaScriptClass(nParticleServer, "nroot");
+nParticleServer* nParticleServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
 */
 nParticleServer::nParticleServer() :
+    enabled(true),
     #ifdef __NEBULA_STATS__
-    numEmitters(        "parNumEmitters"            ,nArg::Int),
-    numActiveEmitters(  "parNumActiveEmitters"      ,nArg::Int),   
-    numParticles(       "parNumParticles"           ,nArg::Int),
-    numDrawnParticles(  "parNumDrawnParticles"      ,nArg::Int),
-    numDrawnPrimitives( "parNumDrawnPrimitives"     ,nArg::Int),
+    numEmitters("parNumEmitters", nArg::Int),
+    numActiveEmitters("parNumActiveEmitters", nArg::Int),   
+    numParticles("parNumParticles", nArg::Int),
+    numDrawnParticles("parNumDrawnParticles", nArg::Int),
+    numDrawnPrimitives("parNumDrawnPrimitives", nArg::Int),
     #endif
     particlePool(MaxParticles, 0, nParticle()),
     freeParticlePool(0, MaxParticles, 0),
@@ -42,6 +29,9 @@ nParticleServer::nParticleServer() :
     intRandomPool(IntRandomCount, 0, 0),
     globalAccel(0.0f, -1.0f, 0.0f)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     ParticlePool::iterator particleIter = particlePool.Begin();
     while (particleIter != particlePool.End())
     {
@@ -75,13 +65,13 @@ nParticleServer::nParticleServer() :
         }
 
         *floatRandomIter = f0;
-        floatRandomIter ++;
+        floatRandomIter++;
         *floatRandomIter = f1;
-        floatRandomIter ++;
+        floatRandomIter++;
         *floatRandomIter = f2;
-        floatRandomIter ++;
+        floatRandomIter++;
         *floatRandomIter = f3;
-        floatRandomIter ++;
+        floatRandomIter++;
      }
 }
 
@@ -93,9 +83,11 @@ nParticleServer::~nParticleServer()
     EmitterPool::iterator emitterIter = this->emitterPool.Begin();
     while (emitterIter != this->emitterPool.End())
     {
-        delete *emitterIter;
+        n_delete(*emitterIter);
         ++emitterIter;
     }
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 
@@ -129,7 +121,7 @@ nParticleServer::GetParticleEmitter(int key)
 nParticleEmitter*
 nParticleServer::NewParticleEmitter()
 {
-    nParticleEmitter* particleEmitter = n_new nParticleEmitter();
+    nParticleEmitter* particleEmitter = n_new(nParticleEmitter);
     this->emitterPool.Append(particleEmitter);
     // n_printf("nParticleServer: particle emitter created!\n");
     return particleEmitter;
@@ -158,10 +150,9 @@ void nParticleServer::Trigger()
         while (emitterIter != this->emitterPool.End())
         {
             nParticleEmitter* emitter = *emitterIter;
-            if (((!emitter->IsAlive()) && (!emitter->HasParticles())) ||
-                emitter->GetFatalException())
+            if ( !emitter->IsAlive() || emitter->GetFatalException())
             {
-                n_delete emitter;
+                n_delete(emitter);
                 // n_printf("nParticleServer: Deleting particle emitter!\n");
                 emitterIter = emitterPool.EraseQuick(emitterIter);
             }
