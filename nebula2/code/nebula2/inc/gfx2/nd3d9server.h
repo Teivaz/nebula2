@@ -58,6 +58,8 @@ public:
     virtual void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     virtual const nDisplayMode2& GetDisplayMode() const;
+    /// set the window title
+    virtual void SetWindowTitle(const char* title);
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
     /// set the viewport

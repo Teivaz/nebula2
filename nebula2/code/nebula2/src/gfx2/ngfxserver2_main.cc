@@ -178,6 +178,18 @@ nGfxServer2::GetDisplayMode() const
 
 //------------------------------------------------------------------------------
 /**
+    Set the window title.
+
+    @param title        the new window title
+*/
+void
+nGfxServer2::SetWindowTitle(const char* title)
+{
+    n_error("nGfxServer2: Pure virtual function called!");
+}
+
+//------------------------------------------------------------------------------
+/**
     Set the current camera. Subclasses should adjust their projection matrix
     accordingly when this method is called.
 

@@ -23,6 +23,8 @@ public:
     bool OpenWindow();
     /// close the application window
     void CloseWindow();
+    /// set the window title
+    void SetWindowTitle(const char* title);
     /// prepare window for switching between windowd/fullscreen mode
     void AdjustWindowForChange();
     /// restore window from minimized state

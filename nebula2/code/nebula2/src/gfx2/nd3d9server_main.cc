@@ -312,6 +312,15 @@ nD3D9Server::GetDisplayMode() const
 
 //-----------------------------------------------------------------------------
 /**
+*/
+void
+nD3D9Server::SetWindowTitle(const char* title)
+{
+    this->windowHandler.SetWindowTitle(title);
+}
+
+//-----------------------------------------------------------------------------
+/**
     Detect the current Windows version,
     only makes a differnence betweem WinNT family, Win95 familiy and the rest.
 */

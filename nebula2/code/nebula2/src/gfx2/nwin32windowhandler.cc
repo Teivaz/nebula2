@@ -158,6 +158,16 @@ nWin32WindowHandler::CloseWindow()
 
 //-----------------------------------------------------------------------------
 /**
+*/
+void
+nWin32WindowHandler::SetWindowTitle(const char* title)
+{
+    this->displayMode.SetWindowTitle(title);
+    SetWindowText(this->hWnd, title);
+}
+
+//-----------------------------------------------------------------------------
+/**
     Adjust window attributes to prepare for a new display mode.
 */
 void 
