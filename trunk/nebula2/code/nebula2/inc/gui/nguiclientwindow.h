@@ -56,10 +56,9 @@ public:
     /// close all sibling windows of the same class
     void CloseSiblings();
 
+protected:
     /// update the child widget layout, when position or size changes
     virtual void UpdateLayout(const rectangle& newRect);
-protected:
-
     /// begin dragging
     void BeginDrag();
     /// end dragging
