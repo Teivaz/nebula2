@@ -390,7 +390,7 @@ proc gen_dsw { name } {
     foreach target [get_targets] {
 
         # ignore any non-win32-packages - this was use above to build the projects
-        if {![test_tarplatform $target $platform]} {
+        if {[test_tarplatform $target $platform]} {
             puts $cid "###############################################################################"
             puts $cid ""
             puts $cid "Project: \"$target\"=.\\$target.dsp - Package Owner=<4>"
@@ -404,7 +404,7 @@ proc gen_dsw { name } {
 
             #for each project in the list - again
             foreach tardep [get_tardeps $target] {
-                if {![test_tarplatform $tardep $platform]} {
+                if {[test_tarplatform $tardep $platform]} {
                     puts $cid "    Begin Project Dependency"
                     puts $cid "    Project_Dep_Name $tardep"
                     puts $cid "    End Project Dependency"

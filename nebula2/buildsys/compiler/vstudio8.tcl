@@ -332,7 +332,7 @@ proc gen_sln { name } {
 
     #for each project in the list, get a uuid
     foreach target [get_targets] {
-        if { [test_tarplatform $target $platform ] } {
+        if { ![test_tarplatform $target $platform ] } {
             continue
         }
 
@@ -341,14 +341,14 @@ proc gen_sln { name } {
 
     # Now with the UUIDs we can write the targets
     foreach target [get_targets] {
-        if { [test_tarplatform $target $platform] } {
+        if { ![test_tarplatform $target $platform] } {
             continue
         }
 
         puts $cid "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"$target\", \"$target.vcproj\", \"{$targetuuids($target)}\""
         puts $cid "\tProjectSection(ProjectDependencies) = postProject"
         foreach dep [get_tardeps $target] {
-            if {[test_tarplatform $dep $platform]} {
+            if {![test_tarplatform $dep $platform]} {
                 continue
             }
 
@@ -367,7 +367,7 @@ proc gen_sln { name } {
     # Configurations
     puts $cid "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution"
     foreach target [get_targets] {
-        if {[test_tarplatform $target $platform]} {
+        if {![test_tarplatform $target $platform]} {
             continue
         }
         puts $cid "\t\t{$targetuuids($target)}.Debug|Win32.ActiveCfg = Debug|Win32"
