@@ -42,6 +42,7 @@ new nskinshapenode shape0
 	.setvector "MatDiffuse" 1.000000 0.800000 0.800000 0.800000
 	.setvector "MatSpecular" 1.000000 1.000000 0.800000 1.000000
 	.setvector "MatAmbient" 0.300000 0.300000 0.30000 1.000000
+	.setfloat "MatSpecularPower" 32.0
 	.setshader "colr" "shaders:default_skinned.fx"
 	.setmesh "meshes:examples/schwirl.n3d2"
 	.setgroupindex 0
