@@ -1,0 +1,378 @@
+//------------------------------------------------------------------------------
+//  nopenal_demo.h
+//  (C) 2004 Bang, Chang Kyu
+//------------------------------------------------------------------------------
+#ifndef N_OPENAL_DEMO_H
+#define N_OPENAL_DEMO_H
+
+#include "gfx2/ndisplaymode2.h"
+#include "gfx2/ncamera2.h"
+#include "gfx2/ngfxserver2.h"
+#include "scene/nsceneserver.h"
+#include "scene/nrendercontext.h"
+#include "kernel/nscriptserver.h"
+#include "input/ninputserver.h"
+#include "misc/nconserver.h"
+#include "resource/nresourceserver.h"
+#include "variable/nvariableserver.h"
+#include "anim2/nanimationserver.h"
+#include "particle/nparticleserver.h"
+#include "mathlib/polar.h"
+#include "kernel/nremoteserver.h"
+#include "audio3/nlistener3.h"
+
+#include "nopenal/nopenalserver.h"
+#include "nopenal/nopenalobj.h"
+#include "nopenal/nopenalresource.h"
+
+#include "nopenal_demo/nopenal_core.h"
+
+//-----------------------------------------------------------------------------
+const int soundMax = 255;
+
+//-----------------------------------------------------------------------------
+/**
+    @class nOpenALDemo
+    @ingroup nOpenALGroup
+
+    @brief
+    @note 
+*/
+
+//------------------------------------------------------------------------------
+class nOpenALDemo
+{
+public:
+    /// control mode
+    enum ControlMode
+    {
+        Maya,
+        Fly,
+    };
+
+    /// constructor
+    nOpenALDemo(nKernelServer* ks);
+    /// destructor
+    virtual ~nOpenALDemo();
+    /// set display mode
+    void SetDisplayMode(const nDisplayMode2& mode);
+    /// get display mode
+    const nDisplayMode2& GetDisplayMode() const;
+    /// set camera parameters
+    void SetCamera(const nCamera2& camera);
+    /// get camera parameters
+    const nCamera2& GetCamera() const;
+    /// set control mode
+    void SetControlMode(ControlMode c);
+    /// get control mode
+    ControlMode GetControlMode() const;
+    /// set scene file name
+    void SetSceneFile(const char* name);
+    /// get scene file name
+    const char* GetSceneFile() const;
+    /// set optional project dir
+    void SetProjDir(const char* name);
+    /// get project dir
+    const char* GetProjDir() const;
+    /// set the scene server (required)
+    void SetSceneServerClass(const char* name);
+    /// get the scene type
+    const char* GetSceneServerClass() const;
+    /// set the script type (ntclserver/nluaserver/etc - required)
+    void SetScriptServerClass(const char* name);
+    /// get the script type
+    const char* GetScriptServerClass() const;
+    /// set the startup script (required)
+    void SetStartupScript(const char* name);
+    /// get the startup script
+    const char* GetStartupScript() const;
+    /// set the light stage script (required - if a scene file is specified)
+    void SetStageScript(const char* name);
+    /// get the light stage script
+    const char* GetStageScript() const;
+    /// set the input binding script (required)
+    void SetInputScript(const char* name);
+    /// get the input binding script
+    const char* GetInputScript() const;
+    /// open the viewer
+    bool Open();
+    /// close the viewer
+    void Close();
+    /// run the viewer, returns when app should exit
+    void Run();
+    /// return true if currently open
+    bool IsOpen() const;
+
+private:
+    /// Listener Init
+    void InitListener( const matrix44& m, const vector3& v );
+    void InitListener( const vector3& pos,
+                       const vector3& vel,
+                       const vector3& at,
+                       const vector3& up );
+    /// MapInput
+    void MapInput();
+    /// handle general input
+    void HandleInput(float frameTime);
+    /// handle input in Maya control mode
+    void HandleInputMaya(float frameTime);
+    /// handle input in Fly control mode
+    void HandleInputFly(float frameTime);
+    /// transfer global variables from variable server to render context
+    void TransferGlobalVariables();
+
+    nKernelServer* kernelServer;
+    nRef<nScriptServer> refScriptServer;
+    nRef<nGfxServer2> refGfxServer;
+    nRef<nInputServer> refInputServer;
+    nRef<nConServer> refConServer;
+    nRef<nResourceServer> refResourceServer;
+    nRef<nSceneServer> refSceneServer;
+    nRef<nVariableServer> refVarServer;
+    nRef<nAnimationServer> refAnimServer;
+    nRef<nParticleServer> refParticleServer;
+    nRef<nAudioServer3> refAudioServer;
+
+    nRef<nTransformNode> refRootNode;
+
+    nString sceneFilename;
+    nString projDir;
+    nString sceneserverClass;
+    nString scriptserverClass;
+    nString startupScript;
+    nString stageScript;
+    nString inputScript;
+    bool isOpen;
+    nDisplayMode2 displayMode;
+    nCamera2 camera;
+    ControlMode controlMode;
+
+    polar2 defViewerAngles;
+    vector3 defViewerPos;
+    vector3 defViewerZoom;
+
+    float viewerVelocity;
+    polar2 viewerAngles;
+    vector3 viewerPos;
+    vector3 viewerZoom;
+
+    nRenderContext renderContext;
+    matrix44 viewMatrix;
+    int screenshotID;
+
+    nListener3      m_Listener;
+    nOpenALCore*    m_pOalCore;
+};
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nOpenALDemo::IsOpen() const
+{
+    return this->isOpen;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetDisplayMode(const nDisplayMode2& mode)
+{
+    this->displayMode = mode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nDisplayMode2&
+nOpenALDemo::GetDisplayMode() const
+{
+    return this->displayMode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetCamera(const nCamera2& cam)
+{
+    this->camera = cam;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nCamera2&
+nOpenALDemo::GetCamera() const
+{
+    return this->camera;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetControlMode(ControlMode mode)
+{
+    this->controlMode = mode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nOpenALDemo::ControlMode
+nOpenALDemo::GetControlMode() const
+{
+    return this->controlMode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetSceneFile(const char* filename)
+{
+    this->sceneFilename = filename;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetSceneFile() const
+{
+    return this->sceneFilename.IsEmpty() ? 0 : this->sceneFilename.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetProjDir(const char* name)
+{
+    this->projDir = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetProjDir() const
+{
+    return this->projDir.IsEmpty() ? 0 : this->projDir.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetSceneServerClass(const char* type)
+{
+    this->sceneserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetSceneServerClass() const
+{
+    return this->sceneserverClass.IsEmpty() ? 0 : this->sceneserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetScriptServerClass(const char* type)
+{
+    this->scriptserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetScriptServerClass() const
+{
+    return this->scriptserverClass.IsEmpty() ? 0 : this->scriptserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetStartupScript(const char* script)
+{
+    this->startupScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetStartupScript() const
+{
+    return this->startupScript.IsEmpty() ? 0 : this->startupScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetStageScript(const char* script)
+{
+    this->stageScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetStageScript() const
+{
+    return this->stageScript.IsEmpty() ? 0 : this->stageScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetInputScript(const char* script)
+{
+    this->inputScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nOpenALDemo::GetInputScript() const
+{
+    return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
+}
+
+//------------------------------------------------------------------------------
+#endif // N_OPENAL_DEMO_H

@@ -1,0 +1,36 @@
+#-----------------------------------------------------------------------------
+#   nopenal.bld
+#   ============
+#   nopenal .bld file
+#
+#   by Bang, Chang Kyu. 
+#-----------------------------------------------------------------------------
+beginmodule nopenalserver
+    setdir nopenal
+    setfiles   { nopenalserver_main nopenalserver_update
+		 nopenalserver_load nopenalserver_cmds }
+    setheaders { nopenalserver }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopenalresource
+    setdir nopenal
+    setfiles   { nopenalresource_main }
+    setheaders { nopenalresource }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopenalobj
+    setdir nopenal
+    setfiles   { nopenalobj_main }
+    setheaders { nopenalobj }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nopenal
+    annotate "Nebula2 OpenAL"
+    settype lib
+    setrtti true
+    setmodules    { nopenalserver nopenalresource nopenalobj }
+    settargetdeps { nkernel nnebula microtcl }
+endtarget 
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
