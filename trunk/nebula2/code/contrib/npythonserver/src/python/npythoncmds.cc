@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "python/npythonserver.h"
 #include "python/npythonobject.h"
+#include "python/ncmdprotopython.h"
 #include "kernel/nkernelserver.h"
 #include "kernel/nroot.h"
 #include "kernel/nroot.h"
@@ -855,6 +856,102 @@ PyObject* pythoncmd_SetTrigger( PyObject * /*self*/, PyObject *args)
   }
 
   return results;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Implementation of 'begincmds' command for nCmdProtoPython.
+
+    06-Sep-04   Kim, H.W.    created
+*/
+PyObject* pythoncmd_BeginCmds(PyObject* /*self*/, PyObject *args)
+{
+    char* className;
+    int numArgs;
+    PyObject *result = NULL;
+
+    if(!PyArg_ParseTuple(args, "si:begincmds", &className, &numArgs))
+    {
+        n_message("Usage: begincmd('classname', num_args)");
+        return result;
+    }
+
+    nClass* clazz = nKernelServer::Instance()->FindClass(className);
+    if (clazz)
+    {
+        clazz->BeginScriptCmds(numArgs);
+ 
+        Py_INCREF(Py_None);
+        result = Py_None;
+    }
+    else
+        n_error("Failed to open class %s!\n", className);
+
+    return result;    
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Implementation of 'addcmds' command for nCmdProtoPython.
+
+    06-Sep-04   Kim, H.W.    created
+*/
+PyObject* pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
+{
+    char* className;
+    char* cmdName;
+    PyObject *result = NULL;
+
+    if(!PyArg_ParseTuple(args, "ss:addcmds", &className, &cmdName))
+    {
+        n_message("Usage: addcmd('classname', 'cmd def')");
+        return result;
+    }
+
+    nCmdProtoPython* cmdProto = new nCmdProtoPython(cmdName);
+    nClass* clazz = nKernelServer::Instance()->FindClass(className);
+    if (clazz)
+    {
+        clazz->AddScriptCmd((nCmdProto*)cmdProto);
+
+        Py_INCREF(Py_None);
+        result = Py_None;
+    }
+    else
+        n_error("Failed to find class %s!\n", className);
+
+    return result;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Implementation of 'endcmds' command for nCmdProtoPython.
+
+    06-Sep-04   Kim, H.W.    created
+*/
+PyObject* pythoncmd_EndCmds(PyObject* /*self*/, PyObject *args)
+{
+    char *className;
+    PyObject *result = NULL;
+
+    if(!PyArg_ParseTuple(args, "s:endcmds", &className))
+    {
+        n_message("Usage: endcmd('classname')");
+        return result;
+    }
+
+    nClass* clazz = nKernelServer::Instance()->FindClass(className);
+    if (clazz)
+    {
+        clazz->EndScriptCmds();
+
+        Py_INCREF(Py_None);
+        result = Py_None;
+    }
+    else
+        n_error("Failed to find class %s!\n", className);
+
+    return result;
 }
 
 #ifdef __cplusplus
