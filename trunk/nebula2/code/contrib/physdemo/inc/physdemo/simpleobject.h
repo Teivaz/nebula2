@@ -10,7 +10,7 @@
     in the PhysDemo world.  It also serves as a (very) basic example of how entities might function in
     user-made applications, and how they would integrate with Nebula 2.
 
-    (C)	2003	Megan Fox
+    (C) 2003    Megan Fox
 */
 #include "kernel/nroot.h"
 #include "scene/nrendercontext.h"

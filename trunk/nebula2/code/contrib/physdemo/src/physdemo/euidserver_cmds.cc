@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-//  (C) 2003	Megan Fox
+//  (C) 2003    Megan Fox
 //------------------------------------------------------------------------------
 #include "physdemo/euidserver.h"
 #include "kernel/npersistserver.h"
@@ -29,7 +29,7 @@ void
 n_initcmds(nClass* clazz)
 {
     clazz->BeginCmds();
-	clazz->AddCmd("i_getnewid_v", 'IDGN', n_getnewid);
+    clazz->AddCmd("i_getnewid_v", 'IDGN', n_getnewid);
     clazz->AddCmd("v_releaseid_i", 'IDRL', n_releaseid);
     clazz->EndCmds();
 }

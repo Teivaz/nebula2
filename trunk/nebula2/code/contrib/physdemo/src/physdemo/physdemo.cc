@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 /**
-	@page NebulaToolsnviewer nviewer
+    @page NebulaToolsnviewer nviewer
 
     nviewer
 
@@ -11,16 +11,16 @@
        <dd>input binding script to run, default is: home:bin/stdinput.tcl</dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
-	 <dt>-alwaysontop</dt>
-		<dd>if present the window will be allways on top</dd>
+     <dt>-alwaysontop</dt>
+        <dd>if present the window will be allways on top</dd>
      <dt>-w</dt>
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
-	 <dt>-x</dt>
-		<dd>the x position of the window (default: 0)</dd>
-	 <dt>-y</dt>
-		<dd>the y position of the window (default: 0)</dd>
+     <dt>-x</dt>
+        <dd>the x position of the window (default: 0)</dd>
+     <dt>-y</dt>
+        <dd>the y position of the window (default: 0)</dd>
     </dl>
 
     nviewer also defines some default input handling:
