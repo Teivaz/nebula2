@@ -16,13 +16,12 @@ nViewerApp::nViewerApp(nKernelServer* ks) :
     controlMode(Maya),
     defViewerPos(0.0f, 0.0f, 0.0f),
     defViewerAngles(0.0f, 0.0f),
-//  defViewerPos(300.0f, 2000.0f, 300.0f),
-//  defViewerAngles(n_deg2rad(-80.0f), n_deg2rad(-180.0f)),
     defViewerZoom(0.0f, 0.0f, 9.0f),
     viewerPos(defViewerPos),
     viewerVelocity(500.0f),
     viewerAngles(defViewerAngles),
-    viewerZoom(defViewerZoom)
+    viewerZoom(defViewerZoom),
+    screenshotID(0)
 {
     // empty
 }
@@ -90,7 +89,7 @@ nViewerApp::Open()
     // run the startup script
     this->refScriptServer->RunScript(this->GetStartupScript(), result);
     
-    // run the scene file script (if specified)
+    // set the stage and load the object
     if (this->GetSceneFile())
     {
         n_assert(this->GetStageScript());
@@ -176,14 +175,7 @@ nViewerApp::Run()
 
         // handle input
         this->refInputServer->Trigger(time);
-        if (Maya == this->controlMode)
-        {
-            this->HandleInputMaya(frameTime);
-        }
-        else
-        {
-            this->HandleInputFly(frameTime);
-        }
+        this->HandleInput(frameTime);
         this->refInputServer->FlushEvents();
 
         // update render context variables
@@ -196,7 +188,7 @@ nViewerApp::Run()
         this->refSceneServer->Attach(&this->renderContext);
         this->refSceneServer->EndScene();
         this->refSceneServer->RenderScene();             // renders the 3d scene
-        this->refConServer->Render();                    // do additional rendering before presenting the frame
+        this->refConServer->Render();                    // render the console or watch variables
         this->refSceneServer->PresentScene();            // present the frame
 
         prevTime = time;
@@ -234,6 +226,44 @@ nViewerApp::TransferGlobalVariables()
             nVariable newVar(globalVar);
             this->renderContext.AddVariable(newVar);
         }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Handle general input
+*/
+void
+nViewerApp::HandleInput(float frameTime)
+{
+    nInputServer* inputServer = this->refInputServer.get();
+    
+    if (Maya == this->controlMode)
+    {
+        this->HandleInputMaya(frameTime);
+    }
+    else
+    {
+        this->HandleInputFly(frameTime);
+    }
+
+    if (inputServer->GetButton("screenshot"))
+    {
+        nPathString filename;
+        const char* sceneFile = this->GetSceneFile();
+        if (sceneFile)
+        {
+            filename = sceneFile;
+            filename.StripExtension();
+        }
+        else
+        {
+            filename = "screenshot";
+        }
+        filename.Append(nString(this->screenshotID++));
+        filename.Append(".bmp");
+
+        this->refGfxServer->SaveScreenshot(filename.Get());
     }
 }
 
@@ -279,6 +309,16 @@ nViewerApp::HandleInputMaya(float frameTime)
     {
         zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
         zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
+    }
+
+    // do mousewheel zoom
+    if (inputServer->GetButton("zoomIn"))
+    {
+        zoomVert += 1.0f; 
+    }
+    else if (inputServer->GetButton("zoomOut"))
+    {
+        zoomVert -= 1.0f; 
     }
 
     // toggle console
@@ -339,7 +379,7 @@ nViewerApp::HandleInputFly(float frameTime)
     }
 
     // set speed
-    if (inputServer->GetButton("speed0")) this->viewerVelocity = 100.0f;
+    if (inputServer->GetButton("speed0")) this->viewerVelocity = 20.0f;
     if (inputServer->GetButton("speed1")) this->viewerVelocity = 500.0f;
     if (inputServer->GetButton("speed2")) this->viewerVelocity = 5000.0f;
 
@@ -387,11 +427,15 @@ nViewerApp::HandleInputFly(float frameTime)
     {
         this->viewerPos -= this->viewMatrix.z_component() * this->viewerVelocity * frameTime;
     }
+    else if (inputServer->GetButton("pan"))
+    {
+        this->viewerPos -= this->viewMatrix.z_component() * -this->viewerVelocity * frameTime;
+    }
 
     // handle viewer rotate
     float lookHori = 0.0f;
     float lookVert = 0.0f;
-    if (inputServer->GetButton("zoom") || inputServer->GetButton("look"))
+    if (inputServer->GetButton("zoom") || inputServer->GetButton("look") || inputServer->GetButton("pan"))
     {
         lookHori = inputServer->GetSlider("left") - inputServer->GetSlider("right");
         lookVert = inputServer->GetSlider("down") - inputServer->GetSlider("up");
