@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-//
+//  nmaxprscontroller.cc
 //
 //  (c)2005 Kim, Hyoun Woo.
 //-----------------------------------------------------------------------------
@@ -7,49 +7,56 @@
 #include "export2/nmaxcontroller.h"
 #include "scene/ntransformanimator.h"
 #include "export2/nmaxprscontroller.h"
+
 #include "kernel/ntypes.h"
 
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxPRSController::nMaxPRSController()
+nMaxTransformAnimator::nMaxTransformAnimator() :
+    maxNode(0)
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxPRSController::~nMaxPRSController()
+nMaxTransformAnimator::~nMaxTransformAnimator()
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxPRSController::Export(INode* inode)
+void nMaxTransformAnimator::Export(INode* inode, Control *control)
 {
     n_assert(inode);
-    this->maxNode = inode;
-    Control* control = inode->GetTMController();
+    n_assert(control);
 
-	n_assert(control);
+    this->maxNode = inode;
+
+    Control *posControl, *rotControl, *scaleControl;
+    posControl   = control->GetPositionController();
+    rotControl   = control->GetRotationController();
+    scaleControl = control->GetScaleController();
 
     // create nTransformAnimator.
-    nTransformAnimator* animator = 0;
+    nTransformAnimator* animator;
+    animator = static_cast<nTransformAnimator*>(CreateNebulaObject("ntransformanimator", "animator"));
 
 	if (control->GetPositionController())
 	{
-		ExportPosition(control, animator);
+		ExportPosition(posControl, animator);
 	}
 
 	if (control->GetRotationController())
 	{
-		ExportRotation(control, animator);
+		ExportRotation(rotControl, animator);
 	}
 
 	if (control->GetScaleController())
 	{
-		ExportScale(control, animator);
+		ExportScale(scaleControl, animator);
 	}
 
     //
@@ -60,7 +67,7 @@ void nMaxPRSController::Export(INode* inode)
 //-----------------------------------------------------------------------------
 /**
 */
-bool nMaxPRSController::HasSampledKeys(Control *control)
+bool nMaxTransformAnimator::HasSampledKeys(Control *control)
 {
     bool result = false;
 

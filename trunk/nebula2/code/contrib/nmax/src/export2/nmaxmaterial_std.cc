@@ -14,8 +14,8 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxcontroller.h"
-#include "export2/nmaxpoint3controller.h"
-#include "export2/nmaxfloatcontroller.h"
+//#include "export2/nmaxpoint3controller.h"
+//#include "export2/nmaxfloatcontroller.h"
 
 #include "scene/nshapenode.h"
 

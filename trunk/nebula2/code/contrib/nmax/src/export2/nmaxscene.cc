@@ -21,6 +21,8 @@
 #include "export2/nmaxdummy.h"
 #include "export2/nmaxtransform.h"
 
+#include "export2/nmaxcontroller.h"
+
 #include "kernel/npersistserver.h"
 #include "variable/nvariableserver.h"
 #include "scene/ntransformnode.h"
@@ -759,7 +761,7 @@ bool nMaxScene::ExportAnimation(const nString &filename)
     return true;
 }
 
-
+/*
 struct SampleKey {
     Matrix3 tm;
 
@@ -770,6 +772,7 @@ struct SampleKey {
 
     float time;
 };
+
 
 void GetFullSampledKey(INode* node, nArray<SampleKey> & sampleKeyArray, int sampleRate)
 {
@@ -819,7 +822,7 @@ void GetFullSampledKey(INode* node, nArray<SampleKey> & sampleKeyArray, int samp
         sampleKeyArray.Append(sampleKey);
     }
 }
-
+*/
 
 //-----------------------------------------------------------------------------
 /**
@@ -833,7 +836,7 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
 
     int numBones = nMaxBoneManager::Instance()->GetNumBones();
 
-    typedef nArray<SampleKey> Keys;
+    typedef nArray<nMaxSampleKey> Keys;
     Keys keys;
     keys.SetFixedSize(numBones);
 
@@ -845,7 +848,8 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
         const nMaxBoneManager::Bone &bone = nMaxBoneManager::Instance()->GetBone(boneIndex);
         INode* boneNode = bone.node;
 
-        GetFullSampledKey(boneNode, keysArray[boneIndex], sampleRate);
+        //GetFullSampledKey(boneNode, keysArray[boneIndex], sampleRate);
+        nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
     }
 
     int numAnimStates = this->noteTrack.GetNumStates();
@@ -879,7 +883,7 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
 
             for (int boneIdx=0; boneIdx<numBones; boneIdx++)
             {
-                nArray<SampleKey> tmpSampleArray = keysArray[boneIdx];
+                nArray<nMaxSampleKey> tmpSampleArray = keysArray[boneIdx];
 
                 //INode* bone = nMaxBoneManager::Instance()->FindBoneNodeByIndex(boneIdx);
 
@@ -900,7 +904,7 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
                     int key_idx = firstKey - sceneFirstKey + clip * numClipKeys + clipKey;
                     n_iclamp(key_idx, 0, tmpSampleArray.Size());
                     //Matrix3 tm = tmpSampleArray[key_idx].tm;
-                    SampleKey& skey = tmpSampleArray[key_idx];
+                    nMaxSampleKey& skey = tmpSampleArray[key_idx];
 
                     keyTrans.Set(vector4(-skey.pos.x, skey.pos.z, skey.pos.y, 0.0f));
                     animCurveTrans.SetKey(clipKey, keyTrans);
