@@ -16,6 +16,7 @@
 #   07-Nov-00   floh    new target type 'mll' for maya plugins
 #   01-Feb-01   floh    support for setdoxycfg keyword
 #   24-Jul-02   floh    added Xbox support
+#   31-Jul-03   floh    removed N_EXPORT macros from generated package files
 #--------------------------------------------------------------------
 
 global includePath
@@ -31,7 +32,6 @@ source "$home/bin/makedepend.tcl"
 #   mod(i,dir)          - directory where source files reside
 #   mod(i,files)        - list of source files for module 'name'
 #   mod(i,headers)      - list of header files for module 'name'
-#   mod(i,version)      - version file for module 'name', can be empty
 #   mod(i,objs)         - object file names for win32 (generated)
 #   mod(i,srcs)         - source file names for win32 (generated)
 #   mod(i,hdrs)         - header file names
@@ -55,6 +55,7 @@ source "$home/bin/makedepend.tcl"
 #   tar(i,rsrc_win32)           - win32 specific resource files
 #   tar(i,frameworks_macosx)    - macosx specific frameworks
 #   tar(i,doxycfg)              - location of Doxygen config file
+#   tar(i,prebuild_win32)       - command to execute on prebuild
 #--------------------------------------------------------------------
 
 global mod
@@ -278,7 +279,6 @@ proc beginmodule {name} {
     set mod($num_mods,dir)          ""
     set mod($num_mods,files)        ""
     set mod($num_mods,headers)      ""
-    set mod($num_mods,version)      ""
     set mod($num_mods,type)         ""
 }
 
@@ -324,16 +324,6 @@ proc setheaders {file_list} {
 }
 
 #--------------------------------------------------------------------
-#   setversion $version_file
-#   04-Mar-00   floh    created
-#--------------------------------------------------------------------
-proc setversion {version_file} {
-    global mod
-    global num_mods
-    set mod($num_mods,version) $version_file
-}
-
-#--------------------------------------------------------------------
 #   endmodule
 #   04-Mar-00   floh    created
 #--------------------------------------------------------------------
@@ -364,7 +354,6 @@ proc dumpmodules { } {
         puts " dir:         $mod($i,dir)"
         puts " files:       $mod($i,files)"
         puts " headers:     $mod($i,headers)"
-        puts " version: $mod($i,version)"
     }
 }
 
@@ -392,6 +381,7 @@ proc begintarget {name} {
     set tar($num_tars,frameworks_macosx)    ""
     set tar($num_tars,doxycfg)              ""
     set tar($num_tars,doxytitle)            ""
+    set tar($num_tars,prebuild_win32)       ""
 }
 
 #--------------------------------------------------------------------
@@ -486,6 +476,16 @@ proc setdoxycfg {filename} {
     global tar
     set tar($num_tars,doxycfg)   $filename
 }
+
+#--------------------------------------------------------------------
+#   setprebuild_win32 $cmdline
+#   01-Oct-03   floh    created
+#--------------------------------------------------------------------
+proc setprebuild_win32 {cmdline} {
+    global num_tars
+    global tar
+    set tar($num_tars,prebuild_win32) $cmdline
+}    
 
 #--------------------------------------------------------------------
 #   setlibs_win32 $libs
@@ -701,16 +701,14 @@ proc genpacksrc {tarname} {
             set initproc "n_init_$curMod"
             set finiproc "n_fini_$curMod"
             set newproc  "n_new_$curMod"
-            set versproc "n_version_$curMod"
             puts $cid "extern \"C\" bool $initproc (nClass *, nKernelServer *);"
             puts $cid "extern \"C\" void $finiproc (void);"
             puts $cid "extern \"C\" void *$newproc (void);"
-            puts $cid "extern \"C\" char *$versproc (void);"
         }
     }
-    puts $cid "extern \"C\" void N_EXPORT n_addmodules(nKernelServer *);"
-    puts $cid "extern \"C\" void N_EXPORT n_remmodules(nKernelServer *);"
-    puts $cid "void N_EXPORT n_addmodules(nKernelServer *ks)"
+    puts $cid "extern \"C\" void n_addmodules(nKernelServer *);"
+    puts $cid "extern \"C\" void n_remmodules(nKernelServer *);"
+    puts $cid "void n_addmodules(nKernelServer *ks)"
     puts $cid "\{"
     for {set j 0} {$j < [llength $tar($i,mods)]} {incr j} {
         set curMod [lindex $tar($i,mods) $j]
@@ -721,12 +719,11 @@ proc genpacksrc {tarname} {
             set initproc "n_init_$curMod"
             set finiproc "n_fini_$curMod"
             set newproc  "n_new_$curMod"
-            set versproc "n_version_$curMod"
-            puts $cid "    ks->AddModule(\"$curMod\",$initproc,$finiproc,$newproc,$versproc);"
+            puts $cid "    ks->AddModule(\"$curMod\",$initproc,$finiproc,$newproc);"
         }
     }
     puts $cid "\}"
-    puts $cid "void N_EXPORT n_remmodules(nKernelServer *)"
+    puts $cid "void n_remmodules(nKernelServer *)"
     puts $cid "\{"
     puts $cid "\}"
     puts $cid "//----------------------------------------------------------"
@@ -760,8 +757,8 @@ global mod
     puts $cid {#undef __WIN32__}
     puts $cid {#endif}
     
-    puts $cid "extern \"C\" void N_EXPORT n_addmodules(nKernelServer *);"
-    puts $cid "extern \"C\" void N_EXPORT n_remmodules(nKernelServer *);"
+    puts $cid "extern \"C\" void n_addmodules(nKernelServer *);"
+    puts $cid "extern \"C\" void n_remmodules(nKernelServer *);"
     for {set i 0} {$i < [llength $list_of_targets]} {incr i} {
         set t [findtargetbyname [lindex $list_of_targets $i]]
         
@@ -791,11 +788,9 @@ global mod
                 set initproc "n_init_$curMod"
                 set finiproc "n_fini_$curMod"
                 set newproc  "n_new_$curMod"
-                set versproc "n_version_$curMod"
                 puts $cid "extern \"C\" bool $initproc (nClass *, nKernelServer *);"
                 puts $cid "extern \"C\" void $finiproc (void);"
                 puts $cid "extern \"C\" void *$newproc (void);"
-                puts $cid "extern \"C\" char *$versproc (void);"
             }
         }
         
@@ -805,7 +800,7 @@ global mod
         }
     }
 
-    puts $cid "void N_EXPORT n_addmodules(nKernelServer *ks)"
+    puts $cid "void n_addmodules(nKernelServer *ks)"
     puts $cid "\{"
     for {set i 0} {$i < [llength $list_of_targets]} {incr i} {
 
@@ -837,8 +832,7 @@ global mod
                 set initproc "n_init_$curMod"
                 set finiproc "n_fini_$curMod"
                 set newproc  "n_new_$curMod"
-                set versproc "n_version_$curMod"
-                puts $cid "    ks->AddModule(\"$curMod\",$initproc,$finiproc,$newproc,$versproc);"
+                puts $cid "    ks->AddModule(\"$curMod\",$initproc,$finiproc,$newproc);"
             }
         }
 
@@ -848,7 +842,7 @@ global mod
         }        
     }
     puts $cid "\}"
-    puts $cid "void N_EXPORT n_remmodules(nKernelServer *)"
+    puts $cid "void n_remmodules(nKernelServer *)"
     puts $cid "\{"
     puts $cid "\}"
     puts $cid "//----------------------------------------------------------"
