@@ -87,6 +87,8 @@ public:
     void FreeChunk(nChunkHeader *);
     /// Allocate memory
     void *Malloc(int, const char *, int);
+    /// Reallocate memory
+    void *Realloc(void *, int, const char *, int);
     /// Free memory
     void Free(void *);
 };
