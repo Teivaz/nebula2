@@ -1,12 +1,14 @@
 a:link { color: #0066CC; text-decoration: none; }
-a:visited { color: #436976; text-decoration: none; }
 a:hover{ color: #B52010; text-decoration: underline; }
+a:visited { color: #436976; text-decoration: none; }
 a.code{ color: #436976; font-weight: normal; text-decoration: none; }
 a.coderef{ color: #436976; font-weight: normal; }
 a.el{ font-weight: bold; text-decoration: none; }
 a.elref, caption { font-weight: bold; }
 a.qindex{ font-weight: normal; white-space: nowrap; }
 a.qindexref{ }
+/* this is repeated to fix a difference in browser rendering, perhaps should be set for each class of <a> */
+a:hover{ color: #B52010; text-decoration: underline; }
 body { background: #FFFFFF; color: #000000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 70%; margin: 0; }
 div.ah{ background: #000000; color: #FFFFFF; font-weight: bold; margin-bottom: 3px; margin-top: 3px; }
 div.footer{ background: #B0C2D7; border: 1px solid #436976; color: #000000; font-style: normal; margin-top: 5em; padding-bottom: 3px; text-align: center; }
@@ -19,7 +21,10 @@ div.header a {margin-right: 1em; }
 div.header a:visited, div.footer a:visited { color: #436976; font-weight: bold; }
 div.header a:hover, div.footer a:hover { color: #B52010; font-weight: bold; text-decoration: none; }
 div.index { padding-right: 10px; text-align: right; }
-div.maindox { padding: 1em; padding-top: 0; }
+/* This is the only way I can find that gives a reasonable rendering in Mozilla and IE6.
+   This does look slightly different in the two browsers, but stops both of them from displaying
+   horizontal scroll bars when unecessary. */
+div.maindox { margin: 2%; width: 96%; }
 div.nav { float: left; }
 dl.el{ margin-left: -1cm; }
 font.charliteral{ color: #008080; }
