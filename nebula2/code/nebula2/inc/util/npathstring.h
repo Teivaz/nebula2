@@ -162,7 +162,11 @@ nPathString::CheckExtension(const char* ext) const
 {
     n_assert(ext);
     const char* extStr = this->GetExtension();
-    return (0 == (strcmp(ext, extStr)));
+    if (extStr)
+    {
+        return (0 == (strcmp(ext, extStr)));
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
