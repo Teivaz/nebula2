@@ -33,7 +33,7 @@ private:
     class nStackNode : public nNode
     {
 #if defined(__WIN32__)
-    #if _MSCVER < 1300
+    #if _MSC_VER < 1300
         friend nStack;
     #else
         friend class nStack;
