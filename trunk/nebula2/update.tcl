@@ -70,9 +70,9 @@ proc configure_gui {} {
     .window.menubar add cascade -label Run -menu .window.menubar.run \
         -underline 0
     menu .window.menubar.run -tearoff 0
-    .window.menubar.run add command -label "Select Compiler..." -underline 5 \
+    .window.menubar.run add command -label "Select Compiler..." -underline 7 \
         -command { select_generator }
-    .window.menubar.run add command -label "Select Workspaces..." -underline 5 \
+    .window.menubar.run add command -label "Select Workspaces..." -underline 7 \
         -command { select_workspaces }
     .window.menubar.run add separator
     .window.menubar.run add command -label "Run" -underline 0 \
