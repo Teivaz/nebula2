@@ -51,22 +51,26 @@ set platform [get_platform]
 
 # Load the data
 loadbldfiles
-dump_data loadbld
+if { $debug } {
+    dump_data loadbld
+}
 
 # Massage data (generation, etc.)
 fixmods
 fixbundles
 fixtargets
 fixworkspaces
-dump_data generatebld
-dump_api_data generateapibld
-
-
+if { $debug } {
+    dump_data generatebld
+    dump_api_data generateapibld
+}
 
 # ETERNAL TODO: Properly validate data 
 puts "\n**** Validating bld files"
  
-dump_api_data validatebld   
+if { $debug } {
+    dump_api_data validatebld   
+}
 add_pkgs
 
 puts "\n->Done loading bld files."
