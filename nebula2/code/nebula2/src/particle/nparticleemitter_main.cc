@@ -12,24 +12,25 @@ int nParticleEmitter::nextKey = 0;
 /**
 */
 nParticleEmitter::nParticleEmitter():
-    key(nextKey++),
+    meshGroupIndex(0),
     scale(1.0f),
-    particlesFollowEmitter(false),
     alive(true),
     active(true),
-    loop(true),
     fatalException(false),
-    activityDistance(100.0f),
-    emissionDuration(10.0),
-    spreadAngle(0.0f),
-    birthDelay(0.0f),
-    startRotation(0.0f),
+    lastEmissionVertex(0),
+    randomKey(0),
     startTime(-1.0),
     lastEmission(0.0),
     prevTime(0.0),
-    randomKey(0),
-    lastEmissionVertex(0),
-    meshGroupIndex(0),
+    emissionDuration(10.0),
+    loop(true),
+    activityDistance(100.0f),
+    spreadAngle(0.0f),
+    birthDelay(0.0f),
+    startRotation(0.0f),
+    renderOldestFirst(true),
+    particlesFollowEmitter(false),
+    key(nextKey++),
     curves(CurveTypeCount, 0, nEnvelopeCurve())
 {
     int i;
