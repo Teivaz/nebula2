@@ -37,12 +37,14 @@ public:
     void SetExportUvs(bool status);
     void SetExportTangents(bool status);
     void SetExportHiddenNodes(bool status);
+    void SetGeomScaleValue(float val);
 
     bool ExportNormals();
     bool ExportColors();
     bool ExportUvs();
     bool ExportTangents();
     bool ExportHiddenNodes();
+    float GetGeomScaleValue() const;
     /// @}
 
     // @name Animation options
@@ -119,6 +121,8 @@ protected:
     int weightTrashHold;
     /// flag for adding joint name.
     bool addJointName;
+    /// geometry scaling value.
+    float geomScale;
     /// @}
 
     /// @name assign and path variables.
@@ -314,6 +318,18 @@ inline
 bool nMaxOptions::HasJointName() const
 {
     return this->addJointName;
+}
+//-----------------------------------------------------------------------------
+inline
+void nMaxOptions::SetGeomScaleValue(float val)
+{
+    this->geomScale = val;
+}
+//-----------------------------------------------------------------------------
+inline
+float nMaxOptions::GetGeomScaleValue() const
+{
+    return this->geomScale;
 }
 //-----------------------------------------------------------------------------
 #endif
