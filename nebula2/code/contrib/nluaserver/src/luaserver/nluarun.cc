@@ -111,13 +111,13 @@ char *nLuaServer::Prompt(char *buf, int size)
 
 
 //--------------------------------------------------------------------
-//  Run(const char *cmd_str, const char *& result)
+//  Run(const char *cmdStr, const char *& result)
 //--------------------------------------------------------------------
-bool nLuaServer::Run(const char *cmd_str, const char*& result)
+bool nLuaServer::Run(const char *cmdStr, const char*& result)
 {
-    n_assert(cmd_str);
+    n_assert(cmdStr);
 
-    bool retval = lua_dostring(this->L, cmd_str);
+    bool retval = lua_dostring(this->L, cmdStr);
 
     result = _lua_tostring(this->L, 0);
     return !retval;
@@ -128,9 +128,9 @@ bool nLuaServer::Run(const char *cmd_str, const char*& result)
 //  This function will allow explicit return statements from the
 //  file - and requires it for output.
 //--------------------------------------------------------------------
-bool nLuaServer::RunScript(const char *fname, const char*& result)
+bool nLuaServer::RunScript(const char *filename, const char*& result)
 {
-    n_assert(fname);
+    n_assert(filename);
     char buf[N_MAXPATH];
     int filesize;
     char *cmdbuf;
@@ -138,7 +138,7 @@ bool nLuaServer::RunScript(const char *fname, const char*& result)
     
     nFileServer2* fileServer = this->ref_FileServer.get();
     nFile* nfile = fileServer->NewFileObject();
-    fileServer->ManglePath(fname, buf, N_MAXPATH);
+    fileServer->ManglePath(filename, buf, N_MAXPATH);
     if (!nfile->Open(buf, "r"))
     {
         result = 0;

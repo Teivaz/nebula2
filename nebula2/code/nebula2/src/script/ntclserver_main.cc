@@ -496,20 +496,20 @@ nTclServer::Run(const char *cmdStr, const char*& result)
     Evaluate a Tcl script.
 */
 bool 
-nTclServer::RunScript(const char *fname, const char*& result)
+nTclServer::RunScript(const char *filename, const char*& result)
 {
     result = 0;
 
 #ifdef __MICROTCL__
     // the microtcl Tcl_EvalFile() implementation accepts Nebula paths
     this->printError = true;
-    int errCode = Tcl_EvalFile(this->interp, (char*) fname);
+    int errCode = Tcl_EvalFile(this->interp, (char*) filename);
     this->printError = false;
 
 #else
     // standard tcl implementations need a mangled path
     char buf[N_MAXPATH];
-    kernelServer->GetFileServer()->ManglePath(fname,buf,sizeof(buf));
+    kernelServer->GetFileServer()->ManglePath(filename,buf,sizeof(buf));
     
     this->printError = true;
     int errCode = Tcl_EvalFile(this->interp, buf);
@@ -522,11 +522,11 @@ nTclServer::RunScript(const char *fname, const char*& result)
     {
         if (this->GetFailOnError())
         {
-            n_error("*** Tcl error '%s' in file %s line %d.\n", result, fname, this->interp->errorLine);
+            n_error("*** Tcl error '%s' in file %s line %d.\n", result, filename, this->interp->errorLine);
         }
         else
         {
-            n_printf("*** Tcl error '%s' in file %s line %d.\n", result, fname, this->interp->errorLine);
+            n_printf("*** Tcl error '%s' in file %s line %d.\n", result, filename, this->interp->errorLine);
         }
         return false;
     }             
