@@ -292,7 +292,7 @@ int nOctree::CollectByFrustum(nGfxServer2* gfx_server,
     n_assert(ext_array);
     n_assert(NULL == ext_collect_array);
 
-    transform_clip_planes_for_frustum(gfx_server);
+    init_clip_planes_for_frustum(gfx_server);
 
     this->num_collected     = 0;
     this->ext_collect_array = ext_array;
@@ -308,58 +308,67 @@ int nOctree::CollectByFrustum(nGfxServer2* gfx_server,
 
 //-------------------------------------------------------------------
 /**
-    Initialize the clip planes for view frustum collection.
-    It is enough to call once at building octree.
- */
-void nOctree::InitClipPlanes(const nCamera2* camera)
-{
-    float minx, maxx, miny, maxy, minz, maxz;
+    Initialize clip planes for view frustum with view-projection matrix.
 
-    n_assert (camera != NULL);
-    camera->GetViewVolume(minx, maxx, miny, maxy, minz, maxz);
-
-    // The setup of the planes here are a bit mucky:
-    //      0 - front
-    //      1 - back
-    //      2 - left
-    //      3 - right
-    //      4 - top
-    //      5 - bottom
-    float angle_h = n_atan(maxx / minz);
-    float cos_h   = n_cos(angle_h);
-    float sin_h   = n_sin(angle_h);
-    float angle_v = n_atan(maxy / minz);
-    float cos_v   = n_cos(angle_v);
-    float sin_v   = n_sin(angle_v);
-
-    // D = - dot(p.normal, point_in_plane)
-    clipPlanes[0].set(0.0f, 0.0f, -1.0f, 0.0f);
-    clipPlanes[0].w = -( -1.0f * -minz);
-    clipPlanes[1].set(0.0f, 0.0f, 1.0f, 0.0f);
-    clipPlanes[1].w = -( 1.0f * -maxz);
-    clipPlanes[2].set(cos_h, 0.0f, -sin_h, 0.0f);
-    clipPlanes[3].set(-cos_h, 0.0f, -sin_h, 0.0f);
-    clipPlanes[4].set(0.0f, -cos_v, -sin_v, 0.0f);
-    clipPlanes[5].set(0.0f, cos_v, -sin_v, 0.0f);
-}
-
-//-------------------------------------------------------------------
-/**
-    Transform clip planes by current camera angle
+    this code from at:
+    http://www2.ravensoft.com/users/ggribb/plane%20extraction.pdf
 */
-void nOctree::transform_clip_planes_for_frustum(nGfxServer2* gfx_server)
+void nOctree::init_clip_planes_for_frustum(nGfxServer2* gfx_server)
 {
-    // Transform clip planes by current camera angle
-    // Plane normals are transformed by the transpose of the inverse
-    // matrix for transforming points.  Just transpose since mv is
-    // already inverted
-    const matrix44& tmp_viewer = gfx_server->GetTransform(nGfxServer2::TransformType::InvView);
-    matrix44 inv_viewer = tmp_viewer;
-    inv_viewer.transpose();
+    const matrix44& inv_viewer = gfx_server->GetTransform(nGfxServer2::TransformType::InvView);
+    const matrix44& projection = gfx_server->GetTransform(nGfxServer2::TransformType::Projection);
 
-    // Would have used plane but vector4 can be transformed
-    for (int i = 0; i < 6; ++i)
-        clipPlanes[i] = inv_viewer * clipPlanes[i];
+    matrix44 m = inv_viewer * projection;
+
+    // front
+    clipPlanes[0].x = m.M13;
+    clipPlanes[0].y = m.M23;
+    clipPlanes[0].z = m.M33;
+    clipPlanes[0].w = m.M43;
+
+    // back
+    clipPlanes[1].x = (m.M14 - m.M13);
+    clipPlanes[1].y = (m.M24 - m.M23);
+    clipPlanes[1].z = (m.M34 - m.M33);
+    clipPlanes[1].w = (m.M44 - m.M43);
+
+    // left
+    clipPlanes[2].x = (m.M14 + m.M11);
+    clipPlanes[2].y = (m.M24 + m.M21);
+    clipPlanes[2].z = (m.M34 + m.M31);
+    clipPlanes[2].w = (m.M44 + m.M41);
+
+    // right
+    clipPlanes[3].x = (m.M14 - m.M11);
+    clipPlanes[3].y = (m.M24 - m.M21);
+    clipPlanes[3].z = (m.M34 - m.M31);
+    clipPlanes[3].w = (m.M44 - m.M41);
+
+    // top
+    clipPlanes[4].x = (m.M14 - m.M12);
+    clipPlanes[4].y = (m.M24 - m.M22);
+    clipPlanes[4].z = (m.M34 - m.M32);
+    clipPlanes[4].w = (m.M44 - m.M42);
+
+    // bottom
+    clipPlanes[5].x = (m.M14 + m.M12);
+    clipPlanes[5].y = (m.M24 + m.M22);
+    clipPlanes[5].z = (m.M34 + m.M32);
+    clipPlanes[5].w = (m.M44 + m.M42);
+
+    //normaize planes.
+    float denom;
+    vector3 tmp;
+    
+    for (int i=0; i<6; i++)
+    {
+        tmp.set (clipPlanes[i].x, clipPlanes[i].y, clipPlanes[i].z);
+        denom = 1.0f / tmp.len();
+        clipPlanes[i].x *= denom;
+        clipPlanes[i].y *= denom;
+        clipPlanes[i].z *= denom;
+        clipPlanes[i].w *= denom;
+    }
 }
 
 //-------------------------------------------------------------------
