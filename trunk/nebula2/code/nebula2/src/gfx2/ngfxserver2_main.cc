@@ -29,7 +29,10 @@ nGfxServer2::nGfxServer2() :
     featureSetOverride(InvalidFeatureSet),
     cursorVisibility(System),
     cursorDirty(true),
-    inDialogBoxMode(false)
+    inDialogBoxMode(false),
+    gamma(0.8f),
+    brightness(0.8f),
+    contrast(0.7f)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -210,12 +213,17 @@ nGfxServer2::OpenDisplay()
 //------------------------------------------------------------------------------
 /**
     Close the display.
+
+    23-Aug-04    kims    added calling RestoreGamma().
 */
 void
 nGfxServer2::CloseDisplay()
 {
     n_assert(this->displayOpen);
     this->displayOpen = false;
+
+    // restore to original.
+    this->RestoreGamma();
 }
 
 //------------------------------------------------------------------------------
@@ -864,4 +872,24 @@ nGfxServer2::EndShapes()
 {
     n_assert(this->inBeginShapes);
     this->inBeginShapes = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    23-Aug-04    kims    created
+*/
+void
+nGfxServer2::AdjustGamma()
+{
+    // empty.
+}
+
+//------------------------------------------------------------------------------
+/**
+    23-Aug-04    kims    created
+*/
+void
+nGfxServer2::RestoreGamma()
+{
+    // empty.
 }
