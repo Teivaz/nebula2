@@ -610,14 +610,13 @@ nD3D9Shader::BeginPass(int pass)
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
 
-/*
-    FIXME: DX9.0c implementation
-
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     HRESULT hr = this->effect->BeginPass(pass);
     n_dxtrace(hr, "nD3D9Shader:BeginPass() failed on effect");
-*/
+#else
     HRESULT hr = this->effect->Pass(pass);
     n_dxtrace(hr, "nD3D9Shader: Pass() failed on effect");
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -626,13 +625,13 @@ nD3D9Shader::BeginPass(int pass)
 void
 nD3D9Shader::CommitChanges()
 {
-/*
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
 
     HRESULT hr = this->effect->CommitChanges();
     n_dxtrace(hr, "nD3D9Shader: CommitChanges() failed on effect");
-*/
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -641,15 +640,13 @@ nD3D9Shader::CommitChanges()
 void
 nD3D9Shader::EndPass()
 {
-/*
-    FIXME: DX9.0c implementation
-
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
     
     HRESULT hr = this->effect->EndPass();
     n_dxtrace(hr, "nD3D9Shader: EndPass() failed on effect");
-*/
+#endif
 }
 
 //------------------------------------------------------------------------------
