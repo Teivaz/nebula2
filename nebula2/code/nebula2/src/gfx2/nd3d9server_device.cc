@@ -76,10 +76,10 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
     // table of valid pixel format combinations
     // { adapterFormat, backbufferFormat, zbufferFormat }
     D3DFORMAT formatTable[][3] = {
-        { D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, D3DFMT_D24S8 },
-        { D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, D3DFMT_D24X4S4 },
-        { D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, D3DFMT_D24X8 },
-        { D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, D3DFMT_D16 },
+        // { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24S8 },
+        // { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X4S4 },
+        { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X8 },
+        { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D16 },
         { D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN },
     };
     if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
@@ -145,12 +145,11 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
 void
 nD3D9Server::UpdateFeatureSet()
 {
+    // get d3d device caps
+    HRESULT hr = this->d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, N_D3D9_DEVICETYPE, &(this->devCaps));
+    n_assert(SUCCEEDED(hr));
     if (this->devCaps.VertexShaderVersion >= D3DVS_VERSION(2, 0))
     {
-        this->featureSet = DX9;
-        n_printf("nD3D9Server: DX9 feature set implemented.\n");
-
-        /*
         // check if floating point textures are available as render target
         HRESULT hr = this->d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
                                                    N_D3D9_DEVICETYPE,
@@ -160,16 +159,12 @@ nD3D9Server::UpdateFeatureSet()
                                                    D3DFMT_R32F);
         if (SUCCEEDED(hr))
         {
-            this->featureSet = DX9;
-            n_printf("nD3D9Server: DX9 feature set implemented.\n");
+            this->featureSet = DX9FLT;
         }
         else
-  
         {
-            this->featureSet = DX7;
-            n_printf("nD3D9Server: DX7 feature set implemented.\n");
+            this->featureSet = DX9;
         }
-        */
     }
     else if (this->devCaps.VertexShaderVersion >= D3DVS_VERSION(1, 1))
     {
@@ -183,19 +178,17 @@ nD3D9Server::UpdateFeatureSet()
         if (SUCCEEDED(hr))
         {
             this->featureSet = DX8SB;
-            n_printf("nD3D9Server: DX8SB feature set available.\n");
         }
         else
         {
             this->featureSet = DX8;
-            n_printf("nD3D9Server: DX8 feature set available.\n");
         }
     }
     else
     {
         this->featureSet = DX7;
-        n_printf("nD3D9Server: DX7 feature set implemented.\n");
     }
+    n_printf("nD3D9Server detected feature set '%s' (pre-override)\n", nGfxServer2::FeatureSetToString(this->featureSet));
 }
 
 //------------------------------------------------------------------------------
@@ -227,13 +220,6 @@ nD3D9Server::DeviceOpen()
     D3DFORMAT zbufFormat;
     this->FindBufferFormats(dispFormat, backFormat, zbufFormat);
 
-    // get d3d device caps for HW T&L decision
-    hr = this->d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, N_D3D9_DEVICETYPE, &(this->devCaps));
-    n_assert(SUCCEEDED(hr));
-
-    // update the feature set member
-    this->UpdateFeatureSet();
-
     // define device behaviour flags
     #ifdef __NEBULA_NO_THREADS__
     this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
@@ -259,12 +245,10 @@ nD3D9Server::DeviceOpen()
 
                 // NOTE: do not use a pure device so that the D3D runtime
                 // will filter redundant renderstate changes for us
-                /*
                 if (this->devCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
                 {
                     this->deviceBehaviourFlags |= D3DCREATE_PUREDEVICE;
                 }
-                */
             }
             else
             {
@@ -332,6 +316,14 @@ nD3D9Server::DeviceOpen()
     }
     n_assert(this->d3d9Device);
 
+    // create effect pool
+    hr = D3DXCreateEffectPool(&this->effectPool);
+    if (FAILED(hr))
+    {
+        n_error("nD3D9Server: Could not create effect pool!\n");
+        return false;
+    }
+
     // fill display mode structure
     memset(&(this->d3dDisplayMode), 0, sizeof(this->d3dDisplayMode));
     hr = this->d3d9Device->GetDisplayMode(0, &(this->d3dDisplayMode));
@@ -358,6 +350,7 @@ nD3D9Server::DeviceClose()
 {
     n_assert(this->d3d9);
     n_assert(this->d3d9Device);
+    n_assert(this->effectPool);
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(!this->windowHandler.IsWindowMinimized());
     n_assert(this->windowHandler.GetHwnd());
@@ -365,12 +358,13 @@ nD3D9Server::DeviceClose()
     // unload all resources
     this->OnDeviceLost();
 
+    // destroy the effect pool
+    this->effectPool->Release();
+    this->effectPool = 0;
+
     // destroy d3d device
     this->d3d9Device->Release();
     this->d3d9Device = 0;
-    
-    // update the feature set variable
-    this->UpdateFeatureSet();
     
     // minimze the app window
     this->windowHandler.MinimizeWindow();
@@ -435,7 +429,7 @@ nD3D9Server::TestResetDevice()
     else
     {
         // device cannot be restored at this time
-        n_sleep(0.1);
+        // n_sleep(0.1);
         return false;
     }
 }
@@ -447,7 +441,14 @@ nD3D9Server::TestResetDevice()
 nGfxServer2::FeatureSet
 nD3D9Server::GetFeatureSet()
 {
+    if (InvalidFeatureSet != this->featureSetOverride)
+    {
+        return this->featureSetOverride;
+    }
+    else
+    {
     return this->featureSet;
+
 }
 
 //------------------------------------------------------------------------------
@@ -538,6 +539,10 @@ nD3D9Server::QueryStatistics()
 void
 nD3D9Server::UpdateCursor()
 {
+    if (this->cursorDirty)
+    {
+        this->cursorDirty = false;
+	
     // make sure current mouse cursor texture is loaded
     nTexture2* tex = this->curMouseCursor.GetTexture();
     if (tex)
@@ -548,11 +553,6 @@ nD3D9Server::UpdateCursor()
             n_assert(mouseCursorLoaded);
             this->cursorDirty = true;
         }
-
-        // need to update D3D?
-        if (this->cursorDirty)
-        {
-            this->cursorDirty = false;
 
             HRESULT hr;
             IDirect3DTexture9* d3d9Tex = ((nD3D9Texture*)tex)->GetTexture2D();
@@ -567,6 +567,23 @@ nD3D9Server::UpdateCursor()
             int hotspotY = this->curMouseCursor.GetHotspotY();
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
             n_assert(SUCCEEDED(hr));
+
+            switch (this->cursorVisibility)
+            {
+                case nGfxServer2::None:
+                    SetCursor(NULL);
+                    this->d3d9Device->ShowCursor(FALSE);
+                    break;
+
+                case nGfxServer2::System:
+                    this->d3d9Device->ShowCursor(FALSE);
+                    break;
+
+                case nGfxServer2::Custom:
+                    SetCursor(NULL);
+                    this->d3d9Device->ShowCursor(TRUE);
+                    break;
+            }
         }
     }
     // NOTE: cursor visibility is handled inside WinProc!
