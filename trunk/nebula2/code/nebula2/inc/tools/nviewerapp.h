@@ -91,10 +91,6 @@ public:
     void SetStageScript(const char* name);
     /// get the light stage script
     const char* GetStageScript() const;
-    /// set the input binding script (required)
-    void SetInputScript(const char* name);
-    /// get the input binding script
-    const char* GetInputScript() const;
     /// enable/disable the logo overlay
     void SetOverlayEnabled(bool b);
     /// get overlay enabled status
@@ -152,7 +148,6 @@ protected:
     nString scriptServerClass;
     nString startupScript;
     nString stageScript;
-    nString inputScript;
     nString gfxServerClass;
     bool isOpen;
     bool isOverlayEnabled;
@@ -384,27 +379,6 @@ nViewerApp::GetStageScript() const
     return this->stageScript.IsEmpty() ? 0 : this->stageScript.Get();
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nViewerApp::SetInputScript(const char* script)
-{
-    this->inputScript = script;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nViewerApp::GetInputScript() const
-{
-    return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
-}
-
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 /**
 */
