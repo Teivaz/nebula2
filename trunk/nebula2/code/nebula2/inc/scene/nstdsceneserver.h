@@ -9,23 +9,10 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_SCENESERVER_H
 #include "scene/nsceneserver.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
-#endif
 
-#undef N_DEFINES
-#define N_DEFINES nStdSceneServer
-#include "kernel/ndefdllclass.h"
-
-class nVariableServer;
 class nTexture2;
 class nShader2;
 class nMesh2;
@@ -40,32 +27,43 @@ public:
     virtual ~nStdSceneServer();
     /// render the scene
     virtual void RenderScene();
+    /// present the scene
+    virtual void PresentScene();
 
     static nKernelServer* kernelServer;
 
 private:
-    enum
-    {
-        MaxLightsPerShape = 16,
-    };
-
+    /// initialize required resources
+    bool LoadResources();
+    /// unload resources
+    void UnloadResources();
+    /// check if resources are valid
+    bool AreResourcesValid();
     /// render shape objects in scene
     void RenderShapes(uint shaderFourCC);
     /// render light/shape interaction for all lit shapes
     void RenderLightShapes(uint shaderFourCC);
     /// split scene nodes into light and shape nodes
     void SplitNodes();
-    /// collect all lights influencing a given shape
-    void CollectShapeLights(const Group& shapeGroup);
+    /// sort shape nodes for optimal rendering
+    void SortNodes();
+    /// static qsort() compare function
+    static int __cdecl Compare(const ushort* i1, const ushort* i2);
+
+    // Used for sorting.
+    static nStdSceneServer* self;
+    static vector3 viewerPos;
+
+    enum
+    {
+        MaxLightsPerShape = 2
+    };
 
     int numLights;
-    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
-
     int numShapes;
-    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
 
-    int numShapeLights;
-    ushort shapeLightArray[MaxLightsPerShape];      // indices of light nodes intersecting a shape
+    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
+    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
 };
 //------------------------------------------------------------------------------
 #endif
