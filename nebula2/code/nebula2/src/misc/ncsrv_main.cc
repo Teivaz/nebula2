@@ -83,12 +83,13 @@ static int keyKillSet[] = {
     N_KEY_NONE
 };
 
+nConServer* nConServer::Singleton = 0;
+
 //------------------------------------------------------------------------------
 /**
 */
 nConServer::nConServer() :
     refInputServer("/sys/servers/input"),
-    refGfxServer("/sys/servers/gfx"),
     refScriptServer("/sys/servers/script"),
     envClass(0),
     consoleOpen(false),
@@ -99,6 +100,9 @@ nConServer::nConServer() :
     ctrlDown(false),
     scrollOffset(0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     memset(this->inputBuffer, 0, sizeof(this->inputBuffer));
     this->envClass = kernelServer->FindClass("nenv");
     n_assert(this->envClass);
@@ -109,7 +113,8 @@ nConServer::nConServer() :
 */
 nConServer::~nConServer()
 {
-    // empty
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -207,7 +212,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     }
 
     // render buffer lines
-    nGfxServer2* gfxServer = this->refGfxServer.get();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     char line[1024];
     int i;
     float xPos = -1.0f;
@@ -265,7 +270,7 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
         int maxLinesOnScreen = displayHeight / fontHeight;
 
         // for each watcher variable
-        nGfxServer2* gfxServer = this->refGfxServer.get();
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
         char line[N_MAXPATH];
         float xPos = -1.0f;
         float yPos = -1.0f;
@@ -323,7 +328,7 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
 void
 nConServer::Render()
 {
-    int displayHeight = this->refGfxServer->GetDisplayMode().GetHeight();
+    int displayHeight = nGfxServer2::Instance()->GetDisplayMode().GetHeight();
     const int fontHeight = 16;
 
     if (this->consoleOpen)
