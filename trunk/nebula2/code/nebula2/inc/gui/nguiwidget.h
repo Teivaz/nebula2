@@ -474,6 +474,7 @@ nGuiWidget::SetBlinkRate(double rate)
 //-----------------------------------------------------------------------------
 /**
 */
+inline
 bool
 nGuiWidget::GetBlinking() const
 {
