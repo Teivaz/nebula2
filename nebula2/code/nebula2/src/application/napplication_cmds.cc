@@ -121,6 +121,8 @@ n_getappname(void* slf, nCmd* cmd)
     s
     @info
     Retrieve name of the current state.
+
+    04-Oct-04    kims    created
 */
 static 
 void n_getcurrentstate(void* slf, nCmd* cmd)
@@ -139,6 +141,8 @@ void n_getcurrentstate(void* slf, nCmd* cmd)
     v
     @info
     Specify the state with given string of the state name.
+
+    04-Oct-04    kims    created
 */
 static 
 void n_setstate(void* slf, nCmd* cmd)
