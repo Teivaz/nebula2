@@ -70,7 +70,6 @@ nApplication::Open()
     // initialize Nebula2 runtime
     this->refScriptServer    = this->CreateScriptServer();
     this->refGfxServer       = this->CreateGfxServer();
-    this->refInputServer     = this->CreateInputServer();
     this->refConServer       = this->CreateConsoleServer();
     this->refResourceServer  = this->CreateResourceServer();
     this->refSceneServer     = this->CreateSceneServer();
@@ -127,6 +126,12 @@ nApplication::Open()
     this->refScriptServer->Run("OnGraphicsStartup", scriptResult);
     this->refVideoServer->Open();
 
+    // create the input server
+    // late initialization of input server, because it relies on
+    // refGfxServer->OpenDisplay having been called
+    this->refInputServer = this->CreateInputServer();
+    this->refScriptServer->Run("OnMapInput", scriptResult);
+
     // initialize audio
     if (!this->refAudioServer->Open())
     {
@@ -152,9 +157,6 @@ nApplication::Open()
     nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
     this->refGuiServer->SetRootWindowPointer(userRootWindow);
 
-    // initialize input mapping
-    this->refScriptServer->Run("OnMapInput", scriptResult);
-
     // initialize camera
     this->appCamera = this->CreateAppCamera();
 
@@ -179,6 +181,35 @@ nApplication::Close()
     {
         this->refAppStates->Release();
     }
+
+    // close servers
+    if (this->refGuiServer.isvalid())
+    {
+        this->refGuiServer->Close();
+    }
+    if (this->refSceneServer.isvalid())
+    {
+        this->refSceneServer->Close();
+    }
+    if (this->refAudioServer.isvalid())
+    {
+       this->refAudioServer->Close();
+    }
+    if (this->refVideoServer.isvalid())
+    {
+        this->refVideoServer->Close();
+    }
+    if (this->refGfxServer.isvalid())
+    {
+        this->refGfxServer->CloseDisplay();
+    }
+    if (this->refLocaleServer.isvalid())
+    {
+        this->refLocaleServer->Close();
+    }
+
+    // close the remote port
+    kernelServer->GetRemoteServer()->Close();
 
     this->refLocaleServer->Release();
     this->refPrefServer->Release();
@@ -361,11 +392,11 @@ nApplication::DoFrame()
     nGuiServer::Instance()->SetTime(this->time);
 
     // trigger the various servers
-    if (!this->refScriptServer->Trigger()) 
+    if (!this->refScriptServer->Trigger())
     {
         this->SetQuitRequested(true);
     }
-    if (!this->refGfxServer->Trigger()) 
+    if (!this->refGfxServer->Trigger())
     {
         this->SetQuitRequested(true);
     }
@@ -375,14 +406,14 @@ nApplication::DoFrame()
     nVideoServer::Instance()->Trigger();
 
     // perform logic triggering
-    this->curState->OnFrame();    
+    this->curState->OnFrame();
 
     // perform rendering
     nAudioServer3* audioServer = nAudioServer3::Instance();
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nSceneServer* sceneServer = nSceneServer::Instance();
 
-    audioServer->BeginScene(this->time);        
+    audioServer->BeginScene(this->time);
     audioServer->UpdateListener(this->audioListener);
     if (!gfxServer->InDialogBoxMode())
     {
