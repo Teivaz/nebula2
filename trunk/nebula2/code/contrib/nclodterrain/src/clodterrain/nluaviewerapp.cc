@@ -49,7 +49,6 @@ nLuaViewerApp::Open()
     // initialize Nebula servers
     this->refScriptServer   = (nScriptServer*)    kernelServer->New("nluaserver", "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
     this->refSceneServer    = (nSceneServer*)     kernelServer->New("nstdsceneserver", "/sys/servers/scene");
@@ -67,9 +66,6 @@ nLuaViewerApp::Open()
         kernelServer->GetFileServer()->SetAssign("proj", kernelServer->GetFileServer()->GetAssign("home"));
     }
 
-    // define the simple input mapping
-    this->DefineInputMapping();
-
     // create scene graph root node
     this->refRootNode = (nTransformNode*) kernelServer->New("ntransformnode",  "/usr/scene");
 
@@ -80,6 +76,12 @@ nLuaViewerApp::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+
+    // late initialization of input server, because it relies on 
+    // refGfxServer->OpenDisplay having been called
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    // define the simple input mapping
+    this->DefineInputMapping();
 
     // load the default Nebula startup.tcl script
     const char* result;
