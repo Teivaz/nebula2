@@ -1,0 +1,100 @@
+#-------------------------------------------------------------------------------
+#   filelist.txt
+#   ============
+#   Lists all public files in the Radonlabs directory for the Nebula
+#   OpenSource version. Use the packsrc.tcl script in the bin directory
+#   to gather them.
+#   
+#   (C) 2003 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+
+#--- /
+public . filelist.txt
+public . readme.txt
+
+#--- /bin
+public bin readme.tcl
+public bin makedepend.tcl
+public bin makemake.tcl
+public bin makesln.tcl
+public bin startup.tcl
+public bin stdlight.tcl
+public bin util.tcl
+public bin packsrc.tcl
+
+#--- /bin/win32
+public bin/win32 devil.dll
+public bin/win32 ilu.dll
+public bin/win32 nebula.ico
+
+#--- /export
+public export                       readme.txt
+public export/gfxlib                readme.txt
+public export/gfxlib/examples       torus.n2
+public export/gfxlib/examples       schwirl.n2
+public export/meshes                readme.txt
+public export/meshes                plane.n3d2
+public export/meshes/examples       torus.n3d2
+public export/meshes/examples       schwirl.n3d2
+public export/shaders               readme.txt
+public export/shaders/dx9           *.fx
+public export/textures              readme.txt
+public export/textures/system       *.{tga,ntx}
+public export/textures/examples     brick.bmp
+public export/textures/examples     bump.tga
+public export/anims/examples        schwirl.nanim2
+
+#--- /code/doc/nebula2
+public doc/nebula2 *.txt
+
+#--- /code/nebula2/inc
+public code/nebula2/inc             *.h
+public code/nebula2/inc/anim2       *.h
+public code/nebula2/inc/character   *.h
+public code/nebula2/inc/file        *.h
+public code/nebula2/inc/gfx2        *.h
+public code/nebula2/inc/il          *.h
+public code/nebula2/inc/input       *.h
+public code/nebula2/inc/kernel      *.h
+public code/nebula2/inc/mathlib     *.h
+public code/nebula2/inc/misc        *.h
+public code/nebula2/inc/resource    *.h
+public code/nebula2/inc/scene       *.h
+public code/nebula2/inc/script      *.h
+public code/nebula2/inc/tools       *.h
+public code/nebula2/inc/util        *.h
+public code/nebula2/inc/variable    *.h  
+
+#--- /code/nebula2/src
+public code/nebula2/src             dummy.cc
+public code/nebula2/src             microtcl.epk
+public code/nebula2/src             ndinput8.epk
+public code/nebula2/src             ndirect3d9.epk
+public code/nebula2/src             nebulalib.epk
+public code/nebula2/src             nkernel.epk
+public code/nebula2/src             nnebula.epk
+public code/nebula2/src             ntoollib.epk
+public code/nebula2/src             tools.epk
+public code/nebula2/src             update.tcl
+public code/nebula2/src/anim2       *.{cc,h}
+public code/nebula2/src/character   *.{cc,h}
+public code/nebula2/src/file        *.{cc,h}
+public code/nebula2/src/gfx2        *.{cc,h}
+public code/nebula2/src/input       *.{cc,h}
+public code/nebula2/src/kernel      *.{cc,h}
+public code/nebula2/src/microtcl    *.{cc,h}
+public code/nebula2/src/misc        *.{cc,h}
+public code/nebula2/src/packages    readme.txt
+public code/nebula2/src/resource    *.{cc,h}
+public code/nebula2/src/scene       *.{cc,h}
+public code/nebula2/src/script      *.{cc,h}
+public code/nebula2/src/tools       *.{cc,h}
+public code/nebula2/src/variable    *.{cc,h}
+
+#--- /code/nebula/vstudio
+public code/nebula2/vstudio         readme.txt
+
+#--- /code/nebula/lib/win32_vc_i386
+public code/nebula2/lib/win32_vc_i386    DevIL.lib
+public code/nebula2/lib/win32_vc_i386    ilu.lib
+public code/nebula2/lib/win32_vc_i386    nv_math.lib

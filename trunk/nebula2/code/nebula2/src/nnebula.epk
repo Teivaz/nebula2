@@ -1,0 +1,226 @@
+#-------------------------------------------------------------------------------
+#   nnebula.epk
+#   ===========
+#   Nebula class package definition.
+#   (C) 2000 A.Weissflog
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+beginmodule nvariableserver
+    setdir variable
+    setfiles { nvariableserver_main nvariableserver_cmds }
+    setheaders { nvariableserver nvariablecontext nvariable }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nsceneserver
+    setdir scene
+    setfiles { nsceneserver_main }
+    setheaders { nsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmrtsceneserver
+    setdir scene
+    setfiles { nmrtsceneserver_main nmrtsceneserver_emissive }
+    setheaders { nmrtsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nscenenode
+    setdir scene
+    setfiles { nscenenode_main nscenenode_cmds }
+    setheaders { nscenenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntransformnode
+    setdir scene
+    setfiles { ntransformnode_main ntransformnode_cmds }
+    setheaders { ntransformnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nabstractshadernode
+    setdir scene
+    setfiles { nabstractshadernode_main nabstractshadernode_cmds }
+    setheaders { nabstractshadernode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaterialnode
+    setdir scene
+    setfiles { nmaterialnode_main nmaterialnode_cmds }
+    setheaders { nmaterialnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nvolumelightnode
+    setdir scene
+    setfiles { nvolumelightnode_main }
+    setheaders { nvolumelightnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nshapenode
+    setdir scene
+    setfiles { nshapenode_main nshapenode_cmds }
+    setheaders { nshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimator
+    setdir scene
+    setfiles { nanimator_main nanimator_cmds }
+    setheaders { nanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nvectoranimator
+    setdir scene
+    setfiles { nvectoranimator_main nvectoranimator_cmds }
+    setheaders { nvectoranimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntransformanimator
+    setdir scene
+    setfiles { ntransformanimator_main ntransformanimator_cmds }
+    setheaders { ntransformanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nbinscriptserver
+    setdir script
+    setfiles nbinscriptserver_main
+    setheaders nbinscriptserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntclserver
+    setdir script
+    setfiles { ntclserver_main ntclserver_commands }
+    setheaders ntclserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nnpkfileserver
+    setdir file
+    setfiles { 
+        nnpkfileserver_main 
+        nnpkfileserver_cmds 
+        nnpkfilewrapper 
+        nnpkfile
+        nnpkdirectory
+    }
+    setheaders { 
+        nnpkfileserver
+        nnpkfilewrapper
+        nnpktoc
+        nnpktocentry
+        nnpkfile
+        nnpkdirectory
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ninputserver
+    setdir input
+    setfiles { 
+        ninput_main ninput_events ninput_states ninput_log 
+        ninput_inpmap ninput_cmds 
+        ninputdevice njoystickdevice nrelmousedevice nkeyboarddevice
+    }
+    setheaders { 
+        ninputserver ninputdevice njoystickdevice nrelmousedevice nkeyboarddevice
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresourceserver
+    setdir resource
+    setfiles { nresourceserver_main }
+    setheaders { nresourceserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresource
+    setdir resource
+    setfiles { nresource_main }
+    setheaders { nresource }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmesh2
+    setdir gfx2
+    setfiles { nmesh2_main }
+    setheaders { nmesh2 }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntexture2
+    setdir gfx2
+    setfiles { ntexture2_main }
+    setheaders { ntexture2 }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nntxfile
+    setmodtype cpplib
+    setdir gfx2
+    setfiles { nntxfile }
+    setheaders { nntxfile }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nshader2
+    setdir gfx2
+    setfiles { nshader2_main }
+    setheaders { nshader2 }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ngfxserver2
+    setdir gfx2
+    setfiles { ngfxserver2_main ngfxserver2_cmds nwireframerenderer }
+    setheaders { ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nprimitivetypes nwireframerenderer }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskinanimator
+    setdir scene
+    setfiles { nskinanimator_main nskinanimator_cmds }
+    setheaders nskinanimator
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskinshapenode
+    setdir scene
+    setfiles { nskinshapenode_main nskinshapenode_cmds }
+    setheaders nskinshapenode
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncharacter
+    setdir character
+    setmodtype cpplib    
+    setfiles { ncharacter2 ncharskinrenderer }
+    setheaders { ncharacter2 ncharskeleton ncharskinrenderer ncharjoint ncharjointpalette }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimationserver
+    setdir anim2
+    setfiles { nanimationserver_main }
+    setheaders { nanimationserver nanimclip nanimstate nanimstatearray }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimation
+    setdir anim2
+    setfiles { nanimation_main }
+    setheaders { nanimation }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmemoryanimation
+    setdir anim2
+    setfiles { nmemoryanimation_main }
+    setheaders { nmemoryanimation }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nconserver
+    setdir misc
+    setfiles { ncsrv_main ncsrv_cmds }
+    setheaders { nconserver }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nnebula
+    settype lib
+    setmods {
+        nbinscriptserver ntclserver nnpkfileserver nvariableserver 
+        ninputserver nresourceserver nresource nntxfile nmesh2 
+        ntexture2 nshader2 ngfxserver2
+        nsceneserver nmrtsceneserver 
+        nscenenode ntransformnode nabstractshadernode 
+        nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
+        ntransformanimator nskinanimator nskinshapenode
+        ncharacter nanimationserver nanimation nmemoryanimation nconserver
+    }
+endtarget
+
+#-------------------------------------------------------------------------------
+# EOF
+#-------------------------------------------------------------------------------

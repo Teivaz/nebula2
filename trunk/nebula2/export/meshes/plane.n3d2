@@ -1,0 +1,13 @@
+type n3d2
+numgroups 1
+numvertices 4
+vertexwidth 5
+numtris 2
+vertexcomps coord uv0 
+g default 0 4 0 2
+v -1.0 +1.0 0.5 0.0 0.0
+v +1.0 +1.0 0.5 1.0 0.0
+v +1.0 -1.0 0.5 1.0 1.0
+v -1.0 -1.0 0.5 0.0 1.0
+t 0 2 1
+t 0 3 2
