@@ -222,8 +222,8 @@ nShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setmeshusage ---
         cmd = ps->GetCmd(this, 'SMSU');
-        const char* flagString = nMesh2::ConvertUsageFlagsToString(this->GetMeshUsage()).Get();
-        cmd->In()->SetS(flagString);
+        nString flagString = nMesh2::ConvertUsageFlagsToString(this->GetMeshUsage());
+        cmd->In()->SetS(flagString.Get());
         ps->PutCmd(cmd);
 
         return true;
