@@ -13,7 +13,7 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 /**
     To make plugin Classes like a ExporterClass to Max it's required:
     - to create a class description by inherit from ClassDesc
-    - you must count the number of ClassDesc you wan't to publish to Max, returned in LibNumberClasses()
+    - you must count the number of ClassDesc you want to publish to Max, returned in LibNumberClasses()
     - you must return a pointer to an instance of the right inherited ClassDesc in LibClassDesc(int i).
     
     The common solution for this task is:
@@ -33,7 +33,7 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
     A 'better' solution:
     - the inherited ClassDecs's is created with the template 
     tRegisteredClassDesc<class TYPE> and must only a static instance must be created.
-    So you have only tow lines code that defines all you need to know about this tasks
+    So you have only two lines code that defines all you need to know about this tasks
     - the linkedClassDesc is parrent for all the individual ClassDesc's created in step 1.
     All instances of linkedClassDesc share a nArray and in the Consturctoe they regiester
     themself in this nArray (Because all instances of them are defined static, the call to
@@ -55,7 +55,7 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
     at differnt adresses. It's not clear if this is a bug of my code,
     or a bug in the linker or something else. If you have a idea about this please
     notify me, to inspect the bug see part2 of the constructor below.
-    A workarond of this bug is that I compare the Class_ID of all instances and only register
+    A workaround of this bug is that I compare the Class_ID of all instances and only register
     uniqes.
 */
 registeredClassDesc::registeredClassDesc(
@@ -63,12 +63,14 @@ registeredClassDesc::registeredClassDesc(
     Class_ID theClassID,
     SClass_ID theSuperClassID,
     int isPublic,
-    const char* theCateory)
+    const char* theCateory,
+    const char* internalName)
 : myClassName(theClassName),
   myClassID(theClassID),
   mySuperClassID(theSuperClassID),
   myIsPublic(isPublic),
-  myCateory(theCateory)
+  myCateory(theCateory),
+  myInternalName (internalName)
 {
     bool unique = true;
     
@@ -173,8 +175,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 __declspec( dllexport ) ClassDesc*
 LibClassDesc(int i)
 {
+    
 	if (registeredClassDesc::array)
 	    return registeredClassDesc::array->At(i);
+    
 	return 0;
 }
 
@@ -185,8 +189,10 @@ LibClassDesc(int i)
 __declspec( dllexport ) int
 LibNumberClasses() 
 {
+    
 	if (registeredClassDesc::array)
 	    return registeredClassDesc::array->Size();
+    
 	return 0;
 }
 
