@@ -3,7 +3,10 @@
 
 //------------------------------------------------------------------------------
 /**
-    A GuiWidget which enables the user to draw curves and text
+    @class nGuiCanvas
+    @ingroup Gui
+
+    @brief A GuiWidget which enables the user to draw lines and text.
 
     (C) 2004 RadonLabs GmbH
 */    
@@ -49,6 +52,8 @@ public:
     void AppendLineToCurve(line2 line);
     /// Add a new text label
     void AddLabel(const char* text, vector2 pos, vector4 col, const char* font);
+    /// Get the rectangle of a label
+    rectangle GetLabelRect(int id);
 
     /// Get number of curves on canvas
     int GetCurveCount() const;
@@ -135,8 +140,8 @@ private:
         vector4 color;
     };
 
-    nArray< LineArray* > curvearray;
-    nArray< Text* > textarray;
+    nArray< LineArray > curvearray;
+    nArray< Text > textarray;
     nArray< curveDesc > curveDescArray;
 
     bool inCurve;
@@ -167,7 +172,7 @@ nGuiCanvas::nGuiCanvas() :
 inline
 nGuiCanvas::~nGuiCanvas()
 {
-    n_delete[] this->vertexBasePtr;
+    n_delete_array(this->vertexBasePtr);
     this->vertexBasePtr = 0;
 }
 
@@ -194,12 +199,12 @@ nGuiCanvas::AppendLineToCurve(line2 line)
 
     if ( this->activeCurveID == this->curvearray.Size() )
     {
-        nGuiCanvas::LineArray* thecurve = n_new nGuiCanvas::LineArray(line, this->currentCurveColor, this->activeCurveID);
+        nGuiCanvas::LineArray thecurve(line, this->currentCurveColor, this->activeCurveID);
         this->curvearray.Append(thecurve);
     }
     else
     {
-        curvearray.At( this->activeCurveID )->AppendLineToCurve( line );
+        curvearray.At( this->activeCurveID ).AppendLineToCurve( line );
     }
 }
 

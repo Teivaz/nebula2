@@ -71,7 +71,7 @@ nArray2<TYPE>::Alloc(uint w, uint h)
     n_assert((w > 0) && (h > 0));
     this->width = w;
     this->height = h;
-    this->elements = new TYPE[w * h];
+    this->elements = n_new_array(TYPE, w * h);
 }
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ nArray2<TYPE>::Delete()
     this->height = 0;
     if (this->elements)
     {
-        delete[] this->elements;
+        n_delete_array(this->elements);
         this->elements = 0;
     }
 }

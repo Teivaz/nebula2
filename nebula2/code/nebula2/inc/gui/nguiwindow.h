@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiWindow
-    @ingroup NebulaGuiSystem
-    @brief A window which may contain widgets.
+    @ingroup Gui
+    @brief A window that defines a rectangular area on screen and may contain
+    other widgets.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -78,6 +79,7 @@ protected:
 
     nString escapeCommand;
     nClass* windowClass;
+    
     bool modal;
     bool dismissed;
     bool closeRequested;

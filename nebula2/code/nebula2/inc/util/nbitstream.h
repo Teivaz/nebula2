@@ -5,7 +5,8 @@
     @class nBitStream
     @ingroup NebulaDataTypes
 
-    author: mark
+    @brief A bitstream codec class.
+
     (C) 2000 Radon Labs GmbH
 */
 #include <memory.h>
@@ -131,7 +132,7 @@ nBitStream::nBitStream(int size)
     writeable   = false;
     readable    = false;
 
-    stream = n_new unsigned char[size];
+    stream = n_new_array(unsigned char, size);
     if (stream != 0)
     {
         memset(stream, 0, streamSize);
@@ -149,7 +150,7 @@ nBitStream::~nBitStream()
 {
     if (stream != 0)
     {
-        n_delete[] stream;
+        n_delete_array(stream);
     }
 }
 
@@ -410,10 +411,10 @@ nBitStream::Set(const uchar* s, int size)
     n_assert(size > 0);
 
     // delete old stream, if exits
-    if (stream != 0) n_delete[] stream;
+    if (stream != 0) n_delete_array(stream);
 
     // create and copy stream
-    stream = n_new unsigned char[size];
+    stream = n_new_array(unsigned char, size);
     n_assert(stream != 0);
     streamSize = size;
     memcpy(stream, s, size);
@@ -441,9 +442,9 @@ nBitStream::SetSize(int size)
 
     if (stream != 0)
     {
-        n_delete stream;
+        n_delete(stream);
     }
-    stream = n_new unsigned char[size];
+    stream = n_new_array(unsigned char, size);
     n_assert(stream != 0);
     streamSize = size;
     Clear();

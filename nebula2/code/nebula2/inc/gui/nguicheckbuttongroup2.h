@@ -2,14 +2,16 @@
 #define N_GUICHECKBUTTONGROUP2_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiCheckButtonGroup2
+    @ingroup Gui
+
     A new style check button group which creates its check buttons and
     places them in a horizontal row.
     
     (C) 2004 RadonLabs GmbH
 */    
 #include "gui/nguiformlayout.h"
-
-class nGuiCheckButton;
+#include "gui/nguicheckbutton.h"
 
 //------------------------------------------------------------------------------
 class nGuiCheckButtonGroup2 : public nGuiFormLayout
@@ -41,6 +43,8 @@ public:
     float GetButtonSpacing() const;
     /// append an option
     void AppendOption(const char* str);
+    /// append an tooltip
+    void AppendTooltip(const char* str);
     /// set current selection
     void SetSelection(int index);
     /// get current selection
@@ -51,18 +55,25 @@ public:
     virtual void OnHide();
     /// notify widget of an event
     virtual void OnEvent(const nGuiEvent& event);
+    /// handle mouse move
+    virtual bool OnMouseMoved(const vector2& mousePos);
 
-private:
+protected:
+
     /// update the child check button status
     void UpdateCheckButtons();
 
-    float buttonSpacing;
+    int selIndex;
     nArray<nString> options;
+    nArray<nString> tooltips;
+    nArray<nRef<nGuiCheckButton> > refCheckButtons;
+
+private:
+
+    float buttonSpacing;
     nArray<nString> defaultBrushes;
     nArray<nString> pressedBrushes;
     nArray<nString> highlightBrushes;
-    int selIndex;
-    nArray<nRef<nGuiCheckButton> > refCheckButtons;
 };
 
 //------------------------------------------------------------------------------
@@ -173,6 +184,16 @@ void
 nGuiCheckButtonGroup2::AppendOption(const char* str)
 {
     this->options.Append(str);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiCheckButtonGroup2::AppendTooltip(const char* str)
+{
+    this->tooltips.Append(str);
 }
 
 //------------------------------------------------------------------------------

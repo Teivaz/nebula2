@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiClientWindow
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A window with optional titlebar, close button, size handles and a
     client area.
     

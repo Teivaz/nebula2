@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiDockWindow
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief The global dock window which replaces the old scripting console as 
     Nebula's default ingame console.
     
@@ -36,8 +36,10 @@ protected:
     nAutoRef<nScriptServer> refScriptServer;
     nRef<nGuiButton> refConsoleButton;
     nRef<nGuiButton> refTexBrowserButton;
+    nRef<nGuiButton> refGfxBrowserButton;
     nRef<nGuiButton> refWatcherButton;
     nRef<nGuiButton> refSysInfoButton;
+    nRef<nGuiButton> refAdjustButton;
     nRef<nGuiButton> refHideButton;
     nRef<nGuiButton> refQuitButton;
 };

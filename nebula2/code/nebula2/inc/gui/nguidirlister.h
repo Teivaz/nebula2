@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiDirLister
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A complete directory listing widget.
     
     (C) 2004 RadonLabs GmbH
@@ -30,6 +30,10 @@ public:
     void SetIgnoreFiles(bool b);
     /// get ignore files flag
     bool GetIgnoreFiles() const;
+    /// set strip extension mode
+    void SetStripExtension(bool b);
+    /// get strip extension mode
+    bool GetStripExtension() const;
     /// set optional pattern
     void SetPattern(const char* pattern);
     /// get optional pattern
@@ -45,6 +49,7 @@ protected:
 
     nString dirPath;
     nString pattern;
+    bool stripExtension;
     bool ignoreSubDirs;
     bool ignoreFiles;
     bool dirty;
@@ -134,6 +139,29 @@ const char*
 nGuiDirLister::GetPattern() const
 {
     return this->pattern.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Enable disable strip extension.
+*/
+inline
+void
+nGuiDirLister::SetStripExtension(bool b)
+{
+    this->stripExtension = b;
+    this->dirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get strip extension mode.
+*/
+inline
+bool
+nGuiDirLister::GetStripExtension() const
+{
+    return this->stripExtension;
 }
 
 //------------------------------------------------------------------------------

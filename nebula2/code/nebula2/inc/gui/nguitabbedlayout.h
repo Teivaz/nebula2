@@ -2,6 +2,9 @@
 #define N_GUITABBEDLAYOUT_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTabbedLayout
+    @ingroup Gui
+
     A tabbed layout is a form layout which embeds several child form layouts
     which can be flipped through a row of tab buttons at the top.
 
@@ -20,7 +23,7 @@ public:
     /// destructor
     virtual ~nGuiTabbedLayout();
     /// set number of tabs
-    void SetNumTabs(int n);
+    virtual void SetNumTabs(int n);
     /// get number of tabs
     int GetNumTabs() const;
     /// set the currently active tab
@@ -38,18 +41,22 @@ public:
     /// notify widget of an event
     virtual void OnEvent(const nGuiEvent& event);
 
-private:
-    /// release existing tab objects
-    void ClearTabs();
-    /// make active tab visible, inactive tabs invisible
-    void UpdateActivePanel();
-
+protected:
     struct Tab
     {
         nRef<nGuiCheckButton> refTabButton;
         nRef<nGuiFormLayout> refChildLayout;
     };
+
+    /// make active tab visible, inactive tabs invisible
+    void UpdateActivePanel();
+
     nArray<Tab> tabs;
+
+private:
+    /// release existing tab objects
+    void ClearTabs();
+
     int activeTab;
 };
 
@@ -72,6 +79,7 @@ nGuiTabbedLayout::SetActiveTab(int i)
 {
     this->activeTab = i;
     this->UpdateActivePanel();
+    this->UpdateLayout(this->rect);
 }
 
 //------------------------------------------------------------------------------

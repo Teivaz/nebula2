@@ -32,6 +32,10 @@ public:
     nString(const char* str);
     /// copy constructor
     nString(const nString& rhs);
+    /// set to int val
+    nString(int intVal);
+    /// set to float val
+    nString(float floatVal);
     /// destructor
     ~nString();
     /// = operator
@@ -75,13 +79,15 @@ public:
     /// append string
     void Append(const nString& str);
     /// append a range of characters
-    void AppendRange(const char* str, ushort numChars);
+    void AppendRange(const char* str, uint numChars);
     /// append int value
     void AppendInt(int val);
     /// append float value
     void AppendFloat(float val);
     /// convert string to lower case
-    void ToLower();
+	void ToLower();
+    /// convert string to upper case
+	void ToUpper();
     /// get first token (this will destroy the string)
     const char* GetFirstToken(const char* whiteSpace);
     /// get next token (this will destroy the string)
@@ -110,12 +116,34 @@ public:
     nString Substitute(const char* str, const char* substStr) const;
     /// convert string inplace from UTF-8 to 8-bit ANSI
     void UTF8toANSI();
+    /// convert ANSI to UTF-8 in place
+    void ANSItoUTF8();
+    /// get pointer to extension (without the dot)
+    const char* GetExtension() const;
+    /// check if extension matches (no dot in the extension!)
+    bool CheckExtension(const char* ext) const;
+    /// convert backslashes to slashes
+    void ConvertBackslashes();
+    /// remove extension
+    void StripExtension();
+    /// extract the part after the last directory separator
+    nString ExtractFileName() const;
+    /// extract the last directory of the path
+    nString ExtractLastDirName() const;
+    /// extract the part before the last directory separator
+    nString ExtractDirName() const;
+    /// extract path until last slash
+    nString ExtractToLastSlash() const;
+    /// check if this string matches the given pattern
+    bool MatchPattern(const nString& pattern) const;
 
 protected:
     /// copy contents
     void Copy(const nString& src);
     /// delete contents
     void Delete();
+    /// get pointer to last directory separator
+    char* GetLastSlash() const;
 
     enum
     {
@@ -273,6 +301,28 @@ nString::nString(const nString& rhs) :
 /**
 */
 inline
+nString::nString(int intVal) :
+    string(0),
+    strLen(0)
+{
+    this->SetInt(intVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString::nString(float floatVal) :
+    string(0),
+    strLen(0)
+{
+    this->SetFloat(floatVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 const char*
 nString::Get() const
 {
@@ -321,7 +371,7 @@ nString::operator=(const char* rhs)
 */
 inline
 void
-nString::AppendRange(const char* str, ushort numChars)
+nString::AppendRange(const char* str, uint numChars)
 {
     n_assert(str);
     if (numChars > 0)
@@ -537,6 +587,25 @@ nString::ToLower()
         while ((c = *ptr))
         {
             *ptr++ = tolower(c);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::ToUpper()
+{
+    char* str = (char*) (this->string ? this->string : this->localString);
+    if (str)
+    {
+        char c;
+        char* ptr = (char*) str;
+        while ((c = *ptr))
+        {
+            *ptr++ = toupper(c);
         }
     }
 }
@@ -858,7 +927,7 @@ nString::Substitute(const char* matchStr, const char* substStr) const
 
     // walk original string for occurances of str
     const char* occur;
-    while ((occur = strstr(ptr, matchStr)))
+    while (occur = strstr(ptr, matchStr))
     {
         // append string fragment until match
         dest.AppendRange(ptr, occur - ptr);
@@ -912,7 +981,7 @@ nString::UTF8toANSI()
     uchar* src = (uchar*) this->Get();
     uchar* dst = src;
     uchar c;
-    while ((c = *src++))
+    while (c = *src++)
     {
         if (c >= 0x80)
         {
@@ -958,6 +1027,255 @@ nString::UTF8toANSI()
     }
     *dst = 0;
 }
+//------------------------------------------------------------------------------
+/**
+    Convert contained ANSI string to UTF-8 in place.
+*/
+inline
+void
+nString::ANSItoUTF8()
+{
+    n_assert(!this->IsEmpty());
+    int bufSize = this->Length() * 2 + 1;
+    char* buffer = n_new_array(char, bufSize);
+    char* dstPtr = buffer;
+    const char* srcPtr = this->Get();
+    unsigned char c;
+    while (c = *srcPtr++)
+    {
+        // note: this only covers the 2 cases that the character
+        // is between 0 and 127 and between 128 and 255
+        if (c < 128)
+        {
+            *dstPtr++ = c;
+        }
+        else
+        {
+            *dstPtr++ = 192 + (c / 64);
+            *dstPtr++ = 128 + (c % 64);
+        }
+    }
+    *dstPtr = 0;
+    this->Set(buffer);
+    n_delete_array(buffer);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Converts backslashes to slashes.
+*/
+inline
+void
+nString::ConvertBackslashes()
+{
+    char* ptr = (char*) this->Get();
+    int i;
+    for (i = 0; i <= this->strLen; i++)
+    {
+        if (ptr[i] == '\\')
+        {
+            ptr[i] = '/';
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    @return     pointer to extension (without the dot), or 0
+*/
+inline
+const char*
+nString::GetExtension() const
+{
+    const char* str = this->Get();
+    const char* ext = strrchr(str, '.');
+    if (ext)
+    {
+        ext++;
+        if (ext[0] != 0)
+        {
+            return ext;
+        }
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true if file extension matches.
+
+    @param  ext     extension string (without the dot)
+    @return         true if extension matches
+*/
+inline
+bool
+nString::CheckExtension(const char* ext) const
+{
+    n_assert(ext);
+    const char* extStr = this->GetExtension();
+	if (0 == extStr)
+    {
+		return false;
+    }
+    return (0 == (strcmp(ext, extStr)));
+}
+
+//------------------------------------------------------------------------------
+/**
+    Remove the file extension.
+*/
+inline
+void
+nString::StripExtension()
+{
+    char* ext = (char*) this->GetExtension();
+    if (ext)
+    {
+        ext[-1] = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get a pointer to the last directory separator.
+*/
+inline
+char*
+nString::GetLastSlash() const
+{
+    char* s = (char*) this->Get();
+    char* lastSlash = strrchr(s, '/');
+    if (0 == lastSlash) lastSlash = strrchr(s, '\\');
+    if (0 == lastSlash) lastSlash = strrchr(s, ':');
+    return lastSlash;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a nString object containing the part after the last
+    path separator.
+*/
+inline
+nString
+nString::ExtractFileName() const
+{
+    nString pathString;
+    char* lastSlash = this->GetLastSlash();
+    if (lastSlash)
+    {
+        pathString = &(lastSlash[1]);
+    }
+    else
+    {
+        pathString = this->Get();
+    }
+    return pathString;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a nString object containing the last directory of the path, i.e.
+    a category.
+
+    - 17-Feb-04     floh    fixed a bug when the path ended with a slash
+*/
+inline
+nString
+nString::ExtractLastDirName() const
+{
+    nString pathString(*this);
+    char* lastSlash = pathString.GetLastSlash();
+    
+    // special case if path ends with a slash
+    if (lastSlash)
+    {
+        if (0 == lastSlash[1])
+        {
+            *lastSlash = 0;
+            lastSlash = pathString.GetLastSlash();
+        }
+
+        char* secLastSlash = 0;
+        if (0 != lastSlash)
+        {
+            *lastSlash = 0; // cut filename
+            secLastSlash = pathString.GetLastSlash();
+            if (secLastSlash)
+            {
+                *secLastSlash = 0;
+                return nString(secLastSlash+1);
+            }
+        }
+    }
+    return "";
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a nString object containing the part before the last
+    directory separator.
+    
+    NOTE: I left my fix in that returns the last slash (or colon), this was 
+    necessary to tell if a dirname is a normal directory or an assign.     
+
+    - 17-Feb-04     floh    fixed a bug when the path ended with a slash
+*/
+inline
+nString
+nString::ExtractDirName() const
+{
+    nString pathString(*this);
+    char* lastSlash = pathString.GetLastSlash();
+
+    // special case if path ends with a slash
+    if (lastSlash)
+    {
+        if (0 == lastSlash[1])
+        {
+            *lastSlash = 0;
+            lastSlash = pathString.GetLastSlash();
+        }
+        if (lastSlash)
+        {
+            *++lastSlash = 0;
+        }
+    }
+    return pathString;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a path string object which contains of the complete path
+    up to the last slash. Returns an empty string if there is no
+    slash in the path.
+*/
+inline
+nString
+nString::ExtractToLastSlash() const
+{
+    nString pathString(*this);
+    char* lastSlash = pathString.GetLastSlash();
+    if (lastSlash)
+    {
+        lastSlash[1] = 0;
+    }
+    else
+    {
+        pathString = "";
+    }
+    return pathString;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nString::MatchPattern(const nString& pattern) const
+{
+    return n_strmatch(this->Get(), pattern.Get());
+}
+
 //------------------------------------------------------------------------------
 #endif
 

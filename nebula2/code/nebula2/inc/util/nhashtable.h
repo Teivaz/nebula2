@@ -37,7 +37,7 @@ inline
 nHashTable::nHashTable(int size)
 {
     this->htable_size = size;
-    this->htable = n_new nStrList[size];
+    this->htable = n_new_array(nStrList, size);
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ nHashTable::nHashTable(int size)
 */
 inline nHashTable::~nHashTable()
 {
-    n_delete[] this->htable;
+    n_delete_array(this->htable);
 }
 
 //------------------------------------------------------------------------------

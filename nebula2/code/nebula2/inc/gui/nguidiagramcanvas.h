@@ -1,103 +1,149 @@
 #ifndef N_GUIDIAGRAMCANVAS_H
 #define N_GUIDIAGRAMCANVAS_H
+//------------------------------------------------------------------------------
+/**
+    @class nGuiDiagramCanvas
+    @ingroup Gui
 
-#include "gui/nguicanvas.h"
+    @brief A GuiWidget which creates a diagram canvas.
 
-class nGuiDiagramCanvas : public nGuiCanvas
+    (C) 2004 RadonLabs GmbH
+*/    
+
+#include "gui/nguiformlayout.h"
+
+class nGuiCanvas;
+class nGuiTextLabel;
+
+class nGuiDiagramCanvas : public nGuiFormLayout
 {
 public:
-
-    struct Border
-    {
-        float top;
-        float bottom;
-        float left;
-        float right;
-    };
-
     /// Constructor
     nGuiDiagramCanvas();
     /// Destructor
-    ~nGuiDiagramCanvas();
-    /// Called when the widget becomes visible
+    virtual ~nGuiDiagramCanvas();
+    /// Called when widget becomes visible
     virtual void OnShow();
-    /// Called every frame
-    virtual void OnFrame();
     /// Called when the widget becomes invisible
     virtual void OnHide();
-    /// Render canvas
-    virtual bool Render();
 
-    /// Set number of horizontal axis-markers
-    void SetNumHMarkers(int num);
-    /// Get number of horizontal axis-markers
-    int GetNumHMarkers() const;
-    /// Set number of vertical axis-markers
-    void SetNumVMarkers(int num);
-    /// Get number of vertical axis-markers
-    int GetNumVMarkers() const;
-    /// Set border between canvas-edge and axis
-    void SetBorder(float top, float bottom, float left, float right);
-    /// Get border between canvas-edge and axis
-    nGuiDiagramCanvas::Border GetBorder() const;
-    /// Set color of the diagram-axis
-    void SetAxisColor(vector4 col);
-    /// Get color of the diagram-axis
-    vector4 GetAxisColor() const;
-    /// Set axis font
+    /// Get the Canvas member
+    nGuiCanvas* GetCanvas() const;
+
+    /// Set if the diagram-axis have labels
+    void SetHasAxisLabels(bool b);
+    /// Set if the x-axis markers have labels
+    void SetHasXAxisLabels(bool b);
+    /// Set if the y-axis markers have labels
+    void SetHasYAxisLabels(bool b);
+    /// Do the axis have labels
+    bool HasAxisLabels() const;
+    /// Does the x-axis have labels
+    bool HasXAxisLabels() const;
+    /// Does the y-axis have labels
+    bool HasYAxisLabels() const;
+    /// Set axis labels
+    void SetAxisLabels(const char* x, const char* y);
+    /// Set axis label font
     void SetAxisFont(const char* font);
-    /// Get axis fong
-    const char* GetAxisFont() const;
-    /// Set X-Axis label
-    void SetXAxisLabel(const char* xlabel);
-    /// Get X-Axis label
-    const char* GetXAxisLabel() const;
-    /// Set Y-Axis label
-    void SetYAxisLabel(const char* ylabel);
-    /// Get Y-Axis label
-    const char* GetYAxisLabel() const;
-    /// Set max. X-Axis value
-    void SetMaxXAxisValue(const int val);
-    /// Get max. X-Axis value
+    /// Set axis textcolor
+    void SetAxisTextColor(vector4 col);
+    /// Set min. x-axis value
+    void SetMinXAxisValue(int val);
+    /// Set max. x-axis value
+    void SetMaxXAxisValue(int val);
+    /// Set min. y-axis value
+    void SetMinYAxisValue(int val);
+    /// Set max. y-axis value
+    void SetMaxYAxisValue(int val);
+    /// Get max. x-axis value
     int GetMaxXAxisValue() const;
-    /// Set max. Y-Axis value
-    void SetMaxYAxisValue(const int val);
-    /// Get max. Y-Axis value
+    /// Get min. x-axis value
+    int GetMinXAxisValue() const;
+    /// Get max y-axis value
     int GetMaxYAxisValue() const;
+    /// Get min y-axis value
+    int GetMinYAxisValue() const;
+    /// Set number of X-axis markers
+    void SetNumXMarkers(int num);
+    /// Set number of Y-axis markers
+    void SetNumYMarkers(int num);
+
+    /// Optional Diagram header
+    void SetDiagramHeader(const char* header);
+    /// Set if the diagram has a header
+    void SetHasHeader(bool b);
+    /// Does the diagram have a header?
+    bool HasHeader() const;
+
 
 protected:
-    // empty
+
+    enum offset
+    {
+        Top = 0,
+        Bottom = 1,
+        Left = 2,
+        Right = 3,
+        ArrowLength = 4,
+
+        numOffsets = 5
+    };
+
+    float curveOffset[numOffsets];
 
 private:
-    Border border;
-    vector4 axisColor;
-    nString axisFont;
+
+    enum labels
+    {
+        XLabel = 0,
+        YLabel = 1,
+        Xmin = 2,
+        Xhalf = 3, 
+        Xmax = 4,
+        Ymin = 5,
+        Yhalf = 6,
+        Ymax = 7,
+
+        numTextLabels = 8
+    };  
+
+    nArray< nRef < nGuiTextLabel > > refTextLabel;
+    nRef<nGuiCanvas> refCanvas;
+
+    bool hasHeader;
+    nString header;
+    bool hasAxisLabels;
+    bool hasXAxisLabels;
+    bool hasYAxisLabels;
     nString xLabel;
     nString yLabel;
-    int numHMarkers;
-    int numVMarkers;
+    nString axisFont;
+    vector4 axisTextColor;
+    int minXValue;
     int maxXValue;
+    int minYValue;
     int maxYValue;
+    int numXMarkers;
+    int numYMarkers;
+
+    // Some colors
+    vector4 blackColor;
+    vector4 whiteColor;
+    vector4 grayColor;
+    vector4 redColor;
+    vector4 greenColor;
+
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void
-nGuiDiagramCanvas::SetXAxisLabel(const char* xlabel)
+nGuiCanvas*
+nGuiDiagramCanvas::GetCanvas() const
 {
-    this->xLabel = xlabel;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGuiDiagramCanvas::GetXAxisLabel() const
-{
-    return this->xLabel.Get();
+    return this->refCanvas.get();
 }
 
 //------------------------------------------------------------------------------
@@ -105,19 +151,19 @@ nGuiDiagramCanvas::GetXAxisLabel() const
 */
 inline
 void
-nGuiDiagramCanvas::SetYAxisLabel(const char* ylabel)
+nGuiDiagramCanvas::SetHasAxisLabels(bool b)
 {
-    this->yLabel = ylabel;
+    this->hasXAxisLabels = b;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const char*
-nGuiDiagramCanvas::GetYAxisLabel() const
+bool
+nGuiDiagramCanvas::HasAxisLabels() const
 {
-    return this->yLabel.Get();
+    return this->hasAxisLabels;
 }
 
 //------------------------------------------------------------------------------
@@ -125,9 +171,120 @@ nGuiDiagramCanvas::GetYAxisLabel() const
 */
 inline
 void
-nGuiDiagramCanvas::SetMaxXAxisValue(const int val)
+nGuiDiagramCanvas::SetHasXAxisLabels(bool b)
 {
-    this->maxXValue = val;
+    this->hasXAxisLabels = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetHasYAxisLabels(bool b)
+{
+    this->hasYAxisLabels = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiDiagramCanvas::HasYAxisLabels() const
+{
+    return this->hasYAxisLabels;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiDiagramCanvas::HasXAxisLabels() const
+{
+    return this->hasXAxisLabels;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetAxisLabels(const char* x, const char* y)
+{
+    this->xLabel = x;
+    this->yLabel = y;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetAxisFont(const char* font)
+{
+    this->axisFont = font;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetAxisTextColor(vector4 col)
+{
+    this->axisTextColor = col;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMinXAxisValue(int val)
+{
+    this->minXValue=val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMaxXAxisValue(int val)
+{
+    this->maxXValue=val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMinYAxisValue(int val)
+{
+    this->minYValue=val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMaxYAxisValue(int val)
+{
+    this->maxYValue=val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nGuiDiagramCanvas::GetMinXAxisValue() const
+{
+    return this->minXValue;
 }
 
 //------------------------------------------------------------------------------
@@ -144,10 +301,10 @@ nGuiDiagramCanvas::GetMaxXAxisValue() const
 /**
 */
 inline
-void
-nGuiDiagramCanvas::SetMaxYAxisValue(const int val)
+int
+nGuiDiagramCanvas::GetMinYAxisValue() const
 {
-    this->maxYValue = val;
+    return this->minYValue;
 }
 
 //------------------------------------------------------------------------------
@@ -165,39 +322,9 @@ nGuiDiagramCanvas::GetMaxYAxisValue() const
 */
 inline
 void
-nGuiDiagramCanvas::SetAxisFont(const char* font)
+nGuiDiagramCanvas::SetNumXMarkers(int num)
 {
-    this->axisFont=font;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGuiDiagramCanvas::GetAxisFont() const
-{
-    return this->axisFont.Get();
-}
-    
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiDiagramCanvas::SetNumHMarkers(int num)
-{
-    this->numHMarkers = num;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nGuiDiagramCanvas::GetNumHMarkers() const
-{
-    return this->numHMarkers;
+    this->numXMarkers=num;
 }
 
 //------------------------------------------------------------------------------
@@ -205,19 +332,9 @@ nGuiDiagramCanvas::GetNumHMarkers() const
 */
 inline
 void
-nGuiDiagramCanvas::SetNumVMarkers(int num)
+nGuiDiagramCanvas::SetNumYMarkers(int num)
 {
-    this->numVMarkers = num;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nGuiDiagramCanvas::GetNumVMarkers() const
-{
-    return this->numVMarkers;
+    this->numYMarkers=num;
 }
 
 //------------------------------------------------------------------------------
@@ -225,22 +342,9 @@ nGuiDiagramCanvas::GetNumVMarkers() const
 */
 inline
 void
-nGuiDiagramCanvas::SetBorder(float top, float bottom, float left, float right)
+nGuiDiagramCanvas::SetDiagramHeader(const char* header)
 {
-    this->border.top = top;
-    this->border.bottom = bottom;
-    this->border.left = left;
-    this->border.right = right;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nGuiDiagramCanvas::Border
-nGuiDiagramCanvas::GetBorder() const
-{
-    return this->border;
+    this->header = header;
 }
 
 //------------------------------------------------------------------------------
@@ -248,21 +352,19 @@ nGuiDiagramCanvas::GetBorder() const
 */
 inline
 void
-nGuiDiagramCanvas::SetAxisColor(vector4 col)
+nGuiDiagramCanvas::SetHasHeader(bool b)
 {
-    this->axisColor = col;
+    this->hasHeader = b;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-vector4
-nGuiDiagramCanvas::GetAxisColor() const
+bool
+nGuiDiagramCanvas::HasHeader() const
 {
-    return this->axisColor;
+    return this->hasHeader;
 }
-
-
 
 #endif

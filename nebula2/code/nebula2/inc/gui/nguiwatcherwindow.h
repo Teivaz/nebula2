@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiWatcherWindow
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A debug watcher window.
     
     (C) 2004 RadonLabs GmbH

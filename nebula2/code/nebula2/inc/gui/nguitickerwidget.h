@@ -2,11 +2,15 @@
 #define N_GUITICKERWIDGET_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTickerWidget
+    @ingroup Gui
+
+    @brief Ticker widget (for Genius). Not very useful for the general case.
+
     WARNING: becuase of a general bug in the GUI system the ticker must be placed
     direct under the top window, or the right border will be false.
 
-    
-    A text lable that moves from left to right.
+    A text label that moves from left to right.
 
                 |-----------------|
     |----------|| Parent Widget   ||------------|

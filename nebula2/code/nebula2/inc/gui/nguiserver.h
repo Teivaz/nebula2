@@ -3,8 +3,8 @@
 //-----------------------------------------------------------------------------
 /**
     @class nGuiServer
-    @ingroup NebulaGuiSystem
-    @brief Handle user interfaces.
+    @ingroup Gui
+    @brief The central server object of the Nebula2 user interface subsystem.
 
     (C) 2001 RadonLabs GmbH
 */
@@ -23,6 +23,7 @@ class nGfxServer2;
 class nInputServer;
 class nGuiToolTip;
 class nScriptServer;
+class nGuiDragBox;
 
 //------------------------------------------------------------------------------
 class nGuiServer : public nRoot
@@ -35,10 +36,22 @@ public:
     /// get instance pointer
     static nGuiServer* Instance();
 
+    /// set display resolution to use for layout computations
+    void SetDisplaySize(const vector2& s);
+    /// get display resolution
+    const vector2& GetDisplaySize() const;
+    /// set the texel mapping ratio (default 1.0)
+    void SetTexelMappingRatio(float r);
+    /// get the texel mapping ratio
+    float GetTexelMappingRatio() const;
     /// create a window of given class name
     nGuiWindow* NewWindow(const char* className, bool visible);
     /// create a new skin
     nGuiSkin* NewSkin(const char* skinName);
+    /// immediatly release all windows under the current root window
+    void DiscardWindows(const char* className);
+    /// find window of given class under root window
+    nGuiWindow* FindWindowByClass(const char* className, nGuiWindow* curWindow);
     /// set gui root directory in Nebula object hierarchy
     void SetRootPath(const char* name);
     /// get gui root directory in Nebula object hierarchy
@@ -55,10 +68,6 @@ public:
     bool Open();
     /// close the gui server
     void Close();
-    /// set reference display size
-    void SetReferenceSize(const vector2& s);
-    /// get reference display size
-    const vector2& GetReferenceSize() const;
     /// set the current root window by its name
     void SetRootWindow(const char* name);
     /// get the name of current root window
@@ -75,8 +84,6 @@ public:
     virtual void Trigger();
     /// render the current gui
     virtual void Render();
-    /// render audio effects
-    //virtual void RenderAudio();
     /// add a font definition using a system font
     void AddSystemFont(const char* fontName, const char* typeFace, int height, bool bold, bool italic, bool underline);
     /// add a font definition using a custom font
@@ -89,16 +96,12 @@ public:
     void DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex);
     /// draw a brush of the current skin
     void DrawBrush(const rectangle& r, nGuiBrush& brush);
-    /// convert a ref space rectangle to screen space
-    rectangle ConvertRefToScreenSpace(const rectangle& src);
-    /// convert a screen space rectangle to ref space
-    rectangle ConvertScreenToRefSpace(const rectangle& src);
     /// compute brush size in screen space, assume 1:1 texel/pixel mapping
     vector2 ComputeScreenSpaceBrushSize(const char* brushName);
+    /// get the size of 1 pixel
+    vector2 GetPixelSize() const;
     /// check if mouse is over a GUI element
     bool IsMouseOverGui() const;
-    /// display tooltip window
-    void ShowToolTip(const char* text, const vector4& textColor);
     /// get current mouse pos
     const vector2& GetMousePos() const;
     /// run a widget script command
@@ -119,6 +122,22 @@ public:
     void PlaySound(nGuiSkin::Sound snd);
     /// draw text, call this instead of nGfxServer2::DrawText()!
     void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
+    /// move the rectangle so that it is fully visible
+    void MoveRectToVisibleArea(rectangle& r) const;
+    /// set pointer to optional global drag box object
+    void SetDragBox(nGuiDragBox* dragBox);
+    /// get pointer to optional global drag box object
+    nGuiDragBox* GetDragBox() const;
+    /// set tool tip enable
+    void SetToolTipEnable(bool enable);
+    /// is tool tip enabled ?
+    bool IsToolTipEnabled() const;
+    /// get tool tip activation time
+    nTime GetToolTipActivationTime() const;
+    /// get tool tip fade in time
+    nTime GetToolTipFadeInTime() const;
+    /// display tooltip window
+    void ShowToolTip(const char* text, const vector4& textColor);
 
 private:
     /// validate embedded rectangle mesh
@@ -127,10 +146,10 @@ private:
     void ValidateShader();
     /// update the mesh geometry
     void UpdateMesh(const rectangle& uvs);
-    /// hide tooltip window
-    void HideToolTip();
     /// return true if tooltip window currently visible
     bool IsToolTipShown() const;
+    /// hide tooltip window
+    void HideToolTip();
     /// flush brush rendering (before rendering text)
     void FlushBrushes();
 
@@ -144,15 +163,20 @@ private:
     nRef<nFont2>            refSmallFont;
     nRef<nRoot>             refSkins;
     nRef<nGuiSkin>          refCurrentSkin;
-
+    nRef<nGuiDragBox>       refDragBox;
+    
     nClass* guiWindowClass;
 
     uint uniqueId;
     bool isOpen;
     vector2 curMousePos;
-    vector2 referenceSize;
     nTime curTime;
     vector4 globalColor;
+
+    bool toolTipEnabled;
+    bool toolTipSet;
+    const nTime toolTipFadeInTime;
+    const nTime toolTipActivationTime;
 
     nArray< nRef<nGuiWidget> > eventListeners;
 
@@ -171,6 +195,9 @@ private:
     int curMaxNumVertices;
     float* curVertexPointer;
     int curVertexIndex;
+
+    vector2 displaySize;
+    float texelMappingRatio;
 };
 
 //-----------------------------------------------------------------------------
@@ -182,6 +209,56 @@ nGuiServer::Instance()
 {
     n_assert(Singleton);
     return Singleton;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiServer::SetDisplaySize(const vector2& s)
+{
+    this->displaySize = s;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nGuiServer::GetDisplaySize() const
+{
+    return this->displaySize;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiServer::SetTexelMappingRatio(float r)
+{
+    this->texelMappingRatio = r;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nGuiServer::GetTexelMappingRatio() const
+{
+    return this->texelMappingRatio;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiDragBox*
+nGuiServer::GetDragBox() const
+{
+    return this->refDragBox.isvalid() ? this->refDragBox.get() : 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -258,6 +335,50 @@ nGuiSkin*
 nGuiServer::GetSystemSkin() const
 {
     return this->refSystemSkin.isvalid() ? this->refSystemSkin.get() : 0;
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiServer::SetToolTipEnable(bool enable)
+{
+    this->toolTipEnabled = enable;
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiServer::IsToolTipEnabled() const
+{
+    return this->toolTipEnabled;
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+nGuiServer::GetToolTipActivationTime() const
+{
+    return this->toolTipActivationTime;
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+nGuiServer::GetToolTipFadeInTime() const
+{
+    return this->toolTipFadeInTime;
 }
 
 //-----------------------------------------------------------------------------

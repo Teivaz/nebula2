@@ -2,6 +2,9 @@
 #define N_GUIBRUSH_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiBrush
+    @ingroup Gui
+
     A brush object which chaches the pointer to the GUI resource inside
     a skin object.
 

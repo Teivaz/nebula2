@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiTextEntry
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A text entry widget.
     
     (C) 2003 RadonLabs GmbH
@@ -35,6 +35,10 @@ public:
     void SetFileMode(bool b);
     /// get filename mode
     bool GetFileMode() const;
+    /// set password mode (displays only '*' characters)
+    void SetPasswordMode(bool b);
+    /// get password mode
+    bool GetPasswordMode() const;
     /// set the cursor brush
     void SetCursorBrush(const char* name);
     /// get the cursor brush
@@ -67,18 +71,43 @@ protected:
     void CheckEmptyText();
     /// return true iff the cursor should be displayed this frame
     bool IsCursorVisible() const;
+    /// return string as password text
+    nString GetPwdText() const;
+    /// return displayed string
+    nString GetDisplayedText() const;
 
     nAutoRef<nInputServer> refInputServer;
     bool mouseOver;
     bool active;
     bool firstFrameActive;
     bool fileMode;
+    bool passwordMode;
     nEditLine* lineEditor;
     nString emptyText;
     nGuiBrush cursorBrush;
     bool overstrikeDefault;
     Alignment initialCursorPos;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextEntry::SetPasswordMode(bool b)
+{
+    this->passwordMode = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextEntry::GetPasswordMode() const
+{
+    return this->passwordMode;
+}
 
 //------------------------------------------------------------------------------
 /**

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiTexBrowserWindow
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A window to browse the currently loaded textures and display
     information about them.
     

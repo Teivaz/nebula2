@@ -91,7 +91,7 @@ nEditLine::nEditLine(int maxChars) :
     overstrike(false),
     fileMode(false)
 {
-    this->buffer = new char[maxChars];
+    this->buffer = n_new_array(char, maxChars);
     this->buffer[0] = 0;
 }
 
@@ -101,7 +101,7 @@ nEditLine::nEditLine(int maxChars) :
 inline
 nEditLine::~nEditLine()
 {
-    delete this->buffer;
+    n_delete(this->buffer);
     this->buffer = 0;
 }
 
@@ -335,6 +335,7 @@ nEditLine::DeleteWordLeft(const char* separators)
 
 //------------------------------------------------------------------------------
 /**
+    10-Sep-04   floh    added point to list of illegal chars when in "fileMode"
 */
 inline
 bool
@@ -351,7 +352,8 @@ nEditLine::IsCharValid(uchar c) const
             (c == '\"') ||
             (c == '<') ||
             (c == '>') ||
-            (c == '|'))
+            (c == '|') ||
+            (c == '.'))
         {
             return false;
         }
@@ -374,6 +376,15 @@ nEditLine::InsertChar(uchar c)
     if (!this->IsCharValid(c))
     {
         return;
+    }
+
+    // Don't accept leading white space in file mode.
+    if (this->fileMode)
+    {
+        if (c == ' ' && this->cursorPos == 0)
+        {
+            return;
+        }
     }
 
     // overstrike or insert mode?
@@ -412,7 +423,7 @@ nEditLine::InsertString(const char* str)
 {
     n_assert(str);
     uchar c;
-    while ((c = *str++))
+    while (c = *str++)
     {
         this->InsertChar(c);
     }

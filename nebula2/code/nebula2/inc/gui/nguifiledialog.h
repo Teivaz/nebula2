@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiFileDialog
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A file dialog base class.
 
     Implement OnOk() and OnCancel() behaviour in a derived subclass.
@@ -11,8 +11,8 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
+#include "gui/nguidirlister.h"
 
-class nGuiDirLister;
 class nGuiTextEntry;
 class nGuiTextButton;
 class nGuiMessageBox;
@@ -50,6 +50,18 @@ public:
     void SetSaveMode(bool b);
     /// get save/load mode
     bool GetSaveMode() const;
+    /// set optional pattern
+    void SetPattern(const char* pat);
+    /// get optional pattern
+    const char* GetPattern() const;
+    /// enable/disable strip extension
+    void SetStripExtension(bool b);
+    /// get strip extension mode
+    bool GetStripExtension() const;
+    /// set optional file extension
+    void SetExtension(const char* ext);
+    /// get optional file extension
+    const char* GetExtension() const;
     /// set text for one of the gui elements
     void SetText(TextId id, const char* text);
     /// get the text for one of the gui elements
@@ -80,6 +92,8 @@ protected:
     void HandleDelete();
     /// called when the user confirms deletion
     bool DeleteFile();
+    /// Set initial selection enabled/disabled
+    void SetInitialSelectionEnabled(bool b);
 
     nRef<nGuiDirLister> refDirLister;
     nRef<nGuiTextEntry> refTextEntry;
@@ -90,10 +104,44 @@ protected:
     nRef<nGuiTextButton> refDeleteButton;
 
     nString dirPath;
+    nString extension;
     bool saveMode;
     nString text[NumTextIds];
     nString filename;
+    bool initialSelection;
+    bool stripExtension;
+    nString pattern;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetExtension(const char* ext)
+{
+    this->extension = ext;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiFileDialog::GetExtension() const
+{
+    return this->extension.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetInitialSelectionEnabled(bool b)
+{
+    this->initialSelection = b;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -177,6 +225,49 @@ const char*
 nGuiFileDialog::GetFilename() const
 {
     return this->filename.IsEmpty() ? 0 : this->filename.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetPattern(const char* p)
+{
+    n_assert(p);
+    this->pattern = p;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiFileDialog::GetPattern() const
+{
+    return this->pattern.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Enable disable strip extension.
+*/
+inline
+void
+nGuiFileDialog::SetStripExtension(bool b)
+{
+    this->stripExtension = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get strip extension mode.
+*/
+inline
+bool
+nGuiFileDialog::GetStripExtension() const
+{
+    return this->stripExtension;
 }
 
 //------------------------------------------------------------------------------

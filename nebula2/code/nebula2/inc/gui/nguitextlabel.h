@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiTextLabel
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief Uses the text server to render a gui label which contains ASCII
     text.
     
@@ -73,6 +73,10 @@ public:
     const vector2& GetBorder() const;
     /// computes the text extent for this widget
     vector2 GetTextExtent();
+    /// Set the textcolor for blinking state
+    void SetBlinkingColor(vector4 color);
+    /// Get the textcolor for blinking state
+    vector4 GetBlinkingColor() const;
 
 protected:
     /// render the label text
@@ -84,6 +88,7 @@ protected:
     nRef<nFont2> refFont;       // the font resource
     nString text;               // the displayed text 
     vector4 color;
+    vector4 blinkColor;
     vector2 pressedOffset;
     Alignment align;
     vector2 border;
@@ -91,6 +96,26 @@ protected:
     bool wordBreak;
     bool vCenter;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextLabel::SetBlinkingColor(vector4 color)
+{
+    this->blinkColor = color;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nGuiTextLabel::GetBlinkingColor() const
+{
+    return this->blinkColor;
+}
 
 //------------------------------------------------------------------------------
 /**
