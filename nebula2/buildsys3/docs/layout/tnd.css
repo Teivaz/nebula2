@@ -1,0 +1,92 @@
+
+body {
+  background: #f6f6f6;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+#common_top {
+  background: white url(top-back.gif);
+  background-repeat: repeat-x;
+  margin: 0;
+}
+
+#common_h0_o1 {
+  background: url(top-image.jpg);
+  background-position: top left;
+  background-repeat: no-repeat;
+  height: 70px;
+  padding: 30px 25px 0 0;
+}
+
+#common_h0 {
+  background: url(nebuladevice2.gif);
+  height: 37px;
+  width: 231px;
+  margin: 0 0 0 auto;
+}
+
+#common_h0 span {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#common_nav {
+  white-space: nowrap;
+}
+
+#common_nav img {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+h1.pagetitle {
+  text-align: center;
+  margin-top: 10px;
+  margin-left: 35px;
+  margin-right: 35px;
+}
+
+h2 {
+  margin-top: 0px;
+  margin-left: 35px;
+  margin-right: 35px;
+  position: relative;
+  top: -30px;
+}
+
+.doctext {
+  margin-left: 35px;
+  margin-right: 35px;
+  position: relative;
+  top: -30px;
+}
+
+img.headerimg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+address {
+  text-align: center;
+}
+
+a:link {
+        color: #336600;
+        text-decoration: underline;
+}
+
+a:visited {
+        color: #003300;
+        text-decoration: underline;
+}
+
+a:hover {
+        color: #66CC00;
+        text-decoration: underline;
+}
+
