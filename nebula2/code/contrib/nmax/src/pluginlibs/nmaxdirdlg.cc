@@ -73,7 +73,6 @@ void nMaxDirDlg::OnInitDialog()
     if (!fileServer->FileExists(iniFilename.Get()))
     {
         // the .ini file does not exist, so make new one.
-        //this->CreateDefaultIniFile(iniFilename.Get());
         nFile* file = fileServer->NewFileObject();
         file->Open(iniFilename.Get(), "w");
         file->Close();
@@ -165,6 +164,7 @@ BOOL nMaxDirDlg::OnCommand(int wParamLow, int wParamHigh, long lParam)
 
 //-----------------------------------------------------------------------------
 /**
+    Message handler function for 'ok' button.
 */
 bool nMaxDirDlg::OnOK()
 {
@@ -251,6 +251,10 @@ bool nMaxDirDlg::OnOK()
 
 //-----------------------------------------------------------------------------
 /**
+    Shows up file select browser to specify nebula2 installed directory.
+
+    FIXME: shown up the dialog has ugly white background. 
+           some setting of it seems be wrong.
 */
 void nMaxDirDlg::OnSelHomeDir()
 {
@@ -283,10 +287,8 @@ void nMaxDirDlg::OnSelHomeDir()
     if (browseList)
     {
         // Convert the item ID to a pathname, 
-        //char szBuf[MAX_PATH];
         if(::SHGetPathFromIDList(browseList, szBuf))
         {
-            //TRACE1("You chose==>%s\n",szBuf);
             nString homeDir;
             homeDir.Format("%s", szBuf);
             SetDlgItemText(hWnd, IDC_EXT_DIRNAME, homeDir.Get());
@@ -298,7 +300,6 @@ void nMaxDirDlg::OnSelHomeDir()
     else
     {
         *szBuf=_T('\0');
-        //AfxMessageBox("Canceled browse.");
     }
 
     // Decrement ref count on the allocator
@@ -307,6 +308,7 @@ void nMaxDirDlg::OnSelHomeDir()
 
 //-----------------------------------------------------------------------------
 /**
+    Specifies 'assign' settings to default values.
 */
 void nMaxDirDlg::OnSetDefaultAssigns()
 {
@@ -321,6 +323,7 @@ void nMaxDirDlg::OnSetDefaultAssigns()
 
 //-----------------------------------------------------------------------------
 /**
+    Specifies 'path' settings to default values.
 */
 void nMaxDirDlg::OnSetDefaultPathes()
 {

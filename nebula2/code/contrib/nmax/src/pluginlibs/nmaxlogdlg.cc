@@ -101,11 +101,6 @@ void nMaxLogDlg::LogMessage(int logLevel, const char* msg, ...)
 
     nString newLog;
 
-    //va_list marker;
-    //va_start(marker, msg);
-
-    //newLog.Format(msg, marker);
-
     va_list argList;
     va_start(argList, msg);
 
@@ -116,7 +111,6 @@ void nMaxLogDlg::LogMessage(int logLevel, const char* msg, ...)
     newLog += "\r\n";
 
     LogMessage(newLog);
-
 }
 
 //-----------------------------------------------------------------------------

@@ -144,9 +144,6 @@ BOOL nIniFile::ReadString(const nString& strEntryName, nString& strValue,
     strValue.Set(buf,len);
 
     return result;
-
-    //return GetPrivateProfileString(sectionName, strEntryName, strDefValue,
-    //    strValue.GetBufferSetLength(MAX_INI_BUFFER), MAX_INI_BUFFER, m_strIniFileName);
 }
 
 //------------------------------------------------------------------------------
