@@ -23,7 +23,7 @@ nBlendShapeAnimator::nBlendShapeAnimator() :
 */
 nBlendShapeAnimator::~nBlendShapeAnimator()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------

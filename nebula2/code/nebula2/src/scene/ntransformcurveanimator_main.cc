@@ -23,7 +23,7 @@ nTransformCurveAnimator::nTransformCurveAnimator() :
 */
 nTransformCurveAnimator::~nTransformCurveAnimator()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------

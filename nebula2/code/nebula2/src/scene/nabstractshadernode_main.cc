@@ -20,7 +20,7 @@ nAbstractShaderNode::nAbstractShaderNode()
 */
 nAbstractShaderNode::~nAbstractShaderNode()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------
