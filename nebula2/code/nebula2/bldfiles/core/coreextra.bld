@@ -40,6 +40,12 @@ beginmodule nnpkfileserver
     }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nnpkbuilder
+    setdir tools
+    setfiles { nnpkbuilder }
+    setheaders { nnpkbuilder }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nresourceloader
     setdir resource
     setfiles {

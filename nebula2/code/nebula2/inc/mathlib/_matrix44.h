@@ -68,13 +68,13 @@ public:
     /// transform vector3, projecting back into w=1
     _vector3 transform_coord(const _vector3& v) const;
     /// return x component
-    _vector3 x_component() const;
+    _vector3& x_component() const;
     /// return y component
-    _vector3 y_component() const;
+    _vector3& y_component() const;
     /// return z component
-    _vector3 z_component() const;
+    _vector3& z_component() const;
     /// return translate component
-    _vector3 pos_component() const;
+    _vector3& pos_component() const;
     /// rotate around global x
     void rotate_x(const float a);
     /// rotate around global y
@@ -97,6 +97,10 @@ public:
     void perspFovLh(float fovY, float aspect, float zn, float zf);
     /// create right-handed field-of-view perspective projection matrix
     void perspFovRh(float fovY, float aspect, float zn, float zf);
+    /// create off-center left-handed perspective projection matrix
+    void perspOffCenterLh(float minX, float maxX, float minY, float maxY, float zn, float zf);
+    /// create off-center right-handed perspective projection matrix
+    void perspOffCenterRh(float minX, float maxX, float minY, float maxY, float zn, float zf);
     /// create left-handed orthogonal projection matrix
     void orthoLh(float w, float h, float zn, float zf);
     /// create right-handed orthogonal projection matrix
@@ -445,44 +449,40 @@ _matrix44::transform_coord(const _vector3& v) const
 /**
 */
 inline
-_vector3 
+_vector3&
 _matrix44::x_component() const
-{
-    _vector3 v(M11,M12,M13);
-    return v;
+{  
+    return *(_vector3*)&M11;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-_vector3 
+_vector3&
 _matrix44::y_component() const
 {
-    _vector3 v(M21,M22,M23);
-    return v;
+    return *(_vector3*)&M21;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-_vector3 
-_matrix44::z_component() const 
+_vector3&
+_matrix44::z_component() const
 {
-    _vector3 v(M31,M32,M33);
-    return v;
+    return *(_vector3*)&M31;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-_vector3 
-_matrix44::pos_component() const 
+_vector3& 
+_matrix44::pos_component() const
 {
-    _vector3 v(M41,M42,M43);
-    return v;
+    return *(_vector3*)&M41;
 }
 
 //------------------------------------------------------------------------------
@@ -643,6 +643,32 @@ _matrix44::perspFovRh(float fovY, float aspect, float zn, float zf)
     M21 = 0.0f; M22 = h;    M23 = 0.0f;                  M24 = 0.0f;
     M31 = 0.0f; M32 = 0.0f; M33 = zf / (zn - zf);        M34 = -1.0f;
     M41 = 0.0f; M42 = 0.0f; M43 = zn * (zf / (zn - zf)); M44 = 0.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::perspOffCenterLh(float minX, float maxX, float minY, float maxY, float zn, float zf)
+{
+    M11 = 2.0f * zn / (maxX - minX); M12 = 0.0f, M13 = 0.0f; M14 = 0.0f;
+    M21 = 0.0f; M22 = 2.0f * zn / (maxY - minY); M23 = 0.0f; M24 = 0.0f;
+    M31 = (minX + maxX) / (minX - maxX); M32 = (maxY + minY) / (minY - maxY); M33 = zf / (zf - zn); 1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); 0.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::perspOffCenterRh(float minX, float maxX, float minY, float maxY, float zn, float zf)
+{
+    M11 = 2.0f * zn / (maxX - minX); M12 = 0.0f, M13 = 0.0f; M14 = 0.0f;
+    M21 = 0.0f; M22 = 2.0f * zn / (maxY - minY); M23 = 0.0f; M24 = 0.0f;
+    M31 = (minX + maxX) / (maxX - minX); M32 = (maxY + minY) / (maxY - minY); M33 = zf / (zn - zf); -1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); 0.0f;
 }
 
 //------------------------------------------------------------------------------

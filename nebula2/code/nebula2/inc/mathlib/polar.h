@@ -163,7 +163,7 @@ polar2::set(const vector3& vec)
     else
     {
         // quadrant 4
-        dRho = acos(-v2.y) + n_deg2rad(270.0f);
+        dRho = asin(-v2.y) + n_deg2rad(90.0f);
     }
 
     this->theta = (float) dTheta;

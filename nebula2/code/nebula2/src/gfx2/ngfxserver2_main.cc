@@ -32,7 +32,7 @@ nGfxServer2::nGfxServer2() :
     inDialogBoxMode(false),
     fontScale(1.0f),
     fontMinHeight(12),
-    deviceIdentifier(GenericDevice)
+    deviceIdentifier(GenericDevice),
     gamma(1.0f),
     brightness(65280.f/65535.f-0.5f),
     contrast(65280.f/65535.f-0.5f)
@@ -924,6 +924,4 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             }
         }
     }
-}
-
 }
