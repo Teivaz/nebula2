@@ -27,6 +27,7 @@ class nLuaTest : public nRoot
     
     void TestScriptCmds();
     void MakeZombies();
+    void EatAnObject( nRoot* obj );
 };
 
 //------------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 
 static void n_testscriptcmds(void* slf, nCmd* cmd);
 static void n_makezombies(void* slf, nCmd* cmd);
+static void n_eatanobject(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -27,6 +28,7 @@ n_initcmds( nClass* clazz )
   clazz->BeginCmds();
   clazz->AddCmd( "v_testscriptcmds_v", 'TSC_', n_testscriptcmds );
   clazz->AddCmd( "v_makezombies_v", 'MZOM', n_makezombies );
+  clazz->AddCmd( "v_eatanobject_o", 'EATO', n_eatanobject );
   clazz->EndCmds();
 }
 
@@ -72,6 +74,28 @@ n_makezombies(void* slf, nCmd* cmd)
 {
   nLuaTest* self = (nLuaTest*)slf;
   self->MakeZombies();
+}
+
+//------------------------------------------------------------------------------
+/**
+  @cmd
+  eatanobject
+
+  @input
+  v
+
+  @output
+  v
+
+  @info
+  Takes an object (thunk) as an input and checks it's a valid nRoot.
+*/
+static
+void
+n_eatanobject(void* slf, nCmd* cmd)
+{
+  nLuaTest* self = (nLuaTest*)slf;
+  self->EatAnObject( (nRoot*)cmd->In()->GetO() );
 }
 
 //------------------------------------------------------------------------------
