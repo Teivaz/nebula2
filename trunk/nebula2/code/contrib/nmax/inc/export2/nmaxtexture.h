@@ -37,8 +37,6 @@ public:
 
     nShaderState::Param GetShaderParamFromStdMapSlot(StdUVGen* uvGen, int subID);
 
-    void GetUvTransform(UVGen* uvGen);
-
     static bool IsClassID(Texmap* texmap, ulong classID);
     static Type GetType (Texmap* map);
 
@@ -46,6 +44,9 @@ protected:
     const char* SubMapIDToString(int subID);
 
     bool CopyTexture(const char* textureName);
+
+    void ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode);
+    void ExportUVAnimator(StdUVGen* uvGen, nShapeNode* shapeNode);
 
 };
 //-----------------------------------------------------------------------------
