@@ -14,10 +14,9 @@ beginworkspace nopenal
         ndirect3d9
         ndinput8
         microtcl
-	nopenal
+        nopenal
         nopenaldemo
         ndshow
-        nvideo
         ngui
     }
 endworkspace

@@ -45,7 +45,7 @@ begintarget nspatialdbapp
     setmodules { nsdbviewer }
     settargetdeps {
         nkernel nnebula noctree ndirect3d9 ndinput8 microtcl nlua
-        ntoollib ngui nvideo ndshow nspatialdb
+        ntoollib ngui ndshow nspatialdb
     }
 endtarget
 #-----------------------------------------------------------------------------
@@ -62,7 +62,6 @@ beginworkspace nspatialdb
         nlua
         ntoollib
         ngui
-        nvideo
         ndshow
         nkernel
         nnebula

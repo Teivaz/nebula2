@@ -33,7 +33,6 @@ begintarget nrubydemo
         ndinput8 
         ndsaudioserver3
         ndshow
-        nvideo
         microtcl 
         ngui 
         nruby         
@@ -51,7 +50,6 @@ beginworkspace rubyserver
         ndinput8 
         ndsaudioserver3
         ndshow
-        nvideo
         microtcl 
         ngui 
         ntoollib 
