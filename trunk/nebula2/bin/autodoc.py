@@ -105,8 +105,7 @@ def classInfo(clas):
 <head>
 <title>Autodoc: %s</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="../../website/main.css" type="text/css">
-<style>td.cmd{padding-right:2em;}</style>
+<link rel="stylesheet" href="../autodoc.css" type="text/css">
 </head>
 <body>
 <h2>class %s</h2>
@@ -186,8 +185,7 @@ root.findSubclasses()
 # create class tree
 out = """<html>
 <head>
-    <link rel="stylesheet" href="../website/main.css" type="text/css">
-    <style>LI {list-style : square; color: #FFCC99; margin-left:-2em; text-indent:0;}</style>
+    <link rel="stylesheet" href="autodoc.css" type="text/css">
     <title>Nebula 2 Script Commands (generated %s)</title>
 </head>
 <body>
