@@ -2,6 +2,9 @@
 #define N_GUISLIDER2_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiSlider2
+    @ingroup NebulaGuiSystem
+
     A vertical or horizontal slider widget.
     
     (C) 2004 RadonLabs GmbH

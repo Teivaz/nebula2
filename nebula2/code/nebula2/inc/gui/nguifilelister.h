@@ -2,6 +2,9 @@
 #define N_GUIFILELISTER_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiFileLister
+    @ingroup NebulaGuiSystem
+
     A filelister widget is derived from the lister widget and displays
     the filenames of a given directory. The user can select a file or type in
     a different filename.

@@ -2,6 +2,9 @@
 #define N_GUISERVER_H
 //-----------------------------------------------------------------------------
 /**
+    @class nGuiServer
+    @ingroup NebulaGuiSystem
+    
     Handle user interfaces.
 
     (C) 2001 RadonLabs GmbH

@@ -2,6 +2,9 @@
 #define N_GUIFORMLAYOUT_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiFormLayout
+    @ingroup NebulaGuiSystem
+
     Layouts size and position of child widgets based on own position.
     Works similar to a MEL formLayout:
     

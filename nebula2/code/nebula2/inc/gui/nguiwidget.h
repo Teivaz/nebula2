@@ -2,6 +2,9 @@
 #define N_GUIWIDGET_H
 //-----------------------------------------------------------------------------
 /**
+    @class nGuiWidget
+    @ingroup NebulaGuiSystem
+
     An abstract gui widget (a rectangular click area)
 
     (C) 2003 RadonLabs GmbH

@@ -2,6 +2,9 @@
 #define N_GUICLIENTWINDOW_H
 //------------------------------------------------------------------------------
 /**
+	@class nGuiClientWindow
+    @ingroup NebulaGuiSystem
+
     A window with optional titlebar, close button, size handles and a
     client area.
     

@@ -3,6 +3,9 @@
 
 //------------------------------------------------------------------------------
 /**
+    @class nGuiLister
+    @ingroup NebulaGuiSystem
+
     A lister widget consists of vertically stacked text label widgets,
     a vertical slider wigdet, and a text entry widget. Those widgets
     must already exist as children of the lister widget, they will then
@@ -39,10 +42,10 @@ public:
     void AppendText(const char* text);
     /// get selected text
     const char* GetText() const;
-	/// set selected label index
-	void SetSelectedIndex(int index);
-	/// get selected label index
-	int GetSelectedIndex() const;
+    /// set selected label index
+    void SetSelectedIndex(int index);
+    /// get selected label index
+    int GetSelectedIndex() const;
     /// get number of entries in list
     int GetNumEntries() const;
     /// set cursor brush
@@ -55,15 +58,15 @@ protected:
     void UpdateTextLabels();
     /// update the text labels from the slider range
     void UpdateTextLabelsFromSlider();
-	/// draw the resource where the selected label is
-	void DrawSelectionResource();
+    /// draw the resource where the selected label is
+    void DrawSelectionResource();
 
     nArray<nString> textArray;              // the text to be displayed in the labels
     int firstIndex;                         // index of first visible file in textArray
     int selectedIndex;                      // index of selected file in textArray
     nGuiTextEntry* textEntryWidget;         // the text entry widget
     nGuiSlider* sliderWidget;               // the slider widget
-    nArray<nGuiTextLabel*> labelArray;		// the text label widgets
+    nArray<nGuiTextLabel*> labelArray;      // the text label widgets
     vector2 curMousePos;
     rectangle textListRect;
     nString cursorBrush;

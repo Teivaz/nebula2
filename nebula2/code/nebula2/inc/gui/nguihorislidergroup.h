@@ -2,6 +2,9 @@
 #define N_GUIHORISLIDERGROUP_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiHoriSliderGroup
+    @ingroup NebulaGuiSystem
+
     A horizontal slider group consisting of a label, a horizontal slider,
     and a text label which displays the current slider's numerical value
     as a printf-formatted string.

@@ -2,6 +2,9 @@
 #define N_GUICATEGORYBROWSER_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiCategoryBrowser
+    @ingroup NebulaGuiSystem
+
     A category/file browser widget.
     
     (C) 2004 RadonLabs GmbH

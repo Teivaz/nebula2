@@ -2,6 +2,9 @@
 #define N_GUIWATCHERWINDOW_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiWatcherWindow
+    @ingroup NebulaGuiSystem
+
     A debug watcher window.
     
     (C) 2004 RadonLabs GmbH

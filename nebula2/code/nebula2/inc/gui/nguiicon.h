@@ -2,6 +2,9 @@
 #define N_GUIICON_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiIcon
+    @ingroup NebulaGuiSystem
+
     A drag and drop icon widget.
 
     (C) 2003 RadonLabs GmbH

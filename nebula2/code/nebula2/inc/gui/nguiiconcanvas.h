@@ -2,6 +2,9 @@
 #define N_GUIICONCANVAS_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiIconCanvas
+    @ingroup NebulaGuiSystem
+    
     A canvas for drag and drop icons.
     
     (C) 2003 RadonLabs GmbH
