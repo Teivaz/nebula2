@@ -629,7 +629,7 @@ nFileServer2::DeleteDirectory(const char* dirName)
     #ifdef __WIN32__
     return ::RemoveDirectory(mangledPath.Get()) ? true : false;
     #elif defined(__LINUX__)
-    #error "nFileServer2::DeleteDirectory() not implemented yet!"
+    return (rmdir(mangledPath.Get()) == 0) ? true : false;
     #else
     #error "nFileServer2::DeleteDirectory() not implemented yet!"
     #endif
