@@ -203,7 +203,7 @@ bool nRubyServer::RunScript(const char *fname, const char*& result)
 {
     char buf[N_MAXPATH];
     result = 0;
-    kernelServer->GetFileServer()->ManglePath(fname,buf,sizeof(buf));
+    strcpy(buf,(kernelServer->GetFileServer()->ManglePath(fname).Get()));
     this->print_error = true;
     ruby_script(buf);  
     //rb_load_file(buf);  
@@ -246,19 +246,19 @@ bool nRubyServer::RunFunction(const char *funcName, const char*& result )
     Check for shutdown flag
 
     - 18-12-03   Tom    created
-	- 01-05-04   Tom	cleaned up
+    - 01-05-04   Tom    cleaned up
 */
 //--------------------------------------------------------------------
 bool nRubyServer::Trigger(void)
 {
     if(!GetQuitRequested() && !finished)
     {
-		return true;
+        return true;
     }
-	else
-	{
-		return false;
-	}
+    else
+    {
+        return false;
+    }
 }
 
 //--------------------------------------------------------------------

@@ -529,12 +529,10 @@ VALUE rubycmd_Exists(VALUE, VALUE name)
 VALUE rubycmd_ToS(VALUE val)
 {
     nRoot * o=getRoot(val);
-    char buffer[N_MAXPATH]="";
 
     if(o)
     {
-        o->GetFullName(buffer, N_MAXPATH);
-        return rb_str_new2(buffer);
+        return rb_str_new2(o->GetFullName().Get());
     }
 
     return rb_str_new2("");

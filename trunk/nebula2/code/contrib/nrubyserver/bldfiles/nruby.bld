@@ -27,34 +27,36 @@ begintarget nrubydemo
     settype exe
     setmodules { nviewer }
     settargetdeps { 
-	nkernel 
-	nnebula 
-	ndirect3d9 
-	ndinput8 
+        nkernel 
+        nnebula 
+        ndirect3d9 
+        ndinput8 
         ndsaudioserver3
         ndshow
         nvideo
-	microtcl 
-	ngui 
-	nruby 	ntoollib 
+        microtcl 
+        ngui 
+        nruby         
+        ntoollib 
     }
 endtarget
 
 beginworkspace rubyserver
+    annotate "Workspace for a ruby capable script server."
     #setbinarydir ./code/contrib/nrubyserver/bin/
     settargets { 
-	nkernel 
-	nnebula 
-	ndirect3d9 
-	ndinput8 
+        nkernel 
+        nnebula 
+        ndirect3d9 
+        ndinput8 
         ndsaudioserver3
         ndshow
         nvideo
-	ngui 
-	ntoollib 
-	microtcl 
-	nruby 
-	nrubydemo 
+        microtcl 
+        ngui 
+        ntoollib 
+        nruby 
+        nrubydemo 
     }
 endworkspace
 #--------------------------------------------------------------------

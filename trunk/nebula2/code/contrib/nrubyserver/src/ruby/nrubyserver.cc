@@ -10,6 +10,7 @@
 #include "ruby/nrubyserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "util/nstring.h"
 #include "ruby.h"
 
 nNebulaClass(nRubyServer, "nscriptserver");
@@ -76,11 +77,10 @@ nRubyServer::nRubyServer()
 void nRubyServer::register_manglepath(const char* param_path)
 {
     int ret =0;
-    char buf[N_MAXPATH];
     char path[N_MAXPATH+10];
-    kernelServer->GetFileServer()->ManglePath(param_path,buf,sizeof(buf));
+    nString str(kernelServer->GetFileServer()->ManglePath(param_path));
     strcpy(path, "$: << \"");
-    strcat(path, buf);
+    strcat(path, str.Get());
     strcat(path, "\"");
     //int ret=0;
     rb_p(rb_eval_string_protect(path, &ret));
@@ -217,13 +217,11 @@ void nRubyServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
 
         case SELCOMMAND:
             // get relative path from owner to o and write select statement
-            char relpath[N_MAXPATH];
             _indent(++this->indent_level, this->indent_buf);
-            owner->GetRelPath(o, relpath, sizeof(relpath));
             
             file->PutS(this->indent_buf);
             file->PutS("sel \"");
-            file->PutS(relpath);
+            file->PutS(owner->GetRelPath(o).Get());
             file->PutS("\"\n");
             break;
 
@@ -333,13 +331,10 @@ bool nRubyServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
     n_assert(o);
 
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
     _indent(--this->indent_level, this->indent_buf);
-    o->GetRelPath(owner, relpath, sizeof(relpath));
-
     file->PutS(this->indent_buf);
     file->PutS("sel \"");
-    file->PutS(relpath);
+    file->PutS(o->GetRelPath(owner).Get());
     file->PutS("\"\n");
 
     return true;
@@ -426,7 +421,7 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) {
                         char buf[N_MAXPATH];
-                        sprintf(buf, "\"%s\"", o->GetFullName(buf, sizeof(buf)));
+                        sprintf(buf, "\"%s\"", o->GetFullName().Get() );
                     } 
                     else 
                     {
