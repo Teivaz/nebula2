@@ -368,8 +368,8 @@ proc gen_sln { name } {
 }
 
 #-------------------------------------------------------------------------------
-#   gen_solution 
-#   Generates the .sln and .vcproj file for all workspaces
+#   generate
+#   Generates the .sln and .vcproj file for the specified workspaces
 #-------------------------------------------------------------------------------
 proc generate { wslist } {
     global targetuuids

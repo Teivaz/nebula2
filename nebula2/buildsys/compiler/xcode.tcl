@@ -439,7 +439,8 @@ proc gen_xcode { workspace } {
 }
 
 #-------------------------------------------------------------------------------
-#   "main"
+#   generate
+#   Generates the project files for the specified workspaces
 #-------------------------------------------------------------------------------
 
 proc generate { wslist } {

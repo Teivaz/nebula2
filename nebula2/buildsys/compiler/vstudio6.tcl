@@ -413,8 +413,8 @@ proc gen_dsw { name } {
 }
 
 #-------------------------------------------------------------------------------
-#   gen_workspace 
-#   Generates the .dsp and .dsw file for all workspaces
+#   generate
+#   Generates the .dsp and .dsw file for the specified workspaces
 #-------------------------------------------------------------------------------
 proc generate { wslist } {
     
