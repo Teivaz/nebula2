@@ -1311,6 +1311,7 @@ nString::Format(const char* fmtString, ...)
 #else
     // This is the C99 behavior and works on glibc 2.1 and later on Linux
     // as well as the libc on OS X.
+    char sizerBuf[2];
     requiredLength = vsnprintf(sizerBuf, 1, fmtString, argList);
 #endif
     requiredLength++; // Account for NULL termination
