@@ -35,6 +35,7 @@ nMapNode::nMapNode() :
 nMapNode::~nMapNode()
 {   
     DeleteBlocks();
+    n_delete(mapQuadtree);
 }
 
 /**
