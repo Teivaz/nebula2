@@ -11,15 +11,44 @@ global home
 global platform
 global vstudioPrefix
 global debug
+global verbose
 
 set workspaces ""
 set buildgen ""
+set listworkspaces false
+set listcompilers false
+set verbose false
 # deal with args
 set i 0
 while {$i < $argc} {
-    if {[lindex $argv $i] == "-build"} {
+    if {[lindex $argv $i] == "-help" || [lindex $argv $i] == "--help"} {
+        puts "Usage:"
+        puts "   update.tcl \[-help\] \[-build buildsystem\] \[workspacelist\]"
+        puts "              \[-listworkspaces\] \[-listcompilers\]"
+        puts "              \[-verbose\]"
+        puts ""
+        puts " -help: Display this information"
+        puts " -build: Specify which build system generator should be used."
+        puts "         If this isn't specified, then all available generators"
+        puts "         will be run."
+        puts " \[workspacelist\]: The list of workspaces that should be"
+        puts "          generated. By default, all workspaces will be"
+        puts "          generated."
+        puts " -listworkspaces: List the available workspaces."
+        puts " -listcompilers: List the build systems that are supported."
+        puts " -verbose: Print extra information (but not full debug"
+        puts "          information). This is off by default but basic"
+        puts "          information will still be printed."
+        exit
+    } elseif {[lindex $argv $i] == "-build"} {
         set i [expr $i + 1]
         set buildgen [lindex $argv $i]
+    } elseif {[lindex $argv $i] == "-listworkspaces"} {
+        set listworkspaces true
+    } elseif {[lindex $argv $i] == "-listcompilers"} {
+        set listcompilers true
+    } elseif {[lindex $argv $i] == "-verbose"} {
+        set verbose true
     } else {
         lappend workspaces [lindex $argv $i]
     }
@@ -55,7 +84,23 @@ foreach gen [glob -nocomplain $home/buildsys/compiler/*.tcl] {
         source $gen
     }
 }
-puts $gen_list
+
+if { $listcompilers } {
+    puts "Supported build systems:"
+    foreach gen $gen_list {
+        puts "   - $gen"
+    }
+    puts ""
+    foreach gen $gen_list {
+        puts "$gen:"
+        if {[catch { namespace inscope $gen description } result]} {
+            puts "  ERROR: $result"
+        }
+        puts "---"
+        puts ""
+    }
+    exit
+}
 
 set platform [get_platform]
 
@@ -65,6 +110,14 @@ set platform [get_platform]
 
 # Load the data
 loadbldfiles
+if { $listworkspaces } {
+    puts ""
+    puts "Available workspaces:"
+    for {set i 0} {$i < $num_wspaces} {incr i} {
+        puts "  $wspace($i,name): $wspace($i,annotate)"
+    }
+    exit
+}
 if { $debug } {
     dump_data loadbld
 }
@@ -104,28 +157,6 @@ if {$buildgen == ""} {
     puts "Running $buildgen generator"
     namespace inscope $buildgen generate $workspaces
 }
-
-# VC7
-#----------------------------------------------------------------------------
-#puts "Looking for uuidgen...."
-#if { [catch { exec uuidgen }] } {
-#   puts "uuidgen.exe not found skipping Visual Studio Solutions."
-#} else {
-#   puts "uuidgen.exe found"
-#   gen_solution
-#}
-
-
-# Unix
-#----------------------------------------------------------------------------
-#gen_makefile
-
-
-# VC6
-#----------------------------------------------------------------------------
-# These must come after the solution files
-# as we add some default libs to libs_win32
-#gen_workspace
 
 puts "\ndone."
 
