@@ -636,7 +636,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                     n_assert(xStr && yStr && zStr && wStr);
                     vertex.SetJointIndices(vector4(float(atof(xStr)), float(atof(yStr)), float(atof(zStr)), float(atof(wStr))));
                 }
-				this->AddVertex(vertex);
+                this->AddVertex(vertex);
             }
             else if (0 == strcmp(keyWord, "t"))
             {
@@ -676,185 +676,185 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 
     if (file->Open(filename, "r"))
     {
-		int act_vn   = 0;
-		int act_rgba = 0;
-		int act_vt   = 0;
-		int act_vt1  = 0;
-		int act_vt2  = 0;
-		int act_vt3  = 0;
+        int act_vn   = 0;
+        int act_rgba = 0;
+        int act_vt   = 0;
+        int act_vt1  = 0;
+        int act_vt2  = 0;
+        int act_vt3  = 0;
         char line[1024];
-		while (file->GetS(line, sizeof(line))) 
-		{
-			char *kw = strtok(line, N_WHITESPACE);
-			if (kw) 
-			{
-				if (strcmp(kw, "v") == 0) 
-				{
-					char *xs = strtok(NULL, N_WHITESPACE);
-					char *ys = strtok(NULL, N_WHITESPACE);
-					char *zs = strtok(NULL, N_WHITESPACE);
-					if (xs && ys && zs) 
-					{
-						Vertex vertex;
-						vector3 v((float)atof(xs), (float)atof(ys), (float)atof(zs));
-						vertex.SetCoord(v);
-						this->AddVertex(vertex);
-					} 
-					else 
-					{
-						n_printf("Broken 'v' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "vn") == 0) 
-				{
-					char *nxs = strtok(NULL, N_WHITESPACE);
-					char *nys = strtok(NULL, N_WHITESPACE);
-					char *nzs = strtok(NULL, N_WHITESPACE);
-					if (nxs && nys && nzs) 
-					{
-						vector3 v((float)atof(nxs), (float)atof(nys), (float)atof(nzs));
-						this->GetVertexAt(act_vn++).SetNormal(v);
-					} 
-					else 
-					{
-						n_printf("Broken 'vn' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "rgba")== 0) 
-				{
-					char *rs = strtok(NULL, N_WHITESPACE);
-					char *gs = strtok(NULL, N_WHITESPACE);
-					char *bs = strtok(NULL, N_WHITESPACE);
-					char *as = strtok(NULL, N_WHITESPACE);
-					if (rs && gs && bs && as) 
-					{
-						vector4 v((float)atof(rs), (float)atof(gs), (float)atof(bs), (float)atof(as));
-						this->GetVertexAt(act_rgba++).SetColor(v);
-					} 
-					else 
-					{
-						n_printf("Broken 'rgba' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "vt") == 0) 
-				{
-					char *us = strtok(NULL, N_WHITESPACE);
-					char *vs = strtok(NULL, N_WHITESPACE);
-					if (us && vs) 
-					{
-						vector2 v((float)atof(us), (float)atof(vs));
-						this->GetVertexAt(act_vt++).SetUv(0, v);
-					} 
-					else 
-					{
-						n_printf("Broken 'vt' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "vt1") == 0)
-				{
-					char *us = strtok(NULL, N_WHITESPACE);
-					char *vs = strtok(NULL, N_WHITESPACE);
-					if (us && vs) 
-					{
-						vector2 v((float)atof(us), (float)atof(vs));
-						this->GetVertexAt(act_vt1++).SetUv(1, v);
-					} 
-					else 
-					{
-						n_printf("Broken 'vt1' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "vt2") == 0)
-				{
-					char *us = strtok(NULL, N_WHITESPACE);
-					char *vs = strtok(NULL, N_WHITESPACE);
-					if (us && vs) 
-					{
-						vector2 v((float)atof(us), (float)atof(vs));
-						this->GetVertexAt(act_vt2++).SetUv(2, v);
-					} 
-					else 
-					{
-						n_printf("Broken 'vt2' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "vt3") == 0)
-				{
-					char *us = strtok(NULL, N_WHITESPACE);
-					char *vs = strtok(NULL, N_WHITESPACE);
-					if (us && vs) 
-					{
-						vector2 v((float)atof(us), (float)atof(vs));
-						this->GetVertexAt(act_vt3++).SetUv(3, v);
-					} 
-					else 
-					{
-						n_printf("Broken 'vt3' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				} 
-				else if (strcmp(kw, "f") == 0) 
-				{
-					char* t0s = strtok(0, N_WHITESPACE);
-					char* t1s = strtok(0, N_WHITESPACE);
-					char* t2s = strtok(0, N_WHITESPACE);
-					if (t0s && t1s && t2s)
-					{
-						char *slash;
-						if ((slash=strchr(t0s, '/'))) 
+        while (file->GetS(line, sizeof(line))) 
+        {
+            char *kw = strtok(line, N_WHITESPACE);
+            if (kw) 
+            {
+                if (strcmp(kw, "v") == 0) 
+                {
+                    char *xs = strtok(NULL, N_WHITESPACE);
+                    char *ys = strtok(NULL, N_WHITESPACE);
+                    char *zs = strtok(NULL, N_WHITESPACE);
+                    if (xs && ys && zs) 
+                    {
+                        Vertex vertex;
+                        vector3 v((float)atof(xs), (float)atof(ys), (float)atof(zs));
+                        vertex.SetCoord(v);
+                        this->AddVertex(vertex);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'v' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "vn") == 0) 
+                {
+                    char *nxs = strtok(NULL, N_WHITESPACE);
+                    char *nys = strtok(NULL, N_WHITESPACE);
+                    char *nzs = strtok(NULL, N_WHITESPACE);
+                    if (nxs && nys && nzs) 
+                    {
+                        vector3 v((float)atof(nxs), (float)atof(nys), (float)atof(nzs));
+                        this->GetVertexAt(act_vn++).SetNormal(v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'vn' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "rgba")== 0) 
+                {
+                    char *rs = strtok(NULL, N_WHITESPACE);
+                    char *gs = strtok(NULL, N_WHITESPACE);
+                    char *bs = strtok(NULL, N_WHITESPACE);
+                    char *as = strtok(NULL, N_WHITESPACE);
+                    if (rs && gs && bs && as) 
+                    {
+                        vector4 v((float)atof(rs), (float)atof(gs), (float)atof(bs), (float)atof(as));
+                        this->GetVertexAt(act_rgba++).SetColor(v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'rgba' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "vt") == 0) 
+                {
+                    char *us = strtok(NULL, N_WHITESPACE);
+                    char *vs = strtok(NULL, N_WHITESPACE);
+                    if (us && vs) 
+                    {
+                        vector2 v((float)atof(us), (float)atof(vs));
+                        this->GetVertexAt(act_vt++).SetUv(0, v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'vt' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "vt1") == 0)
+                {
+                    char *us = strtok(NULL, N_WHITESPACE);
+                    char *vs = strtok(NULL, N_WHITESPACE);
+                    if (us && vs) 
+                    {
+                        vector2 v((float)atof(us), (float)atof(vs));
+                        this->GetVertexAt(act_vt1++).SetUv(1, v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'vt1' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "vt2") == 0)
+                {
+                    char *us = strtok(NULL, N_WHITESPACE);
+                    char *vs = strtok(NULL, N_WHITESPACE);
+                    if (us && vs) 
+                    {
+                        vector2 v((float)atof(us), (float)atof(vs));
+                        this->GetVertexAt(act_vt2++).SetUv(2, v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'vt2' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "vt3") == 0)
+                {
+                    char *us = strtok(NULL, N_WHITESPACE);
+                    char *vs = strtok(NULL, N_WHITESPACE);
+                    if (us && vs) 
+                    {
+                        vector2 v((float)atof(us), (float)atof(vs));
+                        this->GetVertexAt(act_vt3++).SetUv(3, v);
+                    } 
+                    else 
+                    {
+                        n_printf("Broken 'vt3' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                } 
+                else if (strcmp(kw, "f") == 0) 
+                {
+                    char* t0s = strtok(0, N_WHITESPACE);
+                    char* t1s = strtok(0, N_WHITESPACE);
+                    char* t2s = strtok(0, N_WHITESPACE);
+                    if (t0s && t1s && t2s)
+                    {
+                        char *slash;
+                        if ((slash=strchr(t0s, '/'))) 
                         {
-							*slash=0;
+                            *slash=0;
                         }
-						if ((slash=strchr(t1s, '/'))) 
+                        if ((slash=strchr(t1s, '/'))) 
                         {
-							*slash=0;
+                            *slash=0;
                         }
-						if ((slash=strchr(t2s, '/'))) 
+                        if ((slash=strchr(t2s, '/'))) 
                         {
-							*slash=0;
+                            *slash=0;
                         }
-						Triangle triangle;
-						triangle.SetVertexIndices(atoi(t0s) - 1, atoi(t1s) - 1, atoi(t2s) - 1);
-						triangle.SetGroupId(0);
-						this->AddTriangle(triangle);
-					}
-					else 
-					{
-						n_printf("Broken 'f' line in '%s'!\n", filename);
-						file->Close();
-						file->Release();
-						return false;
-					}
-				}
-			}
-		}
+                        Triangle triangle;
+                        triangle.SetVertexIndices(atoi(t0s) - 1, atoi(t1s) - 1, atoi(t2s) - 1);
+                        triangle.SetGroupId(0);
+                        this->AddTriangle(triangle);
+                    }
+                    else 
+                    {
+                        n_printf("Broken 'f' line in '%s'!\n", filename);
+                        file->Close();
+                        file->Release();
+                        return false;
+                    }
+                }
+            }
+        }
 
-		file->Close();
-		file->Release();
-		return true;
-	}
+        file->Close();
+        file->Release();
+        return true;
+    }
 
-	file->Release();
-	return false;
+    file->Release();
+    return false;
 }
 
