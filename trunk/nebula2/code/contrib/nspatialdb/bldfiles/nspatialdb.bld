@@ -18,7 +18,7 @@ beginmodule nspatialsector
         noccludingfrustumvisitor nspatialvisitor 
         nbboxoccluder nfrustumclipper ngenarrayvisitors
         nsphereclipper noccludingspherevisitor
-        nspatialvisitor nspatialspherevisitor
+        nspatialspherevisitor
     }
 endmodule
 
