@@ -145,12 +145,10 @@ nGuiGraphicsBrowserWindow::LoadObject(const nString& objPath)
     this->refUsrScene->Release();
     kernelServer->New("ntransformnode", "/usr/scene");
 
-    // source the light stage...
-    nString result;
-    this->refScriptServer->RunScript("home:bin/stdlight.tcl", result);
-
     // load new object
     kernelServer->PushCwd(this->refUsrScene);
+    // source the light stage...
+    kernelServer->Load("home:export/gfxlib/stdlight.n2");
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
 
