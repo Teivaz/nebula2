@@ -13,7 +13,7 @@
 
 typedef _nFileTimeWin32 nFileTime;
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__MACOSX__)
 #include "kernel/_nfiletime_posix.h"
 
 typedef _nFileTimePosix nFileTime;

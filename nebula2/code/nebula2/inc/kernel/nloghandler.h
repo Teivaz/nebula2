@@ -18,7 +18,7 @@
 #include "kernel/ntypes.h"
 #include "util/nlinebuffer.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(__MACOSX__)
 #include <stdarg.h>
 #endif
 

@@ -14,9 +14,9 @@
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
-#elif __WIN32__
+#elif defined(__WIN32__)
 #include <windows.h>
-#elif __LINUX__
+#elif defined(__LINUX__)
 #include <time.h>
 #include <dlfcn.h>
 #endif

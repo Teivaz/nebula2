@@ -10,7 +10,7 @@
 */
 #include "kernel/ntypes.h"
 
-#ifndef __LINUX__
+#if !defined(__LINUX__) && !defined(__MACOSX__)
 #error "_nFileTimePosix: trying to compile POSIX class on hostile platform"
 #endif
 
