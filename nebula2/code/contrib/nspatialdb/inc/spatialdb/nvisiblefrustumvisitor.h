@@ -20,6 +20,8 @@
 #include "spatialdb/nspatialelements.h"
 #include "spatialdb/nspatialsector.h"
 
+class nGfxServer2;
+
 class nVisibleFrustumVisitor : public nVisibilityVisitor {
 public:
     nVisibleFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform); 
@@ -30,6 +32,8 @@ public:
     virtual void Visit(nSpatialSector *visitee, int recursedepth);
 
     virtual bool VisibilityTest(nSpatialElement *visitee);
+
+    virtual void VisualizeDebug(nGfxServer2 *gfx2);
 
 protected:
     // represents the camera position/rotation in the current space.
