@@ -164,15 +164,11 @@ nArg::Copy(const nArg& rhs)
             break;
 
         case String:
-        	this->Delete();
+            this->Delete();
             if (rhs.s)
             {   
                 this->s = n_strdup(rhs.s);
             } 
-            else 
-            {
-                this->s = 0;
-            }
             break;
 
         case Bool:     
@@ -184,7 +180,7 @@ nArg::Copy(const nArg& rhs)
             break;
 
         case List:
-        	this->Delete();
+            this->Delete();
             if (rhs.l)
             {
                 this->l = n_new nArg[rhs.listLen];
@@ -288,17 +284,12 @@ nArg::operator==(const nArg& rhs) const
                 return (this->f == rhs.f); 
 
             case String:
-                if (this->s && rhs.s)
-                {
-                    return (0 == strcmp(this->s, rhs.s));
-                }
-                else
-                {
-                    return false;
-                }
+                n_assert(this->s && rhs.s);
+                return (0 == strcmp(this->s, rhs.s));
 
             case Bool:     
                 return (this->b == rhs.b); 
+
             case Object:
                 return (this->o == rhs.o);
 
@@ -385,9 +376,10 @@ nArg::SetS(const char *_s)
     n_assert((Void == this->type) || (String == this->type));
     this->Delete();
     this->type = String;
-    if (_s) {
+    if (_s)
+    {
         this->s = n_strdup(_s);
-    } else this->s = NULL;
+    }
 }
 
 
