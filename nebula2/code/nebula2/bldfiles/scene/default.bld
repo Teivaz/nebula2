@@ -45,7 +45,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nhdrsceneserver
     setdir scene
-    setfiles { nhdrsceneserver_main }
+    setfiles { nhdrsceneserver_main nhdrsceneserver_cmds }
     setheaders { nhdrsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmrtsceneserver
     setdir scene
-    setfiles { nmrtsceneserver_main nmrtsceneserver_emissive }
+    setfiles { nmrtsceneserver_main nmrtsceneserver_cmds }
     setheaders { nmrtsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
