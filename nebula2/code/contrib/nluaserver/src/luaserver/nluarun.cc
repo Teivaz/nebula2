@@ -35,6 +35,7 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
     {
         result = this->outputStr; // contains the error info
         n_message(result.Get());
+        lua_settop(this->L, 0); // clear stack
     }
     else
     {
