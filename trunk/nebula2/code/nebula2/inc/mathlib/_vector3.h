@@ -52,6 +52,8 @@ public:
     _vector3 findortho() const;
     /// saturate components between 0 and 1
     void saturate();
+    /// dot product
+    float dot(_vector3 v0) const;
 
     float x, y, z;
 };
@@ -382,6 +384,17 @@ _vector3::findortho() const
     {
         return _vector3(0.0, 0.0, 0.0);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Dot product for vector3
+*/
+inline
+float
+_vector3::dot(_vector3 v0) const
+{
+    return ( x * v0.x + y * v0.y + z * v0.z );
 }
 
 //------------------------------------------------------------------------------

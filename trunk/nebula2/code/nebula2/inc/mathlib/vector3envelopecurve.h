@@ -26,9 +26,14 @@ public:
     // assign to other color envelope curve
     void SetParameters(const nVector3EnvelopeCurve& src);
     /// get the function value; pos must be between 0 and 1
-    vector3 GetValue(float pos) const;
+    const vector3& GetValue(float pos) const;
 
-    vector3 keyFrameValues[4];
+    enum
+    {
+        NumValues = 4,
+    };
+
+    vector3 keyFrameValues[NumValues];
     float keyFramePos1, keyFramePos2;   // 0 through 1
     float frequency, amplitude;         // parameters of the sinus function
 };
@@ -68,7 +73,8 @@ nVector3EnvelopeCurve::nVector3EnvelopeCurve(const vector3& keyFrameValue0,
 /**
 */
 inline
-void nVector3EnvelopeCurve::SetParameters(const vector3& keyFrameValue0, const vector3& keyFrameValue1,
+void 
+nVector3EnvelopeCurve::SetParameters(const vector3& keyFrameValue0, const vector3& keyFrameValue1,
     const vector3& keyFrameValue2, const vector3& keyFrameValue3,
     const float keyFramePos1, const float keyFramePos2)
 {
@@ -83,7 +89,8 @@ void nVector3EnvelopeCurve::SetParameters(const vector3& keyFrameValue0, const v
 /**
 */
 inline
-void nVector3EnvelopeCurve::SetParameters(const nVector3EnvelopeCurve& src)
+void 
+nVector3EnvelopeCurve::SetParameters(const nVector3EnvelopeCurve& src)
 {
     this->keyFrameValues[0] = src.keyFrameValues[0];
     this->keyFrameValues[1] = src.keyFrameValues[1];
@@ -97,12 +104,13 @@ void nVector3EnvelopeCurve::SetParameters(const nVector3EnvelopeCurve& src)
 /**
 */
 inline
-vector3 nVector3EnvelopeCurve::GetValue(float pos) const
+const vector3&
+nVector3EnvelopeCurve::GetValue(float pos) const
 {
     n_assert(pos >= 0.0);
     n_assert(pos <= 1.0);
 
-    vector3 linearValue;
+    static vector3 linearValue;
 
     if (pos < this->keyFramePos1)
     {

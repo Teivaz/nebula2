@@ -35,6 +35,8 @@ public:
     void setscale(const vector3& v);
     /// get scale
     const vector3& getscale() const;
+    /// set matrix 4x4
+    void setmatrix(const matrix44& m);
     /// get resulting 4x4 matrix
     const matrix44& getmatrix();
 
@@ -198,6 +200,16 @@ transform44::isdirty() const
     return (0 != (this->flags & Dirty));
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+transform44::setmatrix(const matrix44 &m)
+{
+    this->matrix = m;
+    this->flags &= ~Dirty;
+}
 //------------------------------------------------------------------------------
 #endif
 

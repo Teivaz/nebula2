@@ -13,7 +13,8 @@ class nEnvelopeCurve
 {
 public:
     /// possible modulation functions
-    enum {
+    enum 
+    {
         Sine = 0,
         Cosine,
     };
@@ -39,7 +40,11 @@ public:
     /// get the highest possible value
     float GetMaxPossibleValue() const;
 
-    float keyFrameValues[4];
+    enum
+    {
+        NumValues = 4,
+    };
+    float keyFrameValues[NumValues];
     float keyFramePos1, keyFramePos2;   // 0 through 1
     float frequency, amplitude;         // parameters of the sinus function
     int modulationFunc;      // use sine or cosine for modulation?
@@ -148,6 +153,8 @@ float nEnvelopeCurve::GetValue(float pos) const
             ((pos-this->keyFramePos2) / (1.0f-this->keyFramePos2));
     }
 
+    if (this->amplitude > 0.0f)
+    {
     if (Sine == this->modulationFunc)
     {
         value += n_sin(pos * N_PI * 2 * this->frequency) * this->amplitude;
@@ -155,6 +162,7 @@ float nEnvelopeCurve::GetValue(float pos) const
     else
     {
         value += n_cos(pos * N_PI * 2 * this->frequency) * this->amplitude;
+    }
     }
 
     return value;
@@ -169,7 +177,7 @@ float nEnvelopeCurve::GetMaxPossibleValue() const
     float maxVal;
     int keyFrame;
     maxVal = this->keyFrameValues[0];
-    for (keyFrame = 1; keyFrame < 4; keyFrame++)
+    for (keyFrame = 1; keyFrame < NumValues; keyFrame++)
     {
         maxVal = n_max(maxVal, this->keyFrameValues[keyFrame]);
     }
