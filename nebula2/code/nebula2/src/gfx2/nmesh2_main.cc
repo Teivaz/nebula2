@@ -19,7 +19,8 @@ nMesh2::nMesh2() :
     numGroups(0),
     groups(0),
     vertexBufferByteSize(0),
-    indexBufferByteSize(0)
+    indexBufferByteSize(0),
+    refillBuffersMode(Disabled)
 {
     // empty
 }

@@ -47,6 +47,62 @@ nD3D9Server::SetViewport(nViewport& vp)
 
 //------------------------------------------------------------------------------
 /**
+    Set a transformation matrix. This will update the shared state in
+    the effect pool.
+*/
+void
+nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
+{
+    // let parent update the transform matrices
+    nGfxServer2::SetTransform(type, matrix);
+
+    // update the shared shader parameters
+    if (this->refSharedShader.isvalid())
+    {
+        nD3D9Shader* shd = this->refSharedShader.get();
+        switch (type)
+        {
+            case Model:
+                shd->SetMatrix(nShader2::Model, this->transform[Model]);
+                shd->SetMatrix(nShader2::InvModelView, this->transform[InvModel]);
+                shd->SetMatrix(nShader2::ModelView, this->transform[ModelView]);
+                shd->SetMatrix(nShader2::InvModelView, this->transform[InvModelView]);
+                break;
+            
+            case View:
+                shd->SetMatrix(nShader2::View, this->transform[View]);
+                shd->SetMatrix(nShader2::InvView, this->transform[InvView]);
+                shd->SetMatrix(nShader2::ModelView, this->transform[ModelView]);
+                shd->SetMatrix(nShader2::InvModelView, this->transform[InvModelView]);
+                break;
+
+            case Projection:
+                n_printf("SetTransform(Projection)\n");
+                shd->SetMatrix(nShader2::Projection, this->transform[Projection]);
+                break;
+
+            case Texture0:
+                shd->SetMatrix(nShader2::TextureTransform0, this->transform[Texture0]);
+                break;
+
+            case Texture1:
+                shd->SetMatrix(nShader2::TextureTransform1, this->transform[Texture1]);
+                break;
+
+            case Texture2:
+                shd->SetMatrix(nShader2::TextureTransform2, this->transform[Texture2]);
+                break;
+
+            case Texture3:
+                shd->SetMatrix(nShader2::TextureTransform3, this->transform[Texture3]);
+                break;
+        }
+        shd->SetMatrix(nShader2::ModelViewProjection, this->transform[ModelViewProjection]);
+        shd->SetVector3(nShader2::ModelEyePos, this->transform[InvModelView].pos_component());
+    }
+}
+//------------------------------------------------------------------------------
+/**
     Start rendering the scene.
 */
 bool
@@ -162,8 +218,10 @@ nD3D9Server::PresentScene()
     n_assert(!this->inBeginScene);
     n_assert(this->d3d9Device);
     HRESULT hr = this->d3d9Device->Present(0, 0, 0, 0);
-    n_assert(SUCCEEDED(hr));
- 
+    if (FAILED(hr))
+    {
+        n_printf("nD3D9Server::PresentScene(): failed to present scene!\n");
+    }
     nGfxServer2::PresentScene();
 }
 
@@ -178,7 +236,7 @@ nD3D9Server::PresentScene()
 void
 nD3D9Server::SetTexture(int stage, nTexture2* tex)
 {
-    n_assert((stage >= 0) && (stage < MAX_TEXTURESTAGES));
+    n_assert((stage >= 0) && (stage < MaxTextureStages));
 
     if (this->GetTexture(stage) != tex)
     {
@@ -202,19 +260,17 @@ nD3D9Server::SetTexture(int stage, nTexture2* tex)
 
 //------------------------------------------------------------------------------
 /**
-    Bind vertex buffer to a vertex stream.
+    Bind vertex buffer to vertex stream 0.
 
-    @param  stream      stream identifier (0..15)
     @param  mesh        pointer to a nD3D9Mesh2 object or 0 to clear the
                         current stream and index buffer
 */                  
 void
-nD3D9Server::SetMesh(int stream, nMesh2* mesh)
+nD3D9Server::SetMesh(nMesh2* mesh)
 {
-    n_assert((stream >= 0) && (stream < MAX_VERTEXSTREAMS));
     HRESULT hr;
 
-    if (this->GetMesh(stream) != mesh)
+    if ((this->GetMesh() != mesh) || (SingleMesh != this->meshSource))
     {
         n_assert(this->d3d9Device);
 
@@ -235,33 +291,46 @@ nD3D9Server::SetMesh(int stream, nMesh2* mesh)
         }
 
         // set the vertex stream source
-        hr = this->d3d9Device->SetStreamSource(stream, d3dVBuf, 0, stride);
+        hr = this->d3d9Device->SetStreamSource(0, d3dVBuf, 0, stride);
         n_assert(SUCCEEDED(hr));
+
+/*FIXME: commented out until we get correct version of GetMeshArray
+        // clear other stream sources
+        if (this->GetMeshArray() != 0)
+        {
+            for (int index = 1; index < MaxVertexStreams; index++)
+            {
+                hr = this->d3d9Device->SetStreamSource(index, 0, 0, 0);
+                n_assert(SUCCEEDED(hr));
+            }
+        }
+*/
 
         // set the vertex declaration
         hr = this->d3d9Device->SetVertexDeclaration(d3dVDecl);
         n_assert(SUCCEEDED(hr));
 
         // indices are provided by the mesh associated with stream 0!
-        if (0 == stream)
-        {
-            hr = this->d3d9Device->SetIndices(d3dIBuf);
-            n_assert(SUCCEEDED(hr));
-        }
+        hr = this->d3d9Device->SetIndices(d3dIBuf);
+        n_assert(SUCCEEDED(hr));
 
 		if (mesh)
 		{
-			if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (DX9 != this->featureSet))
+			if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (this->GetFeatureSet() < DX9))
 			{
-				this->d3d9Device->SetSoftwareVertexProcessing( TRUE );
+				this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
 			}
 			else
 			{
-				this->d3d9Device->SetSoftwareVertexProcessing( FALSE );
+				this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
 			}
 		}
 
-        nGfxServer2::SetMesh(stream, mesh);
+        nGfxServer2::SetMesh(mesh);
+    }
+    else if (0 == mesh)
+    {
+        this->meshSource = NoSource; // for the case that it was MeshArray previously
     }
 }
 
@@ -333,10 +402,10 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
     invocation of Draw().
 */
 void
-nD3D9Server::DrawIndexed(nPrimitiveType primType)
+nD3D9Server::DrawIndexed(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert(this->GetMesh(0));
+    n_assert(this->GetMesh());
     HRESULT hr;
 
     nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
@@ -379,10 +448,10 @@ nD3D9Server::DrawIndexed(nPrimitiveType primType)
     Draw the currently set mesh with non-indexed primitives.
 */
 void
-nD3D9Server::Draw(nPrimitiveType primType)
+nD3D9Server::Draw(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert(this->GetMesh(0));
+    n_assert(this->GetMesh());
     HRESULT hr;
 
     nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
@@ -420,10 +489,11 @@ nD3D9Server::Draw(nPrimitiveType primType)
     yourself as needed.
 */
 void
-nD3D9Server::DrawIndexedNS(nPrimitiveType primType)
+nD3D9Server::DrawIndexedNS(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert(this->GetMesh(0));
+    //n_assert(this->GetMesh() || this->GetMeshArray());
+    n_assert(NoSource != this->meshSource);
     HRESULT hr;
 
     // get primitive type and number of primitives
@@ -453,10 +523,11 @@ nD3D9Server::DrawIndexedNS(nPrimitiveType primType)
     yourself as needed.
 */
 void
-nD3D9Server::DrawNS(nPrimitiveType primType)
+nD3D9Server::DrawNS(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert(this->GetMesh(0));
+//    n_assert(this->GetMesh() || this->GetMeshArray());
+    n_assert(NoSource != this->meshSource);
     HRESULT hr;
 
     // get primitive type and number of primitives

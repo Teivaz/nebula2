@@ -24,6 +24,8 @@ public:
     nShaderParams();
     /// destructor
     ~nShaderParams();
+    /// clear array
+    void Clear();
     /// return true if parameter is valid
     bool IsParameterValid(nShader2::Parameter p) const;
     /// set a single parameter
@@ -35,9 +37,9 @@ public:
     /// get int parameter
     int GetInt(nShader2::Parameter p) const;
     /// set bool parameter
-    void SetBool(nShader2::Parameter p, bool val);
+    //void SetBool(nShader2::Parameter p, bool val);
     /// get bool parameter
-    bool GetBool(nShader2::Parameter p) const;
+    //bool GetBool(nShader2::Parameter p) const;
     /// set float parameter
     void SetFloat(nShader2::Parameter p, float val);
     /// get float parameter
@@ -79,6 +81,16 @@ nShaderParams::nShaderParams()
 /**
 */
 inline
+void
+nShaderParams::Clear()
+{
+    memset(this->valid, 0, sizeof(this->valid));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 nShaderParams::~nShaderParams()
 {
     // empty
@@ -103,6 +115,7 @@ void
 nShaderParams::SetArg(nShader2::Parameter p, const nShaderArg& arg)
 {
     n_assert(p < nShader2::NumParameters);
+    this->valid[p] = true;
     this->args[p] = arg;
 }
 
@@ -142,6 +155,7 @@ nShaderParams::GetInt(nShader2::Parameter p) const
 //------------------------------------------------------------------------------
 /**
 */
+/*
 inline
 void
 nShaderParams::SetBool(nShader2::Parameter p, bool val)
@@ -150,10 +164,11 @@ nShaderParams::SetBool(nShader2::Parameter p, bool val)
     this->valid[p] = true;
     this->args[p].SetBool(val);
 }
-
+*/
 //------------------------------------------------------------------------------
 /**
 */
+/*
 inline
 bool
 nShaderParams::GetBool(nShader2::Parameter p) const
@@ -161,6 +176,7 @@ nShaderParams::GetBool(nShader2::Parameter p) const
     n_assert(p < nShader2::NumParameters);
     return this->args[p].GetBool();
 }
+*/
 //------------------------------------------------------------------------------
 /**
 */
@@ -286,7 +302,9 @@ nShaderParams::Reset()
 {
     memset(this->valid, 0, sizeof(this->valid));
     for(int i=0; i<nShader2::NumParameters; i++)
+    {
         this->args[i].SetType(nShaderArg::Void);
+    }
 }
 
 //------------------------------------------------------------------------------

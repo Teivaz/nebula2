@@ -13,19 +13,21 @@
 */
 #include "kernel/nroot.h"
 #include "gfx2/ncamera2.h"
-#include "gfx2/ndisplaymode2.h"
+
 #include "kernel/nautoref.h"
 #include "mathlib/matrix.h"
 #include "gfx2/ntexture2.h"
 #include "mathlib/rectangle.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/nmousecursor.h"
+#include "gfx2/nshaderlist.h"
+#include "gfx2/ndisplaymode2.h"
+#include "gfx2/nfont2.h"
 
 //------------------------------------------------------------------------------
 class nMesh2;
 class nShader2;
 class nResourceServer;
-class nFont2;
+
 class nFontDesc;
 
 class nViewport
@@ -53,6 +55,11 @@ public:
         ModelView,              ///< model -> view matrix (read only)
         InvModelView,           ///< view -> model matrix (read only)
         ModelViewProjection,    ///< model -> projection matrix (read only)
+        ViewProjection,         ///< current view * projection matrix
+        Texture0,               ///< texture transform for layer 0 (read/write)
+        Texture1,
+        Texture2,
+        Texture3,
 
         NumTransformTypes
     };
@@ -66,6 +73,17 @@ public:
         AllBuffers    = (ColorBuffer | DepthBuffer | StencilBuffer),
     };
 
+    /// primitive types
+    enum PrimitiveType
+    {
+        PointList,
+        LineList,
+        LineStrip,
+        TriangleList,
+        TriangleStrip,
+        TriangleFan,
+    };
+
     /// feature sets (from worst to best)
     enum FeatureSet
     {
@@ -73,7 +91,8 @@ public:
         DX7,                        // a typical dx7 card with fixed function pipeline
         DX8,                        // a typical dx8 card with at least vs/ps 1.1
         DX8SB,                      // a typical dx8 card with support for shadow buffers
-        DX9,                        // a dx9 card with at least vs/ps 2.0 AND float textures
+        DX9,                        // a dx9 card with at least vs/ps 2.0
+        DX9FLT,                     // a dx9 card with floating point textures/render targets
     };
 
     /// the visible mouse cursor type
@@ -82,6 +101,20 @@ public:
         None,               // no mouse cursor visible
         System,             // use Window's system mouse cursor
         Custom,             // use the custom mouse cursor
+    };
+
+    enum MeshSource
+    {
+        NoSource,
+        SingleMesh,         // one single mesh is to be drawn
+        //MeshArray,          // a mesh array is to be drawn
+    };
+
+    enum
+    {
+        MaxVertexStreams = 16,
+        MaxTextureStages = 4,
+        MaxTransformStackDepth = 4,
     };
 
     /// constructor
@@ -106,6 +139,10 @@ public:
     virtual const nDisplayMode2& GetDisplayMode() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
+    /// override the feature set
+    void SetFeatureSetOverride(FeatureSet f);
+    /// get the best supported feature set
+    virtual FeatureSet GetFeatureSet();
     /// get the current camera description
     nCamera2& GetCamera();
     /// set the viewport
@@ -118,8 +155,8 @@ public:
     virtual void CloseDisplay();
     /// trigger the window system message pump
     virtual bool Trigger();
-    /// get the best supported feature set
-    virtual FeatureSet GetFeatureSet();
+    /// get prioritized shader index by shader name
+    int GetShaderIndex(const char* shaderName);
     
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -136,9 +173,9 @@ public:
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
     /// set current mesh
-    virtual void SetMesh(int stream, nMesh2* mesh);
+    virtual void SetMesh(nMesh2* mesh);
     /// get current mesh
-    nMesh2* GetMesh(int stream) const;
+    nMesh2* GetMesh() const;
     /// set current texture
     virtual void SetTexture(int stage, nTexture2* tex);
     /// get current texture
@@ -169,13 +206,13 @@ public:
     float GetNPatchSegments() const;
 
     /// draw the current mesh with indexed primitives
-    virtual void DrawIndexed(nPrimitiveType primType);
+    virtual void DrawIndexed(PrimitiveType primType);
     /// draw the current mesh with non-indexed primitives
-    virtual void Draw(nPrimitiveType primType);
+    virtual void Draw(PrimitiveType primType);
     /// render indexed primitives without applying shader state (NS == No Shader)
-    virtual void DrawIndexedNS(nPrimitiveType primType);
+    virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
-    virtual void DrawNS(nPrimitiveType primType);
+    virtual void DrawNS(PrimitiveType primType);
     /// draw text (immediately)
     virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
     /// get text extents
@@ -205,6 +242,12 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char* filename);    
 
+
+    /// convert feature set string to enum
+    static FeatureSet StringToFeatureSet(const char* str);
+    /// convert feature set enum to string
+    static const char* FeatureSetToString(FeatureSet f);
+
     enum
     {
         MAX_VERTEXSTREAMS = 16,
@@ -221,28 +264,102 @@ protected:
     nViewport viewport;
 
     nRef<nTexture2> refRenderTarget;
-    nRef<nMesh2>    refMeshes[MAX_VERTEXSTREAMS];
-    nRef<nTexture2> refTextures[MAX_TEXTURESTAGES];
+    nRef<nMesh2>    refMesh;
+
+    nRef<nTexture2> refTextures[MaxTextureStages];
     nRef<nFont2>    refFont;
     nRef<nShader2>  refShader;
     nMouseCursor curMouseCursor;
+    nShaderList shaderList;
     int vertexRangeFirst;
     int vertexRangeNum;
     int indexRangeFirst;
     int indexRangeNum;
     float nPatchSegments;
-    
+    FeatureSet featureSetOverride;
     matrix44 transform[NumTransformTypes];
     int transformTopOfStack[NumTransformTypes];
-    matrix44 transformStack[NumTransformTypes][MAX_TRANSFORMSTACKDEPTH];
+    matrix44 transformStack[NumTransformTypes][MaxTransformStackDepth];
     bool cursorDirty;
     bool inDialogBoxMode;
-
+    MeshSource meshSource;  // draw single mesh or mesh array?
 public:
     // note: this stuff is public because WinProcs may need to access it
     nDisplayMode2 displayMode;
     CursorVisibility cursorVisibility;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::FeatureSet
+nGfxServer2::StringToFeatureSet(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp(str, "dx7"))
+    {
+        return DX7;
+    }
+    else if (0 == strcmp(str, "dx8"))
+    {
+        return DX8;
+    }
+    else if (0 == strcmp(str, "dx8sb"))
+    {
+        return DX8SB;
+    }
+    else if (0 == strcmp(str, "dx9"))
+    {
+        return DX9;
+    }
+    else if (0 == strcmp(str, "dx9flt"))
+    {
+        return DX9FLT;
+    }
+    else 
+    {
+        return InvalidFeatureSet;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGfxServer2::FeatureSetToString(FeatureSet f)
+{
+    switch (f)
+    {
+        case nGfxServer2::DX7:      return "dx7"; break;
+        case nGfxServer2::DX8:      return "dx8"; break;
+        case nGfxServer2::DX8SB:    return "dx8sb"; break;
+        case nGfxServer2::DX9:      return "dx9"; break;
+        case nGfxServer2::DX9FLT:   return "dx9flt"; break;
+        default:                    return "invalid"; break;
+    }
+}
+//------------------------------------------------------------------------------
+/**
+    Get the current viewport.
+*/
+inline
+nViewport&
+nGfxServer2::GetViewport()
+{
+    return this->viewport;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGfxServer2::SetFeatureSetOverride(FeatureSet f)
+{
+    this->featureSetOverride = f;
+    n_printf("nGfxServer2: set feature set override to '%s'\n", FeatureSetToString(f));
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -253,17 +370,6 @@ nCamera2&
 nGfxServer2::GetCamera()
 {
     return this->camera;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the current viewport.
-*/
-inline
-nViewport&
-nGfxServer2::GetViewport()
-{
-    return this->viewport;
 }
 
 //------------------------------------------------------------------------------
@@ -283,16 +389,17 @@ nGfxServer2::GetRenderTarget() const
 /**
     Get the current mesh.
 
-    @param  stream      vertex stream index
-    @return             pointer to current nMesh2 object on that stream
+    @return             pointer to current nMesh2 object
 */
 inline
 nMesh2*
-nGfxServer2::GetMesh(int stream) const
+nGfxServer2::GetMesh() const
 {
-    n_assert((stream >= 0) && (stream < MAX_VERTEXSTREAMS));
-    return this->refMeshes[stream].isvalid() ? this->refMeshes[stream].get() : 0;
+    return this->refMesh.isvalid() ? this->refMesh.get() : 0;
 }
+
+
+
 
 //------------------------------------------------------------------------------
 /**
@@ -305,7 +412,7 @@ inline
 nTexture2*
 nGfxServer2::GetTexture(int stage) const
 {
-    n_assert((stage >= 0) && (stage < MAX_TEXTURESTAGES));
+    n_assert((stage >= 0) && (stage < MaxTextureStages));
     return this->refTextures[stage].isvalid() ? this->refTextures[stage].get() : 0;
 }
 
@@ -378,6 +485,35 @@ nGfxServer2::SetIndexRange(int firstIndex, int numIndices)
 {
     this->indexRangeFirst = firstIndex;
     this->indexRangeNum   = numIndices;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get shader priority index, which is generated by parsing the
+    shaders:shaderlist.txt file. Cab be used for priority sorting
+    of scene nodes in the scene server.
+
+    @param  shaderName  shader filename, e.g. "shaders:default.fx"
+    @return             priority index of shader
+*/
+inline
+int
+nGfxServer2::GetShaderIndex(const char* shaderName)
+{
+    if (!this->shaderList.IsLoaded())
+    {
+        if (!this->shaderList.Load("shaders:shaderlist.txt"))
+        {
+            n_error("nGfxServer2::OpenDisplay(): Failed to parse 'shaders:shaderlist.txt'!");
+            return -1;
+        }
+    }
+    int index = this->shaderList.GetShaderIndex(shaderName);
+    if (index == -1)
+    {
+        n_error("Shader '%s' not defined in 'shaders:shaderlist.txt'!", shaderName);
+    }
+    return index;
 }
 
 //------------------------------------------------------------------------------

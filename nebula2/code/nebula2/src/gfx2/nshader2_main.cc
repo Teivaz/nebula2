@@ -11,24 +11,27 @@ nNebulaClass(nShader2, "nresource");
 const char* nShader2::StringTable[nShader2::NumParameters] = 
 {
     "Model",
+    "InvModel",
     "View",
+    "InvView",
     "Projection",
     "ModelView",
     "InvModelView",
     "ModelViewProjection",
     "ModelLightProjection",
+    "ModelShadowProjection",
     "ModelEyePos",
     "ModelLightPos",
     "LightPos",
-    "LightDirection",
+    //"LightDirection",
     "MatAmbient",
     "MatDiffuse",
     "MatSpecular",
     "MatSpecularPower",
     "MatTransparency",
     "MatFresnel",
-    "Frequency",
-    "Height",
+    //"Frequency",
+    "Scale",
     "Noise",
     "MatTranslucency",
     "AlphaRef",
@@ -95,13 +98,31 @@ const char* nShader2::StringTable[nShader2::NumParameters] =
     "TextureTransform0",
     "TextureTransform1",
     "TextureTransform2",
-    "TextureTransform3"
+    "TextureTransform3",
+    "SampleOffsets", 
+    "SampleWeights",
+    "VertexStreams",
+    "VertexWeights1",
+    "VertexWeights2",
+    "AlphaSrcBlend",
+    "AlphaDstBlend",
+    "BumpScale",
+    "FresnelBias",
+    "FresnelPower",
+    "Intensity0",
+    "Intensity1",
+    "Intensity2",
+    "Intensity3",
+    "Amplitude",
+    "Frequency",
+    "Velocity"
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-nShader2::nShader2()
+nShader2::nShader2() :
+    shaderIndex(-1)
 {
     // empty
 }
@@ -129,20 +150,20 @@ nShader2::IsParameterUsed(Parameter /*p*/)
 //------------------------------------------------------------------------------
 /**
 */
-void
-nShader2::SetBool(Parameter /*p*/, bool /*val*/)
-{
+//void
+//nShader2::SetBool(Parameter /*p*/, bool /*val*/)
+//{
     // empty
-}
+//}
 
 //------------------------------------------------------------------------------
 /**
 */
-void
-nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
-{
+//void
+//nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
+//{
     // empty
-}
+//}
 
 //------------------------------------------------------------------------------
 /**
@@ -299,3 +320,20 @@ nShader2::End()
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nShader2::SetTechnique(const char* /*t*/)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+const char*
+nShader2::GetTechnique() const
+{
+    return 0;
+}

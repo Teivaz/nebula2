@@ -23,9 +23,9 @@ public:
     /// close the file
     void Close();
     /// read vertex data
-    bool ReadVertices(void* buffer, uint bufferSize);
+    bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    bool ReadIndices(void* buffer, uint bufferSize);
+    bool ReadIndices(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -125,11 +125,11 @@ nNvx2Loader::Close()
 */
 inline
 bool
-nNvx2Loader::ReadVertices(void* buffer, uint bufferSize)
+nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
-    n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
+    n_assert((this->numVertices * this->vertexWidth * int(sizeof(float))) == bufferSize);
     file->Read(buffer, bufferSize);
     return true;    
 }
@@ -139,20 +139,20 @@ nNvx2Loader::ReadVertices(void* buffer, uint bufferSize)
 */
 inline
 bool
-nNvx2Loader::ReadIndices(void* buffer, uint bufferSize)
+nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
     if (Index16 == this->indexType)
     {
         // 16 bit indices: read index array directly
-        n_assert((this->numIndices * sizeof(ushort)) == bufferSize);
+        n_assert((this->numIndices * int(sizeof(ushort))) == bufferSize);
         file->Read(buffer, bufferSize);
     }
     else
     {
         // 32 bit indices, read into 16 bit buffer, and expand
-        n_assert((this->numIndices * sizeof(uint)) == bufferSize);
+        n_assert((this->numIndices * int(sizeof(uint))) == bufferSize);
 
         // read 16 bit indices into tmp buffer
         int size16 = this->numIndices * sizeof(ushort);

@@ -83,9 +83,8 @@ nD3D9Server::D3dOpen()
         n_error("nD3D9Server: could not initialize Direct3D!\n");
     }
 
-    // create the global effect parameter pool
-    HRESULT hr = D3DXCreateEffectPool(&(this->d3dxEffectPool));
-    n_assert(SUCCEEDED(hr));
+    // update the feature set
+    this->UpdateFeatureSet();
 }
 
 //------------------------------------------------------------------------------
@@ -97,11 +96,6 @@ nD3D9Server::D3dClose()
 {
     n_assert(this->d3d9);
     n_assert(0 == this->d3d9Device);
-    n_assert(this->d3dxEffectPool);
-
-    // release the global effect parameter pool
-    this->d3dxEffectPool->Release();
-    this->d3dxEffectPool = 0;
 
     // release the d3d object
     int refCount = this->d3d9->Release();
@@ -123,6 +117,14 @@ nD3D9Server::OpenDisplay()
     if (this->DeviceOpen())
     {
         nGfxServer2::OpenDisplay();
+
+        // clear display
+        if (this->BeginScene())
+        {
+            this->Clear(AllBuffers, 0.0f, 0.0f, 0.0f, 1.0f, 1.0, 0);
+            this->EndScene();
+            this->PresentScene();
+        }
         return true;
     }
     return false;

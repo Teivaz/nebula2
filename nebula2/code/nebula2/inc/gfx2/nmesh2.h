@@ -100,11 +100,23 @@ public:
         ReadOnly  = (1<<1),     // CPU reads from the vertex buffer, which can never be rendered
         WriteOnly = (1<<2),     // CPU writes frequently to vertex buffer, but never read data back
       
+        // patch types (mutually exclusive)
+        NPatch  = (1<<3),
+        RTPatch = (1<<4),
+        
         // use as point sprite buffer?
         PointSprite = (1<<5),
 
 		// needs vertex shader?
 		NeedsVertexShader = (1<<6),
+    };
+
+    enum RefillBuffersMode
+    {
+        Disabled,       // buffers dont need to be refilled
+        DisabledOnce,   // refilling will be enabled after next empty mesh creation
+        Enabled,        // refilling will be needed after next empty mesh creation
+        NeededNow,      // refilling is needed now
     };
 
     /// constructor
@@ -149,6 +161,13 @@ public:
     /// returns the byte size of the embedded index buffer
     int GetIndexBufferByteSize() const;
 
+    /// get the buffer refill mode
+    RefillBuffersMode GetRefillBuffersMode() const;
+    /// set the buffer refill mode
+    void SetRefillBuffersMode(RefillBuffersMode mode);
+
+
+
 protected:
     /// unload resource
     virtual void UnloadResource();
@@ -166,6 +185,7 @@ protected:
     nMeshGroup* groups;
     int vertexBufferByteSize;
     int indexBufferByteSize;
+    RefillBuffersMode refillBuffersMode;
 };
 
 //------------------------------------------------------------------------------
@@ -348,6 +368,26 @@ nMesh2::GetIndexBufferByteSize() const
     return this->indexBufferByteSize;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/        
+inline
+nMesh2::RefillBuffersMode
+nMesh2::GetRefillBuffersMode() const
+{
+    return this->refillBuffersMode;
+}
+        
+//------------------------------------------------------------------------------
+/**
+*/    
+inline
+void    
+nMesh2::SetRefillBuffersMode(RefillBuffersMode mode)
+{
+    this->refillBuffersMode = mode;
+}
+    
 //------------------------------------------------------------------------------
 #endif
 

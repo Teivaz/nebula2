@@ -80,19 +80,22 @@ public:
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
     /// set current mesh
-    virtual void SetMesh(int stream, nMesh2* mesh);
+    virtual void SetMesh(nMesh2* mesh);
+
     /// set current texture
     virtual void SetTexture(int stage, nTexture2* tex);
     /// set current shader
     virtual void SetShader(nShader2* shader);
+    /// set transform
+    virtual void SetTransform(TransformType type, const matrix44& matrix);
     /// draw the current mesh with indexed primitives
-    virtual void DrawIndexed(nPrimitiveType primType);
+    virtual void DrawIndexed(PrimitiveType primType);
     /// draw the current mesh witn non-indexed primitives
-    virtual void Draw(nPrimitiveType primType);
+    virtual void Draw(PrimitiveType primType);
     /// render indexed primitives without applying shader state (NS == No Shader)
-    virtual void DrawIndexedNS(nPrimitiveType primType);
+    virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
-    virtual void DrawNS(nPrimitiveType primType);
+    virtual void DrawNS(PrimitiveType primType);
 
     /// trigger the window system message pump
     virtual bool Trigger();
@@ -148,11 +151,13 @@ private:
     void QueryStatistics();
     #endif
     /// get d3d primitive type and num primitives for indexed drawing
-    int GetD3DPrimTypeAndNumIndexed(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
+    int GetD3DPrimTypeAndNumIndexed(PrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
     /// get d3d primitive type and num primitives
-    int GetD3DPrimTypeAndNum(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
+    int GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
     /// update the mouse cursor image and visibility
     void UpdateCursor();
+    /// get a pointer to the global d3dx effect pool
+    ID3DXEffectPool* GetEffectPool() const;
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
@@ -183,6 +188,7 @@ private:
     IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface
     IDirect3DSurface9* depthStencilSurface;     ///< the original depth stencil surface
     ID3DXEffectPool* d3dxEffectPool;            ///< pool for sharing shader parameters
+    nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
 
     #ifdef __NEBULA_STATS__
     IDirect3DQuery9*   queryResourceManager;    ///< for quering the d3d resource manager
@@ -242,7 +248,7 @@ nD3D9Server::GetParentHwnd() const
 */
 inline
 int
-nD3D9Server::GetD3DPrimTypeAndNumIndexed(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
+nD3D9Server::GetD3DPrimTypeAndNumIndexed(PrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
 {
     int d3dNumPrimitives = 0;
     switch (primType)
@@ -285,7 +291,7 @@ nD3D9Server::GetD3DPrimTypeAndNumIndexed(nPrimitiveType primType, D3DPRIMITIVETY
 */
 inline
 int
-nD3D9Server::GetD3DPrimTypeAndNum(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
+nD3D9Server::GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
 {
     int d3dNumPrimitives = 0;
     switch (primType)
@@ -322,6 +328,14 @@ nD3D9Server::GetD3DPrimTypeAndNum(nPrimitiveType primType, D3DPRIMITIVETYPE& d3d
     }
     return d3dNumPrimitives;
 }
-
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+ID3DXEffectPool*
+nD3D9Server::GetEffectPool() const
+{
+    return this->d3dxEffectPool;
+}
 //------------------------------------------------------------------------------
 #endif

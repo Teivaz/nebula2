@@ -74,6 +74,17 @@ nD3D9Mesh::LoadResource()
         this->CreateVertexBuffer();
         this->CreateIndexBuffer();
         this->CreateVertexDeclaration();
+        switch (this->refillBuffersMode)
+        {
+            case RefillBuffersMode::DisabledOnce:
+                this->refillBuffersMode = RefillBuffersMode::Enabled;
+                break;
+            case RefillBuffersMode::Enabled:
+                this->refillBuffersMode = RefillBuffersMode::NeededNow;
+                break;
+            default:
+                break;
+        }
         success = true;
     }
     else if (this->refResourceLoader.isvalid())
@@ -115,14 +126,24 @@ nD3D9Mesh::UnloadResource()
     n_assert(gfxServer->d3d9Device);
 
     // check if I'm the current mesh in the gfx server, if yes, unlink
-    int curStream;
-    for (curStream = 0; curStream < nGfxServer2::MAX_VERTEXSTREAMS; curStream++)
+    if (gfxServer->GetMesh() == this)
     {
-        if (gfxServer->GetMesh(curStream) == this)
+        gfxServer->SetMesh(0);
+    }
+/*FIXME: commentted out until we get correct version of GetMeshArray
+    else
+    {
+        nMeshArray* meshArray = gfxServer->GetMeshArray();
+        if (0 != meshArray)
         {
-            gfxServer->SetMesh(curStream, 0);
+            int index = meshArray->ContainsMesh(this);
+            if (index != -1)
+        {
+                meshArray->SetMesh(index, 0);
+            }
         }
     }
+*/
 
     // release the d3d resource
     if (this->vertexBuffer)
@@ -194,13 +215,17 @@ nD3D9Mesh::CreateVertexBuffer()
             d3dPool  = D3DPOOL_DEFAULT;
             this->d3dVBLockFlags = D3DLOCK_DISCARD;
         }
+        if (RTPatch & this->usage)
+        {
+            d3dUsage |= D3DUSAGE_RTPATCHES;
+        }
         if (PointSprite & this->usage)
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
         if (this->refGfxServer->GetSoftwareVertexProcessing() || 
             ((NeedsVertexShader & this->usage) && 
-	    (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
+            (this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9)))
         {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
@@ -251,13 +276,17 @@ nD3D9Mesh::CreateIndexBuffer()
             d3dPool  = D3DPOOL_DEFAULT;
             this->d3dIBLockFlags = D3DLOCK_DISCARD;
         }
+        if (RTPatch & this->usage)
+        {
+            d3dUsage |= D3DUSAGE_RTPATCHES;
+        }
         if (PointSprite & this->usage)
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
         if (this->refGfxServer->GetSoftwareVertexProcessing() ||
-            ((this->usage & NeedsVertexShader) &&
-            (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
+            ((NeedsVertexShader & this->usage) && 
+            (this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9)))
         {	
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
@@ -652,6 +681,7 @@ nD3D9Mesh::LoadN3d2File()
 
 //------------------------------------------------------------------------------
 /**
+    Compute the byte size of the mesh data
 */
 int
 nD3D9Mesh::GetByteSize()

@@ -120,7 +120,7 @@ n_opendisplay(void* slf, nCmd* cmd)
     Close the display.
 */
 static void
-n_closedisplay(void* slf, nCmd* cmd)
+n_closedisplay(void* slf, nCmd* /*cmd*/)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     self->CloseDisplay();
@@ -133,7 +133,7 @@ n_closedisplay(void* slf, nCmd* cmd)
     @input
     v
     @output
-    s(FeatureSet = dx7, dx8, dx8sb, dx9, invalid)
+    s(FeatureSet = dx7, dx8, dx8sb, dx9, dx9flt, invalid)
     @info
     Get the feature set implemented by the graphics card.
 */
@@ -142,14 +142,7 @@ n_getfeatureset(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     nGfxServer2::FeatureSet feat = self->GetFeatureSet();
-    switch (feat)
-    {
-        case nGfxServer2::DX7:                      cmd->Out()->SetS("dx7"); break;
-        case nGfxServer2::DX8:                      cmd->Out()->SetS("dx8"); break;
-        case nGfxServer2::DX8SB:                    cmd->Out()->SetS("dx8sb"); break;
-        case nGfxServer2::DX9:                      cmd->Out()->SetS("dx9"); break;
-        default:                                    cmd->Out()->SetS("invalid"); break;
-    }
+    cmd->Out()->SetS(nGfxServer2::FeatureSetToString(feat));
 }
 
 //------------------------------------------------------------------------------

@@ -68,7 +68,7 @@ nD3D9Texture::UnloadResource()
 
     // check if I am one of the currently active textures
     int curStage;
-    for (curStage = 0; curStage < nGfxServer2::MAX_TEXTURESTAGES; curStage++)
+    for (curStage = 0; curStage < nGfxServer2::MaxTextureStages; curStage++)
     {
         if (gfxServer->GetTexture(curStage) == this)
         {
@@ -89,7 +89,7 @@ nD3D9Texture::UnloadResource()
     }
     if (this->baseTexture)
     {
-        //int ref = this->baseTexture->Release();
+        int ref = this->baseTexture->Release();
         this->baseTexture = 0;
     }
     if (this->texture2D)
@@ -410,7 +410,9 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     // Generate mipmaps?
     DWORD mipmapFilter = D3DX_FILTER_NONE;
     if (genMipMaps)
+    {
         mipmapFilter = D3DX_DEFAULT;
+    }
 
     // D3D usage flags
     DWORD d3dUsage = 0;
@@ -480,6 +482,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
         n_error("nD3D9Texture::LoadD3DXFile(): Unsupported texture type (cube texture?) in file '%s'\n", mangledPath);
         return false;
     }
+    this->baseTexture->PreLoad();
 
     // query texture attributes 
     this->QueryD3DTextureAttributes();
