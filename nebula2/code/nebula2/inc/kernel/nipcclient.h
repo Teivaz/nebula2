@@ -5,59 +5,55 @@
     @class nIpcClient
 
     A nIpcClient object can connect to exactly one nIpcServer
-    object over a socket and send messages to it. The client
-    generally expects a reply from the server befor a new
-    message can be sent. 
-    The server is identified through an [optional] tcp/ip
-    address and a port name, which is magically converted
-    into a port number.
+    object over a socket and send messages to it, or receive messages
+    from it.
 
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
-#include "util/nlist.h"
-#include "util/nmsgnode.h"
 #include "kernel/nsocketdefs.h"
-#include "util/nstring.h"
-#include "util/nhashtable.h"
+#include "kernel/nipcaddress.h"
+#include "kernel/nipcbuffer.h"
 
 //------------------------------------------------------------------------------
 class nIpcClient 
 {
 public:
+    /// connection flags
+    enum
+    {
+        Blocking = (1<<0),
+    };
+
     /// constructor
     nIpcClient();
     /// destructor
     ~nIpcClient();
+    /// set the blocking behaviour
+    void SetBlocking(bool b);
+    /// get the blocking behaviour
+    bool GetBlocking() const;
     /// connect to an ipc server
-    bool Connect(const char* portName);
-    /// disconnect
+    bool Connect(nIpcAddress& addr);
+    /// disconnect from ipc server
     void Disconnect();
-    /// send a message to the server, and return answer
-    nMsgNode* SendMsg(void* buf, int size);
-    /// release answer message node
-    void FreeReplyMsgNode(nMsgNode* nd);
-    /// get hostname part
-    const char* GetHostName() const;
-    /// get portname part 
-    const char* GetPortName() const;
+    /// return true if currently connected
+    bool IsConnected() const;
+    /// send a message to the server
+    bool Send(nIpcBuffer& msg);
+    /// receive a message from the server (optionally blocks)
+    bool Receive(nIpcBuffer& msg);
 
 private:
-    /// initialize the server address field
-    bool FillServerAddr(const char* pname);
-    /// get port number from port name
-    short GetPortNumFromName(const char* portName);
+    /// destroy internal socket
+    void DestroySocket();
+    /// change blocking mode on socket internally
+    void ApplyBlocking(bool b);
 
-    enum
-    {
-        RECEIVEBUFFERSIZE = 2048,
-    };
     SOCKET sock;   
-    sockaddr_in serverAddr;
-    short serverPortNum;
-    nString serverHostName;
-    nString serverPortName;
-    char receiveBuffer[RECEIVEBUFFERSIZE];
+    nIpcAddress serverAddr;
+    bool blocking;
+    bool isConnected;
 };
 
 //------------------------------------------------------------------------------

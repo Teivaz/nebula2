@@ -9,7 +9,6 @@
 #      nresource
 #      nconserver
 #      nipc
-#      nipcclient
 #===============================================================================
 
 #===============================================================================
@@ -70,28 +69,14 @@ endmodule
 beginmodule nipc
     setdir kernel
     setfiles {
-        nipcminiserver
-        nipcserver
+        nipcaddress nipcclient nipcminiserver
+        nipcserver nipcpeer
+        
     }
     setheaders {
-        nsocketdefs
-        nipcminiserver
-        nipcserver
-    }
-    setlibs_win32 {
-        wsock32.lib
-    }
-endmodule
-
-#-------------------------------------------------------------------------------
-beginmodule nipcclient
-    setdir kernel
-    setfiles {
-        nipcclient
-    }
-    setheaders {
-        nsocketdefs
-        nipcclient
+        nsocketdefs nipcaddress nipcbuffer
+        nipcclient nipcminiserver nipcserver
+        nipcpeer
     }
     setlibs_win32 {
         wsock32.lib
