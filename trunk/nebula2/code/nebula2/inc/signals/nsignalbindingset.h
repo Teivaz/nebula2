@@ -28,7 +28,7 @@ public:
     /// destructor
     virtual ~nSignalBindingSet();
 
-    /** @name Managemetn
+    /** @name Management
         Methods for managing the bindings in a signal binding set. */
     //@{
     /// add a binding to a binding set
@@ -49,8 +49,8 @@ public:
     bool HasBinding(const nSignalBinding * binding) const;
     //@}
 
-    /** @name Methods for iterating over the bindings in a signal binding set.
-    */
+    /** @name Iteration
+        Methods for iterating over the bindings in a signal binding set. */
     //@{
     /// get first binding
     nSignalBinding * GetHead() const;
