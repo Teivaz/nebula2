@@ -20,9 +20,9 @@
     region always return a false test result.  Objects straddling a boundary will
     return the test result of the flags that you passed in.  In this manner, you get two
     sorts of tests depending on what you pass in:
-    -If you pass in VisitorFlags(false) you will only get back a true TestResult if the
+    -If you pass in @c VisitorFlags(false) you will only get back a true TestResult if the
        object is completely within the region.
-    -If you pass in a VisitorFlags(true) you will only get back a false TestResult if the
+    -If you pass in a @c VisitorFlags(true) you will only get back a false TestResult if the
        object is completely outside the region.
     These two possibilities have different uses depending on whether or not you're
     determining potentially visible objects or completely obscured objects.
@@ -147,7 +147,8 @@ VisitorFlags nPlaneClipper::TestBBox(const bbox3 &boxtest, VisitorFlags in)
                     {
                         // This box is definitively inside all the culling
                         // planes, so there's no need to continue.
-                        return VisitorFlags(true);
+                        in.m_test = true;
+                        return in;
                     }
                 } // else this plane is ambigious so leave it active.
             }

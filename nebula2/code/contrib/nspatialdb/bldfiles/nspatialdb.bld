@@ -9,14 +9,15 @@ beginmodule nspatialsector
         nspatialsector_main nspatialsector_cmds 
         nspatialelements nvisitorbase nspatialelements
         nspatiallisthierarchy nvisiblefrustumvisitor 
+        nvisiblespherevisitor
         ngeometryocclusionvisitor noccludedfrustumvisitor
     }
     setheaders {
         nspatialsector nspatialelements nvisitorbase
-        nplaneclipper nfrustumclipper nspatialelements
+        nplaneclipper nfrustumclipper nsphereclipper nspatialelements
         nspatiallisthierarchy ngenarrayvisitors
-        nvisiblefrustumvisitor ngeometryocclusionvisitor
-        noccludedfrustumvisitor
+        nvisiblefrustumvisitor nvisiblespherevisitor
+        ngeometryocclusionvisitor noccludedfrustumvisitor
     }
 endmodule
 

@@ -38,6 +38,9 @@ public:
     /** Returns true if the object was found and deleted */
     bool RemObject(const char *objname);
 
+    /// Clear out all objects
+    void ClearObjects();
+
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
 

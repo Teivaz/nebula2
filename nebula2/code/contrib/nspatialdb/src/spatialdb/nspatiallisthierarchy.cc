@@ -20,12 +20,15 @@ nSpatialListHierarchy::~nSpatialListHierarchy()
 void nSpatialListHierarchy::ClearList()
 {
     while (!m_ElementList.IsEmpty())
-        m_ElementList.RemHead();
+    {
+        nNode *n=m_ElementList.RemHead();
+        n_delete(n);
+    }
 }
 
 void nSpatialListHierarchy::AppendElement(nSpatialElement *appendme)
 {
-    nNode *newnode = new nNode();
+    nNode *newnode = n_new(nNode());
     newnode->SetPtr(appendme);
     m_ElementList.AddTail(newnode);
 }
@@ -40,6 +43,7 @@ void nSpatialListHierarchy::RemoveElement(nSpatialElement *removeme)
         if (x == removeme)
         {
             walknodes->Remove();
+            n_delete(walknodes);
             return;
         }
     }

@@ -132,7 +132,7 @@ protected:
 /**
     @class nSpatialVisitor
     @ingroup NSpatialDBContribModule
-    @brief Visitor to collect all elements in a given region of space
+    @brief Visitor to collect all elements in a given region of space.
 
 */
 class nSpatialVisitor {

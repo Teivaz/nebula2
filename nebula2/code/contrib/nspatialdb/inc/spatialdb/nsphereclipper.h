@@ -14,11 +14,11 @@
     this for hierarchical objects to avoid doing cull checks on the children.
 */
 
-#include "gfx2/ncamera2.h"
 #include "gfx2/ngfxserver2.h"
 #include "mathlib/plane.h"
 #include "mathlib/sphere.h"
 #include "mathlib/bbox.h"
+#include "spatialdb/nvisitorbase.h"
 
 class nSphereClipper {
 public:
@@ -27,20 +27,9 @@ public:
     nSphereClipper(const vector3 &center, float radius);
     nSphereClipper(const sphere &clipsphere);
 
-    // helper class for culling
-    class result_info {
-        public:
-            bool    culled; ///< true when the volume is not visible
-            unsigned char   active_flag;  ///< one bit tells if we need to do the clipping check
-        
-            result_info(bool c = false, unsigned char a = 1) : 
-                culled(c), active_flag(a) 
-            { }
-    };
-
-    result_info TestBBox(const bbox3 &boxtest, result_info in);
-    result_info TestSphere(const sphere &spheretest, result_info in);
-    result_info TestPoint(const vector3 &pointtest, result_info in);
+    VisitorFlags TestBBox(const bbox3 &boxtest, VisitorFlags in);
+    VisitorFlags TestSphere(const sphere &spheretest, VisitorFlags in);
+    VisitorFlags TestPoint(const vector3 &pointtest, VisitorFlags in);
 
     void VisualizeSphere(nGfxServer2 *gfx2, const vector4 &color);
 
@@ -73,17 +62,26 @@ nSphereClipper::nSphereClipper(const sphere &clipsphere)
 }
 
 inline
-nSphereClipper::result_info nSphereClipper::TestBBox(const bbox3 &boxtest, result_info in)
+VisitorFlags nSphereClipper::TestBBox(const bbox3 &boxtest, VisitorFlags ri)
 {
+    // flag already off? then we're done
+    if ( (ri.m_activeflags & 1) == 0)
+        return ri;
+
+    // compare radius and distance
     // Convert to a bounding sphere and test it
     sphere virtsphere(boxtest.center(), boxtest.extents().len());
 
-    return TestSphere(virtsphere, in);
+    return TestSphere(virtsphere, ri);
 }
 
 inline
-nSphereClipper::result_info nSphereClipper::TestSphere(const sphere &spheretest, nSphereClipper::result_info ri)
+VisitorFlags nSphereClipper::TestSphere(const sphere &spheretest, VisitorFlags ri)
 {
+    // flag already off? then we're done
+    if ( (ri.m_activeflags & 1) == 0)
+        return ri;
+
     // compare radius and distance
     vector3 d(m_sphere.p - spheretest.p);
     float rsum = m_sphere.r + spheretest.r;
@@ -92,7 +90,7 @@ nSphereClipper::result_info nSphereClipper::TestSphere(const sphere &spheretest,
     // if the spheres are more distant than the sum of their two radii,
     // then cull it totally
     if (dsquared > (rsum*rsum))
-        return nSphereClipper::result_info(true,0);
+        return VisitorFlags(false);
 
     // if the test sphere is of smaller radius than the clip sphere, and
     // the centers are closer than the differences of the two radii, the
@@ -104,18 +102,24 @@ nSphereClipper::result_info nSphereClipper::TestSphere(const sphere &spheretest,
         float rdiff = m_sphere.r - spheretest.r;
         if ( dsquared < (rdiff*rdiff) )
         {
-            ri.active_flag = 0;
+            ri.m_activeflags &= ~1;
+            ri.m_test = true;
             return ri;
         }
     }
 
-    // non-conclusive test, just return the result_info as-is
+    // non-conclusive test, just return the VisitorFlags as-is
     return ri;
 }
 
 inline
-nSphereClipper::result_info nSphereClipper::TestPoint(const vector3 &pointtest, nSphereClipper::result_info ri)
+VisitorFlags nSphereClipper::TestPoint(const vector3 &pointtest, VisitorFlags ri)
 {
+    // flag already off? then we're done
+    if ( (ri.m_activeflags & 1) == 0)
+        return ri;
+
+    // compare radius and distance
     // build a bbox from the point and test that
     bbox3 mybbox(pointtest, vector3(0,0,0));
     return TestBBox(mybbox, ri);

@@ -13,6 +13,7 @@
 
 #include "spatialdb/nvisiblefrustumvisitor.h"
 #include "spatialdb/noccludedfrustumvisitor.h"
+#include "spatialdb/nvisiblespherevisitor.h"
 
 /**
     @class nVisibleFrustumGenArray
@@ -61,6 +62,23 @@ public:
 
 protected:
     void ClearArray() { m_visarray.Clear(); }
+
+    VisibleElements &m_visarray;
+};
+
+class nVisibleSphereGenArray : public nVisibleSphereVisitor {
+public:
+    nVisibleSphereGenArray(const sphere &viewsphere, VisibleElements &foundarray)
+        : nVisibleSphereVisitor(viewsphere), m_visarray(foundarray) {}
+    ~nVisibleSphereGenArray() { }
+
+	void Reset() { ClearArray(); nVisibleSphereVisitor::Reset(); }
+    void Reset(const sphere &s) { ClearArray(); nVisibleSphereVisitor::Reset(s); }
+
+	void Visit(nSpatialElement *visitee) { m_visarray.Append(visitee); }
+
+protected:
+	void ClearArray() { m_visarray.Clear(); }
 
     VisibleElements &m_visarray;
 };

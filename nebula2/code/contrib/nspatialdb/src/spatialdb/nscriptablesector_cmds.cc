@@ -9,6 +9,7 @@ static void n_addvisibleobject(void *slf, nCmd *cmd);
 static void n_addoccludingobject(void *slf, nCmd *cmd);
 static void n_addportalobject(void *slf, nCmd *cmd);
 static void n_remobject(void *slf, nCmd *cmd);
+static void n_clearobjects(void *slf, nCmd *cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -27,6 +28,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("v_addoccludingobject_sffffff",      'AOOB', n_addoccludingobject);
     cl->AddCmd("v_addportalobject_ssffff",          'APOB', n_addportalobject);
     cl->AddCmd("v_remobject_s",                     'RMOB', n_remobject);
+    cl->AddCmd("v_clearobjects_v",                  'CLOb', n_clearobjects);
     cl->EndCmds();
 }
 
@@ -124,6 +126,24 @@ n_remobject(void* slf, nCmd* cmd)
     nScriptableSector *self = (nScriptableSector *)slf;
     const char* s0 = cmd->In()->GetS();
     self->RemObject( s0 );
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    clearobjects
+    @input
+    v
+    @output
+    v
+    @info
+    Remove all objects from the sector
+*/
+static void
+n_clearobjects(void* slf, nCmd* cmd)
+{
+    nScriptableSector *self = (nScriptableSector *)slf;
+    self->ClearObjects();
 }
 
 bool

@@ -39,9 +39,9 @@ public:
     virtual void UpdateElement(ElementHandle elementid, const bbox3 &newbbox);
     virtual void RemoveElement(ElementHandle elementid);
 
-    virtual void Accept(nVisibilityVisitor &v, int recursiondepth, VisitorFlags flags);
-    virtual void Accept(nSpatialVisitor &v, int recursiondepth, VisitorFlags flags);
-    virtual void Accept(nOcclusionVisitor &v, int recursiondepth, VisitorFlags flags);
+    virtual void Accept(nVisibilityVisitor &v, int recursiondepth, VisitorFlags flags = VisitorFlags() );
+    virtual void Accept(nSpatialVisitor &v, int recursiondepth, VisitorFlags flags = VisitorFlags() );
+    virtual void Accept(nOcclusionVisitor &v, int recursiondepth, VisitorFlags flags = VisitorFlags());
 
 protected:
     // The elements of the sector are stashed in here...

@@ -12,7 +12,7 @@
  *  you can implement, which is not really a heirarchy at all.
  *  The set of spatial elements are stuck
  *  into a list.  For processing visitors, the spatiallist simply
- *  calls accept() on the all the spatial elements, relying on the
+ *  calls @c Accept() on the all the spatial elements, relying on the
  *  elements themselves to figure out visibility/occlusion and whatnot.
  *
  *  Obviously more efficient spatial heirarchy data structures exist, but

@@ -26,71 +26,49 @@ void nVisibleSphereVisitor::Reset()
   nVisibilityVisitor::Reset();
 }
 
-void nVisibleSphereVisitor::Visit(nSpatialSector *visitee, int recursedepth)
+void nVisibleSphereVisitor::Reset(const sphere &viewsphere)
 {
-    // bug out if we're hit the bottom of our allowed recursion
-    if (recursedepth < 1)
-        return;
+  nVisibilityVisitor::Reset(viewsphere.p);
+  m_viewspherestack.Clear();
+  m_sphereclipperstack.Clear();
 
-    //n_assert(visitee->GetOctree() != NULL);
-    nOctNode *rootnode = visitee->/*GetOctree()->*/GetRoot();
-    nSphereClipper::result_info clipinfo;
-    nSphereClipper sphereclip = m_sphereclipperstack.Back();
-    if (m_gfxdebug)
-    {
-        sphereclip.VisualizeSphere(m_gfxdebug, vector4(1.0f,1.0f,0.0f,0.5f));
-    }
-
-    // recursively descend the octree checking each node for clipping
-    CheckOctNode(rootnode, sphereclip, clipinfo, recursedepth);
+  m_viewspherestack.PushBack(viewsphere);
+  m_sphereclipperstack.PushBack(nSphereClipper(viewsphere));
+  
 }
 
-void nVisibleSphereVisitor::CheckOctNode(nOctNode *testnode, nSphereClipper &clipper, nSphereClipper::result_info clipstatus, int recursivedepth)
+void nVisibleSphereVisitor::StartVisualizeDebug(nGfxServer2 *gfx2)
 {
-    // if the node is totally enclosed, trivially accept all the children nodes.  otherwise, do a frustum clip test
-    if (clipstatus.active_flag != 0)
-    {
-        bbox3 nodebbox ( (testnode->minCorner + testnode->maxCorner)*0.5, (testnode->maxCorner - testnode->minCorner)*0.5);
-        clipstatus = clipper.TestBBox(nodebbox, clipstatus);
-    }
-
-    // if the node is culled, then ignore this node and all nodes below it
-    if (clipstatus.culled)
-        return;
-
-    // this node is not culled.  Test all the elements in this node, and then recurse to child nodes.
-    nOctElement *oe;
-    for (oe = (nOctElement *) testnode->elm_list.GetHead();
-         oe;
-         oe = (nOctElement *) oe->GetSucc())
-    {
-        bbox3 thisbbox( (oe->minCorner + oe->maxCorner)*0.5, (oe->maxCorner - oe->minCorner)*0.5);
-        nSphereClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
-        if (!ri.culled)
-        {
-            nSpatialElement *se = (nSpatialElement *)oe;
-            se->Accept(*this, recursivedepth);
-        }
-    }
-
-    // now check the children of this node
-    if (testnode->c[0])
-    for (int childix=0; childix < 8; childix++)
-    {
-        this->CheckOctNode(testnode->c[childix], clipper, clipstatus, recursivedepth);
-    }
+    nVisibilityVisitor::StartVisualizeDebug(gfx2);
+    vector4 spherecolor(0.0f,0.7f,0.9f,0.2f);
+    m_sphereclipperstack.Back().VisualizeSphere(gfx2, spherecolor);
 }
 
-bool nVisibleSphereVisitor::VisibilityTest(nSpatialElement *visitee)
+void nVisibleSphereVisitor::Visit(nSpatialElement *visitee)
+{
+    // empty -- typically overridden in subclasses
+}
+
+VisitorFlags nVisibleSphereVisitor::VisibilityTest(const bbox3 &testbox, VisitorFlags flags)
 {
     // test against the current sphere clipper
     nSphereClipper &clipper = GetSphereClipper();
 
-    nSphereClipper::result_info in, out;
-    bbox3 totest( (visitee->minCorner + visitee->maxCorner)*0.5, (visitee->maxCorner - visitee->minCorner)*0.5);
-    out = clipper.TestBBox( totest, in);
+    VisitorFlags out;
+    out = clipper.TestBBox( testbox, flags);
     
-    return !out.culled;
+    return out;
+}
+
+VisitorFlags nVisibleSphereVisitor::VisibilityTest(const sphere &testsphere, VisitorFlags flags)
+{
+    // test against the current sphere clipper
+    nSphereClipper &clipper = GetSphereClipper();
+
+    VisitorFlags out;
+    out = clipper.TestSphere( testsphere, flags);
+    
+    return out;
 }
 
 void nVisibleSphereVisitor::EnterLocalSpace(matrix44 &warp)

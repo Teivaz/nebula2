@@ -3,17 +3,19 @@
     @ingroup NebulaContribModules
     @brief Basic spatial database for visibility and spatial region queries.
 
-The spatial DB is mainly a smarter type of @ref nOctree. The spatialdb
+The spatialdb
 includes various nodes for visibility (portals and occluders) as well as
-hierarchy (nested sectors).  This allows you to perform various queries.
+hierarchy (nested spatial data structures such as octrees and kd-trees).
+Once you have constructed your objects in space, you can perform
+spatial and visibility queries.
+
+Spatial queries allow you to figure out what elements are in a specific
+region, specified possibly as a bounding box or sphere.
 
 Visibility queries allow you to figure out what elements are visible
 from a certain point, culled by either a maximum distance or by a view frustum.
 This allows you to find visible objects to pass on to a chunk of AI or
 rendering code.
-
-Spatial queries allow you to figure out what elements are in a specific
-region, specified possibly as a bounding box or sphere.
 
 The entire system is built on top of @ref nOctree for fast collection
 of objects in a specific space; then sectors and portals are used to take

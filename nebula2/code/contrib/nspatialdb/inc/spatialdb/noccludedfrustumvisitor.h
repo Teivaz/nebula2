@@ -2,6 +2,7 @@
 #define N_OCCLUDEDFRUSTUMVISITOR_H
 
 #include "nvisiblefrustumvisitor.h"
+
 /**
     @class nOccludedFrustumVisitor
     @ingroup NSpatialDBContribModule
@@ -28,10 +29,11 @@
     nMyCoolOcclusionVisitorType myocclusionvisitor(viewpoint);
     nOccludedFrustumVisitor ofvisitor(camera, transform, myocclusionvisitor);
 
-    ofvisitor.Reset();    // this also resets the occlusion visitor you provided
+    ofvisitor.Reset();    // you should also reset the occlusion visitor you provided...
+    myocclusionvisitor.Reset();
 
     mysetofelements->Accept(myocclusionvisitor);   // gathers occluders
-    mysetofelements->Accept(ofvisitor);            // finds visible elements using occlusion set
+    mysetofelements->Accept(ofvisitor);            // finds visible, non-occluded elements
 
     @endcode
 */
