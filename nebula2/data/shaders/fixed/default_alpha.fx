@@ -1,5 +1,6 @@
+#line 1 "default_alpha.fx"
 //------------------------------------------------------------------------------
-//  fixed/default.fx
+//  fixed/default_alpha.fx
 //
 //  The default shader for DX7 cards
 //  

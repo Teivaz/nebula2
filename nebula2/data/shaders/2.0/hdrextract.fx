@@ -1,5 +1,6 @@
+#line 1 "hdrextract.fx"
 //------------------------------------------------------------------------------
-//  hdrextractframe.fx
+//  hdrextract.fx
 //
 //  Post effect shader for the hdr renderer. Extracts the original frame.
 //

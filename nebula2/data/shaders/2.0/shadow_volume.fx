@@ -1,7 +1,9 @@
+#line 1 "shadow_volume.fx"
 //------------------------------------------------------------------------------
 //  shadow_volume.fx
 //
-//  Write the stencil values for the shadow volumes, work on pretransformed, extruded data.
+//  Write the stencil values for the shadow volumes, work on pretransformed,
+//  extruded data.
 //  
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
+#line 1 "default_alpha2.fx"
 //------------------------------------------------------------------------------
-//  fixed/default_alpha2.fx
+//  ps2.0/default_alpha2.fx
 //
 //  A 2 layer alpha shader. Note: the alpha channel of the first 
 //  texture indicates the transparency of the 2nd texture!

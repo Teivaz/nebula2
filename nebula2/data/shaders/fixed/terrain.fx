@@ -1,5 +1,6 @@
+#line 1 "terrain.fx"
 //------------------------------------------------------------------------------
-//  ps2.0/default.fx
+//  fixed/terrain.fx
 //
 //  The default shader for dx7 cards using fixed function pipeline,
 //  running in 1 render pass.

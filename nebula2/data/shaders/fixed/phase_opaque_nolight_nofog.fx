@@ -1,3 +1,4 @@
+#line 1 "phase_opaque_nolight_nofog.fx"
 //------------------------------------------------------------------------------
 //  phase_opaque_nolight_nofog.fx
 //

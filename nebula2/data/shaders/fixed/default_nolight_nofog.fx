@@ -1,5 +1,6 @@
+#line 1 "default_nolight_nofog.fx"
 //------------------------------------------------------------------------------
-//  fixed/default.fx
+//  fixed/default_nolight_nofog.fx
 //
 //  The default shader for DX7 cards
 //  

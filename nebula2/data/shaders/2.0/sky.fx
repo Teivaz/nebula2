@@ -1,5 +1,6 @@
+#line 1 "sky.fx"
 //------------------------------------------------------------------------------
-//  ps2.0/gradientsky.fx
+//  ps2.0/sky.fx
 //
 //  A simple gradient sky shader.
 //

@@ -1,3 +1,4 @@
+#line 1 "noisesampler.fx"
 //------------------------------------------------------------------------------
 //  noisesampler.h
 //  Declare a noise sampler for all shaders.

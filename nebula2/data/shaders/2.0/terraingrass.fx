@@ -1,5 +1,6 @@
+#line 1 "terraingrass.fx"
 //------------------------------------------------------------------------------
-//  ps2.0/grass.fx
+//  ps2.0/terraingrass.fx
 //
 //  A point sprite based grass shader.
 //
