@@ -46,7 +46,7 @@ nGuiButton::OnFrame()
             this->pressed = false;
         }
     }
-    return nGuiWidget::OnFrame();
+    nGuiWidget::OnFrame();
 }
 
 //-----------------------------------------------------------------------------
