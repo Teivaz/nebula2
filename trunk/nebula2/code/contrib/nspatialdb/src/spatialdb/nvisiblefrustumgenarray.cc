@@ -5,7 +5,7 @@
 
 #include "spatialdb/nvisiblefrustumgenarray.h"
 
-nVisibleFrustumGenArray::nVisibleFrustumGenArray(nCamera2 &cam, matrix44 &camxform, nVisibleFrustumGenArray::VisibleElements &foundarray)
+nVisibleFrustumGenArray::nVisibleFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, nVisibilityVisitor::VisibleElements &foundarray)
 : nVisibleFrustumVisitor(cam, camxform), m_visarray(foundarray)
 {
 }

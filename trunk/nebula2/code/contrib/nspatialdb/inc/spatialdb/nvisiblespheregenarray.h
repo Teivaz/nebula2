@@ -15,8 +15,6 @@
 
 class nVisibleSphereGenArray : public nVisibleSphereVisitor {
 public:
-    typedef nArray<nSpatialElement *> VisibleElements;
-
     nVisibleSphereGenArray(const sphere &viewsphere, VisibleElements &foundarray);
     ~nVisibleSphereGenArray();
 

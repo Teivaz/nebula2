@@ -15,9 +15,7 @@
 
 class nVisibleFrustumGenArray : public nVisibleFrustumVisitor {
 public:
-    typedef nArray<nSpatialElement *> VisibleElements;
-
-    nVisibleFrustumGenArray(nCamera2 &cam, matrix44 &camxform, VisibleElements &foundarray);
+    nVisibleFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, VisibleElements &foundarray);
     ~nVisibleFrustumGenArray();
 
     void Reset();

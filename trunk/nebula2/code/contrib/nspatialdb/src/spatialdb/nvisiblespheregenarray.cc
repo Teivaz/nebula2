@@ -5,7 +5,7 @@
 
 #include "spatialdb/nvisiblespheregenarray.h"
 
-nVisibleSphereGenArray::nVisibleSphereGenArray(const sphere &viewsphere, nVisibleSphereGenArray::VisibleElements &foundarray)
+nVisibleSphereGenArray::nVisibleSphereGenArray(const sphere &viewsphere, nVisibilityVisitor::VisibleElements &foundarray)
 : nVisibleSphereVisitor(viewsphere), m_visarray(foundarray)
 {
 }

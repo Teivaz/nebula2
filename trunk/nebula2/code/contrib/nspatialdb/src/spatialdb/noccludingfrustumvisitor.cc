@@ -5,7 +5,7 @@
 
 #include "spatialdb/noccludingfrustumvisitor.h"
 
-nOccludingFrustumVisitor::nOccludingFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform)
+nOccludingFrustumVisitor::nOccludingFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform)
 : nVisibleFrustumVisitor(cameraprojection, cameratransform)
 {
    // initialize the view frustum, matrix, etc.
@@ -29,8 +29,8 @@ void nOccludingFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
     if (recursedepth < 1)
         return;
 
-    n_assert(visitee->GetOctree() != NULL);
-    nOctNode *rootnode = visitee->GetOctree()->GetRoot();
+//    n_assert(visitee->GetOctree() != NULL);
+    nOctNode *rootnode = visitee->/*GetOctree()->*/GetRoot();
     nFrustumClipper::result_info clipinfo;
     nFrustumClipper frustum = m_viewfrustumstack.Back();
     // record the size of the occluder array before doing this sector

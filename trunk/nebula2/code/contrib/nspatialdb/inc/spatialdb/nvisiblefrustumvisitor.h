@@ -24,7 +24,7 @@ class nGfxServer2;
 
 class nVisibleFrustumVisitor : public nVisibilityVisitor {
 public:
-    nVisibleFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform); 
+    nVisibleFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform); 
     ~nVisibleFrustumVisitor();
 
     void Reset();
