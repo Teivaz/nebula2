@@ -15,7 +15,7 @@ new nparticleshapenode particletest
     .setmesh "meshes:examples/plane.n3d2"
     .setgroupindex 0
     
-    .setshader "colr" "shaders:particle_blended.fx"
+    .setshader "colr" "shaders:particle.fx"
     
     .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
     .settexture "DiffMap0" "textures:examples/dot.dds"
