@@ -144,7 +144,8 @@ public:
             MATERIALID       = (1<<2),
             NORMAL           = (1<<3),
             TANGENT          = (1<<4),
-            BINORMAL         = (1<<5)
+            BINORMAL         = (1<<5),
+            EDGEINDICIES     = (1<<6),
         };
 
         /// constructor
@@ -156,6 +157,10 @@ public:
         void SetVertexIndices(int i0, int i1, int i2);
         /// get vertex indices
         void GetVertexIndices(int& i0, int& i1, int& i2) const;
+        /// set edge indices
+        void SetEdgeIndices(int e0, int e1, int e2);
+        /// get vertex indices
+        void GetEdgeIndices(int& e0, int& e1, int& e2) const;
         /// set group id
         void SetGroupId(int i);
         /// get group id
@@ -184,6 +189,7 @@ public:
         const vector3& GetBinormal() const;
 
         int vertexIndex[3];
+        int edgeIndex[3];
         int usageFlags;
         int groupId;
         int materialId;
@@ -251,6 +257,8 @@ public:
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
     /// load from wavefront object file
     bool LoadObj(nFileServer2* fileServer, const char* filename);
+    /// load OLD n3d2 file (saved before Dec-2003)
+    bool LoadOldN3d2(nFileServer2* fileServer, const char* filename);
 
     /// binary save to open file handle
     bool SaveNvx2(nFile* file);
@@ -348,6 +356,12 @@ private:
         ushort vIndex[2];
         ushort fIndex;
         ushort GroupID;
+    };
+
+    struct UngroupedEdge // used as temp data for the generation
+    {
+        ushort vIndex[2];
+        ushort fIndex[2];
     };
 
     /// static userdata pointer for qsort hook
@@ -834,6 +848,7 @@ nMeshBuilder::Triangle::Triangle() :
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
+        this->edgeIndex[i] = nMesh2::InvalidIndex;
     }
 }
 
@@ -868,6 +883,31 @@ nMeshBuilder::Triangle::GetVertexIndices(int& i0, int& i1, int& i2) const
     i0 = this->vertexIndex[0];
     i1 = this->vertexIndex[1];
     i2 = this->vertexIndex[2];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetEdgeIndices(int e0, int e1, int e2)
+{
+    this->edgeIndex[0] = e0;
+    this->edgeIndex[1] = e1;
+    this->edgeIndex[2] = e2;
+    this->compMask |= EDGEINDICIES;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::GetEdgeIndices(int& e0, int& e1, int& e2) const
+{
+    e0 = this->edgeIndex[0];
+    e1 = this->edgeIndex[1];
+    e2 = this->edgeIndex[2];
 }
 
 //------------------------------------------------------------------------------
