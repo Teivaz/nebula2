@@ -1,5 +1,7 @@
+<!-- special renderpath.xml file for nclododeviewer.  This
+     renderpath.xml is a little simplified, and includes the splatterrain.fx
+     shader. -->
 <?xml version="1.0" encoding="utf-8" ?> 
-
 <RenderPath name="dx9_default" featureset="dx9" shaderpath="home:export/shaders/2.0" >
     <Pass name="color" shader="shaders:pass_color.fx">
         <Phase name="environment" shader="shaders:phase_environment.fx" fourcc="colr" sorting="FrontToBack" lights="Off">
