@@ -12,8 +12,14 @@
       output is recorded
     - creates a message box for nKernelServer::Message() 
       and nKernelServer::Error()
-    - Places log files in C:\Documents and Settings\<your username>\
-      Local Settings\Application Data\RadonLabs\Nebula2
+    - Places log files in <tt>C:\Documents and Settings\&lt;your username&gt;\
+      Local Settings\Application Data\&lt;subdir&gt;</tt>.
+      By default, this will be
+      <tt>C:\Documents and Settings\&lt;your username&gt;\
+      Local Settings\Application Data\RadonLabs\Nebula2</tt>.  The subdirectory
+      name is passed to the constructor.
+    - The actual file name is specified by the @c appName argument to the
+      constructor.
 
     (C) 2003 RadonLabs GmbH
 */
