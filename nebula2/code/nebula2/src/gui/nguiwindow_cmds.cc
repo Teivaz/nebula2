@@ -10,6 +10,8 @@ static void n_setmodal(void* slf, nCmd* cmd);
 static void n_ismodal(void* slf, nCmd* cmd);
 static void n_setdismissed(void* slf, nCmd* cmd);
 static void n_isdismissed(void* slf, nCmd* cmd);
+static void n_setfadeintime(void* slf, nCmd* cmd);
+static void n_setfadeouttime(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -35,6 +37,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_ismodal_v",           'ISMD', n_ismodal);
     cl->AddCmd("v_setdismissed_b",      'SDIS', n_setdismissed);
     cl->AddCmd("b_isdismissed_v",       'ISDS', n_isdismissed);
+    cl->AddCmd("v_setfadeintime_f",     'SFIT', n_setfadeintime);
+    cl->AddCmd("v_setfadeouttime_f",    'SFOT', n_setfadeouttime);
     cl->EndCmds();
 }
 
@@ -148,5 +152,42 @@ n_isdismissed(void* slf, nCmd* cmd)
     nGuiWindow* self = (nGuiWindow*) slf;
     cmd->Out()->SetB(self->IsDismissed());
 }
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setfadeintime
+    @input
+    f
+    @output
+    v
+    @info
+    Set the number of seconds the menu takes to fade in from transparency.
+*/
+static void
+n_setfadeintime(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    self->SetFadeInTime(cmd->In()->GetF());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setfadeouttime
+    @input
+    f
+    @output
+    v
+    @info
+    Set the number of seconds the menu takes to fade out from transparency.
+*/
+static void
+n_setfadeouttime(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    self->SetFadeOutTime(cmd->In()->GetF());
+}
+
 
 
