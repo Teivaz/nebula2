@@ -1,17 +1,38 @@
 //------------------------------------------------------------------------------
 //  nipcminiserver.cc
-//  (C) 2002 RadonLabs GmbH
+//  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include <stdlib.h>
-#include <string.h>
-
-#ifdef __LINUX__
-#include "fcntl.h"
-#endif
-
 #include "kernel/nipcserver.h"
-#include "kernel/nthread.h"
 #include "kernel/nipcminiserver.h"
+#include "kernel/nthread.h"
+
+//------------------------------------------------------------------------------
+/**
+*/
+nIpcMiniServer::nIpcMiniServer(nIpcServer *server) :
+    msgBuffer(4096),
+    isConnected(false)
+{
+    n_assert(server);
+
+    this->ipcServer  = server;
+    this->clientId   = this->ipcServer->uniqueMiniServerId++;
+    this->rcvrSocket = INVALID_SOCKET;
+
+    this->ipcServer->miniServerList.Lock();
+    this->ipcServer->miniServerList.AddTail(this);
+    this->ipcServer->miniServerList.Unlock();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+nIpcMiniServer::~nIpcMiniServer()
+{
+    n_printf("-> ~nIpcMiniServer\n");
+    this->CloseRcvrSocket();
+    n_printf("<- ~nIpcMiniServer\n");
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -20,16 +41,61 @@
 void
 nIpcMiniServer::CloseRcvrSocket()
 {
-    if (this->rcvrSocket) 
+    if (INVALID_SOCKET != this->rcvrSocket) 
     {
         shutdown(this->rcvrSocket, 2);
-#if defined(__WIN32__)
+
         closesocket(this->rcvrSocket);
-#elif defined(__LINUX__)
-        close(this->rcvrSocket);
-#endif
-        this->rcvrSocket = 0;
+        this->rcvrSocket = INVALID_SOCKET;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Waits for a client to connect and accepts the connection.
+*/
+bool nIpcMiniServer::Listen()
+{
+    bool retval = false;
+    
+    // wait for a client...
+    if (listen(this->ipcServer->sock, 5) != -1) 
+    {
+        this->rcvrSocket = accept(this->ipcServer->sock, 0, 0);
+        if (INVALID_SOCKET != this->rcvrSocket)
+        {
+            n_printf("client %d: connection accepted, socket %d.\n", this->clientId, this->rcvrSocket);
+
+            // put the socket into nonblocking mode
+            u_long trueAsUlong = 1;
+            ioctlsocket(this->rcvrSocket, FIONBIO, &trueAsUlong);
+            retval = true;
+
+            // set the connection status to false, this will only be set to true
+            // when the actual handshake with the client has happened
+            this->isConnected = false;
+        }
+        else 
+        {
+            n_printf("nIpcMiniServer::Listen(): accept() failed!");
+        }
+    } 
+    else 
+    {
+        n_printf("nIpcMiniServer::Listen(): listen() failed!");
+    }
+    return retval;
+}          
+
+//------------------------------------------------------------------------------
+/**
+    This method should be called after Listen() if the connection should
+    be ignored for any reason.
+*/
+void 
+nIpcMiniServer::Ignore()
+{
+    this->CloseRcvrSocket();
 }
 
 //------------------------------------------------------------------------------
@@ -46,226 +112,96 @@ nIpcMiniServer::CloseRcvrSocket()
 bool
 nIpcMiniServer::Poll()
 {
-    bool connected = false;
-
-    if (this->rcvrSocket)
+    if (INVALID_SOCKET != this->rcvrSocket)
     {
-        connected = true;
-
         // do a non-blocking recv
-        int len = recv(this->rcvrSocket, this->rcvrBuf, sizeof(this->rcvrBuf), 0);
+        int len = recv(this->rcvrSocket, this->msgBuffer.GetPointer(), this->msgBuffer.GetMaxSize(), 0);
         if (len == 0)
         {
             // the connection has been closed
             n_printf("nIpcMiniServer: connection closed!\n");
-            connected = false;
+            this->isConnected = false;
             this->CloseRcvrSocket();
+            return false;
         }
         else if (len < 0)
         {
-            // an error, filter out the would block error
-            #ifdef __WIN32__
-                if (WSAGetLastError() == WSAEWOULDBLOCK)
-                {
-                    // no data pending, return immediately
-                    return true;
-                }
-                else
-                {
-                    // a real error, close socket!
-                    this->CloseRcvrSocket();
-                    connected = false;
-                }
-            #elif defined(__LINUX__) || defined(__MACOSX__)
-                if (errno == EWOULDBLOCK)
-                {
-                    // no data pending, return immediately
-                    return true;
-                }
-                else
-                {
-                    // a real error, close socket!
-                    this->CloseRcvrSocket();
-                    connected = false;
-                }
-            #else
-            #error IMPLEMENT ME
-            #endif
+            // the receive call would block (actually, this is not quite
+            // clean, since WSAEWOULDBLOCK is just one possibility of
+            // many)
+            return true;
         }
         else
         {
             // normal case: a message was received!
+            this->msgBuffer.SetSize(len);
 
-            // check for special case command
-            if (this->rcvrBuf[0] == '~') 
+            // split multi-string receives
+            const char* curString = msgBuffer.GetFirstString();
+            if (curString) do
             {
-                char *result = 0;
-                char *cmd = strtok(this->rcvrBuf, " \t~");
-                if (strcmp(cmd, "handshake") == 0) 
+                bool systemMessage = false;
+                nString tokenString = curString;
+                const char* cmd = tokenString.GetFirstToken(" ");
+                if (cmd)
                 {
-                    // client checks for right portname
-                    char *pname = strtok(NULL," \t~");
-                    if (pname) 
+                    if (strcmp(cmd, "~handshake") == 0)
                     {
-                        if (strcmp(pname, this->server->pname.Get()) == 0) 
+                        // handshake from client, one portname argument
+                        const char* portName = tokenString.GetNextToken(" ");
+                        if (portName && (0 == strcmp(portName, this->ipcServer->selfAddr.GetPortName())))
                         {
-                            result = "~true";
+                            this->isConnected = true;
                         }
-                        else 
+                        else
                         {
-                            // ooops, wrong port, shut down connection
-                            result      = "~false";
-                            connected = false;
+                            this->isConnected = false;
                         }
-                    } 
-                    else 
-                    {
-                        n_error("nIpcMiniServer::n_miniserver_tfunc(): ~handshake command broken!");
+                        systemMessage = true;
                     }
-                } 
-                else if (strcmp(cmd, "close") == 0) 
-                {
-                    result    = "~ok";
-                    connected = false;
-                } 
-                else
-                {
-                    // an unknown command, just ignore
+                    else if (strcmp(cmd, "~close") == 0)
+                    {
+                        // client going to close connection
+                        this->isConnected = false;
+                        systemMessage = true;
+                    }
                 }
 
-                // return answer to special case command
-                if (result) 
+                // if not a system message, add to user message list
+                if (!systemMessage)
                 {
-                    send(this->rcvrSocket, result, strlen(result) + 1, 0);
+                    // a user message, add to msg list of thread
+                    nMsgNode *msgNode = new nMsgNode((void*) curString, strlen(curString) + 1);
+                    msgNode->SetPtr((void*) this->clientId);
+                    this->ipcServer->msgList.Lock();
+                    this->ipcServer->msgList.AddTail(msgNode);
+                    this->ipcServer->msgList.Unlock();
+                    this->ipcServer->msgList.SignalEvent();
                 }
-            } 
-            else 
-            {
-                // normal message, add to msg list and emit signal
-                nMsgNode *nd = n_new nMsgNode(this->rcvrBuf, len);
-                nd->SetPtr((void *)this->id);
-                this->server->msgList.Lock();
-                this->server->msgList.AddTail(nd);
-                this->server->msgList.Unlock();
-                this->server->msgList.SignalEvent();
-            }
+            } while (curString = msgBuffer.GetNextString());
         }
+        return this->isConnected;
     }
-    return connected;
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 28-Oct-98   floh    created
-     - 28-May-99   floh    + memleak fixed if nobody connected to the
-                             miniserver
-*/
-nIpcMiniServer::nIpcMiniServer(nIpcServer *_server)
-{
-    n_assert(_server);
-
-    this->server = _server;
-    this->id     = this->server->numMiniServers++;
-    this->srvrSocket = _server->sock;
-    this->rcvrSocket = 0;
-    memset(&(this->clientAddr), 0, sizeof(this->clientAddr));
-
-    this->server->miniServerList.Lock();
-    this->server->miniServerList.AddTail(this);
-    this->server->miniServerList.Unlock();
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 28-Oct-98   floh    created
-*/
-nIpcMiniServer::~nIpcMiniServer()
-{
-    this->CloseRcvrSocket();
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 28-Oct-98   floh    created
-     - 31-Oct-98   floh    divided into Listen(), Accept() und Ignore()
-*/
-bool nIpcMiniServer::Listen()
-{
-#ifdef __GLIBC__
-    unsigned int addrLen;
-#else
-    int addrLen;
-#endif
-    bool retval = false;
-    
-    // wait for a client...
-    if (listen(this->srvrSocket, 5) != -1) 
+    else
     {
-        addrLen = sizeof(this->clientAddr);
-
-        this->rcvrSocket = accept(this->srvrSocket, (struct sockaddr *)&(this->clientAddr), &addrLen);
-
-        if (this->rcvrSocket != INVALID_SOCKET) 
-        {
-            n_printf("client %d: connection accepted.\n", (int) this);
-
-            // put the socket into nonblocking mode
-#ifdef __WIN32__
-            u_long argp = 1;
-            ioctlsocket(this->rcvrSocket, FIONBIO, &argp);
-#elif defined(__LINUX__)
-            int flags;
-            flags = fcntl(this->rcvrSocket, F_GETFL);
-            flags |= O_NONBLOCK;
-            fcntl(this->rcvrSocket, F_SETFL, flags);
-#endif
- 
-            retval = true;
-        } 
-        else 
-        {
-            n_printf("nIpcMiniServer::Listen(): accept() failed!");
-        }
-    } 
-    else 
-    {
-        n_printf("nIpcMiniServer::Listen(): listen() failed!");
+        return true;
     }
-    return retval;
-}          
-
-//------------------------------------------------------------------------------
-/**
-     - 31-Oct-98   floh    created
-*/
-void 
-nIpcMiniServer::Ignore()
-{
-    this->CloseRcvrSocket();
 }
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
 */
 bool 
-nIpcMiniServer::Send(void *buf, int size)
+nIpcMiniServer::Send(nIpcBuffer& msg)
 {
-    n_assert(buf);
-    n_assert(size > 0);
-    
-    if (this->rcvrSocket) 
+    if ((INVALID_SOCKET != this->rcvrSocket) && (this->isConnected))
     {
-        int res = 0;
-        res = send(this->rcvrSocket, (char *)buf, size, 0);
-        if (-1 == res)
+        int res = send(this->rcvrSocket, msg.GetPointer(), msg.GetSize(), 0);
+        if ((res == SOCKET_ERROR) || (res != msg.GetSize()))
         {
-            n_printf("nIpcMiniServer::Send(): send() failed!\n");
+            n_printf("nIpcMiniServer::Send() failed!\n");
         }
+        return (res != SOCKET_ERROR);
     }
     return true;
 }
-
-//--------------------------------------------------------------------
-//  EOF
-//--------------------------------------------------------------------

@@ -8,15 +8,14 @@
 /**
 */
 nIpcClient::nIpcClient() :
-    serverPortNum(0),
-    sock(0)
+    sock(INVALID_SOCKET),
+    isConnected(false),
+    blocking(true)
 {
-#   ifdef __WIN32__
-    struct WSAData wsa_data;
-    WSAStartup(0x101, &wsa_data);
+#if __WIN32__
+    struct WSAData wsaData;
+    WSAStartup(0x101, &wsaData);
 #   endif
-
-    memset(&(this->serverAddr), 0, sizeof(this->serverAddr));
 }
 
 //------------------------------------------------------------------------------
@@ -24,296 +23,207 @@ nIpcClient::nIpcClient() :
 */
 nIpcClient::~nIpcClient()
 {
-    if (this->sock) 
+    if (this->isConnected)
     {
-        shutdown(this->sock, 2);
-        closesocket(this->sock);
-        this->sock = 0;
+        this->Disconnect();
     }
-
-#   ifdef __WIN32__
+#if __WIN32__
     WSACleanup();
 #   endif
 }
 
 //------------------------------------------------------------------------------
 /**
-    Sets the address of the server. 
-    See nIpcClient::Connect() for more information.
 */
-bool 
-nIpcClient::FillServerAddr(const char* name)
+void
+nIpcClient::DestroySocket()
 {
-    n_assert(name);
-
-    char nameBuf[128];
-    char *hostname = NULL;
-    char *portname = NULL;
-    char *tmp;
-    struct hostent *he;
-    
-    // split host and port name
-    n_strncpy2(nameBuf, name, sizeof(nameBuf));
-    if ((tmp = strchr(nameBuf, ':'))) 
+    if (this->sock != INVALID_SOCKET)
     {
-        *tmp = 0;
-        hostname = nameBuf;
-        portname = tmp + 1;
-    } else {
-        hostname = "localhost";
-        portname = nameBuf;
+        shutdown(this->sock, 2);
+        closesocket(this->sock);
+        this->sock = INVALID_SOCKET;
     }
-
-    this->serverHostName = hostname;
-    this->serverPortName = portname;
-    n_assert(hostname[0] != 0);
-    n_assert(portname[0] != 0);
-
-    he = gethostbyname(hostname);
-    if (!he) {
-        n_printf("nIpcClient(): unknown host!");
-        return false;
-    }
-    this->serverPortNum = this->GetPortNumFromName(portname);
-    this->serverAddr.sin_family = AF_INET;
-    this->serverAddr.sin_port   = htons(this->serverPortNum);
-#if defined(__WIN32__)
-    this->serverAddr.sin_addr.S_un.S_addr = inet_addr(hostname);
-#elif defined(__LINUX__)
-    this->serverAddr.sin_addr.s_addr = inet_addr(hostname);
-#endif
-    this->serverAddr.sin_addr   = *((struct in_addr *)he->h_addr);
-    return true;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-short 
-nIpcClient::GetPortNumFromName(const char *portName)
+void
+nIpcClient::ApplyBlocking(bool b)
 {
-    n_assert(portName);
-    short pnum = ((short)hash(portName, N_SOCKET_PORTRANGE)) + N_SOCKET_MIN_PORTNUM;
-    return pnum;
-} 
+    if (b)
+    {
+        u_long falseAsUlong = 0;
+        int res = ioctlsocket(this->sock, FIONBIO, &falseAsUlong);
+        n_assert(0 == res);
+    }
+    else
+    {
+        u_long trueAsUlong = 1;
+        int res = ioctlsocket(this->sock, FIONBIO, &trueAsUlong);
+        n_assert(0 == res);
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
-    Connects to the given server. The server name has the following structure:
-  
-    [hostname:]portname
+*/
+void
+nIpcClient::SetBlocking(bool b)
+{
+    this->blocking = b;
+    if (this->isConnected)
+    {
+        this->ApplyBlocking(b);
+    }
+}
 
-    Hostname is the usual address or IP of the server, this can be left blank
-    for the local machine. Portname is the string name of the port as set by the
-    server.
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nIpcClient::GetBlocking() const
+{
+    return this->blocking;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Establish a connection to the ipc server identified by the nIpcAddress
+    object.
 */
 bool 
-nIpcClient::Connect(const char* portName)
+nIpcClient::Connect(nIpcAddress& addr)
 {
-    n_assert(this->sock == 0);
-    bool retval = false;
-   
-    // resolve portname
-    if (this->FillServerAddr(portName)) 
+    if (!this->isConnected)
     {
-        int res;
-        char msg_buf[128];
-        bool connected = false;
-        bool error     = false;
-        int num_retries = 0;
+        n_assert(!this->isConnected);
+        this->serverAddr = addr;
+
+        // create socket (in blocking mode)
+        this->sock = socket(AF_INET, SOCK_STREAM, 0);
+        n_assert(this->sock != INVALID_SOCKET);
+
+        // configure the socket
+        int trueAsInt = 1;
+        int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt)); 
+        n_assert(res != -1);
+
+        // try connection
+        n_printf("nIpcClient: trying host %s port %d...\n", addr.GetHostName(), addr.GetPortNum());
+        res = connect(this->sock, (const sockaddr*) &(addr.GetAddrStruct()), sizeof(addr.GetAddrStruct()));
+        if (res == -1)
+        {
+            // connection failed.
+            n_printf("nIpcClient: failed to connect to host %s port %d!\n", addr.GetHostName(), addr.GetPortNum());
+            this->DestroySocket();
+            return false;
+        }
+
+        // send handshake
+        char msg[256];
+        sprintf(msg, "~handshake %s", addr.GetPortName());
+        res = send(this->sock, msg, strlen(msg) + 1, 0);
+        if (res == -1)
+        {
+            // initial send failed!
+            n_printf("nIpcClient: failed to send handshake to host %s port %d!\n", addr.GetHostName(), addr.GetPortNum());
+            this->DestroySocket();
+            return false;
+        }
+
+        // put socket into nonblocking mode?
+        this->ApplyBlocking(this->blocking);
         
-        while ((!connected) && (!error) && (num_retries < 4)) 
-        {    
-            if (this->sock) 
-            {
-                shutdown(this->sock,2);
-                closesocket(this->sock);
-                this->sock = 0;
-                num_retries++;
-            }
-            
-            // intialise new socket
-            this->sock = socket(AF_INET, SOCK_STREAM, 0);
-            if (this->sock == INVALID_SOCKET) 
-            {
-                n_printf("nIpcClient::nIpcClient(): could not create socket!");
-                return false;        
-            }
-
-            n_printf("nIpcClient: trying %s:%s, port %d...\n",
-                      this->serverHostName.Get(), this->serverPortName.Get(),
-                      this->serverPortNum);
-
-            res = connect(this->sock, (struct sockaddr *) &(this->serverAddr),
-                          sizeof(struct sockaddr));
-            if (res != -1) 
-            {
-                // check for correct port
-                sprintf(msg_buf, "~handshake %s", this->serverPortName.Get());
-                res = send(this->sock, msg_buf, strlen(msg_buf)+1, 0);
-            
-                // wait for response
-                if (res != -1) 
-                {
-                    n_printf("nIpcClient: sending handshake... ");
-                    res = recv(this->sock, msg_buf, sizeof(msg_buf), 0);
-                    if ((res==-1)||(res==0)) 
-                    {
-                        n_printf("nIpcClient::Connect(): ~handshake recv() failed!\n");
-                        error = true;
-                    } 
-                    else 
-                    {                    
-                        // correct response
-                        if (strcmp(msg_buf,"~true") == 0) 
-                        {
-                            connected = true;
-                            n_printf("accepted.\n");
-                        } 
-                        else 
-                        {
-                            // wrong response, try next port
-                            this->serverPortNum++;
-                            this->serverAddr.sin_port = htons(this->serverPortNum);
-                            n_printf("wrong portname.\n");
-                        }
-                    }
-                } 
-                else 
-                {
-                    n_printf("nIpcClient::Connect(): ~handshake send() failed!");
-                    error = true;
-                }
-            } 
-            else 
-            {
-                // no response, try next port
-                this->serverPortNum++;
-                this->serverAddr.sin_port = htons(this->serverPortNum);
-            }
-        }
-        if (connected) 
-        {
-            n_printf("nIpcClient: connected.\n");
-            retval = true;
-        } 
-        else 
-        {
-            n_printf("nIpcClient: Could not connect to a valid server!\n");
-            shutdown(this->sock,2);
-            closesocket(this->sock);
-            this->sock = 0;
-        }
+        // all ok
+        this->isConnected = true;
     }
-    return retval;
+    return true;
+
 }                                                                  
         
 //------------------------------------------------------------------------------
 /**
-    Disconnect from the current server.
+    Disconnect from the server.
 */
 void 
 nIpcClient::Disconnect()
 {
-    n_assert(this->sock);
-    int res;
-    char *cmd = "~close";
-    
-    // send ~close cmd
-    res = send(this->sock, cmd, strlen(cmd)+1, 0);
-    if (res != -1) 
+    if (this->isConnected)
     {
-        // get response
-        char buf[128];
-        res = recv(this->sock, buf, sizeof(buf), 0);
-        if ((res == -1) || (res == 0)) 
+        n_assert(INVALID_SOCKET != this->sock);
+
+        // send a close message to the server
+        const char* cmd = "~close";
+        int res = send (this->sock, cmd, strlen(cmd) + 1, 0);
+        if (res == -1)
         {
-            n_printf("nIpcClient::Disconnect(): recv(~close) failed!\n");    
+            n_printf("nIpcClient: failed to send close msg to host %s port %d\n",
+                this->serverAddr.GetHostName(), this->serverAddr.GetPortName());
         }
-    } 
-    else 
-    {
-        n_printf("nIpcClient::Disconnect(): send(~close) failed!\n");
-    } 
-
-    // kill the socket
-    shutdown(this->sock,2);
-    closesocket(this->sock);
-    this->sock = 0;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Sends a message to the current server.
-    
-    @param buf pointer to data to send
-    @param size size of data
-    
-    @return a pointer to a new nMsgNode with the response
-*/
-nMsgNode*
-nIpcClient::SendMsg(void* buf, int size)
-{
-    n_assert(buf);
-    n_assert(size > 0);
-
-    nMsgNode *nd = NULL;
-    int res;
-    res = send(this->sock, (char *) buf, size, 0);
-    if (res == -1) 
-    {
-        n_printf("nIpcClient::SendMsg(): send() failed!");
-    } 
-    else 
-    {
-        // wait for an answer...
-        res = recv(this->sock, this->receiveBuffer, RECEIVEBUFFERSIZE, 0);
-        if ((res == -1) || (res == 0)) 
-        {
-            n_printf("nIpcClient::SendMsg(): recv() failed!\n");
-        } 
-        else if (res > 0) 
-        {
-            nd = new nMsgNode(this->receiveBuffer, res);
-        }
+        this->DestroySocket();
+        this->isConnected = false;
     }
-    return nd;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Frees the reply nMsgNode. Should be called once you have finished processing a
-    response from nIpcClient::SendMsg()
-    
-    @param nd pointer to the nMsgNode you want to free.
 */
-void 
-nIpcClient::FreeReplyMsgNode(nMsgNode *nd)
+bool
+nIpcClient::IsConnected() const
 {
-    delete nd;
+    return this->isConnected;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Get the current server's hostname.
-    
-    @return hostname
 */
-const char*
-nIpcClient::GetHostName() const
+bool
+nIpcClient::Send(nIpcBuffer& msg)
 {
-    return this->serverHostName.IsEmpty() ? 0 : this->serverHostName.Get();
+    if (this->isConnected)
+    {
+        n_assert(INVALID_SOCKET != this->sock);
+        int res = send(this->sock, msg.GetPointer(), msg.GetSize(), 0);
+        if (-1 == res)
+        {
+            n_printf("nIpcClient: Send() failed!\n");
+            this->Disconnect();
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Get the current server's portname.
-    
-    @return portname
+    Receive a message. This method may block if the connection has been
+    created with blocking on.
 */
-const char*
-nIpcClient::GetPortName() const
+bool
+nIpcClient::Receive(nIpcBuffer& msg)
 {
-    return this->serverPortName.IsEmpty() ? 0 : this->serverPortName.Get();
+    n_assert(INVALID_SOCKET != this->sock);
+    int res = recv(this->sock, msg.GetPointer(), msg.GetMaxSize(), 0);
+    if (res > 0)
+    {
+        msg.SetSize(res);
+        return true;
+    }
+    else
+    {
+        // either an error occured, or the method would block
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        {
+            msg.SetSize(0);
+        }
+        else
+        {
+            // FIXME: some other error then WouldBlock
+            n_printf("nIpcClient::Receive(): failed!\n");
+        }
+        return false;
+    }
 }
-

@@ -17,36 +17,54 @@ class nIpcMiniServer : public nNode
 {
 public:
     /// constructor
-    nIpcMiniServer(nIpcServer* _server);
+    nIpcMiniServer(nIpcServer* server);
     /// destructor
     ~nIpcMiniServer();
-    /// listen on socket and wait for new client
+    /// listen on server socket and wait for new client
     bool Listen();
     /// ignore the new client for any reason
     void Ignore();
     /// check for and pull incoming messages, call this frequently!
     bool Poll();
     /// send a message to the client
-    bool Send(void* buf, int bufSize);
+    bool Send(nIpcBuffer& msg);
+    /// get the client id
+    int GetClientId() const;
+    /// return connection status
+    bool IsConnected() const;
 
 private:
     friend class nIpcServer;
 
     /// close the internal receiver socket
     void CloseRcvrSocket();
-
-    enum 
-    {
-        RCRVBUFSIZE = 4096,
-    };
-    
-    nIpcServer *server;             // my mother server
-    int id;                                      
-    SOCKET srvrSocket;
+   
+    nIpcServer* ipcServer;    // the master server
+    int clientId;                                      
     SOCKET rcvrSocket;
-    struct sockaddr_in clientAddr;
-    char rcvrBuf[RCRVBUFSIZE];
+    nIpcBuffer msgBuffer;
+    bool isConnected;         // valid connection established (including handshake)
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nIpcMiniServer::GetClientId() const
+{
+    return this->clientId;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nIpcMiniServer::IsConnected() const
+{
+    return this->isConnected;
+}
 
 //------------------------------------------------------------------------------
 #endif
