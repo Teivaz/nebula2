@@ -1,0 +1,16 @@
+#-------------------------------------------------------------------------------
+#   List of shaders, sorted by render priority.
+#   (C) 2004 Rafael Van Daele-Hunt
+#-------------------------------------------------------------------------------
+shaders:shared.fx
+shaders:skybox.fx
+shaders:terrain.fx
+shaders:default.fx
+shaders:default_skinned.fx
+shaders:underwater.fx
+shaders:water.fx
+shaders:tree.fx
+shaders:shape.fx
+shaders:gui.fx
+
+
