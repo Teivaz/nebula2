@@ -44,6 +44,8 @@
 #   endif
 #else
 #   include <unistd.h>
+#   include <sys/stat.h>
+#   include <sys/types.h>
 #endif
 
 class FileEntry : public nNode
@@ -1128,7 +1130,11 @@ unPackFile(nFileServer2* fs,
         n_assert(0 != dName);
         char absDir[N_MAXPATH];
         nMakeAbsolute(dName, absDir, sizeof(absDir));
-        mkdir(dName);
+#ifdef __WIN32__
+        int err = _mkdir(dName);
+#else
+        int err = mkdir(dName, S_IRWXU|S_IRWXG);
+#endif
         if (dir->Open(absDir))
         {
             nChangeDir(dName);
