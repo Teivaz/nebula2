@@ -387,7 +387,7 @@ bool nEnv::SaveCmds(nPersistServer *fs)
 
             case nArg::Float4:
                 {
-                    cmd = fs->GetCmd(this, 'STF4');
+                    cmd = fs->GetCmd(this, 'STV4');
                     const nFloat4& f = this->GetF4();
                     cmd->In()->SetF(f.x);
                     cmd->In()->SetF(f.y);
