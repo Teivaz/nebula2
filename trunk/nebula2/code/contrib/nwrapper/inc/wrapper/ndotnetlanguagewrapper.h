@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDotNetLanguageWrapper
+    @ingroup NWrapperContribModule
 
     This file is licensed under the terms of the Nebula License.
     (C) 2003 Alton Goerby aka PerfectCell.

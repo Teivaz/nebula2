@@ -5,23 +5,39 @@
 #  Modules:
 #      njavalanguagewrapper
 #      nlanguagewrapper
-#      nwrapper
+#      nwrapperapp
+#      ncorewrapper
+#      nsamplewrapper
 #  Targets:
 #      nlangwrapperlib
-#      nwrapper
+#      nwrapperapp
+#      ncorewrapper
+#      nsamplewrapper
 #===============================================================================
 
 #===============================================================================
 #  nwrapper modules
 #===============================================================================
-beginmodule nwrapper
-    annotate "Required module nwrapper.exe"
+beginmodule nwrapperapp
+    annotate "Required module for the executables"
     setdir wrapper
     setfiles { 
-        nwrapper
+        nwrapperapp
     }
     setmoduledeps  { nlanguagewrapper }
     setlibs_macosx { Carbon }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncorewrapper
+    setdir wrapper
+    setfiles { ncorewrapper }
+    setmoduledeps { nwrapperapp }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nsamplewrapper
+    setdir wrapper
+    setfiles { nsamplewrapper }
+    setmoduledeps { nwrapperapp }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nlanguagewrapper
@@ -55,12 +71,51 @@ begintarget nlangwrapperlib
     }
 endtarget
 #-------------------------------------------------------------------------------
-begintarget nwrapper
-    settype exe
-    setmodules { nwrapper }
+begintarget nwrapperapp
+    settype lib
+    setmodules { nwrapperapp }
     settargetdeps {
         nkernel
         nlangwrapperlib
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget ncorewrapper
+    settype exe
+    setmodules { ncorewrapper }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        nvideo
+        ndshow
+        ngui
+        nlangwrapperlib
+        nwrapperapp
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nsamplewrapper
+    settype exe
+    setmodules { nsamplewrapper }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        nvideo
+        ndshow
+        ngui
+        nlua
+        nopende
+        nclodterrain
+        nlangwrapperlib
+        nwrapperapp
     }
 endtarget
 #-------------------------------------------------------------------------------
