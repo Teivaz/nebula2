@@ -4,37 +4,45 @@
 /**
     @class nIpcAddress
     @ingroup Ipc
+    @brief Encapsulates a target address for the nIpc* class family.
 
-    Encapsulates a target address for the nIpc* class family. A target
-    address is a string made of 2 parts, host name and port id. A host name
-    is either a valid tcp/ip address in string form,
-    a name which can be resolved by gethostbyname() (including "localhost"),
-    or the special strings "self", "inetself", "any" and "broadcast". The port 
+    A target address is a string made of 2 parts, host name and port id.
+    A host name is either a valid tcp/ip address in string form,
+    a name which can be resolved by <tt>gethostbyname()</tt> (including
+    <tt>localhost</tt>), or the special strings <tt>self</tt>,
+    <tt>inetself</tt>, <tt>any</tt> and <tt>broadcast</tt>. The port 
     id string is either a normal name, which will be hashed into a port number, 
     or if the string is valid integer number, this number will be used directly 
     as port number.
 
     Examples:
 
-    localhost
-    192.168.0.90
-    flohbox
-    broadcast
+     - <tt>localhost</tt>
+     - <tt>192.168.0.90</tt>
+     - <tt>flohbox</tt>
+     - <tt>broadcast</tt>
 
-    Special host names and IP addresses:
-    ====================================
+    <b>Special host names and IP addresses:</b>
 
-    "localhost"     - this will translate to 127.0.0.1
-    "any"           - this will translate to INADDR_ANY, which is 0.0.0.0
-    "broadcast"     - this will translate to INADDR_BROADCAST, 
-                      which is 255.255.255.255
-    "self"          - this will translate to the first valid tcp/ip address
-                      for this host (there may be more then one tcp/ip 
-                      addresses bound to a hostname)
-    "inetself"      - This will translate to the first valid tcp/ip address
-                      for this host which is not a LAN address (which is not
-                      a Class A, B or C network address). If no such exists,
-                      the address will fallback to "self".
+    <dl>
+      <dt><tt>localhost</tt></dt>
+        <dd>this will translate to <tt>127.0.0.1</tt>.</dd>
+      <dt><tt>any</tt></dt>
+        <dd>this will translate to <tt>INADDR_ANY</tt>, which is
+          <tt>0.0.0.0</tt>.</dd>
+      <dt><tt>broadcast</tt></dt>
+        <dd>this will translate to <tt>INADDR_BROADCAST</tt>, which is
+          <tt>255.255.255.255</tt>.</dd>
+      <dt><tt>self</tt></dt>
+        <dd>this will translate to the first valid tcp/ip address
+          for this host (there may be more then one tcp/ip addresses
+          bound to a hostname)</dd>
+      <dt><tt>inetself</tt></dt>
+        <dd>This will translate to the first valid tcp/ip address
+          for this host which is not a LAN address (which is not
+          a Class A, B or C network address). If no such exists,
+          the address will fallback to <tt>self</tt>.</dd>
+    </dl>
 
     (C) 2003 RadonLabs GmbH
 */

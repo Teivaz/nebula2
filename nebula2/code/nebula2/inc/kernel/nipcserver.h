@@ -4,8 +4,7 @@
 /**
     @class nIpcServer
     @ingroup Ipc
-
-    Sockets based server object for simple ipc 
+    @brief Sockets based server object for simple inter-process communication.
 
     An nIpcServer object opens a named public message port, and
     waits for connection requests from nIpcClient objects. One

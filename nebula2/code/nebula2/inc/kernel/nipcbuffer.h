@@ -5,9 +5,10 @@
     @class nIpcBuffer
     @ingroup Ipc
 
-    A message buffer for the nIpc* class family. Note that a buffer
-    is just a raw byte pool, especially buffers used for receiving
-    messages may contain more then one message!
+    @brief A message buffer for the nIpc* class family.
+
+    Note that a buffer is just a raw byte pool, especially buffers used
+    for receiving messages may contain more then one message!
     
     (C) 2003 RadonLabs GmbH
 */

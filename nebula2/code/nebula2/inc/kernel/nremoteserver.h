@@ -4,6 +4,7 @@
 /**
     @class nRemoteServer
     @ingroup Ipc
+    @brief A network-accessible console server.
 
     The remote server opens a socket and listens for connecting
     clients. For each client, a remote session will be created,
@@ -13,8 +14,8 @@
     script server for evaluation. All strings emitted by 
     the Nebula kernel will be sent back to the client.
 
-    Please check out the nremoteshell tool, a command line tool
-    which can talk to an nRemoteServer.
+    Please check out the @ref NebulaToolsnremoteshell tool, a
+    command line tool which can talk to an nRemoteServer.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -141,7 +142,3 @@ nRemoteServer::nClientContext::GetCwd() const
 //------------------------------------------------------------------------------
 #endif
 
-
-
-
-    
