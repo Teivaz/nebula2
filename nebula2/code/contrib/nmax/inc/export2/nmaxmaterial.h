@@ -42,6 +42,7 @@ public:
     {
         Standard,
         MultiSub,
+        Shell,
         NebulaCustom,
         Unknown,
     };
