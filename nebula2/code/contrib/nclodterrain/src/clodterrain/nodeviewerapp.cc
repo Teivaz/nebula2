@@ -95,7 +95,6 @@ nODEViewerApp::Open()
     // initialize Nebula servers
     this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
     this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
@@ -140,6 +139,9 @@ nODEViewerApp::Open()
     this->refGfxServer->OpenDisplay();
 
     // define the input mapping
+    // late initialization of input server, because it relies on 
+    // refGfxServer->OpenDisplay having been called
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     if (NULL != this->GetInputScript())
     {
         const char* result;

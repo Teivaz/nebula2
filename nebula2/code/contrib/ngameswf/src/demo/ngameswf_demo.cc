@@ -151,7 +151,6 @@ bool open ()
     timeServer     = kernelServer->GetTimeServer ();
     scriptServer   = (nScriptServer*)kernelServer->New (scriptserverArg, "/sys/servers/script");
     gfxServer      = (nGfxServer2*)kernelServer->New ("nd3d9server", "/sys/servers/gfx");
-    inputServer    = (nInputServer*)kernelServer->New ("ndi8server", "/sys/servers/input");
     variableServer = (nVariableServer*)kernelServer->New ("nvariableserver", "/sys/servers/variable");
     resourceServer = (nResourceServer*)kernelServer->New ("nresourceserver", "/sys/servers/resource");
     consoleServer  = (nConServer*)kernelServer->New("nconserver", "/sys/servers/console");
@@ -165,10 +164,6 @@ bool open ()
     const char* result;
     scriptServer->RunScript (startupArg, result);
 
-    inputServer->BeginMap();
-    inputServer->Map("keyb0:esc.down", "console");
-    inputServer->EndMap();
-
     // specify display mode.
     bool fullscreen = false;
     nDisplayMode2 displayMode ("ngameswf demo", 
@@ -177,6 +172,14 @@ bool open ()
     gfxServer->SetDisplayMode (displayMode);
 
     gfxServer->OpenDisplay ();
+
+    // define the input mapping
+    // late initialization of input server, because it relies on 
+    // refGfxServer->OpenDisplay having been called
+    inputServer    = (nInputServer*)kernelServer->New ("ndi8server", "/sys/servers/input");
+    inputServer->BeginMap();
+    inputServer->Map("keyb0:esc.down", "console");
+    inputServer->EndMap();
 
     if (!initSWF())
     {

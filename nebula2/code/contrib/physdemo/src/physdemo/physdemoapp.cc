@@ -54,7 +54,6 @@ PhysDemoApp::Open()
     // initialize Nebula servers
     this->refScriptServer   = (nScriptServer*)   kernelServer->New("ntclserver", "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refInputServer    = (nInputServer*)    kernelServer->New("ndi8server", "/sys/servers/input");
     this->refConServer      = (nConServer*)      kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*) kernelServer->New("nresourceserver", "/sys/servers/resource");
     this->refSceneServer    = (nSceneServer*)    kernelServer->New("nstdsceneserver", "/sys/servers/scene");
@@ -93,9 +92,6 @@ PhysDemoApp::Open()
         this->physContactArray[index].surface.mu = 0.75;
     }
     
-    // define the input mapping
-    this->refScriptServer->RunScript(this->GetInputScript(), result);
-
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("nviewer");
 
@@ -104,6 +100,12 @@ PhysDemoApp::Open()
     this->camera.SetFarPlane(500.0f);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+
+    // define the input mapping
+    // late initialization of input server, because it relies on 
+    // refGfxServer->OpenDisplay having been called
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    this->refScriptServer->RunScript(this->GetInputScript(), result);
 
     // initialize gui
     this->refGuiServer->SetRootPath("/gui");
