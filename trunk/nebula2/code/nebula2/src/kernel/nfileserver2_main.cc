@@ -295,6 +295,8 @@ nFileServer2::InitHomeAssign(void)
         FSRef bundleFSRef;
         CFURLGetFSRef(bundleURL, &bundleFSRef);
         FSRefMakePath(&bundleFSRef, (unsigned char*)buf, N_MAXPATH);
+        // if last char is not a /, append one
+        if (buf[strlen(buf)] != '/') strcat(buf,"/");
     #else
     #error nFileServer::initHomeAssign() not implemented!
     #endif
