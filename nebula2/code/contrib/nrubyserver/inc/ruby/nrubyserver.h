@@ -70,9 +70,9 @@ public:
     nRubyServer();
     virtual ~nRubyServer(); 
     
-    virtual bool Run(const char *, const char*&);
-    virtual bool RunScript(const char *, const char*&);
-    virtual bool RunFunction(const char *, const char*&); 
+    virtual bool Run(const char *, nString&);
+    virtual bool RunScript(const char *, nString&);
+    virtual bool RunFunction(const char *, nString&); 
     /// Not tested so far where is it used anyway ? 
     virtual bool RunCommand(nCmd *);
     virtual nString Prompt();
