@@ -75,7 +75,7 @@ nJavaLanguageWrapper::OpenClass(nClass * cl)
 {
     nString fileName;
     fileName = "src/java/org/cubik/nebuladevice/";
-    fileName += cl->GetName();
+    fileName += cl->GetProperName();
     fileName += ".java";
     this->javaFile->Open(fileName.Get(), "w");
     n_assert(this->javaFile->IsOpen());
@@ -236,8 +236,10 @@ nJavaLanguageWrapper::WriteCommand(nClass * cl, nCmdProto * cmdProto)
     }
     else if (1 < cmdProto->GetNumOutArgs())
     {
-        implString += "    jobjectArray retVal = NULL;";
-        returnString = "return retVal;\n";
+        // implString += "    jobjectArray retVal = NULL;";
+        // returnString = "return retVal;\n";
+        // For now, we don't properly support multi-value returns at all.
+        returnString = "return;\n";
     }
     else
     {
