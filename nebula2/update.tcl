@@ -8,54 +8,18 @@
 # Globals
 #----------------------------------------------------------------------------
 global home
-global platform
-global vstudioPrefix
 global debug
+global platform
 global verbose
+global data_loaded
+global loaded_generators
+global usegui
 
-set workspaces ""
+set workspaces {}
 set buildgen ""
-set listworkspaces false
-set listcompilers false
 set verbose false
-# deal with args
-set i 0
-while {$i < $argc} {
-    if {[lindex $argv $i] == "-help" || [lindex $argv $i] == "--help"} {
-        puts "Usage:"
-        puts "   update.tcl \[-help\] \[-build buildsystem\] \[workspacelist\]"
-        puts "              \[-listworkspaces\] \[-listcompilers\]"
-        puts "              \[-verbose\]"
-        puts ""
-        puts " -help: Display this information"
-        puts " -build: Specify which build system generator should be used."
-        puts "         If this isn't specified, then all available generators"
-        puts "         will be run."
-        puts " \[workspacelist\]: The list of workspaces that should be"
-        puts "          generated. By default, all workspaces will be"
-        puts "          generated."
-        puts " -listworkspaces: List the available workspaces."
-        puts " -listcompilers: List the build systems that are supported."
-        puts " -verbose: Print extra information (but not full debug"
-        puts "          information). This is off by default but basic"
-        puts "          information will still be printed."
-        exit
-    } elseif {[lindex $argv $i] == "-build"} {
-        set i [expr $i + 1]
-        set buildgen [lindex $argv $i]
-    } elseif {[lindex $argv $i] == "-listworkspaces"} {
-        set listworkspaces true
-    } elseif {[lindex $argv $i] == "-listcompilers"} {
-        set listcompilers true
-    } elseif {[lindex $argv $i] == "-verbose"} {
-        set verbose true
-    } else {
-        lappend workspaces [lindex $argv $i]
-    }
-    set i [expr $i + 1]
-}
-
-set vstudioPrefix "code/nebula2/vstudio"
+set usegui false
+set data_loaded false
 
 # Set this to true if you want extra debug info to get printed
 set debug false
@@ -64,6 +28,7 @@ set debug false
 set home [file dir [info script]]/
 cd $home
 set home ./
+
 
 #----------------------------------------------------------------------------
 #  Included scripts
@@ -84,90 +49,286 @@ if (!$verbose) {
     ::log::lvSuppressLE debug 1
 }
 
-# generators
-set gen_list ""
+set platform [get_platform]
+
+# Load the generator scripts
+set loaded_generators ""
 foreach gen [glob -nocomplain $home/buildsys/compiler/*.tcl] {
     set gen_name [file tail [file rootname $gen]]
-    lappend gen_list $gen_name
+    lappend loaded_generators $gen_name
     namespace eval $gen_name {
         source $gen
     }
 }
 
-if { $listcompilers } {
-    puts "Supported build systems:"
-    foreach gen $gen_list {
-        puts "   - $gen"
+proc configure_gui {} {
+    # The window
+    frame .window
+
+    # The menu bar
+    menu .window.menubar -type menubar
+    .window.menubar add cascade -label Run -menu .window.menubar.run \
+        -underline 0
+    menu .window.menubar.run -tearoff 0
+    .window.menubar.run add command -label "Select Compiler..." -underline 5 \
+        -command { select_generator }
+    .window.menubar.run add command -label "Select Workspaces..." -underline 5 \
+        -command { select_workspaces }
+    .window.menubar.run add separator
+    .window.menubar.run add command -label "Run" -underline 0 \
+        -command { run_buildsystem }
+    .window.menubar.run add separator
+    .window.menubar.run add command -label Exit -underline 1 -command { exit }
+
+    . configure -menu .window.menubar
+
+    # The text area
+    text .window.text -wrap none -yscrollcommand ".window.v_scroll set" \
+        -xscrollcommand ".window.h_scroll set"
+    scrollbar .window.v_scroll -command ".window.text yview"
+    scrollbar .window.h_scroll -command ".window.text xview" -orient horizontal
+
+    # Layout
+    pack .window.v_scroll -side right -fill y
+    pack .window.h_scroll -side bottom -fill x
+    pack .window.text -side left -fill both -expand 1
+    pack .window -fill both -expand 1
+
+    # Set up tags for the log levels in the text widget
+    foreach level $::log::levels {
+        .window.text tag config $level -foreground [::log::lv2color $level]
     }
-    puts ""
-    foreach gen $gen_list {
-        puts "$gen:"
-        if {[catch { namespace inscope $gen description } result]} {
-            puts "  ERROR: $result"
-        }
-        puts "---"
-        puts ""
-    }
-    exit
+
+    focus .window
 }
 
-set platform [get_platform]
+proc log_message {level msg} {
+    .window.text insert end "$msg\n" $level
+    .window.text yview moveto 1
+    update
+}
 
-#----------------------------------------------------------------------------
-#  Prep the pak file data
-#----------------------------------------------------------------------------
+proc load_data {} {
+    global data_loaded
 
-# Load the data
-loadbldfiles
-if { $listworkspaces } {
-    puts ""
-    puts "Available workspaces:"
+    loadbldfiles
+    set data_loaded true
+}
+
+proc list_workspaces {} {
+    global data_loaded
+    global num_wspaces
+    global wspace
+
+    if { $data_loaded == false } {
+        load_data
+    }
+
+    ::log::log info ""
+    ::log::log info "Available workspaces:"
     for {set i 0} {$i < $num_wspaces} {incr i} {
-        puts "  $wspace($i,name): $wspace($i,annotate)"
+        ::log::log info "  $wspace($i,name): $wspace($i,annotate)"
     }
     exit
 }
-if { $debug } {
-    dump_data loadbld
-}
 
-# Massage data (generation, etc.)
-fixmods
-fixbundles
-fixtargets
-fixworkspaces $workspaces
-if { $debug } {
-    dump_data generatebld
-    dump_api_data generateapibld
-}
+proc list_generators {} {
+    global usegui
 
-# ETERNAL TODO: Properly validate data 
-::log::log info "\n**** Validating bld files"
- 
-if { $debug } {
-    dump_api_data validatebld   
-}
-add_pkgs $workspaces
+    set generator_info [get_generator_info]
 
-::log::log info "\n->Done loading bld files."
-#----------------------------------------------------------------------------
-#  Call the generators
-#----------------------------------------------------------------------------
-::log::log info ""
-::log::log info ":: GENERATING buildfiles..."
-::log::log info "==========================="
-
-if {$buildgen == ""} {
-    ::log::log debug "Running all generators..."
-    foreach gen $gen_list {
-        namespace inscope $gen generate $workspaces
+    ::log::log info "Supported build systems:"
+    foreach generator $generator_info {
+        ::log::log info "[lindex $generator 0]:"
+        ::log::log info "    [lindex $generator 1]"
     }
-} else {
-    ::log::log debug "Running $buildgen generator"
-    namespace inscope $buildgen generate $workspaces
+    exit
 }
 
-::log::log info "\ndone."
+proc select_workspaces {} {
+    global data_loaded
+
+    if { $data_loaded == false } {
+        load_data
+    }
+
+    tk_messageBox -message "This is not yet implemented!" -type ok -icon info
+}
+
+proc select_generator {} {
+    global buildgen
+    global usegui
+
+    set generator_info [get_generator_info]
+
+    if {[winfo exists .generators]} {
+        focus .generators
+        return
+    }
+    toplevel .generators
+    frame .generators.f
+    label .generators.f.l -text "Available build system support:"
+    pack .generators.f.l -side top -anchor w
+    frame .generators.f.b
+    button .generators.f.b.cancel -text "Cancel" \
+        -command { destroy .generators }
+    button .generators.f.b.accept -text "Select Compiler" \
+        -command {
+            global buildgen
+
+            set active [.generators.f.f.list curselection]
+            set generator_info [get_generator_info]
+            set buildgen [lindex [lindex $generator_info $active] 0]
+            destroy .generators
+        }
+    pack .generators.f.b.cancel -side left
+    pack .generators.f.b.accept -side right
+    pack .generators.f.b -side bottom -anchor e
+    frame .generators.f.f
+    listbox .generators.f.f.list -yscroll ".generators.f.f.scroll set" \
+        -selectmode browse -width 20
+    scrollbar .generators.f.f.scroll -orient vertical \
+        -command ".generators.f.f.list yview"
+    pack .generators.f.f.scroll -side right -fill y
+    pack .generators.f.f.list -side left -fill both
+    pack .generators.f.f -side left -fill both -anchor nw
+    message .generators.f.description -text "" -width 150 -anchor nw
+    pack  .generators.f.description -side right -fill both -anchor nw \
+        -expand 1
+
+    bind .generators.f.f.list <<ListboxSelect>> {
+        set active [.generators.f.f.list curselection]
+        set generator_info [get_generator_info]
+        set description [lindex [lindex $generator_info $active] 1]
+        .generators.f.description configure -text $description
+    }
+    pack .generators.f -fill both -expand 1
+
+    set idx 0
+    foreach generator $generator_info {
+        .generators.f.f.list insert end [lindex $generator 0]
+        incr idx
+        if {[lindex $generator 0] eq $buildgen} {
+            # XXX: This doesn't seem to activate it in the UI!
+            .generators.f.f.list activate $idx
+        }
+    }
+
+    focus .generators
+}
+
+proc run_buildsystem {} {
+    global buildgen
+    global workspaces
+
+    return [run_buildsystem_worker $workspaces $buildgen]
+}
+
+proc run_buildsystem_worker {workspaces buildgen} {
+    global debug
+    global data_loaded
+    global loaded_generators
+
+    if { $data_loaded == false } {
+        load_data
+    }
+
+    if { $debug } {
+        dump_data loadbld
+    }
+
+    # Massage data (generation, etc.)
+    fixmods
+    fixbundles
+    fixtargets
+    fixworkspaces $workspaces
+    if { $debug } {
+        dump_data generatebld
+        dump_api_data generateapibld
+    }
+
+    # ETERNAL TODO: Properly validate data 
+    ::log::log info "\n**** Validating bld files"
+ 
+    if { $debug } {
+        dump_api_data validatebld   
+    }
+    add_pkgs $workspaces
+
+    ::log::log info "\n->Done loading bld files."
+    #---------------------------------------------------------------------------
+    #  Call the generators
+    #---------------------------------------------------------------------------
+    ::log::log info ""
+    ::log::log info ":: GENERATING buildfiles..."
+    ::log::log info "==========================="
+
+    if {$buildgen == ""} {
+        ::log::log debug "Running all generators..."
+        foreach gen $loaded_generators {
+            namespace inscope $gen generate $workspaces
+        }
+    } else {
+        ::log::log debug "Running $buildgen generator"
+        namespace inscope $buildgen generate $workspaces
+    }
+
+    ::log::log info "\ndone."
+}
+
+# deal with args
+set i 0
+while {$i < $argc} {
+    if {[lindex $argv $i] == "-help" || [lindex $argv $i] == "--help"} {
+        puts "Usage:"
+        puts "   update.tcl \[-help\] \[-build buildsystem\] \[workspacelist\]"
+        puts "              \[-listworkspaces\] \[-listcompilers\]"
+        puts "              \[-verbose\] \[-gui\]"
+        puts ""
+        puts " -help: Display this information"
+        puts " -build: Specify which build system generator should be used."
+        puts "         If this isn't specified, then all available generators"
+        puts "         will be run."
+        puts " \[workspacelist\]: The list of workspaces that should be"
+        puts "          generated. By default, all workspaces will be"
+        puts "          generated."
+        puts " -listworkspaces: List the available workspaces."
+        puts " -listcompilers: List the build systems that are supported."
+        puts " -verbose: Print extra information (but not full debug"
+        puts "          information). This is off by default but basic"
+        puts "          information will still be printed."
+        puts " -gui: Use the GUI."
+        exit
+    } elseif {[lindex $argv $i] == "-build"} {
+        set i [expr $i + 1]
+        set buildgen [lindex $argv $i]
+    } elseif {[lindex $argv $i] == "-listworkspaces"} {
+        list_workspaces
+    } elseif {[lindex $argv $i] == "-listcompilers"} {
+        list_generators
+    } elseif {[lindex $argv $i] == "-verbose"} {
+        set verbose true
+    } elseif {[lindex $argv $i] == "-gui"} {
+        set usegui true
+    } else {
+        lappend workspaces [lindex $argv $i]
+    }
+    set i [expr $i + 1]
+}
+
+if { [string first wish [info nameofexecutable]] != -1 } {
+    set usegui true
+}
+
+if { $usegui } {
+    package require Tk 8.4
+
+    configure_gui
+
+    ::log::lvCmdForall log_message
+} else {
+    run_buildsystem
+}
 
 #----------------------------------------------------------------------------
 #   EOF
