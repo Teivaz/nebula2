@@ -127,7 +127,7 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
             float value;
             control->GetValue(t, &value, interv, CTRL_ABSOLUTE);
 
-            sampleKey.fVal = value;
+            sampleKey.fval = value;
         }
 
         if (type == nMaxPoint3)
@@ -137,6 +137,16 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
 
             sampleKey.pos = value;
         }
+
+        if (type == nMaxPoint4)
+        {
+            Point4 value;
+            control->GetValue(t, &value, interv);
+
+            sampleKey.pt4 = value;
+        }
+
+        sampleKey.time  = t * SECONDSPERTICK;
 
         sampleKeyArray.Append(sampleKey);
     }
@@ -154,7 +164,7 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
             float value;
             control->GetValue(t, &value, interv, CTRL_ABSOLUTE);
 
-            sampleKey.fVal = value;
+            sampleKey.fval = value;
         }
 
         if (type == nMaxPoint3)
@@ -164,6 +174,16 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
 
             sampleKey.pos = value;
         }
+
+        if (type == nMaxPoint4)
+        {
+            Point4 value;
+            control->GetValue(t, &value, interv);
+
+            sampleKey.pt4 = value;
+        }
+
+        sampleKey.time  = t * SECONDSPERTICK;
 
         sampleKeyArray.Append(sampleKey);
     }
