@@ -1,0 +1,70 @@
+#--------------------------------------------------------------------
+#   nmaxexport.bld
+#   Holds the exporter for 3ds max to Nebula2
+#   
+#   Modules:
+#       nmaxexport
+#       nmaxexporttask
+#   Targets::
+#       nmaxexport
+#
+#-------------------------------------------------------------------------------
+beginmodule nmaxexporttask
+    annotate "the export task (the configuation for the export)"
+    
+    settype cpp
+    setplatform win32
+    
+    setdir export
+    setmoduledeps { }
+    setfiles   { nmaxexporttask }
+    setheaders  { nmaxexporttask }
+    
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxexport
+    annotate "the pure export code, no dialogs!"
+    
+    settype cpp
+    setplatform win32
+    
+    setdir export
+    setmoduledeps { 
+      nmaxloghandler nmaxdll
+      nmaxexporttask
+      nmeshbuilder nanimbuilder
+    }
+    setfiles   { 
+        nmaxexport_main
+        nmaxexport_mesh
+        nmaxexport_transformation
+        nmaxexport_material
+        nmaxexport_light
+    }
+    setheaders  { nmaxexport }
+    
+    setlibs_win32 { maxutil.lib core.lib geom.lib igame.lib }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nmaxexport
+    annotate "the nebula2 max export plugin"
+    
+    settype dll
+    changedllextension dle
+    
+    setmodules {
+      nmaxexport
+      nmaxexporttask
+      nmaxdll
+    }
+    settargetdeps {
+        nmaxbase 
+        nkernel ntoollib
+        microtcl
+        nnebula
+    }
+    
+    #setup fileserver behavior for plugins
+    addtargetdef nkernel N_MAXPLUGIN 1
+endtarget
+#-------------------------------------------------------------------------------
