@@ -12,7 +12,7 @@ nNebulaScriptClass(nFloatAnimator, "nanimator");
 /**
 */
 nFloatAnimator::nFloatAnimator() :
-    vectorParameter(nShaderState::InvalidParameter),
+    floatParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -28,30 +28,30 @@ nFloatAnimator::~nFloatAnimator()
 
 //------------------------------------------------------------------------------
 /**
-    Set the name of the vector variable which should be animated by
+    Set the name of the float variable which should be animated by
     this object.
 */
 void
-nFloatAnimator::SetVectorName(const char* name)
+nFloatAnimator::SetFloatName(const char* name)
 {
     n_assert(name);
-    this->vectorParameter = nShaderState::StringToParam(name);
+    this->floatParameter = nShaderState::StringToParam(name);
 }
 
 //------------------------------------------------------------------------------
 /**
-    Get the name of the vector variable which is animated by this object.
+    Get the name of the float variable which is animated by this object.
 */
 const char*
-nFloatAnimator::GetVectorName()
+nFloatAnimator::GetFloatName()
 {
-    if (nShaderState::InvalidParameter == this->vectorParameter)
+    if (nShaderState::InvalidParameter == this->floatParameter)
     {
         return 0;
     }
     else
     {
-        return nShaderState::ParamToString(this->vectorParameter);
+        return nShaderState::ParamToString(this->floatParameter);
     }
 }
 
@@ -87,7 +87,7 @@ nFloatAnimator::GetKeyAt(int index, float& time, float& key) const
 
 //------------------------------------------------------------------------------
 /**
-    Returns the animator type. nVectorAnimator is a SHADER animator.
+    Returns the animator type. nFloatAnimator is a SHADER animator.
 */
 nAnimator::Type
 nFloatAnimator::GetAnimatorType() const
@@ -117,7 +117,7 @@ nFloatAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     float key;
     if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
     {
-        targetNode->SetFloat(this->vectorParameter, key);
+        targetNode->SetFloat(this->floatParameter, key);
     }
 }
 

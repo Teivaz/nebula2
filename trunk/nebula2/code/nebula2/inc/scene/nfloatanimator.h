@@ -29,9 +29,9 @@ public:
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// set the name of the float parameter to manipulate
-    void SetVectorName(const char* name);
+    void SetFloatName(const char* name);
     /// get the name of the float parameter to manipulate
-    const char* GetVectorName();
+    const char* GetFloatName();
     /// add a key 
     void AddKey(float time, const float& key);
     /// get number of keys
@@ -40,7 +40,7 @@ public:
     void GetKeyAt(int index, float& time, float& key) const;
 
 private:
-    nShaderState::Param vectorParameter;
+    nShaderState::Param floatParameter;
     nIpolKeyArray<float> keyArray;
 };
 

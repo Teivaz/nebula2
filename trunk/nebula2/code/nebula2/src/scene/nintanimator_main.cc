@@ -12,7 +12,7 @@ nNebulaScriptClass(nIntAnimator, "nanimator");
 /**
 */
 nIntAnimator::nIntAnimator() :
-    vectorParameter(nShaderState::InvalidParameter),
+    intParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -28,30 +28,30 @@ nIntAnimator::~nIntAnimator()
 
 //------------------------------------------------------------------------------
 /**
-    Set the name of the vector variable which should be animated by
+    Set the name of the int variable which should be animated by
     this object.
 */
 void
-nIntAnimator::SetVectorName(const char* name)
+nIntAnimator::SetIntName(const char* name)
 {
     n_assert(name);
-    this->vectorParameter = nShaderState::StringToParam(name);
+    this->intParameter = nShaderState::StringToParam(name);
 }
 
 //------------------------------------------------------------------------------
 /**
-    Get the name of the vector variable which is animated by this object.
+    Get the name of the int variable which is animated by this object.
 */
 const char*
-nIntAnimator::GetVectorName()
+nIntAnimator::GetIntName()
 {
-    if (nShaderState::InvalidParameter == this->vectorParameter)
+    if (nShaderState::InvalidParameter == this->intParameter)
     {
         return 0;
     }
     else
     {
-        return nShaderState::ParamToString(this->vectorParameter);
+        return nShaderState::ParamToString(this->intParameter);
     }
 }
 
@@ -87,7 +87,7 @@ nIntAnimator::GetKeyAt(int index, float& time, int& key) const
 
 //------------------------------------------------------------------------------
 /**
-    Returns the animator type. nVectorAnimator is a SHADER animator.
+    Returns the animator type. nIntAnimator is a SHADER animator.
 */
 nAnimator::Type
 nIntAnimator::GetAnimatorType() const
@@ -117,7 +117,7 @@ nIntAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     int key;
     if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
     {
-        targetNode->SetInt(this->vectorParameter, key);
+        targetNode->SetInt(this->intParameter, key);
     }
 }
 

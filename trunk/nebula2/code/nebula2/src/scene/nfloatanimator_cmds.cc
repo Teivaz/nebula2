@@ -5,8 +5,8 @@
 #include "scene/nfloatanimator.h"
 #include "kernel/npersistserver.h"
 
-static void n_setvectorname(void* slf, nCmd* cmd);
-static void n_getvectorname(void* slf, nCmd* cmd);
+static void n_setfloatname(void* slf, nCmd* cmd);
+static void n_getfloatname(void* slf, nCmd* cmd);
 static void n_addkey(void* slf, nCmd* cmd);
 static void n_getnumkeys(void* slf, nCmd* cmd);
 static void n_getkeyat(void* slf, nCmd* cmd);
@@ -23,54 +23,54 @@ static void n_getkeyat(void* slf, nCmd* cmd);
     nanimator
 
     @classinfo
-    Animate a float vector attribute of a nabstractshadernode.
+    Animate a float attribute of a nabstractshadernode.
 */
 void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setvectorname_s", 'SVCN', n_setvectorname);
-    cl->AddCmd("s_getvectorname_v", 'GVCN', n_getvectorname);
-    cl->AddCmd("v_addkey_ff",    'ADDK', n_addkey);
+    cl->AddCmd("v_setfloatname_s",  'SVCN', n_setfloatname);
+    cl->AddCmd("s_getfloatname_v",  'GVCN', n_getfloatname);
+    cl->AddCmd("v_addkey_ff",       'ADDK', n_addkey);
     cl->AddCmd("i_getnumkeys_v",    'GNKS', n_getnumkeys);
-    cl->AddCmd("ff_getkeyat_i",  'GKAT', n_getkeyat);
+    cl->AddCmd("ff_getkeyat_i",     'GKAT', n_getkeyat);
     cl->EndCmds();
 }
 
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setvectorname
+    setfloatname
     @input
-    s(VectorName)
+    s(FloatName)
     @output
     v
     @info
-    Set name of float vector variable to animate in target object.
+    Set name of float variable to animate in target object.
 */
 void
-n_setvectorname(void* slf, nCmd* cmd)
+n_setfloatname(void* slf, nCmd* cmd)
 {
     nFloatAnimator* self = (nFloatAnimator*) slf;
-    self->SetVectorName(cmd->In()->GetS());
+    self->SetFloatName(cmd->In()->GetS());
 }
 
 //------------------------------------------------------------------------------
 /**
     @cmd
-    getvectorname
+    getfloatname
     @input
     v
     @output
-    s(VectorName)
+    s(FloatName)
     @info
-    Get name of float vector variable to animate in target object.
+    Get name of float variable to animate in target object.
 */
 void
-n_getvectorname(void* slf, nCmd* cmd)
+n_getfloatname(void* slf, nCmd* cmd)
 {
     nFloatAnimator* self = (nFloatAnimator*) slf;
-    cmd->Out()->SetS(self->GetVectorName());
+    cmd->Out()->SetS(self->GetFloatName());
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ n_getvectorname(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Add a float vector key to the animation key array.
+    Add a float key to the animation key array.
 */
 void
 n_addkey(void* slf, nCmd* cmd)
@@ -145,11 +145,11 @@ nFloatAnimator::SaveCmds(nPersistServer* ps)
     {
         nCmd* cmd;
 
-        //--- setvectorname ---
-        if (this->GetVectorName())
+        //--- setfloatname ---
+        if (this->GetFloatName())
         {
             cmd = ps->GetCmd(this, 'SVCN');
-            cmd->In()->SetS(this->GetVectorName());
+            cmd->In()->SetS(this->GetFloatName());
             ps->PutCmd(cmd);
         }
 
