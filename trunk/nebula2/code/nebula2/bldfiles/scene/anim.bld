@@ -1,0 +1,37 @@
+#===============================================================================
+#  anim.bld
+#  Nebula2 Character animation system modules
+#
+#  Modules:
+#      nanimationserver
+#      nanimation
+#      nmemoryanimation
+#      ncharacter
+#===============================================================================
+
+#===============================================================================
+#  n2apps modules
+#===============================================================================
+beginmodule nanimationserver
+    setdir anim2
+    setfiles { nanimationserver_main }
+    setheaders { nanimationserver nanimclip nanimstate nanimstatearray }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimation
+    setdir anim2
+    setfiles { nanimation_main }
+    setheaders { nanimation }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmemoryanimation
+    setdir anim2
+    setfiles { nmemoryanimation_main }
+    setheaders { nmemoryanimation }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncharacter
+    setdir character
+    setfiles { ncharacter2 ncharskinrenderer }
+    setheaders { ncharacter2 ncharskeleton ncharskinrenderer ncharjoint ncharjointpalette }
+endmodule

@@ -1,0 +1,74 @@
+#===============================================================================
+#  nmicrotcl.bld
+#  A microTCL nScriptServer implementation
+#
+#  Modules:
+#      nmicrotclnebula
+#      nmicrotcl
+#  Targets:
+#      microtcl
+#===============================================================================
+
+#===============================================================================
+#  nmicrotcl modules
+#===============================================================================
+beginmodule nmicrotclnebula
+    annotate "The microTCL nScriptServer."
+    setdir   microtcl
+    settype  cpp
+    setfiles { tclNebula }
+    setmoduledeps { nmicrotcl }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmicrotcl
+    annotate "microTCL runtime."
+    setdir microtcl
+    settype c
+    setfiles {
+        tclAlloc
+        tclBasic
+        tclBinary
+        tclCkalloc
+        tclCmdAH
+        tclCmdIL
+        tclCmdMZ
+        tclCompCmds
+        tclCompExpr
+        tclCompile
+        tclExecute
+        tclGet
+        tclHash
+        tclHistory
+        tclIndexObj
+        tclInterp
+        tclLink
+        tclListObj
+        tclLiteral
+        tclNamesp
+        tclObj
+        tclPanic
+        tclParse
+        tclParseExpr
+        tclPreserve
+        tclProc
+        tclResult
+        tclStringObj
+        tclUtf
+        tclUtil
+        tclVar
+    }
+endmodule
+
+
+#===============================================================================
+#  nmicrotcl Targets
+#===============================================================================
+begintarget microtcl
+    annotate "Complete microTCL nScriptServer implementation for Nebula2"
+    settype lib
+    setmodules {
+        nmicrotclnebula nmicrotcl
+    }
+endtarget
+#-------------------------------------------------------------------------------
+

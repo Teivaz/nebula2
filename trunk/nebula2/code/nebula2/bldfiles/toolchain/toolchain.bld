@@ -1,0 +1,89 @@
+#===============================================================================
+#  toolchain.bld
+#  The Nebula2 toolchain for managing meshes and textures
+#
+#  Modules:
+#      nimagetool
+#      nmeshtool
+#      nmeshbuilder
+#      nanimbuilder
+#  Targets:
+#      ntoollib
+#      nimagetool
+#      nmeshtool
+#===============================================================================
+
+#===============================================================================
+#  toolchain modules
+#===============================================================================
+beginmodule nimagetool
+    annotate "Required module for nimagetool.exe"
+    setdir tools
+    setfiles { 
+        nimagetool
+    }
+    setmoduledeps  { nanimbuilder }
+    setlibs_win32  { DevIL.lib ilu.lib }
+    setlibs_linux  { IL ILU }
+    setlibs_macosx { IL ILU Carbon }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmeshtool
+    annotate "Required module nmeshtool.exe"
+    setdir tools
+    setfiles { 
+        nmeshtool
+    }
+    setmoduledeps  { nmeshbuilder }
+    setlibs_macosx { Carbon }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmeshbuilder
+    setdir tools
+    setfiles { 
+        nmeshbuilder 
+        nmeshbuilder_loadsave 
+        nmeshbuilder_tangent 
+        nskinpartitioner
+        nbspbuilder
+    }
+    setheaders { nmeshbuilder nskinpartitioner nbspbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimbuilder
+    setdir tools
+    setfiles { nanimbuilder }
+    setheaders { nanimbuilder }
+endmodule
+
+
+
+#===============================================================================
+#  toolchain Targets
+#===============================================================================
+begintarget ntoollib
+    annotate "Lib that holds the core tool functionality"
+    settype lib
+    setmodules {
+        nmeshbuilder nanimbuilder
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nimagetool
+    settype exe
+    setmodules { nimagetool nntxfile }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nmeshtool
+    settype exe
+    setmodules { nmeshtool }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+#-------------------------------------------------------------------------------

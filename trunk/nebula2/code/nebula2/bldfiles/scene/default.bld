@@ -1,0 +1,101 @@
+#===============================================================================
+#  scene.bld
+#  default nSceneServer modules including nStdSceneServer
+#
+#  Modules:
+#      nsceneserver
+#      nstdsceneserver
+#      nscenenode
+#      ntransformnode
+#      nabstractshadernode
+#      nmaterialnode
+#      nvolumelightnode
+#      nshapenode
+#      nanimator
+#      nvectoranimator
+#      ntransformanimator
+#      nskinanimator
+#      nskinshapenode
+#===============================================================================
+
+#===============================================================================
+#  scene modules
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nsceneserver
+    setdir scene
+    setfiles { nsceneserver_main }
+    setheaders { nsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nstdsceneserver
+    setdir scene
+    setfiles { nstdsceneserver_main }
+    setheaders { nstdsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nscenenode
+    setdir scene
+    setfiles { nscenenode_main nscenenode_cmds }
+    setheaders { nscenenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntransformnode
+    setdir scene
+    setfiles { ntransformnode_main ntransformnode_cmds }
+    setheaders { ntransformnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nabstractshadernode
+    setdir scene
+    setfiles { nabstractshadernode_main nabstractshadernode_cmds }
+    setheaders { nabstractshadernode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaterialnode
+    setdir scene
+    setfiles { nmaterialnode_main nmaterialnode_cmds }
+    setheaders { nmaterialnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nvolumelightnode
+    setdir scene
+    setfiles { nvolumelightnode_main }
+    setheaders { nvolumelightnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nshapenode
+    setdir scene
+    setfiles { nshapenode_main nshapenode_cmds }
+    setheaders { nshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimator
+    setdir scene
+    setfiles { nanimator_main nanimator_cmds }
+    setheaders { nanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nvectoranimator
+    setdir scene
+    setfiles { nvectoranimator_main nvectoranimator_cmds }
+    setheaders { nvectoranimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntransformanimator
+    setdir scene
+    setfiles { ntransformanimator_main ntransformanimator_cmds }
+    setheaders { ntransformanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskinanimator
+    setdir scene
+    setfiles { nskinanimator_main nskinanimator_cmds }
+    setheaders nskinanimator
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskinshapenode
+    setdir scene
+    setfiles { nskinshapenode_main nskinshapenode_cmds }
+    setheaders nskinshapenode
+endmodule
