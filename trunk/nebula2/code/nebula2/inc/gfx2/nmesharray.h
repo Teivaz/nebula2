@@ -59,8 +59,8 @@ protected:
 /**
     Set the mesh filename for the specified stream.
 
-    @param  index index of stream the mesh shall be used for
-    @param  filename    the absolute path to the resource file
+    @param  index       index of stream the mesh shall be used for
+    @param  path        the absolute path to the resource file
 */
 inline
 void

@@ -145,7 +145,7 @@ public:
     /// create a font object
     virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
-    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
+    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format format, int usageFlags);
     /// create a new instance stream object
     virtual nInstanceStream* NewInstanceStream(const char* rsrcName);
 
