@@ -1,3 +1,130 @@
+=begin
+XML file format:
+
+  <class name='nGfxServer2' package='gfx2' parent='nroot'>
+    <properties>
+      <property name="propertyname" type="simple|index">
+        <doc>...</doc>
+        <getterslist>
+          <getter type="index|count" name="gettername" fourCC="GJNT">
+            [<doc>...</doc>]
+          </getter>
+          ...
+        </getterlist>
+        <setterlist>
+          <setter type="begin|add|end" name="settername" fourCC="BJNT">
+            [<doc>...</doc>]
+          </setter>
+          ...
+        </setterlist>
+        <valueformat>
+          <value name="valuename" type="integer|string|..." editor="text_input|slider|select|checkbox" [index="yes"]>
+            [<doc>...</doc>]
+          </value>
+          <value name="valuename" type="integer|string|...">
+            [<doc>...</doc>]
+          </value>
+          <value name="valuename" type="string" restricted="enum">
+            <enum name="dx7"/>
+            <enum name="dx8"/>
+            ...
+          </value>
+          ...
+        </valueformat>
+      </property>
+      <property>
+        ...
+      </property>
+    </properties>
+    <methods>
+      <method name="methodname" fourCC="GHTR">
+        [<doc>...</doc>]
+        <output>
+          <value name="valuename" type="integer|string|...">
+            [<doc>...</doc>]
+          </value>
+          <value name="valuename" type="string" restricted="enum">
+            <enum name="dx7"/>
+            <enum name="dx8"/>
+            ...
+          </value>
+          ...
+        </output>
+        <input>
+          <value name="valuename" type="integer|string|...">
+            [<doc>...</doc>]
+          </value>
+          <value name="valuename" type="string" restricted="enum">
+            <enum name="dx7"/>
+            <enum name="dx8"/>
+            ...
+          </value>
+          ...
+        </input>
+      </method>
+      <method>
+        ...
+      </method>
+    </methods>
+  </class>
+
+Command comments format:
+
+/**
+    @cppclass <cpp class name>
+    
+    @superclass <cpp parent class name>
+
+    @classinfo <documentation>
+*/
+
+getter/setter:
+/**
+    @property <property name>
+
+    [@type simple|index]
+
+    @format
+      type(name;attr1=val1;attr2=val2..) -- comment
+      type(name;attr1=val1;attr2=val2..) -- comment
+      ...
+
+  @info <documentation>
+*/
+
+/**
+    @cmd <command name>
+
+    @cmdtype <getter|[index,count], setter|[begin,add,end]>
+
+    @property <property name>
+
+    @info <documentation>
+*/
+
+other commands (methods):
+/**
+    @cmd <command name>
+
+    @input
+      type(name;attr1=val1;attr2=val2..) -- comment
+      type(name;attr1=val1;attr2=val2..) -- comment
+      ...
+
+    @output
+      type(name;attr1=val1;attr2=val2..) -- comment
+      type(name;attr1=val1;attr2=val2..) -- comment
+      ...
+
+    @info <documentation>
+*/
+
+attr=val:
+attr - name of the attribute
+val - attribute value: val=val1[,val2...,valN]
+
+=end
+
 require 'rexml/document'
 include REXML
 
@@ -697,6 +824,7 @@ class CCProcessor < Processor
           nameOfClass = $3
           parentClass = $4 ? $6 : nil
           xmlElement = Element.new("class", cppElement)
+          xmlElement.add_element("doc").add_text("\n" + commentLine + "      ") if commentLine != ""
           xmlElement.add_element("template", {"val"=>$2}) if $1
           xmlElement.add_attribute("name", nameOfClass)
           if parentClass
@@ -708,7 +836,6 @@ class CCProcessor < Processor
             end
           end
           xmlElement.add_attribute("package", modName)
-          xmlElement.add_element("doc").add_text("\n" + commentLine + "      ") if commentLine != ""
           elementsProcessed += processClass(hf, xmlElement, nameOfClass, $8 != nil, modName)
           commentLine = ""
         end
