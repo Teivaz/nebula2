@@ -6,6 +6,14 @@
 
     Selfcontained viewer application for Nebula.
 
+    The Nebula2 viewer displays Nebula2 3D objects in realtime. It can be invoked 
+    from the command line (nviewer.exe) or from the start menu.
+
+    The viewer offers an overlay 2D user interface which is activated by pressing 
+    the Escape key.
+    The GUI offers builtin command consoles, a texture browser window, a graphics 
+    object browser window, and 2 windows with runtime and debug information.
+
     <dl>
      <dt>-startup</dt>
        <dd>startup script to run, default is: home:bin/startup.tcl</dd>

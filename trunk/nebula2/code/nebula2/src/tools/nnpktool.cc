@@ -6,6 +6,10 @@
 
     Manage npk files.
 
+    The NPK packer tool (nnpktool.exe) allows to pack, unpack and diff npk archives.
+    Npk archives are Nebula2's version of PAK files where many small files are
+    packed into one big archive to reduce disk fragmentation and loading times.
+
     <dl>
      <dt>-help</dt>
        <dd>show help</dd>

@@ -4,6 +4,21 @@
 
     nsh
 
+    The Nebula2 Shell (nsh.exe) can be used to execute Nebula2 scripts or to 
+    interactively browse a minimal Nebula2 environment.
+    Nebula2 has a pluggable scripting architecture. The default scripting 
+    language is <b>MicroTCL</b>, which is a stripped down TCL dialect, with some 
+    Nebula specific extensions.
+
+    Alternative scripting languages provided by the Open Source community 
+    include Lua, Python, Ruby, and others...
+
+    The default Nebula2 shell looks very much like a Tcl shell which allows to 
+    navigate the hierarchy of live Nebula2 C++ objects like a filesystem 
+    hierarchy and invoke commands on them.
+
+    Use the command <b>exit</b> to quit a running nsh instance.
+
     <dl>
      <dt>-help</dt>
        <dd>show this help</dd>
