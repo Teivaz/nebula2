@@ -98,6 +98,7 @@ proc gen_filelists {i hintdir} {
     global global_gendeps
 
     set moddir $mod($i,dir)
+    set trunkdir ""
     set founddir ""
     set found false
 
@@ -185,6 +186,10 @@ proc gen_filelists {i hintdir} {
                 break
             }
         }
+    }
+
+    if { $trunkdir == "" } {
+        error "ERROR: Could not find module dir '$moddir' for module '$mod($i,name)'"
     }
 
     set mod($i,trunkdir) $trunkdir
