@@ -107,7 +107,11 @@ You may need to set up the Visual Studio environment variables. You can do this 
 
   - A header @c shfolder.h is missing.
 
-This usually happens to users of Visual Studio 6 who have not installed the updated Core SDK as described above.
+This usually happens to users of Visual Studio 6 who have not installed the updated Core SDK as described above.  Be sure that you have told Visual Studio where to find the new headers.
+
+  - <code>LNK1561: entry point must be defined</code>
+
+You are using Visual Studio 6, but haven't configured it to recognize <tt>.cc</tt> files correctly.  You may also have forgotten to restart Visual Studio after editing your registry to make it recognize <tt>.cc</tt> files.
 
   - <code>error C2660: 'D3DXCreateFont' : function does not take 12 parameters</code>
 
