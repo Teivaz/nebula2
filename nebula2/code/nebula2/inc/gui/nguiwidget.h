@@ -83,6 +83,8 @@ public:
     bool HasFocus() const;
     /// turn blinking on/off
     void SetBlinking(bool b);
+    /// set length of blink cycle in seconds
+    void SetBlinkRate(double rate);
     /// get blinking state
     bool GetBlinking() const;
     /// set sticky mouse behaviour
@@ -177,6 +179,7 @@ protected:
     bool triggerSound;
     bool shown;
     bool blinking;
+    double blinkRate;
     bool enabled;
     bool stickyMouse;
     bool hasFocus;
@@ -440,6 +443,16 @@ void
 nGuiWidget::SetBlinking(bool b)
 {
     this->blinking = b;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWidget::SetBlinkRate(double rate)
+{
+    this->blinkRate = rate;
 }
 
 //-----------------------------------------------------------------------------

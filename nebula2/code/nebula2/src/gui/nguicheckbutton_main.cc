@@ -111,7 +111,7 @@ nGuiCheckButton::Render()
         else if (this->blinking)
         {
             double time = nGuiServer::Instance()->GetTime();
-            if (fmod(time, 1.0) > 0.5)
+            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
             {
                 brush = &this->highlightBrush;
             }
