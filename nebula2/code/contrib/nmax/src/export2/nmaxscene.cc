@@ -22,6 +22,7 @@
 #include "export2/nmaxskinanimator.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxskinpartitioner.h"
+#include "export2/nmaxanimator.h"
 
 #include "kernel/npersistserver.h"
 #include "variable/nvariableserver.h"
@@ -489,6 +490,10 @@ bool nMaxScene::ExportNodes(INode* inode)
     }
 
     TimeValue animStart = nMaxInterface::Instance()->GetAnimStartTime();
+
+    // export animation if it exist.
+    nMaxAnimator animator;
+    animator.Export(inode);
 
     ObjectState objState = inode->EvalWorldState(animStart);
     Object* obj = objState.obj;
