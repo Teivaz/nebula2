@@ -83,7 +83,8 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 
         if (classID == IKCONTROL_CLASS_ID || classID == IKCHAINCONTROL_CLASS_ID)
         {
-            n_maxlog(Warning, "Lookat control %s is not supported.", inode->GetName());
+            n_maxlog(Warning, "Waring: IK control %s is not supported.", inode->GetName());
+
             // we don't need to check any other type of controls, so just return.
             return NULL;
         }
@@ -100,7 +101,7 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 
         if (classID == Class_ID(LOOKAT_CONTROL_CLASS_ID, 0))
         {
-            n_maxlog(Warning, "Lookat control %s is not supported.", inode->GetName());
+            n_maxlog(Warning, "Waring: Lookat control %s is not supported.", inode->GetName());
         }
 
         if (posControl && posControl->ClassID() == Class_ID(PATH_CONTROL_CLASS_ID, 0))
@@ -121,8 +122,8 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
             }
             else
             {
-                n_maxlog(Warning, "The control has animations but no animation was exported \
-                                  for the node %s.", inode->GetName());
+                n_maxlog(Warning, "Waring: The control has animations but no animation was \
+                                   exported for the node %s.", inode->GetName());
                 return NULL;
             }
         }
