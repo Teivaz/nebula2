@@ -21,7 +21,7 @@
 // second helper class used to generate mesh data from the heightfield
 /**
  * @class SplatGenerator
- * @ingroup nCLODTerrain
+ * @ingroup NCLODTerrainContribModule
  *
  * As the mesh generator makes a
  * triangle strip for each terrain chunk, the splat generator generates

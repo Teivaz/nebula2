@@ -1,6 +1,6 @@
 /**
  * @class TileIndexData
- * @ingroup nCLODTerrain
+ * @ingroup NCLODTerrainContribModule
  *
  * This class manages access to a bitmap representing the various textures that
  * are tiled and blended together on a splatted texture terrain

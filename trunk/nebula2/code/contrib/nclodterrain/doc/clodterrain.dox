@@ -1,5 +1,5 @@
 /**
-    @defgroup nCLODTerrain Chunked LOD terrain Contributed Module
+    @defgroup NCLODTerrainContribModule Chunked LOD terrain Contributed Module
     @ingroup NebulaContribModules
     @brief nCLODTerrain implements a chunked LOD terrain renderer
     

@@ -33,6 +33,7 @@ struct tqt_tile_layer;
 
 /**
  * @class nCLODTQTSplatterNode
+ * @ingroup NCLODTerrainContribModule
  *
  * @classinfo Implements a node that will generate the proper blend maps and base textures for splatted terrain.
  *
