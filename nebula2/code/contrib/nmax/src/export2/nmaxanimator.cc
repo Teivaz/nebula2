@@ -12,7 +12,7 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
-#include "kernel/ntypes.h"
+#include "kernel/nkernelserver.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -36,9 +36,8 @@ void nMaxAnimator::Export(INode* inode)
     nMaxNode* createdNode = CreateAnimator(inode);
     if (createdNode)
     {
-        //TODO: pop created node.
+        nKernelServer::Instance()->PopCwd();
 
-        //controller->Export(inode);
         n_delete(createdNode);
     }
     else
