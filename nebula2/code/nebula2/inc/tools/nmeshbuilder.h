@@ -144,8 +144,7 @@ public:
             MATERIALID       = (1<<2),
             NORMAL           = (1<<3),
             TANGENT          = (1<<4),
-            BINORMAL         = (1<<5),
-            EDGEINDICIES     = (1<<6),
+            BINORMAL         = (1<<5)
         };
 
         /// constructor
@@ -157,10 +156,6 @@ public:
         void SetVertexIndices(int i0, int i1, int i2);
         /// get vertex indices
         void GetVertexIndices(int& i0, int& i1, int& i2) const;
-        /// set edge indices
-        void SetEdgeIndices(int e0, int e1, int e2);
-        /// get vertex indices
-        void GetEdgeIndices(int& e0, int& e1, int& e2) const;
         /// set group id
         void SetGroupId(int i);
         /// get group id
@@ -189,7 +184,6 @@ public:
         const vector3& GetBinormal() const;
 
         int vertexIndex[3];
-        int edgeIndex[3];
         int usageFlags;
         int groupId;
         int materialId;
@@ -265,7 +259,7 @@ public:
     /// save to nvx2 file
     bool SaveNvx2(nFileServer2* fileServer, const char* filename);
     /// save to n3d2 file
-    bool SaveN3d2(nFileServer2* fileServer, const char* filename);
+    bool SaveN3d2(nFileServer2* fileServer, const char* filename);   
     /// save as legacy n3d files (one file per group)
     bool SaveN3d(nFileServer2* fileServer, const char* filename);
 
@@ -339,26 +333,19 @@ public:
     void BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) const;
     /// create face normals and tangents (requires a valid uv-mapping at layer 0)
     void BuildTriangleNormals();
-    /// create face tangents (requires a valid uv-mapping at layer 0)
-    void BuildTriangleTangents();
     /// generate averaged vertex tangents
     void BuildVertexTangents();
-    /// generate averaged vertex normals
-    void BuildVertexNormals();
     /// flip v texture coordinates
     void FlipUvs();
+    /// checks the mesh for geometry errors
+    nArray<nString> CheckForGeometryError();
 
 private:
     struct TempEdge // used as temp data for the generation
     {
         ushort vIndex[2];
         ushort fIndex;
-    };
-
-    struct UngroupedEdge // used as temp data for the generation
-    {
-        ushort vIndex[2];
-        ushort fIndex[2];
+        ushort GroupID;
     };
 
     /// static userdata pointer for qsort hook
@@ -377,7 +364,7 @@ private:
 public:
     nArray<Vertex>   vertexArray;
     nArray<Triangle> triangleArray;
-    nArray<GroupedEdge>     edgeArray;
+    nArray<GroupedEdge> edgeArray;
 };
 
 //------------------------------------------------------------------------------
@@ -624,108 +611,6 @@ nMeshBuilder::Vertex::GetComponentMask() const
 
 //------------------------------------------------------------------------------
 /**
-    This returns a value suitable for sorting, -1 if the rhs is 'smaller',
-    0 if rhs is equal, and +1 if rhs is 'greater'.
-*/
-inline
-int
-nMeshBuilder::Vertex::Compare(const Vertex& rhs) const
-{
-    if (this->HasComponent(COORD) && rhs.HasComponent(COORD))
-    {
-        int res = this->coord.compare(rhs.coord, 0.001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(NORMAL) && rhs.HasComponent(NORMAL))
-    {
-        int res = this->normal.compare(rhs.normal, 0.001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(TANGENT) && rhs.HasComponent(TANGENT))
-    {
-        int res = this->tangent.compare(rhs.tangent, 0.001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(BINORMAL) && rhs.HasComponent(BINORMAL))
-    {
-        int res = this->binormal.compare(rhs.binormal, 0.001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(COLOR) && rhs.HasComponent(COLOR))
-    {
-        int res = this->color.compare(rhs.color, 0.001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(UV0) && rhs.HasComponent(UV0))
-    {
-        int res = this->uv[0].compare(rhs.uv[0], 0.000001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(UV1) && rhs.HasComponent(UV1))
-    {
-        int res = this->uv[1].compare(rhs.uv[1], 0.000001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(UV2) && rhs.HasComponent(UV2))
-    {
-        int res = this->uv[2].compare(rhs.uv[2], 0.000001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(UV3) && rhs.HasComponent(UV3))
-    {
-        int res = this->uv[3].compare(rhs.uv[3], 0.000001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(WEIGHTS) && rhs.HasComponent(WEIGHTS))
-    {
-        int res = this->weights.compare(rhs.weights, 0.00001f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-    if (this->HasComponent(JINDICES) && rhs.HasComponent(JINDICES))
-    {
-        int res = this->jointIndices.compare(rhs.jointIndices, 0.5f);
-        if (0 != res)
-        {
-            return res;
-        }
-    }
-
-    // fallthrough: all equal
-    return 0;
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 inline
 bool
@@ -947,7 +832,6 @@ nMeshBuilder::Triangle::Triangle() :
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
-        this->edgeIndex[i] = nMesh2::InvalidIndex;
     }
 }
 
@@ -982,31 +866,6 @@ nMeshBuilder::Triangle::GetVertexIndices(int& i0, int& i1, int& i2) const
     i0 = this->vertexIndex[0];
     i1 = this->vertexIndex[1];
     i2 = this->vertexIndex[2];
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMeshBuilder::Triangle::SetEdgeIndices(int e0, int e1, int e2)
-{
-    this->edgeIndex[0] = e0;
-    this->edgeIndex[1] = e1;
-    this->edgeIndex[2] = e2;
-    this->compMask |= EDGEINDICIES;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMeshBuilder::Triangle::GetEdgeIndices(int& e0, int& e1, int& e2) const
-{
-    e0 = this->edgeIndex[0];
-    e1 = this->edgeIndex[1];
-    e2 = this->edgeIndex[2];
 }
 
 //------------------------------------------------------------------------------
