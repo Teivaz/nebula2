@@ -47,11 +47,11 @@ public:
     /// fuzzy compare
     bool isequal(const _vector3_sse& v, float tol) const;
     /// fuzzy compare, returns -1, 0, +1
-    int compare(const _vector3& v, float tol) const;
+    int compare(const _vector3_sse& v, float tol) const;
     /// rotate around axis
     void rotate(const _vector3_sse& axis, float angle);
     /// inplace linear interpolation
-    void lerp(const _vector3& v0, float lerpVal);
+    void lerp(const _vector3_sse& v0, float lerpVal);
 
     union
     {
