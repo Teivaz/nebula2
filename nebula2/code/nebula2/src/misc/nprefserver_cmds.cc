@@ -34,7 +34,7 @@ static void n_readvector3(void* slf, nCmd* cmd);
     @superclass
     nroot
     @classinfo
-    Manages persistent information between application invokations.
+    Manages persistent information between application invocations.
 */
 void
 n_initcmds(nClass* cl)
