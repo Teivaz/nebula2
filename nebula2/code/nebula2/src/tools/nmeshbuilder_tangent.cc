@@ -112,3 +112,95 @@ nMeshBuilder::BuildVertexTangents()
     // inflate-copy the generated vertex tangents and binormals to the original mesh
     this->InflateCopyComponents(cleanMesh, collapsMap, Vertex::TANGENT);
 }
+
+//------------------------------------------------------------------------------
+/**
+    Generates the per-vertex normals by averaging the
+    per-triangle normals which must be computed or exist
+    beforehand. Note that only the vertex normals will be touched!
+
+    29-Mar-2004 cubejk  added for nmax
+*/
+void
+nMeshBuilder::BuildVertexNormals()
+{
+    // create a clean coord/normal-only mesh, record the cleanup operation
+    // in a collaps map so that we can inflate-copy the new vertex
+    // components into the original mesh afterwards
+    nArray< nArray<int> > collapsMap(0, 0);
+    collapsMap.SetFixedSize(this->GetNumVertices());
+    nMeshBuilder cleanMesh = *this;
+    cleanMesh.ForceVertexComponents(Vertex::COORD | Vertex::NORMAL);
+    cleanMesh.Cleanup(&collapsMap);
+
+    // create a connectivity map which contains for each vertex
+    // the triangle indices which share the vertex
+    nArray< nArray<int> > vertexTriangleMap(0, 0);
+    cleanMesh.BuildVertexTriangleMap(vertexTriangleMap);
+
+    // for each vertex...
+    int vertexIndex = 0;
+    const int numVertices = cleanMesh.GetNumVertices();
+    vector3 avgNormal;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+    {
+        avgNormal.set(0.0f, 0.0f, 0.0f);
+
+        // for each triangle sharing this vertex...
+        int numVertexTris = vertexTriangleMap[vertexIndex].Size();
+        n_assert(numVertexTris > 0);
+        int vertexTriIndex;
+        for (vertexTriIndex = 0; vertexTriIndex < numVertexTris; vertexTriIndex++)
+        {
+            const Triangle& tri = cleanMesh.GetTriangleAt(vertexTriangleMap[vertexIndex][vertexTriIndex]);
+            avgNormal += tri.GetNormal();
+        }
+
+        // renormalize averaged normal
+        avgNormal.norm();
+
+        cleanMesh.GetVertexAt(vertexIndex).SetNormal(avgNormal);
+    }
+
+    // inflate-copy the generated vertex normals to the original mesh
+    this->InflateCopyComponents(cleanMesh, collapsMap, Vertex::NORMAL);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Build triangle tangents. The tangents require a valid 
+    uv-mapping in texcoord layer 0.
+
+    29-Mar-2004 cubejk  added for nmax
+*/
+void
+nMeshBuilder::BuildTriangleTangents()
+{
+    int triangleIndex;
+    int numTriangles = this->GetNumTriangles();
+    vector3 v0;
+    vector3 v1;
+    vector2 uv0, uv1;
+    vector3 n, t, b;
+    for (triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
+    {
+        Triangle& tri = this->GetTriangleAt(triangleIndex);
+        int index[3];
+        tri.GetVertexIndices(index[0], index[1], index[2]);
+
+        const Vertex& vertex0 = this->GetVertexAt(index[0]);
+        const Vertex& vertex1 = this->GetVertexAt(index[1]);
+        const Vertex& vertex2 = this->GetVertexAt(index[2]);
+       
+        v0 = vertex1.GetCoord() - vertex0.GetCoord();
+        v1 = vertex2.GetCoord() - vertex0.GetCoord();
+     
+        // compute the tangents
+        uv0 = vertex1.GetUv(0) - vertex0.GetUv(0);
+        uv1 = vertex2.GetUv(0) - vertex0.GetUv(0);
+        t = (v0 * uv1.y) - (v1 * uv0.y);
+        
+        t.norm();
+        tri.SetTangent(t);
+    }
+}
