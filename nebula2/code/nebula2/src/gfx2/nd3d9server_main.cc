@@ -62,9 +62,6 @@ nD3D9Server::nD3D9Server() :
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
 
-    // open the app window
-    this->windowHandler.OpenWindow();
-
     // initialize Direct3D
     this->D3dOpen();
 }
@@ -131,6 +128,12 @@ bool
 nD3D9Server::OpenDisplay()
 {
     n_assert(!this->displayOpen);
+    if (!this->windowHandler.IsWindowOpen())
+    {
+        // lazy initialization: open the app window
+        this->windowHandler.OpenWindow();
+    }
+
     if (this->DeviceOpen())
     {
         nGfxServer2::OpenDisplay();
