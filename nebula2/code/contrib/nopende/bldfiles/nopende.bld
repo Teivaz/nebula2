@@ -150,7 +150,7 @@ beginmodule nopendeserver
     setdir opende
     setheaders { nopendeserver nopendetrimesh nopendesurface }
     setfiles   { nopendeserver_main nopendeserver_cmds nopendetrimesh }
-    setlibs_win32 { ode.lib OPCODE.lib }
+    setlibs_win32 { ode.lib }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget nopende
