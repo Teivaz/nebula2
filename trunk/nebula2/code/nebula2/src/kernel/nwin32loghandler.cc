@@ -17,10 +17,12 @@
     The constructor takes an application name which is used to name the
     log file and which is shown in the error message box titles.
 
+    @param  app     an application name
+    @param  subDir  the name of the subdirectory within which the log file
+                    will be created.
+
     - 03-Mar-04     floh    no longer saves into app directory, since
                             Non-Admin-Users have no write access there
-
-    @param  app     an application name
 */
 nWin32LogHandler::nWin32LogHandler(const char* app, const char* subDir) :
     logFile(0),
