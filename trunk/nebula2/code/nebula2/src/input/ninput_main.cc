@@ -135,7 +135,7 @@ nStrToKey key_remaptable[] = {
 /**
 */
 #ifndef __XBxX__
-void 
+void
 nInputServer::ExportDefaultKeyboard(void)
 {
     nRoot *o;
@@ -154,7 +154,7 @@ nInputServer::ExportDefaultKeyboard(void)
     kernelServer->PushCwd(o);
 
     int i = 0;
-    while ((s = key_remaptable[i].str)) 
+    while ((s = key_remaptable[i].str))
     {
         char buf[128];
         env = (nEnv *) kernelServer->New("nenv",s);
@@ -174,7 +174,7 @@ nInputServer::ExportDefaultKeyboard(void)
 /**
 */
 #ifndef __XBxX__
-void 
+void
 nInputServer::ExportDefaultMouse(void)
 {
     nRoot *o;
@@ -192,7 +192,7 @@ nInputServer::ExportDefaultMouse(void)
     o = kernelServer->New("nroot","channels");
     kernelServer->PushCwd(o);
 
-    for (i=0; i<3; i++) 
+    for (i=0; i<3; i++)
     {
         char buf[128];
         sprintf(buf,"btn%d",i);
@@ -240,25 +240,25 @@ nInputServer::~nInputServer()
 {
     n_assert(this->act_script == 0);
     this->FlushEvents();
-    if (this->ref_statedir.isvalid()) 
+    if (this->ref_statedir.isvalid())
     {
         this->ref_statedir->Release();
     }
-    if (this->ref_inpdir.isvalid())   
+    if (this->ref_inpdir.isvalid())
     {
         this->ref_inpdir->Release();
     }
 
     // kill input mappings
     nInputMapping *im;
-    while ((im = (nInputMapping *) (this->im_list.RemHead()))) 
+    while ((im = (nInputMapping *) (this->im_list.RemHead())))
     {
         delete im;
     }
-    
+
     // kill input states
     nInputState *is;
-    while ((is = (nInputState *) (this->is_list.RemHead()))) 
+    while ((is = (nInputState *) (this->is_list.RemHead())))
     {
         delete is;
     }
@@ -267,7 +267,7 @@ nInputServer::~nInputServer()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::BeginScripts(void)
 {
     n_assert(this->act_script == 0);
@@ -276,10 +276,10 @@ nInputServer::BeginScripts(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::AddScript(const char *str)
 {
-    if (this->act_script < N_MAXNUM_SCRIPTS) 
+    if (this->act_script < N_MAXNUM_SCRIPTS)
     {
         this->script_array[this->act_script++] = n_strdup(str);
     }
@@ -288,18 +288,18 @@ nInputServer::AddScript(const char *str)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::EndScripts(void)
 {
     int i;
-    for (i=0; i<this->act_script; i++) 
+    for (i=0; i<this->act_script; i++)
     {
         const char *cmd = this->script_array[i];
-        n_printf("running script: %s\n",cmd);
-    
+        // n_printf("running script: %s\n",cmd);
+
         const char* result;
         this->ref_ss->Run(cmd, result);
-        
+
         n_free((void *)this->script_array[i]);
         this->script_array[i] = NULL;
     }
@@ -309,7 +309,7 @@ nInputServer::EndScripts(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::SetLongPressedTime(float f)
 {
     this->long_pressed_time = (double) f;
@@ -318,7 +318,7 @@ nInputServer::SetLongPressedTime(float f)
 //------------------------------------------------------------------------------
 /**
 */
-float 
+float
 nInputServer::GetLongPressedTime(void)
 {
     return (float) this->long_pressed_time;
@@ -327,7 +327,7 @@ nInputServer::GetLongPressedTime(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::SetDoubleClickTime(float f)
 {
     this->double_click_time = (double) f;
@@ -343,7 +343,7 @@ float nInputServer::GetDoubleClickTime(void)
 
 //------------------------------------------------------------------------------
 /**
-  
+
     Do the usual per frame stuff, especially mapping raw events
     to cooked input states.
 
@@ -363,7 +363,7 @@ float nInputServer::GetDoubleClickTime(void)
                            + neues Script-Handling (nicht mehr
                              generell bei Button-Down, sondern bei "Active"
 */
-void 
+void
 nInputServer::Trigger(double time)
 {
     nInputMapping *im;
@@ -371,14 +371,14 @@ nInputServer::Trigger(double time)
     this->timeStamp = time;
 
     // event logging and recording
-    if (this->log_events) 
+    if (this->log_events)
     {
         this->LogEvents();
     }
 
 #ifndef __XBxX__
     // trigger console server
-    if (this->ref_con.isvalid()) 
+    if (this->ref_con.isvalid())
     {
         this->ref_con->Trigger();
     }
@@ -395,13 +395,13 @@ nInputServer::Trigger(double time)
     {
         const char *cmd_str = im->GetCmdString();
         nInputState *is     = im->GetInputState();
-        if (cmd_str) 
+        if (cmd_str)
         {
             if (im->IsActive()) this->AddScript(cmd_str);
         }
-        if (is) 
+        if (is)
         {
-            if (im->IsActive()) 
+            if (im->IsActive())
             {
                 is->SetButton(true);
                 is->AddSlider(1.0f);
@@ -410,4 +410,18 @@ nInputServer::Trigger(double time)
         }
     }
     this->EndScripts();
+
+    // update current mouse pos
+    nInputEvent* inputEvent;
+    for (inputEvent = this->FirstEvent(); inputEvent; inputEvent = this->NextEvent(inputEvent))
+    {
+        if (inputEvent->GetDeviceId() == N_INPUT_MOUSE(0))
+        {
+            if (inputEvent->GetType() == N_INPUT_MOUSE_MOVE)
+            {
+                this->mousePos.x = inputEvent->GetRelXPos();
+                this->mousePos.y = inputEvent->GetRelYPos();
+            }
+        }
+    }
 }
