@@ -10,6 +10,7 @@ nNebulaClass(nD3D9Server, "ngfxserver2");
 
 //------------------------------------------------------------------------------
 /**
+    - 13-Nov-04   rafael removed OpenWindow call
 */
 nD3D9Server::nD3D9Server() :
     #ifdef __NEBULA_STATS__
@@ -50,6 +51,10 @@ nD3D9Server::nD3D9Server() :
 
     // detect windows version
     this->DetectWindowsVersion();
+
+    // we used to open the window here, but we now do it lazily in OpenDisplay()
+    // to give the calling app the chance to set (e.g.) the window's name and 
+    // icon before it is opened.
 
     // initialize Direct3D
     this->D3dOpen();
