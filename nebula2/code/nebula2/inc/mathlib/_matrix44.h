@@ -79,7 +79,7 @@ public:
     /// quick multiplication, assumes that M14==M24==M34==0 and M44==1
     void mult_simple(const _matrix44& m1);
     /// transform vector3, projecting back into w=1
-    _vector3 transform_coord(const _vector3 v) const
+    _vector3 transform_coord(const _vector3 v) const;
     /// return x component
     _vector3 x_component() const;
     /// return y component
@@ -430,7 +430,9 @@ _matrix44::mult_simple(const _matrix44& m1)
 /**
     Transforms a vector by the matrix, projecting the result back into w=1.
 */
-_vector3 _matrix44::transform_coord(const _vector3 v) const
+inline
+_vector3
+_matrix44::transform_coord(const _vector3 v) const
 {
     float d = 1.0f / (M14*v.x + M24*v.y + M34*v.z + M44);
     return _vector3(
