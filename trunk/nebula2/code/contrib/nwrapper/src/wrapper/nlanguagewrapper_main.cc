@@ -109,32 +109,38 @@ static
 void
 dumpArg(nArg * arg)
 {
-    nArg::ArgType type = arg->GetType();
+    nArg::Type type = arg->GetType();
     switch (type)
     {
-        case nArg::ARGTYPE_VOID:
+        case nArg::Void:
             n_printf("void");
             break;
-        case nArg::ARGTYPE_INT:
+        case nArg::Int:
             n_printf("int");
             break;
-        case nArg::ARGTYPE_FLOAT:
+        case nArg::Float:
             n_printf("float");
             break;
-        case nArg::ARGTYPE_STRING:
+        case nArg::String:
             n_printf("string");
             break;
-        case nArg::ARGTYPE_BOOL:
+        case nArg::Bool:
             n_printf("bool");
             break;
-        case nArg::ARGTYPE_OBJECT:
+        case nArg::Object:
             n_printf("object");
             break;
-        case nArg::ARGTYPE_CODE:
-            n_printf("code");
-            break;
-        case nArg::ARGTYPE_LIST:
+        case nArg::List:
             n_printf("list");
+            break;
+        case nArg::Float4:
+            n_printf("float4");
+            break;
+        case nArg::Matrix44:
+            n_printf("matrix44");
+            break;
+        default:
+            n_error("Unhandled type: %d\n", type);
             break;
     }
 }
