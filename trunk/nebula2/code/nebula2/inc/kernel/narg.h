@@ -46,7 +46,7 @@ public:
     /// copy content
     void Copy(const nArg& rhs);
     /// copy from va_list 
-    void Copy(va_list & marker);
+    void Copy(va_list * marker);
     /// the equals operator
     bool operator==(const nArg& rhs) const;
     /// assignment operator
@@ -241,7 +241,7 @@ nArg::Copy(const nArg& rhs)
 */
 inline
 void 
-nArg::Copy(va_list & marker)
+nArg::Copy(va_list * marker)
 {
     switch(this->type) 
     {
@@ -249,18 +249,18 @@ nArg::Copy(va_list & marker)
             break;
 
         case Int: 
-            this->i = va_arg(marker, int); 
+            this->i = va_arg(*marker, int); 
             break;
             
         case Float:    
             // Compiler passes floats as double to variable argument functions 
-            this->f = static_cast<float> (va_arg(marker, double)); 
+            this->f = static_cast<float> (va_arg(*marker, double)); 
             break;
 
         case String:
             {
                 this->Delete();
-                const char * str = va_arg(marker, char *);
+                const char * str = va_arg(*marker, char *);
                 if (str)
                 {   
                     this->s = n_strdup(str);
@@ -271,7 +271,7 @@ nArg::Copy(va_list & marker)
         case Bool:     
             // bool is promoted to int when passed through ...
             {
-                int tmp = va_arg(marker, int);
+                int tmp = va_arg(*marker, int);
                 if (tmp)
                 {
                     this->b = true;
@@ -284,7 +284,7 @@ nArg::Copy(va_list & marker)
             break;
 
         case Object:
-            this->o = va_arg(marker, void *);
+            this->o = va_arg(*marker, void *);
             break;
 
         case List:
@@ -293,11 +293,11 @@ nArg::Copy(va_list & marker)
             break;
 
         case Float4:
-            this->f4 = *(va_arg(marker, nFloat4 *));
+            this->f4 = *(va_arg(*marker, nFloat4 *));
             break;
 
         case Matrix44:
-            const matrix44 * mat = va_arg(marker, matrix44 *);
+            const matrix44 * mat = va_arg(*marker, matrix44 *);
             n_assert(mat);
             if (this->m44)
             {
