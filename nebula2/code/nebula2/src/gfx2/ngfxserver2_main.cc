@@ -349,16 +349,16 @@ nGfxServer2::SetShader(nShader2* shd)
 void
 nGfxServer2::SetFont(nFont2* font)
 {
+    if (font)
+    {
+        font->AddRef();
+    }
     if (this->refFont.isvalid())
     {
         this->refFont->Release();
         this->refFont.invalidate();
     }
-    if (font)
-    {
-        this->refFont = font;
-        font->AddRef();
-    }
+    this->refFont = font;
 }
 
 //------------------------------------------------------------------------------
@@ -530,11 +530,11 @@ nGfxServer2::DrawTextBuffer()
 
     @param  text    the text to draw
     @param  color   the text color
-    @param  xPos    screen space x position
-    @param  yPos    screen space y position
+    @param  rect    screen space rectangle in which to draw the text
+    @param  flags   combination of nFont2::RenderFlags
 */
 void
-nGfxServer2::DrawText(const char* text, const vector4& color, float xPos, float yPos)
+nGfxServer2::DrawText(const char* /*text*/, const vector4& /*color*/, const rectangle& /*rect*/, uint /*flags*/)
 {
     // empty
 }
@@ -545,7 +545,7 @@ nGfxServer2::DrawText(const char* text, const vector4& color, float xPos, float 
     screen space coordinates.
 */
 vector2
-nGfxServer2::GetTextExtent(const char* text)
+nGfxServer2::GetTextExtent(const char* /*text*/)
 {
     return vector2(0.0f, 0.0f);
 }

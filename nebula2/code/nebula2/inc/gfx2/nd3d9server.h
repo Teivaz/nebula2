@@ -97,7 +97,7 @@ public:
     virtual void DrawTextBuffer();
 
     /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, float xPos, float yPos);
+    virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
     /// get text extents
     virtual vector2 GetTextExtent(const char* text);
 

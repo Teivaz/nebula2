@@ -177,7 +177,7 @@ public:
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(nPrimitiveType primType);
     /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, float xPos, float yPos);
+    virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
     /// get text extents
     virtual vector2 GetTextExtent(const char* text);
 
