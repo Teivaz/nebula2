@@ -165,6 +165,10 @@ private:
     
     /// used to make object names unique
     int objectID;
+    
+    /// variable handles for the render context
+    nVariable::Handle timeHandle;
+    nVariable::Handle windHandle;
 };
 
 //------------------------------------------------------------------------------

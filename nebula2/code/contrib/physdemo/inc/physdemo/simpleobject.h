@@ -36,14 +36,8 @@ public:
     /// used to manipulate the object's transform (position, rotation, etc.)
     transform44 Transform;
 
-    /// variable handles for the render context
-    nVariable::Handle timeHandle;
-
     // The object's render context
     nRenderContext renderContext;
-
-    // The object's universal ID.
-    int uID;
 
     // The object's physical representation
     nRef<nOpendeBody> refPhysBody;
