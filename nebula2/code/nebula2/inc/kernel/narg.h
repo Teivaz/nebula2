@@ -10,10 +10,12 @@
 
     (C) 2002 RadonLabs GmbH
 */
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+
 #include "kernel/ntypes.h"
 #include "mathlib/matrix.h"
-
-#include <string.h>
 
 //------------------------------------------------------------------------------
 class nArg 
@@ -43,10 +45,14 @@ public:
     void Delete();
     /// copy content
     void Copy(const nArg& rhs);
+    /// copy from va_list 
+    void Copy(va_list & marker);
     /// the equals operator
     bool operator==(const nArg& rhs) const;
     /// assignment operator
     nArg& operator=(const nArg& rhs);
+    /// Set type corresponding to data type character and reset arg contents
+    void Reset(char c);
 
     /// set content to an integer
     void SetI(int i);
@@ -87,6 +93,11 @@ public:
     const vector4& GetV4() const;
     /// get matrix44 content
     const matrix44& GetM44() const;
+
+    /// check if the provided data type character is a valid argument
+    static bool IsValidArg(char c);
+    /// check if the provided data type character is void
+    static bool IsVoid(char c);
 
 private:
     Type type;
@@ -215,6 +226,75 @@ nArg::Copy(const nArg& rhs)
             else
             {
                 this->m44 = n_new(matrix44(*rhs.m44));
+            }
+            break;
+    }
+}
+
+ 
+//-----------------------------------------------------------------------------
+/**
+    Copy contents from variable argument list marker. The type of the variable
+    is known by the this->type.
+
+    @param marker va_list parameter
+*/
+inline
+void 
+nArg::Copy(va_list & marker)
+{
+    switch(this->type) 
+    {
+        case Void:
+            break;
+
+        case Int: 
+            this->i = va_arg(marker, int); 
+            break;
+            
+        case Float:    
+            // Compiler passes floats as double to variable argument functions 
+            this->f = static_cast<float> (va_arg(marker, double)); 
+            break;
+
+        case String:
+            {
+                this->Delete();
+                const char * str = va_arg(marker, char *);
+                if (str)
+                {   
+                    this->s = n_strdup(str);
+                } 
+            }
+            break;
+
+        case Bool:     
+            this->b = va_arg(marker, bool); 
+            break;
+
+        case Object:
+            this->o = va_arg(marker, void *);
+            break;
+
+        case List:
+            n_assert(0);
+            /* not possible to implement from va_list */
+            break;
+
+        case Float4:
+            this->f4 = *(va_arg(marker, nFloat4 *));
+            break;
+
+        case Matrix44:
+            const matrix44 * mat = va_arg(marker, matrix44 *);
+            n_assert(mat);
+            if (this->m44)
+            {
+                *this->m44 = *mat;
+            }
+            else
+            {
+                this->m44 = n_new(matrix44( *mat ));
             }
             break;
     }
@@ -625,6 +705,61 @@ nArg::GetM44() const
     n_assert(Matrix44 == this->type);
     n_assert(this->m44);
     return *(this->m44);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nArg::IsValidArg(char c)
+{
+    switch (c)
+    {
+        case 'i':
+        case 'f':
+        case 's':
+        case 'v':
+        case 'b':
+        case 'o':
+        case 'l':
+            return true;
+        default:
+            return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nArg::IsVoid(char c)
+{
+    if ('v' == c)
+    {
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nArg::Reset(char c)
+{
+    switch (c) 
+    {
+        case 'i':   this->SetI(0);      break;
+        case 'f':   this->SetF(0.0f);   break;
+        case 'b':   this->SetB(false);  break;
+        case 's':   this->SetS(0);      break;
+        case 'o':   this->SetO(0);      break;
+        case 'l':   this->SetL(0,0);    break;
+        default:    break;
+    } 
 }
 
 //--------------------------------------------------------------------

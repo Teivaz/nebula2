@@ -10,51 +10,23 @@
 */
 nCmdProto::nCmdProto(const char *proto_def, nFourCC id)
 {
-    char tmp[128];
-    char inArgs[64];
-    char outArgs[64];
-    char c;
+    // check prototype definition
+    ProtoDefInfo info(proto_def);
+
+    // parse proto definition and divided in outArgs, name and inArgs. @returns true if OK
+    if (!info.valid)
+    {
+        n_assert2(0, "Invalid prototype definition for nCmdProto");
+    }
     
     // copy prototype definition
     this->protoDef = proto_def;
     this->fourcc   = id;
-    
-    // isolate and validate outargs, cmd name and in args...
-    n_strncpy2(tmp, proto_def, sizeof(tmp));
-    char* outArgStr = strtok(tmp, "_");
-    char* nameStr   = strtok(0, "_");
-    char* inArgStr  = strtok(0, "_");
-    n_assert(outArgStr && nameStr && inArgStr);
+    this->numInArgs = info.numInArgs;
+    this->numOutArgs = info.numOutArgs;
 
     // set cmd proto name in own hash node
-    this->SetName(nameStr);
- 
-    // parse in args
-    this->numInArgs = 0;
-    while ((c = *inArgStr++)) 
-    {
-        // ignore void arguments
-        if (c != 'v') 
-        {
-            n_assert(this->IsValidArg(c)) 
-            inArgs[this->numInArgs++] = c;
-        }
-    }
-    inArgs[this->numInArgs] = 0;
-
-    // parse out args
-    this->numOutArgs = 0;
-    while ((c = *outArgStr++)) 
-    {
-        // ignore void arguments
-        if (c != 'v') 
-        {
-            n_assert(this->IsValidArg(c)) 
-            outArgs[this->numOutArgs++] = c;
-        }
-    }
-    outArgs[this->numOutArgs] = 0;
-
+    this->SetName(info.name);
 
     // create template cmd object
     this->cmdTemplate = n_new(nCmd(this));
@@ -63,31 +35,13 @@ nCmdProto::nCmdProto(const char *proto_def, nFourCC id)
     int i;
     for (i = 0; i < this->numInArgs; i++)
     {
-        switch (inArgs[i]) 
-        {
-            case 'i':   this->cmdTemplate->In()->SetI(0);      break;
-            case 'f':   this->cmdTemplate->In()->SetF(0.0f);   break;
-            case 'b':   this->cmdTemplate->In()->SetB(false);  break;
-            case 's':   this->cmdTemplate->In()->SetS(0);      break;
-            case 'o':   this->cmdTemplate->In()->SetO(0);      break;
-            case 'l':   this->cmdTemplate->In()->SetL(0,0);    break;
-            default:    break;
-       } 
+        this->cmdTemplate->In()->Reset(info.inArgs[i]);
     }
 
     // initialize template object out args
     for (i = 0; i < this->numOutArgs; i++)
     {
-        switch (outArgs[i]) 
-        {
-            case 'i':   this->cmdTemplate->Out()->SetI(0);      break;
-            case 'f':   this->cmdTemplate->Out()->SetF(0.0f);   break;
-            case 'b':   this->cmdTemplate->Out()->SetB(false);  break;
-            case 's':   this->cmdTemplate->Out()->SetS(0);      break;
-            case 'o':   this->cmdTemplate->Out()->SetO(0);      break;
-            case 'l':   this->cmdTemplate->Out()->SetL(0,0);    break;
-            default:    break;
-       } 
+        this->cmdTemplate->Out()->Reset(info.outArgs[i]);
     }
     this->cmdTemplate->Rewind();
     this->cmdLocked = false;
@@ -160,6 +114,75 @@ nCmdProto::RelCmd(nCmd* cmd)
         n_assert(cmdLocked);
         cmdLocked = false;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    ProtoDefInfo constructor which parses and checks validity of the prototype 
+    definition. Initializes info resulting information from the parsing process.
+
+    @param proto_def char array containing prototype definition to check & parse
+*/
+ProtoDefInfo::ProtoDefInfo(const char * proto_def)
+{
+    n_assert(proto_def);
+
+    const char * ptr;
+    char c;
+
+    // initialize all output strings & argument counters
+    memset(this, 0, sizeof(ProtoDefInfo));
+    
+    // check out args
+    ptr = proto_def;
+    while ((0 != (c = *ptr++)) && ('_' != c))
+    {
+        if (!nArg::IsVoid(c))
+        {
+            n_assert(nArg::IsValidArg(c));
+            this->outArgs[this->numOutArgs++] = c;
+        }
+    }
+    this->outArgs[this->numOutArgs] = 0;
+
+    // check if found separator '_'
+    if ('_' != c) 
+    {
+        return;
+    }
+
+    // copy name
+    int i = 0;
+    while ((0 != (c = *ptr++)) && ('_' != c))
+    {
+        this->name[i++] = c;
+    }
+    this->name[i++] = 0;
+
+    // check if found separator '_'
+    if ('_' != c) 
+    {
+        return;
+    }
+
+    // copy out args if buffer provided
+    while ((0 != (c = *ptr++)) && ('_' != c))
+    {
+        if (!nArg::IsVoid(c))
+        {
+            n_assert(nArg::IsValidArg(c));
+            this->inArgs[this->numInArgs++] = c;
+        }
+    }
+    this->inArgs[this->numInArgs] = 0;
+
+    // check if found end of string
+    if (0 != c) 
+    {
+        return;
+    }
+
+    valid = true;
 }
 
 //------------------------------------------------------------------------------

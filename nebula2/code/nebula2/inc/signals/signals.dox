@@ -1,0 +1,230 @@
+/**
+
+    @defgroup NebulaSignals Nebula signal / event system
+    @ingroup Kernel
+
+    @brief The signal / event system for Nebula. It allows Nebula code
+    to get called in a flexible way.
+
+    @section NebulaSignalsIntro Introduction to Nebula Signals
+
+    The implementation of signals is based on the proposal written by Bruce
+    Mitchener. There are some minor adaptations. The goals in the
+    implementation are:
+
+    - High performance signal emission, without penalties from C++ side.
+    - Type safety in compile time in C++ code.
+
+    Signals can be created in two ways:
+
+    1) Native signals: signals created in C++ code. This are faster to
+    execute and allow to use the type-safety checking at compile time.
+
+    2) Scripting signals: signals created from scripting. Can be created
+    at any time, but are slower.
+
+    Signals can be binded to objects in two ways:
+
+    1) Native bindings: binded to any C++ member function of a nObject
+    or derived (not needed to be a scripting command).
+
+    2) Scripting binding: binded to any nCmdProto or derived. In some
+    scripting languages (like Lua and Python) it is possible to create
+    nCmdProto to actually execute scripting code on binding, which gives
+    a lot of flexibility.
+
+    All combinations are possible without limitations.
+
+    The signal fucntionality is available for any nObject or derived.
+
+    Sorry, I know the documentation is very poor at the moment.
+
+    @section NebulaSignalsProposal Nebula Signals Proposal
+
+    Include here an adapted version of the proposal written by Bruce Mitchener.
+
+    @section NebulaSignalsUsage Usage of the Nebula Signals system
+
+    We can see below an explanation of the most common use cases. This section
+    is focused in the usage from native C++ code, not from scripting.
+    To hidden the complexities of the signal subsystem, some preprocessor macros
+    have been defined. Check the examples to see how to use them.
+
+    1) Signal declaration. This is done in a header file (.h) inside the public part
+    of the class definition. It declares the following parameters:
+
+@code
+    NSIGNAL_DECLARE(fourcc, RetType, SignalName, NumInArg, InArg, NumOutArg, OutArg)
+@endcode
+
+    * fourcc: fourcc identifier of the signal (if 0 is provided one is calculated).
+    * RetType: return type for the signal.
+    * SignalName: name of the signal (signal names are case-sensitive).
+    * NumInArg: number of input arguments (from 0 to 6)
+    * InArg: list of argument types between parenthesis and separated by commas.
+    Example (bool, int, const char *). In the case of 0 arguments just use ().
+    * NumOutArg: number of output arguments (from 0 to 6)
+    * OutArg: list of argument types between parenthesis and separated by commas.
+    In the case of 0 arguments just use ().
+
+    There are many arguments, but they follow the standard ordering in for a C
+    function (return type, signalname, argumennts), so it should not be so difficult
+    to remember.
+
+    Signal name spaces have a class namespace, so they can be repeated in two different
+    classes provided one is not subclass of the other. Same happens with the fourcc.
+
+    Examples:
+
+@code
+    class MyClass
+    {
+    public:
+
+        NSIGNAL_DECLARE('COLL', bool, Collide, 2, (vector3 &, vector3 &), 0, ());
+        NSIGNAL_DECLARE('OMMV', bool, OnMouseMoved, 1, (vector2 &), 0, ());
+        NSIGNAL_DECLARE('OBDW', bool, OnButtonDown, 1, (vector2 &), 0, ());
+        NSIGNAL_DECLARE('OCHR', void, OnChar, 1, (int));
+        NSIGNAL_DECLARE('OKEY', void, OnKey, 1, (int));
+        NSIGNAL_DECLARE('TRIG', void, Trigger, 0, ());
+
+    };
+@endcode
+
+    2) Signal definition. Done in a code file (.cc), outside the scope of a function.
+    It defines the signal object. The header where the signal was declared must be
+    included before the definition. This is done because the signals are static
+    objects, and so follow the rules of declaration & definition of static objects.
+
+@code
+    NSIGNAL_DEFINE(ClassName,SignalName)
+@endcode
+
+    Examples:
+
+@code
+    NSIGNAL_DEFINE(MyClass,Collide);
+    NSIGNAL_DEFINE(MyClass,OnMouseMoved);
+    NSIGNAL_DEFINE(MyClass,OnButtonDown);
+    NSIGNAL_DEFINE(MyClass,OnChar);
+    NSIGNAL_DEFINE(MyClass,OnKey);
+    NSIGNAL_DEFINE(MyClass,Trigger);
+@endcode
+
+    3) Registration of signals in the Nebula class. This is the same that is done
+    for scripting commands. It is done in the n_initcmds function. Just use add
+    one cl->AddSignal for every signal you have defined, and surrond all these
+    between cl->BeginSignals(NumberOfSignals) and cl->EndSignals(). Example:
+
+@code
+    void
+    n_initcmds(nClass* cl)
+    {
+        cl->BeginCmds();
+        cl->EndCmds();
+        cl->BeginSignals(8);
+        cl->AddSignal(MyClass::SignalCollide);
+        cl->AddSignal(MyClass::SignalOnMouseMoved);
+        cl->AddSignal(MyClass::SignalOnButtonDown);
+        cl->AddSignal(MyClass::SignalOnChar);
+        cl->AddSignal(MyClass::SignalOnKey);
+        cl->AddSignal(MyClass::SignalTrigger);
+        cl->EndSignals();
+    }
+@endcode
+
+    Here we add the static signal objects directly to the class. As you can see
+    all signal objects are created with the 'Signal' prefix to avoid name clashing.
+
+    4) Signal binding. An emitter is the object emitting signals. Other objects
+    (receivers) must bind to the emitter to be able to catch the signals when
+    emitted. Any object can be a receiver. When the receiver is binded, it is
+    binded to an specific member function. The binding action takes place
+    inside a C++ code block. There are many ways to add bindings to a signal,
+    depends a bit on the type of signal and the type of binding.
+
+    For bindings of native signals to native bindings use:
+
+@code
+    emitter->BindSignal(SignalObject, Receiver, MemberFunctionPointer, priority);
+
+    obj->BindSignal(MyClass::SignalTrigger, recv, ReceiverClass::Trigger, 10);
+@endcode
+
+    Check others BindSignal functions in nSignalEmitter.
+
+@code
+    bool BindSignal(nFourCC signal4cc, nSignalBinding * binding);
+    bool BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdProto, int priority);
+    bool BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourCC, int priority, bool rebind = false);
+    bool BindSignal(nFourCC signal4cc, nObject * object, const char * cmdName, int priority, bool rebind = false);
+    bool BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority);
+@endcode
+
+    5) Signal emission. When the signal is emitted by the emitter object, all the binded
+    objects are called by priority order. The emission of the signal is done in this way.
+    Example of signal emission from C++ code, type-safe check at compile time but only
+    for native signals:
+
+@code
+    emitter->SignalObject(emitter, arg1, arg2, arg3);
+
+    emitter->SignalOnKey(emitter, 1024);
+@endcode
+
+    There are other ways of signal emission, which are valid for any type of signal
+    (but not type-safe checked at compile time).
+
+@code
+    emitter->EmitSignal("OnKey", 1024);
+@endcode
+
+    From tcl scripting the signals are emitted this way:
+
+@code
+    emit object.signalname arg1 arg2 arg3
+
+    emit /emitter.OnKey 1024
+@endcode
+
+    6) Async signals. It is possible to emit a signal to be executed at the time specified.
+    For this the signal server must be active. The following command emits the signal
+    at the time 10 seconds.
+
+@code
+    emitter->PostSignal(10.0f, "OnKey", 1024);
+@endcode
+
+    At the moment this is not type-safe, but a type-safe way to post signals can
+    be implemented too.
+
+    From scripting it is possible also to post signals / or any command:
+
+@code
+    post 10.0 /emitter.OnKey 1024
+@endcode
+
+    @section NebulaSignalsNotes Implementation notes
+
+    There are some changes between the original proposal and what has been
+    implemented. Changes have been motivated to improve performance and
+    type-safety.
+
+    - nSignal. It is not just a single class. It is derived from nCmdProto
+    for convenience. nSignal directly is used for signals defined from
+    scripting or from dynamic C++ code. But normal C++ code will use
+    nSignalNative template classes.
+
+    - nSignalRegistry. At the moment has all the nClass extensions, this
+    is mixed-in in nClass. It is better to be done separately
+    since allows easier refactoring in the future.
+
+    - nSignalBindingSet. A list of nSignalBinding.
+
+    - nSignalBinding. This is similar to nSignal, but it handles the signal
+    reception, that is the invocation of each object binded to a signal.
+    nSignalBinding is an abstract class. There are two subclasses,
+    nSignalBindingCmdProto for invocation through nCmd (used for scripting),
+    and nSignalBindingNative for invocation of native C++ code.
+
+*/

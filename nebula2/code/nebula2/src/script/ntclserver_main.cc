@@ -19,6 +19,7 @@ extern Tcl_ObjCmdProc tclcmd_Unknown;
 extern Tcl_ObjCmdProc tclcmd_Puts;
 extern Tcl_ObjCmdProc tclcmd_Dir;
 extern Tcl_ObjCmdProc tclcmd_Exists;
+extern Tcl_ObjCmdProc tclcmd_Emit;
 
 //------------------------------------------------------------------------------
 /**
@@ -114,6 +115,7 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
     Tcl_CreateObjCommand(this->interp, "exit",          tclcmd_Exit,        (ClientData)this, 0);
     Tcl_CreateObjCommand(this->interp, "dir",           tclcmd_Dir,         (ClientData)this, 0);
     Tcl_CreateObjCommand(this->interp, "exists",        tclcmd_Exists,      (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "emit",          tclcmd_Emit,        (ClientData)this, 0);
 }
 
 //------------------------------------------------------------------------------

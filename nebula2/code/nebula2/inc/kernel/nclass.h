@@ -14,13 +14,14 @@
 #include "kernel/ntypes.h"
 #include "kernel/ncmdproto.h"
 #include "util/nkeyarray.h"
+#include "signals/nsignalregistry.h"
 
 //------------------------------------------------------------------------------
 class nCmdProtoNative;
 class nObject;
 class nKernelServer;
 class nHashList;
-class nClass : public nHashNode
+class nClass : public nHashNode, public nSignalRegistry
 {
 public:
     /// constructor
@@ -31,6 +32,8 @@ public:
     nObject* NewObject();
     /// start defining commands
     void BeginCmds();
+    /// add a command to the class
+    void AddCmd(nCmdProto * cmdProto);
     /// add a command to the class
     void AddCmd(const char *proto_def, nFourCC id, void (*)(void *, nCmd *));
     /// finish defining commands

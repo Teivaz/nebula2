@@ -27,13 +27,15 @@
 #include "kernel/ncmd.h"
 #include "kernel/nmutex.h"
 #include "kernel/nreferenced.h"
+#include "signals/nsignalemitter.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
 class nKernelServer;
 class nPersistServer;
 
-class nObject : public nReferenced
+//------------------------------------------------------------------------------
+class nObject : public nReferenced, public nSignalEmitter
 {
 public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)

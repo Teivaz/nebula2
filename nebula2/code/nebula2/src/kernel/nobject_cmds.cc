@@ -48,6 +48,9 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("b_isinstanceof_s",      'ISIO', n_isinstanceof);
     cl->AddCmd("l_getcmds_v",           'GMCD', n_getcmds);
     cl->AddCmd("i_getinstancesize_v",   'GISZ', n_getinstancesize);
+
+    n_initcmds_nsignalemitter(cl);
+
     cl->EndCmds();
 }
 

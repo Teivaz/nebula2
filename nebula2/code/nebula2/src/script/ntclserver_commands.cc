@@ -3,6 +3,7 @@
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "script/ntclserver.h"
+#include "signals/nsignalserver.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -850,6 +851,227 @@ tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
         if (o) Tcl_SetResult(interp, "1", TCL_STATIC);
         else   Tcl_SetResult(interp, "0", TCL_STATIC);
         retval = TCL_OK;
+    }
+    return retval;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Implement signal emission (emit command). Examples:
+    emit .signal arg1 arg2 arg3  (for object currently selected)
+    emit object.signal arg1 arg2 arg3
+*/
+int 
+tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+    int retval = TCL_ERROR;
+    nTclServer *tcl = (nTclServer *) cdata;
+
+    char *obj_name;
+    char *cmd_name;
+    char *dot;
+    char cmd[N_MAXPATH];
+    nObject *o;
+    bool has_dot = false;
+
+    // extract object name and cmd name
+    n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
+    dot = strchr(cmd,'.');
+
+    // special case handle path components
+    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.'); 
+    if (dot) 
+    {
+        has_dot = true;
+        *dot = 0;
+        obj_name = cmd;
+        if (obj_name == dot) 
+        {
+            obj_name = 0;
+        }
+        cmd_name = dot+1;
+    } 
+    else 
+    {
+        obj_name = 0;
+        cmd_name = cmd;
+    }
+    if (*cmd_name == 0) 
+    {
+        cmd_name = NULL;
+    }
+
+    // find object to invoke command on
+    if (obj_name) 
+    {
+        o = nTclServer::kernelServer->Lookup(obj_name);
+    }
+    else          
+    {
+        o = nScriptServer::GetCurrentTargetObject(); // use the nObject if one is set
+        if (!o)
+            o = nTclServer::kernelServer->GetCwd(); // otherwise use the current nRoot
+    }
+    if (!o) 
+    {
+        tclUnknownObject(interp, obj_name);
+        return TCL_ERROR;
+    }
+    if (!cmd_name) {
+        Tcl_SetResult(interp, "No command.", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    // invoke command
+    nClass *cl = o->GetClass();
+    nCmdProto *cmd_proto = (nCmdProto *) cl->FindSignalByName(cmd_name);
+    if (cmd_proto) 
+    {     
+        nCmd *cmd = cmd_proto->NewCmd();
+        n_assert(cmd);
+
+        // retrieve input args (skip the 'unknown' and cmd statement)            
+        if (!_getInArgs(interp,cmd,objc-2,objv+2)) 
+        {
+            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', signal '%s'",o,cmd_name);
+            cmd_proto->RelCmd(cmd);
+            return TCL_ERROR;
+        }
+
+        // let object handle the command
+        if (o->Dispatch(cmd))
+        {
+            retval = TCL_OK;
+            _putOutArgs(interp,cmd);
+        }
+        else 
+        {
+            tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', signal '%s'",o,cmd_name);
+        }
+        cmd_proto->RelCmd(cmd);
+        
+    } 
+    else 
+    {
+        tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept signal '%s'",o,cmd_name);
+        retval = TCL_ERROR;
+    }
+    return retval;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Post signal and commands (post command). Examples:
+    post time object.signal arg1 arg2 arg3  (for object currently selected)
+    post time object.signal arg1 arg2 arg3
+*/
+int 
+tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+    int retval = TCL_ERROR;
+    nTclServer *tcl = (nTclServer *) cdata;
+
+    char *obj_name;
+    char *cmd_name;
+    char *dot;
+    char cmd[N_MAXPATH];
+    nObject *o;
+    bool has_dot = false;
+
+    // extract time and convert time
+    n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
+    nTime t = atof(cmd);
+
+    // extract object name and cmd name
+    n_strncpy2(cmd, Tcl_GetString(objv[2]), sizeof(cmd));
+    dot = strchr(cmd,'.');
+
+    // special case handle path components
+    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.'); 
+    if (dot) 
+    {
+        has_dot = true;
+        *dot = 0;
+        obj_name = cmd;
+        if (obj_name == dot) 
+        {
+            obj_name = 0;
+        }
+        cmd_name = dot+1;
+    } 
+    else 
+    {
+        obj_name = 0;
+        cmd_name = cmd;
+    }
+    if (*cmd_name == 0) 
+    {
+        cmd_name = NULL;
+    }
+
+    // find object to invoke command on
+    if (obj_name) 
+    {
+        o = nTclServer::kernelServer->Lookup(obj_name);
+    }
+    else          
+    {
+        o = nScriptServer::GetCurrentTargetObject(); // use the nObject if one is set
+        if (!o)
+            o = nTclServer::kernelServer->GetCwd(); // otherwise use the current nRoot
+    }
+    if (!o) 
+    {
+        tclUnknownObject(interp, obj_name);
+        return TCL_ERROR;
+    }
+    if (!cmd_name) {
+        Tcl_SetResult(interp, "No command.", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    // invoke command
+    nClass *cl = o->GetClass();
+    nCmdProto *cmd_proto = (nCmdProto *) cl->FindSignalByName(cmd_name);
+    if (!cmd_proto)
+    {
+        cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
+    }
+    if (cmd_proto) 
+    {     
+        nCmd *cmd = cmd_proto->NewCmd();
+        n_assert(cmd);
+
+        // retrieve input args (skip the 'unknown' and cmd statement)            
+        if (!_getInArgs(interp,cmd,objc-3,objv+3)) 
+        {
+            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', command/signal '%s'",o,cmd_name);
+            cmd_proto->RelCmd(cmd);
+            return TCL_ERROR;
+        }
+
+        // let object handle the command
+        nSignalServer * signalServer = nSignalServer::Instance();
+        if (0 != signalServer)
+        {
+            tcl_objcmderror(interp,tcl,"Signal server not available, object '%s', command/signal '%s'",o,cmd_name);
+            cmd_proto->RelCmd(cmd);
+            return TCL_ERROR;            
+        }
+
+        if (signalServer->PostCmd(t, o, cmd))
+        {
+            retval = TCL_OK;
+        }
+        else
+        {
+            tcl_objcmderror(interp,tcl,"Post error, object '%s', command/signal '%s'",o,cmd_name);
+        }
+    } 
+    else 
+    {
+        tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept signal '%s'",o,cmd_name);
+        retval = TCL_ERROR;
     }
     return retval;
 }
