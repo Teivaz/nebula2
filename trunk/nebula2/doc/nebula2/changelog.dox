@@ -1,0 +1,17 @@
+/**
+   @page Nebula2ChangeLog Nebula 2 Change Log
+
+@section September 2, 2003 Release
+
+   - Lots of documentation improvements
+   - Reworked script API docs and made them part of the Doxygen output
+   - Fixed command line parsing to handle args with spaces in them by allowing them to be quoted.
+   - Build system support for Linux, MacOS X and the use of Visual Studio 6 on Windows.
+   - Non-rendering, non-input portions of Nebula compile and run on Linux and OS X.
+   - Fix handling of alt-tab.
+   - Fix /sys/servers/console.watch * crash.
+   - nArg supports list args.
+   - MicroTCL fixes.
+   - New tangent generation code in nMeshBuilder.
+   - Warnings fixes.
+*/
