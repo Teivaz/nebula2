@@ -119,7 +119,7 @@ nMeshBuilder::BuildVertexTangents()
     per-triangle normals which must be computed or exist
     beforehand. Note that only the vertex normals will be touched!
 
-    29-Mar-2004 cubejk  added for nmax
+    29-Mar-2004 Johannes  added for nmax
 */
 void
 nMeshBuilder::BuildVertexNormals()
@@ -171,7 +171,7 @@ nMeshBuilder::BuildVertexNormals()
     Build triangle tangents. The tangents require a valid 
     uv-mapping in texcoord layer 0.
 
-    29-Mar-2004 cubejk  added for nmax
+    29-Mar-2004 Johannes  added for nmax
 */
 void
 nMeshBuilder::BuildTriangleTangents()

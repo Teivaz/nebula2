@@ -9,7 +9,8 @@
 */
 nMeshBuilder::nMeshBuilder() :
     vertexArray((1<<15), (1<<15)),
-    triangleArray((1<<15), (1<<15))
+    triangleArray((1<<15), (1<<15)),
+    edgeArray((1<<15), (1<<15))
 {
     // empty
 }
@@ -40,9 +41,9 @@ nMeshBuilder::GetNumGroupTriangles(int groupId, int materialId, int usageFlags, 
             (this->triangleArray[triIndex].GetMaterialId() == materialId) &&
             (this->triangleArray[triIndex].GetUsageFlags() == usageFlags))
         {
-        	numTris++;
-		}
-    }	
+            numTris++;
+        }
+    }
     return numTris;
 }
 
@@ -134,6 +135,7 @@ nMeshBuilder::Clear()
 {
     this->vertexArray.Clear();
     this->triangleArray.Clear();
+    this->edgeArray.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -161,6 +163,350 @@ nMeshBuilder::Transform(const matrix44& m44)
     {
         this->vertexArray[i].Transform(m44, m33);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Build triangle neighbour data - edges:
+
+    1 - create TempEdge data, 2 vertexIndex + faceIndex, where vertexIndex1 < vertexIndex2
+        for every face and store in array for sorting.
+        [tempMEM: numFaces * 3 * 3 * ushort]
+    2 - sort TempEdge data by: vertexIndex1 vertexIndex2 (TempEdgeSorter)
+    3 - run over TempEdge data:
+        create a UngroupedEdge for  aand create from TempEdges that share the same Indicies
+        one . Also copy TempEdges that are use by only one Face (geometry borders).
+        Store the indicies to the UngroupedEges in the Triangles.
+        Result: Array of edges, without doubles. Every Triangle has 3 valid Indicies it's
+        the Edges.
+        [tempMEM: ~(numFaces * 3) / 2 * 4 ushort + numFaces * 3 ushort] 
+    4 - create a array of edges with group information. Therfore run over all Triangels
+        and by copy the index UngroupedEdges into the GroupEdge array, also store the GroupID
+        of the triangle in this GroupedEdge.
+        [tempMEM: numFaces * 3 * 5 ushort]
+    5 - sort GroupedEdges by: GroupID faceIndex1 faceIndex2 (GroupedEdgeSorter)
+    6 - copy all edges to the edge array, skip identical edges (groupID/face).
+*/
+void
+nMeshBuilder::CreateEdges()
+{
+    n_assert(0 == this->GetNumEdges());
+    n_assert(this->GetNumTriangles() > 0);
+
+    const int numEdges = this->triangleArray.Size() * 3;
+    TempEdge* tempEdgeArray = n_new TempEdge[numEdges];
+    n_assert(tempEdgeArray);
+
+    // generate edge data from all faces
+    int i;
+    int edgeIndex = 0;
+    for (i = 0; i < this->triangleArray.Size(); i++)
+    {
+        int i0, i1, i2;
+        this->triangleArray[i].GetVertexIndices(i0, i1, i2);
+
+        //edge i0 - i1
+        n_assert(edgeIndex < numEdges);
+        tempEdgeArray[edgeIndex].fIndex = (short)i;
+        tempEdgeArray[edgeIndex].vIndex[0] = i0;
+        tempEdgeArray[edgeIndex].vIndex[1] = i1;
+        edgeIndex++;
+
+        //edge i1 - i2
+        n_assert(edgeIndex < numEdges);
+        tempEdgeArray[edgeIndex].fIndex = (short)i;
+        tempEdgeArray[edgeIndex].vIndex[0] = i1;
+        tempEdgeArray[edgeIndex].vIndex[1] = i2;
+        edgeIndex++;
+
+        //edge i2 - i0
+        n_assert(edgeIndex < numEdges);
+        tempEdgeArray[edgeIndex].fIndex = (short)i;
+        tempEdgeArray[edgeIndex].vIndex[0] = i2;
+        tempEdgeArray[edgeIndex].vIndex[1] = i0;
+        edgeIndex++;
+    }
+
+    //sort the temp edges array
+    qsort(tempEdgeArray, numEdges, sizeof(TempEdge), nMeshBuilder::TempEdgeSorter);
+
+    //DEBUG
+    /*int d;
+    for (d = 0; d < numEdges; d++)
+    {
+        n_printf("%i: %i %i - %f\n", d, tempEdgeArray[d].vIndex[0], tempEdgeArray[d].vIndex[1], tempEdgeArray[d].fIndex);
+    }
+    */
+
+    // create array for the unsorted edges
+    nArray<UngroupedEdge>* unsortedEdgeArray = n_new nArray<UngroupedEdge>(numEdges/2, n_max(2,(numEdges/4)));
+    int unsortedEdgeIndex;
+    
+    // create the unsorted edges array - and store temp indicies in the triangles
+    for(i = 0; i < numEdges - 1; i++)
+    {
+        unsortedEdgeIndex = unsortedEdgeArray->Size();
+        const TempEdge& currEdge = tempEdgeArray[i];
+        const TempEdge& nextEdge = tempEdgeArray[i+1];
+        
+        if ( currEdge.vIndex[0] == nextEdge.vIndex[1] && currEdge.vIndex[1] == nextEdge.vIndex[0] )
+        {
+            //current edge and next edge share the same vertex indicies (cross compare) - copy only once, update both faces
+            UngroupedEdge edge;
+            edge.vIndex[0] = currEdge.vIndex[0];
+            edge.vIndex[1] = currEdge.vIndex[1];
+            edge.fIndex[0] = currEdge.fIndex;
+            edge.fIndex[1] = nextEdge.fIndex;
+            unsortedEdgeArray->PushBack(edge);
+            
+            // store edge index into triangles
+            int t;
+            for (t = 0; t < 2; t++)
+            {
+                Triangle& tri = this->GetTriangleAt(edge.fIndex[t]);
+            
+                int eIndex[3];
+                tri.GetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+                int j;
+                for (j = 0; j < 3; j++)
+                {
+                    if (nMesh2::InvalidIndex == eIndex[j])
+                    {
+                        eIndex[j] = unsortedEdgeIndex;                        
+                        break;
+                    }
+                }
+                tri.SetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+            }
+            //skip next element becauce we handled it already
+            i++;
+        }
+        else
+        {
+            //must be a edge with only used by only one face
+            UngroupedEdge edge;
+            edge.vIndex[0] = currEdge.vIndex[0];
+            edge.vIndex[1] = currEdge.vIndex[1];
+            edge.fIndex[0] = currEdge.fIndex;
+            edge.fIndex[1] = nMesh2::InvalidIndex;
+            unsortedEdgeArray->PushBack(edge);
+                
+            // store edge index into triangle
+            Triangle& tri = this->GetTriangleAt(edge.fIndex[0]);
+        
+            int eIndex[3];
+            tri.GetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+            int j;
+            for (j = 0; j < 3; j++)
+            {
+                if (nMesh2::InvalidIndex == eIndex[j])
+                {
+                    eIndex[j] = unsortedEdgeIndex;                        
+                    break;
+                }
+            }
+            tri.SetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+        }
+    }
+    
+    //fix last element
+    unsortedEdgeIndex = unsortedEdgeArray->Size();
+    const TempEdge& prevEdge = tempEdgeArray[numEdges-2];
+    const TempEdge& currEdge = tempEdgeArray[numEdges-1];
+
+    if ( !(currEdge.vIndex[0] == prevEdge.vIndex[1] && currEdge.vIndex[1] == prevEdge.vIndex[0]) )
+    {
+        // if the last and the previous are not the same than the last must be added, else this was handled before
+        //must be a edge with only used by only one face
+        UngroupedEdge edge;
+        edge.vIndex[0] = currEdge.vIndex[0];
+        edge.vIndex[1] = currEdge.vIndex[1];
+        edge.fIndex[0] = currEdge.fIndex;
+        edge.fIndex[1] = nMesh2::InvalidIndex;
+        unsortedEdgeArray->PushBack(edge);
+            
+        // store edge index into triangle
+        Triangle& tri = this->GetTriangleAt(edge.fIndex[0]);
+    
+        int eIndex[3];
+        tri.GetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+        int j;
+        for (j = 0; j < 3; j++)
+        {
+            if (nMesh2::InvalidIndex == eIndex[j])
+            {
+                eIndex[j] = unsortedEdgeIndex;                        
+                break;
+            }
+        }
+        tri.SetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+    }
+    
+    // cleanup done data
+    n_delete[] tempEdgeArray;
+
+    // create the grouped edges array
+    const int numTempGroupEdges = this->triangleArray.Size() * 3;
+    int tempGroupEdgeIndex = 0;
+    GroupedEdge* tempGroupEdgeArray = n_new GroupedEdge[numTempGroupEdges];
+    n_assert(tempGroupEdgeArray);
+    
+    for (i = 0; i < this->triangleArray.Size(); i++)
+    {
+        const Triangle& tri = this->GetTriangleAt(i);
+        int eIndex[3];
+        tri.GetEdgeIndices(eIndex[0], eIndex[1], eIndex[2]);
+        const int GroupID = tri.GetGroupId();
+
+        int j;
+        for (j = 0; j < 3; j++)
+        {
+            //every triangele must have 3 edges - so all indicies must be valid.
+            n_assert(nMesh2::InvalidIndex != eIndex[j]);
+            
+            GroupedEdge& groupEdge = tempGroupEdgeArray[tempGroupEdgeIndex++];
+            groupEdge.GroupID = GroupID;
+
+            UngroupedEdge& uEdge = unsortedEdgeArray->At(eIndex[j]);
+            groupEdge.fIndex[0] = uEdge.fIndex[0];
+            groupEdge.fIndex[1] = uEdge.fIndex[1];
+            groupEdge.vIndex[0] = uEdge.vIndex[0];
+            groupEdge.vIndex[1] = uEdge.vIndex[1];
+        }
+    }
+
+    // cleanup done data
+    n_delete unsortedEdgeArray;
+
+    // sort grouped edges array
+    qsort(tempGroupEdgeArray, numTempGroupEdges, sizeof(GroupedEdge), nMeshBuilder::GroupedEdgeSorter);
+
+
+    // all edges that are use from triangles with the same groupID are now in continious chunks
+    // remove duplicate edges when in the same group
+    // don't skip duplicate edges when they are used from triangles with different groups
+    
+    //do the 1st element
+    this->edgeArray.PushBack(tempGroupEdgeArray[0]);
+    
+    for (i = 1; i < numTempGroupEdges; i++)
+    {
+        const GroupedEdge& e0 = tempGroupEdgeArray[i-1];
+        const GroupedEdge& e1 = tempGroupEdgeArray[i];
+
+        if (e1.GroupID == e0.GroupID)
+        {
+            if (e1.fIndex[0] == e0.fIndex[0])
+            {
+                if (e1.fIndex[1] == e0.fIndex[1])
+                {
+                    if (e1.vIndex[0] == e0.vIndex[0])
+                    {
+                        if (e1.vIndex[1] == e0.vIndex[1])
+                        {
+                            //skip this because it's identical to the previous
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        
+        //fall through - e0 and e1 are different
+        this->edgeArray.PushBack(e1);
+    }
+    n_delete[] tempGroupEdgeArray; 
+}
+
+//------------------------------------------------------------------------------
+/**
+    qsort() hook for CreateEdges() - sort tempEdges
+
+    the compare is done cross, becuase if 2 faces share the same edge, than
+    the index order for the egde from face1 is i0 - i1,
+    but for face2 the order is allways i1 - i0.
+    1 - 1st vertex index
+    2 - 2nd vertex index
+*/
+int
+__cdecl
+nMeshBuilder::TempEdgeSorter(const void* elm0, const void* elm1)
+{
+    TempEdge e0 = *(TempEdge*)elm0;
+    TempEdge e1 = *(TempEdge*)elm1;
+
+    ushort e0i0, e0i1;
+    ushort e1i0, e1i1;
+    if (e0.vIndex[0] < e0.vIndex[1])
+    {
+        e0i0 = e0.vIndex[0]; e0i1 = e0.vIndex[1];
+    }
+    else
+    {
+        e0i0 = e0.vIndex[1]; e0i1 = e0.vIndex[0];
+    }
+    
+    if (e1.vIndex[0] < e1.vIndex[1])
+    {
+        e1i0 = e1.vIndex[0]; e1i1 = e1.vIndex[1];
+    }
+    else
+    {
+        e1i0 = e1.vIndex[1]; e1i1 = e1.vIndex[0];
+    }
+
+    if (e0i0 < e1i0)            return -1;
+    else if (e0i0 > e1i0)       return +1;
+    else
+    {
+        if (e0i1 < e1i1)        return -1;
+        else if (e0i1 > e1i1)   return +1;
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    qsort() hook for CreateEdges() - sort GroupedEdge
+    1 - groupID
+    2 - 1st face index
+    3 - 2nd face index
+*/
+int
+__cdecl
+nMeshBuilder::GroupedEdgeSorter(const void* elm0, const void* elm1)
+{
+    GroupedEdge e0 = *(GroupedEdge*)elm0;
+    GroupedEdge e1 = *(GroupedEdge*)elm1;
+
+    //first sort by groupID
+    if (e0.GroupID < e1.GroupID)        return -1;
+    else if (e0.GroupID > e1.GroupID)   return +1;
+    else
+    {
+        // sort by 1st face index
+        if (e0.fIndex[0] < e1.fIndex[0])      return -1;
+        else if (e0.fIndex[0] > e1.fIndex[0]) return +1;
+        else
+        {
+            // sort by 2nd face index
+            if (e0.fIndex[1] < e1.fIndex[1])      return -1;
+            else if (e0.fIndex[1] > e1.fIndex[1]) return +1;
+            else
+            {
+                // sort by 1st vertex index
+                if (e0.vIndex[0] < e1.vIndex[0])            return -1;
+                else if (e0.vIndex[0] > e1.vIndex[0])       return +1;
+                else
+                {
+                    // sort by 2nd vertex index
+                    if (e0.vIndex[1] < e1.vIndex[1])        return -1;
+                    else if (e0.vIndex[1] > e1.vIndex[1])   return +1;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -271,7 +617,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
         }
     }
 
-	// finally, remove the redundant vertices
+    // finally, remove the redundant vertices
     numVertices = this->vertexArray.Size();
     nArray<Vertex> newArray(numVertices, numVertices);
     for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -308,7 +654,7 @@ nMeshBuilder::TriangleGroupSorter(const void* elm0, const void* elm1)
     if (0 != materialDiff)
     {
         return materialDiff;
-	}
+    }
     int usageDiff = t0->GetUsageFlags() - t1->GetUsageFlags();
     return usageDiff;
 }
@@ -326,16 +672,6 @@ nMeshBuilder::SortTriangles()
 
 //------------------------------------------------------------------------------
 /**
-    Build triangle neighbour data.
-*/
-void
-nMeshBuilder::BuildAdjacency()
-{
-    // TODO!
-}
-
-//------------------------------------------------------------------------------
-/**
     Optimize mesh for better HT&L cache locality.
 */
 void
@@ -349,6 +685,7 @@ nMeshBuilder::Optimize()
     All indices and group id's will be incremented accordingly.
 
     @return     the number of groups in the mesh prior to the append
+    - Johannes  added for nMax
 */
 int
 nMeshBuilder::Append(const nMeshBuilder& source)
@@ -436,6 +773,68 @@ nMeshBuilder::GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVert
     {
         minVertexIndex = 0;
         maxVertexIndex = 0;
+        return false;
+    }
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the smallest edge index with a groupID.
+
+    @param  groupId           [in] group id of group to check
+    @param  minEdgeIndex      [out] filled with minimal edge index
+    @param  maxEdgeIndex      [out] filled with maximal edge index
+*/
+bool
+nMeshBuilder::GetGroupEdgeRange(int groupId, int& minEdgeIndex, int& maxEdgeIndex) const
+{
+    minEdgeIndex = this->GetNumEdges();
+    maxEdgeIndex = 0;
+    bool foundGroupStart = false;
+    bool foundGroupEnd = false;
+    int edgeIndex;
+    int numEdges = this->GetNumEdges();
+    
+    //find first edge with this groupID
+    for (edgeIndex = 0; edgeIndex < numEdges; edgeIndex++)
+    {
+        const GroupedEdge& edge = this->GetEdgeAt(edgeIndex);
+        if (edge.GroupID == groupId)
+        {
+            foundGroupStart = true;
+            minEdgeIndex = edgeIndex;
+            break;
+        }
+    }
+    //find the begin of the next group, or the end of the edgeArray
+    for (;edgeIndex < numEdges; edgeIndex++)
+    {
+        const GroupedEdge& edge = this->GetEdgeAt(edgeIndex);
+        if (edge.GroupID != groupId)
+        {
+            foundGroupEnd = true;
+            maxEdgeIndex = edgeIndex - 1;
+            break;
+        }
+    }
+
+    if (foundGroupStart)
+    {
+        if (!foundGroupEnd)
+        {
+            //is the group end the array end?
+            const GroupedEdge& edge = this->GetEdgeAt(numEdges-1);
+            if (edge.GroupID == groupId)
+            {
+                maxEdgeIndex = numEdges-1;
+            }
+        }
+    }
+    else
+    {
+        minEdgeIndex = 0;
+        maxEdgeIndex = 0;
         return false;
     }
     return true;

@@ -7,6 +7,7 @@
 #include "kernel/nfile.h"
 #include "util/npathstring.h"
 #include "gfx2/nnvx2loader.h"
+#include "gfx2/nn3d2loader.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -34,18 +35,29 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     {
         return this->LoadObj(fileServer, filename);
     }
-    else if (path.CheckExtension("n3d2"))
+    else
     {
-        return this->LoadN3d2(fileServer, filename);
+        nMeshLoader* meshLoader = 0;
+        if (path.CheckExtension("n3d2"))
+    {
+            meshLoader = n_new nN3d2Loader;
     }
     else if (path.CheckExtension("nvx2"))
     {
-        return this->LoadNvx2(fileServer, filename);
+            meshLoader = n_new nNvx2Loader;
+        }
+        
+        if (0 != meshLoader)
+        {
+            bool retval = this->LoadFile(fileServer, meshLoader, filename);
+            n_delete meshLoader;
+            return retval;
     }
     else
     {
         n_printf("nMeshBuilder::Load(): unsupported file extension in '%s'\n", filename);
         return false;
+    }
     }
 }
 
@@ -103,6 +115,7 @@ nMeshBuilder::SaveNvx2(nFile* file)
     const int vertexWidth = this->GetVertexAt(0).GetWidth();
     const int numVertices = this->GetNumVertices();
     const int numTriangles = this->GetNumTriangles();
+    const int numEdges = this->GetNumEdges();
 
     // write header
     file->PutInt('NVX2');
@@ -110,6 +123,7 @@ nMeshBuilder::SaveNvx2(nFile* file)
     file->PutInt(numVertices);
     file->PutInt(vertexWidth);
     file->PutInt(numTriangles);
+    file->PutInt(numEdges);
     file->PutInt(this->GetVertexAt(0).GetComponentMask());
 
     // write groups
@@ -121,10 +135,14 @@ nMeshBuilder::SaveNvx2(nFile* file)
         int numTriangles  = curGroup.GetNumTriangles();
         int minVertexIndex, maxVertexIndex;
         this->GetGroupVertexRange(curGroup.GetId(), minVertexIndex, maxVertexIndex);
+        int minEdgeIndex, maxEdgeIndex;
+        this->GetGroupEdgeRange(curGroup.GetId(), minEdgeIndex, maxEdgeIndex);
         file->PutInt(minVertexIndex);
         file->PutInt((maxVertexIndex - minVertexIndex) + 1);
         file->PutInt(firstTriangle);
         file->PutInt(numTriangles);
+        file->PutInt(minEdgeIndex);
+        file->PutInt((maxEdgeIndex - minEdgeIndex) + 1);
     }
 
     // write mesh block
@@ -217,6 +235,26 @@ nMeshBuilder::SaveNvx2(nFile* file)
     file->Write(ushortBuffer, this->GetNumTriangles() * 3 * sizeof(ushort));
     delete[] ushortBuffer;
     ushortBuffer = 0;
+
+    // write edge block
+    if (numEdges > 0)
+    {
+        nMesh2::Edge* edgeBuffer = n_new nMesh2::Edge[numEdges];
+        int curEdgeIndex;
+        for (curEdgeIndex = 0; curEdgeIndex < numEdges; curEdgeIndex++)
+        {
+            const GroupedEdge& srcEdge = this->GetEdgeAt(curEdgeIndex);
+            nMesh2::Edge* dstEdge = (edgeBuffer + curEdgeIndex);
+            dstEdge->fIndex[0] = srcEdge.fIndex[0];
+            dstEdge->fIndex[1] = srcEdge.fIndex[1];
+            dstEdge->vIndex[0] = srcEdge.vIndex[0];
+            dstEdge->vIndex[1] = srcEdge.vIndex[1];
+        }
+        file->Write((ushort*)edgeBuffer, numEdges * sizeof(nMesh2::Edge));
+        //DEBUG
+        delete[] edgeBuffer;
+    }
+
     return true;
 }
 
@@ -246,35 +284,40 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
         
 //------------------------------------------------------------------------------
 /**
-    Load a mesh from a binary nvx2 file.
+    Load mesh data with the provided nMeshLoader.
+
+    WARN: the egde data is not loaded from file, because it will be invalid when
+    data change. Use BuildEdges() to rebuild edge data.
 */
 bool
-nMeshBuilder::LoadNvx2(nFileServer2* fileServer, const char* filename)
+nMeshBuilder::LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const char* filename)
 {
     n_assert(fileServer);
+    n_assert(meshLoader);
     n_assert(filename);
 
-    nNvx2Loader meshLoader;
-    meshLoader.SetFilename(filename);
-    meshLoader.SetIndexType(nMeshLoader::Index16);
-    if (meshLoader.Open(fileServer))
+    meshLoader->SetFilename(filename);
+    meshLoader->SetIndexType(nMeshLoader::Index16);
+    if (meshLoader->Open(fileServer))
     {
-        int numGroups        = meshLoader.GetNumGroups();
-        int numVertices      = meshLoader.GetNumVertices();
-        int vertexWidth      = meshLoader.GetVertexWidth();
-        int numIndices       = meshLoader.GetNumIndices();
-        int vertexComponents = meshLoader.GetVertexComponents();
+        int numGroups        = meshLoader->GetNumGroups();
+        int numVertices      = meshLoader->GetNumVertices();
+        int vertexWidth      = meshLoader->GetVertexWidth();
+        int numIndices       = meshLoader->GetNumIndices();
+        int vertexComponents = meshLoader->GetVertexComponents();
 
         // read vertices and indices into temporary buffers
         int vertexBufferSize = numVertices * vertexWidth * sizeof(float);
         int indexBufferSize  = numIndices * sizeof(ushort);
         float* vertexBuffer = (float*) n_malloc(vertexBufferSize);
         ushort* indexBuffer = (ushort*) n_malloc(indexBufferSize);
-        if (!meshLoader.ReadVertices(vertexBuffer, vertexBufferSize))
+        
+        if (!meshLoader->ReadVertices(vertexBuffer, vertexBufferSize))
         {
             return false;
         }
-        if (!meshLoader.ReadIndices(indexBuffer, indexBufferSize))
+        
+        if (!meshLoader->ReadIndices(indexBuffer, indexBufferSize))
         {
             return false;
         }
@@ -337,7 +380,7 @@ nMeshBuilder::LoadNvx2(nFileServer2* fileServer, const char* filename)
         ushort* indexPtr = indexBuffer;
         for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
         {
-            const nMeshGroup& meshGroup = meshLoader.GetGroupAt(groupIndex);
+            const nMeshGroup& meshGroup = meshLoader->GetGroupAt(groupIndex);
             int groupFirstIndex = meshGroup.GetFirstIndex();
             int groupNumIndices = meshGroup.GetNumIndices();
             int triIndex = 0;
@@ -356,7 +399,7 @@ nMeshBuilder::LoadNvx2(nFileServer2* fileServer, const char* filename)
         // cleanup
         n_free(vertexBuffer);
         n_free(indexBuffer);
-        meshLoader.Close();
+        meshLoader->Close();
         return true;
     }
     return false;
@@ -393,6 +436,8 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
         sprintf(lineBuffer, "vertexwidth %d\n", this->GetVertexAt(0).GetWidth());
         file->PutS(lineBuffer);
         sprintf(lineBuffer, "numtris %d\n", this->GetNumTriangles());
+        file->PutS(lineBuffer);
+        sprintf(lineBuffer, "numedges %d\n", this->GetNumEdges());
         file->PutS(lineBuffer);
 
         // write vertex components
@@ -452,12 +497,17 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
             const Group& group = groupMap[i];
             int firstTriangle = group.GetFirstTriangle();
             int numTriangles  = group.GetNumTriangles();
+            //verticies
             int minVertexIndex, maxVertexIndex;
             this->GetGroupVertexRange(group.GetId(), minVertexIndex, maxVertexIndex);
+            //edges
+            int minEdgeIndex, maxEdgeIndex;
+            this->GetGroupEdgeRange(group.GetId(), minEdgeIndex, maxEdgeIndex);
 
-            sprintf(lineBuffer, "g %d %d %d %d\n", 
+            sprintf(lineBuffer, "g %d %d %d %d %d %d\n", 
                     minVertexIndex, (maxVertexIndex - minVertexIndex) + 1,
-                    firstTriangle, numTriangles);
+                    firstTriangle, numTriangles,
+                    minEdgeIndex, (maxEdgeIndex - minEdgeIndex) + 1);
             file->PutS(lineBuffer);
         }
 
@@ -535,6 +585,15 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
             int i0, i1, i2;
             curTriangle.GetVertexIndices(i0, i1, i2);
             sprintf(lineBuffer, "t %d %d %d\n", i0, i1, i2);
+            file->PutS(lineBuffer);
+        }
+
+        //write edges
+        int numEdges = this->GetNumEdges();
+        for (i = 0; i < numEdges; i++)
+        {
+            GroupedEdge& curEdge = this->GetEdgeAt(i);
+            sprintf(lineBuffer, "e %d %d %d %d\n", curEdge.fIndex[0], curEdge.fIndex[1], curEdge.vIndex[0], curEdge.vIndex[1]);
             file->PutS(lineBuffer);
         }
 
@@ -647,268 +706,6 @@ nMeshBuilder::SaveN3d(nFileServer2* fileServer, const char* filename)
             retval = false;
         }
     }
-    return retval;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Load a .n3d2 file.
-*/
-bool
-nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
-{
-    // Function has to be converted to FVF order of vertex elements
-    n_assert(fileServer);
-    n_assert(filename);
-
-    bool retval = false;
-    nFile* file = fileServer->NewFileObject();
-    n_assert(file);
-
-    nArray<Group> groupMap;
-    int numGroups = 0;
-    int numVertices = 0;
-    int vertexWidth = 0;
-    int numTriangles = 0;
-    int curTriangle = 0;
-    int curGroup = 0;
-    int vertexComponents = 0;
-    if (file->Open(filename, "r"))
-    {
-        char line[1024];
-        while (file->GetS(line, sizeof(line)))
-        {
-            // get keyword
-            char* keyWord = strtok(line, N_WHITESPACE);
-            if (0 == keyWord)
-            {
-                continue;
-            }
-            else if (0 == strcmp(keyWord, "type"))
-            {
-                // type must be 'n3d2'
-                char* typeString = strtok(0, N_WHITESPACE);
-                n_assert(typeString);
-                if (0 != strcmp(typeString, "n3d2"))
-                {
-                    n_printf("nMeshBuilder::Load(%s): Invalid type '%s', must be 'n3d2'\n", filename, typeString);
-                    file->Close();
-                    file->Release();
-                    return false;
-                }
-            }
-            else if (0 == strcmp(keyWord, "numgroups"))
-            {
-                char* numGroupsString = strtok(0, N_WHITESPACE);
-                n_assert(numGroupsString);
-                numGroups = atoi(numGroupsString);
-            }
-            else if (0 == strcmp(keyWord, "numvertices"))
-            {
-                char* numVerticesString = strtok(0, N_WHITESPACE);
-                n_assert(numVerticesString);
-                numVertices = atoi(numVerticesString);
-            }
-            else if (0 == strcmp(keyWord, "vertexwidth"))
-            {
-                char* vertexWidthString = strtok(0, N_WHITESPACE);
-                n_assert(vertexWidthString);
-                vertexWidth = atoi(vertexWidthString);
-            }
-            else if (0 == strcmp(keyWord, "numtris"))
-            {
-                char* numTrianglesString = strtok(0, N_WHITESPACE);
-                n_assert(numTrianglesString);
-                numTriangles = atoi(numTrianglesString);
-            }
-            else if (0 == strcmp(keyWord, "vertexcomps"))
-            {
-                char* str;
-                while ((str = strtok(0, N_WHITESPACE)))
-                {
-                    if (0 == strcmp(str, "coord"))
-                    {
-                        vertexComponents |= Vertex::COORD;
-                    }
-                    else if (0 == strcmp(str, "normal"))
-                    {
-                        vertexComponents |= Vertex::NORMAL;
-                    }
-                    else if (0 == strcmp(str, "tangent"))
-                    {
-                        vertexComponents |= Vertex::TANGENT;
-                    }
-                    else if (0 == strcmp(str, "binormal"))
-                    {
-                        vertexComponents |= Vertex::BINORMAL;
-                    }
-                    else if (0 == strcmp(str, "color"))
-                    {
-                        vertexComponents |= Vertex::COLOR;
-                    }
-                    else if (0 == strcmp(str, "uv0"))
-                    {
-                        vertexComponents |= Vertex::UV0;
-                    }
-                    else if (0 == strcmp(str, "uv1"))
-                    {
-                        vertexComponents |= Vertex::UV1;
-                    }
-                    else if (0 == strcmp(str, "uv2"))
-                    {
-                        vertexComponents |= Vertex::UV2;
-                    }
-                    else if (0 == strcmp(str, "uv3"))
-                    {
-                        vertexComponents |= Vertex::UV3;
-                    }
-                    else if (0 == strcmp(str, "weights"))
-                    {
-                        vertexComponents |= Vertex::WEIGHTS;
-                    }
-                    else if (0 == strcmp(str, "jindices"))
-                    {
-                        vertexComponents |= Vertex::JINDICES;
-                    }
-                    else
-                    {
-                        n_printf("nMeshBuilder::Load(%s): Invalid vertex component '%s'\n", filename, str);
-                        file->Close();
-                        file->Release();
-                        return false;
-                    }
-                }
-            }
-            else if (0 == strcmp(keyWord, "g"))
-            {
-                // a triangle group
-                strtok(0, N_WHITESPACE);    // firstVertex
-                strtok(0, N_WHITESPACE);    // numVertices
-                const char* firstTriangleString = strtok(0, N_WHITESPACE);
-                const char* numTriangleString   = strtok(0, N_WHITESPACE);
-
-                n_assert(firstTriangleString);
-                n_assert(numTriangleString);
-
-                Group group;
-                group.SetId(curGroup++);
-                group.SetFirstTriangle(atoi(firstTriangleString));
-                group.SetNumTriangles(atoi(numTriangleString));
-                groupMap.Append(group);
-            }
-            else if (0 == strcmp(keyWord, "v"))
-            {
-                // a vertex 
-                n_assert(vertexComponents != 0);
-                Vertex vertex;
-                if (vertexComponents & Vertex::COORD)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr);
-                    vertex.SetCoord(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
-                }
-                if (vertexComponents & Vertex::NORMAL)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr);
-                    vertex.SetNormal(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
-                }
-                if (vertexComponents & Vertex::UV0)
-                {
-                    const char* uStr = strtok(0, N_WHITESPACE);
-                    const char* vStr = strtok(0, N_WHITESPACE);
-                    n_assert(uStr && vStr);
-                    vertex.SetUv(0, vector2((float) atof(uStr), (float) atof(vStr)));
-                }
-                if (vertexComponents & Vertex::UV1)
-                {
-                    const char* uStr = strtok(0, N_WHITESPACE);
-                    const char* vStr = strtok(0, N_WHITESPACE);
-                    n_assert(uStr && vStr);
-                    vertex.SetUv(1, vector2((float) atof(uStr), (float) atof(vStr)));
-                }
-                if (vertexComponents & Vertex::UV2)
-                {
-                    const char* uStr = strtok(0, N_WHITESPACE);
-                    const char* vStr = strtok(0, N_WHITESPACE);
-                    n_assert(uStr && vStr);
-                    vertex.SetUv(2, vector2((float) atof(uStr), (float) atof(vStr)));
-                }
-                if (vertexComponents & Vertex::UV3)
-                {
-                    const char* uStr = strtok(0, N_WHITESPACE);
-                    const char* vStr = strtok(0, N_WHITESPACE);
-                    n_assert(uStr && vStr);
-                    vertex.SetUv(3, vector2((float) atof(uStr), (float) atof(vStr)));
-                }
-                if (vertexComponents & Vertex::TANGENT)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr);
-                    vertex.SetTangent(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
-                }
-                if (vertexComponents & Vertex::BINORMAL)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr);
-                    vertex.SetBinormal(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
-                }
-                if (vertexComponents & Vertex::COLOR)
-                {
-                    const char* rStr = strtok(0, N_WHITESPACE);
-                    const char* gStr = strtok(0, N_WHITESPACE);
-                    const char* bStr = strtok(0, N_WHITESPACE);
-                    const char* aStr = strtok(0, N_WHITESPACE);
-                    n_assert(rStr && gStr && bStr && aStr);
-                    vertex.SetColor(vector4((float) atof(aStr), (float) atof(gStr), (float) atof(bStr), (float) atof(aStr)));
-                }
-                if (vertexComponents & Vertex::WEIGHTS)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    const char* wStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr && wStr);
-                    vertex.SetWeights(vector4(float(atof(xStr)), float(atof(yStr)), float(atof(zStr)), float(atof(wStr))));
-                }
-                if (vertexComponents & Vertex::JINDICES)
-                {
-                    const char* xStr = strtok(0, N_WHITESPACE);
-                    const char* yStr = strtok(0, N_WHITESPACE);
-                    const char* zStr = strtok(0, N_WHITESPACE);
-                    const char* wStr = strtok(0, N_WHITESPACE);
-                    n_assert(xStr && yStr && zStr && wStr);
-                    vertex.SetJointIndices(vector4(float(atof(xStr)), float(atof(yStr)), float(atof(zStr)), float(atof(wStr))));
-                }
-                this->AddVertex(vertex);
-            }
-            else if (0 == strcmp(keyWord, "t"))
-            {
-                // a triangle
-                const char* i0Str = strtok(0, N_WHITESPACE);
-                const char* i1Str = strtok(0, N_WHITESPACE);
-                const char* i2Str = strtok(0, N_WHITESPACE);
-                Triangle triangle;
-                triangle.SetVertexIndices(atoi(i0Str), atoi(i1Str), atoi(i2Str));
-                curTriangle++;
-                this->AddTriangle(triangle);
-            }
-        }
-        file->Close();
-        retval = true;
-    }
-    file->Release();
-
-    // update the triangle group ids from the group map
-    this->UpdateTriangleIds(groupMap);
     return retval;
 }
 
@@ -1207,7 +1004,7 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
                 int normalIndex = 0;
                 int uvIndex;
 
-                char* vertexStr = strtok(0, N_WHITESPACE);
+                const char* vertexStr = strtok(0, N_WHITESPACE);
                 int vertexNo;
                 for (vertexNo = 0; vertexStr != NULL; vertexNo++, vertexStr=strtok(0, N_WHITESPACE))
                 {
