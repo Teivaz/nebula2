@@ -201,9 +201,12 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
 
     mesh->UnlockVertices();
     mesh->UnlockIndices();
-    gfxServer->SetVertexRange(0, numVertices);
-    gfxServer->SetIndexRange(0, numIndices);
-    gfxServer->DrawIndexedNS(this->primitiveType );
+    if (0 != numVertices && 0 != numIndices)
+    {
+        gfxServer->SetVertexRange(0, numVertices);
+        gfxServer->SetIndexRange(0, numIndices);
+        gfxServer->DrawIndexedNS(this->primitiveType);
+    }
     gfxServer->SetMesh(0);
 }
 
