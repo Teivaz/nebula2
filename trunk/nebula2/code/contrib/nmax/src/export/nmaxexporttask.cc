@@ -10,6 +10,7 @@ nMaxExportTask::nMaxExportTask() :
 	forcedVextexComponents(0),
     cfgFileName(""),
     homeDir("."),
+    binaryPath(N_MAXEXPORT_BINARY_PATH),
     animsAssign(N_MAXEXPORT_ANIMS_ASSIGN),
     gfxlibAssign(N_MAXEXPORT_GFXLIB_ASSIGN),
     guiAssign(N_MAXEXPORT_GUI_ASSIGN),
@@ -23,7 +24,8 @@ nMaxExportTask::nMaxExportTask() :
     lightsPath(N_MAXEXPORT_LIGHTS_PATH),
     meshesPath(N_MAXEXPORT_MESHES_PATH),
     shadersPath(N_MAXEXPORT_SHADERS_PATH),
-    texturesPath(N_MAXEXPORT_TEXTURES_PATH)
+    texturesPath(N_MAXEXPORT_TEXTURES_PATH),
+	exportAnimations(true)
 {
     //empty
 }
@@ -54,7 +56,18 @@ nMaxExportTask::ReadConfig()
     file->GetS(hd, 512);
 	s = hd; s.Strip("\r\n"); 
     this->homeDir = s.Get();
-
+    
+    file->GetS(hd, 512);
+	s = hd; s.Strip("\r\n"); 
+    this->binaryPath = s.Get();
+    
+    file->GetS(hd, 512);
+	s = hd; s.Strip("\r\n"); 
+	if (s == nString("1"))
+        this->exportAnimations = true;
+    else
+        this->exportAnimations = false;
+    
     file->GetS(hd, 512); 
 	s = hd; s.Strip("\r\n");
 	this->animsAssign = s.Get();
@@ -130,7 +143,12 @@ nMaxExportTask::WriteConfig()
     }
 
     file->PutS(this->homeDir.Get()); file->PutS("\n");
+    file->PutS(this->binaryPath.Get()); file->PutS("\n");
 
+    if (this->exportAnimations) file->PutS("1");
+    else file->PutS("0");
+    file->PutS("\n");
+    
     file->PutS(this->animsAssign.Get()); file->PutS("\n");
     file->PutS(this->animsPath.Get()); file->PutS("\n");
 

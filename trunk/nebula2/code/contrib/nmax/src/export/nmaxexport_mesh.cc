@@ -5,6 +5,7 @@
 
     This file is licensed under the terms of the Nebula License.
     (C) 2004 Johannes Kellner
+    Sep 2004 Oleg Kreptul (Haron)
 */
 
 //------------------------------------------------------------------------------
@@ -16,6 +17,8 @@
 
     @param meshObject   the meshObject holding the group informations from the meshBuilder to add
     @param meshBuilder  the meshBuilder to add
+    @param animBuilder  the animBuilder to add
+    @param skinned      save animation or not
 */
 void
 nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, nAnimBuilder *animBuilder, bool skinned)
@@ -186,7 +189,7 @@ nMaxExport::storeDataPools()
     {
         const PoolEntry &entry = this->meshPool[poolIndex];
         this->progressNumTotal += entry.meshBuilder->GetNumVertices();
-		//entry.meshBuilder->Cleanup(NULL);
+		entry.meshBuilder->Cleanup(NULL);
     }
 
     //update statistics
@@ -237,8 +240,6 @@ nMaxExport::storeDataPools()
             int groupMapIndex = 0;
             const int numGroupMaps = groupMap.Size();
             
-            //const bool isSkinned = (entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::JINDICES) && entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::WEIGHTS));
-
             //for every group in the groupMapping
             while (groupMapIndex < numGroupMaps)
             {
@@ -279,7 +280,7 @@ nMaxExport::storeDataPools()
 
                 //DEBUG: make shure that the groups in the meshObject and the Pool are in the expected order 
                 /*
-                if (isSkinned)
+                if (entry.skinned)
                 {
                     for (int index = 0; index < meshObject.groupIDs.Size(); index++)
                     {
@@ -390,6 +391,7 @@ nMaxExport::storeDataPools()
                     boneNum = entry.boneIDs.Size();
 
                     skinAnim->BeginJoints(boneNum);
+                    // set joints
                     for (i = 0; i < boneNum; i++)
 	                {
 		                igBone = this->iGameScene->GetIGameNode(entry.boneIDs[i]);
@@ -465,16 +467,14 @@ nMaxExport::storeDataPools()
         - look in the global material pool if this already is known
             - if not add to material pool
         - export the faces that use this material
-        - apply transform (if present)
+        - export animation if present
         - append the resulting meshBuilder to the pool and update the groupID's
 
     @param igNode       the node to export
-    @param nNode        the nebula node that is root for this mesh
     @param nodeName     the NOH path of the root node
-    @param transform    a possible transform that should be applied to the meshBuilder after data gathering from max
 */
 void
-nMaxExport::exportMesh(IGameNode* igNode, /*nSceneNode* nNode,*/ const nString nodeName/*, matrix44* transform*/)
+nMaxExport::exportMesh(IGameNode* igNode, const nString nodeName)
 {
     n_assert(igNode);
 
@@ -502,7 +502,7 @@ nMaxExport::exportMesh(IGameNode* igNode, /*nSceneNode* nNode,*/ const nString n
         meshObject.nNode = nNode;
         meshObject.nNodeName = nodeName;
         
-        if (this->task->ExportStatic() || !igMesh->IsObjectSkinned())
+        if (!this->task->exportAnimations || !igMesh->IsObjectSkinned())
         {
             skinned = false;
         }
@@ -603,6 +603,7 @@ nMaxExport::exportMesh(IGameNode* igNode, /*nSceneNode* nNode,*/ const nString n
     @param matID        the material ID used for nebula (the index into the materials pool)
     @param meshObject   the meshObject to store the groupID's
     @param meshBuilder  the meshBuilder to store the faces/vertex data
+    @param skinned      mesh animated or not
 */
 void
 nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &meshObject, nMeshBuilder* meshBuilder, bool skinned)
@@ -618,7 +619,6 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
         So the new group id, when append the mesh, will be highestGoupID + 0 = higestGroupID (what's in this case always 0)
     */
     const int groupID = this->task->groupMeshBySourceObject ? 1 : 0;
-    
 
     //convert to IGameMesh
     IGameNode* igNode = meshObject.igNode;
@@ -642,8 +642,6 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
             FaceEx* &igFace = matFaces[faceIndex];
             n_assert(igFace);
 
-            //n_printf("Face %d, flags %d:", igFace->meshFaceIndex, igFace->flags);
-        
             nMeshBuilder::Triangle face;
             
             face.SetVertexIndices(vertexCount + indexCount, vertexCount + indexCount+1, vertexCount + indexCount+2);
@@ -662,8 +660,6 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                 Point3 coord;
 
 				faceVertex = igFace->vert[vertexIndex];
-
-                //n_printf("\tVert %d:", faceVertex);
 
                 if (igMesh->GetVertex(faceVertex,coord))
                 {
@@ -737,7 +733,6 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                                 switch (tex->GetUVWSource())
 	                            {
 		                            case UVWSRC_EXPLICIT:
-                                        //n_printf("%d: UVWSRC_EXPLICIT", vertexIndex);
 			                            if (mapChannels[uvLayer] == tex->GetMapChannel())
                                         {
 			                                uvGen = tex->GetTheUVGen();
@@ -745,7 +740,6 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                                         }
 			                            break;
 		                            case UVWSRC_EXPLICIT2:
-                                        //n_printf("%d: UVWSRC_EXPLICIT2", vertexIndex);
 			                            if (mapChannels[uvLayer] == 0)  //the vertexcolorchannel
                                         {
 			                                uvGen = tex->GetTheUVGen();
@@ -778,15 +772,12 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                             switch (uvGen->GetAxis())
                             {
 				                case AXIS_UV:
-                                    //n_printf("%d: AXIS_UV", vertexIndex);
 					                vector.set(mapCoord.x,mapCoord.y);
 					                break;
 				                case AXIS_VW:
-                                    //n_printf("%d: AXIS_VW", vertexIndex);
 					                vector.set(mapCoord.y,mapCoord.z);
 					                break;
 				                case AXIS_WU:
-                                    //n_printf("%d: AXIS_WU", vertexIndex);
 					                vector.set(mapCoord.z,mapCoord.x);
 					                break;
                             }
@@ -853,8 +844,8 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
 					}
 					else*/ if (igMesh->GetNumberOfVerts() != igSkin->GetNumOfSkinnedVerts())
 					{
-                        /*n_printf("nMaxExport::exportFaces(): Mesh vertices(%d) and skin vertices(%d) does not match!",
-                            igMesh->GetNumberOfVerts(), igSkin->GetNumOfSkinnedVerts());*/
+                        n_printf("nMaxExport::exportFaces(): Mesh vertices(%d) and skin vertices(%d) does not match!",
+                            igMesh->GetNumberOfVerts(), igSkin->GetNumOfSkinnedVerts());
 					}
                     else
                     {                        
@@ -970,10 +961,12 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                             weights[i] *= coeff;
                         }
                             
+                        // set weights
                         vector4 vector;
                         vector.set(weights[0], weights[1], weights[2], weights[3]);
                         vertex.SetWeights(vector);
                             
+                        // set joint indices
                         vector.set((float)jindices[0], (float)jindices[1], (float)jindices[2], (float)jindices[3]);
                         vertex.SetJointIndices(vector);
 

@@ -11,6 +11,8 @@
 
 #include "util/npathstring.h"
 
+#define N_MAXEXPORT_BINARY_PATH    "home:bin/win32d/"
+
 #define N_MAXEXPORT_ANIMS_ASSIGN    "home:export/anims/"
 #define N_MAXEXPORT_GFXLIB_ASSIGN   "home:export/gfxlib/"
 #define N_MAXEXPORT_GUI_ASSIGN      "home:export/gui/"
@@ -35,7 +37,6 @@ public:
     nMaxExportTask();
     ~nMaxExportTask();
     bool UseWeightedNormals() { return this->useWeightedNormals; }
-    bool ExportStatic() { return this->exportStatic; }
 
     ///export nodes that are hidden?
     bool exportHiddenNodes;
@@ -59,14 +60,13 @@ public:
     ///basename of the scenefile
     nPathString sceneFileName;
 
-    ///export the mesh data as static (don't export skinning vertex data)
-    bool exportStatic;
-
     ///the maxium joint palette size (see nSkinPartioner for more)
     int maxJointPaletteSize;
     
     ///when this is not 0, than only these vertexcomponents will be exported.
     int forcedVextexComponents;
+
+	nString binaryPath;
 
     nString animsAssign;
     nString gfxlibAssign;

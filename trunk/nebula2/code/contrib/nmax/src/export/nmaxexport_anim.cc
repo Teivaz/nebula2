@@ -12,7 +12,8 @@
 */
 nAnimBuilder::Group
 nMaxExport::createAnimGroup(int numFrames, nAnimBuilder::Group::LoopType loopType)
-{ // when we build the curves, we renormalize them to go from 0 to numFrames
+{
+    // when we build the curves, we renormalize them to go from 0 to numFrames
     nAnimBuilder::Group animGroup;
     animGroup.SetStartKey(0);
     animGroup.SetNumKeys(numFrames);
@@ -41,6 +42,8 @@ nMaxExport::GetBoneByID(int id, bool insert)
 
 //------------------------------------------------------------------------------
 /**
+    Extract PRS data from IGame control for not bipped animation
+    !!! not shure thet this works
 */
 int
 nMaxExport::getCurve(IGameControl *igControl, IGameControlType type, nAnimBuilder::Curve &curve)
@@ -121,6 +124,7 @@ nMaxExport::getCurve(IGameControl *igControl, IGameControlType type, nAnimBuilde
 
 //------------------------------------------------------------------------------
 /**
+    Extract PRS data from bipped IGameNode for each frame and fill curves
 */
 void
 nMaxExport::getBipedCurves(IGameNode *igNode, nAnimBuilder::Curve &posCurve, nAnimBuilder::Curve &rotCurve, nAnimBuilder::Curve &scaleCurve)
@@ -164,7 +168,7 @@ nMaxExport::writeCurves(IGameNode *igNode, nAnimBuilder::Group& animGroup, int& 
     {
         this->getBipedCurves(igNode, posCurve, rotCurve, scaleCurve);
     }
-    else
+    else // not bipped animation
     {
         int pN = this->getCurve(igControl, IGAME_POS, posCurve);
         int rN = this->getCurve(igControl, IGAME_ROT, rotCurve);
@@ -197,7 +201,6 @@ nMaxExport::writeCurves(IGameNode *igNode, nAnimBuilder::Group& animGroup, int& 
     animGroup.AddCurve(posCurve);
     animGroup.AddCurve(rotCurve);
     animGroup.AddCurve(scaleCurve);
-    //animGroup.SetKeyTime((float)this->ticksPerFrame / (float)4800.0);
 
     return true;
 }
@@ -245,7 +248,7 @@ nMaxExport::findBones(IGameSkin *igSkin, int vertNum)
 {
     int i, n;
 
-    // find all bones num
+    // find some bone id
     for (i = 0; i < vertNum; i++)
     {
         if (igSkin->GetNumberOfBones(i) > 0)
@@ -255,7 +258,7 @@ nMaxExport::findBones(IGameSkin *igSkin, int vertNum)
         }
     }
 
-    // find root bone
+    // recursively scan bones tree to find root bone
     IGameNode *igBone;
     igBone = this->iGameScene->GetIGameNode(n);
     while (igBone->GetNodeParent())
@@ -269,7 +272,7 @@ nMaxExport::findBones(IGameSkin *igSkin, int vertNum)
 
 //------------------------------------------------------------------------------
 /**
-    Recursive trace of bones tree
+    Recursive trace of bones tree and add it ids to bone array
 */
 void
 nMaxExport::traceBonesTree(IGameNode *igBone, nArray<int>& tmpIDs)

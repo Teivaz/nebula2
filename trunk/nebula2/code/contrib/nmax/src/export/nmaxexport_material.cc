@@ -15,6 +15,7 @@
     @param  materialNode    the nebula material node to setup
     @param  nodeName        the nohPath of the material node, to be able to create child nodes
     @param  igMaterial      the IGame material node which should be exported
+    @param  skinned         is animation used or not
 
     @todo only default max materials are exported
     @todo only the uv channel 0 is used (because no information from shader is available what texture should use what uv channel)
@@ -178,6 +179,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
     }
     
     nString shdFile(this->task->shadersPath);
+
     //set the default shader
     if (skinned)
     {
