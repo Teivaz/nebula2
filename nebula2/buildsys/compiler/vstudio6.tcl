@@ -100,6 +100,18 @@ proc emit_files {name cid} {
         puts $cid "# End Group"
     }
     puts $cid "# End Group"
+
+    # .def definition file group
+    # if the module definition file is set and target is dll then add it
+    set moddeffile [get_moddeffile $name]
+    if { $moddeffile != "" && [get_tartype $name] == "dll" } {
+        set moddeffile [pathto $moddeffile]
+        puts $cid "# Begin Source File"
+        puts $cid ""
+        puts $cid "SOURCE=$moddeffile"
+        puts $cid "# End Source File"
+    }
+
     puts $cid "# End Target"
     puts $cid "# End Project"
 }
