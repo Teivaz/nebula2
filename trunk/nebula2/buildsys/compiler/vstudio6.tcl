@@ -196,6 +196,14 @@ proc emit_dsp_settings {name cid use_debug} {
         }
         set lib_path "/libpath:Release"
     }
+
+    # add support for rtti and exceptions if desired
+    if { [get_rtti $name] == "true" } {
+        set cpp_flags "$cpp_flags /GR" 
+    }
+    if { [get_exceptions $name] == "true" } {
+        set cpp_flags "$cpp_flags /EHsc"
+    }
     
     puts $cid ""
     puts $cid "# PROP BASE Use_MFC 0"
