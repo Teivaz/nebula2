@@ -1,0 +1,47 @@
+/**
+    @page NebulaTriggeringServers Triggering Servers
+
+    The Trigger() function should be called to update the servers. 
+
+    Servers that are very important to update are: 
+
+      - nInputServer
+      - nConServer 
+      - nTimeServer
+      - nGfxServer2
+
+    @code
+// Updates the time channels. If you don't call this nothing animates.
+timeServer->Trigger();
+
+// Collects any inputs from the OS, and deals with them, checking
+// input events etc. If you don't call this you can't press any
+// keys, move the mouse etc.
+// *NOTE*: Unlike any other Trigger() method, this one takes a
+// parameter giving the current time.
+double t = timeServer->GetFrameTime();
+inputServer->Trigger(t);
+
+// Collects any key presses, and runs commands etc. If you don't call
+// this you can't use the console.  This is automatically called if the
+// input server is triggered.
+consoleServer->Trigger();
+
+// Handles the windows message pump, or whatever it does in linux. If
+// you don't call this nebula's window acts like it's locked up.
+gfxServer2->Trigger();
+
+    @endcode
+
+    You should call these functions from within your game loop, usually every 
+    frame, but you could trigger some things at different rates ie. trigger 
+    the input server at 30hz and everything else at frame rate. 
+
+    Other servers have their own Trigger methods that are usually less critical
+    to the proper operation of Nebula. These include: 
+
+      - nKernelServer
+      - nParticleServer
+      - nScriptServer
+
+*/
