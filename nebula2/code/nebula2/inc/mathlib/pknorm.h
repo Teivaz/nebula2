@@ -2,7 +2,7 @@
 #define N_PKNORM_H
 //-------------------------------------------------------------------
 /**
-    @class pknorm
+    @class pknorm3
     @ingroup NebulaMathDataTypes
 
     a normal packed into 16 bits
