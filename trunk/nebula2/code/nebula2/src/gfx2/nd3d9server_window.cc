@@ -161,28 +161,28 @@ nD3D9Server::RestoreWindow()
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
     
-	int w, h;
+    int w, h;
     if (this->displayMode.GetType() == nDisplayMode2::WINDOWED)
     {
-		// Need to adjust adjust w & h so that the *client* area
-		// is equal to renderWidth/Height.  
-		RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()}; 
-		AdjustWindowRect(&r, this->windowedStyle, 0); 
-		w = r.right - r.left;
-		h = r.bottom - r.top;
-	}
-	else 
+        // Need to adjust adjust w & h so that the *client* area
+        // is equal to renderWidth/Height.  
+        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()}; 
+        AdjustWindowRect(&r, this->windowedStyle, 0); 
+        w = r.right - r.left;
+        h = r.bottom - r.top;
+    }
+    else 
     {
-		w = this->displayMode.GetWidth();
-		h = this->displayMode.GetHeight();
-	}
-	
-	SetWindowPos(this->hWnd,            // the window handle
+        w = this->displayMode.GetWidth();
+        h = this->displayMode.GetHeight();
+    }
+    
+    SetWindowPos(this->hWnd,            // the window handle
                  HWND_NOTOPMOST,        // placement order
                  0,                     // x position
                  0,                     // y position
-				 w,						// adjusted width
-                 h,						// adjusted height
+                 w,                     // adjusted width
+                 h,                     // adjusted height
                  SWP_SHOWWINDOW);
 
     this->windowMinimized = false;
