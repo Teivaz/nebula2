@@ -615,13 +615,13 @@ public:
                             // between the current terrain texture tile and others.  It should be
                             // guaranteed to generate geometry identical to the first splat, so
                             // there should be no z-fighting, but it blows a lot of fill rate
-                            //splatdata->DrawSplat(gfx, 0);
+                            splatdata->DrawSplat(gfx, 0);
                             // The following line will only render the triangles that are needed
                             // to get full coverage for the current tile.  This is typically a
                             // much smaller area than the whole terrain chunk, so it saves fill
                             // rate.  However, by using a triangle list and perhaps different indexing
                             // orders there is sometimes visible z-fighting when using this.
-                            splatdata->DrawSplat(gfx, six+1);
+                            //splatdata->DrawSplat(gfx, six+1);
                         }
                     }
                 }
@@ -1057,7 +1057,7 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    nGfxServer2* gfx = this->refGfxServer.get();
+    nGfxServer2* gfx = this->refGfx2.get();
 
 
     // TODO call geometry manipulators!
@@ -1081,7 +1081,7 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     vector3 texturescale(0.5f/terrextents.x, 0.5f/terrextents.y, 1.0f);
     drapematrix.scale(texturescale);
     terrainshader->SetMatrix(nShaderState::TextureTransform0, drapematrix);
-    detailmatrix.scale(vector3(detailScaling, detailScaling, detailScaling));
+    detailmatrix.scale(vector3(static_cast<float>(detailScaling), static_cast<float>(detailScaling), static_cast<float>(detailScaling)));
     terrainshader->SetMatrix(nShaderState::TextureTransform1, detailmatrix);
 
     if (rootchunk->IsValidChunk())
@@ -1105,7 +1105,7 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
     // get camera setting from the gfx server, and the camera position.
     // from these two items (Camera parameters and position) we can calculate
     // the apparent screen error of each terrain chunk
-    nGfxServer2* gfx = this->refGfxServer.get();
+    nGfxServer2* gfx = this->refGfx2.get();
 
     // collect all the camera and view properties that will be needed
     nCamera2 const &currentcamera = gfx->GetCamera();
@@ -1223,7 +1223,7 @@ void nCLODShapeNode::RenderDebug(nSceneServer *sceneServer, nRenderContext *rend
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    nGfxServer2* gfx = this->refGfxServer.get();
+    nGfxServer2* gfx = this->refGfx2.get();
 
     // see if resources need to be reloaded
     if (!this->AreResourcesValid())

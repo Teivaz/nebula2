@@ -46,6 +46,15 @@
 #include "tools/ncmdlineargs.h"
 #endif
 
+nNebulaUsePackage(nnebula);
+nNebulaUsePackage(ndinput8);
+nNebulaUsePackage(ndirect3d9);
+nNebulaUsePackage(ndshow);
+nNebulaUsePackage(ngui);
+nNebulaUsePackage(nlua);
+nNebulaUsePackage(nclodterrain);
+nNebulaUsePackage(nopende);
+
 //------------------------------------------------------------------------------
 /*
 */
@@ -62,7 +71,7 @@ main(int argc, const char** argv)
 #endif
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "nluaserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nstdsceneserver");
+    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nmrtsceneserver");
     const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/nclodterrain/bin/startup.lua");
     const char* viewArg   = args.GetStringArg("-view", 0);
     const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/nclodterrain/bin/stdlight.lua");
@@ -108,6 +117,13 @@ main(int argc, const char** argv)
         nWin32LogHandler logHandler("nclododeviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
+    kernelServer.AddPackage(nnebula);
+    kernelServer.AddPackage(ndinput8);
+    kernelServer.AddPackage(ndirect3d9);
+    kernelServer.AddPackage(ngui);
+    kernelServer.AddPackage(nlua);
+    kernelServer.AddPackage(nclodterrain);
+    kernelServer.AddPackage(nopende);
 
     // initialize a viewer app object
     nODEViewerApp viewerApp(&kernelServer);

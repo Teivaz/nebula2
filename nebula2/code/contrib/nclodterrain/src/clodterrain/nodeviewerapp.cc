@@ -103,6 +103,7 @@ nODEViewerApp::Open()
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -138,6 +139,10 @@ nODEViewerApp::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+
+    nString renderpathpath(kernelServer->GetFileServer()->ManglePath("nclodshaders:renderpath.xml"));
+    this->refSceneServer->SetRenderPathFilename(renderpathpath);
+    this->refSceneServer->Open();
 
     // define the input mapping
     // late initialization of input server, because it relies on 
@@ -208,6 +213,8 @@ void nODEViewerApp::Close()
     this->refDySpace->Release();
     this->refDyWorld->Release();
     this->refDyServer->Release();
+
+    this->refSceneServer->Close();
 
     this->refGuiServer->Close();
     this->refGfxServer->CloseDisplay();
