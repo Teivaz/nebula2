@@ -38,7 +38,6 @@ beginmodule nglextensionserver
     setdir opengl
     setfiles { 
         nglextensionserver_main
-        nglextensionserver_cmds
     }
     setheaders { nglextensionserver }
     setlibs_linux { GL GLU X11 Xmu }
