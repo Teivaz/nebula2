@@ -8,7 +8,6 @@
 static void n_setlockviewerxz(void* slf, nCmd* cmd);
 static void n_getlockviewerxz(void* slf, nCmd* cmd);
 static void n_settexcoordscale(void* slf, nCmd* cmd);
-//static void n_setfisheyecentrevarname(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -31,7 +30,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setlockviewerxz_b", 'SLVX', n_setlockviewerxz);
     cl->AddCmd("v_getlockviewerxz_b", 'GLVX', n_getlockviewerxz);
     cl->AddCmd("v_settexcoordscale_f", 'STCS', n_settexcoordscale);
-    //cl->AddCmd("v_setfisheyecentrevarname_s", 'SWLV', n_setfisheyecentrevarname);
     cl->EndCmds();
 }
 
@@ -92,29 +90,6 @@ n_settexcoordscale(void* slf, nCmd* cmd)
     CCShapeNode* self = (CCShapeNode*) slf;
     self->SetTexCoordScale(cmd->In()->GetF());
 }
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setfisheyecentrevarname
-
-    @input
-    s
-
-    @output
-    v
-
-    @info
-    Tells us the name of the global variable that stores the current water level
-*/
-//static
-//void
-//n_setfisheyecentrevarname(void* slf, nCmd* cmd)
-//{
-//    CCShapeNode* self = (CCShapeNode*) slf;
-//    self->SetFisheyeCentreVarName(cmd->In()->GetS());
-//}
-
 //------------------------------------------------------------------------------
 /**
 */

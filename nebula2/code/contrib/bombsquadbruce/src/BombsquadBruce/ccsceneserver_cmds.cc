@@ -26,23 +26,21 @@ static void n_getlodshapehandle(void* slf, nCmd* cmd);
     from "obscuring" opaque ones behind them).  They do this by setting the
     alpha variable, whose handle they can get from the server (its value is
     irrelevant -- only the fact that it exists matters).
-    Don't forget to turn ZWrite
-    off in the .fx files of objects that use this flag!  IS THAT ACTUALLY A GOOD IDEA?
 
     2. Objects can declare level of detail categories, with corresponding scene nodes.
     They do this by setting the LODDist variable, which is an array of four floats 
     (and whose handle they can get from this server), as follows:
-    The standard mesh will be used for a distance-to-camera of up to LODDist[0]
+    The standard mesh will be used for a *squared* distance-to-camera of up to LODDist[0]
     Between LODDist[0] and LODDist[1], an alternative (presumably lower poly) model will be substituted
     Between LODDist[1] and LODDist[2], a billboard will be used
     Beyond LODDist[2], the object will not be displayed.
 
-    So if you set the variable to {2000.0, 5000.0, 10000.0}, it means use the standard mesh
-    if this object is closer than 2000 worldspace units, then switch to the low poly model
-    mesh up to a distance of 5000 units, then the billboard up to 10000, then don't show anything.
+    So if you set the variable to {400.0, 2500.0, 10000.0}, it means use the standard mesh
+    if this object is closer than 20 worldspace units, then switch to the low poly model
+    mesh up to a distance of 50 units, then the billboard up to 100, then don't show anything.
 
     Note that you can remove categories by giving them a range of 0: 
-    LODDist of { 2000.0, 2000.0, 5000.0, 10000 } would go straight from standard mesh to billboard.
+    LODDist of { 2500.0, 2500.0, 10000.0 } would go straight from standard mesh to billboard.
 
     LODDist[3] is ignored for now, but you should set it to -1 in case this changes.  
 
