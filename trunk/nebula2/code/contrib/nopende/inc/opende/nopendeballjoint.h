@@ -34,10 +34,6 @@ class nOpendeBallJoint : public nOpendeJoint
         void SetAnchor( const vector3& );
         void GetAnchor( vector3& );
         void GetAnchor2( vector3& );
-        
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

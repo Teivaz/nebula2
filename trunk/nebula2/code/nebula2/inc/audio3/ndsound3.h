@@ -38,8 +38,6 @@ public:
     /// convert a linear volume into a DirectSound volume value
     static LONG AsDirectSoundVolume(float vol);
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the resource 
     virtual bool LoadResource();

@@ -86,8 +86,6 @@ public:
     /// copy audio attributes from another sound object
     void CopySoundAttrsFrom(const nSound3* other);
 
-    static nKernelServer* kernelServer;
-
 protected:
     int numTracks;
     bool ambient;

@@ -23,8 +23,6 @@ public:
     /// destructor
     virtual ~nResourceBundle();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the resource (sets the valid flag)
     virtual bool LoadResource();

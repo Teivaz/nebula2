@@ -67,8 +67,6 @@ public:
     /// convert a fourcc code to a string
     static const char* FourCCToString(nFourCC, char* buf, int bufSize);
 
-    static nKernelServer* kernelServer;
-
 private:
     class VariableDeclaration
     {

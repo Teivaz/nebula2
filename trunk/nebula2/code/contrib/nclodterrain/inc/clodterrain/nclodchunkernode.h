@@ -117,8 +117,6 @@ public:
      */
     void setValidateFlag(bool newstate);
 
-    static nKernelServer * kernelServer;
-
 private:
     /// determines if we re-load the just saved chunks to verify they are correct
     bool m_validate;

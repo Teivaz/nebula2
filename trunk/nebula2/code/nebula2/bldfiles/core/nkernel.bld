@@ -20,17 +20,17 @@
 #===============================================================================
 
 #===============================================================================
-#  mathlib and utilitys 
+#  mathlib and utilities
 #===============================================================================
 #-------------------------------------------------------------------------------
 beginmodule nmath
     setdir mathlib
-    setheaders { 
+    setheaders {
         nmath
         line triangle rectangle plane bbox sphere
         euler eulerangles polar pknorm quaternion
         envelopecurve vector3envelopecurve
-        matrix matrixdefs 
+        matrix matrixdefs
         _matrix33 _matrix44
         _matrix33_sse _matrix44_sse
         vector
@@ -45,10 +45,12 @@ beginmodule nutil
     setheaders {
         narray
         nbitstream
+        nbucket
         neditline
         nhashlist
         nhashnode
         nhashtable
+        nipolkeyarray
         nkeyarray
         nlinebuffer
         nlist
@@ -61,8 +63,8 @@ beginmodule nutil
         nstring
         nstrlist
         nstrnode
+        ntabcomplete
         nthreadvariable
-        nipolkeyarray
     }
 endmodule
 
@@ -86,7 +88,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nfileserver2
     setdir kernel
-    setfiles { 
+    setfiles {
         nfileserver2_main
         nfileserver2_cmds
         nfile ndirectory
@@ -148,7 +150,7 @@ endmodule
 begintarget nkernel
     annotate "The Nebula2 Kernel and required servers and bits."
     settype lib
-    setmodules { 
+    setmodules {
         nkernel
         nroot
         ntimeserver

@@ -61,8 +61,6 @@
 class nFileServer2; 
 class nRubyServer : public nScriptServer {
 public: 
-    static nClass *local_cl;
-    static nKernelServer *kernelServer; 
     //if true signal from ruby was sent to call setquitrequested
     static bool finished;
         

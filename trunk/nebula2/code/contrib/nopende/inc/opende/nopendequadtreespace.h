@@ -28,10 +28,6 @@ class nOpendeQuadTreeSpace : public nOpendeSpace
         virtual ~nOpendeQuadTreeSpace();
         /// persistency
         virtual bool SaveCmds( nPersistServer* );
-                    
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

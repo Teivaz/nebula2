@@ -49,8 +49,6 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
-    static nKernelServer* kernelServer;
-
 protected:
     nAutoRef<nResourceServer> refResourceServer;
     nAutoRef<nEnv> refHwnd;

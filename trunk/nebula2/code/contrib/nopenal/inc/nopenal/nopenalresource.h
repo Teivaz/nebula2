@@ -29,9 +29,6 @@ public:
 
     unsigned getHANDLE() { return m_handle; }
 
-    // kernelServer static
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the resource (sets the valid flag)
     virtual bool LoadResource();

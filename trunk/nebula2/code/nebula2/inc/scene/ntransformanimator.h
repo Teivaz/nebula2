@@ -55,8 +55,6 @@ public:
     /// get scale key at index
     void GetQuatKeyAt(int index, float& time, quaternion& key) const;
 
-    static nKernelServer* kernelServer;
-
 private:
     nIpolKeyArray<vector3> posArray;
     nIpolKeyArray<vector3> eulerArray;

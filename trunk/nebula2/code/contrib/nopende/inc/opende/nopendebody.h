@@ -96,10 +96,6 @@ class nOpendeBody : public nRoot
         void TranslateMass( const vector3& );
         void RotateMass( const matrix33& );
         void AddMassOf( const char* otherBody );
-        
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
     
         /// the actual ODE object (do NOT destroy!)
         dBodyID id;

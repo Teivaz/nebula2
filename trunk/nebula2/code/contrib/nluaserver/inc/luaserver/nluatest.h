@@ -31,9 +31,6 @@ class nLuaTest : public nRoot
     
     void TestScriptCmds();
     void MakeZombies();
-
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
 };
 
 //------------------------------------------------------------------------------

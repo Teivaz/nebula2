@@ -32,8 +32,6 @@ public:
     /// clod tiles support asynchronous loading
     virtual bool CanLoadAsync() const;
 
-    static nKernelServer* kernelServer;
-
     /// issue a load request from an open file
     virtual bool Load();
 

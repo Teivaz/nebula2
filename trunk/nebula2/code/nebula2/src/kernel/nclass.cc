@@ -15,13 +15,11 @@
     @param name               name of the class
     @param kserv              pointer to kernel server
     @param initFunc           pointer to n_init function in class package
-    @param finiFunc           pointer to n_fini function in class package
     @param newFunc            pointer to n_create function in class package
 */
 nClass::nClass(const char *name,
                nKernelServer *kserv,
                bool (*initFunc)(nClass *, nKernelServer *),
-               void (*finiFunc)(void),
                void *(*newFunc)(void)) :
     nHashNode(name),
     kernelServer(kserv),
@@ -32,7 +30,6 @@ nClass::nClass(const char *name,
     refCount(0),
     instanceSize(0),
     n_init_ptr(initFunc),
-    n_fini_ptr(finiFunc),
     n_new_ptr(newFunc)
 {
     // call the class module's init function
@@ -41,7 +38,7 @@ nClass::nClass(const char *name,
 
 //--------------------------------------------------------------------
 /**
-     - 04-Aug-99   floh    boeser Bug: nCmdProto-Liste wurde als nCmd 
+     - 04-Aug-99   floh    boeser Bug: nCmdProto-Liste wurde als nCmd
                            Objekte freigegeben...
      - 18-Feb-00   floh    + cmd_table is now a nKeyArray
 */
@@ -72,12 +69,14 @@ nClass::~nClass(void)
     {
         n_delete this->cmdTable;
     }
-    
+
     if (this->script_cmd_list)
     {
         nCmdProto* cmdProto;
         while ((cmdProto = (nCmdProto *) this->script_cmd_list->RemHead()))
+        {
             n_delete cmdProto;
+        }
         n_delete this->script_cmd_list;
     }
 }
@@ -99,7 +98,7 @@ nClass::NewObject(void)
 /**
      - 08-Aug-99   floh    created
 */
-void 
+void
 nClass::BeginCmds(void)
 {
     n_assert(0 == this->cmdTable);
@@ -109,7 +108,7 @@ nClass::BeginCmds(void)
     // of 16 commands per subclass
     int numCmds = 0;
     nClass* cl = this;
-    do 
+    do
     {
         numCmds += 16;
     } while ((cl = cl->GetSuperClass()));
@@ -120,10 +119,10 @@ nClass::BeginCmds(void)
 //--------------------------------------------------------------------
 /**
     @param  proto_def   the command's prototype definition
-    @param  id          the command's unique fourcc code 
+    @param  id          the command's unique fourcc code
     @param  cmd_proc    the command's stub function
 */
-void 
+void
 nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
 {
     n_assert(proto_def);
@@ -137,14 +136,14 @@ nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
 
 //--------------------------------------------------------------------
 /**
-    Build sorted array of attached cmds for a bsearch() by ID. 
+    Build sorted array of attached cmds for a bsearch() by ID.
 
      - 08-Aug-99   floh    created
      - 24-Oct-99   floh    checks for identical cmd ids and throws
-                           an error 
+                           an error
      - 18-Feb-00   floh    cmd_table now a nKeyArray
 */
-void 
+void
 nClass::EndCmds(void)
 {
     n_assert(0 == this->cmdTable);
@@ -155,7 +154,7 @@ nClass::EndCmds(void)
     // count commands
     int num_cmds = 0;
     cl = this;
-    do 
+    do
     {
         if (cl->cmdList)
         {
@@ -172,7 +171,7 @@ nClass::EndCmds(void)
     // create and fill command table
     this->cmdTable = n_new nKeyArray<nCmdProto *>(num_cmds);
     cl = this;
-    do 
+    do
     {
         if (cl->cmdList)
         {
@@ -188,9 +187,9 @@ nClass::EndCmds(void)
 
     // check for identical cmd ids
     int i;
-    for (i=0; i<(num_cmds-1); i++) 
+    for (i=0; i<(num_cmds-1); i++)
     {
-        if (this->cmdTable->GetKeyAt(i) == this->cmdTable->GetKeyAt(i+1)) 
+        if (this->cmdTable->GetKeyAt(i) == this->cmdTable->GetKeyAt(i+1))
         {
             nCmdProto *cp0 = (nCmdProto *) this->cmdTable->GetElementAt(i);
             nCmdProto *cp1 = (nCmdProto *) this->cmdTable->GetElementAt(i+1);
@@ -204,6 +203,7 @@ nClass::EndCmds(void)
     }
 }
 
+//--------------------------------------------------------------------
 /**
   @param numCmds The number of script cmds that will be defined.
 */
@@ -213,6 +213,7 @@ void nClass::BeginScriptCmds(int numCmds)
     this->script_cmd_list = n_new nHashList(numCmds);
 }
 
+//--------------------------------------------------------------------
 /**
   Can only be called between Begin/EndScriptCmds().
   @param cmdProto A cmd proto created by a script server.
@@ -225,6 +226,7 @@ void nClass::AddScriptCmd(nCmdProto* cmdProto)
     this->script_cmd_list->AddTail(cmdProto);
 }
 
+//--------------------------------------------------------------------
 /**
 */
 void nClass::EndScriptCmds()
@@ -253,16 +255,19 @@ nClass::FindCmdByName(const char *name)
 
     // if that fails try the script cmd list
     if (this->script_cmd_list && !cp)
+    {
         cp = (nCmdProto *) this->script_cmd_list->Find(name);
+    }
 
     // if not found or no command list, recursively hand up to parent class
-    if ((!cp) && (this->superClass)) 
+    if ((!cp) && (this->superClass))
     {
         cp = this->superClass->FindCmdByName(name);
     }
     return cp;
 }
 
+//--------------------------------------------------------------------
 /**
   @param name The name of the command to be found
 */
@@ -270,20 +275,21 @@ nCmdProtoNative *nClass::FindNativeCmdByName(const char *name)
 {
     n_assert(name);
     nCmdProtoNative *cp = 0;
-    
+
     if (this->cmdList)
     {
         cp = (nCmdProtoNative *) this->cmdList->Find(name);
     }
     // if not found, recursively hand up to parent class
-    if ((!cp) && (this->superClass)) 
+    if ((!cp) && (this->superClass))
     {
         cp = this->superClass->FindNativeCmdByName(name);
     }
-    
+
     return cp;
 }
 
+//--------------------------------------------------------------------
 /**
   @param name The name of the command to be found
 */
@@ -292,9 +298,12 @@ nCmdProto *nClass::FindScriptCmdByName(const char *name)
     n_assert(name);
     nCmdProto *cp = 0;
     if (this->script_cmd_list)
+    {
         cp = (nCmdProto *) this->script_cmd_list->Find(name);
+    }
+
     // if not found, recursively hand up to parent class
-    if ((!cp) && (this->superClass)) 
+    if ((!cp) && (this->superClass))
     {
         cp = this->superClass->FindScriptCmdByName(name);
     }
@@ -317,24 +326,24 @@ nCmdProto*
 nClass::FindCmdById(uint id)
 {
     // if the class has no commands, hand the request to the parent class.
-    if (!this->cmdTable) 
+    if (!this->cmdTable)
     {
         nClass *cl = this->GetSuperClass();
-        if (cl) 
+        if (cl)
         {
             return cl->FindCmdById(id);
         }
-    } 
-    else 
+    }
+    else
     {
         nCmdProto *cp = NULL;
-        if (this->cmdTable->Find((int)id, cp)) 
+        if (this->cmdTable->Find((int)id, cp))
         {
             return cp;
         }
     }
     return 0;
-}    
+}
 
 //--------------------------------------------------------------------
 //  EOF

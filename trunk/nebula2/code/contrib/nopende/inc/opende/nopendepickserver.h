@@ -78,9 +78,6 @@ class nOpendePickServer : public nRoot
         int RayPickSimple( dSpaceID, const line3&, int maxContacts,
                            dContactGeom* contacts, int skip, int flags );
                 
-           
-        static nKernelServer* kernelServer;
-    
     private:
         static void PickClosestCallback( void* data, dGeomID g1, dGeomID g2 );
         void PickClosestIntersect( dGeomID ray, dGeomID geom );

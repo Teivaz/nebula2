@@ -32,10 +32,6 @@ class nOpendeFixedJoint : public nOpendeJoint
         */
         
         void Fix();
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

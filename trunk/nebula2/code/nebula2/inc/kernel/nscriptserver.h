@@ -80,8 +80,6 @@ public:
     virtual char *Prompt(char *, int); 
 #endif
 
-    static nKernelServer* kernelServer;
-
 private:
     bool quitRequested;
     bool failOnError;

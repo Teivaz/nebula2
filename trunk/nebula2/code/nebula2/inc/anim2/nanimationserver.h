@@ -29,8 +29,6 @@ public:
     /// create a new streaming animation object (never shared)
     virtual nAnimation* NewStreamingAnimation();
 
-    static nKernelServer* kernelServer;
-
 private:
     nAutoRef<nResourceServer> refResourceServer;
 };

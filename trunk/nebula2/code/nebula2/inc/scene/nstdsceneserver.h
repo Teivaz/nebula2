@@ -30,8 +30,6 @@ public:
     /// present the scene
     virtual void PresentScene();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// split scene nodes into light and shape nodes
     virtual void SplitNodes();

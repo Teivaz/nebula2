@@ -27,8 +27,6 @@ public:
     /// sample value of given curve at given time
     virtual void SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray);
 
-    static nKernelServer* kernelServer;
-
 private:
     /// load the resource (sets the valid flag)
     virtual bool LoadResource();

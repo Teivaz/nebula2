@@ -41,8 +41,6 @@ public:
     /// process pending messages, call this method frequently
     bool Trigger();
 
-    static nKernelServer* kernelServer;
-
 private:
     class nClientContext : public nNode
     {

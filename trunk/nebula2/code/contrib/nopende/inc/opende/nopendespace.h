@@ -45,9 +45,6 @@ class nOpendeSpace : public nOpendeGeom
         dGeomID GetGeom( int i );
         
         void Collide( void* data, dNearCallback* callback );
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

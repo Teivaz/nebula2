@@ -51,7 +51,7 @@ proc emit_files {name cid} {
             foreach filename $filenames { 
                 #build a new source entry
 
-                set more_syms "/D N_INIT=n_init_$module /D N_FINI=n_fini_$module /D N_NEW=n_new_$module /D N_VERSION=n_version_$module /D N_INITCMDS=n_initcmds_$module"
+                set more_syms "/D N_INIT=n_init_$module /D N_NEW=n_new_$module /D N_INITCMDS=n_initcmds_$module"
 
                 puts $cid "# Begin Source File"
                 puts $cid ""

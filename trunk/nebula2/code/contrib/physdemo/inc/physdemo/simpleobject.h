@@ -31,9 +31,6 @@ public:
     /// persistency
     virtual bool SaveCmds(nPersistServer* persistServer);
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
     /// release method (to release all the referenced nRef's)
     bool Release();
 

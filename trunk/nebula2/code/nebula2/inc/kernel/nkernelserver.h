@@ -35,7 +35,8 @@ public:
     nKernelServer();
     /// destructor
     ~nKernelServer();
-
+    /// return pointer to single kernel server instance
+    static nKernelServer* Instance();
     /// take the kernel lock (to make the kernel multithreading safe)
     void Lock();
     /// release the kernel lock
@@ -87,8 +88,10 @@ public:
 
     /// set an alternative file server
     void ReplaceFileServer(const char* className);
+    /// add an extension class package to the kernel
+    void AddPackage(void (*)());
     /// add a code module to the kernel
-    void AddModule(const char *, bool (*)(nClass *, nKernelServer *), void (*)(void), void *(*)(void));
+    void AddModule(const char *, bool (*)(nClass *, nKernelServer *), void* (*)(void));
     /// get pointer to hard ref server
     nHardRefServer* GetHardRefServer() const;
     /// get pointer to file server
@@ -114,8 +117,6 @@ private:
     nClass* OpenClass(const char* className);
     /// create a new unnamed Nebula object
     nRoot* NewUnnamedObject(const char* className);
-    /// determine binary path
-    void InitBinPath();
 
     nFileServer2*   fileServer;     // private pointer to file server
     nPersistServer* persistServer;  // private pointer to persistency server
@@ -140,6 +141,16 @@ private:
 
     nMutex mutex;                   // the kernel lock mutex
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nKernelServer*
+nKernelServer::Instance()
+{
+    return ks;
+}
 
 //------------------------------------------------------------------------------
 /**

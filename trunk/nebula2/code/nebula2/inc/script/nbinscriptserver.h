@@ -39,9 +39,6 @@ public:
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
 private:
     /// write a 32 int to the file
     void PutInt(nFile* file, int val);

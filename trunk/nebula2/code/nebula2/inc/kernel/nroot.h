@@ -139,7 +139,7 @@ public:
     void UnsetSaveModeFlags(int);
 
     /// pointer to kernel server
-    static nKernelServer* kernelServer;   
+    static nKernelServer* kernelServer;
 
     // object flags (use with SetSaveModeFlag, UnsetFlag, GetFlag)
     enum {

@@ -66,8 +66,6 @@ public:
 
     virtual void setValidateFlag(bool flagstate);
 
-    static nKernelServer * kernelServer;
-
 private:
     /// depth of the quadtree to generate
     unsigned int m_targetdepth;

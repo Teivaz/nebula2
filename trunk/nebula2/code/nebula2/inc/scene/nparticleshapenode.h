@@ -71,8 +71,6 @@ public:
     /// get the particle rgb curve
     const nVector3EnvelopeCurve& GetRGBCurve() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     nAutoRef<nParticleServer> refParticleServer;
     nAutoRef<nVariableServer> refVariableServer;

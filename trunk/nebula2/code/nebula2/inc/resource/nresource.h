@@ -97,8 +97,6 @@ public:
     /// unloads the resource
     virtual void Unload();
 
-    static nKernelServer* kernelServer;
-
 protected:
     friend class nResourceServer;
 

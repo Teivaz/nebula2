@@ -31,8 +31,6 @@ public:
     /// unlock index buffer
     virtual void UnlockIndices();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load mesh resource
     virtual bool LoadResource();

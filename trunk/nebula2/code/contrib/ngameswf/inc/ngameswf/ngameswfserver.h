@@ -28,8 +28,6 @@ public:
     
     virtual bool SaveCmds(nPersistServer* ps);
     
-    static nKernelServer* kernelServer;
-    
     virtual void Initialize();
     virtual void InitResources();
 

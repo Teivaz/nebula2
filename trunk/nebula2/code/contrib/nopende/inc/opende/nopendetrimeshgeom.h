@@ -51,10 +51,6 @@ class nOpendeTriMeshGeom : public nOpendeGeom
         void GetTriangle( int index, vector3& v0, vector3& v1, vector3& v2 );
         void GetPoint( int index, float u, float v, vector3& out );
             
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
-        
     private:
         nOpendeTriMesh* triMesh;
 };

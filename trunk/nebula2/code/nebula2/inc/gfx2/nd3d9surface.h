@@ -27,8 +27,6 @@ public:
     virtual void Lock(int& pitch, void **data);
     virtual void Unlock();
 
-    static nKernelServer* kernelServer;
-
 private:
     friend class nD3D9Texture;
 

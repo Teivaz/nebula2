@@ -44,8 +44,6 @@ public:
     /// get the looping behaviour
     bool GetLooping() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     int numTracks;
     bool ambient;

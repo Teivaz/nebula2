@@ -22,8 +22,6 @@ public:
     virtual bool HasLight() const;
     /// set the user defined shader parameters
     virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
-
-    static nKernelServer* kernelServer;
 };
 //------------------------------------------------------------------------------
 #endif

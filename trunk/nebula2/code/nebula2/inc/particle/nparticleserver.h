@@ -63,8 +63,6 @@ public:
     /// pseudo random vector
     vector3 PseudoRandomVector3(int key);
 
-    static nKernelServer* kernelServer;
-
 protected:
     EmitterPool        emitterPool;         // stores all used emitters
     ParticlePool       particlePool;        // stores all particles in the world

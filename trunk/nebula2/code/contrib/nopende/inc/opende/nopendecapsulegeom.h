@@ -34,10 +34,6 @@ class nOpendeCapsuleGeom : public nOpendeGeom
         void SetParams( float radius, float length );
         void GetParams( float* radius, float* length );
         float PointDepth( const vector3& );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

@@ -25,8 +25,6 @@ public:
     /// access to the internal CD3DFont object.
     ID3DXFont* GetD3DFont() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load resource
     virtual bool LoadResource();

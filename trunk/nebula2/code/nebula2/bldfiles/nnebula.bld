@@ -24,6 +24,7 @@ begintarget nnebula
         ntransformanimator nskinanimator nskinshapenode ntextureanimator
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
+        nswingshapenode
     }
 endtarget
 

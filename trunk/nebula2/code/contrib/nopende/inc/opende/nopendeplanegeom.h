@@ -34,10 +34,6 @@ class nOpendePlaneGeom : public nOpendeGeom
         void SetParams( float a, float b, float c, float d );
         void GetParams( vector4& result );
         float PointDepth( const vector3& );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

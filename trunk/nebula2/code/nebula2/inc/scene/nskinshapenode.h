@@ -62,8 +62,6 @@ public:
     /// get a joint index from a fragment's joint palette
     int GetJointIndex(int fragIndex, int paletteIndex) const;
 
-    static nKernelServer* kernelServer;
-
 private:
     /// a private skin fragment class
     class Fragment

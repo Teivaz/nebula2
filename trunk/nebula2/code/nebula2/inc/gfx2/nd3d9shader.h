@@ -67,8 +67,6 @@ public:
     /// finish applying the shader
     virtual void End();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the shader resource file
     virtual bool LoadResource();

@@ -46,10 +46,6 @@ class nOpendeAMotorJoint : public nOpendeJoint
     
         virtual void SetParam( int param, float value );
         virtual float GetParam( int param );
-        
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

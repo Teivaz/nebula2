@@ -27,7 +27,5 @@ public:
     virtual void Lock(int& pitch, void **data);
     virtual void Unlock();
 
-    static nKernelServer* kernelServer;
-
 };
 #endif /*N_SURFACE_H*/

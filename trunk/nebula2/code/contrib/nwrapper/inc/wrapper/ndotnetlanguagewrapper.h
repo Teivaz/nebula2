@@ -24,8 +24,6 @@ public:
     virtual void CloseClass(nClass *);
     virtual void WriteCommand(nClass *, nCmdProto *);
 
-    static nKernelServer* kernelServer;
-
 private:
     std::vector<nString> classNames;
     nFile * csharpFile;

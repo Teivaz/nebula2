@@ -33,9 +33,6 @@ public:
 
     /// Primary load method, the one called by an nResource.
     virtual bool Load(const char *sFilename, nResource *callingResource);
-
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
 };
 //------------------------------------------------------------------------------
 #endif

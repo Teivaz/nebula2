@@ -25,8 +25,6 @@ public:
 
     virtual bool SaveCmds(nPersistServer* ps);
 
-    static nKernelServer* kernelServer;
-
     bool CreateMovie (const char* filename);
     bool CreateLibraryMovie (const char* filename);
 

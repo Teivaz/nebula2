@@ -34,10 +34,6 @@ class nOpendeBoxGeom : public nOpendeGeom
         void SetLengths( float lx, float ly, float lz );
         void GetLengths( vector3& );
         float PointDepth( const vector3& );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------
