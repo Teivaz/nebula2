@@ -21,6 +21,7 @@
 #include "python/npythonobject.h"
 #include "kernel/nroot.h"
 #include "kernel/ndebug.h"    // gives us n_assert, n_error and n_printf
+#include "signals/nsignalserver.h"
 
 #ifdef __cplusplus
     extern "C" {
@@ -247,7 +248,7 @@ NebulaObject_Emit(NebulaObject *self, PyObject * args)
     nClass * objClass = o->GetClass();
     n_assert(objClass);
 
-    // get second item of the tuple (the signal name / fourcc)
+    // get first item of the tuple (the signal name / fourcc)
     PyObject * arg0 = PyTuple_GET_ITEM(args, 0);
     n_assert(arg0);
     nSignal * signal = 0;
@@ -255,7 +256,7 @@ NebulaObject_Emit(NebulaObject *self, PyObject * args)
     {
         char * signalName = PyString_AsString(arg0);
         signal = objClass->FindSignalByName(signalName);
-        if (!signal && strlen(signalName) == 4)
+        if (0 == signal && strlen(signalName) == 4)
         {
             nFourCC fourcc = MAKE_FOURCC(signalName[0], signalName[1], signalName[2], signalName[3]);
             signal = objClass->FindSignalById(fourcc);
@@ -328,11 +329,142 @@ NebulaObject_Emit(NebulaObject *self, PyObject * args)
     return result;
 }
 
+//-----------------------------------------------------------------------------
+/**
+    @brief Post a signal/command from the emitter object
+*/
+PyObject *
+NebulaObject_Post(NebulaObject *self, PyObject * args)
+{
+    PyObject * result = NULL;
+    n_assert(NULL!=self);
+    char * usageMsg = "Usage: object.post(reltime,cmdSignalName,arg1,arg2,...)";
+
+    // check args python object is a tuple
+    if (0 == PyTuple_Check(args))
+    {
+        n_message(usageMsg);
+        return result;
+    }
+
+    // get the emitter object
+    nObject * o = NebulaObject_GetPointer((NebulaObject*)self);
+    if (0 == o)
+    {
+        PyErr_SetString(PyExc_Exception, "Object not valid");
+        return result;
+    }
+
+    // get the class of the object
+    nClass * objClass = o->GetClass();
+    n_assert(objClass);
+
+    // get fist item of the tuple (the relative time)
+    nTime relT = 0;
+    PyObject * arg0 = PyTuple_GET_ITEM(args, 0);
+    n_assert(arg0);
+    if (PyFloat_Check(arg0))
+    {
+        relT = PyFloat_AsDouble(arg0);
+    }
+    else if (PyInt_Check(arg0))
+    {
+        relT = (double) PyInt_AsLong(arg0);
+    }
+    else 
+    {
+        PyErr_SetString(PyExc_Exception, "Relative time not valid");
+        return result;
+    }
+
+    // get second item of the tuple (the signal name / fourcc)
+    PyObject * arg1 = PyTuple_GET_ITEM(args, 1);
+    n_assert(arg1);
+    nCmdProto * cmdsig = 0;
+    if (PyString_Check(arg1))
+    {
+        char * cmdSignalName = PyString_AsString(arg1);
+        cmdsig = objClass->FindSignalByName(cmdSignalName);
+        if (0 == cmdsig && strlen(cmdSignalName) == 4)
+        {
+            nFourCC fourcc = MAKE_FOURCC(cmdSignalName[0], cmdSignalName[1], cmdSignalName[2], cmdSignalName[3]);
+            cmdsig = objClass->FindSignalById(fourcc);
+        }
+        if (0 == cmdsig)
+        {
+            cmdsig = objClass->FindCmdByName(cmdSignalName);
+        }
+    }
+    if (0 == cmdsig)
+    {
+        PyErr_SetString(PyExc_Exception, "Signal/Command name not valid");
+        return result;
+    }
+
+    // get new nCmd for the signal/command
+    nCmd *cmd = cmdsig->NewCmd();
+    n_assert(cmd);
+
+    // Create a new tuple that has just the arguments needed for the command
+    PyObject * commandArgs = PyTuple_GetSlice(args, 2, PyTuple_Size(args));
+
+    // Pass Cmd object and the remaining tuple arguments to _getInArgs.
+    // Retrieve input args (skip the 'unknown' and cmd statement)
+    if (!_getInArgs(cmd, commandArgs))
+    {
+        if (o->IsA("nroot"))
+        {
+            PyErr_Format(PyExc_Exception,
+                    "Broken input args, object '%s' of class '%s', signal/command '%s'",
+                    ((nRoot *)o)->GetName(),
+                    o->GetClass()->GetName(),
+                    cmdsig->GetName());
+        }
+        else
+        {
+            PyErr_Format(PyExc_Exception,
+                    "Broken input args, object of class '%s', signal/command '%s'",
+                    o->GetClass()->GetName(), cmdsig->GetName());
+        }
+        result = NULL;
+    }
+    else
+    {
+        // let object handle the command
+        nSignalServer * signalServer = nSignalServer::Instance();
+        if (0 == signalServer)
+        {
+            PyErr_Format(PyExc_Exception,"Signal server not available");
+            result = NULL;
+        }
+        else if (signalServer->PostCmd(relT, o, cmd))
+        {
+            Py_INCREF(Py_None);
+            result = Py_None;
+        }
+        else
+        {
+            PyErr_Format(PyExc_Exception,"Signal server post failed");
+            result = NULL;
+        }
+    }
+
+    if (result == NULL)
+    {
+        cmdsig->RelCmd(cmd);
+    }
+
+    // Clean up
+    Py_XDECREF(commandArgs);
+    return result;
+}
+
 
 // only one method defined...
 PyMethodDef Nebula_methods[] = {
     {"_SetAutoDel_", (PyCFunction)NebulaObject_SetAutoDel, METH_VARARGS, NULL},
     {"emit",         (PyCFunction)NebulaObject_Emit,       METH_VARARGS, NULL},
+    {"post",         (PyCFunction)NebulaObject_Post,       METH_VARARGS, NULL},
     {NULL,      NULL, 0, NULL}    /* sentinel */
 };
 

@@ -116,14 +116,14 @@ public:
     /** @name Posting
         Methods for posting a signal. */
     //@{
-    /// post signal for execution at time attime with provided object pointer and va_list
-    bool PostSignal(nTime t, nSignal * signal, va_list args);
-    /// post signal for execution at time attime with provided signal object pointer and var arg list
-    bool PostSignal(nTime t, nSignal * signal, ...);
-    /// post signal for execution at time attime with provided signal fourcc and var arg list
-    bool PostSignal(nTime t, nFourCC signalId, ...);
-    /// post signal for execution at time attime with provided signal name and var arg list
-    bool PostSignal(nTime t, const char * signalName, ...);
+    /// post signal for execution at relative time t with provided object pointer and va_list
+    bool PostSignal(nTime relT, nSignal * signal, va_list args);
+    /// post signal for execution at relative time t with provided signal object pointer and var arg list
+    bool PostSignal(nTime relT, nSignal * signal, ...);
+    /// post signal for execution at relative time t with provided signal fourcc and var arg list
+    bool PostSignal(nTime relT, nFourCC signalId, ...);
+    /// post signal for execution at relative time t with provided signal name and var arg list
+    bool PostSignal(nTime relT, const char * signalName, ...);
     //@}
 
 protected:
@@ -230,13 +230,13 @@ nSignalEmitter::EmitSignal(const char * signalName, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalEmitter::PostSignal(nTime t, nSignal * signal, ...)
+nSignalEmitter::PostSignal(nTime relT, nSignal * signal, ...)
 {
     n_assert(signal);
 
     va_list marker;
     va_start(marker, signal);
-    bool ret = this->PostSignal(t, signal, marker);
+    bool ret = this->PostSignal(relT, signal, marker);
     va_end(marker);
     return ret;
 }
@@ -244,7 +244,7 @@ nSignalEmitter::PostSignal(nTime t, nSignal * signal, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalEmitter::PostSignal(nTime t, nFourCC signalId, ...)
+nSignalEmitter::PostSignal(nTime relT, nFourCC signalId, ...)
 {
     nSignal * signal = this->GetSignalRegistry()->FindSignalById(signalId);
     if (!signal)
@@ -254,7 +254,7 @@ nSignalEmitter::PostSignal(nTime t, nFourCC signalId, ...)
 
     va_list marker;
     va_start(marker, signalId);
-    bool ret = this->PostSignal(t, signal, marker);
+    bool ret = this->PostSignal(relT, signal, marker);
     va_end(marker);
     return ret;
 }
@@ -262,7 +262,7 @@ nSignalEmitter::PostSignal(nTime t, nFourCC signalId, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalEmitter::PostSignal(nTime t, const char * signalName, ...)
+nSignalEmitter::PostSignal(nTime relT, const char * signalName, ...)
 {
     n_assert(signalName);
     nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
@@ -273,7 +273,7 @@ nSignalEmitter::PostSignal(nTime t, const char * signalName, ...)
 
     va_list marker;
     va_start(marker, signalName);
-    bool ret = this->PostSignal(t, signal, marker);
+    bool ret = this->PostSignal(relT, signal, marker);
     va_end(marker);
     return ret;
 }
