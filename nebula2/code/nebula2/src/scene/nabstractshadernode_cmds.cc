@@ -21,6 +21,7 @@ static void n_setfloat(void* slf, nCmd* cmd);
 static void n_getfloat(void* slf, nCmd* cmd);
 static void n_setvector(void* slf, nCmd* cmd);
 static void n_getvector(void* slf, nCmd* cmd);
+static void n_getparams(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -29,7 +30,7 @@ static void n_getvector(void* slf, nCmd* cmd);
 
     @cppclass
     nAbstractShaderNode
-    
+
     @superclass
     ntransformnode
 
@@ -57,6 +58,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getfloat_s",      'GFLT', n_getfloat);
     cl->AddCmd("v_setvector_sffff", 'SVEC', n_setvector);
     cl->AddCmd("ffff_getvector_s",  'GVEC', n_getvector);
+    cl->AddCmd("l_getparams_v",     'GPMS', n_getparams);
     cl->EndCmds();
 }
 
@@ -381,6 +383,35 @@ n_getvector(void* slf, nCmd* cmd)
     cmd->Out()->SetF(v.y);
     cmd->Out()->SetF(v.z);
     cmd->Out()->SetF(v.w);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getparams
+    @input
+    v
+    @output
+    l(l(name,type))
+    @info
+    Get a list of pairs of params and their types.
+*/
+static void
+n_getparams(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    int numParams = self->GetNumParams();
+    nArg* params = n_new_array(nArg, numParams);
+    n_assert(params);
+    for (int i = 0; i < numParams; ++i)
+    {
+        nArg* param = n_new_array(nArg, 2);
+        n_assert(param);
+        param[0].SetS(self->GetParamNameByIndex(i));
+        param[1].SetS(self->GetParamTypeByIndex(i));
+        params[i].SetL(param, 2);
+    }
+    cmd->Out()->SetL(params, numParams);
 }
 
 //------------------------------------------------------------------------------
