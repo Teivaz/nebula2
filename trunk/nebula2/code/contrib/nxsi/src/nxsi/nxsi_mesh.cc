@@ -25,12 +25,23 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
     CSLModel* templ = mesh->ParentModel();
     bool isSkinned  = false;
     int groupCount  = 0;
-    int groupId     = 0;
+    int groupId;
     int i;
 
     // get filename
-    CSIBCString meshFilename(mesh->Name());
-    meshFilename.Concat(".n3d2");
+    CSIBCString meshFilename(this->options.GetMeshFilename().Get());
+    if (!(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
+    {
+        meshFilename = mesh->Name();
+        if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_BINARY)
+        {
+            meshFilename.Concat(".nvx2");
+        }
+        else
+        {
+            meshFilename.Concat(".n3d2");
+        }
+    }
 
     // get transform information
     vector3 position = (vector3&)templ->Transform()->GetTranslation();
@@ -70,7 +81,7 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
     if (triangleListCount > 0)
     {
         // read parts
-        for (i = 0; i < triangleListCount; i++, groupId++, groupCount++)
+        for (i = 0, groupId = this->meshGroupId; i < triangleListCount; i++, groupId++, groupCount++)
         {
             this->HandleSITriangleList(triangleLists[i], shape, weightList, groupId);
         }
@@ -90,7 +101,7 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
         }
 
         // create parts
-        for (i = 0, groupId = 0; i < groupCount; i++, groupId++)
+        for (i = 0, groupId = this->meshGroupId; i < groupCount; i++, groupId++)
         {
             nShapeNode* newNode;
             if (isSkinned) newNode = (nShapeNode*)this->kernelServer.New("nskinshapenode", mesh->Name().GetText()); // groupId
@@ -101,7 +112,7 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
             newNode->SetEuler(rotation);
             newNode->SetScale(scale);
             newNode->SetMesh(meshFilename.GetText());
-            newNode->SetGroupIndex(0);
+            newNode->SetGroupIndex(groupId);
 
             { // get material variables
                 CSLBaseMaterial* baseMaterial = triangleLists[i]->GetMaterial();
@@ -147,8 +158,15 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
             }
         }
 
+        // update group id if merging
+        if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL)
+        {
+            this->meshGroupId += groupCount;
+        }
+
         // save mesh object
-        if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MESH)
+        if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MESH) &&
+            !(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
         {
             this->meshBuilder.BuildTriangleTangents();
             this->meshBuilder.BuildVertexTangents();
@@ -188,8 +206,19 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
     // set name
     skinName = mesh->Name();
     skinName.Concat("_animator");
-    animFilename = mesh->Name();
-    animFilename.Concat(".nanim2");
+    animFilename = this->options.GetAnimFilename().Get();
+    if (!(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
+    {
+        animFilename = mesh->Name();
+        if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_BINARY)
+        {
+            animFilename.Concat(".nax2");
+        }
+        else
+        {
+            animFilename.Concat(".nanim2");
+        }
+    }
 
     // get envelope infos
     CSLEnvelope** envelopeList = templ->GetEnvelopeList();
@@ -230,8 +259,10 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
             if (boneParentList[i] == -1)
             {
                 RemapBones(i, boneParentList, b, envelopeRemapList);
+//              break;
             }
         }
+//      envelopeCount = b;
 
         // remap bone list
         for (i = 0; i < envelopeCount; i++)
@@ -262,21 +293,21 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
             vector3 scale = (vector3&)(joint->Transform()->GetScale());
 
             quaternion rotation;
-            rotation.set_rotate_xyz(eulerRotation.x, eulerRotation.y, eulerRotation.z);
+            rotation.set_rotate_xyz(n_deg2rad(eulerRotation.x), n_deg2rad(eulerRotation.y), n_deg2rad(eulerRotation.z));
 
             // set joint
             newNode->SetJoint(i, parentId, translation, rotation, scale);
-//          newNode->AddJointName(i, joint->Name().GetText());
+            newNode->AddJointName(i, joint->Name().GetText());
         }
         newNode->EndJoints();
 
         // build joint_animations
-        this->BuildJointAnimations(boneList);
+        this->BuildJointAnimations(boneList, envelopeCount);
 
         // set states
         newNode->SetStateChannel("charState");
         newNode->BeginStates(1);
-        newNode->SetState(0, 0, 0.0f);
+        newNode->SetState(0, this->animGroupId, 0.0f);
         newNode->BeginClips(0, 1);
         newNode->SetClip(0, 0, "one");
         newNode->EndClips(0);
@@ -323,10 +354,16 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
         }
     }
 
-    // save skin animation
-    if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_ANIM)
+    // update group id if merging
+    if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL)
     {
-        this->animBuilder.FixKeyOffsets();
+        this->animGroupId++;
+    }
+
+    // save skin animation
+    if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_ANIM) &&
+        !(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
+    {
         this->animBuilder.Optimize();
         this->animBuilder.Save(nFileServer2::Instance(), animFilename.GetText());
         this->animBuilder.Clear();
@@ -340,6 +377,7 @@ void nXSI::HandleSITriangleList(CSLTriangleList* templ, CSLShape* shapeOld, cons
     CSLModel* parentTempl = templ->ParentModel();
     CSLShape_35* shape = (CSLShape_35*)shapeOld;
     int shapeType = shape->Type();
+    int firstVertex = this->meshBuilder.GetNumVertices();
     int triangleCount = templ->GetTriangleCount();
     int vertexCount = triangleCount * 3;
     bool isSkinned = false;
@@ -433,7 +471,7 @@ void nXSI::HandleSITriangleList(CSLTriangleList* templ, CSLShape* shapeOld, cons
     nMeshBuilder::Triangle triangle;
     for (i = 0; i < triangleCount; i++)
     {
-        triangle.SetVertexIndices(i*3, i*3 + 1, i*3 + 2);
+        triangle.SetVertexIndices(firstVertex + i*3, firstVertex + i*3 + 1, firstVertex + i*3 + 2);
         triangle.SetGroupId(groupId);
         this->meshBuilder.AddTriangle(triangle);
     }

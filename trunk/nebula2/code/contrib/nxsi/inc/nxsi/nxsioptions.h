@@ -15,10 +15,12 @@ class nXSIOptions
 {
 public:
     enum OutputFlags {
-        OUTPUT_MESH   = 1,
-        OUTPUT_ANIM   = 2,
-        OUTPUT_SCRIPT = 4,
-        OUTPUT_SHADER = 8,
+        OUTPUT_MESH      = (1<<1),
+        OUTPUT_ANIM      = (1<<2),
+        OUTPUT_SCRIPT    = (1<<3),
+        OUTPUT_AUTO      = (1<<4),
+        OUTPUT_MERGEALL  = (1<<5),
+        OUTPUT_BINARY    = (1<<6),
     };
 
     ~nXSIOptions();
@@ -31,25 +33,17 @@ public:
     inline const nPathString& GetMeshFilename() const;
     inline const nPathString& GetAnimFilename() const;
     inline const nPathString& GetScriptFilename() const;
-    inline const nPathString& GetShaderFilename() const;
     inline const nString& GetScriptServerName() const;
-    inline bool IsOutputAutomatic() const;
     inline int GetOutputFlags() const;
 
 private:
-    bool MatchSwitch(const char* currentSwitch, const char* appSwitch) const;
-    bool MatchSwitch(const char* currentSwitch, const char* appSwitch, const char* &argument) const;
-
-private:
     nPathString xsiFilename;        ///< .xsi
-    nPathString meshFilename;       ///< .n3d2
-    nPathString animFilename;       ///< .nanim2
-    nPathString shaderFilename;     ///< .fx
+    nPathString meshFilename;       ///< .n3d2 or .nvx2
+    nPathString animFilename;       ///< .nanim2 or .nax2
     nPathString scriptFilename;     ///< main script (.n2) filename
 
     nString scriptServerName;       ///< script server name (default: ntclserver)
 
-    bool isOutputAutomatic;         ///< is output names generated automatically
     int outputFlags;
 };
 
@@ -75,19 +69,9 @@ inline const nPathString& nXSIOptions::GetScriptFilename() const
     return this->scriptFilename;
 }
 
-inline const nPathString& nXSIOptions::GetShaderFilename() const
-{
-    return this->shaderFilename;
-}
-
 inline const nString& nXSIOptions::GetScriptServerName() const
 {
     return this->scriptServerName;
-}
-
-inline bool nXSIOptions::IsOutputAutomatic() const
-{
-    return this->isOutputAutomatic;
 }
 
 inline int nXSIOptions::GetOutputFlags() const

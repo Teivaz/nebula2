@@ -15,13 +15,14 @@ using std::cerr;
 //-----------------------------------------------------------------------------
 
 nAnimBuilder::Curve BuildJointAnimationCurve(
-    CSLModel* joint, vector3& basepose, nAnimBuilder::Curve::IpolType type,
+    CSLTransform* jointTransform, vector3& basepose, nAnimBuilder::Curve::IpolType type,
     CSLTemplate::EFCurveType xType, CSLTemplate::EFCurveType yType, CSLTemplate::EFCurveType zType,
-    int startKey, int endKey)
+    float startKey, int keyCount)
 {
-    int keyCount = endKey - startKey + 1;
     nAnimBuilder::Curve curve;
-    int f, k;
+    vector4 keyValue;
+    float f;
+    int k;
 
     // set curve infos
     curve.SetIpolType(type);
@@ -29,25 +30,34 @@ nAnimBuilder::Curve BuildJointAnimationCurve(
 
     // get fcurves
     CSLFCurve* fcurves[3];
-    fcurves[0] = joint->GetSpecificFCurve(xType);
-    fcurves[1] = joint->GetSpecificFCurve(yType);
-    fcurves[2] = joint->GetSpecificFCurve(zType);
+    fcurves[0] = jointTransform->GetSpecificFCurve(xType);
+    fcurves[1] = jointTransform->GetSpecificFCurve(yType);
+    fcurves[2] = jointTransform->GetSpecificFCurve(zType);
 
     // add keys
     for (k = 0, f = startKey; k < keyCount; k++, f++)
     {
         nAnimBuilder::Key key;
-        vector4 keyValue(basepose);
+        keyValue = basepose;
 
-        if (fcurves[0]) keyValue.x = fcurves[0]->GetValueAtPrevFrame((float)f);
-        if (fcurves[1]) keyValue.y = fcurves[1]->GetValueAtPrevFrame((float)f);
-        if (fcurves[2]) keyValue.z = fcurves[2]->GetValueAtPrevFrame((float)f);
+        if (fcurves[0] && (fcurves[0]->Evaluate(f) == SI_SUCCESS))
+        {
+            keyValue.x = fcurves[0]->GetLastEvaluation();
+        }
+        if (fcurves[1] && (fcurves[1]->Evaluate(f) == SI_SUCCESS))
+        {
+            keyValue.y = fcurves[1]->GetLastEvaluation();
+        }
+        if (fcurves[2] && (fcurves[2]->Evaluate(f) == SI_SUCCESS))
+        {
+            keyValue.z = fcurves[2]->GetLastEvaluation();
+        }
         keyValue.w = 0.0f;
 
         if (type == nAnimBuilder::Curve::QUAT)
         {
             quaternion quat;
-            quat.set_rotate_xyz(keyValue.x, keyValue.y, keyValue.z);
+            quat.set_rotate_xyz(n_deg2rad(keyValue.x), n_deg2rad(keyValue.y), n_deg2rad(keyValue.z));
             key.SetX(quat.x);
             key.SetY(quat.y);
             key.SetZ(quat.z);
@@ -60,14 +70,13 @@ nAnimBuilder::Curve BuildJointAnimationCurve(
     return curve;
 }
 
-void nXSI::BuildJointAnimations(const nArray<CSLModel*>& jointList)
+void nXSI::BuildJointAnimations(const nArray<CSLModel*>& jointList, int jointCount)
 {
-    int jointCount = jointList.Size();
     int j;
 
-    int startKey = (int)(this->xsiScene.SceneInfo()->GetStart());
-    int endKey = (int)(this->xsiScene.SceneInfo()->GetEnd());
-    int keyCount = endKey - startKey + 1;
+    float startKey = this->xsiScene.SceneInfo()->GetStart();
+    float endKey = this->xsiScene.SceneInfo()->GetEnd();
+    int keyCount = (int)(endKey - startKey + 1);
     float keyTime = 1.f / this->xsiScene.SceneInfo()->GetFrameRate();
 
     // create animation group
@@ -76,7 +85,7 @@ void nXSI::BuildJointAnimations(const nArray<CSLModel*>& jointList)
     group.SetStartKey(0);
     group.SetNumKeys(keyCount);
     group.SetKeyTime(keyTime);
-    group.SetKeyStride(0);
+    group.SetKeyStride(1);
 
     // build key array
     for (j = 0; j < jointCount; j++)
@@ -85,21 +94,21 @@ void nXSI::BuildJointAnimations(const nArray<CSLModel*>& jointList)
 
         // handle translation curve
         group.AddCurve( BuildJointAnimationCurve(
-            joint, (vector3&)(joint->Transform()->GetTranslation()), nAnimBuilder::Curve::LINEAR,
+            joint->Transform(), (vector3&)(joint->Transform()->GetTranslation()), nAnimBuilder::Curve::LINEAR,
             CSLTemplate::SI_TRANSLATION_X, CSLTemplate::SI_TRANSLATION_Y, CSLTemplate::SI_TRANSLATION_Z,
-            startKey, endKey));
+            startKey, keyCount));
 
         // handle rotation curve
         group.AddCurve( BuildJointAnimationCurve(
-            joint, (vector3&)(joint->Transform()->GetEulerRotation()), nAnimBuilder::Curve::QUAT,
+            joint->Transform(), (vector3&)(joint->Transform()->GetEulerRotation()), nAnimBuilder::Curve::QUAT,
             CSLTemplate::SI_ROTATION_X, CSLTemplate::SI_ROTATION_Y, CSLTemplate::SI_ROTATION_Z,
-            startKey, endKey));
+            startKey, keyCount));
 
         // handle scaling curve
         group.AddCurve( BuildJointAnimationCurve(
-            joint, (vector3&)(joint->Transform()->GetScale()), nAnimBuilder::Curve::LINEAR,
+            joint->Transform(), (vector3&)(joint->Transform()->GetScale()), nAnimBuilder::Curve::LINEAR,
             CSLTemplate::SI_SCALING_X, CSLTemplate::SI_SCALING_Y, CSLTemplate::SI_SCALING_Z,
-            startKey, endKey));
+            startKey, keyCount));
     }
 
     this->animBuilder.AddGroup(group);
