@@ -39,7 +39,7 @@ private:
     /// load curve group from binary nax2 file
     bool LoadNax2(const char* filename);
 
-    nArray<vector4> keyArray;   
+    nArray<vector4> keyArray;
 };
 //------------------------------------------------------------------------------
 #endif

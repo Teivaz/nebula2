@@ -27,6 +27,10 @@ class nAnimState
 public:
     /// constructor
     nAnimState();
+    /// set state name
+    void SetName(const nString& n);
+    /// get state name
+    const nString& GetName() const;
     /// set index of animation group in animation resource file
     void SetAnimGroupIndex(int index);
     /// get animation group index
@@ -50,6 +54,7 @@ public:
 
 private:
     nArray<nAnimClip> clipArray;
+    nString name;
     int animGroupIndex;
     float fadeInTime;
 };
@@ -64,6 +69,26 @@ nAnimState::nAnimState() :
     fadeInTime(0.0f)
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimState::SetName(const nString& n)
+{
+    this->name = n;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nAnimState::GetName() const
+{
+    return this->name;
 }
 
 //------------------------------------------------------------------------------
