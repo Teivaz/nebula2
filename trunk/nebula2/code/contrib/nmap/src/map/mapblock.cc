@@ -73,10 +73,10 @@ void MapBlock::Init(nGfxServer2 * gfx_server, int num, int x, int z)
 	n_assert(meshTriStrip);
 	meshTriStrip->SetNumGroups(2);
 	meshTriStrip->SetVertexComponents( 
-		nMesh2::VertexComponent::Coord | 
-		nMesh2::VertexComponent::Normal |
-		nMesh2::VertexComponent::Uv0 |
-		nMesh2::VertexComponent::Uv1 );
+		nMesh2::Coord | 
+		nMesh2::Normal |
+		nMesh2::Uv0 |
+		nMesh2::Uv1 );
     meshTriStrip->SetUsage( map->GetMeshUsage() );
 	int num_vertices = map->GetBlockSize() * map->GetBlockSize();
 	meshTriStrip->SetNumVertices(num_vertices);
