@@ -142,8 +142,8 @@ main(int argc, const char** argv)
                "-startup                startup script to run, default is: home:bin/startup.tcl\n"
                "-sceneserver            scene server to use, default is nmrtsceneserver\n"
                "-scriptserver           script server to use\n"
-               "-gfxserver              graphics server to use; default is platform dependent"
-               "-featureset             Which shader feature set to use; I'm not sure how this is expressed\n"
+               "-gfxserver              graphics server to use; default is platform dependent\n"
+               "-featureset             Which shader feature set to use; One of: dx7, dx8, dx8sb, dx9, dx9flt\n"
                "-input                  input binding script to run, default is: home:bin/stdinput.tcl\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
                "-stage                  light stage to load, default is: home:bin/stdlight.tcl\n"
@@ -217,6 +217,10 @@ main(int argc, const char** argv)
     if (featureSetArg)
     {
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
+        if (nGfxServer2::InvalidFeatureSet == featureSet)
+        {
+            n_error("Invalid feature set string specified: %s", featureSetArg);
+        }
         viewerApp.SetFeatureSetOverride(featureSet);
     }
     
