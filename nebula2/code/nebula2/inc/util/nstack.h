@@ -32,7 +32,11 @@ private:
     /// a private stack node class
     class nStackNode : public nNode
     {
+#if _MSCVER < 1300
+        friend nStack;
+#else
         friend class nStack;
+#endif
 
         /// constructor
         nStackNode(const TYPE& e)
@@ -121,4 +125,3 @@ nStack<TYPE>::IsEmpty() const
 
 //------------------------------------------------------------------------------
 #endif
-
