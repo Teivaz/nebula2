@@ -93,7 +93,10 @@ static PyMethodDef NebulaMethods[] = {
    Called implicitly to extend an external interpreter or
    called explicitly when embedding the interpreter.
 */
-__declspec(dllexport) void
+#ifdef __WIN32__
+__declspec(dllexport)
+#endif
+void
 initpynebula()
 {
     PyObject *m, *d, *gd;
