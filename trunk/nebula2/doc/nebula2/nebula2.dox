@@ -3,18 +3,18 @@
 
 In 1999 Radon Labs bundled the fundamental parts of their game engine into The Nebula Device and released it to the public as a game framework, something that could be used as the base for further games. Radon Labs went on to create Project Nomads using Nebula and it has since been used in several other commercial games.
 
-Nebula2 is the next step in the evolution, fully unleashing the power of programmable graphics hardware in a flexible high level framework. Although still early in its development, Nebula2 benefits from a solid core based on that of Nebula1.
+Nebula2 is the next step in the evolution, fully unleashing the power of programmable graphics hardware in a flexible high level framework.
 
 @section Nebula2IntroFeatures Features
 
-  - <b>Shader Based Graphics</b>: Nebula2 is 'shader-centric', all render state is handled
+  - <b>Shader Based Graphics</b>: Nebula2 is 'shader-centric': all render state is handled
     by the shaders. It's possible to render many effects without changing any C++
     code, just by writing new shaders. Shader parameters can be created and altered
-    from the in-game console. The DX9 implementation uses Direct3D Effect Files.
+    from the in-game console. The DX9 implementation uses Direct3D Effect Files (.fx).
     
-  - <b>Animation</b>: Many things can be animated in Nebula2, shader parameters,
+  - <b>Animation</b>: Many things can be animated in Nebula2: shader parameters,
     position, rotation, scale. The animations can be driven by time or any other 
-    variable of your choosing and you can choose from step, linear and quaternion
+    variable of your choice, and you can choose from step, linear and quaternion
     slerp interpolation.
     
   - <b>Character Animation</b>: Nebula2 has a high-performance skinned mesh renderer 
@@ -27,7 +27,7 @@ Nebula2 is the next step in the evolution, fully unleashing the power of program
     referencing objects through the script interface, or in their persistent
     state. Runtime efficiency doesn't suffer from this, since normally,
     references by name are resolved into references by pointer only once at
-    load/initialization time. During an objects lifetime, references to
+    load/initialization time. During an object's lifetime, references to
     other objects are normally kept as cached C++ pointers.
 
   - <b>Scripting</b>: Scripting in Nebula2 means sending script commands directly
