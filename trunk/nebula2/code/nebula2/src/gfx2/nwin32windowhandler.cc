@@ -557,6 +557,23 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             break;
 
+        case WM_SYSKEYDOWN:
+            if (self && self->refInputServer.isvalid()) 
+            {
+                nKey key = self->TranslateKey((int)wParam);
+                nInputEvent *ie = self->refInputServer->NewEvent();
+                if (ie) 
+                {
+                    ie->SetType(N_INPUT_KEY_DOWN);
+                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                    ie->SetKey(key);
+                    self->refInputServer->LinkEvent(ie);
+                }
+
+                return(0);
+            }
+            break;
+
         case WM_KEYUP:
             if (self && self->refInputServer.isvalid()) 
             {
@@ -569,6 +586,23 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     ie->SetKey(key);
                     self->refInputServer->LinkEvent(ie);
                 }
+            }
+            break;
+
+        case WM_SYSKEYUP:
+            if (self && self->refInputServer.isvalid()) 
+            {
+                nKey key = self->TranslateKey((int)wParam);
+                nInputEvent *ie = self->refInputServer->NewEvent();
+                if (ie) 
+                {
+                    ie->SetType(N_INPUT_KEY_UP);
+                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                    ie->SetKey(key);
+                    self->refInputServer->LinkEvent(ie);
+                }
+
+                return(0);
             }
             break;
 
