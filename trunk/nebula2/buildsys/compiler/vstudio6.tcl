@@ -89,13 +89,32 @@ proc emit_files {name cid} {
         }
     }
     # resource file group
-    if {[get_tartype $name] == "exe"} {
+    set tartype [get_tartype $name]
+    if {$tartype == "exe" || $tartype == "dll"} {
         puts $cid "# Begin Group \"resources\""
         puts $cid ""
         puts $cid "# PROP Default_Filter \"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\""
         puts $cid "# Begin Source File"
         puts $cid ""
-        puts $cid "SOURCE=pkg/res_$name.rc"
+
+        # add standard nebula rsrc to exe
+        if {$tartype == "exe"} {
+            puts $cid "SOURCE=pkg/res_$name.rc"
+        }
+
+        # add any custom rsrc files
+        set resfile [get_win32resource $name]
+        if { $resfile != "" } {
+            global cur_workspacepath
+            global home
+            global mod
+
+            set startpath [string trim $home '/']
+            set i [findmodbyname $name]
+            set resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile.rc]
+            regsub -all "/" $resfile "\\" filename
+            puts $cid "SOURCE=\"$filename\""
+        }
         puts $cid "# End Source File"
         puts $cid "# End Group"
     }
