@@ -6,6 +6,21 @@
 
 nNebulaClass(nKeyAnimator, "nanimator");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nkeyanimator
+
+    @cppclass
+    nKeyAnimator
+    
+    @superclass
+    nanimator
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -8,6 +8,22 @@
 
 nNebulaClass(nLightNode, "nabstractshadernode");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nlightnode
+
+    @cppclass
+    nLightNode
+    
+    @superclass
+    nabstractshadernode
+    
+    @classinfo
+    Generic light.
+*/
+
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -7,6 +7,21 @@
 
 nNebulaClass(nGuiLabel, "nguiwidget");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguilabel
+
+    @cppclass
+    nGuiLabel
+    
+    @superclass
+    nguiwidget
+    
+    @classinfo
+    Base class for text widgets.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
