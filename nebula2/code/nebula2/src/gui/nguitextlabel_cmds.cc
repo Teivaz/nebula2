@@ -231,7 +231,7 @@ n_gettext(void* slf, nCmd* cmd)
     @input
     v
     @output
-    f
+    f(X), f(Y)
     @info
     Get the text extent for the currently set text and font.
 */
