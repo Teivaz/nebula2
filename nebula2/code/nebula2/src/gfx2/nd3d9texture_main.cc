@@ -5,8 +5,6 @@
 #include "gfx2/nd3d9texture.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
-#include "il/il.h"
-#include "il/ilu.h"
 
 nNebulaClass(nD3D9Texture, "ntexture2");
 
@@ -136,13 +134,13 @@ nD3D9Texture::LoadResource()
     }
     else if (filename.CheckExtension("dds"))
     {
-        // load file through D3DX
-        success = this->LoadD3DXFile();
+        // load file through D3DX, assume file has mip maps 
+        success = this->LoadD3DXFile(false);
     }
-    else 
+    else
     {
-        // load file through DevIL
-        success = this->LoadILFile();
+        // load file through D3DX and generate mip maps
+        success = this->LoadD3DXFile(true);
     }
     this->SetValid(success);
     return success;
@@ -383,7 +381,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
     Create texture from file via D3DX.
 */
 bool
-nD3D9Texture::LoadD3DXFile()
+nD3D9Texture::LoadD3DXFile(bool genMipMaps)
 {
     n_assert(0 == this->baseTexture);
     n_assert(0 == this->texture2D);
@@ -405,6 +403,11 @@ nD3D9Texture::LoadD3DXFile()
         n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'\n", mangledPath);
         return false;
     }
+
+    // Generate mipmaps?
+    DWORD mipmapFilter = D3DX_FILTER_NONE;
+    if (genMipMaps)
+        mipmapFilter = D3DX_DEFAULT;
 
     // D3D usage flags
     DWORD d3dUsage = 0;
@@ -428,7 +431,7 @@ nD3D9Texture::LoadD3DXFile()
                 D3DFMT_UNKNOWN,             // Format
                 d3dPool,                    // Pool
                 D3DX_FILTER_NONE,           // Filter
-                D3DX_FILTER_NONE,           // MipFilter
+                mipmapFilter,               // MipFilter
                 0,                          // ColorKey
                 0,                          // pSrcInfo
                 0,                          // pPalette
@@ -675,97 +678,6 @@ nD3D9Texture::LoadFromDDSCompoundFile()
     // query texture attributes 
     this->QueryD3DTextureAttributes();
 
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Load the file through DevIL. This method should only be used in
-    tools and viewers, not in an actual game application, because a lot
-    of conversion happens in here, and all loaded textures are converted
-    to 32 bit BGRA, which is not very memory efficient.
-*/
-bool
-nD3D9Texture::LoadILFile()
-{
-    n_assert(0 == this->baseTexture);
-    n_assert(0 == this->texture2D);
-    n_assert(0 == this->textureCube);
-
-    HRESULT hr;
-    IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
-    n_assert(d3d9Dev);
- 
-    // mangle pathname
-    char mangledPath[N_MAXPATH];
-    this->refFileServer->ManglePath(this->GetFilename().Get(), mangledPath, sizeof(mangledPath));
-
-    // create IL image and load
-    ilEnable(IL_CONV_PAL);
-    ILuint image = iluGenImage();
-    ilBindImage(image);
-    if (!ilLoadImage(mangledPath))
-    {
-        n_error("nD3D9Texture: ilLoadImage() failed loading file '%s'\n", mangledPath);
-        iluDeleteImage(image);
-        return false;
-    }
-
-    // always convert the image to BGRA format
-    ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
-
-    // flip image in V direction
-    iluFlipImage();
-
-    // get relevant image data and create an empty d3d8 texture
-    int imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
-    int imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-    hr = D3DXCreateTexture(d3d9Dev,             // pDevice,
-                           imageWidth,          // Width
-                           imageHeight,         // Height
-                           D3DX_DEFAULT,        // MipLevels (complete)
-                           0,                   // Usage
-                           D3DFMT_A8R8G8B8,     // Format
-                           D3DPOOL_MANAGED,     // Pool
-                           &(this->texture2D));
-    n_assert(SUCCEEDED(hr));
-
-    this->SetType(TEXTURE_2D);
-
-    // get base texture interface pointer
-    hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-    n_assert(SUCCEEDED(hr));
-
-    // copy the image data into the toplevel surface
-    IDirect3DSurface9* surf;
-    hr = this->texture2D->GetSurfaceLevel(0, &surf);
-    n_assert(SUCCEEDED(hr));
-    RECT srcRect = { 0, 0, imageWidth, imageHeight };
-    hr = D3DXLoadSurfaceFromMemory(surf,                // pDestSurface
-                                   NULL,                // pDestPalette
-                                   NULL,                // pDestRect (entire surface)
-                                   ilGetData(),         // pSrcMemory
-                                   D3DFMT_A8R8G8B8,     // SrcFormat
-                                   imageWidth * 4,      // SrcPitch
-                                   NULL,                // pSrcPalette
-                                   &srcRect,            // pSrcRect
-                                   D3DX_FILTER_NONE,    // Filter
-                                   0),                  // ColorKey (disabled)
-    surf->Release();
-    n_assert(SUCCEEDED(hr));
-
-    // generate mipmaps
-    hr = D3DXFilterTexture(this->texture2D,     // pTexture
-                           NULL,                // pPalette
-                           D3DX_DEFAULT,        // SrcLevel (0)
-                           D3DX_DEFAULT);       // MipFilter (D3DX_FILTER_BOX)
-    n_assert(SUCCEEDED(hr));
-
-    // query texture attributes 
-    this->QueryD3DTextureAttributes();
-
-    // cleanup
-    iluDeleteImage(image);
     return true;
 }
 

@@ -40,4 +40,7 @@ Here are some links to information about effect files and HLSL:
 
 (Talk about support for cube maps, compressed textures and other good things.)
 
+In addition to the DDS format, the DirectX 9 Graphics Server supports bmp, dib, hdr, 
+jpg, pfm, png, ppm and tga.  These are only recommended for testing purposes, however
+(see the general Graphics System docs).
 */

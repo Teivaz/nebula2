@@ -59,9 +59,7 @@ private:
     /// create an empty 2d or cube texture
     bool CreateEmptyTexture();
     /// load texture through D3DX
-    bool LoadD3DXFile();
-    /// load a texture through DevIL
-    bool LoadILFile();
+    bool LoadD3DXFile(bool genMipMaps);
     /// load from a raw compound file
     bool LoadFromRawCompoundFile();
     /// load from dds compound file

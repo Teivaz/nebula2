@@ -1,3 +1,19 @@
 /**
     @defgroup NebulaGraphicsSystem Graphics System
+
+<h2>Texture support</h2>
+
+The default image format for textures is DDS.  Other image formats may be supported
+(see the docs for the actual graphics server used), but should only be used in tools 
+or during testing as the loading is slow and the internal texture format can be 
+inefficient. DDS files can be in many formats and support cube and volume textures (volume textures aren't yet supported in Nebula2), 
+they can also contain mip map levels.
+
+@note When using DDS files any mip maps you need should be pre generated as Nebula2 will
+assume the DDS file contains all needed mip maps. Nebula2 will generate mip maps for other 
+file formats.
+
+For information on DDS, see:
+   - <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directx/graphics/reference/DDSFileReference/ddsfileformat.asp">DDS Files</a>
+
 */
