@@ -185,7 +185,8 @@ nTclServer::InitAsExtension(Tcl_Interp *extInterp)
 /**
     Begin writing a persistent object.
     
-    27-Feb-04   cubejk  check for already existing file and delete before creating the new
+     - 27-Feb-04   cubejk  check for already existing file and delete before
+                           creating the new
 */
 nFile* 
 nTclServer::BeginWrite(const char* filename, nRoot* obj)
