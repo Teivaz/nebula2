@@ -17,12 +17,6 @@
 nKernelServer *nKernelServer::ks = 0;
 
 nNebulaUsePackage(nkernel);
-// on static-linking platforms, a global n_addmodules() function must exist,
-// which adds all class modules to the kernel.
-// #ifdef N_STATIC
-// extern "C" void n_addmodules(nKernelServer*);
-// #endif
-// #endif
 
 //------------------------------------------------------------------------------
 /**
