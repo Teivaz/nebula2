@@ -89,6 +89,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nwin32prefserver
     setdir misc
+    setplatform win32
     setfiles { nwin32prefserver_main }
     setheaders { nwin32prefserver }
 endmodule
