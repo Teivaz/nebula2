@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nTclServer
 //------------------------------------------------------------------------------
 //  ntclserver_commands.cc
 //  (C) 2002 RadonLabs GmbH
@@ -260,7 +259,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
             arg = cmd->In();
             switch(arg->GetType()) 
             {
-                case nArg::ARGTYPE_INT:
+                case nArg::Int:
                 {
                     int n;
                     if (Tcl_GetIntFromObj(interp,objv[i],&n)==TCL_OK) 
@@ -271,7 +270,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                 } 
                 break;
 
-                case nArg::ARGTYPE_FLOAT:
+                case nArg::Float:
                 {
                     double d;
                     if (Tcl_GetDoubleFromObj(interp,objv[i],&d)==TCL_OK) 
@@ -284,7 +283,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                 break;
 
 
-                case nArg::ARGTYPE_STRING:
+                case nArg::String:
                 {
                     const char *str = Tcl_GetString(objv[i]);
                     if (strcmp(":null:",str)==0) 
@@ -296,19 +295,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                 }
                 break;    
 
-                case nArg::ARGTYPE_CODE:
-                {
-                    const char *str = Tcl_GetString(objv[i]);
-                    if (strcmp("",str)==0) 
-                    {
-                        str = NULL;
-                    }
-                    arg->SetC(str);
-                    arg_ok = true;
-                }
-                break;    
-
-                case nArg::ARGTYPE_BOOL:
+                case nArg::Bool:
                 {
                     int bi;
                     if (Tcl_GetBooleanFromObj(interp,objv[i],&bi)==TCL_OK) 
@@ -320,7 +307,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                 }
                 break;
 
-                case nArg::ARGTYPE_OBJECT:
+                case nArg::Object:
                     {
                         nRoot *o;
                         char *o_name = Tcl_GetString(objv[i]);
@@ -342,10 +329,10 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                     }
                     break;
                     
-                case nArg::ARGTYPE_VOID:
+                case nArg::Void:
                     break;
 
-                case nArg::ARGTYPE_LIST:
+                case nArg::List:
                     n_printf("List values aren't acceptable in arguments.");
                     arg_ok = false;
                     break;
@@ -359,11 +346,11 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
 
 //--------------------------------------------------------------------
 /**
-    utility function for nArg of type ARGTYPE_LIST
+    utility function for nArg of type List
 */
 static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
 {
-    n_assert(nArg::ARGTYPE_LIST == listArg->GetType());
+    n_assert(nArg::List == listArg->GetType());
     
     nArg* args;
     int num_args = listArg->GetL(args);
@@ -375,21 +362,21 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
     {
         switch (arg->GetType())
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
             {
                 Tcl_Obj *io = Tcl_NewIntObj(arg->GetI());
                 Tcl_ListObjAppendElement(interp,res,io);
             }
             break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
             {
                 Tcl_Obj *fo = Tcl_NewDoubleObj((double)arg->GetF());
                 Tcl_ListObjAppendElement(interp,res,fo);
             }
             break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
             {
                 const char *s = arg->GetS();
                 if (!s)
@@ -401,19 +388,7 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
             }
             break;
 
-            case nArg::ARGTYPE_CODE:
-            {
-                const char *s = arg->GetC();
-                if (!s)
-                {
-                    s = "";
-                }
-                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                Tcl_ListObjAppendElement(interp,res,so);
-            }
-            break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
             {
                 const char *s = arg->GetB() ? "true" : "false";
                 Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
@@ -421,7 +396,7 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
             }
             break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
             {
                 char buf[N_MAXPATH];
                 const char *s;
@@ -440,11 +415,11 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
             }
             break;
 
-            case nArg::ARGTYPE_LIST:
+            case nArg::List:
                 Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
                 break;
 
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
                 break;
         }
         arg++;
@@ -479,15 +454,15 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
         arg = cmd->Out();
         switch (arg->GetType()) 
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 Tcl_SetIntObj(res,arg->GetI());
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 Tcl_SetDoubleObj(res,arg->GetF());
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 {
                     const char *s = arg->GetS();
                     if (!s) 
@@ -498,25 +473,14 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                 }
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                {
-                    const char *s = arg->GetC();
-                    if (!s) 
-                    {
-                        s = "";
-                    }
-                    Tcl_SetStringObj(res,(char *)s,strlen(s));
-                }
-                break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 {
                     const char *s = arg->GetB() ? "true" : "false";
                     Tcl_SetStringObj(res,(char *)s,strlen(s));
                 }
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 {
                     char buf[N_MAXPATH];
                     const char *s;
@@ -534,10 +498,10 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                 }
                 break;
 
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
                 break;
 
-            case nArg::ARGTYPE_LIST:
+            case nArg::List:
                 Tcl_ListObjAppendList(interp,res,_putOutListArg(interp,arg));
                 break;
         }
@@ -551,21 +515,21 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
             arg = cmd->Out();
             switch (arg->GetType()) 
             {
-                case nArg::ARGTYPE_INT:
+                case nArg::Int:
                     {
                         Tcl_Obj *io = Tcl_NewIntObj(arg->GetI());
                         Tcl_ListObjAppendElement(interp,res,io);
                     }
                     break;
 
-                case nArg::ARGTYPE_FLOAT:
+                case nArg::Float:
                     {
                         Tcl_Obj *fo = Tcl_NewDoubleObj((double)arg->GetF());
                         Tcl_ListObjAppendElement(interp,res,fo);
                     }
                     break;
 
-                case nArg::ARGTYPE_STRING:
+                case nArg::String:
                     {
                         const char *s = arg->GetS();
                         if (!s) 
@@ -577,19 +541,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     }
                     break;
 
-                case nArg::ARGTYPE_CODE:
-                    {
-                        const char *s = arg->GetC();
-                        if (!s) 
-                        {
-                            s = "";
-                        }
-                        Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                        Tcl_ListObjAppendElement(interp,res,so);
-                    }
-                    break;
-
-                case nArg::ARGTYPE_BOOL:
+                case nArg::Bool:
                     {
                         const char *s = arg->GetB() ? "true" : "false";
                         Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
@@ -597,7 +549,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     }
                     break;
 
-                case nArg::ARGTYPE_OBJECT:
+                case nArg::Object:
                     {
                         char buf[N_MAXPATH];
                         const char *s;
@@ -616,10 +568,10 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     }
                     break;
 
-                case nArg::ARGTYPE_VOID:
+                case nArg::Void:
                     break;
 
-                case nArg::ARGTYPE_LIST:
+                case nArg::List:
                     Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
                     break;
             }

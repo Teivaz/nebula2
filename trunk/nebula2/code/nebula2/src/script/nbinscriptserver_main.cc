@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nBinScriptServer
 //------------------------------------------------------------------------------
 //  nbinscriptserver_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -189,27 +188,23 @@ nBinScriptServer::GetArgLength(nCmd* cmd)
 
         switch (arg->GetType())
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 len += sizeof(int);
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 len += sizeof(float);
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 len += strlen(arg->GetS()) + sizeof(ushort);
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                len += strlen(arg->GetC()) + sizeof(ushort);
-                break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 len += sizeof(char);
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 {
                     char buf[N_MAXPATH];
                     nRoot* obj = (nRoot*) arg->GetO();
@@ -219,7 +214,7 @@ nBinScriptServer::GetArgLength(nCmd* cmd)
                 }
                 break;
 
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
                 break;
         }
     }
@@ -254,31 +249,27 @@ nBinScriptServer::WriteCmd(nFile* file, nCmd* cmd)
 
         switch (arg->GetType())
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 this->PutInt(file, arg->GetI());
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 this->PutFloat(file, arg->GetF());
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 this->PutString(file, arg->GetS());
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                this->PutCode(file, arg->GetC());
-                break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 this->PutBool(file, arg->GetB());
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 this->PutObject(file, (nRoot*) arg->GetO());
                 break;
 
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
                 break;
         }
     }
@@ -347,17 +338,6 @@ nBinScriptServer::PutBool(nFile* file, bool b)
 
     char c = b ? 1 : 0;
     file->Write(&c, sizeof(char));
-}
-
-//------------------------------------------------------------------------------
-/**
-    Write script code to the file.
-*/
-void
-nBinScriptServer::PutCode(nFile* file, const char* str)
-{
-    n_assert(file);
-    this->PutString(file, str);
 }
 
 //------------------------------------------------------------------------------
@@ -487,21 +467,6 @@ nBinScriptServer::GetBool(nFile* file, bool& val)
 
 //------------------------------------------------------------------------------
 /**
-    Read a code sequence from the file.
-
-    @param  file    [in]  nFile object to read from
-    @param  val     [out] read value
-    @return         false if EOF reached
-*/
-bool
-nBinScriptServer::GetCode(nFile* file, nString& val)
-{
-    n_assert(file);
-    return this->GetString(file, val);
-}
-
-//------------------------------------------------------------------------------
-/**
     Read an object handle from the file.
 
     @param  file    [in]  nFile object to read from
@@ -509,7 +474,7 @@ nBinScriptServer::GetCode(nFile* file, nString& val)
     @return         false if EOF reached
 */
 bool
-nBinScriptServer::GetObject(nFile* file, nRoot*& val)
+nBinScriptServer::GetObj(nFile* file, nRoot*& val)
 {
     n_assert(file);
 
@@ -594,37 +559,32 @@ nBinScriptServer::GetInArgs(nFile* file, nCmd* cmd)
         switch(arg->GetType())
         {
         
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 notEof = this->GetInt(file, iArg);
                 arg->SetI(iArg);
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 notEof = this->GetFloat(file, fArg);
                 arg->SetF(fArg);
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 notEof = this->GetString(file, sArg);
                 arg->SetS(sArg.Get());
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                notEof = this->GetCode(file, cArg);
-                arg->SetC(cArg.Get());
-                break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 notEof = this->GetBool(file, bArg);
                 arg->SetB(bArg);
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
-                notEof = this->GetObject(file, oArg);
+            case nArg::Object:
+                notEof = this->GetObj(file, oArg);
                 arg->SetO(oArg);
                 break;
 
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
                 break;
         }
 

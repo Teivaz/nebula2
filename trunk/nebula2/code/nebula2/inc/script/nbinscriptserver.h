@@ -8,23 +8,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_SCRIPTSERVER_H
 #include "kernel/nscriptserver.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nBinScriptServer
-#include "kernel/ndefdllclass.h"
-
-#ifdef __WIN32__
-#ifdef GetObject
-#undef GetObject
-#endif
-#endif
 
 //------------------------------------------------------------------------------
 class nString;
@@ -67,8 +52,6 @@ private:
     void PutString(nFile* file, const char* str);
     /// write a bool to the file
     void PutBool(nFile* file, bool b);
-    /// write a code sequence to the file
-    void PutCode(nFile* file, const char* str);
     /// write an object handle to the file
     void PutObject(nFile* file, nRoot* obj);
 
@@ -86,10 +69,8 @@ private:
     bool GetString(nFile* file, nString& val);
     /// get a bool from the file
     bool GetBool(nFile* file, bool& val);
-    /// get a code sequence from the file
-    bool GetCode(nFile* file, nString& val);
     /// get an object handle from the file
-    bool GetObject(nFile* file, nRoot*& val);
+    bool GetObj(nFile* file, nRoot*& val);
 
     /// write a select statement
     void WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, SelectMethod selMethod);
