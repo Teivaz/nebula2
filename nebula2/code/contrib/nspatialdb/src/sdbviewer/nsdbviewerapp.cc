@@ -3,13 +3,14 @@
 //  (C) 2003 RadonLabs GmbH
 //  (C) 2004 Gary Haussmann
 //------------------------------------------------------------------------------
-#include "spatialdb/nsdbviewerapp.h"
+#include "sdbviewer/nsdbviewerapp.h"
 #include "spatialdb/ngenarrayvisitors.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
+#include "gui/nguitextlabel.h"
 
 #include <math.h>
 
@@ -125,7 +126,7 @@ nSDBViewerApp::Open()
     this->refGfxServer->OpenDisplay();
 
     // define the input mapping
-    // late initialization of input server, because it relies on 
+    // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     if (NULL != this->GetInputScript())
@@ -218,7 +219,7 @@ void nSDBViewerApp::Close()
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
-    this->refSceneServer->Release();    
+    this->refSceneServer->Release();
     this->refInputServer->Release();
     this->refGfxServer->Release();
     this->refScriptServer->Release();
@@ -309,7 +310,7 @@ void nSDBViewerApp::Run()
                 if ( curobject->rendernode.isvalid() )
                     this->refSceneServer->Attach(&(curobject->rc));
             }
-            
+
             // attach camera markers-note that camera transforms were updated in UpdateObjectMarks()
             for (int camix=0; camix < nSDBViewerApp::CAMERACOUNT; camix++)
             {
@@ -318,7 +319,7 @@ void nSDBViewerApp::Run()
                 // turn off lighting for all cameras but the active one
                 nFloat4 camlight = {0.f,0.f,0.f,1.0f};
                 if (camix == m_activecamera)
-                {   
+                {
                     camlight.x = camlight.w = 1.0f;
                     camlight.y = camlight.z = 1.0f;
                 }
@@ -386,7 +387,7 @@ void nSDBViewerApp::Run()
 
         // update watchers
         nSDBViewerApp::CameraDescription &activecamera = this->markcameras[m_activecamera];
-        watchViewerPos->SetV4(vector4(activecamera.viewMatrix.M41, activecamera.viewMatrix.M42, activecamera.viewMatrix.M43, 
+        watchViewerPos->SetV4(vector4(activecamera.viewMatrix.M41, activecamera.viewMatrix.M42, activecamera.viewMatrix.M43,
             n_rad2deg(activecamera.viewerAngles.rho)));
 
         // flush input events
@@ -407,7 +408,7 @@ void
 nSDBViewerApp::HandleInput(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-    
+
     if (Maya == this->controlMode)
     {
         this->HandleInputMaya(frameTime);
@@ -445,7 +446,7 @@ nSDBViewerApp::HandleInput(float frameTime)
 void nSDBViewerApp::HandleInputPlay(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-    
+
     // process 'play' commands like move/turn for the active object
 
     CameraDescription &playcamera = markcameras[m_activecamera];
@@ -479,7 +480,7 @@ void nSDBViewerApp::HandleInputPlay(float frameTime)
 
     matrix44 dummy;
     playcamera.GenerateTransform(dummy);
-    
+
 }
 /// handle state change--mainly switching play object
 void nSDBViewerApp::HandlePlaySwitch(float framtTime)
@@ -496,7 +497,7 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
         m_activecamera = 2;
         m_viscamera = 2;
     }
-    
+
 	if (inputServer->GetButton("changeclipstyle"))
     {
 		switch (CurrentClipState)
@@ -577,7 +578,7 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
     if (inputServer->GetButton("zoom"))
     {
         zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
+        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up");
     }
 
     // toggle console
@@ -709,7 +710,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
 //------------------------------------------------------------------------------
 /**
     Initialize the overlay GUI.
-*/  
+*/
 void
 nSDBViewerApp::InitOverlayGui()
 {
@@ -735,6 +736,18 @@ nSDBViewerApp::InitOverlayGui()
     logoLabel->SetDefaultBrush("n2logo");
     logoLabel->SetPressedBrush("n2logo");
     logoLabel->SetHighlightBrush("n2logo");
+
+    // create a help text label
+    nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "HelpLabel");
+    n_assert(textLabel);
+    textLabel->SetText("Esc: toggle GUI\n1: Activate Camera 1\n2: Activate Camera 2\nF1: Change clip style\nF4: Cycle visibility camera\nF5: Cycle view camera");
+    textLabel->SetFont("GuiSmall");
+    textLabel->SetAlignment(nGuiTextLabel::Left);
+    textLabel->SetColor(vector4(1.0f, 1.0f, 1.0f, 1.0f));
+    textLabel->SetClipping(false);
+    vector2 textExtent = textLabel->GetTextExtent();
+    rectangle textRect(vector2(0.0f, 0.0f), textExtent);
+    textLabel->SetRect(textRect);
 
     kernelServer->PopCwd();
 
