@@ -293,9 +293,9 @@ public:
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
 
-    /// get gamma value.
+    /// set gamma value.
     void SetGamma(float g);
-    /// get brightness value.
+    /// set brightness value.
     void SetBrightness(float b);
     /// set contrast value.
     void SetContrast(float c);
