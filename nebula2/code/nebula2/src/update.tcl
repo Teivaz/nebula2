@@ -26,9 +26,19 @@ foreach ext [glob -nocomplain *.epk] {
 puts ""
 puts ":: GENERATING buildfiles..."
 puts "==========================="
-gen_solution nebulalib 0
-gen_solution tools 0
+puts "Looking for uuidgen...."
+if { [catch { exec uuidgen }] } {
+	puts "uuidgen.exe not found skipping Visual Studio Solutions."
+} else {
+	puts "uuidgen.exe found"
+	gen_solution nebulalib 0
+	gen_solution tools 0	
+}
 gen_makefile
+# These must come after the solution files
+# as we add some defauly libs to libs_win32
+gen_workspace nebulalib 0
+gen_workspace tools 0
 
 puts "done."
 

@@ -854,9 +854,11 @@ global num_tars
 source $env(RL_HOME)/bin/makesln.tcl
 #unix
 source $env(RL_HOME)/bin/makeunix.tcl
+#vc6
+source $env(RL_HOME)/bin/makedsw.tcl
 
 #TODO:
-#vc6, macosx and other build system script includes
+#macosx and other build system script includes
 
 
 #--------------------------------------------------------------------
