@@ -34,6 +34,10 @@ public:
     void SetInt(nShader2::Parameter p, int val);
     /// get int parameter
     int GetInt(nShader2::Parameter p) const;
+    /// set bool parameter
+    void SetBool(nShader2::Parameter p, bool val);
+    /// get bool parameter
+    bool GetBool(nShader2::Parameter p) const;
     /// set float parameter
     void SetFloat(nShader2::Parameter p, float val);
     /// get float parameter
@@ -135,7 +139,28 @@ nShaderParams::GetInt(nShader2::Parameter p) const
     n_assert(p < nShader2::NumParameters);
     return this->args[p].GetInt();
 }
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nShaderParams::SetBool(nShader2::Parameter p, bool val)
+{
+    n_assert(p < nShader2::NumParameters);
+    this->valid[p] = true;
+    this->args[p].SetBool(val);
+}
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nShaderParams::GetBool(nShader2::Parameter p) const
+{
+    n_assert(p < nShader2::NumParameters);
+    return this->args[p].GetBool();
+}
 //------------------------------------------------------------------------------
 /**
 */

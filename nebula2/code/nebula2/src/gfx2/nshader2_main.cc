@@ -130,6 +130,24 @@ nShader2::IsParameterUsed(Parameter p)
 /**
 */
 void
+nShader2::SetBool(Parameter p, bool val)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nShader2::SetBoolArray(Parameter p, const bool* array, int count)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 nShader2::SetInt(Parameter p, int val)
 {
     // empty

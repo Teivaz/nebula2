@@ -43,6 +43,10 @@ public:
     void SetInt(nShader2::Parameter param, int val);
     /// get an int value bound to a shader variable
     int GetInt(nShader2::Parameter param) const;
+    /// bind a bool value to a a shader variable
+    void SetBool(nShader2::Parameter param, bool val);
+    /// get an bool value bound to a shader variable
+    bool GetBool(nShader2::Parameter param) const;
     /// bind a float value to a shader variable
     void SetFloat(nShader2::Parameter param, float val);
     /// get a float value bound to a shader variable
@@ -131,6 +135,32 @@ int
 nAbstractShaderNode::GetInt(nShader2::Parameter param) const
 {
     return this->shaderParams.GetInt(param);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAbstractShaderNode::SetBool(nShader2::Parameter param, bool val)
+{
+    // silently ignore invalid parameters
+    if (nShader2::InvalidParameter == param)
+    {
+        n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
+        return;
+    }
+    this->shaderParams.SetBool(param, val);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nAbstractShaderNode::GetBool(nShader2::Parameter param) const
+{
+    return this->shaderParams.GetBool(param);
 }
 
 //------------------------------------------------------------------------------
