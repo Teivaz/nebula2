@@ -12,7 +12,6 @@ static void n_setclosebutton(void* slf, nCmd* cmd);
 static void n_hasclosebutton(void* slf, nCmd* cmd);
 static void n_settitle(void* slf, nCmd* cmd);
 static void n_gettitle(void* slf, nCmd* cmd);
-static void n_updatelayout(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -41,7 +40,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_hasclosebutton_v",    'GCLB', n_hasclosebutton);
     cl->AddCmd("v_settitle_s",          'STIT', n_settitle);
     cl->AddCmd("s_gettitle_v",          'GTIT', n_gettitle);
-    cl->AddCmd("v_updatelayout_v",      'UPLO', n_updatelayout);
     cl->EndCmds();
 }
 
@@ -189,23 +187,3 @@ n_gettitle(void* slf, nCmd* cmd)
     cmd->Out()->SetS(self->GetTitle());
 }
 
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    updatelayout
-    @input
-    v
-    @output
-    v
-    @info
-    Update the layout of the window.
-    Call this after all child widgets are added. If not, you will see odd window.
-
-    04-Aug-04    kims    created
-*/
-static void 
-n_updatelayout(void* slf, nCmd* cmd)
-{
-    nGuiClientWindow* self = (nGuiClientWindow*) slf;
-    self->UpdateLayout(self->GetRect());
-}
