@@ -132,8 +132,6 @@ nD3D9Mesh::UnloadResource()
 //------------------------------------------------------------------------------
 /**
     Create a static d3d vertex buffer and validate the vertexBuffer member.
-
-    @param  byteSize    size of vertex buffer in bytes
 */
 void
 nD3D9Mesh::CreateVertexBuffer()
@@ -200,8 +198,6 @@ nD3D9Mesh::CreateVertexBuffer()
 //------------------------------------------------------------------------------
 /**
     Create a static d3d index buffer and validate the index buffer member.
-
-    @param  byteSize    size of index buffer in bytes
 */
 void
 nD3D9Mesh::CreateIndexBuffer()

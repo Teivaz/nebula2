@@ -5,9 +5,11 @@
     @class nString
     @ingroup NebulaDataTypes
 
-    A simple Nebula string class. Very handy when strings must be stored or
-    manipulated. Note that Nebula interfaces hand strings around as
-    char pointers, not nString objects.
+    @brief A simple Nebula string class.
+    
+    Very handy when strings must be stored or manipulated. Note that many
+    Nebula interfaces hand strings around as char pointers, not nString
+    objects.
 
     The current implementation does not allocate extra memory if the
     string has less then 13 characters.

@@ -5,7 +5,7 @@
     @class nRingBuffer
     @ingroup NebulaDataTypes
 
-    A ring buffer class.
+    @brief A ring buffer class.
 
     (C) 2003 RadonLabs GmbH
 */

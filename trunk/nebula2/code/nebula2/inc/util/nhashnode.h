@@ -5,7 +5,7 @@
     @class nHashNode
     @ingroup NebulaDataTypes
 
-    A node element in a nHashList.
+    @brief A node element in a nHashList.
 
     (C) 2002 RadonLabs GmbH
 */

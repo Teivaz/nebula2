@@ -2,7 +2,9 @@
 #define N_ARRAY2_H
 //------------------------------------------------------------------------------
 /**
-    Fixed size two-dimensional array.
+    @class nArray2
+    @ingroup NebulaDataTypes
+    @brief Fixed size two-dimensional array.
     
     (C) 2004 RadonLabs GmbH
 */
