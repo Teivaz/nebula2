@@ -38,6 +38,8 @@ public:
     /// rewind internal next args
     void Rewind();
 
+    int GetInArgIndex() const;
+
 private:
     enum 
     {
@@ -151,5 +153,18 @@ nCmd::Out()
     return &(this->args[this->outArgIndex++]);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Retrieves index of the in-arg.
+
+    -23-Dec-04 added by kims needs for nmaxscript module when it generate
+                             custom attribute of a function in-arg.
+*/
+inline
+int 
+nCmd::GetInArgIndex() const
+{
+    return this->inArgIndex;
+}
 //------------------------------------------------------------------------------
 #endif    
