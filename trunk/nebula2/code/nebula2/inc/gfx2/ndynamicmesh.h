@@ -7,6 +7,18 @@
 
     Helper class for rendering dynamic geometry, simplifies writing
     to the global dynamic mesh offered by the gfx server.
+    
+    At the moment it is advisable to flush the gfx server's mesh stream 0
+    before use, by doing:
+    
+    @verbatim
+    gfxServer->SetMesh(0,0);
+    @endverbatim
+    
+    This is because the gfx server assumes that if the mesh to be drawn is
+    the same as the last mesh that was drawn, then the details are the same.
+    If you don't do this then there can be errors when changing primitive types.
+    This will hopefully be fixed soon.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -32,6 +44,8 @@ public:
     void Swap(int numValidVertices, int numValidIndices, float*& vertexPointer, ushort*& indexPointer);
     /// end rendering
     void End(int numValidVertices, int numValidIndices);
+    /// get vertex width
+    int GetVertexWidth();
 
 private:
     nGfxServer2* gfxServer;
@@ -65,13 +79,13 @@ nDynamicMesh::~nDynamicMesh()
     maximum number of vertices and indices which can be written
     before Swap() or End() must be called.
 
-    @param  gfxServ         [in]  pointer to gfx server
-    @param  primType        [in]  primitive type
-    @param  vertexWidth     [in]  width of one vertex in number of floats
-    @param  vertexPointer   [out] will be filled with a pointer to the vertex buffer
-    @param  indexPointer    [out] will be filled with a pointer to the index buffer
-    @param  maxNumVertices  [out] max number of vertices before calling Swap() or End()
-    @param  maxNumIndices   [out] max number of indices before calling Swap() or End()
+    @param  gfxServ             [in]  pointer to gfx server
+    @param  primType            [in]  primitive type
+    @param  vertexComponentMask [in]  vertex components
+    @param  vertexPointer       [out] will be filled with a pointer to the vertex buffer
+    @param  indexPointer        [out] will be filled with a pointer to the index buffer
+    @param  maxNumVertices      [out] max number of vertices before calling Swap() or End()
+    @param  maxNumIndices       [out] max number of indices before calling Swap() or End()
 */
 inline
 void
@@ -172,6 +186,20 @@ nDynamicMesh::End(int numVertices, int numIndices)
     // give up ownership of the global dynamic mesh
     this->gfxServer->UnlockDynamicMesh(this->globalDynMesh);
     this->globalDynMesh = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the vertex width for the current component mask.
+    
+    @return the vertex width in floats.
+*/
+inline
+int
+nDynamicMesh::GetVertexWidth()
+{
+    n_assert(this->globalDynMesh);
+    return this->globalDynMesh->GetVertexWidth();
 }
 
 //------------------------------------------------------------------------------
