@@ -392,15 +392,6 @@ nD3D9Server::SetMesh(nMesh2* mesh)
             // indices are provided by the mesh associated with stream 0!
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
-
-            if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (this->GetFeatureSet() < DX9))
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
-            }
-            else
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
-            }
         }
     }
     else
@@ -450,8 +441,6 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             //clean old mesh array before set new
             this->SetMeshArray(0);
 
-            bool needSoftwareProcessing = false;
-
             // set the vertex stream source
             IDirect3DVertexBuffer9* d3dVBuf = 0;
             UINT stride = 0;
@@ -472,11 +461,6 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
                         hr = this->d3d9Device->SetStreamSource(i, d3dVBuf, 0, stride);
                         n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
                     }
-
-                    if (0 != (mesh->GetUsage() & nMesh2::NeedsVertexShader))
-                    {
-                        needSoftwareProcessing = true;
-                    }
                 }
             }
             
@@ -491,15 +475,6 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             n_assert2(d3dIBuf, "The mesh at stream 0 must provide a valid IndexBuffer!\n");
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
-            
-            if (this->GetFeatureSet() < DX9 && needSoftwareProcessing)
-            {                
-                this->d3d9Device->SetSoftwareVertexProcessing(true);
-            }
-            else
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(false);
-            }
         }
     }
     else
@@ -534,6 +509,18 @@ nD3D9Server::SetShader(nShader2* shader)
     if (this->GetShader() != shader)
     {
         nGfxServer2::SetShader(shader);
+        
+        if (shader)
+        {
+            if (((nD3D9Shader*)shader)->NeedsSoftwareVertexProcessing())
+            {
+                this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
+            }
+            else if (this->GetFeatureSet() > DX7)
+            {
+                this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
+            }
+        }
     }
 }
 

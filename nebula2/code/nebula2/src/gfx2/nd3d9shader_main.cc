@@ -36,6 +36,7 @@ nD3D9Shader::nD3D9Shader() :
 #endif
     refGfxServer("/sys/servers/gfx"),
     effect(0),
+    needSoftwareVertexProcessing(false),
     hasBeenValidated(false),
     didNotValidate(false)
 {
@@ -671,7 +672,7 @@ nD3D9Shader::ValidateEffect()
         BOOL oldSoftwareVertexProcessing = this->refGfxServer->d3d9Device->GetSoftwareVertexProcessing( );
 
         // if not DX9, give it another chance with software vertex processing
-    if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
+        if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
         {
             this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing( TRUE );
             hr = this->effect->ValidateTechnique(technique);
@@ -684,6 +685,7 @@ nD3D9Shader::ValidateEffect()
                 // technique could be validated
                 this->effect->SetTechnique(technique);
                 this->didNotValidate = false;
+                this->needSoftwareVertexProcessing = true;
                 this->UpdateParameterHandles();
             }
             else
