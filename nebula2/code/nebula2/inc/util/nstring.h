@@ -51,11 +51,11 @@ public:
     /// Is `a' inequal to `b'?
     friend bool operator != (const nString& a, const nString& b);
     /// Subscript operator (read only).
-    const char operator[](int i) const;
+    const char operator[](size_t i) const;
     /// Subscript operator (writeable).
-    char& operator[](int i);
+    char& operator[](size_t i);
     /// set as char ptr, with explicit length
-    void Set(const char* ptr, int length);
+    void Set(const char* ptr, size_t length);
     /// set as char ptr
     void Set(const char* str);
     /// set as int value
@@ -69,7 +69,7 @@ public:
     /// return content as float
     float AsFloat() const;
     /// return length of string
-    int Length() const;
+    size_t Length() const;
     /// clear the string
     void Clear();
     /// return true if string object is empty
@@ -79,7 +79,7 @@ public:
     /// append string
     void Append(const nString& str);
     /// append a range of characters
-    void AppendRange(const char* str, uint numChars);
+    void AppendRange(const char* str, size_t numChars);
     /// append int value
     void AppendInt(int val);
     /// append float value
@@ -95,15 +95,15 @@ public:
     /// tokenize string into a provided nString array
     int Tokenize(const char* whiteSpace, nArray<nString>& tokens) const;
     /// extract substring
-    nString ExtractRange(int from, int to) const;
+    nString ExtractRange(size_t from, size_t to) const;
     /// terminate string at first occurence of character in set
     void Strip(const char* charSet);
     /// Index of first appearance of `v' starting from index `startIndex'.
-    int IndexOf(const nString& v, int startIndex) const;
+    size_t IndexOf(const nString& v, size_t startIndex) const;
     /// return index of character in string
-    int FindChar(unsigned char c, int startIndex) const;
+    size_t FindChar(unsigned char c, size_t startIndex) const;
     /// terminate string at given index
-    void TerminateAtIndex(int index);
+    void TerminateAtIndex(size_t index);
     /// strip slash at end of path, if exists
     void StripTrailingSlash();
     /// delete characters from charset at left side of string
@@ -151,7 +151,7 @@ protected:
     };
     char* string;
     char localString[LOCALSTRINGSIZE];
-    ushort strLen;
+    size_t strLen;
 };
 
 //------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ nString::~nString()
 */
 inline
 void
-nString::Set(const char* str, int length)
+nString::Set(const char* str, size_t length)
 {
     this->Delete();
     if (str)
@@ -210,7 +210,7 @@ nString::Set(const char* str, int length)
         {
             ptr = this->localString;
         }
-        int i;
+        size_t i;
         for (i = 0; i < strLen; i++)
         {
             *ptr++ = *str++;
@@ -226,7 +226,7 @@ inline
 void
 nString::Set(const char* str)
 {
-    int len = 0;
+    size_t len = 0;
     if (str)
     {
         len = strlen(str);
@@ -371,13 +371,13 @@ nString::operator=(const char* rhs)
 */
 inline
 void
-nString::AppendRange(const char* str, uint numChars)
+nString::AppendRange(const char* str, size_t numChars)
 {
     n_assert(str);
     if (numChars > 0)
     {
-        ushort rlen = numChars;
-        ushort tlen = this->strLen + rlen;
+        size_t rlen = numChars;
+        size_t tlen = this->strLen + rlen;
         if (this->string)
         {
             char* ptr = (char*) n_malloc(tlen + 1);
@@ -418,7 +418,7 @@ void
 nString::Append(const char* str)
 {
     n_assert(str);
-    ushort rlen = strlen(str);
+    size_t rlen = strlen(str);
     this->AppendRange(str, rlen);
 }
 
@@ -503,7 +503,7 @@ operator != (const nString& a, const nString& b)
 */
 inline
 const char
-nString::operator[](int i) const
+nString::operator[](size_t i) const
 {
     n_assert((0 <= i) && (i <= (strLen - 1)));
     if (this->string != 0)
@@ -521,7 +521,7 @@ nString::operator[](int i) const
 */
 inline
 char&
-nString::operator[](int i)
+nString::operator[](size_t i)
 {
     n_assert((0 <= i) && (i <= (strLen - 1)));
     if (this->string != 0)
@@ -538,7 +538,7 @@ nString::operator[](int i)
 /**
 */
 inline
-int
+size_t
 nString::Length() const
 {
     return this->strLen;
@@ -700,7 +700,7 @@ nString::Tokenize(const char* whiteSpace, nArray<nString>& tokens) const
 */
 inline
 nString
-nString::ExtractRange(int from, int numChars) const
+nString::ExtractRange(size_t from, size_t numChars) const
 {
     n_assert(from <= this->strLen);
     n_assert((from + numChars) <= this->strLen);
@@ -733,13 +733,13 @@ nString::Strip(const char* charSet)
     @result Index or -1 if not found.
 */
 inline
-int
-nString::IndexOf(const nString& v, int startIndex) const
+size_t
+nString::IndexOf(const nString& v, size_t startIndex) const
 {
     n_assert(0 <= startIndex && startIndex <= Length() - 1);
     n_assert(!v.IsEmpty());
 
-    for (int i = startIndex; i < Length(); i++)
+    for (size_t i = startIndex; i < Length(); i++)
     {
         if (Length() - i < v.Length())
         {
@@ -760,8 +760,8 @@ nString::IndexOf(const nString& v, int startIndex) const
     Return index of character in string, or -1 if not found.
 */
 inline
-int
-nString::FindChar(unsigned char c, int startIndex) const
+size_t
+nString::FindChar(unsigned char c, size_t startIndex) const
 {
     if (this->Length() > 0)
     {
@@ -781,7 +781,7 @@ nString::FindChar(unsigned char c, int startIndex) const
 */
 inline
 void
-nString::TerminateAtIndex(int index)
+nString::TerminateAtIndex(size_t index)
 {
     n_assert(index < this->Length());
     char* ptr = (char*) this->Get();
@@ -798,7 +798,7 @@ nString::StripTrailingSlash()
 {
     if (this->strLen > 0)
     {
-        int pos = strLen - 1;
+        size_t pos = strLen - 1;
         char* str = (char*) this->Get();
         if ((str[pos] == '/') || (str[pos] == '\\'))
         {
@@ -822,12 +822,12 @@ nString::TrimLeft(const char* charSet) const
         return *this;
     }
 
-    int charSetLen = strlen(charSet);
-    int thisIndex = 0;
+    size_t charSetLen = strlen(charSet);
+    size_t thisIndex = 0;
     bool stopped = false;
     while (!stopped && (thisIndex < this->strLen))
     {
-        int charSetIndex;
+        size_t charSetIndex;
         bool match = false;
         for (charSetIndex = 0; charSetIndex < charSetLen; charSetIndex++)
         {
@@ -868,12 +868,12 @@ nString::TrimRight(const char* charSet) const
         return *this;
     }
 
-    int charSetLen = strlen(charSet);
-    int thisIndex = this->strLen - 1;
+    size_t charSetLen = strlen(charSet);
+    size_t thisIndex = this->strLen - 1;
     bool stopped = false;
     while (!stopped && (thisIndex < this->strLen))
     {
-        int charSetIndex;
+        size_t charSetIndex;
         bool match = false;
         for (charSetIndex = 0; charSetIndex < charSetLen; charSetIndex++)
         {
@@ -922,7 +922,7 @@ nString::Substitute(const char* matchStr, const char* substStr) const
     n_assert(matchStr && substStr);
 
     const char* ptr = this->Get();
-    int matchStrLen = strlen(matchStr);
+    size_t matchStrLen = strlen(matchStr);
     nString dest;
 
     // walk original string for occurances of str
@@ -1069,7 +1069,7 @@ void
 nString::ConvertBackslashes()
 {
     char* ptr = (char*) this->Get();
-    int i;
+    size_t i;
     for (i = 0; i <= this->strLen; i++)
     {
         if (ptr[i] == '\\')
