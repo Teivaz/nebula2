@@ -9,21 +9,51 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
-#include "kernel/ntypes.h"
-#endif
 
-#ifndef N_MATH_H
-#include "mathlib/nmath.h"
-#endif
+#include "kernel/ntypes.h"
+#include "mathlib/matrix.h"
+#include "mathlib/bbox.h"
 
 //------------------------------------------------------------------------------
 class nCamera2
 {
 public:
-    /// constructor
+    /// clip status
+    enum ClipStatus 
+    {
+        Outside,
+        Inside,
+        Clipped,
+    };
+
+    /// type
+    enum Type
+    {
+        Perspective,
+        Orthogonal,
+    };
+
+    /// default constructor
     nCamera2();
-    /// set angle of view
+        /// arg constructor
+    nCamera2(float aov, float aspect, float nearp, float farp);
+    /// set perspective projection parameters
+    void SetPerspective(float aov, float aspect, float nearp, float farp);
+    /// set orthogonal projection parameters
+    void SetOrthogonal(float w, float h, float nearp, float farp);
+    /// set projection type
+    void SetType(Type t);
+    /// get projection type
+    Type GetType() const;
+    /// set view volume width (ortho only)
+    void SetWidth(float w);
+    /// get view volume width (ortho only)
+    float GetWidth() const;
+    /// set view volume height (ortho only)
+    void SetHeight(float h);
+    /// get view volume height (ortho only)
+    float GetHeight() const;
+    /// set angle of view in degree
     void SetAngleOfView(float a);
     /// get angle of view
     float GetAngleOfView() const;
@@ -39,14 +69,32 @@ public:
     void SetFarPlane(float v);
     /// set far clip plane
     float GetFarPlane() const;
+    /// get a projection matrix representing the camera
+    const matrix44& GetProjection();
+	/// get the inverse of the projection
+    const matrix44& GetInvProjection();
+    /// get a bounding box enclosing the camera
+    const bbox3& GetBox();
     // get the view volume
     void GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const;
-
+    /// check if 2 view volumes intersect
+    ClipStatus GetClipStatus(const matrix44& myTransform, const matrix44& otherViewProjection);
 private:
+    /// update the internal projection and inverse projection matrices
+    void UpdateProjInvProj();
+
+    Type type;
+    float width;
+    float height;
     float angleOfView;
     float aspectRatio;
     float nearPlane;
     float farPlane;
+    bool projDirty;
+    bool boxDirty;
+    matrix44 proj;
+    matrix44 invProj;
+    bbox3 box;
 };
 
 //------------------------------------------------------------------------------
@@ -54,10 +102,29 @@ private:
 */
 inline
 nCamera2::nCamera2() :
-    angleOfView(60.0f),
+    type(Perspective),
+    angleOfView(n_deg2rad(60.0f)),
     aspectRatio(4.0f / 3.0f),
     nearPlane(0.1f),
-    farPlane(500.0f)
+    farPlane(5000.0f),
+    projDirty(true),
+    boxDirty(true)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCamera2::nCamera2(float aov, float aspect, float nearp, float farp) :
+    type(Perspective),
+    angleOfView(n_deg2rad(aov)),
+    aspectRatio(aspect),
+    nearPlane(nearp),
+    farPlane(farp),
+    projDirty(true),
+    boxDirty(true)
 {
     // empty
 }
@@ -67,9 +134,109 @@ nCamera2::nCamera2() :
 */
 inline
 void
+nCamera2::SetPerspective(float aov, float aspect, float nearp, float farp)
+{
+    this->type = Perspective;
+    this->angleOfView = n_deg2rad(aov);
+    this->aspectRatio = aspect;
+    this->nearPlane = nearp;
+    this->farPlane = farp;
+    this->projDirty = true;
+    this->boxDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCamera2::SetOrthogonal(float w, float h, float nearp, float farp)
+{
+    this->type = Orthogonal;
+    this->width = w;
+    this->height = h;
+    this->nearPlane = nearp;
+    this->farPlane = farp;
+    this->projDirty = true;
+    this->boxDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCamera2::SetType(Type t)
+{
+    this->type = t;
+    this->projDirty = true;
+    this->boxDirty  = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCamera2::Type
+nCamera2::GetType() const
+{
+    return this->type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCamera2::SetWidth(float w)
+{
+    this->width = w;
+    this->projDirty = true;
+    this->boxDirty  = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nCamera2::GetWidth() const
+{
+    return this->width;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCamera2::SetHeight(float h)
+{
+    this->height = h;
+    this->projDirty = true;
+    this->boxDirty  = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nCamera2::GetHeight() const
+{
+    return this->height;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nCamera2::SetAngleOfView(float a)
 {
-    this->angleOfView = a;
+    this->angleOfView = n_deg2rad(a);
+    this->projDirty = true;
+    this->boxDirty  = true;
 }
 
 //------------------------------------------------------------------------------
@@ -79,7 +246,7 @@ inline
 float
 nCamera2::GetAngleOfView() const
 {
-    return this->angleOfView;
+    return n_rad2deg(this->angleOfView);
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +257,8 @@ void
 nCamera2::SetAspectRatio(float r)
 {
     this->aspectRatio = r;
+    this->projDirty = true;
+    this->boxDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -110,6 +279,8 @@ void
 nCamera2::SetNearPlane(float v)
 {
     this->nearPlane = v;
+    this->projDirty = true;
+    this->boxDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -130,6 +301,8 @@ void
 nCamera2::SetFarPlane(float v)
 {
     this->farPlane = v;
+    this->projDirty = true;
+    this->boxDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -170,6 +343,139 @@ nCamera2::GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, 
     maxy = c;
     minz = this->nearPlane;
     maxz = this->farPlane;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Update the internal projection and inverse projection matrix
+    and clear the projDirty flag.
+*/
+inline
+void
+nCamera2::UpdateProjInvProj()
+{
+    n_assert(this->projDirty);
+    this->projDirty = false;
+    if (Perspective == this->type)
+    {
+        this->proj.perspFovRh(this->angleOfView, this->aspectRatio, this->nearPlane, this->farPlane);
+    }
+    else
+    {
+        this->proj.orthoRh(this->width, this->height, this->nearPlane, this->farPlane);
+    }
+    this->invProj = proj;
+    this->invProj.invert();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the projection matrix representing the camera. This will only
+    recompute the matrix if it is marked as dirty. The returned matrixed
+    is identical to the result of D3DXMatrixPerspectiveFovRH() (see DX9
+    docs for details).
+*/
+inline
+const matrix44&
+nCamera2::GetProjection()
+{
+    if (this->projDirty)
+    {
+        this->UpdateProjInvProj();
+    }
+    return this->proj;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the inverse of the projection matrix.
+*/
+inline
+const matrix44&
+nCamera2::GetInvProjection()
+{
+    if (this->projDirty)
+    {
+        this->UpdateProjInvProj();
+    }
+    return this->invProj;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Check if 2 view volumes intersect.
+*/
+inline
+nCamera2::ClipStatus 
+nCamera2::GetClipStatus(const matrix44& myTransform, const matrix44& otherViewProjection)
+{
+    // compute matrix which transforms my local hull into
+    // projection space of the other camera
+    matrix44 invProjModelViewProj = this->GetInvProjection() * myTransform * otherViewProjection;
+
+    // compute clip code of hull
+    int andFlags = 0xffff;
+    int orFlags  = 0;
+    int i;
+    vector4 v0(0.0f, 0.0f, 0.0f, 1.0f);
+    vector4 v1;
+    for (i = 0; i < 8; i++)
+    {
+        if (i & 1) v0.x = -1.0f;
+        else       v0.x = +1.0f;
+        if (i & 2) v0.y = -1.0f;
+        else       v0.y = +1.0f;
+        if (i & 3) v0.z = 0.0f;
+        else       v0.z = +1.0f;
+
+        v1 = invProjModelViewProj * v0;
+        int clip = 0;
+        if (v1.x < -v1.w)       clip |= (1<<0);
+        else if (v1.x > v1.w)   clip |= (1<<1);
+        if (v1.y < -v1.w)       clip |= (1<<2);
+        else if (v1.y > v1.w)   clip |= (1<<3);
+        if (v1.z < -v1.w)       clip |= (1<<4);
+        else if (v1.z > v1.w)   clip |= (1<<5);
+        andFlags &= clip;
+        orFlags  |= clip;
+    }
+    if (0 == orFlags)       return Inside;
+    else if (0 != andFlags) return Outside;
+    else                    return Clipped;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the bounding box enclosing the view frustum defined by the camera.
+*/
+inline
+const bbox3&
+nCamera2::GetBox()
+{
+    if (this->boxDirty)
+    {
+        this->boxDirty = false;
+        if (Perspective == this->type)
+        {
+            float tanAov = float(tan(this->angleOfView * 0.5f));
+            this->box.vmin.z = this->nearPlane;
+            this->box.vmax.z = this->farPlane;
+            this->box.vmax.y = tanAov * this->farPlane;     // ??? -> tanAov * (this->farPlane - this->nearPlane);
+            this->box.vmin.y = -this->box.vmax.y;
+            this->box.vmax.x = this->box.vmax.y * this->aspectRatio;
+            this->box.vmin.x = -this->box.vmax.x;
+        }
+        else
+        {
+            this->box.vmin.x = -this->width * 0.5f;
+            this->box.vmin.y = -this->height * 0.5f;
+            this->box.vmin.z = -1000000.0f;
+            this->box.vmax.x = this->width * 0.5f;
+            this->box.vmax.y = this->height * 0.5f;
+            this->box.vmax.z = 1000000.0f;
+        }
+    }
+    return this->box;
 }
 
 //------------------------------------------------------------------------------
