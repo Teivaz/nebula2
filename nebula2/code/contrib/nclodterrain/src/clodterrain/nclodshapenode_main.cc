@@ -580,7 +580,6 @@ public:
                 }
                 drapematrix.set_translation(-chunkorigin);
                 drapematrix.scale(chunkscale);
-                detailmatrix.scale(vector3(0.1f,0.1f,0.1f));
 
                 n_assert(splatshader->IsParameterUsed(nShader2::Height));
                 n_assert(splatshader->IsParameterUsed(nShader2::TextureTransform0));
@@ -588,7 +587,6 @@ public:
 
                 splatshader->SetFloat(nShader2::Height, morphscale);
                 splatshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
-                splatshader->SetMatrix(nShader2::TextureTransform1, detailmatrix);
 
                 if (tiledchunk->tiledata->GetNumTextures() > 1)
                 {
@@ -686,7 +684,8 @@ nCLODShapeNode::nCLODShapeNode() :
     quadtreeDepth(0),
     terrainFile(NULL),
     tqtFile(NULL),
-    screenError(2.5)
+    screenError(2.5),
+    detailScaling(0.1)
 {
 }
 
@@ -1067,12 +1066,15 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     nCLODQuadTreeNode *rootchunk = this->quadtreeChunks[0];
     nShader2 *terrainshader = gfx->GetShader();
     // set texture transform to drape the texture over the terrain
-    matrix44 drapematrix;
+    n_assert(terrainshader->IsParameterUsed(nShader2::TextureTransform0));
+    n_assert(terrainshader->IsParameterUsed(nShader2::TextureTransform1));
+    matrix44 drapematrix, detailmatrix;
     vector3 terrextents(this->terrainBounds.extents());
     vector3 texturescale(0.5f/terrextents.x, 0.5f/terrextents.y, 1.0f);
     drapematrix.scale(texturescale);
-    n_assert(terrainshader->IsParameterUsed(nShader2::TextureTransform0));
     terrainshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
+    detailmatrix.scale(vector3(detailScaling, detailScaling, detailScaling));
+    terrainshader->SetMatrix(nShader2::TextureTransform1, detailmatrix);
 
     if (rootchunk->IsValidChunk())
     {
@@ -1322,6 +1324,25 @@ void nCLODShapeNode::EndDetailTextures()
     }
 }
 
+
+/**
+ * @brief Set scaling of the detail image
+ *
+ * All detail images are mapped via texture generation, where a vertex (x,y) coordinate is mapped directly into
+ * a (u,v) coordinate.  If you have a large distance between points of your heightfield, this can result in a high
+ * repetition of the detail texture and very obvious tiling.  If you want to strech out the detail textures to avoid a
+ * tiled appearance, reduce this number to 0.1 or maybe 0.01
+ */
+void nCLODShapeNode::SetDetailScale(double detailscale)
+{
+    this->detailScaling = detailscale;
+}
+
+/// Get current scaling of the detail images
+double nCLODShapeNode::GetDetailScale() const
+{
+    return this->detailScaling;
+}
 
 //------------------------------------------------------------------------------
 /**

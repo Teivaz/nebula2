@@ -18,6 +18,8 @@ static void n_getcollisionspace(void *slf, nCmd *cmd);
 static void n_begindetailtextures(void *slf, nCmd *cmd);
 static void n_setdetailtexture(void *slf, nCmd *cmd);
 static void n_enddetailtextures(void *slf, nCmd *cmd);
+static void n_setdetailscale(void *slf, nCmd *cmd);
+static void n_getdetailscale(void *slf, nCmd *cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -50,6 +52,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_begindetailtextures_i",       'BDTX', n_begindetailtextures);
     cl->AddCmd("v_setdetailtexture_is",         'SDTX', n_setdetailtexture);
     cl->AddCmd("v_enddetailtextures_v",         'EDTX', n_enddetailtextures);
+    cl->AddCmd("v_setdetailscale_f",          'SDSC', n_setdetailscale);
+    cl->AddCmd("v_getdetailscale_f",          'GDSC', n_getdetailscale);
     cl->EndCmds();
 }
 
@@ -297,6 +301,42 @@ n_enddetailtextures(void* slf, nCmd* cmd)
     self->EndDetailTextures();
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setdetailscale
+    @input
+    f (scale)
+    @output
+    v
+    @info
+    Set the scaling of detail textures; texture (u,v) is equal to vertex (x,y) * scale
+*/
+static void
+n_setdetailscale(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetDetailScale(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getdetailscale
+    @input
+    v
+    @output
+    f (scale)
+    @info
+    Get the scaling of detail textures; texture (u,v) is equal to vertex (x,y) * scale
+*/
+static void
+n_getdetailscale(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetF((float)self->GetDetailScale());
+}
 
 //------------------------------------------------------------------------------
 /**
