@@ -166,7 +166,7 @@ n_setrotatespeed(void* slf, nCmd* cmd)
 }
 //------------------------------------------------------------------------------
 /**
-    @param  fileServer  writes the nCmd object contents out to a file.
+    @param  ps          writes the nCmd object contents out to a file.
     @return             success or failure
 */
 bool
