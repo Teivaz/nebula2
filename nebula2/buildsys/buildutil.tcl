@@ -27,6 +27,8 @@
 #
 #--------------------------------------------------------------------
 
+global modulename_to_sortedindex
+
 #--------------------------------------------------------------------
 #   addtolist dest_list $list
 #
@@ -186,6 +188,30 @@ proc findwspacebyname {name} {
 #  sort_mods $modname_list
 #
 #  Sorts mods for nRoot init dependence based on generated ancestors.
+#--------------------------------------------------------------------
+
+proc sort_mods { orig_list } {
+    global modulename_to_sortedindex
+    
+    set sort_indices ""
+    foreach mname $orig_list {
+        lappend sort_indices [list $modulename_to_sortedindex($mname) $mname]
+    }
+    
+    # now grab sorted names
+    set sorted_list ""
+    foreach i [lsort -unique -integer -index 0 $sort_indices] {
+        set index [lindex $i 0]
+        set name [lindex $i 1]
+        lappend sorted_list $name
+    }
+    return $sorted_list    
+}
+
+#--------------------------------------------------------------------
+#  sort_mods_old $modname_list
+#
+#  Sorts mods for nRoot init dependence based on generated ancestors.
 #  non nRoot derived modules (generated) are placed first in the list
 #  in all cases, but are not removed so that validation routines may
 #  use this data
@@ -193,7 +219,7 @@ proc findwspacebyname {name} {
 #  CAVEAT:  This does not sort modules based on setmoddepends{}
 #           dependencies.
 #--------------------------------------------------------------------
-proc sort_mods { orig_list } {
+proc sort_mods_old { orig_list } {
     global mod
     global num_mods
 

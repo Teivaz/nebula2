@@ -24,6 +24,7 @@
 #    fixworkspaces
 #----------------------------------------------------------------------------
 
+global modulename_to_sortedindex
 
 #============================================================================
 #  Modules generation
@@ -158,11 +159,14 @@ proc gen_filelists {i} {
 proc fixmods { } {
     global mod
     global num_mods
+    global modulename_to_sortedindex
 
     ::log::log info "\n**** Fixing modules"
 
+    set lmods ""
     for {set i 0} {$i < $num_mods} {incr i} {
          ::log::log debug "  $mod($i,name)"
+         lappend lmods $mod($i,name)
          gen_filelists $i
          gen_ancestor $i
 
@@ -178,7 +182,13 @@ proc fixmods { } {
              findmodbyname $moddep
          }
     }
-
+    
+    set sorted_mods [sort_mods_old $lmods]
+    set len_smods [llength $sorted_mods]
+    for {set i 0} {$i < $len_smods} {incr i} {
+        set modname [lindex $sorted_mods $i]
+        array set modulename_to_sortedindex [list $modname $i]
+    }
 }
 
 
