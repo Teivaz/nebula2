@@ -442,15 +442,15 @@ void nLuaServer::AddClassToCache(lua_State* L, nClass* clazz)
         protoList = clazz->GetCmdList();
         if ( protoList )
         {
-			cmdProto = (nCmdProto*)protoList->GetHead();
-			for (; cmdProto; cmdProto = (nCmdProto*)cmdProto->GetSucc()) 
-			{
-				lua_pushstring(L, cmdProto->GetName());
-				lua_pushlightuserdata(L, cmdProto);
-				lua_pushcclosure(L, luacmd_CmdDispatch, 1);
-				lua_settable(L, -3);
-			}
-		}
+            cmdProto = (nCmdProto*)protoList->GetHead();
+            for (; cmdProto; cmdProto = (nCmdProto*)cmdProto->GetSucc()) 
+            {
+                lua_pushstring(L, cmdProto->GetName());
+                lua_pushlightuserdata(L, cmdProto);
+                lua_pushcclosure(L, luacmd_CmdDispatch, 1);
+                lua_settable(L, -3);
+            }
+        }
     } while ((clazz = clazz->GetSuperClass()));
         
     // store table in the global class cache
@@ -556,9 +556,13 @@ void nLuaServer::RemoveThunk(lua_State* L, void* key)
 //--------------------------------------------------------------------
 /**
     @brief Simply unwraps a thunk for a passable nRoot* value.
+    @param L
+    @param tableidx The absolute stack index of the table.
 */
 nRoot* nLuaServer::UnpackThunkRoot( lua_State* L, int tableidx )
 {
+    n_assert( tableidx > 0 );
+    
     // push the key on and see what we get back
     // make sure this doesn't chump with the metatables
     nRoot* root;
@@ -592,8 +596,13 @@ bool nLuaServer::StackToInArgs(lua_State* L, nCmd* cmd)
     cmd->Rewind();
     nArg* narg;
     int numArgs = cmd->GetNumInArgs();
+    if (numArgs < 1)
+        return true;
+    int top = lua_gettop(L);
+    // compute the stack index of the first cmd arg
+    int i = top - numArgs + 1;
     // loop through and pack it all in
-    for (int i = -numArgs; i < 0; i++)
+    for ( ; i <= top; i++)
     {
         // get the arg prepped
         narg = cmd->In();
@@ -895,11 +904,12 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
 /**
   @brief Convert a value from the LUA stack to an nArg of the 
   specified type.
-  @param index The index of the value to convert.
+  @param index The absolute stack index of the value to convert.
   @return True if arg was successfuly retrieved and converted.
 */
 bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
 {
+    n_assert( index > 0 );
     switch (arg->GetType())
     {
         case nArg::Int:
