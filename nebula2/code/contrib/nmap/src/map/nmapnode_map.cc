@@ -39,7 +39,7 @@ nMapNode::ProcessMap()
     // Initialise octree
     if (!mapQuadtree)
     {
-        mapQuadtree = n_new MapQuadtree(refMap);
+        mapQuadtree = n_new(MapQuadtree(refMap));
     }
     else // Remove existing
     {
@@ -48,14 +48,14 @@ nMapNode::ProcessMap()
 
     // Create blocks
     numBlocks = (map_size - 1)/(blockSize - 1);
-    blockArray = n_new MapBlock**[numBlocks];
+    blockArray = n_new_array(MapBlock**, numBlocks);
     for (int j = 0; j < numBlocks; ++j)
     {
-        blockArray[j] = n_new MapBlock*[numBlocks];
+        blockArray[j] = n_new_array(MapBlock*, numBlocks);
 
         for (int i = 0; i < numBlocks; ++i)
         {
-            MapBlock* block = n_new MapBlock(this);
+            MapBlock* block = n_new(MapBlock(this));
             block->Init(this->resourceLoader, refGfxServer, i + j*numBlocks, i, j);
 
             MapQuadElement* oct_elm = block->GetQuadElement();
@@ -158,11 +158,11 @@ nMapNode::DeleteBlocks()
                 MapQuadElement* oct_elm = block->GetQuadElement();
                 mapQuadtree->RemElement(oct_elm);
 
-                n_delete block;
+                n_delete(block);
             }
-            n_delete[] blockArray[j];
+            n_delete_array(blockArray[j]);
         }
-        n_delete[] blockArray;
+        n_delete_array(blockArray);
         blockArray = 0;
     }
 }
