@@ -586,7 +586,7 @@ dJointID JointCreateAMotor( dWorldID world, dJointGroupID group )
 }
 
 inline
-void JointDestroy( dJointID id ) { return dJointDestroy( id ); }
+void JointDestroy( dJointID id ) { dJointDestroy( id ); }
 
 inline
 dJointGroupID JointGroupCreate( int max_size ) { dJointGroupCreate( max_size ); }
@@ -1217,7 +1217,7 @@ matrix33 GeomGetRotation( dGeomID g )
 inline
 void GeomGetRotation( dGeomID g, matrix33& out )
 {
-    return nOpendeMarshal::dRealPointer_2_matrix33( dGeomGetRotation( g ), out );
+    nOpendeMarshal::dRealPointer_2_matrix33( dGeomGetRotation( g ), out );
 }
 
 inline
