@@ -105,7 +105,7 @@ void CCSkinData::Init( nRenderContext& renderContext )
         m_pRenderContext->AddVariable( stateVar );
         m_pSkinAnimatorStateVar = m_pRenderContext->GetVariable( channelHandle );
 
-        char* weightChannelName;
+        const char* weightChannelName;
         m_rSkinAnimator->GetClipAt( initialAnimState, 0, weightChannelName );
         const nVariable weightVar( nVariableServer::Instance()->GetVariableHandleByName( weightChannelName ), 1.0f );
         m_pRenderContext->AddVariable( weightVar );
