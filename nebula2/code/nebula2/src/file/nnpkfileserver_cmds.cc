@@ -30,12 +30,15 @@ n_initcmds(nClass* cl)
 /**
     @cmd
     parsedirectory
+
     @input
     s(AbsDirName)
+
     @output
     i(NumberOfNpkFilesInDir)
+
     @info
-    Parse a directory for npk files, and add the files to the internal\
+    Parse a directory for npk files, and add the files to the internal
     list of managed files.
 */
 static
