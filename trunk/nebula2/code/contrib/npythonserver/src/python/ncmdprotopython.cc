@@ -31,7 +31,8 @@ nCmdProtoPython::nCmdProtoPython(const nCmdProtoPython& rhs)
     @param obj pointer to nebula object(derives nRoot)
     @cmd pointer to nCmd which contains in-args and out-args.
 */
-bool nCmdProtoPython::Dispatch(void* obj, nCmd* cmd)
+bool
+nCmdProtoPython::Dispatch(void* obj, nCmd* cmd)
 {
     const char* result;
     const char* funcName = cmd->GetProto()->GetName();

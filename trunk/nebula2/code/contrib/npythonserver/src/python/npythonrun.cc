@@ -18,7 +18,8 @@
 
     @return 
 */
-nString nPythonServer::Prompt()
+nString
+nPythonServer::Prompt()
 {
     nString prompt = kernelServer->GetCwd()->GetFullName();
     prompt.Append("> ");
@@ -33,12 +34,14 @@ nString nPythonServer::Prompt()
     @param result
     @return 
 */
-bool nPythonServer::Run(const char *cmdStr, const char*& result)
+bool
+nPythonServer::Run(const char *cmdStr, const char*& result)
 {
     return this->Run(cmdStr, Py_single_input, result);
 }
 
-PyObject *NArg2PyObject(nArg *a) 
+PyObject*
+NArg2PyObject(nArg *a) 
 {
     switch (a->GetType())
     {
@@ -67,7 +70,8 @@ PyObject *NArg2PyObject(nArg *a)
     @param c
     @return 
 */
-bool nPythonServer::RunCommand(nCmd *c) 
+bool
+nPythonServer::RunCommand(nCmd *c) 
 {
     c->Rewind();
     int len = c->GetNumInArgs();
@@ -101,9 +105,9 @@ bool nPythonServer::RunCommand(nCmd *c)
     @param result
     @return 
 */
-bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
+bool
+nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
 {
-    // buffer was to small :(
     char buffer[1<<12];
     PyObject *module_dict;
     PyObject *main_module_dict;
@@ -131,8 +135,7 @@ bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
         if (output == Py_None)
         {
             Py_DECREF(output);
-            strcpy(&buffer[0], "");   // TODO: More elegant solution here
-            result = (const char*)&buffer[0];
+            result = "";
             retval = true;
         }
         else
@@ -154,12 +157,8 @@ bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
         exception = PyErr_Occurred();
         if (exception)
         {
-            PyObject* temp;
-            temp = PyObject_Str(exception);
-            strcpy(&buffer[0], PyString_AsString(temp));
-            result = (const char*)&buffer[0];
-            Py_DECREF(temp);
             PyErr_Print();
+            result = "Problem running script! See the log file for details.";
         }
         retval = false;
     }
@@ -175,10 +174,9 @@ bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
     @param result
     @return 
 */
-bool nPythonServer::RunScript(const char *filename, const char*& result)
+bool
+nPythonServer::RunScript(const char *filename, const char*& result)
 {
-    //char filename_buf[N_MAXPATH];
-    char buffer[1024];
     char *exec_str;
     int success = 0;
     result = NULL;
@@ -189,7 +187,6 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
     PyRun_SimpleString("from pynebula import *");
 
     // Open file
-    //nFileServer2* file2 = kernelServer->GetFileServer();
     nFileServer2* file2 = nFileServer2::Instance();
     nString fname = file2->ManglePath(filename);
     nFile* file = file2->NewFileObject();
@@ -215,10 +212,11 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
         if (success == -1) 
         {
             // interpreter exits due to an exception
-            strcpy(&buffer[0], "Problem running script!");
-            if(PyErr_Occurred())
+            if (PyErr_Occurred())
+            {
                 PyErr_Print();
-            result = (const char*)&buffer[0];
+            }
+            result = "Problem running script! See the log file for details.";
             return false;
         }
     }
@@ -236,7 +234,8 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
 /**
     @brief Invoke a Python function.
 */
-bool nPythonServer::RunFunction(const char *funcName, const char*& result)
+bool
+nPythonServer::RunFunction(const char *funcName, const char*& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");
@@ -251,7 +250,8 @@ bool nPythonServer::RunFunction(const char *funcName, const char*& result)
 
     TODO: Add time delta calculation and pass the delta as an argument
 */
-bool nPythonServer::Trigger(void)
+bool
+nPythonServer::Trigger(void)
 {
     PyObject *result = NULL;
     PyObject *delta  = NULL;
@@ -262,10 +262,14 @@ bool nPythonServer::Trigger(void)
         Py_XDECREF(delta);
 
         if (result == NULL)
-          // TODO: Report a traceback
-          return false;
+        {
+            // TODO: Report a traceback
+            return false;
+        }
         else
-          Py_XDECREF(result);
+        {
+            Py_XDECREF(result);
+        }
     }
 
     // Let's see what the rest of the trigger system has to say
