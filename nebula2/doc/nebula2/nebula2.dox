@@ -20,14 +20,14 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
 
 @section Nebula2IntroSystems Systems
 
-  - @ref NebulaKernel
+  - @ref Kernel
   - @ref NebulaResourceSystem
   - @ref NebulaGraphicsSystem
   - @ref NebulaInputSystem
-  - @ref NebulaSceneSystem
+  - @ref Scene
   - @ref NebulaAnimationSystem
   - @ref NebulaParticleSystem
-  - @ref NebulaGuiSystem
+  - @ref Gui
   - @ref NebulaAudioSystem
 
   See also @ref NebulaContribModules.
@@ -84,7 +84,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
     "script server" also allows objects to be saved out in a compact,
     efficient binary representation that can be loaded quickly.
 
-  - @ref NebulaGuiSystem: Nebula 2 provides a full blown system for providing
+  - @ref Gui: Nebula 2 provides a full blown system for providing
     themeable user interfaces within the game.
     
 @section Nebula2IntroHistorical Historical Documents

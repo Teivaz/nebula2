@@ -1,5 +1,5 @@
 /**
-    @page NebulaStructure Structure of Nebula2
+    @page Nebula2Structure Structure of Nebula2
 
     The design concept of Nebula2 structure is based on operating 
     system's structure.
@@ -13,14 +13,14 @@
     As shown in the figure, the Nebula2 game operating system is
     consists of three layers:
 
-     - <b>Kernel layer</b> that create Nebula object and work of kernel level tasks
-       (such as memory management, threading, timer and so on.)
+     - <b>Kernel layer</b> that create Nebula object and work of kernel level
+       tasks (such as memory management, threading, timer and so on.)
      - <b>Server layer</b> consisting of a number of servers that each handle
        the low-level work of common tasks (such as rendering, handling input,
        running script and so on) 
-     - <b>Nebula Class layer</b> which gives programming interface to specific tasks 
-       (such as transformation, meshes, particles, animations, textures and 
-        shaders etc.)
+     - <b>Nebula Class layer</b> which gives programming interface to specific
+       tasks (such as transformation, meshes, particles, animations, textures
+       and shaders etc.)
 
     @image html n2structure.jpg "Nebula2 Sturucture"
     
@@ -31,10 +31,10 @@
     <i>memory management, timer, threading, file system, creating and releasing 
     object</i> (creating and killing process in operating system) and so on.
 
-    As like kernel is loaded at first when the boot time, Nebula kernel should be
-    created at first when application runs.
+    As like kernel is loaded at first when the boot time, Nebula kernel should
+    be created at first when application runs.
 
-    See @ref NebulaKernel page for more details about Nebula kernel. 
+    See @ref Kernel page for more details about Nebula kernel. 
 
     @section NebulaStructureServer Server
 
@@ -42,13 +42,14 @@
     As like client-server system, Nebula server layer is consists of several 
     number of servers and each server provides it's service.
     By splitting the game engine up into parts, each of which only handles 
-    one facet of the system. This leads that each part becomes <i>small</i> and 
-    <i>manageable</i>. 
-    One of the good thing to do this is that it makes the architecture
-    of engine to be modular. 
+    one facet of the system. This leads that each part becomes <i>small</i>
+    and <i>manageable</i>.  One of the good thing to do this is that it
+    makes the architecture of engine to be modular. 
+
     It is prefered to rewrite from bottom to up, instead of maintain
     a large system or module for a long period of time cause it is
-    more easy and time saving way. The modula feature of Nebula enables to do it.
+    more easy and time saving way. The modula feature of Nebula enables
+    to do it.
 
     @note The feature, <i>modular</i>, is not the concept only limitted to 
     the server layer.
