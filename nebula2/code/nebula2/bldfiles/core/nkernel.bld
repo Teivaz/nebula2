@@ -11,6 +11,7 @@
 #      nroot
 #      nenv
 #      nremoteserver
+#      nipc
 #      nkernel
 #  Targets:
 #      nkernel
