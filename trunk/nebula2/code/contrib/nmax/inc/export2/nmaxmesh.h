@@ -57,6 +57,7 @@ public:
     const nMeshBuilder& GetLocalMeshBuilder();
 
     static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
+    static void CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename);
 
 protected:
     Mesh* LockMesh(INode* node);

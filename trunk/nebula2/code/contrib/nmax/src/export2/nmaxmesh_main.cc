@@ -22,8 +22,8 @@
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
 #include "tinyxml/tinyxml.h"
-
 #include "scene/nattachmentnode.h"
 #include "scene/nskinshapenode.h"
 #include "scene/nshadowskinshapenode.h"
@@ -1224,14 +1224,18 @@ void nMaxMesh::SetMeshFile(nShapeNode* shapeNode, nString &nodeName, bool useInd
 {
     if (useIndivisualMesh)
     {
-        this->localMeshBuilder.Cleanup(0);
-
-        BuildMeshTangentNormals(this->localMeshBuilder);
-
         nString filename;
         filename += nMaxOptions::Instance()->GetMeshesPath();
         filename += nMaxUtil::CorrectName(nodeName);
         filename += nMaxOptions::Instance()->GetMeshFileType();
+
+        // remove redundant vertices.
+        this->localMeshBuilder.Cleanup(0);
+
+        // build mesh tangents and normals (also vertex normal if it does not exist)
+        BuildMeshTangentNormals(this->localMeshBuilder);
+
+        CheckGeometryErrors(this->localMeshBuilder, filename.Get());
 
         this->localMeshBuilder.Optimize(); //TODO!
         this->localMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
@@ -1340,4 +1344,46 @@ bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
     }
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Check the validation of the given mesh builder and put the error log to
+    log file if any of it exist.
+
+    @param meshBuilder the mesh builder which to check the geometry errors.
+    @param filename .n3d2 (or .nvx2) mesh file name which to be saved.
+*/
+void nMaxMesh::CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename)
+{
+    nArray<nString> geomErrorMsgArray;
+    geomErrorMsgArray = meshBuilder.CheckForGeometryError();
+    if (geomErrorMsgArray.Size())
+    {
+        nString errlogfilename;
+        errlogfilename += nMaxOptions::Instance()->GetMeshesAssign();
+        errlogfilename += nMaxOptions::Instance()->GetSaveFileName();
+        errlogfilename += ".error";
+
+        n_maxlog(Warning, "Warning: The exported mesh file '%s' has geometry errors.", filename);
+        n_maxlog(Warning, "    - See the file '%s' for the details.", errlogfilename.Get());
+
+        nFile* errFile = nFileServer2::Instance()->NewFileObject();
+        if (errFile->Open(errlogfilename.Get(), "w"))
+        {
+            // put the geometry error message to log dialog.
+            for (int i=0; i<geomErrorMsgArray.Size(); i++)
+            {
+                errFile->PutS(geomErrorMsgArray[i].Get());
+            }
+
+            errFile->Close();
+            errFile->Release();
+        }
+        else
+        {
+            n_maxlog(Error, "Error: Failed to open error log file '%s for the geometry errrs.", errlogfilename.Get());
+            errFile->Release();
+        }
+    }
 }

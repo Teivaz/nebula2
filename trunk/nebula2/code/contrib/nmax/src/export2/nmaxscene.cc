@@ -24,6 +24,8 @@
 #include "export2/nmaxskinpartitioner.h"
 #include "export2/nmaxanimator.h"
 
+#include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
 #include "kernel/npersistserver.h"
 #include "variable/nvariableserver.h"
 #include "scene/ntransformnode.h"
@@ -385,21 +387,24 @@ bool nMaxScene::Postprocess()
 
     if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
-        // remove redundant vertices.
-        this->globalMeshBuilder.Cleanup(0);
-
-        // build mesh tangents.
-        nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
-        
-        // specifies bounding box.
-        rootBBox = globalMeshBuilder.GetBBox();
-
-        // save mesh data.
         nString filename;
         filename += nMaxOptions::Instance()->GetMeshesAssign();
         filename += nMaxOptions::Instance()->GetSaveFileName();
         filename += nMaxOptions::Instance()->GetMeshFileType();
 
+        // remove redundant vertices.
+        this->globalMeshBuilder.Cleanup(0);
+
+        // build mesh tangents and normals (also vertex normal if it does not exist)
+        nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
+        
+        // check the mesh for geometry error.
+        nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
+
+        // specifies bounding box.
+        rootBBox = globalMeshBuilder.GetBBox();
+
+        // save mesh data.
         this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
     }
     else
@@ -491,10 +496,6 @@ bool nMaxScene::ExportNodes(INode* inode)
 
     TimeValue animStart = nMaxInterface::Instance()->GetAnimStartTime();
 
-    // export animation if it exist.
-    nMaxAnimator animator;
-    animator.Export(inode);
-
     ObjectState objState = inode->EvalWorldState(animStart);
     Object* obj = objState.obj;
 
@@ -525,8 +526,6 @@ bool nMaxScene::ExportNodes(INode* inode)
             {
                 //FIXME: need more appropriate way.
                 //Check the given node is hidden and we even export hidden node or not.
-                //bool exportHidden = true;
-                //bool exportHidden = inode->IsNodeHidden() ? true : false;
                 bool exportHidden = nMaxOptions::Instance()->ExportHiddenNodes();
 
                 // export only renderable geometry objects from the scene.
@@ -555,7 +554,13 @@ bool nMaxScene::ExportNodes(INode* inode)
     // we neeed to export it.
     if (createdNode)
     {
-        //HACK: is that sure the 'createNode' param is nTransformNode type?
+        //HACK: is that sure the 'createNode' param is nTransformNode type or its derive class?
+
+        // export animation if it exist.
+        nMaxAnimator animator;
+        animator.Export(inode);
+
+        // export xform.
         this->ExportXForm(inode, createdNode, animStart);
     }
 
