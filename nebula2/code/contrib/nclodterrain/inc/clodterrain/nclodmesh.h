@@ -6,7 +6,6 @@
     @ingroup nCLODTerrain
 */
 #include "resource/nresource.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/nmeshgroup.h"
 #include "gfx2/nmesh2.h"
 

@@ -38,7 +38,7 @@ void nCLODSplat::DrawSplat(nGfxServer2 *gfx2, int splatindex) const
     n_assert(meshData.isvalid());
 
     // render the mesh in normal mode (always at stream 0)
-    gfx2->SetMesh(0, this->meshData.get());
+    gfx2->SetMesh(this->meshData.get());
 
     // map from splatindex to a specific group
 /*    int mappedsplatindex = -1;
@@ -60,9 +60,9 @@ void nCLODSplat::DrawSplat(nGfxServer2 *gfx2, int splatindex) const
     gfx2->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
     // strip or triangle list?
     if (mappedsplatindex == 0)
-        gfx2->DrawIndexed(TriangleStrip);
+        gfx2->DrawIndexedNS(nGfxServer2::TriangleStrip);
     else
-        gfx2->DrawIndexed(TriangleList);
+        gfx2->DrawIndexedNS(nGfxServer2::TriangleList);
 }
 
 

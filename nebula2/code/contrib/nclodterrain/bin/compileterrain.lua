@@ -1,4 +1,6 @@
 --
+-- $parser:nluaserver$ $class:ntransformnode$
+--
 -- lua script to chunk up heightfield data and compile collision chunks
 --
 --(C) Copyright 2004 Gary Haussmann

@@ -6,6 +6,8 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
+#include "gui/nguiwindow.h"
+#include "gui/nguilabel.h"
 
 #include "opende/nopendespheregeom.h"
 #include "opende/nopendeboxgeom.h"
@@ -50,8 +52,10 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 /**
 */
 nODEViewerApp::nODEViewerApp(nKernelServer* ks) :
+    startupScript("home:code/contrib/nclodterrain/bin/startup.lua"),
     kernelServer(ks),
     isOpen(false),
+    isOverlayEnabled(false),
     camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
     controlMode(Fly),
     defViewerPos(240.0f, 50.0f, 100.0f),
@@ -63,7 +67,8 @@ nODEViewerApp::nODEViewerApp(nKernelServer* ks) :
     viewerPos(defViewerPos),
     viewerVelocity(50.0f),
     viewerAngles(defViewerAngles),
-    viewerZoom(defViewerZoom)
+    viewerZoom(defViewerZoom),
+    screenshotID(0)
 {
     // empty
 }
@@ -88,15 +93,22 @@ nODEViewerApp::Open()
     n_assert(!this->isOpen);
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)    kernelServer->New("nluaserver", "/sys/servers/script");
+    this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)     kernelServer->New("nstdsceneserver", "/sys/servers/scene");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
     this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
+    this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+
+    // set the gfx server feature set override
+    if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
+    {
+        this->refGfxServer->SetFeatureSetOverride(this->featureSetOverride);
+    }
 
     // initialize the proj: assign
     if (this->GetProjDir())
@@ -108,23 +120,53 @@ nODEViewerApp::Open()
         kernelServer->GetFileServer()->SetAssign("proj", kernelServer->GetFileServer()->GetAssign("home"));
     }
 
-    // define the simple input mapping
-    this->DefineInputMapping();
-
     // create scene graph root node
     this->refRootNode = (nTransformNode*) kernelServer->New("ntransformnode",  "/usr/scene");
 
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("nodeviewer");
 
+
+    // run startup script
+    if (this->GetStartupScript())
+    {
+        const char* result;
+        this->refScriptServer->RunScript(this->GetStartupScript(), result);
+    }
+
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
 
-    // load the clod-specific startup.lua script
-    const char* result;
-    this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/startup.lua", result);
+    // define the input mapping
+    if (NULL != this->GetInputScript())
+    {
+        const char* result;
+        this->refScriptServer->RunScript(this->GetInputScript(), result);
+    }
+
+    // initialize gui
+    this->refGuiServer->SetRootPath("/gui");
+    this->refGuiServer->Open();
+    if (this->isOverlayEnabled)
+    {
+        this->InitOverlayGui();
+    }
+
+    this->InitDynamics();  // must create the spaces for geoms to inhabit before running the scene script!
+
+    if (this->GetSceneFile())
+    {
+        // load the stage (normally stdlight.lua)
+        const char* result;
+        this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/stdlight.lua", result);
+
+        // load the object to look at
+        kernelServer->PushCwd(this->refRootNode.get());
+        kernelServer->Load(this->GetSceneFile());
+        kernelServer->PopCwd();
+    }
 
     // initialize the main render context
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
@@ -137,28 +179,8 @@ nODEViewerApp::Open()
     this->renderContext.SetRootNode(this->refRootNode.get());
     this->refRootNode->RenderContextCreated(&this->renderContext);
 
-    this->InitDynamics();
-
     // make the joint group for contact joints
     this->contactgroup = nOpende::JointGroupCreate(20);
-
-    // run scripts
-    if (this->GetStartupScript())
-    {
-        const char* result;
-        this->refScriptServer->RunScript(this->GetStartupScript(), result);
-    }
-    if (this->GetSceneFile())
-    {
-        // load the stage (normally stdlight.lua)
-        const char* result;
-        this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/stdlight.lua", result);
-
-        // load the object to look at
-        kernelServer->PushCwd(this->refRootNode.get());
-        kernelServer->Load(this->GetSceneFile());
-        kernelServer->PopCwd();
-    }
 
     this->isOpen = true;
     return true;
@@ -184,9 +206,11 @@ void nODEViewerApp::Close()
     this->refDyWorld->Release();
     this->refDyServer->Release();
 
+    this->refGuiServer->Close();
     this->refGfxServer->CloseDisplay();
 
     this->refRootNode->Release();
+    this->refGuiServer->Release();
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
@@ -232,43 +256,44 @@ void nODEViewerApp::Run()
 
         // handle input
         this->refInputServer->Trigger(time);
-        if (Maya == this->controlMode)
+        if (!this->refGuiServer->IsMouseOverGui())
         {
-            this->HandleInputMaya(frameTime);
+            this->HandleInput(frameTime);
         }
-        else
-        {
-            this->HandleInputFly(frameTime);
-        }
-        this->refInputServer->FlushEvents();
+
+        // trigger gui server
+        this->refGuiServer->Trigger();
 
         // update render context variables
         this->renderContext.GetVariable(timeHandle)->SetFloat((float)time);
         this->TransferGlobalVariables();
         this->renderContext.SetFrameId(frameId++);
 
-        // render
-        this->refSceneServer->BeginScene(viewMatrix);
-        this->refSceneServer->Attach(&this->renderContext);
-
-        // attach ode bodies - extract the transform from the body position/orientation and
-        // put that into the rendercontext
-        int geomix;
-        for (geomix = 0; geomix < NUMTHINGS; geomix++)
+        if (!this->refGfxServer->InDialogBoxMode())
         {
-            vector3 pos = this->bodies[geomix]->GetPosition();
-            quaternion quat = this->bodies[geomix]->GetQuaternion();
-            matrix44 bodyxform(quat);
-            bodyxform.translate(pos);
-            this->bodyContext.SetTransform(bodyxform);
-            this->refSceneServer->Attach(&this->bodyContext);
+            // render
+            this->refSceneServer->BeginScene(viewMatrix);
+            this->refSceneServer->Attach(&this->renderContext);
+
+            // attach ode bodies - extract the transform from the body position/orientation and
+            // put that into the rendercontext
+            int geomix;
+            for (geomix = 0; geomix < NUMTHINGS; geomix++)
+            {
+                vector3 pos = this->bodies[geomix]->GetPosition();
+                quaternion quat = this->bodies[geomix]->GetQuaternion();
+                matrix44 bodyxform(quat);
+                bodyxform.translate(pos);
+                this->bodyContext.SetTransform(bodyxform);
+                this->refSceneServer->Attach(&this->bodyContext);
+            }
+
+            this->refSceneServer->EndScene();
+            this->refSceneServer->RenderScene();             // renders the 3d scene
+            this->refConServer->Render();                    // do additional rendering before presenting the frame
+
+            this->refSceneServer->PresentScene();            // present the frame
         }
-
-        this->refSceneServer->EndScene();
-        this->refSceneServer->RenderScene();             // renders the 3d scene
-        this->refConServer->Render();                    // do additional rendering before presenting the frame
-
-        this->refSceneServer->PresentScene();            // present the frame
 
         prevTime = time;
 
@@ -297,9 +322,12 @@ void nODEViewerApp::Run()
         // update body positions and velocity
         this->refDyWorld->StepFast1(0.15f,10);
 
+        // flush input events
+        this->refInputServer->FlushEvents();
+
         // sleep for a very little while because we
         // are multitasking friendly
-        n_sleep(0.005);
+        n_sleep(0.0);
     }
 }
 
@@ -329,36 +357,43 @@ void nODEViewerApp::TransferGlobalVariables()
     }
 }
 
+
 //------------------------------------------------------------------------------
-/*
-    Define the input mapping.
+/**
+    Handle general input
 */
 void
-nODEViewerApp::DefineInputMapping()
+nODEViewerApp::HandleInput(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-    inputServer->BeginMap();
-    inputServer->Map("keyb0:space.down",        "reset");
-    inputServer->Map("keyb0:esc.down",          "console");
-    inputServer->Map("relmouse0:btn0.pressed",  "look");    
-    inputServer->Map("relmouse0:btn1.pressed",  "zoom");
-    inputServer->Map("relmouse0:btn2.pressed",  "pan");
-    inputServer->Map("relmouse0:-x",            "left");
-    inputServer->Map("relmouse0:+x",            "right");
-    inputServer->Map("relmouse0:-y",            "up");
-    inputServer->Map("relmouse0:+y",            "down");
-    inputServer->Map("relmouse0:-z",            "zoomIn");
-    inputServer->Map("relmouse0:+z",            "zoomOut");
-    inputServer->Map("keyb0:f1.down",           "mayacontrols");
-    inputServer->Map("keyb0:f2.down",           "flycontrols");
-    inputServer->Map("keyb0:1.down",            "speed0");
-    inputServer->Map("keyb0:2.down",            "speed1");
-    inputServer->Map("keyb0:3.down",            "speed2");
-    inputServer->Map("keyb0:f5.down",           "setpos0");
-    inputServer->Map("keyb0:f6.down",           "setpos1");
-    inputServer->Map("keyb0:f7.down",           "setpos2");
-    inputServer->Map("keyb0:f8.down",           "setpos3");
-    inputServer->EndMap();
+    
+    if (Maya == this->controlMode)
+    {
+        this->HandleInputMaya(frameTime);
+    }
+    else
+    {
+        this->HandleInputFly(frameTime);
+    }
+
+    if (inputServer->GetButton("screenshot"))
+    {
+        nPathString filename;
+        const char* sceneFile = this->GetSceneFile();
+        if (sceneFile)
+        {
+            filename = sceneFile;
+            filename.StripExtension();
+        }
+        else
+        {
+            filename = "screenshot";
+        }
+        filename.Append(nString(this->screenshotID++));
+        filename.Append(".bmp");
+
+        this->refGfxServer->SaveScreenshot(filename.Get());
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -538,6 +573,43 @@ nODEViewerApp::HandleInputFly(float frameTime)
         this->SetControlMode(Maya);
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Initialize the overlay GUI.
+*/  
+void
+nODEViewerApp::InitOverlayGui()
+{
+    const float borderSize = 0.02f;
+
+    // create a dummy root window
+    this->refGuiServer->SetRootWindowPointer(0);
+    nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
+    n_assert(userRootWindow);
+    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
+    userRootWindow->SetRect(nullRect);
+
+    kernelServer->PushCwd(userRootWindow);
+
+    // create logo label
+    nGuiLabel* logoLabel = (nGuiLabel*) kernelServer->New("nguilabel", "n2logo");
+    n_assert(logoLabel);
+    vector2 logoLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
+    rectangle logoRect;
+    logoRect.v0.set(1.0f - logoLabelSize.x - borderSize, 1.0f - logoLabelSize.y - borderSize);
+    logoRect.v1.set(1.0f - borderSize, 1.0f - borderSize);
+    logoLabel->SetRect(logoRect);
+    logoLabel->SetDefaultBrush("n2logo");
+    logoLabel->SetPressedBrush("n2logo");
+    logoLabel->SetHighlightBrush("n2logo");
+
+    kernelServer->PopCwd();
+
+    // set the new user root window
+    this->refGuiServer->SetRootWindowPointer(userRootWindow);
+}
+
 
 
 /// setup dynamics objects

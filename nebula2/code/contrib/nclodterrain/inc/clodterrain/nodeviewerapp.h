@@ -20,6 +20,7 @@
 #include "particle/nparticleserver.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
+#include "gui/nguiserver.h"
 
 #include "opende/nopendeworld.h"
 #include "opende/nopendespace.h"
@@ -47,6 +48,10 @@ public:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// set optional feature set override
+    void SetFeaturSetOverride(nGfxServer2::FeatureSet f);
+    /// get optional feature set override
+    nGfxServer2::FeatureSet GetFeatureSetOverride() const;
     /// set camera parameters
     void SetCamera(const nCamera2& camera);
     /// get camera parameters
@@ -59,14 +64,35 @@ public:
     void SetSceneFile(const char* name);
     /// get scene file name
     const char* GetSceneFile() const;
+    /// set the scene server (required)
+    void SetSceneServerClass(const char* name);
+    /// get the scene type
+    const char* GetSceneServerClass() const;
+    /// set the script type (ntclserver/nluaserver/etc - required)
+    void SetScriptServerClass(const char* name);
     /// set optional project dir
     void SetProjDir(const char* name);
     /// get project dir
     const char* GetProjDir() const;
+    /// get the script type
+    const char* GetScriptServerClass() const;
     /// set optional startup script
     void SetStartupScript(const char* name);
     /// get optional startup script
     const char* GetStartupScript() const;
+    /// set the light stage script (required - if a scene file is specified)
+    void SetStageScript(const char* name);
+    /// get the light stage script
+    const char* GetStageScript() const;
+    /// set the input binding script (required)
+    void SetInputScript(const char* name);
+    /// get the input binding script
+    const char* GetInputScript() const;
+    /// enable/disable the logo overlay
+    void SetOverlayEnabled(bool b);
+    /// get overlay enabled status
+    bool GetOverlayEnabled() const;
+    /// open the viewer
     /// open the viewer
     bool Open();
     /// close the viewer
@@ -83,14 +109,16 @@ public:
     void ResetTestObjects();
 
 private:
-    /// define the input mapping
-    void DefineInputMapping();
+    /// handle general input
+    void HandleInput(float frameTime);
     /// handle input in Maya control mode
     void HandleInputMaya(float frameTime);
     /// handle input in Fly control mode
     void HandleInputFly(float frameTime);
     /// transfer global variables from variable server to render context
     void TransferGlobalVariables();
+    /// initialize the overlay GUI
+    void InitOverlayGui();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -102,16 +130,23 @@ private:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
+    nRef<nGuiServer> refGuiServer;
 
     nRef<nTransformNode> refRootNode;
 
     nString sceneFilename;
     nString projDir;
+    nString sceneserverClass;
+    nString scriptserverClass;
     nString startupScript;
+    nString stageScript;
+    nString inputScript;
     bool isOpen;
+    bool isOverlayEnabled;
     nDisplayMode2 displayMode;
     nCamera2 camera;
     ControlMode controlMode;
+    nGfxServer2::FeatureSet featureSetOverride;
 
     polar2 defViewerAngles;
     vector3 defViewerPos;
@@ -124,6 +159,7 @@ private:
 
     nRenderContext renderContext;
     matrix44 viewMatrix;
+    int screenshotID;
 
     // dynamics stuff-hold a world and some bodies
     enum { NUMTHINGS = 5 };
@@ -140,6 +176,26 @@ private:
     nRenderContext bodyContext;
     dJointGroupID contactgroup;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nODEViewerApp::SetFeaturSetOverride(nGfxServer2::FeatureSet f)
+{
+    this->featureSetOverride = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::FeatureSet
+nODEViewerApp::GetFeatureSetOverride() const
+{
+    return this->featureSetOverride;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -256,6 +312,46 @@ nODEViewerApp::GetProjDir() const
 */
 inline
 void
+nODEViewerApp::SetSceneServerClass(const char* type)
+{
+    this->sceneserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nODEViewerApp::GetSceneServerClass() const
+{
+    return this->sceneserverClass.IsEmpty() ? 0 : this->sceneserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nODEViewerApp::SetScriptServerClass(const char* type)
+{
+    this->scriptserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nODEViewerApp::GetScriptServerClass() const
+{
+    return this->scriptserverClass.IsEmpty() ? 0 : this->scriptserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nODEViewerApp::SetStartupScript(const char* script)
 {
     this->startupScript = script;
@@ -269,6 +365,66 @@ const char*
 nODEViewerApp::GetStartupScript() const
 {
     return this->startupScript.IsEmpty() ? 0 : this->startupScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nODEViewerApp::SetStageScript(const char* script)
+{
+    this->stageScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nODEViewerApp::GetStageScript() const
+{
+    return this->stageScript.IsEmpty() ? 0 : this->stageScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nODEViewerApp::SetInputScript(const char* script)
+{
+    this->inputScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nODEViewerApp::GetInputScript() const
+{
+    return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nODEViewerApp::SetOverlayEnabled(bool b)
+{
+    this->isOverlayEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nODEViewerApp::GetOverlayEnabled() const
+{
+    return this->isOverlayEnabled;
 }
 
 //------------------------------------------------------------------------------
