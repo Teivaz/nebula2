@@ -270,7 +270,9 @@ nKernelServer::nKernelServer() :
     ks = this;
 
     // initialize the debug memory system
+#ifdef __WIN32__
     n_dbgmeminit();
+#endif
 
     // set the default log handler
     #ifdef __XBxX__
@@ -817,10 +819,12 @@ nKernelServer::PopCwd()
 void nKernelServer::Trigger()
 {
     // get memory statistics...
+#ifdef __WIN32__
     nMemoryStats memStats = n_dbgmemgetstats();
     this->varMemHighWaterSize->SetI(memStats.highWaterSize);
     this->varMemTotalSize->SetI(memStats.totalSize);
     this->varMemTotalCount->SetI(memStats.totalCount);
+#endif
 }
 
 //------------------------------------------------------------------------------
