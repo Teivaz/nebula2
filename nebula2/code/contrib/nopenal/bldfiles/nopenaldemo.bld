@@ -21,7 +21,6 @@ begintarget nopenaldemo
         ndirect3d9
         microtcl
         nopenal
-        nvideo
         ndshow
         ngui
     }
