@@ -4,7 +4,7 @@ guiServer.modes.mainMenu =
         {       
             name = 'mainMenu',
             
-            width = 9,
+            width = 11,
             height = 1,
             
             upperEdge = 0.27,
