@@ -72,8 +72,8 @@ nNpkFile::Open(const char* filename, const char* accessMode)
     }
 
     // not a conventional file, try to open as npk file
-	char absPath[N_MAXPATH];
-	this->npkFileServer->ManglePath(filename, absPath, sizeof(absPath));
+    char absPath[N_MAXPATH];
+    this->npkFileServer->ManglePath(filename, absPath, sizeof(absPath));
 
     this->tocEntry = this->npkFileServer->FindTocEntry(absPath);
     if (this->tocEntry && (nNpkTocEntry::FILE == this->tocEntry->GetType()))
