@@ -33,13 +33,19 @@ public:
     /// get pointer to animation source
     const nAnimation* GetAnimation() const;
     /// set the currently active state
-    void SetActiveState(int stateIndex, float time);
+    void SetActiveState(int stateIndex, nTime time);
     /// get the current state index
     int GetActiveState() const;
     /// Is `i' a valid state index?
     bool ValidStateIndex(int i) const;
     /// evaluate the joint skeleton
     void EvaluateSkeleton(float time, nVariableContext* varContext);
+    /// find a state index by state name
+    int FindStateIndexByName(const nString& n);
+    /// return animation duration of an animation state
+    nTime GetStateDuration(int stateIndex) const;
+    /// return fadein time of an animation state
+    nTime GetStateFadeInTime(int stateIndex) const;
 
 private:
     enum
@@ -195,19 +201,6 @@ nCharacter2::GetAnimation() const
 /**
 */
 inline
-void
-nCharacter2::SetActiveState(int stateIndex, float time)
-{
-    n_assert(ValidStateIndex(stateIndex));
-    this->prevStateInfo = this->curStateInfo;
-    this->curStateInfo.SetStateIndex(stateIndex);
-    this->curStateInfo.SetStateStarted(time);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
 int
 nCharacter2::GetActiveState() const
 {
@@ -221,7 +214,7 @@ inline
 bool
 nCharacter2::ValidStateIndex(int i) const
 {
-    return 0 <= i && i < animStateArray->GetNumStates();
+    return ((0 <= i) && (i < animStateArray->GetNumStates()));
 }
 
 //------------------------------------------------------------------------------

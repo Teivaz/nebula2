@@ -38,6 +38,36 @@ nCharacter2::~nCharacter2()
 
 //------------------------------------------------------------------------------
 /**
+    Set a new animation state, and handle stuff necessary for
+    blending between previous and current state.
+*/
+void
+nCharacter2::SetActiveState(int stateIndex, nTime time)
+{
+    n_assert(ValidStateIndex(stateIndex));
+
+    // only overwrite previous state if the current state was active 
+    // for at least a little while to prevent excessive "plopping"
+    if (this->curStateInfo.IsValid())
+    {
+        nAnimState& curAnimState = this->animStateArray->GetStateAt(this->curStateInfo.GetStateIndex());
+        float fadeInTime = curAnimState.GetFadeInTime();
+        if ((time - this->curStateInfo.GetStateStarted()) > fadeInTime)
+        {
+            this->prevStateInfo = this->curStateInfo;
+        }
+    }
+    else
+    {
+        // no valid current state
+        this->prevStateInfo = this->curStateInfo;
+    }
+    this->curStateInfo.SetStateIndex(stateIndex);
+    this->curStateInfo.SetStateStarted(float(time));
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 void
 nCharacter2::EvaluateSkeleton(float time, nVariableContext* varContext)
@@ -49,6 +79,15 @@ nCharacter2::EvaluateSkeleton(float time, nVariableContext* varContext)
     // check if a state transition is necessary
     nAnimState& curAnimState = this->animStateArray->GetStateAt(this->curStateInfo.GetStateIndex());
     float curRelTime = time - this->curStateInfo.GetStateStarted();
+    
+    // handle time exception (this happens when time is reset to a smaller value
+    // since the last anim state switch)
+    if (curRelTime < 0.0f)
+    {
+        curRelTime = 0.0f;
+        this->curStateInfo.SetStateStarted(time);
+    }
+
     float fadeInTime = curAnimState.GetFadeInTime();
     float lerp = 1.0f;
     bool transition = false;
@@ -101,4 +140,42 @@ nCharacter2::EvaluateSkeleton(float time, nVariableContext* varContext)
             joint.Evaluate();
         }
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finds a state index by name. Returns -1 if state not found.
+*/
+int
+nCharacter2::FindStateIndexByName(const nString& n)
+{
+    return this->animStateArray->FindStateIndex(n);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the duration of an animation state in seconds.
+*/
+nTime
+nCharacter2::GetStateDuration(int stateIndex) const
+{
+    n_assert(this->ValidStateIndex(stateIndex));
+    n_assert(this->animation);
+    n_assert(this->animStateArray);
+
+    int animGroupIndex = this->animStateArray->GetStateAt(stateIndex).GetAnimGroupIndex();
+    nTime dur = this->animation->GetDuration(animGroupIndex);
+    return dur;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the fadein time of an animation state in seconds.
+*/
+nTime
+nCharacter2::GetStateFadeInTime(int stateIndex) const
+{
+    n_assert(this->ValidStateIndex(stateIndex));
+    n_assert(this->animStateArray);
+    return this->animStateArray->GetStateAt(stateIndex).GetFadeInTime();
 }
