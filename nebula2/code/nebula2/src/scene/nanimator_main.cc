@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nAnimator
 //------------------------------------------------------------------------------
 //  nanimator_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -14,7 +13,7 @@ nNebulaScriptClass(nAnimator, "nscenenode");
 nAnimator::nAnimator() :
     refVariableServer("/sys/servers/variable"),
     loopType(LOOP),
-    channelVarHandle(nVariable::INVALID_HANDLE)
+    channelVarHandle(nVariable::InvalidHandle)
 {
     // empty
 }
@@ -70,7 +69,7 @@ nAnimator::SetChannel(const char* name)
 const char*
 nAnimator::GetChannel()
 {
-    if (nVariable::INVALID_HANDLE == this->channelVarHandle)
+    if (nVariable::InvalidHandle == this->channelVarHandle)
     {
         return 0;
     }
