@@ -6,18 +6,23 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
+#include "gui/nguiwindow.h"
+#include "gui/nguilabel.h"
 
-nOpenALObj *p_sobj1;
-nOpenALObj *p_sobj2;
+static nOpenALObj *p_ogg = 0;   /// ogg sample
+static nOpenALObj *p_wav = 0;   /// wav sample
 
 //------------------------------------------------------------------------------
 /**
 */
 nOpenALDemo::nOpenALDemo(nKernelServer* ks) :
+    startupScript("home:bin/startup.tcl"),
     kernelServer(ks),
     isOpen(false),
+    isOverlayEnabled(true),
     controlMode(Fly),
-    defViewerPos(0.0f, 0.0f, 0.0f),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet),
+    defViewerPos(0.0f, 0.0f, 9.0f),
     defViewerAngles(0.0f, 0.0f),
     defViewerZoom(0.0f, 0.0f, 9.0f),
     viewerPos(defViewerPos),
@@ -47,24 +52,27 @@ bool
 nOpenALDemo::Open()
 {
     const char* result;
-
     n_assert(!this->isOpen);
-    n_assert(this->GetStartupScript());
-    n_assert(this->GetSceneServerClass());
-    n_assert(this->GetScriptServerClass());
-    n_assert(this->GetInputScript());
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)   kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
-    this->refGfxServer      = (nGfxServer2*)     kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refInputServer    = (nInputServer*)    kernelServer->New("ndi8server", "/sys/servers/input");
-    this->refConServer      = (nConServer*)      kernelServer->New("nconserver", "/sys/servers/console");
-    this->refResourceServer = (nResourceServer*) kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)    kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
-    this->refVarServer      = (nVariableServer*) kernelServer->New("nvariableserver", "/sys/servers/variable");
+    this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
+    this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
+    this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
+    this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
-    this->refAudioServer    = (nAudioServer3*)   kernelServer->New("nopenalserver", "/sys/servers/audio");
+    this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/vdeo");
+    this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+    this->refAudioServer    = (nAudioServer3*)    kernelServer->New("nopenalserver", "/sys/servers/audio");
+
+    // set the gfx server feature set override
+    if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
+    {
+        this->refGfxServer->SetFeatureSetOverride(this->featureSetOverride);
+    }
 
     // initialize the proj: assign
     if (this->GetProjDir())
@@ -76,30 +84,48 @@ nOpenALDemo::Open()
         kernelServer->GetFileServer()->SetAssign("proj", kernelServer->GetFileServer()->GetAssign("home"));
     }
 
-    // define the input mapping
-    this->refScriptServer->RunScript(this->GetInputScript(), result);
-
     // create scene graph root node
     this->refRootNode = (nTransformNode*) kernelServer->New("ntransformnode",  "/usr/scene");
 
     // open the remote port
-    this->kernelServer->GetRemoteServer()->Open("nOpenAL Demo");
+    this->kernelServer->GetRemoteServer()->Open("nopenaldemo");
+
+    // run startup script (assigns must be setup before opening the display!)
+    if (this->GetStartupScript())
+    {
+        this->refScriptServer->RunScript(this->GetStartupScript(), result);
+    }
     
+    // define the input mapping
+    if (NULL != this->GetInputScript())
+    {
+        this->refScriptServer->RunScript(this->GetInputScript(), result);
+    }
+
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+    this->refVideoServer->Open();
 
-    // run the startup script
-    this->refScriptServer->RunScript(this->GetStartupScript(), result);
-    
+    // initialize gui
+    this->refGuiServer->SetRootPath("/gui");
+    this->refGuiServer->Open();
+    if (this->isOverlayEnabled)
+    {
+        this->InitOverlayGui();
+    }
+
     // set the stage and load the object
     if (this->GetSceneFile())
     {
-        n_assert(this->GetStageScript());
+        if (NULL != this->GetStageScript())
+        {
+            const char* result;
 
-        // run the light stage script
-        this->refScriptServer->RunScript(this->GetStageScript(), result);
+            // run the light stage script
+            this->refScriptServer->RunScript(this->GetStageScript(), result);
+        }
 
         // load the object to look at
         kernelServer->PushCwd(this->refRootNode.get());
@@ -136,30 +162,30 @@ nOpenALDemo::Open()
                        vector3(0.0f,0.0f,-1.0f),
                        vector3(0.0f,1.0f,0.0f));
 
-    p_sobj1 = m_pOalCore->PlayFile("bgmusic",
+    p_ogg = m_pOalCore->PlayFile("bgmusic",
         "oal:music/test.ogg");
 
-    p_sobj1->SetVolume(0.2f);
-    p_sobj1->SetLooping(true);
-    p_sobj1->Update();
+    p_ogg->SetVolume(0.5f);
+    p_ogg->SetLooping(true);
+    p_ogg->Update();
 
     float tempPos[3];
     tempPos[0] = 0.0f;
     tempPos[1] = 0.0f;
     tempPos[2] = 0.0f;
-    m_pOalCore->SetSourcePosition(p_sobj1, tempPos);
+    m_pOalCore->SetSourcePosition(p_ogg, tempPos);
 
-    p_sobj2 = m_pOalCore->PlayFile("pingping",
+    p_wav = m_pOalCore->PlayFile("pingping",
         "oal:sound/test.wav");
     
-    p_sobj2->SetVolume(1.0f);
-    p_sobj2->SetLooping(true);
-    p_sobj2->Update();
+    p_wav->SetVolume(1.0f);
+    p_wav->SetLooping(true);
+    p_wav->Update();
 
     tempPos[0] = 0.0f;
     tempPos[1] = 0.0f;
     tempPos[2] = 0.0f;
-    m_pOalCore->SetSourcePosition(p_sobj2, tempPos);
+    m_pOalCore->SetSourcePosition(p_wav, tempPos);
 
     this->isOpen = true;
     return true;
@@ -173,16 +199,19 @@ nOpenALDemo::Close()
 {
     n_assert(this->IsOpen());
 
-    this->refGfxServer->CloseDisplay();
-
-    this->refAudioServer->StopSound(p_sobj1);
-    this->refAudioServer->StopSound(p_sobj2);
+    this->refAudioServer->StopSound(p_ogg);
+    this->refAudioServer->StopSound(p_wav);
 
     if( m_pOalCore )
         delete m_pOalCore;
 
-    this->refAudioServer->Release();
+    this->refGuiServer->Close();
+    this->refVideoServer->Close();
+    this->refGfxServer->CloseDisplay();
+
     this->refRootNode->Release();
+    this->refGuiServer->Release();
+    this->refVideoServer->Release();
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
@@ -204,6 +233,9 @@ nOpenALDemo::Run()
 {
     nVariable::Handle timeHandle = this->refVarServer->GetVariableHandleByName("time");
     nWatched watchViewerPos("viewerPos", nArg::Float4);
+    nWatched watchHelp("help", nArg::String);
+
+    watchHelp->SetS("left - turn left, right - turn right, LMB - zoomup, RMB - zoomdown");
 
     // run the render loop
     bool running = true;
@@ -217,6 +249,7 @@ nOpenALDemo::Run()
             prevTime = time;
         }
         float frameTime = (float) (time - prevTime);
+        this->refGuiServer->SetTime(time);
 
         // trigger remote server
         kernelServer->GetRemoteServer()->Trigger();
@@ -229,8 +262,16 @@ nOpenALDemo::Run()
 
         // handle input
         this->refInputServer->Trigger(time);
-        this->HandleInput(frameTime);
-        this->refInputServer->FlushEvents();
+        if (!this->refGuiServer->IsMouseOverGui())
+        {
+            this->HandleInput(frameTime);
+        }
+
+        // trigger gui server
+        this->refGuiServer->Trigger();
+
+        // trigger video server
+        this->refVideoServer->Trigger();
 
         // update render context variables
         this->renderContext.GetVariable(timeHandle)->SetFloat((float)time);
@@ -238,12 +279,27 @@ nOpenALDemo::Run()
         this->renderContext.SetFrameId(frameId++);
 
         // render
-        this->refSceneServer->BeginScene(viewMatrix);
-        this->refSceneServer->Attach(&this->renderContext);
-        this->refSceneServer->EndScene();
-        this->refSceneServer->RenderScene();             // renders the 3d scene
-        this->refConServer->Render();                    // render the console or watch variables
-        this->refSceneServer->PresentScene();            // present the frame
+        if (!this->refGfxServer->InDialogBoxMode())
+        {
+            if (this->refSceneServer->BeginScene(viewMatrix))
+            {
+                vector2 v_left;
+                v_left.x = 100;
+                v_left.y = 100;
+                vector2 v_right;
+                v_right.x = 200;
+                v_right.y = 120;
+                rectangle rect(v_left, v_right);
+                this->refGfxServer->DrawText("test", vector4(1,1,1,1), rect, nFont2::RenderFlags::NoClip);
+
+                this->refSceneServer->Attach(&this->renderContext);
+                this->refSceneServer->EndScene();
+                this->refSceneServer->RenderScene();             // renders the 3d scene
+                this->refGuiServer->Render();
+                this->refConServer->Render();                    // do additional rendering before presenting the frame
+                this->refSceneServer->PresentScene();            // present the frame
+            }
+        }
 
         // audio
         if (this->refAudioServer->BeginScene())
@@ -253,8 +309,8 @@ nOpenALDemo::Run()
             m.invert();
             m_Listener.SetTransform(m);
             this->refAudioServer->UpdateListener(m_Listener);
-            this->refAudioServer->UpdateSound(p_sobj1);
-            this->refAudioServer->UpdateSound(p_sobj2);
+            this->refAudioServer->UpdateSound(p_ogg);
+            this->refAudioServer->UpdateSound(p_wav);
             this->refAudioServer->EndScene();
         }
 
@@ -266,9 +322,12 @@ nOpenALDemo::Run()
                                       viewerPos.z,
                                       n_rad2deg(this->viewerAngles.rho)));
 
+        // flush input events
+        this->refInputServer->FlushEvents();
+
         // sleep for a very little while because we
         // are multitasking friendly
-        n_sleep(0.005);
+        n_sleep(0.0);
     }
 }
 
@@ -297,62 +356,6 @@ nOpenALDemo::TransferGlobalVariables()
             this->renderContext.AddVariable(newVar);
         }
     }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Init Listener
-*/
-void nOpenALDemo::InitListener( const matrix44& m, const vector3& v )
-{
-    m_Listener.SetTransform(m);
-    m_Listener.SetVelocity(v);
-
-    this->refAudioServer->UpdateListener(m_Listener);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Init Listener
-*/
-void nOpenALDemo::InitListener( const vector3& pos,
-                                const vector3& vel,
-                                const vector3& at,
-                                const vector3& up )
-{
-    matrix44 m;
-
-    m.M41 = pos.x;
-    m.M42 = pos.y;
-    m.M43 = pos.z;
-    m.M31 = at.x;
-    m.M32 = at.y;
-    m.M33 = at.z;
-    m.M21 = up.x;
-    m.M22 = up.y;
-    m.M23 = up.z;
-
-    m_Listener.SetTransform(m);
-    m_Listener.SetVelocity(vel);
-
-    this->refAudioServer->UpdateListener(m_Listener);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Map Input
-*/
-void nOpenALDemo::MapInput()
-{
-    this->refInputServer->BeginMap();
-    this->refInputServer->Map("keyb0:esc.down", "console");
-    this->refInputServer->Map("relmouse0:btn0.pressed", "pan");
-    this->refInputServer->Map("relmouse0:btn1.pressed", "zoom");
-    this->refInputServer->Map("keyb0:up.pressed", "up");
-    this->refInputServer->Map("keyb0:down.pressed", "down");
-    this->refInputServer->Map("keyb0:left.pressed", "left");
-    this->refInputServer->Map("keyb0:right.pressed", "right");
-    this->refInputServer->EndMap();
 }
 
 //------------------------------------------------------------------------------
@@ -587,4 +590,97 @@ nOpenALDemo::HandleInputFly(float frameTime)
     {
         this->SetControlMode(Maya);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Initialize the overlay GUI.
+*/  
+void
+nOpenALDemo::InitOverlayGui()
+{
+    const float borderSize = 0.02f;
+
+    // create a dummy root window
+    this->refGuiServer->SetRootWindowPointer(0);
+    nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
+    n_assert(userRootWindow);
+    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
+    userRootWindow->SetRect(nullRect);
+
+    kernelServer->PushCwd(userRootWindow);
+
+    // create logo label
+    nGuiLabel* logoLabel = (nGuiLabel*) kernelServer->New("nguilabel", "n2logo");
+    n_assert(logoLabel);
+    vector2 logoLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
+    rectangle logoRect;
+    logoRect.v0.set(1.0f - logoLabelSize.x - borderSize, 1.0f - logoLabelSize.y - borderSize);
+    logoRect.v1.set(1.0f - borderSize, 1.0f - borderSize);
+    logoLabel->SetRect(logoRect);
+    logoLabel->SetDefaultBrush("n2logo");
+    logoLabel->SetPressedBrush("n2logo");
+    logoLabel->SetHighlightBrush("n2logo");
+
+    kernelServer->PopCwd();
+
+    // set the new user root window
+    this->refGuiServer->SetRootWindowPointer(userRootWindow);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Init Listener
+*/
+void nOpenALDemo::InitListener( const matrix44& m, const vector3& v )
+{
+    m_Listener.SetTransform(m);
+    m_Listener.SetVelocity(v);
+
+    this->refAudioServer->UpdateListener(m_Listener);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Init Listener
+*/
+void nOpenALDemo::InitListener( const vector3& pos,
+                                const vector3& vel,
+                                const vector3& at,
+                                const vector3& up )
+{
+    matrix44 m;
+
+    m.M41 = pos.x;
+    m.M42 = pos.y;
+    m.M43 = pos.z;
+    m.M31 = at.x;
+    m.M32 = at.y;
+    m.M33 = at.z;
+    m.M21 = up.x;
+    m.M22 = up.y;
+    m.M23 = up.z;
+
+    m_Listener.SetTransform(m);
+    m_Listener.SetVelocity(vel);
+
+    this->refAudioServer->UpdateListener(m_Listener);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Map Input
+*/
+void nOpenALDemo::MapInput()
+{
+    this->refInputServer->BeginMap();
+    this->refInputServer->Map("keyb0:esc.down", "script:/sys/servers/gui.togglesystemgui");
+    this->refInputServer->Map("keyb0:f11.down", "console");
+    this->refInputServer->Map("relmouse0:btn0.pressed", "pan");
+    this->refInputServer->Map("relmouse0:btn1.pressed", "zoom");
+    this->refInputServer->Map("keyb0:up.pressed", "up");
+    this->refInputServer->Map("keyb0:down.pressed", "down");
+    this->refInputServer->Map("keyb0:left.pressed", "left");
+    this->refInputServer->Map("keyb0:right.pressed", "right");
+    this->refInputServer->EndMap();
 }

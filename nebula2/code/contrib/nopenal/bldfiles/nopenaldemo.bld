@@ -6,15 +6,25 @@
 #-----------------------------------------------------------------------------
 beginmodule nopenalapp
     setdir nopenal_demo
-    setfiles   { nopenal_demomain nopenal_demo }
-    setheaders { nopenal_demo }
+    setfiles   { nopenal_demomain nopenal_demo nopenal_core }
+    setheaders { nopenal_demo nopenal_core }
     setlibs_win32 { ALut.lib OpenAL32.lib }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget nopenaldemo
     settype exe
     setmodules { nopenalapp }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nopenal }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        microtcl
+        nopenal
+        nvideo
+        ndshow
+        ngui
+    }
 endtarget
 #-----------------------------------------------------------------------------
 # EOF
