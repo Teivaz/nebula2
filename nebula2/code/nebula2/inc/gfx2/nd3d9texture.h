@@ -30,6 +30,8 @@ public:
     virtual bool LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo);
     /// unlock a cube face
     virtual void UnlockCubeFace(CubeFace face, int level);
+    /// get an estimated byte size of the resource data (for memory statistics)
+    virtual int GetByteSize();
 
     // begin added for ngameswf
     virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);

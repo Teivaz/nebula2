@@ -26,6 +26,8 @@ public:
     virtual ~nMemoryAnimation();
     /// sample value of given curve at given time
     virtual void SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray);
+    /// get an estimated byte size of the resource data (for memory statistics)
+    virtual int GetByteSize();
 
 private:
     /// load the resource (sets the valid flag)

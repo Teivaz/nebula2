@@ -24,7 +24,7 @@
     some point in the past which has not been fullfilled yet, call
     the IsPending() method. IsPending() returns true after an async
     call to Load() and before IsValid() returns true to indicate the
-    the resource is available. In all other cases, IsPending() returns 
+    the resource is available. In all other cases, IsPending() returns
     false.
 
     Unloading resources always happend immediately, both in sync and
@@ -96,11 +96,8 @@ public:
     virtual bool Load(nFile* file, int offset, int length);
     /// unloads the resource
     virtual void Unload();
-
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
-
-
 
 protected:
     friend class nResourceServer;

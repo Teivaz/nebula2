@@ -355,3 +355,11 @@ nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, 
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+int
+nMemoryAnimation::GetByteSize()
+{
+    return this->keyArray.Size() * sizeof(vector4);
+}

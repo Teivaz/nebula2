@@ -649,3 +649,21 @@ nD3D9Mesh::LoadN3d2File()
 
     return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+int
+nD3D9Mesh::GetByteSize()
+{
+    if (this->IsValid())
+    {
+        int vertexBufferSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
+        int indexBufferSize = this->GetNumIndices() * sizeof(ushort);
+        return vertexBufferSize + indexBufferSize;
+    }
+    else
+    {
+        return 0;
+    }
+}

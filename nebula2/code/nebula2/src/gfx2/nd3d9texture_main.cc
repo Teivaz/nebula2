@@ -841,3 +841,94 @@ void nD3D9Texture::GenerateMipMaps()
 
     n_assert (SUCCEEDED(hr));
 }
+                
+//------------------------------------------------------------------------------
+/**             
+    Compute the byte size of the texture data.
+*/          
+int         
+nD3D9Texture::GetByteSize()
+{               
+    if (this->IsValid())
+    {
+        // compute number of pixels
+        int numPixels = this->GetWidth() * this->GetHeight();
+                
+        // 3d or cube texture?
+        switch (this->GetType())
+        {
+            case TEXTURE_3D:   numPixels *= this->GetDepth(); break;
+            case TEXTURE_CUBE: numPixels *= 6; break;
+            default: break;
+        }
+    
+        // mipmaps ?
+        if (this->GetNumMipLevels() > 1)
+        {
+            switch (this->GetType())
+            {
+                case TEXTURE_2D:
+                case TEXTURE_CUBE:
+                    numPixels += numPixels / 3;
+                    break;
+
+                default:
+                    /// 3d texture
+                    numPixels += numPixels / 7;
+                    break;
+            }
+        }
+
+        // size per pixel
+        int size = 0;
+        switch (this->GetFormat())
+        {
+            case DXT1:
+                // 4 bits per pixel
+                size = numPixels / 2;
+                break;
+
+            case DXT2:
+            case DXT3:
+            case DXT4:
+            case DXT5:
+            case P8:
+                // 8 bits per pixel
+                size = numPixels;
+                break;
+
+            case R5G6B5:
+            case A1R5G5B5:
+            case A4R4G4B4:
+            case R16F:
+                // 16 bits per pixel
+                size = numPixels * 2;
+                break;
+
+            case X8R8G8B8:
+            case A8R8G8B8:
+            case R32F:
+            case G16R16F:
+                // 32 bits per pixel
+                size = numPixels * 4;
+                break;
+
+            case A16B16G16R16F:
+            case G32R32F:
+                // 64 bits per pixel
+                size = numPixels * 8;
+                break;
+
+            case A32B32G32R32F:
+                // 128 bits per pixel
+                size = numPixels * 16;
+                break;
+        }
+        return size;
+    }
+    else
+    {
+        return 0;
+    }
+}
+

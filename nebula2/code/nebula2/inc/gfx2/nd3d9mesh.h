@@ -30,6 +30,8 @@ public:
     virtual ushort* LockIndices();
     /// unlock index buffer
     virtual void UnlockIndices();
+    /// get an estimated byte size of the resource data (for memory statistics)
+    virtual int GetByteSize();
 
 protected:
     /// load mesh resource
