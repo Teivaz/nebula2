@@ -164,6 +164,9 @@ private:
 
     /// a single default light render context
     nRenderContext lightRenderContext;
+    
+    /// used to make object names unique
+    int objectID;
 };
 
 //------------------------------------------------------------------------------
