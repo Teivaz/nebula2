@@ -47,7 +47,7 @@ bool nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * rende
 
     // Calculate mipmaps
     matrix44 view;
-	view = gfx_server->GetTransform(nGfxServer2::TransformType::View);
+	view = gfx_server->GetTransform(nGfxServer2::View);
     vector3 camera_pos = view.pos_component();
 	
     for (i = 0; i < num_blocks; ++i)
