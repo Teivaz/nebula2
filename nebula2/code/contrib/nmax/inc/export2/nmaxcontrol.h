@@ -3,8 +3,8 @@
 //
 //  (C)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
-#ifndef N_MAXCONTROLLER_H
-#define N_MAXCONTROLLER_H
+#ifndef N_MAXCONTROL_H
+#define N_MAXCONTROL_H
 //-----------------------------------------------------------------------------
 #include "export2/nmaxnode.h"
 #include "util/narray.h"

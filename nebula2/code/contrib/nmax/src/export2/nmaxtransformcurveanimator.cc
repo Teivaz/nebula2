@@ -1,31 +1,29 @@
 //-----------------------------------------------------------------------------
-//  nmaxikanimator.h
+//  nmaxtransformcurveanimator.cc
 //
 //  (C)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
-#ifndef N_MAXIKCONTROLLER_H
-#define N_MAXIKCONTROLLER_H
+#include "export2/nmax.h"
+#include "export2/nmaxcontrol.h"
+#include "export2/nmaxtransformcurveanimator.h"
 
 //-----------------------------------------------------------------------------
 /**
-    @class nMaxIKAnimator
-    @ingroup
-
-    @brief A class for handling Inverse Kinemetics(IK).
 */
-class nMaxTransformAnimator;
-
-//-----------------------------------------------------------------------------
-class nMaxIKAnimator : public nMaxTransformAnimator
+nMaxTransformCurveAnimator::nMaxTransformCurveAnimator()
 {
-public:
-    nMaxIKAnimator();
-    virtual ~nMaxIKAnimator();
+}
 
-    virtual void Export(INode *inode);
-protected:
-    
-
-};
 //-----------------------------------------------------------------------------
-#endif
+/**
+*/
+nMaxTransformCurveAnimator::~nMaxTransformCurveAnimator()
+{
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxTransformCurveAnimator::Export(Control *control)
+{
+}

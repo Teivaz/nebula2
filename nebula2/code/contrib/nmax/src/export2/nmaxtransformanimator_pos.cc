@@ -1,11 +1,11 @@
 //-----------------------------------------------------------------------------
-// nmaxprscontroller_pos.cc
+// nmaxtransformanimator_pos.cc
 //
 // (c)2004 Kim, Hyoun Woo.
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
-#include "export2/nmaxcontroller.h"
-#include "export2/nmaxprscontroller.h"
+#include "export2/nmaxcontrol.h"
+#include "export2/nmaxtransformanimator.h"
 #include "export2/nmaxinterface.h"
 #include "export2/nmaxtransform.h"
 #include "pluginlibs/nmaxdlg.h"

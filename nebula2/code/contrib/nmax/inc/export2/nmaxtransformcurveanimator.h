@@ -3,8 +3,8 @@
 //
 //  (C)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
-#ifndef N_MAXPATHCONTROLLER_H
-#define N_MAXPATHCONTROLLER_H
+#ifndef N_MAXTRANSFORMCURVEANIMATOR_H
+#define N_MAXTRANSFORMCURVEANIMATOR_H
 //-----------------------------------------------------------------------------
 /**
     @class nMaxTransformCurveAnimator
