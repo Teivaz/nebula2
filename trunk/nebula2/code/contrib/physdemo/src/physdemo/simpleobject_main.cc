@@ -29,6 +29,9 @@ SimpleObject::Release()
     if (this->refRootShapeNode.isvalid())
         this->refRootShapeNode->Release();
 
+    if (this->refFloatyText.isvalid())
+        this->refFloatyText->Release();
+
     nRoot::Release();
 
     return true;

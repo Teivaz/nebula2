@@ -1,3 +1,4 @@
+#line 1 "bumpsampler.fx"
 //------------------------------------------------------------------------------
 //  bumpsampler.fx
 //  Declare the standard bump sampler for all shaders.
@@ -10,5 +11,5 @@ sampler BumpSampler = sampler_state
     AddressV  = Wrap;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = Linear;
 };
