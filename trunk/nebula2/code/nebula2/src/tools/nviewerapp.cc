@@ -11,6 +11,7 @@
 /**
 */
 nViewerApp::nViewerApp(nKernelServer* ks) :
+    startupScript("home:bin/startup.tcl"),
     kernelServer(ks),
     isOpen(false),
     controlMode(Maya),
@@ -46,7 +47,6 @@ nViewerApp::Open()
     const char* result;
 
     n_assert(!this->isOpen);
-    n_assert(this->GetStartupScript());
     n_assert(this->GetSceneServerClass());
     n_assert(this->GetScriptServerClass());
     n_assert(this->GetInputScript());
@@ -81,14 +81,18 @@ nViewerApp::Open()
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("nviewer");
 
+    // run startup script (assigns must be setup before opening the display!)
+    if (this->GetStartupScript())
+    {
+        const char* result;
+        this->refScriptServer->RunScript(this->GetStartupScript(), result);
+    }
+    
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
 
-    // run the startup script
-    this->refScriptServer->RunScript(this->GetStartupScript(), result);
-    
     // set the stage and load the object
     if (this->GetSceneFile())
     {
