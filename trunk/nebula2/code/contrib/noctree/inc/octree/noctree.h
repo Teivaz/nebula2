@@ -29,30 +29,11 @@
                          allocnode() to alloc_node().
 */
 //--------------------------------------------------------------------
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_BBOX_H
 #include "mathlib/bbox.h"
-#endif
-
-//--------------------------------------------------------------------
-#undef N_DEFINES
-#define N_DEFINES nOctree
-#include "kernel/ndefdllclass.h"
 
 //--------------------------------------------------------------------
 /**
