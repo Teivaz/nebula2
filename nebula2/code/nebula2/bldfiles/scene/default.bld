@@ -95,6 +95,12 @@ beginmodule ntransformanimator
     setheaders { ntransformanimator }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule ntextureanimator
+    setdir scene
+    setfiles { ntextureanimator_main ntextureanimator_cmds }
+    setheaders { ntextureanimator }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nskinanimator
     setdir scene
     setfiles { nskinanimator_main nskinanimator_cmds }

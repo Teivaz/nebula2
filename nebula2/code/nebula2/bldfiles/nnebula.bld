@@ -20,7 +20,7 @@ begintarget nnebula
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nshapenode nanimator nvectoranimator
         nlightnode nspotlightnode
-        ntransformanimator nskinanimator nskinshapenode
+        ntransformanimator nskinanimator nskinshapenode ntextureanimator
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
     }
