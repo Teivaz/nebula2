@@ -1,4 +1,4 @@
-Imports N2 = Nebula2
+Imports N2 = Nebula2NET
 
 Module Hello
 
