@@ -9,9 +9,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
+
 #include "kernel/ntypes.h"
-#endif
+#include "mathlib/matrix.h"
 
 //------------------------------------------------------------------------------
 class nVariable
@@ -20,18 +20,19 @@ public:
     /// variable types
     enum Type
     {
-        NOTYPE,
-        INT,
-        FLOAT,
-        VECTOR,
-        STRING,
-        OBJECT,
+        Void,
+        Int,
+        Float,
+        Float4,
+        String,
+        Object,
+        Matrix,
     };
 
     typedef uint Handle;
     enum
     {
-        INVALID_HANDLE = 0xffffffff,
+        InvalidHandle = -1,
     };
 
     /// default constructor
@@ -40,12 +41,14 @@ public:
     nVariable(Handle h, int val);
     /// float constructor
     nVariable(Handle h, float val);
-    /// vector constructor
-    nVariable(Handle h, const float4& val);
+    /// float4 constructor
+    nVariable(Handle h, const nFloat4& val);
     /// string constructor
     nVariable(Handle h, const char* str);
     /// object constructor
     nVariable(Handle h, void* ptr);
+    /// matrix constructor
+    nVariable(Handle h, const matrix44& val);
     /// constructor
     nVariable(Type t, Handle h);
     /// copy contstructor
@@ -72,18 +75,23 @@ public:
     void SetFloat(float val);
     /// get float content
     float GetFloat() const;
-    /// set vector content
-    void SetVector(const float4& v);
-    /// get vector content
-    const float4& GetVector() const;
+    /// set float4 content
+    void SetFloat4(const nFloat4& v);
+    /// get float4 content
+    const nFloat4& GetFloat4() const;
     /// set string content (will be copied internally)
     void SetString(const char* str);
     /// get string content
     const char* GetString() const;
     /// set object content
-    void SetObject(void* ptr);
+    void SetObj(void* ptr);
     /// get object context
-    void* GetObject() const;
+    void* GetObj() const;
+    /// set matrix content
+    void SetMatrix(const matrix44& val);
+    /// get matrix content
+    const matrix44& GetMatrix() const;
+
 
 private:
     /// delete content
@@ -97,9 +105,10 @@ private:
     {
         int intVal;
         float floatVal;
-        float4 vectorVal;
+        nFloat4 float4Val;
         const char* stringVal;
         void* objectVal;
+        matrix44* matrixVal;
     };
 };
 
@@ -108,8 +117,8 @@ private:
 */
 inline
 nVariable::nVariable() :
-    handle(INVALID_HANDLE),
-    type(NOTYPE),
+    handle(InvalidHandle),
+    type(Void),
     stringVal(0)
 {
     // empty
@@ -134,13 +143,18 @@ inline
 void
 nVariable::Delete()
 {
-    if ((STRING == this->type) && (this->stringVal))
+    if ((String == this->type) && (this->stringVal))
     {
         n_free((void*) this->stringVal);
         this->stringVal = 0;
     }
-    this->handle = INVALID_HANDLE;
-    this->type = NOTYPE;
+    else if ((Matrix == this->type) && (this->matrixVal))
+    {
+        delete this->matrixVal;
+        this->matrixVal = 0;
+    }
+    this->handle = -1;
+    this->type = Void;
 }
 
 //------------------------------------------------------------------------------
@@ -154,22 +168,19 @@ nVariable::Copy(const nVariable& from)
     this->type     = from.type;
     switch (from.type)
     {
-        case INT:
+        case Int:
             this->intVal = from.intVal;
             break;
 
-        case FLOAT:
+        case Float:
             this->floatVal = from.floatVal;
             break;
 
-        case VECTOR:
-            this->vectorVal[0] = from.vectorVal[0];
-            this->vectorVal[1] = from.vectorVal[1];
-            this->vectorVal[2] = from.vectorVal[2];
-            this->vectorVal[3] = from.vectorVal[3];
+        case Float4:
+            this->float4Val = from.float4Val;
             break;
 
-        case STRING:
+        case String:
             n_assert(0 == this->stringVal);
             if (from.stringVal)
             {
@@ -177,8 +188,17 @@ nVariable::Copy(const nVariable& from)
             }
             break;
 
-        case OBJECT:
+        case Object:
             this->objectVal = from.objectVal;
+            break;
+
+        case Matrix:
+            n_assert(0 == this->matrixVal);
+            if (from.matrixVal)
+            {
+                this->matrixVal = new matrix44;
+                *(this->matrixVal) = *(from.matrixVal);
+            }
             break;
 
         default:
@@ -237,8 +257,8 @@ inline
 void
 nVariable::SetType(Type t)
 {
-    n_assert(NOTYPE == this->type);
-    n_assert(NOTYPE != t);
+    n_assert(Void == this->type);
+    n_assert(Void != t);
     this->type = t;
 }
 
@@ -261,8 +281,8 @@ inline
 void
 nVariable::SetHandle(Handle h)
 {
-    n_assert(INVALID_HANDLE != h);
-    n_assert(INVALID_HANDLE == this->handle);
+    n_assert(InvalidHandle != h);
+    n_assert(InvalidHandle == this->handle);
 
     this->handle = h;
 }
@@ -284,7 +304,7 @@ inline
 void
 nVariable::SetInt(int val)
 {
-    n_assert(INT == this->type);
+    n_assert(Int == this->type);
     this->intVal = val;
 }
 
@@ -295,7 +315,7 @@ inline
 int
 nVariable::GetInt() const
 {
-    n_assert(INT == this->type);
+    n_assert(Int == this->type);
     return this->intVal;
 }
 
@@ -306,7 +326,7 @@ inline
 void
 nVariable::SetFloat(float val)
 {
-    n_assert(FLOAT == this->type);
+    n_assert(Float == this->type);
     this->floatVal = val;
 }
 
@@ -317,7 +337,7 @@ inline
 float
 nVariable::GetFloat() const
 {
-    n_assert(FLOAT == this->type);
+    n_assert(Float == this->type);
     return this->floatVal;
 }
 
@@ -326,24 +346,21 @@ nVariable::GetFloat() const
 */
 inline
 void
-nVariable::SetVector(const float4& val)
+nVariable::SetFloat4(const nFloat4& val)
 {
-    n_assert(VECTOR == this->type);
-    this->vectorVal[0] = val[0];
-    this->vectorVal[1] = val[1];
-    this->vectorVal[2] = val[2];
-    this->vectorVal[3] = val[3];
+    n_assert(Float4 == this->type);
+    this->float4Val = val;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const float4&
-nVariable::GetVector() const
+const nFloat4&
+nVariable::GetFloat4() const
 {
-    n_assert(VECTOR == this->type);
-    return this->vectorVal;
+    n_assert(Float4 == this->type);
+    return this->float4Val;
 }
 
 //------------------------------------------------------------------------------
@@ -353,7 +370,7 @@ inline
 void
 nVariable::SetString(const char* str)
 {
-    n_assert(STRING == this->type);
+    n_assert(String == this->type);
     n_assert(str);
     if (this->stringVal)
     {
@@ -370,7 +387,7 @@ inline
 const char*
 nVariable::GetString() const
 {
-    n_assert(STRING == this->type);
+    n_assert(String == this->type);
     return this->stringVal;
 }
 
@@ -379,9 +396,9 @@ nVariable::GetString() const
 */
 inline
 void
-nVariable::SetObject(void* ptr)
+nVariable::SetObj(void* ptr)
 {
-    n_assert(OBJECT == this->type);
+    n_assert(Object == this->type);
     this->objectVal = ptr;
 }
 
@@ -390,10 +407,37 @@ nVariable::SetObject(void* ptr)
 */
 inline
 void*
-nVariable::GetObject() const
+nVariable::GetObj() const
 {
-    n_assert(OBJECT == this->type);
+    n_assert(Object == this->type);
     return this->objectVal;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nVariable::SetMatrix(const matrix44& val)
+{
+    n_assert(Matrix == this->type);
+    if (0 == this->matrixVal)
+    {
+        this->matrixVal = new matrix44;
+    }
+    *(this->matrixVal) = val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const matrix44&
+nVariable::GetMatrix() const
+{
+    n_assert(Matrix == this->type);
+    n_assert(this->matrixVal);
+    return *(this->matrixVal);
 }
 
 //------------------------------------------------------------------------------
@@ -402,7 +446,7 @@ nVariable::GetObject() const
 inline
 nVariable::nVariable(Handle h, int val) :
     handle(h),
-    type(INT),
+    type(Int),
     intVal(val)
 {
     // empty
@@ -414,7 +458,7 @@ nVariable::nVariable(Handle h, int val) :
 inline
 nVariable::nVariable(Handle h, float val) :
     handle(h),
-    type(FLOAT),
+    type(Float),
     floatVal(val)
 {
     // empty
@@ -424,11 +468,11 @@ nVariable::nVariable(Handle h, float val) :
 /**
 */
 inline
-nVariable::nVariable(Handle h, const float4& val) :
+nVariable::nVariable(Handle h, const nFloat4& val) :
     handle(h),
-    type(VECTOR)
+    type(Float4)
 {
-    this->SetVector(val);
+    this->SetFloat4(val);
 }
 
 //------------------------------------------------------------------------------
@@ -437,7 +481,7 @@ nVariable::nVariable(Handle h, const float4& val) :
 inline
 nVariable::nVariable(Handle h, const char* str) :
     handle(h),
-    type(STRING)
+    type(String)
 {
     this->SetString(str);
 }
@@ -448,10 +492,22 @@ nVariable::nVariable(Handle h, const char* str) :
 inline
 nVariable::nVariable(Handle h, void* ptr) :
     handle(h),
-    type(OBJECT),
+    type(Object),
     objectVal(ptr)
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariable::nVariable(Handle h, const matrix44& val) :
+    handle(h),
+    type(Matrix),
+    matrixVal(0)
+{
+    this->SetMatrix(val);
 }
 
 //------------------------------------------------------------------------------
