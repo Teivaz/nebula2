@@ -90,12 +90,12 @@ nRoot::Release()
      - 24-May-04    floh    returns nString
 */
 nString
-nRoot::GetFullName()
+nRoot::GetFullName() const
 {
     // build stack of pointers leading from me to root
     const int maxDepth = 128;
-    nRoot* stack[maxDepth];
-    nRoot* cur = this;
+    const nRoot* stack[maxDepth];
+    const nRoot* cur = this;
     int i = 0;
     do 
     {
