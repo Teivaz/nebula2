@@ -77,12 +77,25 @@ nAppLauncher::LaunchWait() const
 
 //------------------------------------------------------------------------------
 /**
+    Launches specified application(.exe)
+
+    The path of executable file and directory are should be specified
+    before launching the application by calling nAppLauncher::SetExecutable() and
+    nAppLauncher::SetWorkingDirectory().  
+    And aguments should be specified by calling nAppLauncher::SetArguments() if 
+    those are needed.
+
+    15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and 
+                   'dirMangled' variables.
 */
 bool
 nAppLauncher::Launch() const
 {
     n_assert(!this->exec.IsEmpty());
     n_assert(this->kernelServer);
+
+    nString execMangled;
+    nString dirMangled;
 
     // mangle paths
     const char* filePath = 0;
@@ -92,13 +105,13 @@ nAppLauncher::Launch() const
     }
     else
     {
-        nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
+        execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
         filePath = execMangled.Get();
     }
     const char* dirPtr = 0;
     if (!this->dir.IsEmpty())
     {
-        nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
+        dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
         dirPtr = dirMangled.Get();
     }
     const char* argPtr = 0;
