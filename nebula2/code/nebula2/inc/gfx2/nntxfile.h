@@ -14,7 +14,8 @@
     several pixel formats in one file, mipmaps, etc...).
 
     Here's the file format description:
-
+    
+    @verbatim
     ntxFile
     {
         int32 'NTX1'        -> magic number for NTX file format version 1
@@ -41,6 +42,7 @@
     {
         ... simply a block of bytes with the image data
     }
+    @endverbatim
 
     (C) 2001 RadonLabs GmbH
 */
