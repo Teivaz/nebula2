@@ -66,7 +66,7 @@
     @endcode
 
     @warning Because nRoot derived classes are created by the nKernelServer,
-    they can only have the default destructor.
+    they can only have the default constructor.
 
     Next we make the script and persistence interface. The script commands are
     put in their own file which should have be named
