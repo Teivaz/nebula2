@@ -5,6 +5,7 @@
 #  Modules:
 #      nvariableserver
 #      nresourceloader
+#      nresourcebundle
 #      nresourceserver
 #      nresource
 #      nconserver
@@ -46,6 +47,12 @@ beginmodule nresourceloader
         nresourceloader_cmds
     }
     setheaders { nresourceloader }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresourcebundle
+    setdir resource
+    setfiles { nresourcebundle_main }
+    setheaders { nresourcebundle }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nresourceserver
