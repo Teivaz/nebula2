@@ -49,7 +49,7 @@ public:
     /// get background color
     const vector4& GetBgColor() const;
     /// returns true if scene graph uses a specific shader type (override in subclasses!)
-    virtual bool IsShaderUsed(uint fourcc) const;
+    virtual bool IsShaderUsed(nFourCC fourcc) const;
     /// begin the scene
     virtual bool BeginScene(const matrix44& viewer);
     /// attach the toplevel object of a scene node hierarchy to the scene
@@ -74,7 +74,7 @@ private:
 
 protected:
     /// split scene nodes into light and shape nodes
-    virtual void SplitNodes(uint shaderFourCC);
+    virtual void SplitNodes(nFourCC shaderFourCC);
     /// make sure scene node resources are valid
     void ValidateNodeResources();
     /// sort shape nodes for optimal rendering
@@ -84,7 +84,7 @@ protected:
     /// static qsort() compare function
     static int __cdecl Compare(const ushort* i1, const ushort* i2);
     /// get shader object from shape bucket (may return 0)
-    nShader2* GetBucketShader(int bucketIndex, uint fourcc);
+    nShader2* GetBucketShader(int bucketIndex, nFourCC fourcc);
 
     class Group
     {

@@ -103,7 +103,7 @@ nSceneServer::Close()
     @return         true if scene graph uses shaders of this type
 */
 bool
-nSceneServer::IsShaderUsed(uint /*fourcc*/) const
+nSceneServer::IsShaderUsed(nFourCC /*fourcc*/) const
 {
     return true;
 }
@@ -252,7 +252,7 @@ nSceneServer::PresentScene()
     as a convenience method for subclasses.
 */
 void
-nSceneServer::SplitNodes(uint shaderFourCC)
+nSceneServer::SplitNodes(nFourCC shaderFourCC)
 {
     ushort i;
     ushort num = this->groupArray.Size();
@@ -395,7 +395,7 @@ nSceneServer::DoSort( ushort* indexPtr, int numIndices )
     Get shader object valid for a whole bucket.
 */
 nShader2*
-nSceneServer::GetBucketShader(int bucketIndex, uint fourcc)
+nSceneServer::GetBucketShader(int bucketIndex, nFourCC fourcc)
 {
     const nArray<ushort>& shapeArray = this->shapeBucket[bucketIndex];
     nMaterialNode* shapeNode = (nMaterialNode*) this->groupArray[shapeArray[0]].sceneNode;

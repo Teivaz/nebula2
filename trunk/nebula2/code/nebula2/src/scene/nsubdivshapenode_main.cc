@@ -52,7 +52,7 @@ nSubdivShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     Apply shader variables.
 */
 bool
-nSubdivShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
+nSubdivShapeNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
 {
     if (nShapeNode::ApplyShader(fourcc, sceneServer))
     {

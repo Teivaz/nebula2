@@ -27,9 +27,9 @@ public:
     /// unload resources
     virtual void UnloadResources();
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
-    virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the max swing angle
     void SetSwingAngle(float f);
     /// get the swing angle

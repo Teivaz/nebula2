@@ -215,7 +215,7 @@ nPersistServer::EndObject()
                              sondern nCmdProto::NewCmd()
 */
 nCmd*
-nPersistServer::GetCmd(nRoot *o, uint id)
+nPersistServer::GetCmd(nRoot *o, nFourCC id)
 {
     n_assert(o);
     nCmdProto *cp = o->GetClass()->FindCmdById(id);

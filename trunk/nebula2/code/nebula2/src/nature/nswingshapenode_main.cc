@@ -87,7 +87,7 @@ nSwingShapeNode::ComputeAngle(const vector3& pos, nTime time) const
     Set pre-instancing attribute of shader.
 */
 bool
-nSwingShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
+nSwingShapeNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
 {
     if (nMaterialNode::ApplyShader(fourcc, sceneServer))
     {
@@ -117,7 +117,7 @@ nSwingShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
     Set per-instance-attribute of shader.
 */
 bool
-nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nSwingShapeNode::RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     if (nMaterialNode::RenderShader(fourcc, sceneServer, renderContext))
     {

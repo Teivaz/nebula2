@@ -30,7 +30,7 @@ public:
         HandleVal
     };
 
-    typedef uint Handle;
+    typedef nFourCC Handle;
     enum
     {
         InvalidHandle = 0xffffffff

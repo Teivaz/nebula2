@@ -87,7 +87,7 @@ public:
     /// begin a persistent object with constructor command
     bool BeginObjectWithCmd(nRoot *, nCmd *, const char *);
     /// create a nCmd object
-    nCmd *GetCmd(nRoot *, uint id);
+    nCmd *GetCmd(nRoot *, nFourCC id);
     /// put a cmd into persistency stream
     bool PutCmd(nCmd *);
     /// put a cmd into persistency stream if savelevel permits

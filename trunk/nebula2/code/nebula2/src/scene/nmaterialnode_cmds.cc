@@ -109,7 +109,7 @@ static void
 n_getshaderat(void* slf, nCmd* cmd)
 {
     nMaterialNode* self = (nMaterialNode*) slf;
-    uint i0;
+    nFourCC i0;
     const char* s0;
     char buf[5];
     self->GetShaderAt(cmd->In()->GetI(), i0, s0);
@@ -132,7 +132,7 @@ nMaterialNode::SaveCmds(nPersistServer* ps)
         int numShaders = this->GetNumShaders();
         for (i = 0; i < numShaders; i++)
         {
-            uint fourcc;
+            nFourCC fourcc;
             const char* name;
             char buf[5];
 

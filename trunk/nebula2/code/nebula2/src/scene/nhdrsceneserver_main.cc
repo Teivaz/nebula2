@@ -217,7 +217,7 @@ nHdrSceneServer::LoadResources()
     the fourcc code. If no such shader exists, no rendering is done.
 */
 void
-nHdrSceneServer::RenderShapes(uint shaderFourCC)
+nHdrSceneServer::RenderShapes(nFourCC shaderFourCC)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
@@ -273,7 +273,7 @@ nHdrSceneServer::RenderShapes(uint shaderFourCC)
     Render all light/shape interactions matching a given fourcc shader code.
 */
 void
-nHdrSceneServer::RenderLightShapes(uint shaderFourCC)
+nHdrSceneServer::RenderLightShapes(nFourCC shaderFourCC)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 

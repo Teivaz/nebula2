@@ -44,9 +44,9 @@ private:
     /// check if resources are valid
     bool AreResourcesValid();
     /// render shape objects in scene
-    void RenderShapes(uint shaderFourCC);
+    void RenderShapes(nFourCC shaderFourCC);
     /// render light/shape interaction for all lit shapes
-    void RenderLightShapes(uint shaderFourCC);
+    void RenderLightShapes(nFourCC shaderFourCC);
     /// render the bloom effect
     void RenderPostEffect();
     /// compute a 2d gaussian distribution value
