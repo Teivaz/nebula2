@@ -15,15 +15,5 @@ begintarget noctree
   	settargetdeps { nnebula }
 endtarget
 #-----------------------------------------------------------------------------
-beginworkspace octree
-    setbinarydir ./bin/
-    setlibdir ./code/contrib/lib/
-    settargets {
-        nkernel
-        nnebula
-        noctree
-    }
-endworkspace
-#-----------------------------------------------------------------------------
 # EOF
 #-----------------------------------------------------------------------------
