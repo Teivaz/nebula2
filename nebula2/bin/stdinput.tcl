@@ -5,7 +5,7 @@
 set oldCwd [psel]
 
 sel /sys/servers/input
-	.beginmap
+    .beginmap
     .map "keyb0:space.down"        "reset"
     .map "keyb0:esc.down"          "console"
     .map "relmouse0:btn0.pressed"  "look"
@@ -26,7 +26,7 @@ sel /sys/servers/input
     .map "keyb0:f6.down"           "setpos1"
     .map "keyb0:f7.down"           "setpos2"
     .map "keyb0:f8.down"           "setpos3"
-	.endmap
+    .endmap
 sel ..
 
 sel $oldCwd
