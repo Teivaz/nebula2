@@ -28,7 +28,7 @@ static void n_getselectionindex(void* slf, nCmd* cmd);
     nGuiTextView
 
     @superclass
-    nguiwidget
+    nguiformlayout
 
     @classinfo
     Simple widget which renders a vertical list of text lines.

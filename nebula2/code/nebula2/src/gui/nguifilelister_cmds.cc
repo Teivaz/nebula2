@@ -12,8 +12,13 @@ static void n_getfilename(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguifilelister
+
+    @cppclass
+    nGuiFileLister
+
     @superclass
-    nguiwidget
+    nguilister
+
     @classinfo
     A file lister widget.
 */

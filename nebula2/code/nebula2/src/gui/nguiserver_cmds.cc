@@ -25,8 +25,13 @@ static void n_togglesystemgui(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguiserver
+
+    @cppclass
+    nGuiServer
+
     @superclass
     nroot
+
     @classinfo
     Handle user interfaces.
 */

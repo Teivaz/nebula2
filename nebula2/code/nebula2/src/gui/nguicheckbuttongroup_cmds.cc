@@ -10,9 +10,14 @@ static void n_getonbuttonindex(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
-    nguicheckbutton
+    nguicheckbuttongroup
+
+    @cppclass
+    nGuiCheckButtonGroup
+
     @superclass
     nguiwidget
+
     @classinfo
     A on/off check button.
 */

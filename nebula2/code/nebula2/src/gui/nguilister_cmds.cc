@@ -17,8 +17,13 @@ static void n_getcursorbrush(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguilister
+
+    @cppclass
+    nGuiLister
+
     @superclass
     nguiwidget
+
     @classinfo
     A lister widget.
 */

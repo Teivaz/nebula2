@@ -22,7 +22,7 @@ static void n_getpattern(void* slf, nCmd* cmd);
     nGuiDirLister
 
     @superclass
-    nguiwidget
+    nguitextview
 
     @classinfo
     A directory content lister widget.

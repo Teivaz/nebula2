@@ -17,8 +17,13 @@ static void n_getemptytext(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguitextentry
+
+    @cppclass
+    nGuiTextEntry
+
     @superclass
     nguitextlabel
+
     @classinfo
     A widget which is a text entry field.
 */

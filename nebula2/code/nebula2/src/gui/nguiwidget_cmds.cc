@@ -42,8 +42,12 @@ static void n_getdisabledbrush(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguiwidget
+
+    @cppclass nGuiWidget
+
     @superclass
     nroot
+
     @classinfo
     Ancestor of all gui widgets.
 */

@@ -17,8 +17,12 @@ static void n_getbackgroundbrush(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguislider
+
+    @cppclass nGuiSlider
+
     @superclass
     nguiwidget
+
     @classinfo
     A horizontal or vertical slider widget.
 */

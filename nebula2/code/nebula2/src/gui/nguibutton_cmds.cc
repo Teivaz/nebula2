@@ -8,8 +8,13 @@
 /**
     @scriptclass
     nguibutton
+
+    @cppclass
+    nGuiButton
+
     @superclass
     nguiwidget
+
     @classinfo
     A button widget.
 */
