@@ -21,6 +21,7 @@ static void n_setmousefactor(void*, nCmd*);
 static void n_getmousefactor(void*, nCmd*);
 static void n_setmouseinvert(void*, nCmd*);
 static void n_getmouseinvert(void*, nCmd*);
+static void n_getmousepos(void*, nCmd*);
 
 //-------------------------------------------------------------------
 /**
@@ -64,6 +65,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("f_getmousefactor_v",        'GMSF', n_getmousefactor);
     cl->AddCmd("v_setmouseinvert_b",        'SMIV', n_setmouseinvert);
     cl->AddCmd("b_getmouseinvert_v",        'GMIV', n_getmouseinvert);
+    cl->AddCmd("ff_getmousepos_v",          'GMXY', n_getmousepos);
     cl->EndCmds();
 }
 
@@ -385,6 +387,27 @@ static void n_getmouseinvert(void* slf, nCmd* cmd)
 {
     nInputServer* self = (nInputServer*) slf;
     cmd->Out()->SetB(self->GetMouseInvert());
+}
+
+//-------------------------------------------------------------------
+/**
+    @cmd
+    getmousepos
+    @input
+    v
+    @output
+    ff (x,y coords)
+    @info
+    Get the current mouse position.
+    (0,0) is the upper left hand corner, 
+    (1,1) is the lower right.
+*/
+static void n_getmousepos(void* slf, nCmd* cmd)
+{
+    nInputServer* self = (nInputServer*) slf;
+    const vector2& pos = self->GetMousePos();
+    cmd->Out()->SetF(pos.x);
+    cmd->Out()->SetF(pos.y);
 }
 //-------------------------------------------------------------------
 //  EOF
