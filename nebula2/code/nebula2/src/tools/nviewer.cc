@@ -71,8 +71,8 @@ DefineInputMapping(nInputServer* inputServer)
     inputServer->Map("relmouse0:+x",           "right");
     inputServer->Map("relmouse0:-y",           "up");
     inputServer->Map("relmouse0:+y",           "down");
-    inputServer->Map("keyb0:1.down", "script:/sys/servers/gfx.closedisplay;/sys/servers/gfx.setdisplaymode fullscreen 1024 768;/sys/servers/gfx.opendisplay");
-    inputServer->Map("keyb0:2.down", "script:/sys/servers/gfx.closedisplay;/sys/servers/gfx.setdisplaymode windowed 640 480;/sys/servers/gfx.opendisplay");
+    inputServer->Map("keyb0:1.down", "script:/sys/servers/gfx.closedisplay;/sys/servers/gfx.setdisplaymode fullscreen 1024 768 false;/sys/servers/gfx.opendisplay");
+    inputServer->Map("keyb0:2.down", "script:/sys/servers/gfx.closedisplay;/sys/servers/gfx.setdisplaymode windowed 640 480 false;/sys/servers/gfx.opendisplay");
     inputServer->EndMap();
 }
 
@@ -248,7 +248,7 @@ main(int argc, const char** argv)
     remoteServer->Open("nviewer");
 
     // initialize graphics
-    nDisplayMode2 displayMode(fullscreenArg ? nDisplayMode2::FULLSCREEN : nDisplayMode2::WINDOWED, widthArg, heightArg);
+    nDisplayMode2 displayMode(fullscreenArg ? nDisplayMode2::FULLSCREEN : nDisplayMode2::WINDOWED, widthArg, heightArg, true);
     gfxServer->SetDisplayMode(displayMode);
     nString title;
     if (viewArg)

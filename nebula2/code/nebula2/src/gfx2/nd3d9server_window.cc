@@ -384,11 +384,11 @@ FIXME!
                         nDisplayMode2 mode = d3d9->displayMode;
                         if (mode.GetType() == nDisplayMode2::FULLSCREEN)
                         {
-                            mode.Set(nDisplayMode2::WINDOWED, mode.GetWidth(), mode.GetHeight());
+                            mode.Set(nDisplayMode2::WINDOWED, mode.GetWidth(), mode.GetHeight(), mode.GetVerticalSync());
                         }
                         else
                         {
-                            mode.Set(nDisplayMode2::FULLSCREEN, mode.GetWidth(), mode.GetHeight());
+                            mode.Set(nDisplayMode2::FULLSCREEN, mode.GetWidth(), mode.GetHeight(), mode.GetVerticalSync());
                         }
                         d3d9->CloseDisplay();
                         d3d9->SetDisplayMode(mode);
