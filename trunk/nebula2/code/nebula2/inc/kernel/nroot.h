@@ -156,7 +156,7 @@ public:
     };
 
 protected:
-    friend nClass;
+    friend class nClass;
         
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nRoot();

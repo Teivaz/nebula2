@@ -42,7 +42,7 @@ private:
     /// private class to keep track of lines in buffer
     class nLine
     {
-        friend nLineBuffer;
+        friend class nLineBuffer;
 
         /// constructor
         nLine();

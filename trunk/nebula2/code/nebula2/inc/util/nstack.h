@@ -37,7 +37,7 @@ private:
     /// a private stack node class
     class nStackNode : public nNode
     {
-        friend nStack;
+        friend class nStack;
 
         /// constructor
         nStackNode(const TYPE& e)
