@@ -1,4 +1,7 @@
-
+//-------------------------------------------------------------------
+//  nvsdebugger.cc
+//  (C) 2004 Bruce Mitchener, Jr.
+//-------------------------------------------------------------------
 #include "vsaddin/vsaddin.h"
 #include "vsaddin/nvsdebugger.h"
 
