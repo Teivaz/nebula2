@@ -9,9 +9,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nPathString : public nString
@@ -165,11 +163,11 @@ nPathString::CheckExtension(const char* ext) const
 {
     n_assert(ext);
     const char* extStr = this->GetExtension();
-    if (extStr)
+	if (0 == extStr)
     {
-        return (0 == (strcmp(ext, extStr)));
-    }
-    return false;
+        return false;
+	}
+    return (0 == (strcmp(ext, extStr)));
 }
 
 //------------------------------------------------------------------------------
