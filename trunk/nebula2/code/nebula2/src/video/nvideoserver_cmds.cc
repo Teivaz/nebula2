@@ -113,7 +113,7 @@ n_playfile(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    stopfile
+    stop
     @input
     v
     @output

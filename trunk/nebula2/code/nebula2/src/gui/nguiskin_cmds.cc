@@ -387,7 +387,7 @@ n_setwindowborder(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
-    getwindowbordersize
+    getwindowborder
     @input
     v
     @output
