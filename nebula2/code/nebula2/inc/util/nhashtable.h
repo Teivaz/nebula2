@@ -2,6 +2,9 @@
 #define N_HASHTABLE_H
 //------------------------------------------------------------------------------
 /**
+    @class nHashTable
+    @ingroup NebulaDataTypes
+
     Implements a simple string hash table.
 
     (C) 2002 RadonLabs GmbH

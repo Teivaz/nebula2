@@ -2,6 +2,8 @@
 #define N_MATERIALNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nMaterialNode
+
     A material node defines a shader resource and associated shader
     variables. A shader resource is an external file (usually a text file)
     which defines a surface shader.
@@ -11,6 +13,8 @@
     Thus, subclasses should be derived which implement some sort of
     shape rendering.
     
+    See also @ref N2ScriptInterface_nmaterialnode
+
     (C) 2002 RadonLabs GmbH
 */
 #ifndef N_ABSTRACTSHADERNODE_H

@@ -2,6 +2,8 @@
 #define N_AXISFILTER_H
 //------------------------------------------------------------------------------
 /**
+    @class nAxisFilter
+
     A simple axis filter object which filters input values over the last
     few frames.
 

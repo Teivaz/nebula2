@@ -2,6 +2,8 @@
 #define N_NTXFILE_H
 //------------------------------------------------------------------------------
 /**
+    @class nNtxFile
+
     Implement a Nebula texture file format optimized for fast loading.
 
     NTX files (Nebula Texture File) implements a simple texture file format

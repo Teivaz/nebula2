@@ -2,6 +2,8 @@
 #define _VECTOR3_SSE_H
 //------------------------------------------------------------------------------
 /**
+    @class _vector3_sse
+
     SSE based vector3 class.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,9 @@
 #define N_STRING_H
 //------------------------------------------------------------------------------
 /**
+    @class nString
+    @ingroup NebulaDataTypes
+
     A simple Nebula string class. Very handy when strings must be stored or
     manipulated. Note that Nebula interfaces hand strings around as
     char pointers, not nString objects.

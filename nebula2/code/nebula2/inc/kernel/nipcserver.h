@@ -2,6 +2,8 @@
 #define N_IPCSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nIpcServer
+
     Sockets based server object for simple ipc 
 
     An nIpcServer object opens a named public message port, and

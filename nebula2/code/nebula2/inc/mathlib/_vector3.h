@@ -2,6 +2,8 @@
 #define _VECTOR3_H
 //------------------------------------------------------------------------------
 /**
+    @class _vector3
+
     Generic vector3 class. Uses 16 Byte of mem instead of 12 (!)
 
     (C) 2002 RadonLabs GmbH

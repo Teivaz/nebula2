@@ -2,6 +2,8 @@
 #define N_CMD_H
 //------------------------------------------------------------------------------
 /**
+    @class nCmd
+
     Encapsulate a function call into a C++ object. 
     
     (C) 2002 RadonLabs GmbH

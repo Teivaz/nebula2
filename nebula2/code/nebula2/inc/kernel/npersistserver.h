@@ -2,11 +2,12 @@
 #define N_PERSISTSERVER_H
 //------------------------------------------------------------------------------
 /**
-    OVERVIEW
+    @class nPersistServer
+
     Interface to the file system for serializing objects.
 
-    Nebula Persistent Object File Format
-    ------------------------------------
+    <h2>Nebula Persistent Object File Format</h2>
+
     The actual format of serialized objects is not specified.
     Instead script server objects are used to translate nCmd objects
     emitted by objects into actual script statements that will
@@ -17,20 +18,22 @@
     understands it.
 
     Within the first 128 Bytes of a serialized object file the 
-    following strings must be embedded:
+    following string must be embedded:
 
+    @verbatim
     $parser:classname$
+    @endverbatim
 
     Where 'classname' is the script server's class which has
     to be used to read that file. 
+
+    <h2>Folded and unfolded objects</h2>
 
     *** NOTE *** UNFOLDED OBJECTS ARE NO LONGER SUPPORTED FOR
     WRITING, AND READING IS ONLY SUPPORTED FOR "FLAT" FILE
     HIERARCHIES (i.e. a "nKernelServer::Load("bla.n") is allowed
     if bla.n is a directory, and contains a _main file).
 
-    Folded and unfolded objects
-    ---------------------------
     Serialized objects can be saved in 2 ways, folded and unfolded.
     Folded means, the object itself and all of it's children will
     be saved into a single file. Unfolded means that for each

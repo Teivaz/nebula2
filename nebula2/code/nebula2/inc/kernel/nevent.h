@@ -2,6 +2,8 @@
 #define N_EVENT_H
 //------------------------------------------------------------------------------
 /**
+    @class nEvent
+
     Event wrapper for multithreading synchrinization.
 
     THERE MAY BE DIFFERENCES IN BEHAVIOUR IF AN EVENT IS SIGNALLED

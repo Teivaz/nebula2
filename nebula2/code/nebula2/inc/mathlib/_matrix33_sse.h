@@ -2,6 +2,8 @@
 #define _MATRIX33_SSE_H
 //------------------------------------------------------------------------------
 /**
+    @class _matrix33_sse
+
     An SSE based matrix33 class.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_POLAR_H
 //------------------------------------------------------------------------------
 /**
+    @class polar2
+
     A polar coordinate inline class, consisting of 2 angles theta (latitude)
     and rho (longitude). Also offers conversion between cartesian and 
     polar space.

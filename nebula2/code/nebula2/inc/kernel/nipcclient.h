@@ -2,6 +2,8 @@
 #define N_IPCCLIENT_H
 //-----------------------------------------------------------------------------=
 /**
+    @class nIpcClient
+
     A nIpcClient object can connect to exactly one nIpcServer
     object over a socket and send messages to it. The client
     generally expects a reply from the server befor a new

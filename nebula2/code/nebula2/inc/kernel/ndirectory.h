@@ -2,6 +2,8 @@
 #define N_DIRECTORY_H
 //------------------------------------------------------------------------------
 /**
+    @class nDirectory
+
     wrapper for directory functions
 
     provides functions for searching directories

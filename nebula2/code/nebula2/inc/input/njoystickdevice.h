@@ -2,15 +2,17 @@
 #define N_JOYSTICKDEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nJoystickDevice
+
     A Nebula joystick input device. Nebula joystick device have buttons, axes
     and button-axes. POVs are tranlated into normal axes. For each hardware
     joystick axes, 2 device axes and 2 axis buttons are created:
 
     x hardware axis:
-        -x          -> negative axis (0 .. +1.0)
-        +x          -> positive axis (0 .. +1.0)
-        -xbtn       -> negative axis button 
-        +xbtn       -> positive axis button
+       - -x          -> negative axis (0 .. +1.0)
+       - +x          -> positive axis (0 .. +1.0)
+       - -xbtn       -> negative axis button 
+       - +xbtn       -> positive axis button
 
     Each pov translates to 2 "hardware axes", resulting in 4 Nebula axis and
     4 Nebula axis buttons.

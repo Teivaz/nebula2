@@ -2,7 +2,11 @@
 #define N_INPUTSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nInputServer
+
     Manage input devices, events and mappings.
+
+    See also @ref N2ScriptInterface_ninputserver
 
     (C) 2002 RadonLabs GmbH
 */

@@ -2,6 +2,8 @@
 #define N_ANIMATIONSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimationServer
+
     The animation server offers central services of the animation subsystem
     (at the moment it is merely a factory for nAnimation objects).
     
@@ -42,8 +44,3 @@ private:
 };
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

@@ -2,6 +2,8 @@
 #define N_KERNELSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nKernelServer
+
     The Nebula kernel server class.
 
     (C) 2002 RadonLabs GmbH

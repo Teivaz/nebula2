@@ -2,6 +2,8 @@
 #define _MATRIX44_SSE_H
 //------------------------------------------------------------------------------
 /**
+    @class _matrix44_sse
+
     SSE based matrix44 class.
 
     (C) 2002 RadonLabs GmbH

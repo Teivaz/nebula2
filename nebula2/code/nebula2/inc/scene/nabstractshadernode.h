@@ -2,10 +2,14 @@
 #define N_ABSTRACTSHADERNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nAbstractShaderNode
+
     This is the base class for all shader related scene node classes
     (for instance material and light nodes). All those classes need
     to hold named, typed shader variables, as well as texture resource
     management.
+
+    See also @ref N2ScriptInterface_nabstractshadernode
     
     (C) 2003 RadonLabs GmbH
 */

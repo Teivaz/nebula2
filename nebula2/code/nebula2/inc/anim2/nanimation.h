@@ -2,6 +2,8 @@
 #define N_ANIMATION_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimation
+
     An nAnimation is a nResource subclass which holds one or more
     animation curves, which must all share the same number of
     keys, framerate and loop type. The nAnimation object

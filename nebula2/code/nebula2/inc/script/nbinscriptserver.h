@@ -2,6 +2,8 @@
 #define N_BINSCRIPTSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nBinScriptServer
+
     Save/load objects as binary files.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_D3D9SERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9Server
+
     D3D9 based gfx server.
 
     (C) 2002 RadonLabs GmbH

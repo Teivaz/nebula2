@@ -166,12 +166,3 @@ static inline float n_clamp(float val, float lower, float upper)
 //-------------------------------------------------------------------
 #endif
 
-
-
-
-
-
-
-
-
-

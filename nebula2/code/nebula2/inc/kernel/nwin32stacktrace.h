@@ -2,6 +2,8 @@
 #define N_STACKTRACE_H
 //------------------------------------------------------------------------------
 /**
+    @class nStackTrace
+
     FIXME FIXME FIMXE
 
     This class implements experimental stacktracing under Win32, and 

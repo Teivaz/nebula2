@@ -2,6 +2,8 @@
 #define N_TEXTURE2_H
 //------------------------------------------------------------------------------
 /**
+    @class nTexture2
+
     Contains image data used by the gfx api's texture samplers. Textures
     are normal named, shared resources which are usually loaded from disk.
     Textures can also be declared as render targets.

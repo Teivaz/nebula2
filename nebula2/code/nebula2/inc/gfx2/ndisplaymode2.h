@@ -2,6 +2,8 @@
 #define N_DISPLAYMODE2_H
 //------------------------------------------------------------------------------
 /**
+    @class nDisplayMode2
+
     Contains display mode parameters.
 
     (C) 2002 RadonLabs GmbH

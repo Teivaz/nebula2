@@ -2,6 +2,8 @@
 #define N_DI8DEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nDI8Device
+
     Hold information about a DirectInput8 device. There is one nDI8Device
     object per supported DirectInput device.
 

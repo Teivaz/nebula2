@@ -1,13 +1,13 @@
 #ifndef N_TCLSERVER_H
 #define N_TCLSERVER_H
 //--------------------------------------------------------------------
-//  CLASS
-//  nTclServer -- wraps around Tcl interpreter
-//
-//  OVERVIEW
-//  Implements an nScriptServer that understands Tcl, extended
-//  by a few Nebula specific Tcl commands and the ability
-//  to route script cmds to Nebula C++ objects.
+/**
+    @class nTclServer
+
+    Implements an nScriptServer that understands Tcl, extended
+    by a few Nebula specific Tcl commands and the ability
+    to route script cmds to Nebula C++ objects.
+*/
 //--------------------------------------------------------------------
 
 #include "tcl.h"

@@ -2,6 +2,8 @@
 #define N_CLASS_H
 //------------------------------------------------------------------------------
 /**
+    @class nClass
+
     Nebula metaclass. nRoot derived objects are not created directly
     in C++, but by nClass objects. nClass objects wrap dynamic demand-loading
     of classes, and do other householding stuff.

@@ -2,6 +2,8 @@
 #define N_ARG_H
 //------------------------------------------------------------------------------
 /**
+    @class nArg
+
     nArg encapsulates a typed argument (float, int, bool, string
     or object pointer) into a uniform C++ class.
 
@@ -247,7 +249,7 @@ nArg::operator==(const nArg& rhs) const
 /**
     Sets the contents to an integer, and sets the arg type to ARGTYPE_INTEGER.
 
-    @param i the integer
+    @param _i the integer
 */
 inline void nArg::SetI(int _i)
 {
@@ -259,7 +261,7 @@ inline void nArg::SetI(int _i)
 /**
     Sets the contents to a bool value, and set the arg type to ARGTYPE_BOOL.
 
-    @param b the bool value
+    @param _b the bool value
 */
 inline void nArg::SetB(bool _b)
 {
@@ -272,7 +274,7 @@ inline void nArg::SetB(bool _b)
 /**
     Sets the contents to a float value, and sets the arg type to ARGTYPE_FLOAT.
 
-    @param f the float value
+    @param _f the float value
 */
 inline void nArg::SetF(float _f)
 {
@@ -286,7 +288,7 @@ inline void nArg::SetF(float _f)
     Sets the contents to a string, and sets the arg type to ARGTYPE_STRING.
     The string is duplicated internally.
 
-    @param s the string
+    @param _s the string
 */
 inline void nArg::SetS(const char *_s)
 {
@@ -307,7 +309,7 @@ inline void nArg::SetS(const char *_s)
     Sets the contents to a chunk of code, and sets the arg type to ARGTYPE_CODE.
     The string is duplicated internally.
 
-    @param s the script chunk string
+    @param _c the script chunk string
 */
 inline void nArg::SetC(const char* _c)
 {
@@ -323,7 +325,7 @@ inline void nArg::SetC(const char* _c)
     ARGTYPE_OBJECT. The pointer is NOT safe (if the object is destroyed,
     the pointer points to Nirvana).
 
-    @param o the object pointer
+    @param _o the object pointer
 */
 inline void nArg::SetO(void *_o)
 {
@@ -338,7 +340,7 @@ inline void nArg::SetO(void *_o)
     to ARGTYPE_LIST.
     The array is NOT duplicated.
 
-    @param l pointer to array of nArg
+    @param _l pointer to array of nArg
     @param len length of array
 */
 inline void nArg::SetL(nArg* _l, int len)

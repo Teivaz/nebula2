@@ -2,6 +2,8 @@
 #define N_CAMERA2_H
 //------------------------------------------------------------------------------
 /**
+    @class nCamera2
+
     Hold camera attributes for nGfxServer2.
 
     (C) 2002 RadonLabs GmbH

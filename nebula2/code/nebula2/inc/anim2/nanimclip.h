@@ -2,6 +2,8 @@
 #define N_ANIMCLIP_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimClip
+
     An animation clip bundles several animation curves into a unit and
     associates them with a weight value.
 

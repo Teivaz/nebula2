@@ -2,6 +2,8 @@
 #define _MATRIX44_H
 //------------------------------------------------------------------------------
 /**
+    @class _matrix44
+
     Generic matrix44 class.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define _MATRIX33_H
 //------------------------------------------------------------------------------
 /**
+    @class _matrix33
+
     A generic matrix33 class.
 
     (C) 2002 RadonLabs GmbH

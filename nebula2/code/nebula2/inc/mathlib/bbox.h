@@ -1,8 +1,11 @@
 #ifndef N_BBOX_H
 #define N_BBOX_H
 //------------------------------------------------------------------------------
-//  CLASS
-//  bbox3 -- (non-oriented) bounding box
+/**
+    @class bbox3
+
+    (non-oriented) bounding box
+*/
 //------------------------------------------------------------------------------
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"

@@ -2,6 +2,8 @@
 #define N_HASHNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nHashNode
+
     A node element in a nHashList.
 
     (C) 2002 RadonLabs GmbH

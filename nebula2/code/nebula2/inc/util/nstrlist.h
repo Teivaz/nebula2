@@ -2,6 +2,9 @@
 #define N_STRLIST_H
 //------------------------------------------------------------------------------
 /**
+    @class nStrList
+    @ingroup NebulaDataTypes
+
     A doubly linked list for named nodes with slow linear search.
 
     (C) 2002 RadonLabs GmbH

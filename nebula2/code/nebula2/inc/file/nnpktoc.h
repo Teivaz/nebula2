@@ -2,6 +2,8 @@
 #define N_NPKTOC_H
 //------------------------------------------------------------------------------
 /**
+    @class nNpkToc
+
     Hold table of content entries for npk files.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_NPKDIRECTORY_H
 //------------------------------------------------------------------------------
 /**
+    @class nNpkDirectory
+
     npk File Directory Wrapper.
 
     (C) 2002 RadonLabs GmbH

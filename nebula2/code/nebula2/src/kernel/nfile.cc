@@ -56,13 +56,13 @@ nFile::IsOpen()
 /**
     opens the specified file
 
-	@param dirName		the name of the file to open
+    @param fileName     the name of the file to open
     @param accessMode   the access mode ("(r|w|a)[+]")
-    @return				success
+    @return             success
 
-	history:
-    - 30-Jan-2002   peter   created
-    - 11-Feb-2002   floh    Linux stuff
+    history:
+      - 30-Jan-2002   peter   created
+      - 11-Feb-2002   floh    Linux stuff
 */
 bool
 nFile::Open(const char* fileName, const char* accessMode)

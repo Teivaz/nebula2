@@ -2,6 +2,9 @@
 #define N_PATHSTRING_H
 //------------------------------------------------------------------------------
 /**
+    @class nPathString
+    @ingroup NebulaDataTypes
+
     A special nString subclass for file paths.
 
     (C) 2002 RadonLabs GmbH

@@ -6,9 +6,14 @@
     Run from within nebula/bin,
     html files are created in nebula/doc/autodoc.
 
+    TODO:
+       - Add C++ class names to the data tracked and use that to generate
+         links over to the C++ API doc.
+       - Add grouping to create some form of hierarchy.
+
     30-Aug-01   leaf    created.
     12-Jun-02   leaf    new style and other improvements
-    
+    16-Aug-03   bruce   added doxygen output
 """
 import sys, os, fnmatch, re, time
 
@@ -91,16 +96,16 @@ def scanFiles(pathname):
             fp.close()
 
 # functions for creating the html
-def classTree(clas, indent = 0):
+def classTreeHTML(clas, indent = 0):
     out = '<li><a href="classes/%s.html" target="mainFrame">%s</a>' % (clas.name, clas.name)
     if clas.subclasses:
         out += '\n <ul>\n'
         for sc in clas.subclasses:
-            out += classTree(sc, indent)
+            out += classTreeHTML(sc, indent)
         out += ' </ul>\n'
     return out+'</li>\n'
 
-def classInfo(clas):
+def classInfoHTML(clas):
     out = """<html>
 <head>
 <title>Autodoc: %s</title>
@@ -139,7 +144,7 @@ def classInfo(clas):
 </ul><hr noshade size=" 1"color="#CCCCCC"/>"""
     return out
 
-def cmdBlock(cmd, clas):
+def cmdBlockHTML(cmd, clas):
     out = """<h3><a name="%s">%s</a></h3>
 <ul>
   <h4>input:</h4>
@@ -162,19 +167,98 @@ def cmdBlock(cmd, clas):
         cmd.info.replace("\n    ","\n"))
     return out
 
-def classPage(clas):
-    out = classInfo(clas)
+def classPageHTML(clas):
+    out = classInfoHTML(clas)
     for cmd in clas.cmds:
-        out += cmdBlock(cmd, clas)
+        out += cmdBlockHTML(cmd, clas)
     out += "</body></html>"
     fo = open(os.path.join(dir_classes, '%s.html' % clas), 'w')
     fo.write(out)
     fo.close()
 
-def cmdsPage(root):
-    classPage(root)
+def cmdsPageHTML(root):
+    classPageHTML(root)
     for clas in root.subclasses:
-        cmdsPage(clas)
+        cmdsPageHTML(clas)
+    return out
+
+# functions for creating doxygen output
+def classTreeDoxygen(clas, indent = 0):
+    out = '%s - @ref N2ScriptInterface_%s "%s"\n' % (' ' * indent, clas.name,
+                                                  clas.name)
+    if clas.subclasses:
+        for sc in clas.subclasses:
+            out += classTreeDoxygen(sc, indent + 4)
+    return out
+
+def classInfoDoxygen(clas):
+    out = """/**
+@page N2ScriptInterface_%s %s Script Interface
+
+@section N2ScriptInterfaceClass_%s %s:
+""" % (clas.name, clas.name, clas.name, clas.name)
+
+    if clas.superclass != "---":
+        out += """
+@subsection N2ScriptInterfaceSuperClass_%s Super Class:
+ 
+   - @ref N2ScriptInterface_%s "%s"\n""" % (clas.name, clas.superclass, clas.superclass)
+
+    if clas.subclasses:
+        out += "\n@subsection N2ScriptInterfaceSubClasses_%s Subclasses:\n" % (clas.name)
+        for subclas in clas.subclasses:
+            out += """    - @ref N2ScriptInterface_%s "%s"\n""" % (subclas.name,
+                                                                   subclas.name)
+
+    out += """
+@subsection N2ScriptInterface_%sInfo Info
+
+%s
+""" % (clas.name, clas.info.replace("\n    ","\n"))
+    out += "\n@subsection N2ScriptInterfaceCommands_%s Commands:\n" % (clas.name)
+    # do command block
+    numcmds = len(clas.cmds)
+    for i in range(numcmds):
+        cmd = clas.cmds[i]
+        out += "    - @ref N2ScriptInterface_%s_%s\n" % (clas.name, cmd.name)
+    out += "\n\n<hr>\n\n"
+    return out
+
+def cmdBlockDoxygen(cmd, clas):
+    out = """@subsubsection N2ScriptInterface_%s_%s %s
+
+@par Command Input:
+<tt>%s</tt>
+
+@par Command Output:
+<tt>%s</tt>
+
+@par Command Description:
+%s
+
+<hr>
+""" % (
+        clas.name,
+        cmd.name,
+        cmd.name,
+        cmd.input.replace("\n    ","\n"),
+        cmd.output.replace("\n    ","\n"),
+        cmd.info.replace("\n    ","\n"))
+    return out
+
+def classPageDoxygen(clas):
+    out = classInfoDoxygen(clas)
+    for cmd in clas.cmds:
+        out += cmdBlockDoxygen(cmd, clas)
+    out += "*/"
+    fo = open(os.path.join(dir_classes, '%s.dox' % clas), 'w')
+    fo.write(out)
+    fo.close()
+
+def cmdsPageDoxygen(root):
+    classPageDoxygen(root)
+    for clas in root.subclasses:
+        cmdsPageDoxygen(clas)
     return out
 
 # parse all the cmd files
@@ -182,7 +266,7 @@ scanFiles(dir_src)
 root = classes['nroot']
 root.findSubclasses()
 
-# create class tree
+# create HTML class tree
 out = """<html>
 <head>
     <link rel="stylesheet" href="autodoc.css" type="text/css">
@@ -192,7 +276,7 @@ out = """<html>
     <h3>Nebula 2 Class Tree</h3>
     <ul>
 """ % (time.strftime("%d/%m/%y %H:%M"))
-out += classTree(root)
+out += classTreeHTML(root)
 out += """
     </ul>
 </body>
@@ -201,16 +285,86 @@ fp = open(os.path.join(dir_autodoc, 'tree.html'), 'w')
 fp.write(out)
 fp.close()
 
+# create class tree
+out = """/**
+@page NebulaTwoScriptInterface Nebula 2 Script Interface
+
+@section NebulaTwoScriptInterfaceForUsers Notes for Users
+
+Select the class you're interested in from the tree below. Each class documents
+the commands that that class defines, plus a class also inherits commands from
+its parent. For example @c nanimator also accepts @c nscenenode
+commands, and every class inherits @c nroot commands.
+
+You can use the command @c getcmds on any class to see a full
+list of commands for that class.
+
+The @b input / @b output parameter information for each command uses a single letter code to
+represent the type of the parameter.
+   - f - float value
+   - i - integer value
+   - o - object reference
+   - s - string value
+   - l - list value
+   - b - true|false
+   - v - no parameters
+
+@section NebulaTwoScriptInterfaceTree Scriptable Classes
+"""
+out += classTreeDoxygen(root) 
+out += """
+@section NebulaTwoScriptInterfaceForDevelopers Notes for Developers
+
+<p>In order for your commands to be documented here you must put the functions
+  in a file called <code>*_cmds.cc</code>. To describe the class use a comment
+  block like this, usually put in front of the <code>n_initcmds</code> function:</p>
+
+@verbatim
+/**
+    @ scriptclass
+    ntimeserver
+
+    @ superclass
+    nroot
+
+    @ classinfo
+    The ntimeserver object lives under the name /sys/servers/time
+    and provides a central time source for Nebula.
+*/
+@endverbatim
+
+Then put a comment block in front of
+each script function like this:
+
+@verbatim
+/**
+    @ cmd
+    gettime
+
+    @ input
+    v
+
+    @ output
+    f (Time)
+
+    @ info
+    Return current global time in seconds since the time server
+    was created.
+*/
+@endverbatim
+
+	This will be output <i>as is</i> so make sure to wrap
+your text at a reasonable point, and try to use spaces instead of tabs.
+See any @c *_cmds.cc file for more detail.
+"""
+out += "*/"
+fp = open(os.path.join(dir_autodoc, 'tree.dox'), 'w')
+fp.write(out)
+fp.close()
+
 # create class pages
 if not os.path.exists(dir_classes):
     os.mkdir(dir_classes)
-cmdsPage(root)
-
-
-
-
-
-
-
-
+cmdsPageHTML(root)
+cmdsPageDoxygen(root)
 

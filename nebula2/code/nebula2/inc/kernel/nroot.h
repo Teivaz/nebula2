@@ -2,6 +2,8 @@
 #define N_ROOT_H
 //------------------------------------------------------------------------------
 /**
+    @class nRoot
+
     nRoot defines the basic functionality and interface for
     the Nebula class hierarchie:
 

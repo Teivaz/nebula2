@@ -2,6 +2,8 @@
 #define N_DYNAUTOREF_H
 //------------------------------------------------------------------------------
 /**
+    @class nDynAutoRef
+
     nAutoRef with dynamically allocated name string.
 */
 #ifndef N_AUTOREF_H

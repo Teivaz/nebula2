@@ -2,6 +2,8 @@
 #define N_REMOTESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nRemoteServer
+
     The remote server opens a socket and listens for connecting
     clients. For each client, a remote session will be created,
     each with its own current working object.

@@ -2,6 +2,8 @@
 #define N_KEYBOARDDEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nKeyboardDevice
+
     A Nebula input device wrapping around a keyboard.
 
     (C) 2002 RadonLabs GmbH

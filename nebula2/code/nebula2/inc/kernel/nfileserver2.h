@@ -2,6 +2,8 @@
 #define N_FILESERVER2_H
 //------------------------------------------------------------------------------
 /**
+    @class nFileServer2
+
     New fileserver.
 
     Provides functions for creating file and directory objects and assigns.

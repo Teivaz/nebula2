@@ -2,8 +2,12 @@
 #define N_TRANSFORMANIMATOR_H
 //------------------------------------------------------------------------------
 /**
+    @class nTransformAnimator
+
     Animate position, orientation and scaling of a nTransformNode from
     directly defined key arrays.
+
+    See also @ref N2ScriptInterface_ntransformanimator
     
     (C) 2003 RadonLabs GmbH
 */
@@ -163,7 +167,7 @@ nTransformAnimator::GetNumScaleKeys() const
 
     @param  index   [in]    index of key to get
     @param  time    [out]   the time stamp of the key
-    @param  pos     [out]   the value of the key
+    @param  key     [out]   the value of the key
 */
 inline
 void
@@ -180,7 +184,7 @@ nTransformAnimator::GetPosKeyAt(int index, float& time, vector3& key) const
 
     @param  index   [in]    index of key to get
     @param  time    [out]   the time stamp of the key
-    @param  pos     [out]   the value of the key
+    @param  key     [out]   the value of the key
 */
 inline
 void
@@ -197,7 +201,7 @@ nTransformAnimator::GetEulerKeyAt(int index, float& time, vector3& key) const
 
     @param  index   [in]    index of key to get
     @param  time    [out]   the time stamp of the key
-    @param  pos     [out]   the value of the key
+    @param  key     [out]   the value of the key
 */
 inline
 void

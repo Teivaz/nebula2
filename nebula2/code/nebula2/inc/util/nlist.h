@@ -2,6 +2,9 @@
 #define N_LIST_H
 //------------------------------------------------------------------------------
 /**
+    @class nList
+    @ingroup NebulaDataTypes
+
     Implement a doubly linked list.
     
     (C) 2002 RadonLabs GmbH

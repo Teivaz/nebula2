@@ -2,6 +2,8 @@
 #define N_FILE_H
 //------------------------------------------------------------------------------
 /**
+    @class nFile
+
     wrapper for file routines
 
     provides functions for reading and writing files

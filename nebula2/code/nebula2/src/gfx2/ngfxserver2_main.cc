@@ -312,7 +312,7 @@ nGfxServer2::SetTexture(int stage, nTexture2* texture)
     This will increment its refcount and decrement the refcount 
     of the previous object.
 
-    @param  shader     pointer to a nShader2 object
+    @param  shd     pointer to a nShader2 object
 */
 void
 nGfxServer2::SetShader(nShader2* shd)

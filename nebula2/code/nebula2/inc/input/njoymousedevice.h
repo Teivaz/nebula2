@@ -2,6 +2,8 @@
 #define N_JOYMOUSEDEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nJoyMouseDevice
+
     A Nebula input device which takes as input mouse data and emulates
     a recentering joystick.
 

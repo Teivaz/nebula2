@@ -2,6 +2,8 @@
 #define N_LOGHANDLER_H
 //------------------------------------------------------------------------------
 /**
+    @class nLogHandler
+
     The nLogHandler class provides a flexible way to provide text output
     to the user. Whenever the Print(), Message() or Error()
     methods of the kernel server are called, it will invoke the
