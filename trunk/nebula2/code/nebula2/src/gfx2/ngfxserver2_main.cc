@@ -264,7 +264,7 @@ nGfxServer2::BeginScene()
     n_assert(!this->inBeginScene);
     if (this->displayOpen)
     {
-        // reset the ligth array
+        // reset the light array
         this->ClearLights();
         this->inBeginScene = true;
         return true;
