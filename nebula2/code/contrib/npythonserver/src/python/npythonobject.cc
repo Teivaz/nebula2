@@ -217,9 +217,122 @@ NebulaObject_SetAutoDel(NebulaObject *self, PyObject * /*args*/)
     return result;
 }
 
+//-----------------------------------------------------------------------------
+/**
+    @brief Emit a signal from the emitter object
+*/
+PyObject *
+NebulaObject_Emit(NebulaObject *self, PyObject * args)
+{
+    PyObject * result = NULL;
+    n_assert(NULL!=self);
+    char * usageMsg = "Usage: object.emit(signalname,arg1,arg2,...)";
+
+    // check args python object is a tuple
+    if (0 == PyTuple_Check(args))
+    {
+        n_message(usageMsg);
+        return result;
+    }
+
+    // get the emitter object
+    nObject * o = NebulaObject_GetPointer((NebulaObject*)self);
+    if (0 == o)
+    {
+        PyErr_SetString(PyExc_Exception, "Emitter object not valid");
+        return result;
+    }
+
+    // get the class of the object
+    nClass * objClass = o->GetClass();
+    n_assert(objClass);
+
+    // get second item of the tuple (the signal name / fourcc)
+    PyObject * arg0 = PyTuple_GET_ITEM(args, 0);
+    n_assert(arg0);
+    nSignal * signal = 0;
+    if (PyString_Check(arg0))
+    {
+        char * signalName = PyString_AsString(arg0);
+        signal = objClass->FindSignalByName(signalName);
+        if (!signal && strlen(signalName) == 4)
+        {
+            nFourCC fourcc = MAKE_FOURCC(signalName[0], signalName[1], signalName[2], signalName[3]);
+            signal = objClass->FindSignalById(fourcc);
+        }
+    }
+    if (0 == signal)
+    {
+        PyErr_SetString(PyExc_Exception, "Signal name not valid");
+        return result;
+    }
+
+    // get new nCmd for the signal information
+    nCmd *cmd = signal->NewCmd();
+    n_assert(cmd);
+
+    // Create a new tuple that has just the arguments needed for the command
+    PyObject * commandArgs = PyTuple_GetSlice(args, 1, PyTuple_Size(args));
+
+    // Pass Cmd object and the remaining tuple arguments to _getInArgs.
+    // Retrieve input args (skip the 'unknown' and cmd statement)
+    if (!_getInArgs(cmd, commandArgs))
+    {
+        if (o->IsA("nroot"))
+        {
+            PyErr_Format(PyExc_Exception,
+                    "Broken input args, object '%s' of class '%s', signal '%s'",
+                    ((nRoot *)o)->GetName(),
+                    o->GetClass()->GetName(),
+                    signal->GetName());
+        }
+        else
+        {
+            PyErr_Format(PyExc_Exception,
+                    "Broken input args, object of class '%s', signal '%s'",
+                    o->GetClass()->GetName(), signal->GetName());
+        }
+        result = NULL;
+    }
+    else if (o->Dispatch(cmd))
+    {
+        // let object handle the command
+        result = _putOutArgs(cmd);
+        // either returns a single PyObject of the appropriate
+        // return type OR a tuple containing results
+        // a null return is done as a null Tuple..
+    }
+    else
+    {
+        if (o->IsA("nroot"))
+        {
+            PyErr_Format(PyExc_Exception,
+                "Dispatch error, object '%s' of class '%s', signal '%s'",
+                ((nRoot *)o)->GetName(),
+                o->GetClass()->GetName(),
+                signal->GetName());
+        }
+        else
+        {
+            PyErr_Format(PyExc_Exception,
+                "Dispatch error, object of class '%s', signal '%s'",
+                o->GetClass()->GetName(), signal->GetName());
+        }
+        result = NULL;
+    }
+    // In any case, cleanup the cmd object
+    signal->RelCmd(cmd);
+
+    // Clean up
+    Py_XDECREF(commandArgs);
+    return result;
+}
+
+
 // only one method defined...
 PyMethodDef Nebula_methods[] = {
     {"_SetAutoDel_", (PyCFunction)NebulaObject_SetAutoDel, METH_VARARGS, NULL},
+    {"emit",         (PyCFunction)NebulaObject_Emit,       METH_VARARGS, NULL},
     {NULL,      NULL, 0, NULL}    /* sentinel */
 };
 
