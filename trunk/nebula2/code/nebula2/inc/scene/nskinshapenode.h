@@ -13,25 +13,10 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_SHAPENODE_H
 #include "scene/nshapenode.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
-
-#ifndef N_CHARJOINTPALETTE_H
 #include "character/ncharjointpalette.h"
-#endif
-
-#ifndef N_CHARSKINRENDERER_H
 #include "character/ncharskinrenderer.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nShapeNode
-#include "kernel/ndefdllclass.h"
 
 class nCharSkeleton;
 class nSkinAnimator;
@@ -46,12 +31,10 @@ public:
     virtual ~nSkinShapeNode();
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
-    /// load resources
-    virtual bool LoadResources();
-    /// return true if resources for this object are valid
-    virtual bool AreResourcesValid() const;
     /// render geometry
-    virtual void RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// set the skin animator
     void SetSkinAnimator(const char* path);
     /// get the skin animator
@@ -105,7 +88,6 @@ private:
     nDynAutoRef<nSkinAnimator> refSkinAnimator;
     const nCharSkeleton* extCharSkeleton;
     nArray<Fragment> fragmentArray;
-    nVariable::Handle jointPaletteVarHandle;
     static nCharSkinRenderer charSkinRenderer;
 };
 
