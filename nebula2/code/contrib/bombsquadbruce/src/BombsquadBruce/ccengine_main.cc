@@ -117,7 +117,7 @@ void CCEngine::StartServers()
 void CCEngine::StartScriptServer()
 {
     m_ScriptServer = (nScriptServer*)kernelServer->New("nluaserver", "/sys/servers/script");
-    const char* result = 0;
+    nString result;
     nString startupScript( "home:data/scripts/universal/startup.lua" );
     n_verify( m_ScriptServer->RunScript(startupScript.Get(), result) ); // since "result" is a string dump of the lua stack (as opposed to a return code from RunScript), and since I know startup.lua doesn't return anything, I can ignore that value.
 }
