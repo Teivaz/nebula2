@@ -3,26 +3,9 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "scene/nlightnode.h"
-#include "gfx2/nshader2.h"
 #include "gfx2/ngfxserver2.h"
 
 nNebulaClass(nLightNode, "nabstractshadernode");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nlightnode
-
-    @cppclass
-    nLightNode
-    
-    @superclass
-    nabstractshadernode
-    
-    @classinfo
-    Generic light.
-*/
-
 
 //------------------------------------------------------------------------------
 /**
@@ -70,4 +53,3 @@ nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext
 
     return true;
 }
-

@@ -65,6 +65,13 @@ nSceneNode::UnloadResources()
     // char buf[N_MAXPATH];
     // n_printf("-> Unloading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
 #endif
+    /*
+    if (this->refInstanceStream.isvalid())
+    {
+        this->refInstanceStream->Release();
+        n_assert(!this->refInstanceStream.isvalid());
+    }
+    */
     this->resourcesValid = false;
 }
 

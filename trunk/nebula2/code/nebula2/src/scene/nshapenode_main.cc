@@ -82,7 +82,7 @@ nShapeNode::LoadMesh()
 
         // get a new or shared mesh
         nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
-        n_assert(mesh);        
+        n_assert(mesh);
         if (!mesh->IsValid())
         {
             mesh->SetFilename(this->meshName.Get());

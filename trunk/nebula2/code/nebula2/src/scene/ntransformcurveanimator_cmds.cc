@@ -20,7 +20,7 @@ static void n_getanimationgroup(void* slf, nCmd* cmd);
 
     @superclass
     nanimator
-    
+
     @classinfo
     Animate attributes of a transform node using a nAnimation.
 */

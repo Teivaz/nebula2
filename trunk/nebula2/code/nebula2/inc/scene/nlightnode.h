@@ -22,7 +22,7 @@ public:
     virtual ~nLightNode();
     /// return true if node provides lighting information
     virtual bool HasLight() const;
-    /// set the user defined shader parameters
+    /// render the light
     virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
     /// set light type (FIXME: for now always point!)
     void SetType(nLight::Type t);

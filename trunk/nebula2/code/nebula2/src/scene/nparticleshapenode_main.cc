@@ -24,7 +24,7 @@ nParticleShapeNode::nParticleShapeNode() :
     emitterVarIndex(-1),
     renderOldestFirst(true)
 {
-    SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
+    this->SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
     int i;
     for (i=0; i<4; i++)
     {
@@ -56,9 +56,9 @@ nParticleShapeNode::~nParticleShapeNode()
     - 28-Jan-04     daniel  emitter setup moved here from RenderTransform()
 */
 bool
-nParticleShapeNode::RenderTransform(nSceneServer* sceneServer, 
-                                nRenderContext* renderContext, 
-                                const matrix44& parentMatrix)
+nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
+                                    nRenderContext* renderContext,
+                                    const matrix44& parentMatrix)
 {
     n_assert(sceneServer);
     n_assert(renderContext);
