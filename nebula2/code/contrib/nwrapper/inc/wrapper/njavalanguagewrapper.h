@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nJavaLanguageWrapper
+    @ingroup NWrapperContribModule
+    @brief Java-specific backend for @ref NWrapperContribModule.
 
     This file is licensed under the terms of the Nebula License.
     (C) 2003 Bruce Mitchener, Jr.

@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nLanguageWrapper
-
-    The generic backend for the nwrapper executable. This demonstrates
+    @ingroup NWrapperContribModule
+    @brief The generic backend for the nwrapper executable. This demonstrates
     how to extract most of the data that you'll need from the Nebula
     Object System and outputs it in a generic manner.
 
