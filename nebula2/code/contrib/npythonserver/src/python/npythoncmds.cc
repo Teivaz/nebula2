@@ -402,7 +402,7 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
       bool arg_ok = false;
       arg = cmd->In();
       switch(arg->GetType()) {
-        case nArg::Type::Int:
+        case nArg::Int:
         {
           int n;
           temp = PyTuple_GetItem(args, i);
@@ -417,7 +417,7 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
         }
         break;
 
-        case nArg::Type::Float:
+        case nArg::Float:
         {
           int n;
           float f;
@@ -438,7 +438,7 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
         }
         break;
 
-        case nArg::Type::String:
+        case nArg::String:
         {
           temp = PyTuple_GetItem(args, i);
           if (PyString_Check(temp)) {
@@ -450,7 +450,7 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
         }
         break;
 
-        case nArg::Type::Bool:
+        case nArg::Bool:
         {
           int bi;
           temp = PyTuple_GetItem(args, i);
@@ -463,7 +463,7 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
         }
         break;
 
-        case nArg::Type::Object:
+        case nArg::Object:
         {
           nRoot *o;
 
@@ -493,14 +493,14 @@ bool _getInArgs(nCmd *cmd, PyObject *args)
         }
         break;
 
-        case nArg::Type::List:
+        case nArg::List:
         {
           n_printf("List values aren't acceptable in arguments.");
           arg_ok = false;
         }
         break;
 
-        case nArg::Type::Void:
+        case nArg::Void:
           break;
 
       }
@@ -521,15 +521,15 @@ PyObject* _putOutSingleArg(nArg *arg)
   PyObject *result = NULL;
 
   switch (arg->GetType()) {
-    case nArg::Type::Int:
+    case nArg::Int:
       result = PyInt_FromLong(arg->GetI());
       break;
 
-    case nArg::Type::Float:
+    case nArg::Float:
       result = PyFloat_FromDouble(arg->GetF());
       break;
 
-    case nArg::Type::String:
+    case nArg::String:
       {
          const char *s = arg->GetS();
          // Hmmm...
@@ -540,13 +540,13 @@ PyObject* _putOutSingleArg(nArg *arg)
       }
       break;
 
-    case nArg::Type::Bool:
+    case nArg::Bool:
       {
          result = PyInt_FromLong(arg->GetB());
       }
       break;
 
-    case nArg::Type::Object:
+    case nArg::Object:
       {
          nRoot *o = (nRoot *) arg->GetO();
          if (o) {
@@ -558,7 +558,7 @@ PyObject* _putOutSingleArg(nArg *arg)
       }
       break;
 
-    case nArg::Type::List:
+    case nArg::List:
       {
          nArg *args, *a;
          int i, count;
@@ -574,7 +574,7 @@ PyObject* _putOutSingleArg(nArg *arg)
       }
       break;
 
-    case nArg::Type::Void:
+    case nArg::Void:
       break;
   }
   return result;
@@ -908,7 +908,7 @@ PyObject* pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
         return result;
     }
 
-    nCmdProtoPython* cmdProto = new nCmdProtoPython(cmdName);
+    nCmdProtoPython* cmdProto = n_new(nCmdProtoPython(cmdName));
     nClass* clazz = nKernelServer::Instance()->FindClass(className);
     if (clazz)
     {

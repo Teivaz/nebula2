@@ -15,6 +15,11 @@ begintarget npythonserver
     settargetdeps { nkernel nnebula microtcl }
 endtarget
 #-----------------------------------------------------------------------------
+beginmodule nshpython
+    setdir pythontest
+    setfiles { nshpython }
+endmodule
+#-----------------------------------------------------------------------------
 begintarget pynebula
     annotate "Dll for importing into Python"
     settype dll    
@@ -24,8 +29,16 @@ endtarget
 begintarget nshpython
     annotate "Sample application: A Nebula2 console based interface using Python."
     settype exe
-    setmodules { nsh }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl npythonserver }
+    setmodules { nshpython }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndirect3d9
+        ndinput8
+        nnetwork
+        npythonserver
+    }
 endtarget
 #-----------------------------------------------------------------------------
 beginworkspace pythonserver
@@ -36,7 +49,7 @@ beginworkspace pythonserver
         nkernel
         nnebula
         ndirect3d9 
-        nremoteshell
+        nnetwork
         ndinput8 
         microtcl
         npythonserver

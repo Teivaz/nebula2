@@ -42,20 +42,20 @@ PyObject *NArg2PyObject(nArg *a)
 {
     switch (a->GetType())
     {
-        case nArg::Type::Void:
+        case nArg::Void:
             return Py_None;
-        case nArg::Type::Int:
+        case nArg::Int:
             return PyInt_FromLong(a->GetI());
-        case nArg::Type::Float:
+        case nArg::Float:
             return PyFloat_FromDouble(a->GetF());
-        case nArg::Type::String:
+        case nArg::String:
             return PyString_FromString(a->GetS());
-        case nArg::Type::Bool:
+        case nArg::Bool:
             if (a->GetB())
                 return PyInt_FromLong(1);
             else
                 return PyInt_FromLong(0);
-        case nArg::Type::Object:
+        case nArg::Object:
             return PyCObject_FromVoidPtr(a->GetO(), NULL);
     }
     return NULL;
