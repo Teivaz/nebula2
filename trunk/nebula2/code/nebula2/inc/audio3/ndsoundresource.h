@@ -5,7 +5,7 @@
     @class nDSoundResource
     @ingroup NebulaDSAudioSystem
 
-    An implementation of the nSoundResource class on top of DirectSound.
+    @brief An implementation of the nSoundResource class on top of DirectSound.
     
     (C) 2003 RadonLabs GmbH
 */
