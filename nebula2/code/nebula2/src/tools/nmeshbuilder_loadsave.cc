@@ -12,10 +12,10 @@
     Load a mesh file. The file format will be determined by looking at
     the filename extension:
 
-    .n3d    -> legacy n3d files (ascii)
-    .n3d2   -> new n3d2 files (ascii)
-    .nvx    -> legacy nvx files (binary)
-    .nvx2   -> new nvx2 files (binary)
+     - @c .n3d    -> legacy n3d files (ascii)
+     - @c .n3d2   -> new n3d2 files (ascii)
+     - @c .nvx    -> legacy nvx files (binary)
+     - @c .nvx2   -> new nvx2 files (binary)
 */
 bool
 nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
@@ -44,8 +44,8 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     Save into mesh file. The file format will be determined by looking
     at the file extension:
 
-    .n3d2   n3d2 file format (ascii)
-    .nvx2   nvx2 file format (binary)
+     - .n3d2   n3d2 file format (ascii)
+     - .nvx2   nvx2 file format (binary)
 */
 bool
 nMeshBuilder::Save(nFileServer2* fileServer, const char* filename)
@@ -71,7 +71,7 @@ nMeshBuilder::Save(nFileServer2* fileServer, const char* filename)
 
 //------------------------------------------------------------------------------
 /**
-    Save the mesh as binary nvx2 file. See inc/gfx2/nmesh2.h for
+    Save the mesh as binary nvx2 file. See inc/gfx2/nmesh2.h (nMesh2) for
     format specification.
 */
 bool
