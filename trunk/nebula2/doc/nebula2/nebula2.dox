@@ -1,11 +1,78 @@
 /**
 @mainpage Nebula 2
 
--- Put some nice text here along with links to important sections
+In 1999 Radon Labs bundled the fundamental parts of their game engine into The Nebula Device and released it to the public as a game framework, something that could be used as the base for further games. Radon Labs went on to create Project Nomads using Nebula and it has since been used in several other commercial games.
 
+Nebula2 is the next step in the evolution, fully unleashing the power of programmable graphics hardware in a flexible high level framework. Although still early in its development, Nebula2 benefits from a solid core based on that of Nebula1.
 
-Release Notes:
-   - @ref Nebula2InitialReleaseNotes
+@section Nebula2IntroFeatures Features
+
+  - Shader Based Graphics: Nebula2 is 'shader-centric', all render state is handled
+    by the shaders. It's possible to render many effects without changing any C++
+    code, just by writing new shaders. Shader parameters can be created and altered
+    from the in-game console. The DX9 implementation uses Direct3D Effect Files.
+    
+  - Animation: Many things can be animated in Nebula2, shader parameters,
+    position, rotation, scale. The animations can be driven by time or any other 
+    variable of your choosing and you can choose from step, linear and quaternion
+    slerp interpolation.
+    
+  - Character Animation: Nebula2 has a high-performance skinned mesh renderer 
+    with multiple animation clips per state and blending between different states.
+
+  - Hierarchical Object Name Space: Nebula2 objects live in a hierarchical tree
+    of named nodes similar to a file system hierarchy. An object name can be
+    converted into a C++ pointer and a C++ pointer can be converted into a
+    name at any time. Having named objects around is very convenient when
+    referencing objects through the script interface, or in their persistent
+    state. Runtime efficiency doesn't suffer from this, since normally,
+    references by name are resolved into references by pointer only once at
+    load/initialization time. During an objects lifetime, references to
+    other objects are normally kept as cached C++ pointers.
+
+  - Scripting: Scripting in Nebula2 means sending script commands directly
+    to C++ objects. Nebula2 objects come with 2 interfaces: their
+    C++ interface for runtime efficiency, and a script interface
+    for flexibility. The script interface is as close
+    to the C++ interface as possible to minimize work on the dispatcher
+    code (around 3..6 lines of codes per script command). Internally,
+    script commands are handed around in language independent binary
+    packets, which are translated by a script server object into and from
+    a specific script syntax. Nebula2 can be used with many script languages
+    and switching to other is just a matter of writing new script server
+    classes. See @ref NebulaTwoScriptInterface for information on how to
+    control Nebula from script.
+    
+  - Networking: A running instance of Nebula2 can be controlled, via the script
+    server, from another process on the local machine or another remote machine.
+    This is mainly used for debugging, but other game orientated networking tools 
+    are in development.
+
+  - Object Persistence: Nebula2 objects survive on disk as 
+    scripts that contain exactly the sequence of script commands
+    that would put a default object of that class into an exact clone
+    of the object which created the script. Since the object persistency
+    mechanism reuses the script interface there is no conceptual difference
+    between a "Nebula script" and a "Nebula data file".  A binary
+    "script server" also allows objects to be saved out in a compact,
+    efficient binary representation that can be loaded quickly.
+    
+@section Nebula2IntroSystems Systems
+
+Here are pointers to some of the different systems that make up Nebula2.
+
+  - @ref NebulaKernel
+  - @ref NebulaResourceSystem
+  - @ref NebulaGraphicsSystem
+  - @ref NebulaSceneSystem
+  
+@section Nebula2IntroCompiling Compiling
+
+For information on compiling The Nebula Device, see @ref Nebula2Compiling.
+
+@section Nebula2IntroRelease Release Notes
+
    - @ref Nebula2ChangeLog
+   - @ref Nebula2InitialReleaseNotes
 
 */
