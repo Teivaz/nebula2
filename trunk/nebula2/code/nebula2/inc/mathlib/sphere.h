@@ -8,6 +8,7 @@
     a sphere in 3d space
 */
 #include "mathlib/vector.h"
+#include "mathlib/bbox.h"
 
 //-------------------------------------------------------------------
 class sphere {
