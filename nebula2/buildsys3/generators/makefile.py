@@ -46,66 +46,68 @@ class makefile:
         self.buildSys.CreateProgressDialog('Generating Makefiles', '', 
                                            len(workspaceNames))
                                            
-                                           
-        makeFile = file(os.path.join(defaultLocation, 'Makefile'), "w")
-        
-        makeFile.write("# Makefile for nebula\n")
-        makeFile.write("include ../../buildsys/config.mak\n\n")
-        
-        for workspaceName in workspaceNames:
-            workspace = self.buildSys.workspaces[workspaceName]
+        try:
+            makeFile = file(os.path.join(defaultLocation, 'Makefile'), "w")
             
-            # calculate these once for the workspace
-            self.workspacePath = workspace.GetWorkspacePath(defaultLocation)
-            self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
-            self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
-                                                              defaultLocation)
+            makeFile.write("# Makefile for nebula\n")
+            makeFile.write("include ../../buildsys/config.mak\n\n")
             
-            # make sure the workspace/projects directory exists
-            absPath = os.path.join(self.buildSys.homeDir, self.workspacePath)
-            if not os.path.exists(absPath):
-                os.makedirs(absPath)
+            for workspaceName in workspaceNames:
+                workspace = self.buildSys.workspaces[workspaceName]
+                
+                # calculate these once for the workspace
+                self.workspacePath = workspace.GetWorkspacePath(defaultLocation)
+                self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
+                self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
+                                                                  defaultLocation)
+                
+                # make sure the workspace/projects directory exists
+                absPath = os.path.join(self.buildSys.homeDir, self.workspacePath)
+                if not os.path.exists(absPath):
+                    os.makedirs(absPath)
+                
+                self.buildSys.UpdateProgressDialog(progressVal,
+                    'Generating %s...' % workspaceName)
+                if self.buildSys.ProgressDialogCancelled():
+                    break
+                
+                # spit out the target
+                makeFile.write("%s: \n" % workspaceName)
+                makeFile.write("\t@$(MAKE) -f ./%s.mak EXTRA_CFLAGS=\"" % workspaceName)
+                for include in string.split(self.incDirStr, ';'):
+                    makeFile.write("$(IPATH_OPT)%s " % include)
+                for lib in string.split(self.libDirStr, ';'):
+                    makeFile.write("$(LPATH_OPT)%s " % lib)
+                makeFile.write("\"\n\n")
+                
+                # spit out the files
+                self.generateWorkspace(workspace)
+                                        
+                progressVal += 1
             
-            self.buildSys.UpdateProgressDialog(progressVal,
-                'Generating %s...' % workspaceName)
-            if self.buildSys.ProgressDialogCancelled():
-                break
+            # generic targets
+            makeFile.write("all: ")
+            for workspaceName in workspaceNames:
+                makeFile.write("%s " % workspaceName)
+            makeFile.write("\n")
             
-            # spit out the target
-            makeFile.write("%s: \n" % workspaceName)
-            makeFile.write("\t@$(MAKE) -f ./%s.mak EXTRA_CFLAGS=\"" % workspaceName)
-            for include in string.split(self.incDirStr, ';'):
-                makeFile.write("$(IPATH_OPT)%s " % include)
-            for lib in string.split(self.libDirStr, ';'):
-                makeFile.write("$(LPATH_OPT)%s " % lib)
-            makeFile.write("\"\n\n")
+            # spring clean
+            makeFile.write("clean: \n")
+            makeFile.write("\t\$(RM) \$(N_TARGETDIR)*\n")
+            makeFile.write("\t\$(RM) \$(N_INTERDIR)\n")
             
-            # spit out the files
-            self.generateWorkspace(workspace)
-                                    
-            progressVal += 1
-        
-        # generic targets
-        makeFile.write("all: ")
-        for workspaceName in workspaceNames:
-            makeFile.write("%s " % workspaceName)
-        makeFile.write("\n")
-        
-        # spring clean
-        makeFile.write("clean: \n")
-        makeFile.write("\t\$(RM) \$(N_TARGETDIR)*\n")
-        makeFile.write("\t\$(RM) \$(N_INTERDIR)\n")
-        
-        makeFile.write("default: all\n")
-        
-        # none of these are real
-        makeFile.write(".PHONY: all ")
-        for workspaceName in workspaceNames:
-            makeFile.write("%s " % workspaceName)
-        makeFile.write("\n")
-        
-        
-        makeFile.close()
+            makeFile.write("default: all\n")
+            
+            # none of these are real
+            makeFile.write(".PHONY: all ")
+            for workspaceName in workspaceNames:
+                makeFile.write("%s " % workspaceName)
+            makeFile.write("\n")
+            
+            
+            makeFile.close()
+        except:
+            self.buildSys.logger.exception('Exception in makefile.Generate()')
         
         self.buildSys.DestroyProgressDialog()
         

@@ -157,33 +157,36 @@ class vstudio7:
         self.buildSys.CreateProgressDialog('Generating Solutions', '', 
                                            len(workspaceNames))
         
-        for workspaceName in workspaceNames:
-            workspace = self.buildSys.workspaces[workspaceName]
+        try:
+            for workspaceName in workspaceNames:
+                workspace = self.buildSys.workspaces[workspaceName]
+                
+                # calculate these once for the workspace
+                self.vcprojLocation = workspace.GetWorkspacePath(defaultLocation)
+                self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
+                self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
+                                                                  defaultLocation)
+                
+                # make sure the workspace/projects directory exists
+                absPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation)
+                if not os.path.exists(absPath):
+                    os.makedirs(absPath)
+                
+                self.buildSys.UpdateProgressDialog(progressVal,
+                    'Generating %s...' % workspaceName)
+                if self.buildSys.ProgressDialogCancelled():
+                    break
+                
+                # spit out the files
+                self.GenerateSolution(workspace)
+                for targetName in workspace.targets:
+                    self.GenerateProject(self.buildSys.targets[targetName],
+                                         workspace)
+                                        
+                progressVal += 1
+        except:
+            self.buildSys.logger.exception('Exception in vstudio7.Generate()')
             
-            # calculate these once for the workspace
-            self.vcprojLocation = workspace.GetWorkspacePath(defaultLocation)
-            self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
-            self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
-                                                              defaultLocation)
-            
-            # make sure the workspace/projects directory exists
-            absPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation)
-            if not os.path.exists(absPath):
-                os.makedirs(absPath)
-            
-            self.buildSys.UpdateProgressDialog(progressVal,
-                'Generating %s...' % workspaceName)
-            if self.buildSys.ProgressDialogCancelled():
-                break
-            
-            # spit out the files
-            self.GenerateSolution(workspace)
-            for targetName in workspace.targets:
-                self.GenerateProject(self.buildSys.targets[targetName],
-                                     workspace)
-                                    
-            progressVal += 1
-        
         self.buildSys.DestroyProgressDialog()
         
         summaryDetails = { 'numOfWorkspacesBuilt' : progressVal,
