@@ -37,7 +37,8 @@
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndirect3d9);
 
-main(int argc, const char** argv)
+int
+main(int /*argc*/, const char** /*argv*/)
 {
     nKernelServer* kernelServer = new nKernelServer();
 
@@ -90,5 +91,5 @@ main(int argc, const char** argv)
     refResourceServer->Release();
 
     delete kernelServer;
-    return;
+    return 0;
 }

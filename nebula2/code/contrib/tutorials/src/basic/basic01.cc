@@ -11,12 +11,13 @@
 
 #include "kernel/nkernelserver.h"
 
-main(int argc, const char** argv)
+int
+main(int /*argc*/, const char** /*argv*/)
 {
     nKernelServer* kernelServer = new nKernelServer();
 
     n_printf("Goodbye Cruel World");
 
     delete kernelServer;
-    return;
+    return 0;
 }
