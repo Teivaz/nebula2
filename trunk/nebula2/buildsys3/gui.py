@@ -79,37 +79,6 @@ class AboutDialog(wx.Dialog):
         self.Fit()
 
 #--------------------------------------------------------------------------
-class LogRecordDialog(wx.Dialog):
-
-    LOG_RECORD_INFO_TEXT = """\
-%(name)s - %(levelname)s
-Created: %(asctime)s
-
-%(message)s"""
-    
-    def __init__(self, parentWindow, title, record):
-        wx.Dialog.__init__(self, parentWindow, -1, title)
-        formatter = logging.Formatter('%(message)s')
-        args = { 'name' : record.name,
-                 'levelname' : record.levelname,
-                 'asctime' : record.asctime,
-                 'message' : formatter.format(record) }
-        self.panel = wx.Panel(self)
-        style = wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_LINEWRAP
-        self.textBox = wx.TextCtrl(self.panel, -1, 
-                                   self.LOG_RECORD_INFO_TEXT % args,
-                                   (0, 0), (400, 100), style)
-        self.okBtn = wx.Button(self.panel, wx.ID_OK, 'OK')
-        # layout
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.textBox, 0, wx.EXPAND|wx.ALL, 4)
-        sizer.Add(self.okBtn, 0, wx.CENTER|wx.TOP, 8)
-        sizer.Fit(self.panel)
-        self.panel.SetSizer(sizer)
-        self.Fit()
-        
-
-#--------------------------------------------------------------------------
 class BuildLogCtrlHandler(logging.Handler):
     
     def __init__(self, buildLogCtrl, level = logging.NOTSET):
@@ -123,8 +92,12 @@ class BuildLogCtrlHandler(logging.Handler):
 #--------------------------------------------------------------------------
 class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     
-    [ID_CLEAR_LOG, ID_VIEW_RECORD, ID_COPY_RECORDS
-    ] = map(lambda init_ids: wx.NewId(), range(3))
+    LOG_RECORD_INFO_TEXT = '''\
+[%(asctime)s] %(levelname)s
+%(message)s'''
+    
+    [ID_CLEAR_LOG, ID_COPY_RECORDS
+    ] = map(lambda init_ids: wx.NewId(), range(2))
     
     #--------------------------------------------------------------------------
     def __init__(self, parentWindow, id):
@@ -142,18 +115,18 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.showInfo = True
         self.showErrors = True
         self.showWarnings = True
+        self.recDescTextBox = None
         self.logRecs = []
         self.infoRecIndices = []
         self.errorRecIndices = []
         self.warningRecIndices = []
         self.displayedRecIndices = []
         self.Bind(EVT_NEW_BUILD_LOG_RECORD, self.OnNewLogRecord)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightMouseUp) # for wxMSW
         self.Bind(wx.EVT_RIGHT_UP, self.OnRightMouseUp) # for wxGTK
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightMouseDown)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated)
         self.Bind(wx.EVT_MENU, self.OnClearLog, id = self.ID_CLEAR_LOG)
-        self.Bind(wx.EVT_MENU, self.OnViewRecord, id = self.ID_VIEW_RECORD)
         self.Bind(wx.EVT_MENU, self.OnCopyRecords, id = self.ID_COPY_RECORDS)
         
     #--------------------------------------------------------------------------
@@ -248,8 +221,6 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         if itemFlags & wx.LIST_HITTEST_ONITEM: 
             if len(selectedItems) > 0:
                 if hitItem in selectedItems:
-                    if len(selectedItems) == 1:
-                        menu.Append(self.ID_VIEW_RECORD, 'View')
                     menu.Append(self.ID_COPY_RECORDS, 'Copy')
                     menu.AppendSeparator()
                 else:
@@ -258,8 +229,6 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
                         self.SetItemState(i, 0, wx.LIST_STATE_SELECTED)
             else:
                 self.Select(hitItem)
-                menu.Append(self.ID_VIEW_RECORD, 'View')
-                menu.AppendSeparator()
         else:
             # deselect all
             for i in range(len(selectedItems)):
@@ -302,23 +271,25 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.errorRecIndices = []
         self.warningRecIndices = []
         self.displayedRecIndices = []
+        if self.recDescTextBox != None:
+            self.recDescTextBox.SetValue('')
         
     #--------------------------------------------------------------------------
-    def OnViewRecord(self, evt):
-        items = self.getSelectedItems()
-        if len(items) == 1:
-            dlg = LogRecordDialog(self, 'Log Entry Details', 
-                      self.logRecs[self.displayedRecIndices[items[0]]])
-            dlg.ShowModal()
-            dlg.Destroy()
+    # Set the TextBox that will be populated with the details of the currently
+    # selected log record.
+    def AttachToDescTextBox(self, textBox):
+        self.recDescTextBox = textBox
         
     #--------------------------------------------------------------------------
-    def OnItemActivated(self, evt):
-        assert evt.m_itemIndex < len(self.displayedRecIndices)
-        dlg = LogRecordDialog(self, 'Log Entry Details',
-                  self.logRecs[self.displayedRecIndices[evt.m_itemIndex]])
-        dlg.ShowModal()
-        dlg.Destroy()
+    def OnItemSelected(self, evt):
+        if self.recDescTextBox != None:
+            record = self.logRecs[self.displayedRecIndices[evt.m_itemIndex]]
+            formatter = logging.Formatter('%(message)s')
+            args = { 'levelname' : record.levelname,
+                     'asctime' : record.asctime,
+                     'message' : formatter.format(record) }
+            text = self.LOG_RECORD_INFO_TEXT % args
+            self.recDescTextBox.SetValue(text)
         
     #--------------------------------------------------------------------------
     def OnCopyRecords(self, evt):
@@ -444,6 +415,12 @@ class MainFrame(wx.Frame):
         self.errorsCheckBox = wx.CheckBox(self.mainPanel, -1, 'Show Errors')
         self.errorsCheckBox.SetValue(self.buildLogCtrl.GetShowErrors())
         self.Bind(wx.EVT_CHECKBOX, self.OnTickShowErrors, self.errorsCheckBox)
+        self.logRecTextBox = wx.TextCtrl(self.mainPanel, -1, '', 
+                                         (0, 0), (380, 50), 
+                                         wx.TE_MULTILINE
+                                         |wx.TE_READONLY
+                                         |wx.TE_LINEWRAP)
+        self.buildLogCtrl.AttachToDescTextBox(self.logRecTextBox)
         
         # Run button
         self.runBtn = wx.Button(self.mainPanel, -1, 'Run', (0, 0))
@@ -485,12 +462,17 @@ class MainFrame(wx.Frame):
         sizerB = wx.BoxSizer(wx.VERTICAL)
         sizerB.Add(sizerD, 0, wx.EXPAND|wx.ALL, 4)
         sizerB.Add(sizerE, 0, wx.EXPAND|wx.ALL, 4)
-        # log area sizer
+        # log area sizers
+        sizerI = wx.BoxSizer(wx.VERTICAL)
+        sizerI.Add(self.infoCheckBox, 0, wx.ALIGN_LEFT)
+        sizerI.Add(self.warningsCheckBox, 0, wx.ALIGN_LEFT|wx.TOP, 4)
+        sizerI.Add(self.errorsCheckBox, 0, wx.ALIGN_LEFT|wx.TOP, 4)
+        sizerJ = wx.BoxSizer(wx.HORIZONTAL)
+        sizerJ.Add(sizerI, 0, wx.ALIGN_TOP|wx.LEFT, 4)
+        sizerJ.Add(self.logRecTextBox, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 4)
         sizerC = wx.StaticBoxSizer(self.logStaticBox, wx.VERTICAL)
         sizerC.Add(self.buildLogCtrl, 1, wx.EXPAND|wx.ALL, 4)
-        sizerC.Add(self.infoCheckBox, 0, wx.ALIGN_LEFT|wx.LEFT, 4)
-        sizerC.Add(self.warningsCheckBox, 0, wx.ALIGN_LEFT|wx.LEFT|wx.TOP, 4)
-        sizerC.Add(self.errorsCheckBox, 0, wx.ALIGN_LEFT|wx.ALL, 4)
+        sizerC.Add(sizerJ, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 4)
         # top level sizer
         sizerA = wx.BoxSizer(wx.VERTICAL)
         sizerA.Add(self.staticLine, 0, wx.EXPAND)
