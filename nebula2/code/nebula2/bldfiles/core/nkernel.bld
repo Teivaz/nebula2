@@ -78,6 +78,11 @@ beginmodule nutil
         nhashmap
         nquadtree
     }
+    setfiles {
+        nhttpformdatawrapper
+        nhttpsession
+        nquadtree
+    }
 endmodule
 
 #===============================================================================
