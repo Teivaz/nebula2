@@ -1,6 +1,6 @@
 /**
 
-    @page NebulaBuilddSystem Nebula2 Build System
+    @page NebulaBuildSystem Nebula2 Build System
 
       - @ref NebulaBuildSystemIntro
       - @ref NebulaBuildSystemCommands
@@ -11,34 +11,38 @@
 
     @section NebulaBuildSystemIntro Introduction
 
-    Nebula uses it's own build system. So, you should be familiar with build system
-    first before you start to use Nebula.
+    Nebula uses it's own build system. So you should be familiarize yourself with the build system
+    before you start using Nebula.
 
-    The core part of build system is consisted of two items which are:
+    The core part of the build system consists of two items which are:
 
-      - module : defines header and source files which consist of module.
-      - target : defines library type which is linked. It can be static library(.lib),
-                 dynamic linkage library(.dll) or execution file(.exe ).
+      - module : A group of header and source files which can contain the source for an nRoot 
+                 derived class and/or arbitrary code.
+      - target : An executable (.exe), static library (.lib) or dynamic library (.dll)
       
-    One thing to remind about module is that there can be only one module which is
-    scriptable. Simply saying, you cannot have more than one implementation file(.cc) 
-    which contains nNebulaScriptClass macro in one module. So, if there's two classes
-    and both of that classes is scriptable, you should make two modules for those 
-    classes.
+    One thing to remember about modules is that there can only be one nRoot derived class per
+    module. Therefore, you cannot have more than one source file (.cc) that contains the 
+    nNebulaScriptClass or nNebulaClass macro in any one module.
 
-    @see see @ref NebulaWritingClass for more details about nNebulaScriptClass and 
-         scriptable class.
+    @see see @ref NebulaWritingClass for more details about nNebulaClass/nNebulaScriptClass and 
+         nRoot derived classes.
 
-    The new system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
-    process .bld files located in $home/code/nebula2/bldfiles and its subdirectories, 
-    and outputs to $home/build/[compiler]. Normally, to create your own project, 
-    all you need is to create a batch of .bld files: 
+    The build system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
+    process any .bld files it finds in any of the following places:
+    - $home/code/nebula2/bldfiles and its subdirectories
+    - $home/code/*/bldfiles
+    - $home/code/contrib/*/bldfiles
+    and generates workspaces/solutions/projects/makefiles in $home/build/[compiler]. 
+    
+    Normally, to create your own project, all you need is to create a bunch of .bld files
+    (you could also put everything into a single .bld file, but we're using multiple files
+    here for clarity): 
 
-    @verbatim
-#### $home/code/nebula2/bldfiles/myStuff/myModules.bld ####
-# a module is a collection of a few related files,
+@verbatim
+#### $home/code/myproject/bldfiles/myModules.bld ####
+# a module is a collection of a number of related files,
 # often just the source and header files for a single class.
-# Any files you wish to include in your library should be declared .here
+# Any files you wish to have in your project should be listed in here.
 
 beginmodule nmyclass1
     setdir wheretofindthefollowing
@@ -48,57 +52,59 @@ endmodule
 
 beginmodule nmyclass2
 ...
-    @endverbatim
+@endverbatim
 
-    The directory in setdir is given relative to $home/code/nebula2/src or inc for 
-    the files listed under setfiles and setheaders respectively. Note that .cc will 
-    automatically be appended to "files", and .h to "headers". 
+    The directory in setdir is given relative to $home/code/*/src or inc 
+    (or $home/code/contrib/*/src or inc for contrib modules). The files listed in 
+    setfiles are your source files (.cc) and your headers (.h) are listed in setheaders. 
+    Note that the .cc and .h extensions will be automatically appended to the files you list
+    in setfiles/setheaders. 
+    
     Now you need to combine these modules into a "target" (project): 
 
-    @verbatim
-#### $home/code/nebula2/bldfiles/myStuff/myLibrary.bld ####
+@verbatim
+#### $home/code/myproject/bldfiles/myLibrary.bld ####
 begintarget mylibrary
     settype lib
-    setmodules {
-        nmyclass1 nmyclass2
-    }
+    setmodules { nmyclass1 nmyclass2 }
 endtarget
-    @endverbatim
+@endverbatim
 
     The modules will be found automagically if they have been defined in a .bld file 
     in the appropriate directory. Other valid settypes are exe and dll. 
 
     Finally, you need to define a workspace (aka solution), so you have something to 
-    load into (e.g.) Visual Studio. 
+    load into Visual Studio (or whatever you're using). 
 
-    @verbatim
-####$home/code/nebula2/bldfiles/myWorkspace.bld ####
-beginworkspace myWorkspace
+@verbatim
+####$home/code/myproject/bldfiles/myWorkspace.bld ####
+beginworkspace myProjectWorkspace
     setbinarydir ./bin/
-    settargets {
+    settargets { 
         mylibrary 
         nkernel
         nnebula
     }
 endworkspace
-    @endverbatim
+@endverbatim
 
-    setbinarydir is relative to $home. settargets should include whatever you want to 
-    appear in your solution, which means anything you'd like to be able to do 
+    setbinarydir is relative to $home. settargets should include a list of targets (aka projects) 
+    you want to appear in your solution/workspace, which means anything you'd like to be able to do 
     source-level debugging on. The first target in the list will become the default 
-    active project for the solution. 
+    active project for the solution/workspace. 
 
     @note
     The old build system used $home/code/nebula2/src/update.tcl in combination with 
     $home/bin/*.tcl to process .epk files located in $home/code/nebula2/src, and outputs 
     to $home/code/nebula2/vstudio, so if you want to use the new system, you don't need 
-    any of these. $home/code/nebula2/src/dummy.cc is still used in the new system, though.
+    any of these (and in fact they're no longer in CVS). 
+    $home/code/nebula2/src/dummy.cc is still used in the current build system, though.
 
     @section NebulaBuildSystemCommands Commands
 
-    This commands can be used in the bld files. From parameters that are 
-    sperated with a '/' you can only select one. From parameters that are 
-    sperated with ',' you can select a one or more
+    These commands can be used in the bld files. From parameters that are 
+    separated with a '/' you can only select one. From parameters that are 
+    separated with ',' you can select one or more.
 
     @subsection NebulaBuildSystemCommandsWorkspace Workspace
 
@@ -108,15 +114,18 @@ endworkspace
       </tr>
 
       <tr>
-      <td>beginworkspace</td><td>name</td><td></td>no default
-      <td>workspaces are containers to get many targets together in the workspaches/solutions. TODO: [The name should be/must be uniqe???]</td>
+      <td>beginworkspace</td><td>name</td><td></td>no default<td>
+      Workspaces are containers for targets, a target can be listed in any number of workspaces 
+      (or none at all). The name of your workspace must be unique among all the workspaces that the
+      build system finds.</td>
       </tr>
       <tr>
-      <td>annotate</td><td>annotation</td><td>""</td><td>A description, use "" for more than one word</td>
+      <td>annotate</td><td>annotation</td><td>""</td><td>An optional description of the workspace, 
+      enclose it in double quotation marks if it's more than one word, e.g. "my description".</td>
       </tr>
       <tr>
       <td>setdir</td> <td>dir</td> <td>no default</td> 
-      <td>Sets the directory that a workspace should be written</td>
+      <td>Sets the directory that a workspace should be created in.</td>
       </tr>
       <tr>
       <td>setbinarydir</td> <td>dir</td> <td>""</td> <td>Sets the root directory to be used for binary output - dll and exe </td>
