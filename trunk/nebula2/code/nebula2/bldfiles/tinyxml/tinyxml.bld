@@ -1,0 +1,50 @@
+#===============================================================================
+#  tinyxml.bld
+#  An XML parser.
+#
+#  Modules:
+#      tinystr
+#      tinyxml
+#      tinyxmlerror
+#      tinyxmlparser
+#  Targets:
+#      tinyxml
+#===============================================================================
+
+#===============================================================================
+#  tinyxml modules
+#===============================================================================
+beginmodule tinystr
+    setdir tinyxml
+    setfiles { tinystr }
+    setheaders { tinystr tinyxml }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule tinyxml
+    setdir tinyxml
+    setfiles { tinyxml }
+    setheaders { tinystr tinyxml }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule tinyxmlerror
+    setdir tinyxml
+    setfiles { tinyxmlerror }
+    setheaders { tinystr tinyxml }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule tinyxmlparser
+    setdir tinyxml
+    setfiles { tinyxmlparser }
+    setheaders { tinystr tinyxml }
+endmodule
+#-------------------------------------------------------------------------------
+
+#===============================================================================
+#  tinyxml Targets
+#===============================================================================
+begintarget tinyxml
+    annotate "Tiny XML Parser"
+    settype lib
+    setmodules { tinystr tinyxml tinyxmlerror tinyxmlparser }
+endtarget
+#-------------------------------------------------------------------------------
