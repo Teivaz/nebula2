@@ -6,6 +6,7 @@
     @ingroup NebulaSignals
     @brief nSignal, while largely internal, is a key concept in the signal
     system.
+    @author Mateu Batle Sastre <mateu.batle@tragnarion.com>
 
     It is really just a name and a type signature:
 
