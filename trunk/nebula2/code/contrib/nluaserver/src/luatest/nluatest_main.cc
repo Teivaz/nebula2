@@ -3,7 +3,7 @@
 //  (c) 2003 Vadim Macagon
 //------------------------------------------------------------------------------
 #include "kernel/ncmdprotonative.h"
-#include "luaserver/nluatest.h"
+#include "luatest/nluatest.h"
 
 nNebulaScriptClass(nLuaTest, "nroot")
 

@@ -43,7 +43,7 @@ function start()
     
     new(inputClass,            '/sys/servers/input')
     new('nconserver',          '/sys/servers/console')
-    new('nstdsceneserver',     '/sys/servers/scene')
+    new('nmrtsceneserver',     '/sys/servers/scene')
     new('nvariableserver',     '/sys/servers/variable')
     new('nanimationserver',    '/sys/servers/anim')
 

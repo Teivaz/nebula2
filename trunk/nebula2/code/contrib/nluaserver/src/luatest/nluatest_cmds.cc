@@ -2,7 +2,7 @@
 //------------------------------------------------------------------------------
 //  (c) 2003 Vadim Macagon
 //------------------------------------------------------------------------------
-#include "luaserver/nluatest.h"
+#include "luatest/nluatest.h"
 
 static void n_testscriptcmds(void* slf, nCmd* cmd);
 static void n_makezombies(void* slf, nCmd* cmd);
