@@ -28,8 +28,10 @@
 // max5: use vc6, vc7 and vc7.1 (no need to use MAX_mem.h on)
 // max6: use vc7 (default is ok) and vc7.1 (should download max_mem on discreet site)
 
-//include max memory wrapper only on max6 (it will spit error out on max5)
-#if MAX_RELEASE >= 6000
+// include max memory wrapper only on max6 (it will spit error out on max5)
+// - 16-Jan-05 modified by Kim, H.W. no more need on 3dsmax7. 
+//             (there will be Max_mem linkage error if we use 'Max_mem.h')
+#if MAX_RELEASE >= 6000 && MAX_RELEASE < 6900 // 6900: 3dsmax7 alpha.
 namespace MAXMem {
 #include <MAX_mem.h> 
 }
@@ -37,7 +39,6 @@ using namespace MAXMem;
 #endif
 
 #include "util/narray.h"
-
 #include "base/nmaxloghandler.h"
 #include "kernel/nkernelserver.h"
 
