@@ -22,6 +22,7 @@ public:
     {
         WINDOWED,
         FULLSCREEN,
+        CHILDWINDOWED
     };
 
     /// constructor
@@ -34,6 +35,10 @@ public:
     int GetWidth() const;
     /// get display mode height
     int GetHeight() const;
+    /// set display width
+    void SetWidth(ushort w);
+    /// set display mode height
+    void SetHeight(ushort h);   
     /// get display mode type
     Type GetType() const;
     /// convert type to string
@@ -45,6 +50,7 @@ private:
     Type type;
     ushort width;
     ushort height;
+    int parentHWnd;
 };
 
 //------------------------------------------------------------------------------
@@ -73,6 +79,7 @@ nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h) :
 
 //------------------------------------------------------------------------------
 /**
+
 */
 inline
 void
@@ -102,6 +109,25 @@ nDisplayMode2::GetHeight() const
 {
     return this->height;
 }
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetWidth(ushort w) 
+{
+   this->width = w;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetHeight(ushort h)
+{
+    this->height = h;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -123,6 +149,7 @@ nDisplayMode2::TypeToString(Type t)
     switch (t)
     {
         case WINDOWED:   return "windowed";
+        case CHILDWINDOWED: return "child";
         default:         return "fullscreen";
     }
 }
@@ -139,8 +166,12 @@ nDisplayMode2::StringToType(const char* str)
     {
         return WINDOWED;
     }
-    else
+    else if (0 == strcmp(str, "child"))
     {
+        return CHILDWINDOWED;
+    }
+    else
+    { 
         return FULLSCREEN;
     }
 }

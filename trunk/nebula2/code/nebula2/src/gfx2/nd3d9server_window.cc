@@ -31,6 +31,27 @@ nD3D9Server::WindowOpen()
     n_assert(!this->windowOpen);
     n_assert(this->hInst);
 
+    // add for parent HWND handling
+    // check if an environment variable named "/sys/env/parent_hwnd" exists
+    nAutoRef<nEnv> parent_hwnd(this->kernelServer);
+    parent_hwnd = "/sys/env/parent_hwnd";
+
+    if (parent_hwnd.isvalid()) 
+    {
+        // parent window exist and set window height and width
+        this->parentHWnd = (HWND)parent_hwnd.get()->GetI();
+        // we are a child, so set dimension from parent
+        RECT r;
+        GetClientRect(this->parentHWnd, &r);
+        this->displayMode.SetWidth((ushort)(r.right - r.left));
+        this->displayMode.SetHeight((ushort)(r.bottom - r.top));
+    } 
+    else
+    {
+        // parent window doesn't exist
+        this->parentHWnd = NULL;       
+    }
+
     // initialize accelerator keys
     ACCEL acc[3];
     acc[0].fVirt = FALT|FNOINVERT|FVIRTKEY;
@@ -60,22 +81,25 @@ nD3D9Server::WindowOpen()
     RegisterClassEx(&wc);
 
     // open the window
+    // fix for create window 
+    // if first time is window created set to not visible,
+    // after all initialisation it's set to orginal style
     this->hWnd = CreateWindow("nD3D9Server window class",       // lpClassName
-                              this->GetWindowTitle(),           // lpWindowName
-                              this->windowedStyle,              // dwStyle
-                              0,                                // x
-                              0,                                // y
-                              0,                                // nWidth
-                              0,                                // nHeight
-                              NULL,                             // hWndParent
-                              NULL,                             // hMenu
-                              this->hInst,                      // hInstance
-                              NULL);                            // lpParam
+                                this->GetWindowTitle(),           // lpWindowName
+                                this->parentHWnd != NULL ? this->childStyle : WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX ,  // dwStyle
+                                0,                                // x
+                                0,                                // y
+                                this->displayMode.GetWidth(),     // nWidth
+                                this->displayMode.GetHeight(),    // nHeight
+                                this->parentHWnd,                 // hWndParent
+                                NULL,                             // hMenu
+                                this->hInst,                      // hInstance
+                                NULL);                            // lpParam
     n_assert(this->hWnd);
 
     // initialize the user data field with this object's this pointer,
     // WndProc uses the user data field to get a pointer to
-    // the nD3D8Server object
+    // the nD3D9Server object
     SetWindowLong(this->hWnd, 0, (LONG)this);
     
     // minimize the window
@@ -137,11 +161,17 @@ nD3D9Server::AdjustWindowForChange()
         // adjust for fullscreen mode
         SetWindowLong(this->hWnd, GWL_STYLE, this->fullscreenStyle);
     }
+    else if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
+    {
+        // adjust for child mode
+        SetWindowLong(this->hWnd, GWL_STYLE, this->childStyle);
+    }
     else
     {
         // adjust for windowed mode
         SetWindowLong(this->hWnd, GWL_STYLE, this->windowedStyle);
     }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -165,18 +195,30 @@ nD3D9Server::RestoreWindow()
     if (this->displayMode.GetType() == nDisplayMode2::WINDOWED)
     {
         // Need to adjust adjust w & h so that the *client* area
-        // is equal to renderWidth/Height.  
-        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()}; 
-        AdjustWindowRect(&r, this->windowedStyle, 0); 
+        // is equal to renderWidth/Height.
+        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
+        AdjustWindowRect(&r, this->windowedStyle, 0);
         w = r.right - r.left;
         h = r.bottom - r.top;
     }
+    else if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
+    {
+        // We are child window, so get dimesion from parent
+        RECT r;
+        GetClientRect(this->parentHWnd, &r);
+        AdjustWindowRect(&r, this->childStyle, 0);
+        w = r.right - r.left;
+        h = r.bottom - r.top;
+        this->displayMode.SetWidth(w);
+        this->displayMode.SetHeight(h);
+    }
     else 
     {
+        // if child mode is FullScreen
         w = this->displayMode.GetWidth();
         h = this->displayMode.GetHeight();
     }
-    
+
     SetWindowPos(this->hWnd,            // the window handle
                  HWND_NOTOPMOST,        // placement order
                  0,                     // x position
@@ -184,6 +226,12 @@ nD3D9Server::RestoreWindow()
                  w,                     // adjusted width
                  h,                     // adjusted height
                  SWP_SHOWWINDOW);
+
+    if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED) 
+    {
+        // For some reason, SetWindowPos doesn't work when in child mode
+        MoveWindow(this->hWnd, 0, 0, w, h, 0);
+    }
 
     this->windowMinimized = false;
 }
@@ -202,7 +250,12 @@ nD3D9Server::MinimizeWindow()
     n_assert(this->windowOpen);
     n_assert(!this->windowMinimized);
 
-    ShowWindow(this->hWnd, SW_MINIMIZE);
+    // minimize window for all mode except child
+    if (this->displayMode.GetType() != nDisplayMode2::CHILDWINDOWED) 
+    {
+        ShowWindow(this->hWnd, SW_MINIMIZE);
+    }
+
     this->windowMinimized = true;
 }
 
@@ -395,6 +448,10 @@ FIXME!
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
+            if (d3d9->GetParentHWnd()) 
+            {
+                SetFocus(hWnd);
+            }
             if (d3d9 && d3d9->refInputServer.isvalid()) 
             {
                 nInputEvent *ie = d3d9->refInputServer->NewEvent();

@@ -130,7 +130,7 @@ nD3D9Server::PresentScene()
     n_assert(this->d3d9Device);
     HRESULT hr = this->d3d9Device->Present(0, 0, 0, 0);
     n_assert(SUCCEEDED(hr));
-
+ 
     nGfxServer2::PresentScene();
 }
 
