@@ -23,7 +23,7 @@ public:
     /// destructor
     virtual ~nD3D9Font();
     /// access to the internal CD3DFont object.
-    ID3DXFont9* GetD3DFont() const;
+    CD3DFont9* GetD3DFont() const;
 
     static nKernelServer* kernelServer;
 
@@ -35,7 +35,7 @@ protected:
 
 private:
     nAutoRef<nD3D9Server> refD3D9Server;
-    ID3DXFont9* d3dFont;
+    CD3DFont9* d3dFont;
 };
 
 //------------------------------------------------------------------------------

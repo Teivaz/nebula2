@@ -16,7 +16,7 @@ nD3D9Server::OpenTextRenderer()
     n_assert(!this->d3dFont);
 
     // create the CD3DFont object
-    this->d3dFont = new CD3DFont9((const unsigned char*) "Arial", 10, D3DFONT_BOLD);
+    this->d3dFont = new CD3DFont9((const char*) "Arial", 10, D3DFONT_BOLD);
     n_assert(this->d3dFont);
 
     // initialize the font object
@@ -83,11 +83,11 @@ nD3D9Server::DrawTextBuffer()
             this->d3dFont->DrawText(((textNode->xpos + 1.0f) * 0.5f * width) + 1.0f, 
                                     ((textNode->ypos + 1.0f) * 0.5f * height) + 1.0f,
                                     D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, textNode->color.w),
-                                    (const unsigned char*) textNode->string.Get(), 0);
+                                    (const char*) textNode->string.Get(), 0);
             this->d3dFont->DrawText((textNode->xpos + 1.0f) * 0.5f * width, 
                                     (textNode->ypos + 1.0f) * 0.5f * height,
                                     D3DCOLOR_COLORVALUE(textNode->color.x, textNode->color.y, textNode->color.z, textNode->color.w),
-                                    (const unsigned char*) textNode->string.Get(), 0);
+                                    (const char*) textNode->string.Get(), 0);
             n_delete textNode;
         }
     }
@@ -120,7 +120,7 @@ nD3D9Server::DrawText(const char* text, const vector4& color, float xPos, float 
 
     CD3DFont9* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
     n_assert(d3dFont);
-    d3dFont->DrawTextA(x, y, d3dColor, (const unsigned char*) text, d3dFlags);
+    d3dFont->DrawTextA(x, y, d3dColor, (const char*) text, d3dFlags);
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ nD3D9Server::GetTextExtent(const char* text)
     float dispHeight = (float) this->displayMode.GetHeight();
 
     SIZE intExtent;
-    d3dFont->GetTextExtent((const unsigned char*) text, &intExtent);
+    d3dFont->GetTextExtent((const char*) text, &intExtent);
 
     vector2 extent((float(intExtent.cx) / dispWidth), (float(intExtent.cy) / dispHeight));
     return extent;
