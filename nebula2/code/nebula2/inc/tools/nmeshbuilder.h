@@ -600,7 +600,7 @@ nMeshBuilder::Vertex::ZeroComponent(Component c)
         case COORD:     this->coord.set(0.0f, 0.0f, 0.0f); break;
         case NORMAL:    this->normal.set(0.0f, 0.0f, 0.0f); break;
         case TANGENT:   this->tangent.set(0.0f, 0.0f, 0.0f); break;
-        case BINORMAL:  this->tangent.set(0.0f, 0.0f, 0.0f); break;
+        case BINORMAL:  this->binormal.set(0.0f, 0.0f, 0.0f); break;
         case COLOR:     this->color.set(0.0f, 0.0f, 0.0f, 0.0f); break;
         case UV0:       this->uv[0].set(0.0f, 0.0f); break;
         case UV1:       this->uv[1].set(0.0f, 0.0f); break;
