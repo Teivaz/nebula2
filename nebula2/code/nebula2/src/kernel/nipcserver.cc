@@ -112,7 +112,7 @@ n_listener_wakeup(nThread *t)
 short 
 nIpcServer::GetPortNumFromName(const char* portName)
 {
-    short pnum = ((short)hash(pname.Get(), N_SOCKET_PORTRANGE)) + N_SOCKET_MIN_PORTNUM;
+    short pnum = ((short)hash(portName.Get(), N_SOCKET_PORTRANGE)) + N_SOCKET_MIN_PORTNUM;
     return pnum;
 } 
 
