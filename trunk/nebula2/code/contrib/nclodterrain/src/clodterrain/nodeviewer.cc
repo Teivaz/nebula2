@@ -72,9 +72,10 @@ main(int argc, const char** argv)
     int heightArg         = args.GetIntArg("-h", 480);
     const char* projDir   = args.GetStringArg("-projdir", 0);
 
-//    scriptArg = "home:work/gfxlib/compilesplatterrain.lua";
+//    scriptArg = "home:code/contrib/nclodterrain/bin/compilesplatterrain.lua";
+//    scriptArg = "home:code/contrib/nclodterrain/bin/compileterrain.lua";
     if (scriptArg == NULL)
-        viewArg = "home:work/gfxlib/clod.n2";
+        viewArg = "home:code/contrib/nclodterrain/bin/clod.n2";
     
     // initialize a display mode object
     nString title;
@@ -101,7 +102,7 @@ main(int argc, const char** argv)
     // initialize Nebula runtime
     nKernelServer kernelServer;
     #ifdef __WIN32__
-        nWin32LogHandler logHandler("nviewer");
+        nWin32LogHandler logHandler("nclododeviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
 
