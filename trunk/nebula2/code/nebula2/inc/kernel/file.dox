@@ -28,7 +28,7 @@
      - drastically reduced loading time 
      - cleaner application directory layout
     
-    @see @ref NebulaNPKFileManagement.
+    @see @ref NPKFile.
 
     @section NebulaFileManagementInitialization File Server Initialization
 
