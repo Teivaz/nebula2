@@ -227,6 +227,15 @@ nD3D9Server::DeviceOpen()
         this->displayMode.SetHeight((ushort)(r.bottom - r.top));
     }
 
+    if (this->displayMode.GetVerticalSync())
+    {
+        this->presentParams.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+    }
+    else
+    {
+        this->presentParams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    }
+
     this->presentParams.BackBufferWidth                 = this->displayMode.GetWidth();
     this->presentParams.BackBufferHeight                = this->displayMode.GetHeight();
     this->presentParams.BackBufferFormat                = backFormat;
@@ -237,7 +246,6 @@ nD3D9Server::DeviceOpen()
     this->presentParams.EnableAutoDepthStencil          = TRUE;
     this->presentParams.AutoDepthStencilFormat          = zbufFormat;
     this->presentParams.FullScreen_RefreshRateInHz      = D3DPRESENT_RATE_DEFAULT;
-    this->presentParams.PresentationInterval            = D3DPRESENT_INTERVAL_DEFAULT;
 
     // create d3d device
     hr = this->d3d9->CreateDevice(D3DADAPTER_DEFAULT,

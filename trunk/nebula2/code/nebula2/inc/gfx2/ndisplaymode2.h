@@ -28,9 +28,9 @@ public:
     /// constructor
     nDisplayMode2();
     /// constructor
-    nDisplayMode2(Type t, ushort w, ushort h);
+    nDisplayMode2(Type t, ushort w, ushort h, bool vs);
     /// set display mode
-    void Set(Type t, ushort w, ushort h);
+    void Set(Type t, ushort w, ushort h, bool vs);
     /// get display width
     int GetWidth() const;
     /// get display mode height
@@ -41,6 +41,8 @@ public:
     void SetHeight(ushort h);   
     /// get display mode type
     Type GetType() const;
+    /// return vsync value
+    bool GetVerticalSync() const;
     /// convert type to string
     static const char* TypeToString(Type t);
     /// convert string to type
@@ -51,6 +53,7 @@ private:
     ushort width;
     ushort height;
     int parentHWnd;
+    bool vSync;
 };
 
 //------------------------------------------------------------------------------
@@ -60,7 +63,8 @@ inline
 nDisplayMode2::nDisplayMode2() :
     type(WINDOWED),
     width(640),
-    height(480)
+    height(480),
+    vSync(true)
 {
     // empty
 }
@@ -69,10 +73,11 @@ nDisplayMode2::nDisplayMode2() :
 /**
 */
 inline
-nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h) :
+nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h, bool vs) :
     type(t),
     width(w),
-    height(h)
+    height(h),
+    vSync(vs)
 {
     // empty
 }
@@ -83,11 +88,12 @@ nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h) :
 */
 inline
 void
-nDisplayMode2::Set(Type t, ushort w, ushort h)
+nDisplayMode2::Set(Type t, ushort w, ushort h, bool vs)
 {
     this->type   = t;
     this->width  = w;
     this->height = h;
+    this->vSync = vs;
 }
 
 //------------------------------------------------------------------------------
@@ -137,6 +143,15 @@ nDisplayMode2::Type
 nDisplayMode2::GetType() const
 {
     return this->type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool nDisplayMode2::GetVerticalSync() const
+{
+    return this->vSync;
 }
 
 //------------------------------------------------------------------------------
