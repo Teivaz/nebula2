@@ -121,7 +121,13 @@ nViewerApp::Open()
     if (this->GetStartupScript())
     {
         const char* result;
-        this->refScriptServer->RunScript(this->GetStartupScript(), result);
+        bool r;
+        r = this->refScriptServer->RunScript(this->GetStartupScript(), result);
+        if (false == r)
+        {
+            n_error("Executing startup script failed: %s",
+                    result ? result : "Unknown error");
+        }
     }
     
     // initialize graphics
@@ -162,9 +168,15 @@ nViewerApp::Open()
         if (NULL != this->GetStageScript())
         {
             const char* result;
+            bool r;
 
             // run the light stage script
-            this->refScriptServer->RunScript(this->GetStageScript(), result);
+            r = this->refScriptServer->RunScript(this->GetStageScript(), result);
+            if (false == r)
+            {
+                n_error("Executing light stage script failed: %s",
+                        result ? result : "Unknown error");
+            }
         }
 
         // load the object to look at
@@ -380,7 +392,13 @@ void
 nViewerApp::DefineInputMapping()
 {
     const char* scriptResult;
-    this->refScriptServer->Run("OnMapInput", scriptResult);
+    bool r;
+    r = this->refScriptServer->RunFunction("OnMapInput", scriptResult);
+    if (false == r)
+    {
+        n_error("Executing OnMapInput failed: %s",
+                scriptResult ? scriptResult : "Unknown error");
+    }
 }
 
 //------------------------------------------------------------------------------
