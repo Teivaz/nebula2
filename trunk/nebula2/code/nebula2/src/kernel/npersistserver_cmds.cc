@@ -125,7 +125,7 @@ static void n_setsaverclass(void* slf, nCmd* cmd)
 static void n_getsaverclass(void* slf, nCmd* cmd)
 {
     nPersistServer* self = (nPersistServer*) slf;
-    cmd->Out()->SetS(self->GetSaverClass());
+    cmd->Out()->SetS(self->GetSaverClass().Get());
 }
 
 //-------------------------------------------------------------------
