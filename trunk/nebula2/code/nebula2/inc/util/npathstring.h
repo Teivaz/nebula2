@@ -250,3 +250,4 @@ operator+(const nPathString& s0, const nPathString& s1)
 
 //------------------------------------------------------------------------------
 #endif
+

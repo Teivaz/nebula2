@@ -36,7 +36,7 @@ nScriptServer::~nScriptServer()
     @return             false if an error occured during execution
 */
 bool 
-nScriptServer::Run(const char* str, const char*& result)
+nScriptServer::Run(const char* /* str */, const char*& /* result */)
 {
     // overwrite in subclass
     return false;
@@ -51,7 +51,7 @@ nScriptServer::Run(const char* str, const char*& result)
     @return             false if an error occured during execution
 */
 bool
-nScriptServer::RunScript(const char* filename, const char*& result)
+nScriptServer::RunScript(const char* /* filename */, const char*& /* result */)
 {
     // overwrite in subclass
     return false;
@@ -73,7 +73,7 @@ nScriptServer::Prompt(char* buf, int bufSize)
 /**
 */
 nFile*
-nScriptServer::BeginWrite(const char* filename, nRoot* obj)
+nScriptServer::BeginWrite(const char* /* filename */, nRoot* /* obj */)
 {
     // overwrite in subclass
     return false;
@@ -133,7 +133,7 @@ nScriptServer::WriteEndObject(nFile*, nRoot *, nRoot *)
 /**
 */
 bool
-nScriptServer::EndWrite(nFile* file)
+nScriptServer::EndWrite(nFile* /* file */)
 {
     // overwrite in subclass
     return false;

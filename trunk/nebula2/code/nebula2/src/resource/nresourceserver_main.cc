@@ -1,4 +1,4 @@
-#define N_IMPLEMENTS nResourceName
+#define N_IMPLEMENTS nResourceServer
 //------------------------------------------------------------------------------
 //  nresourceserver_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -70,7 +70,7 @@ nResourceServer::GetResourceId(const char* rsrcName, char* buf, int bufSize)
         char c;
         const char* from = &(rsrcName[offset]);
         char* to   = buf;
-        while (c = *from++)
+        while ((c = *from++))
         {
             if (('.' == c) || (c == '/') || (c == ':') || (c == '\\'))
             {
@@ -204,7 +204,7 @@ nResourceServer::ReloadResources(nResource::Type rsrcType)
     nRoot* rsrcPool = this->GetResourcePool(rsrcType);
     n_assert(rsrcPool);
 
-    bool retval;
+    bool retval = true;
     nResource* rsrc;
     for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
     {
@@ -220,7 +220,7 @@ nResourceServer::ReloadResources(nResource::Type rsrcType)
     can be packed into a single file.
 */
 bool
-nResourceServer::LoadResourceBundle(const char* filename)
+nResourceServer::LoadResourceBundle(const char* /* filename */)
 {
     // empty
     return false;

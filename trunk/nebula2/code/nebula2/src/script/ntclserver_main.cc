@@ -68,7 +68,7 @@ nTclServer::~nTclServer()
     Link to a tcl interpreter.
 */
 void
-nTclServer::LinkToInterp(Tcl_Interp* interp, bool isStandAlone)
+nTclServer::LinkToInterp(Tcl_Interp* interp, bool /* isStandAlone */)
 {
     n_assert(interp);
 
@@ -122,7 +122,7 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool isStandAlone)
     Unlink from tcl interpreter if running as extension.
 */
 void 
-nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool isStandAlone)
+nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /* isStandAlone */)
 {
     n_assert(interp);
 

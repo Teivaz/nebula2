@@ -111,3 +111,4 @@ nWin32LogHandler::PutMessageBox(MsgType type, const char* msg, va_list argList)
     MessageBox(0, msgBuf, this->appName.Get(), boxType);
 }
 #endif /* defined __WIN32__ && !defined(__XBxX__) */
+

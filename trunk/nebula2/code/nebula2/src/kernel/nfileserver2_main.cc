@@ -131,7 +131,7 @@ nFileServer2::CleanupPathName(char* path)
     }
 #else
     // on all other systems replace backslashes with slashes
-    while (c = *ptr)
+    while ((c = *ptr))
     {
         if (c == '\\')
         {

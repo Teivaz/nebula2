@@ -210,3 +210,4 @@ nTransformAnimator::GetScaleKeyAt(int index, float& time, vector3& key) const
 
 //------------------------------------------------------------------------------
 #endif
+
