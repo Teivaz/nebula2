@@ -470,7 +470,7 @@ n_gettooltip(void* slf, nCmd* cmd)
     @info
     Set blinking state of widget (only implemented by some widget classes).
     If blinking is turned on, it will turn off automatically after TimeOut
-    time has elapsed.
+    time has elapsed. Set TimeOut to 0 for infinite blinking.
 */
 static void
 n_setblinking(void* slf, nCmd* cmd)
