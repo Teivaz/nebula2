@@ -6,6 +6,21 @@
 
 nNebulaClass(nGuiIpAddressEntry, "nguitextentry");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguiipaddressentry
+
+    @cppclass
+    nGuiIpAddressEntry
+    
+    @superclass
+    nguitextentry
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -11,6 +11,21 @@
 
 nNebulaClass(nGuiWatcherWindow, "nguiclientwindow");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguiwatcherwindow
+
+    @cppclass
+    nGuiWatcherWindow
+    
+    @superclass
+    nguiclientwindow
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
