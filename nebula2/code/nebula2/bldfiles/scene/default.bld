@@ -93,7 +93,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nshadownode
     setdir scene
-    setfiles { nshadownode_main }
+    setfiles { nshadownode_main nshadownode_cmds }
     setheaders { nshadownode }
 endmodule
 #-------------------------------------------------------------------------------
