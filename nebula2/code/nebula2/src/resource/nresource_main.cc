@@ -9,21 +9,6 @@
 
 nNebulaClass(nResource, "nroot");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nresource
-    
-    @cppclass
-    nResource
-
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

@@ -39,7 +39,6 @@ private:
     /// load a texture resource from the resource bundle file
     bool LoadTexture(const char* resId, int dataOffset, int dataSize, int flags, nFile* dataFile);
 
-    nAutoRef<nGfxServer2> refGfxServer;
     nAutoRef<nAnimationServer> refAnimServer;
     nArray< nRef<nResource> > bundleResources;  // resource objects associated with this bundle
 };
