@@ -61,6 +61,10 @@ private:
     nString dir;
     nString args;
     nString url;
+
+#ifdef __LINUX__
+    bool LaunchHelper(bool waitForChild) const;
+#endif
 };
 
 //------------------------------------------------------------------------------
