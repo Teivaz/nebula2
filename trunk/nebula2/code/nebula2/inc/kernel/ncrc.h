@@ -2,7 +2,7 @@
 #define N_CRC_H
 //------------------------------------------------------------------------------
 /**
-    @class nCrc
+    @class nCRC
     @ingroup Kernel
 
     A CRC checker class. 
