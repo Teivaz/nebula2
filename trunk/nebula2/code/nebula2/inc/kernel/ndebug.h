@@ -5,7 +5,7 @@
     Nebula debug macros.
   
     n_assert()  - the vanilla assert() Macro
-    n_verify()  - like assert() except that the statement in parens is simply evaluated, unchecked, if __NEBULA_NO_ASSERT is next
+    n_verify()  - like assert() except that the statement in parens is simply evaluated, unchecked, if __NEBULA_NO_ASSERT is set
 */
 #include <stdlib.h>
 
