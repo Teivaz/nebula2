@@ -50,15 +50,16 @@ public:
             COORD    = (1<<0),
             NORMAL   = (1<<1),
             TANGENT  = (1<<2),
-            COLOR    = (1<<3),
-            UV0      = (1<<4),
-            UV1      = (1<<5),
-            UV2      = (1<<6),
-            UV3      = (1<<7),
-            WEIGHTS  = (1<<8),
-            JINDICES = (1<<9), 
+            BINORMAL = (1<<3),
+            COLOR    = (1<<4),
+            UV0      = (1<<5),
+            UV1      = (1<<6),
+            UV2      = (1<<7),
+            UV3      = (1<<8),
+            WEIGHTS  = (1<<9),
+            JINDICES = (1<<10), 
 
-            NUM_VERTEX_COMPONENTS = 10,
+            NUM_VERTEX_COMPONENTS = 11,
         };
         enum Flag
         {
@@ -84,6 +85,10 @@ public:
         void SetTangent(const vector3& v);
         /// get tangent
         const vector3& GetTangent() const;
+        /// set binormal
+        void SetBinormal(const vector3& v);
+        /// get binormal
+        const vector3& GetBinormal() const;
         /// set color
         void SetColor(const vector4& v);
         /// get color
@@ -124,10 +129,13 @@ public:
         void Transform(const matrix44& m44, const matrix33& m33);
         /// fill vertex data with interpolated result (ignores weights and joint indices!)
         void Interpolate(const Vertex& v0, const Vertex& v1, float lerp);
+        /// component-wise copy from source vertex
+        void ComponentCopy(const Vertex& src, int compMask);
 
         vector3 coord;
         vector3 normal;
         vector3 tangent;
+        vector3 binormal;
         vector4 color;
         vector2 uv[MAX_TEXTURE_LAYERS];
         vector4 weights;
@@ -146,7 +154,9 @@ public:
         {
             VERTEXINDICES    = (1<<0),
             GROUPID          = (1<<1),
-            NEIGHBOURINDICES = (1<<2),
+            NORMAL           = (1<<2),
+            TANGENT          = (1<<3),
+            BINORMAL         = (1<<4),
         };
 
         /// constructor
@@ -162,24 +172,27 @@ public:
         void SetGroupId(int i);
         /// get group index
         int GetGroupId() const;
-        /// set neighbour indices
-        void SetNeighbourIndices(int i0, int i1, int i2);
-        /// get neighbour indices
-        void GetNeighbourIndices(int& i0, int& i1, int& i2) const;
         /// check if component is valid
         bool HasComponent(Component c) const;
-		/// set additional data
-		void SetCustomData(const void* data);
-		/// get additional data
-		const void* GetCustomData();
+        /// set triangle normal
+        void SetNormal(const vector3& v);
+        /// get triangle normal
+        const vector3& GetNormal() const;
+        /// set triangle tangent
+        void SetTangent(const vector3& v);
+        /// get triangle tangent
+        const vector3& GetTangent() const;
+        /// set triangle binormal
+        void SetBinormal(const vector3& v);
+        /// get triangle binormal
+        const vector3& GetBinormal() const;
 
-        int vertexIndex[3];     // vertex indices
-        int groupId;            // group index
-        int neighbourIndex[3];  // indices of neighboring triangles
-
+        int vertexIndex[3];
+        int groupId;
+        vector3 normal;
+        vector3 tangent;
+        vector3 binormal;
         int compMask;
-
-		const void* customData;		// place for additional data
     };
 
     //--- a triangle group ---
@@ -231,18 +244,10 @@ public:
     //--- mesh building ---
     /// check if vertex component exists
     bool HasVertexComponent(Vertex::Component c) const;
-    /// add a group
-    void AddGroup(const Group& g);
     /// add a vertex
     void AddVertex(const Vertex& v);
     /// add a triangle
     void AddTriangle(const Triangle& t);
-    /// get number of groups
-    int GetNumGroups() const;
-    /// get group at index
-    Group& GetGroupAt(int index) const;
-    /// get group by id
-    Group* GetGroupById(int groupId) const;
     /// get number of triangles
     int GetNumTriangles() const;
     /// get triangle at index
@@ -251,14 +256,18 @@ public:
     int GetNumVertices() const;
     /// get vertex at index
     Vertex& GetVertexAt(int index) const;
-    /// get number of triangles in group
-    int GetNumTrianglesInGroup(int groupId);
-    /// get number first triangle matching a group
-    int GetFirstTriangleInGroup(int groupId);
+    /// sort triangles by group id
+    void SortTrianglesByGroupId();
+    /// find the first triangle matching group id
+    int GetFirstGroupTriangle(int groupId) const;
+    /// count number of triangles matching group starting at index
+    int GetNumGroupTriangles(int groupId, int startTriangleIndex) const;
     /// get the minimum vertex index referenced by a group
-    bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex); 
-    /// fix triangle group ids in mesh
-    void FixTriangleGroupIds();
+    bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex) const; 
+    /// build a group mapping array
+    void BuildGroupMap(nArray<Group>& groupMap);
+    /// update triangle group ids from a group map
+    void UpdateTriangleGroupIds(const nArray<Group>& groupMap);
 
     //--- mesh operations ---
 
@@ -272,22 +281,22 @@ public:
     void BuildAdjacency();
     /// optimize for t&l hardware vertex cache
     void Optimize();
-    /// generate vertex tangents
-    bool BuildTangents();
     /// append mesh from mesh builder object
     void Append(const nMeshBuilder& source);
     /// copy from mesh builder object
     void Copy(const nMeshBuilder& source);
-    /// pack triangles by group
-    void PackTrianglesByGroup();
-    /// extract group into new nMeshBuilder object
-    void ExtractGroup(int groupIndex, nMeshBuilder& dest);
-    /// compute the bounding box of the mesh
-    bbox3 ComputeBBox() const;
+    /// compute the bounding box of the mesh, filtered by a group id
+    bbox3 ComputeGroupBBox(int groupId) const;
     /// count vertices in bounding box
     int CountVerticesInBBox(const bbox3& box) const;
-    /// split mesh using a clip plane, and return the 2 resulting meshes
-    void Split(const plane& clipPlane, nMeshBuilder& mesh0, nMeshBuilder& mesh1) const;
+    /// split triangle group in place, using a clip plane, return 2 new group indices
+    void Split(const plane& clipPlane, int groupId, int posGroupId, int negGroupId);
+    /// fill a vertex-triangle mapping array
+    void BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) const;
+    /// create face normals, tangents and binormals (requires a valid uv-mapping at layer 0)
+    void BuildTriangleNormals();
+    /// generate averaged vertex tangents and binormals
+    void BuildVertexTangentBinormals();
 
 private:
     /// static userdata pointer for qsort hook
@@ -296,15 +305,12 @@ private:
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
     /// qsort hook for sorting triangles by their group index
     static int __cdecl TriangleGroupSorter(const void* elm0, const void* elm1);
-    /// generate tangents for one mesh group
-    bool BuildTangentsForOneGroup(int groupIndex, nMeshBuilder& outMesh);
     /// do an inflated component copy using a source mesh and a collapsMap
     void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapsMap, int compMask);
 
 public:
     nArray<Vertex>   vertexArray;
     nArray<Triangle> triangleArray;
-    nArray<Group>    groupArray;
 };
 
 //------------------------------------------------------------------------------
@@ -379,6 +385,27 @@ const vector3&
 nMeshBuilder::Vertex::GetTangent() const
 {
     return this->tangent;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Vertex::SetBinormal(const vector3& v)
+{
+    this->binormal = v;
+    this->compMask |= BINORMAL;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nMeshBuilder::Vertex::GetBinormal() const
+{
+    return this->binormal;
 }
 
 //------------------------------------------------------------------------------
@@ -506,6 +533,7 @@ nMeshBuilder::Vertex::ZeroComponent(Component c)
         case COORD:     this->coord.set(0.0f, 0.0f, 0.0f); break;
         case NORMAL:    this->normal.set(0.0f, 0.0f, 0.0f); break;
         case TANGENT:   this->tangent.set(0.0f, 0.0f, 0.0f); break;
+        case BINORMAL:  this->tangent.set(0.0f, 0.0f, 0.0f); break;
         case COLOR:     this->color.set(0.0f, 0.0f, 0.0f, 0.0f); break;
         case UV0:       this->uv[0].set(0.0f, 0.0f); break;
         case UV1:       this->uv[1].set(0.0f, 0.0f); break;
@@ -555,6 +583,14 @@ nMeshBuilder::Vertex::Compare(const Vertex& rhs) const
     if (this->HasComponent(TANGENT) && rhs.HasComponent(TANGENT))
     {
         int res = this->tangent.compare(rhs.tangent, 0.001f);
+        if (0 != res)
+        {
+            return res;
+        }
+    }
+    if (this->HasComponent(BINORMAL) && rhs.HasComponent(BINORMAL))
+    {
+        int res = this->binormal.compare(rhs.binormal, 0.001f);
         if (0 != res)
         {
             return res;
@@ -672,6 +708,7 @@ nMeshBuilder::Vertex::GetWidth() const
     if (this->HasComponent(COORD))      w += 3;
     if (this->HasComponent(NORMAL))     w += 3;
     if (this->HasComponent(TANGENT))    w += 3;
+    if (this->HasComponent(BINORMAL))   w += 3;
     if (this->HasComponent(COLOR))      w += 4;
     if (this->HasComponent(UV0))        w += 2;
     if (this->HasComponent(UV1))        w += 2;
@@ -701,6 +738,10 @@ nMeshBuilder::Vertex::Transform(const matrix44& m44, const matrix33& m33)
     {
         this->tangent = m33 * this->tangent;
     }
+    if (this->HasComponent(BINORMAL))
+    {
+        this->binormal = m33 * this->binormal;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -727,6 +768,11 @@ nMeshBuilder::Vertex::Interpolate(const Vertex& v0, const Vertex& v1, float lerp
         this->SetTangent(v0.tangent + ((v1.tangent - v0.tangent) * lerp));
         this->tangent.norm();
     }
+    if (v0.HasComponent(BINORMAL))
+    {
+        this->SetBinormal(v0.binormal + ((v1.binormal - v0.binormal) * lerp));
+        this->binormal.norm();
+    }
     if (v0.HasComponent(COLOR))
     {
         this->SetColor(v0.color + ((v1.color - v0.color) * lerp));
@@ -751,6 +797,30 @@ nMeshBuilder::Vertex::Interpolate(const Vertex& v0, const Vertex& v1, float lerp
 
 //------------------------------------------------------------------------------
 /**
+    Copy vertex component defined by component mask from source vertex.
+
+    @param  src     the source vertex
+    @param  mask    component mask which defines which components to copy
+*/
+inline
+void
+nMeshBuilder::Vertex::ComponentCopy(const Vertex& src, int mask)
+{
+    if (mask & Vertex::COORD)       this->SetCoord(src.coord);
+    if (mask & Vertex::NORMAL)      this->SetNormal(src.normal);
+    if (mask & Vertex::TANGENT)     this->SetTangent(src.tangent);
+    if (mask & Vertex::BINORMAL)    this->SetBinormal(src.binormal);
+    if (mask & Vertex::COLOR)       this->SetColor(src.color);
+    if (mask & Vertex::UV0)         this->SetUv(0, src.uv[0]);
+    if (mask & Vertex::UV1)         this->SetUv(1, src.uv[1]);
+    if (mask & Vertex::UV2)         this->SetUv(2, src.uv[2]);
+    if (mask & Vertex::UV3)         this->SetUv(3, src.uv[3]);
+    if (mask & Vertex::WEIGHTS)     this->SetWeights(src.weights);
+    if (mask & Vertex::JINDICES)    this->SetJointIndices(src.jointIndices);
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 nMeshBuilder::Triangle::Triangle() :
@@ -760,10 +830,8 @@ nMeshBuilder::Triangle::Triangle() :
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
-        this->neighbourIndex[i] = 0;
     }
     this->groupId = 0;
-	this->customData = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -824,31 +892,6 @@ nMeshBuilder::Triangle::GetGroupId() const
 /**
 */
 inline
-void
-nMeshBuilder::Triangle::SetNeighbourIndices(int i0, int i1, int i2)
-{
-    this->neighbourIndex[0] = i0;
-    this->neighbourIndex[1] = i1;
-    this->neighbourIndex[2] = i2;
-    this->compMask |= NEIGHBOURINDICES;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMeshBuilder::Triangle::GetNeighbourIndices(int& i0, int& i1, int& i2) const
-{
-    i0 = this->neighbourIndex[0];
-    i1 = this->neighbourIndex[1];
-    i2 = this->neighbourIndex[2];
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
 bool
 nMeshBuilder::Triangle::HasComponent(Component c) const
 {
@@ -860,21 +903,66 @@ nMeshBuilder::Triangle::HasComponent(Component c) const
 */
 inline
 void
-nMeshBuilder::Triangle::SetCustomData(const void* data)
+nMeshBuilder::Triangle::SetNormal(const vector3& v)
 {
-	this->customData = data;
+    this->normal = v;
+    this->compMask |= NORMAL;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const void*
-nMeshBuilder::Triangle::GetCustomData()
+const vector3&
+nMeshBuilder::Triangle::GetNormal() const
 {
-	return this->customData;
+    n_assert(NORMAL & this->compMask);
+    return this->normal;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetTangent(const vector3& v)
+{
+    this->tangent = v;
+    this->compMask |= TANGENT;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nMeshBuilder::Triangle::GetTangent() const
+{
+    n_assert(TANGENT & this->compMask);
+    return this->tangent;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetBinormal(const vector3& v)
+{
+    this->binormal = v;
+    this->compMask |= BINORMAL;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nMeshBuilder::Triangle::GetBinormal() const
+{
+    n_assert(BINORMAL & this->compMask);
+    return this->binormal;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -970,16 +1058,6 @@ nMeshBuilder::HasVertexComponent(Vertex::Component c) const
 */
 inline
 void
-nMeshBuilder::AddGroup(const Group& g)
-{
-    this->groupArray.PushBack(g);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
 nMeshBuilder::AddVertex(const Vertex& v)
 {
     this->vertexArray.PushBack(v);
@@ -993,26 +1071,6 @@ void
 nMeshBuilder::AddTriangle(const Triangle& t)
 {
     this->triangleArray.PushBack(t);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nMeshBuilder::GetNumGroups() const
-{
-    return this->groupArray.Size();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nMeshBuilder::Group&
-nMeshBuilder::GetGroupAt(int index) const
-{
-    return this->groupArray[index];
 }
 
 //------------------------------------------------------------------------------
@@ -1053,72 +1111,6 @@ nMeshBuilder::Triangle&
 nMeshBuilder::GetTriangleAt(int index) const
 {
     return this->triangleArray[index];
-}
-
-//------------------------------------------------------------------------------
-/**
-    Count the number of triangles matching a group id. This may be a slow
-    operation with large meshes.
-*/
-inline
-int
-nMeshBuilder::GetNumTrianglesInGroup(int groupId)
-{
-    int numTris = 0;
-    int i;
-    int numTriangles = this->triangleArray.Size();
-    for (i = 0; i < numTriangles; i++)
-    {
-        if (this->triangleArray[i].GetGroupId() == groupId)
-        {
-            numTris++;
-        }
-    }
-    return numTris;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the first triangle matching a group id. This may be a slow operation
-    on large meshes. 
-*/
-inline
-int
-nMeshBuilder::GetFirstTriangleInGroup(int groupId)
-{
-    int i;
-    int numTriangles = this->triangleArray.Size();
-    for (i = 0; i < numTriangles; i++)
-    {
-        if (this->triangleArray[i].GetGroupId() == groupId)
-        {
-            return i;
-        }
-    }
-    // fallthrough: can't happen
-    n_assert(false);
-    return -1;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Return group matching group id.
-*/
-inline
-nMeshBuilder::Group*
-nMeshBuilder::GetGroupById(int id) const
-{
-    int numGroups = this->groupArray.Size();
-    int i;
-    for (i = 0; i < numGroups; i++)
-    {
-        Group& group = this->groupArray[i];
-        if (group.GetId() == id)
-        {
-            return &group;
-        }
-    }
-    return 0;
 }
 
 //------------------------------------------------------------------------------
