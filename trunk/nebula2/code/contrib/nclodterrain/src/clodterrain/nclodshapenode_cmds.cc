@@ -1,0 +1,331 @@
+//------------------------------------------------------------------------------
+//  nCLODShapeNode_cmds.cc
+//  (C) 2002 RadonLabs GmbH
+//------------------------------------------------------------------------------
+#include "clodterrain/nclodshapenode.h"
+#include "kernel/npersistserver.h"
+
+static void n_setterrainname(void* slf, nCmd* cmd);
+static void n_getterrainname(void* slf, nCmd* cmd);
+static void n_settqtname(void* slf, nCmd* cmd);
+static void n_gettqtname(void* slf, nCmd* cmd);
+static void n_setterrainresourceloader(void* slf, nCmd* cmd);
+static void n_getterrainresourceloader(void* slf, nCmd* cmd);
+static void n_setscreenspaceerror(void* self, nCmd *cmd);
+static void n_getscreenspaceerror(void* self, nCmd *cmd);
+static void n_setcollisionspace(void *slf, nCmd *cmd);
+static void n_getcollisionspace(void *slf, nCmd *cmd);
+static void n_begindetailtextures(void *slf, nCmd *cmd);
+static void n_setdetailtexture(void *slf, nCmd *cmd);
+static void n_enddetailtextures(void *slf, nCmd *cmd);
+
+//------------------------------------------------------------------------------
+/**
+    @scriptclass
+    nCLODShapeNode
+
+    @cppclass
+    nShapeNode
+    
+    @superclass
+    nmaterialnode
+
+    @classinfo
+    This one can render a chunked lod terrain.
+*/
+void
+n_initcmds(nClass* cl)
+{
+    cl->BeginCmds();
+    cl->AddCmd("v_setterrainname_s",               'SMSN', n_setterrainname);
+    cl->AddCmd("s_getterrainname_v",               'GMSN', n_getterrainname);
+    cl->AddCmd("v_settqtname_s",               'STQN', n_settqtname);
+    cl->AddCmd("s_gettqtname_v",               'GTQN', n_gettqtname);
+    cl->AddCmd("v_setterrainresourceloader_s", 'SMRL', n_setterrainresourceloader);
+    cl->AddCmd("s_getterrainresourceloader_v", 'GMRL', n_getterrainresourceloader);
+    cl->AddCmd("v_setscreenspaceerror_f",       'SSSE', n_setscreenspaceerror);
+    cl->AddCmd("f_getscreenspaceerror_v",       'GSSE', n_getscreenspaceerror);
+    cl->AddCmd("v_setcollisionspace_s",         'SCSP', n_setcollisionspace);
+    cl->AddCmd("s_getcollisionspace_v",         'GCSP', n_getcollisionspace);
+    cl->AddCmd("v_begindetailtextures_i",       'BDTX', n_begindetailtextures);
+    cl->AddCmd("v_setdetailtexture_is",         'SDTX', n_setdetailtexture);
+    cl->AddCmd("v_enddetailtextures_v",         'EDTX', n_enddetailtextures);
+    cl->EndCmds();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setterrainname
+    @input
+    s(MeshResource)
+    @output
+    v
+    @info
+    Set the name of the terrain resource.
+*/
+static void
+n_setterrainname(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetTerrainName(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getterrainname
+    @input
+    v
+    @output
+    s(MeshResource)
+    @info
+    Get the name of the terrain resource.
+*/
+static void
+n_getterrainname(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetS(self->GetTerrainName());
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    settqtname
+    @input
+    s(MeshResource)
+    @output
+    v
+    @info
+    Set the name of the terrain texture quadtree.
+*/
+static void
+n_settqtname(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetTqtName(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    gettqtname
+    @input
+    v
+    @output
+    s(MeshResource)
+    @info
+    Get the name of the terrain texture quadtree.
+*/
+static void
+n_gettqtname(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetS(self->GetTqtName());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setterrainresourceloader
+    @input
+    o(ResourceLoader)
+    @output
+    v
+    @info
+    Set the NOH path for the mesh resource loader.
+*/
+static void
+n_setterrainresourceloader(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetTerrainResourceLoader(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getterrainresourceloader
+    @input
+    v
+    @output
+    o(ResourceLoader)
+    @info
+    Get the NOH path for the mesh resource loader.
+*/
+static void
+n_getterrainresourceloader(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetS(self->GetTerrainResourceLoader());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setscreenspaceerror
+    @input
+    f (error)
+    @output
+    v
+    @info
+    Set the allowed screen space error, in pixels
+*/
+static void
+n_setscreenspaceerror(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetScreenSpaceError(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getscreenspaceerror
+    @input
+    v
+    @output
+    f (error value)
+    @info
+    Get the current value of the screen space error in pixels
+*/
+static void
+n_getscreenspaceerror(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetF((float)self->GetScreenSpaceError());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setcollisionspace
+    @input
+    s (path to collision space)
+    @output
+    v
+    @info
+    Set the collision space to use
+*/
+static void
+n_setcollisionspace(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->SetCollisionSpace(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getscreenspaceerror
+    @input
+    v
+    @output
+    s (current collision space)
+    @info
+    Get the current value of the screen space error in pixels
+*/
+static void
+n_getcollisionspace(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    cmd->Out()->SetS(self->GetCollisionSpace());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    begindetailtextures
+    @input
+    i (number of detail textures)
+
+    @output
+    v
+    @info
+    Setup the process to specify detail textures used for splatting.
+
+*/
+static void
+n_begindetailtextures(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->BeginDetailTextures(cmd->In()->GetI());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setdetailtexture
+    @input
+    i (index of this detail texture)
+    s (path to texture resource)
+
+    @output
+    v
+    @info
+    Specify the resource to use for a specific detail texture.
+    You need to specify EVERY detail texture, even if you aren't using it.
+*/
+static void
+n_setdetailtexture(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    unsigned int detailtexindex = cmd->In()->GetI();
+    const char *detailtexname = cmd->In()->GetS();
+    self->SetDetailTexture(detailtexindex, detailtexname);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    enddetailtextures
+    @input
+    v
+
+    @output
+    v
+    @info
+    Indicate that you are done specifying the detail textures.  Also checks that
+    every detail texture index has a valid texture.
+*/
+static void
+n_enddetailtextures(void* slf, nCmd* cmd)
+{
+    nCLODShapeNode* self = (nCLODShapeNode*) slf;
+    self->EndDetailTextures();
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nCLODShapeNode::SaveCmds(nPersistServer* ps)
+{
+    if (nMaterialNode::SaveCmds(ps))
+    {
+        nCmd* cmd;
+
+        //--- setmesh ---
+        cmd = ps->GetCmd(this, 'SMSH');
+        cmd->In()->SetS(this->GetTerrainName());
+        ps->PutCmd(cmd);
+
+ 
+        //--- setmeshresourceloader ---
+        const char* rlName = this->GetTerrainResourceLoader();
+        // only when we have a resource loader
+        if (rlName)
+        {
+            cmd = ps->GetCmd(this, 'SMRL');
+            cmd->In()->SetS(rlName);
+            ps->PutCmd(cmd);
+        }
+
+        return true;
+    }
+    return false;
+}
+

@@ -1,0 +1,72 @@
+Included here is the source for nCLODTerrain, the chunked LOD terrain
+implementation for The Nebula Device.
+
+To compile, unpack into code/contrib and re-run the update.tcl script in
+the Nebula root directory (typically whatever $RL_HOME is set to).
+You should then see a 'chunklod' project/solution which you can compile.
+Note that you also need nopende installed in contrib, since clodterrain
+uses the nopende code for collision and dynamics.
+
+The nclodterrain module is usable for linking in other programs, and
+'nclododeviewer' is an example of a viewer that uses both clodterrain
+and opende to bounce around a bunch of boxes.
+
+The descriptions below assume you are in code/contrib/nclodterrain/bin, as
+that is where all the relevant scripts are located.
+
+In order to use a terrain, you must 'compile' it from the bitmap-based
+form into a chunked vertex mesh/texture chunked format.
+
+
+***To compile the terrain:
+
+You can compile two sorts of terrains.  Basically, they differ only in
+how the texture is applied.  You can drape one huge texture over the
+entire terrain (texture-mapped) or apply several small tiled detail
+textures based on a "tile map" (tile-mapped)
+
+***To compile a texture-mapped terrain:
+
+Select your input and output files. You need as input a greyscale heightmap
+and an RGB terrain texture.  The output is a tesselated mesh quadtree
+(a .clod file) and a texture quadtree (a .tqt file).  I have included
+an example script "compileterrain.lua" for this which is setup like:
+
+Heightmap:   work/textures/heightfield.bmp
+Texture:     work/textures/cloddiffuse.bmp
+
+Mesh output:  export/terrains/examples/sample.clod
+TQT output:   export/terrains/examples/sample.tqt
+
+You can of course edit the script file to change these locations.
+
+***To compile a tile-mapped terrain:
+
+First, decide on which textures to use as your tiles.  For example, let's
+use grass, dirt, rock, and water.  We'll map these to indices 0,1,2, and 3.
+
+Select your input and output files. You need as input a greyscale heightmap
+and an indexed terrain texture.  The indexed texture should contain
+indexed entries at each pixel indicate which tile texture to put there. 
+For instance, paint pixels with index 0 everywhere you want grass, index 1
+where you want dirt, etc.
+The output is a tesselated mesh quadtree (a .clod file) and a texture quadtree
+(a .tqt file).  I have included an example script "compilesplatterrain.lua" for
+this which is setup like:
+
+Heightmap:   work/textures/heightfield.bmp
+Tiles:       work/textures/tiles.bmp
+
+Mesh output:  export/terrains/examples/sample.clod
+TQT output:   export/terrains/examples/sample.tqt
+
+
+***To view the resultant terrain:
+
+To view your terrain execute
+"nclododeviewer -view clod.n2"
+Again, you can edit the script file clod.n2 to use other terrain files
+if you want.
+
+Gary Haussmann, 16 Mar 2004
+
