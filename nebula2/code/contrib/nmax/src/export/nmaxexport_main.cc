@@ -732,7 +732,7 @@ nMaxExport::checkChars(nString &string)
 char*
 nMaxExport::checkChars(const char* string)
 {
-    char* temp = n_new(char, strlen(string) + 1);
+    char* temp = n_new_array(char, strlen(string) + 1);
     strcpy(temp, string);
     temp = this->checkChars(temp);
     return temp;
