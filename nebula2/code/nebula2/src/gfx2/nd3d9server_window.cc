@@ -365,8 +365,12 @@ FIXME!
 
         case WM_CLOSE:
             // ask Nebula to quit, everything else should happen in the destructor
-            d3d9->quitRequested = true;
-            return 0;
+            // If we're not a child window
+            if (!d3d9->GetParentHWnd())
+            {
+                d3d9->quitRequested = true;
+                return 0;
+            }
             break;
 
         case WM_COMMAND:
