@@ -26,7 +26,6 @@ beginworkspace Nebula2
         nsh
         nviewer
         ndshow
-        nvideo
         ngui
         nnpktool
         nnetwork
