@@ -181,7 +181,8 @@ private:
         float ypos;
     };
     nList textNodeList;
-    CD3DFont9* d3dFont;
+    ID3DXSprite* d3dSprite;
+    nRef<nFont2> refDefaultFont;
 
     D3DPRESENT_PARAMETERS presentParams;        ///< current presentation parameters
     IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface

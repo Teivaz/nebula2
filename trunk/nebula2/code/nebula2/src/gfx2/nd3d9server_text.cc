@@ -13,15 +13,24 @@ void
 nD3D9Server::OpenTextRenderer()
 {
     n_assert(this->d3d9Device);
-    n_assert(!this->d3dFont);
 
-    // create the CD3DFont object
-    this->d3dFont = new CD3DFont9((const char*) "Arial", 10, D3DFONT_BOLD);
-    n_assert(this->d3dFont);
+    if (!this->refDefaultFont.isvalid())
+    {
+        nFontDesc fontDesc;
+        fontDesc.SetAntiAliased(true);
+        fontDesc.SetHeight(18);
+        fontDesc.SetWeight(nFontDesc::Normal);
+        fontDesc.SetTypeFace("Arial");
+        nFont2* font = this->NewFont("Default", fontDesc);
+        if (!font->Load())
+            n_error("nD3D9Server: Failed to load default font!");
 
-    // initialize the font object
-    this->d3dFont->InitDeviceObjects(this->d3d9Device);
-    this->d3dFont->RestoreDeviceObjects();
+        this->refDefaultFont = font;
+    }
+
+    // create sprite object for batched rendering
+    HRESULT hr = D3DXCreateSprite(this->d3d9Device, &this->d3dSprite);
+    n_assert(SUCCEEDED(hr));
 }
 
 //------------------------------------------------------------------------------
@@ -35,15 +44,11 @@ nD3D9Server::CloseTextRenderer()
     TextNode* textNode;
     while (textNode = (TextNode*) this->textNodeList.RemHead())
     {
-        delete textNode;
+        n_delete textNode;
     }
 
-    // kill the D3DFont object
-    if (this->d3dFont)
-    {
-        delete this->d3dFont;
-        this->d3dFont = 0;
-    }
+    if (this->d3dSprite)
+        this->d3dSprite->Release();
 }
 
 //------------------------------------------------------------------------------
@@ -69,27 +74,40 @@ nD3D9Server::DrawTextBuffer()
     if (!this->textNodeList.IsEmpty())
     {
         n_assert(this->d3d9Device);
-        n_assert(this->d3dFont);
 
         // flush the mesh at stream 0 because we cannot preserve its state
         this->SetMesh(0, 0);
 
+        ID3DXFont* d3dFont = ((nD3D9Font*)this->refDefaultFont.get())->GetD3DFont();
+        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND|D3DXSPRITE_SORT_TEXTURE);
         TextNode* textNode;
         while (textNode = (TextNode*) this->textNodeList.RemHead())
         {
             int width = this->displayMode.GetWidth();
             int height = this->displayMode.GetHeight();
+            int len = textNode->string.Length();
+            RECT r;
+            r.right = width;
+            r.bottom = height;     
 
-            this->d3dFont->DrawText(((textNode->xpos + 1.0f) * 0.5f * width) + 1.0f, 
-                                    ((textNode->ypos + 1.0f) * 0.5f * height) + 1.0f,
-                                    D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, textNode->color.w),
-                                    (const char*) textNode->string.Get(), 0);
-            this->d3dFont->DrawText((textNode->xpos + 1.0f) * 0.5f * width, 
-                                    (textNode->ypos + 1.0f) * 0.5f * height,
-                                    D3DCOLOR_COLORVALUE(textNode->color.x, textNode->color.y, textNode->color.z, textNode->color.w),
-                                    (const char*) textNode->string.Get(), 0);
+            r.left = (LONG) ((textNode->xpos + 1.0f) * 0.5f * width) + 1;
+            r.top = (LONG) ((textNode->ypos + 1.0f) * 0.5f * height) + 1;
+            d3dFont->DrawText(this->d3dSprite,
+                textNode->string.Get(),
+                len,&r,
+                DT_LEFT|DT_NOCLIP|DT_SINGLELINE,
+                D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, textNode->color.w));
+            r.left = (LONG) ((textNode->xpos + 1.0f) * 0.5f * width);
+            r.top = (LONG) ((textNode->ypos + 1.0f) * 0.5f * height);
+            d3dFont->DrawText(this->d3dSprite,
+                textNode->string.Get(),
+                len,&r,
+                DT_LEFT|DT_NOCLIP|DT_SINGLELINE,
+                D3DCOLOR_COLORVALUE(textNode->color.x, textNode->color.y, textNode->color.z, textNode->color.w));
+
             n_delete textNode;
         }
+        this->d3dSprite->End();
     }
 }
 
@@ -101,26 +119,29 @@ void
 nD3D9Server::DrawText(const char* text, const vector4& color, float xPos, float yPos)
 {
     n_assert(text);
-    n_assert(this->refFont.isvalid());
-    if (!this->refFont->IsValid())
+    if (this->refFont.isvalid())
     {
-        this->refFont->Load();
+        if (!this->refFont->IsValid())
+        {
+            this->refFont->Load();
+        }        
+        float dispWidth  = (float) this->displayMode.GetWidth();
+        float dispHeight = (float) this->displayMode.GetHeight();
+        RECT r;
+        r.left = (LONG) (xPos * dispWidth);
+        r.top = (LONG) (yPos * dispHeight);
+    
+        DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
+        ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
+        n_assert(d3dFont);
+        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND|D3DXSPRITE_SORT_TEXTURE);
+        d3dFont->DrawText(this->d3dSprite,
+            text,
+            -1,&r,
+            DT_LEFT|DT_NOCLIP|DT_SINGLELINE,
+            d3dColor);
+        this->d3dSprite->End();
     }
-    float dispWidth  = (float) this->displayMode.GetWidth();
-    float dispHeight = (float) this->displayMode.GetHeight();
-
-    float x = xPos * dispWidth;
-    float y = yPos * dispHeight;
-    int d3dFlags = 0;
-    if (this->refFont->GetFontDesc().GetAntiAliased())
-    {
-        d3dFlags |= D3DFONT_FILTERED;
-    }
-    DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
-
-    CD3DFont9* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
-    n_assert(d3dFont);
-    d3dFont->DrawTextA(x, y, d3dColor, (const char*) text, d3dFlags);
 }
 
 //------------------------------------------------------------------------------
@@ -131,20 +152,31 @@ vector2
 nD3D9Server::GetTextExtent(const char* text)
 {
     n_assert(text);
-    n_assert(this->refFont.isvalid());
-    if (!this->refFont->IsValid())
-    {
-        this->refFont->Load();
-    }
-    CD3DFont9* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
-
-    // get the current width and height of the display
+    int width = 0;
+    int height = 0;
     float dispWidth  = (float) this->displayMode.GetWidth();
     float dispHeight = (float) this->displayMode.GetHeight();
 
-    SIZE intExtent;
-    d3dFont->GetTextExtent((const char*) text, &intExtent);
+    if (this->refFont.isvalid())
+    {
+        if (!this->refFont->IsValid())
+        {
+            this->refFont->Load();
+        }        
+        RECT r;
+        r.left = 0;
+        r.top = 0;
+        r.bottom = 0;
+        r.right = 0;
 
-    vector2 extent((float(intExtent.cx) / dispWidth), (float(intExtent.cy) / dispHeight));
-    return extent;
+        ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
+        n_assert(d3dFont);
+        height = d3dFont->DrawText(0,
+            text,
+            -1,&r,
+            DT_LEFT|DT_NOCLIP|DT_SINGLELINE|DT_CALCRECT,
+            0);
+        width = r.right;
+    }
+    return vector2((float(width) / dispWidth), (float(height) / dispHeight));
 }

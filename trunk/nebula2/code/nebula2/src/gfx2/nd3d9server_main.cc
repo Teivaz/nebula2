@@ -46,7 +46,7 @@ nD3D9Server::nD3D9Server() :
     windowOpen(false),
     windowMinimized(false),
     quitRequested(false),
-    d3dFont(0),
+    d3dSprite(0),
     d3d9(0),
     d3d9Device(0),
     depthStencilSurface(0),
@@ -91,7 +91,6 @@ nD3D9Server::~nD3D9Server()
     ilShutDown();
     this->WindowClose();
     n_assert(this->textNodeList.IsEmpty());
-    n_assert(0 == this->d3dFont);
 }
 
 //------------------------------------------------------------------------------
