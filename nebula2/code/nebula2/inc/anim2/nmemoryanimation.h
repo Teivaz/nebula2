@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMemoryAnimation
+    @ingroup NebulaAnimationSystem
 
     An nMemoryAnimation object holds its entire animation data in memory.
     Since all the animation is in memory all the time, the animation

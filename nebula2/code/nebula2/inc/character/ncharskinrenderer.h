@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCharSkinRenderer
+    @ingroup NebulaCharacterAnimationSystem
 
     A smooth character skin renderer. Takes a pointer to an nMesh2
     object which contains the skin mesh, and a pointer to an 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCharSkeleton
+    @ingroup NebulaCharacterAnimationSystem
 
     Implements a character skeleton made of nCharJoint objects.
 

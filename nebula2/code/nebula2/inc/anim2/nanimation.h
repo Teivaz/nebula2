@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimation
+    @ingroup NebulaAnimationSystem
 
     An nAnimation is a nResource subclass which holds one or more
     animation curves, which must all share the same number of
@@ -111,10 +112,10 @@ public:
         /// interpolation type
         enum IpolType
         {
-            None = 0,       // always return the const key
-            Step,           // no interpolation done between keys
-            Quat,           // do quaternion interpolation
-            Linear,         // linear interpolation done between keys
+            None = 0,       ///< always return the const key
+            Step,           ///< no interpolation done between keys
+            Quat,           ///< do quaternion interpolation
+            Linear,         ///< linear interpolation done between keys
         };
 
         /// constructor
@@ -189,11 +190,11 @@ public:
         void TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float& inbetween) const;
 
     private:
-        int startKey;           // index of start key
-        int numKeys;            // number of keys shared by all curves
-        int keyStride;          // key stride in key array
-        float keyTime;          // number of keys 
-        LoopType loopType;      // the loop type
+        int startKey;           ///< index of start key
+        int numKeys;            ///< number of keys shared by all curves
+        int keyStride;          ///< key stride in key array
+        float keyTime;          ///< number of keys 
+        LoopType loopType;      ///< the loop type
         nArray<Curve> curveArray;
     };
 
