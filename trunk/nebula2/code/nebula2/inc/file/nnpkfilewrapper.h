@@ -9,22 +9,13 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
-
-#ifndef N_NPKTOC_H
 #include "file/nnpktoc.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nNpkFileWrapper
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nFile;
 class nFileServer2;
-class N_PUBLIC nNpkFileWrapper : public nNode
+class nNpkFileWrapper : public nNode
 {
 public:
     /// constructor
