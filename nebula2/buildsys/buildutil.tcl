@@ -71,8 +71,7 @@ proc translate_platdefs { platform_list } {
         } elseif {$bit == "macosx"} {
             set bit __MACOSX__
         } else {
-           ::log::log error "ERROR: unknown platform: $bit"
-           exit
+           error "ERROR: unknown platform: $bit"
         }
         addtolist retval $bit
     }
@@ -130,8 +129,7 @@ proc findmodbyname {name} {
             return $i
         }
     }
-    ::log::log error "ERROR: module '$name' not defined!"
-    exit
+    error "ERROR: module '$name' not defined!"
 }
 
 #--------------------------------------------------------------------
@@ -148,8 +146,7 @@ proc findtargetbyname { tname} {
         }
     }
 
-    ::log::log error "ERROR: target '$tname' not defined!"
-    exit
+    error "ERROR: target '$tname' not defined!"
 }
 
 #--------------------------------------------------------------------
@@ -165,8 +162,7 @@ proc findbundlebyname {name} {
             return $i
         }
     }
-    ::log::log error "ERROR: bundle '$name' not defined!"
-    exit
+    error "ERROR: bundle '$name' not defined!"
 }
 
 #--------------------------------------------------------------------
@@ -182,8 +178,7 @@ proc findwspacebyname {name} {
             return $i
         }
     }
-    ::log::log error "ERROR: workspace '$name' not defined!"
-    exit
+    error "ERROR: workspace '$name' not defined!"
 }
 
 
