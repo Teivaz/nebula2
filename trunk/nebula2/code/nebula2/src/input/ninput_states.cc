@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nInputServer
 //------------------------------------------------------------------------------
 //  ninput_states.cc
 //  (C) 1999 A.Weissflog
@@ -318,7 +317,20 @@ nInputServer::DoInputMapping(void)
 /**
 */
 void nInputServer::ObtainFocus(void)
-{ }
+{ 
+    // all active input mappings must be reset
+    nInputMapping *im;
+    for (im = (nInputMapping *) this->im_list.GetHead();
+         im;
+         im = (nInputMapping *) im->GetSucc())
+    {
+        if (im->GetButtonState())
+        {
+            im->SetButtonUp();
+        }
+        im->SetSlider(0.0f);
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -331,7 +343,10 @@ void nInputServer::LoseFocus(void)
          im;
          im = (nInputMapping *) im->GetSucc())
     {
-        if (im->GetButtonState())    im->SetButtonUp();
+        if (im->GetButtonState())
+        {
+            im->SetButtonUp();
+        }
         im->SetSlider(0.0f);
     }
 }
