@@ -133,16 +133,18 @@ nFrustumClipper::nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform
     }
 
     // generate frustum corners, for debugging
-    matrix44 projectback(m);
-    projectback.invert();
-    m_frustumcorners[0] = projectback * vector3(1,1,0);
-    m_frustumcorners[1] = projectback * vector3(1,1,1);
-    m_frustumcorners[2] = projectback * vector3(-1,1,0);
-    m_frustumcorners[3] = projectback * vector3(-1,1,1);
-    m_frustumcorners[4] = projectback * vector3(1,-1,0);
-    m_frustumcorners[5] = projectback * vector3(1,-1,1);
-    m_frustumcorners[6] = projectback * vector3(-1,-1,0);
-    m_frustumcorners[7] = projectback * vector3(-1,-1,1);
+    matrix44 projectback(viewtransform);
+    float minx, maxx, miny, maxy, minz, maxz;
+    camera.GetViewVolume(minx,maxx,miny,maxy,minz,maxz);
+    float nfscale = maxz/minz;
+    m_frustumcorners[0] = projectback * (vector3(minx,miny,-minz) * 1.0f);
+    m_frustumcorners[1] = projectback * (vector3(minx,miny,-minz) * nfscale);
+    m_frustumcorners[2] = projectback * (vector3(minx,maxy,-minz) * nfscale);
+    m_frustumcorners[3] = projectback * (vector3(minx,maxy,-minz) * 1.0f);
+    m_frustumcorners[4] = projectback * (vector3(maxx,miny,-minz) * 1.0f);
+    m_frustumcorners[5] = projectback * (vector3(maxx,miny,-minz) * nfscale);
+    m_frustumcorners[6] = projectback * (vector3(maxx,maxy,-minz) * nfscale);
+    m_frustumcorners[7] = projectback * (vector3(maxx,maxy,-minz) * 1.0f);
 }
 
 inline
