@@ -366,7 +366,7 @@ int luacmd_Psel(lua_State* L)
     }
     else
     {
-        n_message("Could not find current working directroy");
+        n_message("Could not find current working directory");
         lua_settop(L, 0);
         lua_pushnil(L);
     }
