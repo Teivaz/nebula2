@@ -62,6 +62,8 @@ public:
     void SetL(nArg* _l, int len);
     /// set to float4
     void SetF4(const nFloat4& f4);
+    /// set to float4, as vector4
+    void SetV4(const vector4& v4);
     /// set to matrix44
     void SetM44(const matrix44& m44);
 
@@ -81,6 +83,8 @@ public:
     int GetL(nArg*&) const;
     /// get float4 content
     const nFloat4& GetF4() const;
+    /// get float4 content as vector4
+    const vector4& GetV4() const;
     /// get matrix44 content
     const matrix44& GetM44() const;
 
@@ -442,6 +446,19 @@ nArg::SetF4(const nFloat4& _f4)
 
 //-----------------------------------------------------------------------------
 /**
+    Set the content to a Float4 value, with vector4 as parameter.
+*/
+inline
+void
+nArg::SetV4(const vector4& v)
+{
+    n_assert((Void == this->type) || (Float4 == this->type));
+    this->type = Float4;
+    this->f4 = *(nFloat4*)&v;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Set the content to a matrix44 value.
 */
 inline
@@ -583,6 +600,18 @@ nArg::GetF4() const
 {
     n_assert(Float4 == this->type);
     return this->f4;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Return float4 content as vector4
+*/
+inline
+const vector4&
+nArg::GetV4() const
+{
+    n_assert(Float4 == this->type);
+    return *(vector4*)&this->f4;
 }
 
 //-----------------------------------------------------------------------------
