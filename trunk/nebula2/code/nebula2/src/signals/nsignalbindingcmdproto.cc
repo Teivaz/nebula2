@@ -120,7 +120,7 @@ nSignalBindingCmdProto::IsBoundWithCmdName(const char * name) const
 
 //------------------------------------------------------------------------------
 bool
-nSignalBindingCmdProto::IsBoundWithCmdFourCC(nFourCC fourc) const
+nSignalBindingCmdProto::IsBoundWithCmdFourCC(nFourCC fourcc) const
 {
     const nCmdProto * cmdProto = this->GetCmdProto();
     return (cmdProto->GetId() == fourcc);
