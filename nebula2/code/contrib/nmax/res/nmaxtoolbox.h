@@ -47,16 +47,16 @@
 #define IDC_EDIT_WEIGHTRASHOLD          1042
 #define IDC_SPIN_WEIGHTRASHOLD          1043
 #define IDC_EDIT_SAMPLERATE             1044
-#define IDC_SPIN_WEIGHTRASHOLD2         1045
 #define IDC_SPIN_SAMPLERATE             1045
+#define IDC_ADDJOINTNAME                1046
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        108
+#define _APS_NEXT_RESOURCE_VALUE        109
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1042
+#define _APS_NEXT_CONTROL_VALUE         1047
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
