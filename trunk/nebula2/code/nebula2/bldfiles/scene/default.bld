@@ -32,6 +32,7 @@
 #      nintanimator
 #      nlodnode
 #      nrenderpath
+#      nrendercontext
 #===============================================================================
 
 #===============================================================================
@@ -210,5 +211,11 @@ beginmodule nrenderpath
     setdir scene
     setfiles { nrenderpath }
     setheaders { nrenderpath }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nrendercontext
+    setdir scene
+    setfiles { }
+    setheaders { nrendercontext }
 endmodule
 #-------------------------------------------------------------------------------
