@@ -18,9 +18,11 @@ begintarget nnebula
         nntxfile nmesh2 ntexture2 nshader2 ngfxserver2
         nsceneserver nstdsceneserver 
         nscenenode ntransformnode nabstractshadernode 
-        nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
+        nmaterialnode nshapenode nanimator nvectoranimator
+        nlightnode nspotlightnode
         ntransformanimator nskinanimator nskinshapenode
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
+        nparticle nparticleserver nparticleemitter nparticleshapenode
     }
 endtarget
 
