@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  nmaketqt2.cc
 //
-//  Creates a tqt2 chunked texture file from a 24 or 32 bit TGA file.
+//  Creates a tqt2 chunked texture file from a 32 bit TGA file.
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ main(int argc, const char** argv)
         n_printf("(C) 2003 RadonLabs GmbH\n"
                  "Based on Thatcher Ulrich's maketqt tool\n\n"
                  "-help     -- show this help\n"
-                 "-in       -- input tga filename (size 2^n, 24 or 32 bits uncompressed), or tqt2 RAW file\n"
+                 "-in       -- input tga filename (size 2^n, 32 bits uncompressed), or tqt2 RAW file\n"
                  "-out      -- output filename\n"
                  "-tmp      -- filename of optional temporary file\n"
                  "-depth    -- tree depth (1..12, default 4)\n"

@@ -66,7 +66,7 @@ nTqt2FileMaker::OpenFiles()
         switch (this->srcFile.GetError())
         {
             case nTgaFile::InvalidPixelFormat:
-                this->SetError("Source file '%s' must be 24 or 32 bit tga file!\n", this->GetSourceFile());
+                this->SetError("Source file '%s' must be a 32 bit tga file!\n", this->GetSourceFile());
                 break;
 
             default:
