@@ -2,6 +2,9 @@
 #define N_SKINPARTITIONER_H
 //------------------------------------------------------------------------------
 /**
+    @class nSkinPartitioner
+    @ingroup NebulaGraphicsSystemTools
+
     Partitions a skin for a given joint palette size. The initial skin is 
     represented by a nMeshBuilder object.
     
