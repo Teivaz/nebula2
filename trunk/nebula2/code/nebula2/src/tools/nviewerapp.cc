@@ -117,6 +117,10 @@ nViewerApp::Open()
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("nviewer");
 
+    // Initialize the display mode now so that the startup script can
+    // override it.
+    this->refGfxServer->SetDisplayMode(this->displayMode);
+
     // run startup script (assigns must be setup before opening the display!)
     if (this->GetStartupScript())
     {
@@ -131,7 +135,6 @@ nViewerApp::Open()
     }
     
     // initialize graphics
-    this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
     this->refVideoServer->Open();
