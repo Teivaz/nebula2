@@ -20,6 +20,8 @@
 #include "util/nlinebuffer.h"
 #endif
 
+#include <stdarg.h>
+
 //------------------------------------------------------------------------------
 class nLogHandler 
 {
