@@ -11,7 +11,9 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#ifdef __WIN32__
 #include "util/nhttpsession.h"
+#endif
 
 //------------------------------------------------------------------------------
 class nHttpServer : public nRoot
@@ -33,7 +35,9 @@ public:
     bool Post(const nString& object, const nString& postData, nString& result);
 
 private:
+#ifdef __WIN32__
     nHttpSession httpSession;
+#endif
 };
 
 //------------------------------------------------------------------------------

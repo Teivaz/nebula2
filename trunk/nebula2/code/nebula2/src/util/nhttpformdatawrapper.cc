@@ -2,6 +2,7 @@
 //  nhttpformdatawrapper.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#if defined(__WIN32__) || defined(DOXYGEN)
 #include "util/nhttpformdatawrapper.h"
 
 const char* nHttpFormDataWrapper::Boundary = "---------------------------299213203213844";
@@ -130,4 +131,5 @@ nHttpFormDataWrapper::BuildFormData()
     // encode to UTF-8
     this->formData.ANSItoUTF8();
 }
+#endif /* __WIN32__ or DOXYGEN */
 

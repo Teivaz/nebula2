@@ -29,6 +29,7 @@ nHttpServer::~nHttpServer()
 bool
 nHttpServer::Connect(const nString& serverName)
 {
+#ifdef __WIN32__
     if (this->httpSession.IsConnected())
     {
         this->httpSession.Disconnect();
@@ -40,6 +41,10 @@ nHttpServer::Connect(const nString& serverName)
         n_printf("nHttpServer::Connect(): error '%s'\n", this->httpSession.GetError().Get());
     }
     return res;
+#else
+    n_printf("nHttpServer::Connect(): not implemented!\n");
+    return false;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -47,11 +52,13 @@ nHttpServer::Connect(const nString& serverName)
 */
 void
 nHttpServer::Disconnect()
-{   
+{
+#ifdef __WIN32__
     if (this->httpSession.IsConnected())
     {
         this->httpSession.Disconnect();
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -60,7 +67,11 @@ nHttpServer::Disconnect()
 bool
 nHttpServer::IsConnected() const
 {
+#ifdef __WIN32__
     return this->httpSession.IsConnected();
+#else
+    return false;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -69,9 +80,13 @@ nHttpServer::IsConnected() const
 bool
 nHttpServer::Get(const nString& object, nString& response)
 {
+#ifdef __WIN32__
     n_assert(this->httpSession.IsConnected());
     bool res = this->httpSession.SendGetRequest(object, "", response);
     return res;
+#else
+    return false;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +95,12 @@ nHttpServer::Get(const nString& object, nString& response)
 bool
 nHttpServer::Post(const nString& object, const nString& postData, nString& response)
 {
+#ifdef __WIN32__
     n_assert(this->httpSession.IsConnected());
     bool res = this->httpSession.SendPostRequest(object, "", postData, response);
     return res;
+#else
+    return false;
+#endif
 }
+

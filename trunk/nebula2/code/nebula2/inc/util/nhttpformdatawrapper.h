@@ -1,5 +1,10 @@
 #ifndef N_HTTPFORMDATAWRAPPER_H
 #define N_HTTPFORMDATAWRAPPER_H
+#ifndef __WIN32__
+#error "nHttpFormDataWrapper not implemented!"
+#endif
+
+#if defined(__WIN32__) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 /**
     @class nHttpFormDataWrapper
@@ -95,5 +100,5 @@ nHttpFormDataWrapper::GetObject() const
 }
 
 //------------------------------------------------------------------------------
+#endif /* __WIN32__ or DOXYGEN */
 #endif
-
