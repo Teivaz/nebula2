@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nResource
 //------------------------------------------------------------------------------
 //  nresource_main.cc
 //  (C) 2001 RadonLabs GmbH

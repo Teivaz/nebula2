@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nLuaServer
 //--------------------------------------------------------------------
 //  nluamds.cc --  tha veggies - Lua bindings to static Neb items
 //

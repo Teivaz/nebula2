@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nMapNode
 //-------------------------------------------------------------------
 //  mapoctree_collect.cc
 //  (C) 1999 A.Weissflog

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nGfxServer
 //-------------------------------------------------------------------
 //  npixelformat.cc
 //  (C) 1999 Andre Weissflog
