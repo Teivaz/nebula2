@@ -61,8 +61,6 @@ public:
     /// get scale in parent space
     const vector3& GetScale() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// set a flags
     void SetFlags(ushort mask);

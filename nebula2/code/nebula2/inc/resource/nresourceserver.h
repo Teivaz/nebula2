@@ -36,8 +36,6 @@ public:
     /// generate a valid resource id from a resource path
     char* GetResourceId(const char* rsrcName, char* buf, int bufSize);
 
-    static nKernelServer* kernelServer;
-
 protected:
     friend class nResource;
 

@@ -55,8 +55,6 @@ public:
     /// get the mesh's resource loader
     const char* GetMeshResourceLoader();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load mesh resource
     bool LoadMesh();

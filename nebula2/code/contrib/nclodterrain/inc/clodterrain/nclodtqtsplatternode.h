@@ -92,8 +92,6 @@ public:
 
     virtual void setValidateFlag(bool flagstate);
 
-    static nKernelServer * kernelServer;
-
 private:
     /// depth of the quadtree to generate; the last layer has splat blend textures
     unsigned int m_splatdepth;

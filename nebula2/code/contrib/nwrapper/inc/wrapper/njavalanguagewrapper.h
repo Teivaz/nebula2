@@ -33,8 +33,6 @@ public:
     virtual void CloseClass(nClass *);
     virtual void WriteCommand(nClass *, nCmdProto *);
 
-    static nKernelServer* kernelServer;
-
 private:
     nFile* javaFile;
     nFile* headerFile;

@@ -26,8 +26,6 @@ public:
     /// trigger the input server
     virtual void Trigger(double time);
 
-    static nKernelServer* kernelServer;
-
 private:
     /// initialize DInput8
     bool InitDirectInput();

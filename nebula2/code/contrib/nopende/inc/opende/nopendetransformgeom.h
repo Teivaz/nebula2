@@ -40,10 +40,6 @@ class nOpendeTransformGeom : public nOpendeGeom
         void SetInfo( int mode );
         int GetInfo();
             
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
-        
     private:
         nString geomName;
 };

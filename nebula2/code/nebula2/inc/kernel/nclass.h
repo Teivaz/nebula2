@@ -24,7 +24,7 @@ class nClass : public nHashNode
 {
 public:
     /// constructor
-    nClass(const char* name, nKernelServer *ks, bool (*)(nClass *, nKernelServer *), void (*)(void), void *(*)(void));
+    nClass(const char* name, nKernelServer *ks, bool (*initFunc)(nClass *, nKernelServer *), void* (*newFunc)(void));
     /// class destructor
     ~nClass();
     /// create a new instance of the class
@@ -84,7 +84,6 @@ private:
     int instanceSize;
 
     bool (*n_init_ptr)(nClass *, nKernelServer *);      // pointer to class init function
-    void (*n_fini_ptr)(void);                           // pointer to class fini function
     void *(*n_new_ptr)(void);                           // pointer to object construction function
 };
 
@@ -122,7 +121,7 @@ nClass::GetSuperClass() const
 /**
 */
 inline
-void 
+void
 nClass::AddSubClass(nClass *cl)
 {
     this->AddRef();
@@ -133,12 +132,12 @@ nClass::AddSubClass(nClass *cl)
 /**
 */
 inline
-void 
+void
 nClass::RemSubClass(nClass *cl)
 {
     this->RemRef();
     cl->superClass = NULL;
-}        
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -175,7 +174,7 @@ nClass::GetRef() const
 /**
 */
 inline
-nHashList* 
+nHashList*
 nClass::GetCmdList() const
 {
     return this->cmdList;

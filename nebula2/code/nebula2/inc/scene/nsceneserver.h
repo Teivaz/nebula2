@@ -51,8 +51,6 @@ public:
     /// finish current group node
     void EndGroup();
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// transfer standard parameters to shader (matrices, etc...)
     virtual void UpdateShader(nShader2* shd, nRenderContext* renderContext);

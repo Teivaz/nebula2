@@ -39,10 +39,6 @@ class nOpendeRayGeom : public nOpendeGeom
         void GetParams( bool* firstContact, bool* backfaceCull );
         void SetClosestHit( bool );
         bool GetClosestHit();
-                    
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

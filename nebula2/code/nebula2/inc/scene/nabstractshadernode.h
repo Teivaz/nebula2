@@ -63,8 +63,6 @@ public:
     /// get texture shader parameter at index
     nShader2::Parameter GetTextureParamAt(int index) const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load a texture resource
     bool LoadTexture(int index);

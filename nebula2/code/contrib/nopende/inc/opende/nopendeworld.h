@@ -41,10 +41,6 @@ class nOpendeWorld : public nRoot
         void ImpulseToForce( float, const vector3&, vector3& );
         
         void StepFast1( float, int );
-        
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
     
         /// the actual ODE object (do NOT destroy!)
         dWorldID id;

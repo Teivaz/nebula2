@@ -90,9 +90,6 @@ public:
     /// Debug method to visualise what is going on
     virtual int Visualize();
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
     nAutoRef<nGfxServer2> refGfxServer;
 
 private:

@@ -50,8 +50,6 @@ public:
     /// get float4 value
     const nFloat4& GetF4();
 
-    static nKernelServer* kernelServer;
-
 private:
     nArg arg;
 };

@@ -37,8 +37,6 @@ public:
     /// get the playback volume
     virtual float GetVolume() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the resource 
     virtual bool LoadResource();

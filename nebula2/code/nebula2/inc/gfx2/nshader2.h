@@ -180,8 +180,6 @@ public:
     /// convert string to shader state
     static Parameter StringToParameter(const char* str);
 
-    static nKernelServer* kernelServer;
-
 protected:
     static const char* StringTable[NumParameters];
 };

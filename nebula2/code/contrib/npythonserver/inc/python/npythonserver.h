@@ -33,8 +33,6 @@
 class nFileServer2;
 class nPythonServer : public nScriptServer {
 public:
-    static nClass *local_cl;
-    static nKernelServer *kernelServer;
     nAutoRef<nFileServer2> refFileServer;
     static nPythonServer *Instance;
 

@@ -60,8 +60,6 @@ public:
     /// convert string to loop type
     static LoopType StringToLoopType(const char* str);
 
-    static nKernelServer* kernelServer;
-
 protected:
     nAutoRef<nVariableServer> refVariableServer;
     LoopType loopType;

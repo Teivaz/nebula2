@@ -73,9 +73,6 @@ public:
     /// parse the given directory for npk files
     virtual int ParseDirectory(const char* dir);
 
-    /// pointer to kernel server
-    static nKernelServer* kernelServer;
-
 private:
     /// parse the root dir (hardwired to "home:") for npk files
     bool ParseNpkFile(const char* rootPath, const char* filename);

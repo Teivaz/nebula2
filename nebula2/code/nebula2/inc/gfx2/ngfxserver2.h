@@ -198,8 +198,6 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char* filename);    
 
-    static nKernelServer* kernelServer;
-
     enum
     {
         MAX_VERTEXSTREAMS = 16,

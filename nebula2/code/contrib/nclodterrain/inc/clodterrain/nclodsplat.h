@@ -44,8 +44,6 @@ public:
     /// draw a splat
     void DrawSplat(nGfxServer2 *gfx2, int splatindex) const;
 
-    static nKernelServer* kernelServer;
-
     /// issue a load request from an open file
     virtual bool Load(nFile* file, int offset, int length);
 

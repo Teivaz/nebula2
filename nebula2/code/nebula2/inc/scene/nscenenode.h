@@ -87,8 +87,6 @@ public:
     /// invoke all transform animators
     void InvokeTransformAnimators(nRenderContext* renderContext);
 
-    static nKernelServer* kernelServer;
-
 protected:
     nAutoRef<nVariableServer> refVariableServer;
     nAutoRef<nSceneServer> refSceneServer;

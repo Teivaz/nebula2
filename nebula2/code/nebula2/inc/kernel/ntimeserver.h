@@ -70,8 +70,6 @@ public:
     /// disable frame based timing
     void DisableFrameTime();
 
-    static nKernelServer* kernelServer;
-
 private:
     bool stopped;
     bool frame_enabled;

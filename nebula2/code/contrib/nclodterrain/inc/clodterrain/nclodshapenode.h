@@ -87,8 +87,6 @@ public:
     /// get the mesh's resource loader
     const char* GetTerrainResourceLoader();
 
-    static nKernelServer* kernelServer;
-
     typedef nArray<nDynAutoRef<nTexture2> > DetailTextureArray;
 
 protected:

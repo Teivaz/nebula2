@@ -59,8 +59,6 @@ public:
     /// get string from fourcc code
     static const char* FourCCToString(uint fourcc, char* buf, int bufSize);
 
-    static nKernelServer* kernelServer;
-
 private:
     class ShaderEntry
     {

@@ -82,8 +82,6 @@ public:
 	/// flush entire input mapping
 	void FlushInput();
 
-    static nKernelServer* kernelServer;
-
 private:
     /// convert an input event string into an input event
     bool MapStrToEvent(const char* str, nInputEvent* event);

@@ -23,10 +23,6 @@ class nOpendeSimpleSpace : public nOpendeSpace
         virtual ~nOpendeSimpleSpace();
         /// create the underlying ODE object
         virtual void Create( const char* space = "none" );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

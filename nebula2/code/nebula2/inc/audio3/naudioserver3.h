@@ -45,8 +45,6 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
-    static nKernelServer* kernelServer;
-
 protected:
     bool isOpen;
     bool inBeginScene;

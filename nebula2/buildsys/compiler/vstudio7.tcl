@@ -178,7 +178,7 @@ proc emit_vcproj_files {name cid} {
             default { set compileas 0 }
         }
         
-        set more_syms "N_INIT=n_init_$module;N_FINI=n_fini_$module;N_NEW=n_new_$module;N_INITCMDS=n_initcmds_$module"
+        set more_syms "N_INIT=n_init_$module;N_NEW=n_new_$module;N_INITCMDS=n_initcmds_$module"
         puts $cid "\t\t<Filter Name=\"$module\" Filter=\"cpp;c;cxx;cc;h;hxx;hcc\" >"
         
         # Source files

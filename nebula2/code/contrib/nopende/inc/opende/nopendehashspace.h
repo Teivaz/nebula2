@@ -34,10 +34,6 @@ class nOpendeHashSpace : public nOpendeSpace
         void SetLevels( int minLevel, int maxLevel );
         /// get the smallest and largest cell sizes 
         void GetLevels( int* minLevel, int* maxLevel );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

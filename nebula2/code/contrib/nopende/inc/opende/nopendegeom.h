@@ -65,10 +65,7 @@ class nOpendeGeom : public nRoot
         void GetQuaternion( quaternion& );
         
         void Collide2( dGeomID other, void* data, dNearCallback* callback );
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
-    
+
     protected:
         dSpaceID getSpace();
         

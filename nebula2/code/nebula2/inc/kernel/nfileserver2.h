@@ -70,9 +70,6 @@ public:
     /// get number of seeks
     int GetNumSeeks() const;
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
 protected:
     /// cleanup a path name in place
     void CleanupPathName(char* path);

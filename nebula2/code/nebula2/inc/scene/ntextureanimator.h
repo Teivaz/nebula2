@@ -35,7 +35,6 @@ public:
     /// Sets the shader state parameter that will be passed to nAbstractShaderNode::SetTexture
     void SetShaderParam( const char* param );
 
-    static nKernelServer* kernelServer;
 private:
     /// Returns the number of textures that have been added so far
     int GetNumTextures() const;

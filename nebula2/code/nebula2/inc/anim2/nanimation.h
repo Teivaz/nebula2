@@ -197,8 +197,6 @@ public:
     /// get group at index
     Group& GetGroupAt(int i) const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// unload the resource (clears the valid flag)
     virtual void UnloadResource();

@@ -36,9 +36,6 @@ public:
     /// Release an unused unique ID
     void ReleaseID(int OldID);
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
     int nextUniqueID;
     nList releasedUIDList;
 };

@@ -26,9 +26,6 @@ public:
     /// destructor
     virtual ~nDSoundResource();
 
-    // kernelServer static
-    static nKernelServer* kernelServer;
-
 protected:
     /// load the resource (sets the valid flag)
     virtual bool LoadResource();

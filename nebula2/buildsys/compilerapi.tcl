@@ -719,9 +719,8 @@ proc write_pkgfiles { } {
                     set deflist [join $plat_list " || "]
                     puts $cid "#ifdef $deflist"
                 }
-                puts $cid "extern \"C\" bool n_init_$module (nClass *, nKernelServer *);"
-                puts $cid "extern \"C\" void n_fini_$module (void);"
-                puts $cid "extern \"C\" void *n_new_$module (void);"
+                puts $cid "extern bool n_init_$module (nClass *, nKernelServer *);"
+                puts $cid "extern void *n_new_$module (void);"
 
                 if {$ifdefd} {
                     puts $cid "#endif"
@@ -743,7 +742,7 @@ proc write_pkgfiles { } {
                     set deflist [join $plat_list " || "]
                     puts $cid "#ifdef $deflist"
                 }
-                puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_fini_$module,n_new_$module);"
+                puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_new_$module);"
 
                 if {$ifdefd} {
                     puts $cid "#endif"

@@ -89,8 +89,6 @@ public:
     void incNextSource() { nextSource++; }
     bool createBufSrc();
 
-    static nKernelServer* kernelServer;
-
 protected:
     nAutoRef<nResourceServer> refResourceServer;
     nAutoRef<nEnv> refHwnd;

@@ -98,8 +98,6 @@ public:
     void GetHardPoint(int index, int& jointIndex, const char*& pathToNode);
 */
 
-    static nKernelServer* kernelServer;
-
 private:
     /// load anim resource
     bool LoadAnim();

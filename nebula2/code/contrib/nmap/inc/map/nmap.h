@@ -81,9 +81,6 @@ public:
     /// Load map data.
     virtual void LoadMap();
 
-    /// pointer to nKernelServer
-    static nKernelServer* kernelServer;
-
 private:
     bool LoadFromImage(const char* abs_path);
     void CalculateNormals();

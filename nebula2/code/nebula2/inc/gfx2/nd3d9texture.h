@@ -31,8 +31,6 @@ public:
     /// unlock a cube face
     virtual void UnlockCubeFace(CubeFace face, int level);
 
-    static nKernelServer* kernelServer;
-
     // begin added for ngameswf
     virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
     virtual void GenerateMipMaps();

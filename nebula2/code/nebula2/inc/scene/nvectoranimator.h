@@ -41,8 +41,6 @@ public:
     /// get key at
     void GetKeyAt(int index, float& time, vector4& key) const;
 
-    static nKernelServer* kernelServer;
-
 private:
     nShader2::Parameter vectorParameter;
     nIpolKeyArray<vector4> keyArray;

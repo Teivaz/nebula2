@@ -149,8 +149,6 @@ public:
     /// returns the byte size of the embedded index buffer
     int GetIndexBufferByteSize() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     /// unload resource
     virtual void UnloadResource();

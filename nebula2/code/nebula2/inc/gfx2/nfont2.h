@@ -24,8 +24,6 @@ public:
     /// get font description
     const nFontDesc& GetFontDesc() const;
 
-    static nKernelServer* kernelServer;
-
 protected:
     nFontDesc fontDesc;
 };

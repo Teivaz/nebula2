@@ -195,9 +195,6 @@ protected:
     nAutoRef<nGfxServer2> refGfxServer;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *kernelServer;
-
     nOctree();
     virtual ~nOctree();
 

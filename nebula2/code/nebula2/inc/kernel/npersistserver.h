@@ -98,8 +98,6 @@ public:
     /// load a object from persistency stream
     nRoot *LoadObject(const char *fileName, const char* objName);
 
-    static nKernelServer* kernelServer;
-
 private:   
     /// internal
     bool BeginFoldedObject(nRoot *obj, nCmd *, const char *name, bool sel_only);

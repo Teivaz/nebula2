@@ -34,10 +34,6 @@ class nOpendeSphereGeom : public nOpendeGeom
         void SetRadius( float );
         float GetRadius();
         float PointDepth( const vector3& );
-            
-        
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
 };
 
 //----------------------------------------------------------------------------

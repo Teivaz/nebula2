@@ -31,8 +31,6 @@ public:
     /// write string to file
     bool PutS(const char* buffer);
 
-    static nKernelServer* kernelServer;
-
 private:
     nFile* file;
 };

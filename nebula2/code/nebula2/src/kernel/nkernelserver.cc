@@ -778,20 +778,30 @@ void nKernelServer::Trigger(void)
 
 //------------------------------------------------------------------------------
 /**
+    Add an extension class package to the kernel. The provided function
+    should call nKernelServer::AddModule() for each class in the package.
+*/
+void
+nKernelServer::AddPackage(void(*_func)())
+{
+    _func();
+}
+
+//------------------------------------------------------------------------------
+/**
     Add a new class package module to the class list. Normally called
     from the n_init() function of a class package.
 */
 void
 nKernelServer::AddModule(const char *name,
                          bool (*_init_func)(nClass *, nKernelServer *),
-                         void (*_fini_func)(void),
                          void *(*_new_func)(void))
 {
     this->Lock();
     nClass *cl = (nClass *) this->classList.Find(name);
     if (!cl)
     {
-        cl = n_new nClass(name, this, _init_func, _fini_func, _new_func);
+        cl = n_new nClass(name, this, _init_func, _new_func);
         this->classList.AddTail(cl);
     }
     this->Unlock();

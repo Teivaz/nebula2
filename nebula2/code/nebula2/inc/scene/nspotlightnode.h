@@ -32,8 +32,6 @@ public:
     /// get the cone definition
     const nCamera2& GetCamera() const;
 
-    static nKernelServer* kernelServer;
-
 private:
     nCamera2 camera;
 };

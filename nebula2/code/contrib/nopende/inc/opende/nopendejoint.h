@@ -56,9 +56,6 @@ class nOpendeJoint : public nRoot
         /// get a joint parameter
         float GetParam2( const char* param, int axis );
         
-        /// pointer to nKernelServer
-        static nKernelServer* kernelServer;
-    
         /// the actual ODE object (do NOT destroy!)
         dJointID id;
         

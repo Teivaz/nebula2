@@ -56,8 +56,6 @@ public:
     virtual void InitAsExtension(Tcl_Interp *);
 #endif
 
-    static nKernelServer* kernelServer;
-
 private:    
     /// write a select object statement
     void WriteSelectStatement(nFile*, nRoot *, nRoot *);

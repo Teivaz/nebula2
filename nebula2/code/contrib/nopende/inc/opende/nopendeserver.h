@@ -51,8 +51,7 @@ class nOpendeServer : public nRoot
             
         nOpendeSurface* GetSurface( int index );
         int GetSurfaceIndex( const char* name );
-           
-        static nKernelServer* kernelServer;
+
         static nOpendeServer* opendeServer;
     
     private:

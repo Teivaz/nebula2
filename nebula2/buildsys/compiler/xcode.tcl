@@ -250,7 +250,6 @@ proc emit_PBXNativeTarget { cid target } {
                     append settings(COMPILER_FLAGS) "-x c++ "
                 }
                 append settings(COMPILER_FLAGS) "-DN_INIT=n_init_$module " 
-                append settings(COMPILER_FLAGS) "-DN_FINI=n_fini_$module "
                 append settings(COMPILER_FLAGS) "-DN_NEW=n_new_$module "
                 append settings(COMPILER_FLAGS) "-DN_INITCMDS=n_initcmds_$module "
                 append settings(COMPILER_FLAGS) "-I$includePath "

@@ -44,8 +44,6 @@ public:
     /// unwatch all watcher variables
     void Unwatch();
 
-    static nKernelServer* kernelServer;
-
 private:
     /// process input events
     bool EditLine(nInputEvent* inputEvent);

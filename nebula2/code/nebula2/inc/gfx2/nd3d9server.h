@@ -104,8 +104,6 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
 
-    static nKernelServer* kernelServer;
-
 private:
     /// open the window
     bool WindowOpen();
