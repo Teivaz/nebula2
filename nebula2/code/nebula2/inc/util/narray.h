@@ -554,7 +554,6 @@ template<class TYPE>
 TYPE&
 nArray<TYPE>::Set(int index, const TYPE& elm)
 {
-    n_assert(index < this->numElements);
     this->CheckIndex(index);
     this->elements[index] = elm;
     return this->elements[index];
