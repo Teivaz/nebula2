@@ -30,7 +30,7 @@ static void n_getframetime(void *, nCmd *);
     @superclass
     nroot
 
-    @info
+    @classinfo
     The ntimeserver object lives under the name /sys/servers/time
     and provides a central time source for Nebula. 
 */

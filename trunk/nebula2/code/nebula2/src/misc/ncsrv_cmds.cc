@@ -20,7 +20,7 @@ static void n_unwatch(void *, nCmd *);
     @superclass
     nroot
 
-    @info
+    @classinfo
     The console server can be found at "/sys/servers/console", it 
     implements an interactive console in the actual graphics mode. 
     For the console server to be functioning, the following objects 
