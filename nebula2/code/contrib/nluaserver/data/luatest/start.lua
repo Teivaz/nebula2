@@ -130,6 +130,22 @@ function start()
             puts( 'Test4: fail\n' )
         end
     end
+    
+    function NaughtyFunctionC()
+        Ooh_I_am_so_naughty()
+    end
+    
+    function GoodFunctionB()
+        NaughtyFunctionC()
+    end
+    
+    function GoodFunctionA()
+        GoodFunctionB()
+    end
+    
+    function GenerateStackTrace()
+        GoodFunctionA()
+    end
 
     -- map input
 
