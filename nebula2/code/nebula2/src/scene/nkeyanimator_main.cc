@@ -21,7 +21,7 @@ nKeyAnimator::nKeyAnimator()
     @param  sampleTime  [in] time position at which to sample
     @param  keyArray    [in] reference of a key array containing the keys
     @param  result      [out] the result
-    @param              true if the result is valid, false otherwise
+    @return             true if the result is valid, false otherwise
 */
 bool
 nKeyAnimator::SampleKey(float sampleTime, const nArray<Key>& keyArray, vector4& result)
