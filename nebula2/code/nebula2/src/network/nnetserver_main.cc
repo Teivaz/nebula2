@@ -143,7 +143,11 @@ nNetServer::Trigger()
         int clientIndex;
         for (clientIndex = 0; clientIndex < numClients; clientIndex++)
         {
-            start &= this->clientArray[clientIndex].GetClientStatus() == Connected;
+            if (this->clientArray[clientIndex].GetClientStatus() != Connected)
+            {
+                start = false;
+                break;
+            }
         }
         if (start)
         {
