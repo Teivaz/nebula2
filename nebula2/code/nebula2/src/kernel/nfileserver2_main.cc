@@ -288,18 +288,21 @@ nFileServer2::InitHomeAssign()
         else
         {
         */
-            // use the executable's directory to locate the home directory
-            DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
-            if (res == 0) 
-            {
-                n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
-            }
+
+        // use the executable's directory to locate the home directory
+        DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
+        if (res == 0) 
+        {
+            n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
+        }
 
         nPathString pathToExe(buf);
         pathToExe.ConvertBackslashes();
 
         // check if executable resides in a win32 directory
         nPathString pathToDir = pathToExe.ExtractLastDirName();
+        // converted to lowercase because sometimes the path is in uppercase
+        pathToDir.ToLower();
         if (pathToDir == "win32" || pathToDir == "win32d")
         {
             // normal home:bin/win32 directory structure
@@ -310,6 +313,7 @@ nFileServer2::InitHomeAssign()
             homePath.StripTrailingSlash();
             homePath = homePath.ExtractDirName();
             this->SetAssign("home", homePath.Get());
+            n_printf("home: %s", homePath.Get());
         }
         else
         {
@@ -317,6 +321,7 @@ nFileServer2::InitHomeAssign()
             // use the exe's directory as home path
             nPathString homePath = pathToExe.ExtractDirName();
             this->SetAssign("home", homePath.Get());
+            n_printf("home: %s", homePath.Get());
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
