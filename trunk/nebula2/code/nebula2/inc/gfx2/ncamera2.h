@@ -6,6 +6,10 @@
     @ingroup NebulaGraphicsSystem
 
     Hold camera attributes for nGfxServer2.
+    
+    Technically this sets the projection matrix. The camera's position and 
+    orientation have to be set by the View matrix which can be done using 
+    nGfxServer2::SetTransform().
 
     (C) 2002 RadonLabs GmbH
 */

@@ -18,7 +18,6 @@
 #include "gfx2/ntexture2.h"
 #include "mathlib/rectangle.h"
 #include "gfx2/nmousecursor.h"
-#include "gfx2/nshaderlist.h"
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/nfont2.h"
 #include "gfx2/ninstancestream.h"
@@ -127,6 +126,12 @@ public:
         MaxTransformStackDepth = 4,
     };
 
+    enum DeviceIdentifier // list of devices that are known to cause bugs
+    {
+        GenericDevice = 0,
+        Intel_82865G  = 1,   // shadow bugs
+    };
+
     /// constructor
     nGfxServer2();
     /// destructor
@@ -153,6 +158,14 @@ public:
     virtual void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     virtual const nDisplayMode2& GetDisplayMode() const;
+    /// set global scale factor for fonts
+    void SetFontScale(float s);
+    /// get global scale factor for fonts
+    float GetFontScale() const;
+    /// set minimum font height
+    void SetMinFontHeight(int s);
+    /// get minimum font height
+    int GetMinFontHeight() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
     /// override the feature set
@@ -266,7 +279,7 @@ public:
 
     /// add text to the text buffer (OLD STYLE)
     virtual void Text(const char* text, const vector4& color, float xPos, float yPos);
-    /// draw the text buffer
+    /// draw the text buffer (OLD STYLE)
     virtual void DrawTextBuffer();
 
     /// set mouse cursor image and hotspot
@@ -293,6 +306,8 @@ public:
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
 
+    /// get the device identifier
+    DeviceIdentifier GetDeviceIdentifier() const;
     /// set gamma value.
     void SetGamma(float g);
     /// set brightness value.
@@ -315,6 +330,9 @@ private:
     static nGfxServer2* Singleton;
 
 protected:
+    /// insert newline chars to break the text manual in lines
+    void BreakLines(const nString& text, const rectangle& rect, nString& outString);
+
     bool displayOpen;
     bool inBeginScene;
     bool inBeginLines;
@@ -332,7 +350,6 @@ protected:
     nRef<nShader2>          refShader;
     nRef<nInstanceStream>   refInstanceStream;
     nMouseCursor curMouseCursor;
-    nShaderList shaderList;
     int vertexRangeFirst;
     int vertexRangeNum;
     int indexRangeFirst;
@@ -350,6 +367,10 @@ protected:
     float gamma;
     float brightness;
     float contrast;
+    float fontScale;
+    int fontMinHeight;
+
+    DeviceIdentifier deviceIdentifier;
 
 public:
     // note: this stuff is public because WinProcs may need to access it
@@ -365,6 +386,46 @@ nGfxServer2::Instance()
 {
     n_assert(Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGfxServer2::SetMinFontHeight(int s)
+{
+    this->fontMinHeight = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nGfxServer2::GetMinFontHeight() const
+{
+    return this->fontMinHeight;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGfxServer2::SetFontScale(float s)
+{
+    this->fontScale = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nGfxServer2::GetFontScale() const
+{
+    return this->fontScale;
 }
 
 //------------------------------------------------------------------------------
@@ -710,4 +771,15 @@ float nGfxServer2::GetContrast() const
     return this->contrast;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::DeviceIdentifier
+nGfxServer2::GetDeviceIdentifier() const
+{
+    return this->deviceIdentifier;
+}
+
+//------------------------------------------------------------------------------
 #endif

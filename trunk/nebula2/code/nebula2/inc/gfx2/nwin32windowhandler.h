@@ -42,7 +42,7 @@ public:
     /// called when fullscreen/windowed should be toggled
     virtual void OnToggleFullscreenWindowed();
     /// called when WM_SIZE is received
-    virtual void OnSize();
+    virtual void OnSize(bool minimize);
     /// called when WM_CLOSE is received, return true if app should quit
     virtual bool OnClose();
 
@@ -68,9 +68,6 @@ public:
     {
         ACCEL_TOGGLEFULLSCREEN = 1001,
     };
-private:
-    /// Sets the window icon based on the display mode
-    HICON SetIcon();
 };
 
 //------------------------------------------------------------------------------

@@ -12,20 +12,6 @@
 
 nNebulaClass(nMesh2, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nmesh2
-
-    @cppclass
-    nMesh2
-    
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
 //------------------------------------------------------------------------------
 /**
 */
@@ -97,7 +83,7 @@ nMesh2::UnloadResource()
 
     if (this->groups)
     {
-        delete[] this->groups;
+        n_delete_array(this->groups);
         this->groups = 0;
     }
 
@@ -147,11 +133,11 @@ nMesh2::LoadResource()
         // select meshloader
         if (filename.CheckExtension("nvx2"))
         {
-            meshLoader = n_new nNvx2Loader;
+            meshLoader = n_new(nNvx2Loader);
         }
         else if (filename.CheckExtension("n3d2"))
         {
-            meshLoader = n_new nN3d2Loader;
+            meshLoader = n_new(nN3d2Loader);
         }
         else
         {
@@ -160,8 +146,18 @@ nMesh2::LoadResource()
 
         if (0 != meshLoader)
         {
+            // set DX7 vertex component mask for meshes that arn't used with vertex shader
+            if (0 == (this->usage & this->NeedsVertexShader))
+            {
+                if (nGfxServer2::Instance()->GetFeatureSet() < nGfxServer2::DX9)
+                {
+                    // set valid DX7 vertex components before loading
+                    meshLoader->SetValidVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Uv3 | nMesh2::Color);  
+                }
+            }
+            
             success = this->LoadFile(meshLoader);
-            n_delete meshLoader;
+            n_delete(meshLoader);
         }
     }
     this->SetValid(success);

@@ -2,6 +2,9 @@
 #define N_SHADERSTATE_H
 //------------------------------------------------------------------------------
 /**
+    @class nShaderState
+    @ingroup NebulaGraphicsSystem
+
     Shader state parameters and data types.
     
     (C) 2004 RadonLabs GmbH
@@ -43,6 +46,7 @@ enum Param
     ModelViewProjection,            // matrix: the model*view*projection matrix
     ModelLightProjection,           // matrix: the model*light*projection matrix
     ModelShadowProjection,          // matrix: the model*shadow*projection matrix (shadow == shadow source)
+    EyePos,                         // vector: the eye position in world space
     ModelEyePos,                    // vector: the eye position in model space
     ModelLightPos,                  // vector[]: the light position in model space
     LightPos,                       // vector3:  the light position in world space (must be vec3 for the FF pipeline)
@@ -67,6 +71,9 @@ enum Param
     LightAmbient,                   // color[]: light ambient component
     LightDiffuse,                   // color[]: light diffuse component
     LightSpecular,                  // color[]: light specular component
+    LightAmbient1,                  // color[]: additional light ambient component
+    LightDiffuse1,                  // color[]: additional light diffuse component
+    LightSpecular1,                 // color[]: additional light specular component
     DiffMap0,                       // texture: diffuse map layer 0
     DiffMap1,                       // texture: diffuse map layer 1
     DiffMap2,                       // texture: diffuse map layer 2

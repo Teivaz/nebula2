@@ -30,6 +30,9 @@ nGfxServer2::nGfxServer2() :
     cursorVisibility(System),
     cursorDirty(true),
     inDialogBoxMode(false),
+    fontScale(1.0f),
+    fontMinHeight(12),
+    deviceIdentifier(GenericDevice)
     gamma(1.0f),
     brightness(65280.f/65535.f-0.5f),
     contrast(65280.f/65535.f-0.5f)
@@ -346,54 +349,30 @@ nGfxServer2::SetRenderTarget(nTexture2* t)
 //------------------------------------------------------------------------------
 /**
     Set the current mesh object for rendering.
-    This will increment its refcount and decrement the refcount 
-    of the previous object.
 
     @param  mesh        pointer to a nMesh2 object
 */
 void
 nGfxServer2::SetMesh(nMesh2* mesh)
 {
-    if (mesh)
-    {
-        mesh->AddRef();
-    }
-    if (this->refMesh.isvalid())
-    {
-        this->refMesh->Release();
-        this->refMesh.invalidate();
-    }
     this->refMesh = mesh;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current mesh array object for rendering.
-    This will increment its refcount and decrement the refcount 
-    of the previous object.
 
     @param  meshArray   pointer to a nMeshArray object
 */
 void
 nGfxServer2::SetMeshArray(nMeshArray* meshArray)
 {
-    if (0 != meshArray)
-    {
-        meshArray->AddRef();
-    }
-    if (this->refMeshArray.isvalid())
-    {
-        this->refMeshArray->Release();
-        this->refMeshArray.invalidate();
-    }
     this->refMeshArray = meshArray;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current texture object for rendering.
-    This will increment its refcount and decrement the refcount 
-    of the previous object.
 
     @param  stage       texture stage index
     @param  texture     pointer to a nTexture2 object
@@ -402,85 +381,42 @@ void
 nGfxServer2::SetTexture(int stage, nTexture2* texture)
 {
     n_assert((stage >= 0) && (stage < MaxTextureStages));
-
-    if (texture)
-    {
-        texture->AddRef();
-    }
-    if (this->refTextures[stage].isvalid())
-    {
-        this->refTextures[stage]->Release();
-        this->refTextures[stage].invalidate();
-    }
     this->refTextures[stage] = texture;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current shader object for rendering.
-    This will increment its refcount and decrement the refcount 
-    of the previous object.
 
     @param  shd     pointer to a nShader2 object
 */
 void
 nGfxServer2::SetShader(nShader2* shd)
 {
-    if (shd)
-    {
-        shd->AddRef();
-    }
-    if (this->refShader.isvalid())
-    {
-        this->refShader->Release();
-        this->refShader.invalidate();
-    }
     this->refShader = shd;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current font object for rendering.
-    This will increment its refcount and decrement the refcount 
-    of the previous object.
 
     @param  font        pointer to a nFont2 object
 */
 void
 nGfxServer2::SetFont(nFont2* font)
 {
-    if (font)
-    {
-        font->AddRef();
-    }
-    if (this->refFont.isvalid())
-    {
-        this->refFont->Release();
-        this->refFont.invalidate();
-    }
     this->refFont = font;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current instance stream object for rendering.
-    This will increment its refcount and decrement the refcount of
-    the previous object.
 
     @param  stream      pointer to nInstanceStream object
 */
 void
 nGfxServer2::SetInstanceStream(nInstanceStream* stream)
 {
-    if (stream)
-    {
-        stream->AddRef();
-    }
-    if (this->refInstanceStream.isvalid())
-    {
-        this->refInstanceStream->Release();
-        this->refInstanceStream.invalidate();
-    }
     this->refInstanceStream = stream;
 }
 
@@ -544,6 +480,7 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
         case Projection:
             this->transform[Projection] = matrix;
             updViewProjection = true;
+            updModelLightProj = true;
             break;
 
         case Texture0:
@@ -897,4 +834,97 @@ void
 nGfxServer2::RestoreGamma()
 {
     // empty.
+}
+//------------------------------------------------------------------------------
+/**
+    Break a string into lines by replacing spaces with newlines.
+    Word break in D3DX doesn't work for umlauts, that's why this fix is
+    needed. 
+
+    FIXME: this should be removed once D3DX has been fixed!
+
+    - 20-Sep-04     floh    fixed the implementation to use nString instead of
+                            insecure char* 
+*/
+void
+nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& outString)
+{
+    n_assert(!inText.IsEmpty());
+    n_assert(this->refFont->IsValid());
+    
+    // text lenght
+    const int textLength = inText.Length();
+    n_assert(textLength > 0);
+    
+    // allocate memory
+    outString = inText;
+
+    // do the line break
+    bool finished = false;
+    int lastLineBegin = 0;
+    int previousLineEndTestMark = -1;
+    int lineEndTestMark = 0;
+    
+    while (!finished)
+    {
+        // search the next white space for test newline test
+        while (!finished && (outString[lineEndTestMark] != ' '))
+        {
+            if (lineEndTestMark >= textLength)
+            {
+                // end of text - stop
+                finished = true;
+            }
+            else
+            {
+                lineEndTestMark++;
+            }
+        }
+
+        if (lineEndTestMark > 0) // skip a possible leading white space
+        {
+            // set a text end mark at the current test postion
+            outString[lineEndTestMark] = 0;
+
+            // get the text extend
+            const vector2& textExtend = this->GetTextExtent(outString.Get());
+
+            // restore the original text (but only if this isn't the last char, that must be \0)
+            if (lineEndTestMark < textLength)
+            {
+                outString[lineEndTestMark] = ' ';
+            }
+
+            if (textExtend.x >= rect.width())
+            {
+                // the test line is greater then the rect, insert a newline at the previous tested position
+                if ((previousLineEndTestMark > 0) && (lastLineBegin != previousLineEndTestMark))
+                {
+                    lastLineBegin = previousLineEndTestMark;
+                    outString[lastLineBegin] = '\n';
+                }
+                else
+                {
+                    // there was no valid previous tested position (reason, no white space in the fisrt line, or since the
+                    // last inserted new line
+                    // insert the new line at the current test positon
+                    lastLineBegin = lineEndTestMark;
+                    previousLineEndTestMark = lastLineBegin;
+                    outString[lastLineBegin] = '\n';
+                    
+                    // debug
+                    n_printf("nGfxServer2::BreakLines(): found a part in the text that don't fit into one line. Please insert a new line manual!\n\
+                             Text: '%s'\n", outString.Get());
+                }
+            }
+            else
+            {
+                // line fits in screen, remember this test position and continue at next char
+                previousLineEndTestMark = lineEndTestMark;
+                lineEndTestMark++;
+            }
+        }
+    }
+}
+
 }

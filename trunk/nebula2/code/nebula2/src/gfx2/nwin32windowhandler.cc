@@ -117,8 +117,11 @@ nWin32WindowHandler::OpenWindow()
     SetWindowLong(this->hWnd, 0, (LONG)this);
 
     // publish the window handle under a well defined name
-    nEnv* envHwnd = (nEnv*) nKernelServer::Instance()->Lookup("/sys/env/hwnd");
-    envHwnd->SetI((int)this->hWnd);
+    nEnv *env;
+    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd"))) 
+    {
+        env->SetI((int)this->hWnd);
+    }
 
     // minimize the window
     this->windowOpen       = true;
@@ -206,7 +209,15 @@ nWin32WindowHandler::RestoreWindow()
     SetWindowText(this->hWnd, this->displayMode.GetWindowTitle());
 
     // update icon (if exists)
-    SetIcon();
+    const char* iconName = this->displayMode.GetIcon();
+    if (iconName)
+    {
+        HICON icon = LoadIcon(this->hInst, iconName);
+        if (icon)
+        {
+            SetClassLong(this->hWnd, GCL_HICON, (LONG)icon);
+        }
+    }
 
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
@@ -401,7 +412,22 @@ nWin32WindowHandler::OnToggleFullscreenWindowed()
 void
 nWin32WindowHandler::OnSize()
 {
-    // empty
+    if (minimize)
+    {
+        this->windowMinimized = true;
+        if (this->refInputServer.isvalid())
+        {
+            this->refInputServer->LoseFocus();
+        }
+    }
+    else
+    {
+        this->windowMinimized = false;
+        if (this->refInputServer.isvalid())
+        {
+            this->refInputServer->ObtainFocus();
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -455,25 +481,17 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_SIZE:
             if (self)
             {
-                // let window handler react on size change
-                self->OnSize();
-
                 // inform input server about focus change
                 if ((SIZE_MAXHIDE == wParam) || (SIZE_MINIMIZED == wParam))
                 {
-                    self->windowMinimized = true;
-                    if (self->refInputServer.isvalid())
-                    {
-                        self->refInputServer->LoseFocus();
-                    }
+                    // let window handler react on size change
+                    self->OnSize(true);
+                    
                 }
                 else
                 {
-                    self->windowMinimized = false;
-                    if (self->refInputServer.isvalid())
-                    {
-                        self->refInputServer->LoseFocus();
-                    }
+                    // let window handler react on size change
+                    self->OnSize(false);
                 }
                 ReleaseCapture();
             }
@@ -844,27 +862,6 @@ nWin32WindowHandler::TranslateKey(int vkey)
         default:            nk=N_KEY_NONE; break;
     }
     return nk;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Create a custom icon if so requested by the current display mode.
-    Returns the created icon's handle, or NULL if the display mode didn't 
-    set an icon or the create failed.
-*/
-HICON nWin32WindowHandler::SetIcon()
-{
-    HICON icon = NULL;
-    const char* iconName = this->displayMode.GetIcon();
-    if (iconName)
-    {
-        icon = LoadIcon(this->hInst, iconName);
-        if (icon)
-        {
-            SetClassLong(this->hWnd, GCL_HICON, (LONG)icon);
-        }
-    }
-    return icon;    
 }
 
 #endif __WIN32__

@@ -17,17 +17,17 @@ public:
     /// constructor
     nNvx2Loader();
     /// destructor
-    ~nNvx2Loader();
+    virtual ~nNvx2Loader();
     /// open file and read header data
     virtual bool Open(nFileServer2* fs);
     /// close the file
     virtual void Close();
     /// read vertex data
-    virtual bool ReadVertices(void* buffer, unsigned int bufferSize);
+    virtual bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    virtual bool ReadIndices(void* buffer, unsigned int bufferSize);
+    virtual bool ReadIndices(void* buffer, int bufferSize);
     /// read edge data
-    virtual bool ReadEdges(void* buffer, unsigned int bufferSize);
+    virtual bool ReadEdges(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -80,10 +80,10 @@ nNvx2Loader::Open(nFileServer2* fs)
     }
     this->numGroups        = file->GetInt();
     this->numVertices      = file->GetInt();
-    this->vertexWidth      = file->GetInt();
+    this->fileVertexWidth  = file->GetInt();
     this->numTriangles     = file->GetInt();
     this->numEdges         = file->GetInt();
-    this->vertexComponents = file->GetInt();
+    this->fileVertexComponents = file->GetInt();
     this->numIndices       = this->numTriangles * 3;
 
     int groupIndex;
@@ -106,7 +106,7 @@ nNvx2Loader::Open(nFileServer2* fs)
         this->groupArray.Append(group);
     }
 
-    return true;
+    return nMeshLoader::Open(fileServer);
 }
 
 //------------------------------------------------------------------------------
@@ -132,12 +132,88 @@ nNvx2Loader::Close()
 */
 inline
 bool
-nNvx2Loader::ReadVertices(void* buffer, unsigned int bufferSize)
+nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
-    n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
-    file->Read(buffer, bufferSize);
+    n_assert((this->numVertices * this->vertexWidth * int(sizeof(float))) == bufferSize);
+    if (this->vertexComponents == this->fileVertexComponents)
+    {
+        n_assert(this->vertexWidth == this->fileVertexWidth);
+        file->Read(buffer, bufferSize);
+    }
+    else
+    {
+        float* destBuf = (float*) buffer;
+        float* readBuffer = n_new_array(float, this->fileVertexWidth);
+        const int readSize = int(sizeof(float)) * this->fileVertexWidth;
+        int v = 0;
+        for (v = 0; v < this->numVertices; v++)
+        {
+            float* vBuf = readBuffer;
+            int numRead = file->Read(vBuf, readSize);
+            n_assert(numRead == readSize);
+            int mask;
+            for (mask = 1; mask <= this->vertexComponents; mask <<= 1)
+            {                
+                int num = 0;
+                switch (mask)
+                {
+                // float 2
+                case nMesh2::Uv0:
+                case nMesh2::Uv1:
+                case nMesh2::Uv2:
+                case nMesh2::Uv3:
+                    num = 2;
+                    break;
+
+                // float 3
+                case nMesh2::Coord:
+                case nMesh2::Normal:
+                case nMesh2::Tangent:
+                case nMesh2::Binormal:
+                    num = 3;
+                    break;
+
+                // float 4
+                case nMesh2::Color:
+                case nMesh2::Weights:
+                case nMesh2::JIndices:
+                    num = 4;
+                    break;
+
+                default:
+                    n_error("Unknown vertex component in vertex component mask");
+                    break;
+                }
+
+                n_assert(num > 0);
+                if (this->vertexComponents & mask)
+                {
+                    // read
+                    *(destBuf++) = *(vBuf++);
+                    if (num >= 2)
+                    {
+                        *(destBuf++) = *(vBuf++);
+                    }
+                    if (num >= 3)
+                    {
+                        *(destBuf++) = *(vBuf++);
+                    }
+                    if (num >= 4)
+                    {
+                        *(destBuf++) = *(vBuf++);
+                    }
+                }
+                else
+                {
+                    // skip
+                    vBuf += num;
+                }
+            }
+        }
+        n_delete_array(readBuffer);
+    }
     return true;    
 }
 
@@ -146,20 +222,20 @@ nNvx2Loader::ReadVertices(void* buffer, unsigned int bufferSize)
 */
 inline
 bool
-nNvx2Loader::ReadIndices(void* buffer, unsigned int bufferSize)
+nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
     if (Index16 == this->indexType)
     {
         // 16 bit indices: read index array directly
-        n_assert((this->numIndices * sizeof(ushort)) == bufferSize);
+        n_assert((this->numIndices * int(sizeof(ushort))) == bufferSize);
         file->Read(buffer, bufferSize);
     }
     else
     {
         // 32 bit indices, read into 16 bit buffer, and expand
-        n_assert((this->numIndices * sizeof(uint)) == bufferSize);
+        n_assert((this->numIndices * int(sizeof(uint))) == bufferSize);
 
         // read 16 bit indices into tmp buffer
         int size16 = this->numIndices * sizeof(ushort);
@@ -191,7 +267,7 @@ nNvx2Loader::ReadIndices(void* buffer, unsigned int bufferSize)
 */
 inline
 bool
-nNvx2Loader::ReadEdges(void* buffer, unsigned int bufferSize)
+nNvx2Loader::ReadEdges(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);

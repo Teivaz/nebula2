@@ -25,6 +25,13 @@ public:
         ChildWindow,    // windowed, as child window
     };
 
+    /// bit depths
+    enum Bpp
+    {
+        Bpp16,
+        Bpp32,
+    };
+
     /// constructor
     nDisplayMode2();
     /// constructor
@@ -51,6 +58,10 @@ public:
     void SetType(Type t);
     /// get display type
     Type GetType() const;
+    /// set bit depth
+    void SetBpp(Bpp depth);
+    /// get bit depth
+    Bpp GetBpp() const;
     /// set window title
     void SetWindowTitle(const char* t);
     /// get window title
@@ -80,6 +91,7 @@ private:
     ushort ypos;
     ushort width;
     ushort height;
+    Bpp bitsPerPixel;
     bool verticalSync;
     bool dialogBoxMode;
 };
@@ -95,6 +107,7 @@ nDisplayMode2::nDisplayMode2() :
     ypos(0),
     width(640),
     height(480),
+    bitsPerPixel(Bpp32),
     verticalSync(true),
     dialogBoxMode(false)
 {
@@ -112,6 +125,7 @@ nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, u
     ypos(y),
     width(w),
     height(h),
+    bitsPerPixel(Bpp32),
     verticalSync(vSync),
     dialogBoxMode(false)
 {
@@ -354,6 +368,26 @@ bool
 nDisplayMode2::GetDialogBoxMode() const
 {
     return this->dialogBoxMode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetBpp(Bpp depth)
+{
+    this->bitsPerPixel = depth;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nDisplayMode2::Bpp
+nDisplayMode2::GetBpp() const
+{
+    return this->bitsPerPixel;
 }
 
 //------------------------------------------------------------------------------
