@@ -123,7 +123,7 @@ float nMapNode::GetDetailSize()
 /**
     This method returns the current mesh usage flag combination.
 
-    @return     a combination on nMesh2::Usage flags
+    @return     a combination of nMesh2::Usage flags
 */
 int
 nMapNode::GetMeshUsage() const

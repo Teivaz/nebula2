@@ -18,7 +18,7 @@ nSwingShapeNode::nSwingShapeNode() :
     swingAngle(45.0f),
     swingTime(5.0f)
 {
-    // empty
+    SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader );
 }
 
 //------------------------------------------------------------------------------
@@ -27,20 +27,6 @@ nSwingShapeNode::nSwingShapeNode() :
 nSwingShapeNode::~nSwingShapeNode()
 {
     // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
-
-    @return     a combination on nMesh2::Usage flags
-*/
-int
-nSwingShapeNode::GetMeshUsage() const
-{
-    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------

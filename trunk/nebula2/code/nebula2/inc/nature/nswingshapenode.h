@@ -26,8 +26,6 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
-    /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
     /// override shader parameter rendering
     virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the max swing angle

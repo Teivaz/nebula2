@@ -15,6 +15,7 @@ static void n_getgridinterval(void* slf, nCmd* cmd);
 static void n_setheightrange(void* slf, nCmd* cmd);
 static void n_getheightrange(void* slf, nCmd* cmd);
 static void n_getheight(void* slf, nCmd* cmd);
+static void n_getnormal(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -38,6 +39,7 @@ n_initcmds(nClass* clazz)
     clazz->AddCmd("v_setheightrange_ff", 'SHRG', n_setheightrange);
     clazz->AddCmd("ff_getheightrange_v", 'GHRG', n_getheightrange);
     clazz->AddCmd("f_getheight_ff",'GHXY', n_getheight);
+    clazz->AddCmd("fff_getnormal_ff",'GNXY', n_getnormal);
     clazz->EndCmds();
 }
 
@@ -174,7 +176,7 @@ void n_getheightrange(void* o, nCmd* cmd)
 //-------------------------------------------------------------------
 /**
     @cmd
-    getheightrange
+    getheight
 
     @input
     f (X coordinate), f (Z coordinate)
@@ -189,13 +191,38 @@ void n_getheightrange(void* o, nCmd* cmd)
 //-------------------------------------------------------------------
 void n_getheight(void* o, nCmd* cmd)
 {
-   nMap* self = (nMap*)o;
-   float x = cmd->In()->GetF();
-   float z = cmd->In()->GetF();
+    nMap* self = (nMap*)o;
+    float x = cmd->In()->GetF();
+    float z = cmd->In()->GetF();
 
-   cmd->Out()->SetF(self->GetHeight(x,z));
+    cmd->Out()->SetF(self->GetHeight(x,z));
 }
+//-------------------------------------------------------------------
+/**
+    @cmd
+    getnormal
 
+    @input
+    f (X coordinate), f (Z coordinate)
+
+    @output
+    fff (normal xyz)
+
+    @info
+    Returns the triangle mesh normal at the specified location.
+*/
+//-------------------------------------------------------------------
+void n_getnormal(void* o, nCmd* cmd)
+{
+    nMap* self = (nMap*)o;
+    float x = cmd->In()->GetF();
+    float z = cmd->In()->GetF();
+    vector3 normal;
+    self->GetNormal(x,z,normal);
+    cmd->Out()->SetF(normal.x);
+    cmd->Out()->SetF(normal.y);
+    cmd->Out()->SetF(normal.z);
+}
 //------------------------------------------------------------------------------
 /**
     @param  ps  writes the nCmd object contents out to a file.

@@ -11,6 +11,8 @@ static void n_setgroupindex(void* slf, nCmd* cmd);
 static void n_getgroupindex(void* slf, nCmd* cmd);
 static void n_setmeshresourceloader(void* slf, nCmd* cmd);
 static void n_getmeshresourceloader(void* slf, nCmd* cmd);
+static void n_setmeshusage(void* slf, nCmd* cmd);
+static void n_getmeshusage(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -36,6 +38,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_getgroupindex_v",         'GGRI', n_getgroupindex);
     cl->AddCmd("v_setmeshresourceloader_s", 'SMRL', n_setmeshresourceloader);
     cl->AddCmd("s_getmeshresourceloader_v", 'GMRL', n_getmeshresourceloader);
+    cl->AddCmd("v_setmeshusage_s",          'SMSU', n_setmeshusage);
+    cl->AddCmd("s_getmeshusage_v",          'GMSU', n_getmeshusage);
     cl->EndCmds();
 }
 
@@ -149,6 +153,45 @@ n_getmeshresourceloader(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    setmeshusage
+    @input
+    s(usage flag string)
+    @output
+    v
+    @info
+    Set the usage flags for the mesh.
+*/
+static void
+n_setmeshusage(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    const int flags = nMesh2::ConvertUsageStringToFlags( cmd->In()->GetS() );
+    self->SetMeshUsage(flags);
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getmeshusage
+    @input
+    v
+    @output
+    s(usage flag string)
+    @info
+    Gets the usage flags for the mesh.
+*/
+static void
+n_getmeshusage(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    const char* flagString = nMesh2::ConvertUsageFlagsToString( self->GetMeshUsage() ).Get();
+    cmd->Out()->SetS(flagString);
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nShapeNode::SaveCmds(nPersistServer* ps)
@@ -176,6 +219,11 @@ nShapeNode::SaveCmds(nPersistServer* ps)
             cmd->In()->SetS(rlName);
             ps->PutCmd(cmd);
         }
+
+        //--- setmeshusage ---
+        cmd = ps->GetCmd(this, 'SMSU');
+        cmd->In()->SetI(this->GetMeshUsage());
+        ps->PutCmd(cmd);
 
         return true;
     }
