@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCMobileActor
-
+    @ingroup BombsquadBruceContribModule
     @brief The base class for everything that moves and is visible.
 
     At the moment, there is only one such class, namely the player.  To avoid 

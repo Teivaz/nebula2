@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCWorld
-
+    @ingroup BombsquadBruceContribModule
     @brief Abstract base class for a game world.
 
     A collection of game objects, some stored in an nSpatialDB,

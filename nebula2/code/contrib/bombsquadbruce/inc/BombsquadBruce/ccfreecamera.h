@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCFreeCamera
-
+    @ingroup BombsquadBruceContribModule
     @brief a simple camera that can be flown around the world
 
     A CCFreeCamera keeps track only of its own position and orientation.

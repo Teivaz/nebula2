@@ -11,7 +11,7 @@ class nSound3;
 //-----------------------------------------------------------------------------
 /**
     @class CCSound
-    @ingroup Crazy Chipmunk
+    @ingroup BombsquadBruceContribModule
 
     @brief
     Encapsulates a sound scriptably.

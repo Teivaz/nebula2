@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCShapeNode
+    @ingroup BombsquadBruceContribModule
 
     Adds various Crazy Chipmunk functionality to nShapeNode.
     At the moment, only allows SetLockViewerXZ, which

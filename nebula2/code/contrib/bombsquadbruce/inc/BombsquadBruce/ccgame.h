@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCGame
-
+    @ingroup BombsquadBruceContribModule
     @brief Handles a single game mode (e.g. the pregame menus, or game proper).
 
     All it actually does is call registered scripts and triggers the renderer 

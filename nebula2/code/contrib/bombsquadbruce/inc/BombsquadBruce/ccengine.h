@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCEngine
-
+    @ingroup BombsquadBruceContribModule
     @brief The global game application.
 
     The engine starts and triggers the essential servers, as well as an 

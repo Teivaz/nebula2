@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCOFMWorld
-
+    @ingroup BombsquadBruceContribModule
     @brief The Bombsquad Bruce game world
 
     (C)	2004 Rafael Van Daele-Hunt

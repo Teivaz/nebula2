@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCActor
-
+    @ingroup BombsquadBruceContribModule
     @brief The most basic game object that can be triggered.
 
     (C)	2004 Rafael Van Daele-Hunt

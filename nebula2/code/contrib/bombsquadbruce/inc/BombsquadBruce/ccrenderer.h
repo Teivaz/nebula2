@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCRenderer
-
+    @ingroup BombsquadBruceContribModule
     @brief The renderer
 
     CCRenderer sends the visible objects in the world,
