@@ -7,13 +7,14 @@
     html files are created in nebula/doc/autodoc.
 
     TODO:
-       - Add C++ class names to the data tracked and use that to generate
-         links over to the C++ API doc.
        - Add grouping to create some form of hierarchy.
 
     30-Aug-01   leaf    created.
     12-Jun-02   leaf    new style and other improvements
     16-Aug-03   bruce   added doxygen output
+    17-Aug-03   leaf    added C++ class name. Currently it
+                        searches for @cppclass or 
+                        N_IMPLEMENTS nClassName
 """
 import sys, os, fnmatch, re, time
 
@@ -21,8 +22,9 @@ import sys, os, fnmatch, re, time
 classes = {}
 
 # regular expressions to extract class/cmd info
-rClass = re.compile(r"@scriptclass\s*(?P<classname>\S*)\s*@superclass\s*(?P<superclass>\S*)\s*@classinfo\s*(?P<info>.*?)\s*\*/", re.S)
+rClass = re.compile(r"@scriptclass\s*(?P<classname>\S*)(?:(?:\s*)|(?:\s*@cppclass\s*(?P<cppname>\S*?))\s*)@superclass\s*(?P<superclass>\S*)\s*@classinfo\s*(?P<info>.*?)\s*\*/", re.S)
 rCmd = re.compile(r"@cmd\s*(?P<cmd>\S*)\s*@input\s*(?P<input>.*?)\s*@output\s*(?P<output>.*?)\s*@info\s*(?P<info>.*?)\s*\*/", re.S)
+rCppName = re.compile(r"#define\sN_IMPLEMENTS\s(\S*)")
 
 # set up paths in hopefully OS independant manner
 dir_autodoc = os.path.join(sys.path[0], os.pardir, 'doc', 'autodoc')
@@ -79,6 +81,7 @@ def scanFiles(pathname):
                 clas.name = mClass.group('classname')
                 clas.superclass = mClass.group('superclass')
                 clas.info = escapeHtml(mClass.group('info'))
+                clas.cppname = mClass.group('cppname') or rCppName.search(file).groups()[0]
                 cmds = []
                 mCmd = rCmd.search(file)
                 while mCmd:
@@ -95,92 +98,7 @@ def scanFiles(pathname):
                 print "No class information found in " + path
             fp.close()
 
-# functions for creating the html
-def classTreeHTML(clas, indent = 0):
-    out = '<li><a href="classes/%s.html" target="mainFrame">%s</a>' % (clas.name, clas.name)
-    if clas.subclasses:
-        out += '\n <ul>\n'
-        for sc in clas.subclasses:
-            out += classTreeHTML(sc, indent)
-        out += ' </ul>\n'
-    return out+'</li>\n'
 
-def classInfoHTML(clas):
-    out = """<html>
-<head>
-<title>Autodoc: %s</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="../autodoc.css" type="text/css">
-</head>
-<body>
-<h2>class %s</h2>
-<ul>
-  <h4>super class</h4>
-  <ul>
-    <a href="%s">%s</a> 
-  </ul>
-  <h4>info</h4>
-  <ul>
-    <pre>%s</pre>
-  </ul>""" % (clas.name, clas.name, clas.superclass+'.html', clas.superclass, clas.info.replace("\n    ","\n"))
-    out += """  <h4>commands:</h4>
-  <ul><table border="0">"""
-    # do command block
-    numcmds = len(clas.cmds)
-    rows = (numcmds / 4) + 1
-    for i in range(rows):
-        out += "<tr>"
-        for j in range(4):
-            c = i + (j * rows)
-            if c < numcmds:
-                cmd = clas.cmds[c]
-                out += "<td class=\"cmd\"><a href=\"#%s\">%s</a></td>" % (clas.name+cmd.name, cmd.name)
-            else:
-                out += "<td></td>"
-        out += "</tr>"
-        
-    out += """</table>
-  </ul>
-</ul><hr noshade size=" 1"color="#CCCCCC"/>"""
-    return out
-
-def cmdBlockHTML(cmd, clas):
-    out = """<h3><a name="%s">%s</a></h3>
-<ul>
-  <h4>input:</h4>
-  <ul>
-    <pre>%s</pre>
-  </ul>
-  <h4>output:</h4>
-  <ul>
-    <pre>%s</pre>
-  </ul>
-  <h4>info:</h4>
-  <ul>
-    <pre>%s</pre>
-  </ul>
-</ul><hr noshade size=" 1"color="#CCCCCC"/>""" % (
-        clas.name+cmd.name, 
-        cmd.name, 
-        cmd.input.replace("\n    ","\n"), 
-        cmd.output.replace("\n    ","\n"), 
-        cmd.info.replace("\n    ","\n"))
-    return out
-
-def classPageHTML(clas):
-    out = classInfoHTML(clas)
-    for cmd in clas.cmds:
-        out += cmdBlockHTML(cmd, clas)
-    out += "</body></html>"
-    fo = open(os.path.join(dir_classes, '%s.html' % clas), 'w')
-    fo.write(out)
-    fo.close()
-
-def cmdsPageHTML(root):
-    classPageHTML(root)
-    for clas in root.subclasses:
-        cmdsPageHTML(clas)
-    return out
 
 # functions for creating doxygen output
 def classTreeDoxygen(clas, indent = 0):
@@ -211,6 +129,12 @@ def classInfoDoxygen(clas):
                                                                    subclas.name)
 
     out += """
+@subsection N2ScriptInterface_%sCPPClass C++ Class:
+   - @ref %s
+   """ % (clas.name, clas.cppname)
+
+    out += """
+
 @subsection N2ScriptInterface_%sInfo Info
 
 %s
@@ -265,25 +189,6 @@ def cmdsPageDoxygen(root):
 scanFiles(dir_src)
 root = classes['nroot']
 root.findSubclasses()
-
-# create HTML class tree
-out = """<html>
-<head>
-    <link rel="stylesheet" href="autodoc.css" type="text/css">
-    <title>Nebula 2 Script Commands (generated %s)</title>
-</head>
-<body>
-    <h3>Nebula 2 Class Tree</h3>
-    <ul>
-""" % (time.strftime("%d/%m/%y %H:%M"))
-out += classTreeHTML(root)
-out += """
-    </ul>
-</body>
-</html>"""
-fp = open(os.path.join(dir_autodoc, 'tree.html'), 'w')
-fp.write(out)
-fp.close()
 
 # create class tree
 out = """/**
@@ -365,6 +270,5 @@ fp.close()
 # create class pages
 if not os.path.exists(dir_classes):
     os.mkdir(dir_classes)
-cmdsPageHTML(root)
 cmdsPageDoxygen(root)
 
