@@ -56,7 +56,7 @@
 #include "util/nstring.h"
 #endif
 
-#if __XBxX__
+#ifdef __XBxX__
 #   include "xbox/nxbwrapper.h"
 #elif __WIN32__
 #   ifndef _INC_WINDOWS
