@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nSkinShapeNode
 //------------------------------------------------------------------------------
 //  nskinshapenode_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -13,8 +12,7 @@ nCharSkinRenderer nSkinShapeNode::charSkinRenderer;
 /**
 */
 nSkinShapeNode::nSkinShapeNode() :
-    extCharSkeleton(0),
-    jointPaletteVarHandle(nVariable::INVALID_HANDLE)
+    extCharSkeleton(0)
 {
     // empty
 }
@@ -29,35 +27,16 @@ nSkinShapeNode::~nSkinShapeNode()
 
 //------------------------------------------------------------------------------
 /**
-    Load the resources needed by this object.
-*/
-bool
-nSkinShapeNode::LoadResources()
-{
-    if (nShapeNode::LoadResources())
-    {
-        if (nVariable::INVALID_HANDLE == this->jointPaletteVarHandle)
-        {
-            this->jointPaletteVarHandle = this->refVariableServer->GetVariableHandleByName("jointPalette");
-            n_assert(nVariable::INVALID_HANDLE != this->jointPaletteVarHandle);
-        }
-        return true;
-    }
-    return false;
-}
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
 
-//------------------------------------------------------------------------------
-/**
-    Check if resources are valid.
+    @return     a combination on nMesh2::Usage flags
 */
-bool
-nSkinShapeNode::AreResourcesValid() const
+int
+nSkinShapeNode::GetMeshUsage() const
 {
-    if (nShapeNode::AreResourcesValid())
-    {
-        return (this->jointPaletteVarHandle != nVariable::INVALID_HANDLE);
-    }
-    return false;
+    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
@@ -66,7 +45,7 @@ nSkinShapeNode::AreResourcesValid() const
     of setting the mesh directly in the gfx server, the embedded
     nCharSkinRenderer is asked to do the rendering for us.
 */
-void
+bool
 nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     n_assert(sceneServer);
@@ -87,10 +66,7 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     kernelServer->PopCwd();
 
     // render the skin in several passes (one per skin fragment)
-    this->charSkinRenderer.Begin(this->refGfxServer.get(),
-                                 this->refMesh.get(),
-                                 this->jointPaletteVarHandle,
-                                 this->extCharSkeleton);
+    this->charSkinRenderer.Begin(this->refGfxServer.get(), this->refMesh.get(), this->extCharSkeleton);
     int numFragments = this->GetNumFragments();
     int fragIndex;
     for (fragIndex = 0; fragIndex < numFragments; fragIndex++)
@@ -99,6 +75,7 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
         charSkinRenderer.Render(fragment.GetMeshGroupIndex(), fragment.GetJointPalette());
     }
     this->charSkinRenderer.End();
+    return true;
 }
 
 //------------------------------------------------------------------------------
