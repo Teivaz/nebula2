@@ -46,6 +46,10 @@ public:
     friend bool operator == (const nString& a, const nString& b);
     /// Is `a' inequal to `b'?
     friend bool operator != (const nString& a, const nString& b);
+    /// Subscript operator (read only).
+    const char operator [] (int i) const;
+    /// Subscript operator (writeable).
+    char& operator [] (int i);
     /// set as char ptr, with explicit length
     void Set(const char* ptr, int length);
     /// set as char ptr
@@ -71,7 +75,7 @@ public:
     /// tokenize string into a provided nString array
     int Tokenize(const char* whiteSpace, nArray<nString>& tokens) const;
     /// extract substring
-    nString ExtractRange(int from, int to);
+    nString ExtractRange(int from, int to) const;
     /// terminate string at first occurence of character in set
     void Strip(const char* charSet);
 
@@ -85,7 +89,7 @@ protected:
     {
         LOCALSTRINGSIZE = 14,
     };
-    const char* string;
+    char* string;
     char localString[LOCALSTRINGSIZE];
     ushort strLen;
 };
@@ -255,8 +259,11 @@ inline
 nString&
 nString::operator=(const nString& rhs)
 {
-    this->Delete();
-    this->Copy(rhs);
+    if (&rhs != this)
+    {
+        this->Delete();
+        this->Copy(rhs);
+    }
     return *this;
 }
 
@@ -306,7 +313,7 @@ nString::Append(const char* str)
         this->strLen = tlen;
     }
     else
-        this->Set(str);    
+        this->Set(str);
 }
 
 //------------------------------------------------------------------------------
@@ -337,7 +344,7 @@ inline
 nString&
 nString::operator+=(const nString& rhs)
 {
-    this->Append(rhs.Get());       
+    this->Append(rhs.Get());
     return *this;
 }
 
@@ -345,7 +352,7 @@ nString::operator+=(const nString& rhs)
 /**
 */
 inline
-bool 
+bool
 operator == (const nString& a, const nString& b)
 {
     return strcmp(a.Get(), b.Get()) == 0;
@@ -359,6 +366,38 @@ bool
 operator != (const nString& a, const nString& b)
 {
     return strcmp(a.Get(), b.Get()) != 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char
+nString::operator [] (int i) const
+{
+    n_assert(0 <= i && i <= strLen - 1);
+   if (string != 0)
+    {
+        return string[i];
+    }
+
+    return localString[i];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+char&
+nString::operator [] (int i)
+{
+    n_assert(0 <= i && i <= strLen - 1);
+    if (string != 0)
+    {
+        return string[i];
+    }
+
+    return localString[i];
 }
 
 //------------------------------------------------------------------------------
@@ -400,7 +439,7 @@ nString::ToLower()
     if (str)
     {
         char c;
-        char* ptr = (char*) this->string;
+        char* ptr = (char*) str;
         while ((c = *ptr))
         {
             *ptr++ = tolower(c);
@@ -498,7 +537,7 @@ nString::Tokenize(const char* whiteSpace, nArray<nString>& tokens) const
 */
 inline
 nString
-nString::ExtractRange(int from, int numChars)
+nString::ExtractRange(int from, int numChars) const
 {
     n_assert(from <= this->strLen);
     n_assert((from + numChars) <= this->strLen);

@@ -65,14 +65,18 @@ public:
     iterator EraseQuick(iterator iter);
     /// insert element at index
     void Insert(int index, const TYPE& elm);
-    /// clear array
+    /// clear array (calls destructors)
     void Clear();
+    /// reset array (does NOT call destructors)
+    void Reset();
     /// return iterator to beginning of array
     iterator Begin() const;
     /// return iterator to end of array
     iterator End() const;
-    /// find identical element in array
+    /// find identical element in array, return iterator
     iterator Find(const TYPE& elm) const;
+    /// find identical element in array, return index
+    int FindIndex(const TYPE& elm) const;
     /// find array range with element
     void Fill(int first, int num, const TYPE& elm);
     /// clear contents and preallocate with new attributes
@@ -272,7 +276,7 @@ nArray<TYPE>::SetFixedSize(int size)
 /**
 */
 template<class TYPE>
-nArray<TYPE>& 
+nArray<TYPE>&
 nArray<TYPE>::operator=(const nArray<TYPE>& rhs)
 {
     this->Delete();
@@ -536,7 +540,7 @@ nArray<TYPE>::Back() const
 /**
 */
 template<class TYPE>
-bool 
+bool
 nArray<TYPE>::Empty() const
 {
     return (this->numElements == 0);
@@ -632,7 +636,7 @@ nArray<TYPE>::Insert(int index, const TYPE& elm)
 
 //------------------------------------------------------------------------------
 /**
-    The current implementation of this method does not shrink the 
+    The current implementation of this method does not shrink the
     preallocated space. It simply sets the array size to 0.
 */
 template<class TYPE>
@@ -644,6 +648,18 @@ nArray<TYPE>::Clear()
     {
         this->Destroy(&(this->elements[i]));
     }
+    this->numElements = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This is identical with Clear(), but does NOT call destructors (it just
+    resets the numElements member. USE WITH CARE!
+*/
+template<class TYPE>
+void
+nArray<TYPE>::Reset()
+{
     this->numElements = 0;
 }
 
@@ -669,6 +685,11 @@ nArray<TYPE>::End() const
 
 //------------------------------------------------------------------------------
 /**
+    Find element in array, return iterator, or 0 if element not
+    found.
+
+    @param elm          element to find
+    @return             element iterator, or 0 if not found
 */
 template<class TYPE>
 typename nArray<TYPE>::iterator
@@ -683,6 +704,29 @@ nArray<TYPE>::Find(const TYPE& elm) const
         }
     }
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Find element in array, return element index, or -1 if element not
+    found.
+
+    @param  elm     element to find
+    @return         index to element, or -1 if not found
+*/
+template<class TYPE>
+int
+nArray<TYPE>::FindIndex(const TYPE& elm) const
+{
+    int index;
+    for (index = 0; index < this->numElements; index++)
+    {
+        if (this->elements[index] == elm)
+        {
+            return index;
+        }
+    }
+    return -1;
 }
 
 //------------------------------------------------------------------------------
