@@ -31,7 +31,7 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_declarevariable_ss",      'DCLV', n_declarevariable);
+    cl->AddCmd("i_declarevariable_ss",      'DCLV', n_declarevariable);
     cl->AddCmd("i_getnumvariables_v",       'GNMV', n_getnumvariables);
     cl->AddCmd("ss_getvariableat_i",        'GVAT', n_getvariableat);
     cl->AddCmd("v_setfloatvariable_sf",     'SFLV', n_setfloatvariable);
@@ -59,7 +59,7 @@ n_declarevariable(void* slf, nCmd* cmd)
     nVariableServer* self = (nVariableServer*) slf;
     const char* s0 = cmd->In()->GetS();
     const char* s1 = cmd->In()->GetS();
-    self->DeclareVariable(s0, nVariableServer::StringToFourCC(s1));
+    cmd->Out()->SetI( self->DeclareVariable(s0, nVariableServer::StringToFourCC(s1)) );
 }
 
 //------------------------------------------------------------------------------
