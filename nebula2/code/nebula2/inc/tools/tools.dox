@@ -4,7 +4,6 @@
 Nebula provides some basic tools as part of the package.
 
 These include:
-    - @ref NebulaToolsnimagetool
     - @ref NebulaToolsnmeshtool
     - @ref NebulaToolsnnpktool
     - @ref NebulaToolsnremoteshell
