@@ -41,7 +41,7 @@ n_initcmds(nClass* clazz)
     clazz->AddCmd( "v_Step_f",                  'STEP', n_step );
     clazz->AddCmd( "v_QuickStep_f",             'QSTP', n_quickstep );
     clazz->AddCmd( "v_SetQuickStepNumIterations_i", 'QSSI', n_qstepsetnumiters );
-    clazz->AddCmd( "v_GetQuickStepNumIterations_i", 'QSGI', n_qstepgetnumiters );
+    clazz->AddCmd( "i_GetQuickStepNumIterations_v", 'QSGI', n_qstepgetnumiters );
     clazz->AddCmd( "fff_ImpulseToForce_ffff",   'ITOF', n_impulsetoforce );
     clazz->AddCmd( "v_StepFast1_fi",            'STPF', n_stepfast1 );
     clazz->EndCmds();
