@@ -10,7 +10,7 @@
     language. More specifically, the script server's main task is to
     translate nCmd objects into script statements and back, and to
     communicate with receiver nRoot objects by sending nCmd objects
-    to them (which is done by involing Dispatch() on the receiver
+    to them (which is done by invoking Dispatch() on the receiver
     with the nCmd object as the argument).
 
     Script servers are also used as filter for the object serialization.
