@@ -196,7 +196,7 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
         // remove redundant keys which is same to previous key.
         nArray<nMaxSampleKey> tmpKeyArray;
 
-        int i,j;
+        int i;
 
         for (i=0; i<sampleKeyArray.Size(); i++)
         {
