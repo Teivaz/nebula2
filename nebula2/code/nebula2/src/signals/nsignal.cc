@@ -65,7 +65,7 @@ nSignal::Dispatch(nSignalEmitter * emitter, va_list args)
     // get new command and forward to Dispatch
     nCmd * cmd = this->NewCmd();
     cmd->CopyInArgsFrom(args);
-    this->Dispatch(emitter, cmd);
+    this->Dispatch(static_cast<nObject *> (emitter), cmd);
     this->RelCmd(cmd);
 
     return true;

@@ -9,6 +9,9 @@
 #include "signals/nsignalserver.h"
 #include "signals/nsignalemitter.h"
 #include "kernel/ntimeserver.h"
+#include "kernel/nkernelserver.h"
+
+nNebulaClass( nSignalServer, "nroot" );
 
 //------------------------------------------------------------------------------
 nSignalServer* nSignalServer::Singleton = 0;

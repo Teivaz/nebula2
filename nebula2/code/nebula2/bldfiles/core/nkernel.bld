@@ -52,7 +52,6 @@ beginmodule nsignal
         nsignalbindingset
         nsignalemitter
         nsignalregistry
-        nsignalserver
         nsignalnative
         nsignalbindingnative
     }
@@ -63,6 +62,14 @@ beginmodule nsignal
         nsignalemitter
         nsignalemitter_cmds
         nsignalregistry
+    }
+endmodule
+beginmodule nsignalserver
+    setdir signals
+    setheaders {
+        nsignalserver
+    }
+    setfiles {
         nsignalserver
     }
 endmodule
@@ -227,6 +234,7 @@ begintarget nkernel
         nmath
         nutil
         nsignal
+        nsignalserver
         lokiheaders
     }
 endtarget
