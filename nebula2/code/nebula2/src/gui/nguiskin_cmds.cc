@@ -33,7 +33,6 @@ static void n_setbuttonsound(void* slf, nCmd* cmd);
 static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
-static void n_setmastervolume(void* slf, nCmd* cmd);
 static void n_setsoundvolume(void* slf, nCmd* cmd);
 static void n_getsoundvolume(void* slf, nCmd* cmd);
 static void n_setwindowfont(void* slf, nCmd* cmd);
@@ -88,7 +87,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endbrushes_v",                'EDBR', n_endbrushes);
     cl->AddCmd("v_setsound_ss",                 'SBTS', n_setsound);
     cl->AddCmd("s_getsound_s",                  'GBTS', n_getsound);
-    cl->AddCmd("v_setmastervolume_f",           'SVOL', n_setmastervolume);
     cl->AddCmd("v_setsoundvolume_sf",           'SSVO', n_setsoundvolume);
     cl->AddCmd("f_getsoundvolume_s",            'GSVO', n_getsoundvolume);
     cl->AddCmd("v_setwindowfont_s",             'SWNF', n_setwindowfont);
@@ -643,24 +641,6 @@ n_endbrushes(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
     self->EndBrushes();
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    setmastervolume
-    @input
-    f(Volume)
-    @output
-    v
-    @info
-    Define the master volume.
-*/
-static void
-n_setmastervolume(void* slf, nCmd* cmd)
-{
-    nGuiSkin* self = (nGuiSkin*) slf;
-    self->SetSoundVolume(cmd->In()->GetF());
 }
 
 //-----------------------------------------------------------------------------
