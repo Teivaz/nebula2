@@ -85,6 +85,15 @@ public:
     /// get the particle rgb curve
     const nVector3EnvelopeCurve& GetRGBCurve() const;
 
+    /// set the effect back to its start time
+    void Reset();
+    /// whether the effect is about to be reset (intended only for SaveCmds)
+    bool IsResetting() const;
+    /// set whether the effect is allowed to run
+    void SetEffectActive(bool b);
+    /// whether the effect is currently running (note: one-shot effects may be over but still active!)
+    bool IsEffectActive() const;
+
 protected:
     nAutoRef<nParticleServer> refParticleServer;
 
@@ -99,6 +108,8 @@ protected:
     bool  renderOldestFirst;   ///< whether to render the oldest particles first or the youngest
     float globalScale;         ///< the scale of the effect as a whole (including the emitter mesh)
     bool  particlesFollowNode; ///< true iff particles move in nodespace (instead of worldspace)
+    bool  doReset;             ///< whether the effect is about to be reset to time=0
+    bool  active;              ///< whether the effect is running
 
     nEnvelopeCurve curves[nParticleEmitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;
@@ -321,6 +332,62 @@ const nVector3EnvelopeCurve&
 nParticleShapeNode::GetRGBCurve() const
 {
     return this->rgbCurve;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Tells the effect to begin at the beginning again.
+
+    Note that if the effect has been stopped with 
+    nParticleShape::SetActive(false), it must be reactivated as well.
+*/
+inline
+void
+nParticleShapeNode::Reset()
+{
+    this->doReset = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true iff the nParticleShapeNode::Reset method has been called, but 
+    not yet taken effect (in the next frame).  This is really only intended for
+    use by SaveCmds.
+*/
+inline
+bool
+nParticleShapeNode::IsResetting() const
+{
+    return this->doReset;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Turns the effect on or off.
+    
+    When an effect is turned off, particles already born get to live out 
+    their lives, but no new particles are created.
+*/
+inline
+void
+nParticleShapeNode::SetEffectActive(bool b)
+{
+    this->active = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true iff the effect is active (the Stop method has not been called).
+    Note that a one-shot effect may be finished, and hence have no further 
+    visible effect, but still be active!  An inactive effect is suppressed --
+    it isn't allowed to create particles during the time that it normally
+    would.
+*/
+inline
+bool
+nParticleShapeNode::IsEffectActive() const
+{
+    return this->active;
 }
 
 //------------------------------------------------------------------------------

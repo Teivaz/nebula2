@@ -49,6 +49,8 @@ static void n_getparticleairresistance(void* slf, nCmd* cmd);
 static void n_setparticlevelocityfactor(void* slf, nCmd* cmd);
 static void n_getparticlevelocityfactor(void* slf, nCmd* cmd);
 
+static void n_reset(void* slf, nCmd* cmd);
+static void n_seteffectactive(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
@@ -110,6 +112,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffffffffi_getparticleairresistance_v", 'GPAR', n_getparticleairresistance);
     cl->AddCmd("v_setparticlevelocityfactor_ffffffffi", 'SPVF', n_setparticlevelocityfactor);
     cl->AddCmd("ffffffffi_getparticlevelocityfactor_v", 'GPVF', n_getparticlevelocityfactor);
+    cl->AddCmd("v_reset_v", 'RSET', n_reset);
+    cl->AddCmd("v_seteffectactive_b", 'SEAC', n_seteffectactive);
     cl->EndCmds();
 }
 
@@ -991,6 +995,49 @@ n_getparticlevelocityfactor(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    reset
+    @input
+    v
+    @output
+    v
+    @info
+    Reset the effect to run from its initial state.
+    If the effect has been deactivated, it must be reactivated for
+    the reset to have any visible effect.
+*/
+static void
+n_reset(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    self->Reset();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    seteffectactive
+    @input
+    b
+    @output
+    v
+    @info
+    Turns the effect on or off.  This is different from turning the node 
+    on and off!    
+    An effect that is deactivated doesn't disappear immediately: no new 
+    particles are created, but already living particles are 
+    allowed to die off naturally.  Conversely, an effect that is active may
+    not do anything visible -- for example, a one-shot whose time has expired.
+*/
+static void
+n_seteffectactive(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    self->SetEffectActive(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nParticleShapeNode::SaveCmds(nPersistServer* ps)
@@ -1120,6 +1167,18 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
         //--- setparticlesfollownode ---
         cmd = ps->GetCmd(this, 'SPFN');
         cmd->In()->SetB(this->GetParticlesFollowNode());
+        ps->PutCmd(cmd);
+
+        //--- reset ---
+        if(this->IsResetting())
+        {
+            cmd = ps->GetCmd(this, 'RSET');
+            ps->PutCmd(cmd);
+        }
+
+        //--- seteffectactive ---
+        cmd = ps->GetCmd(this, 'SACT');
+        cmd->In()->SetB(this->IsEffectActive());
         ps->PutCmd(cmd);
 
         return true;
