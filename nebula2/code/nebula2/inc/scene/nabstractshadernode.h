@@ -66,8 +66,8 @@ protected:
     bool LoadTexture(int index);
     /// unload a texture resource
     void UnloadTexture(int index);
-	/// abstract method: returns always true
-	virtual bool IsTextureUsed(nShader2::Parameter param);
+    /// abstract method: returns always true
+    virtual bool IsTextureUsed(nShader2::Parameter param);
 
     class TexNode
     {
