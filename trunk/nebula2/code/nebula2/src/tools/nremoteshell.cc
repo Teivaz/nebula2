@@ -44,17 +44,12 @@ main(int argc, const char** argv)
     if (helpArg)
     {
         printf("(C) 2003 RadonLabs GmbH\n"
-               "nremoteshell - Nebula2 remote shell\n"
+               "nrsh - Nebula2 remote shell\n"
                "Command line args:\n"
                "------------------\n"
                "-help       show this help\n"
                "-host       a host name\n"
-               "-port       a port name\n\n"
-               "Examples:\n"
-               "---------\n"
-               "nremoteshell -host localhost -port nviewer\n"
-               "nremoteshell -host 192.168.0.1 -port test\n"
-               "nremoteshell -host zeus -port nviewer\n");
+               "-port       a port name\n");
         return 5;
     }
     if (!portArg)
@@ -102,17 +97,17 @@ main(int argc, const char** argv)
             {
                 // display prompt string
                 printf("%s>", msg.GetString());
-                fflush(stdout);
+        		fflush(stdout);
 
                 // get command from user
-                lineOk = (gets(line) > 0);
-        
-                if (strcmp("exit", line) == 0)
-                {
-                    running = false;
-                }
-                else
-                {
+		        lineOk = (gets(line) > 0);
+		
+		        if (strcmp("exit", line) == 0)
+		        {
+		            running = false;
+		        }
+		        else
+		        {
                     // send user command and wait for answer from server
                     msg.SetString(line);
                     if (ipcClient.Send(msg))
@@ -126,14 +121,14 @@ main(int argc, const char** argv)
                         {
                             // display answer from server
                             if (msg.GetString()[0] != 0)
-                            {
+		            		{
                                 puts(msg.GetString());
                             }
                         }
                     }
-                }
+		        }
             }
-        }
+		}
     }
     if (ipcClient.IsConnected())
     {

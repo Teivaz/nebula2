@@ -20,8 +20,6 @@
 #include "particle/nparticleserver.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
-#include "gfx2/ntexture2.h"
-#include "gfx2/nmousecursor.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -91,8 +89,6 @@ private:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
-	nRef<nTexture2> refMouseTexture;
-	nMouseCursor mouseCursor;
 
     nRef<nTransformNode> refRootNode;
 

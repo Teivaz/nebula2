@@ -8,8 +8,8 @@
 /**
 */
 nMeshBuilder::nMeshBuilder() :
-    vertexArray(5000, 5000),
-    triangleArray(5000, 5000)
+    vertexArray((1<<15), (1<<15)),
+    triangleArray((1<<15), (1<<15))
 {
     // empty
 }
@@ -24,40 +24,42 @@ nMeshBuilder::~nMeshBuilder()
 
 //------------------------------------------------------------------------------
 /**
-    Count the number of triangles matching a group id starting at a given 
-    triangle index. Will stop on first triangle which doesn't match the
-    group id.
+    Count the number of triangles matching a group id and material id starting 
+    at a given triangle index. Will stop on first triangle which doesn't 
+    match the group id.
 */
 int
-nMeshBuilder::GetNumGroupTriangles(int groupId, int startTriangleIndex) const
+nMeshBuilder::GetNumGroupTriangles(int groupId, int materialId, int usageFlags, int startTriangleIndex) const
 {
     int triIndex = startTriangleIndex;
     int maxTriIndex = this->triangleArray.Size();
     int numTris = 0;
     for (; triIndex < maxTriIndex; triIndex++)
     {
-        if (this->triangleArray[triIndex].GetGroupId() != groupId)
+        if ((this->triangleArray[triIndex].GetGroupId() == groupId) &&
+            (this->triangleArray[triIndex].GetMaterialId() == materialId) &&
+            (this->triangleArray[triIndex].GetUsageFlags() == usageFlags))
         {
-            break;
-        }
-        numTris++;
-    }
+        	numTris++;
+		}
+    }	
     return numTris;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Get the first triangle matching a group id. This may be a slow operation
-    on large meshes. Returns the first triangle matching the given group id. 
+    Get the first triangle matching a group id and material id.
 */
 int
-nMeshBuilder::GetFirstGroupTriangle(int groupId) const
+nMeshBuilder::GetFirstGroupTriangle(int groupId, int materialId, int usageFlags) const
 {
     int triIndex;
     int maxTriIndex = this->triangleArray.Size();
     for (triIndex = 0; triIndex < maxTriIndex; triIndex++)
     {
-        if (this->triangleArray[triIndex].GetGroupId() == groupId)
+        if ((this->triangleArray[triIndex].GetGroupId() == groupId) &&
+            (this->triangleArray[triIndex].GetMaterialId() == materialId) &&
+            (this->triangleArray[triIndex].GetUsageFlags() == usageFlags))
         {
             return triIndex;
         }
@@ -82,10 +84,15 @@ nMeshBuilder::BuildGroupMap(nArray<Group>& groupArray)
     Group newGroup;
     while (triIndex < numTriangles)
     {
-        int groupId = this->GetTriangleAt(triIndex).GetGroupId();
-        int numTrisInGroup = this->GetNumGroupTriangles(groupId, triIndex);
+        const Triangle& tri = this->GetTriangleAt(triIndex);
+        int groupId    = tri.GetGroupId();
+        int matId      = tri.GetMaterialId();
+        int usageFlags = tri.GetUsageFlags();
+        int numTrisInGroup = this->GetNumGroupTriangles(groupId, matId, usageFlags, triIndex);
         n_assert(numTrisInGroup > 0);
         newGroup.SetId(groupId);
+        newGroup.SetMaterialId(matId);
+        newGroup.SetUsageFlags(usageFlags);
         newGroup.SetFirstTriangle(triIndex);
         newGroup.SetNumTriangles(numTrisInGroup);
         groupArray.Append(newGroup);
@@ -95,10 +102,11 @@ nMeshBuilder::BuildGroupMap(nArray<Group>& groupArray)
 
 //------------------------------------------------------------------------------
 /**
-    Update the triangle group id's from an existing group map.
+    Update the triangle group id's, material id's and usage flags 
+    from an existing group map.
 */
 void
-nMeshBuilder::UpdateTriangleGroupIds(const nArray<Group>& groupMap)
+nMeshBuilder::UpdateTriangleIds(const nArray<Group>& groupMap)
 {
     int groupIndex;
     int numGroups = groupMap.Size();
@@ -109,7 +117,10 @@ nMeshBuilder::UpdateTriangleGroupIds(const nArray<Group>& groupMap)
         int maxTriIndex = triIndex + group.GetNumTriangles();
         for (; triIndex < maxTriIndex; triIndex++)
         {
-            this->GetTriangleAt(triIndex).SetGroupId(group.GetId());
+            Triangle& tri = this->GetTriangleAt(triIndex);
+            tri.SetGroupId(group.GetId());
+            tri.SetMaterialId(group.GetMaterialId());
+            tri.SetUsageFlags(group.GetUsageFlags());
         }
     }
 }
@@ -245,7 +256,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapsMap)
         {
             int newIndex = indexMap[i];
             int collapsedIndex = newIndex - shiftMap[newIndex];
-            collapsMap->At(collapsedIndex).PushBack(i);
+            collapsMap->At(collapsedIndex).Append(i);
         }
     }
 
@@ -256,7 +267,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapsMap)
     {
         if (!this->vertexArray[vertexIndex].CheckFlag(Vertex::REDUNDANT))
         {
-            newArray.PushBack(vertexArray[vertexIndex]);
+            newArray.Append(vertexArray[vertexIndex]);
         }
     }
     this->vertexArray = newArray;
@@ -277,7 +288,18 @@ nMeshBuilder::TriangleGroupSorter(const void* elm0, const void* elm1)
 {
     Triangle* t0 = (Triangle*) elm0;
     Triangle* t1 = (Triangle*) elm1;
-    return t0->GetGroupId() - t1->GetGroupId();
+    int groupDiff = t0->GetGroupId() - t1->GetGroupId();
+    if (0 != groupDiff)
+    {
+        return groupDiff;
+    }
+    int materialDiff = t0->GetMaterialId() - t1->GetMaterialId();
+    if (0 != materialDiff)
+    {
+        return materialDiff;
+	}
+    int usageDiff = t0->GetUsageFlags() - t1->GetUsageFlags();
+    return usageDiff;
 }
 
 //------------------------------------------------------------------------------
@@ -285,7 +307,7 @@ nMeshBuilder::TriangleGroupSorter(const void* elm0, const void* elm1)
     Sort triangles by group.
 */
 void
-nMeshBuilder::SortTrianglesByGroupId()
+nMeshBuilder::SortTriangles()
 {
     // first, sort triangles by their group id
     qsort(&(this->triangleArray[0]), this->triangleArray.Size(), sizeof(Triangle), nMeshBuilder::TriangleGroupSorter);
@@ -414,30 +436,47 @@ nMeshBuilder::GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVert
 void
 nMeshBuilder::ForceVertexComponents(int wantedMask)
 {
-    int hasMask = this->GetVertexAt(0).GetComponentMask();
+    // for each vertex...
     int numVertices = this->GetNumVertices();
-    int curCompIndex;
-    for (curCompIndex = 0; curCompIndex < Vertex::NUM_VERTEX_COMPONENTS; curCompIndex++)
+    int vertexIndex = 0;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
     {
-        int curMask = (1<<curCompIndex);
+        Vertex& vertex = this->GetVertexAt(vertexIndex);
+        int hasMask = vertex.GetComponentMask();
+        if (wantedMask != hasMask)
+        {
+            int compIndex;
+            for (compIndex = 0; compIndex < Vertex::NUM_VERTEX_COMPONENTS; compIndex++)
+            {
+                int curMask = (1 << compIndex);
+                if ((hasMask & curMask) && (!(wantedMask & curMask)))
+                {
+                    // delete the vertex component
+                    vertex.DelComponent((Vertex::Component) curMask);
+                }
+                else if ((!(hasMask & curMask)) && (wantedMask & curMask))
+                {
+                    // add the vertex component
+                    vertex.ZeroComponent((Vertex::Component) curMask);
+                }
+            }
+        }
+    }
+}
 
-        if ((hasMask & curMask) && (!(wantedMask & curMask)))
-        {
-            // delete the component array
-            int curVertex;
-            for (curVertex = 0; curVertex < numVertices; curVertex++)
-            {
-                this->GetVertexAt(curVertex).DelComponent((Vertex::Component) curMask);
-            }
-        }
-        else if ((!(hasMask & curMask)) && (wantedMask & curMask))
-        {
-            int curVertex;
-            for (curVertex = 0; curVertex < numVertices; curVertex++)
-            {
-                this->GetVertexAt(curVertex).ZeroComponent((Vertex::Component) curMask);
-            }
-        }
+//------------------------------------------------------------------------------
+/**
+    Copy one vertex component to another if source vertex component exists.
+    If source vertex component does not exist, do nothing.
+*/
+void
+nMeshBuilder::CopyVertexComponents(Vertex::Component from, Vertex::Component to)
+{
+    int numVertices = this->GetNumVertices();
+    int vertexIndex = 0;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+    {
+        this->GetVertexAt(vertexIndex).CopyComponentFromComponent(from, to);
     }
 }
 
@@ -459,7 +498,7 @@ nMeshBuilder::InflateCopyComponents(const nMeshBuilder& src, const nArray< nArra
         for (dstIndex = 0; dstIndex < dstNum; dstIndex++)
         {
             Vertex& dstVertex = this->GetVertexAt(collapsMap[srcIndex][dstIndex]);
-            dstVertex.ComponentCopy(srcVertex, compMask);
+            dstVertex.CopyComponentFromVertex(srcVertex, compMask);
 
         }
     }
@@ -467,10 +506,10 @@ nMeshBuilder::InflateCopyComponents(const nMeshBuilder& src, const nArray< nArra
 
 //------------------------------------------------------------------------------
 /**
-    Compute the bounding box of the mesh, filtered by a triangle group id
+    Compute the bounding box of the mesh, filtered by a triangle group id.
 */
 bbox3
-nMeshBuilder::ComputeGroupBBox(int groupId) const
+nMeshBuilder::GetGroupBBox(int groupId) const
 {
     bbox3 box;
     box.begin_extend();
@@ -489,6 +528,25 @@ nMeshBuilder::ComputeGroupBBox(int groupId) const
                 box.extend(this->GetVertexAt(index[i]).GetCoord());
             }
         }
+    }
+    return box;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Compute the bounding box of the complete mesh.
+*/
+bbox3
+nMeshBuilder::GetBBox() const
+{
+    bbox3 box;
+    box.begin_extend();
+
+    int numVertices = this->GetNumVertices();
+    int vertexIndex;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+    {
+        box.extend(this->GetVertexAt(vertexIndex).GetCoord());
     }
     return box;
 }
@@ -532,12 +590,21 @@ nMeshBuilder::CountVerticesInBBox(const bbox3& box) const
 
     @param  clipPlane       [in] a clip plane
     @param  groupId         [in] defines triangle group to split
-    @param  posGroupId      [in] group id to use for the positive group
-    @param  negGroupId      [in] group id to use for the negative group
+    @param  posGroupIndex       [in] group id to use for the positive group
+    @param  negGroupIndex       [in] group id to use for the negative group
+    @param  numPosTriangles     [out] resulting num of triangles in positive group
+    @param  numNegTriangles     [out] resulting num of triangles in negative group
 */
 void
-nMeshBuilder::Split(const plane& clipPlane, int groupId, int posGroupId, int negGroupId)
+nMeshBuilder::Split(const plane& clipPlane, 
+                    int groupId, 
+                    int posGroupId, 
+                    int negGroupId,
+                    int& numPosTriangles,
+                    int& numNegTriangles)
 {
+    numPosTriangles = 0;
+    numNegTriangles = 0;
     int numTriangles = this->GetNumTriangles();
     int triangleIndex;
     for (triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
@@ -568,11 +635,13 @@ nMeshBuilder::Split(const plane& clipPlane, int groupId, int posGroupId, int neg
         {
             // triangle entirely on positive side of clipPlane,
             tri.SetGroupId(posGroupId);
+            numPosTriangles++;
         }
         else if ((negCode == v0Code) && (negCode == v1Code) && (negCode == v2Code))
         {
             // triangle entirely on negative side of clipPlane
             tri.SetGroupId(negGroupId);
+            numNegTriangles++;
         }
         else
         {
@@ -653,6 +722,7 @@ nMeshBuilder::Split(const plane& clipPlane, int groupId, int posGroupId, int neg
                                             posVertexIndices[i + 2]);
                     this->AddTriangle(newTri);
                 }
+                numPosTriangles++;
             }
             newTri.SetGroupId(negGroupId);
             for (i = 0; i < (numNegVertexIndices - 2); i++)
@@ -661,6 +731,7 @@ nMeshBuilder::Split(const plane& clipPlane, int groupId, int posGroupId, int neg
                                         negVertexIndices[i + 1], 
                                         negVertexIndices[i + 2]);
                 this->AddTriangle(newTri);
+                numNegTriangles++;
             }
         }
     }
@@ -693,4 +764,53 @@ nMeshBuilder::BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) c
         vertexTriangleMap[i[1]].Append(triangleIndex);
         vertexTriangleMap[i[2]].Append(triangleIndex);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Flip vertical texture coordinates.
+*/
+void
+nMeshBuilder::FlipUvs()
+{
+    int numVertices = this->GetNumVertices();
+    int vertexIndex;
+    vector2 uv;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+    {
+        Vertex& v = this->GetVertexAt(vertexIndex);
+        int layer;
+        for (layer = 0; layer < 4; layer++)
+        {
+            if (v.HasComponent(Vertex::Component(Vertex::UV0 << layer)))
+            {
+                uv = v.GetUv(layer);
+                uv.y = 1.0f - uv.y;
+                v.SetUv(layer, uv);
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Or's the components of all vertices, and forces the whole
+    vertex pool to that mask. This ensures that all vertices
+    in the mesh builder have the same format.
+*/
+void
+nMeshBuilder::ExtendVertexComponents()
+{
+    // get or'ed mask of all vertex components
+    int numVertices = this->GetNumVertices();
+    int mask = 0;
+    int vertexIndex;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+    {
+        Vertex& v = this->GetVertexAt(vertexIndex);
+        mask |= v.GetComponentMask();
+    }
+
+    // extend all vertices to the or'ed vertex component mask
+    this->ForceVertexComponents(mask);
 }

@@ -11,6 +11,8 @@
        <dd>input mesh file (n3d, n3d2, nvx or nvx2 file)</dd>
      <dt>-out</dt>
        <dd>output mesh file (file extension defines output format)</dd>
+     <dt>-oldn3d2</dt>
+        <dd>use the the old (files saved before Dec-2003) n3d2 loader code</dd>
      <dt>-clean</dt>
        <dd>clean the mesh before anything else</dd>
      <dt>-tangent</dt>
@@ -61,6 +63,7 @@ main(int argc, const char** argv)
     bool helpArg               = args.GetBoolArg("-help");
     const char* inFileArg      = args.GetStringArg("-in", 0);
     const char* outFileArg     = args.GetStringArg("-out", 0);
+    bool oldN3d2Loader         = args.GetBoolArg("-oldn3d2");
     const char* appendFileArg  = args.GetStringArg("-append", 0);
     bool cleanArg              = args.GetBoolArg("-clean");
     bool tangentArg            = args.GetBoolArg("-tangent");
@@ -87,6 +90,7 @@ main(int argc, const char** argv)
                  "-help                 show this help\n"
                  "-in [filename]        input mesh file (.n3d, .n3d2, .nvx or .nvx2 extension)\n"
                  "-out [filename]       output mesh file (.n3d2 or .nvx2 extension)\n"
+                 "-oldn3d2              use the the old n3d2 loader code"
                  "-append [filename]    optional mesh file to append to input mesh\n"
                  "-clean                clean up mesh (removes redundant vertices)\n"
                  "-tangent              generate vertex tangents for per pixel lighting\n"
@@ -133,11 +137,25 @@ main(int argc, const char** argv)
 
     // read input mesh
     n_printf("-> loading mesh '%s'\n", inFileArg);
-    if (!mesh.Load(kernelServer->GetFileServer(), inFileArg))
+    nPathString filename = inFileArg;
+    if (oldN3d2Loader && (0 == strcmp(filename.GetExtension(), "n3d2")))
     {
-        n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
-        delete kernelServer;
-        return 5;
+        n_printf("-> using load n3d2 loader code\n");
+        if (!mesh.LoadOldN3d2(kernelServer->GetFileServer(), inFileArg))
+        {
+            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
+            delete kernelServer;
+            return 5;
+        }
+    }
+    else
+    {
+        if (!mesh.Load(kernelServer->GetFileServer(), inFileArg))
+        {
+            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
+            delete kernelServer;
+            return 5;
+        }
     }
 
     // read optional append mesh
@@ -189,7 +207,7 @@ main(int argc, const char** argv)
     {
         n_printf("-> generating tangents...\n");
         mesh.BuildTriangleNormals();
-        mesh.BuildVertexTangentBinormals();
+        mesh.BuildVertexTangents();
     }
 
     // FIXME: group renaming

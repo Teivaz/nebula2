@@ -72,7 +72,7 @@ nSkinPartitioner::PartitionMesh(nMeshBuilder& srcMesh,
             Partition newPartition(&srcMesh, maxJointPaletteSize, triangle.GetGroupId());
             triangleAdded = newPartition.CheckAddTriangle(triIndex);
             n_assert(triangleAdded);
-            this->partitionArray.PushBack(newPartition);
+            this->partitionArray.Append(newPartition);
         }
     }
 
@@ -100,7 +100,7 @@ nSkinPartitioner::BuildDestMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh)
         const Partition& partition = this->partitionArray[partitionIndex];
         
         // record the original group id in the groupMapArray
-        this->groupMappingArray.PushBack(partition.GetGroupId());
+        this->groupMappingArray.Append(partition.GetGroupId());
 
         // transfer the partition vertices and triangles
         int i;
@@ -118,15 +118,13 @@ nSkinPartitioner::BuildDestMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh)
             {
                 const nMeshBuilder::Vertex& v = srcMesh.GetVertexAt(origVertexIndex[triPoint]);
 
-                // convert the global joint indices to partition-local joint indices,
-                // and multiply them by 3 to get direct vertex shader constant indices
-                // (not matrix indices)
+                // convert the global joint indices to partition-local joint indices
                 const vector4& globalJointIndices = v.GetJointIndices();
                 vector4 localJointIndices;
-                localJointIndices.x = 3 * float(partition.GlobalToLocalJointIndex(int(globalJointIndices.x)));
-                localJointIndices.y = 3 * float(partition.GlobalToLocalJointIndex(int(globalJointIndices.y)));
-                localJointIndices.z = 3 * float(partition.GlobalToLocalJointIndex(int(globalJointIndices.z)));
-                localJointIndices.w = 3 * float(partition.GlobalToLocalJointIndex(int(globalJointIndices.w)));
+                localJointIndices.x = float(partition.GlobalToLocalJointIndex(int(globalJointIndices.x)));
+                localJointIndices.y = float(partition.GlobalToLocalJointIndex(int(globalJointIndices.y)));
+                localJointIndices.z = float(partition.GlobalToLocalJointIndex(int(globalJointIndices.z)));
+                localJointIndices.w = float(partition.GlobalToLocalJointIndex(int(globalJointIndices.w)));
 
                 // add the vertex to the destination mesh and correct the joint indices
                 newVertexIndex[triPoint] = dstMesh.GetNumVertices();
