@@ -8,42 +8,49 @@
     A session server manages all necessary information about a network
     session, and eventually configures and opens the actual game network server.
 
-    Session info broadcasting
-    =========================
+    <h2>Session info broadcasting</h2>
+
     An open session server periodically broadcasts its presence
     into the LAN approx once per second. The broadcast is sent on 
-    the nIpcAddress "self:BroadcastAPPNAME", where APPNAME is the 
+    the nIpcAddress <tt>self:BroadcastAPPNAME</tt>, where @c APPNAME is the 
     application name set via nSessionServer::SetAppName(). The message 
     is a normal string of the following format:
 
+@verbatim
     "~session Guid AppName AppVersion IpAddress IpPort"
+@endverbatim
 
     The guid is a unique session id understood by the Nebula nGuid
-    class. Appname and Appversion are the respective application
+    class. @c Appname and @c Appversion are the respective application
     id strings set by nSessionServer::SetAppName() and 
     nSessionServer::SetAppVersion(). Potential clients which
     want to know more about the session should initiate a
     normal nIpcServer/nIpcClient connection to the session server
-    using the IpAddress and IpPort fields of the session broadcast message.
+    using the @c IpAddress and @c IpPort fields of the session broadcast
+    message.
 
-    Protocol spec:
-    ==============
+    <h2>Protocol spec:</h2>
+
     Once a potential client has found out about a session server by
     listening on the above broadcast message it may establish a 
     nIpcServer/nIpcClient connection to get a reliable communication 
     channel with the server and implement the following protocol:
 
+@verbatim
     ---
     client: "~queryserverattrs"
     server: ---
+@endverbatim
 
     This message is sent by a new client to obtain a copy of the current
-    server attributes. The server will reply with "~serverattr" messages
-    to that client (see below).
+    server attributes. The server will reply with <tt>~serverattr</tt>
+    messages to that client (see below).
 
+@verbatim
     ---
     server: "~serverattr AttrName [AttrValue]"
     client: ---
+@endverbatim
 
     This message is sent by the server to all connected clients
     as soon as a refresh of one or more server attributes is necessary. 
@@ -52,81 +59,95 @@
     is totally up to the application which server attributes it defines.
     The server does not expect an answer from the clients.
 
+@verbatim
     ---
     server: "~closesession"
     client: ---
+@endverbatim
 
     This message is sent by the server to all connected clients when
     the session is going to be closed/cancelled. This means the session
     will no longer exists. If a game is started from the session, all
-    connected non-joined clients will receive a "~closesession" message,
-    while all joined clients will receive a "~start" message from the
-    server.
+    connected non-joined clients will receive a <tt>~closesession</tt>
+    message, while all joined clients will receive a <tt>~start</tt>
+    message from the server.
 
+@verbatim
     ---
     server: "~start IpAddress IpPort"
     client: ---
+@endverbatim
 
     This message is sent by the server to all connected clients when
-    the game session is about to start. The provided IpcAddress is
+    the game session is about to start. The provided @c IpcAddress is
     the address of the GameServer which the client should contact
-    right after receiving the "~start" message from the session
+    right after receiving the <tt>~start</tt> message from the session
     server. The session server itself will stop its duty after
-    the "~start" message has been sent, as the GameServer will
+    the <tt>~start</tt> message has been sent, as the GameServer will
     take over from here on.
 
+@verbatim
     ---
     client: "~joinsession clientGuid"
     server: "~joinaccepted" OR
             "~joindenied"
+@endverbatim
 
     This message is sent by a client when it wants to join a session.
-    The server responds either with a "~joinaccepted clientName"
-    message, where clientName is a string which identifies the client
-    for later communication, or a "~joindenied" message, the most
-    common reason for "~joindenied" is that the session was full.
+    The server responds either with a <tt>~joinaccepted clientName</tt>
+    message, where @c clientName is a string which identifies the client
+    for later communication, or a <tt>~joindenied</tt> message, the most
+    common reason for <tt>~joindenied</tt> is that the session was full.
 
+@verbatim
     ---
     client: "~clientattr clientGuid AttrName [AttrValue]"
     server: ---
+@endverbatim
 
     This message is sent by joined clients to the server when a client attribute
     needs a refresh, or right after a session is joined. Client attributes
-    contain client specific data like PlayerName, PlayerColor. It is totally
-    up to the application which data is defined as client attribute.
+    contain client specific data like @c PlayerName, @c PlayerColor. It is
+    totally up to the application which data is defined as client attribute.
 
     The server will convert client attributes to server attributes, which then
     get automatically distributed to all clients. The server will prefix
-    the client attribute's name with a ClientX_ prefix, where X is a
+    the client attribute's name with a @c ClientX_ prefix, where X is a
     number from 0 to (MaxClients - 1).
     
+@verbatim
     ---
     server: "~kick"
     client: ---
+@endverbatim
 
     This message is sent by the server to a joined client which has
     been kicked from the session by the host player. The client
-    should simply reply with a ~leavesession clientGuid" message.
+    should simply reply with a <tt>~leavesession clientGuid</tt> message.
     
+@verbatim
     ---
     client: "~leavesession clientGuid"
     server: ---
+@endverbatim
 
     This message is sent by a joined client to the server when it
     wants to leave the session. The client will still receive
-    "~serverattr" messages from the server, but no longer join-specific
+    <tt>~serverattr</tt> messages from the server, but no longer join-specific
     messages.
 
+@verbatim
     ---
     NOT YET IMPLEMENTED
 
     server: "~ping clientGuid"
     client: "~pong clientGuid"
+@endverbatim
 
     This is a keepalive message which the server sends to every joined
     client every few seconds just to keep the connection alive. The
-    client should respond with a "~pong clientId" message. If no messages
-    arrive for at least 10 seconds on the either the server or the
+    client should respond with a <tt>~pong clientId</tt> message. If no
+    messages arrive for at least 10 seconds on the either the server or the
     client side, the connection should be considered dead by both sides.
 
     (C) 2003 RadonLabs GmbH

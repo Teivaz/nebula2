@@ -5,11 +5,12 @@
     @class nSessionClient
     @ingroup Network
 
-    A session client object can discover open sessions in a LAN, join
-    an open session and get information about the session from
-    the session server. When the session is started by the session
-    server, the session client will configure and open the local
-    game client object.
+    @brief  A session client object can discover open sessions in a LAN,
+    join an open session and get information about the session from
+    the session server.
+
+    When the session is started by the session server, the session client
+    will configure and open the local game client object.
     
     (C) 2003 RadonLabs GmbH
 */

@@ -4,8 +4,7 @@
 /**
     @class nSessionAttrPool
     @ingroup Network
-
-    An attribute pool class for the network subsystem.
+    @brief An attribute pool class for the network subsystem.
     
     (C) 2003 RadonLabs GmbH
 */
