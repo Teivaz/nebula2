@@ -225,7 +225,7 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nguihorislidergroup
     setdir gui
-    setfiles { nguihorislidergroup_main }
+    setfiles { nguihorislidergroup_main nguihorislidergroup_cmds }
     setheaders nguihorislidergroup
 endmodule
 #--------------------------------------------------------------------
