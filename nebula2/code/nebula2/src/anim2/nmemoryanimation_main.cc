@@ -126,7 +126,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
             n_assert(typeString);
             if (0 != strcmp(typeString, "nanim2"))
             {
-                n_error("nMemoryAnimation::LoadNanim2(): Invalid type %s, must be 'nanim2'\n", filename, typeString);
+                n_error("nMemoryAnimation::LoadNanim2(): File %s has invalid type %s, must be 'nanim2'\n", filename, typeString);
                 file->Close();
                 file->Release();
                 return false;
