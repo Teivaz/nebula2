@@ -14,10 +14,8 @@ class nOctSphere : public nOctVisitor
 {
 public:
     virtual void DoCulling (nOctree* oct);
-
     void SetSphere(const sphere& sphere);
     const sphere& GetSphere();
-
 private:
     void recurse_collect_by_sphere(nOctree* octree, 
                                    nOctNode* on, 

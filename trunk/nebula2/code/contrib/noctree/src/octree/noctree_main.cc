@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nOctree
 //-------------------------------------------------------------------
 //  noctree_main.cc
 //  (C) 1999 A.Weissflog

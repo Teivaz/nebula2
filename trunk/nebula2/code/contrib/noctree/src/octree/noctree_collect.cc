@@ -1,9 +1,7 @@
-#define N_IMPLEMENTS nOctree
 //-------------------------------------------------------------------
 //  noctree_collect.cc
 //  (C) 1999 A.Weissflog
 //-------------------------------------------------------------------
-#include "kernel/nkernelserver.h"
 #include "kernel/nenv.h"
 #include "octree/noctvisitor.h"
 #include "octree/noctree.h"

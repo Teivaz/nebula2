@@ -17,7 +17,6 @@ public:
 
     void SetBBox (const bbox3& bbox);
     const bbox3& GetBBox ();
-
 private:
     void recurse_collect_by_bbox (nOctree* octree, nOctNode *on);
     void collect_nodes_in_bbox(nOctree* octree, nOctNode *on);
