@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFileTimePosix
+    @ingroup File
 
     Implement POSIX nFileTime class. Please use the platform neutral
     nFileTime class for indirect access to _nFileTimePosix.
