@@ -42,12 +42,18 @@ source $home/buildsys/compilerapi.tcl
 source $home/buildsys/helperfunctions.tcl
 
 # set default verbosity level
-# allow all
-::log::lvSuppressLE emergency 0
-if (!$verbose) {
-    # suppress debug
-    ::log::lvSuppressLE debug 1
+proc configure_log_suppression {} {
+    global verbose
+
+    # allow all
+    ::log::lvSuppressLE emergency 0
+    if (!$verbose) {
+        # suppress debug
+        ::log::lvSuppressLE debug 1
+    }
 }
+
+configure_log_suppression
 
 set platform [get_platform]
 
@@ -70,6 +76,9 @@ proc configure_gui {} {
     .window.menubar add cascade -label Run -menu .window.menubar.run \
         -underline 0
     menu .window.menubar.run -tearoff 0
+    .window.menubar.run add checkbutton -label "Verbose" -underline 0 \
+        -variable verbose
+    .window.menubar.run add separator
     .window.menubar.run add command -label "Select Compiler..." -underline 7 \
         -command { select_generator }
     .window.menubar.run add command -label "Select Workspaces..." -underline 7 \
@@ -120,6 +129,8 @@ proc list_workspaces {} {
     global num_wspaces
     global wspace
 
+    configure_log_suppression
+
     if { $data_loaded == false } {
         load_data
     }
@@ -134,6 +145,8 @@ proc list_workspaces {} {
 
 proc list_generators {} {
     global usegui
+
+    configure_log_suppression
 
     set generator_info [get_generator_info]
 
@@ -150,6 +163,8 @@ proc select_workspaces {} {
     global wspace
     global num_wspaces
     global chosen_workspaces
+
+    configure_log_suppression
 
     if { $data_loaded == false } {
         load_data
@@ -226,6 +241,8 @@ proc select_generator {} {
     global buildgen
     global usegui
 
+    configure_log_suppression
+
     set generator_info [get_generator_info]
 
     if {[winfo exists .generators]} {
@@ -292,6 +309,8 @@ proc select_generator {} {
 proc run_buildsystem {} {
     global buildgen
     global chosen_workspaces
+
+    configure_log_suppression
 
     if {[catch {run_buildsystem_worker $chosen_workspaces $buildgen} result]} {
         global errorInfo
@@ -384,6 +403,7 @@ while {$i < $argc} {
         list_generators
     } elseif {[lindex $argv $i] == "-verbose"} {
         set verbose true
+        ::log::lvSuppressLE debug 0
     } elseif {[lindex $argv $i] == "-gui"} {
         set usegui true
     } else {
