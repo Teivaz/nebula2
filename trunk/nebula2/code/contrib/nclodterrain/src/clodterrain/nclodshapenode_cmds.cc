@@ -53,7 +53,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setdetailtexture_is",         'SDTX', n_setdetailtexture);
     cl->AddCmd("v_enddetailtextures_v",         'EDTX', n_enddetailtextures);
     cl->AddCmd("v_setdetailscale_f",            'SDSC', n_setdetailscale);
-    cl->AddCmd("f_getdetailscale_n",            'GDSC', n_getdetailscale);
+    cl->AddCmd("f_getdetailscale_v",            'GDSC', n_getdetailscale);
     cl->EndCmds();
 }
 
