@@ -117,7 +117,7 @@ proc emit_vcproj_config {name cid debug} {
         puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
         puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
         puts $cid "\t\t\t\tMinimalRebuild=\"TRUE\""
-        puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
+        puts $cid "\t\t\t\tBasicRuntimeChecks=\"3\""
         puts $cid "\t\t\t\tRuntimeLibrary=\"1\""
         puts $cid "\t\t\t\tUsePrecompiledHeader=\"0\""
         #puts $cid "\t\t\t\tObjectFile=\"$idir\\$name\\\""
@@ -340,8 +340,8 @@ proc gen_sln { name } {
 
     puts $cid "Global"
     puts $cid "\tGlobalSection(SolutionConfiguration) = preSolution"
-    puts $cid "\t\tDebug_Win32 = Debug_Win32"
-    puts $cid "\t\tRelease_Win32 = Release_Win32"
+    puts $cid "\t\tDebug = Debug"
+    puts $cid "\t\tRelease = Release"
     puts $cid "\tEndGlobalSection"
     
     # Configurations
@@ -350,10 +350,10 @@ proc gen_sln { name } {
         if {[test_tarplatform $target $platform]} {
             continue
         }
-        puts $cid "\t\t{$targetuuids($target)}.Debug_Win32.ActiveCfg = Debug|Win32"
-        puts $cid "\t\t{$targetuuids($target)}.Debug_Win32.Build.0 = Debug|Win32"
-        puts $cid "\t\t{$targetuuids($target)}.Release_Win32.ActiveCfg = Release|Win32"
-        puts $cid "\t\t{$targetuuids($target)}.Release_Win32.Build.0 = Release|Win32"
+        puts $cid "\t\t{$targetuuids($target)}.Debug.ActiveCfg = Debug|Win32"
+        puts $cid "\t\t{$targetuuids($target)}.Debug.Build.0 = Debug|Win32"
+        puts $cid "\t\t{$targetuuids($target)}.Release.ActiveCfg = Release|Win32"
+        puts $cid "\t\t{$targetuuids($target)}.Release.Build.0 = Release|Win32"
     }
     
     puts $cid "\tEndGlobalSection"
