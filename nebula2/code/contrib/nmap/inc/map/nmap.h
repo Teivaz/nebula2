@@ -83,6 +83,7 @@ public:
     virtual void LoadMap();
 
 private:
+    int ClampToBounds( int coord ) const;
     bool LoadFromImage(const char* abs_path);
     void CalculateNormals();
     float Interpolate(float f, float a, float b) const;
