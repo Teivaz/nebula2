@@ -16,7 +16,7 @@
 MapBlock::MapBlock(nMapNode* m) :
     map(m),
     blockSize(map->GetBlockSize()),
-    minD2(n_new float[map->GetNumMipMapLevels()]),
+    minD2(n_new_array(float, map->GetNumMipMapLevels())),
     boundingBox(),
     isVisible(false),
     currentLevel(0),
@@ -39,12 +39,12 @@ MapBlock::~MapBlock()
     // Assume someone else has removed it for us
     if (quadElement)
     {
-        n_delete quadElement;
+        n_delete(quadElement);
     }
 
     if (minD2)
     {
-        delete[] minD2;
+        n_delete_array(minD2);
     }
 }
 
@@ -447,7 +447,7 @@ MapBlock::GetQuadElement()
 {
     if (!quadElement)
     {
-        quadElement = n_new MapQuadElement(this);
+        quadElement = n_new(MapQuadElement(this));
     }
 
     return quadElement;

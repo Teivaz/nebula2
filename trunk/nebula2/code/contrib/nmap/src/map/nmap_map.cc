@@ -66,9 +66,9 @@ nMap::LoadFromImage(const nString& abs_path)
         mapDimension = w;
         if (pointData)
         {
-            delete[] pointData;
+            n_delete_array(pointData);
         }
-        pointData = n_new MapPoint[mapDimension * mapDimension];
+        pointData = n_new_array(MapPoint, mapDimension * mapDimension);
 
         // allocate a line buffer for pixelformat conversion
         uchar* line_buf = (uchar*)n_malloc(w*3+4);

@@ -60,7 +60,7 @@ bool nImageFile::Open(const char *fname, const char *mode)
 void nImageFile::Close(void)
 {
     if (this->pf) {
-        n_delete this->pf;
+        n_delete(this->pf);
         this->pf = NULL;
     }
     if (this->fp) {
@@ -128,7 +128,7 @@ int nImageFile::GetHeight(void)
 void nImageFile::SetPixelFormat(int bpp, nPalEntry *pal)
 {
     n_assert(NULL == this->pf);
-    this->pf = n_new nPixelFormat(bpp,pal);
+    this->pf = n_new(nPixelFormat(bpp, pal));
 }
 
 //-------------------------------------------------------------------
@@ -139,7 +139,7 @@ void nImageFile::SetPixelFormat(int bpp, nPalEntry *pal)
 void nImageFile::SetPixelFormat(int bpp, int r_mask, int g_mask, int b_mask, int a_mask)
 {
     n_assert(NULL == this->pf);
-    this->pf = n_new nPixelFormat(bpp,r_mask,g_mask,b_mask,a_mask);
+    this->pf = n_new(nPixelFormat(bpp, r_mask, g_mask, b_mask, a_mask));
 }
 
 //-------------------------------------------------------------------
