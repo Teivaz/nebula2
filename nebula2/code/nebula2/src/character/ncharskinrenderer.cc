@@ -34,7 +34,7 @@ nCharSkinRenderer::Begin(nGfxServer2* gfxServer,
     this->inBegin = true;
 
     // set the current mesh in the gfx server
-    gfxServer->SetMesh(0, mesh);
+    gfxServer->SetMesh(mesh);
 
     // get the current shader from the gfx server
     this->shader = gfxServer->GetShader();
@@ -82,5 +82,5 @@ nCharSkinRenderer::Render(int meshGroupIndex, const nCharJointPalette& jointPale
     const nMeshGroup& meshGroup = this->mesh->GetGroup(meshGroupIndex);
     this->gfxServer->SetVertexRange(meshGroup.GetFirstVertex(), meshGroup.GetNumVertices());
     this->gfxServer->SetIndexRange(meshGroup.GetFirstIndex(), meshGroup.GetNumIndices());
-    this->gfxServer->DrawIndexed(TriangleList);
+    this->gfxServer->DrawIndexedNS(nGfxServer2::TriangleList);
 }

@@ -164,13 +164,13 @@ nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
     n_assert(this->refMesh->IsValid());
 
     // render the mesh in normal mode (always at stream 0)
-    gfx->SetMesh(0, this->refMesh.get());
+    gfx->SetMesh(this->refMesh.get());
 
     // set the vertex and index range
     const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
     gfx->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfx->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
-    gfx->DrawIndexed(TriangleList);
+    gfx->DrawIndexedNS(nGfxServer2::TriangleList);
     return true;
 }
 
