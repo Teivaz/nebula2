@@ -1,0 +1,6 @@
+/*
+**  Windows Resource File for Nebula2
+**
+**  (C) 2002 RadonLabs GmbH
+*/
+nebula_icon ICON "../../../bin/win32/nebula.ico"
