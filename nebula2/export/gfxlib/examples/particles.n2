@@ -1,0 +1,42 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+.setlockviewer false
+.setactive true
+.setposition 0.000000 0.000000 0.000000
+.seteuler 0.000000 90.000000 0.000000
+.setscale 1.000000 1.000000 1.000000
+ 
+new nparticleshapenode particletest
+    sel particletest
+    .setactive true
+    .setlockviewer false
+
+    .setmesh "meshes:examples/plane.n3d2"
+    .setgroupindex 0
+    
+    .setshader "colr" "shaders:particle_blended.fx"
+    
+    .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+    .settexture "DiffMap0" "textures:examples/dot.dds"
+    
+    .setemissionduration 100.0
+    .setloop true
+    .setspreadangle 20.0
+    .setactivitydistance 100.0
+    
+    .setemissionfrequency         50.0 50.0 50.0 50.0  0.25  0.75 20.0 0.25 0
+    .setparticlelifetime          5.0  5.0  5.0  5.0   0.25  0.75 10.0 0.0  0
+    .setparticlestartvelocity     2.0  2.0  2.0  2.0   0.25  0.75 1.0  0.0  0
+    .setparticlerotationvelocity  60.0 60.0 60.0 60.0  0.25  0.75 1.0  0.0  0
+    .setparticlescale             0.2  0.2  0.75  2.0  0.25  0.75 1.0  0.0  0
+    .setparticleweight            1.0  1.0  1.0   1.0  0.25  0.75 1.0  0.0  0 
+    
+    .setparticlealpha             0.8  1.0  1.0   0.8  1.0  0.75 5.0  0.0  0
+    
+    #.setparticlesidevelocity1    
+    #.setparticlesidevelocity2    
+    #.setparticleairresistance
+    #.setparticlevelocityfactor
+    
+sel ..
