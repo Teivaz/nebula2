@@ -239,9 +239,9 @@ proc sort_mods_old { orig_list } {
     }
 
     #handle nRoot
-    set i [lsearch $mod_source "nroot"]
+    set i [lsearch $mod_source "nobject"]
     if {$i != -1} {
-        lappend mod_sorted "nroot"
+        lappend mod_sorted "nobject"
         set mod_source [lreplace $mod_source $i $i]
     }
 
