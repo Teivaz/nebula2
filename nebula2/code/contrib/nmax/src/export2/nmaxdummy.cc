@@ -5,24 +5,20 @@
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxdummy.h"
+#include "export2/nmaxbones.h"
 #include "export2/nmaxutil.h"
 #include "export2/nmaxcustattrib.h"
-
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "scene/ntransformnode.h"
 #include "scene/nlodnode.h"
-#include "tinyxml/tinyxml.h"
+#include "scene/nattachmentnode.h"
 
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxDummy::nMaxDummy() :
-    isLOD(false),
-    threshold(100.0f),
-    minDistance(-100.0f),
-    maxDistance(100.0f)
+nMaxDummy::nMaxDummy()
 {
 }
 
@@ -35,51 +31,43 @@ nMaxDummy::~nMaxDummy()
 
 //-----------------------------------------------------------------------------
 /**
+    @note 
+        Do not create more than one nSceneNode derived node from the given node.
 */
 nSceneNode* nMaxDummy::Export(INode* inode)
 {
     nSceneNode* createdNode = 0;
 
-    if (this->GetCustAttrib(inode))
+    createdNode = this->CreateNodeFromCustAttrib(inode);
+
+    if (createdNode)
     {
         n_maxlog(Midium, "%s node has custom attributes.", inode->GetName());
     }
-
-    // the node is group owner node.
-    if (inode->IsGroupHead())
+    else
     {
-        //If this node is a group owner node(this is a dummy node in max), add a transform node,
-        //so we can handle the group complete later)
-        nTransformNode* transformNode;
-        //transformNode = static_cast<nTransformNode*>(nMaxSceneObjFactory::Create(inode->GetName(), "ntransformnode"));
-        transformNode = static_cast<nTransformNode*>(CreateNebulaObject("ntransformnode", inode->GetName()));
-        if (transformNode)
+        // special case of a dummy node.
+        if (inode->IsGroupHead())
         {
-            // transform.
+            // the node is group owner node.
+            // If this node is a group owner node(this is a dummy node in max), add 
+            // a transform node, so we can handle the group complete later)
+            nTransformNode* transformNode;
+            transformNode = static_cast<nTransformNode*>(CreateNebulaObject("ntransformnode", 
+                                                                            inode->GetName()));
+            createdNode = transformNode;
         }
-
-        createdNode = transformNode;
     }
-
-    // the node is LOD dummy node.
-    if (this->isLOD)
-    {
-        nLodNode* lodNode = static_cast<nLodNode*>(CreateNebulaObject("nlodnode", inode->GetName()));
-        
-        lodNode->AppendThreshold(this->threshold);
-        lodNode->SetMinDistance(this->minDistance);
-        lodNode->SetMaxDistance(this->maxDistance);
-
-        createdNode = lodNode;
-    }
-
+    
     return createdNode;
 }
 
 //-----------------------------------------------------------------------------
 /**
+    Creates Nebula node from the given node which has corresponding custom
+    attributes for the node.
 */
-bool nMaxDummy::GetCustAttrib(INode* inode)
+nSceneNode*  nMaxDummy::CreateNodeFromCustAttrib(INode* inode)
 {
     TiXmlDocument xmlDoc;
 
@@ -87,7 +75,7 @@ bool nMaxDummy::GetCustAttrib(INode* inode)
     if (!obj)
     {
         n_maxlog(Midium, "The node %s has no object.", inode->GetName());
-        return false;
+        return NULL;
     }
 
     // convert node custom attributes to xml data.
@@ -95,51 +83,145 @@ bool nMaxDummy::GetCustAttrib(INode* inode)
     if (!custAttrib.Convert(obj, xmlDoc))
     {
         n_maxlog(Midium, "The node %s has no custom attribute.", inode->GetName());
-        return false;
+        return NULL;
     }
 
     TiXmlHandle xmlHandle(&xmlDoc);
 
     TiXmlElement* e;
+    nSceneNode* createdNode = NULL;
 
-    // parameter name of LOD
-    const char* lodParamName = "LodParam";
-
-    e = xmlHandle.FirstChild(lodParamName).Element();
-    if (e)
+    if (e = xmlHandle.FirstChild("LodParam").Element())
     {
-        this->isLOD = true;
+        createdNode = ExportLODNode(inode, xmlHandle, "LodParam");
+    }
+    else
+    if (e = xmlHandle.FirstChild("AttachParam").Element())
+    {
+        createdNode = ExportAttachmentNode(inode, xmlHandle, "AttachParam");
+    }
+    else
+    {
+        // the given node has unknown custom attribute.
+        n_maxlog(Warning, "Warning: The dummy node '%s' has unknown custom attributes.", inode->GetName());
+    }
 
+    return createdNode;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    The given node has custom attributes for LOD node so, create nLodNode from
+    its custom attributes.
+*/
+nSceneNode* nMaxDummy::ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName)
+{
+    nString objectname = inode->GetName();
+    objectname += nMaxUtil::CorrectName(objectname);
+
+    nLodNode* lodNode = static_cast<nLodNode*>(CreateNebulaObject("nlodnode", objectname.Get()));
+    if (lodNode)
+    {
         TiXmlElement* child;
 
         double value;
 
         // get the mesh type
-        child = xmlHandle.FirstChild(lodParamName).FirstChild("threshold").Child("", 0).Element();
+        child = xmlHandle.FirstChild(paramName).FirstChild("threshold").Child("", 0).Element();
         if (child)
         {
             child->Attribute("value", &value);
-            this->threshold = (float)value;
+
+            // specifies LOD treshold.
+            lodNode->AppendThreshold((float)value);
         }
 
-        child = xmlHandle.FirstChild(lodParamName).FirstChild("mindistance").Child("", 0).Element();
+        child = xmlHandle.FirstChild(paramName).FirstChild("mindistance").Child("", 0).Element();
         if (child)
         {
             child->Attribute("value", &value);
-            this->minDistance = (float)value;
+
+            // specifies LOD min distance.
+            lodNode->SetMinDistance((float)value);
         }
 
-        child = xmlHandle.FirstChild(lodParamName).FirstChild("maxdistance").Child("", 0).Element();
+        child = xmlHandle.FirstChild(paramName).FirstChild("maxdistance").Child("", 0).Element();
         if (child)
         {
             child->Attribute("value", &value);
-            this->maxDistance = (float)value;
+            lodNode->SetMaxDistance((float)value);
         }
     }
     else
     {
-        ;
+        n_maxlog(Error, "Error: Failed to create LOD node for the dummy node '%s'.", inode->GetName());
     }
 
-    return true;
+    return lodNode;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    The given node has custom attributes for attachment node so, create 
+    nAttachmentNode from its custom attributes.
+*/
+nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName)
+{
+    nSceneNode* createdNode = NULL;
+
+    TiXmlElement* child;
+
+    if (child = xmlHandle.FirstChild(paramName).FirstChild("attachmentnode").Child("", 0).Element())
+    {
+        int isAttached = 0;
+        child->Attribute("value", &isAttached);
+
+        if (isAttached)
+        {
+            nString objectname;
+            objectname += nMaxUtil::CorrectName(inode->GetName());
+
+            nAttachmentNode* attachNode = static_cast<nAttachmentNode*>(CreateNebulaObject("nattachmentnode",
+                objectname.Get()));
+            if (attachNode)
+            {
+                INode* parent = inode->GetParentNode();
+                if (parent)
+                {
+                    // the parent node of the given node should be any one of the bone nodes,
+                    int boneID = nMaxBoneManager::Instance()->FindBoneIDByNode(parent);
+                    if (boneID >= 0)
+                    {
+                        //specifies a created attachment node.
+                        //attachNode->SetSkinAnimator("../skinanimator");
+                        //attachNode->SetJointByIndex(boneID);
+                    }
+                    else
+                    {
+                        n_maxlog(Warning, "Warning:  The attachment node %s should be child node of any other bone node.",
+                            inode->GetName());
+
+                        nKernelServer::Instance()->PopCwd();
+                        attachNode->Release();
+                    }
+                }
+                else
+                {
+                    n_maxlog(Midium, "The attachment node %s has no parent node. It is deleted.", inode->GetName());
+
+                    nKernelServer::Instance()->PopCwd();
+                    attachNode->Release();
+                    attachNode = 0;
+                }
+                createdNode = attachNode;
+            }
+        }
+        else
+        {
+            n_maxlog(Error, "Error: Failed to create attchment node for the dummy node '%s'.", inode->GetName());
+        }
+    }
+    //HACK: may need any other type of a attachment node
+
+    return createdNode;
 }
