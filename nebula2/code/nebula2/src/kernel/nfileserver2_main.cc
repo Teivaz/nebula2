@@ -7,7 +7,13 @@
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
 #include "util/npathstring.h"
+#ifdef __WIN32__
 #include <direct.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 #if defined(__MACOSX__)
 #include <Carbon/carbon.h>
 #endif
@@ -412,7 +418,11 @@ nFileServer2::MakePath(const char* dirName)
     for (i = pathStack.Size() - 1; i >= 0; --i)
     {
         const nPathString& curPath = pathStack[i];
-        int err = _mkdir(curPath.Get());
+        #ifdef __WIN32__
+            int err = _mkdir(curPath.Get());
+        #else
+            int err = mkdir(curPath.Get(), S_IRWXU|S_IRWXG);
+        #endif
         if (-1 == err)
         {
             return false;
@@ -487,6 +497,8 @@ nFileServer2::DeleteFile(const char* filename)
 
     #ifdef __WIN32__
         return ::DeleteFile(mangledPath) ? true : false;
+    #elif defined(__LINUX__)
+        return (0 == unlink(mangledPath)) ? true : false;
     #else
     #error "nFileServer2::DeleteFile() not implemented yet!"
     #endif
