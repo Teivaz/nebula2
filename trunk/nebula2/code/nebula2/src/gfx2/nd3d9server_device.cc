@@ -36,6 +36,17 @@ nD3D9Server::InitDeviceState()
 
     // update the device caps
     this->d3d9Device->GetDeviceCaps(&(this->devCaps));
+    // extract device identifier
+    D3DADAPTER_IDENTIFIER9 identifier;
+    HRESULT hr = this->d3d9->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &identifier);
+    n_dxtrace(hr, "nD3D9Server::InitDeviceState(): GetAdapterIdentifier() failed!");
+
+    if (0x8086 == identifier.VendorId && 0x2572 == identifier.DeviceId)
+    {
+        // Chip type: Intel(R) 82865G Graphics Controller
+        this->deviceIdentifier = Intel_82865G;
+        n_printf("Intel(R) 82865G Graphics Controller detected.\n");
+    }
 }
 
 //------------------------------------------------------------------------------
