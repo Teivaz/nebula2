@@ -133,7 +133,97 @@ int nOpendeWorld::GetQuickStepNumIterations()
     n_assert( this->id && "nOpendeWorld::id not valid!" );
     return nOpende::WorldGetQuickStepNumIterations( this->id );
 }
-        
+    
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetAutoDisableFlag( int do_auto_disable )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetAutoDisableFlag( this->id, do_auto_disable );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+int nOpendeWorld::GetAutoDisableFlag()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetAutoDisableFlag( this->id );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetAutoDisableLinearThreshold( float threshold )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetAutoDisableLinearThreshold( this->id, threshold );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+float nOpendeWorld::GetAutoDisableLinearThreshold()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetAutoDisableLinearThreshold( this->id );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetAutoDisableAngularThreshold( float threshold )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetAutoDisableAngularThreshold( this->id, threshold );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+float nOpendeWorld::GetAutoDisableAngularThreshold()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetAutoDisableAngularThreshold( this->id );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetAutoDisableSteps( int steps )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetAutoDisableSteps( this->id, steps );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+int nOpendeWorld::GetAutoDisableSteps()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetAutoDisableSteps( this->id );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetAutoDisableTime( float time )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetAutoDisableTime( this->id, time );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+float nOpendeWorld::GetAutoDisableTime()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetAutoDisableTime( this->id );
+}
+
 //----------------------------------------------------------------------------
 // EOF
 //----------------------------------------------------------------------------
