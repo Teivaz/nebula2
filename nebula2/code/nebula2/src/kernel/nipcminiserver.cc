@@ -177,7 +177,7 @@ nIpcMiniServer::Poll()
                 if (!systemMessage)
                 {
                     // a user message, add to msg list of thread
-                    nMsgNode *msgNode = new nMsgNode((void*) curString, strlen(curString) + 1);
+                    nMsgNode *msgNode = n_new(nMsgNode((void*) curString, strlen(curString) + 1));
                     msgNode->SetPtr((void*) this->clientId);
                     this->ipcServer->msgList.Lock();
                     this->ipcServer->msgList.AddTail(msgNode);

@@ -52,7 +52,7 @@
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         return true; \
     }; \
-    void* n_create() { return n_new CLASS(); };
+    void* n_create() { return n_new(CLASS()); };
 
 //------------------------------------------------------------------------------
 /**
@@ -75,7 +75,7 @@
         INITSTATICDATAFUNC(); \
         return true; \
     }; \
-    void* n_create() { return n_new CLASS(); };
+    void* n_create() { return n_new(CLASS()); };
 
 //------------------------------------------------------------------------------
 /**
@@ -102,7 +102,7 @@
         n_initcmds(clazz); \
         return true; \
     }; \
-    void* n_create() { return n_new CLASS(); };
+    void* n_create() { return n_new(CLASS()); };
 
 //------------------------------------------------------------------------------
 /**
@@ -127,7 +127,7 @@
         n_initcmds(clazz); \
         return true; \
     }; \
-    void* n_create() { return n_new CLASS(); };
+    void* n_create() { return n_new(CLASS()); };
 
 //------------------------------------------------------------------------------
 /**
@@ -150,7 +150,7 @@
         n_initcmds(clazz); \
         return true; \
     }; \
-    void* n_create() { return n_new CLASS(); };
+    void* n_create() { return n_new(CLASS()); };
 
 //------------------------------------------------------------------------------
 #endif

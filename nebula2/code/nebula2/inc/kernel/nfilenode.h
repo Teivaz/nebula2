@@ -2,6 +2,9 @@
 #define N_FILENODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nFileNode
+    @ingroup File
+
     An nFileNode wraps an nFile object into an nRoot subclass, and offers 
     a script interface to the file. This is useful for script languages
     which don't have file system access built in (like MicroTcl).

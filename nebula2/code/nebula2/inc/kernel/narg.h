@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nArg
+    @ingroup Kernel
 
     nArg encapsulates a typed argument (float, int, bool, string
     or object pointer) into a uniform C++ class.
@@ -119,14 +120,14 @@ nArg::Delete()
     else if (this->type == Matrix44)
     {
         n_assert(this->m44);
-        delete this->m44;
+        n_delete(this->m44);
         this->m44 = 0;
     }
     else if (this->type == List)
     {
         if (this->l)
         {
-            n_delete[] this->l;
+            n_delete_array(this->l);
             this->l = 0;
             this->listLen = 0;
         }
@@ -183,7 +184,7 @@ nArg::Copy(const nArg& rhs)
             this->Delete();
             if (rhs.l)
             {
-                this->l = n_new nArg[rhs.listLen];
+                this->l = n_new_array(nArg, rhs.listLen);
                 for (int i = 0; i < rhs.listLen; i++)
                 {
                     this->l[i].Copy(rhs.l[i]);
@@ -209,7 +210,7 @@ nArg::Copy(const nArg& rhs)
             }
             else
             {
-                this->m44 = new matrix44(*rhs.m44);
+                this->m44 = n_new(matrix44(*rhs.m44));
             }
             break;
     }
@@ -454,7 +455,7 @@ nArg::SetM44(const matrix44& _m44)
     }
     else
     {
-        this->m44 = new matrix44(_m44);
+        this->m44 = n_new(matrix44(_m44));
     }
     this->type = Matrix44;
 }

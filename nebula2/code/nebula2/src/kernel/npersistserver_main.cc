@@ -57,13 +57,13 @@ nPersistServer::GetSaveLevel(void)
     @return                 currently always true, breaks if object could not be created
 */
 bool
-nPersistServer::SetSaverClass(const char* saverClass)
+nPersistServer::SetSaverClass(const nString& saverClass)
 {
-    n_assert(saverClass);
+    n_assert(!saverClass.IsEmpty());
 
     // first check if the default script server matches this class
     nScriptServer* defaultServer = (nScriptServer*) kernelServer->Lookup("/sys/servers/script");
-    if (defaultServer && (strcmp(saverClass, defaultServer->GetClass()->GetName()) == 0))
+    if (defaultServer && (strcmp(saverClass.Get(), defaultServer->GetClass()->GetName()) == 0))
     {
         this->refSaver.set(0);
         this->refSaver = defaultServer;
@@ -71,11 +71,11 @@ nPersistServer::SetSaverClass(const char* saverClass)
     else
     {
         // otherwise check if a matching local script server already exists
-        nScriptServer* localServer = (nScriptServer*) this->Find(saverClass);
+        nScriptServer* localServer = (nScriptServer*) this->Find(saverClass.Get());
         if (!localServer)
         {
             kernelServer->PushCwd(this);
-            localServer = (nScriptServer*) kernelServer->New(saverClass, saverClass);
+            localServer = (nScriptServer*) kernelServer->New(saverClass.Get(), saverClass.Get());
             kernelServer->PopCwd();
         }
         n_assert(localServer);
@@ -89,7 +89,7 @@ nPersistServer::SetSaverClass(const char* saverClass)
 /**
     Get name of class which is currently used to save objects.
 */
-const char*
+nString
 nPersistServer::GetSaverClass()
 {
     return this->refSaver->GetClass()->GetName();

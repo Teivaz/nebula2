@@ -16,18 +16,7 @@
 
 nKernelServer *nKernelServer::ks = 0;
 
-// from nmemory.cc
-#ifdef __NEBULA_MEM_MANAGER__
-extern int n_memallocated;
-extern int n_memused;
-extern int n_memnumalloc;
-#endif
-
-// on static-linking platforms, a global n_addmodules() function must exist,
-// which adds all class modules to the kernel.
-#ifdef N_STATIC
-extern "C" void n_addmodules(nKernelServer*);
-#endif
+nNebulaUsePackage(nkernel);
 
 //------------------------------------------------------------------------------
 /**
@@ -255,11 +244,9 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
      - 20-Jan-00   floh    + no SetScriptServer() anymore
 */
 nKernelServer::nKernelServer() :
-#ifdef __NEBULA_MEM_MANAGER__
-    varMemAlloc(0),
-    varMemUsed(0),
-    varMemNumAlloc(0),
-#endif
+    varMemHighWaterSize(0),
+    varMemTotalSize(0),
+    varMemTotalCount(0),
     fileServer(0),
     persistServer(0),
     timeServer(0),
@@ -274,19 +261,22 @@ nKernelServer::nKernelServer() :
     // initialize static kernelserver pointer
     ks = this;
 
+    // initialize the debug memory system
+    n_dbgmeminit();
+
     // set the default log handler
     #ifdef __XBxX__
-        this->defaultLogHandler = new nLogHandler;
+        this->defaultLogHandler = n_new(nLogHandler);
     #else
-        this->defaultLogHandler = new nDefaultLogHandler;
+        this->defaultLogHandler = n_new(nDefaultLogHandler);
     #endif
     this->SetLogHandler(this->defaultLogHandler);
 
-    // initialize class modules on static link systems
-    n_addmodules(this);
+    // initialize the kernel package classes
+    this->AddPackage(nkernel);
 
     // create hard ref server
-    this->hardRefServer = n_new nHardRefServer;
+    this->hardRefServer = n_new(nHardRefServer);
     n_assert(this->hardRefServer);
 
     // create root object
@@ -301,12 +291,10 @@ nKernelServer::nKernelServer() :
     this->remoteServer  = (nRemoteServer*)  this->New("nremoteserver",  "/sys/servers/remote");
     this->timeServer    = (nTimeServer*)    this->New("ntimeserver",    "/sys/servers/time");
 
-    #ifdef __NEBULA_MEM_MANAGER__
-        // create status variables
-        this->varMemAlloc = (nEnv *) this->New("nenv","/sys/var/mem_alloc");
-        this->varMemUsed  = (nEnv *) this->New("nenv","/sys/var/mem_used");
-        this->varMemNumAlloc = (nEnv *) this->New("nenv","/sys/var/mem_num");
-    #endif
+    // create memory status variables
+    this->varMemHighWaterSize = (nEnv*) this->New("nenv", "/sys/var/mem_highwatersize");
+    this->varMemTotalSize     = (nEnv*) this->New("nenv", "/sys/var/mem_totalsize");
+    this->varMemTotalCount    = (nEnv*) this->New("nenv", "/sys/var/mem_totalcount");
 }
 
 //------------------------------------------------------------------------------
@@ -318,10 +306,12 @@ nKernelServer::nKernelServer() :
      - 26-Feb-99   floh    + kills MemHandler
      - 25-May-99   floh    + Stdout redirection
      - 07-Feb-00   floh    + more detailed shutdown messages
+     - 15-Sep-04   floh    + reset log handler at beginning of destructor
 */
 nKernelServer::~nKernelServer(void)
 {
     this->Lock();
+    this->SetLogHandler(0);
 
     // kill time and file server
     if (this->timeServer)
@@ -371,7 +361,7 @@ nKernelServer::~nKernelServer(void)
             {
                 numZeroRefs++;
                 actClass->Remove();
-                n_delete actClass;
+                n_delete(actClass);
             }
             actClass = nextClass;
         } while (actClass);
@@ -391,12 +381,12 @@ nKernelServer::~nKernelServer(void)
     }
 
     // kill the nHardRefServer
-    n_delete this->hardRefServer;
+    n_delete(this->hardRefServer);
     this->hardRefServer = 0;
 
     // delete default log handler
     this->SetLogHandler(0);
-    delete this->defaultLogHandler;
+    n_delete(this->defaultLogHandler);
     this->defaultLogHandler = 0;
 
     // reset static kernelserver pointer
@@ -459,13 +449,19 @@ nKernelServer::GetLogHandler() const
 void
 nKernelServer::Print(const char* str, ...)
 {
-    this->Lock();
-    n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
-    this->curLogHandler->Print(str, argList);
-    va_end(argList);
-    this->Unlock();
+    if (this->curLogHandler)
+    {
+        this->Lock();
+        this->curLogHandler->Print(str, argList);
+        this->Unlock();
+    }
+    else
+    {   
+        vprintf(str, argList);
+    }
+    va_end(argList);    
 }
 
 //------------------------------------------------------------------------------
@@ -477,13 +473,19 @@ nKernelServer::Print(const char* str, ...)
 void
 nKernelServer::Message(const char* str, ...)
 {
-    this->Lock();
-    n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
-    this->curLogHandler->Message(str, argList);
-    va_end(argList);
-    this->Unlock();
+    if (this->curLogHandler)
+    {
+        this->Lock();
+        this->curLogHandler->Message(str, argList);
+        this->Unlock();
+    }
+    else
+    {
+        vprintf(str, argList);
+    }
+    va_end(argList);    
 }
 
 //------------------------------------------------------------------------------
@@ -495,13 +497,19 @@ nKernelServer::Message(const char* str, ...)
 void
 nKernelServer::Error(const char* str, ...)
 {
-    this->Lock();
-    n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
-    this->curLogHandler->Error(str, argList);
-    va_end(argList);
-    this->Unlock();
+    if (this->curLogHandler)
+    {
+        this->Lock();
+        this->curLogHandler->Error(str, argList);
+        this->Unlock();
+    }
+    else
+    {   
+        vprintf(str, argList);
+    }
+    va_end(argList);    
 }
 
 //------------------------------------------------------------------------------
@@ -659,6 +667,7 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     n_assert(className && path);
     this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, false);
+    n_assert(o);
     this->Unlock();
     return o;
 }
@@ -792,13 +801,13 @@ nKernelServer::PopCwd()
 
      - 13-May-99   floh    created
 */
-void nKernelServer::Trigger(void)
+void nKernelServer::Trigger()
 {
-    #ifdef __NEBULA_MEM_MANAGER__
-        this->varMemAlloc->SetI(n_memallocated);
-        this->varMemUsed->SetI(n_memused);
-        this->varMemNumAlloc->SetI(n_memnumalloc);
-    #endif
+    // get memory statistics...
+    nMemoryStats memStats = n_dbgmemgetstats();
+    this->varMemHighWaterSize->SetI(memStats.highWaterSize);
+    this->varMemTotalSize->SetI(memStats.totalSize);
+    this->varMemTotalCount->SetI(memStats.totalCount);
 }
 
 //------------------------------------------------------------------------------
@@ -826,7 +835,7 @@ nKernelServer::AddModule(const char *name,
     nClass *cl = (nClass *) this->classList.Find(name);
     if (!cl)
     {
-        cl = n_new nClass(name, this, _init_func, _new_func);
+        cl = n_new(nClass(name, this, _init_func, _new_func));
         this->classList.AddTail(cl);
     }
     this->Unlock();

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuid
+    @ingroup Kernel
 
     Wraps a Globally Unique Identifier. Under Win32, this is a normal
     GUID. Other platform may implement something different. The actual

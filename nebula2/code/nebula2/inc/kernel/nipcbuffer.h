@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIpcBuffer
+    @ingroup Ipc
 
     A message buffer for the nIpc* class family. Note that a buffer
     is just a raw byte pool, especially buffers used for receiving

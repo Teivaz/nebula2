@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------=
 /**
     @class nIpcClient
+    @ingroup Ipc
 
     A nIpcClient object can connect to exactly one nIpcServer
     object over a socket and send messages to it, or receive messages

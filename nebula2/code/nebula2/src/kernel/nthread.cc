@@ -32,7 +32,7 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
     } 
     else 
     {
-        this->msgList = n_new nThreadSafeList;
+        this->msgList = n_new(nThreadSafeList);
         this->isExtMsgList = false;
     }
 
@@ -153,10 +153,10 @@ nThread::~nThread()
         this->msgList->Lock();
         while ((nd = (nMsgNode *) this->msgList->RemHead())) 
         {
-            n_delete nd;
+            n_delete(nd);
         }
         this->msgList->Unlock();
-        n_delete this->msgList;
+        n_delete(this->msgList);
     }
 #endif
 }
@@ -249,7 +249,7 @@ void
 nThread::ReplyMsg(nMsgNode *nd)
 {
 #ifndef __NEBULA_NO_THREADS__
-    n_delete nd;
+    n_delete(nd);
 #endif
 }
 
@@ -275,7 +275,7 @@ nThread::PutMsg(void* buf, int size)
 #ifndef __NEBULA_NO_THREADS__
     n_assert(buf);
     n_assert(size > 0);
-    nMsgNode *nd = n_new nMsgNode(buf, size);
+    nMsgNode *nd = n_new(nMsgNode(buf, size));
     this->msgList->Lock();
     this->msgList->AddTail(nd);
     this->msgList->Unlock();

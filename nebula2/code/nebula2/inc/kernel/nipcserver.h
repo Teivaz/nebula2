@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIpcServer
+    @ingroup Ipc
 
     Sockets based server object for simple ipc 
 

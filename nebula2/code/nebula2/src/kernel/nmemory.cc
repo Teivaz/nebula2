@@ -8,27 +8,14 @@
 
     (C) 1999 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 #if defined(__NEBULA_MEM_MANAGER__) || defined(DOXYGEN)
 
-#ifndef N_MUTEX_H
 #include "kernel/nmutex.h"
-#endif
-
-#ifndef N_LIST_H
 #include "util/nlist.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
-
-#ifndef N_KERNELSERVER_H
 #include "kernel/nkernelserver.h"
-#endif
 
 #undef n_malloc
 #undef n_calloc

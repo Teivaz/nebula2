@@ -5,7 +5,7 @@
     @class nFile
     @ingroup NebulaFileManagement
 
-    wrapper for file routines
+    @brief Wrapper class for accessing file system files.
 
     provides functions for reading and writing files
 
@@ -245,7 +245,8 @@ nFile::GetChar()
 
 //------------------------------------------------------------------------------
 /**
-    @return     the value
+    @param  val     [out] 32 bit float value
+    @return         number of bytes read
 */
 inline
 float
@@ -258,7 +259,8 @@ nFile::GetFloat()
 
 //------------------------------------------------------------------------------
 /**
-    @return     the value
+    @param  val     [out] 32 bit float value
+    @return         number of bytes read
 */
 inline
 double

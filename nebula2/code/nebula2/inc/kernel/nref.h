@@ -5,15 +5,10 @@
     @class nRef
     @ingroup NebulaSmartPointers
 
-    nRef and nAutoRef implement safe pointers to objects.
-    If one object keeps a pointer to another object,
-    and the pointed-to object goes away, the first object is
-    left with an invalid object pointer. An nRef creates
-    a wire between the 2 objects, if the referenced object goes
-    away, the nRef will be invalidated and the object
-    holding the reference will be notified.
-
-    Technically, it's a class template implementing a smart pointer.
+    nRef and nAutoRef implement safe pointers to nRoot derived objects which 
+    will invalidate themselves when the target object goes away. This
+    avoids dangling pointers and also protects against dereferencing
+    a null pointer.
 
     Operations:
 
@@ -73,8 +68,10 @@ public:
     void invalidate();
     /// set target object
     void set(TYPE *obj);
-    /// get target object
+    /// get target object (safe)
     TYPE* get() const;
+    /// get target object (unsafe, may return 0)
+    TYPE* get_unsafe() const;
 
 protected:
     TYPE* targetObject;
@@ -179,6 +176,17 @@ nRef<TYPE>::get() const
 */
 template<class TYPE>
 inline
+TYPE*
+nRef<TYPE>::get_unsafe() const
+{
+    return (TYPE*) this->targetObject;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
 bool
 nRef<TYPE>::isvalid(void) const
 {
@@ -229,7 +237,7 @@ template<class TYPE>
 inline
 nRef<TYPE>&
 nRef<TYPE>::operator=(TYPE *obj)
-    {
+{
     this->set(obj);
     return *this;
 }

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFileTime
+    @ingroup File
 
     Encapsulate a file time stamp. See nFile class for details.
     

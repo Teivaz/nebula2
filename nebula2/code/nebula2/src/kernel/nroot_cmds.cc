@@ -185,7 +185,7 @@ static void n_getcmds(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
     {
-        nHashList *cmd_list = n_new nHashList;
+        nHashList *cmd_list = n_new(nHashList);
         nHashNode* node;
         int num_cmds = 0;
         
@@ -198,15 +198,15 @@ static void n_getcmds(void *o, nCmd *cmd)
             num_cmds++;
         }
         
-        nArg* args = new nArg[num_cmds];
+        nArg* args = n_new_array(nArg,num_cmds);
         int i = 0;
         while ((node = cmd_list->RemHead()))
         {
             args[i++].SetS(((nCmdProto*) node->GetPtr())->GetProtoDef());
-            n_delete node;
+            n_delete(node);
         }
         cmd->Out()->SetL(args, num_cmds);
-        n_delete cmd_list;
+        n_delete(cmd_list);
     }
 }
 
@@ -408,7 +408,7 @@ static void n_getchildren(void *o, nCmd *cmd)
         {
              num_children++;
         }
-        nArg* children = new nArg[num_children];
+        nArg* children = n_new_array(nArg,num_children);
         n_assert(children);
         int i = 0;
         for (child = (nRoot *) self->GetHead();
