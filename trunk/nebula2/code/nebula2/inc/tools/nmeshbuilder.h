@@ -259,7 +259,7 @@ public:
     /// save to nvx2 file
     bool SaveNvx2(nFileServer2* fileServer, const char* filename);
     /// save to n3d2 file
-    bool SaveN3d2(nFileServer2* fileServer, const char* filename);   
+    bool SaveN3d2(nFileServer2* fileServer, const char* filename);
     /// save as legacy n3d files (one file per group)
     bool SaveN3d(nFileServer2* fileServer, const char* filename);
 
@@ -333,8 +333,12 @@ public:
     void BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) const;
     /// create face normals and tangents (requires a valid uv-mapping at layer 0)
     void BuildTriangleNormals();
+    /// create face tangents (requires a valid uv-mapping at layer 0)
+    void BuildTriangleTangents();
     /// generate averaged vertex tangents
     void BuildVertexTangents();
+    /// generate averaged vertex normals
+    void BuildVertexNormals();
     /// flip v texture coordinates
     void FlipUvs();
     /// checks the mesh for geometry errors
