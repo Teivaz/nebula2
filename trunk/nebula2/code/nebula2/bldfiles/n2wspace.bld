@@ -30,6 +30,7 @@ beginworkspace Nebula2
         ngui
         nnpktool
         nshadow
+        napplication
         tinyxml
     }
 endworkspace

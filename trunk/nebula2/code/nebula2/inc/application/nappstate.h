@@ -1,0 +1,45 @@
+#ifndef N_APPSTATE_H
+#define N_APPSTATE_H
+//------------------------------------------------------------------------------
+/**
+    @class nAppState
+    @ingroup Application
+
+    An application state. Application states completely control
+    application behaviour and rendering when they are active. State behaviour
+    is implemented by deriving subclasses from nAppState. Add state objects
+    to nApplication before calling nApplication::Open().
+    
+    (C) 2004 RadonLabs GmbH
+*/
+#include "kernel/nroot.h"
+
+class nApplication;
+
+//------------------------------------------------------------------------------
+class nAppState : public nRoot
+{
+public:
+    /// constructor
+    nAppState();
+    /// destructor
+    virtual ~nAppState();
+    /// called when state is created
+    virtual void OnCreate(nApplication* application);
+    /// called when state is becoming active
+    virtual void OnStateEnter(const nString& prevState);
+    /// called when state is becoming inactive
+    virtual void OnStateLeave(const nString& nextState);
+    /// called on state to perform state logic 
+    virtual void OnFrame();
+    /// called on state to perform 3d rendering
+    virtual void OnRender3D();
+    /// called on state to perform 2d rendering
+    virtual void OnRender2D();
+
+protected:
+    nRef<nApplication> app;
+};
+
+//------------------------------------------------------------------------------
+#endif
