@@ -157,6 +157,8 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
     int status = luaL_loadbuffer( this->L, cmdStr, strlen(cmdStr), cmdStr );
     if ( 0 == status ) // parse OK?
         return this->ExecuteLuaChunk( result, errfunc );
+    else
+        result = 0;
     return false;
 }
 
