@@ -42,8 +42,8 @@ public:
 private:
     enum
     {	
-        IndexBufferSize = 16384,                   // number of vertices
-        VertexBufferSize  = 3 * IndexBufferSize,    // number of indices
+        VertexBufferSize = 16384,                   // number of vertices
+        IndexBufferSize  = 3 * VertexBufferSize,    // number of indices
     };
     nGfxServer2* gfxServer;
     bool indexedRendering;
