@@ -14,8 +14,11 @@ static void n_setcursorvisibility(void* slf, nCmd* cmd);
 static void n_setmousecursor(void* slf, nCmd* cmd);
 static void n_seticon(void* slf, nCmd* cmd);
 static void n_setgamma(void* slf, nCmd* cmd);
+static void n_getgamma(void* slf, nCmd* cmd);
 static void n_setbrightness(void* slf, nCmd* cmd);
+static void n_getbrightness(void* slf, nCmd* cmd);
 static void n_setcontrast(void* slf, nCmd* cmd);
+static void n_getcontrast(void* slf, nCmd* cmd);
 static void n_adjustgamma(void* slf, nCmd* cmd);
 static void n_restoregamma(void* slf, nCmd* cmd);
 
@@ -51,8 +54,11 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setmousecursor_sii",      'SMCS', n_setmousecursor);
     cl->AddCmd("v_seticon_s",               'SICO', n_seticon);
     cl->AddCmd("v_setgamma_f",              'SETG', n_setgamma);
+    cl->AddCmd("f_getgamma_v",              'GETG', n_getgamma);
     cl->AddCmd("v_setbrightness_f",         'SETB', n_setbrightness);
+    cl->AddCmd("f_getbrightness_v",         'GETB', n_getbrightness);
     cl->AddCmd("v_setcontrast_f",           'SETC', n_setcontrast);
+    cl->AddCmd("f_getcontrast_v",           'GETC', n_getcontrast);
     cl->AddCmd("v_adjustgamma_v",           'ADJG', n_adjustgamma);
     cl->AddCmd("v_restoregamma_v",          'RESG', n_restoregamma);
     cl->EndCmds();
@@ -267,12 +273,13 @@ n_seticon(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    
+    setgamma    
     @input
     f
     @output
     v
     @info
+    Set gamma value (adjustgamma must be called for the change to take effect)
 
     23-Aug-04    kims    created
 */
@@ -282,16 +289,36 @@ void n_setgamma(void* slf, nCmd* cmd)
     nGfxServer2* self = (nGfxServer2*) slf;
     self->SetGamma(cmd->In()->GetF());
 }
-
 //------------------------------------------------------------------------------
 /**
     @cmd
-    
+    getgamma    
+    @input
+    v
+    @output
+    f
+    @info
+    Get current gamma value (reflects the last call to setgamma, which may not
+    correspond to the actual screen gamma if adjustgamma has not been called).
+
+    8-Sep-04    rafael    created
+*/
+static 
+void n_getgamma(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    cmd->Out()->SetF(self->GetGamma());
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setbrightness    
     @input
     f
     @output
     v
     @info
+    Set brightness value (adjustgamma must be called for the change to take effect)
 
     23-Aug-04    kims    created
 */
@@ -301,16 +328,36 @@ void n_setbrightness(void* slf, nCmd* cmd)
     nGfxServer2* self = (nGfxServer2*) slf;
     self->SetBrightness(cmd->In()->GetF());
 }
-
 //------------------------------------------------------------------------------
 /**
     @cmd
-    
+    getbrightness    
+    @input
+    v
+    @output
+    f
+    @info
+    Get current brightness (reflects last call to setbrightness, which may not
+    correspond to the actual screen brightness if adjustgamma has not been called).
+
+    8-Sep-04    rafael    created
+*/
+static 
+void n_getbrightness(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    cmd->Out()->SetF(self->GetBrightness());
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setcontrast
     @input
     f
     @output
     v
     @info
+    Set contrast value (adjustgamma must be called for the change to take effect)
 
     23-Aug-04    kims    created
 */
@@ -320,17 +367,37 @@ n_setcontrast(void* slf, nCmd* cmd)
     nGfxServer2* self = (nGfxServer2*) slf;
     self->SetContrast(cmd->In()->GetF());
 }
-
 //------------------------------------------------------------------------------
 /**
     @cmd
-    
+    getcontrast    
+    @input
+    v
+    @output
+    f
+    @info
+    Get current contrast (reflects last call to setcontrast, which may not
+    correspond to the actual screen contrast if adjustgamma has not been called).
+
+    8-Sep-04    rafael    created
+*/
+static 
+void n_getcontrast(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    cmd->Out()->SetF(self->GetContrast());
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    adjustgamma
     @input
     v
     @output
     v
     @info
-
+    Commits the last gamma, contrast, and brightness values set,
+    so that they are actually visible on the screen.
     23-Aug-04    kims    created
 */
 static void 
@@ -343,13 +410,14 @@ n_adjustgamma(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    
+    restoregamma
     @input
     v
     @output
     v
     @info
-    
+    Resets screen gamma to default values.
+
     23-Aug-04    kims    created
 */
 static void 
