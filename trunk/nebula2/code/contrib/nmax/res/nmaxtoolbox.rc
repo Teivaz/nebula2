@@ -31,8 +31,8 @@ STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Mesh",IDC_STATIC,3,1,102,177
-    GROUPBOX        "Animation",IDC_STATIC,3,182,102,44
-    GROUPBOX        "Script Server",IDC_STATIC,3,262,101,46
+    GROUPBOX        "Animation",IDC_STATIC,3,179,102,69
+    GROUPBOX        "Script Server",IDC_STATIC,3,281,101,46
     CONTROL         "Normal",IDC_VERTEX_NORMAL,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,25,78,8
     CONTROL         "Color",IDC_VERTEX_COLOR,"Button",BS_AUTOCHECKBOX | 
@@ -45,7 +45,7 @@ BEGIN
     CONTROL         "nanim2",IDC_NANIM2,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,11,205,45,11
     CONTROL         "nax2",IDC_NAX2,"Button",BS_AUTORADIOBUTTON,60,205,35,11
-    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,287,88,82,CBS_DROPDOWN | 
+    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,306,88,82,CBS_DROPDOWN | 
                     WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Save As",IDC_STATIC,7,148,95,25
     GROUPBOX        "Save As",IDC_STATIC,7,195,95,26
@@ -55,10 +55,10 @@ BEGIN
     LTEXT           "Weight Trash Hold:",IDC_STATIC,12,113,82,11
     CONTROL         "Tangent",IDC_VERTEX_TANGENT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,58,80,8
-    GROUPBOX        "Hidden Nodes",IDC_STATIC,3,231,102,24
+    GROUPBOX        "Hidden Nodes",IDC_STATIC,3,253,102,24
     CONTROL         "Export Hidden Nodes",IDC_HIDDEN_OBJ,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,242,80,8
-    LTEXT           "Select Script Server:",IDC_STATIC,8,276,91,8
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,263,80,9
+    LTEXT           "Select Script Server:",IDC_STATIC,8,295,91,8
     CONTROL         "",IDC_EDIT_MAXJOINTPALETTE,"CustEdit",WS_TABSTOP,12,97,
                     69,10
     CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,97,7,
@@ -67,6 +67,9 @@ BEGIN
                     69,10
     CONTROL         "",IDC_SPIN_WEIGHTRASHOLD,"SpinnerControl",0x0,84,124,7,
                     10
+    LTEXT           "Sample Rate:",IDC_STATIC,8,223,82,11
+    CONTROL         "",IDC_EDIT_SAMPLERATE,"CustEdit",WS_TABSTOP,8,234,69,10
+    CONTROL         "",IDC_SPIN_SAMPLERATE,"SpinnerControl",0x0,80,233,7,10
 END
 
 

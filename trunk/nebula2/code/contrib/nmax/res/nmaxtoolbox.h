@@ -46,6 +46,9 @@
 #define IDC_SPIN_MAXJOINTPALETTE        1041
 #define IDC_EDIT_WEIGHTRASHOLD          1042
 #define IDC_SPIN_WEIGHTRASHOLD          1043
+#define IDC_EDIT_SAMPLERATE             1044
+#define IDC_SPIN_WEIGHTRASHOLD2         1045
+#define IDC_SPIN_SAMPLERATE             1045
 
 // Next default values for new objects
 // 
