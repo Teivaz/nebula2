@@ -52,7 +52,8 @@ public:
     
     virtual void fill_style_disable(int fill_side);
     virtual void fill_style_color(int fill_side, gameswf::rgba color);
-    virtual void fill_style_bitmap(int fill_sid, const gameswf::bitmap_info* bi,
+    virtual void fill_style_bitmap(int fill_side,
+                                   const gameswf::bitmap_info* bi,
                                    const gameswf::matrix& m, 
                                    gameswf::render_handler::bitmap_wrap_mode wm);
     
@@ -192,7 +193,7 @@ nGameSwfServer::SetShaderPath (const char* path)
 /**
     Retrieve the mangle path of ngameswf shader repository.
 
-    @retrun path where ngameswf shaders are.
+    @return path where ngameswf shaders are.
 */
 inline
 const char* 
@@ -203,7 +204,7 @@ nGameSwfServer::GetShaderPath () const
 
 //-----------------------------------------------------------------------------
 /**
-   	Enable/disable attempts to read cache files (.gsc) when loading movies.
+    Enable/disable attempts to read cache files (.gsc) when loading movies.
 
     @param bUse set to false if you do not want to use cached data.
 */
