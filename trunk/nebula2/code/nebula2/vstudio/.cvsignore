@@ -1,2 +1,9 @@
 *.vcproj
 *.sln
+*.dsp
+*.dsw
+*.opt
+*.ncb
+*.plg
+Release
+Debug
