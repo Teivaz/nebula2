@@ -54,7 +54,7 @@
     You should reimplement nRoot::SaveCmds() to use object serialization.
     See @ref NebulaWritingClass more details.
 
-    The <i><objectname></i> is whatever the name of the node which you want to save.
+    The <i>&lt;objectname&gt;</i> is whatever the name of the node which you want to save.
 
     You can change the script server that is used to save objects by:
 @verbatim
