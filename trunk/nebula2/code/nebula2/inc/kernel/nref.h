@@ -48,9 +48,9 @@ public:
     /// assign nRef object
     nRef& operator=(const nRef& rhs);
     /// equality operator
-    friend bool operator==(const nRef&a, const nRef& b);
+    bool operator==(const nRef& rhs);
     /// inequality operator
-    friend bool operator!=(const nRef&a, const nRef& b);
+    bool operator!=(const nRef& rhs);
 
 protected:
     nRoot *targetObject;
@@ -213,9 +213,9 @@ nRef<TYPE>::operator=(const nRef<TYPE>& rhs)
 template<class TYPE>
 inline
 bool
-operator==(const nRef<TYPE>& a, const nRef<TYPE>& b)
+nRef<TYPE>::operator==(const nRef<TYPE>& rhs)
 {
-    return (a.targetObject == b.targetObject);
+    return (targetObject == rhs.targetObject);
 }
 
 //------------------------------------------------------------------------------
@@ -225,9 +225,9 @@ operator==(const nRef<TYPE>& a, const nRef<TYPE>& b)
 template<class TYPE>
 inline
 bool
-operator!=(const nRef<TYPE>& a, const nRef<TYPE>& b)
+nRef<TYPE>::operator!=(const nRef<TYPE>& rhs)
 {
-    return (a.targetObject != b.targetObject);
+    return (targetObject != rhs.targetObject);
 }
 
 //------------------------------------------------------------------------------
