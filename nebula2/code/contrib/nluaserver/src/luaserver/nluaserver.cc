@@ -70,7 +70,6 @@ void nLuaServer::reg_globalfunc(lua_CFunction func, const char* name)
 //  Initialize Lua5 interpreter
 //--------------------------------------------------------------------
 nLuaServer::nLuaServer() :
-    ref_FileServer("/sys/servers/file2"),
     echo(true),
     selgrab(false)
 {
@@ -230,7 +229,7 @@ nLuaServer::BeginWrite(const char* filename, nRoot* obj)
 
     this->indent_level = 0;
 
-    nFile* file = this->ref_FileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "w"))
     {
@@ -298,13 +297,12 @@ bool nLuaServer::WriteComment(nFile *file, const char *str)
 void nLuaServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
 {
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
     _indent(++this->indent_level, this->indent_buf);
-    owner->GetRelPath(o, relpath, sizeof(relpath));
+    nString relpath = owner->GetRelPath(o);
     
     file->PutS(this->indent_buf);
     file->PutS("sel('");
-    file->PutS(relpath);
+    file->PutS(relpath.Get());
     file->PutS("')\n");
 }
 
@@ -378,13 +376,12 @@ bool nLuaServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
     n_assert(o);
 
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
     _indent(--this->indent_level, this->indent_buf);
-    o->GetRelPath(owner, relpath, sizeof(relpath));
+    nString relpath = o->GetRelPath(owner);
     
     file->PutS(this->indent_buf);
     file->PutS("sel('");
-    file->PutS(relpath);
+    file->PutS(relpath.Get());
     file->PutS("')\n");
 
     return true;
@@ -445,7 +442,7 @@ bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) {
                         char buf[N_MAXPATH];
-                        sprintf(buf, "'%s'", o->GetFullName(buf, sizeof(buf)));
+                        sprintf(buf, "'%s'", o->GetFullName().Get());
                     } else {
                         sprintf(buf, " null");
                     }
@@ -744,11 +741,10 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                     nLuaServer::Instance->ThunkNebObject(L, o);
                     if (print)
                     {
-                        char buf[N_MAXPATH];
                         if (j > 0)
-                            n_printf(", %s", o->GetFullName(buf, sizeof(buf)));
+                            n_printf(", %s", o->GetFullName().Get());
                         else
-                            n_printf("%s", o->GetFullName(buf, sizeof(buf)));
+                            n_printf("%s", o->GetFullName().Get());
                     }
                 }
                 else
@@ -854,11 +850,10 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                     nLuaServer::Instance->ThunkNebObject(L, o);
                     if (print)
                     {
-                        char buf[N_MAXPATH];
                         if (i > 0)
-                            n_printf(" %s", o->GetFullName(buf, sizeof(buf)));
+                            n_printf(" %s", o->GetFullName().Get());
                         else
-                            n_printf("%s", o->GetFullName(buf, sizeof(buf)));
+                            n_printf("%s", o->GetFullName().Get());
                     }
                 }
                 else
