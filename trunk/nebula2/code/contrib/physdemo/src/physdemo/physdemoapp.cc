@@ -107,10 +107,6 @@ PhysDemoApp::Open()
     this->refGuiServer->Open();
     this->InitOverlayGui();
 
-    // create the root node for where the objects will exist (exists only for organizational purposes,
-    // nothing more.  In a real engine, instead of this, you would have a spacial hierarchy of rooms
-    // or similar space divisions.  For this physdemo, we are essentially dealing with only one "room")
-    this->kernelServer->New("ntransformnode", "/objects");
 
     // create the floor for the physical world
     this->CreateFloor(0.0f, -5.0f, 0.0f);
