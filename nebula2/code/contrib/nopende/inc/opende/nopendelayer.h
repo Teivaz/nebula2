@@ -96,6 +96,29 @@ void WorldStepFast1( dWorldID id, float stepsize, int maxiterations )
     dWorldStepFast1( id, stepsize, maxiterations );
 }
 
+//----------------------------------------------------------------------------
+/*
+    QuickStep functions
+*/
+
+inline
+void WorldQuickStep( dWorldID id, float stepsize ) 
+{ 
+    dWorldQuickStep( id, stepsize ); 
+}
+
+inline
+void WorldSetQuickStepNumIterations( dWorldID id, int num ) 
+{ 
+    dWorldSetQuickStepNumIterations( id, num ); 
+}
+
+inline
+int WorldGetQuickStepNumIterations( dWorldID id ) 
+{ 
+    return dWorldGetQuickStepNumIterations( id ); 
+}
+
 /*
 void dWorldSetAutoEnableDepthSF1(dWorldID, int autoEnableDepth);
 int dWorldGetAutoEnableDepthSF1(dWorldID);
