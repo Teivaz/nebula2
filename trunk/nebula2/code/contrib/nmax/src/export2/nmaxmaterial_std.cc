@@ -80,13 +80,13 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
         if (stdMat->GetTransparencyType() == TRANSP_SUBTRACTIVE)
         {
             shapeNode->SetInt(nShaderState::AlphaSrcBlend, 1/*Zero*/);
-            shapeNode->SetInt(nShaderState::AlphaDstBlend, 3/*SrcColor*/)
+            shapeNode->SetInt(nShaderState::AlphaDstBlend, 3/*SrcColor*/);
         }
         else 
         if (stdMat->GetTransparencyType() == TRANSP_ADDITIVE)
         {
             shapeNode->SetInt(nShaderState::AlphaSrcBlend, 5/*SrcAlpha*/);
-            shapeNode->SetInt(nShaderState::AlphaDstBlend, 2/*One*/)
+            shapeNode->SetInt(nShaderState::AlphaDstBlend, 2/*One*/);
         }
         bool hasAlpha = this->SetAlphaParam(stdMat, shapeNode);
 
