@@ -65,11 +65,7 @@ nMutex::nMutex()
     #else
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
-        #ifdef __MACOSX__
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-        #else
-        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
-        #endif
         pthread_mutex_init(&this->pmutex, &attr);
         pthread_mutexattr_destroy(&attr);
     #endif
