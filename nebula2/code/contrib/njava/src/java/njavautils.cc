@@ -46,7 +46,7 @@ wrapNebulaObject(JNIEnv * env, nRoot * nobj)
         return NULL;
     }
     char jclsName[256];
-    sprintf(jclsName, "org/cubik/nebuladevice/%s", nobj->GetClass()->GetName());
+    sprintf(jclsName, "org/cubik/nebuladevice/%s", nobj->GetClass()->GetProperName());
     jclass jcls = env->FindClass(jclsName);
     if (0 == jcls)
     {
