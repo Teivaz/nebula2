@@ -143,10 +143,10 @@ nVisibilityVisitor* CCCamera::GetVisibilityVisitor( nVisibilityVisitor::VisibleE
             sphereTransform.set_translation( m_CullSphereOffset );
             sphereTransform.mult_simple(GetTransform());
             sphere cullSphere(sphereTransform.pos_component(), m_CullSphereRadius);
-            return n_new nVisibleSphereGenArray( cullSphere, m_Elements);
+            return n_new( nVisibleSphereGenArray( cullSphere, m_Elements ) );
         }
     case FRUSTUM:
-        return n_new nVisibleFrustumGenArray(*this, this->GetTransform(), m_Elements);
+        return n_new( nVisibleFrustumGenArray(*this, this->GetTransform(), m_Elements) );
     default:
         return 0;
     }

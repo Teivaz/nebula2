@@ -44,7 +44,7 @@ CCCullingMgr::CCCullingMgr() :
 
 CCCullingMgr::~CCCullingMgr()
 {
-    n_delete m_pCuller;
+    n_delete(m_pCuller);
     DestroySpatialDB(m_rRootSector->GetRoot());
 }
 
@@ -84,7 +84,7 @@ void CCCullingMgr::EndElements()
 
 const nVisibilityVisitor::VisibleElements& CCCullingMgr::GetVisibleElements(const CCCamera& cullCamera)
 {
-    n_delete m_pCuller;
+    n_delete( m_pCuller );
     m_ObjectsToRender.Clear();
     m_pCuller = cullCamera.GetVisibilityVisitor(m_ObjectsToRender);
     m_pCuller->Visit(m_rRootSector.get(),3);
