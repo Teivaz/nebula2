@@ -245,7 +245,7 @@ nMeshBuilder::CreateEdges()
         
         if ( currEdge.vIndex[0] == nextEdge.vIndex[1] && currEdge.vIndex[1] == nextEdge.vIndex[0] && currEdge.GroupID == nextEdge.GroupID)
         {
-            //current edge and next edge share the same vertex indicies (cross compare) - copy only once
+            //current edge and next edge share the same vertex indices (cross compare) - copy only once
             GroupedEdge& edge =  groupedEdgeArray[groupedEdgeIndex++];
             edge.GroupID   = currEdge.GroupID; 
             edge.vIndex[0] = currEdge.vIndex[0];
