@@ -40,7 +40,7 @@ proc emit_vcproj_header {name cid guid} {
 #-------------------------------------------------------------------------------
 #   emit_vcproj_config $name $cid $debug
 #-------------------------------------------------------------------------------
-proc emit_vcproj_config {name cid debug} {
+proc emit_vcproj_config {name cid debug inc_list lib_list} {
     variable debug_preprocessor_defs
     variable release_preprocessor_defs
     global cur_workspacepath
@@ -76,8 +76,6 @@ proc emit_vcproj_config {name cid debug} {
         }
     }
 
-    set inc_list [join [get_incsearchdirs] ";"]
-    set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
     foreach def [get_tardefs $name] {
         if { [llength [lindex $def 0]] && [llength [lindex $def 1]] } {
             append def_list "[lindex $def 0]=[lindex $def 1];"
@@ -288,7 +286,7 @@ proc emit_vcproj_tail {cid} {
 #   gen_vcproj $name
 #   Creates a .vcproj file
 #-------------------------------------------------------------------------------
-proc gen_vcproj {name guid} {
+proc gen_vcproj {name guid inc_list lib_list} {
     global home
     global cur_workspacepath
 
@@ -299,8 +297,8 @@ proc gen_vcproj {name guid} {
 
     emit_vcproj_header $name $cid $guid
     puts $cid "\t<Configurations>"
-    emit_vcproj_config $name $cid 1
-    emit_vcproj_config $name $cid 0
+    emit_vcproj_config $name $cid 1 $inc_list $lib_list
+    emit_vcproj_config $name $cid 0 $inc_list $lib_list
     puts $cid "\t</Configurations>"
     puts $cid "\t<References>"
     puts $cid "\t</References>"
@@ -414,9 +412,13 @@ proc generate { wslist } {
 
         gen_sln $workspace
 
+        # Calculate these once for the workspace
+        set inc_list [join [get_incsearchdirs] ";"]
+        set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
+
         #create the project files
         foreach target [get_targets] {
-            gen_vcproj $target $targetuuids($target)
+            gen_vcproj $target $targetuuids($target) $inc_list $lib_list
         }
     }
 }
