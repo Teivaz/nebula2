@@ -1,0 +1,26 @@
+#===============================================================================
+#  nnebula.bld
+#  The default Nebula2 distribution nnebula.lib library
+#
+#  Targets:
+#      nnebula
+#===============================================================================
+
+#===============================================================================
+#  nnebula Targets
+#===============================================================================
+begintarget nnebula
+    settype lib
+    setmodules {
+        nbinscriptserver ntclserver 
+        nnpkfileserver nvariableserver 
+        ninputserver nresourceserver nresource nntxfile nmesh2 
+        ntexture2 nshader2 ngfxserver2
+        nsceneserver nstdsceneserver 
+        nscenenode ntransformnode nabstractshadernode 
+        nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
+        ntransformanimator nskinanimator nskinshapenode
+        ncharacter nanimationserver nanimation nmemoryanimation nconserver
+    }
+endtarget
+

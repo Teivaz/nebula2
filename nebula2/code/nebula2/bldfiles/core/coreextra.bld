@@ -1,0 +1,89 @@
+#===============================================================================
+#  coreextra.bld
+#  Commonly used bits that really ought to be here
+#
+#  Modules:
+#      nvariableserver
+#      nresourceserver
+#      nresource
+#      nconserver
+#      nipc
+#      nipcclient
+#===============================================================================
+
+#===============================================================================
+#  coreextra modules
+#===============================================================================
+beginmodule nvariableserver
+    setdir variable
+    setfiles { nvariableserver_main nvariableserver_cmds }
+    setheaders { nvariableserver nvariablecontext nvariable }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nnpkfileserver
+    setdir file
+    setfiles { 
+        nnpkfileserver_main 
+        nnpkfileserver_cmds 
+        nnpkfilewrapper 
+        nnpkfile
+        nnpkdirectory
+    }
+    setheaders { 
+        nnpkfileserver
+        nnpkfilewrapper
+        nnpktoc
+        nnpktocentry
+        nnpkfile
+        nnpkdirectory
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresourceserver
+    setdir resource
+    setfiles { nresourceserver_main }
+    setheaders { nresourceserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresource
+    setdir resource
+    setfiles { nresource_main }
+    setheaders { nresource }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nconserver
+    setdir misc
+    setfiles { ncsrv_main ncsrv_cmds }
+    setheaders { nconserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nipc
+    setdir kernel
+    setfiles {
+        nipcminiserver
+        nipcserver
+    }
+    setheaders {
+        nsocketdefs
+        nipcminiserver
+        nipcserver
+    }
+    setlibs_win32 {
+        wsock32.lib
+    }
+endmodule
+
+#-------------------------------------------------------------------------------
+beginmodule nipcclient
+    setdir kernel
+    setfiles {
+        nipcclient
+    }
+    setheaders {
+        nsocketdefs
+        nipcclient
+    }
+    setlibs_win32 {
+        wsock32.lib
+    }
+endmodule

@@ -1,0 +1,104 @@
+#===============================================================================
+#  nkernel.bld
+#  The Nebula2 kernel and kernel required servers
+#
+#  Modules:
+#      ntimeserver
+#      npersistserver
+#      nfileserver2
+#      nscriptserver
+#      nroot
+#      nenv
+#      nremoteserver
+#      nkernel
+#  Targets:
+#      nkernel
+#===============================================================================
+
+#===============================================================================
+#  nkernel modules
+#===============================================================================
+beginmodule ntimeserver
+    setdir kernel
+    setfiles { ntime_main ntime_cmds }
+    setheaders ntimeserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule npersistserver
+    setdir kernel
+    setfiles {
+        npersistserver_main npersistserver_beginend
+        npersistserver_load npersistserver_cmds
+    }
+    setheaders npersistserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nfileserver2
+    setdir kernel
+    setfiles { 
+        nfileserver2_main
+        nfileserver2_cmds
+        nfile ndirectory
+    }
+    setheaders { nfileserver2 nfile ndirectory }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nscriptserver
+    setdir kernel
+    setfiles   { nscriptserver_main }
+    setheaders { nscriptserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nroot
+    setdir kernel
+    setfiles   { nroot_main nroot_cmds }
+    setheaders { nroot }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nenv
+    setdir kernel
+    setfiles   { nenv_main nenv_cmds }
+    setheaders { nenv }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nremoteserver
+    setdir kernel
+    setmoduledeps { nipc }
+    setfiles   { nremoteserver_main }
+    setheaders { nremoteserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nkernel
+    setdir kernel
+    settype cpp
+    setfiles {
+        nkernelserver nkernel nmemory nclass ncmdproto nhardrefserver
+        nthread nloghandler ndefaultloghandler nwin32loghandler
+    }
+    setheaders {
+        nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
+        ncmdproto ncmd narg nhardrefserver nref nautoref ndynautoref nhardref
+        nevent nmutex nthread nthreadsafelist
+        nloghandler ndefaultloghandler nwin32loghandler
+    }
+endmodule
+
+#===============================================================================
+#  nkernel targets
+#===============================================================================
+begintarget nkernel
+    annotate "The Nebula2 Kernel and required servers and bits."
+    settype lib
+    setmodules { 
+        nkernel
+        nroot
+        ntimeserver
+        npersistserver
+        nfileserver2
+        nscriptserver
+        nenv
+        nremoteserver
+        nipc 
+    }
+endtarget
+#-------------------------------------------------------------------------------
