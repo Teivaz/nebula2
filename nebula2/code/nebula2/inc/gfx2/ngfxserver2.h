@@ -161,6 +161,9 @@ public:
     /// draw the text buffer
     virtual void DrawTextBuffer();
 
+    /// save a screen shot
+    virtual bool SaveScreenshot(const char*);
+
     static nKernelServer* kernelServer;
 
     enum

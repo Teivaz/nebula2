@@ -473,4 +473,13 @@ nGfxServer2::DrawTextBuffer()
 }
 
 //------------------------------------------------------------------------------
+/**
+    create screen shot
+*/
+bool
+nGfxServer2::SaveScreenshot (const char* fileName)
+{
+    return false;
+}
 
+//------------------------------------------------------------------------------

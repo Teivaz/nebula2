@@ -179,3 +179,61 @@ nD3D9Server::Trigger()
     return (!this->quitRequested);
 }
 
+//-----------------------------------------------------------------------------
+/**
+    Create screen shot and save it to given filename. (.bmp file)
+
+    @param fileName filename for screen shot.
+*/
+bool
+nD3D9Server::SaveScreenshot(const char* fileName)
+{
+    n_assert(fileName);
+    HRESULT hr;
+
+    // get adapter number and device window
+    D3DDEVICE_CREATION_PARAMETERS dcp;
+    this->d3d9Device->GetCreationParameters(&dcp);
+
+    // get width and height for the front buffer surface
+    D3DDISPLAYMODE dispMode;
+    hr = this->d3d9->GetAdapterDisplayMode(dcp.AdapterOrdinal, &dispMode);
+    if (FAILED(hr))
+    {
+        n_printf("nD3D9Server::Screenshot(): Failed to get 'adapter display mode'!\n");
+        return false;
+    }
+
+    // create the front buffer surface to save for screenshot. 
+    IDirect3DSurface9* surf;
+    hr = this->d3d9Device->CreateOffscreenPlainSurface(dispMode.Width, dispMode.Height, 
+                                                       D3DFMT_A8R8G8B8,
+                                                       D3DPOOL_SCRATCH,
+                                                       &surf,
+                                                       NULL);
+    if (FAILED(hr))
+    {
+        n_printf("nD3D9Server::Screenshot(): Failed to 'create offscreen plain surface'!\n");
+        return false;
+    }
+
+    // get a copy of the front buffer surface.
+    this->d3d9Device->GetFrontBufferData(0, surf);
+
+    // get the rectangle into which rendering is drawn
+    // it's the client rectangle of the focus window in screen coordinates
+    RECT rc;
+    GetClientRect(dcp.hFocusWindow, &rc);
+    ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.left));
+    ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.right));
+
+    // save the front buffer surface to given filename.
+    hr = D3DXSaveSurfaceToFile(fileName, D3DXIFF_BMP, surf, 0, &rc);
+    if (FAILED(hr))
+    {
+        n_printf("nD3D9Server::Screenshot(): Failed to save file '%s'!\n", fileName);
+        return false;
+    }
+
+    return true;
+}

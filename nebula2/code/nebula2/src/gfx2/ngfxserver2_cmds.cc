@@ -9,6 +9,7 @@ static void n_setdisplaymode(void* slf, nCmd* cmd);
 static void n_getdisplaymode(void* slf, nCmd* cmd);
 static void n_opendisplay(void* slf, nCmd* cmd);
 static void n_closedisplay(void* slf, nCmd* cmd);
+static void n_savescreenshot(void *, nCmd *);
 
 //------------------------------------------------------------------------------
 /**
@@ -29,6 +30,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("siib_getdisplaymode_v", 'GDMD', n_getdisplaymode);
     cl->AddCmd("b_opendisplay_v",      'ODSP', n_opendisplay);
     cl->AddCmd("v_closedisplay_v",     'CDSP', n_closedisplay);
+    cl->AddCmd("b_savescreenshot_s",   'SSHT', n_savescreenshot);
     cl->EndCmds();
 }
 
@@ -115,4 +117,26 @@ n_closedisplay(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     self->CloseDisplay();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    savescreenshot
+
+    @input
+    s (FileName)
+
+    @output
+    v
+
+    @info
+    Generate a screenshot under the given filename.
+    A 24 bpp BMP file will be created.
+*/
+static void
+n_savescreenshot(void *slf, nCmd *cmd)
+{
+    nGfxServer2 *self = (nGfxServer2*) slf;
+    cmd->Out()->SetB(self->SaveScreenshot(cmd->In()->GetS()));
 }
