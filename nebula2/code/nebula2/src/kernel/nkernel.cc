@@ -134,7 +134,7 @@ n_sleep(double sec)
 #   ifdef __WIN32__
     int milli_sec = (int) (sec * 1000.0);
     Sleep(milli_sec);
-#   elif defined(__LINUX__)
+#   elif defined(__LINUX__) || defined(__MACOSX__)
     struct timespec t;
     #define N_NANOSEC_INT 1000000000
     #define N_NANOSEC_FLT 1000000000.0

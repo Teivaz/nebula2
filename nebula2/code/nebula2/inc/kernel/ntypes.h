@@ -74,7 +74,7 @@ typedef double nTime;
 #define FOURCC(i) (((i&0xff000000)>>24) | ((i&0x00ff0000)>>8) | ((i&0x0000ff00)<<8) | ((i&0x000000ff)<<24))
 #define N_WHITESPACE " \r\n\t"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(__MACOSX__)
 #define n_stricmp strcasecmp
 #else
 #define n_stricmp stricmp
