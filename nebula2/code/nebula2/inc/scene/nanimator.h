@@ -4,8 +4,8 @@
 /**
     @class nAnimator
 
-    Animator nodes manipulate properties of other scene object. They will
-    not attach to the scene, instead they are called back by scene objects
+    Animator nodes manipulate properties of other scene objects. They are
+    not attached to the scene, instead they are called back by scene objects
     which wish to be manipulated.
 
     See also @ref N2ScriptInterface_nanimator
