@@ -344,7 +344,7 @@ nFile::GetS(char* buffer, int numChars)
     char* readPos = buffer;
 
     bool retval = false;
-    DWORD bytesRead;
+    int bytesRead;
     int curIndex = 0;
     for (curIndex = 0; curIndex < (numChars - 1); curIndex++)
     {
