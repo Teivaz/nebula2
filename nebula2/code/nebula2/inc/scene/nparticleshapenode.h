@@ -66,6 +66,14 @@ public:
     void SetRenderOldestFirst(bool b);
     /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
+    /// set the scale for the effect as a whole (including the emitter mesh)
+    void SetGlobalScale(float f);
+    /// get the scale for the effect as a whole (including the emitter mesh)
+    float GetGlobalScale() const;
+    /// set whether created particles move relative to the node or to the world
+    void SetParticlesFollowNode(bool b);
+    /// get whether created particles move relative to the node or to the world
+    bool GetParticlesFollowNode() const;
 
     /// set one of the envelope curves (not the color)
     void SetCurve(nParticleEmitter::CurveType curveType, const nEnvelopeCurve& curve);
@@ -89,6 +97,8 @@ protected:
     float birthDelay;          ///< maximum delay until particle starts to live
     float startRotation;       ///< maximum angle of rotation at birth
     bool  renderOldestFirst;   ///< whether to render the oldest particles first or the youngest
+    float globalScale;         ///< the scale of the effect as a whole (including the emitter mesh)
+    bool  particlesFollowNode; ///< true iff particles move in nodespace (instead of worldspace)
 
     nEnvelopeCurve curves[nParticleEmitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;
@@ -177,7 +187,6 @@ inline float nParticleShapeNode::GetSpreadAngle() const
     return this->spreadAngle;
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -203,6 +212,7 @@ nParticleShapeNode::SetRenderOldestFirst(bool b)
 {
     this->renderOldestFirst = b;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -211,6 +221,62 @@ bool
 nParticleShapeNode::GetRenderOldestFirst() const
 {
     return this->renderOldestFirst;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Set the scale of the effect as a whole.
+
+    This doesn't effect the emitter mesh's scale (that can be changed with the
+    usual SetScale call inherited from nTransformNode), but rather the size
+    and speed of the individual particles.  The global scale is cumulative with
+    the sizes and speeds specified by the envelope curves.
+*/
+inline
+void
+nParticleShapeNode::SetGlobalScale(float f)
+{
+    this->globalScale = f;
+    this->SetScale(vector3(f, f, f));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Get the scale of the effect as a whole.
+
+    See GetGlobalScale for details.
+*/
+inline
+float
+nParticleShapeNode::GetGlobalScale() const
+{
+    return this->globalScale;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Sets whether the particles follow the node around.
+
+    See nParticleEmitter::GetParticlesFollowEmitter for details
+*/
+inline
+void
+nParticleShapeNode::SetParticlesFollowNode(bool b)
+{
+    this->particlesFollowNode = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Sets whether the particles follow the node around.
+
+    See nParticleEmitter::GetParticlesFollowEmitter for details
+*/
+inline
+bool
+nParticleShapeNode::GetParticlesFollowNode() const
+{
+    return this->particlesFollowNode;
 }
 
 //------------------------------------------------------------------------------
