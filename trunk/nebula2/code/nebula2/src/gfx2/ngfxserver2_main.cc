@@ -15,6 +15,11 @@ nNebulaScriptClass(nGfxServer2, "nroot");
 /**
 */
 nGfxServer2::nGfxServer2() :
+#if defined(N_DO_STATS)
+    FrameRate(kernelServer, "gfx_fps"),
+    totalFrames(0),
+    timeStamp(0),
+#endif
     displayOpen(false),
     inBeginScene(false),
     refResource(kernelServer),
@@ -30,6 +35,10 @@ nGfxServer2::nGfxServer2() :
     {
         this->transformTopOfStack[i] = 0;
     }
+
+#if defined(N_DO_STATS)
+    FrameRate = 0;
+#endif    
 }
 
 //------------------------------------------------------------------------------
@@ -37,7 +46,7 @@ nGfxServer2::nGfxServer2() :
 */
 nGfxServer2::~nGfxServer2()
 {
-    // empty
+    //empty
 }
 
 //------------------------------------------------------------------------------
@@ -173,6 +182,20 @@ nGfxServer2::CloseDisplay()
 bool
 nGfxServer2::Trigger()
 {
+#if defined(N_DO_STATS)
+    if (this->totalFrames++ == 9)
+    {
+        double curTime = kernelServer->GetTimeServer()->GetTime();
+        double frameTime = curTime - this->timeStamp;
+        if (frameTime > 0.0)
+        {
+            this->FrameRate = (int)(10.0 / frameTime);
+        }
+        this->totalFrames = 0;
+        this->timeStamp = curTime;
+    }
+#endif
+
     return true;
 }
 

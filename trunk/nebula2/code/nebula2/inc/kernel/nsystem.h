@@ -18,6 +18,9 @@
 // use MicroTcl?
 #define __MICROTCL__ (1)
 
+// do console.watch stats
+#define N_DO_STATS
+
 #ifdef __WIN32__
 #undef __WIN32__
 #endif
