@@ -50,8 +50,6 @@ private:
     bool m_IsRunning;
 
     nDynAutoRef<CCGame>         m_Game;
-
-    nAutoRef<nConServer>        m_ConsoleServer;
     nRef<nScriptServer>         m_ScriptServer;
 };
 
