@@ -34,6 +34,7 @@
 #include "kernel/nref.h"
 #include "mathlib/matrix.h"
 #include "mathlib/bbox.h"
+#include "mathlib/sphere.h"
 
 //--------------------------------------------------------------------
 /**
@@ -215,6 +216,7 @@ public:
     virtual int CollectByBBox(bbox3& bbox, nOctElement **, int);
     virtual int CollectByViewvolOrBBox(matrix44& mv, matrix44& p, bbox3& bbox, nOctElement **, int);
     virtual int CollectByFrustum(nGfxServer2* gfx_server, nOctElement**, int);
+    virtual int CollectBySphere(const sphere& clip, nOctElement**, int);
 
     virtual void Visualize(nGfxServer2 *);
 
@@ -248,6 +250,12 @@ protected:
                                       unsigned int& out_clip_mask,
                                       unsigned int in_clip_mask);
     void collect_nodes_within_clip_planes(nOctNode* on, unsigned int clip_mask);
+
+    // CollectBySphere methods
+    void recurse_collect_by_sphere(nOctNode* on, const sphere& clip,
+                                                 bool full_intersect);
+    void collect_nodes_in_sphere(nOctNode* on, const sphere& clip,
+                                               bool full_intersect);
 };
 //--------------------------------------------------------------------
 #endif
