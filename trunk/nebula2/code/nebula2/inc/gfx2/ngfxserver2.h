@@ -283,7 +283,7 @@ inline
 nTexture2*
 nGfxServer2::GetTexture(int stage) const
 {
-    n_assert((stage >= 0) && (stage < MAX_VERTEXSTREAMS));
+    n_assert((stage >= 0) && (stage < MAX_TEXTURESTAGES));
     return this->refTextures[stage].isvalid() ? this->refTextures[stage].get() : 0;
 }
 
