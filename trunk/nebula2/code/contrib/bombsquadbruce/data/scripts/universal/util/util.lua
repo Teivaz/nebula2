@@ -2,6 +2,17 @@ runscript( 'universal/util/vector.lua' )
 runscript( 'universal/util/string.lua' )
 runscript( 'universal/util/math.lua' )
 
+function renew( class, name ) -- like selNew, but doesn't change directories
+    if sel( name ) ~= nil then -- then the object already exists
+        sel('..')
+        delete( name )
+    end
+	if new( class, name ) then
+		return lookup( name )
+	else
+		writeDebug( "renew failed to create '".. name .. "'!" )
+	end
+end
 
 function selSafe( class, name ) 
 	if sel( name ) == nil then -- then the object doesn't exist
