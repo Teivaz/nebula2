@@ -4,11 +4,10 @@
 // this file contains subclasses of the various visitors that take the found
 // nSpatialElements and put them into an array container that is specified
 // by the user.  Note that all of these "GenArray" classes are designed such
-// that you do a Reset() and Visit() to get a new set of found objects in
-// the array.  In particular, the array is cleared when a GenArray-style
-// visitor is destroyed!  For other behavior such as appending found objects
-// to a list non-destructively, you can construct your own subclasses based
-// upon these examples
+// that you perform a Reset(), then a Visit() to get a new set of found objects in
+// the array.  Without the Reset(), doing multiple visits will just append found
+// objects, which can be used in some situations where, for example, you want to get 
+// all the objects found in two sphere regions.
 
 
 /**
