@@ -84,9 +84,8 @@ void nCLODChunkerNode::compileChunksFromFile(const char *sourcefilename)
 {
     n_assert(m_ref_fs.isvalid());
     nFile *sourcefile = m_ref_fs->NewFileObject();
-    char bigsrcpath[N_MAXPATH];
-    m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
-    if (!sourcefile->Open(bigsrcpath, "rb"))
+    nString bigsrcpath = m_ref_fs->ManglePath(sourcefilename);
+    if (!sourcefile->Open(bigsrcpath.Get(), "rb"))
     {
         n_error("nCLODChunkerNode::compileChunksFromFile(): Could not open file: %s",
                 bigsrcpath);
@@ -185,8 +184,7 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
     // now generate the triangle meshes
     if (m_tileindexfilename)
     {   
-        char bigsrcpath[N_MAXPATH];
-        m_ref_fs->ManglePath(m_tileindexfilename, bigsrcpath, sizeof(bigsrcpath));
+        nString bigsrcpath = m_ref_fs->ManglePath(m_tileindexfilename);
         m_tileindexfield = new TileIndexData();
         m_tileindexfield->readBitmap(bigsrcpath);
         m_mesher = new SplatGenerator(m_heightfield, m_tileindexfield, destfile, m_splatthickness);

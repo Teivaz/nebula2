@@ -19,6 +19,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 #include "kernel/ntypes.h"
+#include "util/nstring.h"
 
 typedef short Sint16;
 
@@ -83,9 +84,9 @@ public:
     HeightFieldData(float xscale, float yscale, float zscale);
     virtual ~HeightFieldData();
 
-    virtual bool readBitmap(const char *bitmapfilename);
+    virtual bool readBitmap(nString bitmapfilename);
 
-    void dumpActivationLevels(char * const dumpfilename, unsigned int max_activation);
+    void dumpActivationLevels(nString dumpfilename, unsigned int max_activation);
 
     Sint16 getHeight(unsigned int x, unsigned int y) const {
         n_assert(NULL != m_heights);

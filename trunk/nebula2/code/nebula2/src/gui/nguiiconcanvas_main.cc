@@ -128,7 +128,7 @@ nGuiIconCanvas::Render()
     if (this->IsShown())
     {
         // render the background resource
-        this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+        this->refGuiServer->DrawRect(this->GetScreenSpaceRect(), this->GetUvs(), &this->defaultResource);
 
         // render contained widgets
         nGuiWidget::Render();

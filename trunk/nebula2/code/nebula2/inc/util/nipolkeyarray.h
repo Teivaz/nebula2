@@ -106,7 +106,7 @@ nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimator::
         float maxTime = keyArray.Back().time;
         if (maxTime > 0.0f)
         {
-            if (loopType == nAnimator::LOOP)
+            if (loopType == nAnimator::Loop)
             {
                 // in loop mode, wrap time into loop time
                 sampleTime = sampleTime - (float(floor(sampleTime / maxTime)) * maxTime);

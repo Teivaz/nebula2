@@ -156,8 +156,9 @@ nNpkDirectory::GetEntryName()
     {
         n_assert(this->curSearchEntry);
         char buf[N_MAXPATH];
-        return this->curSearchEntry->GetFullName(buf, sizeof(buf));
+        this->curSearchEntry->GetFullName(buf, sizeof(buf));
         this->npkEntryAbsPath = buf;
+        return this->npkEntryAbsPath.Get();
     }
     else
     {

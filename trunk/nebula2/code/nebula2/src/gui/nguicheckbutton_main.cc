@@ -54,8 +54,8 @@ nGuiCheckButton::OnButtonDown(const vector2& /*mousePos*/)
     if (this->mouseOver)
     {
         this->pressed = !this->pressed;
-        this->triggerSound = true;
         this->OnAction();
+        nGuiServer::Instance()->PlaySound(nGuiSkin::ButtonClick);
         return true;
     }
     return false;
@@ -99,14 +99,24 @@ nGuiCheckButton::Render()
     if (this->IsShown())
     {
         // render the background image
-        if (this->pressed)
+        nGuiBrush* brush = &this->defaultBrush;
+        if (!this->enabled)
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetPressedBrush());
+            brush = &this->disabledBrush;
         }
-        else
+        else if (this->pressed)
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+            brush = &this->pressedBrush;
         }
+        else if (this->blinking)
+        {
+            double time = nGuiServer::Instance()->GetTime();
+            if (fmod(time, 1.0) > 0.5)
+            {
+                brush = &this->highlightBrush;
+            }
+        }
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), *brush);
 
         // render the text on top
         this->RenderText(this->pressed);

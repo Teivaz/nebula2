@@ -32,6 +32,8 @@ public:
     virtual void Stop();
     /// update the sound
     virtual void Update();
+    /// return true if sound is playing
+    virtual bool IsPlaying();
     /// set the number of simultaneous "playback tracks" this sound should support
     void SetNumTracks(int t);
     /// get number of tracks

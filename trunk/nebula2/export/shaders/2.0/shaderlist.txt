@@ -34,5 +34,6 @@ shaders:gui.fx
 shaders:hdrcompose.fx
 shaders:hdrextract.fx
 shaders:hdrfilter.fx
+shaders:shape.fx
 
 

@@ -45,10 +45,16 @@ public:
     void SetCloseButton(bool b);
     /// has close button?
     bool HasCloseButton() const;
+    /// has the window a title bar (default yes)
+    void SetTitleBar(bool b);
+    /// return if title bar is enabled
+    bool HasTitleBar() const;
     /// set title string
     void SetTitle(const char* s);
     /// get title string
     const char* GetTitle() const;
+    /// close all sibling windows of the same class
+    void CloseSiblings();
 
 protected:
     /// update the child widget layout, when position or size changes
@@ -71,8 +77,8 @@ protected:
         Movable = (1<<0),
         Resizable = (1<<1),
         CloseButton = (1<<2),
+        TitleBar = (1<<3),
     };
-    nAutoRef<nGfxServer2> refGfxServer;
     nString title;
     ushort flags;
     nRef<nGuiButton>     refCloseButton;
@@ -85,6 +91,27 @@ protected:
     rectangle startRect;
     float titleHeight;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiClientWindow::SetTitleBar(bool b)
+{
+    if (b) this->flags |= TitleBar;
+    else   this->flags &= ~TitleBar;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiClientWindow::HasTitleBar() const
+{
+    return (0 != (this->flags & TitleBar));
+}
 
 //------------------------------------------------------------------------------
 /**

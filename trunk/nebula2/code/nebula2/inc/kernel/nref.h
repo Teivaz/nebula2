@@ -5,10 +5,6 @@
     @class nRef
     @ingroup NebulaSmartPointers
 
-    nRef and nAutoRef implement safe pointers to nRoot derived objects which 
-    will invalidate themselves when the target object goes away. This
-    avoids dangling pointers and also protects against dereferencing
-    a null pointer.
     nRef and nAutoRef implement safe pointers to objects.
     If one object keeps a pointer to another object,
     and the pointed-to object goes away, the first object is
@@ -224,7 +220,7 @@ nRef<TYPE>::operator=(const nRef<TYPE>& rhs)
 {
     this->set(rhs.targetObject);
     return *this;
-    }
+}
 
 //------------------------------------------------------------------------------
 /**

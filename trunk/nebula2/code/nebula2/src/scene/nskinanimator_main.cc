@@ -157,7 +157,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         nVariable* var = renderContext->GetVariable(this->channelVarHandle);
         if (var == 0)
         {
-            n_error("nSkinAnimator::Animate: TimeChannel Variable '%s' not found in the RenderContext!\n", this->refVariableServer->GetVariableName(this->channelVarHandle));
+            n_error("nSkinAnimator::Animate: TimeChannel Variable '%s' not found in the RenderContext!\n", nVariableServer::Instance()->GetVariableName(this->channelVarHandle));
         }
         float curTime = var->GetFloat();
 
@@ -288,7 +288,7 @@ void
 nSkinAnimator::SetStateChannel(const char* name)
 {
     n_assert(name);
-    this->animStateVarHandle = this->refVariableServer->GetVariableHandleByName(name);
+    this->animStateVarHandle = nVariableServer::Instance()->GetVariableHandleByName(name);
 }
 
 //------------------------------------------------------------------------------
@@ -306,7 +306,7 @@ nSkinAnimator::GetStateChannel()
     }
     else
     {
-        return this->refVariableServer->GetVariableName(this->animStateVarHandle);
+        return nVariableServer::Instance()->GetVariableName(this->animStateVarHandle);
     }
 }
 
@@ -384,7 +384,7 @@ nSkinAnimator::SetClip(int stateIndex, int clipIndex, const char* weightChannelN
     int firstCurve = numCurves * clipIndex;
 
     // get the variable handle for the weightChannel
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(weightChannelName);
+    nVariable::Handle varHandle = nVariableServer::Instance()->GetVariableHandleByName(weightChannelName);
     n_assert(nVariable::InvalidHandle != varHandle);
 
     nAnimClip newClip(firstCurve, numCurves, varHandle);
@@ -416,5 +416,5 @@ void
 nSkinAnimator::GetClipAt(int stateIndex, int clipIndex, const char*& weightChannelName)
 {
     nVariable::Handle varHandle = this->animStateArray.GetStateAt(stateIndex).GetClipAt(clipIndex).GetWeightChannelHandle();
-    weightChannelName = this->refVariableServer->GetVariableName(varHandle);
+    weightChannelName = nVariableServer::Instance()->GetVariableName(varHandle);
 }

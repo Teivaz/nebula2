@@ -93,7 +93,7 @@ nD3D9Font::LoadResource()
         this->fontDesc.GetTypeFace(),
         &this->d3dFont);
 
-    n_assert(SUCCEEDED(hr));        
+    n_dxtrace(hr, "D3DXCreateFont() failed!");
     n_assert(this->d3dFont);
     this->SetValid(true);
     return true;

@@ -21,13 +21,15 @@ public:
     /// destructor
     ~nN3d2Loader();
     /// open file and read header data
-    bool Open(nFileServer2* fs);
+    virtual bool Open(nFileServer2* fs);
     /// close the file
-    void Close();
+    virtual void Close();
     /// read vertex data
-    bool ReadVertices(void* buffer, int bufferSize);
+    virtual bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    bool ReadIndices(void* buffer, int bufferSize);
+    virtual bool ReadIndices(void* buffer, int bufferSize);
+    /// read edge data
+    virtual bool ReadEdges(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -107,6 +109,13 @@ nN3d2Loader::Open(nFileServer2* fs)
             n_assert(numVerticesString);
             this->numVertices = atoi(numVerticesString);
         }
+        else if (0 == strcmp(keyWord, "numedges"))
+        {
+            // number of edges
+            const char* numEdgesString = strtok(0, N_WHITESPACE);
+            n_assert(numEdgesString);
+            this->numEdges = atoi(numEdgesString);
+        }
         else if (0 == strcmp(keyWord, "vertexcomps"))
         {
             // vertex components
@@ -149,15 +158,26 @@ nN3d2Loader::Open(nFileServer2* fs)
             const char* numVertsString  = strtok(0, N_WHITESPACE);
             const char* firstTriString  = strtok(0, N_WHITESPACE);
             const char* numTrisString   = strtok(0, N_WHITESPACE);
+            const char* firstEdgeString = strtok(0, N_WHITESPACE);
+            const char* numEdgeString   = strtok(0, N_WHITESPACE);
             
             n_assert(firstVertString && numVertsString);
             n_assert(firstTriString && numTrisString);
+            // FIXME: quick tweak to handle old mesh files
+            if (!firstEdgeString)
+            {
+                firstEdgeString = "0";
+                numEdgeString = "0";
+            }
+            n_assert(firstEdgeString && numEdgeString);
             
             nMeshGroup meshGroup;
             meshGroup.SetFirstVertex(atoi(firstVertString));
             meshGroup.SetNumVertices(atoi(numVertsString));
             meshGroup.SetFirstIndex(atoi(firstTriString) * 3);
             meshGroup.SetNumIndices(atoi(numTrisString) * 3);
+            meshGroup.SetFirstEdge(atoi(firstEdgeString));
+            meshGroup.SetNumEdges(atoi(numEdgeString));
             this->groupArray.Append(meshGroup);
 
             // if all groups read, set the headerDone flag to true
@@ -288,6 +308,60 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
     }
     return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+    A edge has the size of 4 * ushort, so you have to provide a buffer with the
+    size numEdges * 4 * sizeof(ushort).
+    The edge data is: ushort vertexIndex1, vertexIndex2, faceIndex1, faceIndex2;
+    If a face Indicie is invalid (a border edge with only on face connected)
+    the value is nMeshBuilder::InvalidIndex ( == -1).
+*/
+inline
+bool
+nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
+{
+    n_assert(buffer);
+    n_assert(this->file);
+
+    void* endOfBuffer = 0;
+    n_assert(bufferSize == (this->numEdges * 4 * sizeof(ushort)));
+    endOfBuffer = ((ushort*)buffer) + this->numEdges * 4;
+
+    nMesh2::Edge* edgeBuffer = (nMesh2::Edge*) buffer;
+
+    int edgeIndex;
+    int index = 0;
+    for (edgeIndex = 0; edgeIndex < this->numEdges; edgeIndex++)
+    {
+        char line[1024];
+        bool res = this->file->GetS(line, sizeof(line));
+        n_assert(res);
+
+        char* keyWord = strtok(line, N_WHITESPACE);
+        n_assert(0 == strcmp(keyWord, "e"));
+
+        const char* f0String = strtok(0, N_WHITESPACE);
+        const char* f1String = strtok(0, N_WHITESPACE);
+        const char* v0String = strtok(0, N_WHITESPACE);
+        const char* v1String = strtok(0, N_WHITESPACE);
+        n_assert(v0String && v1String && f0String && f1String);
+        ushort f0 = atoi(f0String);
+        ushort f1 = atoi(f1String);
+        ushort v0 = atoi(v0String);
+        ushort v1 = atoi(v1String);
+        
+        edgeBuffer[index].fIndex[0] = f0;
+        edgeBuffer[index].fIndex[1] = f1;
+        edgeBuffer[index].vIndex[0] = v0;
+        edgeBuffer[index].vIndex[1] = v1;
+        index++;
+
+        n_assert(&(edgeBuffer[index]) <= endOfBuffer);
+    }
+    return true;
+}
+
 //------------------------------------------------------------------------------
 #endif
 

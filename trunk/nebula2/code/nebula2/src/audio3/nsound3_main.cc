@@ -33,6 +33,9 @@ nSound3::nSound3() :
     volume(1.0f),
     minDist(10.0f),
     maxDist(100.0f),
+    insideConeAngle(0),
+    outsideConeAngle(360),
+    coneOutsideVolume(1.0f),
     volumeDirty(true),
     props3DDirty(true)
 {
@@ -76,5 +79,15 @@ nSound3::Update()
 {
     // empty
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nSound3::IsPlaying()
+{
+    return false;
+}
+
 
 

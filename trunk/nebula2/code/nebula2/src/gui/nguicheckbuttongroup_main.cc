@@ -46,27 +46,6 @@ nGuiCheckButtonGroup::Render()
 
 //------------------------------------------------------------------------------
 /**
-    This simply distributes the RenderAudio() call to the sub objects.
-*/
-bool
-nGuiCheckButtonGroup::RenderAudio()
-{
-    if (this->IsShown())
-    {
-        nGuiWidget* curWidget;
-        for (curWidget = (nGuiWidget*) this->GetHead();
-            curWidget;
-            curWidget = (nGuiWidget*) curWidget->GetSucc())
-        {
-            curWidget->RenderAudio();
-        }
-        return true;
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
     This simply distributes the the OnMouseMoved() call to the sub objects.
 */
 bool
@@ -103,8 +82,6 @@ nGuiCheckButtonGroup::OnButtonDown(const vector2& /*mousePos*/)
 
     if (mouseOverGroup)
     {
-        this->triggerSound = true;
-
         // if mouse is over any check button in the group, activate
         // this button, and deactivate all others
         nGuiCheckButton* curCheckButton;

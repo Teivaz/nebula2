@@ -6,6 +6,7 @@
 #include "resource/nresource.h"
 
 nNebulaClass(nResourceServer, "nroot");
+nResourceServer* nResourceServer::Singleton = 0;
 
 //---  MetaInfo  ---------------------------------------------------------------
 /**
@@ -29,6 +30,9 @@ nResourceServer::nResourceServer() :
     uniqueId(0),
     loaderThread(0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     this->meshPool    = kernelServer->New("nroot", "/sys/share/rsrc/mesh");
     this->texPool     = kernelServer->New("nroot", "/sys/share/rsrc/tex");
     this->shdPool     = kernelServer->New("nroot", "/sys/share/rsrc/shd");
@@ -52,6 +56,9 @@ nResourceServer::nResourceServer() :
 */
 nResourceServer::~nResourceServer()
 {
+    n_assert(Singleton);
+    Singleton = 0;
+
     #ifndef __NEBULA_NO_THREADS__
     this->ShutdownLoaderThread();
     #endif

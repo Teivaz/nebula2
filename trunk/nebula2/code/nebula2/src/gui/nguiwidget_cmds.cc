@@ -27,8 +27,6 @@ static void n_settooltip(void* slf, nCmd* cmd);
 static void n_gettooltip(void* slf, nCmd* cmd);
 static void n_setblinking(void* slf, nCmd* cmd);
 static void n_getblinking(void* slf, nCmd* cmd);
-static void n_setdismissed(void* slf, nCmd* cmd);
-static void n_isdismissed(void* slf, nCmd* cmd);
 static void n_setdefaultbrush(void* slf, nCmd* cmd);
 static void n_getdefaultbrush(void* slf, nCmd* cmd);
 static void n_setpressedbrush(void* slf, nCmd* cmd);
@@ -77,8 +75,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_gettooltip_v",                'GTTP', n_gettooltip);
     cl->AddCmd("v_setblinking_b",               'SBLK', n_setblinking);
     cl->AddCmd("b_getblinking_v",               'GBLK', n_getblinking);
-    cl->AddCmd("v_setdismissed_b",              'SDIS', n_setdismissed);
-    cl->AddCmd("b_isdismissed_v",               'ISDS', n_isdismissed);
     cl->AddCmd("v_setdefaultbrush_s",           'SDFB', n_setdefaultbrush);
     cl->AddCmd("s_getdefaultbrush_v",           'GDFB', n_getdefaultbrush);
     cl->AddCmd("v_setpressedbrush_s",           'SPRB', n_setpressedbrush);
@@ -398,7 +394,7 @@ n_setrect(void* slf, nCmd* cmd)
     r.v1.x = cmd->In()->GetF();
     r.v0.y = cmd->In()->GetF();
     r.v1.y = cmd->In()->GetF();
-    self->SetRect(self->GetGuiServer()->ConvertRefToScreenSpace(r));
+    self->SetRect(nGuiServer::Instance()->ConvertRefToScreenSpace(r));
 }
 
 //-----------------------------------------------------------------------------
@@ -416,7 +412,7 @@ static void
 n_getrect(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
-    rectangle r = self->GetGuiServer()->ConvertScreenToRefSpace(self->GetRect());
+    rectangle r = nGuiServer::Instance()->ConvertScreenToRefSpace(self->GetRect());
     cmd->Out()->SetF(r.v0.x);
     cmd->Out()->SetF(r.v1.x);
     cmd->Out()->SetF(r.v0.y);
@@ -493,45 +489,6 @@ n_getblinking(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
     cmd->Out()->SetB(self->GetBlinking());
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    setdismissed
-    @input
-    b
-    @output
-    v
-    @info
-    Set the dismissed flag. Dismissed windows will be removed by the
-    gui server after windows have been triggered. 
-    
-    FIXME: For now, this works only for toplevel windows.
-*/
-static void
-n_setdismissed(void* slf, nCmd* cmd)
-{
-    nGuiWidget* self = (nGuiWidget*) slf;
-    self->SetDismissed(cmd->In()->GetB());
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    isdismissed
-    @input
-    v
-    @output
-    v
-    @info
-    Get the widget's dismissed flag.
-*/
-static void
-n_isdismissed(void* slf, nCmd* cmd)
-{
-    nGuiWidget* self = (nGuiWidget*) slf;
-    cmd->Out()->SetB(self->IsDismissed());
 }
 
 //-----------------------------------------------------------------------------

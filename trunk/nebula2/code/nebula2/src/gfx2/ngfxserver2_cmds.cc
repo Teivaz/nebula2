@@ -185,8 +185,8 @@ n_savescreenshot(void *slf, nCmd *cmd)
 static void
 n_setcursorvisibility(void *slf, nCmd *cmd)
 {
-    nGfxServer2 *self = (nGfxServer2*) slf;   
-    self->SetCursorVisibility( nGfxServer2::StringToCursorVisibility( cmd->In()->GetS() ) );
+//    nGfxServer2 *self = (nGfxServer2*) slf;   
+//    self->SetCursorVisibility( nGfxServer2::StringToCursorVisibility( cmd->In()->GetS() ) );
 }
 
 

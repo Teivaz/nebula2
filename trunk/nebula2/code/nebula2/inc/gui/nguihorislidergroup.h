@@ -230,6 +230,11 @@ void
 nGuiHoriSliderGroup::SetValue(int v)
 {
     this->curValue = v;
+    if (this->refSlider.isvalid())
+    {
+        this->refSlider->SetVisibleRangeStart(float(this->curValue - this->minValue));
+        this->refSlider->SetVisibleRangeSize(float(this->knobSize));
+    }
 }
 
 //------------------------------------------------------------------------------

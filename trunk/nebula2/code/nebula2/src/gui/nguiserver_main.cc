@@ -14,15 +14,18 @@
 #include "gfx2/nshader2.h"
 #include "gfx2/nfontdesc.h"
 #include "gui/nguiskin.h"
+#include "audio3/naudioserver3.h"
+#include "gui/nguiresource.h"
+#include "gui/nguibrush.h"
 
 nNebulaScriptClass(nGuiServer, "nroot");
+nGuiServer* nGuiServer::Singleton = 0;
 
 //-----------------------------------------------------------------------------
 /**
 */
 nGuiServer::nGuiServer() :
     refScriptServer("/sys/servers/script"),
-    refGfxServer("/sys/servers/gfx"),
     refGui("/res/gui"),
     refInputServer("/sys/servers/input"),
     isOpen(false),
@@ -30,9 +33,16 @@ nGuiServer::nGuiServer() :
     referenceSize(1.0f, 1.0f),
     uniqueId(0),
     systemGuiActive(false),
-    globalColor(1.0f, 1.0f, 1.0f, 1.0f)
+    globalColor(1.0f, 1.0f, 1.0f, 1.0f),
+    curTexture(0),
+    curMaxNumVertices(0),
+    curVertexPointer(0),
+    curVertexIndex(0)
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
+    this->guiWindowClass = kernelServer->FindClass("nguiwindow");
+    n_assert(this->guiWindowClass);
 }
 
 //-----------------------------------------------------------------------------
@@ -44,6 +54,8 @@ nGuiServer::~nGuiServer()
     {
         this->Close();
     }
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -70,104 +82,6 @@ nGuiServer::GetRootPath() const
 
 //-----------------------------------------------------------------------------
 /**
-    Update the mesh's uv coordinates. FIXME: this is bad behaviour,
-    since the mesh has been allocated with WriteOnce behaviour!
-*/
-void
-nGuiServer::UpdateMesh(const rectangle& uvs)
-{
-    float* vPtr = this->refMesh->LockVertices();
-    n_assert(vPtr);
-
-    *vPtr++ = -0.5f; *vPtr++ = 0.5f; *vPtr++ = 0.0f; 
-    *vPtr++ = 0.0f;  *vPtr++ = 0.0f; *vPtr++ = 1.0f;
-    *vPtr++ = uvs.v0.x; *vPtr++ = 1.0f - uvs.v1.y;
-    
-    *vPtr++ = -0.5f; *vPtr++ = -0.5f; *vPtr++ = 0.0f; 
-    *vPtr++ = 0.0f;  *vPtr++ = 0.0f; *vPtr++ = 1.0f;        
-    *vPtr++ = uvs.v0.x; *vPtr++ = 1.0f - uvs.v0.y;
-    
-    *vPtr++ = 0.5f;  *vPtr++ =  0.5f; *vPtr++ = 0.0f; 
-    *vPtr++ = 0.0f;  *vPtr++ = 0.0f; *vPtr++ = 1.0f;        
-    *vPtr++ = uvs.v1.x; *vPtr++ = 1.0f - uvs.v1.y;
-    
-    *vPtr++ = 0.5f;  *vPtr++ = -0.5f; *vPtr++ = 0.0f; 
-    *vPtr++ = 0.0f;  *vPtr++ = 0.0f; *vPtr++ = 1.0f;        
-    *vPtr++ = uvs.v1.x; *vPtr++ = 1.0f - uvs.v0.y;
-
-    this->refMesh->UnlockVertices();
-
-    ushort* iPtr = this->refMesh->LockIndices();
-    n_assert(iPtr);
-    *iPtr++ = 0; *iPtr++ = 1; *iPtr++ = 2;
-    *iPtr++ = 1; *iPtr++ = 3; *iPtr++ = 2;
-    this->refMesh->UnlockIndices();
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Initialize the rectangle mesh. This method should be called per
-    frame because the mesh may become invalid (for instance when 
-    switching display modes).
-*/
-void
-nGuiServer::ValidateMesh()
-{
-    nMesh2* mesh = 0;
-    if (!this->refMesh.isvalid())
-    {
-        mesh = this->refGfxServer->NewMesh(0);
-        mesh->SetUsage(nMesh2::WriteOnly);
-        mesh->SetRefillBuffersMode(nMesh2::Enabled);
-        mesh->SetNumVertices(4);
-        mesh->SetNumIndices(6);
-        mesh->SetVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0);
-        this->refMesh = mesh;
-    }
-    else
-    {
-        mesh = this->refMesh.get();
-    }
-
-    if (!mesh->IsValid() || (nMesh2::NeededNow == mesh->GetRefillBuffersMode()))
-    {
-        bool success = mesh->Load();
-        n_assert(success);
-        rectangle uvs(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
-        this->UpdateMesh(uvs);
-        mesh->SetRefillBuffersMode(nMesh2::Enabled);
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Initialize the gui shader. This method must be called per frame
-    because the shader may become invalid (for instance when switching
-    display modes).
-*/
-void
-nGuiServer::ValidateShader()
-{
-    nShader2* shader = 0;
-    if (!this->refShader.isvalid())
-    {
-        shader = this->refGfxServer->NewShader(0);
-        shader->SetFilename("shaders:gui.fx");
-        this->refShader = shader;
-    }
-    else
-    {
-        shader = this->refShader.get();
-    }
-    if (!shader->IsValid())
-    {
-        bool guiShaderLoaded = shader->Load();
-        n_assert(guiShaderLoaded);
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
     Create a new window object.
 */
 nGuiWindow*
@@ -188,7 +102,7 @@ nGuiServer::NewWindow(const char* className, bool visible)
 
     // create new window, if no root window is set, creates a new root window
     char windowName[N_MAXPATH];
-    sprintf(windowName, "window%d", this->uniqueId++);
+    snprintf(windowName, sizeof(windowName), "window%d", this->uniqueId++);
     if (this->refCurrentRootWindow.isvalid())
     {
         kernelServer->PushCwd(this->refCurrentRootWindow.get());
@@ -205,9 +119,20 @@ nGuiServer::NewWindow(const char* className, bool visible)
         {
             window->Show();
         }
-        if (this->refCurrentRootWindow.isvalid())
+        if (window->IsBackground())
         {
-            this->refCurrentRootWindow->SetFocusWindow(window);
+            // move window to back
+            nRoot* parent = window->GetParent();
+            window->Remove();
+            parent->AddHead(window);
+        }
+        else
+        {
+            // make new focus window
+            if (this->refCurrentRootWindow.isvalid())
+            {
+                this->refCurrentRootWindow->SetFocusWindow(window);
+            }
         }
     }
     return window;
@@ -244,7 +169,6 @@ bool
 nGuiServer::Open()
 {
     n_assert(!this->isOpen);
-    n_assert(!this->refMesh.isvalid());
     n_assert(!this->refShader.isvalid());
 
     // create a few default fonts
@@ -253,7 +177,7 @@ nGuiServer::Open()
     defaultFont.SetHeight(16);
     defaultFont.SetWeight(nFontDesc::Normal);
     defaultFont.SetTypeFace("Arial");
-    this->refDefaultFont = this->refGfxServer->NewFont("GuiDefault", defaultFont);
+    this->refDefaultFont = nGfxServer2::Instance()->NewFont("GuiDefault", defaultFont);
     if ((!this->refDefaultFont->IsValid()) && (!this->refDefaultFont->Load()))
     {
         n_error("nGuiServer: Failed to load default gui font!");
@@ -263,7 +187,7 @@ nGuiServer::Open()
     smallFont.SetHeight(14);
     smallFont.SetWeight(nFontDesc::Normal);
     smallFont.SetTypeFace("Arial");
-    this->refSmallFont = this->refGfxServer->NewFont("GuiSmall", smallFont);
+    this->refSmallFont = nGfxServer2::Instance()->NewFont("GuiSmall", smallFont);
     if ((!this->refSmallFont->Load()) && (!this->refSmallFont->Load()))
     {
         n_error("nGuiServer: Failed to load small gui font!");
@@ -326,14 +250,9 @@ nGuiServer::Close()
         n_assert(!this->refSystemRootWindow.isvalid());
     }
 
-    this->refGfxServer->SetMesh(0);
-    this->refGfxServer->SetShader(0);
-    this->refGfxServer->SetFont(0);
-    if (this->refMesh.isvalid())
-    {
-        this->refMesh->Release();
-        this->refMesh = 0;
-    }
+    nGfxServer2::Instance()->SetMesh(0);
+    nGfxServer2::Instance()->SetShader(0);
+    nGfxServer2::Instance()->SetFont(0);
     if (this->refShader.isvalid())
     {
         this->refShader->Release();
@@ -417,10 +336,46 @@ nGuiServer::GetRootWindowPointer() const
 void
 nGuiServer::Trigger()
 {
+    n_assert(this->guiWindowClass);
+
     if (this->refCurrentRootWindow.isvalid())
     {
         // the root window may change during event handling...
         nGuiWindow* rootWindow = this->refCurrentRootWindow.get();
+
+        // check for dismissed windows from the last frame, and release them
+        nGuiWidget* curWidget = (nGuiWidget*) rootWindow->GetHead();
+        nGuiWidget* nextWidget;
+        while (curWidget)
+        {
+            nextWidget = (nGuiWidget*) curWidget->GetSucc();
+            if (curWidget->IsA(this->guiWindowClass))
+            {
+                nGuiWindow* curWindow = (nGuiWindow*) curWidget;
+                if (curWindow->IsDismissed())
+                {
+                    curWindow->Release();
+                }
+            }
+            curWidget = nextWidget;
+        }
+
+        // check for invalid listener references (listeners which
+        // have disappeared and did not unregister themselves)
+        nArray< nRef<nGuiWidget> >::iterator iter = this->eventListeners.Begin();
+        for (; iter != this->eventListeners.End();)
+        {
+            if (!iter->isvalid())
+            {
+                iter = this->eventListeners.Erase(iter);
+            }
+            else
+            {
+                iter++;
+            }
+        }
+
+        //handle events
         for (nInputEvent* i = this->refInputServer->FirstEvent(); i != 0; i = this->refInputServer->NextEvent(i))
         {
             n_assert(i != 0);
@@ -489,35 +444,181 @@ nGuiServer::Trigger()
 
         // call the per-frame handler method
         rootWindow->OnFrame();
-
-        // check for dismissed windows, and release them
-        nGuiWidget* curWidget = (nGuiWidget*) rootWindow->GetHead();
-        nGuiWidget* nextWidget;
-        while (curWidget)
-        {
-            nextWidget = (nGuiWidget*) curWidget->GetSucc();
-            if (curWidget->IsDismissed())
-            {
-                curWidget->Release();
-            }
-            curWidget = nextWidget;
-        }
-
-        // check for invalid listener references (listeners which
-        // have disappeared and did not unregister themselves)
-        nArray< nRef<nGuiWidget> >::iterator iter = this->eventListeners.Begin();
-        for (; iter != this->eventListeners.End();)
-        {
-            if (!iter->isvalid())
-            {
-                iter = this->eventListeners.Erase(iter);
-            }
-            else
-            {
-                iter++;
-            }
-        }
     }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Draw text through the gfx server.
+*/
+void
+nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
+{
+    // need to flush graphics rendering before rendering text
+    this->FlushBrushes();
+    static vector4 modColor;
+    modColor.set(color.x, color.y, color.z, color.w * this->globalColor.w);
+    nGfxServer2::Instance()->DrawText(text, modColor, rect, flags);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Initialize the rectangle mesh. This method should be called per
+    frame because the mesh may become invalid (for instance when 
+    switching display modes).
+*/
+void
+nGuiServer::ValidateMesh()
+{
+    if (!this->dynMesh.IsValid())
+    {
+        this->dynMesh.Initialize(nGfxServer2::TriangleList, nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0, 0, false);
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Initialize the gui shader. This method must be called per frame
+    because the shader may become invalid (for instance when switching
+    display modes).
+*/
+void
+nGuiServer::ValidateShader()
+{
+    nShader2* shader = 0;
+    if (!this->refShader.isvalid())
+    {
+        shader = nGfxServer2::Instance()->NewShader(0);
+        shader->SetFilename("shaders:gui.fx");
+        this->refShader = shader;
+    }
+    else
+    {
+        shader = this->refShader.get();
+    }
+    if (!shader->IsValid())
+    {
+        bool guiShaderLoaded = shader->Load();
+        n_assert(guiShaderLoaded);
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Flush the brush rendering.
+*/
+void
+nGuiServer::FlushBrushes()
+{
+    if (this->curVertexIndex > 0)
+    {
+        this->dynMesh.Swap(this->curVertexIndex, this->curVertexPointer);
+        this->curVertexIndex = 0;
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Directly draw a textured rectangle to the dynamic mesh
+*/
+void
+nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex)
+{
+    n_assert(tex);
+
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    // compute modulated color
+    vector4 modColor(color.x * this->globalColor.x,
+                     color.y * this->globalColor.y,
+                     color.z * this->globalColor.z,
+                     color.w * this->globalColor.w);
+
+    // check swap conditions
+    bool doSwap = false;
+    bool updateTexture = false;
+    bool updateColor   = false;
+    if ((this->curTexture != 0) && (tex != this->curTexture) || ((this->curVertexIndex + 6) >= this->curMaxNumVertices))
+    {
+        doSwap = true;
+    }
+    if (tex != this->curTexture)
+    {
+        this->curTexture = tex;
+        updateTexture = true;
+        doSwap = true;
+    }
+    if (!this->curColor.isequal(modColor, 0.001f))
+    {
+        this->curColor = modColor;
+        updateColor = true;
+        doSwap = true;
+    }
+
+    // if state change, force rendering
+    if (doSwap)
+    {
+        this->FlushBrushes();
+    }
+
+    // update shader parameters
+    nShader2* shader = this->refShader.get();
+    if (updateTexture && shader->IsParameterUsed(nShaderState::DiffMap0))
+    {
+        shader->SetTexture(nShaderState::DiffMap0, this->curTexture);
+    }
+    if (updateColor && shader->IsParameterUsed(nShaderState::MatDiffuse))
+    {
+        shader->SetVector4(nShaderState::MatDiffuse, modColor);
+    }
+
+    // write vertices
+    float* ptr = this->curVertexPointer + this->curVertexIndex * 8; // (coord3, norm3, uv2)
+    this->curVertexIndex += 6;
+
+    rectangle r;
+    r.v0.x = rect.v0.x - 0.5f;
+    r.v0.y = -(rect.v0.y - 0.5f);
+    r.v1.x = rect.v1.x - 0.5f;
+    r.v1.y = -(rect.v1.y - 0.5f);
+
+    rectangle uv;
+    uv.v0.x = uvRect.v0.x;
+    uv.v0.y = 1.0f - uvRect.v1.y;
+    uv.v1.x = uvRect.v1.x;
+    uv.v1.y = 1.0f - uvRect.v0.y;
+
+    // triangle 1
+    // top left
+    *ptr++ = r.v0.x;  *ptr++ = r.v0.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v0.x; *ptr++ = uv.v0.y;
+
+    // top right
+    *ptr++ = r.v1.x;  *ptr++ = r.v0.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v1.x; *ptr++ = uv.v0.y;
+
+    // bottom right
+    *ptr++ = r.v1.x;  *ptr++ = r.v1.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v1.x; *ptr++ = uv.v1.y;
+
+    // triangle 2
+    // top left
+    *ptr++ = r.v0.x;  *ptr++ = r.v0.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v0.x; *ptr++ = uv.v0.y;
+
+    // bottom right
+    *ptr++ = r.v1.x;  *ptr++ = r.v1.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v1.x; *ptr++ = uv.v1.y;
+
+    // bottom left
+    *ptr++ = r.v0.x;  *ptr++ = r.v1.y; *ptr++ = 0.0f;  // coord
+    *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
+    *ptr++ = uv.v0.x; *ptr++ = uv.v1.y;
 }
 
 //-----------------------------------------------------------------------------
@@ -530,40 +631,46 @@ nGuiServer::Render()
     // set the current time for all following render calls
     if (this->refCurrentRootWindow.isvalid())
     {
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+
         this->ValidateMesh();
         this->ValidateShader();
 
+        // update gfx server's transforms
+        static const matrix44 identity;
+        static const rectangle screenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+        matrix44 model = this->GetViewSpaceMatrix(screenRect);
+        gfxServer->PushTransform(nGfxServer2::View, identity);
+        gfxServer->PushTransform(nGfxServer2::Model, model);
+
         nShader2* shader = this->refShader.get();
-        this->refGfxServer->SetShader(shader);
+        nGfxServer2::Instance()->SetShader(shader);
         int curPass;
-        int numPasses = shader->Begin();
+        int numPasses = shader->Begin(false);
         for (curPass = 0; curPass < numPasses; curPass++)
         {
             shader->Pass(curPass);
-            this->refCurrentRootWindow->Render();
-        }
 
-        // render optional tooltip
-        if (this->IsToolTipShown())
-        {
-            this->refToolTip->Render();
-            this->HideToolTip();
+            // begin rendering to dynamic mesh
+            this->curTexture = 0;
+            this->curColor.set(0.0f, 0.0f, 0.0f, 0.0f);
+            this->curVertexIndex = 0;
+            this->dynMesh.Begin(this->curVertexPointer, this->curMaxNumVertices);
+            this->refCurrentRootWindow->Render();
+
+            // render optional tooltip
+            if (this->IsToolTipShown())
+            {
+                this->refToolTip->Render();
+                this->HideToolTip();
+            }
+
+            // finish dynamic mesh rendering
+            this->dynMesh.End(this->curVertexIndex);
         }
         shader->End();
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Render the audio effects.
-*/
-void
-nGuiServer::RenderAudio()
-{
-    // set the current time for all following render calls
-    if (this->refCurrentRootWindow.isvalid())
-    {
-        this->refCurrentRootWindow->RenderAudio();
+        gfxServer->PopTransform(nGfxServer2::Model);
+        gfxServer->PopTransform(nGfxServer2::View);
     }
 }
 
@@ -600,7 +707,7 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
     fontDesc.SetAntiAliased(true);
     
     // ... and create the font
-    this->refGfxServer->NewFont(fontName, fontDesc);
+    nGfxServer2::Instance()->NewFont(fontName, fontDesc);
 }
 
 
@@ -639,7 +746,7 @@ nGuiServer::AddCustomFont(const char* fontName, const char* fontFile, const char
     fontDesc.SetAntiAliased(true);
     
     // ... and create the font
-    this->refGfxServer->NewFont(fontName, fontDesc);
+    nGfxServer2::Instance()->NewFont(fontName, fontDesc);
 }
 
 //-----------------------------------------------------------------------------
@@ -669,14 +776,14 @@ vector3
 nGuiServer::ConvertScreenToViewSpace(const vector2& screenCoord)
 {
     // get current inverted projection matrix
-    matrix44 invProj = this->refGfxServer->GetTransform(nGfxServer2::Projection);
+    matrix44 invProj = nGfxServer2::Instance()->GetTransform(nGfxServer2::Projection);
     invProj.invert();
 
     vector3 screenCoord3D((screenCoord.x - 0.5f) * 2.0f, (screenCoord.y - 0.5f) * 2.0f, 1.0f);
     vector3 viewCoord = invProj * screenCoord3D;
 
     // get near plane
-    float nearZ = this->refGfxServer->GetCamera().GetNearPlane();
+    float nearZ = nGfxServer2::Instance()->GetCamera().GetNearPlane();
     return viewCoord * nearZ * 1.1f;
 }
 
@@ -691,7 +798,7 @@ nGuiServer::GetViewSpaceMatrix(const rectangle& r)
     vector3 v1 = this->ConvertScreenToViewSpace(r.v1);
 
     vector3 pos  = (v0 + v1) * 0.5f;
-    pos.y = -pos.y;
+    // pos.y = -pos.y;
     vector3 size = (v1 - v0);
     matrix44 m;
     m.scale(size);
@@ -701,98 +808,28 @@ nGuiServer::GetViewSpaceMatrix(const rectangle& r)
 
 //-----------------------------------------------------------------------------
 /**
-    Directly draw a textured rectangle to the screen.
-*/
-void
-nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex)
-{
-    n_assert(tex);
-
-    nGfxServer2* gfxServer = this->refGfxServer.get();
-
-    // update gfx server's modelview matrix
-    static const matrix44 identity;
-    gfxServer->PushTransform(nGfxServer2::View, identity);
-    gfxServer->PushTransform(nGfxServer2::Model, this->GetViewSpaceMatrix(rect));
-
-    // compute modulated color
-    vector4 modColor(color.x * this->globalColor.x,
-                     color.y * this->globalColor.y,
-                     color.z * this->globalColor.z,
-                     color.w * this->globalColor.w);
-
-    // update shader parameters
-    nShader2* shader = this->refShader.get();
-    if (shader->IsParameterUsed(nShader2::DiffMap0))
-    {
-        shader->SetTexture(nShader2::DiffMap0, tex);
-    }
-    if (shader->IsParameterUsed(nShader2::MatDiffuse))
-    {
-        shader->SetVector4(nShader2::MatDiffuse, modColor);
-    }
-
-    // render the mesh
-    gfxServer->SetMesh(0);
-    this->UpdateMesh(uvRect);
-    gfxServer->SetMesh(this->refMesh.get());
-    gfxServer->SetVertexRange(0, 4);
-    gfxServer->SetIndexRange(0, 6);
-    gfxServer->DrawIndexedNS(nGfxServer2::TriangleList);
-
-    gfxServer->PopTransform(nGfxServer2::View);
-    gfxServer->PopTransform(nGfxServer2::Model);
-}
-
-//-----------------------------------------------------------------------------
-/**
     Draw a brush of the current skin.
 */
 void
-nGuiServer::DrawBrush(const rectangle& rect, const char* brushName)
+nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
 {
     // a null brush pointer is valid, in this case, nothing is rendered
-    if (0 == brushName)
+    if (brush.GetName().IsEmpty())
     {
         return;
     }
+    // get gui resource from brush
+    nGuiResource* guiResource = brush.GetGuiResource();
+    n_assert(guiResource);
 
-    nGfxServer2* gfxServer = this->refGfxServer.get();
-
-    // resolve brush name into gui resource
-    if (!this->GetSkin())
+    // make sure gui resource is loaded
+    if (!guiResource->IsValid())
     {
-        n_error("nGuiServer::DrawBrush: need skin for brush rendering!");
+        bool success = guiResource->Load();
+        n_assert(success);
     }
-    
-    nGuiResource* guiResource = this->GetSkin()->FindBrush(brushName);
-    
-    if (!guiResource)
-    {
-        //toggle gui and retry
-        this->ToggleSystemGui();
-        guiResource = this->GetSkin()->FindBrush(brushName);
-        this->ToggleSystemGui();
-    }
-    
-    if (guiResource)
-    {
-        // make sure gui resource is loaded
-        if (!guiResource->IsValid())
-        {
-            bool success = guiResource->Load();
-            n_assert(success);
-        }
-        this->DrawTexture(rect, guiResource->GetUvRect(), guiResource->GetColor(), guiResource->GetTexture());
-    }
-    else
-    {
-        nGuiSkin* userSkin = this->refUserSkin.isvalid() ? this->refUserSkin.get() : 0;
-        nGuiSkin* systemSkin = this->GetSystemSkin();
-        n_error("nGuiServer: brush '%s' not found in user skin '%s' nor system skin '%s' !\n", brushName, userSkin ? userSkin->GetName() : "<NO SKIN>", systemSkin->GetName());
-    }
+    this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
 }
-
 //-----------------------------------------------------------------------------
 /**
     Set a coordinate space reference size.
@@ -866,7 +903,9 @@ nGuiServer::IsMouseOverGui() const
              widget;
              widget = (nGuiWidget*) widget->GetSucc())
         {
-            if (widget->IsShown() && (widget->Inside(this->curMousePos)))
+            if (widget->IsShown() && 
+                (!widget->IsBackground()) &&
+                (widget->Inside(this->curMousePos)))
             {
                 return true;
             }
@@ -960,8 +999,10 @@ void
 nGuiServer::RegisterEventListener(nGuiWidget* w)
 {
     nRef<nGuiWidget> refWidget(w);
-    n_assert(!this->eventListeners.Find(refWidget));
-    this->eventListeners.Append(refWidget);
+    if (!this->eventListeners.Find(refWidget))
+    {
+        this->eventListeners.Append(refWidget);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -973,8 +1014,12 @@ nGuiServer::UnregisterEventListener(nGuiWidget* w)
 {
     nRef<nGuiWidget> refWidget(w);
     nArray< nRef<nGuiWidget> >::iterator iter = this->eventListeners.Find(refWidget);
-    n_assert(0 != iter);
-    this->eventListeners.Erase(iter);
+    if (0 != iter)
+    {
+        // NOTE: just invalidate the nRef here, the array
+        // entry will be removed at the next nGuiServer::Trigger()
+        iter->invalidate();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -989,7 +1034,10 @@ nGuiServer::PutEvent(const nGuiEvent& event)
     int i;
     for (i = 0; i < num; i++)
     {
-        this->eventListeners[i]->OnEvent(event);
+        if (this->eventListeners[i].isvalid())
+        {
+            this->eventListeners[i]->OnEvent(event);
+        }
     }
 }
 
@@ -1028,30 +1076,36 @@ nGuiServer::ToggleSystemGui()
 vector2
 nGuiServer::ComputeScreenSpaceBrushSize(const char* brushName)
 {
+    nGuiBrush tmpBrush(brushName);
+
     vector2 size;
-    if (this->GetSkin() && brushName)
-    {
-        nGuiResource* guiResource = this->GetSkin()->FindBrush(brushName);
-        if (!guiResource)
-        {
-            //toggle gui and retry
-            this->ToggleSystemGui();
-            guiResource = this->GetSkin()->FindBrush(brushName);
-            this->ToggleSystemGui();
-        }
-        
-        if (guiResource)
-        {
-            const rectangle& uvRect = guiResource->GetUvRect();
-            float texWidth   = (float) guiResource->GetTextureWidth();
-            float texHeight  = (float) guiResource->GetTextureHeight();
-            const nDisplayMode2& dispMode = this->refGfxServer->GetDisplayMode();
-            float dispWidth  = (float) dispMode.GetWidth();
-            float dispHeight = (float) dispMode.GetHeight();
-            size.x = (uvRect.width() * texWidth) / dispWidth;
-            size.y = (uvRect.height() * texHeight) / dispHeight;
-        }
-        //fallthrough: brush not found
-    }
+    nGuiResource* guiResource = tmpBrush.GetGuiResource();
+    n_assert(guiResource);
+    const rectangle& uvRect = guiResource->GetRelUvRect();
+    float texWidth   = (float) guiResource->GetTextureWidth();
+    float texHeight  = (float) guiResource->GetTextureHeight();
+    const nDisplayMode2& dispMode = nGfxServer2::Instance()->GetDisplayMode();
+    float dispWidth  = (float) dispMode.GetWidth();
+    float dispHeight = (float) dispMode.GetHeight();
+    size.x = (uvRect.width() * texWidth) / dispWidth;
+    size.y = (uvRect.height() * texHeight) / dispHeight;
     return size;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Play a GUI sound.
+*/
+void
+nGuiServer::PlaySound(nGuiSkin::Sound snd)
+{
+    nGuiSkin* curSkin = this->GetSkin();
+    if (curSkin)
+    {
+        nSound3* soundObject = curSkin->GetSoundObject(snd);
+        if (soundObject)
+        {
+            nAudioServer3::Instance()->StartSound(soundObject);
+        }
+    }
 }

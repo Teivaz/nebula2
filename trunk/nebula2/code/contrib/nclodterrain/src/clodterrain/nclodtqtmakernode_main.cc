@@ -133,8 +133,7 @@ void nCLODTQTMakerNode::compileTQTFromFile(const char *sourcefilename)
 {
     n_assert(m_ref_fs.isvalid());
     nFile *destfile = m_ref_fs->NewFileObject();
-    char bigsrcpath[N_MAXPATH];
-    m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
+    nString bigsrcpath = m_ref_fs->ManglePath(sourcefilename);
     if (!destfile->Open(m_outputfilename, "wb"))
     {
         n_error("nCLODTQTMakerNode::compileTQTFromFile(): Could not open file %s\n",
@@ -181,12 +180,12 @@ void nCLODTQTMakerNode::generateEmptyTOC(nFile &destfile, int root_level)
 }
 
 // generate leaf nodes from the source image
-tqt_tile_layer * nCLODTQTMakerNode::generateTQTLeaves(nFile &destfile, const char *sourcefilename, tqt_tile_layer *tiles)
+tqt_tile_layer * nCLODTQTMakerNode::generateTQTLeaves(nFile &destfile, nString sourcefilename, tqt_tile_layer *tiles)
 {
     // grab the image from the file
     ILuint sourceImage = iluGenImage();
     ilBindImage(sourceImage);
-    if ( !ilLoadImage( (char*)sourcefilename ) )
+    if ( !ilLoadImage( (char*)sourcefilename.Get() ) )
     {
         n_printf("DevIL failed loading image '%s' with '%s'.\n", sourcefilename, iluErrorString(ilGetError()));
         iluDeleteImage(sourceImage);

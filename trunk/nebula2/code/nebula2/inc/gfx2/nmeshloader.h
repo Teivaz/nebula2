@@ -44,9 +44,9 @@ public:
     /// get index type
     IndexType GetIndexType() const;
     /// open the file and read header data
-    bool Open(nFileServer2* fileServer);
+    virtual bool Open(nFileServer2* fileServer);
     /// close the file
-    void Close();
+    virtual void Close();
     /// get number of groups (valid after Open())
     int GetNumGroups() const;
     /// get group info (valid after Open())
@@ -59,12 +59,16 @@ public:
     int GetNumTriangles() const;
     /// get number of indices (valid after Open())
     int GetNumIndices() const;
+    /// get number of edges (valid after Open())
+    int GetNumEdges() const;
     /// get vertex components (see gfx2/nmesh2.h)(valid after Open())
     int GetVertexComponents() const;
     /// read vertex data
-    bool ReadVertices(void* buffer, int bufferSize);
+    virtual bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    bool ReadIndices(void* buffer, int bufferSize);
+    virtual bool ReadIndices(void* buffer, int bufferSize);
+    /// read edge data
+    virtual bool ReadEdges(void* buffer, int bufferSize);
 
 protected:
     nFileServer2* fileServer;
@@ -76,6 +80,7 @@ protected:
     int vertexWidth;
     int numTriangles;
     int numIndices;
+    int numEdges;
     int vertexComponents;
     nArray<nMeshGroup> groupArray;
 };
@@ -93,6 +98,7 @@ nMeshLoader::nMeshLoader() :
     vertexWidth(0),
     numTriangles(0),
     numIndices(0),
+    numEdges(0),
     vertexComponents(0)
 {
     // empty
@@ -234,6 +240,16 @@ nMeshLoader::GetNumIndices() const
 */
 inline
 int
+nMeshLoader::GetNumEdges() const
+{
+    return this->numEdges;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
 nMeshLoader::GetVertexComponents() const
 {
     return this->vertexComponents;
@@ -261,6 +277,16 @@ nMeshLoader::ReadIndices(void* buffer, int bufferSize)
     return false;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nMeshLoader::ReadEdges(void* buffer, int bufferSize)
+{
+    n_error("nMeshLoader::ReadEdges() called!");
+    return false;
+}
 //------------------------------------------------------------------------------
 #endif
 

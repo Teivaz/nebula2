@@ -207,27 +207,27 @@ nGuiDockWindow::OnEvent(const nGuiEvent& event)
         if (event.GetWidget() == this->refConsoleButton.get())
         {
             // open a new console window
-            this->refGuiServer->NewWindow("nguiconsolewindow", true);
+            nGuiServer::Instance()->NewWindow("nguiconsolewindow", true);
         }
         else if (event.GetWidget() == this->refTexBrowserButton.get())
         {
             // open a texture browser window
-            this->refGuiServer->NewWindow("nguitexbrowserwindow", true);
+            nGuiServer::Instance()->NewWindow("nguitexbrowserwindow", true);
         }
         else if (event.GetWidget() == this->refWatcherButton.get())
         {
             // open debug watcher window
-            this->refGuiServer->NewWindow("nguiwatcherwindow", true);
+            nGuiServer::Instance()->NewWindow("nguiwatcherwindow", true);
         }
         else if (event.GetWidget() == this->refSysInfoButton.get())
         {
             // open system info window
-            this->refGuiServer->NewWindow("nguisysteminfowindow", true);
+            nGuiServer::Instance()->NewWindow("nguisysteminfowindow", true);
         }
         else if (event.GetWidget() == this->refHideButton.get())
         {
             // hide the system gui
-            this->refGuiServer->ToggleSystemGui();
+            nGuiServer::Instance()->ToggleSystemGui();
         }
         else if (event.GetWidget() == this->refQuitButton.get())
         {

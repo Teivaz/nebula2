@@ -62,7 +62,7 @@ nGuiTexBrowserWindow::OnShow()
     // "prev texture" button
     nGuiButton* prevBtn = (nGuiButton*) kernelServer->New("nguibutton", "Prev");
     n_assert(prevBtn);
-    vector2 prevBtnSize = this->refGuiServer->ComputeScreenSpaceBrushSize("arrowleft_n");
+    vector2 prevBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowleft_n");
     prevBtn->SetDefaultBrush("arrowleft_n");
     prevBtn->SetPressedBrush("arrowleft_p");
     prevBtn->SetHighlightBrush("arrowleft_h");
@@ -76,7 +76,7 @@ nGuiTexBrowserWindow::OnShow()
     // "next texture" button
     nGuiButton* nextBtn = (nGuiButton*) kernelServer->New("nguibutton", "Next");
     n_assert(nextBtn);
-    vector2 nextBtnSize = this->refGuiServer->ComputeScreenSpaceBrushSize("arrowright_n");
+    vector2 nextBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowright_n");
     nextBtn->SetDefaultBrush("arrowright_n");
     nextBtn->SetPressedBrush("arrowright_p");
     nextBtn->SetHighlightBrush("arrowright_h");

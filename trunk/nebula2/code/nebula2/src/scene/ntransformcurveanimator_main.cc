@@ -28,6 +28,15 @@ nTransformCurveAnimator::~nTransformCurveAnimator()
 
 //------------------------------------------------------------------------------
 /**
+*/
+nAnimator::Type
+nTransformCurveAnimator::GetAnimatorType() const
+{
+    return Transform;
+}
+
+//------------------------------------------------------------------------------
+/**
     Unload animation resource if valid.
 */
 void

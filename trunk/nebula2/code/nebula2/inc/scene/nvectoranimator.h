@@ -27,7 +27,7 @@ public:
     virtual bool SaveCmds(nPersistServer* ps);
 
     /// return the type of this animator object (SHADER)
-    virtual AnimatorType GetAnimatorType() const;
+    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// set the name of the vector parameter to manipulate
@@ -42,7 +42,7 @@ public:
     void GetKeyAt(int index, float& time, vector4& key) const;
 
 private:
-    nShader2::Parameter vectorParameter;
+    nShaderState::Param vectorParameter;
     nIpolKeyArray<vector4> keyArray;
 };
 

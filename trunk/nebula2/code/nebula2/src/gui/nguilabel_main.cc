@@ -70,11 +70,11 @@ nGuiLabel::Render()
     {
         if (this->mouseOver && this->GetHighlightBrush())
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetHighlightBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
         }
         else
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
         }
         return true;
     }

@@ -24,7 +24,7 @@ TileIndexData::~TileIndexData()
     }
 }
 
-bool TileIndexData::readBitmap(const char *bitmapfilename)
+bool TileIndexData::readBitmap(nString bitmapfilename)
 {
         // try to read in the image file
     ilInit();
@@ -32,7 +32,7 @@ bool TileIndexData::readBitmap(const char *bitmapfilename)
     ILuint pixelImage = iluGenImage();
     ilBindImage(pixelImage);
 
-    if (!ilLoadImage((char*) bitmapfilename))
+    if (!ilLoadImage((char*) bitmapfilename.Get()))
     {
         n_printf("DevIL failed loading image '%s' with '%s'.\n", bitmapfilename, iluErrorString(ilGetError()));
         iluDeleteImage(pixelImage);

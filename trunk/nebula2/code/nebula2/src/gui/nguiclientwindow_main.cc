@@ -14,15 +14,16 @@ nNebulaScriptClass(nGuiClientWindow, "nguiwindow");
 /**
 */
 nGuiClientWindow::nGuiClientWindow() :
-    refGfxServer("/sys/servers/gfx"),
     title("NoTitle"),
-    flags(Movable | Resizable | CloseButton),
+    flags(Movable | Resizable | CloseButton | TitleBar),
     dragging(false),
     resizing(false),
     titleHeight(0.0f)
 {
     this->shown = false;
     this->SetRect(rectangle(vector2(0.1f, 0.1f), vector2(0.6f, 0.6f)));
+    this->SetFadeInTime(0.2f);
+    this->SetFadeOutTime(0.2f);
 }
 
 //------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ nGuiClientWindow::~nGuiClientWindow()
 void
 nGuiClientWindow::UpdateLayout(const rectangle& newRect)
 {
-    nGuiSkin* skin = this->refGuiServer->GetSkin();
+    nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
 
     rectangle closeRect;
@@ -51,7 +52,7 @@ nGuiClientWindow::UpdateLayout(const rectangle& newRect)
     // update close button
     if (this->refCloseButton.isvalid())
     {
-        vector2 closeSize = this->refGuiServer->ComputeScreenSpaceBrushSize("close_n");
+        vector2 closeSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("close_n");
         closeRect.v0.x = newRect.width() - closeSize.x;
         closeRect.v0.y = (this->titleHeight - closeSize.y) * 0.5f;
         closeRect.v1.x = newRect.width();
@@ -62,18 +63,21 @@ nGuiClientWindow::UpdateLayout(const rectangle& newRect)
     // update size button
     if (this->refSizeButton.isvalid())
     {
-        vector2 sizeSize = this->refGuiServer->ComputeScreenSpaceBrushSize("size_n");
+        vector2 sizeSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("size_n");
         sizeRect.v0 = newRect.size() - sizeSize;
         sizeRect.v1 = newRect.size();
         this->refSizeButton->SetRect(sizeRect);
     }
 
     // update title bar
-    titleRect.v0.x = 0.0f;
-    titleRect.v0.y = 0.0f;
-    titleRect.v1.x = newRect.width();
-    titleRect.v1.y = this->titleHeight;
-    this->refTitleBar->SetRect(titleRect);
+    if (this->refTitleBar.isvalid())
+    {
+        titleRect.v0.x = 0.0f;
+        titleRect.v0.y = 0.0f;
+        titleRect.v1.x = newRect.width();
+        titleRect.v1.y = this->titleHeight;
+        this->refTitleBar->SetRect(titleRect);
+    }
 
     // update client area
     const rectangle& border = skin->GetWindowBorder();
@@ -99,7 +103,7 @@ nGuiClientWindow::OnShow()
     n_assert(!this->refSizeButton.isvalid());
     n_assert(!this->refTitleBar.isvalid());
     n_assert(!this->refFormLayout.isvalid());
-    nGuiSkin* skin = this->refGuiServer->GetSkin();
+    nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
 
     // set own background resource and initial size
@@ -109,7 +113,7 @@ nGuiClientWindow::OnShow()
     }
 
     // update vertical text extent
-    vector2 titleSize = this->refGuiServer->ComputeScreenSpaceBrushSize("titlebar");
+    vector2 titleSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("titlebar");
     this->titleHeight = titleSize.y;
     this->SetMinSize(vector2(5.0f * this->titleHeight, 2.0f * this->titleHeight));
     
@@ -117,19 +121,22 @@ nGuiClientWindow::OnShow()
     kernelServer->PushCwd(this);
 
     // create and configure the title bar button (also used to move window)
-    nGuiTextButton* btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "TitleBar");
-    n_assert(btn);
-    btn->SetDefaultBrush("titlebar");
-    btn->SetPressedBrush("titlebar");
-    btn->SetHighlightBrush("titlebar");
-    btn->SetText(this->GetTitle());
-    btn->SetColor(skin->GetTitleTextColor());
-    btn->SetShadowOffset(vector2(0.0f, 0.0f));
-    if (this->IsMovable())
+    if (this->HasTitleBar())
     {
-        btn->SetStickyMouse(true);
+        nGuiTextButton* btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "TitleBar");
+        n_assert(btn);
+        btn->SetDefaultBrush("titlebar");
+        btn->SetPressedBrush("titlebar");
+        btn->SetHighlightBrush("titlebar");
+        btn->SetText(this->GetTitle());
+        btn->SetColor(skin->GetTitleTextColor());
+        btn->SetPressedOffset(vector2(0.0f, 0.0f));
+        if (this->IsMovable())
+        {
+            btn->SetStickyMouse(true);
+        }
+        this->refTitleBar = btn;
     }
-    this->refTitleBar = btn;
 
     // create and configure close button
     if (this->HasCloseButton())
@@ -162,7 +169,7 @@ nGuiClientWindow::OnShow()
     // update child widget rectangles
     this->SetRect(this->rect);
 
-    this->refGuiServer->RegisterEventListener(this);
+    nGuiServer::Instance()->RegisterEventListener(this);
     nGuiWindow::OnShow();
 }
 
@@ -172,7 +179,7 @@ nGuiClientWindow::OnShow()
 void
 nGuiClientWindow::OnHide()
 {
-    this->refGuiServer->UnregisterEventListener(this);
+    nGuiServer::Instance()->UnregisterEventListener(this);
 
     if (this->refCloseButton.isvalid())
     {
@@ -302,7 +309,7 @@ nGuiClientWindow::OnEvent(const nGuiEvent& event)
         // handle events from our close button
         if (event.GetType() == nGuiEvent::ButtonUp)
         {
-            this->SetDismissed(true);
+            this->SetCloseRequested(true);
         }
     }
     else if (this->refSizeButton.isvalid() && (event.GetWidget() == this->refSizeButton.get()))
@@ -330,7 +337,7 @@ nGuiClientWindow::BeginDrag()
 {
     n_assert(this->IsMovable());
     this->dragging      = true;
-    this->startMousePos = this->refGuiServer->GetMousePos();
+    this->startMousePos = nGuiServer::Instance()->GetMousePos();
     this->startRect     = this->rect;
 }
 
@@ -367,7 +374,7 @@ nGuiClientWindow::BeginResize()
 {
     n_assert(this->IsResizable());
     this->resizing      = true;
-    this->startMousePos = this->refGuiServer->GetMousePos();
+    this->startMousePos = nGuiServer::Instance()->GetMousePos();
     this->startRect     = this->rect;
 }
 
@@ -393,3 +400,24 @@ nGuiClientWindow::CancelResize()
     this->resizing = false;
     this->rect = this->startRect;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Close all sibling windows which are of the same class of me. Can be used
+    to implement Singleton windows.
+*/
+void
+nGuiClientWindow::CloseSiblings()
+{
+    nGuiWindow* window;
+    for (window = (nGuiWindow*) this->GetParent()->GetHead();
+         window;
+         window = (nGuiWindow*) window->GetSucc())
+    {
+        if ((window != this) && window->IsInstanceOf(this->GetClass()))
+        {
+            window->SetDismissed(true);
+        }
+    }
+}
+

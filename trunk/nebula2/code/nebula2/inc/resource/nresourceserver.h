@@ -23,6 +23,8 @@ public:
     nResourceServer();
     /// destructor
     virtual ~nResourceServer();
+    /// return singleton instance pointer
+    static nResourceServer* Instance();
     /// find a resource object by its name and type
     virtual nResource* FindResource(const char* rsrcName, nResource::Type rsrcType);
     /// create a resource object
@@ -43,6 +45,7 @@ public:
 
 protected:
     friend class nResource;
+    static nResourceServer* Singleton;
 
     /// add a resource to the loader job list
     void AddLoaderJob(nResource* res);
@@ -73,5 +76,17 @@ protected:
 
     nClass* resourceClass;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nResourceServer*
+nResourceServer::Instance()
+{
+    n_assert(0 != Singleton);
+    return Singleton;
+}
+
 //------------------------------------------------------------------------------
 #endif

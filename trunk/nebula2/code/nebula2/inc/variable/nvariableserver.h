@@ -32,6 +32,9 @@ public:
     nVariableServer();
     /// destructor
     virtual ~nVariableServer();
+    /// return instance pointer
+    static nVariableServer* Instance();
+
     /// declare a variable
     nVariable::Handle DeclareVariable(const char* varName, nFourCC fourcc);
     /// get number of variable declarations
@@ -68,6 +71,8 @@ public:
     static const char* FourCCToString(nFourCC, char* buf, int bufSize);
 
 private:
+    static nVariableServer* Singleton;
+
     class VariableDeclaration
     {
     public:
@@ -95,6 +100,17 @@ private:
     nVariableContext globalVariableContext;
     nArray<VariableDeclaration> registry;
 };
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+nVariableServer*
+nVariableServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
 
 //------------------------------------------------------------------------------
 /*

@@ -6,6 +6,7 @@
 #include "resource/nresourceserver.h"
 #include "gfx2/nmesh2.h"
 #include "gfx2/nfont2.h"
+#include "gfx2/nd3d9mesharray.h"
 #include "gfx2/nd3d9shader.h"
 
 //------------------------------------------------------------------------------
@@ -20,6 +21,18 @@ nMesh2*
 nD3D9Server::NewMesh(const char* rsrcName)
 {
     return (nMesh2*) this->refResource->NewResource("nd3d9mesh", rsrcName, nResource::Mesh);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a new mesh array object.
+
+    @return             pointer to a nD3D9MeshArray object
+*/
+nMeshArray*
+nD3D9Server::NewMeshArray(const char* rsrcName)
+{
+    return ((nMeshArray*) this->refResource->NewResource("nd3d9mesharray", rsrcName, nResource::Mesh));
 }
 
 //------------------------------------------------------------------------------
@@ -119,6 +132,13 @@ nD3D9Server::OnDeviceLost()
     // release other resources
     this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
 
+    // release shape shader
+    if (this->refShapeShader.isvalid())
+    {
+        this->refShapeShader->Release();
+        this->refShapeShader.invalidate();
+    }
+
     // release the shared state shader
     if (this->refSharedShader.isvalid())
     {
@@ -138,6 +158,10 @@ nD3D9Server::OnDeviceLost()
         this->depthStencilSurface = 0;
     }
     
+    // inform line renderer
+    HRESULT hr = this->d3dxLine->OnLostDevice();
+    n_dxtrace(hr, "OnLostDevice() on d3dxLine failed");
+
     #ifdef __NEBULA_STATS__
     // release the d3d query object
     if (this->queryResourceManager)
@@ -163,11 +187,11 @@ nD3D9Server::OnRestoreDevice()
 
     // get a pointer to the back buffer and depth/stencil surface
     hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetBackBuffer() on device failed.");
     n_assert(this->backBufferSurface);
 
     hr = this->d3d9Device->GetDepthStencilSurface(&this->depthStencilSurface);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetDepthStencilSurface() on device failed.");
     n_assert(this->depthStencilSurface);
 
     #ifdef __NEBULA_STATS__
@@ -182,9 +206,25 @@ nD3D9Server::OnRestoreDevice()
     // open the text renderer
     this->OpenTextRenderer();
 
+    // inform line renderer
+    hr = this->d3dxLine->OnResetDevice();
+    n_dxtrace(hr, "OnResetDevice() on d3dxLine failed");
+
     // update mouse cursor
     this->cursorDirty = true;
     this->UpdateCursor();
+
+    // create the shape shader
+    this->refShapeShader = (nD3D9Shader*) this->NewShader("shape");
+    if (!this->refShapeShader->IsValid())
+    {
+        this->refShapeShader->SetFilename("shaders:shape.fx");
+        if (!this->refShapeShader->Load())
+        {
+            this->refShapeShader->Release();
+            this->refShapeShader.invalidate();
+        }
+    }
 
     // create the shared effect parameter reference shader
     this->refSharedShader = (nD3D9Shader*) this->NewShader("shared");

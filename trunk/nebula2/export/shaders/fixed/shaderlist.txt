@@ -21,6 +21,8 @@ shaders:default_alpha.fx
 shaders:default_alpha2.fx
 shaders:particle_added.fx
 shaders:particle_blended.fx
+shaders:shape.fx
 shaders:gui.fx
+
 
 

@@ -76,7 +76,6 @@ function OnGuiServerOpen()
     tt:setdefaultbrush("tooltip")
     tt:setfont("GuiSmall")
     tt:setcolor(0,0,0,1)
-    tt:setshadowcolor(0,0,0,0)
     tt:setalignment("left")
     tt:setborder(0.005,0.005)
         

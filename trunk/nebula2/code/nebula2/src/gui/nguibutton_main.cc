@@ -33,7 +33,7 @@ nGuiButton::~nGuiButton()
 bool
 nGuiButton::OnMouseMoved(const vector2& mousePos)
 {
-    if (this->Inside(mousePos))
+    if (this->Inside(mousePos) && this->GetOwnerWindow()->HasFocus())
     {
         this->focus = true;
     }
@@ -62,11 +62,11 @@ nGuiButton::OnMouseMoved(const vector2& mousePos)
 bool
 nGuiButton::OnButtonDown(const vector2& mousePos)
 {
-    if (this->Inside(mousePos))
+    if (this->Inside(mousePos) && this->GetOwnerWindow()->HasFocus())
     {
         this->focus = true;
         this->pressed = true;
-        this->triggerSound = true;
+        nGuiServer::Instance()->PlaySound(nGuiSkin::ButtonClick);
         nGuiWidget::OnButtonDown(mousePos);
         return true;
     }
@@ -98,28 +98,28 @@ nGuiButton::Render()
 {
     if (this->IsShown())
     {
-        const char* brush = this->GetDefaultBrush();
+        nGuiBrush* brush = &this->defaultBrush;
         if (!this->enabled)
         {
-            brush = this->GetDisabledBrush();
+            brush = &this->disabledBrush;
         }
         else if (this->pressed)
         {
-            brush = this->GetPressedBrush();
+            brush = &this->pressedBrush;
         }
         else if (this->focus)
         {
-            brush = this->GetHighlightBrush();
+            brush = &this->highlightBrush;
         }
         else if (this->blinking)
         {
-            double time = this->refGuiServer->GetTime();
-            if (fmod(time, 1.0) > 0.5f)
+            double time = nGuiServer::Instance()->GetTime();
+            if (fmod(time, 1.0) > 0.5)
             {
-                brush = this->GetHighlightBrush();
+                brush = &this->highlightBrush;
             }
         }
-        this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), brush);
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), *brush);
         return true;
     }
     return false;

@@ -76,8 +76,8 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
     // table of valid pixel format combinations
     // { adapterFormat, backbufferFormat, zbufferFormat }
     D3DFORMAT formatTable[][3] = {
-        // { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24S8 },
-        // { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X4S4 },
+        { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24S8 },
+        { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X4S4 },
         { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X8 },
         { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D16 },
         { D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN },
@@ -106,7 +106,7 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
         // are defined by the current desktop color depth
         D3DDISPLAYMODE desktopMode;
         hr = this->d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &desktopMode);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "GetAdapterDisplayMode() failed.");
 
         dispFormat = desktopMode.Format;
         switch (dispFormat)
@@ -147,7 +147,7 @@ nD3D9Server::UpdateFeatureSet()
 {
     // get d3d device caps
     HRESULT hr = this->d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, N_D3D9_DEVICETYPE, &(this->devCaps));
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetDeviceCaps() in nD3D9Server::UpdateFeatureSet() failed!");
     if (this->devCaps.VertexShaderVersion >= D3DVS_VERSION(2, 0))
     {
         // check if floating point textures are available as render target
@@ -203,6 +203,7 @@ nD3D9Server::DeviceOpen()
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(this->windowHandler.IsWindowMinimized());
     n_assert(!this->inBeginScene);
+    n_assert(0 == this->d3dxLine);
     n_assert(0 == this->depthStencilSurface);
     n_assert(0 == this->backBufferSurface);
     #ifdef __NEBULA_STATS__
@@ -317,7 +318,7 @@ nD3D9Server::DeviceOpen()
     n_assert(this->d3d9Device);
 
     // create effect pool
-    hr = D3DXCreateEffectPool(&this->d3dxEffectPool);
+    hr = D3DXCreateEffectPool(&this->effectPool);
     if (FAILED(hr))
     {
         n_error("nD3D9Server: Could not create effect pool!\n");
@@ -327,7 +328,23 @@ nD3D9Server::DeviceOpen()
     // fill display mode structure
     memset(&(this->d3dDisplayMode), 0, sizeof(this->d3dDisplayMode));
     hr = this->d3d9Device->GetDisplayMode(0, &(this->d3dDisplayMode));
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): GetDisplayMode() failed!");
+
+    // create line object
+    hr = D3DXCreateLine(this->d3d9Device, &this->d3dxLine);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateLine() failed!");
+
+    // create shape objects
+    hr = D3DXCreateBox(this->d3d9Device, 1.0f, 1.0f, 1.0f, &this->shapeMeshes[Box], NULL);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateBox() failed!");
+    hr = D3DXCreateCylinder(this->d3d9Device, 1.0f, 1.0f, 1.0f, 18, 1, &this->shapeMeshes[Cylinder], NULL);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateCylinder() failed!");
+    hr = D3DXCreateSphere(this->d3d9Device, 1.0f, 18, 6, &this->shapeMeshes[Sphere], NULL);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateSphere() failed!");
+    hr = D3DXCreateTorus(this->d3d9Device, 1.0f, 0.5f, 18, 12, &this->shapeMeshes[Torus], NULL);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateTorus() failed!");
+    hr = D3DXCreateTeapot(this->d3d9Device, &this->shapeMeshes[Teapot], NULL);
+    n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateTeapot() failed!");
 
     // reload any resources if necessary
     this->OnRestoreDevice();
@@ -350,7 +367,8 @@ nD3D9Server::DeviceClose()
 {
     n_assert(this->d3d9);
     n_assert(this->d3d9Device);
-    n_assert(this->d3dxEffectPool);
+    n_assert(this->effectPool);
+    n_assert(this->d3dxLine);
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(!this->windowHandler.IsWindowMinimized());
     n_assert(this->windowHandler.GetHwnd());
@@ -358,9 +376,24 @@ nD3D9Server::DeviceClose()
     // unload all resources
     this->OnDeviceLost();
 
+    // destroy primitive shapes
+    int i;
+    for (i = 0; i < NumShapeTypes; i++)
+    {
+        if (this->shapeMeshes[i])
+        {
+            this->shapeMeshes[i]->Release();
+            this->shapeMeshes[i] = 0;
+        }
+    }
+
+    // destroy d3dx line object
+    this->d3dxLine->Release();
+    this->d3dxLine = 0;
+
     // destroy the effect pool
-    this->d3dxEffectPool->Release();
-    this->d3dxEffectPool = 0;
+    this->effectPool->Release();
+    this->effectPool = 0;
 
     // destroy d3d device
     this->d3d9Device->Release();
@@ -557,13 +590,13 @@ nD3D9Server::UpdateCursor()
 
             IDirect3DSurface9* surfPtr = 0;
             hr = d3d9Tex->GetSurfaceLevel(0, &surfPtr);
-            n_assert(SUCCEEDED(hr));
+            n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): GetSurfaceLevel() failed!");
             n_assert(surfPtr);
 
             int hotspotX = this->curMouseCursor.GetHotspotX();
             int hotspotY = this->curMouseCursor.GetHotspotY();
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
-            n_assert(SUCCEEDED(hr));
+            n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): SetCursorProperties() failed!");
 
             switch (this->cursorVisibility)
             {
@@ -584,4 +617,42 @@ nD3D9Server::UpdateCursor()
         }
     }
     // NOTE: cursor visibility is handled inside WinProc!
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method should return the number of currently available stencil bits 
+    (override in subclass).
+*/
+int
+nD3D9Server::GetNumStencilBits() const
+{
+    n_assert(this->d3d9Device);
+    switch (this->presentParams.AutoDepthStencilFormat)
+    {
+        case D3DFMT_D24S8:      return 8;
+        case D3DFMT_D24X4S4:    return 4;
+        default:                return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method should return the number of currently available depth bits
+    (override in subclass).
+*/
+int
+nD3D9Server::GetNumDepthBits() const
+{
+    n_assert(this->d3d9Device);
+    switch (this->presentParams.AutoDepthStencilFormat)
+    {
+        case D3DFMT_D24S8:
+        case D3DFMT_D24X4S4:
+        case D3DFMT_D24X8:
+            return 24;
+
+        default:
+            return 16;
+    }
 }

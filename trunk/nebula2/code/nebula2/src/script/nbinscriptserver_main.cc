@@ -179,13 +179,9 @@ nBinScriptServer::WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, nScriptServ
 
     switch (selMethod)
     {
-        case SELCOMMAND:
-            {
-            // get relative path from obj1 to obj0 and write select statement
-                nString relPath = obj1->GetRelPath(obj0);
+        case SELCOMMAND:         
             this->PutInt(file, '_sel');
-                this->PutString(file, relPath.Get());
-            }
+            this->PutString(file, obj1->GetRelPath(obj0).Get());
           break;
 
         case NOSELCOMMAND:

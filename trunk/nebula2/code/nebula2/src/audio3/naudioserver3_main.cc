@@ -3,32 +3,25 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "audio3/naudioserver3.h"
+#include "audio3/nsound3.h"
+#include "resource/nresourceserver.h"
 
-nNebulaClass(nAudioServer3, "nroot");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    naudioserver3
-
-    @cppclass
-    nAudioServer3
-    
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
+nNebulaScriptClass(nAudioServer3, "nroot");
+nAudioServer3* nAudioServer3::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
 */
 nAudioServer3::nAudioServer3() :
     isOpen(false),
-    inBeginScene(false)
+    inBeginScene(false),
+    masterVolume(1.0f),
+    masterVolumeDirty(true),
+    curTime(0.0),
+    masterVolumeChangedTime(0.0)
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
 }
 
 //------------------------------------------------------------------------------
@@ -36,7 +29,8 @@ nAudioServer3::nAudioServer3() :
 */
 nAudioServer3::~nAudioServer3()
 {
-    n_assert(!this->isOpen);
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -63,11 +57,30 @@ nAudioServer3::Close()
 //------------------------------------------------------------------------------
 /**
 */
+void
+nAudioServer3::Reset()
+{
+    nRoot* rsrcPool = nResourceServer::Instance()->GetResourcePool(nResource::SoundInstance);
+    nRoot* cur;
+    for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
+    {
+        nSound3* snd = (nSound3*) cur;
+        if (snd->IsPlaying())
+        {
+            snd->Stop();
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 bool
-nAudioServer3::BeginScene()
+nAudioServer3::BeginScene(nTime t)
 {
     n_assert(this->isOpen);
     n_assert(!this->inBeginScene);
+    this->curTime = t;
     this->inBeginScene = true;
     return true;
 }

@@ -19,9 +19,9 @@ public:
     inline bool analyzeP() const { return _bAnalyze; }
 
     inline MString mayaInputFilename() const { return _szMayaInputFilename; }
-    inline nPathString animKeysFilename() const { return _szAnimKeysFilename; }
-    inline nPathString meshFilename() const { return _szMeshFilename; }
-    inline nPathString scriptFilename() const { return _szScriptFilename; }
+    inline const nPathString& animKeysFilename() const { return _szAnimKeysFilename; }
+    inline const nPathString& meshFilename() const { return _szMeshFilename; }
+    inline const nPathString& scriptFilename() const { return _szScriptFilename; }
     inline MString getSizeMult() const { return _szSizeMult; }
     inline uint animStep() const { return _nKeyEveryNFrames; }
     inline int startFrame() const { return _nStartFrame; } // 0 is the beginning, negative values are relative to endFrame

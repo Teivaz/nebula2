@@ -116,29 +116,15 @@ nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderCon
         // set shader parameter
         nShader2* shader = this->refGfxServer->GetShader();
         n_assert(shader);
-        if (shader->IsParameterUsed(nShader2::Swing))
+        if (shader->IsParameterUsed(nShaderState::Swing))
         {
-            shader->SetMatrix(nShader2::Swing, rotMatrix);
-        }
-
-        // set bounding box parameters
-        if (shader->IsParameterUsed(nShader2::BoxMinPos))
-        {
-            shader->SetVector3(nShader2::BoxMinPos, this->localBox.vmin);
-        }
-        if (shader->IsParameterUsed(nShader2::BoxMaxPos))
-        {
-            shader->SetVector3(nShader2::BoxMaxPos, this->localBox.vmax);
-        }
-        if (shader->IsParameterUsed(nShader2::BoxCenter))
-        {
-            shader->SetVector3(nShader2::BoxCenter, this->localBox.center());
+            shader->SetMatrix(nShaderState::Swing, rotMatrix);
         }
 
         // set wind shader parameter
-        if (shader->IsParameterUsed(nShader2::Wind))
+        if (shader->IsParameterUsed(nShaderState::Wind))
         {
-            shader->SetFloat4(nShader2::Wind, windVar->GetFloat4());
+            shader->SetFloat4(nShaderState::Wind, windVar->GetFloat4());
         }
 
         return true;

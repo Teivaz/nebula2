@@ -104,7 +104,7 @@ nSpotLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderCon
     }
 
     // compute the modelLightProjection matrix
-    if (shader->IsParameterUsed(nShader2::ModelLightProjection))
+    if (shader->IsParameterUsed(nShaderState::ModelLightProjection))
     {
         matrix44 scaleAndBias(0.5f, 0.0f,  0.0f, 0.0f,
                               0.0f, -0.5f, 0.0f, 0.0f,
@@ -119,12 +119,12 @@ nSpotLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderCon
         matrix44 modelLight = model * invLightTransform;
         matrix44 modelLightProjection = modelLight * projection;
         matrix44 mvpScaledAndBiased = modelLightProjection * scaleAndBias;
-        shader->SetMatrix(nShader2::ModelLightProjection, mvpScaledAndBiased);
+        shader->SetMatrix(nShaderState::ModelLightProjection, mvpScaledAndBiased);
     }
 
     // compute the lightPos in model space
     vector3 lightPos = lightTransform.pos_component();
-    if (shader->IsParameterUsed(nShader2::ModelLightPos))
+    if (shader->IsParameterUsed(nShaderState::ModelLightPos))
     {
         vector3 p = gfxServer->GetTransform(nGfxServer2::InvModel) * lightPos;
         nFloat4 f4;
@@ -132,18 +132,18 @@ nSpotLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderCon
         f4.y = p.y;
         f4.z = p.z;
         f4.w = 1.0f;
-        shader->SetFloat4(nShader2::ModelLightPos, f4);
+        shader->SetFloat4(nShaderState::ModelLightPos, f4);
     }
 
     // ...or if world space position is needed...
-    if (shader->IsParameterUsed(nShader2::LightPos))
+    if (shader->IsParameterUsed(nShaderState::LightPos))
     {
         nFloat4 f4;
         f4.x = lightPos.x;
         f4.y = lightPos.y;
         f4.z = lightPos.z;
         f4.w = 1.0f;
-        shader->SetFloat4(nShader2::LightPos, f4);
+        shader->SetFloat4(nShaderState::LightPos, f4);
     }
     return true;
 }

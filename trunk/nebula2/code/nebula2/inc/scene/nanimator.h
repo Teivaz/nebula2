@@ -24,17 +24,18 @@ class nVariableServer;
 class nAnimator : public nSceneNode
 {
 public:
-    enum AnimatorType
+    enum Type
     {
-        INVALID_TYPE,   // an invalid type
-        TRANSFORM,      // a transform animator
-        SHADER,         // a shader animator
+        InvalidType,    // an invalid type
+        Transform,      // a transform animator
+        Shader,         // a shader animator
+        BlendShape,     // a blend shape animator
     };
 
     enum LoopType
     {
-        LOOP,           // looping
-        ONESHOT,        // one shot (clamping)
+        Loop,           // looping
+        OneShot,        // one shot (clamping)
     };
 
     /// constructor
@@ -45,7 +46,7 @@ public:
     virtual bool SaveCmds(nPersistServer* ps);
     
     /// return the type of this animator object
-    virtual AnimatorType GetAnimatorType() const;
+    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// set the variable handle which drives this animator object (e.g. time)
@@ -62,7 +63,6 @@ public:
     static LoopType StringToLoopType(const char* str);
 
 protected:
-    nAutoRef<nVariableServer> refVariableServer;
     LoopType loopType;
     nVariable::Handle channelVarHandle;
 };
@@ -76,10 +76,10 @@ nAnimator::LoopTypeToString(LoopType t)
 {
     switch (t)
     {
-        case LOOP:      
+        case Loop:  
             return "loop"; 
 
-        case ONESHOT:   
+        case OneShot:
         default:
             return "oneshot";
     }
@@ -93,14 +93,8 @@ nAnimator::LoopType
 nAnimator::StringToLoopType(const char* str)
 {
     n_assert(str);
-    if (0 == strcmp(str, "loop"))
-    {
-        return LOOP;
-    }
-    else
-    {
-        return ONESHOT;
-    }
+    if (0 == strcmp(str, "loop")) return Loop;
+    else                          return OneShot;
 }
 
 //------------------------------------------------------------------------------

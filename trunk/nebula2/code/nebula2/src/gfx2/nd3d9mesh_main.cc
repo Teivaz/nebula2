@@ -3,10 +3,6 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "gfx2/nd3d9mesh.h"
-#include "kernel/nfileserver2.h"
-#include "kernel/nfile.h"
-#include "gfx2/nn3d2loader.h"
-#include "gfx2/nnvx2loader.h"
 
 nNebulaClass(nD3D9Mesh, "nmesh2");
 
@@ -29,7 +25,6 @@ nNebulaClass(nD3D9Mesh, "nmesh2");
 /**
 */
 nD3D9Mesh::nD3D9Mesh() :
-    refGfxServer("/sys/servers/gfx"),
     d3dVBLockFlags(0),
     d3dIBLockFlags(0),
     vertexBuffer(0),
@@ -77,47 +72,13 @@ nD3D9Mesh::LoadResource()
     n_assert(0 == this->vertexBuffer);
     n_assert(0 == this->indexBuffer);
 
-    nPathString filename(this->GetFilename().Get());
-    bool success = false;
-    if (filename.IsEmpty())
+    bool success = nMesh2::LoadResource();
+    
+    if (success)
     {
-        // no filename, just create empty vertex and index buffers        
-        int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-        int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
-        this->SetVertexBufferByteSize(verticesByteSize);
-        this->SetIndexBufferByteSize(indicesByteSize);
-        this->CreateVertexBuffer();
-        this->CreateIndexBuffer();
+        // create the vertex declaration from the vertex component mask
         this->CreateVertexDeclaration();
-        switch (this->refillBuffersMode)
-        {
-            case DisabledOnce:
-                this->refillBuffersMode = Enabled;
-                break;
-            case Enabled:
-                this->refillBuffersMode = NeededNow;
-                break;
-            default:
-                break;
-        }
-        success = true;
     }
-    else if (this->refResourceLoader.isvalid())
-    {
-        // if the resource loader reference is valid, let it take a stab at the file
-        success = this->refResourceLoader->Load(filename.Get(), this);
-    }
-    else if (filename.CheckExtension("nvx2"))
-    {
-        // load from nvx2 file
-        success = this->LoadNvx2File();
-    }
-    else if (filename.CheckExtension("n3d2"))
-    {
-        // load from n3d2 file
-        success = this->LoadN3d2File();
-    }
-    this->SetValid(success);
     return success;
 }
 
@@ -135,29 +96,6 @@ nD3D9Mesh::UnloadResource()
     n_assert(this->IsValid());
 
     nMesh2::UnloadResource();
-
-    nD3D9Server* gfxServer = this->refGfxServer.get();
-    n_assert(gfxServer->d3d9Device);
-
-    // check if I'm the current mesh in the gfx server, if yes, unlink
-    if (gfxServer->GetMesh() == this)
-    {
-        gfxServer->SetMesh(0);
-    }
-/*FIXME: commentted out until we get correct version of GetMeshArray
-    else
-    {
-        nMeshArray* meshArray = gfxServer->GetMeshArray();
-        if (0 != meshArray)
-        {
-            int index = meshArray->ContainsMesh(this);
-            if (index != -1)
-        {
-                meshArray->SetMesh(index, 0);
-            }
-        }
-    }
-*/
 
     // release the d3d resource
     if (this->vertexBuffer)
@@ -215,13 +153,15 @@ nD3D9Mesh::CreateVertexBuffer()
     }
     else
     {
+        nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+        n_assert(gfxServer->d3d9Device);
+        
         // this is either a WriteOnce or a WriteOnly vertex buffer,
         // in both cases we create a D3D vertex buffer object
-        n_assert(this->refGfxServer->d3d9Device);
         HRESULT hr;    
 
-        DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
-        D3DPOOL d3dPool      = D3DPOOL_MANAGED;
+        DWORD d3dUsage = D3DUSAGE_WRITEONLY;
+        D3DPOOL d3dPool = D3DPOOL_MANAGED;
         this->d3dVBLockFlags = 0;
         if (WriteOnly & this->usage)
         {
@@ -237,22 +177,22 @@ nD3D9Mesh::CreateVertexBuffer()
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-        if (this->refGfxServer->GetSoftwareVertexProcessing() || 
+        if (gfxServer->GetSoftwareVertexProcessing() || 
             ((NeedsVertexShader & this->usage) && 
-            (this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9)))
+            (gfxServer->GetFeatureSet() < nGfxServer2::DX9)))
         {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
         
         // create the vertex buffer
-        hr = this->refGfxServer->d3d9Device->CreateVertexBuffer(
+        hr = gfxServer->d3d9Device->CreateVertexBuffer(
                 this->vertexBufferByteSize,
                 d3dUsage,
                 0,
                 d3dPool,
                 &(this->vertexBuffer),
                 NULL);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "CreateVertexBuffer() failed in nD3D9Mesh");
         n_assert(this->vertexBuffer);
     }
 }
@@ -278,7 +218,8 @@ nD3D9Mesh::CreateIndexBuffer()
     }
     else
     {
-        n_assert(this->refGfxServer->d3d9Device);
+        nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+        n_assert(gfxServer->d3d9Device);
         HRESULT hr;
 
         DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
@@ -298,21 +239,21 @@ nD3D9Mesh::CreateIndexBuffer()
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-        if (this->refGfxServer->GetSoftwareVertexProcessing() ||
+        if (gfxServer->GetSoftwareVertexProcessing() || 
             ((NeedsVertexShader & this->usage) && 
-            (this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9)))
+            (gfxServer->GetFeatureSet() < nGfxServer2::DX9)))
         { 
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
 
-        hr = this->refGfxServer->d3d9Device->CreateIndexBuffer(
+        hr = gfxServer->d3d9Device->CreateIndexBuffer(
                 this->indexBufferByteSize,
                 d3dUsage,
                 D3DFMT_INDEX16,
                 d3dPool,
                 &(this->indexBuffer),
                 NULL);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "CreateIndexBuffer failed in nD3D9Mesh");
         n_assert(this->indexBuffer);
     }
 }
@@ -325,7 +266,8 @@ void
 nD3D9Mesh::CreateVertexDeclaration()
 {
     n_assert(0 == this->vertexDeclaration);
-    n_assert(this->refGfxServer->d3d9Device);
+    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+    n_assert(gfxServer->d3d9Device);
 
     const int maxElements = 11;
     D3DVERTEXELEMENT9 decl[maxElements];
@@ -435,8 +377,8 @@ nD3D9Mesh::CreateVertexDeclaration()
     decl[curElement].Usage  = 0;
     decl[curElement].UsageIndex = 0;
 
-    HRESULT hr = this->refGfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration));
-    n_assert(SUCCEEDED(hr));
+    HRESULT hr = gfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration));
+    n_dxtrace(hr, "CreateVertexDeclaration() failed in nD3D9Mesh");
     n_assert(this->vertexDeclaration);
 }
 
@@ -454,7 +396,7 @@ nD3D9Mesh::LockVertices()
     {
         VOID* ptr;
         HRESULT hr = this->vertexBuffer->Lock(0, 0, &ptr, this->d3dVBLockFlags);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "Lock() on vertex buffer failed in nD3D9Mesh()");
         n_assert(ptr);
         retval = (float*) ptr;
     }
@@ -479,7 +421,7 @@ nD3D9Mesh::UnlockVertices()
     {
         HRESULT hr;
         hr = this->vertexBuffer->Unlock();
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "Unlock() on vertex buffer failed in nD3D9Mesh");
     }
     this->UnlockMutex();
 }
@@ -491,14 +433,14 @@ nD3D9Mesh::UnlockVertices()
 ushort*
 nD3D9Mesh::LockIndices()
 {
-    n_assert(this->indexBuffer || this->privIndexBuffer);
     this->LockMutex();
+    n_assert(this->indexBuffer || this->privIndexBuffer);
     ushort* retval = 0;
     if (this->indexBuffer)
     {
         VOID* ptr;
         HRESULT hr = this->indexBuffer->Lock(0, 0, &ptr, this->d3dIBLockFlags);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "Lock on index buffer failed in nD3D9Mesh");
         n_assert(ptr);
         retval = (ushort*) ptr;
     }
@@ -522,175 +464,9 @@ nD3D9Mesh::UnlockIndices()
     if (this->indexBuffer)
     {
         HRESULT hr = this->indexBuffer->Unlock();
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "Unlock() on index buffer failed in nD3D9Mesh");
     }
     this->UnlockMutex();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Update the group bounding boxes. This is a slow operation (since the
-    d3d vertex buffer must be locked and read). It should only be called
-    once after loading.
-*/
-void
-nD3D9Mesh::UpdateGroupBoundingBoxes()
-{
-    bbox3 groupBox;
-    int groupIndex;
-
-    float* vertexBufferData = this->LockVertices();
-    ushort* indexBufferData = this->LockIndices();
-    for (groupIndex = 0; groupIndex < this->numGroups; groupIndex++)
-    {
-        groupBox.begin_extend();
-
-        nMeshGroup& group = this->GetGroup(groupIndex);
-        ushort* indexPointer = indexBufferData + group.GetFirstIndex();
-        int i;
-        for (i = 0; i < group.GetNumIndices(); i++)
-        {
-            float* vertexPointer = vertexBufferData + (indexPointer[i] * this->vertexWidth);
-            groupBox.extend(vertexPointer[0], vertexPointer[1], vertexPointer[2]);
-        }
-        group.SetBoundingBox(groupBox);
-    }
-    this->UnlockIndices();
-    this->UnlockVertices();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Read an .nvx2 file (Nebula's binary mesh file format).
-*/
-bool
-nD3D9Mesh::LoadNvx2File()
-{
-    n_assert(!this->IsValid());
-    bool res;
-    nString filename = this->GetFilename();
-
-    // configure a mesh loader and load header
-    nNvx2Loader meshLoader;
-    meshLoader.SetFilename(filename.Get());
-    meshLoader.SetIndexType(nMeshLoader::Index16);
-    if (!meshLoader.Open(kernelServer->GetFileServer()))
-    {
-        n_error("nD3D9Mesh: could not open file '%s'!\n", filename.Get());
-        return false;
-    }
-
-    // transfer header data
-    this->SetNumGroups(meshLoader.GetNumGroups());
-    this->SetNumVertices(meshLoader.GetNumVertices());
-    this->SetVertexComponents(meshLoader.GetVertexComponents());
-    this->SetNumIndices(meshLoader.GetNumIndices());
-    int groupIndex;
-    int numGroups = meshLoader.GetNumGroups();
-    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
-    {
-        nMeshGroup& group = this->GetGroup(groupIndex);
-        group = meshLoader.GetGroupAt(groupIndex);
-    }
-    n_assert(this->GetVertexWidth() == meshLoader.GetVertexWidth());
-
-    // allocate vertex and index buffers
-    int vbSize = meshLoader.GetNumVertices() * meshLoader.GetVertexWidth() * sizeof(float);
-    int ibSize = meshLoader.GetNumIndices() * sizeof(ushort);
-    this->SetVertexBufferByteSize(vbSize);
-    this->SetIndexBufferByteSize(ibSize);
-    this->CreateVertexBuffer();
-    this->CreateIndexBuffer();
-
-    // load vertex buffer
-    float* vertexBufferPtr = this->LockVertices();
-    res = meshLoader.ReadVertices(vertexBufferPtr, vbSize);
-    n_assert(res);
-    this->UnlockVertices();
-
-    // load indices
-    ushort* indexBufferPtr = this->LockIndices();
-    res = meshLoader.ReadIndices(indexBufferPtr, ibSize);
-    n_assert(res);
-    this->UnlockIndices();
-
-    // close the meshloader
-    meshLoader.Close();
-
-    // update the group bounding box data
-    this->UpdateGroupBoundingBoxes();
-
-    // create the vertex declaration from the vertex component mask
-    this->CreateVertexDeclaration();
-
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Read an .n3d2 file (Nebula ascii mesh file format).
-*/
-bool 
-nD3D9Mesh::LoadN3d2File()
-{
-    n_assert(!this->IsValid());
-    bool res;
-    nString filename = this->GetFilename();
-
-    // configure a mesh loader and load header
-    nN3d2Loader meshLoader;
-    meshLoader.SetFilename(filename.Get());
-    meshLoader.SetIndexType(nMeshLoader::Index16);
-    if (!meshLoader.Open(kernelServer->GetFileServer()))
-    {
-        n_error("nD3D9Mesh: could not open file '%s'!\n", filename.Get());
-        return false;
-    }
-
-    // transfer header data
-    this->SetNumGroups(meshLoader.GetNumGroups());
-    this->SetNumVertices(meshLoader.GetNumVertices());
-    this->SetVertexComponents(meshLoader.GetVertexComponents());
-    this->SetNumIndices(meshLoader.GetNumIndices());
-    int groupIndex;
-    int numGroups = meshLoader.GetNumGroups();
-    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
-    {
-        nMeshGroup& group = this->GetGroup(groupIndex);
-        group = meshLoader.GetGroupAt(groupIndex);
-    }
-    n_assert(this->GetVertexWidth() == meshLoader.GetVertexWidth());
-
-    // allocate vertex and index buffers
-    int vbSize = meshLoader.GetNumVertices() * meshLoader.GetVertexWidth() * sizeof(float);
-    int ibSize = meshLoader.GetNumIndices() * sizeof(ushort);
-    this->SetVertexBufferByteSize(vbSize);
-    this->SetIndexBufferByteSize(ibSize);
-    this->CreateVertexBuffer();
-    this->CreateIndexBuffer();
-
-    // load vertex buffer
-    float* vertexBufferPtr = this->LockVertices();
-    res = meshLoader.ReadVertices(vertexBufferPtr, vbSize);
-    n_assert(res);
-    this->UnlockVertices();
-
-    // load indices
-    ushort* indexBufferPtr = this->LockIndices();
-    res = meshLoader.ReadIndices(indexBufferPtr, ibSize);
-    n_assert(res);
-    this->UnlockIndices();
-
-    // close the meshloader
-    meshLoader.Close();
-
-    // update the group bounding box data
-    this->UpdateGroupBoundingBoxes();
-
-    // create the vertex declaration from the vertex component mask
-    this->CreateVertexDeclaration();
-
-    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -703,8 +479,8 @@ nD3D9Mesh::GetByteSize()
     if (this->IsValid())
     {
         int vertexBufferSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-        int indexBufferSize = this->GetNumIndices() * sizeof(ushort);
-        return vertexBufferSize + indexBufferSize;
+        int indexBufferSize  = this->GetNumIndices() * sizeof(ushort);
+        return vertexBufferSize + indexBufferSize + nMesh2::GetByteSize();
     }
     else
     {

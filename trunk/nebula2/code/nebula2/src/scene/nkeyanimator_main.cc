@@ -6,21 +6,6 @@
 
 nNebulaClass(nKeyAnimator, "nanimator");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nkeyanimator
-
-    @cppclass
-    nKeyAnimator
-    
-    @superclass
-    nanimator
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -47,7 +32,7 @@ nKeyAnimator::SampleKey(float sampleTime, const nArray<Key>& keyArray, vector4& 
         float maxTime = keyArray.Back().time;
         if (maxTime > 0.0f)
         {
-            if (this->GetLoopType() == LOOP)
+            if (this->GetLoopType() == Loop)
             {
                 // in loop mode, wrap time into loop time
                 sampleTime = sampleTime - (float(floor(sampleTime / maxTime)) * maxTime);

@@ -39,13 +39,15 @@ protected:
     /// unload mesh resource
     virtual void UnloadResource();
 
+    /// create the d3d vertex buffer
+    virtual void CreateVertexBuffer();
+    /// create the d3d index buffer
+    virtual void CreateIndexBuffer();
+
 private:
     friend class nD3D9Server;
+    friend class nD3D9MeshArray;
     
-    /// create the d3d vertex buffer
-    void CreateVertexBuffer();
-    /// create the d3d index buffer
-    void CreateIndexBuffer();
     /// create the vertex declaration
     void CreateVertexDeclaration();
     /// get d3d vertex buffer
@@ -54,14 +56,7 @@ private:
     IDirect3DIndexBuffer9* GetIndexBuffer();
     /// get the d3d vertex declaration
     IDirect3DVertexDeclaration9* GetVertexDeclaration();
-    /// load n3d2 file
-    bool LoadN3d2File();
-    /// load nvx2 file
-    bool LoadNvx2File();
-    /// update the group bounding boxes (slow!)
-    void UpdateGroupBoundingBoxes();
 
-    nAutoRef<nD3D9Server> refGfxServer;
     DWORD d3dVBLockFlags;
     DWORD d3dIBLockFlags;
     IDirect3DVertexBuffer9* vertexBuffer;

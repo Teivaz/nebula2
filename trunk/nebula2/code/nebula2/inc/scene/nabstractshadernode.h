@@ -52,32 +52,32 @@ public:
     const vector2& GetUvScale(uint layer) const;
 
     /// bind a texture resource to a shader variable
-    void SetTexture(nShader2::Parameter param, const char* texName);
+    void SetTexture(nShaderState::Param param, const char* texName);
     /// get texture resource bound to variable
-    const char* GetTexture(nShader2::Parameter param) const;
+    const char* GetTexture(nShaderState::Param param) const;
     /// bind a int value to a a shader variable
-    void SetInt(nShader2::Parameter param, int val);
+    void SetInt(nShaderState::Param param, int val);
     /// get an int value bound to a shader variable
-    int GetInt(nShader2::Parameter param) const;
+    int GetInt(nShaderState::Param param) const;
     /// bind a bool value to a a shader variable
-    void SetBool(nShader2::Parameter param, bool val);
+    void SetBool(nShaderState::Param param, bool val);
     /// get an bool value bound to a shader variable
-    bool GetBool(nShader2::Parameter param) const;
+    bool GetBool(nShaderState::Param param) const;
     /// bind a float value to a shader variable
-    void SetFloat(nShader2::Parameter param, float val);
+    void SetFloat(nShaderState::Param param, float val);
     /// get a float value bound to a shader variable
-    float GetFloat(nShader2::Parameter param) const;
+    float GetFloat(nShaderState::Param param) const;
     /// bind a vector value to a shader variable
-    void SetVector(nShader2::Parameter param, const vector4& val);
+    void SetVector(nShaderState::Param param, const vector4& val);
     /// get a vector value bound to a shader variable
-    vector4 GetVector(nShader2::Parameter param) const;
+    vector4 GetVector(nShaderState::Param param) const;
 
     /// get number of textures
     int GetNumTextures() const;
     /// get texture resource name at index
     const char* GetTextureAt(int index) const;
     /// get texture shader parameter at index
-    nShader2::Parameter GetTextureParamAt(int index) const;
+    nShaderState::Param GetTextureParamAt(int index) const;
 
 protected:
     /// load a texture resource
@@ -85,7 +85,7 @@ protected:
     /// unload a texture resource
     void UnloadTexture(int index);
     /// abstract method: returns always true
-    virtual bool IsTextureUsed(nShader2::Parameter param);
+    virtual bool IsTextureUsed(nShaderState::Param param);
 
     class TexNode
     {
@@ -93,9 +93,9 @@ protected:
         /// default constructor
         TexNode();
         /// constructor
-        TexNode(nShader2::Parameter shaderParam, const char* texName);
+        TexNode(nShaderState::Param shaderParam, const char* texName);
 
-        nShader2::Parameter shaderParameter;
+        nShaderState::Param shaderParameter;
         nString texName;
         nRef<nTexture2> refTexture;
     };
@@ -110,7 +110,7 @@ protected:
 */
 inline
 nAbstractShaderNode::TexNode::TexNode() :
-    shaderParameter(nShader2::InvalidParameter)
+    shaderParameter(nShaderState::InvalidParameter)
 {
     // empty
 }
@@ -119,7 +119,7 @@ nAbstractShaderNode::TexNode::TexNode() :
 /**
 */
 inline
-nAbstractShaderNode::TexNode::TexNode(nShader2::Parameter shaderParam, const char* name) :
+nAbstractShaderNode::TexNode::TexNode(nShaderState::Param shaderParam, const char* name) :
     shaderParameter(shaderParam),
     texName(name)
 {
@@ -196,15 +196,15 @@ nAbstractShaderNode::GetUvScale(uint layer) const
 */
 inline
 void
-nAbstractShaderNode::SetInt(nShader2::Parameter param, int val)
+nAbstractShaderNode::SetInt(nShaderState::Param param, int val)
 {
     // silently ignore invalid parameters
-    if (nShader2::InvalidParameter == param)
+    if (nShaderState::InvalidParameter == param)
     {
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
     }
-    this->shaderParams.SetInt(param, val);
+    this->shaderParams.SetArg(param, nShaderArg(val));
 }
 
 //------------------------------------------------------------------------------
@@ -212,9 +212,9 @@ nAbstractShaderNode::SetInt(nShader2::Parameter param, int val)
 */
 inline
 int
-nAbstractShaderNode::GetInt(nShader2::Parameter param) const
+nAbstractShaderNode::GetInt(nShaderState::Param param) const
 {
-    return this->shaderParams.GetInt(param);
+    return this->shaderParams.GetArg(param).GetInt();
 }
 
 //------------------------------------------------------------------------------
@@ -222,15 +222,15 @@ nAbstractShaderNode::GetInt(nShader2::Parameter param) const
 */
 inline
 void
-nAbstractShaderNode::SetBool(nShader2::Parameter param, bool val)
+nAbstractShaderNode::SetBool(nShaderState::Param param, bool val)
 {
     // silently ignore invalid parameters
-    if (nShader2::InvalidParameter == param)
+    if (nShaderState::InvalidParameter == param)
     {
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
     }
-    this->shaderParams.SetBool(param, val);
+    this->shaderParams.SetArg(param, nShaderArg(val));
 }
 
 //------------------------------------------------------------------------------
@@ -238,9 +238,9 @@ nAbstractShaderNode::SetBool(nShader2::Parameter param, bool val)
 */
 inline
 bool
-nAbstractShaderNode::GetBool(nShader2::Parameter param) const
+nAbstractShaderNode::GetBool(nShaderState::Param param) const
 {
-    return this->shaderParams.GetBool(param);
+    return this->shaderParams.GetArg(param).GetBool();
 }
 
 //------------------------------------------------------------------------------
@@ -248,15 +248,15 @@ nAbstractShaderNode::GetBool(nShader2::Parameter param) const
 */
 inline
 void
-nAbstractShaderNode::SetFloat(nShader2::Parameter param, float val)
+nAbstractShaderNode::SetFloat(nShaderState::Param param, float val)
 {
     // silently ignore invalid parameters
-    if (nShader2::InvalidParameter == param)
+    if (nShaderState::InvalidParameter == param)
     {
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
     }
-    this->shaderParams.SetFloat(param, val);
+    this->shaderParams.SetArg(param, nShaderArg(val));
 }
 
 //------------------------------------------------------------------------------
@@ -264,9 +264,9 @@ nAbstractShaderNode::SetFloat(nShader2::Parameter param, float val)
 */
 inline
 float
-nAbstractShaderNode::GetFloat(nShader2::Parameter param) const
+nAbstractShaderNode::GetFloat(nShaderState::Param param) const
 {
-    return this->shaderParams.GetFloat(param);
+    return this->shaderParams.GetArg(param).GetFloat();
 }
 
 //------------------------------------------------------------------------------
@@ -274,10 +274,10 @@ nAbstractShaderNode::GetFloat(nShader2::Parameter param) const
 */
 inline
 void
-nAbstractShaderNode::SetVector(nShader2::Parameter param, const vector4& val)
+nAbstractShaderNode::SetVector(nShaderState::Param param, const vector4& val)
 {
     // silently ignore invalid parameters
-    if (nShader2::InvalidParameter == param)
+    if (nShaderState::InvalidParameter == param)
     {
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
@@ -286,7 +286,7 @@ nAbstractShaderNode::SetVector(nShader2::Parameter param, const vector4& val)
     {
         val.x, val.y, val.z, val.w
     };
-    this->shaderParams.SetFloat4(param, float4Val);
+    this->shaderParams.SetArg(param, nShaderArg(float4Val));
 }
 
 //------------------------------------------------------------------------------
@@ -294,9 +294,9 @@ nAbstractShaderNode::SetVector(nShader2::Parameter param, const vector4& val)
 */
 inline
 vector4
-nAbstractShaderNode::GetVector(nShader2::Parameter param) const
+nAbstractShaderNode::GetVector(nShaderState::Param param) const
 {
-    const nFloat4& float4Val = this->shaderParams.GetFloat4(param);
+    const nFloat4& float4Val = this->shaderParams.GetArg(param).GetFloat4();
     return vector4(float4Val.x, float4Val.y, float4Val.z, float4Val.w);
 }
 
@@ -324,17 +324,7 @@ nAbstractShaderNode::GetTextureAt(int index) const
 /**
 */
 inline
-bool
-nAbstractShaderNode::IsTextureUsed(nShader2::Parameter param)
-{
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nShader2::Parameter
+nShaderState::Param
 nAbstractShaderNode::GetTextureParamAt(int index) const
 {
     return this->texNodeArray[index].shaderParameter;

@@ -31,10 +31,10 @@ nTransformAnimator::~nTransformAnimator()
 //------------------------------------------------------------------------------
 /**
 */
-nAnimator::AnimatorType
+nAnimator::Type
 nTransformAnimator::GetAnimatorType() const
 {
-    return TRANSFORM;
+    return Transform;
 }
 
 //------------------------------------------------------------------------------

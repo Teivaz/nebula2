@@ -39,14 +39,16 @@ public:
         Bottom,
         Left,
         Right,
+        HCenter,
+        VCenter,
     };
 
     /// constructor
     nGuiFormLayout();
     /// destructor
     virtual ~nGuiFormLayout();
-    /// clear layout rules
-    void ClearAttachments();
+    /// clear attachment rules
+    void ClearAttachRules();
     /// add an "Attach To Form" layout rule
     int AttachForm(nGuiWidget* widget, Edge where, float offset);
     /// add an "Attach To Widget" layout rule
@@ -90,7 +92,7 @@ protected:
 */
 inline
 void
-nGuiFormLayout::ClearAttachments()
+nGuiFormLayout::ClearAttachRules()
 {
     this->attachRules.Clear();
 }

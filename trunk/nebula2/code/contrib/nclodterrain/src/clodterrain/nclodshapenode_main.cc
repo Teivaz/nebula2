@@ -439,8 +439,8 @@ public:
             n_assert(IsValidChunk());
 
             // set the morph value for the shader to use and draw the mesh
-            n_assert(someshader->IsParameterUsed(nShader2::Scale));
-            someshader->SetFloat(nShader2::Scale, morphscale);
+            n_assert(someshader->IsParameterUsed(nShaderState::Scale));
+            someshader->SetFloat(nShaderState::Scale, morphscale);
             // if a tiled chunk exists (either this chunk or an ancestor passed in as
             // the third parameter) map the tile for that chunk.
             if (tiledchunk != NULL)
@@ -453,8 +453,8 @@ public:
                 vector3 chunkscale(0.5f/chunkextents.x, 0.5f/chunkextents.y, 1.0f);
                 drapematrix.set_translation(-chunkorigin);
                 drapematrix.scale(chunkscale);
-                n_assert(someshader->IsParameterUsed(nShader2::TextureTransform0));
-                someshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
+                n_assert(someshader->IsParameterUsed(nShaderState::TextureTransform0));
+                someshader->SetMatrix(nShaderState::TextureTransform0, drapematrix);
             }
             meshdata->DrawMesh(gfx);
         }
@@ -581,12 +581,12 @@ public:
                 drapematrix.set_translation(-chunkorigin);
                 drapematrix.scale(chunkscale);
 
-                n_assert(splatshader->IsParameterUsed(nShader2::Scale));
-                n_assert(splatshader->IsParameterUsed(nShader2::TextureTransform0));
-                n_assert(splatshader->IsParameterUsed(nShader2::TextureTransform1));
+                n_assert(splatshader->IsParameterUsed(nShaderState::Scale));
+                n_assert(splatshader->IsParameterUsed(nShaderState::TextureTransform0));
+                n_assert(splatshader->IsParameterUsed(nShaderState::TextureTransform1));
 
-                splatshader->SetFloat(nShader2::Scale, morphscale);
-                splatshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
+                splatshader->SetFloat(nShaderState::Scale, morphscale);
+                splatshader->SetMatrix(nShaderState::TextureTransform0, drapematrix);
 
                 if (tiledchunk->tiledata->GetNumTextures() > 1)
                 {
@@ -597,20 +597,20 @@ public:
                         unsigned int splattileindex = splatdata->GetTileIndexForSplat(six);
                         n_assert(tiledchunk->tiledata->ToShader(splatshader,splattileindex));
                         if (detailTextures)
-                            splatshader->SetTexture(nShader2::DiffMap1, (*detailTextures)[splattileindex].get() );
+                            splatshader->SetTexture(nShaderState::DiffMap1, (*detailTextures)[splattileindex].get() );
 
                         if (six==0)
                         {
                             // turn blending off and draw the whole terrain chunk for the first
                             // "splat" as this will set the depth buffer and zero out the whole
                             // chunk so we can additively blend in the rest of the tiles
-                            splatshader->SetBool(nShader2::MatTranslucency, false);
+                            splatshader->SetBool(nShaderState::MatTranslucency, false);
                             splatdata->DrawSplat(gfx,0);
                         }
                         else
                         {
                             // turn on blending and draw only the relevant polygons
-                            splatshader->SetBool(nShader2::MatTranslucency, true);
+                            splatshader->SetBool(nShaderState::MatTranslucency, true);
                             // this line draws the whole chunk, relying on blending to distinguish
                             // between the current terrain texture tile and others.  It should be
                             // guaranteed to generate geometry identical to the first splat, so
@@ -629,8 +629,8 @@ public:
                 {
                     // just one texture; so render it
                     n_assert(tiledchunk->tiledata->ToShader(splatshader,0));
-                    splatshader->SetTexture(nShader2::DiffMap1, baseblendtexture);
-                    splatshader->SetBool(nShader2::MatTranslucency, false);
+                    splatshader->SetTexture(nShaderState::DiffMap1, baseblendtexture);
+                    splatshader->SetBool(nShaderState::MatTranslucency, false);
                     splatdata->DrawMesh(gfx);
                 }
             }
@@ -1074,15 +1074,15 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     nCLODQuadTreeNode *rootchunk = this->quadtreeChunks[0];
     nShader2 *terrainshader = gfx->GetShader();
     // set texture transform to drape the texture over the terrain
-    n_assert(terrainshader->IsParameterUsed(nShader2::TextureTransform0));
-    n_assert(terrainshader->IsParameterUsed(nShader2::TextureTransform1));
+    n_assert(terrainshader->IsParameterUsed(nShaderState::TextureTransform0));
+    n_assert(terrainshader->IsParameterUsed(nShaderState::TextureTransform1));
     matrix44 drapematrix, detailmatrix;
     vector3 terrextents(this->terrainBounds.extents());
     vector3 texturescale(0.5f/terrextents.x, 0.5f/terrextents.y, 1.0f);
     drapematrix.scale(texturescale);
-    terrainshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
+    terrainshader->SetMatrix(nShaderState::TextureTransform0, drapematrix);
     detailmatrix.scale(vector3(detailScaling, detailScaling, detailScaling));
-    terrainshader->SetMatrix(nShader2::TextureTransform1, detailmatrix);
+    terrainshader->SetMatrix(nShaderState::TextureTransform1, detailmatrix);
 
     if (rootchunk->IsValidChunk())
     {
@@ -1232,7 +1232,7 @@ void nCLODShapeNode::RenderDebug(nSceneServer *sceneServer, nRenderContext *rend
     }
     if (!this->dynmesh->IsValid())
     {
-        this->dynmesh->Initialize(gfx, nGfxServer2::LineList, nMesh2::Coord, 0, true);
+        this->dynmesh->Initialize(nGfxServer2::LineList, nMesh2::Coord, 0, true);
     }
     n_assert(this->dynmesh->IsValid());
 

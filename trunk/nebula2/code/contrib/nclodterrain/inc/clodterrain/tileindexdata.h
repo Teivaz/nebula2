@@ -14,6 +14,7 @@
 #ifndef N_TYPES_H
 #include "kernel/ntypes.h"
 #endif
+#include "util/nstring.h"
 
 class TileIndexData {
 public:
@@ -27,7 +28,7 @@ public:
     virtual ~TileIndexData();
 
     /// load a bitmap--typically an indexed bitmap!
-    virtual bool readBitmap(const char *bitmapfilename);
+    virtual bool readBitmap(nString bitmapfilename);
 
     /// get the tile index for a given location
     tileindex getTileIndex(int x, int y) const

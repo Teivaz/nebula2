@@ -350,7 +350,7 @@ nSceneNode::InvokeShaderAnimators(nRenderContext* renderContext)
         for (i = 0; i < numAnimators; i++)
         {
             nAnimator* animator = this->animatorArray[i].get();
-            if (nAnimator::SHADER == animator->GetAnimatorType())
+            if (nAnimator::Shader == animator->GetAnimatorType())
             {
                 animator->Animate(this, renderContext);
             }
@@ -377,7 +377,7 @@ nSceneNode::InvokeTransformAnimators(nRenderContext* renderContext)
         for (i = 0; i < numAnimators; i++)
         {
             nAnimator* animator = this->animatorArray[i].get();
-            if (nAnimator::TRANSFORM == animator->GetAnimatorType())
+            if (nAnimator::Transform == animator->GetAnimatorType())
             {
                 animator->Animate(this, renderContext);
             }

@@ -23,7 +23,7 @@ public:
     /// destructor
     ~nDynamicMesh();
 	/// initialize the dynamic mesh
-    bool Initialize(nGfxServer2* gfxServer, nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering);
+    bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering);
     /// if this returns false, call Initialize()
     bool IsValid() const;
     /// begin indexed rendering
@@ -45,7 +45,6 @@ private:
         VertexBufferSize = 16384,                   // number of vertices
         IndexBufferSize  = 3 * VertexBufferSize,    // number of indices
     };
-    nGfxServer2* gfxServer;
     bool indexedRendering;
     nRef<nMesh2> refMesh;
     nGfxServer2::PrimitiveType primitiveType;
@@ -56,7 +55,6 @@ private:
 */
 inline
 nDynamicMesh::nDynamicMesh() :
-    gfxServer(0),
     indexedRendering(true),
     primitiveType(nGfxServer2::TriangleList)
 {
@@ -86,7 +84,7 @@ inline
 bool
 nDynamicMesh::IsValid() const
 {
-    return this->refMesh.isvalid();
+    return this->refMesh.isvalid() && this->refMesh->IsValid();
 }
 
 //------------------------------------------------------------------------------
@@ -105,43 +103,48 @@ nDynamicMesh::IsValid() const
 */
 inline
 bool
-nDynamicMesh::Initialize(nGfxServer2* gfxServ, 
-                         nGfxServer2::PrimitiveType primType, 
+nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType, 
                          int vertexComponents, 
                          int usageFlags, 
                          bool indexed)
 {
     n_assert(!this->IsValid());
-    n_assert(gfxServ);
 
     this->primitiveType = primType;
-    this->gfxServer = gfxServ;
     this->indexedRendering = indexed;
 
-    // build resource sharing name
-    char resName[128];
-    strcpy(resName, "dyn_");
-    int charIndex = strlen(resName);
-    if (vertexComponents & nMesh2::Coord)       resName[charIndex++] = 'a';
-    if (vertexComponents & nMesh2::Normal)      resName[charIndex++] = 'b';
-    if (vertexComponents & nMesh2::Tangent)     resName[charIndex++] = 'c';
-    if (vertexComponents & nMesh2::Binormal)    resName[charIndex++] = 'd';
-    if (vertexComponents & nMesh2::Color)       resName[charIndex++] = 'e';
-    if (vertexComponents & nMesh2::Uv0)         resName[charIndex++] = 'f';
-    if (vertexComponents & nMesh2::Uv1)         resName[charIndex++] = 'g';
-    if (vertexComponents & nMesh2::Uv2)         resName[charIndex++] = 'h';
-    if (vertexComponents & nMesh2::Uv3)         resName[charIndex++] = 'i';
-    if (vertexComponents & nMesh2::Weights)     resName[charIndex++] = 'f';
-    if (vertexComponents & nMesh2::JIndices)    resName[charIndex++] = 'g';
-    if (usageFlags & nMesh2::NPatch)            resName[charIndex++] = 'h';
-    if (usageFlags & nMesh2::RTPatch)           resName[charIndex++] = 'i';
-    if (usageFlags & nMesh2::PointSprite)       resName[charIndex++] = 'j';
-    resName[charIndex] = 0;
+    nMesh2* mesh = 0;
+    if (!this->refMesh.isvalid())
+    {
+        // build resource sharing name
+        char resName[128];
+        strcpy(resName, "dyn_");
+        int charIndex = strlen(resName);
+        if (vertexComponents & nMesh2::Coord)       resName[charIndex++] = 'a';
+        if (vertexComponents & nMesh2::Normal)      resName[charIndex++] = 'b';
+        if (vertexComponents & nMesh2::Tangent)     resName[charIndex++] = 'c';
+        if (vertexComponents & nMesh2::Binormal)    resName[charIndex++] = 'd';
+        if (vertexComponents & nMesh2::Color)       resName[charIndex++] = 'e';
+        if (vertexComponents & nMesh2::Uv0)         resName[charIndex++] = 'f';
+        if (vertexComponents & nMesh2::Uv1)         resName[charIndex++] = 'g';
+        if (vertexComponents & nMesh2::Uv2)         resName[charIndex++] = 'h';
+        if (vertexComponents & nMesh2::Uv3)         resName[charIndex++] = 'i';
+        if (vertexComponents & nMesh2::Weights)     resName[charIndex++] = 'f';
+        if (vertexComponents & nMesh2::JIndices)    resName[charIndex++] = 'g';
+        if (usageFlags & nMesh2::NPatch)            resName[charIndex++] = 'h';
+        if (usageFlags & nMesh2::RTPatch)           resName[charIndex++] = 'i';
+        if (usageFlags & nMesh2::PointSprite)       resName[charIndex++] = 'j';
+        resName[charIndex] = 0;
 
-    // create shared mesh object
-    nMesh2* mesh = this->gfxServer->NewMesh(resName);
-    n_assert(mesh);
-    this->refMesh = mesh;
+        // create shared mesh object
+        mesh = nGfxServer2::Instance()->NewMesh(resName);
+        n_assert(mesh);
+        this->refMesh = mesh;
+    }
+    else
+    {
+        mesh = this->refMesh;
+    }
     
     // initialize the mesh
     if (!mesh->IsValid())
@@ -176,10 +179,9 @@ nDynamicMesh::BeginIndexed(float*& vertexPointer,
 {
     n_assert(this->IsValid());
     n_assert(this->indexedRendering);
-    n_assert(this->gfxServer);
     nMesh2* mesh = this->refMesh.get();
 
-    this->gfxServer->SetMesh(mesh);
+    nGfxServer2::Instance()->SetMesh(mesh);
 
     vertexPointer  = mesh->LockVertices();
     indexPointer   = mesh->LockIndices();
@@ -210,13 +212,13 @@ nDynamicMesh::SwapIndexed(int numVertices, int numIndices, float*& vertexPointer
 {
     n_assert(this->IsValid());
     n_assert(this->indexedRendering);
-    n_assert(this->gfxServer);
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
     mesh->UnlockVertices();
     mesh->UnlockIndices();
-    this->gfxServer->SetVertexRange(0, numVertices);
-    this->gfxServer->SetIndexRange(0, numIndices);
-    this->gfxServer->DrawIndexedNS(this->primitiveType);
+    gfxServer->SetVertexRange(0, numVertices);
+    gfxServer->SetIndexRange(0, numIndices);
+    gfxServer->DrawIndexedNS(this->primitiveType);
     vertexPointer = mesh->LockVertices();
     indexPointer  = mesh->LockIndices();
 }
@@ -236,22 +238,22 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
 {
     n_assert(this->IsValid());
     n_assert(this->indexedRendering);
-    n_assert(this->gfxServer);
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
     mesh->UnlockVertices();
     mesh->UnlockIndices();
-    this->gfxServer->SetVertexRange(0, numVertices);
-    this->gfxServer->SetIndexRange(0, numIndices);
-    this->gfxServer->DrawIndexedNS(this->primitiveType );
-    this->gfxServer->SetMesh(0);
+    gfxServer->SetVertexRange(0, numVertices);
+    gfxServer->SetIndexRange(0, numIndices);
+    gfxServer->DrawIndexedNS(this->primitiveType );
+    gfxServer->SetMesh(0);
 }
 
 //------------------------------------------------------------------------------
 /**
     Begin non-indexed rendering to the dynamic mesh. 
 
-    @param  vertexPointer       [out] will be filled with a pointer to the vertex buffer
-    @param  maxNumVertices      [out] max number of vertices before calling Swap() or End()
+    @param  vertexPointer   [out] will be filled with a pointer to the vertex buffer
+    @param  maxNumVertices  [out] max number of vertices before calling Swap() or End()
 */
 inline
 void
@@ -259,10 +261,9 @@ nDynamicMesh::Begin(float*& vertexPointer, int& maxNumVertices)
 {
     n_assert(this->IsValid());
     n_assert(!this->indexedRendering);
-    n_assert(this->gfxServer);
-    nMesh2* mesh = this->refMesh.get();
 
-    this->gfxServer->SetMesh(mesh);
+    nMesh2* mesh = this->refMesh.get();
+    nGfxServer2::Instance()->SetMesh(mesh);
 
     vertexPointer  = mesh->LockVertices();
     maxNumVertices = mesh->GetNumVertices();
@@ -281,12 +282,12 @@ nDynamicMesh::Swap(int numVertices, float*& vertexPointer)
 {
     n_assert(this->IsValid());
     n_assert(!this->indexedRendering);
-    n_assert(this->gfxServer);
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
 
     mesh->UnlockVertices();
-    this->gfxServer->SetVertexRange(0, numVertices);
-    this->gfxServer->DrawNS(this->primitiveType);
+    gfxServer->SetVertexRange(0, numVertices);
+    gfxServer->DrawNS(this->primitiveType);
     vertexPointer = mesh->LockVertices();
 }
 
@@ -302,15 +303,16 @@ nDynamicMesh::End(int numVertices)
 {
     n_assert(this->IsValid());
     n_assert(!this->indexedRendering);
-    n_assert(this->gfxServer);
+
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
     mesh->UnlockVertices();
     if (0 != numVertices)
     {
-        this->gfxServer->SetVertexRange(0, numVertices);
-        this->gfxServer->DrawNS(this->primitiveType);
+        gfxServer->SetVertexRange(0, numVertices);
+        gfxServer->DrawNS(this->primitiveType);
     }
-    this->gfxServer->SetMesh(0);
+    gfxServer->SetMesh(0);
 }
 
 //------------------------------------------------------------------------------

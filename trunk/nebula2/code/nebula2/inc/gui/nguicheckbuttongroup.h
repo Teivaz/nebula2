@@ -21,7 +21,7 @@ public:
     /// rendering
     virtual bool Render();
     /// audio rendering
-    virtual bool RenderAudio();
+    //virtual bool RenderAudio();
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down

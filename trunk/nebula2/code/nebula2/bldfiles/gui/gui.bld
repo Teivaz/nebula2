@@ -4,7 +4,6 @@
 #   (C) 2003 RadonLabs GmbH
 #-------------------------------------------------------------------------------
 
-#--------------------------------------------------------------------
 beginmodule nguiwidget
     setdir gui
     setfiles {
@@ -19,14 +18,6 @@ beginmodule nguiformlayout
         nguiformlayout_main nguiformlayout_cmds
     }
     setheaders nguiformlayout
-endmodule
-#--------------------------------------------------------------------
-beginmodule nguislider
-    setdir gui
-    setfiles {
-        nguislider_main nguislider_cmds
-    }
-    setheaders nguislider
 endmodule
 #--------------------------------------------------------------------
 beginmodule nguislider2
@@ -61,20 +52,20 @@ beginmodule nguitextlabel
     setheaders nguitextlabel
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguitickerwidget
+    setdir gui
+    setfiles {
+        nguitickerwidget_main nguitickerwidget_cmds
+    }
+    setheaders nguitickerwidget
+endmodule
+#--------------------------------------------------------------------
 beginmodule nguitextbutton
     setdir gui
     setfiles {
         nguitextbutton_main nguitextbutton_cmds
     }
     setheaders nguitextbutton
-endmodule
-#--------------------------------------------------------------------
-beginmodule nguicyclebutton
-    setdir gui
-    setfiles {
-        nguicyclebutton_main nguicyclebutton_cmds
-    }
-    setheaders nguicyclebutton
 endmodule
 #--------------------------------------------------------------------
 beginmodule nguitextentry
@@ -101,14 +92,6 @@ beginmodule nguicheckbutton
     setheaders nguicheckbutton
 endmodule
 #--------------------------------------------------------------------
-beginmodule nguiflipbutton
-    setdir gui
-    setfiles {
-        nguiflipbutton_main nguiflipbutton_cmds
-    }
-    setheaders nguiflipbutton
-endmodule
-#--------------------------------------------------------------------
 beginmodule nguicheckbuttongroup
     setdir gui
     setfiles {
@@ -117,20 +100,12 @@ beginmodule nguicheckbuttongroup
     setheaders nguicheckbuttongroup
 endmodule
 #--------------------------------------------------------------------
-beginmodule nguilister
+beginmodule nguicheckbuttongroup2
     setdir gui
     setfiles {
-        nguilister_main nguilister_cmds
+        nguicheckbuttongroup2_main
     }
-    setheaders nguilister
-endmodule
-#--------------------------------------------------------------------
-beginmodule nguifilelister
-    setdir gui
-    setfiles {
-        nguifilelister_main nguifilelister_cmds
-    }
-    setheaders nguifilelister
+    setheaders nguicheckbuttongroup2
 endmodule
 #--------------------------------------------------------------------
 beginmodule nguitextview
@@ -229,12 +204,18 @@ beginmodule nguihorislidergroup
     setheaders nguihorislidergroup
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguitabbedlayout
+    setdir gui
+    setfiles { nguitabbedlayout_main nguitabbedlayout_cmds }
+    setheaders { nguitabbedlayout }
+endmodule
+#--------------------------------------------------------------------
 beginmodule nguiserver
     setdir gui
     setfiles {
-        nguiserver_main nguiserver_cmds nguiresource
+        nguiserver_main nguiserver_cmds nguiresource nguibrush
     }
-    setheaders { nguiserver nguiresource nguievent }
+    setheaders { nguiserver nguievent nguiresource nguibrush }
 endmodule
 #--------------------------------------------------------------------
 beginmodule nguiskin
@@ -245,19 +226,41 @@ beginmodule nguiskin
     setheaders { nguiskin }
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguimessagebox
+    setdir gui
+    setfiles {
+        nguimessagebox_main
+    }
+    setheaders nguimessagebox
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicanvas
+    setdir gui
+    setfiles {
+        nguicanvas_main
+    }
+    setheaders nguicanvas
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidiagramcanvas
+    setdir gui
+    setfiles {
+        nguidiagramcanvas_main
+    }
+    setheaders nguidiagramcanvas
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
     setmodules {
-        nguiwidget nguiformlayout nguislider nguislider2 nguibutton nguilabel
-        nguitextlabel nguicyclebutton nguitextbutton nguitextentry
-        nguiipaddressentry nguicheckbutton nguiflipbutton
-        nguicheckbuttongroup nguilister nguifilelister nguitextview
-        nguicmdentry nguitextureview nguiwindow nguiclientwindow
-        nguiconsolewindow nguidockwindow nguitexbrowserwindow
-        nguiwatcherwindow nguisysteminfowindow nguitooltip
-        nguidirlister nguicategorybrowser nguihorislidergroup
-        nguifiledialog nguiskin nguiserver
+        nguiwidget nguiformlayout nguislider2 nguibutton nguilabel nguitextlabel 
+        nguitextbutton nguitextentry nguiipaddressentry nguicheckbutton 
+        nguicheckbuttongroup nguicheckbuttongroup2 nguitextview nguicmdentry nguitextureview
+        nguiwindow nguiclientwindow nguiconsolewindow nguidockwindow nguitexbrowserwindow
+        nguiwatcherwindow nguisysteminfowindow nguitooltip nguidirlister nguicategorybrowser
+        nguihorislidergroup nguifiledialog nguiskin nguitickerwidget nguitabbedlayout 
+        nguimessagebox nguiserver nguicanvas nguidiagramcanvas
     }
 endtarget
 

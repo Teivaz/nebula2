@@ -139,11 +139,11 @@ PhysDemoApp::Close()
 {
     n_assert(this->IsOpen());
 
-    // First, disable any possibility of future rendering
-    this->refGfxServer->CloseDisplay();
-    // Then kill the GUI
+    // kill the GUI server before closing the gfx server
     this->refGuiServer->Close();
-
+    // disable any possibility of future rendering
+    this->refGfxServer->CloseDisplay();
+    
     // clear the objects
     kernelServer->Lookup("/objects")->Release();
 
@@ -264,7 +264,7 @@ PhysDemoApp::HandleInput(float frameTime)
         
         filename = "physdemo";
 
-        filename.Append(nString(this->screenshotID++));
+        filename.AppendInt(this->screenshotID++);
         filename.Append(".bmp");
 
         this->refGfxServer->SaveScreenshot(filename.Get());
@@ -498,7 +498,7 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
 {
     // create unique name for this object
     nString name = "floor";
-    name.Append(nString(this->objectID++));
+    name.AppendInt(this->objectID++);
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
@@ -552,7 +552,7 @@ PhysDemoApp::CreateBox(float x, float y, float z)
 {
     // create unique name for this object
     nString name = "box";
-    name.Append(nString(this->objectID++));
+    name.AppendInt(this->objectID++);
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
@@ -607,7 +607,7 @@ PhysDemoApp::CreateSphere(float x, float y, float z)
     
     // create unique name for this object
     nString name = "sphere";
-    name.Append(nString(this->objectID++));
+    name.AppendInt(this->objectID++);
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
@@ -661,7 +661,7 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
 {
     // create unique name for this object
     nString name = "bigsphere";
-    name.Append(nString(this->objectID++));
+    name.AppendInt(this->objectID++);
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
@@ -715,7 +715,7 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
 {
     // create unique name for this object
     nString name = "bullet";
-    name.Append(nString(this->objectID++));
+    name.AppendInt(this->objectID++);
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));

@@ -5,6 +5,7 @@
 #include "gui/nguitooltip.h"
 #include "input/ninputserver.h"
 #include "resource/nresourceserver.h"
+#include "gfx2/ngfxserver2.h"
 
 nNebulaClass(nGuiToolTip, "nguitextlabel");
 
@@ -84,7 +85,7 @@ nGuiToolTip::OnShow()
     // (re-)validate the font object
     if (!this->refFont.isvalid())
     {
-        this->refFont = (nFont2*) this->refResourceServer->FindResource(this->fontName.Get(), nResource::Font);
+        this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
             n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
@@ -92,12 +93,12 @@ nGuiToolTip::OnShow()
     }
 
     // get text size
-    this->refGfxServer->SetFont(this->refFont.get());
-    vector2 size = this->refGfxServer->GetTextExtent(this->GetText()) + this->border * 2.0f;
+    nGfxServer2::Instance()->SetFont(this->refFont.get());
+    vector2 size = nGfxServer2::Instance()->GetTextExtent(this->GetText()) + this->border * 2.0f;
 
     // compute tooltip offset to mouse hot spot
     // we assume a 32x32 mouse pointer
-    const nDisplayMode2& mode = this->refGfxServer->GetDisplayMode();
+    const nDisplayMode2& mode = nGfxServer2::Instance()->GetDisplayMode();
     vector2 offset(0.0f, 32.0f / mode.GetHeight());
 
     // update screen space rectangle
@@ -120,7 +121,7 @@ nGuiToolTip::OnMouseMoved(const vector2& mousePos)
 
     // compute tooltip offset to mouse hot spot
     // we assume a 32x32 mouse pointer
-    const nDisplayMode2& mode = this->refGfxServer->GetDisplayMode();
+    const nDisplayMode2& mode = nGfxServer2::Instance()->GetDisplayMode();
     vector2 offset(0.0f, 32.0f / mode.GetHeight());
 
     r.v0 = mousePos + offset;

@@ -51,7 +51,7 @@ nAbstractShaderNode::LoadTexture(int index)
         // load only if the texture is used in the shader
         if (this->IsTextureUsed(texNode.shaderParameter))
         {
-            nTexture2* tex = this->refGfxServer->NewTexture(texNode.texName.Get());
+            nTexture2* tex = nGfxServer2::Instance()->NewTexture(texNode.texName.Get());
             n_assert(tex);
             if (!tex->IsValid())
             {
@@ -63,7 +63,7 @@ nAbstractShaderNode::LoadTexture(int index)
                 }
             }
             texNode.refTexture = tex;
-            this->shaderParams.SetTexture(texNode.shaderParameter, tex);
+            this->shaderParams.SetArg(texNode.shaderParameter, nShaderArg(tex));
         }
     }
     return true;
@@ -109,12 +109,12 @@ nAbstractShaderNode::UnloadResources()
 /**
 */
 void
-nAbstractShaderNode::SetTexture(nShader2::Parameter param, const char* texName)
+nAbstractShaderNode::SetTexture(nShaderState::Param param, const char* texName)
 {
     n_assert(texName);
 
     // silently ignore invalid parameters
-    if (nShader2::InvalidParameter == param)
+    if (nShaderState::InvalidParameter == param)
     {
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
@@ -150,7 +150,7 @@ nAbstractShaderNode::SetTexture(nShader2::Parameter param, const char* texName)
 /**
 */
 const char*
-nAbstractShaderNode::GetTexture(nShader2::Parameter param) const
+nAbstractShaderNode::GetTexture(nShaderState::Param param) const
 {
     int i;
     int num = this->texNodeArray.Size();
@@ -163,5 +163,14 @@ nAbstractShaderNode::GetTexture(nShader2::Parameter param) const
     }
     // fallthrough: invalid variable name
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nAbstractShaderNode::IsTextureUsed(nShaderState::Param /*param*/)
+{
+    return true;
 }
 

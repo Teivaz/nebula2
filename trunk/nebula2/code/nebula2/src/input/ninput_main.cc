@@ -13,6 +13,7 @@
 #endif
 
 nNebulaScriptClass(nInputServer, "nroot");
+nInputServer* nInputServer::Singleton = 0;
 
 #ifndef __XBxX__
 struct nStrToKey {
@@ -213,24 +214,26 @@ nInputServer::nInputServer() :
     ref_ss("/sys/servers/script"),
     ref_con("/sys/servers/console"),
     mouseFactor(1.0f),
-    mouseInvert(false)
+    mouseInvert(false),
+    mute(false),
+    log_events(false),
+    in_begin_map(false),
+    act_script(0),
+    double_click_time(0.5),
+    long_pressed_time(1.0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     this->ref_statedir   = kernelServer->New("nroot","/sys/share/input/states");
     this->ref_inpdir     = kernelServer->New("nroot","/sys/share/input");
-
-    this->log_events    = false;
-    this->in_begin_map  = false;
 
 #ifndef __XBxX__
     this->ExportDefaultKeyboard();
     this->ExportDefaultMouse();
 #endif
 
-    this->act_script = 0;
     memset(this->script_array, 0, sizeof(this->script_array));
-
-    this->double_click_time = 0.5;
-    this->long_pressed_time = 1.0;
 }
 
 //------------------------------------------------------------------------------
@@ -262,6 +265,9 @@ nInputServer::~nInputServer()
     {
         delete is;
     }
+
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -388,28 +394,31 @@ nInputServer::Trigger(double time)
     this->DoInputMapping();
 
     // handle all active mappings...
-    this->BeginScripts();
-    for (im = (nInputMapping *) this->im_list.GetHead();
-         im;
-         im = (nInputMapping *) im->GetSucc())
+    if (!this->mute)
     {
-        const char *cmd_str = im->GetCmdString();
-        nInputState *is     = im->GetInputState();
-        if (cmd_str)
+        this->BeginScripts();
+        for (im = (nInputMapping *) this->im_list.GetHead();
+            im;
+            im = (nInputMapping *) im->GetSucc())
         {
-            if (im->IsActive()) this->AddScript(cmd_str);
-        }
-        if (is)
-        {
-            if (im->IsActive())
+            const char *cmd_str = im->GetCmdString();
+            nInputState *is     = im->GetInputState();
+            if (cmd_str) 
             {
-                is->SetButton(true);
-                is->AddSlider(1.0f);
+                if (im->IsActive()) this->AddScript(cmd_str);
             }
-            is->AddSlider(im->GetSlider());
+            if (is) 
+            {
+                if (im->IsActive()) 
+                {
+                    is->SetButton(true);
+                    is->AddSlider(1.0f);
+                }
+                is->AddSlider(im->GetSlider());
+            }
         }
+        this->EndScripts();
     }
-    this->EndScripts();
 
     // update current mouse pos
     nInputEvent* inputEvent;

@@ -17,7 +17,7 @@ HeightFieldData::~HeightFieldData()
     if (m_heights) { delete[] m_heights; }
 }
 
-bool HeightFieldData::readBitmap(const char *bitmapfilename)
+bool HeightFieldData::readBitmap(nString bitmapfilename)
 {
     // try to read in the image file
     ilInit();
@@ -25,7 +25,7 @@ bool HeightFieldData::readBitmap(const char *bitmapfilename)
     ILuint pixelImage = iluGenImage();
     ilBindImage(pixelImage);
 
-    if (!ilLoadImage((char*) bitmapfilename))
+    if (!ilLoadImage((char*) bitmapfilename.Get()))
     {
         n_printf("DevIL failed loading image '%s' with '%s'.\n", bitmapfilename, iluErrorString(ilGetError()));
         iluDeleteImage(pixelImage);
@@ -108,7 +108,7 @@ bool HeightFieldData::readBitmap(const char *bitmapfilename)
     return true;
 }
 
-void HeightFieldData::dumpActivationLevels(char * const dumpfilename, unsigned int max_activation)
+void HeightFieldData::dumpActivationLevels(nString dumpfilename, unsigned int max_activation)
 {
     float colorscale = 255.0f/max_activation;
     unsigned char *rgbval = new unsigned char[m_bitmapxsize * m_bitmapysize * 3];
@@ -123,7 +123,7 @@ void HeightFieldData::dumpActivationLevels(char * const dumpfilename, unsigned i
     ilBindImage(pixelImage);
     ilTexImage(m_bitmapxsize, m_bitmapysize, 1,
             3, IL_RGB, IL_UNSIGNED_BYTE, rgbval);
-    ilSaveImage(dumpfilename);
+    ilSaveImage((char *)dumpfilename.Get());
     iluDeleteImage(pixelImage);
     delete[] rgbval;
 }

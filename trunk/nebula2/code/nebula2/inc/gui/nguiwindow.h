@@ -9,6 +9,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"
+#include "gui/nguiserver.h"
 
 //------------------------------------------------------------------------------
 class nGuiWindow : public nGuiWidget
@@ -24,6 +25,8 @@ public:
     virtual void SetFocusWindow(nGuiWindow* window);
     /// get topmost visible child window
     virtual nGuiWindow* GetTopMostWindow();
+    /// called when widget is becoming visible
+    virtual void OnShow();
     /// handle mouse move, route to focus window if exists
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down, route to focus window if exists
@@ -50,12 +53,52 @@ public:
     void SetEscapeCommand(const char* cmd);
     /// get escape key script handler
     const char* GetEscapeCommand() const;
+    /// set dismissed flag
+    void SetDismissed(bool b);
+    /// is dismissed?
+    bool IsDismissed() const;
+    /// set close request
+    void SetCloseRequested(bool b);
+    /// get close request
+    bool IsCloseRequested() const;
+    /// set fadein time
+    void SetFadeInTime(nTime t);
+    /// get fadein time
+    nTime GetFadeInTime() const;
+    /// set fadeout time
+    void SetFadeOutTime(nTime t);
+    /// get fadeout time
+    nTime GetFadeOutTime() const;
+    /// Get Window Color
+    const vector4& GetWindowColor();
 
 protected:
+    /// compute current window color
+    void UpdateWindowColor();
+
     nString escapeCommand;
     nClass* windowClass;
     bool modal;
+    bool dismissed;
+    bool closeRequested;
+
+    bool openFirstFrame;
+    nTime fadeInTime;
+    nTime fadeOutTime;
+    nTime openedTime;
+    nTime closeRequestTime;
+    vector4 windowColor;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nGuiWindow::GetWindowColor()
+{
+    return this->windowColor;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -95,6 +138,78 @@ bool
 nGuiWindow::IsModal() const
 {
     return this->modal;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Set the dismiss flag. The gui server will check for dismissed windows
+    under the current root window and release them.
+*/
+inline
+void
+nGuiWindow::SetDismissed(bool b)
+{
+    this->dismissed = b;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiWindow::IsDismissed() const
+{
+    return this->dismissed;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiWindow::IsCloseRequested() const
+{
+    return this->closeRequested;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWindow::SetFadeInTime(nTime t)
+{
+    this->fadeInTime = t;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+nGuiWindow::GetFadeInTime() const
+{
+    return this->fadeInTime;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWindow::SetFadeOutTime(nTime t)
+{
+    this->fadeOutTime = t;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+nGuiWindow::GetFadeOutTime() const
+{
+    return this->fadeOutTime;
 }
 
 //------------------------------------------------------------------------------

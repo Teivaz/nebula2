@@ -18,11 +18,19 @@ static void n_settitletextcolor(void* slf, nCmd* cmd);
 static void n_gettitletextcolor(void* slf, nCmd* cmd);
 static void n_setlabeltextcolor(void* slf, nCmd* cmd);
 static void n_getlabeltextcolor(void* slf, nCmd* cmd);
+static void n_setentrytextcolor(void* slf, nCmd* cmd);
+static void n_getentrytextcolor(void* slf, nCmd* cmd);
+static void n_settextcolor(void* slf, nCmd* cmd);
+static void n_gettextcolor(void* slf, nCmd* cmd);
 static void n_setwindowborder(void* slf, nCmd* cmd);
 static void n_getwindowborder(void* slf, nCmd* cmd);
 static void n_beginbrushes(void* slf, nCmd* cmd);
 static void n_addbrush(void* slf, nCmd* cmd);
 static void n_endbrushes(void* slf, nCmd* cmd);
+static void n_setbuttonsound(void* slf, nCmd* cmd);
+static void n_getbuttonsound(void* slf, nCmd* cmd);
+static void n_setsound(void* slf, nCmd* cmd);
+static void n_getsound(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -56,11 +64,17 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getbuttontextcolor_v",     'GBTC', n_getbuttontextcolor);
     cl->AddCmd("v_setlabeltextcolor_ffff",      'SLTC', n_setlabeltextcolor);
     cl->AddCmd("ffff_getlabeltextcolor_v",      'GLTC', n_getlabeltextcolor);
+    cl->AddCmd("v_setentrytextcolor_ffff",      'SETC', n_setentrytextcolor);
+    cl->AddCmd("ffff_getentrytextcolor_v",      'GETC', n_getentrytextcolor);
+    cl->AddCmd("v_settextcolor_ffff",           'STXC', n_settextcolor);
+    cl->AddCmd("ffff_gettextcolor_v",           'GTXC', n_gettextcolor);
     cl->AddCmd("v_setwindowborder_ffff",        'SWBS', n_setwindowborder);
     cl->AddCmd("ffff_getwindowborder_v",        'GWBS', n_getwindowborder);
     cl->AddCmd("v_beginbrushes_v",              'BGBR', n_beginbrushes);
     cl->AddCmd("v_addbrush_ssffffffff",         'ADBR', n_addbrush);
     cl->AddCmd("v_endbrushes_v",                'EDBR', n_endbrushes);
+    cl->AddCmd("v_setsound_ss",                 'SBTS', n_setsound);
+    cl->AddCmd("s_getsound_s",                  'GBTS', n_getsound);
     cl->EndCmds();
 }
 
@@ -229,6 +243,51 @@ n_getinactivewindowcolor(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    settextcolor
+    @input
+    ffff(Color)
+    @output
+    v
+    @info
+    Set the default text color.
+*/
+static void
+n_settextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    vector4 c;
+    c.x = cmd->In()->GetF();
+    c.y = cmd->In()->GetF();
+    c.z = cmd->In()->GetF();
+    c.w = cmd->In()->GetF();
+    self->SetTextColor(c);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    gettextcolor
+    @input
+    v
+    @output
+    ffff(Color)
+    @info
+    Get the default text color.
+*/
+static void
+n_gettextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    const vector4& c = self->GetTextColor();
+    cmd->Out()->SetF(c.x);
+    cmd->Out()->SetF(c.y);
+    cmd->Out()->SetF(c.z);
+    cmd->Out()->SetF(c.w);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     settitletextcolor
     @input
     ffff(Color)
@@ -364,6 +423,51 @@ n_getlabeltextcolor(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    setentrytextcolor
+    @input
+    ffff(Color)
+    @output
+    v
+    @info
+    Set the text entry fiel text color.
+*/
+static void
+n_setentrytextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    vector4 c;
+    c.x = cmd->In()->GetF();
+    c.y = cmd->In()->GetF();
+    c.z = cmd->In()->GetF();
+    c.w = cmd->In()->GetF();
+    self->SetEntryTextColor(c);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getentrytextcolor
+    @input
+    v
+    @output
+    ffff(Color)
+    @info
+    Get the text entry fiel text color.
+*/
+static void
+n_getentrytextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    const vector4& c = self->GetEntryTextColor();
+    cmd->Out()->SetF(c.x);
+    cmd->Out()->SetF(c.y);
+    cmd->Out()->SetF(c.z);
+    cmd->Out()->SetF(c.w);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     setwindowborder
     @input
     ffff(BorderRect: left, top, right, bottom)
@@ -472,4 +576,43 @@ n_endbrushes(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
     self->EndBrushes();
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setsound
+    @input
+    s(Sound), s(Filename)
+    @output
+    v
+    @info
+    Define a sound filename.
+*/
+static void
+n_setsound(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
+    const char* filename = cmd->In()->GetS();
+    self->SetSound(snd, filename);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getsound
+    @input
+    s(Sound)
+    @output
+    s(Filename)
+    @info
+    Returns filename associated with a sound.
+*/
+static void
+n_getsound(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
+    cmd->Out()->SetS(self->GetSound(snd));
 }

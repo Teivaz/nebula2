@@ -27,10 +27,10 @@ nUvAnimator::~nUvAnimator()
 //------------------------------------------------------------------------------
 /**
 */
-nAnimator::AnimatorType
+nAnimator::Type
 nUvAnimator::GetAnimatorType() const
 {
-    return SHADER;
+    return Shader;
 }
 
 //------------------------------------------------------------------------------

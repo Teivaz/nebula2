@@ -5,6 +5,7 @@
 #include "gui/nguitextentry.h"
 #include "gui/nguiserver.h"
 #include "resource/nresourceserver.h"
+#include "input/ninputserver.h"
 
 nNebulaScriptClass(nGuiTextEntry, "nguitextlabel");
 
@@ -12,13 +13,14 @@ nNebulaScriptClass(nGuiTextEntry, "nguitextlabel");
 /**
 */
 nGuiTextEntry::nGuiTextEntry() :
+    refInputServer("/sys/servers/input"),
     mouseOver(false),
     active(false),
     firstFrameActive(false),
     lineEditor(0),
-    overstrikeDefault(false)
+    fileMode(false)
 {
-    this->SetMaxLength(32);
+    this->SetMaxLength(48);
 }
 
 //------------------------------------------------------------------------------
@@ -76,15 +78,7 @@ nGuiTextEntry::GetEmptyText() const
 {
     return this->emptyText.Get();
 }
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nGuiTextEntry::SetOverstrike(bool overstrike) 
-{
-    this->overstrikeDefault = overstrike;
-    this->lineEditor->SetOverstrike( overstrike );
-}
+
 //------------------------------------------------------------------------------
 /**
     Set max number of chars in text buffer. Discards old text buffer
@@ -99,7 +93,6 @@ nGuiTextEntry::SetMaxLength(int l)
         this->lineEditor = 0;
     }
     this->lineEditor = new nEditLine(l);
-    this->lineEditor->SetOverstrike(this->overstrikeDefault);
 }
 
 //------------------------------------------------------------------------------
@@ -158,6 +151,7 @@ nGuiTextEntry::SetActive(bool b)
     {
         if (!this->active)
         {
+            this->refInputServer->SetMute(true);
             this->active = true;
             this->firstFrameActive = true;
             this->lineEditor->CursorEnd();
@@ -165,6 +159,7 @@ nGuiTextEntry::SetActive(bool b)
     }
     else
     {
+        this->refInputServer->SetMute(false);
         this->active = false;
     }
 }
@@ -223,37 +218,7 @@ nGuiTextEntry::OnChar(uchar charCode)
 {
     if (this->active)
     {
-        // FIXME FIXME FIXME: text entry needs a special
-        // Filename mode !!!
-        
-        // Only accept letters, numbers and some special characters.
-        /*
-        if ('a' <= charCode && charCode <= 'z' ||
-            'A' <= charCode && charCode <= 'Z' ||
-            '0' <= charCode && charCode <= '9' ||
-            charCode == ' ' ||
-            charCode == '.' ||
-            charCode == '\'' ||
-            charCode == '-' ||
-            charCode == '+' ||
-            charCode == '=' ||
-            charCode == '_' ||
-            charCode == '&' ||
-            charCode == '@' ||
-            charCode == '#' ||
-            charCode == 196 || // 'Ä'
-            charCode == 201 || // 'É'
-            charCode == 214 || // 'Ö'
-            charCode == 220 || // 'Ü'
-            charCode == 223 || // 'ß'
-            charCode == 228 || // 'ä'
-            charCode == 233 || // 'é'
-            charCode == 246 || // 'ö'
-            charCode == 252)   // 'ü'
-        {
-            this->lineEditor->InsertChar(charCode);
-        }
-        */
+        this->lineEditor->SetFileMode(this->GetFileMode());
         this->lineEditor->InsertChar(charCode);
     }
 }
@@ -281,7 +246,7 @@ nGuiTextEntry::OnKeyDown(nKey key)
                 {
                     this->CheckEmptyText();
                     this->OnAction();
-                    this->active = false;
+                    this->SetActive(false);
                     handled = true;
                 }
                 break;
@@ -337,24 +302,24 @@ nGuiTextEntry::Render()
 
     if (this->IsShown())
     {
-        const rectangle screenSpaceRect = this->GetScreenSpaceRect();
+        rectangle screenSpaceRect = this->GetScreenSpaceRect();
         if (this->active)
         {
-            this->refGuiServer->DrawBrush(screenSpaceRect, this->GetPressedBrush());
+            nGuiServer::Instance()->DrawBrush(screenSpaceRect, this->pressedBrush);
         }
         else if (this->mouseOver)
         {
-            this->refGuiServer->DrawBrush(screenSpaceRect, this->GetHighlightBrush());
+            nGuiServer::Instance()->DrawBrush(screenSpaceRect, this->highlightBrush);
         }
         else
         {
-            this->refGuiServer->DrawBrush(screenSpaceRect, this->GetDefaultBrush());
+            nGuiServer::Instance()->DrawBrush(screenSpaceRect, this->defaultBrush);
         }
 
         // (re-)validate the font object
         if (!this->refFont.isvalid())
         {
-            this->refFont = (nFont2*) this->refResourceServer->FindResource(this->fontName.Get(), nResource::Font);
+            this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
             if (!this->refFont.isvalid())
             {
                 n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
@@ -362,7 +327,7 @@ nGuiTextEntry::Render()
         }
         
         // compute the text position
-        this->refGfxServer->SetFont(this->refFont.get());
+        nGfxServer2::Instance()->SetFont(this->refFont.get());
         uint renderFlags = nFont2::VCenter;
         switch (this->align)
         {
@@ -371,19 +336,26 @@ nGuiTextEntry::Render()
             default:    renderFlags |= nFont2::Center; break;
         }
 
+        // add text border
+        screenSpaceRect.v0 += this->border;
+        screenSpaceRect.v1 -= this->border;
+
         // if currently active, render the cursor
         if (this->active)
         {
             // get x position and width of cursor
             int cursorIndex = this->lineEditor->GetCursorPos();
             nString lineText = this->lineEditor->GetContent();
+            nString textToCursor = lineText.ExtractRange(0, cursorIndex);
 
             // build a string from the character under the cursor
             char charUnderCursor[2];
             charUnderCursor[0] = (lineText.Get()[cursorIndex] == 0) ? ' ' : lineText.Get()[cursorIndex];
             charUnderCursor[1] = 0;
             
-            vector2 cursorSize = this->refGfxServer->GetTextExtent(charUnderCursor);
+            // get text extents
+            vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
+            vector2 cursorSize = nGfxServer2::Instance()->GetTextExtent(charUnderCursor);
 
             // FIXME: GetTextExtent() thinks that spaces are 0 pixels wide!!!
             if (cursorSize.x == 0)
@@ -392,41 +364,16 @@ nGuiTextEntry::Render()
             }
 
             // prepare matrix to render cursor resource
-            float leftMargin = 0;
-            switch (this->align)
-            {
-                case Center:
-                {
-                    vector2 totalTextSize = this->refGfxServer->GetTextExtent(lineText.Get());
-                    leftMargin = (screenSpaceRect.v1.x - screenSpaceRect.v0.x - totalTextSize.x) * 0.5f;
-                    // fallthrough!
-                }
-                case Left:  
-                {  
-                    nString textToCursor = lineText.ExtractRange(0, cursorIndex);
-                    vector2 textToCursorSize = this->refGfxServer->GetTextExtent(textToCursor.Get());
-                    leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
-                    break;
-                }
-                case Right:
-                {   
-                    nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
-                    vector2 textAfterCursorSize = this->refGfxServer->GetTextExtent(textAfterCursor.Get());
-                    leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
-                    break;
-                }
-            }
-
-            rectangle cursorRect(vector2(leftMargin, 
+            rectangle cursorRect(vector2(screenSpaceRect.v0.x + textToCursorSize.x, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() - cursorSize.y) * 0.5f),
-                                 vector2(leftMargin + cursorSize.x, 
+                                 vector2(screenSpaceRect.v0.x + textToCursorSize.x + cursorSize.x, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() + cursorSize.y) * 0.5f));
 
-            this->refGuiServer->DrawBrush(cursorRect, this->GetCursorBrush());
+            nGuiServer::Instance()->DrawBrush(cursorRect, this->cursorBrush);
         }
 
         // draw the text
-        this->refGfxServer->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
+        nGuiServer::Instance()->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
 
         return true;
     }

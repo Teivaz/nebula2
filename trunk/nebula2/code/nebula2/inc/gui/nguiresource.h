@@ -30,10 +30,12 @@ public:
     void SetTextureName(const char* n);
     /// get texture path
     const char* GetTextureName() const;
-    /// set uv rect in texture
-    void SetUvRect(const rectangle& r);
-    /// get uv rect in texture
-    const rectangle& GetUvRect() const;
+    /// set uv rect in texture in texel coords
+    void SetAbsUvRect(const rectangle& r);
+    /// get uv rect in texture in texel coords
+    const rectangle& GetAbsUvRect() const;
+    /// get relative uv rect 
+    const rectangle& GetRelUvRect();
     /// set modulate color
     void SetColor(const vector4& v);
     /// get modulate color
@@ -52,11 +54,11 @@ public:
     int GetTextureHeight();
 
 private:
-    nAutoRef<nGfxServer2> refGfxServer;
-    nAutoRef<nGuiServer> refGuiServer;
     nString resName;
     nString texName;
-    rectangle uvRect;
+    rectangle absUvRect;
+    rectangle relUvRect;
+    bool relUvRectDirty;
     vector4 color;
     nRef<nTexture2> refTexture;
 };
@@ -66,10 +68,8 @@ private:
 */
 inline
 nGuiResource::nGuiResource() :
-    refGfxServer("/sys/servers/gfx"),
-    refGuiServer("/sys/servers/gui"),
-    uvRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
-    color(1.0f, 1.0f, 1.0f, 1.0f)
+    color(1.0f, 1.0f, 1.0f, 1.0f),
+    relUvRectDirty(true)
 {
     // empty
 }
@@ -119,6 +119,7 @@ nGuiResource::SetTextureName(const char* name)
         this->Unload();
     }
     this->texName = name;
+    this->relUvRectDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -136,9 +137,10 @@ nGuiResource::GetTextureName() const
 */
 inline
 void
-nGuiResource::SetUvRect(const rectangle& r)
+nGuiResource::SetAbsUvRect(const rectangle& r)
 {
-    this->uvRect = r;
+    this->absUvRect = r;
+    this->relUvRectDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -146,9 +148,39 @@ nGuiResource::SetUvRect(const rectangle& r)
 */
 inline
 const rectangle&
-nGuiResource::GetUvRect() const
+nGuiResource::GetAbsUvRect() const
 {
-    return this->uvRect;
+    return this->absUvRect;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const rectangle&
+nGuiResource::GetRelUvRect()
+{
+    if (this->relUvRectDirty)
+    {
+        if (!this->IsValid())
+        {
+            this->Load();
+        }
+        this->relUvRectDirty = false;
+
+        vector2 corrUvPos(this->absUvRect.v0.x + 0.5f, this->absUvRect.v0.y + 0.5f);
+        vector2 absUvSize = this->absUvRect.size();
+        vector2 corrUvSize(absUvSize.x - 1.0f, absUvSize.y - 1.0f);
+
+        float texHeight = float(this->GetTextureHeight());
+        float texWidth  = float(this->GetTextureWidth());
+
+        this->relUvRect.v0.x = (corrUvPos.x + 0.5f) / texWidth;
+        this->relUvRect.v0.y = 1.0f - ((corrUvPos.y + corrUvSize.y) / texHeight);
+        this->relUvRect.v1.x = (corrUvPos.x + 0.5f + corrUvSize.x) / texWidth;
+        this->relUvRect.v1.y = 1.0f - ((corrUvPos.y + 0.5f) / texHeight);
+    }
+    return this->relUvRect;
 }
 
 //------------------------------------------------------------------------------

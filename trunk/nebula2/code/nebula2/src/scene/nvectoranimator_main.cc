@@ -12,7 +12,7 @@ nNebulaScriptClass(nVectorAnimator, "nanimator");
 /**
 */
 nVectorAnimator::nVectorAnimator() :
-    vectorParameter(nShader2::InvalidParameter),
+    vectorParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -35,7 +35,7 @@ void
 nVectorAnimator::SetVectorName(const char* name)
 {
     n_assert(name);
-    this->vectorParameter = nShader2::StringToParameter(name);
+    this->vectorParameter = nShaderState::StringToParam(name);
 }
 
 //------------------------------------------------------------------------------
@@ -45,13 +45,13 @@ nVectorAnimator::SetVectorName(const char* name)
 const char*
 nVectorAnimator::GetVectorName()
 {
-    if (nShader2::InvalidParameter == this->vectorParameter)
+    if (nShaderState::InvalidParameter == this->vectorParameter)
     {
         return 0;
     }
     else
     {
-        return nShader2::ParameterToString(this->vectorParameter);
+        return nShaderState::ParamToString(this->vectorParameter);
     }
 }
 
@@ -89,10 +89,10 @@ nVectorAnimator::GetKeyAt(int index, float& time, vector4& key) const
 /**
     Returns the animator type. nVectorAnimator is a SHADER animator.
 */
-nAnimator::AnimatorType
+nAnimator::Type
 nVectorAnimator::GetAnimatorType() const
 {
-    return SHADER;
+    return Shader;
 }
 
 //------------------------------------------------------------------------------
@@ -108,10 +108,10 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     // FIXME: dirty cast, make sure that it is a nAbstractShaderNode!
     nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
 
-            // get the anim driver value (e.g. the current time)
-            nVariable* var = renderContext->GetVariable(this->channelVarHandle);
-            n_assert(var);
-            float curTime = var->GetFloat();
+    // get the sample time from the render context
+    nVariable* var = renderContext->GetVariable(this->channelVarHandle);
+    n_assert(var);
+    float curTime = var->GetFloat();
 
     vector4 result;
     if (this->keyArray.SampleKey(curTime, result, this->GetLoopType()))
