@@ -5,6 +5,13 @@
 #include "kernel/nfile.h"
 #include "kernel/nfileserver2.h"
 
+#if defined(__LINUX__)
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
 //------------------------------------------------------------------------------
 /**
     history:
@@ -304,6 +311,10 @@ nFile::GetSize() const
 
 #ifdef __WIN32__
     return GetFileSize(this->handle, NULL);
+#elif defined(__LINUX__)
+    struct stat s;
+    fstat(fileno(this->fp), &s);
+    return s.st_size;
 #else
 #error "nFile::GetSize(): NOT IMPLEMENTED!"
 #endif
@@ -322,6 +333,12 @@ nFile::GetLastWriteTime() const
 #ifdef __WIN32__
     nFileTime fileTime;
     GetFileTime(this->handle, NULL, NULL, &(fileTime.time));
+    return fileTime;
+#elif defined(__LINUX__)
+    nFileTime fileTime;
+    struct stat s;
+    fstat(fileno(this->fp), &s);
+    fileTime.time = s.st_mtime;
     return fileTime;
 #else
 #error "nFile::GetLastWriteTime(): NOT IMPLEMENTED!"
