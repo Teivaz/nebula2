@@ -21,6 +21,10 @@
 #include "particle/nparticleserver.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
+#include "gui/nguiserver.h"
+#include "gui/nguiwindow.h"
+#include "gui/nguilabel.h"
+#include "gui/nguitextlabel.h"
 
 #include "physdemo/euidserver.h"
 #include "physdemo/simpleobject.h"
@@ -48,6 +52,14 @@ public:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// set optional feature set override
+    void SetFeatureSetOverride(nGfxServer2::FeatureSet f);
+    /// get optional feature set override
+    nGfxServer2::FeatureSet GetFeatureSetOverride() const;
+    /// set font size
+    void SetFontSize(int newFontSize);
+    /// get font size
+    int GetFontSize() const;
     /// set camera parameters
     void SetCamera(const nCamera2& camera);
     /// get camera parameters
@@ -95,6 +107,8 @@ private:
     void HandleInput(float frameTime);
     /// handle movement input
     void HandleMovementInput(float frameTime);
+    /// initialize the overlay GUI
+    void InitOverlayGui();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -107,6 +121,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<eUIDServer> refUIDServer;
+    nRef<nGuiServer> refGuiServer;
 
     nString sceneFilename;
     nString projDir;
@@ -119,6 +134,8 @@ private:
     nDisplayMode2 displayMode;
     nCamera2 camera;
 
+    nGfxServer2::FeatureSet featureSetOverride;
+
     polar2 defViewerAngles;
     vector3 defViewerPos;
     vector3 defViewerZoom;
@@ -130,6 +147,11 @@ private:
 
     matrix44 viewMatrix;
     int screenshotID;
+    float currFPS;
+    int fontSize;
+
+    /// GUI label used for displaying the FPS (pointer retained so that the text can be updated easily)
+    nGuiTextLabel *guiFPSLabel;
 
     /// entity management
     nList objectList;
@@ -143,6 +165,46 @@ private:
     /// a single default light render context
     nRenderContext lightRenderContext;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+PhysDemoApp::SetFeatureSetOverride(nGfxServer2::FeatureSet f)
+{
+    this->featureSetOverride = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::FeatureSet
+PhysDemoApp::GetFeatureSetOverride() const
+{
+    return this->featureSetOverride;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+PhysDemoApp::SetFontSize(int newFontSize)
+{
+    this->fontSize = newFontSize;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+PhysDemoApp::GetFontSize() const
+{
+    return this->fontSize;
+}
 
 //------------------------------------------------------------------------------
 /**

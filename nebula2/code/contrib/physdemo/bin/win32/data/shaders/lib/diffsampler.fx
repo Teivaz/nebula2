@@ -1,3 +1,4 @@
+#line 1 "diffsampler.fx"
 //------------------------------------------------------------------------------
 //  diffsampler.h
 //  Declare the standard diffuse sampler for all shaders.
@@ -10,6 +11,6 @@ sampler DiffSampler = sampler_state
     AddressV  = Wrap;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = Linear;
 };
 

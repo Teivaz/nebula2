@@ -13,6 +13,7 @@
 PhysDemoApp::PhysDemoApp(nKernelServer* ks) :
     kernelServer(ks),
     isOpen(false),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet),
     defViewerPos(0.0f, 0.0f, 0.0f),
     defViewerAngles(0.0f, 0.0f),
     defViewerZoom(0.0f, 0.0f, 9.0f),
@@ -20,7 +21,8 @@ PhysDemoApp::PhysDemoApp(nKernelServer* ks) :
     viewerVelocity(500.0f),
     viewerAngles(defViewerAngles),
     viewerZoom(defViewerZoom),
-    screenshotID(0)
+    screenshotID(0),
+    fontSize(20)
 {
     // empty
 }
@@ -58,6 +60,16 @@ PhysDemoApp::Open()
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refUIDServer      = (eUIDServer*)      kernelServer->New("euidserver", "/sys/servers/uidserver");
+    this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+
+    // run the startup script
+    this->refScriptServer->RunScript("startup.tcl", result);
+
+    // set the gfx server feature set override
+    if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
+    {
+        this->refGfxServer->SetFeatureSetOverride(this->featureSetOverride);
+    }
 
     // initialize the physics-related classes
     this->refPhysWorld      = (nOpendeWorld*)    kernelServer->New("nopendeworld", "/phys/world");
@@ -90,8 +102,10 @@ PhysDemoApp::Open()
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
 
-    // run the startup script
-    this->refScriptServer->RunScript("startup.tcl", result);
+    // initialize gui
+    this->refGuiServer->SetRootPath("/gui");
+    this->refGuiServer->Open();
+    this->InitOverlayGui();
 
     // create the root node for where the objects will exist (exists only for organizational purposes,
     // nothing more.  In a real engine, instead of this, you would have a spacial hierarchy of rooms
@@ -120,6 +134,8 @@ PhysDemoApp::Close()
 
     // First, disable any possibility of future rendering
     this->refGfxServer->CloseDisplay();
+    // Then kill the GUI
+    this->refGuiServer->Close();
 
     // Then, release the list of objects
     nNode *node = objectList.GetHead();
@@ -182,6 +198,15 @@ PhysDemoApp::Run()
         }
         float frameTime = (float) (time - prevTime);
 
+        this->currFPS = 1.0f / frameTime;
+
+        // Update the GUI's concept of time
+        this->refGuiServer->SetTime(time);
+        // Also update the GUI FPS element
+        char fpsString[256];
+        sprintf(fpsString, "FPS: %.1f", this->currFPS);
+        this->guiFPSLabel->SetText(fpsString);
+
         // trigger remote server
         kernelServer->GetRemoteServer()->Trigger();
 
@@ -193,7 +218,15 @@ PhysDemoApp::Run()
 
         // handle input
         this->refInputServer->Trigger(time);
-        this->HandleInput(frameTime);
+        if (!this->refGuiServer->IsMouseOverGui())
+        {
+            this->HandleInput(frameTime);
+        }
+        
+        // trigger gui server
+        this->refGuiServer->Trigger();
+
+        // flush the events, we're done with them.
         this->refInputServer->FlushEvents();
 
         // Update the physical world
@@ -710,7 +743,6 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     nNode *objListNode = new nNode;
     objListNode->SetPtr(newObj);
     kernelServer->PopCwd();
-    delete(strUID);
 
     // Make sure the obj knows its new uID
     newObj->uID = uID;
@@ -754,6 +786,24 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
 
     // Finished defining objects, pop the Cwd
     kernelServer->PopCwd();
+
+    // Let's give the bullet some floaty text
+    this->kernelServer->PushCwd(this->refGuiServer->GetRootWindowPointer());
+
+    newObj->refFloatyText = (nGuiTextLabel *) kernelServer->New("nguitextlabel", strUID);
+    n_assert(newObj->refFloatyText.isvalid());
+    newObj->refFloatyText->SetText("bullet");
+    newObj->refFloatyText->SetAlignment(nGuiTextLabel::Alignment::Center);
+    newObj->refFloatyText->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    newObj->refFloatyText->SetFont("physDefaultFont");
+
+    newObj->textWidth = 0.15;
+    newObj->textHeight = 0.05;
+
+    // Now we're REALLY finished with strUID, so delete it
+    delete(strUID);
+
+    this->kernelServer->PopCwd();
 
     return newObj;
 }
@@ -879,6 +929,39 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
                 shapeNode->SetPosition(obj->refPhysBody->GetPosition());
                 shapeNode->SetQuat(obj->refPhysBody->GetQuaternion());
 
+                // if the floaty text is initialized, update its position
+                if (obj->refFloatyText.isvalid())
+                {
+                    matrix44 projMat = this->refGfxServer->GetTransform(nGfxServer2::ViewProjection);
+
+                    vector3 textCoords = obj->refRootShapeNode->GetPosition();
+                    vector4 projCoords;
+
+                    // First, move the original coords into a vector4
+                    projCoords.x = textCoords.x;
+                    projCoords.y = textCoords.y;
+                    projCoords.z = textCoords.z;
+                    projCoords.w = 1.0f;
+
+                    // Now, do textCoords * projectMat (I know, it looks backwards, no idea why the operation works this way)
+                    projCoords = projMat * projCoords;
+
+                    // Now divide by w to complete the projection.
+                    projCoords.x /= projCoords.w;
+                    projCoords.y /= projCoords.w;
+                    projCoords.z /= projCoords.w;
+
+                    // ... and scale the projected coords to be in proper screen space.
+                    projCoords.x = projCoords.x / 2.0f + 0.5f;
+                    projCoords.y = -projCoords.y / 2.0f + 0.5f;
+
+                    // And finally, set up the rect to reflect the projected coordinates.
+                    rectangle screenCoords;
+                    screenCoords.v0.set(projCoords.x - obj->textWidth / 2.0f, projCoords.y - obj->textHeight / 2.0f - 0.05f);
+                    screenCoords.v1.set(projCoords.x + obj->textWidth / 2.0f, projCoords.y + obj->textHeight / 2.0f - 0.05f);
+                    obj->refFloatyText->SetRect(screenCoords);
+                }
+
                 node = node->GetSucc();
             }
         }
@@ -919,6 +1002,57 @@ void PhysDemoApp::RenderWorld(nTime time, uint frameId)
     // Complete the rendering of the scene
     this->refSceneServer->EndScene();
     this->refSceneServer->RenderScene();             // renders the 3d scene
-    this->refConServer->Render();                    // render the console or watch variables
+    this->refGuiServer->Render();                    // render the GUI elements
+    this->refConServer->Render();                    // render the console and watch variables
     this->refSceneServer->PresentScene();            // present the frame
+}
+
+//------------------------------------------------------------------------------
+/**
+    Initialize the overlay GUI.
+*/  
+void
+PhysDemoApp::InitOverlayGui()
+{
+    const float borderSize = 0.02f;
+
+    // add an appropriate font for this app
+    this->refGuiServer->AddSystemFont("physDefaultFont", "New Times Roman", this->fontSize, true, false, false);
+
+    // create a dummy root window
+    this->refGuiServer->SetRootWindowPointer(0);
+    nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
+    n_assert(userRootWindow);
+    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
+    userRootWindow->SetRect(nullRect);
+
+    kernelServer->PushCwd(userRootWindow);
+
+    // create logo label
+    nGuiLabel* logoLabel = (nGuiLabel*) kernelServer->New("nguilabel", "n2logo");
+    n_assert(logoLabel);
+    vector2 logoLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
+    rectangle logoRect;
+    logoRect.v0.set(1.0f - logoLabelSize.x - borderSize, 1.0f - logoLabelSize.y - borderSize);
+    logoRect.v1.set(1.0f - borderSize, 1.0f - borderSize);
+    logoLabel->SetRect(logoRect);
+    logoLabel->SetDefaultBrush("n2logo");
+    logoLabel->SetPressedBrush("n2logo");
+    logoLabel->SetHighlightBrush("n2logo");
+
+    // let's add a text readout for the current FPS
+    this->guiFPSLabel = (nGuiTextLabel *) kernelServer->New("nguitextlabel", "fpsreadout");
+    n_assert(this->guiFPSLabel);
+    logoRect.v0.set(0.0f, 0.0f);
+    logoRect.v1.set(0.2f, 0.05f);
+    this->guiFPSLabel->SetRect(logoRect);
+    this->guiFPSLabel->SetText("30.0");
+    this->guiFPSLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiFPSLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    this->guiFPSLabel->SetFont("physDefaultFont");
+
+    kernelServer->PopCwd();
+
+    // set the new user root window
+    this->refGuiServer->SetRootWindowPointer(userRootWindow);
 }

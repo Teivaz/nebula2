@@ -16,6 +16,8 @@
 #include "scene/nrendercontext.h"
 #include "scene/nshapenode.h"
 
+#include "gui/nguitextlabel.h"
+
 #include "opende/nopendebody.h"
 #include "opende/nopendegeom.h"
 
@@ -48,6 +50,10 @@ public:
     nRef<nOpendeBody> refPhysBody;
     // The object's collision representation
     nRef<nOpendeGeom> refPhysGeom;
+
+    // Initialize this with the proper nGuiTextLabe pointer if the object is to have floaty text
+    nRef<nGuiTextLabel> refFloatyText;
+    float textWidth, textHeight;
 };
 //------------------------------------------------------------------------------
 #endif
