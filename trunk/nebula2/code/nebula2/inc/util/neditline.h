@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     A line edit object.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -31,6 +31,8 @@ public:
     void SetContent(const char* str);
     /// get content
     const char* GetContent() const;
+    /// return true if empty
+    bool IsEmpty() const;
     /// clear content
     void ClearContent();
     /// get max valid cursor position
@@ -47,12 +49,24 @@ public:
     void CursorLeft();
     /// move cursor to the right
     void CursorRight();
+    /// move cursor 1 word left
+    void CursorWordLeft();
+    /// move cursor 1 word right
+    void CursorWordRight();
     /// delete character under cursor
     void Delete();
     /// delete character left of cursor
     void DeleteLeft();
+    /// delete word left of cursor
+    void DeleteWordLeft(const char* separators);
+    /// return true if character is valid
+    bool IsCharValid(uchar c) const;
     /// insert character at current cursor position
     void InsertChar(uchar c);
+    /// insert a string
+    void InsertString(const char* str);
+    /// extract the word left and upto the cursor
+    nString GetWordToCursor() const;
 
 private:
     int bufSize;
@@ -130,10 +144,32 @@ nEditLine::ToggleOverstrike()
 */
 inline
 void
+nEditLine::ClearContent()
+{
+    this->buffer[0] = 0;
+    this->cursorPos = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nEditLine::IsEmpty() const
+{
+    return (0 == this->buffer[0]);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nEditLine::SetContent(const char* str)
 {
     n_assert(str);
     n_strncpy2(this->buffer, str, this->bufSize);
+    this->cursorPos = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -227,15 +263,19 @@ nEditLine::CursorRight()
 
 //------------------------------------------------------------------------------
 /**
+    - 05-Mar-04     floh    bugfix if cursor at last position
 */
 inline
 void
 nEditLine::Delete()
 {
-    char* moveTo = this->buffer + this->cursorPos;
-    char* moveFrom = moveTo + 1;
-    int moveCount = this->bufSize - (this->cursorPos + 1);
-    memmove(moveTo, moveFrom, moveCount);
+    if (this->cursorPos < this->GetMaxValidCursorPos())
+    {
+        char* moveTo = this->buffer + this->cursorPos;
+        char* moveFrom = moveTo + 1;
+        int moveCount = this->bufSize - (this->cursorPos + 1);
+        memmove(moveTo, moveFrom, moveCount);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -257,10 +297,35 @@ nEditLine::DeleteLeft()
 */
 inline
 void
+nEditLine::DeleteWordLeft(const char* separators)
+{
+    n_assert(separators);
+    while ((this->cursorPos > 0) && (strchr(separators, this->buffer[this->cursorPos - 1]) == 0))
+    {
+        --this->cursorPos;
+        this->Delete();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nEditLine::IsCharValid(uchar c) const
+{
+    return ((isprint(c) || (c=='ä') || (c=='Ä') || (c=='ö') || (c=='Ö') || (c=='ü') || (c=='Ü') || (c=='ß')));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nEditLine::InsertChar(uchar c)
 {
-    // ignore everything below space
-    if (c < 32)
+    // only accept certain characters
+    if (!this->IsCharValid(c))
     {
         return;
     }
@@ -287,11 +352,78 @@ nEditLine::InsertChar(uchar c)
     {
         this->cursorPos = this->bufSize - 1;
     }
-    
+
     // make sure the buffer is always properly terminated
     this->buffer[this->bufSize - 1] = 0;
 }
 
 //------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nEditLine::InsertString(const char* str)
+{
+    n_assert(str);
+    uchar c;
+    while (c = *str++)
+    {
+        this->InsertChar(c);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nEditLine::GetWordToCursor() const
+{
+    nString str;
+    int pos = this->cursorPos;
+    while ((--pos >= 0) && this->buffer[pos] != ' ');
+    pos++;
+    int len = this->cursorPos - pos;
+    if (len > 0)
+    {
+        str.Set(&(this->buffer[pos]), len);
+    }
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nEditLine::CursorWordLeft()
+{
+    while ((--this->cursorPos >= 0) && this->buffer[this->cursorPos] == ' ');
+    while ((--this->cursorPos >= 0) && this->buffer[this->cursorPos] != ' ');
+    this->cursorPos++;
+    if (this->cursorPos < 0)
+    {
+        this->cursorPos = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nEditLine::CursorWordRight()
+{
+    int maxPos = this->GetMaxValidCursorPos();
+    while ((++this->cursorPos < maxPos) && this->buffer[this->cursorPos] == ' ');
+    while ((++this->cursorPos < maxPos) && this->buffer[this->cursorPos] != ' ');
+    while ((++this->cursorPos < maxPos) && this->buffer[this->cursorPos] == ' ');
+    if (this->cursorPos > maxPos)
+    {
+        this->cursorPos = maxPos;
+    }
+}
+
+//------------------------------------------------------------------------------
 #endif
-    
+

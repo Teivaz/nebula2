@@ -36,8 +36,14 @@ public:
     void StripExtension();
     /// extract the part after the last directory separator
     nPathString ExtractFileName() const;
+    /// extract the last directory of the path
+    nPathString ExtractLastDirName() const;
     /// extract the part before the last directory separator
     nPathString ExtractDirName() const;
+    /// strip slash at end of path, if exists
+    void StripTrailingSlash();
+    /// extract path until last slash
+    nPathString ExtractToLastSlash() const;
 
 private:
     /// get pointer to last directory separator
@@ -109,7 +115,7 @@ nPathString::ConvertBackslashes()
     }
 
     char *buf = new char[this->strLen + 1];
-    
+
     for (int i = 0; i <= this->strLen; i++)
     {
         buf[i] = (ptr[i] == '\\') ? '/' : ptr[i];
@@ -163,11 +169,30 @@ nPathString::CheckExtension(const char* ext) const
 {
     n_assert(ext);
     const char* extStr = this->GetExtension();
-	if (0 == extStr)
+    if (0 == extStr)
     {
         return false;
-	}
+    }
     return (0 == (strcmp(ext, extStr)));
+}
+
+//------------------------------------------------------------------------------
+/**
+    Strips last slash, if the path name ends on a slash.
+*/
+inline
+void
+nPathString::StripTrailingSlash()
+{
+    if (this->strLen > 0)
+    {
+        int pos = strLen - 1;
+        char* str = (char*) this->Get();
+        if ((str[pos] == '/') || (str[pos] == '\\'))
+        {
+            str[pos] = 0;
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -210,7 +235,7 @@ nPathString
 nPathString::ExtractFileName() const
 {
     nPathString pathString;
-    char* lastSlash = this->GetLastSlash(); 
+    char* lastSlash = this->GetLastSlash();
     if (lastSlash)
     {
         pathString = &(lastSlash[1]);
@@ -224,11 +249,51 @@ nPathString::ExtractFileName() const
 
 //------------------------------------------------------------------------------
 /**
-    Return a nPathString object containing the part up to and including the last
+    Return a nPathString object containing the last directory of the path, i.e.
+    a category.
+
+    - 17-Feb-04     floh    fixed a bug when the path ended with a slash
+*/
+inline
+nPathString
+nPathString::ExtractLastDirName() const
+{
+    nPathString pathString(*this);
+    char* lastSlash = pathString.GetLastSlash();
+
+    // special case if path ends with a slash
+    if (lastSlash)
+    {
+        if (0 == lastSlash[1])
+        {
+            *lastSlash = 0;
+            lastSlash = pathString.GetLastSlash();
+        }
+
+        char* secLastSlash = 0;
+        if (0 != lastSlash)
+        {
+            *lastSlash = 0; // cut filename
+            secLastSlash = pathString.GetLastSlash();
+            if (secLastSlash)
+            {
+                *secLastSlash = 0;
+                return nPathString(secLastSlash+1);
+            }
+        }
+    }
+    return "";
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a nPathString object containing the part before the last
     directory separator.
-    
-    NOTE: I left my fix in that returns the last slash (or colon), this was 
-    necessary to tell if a dirname is a normal directory or an assign. 
+
+    NOTE: I left my fix in that returns the last slash (or colon), this was
+    necessary to tell if a dirname is a normal directory or an assign.
+
+    - 17-Feb-04     floh    fixed a bug when the path ended with a slash
 */
 inline
 nPathString
@@ -236,9 +301,42 @@ nPathString::ExtractDirName() const
 {
     nPathString pathString(*this);
     char* lastSlash = pathString.GetLastSlash();
+
+    // special case if path ends with a slash
     if (lastSlash)
     {
-        *++lastSlash = 0;
+        if (0 == lastSlash[1])
+        {
+            *lastSlash = 0;
+            lastSlash = pathString.GetLastSlash();
+        }
+        if (lastSlash)
+        {
+            *++lastSlash = 0;
+        }
+    }
+    return pathString;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return a path string object which contains of the complete path
+    up to the last slash. Returns an empty string if there is no
+    slash in the path.
+*/
+inline
+nPathString
+nPathString::ExtractToLastSlash() const
+{
+    nPathString pathString(*this);
+    char* lastSlash = pathString.GetLastSlash();
+    if (lastSlash)
+    {
+        lastSlash[1] = 0;
+    }
+    else
+    {
+        pathString = "";
     }
     return pathString;
 }
