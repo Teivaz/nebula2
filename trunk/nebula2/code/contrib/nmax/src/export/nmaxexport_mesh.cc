@@ -702,19 +702,19 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                         IGameTextureMap *igTextureMap;
                         IGameUVGen *igUVGen = NULL;
                         Point3 mapCoord;
-                        DWORD mapIndicies[3];
+                        DWORD mapIndices[3];
                         UVGen* uvGen = NULL;
 
-                        if (igMesh->GetMapFaceIndex(mapChannels[uvLayer], igFace->meshFaceIndex, &mapIndicies[0]))
+                        if (igMesh->GetMapFaceIndex(mapChannels[uvLayer], igFace->meshFaceIndex, &mapIndices[0]))
                         {
-                            igMesh->GetMapVertex(mapChannels[uvLayer], mapIndicies[vertexIndex], mapCoord);
-                            if (igFace->texCoord[0] != mapIndicies[0] ||
-                                igFace->texCoord[1] != mapIndicies[1] ||
-                                igFace->texCoord[2] != mapIndicies[2])
+                            igMesh->GetMapVertex(mapChannels[uvLayer], mapIndices[vertexIndex], mapCoord);
+                            if (igFace->texCoord[0] != mapIndices[0] ||
+                                igFace->texCoord[1] != mapIndices[1] ||
+                                igFace->texCoord[2] != mapIndices[2])
                             {
                                 n_printf("\t\tTex&Map diff: t[%d %d %d] m[%d %d %d]",
                                     igFace->texCoord[0], igFace->texCoord[1], igFace->texCoord[2],
-                                    mapIndicies[0], mapIndicies[1], mapIndicies[2]);
+                                    mapIndices[0], mapIndices[1], mapIndices[2]);
                             }
                         }
 
