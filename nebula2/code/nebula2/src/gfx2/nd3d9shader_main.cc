@@ -439,7 +439,8 @@ nD3D9Shader::SetTexture(Parameter p, nTexture2* tex)
 //------------------------------------------------------------------------------
 /**
     Set a whole shader parameter block at once. This is slightly faster
-    (and more convenient) then setting single parameters.
+    (and more convenient) then setting single parameters. This works by batching 
+    the parameter changes and then applying them all at once.
 */
 void
 nD3D9Shader::SetParams(const nShaderParams& params)
@@ -449,6 +450,8 @@ nD3D9Shader::SetParams(const nShaderParams& params)
     #endif
     int i;
     HRESULT hr;
+    this->effect->BeginParameterBlock();
+    bool changes = false;
     for (i = 0; i < NumParameters; i++)
     {
         Parameter p = (Parameter) i;
@@ -464,6 +467,7 @@ nD3D9Shader::SetParams(const nShaderParams& params)
                 const nShaderArg& curArg = params.GetArg(p);
                 if (!(curArg == this->curParams.GetArg(p)))
                 {
+                    changes = true;
                     this->curParams.SetArg(p, curArg);
                     switch (curArg.GetType())
                     {
@@ -513,6 +517,12 @@ nD3D9Shader::SetParams(const nShaderParams& params)
                 }
             }
         }
+    }
+    D3DXHANDLE paramblock = this->effect->EndParameterBlock();
+    if (changes) 
+    {
+        hr = this->effect->ApplyParameterBlock(paramblock);
+        n_assert(SUCCEEDED(hr));
     }
 }
 
