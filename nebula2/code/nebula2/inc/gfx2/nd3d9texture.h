@@ -40,7 +40,7 @@ private:
     friend class nD3D9Server;
     friend class nD3D9Shader;
 
-    /// get d3d8 texture
+    /// get d3d9 texture
     IDirect3DBaseTexture9* GetTexture() const;
     /// get render target surface (returns 0 if no render target)
     IDirect3DSurface9* GetRenderTarget() const;
