@@ -11,6 +11,24 @@
 
     @section NebulaBuildSystemIntro Introduction
 
+    Nebula uses it's own build system. So, you should be familiar with build system
+    first before you start to use Nebula.
+
+    The core part of build system is consisted of two items which are:
+
+      - module : defines header and source files which consist of module.
+      - target : defines library type which is linked. It can be static library(.lib),
+                 dynamic linkage library(.dll) or execution file(.exe ).
+      
+    One thing to remind about module is that there can be only one module which is
+    scriptable. Simply saying, you cannot have more than one implementation file(.cc) 
+    which contains nNebulaScriptClass macro in one module. So, if there's two classes
+    and both of that classes is scriptable, you should make two modules for those 
+    classes.
+
+    @see see @ref NebulaWritingClass for more details about nNebulaScriptClass and 
+         scriptable class.
+
     The new system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
     process .bld files located in $home/code/nebula2/bldfiles and its subdirectories, 
     and outputs to $home/build/[compiler]. Normally, to create your own project, 
