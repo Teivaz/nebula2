@@ -186,7 +186,7 @@ nClass::EndCmds(void)
         {
             nCmdProto *cp0 = (nCmdProto *) this->cmdTable->GetElementAt(i);
             nCmdProto *cp1 = (nCmdProto *) this->cmdTable->GetElementAt(i+1);
-            n_error("Command id collission in class '%s'\n"
+            n_error("Command id collision in class '%s'\n"
                      "cmd '%s' and cmd '%s' both have id '0x%lx'\n",
                      this->GetName(),
                      cp0->GetName(),
