@@ -11,4 +11,6 @@
 
 void n_listener (char* msg, ...);
 
+void n_openeditor(const char* filename);
+
 #endif /*N_MAXLISTENER_H*/
