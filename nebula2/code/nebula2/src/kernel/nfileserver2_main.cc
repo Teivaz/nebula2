@@ -238,7 +238,7 @@ nFileServer2::NewFileObject()
 void 
 nFileServer2::InitHomeAssign(void)
 {
-#if __XBxX__
+#ifdef __XBxX__
     this->SetAssign("home", "d:/");
 #else    
     char buf[N_MAXPATH];
