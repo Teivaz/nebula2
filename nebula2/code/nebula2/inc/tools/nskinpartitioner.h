@@ -45,7 +45,7 @@ private:
         /// default constructor
         Partition();
         /// constructor
-        Partition(nMeshBuilder* mBuilder, int maxJoints, int groupIndex);
+        Partition(nMeshBuilder* mBuilder, int maxJoints, int groupId);
         /// check if a triangle can be added, and if yes, add the triangle
         bool CheckAddTriangle(int triangleIndex);
         /// get joint palette of the partition
@@ -53,7 +53,7 @@ private:
         /// get the triangle indices of the partition
         const nArray<int>& GetTriangleIndices() const;
         /// get the original group index the partition belongs to
-        int GetGroupIndex() const;
+        int GetGroupId() const;
         /// convert a global joint index into a partition-local joint index
         int GlobalToLocalJointIndex(int globalJointIndex) const;
 
@@ -72,7 +72,7 @@ private:
 
         nMeshBuilder* sourceMesh;
         int maxJointPaletteSize;
-        int groupIndex;
+        int groupId;
         bool jointMask[MaxJointsInSkeleton];
         nArray<int> jointPalette;
         nArray<int> triangleArray;
@@ -89,7 +89,7 @@ inline
 nSkinPartitioner::Partition::Partition() :
     sourceMesh(0),
     maxJointPaletteSize(0),
-    groupIndex(0),
+    groupId(0),
     jointPalette(32, 32),
     triangleArray(2048, 2048)
 {
@@ -100,10 +100,10 @@ nSkinPartitioner::Partition::Partition() :
 /**
 */
 inline
-nSkinPartitioner::Partition::Partition(nMeshBuilder* mBuilder, int maxJoints, int gIndex) :
+nSkinPartitioner::Partition::Partition(nMeshBuilder* mBuilder, int maxJoints, int gId) :
     sourceMesh(mBuilder),
     maxJointPaletteSize(maxJoints),
-    groupIndex(gIndex),
+    groupId(gId),
     jointPalette(32, 32),
     triangleArray(2048, 2048)
 {
@@ -116,9 +116,9 @@ nSkinPartitioner::Partition::Partition(nMeshBuilder* mBuilder, int maxJoints, in
 */
 inline
 int
-nSkinPartitioner::Partition::GetGroupIndex() const
+nSkinPartitioner::Partition::GetGroupId() const
 {
-    return this->groupIndex;
+    return this->groupId;
 }
 
 //------------------------------------------------------------------------------
