@@ -23,6 +23,8 @@
 //------------------------------------------------------------------------------
 class nDirectory;
 class nFile;
+class nFileNode;
+
 class nFileServer2 : public nRoot
 {
 public:
@@ -37,11 +39,21 @@ public:
     const char* GetAssign(const char* assignName);
     /// expand path alias to real path
     const char* ManglePath(const char* pathName, char* buf, int bufSize);
+    /// make path components
+    bool MakePath(const char* path);
+    /// copy a file
+    bool CopyFile(const char* from, const char* to);
+    /// delete a file
+    bool DeleteFile(const char* filename);
 
     /// creates a new nDirectory object
     virtual nDirectory* NewDirectoryObject();
     /// creates a new nFile object
     virtual nFile* NewFileObject();
+    /// check if file exists
+    virtual bool FileExists(const char* pathName);
+    /// creates a file node (only useful for scripting languages)
+    virtual nFileNode* CreateFileNode(const char* name);
 
     /// reset statistics
     void ResetStatistics();

@@ -6,7 +6,8 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
-
+#include "util/npathstring.h"
+#include <direct.h>
 #if defined(__MACOSX__)
 #include <Carbon/carbon.h>
 #endif
@@ -122,7 +123,7 @@ nFileServer2::CleanupPathName(char* path)
         }
         else
         {
-            *ptr = tolower(c);
+            *ptr = c;
         }
         ptr++;
     }
@@ -141,7 +142,7 @@ nFileServer2::CleanupPathName(char* path)
         }
         else
         {
-            *ptr = tolower(c);
+            *ptr = c;
         }
         ptr++;
     }
@@ -173,10 +174,9 @@ nFileServer2::CleanupPathName(char* path)
 const char* 
 nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
 {
-    char *pathBuf;
+    char pathBuf[N_MAXPATH];
     char *colon;
-    pathBuf = (char*)n_malloc(bufSize);
-    n_strncpy2(pathBuf,pathName, bufSize);
+    n_strncpy2(pathBuf, pathName, N_MAXPATH);
     buf[0] = 0;
 
     // check for assigns
@@ -190,11 +190,10 @@ nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
             {
                 n_strncpy2(buf, replace, bufSize);
                 n_strcat(buf, colon, bufSize);
-                n_strncpy2(pathBuf, buf, bufSize);
+                n_strncpy2(pathBuf, buf, N_MAXPATH); //copy back for the next round
             }
         }
     }
-    n_free(pathBuf);
     
     // no assigns, just do a copy.
     if (0 == buf[0])
@@ -352,6 +351,168 @@ nFileServer2::InitBinAssign(void)
 
     this->SetAssign("bin",buf);
 #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nFileServer2::FileExists(const char* pathName)
+{
+    nFile* file = this->NewFileObject();
+    if (file->Open(pathName, "r"))
+    {
+        file->Close();
+        file->Release();
+        return true;
+    }
+    file->Release();
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Make any missing directories in path.
+*/
+bool
+nFileServer2::MakePath(const char* dirName)
+{
+    n_assert(dirName);
+    
+    nDirectory* dir = this->NewDirectoryObject();
+    n_assert(dir);
+
+    // mangle path name
+    char mangledPath[N_MAXPATH];
+    this->ManglePath(dirName, mangledPath, sizeof(mangledPath));
+
+    // build stack of non-existing dir components
+    nPathString path(mangledPath);
+    path.ConvertBackslashes();
+    nArray<nPathString> pathStack;
+    while ((!path.IsEmpty()) && (!dir->Open(path.Get())))
+    {
+        pathStack.Append(path);
+        path = path.ExtractDirName();
+    }
+    if (dir->IsOpen())
+    {
+        dir->Close();
+    }
+    delete dir;
+
+    // error?
+    if (path.IsEmpty())
+    {
+        return false;
+    }
+
+    // create missing directory components
+    int i;
+    for (i = pathStack.Size() - 1; i >= 0; --i)
+    {
+        const nPathString& curPath = pathStack[i];
+        int err = _mkdir(curPath.Get());
+        if (-1 == err)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Copy a file.
+    FIXME: the Non-Win32 version reads the entire file is into RAM!
+*/
+bool
+nFileServer2::CopyFile(const char* from, const char* to)
+{
+    n_assert(from && to);
+
+    #ifdef __WIN32__
+        // Win32 specific method is more efficient
+        char mangledFromPath[N_MAXPATH];
+        char mangledToPath[N_MAXPATH];
+        this->ManglePath(from, mangledFromPath, sizeof(mangledFromPath));
+        this->ManglePath(to, mangledToPath, sizeof(mangledToPath));
+        return ::CopyFile(mangledFromPath, mangledToPath, FALSE) ? true : false;
+    #else
+        nFile* fromFile = this->NewFileObject();
+        if (!fromFile->Open(from, "rb"))
+        {
+            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from);
+            fromFile->Release();
+            return false;
+        }
+        nFile* toFile = this->NewFileObject();
+        if (!toFile->Open(to, "wb"))
+        {
+            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to);
+            fromFile->Close();
+            fromFile->Release();
+            toFile->Release();
+            return false;
+        }
+
+        int size = fromFile->GetSize();
+        n_assert(size > 0);
+        void* buffer = n_malloc(size);
+        n_assert(buffer);
+        int numRead = fromFile->Read(buffer, size);
+        n_assert(numRead == size);
+        int numWritten = toFile->Write(buffer, size);
+        n_assert(numWritten == size);
+        n_free(buffer);
+
+        fromFile->Close();
+        toFile->Close();
+        fromFile->Release();
+        toFile->Release();
+        return true;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Delete a file.
+*/
+bool
+nFileServer2::DeleteFile(const char* filename)
+{
+    n_assert(filename);
+    char mangledPath[N_MAXPATH];
+    this->ManglePath(filename, mangledPath, sizeof(mangledPath));
+
+    #ifdef __WIN32__
+        return ::DeleteFile(mangledPath) ? true : false;
+    #else
+    #error "nFileServer2::DeleteFile() not implemented yet!"
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a filenode and return its full path name. A filenode is a
+    nFile object wrapped into a nRoot subclass. It offers access to filesystem
+    functionality for scripting languages which don't offer access to
+    the host filesystem (like MicroTcl).
+*/
+nFileNode*
+nFileServer2::CreateFileNode(const char* name)
+{
+    n_assert(name);
+
+    nString path = "/sys/share/files/";
+    path += name;
+    if (kernelServer->Lookup(path.Get()))
+    {
+        n_error("nFileServer2: file node '%s' exists!", name);
+        return 0;
+    }
+    nFileNode* fileNode = (nFileNode*) kernelServer->New("nfilenode", path.Get());
+    return fileNode;
 }
 
 //------------------------------------------------------------------------------
