@@ -33,6 +33,7 @@
 #include <iskin.h>
 #include <plugapi.h>
 #include <ikctrl.h>
+#include <iiksys.h>
 #include <notetrck.h>
 
 #if MAX_RELEASE >= 6000
