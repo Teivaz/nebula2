@@ -5,6 +5,7 @@
 #include "scene/nscenenode.h"
 #include "scene/nanimator.h"
 #include "scene/nrendercontext.h"
+#include "gfx2/ngfxserver2.h"
 
 nNebulaScriptClass(nSceneNode, "nroot");
 
@@ -13,8 +14,6 @@ nNebulaScriptClass(nSceneNode, "nroot");
 */
 nSceneNode::nSceneNode() :
     animatorArray(1, 4),
-    refVariableServer("/sys/servers/variable"),
-    refSceneServer("/sys/servers/scene"),
     resourcesValid(false),
     renderPri(0)
 {
@@ -134,6 +133,8 @@ nSceneNode::RenderContextCreated(nRenderContext* renderContext)
     of the scene node object.
 
     @param  renderContext   pointer to a nRenderContext object    
+
+    - 20-Jul-04     floh    oops, recursive routine was calling ClearLocalVars!
 */
 void
 nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
@@ -147,7 +148,6 @@ nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
     {
         curChild->RenderContextDestroyed(renderContext);
     }
-    renderContext->ClearLocalVars();
 }
 
 //------------------------------------------------------------------------------
@@ -162,6 +162,7 @@ nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
 
     @param  sceneServer     pointer to the nSceneServer object
     @param  renderContext   pointer to the nRenderContext object
+    @param  caller          pointer to caller nSceneNode object, or 0 if called by nSceneServer
 */
 void
 nSceneNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
@@ -192,9 +193,22 @@ nSceneNode::RenderTransform(nSceneServer* /*sceneServer*/, nRenderContext* /*ren
 
 //------------------------------------------------------------------------------
 /**
-    Render the node's geometry. This should be implemented by a subclass.
-    The method will only be called by nSceneServer if the method 
-    HasGeometry() returns true.
+    Perform pre-instance rendering of geometry. This method will be
+    called once at the beginning of rendering different instances
+    of the same scene node. Use this method to setup geometry attributes
+    which are constant for a complete instance set.
+*/
+bool
+nSceneNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Perform per-instance-rendering of geometry. This method will be
+    called after ApplyGeometry() once for each instance of the
+    node.
 */
 bool
 nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
@@ -204,14 +218,23 @@ nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
 
 //------------------------------------------------------------------------------
 /**
-    Render the node's shader. This should be implemented by a subclass.
-    The method will only be called by nSceneServer if the method 
-    HasShader() returns true.
+    Perform pre-instance rendering of the shader. This method will be
+    called once at the beginning of rendering different instances
+    of the same scene node. Use this method to setup shader attributes
+    which are constant for a complete instance set. 
+*/
+bool
+nSceneNode::ApplyShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/)
+{
+    return false;
+}
 
-    @param  fourcc          a fourcc code that identifies the "shader stage"
-    @param  sceneServer     pointer to scene server object
-    @param  renderContext   pointer to render context object
-    @return     must return true if current shader in gfx server has been altered
+//------------------------------------------------------------------------------
+/**
+    Perform per-instance-rendering of the shader. This method will
+    be called after ApplyShader() once for each rendered instance.
+    Use this method to set shader attributes which vary from instance
+    to instance.
 */
 bool
 nSceneNode::RenderShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
@@ -221,12 +244,36 @@ nSceneNode::RenderShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/, nRender
 
 //------------------------------------------------------------------------------
 /**
-    Render the node's light data. This should be implemented by a subclass.
-    The method will only be called by nSceneServer if the method 
-    HasLight() returns true.
+    Perform per-instance-rendering of the light source. This method will
+    be called once for each scene node which is influenced by this light.
 */
 bool
 nSceneNode::RenderLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*lightTransform*/)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Perform pre-instance rendering of shadow. This method will be
+    called once at the beginning of rendering different instances
+    of the same scene node. Use this method to setup shadow geometry attributes
+    which are constant for a complete instance set.
+*/
+bool
+nSceneNode::ApplyShadow(nSceneServer* /*sceneServer*/)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Perform per-instance-rendering of shadow geometry. This method will be
+    called after ApplyShadow() once for each instance of the
+    node.
+*/
+bool
+nSceneNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     return false;
 }
@@ -267,11 +314,22 @@ nSceneNode::HasShader(uint /*fourcc*/) const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides light information. Should be 
+    Return true if this node provides shadow. Should be 
     overriden by subclasses.
 */
 bool
 nSceneNode::HasLight() const
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if this node provides light information. Should be 
+    overriden by subclasses.
+*/
+bool
+nSceneNode::HasShadow() const
 {
     return false;
 }
@@ -338,7 +396,7 @@ nSceneNode::GetAnimatorAt(int index)
     which implement the RenderShader() method from inside this method.
 */
 void
-nSceneNode::InvokeShaderAnimators(nRenderContext* renderContext)
+nSceneNode::InvokeAnimators(int type, nRenderContext* renderContext)
 {
     int numAnimators = this->GetNumAnimators();
     if (numAnimators > 0)
@@ -350,7 +408,7 @@ nSceneNode::InvokeShaderAnimators(nRenderContext* renderContext)
         for (i = 0; i < numAnimators; i++)
         {
             nAnimator* animator = this->animatorArray[i].get();
-            if (nAnimator::Shader == animator->GetAnimatorType())
+            if (type == animator->GetAnimatorType())
             {
                 animator->Animate(this, renderContext);
             }
@@ -361,27 +419,48 @@ nSceneNode::InvokeShaderAnimators(nRenderContext* renderContext)
 
 //------------------------------------------------------------------------------
 /**
-    Invoke all transform animators. This method should be called classes
-    which implement the RenderTransform() method from inside this method.
+    Returns a valid instance stream object for this scene node hierarchy.
+    If no instance stream object exists yet, it will be created and stored.
+    The instance stream declaration will be built from all shaders in the
+    hierarchy by recursively calling UpdateInstStreamDecl().
+*/
+/*
+nInstanceStream*
+nSceneNode::GetInstanceStream()
+{
+    if (!this->refInstanceStream.isvalid())
+    {
+        nInstanceStream* instStream = this->refGfxServer->NewInstanceStream(0);
+        n_assert(instStream);
+        n_assert(!instStream->IsValid());
+
+        // build an instance stream declaration from the hierarchy
+        nInstanceStream::Declaration decl;
+        this->UpdateInstStreamDecl(decl);
+
+        instStream->SetDeclaration(decl);
+        bool success = instStream->Load();
+        n_assert(success);
+        this->refInstanceStream = instStream;
+    }
+    return this->refInstanceStream.get();
+}
+*/
+
+//------------------------------------------------------------------------------
+/**
+    Recursively build an instance stream declaration from the shaders in
+    the scene node hierarchy. Override this method in subclasses with 
+    shader handling.
 */
 void
-nSceneNode::InvokeTransformAnimators(nRenderContext* renderContext)
+nSceneNode::UpdateInstStreamDecl(nInstanceStream::Declaration& decl)
 {
-    int numAnimators = this->GetNumAnimators();
-    if (numAnimators > 0)
+    nSceneNode* curChild;
+    for (curChild = (nSceneNode*) this->GetHead();
+         curChild;
+         curChild = (nSceneNode*) curChild->GetSucc())
     {
-        n_assert(renderContext);
-
-        kernelServer->PushCwd(this);
-        int i;
-        for (i = 0; i < numAnimators; i++)
-        {
-            nAnimator* animator = this->animatorArray[i].get();
-            if (nAnimator::Transform == animator->GetAnimatorType())
-            {
-                animator->Animate(this, renderContext);
-            }
-        }
-        kernelServer->PopCwd();
+        curChild->UpdateInstStreamDecl(decl);
     }
 }

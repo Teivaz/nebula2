@@ -29,7 +29,7 @@ nNebulaClass(nLightNode, "nabstractshadernode");
 */
 nLightNode::nLightNode()
 {
-    // empty
+    this->light.SetType(nLight::Directional);
 }
 
 //------------------------------------------------------------------------------
@@ -51,43 +51,23 @@ nLightNode::HasLight() const
 
 //------------------------------------------------------------------------------
 /**
-    "Render" the light into the current shader.
-
-    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
-
-    @param  sceneServer         pointer to the scene server object rendering this node
-    @param  renderContext       pointer to the render context for this node
-    @param  lightTransform      this node's model matrix
+    Setup light parameters once before rendering instances of scene nodes
+    influenced by this light.
 */
 bool
-nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& /*lightTransform*/)
+nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)
 {
     n_assert(sceneServer);
-    n_assert(renderContext);
 
-    // invoke shader animators
-    this->InvokeShaderAnimators(renderContext);
+    // FIXME?
+    this->light.SetTransform(lightTransform);
+    this->light.SetDiffuse(this->shaderParams.GetArg(nShaderState::LightDiffuse).GetVector4());
+    this->light.SetSpecular(this->shaderParams.GetArg(nShaderState::LightSpecular).GetVector4());
+    this->light.SetAmbient(this->shaderParams.GetArg(nShaderState::LightAmbient).GetVector4());
+    this->light.SetSecondaryDiffuse(this->shaderParams.GetArg(nShaderState::LightDiffuse1).GetVector4());
+    this->light.SetSecondarySpecular(this->shaderParams.GetArg(nShaderState::LightSpecular1).GetVector4());
+    nGfxServer2::Instance()->AddLight(this->light);
 
-    // get the current shader object from the gfx server
-    nShader2* shader = this->refGfxServer->GetShader();
-    n_assert(shader);
-
-    // apply int, float and vector variables to the shader
-    shader->SetParams(this->shaderParams);
-
-    // apply texture shader variables to the shader
-    /*
-    int numTextureVariables = this->texNodeArray.Size();
-    int i;
-    for (i = 0; i < numTextureVariables; i++)
-    {
-        TexNode& texNode = this->texNodeArray[i];
-        if (shader->IsParameterUsed(texNode.shaderParameter))
-        {
-            shader->SetTexture(texNode.shaderParameter, texNode.refTexture.get());
-        }
-    }
-    */
     return true;
 }
 

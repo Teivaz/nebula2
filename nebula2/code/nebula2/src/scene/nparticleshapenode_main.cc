@@ -7,6 +7,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
 #include "kernel/ntimeserver.h"
+#include "scene/nanimator.h"
 
 nNebulaScriptClass(nParticleShapeNode, "nshapenode");
 
@@ -15,7 +16,6 @@ nNebulaScriptClass(nParticleShapeNode, "nshapenode");
 */
 nParticleShapeNode::nParticleShapeNode() :
     refParticleServer("/sys/servers/particle"),
-    refVariableServer("/sys/servers/variable"),
     emissionDuration(10.0),
     loop(true),
     activityDistance(10.0f),
@@ -32,8 +32,8 @@ nParticleShapeNode::nParticleShapeNode() :
     }
 
     // obtain variable handles
-    this->timeHandle = this->refVariableServer->GetVariableHandleByName("time");
-    this->windHandle = this->refVariableServer->GetVariableHandleByName("wind");
+    this->timeHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
+    this->windHandle = nVariableServer::Instance()->GetVariableHandleByName("wind");
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    this->InvokeTransformAnimators(renderContext);
+    this->InvokeAnimators(nAnimator::Transform, renderContext);
 
     // get emitter from render context
     nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
@@ -140,6 +140,18 @@ nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderCont
 
 //------------------------------------------------------------------------------
 /**
+    Perform pre-instance-rendering of particle system.
+    FIXME: check if this is the optimal setup for the new instance 
+    rendering!
+*/
+bool
+nParticleShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+{
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
     - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
@@ -158,7 +170,7 @@ nParticleShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* re
     nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
     n_assert(0 != emitter);
     emitter->Trigger(curTime);
-    emitter->Render();
+    emitter->Render(curTime);
 
     return true;
 }

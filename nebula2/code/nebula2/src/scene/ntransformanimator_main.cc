@@ -6,7 +6,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/ntransformnode.h"
 
-nNebulaScriptClass(nTransformAnimator, "nanimator");
+nNebulaScriptClass(nTransformAnimator, "nkeyanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -56,28 +56,38 @@ nTransformAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext
 
     // get the sample time from the render context
     nVariable* var = renderContext->GetVariable(this->channelVarHandle);
-    n_assert(var);
-    float curTime = var->GetFloat();
+    float curTime = 0.0f;
+    if (0 == var)
+    {
+        n_printf("Warning: nTransformAnimator::Animate() ChannelVariable '%s' not found!\n", this->GetChannel());
+    }
+    else
+    {
+        curTime = var->GetFloat();
+    }
 
     // sample key arrays and manipulate target object
-    vector3 vectorKey;
-    quaternion quatKey;
-    if (this->posArray.SampleKey(curTime, vectorKey, this->GetLoopType()))
+    static vector4 key4;
+    static vector3 key3;
+    static quaternion quat;
+    if (this->SampleKey(curTime, this->posArray, key4))
     {
-        targetNode->SetPosition(vectorKey);
+        key3.set(key4.x, key4.y, key4.z);
+        targetNode->SetPosition(key3);
     }
-    
-    if (this->eulerArray.SampleKey(curTime, vectorKey, this->GetLoopType()))
+    if (this->SampleKey(curTime, this->quatArray, key4))
     {
-        targetNode->SetEuler(vectorKey);
+        quat.set(key4.x, key4.y, key4.z, key4.w);
+        targetNode->SetQuat(quat);
     }
-    else if (this->quatArray.SampleKey(curTime, quatKey, this->GetLoopType()))
+    if (this->SampleKey(curTime, this->eulerArray, key4))
     {
-        targetNode->SetQuat(quatKey);
+        key3.set(key4.x, key4.y, key4.z);
+        targetNode->SetEuler(key3);
     }
-    
-    if (this->scaleArray.SampleKey(curTime, vectorKey, this->GetLoopType()))
+    if (this->SampleKey(curTime, this->scaleArray, key4))
     {
-        targetNode->SetScale(vectorKey);
+        key3.set(key4.x, key4.y, key4.z);
+        targetNode->SetScale(key3);
     }
 }

@@ -5,6 +5,7 @@
 #include "scene/ntransformnode.h"
 #include "scene/nsceneserver.h"
 #include "gfx2/ngfxserver2.h"
+#include "scene/nanimator.h"
 
 nNebulaScriptClass(nTransformNode, "nscenenode");
 
@@ -12,7 +13,6 @@ nNebulaScriptClass(nTransformNode, "nscenenode");
 /**
 */
 nTransformNode::nTransformNode() :
-    refGfxServer("/sys/servers/gfx"),
     transformFlags(Active)
 {
     // empty
@@ -64,17 +64,18 @@ nTransformNode::RenderTransform(nSceneServer* sceneServer,
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-
-    this->InvokeTransformAnimators(renderContext);
+    
+    this->InvokeAnimators(nAnimator::Transform, renderContext);
     if (this->GetLockViewer())
     {
-        // if lock viewer active, copy viewer position
-        const matrix44& viewMatrix = this->refGfxServer->GetTransform(nGfxServer2::InvView);
+        // handle lock to viewer
+        const matrix44& viewMatrix = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
         matrix44 m = this->tform.getmatrix();
+        m = m * parentMatrix;
         m.M41 = viewMatrix.M41;
         m.M42 = viewMatrix.M42;
         m.M43 = viewMatrix.M43;
-        sceneServer->SetModelTransform(m * parentMatrix);
+        sceneServer->SetModelTransform(m);
     }
     else
     {

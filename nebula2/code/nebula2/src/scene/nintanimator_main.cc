@@ -1,17 +1,17 @@
 //------------------------------------------------------------------------------
-//  nvectoranimator_main.cc
-//  (C) 2003 RadonLabs GmbH
+//  nintanimator_main.cc
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "scene/nvectoranimator.h"
+#include "scene/nintanimator.h"
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nVectorAnimator, "nkeyanimator");
+nNebulaScriptClass(nIntAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**
 */
-nVectorAnimator::nVectorAnimator() :
+nIntAnimator::nIntAnimator() :
     vectorParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
@@ -21,7 +21,7 @@ nVectorAnimator::nVectorAnimator() :
 //------------------------------------------------------------------------------
 /**
 */
-nVectorAnimator::~nVectorAnimator()
+nIntAnimator::~nIntAnimator()
 {
     // empty
 }
@@ -32,7 +32,7 @@ nVectorAnimator::~nVectorAnimator()
     this object.
 */
 void
-nVectorAnimator::SetVectorName(const char* name)
+nIntAnimator::SetVectorName(const char* name)
 {
     n_assert(name);
     this->vectorParameter = nShaderState::StringToParam(name);
@@ -43,7 +43,7 @@ nVectorAnimator::SetVectorName(const char* name)
     Get the name of the vector variable which is animated by this object.
 */
 const char*
-nVectorAnimator::GetVectorName()
+nIntAnimator::GetVectorName()
 {
     if (nShaderState::InvalidParameter == this->vectorParameter)
     {
@@ -60,7 +60,7 @@ nVectorAnimator::GetVectorName()
     Add a key to the animation key array.
 */
 void
-nVectorAnimator::AddKey(float time, const vector4& key)
+nIntAnimator::AddKey(float time, const int& key)
 {
     Key newKey(time, key);
     this->keyArray.Append(newKey);
@@ -71,7 +71,7 @@ nVectorAnimator::AddKey(float time, const vector4& key)
     Return the number of keys in the animation key array.
 */
 int
-nVectorAnimator::GetNumKeys() const
+nIntAnimator::GetNumKeys() const
 {
     return this->keyArray.Size();
 }
@@ -81,7 +81,7 @@ nVectorAnimator::GetNumKeys() const
     Return information for a key index.
 */
 void
-nVectorAnimator::GetKeyAt(int index, float& time, vector4& key) const
+nIntAnimator::GetKeyAt(int index, float& time, int& key) const
 {
     const Key& animKey = this->keyArray[index];
     time = animKey.time;
@@ -93,7 +93,7 @@ nVectorAnimator::GetKeyAt(int index, float& time, vector4& key) const
     Returns the animator type. nVectorAnimator is a SHADER animator.
 */
 nAnimator::Type
-nVectorAnimator::GetAnimatorType() const
+nIntAnimator::GetAnimatorType() const
 {
     return Shader;
 }
@@ -102,7 +102,7 @@ nVectorAnimator::GetAnimatorType() const
 /**
 */
 void
-nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
+nIntAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
@@ -117,26 +117,62 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     float curTime = var->GetFloat();
 
     // get sampled key
-    vector4 key;
+    int key;
     if (this->SampleKey(curTime, this->keyArray, key))
     {
-        // manipulate the target object
-        targetNode->SetVector(this->vectorParameter, key);
+        targetNode->SetInt(this->vectorParameter, key);
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    Compute an interpolated key value from a time and a key array.
 
+    @param  sampleTime  [in] time position at which to sample
+    @param  keyArray    [in] reference of a key array containing the keys
+    @param  result      [out] the result
+    @param              true if the result is valid, false otherwise
+*/
+bool
+nIntAnimator::SampleKey(float sampleTime, const nArray<Key>& keyArray, int& result)
+{
+    if (keyArray.Size() > 1)
+    {
+        float minTime = keyArray.Front().time;
+        float maxTime = keyArray.Back().time;
+        if (maxTime > 0.0f)
+        {
+            if (this->GetLoopType() == Loop)
+            {
+                // in loop mode, wrap time into loop time
+                sampleTime = sampleTime - (float(floor(sampleTime / maxTime)) * maxTime);
+            }
 
+            // clamp time to range
+            if (sampleTime < minTime)       sampleTime = minTime;
+            else if (sampleTime >= maxTime) sampleTime = maxTime - 0.001f;
 
+            // find the surrounding keys
+            n_assert(keyArray.Front().time == 0.0f);
+            int i = 0;;
+            while (keyArray[i].time <= sampleTime)
+            {
+                i++;
+            }
+            n_assert((i > 0) && (i < keyArray.Size()));
 
+            const Key& key0 = keyArray[i - 1];
+            const Key& key1 = keyArray[i];
+            float time0 = key0.time;
+            float time1 = key1.time;
 
-
-
-
-
-
-
-
-
-
-
+            // compute the actual interpolated values
+            float lerp;
+            if (time1 > time0) lerp = (float) ((sampleTime - time0) / (time1 - time0));
+            else               lerp = 1.0f;
+            result = n_frnd((float)key0.value + (((float)key1.value - (float)key0.value) * lerp));
+            return true;
+        }
+    }
+    return false;
+}

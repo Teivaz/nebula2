@@ -77,11 +77,11 @@ nShapeNode::LoadMesh()
     {
         // append mesh usage to mesh resource name
         nString resourceName = this->meshName.Get();
-        resourceName += "_";
+        resourceName.Append("_"); 
         resourceName.AppendInt(this->GetMeshUsage());
 
         // get a new or shared mesh
-        nMesh2* mesh = this->refGfxServer->NewMesh(resourceName.Get());
+        nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
         n_assert(mesh);        
         if (!mesh->IsValid())
         {
@@ -144,6 +144,26 @@ nShapeNode::HasGeometry() const
 
 //------------------------------------------------------------------------------
 /**
+    Perform pre-instancing actions needed for rendering geometry. This
+    is called once before multiple instances of this shape node are
+    actually rendered.
+*/
+bool
+nShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+{
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    n_assert(this->refMesh->IsValid());
+
+    // set mesh, vertex and index range
+    gfxServer->SetMesh(this->refMesh.get());
+    const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
+    gfxServer->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
+    gfxServer->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
     Update geometry, set as current mesh in the gfx server and
     call nGfxServer2::DrawIndexed().
 
@@ -152,21 +172,7 @@ nShapeNode::HasGeometry() const
 bool
 nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
-    n_assert(sceneServer);
-    n_assert(renderContext);
-    nGfxServer2* gfx = this->refGfxServer.get();
-
-    // TODO call geometry manipulators!
-    n_assert(this->refMesh->IsValid());
-
-    // render the mesh in normal mode (always at stream 0)
-    gfx->SetMesh(this->refMesh.get());
-
-    // set the vertex and index range
-    const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
-    gfx->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
-    gfx->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
-    gfx->DrawIndexedNS(nGfxServer2::TriangleList);
+    nGfxServer2::Instance()->DrawIndexedNS(nGfxServer2::TriangleList);
     return true;
 }
 
