@@ -165,6 +165,9 @@ beginmodule nkernel
         nrefcounted nguid nshell32wrapper ncrc nreferenced
         ndefclass
     }
+    setlibs_linux {
+        uuid
+    }
 endmodule
 
 #===============================================================================

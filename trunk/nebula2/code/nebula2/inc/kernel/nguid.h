@@ -5,9 +5,12 @@
     @class nGuid
     @ingroup Kernel
 
-    Wraps a Globally Unique Identifier. Under Win32, this is a normal
-    GUID. Other platform may implement something different. The actual
+    @brief Wraps a Globally Unique Identifier.  The actual
     GUID data is hidden inside the object and only accessible as string.
+
+    Under Win32, this is a normal GUID.
+    Under GNU/Linux, libuuid from the e2fsprogs package is used.
+    Other platforms may implement something different.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -17,6 +20,8 @@
 #include <windows.h>
 #include <Rpc.h>
 #include <Rpcdce.h>
+#elif defined(__LINUX__)
+#include <uuid/uuid.h>
 #else
 #error "nGuid not implemented!"
 #endif
@@ -50,7 +55,7 @@ private:
 inline
 nGuid::nGuid()
 {
-    #if __WIN32__
+    #if defined(__WIN32__) || defined(__LINUX__)
     this->guidString = "00000000-0000-0000-0000-000000000000";
     #endif
 }
@@ -112,13 +117,21 @@ inline
 void
 nGuid::Generate()
 {
-    #if __WIN32__
+    #if defined(__WIN32__)
         GUID guid;
         UuidCreate(&guid);
         uchar* guidStr;
         UuidToString(&guid, &guidStr);
         this->guidString = (const char*) guidStr;
         RpcStringFree(&guidStr);
+    #elif defined(__LINUX__)
+        uuid_t guid;
+        uuid_generate(guid);
+        n_assert(!uuid_is_null(guid));
+
+        char guidstr[37];
+        uuid_unparse(guid, guidstr);
+        this->guidString = guidstr;
     #endif
 }
 
