@@ -9,17 +9,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_MESH2_H
 #include "gfx2/nmesh2.h"
-#endif
-
-#ifndef N_D3D9SERVER_H
 #include "gfx2/nd3d9server.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nD3D9Mesh
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nD3D9Mesh : public nMesh2
@@ -29,10 +20,8 @@ public:
     nD3D9Mesh();
     /// destructor
     virtual ~nD3D9Mesh();
-    /// load mesh resource
-    virtual bool Load();
-    /// unload mesh resource
-    virtual void Unload();
+    /// supports async resource loading
+    virtual bool CanLoadAsync() const;
     /// lock vertex buffer
     virtual float* LockVertices();
     /// unlock vertex buffer
@@ -44,6 +33,12 @@ public:
 
     static nKernelServer* kernelServer;
 
+protected:
+    /// load mesh resource
+    virtual bool LoadResource();
+    /// unload mesh resource
+    virtual void UnloadResource();
+
 private:
     friend class nD3D9Server;
     
@@ -54,11 +49,11 @@ private:
     /// create the vertex declaration
     void CreateVertexDeclaration();
     /// get d3d vertex buffer
-    IDirect3DVertexBuffer9* GetVertexBuffer() const;
+    IDirect3DVertexBuffer9* GetVertexBuffer();
     /// get d3d index buffer
-    IDirect3DIndexBuffer9* GetIndexBuffer() const;
+    IDirect3DIndexBuffer9* GetIndexBuffer();
     /// get the d3d vertex declaration
-    IDirect3DVertexDeclaration9* GetVertexDeclaration() const;
+    IDirect3DVertexDeclaration9* GetVertexDeclaration();
     /// load n3d2 file
     bool LoadN3d2File();
     /// load nvx2 file
@@ -81,8 +76,9 @@ private:
 */
 inline
 IDirect3DVertexBuffer9* 
-nD3D9Mesh::GetVertexBuffer() const
+nD3D9Mesh::GetVertexBuffer()
 {
+    n_assert(this->IsValid());
     return this->vertexBuffer;
 }
 
@@ -91,8 +87,9 @@ nD3D9Mesh::GetVertexBuffer() const
 */
 inline
 IDirect3DIndexBuffer9* 
-nD3D9Mesh::GetIndexBuffer() const
+nD3D9Mesh::GetIndexBuffer()
 {
+    n_assert(this->IsValid());
     return this->indexBuffer;
 }
 
@@ -101,8 +98,9 @@ nD3D9Mesh::GetIndexBuffer() const
 */
 inline
 IDirect3DVertexDeclaration9*
-nD3D9Mesh::GetVertexDeclaration() const
+nD3D9Mesh::GetVertexDeclaration()
 {
+    n_assert(this->IsValid());
     return this->vertexDeclaration;
 }
 
