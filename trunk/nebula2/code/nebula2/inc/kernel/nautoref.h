@@ -13,6 +13,7 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/nref.h"
+#include "kernel/nkernelserver.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nAutoRef : public nRef<TYPE> 
@@ -98,7 +99,7 @@ nAutoRef<TYPE>::check()
         this->targetObject = (TYPE*) nKernelServer::ks->Lookup(this->targetName);
         if (this->targetObject) 
         {
-            ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
+            ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
         }
     }
     return (TYPE *) this->targetObject;

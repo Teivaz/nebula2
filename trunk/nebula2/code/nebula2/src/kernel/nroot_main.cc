@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-nNebulaRootClass(nRoot);
+nNebulaScriptClass(nRoot, "nobject");
 
 //------------------------------------------------------------------------------
 /**
@@ -18,9 +18,7 @@ nNebulaRootClass(nRoot);
      - 02-May-00   floh    + parse file name
 */
 nRoot::nRoot() :
-    instanceClass(0),
     parent(0),
-    refCount(1),
     saveModeFlags(0)
 {
     // empty
@@ -45,9 +43,6 @@ nRoot::~nRoot()
     {
         while (!child->Release());
     }
-
-    // invalidate all refs to me
-    this->InvalidateAllRefs();
 
     // if I am a child, remove from parent
     if (this->parent) 
@@ -75,7 +70,7 @@ nRoot::Initialize()
 bool 
 nRoot::Release()
 {
-    n_assert(refCount > 0);
+    n_assert(this->refCount > 0);
     bool retval = false;
     this->refCount--;
     if (this->refCount == 0) 
@@ -86,19 +81,6 @@ nRoot::Release()
         retval = true;
     }
     return retval;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void 
-nRoot::InvalidateAllRefs()
-{
-    nRef<nRoot> *r;
-    while ((r = (nRef<nRoot> *) this->refList.GetHead())) 
-    {
-        r->invalidate();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -224,49 +206,6 @@ nRoot::GetRelPath(nRoot *other)
 
     // done
     return str;
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 02-Jan-00   floh    created
-*/
-bool 
-nRoot::Dispatch(nCmd *cmd)
-{
-    n_assert(cmd->GetProto());
-    cmd->Rewind();
-    cmd->GetProto()->Dispatch((void*)this, cmd);
-    cmd->Rewind();
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void 
-nRoot::GetCmdProtos(nHashList *cmd_list)
-{
-    // for each superclass attach it's command proto names
-    // to the list
-    nClass *cl = this->instanceClass;
-    
-    // for each superclass...
-    do 
-    {
-        nHashList *cl_cmdprotos = cl->GetCmdList();
-        if (cl_cmdprotos)
-        {
-            nCmdProto *cmd_proto;
-            for (cmd_proto=(nCmdProto *) cl_cmdprotos->GetHead(); 
-                 cmd_proto; 
-                 cmd_proto=(nCmdProto *) cmd_proto->GetSucc()) 
-            {
-                nHashNode* node = n_new(nHashNode(cmd_proto->GetName()));
-                node->SetPtr((void*)cmd_proto);
-                cmd_list->AddTail(node);
-            }
-        }
-    } while ((cl = cl->GetSuperClass()));
 }
 
 //------------------------------------------------------------------------------
@@ -428,29 +367,6 @@ nRoot::Clone(const char *name)
     ps->SetSaveMode(old_sm);
 
     return clone;
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is usually derived by subclasses to write their peristent 
-    attributes to the file server.
-*/
-bool 
-nRoot::SaveCmds(nPersistServer *)
-{
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get byte size of this instance. For more accuracy, subclasses should
-    add the size of allocated memory.
-*/
-int
-nRoot::GetInstanceSize() const
-{
-    n_assert(this->instanceClass);
-    return this->instanceClass->GetInstanceSize();
 }
 
 //------------------------------------------------------------------------------

@@ -55,14 +55,14 @@ nKernelServer::OpenClass(const char* className)
      - 08-Oct-98   floh    created
      - 04-Oct-98   floh    char * -> const char *
 */
-nRoot*
+nObject*
 nKernelServer::NewUnnamedObject(const char* className)
 {
     n_assert(className);
 
     this->Lock();
     nClass *cl = this->OpenClass(className);
-    nRoot *obj = 0;
+    nObject *obj = 0;
     if (cl)
     {
         obj = cl->NewObject();
@@ -175,7 +175,7 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
             if (!child)
             {
                 // subdir doesn't exist, fill up
-                child = this->NewUnnamedObject("nroot");
+                child = (nRoot *) this->NewUnnamedObject("nroot");
                 if (child)
                 {
                     child->SetName(curPathComponent);
@@ -655,10 +655,30 @@ nKernelServer::New(const char* className, const char* path)
 
 //------------------------------------------------------------------------------
 /**
+    Create a Nebula object given a class name. This method will abort the 
+    Nebula app with a fatal error if the object couldn't be created.
+
+    @param  className   Class name of the object
+    @return             Pointer to new object
+*/
+nObject*
+nKernelServer::New(const char* className)
+{
+    n_assert(className);
+    this->Lock();
+    nObject *obj = this->NewUnnamedObject(className);
+    if (!obj) 
+        n_error("nKernelServer: Couldn't create object of class '%s'.\n", className);
+    this->Unlock();
+    return obj;
+}
+
+//------------------------------------------------------------------------------
+/**
     Same as nKernelServer::New(), but doesn't fail if the object can't be
     created, instead, a 0 pointer is returned.
 
-    @param className    Name of the object
+    @param className    Class name of the object
     @param path         Path where to create the new object in the hierarchy
 
      - 24-Oct-99   floh    created
@@ -672,6 +692,26 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     n_assert(o);
     this->Unlock();
     return o;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Same as nKernelServer::New(), but doesn't fail if the object can't be
+    created, instead, a null pointer is returned.
+
+    @param className    Class name of the object
+*/
+nObject*
+nKernelServer::NewNoFail(const char* className)
+{
+    n_assert(className);
+    this->Lock();
+    nObject *obj = this->NewUnnamedObject(className);
+    if (!obj)
+        n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
+    n_assert(obj);
+    this->Unlock();
+    return obj;
 }
 
 //------------------------------------------------------------------------------
