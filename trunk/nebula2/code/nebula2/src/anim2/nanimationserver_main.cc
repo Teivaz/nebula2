@@ -7,21 +7,6 @@
 
 nNebulaClass(nAnimationServer, "nroot");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nanimationserver
-
-    @cppclass
-    nAnimationServer
-    
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -37,7 +22,10 @@ nAnimationServer::nAnimationServer() :
 nAnimationServer::~nAnimationServer()
 {
     // unload all animation resources
-    this->refResourceServer->UnloadResources(nResource::Animation);
+    if (this->refResourceServer.isvalid())
+    {
+        this->refResourceServer->UnloadResources(nResource::Animation);
+    }
 }
 
 //------------------------------------------------------------------------------
