@@ -20,12 +20,12 @@ public:
     {
         Bottom     = (1<<0),    // bottom-align text
         Top        = (1<<1),    // top-align text
-        Center     = (1<<1),    // centers text horizontally
-        Left       = (1<<2),    // align text to the left
-        Right      = (1<<3),    // align text to the right
-        VCenter    = (1<<4),    // center text vertically
-        NoClip     = (1<<5),    // don't clip text (faster)
-        ExpandTabs = (1<<6),    // expand tabs, doh
+        Center     = (1<<2),    // centers text horizontally
+        Left       = (1<<3),    // align text to the left
+        Right      = (1<<4),    // align text to the right
+        VCenter    = (1<<5),    // center text vertically
+        NoClip     = (1<<6),    // don't clip text (faster)
+        ExpandTabs = (1<<7),    // expand tabs, doh
     };
 
     /// constructor
