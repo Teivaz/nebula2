@@ -30,13 +30,23 @@
     (C) 2002 RadonLabs GmbH
 */
 //------------------------------------------------------------------------------
-#include "tools/wftools.h"
+
 #include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"
 #include "kernel/nfile.h"
 #include "file/nnpktoc.h"
 #include "file/nnpkfilewrapper.h"
+#include "tools/ncmdlineargs.h"
+
+#ifdef __WIN32__
+#   include <direct.h>
+#   ifndef getcwd
+#       define getcwd _getcwd
+#   endif
+#else
+#   include <unistd.h>
+#endif
 
 class FileEntry : public nNode
 {
@@ -58,6 +68,96 @@ public:
     int             firstDiff;
     int             fileSize;
 };
+
+//------------------------------------------------------------------------------
+/**
+Cleanup the path name in place (replace any backslashes with slashes),
+and removes a trailing slash if exists.
+*/
+void nCleanupPathName(char* path)
+{
+    n_assert(path);
+
+    char* ptr = path;
+    char c;
+
+    // replace backslashes with slashes
+    while ((c = *ptr))
+    {
+        if (c == '\\')
+        {
+            *ptr = '/';
+        }
+        ptr++;
+    }
+
+    // remove trailing slash
+    if ((ptr > path) && (*(--ptr) == '/'))
+    {
+        *ptr = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+Return path to current working dir.
+
+@param buf		buffer to store absolute path in
+@param buflen   length of buffer 
+
+@return     path to current working dir
+*/
+const char* nGetCwd(char* buf, int buflen)
+{
+    if (getcwd(buf, buflen))
+    {
+        nCleanupPathName(buf);        
+    }
+    else
+    {
+        buf[0] = 0;
+        n_error("nGetCwd: Buffer not long enough!\n");
+    }
+    return buf;
+}
+
+//------------------------------------------------------------------------------
+/**
+makes an absolute path out of a relative one
+
+@param path		the relative path (may already be absolute)
+@param buf		buffer to store absolute path in
+@param buflen   length of buffer 
+*/
+void nMakeAbsolute(const char* path, char* buf, int buflen)
+{
+    if ((path[0]=='/')||(path[0]=='\\')||(path[1]==':'))
+    {
+        n_strncpy2(buf, path, buflen);
+    } 
+    else 
+    {
+        char buf2[N_MAXPATH];
+        n_strncpy2(buf, nGetCwd(buf2, N_MAXPATH), buflen);
+        strcat(buf, "/");
+        strcat(buf, path);
+    }
+    nCleanupPathName(buf);
+}
+
+//------------------------------------------------------------------------------
+/**
+Change current working dir.
+
+@param  newDir      path to new working dir, may contain assigns
+@return             true or false
+*/
+bool nChangeDir(const char* newDir)
+{
+    // change to working dir
+    int result = chdir(newDir);
+    return (result == 0);
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -409,13 +509,6 @@ writeData(nFileServer2* fs, nFile* file, nNpkToc& tocObject)
 bool
 packIt(nFileServer2* fs, const char* dirName, const char* outName)
 {
-    char absDirName[N_MAXPATH];
-    char absOutName[N_MAXPATH];
-
-    // absolutize filenames
-    fs->MakeAbsolute(dirName, absDirName, sizeof(absDirName));
-    fs->MakeAbsolute(outName, absOutName, sizeof(absOutName));
-
     // create directory and file objects
     nDirectory* dir = fs->NewDirectoryObject();
     nFile* file = fs->NewFileObject();
@@ -423,14 +516,14 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     n_assert(file);
 
     // open source directory and target file...
-    if (!dir->Open(absDirName))
+    if (!dir->Open(dirName))
     {
         n_printf("Could not open directory '%s' for reading!\n", dirName);
         delete file;
         delete dir;
         return false;
     }
-    if (!file->Open(absOutName, "w"))
+    if (!file->Open(outName, "w"))
     {
         n_printf("Could not open file '%s' for writing!\n", outName);
         delete file;
@@ -440,12 +533,13 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
 
     // create table of content
     nNpkToc tocObject;
-    tocObject.SetRootPath(fs->GetCwd());
+    char cwdbuf[N_MAXPATH];
+    tocObject.SetRootPath(nGetCwd(cwdbuf, N_MAXPATH));
     
     bool retval = true;
     n_printf("-> building table of contents...\n");
     int fileOffset = 0;
-    if (generateToc(fs, dir, stripParentPath(absDirName), tocObject, fileOffset))
+    if (generateToc(fs, dir, stripParentPath(dirName), tocObject, fileOffset))
     {
         n_printf("-> done\n");
 
@@ -601,9 +695,6 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
     nDirectory* dir = fs->NewDirectoryObject();
     n_assert(0 != dir);
     
-    char curDir[N_MAXPATH];
-    strcpy(curDir, fs->GetCwd());
-    
     if (dir->Open(base))
     {
         // if this one is empty, return immediatly and let kill
@@ -613,8 +704,6 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
             dir->Close();
             return true;
         }
-        
-        fs->ChangeDir(base);
         
         // step through all elements
         bool doLoop = dir->SetToFirstEntry(); 
@@ -634,7 +723,6 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
         }
     
         dir->Close();
-        fs->ChangeDir(curDir);
     }
     else
     {
@@ -656,11 +744,11 @@ RemoveDir(nFileServer2* fs, const char* dirName)
     n_assert(0 != dir);
     
     char curDir[N_MAXPATH];
-    strcpy(curDir, fs->GetCwd());
+    nGetCwd(curDir, N_MAXPATH);
     
     if (dir->Open(dirName))
     {
-        fs->ChangeDir(dirName);
+        nChangeDir(dirName);
         
         // seems to be no problem deleting files while stepping 
         // through subdir...
@@ -683,7 +771,7 @@ RemoveDir(nFileServer2* fs, const char* dirName)
     
         dir->Close();
         
-        fs->ChangeDir(curDir);
+        nChangeDir(curDir);
     }
     
     rmdir(dirName);
@@ -868,7 +956,7 @@ listIt(nFileServer2* fs, const char* listName)
     char rootPath[N_MAXPATH];
 
     // absolutize filenames
-    fs->MakeAbsolute(listName, absFileName, sizeof(absFileName));
+    nMakeAbsolute(listName, absFileName, sizeof(absFileName));
 
     // get the directory name from the absolute filename
     getDirectoryName(absFileName, rootPath, sizeof(rootPath));
@@ -910,8 +998,8 @@ GenerateDifferenceList(nFileServer2* fs,
     char rootOldPath[N_MAXPATH];
 
     // absolutize filenames
-    fs->MakeAbsolute(newName, absNewName, sizeof(absNewName));
-    fs->MakeAbsolute(oldName, absOldName, sizeof(absOldName));
+    nMakeAbsolute(newName, absNewName, sizeof(absNewName));
+    nMakeAbsolute(oldName, absOldName, sizeof(absOldName));
 
     // get the directory name from the absolute filename
     getDirectoryName(absNewName, rootNewPath, sizeof(rootNewPath));
@@ -997,7 +1085,7 @@ unPackFile(nFileServer2* fs,
             char absName[N_MAXPATH];
             char intern[N_MAXPATH];
             BuildInternalPath(entry, intern, N_MAXPATH);
-            fs->MakeAbsolute(intern, absName, sizeof(absName));
+            nMakeAbsolute(intern, absName, sizeof(absName));
             if (file->Open(entry->GetName(), "w"))
             {
                 // copy bytes from npk into this file
@@ -1027,9 +1115,8 @@ unPackFile(nFileServer2* fs,
         n_assert(0 != dir);
 
         char currentDir[N_MAXPATH];
-        n_assert(N_MAXPATH >= strlen(fs->GetCwd()));
-        sprintf(currentDir, fs->GetCwd());
-        
+        nGetCwd(currentDir, N_MAXPATH);
+
         // use correct name or the one was given from outside?
         const char* dName = 0;
         if (0 != outName)
@@ -1042,11 +1129,11 @@ unPackFile(nFileServer2* fs,
         }
         n_assert(0 != dName);
         char absDir[N_MAXPATH];
-        fs->MakeAbsolute(dName, absDir, sizeof(absDir));
+        nMakeAbsolute(dName, absDir, sizeof(absDir));
         mkdir(dName);
         if (dir->Open(absDir))
         {
-            fs->ChangeDir(dName);
+            nChangeDir(dName);
         
             nNpkTocEntry* childEntry = 0;
             for (childEntry = entry->GetFirstEntry();
@@ -1059,7 +1146,7 @@ unPackFile(nFileServer2* fs,
             }
         
             dir->Close();
-            fs->ChangeDir(currentDir);
+            nChangeDir(currentDir);
         }
         else 
         {
@@ -1093,7 +1180,7 @@ unPack(nFileServer2* fs, const char* fileName, const char* outName, nList* dList
     char rootPath[N_MAXPATH];
     nNpkFileWrapper fileWrapper;
     
-    fs->MakeAbsolute(fileName, absFileName, sizeof(absFileName));
+    nMakeAbsolute(fileName, absFileName, sizeof(absFileName));
     getDirectoryName(absFileName, rootPath, sizeof(rootPath));
     
     if (fileWrapper.Open(fs, rootPath, absFileName))
@@ -1188,8 +1275,9 @@ makeDiff(nFileServer2* fs,
 
 //------------------------------------------------------------------------------
 int
-main(int argc, char* argv[])
+main(int argc, const char** argv)
 {
+    nCmdLineArgs args(argc, argv);
     bool help, showDiff, diff;
     const char* packName;
     const char* listName;
@@ -1199,15 +1287,15 @@ main(int argc, char* argv[])
     const char* unPackName;
 
     // get args
-    help       = wf_getboolarg(argc, argv, "-help");
-    packName   = wf_getstrarg(argc, argv, "-pack", 0);
-    listName   = wf_getstrarg(argc, argv, "-list", 0);
-    outName    = wf_getstrarg(argc, argv, "-out", "pack.npk");
-    diff       = wf_getboolarg(argc, argv, "-diff");
-    showDiff   = wf_getboolarg(argc, argv, "-listdiff");
-    oldName    = wf_getstrarg(argc, argv, "-old", 0);
-    newName    = wf_getstrarg(argc, argv, "-new", 0);
-    unPackName = wf_getstrarg(argc, argv, "-unpack", 0);
+    help       = args.GetBoolArg("-help");
+    packName   = args.GetStringArg("-pack", 0);
+    listName   = args.GetStringArg("-list", 0);
+    outName    = args.GetStringArg("-out", "pack.npk");
+    diff       = args.GetBoolArg("-diff");
+    showDiff   = args.GetBoolArg("-listdiff");
+    oldName    = args.GetStringArg("-old", 0);
+    newName    = args.GetStringArg("-new", 0);
+    unPackName = args.GetStringArg("-unpack", 0);
 
     // show help
     if (help)
@@ -1238,7 +1326,7 @@ main(int argc, char* argv[])
         {
             n_printf("ERROR IN FILE GENERATION, DELETING NPK FILE\n");
             char absOutName[N_MAXPATH];
-            fs->MakeAbsolute(outName, absOutName, sizeof(absOutName));
+            nMakeAbsolute(outName, absOutName, sizeof(absOutName));
             remove(absOutName);
         }
     }
