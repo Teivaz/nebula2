@@ -253,10 +253,7 @@ nStdSceneServer::RenderScene()
     {
         // clear, render depth, diffuse, color and specular into the back buffer
         gfxServer->Clear(nGfxServer2::AllBuffers, 0.3f, 0.3f, 0.3f, 1.0f, 1.0f, 0);
-        this->RenderShapes(FOURCC('dept'));
-        this->RenderLightShapes(FOURCC('diff'));
-        this->RenderShapes(FOURCC('colr'));
-        this->RenderLightShapes(FOURCC('spec'));
+        this->RenderLightShapes(FOURCC('colr'));
     }
 }
 
