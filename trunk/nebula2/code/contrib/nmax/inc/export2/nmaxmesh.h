@@ -157,9 +157,6 @@ protected:
     /// vertex option of the mesh.
     uint vertexFlag;
 
-    /// check the given node is attached node which for nAttachmentNode.
-    bool isAttachedNode;
-
     /// 3dsmax geometry node which we extract the mesh data.
     INode* maxNode;
 
