@@ -125,8 +125,8 @@ nApplication::Open()
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->gfxCamera);
-    this->refGfxServer->OpenDisplay();
     this->refScriptServer->Run("OnGraphicsStartup", scriptResult);
+    this->refGfxServer->OpenDisplay();
     this->refVideoServer->Open();
 
     // create the input server
