@@ -41,22 +41,22 @@ protected:
 
 private:
     /// read vertex data from source mesh
-    void LoadVerticies(nMesh2* sourceMesh);
-    /// read wights and JIndicies data from source mesh
-    void LoadWeightsAndJIndicies(nMesh2* sourceMesh);
+    void LoadVertices(nMesh2* sourceMesh);
+    /// read wights and JIndices data from source mesh
+    void LoadWeightsAndJIndices(nMesh2* sourceMesh);
 
-    /// update the skinned verticies with the current set skeleton
-    void UpdateSkinnedVerticies();
+    /// update the skinned vertices with the current set skeleton
+    void UpdateSkinnedVertices();
     /// generate face normals
-    void CreateFaceNormales();
+    void CreateFaceNormals();
 
-    /// array of the face normals of the current loaded triangels
-    vector3* faceNormales;
-    int numFaceNormales;
+    /// array of the face normals of the current loaded triangles
+    vector3* faceNormals;
+    int numFaceNormals;
 
     /// calcuated vertex data for the current skeleton
-    vector3* skinnedVerticies;
-    int numSkinnedVerticies;
+    vector3* skinnedVertices;
+    int numSkinnedVertices;
 
     /// source coordiantes of the all groups of the shadow geometry, is shared via resource system
     nRef<nMesh2> refCoordMesh;
@@ -70,8 +70,8 @@ private:
         ushort index[4];
     };
 
-    WeightAndJIndex* weightsAndJIndicies;
-    int numWeightsAndJIndicies;
+    WeightAndJIndex* weightsAndJIndices;
+    int numWeightsAndJIndices;
 };
 
 //------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ inline
 vector3*
 nSkinShadowCaster::GetFaceNormals() const
 {
-    n_assert(0 != this->faceNormales)
-    return this->faceNormales;
+    n_assert(0 != this->faceNormals)
+    return this->faceNormals;
 }
 
 //------------------------------------------------------------------------------

@@ -96,7 +96,7 @@ nShadowServer::LoadResources()
         {
             case zPass:
             case zFail:
-                if ( ! this->refStencilShader[type].isvalid() )
+                if (!this->refStencilShader[type].isvalid())
                 {
                     nString resName("shaders:shadow_volume.fx");
                     resName.AppendInt(type);
@@ -154,7 +154,7 @@ nShadowServer::LoadResources()
     }
     
     // load debug shader
-    if ( ! this->refDebugShader.isvalid() )
+    if (!this->refDebugShader.isvalid())
     {
         nShader2* shader = gfxServer->NewShader("shaders:shadow_debug.fx");
         shader->SetFilename("shaders:shadow_debug.fx");
@@ -168,7 +168,7 @@ nShadowServer::LoadResources()
     }
 
     // load stencil shadow plane shader
-    if ( ! this->refPlaneShader.isvalid() )
+    if (!this->refPlaneShader.isvalid())
     {
         nShader2* shader = gfxServer->NewShader("shaders:stencil_plane.fx");
         shader->SetFilename("shaders:stencil_plane.fx");
@@ -176,13 +176,13 @@ nShadowServer::LoadResources()
     }
 
     // init
-    if ( ! this->refPlaneShader->IsValid() )
+    if (!this->refPlaneShader->IsValid())
     {
         this->refPlaneShader->Load();
     }
 
     // create plane mesh
-    if ( ! this->refPlaneMesh.isvalid() )     
+    if (!this->refPlaneMesh.isvalid())
     {
         nMesh2* plane = gfxServer->NewMesh("shadow_plane");
         plane->SetUsage(nMesh2::WriteOnce);
@@ -200,7 +200,7 @@ nShadowServer::LoadResources()
         bool success = this->refPlaneMesh->Load();
         n_assert(success);
         
-        // verticies
+        // vertices
         float* vPtr = this->refPlaneMesh->LockVertices();
         n_assert(vPtr);
 
@@ -210,7 +210,7 @@ nShadowServer::LoadResources()
         *vPtr++ = 1.0f;  *vPtr++ = -1.0f; *vPtr++ = 0.0f; 
         this->refPlaneMesh->UnlockVertices();
 
-        // indicies
+        // indices
         ushort* iPtr = this->refPlaneMesh->LockIndices();
         n_assert(iPtr);
         *iPtr++ = 0; *iPtr++ = 1; *iPtr++ = 2;

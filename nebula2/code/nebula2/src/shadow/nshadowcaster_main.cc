@@ -19,11 +19,11 @@ nShadowCaster::nShadowCaster() :
     lightPosition(0.0f, 0.0f, 0.0f),
     faces(0),
     edges(0),
-    silhouetteIndicies(0, 64),
+    silhouetteIndices(0, 64),
     lastGroupIndex(-1),
     dirty(true)
 {
-    this->silhouetteIndicies.SetFlags(nArray<ushort>::DoubleGrowSize);
+    this->silhouetteIndices.SetFlags(nArray<ushort>::DoubleGrowSize);
 }
 
 //------------------------------------------------------------------------------
@@ -68,8 +68,8 @@ nShadowCaster::UnloadResource()
         this->numEdges = 0;
     }
     
-    this->silhouetteIndicies.Reset();
-    this->numSilhouetteIndicies = 0;
+    this->silhouetteIndices.Reset();
+    this->numSilhouetteIndices = 0;
     this->dirty = true;
 }
 
@@ -152,7 +152,7 @@ nShadowCaster::LoadFaces(nMesh2* sourceMesh)
     n_assert(0 == this->faces);
     
     n_assert2(sourceMesh->GetNumIndices() > 0, "The mesh used for shadow casting must have triangle data!\n" );
-    n_assert2(sourceMesh->GetNumIndices() % 3 == 0, "The indicies must be a triangle list!\n" );
+    n_assert2(sourceMesh->GetNumIndices() % 3 == 0, "The indices must be a triangle list!\n" );
 
     // begin of source data
     ushort* sourcePtr = sourceMesh->LockIndices();
@@ -321,12 +321,12 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
         int firstGroupEdge = meshGroup.GetFirstEdge();
         int numGroupEdges = meshGroup.GetNumEdges();
 
-        // face normales
+        // face normals
         vector3* faceNormals = this->GetFaceNormals();
         n_assert(faceNormals);
         
         // negative light position
-        const vector3 negLight3( - this->lightPosition.x, - this->lightPosition.y, - this->lightPosition.z);
+        const vector3 negLight3(- this->lightPosition.x, - this->lightPosition.y, - this->lightPosition.z);
         
         int i, e;
         if (nLight::Directional == lightType)
@@ -349,7 +349,7 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
 
                             const vector3& n = faceNormals[edge.fIndex[i]];
 
-                            if ( n.dot( negLight3 ) > 0.0f )
+                            if (n.dot(negLight3) > 0.0f)
                             {
                                 face.lightFacing = true;
                             }
@@ -380,7 +380,7 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
                 const vector3& n = faceNormals[i];
                 const vector3& v0 = coordiantes[face.index[0]];
 
-                if ( n.dot( (v0 * this->lightPosition.w) + negLight3 ) > 0.0f )
+                if (n.dot((v0 * this->lightPosition.w) + negLight3) > 0.0f)
                 {
                     face.lightFacing = true;
                 }
@@ -392,21 +392,21 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
             */
         }
 
-        this->numSilhouetteIndicies = 0;
-        this->silhouetteIndicies.Reset();
+        this->numSilhouetteIndices = 0;
+        this->silhouetteIndices.Reset();
         int growSize = n_max(16, this->numEdges / 16);
         int index = 0;
-        ushort* indcies = this->silhouetteIndicies.Reserve(growSize);
+        ushort* indices = this->silhouetteIndices.Reserve(growSize);
 
         // find silhouette edges
         for (e = 0; e < numGroupEdges; e++)
         {
             if (index + 2 > growSize)
             {
-                this->numSilhouetteIndicies += growSize;
+                this->numSilhouetteIndices += growSize;
                 // get more space
                 index = index - growSize;
-                indcies = this->silhouetteIndicies.Reserve(growSize);
+                indices = this->silhouetteIndices.Reserve(growSize);
             }
             
             const nMesh2::Edge& edge = this->edges[firstGroupEdge + e];
@@ -419,32 +419,32 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
                 {
                     const Face& face1 = this->faces[edge.fIndex[1]];
                     
-                    if ( (face0.lightFacing != face1.lightFacing) )
+                    if (face0.lightFacing != face1.lightFacing)
                     {
-                        if(face0.lightFacing)
+                        if (face0.lightFacing)
                         {
-                            indcies[index++] = edge.vIndex[0];
-                            indcies[index++] = edge.vIndex[1];
+                            indices[index++] = edge.vIndex[0];
+                            indices[index++] = edge.vIndex[1];
                         }
                         else
                         {
-                            indcies[index++] = edge.vIndex[1];
-                            indcies[index++] = edge.vIndex[0];
+                            indices[index++] = edge.vIndex[1];
+                            indices[index++] = edge.vIndex[0];
                         }
                     }
                 }
                 else
                 {
                     //special case: the edge.fIndex[1] is a border.
-                    if(face0.lightFacing)
+                    if (face0.lightFacing)
                     {
-                        indcies[index++] = edge.vIndex[0];
-                        indcies[index++] = edge.vIndex[1];
+                        indices[index++] = edge.vIndex[0];
+                        indices[index++] = edge.vIndex[1];
                     }
                     else
                     {
-                        indcies[index++] = edge.vIndex[1];
-                        indcies[index++] = edge.vIndex[0];
+                        indices[index++] = edge.vIndex[1];
+                        indices[index++] = edge.vIndex[0];
                     }
                 }
             }
@@ -454,24 +454,24 @@ nShadowCaster::ComputeSilhouetteEdges(const nLight::Type lightType, const vector
                 const Face& face1 = this->faces[edge.fIndex[1]];
                 
                 //special case: the edge.fIndex[0] is a border.
-                if(face1.lightFacing)
+                if (face1.lightFacing)
                 {
-                    indcies[index++] = edge.vIndex[0];
-                    indcies[index++] = edge.vIndex[1];
+                    indices[index++] = edge.vIndex[0];
+                    indices[index++] = edge.vIndex[1];
                 }
                 else
                 {
-                    indcies[index++] = edge.vIndex[1];
-                    indcies[index++] = edge.vIndex[0];
+                    indices[index++] = edge.vIndex[1];
+                    indices[index++] = edge.vIndex[0];
                 }
             }
         }        
-        this->numSilhouetteIndicies += index;
+        this->numSilhouetteIndices += index;
 
         //DEBUG
-        /*for (int v = 0; v < this->numSilhouetteIndicies; v++)
+        /*for (int v = 0; v < this->numSilhouetteIndices; v++)
         {
-            int index = this->silhouetteIndicies[v];
+            int index = this->silhouetteIndices[v];
             n_assert(index >= meshGroup.GetFirstVertex() && index < (meshGroup.GetFirstVertex() + meshGroup.GetNumVertices()));
         }*/
     }
@@ -495,8 +495,8 @@ nShadowCaster::DrawSides(nShadowServer::DrawType type, const nLight::Type lightT
     const int numSrcCoords = this->GetNumCoords();
     n_assert(numSrcCoords > 0);
 
-    // make shure that we got a even amount of indicies (this must be becuase there are always both indices of edge added)
-    n_assert(this->numSilhouetteIndicies % 2 == 0);
+    // make shure that we got a even amount of indices (this must be becuase there are always both indices of edge added)
+    n_assert(this->numSilhouetteIndices % 2 == 0);
 
     // data destination
     const int maxNumCoords = shdServer->GetMaxNumCoords(type);
@@ -516,7 +516,7 @@ nShadowCaster::DrawSides(nShadowServer::DrawType type, const nLight::Type lightT
         offset *= shadowOffset;
         
         int i;
-        for (i = 0; i < this->numSilhouetteIndicies - 1; i += 2)
+        for (i = 0; i < this->numSilhouetteIndices - 1; i += 2)
         {
 		    // swap if needed
             if (numCoords + 3 > maxNumCoords)
@@ -525,12 +525,12 @@ nShadowCaster::DrawSides(nShadowServer::DrawType type, const nLight::Type lightT
                 n_assert(success);
             }
 
-            //n_assert(this->silhouetteIndicies[i] >= 0);
-            //n_assert(this->silhouetteIndicies[i+1] >= 0);
+            //n_assert(this->silhouetteIndices[i] >= 0);
+            //n_assert(this->silhouetteIndices[i+1] >= 0);
 
             // transform to model space
-            modelMatrix.mult(srcCoords[this->silhouetteIndicies[i]], v0);
-            modelMatrix.mult(srcCoords[this->silhouetteIndicies[i+1]], v1);
+            modelMatrix.mult(srcCoords[this->silhouetteIndices[i]], v0);
+            modelMatrix.mult(srcCoords[this->silhouetteIndices[i+1]], v1);
             *dstCoords++ = v0 + offset;
             *dstCoords++ = v1 + offset;
 
@@ -542,18 +542,18 @@ nShadowCaster::DrawSides(nShadowServer::DrawType type, const nLight::Type lightT
     else
     {
         //FIXME: point light - draw quads
-        //ushort index0 = 2 * this->silhouetteIndicies[i];
-        //ushort index1 = 2 * this->silhouetteIndicies[i+1];
+        //ushort index0 = 2 * this->silhouetteIndices[i];
+        //ushort index1 = 2 * this->silhouetteIndices[i+1];
         //ushort index2 = index0 + 1;
         //ushort index3 = index1 + 1;
         //
-        //*(basePtr + numAddedIndicies++) = index0;
-        //*(basePtr + numAddedIndicies++) = index1;
-        //*(basePtr + numAddedIndicies++) = index2;
+        //*(basePtr + numAddedIndices++) = index0;
+        //*(basePtr + numAddedIndices++) = index1;
+        //*(basePtr + numAddedIndices++) = index2;
 
-        //*(basePtr + numAddedIndicies++) = index1;
-        //*(basePtr + numAddedIndicies++) = index3;
-        //*(basePtr + numAddedIndicies++) = index2;
+        //*(basePtr + numAddedIndices++) = index1;
+        //*(basePtr + numAddedIndices++) = index3;
+        //*(basePtr + numAddedIndices++) = index2;
     }
 
     shdServer->EndDrawBuffer(type, dstCoords, numCoords);
@@ -688,7 +688,7 @@ nShadowCaster::DebugSetupGeometry(bool litFaces, int groupIndex)
         if (face.lightFacing == litFaces)
         {
             int f;
-            for(f = 0; f < 3; f++)
+            for (f = 0; f < 3; f++)
             {
                 *(dstVtxPtr++) = srcVtxPtr[face.index[f]];
                 numValidVtx++;
@@ -792,7 +792,7 @@ nShadowCaster::DebugSetupSilhouetteEdges()
 
     nMesh2* mesh = nGfxServer2::Instance()->NewMesh(0);
     mesh->SetAsyncEnabled(false);
-    mesh->SetNumVertices(this->numSilhouetteIndicies);
+    mesh->SetNumVertices(this->numSilhouetteIndices);
     mesh->SetVertexComponents(nMesh2::Coord);
     mesh->SetNumGroups(1);
     mesh->SetNumEdges(0);
@@ -805,10 +805,10 @@ nShadowCaster::DebugSetupSilhouetteEdges()
 
     int i;
     int numValidVtx = 0;
-    for (i = 0; i < this->numSilhouetteIndicies - 1; i +=2)
+    for (i = 0; i < this->numSilhouetteIndices - 1; i +=2)
     {
-        const int index0 = this->silhouetteIndicies[i];
-        const int index1 = this->silhouetteIndicies[i+1];
+        const int index0 = this->silhouetteIndices[i];
+        const int index1 = this->silhouetteIndices[i+1];
         *(dstVtxPtr++) = srcVtxPtr[index0];
         *(dstVtxPtr++) = srcVtxPtr[index1];
         numValidVtx +=2;

@@ -12,14 +12,14 @@ nNebulaClass(nSkinShadowCaster, "nshadowcaster");
 /**
 */
 nSkinShadowCaster::nSkinShadowCaster() :
-    faceNormales(0), 
-    numFaceNormales(0),
-    skinnedVerticies(0), 
-    numSkinnedVerticies(0),
+    faceNormals(0), 
+    numFaceNormals(0),
+    skinnedVertices(0), 
+    numSkinnedVertices(0),
     charSkeletonDirty(true), 
     charSkeleton(0),
-    weightsAndJIndicies(0), 
-    numWeightsAndJIndicies(0)
+    weightsAndJIndices(0), 
+    numWeightsAndJIndices(0)
 {
     //empty
 }
@@ -44,8 +44,8 @@ nSkinShadowCaster::RenderShadow(const matrix44& modelMatrix, int groupIndex)
     //if (this->charSkeletonDirty)
     //{
         this->dirty = true;
-        this->UpdateSkinnedVerticies();
-        this->CreateFaceNormales();
+        this->UpdateSkinnedVertices();
+        this->CreateFaceNormals();
     //}
 
     nShadowCaster::RenderShadow(modelMatrix, groupIndex);
@@ -61,8 +61,8 @@ nSkinShadowCaster::LoadShadowData(nMesh2* sourceMesh)
 
     nShadowCaster::LoadShadowData(sourceMesh);
     
-    this->LoadVerticies(sourceMesh);    
-    this->LoadWeightsAndJIndicies(sourceMesh);
+    this->LoadVertices(sourceMesh);    
+    this->LoadWeightsAndJIndices(sourceMesh);
 }
 
 //------------------------------------------------------------------------------
@@ -79,25 +79,25 @@ nSkinShadowCaster::UnloadResource()
         this->refCoordMesh.invalidate();
     }
 
-    if (0 != this->faceNormales)
+    if (0 != this->faceNormals)
     {
-        n_delete_array(this->faceNormales);
-        this->faceNormales = 0;
-        this->numFaceNormales = 0;
+        n_delete_array(this->faceNormals);
+        this->faceNormals = 0;
+        this->numFaceNormals = 0;
     }
     
-    if (0 != this->skinnedVerticies)
+    if (0 != this->skinnedVertices)
     {
-        n_delete_array(this->skinnedVerticies);
-        this->skinnedVerticies = 0;
-        this->numSkinnedVerticies = 0;
+        n_delete_array(this->skinnedVertices);
+        this->skinnedVertices = 0;
+        this->numSkinnedVertices = 0;
     }
 
-    if (0 != this->weightsAndJIndicies)
+    if (0 != this->weightsAndJIndices)
     {
-        n_delete_array(this->weightsAndJIndicies);
-        this->weightsAndJIndicies = 0;
-        this->numWeightsAndJIndicies = 0;
+        n_delete_array(this->weightsAndJIndices);
+        this->weightsAndJIndices = 0;
+        this->numWeightsAndJIndices = 0;
     }
 }
 
@@ -107,7 +107,7 @@ nSkinShadowCaster::UnloadResource()
 int
 nSkinShadowCaster::GetNumCoords() const
 {
-    return this->numSkinnedVerticies;
+    return this->numSkinnedVertices;
 }
 
 //------------------------------------------------------------------------------
@@ -116,23 +116,23 @@ nSkinShadowCaster::GetNumCoords() const
 vector3*
 nSkinShadowCaster::GetCoords() const
 {
-    n_assert(0 != this->skinnedVerticies);
-    n_assert(this->numSkinnedVerticies > 0);
-    return this->skinnedVerticies;
+    n_assert(0 != this->skinnedVertices);
+    n_assert(this->numSkinnedVertices > 0);
+    return this->skinnedVertices;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nSkinShadowCaster::UpdateSkinnedVerticies()
+nSkinShadowCaster::UpdateSkinnedVertices()
 {
     n_assert(0 != this->charSkeleton);
     n_assert(this->refCoordMesh.isvalid());
     n_assert(this->refCoordMesh->IsValid());
     n_assert(this->refCoordMesh->GetNumVertices() > 0);
-    n_assert(0 != this->numWeightsAndJIndicies);
-    n_assert(this->refCoordMesh->GetNumVertices() == this->numWeightsAndJIndicies);
+    n_assert(0 != this->numWeightsAndJIndices);
+    n_assert(this->refCoordMesh->GetNumVertices() == this->numWeightsAndJIndices);
 
     // data source
     nMesh2* sourceMesh = this->refCoordMesh.get();
@@ -141,24 +141,24 @@ nSkinShadowCaster::UpdateSkinnedVerticies()
     n_assert(sourcePtr);
 
     // allocate skinned vertex data buffer, if not happened yet 
-    if (0 == this->skinnedVerticies)
+    if (0 == this->skinnedVertices)
     {
-        this->numSkinnedVerticies = sourceMesh->GetNumVertices();
-        this->skinnedVerticies = n_new_array(vector3, this->numSkinnedVerticies);
+        this->numSkinnedVertices = sourceMesh->GetNumVertices();
+        this->skinnedVertices = n_new_array(vector3, this->numSkinnedVertices);
     }
-    n_assert(this->numSkinnedVerticies == sourceMesh->GetNumVertices());
+    n_assert(this->numSkinnedVertices == sourceMesh->GetNumVertices());
     
     // calculate new vertex positions for current skeleton
     int v;
-    for (v = 0; v < this->numSkinnedVerticies; v++)
+    for (v = 0; v < this->numSkinnedVertices; v++)
     {
-        const WeightAndJIndex& waji = this->weightsAndJIndicies[v];
+        const WeightAndJIndex& waji = this->weightsAndJIndices[v];
         const vector3& inPos = *((vector3*)(sourcePtr + (stride * v)));
         
         vector3 pos[4];
         int i;
         float weightSum = 0.0f;
-        for(i = 0; i < 4; i++)
+        for (i = 0; i < 4; i++)
         {
             weightSum += waji.weight[i];
             const nCharJoint& charJoint = this->charSkeleton->GetJointAt(waji.index[i]);
@@ -167,9 +167,9 @@ nSkinShadowCaster::UpdateSkinnedVerticies()
         n_assert(weightSum > 0.99f && weightSum < 1.01f);
         const float factor = 1.0f / weightSum;
         
-        vector3& outPos = this->skinnedVerticies[v];
+        vector3& outPos = this->skinnedVertices[v];
         outPos.set(0.0, 0.0, 0.0);
-        for(i = 0; i < 4; i++)
+        for (i = 0; i < 4; i++)
         {
             outPos += (pos[i] * (waji.weight[i] * factor) );
         }
@@ -181,18 +181,18 @@ nSkinShadowCaster::UpdateSkinnedVerticies()
 /**
 */
 void
-nSkinShadowCaster::LoadWeightsAndJIndicies(nMesh2* sourceMesh)
+nSkinShadowCaster::LoadWeightsAndJIndices(nMesh2* sourceMesh)
 {
     n_assert(sourceMesh);
     n_assert(sourceMesh->IsValid());
     n_assert2(sourceMesh->GetNumVertices() > 0 && (0 != (sourceMesh->GetVertexComponents() & (nMesh2::JIndices | nMesh2::Weights))),
-        "The mesh used for skinned shadow casting must have weights and JIndicies!\n");
+        "The mesh used for skinned shadow casting must have weights and JIndices!\n");
     
-    n_assert(0 == this->weightsAndJIndicies);
+    n_assert(0 == this->weightsAndJIndices);
 
     // allocate data
-    this->numWeightsAndJIndicies = sourceMesh->GetNumVertices();
-    this->weightsAndJIndicies = n_new_array(WeightAndJIndex, this->numWeightsAndJIndicies);
+    this->numWeightsAndJIndices = sourceMesh->GetNumVertices();
+    this->weightsAndJIndices = n_new_array(WeightAndJIndex, this->numWeightsAndJIndices);
     
     // vertex strides
     const int stride = sourceMesh->GetVertexWidth();
@@ -204,17 +204,17 @@ nSkinShadowCaster::LoadWeightsAndJIndicies(nMesh2* sourceMesh)
     n_assert(sourcePtr);
 
     int v;
-    for (v = 0; v < this->numWeightsAndJIndicies; v++)
+    for (v = 0; v < this->numWeightsAndJIndices; v++)
     {
-        WeightAndJIndex& waji = this->weightsAndJIndicies[v];
+        WeightAndJIndex& waji = this->weightsAndJIndices[v];
         float* weights = sourcePtr + (stride * v) + weightDst;
-        float* jindicies = sourcePtr + (stride * v) + jindicesDst;
+        float* jindices = sourcePtr + (stride * v) + jindicesDst;
         
         int i;
         for (i = 0; i < 4; i++)
         {
             waji.weight[i] = *(weights + i);
-            waji.index[i] = (int) *(jindicies + i);
+            waji.index[i] = (int) *(jindices + i);
         }
     }
     sourceMesh->UnlockVertices();
@@ -224,7 +224,7 @@ nSkinShadowCaster::LoadWeightsAndJIndicies(nMesh2* sourceMesh)
 /**
 */
 void
-nSkinShadowCaster::LoadVerticies(nMesh2* sourceMesh)
+nSkinShadowCaster::LoadVertices(nMesh2* sourceMesh)
 {
     n_assert(sourceMesh);
     n_assert(sourceMesh->IsValid());
@@ -290,8 +290,8 @@ nSkinShadowCaster::LoadVerticies(nMesh2* sourceMesh)
 void
 nSkinShadowCaster::CreateRenderGeometry()
 {
-    n_assert(this->skinnedVerticies);
-    n_assert(this->numSkinnedVerticies > 0);
+    n_assert(this->skinnedVertices);
+    n_assert(this->numSkinnedVertices > 0);
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     
@@ -316,7 +316,7 @@ nSkinShadowCaster::CreateRenderGeometry()
         // init mesh
         destMesh->SetVertexComponents(nMesh2::Color); // FIXME: the needed coord is vector4, but in nebula coord is vector3, so color is used as way around.
         destMesh->SetUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
-        destMesh->SetNumVertices(2 * this->numSkinnedVerticies);
+        destMesh->SetNumVertices(2 * this->numSkinnedVertices);
 
         destMesh->SetNumIndices(0);
         destMesh->SetNumEdges(0);
@@ -330,18 +330,18 @@ nSkinShadowCaster::CreateRenderGeometry()
         float* basePtr = destMesh->LockVertices();
         // fill mesh with data
         int v;
-        for (v = 0; v < this->numSkinnedVerticies; v++)
+        for (v = 0; v < this->numSkinnedVertices; v++)
         {
             // vertex 1 - V.w = 1.0
-            *basePtr++ = this->skinnedVerticies[v].x;
-            *basePtr++ = this->skinnedVerticies[v].y;
-            *basePtr++ = this->skinnedVerticies[v].z;
+            *basePtr++ = this->skinnedVertices[v].x;
+            *basePtr++ = this->skinnedVertices[v].y;
+            *basePtr++ = this->skinnedVertices[v].z;
             *basePtr++ = 1.0f;
 
             // vertex 2 - V.w = 0.0
-            *basePtr++ = this->skinnedVerticies[v].x;
-            *basePtr++ = this->skinnedVerticies[v].y;
-            *basePtr++ = this->skinnedVerticies[v].z;
+            *basePtr++ = this->skinnedVertices[v].x;
+            *basePtr++ = this->skinnedVertices[v].y;
+            *basePtr++ = this->skinnedVertices[v].z;
             *basePtr++ = 0.0f;
         }
         destMesh->UnlockVertices();
@@ -353,31 +353,31 @@ nSkinShadowCaster::CreateRenderGeometry()
 /**
 */
 void
-nSkinShadowCaster::CreateFaceNormales()
+nSkinShadowCaster::CreateFaceNormals()
 {
-    n_assert(this->skinnedVerticies);
-    n_assert(this->numSkinnedVerticies > 0);
+    n_assert(this->skinnedVertices);
+    n_assert(this->numSkinnedVertices > 0);
     n_assert(this->faces);
     n_assert(this->numFaces > 0);
 
     // allocate face normal buffer if not happened yet
-    if (0 == this->faceNormales)
+    if (0 == this->faceNormals)
     {
-        this->numFaceNormales = this->numFaces;
-        this->faceNormales = n_new_array(vector3, this->numFaceNormales);
+        this->numFaceNormals = this->numFaces;
+        this->faceNormals = n_new_array(vector3, this->numFaceNormals);
     }
     
     int i;
     for (i = 0; i < this->numFaces; i++)
     {
         const Face& face = this->faces[i];
-        const vector3& vertex0 = this->skinnedVerticies[face.index[0]];
-        const vector3& vertex1 = this->skinnedVerticies[face.index[1]];
-        const vector3& vertex2 = this->skinnedVerticies[face.index[2]];
+        const vector3& vertex0 = this->skinnedVertices[face.index[0]];
+        const vector3& vertex1 = this->skinnedVertices[face.index[1]];
+        const vector3& vertex2 = this->skinnedVertices[face.index[2]];
 
         // compute the face normal
-        this->faceNormales[i] = (vertex1 - vertex0) * (vertex2 - vertex0);
-        this->faceNormales[i].norm();
+        this->faceNormals[i] = (vertex1 - vertex0) * (vertex2 - vertex0);
+        this->faceNormals[i].norm();
     }
 }
 
@@ -392,7 +392,7 @@ nSkinShadowCaster::DebugSetupGeometry()
         this->dbgMesh->Release();
     }
 
-    if (this->numSkinnedVerticies > 0 && this->numFaces > 0)
+    if (this->numSkinnedVertices > 0 && this->numFaces > 0)
     {
         nMesh2* mesh = nGfxServer2::Instance()->NewMesh(0);
         mesh->SetAsyncEnabled(false);
@@ -404,7 +404,7 @@ nSkinShadowCaster::DebugSetupGeometry()
         mesh->SetUsage(nMesh2::WriteOnce);
         mesh->Load();
 
-        vector3* srcVtxPtr = this->skinnedVerticies;
+        vector3* srcVtxPtr = this->skinnedVertices;
         float* dstVtxPtr = mesh->LockVertices();
 
         int i;
@@ -415,7 +415,7 @@ nSkinShadowCaster::DebugSetupGeometry()
             if (face.lightFacing)
             {
                 int f;
-                for(f = 0; f < 3; f++)
+                for (f = 0; f < 3; f++)
                 {
                     *(dstVtxPtr++) = srcVtxPtr[face.index[f]].x;
                     *(dstVtxPtr++) = srcVtxPtr[face.index[f]].y;
