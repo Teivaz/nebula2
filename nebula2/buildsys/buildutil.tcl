@@ -33,13 +33,16 @@
 #   This strips each element out of $list and appends it with a 
 #   single trailing space to dest_list.
 #
-#   CAVEAT:  If dest_list does not have a trailing space this 
-#            function will not append the first element correctly.
+#   CAVEAT:  If dest_list has a trailing space then this function
+#            will append an extra space before appending the first
+#            element... don't think this really makes any difference
+#            though, *shrug*, seems to be better than ending up with
+#            not enough spaces. -- Vadim
 #--------------------------------------------------------------------
 proc addtolist {var list} {
     upvar $var v
     for {set i 0} {$i < [llength $list]} {incr i} {
-        append v [lindex $list $i] " "
+        append v " " [lindex $list $i]
     }
 }
 
