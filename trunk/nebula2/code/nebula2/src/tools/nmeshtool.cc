@@ -6,44 +6,42 @@
     
     Command line tool for mesh manipulation.
 
-    <dl>
-     <dt>-in</dt>
-       <dd>input mesh file (n3d, n3d2, nvx or nvx2 file)</dd>
-     <dt>-out</dt>
-       <dd>output mesh file (file extension defines output format)</dd>
-     <dt>-oldn3d2</dt>
-        <dd>use the the old (files saved before Dec-2003) n3d2 loader code</dd>
-     <dt>-clean</dt>
-       <dd>clean the mesh before anything else</dd>
-     <dt>-tangent</dt>
-       <dd>generate tangents</dd>
-     <dt>-append</dt>
-       <dd>name of mesh to append (note: duplicate group names are renamed)</dd>
-     <dt>-group</dt>
-       <dd>optional group name, if exists, all operations only affect this group</dd>
-     <dt>-grename</dt>
-       <dd>rename the group defined by group</dd>
-     <dt>-tx</dt>
-       <dd>translate x</dd>
-     <dt>-ty</dt>
-       <dd>translate y</dd>
-     <dt>-tz</dt>
-       <dd>translate z</dd>
-     <dt>-rx</dt>
-       <dd>rotate x</dd>
-     <dt>-ry</dt>
-       <dd>rotate y</dd>
-     <dt>-rz</dt>
-       <dd>rotate z</dd>
-     <dt>-sx</dt>
-       <dd>scale x</dd>
-     <dt>-sy</dt>
-       <dd>scale y</dd>
-     <dt>-sz</dt>
-       <dd>scale z</dd>
-     <dt>-scale</dt>
-       <dd>uniform scale</dd>
-    </dl>
+     @par -in
+       input mesh file (obj, n3d, n3d2, nvx or nvx2 file)
+     @par -out
+       output mesh file (n3d, n3d2, nvx2)
+     @par -oldn3d2
+        use the the old (files saved before Dec-2003) n3d2 loader code
+     @par -clean
+       clean the mesh before anything else
+     @par -tangent
+       generate tangents
+     @par -append
+       name of mesh to append (note: duplicate group names are renamed)
+     @par -group
+       optional group name, if exists, all operations only affect this group
+     @par -grename
+       rename the group defined by group
+     @par -tx
+       translate x
+     @par -ty
+       translate y
+     @par -tz
+       translate z
+     @par -rx
+       rotate x
+     @par -ry
+       rotate y
+     @par -rz
+       rotate z
+     @par -sx
+       scale x
+     @par -sy
+       scale y
+     @par -sz
+       scale z
+     @par -scale
+       uniform scale
 
     (C) 2003 RadonLabs GmbH
 */
@@ -90,7 +88,7 @@ main(int argc, const char** argv)
                  "-help                 show this help\n"
                  "-in [filename]        input mesh file (.n3d, .n3d2, .nvx or .nvx2 extension)\n"
                  "-out [filename]       output mesh file (.n3d2 or .nvx2 extension)\n"
-                 "-oldn3d2              use the the old n3d2 loader code"
+                 "-oldn3d2              use the the old n3d2 loader code\n"
                  "-append [filename]    optional mesh file to append to input mesh\n"
                  "-clean                clean up mesh (removes redundant vertices)\n"
                  "-tangent              generate vertex tangents for per pixel lighting\n"
@@ -126,7 +124,7 @@ main(int argc, const char** argv)
         scale.set(scaleArg, scaleArg, scaleArg);
     }
 
-    if ((translate.len() > 0.0f) || (rotate.len() > 0.0f) || (scale.len() != 1.0f))
+    if ((translate.len() > 0.0f) || (rotate.len() > 0.0f) || !(scale.x == scale.y == scale.z == 1.0f))
     {
         doTransform = true;
     }
@@ -139,7 +137,7 @@ main(int argc, const char** argv)
     nPathString filename = inFileArg;
     if (oldN3d2Loader && (0 == strcmp(filename.GetExtension(), "n3d2")))
     {
-        n_printf("-> using load n3d2 loader code\n");
+        n_printf("-> using old n3d2 loader code\n");
         if (!mesh.LoadOldN3d2(kernelServer->GetFileServer(), inFileArg))
         {
             n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
