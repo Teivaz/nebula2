@@ -237,9 +237,9 @@ tqt_tile_layer * nCLODTQTMakerNode::generateTQTLeaves(nFile &destfile, const cha
             float ycoord = y0 + (m_tilesize - 1 - yoffset) * ystep;
             ILubyte *sourcepixel = sourcedata + 3 * ((int)xcoord + ((int)ycoord) * width);
             ILubyte *destpixel = destdata + 3 * (xoffset + yoffset * m_tilesize);
-            destpixel[2] = sourcepixel[0];
+            destpixel[0] = sourcepixel[0];
             destpixel[1] = sourcepixel[1];
-            destpixel[0] = sourcepixel[2];
+            destpixel[2] = sourcepixel[2];
         }
 
         // write out sample image
