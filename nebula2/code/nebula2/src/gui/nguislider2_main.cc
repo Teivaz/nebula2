@@ -21,8 +21,7 @@ nGuiSlider2::nGuiSlider2() :
     knobPosEdgeLayoutIndex(0),
     dragging(false),
     horizontal(false),
-    dragVisibleStart(0.0),
-    backgroundIsBig(false)
+    dragVisibleStart(0.0)
 {
     // empty
 }
@@ -42,6 +41,11 @@ void
 nGuiSlider2::OnShow()
 {
     nGuiFormLayout::OnShow();
+
+    if (nGuiServer::Instance()->BrushExists("sliderbg"))
+    {
+        this->SetDefaultBrush("sliderbg");
+    }
 
     kernelServer->PushCwd(this);
 
@@ -105,27 +109,24 @@ nGuiSlider2::OnShow()
     posBtn->OnShow();
     this->refPosButton = posBtn;
 
-    // The background image either covers the whole slider, including the 
-    // arrow buttons (big), or it lies between those buttons (small).
-    if (this->backgroundIsBig)
-    {
-        this->SetDefaultBrush("sliderbg");
-    }
-    else
+    // The "slidertrack" brush, if present, lies *between* the arrow buttons.
+    if (nGuiServer::Instance()->BrushExists("slidertrack"))
     {
         nGuiLabel* backgroundLabel = (nGuiLabel*) kernelServer->New("nguilabel", "BackgroundLabel");
         n_assert(backgroundLabel);
-        backgroundLabel->SetMinSize( vector2( 0, this->arrowBtnSize.y ) );
-        backgroundLabel->SetMaxSize( vector2( 1.0f - 2*this->arrowBtnSize.x, this->arrowBtnSize.y ) );
-        backgroundLabel->SetDefaultBrush("sliderbg");
+        backgroundLabel->SetDefaultBrush("slidertrack");
         if (this->horizontal)
         {
+            backgroundLabel->SetMinSize( vector2( 0, this->arrowBtnSize.y ) );
+            backgroundLabel->SetMaxSize( vector2( 1.0f - 2*this->arrowBtnSize.x, this->arrowBtnSize.y ) );
             this->AttachForm(backgroundLabel, Top, 0.0f);
             this->AttachWidget(backgroundLabel, Left, negBtn, 0 );
             this->AttachWidget(backgroundLabel, Right, posBtn, 0 );
         }
         else
         {
+            backgroundLabel->SetMinSize( vector2( this->arrowBtnSize.x, 0 ) );
+            backgroundLabel->SetMaxSize( vector2( this->arrowBtnSize.x, 1.0f - 2*this->arrowBtnSize.y ) );
             this->AttachForm(backgroundLabel, Left, 0.0f);
             this->AttachWidget(backgroundLabel, Top, negBtn, 0 );
             this->AttachWidget(backgroundLabel, Bottom, posBtn, 0 );

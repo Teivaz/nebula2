@@ -1091,7 +1091,21 @@ nGuiServer::ComputeScreenSpaceBrushSize(const char* brushName)
     size.y = (uvRect.height() * texHeight) / this->displaySize.y;
     return size;
 }
-
+//-----------------------------------------------------------------------------
+/**
+    Returns true iff the named brush exists in the current skin
+*/
+bool
+nGuiServer::BrushExists(const char* brushName)
+{
+    bool retVal = false;
+    nGuiSkin* pSkin = GetSkin();
+    if (pSkin && pSkin->FindBrush(brushName))
+    {
+        retVal = true;
+    }
+    return retVal;
+}
 //-----------------------------------------------------------------------------
 /**
     Play a GUI sound.
