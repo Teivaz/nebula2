@@ -497,7 +497,7 @@ nFileServer2::DeleteFile(const char* filename)
 
     #ifdef __WIN32__
         return ::DeleteFile(mangledPath) ? true : false;
-    #elif defined(__LINUX__)
+    #elif defined(__LINUX__) || defined(__MACOSX__)
         return (0 == unlink(mangledPath)) ? true : false;
     #else
     #error "nFileServer2::DeleteFile() not implemented yet!"

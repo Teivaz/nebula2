@@ -5,7 +5,7 @@
 #include "kernel/nfile.h"
 #include "kernel/nfileserver2.h"
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__MACOSX__)
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -311,7 +311,7 @@ nFile::GetSize() const
 
 #ifdef __WIN32__
     return GetFileSize(this->handle, NULL);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__MACOSX__)
     struct stat s;
     fstat(fileno(this->fp), &s);
     return s.st_size;
@@ -334,7 +334,7 @@ nFile::GetLastWriteTime() const
     nFileTime fileTime;
     GetFileTime(this->handle, NULL, NULL, &(fileTime.time));
     return fileTime;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__MACOSX__)
     nFileTime fileTime;
     struct stat s;
     fstat(fileno(this->fp), &s);
