@@ -12,6 +12,8 @@ static void n_getclientattrat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nsessionclientcontext
+    @cppclass
+    nSessionClientContext
     @superclass
     nroot
     @classinfo

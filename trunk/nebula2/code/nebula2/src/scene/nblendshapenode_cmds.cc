@@ -19,6 +19,9 @@ static void n_getweightat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nblendshapenode
+
+    @cppclass
+    nBlendShapeNode
     
     @superclass
     nshapenode
