@@ -29,6 +29,8 @@ public:
     nRef();
     /// constructor with target object
     nRef(TYPE* o);
+    /// copy constructor
+    nRef( const nRef& );
     /// destructor
     ~nRef();
     /// invalidate the ref
@@ -69,9 +71,25 @@ inline
 nRef<TYPE>::nRef(TYPE* o) :
     targetObject(o)
 {
-    // empty
+    if (o) 
+    {
+        this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+    }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nRef<TYPE>::nRef( const nRef<TYPE>& rhs ) :
+    targetObject( rhs.get() )
+{
+    if (targetObject) 
+    {
+        this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
