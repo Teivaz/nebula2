@@ -32,7 +32,7 @@ private:
     /// a private stack node class
     class nStackNode : public nNode
     {
-#if _MSCVER < 1300
+#if defined(_MSCVER) && (_MSCVER < 1300)
         friend nStack;
 #else
         friend class nStack;
