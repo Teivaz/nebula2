@@ -404,10 +404,10 @@ proc generate { wslist } {
 
 #-------------------------------------------------------------------------------
 #   description
-#   Output a description of this generator.                                     #-------------------------------------------------------------------------------
+#   Return a description of this generator.
+#-------------------------------------------------------------------------------
 proc description { } {
-    puts "Support for Microsoft Visual Studio 7.1. This is also known as Visual"
-    puts "Studio .NET 2003."
+    return "Support for Microsoft Visual Studio 7.1. This is also known as Visual Studio .NET 2003."
 }
 
 #-------------------------------------------------------------------------------
