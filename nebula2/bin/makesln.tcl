@@ -674,6 +674,7 @@ proc gen_exe_vcproj {name} {
 #--------------------------------------------------------------------
 #   gen_solution
 #   29-Jan-02	stki    created
+#   29-Mar-03   cubejk  added the handling for 'workspace' target.
 #--------------------------------------------------------------------
 proc gen_solution {main_target nodirgroups} {
     global tar
@@ -708,7 +709,9 @@ proc gen_solution {main_target nodirgroups} {
             gen_dll_vcproj $tar($t,name) mll $nodirgroups
         } elseif {$tar($t,type) == "lib"} {
             gen_lib_vcproj $tar($t,name) $nodirgroups
-	    } else {
+        } elseif {$tar($t,type) == "workspace"} {
+            gen_lib_vcproj $tar($t,name) $nodirgroups
+        } else {
             puts "ERROR: UNKNOWN TARGET TYPE '$tar($t,type)'"
             exit
         }

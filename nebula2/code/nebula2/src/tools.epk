@@ -146,7 +146,7 @@ beginmodule dummy
 endmodule 
 #-------------------------------------------------------------------------------
 begintarget tools
-    settype lib
+    settype workspace
     setmods dummy
     setdepends {
         nkernel
