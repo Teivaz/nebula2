@@ -13,10 +13,14 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxcontrol.h"
+#include "export2/nmaxintanimator.h"
+#include "export2/nmaxvectoranimator.h"
 
 #include "scene/nshapenode.h"
+#include "scene/nintanimator.h"
+#include "scene/nvectoranimator.h"
 
-// the followings are 3dmax predifined custom attribute.
+// the followings are 3dmax predefined custom attribute.
 #define NUM_PREDEFINED_CA  3
 const char* predefinedCA[NUM_PREDEFINED_CA] = {
     "Viewport Manager",
@@ -100,7 +104,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                         TCHAR* name = paramDef.int_name;
                         
-                        // find nShaderState::Param which match to paramter name.
+                        // find nShaderState::Param which match to parameter name.
                         shaderParam = this->GetShaderParam(name);
 
                         // filter it if the given parameter name does not match
@@ -114,7 +118,10 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                         {
                         case TYPE_STRING:
                             {
+                                //HACK: string type used only for effect filename at the present.
+
                                 BOOL result;
+
                                 // .fx effect file name. (e.g. "shaders:default.fx")
                                 TCHAR* value; 
                                 Interval interval;
@@ -125,8 +132,11 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     // is this parameter for 'shader'?
                                     if (strcmp(name, "Shader") == 0)
                                     {
+                                        //FIXME: other type of FourCC should be available.
                                         shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), value);
                                     }
+                                    else
+                                        n_maxlog(Error, "The parameter block has string type parameter but it is not effect filename.");
                                 }
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
@@ -172,6 +182,25 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     shapeNode->SetInt(shaderParam, value);
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+
+                                Control* control = pblock2->GetController(paramID);
+                                if (control)
+                                {
+                                    // the parameter was animated.
+                                    nIntAnimator* animator = 0;
+
+                                    nMaxIntAnimator intAnimator;
+                                    animator = static_cast<nIntAnimator*>(intAnimator.Export(name, control));
+                                    if (animator)
+                                    {
+                                        // add the animator to the shapenode.
+                                        shapeNode->AddAnimator(animator->GetName());
+
+                                        nKernelServer::Instance()->PopCwd();
+                                    }
+                                    else
+                                        n_maxlog(Error, "Failed to create nIntAnimator %s", animator->GetName());
+                                }
                             }
                             break;
 
@@ -201,6 +230,12 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+
+                                Control* control = pblock2->GetController(paramID);
+                                if (control)
+                                {
+                                    n_maxlog(Warning, "The animation of rgba type of parameter %s is not supported.", name);
+                                }
                             }
                             break;
 
@@ -220,6 +255,25 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+
+                                Control* control = pblock2->GetController(paramID);
+                                if (control)
+                                {
+                                    // the parameter was animated.
+                                    nVectorAnimator* animator = 0;
+
+                                    nMaxVectorAnimator vectorAnimator;
+                                    animator = static_cast<nVectorAnimator*>(vectorAnimator.Export(name, control));
+                                    if (animator)
+                                    {
+                                        // add the animator to the shapenode.
+                                        shapeNode->AddAnimator(animator->GetName());
+
+                                        nKernelServer::Instance()->PopCwd();
+                                    }
+                                    else
+                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                }
                             }
                             break;
 
@@ -236,9 +290,28 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     shapeNode->SetVector(shaderParam, value);
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+
+                                Control* control = pblock2->GetController(paramID);
+                                if (control)
+                                {
+                                    // the parameter was animated.
+                                    nVectorAnimator* animator = 0;
+
+                                    nMaxVectorAnimator vectorAnimator;
+                                    animator = static_cast<nVectorAnimator*>(vectorAnimator.Export(name, control));
+                                    if (animator)
+                                    {
+                                        // add the animator to the shapenode.
+                                        shapeNode->AddAnimator(animator->GetName());
+
+                                        nKernelServer::Instance()->PopCwd();
+                                    }
+                                    else
+                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                }
                             }
                             break;
-                    #endif
+                    #endif // MAX_RELEASE >= 6000
 
                         case TYPE_TEXMAP:
                             {
@@ -265,13 +338,6 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                 }// end of for each param blocks
             }
         }
-    }
-
-    // export shader animations.
-    if (IsClassID(mtl, DMTL_CLASS_ID))
-    {
-        // we only export shader animation for original standard material type.
-        ExportShaderAnimations(mtl);
     }
 }
 
