@@ -24,7 +24,6 @@ classes = {}
 # regular expressions to extract class/cmd info
 rClass = re.compile(r"@scriptclass\s*(?P<classname>\S*)(?:(?:\s*)|(?:\s*@cppclass\s*(?P<cppname>\S*?))\s*)@superclass\s*(?P<superclass>\S*)\s*@classinfo\s*(?P<info>.*?)\s*\*/", re.S)
 rCmd = re.compile(r"@cmd\s*(?P<cmd>\S*)\s*@input\s*(?P<input>.*?)\s*@output\s*(?P<output>.*?)\s*@info\s*(?P<info>.*?)\s*\*/", re.S)
-rCppName = re.compile(r"#define\sN_IMPLEMENTS\s(\S*)")
 
 # set up paths in hopefully OS independant manner
 dir_autodoc = os.path.join(sys.path[0], os.pardir, 'doc', 'autodoc')
@@ -81,7 +80,7 @@ def scanFiles(pathname):
                 clas.name = mClass.group('classname')
                 clas.superclass = mClass.group('superclass')
                 clas.info = escapeHtml(mClass.group('info'))
-                clas.cppname = mClass.group('cppname') or rCppName.search(file).groups()[0]
+                clas.cppname = mClass.group('cppname') or clas.name
                 cmds = []
                 mCmd = rCmd.search(file)
                 while mCmd:
