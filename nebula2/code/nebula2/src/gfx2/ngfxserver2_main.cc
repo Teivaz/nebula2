@@ -248,7 +248,7 @@ nGfxServer2::Trigger()
 
 //------------------------------------------------------------------------------
 /**
-    Reset the light array. BeginScene() will call this.
+    Reset the light array. This will happen automatically in BeginScene().
 */
 void
 nGfxServer2::ClearLights()
@@ -496,7 +496,6 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
             updModelLightProj = true;
             break;
 
-
         default:
             n_error("nGfxServer2::SetTransform() Trying to set read-only transform type!");
             break;
@@ -509,8 +508,8 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
     }
     if (updModelLight)
     {
-        this->transform[ModelLight] = this->transform[Model] * this->transform[Light];
-        this->transform[InvModelLight] = this->transform[Light] * this->transform[InvModel];
+        this->transform[ModelLight]     = this->transform[Model] * this->transform[Light];
+        this->transform[InvModelLight]  = this->transform[Light] * this->transform[InvModel];
     }
     if (updViewProjection)
     {

@@ -21,7 +21,7 @@ nWin32WindowHandler::nWin32WindowHandler() :
     // get applications module handle
     this->hInst = GetModuleHandle(0);
     nEnv *env;
-    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd"))) 
+    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv", "/sys/env/hwnd"))) 
     {
         env->SetI(NULL);
     }
@@ -290,8 +290,8 @@ nWin32WindowHandler::RestoreWindow()
     {
         SetWindowPos(this->hWnd,             // the window handle
                      this->parentHwnd,       // placement order
-		     x,                      // x position
-		     y,                      // y position
+                     x,                      // x position
+                     y,                      // y position
                      w,	                     // adjusted width
                      h,	                     // adjusted height
                      SWP_SHOWWINDOW);
@@ -322,7 +322,6 @@ nWin32WindowHandler::MinimizeWindow()
 {
     n_assert(this->hWnd);
     n_assert(this->windowOpen);
-
     if (!this->windowMinimized)
     {
         // minimize window for all mode except child
@@ -407,10 +406,9 @@ nWin32WindowHandler::OnToggleFullscreenWindowed()
 
 //------------------------------------------------------------------------------
 /**
-    Override this method in a derived class!
 */
 void
-nWin32WindowHandler::OnSize()
+nWin32WindowHandler::OnSize(bool minimize)
 {
     if (minimize)
     {

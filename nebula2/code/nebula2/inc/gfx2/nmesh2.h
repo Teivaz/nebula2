@@ -6,7 +6,7 @@
     @ingroup NebulaGraphicsSystem
 
     Internally holds opaque vertex and index data to feed a vertex shader.
-    Vertices in a mesh are simply an array of floats. 
+    Vertices in a mesh are simply an array of floats.
     Edges are stored in a system memory array with the Edge type.
     Meshes are generally static and loaded from mesh resource files.
     
@@ -110,7 +110,7 @@ public:
         WriteOnce = (1<<0),     // (default) CPU only fills the vertex buffer once, and never touches it again
         ReadOnly  = (1<<1),     // CPU reads from the vertex buffer, which can never be rendered
         WriteOnly = (1<<2),     // CPU writes frequently to vertex buffer, but never read data back
-      
+
         // patch types (mutually exclusive)
         NPatch  = (1<<3),
         RTPatch = (1<<4),
@@ -543,7 +543,7 @@ nMesh2::SetRefillBuffersMode(RefillBuffersMode mode)
 {
     this->refillBuffersMode = mode;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
 */

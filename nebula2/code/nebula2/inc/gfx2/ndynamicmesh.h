@@ -7,10 +7,9 @@
 
     Helper class for rendering dynamic geometry, simplifies writing
     to the global dynamic mesh offered by the gfx server.
-    
+
     (C) 2003 RadonLabs GmbH
 */
-
 #include "gfx2/ngfxserver2.h"
 #include "gfx2/nmesh2.h"
 
@@ -22,7 +21,7 @@ public:
     nDynamicMesh();
     /// destructor
     ~nDynamicMesh();
-	/// initialize the dynamic mesh
+    /// initialize the dynamic mesh
     bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering, bool shared = true);
     /// if this returns false, call Initialize()
     bool IsValid() const;
@@ -41,9 +40,9 @@ public:
 
 protected:
     enum
-    {	
-        VertexBufferSize = 16384,                   // number of vertices
-        IndexBufferSize  = 3 * VertexBufferSize,    // number of indices
+    {
+        IndexBufferSize = 16384,                    // number of vertices
+        VertexBufferSize  = 3 * IndexBufferSize,    // number of indices
     };
     bool indexedRendering;
     nRef<nMesh2> refMesh;

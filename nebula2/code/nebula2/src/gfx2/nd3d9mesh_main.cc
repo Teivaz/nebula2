@@ -141,7 +141,7 @@ nD3D9Mesh::CreateVertexBuffer()
         
         // this is either a WriteOnce or a WriteOnly vertex buffer,
         // in both cases we create a D3D vertex buffer object
-        HRESULT hr;    
+        HRESULT hr;
 
         DWORD d3dUsage = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool = D3DPOOL_MANAGED;

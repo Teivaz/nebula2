@@ -8,21 +8,6 @@
 
 nNebulaClass(nD3D9Server, "ngfxserver2");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9server
-
-    @cppclass
-    nD3D9Server
-    
-    @superclass
-    ngfxserver2
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -56,11 +41,18 @@ nD3D9Server::nD3D9Server() :
     backBufferSurface(0),
     effectPool(0),
     featureSet(InvalidFeatureSet),
-    d3dxLine(0)
+    d3dxLine(0),
+    winVersion(UnknownWin)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
+
+    // detect windows version
+    this->DetectWindowsVersion();
+
+    // open the app window
+    this->windowHandler.OpenWindow();
 
     // initialize Direct3D
     this->D3dOpen();
@@ -249,6 +241,34 @@ nD3D9Server::EnterDialogBoxMode()
     nGfxServer2::EnterDialogBoxMode();
     HRESULT hr = this->d3d9Device->SetDialogBoxMode(TRUE);
     n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode()");
+
+    // reset the device to fix a know issue for win98/ME where this dialogbox is sometimes hidden
+    if (Win32_Windows == this->GetWindowsVersion()) // windows 95 and family
+    {
+        // invoke the reanimation procedure...
+        this->OnDeviceLost(false);
+
+        // if we are in windowed mode, the cause for the reset may be a display
+        // mode change of the desktop, in this case we need to find new
+        // buffer pixel formats
+        D3DFORMAT dispFormat;
+        D3DFORMAT backFormat;
+        D3DFORMAT zbufFormat;
+        this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, backFormat, zbufFormat);
+        this->presentParams.BackBufferFormat       = backFormat;
+        this->presentParams.AutoDepthStencilFormat = zbufFormat;
+
+        hr = this->d3d9Device->Reset(&this->presentParams);
+        if (D3DERR_INVALIDCALL == hr ||FAILED(hr))
+        {
+            n_error("nD3D9Server: Failed to reset d3d device!\n");
+        }
+        // initialize the device
+        this->InitDeviceState();
+
+        // reload the resource
+        this->OnRestoreDevice();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -284,4 +304,144 @@ const nDisplayMode2&
 nD3D9Server::GetDisplayMode() const
 {
     return this->windowHandler.GetDisplayMode();
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Detect the current Windows version,
+    only makes a differnence betweem WinNT family, Win95 familiy and the rest.
+*/
+void
+nD3D9Server::DetectWindowsVersion()
+{
+    // copy and paste from the windows platform SDK GetVersionEx example
+    
+    OSVERSIONINFOEX osvi;
+    BOOL bOsVersionInfoEx;
+
+    // Try calling GetVersionEx using the OSVERSIONINFOEX structure.
+    // If that fails, try using the OSVERSIONINFO structure.
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+    if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
+    {
+        // If OSVERSIONINFOEX doesn't work, try OSVERSIONINFO.
+        osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+        if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
+        {
+            this->winVersion = UnknownWin;
+            return;
+        }
+    }
+
+    switch (osvi.dwPlatformId)
+    {
+        case VER_PLATFORM_WIN32_NT:
+        {
+            this->winVersion = Win32_NT;
+            /*
+            // Test for the product.
+
+            if ( osvi.dwMajorVersion <= 4 )
+                printf("Microsoft Windows NT ");
+
+            if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 )
+                printf ("Microsoft Windows 2000 ");
+
+            if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
+                printf ("Microsoft Windows XP ");
+
+            // Test for product type.
+
+            if( bOsVersionInfoEx )
+            {
+                if ( osvi.wProductType == VER_NT_WORKSTATION )
+                {
+                    if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
+                        printf ( "Personal " );
+                    else
+                        printf ( "Professional " );
+                }
+                else if ( osvi.wProductType == VER_NT_SERVER )
+                {
+                    if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
+                        printf ( "DataCenter Server " );
+                    else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
+                        printf ( "Advanced Server " );
+                    else
+                        printf ( "Server " );
+                }
+            }
+            else
+            {
+                HKEY hKey;
+                char szProductType[80];
+                DWORD dwBufLen;
+
+                RegOpenKeyEx( HKEY_LOCAL_MACHINE,
+                    "SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
+                    0, KEY_QUERY_VALUE, &hKey );
+                RegQueryValueEx( hKey, "ProductType", NULL, NULL,
+                    (LPBYTE) szProductType, &dwBufLen);
+                RegCloseKey( hKey );
+                if ( lstrcmpi( "WINNT", szProductType) == 0 )
+                    printf( "Professional " );
+                if ( lstrcmpi( "LANMANNT", szProductType) == 0 )
+                    printf( "Server " );
+                if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
+                    printf( "Advanced Server " );
+            }
+
+            // Display version, service pack (if any), and build number.
+
+            if ( osvi.dwMajorVersion <= 4 )
+            {
+                printf ("version %d.%d %s (Build %d)\n",
+                    osvi.dwMajorVersion,
+                    osvi.dwMinorVersion,
+                    osvi.szCSDVersion,
+                    osvi.dwBuildNumber & 0xFFFF);
+            }
+            else
+            { 
+                printf ("%s (Build %d)\n",
+                    osvi.szCSDVersion,
+                    osvi.dwBuildNumber & 0xFFFF);
+            }
+            */
+        }
+        break;
+        case VER_PLATFORM_WIN32_WINDOWS:
+        {
+            this->winVersion = Win32_Windows;
+            /*
+            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
+            {
+                printf ("Microsoft Windows 95 ");
+                if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
+                    printf("OSR2 " );
+            } 
+
+            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
+            {
+                printf ("Microsoft Windows 98 ");
+                if ( osvi.szCSDVersion[1] == 'A' )
+                    printf("SE " );
+            } 
+
+            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
+            {
+                printf ("Microsoft Windows Me ");
+            } 
+            */
+        }
+        break;
+        case VER_PLATFORM_WIN32s:
+        {
+            this->winVersion = UnknownWin;
+            //printf ("Microsoft Win32s ");
+        }
+        break;
+   }
 }

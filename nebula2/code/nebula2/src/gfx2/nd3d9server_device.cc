@@ -65,11 +65,55 @@ nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
 
 //------------------------------------------------------------------------------
 /**
+    Returns the number of bits in a d3d format.
+*/
+int
+nD3D9Server::GetD3DFormatNumBits(D3DFORMAT fmt)
+{
+    switch (fmt)
+    {
+        case D3DFMT_R8G8B8:
+        case D3DFMT_A8R8G8B8:
+        case D3DFMT_X8R8G8B8:
+        case D3DFMT_G16R16:
+        case D3DFMT_A4L4:
+        case D3DFMT_X8L8V8U8:
+        case D3DFMT_Q8W8V8U8:
+        case D3DFMT_V16U16:
+        case D3DFMT_A2B10G10R10:
+        case D3DFMT_A2W10V10U10:
+            return 32;
+
+        case D3DFMT_R5G6B5:
+        case D3DFMT_X1R5G5B5:
+        case D3DFMT_A1R5G5B5:
+        case D3DFMT_A4R4G4B4:
+        case D3DFMT_A8R3G3B2:
+        case D3DFMT_X4R4G4B4:
+        case D3DFMT_A8P8:
+        case D3DFMT_A8L8:
+        case D3DFMT_V8U8:
+        case D3DFMT_L6V5U5:
+            return 16;
+
+        case D3DFMT_P8:
+        case D3DFMT_A8:
+        case D3DFMT_L8:
+        case D3DFMT_R3G3B2:
+            return 8;
+    
+        default:
+            return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Find the best possible combination of buffer formats. The method will
     fail hard if no matching buffer formats could be found!
 */
 void
-nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3DFORMAT& zbufFormat)
+nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3DFORMAT& zbufFormat)
 {
     HRESULT hr;
 
@@ -80,8 +124,10 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
         { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X4S4 },
         { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X8 },
         { D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D16 },
+        { D3DFMT_R5G6B5,   D3DFMT_R5G6B5,   D3DFMT_D16 },
         { D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN },
     };
+
     if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
     {
         // find fullscreen buffer formats
@@ -94,7 +140,13 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
             dispFormat = formatTable[i][0];
             backFormat = formatTable[i][1];
             zbufFormat = formatTable[i][2];
-            if (this->CheckDepthFormat(dispFormat, backFormat, zbufFormat))
+
+            // skip 32 bit formats?
+            if ((nDisplayMode2::Bpp16 == bpp) && (this->GetD3DFormatNumBits(formatTable[i][0]) > 16))
+            {
+                continue;
+            }
+            else if (this->CheckDepthFormat(dispFormat, backFormat, zbufFormat))
             {
                 break;
             }
@@ -219,7 +271,7 @@ nD3D9Server::DeviceOpen()
     D3DFORMAT dispFormat;
     D3DFORMAT backFormat;
     D3DFORMAT zbufFormat;
-    this->FindBufferFormats(dispFormat, backFormat, zbufFormat);
+    this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, backFormat, zbufFormat);
 
     // define device behaviour flags
     #ifdef __NEBULA_NO_THREADS__
@@ -312,7 +364,7 @@ nD3D9Server::DeviceOpen()
                                   &(this->d3d9Device));
     if (FAILED(hr))
     {
-        n_dxtrace(hr, "nD3D9Server: Could not create d3d device!");
+        n_dxtrace(hr, "nD3D9Server: Could not create d3d device!\nDirectX Error is: %s\n", DXGetErrorString9(hr));
         return false;
     }
     n_assert(this->d3d9Device);
@@ -321,7 +373,7 @@ nD3D9Server::DeviceOpen()
     hr = D3DXCreateEffectPool(&this->effectPool);
     if (FAILED(hr))
     {
-        n_error("nD3D9Server: Could not create effect pool!\n");
+        n_error("nD3D9Server: Could not create effect pool!\nDirectX Error is: %s\n", DXGetErrorString9(hr));
         return false;
     }
 
@@ -375,7 +427,7 @@ nD3D9Server::DeviceClose()
     n_assert(this->windowHandler.GetHwnd());
 
     // unload all resources
-    this->OnDeviceLost();
+    this->OnDeviceLost(true);
 
     // destroy primitive shapes
     int i;
@@ -399,7 +451,7 @@ nD3D9Server::DeviceClose()
     // destroy d3d device
     this->d3d9Device->Release();
     this->d3d9Device = 0;
-    
+
     // minimze the app window
     this->windowHandler.MinimizeWindow();
 }
@@ -422,7 +474,7 @@ nD3D9Server::TestResetDevice()
     else if (D3DERR_DEVICENOTRESET == hr)
     {
         // device is ready to be reset, invoke the reanimation procedure...
-        this->OnDeviceLost();
+        this->OnDeviceLost(false);
 
         // if we are in windowed mode, the cause for the reset may be a display
         // mode change of the desktop, in this case we need to find new
@@ -432,7 +484,7 @@ nD3D9Server::TestResetDevice()
             D3DFORMAT dispFormat;
             D3DFORMAT backFormat;
             D3DFORMAT zbufFormat;
-            this->FindBufferFormats(dispFormat, backFormat, zbufFormat);
+            this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, backFormat, zbufFormat);
             this->presentParams.BackBufferFormat       = backFormat;
             this->presentParams.AutoDepthStencilFormat = zbufFormat;
         //}
@@ -574,18 +626,16 @@ nD3D9Server::UpdateCursor()
     if (this->cursorDirty)
     {
         this->cursorDirty = false;
-	
-        if (this->curMouseCursor.GetFilename())
+
+        nTexture2* tex = this->curMouseCursor.GetTexture();
+        if (tex)
         {
-            if (!this->curMouseCursor.IsLoaded())
+            if (!tex->IsValid())
             {
-                bool mouseCursorLoaded = this->curMouseCursor.Load();
+                bool mouseCursorLoaded = tex->Load();
                 n_assert(mouseCursorLoaded);
                 this->cursorDirty = true;
             }
-
-            nTexture2* tex = this->curMouseCursor.GetTexture();
-            n_assert(tex && tex->IsValid());
 
             HRESULT hr;
             IDirect3DTexture9* d3d9Tex = ((nD3D9Texture*)tex)->GetTexture2D();

@@ -555,7 +555,7 @@ nD3D9Shader::ValidateEffect()
             else
             {
                 this->didNotValidate = true;
-                n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
+                n_printf("nD3D9Shader() warning: shader '%s' did not validate for software vertex processing!\n", this->GetFilename());
             }
         }
         else
@@ -563,7 +563,7 @@ nD3D9Shader::ValidateEffect()
             // no valid technique found
             this->hasBeenValidated = true;
             this->didNotValidate = true;
-            n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
+            n_printf("nD3D9Shader() warning: shader '%s' did not validate for hardware vertex processing!\n", this->GetFilename());
         }
     }
 }

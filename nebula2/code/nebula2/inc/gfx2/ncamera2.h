@@ -39,7 +39,7 @@ public:
 
     /// default constructor
     nCamera2();
-        /// arg constructor
+    /// arg constructor
     nCamera2(float aov, float aspect, float nearp, float farp);
     /// set perspective projection parameters
     void SetPerspective(float aov, float aspect, float nearp, float farp);

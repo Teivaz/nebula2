@@ -19,11 +19,6 @@ nD3D9Server::BeginShapes()
     nShader2* shd = this->refShapeShader;
     int numPasses = shd->Begin(true);
     n_assert(1 == numPasses);
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    shd->BeginPass(0);
-#else
-    shd->Pass(0);
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +40,9 @@ nD3D9Server::DrawShape(ShapeType type, const matrix44& model, const vector4& col
 
     // update model matrix
     this->PushTransform(nGfxServer2::Model, model);
+    shd->BeginPass(0);
     HRESULT hr = this->shapeMeshes[type]->DrawSubset(0);
+    shd->EndPass();
     n_dxtrace(hr, "DrawSubset() failed in nD3D9Server::DrawShape()");
     this->PopTransform(nGfxServer2::Model);
 }
@@ -58,8 +55,5 @@ void
 nD3D9Server::EndShapes()
 {
     nGfxServer2::EndShapes();
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    this->refShapeShader->EndPass();
-#endif
     this->refShapeShader->End();
 }
