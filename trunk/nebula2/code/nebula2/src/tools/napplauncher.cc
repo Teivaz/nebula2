@@ -148,26 +148,47 @@ nAppLauncher::Launch() const
 bool
 nAppLauncher::LaunchHelper(bool waitForChild) const
 {
+    // No exec, no lunch.
+    if (this->exec.IsEmpty())
+        return false;
+
     // mangle paths
     nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
     nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
 
-    nString appCmdLine;
-    appCmdLine.Format("%s/%s", dirMangled.Get(), execMangled.Get());
-    const char *execCmd = appCmdLine.Get();
+    // If executable path contains '/' then we convert it to absolute
+    // path. Otherwise we will use `execvp' to resolve executable name
+    // using `PATH' enviroment variable.
+    nString execCmd;
+    if (this->exec.FindChar('/', 0) != -1 && this->exec.Get()[0] != '/')
+    {
+        // NOTE: This is `glibc' exstension to `POSIX.1'.
+        char *cwd = getcwd(NULL, 0);
+        execCmd.Format("%s/%s", cwd, this->exec.Get());
+        free(cwd);
+    }
+    else
+        execCmd = this->exec;
 
     // fork this process, and replace it with intended target
     int pid = fork();
     if (pid == 0) {
+        // Change to working directory.
+        if (!dirMangled.IsEmpty())
+        {
+            if (chdir(dirMangled.Get()))
+                exit(-1);
+        }
+ 
         // +2 -> 1 for the command name, 1 for the NULL
         char  *argv[ARG_MAX + 2];
-        argv[0] = (char*)execMangled.Get();
+        argv[0] = strdup(execMangled.Get());
         int argc = 1;
 
         // tokenize command line
-        // XXX: This cast is bad.
-        char* ptr = (char*)this->args.Get();
-        char* end = ptr + strlen(ptr);
+        char *argTmp = strdup(this->args.Get());
+        char *end = argTmp + strlen(argTmp);
+        char *ptr = argTmp;
 
         while ((argc < ARG_MAX) && (ptr < end))
         {
@@ -195,7 +216,10 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
         argv[argc] = NULL;
 
         // we have the args, so now we can exec the new process
-        execv(execCmd, argv);
+        execvp(execCmd.Get(), argv);
+        free(argv[0]);
+        free(argTmp);
+
         exit(-1);
     } else if (pid > 0) {
         // Wait for the child...
