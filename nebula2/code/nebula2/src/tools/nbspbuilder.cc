@@ -20,7 +20,7 @@ nBspBuilder::~nBspBuilder()
 {
     if (this->rootNode)
     {
-        delete this->rootNode;
+        n_delete(this->rootNode);
         this->rootNode = 0;
     }
 }
@@ -81,7 +81,7 @@ nBspBuilder::BuildBsp(nMeshBuilder& srcMesh, float maxNodeSize, const bbox3& box
 nBspBuilder::BspNode*
 nBspBuilder::Split(nMeshBuilder& mesh, const bbox3& box, int groupId, float maxNodeSize, int curDepth, int& nextGroupId)
 {
-    BspNode* node = new BspNode;
+    BspNode* node = n_new(BspNode);
 
     // select a split plane (split the longest dimension by half,
     // stop splitting if all dimensions are less then maxLength

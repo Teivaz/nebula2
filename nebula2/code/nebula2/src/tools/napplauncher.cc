@@ -85,14 +85,32 @@ nAppLauncher::Launch() const
     n_assert(this->kernelServer);
 
     // mangle paths
-    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
-    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
-
+    const char* filePath = 0;
+    if (!this->url.IsEmpty())
+    {
+        filePath = this->url.Get();
+    }
+    else
+    {
+        nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
+        filePath = execMangled.Get();
+    }
+    const char* dirPtr = 0;
+    if (!this->dir.IsEmpty())
+    {
+        nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
+        dirPtr = dirMangled.Get();
+    }
+    const char* argPtr = 0;
+    if (!this->args.IsEmpty())
+    {
+        argPtr = this->args.Get();
+    }
     HINSTANCE retval = ShellExecute(NULL,                   // hWnd
                                     "open",                 // lpOperation
-                                    execMangled.Get(),      // lpFile
-                                    this->args.Get(),       // lpParameters
-                                    dirMangled.Get(),       // lpDirectory
+                                    filePath,               // lpFile
+                                    argPtr,                 // lpParameters
+                                    dirPtr,                 // lpDirectory
                                     SW_SHOW);               // nShowCmd
     return ((int)retval > 32);
 }

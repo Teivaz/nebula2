@@ -294,13 +294,13 @@ nAnimBuilder::Curve::Curve() :
 /**
 */
 inline
-nAnimBuilder::Curve::Curve(int numKeys, const Key& fillKey) :
+nAnimBuilder::Curve::Curve(int numKeys, const Key& initKey) :
     ipolType(NONE),
     isCollapsed(true),
     firstKeyIndex(-1)
 {
     this->keyArray.SetFixedSize(numKeys);
-    this->keyArray.Fill(0, this->keyArray.Size(), fillKey);
+    this->keyArray.Fill(0, this->keyArray.Size(), initKey);
 }
 
 //------------------------------------------------------------------------------

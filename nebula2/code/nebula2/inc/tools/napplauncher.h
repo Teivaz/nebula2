@@ -2,6 +2,9 @@
 #define N_APPLAUNCHER_H
 //------------------------------------------------------------------------------
 /**
+    @class nAppLauncher
+    @ingroup Tools
+    
     Launch a command line utility and wait for its termination.
     FIXME: operating system specific subclasses should be created.
     
@@ -19,6 +22,8 @@ public:
     ~nAppLauncher();
     /// set the name of the executable, including path, if not in search path
     void SetExecutable(const char* path);
+    /// set optional URL path
+    void SetUrl(const char* url);
     /// set the working directory
     void SetWorkingDirectory(const char* path);
     /// do not open a console window for the new process
@@ -36,7 +41,19 @@ private:
     nString exec;
     nString dir;
     nString args;
+    nString url;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAppLauncher::SetUrl(const char* u)
+{
+    n_assert(u);
+    this->url = u;
+}
 
 //------------------------------------------------------------------------------
 /**

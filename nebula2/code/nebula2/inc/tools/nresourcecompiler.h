@@ -1,7 +1,10 @@
-#ifndef N_RESOURCEBUILDER_H
-#define N_RESOURCEBUILDER_H
+#ifndef N_RESOURCECOMPILER_H
+#define N_RESOURCECOMPILER_H
 //------------------------------------------------------------------------------
 /**
+    @class nResourceCompiler
+    @ingroup Tools
+
     A resource compiler class. Takes a number of .N2 files as input
     and generates one big .N2 file and an associated resource file which
     contains the meshes, animations and textures.

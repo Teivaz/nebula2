@@ -21,6 +21,10 @@
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
+#include "network/nhttpserver.h"
+
+nNebulaUsePackage(nnebula);
+nNebulaUsePackage(nnetwork);
 
 //------------------------------------------------------------------------------
 /**
@@ -52,12 +56,17 @@ main(int argc, const char** argv)
 
     // create minimal Nebula runtime
     nKernelServer kernelServer;
+    kernelServer.AddPackage(nnebula);
+    kernelServer.AddPackage(nnetwork);
+
     nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg, "/sys/servers/script");
     if (0 == scriptServer)
     {
         n_printf("Could not create script server of class '%s'\n", scriptServerArg);
         return 10;
     }
+    nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
+    n_assert(httpServer);
 
     if (runArg)
     {
@@ -98,6 +107,7 @@ main(int argc, const char** argv)
             }
         }
     }
+    httpServer->Release();
     scriptServer->Release();
     return 0;
 }

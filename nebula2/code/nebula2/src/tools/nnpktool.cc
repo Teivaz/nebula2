@@ -291,7 +291,7 @@ generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& toc
                 subDir->Close();
                 subDirOk = true;
             }
-            delete subDir;
+            n_delete(subDir);
 
             if (!subDirOk)
             {
@@ -444,22 +444,23 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
         if (srcFile->Open(fileName, "rb"))
         {
             // allocate buffer for file and file contents
-            char* buffer = n_new char[entryFileLength];
+            char* buffer = n_new_array(char, entryFileLength);
             int bytesRead = srcFile->Read(buffer, entryFileLength);
             srcFile->Close();
-            srcFile->Release();
             if (bytesRead != entryFileLength)
             {
-                n_delete buffer;
+                srcFile->Release();
+                n_delete(buffer);
                 n_printf("Error reading file '%s'!\n", fileName);
                 return false;
             }
 
             // write buffer to target file
             int bytesWritten = file->Write(buffer, entryFileLength);
-            n_delete buffer;
+            n_delete(buffer);
             if (bytesWritten != entryFileLength)
             {
+                srcFile->Release();
                 n_printf("Error writing to target file!\n");
                 return false;
             }
@@ -467,9 +468,11 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
         }
         else
         {
+            srcFile->Release();
             n_printf("Failed to open source file '%s'!\n", fileName);
             return false;
         }
+        srcFile->Release();
     }
     return true;
 }
@@ -520,14 +523,14 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     {
         n_printf("Could not open directory '%s' for reading!\n", dirName);
         file->Release();
-        delete dir;
+        n_delete(dir);
         return false;
     }
     if (!file->Open(outName, "w"))
     {
         n_printf("Could not open file '%s' for writing!\n", outName);
         file->Release();
-        delete dir;
+        n_delete(dir);
         return false;
     }
 
@@ -577,7 +580,7 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     file->Close();
     dir->Close();
     file->Release();
-    delete dir;
+    n_delete(dir);
     return retval;
 }
 
@@ -805,8 +808,8 @@ AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
     n_assert(0 != newFile);
     
     int size = oldNpkEntry->GetFileLength();
-    char* oldArray = new char[size];
-    char* newArray = new char[size];
+    char* oldArray = n_new_array(char, size);
+    char* newArray = n_new_array(char, size);
     oldFile->Seek(oldNpkEntry->GetFileOffset(), nFile::START);
     newFile->Seek(newNpkEntry->GetFileOffset(), nFile::START);
     
@@ -834,8 +837,8 @@ AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
         }
     }
 
-    delete oldArray;
-    delete newArray;
+    n_delete_array(oldArray);
+    n_delete_array(newArray);
 
     if (retValue != 0)
     {
@@ -902,7 +905,7 @@ BuildDifferenceList(nList& oldList, nList& newList, nList& diffList)
         if (!found)
         {
             // not in old list??? put a new entry into diff list
-            diffEntry = new FileEntry;
+            diffEntry = n_new(FileEntry);
             n_assert(0 != diffEntry);
 
             diffEntry->name      = newEntry->name;
@@ -929,7 +932,7 @@ FillList(nNpkTocEntry* entry, nList& list)
     nNpkTocEntry::Type type = entry->GetType();
     
     // store data in list
-    FileEntry* fileEntry = new FileEntry;
+    FileEntry* fileEntry = n_new(FileEntry);
     fileEntry->name  = name;
     fileEntry->entry = entry;
     list.AddTail((nNode *) fileEntry);
@@ -1029,11 +1032,11 @@ GenerateDifferenceList(nFileServer2* fs,
             FileEntry* fEntry = 0;
             while (0 != (fEntry = (FileEntry*) oldList.RemHead()))
             {
-                delete fEntry;
+                n_delete(fEntry);
             }
             while (0 != (fEntry = (FileEntry*) newList.RemHead()))
             {
-                delete fEntry;
+                n_delete(fEntry);
             }
             return true;
         }
@@ -1156,7 +1159,7 @@ unPackFile(nFileServer2* fs,
         {
             n_printf("Cannot open dir %s\n", entry->GetName());
         }
-        delete dir;
+        n_delete(dir);
     }
 }
 
@@ -1166,20 +1169,6 @@ unPackFile(nFileServer2* fs,
 void
 unPack(nFileServer2* fs, const char* fileName, const char* outName, nList* dList)
 {
-    // create directory of the same name. check for existence and
-    // ".npk" first
-    if (0 == strstr(fileName, ".npk"))
-    {
-        n_printf("Error: %s is not an nebula pack file!\n", fileName);
-        return;
-    }
-    
-    char dirName[N_MAXPATH];
-    strcpy(dirName, fileName);
-    char* end = strstr(dirName, ".npk");
-    *end = 0;
-    strcat(dirName, ".n");
-    
     char absFileName[N_MAXPATH];
     char rootPath[N_MAXPATH];
     nNpkFileWrapper fileWrapper;
@@ -1237,7 +1226,7 @@ listDiff(nFileServer2* fs,
     fEntry = 0;
     while (0 != (fEntry = (FileEntry*) diffList.RemHead()))
     {
-        delete fEntry;
+        n_delete(fEntry);
     }
 }
 
@@ -1273,7 +1262,7 @@ makeDiff(nFileServer2* fs,
     FileEntry* fEntry = 0;
     while (0 != (fEntry = (FileEntry*) diffList.RemHead()))
     {
-        delete fEntry;
+        n_delete(fEntry);
     }
 }
 
@@ -1319,8 +1308,8 @@ main(int argc, const char** argv)
     }
 
     // create Nebula environment
-    nKernelServer* ks = new nKernelServer;
-    nFileServer2* fs = (nFileServer2*) ks->New("nfileserver2", "/sys/servers/file2");
+    nKernelServer kernelServer;
+    nFileServer2* fs = kernelServer.GetFileServer();
 
     // what operation to do?
     if (packName)
@@ -1371,8 +1360,6 @@ main(int argc, const char** argv)
             }
         }
     }
-
-    delete ks;
 
     // success
     return 0;
