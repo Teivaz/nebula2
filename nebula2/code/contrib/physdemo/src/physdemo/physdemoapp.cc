@@ -817,36 +817,20 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
                 shapeNode->SetQuat(obj->refPhysBody->GetQuaternion());
 
                 // if the floaty text is initialized, update its position
-                if (obj->refFloatyText.isvalid())
+                if (curObj->refFloatyText.isvalid())
                 {
                     matrix44 projMat = this->refGfxServer->GetTransform(nGfxServer2::ViewProjection);
+                    vector3 projCoords = projMat.transform_coord(curObj->Transform.gettranslation());
 
-                    vector3 textCoords = obj->refRootShapeNode->GetPosition();
-                    vector4 projCoords;
-
-                    // First, move the original coords into a vector4
-                    projCoords.x = textCoords.x;
-                    projCoords.y = textCoords.y;
-                    projCoords.z = textCoords.z;
-                    projCoords.w = 1.0f;
-
-                    // Now, do textCoords * projectMat (I know, it looks backwards, no idea why the operation works this way)
-                    projCoords = projMat * projCoords;
-
-                    // Now divide by w to complete the projection.
-                    projCoords.x /= projCoords.w;
-                    projCoords.y /= projCoords.w;
-                    projCoords.z /= projCoords.w;
-
-                    // ... and scale the projected coords to be in proper screen space.
+                    // scale the projected coords to be in proper screen space.
                     projCoords.x = projCoords.x / 2.0f + 0.5f;
                     projCoords.y = -projCoords.y / 2.0f + 0.5f;
 
                     // And finally, set up the rect to reflect the projected coordinates.
                     rectangle screenCoords;
-                    screenCoords.v0.set(projCoords.x - obj->textWidth / 2.0f, projCoords.y - obj->textHeight / 2.0f - 0.05f);
-                    screenCoords.v1.set(projCoords.x + obj->textWidth / 2.0f, projCoords.y + obj->textHeight / 2.0f - 0.05f);
-                    obj->refFloatyText->SetRect(screenCoords);
+                    screenCoords.v0.set(projCoords.x - curObj->textWidth / 2.0f, projCoords.y - curObj->textHeight / 2.0f - 0.05f);
+                    screenCoords.v1.set(projCoords.x + curObj->textWidth / 2.0f, projCoords.y + curObj->textHeight / 2.0f - 0.05f);
+                    curObj->refFloatyText->SetRect(screenCoords);
                 }
 
                 node = node->GetSucc();
