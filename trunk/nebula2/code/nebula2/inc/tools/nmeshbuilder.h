@@ -161,8 +161,8 @@ public:
 
         /// constructor
         Triangle();
-		/// destructor
-		~Triangle();
+        /// destructor
+        ~Triangle();
 
         /// set vertex indices
         void SetVertexIndices(int i0, int i1, int i2);

@@ -34,7 +34,7 @@ public:
     {
         FILE,
         DIRECTORY,
-		INVALID,
+        INVALID,
     };
 
     /// constructor
@@ -42,37 +42,37 @@ public:
     /// destructor
     virtual ~nDirectory();
 
-	/// opens a directory
-	virtual bool Open(const char* dirName);
-	/// closes the directory
+    /// opens a directory
+    virtual bool Open(const char* dirName);
+    /// closes the directory
     virtual void Close();
     /// get the full path name of the directory itself
     const char* GetPathName() const;
-	/// check if the directory is empty
+    /// check if the directory is empty
     virtual bool IsEmpty();
     /// set first entry as current
     virtual bool SetToFirstEntry();
-	/// set next entry as current
+    /// set next entry as current
     virtual bool SetToNextEntry();
-	/// get name of current entry
+    /// get name of current entry
     virtual const char* GetEntryName();
-	/// get type of current entry
+    /// get type of current entry
     virtual nEntryType GetEntryType();
 
 protected:
-	/// determines wether the directory is opened
+    /// determines wether the directory is opened
     virtual bool IsOpen() const;
 
-	nFileServer2* fs;
-	bool empty;
-	char path[N_MAXPATH];
-	char apath[N_MAXPATH];
+    nFileServer2* fs;
+    bool empty;
+    char path[N_MAXPATH];
+    char apath[N_MAXPATH];
 
 #ifdef __WIN32__
     /// win32 directory search handle
-	HANDLE handle;
-	/// win32 search result
-	WIN32_FIND_DATA findData;
+    HANDLE handle;
+    /// win32 search result
+    WIN32_FIND_DATA findData;
 #endif
 };
 

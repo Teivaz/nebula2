@@ -33,7 +33,7 @@ public:
 
 //------------------------------------------------------------------------------
 /**
-    22-Jan-01   floh    created
+     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
@@ -44,7 +44,7 @@ nDynAutoRef<TYPE>::nDynAutoRef()
 
 //------------------------------------------------------------------------------
 /**
-    22-Jan-01   floh    created
+     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
@@ -56,7 +56,7 @@ nDynAutoRef<TYPE>::nDynAutoRef(nKernelServer *ks)
 
 //------------------------------------------------------------------------------
 /**
-    22-Jan-01   floh    created
+     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
@@ -74,7 +74,7 @@ nDynAutoRef<TYPE>::~nDynAutoRef()
     at the time set() is called. The path will be resolved when the nDynAutoRef
     is first accessed (with get() or the -> operator).
 
-    22-Jan-01   floh    created
+     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
@@ -114,7 +114,7 @@ nDynAutoRef<TYPE>::operator=(const nDynAutoRef<TYPE>& rhs)
 /**
     Path name assignment operator (same functionality as set).
   
-    22-Jan-01   floh    created
+     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline

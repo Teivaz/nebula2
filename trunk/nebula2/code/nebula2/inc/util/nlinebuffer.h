@@ -21,17 +21,17 @@ public:
     nLineBuffer();
     /// destructor
     ~nLineBuffer();
-	/// write string to line buffer
+    /// write string to line buffer
     void Put(const char*);
-	/// return pointer to line defined by line number
+    /// return pointer to line defined by line number
     const char *GetLine(int) const;
-	/// get line number of first line
+    /// get line number of first line
     int GetHeadLine() const;
     /// get line number of last line
     int GetTailLine() const;
-	/// get line number of previous line
+    /// get line number of previous line
     int GetNextLine(int) const;
-	/// get line number of next line
+    /// get line number of next line
     int GetPrevLine(int) const;
     /// fill a user provided array with pointers to lines
     int GetLines(const char** array, int arraySize) const;

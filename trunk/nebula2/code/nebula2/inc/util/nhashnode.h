@@ -42,7 +42,7 @@ public:
     void SetName(const char* name);
 
 private:
-	friend class nHashList;
+    friend class nHashList;
     nStrNode str_node;
     nHashTable *h_table;
 };

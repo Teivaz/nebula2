@@ -312,10 +312,10 @@ nRoot::SetName(const char *str)
 
 //------------------------------------------------------------------------------
 /**
-    04-Nov-98	floh	akzeptiert jetzt die Spezial-Objekte
-    					".." und "."
-    17-May-99   floh    etwas optimiert (strcmp() wird nicht mehr
-                        aufgerufen).
+     - 04-Nov-98    floh    akzeptiert jetzt die Spezial-Objekte
+                            ".." und "."
+     - 17-May-99   floh     etwas optimiert (strcmp() wird nicht mehr
+                            aufgerufen).
 */
 inline
 nRoot*
@@ -430,8 +430,8 @@ nRoot::AddRef()
     auf mich benutzt in die eigenen RefList. Auf das Wirts-Objekt
     der Referenz wird die Methode ValidRef() angewendet.
 
-    15-Jul-99   floh    created
-    30-Aug-00   floh    + removed call to nRoot::ValidRef()
+     - 15-Jul-99   floh    created
+     - 30-Aug-00   floh    + removed call to nRoot::ValidRef()
 */
 inline
 void 
@@ -445,8 +445,8 @@ nRoot::AddObjectRef(nRef<nRoot> *r)
     Eine Referenz in meiner RefList wird invalid. Auf das
     Wirts-Objekt der Referenz wird ein InvalidRef() angewendet.
 
-    15-Jul-99   floh    created
-    30-Aug-00   floh    + removed call to nRoot::InvalidRef()
+     - 15-Jul-99   floh    created
+     - 30-Aug-00   floh    + removed call to nRoot::InvalidRef()
 */
 inline
 void 
