@@ -3,4 +3,39 @@
 
     This section of the documentation covers the Nebula GUI system that 
     can be used to create an in-game graphical user interface.
+
+    @section NebulaGuiSystemSkin Setting up Skin
+
+    For using GUI system, you should create its skin first. 
+
+    You can create skin by calling nGuiServer::NewSkin with given skin name.
+
+    @code
+// 'system' is skin name.
+skin = guiServer->NewSkin("system");
+    @endcode
+
+    Then specify path of skin texture and its file extension.
+
+    @code
+skin->SetTexturePrefix("home:export/textures/system/");
+skin->SetTexturePostfix(".dds");
+    @endcode
+
+    A Skin also need to be specifed its color when it is activate or 
+    inactivate.
+
+    @code
+skin->SetActiveWindowColor(1.0, 1.0, 1.0, 0.9);
+skin->SetInactiveWindowColor(0.6, 0.6, 0.6, 0.6);
+    @endcode
+
+    Finally, register brush to be used in the skin.
+    @code
+skin->BeginBrushes()
+skin->AddBrush("titlebar", "skin",  0, 52, 43, 20, 1.0, 1.0, 1.0, 1.0)
+skin->AddBrush("window",   "skin",  0, 77, 15, 13, 1.0, 1.0, 1.0, 1.0)
+skin->EndBrushes()
+    @endcode
+
 */
