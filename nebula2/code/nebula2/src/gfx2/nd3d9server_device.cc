@@ -355,6 +355,8 @@ nD3D9Server::DeviceOpen()
     // restore window
     this->windowHandler.RestoreWindow();
     
+    this->CreateDisplayModeEnvVars();
+
     return true;
 }
 
@@ -721,4 +723,89 @@ void nD3D9Server::RestoreGamma()
     }
     else
         SetDeviceGammaRamp(GetDC(GetDesktopWindow()), &ramp );
+}
+
+//------------------------------------------------------------------------------
+/**
+    When the display is first opened, we create a collection of nEnvs 
+    that describe the possible video modes for all adapters.  We
+    only include those whose format corresponds to the "best" display
+    format, as returned by FindBufferFormats.  Note that, at the moment,
+    N2 always uses the default adapter, so knowing about the rest isn't
+    very useful.
+
+    Note: nEnv doesn't support unsigned ints or longs, so I used ints -- risky!
+
+    7-Sep-04    rafael    created
+*/
+void nD3D9Server::CreateDisplayModeEnvVars()
+{
+    if (!kernelServer->Lookup( "/sys/share/display" ))
+    {
+        nRoot* cwd = kernelServer->GetCwd();
+
+        D3DFORMAT dispFormat, dummy1, dummy2;
+        this->FindBufferFormats( dispFormat, dummy1, dummy2 );
+
+        HRESULT hr;
+        D3DADAPTER_IDENTIFIER9 identifier;
+        D3DDISPLAYMODE mode;
+        D3DCAPS9 caps;
+        const uint numAdapters = this->d3d9->GetAdapterCount();
+        char adaptorDirStr[64];
+        char modeSubDirStr[64];
+        for (uint adapterIdx = 0; adapterIdx < numAdapters; ++adapterIdx)
+        {
+            sprintf( adaptorDirStr, "/sys/share/display/adapter%u", adapterIdx );
+            nRoot* adaptorDir = kernelServer->New( "nroot", adaptorDirStr );
+            kernelServer->SetCwd( adaptorDir );
+
+            // Adapter identifier info
+            hr = this->d3d9->GetAdapterIdentifier( adapterIdx, 0, &identifier );
+            n_dxtrace(hr, "GetAdapterIdentifier() failed in CreateDisplayModeEnvVars.");
+            nEnv* envVar = (nEnv*)kernelServer->New( "nenv", "deviceName" );
+            envVar->SetS( identifier.DeviceName );
+            envVar = (nEnv*)kernelServer->New( "nenv", "description" );
+            envVar->SetS( identifier.Description );
+            
+            // adapter mode enumeration
+            const uint numModes = this->d3d9->GetAdapterModeCount( adapterIdx, dispFormat );
+            for (uint modeIdx = 0; modeIdx < numModes; ++modeIdx)
+            {
+                sprintf( modeSubDirStr, "mode%u", modeIdx );
+                nRoot* modeSubDir = kernelServer->New( "nroot", modeSubDirStr );
+                kernelServer->SetCwd( modeSubDir );
+
+                hr = this->d3d9->EnumAdapterModes( adapterIdx, dispFormat, modeIdx, &mode );
+                n_dxtrace( hr, "EnumAdapterModes failed in CreateDisplayModeEnvVars." )
+                envVar = (nEnv*)kernelServer->New( "nenv", "width" );
+                envVar->SetI( mode.Width );
+                envVar = (nEnv*)kernelServer->New( "nenv", "height" );
+                envVar->SetI( mode.Height );
+                envVar = (nEnv*)kernelServer->New( "nenv", "refreshRate" );
+                envVar->SetI( mode.RefreshRate );
+
+                kernelServer->SetCwd( adaptorDir );
+            }
+
+            // device caps info
+            nRoot* capsSubDir = kernelServer->New( "nroot", "caps" );
+            kernelServer->SetCwd( capsSubDir );
+            hr = this->d3d9->GetDeviceCaps( adapterIdx, N_D3D9_DEVICETYPE, &caps );
+            n_dxtrace(hr, "GetDeviceCaps() failed in CreateDisplayModeEnvVars.");
+
+            // the caps that appear here are those that I thought might be useful;
+            // feel free to extend it if you need to know something else.
+            envVar = (nEnv*)kernelServer->New( "nenv", "maxTexHeight" );
+            envVar->SetI( caps.MaxTextureHeight );
+            envVar = (nEnv*)kernelServer->New( "nenv", "maxTexWidth" );
+            envVar->SetI( caps.MaxTextureWidth );
+            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShaderVer" );
+            envVar->SetI( caps.PixelShaderVersion );
+            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShaderVer" );
+            envVar->SetI( caps.VertexShaderVersion );
+        }
+
+        kernelServer->SetCwd( cwd );    
+    }
 }
