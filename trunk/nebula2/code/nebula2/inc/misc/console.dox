@@ -45,10 +45,13 @@
     nConServer::Close, to switch the state of the console use nConServer::Toggle. 
     These are also accessible via script as the @c open, @c close, and @c toggle methods.
 
-    The console server should be triggered frequently, usually every frame, by 
-    calling nConServer::Trigger. nConServer::Trigger should be called before your 
-    application processes input events, to allow the console server to consume 
-    any key press events when it is open.
+    The console server should be triggered frequently, usually every frame, by
+    calling nConServer::Trigger. nConServer::Trigger should be called before
+    your application processes input events, to allow the console server to
+    consume any key press events when it is open.  By default (if the console
+    server is at <tt>/sys/servers/console</tt>), the console server is
+    triggered by nInputServer::Trigger(), so this needn't be manually triggered
+    each frame.
 
     The console server also offers the ability to display the value of any nEnv 
     nodes under @c /sys/var. To do this call nConServer::Watch with a

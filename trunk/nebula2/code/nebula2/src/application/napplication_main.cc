@@ -370,7 +370,6 @@ nApplication::DoFrame()
         this->SetQuitRequested(true);
     }
     kernelServer->Trigger();
-    nConServer::Instance()->Trigger();
     nInputServer::Instance()->Trigger(this->time);
     nGuiServer::Instance()->Trigger();
     nVideoServer::Instance()->Trigger();
