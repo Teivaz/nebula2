@@ -45,6 +45,7 @@ beginworkspace ncterrain2
     annotate "Radon Lab's chunked LOD terrain implementation"
     settargets {
         ncterrain2
+        nct2viewer
         nct2toolscommon
         nmaketqt2
         nbttotga
@@ -54,5 +55,9 @@ beginworkspace ncterrain2
         nnebula
         microtcl
         ndirect3d9
+        ndinput8
+        ndshow
+        ngui
+        nnetwork
     }
 endworkspace
