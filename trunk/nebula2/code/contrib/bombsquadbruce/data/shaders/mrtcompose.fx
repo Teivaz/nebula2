@@ -75,6 +75,7 @@ technique t0
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
+        FogEnable        = False;
 
         VertexShader = compile vs_2_0 vsMain();
         PixelShader = compile ps_2_0 psMain();
