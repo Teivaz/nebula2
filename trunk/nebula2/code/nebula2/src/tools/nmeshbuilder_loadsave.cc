@@ -1210,7 +1210,8 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
                 int uvIndex;
 
                 const char* vertexStr = strtok(0, N_WHITESPACE);
-                for (int vertexNo = 0; vertexStr != NULL; vertexNo++, vertexStr=strtok(0, N_WHITESPACE))
+                int vertexNo;
+                for (vertexNo = 0; vertexStr != NULL; vertexNo++, vertexStr=strtok(0, N_WHITESPACE))
                 {
                     // unpack poly vertex info (coord/uv/normal)
 
