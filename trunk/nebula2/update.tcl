@@ -15,7 +15,7 @@ global data_loaded
 global loaded_generators
 global usegui
 
-set workspaces {}
+set chosen_workspaces {}
 set buildgen ""
 set verbose false
 set usegui false
@@ -149,7 +149,7 @@ proc select_workspaces {} {
     global data_loaded
     global wspace
     global num_wspaces
-    global workspaces
+    global chosen_workspaces
 
     if { $data_loaded == false } {
         load_data
@@ -168,15 +168,14 @@ proc select_workspaces {} {
         -command { destroy .workspaces }
     button .workspaces.f.b.accept -text "Select Workspaces" \
         -command {
-            global workspaces
+            global chosen_workspaces
             global wspace
 
-            set workspaces {}
+            set chosen_workspaces {}
             set active [.workspaces.f.f.list curselection]
             foreach item $active {
-                lappend workspaces $wspace($item,name)
+                lappend chosen_workspaces $wspace($item,name)
             }
-            puts "Workspaces: $workspaces"
             destroy .workspaces
         }
     pack .workspaces.f.b.cancel -side left
@@ -209,7 +208,7 @@ proc select_workspaces {} {
     set activeIdxList {}
     for {set i 0} {$i < $num_wspaces} {incr i} {
         .workspaces.f.f.list insert end $wspace($i,name)
-        if {[lsearch -exact $workspaces $wspace($i,name)] >= 0} {
+        if {[lsearch -exact $chosen_workspaces $wspace($i,name)] >= 0} {
             lappend activeIdxList $idx
         }
         incr idx
@@ -292,9 +291,9 @@ proc select_generator {} {
 
 proc run_buildsystem {} {
     global buildgen
-    global workspaces
+    global chosen_workspaces
 
-    return [run_buildsystem_worker $workspaces $buildgen]
+    return [run_buildsystem_worker $chosen_workspaces $buildgen]
 }
 
 proc run_buildsystem_worker {workspaces buildgen} {
@@ -384,7 +383,7 @@ while {$i < $argc} {
     } elseif {[lindex $argv $i] == "-gui"} {
         set usegui true
     } else {
-        lappend workspaces [lindex $argv $i]
+        lappend chosen_workspaces [lindex $argv $i]
     }
     set i [expr $i + 1]
 }
