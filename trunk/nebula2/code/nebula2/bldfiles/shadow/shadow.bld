@@ -38,7 +38,7 @@ beginbundle nshadow
     annotate "The Nebula 2 shadow modules"
     setmodules {
         nshadowcaster nshadowserver nstaticshadowcaster
-        nstaticshadowcaster
+        nskinshadowcaster
     }
 endbundle
 
