@@ -104,7 +104,7 @@ category:"nmaxtoolbox"
 buttonText:"Animation Editor..."
 tooltip:"Specify Animations States and Clips" 
 ( 	
-    include "nebula2/animation.ms"
+    --include "nebula2/animation.ms"
 
     on execute do 
     (
