@@ -11,6 +11,8 @@
 
     Allowed range for theta is 0..180 degree (in rad!) and for rho 0..360 degree
     (in rad).
+
+    (C) 2004 RadonLabs GmbH
 */
 #include <stdlib.h>
 #include <math.h>
@@ -148,17 +150,17 @@ polar2::set(const vector3& vec)
     if ((v2.x >= 0.0f) && (v2.y >= 0.0f))
     {
         // quadrant 1
-        dRho = acos(v2.x);
+        dRho = asin(v2.x);
     }
     else if ((v2.x < 0.0f) && (v2.y >= 0.0f))
     {
         // quadrant 2 
-        dRho = acos(v2.y) + n_deg2rad(90.0f);
+        dRho = asin(v2.y) + n_deg2rad(270.0f);
     }
     else if ((v2.x < 0.0f) && (v2.y < 0.0f))
     {
         // quadrant 3
-        dRho = acos(-v2.x) + n_deg2rad(180.0f);
+        dRho = asin(-v2.x) + n_deg2rad(180.0f);
     }
     else
     {
