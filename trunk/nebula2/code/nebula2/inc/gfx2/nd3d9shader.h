@@ -78,6 +78,8 @@ public:
 #endif
     /// finish applying the shader
     virtual void End();
+    
+    bool NeedsSoftwareVertexProcessing();
 
 protected:
     /// load the shader resource file
@@ -101,11 +103,22 @@ private:
     bool didNotValidate;
     D3DXHANDLE parameterHandles[nShaderState::NumParameters];     // map shader states to D3DX handles
     nShaderParams curParams;    // mirrored to avoid redundant parameters setting
+    
+    bool needSoftwareVertexProcessing;
 
 #if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     bool inBeginPass;
 #endif
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool nD3D9Shader::NeedsSoftwareVertexProcessing()
+{
+    return this->needSoftwareVertexProcessing;
+}
 
 //------------------------------------------------------------------------------
 #endif
