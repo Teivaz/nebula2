@@ -193,7 +193,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     int numLines = lineBuffer->GetLines(lineArray, maxLines);
 
     // compute num lines fitting on screen, and the first and last visible line
-    int maxLinesOnScreen = (displayHeight / int(fontHeight * 1.6f)) - safeBottom;
+    int maxLinesOnScreen = (displayHeight / fontHeight) - safeBottom;
     int firstLine = maxLinesOnScreen + this->scrollOffset;
     if (firstLine >= numLines)
     {
@@ -259,13 +259,13 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
     n_assert(fontHeight > 0);
     n_assert(displayHeight > 0);
 
-    const vector4 textColor(1.0f, 0.69f, 0.43f, 1.0f);
+    const vector4 textColor(0.43f, 0.69f, 1.0f, 1.0f);
 
     nRoot* watcherVars = kernelServer->Lookup("/sys/var");
     if (watcherVars)
     {
         // compute num lines fitting on screen, and the first and last visible line
-        int maxLinesOnScreen = ((displayHeight * 4) / 5) / fontHeight;
+        int maxLinesOnScreen = displayHeight / fontHeight;
 
         // for each watcher variable
         nGfxServer2* gfxServer = this->refGfxServer.get();
@@ -327,7 +327,7 @@ void
 nConServer::Render()
 {
     int displayHeight = this->refGfxServer->GetDisplayMode().GetHeight();
-    const int fontHeight = 10;
+    const int fontHeight = 18;
 
     if (this->consoleOpen)
     {
