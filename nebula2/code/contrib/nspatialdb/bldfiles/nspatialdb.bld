@@ -11,7 +11,7 @@ beginmodule nspatialsector
            }
     setheaders    { nspatialsector nspatialelements nvisibilityvisitor nvisiblefrustumvisitor 
            nvisiblefrustumgenarray nvisiblespherevisitor nvisiblespheregenarray noccludingfrustumvisitor noccludingfrustumgenarray
-           nspatialvisitor nbboxoccluder
+           nspatialvisitor nbboxoccluder nfrustumclipper
            }
 endmodule
 
