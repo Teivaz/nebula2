@@ -220,7 +220,7 @@ main(int argc, const char** argv)
     inputServer     = (nInputServer*)     kernelServer->New("ndi8server",      "/sys/servers/input");
     consoleServer   = (nConServer*)       kernelServer->New("nconserver",      "/sys/servers/console");
     resourceServer  = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
-    sceneServer     = (nSceneServer*)     kernelServer->New("nmrtsceneserver", "/sys/servers/scene");
+    sceneServer     = (nSceneServer*)     kernelServer->New("nstdsceneserver", "/sys/servers/scene");
     varServer       = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     animServer      = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     n_assert(gfxServer);

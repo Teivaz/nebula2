@@ -1,11 +1,16 @@
 #define N_IMPLEMENTS nStdSceneServer
 //------------------------------------------------------------------------------
 //  nstdsceneserver_main.cc
-//  (C) 2002 RadonLabs GmbH
+//  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "scene/nstdsceneserver.h"
-#include "gfx2/ngfxserver2.h"
 #include "scene/nscenenode.h"
+#include "gfx2/ngfxserver2.h"
+#include "gfx2/ntexture2.h"
+#include "gfx2/nshader2.h"
+#include "gfx2/ndisplaymode2.h"
+#include "gfx2/nmesh2.h"
+#include "variable/nvariableserver.h"
 
 nNebulaClass(nStdSceneServer, "nsceneserver");
 
@@ -13,12 +18,13 @@ nNebulaClass(nStdSceneServer, "nsceneserver");
 /**
 */
 nStdSceneServer::nStdSceneServer() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
     numLights(0),
     numShapes(0),
     numShapeLights(0)
 {
-    // empty
+    memset(this->lightArray, 0, sizeof(this->lightArray));
+    memset(this->shapeArray, 0, sizeof(this->shapeArray));
+    memset(this->shapeLightArray, 0, sizeof(this->shapeLightArray));
 }
 
 //------------------------------------------------------------------------------
@@ -26,8 +32,9 @@ nStdSceneServer::nStdSceneServer() :
 */
 nStdSceneServer::~nStdSceneServer()
 {
-    // empty
+    //empty
 }
+
 
 //------------------------------------------------------------------------------
 /**
@@ -61,14 +68,15 @@ nStdSceneServer::SplitNodes()
 /**
     Collect all light nodes which intersect the given shape into the
     shapeLightArray member.
+
+    @todo this would only work for static shapes!
+    Perhaps the bbox should be updated at transform time?
 */
 void
 nStdSceneServer::CollectShapeLights(const Group& shapeGroup)
 {
     // get the shape's bounding box and transform it to 
     // view space
-    // FIXME: this would only work for static shapes!
-    // -> the bbox should be updated at transform time???
     bbox3 shapeBox = shapeGroup.sceneNode->GetBoundingBox();
     shapeBox.transform(shapeGroup.modelView);
 
@@ -94,63 +102,108 @@ nStdSceneServer::CollectShapeLights(const Group& shapeGroup)
 
 //------------------------------------------------------------------------------
 /**
-    FIXME: 
-    - implement simple viewport culling (?)
-    - implement shape/lightsource intersection
-    - implement sorting for minimal render state switches
+    Render the shape objects in the scene, using the shader defined by
+    the fourcc code. If no such shader exists, no rendering is done.
+*/
+void
+nStdSceneServer::RenderShapes(uint shaderFourCC)
+{
+    nGfxServer2* gfxServer = this->refGfxServer.get();
+
+    // for each shape object...
+    int i;
+    for (i = 0; i < this->numShapes; i++)
+    {
+        Group& group = this->groupArray[this->shapeArray[i]];
+        if (group.sceneNode->HasShader(shaderFourCC))
+        {
+            gfxServer->SetTransform(nGfxServer2::MODELVIEW, group.modelView);
+            group.sceneNode->RenderShader(shaderFourCC, this, group.renderContext);
+            group.sceneNode->RenderGeometry(this, group.renderContext);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render all light/shape interactions matching a given fourcc shader code.
+
+    @todo the intersection check happens once for the diffuse and
+    specular pass, the information which lights intersect which
+    shapes should be collected and stored once during SplitNodes()!
+*/
+void
+nStdSceneServer::RenderLightShapes(uint shaderFourCC)
+{
+    nGfxServer2* gfxServer = this->refGfxServer.get();
+
+    // for each shape object...
+    int curShapeIndex;
+    for (curShapeIndex = 0; curShapeIndex < this->numShapes; curShapeIndex++)
+    {
+        Group& shapeGroup = this->groupArray[this->shapeArray[curShapeIndex]];
+        if (shapeGroup.sceneNode->HasShader(shaderFourCC))
+        {
+            // collect the lights influencing this shape
+            this->CollectShapeLights(shapeGroup);
+            if (this->numShapeLights > 0)
+            {
+                // set the modelview matrix for the shape
+                gfxServer->SetTransform(nGfxServer2::MODELVIEW, shapeGroup.modelView);
+
+                // prepare shader and geometry
+                shapeGroup.sceneNode->RenderShader(shaderFourCC, this, shapeGroup.renderContext);
+            
+                // render geometry for each light intersecting this shape...
+                int shapeLightIndex;
+                for (shapeLightIndex = 0; shapeLightIndex < this->numShapeLights; shapeLightIndex++)
+                {
+                    Group& lightGroup = this->groupArray[this->shapeLightArray[shapeLightIndex]];
+
+                    // update light parameters
+                    lightGroup.sceneNode->RenderLightVolume(this, lightGroup.renderContext, lightGroup.modelView);
+
+                    // render!
+                    shapeGroup.sceneNode->RenderGeometry(this, shapeGroup.renderContext);
+                }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render the scene. Rendering happens in multiple passes:
+
+     -# clear the screen
+     -# render scene into the depth buffer only
+     -# render diffuse lighting 
+     -# render pixel colors and modulate into frame buffer
+     -# render specular light and add onto frame buffer
+     -# apply various post-special-effects
 */
 void
 nStdSceneServer::RenderScene()
 {
     nGfxServer2* gfxServer = this->refGfxServer.get();
 
-    // clear scene
-    gfxServer->Clear(nGfxServer2::ALL);
-
-    // split nodes into light and shape nodes
+    // split shape and light nodes
     this->SplitNodes();
 
-    // render shape objects (unsorted!)
-    int shapeIndex;
-    for (shapeIndex = 0; shapeIndex < this->numShapes; shapeIndex++)
+    // start rendering to the frame buffer
+    if (gfxServer->BeginScene()) 
     {
-        Group& shapeGroup = this->groupArray[this->shapeArray[shapeIndex]];
+        gfxServer->Clear(nGfxServer2::ALL, 0.4f, 0.4f, 0.4f, 1.0f, 1.0f, 0);
 
-        // collect all light nodes which intersect this shape
-        this->CollectShapeLights(shapeGroup);
+        // clear, render depth, diffuse, color and specular into the back buffer
+        this->RenderShapes(FOURCC('dept'));
+        this->RenderLightShapes(FOURCC('diff'));
+        this->RenderShapes(FOURCC('colr'));
+        this->RenderLightShapes(FOURCC('spec'));
 
-        // set the modelview matrix for the shape
-        gfxServer->SetTransform(nGfxServer2::MODELVIEW, shapeGroup.modelView);
-
-        // prepare shader
-        if (shapeGroup.sceneNode->HasShader())
-        {
-            shapeGroup.sceneNode->RenderShader(this, shapeGroup.renderContext);
-        }
-
-        // prepare geometry
-        shapeGroup.sceneNode->RenderGeometry(this, shapeGroup.renderContext);
-
-        // one render pass for each intersecting light
-        if (this->numShapeLights > 0)
-        {
-            int shapeLightIndex;
-            for (shapeLightIndex = 0; shapeLightIndex < this->numShapeLights; shapeLightIndex++)
-            {
-                Group& lightGroup = this->groupArray[this->shapeLightArray[shapeLightIndex]];
-                
-                // update light
-                lightGroup.sceneNode->RenderLightVolume(this, lightGroup.renderContext, lightGroup.modelView);
-
-                // render!
-                gfxServer->Draw();
-            }
-        }
-        else
-        {
-            // special case: no lights intersect this object...
-            gfxServer->Draw();
-        }
+        // finish the frame
+        gfxServer->DrawTextBuffer();
+        gfxServer->EndScene();
+        gfxServer->PresentScene();
     }
 }
-    
