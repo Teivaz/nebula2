@@ -132,6 +132,36 @@ protected:
     VisibleElements &m_visarray;
 };
 
+/**
+    @class nSpatialSphereGenArray
+    @ingroup NSpatialDBContribModule
+    @brief Visits all elements contained in a sphere and populates an
+    nArray with the visible elements.
+
+    This is a simple example of how to override spatialvisitor.  We
+    just override Visit() to append the given element to the array
+*/
+
+#include "spatialdb/nspatialspherevisitor.h"
+
+class nSpatialSphereGenArray : public nSpatialSphereVisitor {
+public:
+    nSpatialSphereGenArray(const sphere &viewsphere, SpatialElements &foundarray)
+        : nSpatialSphereVisitor(viewsphere), m_visarray(foundarray) { }
+
+    ~nSpatialSphereGenArray() { }
+
+    virtual void Reset() { ClearArray(); }
+
+    virtual void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
+
+protected:
+    void ClearArray() { m_visarray.Clear(); }
+
+    SpatialElements &m_visarray;
+};
+
+
 
 #endif
 

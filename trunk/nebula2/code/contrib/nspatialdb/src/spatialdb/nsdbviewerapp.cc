@@ -328,12 +328,12 @@ void nSDBViewerApp::Run()
             identmatrix.ident();
             this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
             this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
-            nVisibleFrustumGenArray::VisibleElements dummyarray(10,10);
+            nVisibilityVisitor::VisibleElements dummyarray(10,10);
 			if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
             {
                 nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, dummyarray);
                 generator.VisualizeDebug(this->refGfxServer.get());
-                generator.Visit(m_rootsector.get(),3);
+                generator.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
             }
             if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
             {
@@ -356,6 +356,14 @@ void nSDBViewerApp::Run()
 			    nOccludingSphereGenArray generator(cameraviewsphere, dummyarray);
 				generator.VisualizeDebug(this->refGfxServer.get());
 		        generator.nOccludingSphereVisitor::Visit(m_rootsector.get(),3);
+			}
+			if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::SpatialSphere)
+			{
+		        // create a clipper
+                sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
+			    nSpatialSphereGenArray generator(cameraviewsphere, dummyarray);
+				generator.VisualizeDebug(this->refGfxServer.get());
+		        generator.nSpatialSphereVisitor::Visit(m_rootsector.get(),3);
 			}
 
             this->refSceneServer->PresentScene();            // present the frame
@@ -483,7 +491,8 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
 		case nSDBViewerApp::Frustum: CurrentClipState = nSDBViewerApp::OccludingFrustum; break;
 		case nSDBViewerApp::OccludingFrustum: CurrentClipState = nSDBViewerApp::Sphere; break;
 		case nSDBViewerApp::Sphere: CurrentClipState = nSDBViewerApp::OccludingSphere; break;
-		case nSDBViewerApp::OccludingSphere: CurrentClipState = nSDBViewerApp::Frustum; break;
+		case nSDBViewerApp::OccludingSphere: CurrentClipState = nSDBViewerApp::SpatialSphere; break;
+        case nSDBViewerApp::SpatialSphere: CurrentClipState = nSDBViewerApp::Frustum; break;
 		}
     }
 
@@ -564,7 +573,7 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
         this->refConServer->Toggle();
     }
 
-    CameraDescription &controlcamera(this->markcameras[0]);//m_viewcamera]);
+    CameraDescription &controlcamera = this->markcameras[0];//m_viewcamera]);
 
     // handle viewer reset
     if (reset)
@@ -612,7 +621,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
         frameTime = 0.0001f;
     }
 
-    CameraDescription &controlcamera(this->markcameras[0]);//m_viewcamera]);
+    CameraDescription &controlcamera = this->markcameras[0];//m_viewcamera]);
 
     // set predefined positions
     if (inputServer->GetButton("setpos0"))
@@ -811,6 +820,7 @@ void nSDBViewerApp::UpdateObjectMarks()
     }
 
 	// compute the stuff for an appropriate visitor
+    int allowedrecursiondepth = 3;
     matrix44 cameraxform0;
     markcameras[m_viscamera].GenerateTransform(cameraxform0);
     sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
@@ -819,21 +829,25 @@ void nSDBViewerApp::UpdateObjectMarks()
 	nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, visiblearray);
 	nVisibleSphereGenArray generator3(cameraviewsphere, visiblearray);
 	nOccludingSphereGenArray generator4(cameraviewsphere, visiblearray);
+    nSpatialSphereGenArray generator5(cameraviewsphere, visiblearray);
 	switch (this->CurrentClipState)
 	{
 	case nSDBViewerApp::Frustum:
-			generator1.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
+			generator1.nVisibleFrustumVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
 		break;
 	case nSDBViewerApp::OccludingFrustum:
 			// create a clipper
-			generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
+			generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
 		break;
 	case nSDBViewerApp::Sphere:
-			generator3.nVisibleSphereVisitor::Visit(m_rootsector.get(),3);
+			generator3.nVisibleSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
 		break;
 	case nSDBViewerApp::OccludingSphere:
-			generator4.nOccludingSphereVisitor::Visit(m_rootsector.get(),3);
+			generator4.nOccludingSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
 		break;
+    case nSDBViewerApp::SpatialSphere:
+            generator5.nSpatialSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
+        break;
 	}
 
     // mark all elements found

@@ -163,7 +163,7 @@ private:
     int screenshotID;
 
 	// describes which view clipper we are currently using
-	enum { Frustum, OccludingFrustum, Sphere, OccludingSphere } CurrentClipState;
+	enum { Frustum, OccludingFrustum, Sphere, OccludingSphere, SpatialSphere } CurrentClipState;
 
     // spatial db reference-just a sector, really
     nRef<nSpatialSector> m_rootsector;
