@@ -7,6 +7,7 @@
 from vstudio71 import vstudio71
 from vstudio8 import vstudio8
 from vstudio7 import vstudio7
+from makefile import makefile
 
 class Factory:
     
@@ -15,7 +16,8 @@ class Factory:
         self.buildSys = buildSys
         self.generators = { 'vstudio71' : vstudio71(buildSys),
                             'vstudio7'  : vstudio7(buildSys),
-                            'vstudio8'  : vstudio8(buildSys) }
+                            'vstudio8'  : vstudio8(buildSys),
+                            'makefile'  : makefile(buildSys) }
         
     #--------------------------------------------------------------------------
     def GetGenerator(self, generatorName):
