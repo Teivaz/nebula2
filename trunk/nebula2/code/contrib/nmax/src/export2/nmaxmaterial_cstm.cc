@@ -14,11 +14,13 @@
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxintanimator.h"
+#include "export2/nmaxfloatanimator.h"
 #include "export2/nmaxvectoranimator.h"
 
 #include "scene/nshapenode.h"
 #include "scene/nintanimator.h"
 #include "scene/nvectoranimator.h"
+#include "scene/nfloatanimator.h"
 
 // the followings are 3dmax predefined custom attribute.
 #define NUM_PREDEFINED_CA  3
@@ -154,6 +156,26 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     shapeNode->SetFloat(shaderParam, value);
                                 else
                                     n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+
+                                Control* control = pblock2->GetController(paramID);
+                                if (control)
+                                {
+                                    // the parameter was animated.
+                                    nFloatAnimator* animator = 0;
+
+                                    nMaxFloatAnimator floatAnimator;
+                                    animator = static_cast<nFloatAnimator*>(floatAnimator.Export(name, control));
+                                    if (animator)
+                                    {
+                                        // add the animator to the shapenode.
+                                        shapeNode->AddAnimator(animator->GetName());
+
+                                        nKernelServer::Instance()->PopCwd();
+                                    }
+                                    else
+                                        n_maxlog(Error, "Failed to create nFloatAnimator for the parameter %s", name);
+                                }
+
                             }
                             break;
 
@@ -199,7 +221,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         nKernelServer::Instance()->PopCwd();
                                     }
                                     else
-                                        n_maxlog(Error, "Failed to create nIntAnimator %s", animator->GetName());
+                                        n_maxlog(Error, "Failed to create nIntAnimator for the parameter %s", name);
                                 }
                             }
                             break;
