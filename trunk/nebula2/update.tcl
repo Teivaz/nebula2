@@ -147,12 +147,80 @@ proc list_generators {} {
 
 proc select_workspaces {} {
     global data_loaded
+    global wspace
+    global num_wspaces
+    global workspaces
 
     if { $data_loaded == false } {
         load_data
     }
 
-    tk_messageBox -message "This is not yet implemented!" -type ok -icon info
+    if {[winfo exists .workspaces]} {
+        focus .workspaces
+        return
+    }
+    toplevel .workspaces
+    frame .workspaces.f
+    label .workspaces.f.l -text "Available workspaces:\nDouble click for a description" -justify left
+    pack .workspaces.f.l -side top -anchor w
+    frame .workspaces.f.b
+    button .workspaces.f.b.cancel -text "Cancel" \
+        -command { destroy .workspaces }
+    button .workspaces.f.b.accept -text "Select Workspaces" \
+        -command {
+            global workspaces
+            global wspace
+
+            set workspaces {}
+            set active [.workspaces.f.f.list curselection]
+            foreach item $active {
+                lappend workspaces $wspace($item,name)
+            }
+            puts "Workspaces: $workspaces"
+            destroy .workspaces
+        }
+    pack .workspaces.f.b.cancel -side left
+    pack .workspaces.f.b.accept -side right
+    pack .workspaces.f.b -side bottom -anchor e
+    frame .workspaces.f.f
+    listbox .workspaces.f.f.list -yscroll ".workspaces.f.f.scroll set" \
+        -selectmode multiple -width 20
+    scrollbar .workspaces.f.f.scroll -orient vertical \
+        -command ".workspaces.f.f.list yview"
+    pack .workspaces.f.f.scroll -side right -fill y
+    pack .workspaces.f.f.list -side left -fill both
+    pack .workspaces.f.f -side left -fill both -anchor nw
+    message .workspaces.f.description -text "" -width 150 -anchor nw
+    pack  .workspaces.f.description -side right -fill both -anchor nw \
+        -expand 1
+
+    bind .workspaces.f.f.list <Double-Button-1> {
+        global wspace
+        set active [.workspaces.f.f.list index @%x,%y]
+        set description $wspace($active,annotate)
+        if {$description eq ""} {
+            set description "No description provided."
+        }
+        .workspaces.f.description configure -text $description
+    }
+    pack .workspaces.f -fill both -expand 1
+
+    set idx 0
+    set activeIdxList {}
+    for {set i 0} {$i < $num_wspaces} {incr i} {
+        .workspaces.f.f.list insert end $wspace($i,name)
+        if {[lsearch -exact $workspaces $wspace($i,name)] >= 0} {
+            lappend activeIdxList $idx
+        }
+        incr idx
+    }
+    foreach activeIdx $activeIdxList {
+        .workspaces.f.f.list selection set $activeIdx
+        .workspaces.f.f.list activate $activeIdx
+        .workspaces.f.f.list see $activeIdx
+    }
+
+    focus .workspaces
 }
 
 proc select_generator {} {
