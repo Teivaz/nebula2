@@ -46,7 +46,7 @@ nD3D9Server::CloseTextRenderer()
     TextNode* textNode;
     while (textNode = (TextNode*) this->textNodeList.RemHead())
     {
-        n_delete textNode;
+        n_delete(textNode);
     }
 
     if (this->d3dSprite)
@@ -109,7 +109,7 @@ nD3D9Server::DrawTextBuffer()
                 DT_LEFT|DT_NOCLIP|DT_SINGLELINE,
                 D3DCOLOR_COLORVALUE(textNode->color.x, textNode->color.y, textNode->color.z, textNode->color.w));
 
-            n_delete textNode;
+            n_delete(textNode);
         }
         this->d3dSprite->End();
     }
