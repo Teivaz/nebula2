@@ -26,6 +26,7 @@ begintarget nnebula
         nparticle nparticleserver nparticleemitter nparticleshapenode
         nswingshapenode nwindowhandler nwin32windowhandler
         nmousecursor nshaderlist
+        nkeyanimator ntransformcurveanimator nuvanimator
     }
 endtarget
 

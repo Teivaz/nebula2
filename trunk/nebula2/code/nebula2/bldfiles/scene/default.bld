@@ -18,6 +18,9 @@
 #      ntextureanimator
 #      nskinanimator
 #      nskinshapenode
+#      nkeyanimator
+#      ntransformcurveanimator
+#      nuvanimator
 #===============================================================================
 
 #===============================================================================
@@ -112,4 +115,22 @@ beginmodule nskinshapenode
     setdir scene
     setfiles { nskinshapenode_main nskinshapenode_cmds }
     setheaders nskinshapenode
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nkeyanimator
+    setdir scene
+    setfiles { nkeyanimator_main }
+    setheaders nkeyanimator
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntransformcurveanimator
+    setdir scene
+    setfiles { ntransformcurveanimator_main ntransformcurveanimator_cmds }
+    setheaders ntransformcurveanimator
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nuvanimator
+    setdir scene
+    setfiles { nuvanimator_main nuvanimator_cmds }
+    setheaders nuvanimator
 endmodule
