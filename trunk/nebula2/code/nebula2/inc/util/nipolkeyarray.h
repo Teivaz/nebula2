@@ -45,7 +45,7 @@ public:
     }
 
     ///get interpolated key value at time            
-    bool SampleKey(float time, TYPE& result, const nAnimator::LoopType loopType);
+    bool SampleKey(float time, TYPE& result, const nAnimator::LoopType loopType) const;
     
     /// add a key
     void AddKey(float t, const TYPE& key)
@@ -105,7 +105,7 @@ private:
 */
 template<class TYPE>
 inline bool
-nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimator::LoopType loopType)
+nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimator::LoopType loopType) const
 {
     if (keyArray.Size() > 1)
     {
