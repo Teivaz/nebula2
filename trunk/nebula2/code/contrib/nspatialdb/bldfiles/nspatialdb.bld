@@ -16,10 +16,16 @@ beginmodule nspatialsector
         nspatialsector nspatialelements nvisibilityvisitor
         nvisiblefrustumvisitor nvisiblespherevisitor 
         noccludingfrustumvisitor nspatialvisitor 
-	nbboxoccluder nfrustumclipper ngenarrayvisitors
+        nbboxoccluder nfrustumclipper ngenarrayvisitors
         nsphereclipper noccludingspherevisitor
         nspatialvisitor nspatialspherevisitor
     }
+endmodule
+
+beginmodule nscriptablesector
+    setdir spatialdb
+    setfiles { nscriptablesector_main nscriptablesector_cmds }
+    setheaders { nscriptablesector }
 endmodule
 #-----------------------------------------------------------------------------
 beginmodule nsdbviewer
@@ -30,7 +36,7 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget nspatialdb
   	settype lib
-  	setmodules    { nspatialsector }
+  	setmodules    { nspatialsector nscriptablesector }
   	settargetdeps { noctree }
 endtarget
 #-----------------------------------------------------------------------------

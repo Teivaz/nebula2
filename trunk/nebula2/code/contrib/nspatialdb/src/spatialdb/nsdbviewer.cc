@@ -124,7 +124,6 @@ main(int argc, const char** argv)
     viewerApp.SetStageScript(stageArg);
     viewerApp.SetInputScript(inputArg);
 
-
     // open and run viewer
     if (viewerApp.Open())
     {
