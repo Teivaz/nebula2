@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+//  nmaxtransformcurveanimator.cc
+//
+//  (C)2004 Kim, Hyoun Woo
+//-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxcontroller.h"
 #include "export2/nmaxpathcontroller.h"
@@ -5,20 +10,20 @@
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxPathController::nMaxPathController()
+nMaxTransformCurveAnimator::nMaxTransformCurveAnimator()
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxPathController::~nMaxPathController()
+nMaxTransformCurveAnimator::~nMaxTransformCurveAnimator()
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxPathController::Export(Control *control)
+void nMaxTransformCurveAnimator::Export(Control *control)
 {
 }

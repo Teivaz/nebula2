@@ -1,5 +1,5 @@
  //-----------------------------------------------------------------------------
-//  nmaxmaterial.cc
+//  nmaxmaterial_main.cc
 //
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
@@ -12,8 +12,6 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxcontroller.h"
-#include "export2/nmaxpoint3controller.h"
-#include "export2/nmaxfloatcontroller.h"
 
 #include "scene/nshapenode.h"
 
@@ -239,10 +237,11 @@ void nMaxMaterial::SetStatndardNebulaShader(nShapeNode* shapeNode)
 
 //-----------------------------------------------------------------------------
 /**
+    Export shader animations if it exist. (nvectoranimator is created for it)
 */
 void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
 {
-    nMaxFloatController floatCtrl;
+    Control* ctrlAlpha = NULL;
 
     StdMat2* stdMat = static_cast<StdMat2*>(mtl);
 
@@ -250,11 +249,12 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
     pblock = stdMat->GetParamBlockByID(std2_extended);
     if (pblock)
     {
-        // get alpha animation
+        // check that the param block has control for alpha animation.
         Control* control = pblock->GetController(std2_opacity);
         if (control)
         {
-            floatCtrl.Export(control);
+            ctrlAlpha = control;
+
         }
     }
 
@@ -270,27 +270,27 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
     pblock = shader->GetParamBlockByID(shdr_params);
     if (pblock)
     {
-        Control* control;
+        Control* ctrlColor;
 
         // ambient
-        control = pblock->GetController(shdr_ambient);
-        if (control)
+        ctrlColor = pblock->GetController(shdr_ambient);
+        if (ctrlColor)
         {
-            CreateShaderAnim(control, floatCtrl);
+            CreateShaderAnimator(GetShaderParam("MatAmbient"), ctrlColor, ctrlAlpha);
         }
 
         // diffuse
-        control = pblock->GetController(shdr_diffuse);
-        if (control)
+        ctrlColor = pblock->GetController(shdr_diffuse);
+        if (ctrlColor)
         {
-            CreateShaderAnim(control, floatCtrl);
+            CreateShaderAnimator(GetShaderParam("MatDiffuse"), ctrlColor, ctrlAlpha);
         }
 
         // specular
-        control = pblock->GetController(shdr_specular);
-        if (control)
+        ctrlColor = pblock->GetController(shdr_specular);
+        if (ctrlColor)
         {
-            CreateShaderAnim(control, floatCtrl);
+            CreateShaderAnimator(GetShaderParam("MatSpecular"), ctrlColor, ctrlAlpha);
         }
     }
 }
@@ -298,59 +298,55 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxMaterial::CreateShaderAnim(Control* control, nMaxFloatController& alpha)
+void nMaxMaterial::CreateShaderAnimator(nShaderState::Param vectorParameter, 
+                                        Control* ctrlColor, Control* ctrlAlpha)
 {
-    // get color animation
-    nMaxPoint3Controller point3Ctrl;
-    point3Ctrl.Export(control);
+    if (!ctrlColor && !ctrlAlpha)
+        return;
 
-    nArray<nMaxPoint3Controller::SampleKey> colorKeyArray;
-    colorKeyArray = point3Ctrl.GetKeyArray();
-
-    // check that if we have opacity animation
-    int numKeys = point3Ctrl.GetNumKeys();
-    if ( numKeys > 0)
+    if (vectorParameter == nShaderState::InvalidParameter)
     {
-        //FIXME: assume that we have same time values for both of opacity and color.
-        if (numKeys == alpha.GetNumKeys())
-        {
-            nArray<Sample> mergeSample;
-
-            nArray<nMaxFloatController::SampleKey> alphaKeyArray;
-            alphaKeyArray = alpha.GetKeyArray();
-
-            // merge color and alpha values to new sample array.
-            for (int i=0; i<numKeys; i++)
-            {
-                Sample sample;
-                sample.time = colorKeyArray[i].time;
-                
-                vector3 color = colorKeyArray[i].key;
-                float a = alphaKeyArray[i].key;
-
-                sample.key  = vector4(color.x, color.y, color.z, a);
-
-                mergeSample.Append(sample);
-            }
-
-            // create nvectoranimator based on mergedSample
-            //...
-        }
-        else
-        {
-            for (int i=0; i<numKeys; i++)
-            {
-                Sample sample;
-                sample.time = colorKeyArray[i].time;
-
-                vector3 color = colorKeyArray[i].key;
-                sample.key  = vector4(color.x, color.y, color.z, 1.0f);
-             
-                // create nvectoranimator.
-                // ...
-            }
-        }
+        n_maxlog(Error, "Invalid shader parameter for vector animator.");
+        return;
     }
+
+    int numFrames = nMaxInterface::Instance()->GetNumFrames();;
+
+    // retrieves alpha animation
+    nArray<nMaxSampleKey> alphaKeyArray;
+
+    if (ctrlAlpha)
+    {
+        alphaKeyArray.SetFixedSize(numFrames + 1);
+
+        nMaxControl::GetSampledKey(ctrlAlpha, alphaKeyArray, 1, nMaxFloat);
+    }
+
+    // retrieves color animations.
+    nArray<nMaxSampleKey> colorKeyArray;
+    colorKeyArray.SetFixedSize(numFrames + 1);
+
+    nMaxControl::GetSampledKey(ctrlColor, colorKeyArray, 1, nMaxPoint3);
+
+    //FIXME: what happened if color and alpha aniamtion has different time line?
+
+    //
+    //TODO: create nvectoranimator based on mergedSample
+    //...
+
+    // merge color and alpha values to a vector4.
+    for (int i=0; i<numFrames; i++)
+    {
+        nMaxSampleKey colorKey = colorKeyArray[i];
+        nMaxSampleKey alphaKey = alphaKeyArray[i];
+
+        vector4 color;
+        color.x = colorKey.pos.x; // r
+        color.y = colorKey.pos.y; // g
+        color.z = colorKey.pos.z; // b
+        color.w = alphaKey.fVal;  // a
+    }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -372,170 +368,6 @@ int nMaxMaterial::GetNumMaps(StdMat2 *mtl)
     return numMaps;
 }
 
-//-----------------------------------------------------------------------------
-/**
-*/
-/*
-bool nMaxMaterial::HasMultiTexture(StdMat2 *mat)
-{
-    Texmap* tex, *pSubTm;
-    int i;
-
-    //if (!mat->MapEnabled(ID_DI))
-    //    return false ;
-    //tex = (BitmapTex*) mat->GetSubTexmap(ID_DI);
-    //if (!tex)
-    //{
-    //    return false;
-    //}
-    tex = GetSubTexmap(mat, ID_DI);
-    if (NULL == tex)
-        return false;
-
-    // There is a bitmap in the self-illum slot. It should be used as a
-    // dark map
-    Texmap *pSITm = 0;
-
-    //if (mat->MapEnabled(ID_SI))
-    //{
-    //    pSITm = (BitmapTex*) mat->GetSubTexmap(ID_SI);
-    //    if (pSITm && pSITm->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
-    //        pSITm = NULL;
-    //}
-    sSITm = GetSubTexmap(mat, ID_SI);
-
-    //if (pSITm && tex && tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
-    if (pSITm && IsClassID(tex, BMTEX_CLASS_ID))
-        return true;
-
-    // The other types of MultiTexturing
-    //if (tex->ClassID() == Class_ID(MIX_CLASS_ID, 0))
-    if (IsClassID(tex, MIX_CLASS_ID))
-    {
-        Mix *pMix = (Mix *) tex;
-
-        // There is a "Mix" shader in the diffuse slot. It should be
-        // used to set up a decal map
-
-        if (pMix->NumSubTexmaps() != 2 && pMix->NumSubTexmaps() != 3)
-            return false;
-
-        for (i = 0; i < pMix->NumSubTexmaps(); i++)
-        {
-            pSubTm = pMix->GetSubTexmap(i);
-            //if (pSubTm == NULL || pSubTm->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
-            if (!IsClassID(pSubTm, BMTEX_CLASS_ID))
-                return false;
-        }
-
-        return true;
-    }
-    else 
-    //if (tex->ClassID() == Class_ID(COMPOSITE_CLASS_ID, 0))
-    if (IsClassID(tex, COMPOSITE_CLASS_ID))
-    {
-        Composite *pComp = (Composite *) tex;
-
-        // There is a "Composite" shader in the diffuse slot. It 
-        // should be used to set up a glow map.
-
-        if (pComp->NumSubTexmaps() != 2)
-            return false;
-
-        for (i = 0; i < pComp->NumSubTexmaps(); i++)
-        {
-            pSubTm = pComp->GetSubTexmap(i);
-            //if (pSubTm == NULL || pSubTm->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
-            if (!IsClassID(pSubTm, BMTEX_CLASS_ID))
-                return false;
-        }
-
-        return(true);
-    }
-    else 
-    //if (tex->ClassID() == Class_ID(RGBMULT_CLASS_ID, 0))
-    if (IsClassID(tex, RGBMULT_CLASS_ID))
-    {
-        RGBMult *pMult = (RGBMult *) tex;
-
-        // There is an "RGB Mult" shader in the diffuse slot. It should
-        // be used to set up a dark map.
-
-        if (pMult->NumSubTexmaps() != 2)
-            return false;
-
-        for (i = 0; i < pMult->NumSubTexmaps(); i++)
-        {
-            pSubTm = pMult->GetSubTexmap(i);
-            //if (pSubTm == NULL || pSubTm->ClassID() != Class_ID(BMTEX_CLASS_ID, 0))
-            if (!IsClassID(pSubTm, BMTEX_CLASS_ID))
-                return false;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-*/
-//-----------------------------------------------------------------------------
-/*
-CreateAnimator(Control* control, const char* paramName)
-{
-    Class_ID cId;
-    cId = control->ClassID();
-
-    IKeyControl* iKeyCtrl;
-    iKeyCtrl = GetKeyControlInterface(control);
-    if (iKeyCtrl)
-    {
-        if (iKeyCtrl->GetNumKeys() <= 0)
-            return;
-
-        //if (Class_ID(TCBINTERP_POINT3_CLASS_ID) == cId)
-        //{
-        //}
-        //else
-        //if ((Class_ID(HYBRIDINTERP_COLOR_CLASS_ID, 0)) == cId || 
-        //    (Class_ID(HYBRIDINTERP_POINT3_CLASS_ID, 0)) == cId )
-        //{
-        //}
-        //else
-        //{
-        //}
-    }
-    else
-    {
-        // IKeyControl does not exist.
-    }
-
-    return;
-}
-*/
-/*
-//
-(Control* control, )
-{
-    TimeValue time;
-    Point3 value;
-    vector4 key;
-
-    // create a new nVectorAnimator
-    nKernelServer* ks = nKernelServer::Instance();
-    nVectorAnimator* animator = (nVectorAnimator*)ks->New("nvectoranimator",);
-
-    for (i=0, time=; i<numFrames; i++, time += GetTickPerFrame())
-    {
-        control->GetValue(t, &value, range);
-
-        key.x = value.x;
-        key.y = value.y;
-        key.z = value.z;
-        key.w = 0.0f;
-        animator->AddKey(t, key);
-    }
-}
-*/
 //-----------------------------------------------------------------------------
 /**
     Get material type from given max material

@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+//  nmaxikanimator.cc
+//
+//  (C)2004 Kim, Hyoun Woo
+//-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxcontroller.h"
 #include "export2/nmaxprscontroller.h"
@@ -6,20 +11,20 @@
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxIKController::nMaxIKController()
+nMaxIKAnimator::nMaxIKAnimator()
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxIKController::~nMaxIKController()
+nMaxIKAnimator::~nMaxIKAnimator()
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxIKController::Export(INode *inode)
+void nMaxIKAnimator::Export(INode *inode)
 {
 }
