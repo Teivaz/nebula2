@@ -23,6 +23,10 @@ nResourceServer::nResourceServer() :
     this->fontPool    = kernelServer->New("nroot", "/sys/share/rsrc/font");
     this->bundlePool  = kernelServer->New("nroot", "/sys/share/rsrc/bundle");
     this->otherPool   = kernelServer->New("nroot", "/sys/share/rsrc/other");
+
+    this->resourceClass = kernelServer->FindClass("nresource");
+    n_assert(this->resourceClass);
+
     #ifndef __NEBULA_NO_THREADS__
     this->StartLoaderThread();
     #endif
@@ -387,4 +391,42 @@ nResourceServer::RemLoaderJob(nResource* res)
         res->jobNode.Remove();
     }
     this->jobList.Unlock();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Count the number of resources of a given type.
+*/
+int
+nResourceServer::GetNumResources(nResource::Type rsrcType)
+{
+    nRoot* rsrcPool = this->GetResourcePool(rsrcType);
+    n_assert(rsrcPool);
+    nRoot* cur;
+    int num = 0;
+    for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
+    {
+        num++;
+    }
+    return num;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the number of bytes a resource type occupies in RAM.
+*/
+int
+nResourceServer::GetResourceByteSize(nResource::Type rsrcType)
+{
+    nRoot* rsrcPool = this->GetResourcePool(rsrcType);
+    n_assert(rsrcPool);
+    nRoot* cur;
+    int size = 0;
+    for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
+    {
+        n_assert(cur->IsA(this->resourceClass));
+        nResource* res = (nResource*) cur;
+        size += res->GetByteSize();
+    }
+    return size;
 }

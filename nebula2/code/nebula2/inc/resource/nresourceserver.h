@@ -36,6 +36,11 @@ public:
     /// generate a valid resource id from a resource path
     char* GetResourceId(const char* rsrcName, char* buf, int bufSize);
 
+    /// return number of resources of given type
+    int GetNumResources(nResource::Type rsrcType);
+    /// get number of bytes of RAM occupied by resource type
+    int GetResourceByteSize(nResource::Type rsrcType);
+
 protected:
     friend class nResource;
 
@@ -65,6 +70,8 @@ protected:
 
     nThreadSafeList jobList;    // list for outstanding background loader jobs
     nThread* loaderThread;      // background thread for handling async resource loading
+
+    nClass* resourceClass;
 };
 //------------------------------------------------------------------------------
 #endif
