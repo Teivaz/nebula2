@@ -309,7 +309,7 @@ nViewerApp::HandleInput(float frameTime)
         {
             filename = "screenshot";
         }
-        filename.Append(nString(this->screenshotID++));
+        filename.AppendInt(this->screenshotID++);
         filename.Append(".bmp");
 
         this->refGfxServer->SaveScreenshot(filename.Get());

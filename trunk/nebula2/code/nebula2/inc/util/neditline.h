@@ -25,6 +25,10 @@ public:
     void SetOverstrike(bool b);
     /// get overstrike flag
     bool GetOverstrike() const;
+    /// enable/disable filename mode
+    void SetFileMode(bool b);
+    /// get filename mode
+    bool GetFileMode() const;
     /// toggle overstrike flag
     void ToggleOverstrike();
     /// set content
@@ -73,6 +77,7 @@ private:
     char* buffer;
     int cursorPos;
     bool overstrike;
+    bool fileMode;
 };
 
 //------------------------------------------------------------------------------
@@ -83,7 +88,8 @@ nEditLine::nEditLine(int maxChars) :
     bufSize(maxChars),
     buffer(0),
     cursorPos(0),
-    overstrike(false)
+    overstrike(false),
+    fileMode(false)
 {
     this->buffer = new char[maxChars];
     this->buffer[0] = 0;
@@ -127,6 +133,26 @@ bool
 nEditLine::GetOverstrike() const
 {
     return this->overstrike;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nEditLine::SetFileMode(bool b)
+{
+    this->fileMode = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nEditLine::GetFileMode() const
+{
+    return this->fileMode;
 }
 
 //------------------------------------------------------------------------------
@@ -314,10 +340,27 @@ inline
 bool
 nEditLine::IsCharValid(uchar c) const
 {
-    // ä - 228      Ö - 214     ß - 223
-    // Ä - 196      ü - 252
-    // ö - 246      Ü - 220
-    return ((isprint(c) || (c==228) || (c==196) || (c==246) || (c==214) || (c==252) || (c==220) || (c==223)));
+    if (this->fileMode)
+    {
+        // if in file name mode, filter out characters which are invalid for filenames
+        if ((c == '\\') ||
+            (c == '/') ||
+            (c == ':') ||
+            (c == '*') ||
+            (c == '?') ||
+            (c == '\"') ||
+            (c == '<') ||
+            (c == '>') ||
+            (c == '|'))
+        {
+            return false;
+        }
+    }
+    if (c >= 32)
+    {
+        return true;
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------

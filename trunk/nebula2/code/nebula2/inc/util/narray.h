@@ -22,12 +22,18 @@ template<class TYPE> class nArray
 public:
     typedef TYPE* iterator;
 
+    /// behaviour flags
+    enum
+    {
+        DoubleGrowSize = (1<<0),    // when set, grow size doubles each turn
+    };
+
     /// constructor with default parameters
     nArray();
     /// constuctor with initial size and grow size
-    nArray(int initialSize, int grow);
+    nArray(int initialSize, int initialGrow);
     /// constructor with initial size, grow size and initial values
-    nArray(int initialSize, int grow, TYPE initialValue);
+    nArray(int initialSize, int initialGrow, TYPE initialValue);
     /// copy constructor
     nArray(const nArray<TYPE>& rhs);
     /// destructor
@@ -37,14 +43,22 @@ public:
     /// [] operator
     TYPE& operator[](int index) const;
 
+    /// set behaviour flags
+    void SetFlags(int f);
+    /// get behaviour flags
+    int GetFlags() const;
     /// clear contents and set a fixed size
     void SetFixedSize(int size);
     /// push element to back of array
     TYPE& PushBack(const TYPE& elm);
     /// append element to array (synonym for PushBack())
     void Append(const TYPE& elm);
+    /// reserve 'num' elements at end of array and return pointer to first element
+    iterator Reserve(int num);
     /// get number of elements in array
     int Size() const;
+    /// get overall allocated size of array in number of elements
+    int AllocSize() const;
     /// set element at index, grow array if necessary
     TYPE& Set(int index, const TYPE& elm);
     /// return reference to nth element in array
@@ -103,6 +117,7 @@ private:
     int growSize;           // grow by this number of elements if array exhausted
     int allocSize;          // number of elements allocated
     int numElements;        // number of elements in array
+    int flags;
     TYPE* elements;         // pointer to element array
 };
 
@@ -111,11 +126,12 @@ private:
 */
 template<class TYPE>
 nArray<TYPE>::nArray() :
-    growSize(32),
-    allocSize(32),
-    numElements(0)
+    growSize(16),
+    allocSize(0),
+    numElements(0),
+    flags(0)
 {
-    this->elements = new TYPE[this->allocSize];
+    this->elements = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +142,8 @@ template<class TYPE>
 nArray<TYPE>::nArray(int initialSize, int grow) :
     growSize(grow),
     allocSize(initialSize),
-    numElements(0)
+    numElements(0),
+    flags(0)
 {
     n_assert(initialSize >= 0);
     if (initialSize > 0)
@@ -147,7 +164,8 @@ template<class TYPE>
 nArray<TYPE>::nArray(int initialSize, int grow, TYPE initialValue) :
     growSize(grow),
     allocSize(initialSize),
-    numElements(initialSize)
+    numElements(initialSize),
+    flags(0)
 {
     n_assert(initialSize >= 0);
     if (initialSize > 0)
@@ -177,6 +195,7 @@ nArray<TYPE>::Copy(const nArray<TYPE>& src)
     this->growSize    = src.growSize;
     this->allocSize   = src.allocSize;
     this->numElements = src.numElements;
+    this->flags       = src.flags;
     if (this->allocSize > 0)
     {
         this->elements = new TYPE[this->allocSize];
@@ -198,6 +217,7 @@ nArray<TYPE>::Delete()
     this->growSize = 0;
     this->allocSize = 0;
     this->numElements = 0;
+    this->flags = 0;
     if (this->elements)
     {
         delete[] this->elements;
@@ -223,7 +243,8 @@ nArray<TYPE>::nArray(const nArray<TYPE>& rhs) :
     growSize(0),
     allocSize(0),
     numElements(0),
-    elements(0)
+    elements(0),
+    flags(0)
 {
     this->Copy(rhs);
 }
@@ -235,6 +256,26 @@ template<class TYPE>
 nArray<TYPE>::~nArray()
 {
     this->Delete();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
+nArray<TYPE>::SetFlags(int f)
+{
+    this->flags = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+int
+nArray<TYPE>::GetFlags() const
+{
+    return this->flags;
 }
 
 //------------------------------------------------------------------------------
@@ -317,7 +358,25 @@ void
 nArray<TYPE>::Grow()
 {
     n_assert(this->growSize > 0);
-    this->GrowTo(this->allocSize + this->growSize);
+    int growToSize;
+    if ((DoubleGrowSize & this->flags) != 0)
+    {
+        // double growth behaviour
+        if (0 == this->allocSize)
+        {
+            growToSize = growSize;
+        }
+        else
+        {
+            growToSize = 2 * this->allocSize;
+        }
+    }
+    else
+    {
+        // classic linear growth behaviour
+        growToSize = this->allocSize + this->growSize;
+    }
+    this->GrowTo(growToSize);
 }
 
 //------------------------------------------------------------------------------
@@ -445,6 +504,28 @@ nArray<TYPE>::Append(const TYPE& elm)
 
 //------------------------------------------------------------------------------
 /**
+    Make room for N new elements at the end of the array, and return a pointer 
+    to the start of the reserved area. This can be (carefully!) used as a fast 
+    shortcut to fill the array directly with data.
+*/
+template<class TYPE>
+typename nArray<TYPE>::iterator
+nArray<TYPE>::Reserve(int num)
+{
+    n_assert(num > 0);
+    int maxElement = this->numElements + num;
+    while (maxElement >= this->allocSize)
+    {
+        this->Grow();
+    }
+    n_assert(this->elements);
+    iterator iter = this->elements + this->numElements;
+    this->numElements += num;
+    return iter;
+}
+
+//------------------------------------------------------------------------------
+/**
     This will check if the provided index is in the valid range. If it is
     not the array will be grown to that index.
 */
@@ -486,6 +567,16 @@ int
 nArray<TYPE>::Size() const
 {
     return this->numElements;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+int
+nArray<TYPE>::AllocSize() const
+{
+    return this->allocSize;
 }
 
 //------------------------------------------------------------------------------
@@ -621,7 +712,7 @@ template<class TYPE>
 void
 nArray<TYPE>::Insert(int index, const TYPE& elm)
 {
-    n_assert(this->elements && (index >= 0) && (index <= this->numElements));
+    n_assert((index >= 0) && (index <= this->numElements));
     if (index == this->numElements)
     {
         // special case: append element to back
@@ -688,8 +779,8 @@ nArray<TYPE>::End() const
     Find element in array, return iterator, or 0 if element not
     found.
 
-    @param elm          element to find
-    @return             element iterator, or 0 if not found
+    @param  elm     element to find
+    @return         element iterator, or 0 if not found
 */
 template<class TYPE>
 typename nArray<TYPE>::iterator
