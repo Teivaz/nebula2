@@ -143,8 +143,8 @@ ifeq ($(N_COMPILER),__GNUC__)
     CXX       = c++
     CC        = c++ -x c
   else
-    CXX       = g++-3.0
-    CC        = gcc-3.0 -x c
+    CXX       = g++
+    CC        = gcc -x c
   endif
   TCL         = tclsh
   AR          = ar
