@@ -57,6 +57,12 @@ beginmodule nd3d9font
     setheaders { nd3d9font }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nd3d9surface
+    setdir gfx2
+    setfiles   { nd3d9surface }
+    setheaders { nd3d9surface }
+endmodule
+#-------------------------------------------------------------------------------
 
 #===============================================================================
 #  n2apps Targets
@@ -64,7 +70,7 @@ endmodule
 begintarget ndirect3d9
     settype lib
     setmodules {
-        nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font
+        nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font nd3d9surface
     }
 endtarget
 #-------------------------------------------------------------------------------
