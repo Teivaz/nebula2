@@ -18,10 +18,10 @@ beginmodule nsceneserver
     setheaders { nsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nmrtsceneserver
+beginmodule nstdsceneserver
     setdir scene
-    setfiles { nmrtsceneserver_main nmrtsceneserver_emissive }
-    setheaders { nmrtsceneserver }
+    setfiles { nstdsceneserver_main }
+    setheaders { nstdsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nscenenode
@@ -213,7 +213,7 @@ begintarget nnebula
         nbinscriptserver ntclserver nnpkfileserver nvariableserver 
         ninputserver nresourceserver nresource nntxfile nmesh2 
         ntexture2 nshader2 ngfxserver2
-        nsceneserver nmrtsceneserver 
+        nsceneserver nstdsceneserver 
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
         ntransformanimator nskinanimator nskinshapenode

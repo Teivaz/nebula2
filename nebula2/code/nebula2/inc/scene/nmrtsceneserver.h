@@ -3,13 +3,12 @@
 //------------------------------------------------------------------------------
 /**
     @class nMTRSceneServer
-    @ingroup NebulaSceneSystemServers
 
     "Multiple Render Target" scene server, spreads rendering across various
     specialized offscreen buffers, which are combined to the final result
     by specific "compositing" pixel shaders.
 
-    *** EXPERIMENTAL ***
+    *** EXPERIMENTAL AND UNFINISHED ***
     
     (C) 2003 RadonLabs GmbH
 */
