@@ -98,7 +98,7 @@ nOpenALResource::LoadResource()
     {
         if (alIsExtensionPresent((ALubyte *)"AL_EXT_vorbis") == AL_FALSE)
         {
-            n_message( "error No supported vorbis\n" );
+            n_message( "Error: vorbis not supported\n" );
             return false;
         }
 
@@ -137,7 +137,7 @@ nOpenALResource::LoadResource()
     }
     else
     {
-        n_message( "unsurpported format\n" );
+        n_message( "Unknown format: '%s'\n", dstFileName.GetExtension() );
         return false;
     }
 #endif
