@@ -71,6 +71,9 @@ PhysDemoApp::Open()
     // Create the contact joint group and array (and set some values for the contact joints, since in this sim, every surface is treated identically)
     this->physColJointGroupId = nOpende::JointGroupCreate(0);
     this->physContactArray = new dContact[3];
+    this->physContactArray[0].surface.mode = dContactApprox1;
+    this->physContactArray[1].surface.mode = dContactApprox1;
+    this->physContactArray[2].surface.mode = dContactApprox1;
     this->physContactArray[0].surface.mu = dInfinity / 2.0f;
     this->physContactArray[1].surface.mu = dInfinity / 2.0f;
     this->physContactArray[2].surface.mu = dInfinity / 2.0f;
@@ -823,7 +826,7 @@ PhysDemoApp::DestroyObject(int objID)
 /**
     Collision resolution callback
 */
-void __cdecl PhysDemoApp::PhysCollisionCallback(void *data, dGeomID o1, dGeomID o2)
+void PhysDemoApp::PhysCollisionCallback(void *data, dGeomID o1, dGeomID o2)
 {
     PhysDemoApp *app = (PhysDemoApp *)data;
     int numContacts = nOpende::Collide(o1, o2, 3, &app->physContactArray[0].geom, sizeof(dContact));
