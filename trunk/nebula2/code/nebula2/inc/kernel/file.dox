@@ -9,12 +9,13 @@
      - a fileserver object encapsulates the host filesystem.
      - completely removes differences between Windows, Linux or XBox filesystem.
      - OOP concepts <br>
-       File and Directory as comfortable C++ classes.
+       File and Directory as comfortable C++ classes (nFile, nDirectory).
      - support platform specific service. <br>
-       Nebula uses Win32 file routines under Windows not the ANSI-C file 
-       routines.(CreateFile(), WriteFile(), ReadFile etc.)
+       Nebula uses Win32 file routines under Windows not the ANSI C file 
+       routines. (@c CreateFile(), @c WriteFile(), @c ReadFile() etc.)
      - offers 'Directory Assigns'
-       - Use @c textures:image.dds instead of @c c:\program files\...\textures\image.dds
+       - Use <tt>textures:image.dds</tt> instead of
+         <tt>c:\\program files\\...\\textures\\image.dds</tt>
        - Let Nebula convert it to the absolute path.
        - This is inspired by AmigaOS.
 

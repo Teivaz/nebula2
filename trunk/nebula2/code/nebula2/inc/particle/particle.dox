@@ -36,10 +36,9 @@
     emission and 1.0 at the end of the emission time. They will loop if loop is 
     set to true. 
 
-    @Note 
-    The particle life time should never be less than 0.0, be careful when using 
-    waves to make sure that the amplitude is always >= to the lowest key frame 
-    value. 
+    @note The particle life time should never be less than 0.0, be careful
+    when using waves to make sure that the amplitude is always >= to the
+    lowest key frame value. 
   
 @verbatim
     .setemissionfrequency 

@@ -28,7 +28,7 @@
     on your system. <br>
       -# Run update.tcl to generate workspace.
       -# Ensure that the path of 3dsmax SDK is on your project path.
-      -# Build the package and copy it to '$3dsmax\plugins' directory.
+      -# Build the package and copy it to <tt>$3dsmax\\plugins</tt> directory.
       -# Run 3dsmax.
 
     A sample maxscript file is provided with this package.     
