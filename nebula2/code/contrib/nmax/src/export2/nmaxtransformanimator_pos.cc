@@ -37,15 +37,15 @@ void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator*
             switch(type)
             {
             case nMaxControl::TCBPosition:
-                ExportTCBPosition(iKeyControl, numKeys);
+                ExportTCBPosition(iKeyControl, numKeys, animator);
                 break;
 
             case nMaxControl::HybridPosition:
-                ExportHybridPosition(iKeyControl, numKeys);
+                ExportHybridPosition(iKeyControl, numKeys, animator);
                 break;
 
             case nMaxControl::LinearPosition:
-                ExportLinearPosition(iKeyControl, numKeys);
+                ExportLinearPosition(iKeyControl, numKeys, animator);
                 break;
 
             default:
@@ -86,9 +86,10 @@ void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator*
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys)
+void nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys, 
+                                              nTransformAnimator* animator)
 {
-    //for (i=0; i<numKeys; i++)
+    //for (int i=0; i<numKeys; i++)
     //{
     //    ITCBPoint3Key key;
     //    ikc->GetKey(i, &key);
@@ -100,9 +101,10 @@ void nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys)
+void nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys, 
+                                                 nTransformAnimator* animator)
 {
-    //for (i=0; i<numKeys; i++)
+    //for (int i=0; i<numKeys; i++)
     //{
     //    IBezPoint3Key key;
     //    ikc->GetKey(i, &key);
@@ -114,13 +116,21 @@ void nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys)
+void nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
+                                                 nTransformAnimator* animator)
 {
-    //for (i=0; i<numKeys; i++)
-    //{
-    //    ILinPoint3Key key;
-    //    ikc->GetKey(i, &key);
-    //}
+    for (int i=0; i<numKeys; i++)
+    {
+        ILinPoint3Key key;
+        ikc->GetKey(i, &key);
+
+        vector3 pos;
+        pos.x = -(key.val.x);
+        pos.y = key.val.z;
+        pos.z = key.val.y;
+
+        animator->AddPosKey(key.time * SECONDSPERTICK, pos);
+    }
 
     n_maxlog(Warning, "The 'LinearPosition' type of control is not supported.");
 }
