@@ -337,6 +337,10 @@ nConServer::EditInsertChar(char c)
     if (this->overstrike)
     {
         // overstrike mode
+        if ((0 == this->inputBuffer[this->cursorPos]) && (this->cursorPos < (inputBufferSize - 1)))
+        {
+            this->inputBuffer[this->cursorPos + 1] = 0;
+        }
         this->inputBuffer[this->cursorPos] = c;
     }
     else
@@ -352,6 +356,7 @@ nConServer::EditInsertChar(char c)
     if (this->cursorPos >= inputBufferSize)
     {
         this->cursorPos = inputBufferSize - 1;
+        this->inputBuffer[this->cursorPos] = 0;
     }
 }
 
