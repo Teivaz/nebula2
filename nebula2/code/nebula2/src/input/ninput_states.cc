@@ -29,7 +29,7 @@ nInputServer::AddInputState(const char *n)
     kernelServer->New("nroot",o_name);
 
     // create and link input state object
-    nInputState *is = new nInputState(n);
+    nInputState *is = n_new(nInputState(n));
     this->is_list.AddTail(is);
     return is;
 }
@@ -145,12 +145,12 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
         }
 
         // create and link input mapping object...
-        im = new nInputMapping(this,
-                               imName,
-                               ie,
-                               this->long_pressed_time,
-                               this->double_click_time,
-                               mod_flags);
+        im = n_new(nInputMapping(this,
+                                 imName,
+                                 ie,
+                                 this->long_pressed_time,
+                                 this->double_click_time,
+                                 mod_flags));
         this->im_list.AddTail(im);
     }
 
@@ -191,7 +191,7 @@ nInputServer::EndMap(void)
         if (im->GetKillMe()) 
         {
             im->Remove();
-            delete im;
+            n_delete(im);
         }
     } while ((im = next_im));
 

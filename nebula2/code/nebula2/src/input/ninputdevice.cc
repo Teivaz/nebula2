@@ -34,7 +34,7 @@ nInputDevice::~nInputDevice()
 {
     if (this->valueStore)
     {
-        delete[] this->valueStore;
+        n_delete_array(this->valueStore);
         this->valueStore = 0;
     }
 }
@@ -298,7 +298,7 @@ nInputDevice::SetStoreSize(int s)
 {
     n_assert(s > 0);
     n_assert(0 == this->valueStore);
-    this->valueStore = new float[s];
+    this->valueStore = n_new_array(float,s);
     this->numValues = s;
     int i;
     for (i = 0; i < s; i++)
