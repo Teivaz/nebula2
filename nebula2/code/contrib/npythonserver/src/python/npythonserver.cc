@@ -104,7 +104,6 @@ void initnpython()
 
     CreatedObjectsList_weakref_callback_ = PyDict_GetItemString(d, "__CreatedObjectsList_weakref_callback__");
 
-
     gd = PyDict_New();
     CreatedObjectsList_ = gd;
     PyModule_AddObject(m, "__created_objects__", gd);
@@ -114,20 +113,24 @@ void initnpython()
     
 
     // If Python is calling this function as part of an import
-    if (!nPythonServer::Instance) {
-      nPythonServer::kernelServer = new nKernelServer();
-      n_assert(nPythonServer::kernelServer);
+    if (!nPythonServer::Instance) 
+    {
+        nPythonServer::kernelServer = new nKernelServer();
+        n_assert(nPythonServer::kernelServer);
 
-      nPythonServer *ps = (nPythonServer *) nPythonServer::kernelServer->Lookup("/sys/servers/script");
-      if (!ps) {
-        ps = (nPythonServer *) nPythonServer::kernelServer->New("npythonserver","/sys/servers/script");
-        n_assert(ps);
-        nPythonServer::Instance = ps;
-      }
-      nPythonServer::Instance->is_standalone_python = false;
+        nPythonServer *ps = (nPythonServer *) nPythonServer::kernelServer->Lookup("/sys/servers/script");
+        if (!ps) 
+        {
+            ps = (nPythonServer *) nPythonServer::kernelServer->New("npythonserver","/sys/servers/script");
+            n_assert(ps);
+            nPythonServer::Instance = ps;
+        }
+        nPythonServer::Instance->is_standalone_python = false;
     }
     else
-      nPythonServer::Instance->is_standalone_python = true;
+    {
+        nPythonServer::Instance->is_standalone_python = true;
+    }
 }
 
 
@@ -140,12 +143,11 @@ nNebulaClass(nPythonServer, "nscriptserver");
 
 //--------------------------------------------------------------------
 /**
+    Constructor.
     Initialize Python interpreter
 */
-nPythonServer::nPythonServer() :
-    refFileServer("/sys/servers/file2")
+nPythonServer::nPythonServer() 
 {
-    //this->refFileServer        = "/sys/servers/file2";
     this->indent_level         = 0;
     this->indent_buf[0]        = 0;
 
@@ -158,11 +160,11 @@ nPythonServer::nPythonServer() :
     // Test to see if we are running inside an existing Python interpreter
     if (!Py_IsInitialized())
     {
-      // setup interpreter
-      Py_Initialize();
+        // setup interpreter
+        Py_Initialize();
 
-      // Explicitly initialize Nebula extensions
-      initnpython();
+        // Explicitly initialize Nebula extensions
+        initnpython();
     }
 
     // Store a handy reference to the nebula module
@@ -185,12 +187,11 @@ nPythonServer::nPythonServer() :
                        "sys.stdout = nwriter()\n"
                        "sys.stderr = nwriter()\n"
                       );
-
-
 }
 
 //--------------------------------------------------------------------
 /**
+    Destructor.
     Shutdown Python interpreter
 */
 nPythonServer::~nPythonServer()
@@ -204,7 +205,9 @@ nPythonServer::~nPythonServer()
     this->callback    = NULL;
 
     if (is_standalone_python)
-      Py_Finalize();
+    {
+        Py_Finalize();
+    }
 }
 
 
@@ -220,7 +223,7 @@ nPythonServer::BeginWrite(const char* filename, nRoot* obj)
 
     this->indent_level = 0;
 
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "w"))
     {
@@ -230,15 +233,12 @@ nPythonServer::BeginWrite(const char* filename, nRoot* obj)
         file->PutS("# ---\n");
         file->PutS(buf);
         file->PutS("# ---\n");
-
-		file->PutS("\n__NDobj = sel('.')\n");
-
+        file->PutS("\n__NDobj = sel('.')\n");
         return file;
     }
     else
     {
         n_printf("nPythonServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        //delete file;
         file->Release();
         return 0;
     }
@@ -253,12 +253,11 @@ nPythonServer::EndWrite(nFile* file)
 {
     n_assert(file);
 
-	file->PutS("del __NDobj\n\n");
+    file->PutS("del __NDobj\n\n");
     file->PutS("# ---\n");
     file->PutS("# Eof\n");
 
     file->Close();
-    //delete file;
     file->Release();
     return (this->indent_level == 0);
 }
@@ -298,16 +297,14 @@ bool nPythonServer::WriteComment(nFile *file, const char *str)
 */
 void nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
 {
-    switch (this->GetSelectMethod()) {
-
+    switch (this->GetSelectMethod())
+    {
         case SELCOMMAND:
             // get relative path from owner to o and write select statement
-            char relpath[N_MAXPATH];
             _indent(++this->indent_level, this->indent_buf);
-            owner->GetRelPath(o, relpath, sizeof(relpath));
             file->PutS(this->indent_buf);
             file->PutS("__NDobj = sel('");
-            file->PutS(relpath);
+            file->PutS(owner->GetRelPath(o).Get());
             file->PutS("')\n");
             break;
 
@@ -382,12 +379,10 @@ bool nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
     n_assert(o);
 
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
     _indent(--this->indent_level, this->indent_buf);
-    o->GetRelPath(owner, relpath, sizeof(relpath));
     file->PutS(this->indent_buf);
     file->PutS("__NDobj = sel('");
-    file->PutS(relpath);
+    file->PutS(o->GetRelPath(owner).Get());
     file->PutS("')\n");
 
     return true;
@@ -415,12 +410,12 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
     ushort bufLen;
 
     int i;
-    for (i=0; i<num_args; i++) {
-
+    for (i=0; i<num_args; i++)
+    {
         arg=cmd->In();
 
-        switch(arg->GetType()) {
-
+        switch(arg->GetType())
+        {
             case nArg::Type::Int:
                 sprintf(buf,"%d",arg->GetI());
                 break;
@@ -462,10 +457,13 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
             case nArg::Type::Object:
                 {
                     nRoot *o = (nRoot *) arg->GetO();
-                    if (o) {
+                    if (o)
+                    {
                         char buf[N_MAXPATH];
-                        sprintf(buf, "'%s'", o->GetFullName(buf, sizeof(buf)));
-                    } else {
+                        sprintf(buf, "'%s'", o->GetFullName().Get());
+                    }
+                    else
+                    {
                         sprintf(buf, " null");
                     }
                 }
@@ -477,11 +475,13 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
         }
         file->PutS(buf);
         if (i < (num_args-1))
-          file->PutS(", ");
-     }
-     file->PutS(")");
+        {
+            file->PutS(", ");
+        }
+    }
+    file->PutS(")");
 
-     return file->PutS("\n");
+    return file->PutS("\n");
 }
 //--------------------------------------------------------------------
 //  EOF
