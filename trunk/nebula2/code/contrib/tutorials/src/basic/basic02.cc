@@ -5,9 +5,27 @@
     
     @brief Basic Example 02 - Opening a graphics window.
     
-    This example opens a graphics window and clears it to a particular colour.
-    In order to open a window we need to do quite a lot more than the previous
-    example. 
+    This example opens a graphics window and clears it to a particular 
+    colour. In order to open a window we need to do quite a lot more 
+    than the previous example. 
+    
+    The main class we need to deal with is nGfxServer2, this is the base 
+    class for all the graphics implementations. Unlike the kernel server 
+    all other servers have to be created through the kernel server, this 
+    is true for any nRoot derived class and servers are always derived 
+    from nRoot. In order to be able to create a server, or other nRoot 
+    derived object, we have to first ensure that it has been registered 
+    with the kernel server; this is done by adding packages. The base 
+    gfx classes are contained in the nnebula package and the D3D9 based 
+    graphics server is in the ndirect3d9 package. See @ref 
+    Nebula2Packages to see the other packages. There are two steps to 
+    adding a package, the first is to declare which packages we are 
+    using, and then after creating the kernel server we have to add the 
+    packages.
+    
+    The graphics server can now be created via nKernelServer::New(). It 
+    is also necessary to add a resource server (nResourceServer) as the 
+    graphics server expects one to be available.
 */
 
 #include "kernel/nkernelserver.h"
@@ -15,6 +33,7 @@
 #include "resource/nresourceserver.h"
 #include "gfx2/ngfxserver2.h"
 
+// declare packages
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndirect3d9);
 
