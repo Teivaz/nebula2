@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nShapeNode
 //------------------------------------------------------------------------------
 //  nshapenode_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -13,9 +12,7 @@ nNebulaScriptClass(nShapeNode, "nmaterialnode");
 /**
 */
 nShapeNode::nShapeNode() :
-    groupIndex(0),
-    meshUsage(nMesh2::WriteOnce),
-    renderWireframe(false)
+    groupIndex(0)
 {
     // empty
 }
@@ -26,6 +23,20 @@ nShapeNode::nShapeNode() :
 nShapeNode::~nShapeNode()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nShapeNode::GetMeshUsage() const
+{
+    return nMesh2::WriteOnce;
 }
 
 //------------------------------------------------------------------------------
@@ -52,12 +63,27 @@ nShapeNode::LoadMesh()
 {
     if ((!this->refMesh.isvalid()) && (!this->meshName.IsEmpty()))
     {
+        //get a mesh, maybe reuse an existing one.
         nMesh2* mesh = this->refGfxServer->NewMesh(this->meshName.Get());
-        n_assert(mesh);
+        n_assert(mesh);        
+        
+        if (mesh->IsValid())
+        {
+            //if we got a mesh, validate that we can reuse it
+            if (mesh->GetUsage() != this->GetMeshUsage())
+            {
+                nString resourceName = this->meshName.Get();
+                resourceName += "_"; resourceName += this->GetMeshUsage();
+                //if the usage is not equal create a usage type specific one
+                mesh = this->refGfxServer->NewMesh(resourceName.Get());
+                n_assert(mesh);
+            }
+        }
+        
         if (!mesh->IsValid())
         {
             mesh->SetFilename(this->meshName.Get());
-            mesh->SetUsage(this->meshUsage);
+            mesh->SetUsage(this->GetMeshUsage());
 
             if (refMeshResourceLoader.isvalid())
             {
@@ -72,6 +98,7 @@ nShapeNode::LoadMesh()
             }
         }
         this->refMesh = mesh;
+        this->SetLocalBox(this->refMesh->GetGroup(this->groupIndex).GetBoundingBox());
     }
     return true;
 }
@@ -104,20 +131,6 @@ nShapeNode::UnloadResources()
 
 //------------------------------------------------------------------------------
 /**
-    Check if resources are valid.
-*/
-bool
-nShapeNode::AreResourcesValid() const
-{
-    if (nMaterialNode::AreResourcesValid())
-    {
-        return this->refMesh.isvalid();
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
     Indicate to scene server that we provide geometry
 */
 bool
@@ -129,9 +142,9 @@ nShapeNode::HasGeometry() const
 //------------------------------------------------------------------------------
 /**
     Update geometry, set as current mesh in the gfx server and
-    call nGfxServer2::Draw().
+    call nGfxServer2::DrawIndexed().
 */
-void
+bool
 nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     n_assert(sceneServer);
@@ -145,23 +158,17 @@ nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
     {
         this->LoadResources();
     }
+    n_assert(this->refMesh->IsValid());
 
-    if (this->renderWireframe)
-    {
-        // render the mesh in wireframe mode
-        this->refMesh->RenderWireframe(gfx, this->refVariableServer.get(), "shaders:wireframe.fx", this->groupIndex);
-    }
-    else
-    {
-        // render the mesh in normal mode (always at stream 0)
-        gfx->SetMesh(0, this->refMesh.get());
+    // render the mesh in normal mode (always at stream 0)
+    gfx->SetMesh(0, this->refMesh.get());
 
-        // set the vertex and index range
-        const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
-        gfx->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
-        gfx->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
-        gfx->Draw();
-    }
+    // set the vertex and index range
+    const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
+    gfx->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
+    gfx->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
+    gfx->DrawIndexed(TriangleList);
+    return true;
 }
 
 //------------------------------------------------------------------------------

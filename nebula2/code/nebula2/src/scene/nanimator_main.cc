@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nAnimator
 //------------------------------------------------------------------------------
 //  nanimator_main.cc
 //  (C) 2003 RadonLabs GmbH

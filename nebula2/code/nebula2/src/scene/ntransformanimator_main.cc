@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nTransformAnimator
 //------------------------------------------------------------------------------
 //  ntransformanimator_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -102,7 +101,7 @@ nTransformAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::INVALID_HANDLE != this->channelVarHandle);
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     // FIXME: dirty cast, make sure that it is a nTransformNode
     nTransformNode* targetNode = (nTransformNode*) sceneNode;
