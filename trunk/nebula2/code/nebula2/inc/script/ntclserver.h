@@ -31,7 +31,7 @@ public:
     virtual bool RunScript(const char *, const char*&);
 
     /// write header of a persistent object file
-    virtual nFile* BeginWrite(const char* filename, nRoot* obj);
+    virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// begin a new object in a persistent object file
     virtual bool WriteBeginNewObject(nFile*, nRoot *, nRoot *);
     /// begin a new object with custom constructor

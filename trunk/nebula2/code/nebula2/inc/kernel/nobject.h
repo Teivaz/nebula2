@@ -44,10 +44,17 @@ public:
     /// get instance size
     virtual int GetInstanceSize() const;
         
+    /// save object under different name
+    virtual bool SaveAs(const char* name);
+    /// create new object as clone of this object
+    virtual nObject *Clone(const char *unused = 0);
+        
     /// get pointer to my class object
     nClass *GetClass() const;
     /// return true if part of class hierarchy
     bool IsA(nClass *) const;
+    /// return true if part of class herarchy
+    bool IsA(const char *) const;
     /// return true instance of class
     bool IsInstanceOf(nClass *) const; 
 

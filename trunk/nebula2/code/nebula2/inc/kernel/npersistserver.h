@@ -83,46 +83,48 @@ public:
     /// get the script server class which is currently used for saving
     nString GetSaverClass();
     /// begin a persistent object
-    bool BeginObject(nRoot *, const char *);
+    bool BeginObject(nObject *, const char *, bool);
     /// begin a persistent object with constructor command
     bool BeginObjectWithCmd(nRoot *, nCmd *, const char *);
     /// create a nCmd object
-    nCmd *GetCmd(nRoot *, nFourCC id);
+    nCmd *GetCmd(nObject *, nFourCC id);
     /// put a cmd into persistency stream
     bool PutCmd(nCmd *);
     /// put a cmd into persistency stream if savelevel permits
     bool PutCmd(int, nCmd *);
     /// finish a persistent object
-    bool EndObject(void);
+    bool EndObject(bool);
     /// return cloned object
-    nRoot *GetClone(void);
+    nObject *GetClone(void);
     /// load a object from persistency stream
-    nRoot *LoadObject(const char *fileName, const char* objName);
+    nObject *LoadObject(const char *fileName, const char* objName);
 
 private:   
     /// internal
-    bool BeginFoldedObject(nRoot *obj, nCmd *, const char *name, bool sel_only);
+    bool BeginFoldedObject(nObject *obj, nCmd *, const char *name, bool sel_only, 
+                           bool isObjNamed);
     /// internal
-    bool BeginCloneObject(nRoot *obj, const char *name);
+    bool BeginCloneObject(nObject *obj, const char *name, bool isObjNamed);
     /// internal
-    bool EndFoldedObject(void);
+    bool EndFoldedObject(bool);
     /// internal
-    bool EndCloneObject(void);
+    bool EndCloneObject(bool);
     /// internal
-    nRoot *LoadFoldedObject(const char *fname, const char *obj_name);
+    nObject* LoadFoldedObject(const char *fname, const char *objName,
+                              const char *parser, const char *objClass);
     /// internal
     char *ReadEmbeddedString(const char *fname, const char *keyword, char *buf, int buf_size);
     /// internal
-    nFile * PutFoldedObjectHeader(nScriptServer *saver, const char *fname, nRoot* obj);
+    nFile * PutFoldedObjectHeader(nScriptServer *saver, const char *fname, nObject* obj);
     /// get a valid loader script server from class name
     nScriptServer* GetLoader(const char* loaderClass);
 
     nDynAutoRef<nScriptServer> refSaver;
     nFile *file;
-    nStack<nRoot*> objectStack;
+    nStack<nObject*> objectStack;
     nSaveMode saveMode;     
     
-    nRoot *cloneTarget;
+    nObject *cloneTarget;
     nRoot *origCwd;
 
     int saveLevel;

@@ -7,6 +7,8 @@
 #include "kernel/nobject.h"
 #include "kernel/nref.h"
 
+static void n_saveas(void *, nCmd *);
+static void n_clone(void *, nCmd *);
 static void n_getrefcount(void *, nCmd *);
 static void n_getclass(void *, nCmd *);
 static void n_isa(void *, nCmd *);
@@ -36,6 +38,8 @@ static void n_getinstancesize(void*, nCmd*);
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
+    cl->AddCmd("b_saveas_s",            'SVAS', n_saveas);
+    cl->AddCmd("o_clone_s",             'CLON', n_clone);
     cl->AddCmd("i_getrefcount_v",       'GRCT', n_getrefcount);
     cl->AddCmd("s_getclass_v",          'GCLS', n_getclass);
     cl->AddCmd("b_isa_s",               'ISA_', n_isa);
@@ -43,6 +47,51 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("l_getcmds_v",           'GMCD', n_getcmds);
     cl->AddCmd("i_getinstancesize_v",   'GISZ', n_getinstancesize);
     cl->EndCmds();
+}
+
+//-------------------------------------------------------------------
+/**
+    @cmd
+    saveas
+
+    @input
+    s (Name)
+
+    @output
+    b (Success)
+
+    @info
+    Save the object under a given name into a file.
+*/
+static void n_saveas(void *o, nCmd *cmd)
+{
+    nObject *self = (nObject *) o;
+    cmd->Out()->SetB(self->SaveAs(cmd->In()->GetS()));
+}
+
+//-------------------------------------------------------------------
+/**
+    @cmd
+    clone
+
+    @input
+    s (CloneName)
+
+    @output
+    o (CloneHandle)
+
+    @info
+    Creates a clone of this object.
+    - If the object's class hierarchy doesn't contain nroot then 
+    'CloneName' is ignored. Otherwise 'CloneName' is the name given
+    to the new cloned object.
+    - If the original object has child objects, they will be cloned 
+    as well.
+*/
+static void n_clone(void *o, nCmd *cmd)
+{
+    nObject *self = (nObject *) o;
+    cmd->Out()->SetO(self->Clone(cmd->In()->GetS()));
 }
 
 //-------------------------------------------------------------------

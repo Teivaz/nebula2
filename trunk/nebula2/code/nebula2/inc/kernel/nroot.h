@@ -58,12 +58,13 @@ public:
     void LockMutex();
     /// unlock the object's main mutex
     void UnlockMutex();
+    
     /// save object to persistency stream
     bool Save();
     /// save object under different name
-    bool SaveAs(const char* name);
+    virtual bool SaveAs(const char* name);
     /// create new object as clone of this object
-    nRoot *Clone(const char *name);
+    virtual nObject *Clone(const char *name);
 
     /// set name of object
     void SetName(const char *str);

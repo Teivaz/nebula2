@@ -29,10 +29,11 @@ nBinScriptServer::~nBinScriptServer()
 /**
     Begin writing a persistent object.
 
-    27-Feb-04   Johannes    added for nMax: check for already existing file and delete before creating the new
+    27-Feb-04   Johannes    added for nMax: check for already existing file and 
+                            delete before creating the new
 */
 nFile*
-nBinScriptServer::BeginWrite(const char* filename, nRoot* obj)
+nBinScriptServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
     n_assert(obj);
@@ -170,7 +171,7 @@ nBinScriptServer::WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, nScriptServ
                 this->PutInt(file, '_sel');
                 this->PutString(file, relPath.Get());
             }
-	        break;
+            break;
 
         case NOSELCOMMAND:
             break;
@@ -681,7 +682,9 @@ nBinScriptServer::ReadBlock(nFile* file)
     else
     {
         // this is a normal cmd
-        nRoot* obj = kernelServer->GetCwd();
+        nObject* obj = nScriptServer::GetCurrentTargetObject(); // use the current nObject if one is set
+        if (!obj)
+            obj = nKernelServer::Instance()->GetCwd(); // otherwise use the current nRoot
         n_assert(obj);
         nClass* objClass = obj->GetClass();
         nCmdProto* cmdProto = objClass->FindCmdById(fourcc);
@@ -702,8 +705,19 @@ nBinScriptServer::ReadBlock(nFile* file)
             bool success = obj->Dispatch(cmd);
             if (!success)
             {
-                n_printf("nBinScriptServer::ReadBlock(): obj '%s' doesn't accept cmd '%s'\n", 
-                    obj->GetFullName().Get(), cmdProto->GetName());
+                if (obj->IsA("nroot"))
+                {
+                    n_printf("nBinScriptServer::ReadBlock(): obj '%s' of class '%s' doesn't accept cmd '%s'\n", 
+                             ((nRoot *)obj)->GetFullName().Get(), 
+                             obj->GetClass()->GetName(), 
+                             cmdProto->GetName());
+                }
+                else
+                {
+                    n_printf("nBinScriptServer::ReadBlock(): obj of class '%s' doesn't accept cmd '%s'\n", 
+                             obj->GetClass()->GetName(),
+                             cmdProto->GetName());
+                }
             }
             cmdProto->RelCmd(cmd);
         }

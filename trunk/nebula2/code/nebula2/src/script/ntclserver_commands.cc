@@ -203,11 +203,22 @@ tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     else 
     {
         char *objName = Tcl_GetString(objv[1]);
-        nRoot *obj = nTclServer::kernelServer->Load(objName);
+        nObject *obj = nTclServer::kernelServer->Load(objName);
         if (obj) 
         {
-            Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
-            retval = TCL_OK;
+            bool isRoot = obj->IsA("nroot");
+            n_assert(isRoot);
+            if (isRoot)
+            {
+                Tcl_SetResult(interp, (char*) ((nRoot *)obj)->GetFullName().Get(), TCL_VOLATILE);
+                retval = TCL_OK;
+            }
+            else
+            {
+                char buf[N_MAXPATH];
+                sprintf(buf, "Could not load object '%s', not an nRoot", objName); 
+                Tcl_SetResult(interp, buf, TCL_VOLATILE);
+            }
         } 
         else 
         {   
@@ -581,11 +592,14 @@ void
 tcl_objcmderror(Tcl_Interp *interp,
                 nTclServer *tcl,
                 const char *msg,    // message, must contain 2 '%s'
-                nRoot *o,           // name is 1st '%s'
+                nObject *o,         // name is 1st '%s'
                 char *cmd_name)     // 2nd '%s'
 {
     char errorBuf[1024];
-    snprintf(errorBuf, sizeof(errorBuf), msg, o->GetFullName().Get(), cmd_name);
+    if (o->IsA("nroot"))
+        snprintf(errorBuf, sizeof(errorBuf), msg, ((nRoot *)o)->GetFullName().Get(), cmd_name);
+    else
+        snprintf(errorBuf, sizeof(errorBuf), msg, "nObject", cmd_name);
     Tcl_SetResult(interp,  errorBuf, TCL_VOLATILE);
     n_printf("*** %s\n", errorBuf);
 }
@@ -614,7 +628,7 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     char *cmd_name;
     char *dot;
     char cmd[N_MAXPATH];
-    nRoot *o;
+    nObject *o;
     bool has_dot = false;
 
     // extract object name and cmd name
@@ -651,7 +665,9 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     }
     else          
     {
-        o = nTclServer::kernelServer->GetCwd();
+        o = nScriptServer::GetCurrentTargetObject(); // use the nObject if one is set
+        if (!o)
+            o = nTclServer::kernelServer->GetCwd(); // otherwise use the current nRoot
     }
     if (!o) 
     {

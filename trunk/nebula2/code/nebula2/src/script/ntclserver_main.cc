@@ -189,7 +189,7 @@ nTclServer::InitAsExtension(Tcl_Interp *extInterp)
                            creating the new
 */
 nFile* 
-nTclServer::BeginWrite(const char* filename, nRoot* obj)
+nTclServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
     n_assert(obj);

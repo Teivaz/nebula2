@@ -717,7 +717,7 @@ nKernelServer::NewNoFail(const char* className)
 //------------------------------------------------------------------------------
 /*
     Create a Nebula object from a persistent object file. The created
-    object's name is derived from the path name.
+    object's name is derived from the path name (for nRoot-derived objects).
 
     @param  path    path of persistent object file in host filesystem
     @return         pointer to created object, or 0
@@ -726,19 +726,19 @@ nKernelServer::NewNoFail(const char* className)
      - 04-Oct-98   floh    char * -> const char *
      - 11-Nov-98   floh    implementiert
 */
-nRoot*
+nObject*
 nKernelServer::Load(const char* path)
 {
     n_assert(path);
     this->Lock();
-    nRoot* obj = this->persistServer->LoadObject(path, 0);
+    nObject* obj = this->persistServer->LoadObject(path, 0);
     this->Unlock();
     return obj;
 }
 
 //------------------------------------------------------------------------------
 /*
-    Create a Nebula object from a persistent object file with a given name.
+    Create an nRoot object from a persistent object file with a given name.
 
     @param  path    path of persistent object file in host filesystem
     @param  name    object name
@@ -753,9 +753,10 @@ nKernelServer::LoadAs(const char* path, const char* name)
 {
     n_assert(path && name);
     this->Lock();
-    nRoot* obj = this->persistServer->LoadObject(path, name);
+    nObject* obj = this->persistServer->LoadObject(path, name);
+    n_assert(obj->IsA("nroot"));
     this->Unlock();
-    return obj;
+    return (nRoot *)obj;
 }
 
 //------------------------------------------------------------------------------

@@ -98,89 +98,110 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
      - 20-Jan-00   floh    + rewritten for ref_ss
      - 28-Sep-00   floh    + PushCwd()/PopCwd()
 */
-nRoot*
-nPersistServer::LoadFoldedObject(const char *fname, const char *objName)
+nObject*
+nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
+                                 const char* parserClass, const char* objClass)
 {
-    nRoot *obj = 0;
-    char parserBuf[128];
-    char objBuf[128];
-    const char* parserClass;
-    const char* objClass;
+    nObject *obj = 0;
     
-    // read parser and object class meta data from file
-    parserClass = this->ReadEmbeddedString(fname, "parser", parserBuf, sizeof(parserBuf));
-    objClass    = this->ReadEmbeddedString(fname, "class", objBuf, sizeof(objBuf));
-    if (!parserClass) 
-    {
-        return 0;
-    }
-    if (!objClass) 
-    {
-        return 0;
-    }
-
+    n_assert(parserClass);
+    n_assert(objClass);
+    
     // create object and parse script
-    obj = kernelServer->New(objClass, objName);
+    if (objName)
+    {
+        obj = nKernelServer::Instance()->New(objClass, objName);
+    }
+    else
+    {
+        obj = nKernelServer::Instance()->New(objClass);
+    }
+    
     if (obj) 
     {
-        kernelServer->PushCwd(obj);
+        bool isRoot = obj->IsA("nroot");
         const char* result;
-        nScriptServer* loader = this->GetLoader(parserBuf);
+        nScriptServer* loader = this->GetLoader(parserClass);
+        
+        if (isRoot)
+            nKernelServer::Instance()->PushCwd((nRoot *)obj);
+        else
+            nScriptServer::SetCurrentTargetObject(obj);
+        
         loader->RunScript(fname, result);
-        kernelServer->PopCwd();
+        
+        if (isRoot)
+            nKernelServer::Instance()->PopCwd();
+        else
+            nScriptServer::SetCurrentTargetObject(0);
     } 
     return obj; 
 }
 
 //------------------------------------------------------------------------------
 /**
-    Frontend to load an object from a persistent object file.
+    @brief Frontend to load an object from a persistent object file.
 */
-nRoot*
+nObject*
 nPersistServer::LoadObject(const char* fileName, const char* objName)
 {
     n_assert(fileName);
     
-    // isolate object name from path, object path can have 2 forms:
-    //
-    //  (1) xxx/blub.n/_main.n      -> a folded object
-    //  (2) xxx/blub.n              -> an unfolded object
-    //
-    nPathString tmpName;
-    if (0 == objName)
-    {
-        nPathString path(fileName);
-        path.ConvertBackslashes();
-        tmpName = path.ExtractFileName();
-        tmpName.StripExtension();
-        objName = tmpName.Get();
-    }
-    n_assert(objName);
-
-    // drop out if trying to load existing object
-    nRoot *obj = kernelServer->Lookup(objName);
-    if (obj)
-    {
-        n_error("nPersistServer: trying to overwrite existing object '%s'!\n", obj->GetFullName().Get());
+    char parserBuf[128];
+    char objBuf[128];
+    const char* parserClass;
+    const char* objClass;
+    
+    // read parser and object class meta data from file
+    parserClass = this->ReadEmbeddedString(fileName, "parser", parserBuf, sizeof(parserBuf));
+    objClass = this->ReadEmbeddedString(fileName, "class", objBuf, sizeof(objBuf));
+    if (!parserClass)
         return 0;
-    }
-    else 
-    {   
-        // try to load object as folded object, if that fails try unfolded
-        obj = this->LoadFoldedObject(fileName, objName);
-        if (!obj)
+    if (!objClass)
+        return 0;
+        
+    nObject *obj = 0;
+        
+    // if we need to create an nRoot make sure it will have a valid name
+    if (nKernelServer::Instance()->FindClass(objClass)->IsA("nroot"))
+    {
+        // isolate object name from path, object path can have 2 forms:
+        //
+        //  (1) xxx/blub.n/_main.n      -> a folded object
+        //  (2) xxx/blub.n              -> an unfolded object
+        //
+        nPathString tmpName;
+        if (0 == objName)
         {
-            char unfoldedName[N_MAXPATH];
-            sprintf(unfoldedName, "%s/_main.n2", fileName);
-            obj = this->LoadFoldedObject(unfoldedName, objName);
-            if (!obj)
-            {
-                // couldn't load object!
-                n_message("nPersistServer: Could not load object '%s'!\n", fileName);
-                return 0;
-            }
+            nPathString path(fileName);
+            path.ConvertBackslashes();
+            tmpName = path.ExtractFileName();
+            tmpName.StripExtension();
+            objName = tmpName.Get();
+        }
+        n_assert(objName);
+
+        // drop out if trying to load existing object
+        obj = kernelServer->Lookup(objName);
+        if (obj)
+        {
+            n_error("nPersistServer: trying to overwrite existing object '%s'!\n", 
+                    ((nRoot *)obj)->GetFullName().Get());
+            return 0;
         }
     }
+    
+    // try to load object as folded object, if that fails try unfolded
+    obj = this->LoadFoldedObject(fileName, objName, parserClass, objClass);
+    if (!obj)
+    {
+        char unfoldedName[N_MAXPATH];
+        sprintf(unfoldedName, "%s/_main.n2", fileName);
+        obj = this->LoadFoldedObject(unfoldedName, objName, parserClass, objClass);
+        if (!obj) // couldn't load object!
+            n_message("nPersistServer: Could not load object '%s'!\n", fileName);
+    }
+           
     return obj;
 }
 
