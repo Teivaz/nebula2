@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 /**
-    nmaxexposecmds.cc
+    @file nmaxexposecmds.cc
 
     (C) 2004 Kim, Hyoun Woo
 
