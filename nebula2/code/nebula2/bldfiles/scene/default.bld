@@ -1,17 +1,21 @@
 #===============================================================================
 #  scene.bld
-#  default nSceneServer modules including nStdSceneServer
+#  default nSceneServer modules
 #
 #  Modules:
 #      nsceneserver
-#      nstdsceneserver
+#      nhdrsceneserver
+#      ninstsceneserver
+#      nmrtsceneserver
 #      nscenenode
 #      ntransformnode
 #      nabstractshadernode
 #      nmaterialnode
 #      nlightnode
-#      nspotlightnode
+#      nshadownode
 #      nshapenode
+#      nsubdivshapenode
+#      nblendshapenode
 #      nattachmentnode
 #      nanimator
 #      nvectoranimator
@@ -19,9 +23,14 @@
 #      ntextureanimator
 #      nskinanimator
 #      nskinshapenode
+#      nshadowskinshapenode
 #      nkeyanimator
 #      ntransformcurveanimator
 #      nuvanimator
+#      nblendshapeanimator
+#      nintanimator
+#      nlodnode
+#      nrenderpath
 #===============================================================================
 
 #===============================================================================
@@ -34,10 +43,22 @@ beginmodule nsceneserver
     setheaders { nsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nstdsceneserver
+beginmodule nhdrsceneserver
     setdir scene
-    setfiles { nstdsceneserver_main }
-    setheaders { nstdsceneserver }
+    setfiles { nhdrsceneserver_main }
+    setheaders { nhdrsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ninstsceneserver
+    setdir scene
+    setfiles { ninstsceneserver_main }
+    setheaders { ninstsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmrtsceneserver
+    setdir scene
+    setfiles { nmrtsceneserver_main nmrtsceneserver_emissive }
+    setheaders { nmrtsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nscenenode
@@ -70,16 +91,28 @@ beginmodule nlightnode
     setheaders { nlightnode }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nspotlightnode
+beginmodule nshadownode
     setdir scene
-    setfiles { nspotlightnode_main nspotlightnode_cmds }
-    setheaders { nspotlightnode }
+    setfiles { nshadownode_main }
+    setheaders { nshadownode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nshapenode
     setdir scene
     setfiles { nshapenode_main nshapenode_cmds }
     setheaders { nshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nsubdivshapenode
+    setdir scene
+    setfiles { nsubdivshapenode_main nsubdivshapenode_cmds }
+    setheaders { nsubdivshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nblendshapenode
+    setdir scene
+    setfiles { nblendshapenode_main nblendshapenode_cmds }
+    setheaders { nblendshapenode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nattachmentnode
@@ -124,6 +157,12 @@ beginmodule nskinshapenode
     setheaders nskinshapenode
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nshadowskinshapenode
+    setdir scene
+    setfiles { nshadowskinshapenode_main nshadowskinshapenode_cmds }
+    setheaders nshadowskinshapenode
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nkeyanimator
     setdir scene
     setfiles { nkeyanimator_main }
@@ -140,4 +179,28 @@ beginmodule nuvanimator
     setdir scene
     setfiles { nuvanimator_main nuvanimator_cmds }
     setheaders nuvanimator
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nblendshapeanimator
+    setdir scene
+    setfiles { nblendshapeanimator_main nblendshapeanimator_cmds }
+    setheaders { nblendshapeanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nintanimator
+    setdir scene
+    setfiles { nintanimator_main nintanimator_cmds }
+    setheaders { nintanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nlodnode
+    setdir scene
+    setfiles { nlodnode_main nlodnode_cmds }
+    setheaders { nlodnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nrenderpath
+    setdir scene
+    setfiles { nrenderpath }
+    setheaders { nrenderpath }
 endmodule
