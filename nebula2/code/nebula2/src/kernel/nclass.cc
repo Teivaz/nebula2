@@ -26,7 +26,7 @@ nClass::nClass(const char *name,
     superClass(0),
     cmdList(0),
     cmdTable(0),
-    script_cmd_list(0),
+    scriptCmdList(0),
     refCount(0),
     instanceSize(0),
     n_init_ptr(initFunc),
@@ -70,14 +70,14 @@ nClass::~nClass(void)
         n_delete(this->cmdTable);
     }
 
-    if (this->script_cmd_list)
+    if (this->scriptCmdList)
     {
         nCmdProto* cmdProto;
-        while ((cmdProto = (nCmdProto *) this->script_cmd_list->RemHead()))
+        while ((cmdProto = (nCmdProto *) this->scriptCmdList->RemHead()))
         {
             n_delete(cmdProto);
         }
-        n_delete(this->script_cmd_list);
+        n_delete(this->scriptCmdList);
     }
 }
 
@@ -209,8 +209,8 @@ nClass::EndCmds(void)
 */
 void nClass::BeginScriptCmds(int numCmds)
 {
-    n_assert(!this->script_cmd_list);
-    this->script_cmd_list = n_new(nHashList(numCmds));
+    n_assert(!this->scriptCmdList);
+    this->scriptCmdList = n_new(nHashList(numCmds));
 }
 
 //--------------------------------------------------------------------
@@ -221,9 +221,9 @@ void nClass::BeginScriptCmds(int numCmds)
 */
 void nClass::AddScriptCmd(nCmdProto* cmdProto)
 {
-    n_assert(this->script_cmd_list);
+    n_assert(this->scriptCmdList);
     n_assert(cmdProto);
-    this->script_cmd_list->AddTail(cmdProto);
+    this->scriptCmdList->AddTail(cmdProto);
 }
 
 //--------------------------------------------------------------------
@@ -254,9 +254,9 @@ nClass::FindCmdByName(const char *name)
     }
 
     // if that fails try the script cmd list
-    if (this->script_cmd_list && !cp)
+    if (this->scriptCmdList && !cp)
     {
-        cp = (nCmdProto *) this->script_cmd_list->Find(name);
+        cp = (nCmdProto *) this->scriptCmdList->Find(name);
     }
 
     // if not found or no command list, recursively hand up to parent class
@@ -297,9 +297,9 @@ nCmdProto *nClass::FindScriptCmdByName(const char *name)
 {
     n_assert(name);
     nCmdProto *cp = 0;
-    if (this->script_cmd_list)
+    if (this->scriptCmdList)
     {
-        cp = (nCmdProto *) this->script_cmd_list->Find(name);
+        cp = (nCmdProto *) this->scriptCmdList->Find(name);
     }
 
     // if not found, recursively hand up to parent class
