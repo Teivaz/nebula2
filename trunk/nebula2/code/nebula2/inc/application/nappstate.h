@@ -14,6 +14,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#include "kernel/nref.h"
 
 class nApplication;
 
