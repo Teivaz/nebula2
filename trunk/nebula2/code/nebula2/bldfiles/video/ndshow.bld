@@ -14,7 +14,7 @@ beginmodule ndshowserver
     setplatform win32
     setfiles { ndshowserver_main }
     setheaders { ndshowserver }
-    setlibs_win32 { strmiids.lib }
+    setlibs_win32 { ole32.lib strmiids.lib }
 endmodule
 #-------------------------------------------------------------------------------
 
