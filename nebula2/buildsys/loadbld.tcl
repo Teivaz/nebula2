@@ -150,7 +150,7 @@ proc recursepakdir { sdir } {
     getpakdir $sdir
 
     foreach ext [glob -nocomplain -directory $sdir */ ] {
-    	recursepakdir $ext
+        recursepakdir $ext
     }
 }
 
