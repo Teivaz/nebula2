@@ -13,9 +13,8 @@ beginmodule nd3d9server
         nd3d9server_device
         nd3d9server_render
         nd3d9server_text
-        d3dfont9
     }
-    setheaders { nd3d9server d3dfont9 }
+    setheaders { nd3d9server }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nd3d9mesh
