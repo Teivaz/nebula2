@@ -659,7 +659,6 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     n_assert(className && path);
     this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, false);
-    n_assert(o);
     this->Unlock();
     return o;
 }
