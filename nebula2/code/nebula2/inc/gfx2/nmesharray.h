@@ -74,7 +74,7 @@ nMeshArray::SetFilenameAt(int index, const nString& path)
 /**
     Get the mesh for the specified stream.
 
-    @param  streamIndex index of stream the mesh shall be used for
+    @param  index       index of stream the mesh shall be used for
     @return             current mesh on that stream
 */
 inline

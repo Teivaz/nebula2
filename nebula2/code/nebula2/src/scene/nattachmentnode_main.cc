@@ -66,8 +66,6 @@ nAttachmentNode::RenderTransform(nSceneServer* sceneServer,
 //------------------------------------------------------------------------------
 /**
     Compute the final transformation matrix for the nAttachmentNode
-
-    @param renderContext  the render context used by both the parent nSkinAnimator and this nAttachmentNode
 */
 void
 nAttachmentNode::UpdateFinalTransform()
