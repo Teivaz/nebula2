@@ -20,6 +20,10 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+#if D3D_SDK_VERSION < 31
+#error You must be using the DirectX 9 Summer Update SDK!  You may download it from http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en
+#endif
+
 //------------------------------------------------------------------------------
 //  Debugging definitions (for shader debugging etc...)
 //------------------------------------------------------------------------------
