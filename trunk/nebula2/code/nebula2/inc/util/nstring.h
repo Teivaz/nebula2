@@ -339,7 +339,7 @@ nString::ToLower()
     {
         char c;
         char* ptr = (char*) this->string;
-        while (c = *ptr)
+        while ((c = *ptr))
         {
             *ptr++ = tolower(c);
         }
