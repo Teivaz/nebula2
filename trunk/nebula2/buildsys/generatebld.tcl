@@ -354,12 +354,13 @@ proc fixworkspaces { wslist } {
         ::log::log debug "  $wspace($i,name)"
         foreach tarname $wspace($i,targets) {
             set idx [findtargetbyname $tarname]
-            set wspace($i,$tarname,type)        $tar($idx,type)
-            set wspace($i,$tarname,rtti)        $tar($idx,rtti)
-            set wspace($i,$tarname,exceptions)  $tar($idx,exceptions)
-            set wspace($i,$tarname,icon)        $tar($idx,icon)
-            set wspace($i,$tarname,dllextension) $tar($idx,dllextension)
-            set wspace($i,$tarname,moddeffile)   $tar($idx,moddeffile)
+            set wspace($i,$tarname,type)           $tar($idx,type)
+            set wspace($i,$tarname,rtti)           $tar($idx,rtti)
+            set wspace($i,$tarname,exceptions)     $tar($idx,exceptions)
+            set wspace($i,$tarname,icon)           $tar($idx,icon)
+            set wspace($i,$tarname,resource_win32) $tar($idx,resource_win32)
+            set wspace($i,$tarname,dllextension)   $tar($idx,dllextension)
+            set wspace($i,$tarname,moddeffile)     $tar($idx,moddeffile)
             set wspace($i,$tarname,modules)        $tar($idx,mergedmods)
 
             set wspace($i,$tarname,libs_win32_release) $tar($idx,libs_win32_release)

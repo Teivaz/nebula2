@@ -62,6 +62,7 @@ set current_file  ""
 #    setrtti               true|false
 #    setexceptions         true|false
 #    seticon               $filename
+#    setresource_win32     $filename
 #    setmodules            { $modulename $modulename ... }
 #    setbundles            { $bundlename $bundlename ... }
 #    settargetdeps         { $targetname $targetname ... }
@@ -316,6 +317,23 @@ proc seticon {filename} {
 }
 
 #----------------------------------------------------------------------------
+#  setresource_win32 $filename
+#  the filename of the target's resource
+#----------------------------------------------------------------------------
+proc setresource_win32 {filename} {
+    global current_block
+    global target_block
+
+    if {$current_block == $target_block} {
+        global tar
+        global num_tars
+        set tar($num_tars,resource_win32) $filename
+    } else {
+        ::log::log warning "FAILED to setresource_win32 for currentblocktype $current_block"
+    }
+}
+
+#----------------------------------------------------------------------------
 #  setmodules $module_list
 #  sets the modules to a target or bundle
 #----------------------------------------------------------------------------
@@ -510,17 +528,18 @@ proc begintarget {name} {
     set current_block $target_block
 
     #bld file data
-    set tar($num_tars,name)        $name
-    set tar($num_tars,annotate)    ""
-    set tar($num_tars,type)        lib
-    set tar($num_tars,dllextension) "dll"
-    set tar($num_tars,rtti)        false
-    set tar($num_tars,exceptions)  false
-    set tar($num_tars,icon)        "nebula.ico"
-    set tar($num_tars,modules)     ""
-    set tar($num_tars,bundles)     ""
-    set tar($num_tars,targetdeps)  ""
-    set tar($num_tars,defs)        ""
+    set tar($num_tars,name)           $name
+    set tar($num_tars,annotate)       ""
+    set tar($num_tars,type)           lib
+    set tar($num_tars,dllextension)   "dll"
+    set tar($num_tars,rtti)           false
+    set tar($num_tars,exceptions)     false
+    set tar($num_tars,icon)           "nebula.ico"
+    set tar($num_tars,resource_win32) ""
+    set tar($num_tars,modules)        ""
+    set tar($num_tars,bundles)        ""
+    set tar($num_tars,targetdeps)     ""
+    set tar($num_tars,defs)           ""
 
     #generated data
     set tar($num_tars,bldfile)            $current_file

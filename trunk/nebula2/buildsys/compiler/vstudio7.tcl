@@ -222,6 +222,19 @@ proc emit_vcproj_files {name cid} {
         puts $cid "\t\t</Filter>"
     }
 
+    set resfile [get_win32resource $name]
+    if { $resfile != "" } {
+        global cur_workspacepath
+        global home
+        global mod
+
+        set startpath [string trim $home '/']
+        set i [findmodbyname $name]
+        set resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile.rc]
+        regsub -all "/" $resfile "\\" filename
+        puts $cid "\t\t<File RelativePath=\"$filename\" />"
+    }
+
     puts $cid "\t</Files>"
 }
 

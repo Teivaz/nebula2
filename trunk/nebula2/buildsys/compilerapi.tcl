@@ -36,6 +36,7 @@
 #    get_rtti               $tarname
 #    get_exceptions         $tarname
 #    get_icon               $tarname
+#    get_win32resource      $tarname
 #    get_moddeffile         $tarname
 #    get_dllextensition     $tarname
 #    get_win32libs_release  $tarname
@@ -387,6 +388,19 @@ proc get_icon {tarname} {
     global wspace
     global cur_workspace
     return $wspace($cur_workspace,$tarname,icon)
+}
+
+#----------------------------------------------------------------------------
+#  get_win32resource
+#
+#  Returns the filename of the target's resource
+#
+#  In .bld file, write "setresource_win32 $filename"
+#----------------------------------------------------------------------------
+proc get_win32resource {tarname} {
+    global wspace
+    global cur_workspace
+    return $wspace($cur_workspace,$tarname,resource_win32)
 }
 
 #----------------------------------------------------------------------------
