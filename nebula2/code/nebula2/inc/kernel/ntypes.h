@@ -162,10 +162,10 @@ void n_free_dbg(void* memblock, const char* file, int line);
 #define n_new_array(type,size) new(__FILE__,__LINE__) type[size]
 #define n_delete(ptr) delete ptr
 #define n_delete_array(ptr) delete[] ptr
-#define n_malloc(size) n_malloc_dbg(size, __FILE__, __LINE__);
-#define n_calloc(num, size) n_calloc_dbg(num, size, __FILE__, __LINE__);
-#define n_realloc(memblock, size) n_realloc_dbg(memblock, size, __FILE__, __LINE__);
-#define n_free(memblock) n_free_dbg(memblock, __FILE__, __LINE__);
+#define n_malloc(size) n_malloc_dbg(size, __FILE__, __LINE__)
+#define n_calloc(num, size) n_calloc_dbg(num, size, __FILE__, __LINE__)
+#define n_realloc(memblock, size) n_realloc_dbg(memblock, size, __FILE__, __LINE__)
+#define n_free(memblock) n_free_dbg(memblock, __FILE__, __LINE__)
 #else
 #define n_new(type) new type
 #define n_new_array(type,size) new type[size]
