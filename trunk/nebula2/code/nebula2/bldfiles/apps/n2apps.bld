@@ -20,7 +20,7 @@ beginmodule nremoteshell
     settype  cpp
     setdir   tools
     setfiles { nremoteshell }
-    setmoduledeps  { nipcclient }
+    setmoduledeps  { nipc }
     setlibs_macosx { Carbon }
 endmodule
 #-------------------------------------------------------------------------------
@@ -46,9 +46,9 @@ endmodule
 #  n2apps Targets
 #===============================================================================
 begintarget nremoteshell
-    annotate "Sample application: A remote console over IPX for debugging Nebula2."
+    annotate "Sample application: A remote console for debugging Nebula2."
     settype exe
-    setmodules    { nremoteshell nipcclient}
+    setmodules    { nremoteshell nipc }
     settargetdeps { nkernel }
 endtarget
 #-------------------------------------------------------------------------------
