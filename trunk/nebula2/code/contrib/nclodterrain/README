@@ -7,8 +7,8 @@ You should then see a 'nchunklod' workspace/solution which you can compile.
 Note that you also need nopende installed in contrib, since clodterrain
 uses the nopende code for collision and dynamics.
 
-The nclodterrain module is usable for linking in other programs, and
-'nclododeviewer' is an example of a viewer that uses both clodterrain
+The nclodterrain module is usable for linking into other programs as a library,
+ and 'nclododeviewer' is an example of a viewer that uses both clodterrain
 and opende to bounce around a bunch of boxes.
 
 The descriptions below assume you are in code/contrib/nclodterrain/bin, as
@@ -58,8 +58,8 @@ an example script "compileterrain.lua" for this which is setup like:
 Heightmap:   code/contrib/nclodterrain/export/textures/examples/heightfield.bmp
 Texture:     code/contrib/nclodterrain/export/textures/examples/cloddiffuse.bmp
 
-Mesh output:  code/contrib/export/terrains/examples/sample.clod
-TQT output:   code/contrib/export/terrains/examples/sample.tqt
+Mesh output:  code/contrib/nclodterrain/export/terrains/examples/sample.clod
+TQT output:   code/contrib/nclodterrain/export/terrains/examples/sample.tqt
 
 You can of course edit the script file to change these locations.
 
@@ -87,8 +87,8 @@ Heightmap:   code/contrib/nclodterrain/export/textures/examples/heightfield.bmp
 Texture:     code/contrib/nclodterrain/export/textures/examples/tiles.bmp
 Tiles:       code/contrib/nclodterrain/export/textures/terrainsplat/{tile names}.bmp
 
-Mesh output:  code/contrib/export/terrains/examples/sample.clod
-TQT output:   code/contrib/export/terrains/examples/sample.tqt
+Mesh output:  code/contrib/nclodterrain/export/terrains/examples/sample.clod
+TQT output:   code/contrib/nclodterrain/export/terrains/examples/sample.tqt
 
 The actual command is:
 
