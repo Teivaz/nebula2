@@ -7,6 +7,22 @@
 
 nNebulaClass(nShader2, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nshader2
+
+    @cppclass
+    nShader2
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
+//------------------------------------------------------------------------------
+
 /// the shader parameter name string table
 const char* nShader2::StringTable[nShader2::NumParameters] = 
 {

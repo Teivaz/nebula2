@@ -8,6 +8,21 @@
 
 nNebulaClass(nTexture2, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    ntexture2
+
+    @cppclass
+    nTexture2
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -38,7 +53,7 @@ nTexture2::~nTexture2()
     {
         this->compoundFile->Release();
         this->compoundFile = 0;
-	}
+  }
 }
 
 //------------------------------------------------------------------------------

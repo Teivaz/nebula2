@@ -6,6 +6,21 @@
 
 nNebulaClass(nFont2, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nfont2
+
+    @cppclass
+    nFont2
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
