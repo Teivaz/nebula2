@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nAnimation
 //------------------------------------------------------------------------------
 //  nanimation_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -27,22 +26,12 @@ nAnimation::~nAnimation()
     }
 }
 
-//------------------------------------------------------------------------------
-/**
-    NOTE: the actual load operation should be implemented by subclasses.
-*/
-bool
-nAnimation::Load()
-{
-    n_assert(!this->valid);
-    return true;
-}
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nAnimation::Unload()
+nAnimation::UnloadResource()
 {
     this->groupArray.Clear();
 }
