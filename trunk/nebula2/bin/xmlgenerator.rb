@@ -3,10 +3,10 @@ XML file format:
 
   <class name='nGfxServer2' package='gfx2' parent='nroot'>
     <properties>
-      <property name="propertyname" type="simple|index">
+      <property name="propertyname">
         <doc>...</doc>
         <getterslist>
-          <getter type="index|count" name="gettername" fourCC="GJNT">
+          <getter [type="count"] name="gettername" fourCC="GJNT">
             [<doc>...</doc>]
           </getter>
           ...
@@ -82,20 +82,18 @@ getter/setter:
 /**
     @property <property name>
 
-    [@type simple|index]
-
     @format
       type(name;attr1=val1;attr2=val2..) -- comment
       type(name;attr1=val1;attr2=val2..) -- comment
       ...
 
-  @info <documentation>
+    @info <documentation>
 */
 
 /**
     @cmd <command name>
 
-    @cmdtype <getter|[index,count], setter|[begin,add,end]>
+    @cmdtype <getter|[count], setter|[begin,add,end]>
 
     @property <property name>
 
@@ -122,6 +120,8 @@ other commands (methods):
 attr=val:
 attr - name of the attribute
 val - attribute value: val=val1[,val2...,valN]
+For example:
+  index=yes - used if some property is indexed (array or you can get it by name)
 
 =end
 
@@ -341,7 +341,7 @@ class CmdProcessor < Processor
     elsif descStr =~ /^([ifsbo]+)\s*\(\s*(\w[\w\d]*)\s*(;\s*\w[\w\d]*\s*=\s*[^;]+\s*)*\)\s*(?:--\s*(.+)\s*)?$/
       typeSize = $1.size
       if typeSize > 1
-        if (typeSize == 3 || typeSize == 4) && ($1 == 'f' * typeSize) # fff or ffff
+        if (typeSize <= 4) && ($1 == 'f' * typeSize) # fff or ffff
           valueElement.add_attribute("type", "vector" + typeSize.to_s)
         else
           valueElement.add_element("error").add_text("Wrong parameter type!")
@@ -433,8 +433,8 @@ class CmdProcessor < Processor
                       docElement = getElement(getterElement, "doc")
                       docElement.add_text(CData.new(info))
                     end
-                    if type[1] && (type[1] == "index" || type[1] == "count")
-                      getterElement.add_attribute("type", type[1])
+                    if type[1] && type[1] == "count"
+                      getterElement.add_attribute("type", "count")
                     end
                   elsif type[0] == "setter"
                     setterListElement = getElement(scriptPropertyElement, "setterlist")
@@ -478,7 +478,6 @@ class CmdProcessor < Processor
               elsif atBlocks.has_key? "property"
                 propertyName = atBlocks["property"].strip
                 format = atBlocks["format"].strip
-                type = atBlocks["type"].strip
                 info = atBlocks["info"].strip
                 
                 scriptPropertyElement = getElementWithAttribute(scriptPropertiesElement, "property", "name", propertyName, true)
@@ -508,18 +507,6 @@ class CmdProcessor < Processor
                         valueElement.add_element("editor", {"type" => "text_input"})
                     end
                   }
-                end
-                if type
-                  if type == "simple" || type == "index"
-                    scriptPropertyElement.add_attribute("type", type)
-                  else
-                    scriptPropertyElement.add_attribute("type", "simple")
-                    
-                    docElement = getElement(scriptPropertyElement, "doc")
-                    docElement.add_element("error").add_text("Wrong property type. Should be 'simple' or 'index'.")
-                  end
-                else
-                  scriptPropertyElement.add_attribute("type", "simple")
                 end
               end
             when INITCMDFUNCTIONDEF_REGEX
