@@ -4,12 +4,13 @@
 /**
   @class nCmdProtoLua
   @ingroup ScriptServices
-  @brief A factory for nCmd objects that correspond to LUA implemented
+  @ingroup NLuaServerContribModule
+  @brief A factory for nCmd objects that correspond to Lua implemented
          script commands.
 
   (c) 2003 Vadim Macagon
   
-  nCmdProtoLua is licensed under the terms of the Nebula License
+  nCmdProtoLua is licensed under the terms of the Nebula License.
 */
 
 #include "kernel/ncmdproto.h"
@@ -17,8 +18,6 @@
 //--------------------------------------------------------------------
 class nCmdProtoLua : public nCmdProto 
 {
-  private:
-
   public:
     /// Class constructor
     nCmdProtoLua(const char* protoDef);

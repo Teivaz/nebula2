@@ -81,8 +81,6 @@ public:
     nString thunkStoreName;
     
 private:
-    friend class nLuaScriptlet;
-
     static void ArgToStack( lua_State*, nArg* );
     static bool StackToArg( lua_State*, nArg*, int index );
     static const char* StackToString( lua_State*, int );

@@ -36,7 +36,7 @@ bool nCmdProtoLua::Dispatch(void* obj, nCmd* cmd)
     // use the object pointer as a key into thunks table
     lua_pushstring(L, nLuaServer::Instance->thunkStoreName.Get());
     lua_rawget(L, LUA_GLOBALSINDEX);
-    n_assert((0 == lua_isnil(L, -1)) && "_nebthunks table not found!");
+    n_assert2(0 == lua_isnil(L, -1), "_nebthunks table not found!");
     lua_pushlightuserdata(L, obj);
     lua_gettable(L, -2);
     if (0 == lua_istable(L, -1)) // thunk not found?

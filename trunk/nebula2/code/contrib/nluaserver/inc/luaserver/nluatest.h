@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
   @class nLuaTest
+  @ingroup NLuaServerContribModule
 
   @brief A little test suite for testing the Lua server.
 
