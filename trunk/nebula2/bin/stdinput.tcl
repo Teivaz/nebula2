@@ -7,7 +7,8 @@ set oldCwd [psel]
 sel /sys/servers/input
     .beginmap
     .map "keyb0:space.down"        "reset"
-    .map "keyb0:esc.down"          "console"
+    .map "keyb0:esc.down"          "script:/sys/servers/gui.togglesystemgui"
+    .map "keyb0:f11.down"          "console"
     .map "relmouse0:btn0.pressed"  "look"
     .map "relmouse0:btn1.pressed"  "zoom"
     .map "relmouse0:btn2.pressed"  "pan"
