@@ -10,10 +10,16 @@ import wx
 import wx.lib.newevent
 import string, thread
 
-STARTUP_BOX_TEXT = """\
+STR_WORKSPACE_LIST_LOADING = """\
 Please wait...
 
     Loading Workspaces.
+"""
+
+STR_WORKSPACE_LIST_NOT_LOADED = """\
+The workspaces couldn't be loaded...
+
+    Check the log window for errors.
 """
 
 SUMMARY_DLG_TEXT = """\
@@ -38,6 +44,7 @@ class WorkspacesPanel(wx.Panel):
         self.buildSys = buildSys
         self.defaultGeneratorName = generatorName
         self.defaultWorkspaceNames = workspaceNames
+        self.workspaceLoaderThreadDone = False
         
         self.progressDialog = None
         self.cancelProgressDlg = False
@@ -91,7 +98,7 @@ class WorkspacesPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnDeselectAllWorkspaces,
                   self.deselectAllWorkspacesBtn)
         self.workspaceDescBox = wx.StaticText(self, -1,
-                                              STARTUP_BOX_TEXT, 
+                                              STR_WORKSPACE_LIST_LOADING, 
                                               (0, 0), (150, 50),
                                               wx.ST_NO_AUTORESIZE)
         self.bldFilenameBox = wx.StaticText(self, -1, '',
@@ -227,33 +234,37 @@ class WorkspacesPanel(wx.Panel):
     #--------------------------------------------------------------------------
     # Called when the list of available workspaces has been obtained.
     def OnWorkspaceListLoaded(self, evt):
-        workspaceNames = self.buildSys.workspaces.keys()
-        workspaceNames.sort()
+        if evt.listLoaded:
+            workspaceNames = self.buildSys.workspaces.keys()
+            workspaceNames.sort()
         
-        # populate the list box
-        if len(workspaceNames) > 0:
-            self.workspaceListBox.InsertItems(workspaceNames, 0)
-            self.workspaceListBox.SetSelection(0)
-            self.OnSelectWorkspace(None)
+            # populate the list box
+            if len(workspaceNames) > 0:
+                self.workspaceListBox.InsertItems(workspaceNames, 0)
+                self.workspaceListBox.SetSelection(0)
+                self.OnSelectWorkspace(None)
             
-        # tick the workspaces passed in via cmd line args
-        workspaceIdx = 0
-        for workspaceName in workspaceNames:
-            if workspaceName in self.defaultWorkspaceNames:
-                self.workspaceListBox.Check(workspaceIdx, True)
-            workspaceIdx += 1
+            # tick the workspaces passed in via cmd line args
+            workspaceIdx = 0
+            for workspaceName in workspaceNames:
+                if workspaceName in self.defaultWorkspaceNames:
+                    self.workspaceListBox.Check(workspaceIdx, True)
+                workspaceIdx += 1
             
-        # re-enable controls we disabled previously
-        self.selectAllWorkspacesBtn.Enable(True)
-        self.deselectAllWorkspacesBtn.Enable(True)
-        self.runBtn.Enable(True)
+            # re-enable controls we disabled previously
+            self.selectAllWorkspacesBtn.Enable(True)
+            self.deselectAllWorkspacesBtn.Enable(True)
+            self.runBtn.Enable(True)
+        else:
+            self.workspaceDescBox.SetLabel(STR_WORKSPACE_LIST_NOT_LOADED)
+            
+        self.workspaceLoaderThreadDone = True
         
     #--------------------------------------------------------------------------
-    # Return True if the workspace list has been populated, False otherwise.
-    def WorkspaceListLoaded(self):
-        # The Run button is disabled while the list is being loaded, so we
-        # can assume when it's enabled the list has already been loaded.
-        return self.runBtn.IsEnabled()
+    # Return True if the workspace list loader thread has finished doing it's 
+    # thing (and died), or False if it's still doing stuff.
+    def WorkspaceLoaderThreadDone(self):
+        return self.workspaceLoaderThreadDone
 
     #--------------------------------------------------------------------------
     # This can be safely called from any thread.

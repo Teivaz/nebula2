@@ -124,60 +124,68 @@ class BuildSys:
     #--------------------------------------------------------------------------
     # Pre-process bld files
     def Prepare(self):
-        self.findCodeDirs()
-        if self.buildConfig.Read(self.cfgFileName):
-            #print self.buildConfig.bldFiles
-            for bldFileName in self.buildConfig.bldFiles:
-                # parse bld file
-                scanner = None                
-                try:
-                    bldFile = file(bldFileName, 'r')
-                except IOError:
-                    self.logger.error("Couldn't read " + bldFileName)
+        try:
+            self.findCodeDirs()
+            if self.buildConfig.Read(self.cfgFileName):
+                #print self.buildConfig.bldFiles
+                for bldFileName in self.buildConfig.bldFiles:
+                    # parse bld file
+                    scanner = None                
+                    try:
+                        bldFile = file(bldFileName, 'r')
+                    except IOError:
+                        self.logger.exception("Couldn't read " + bldFileName)
+                    else:
+                        scanner = BldScanner(bldFile, bldFileName, self.logger)
+                        value, text = scanner.read()
+                        bldFile.close()
+                    if scanner != None:
+                        # collect modules
+                        keepGoing = True
+                        for module in scanner.modules:
+                            if not self.addModule(module):
+                                keepGoing = False
+                        if not keepGoing:
+                            return False
+                        # collect targets
+                        for target in scanner.targets:
+                            if not self.addTarget(target):
+                                keepGoing = False
+                        if not keepGoing:
+                            return False
+                        # collect bundles
+                        for bundle in scanner.bundles:
+                            if not self.addBundle(bundle):
+                                keepGoing = False
+                        if not keepGoing:
+                            return False
+                        # collect workspaces
+                        for workspace in scanner.workspaces:
+                            if not self.addWorkspace(workspace):
+                                keepGoing = False
+                        if not keepGoing:
+                            return False
+                # now that we have everything do some more checks
+                if self.validateInput():
+                    return self.processInput()
                 else:
-                    scanner = BldScanner(bldFile, bldFileName, self.logger)
-                    value, text = scanner.read()
-                    bldFile.close()
-                if scanner != None:
-                    # collect modules
-                    keepGoing = True
-                    for module in scanner.modules:
-                        if not self.addModule(module):
-                            keepGoing = False
-                    if not keepGoing:
-                        return False
-                    # collect targets
-                    for target in scanner.targets:
-                        if not self.addTarget(target):
-                            keepGoing = False
-                    if not keepGoing:
-                        return False
-                    # collect bundles
-                    for bundle in scanner.bundles:
-                        if not self.addBundle(bundle):
-                            keepGoing = False
-                    if not keepGoing:
-                        return False
-                    # collect workspaces
-                    for workspace in scanner.workspaces:
-                        if not self.addWorkspace(workspace):
-                            keepGoing = False
-                    if not keepGoing:
-                        return False
-            # now that we have everything do some more checks
-            if self.validateInput():
-                return self.processInput()
+                    return False
             else:
+                self.logger.error('BuildSys.Prepare(): Failed to read ' \
+                                  + self.cfgFileName)
                 return False
-        else:
-            self.logger.error('BuildSys.Prepare(): Failed to read ' \
-                              + self.cfgFileName)
+        except:
+            self.logger.exception('BuildSys.Prepare()')
             return False
 
     #--------------------------------------------------------------------------
     # Generate pkg files, resource files and project/make files
     def Run(self, generatorName, workspacesToBuild):
         try:
+            # make sure the pkg directory exists
+            pkgDirectory = os.path.join(self.homeDir, 'build', 'pkg')
+            if not os.path.exists(pkgDirectory):
+                os.makedirs(pkgDirectory)
             # first spit out the pkg and resource files
             for target in self.targets.values():
                 target.GeneratePkgFile()
@@ -329,10 +337,6 @@ class BuildSys:
         # bail out if module processing failed
         if not dataValid:
             return False
-        # make sure the pkg directory exists
-        pkgDirectory = os.path.join(self.homeDir, 'build', 'pkg')
-        if not os.path.exists(pkgDirectory):
-            os.mkdir(pkgDirectory)
         # process targets
         for target in self.targets.values():
             target.MergeBundles()

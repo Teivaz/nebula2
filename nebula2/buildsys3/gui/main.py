@@ -148,7 +148,7 @@ class MainFrame(wx.Frame):
     def OnClose(self, evt):
         # need to wait for the workspace loading thread to stop before
         # killing the application, otherwise bad things happen
-        if not self.workspacesTab.WorkspaceListLoaded():
+        if not self.workspacesTab.WorkspaceLoaderThreadDone():
             dlg = wx.MessageDialog(self, 
                                    'Please wait for the workspace list to load.',
                                    'Nebula 2 Build System',
@@ -164,11 +164,9 @@ class MainFrame(wx.Frame):
     # Obtain a list of available workspaces and update the workspace
     # check-list-box when done.
     def LoadWorkspaceList(self):
-        if (self.buildSys.Prepare()):
-            #self.buildSys.logger.info('LoadWorkspaceList() done!')
-            evt = WorkspaceListLoadedEvent()
-            wx.PostEvent(self.workspacesTab, evt)
-
+        success = self.buildSys.Prepare()
+        evt = WorkspaceListLoadedEvent(listLoaded = success)
+        wx.PostEvent(self.workspacesTab, evt)
 
 #--------------------------------------------------------------------------
 class MainApp(wx.App):
