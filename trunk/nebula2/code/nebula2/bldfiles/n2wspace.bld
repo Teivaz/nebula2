@@ -33,6 +33,6 @@ beginworkspace Nebula2
         nnetwork
         napplication
         tinyxml
-        nxml
+        xml
     }
 endworkspace

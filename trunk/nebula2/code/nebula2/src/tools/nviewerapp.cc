@@ -569,28 +569,17 @@ nViewerApp::InitOverlayGui()
 
     kernelServer->PushCwd(userRootWindow);
 
-    // create 2 logo labels
-    nGuiLabel* leftLabel = (nGuiLabel*) kernelServer->New("nguilabel", "LeftLogo");
-    n_assert(leftLabel);
-    vector2 leftLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("leftlogo");
-    rectangle leftRect;
-    leftRect.v0.set(0.0f + borderSize, 1.0f - leftLabelSize.y - borderSize);
-    leftRect.v1.set(leftLabelSize.x + borderSize, 1.0f - borderSize);
-    leftLabel->SetRect(leftRect);
-    leftLabel->SetDefaultBrush("leftlogo");
-    leftLabel->SetPressedBrush("leftlogo");
-    leftLabel->SetHighlightBrush("leftlogo");
-
+    // create logo label
     nGuiLabel* rightLabel = (nGuiLabel*) kernelServer->New("nguilabel", "RightLogo");
     n_assert(rightLabel);
-    vector2 rightLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("rightlogo");
+    vector2 rightLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
     rectangle rightRect;
     rightRect.v0.set(1.0f - rightLabelSize.x - borderSize, 1.0f - rightLabelSize.y - borderSize);
     rightRect.v1.set(1.0f - borderSize, 1.0f - borderSize);
     rightLabel->SetRect(rightRect);
-    rightLabel->SetDefaultBrush("rightlogo");
-    rightLabel->SetPressedBrush("rightlogo");
-    rightLabel->SetHighlightBrush("rightlogo");
+    rightLabel->SetDefaultBrush("n2logo");
+    rightLabel->SetPressedBrush("n2logo");
+    rightLabel->SetHighlightBrush("n2logo");
 
     // create a help text label
     nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "HelpLabel");

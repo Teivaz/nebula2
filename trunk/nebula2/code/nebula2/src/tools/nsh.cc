@@ -56,8 +56,8 @@ main(int argc, const char** argv)
 
     // create minimal Nebula runtime
     nKernelServer kernelServer;
-    kernelServer.AddPackage(nnebula);
-    kernelServer.AddPackage(nnetwork);
+//    kernelServer.AddPackage(nnebula);
+//    kernelServer.AddPackage(nnetwork);
 
     nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg, "/sys/servers/script");
     if (0 == scriptServer)

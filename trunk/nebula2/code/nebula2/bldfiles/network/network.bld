@@ -10,6 +10,7 @@ beginmodule nhttpserver
     setheaders {
         nhttpserver nsessionattrpool
     }
+    setlibs_win32 { wininet.lib rpcrt4.lib }
 endmodule
 #--------------------------------------------------------------------
 beginmodule nnetclient

@@ -33,7 +33,7 @@ begintarget nnebula
     settargetdeps {
         nshadow
         tinyxml
-        nxml
+        xml
     }
 endtarget
 

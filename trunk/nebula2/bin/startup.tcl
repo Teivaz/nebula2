@@ -55,7 +55,36 @@ sel /sys/servers/file2
 sel $oldCwd
 
 #-------------------------------------------------------------------------------
-#   This procedure is called when the gui server is opened.
+#   OnMapInput is called back by nviewer when the input mapping should be
+#   defined.
+#-------------------------------------------------------------------------------
+proc OnMapInput {} {
+    set cwd [psel]
+    sel /sys/servers/input
+    .beginmap
+    .map "keyb0:space.down" "reset"
+    .map "keyb0:esc.down" "script:/sys/servers/gui.togglesystemgui"
+    .map "keyb0:f11.down" "console"
+    .map "keyb0:t.down" "script:/sys/servers/time.resettime"
+    .map "relmouse0:btn0.pressed" "look"
+    .map "relmouse0:btn1.pressed" "zoom"
+    .map "relmouse0:btn2.pressed" "pan"
+    .map "relmouse0:+zbtn.down"   "ScrollDown"
+    .map "relmouse0:-zbtn.down"   "ScrollUp"
+    .map "relmouse0:-x" "left"
+    .map "relmouse0:+x" "right"
+    .map "relmouse0:-y" "up"
+    .map "relmouse0:+y" "down"
+    .map "relmouse0:-z" "zoomIn"
+    .map "relmouse0:+z" "zoomOut"
+    .map "keyb0:f1.down" "mayacontrols"
+    .map "keyb0:f2.down" "flycontrols"
+    .endmap
+    sel $cwd
+}
+
+#-------------------------------------------------------------------------------
+#   This procedure ist called when the gui server is opened.
 #-------------------------------------------------------------------------------
 proc OnGuiServerOpen {} {
 
@@ -211,8 +240,6 @@ proc OnGuiServerOpen {} {
 
     # the left and right logos
     .addbrush n2logo n2logo 0 0 64 64 1.0 1.0 1.0 0.5
-    .addbrush leftlogo  radonlabs 0 0 128 64 1.0 1.0 1.0 1.0
-    .addbrush rightlogo n2toolkit 0 0 64 64 1.0 1.0 1.0 1.0
 
     .endbrushes
 

@@ -52,13 +52,13 @@
 #include "tools/ncmdlineargs.h"
 #endif
 
-nNebulaUsePackage(nnebula);
-nNebulaUsePackage(ndinput8);
-nNebulaUsePackage(ndirect3d9);
-nNebulaUsePackage(ncterrain2);
-nNebulaUsePackage(ndshow);
-nNebulaUsePackage(ngui);
-nNebulaUsePackage(nnetwork);
+//nNebulaUsePackage(nnebula);
+//nNebulaUsePackage(ndinput8);
+//nNebulaUsePackage(ndirect3d9);
+//nNebulaUsePackage(ncterrain2);
+//nNebulaUsePackage(ndshow);
+//nNebulaUsePackage(ngui);
+//nNebulaUsePackage(nnetwork);
 
 //------------------------------------------------------------------------------
 /*
@@ -155,13 +155,13 @@ main(int argc, const char** argv)
         nWin32LogHandler logHandler("nviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
-    kernelServer.AddPackage(nnebula);
-    kernelServer.AddPackage(ndinput8);
-    kernelServer.AddPackage(ndirect3d9);
-    kernelServer.AddPackage(ncterrain2);
-    kernelServer.AddPackage(ndshow);
-    kernelServer.AddPackage(ngui);
-    kernelServer.AddPackage(nnetwork);
+//    kernelServer.AddPackage(nnebula);
+//    kernelServer.AddPackage(ndinput8);
+//    kernelServer.AddPackage(ndirect3d9);
+//    kernelServer.AddPackage(ncterrain2);
+//    kernelServer.AddPackage(ndshow);
+//    kernelServer.AddPackage(ngui);
+//    kernelServer.AddPackage(nnetwork);
 
     // initialize a display mode object
     nString title;
@@ -209,7 +209,7 @@ main(int argc, const char** argv)
     if (featureSetArg)
     {
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
-        viewerApp.SetFeaturSetOverride(featureSet);
+        viewerApp.SetFeatureSetOverride(featureSet);
     }
     
     viewerApp.SetScriptServerClass(scriptserverArg);
