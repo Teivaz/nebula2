@@ -1,6 +1,141 @@
 /**
     @defgroup NebulaSceneSystem Scene System
 
+    This page describes scene system and general rendering process of Nebula.
+    
+    On most case of complicated and large application, you maybe 
+    need to write your own scene server. 
+    This document will help you to understand the concept and basics of 
+    scene system for doing that.
+
+    There are three classes one needs to deal with for rendering:
+
+      - nGfxServer2 <br>
+        : the low level 3D rendering API.
+          See @ref NebulaGraphicsSystem for details.
+      - nSceneServer <br>
+        : sits on top of the gfx server and optimizes rendering of visual
+          hierarchies.
+          See @ref NebulaSceneSystemServers for details.
+      - nSceneNode subclasses <br>
+        : the root class of all objects that can be grouped into visual hierarcies
+          and know how to render themselves.
+          See @ref NebulaSceneSystemNodes for details.
+
+    Examples of nSceneNode subclasses are like this:
+
+       - nTransformNode : groups subobjects into hierarchies and describes 3D
+         position and rotation.
+       - nAbstractShaderNode : base class for dealing materials and give some 
+         interfaces for handling textures.
+       - nMaterialNode : handles shader
+       - nShapeNode : which defines geometry to be rendered 
+    
+    @note
+    Usually these node are called for <b>'visual node'</b> and all these derive
+    nSceneNode class.
+
+    The vanilla visual hierarchy consists of a nTransformNode object at the
+    top, and one nShapeNode object as children. This will generate a textured
+    polygonal object that can be positioned, scaled and oriented.
+ 
+    The class hierarchy looks like this:
+    @verbatim
+    nTransformNode
+        nAbstractShaderNode
+            nMaterialNode
+                nShapeNode
+    @endverbatim
+
+    It reduces the number of scene nodes required for objects. 
+    It means that a single nShapeNode is all that's needed to transform and
+    render a mesh.
+
+    @note
+    In Nebula1, this would have required four scene nodes, one transform node 
+    with shader, texture and mesh children. It is a trade off between the class
+    hierarchy and the object hierarchy. Nebula2 has a deeper class hierarchy for a
+    shallower node hierarchy.
+
+    The rendering loop of Nebula roughly looks like this:
+
+       -# BeginScene() is invoked on the scene server object.
+       -# Attach() is invoked on each visual hierarchy root object that want
+          to be rendered.
+       -# EndScene() is invoked on the scene server object.
+       -# RenderScene() is invoked on the scene server object.
+       -# PresentScene() is invoked on the scene server object.
+
+    Step (1) prepares rendering. It contains initializing per frame variables and
+    loading resources if necessary.
+
+    Step (2) is called the <b>'attach pass'</b>, because during this pass, 
+    visual objects attach themselves to the scene. This is done through render
+    context. (See @ref NebulaRenderContext for more details of render context)
+    The goal of the attach pass
+    is give the scene server a complete highlvel description of the current 
+    frame to be rendered by filling out 'group array' of scene server.
+
+    A render context contains a pointer to the root node of scene nodes which
+    to be rendered and transform matrix, frame id, priority and shader paramters 
+    and so on. Also user can provide user defined type of variables which
+    are needed to render the node.
+
+    During the Attach() pass, scene server call nSceneNode::Attach() of the 
+    root node of scene node which is contained in render context. 
+    This is done recursively to all it's child scene nodes.
+    When nTransformNode::Attach() is called (recall that nTransformNode derive
+    nSceneNode, so scene server invokes nSceneNode::Attach(), 
+    nTranformNode::Attach() is called either), the scenen node is attached to
+    scene server by calling of nSceneServer::BeginGroup() of scene server. 
+    The nodes attached
+    to scene server is stored to group array of scene server. Those nodes 
+    contained in group array will be split out by it's type in futher rendering
+    process. After the node is stored to group array, transform is done  
+    at the end of nSceneServer::BeginGroup().
+ 
+    After the Attach() pass (Step (3)), the scene server object has a
+    complete hierarchy of scene server nodes which are contained in group array
+    of scene server. As mentioned ealry, The nodes of this group array are 
+    splitted again before it is rendered.  
+
+    Now we can render a scene by calling RenderScene (Step (4)).
+    Whenever we render a scene, scene server object performs the following steps 
+    to render the scene:
+
+       - <b>Validate resources</b>
+         : before scene server render, it validate that all attached shape and 
+           light nodes have loaded their resources.
+
+       - <b>Split and Sort pass</b>
+         : scene node is split out by it's attribute which has geomoerty or light,
+           then sorted by it's shader.
+
+       - <b>Render pass</b>
+         : rendering pass is sperated to three passes like this:
+         - <b>Light pass</b>
+           : do something for light calculation for this node if it is necessary.
+             This is passed back to shader parameters of the node for later use.
+         - <b>Shader pass</b>
+           : specify the shader for this node to gfx.
+         - <b>Geometry pass</b>
+           : call scene node's RenderGeometry() for it's rendering of geometry.
+             Usually nShapeNode::RenderGeometry() is called.
+
+    The last thing for rendering loop is calling PresentScene() (Step (5)).
+    This finalizes rendering and presents the scene to the user.
+    PresentScene() calls internally nGfxScene::PresetScene() which present
+    the contents of the back buffer. 
+
+    @note
+    nGfxServer2::PresentScene() should be invoked outside of BeginScene() and
+    EndScene().
+
+    That is the basics of Nebula scene system.
+    See nStdSceneServer::RenderScene() for more details of the rendering loop.
+
+    See below sections for more details of each scene system modules:
+
       - @ref NebulaSceneSystemServers
       - @ref NebulaSceneSystemNodes
       - @ref NebulaSceneSystemAnimators
