@@ -5,3 +5,4 @@
 shaders:shared.fx
 shaders:default.fx
 shaders:default_skinned.fx
+shaders:gui.fx
