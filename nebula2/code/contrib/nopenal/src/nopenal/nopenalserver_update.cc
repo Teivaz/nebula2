@@ -13,9 +13,9 @@
     Begin the audio scene.
 */
 bool
-nOpenALServer::BeginScene()
+nOpenALServer::BeginScene(nTime time)
 {
-    return nAudioServer3::BeginScene();
+    return nAudioServer3::BeginScene(time);
 }
 
 //------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ nOpenALServer::UpdateListener(const nListener3& l)
     listenerVel[0] = v.x;
     listenerVel[1] = v.y;
     listenerVel[2] = v.z;
-    listenerOri[0] = (float) -sin(m.M31);
-    listenerOri[1] = m.M32;
-    listenerOri[2] = (float) cos(m.M33);
+    listenerOri[0] = -m.M31;
+    listenerOri[1] = -m.M32;
+    listenerOri[2] = -m.M33;
     listenerOri[3] = m.M21;
     listenerOri[4] = m.M22;
     listenerOri[5] = m.M23;

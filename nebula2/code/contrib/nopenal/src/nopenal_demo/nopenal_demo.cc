@@ -302,11 +302,10 @@ nOpenALDemo::Run()
         }
 
         // audio
-        if (this->refAudioServer->BeginScene())
+        if (this->refAudioServer->BeginScene(time))
         {
             matrix44 m;
             m.set(viewMatrix);
-            m.invert();
             m_Listener.SetTransform(m);
             this->refAudioServer->UpdateListener(m_Listener);
             this->refAudioServer->UpdateSound(p_ogg);
@@ -389,7 +388,7 @@ nOpenALDemo::HandleInput(float frameTime)
         {
             filename = "screenshot";
         }
-        filename.Append(nString(this->screenshotID++));
+        filename.AppendInt(this->screenshotID++);
         filename.Append(".bmp");
 
         this->refGfxServer->SaveScreenshot(filename.Get());
