@@ -850,9 +850,14 @@ global num_tars
 #   Include generator functions for GNU Make and Visual Studio
 #   Workspace files.
 #====================================================================
-puts "*** Building VisualStudio.NET solution"
+#vc7
 source $env(RL_HOME)/bin/makesln.tcl
-set gen_vc gen_solution
+#unix
+source $env(RL_HOME)/bin/makeunix.tcl
+
+#TODO:
+#vc6, macosx and other build system script includes
+
 
 #--------------------------------------------------------------------
 #   EOF
