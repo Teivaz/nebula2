@@ -173,7 +173,6 @@ public:
     class Sequence
     {
     public:
-        friend class nRenderPath;
         /// constructor
         Sequence();
         /// destructor
