@@ -94,9 +94,13 @@ typedef double nTime;
 //------------------------------------------------------------------------------
 //  public kernel C functions
 //------------------------------------------------------------------------------
-void __cdecl n_printf(const char *, ...);
-void __cdecl n_error(const char*, ...);
-void __cdecl n_message(const char*, ...);
+void __cdecl n_printf(const char *, ...)
+    __attribute__((format(printf,1,2)));
+void __cdecl n_error(const char*, ...)
+    __attribute__((noreturn))
+    __attribute__((format(printf,1,2)));
+void __cdecl n_message(const char*, ...)
+    __attribute__((format(printf,1,2)));
 void n_sleep(double);
 char *n_strdup(const char *);
 char *n_strncpy2(char *, const char *, size_t);
@@ -107,8 +111,10 @@ void n_free(void *);
 bool n_strmatch(const char *, const char *);
 void n_strcat(char *, const char *, size_t);
 
-void n_barf(const char *, const char *, int);
-void n_barf2(const char*, const char*, const char*, int);
+void n_barf(const char *, const char *, int)
+    __attribute__((noreturn));
+void n_barf2(const char*, const char*, const char*, int)
+    __attribute__((noreturn));
 
 void *n_dllopen(const char *);
 void  n_dllclose(void *);
