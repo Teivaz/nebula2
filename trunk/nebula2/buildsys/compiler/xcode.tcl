@@ -417,7 +417,7 @@ proc gen_xcode { workspace } {
     global home
     global cur_workspacepath
     
-    puts "Generating XCode file for project: $workspace"
+    ::log::log info "Generating XCode file for project: $workspace"
     check_makedir $home/$cur_workspacepath/$workspace.xcode
     set cid [open [cleanpath $home/$cur_workspacepath/$workspace.xcode/project.pbxproj] w]
     

@@ -270,7 +270,7 @@ proc gen_sln { name } {
     global cur_workspacepath
     set targetuuids(0) 0
     
-    puts "Generating Visual Studio .NET 2002 solution file $name.sln..."
+    ::log::log info "Generating Visual Studio .NET 2002 solution file $name.sln..."
     
     # write .sln file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.sln] w]
