@@ -22,11 +22,15 @@ can see there are two techniques, one for pixel shader hardware and
 one for cards that don't have pixel shaders.
 
 Effect files are part of Direct3D so the place to learn more about them
-is the Direct3D documentation. Here are some links:
+is the Direct3D documentation. The example effect files use High Level Shader Language or HLSL. 
+Here are some links to information about effect files and HLSL:
 
-   - <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directx/graphics/reference/effectfilereference/effectfilereference.asp">Effect File Reference</a>
+   - <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directx/graphics/reference/effectfilereference/effectfilereference.asp">Effect File Reference</a> - The DirectX docs will have much better information about the effect framework in the next release.
    - <a href="http://msdn.microsoft.com/library/en-us/dndrive/html/directx03182003.asp?frame=true&_r=1">Using the Effects Framework</a>
    - <a href="http://msdn.microsoft.com/library/en-us/dndrive/html/directx04152003.asp?frame=true&_r=1">Taking It Higher with the High Level Shader Language</a>
+   - <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnhlsl/html/shaderx2_introductionto.asp">Introduction to the High Level Shader Language</a>
+   - <a href="http://www.fairyengine.com/articles/hlsl2sided.htm">Another Introduction</a>
+   
 
 <h2>Mesh support</h2>
 
