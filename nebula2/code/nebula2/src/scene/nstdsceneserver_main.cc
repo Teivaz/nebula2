@@ -101,7 +101,11 @@ nStdSceneServer::RenderShapes(uint shaderFourCC)
                 int curPass;
                 for (curPass = 0; curPass < numPasses; curPass++)
                 {
-                    curShader->Pass(curPass);
+                    #if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+					curShader->BeginPass(curPass);
+					#else
+					curShader->Pass(curPass);
+					#endif					
 
                     // for each shape...
                     int shapeIndex;
@@ -113,6 +117,10 @@ nStdSceneServer::RenderShapes(uint shaderFourCC)
                         this->UpdateShader(curShader, group.renderContext);
                         group.sceneNode->RenderGeometry(this, group.renderContext);
                     }
+					
+					#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+					curShader->EndPass();
+					#endif
                 }
                 curShader->End();
             }
@@ -148,7 +156,11 @@ nStdSceneServer::RenderLightShapes(uint shaderFourCC)
                 int curPass;
                 for (curPass = 0; curPass < numPasses; curPass++)
                 {
-                    curShader->Pass(curPass);
+					#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+					curShader->BeginPass(curPass);
+					#else
+					curShader->Pass(curPass);
+					#endif
 
                     // for each shape in bucket...
                     int shapeIndex;
@@ -175,6 +187,10 @@ nStdSceneServer::RenderLightShapes(uint shaderFourCC)
                         // render!
                         shapeNode->RenderGeometry(this, shapeGroup.renderContext);
                     }
+
+					#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+					curShader->EndPass();
+					#endif
                 }
                 curShader->End();
             }
