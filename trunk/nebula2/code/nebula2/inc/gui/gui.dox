@@ -140,7 +140,7 @@ skin->EndBrushes()
     or on C++:
 
     @code
-guiServer->NewWindow("nguiclientwindow", true);
+nGuiClientWindow* wnd = (nGuiClientWindow*)guiServer->NewWindow("nguiclientwindow", true);
     @endcode
 
     The above code create a window of nGuiClientWindow type under the
@@ -176,8 +176,8 @@ TitleBar CloseButton SizeButton Layout
 /gui/SystemRootWindow/window3/Layout>.attachform mybutton top 0.0
 /gui/SystemRootWindow/window3/Layout>.attachform mybutton bottom 0.0
 /gui/SystemRootWindow/window3/Layout>.attachpos mybutton right 0.3
-/gui/SystemRootWindow/window3/Layout>sel mybutton
-/gui/SystemRootWindow/window3/Layout/mybutton>.show
+/gui/SystemRootWindow/window3/Layout>sel .. 
+/gui/SystemRootWindow/window3>.updatelayout
     @endverbatim
 
     or on C++:
@@ -197,7 +197,8 @@ layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
 layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
 // assume btnSize is 0.3
 layout->AttachPos(btn, nGuiFormLayout::Right, 1 * btnSize);
-btn->OnShow();
+// update window's layout
+wnd->UpdateLayout(wnd->GetRect());
     @endcode
 
     nGuiWidget and all classes that derived from it have four states:
@@ -220,6 +221,8 @@ btn->OnShow();
     @c 'mybutton' has its left, top and bottom edges aligned with the form.
     Its right edge is placed at 30% of the width of the form.
 
-    Call the @c 'show' script method or the C++ method @c nGuiWidget::OnShow()
-    on the button to apply the changes.
+    Call the @c 'updatelayout' script method or the C++ method 
+    @c nGuiClientWindow::UpdateLayout() on the button to update the position
+    and size of the window.
+    
 */
