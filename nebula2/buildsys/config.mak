@@ -12,6 +12,14 @@
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
+# Generic options:
+# N_DEBUG   - Build debug version
+# N_PROFILE - Incorporate profiling code
+#---------------------------------------------------------------------
+N_DEBUG = false
+N_PROFILE = false
+
+#---------------------------------------------------------------------
 # N_PLATFORM = __LINUX__, __WIN32__
 # Automatically try to determine the platform we are running
 # on. WinNT and Linux offer the 'OSTYPE' env var, Win9x not.
@@ -32,35 +40,56 @@ endif
 
 #---------------------------------------------------------------------
 # N_TARGETDIR - where the exe and the lib files should stay
-# N_OBJECTDIR - the place for the object files
+# N_INTERDIR  - where the object files should stay
 #---------------------------------------------------------------------
+# First, calculate end prefix
+ifeq ($(N_DEBUG),true)
+    N_POSTDIR = d
+else
+    N_POSTDIR = 
+endif
+
+# Now dump the directory paths
 ifeq ($(N_PLATFORM),__LINUX__)
-    N_TARGETDIR = ../../../bin/linux/
+    N_TARGETDIR = ../../bin/linux$(N_POSTDIR)/
+    N_INTERDIR  = ./inter/linux$(N_POSTDIR)/
 endif
 ifeq ($(N_PLATFORM),__WIN32__)
-    N_TARGETDIR = ../../../bin/win32/
+    N_TARGETDIR = ../../bin/win32$(N_POSTDIR)/
+    N_INTERDIR  = ./inter/win32$(N_POSTDIR)/
 endif
 ifeq ($(N_PLATFORM),__MACOSX__)
-    N_TARGETDIR = ../../../bin/macosx/
+    N_TARGETDIR = ../../bin/macosx$(N_POSTDIR)/
+    N_INTERDIR  = ./inter/macosx$(N_POSTDIR)/
 endif
-N_OBJECTDIR = ../make/
 
 #---------------------------------------------------------------------
 # N_COMPILER = __VC__, __GNUC__
 # Based on N_PLATFORM, set the compiler type macro.
 #---------------------------------------------------------------------
-ifeq ($(N_PLATFORM),__WIN32__)
-  N_COMPILER = __VC__
-else 
-  N_COMPILER = __GNUC__
+ifeq ($(N_COMPILER)X,X)
+  ifeq ($(N_PLATFORM),__WIN32__)
+    N_COMPILER = __VC__
+  else 
+    N_COMPILER = __GNUC__
+  endif
 endif
 
 #---------------------------------------------------------------------
-# CHM_COMPILER = path to hhc from HTML Workshop
-# Only for Windows
+# Tools
+# Assign useful system tools here
 #---------------------------------------------------------------------
+ifeq ($(N_PLATFORM),__LINUX__)
+    RM = rm -f
+    CHM_COMPILER =
+endif
 ifeq ($(N_PLATFORM),__WIN32__)
-  CHM_COMPILER = c:/Program\ Files/HTML\ Help\ Workshop/hhc.exe
+    RM = del
+    CHM_COMPILER = c:/Program\ Files/HTML\ Help\ Workshop/hhc.exe
+endif
+ifeq ($(N_PLATFORM),__MACOSX__)
+    RM = rm -f
+    CHM_COMPILER =
 endif
 
 #---------------------------------------------------------------------
@@ -116,7 +145,8 @@ endif
 ifeq ($(N_COMPILER),__VC__)
 # VisualC under Win32
   RC          = rc
-  CC          = cl
+  CC          = cl /TC
+  CXX         = cl /TP
   TCL         = tclsh84
   AR          = lib
   LD          = link
@@ -131,11 +161,19 @@ ifeq ($(N_COMPILER),__VC__)
   DLL_POST    = .dll
   LIB_PRE     =
   LIB_POST    = .lib
-  CC_OPT      = /Tp
   OBJ_OPT     = /Fo
   OUT_OPT     = /Fe
   NOLINK_OPT  = /c
   SYM_OPT     = /D
+  #flags
+  N_WARNFLAGS     = 
+  N_WARNFLAGS_C   = 
+  #N_WARNFLAGS    = 
+  N_OPTIMIZEFLAGS = 
+  N_PROFILEFLAGS  = 
+  N_DEBUGFLAGS    = 
+  INC_PATH        = ../../code/nebula2/inc/
+  RCFLAGS         =
 endif
 ifeq ($(N_COMPILER),__GNUC__)
 # GCC in Linux
@@ -146,6 +184,7 @@ ifeq ($(N_COMPILER),__GNUC__)
     CXX       = g++
     CC        = gcc -x c
   endif
+  RC          =
   TCL         = tclsh
   AR          = ar
   LD          = ld
@@ -155,25 +194,25 @@ ifeq ($(N_COMPILER),__GNUC__)
   FWORK_OPT   = -framework 
   TAR_OPT     = -o
   LIB_OPT     = -l
-  EXE         = 
+  EXE         = .bin
   OBJ         = .o
   DLL_PRE     = lib
   DLL_POST    = .so
   LIB_PRE     = lib
   LIB_POST    = .a
-  CC_OPT      =
   OBJ_OPT     = -o
   OUT_OPT     = -o
   NOLINK_OPT  = -c
   SYM_OPT     = -D
   #flags
-  N_WARNFLAGS     = -W -Wall -Wno-multichar -Wno-reorder -Wno-unused
-  N_WARNFLAGS_C   = -W -Wall -Wno-multichar -Wno-unused
+  N_WARNFLAGS     = -W -Wall -Wno-multichar -Wno-reorder
+  N_WARNFLAGS_C   = -W -Wall -Wno-multichar
   #N_WARNFLAGS    = 
   N_OPTIMIZEFLAGS = -O3 -ffast-math -fomit-frame-pointer
   N_PROFILEFLAGS  = -p
   N_DEBUGFLAGS    = -g
-  INC_PATH    = ../inc/
+  INC_PATH        = ../../code/nebula2/inc/
+  RCFLAGS         =
 endif
 
 #---------------------------------------------------------------------
@@ -197,38 +236,51 @@ ifeq ($(N_COMPILER),__GNUC__)
   endif
   
   ifeq ($(N_MEMMANAGER),true)
-    CFLAGS += -D__NEBULA_MEM_MANAGER__
+    BASECFLAGS += -D__NEBULA_MEM_MANAGER__
   endif
   
-  #???
-  SYS_LIBS = m
+  LIBS += -lm
   
   #threads
   ifeq ($(N_NOTHREADS),false) 
-    CFLAGS += -D_REENTRANT
+    BASECFLAGS += -D_REENTRANT
     LIBS   += -lpthread
   else
-    CFLAGS += -D__NEBULA_NO_THREADS__
+    BASECFLAGS += -D__NEBULA_NO_THREADS__
   endif
   
 endif
 
 #---------------------------------------------------------------------
-# CFLAGS            , CFLAGS-d, CFLAGS-p the build type specific flags
-# release - default , debug   , profile
+# CFLAGS / CXXFLAGS
+# release - default , debug , profile
 #---------------------------------------------------------------------
 ifeq ($(N_COMPILER),__GNUC__)
-    BASECFLAGS = $(CFLAGS)
-    CFLAGS += $(SYM_OPT)$(N_PLATFORM) -DN_STATIC
-    CFLAGS += $(N_WARNFLAGS_C)
-    CFLAGS-d = $(CFLAGS) $(N_DEBUGFLAGS)
-    CFLAGS-p = $(CFLAGS) $(N_PROFILEFLAGS)
-    CFLAGS  += $(N_OPTIMIZEFLAGS)
+    BASECFLAGS += $(SYM_OPT)$(N_PLATFORM) -DN_STATIC
+    
+    # Add on Debug, Optimization or Profiling flags to base
+    ifeq ($(N_DEBUG),true)
+      BASECFLAGS   += $(N_DEBUGFLAGS)
+    else
+      BASECFLAGS   += $(N_OPTIMIZEFLAGS)
+    endif
+    ifeq ($(N_PROFILE),true)
+      BASECFLAGS   += $(N_PROFILEFLAGS)
+    endif
+    
+    # C flags
+    CFLAGS += $(BASECFLAGS) $(N_WARNFLAGS_C)
+    
+    # C++ flags
+    CXXFLAGS += $(BASECFLAGS) $(N_WARNFLAGS)
+endif
 
-    CXXFLAGS += $(BASECFLAGS)
-    CXXFLAGS += $(SYM_OPT)$(N_PLATFORM) -DN_STATIC
-    CXXFLAGS += $(N_WARNFLAGS)
-    CXXFLAGS-d = $(CXXFLAGS) $(N_DEBUGFLAGS)
-    CXXFLAGS-p = $(CXXFLAGS) $(N_PROFILEFLAGS)
-    CXXFLAGS  += $(N_OPTIMIZEFLAGS)
+#---------------------------------------------------------------------
+# Generic compiler targets
+#---------------------------------------------------------------------
+ifeq ($(N_COMPILER),__VC__)
+%.res: %.rc
+	$(RC) $(RCFLAGS) $(OBJ_OPT)$@ $(<)
+else
+    %.res:
 endif
