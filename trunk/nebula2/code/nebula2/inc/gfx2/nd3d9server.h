@@ -23,6 +23,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <d3dx9tex.h>
 #include "gfx2/d3dfont9.h"
 
 #undef N_DEFINES
@@ -95,6 +96,9 @@ public:
     virtual void Text(const char* text, float x, float y);
     /// draw the text buffer
     virtual void DrawTextBuffer();
+
+    /// save a screen shot
+    virtual bool SaveScreenshot(const char*);
 
     static nKernelServer* kernelServer;
 
