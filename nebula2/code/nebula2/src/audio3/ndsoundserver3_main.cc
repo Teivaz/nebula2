@@ -12,6 +12,21 @@
 
 nNebulaClass(nDSoundServer3, "naudioserver3");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    ndsoundserver3
+
+    @cppclass
+    nDSoundServer3
+    
+    @superclass
+    naudioserver3
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

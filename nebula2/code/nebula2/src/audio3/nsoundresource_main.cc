@@ -6,6 +6,20 @@
 
 nNebulaClass(nSoundResource, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nsoundresource
+
+    @cppclass
+    nSoundResource
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
 //------------------------------------------------------------------------------
 /**
 */
