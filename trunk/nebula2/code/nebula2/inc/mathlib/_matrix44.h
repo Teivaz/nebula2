@@ -9,25 +9,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef _VECTOR4_H
 #include "mathlib/_vector4.h"
-#endif
-
-#ifndef _VECTOR3_H
 #include "mathlib/_vector3.h"
-#endif
-
-#ifndef N_QUATERNION_H
 #include "mathlib/quaternion.h"
-#endif
-
-#ifndef N_EULERANGLES_H
 #include "mathlib/euler.h"
-#endif
-
-#ifndef M_MATRIXDEFS_H
 #include "mathlib/matrixdefs.h"
-#endif
 
 static float _matrix44_ident[16] = 
 {
@@ -103,8 +89,18 @@ public:
     void set_translation(const _vector3& t);
     /// scale
     void scale(const _vector3& s);
-    /// unrestricted lookat
-    void lookat(const _vector3& to, const _vector3& up);
+    /// lookat in a left-handed coordinate system
+    void lookatLh(const _vector3& to, const _vector3& up);
+    /// lookat in a right-handed coordinate system
+    void lookatRh(const _vector3& to, const _vector3& up);
+    /// create left-handed field-of-view perspective projection matrix
+    void perspFovLh(float fovY, float aspect, float zn, float zf);
+    /// create right-handed field-of-view perspective projection matrix
+    void perspFovRh(float fovY, float aspect, float zn, float zf);
+    /// create left-handed orthogonal projection matrix
+    void orthoLh(float w, float h, float zn, float zf);
+    /// create right-handed orthogonal projection matrix
+    void orthoRh(float w, float h, float zn, float zf);
     /// restricted lookat
     void billboard(const _vector3& to, const _vector3& up);
     /// inplace matrix mulitply
@@ -587,18 +583,91 @@ _matrix44::scale(const _vector3& s)
 */
 inline
 void 
-_matrix44::lookat(const _vector3& to, const _vector3& up) 
+_matrix44::lookatRh(const _vector3& at, const _vector3& up) 
 {
-    _vector3 from(M41,M42,M43);
-    _vector3 z(from - to);
-    z.norm();
-    _vector3 x(up * z);      // x = y cross z
-    x.norm();
-    _vector3 y = z * x;      // y = z cross x
+    _vector3 eye(M41, M42, M43);
+    _vector3 zaxis = eye - at;
+    zaxis.norm();
+    _vector3 xaxis = up * zaxis;
+    xaxis.norm();
+    _vector3 yaxis = zaxis * xaxis;
+    M11 = xaxis.x;  M12 = xaxis.y;  M13 = xaxis.z;  M14 = 0.0f;
+    M21 = yaxis.x;  M22 = yaxis.y;  M23 = yaxis.z;  M24 = 0.0f;
+    M31 = zaxis.x;  M32 = zaxis.y;  M33 = zaxis.z;  M34 = 0.0f;
+}
 
-    M11=x.x;  M12=x.y;  M13=x.z;  M14=0.0f;
-    M21=y.x;  M22=y.y;  M23=y.z;  M24=0.0f;
-    M31=z.x;  M32=z.y;  M33=z.z;  M34=0.0f;
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+_matrix44::lookatLh(const _vector3& at, const _vector3& up) 
+{
+    _vector3 eye(M41, M42, M43);
+    _vector3 zaxis = at - eye;
+    zaxis.norm();
+    _vector3 xaxis = up * zaxis;
+    xaxis.norm();
+    _vector3 yaxis = zaxis * xaxis;
+    M11 = xaxis.x;  M12 = yaxis.x;  M13 = zaxis.x;  M14 = 0.0f;
+    M21 = xaxis.y;  M22 = yaxis.y;  M23 = zaxis.y;  M24 = 0.0f;
+    M31 = xaxis.z;  M32 = yaxis.z;  M33 = zaxis.z;  M34 = 0.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::perspFovLh(float fovY, float aspect, float zn, float zf)
+{
+    float h = float(1.0 / tan(fovY * 0.5f));
+    float w = h / aspect;
+    M11 = w;    M12 = 0.0f; M13 = 0.0f;                   M14 = 0.0f;
+    M21 = 0.0f; M22 = h;    M23 = 0.0f;                   M24 = 0.0f;
+    M31 = 0.0f; M32 = 0.0f; M33 = zf / (zf - zn);         M34 = 1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = -zn * (zf / (zf - zn)); M44 = 0.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::perspFovRh(float fovY, float aspect, float zn, float zf)
+{
+    float h = float(1.0 / tan(fovY * 0.5f));
+    float w = h / aspect;
+    M11 = w;    M12 = 0.0f; M13 = 0.0f;                  M14 = 0.0f;
+    M21 = 0.0f; M22 = h;    M23 = 0.0f;                  M24 = 0.0f;
+    M31 = 0.0f; M32 = 0.0f; M33 = zf / (zn - zf);        M34 = -1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = zn * (zf / (zn - zf)); M44 = 0.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::orthoLh(float w, float h, float zn, float zf)
+{
+    M11 = 2.0f / w; M12 = 0.0f;     M13 = 0.0f;             M14 = 0.0f;
+    M21 = 0.0f;     M22 = 2.0f / h; M23 = 0.0f;             M24 = 0.0f;
+    M31 = 0.0f;     M32 = 0.0f;     M33 = 1.0f / (zf - zn); M34 = 0.0f;
+    M41 = 0.0f;     M42 = 0.0f;     M43 = zn / (zn - zf);   M44 = 1.0f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::orthoRh(float w, float h, float zn, float zf)
+{
+    M11 = 2.0f / w; M12 = 0.0f;     M13 = 0.0f;             M14 = 0.0f;
+    M21 = 0.0f;     M22 = 2.0f / h; M23 = 0.0f;             M24 = 0.0f;
+    M31 = 0.0f;     M32 = 0.0f;     M33 = 1.0f / (zn - zf); M34 = 0.0f;
+    M41 = 0.0f;     M42 = 0.0f;     M43 = zn / (zn - zf);   M44 = 1.0f;
 }
 
 //------------------------------------------------------------------------------
