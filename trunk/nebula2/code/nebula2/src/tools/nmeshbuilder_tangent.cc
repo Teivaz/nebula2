@@ -2,383 +2,109 @@
 //  nmeshbuilder_tangent.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#undef __NEBULA_MEM_MANAGER__
-
 #include "tools/nmeshbuilder.h"
-#include "NVMeshMender.h"
 
 //------------------------------------------------------------------------------
-/*
-    Helper method: Build tangents for one triangle group. The outMesh
-    nMeshBuilder object will contain one group containing the original
-    group geometry, plus new per-vertex tangents. Note the the outMesh
-    may contain more vertices then the original group because of the 
-    way NVMeshMender works.
+/**
+    Build triangle normals, tangents and binormals. The tangents require a valid 
+    uv-mapping in texcoord layer 0. A new mesh reduced to coord and uv0 
+    components will be used for the computation to ensure proper vertex sharing 
+    between triangles.
 */
-bool
-nMeshBuilder::BuildTangentsForOneGroup(int groupIndex, nMeshBuilder& outMesh)
+void
+nMeshBuilder::BuildTriangleNormals()
 {
-    // build a new mesh builder object containing only the group data
-nMeshBuilder srcMesh = *this;
-    
-//    nMeshBuilder srcMesh;
-//    this->ExtractGroup(groupIndex, srcMesh);
-
-    n_assert(srcMesh.HasVertexComponent(Vertex::COORD));
-    n_assert(srcMesh.GetNumTriangles() > 0);
-
-    // do the actual tangent generation work
-    NVMeshMender::VAVector inAttrs;
-    NVMeshMender::VAVector outAttrs;
-
-    int vertexIndex;
-    int numVertices = srcMesh.GetNumVertices();
-
-    // add coords
-    NVMeshMender::VertexAttribute posAtt;
-    posAtt.Name_ = "position";
-    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-    {
-        const vector3& v = srcMesh.GetVertexAt(vertexIndex).GetCoord();
-        posAtt.floatVector_.push_back(v.x);
-        posAtt.floatVector_.push_back(v.y);
-        posAtt.floatVector_.push_back(v.z);
-    }
-    inAttrs.push_back(posAtt);
-    outAttrs.push_back(posAtt);
-
-    // add normals
-    if (srcMesh.HasVertexComponent(Vertex::NORMAL))
-    {
-        NVMeshMender::VertexAttribute normAtt;
-        normAtt.Name_ = "normal";
-        for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-        {
-            const vector3& v = srcMesh.GetVertexAt(vertexIndex).GetNormal();
-            normAtt.floatVector_.push_back(v.x);
-            normAtt.floatVector_.push_back(v.y);
-            normAtt.floatVector_.push_back(v.z);
-        }
-        inAttrs.push_back(normAtt);
-        outAttrs.push_back(normAtt);
-    }
-
-    // add vertex weights (since MeshMender only accepts input of up to 3
-    // components, we have to split the 4d weights over 2 MeshMender
-    // component arrays
-    if (srcMesh.HasVertexComponent(Vertex::WEIGHTS))
-    {
-        NVMeshMender::VertexAttribute weightAtt0;
-        NVMeshMender::VertexAttribute weightAtt1;
-        weightAtt0.Name_ = "weight0";
-        weightAtt1.Name_ = "weight1";
-        for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-        {
-            const vector4& v = srcMesh.GetVertexAt(vertexIndex).GetWeights();
-            weightAtt0.floatVector_.push_back(v.x);
-            weightAtt0.floatVector_.push_back(v.y);
-            weightAtt0.floatVector_.push_back(0.0f);
-            weightAtt1.floatVector_.push_back(v.z);
-            weightAtt1.floatVector_.push_back(v.w);
-            weightAtt1.floatVector_.push_back(0.0f);
-        }
-        inAttrs.push_back(weightAtt0);
-        inAttrs.push_back(weightAtt1);
-        outAttrs.push_back(weightAtt0);
-        outAttrs.push_back(weightAtt1);
-    }
-
-    // add joint indices, same procedure as vertex weights
-    if (srcMesh.HasVertexComponent(Vertex::JINDICES))
-    {
-        NVMeshMender::VertexAttribute jiAtt0;
-        NVMeshMender::VertexAttribute jiAtt1;
-        jiAtt0.Name_ = "ji0";
-        jiAtt1.Name_ = "ji1";
-        for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-        {
-            const vector4& v = srcMesh.GetVertexAt(vertexIndex).GetJointIndices();
-            jiAtt0.floatVector_.push_back(v.x);
-            jiAtt0.floatVector_.push_back(v.y);
-            jiAtt0.floatVector_.push_back(0.0f);
-            jiAtt1.floatVector_.push_back(v.z);
-            jiAtt1.floatVector_.push_back(v.w);
-            jiAtt1.floatVector_.push_back(0.0f);
-        }
-        inAttrs.push_back(jiAtt0);
-        inAttrs.push_back(jiAtt1);
-        outAttrs.push_back(jiAtt0);
-        outAttrs.push_back(jiAtt1);
-    }
-
-    // add texture coordinate layers
-    int texCoordSet;
-    for (texCoordSet = 0; texCoordSet < 4; texCoordSet++)
-    {
-        Vertex::Component comp;
-        const char* name;
-        switch (texCoordSet)
-        {
-            case 0: comp = Vertex::UV0; name = "tex0"; break;
-            case 1: comp = Vertex::UV1; name = "tex1"; break;
-            case 2: comp = Vertex::UV2; name = "tex2"; break;
-            case 3: comp = Vertex::UV3; name = "tex3"; break;
-        }
-        if (srcMesh.HasVertexComponent(comp))
-        {
-            NVMeshMender::VertexAttribute texAtt;
-            texAtt.Name_ = name;
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                const vector2& v = srcMesh.GetVertexAt(vertexIndex).GetUv(texCoordSet);
-                texAtt.floatVector_.push_back(v.x);
-                texAtt.floatVector_.push_back(v.y);
-                texAtt.floatVector_.push_back(0.0f);
-            }
-            inAttrs.push_back(texAtt);
-            outAttrs.push_back(texAtt);
-        }
-    }
-
-    // add indices
-    int numTriangles = srcMesh.GetNumTriangles();
-    NVMeshMender::VertexAttribute indicesAtt;
-    indicesAtt.Name_ = "indices";
+    // compute face normals and tangents
     int triangleIndex;
+    int numTriangles = this->GetNumTriangles();
+    vector3 v0, v1;
+    vector2 uv0, uv1;
+    vector3 n, t, b;
     for (triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
     {
-        int i0, i1, i2;
-        srcMesh.GetTriangleAt(triangleIndex).GetVertexIndices(i0, i1, i2);
-        indicesAtt.intVector_.push_back(i0);
-        indicesAtt.intVector_.push_back(i1);
-        indicesAtt.intVector_.push_back(i2);
+        Triangle& tri = this->GetTriangleAt(triangleIndex);
+        int index[3];
+        tri.GetVertexIndices(index[0], index[1], index[2]);
+
+        const Vertex& vertex0 = this->GetVertexAt(index[0]);
+        const Vertex& vertex1 = this->GetVertexAt(index[1]);
+        const Vertex& vertex2 = this->GetVertexAt(index[2]);
+
+        // compute the face normal
+        v0 = vertex1.GetCoord() - vertex0.GetCoord();
+        v1 = vertex2.GetCoord() - vertex0.GetCoord();
+        n = v0 * v1;
+        n.norm();
+        tri.SetNormal(n);
+
+        // compute the tangent and binormal
+        uv0 = vertex1.GetUv(0) - vertex0.GetUv(0);
+        uv1 = vertex2.GetUv(0) - vertex0.GetUv(0);
+        t = (v0 * uv1.y) - (v1 * uv0.y);
+        b = (v0 * uv1.x) - (v1 * uv0.x);
+        t.norm();
+        b.norm();
+        tri.SetTangent(t);
+        tri.SetBinormal(b);
     }
-    inAttrs.push_back(indicesAtt);
-    outAttrs.push_back(indicesAtt);
-
-    // set requested output attributes
-    NVMeshMender::VertexAttribute tangentAtt;
-    tangentAtt.Name_ = "tangent";
-    outAttrs.push_back(tangentAtt);
-
-    NVMeshMender::VertexAttribute binormalAtt;
-    binormalAtt.Name_ = "binormal";
-    outAttrs.push_back(binormalAtt);
-
-    // do the actual work
-    NVMeshMender mender;
-    bool success = mender.Munge(inAttrs,        // these are my positions & indices
-                                outAttrs,       // these are the outputs I requested, plus extra stuff generated on my behalf
-                                3.141592654f,   // 3.141592654f / 2.5f,    // tangent space smooth angle
-                                NULL,                   // no Texture matrix applied to my tex0 coords
-                                NVMeshMender::FixTangents,              // fix degenerate bases & texture mirroring
-                                NVMeshMender::DontFixCylindricalTexGen, // handle cylidrically mapped textures via vertex duplication
-                                NVMeshMender::WeightNormalsByFaceSize); // weight vertex normals by the triangle's size
-    if (!success)
-    {
-        n_printf("nMeshBuilder: NVMeshMender::Munge() failed!\n");
-        return false;
-    }
-
-    // NOTE: the resulting mesh may contain more vertices then the input mesh
-    // thus we make sure that the outMesh is empty and fill it with the
-    // new data
-    n_assert(0 == outMesh.GetNumVertices());
-    n_assert(0 == outMesh.GetNumTriangles());
-    n_assert(0 == outMesh.GetNumGroups());
-    
-    numVertices = outAttrs[0].floatVector_.size() / 3;
-    uint attIndex = 0;
-    vector3 v3;
-    for (attIndex = 0; attIndex < outAttrs.size(); attIndex++)
-    {
-        if ("position" == outAttrs[attIndex].Name_)
-        {
-            // write position
-            n_assert(srcMesh.HasVertexComponent(Vertex::COORD));
-            Vertex newVertex;
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                v3.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v3.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                v3.z = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 2];
-                newVertex.SetCoord(v3);
-                outMesh.AddVertex(newVertex);
-            }
-        }
-        else if ("normal" == outAttrs[attIndex].Name_)
-        {
-            // write normals
-            if (srcMesh.HasVertexComponent(Vertex::NORMAL))
-            {
-                for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-                {
-                    v3.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                    v3.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                    v3.z = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 2];
-                    outMesh.GetVertexAt(vertexIndex).SetNormal(v3);
-                }
-            }
-        }
-        else if ("indices" == outAttrs[attIndex].Name_)
-        {
-            // write triangle indices
-            numTriangles = outAttrs[attIndex].intVector_.size() / 3;
-            n_assert(numTriangles > 0);
-            Triangle newTriangle;
-            int origGroupId = srcMesh.GetGroupAt(0).GetId();
-            for (triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
-            {
-                int i0, i1, i2;
-                i0 = outAttrs[attIndex].intVector_[triangleIndex * 3 + 0];
-                i1 = outAttrs[attIndex].intVector_[triangleIndex * 3 + 1];
-                i2 = outAttrs[attIndex].intVector_[triangleIndex * 3 + 2];
-                newTriangle.SetVertexIndices(i0, i1, i2);
-                newTriangle.SetGroupId(origGroupId);
-                outMesh.AddTriangle(newTriangle);
-            }
-        }
-        else if ("tangent" == outAttrs[attIndex].Name_)
-        {
-            // write newly created tangents
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                v3.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v3.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                v3.z = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 2];
-                outMesh.GetVertexAt(vertexIndex).SetTangent(v3);
-            }
-        }
-        else if ("weight0" == outAttrs[attIndex].Name_)
-        {
-            // write first 2 components of vertex weights
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                vector4 v4 = outMesh.GetVertexAt(vertexIndex).GetWeights();
-                v4.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v4.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                outMesh.GetVertexAt(vertexIndex).SetWeights(v4);
-            }
-        }
-        else if ("weight1" == outAttrs[attIndex].Name_)
-        {
-            // write last 2 components of vertex weights
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                vector4 v4 = outMesh.GetVertexAt(vertexIndex).GetWeights();
-                v4.z = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v4.w = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                outMesh.GetVertexAt(vertexIndex).SetWeights(v4);
-            }
-        }
-        else if ("ji0" == outAttrs[attIndex].Name_)
-        {
-            // write first 2 components of joint indices
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                vector4 v4 = outMesh.GetVertexAt(vertexIndex).GetJointIndices();
-                v4.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v4.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                outMesh.GetVertexAt(vertexIndex).SetJointIndices(v4);
-            }
-        }
-        else if ("ji1" == outAttrs[attIndex].Name_)
-        {
-            // write last 2 components of vertex weights
-            for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-            {
-                vector4 v4 = outMesh.GetVertexAt(vertexIndex).GetJointIndices();
-                v4.z = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                v4.w = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                outMesh.GetVertexAt(vertexIndex).SetJointIndices(v4);
-            }
-        }
-        else
-        {
-            // write texture coordinate sets
-            vector2 v2;
-            for (texCoordSet = 0; texCoordSet < 4; texCoordSet++)
-            {
-                char attName[32];
-                sprintf(attName, "tex%d", texCoordSet);
-                if (outAttrs[attIndex].Name_ == attName)
-                {
-                    Vertex::Component comp;
-                    switch (texCoordSet)
-                    {
-                        case 0: comp = Vertex::UV0; break;
-                        case 1: comp = Vertex::UV1; break;
-                        case 2: comp = Vertex::UV2; break;
-                        case 3: comp = Vertex::UV3; break;
-                    }
-                    if (srcMesh.HasVertexComponent(comp))
-                    {
-                        for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-                        {
-                            v2.x = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 0];
-                            v2.y = outAttrs[attIndex].floatVector_[vertexIndex * 3 + 1];
-                            outMesh.GetVertexAt(vertexIndex).SetUv(texCoordSet, v2);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // write a group
-/*
-    Group newGroup = srcMesh.GetGroupAt(0);
-    newGroup.SetFirstTriangle(0);
-    newGroup.SetNumTriangles(numTriangles);
-    outMesh.AddGroup(newGroup);
-*/
-    return true;
 }
 
 //------------------------------------------------------------------------------
-/*
-    Generate vertex tangents. Uses nVidia's NVMeshMender class to do the
-    actual work.
+/**
+    Generates the per-vertex tangents and binormals by averaging the
+    per-triangle tangents and binormals which must be computed
+    beforehand. Note that the vertex normals will not be touched!
+    Internally, the method will create a clean mesh which contains
+    only vertex coordinates and normals, and computes connectivity
+    information from the resulting mesh. The result is that 
+    tangents and binormals are averaged for smooth edges, as defined
+    by the existing normal set.
 */
-bool
-nMeshBuilder::BuildTangents()
+void
+nMeshBuilder::BuildVertexTangentBinormals()
 {
-    // First make a clean copy of the source mesh with coordinates 
-    // and normales only. This eliminates unwanted hard edges when
-    // MeshMender builds its adjacency information. Record the
-    // cleanup operation in a collapsMap which we will need later.
-    nArray< nArray<int> > collapsMap(32000, 32000);
+    // create a clean coord/normal-only mesh, record the cleanup operation
+    // in a collaps map so that we can inflate-copy the new vertex
+    // components into the original mesh afterwards
+    nArray< nArray<int> > collapsMap(0, 0);
+    collapsMap.SetFixedSize(this->GetNumVertices());
     nMeshBuilder cleanMesh = *this;
-    cleanMesh.ForceVertexComponents(Vertex::COORD | Vertex::NORMAL | Vertex::UV0);
+    cleanMesh.ForceVertexComponents(Vertex::COORD | Vertex::NORMAL);
     cleanMesh.Cleanup(&collapsMap);
 
-    nMeshBuilder tangentMesh;
-    cleanMesh.BuildTangentsForOneGroup(-1, tangentMesh);
+    // create a connectivity map which contains for each vertex
+    // the triangle indices which share the vertex
+    nArray< nArray<int> > vertexTriangleMap(0, 0);
+    cleanMesh.BuildVertexTriangleMap(vertexTriangleMap);
 
-    this->InflateCopyComponents(tangentMesh, collapsMap, Vertex::TANGENT);
-
-/*
-    // since the tangent generation can change the number of vertices
-    // we must handle each group individually
-    int groupIndex;
-    int numGroups = this->GetNumGroups();
-    nMeshBuilder finalMesh;
-    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+    // for each vertex...
+    int vertexIndex = 0;
+    int numVertices = cleanMesh.GetNumVertices();
+    vector3 avgTangent, avgBinormal;
+    for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
     {
-        nMeshBuilder groupMesh;
-        if (!this->BuildTangentsForOneGroup(groupIndex, groupMesh))
+        avgTangent.set(0.0f, 0.0f, 0.0f);
+        avgBinormal.set(0.0f, 0.0f, 0.0f);
+
+        // for each triangle sharing this vertex...
+        int numVertexTris = vertexTriangleMap[vertexIndex].Size();
+        n_assert(numVertexTris > 0);
+        int vertexTriIndex;
+        for (vertexTriIndex = 0; vertexTriIndex < numVertexTris; vertexTriIndex++)
         {
-            n_printf("nMeshBuilder: error in tangent generation in mesh group %d\n", groupIndex);
-            return false;
+            const Triangle& tri = cleanMesh.GetTriangleAt(vertexTriangleMap[vertexIndex][vertexTriIndex]);
+            avgTangent += tri.GetTangent();
+            avgBinormal += tri.GetBinormal();
         }
 
-        // append result to final mesh
-        finalMesh.Append(groupMesh);
-    }
-    
-    // overwrite myself with final mesh
-    this->Copy(finalMesh);
-*/
+        // renormalize averaged tangent and binormal
+        avgTangent.norm();
+        avgBinormal.norm();
 
-    return true;
+        cleanMesh.GetVertexAt(vertexIndex).SetTangent(avgTangent);
+        cleanMesh.GetVertexAt(vertexIndex).SetBinormal(avgBinormal);
+    }
+
+    // inflate-copy the generated vertex tangents and binormals to the original mesh
+    this->InflateCopyComponents(cleanMesh, collapsMap, Vertex::TANGENT | Vertex::BINORMAL);
 }
