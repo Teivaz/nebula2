@@ -47,7 +47,7 @@ proc gen_ancestor {i} {
     foreach filename $mod($i,srcs) {
 
         if {[catch { set cid [open [cleanpath $home/[getfilenamewithextension $filename cc]] r] } result]} {
-            puts stderr "ERROR: $result"
+            ::log::log error "ERROR: $result"
             return
         }
 
@@ -105,7 +105,7 @@ proc gen_kernel {i} {
 
         set cid [open [cleanpath $home/$filename.h] r]
         if {[catch { set cid [open [cleanpath $home/$filename.h] r] } result]} {
-            puts stderr "ERROR: $result"
+            ::log::log error "ERROR: $result"
             return
         }
         while {![eof $cid]} {
@@ -118,7 +118,7 @@ proc gen_kernel {i} {
             #   #define N_DEFINES nKernelServer
 
             if {[string match "#define" [lindex $line 0]] && [string match "N_DEFINES" [lindex $line 1]] && [string match "nKernelServer" [lindex $line 2]]} {
-                puts "\n->Found the kernel!\n"
+                ::log::log debug "\n->Found the kernel!\n"
                 set mod($i,kernel) true
                 break
             }
@@ -204,10 +204,10 @@ proc fixmods { } {
     global mod
     global num_mods
 
-    puts "\n**** Fixing modules"
+    ::log::log info "\n**** Fixing modules"
 
     for {set i 0} {$i < $num_mods} {incr i} {
-         puts "  $mod($i,name)"
+         ::log::log debug "  $mod($i,name)"
          gen_filelists $i
          gen_ancestor $i
 
@@ -239,9 +239,9 @@ proc fixbundles { } {
     global bundle
     global num_bundles
 
-    puts "\n**** Fixing bundles"
+    ::log::log info "\n**** Fixing bundles"
     for {set i 0} {$i < $num_bundles} {incr i} {
-        puts "  $bundle($i,name)"
+        ::log::log debug "  $bundle($i,name)"
         foreach module $bundle($i,modules) {
             findmodbyname $module
         }
@@ -266,9 +266,9 @@ proc fixtargets { } {
     global tar
     global num_tars
 
-    puts "\n**** Fixing targets"
+    ::log::log info "\n**** Fixing targets"
     for {set i 0} {$i < $num_tars} {incr i} {
-        puts "  $tar($i,name)"
+        ::log::log debug "  $tar($i,name)"
 
         # fix up the mergedmods list
         foreach bit $tar($i,bundles) {
@@ -293,7 +293,7 @@ proc fixtargets { } {
                     set tar($i,moddeffile) $filename
                     break
                 } else {
-                    puts "Warning: Module Definition File set but file not found $filename."
+                    ::log::log debug "Warning: Module Definition File set but file not found $filename."
                 }
             }
         }
@@ -341,17 +341,17 @@ proc fixworkspaces { wslist } {
     global mod
     global home
 
-    puts "\n**** Fixing workspaces"    
+    ::log::log info "\n**** Fixing workspaces"    
     for {set i 0} {$i < $num_wspaces} {incr i} {
         #format
         # wspace(idx,tar#name#,#fields#)
         if {$wslist != ""} {
             if {[lsearch $wslist $wspace($i,name)] == -1} {
-                puts "-- $wspace($i,name) not in workspace list ($wslist)"
+                ::log::log debug "-- $wspace($i,name) not in workspace list ($wslist)"
                 continue
             }
         }
-        puts "  $wspace($i,name)"
+        ::log::log debug "  $wspace($i,name)"
         foreach tarname $wspace($i,targets) {
             set idx [findtargetbyname $tarname]
             set wspace($i,$tarname,type)        $tar($idx,type)
