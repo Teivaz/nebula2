@@ -92,7 +92,7 @@ div.fragment{
 	padding-right: 1em;
 }
 
-div.groupheader{
+div.groupHeader{
 	border-bottom: 1px solid #557E8C;
 	font-weight: bold;
 	margin-bottom: 6px;
@@ -100,7 +100,7 @@ div.groupheader{
 	margin-top: 12px;
 }
 
-div.grouptext{
+div.groupText{
 	font-style: italic;
 	margin-left: 16px;
 }
