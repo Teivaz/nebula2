@@ -15,7 +15,7 @@
 
     The followings are supported:
       -# Standard material.
-      =# Muliti-sub material.
+      -# Muliti-sub material.
       -# Nebula2 custom mateiral which is shader censtric and more Nebula
          friendly.
     
@@ -59,8 +59,6 @@ public:
 
     int GetNumMaps(StdMat2 *mtl);
 
-    void ExportShaderAnimations(Mtl* mtl);
-
 protected:
     void CreateDefaultMaterial(nShapeNode* shapeNode);
 
@@ -71,9 +69,13 @@ protected:
     
     void GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode);
 
-    //void CreateShaderAnim(Control* control, nMaxFloatController& alpha);
-    void CreateShaderAnimator(nShaderState::Param vectorParameter, 
+    // @name Functions for vector4 type material animation
+    // @{
+    void ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode);
+    void CreateShaderAnimator(nShapeNode* shapeNode,
+                              nShaderState::Param vectorParameter, 
                               Control* ctrlColor, Control* ctrlAlpha);
+    // @}
 
     bool SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode);
     void SetStatndardNebulaShader(nShapeNode* shapeNode);
