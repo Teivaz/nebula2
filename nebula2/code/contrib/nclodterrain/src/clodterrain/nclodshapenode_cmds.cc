@@ -39,12 +39,12 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setterrainname_s",               'SMSN', n_setterrainname);
-    cl->AddCmd("s_getterrainname_v",               'GMSN', n_getterrainname);
-    cl->AddCmd("v_settqtname_s",               'STQN', n_settqtname);
-    cl->AddCmd("s_gettqtname_v",               'GTQN', n_gettqtname);
-    cl->AddCmd("v_setterrainresourceloader_s", 'SMRL', n_setterrainresourceloader);
-    cl->AddCmd("s_getterrainresourceloader_v", 'GMRL', n_getterrainresourceloader);
+    cl->AddCmd("v_setterrainname_s",            'SMSN', n_setterrainname);
+    cl->AddCmd("s_getterrainname_v",            'GMSN', n_getterrainname);
+    cl->AddCmd("v_settqtname_s",                'STQN', n_settqtname);
+    cl->AddCmd("s_gettqtname_v",                'GTQN', n_gettqtname);
+    cl->AddCmd("v_setterrainresourceloader_s",  'SMRL', n_setterrainresourceloader);
+    cl->AddCmd("s_getterrainresourceloader_v",  'GMRL', n_getterrainresourceloader);
     cl->AddCmd("v_setscreenspaceerror_f",       'SSSE', n_setscreenspaceerror);
     cl->AddCmd("f_getscreenspaceerror_v",       'GSSE', n_getscreenspaceerror);
     cl->AddCmd("v_setcollisionspace_s",         'SCSP', n_setcollisionspace);
@@ -52,8 +52,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_begindetailtextures_i",       'BDTX', n_begindetailtextures);
     cl->AddCmd("v_setdetailtexture_is",         'SDTX', n_setdetailtexture);
     cl->AddCmd("v_enddetailtextures_v",         'EDTX', n_enddetailtextures);
-    cl->AddCmd("v_setdetailscale_f",          'SDSC', n_setdetailscale);
-    cl->AddCmd("v_getdetailscale_f",          'GDSC', n_getdetailscale);
+    cl->AddCmd("v_setdetailscale_f",            'SDSC', n_setdetailscale);
+    cl->AddCmd("f_getdetailscale_n",            'GDSC', n_getdetailscale);
     cl->EndCmds();
 }
 
