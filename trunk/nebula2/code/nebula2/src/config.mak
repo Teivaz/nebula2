@@ -152,9 +152,10 @@ ifeq ($(N_COMPILER),__GNUC__)
   DOCTOOL     = doxygen
   IPATH_OPT   = -I
   LPATH_OPT   = -L
+  FWORK_OPT   = -framework 
   TAR_OPT     = -o
   LIB_OPT     = -l
-  EXE         = .exe
+  EXE         = 
   OBJ         = .o
   DLL_PRE     = lib
   DLL_POST    = .so
