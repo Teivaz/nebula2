@@ -312,10 +312,8 @@ nRoot::SetName(const char *str)
 
 //------------------------------------------------------------------------------
 /**
-     - 04-Nov-98    floh    akzeptiert jetzt die Spezial-Objekte
-                            ".." und "."
-     - 17-May-99   floh     etwas optimiert (strcmp() wird nicht mehr
-                            aufgerufen).
+     - 04-Nov-98   floh     Accept special objects ".." und "."
+     - 17-May-99   floh     Optimized (strcmp() is no longer called).
 */
 inline
 nRoot*
@@ -426,9 +424,7 @@ nRoot::AddRef()
 
 //------------------------------------------------------------------------------
 /**
-    Haengt Referenz eines Objekts, welches gerade einen Pointer
-    auf mich benutzt in die eigenen RefList. Auf das Wirts-Objekt
-    der Referenz wird die Methode ValidRef() angewendet.
+    Hang the reference to an object on @c refList.
 
      - 15-Jul-99   floh    created
      - 30-Aug-00   floh    + removed call to nRoot::ValidRef()
@@ -442,8 +438,7 @@ nRoot::AddObjectRef(nRef<nRoot> *r)
 
 //------------------------------------------------------------------------------
 /**
-    Eine Referenz in meiner RefList wird invalid. Auf das
-    Wirts-Objekt der Referenz wird ein InvalidRef() angewendet.
+    Remove the reference to @c r from the @c refList.
 
      - 15-Jul-99   floh    created
      - 30-Aug-00   floh    + removed call to nRoot::InvalidRef()
