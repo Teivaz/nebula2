@@ -15,15 +15,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_LINEBUFFER_H
 #include "util/nlinebuffer.h"
-#endif
-
-#include <stdarg.h>
 
 //------------------------------------------------------------------------------
 class nLogHandler 

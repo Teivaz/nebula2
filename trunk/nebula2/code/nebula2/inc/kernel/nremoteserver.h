@@ -12,8 +12,8 @@
     script server for evaluation. All strings emitted by 
     the Nebula kernel will be sent back to the client.
 
-    Please check out the nRemoteClient class, which is designed to
-    talk to the nRemoteServer class.
+    Please check out the nremoteshell tool, a command line tool
+    which can talk to a nRemoteServer.
 
     (C) 2002 RadonLabs GmbH
 */

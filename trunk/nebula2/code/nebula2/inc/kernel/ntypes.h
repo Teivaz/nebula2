@@ -11,17 +11,9 @@
 #include <stdio.h>
 #endif
 
-#ifndef N_SYSTEM_H
 #include "kernel/nsystem.h"
-#endif
-
-#ifndef N_DEBUG_H
 #include "kernel/ndebug.h"
-#endif
-
-#ifndef N_DEFCLASS_H
 #include "kernel/ndefclass.h"
-#endif
 
 // Shortcut Typedefs
 typedef unsigned long  ulong;
@@ -31,6 +23,24 @@ typedef unsigned char  uchar;
 typedef float float2[2];
 typedef float float3[3];
 typedef float float4[4];
+struct nFloat4
+{
+    float x;
+    float y;
+    float z;
+    float w;
+};
+struct nFloat3
+{
+    float x;
+    float y;
+    float z;
+};
+struct nFloat2
+{
+    float x;
+    float y;
+};
 typedef unsigned int nFourCC;
 typedef double nTime;
 
@@ -54,25 +64,31 @@ typedef double nTime;
 #define n_stricmp stricmp
 #endif
 
+// maps unsigned 8 bits/channel to D3DCOLOR
+#define N_ARGB(a,r,g,b) ((uint)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+#define N_RGBA(r,g,b,a) N_ARGB(a,r,g,b)
+#define N_XRGB(r,g,b)   N_ARGB(0xff,r,g,b)
+#define N_COLORVALUE(r,g,b,a) N_RGBA((uint)((r)*255.f),(uint)((g)*255.f),(uint)((b)*255.f),(uint)((a)*255.f))
+
 //------------------------------------------------------------------------------
-//  public kernel functions
+//  public kernel C functions
 //------------------------------------------------------------------------------
 #if defined(N_KERNEL)
 
-N_EXPORT void __cdecl n_printf(const char *, ...);
-N_EXPORT void __cdecl n_error(const char*, ...);
-N_EXPORT void __cdecl n_message(const char*, ...);
-N_EXPORT void n_sleep(double);
-N_EXPORT char *n_strdup(const char *);
-N_EXPORT char *n_strncpy2(char *, const char *, size_t);
-N_EXPORT void *nn_malloc(size_t, const char *, int);
-N_EXPORT void *nn_calloc(size_t, size_t, const char *, int);
-N_EXPORT void *nn_realloc(void *, size_t, const char *, int);  
-N_EXPORT void n_free(void *);
-N_EXPORT bool n_strmatch(const char *, const char *);
-N_EXPORT void n_strcat(char *, const char *, size_t);
+void __cdecl n_printf(const char *, ...);
+void __cdecl n_error(const char*, ...);
+void __cdecl n_message(const char*, ...);
+void n_sleep(double);
+char *n_strdup(const char *);
+char *n_strncpy2(char *, const char *, size_t);
+void *nn_malloc(size_t, const char *, int);
+void *nn_calloc(size_t, size_t, const char *, int);
+void *nn_realloc(void *, size_t, const char *, int);  
+void n_free(void *);
+bool n_strmatch(const char *, const char *);
+void n_strcat(char *, const char *, size_t);
 
-N_EXPORT void n_barf(const char *, const char *, int);
+void n_barf(const char *, const char *, int);
  
 void *n_dllopen(const char *);
 void  n_dllclose(void *);

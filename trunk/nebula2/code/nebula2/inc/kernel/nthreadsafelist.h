@@ -12,17 +12,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_LIST_H
 #include "util/nlist.h"
-#endif
-
-#ifndef N_MUTEX_H
 #include "kernel/nmutex.h"
-#endif
-
-#ifndef N_EVENT_H
 #include "kernel/nevent.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nThreadSafeList : public nList 

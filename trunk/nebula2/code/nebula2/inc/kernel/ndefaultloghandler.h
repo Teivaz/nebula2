@@ -9,9 +9,7 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_LOGHANDLER_H
 #include "kernel/nloghandler.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nDefaultLogHandler : public nLogHandler

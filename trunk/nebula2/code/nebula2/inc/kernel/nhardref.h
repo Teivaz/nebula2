@@ -25,18 +25,9 @@
     State 3 is only entered right after creation, or if the
     target object is killed.
 */
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_STRNODE_H
 #include "util/nstrnode.h"
-#endif
-
-#ifndef N_HARDREFSERVER_H
 #include "kernel/nhardrefserver.h"
-# endif
 
 //------------------------------------------------------------------------------
 class nKernelServer;

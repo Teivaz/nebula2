@@ -14,47 +14,12 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_LIST_H
 #include "util/nlist.h"
-#endif
-
-#ifndef N_MSGNODE_H
 #include "util/nmsgnode.h"
-#endif
-
-#ifndef N_SOCKETDEFS_H
 #include "kernel/nsocketdefs.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
-
-#ifndef N_HASHTABLE_H
 #include "util/nhashtable.h"
-#endif
-
-#ifdef __XBxX__
-#   include "xbox/nxbwrapper.h"
-#elif defined(__WIN32__)
-#   ifndef _INC_WINDOWS
-#   include <windows.h> 
-#   endif
-#   ifndef _WINSOCKAPI_
-#   include <winsock.h>
-#   endif
-#else
-#   include <sys/types.h>
-#   include <sys/socket.h>
-#   include <netinet/in.h>
-#   include <arpa/inet.h>
-#   include <unistd.h>
-#   include <netdb.h>
-#endif
 
 //------------------------------------------------------------------------------
 class nIpcClient 
