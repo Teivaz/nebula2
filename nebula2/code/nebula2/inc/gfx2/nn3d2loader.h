@@ -25,11 +25,11 @@ public:
     /// close the file
     virtual void Close();
     /// read vertex data
-    virtual bool ReadVertices(void* buffer, int bufferSize);
+    virtual bool ReadVertices(void* buffer, unsigned int bufferSize);
     /// read index data
-    virtual bool ReadIndices(void* buffer, int bufferSize);
+    virtual bool ReadIndices(void* buffer, unsigned int bufferSize);
     /// read edge data
-    virtual bool ReadEdges(void* buffer, int bufferSize);
+    virtual bool ReadEdges(void* buffer, unsigned int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ nN3d2Loader::Open(nFileServer2* fs)
             // vertex components
             char* str;
             this->vertexComponents = 0;
-            while (str = strtok(0, N_WHITESPACE))
+            while ((str = strtok(0, N_WHITESPACE)))
             {
                     if (0 == strcmp(str, "coord"))          this->vertexComponents |= nMesh2::Coord;
                     else if (0 == strcmp(str, "normal"))    this->vertexComponents |= nMesh2::Normal;
@@ -213,7 +213,7 @@ nN3d2Loader::Close()
 */
 inline
 bool
-nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
+nN3d2Loader::ReadVertices(void* buffer, unsigned int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
@@ -252,7 +252,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
 */
 inline
 bool
-nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
+nN3d2Loader::ReadIndices(void* buffer, unsigned int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
@@ -319,7 +319,7 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
 */
 inline
 bool
-nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
+nN3d2Loader::ReadEdges(void* buffer, unsigned int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
