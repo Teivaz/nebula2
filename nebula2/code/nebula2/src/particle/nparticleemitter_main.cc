@@ -134,7 +134,7 @@ nParticleEmitter::Trigger(nTime curTime)
         const matrix44& viewer = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
         vector3 emitterViewer = viewer.pos_component() - this->matrix.pos_component();
         float distance = emitterViewer.len();
-        if (distance < this->activityDistance)
+        if (this->IsActive() && distance < this->activityDistance)
         {
             #ifdef __NEBULA_STATS__
             particleServer->numActiveEmitters->SetI(particleServer->numActiveEmitters->GetI() + 1);

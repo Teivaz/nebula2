@@ -132,6 +132,10 @@ public:
     void SetFatalException(bool b);
     /// get the fatal exception flag
     bool GetFatalException() const;
+    /// set whether the emitter is allowed to emit new particles
+    void SetActive(bool b);
+    /// get whether the emitter is allowed to emit new particles
+    bool IsActive() const;
 
     /// erase dead particles, create new
     virtual void Trigger(nTime curTime);
@@ -245,6 +249,26 @@ bool
 nParticleEmitter::IsAlive() const
 {
     return this->alive;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticleEmitter::SetActive(bool b)
+{
+    this->active = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nParticleEmitter::IsActive() const
+{
+    return this->active;
 }
 
 //------------------------------------------------------------------------------
