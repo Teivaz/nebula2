@@ -9,10 +9,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_MATH_H
 #include "mathlib/nmath.h"
-#endif
-
 #include <float.h>
 
 //------------------------------------------------------------------------------
@@ -49,6 +46,10 @@ public:
     void rotate(const _vector3& axis, float angle);
     /// inplace linear interpolation
     void lerp(const _vector3& v0, float lerpVal);
+    /// returns a vector orthogonal to self, not normalized
+    _vector3 findortho() const;
+    /// saturate components between 0 and 1
+    void saturate();
 
     float x, y, z;
 };
@@ -318,6 +319,44 @@ _vector3::lerp(const _vector3& v0, float lerpVal)
     x = v0.x + ((x - v0.x) * lerpVal);
     y = v0.y + ((y - v0.y) * lerpVal);
     z = v0.z + ((z - v0.z) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector3::saturate()
+{
+    x = n_saturate(x);
+    y = n_saturate(y);
+    z = n_saturate(z);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Find a vector that is orthogonal to self. Self should not be (0,0,0).
+    Return value is not normalized.
+*/
+inline
+_vector3
+_vector3::findortho() const
+{
+    if (0.0 != x)
+    {
+        return _vector3((-y - z) / x, 1.0, 1.0);
+    } else
+    if (0.0 != y)
+    {
+        return _vector3(1.0, (-x - z) / y, 1.0);
+    } else
+    if (0.0 != z)
+    {
+        return _vector3(1.0, 1.0, (-x - y) / z);
+    } else
+    {
+        return _vector3(0.0, 0.0, 0.0);
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -52,6 +52,8 @@ public:
     void rotate(const _vector3_sse& axis, float angle);
     /// inplace linear interpolation
     void lerp(const _vector3_sse& v0, float lerpVal);
+    /// returns a vector orthogonal to self, not normalized
+    _vector3_sse findortho() const;
 
     union
     {
@@ -372,5 +374,30 @@ _vector3_sse::lerp(const _vector3_sse& v0, float lerpVal)
 }
 
 //------------------------------------------------------------------------------
-#endif
+/**
+    Find a vector that is orthogonal to self. Self should not be (0,0,0).
+    Return value is not normalized.
+*/
+inline
+_vector3_sse
+_vector3_sse::findortho() const
+{
+    if (0.0 != x)
+    {
+        return _vector3_sse((-y - z) / x, 1.0, 1.0);
+    } else
+    if (0.0 != y)
+    {
+        return _vector3_sse(1.0, (-x - z) / y, 1.0);
+    } else
+    if (0.0 != z)
+    {
+        return _vector3_sse(1.0, 1.0, (-x - y) / z);
+    } else
+    {
+        return _vector3_sse(0.0, 0.0, 0.0);
+    }
+}
 
+//------------------------------------------------------------------------------
+#endif
