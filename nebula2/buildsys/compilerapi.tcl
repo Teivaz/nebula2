@@ -83,7 +83,7 @@ proc get_workspaces { wslist } {
     for {set i 0} {$i < $num_wspaces} {incr i} {
         if {$wslist != ""} {
             if {[lsearch $wslist $wspace($i,name)] == -1} {
-                break
+                continue
             }
         }
         addtolist wlist $wspace($i,name)
