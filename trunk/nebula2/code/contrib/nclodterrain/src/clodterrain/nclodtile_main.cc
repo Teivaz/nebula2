@@ -65,7 +65,7 @@ bool nCLODTile::ToShader(nShader2 *puthere, unsigned int textureindex)
 /// clod meshes support asynchronous loading
 bool nCLODTile::CanLoadAsync() const
 {
-    return false;
+    return true;
 }
 
 /// issue a load request from an open file
@@ -96,6 +96,9 @@ bool nCLODTile::Load()
 */
 bool nCLODTile::LoadResource()
 {
+    if (this->IsValid())
+        return true;
+
     n_assert(!this->IsValid());
     n_assert(chunkTextures[0].isvalid());
 
@@ -107,6 +110,7 @@ bool nCLODTile::LoadResource()
     n_assert(singledatasize * this->texturecount == this->dataSize);
     tqtFile->Seek(dataOffset, nFile::START);
     char *filedata = new char[singledatasize];
+    bool multitexture = (this->texturecount > 1);
     for (unsigned int iindex=0; iindex < this->texturecount; iindex++)
     {
         // read in tile index and image size
@@ -125,8 +129,8 @@ bool nCLODTile::LoadResource()
         tileData->SetType(nTexture2::TEXTURE_2D);
         tileData->SetWidth(pixelsize);
         tileData->SetHeight(pixelsize);
-        if (this->texturecount > 1)
-            tileData->SetFormat(nTexture2::A1R5G5B5);
+        if (multitexture)
+            tileData->SetFormat(nTexture2::A4R4G4B4);
         else
             tileData->SetFormat(nTexture2::A8R8G8B8);
         tileData->Load();
@@ -135,7 +139,7 @@ bool nCLODTile::LoadResource()
         if (tileData->Lock(nTexture2::WriteOnly, 0, tilesurf))
         {
             // read in the data and dump into the texture
-            if (this->texturecount == 1)
+            if (!multitexture)
                 tqtFile->Read(tilesurf.surfPointer, singledatasize);
             else
             {
@@ -145,18 +149,21 @@ bool nCLODTile::LoadResource()
                 for (unsigned int pixbyte=0; pixbyte < (singledatasize); pixbyte++)
                 {
                     unsigned char curbyte = filedata[pixbyte];
-                    for (int curbit=0; curbit < 8; curbit++)
+                    surface[0] = curbyte;
+                    surface[1] = curbyte;
+                    surface += 2;
+/*                    for (int curbit=0; curbit < 8; curbit++)
                     {
                         unsigned char extendedbit = (curbyte & 128) ? 255 : 0;
                         surface[0] = extendedbit;
                         surface[1] = extendedbit & 127;
                         surface += 2;
                         curbyte <<= 1;
-                    }
+                    }*/
                 }
             }
             tileData->Unlock(0);
-            n_printf("loaded texture at %d\n", this->dataOffset);
+//            n_printf("loaded texture at %d\n", this->dataOffset);
         }
     }
     delete [] filedata;
