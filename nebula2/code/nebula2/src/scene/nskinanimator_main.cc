@@ -257,7 +257,8 @@ nSkinAnimator::SetStateChannel(const char* name)
 
 //------------------------------------------------------------------------------
 /**
-    Return the animation channel which drives this animation.
+    Returns the name of the animation variable which drives this animation. This variable
+    exists within the variable server located at @c /sys/servers/variable.
 */
 const char*
 nSkinAnimator::GetStateChannel()

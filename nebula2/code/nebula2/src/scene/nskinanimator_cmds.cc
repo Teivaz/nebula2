@@ -241,7 +241,8 @@ n_getjoint(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Set the name of the channel which controls the current animation state.
+    Set the name of the nVariable which controls the current animation state. This
+    variable is handled by @c /sys/servers/variable.
 */
 static void
 n_setstatechannel(void* slf, nCmd* cmd)
@@ -259,7 +260,7 @@ n_setstatechannel(void* slf, nCmd* cmd)
     @output
     s(StateChannelName)
     @info
-    Get the name of the channel which controls the current animation state.
+    Get the name of the nVariable which controls the current animation state.
 */
 static void
 n_getstatechannel(void* slf, nCmd* cmd)
