@@ -192,7 +192,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 
     // initialize the device
     HWND hwnd = (HWND) diServer->refHwnd->GetI();
-    n_assert2( hwnd, "/sys/env/hwnd is NULL -- perhaps nWin32WindowHandler::OpenWindow() has not been called." )
+    n_assert2(hwnd, "/sys/env/hwnd is NULL -- perhaps nWin32WindowHandler::OpenWindow() has not been called.")
     hr = diDev->SetCooperativeLevel(hwnd, (DISCL_FOREGROUND | DISCL_NOWINKEY | DISCL_NONEXCLUSIVE));
     if (FAILED(hr))
     {
@@ -302,14 +302,14 @@ nDI8Server::KillDevices()
     nDI8Device* di8Dev;
     while (di8Dev = (nDI8Device*) this->di8DevList.RemHead())
     {
-        n_delete( di8Dev );
+        n_delete(di8Dev);
     }
 
     // kill Nebula input device objects
     nInputDevice* dev;
     while (dev = (nInputDevice*) this->nebDevList.RemHead())
     {
-        n_delete( dev );
+        n_delete(dev);
     }
 }
 

@@ -70,9 +70,9 @@ nWin32LogHandler::Open()
         // construct path
         nPathString path(rawPath);
         path.ConvertBackslashes();
-        path.Append( "/" );
+        path.Append("/");
         path.Append(this->subDir);
-        path.Append( "/" );
+        path.Append("/");
 
         // make sure path exists
         fileServer->MakePath(path.Get());

@@ -117,19 +117,19 @@ nGuiSlider2::OnShow()
         backgroundLabel->SetDefaultBrush("slidertrack");
         if (this->horizontal)
         {
-            backgroundLabel->SetMinSize( vector2( 0, this->arrowBtnSize.y ) );
-            backgroundLabel->SetMaxSize( vector2( 1.0f - 2*this->arrowBtnSize.x, this->arrowBtnSize.y ) );
+            backgroundLabel->SetMinSize(vector2(0, this->arrowBtnSize.y));
+            backgroundLabel->SetMaxSize(vector2(1.0f - 2*this->arrowBtnSize.x, this->arrowBtnSize.y));
             this->AttachForm(backgroundLabel, Top, 0.0f);
-            this->AttachWidget(backgroundLabel, Left, negBtn, 0 );
-            this->AttachWidget(backgroundLabel, Right, posBtn, 0 );
+            this->AttachWidget(backgroundLabel, Left, negBtn, 0);
+            this->AttachWidget(backgroundLabel, Right, posBtn, 0);
         }
         else
         {
-            backgroundLabel->SetMinSize( vector2( this->arrowBtnSize.x, 0 ) );
-            backgroundLabel->SetMaxSize( vector2( this->arrowBtnSize.x, 1.0f - 2*this->arrowBtnSize.y ) );
+            backgroundLabel->SetMinSize(vector2(this->arrowBtnSize.x, 0));
+            backgroundLabel->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f - 2*this->arrowBtnSize.y));
             this->AttachForm(backgroundLabel, Left, 0.0f);
-            this->AttachWidget(backgroundLabel, Top, negBtn, 0 );
-            this->AttachWidget(backgroundLabel, Bottom, posBtn, 0 );
+            this->AttachWidget(backgroundLabel, Top, negBtn, 0);
+            this->AttachWidget(backgroundLabel, Bottom, posBtn, 0);
         }
         backgroundLabel->OnShow();
         this->refBgLabel = backgroundLabel;
