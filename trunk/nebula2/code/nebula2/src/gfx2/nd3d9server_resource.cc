@@ -101,6 +101,10 @@ nD3D9Server::UnloadResources()
     // release the dynamic mesh object
     this->refDynMesh->Release();
 
+    // release the stencil surface... might be necessary.
+    this->backBufferSurface->Release();
+    this->depthStencilSurface->Release();
+
     // close the text renderer
     this->CloseTextRenderer();
 
