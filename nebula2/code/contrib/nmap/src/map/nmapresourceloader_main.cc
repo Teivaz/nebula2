@@ -26,10 +26,9 @@ nMapResourceLoader::~nMapResourceLoader()
 /**
     Base Load() function for the nMapResourceLoader
 
-    @param  const char*       nMapBlockName    the NOH path to the MapBlock that provides the data
-            const nResource*  callingResource  ptr to the nResource calling nMapResourceLoader::Load()
-
-    @return bool                               success/failure
+    @param nMapBlockName    the NOH path to the MapBlock that provides the data
+    @param callingResource  ptr to the nResource calling nMapResourceLoader::Load()
+    @return                 success/failure
 */
 bool nMapResourceLoader::Load(const char *nMapBlockName, nResource *callingResource)
 {

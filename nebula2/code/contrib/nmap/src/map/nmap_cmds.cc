@@ -199,8 +199,8 @@ void n_getheight(void* o, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    @param  fileServer  writes the nCmd object contents out to a file.
-    @return             success or failure
+    @param  ps  writes the nCmd object contents out to a file.
+    @return     success or failure
 */
 bool
 nMap::SaveCmds(nPersistServer* ps)
