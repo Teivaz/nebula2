@@ -26,6 +26,7 @@ nParticleShapeNode::nParticleShapeNode() :
     int i;
     for (i=0; i<4; i++)
         this->curves[nParticleEmitter::ParticleVelocityFactor].keyFrameValues[i] = 1.0;
+    SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------
@@ -128,21 +129,6 @@ nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderCont
     nShapeNode::Attach(sceneServer, renderContext);
 
     
-}
-
-
-//------------------------------------------------------------------------------
-/**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
-
-    @return     a combination of nMesh2::Usage flags
-*/
-int
-nParticleShapeNode::GetMeshUsage() const
-{
-    return nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------

@@ -30,8 +30,6 @@ public:
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
     /// return true if node provides transformion
     virtual bool HasTransform() const;
     /// update transform and render into scene server
