@@ -115,7 +115,7 @@ nSignalEmitter::BindSignal(const char * signalName, nObject * object, const char
         return false;
     }
 
-    return this->BindSignal(signal->GetId(), object, cmdName, false);
+    return this->BindSignal(signal->GetId(), object, cmdName, priority, false);
 }
 
 //------------------------------------------------------------------------------
