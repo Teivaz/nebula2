@@ -14,29 +14,39 @@ class nSpatialElement;
 class nGfxServer2;
 class nPlaneClipper;
 
-/** VisitorFlags helper struct.  This class contains a boolean flag, for specifying that a primitive is
-    visible or contained or whatever.  Also within the class is a bunch of bits that be used by the visitor
-    for transferring state between calls to the visitor; this is mainly use by visitors to avoid extra
-    or redundant tests.  For instance, if you do a VisibilityTest() on an octtree node that is fully visible,
-    then the VisitorFlags returned will contain a state that says anything contained within the octree node does
-    not need further plane tests.  If you pass the returned VisitorFlags into future VisibilityTest() calls for
-    child nodes of that node, the VisibilityTest()s will go much faster since the visitor can tell that it 
-    doesn't need to do a full set of culling tests.
+/** VisitorFlags helper struct.  
+
+    This class contains a boolean flag, for specifying that a primitive is
+    visible or contained or whatever.  There is also a "antitest" flag that says an object is
+    certainly NOT visible or contained, for when you want that information.
+    
+    Also within the class is a bunch of bits that be used by the visitor
+    for transferring state between calls to the visitor. Using the view frustum visitor as an example, if
+    you call VisibilityTest() for a bounding box and that bbox is found to be totally on the 'inside' 
+    of one of the frustum sides, the bit flags for that side will be turned off in the returned VisitorFlags
+    value.  For nested data structures, you can use this updated VisitorFlags when doing VisibilityTest()
+    calls on enclosed nodes; because of the bit flags, these child nodes won't require the full set of
+    plane tests.
 
     You can of course ignore all this for simplicity and always pass in the default constructed VisitorFlags.
-    The visitor should still work and return the exact same set of elements, it will just be a bit slower.  This
-    can be used for fairly simple heirarchy elements or debugging scaffolding elements.
+    The visitor should still work and return the exact same set of elements, it will just be a bit slower
+    because it is doing some redundant tests.  You may also want to avoid the whole bitflag thing when using
+    simple heirarchy elements or debugging scaffolding elements.
 
-    The exact meaning of the activeflags varies with the visitor, so don't try to take the result from one visitor
-    and use it in another visitor...
+    The exact meaning of the activeflags varies with the visitor, so don't try to take the VisitorFlags
+    result from one visitor and use it in another visitor...
 */
 struct VisitorFlags {
-    VisitorFlags(bool c=true, int initflags=~0) : m_test(c), m_activeflags(initflags) {}
-    VisitorFlags(const VisitorFlags &copyme) : m_test(copyme.m_test), m_activeflags(copyme.m_activeflags) {}
+
+    /// by default test=true, antitest=false, such that objects are rejected only if they are known not to be visible
+    VisitorFlags(bool c=true, bool d=false, int initflags=~0) : m_test(c), m_antitest(d), m_activeflags(initflags) {}
+    VisitorFlags(const VisitorFlags &copyme) 
+        : m_test(copyme.m_test), m_antitest(copyme.m_antitest), m_activeflags(copyme.m_activeflags) {}
 
     bool TestResult() { return m_test; }
+    bool AntiTestResult() { return m_antitest; }
 
-    bool m_test;
+    bool m_test, m_antitest;
     unsigned short m_activeflags;
 
     enum { MAXVISITORFLAGS = 15 };

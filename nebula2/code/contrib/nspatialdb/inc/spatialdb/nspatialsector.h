@@ -1,7 +1,8 @@
 #ifndef N_SPATIALSECTOR_H
 #define N_SPATIALSECTOR_H
 
-#include "nspatiallisthierarchy.h"
+#include "spatialdb/nspatiallisthierarchy.h"
+#include "spatialdb/nspatialaabbtree.h"
 
 //--------------------------------------------------------------------
 /**
@@ -45,7 +46,7 @@ public:
 
 protected:
     // The elements of the sector are stashed in here...
-    nSpatialListHierarchy m_Nodeset;
+    nSpatialAABBTree m_Nodeset;
 };
 
 

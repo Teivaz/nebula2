@@ -26,7 +26,7 @@ void nSpatialListHierarchy::ClearList()
     }
 }
 
-void nSpatialListHierarchy::AppendElement(nSpatialElement *appendme)
+void nSpatialListHierarchy::AddElement(nSpatialElement *appendme)
 {
     nNode *newnode = n_new(nNode());
     newnode->SetPtr(appendme);

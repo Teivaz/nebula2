@@ -62,6 +62,7 @@ void nGeometryOcclusionVisitor::Visit(nSpatialElement *visitee)
 {
 }
 
+
 void nGeometryOcclusionVisitor::AddBBoxOccluder(const bbox3 &occludingbox)
 {
     // here we construct a plane clipper that enclosed the shadowed area behind the bbox;
@@ -207,27 +208,46 @@ void nGeometryOcclusionVisitor::AddHullOccluder(const nPlaneClipper &hullocclude
 
 VisitorFlags nGeometryOcclusionVisitor::VisibilityTest(const bbox3 &testbox, VisitorFlags flags)
 {
+    // note that the occlusionvisitor uses all the bitflags in the VisitorFlags structure to
+    // determine which of its occluders can be safely ignored.  This means the restricting 
+    // visibilityvisitor gets a default set of bitflags and always has to do all its tests!
+    // Perhaps someday we'll 'reallocate' the first 6 bitflags or so for the restricting
+    // visibilityvisitor...
+
     // test this bbox against the provided visibility visitor, if any
     if (m_restrictingvisitor)
-        flags = m_restrictingvisitor->VisibilityTest(testbox, flags);
-    if (flags.TestResult() == false)
-        return flags;
+    {
+        VisitorFlags ff=m_restrictingvisitor->VisibilityTest(testbox, VisitorFlags());
+        if (ff.AntiTestResult())
+            return ff;
+    }
 
     // test this bbox against all our planeclipper occluders
     for (int occix=0; occix < m_occluderset.Size(); occix++)
     {
+        int occluderbit = (1<<occix);
+
+        // if this occluder is turned off, skip it
+//        if ( (occix < VisitorFlags::MAXVISITORFLAGS) && ((occluderbit & flags.m_activeflags) == 0) )
+//            continue;
+
         nPlaneClipper &thisoccluder= m_occluderset[occix];
 
         // by passing in a 'false' initial flag, we'll only get a true back if the object
         // is entirely inside the occluder shadow
-        VisitorFlags occludetest(thisoccluder.TestBBox(testbox, VisitorFlags(false)));
+        VisitorFlags occludetest(thisoccluder.TestBBox(testbox, VisitorFlags(false,false)));
 
         // if the test result is true, this bbox is completely behind the object and so is not visible
         if (occludetest.TestResult())
             return VisitorFlags(false);
+
+/*        // if the antitest results is true, this bbox is completely not behind the object and so we
+        // can ignore this occluder for enclosed elements
+        if (occludetest.AntiTestResult())
+            flags.m_activeflags &= ~occluderbit;*/
     }
 
-    // it's not occluded according to the occluders
+    // it's not totally occluded according to the occluders, although it may still be occluding something
     return flags;
 }
 

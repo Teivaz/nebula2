@@ -26,11 +26,11 @@ public:
     nSpatialListHierarchy();
     ~nSpatialListHierarchy();
 
-    /// Clear out spatial elements.  Elements are not deleted!
+    /// Clear out spatial element references.  Elements are not deleted!
     void ClearList();
 
     /// Append an element to the list of elements
-    void AppendElement(nSpatialElement *appendme);
+    void AddElement(nSpatialElement *appendme);
     /// Remove a given element
     void RemoveElement(nSpatialElement *removeme);
 

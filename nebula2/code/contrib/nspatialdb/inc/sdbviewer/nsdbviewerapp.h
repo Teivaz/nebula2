@@ -153,6 +153,7 @@ private:
     nString inputScript;
     bool isOpen;
     bool isOverlayEnabled;
+    bool showVisualDebug;
     nDisplayMode2 displayMode;
     nCamera2 chasecamera, playcamera;
     ControlMode controlMode;

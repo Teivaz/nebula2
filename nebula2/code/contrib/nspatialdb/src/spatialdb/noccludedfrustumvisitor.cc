@@ -44,6 +44,7 @@ void nOccludedFrustumVisitor::StartVisualizeDebug(nGfxServer2 *gfx2)
 
 void nOccludedFrustumVisitor::EndVisualizeDebug()
 {
+    nVisibilityVisitor::EndVisualizeDebug();
     m_occlusionvisitor.EndVisualizeDebug();
 }
 

@@ -21,7 +21,7 @@ void nSpatialSector::Configure(const matrix44 &transformtoglobalspace)
 
 nSpatialSector::ElementHandle nSpatialSector::AddElement(nSpatialElement *addme)
 {
-    m_Nodeset.AppendElement(addme);
+    m_Nodeset.AddElement(addme);
     return addme;
 }
 
