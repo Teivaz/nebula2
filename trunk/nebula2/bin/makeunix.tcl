@@ -20,7 +20,6 @@
 #
 #   TODO:
 #   - handle target type: mll, dll, package
-#   - handle the doxydoc genation
 #   - support for win32 and macosx makefiles
 #
 #   22-Mar-2003 cubejk  created
@@ -392,6 +391,11 @@ proc gen_makefile { } {
     puts $cid "doc:"
     puts $cid "\tpython \$(RL_HOME)/bin/autodoc.py"
     puts $cid "\tcd \$(RL_HOME)/code/nebula2/doxycfg; doxygen nebula2.cfg"
+    puts $cid ""
+    puts $cid "ifeq (\$(N_PLATFORM),__WIN32__)"
+    puts $cid "chm: doc"
+    puts $cid "\tcd \$(RL_HOME)/doc/doxydoc/nebula2/html/; \$(CHM_COMPILER) index.hhp"
+    puts $cid "endif"
 
     #write end of Makefile
     puts $cid "#----------------------------------------------------------"
