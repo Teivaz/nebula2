@@ -518,8 +518,8 @@ nViewerApp::InitOverlayGui()
     this->refGuiServer->SetRootWindowPointer(0);
     nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
     n_assert(userRootWindow);
-    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
-    userRootWindow->SetRect(nullRect);
+    rectangle rect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+    userRootWindow->SetRect(rect);
 
     kernelServer->PushCwd(userRootWindow);
 
