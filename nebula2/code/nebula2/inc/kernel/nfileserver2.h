@@ -11,6 +11,8 @@
     Please note that Nebula no longer knows the concept of a current working
     directory!
 
+    See also @ref N2ScriptInterface_nfileserver2
+
     (C) 2002 RadonLabs GmbH
 */
 #ifndef N_ROOT_H

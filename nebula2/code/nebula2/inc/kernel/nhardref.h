@@ -94,7 +94,7 @@ nHardRef<TYPE>::nHardRef() :
     Prefer this constructor over the default constructor.
     nHardRef::initialize() shouldn't be called.
 
-    @param kServer      pointer to the Nebula kernel server
+    @param kernelServer      pointer to the Nebula kernel server
 
     history:
     - 23-Jan-2001   floh    created

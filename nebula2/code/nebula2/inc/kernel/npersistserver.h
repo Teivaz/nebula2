@@ -6,6 +6,8 @@
 
     Interface to the file system for serializing objects.
 
+    See also @ref N2ScriptInterface_npersistserver
+
     <h2>Nebula Persistent Object File Format</h2>
 
     The actual format of serialized objects is not specified.

@@ -28,6 +28,8 @@
 
     -Floh.
 
+    See also @ref N2ScriptInterface_nroot
+
     (C) 1999 RadonLabs GmbH
 */
 #ifndef N_TYPES_H
