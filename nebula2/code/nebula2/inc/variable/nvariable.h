@@ -27,7 +27,8 @@ public:
         String,
         Object,
         Matrix,
-        HandleVal
+        HandleVal,
+        Vector4
     };
 
     typedef nFourCC Handle;
@@ -50,6 +51,8 @@ public:
     nVariable(Handle h, void* ptr);
     /// matrix constructor
     nVariable(Handle h, const matrix44& val);
+    /// vector4 constructor
+    nVariable(Handle h, const vector4& val);
     /// handle constructor
     nVariable(Handle h, Handle val);
     /// constructor
@@ -68,7 +71,7 @@ public:
     Type GetType() const;
     /// set variable handle
     void SetHandle(Handle h);
-    /// get variable handle 
+    /// get variable handle
     Handle GetHandle() const;
     /// set int content
     void SetInt(int val);
@@ -94,11 +97,14 @@ public:
     void SetMatrix(const matrix44& val);
     /// get matrix content
     const matrix44& GetMatrix() const;
+    /// set vector4 content
+    void SetVector4(const vector4& val);
+    /// get vector4 content
+    const vector4& GetVector4() const;
     /// set handle content
     void SetHandleVal(Handle h);
     /// get handle content
     Handle GetHandleVal() const;
-    /// set int content
 
 private:
     /// delete content
@@ -143,7 +149,7 @@ nVariable::nVariable(Type t, Handle h) :
 {
     // empty
 }
-   
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -184,6 +190,7 @@ nVariable::Copy(const nVariable& from)
             this->floatVal = from.floatVal;
             break;
 
+        case Vector4:
         case Float4:
             this->float4Val = from.float4Val;
             break;
@@ -211,7 +218,7 @@ nVariable::Copy(const nVariable& from)
 
         case HandleVal:
             this->handleVal = from.handleVal;
-            break;  
+            break;
 
         default:
             n_assert(false);
@@ -296,7 +303,6 @@ nVariable::SetHandle(Handle h)
 {
     n_assert(InvalidHandle != h);
     n_assert(InvalidHandle == this->handle);
-
     this->handle = h;
 }
 
@@ -374,6 +380,27 @@ nVariable::GetFloat4() const
 {
     n_assert(Float4 == this->type);
     return this->float4Val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nVariable::SetVector4(const vector4& val)
+{
+    n_assert(Vector4 == this->type);
+    *(vector4*)&this->float4Val  = val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nVariable::GetVector4() const
+{
+    return *(vector4*)&this->float4Val;
 }
 
 //------------------------------------------------------------------------------
@@ -508,6 +535,17 @@ nVariable::nVariable(Handle h, const nFloat4& val) :
     type(Float4)
 {
     this->SetFloat4(val);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariable::nVariable(Handle h, const vector4& val) :
+    handle(h),
+    type(Vector4)
+{
+    this->SetVector4(val);
 }
 
 //------------------------------------------------------------------------------

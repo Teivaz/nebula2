@@ -7,7 +7,7 @@
 
     A variable context is a container for nVariable objects. Variables
     are accessed by their global nVariableHandle.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 
@@ -26,6 +26,8 @@ public:
     void Clear();
     /// add a variable to the context
     void AddVariable(const nVariable& var);
+    /// update existing variable or append new var
+    void SetVariable(const nVariable& var);
     /// get a variable object by its handle
     nVariable* GetVariable(nVariable::Handle handle) const;
     /// get number of variables in context
@@ -100,6 +102,25 @@ void
 nVariableContext::AddVariable(const nVariable& var)
 {
     this->varArray.Append(var);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Update value of existing variable, or create new if it doesn't exist.
+*/
+inline
+void
+nVariableContext::SetVariable(const nVariable& var)
+{
+    nVariable* varPtr = this->GetVariable(var.GetHandle());
+    if (varPtr)
+    {
+        *varPtr = var;
+    }
+    else
+    {
+        this->AddVariable(var);
+    }
 }
 
 //------------------------------------------------------------------------------
