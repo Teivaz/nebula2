@@ -5,7 +5,7 @@
 #          bits as an example for other compiler generator authors.
 #  FIXME:  Make sure the functions are properly commented on.
 #
-#   Cobbled up from the original buildsys courtesy of Radon Labs and 
+#   Cobbled up from the original buildsys courtesy of Radon Labs and
 #   Leaf Garland's Nebula2 VC6 project files.
 #   Copyright (c) 2003 Radon Labs
 #
@@ -48,7 +48,7 @@ proc emit_files {name cid} {
         if {[test_modplatform $module $platform]} {
             set filenames [get_modsources_dressed $module]
 
-            foreach filename $filenames { 
+            foreach filename $filenames {
                 #build a new source entry
 
                 set more_syms "/D N_INIT=n_init_$module /D N_NEW=n_new_$module /D N_INITCMDS=n_initcmds_$module"
@@ -77,7 +77,7 @@ proc emit_files {name cid} {
 
             }
 
-            # add header files 
+            # add header files
             set headers [get_modheaders_dressed $module]
             foreach header $headers {
                 puts $cid "# Begin Source File"
@@ -130,7 +130,7 @@ proc emit_dsp_header {name cid type} {
         set tagline "Application"
         set vernum  "0x0101"
     }
- 
+
     puts $cid "# Microsoft Developer Studio Project File - Name=\"$name\" - Package Owner=<4>"
     puts $cid "# Microsoft Developer Studio Generated Build File, Format Version 6.00"
     puts $cid "# ** DO NOT EDIT **"
@@ -181,15 +181,15 @@ proc emit_dsp_settings {name cid use_debug} {
             append def_list "/D [lindex $def 0]=[lindex $def 1] "
         }
     }
-    
+
 
     puts $cid ""
-    
+
     if {$use_debug == 1} {
-        puts $cid "!IF  \"\$(CFG)\" == \"$name - Win32 Debug\""    
+        puts $cid "!IF  \"\$(CFG)\" == \"$name - Win32 Debug\""
         set idir [path_wspacetointer]/win32d
         set odir [path_wspacetooutput]/win32d
-        set win32_libs [get_win32libs_debug $name]        
+        set win32_libs [get_win32libs_debug $name]
         if {[get_tartype $name] == "lib"} {
             set cpp_flags $debug_cpp_flags
         } else {
@@ -200,7 +200,7 @@ proc emit_dsp_settings {name cid use_debug} {
         puts $cid "!ELSEIF  \"\$(CFG)\" == \"$name - Win32 Release\""
         set idir [path_wspacetointer]/win32
         set odir [path_wspacetooutput]/win32
-         set win32_libs [get_win32libs_release $name]        
+        set win32_libs [get_win32libs_release $name]
         if {[get_tartype $name] == "lib"} {
             set cpp_flags $release_lib_flags
         } else {
@@ -211,12 +211,12 @@ proc emit_dsp_settings {name cid use_debug} {
 
     # add support for rtti and exceptions if desired
     if { [get_rtti $name] == "true" } {
-        set cpp_flags "$cpp_flags /GR" 
+        set cpp_flags "$cpp_flags /GR"
     }
     if { [get_exceptions $name] == "true" } {
         set cpp_flags "$cpp_flags /EHsc"
     }
-    
+
     puts $cid ""
     puts $cid "# PROP BASE Use_MFC 0"
     puts $cid "# PROP BASE Use_Debug_Libraries $use_debug"
@@ -230,16 +230,16 @@ proc emit_dsp_settings {name cid use_debug} {
     puts $cid "# PROP Target_Dir \"\""
     puts $cid "# ADD BASE CPP $cpp_flags"
     puts $cid "# ADD CPP $cpp_flags $inc_list $def_list"
-    
+
     if {[get_tartype $name] == "lib"} {
         puts $cid "MTL=midl.exe"
     } elseif {[get_tartype $name] == "dll"} {
         puts $cid "MTL=midl.exe"
     }
-    
+
     puts $cid "# ADD BASE MTL /nologo /win32"
     puts $cid "# ADD MTL /nologo /win32"
-    
+
     if {$use_debug == 1} {
         puts $cid "# ADD BASE RSC /l 0x409 /d \"_DEBUG\""
         puts $cid "# ADD RSC /l 0x409 /d \"_DEBUG\""
@@ -247,7 +247,7 @@ proc emit_dsp_settings {name cid use_debug} {
         puts $cid "# ADD BASE RSC /l 0x409 /d \"NDEBUG\""
         puts $cid "# ADD RSC /l 0x409 /d \"NDEBUG\""
     }
-    
+
     puts $cid "BSC32=bscmake.exe"
     puts $cid "# ADD BASE BSC32 /nologo"
     puts $cid "# ADD BSC32 /nologo"
@@ -263,7 +263,7 @@ proc emit_dsp_settings {name cid use_debug} {
         # change dll extension if the extension is not '.dll' (dle or mll whatever it is)
         set dllextension [get_dllextension $name]
         set out "\"$odir/$name.$dllextension\""
- 
+
         puts $cid "# ADD LINK32 $win32_libs /nologo /dll /machine:I386 /out:$out $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
 
    } else {
@@ -277,7 +277,7 @@ proc emit_dsp_settings {name cid use_debug} {
         puts $cid "# ADD LINK32 user32.lib gdi32.lib advapi32.lib $win32_libs /nologo $linkdbg/machine:IX86 /pdbtype:sept $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
         puts $cid "# SUBTRACT LINK32 /pdb:none"
     }
-    
+
     if {$use_debug == 0} {
         puts $cid ""
         puts $cid "!ENDIF "
@@ -294,7 +294,7 @@ proc emit_dsp_settings {name cid use_debug} {
 proc gen_lib_dsp {name} {
     global home
     global cur_workspacepath
-    
+
     ::log::log debug "Generate lib target: $name"
 
     # write .dsp file
@@ -304,7 +304,7 @@ proc gen_lib_dsp {name} {
     emit_dsp_settings $name $cid 1
     emit_dsp_settings $name $cid 0
     emit_files $name $cid
-    
+
     close $cid
 }
 
@@ -315,7 +315,7 @@ proc gen_lib_dsp {name} {
 proc gen_dll_dsp {name} {
     global home
     global cur_workspacepath
-   
+
     ::log::log debug "Generate dll target: $name"
 
     # write .dsp file
@@ -325,7 +325,7 @@ proc gen_dll_dsp {name} {
     emit_dsp_settings $name $cid 1
     emit_dsp_settings $name $cid 0
     emit_files $name $cid
-   
+
     close $cid
 }
 
@@ -338,7 +338,7 @@ proc gen_exe_dsp {name} {
     global cur_workspacepath
 
     ::log::log debug "Generate exe target: $name"
-    
+
     # write .dsp file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.dsp] w]
 
@@ -359,7 +359,7 @@ proc gen_dsw { name } {
     global platform
     global home
     global cur_workspacepath
-    
+
     # write .dsw file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.dsw] w]
 
@@ -417,26 +417,25 @@ proc gen_dsw { name } {
 #   Generates the .dsp and .dsw file for the specified workspaces
 #-------------------------------------------------------------------------------
 proc generate { wslist } {
-    
     set vstudiopath ./build/vstudio6
     set outputpath  ./bin
     set interpath   $vstudiopath/inter
-    
-    foreach workspace [get_workspaces $wslist]  {    
-        ::log::log info "Generating vstudio workspace file $workspace.dsw..."
+
+    foreach workspace [get_workspaces $wslist]  {
+        ::log::log info "Generating vstudio 6 workspace file $workspace.dsw..."
 
         # let the buildsys know which workspace we are currently working
         # with and what the default directories for that workspace should
         # be - default directories may be overridden - this particular
         # call also writes the pkg_XXX.cc files for the workspace out.
         use_workspace $workspace $vstudiopath $outputpath $interpath
-        
+
         gen_dsw $workspace
-        
+
         #create the project files
         foreach target [get_targets] {
             set t [get_tartype $target]
-            
+
             # no dll target just yet
             if {$t == "lib"} {
                 gen_lib_dsp $target

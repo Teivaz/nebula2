@@ -249,21 +249,21 @@ proc emit_vcproj_files {name cid} {
 
     # Resource files
     set tartype [get_tartype $name]
-    if {$tartype == "exe" || $tartype == "dll"} {        
+    if {$tartype == "exe" || $tartype == "dll"} {
         puts $cid "\t\t<Filter Name=\"Resource Files\" Filter=\"rc\" >"
 
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
             puts $cid "\t\t\t<File RelativePath=\"pkg\\res_$name.rc\" />"
         }
-        
+
         # add any custom rsrc files
         set resfile [get_win32resource $name]
         if { $resfile != "" } {
             global cur_workspacepath
             global home
             global mod
-    
+
             set startpath [string trim $home '/']
             set i [findmodbyname $name]
             set resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile.rc]

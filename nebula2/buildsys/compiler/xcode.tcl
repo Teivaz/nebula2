@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #    xcode.tcl
 #
-#   Cobbled up from the original buildsys courtesy of Radon Labs and 
+#   Cobbled up from the original buildsys courtesy of Radon Labs and
 #   Leaf Garland's Nebula2 VC7 project files.
 #   Copyright (c) 2003 Radon Labs
 #
@@ -34,7 +34,7 @@ proc nextuuid {} {
 proc emit_PBXContainerItemProxy { cid targetID } {
     set proxyID [nextuuid]
     variable workspaceID
-    
+
     puts $cid "\t\t$proxyID = {"
     puts $cid "\t\t\tcontainerPortal = $workspaceID;"
     puts $cid "\t\t\tisa = PBXContainerItemProxy;"
@@ -42,7 +42,7 @@ proc emit_PBXContainerItemProxy { cid targetID } {
     puts $cid "\t\t\tremoteGlobalIDString = $targetID;"
     #puts $cid "\t\t\tremoteInfo = $targetName;"
     puts $cid "\t\t};"
-    
+
     return $proxyID
 }
 
@@ -53,13 +53,13 @@ proc emit_PBXContainerItemProxy { cid targetID } {
 proc emit_PBXTargetDependency { cid targetID } {
     set targetDependecyID [nextuuid]
     set targetProxy [emit_PBXContainerItemProxy $cid $targetID]
-    
+
     puts $cid "\t\t$targetDependecyID = {"
     puts $cid "\t\t\tisa = PBXTargetDependency;"
     puts $cid "\t\t\ttarget = $targetID;"
     puts $cid "\t\t\ttargetProxy = $targetProxy;"
     puts $cid "\t\t};"
-    
+
     return $targetDependecyID
 }
 
@@ -70,21 +70,21 @@ proc emit_PBXTargetDependency { cid targetID } {
 proc emit_PBXBuildFile { cid fileRef settingsList } {
     set buildFileID [nextuuid]
     array set settings $settingsList
-    
+
     puts $cid "\t\t$buildFileID = {"
     puts $cid "\t\t\tisa = PBXBuildFile;"
     puts $cid "\t\t\tfileRef = $fileRef;"
     puts $cid "\t\t\tsettings = {"
-    
+
     if { [array size settings] > 0 } {
         foreach setting [array names settings] {
             puts $cid "\t\t\t\t$setting = \"$settings($setting)\";"
         }
     }
-    
+
     puts $cid "\t\t\t};"
     puts $cid "\t\t};"
-    
+
     return $buildFileID
 }
 
@@ -97,13 +97,13 @@ proc emit_PBXSourcesBuildPhase { cid files } {
     puts $cid "\t\t$buildPhaseID = {"
     puts $cid "\t\t\tbuildActionMask = 2147483647;"
     puts $cid "\t\t\tfiles = ("
-    
+
     if { [llength $files] > 0 } {
         foreach fileID $files {
             puts $cid "\t\t\t\t$fileID,"
         }
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tisa = PBXSourcesBuildPhase;"
     puts $cid "\t\t\trunOnlyForDeploymentPostprocessing = 0;"
@@ -120,13 +120,13 @@ proc emit_PBXHeadersBuildPhase { cid files } {
     puts $cid "\t\t$buildPhaseID = {"
     puts $cid "\t\t\tbuildActionMask = 2147483647;"
     puts $cid "\t\t\tfiles = ("
-    
+
     if { [llength $files] > 0 } {
         foreach fileID $files {
             puts $cid "\t\t\t\t$fileID,"
         }
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tisa = PBXHeadersBuildPhase;"
     puts $cid "\t\t\trunOnlyForDeploymentPostprocessing = 0;"
@@ -141,7 +141,7 @@ proc emit_PBXHeadersBuildPhase { cid files } {
 proc emit_PBXGroup { cid name path refType children } {
     variable filerefids
     set filerefids($path) [nextuuid]
-    
+
     puts $cid "\t\t$filerefids($path) = {"
     puts $cid "\t\t\tchildren = ("
     if { [llength children] > 0 } {
@@ -171,7 +171,7 @@ proc emit_PBXGroup { cid name path refType children } {
         puts $cid "\t\t\tsourceTree = \"<group>\";"
     }
     puts $cid "\t\t};"
-    
+
     return $filerefids($path)
 }
 
@@ -182,7 +182,7 @@ proc emit_PBXGroup { cid name path refType children } {
 proc emit_PBXFileReference { cid name path refType } {
     variable filerefids
     set filerefids($path) [nextuuid]
-    
+
     puts $cid "\t\t$filerefids($path) = {"
     puts $cid "\t\t\tisa = PBXFileReference;"
     if { $name != "" } {
@@ -205,7 +205,7 @@ proc emit_PBXFileReference { cid name path refType } {
         puts $cid "\t\t\tsourceTree = \"<group>\";"
     }
     puts $cid "\t\t};"
-    
+
     return $filerefids($path)
 }
 
@@ -219,7 +219,7 @@ proc emit_PBXNativeTarget { cid target } {
     set fileIDs [list]
     set buildFileIDs [list]
     set dependencies [list]
-    
+
     if {[lsearch [array names targetids] $target] < 0} {
         set targetids($target) [nextuuid]
     }
@@ -233,7 +233,7 @@ proc emit_PBXNativeTarget { cid target } {
     }
 
     set targetType [get_tartype $target]
-    
+
     foreach module [get_tarmods $target] {
         if { [test_modplatform $module $platform ] } {
             set modType [get_modtype $module]
@@ -249,7 +249,7 @@ proc emit_PBXNativeTarget { cid target } {
                 if { $modType == "cpp" } {
                     append settings(COMPILER_FLAGS) "-x c++ "
                 }
-                append settings(COMPILER_FLAGS) "-DN_INIT=n_init_$module " 
+                append settings(COMPILER_FLAGS) "-DN_INIT=n_init_$module "
                 append settings(COMPILER_FLAGS) "-DN_NEW=n_new_$module "
                 append settings(COMPILER_FLAGS) "-DN_INITCMDS=n_initcmds_$module "
                 append settings(COMPILER_FLAGS) "-I$includePath "
@@ -265,10 +265,10 @@ proc emit_PBXNativeTarget { cid target } {
             }
         }
     }
-    
+
     set sourceGroupID [emit_PBXGroup $cid "src" "" 4 $fileIDs]
     lappend buildPhaseIDs [emit_PBXSourcesBuildPhase $cid $buildFileIDs]
-    
+
     set fileIDs [list]
     set buildFileIDs [list]
     foreach module [get_tarmods $target] {
@@ -283,11 +283,11 @@ proc emit_PBXNativeTarget { cid target } {
             }
         }
     }
-    
+
     set headerGroupID [emit_PBXGroup $cid "inc" "" 4 $fileIDs]
     lappend buildPhaseIDs [emit_PBXHeadersBuildPhase $cid $buildFileIDs]
     set groupID [emit_PBXGroup $cid $target "" 4 [list $sourceGroupID $headerGroupID]]
-    
+
     if { $targetType == "lib" } {
         set productType "com.apple.product-type.library.static"
     }
@@ -297,31 +297,31 @@ proc emit_PBXNativeTarget { cid target } {
     if { $targetType == "dll" } {
         set productType "com.apple.product-type.library.dynamic"
     }
-    
+
     puts $cid "\t\t$targetids($target) = {"
     puts $cid "\t\t\tbuildPhases = ("
-    
+
     if { [llength $buildPhaseIDs] > 0 } {
         foreach buildPhase $buildPhaseIDs {
             puts $cid "\t\t\t\t$buildPhase,"
         }
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tbuildSettings = {"
     puts $cid "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;"
     puts $cid "\t\t\t};"
     puts $cid "\t\t\tbuildRules = ("
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tdependencies = ("
-    
+
     if { [llength $dependencies] > 0 } {
         foreach dep $dependencies {
             puts $cid "\t\t\t\t$dep,"
         }
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tisa = PBXNativeTarget;"
     puts $cid "\t\t\tname = $target;"
@@ -339,7 +339,7 @@ proc emit_PBXNativeTarget { cid target } {
 
 proc emit_PBXBuildStyle { cid name } {
     set uuid [nextuuid]
-    
+
     puts $cid "\t\t$uuid = {"
     puts $cid "\t\t\tbuildSettings = {"
     if { $name == "Development" } {
@@ -354,7 +354,7 @@ proc emit_PBXBuildStyle { cid name } {
     puts $cid "\t\t\tisa = PBXBuildStyle;"
     puts $cid "\t\t\tname = $name;"
     puts $cid "\t\t};"
-    
+
     return $uuid
 }
 
@@ -370,41 +370,41 @@ proc emit_PBXProject { cid workspace } {
     variable workspaceID
 
     set workspaceID [nextuuid]
-    lappend buildStyleIDs [emit_PBXBuildStyle $cid "Development"] 
+    lappend buildStyleIDs [emit_PBXBuildStyle $cid "Development"]
     lappend buildStyleIDs [emit_PBXBuildStyle $cid "Deployment"]
-    
+
     foreach target [get_targets] {
         set temp [emit_PBXNativeTarget $cid $target]
         lappend targetIDs [lindex $temp 0]
         lappend groupIDs [lindex $temp 1]
     }
-    
+
     set mainGroupID [emit_PBXGroup $cid $workspace "" 4 $groupIDs]
-    
+
     puts $cid "\t\t$workspaceID = {"
     puts $cid "\t\t\tbuildSettings = {"
     puts $cid "\t\t\t};"
     puts $cid "\t\t\tbuildStyles = ("
-    
+
     foreach buildStyle $buildStyleIDs {
         puts $cid "\t\t\t\t$buildStyle,"
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\thasScannedForEncodings = 1;"
     puts $cid "\t\t\tisa = PBXProject;"
     #puts $cid "\t\t\tproductRefGroup = ;"
     puts $cid "\t\t\tprojectDirPath = \"../../\";"
     puts $cid "\t\t\ttargets = ("
-    
+
     foreach target $targetIDs {
         puts $cid "\t\t\t\t$target,"
     }
-    
+
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tmainGroup = $mainGroupID;"
     puts $cid "\t\t};"
-    
+
     return $workspaceID
 }
 
@@ -416,11 +416,11 @@ proc gen_xcode { workspace } {
     global platform
     global home
     global cur_workspacepath
-    
+
     ::log::log info "Generating XCode file for project: $workspace"
     check_makedir $home/$cur_workspacepath/$workspace.xcode
     set cid [open [cleanpath $home/$cur_workspacepath/$workspace.xcode/project.pbxproj] w]
-    
+
     puts $cid "// !$*UTF8*$!"
     puts $cid "{"
     puts $cid "\tarchiveVersion = 1;"
@@ -428,13 +428,13 @@ proc gen_xcode { workspace } {
     puts $cid "\t};"
     puts $cid "\tobjectVersion = 39;"
     puts $cid "\tobjects = {"
-    
+
     set rootObject [emit_PBXProject $cid $workspace]
-    
+
     puts $cid "\t};"
     puts $cid "\trootObject = $rootObject;"
     puts $cid "}"
-    
+
     close $cid
 }
 
@@ -445,7 +445,7 @@ proc gen_xcode { workspace } {
 
 proc generate { wslist } {
     global platform
-    
+
     if { $platform == "macosx" }  {
 
         ::log::log debug "Generate xcode files"
@@ -463,7 +463,7 @@ proc generate { wslist } {
 
 #-------------------------------------------------------------------------------
 #   description
-#   Return a description of this generator.                                     
+#   Return a description of this generator.
 #-------------------------------------------------------------------------------
 proc description { } {
     return "Support for Apple's XCode IDE."
