@@ -34,6 +34,7 @@ nMapNode::nMapNode() :
 */
 nMapNode::~nMapNode()
 {   
+    DeleteBlocks();
 }
 
 /**

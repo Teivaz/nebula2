@@ -112,7 +112,7 @@ private:
     MapQuadElement* quadElement;
 
     // Triangle strip
-    nMesh2 * meshTriStrip;
+    nRef<nMesh2> meshTriStrip;
     ushort * curIndexBuffer;
     /// Current vertex index
     int curVertex;

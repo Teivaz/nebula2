@@ -15,35 +15,34 @@
 */
 MapBlock::MapBlock(nMapNode* m) :
     map(m),
-    startX(),
-    startZ(),
     blockSize(map->GetBlockSize()),
     minD2(n_new float[map->GetNumMipMapLevels()]),
     boundingBox(),
     isVisible(false),
     currentLevel(0),
     currentStep(1),
-    quadElement(NULL),
-    curVertex(0),
-    curIndexBuffer(NULL)
+    quadElement(0),
+    curIndexBuffer(0),
+    curVertex(0)
 {
     memset(neighborBlock, 0, 4 * sizeof(MapBlock*));
 }
 
 MapBlock::~MapBlock()
 {
-    if (meshTriStrip != NULL) 
+    if (meshTriStrip.isvalid()) 
     {
-        n_delete meshTriStrip; 
+        meshTriStrip->Release();
+        meshTriStrip.invalidate();
     }
 
     // Assume someone else has removed it for us
-    if (NULL != quadElement)
+    if (quadElement)
     {
         n_delete quadElement;
     }
 
-    if (NULL != minD2)
+    if (minD2)
     {
         delete[] minD2;
     }
@@ -55,25 +54,26 @@ MapBlock::~MapBlock()
 void 
 MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, int x, int z)
 {
-    startX = blockSize * x - x;
-    startZ = blockSize * z - z;
+    this->startX = x * (blockSize - 1);
+    this->startZ = z * (blockSize - 1);
 
     nMap* map_data = map->GetMap();
 
     // Set up bounding box
-    boundingBox.set(map_data->GetPoint(startX, startZ).coord,
-                    map_data->GetPoint(startX, startZ).coord);
+    boundingBox.set(map_data->GetPoint(this->startX, this->startZ).coord,
+                    map_data->GetPoint(this->startX, this->startZ).coord);
     for (int loopZ = 0; loopZ < map->GetBlockSize(); ++loopZ)
     {
         for (int loopX = 0; loopX < map->GetBlockSize(); ++loopX)
         {
-            boundingBox.grow(map_data->GetPoint(startX + loopX, startZ + loopZ).coord);
+            boundingBox.grow(map_data->GetPoint(this->startX + loopX, this->startZ + loopZ).coord);
         }
     }
 
     // Create a mesh for each node for triangle strips
+    n_assert( !meshTriStrip.isvalid() );
     meshTriStrip = map->refGfxServer->NewMesh(0);
-    n_assert(meshTriStrip);
+    n_assert(meshTriStrip.isvalid());
     meshTriStrip->SetVertexComponents( 
         nMesh2::Coord | 
         nMesh2::Normal |
@@ -131,9 +131,9 @@ MapBlock::CalculateMinD2Levels(float c2)
         int step = 1 << level;
 
         // Loop thru quads
-        for (int j = startZ; j < startZ + map->GetBlockSize()-1; j += step)
+        for (int j = this->startZ; j < this->startZ + map->GetBlockSize()-1; j += step)
         {
-            for (int i = startX; i < startX + map->GetBlockSize()-1; i += step)
+            for (int i = this->startX; i < this->startX + map->GetBlockSize()-1; i += step)
             {
                 heights[0] = map_data->GetPoint(i,        j).coord.y;
                 heights[1] = map_data->GetPoint(i,        j + step).coord.y;
@@ -445,7 +445,7 @@ MapBlock::RenderEastEdge(bool align_north, bool align_south)
 MapQuadElement* 
 MapBlock::GetQuadElement()
 {
-    if (NULL == quadElement)
+    if (!quadElement)
     {
         quadElement = n_new MapQuadElement(this);
     }

@@ -102,6 +102,7 @@ private:
     void LinkBlocks();
     void CalculateMinD2Levels();
     float CalculateCFactor();
+    void DeleteBlocks();
 
     /// Map data source
     nAutoRef<nMap> refMap;
@@ -140,7 +141,7 @@ inline
 nMap*
 nMapNode::GetMap()
 {
-    return refMap.get();
+    return refMap;
 }
 
 //---------------------------------------------------------------------------
