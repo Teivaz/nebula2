@@ -29,8 +29,8 @@ n_initcmds(nClass* clazz)
 
 //------------------------------------------------------------------------------
 /**
-    @param  fileServer  writes the nCmd object contents out to a file.
-    @return             success or failure
+    @param  ps writes the nCmd object contents out to a file.
+    @return    success or failure
 */
 bool
 nResourceLoader::SaveCmds(nPersistServer* ps)

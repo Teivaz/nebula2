@@ -7,8 +7,7 @@
 
     An nRef with the ability to resolve itself from a static object name.
 
-    @history
-    31-Mar-03   floh    now uses static nKernelServer pointer
+     - 31-Mar-03   floh    now uses static nKernelServer pointer
 
     (C) 2002 RadonLabs GmbH
 */

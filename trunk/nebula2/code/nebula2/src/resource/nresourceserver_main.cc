@@ -221,8 +221,8 @@ nResourceServer::UnloadResources(int rsrcTypeMask)
     before all other resource types, it is guaranteed that bundled
     resources are loaded before all others. 
 
-    @param  rsrcType    a resource type
-    @return             true if all resources loaded correctly
+    @param  rsrcTypeMask  a resource type mask
+    @return               true if all resources loaded correctly
 */
 bool
 nResourceServer::ReloadResources(int rsrcTypeMask)

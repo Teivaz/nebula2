@@ -24,10 +24,10 @@ nResourceLoader::~nResourceLoader()
 /**
     Base Load() function for the nResourceLoader.  This is to be redefined by child classes
 
-    @param const char*       path             the full path to the to-be-loaded file
-    @param const nResource*  callingResource  ptr to the nResource calling nResourceLoader::Load()
+    @param path             the full path to the to-be-loaded file
+    @param callingResource  ptr to the nResource calling nResourceLoader::Load()
 
-    @return bool                               success/failure
+    @return                 success/failure
 */
 bool nResourceLoader::Load(const char *sFilename, nResource *callingResource)
 {
