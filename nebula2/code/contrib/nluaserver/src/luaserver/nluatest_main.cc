@@ -124,9 +124,9 @@ void nLuaTest::MakeZombies()
 }
 
 //------------------------------------------------------------------------------
-void nLuaTest::EatAnObject( nRoot* obj )
+void nLuaTest::EatAnObject(nRoot* obj)
 {
-    n_assert( obj->IsA( this->kernelServer->FindClass( "nroot" ) ) );
+    n_assert(obj->IsA(this->kernelServer->FindClass("nroot")));
 }
 
 //------------------------------------------------------------------------------

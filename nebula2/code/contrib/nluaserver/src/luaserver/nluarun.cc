@@ -22,25 +22,25 @@
 /**
     @brief Executes the chunk at the top of the Lua stack.
 */
-bool nLuaServer::ExecuteLuaChunk( const char*& result, int errfunc )
+bool nLuaServer::ExecuteLuaChunk(const char*& result, int errfunc)
 {
-    n_assert( (errfunc > 0) && "Error function stack index must be absolute!" );
+    n_assert2(errfunc > 0, "Error function stack index must be absolute!");
     
     // call chunk main
-    int status = lua_pcall( this->L, 
-                            0 /* no args */, 
-                            LUA_MULTRET, 
-                            errfunc /* stack index of error handler */ );
-    if ( 0 != status ) // error occured
+    int status = lua_pcall(this->L, 
+                           0 /* no args */, 
+                           LUA_MULTRET, 
+                           errfunc /* stack index of error handler */);
+    if (0 != status) // error occured
     {
         result = this->outputStr.Get(); // contains the error info
-        n_message( result );
+        n_message(result);
     }
     else
     {
-        this->outputStr.Set( "" );
-        result = this->StackToString( this->L, 0 );
-        if ( 0 == result[0] ) // empty string?
+        this->outputStr.Set("");
+        result = this->StackToString(this->L, 0);
+        if (0 == result[0]) // empty string?
             result = 0; // don't want a blank to be printed in the console
     }
     
@@ -60,16 +60,16 @@ bool nLuaServer::ExecuteLuaChunk( const char*& result, int errfunc )
     string, passing 0 for the bottom will dump all the 
     items in the stack.
 */
-const char* nLuaServer::StackToString( lua_State* L, int bottom )
+const char* nLuaServer::StackToString(lua_State* L, int bottom)
 {
     nString* buf = &nLuaServer::Instance->outputStr;
     while (bottom < lua_gettop(L))
     {
-        switch (lua_type(L,-1))
+        switch (lua_type(L, -1))
         {
             case LUA_TBOOLEAN:
             {
-                if (lua_toboolean(L,-1)) 
+                if (lua_toboolean(L, -1)) 
                     buf->Append("true");
                 else 
                     buf->Append("false");
@@ -78,7 +78,7 @@ const char* nLuaServer::StackToString( lua_State* L, int bottom )
             case LUA_TNUMBER:
             case LUA_TSTRING:
             {
-                buf->Append(lua_tostring(L,-1));
+                buf->Append(lua_tostring(L, -1));
                 break;
             }
             case LUA_TUSERDATA:
@@ -96,8 +96,8 @@ const char* nLuaServer::StackToString( lua_State* L, int bottom )
             {
                 // check if it's a thunk
                 lua_pushstring(L, "_");
-                lua_rawget(L,-2);
-                if ( lua_isuserdata(L,-1) )
+                lua_rawget(L, -2);
+                if (lua_isuserdata(L, -1))
                 {
                     // assume it's a thunk
                     buf->Append("<thunk>");
@@ -106,17 +106,17 @@ const char* nLuaServer::StackToString( lua_State* L, int bottom )
                 {
                     buf->Append("{ ");
                     lua_pushnil(L);
-                    lua_gettable(L,-2);
+                    lua_gettable(L, -2);
                     bool firstItem = true;
-                    while (lua_next(L,-2) != 0)
+                    while (lua_next(L, -2) != 0)
                     {
-                        if ( !firstItem )
+                        if (!firstItem)
                             buf->Append(", ");
                         else
                             firstItem = false;
-                        nLuaServer::StackToString(L,lua_gettop(L)-1);
+                        nLuaServer::StackToString(L, lua_gettop(L) - 1);
                     }
-                    lua_pop(L,1);
+                    lua_pop(L, 1);
                     buf->Append(" }");
                 }
                 break;
@@ -125,7 +125,7 @@ const char* nLuaServer::StackToString( lua_State* L, int bottom )
                 //buf->Append("???");
                 break;  
         }
-        lua_pop(L,-1);
+        lua_pop(L, -1);
     }
     return buf->Get();
 }
@@ -148,14 +148,14 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
 {
     n_assert(cmdStr);
     // push the error handler on stack
-    lua_pushstring( this->L, "_LUASERVER_STACKDUMP" );
-    lua_gettable( this->L, LUA_GLOBALSINDEX );
-    n_assert( lua_isfunction( this->L, -1 ) && "Error handler not registered!" );
-    int errfunc = lua_gettop( this->L );
+    lua_pushstring(this->L, "_LUASERVER_STACKDUMP");
+    lua_gettable(this->L, LUA_GLOBALSINDEX);
+    n_assert2(lua_isfunction(this->L, -1), "Error handler not registered!");
+    int errfunc = lua_gettop(this->L);
     // load chunk
-    int status = luaL_loadbuffer( this->L, cmdStr, strlen(cmdStr), cmdStr );
-    if ( 0 == status ) // parse OK?
-        return this->ExecuteLuaChunk( result, errfunc );
+    int status = luaL_loadbuffer(this->L, cmdStr, strlen(cmdStr), cmdStr);
+    if (0 == status) // parse OK?
+        return this->ExecuteLuaChunk(result, errfunc);
     else
         result = 0;
     return false;
@@ -188,7 +188,7 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     nfile->Seek(0, nFile::START);
        
     cmdbuf = (char*)n_malloc(filesize + 1);
-    n_assert(cmdbuf && "Failed to allocate command buffer!");
+    n_assert2(cmdbuf, "Failed to allocate command buffer!");
     nfile->Read(cmdbuf, filesize + 1);
     cmdbuf[filesize] = 0;
     
@@ -204,7 +204,7 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
 /**
     @brief Invoke a Lua function.
 */
-bool nLuaServer::RunFunction(const char *funcName, const char*& result )
+bool nLuaServer::RunFunction(const char *funcName, const char*& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");

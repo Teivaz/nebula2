@@ -34,11 +34,11 @@ int _luaDispatch(lua_State* L, nRoot* root, nCmdProto* cmd_proto, bool print)
     
     // Need to get the proper args in...
     int numargs = cmd->GetNumInArgs();
-    if ((lua_gettop(L)-1) != numargs)
+    if ((lua_gettop(L) - 1) != numargs)
     {
         n_message("Wrong number of arguments for command: %s\n", 
                     cmd_proto->GetProtoDef());
-        lua_settop(L,0);
+        lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
@@ -47,12 +47,12 @@ int _luaDispatch(lua_State* L, nRoot* root, nCmdProto* cmd_proto, bool print)
     {
         n_message("Incorrect arguments for: %s\n",
                     cmd_proto->GetProtoDef());
-        lua_settop(L,0);
+        lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
 
-    lua_settop(L,0);
+    lua_settop(L, 0);
 
     if (!root->Dispatch(cmd))
     {
@@ -117,7 +117,7 @@ int luacmd_New(lua_State* L)
     // returns true on success or nil on failure
     const char* class_name;
     const char* object_name;
-    if ((2!=lua_gettop(L)) || !lua_isstring(L, -1) || !lua_isstring(L, -2))
+    if ((2 != lua_gettop(L)) || !lua_isstring(L, -1) || !lua_isstring(L, -2))
     {
         n_message("Usage is new('class', 'name')");
         lua_settop(L, 0);
@@ -152,9 +152,9 @@ int luacmd_NewThunk(lua_State* L)
 {
     // takes 2 strings as arguments
     // returns 1 thunk on success or nil on failure
-    if ( (2!=lua_gettop(L)) || !lua_isstring(L, -1) || !lua_isstring(L, -2) )
+    if ((2 != lua_gettop(L)) || !lua_isstring(L, -1) || !lua_isstring(L, -2))
     {
-        n_message( "Usage is newthunk('class', 'name')" );
+        n_message("Usage is newthunk('class', 'name')");
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
@@ -165,7 +165,7 @@ int luacmd_NewThunk(lua_State* L)
     
     lua_settop(L, 0);
     
-    nRoot* obj = nLuaServer::kernelServer->NewNoFail( className, objectName );
+    nRoot* obj = nLuaServer::kernelServer->NewNoFail(className, objectName);
     if (!obj)
     {
         n_message("Could not create object '%s' of class '%s'\n", 
@@ -196,7 +196,7 @@ int luacmd_Delete(lua_State* L)
     nRoot* o;
     const char* object_name;
     
-    if((1!=lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
     {
         n_message("Usage is delete('object name') or delete(thunk)");
         lua_settop(L, 0);
@@ -246,7 +246,7 @@ int luacmd_UnpinThunk(lua_State* L)
     nRoot* o;
     const char* object_name;
     
-    if((1!=lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
     {
         n_message("Usage is unpin('object name') or unpin(thunk)");
         lua_settop(L, 0);
@@ -296,7 +296,7 @@ int luacmd_PinThunk(lua_State* L)
     // takes 1 thunk as an argument
     // returns nil on failure and true on success
       
-    if((1!=lua_gettop(L)) || !lua_istable(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_istable(L, -1))
     {
         n_message("Usage is pin(thunk)");
         lua_settop(L, 0);
@@ -321,7 +321,7 @@ int luacmd_Sel(lua_State* L)
     // returns 1 object or thunk table or nil
     nRoot* o;
 
-    if ((1!=lua_gettop(L)) || (!lua_isstring(L, -1) && !lua_istable(L, -1)))
+    if ((1 != lua_gettop(L)) || (!lua_isstring(L, -1) && !lua_istable(L, -1)))
     {
         n_message("Usage is sel('path') or sel(obj ref)\n");
         lua_settop(L, 0);
@@ -392,7 +392,7 @@ int luacmd_Get(lua_State* L)
 {
     // takes 1 string (filename)
     // returns 1 thunk or nil
-    if ((1!=lua_gettop(L)) || !lua_isstring(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1))
     {
         n_message("Usage is get('filename')");
         lua_settop(L, 0);
@@ -403,7 +403,7 @@ int luacmd_Get(lua_State* L)
     lua_settop(L, 0);
     if (!o)
     {
-        n_message("Could not load file '%s'\n",lua_tostring(L, -1));
+        n_message("Could not load file '%s'\n", lua_tostring(L, -1));
         lua_pushnil(L);
     }
     else 
@@ -422,7 +422,7 @@ int luacmd_Exit(lua_State* L)
     //Returns nothing
     nScriptServer* ss = (nScriptServer*)lua_touserdata(L, lua_upvalueindex(1));
     ss->SetQuitRequested(1);
-    lua_settop(L,0);
+    lua_settop(L, 0);
     return 0;
 }
 
@@ -433,7 +433,7 @@ int luacmd_Puts(lua_State* L)
 {
     // takes 1 string as an argument
     // returns nothing
-    if ((1!=lua_gettop(L)) || !lua_isstring(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1))
     {
         n_message("Usage is puts('some text here')");
         lua_settop(L, 0);
@@ -455,7 +455,7 @@ int luacmd_Dir(lua_State* L)
     // have to be translated back to a string.
     lua_settop(L, 0);
     nRoot* cwd = nLuaServer::kernelServer->GetCwd();
-    if(!cwd)
+    if (!cwd)
     {
         n_message("Could not acquire the current working directory.\n");
         lua_pushnil(L);
@@ -483,7 +483,7 @@ int luacmd_CmdDispatch(lua_State* L)
     // Get the nRoot* out of the table self ref first
     // The parent table is only guarenteed to be first
     // if the : syntax is used - otherwise this fails
-    if ( !lua_istable(L, 1) )
+    if (!lua_istable(L, 1))
     {
         n_message("On calling member functions make sure to use the ':' operator to access methods\n");
         lua_settop(L, 0);
@@ -508,27 +508,27 @@ int luacmd_Call(lua_State* L)
     // This requires no thunk and has
     // to do the lookup from here.
     int num = lua_gettop(L);
-    if(!num || !lua_isstring(L,1))
+    if (!num || !lua_isstring(L, 1))
     {
-        n_message("Usage is call('func',...)\n");
+        n_message("Usage is call('func', ...)\n");
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
 
     nRoot* root = nLuaServer::kernelServer->GetCwd();
-    const char* cmdname = lua_tostring(L,1);
+    const char* cmdname = lua_tostring(L, 1);
     nClass* cl = root->GetClass();
     nCmdProto* cmd_proto = (nCmdProto*) cl->FindCmdByName(cmdname);
-    if(!cmd_proto)
+    if (!cmd_proto)
     {
-        n_message("Could not find the command '%s'\n",cmdname);
+        n_message("Could not find the command '%s'\n", cmdname);
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
 
-    return _luaDispatch( L, root, cmd_proto, false);
+    return _luaDispatch(L, root, cmd_proto, false);
 }
 
 //--------------------------------------------------------------------
@@ -542,27 +542,27 @@ int luacmd_ConCall(lua_State* L)
     //This requires no thunk and has
     //to do the look up from here.
     int num = lua_gettop(L);
-    if(!num || !lua_isstring(L,1))
+    if (!num || !lua_isstring(L, 1))
     {
-        n_message("Usage is concall('func',...)\n");
+        n_message("Usage is concall('func', ...)\n");
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
 
     nRoot* root = nLuaServer::kernelServer->GetCwd();
-    const char* cmdname = lua_tostring(L,1);
+    const char* cmdname = lua_tostring(L, 1);
     nClass* cl = root->GetClass();
     nCmdProto* cmd_proto = (nCmdProto*) cl->FindCmdByName(cmdname);
-    if(!cmd_proto)
+    if (!cmd_proto)
     {
-        n_message("Could not find the command '%s'\n",cmdname);
+        n_message("Could not find the command '%s'\n", cmdname);
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
     }
 
-    return _luaDispatch( L, root, cmd_proto, true);
+    return _luaDispatch(L, root, cmd_proto, true);
 }
 
 //--------------------------------------------------------------------
@@ -574,7 +574,7 @@ int luacmd_ConCall(lua_State* L)
 //--------------------------------------------------------------------
 int luacmd_Lookup(lua_State* L)
 {
-    if ((1!=lua_gettop(L)) || !lua_isstring(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1))
     {
         n_message("Usage is lookup('fullpathname')");
         lua_settop(L, 0);
@@ -591,7 +591,7 @@ int luacmd_Lookup(lua_State* L)
     else
     {
         nLuaServer::FindThunk(L, (void*)root);
-        if ( 1 == lua_isnil(L, -1) ) // no thunk? create it
+        if (1 == lua_isnil(L, -1)) // no thunk? create it
         {
             nLuaServer::ThunkNebObject(L, root);
         }
@@ -604,7 +604,7 @@ int luacmd_Lookup(lua_State* L)
 //--------------------------------------------------------------------
 int luacmd_Mangle(lua_State* L)
 {
-    if ((1!=lua_gettop(L)) || !lua_isstring(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1))
     {
         n_message("Usage is mangle('path')");
         lua_settop(L, 0);
@@ -630,7 +630,7 @@ int luacmd_Mangle(lua_State* L)
 //--------------------------------------------------------------------
 int luacmd_Exists(lua_State* L)
 {
-    if ((1!=lua_gettop(L)) || !lua_isstring(L, -1))
+    if ((1 != lua_gettop(L)) || !lua_isstring(L, -1))
     {
         n_message("Usage is exists('name')");
         lua_settop(L, 0);
@@ -680,14 +680,14 @@ int luacmd_AddCmd(lua_State* L)
     // returns nothing.
     if ((2 != lua_gettop(L)) || !(lua_isstring(L, -1) && lua_isstring(L, -2)))
     {
-        n_message( "Usage is addcmd('classname', 'cmd def')" );
+        n_message("Usage is addcmd('classname', 'cmd def')");
         lua_settop(L, 0);
         return 0;
     }
     
     nCmdProtoLua* cmdProto = new nCmdProtoLua(lua_tostring(L, -1));
     const char* className = lua_tostring(L, -2);
-    nClass* clazz = nLuaServer::kernelServer->FindClass( className );
+    nClass* clazz = nLuaServer::kernelServer->FindClass(className);
     if (clazz)
         clazz->AddScriptCmd((nCmdProto*)cmdProto);
     else
@@ -751,14 +751,14 @@ int luacmd_IsZombieThunk(lua_State* L)
     // Returns true if thunk is a zombie, false if it isn't, nil on error
     if ((1 != lua_gettop(L)) || !lua_istable(L, -1))
     {
-      n_printf( "Usage is IsZombieThunk(thunk)\n" );
+      n_printf("Usage is IsZombieThunk(thunk)\n");
       lua_settop(L, 0);
       lua_pushnil(L);
       return 1;
     }
     lua_pushstring(L, "_");
     lua_rawget(L, -2);
-    n_assert(lua_isuserdata(L, -1) && "nRef userdata not found in thunk!");
+    n_assert2(lua_isuserdata(L, -1), "nRef userdata not found in thunk!");
     nRef<nRoot>* ref = (nRef<nRoot>*)lua_unboxpointer(L, -1);
     lua_settop(L, 0);
     if (ref)
@@ -792,7 +792,7 @@ int luacmd_PushCwd(lua_State* L)
     {
         lua_pushstring(L, "_");
         lua_rawget(L, -2);
-        n_assert(lua_isuserdata(L, -1) && "nRef userdata not found in thunk!");
+        n_assert2(lua_isuserdata(L, -1), "nRef userdata not found in thunk!");
         nRef<nRoot>* ref = (nRef<nRoot>*)lua_unboxpointer(L, -1);
         if (ref)
         {
@@ -828,13 +828,13 @@ int luacmd_PushCwd(lua_State* L)
 //
 //  Just exposes nKernelServer::PopCwd()
 //--------------------------------------------------------------------
-int luacmd_PopCwd( lua_State* L )
+int luacmd_PopCwd(lua_State* L)
 {
     // Takes in no arguments.
     // Returns nothing.
-    if ( 0 != lua_gettop(L) )
+    if (0 != lua_gettop(L))
     {
-      n_printf( "Usage is popcwd()\n" );
+      n_printf("Usage is popcwd()\n");
       return 0;
     }
     nLuaServer::kernelServer->PopCwd();
