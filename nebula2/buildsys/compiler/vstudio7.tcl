@@ -37,7 +37,7 @@ proc emit_vcproj_header {name cid} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	emit_vcproj_config $name $cid $debug
+#   emit_vcproj_config $name $cid $debug
 #-----------------------------------------------------------------------------------------
 proc emit_vcproj_config {name cid debug} {
     variable debug_preprocessor_defs
@@ -47,6 +47,11 @@ proc emit_vcproj_config {name cid debug} {
     
     set tartype [get_tartype $name]
     set def_list ""
+    
+    set moddeffile [get_moddeffile $name]
+        if { $moddeffile != "" } {
+            set moddeffile [findrelpath $cur_workspacepath $moddeffile]
+    }
     
     set typenumber 0
     set prefix ""
@@ -61,7 +66,7 @@ proc emit_vcproj_config {name cid debug} {
         }
         "dll" {
             set typenumber 2
-            set extension "dll"
+            set extension [get_dllextension $name]
         }
         "exe" {
             set typenumber 1
@@ -143,6 +148,7 @@ proc emit_vcproj_config {name cid debug} {
         }
         puts $cid "\t\t\t\tSuppressStartupBanner=\"TRUE\""
         puts $cid "\t\t\t\tAdditionalLibraryDirectories=\"$lib_path;$idir\""
+        puts $cid "\t\t\t\tModuleDefinitionFile=\"$moddeffile\""
         puts $cid "\t\t\t\tProgramDatabaseFile=\"$idir\\$name.pdb\"/>"
     }
 
@@ -157,7 +163,7 @@ proc emit_vcproj_config {name cid debug} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	emit_vcproj_files $name $cid
+#   emit_vcproj_files $name $cid
 #-----------------------------------------------------------------------------------------
 proc emit_vcproj_files {name cid} {
     global platform
@@ -171,7 +177,7 @@ proc emit_vcproj_files {name cid} {
             default { set compileas 0 }
         }
         
-        set more_syms "N_INIT=n_init_$module;N_FINI=n_fini_$module;N_NEW=n_new_$module;N_VERSION=n_version_$module;N_INITCMDS=n_initcmds_$module"
+        set more_syms "N_INIT=n_init_$module;N_FINI=n_fini_$module;N_NEW=n_new_$module;N_INITCMDS=n_initcmds_$module"
         puts $cid "\t\t<Filter Name=\"$module\" Filter=\"cpp;c;cxx;cc;h;hxx;hcc\" >"
         
         # Source files
@@ -197,6 +203,17 @@ proc emit_vcproj_files {name cid} {
         puts $cid "\t\t</Filter>"
     }
 
+    #if the module definition file is set and target is dll then add it
+        set moddeffile [get_moddeffile $name]
+        if { $moddeffile != "" && [get_tartype $name] == "dll" } {
+            global cur_workspacepath
+            set moddeffile [findrelpath $cur_workspacepath $moddeffile]
+            regsub -all "/" $moddeffile "\\" filename
+            puts $cid "\t\t<Filter Name=\"Module Definition\" Filter=\"def\" >"
+            puts $cid "\t\t\t<File RelativePath=\"$filename\" />"
+            puts $cid "\t\t</Filter>"
+    }
+    
     # Resource files
     if {[get_tartype $name] == "exe"} {
         puts $cid "\t\t<Filter Name=\"Resource Files\" Filter=\"rc\" >"
@@ -208,7 +225,7 @@ proc emit_vcproj_files {name cid} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	emit_vcproj_tail $cid
+#   emit_vcproj_tail $cid
 #-----------------------------------------------------------------------------------------
 proc emit_vcproj_tail {cid} {
     puts $cid "\t<Globals>"
@@ -217,7 +234,7 @@ proc emit_vcproj_tail {cid} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_vcproj $name
+#   gen_vcproj $name
 #   Creates a .vcproj file
 #-----------------------------------------------------------------------------------------
 proc gen_vcproj {name} {
@@ -243,7 +260,7 @@ proc gen_vcproj {name} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_sln $wspace_idx
+#   gen_sln $wspace_idx
 #   Creates a .sln file
 #-----------------------------------------------------------------------------------------
 proc gen_sln { name } {
@@ -315,17 +332,17 @@ proc gen_sln { name } {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_solution 
+#   gen_solution 
 #   Generates the .sln and .vcproj file for all workspaces
 #-----------------------------------------------------------------------------------------
 proc generate {} {
     
     puts "Looking for uuidgen...."
     if { [catch { exec uuidgen }] } {
-    	puts "uuidgen.exe not found skipping Visual Studio Solutions."
-    	return
+        puts "uuidgen.exe not found skipping Visual Studio Solutions."
+        return
     } else {
-    	puts "uuidgen.exe found"
+        puts "uuidgen.exe found"
     }
     
     set vstudiopath ./build/vstudio7
