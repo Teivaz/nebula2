@@ -13,7 +13,9 @@ nNebulaClass(nGuiTextureView, "nguiwidget");
 */
 nGuiTextureView::nGuiTextureView()
 {
-    // empty
+    this->color.set(1.0f, 1.0f, 1.0f, 1.0f);
+    this->uvsTopLeft.set(0.0f, 0.0f);
+    this->uvsBottomRight.set(1.0f, 1.0f);
 }
 
 //------------------------------------------------------------------------------
@@ -40,10 +42,10 @@ nGuiTextureView::Render()
         if (this->refTexture.isvalid())
         {
             const vector4& curGlobalColor = nGuiServer::Instance()->GetGlobalColor();
-            static const rectangle uvs(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+            static const rectangle uvs(this->uvsTopLeft, this->uvsBottomRight);
             static const vector4 white(1.0f, 1.0f, 1.0f, 1.0f);
             nGuiServer::Instance()->SetGlobalColor(white);
-            nGuiServer::Instance()->DrawTexture(this->GetScreenSpaceRect(), uvs, white, this->refTexture.get());
+            nGuiServer::Instance()->DrawTexture(this->GetScreenSpaceRect(), uvs, this->color, this->refTexture.get());
             nGuiServer::Instance()->SetGlobalColor(curGlobalColor);
         }
         return true;
