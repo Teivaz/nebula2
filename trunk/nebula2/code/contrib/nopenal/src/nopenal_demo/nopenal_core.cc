@@ -28,7 +28,7 @@ nOpenALCore::~nOpenALCore()
 void
 nOpenALCore::Init()
 {
-    n_assert(this->refAudioServer->Open());
+    n_verify(this->refAudioServer->Open());
 }
 
 //------------------------------------------------------------------------------
