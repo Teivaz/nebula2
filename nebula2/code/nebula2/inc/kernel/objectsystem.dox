@@ -5,5 +5,23 @@
     @brief Nebula provides an object system to provide metadata for
     the scripting system.  This is a key part of what allows Nebula
     to support multiple languages with relative ease.
+
+    <h2> Object Creation </h2>
+
+    To use Nebula scripting interface, the class instance which you want to create 
+    should be derived from nRoot class.
+    All nRoot derived class should be created by nKernelServer::New with given
+    <i>classname</i> and <i>objectname</i>.
+
+    Here's an example:
+
+    @code
+    nShapeNode* node = nKernelServer::ks->New("nshapenode", "/usr/scene/node1");
+    @endcode
+
+    As mentioned above, Nebula object uses <I>className</I> and <I>objectName</I> 
+    for it's creation. 'nshapenode' is classname and '/usr/scene/node1' is
+    objectname in above code.
+
 */
 
