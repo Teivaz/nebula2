@@ -12,6 +12,9 @@ static void n_makezombies(void* slf, nCmd* cmd);
   @scriptclass
   nluatest
 
+  @cppclass
+  nLuaTest
+
   @superclass
   nroot
 

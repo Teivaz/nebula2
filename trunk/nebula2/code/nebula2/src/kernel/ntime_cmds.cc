@@ -25,6 +25,9 @@ static void n_getframetime(void *, nCmd *);
     @scriptclass
     ntimeserver
 
+    @cppclass
+    nTimeServer
+
     @superclass
     nroot
 

@@ -14,6 +14,9 @@ static void n_getshaderat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nmaterialnode
+
+    @cppclass
+    nMaterialNode
     
     @superclass
     nabstractshadernode

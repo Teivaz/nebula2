@@ -23,6 +23,9 @@ static void n_getjointindex(void* slf, nCmd* cmd);
     @scriptclass
     nskinshapenode    
 
+    @cppclass
+    nSkinShapeNode
+
     @superclass
     nshapenode
 

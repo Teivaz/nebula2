@@ -27,6 +27,9 @@ static void n_setf4(void*, nCmd*);
     @scriptclass
     nenv
 
+    @cppclass
+    nEnv
+
     @superclass
     nroot
 

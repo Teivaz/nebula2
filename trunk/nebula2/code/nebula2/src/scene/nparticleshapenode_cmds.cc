@@ -48,6 +48,9 @@ static void n_getparticlevelocityfactor(void* slf, nCmd* cmd);
     @scriptclass
     nparticleshapenode
 
+    @cppclass
+    nParticleShapeNode
+
     @superclass
     nshapenode
 

@@ -17,6 +17,9 @@ static void n_savescreenshot(void* slf, nCmd* cmd);
     @scriptclass
     ngfxserver2
 
+    @cppclass
+    nGfxServer2
+
     @superclass
     nroot
 

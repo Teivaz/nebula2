@@ -12,13 +12,17 @@ static void n_puts(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nfileserver2
+    nfilenode
+
+    @cppclass
+    nFileNode
     
     @superclass
     nroot
 
     @classinfo
-    New style fileserver.
+    NOH representation of a file. This is useful for scripting languages without
+    native file I/O support, like Nebula's MicroTCL.
 */
 void
 n_initcmds(nClass* cl)
