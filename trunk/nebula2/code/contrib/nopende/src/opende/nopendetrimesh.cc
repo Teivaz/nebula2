@@ -15,6 +15,7 @@
 #include "gfx2/nmeshgroup.h"
 #include "gfx2/nn3d2loader.h"
 #include "gfx2/nnvx2loader.h"
+#include "gfx2/nmesh2.h"
 
 //------------------------------------------------------------------------------
 /**
