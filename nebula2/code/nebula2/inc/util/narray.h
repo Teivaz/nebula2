@@ -36,6 +36,8 @@ public:
     /// [] operator
     TYPE& operator[](int index) const;
 
+    /// clear contents and preallocate with new attributes
+    void Reallocate(int initialSize, int grow);
     /// clear contents and set a fixed size
     void SetFixedSize(int size);
     /// push element to back of array
@@ -76,8 +78,6 @@ public:
 private:
     /// check if index is in valid range, and grow array if necessary
     void CheckIndex(int);
-    /// clear contents and preallocate with new attributes
-    void Reallocate(int initialSize, int grow);
     /// destroy an element (call destructor without freeing memory)
     void Destroy(TYPE* elm);
     /// copy content
