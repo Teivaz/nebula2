@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nVariableServer
 //------------------------------------------------------------------------------
 //  nvariableserver_cmds.cc
 //  (C) 2003 RadonLabs GmbH
@@ -153,11 +152,11 @@ n_setvectorvariable(void* slf, nCmd* cmd)
 {
     nVariableServer* self = (nVariableServer*) slf;
     nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
-    float4 vec;
-    vec[0] = cmd->In()->GetF();
-    vec[1] = cmd->In()->GetF();
-    vec[2] = cmd->In()->GetF();
-    vec[3] = cmd->In()->GetF();
+    nFloat4 vec;
+    vec.x = cmd->In()->GetF();
+    vec.y = cmd->In()->GetF();
+    vec.z = cmd->In()->GetF();
+    vec.w = cmd->In()->GetF();
     self->SetVectorVariable(var, vec);
 }
 

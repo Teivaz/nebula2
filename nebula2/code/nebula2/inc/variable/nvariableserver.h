@@ -15,25 +15,12 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
+
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
-
-#ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
-#endif
-
-#ifndef N_VARIABLECONTEXT_H
 #include "variable/nvariablecontext.h"
-#endif
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nVariableContext;
@@ -69,7 +56,7 @@ public:
     /// set the float value of a global variable
     void SetFloatVariable(nVariable::Handle varHandle, float v);
     /// set the vector4 value of a global variable
-    void SetVectorVariable(nVariable::Handle varHandle, const float4& v);
+    void SetVectorVariable(nVariable::Handle varHandle, const nFloat4& v);
     /// set the integer value of a global variable
     void SetIntVariable(nVariable::Handle varHandle, int i);
     /// set the string value of a global variable
