@@ -46,7 +46,8 @@ struct VsInput
 StdVsOutput vsMain(const VsInput vsIn)
 {
     StdVsOutput vsOut;
-    vsOut.diffuse = lightDiffuse( vsIn.normal, Model, LightAmbient, LightDiffuse, LightPos );
+    //vsOut.diffuse = lightDiffuse( vsIn.normal, Model, LightAmbient, LightDiffuse, LightPos );
+    vsOut.diffuse = float4(1.0f,1.0f,1.0f,1.0f); // normals don't work anyway
     vsOut.position = mul(vsIn.position, ModelViewProjection);
     vsOut.uv0.xy = vsIn.uv0.xy * TexScale;     // generate texture coordinates
     vsOut.fog = fog( vsOut.diffuse.a, vsOut.position, MatTranslucency );
