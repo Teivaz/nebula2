@@ -13,6 +13,7 @@ static void n_getvalue(void* slf, nCmd* cmd);
 static void n_setleftwidth(void* slf, nCmd* cmd);
 static void n_setrightwidth(void* slf, nCmd* cmd);
 static void n_setlabelfont(void* slf, nCmd* cmd);
+static void n_setknobsize(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
@@ -42,6 +43,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setleftwidth_f",   'SLWD', n_setleftwidth);
     cl->AddCmd("v_setrightwidth_f",  'SFWD', n_setrightwidth);
     cl->AddCmd("v_setlabelfont_s",   'SFON', n_setlabelfont);
+    cl->AddCmd("v_setknobsize_i",    'SKSZ', n_setknobsize);
     cl->EndCmds();
 }
 
@@ -198,4 +200,20 @@ n_setlabelfont(void* slf, nCmd* cmd)
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
     self->SetLabelFont(cmd->In()->GetS());
 }
-
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setknobsize
+    @input
+    i
+    @output
+    v
+    @info
+    Sets the width of the thumb/drag button.
+*/
+static void
+n_setknobsize(void* slf, nCmd* cmd)
+{
+    nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
+    self->SetKnobSize(cmd->In()->GetI());
+}
