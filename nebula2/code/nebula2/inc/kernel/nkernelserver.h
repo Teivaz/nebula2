@@ -68,7 +68,7 @@ public:
     /// create a Nebula object, don't fail when no object could be created
     nObject* NewNoFail(const char* className);
     /// create a Nebula object from a persistent object file
-    nRoot* Load(const char* path);
+    nObject* Load(const char* path);
     /// create a Nebula object from a persistent object file with given name
     nRoot* LoadAs(const char* path, const char* objName);
     /// lookup a Nebula object in the hierarchy

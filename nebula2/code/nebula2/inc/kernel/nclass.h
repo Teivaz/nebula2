@@ -71,6 +71,8 @@ public:
     void SetProperName(const char* name);
     /// get proper name
     const char* GetProperName() const;
+    /// is this class derived from ...?
+    bool IsA(const char* className) const;
 
 private:
     nKernelServer* kernelServer;

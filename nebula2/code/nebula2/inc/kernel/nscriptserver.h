@@ -46,10 +46,14 @@ public:
     virtual bool Run(const char *, const char*&); 
     /// invoke a script function by name, with no parameters
     virtual bool RunFunction(const char *, const char *&);
+    /// set an unnamed object that will receive cmds instead of the cwd
+    static void SetCurrentTargetObject(nObject *obj);
+    /// get the currently set unnamed object
+    static nObject* GetCurrentTargetObject();
     /// evaluate a script file
     virtual bool RunScript(const char *, const char*&);
     /// write header of a persistent object file
-    virtual nFile* BeginWrite(const char* filename, nRoot* obj);
+    virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// write object header with default constructor
     virtual bool WriteBeginNewObject(nFile* fp, nRoot *o, nRoot *owner);
     /// write object header with constructor cmd 
@@ -82,6 +86,10 @@ public:
     /// generate a prompt string for interactive mode
     virtual nString Prompt(); 
 #endif
+
+protected:
+    /// when set the script server will dispatch cmds to this object instead of the cwd
+    static nObject *currentTargetObject;
 
 private:
     bool quitRequested;
@@ -147,6 +155,26 @@ nScriptServer::SelectMethod
 nScriptServer::GetSelectMethod() const
 {
     return this->selMethod;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nScriptServer::SetCurrentTargetObject(nObject *obj)
+{
+    nScriptServer::currentTargetObject = obj;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nObject* 
+nScriptServer::GetCurrentTargetObject()
+{
+    return nScriptServer::currentTargetObject;
 }
 
 //------------------------------------------------------------------------------

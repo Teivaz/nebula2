@@ -9,8 +9,6 @@
 #include "kernel/nref.h"
 
 static void n_save(void *, nCmd *);
-static void n_saveas(void *, nCmd *);
-static void n_clone(void *, nCmd *);
 static void n_getparent(void *, nCmd *);
 static void n_gethead(void *, nCmd *);
 static void n_gettail(void *, nCmd *);
@@ -49,8 +47,6 @@ void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
     cl->AddCmd("b_save_v",              'SAVE', n_save);
-    cl->AddCmd("b_saveas_s",            'SVAS', n_saveas);
-    cl->AddCmd("o_clone_s",             'CLON', n_clone);
     cl->AddCmd("o_getparent_v",         'GPRT', n_getparent);
     cl->AddCmd("o_gethead_v",           'GHED', n_gethead);
     cl->AddCmd("o_gettail_v",           'GTAL', n_gettail);
@@ -88,48 +84,6 @@ static void n_save(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
     cmd->Out()->SetB(self->Save());                    
-}
-
-//-------------------------------------------------------------------
-/**
-    @cmd
-    saveas
-
-    @input
-    s (Name)
-
-    @output
-    b (Success)
-
-    @info
-    Save the object under a given name into a file. A trailing
-    '.n' will be appended.
-*/
-static void n_saveas(void *o, nCmd *cmd)
-{
-    nRoot *self = (nRoot *) o;
-    cmd->Out()->SetB(self->SaveAs(cmd->In()->GetS()));
-}
-
-//-------------------------------------------------------------------
-/**
-    @cmd
-    clone
-
-    @input
-    s (CloneName)
-
-    @output
-    o (CloneHandle)
-
-    @info
-    Creates a clone with the name 'CloneName' of the object.
-    If the original has child objects, they will be cloned as well.
-*/
-static void n_clone(void *o, nCmd *cmd)
-{
-    nRoot *self = (nRoot *) o;
-    cmd->Out()->SetO(self->Clone(cmd->In()->GetS()));
 }
 
 //-------------------------------------------------------------------

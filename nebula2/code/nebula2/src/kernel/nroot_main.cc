@@ -273,11 +273,11 @@ bool
 nRoot::SaveAs(const char *name)
 {
     n_assert(name);
-    nPersistServer *ps = kernelServer->GetPersistServer();
+    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
     bool retval = false;
-    if (ps->BeginObject(this, name)) 
+    if (ps->BeginObject(this, name, true)) 
     {
         // ...the usual behaviour...
         nRoot *c;
@@ -305,7 +305,7 @@ nRoot::SaveAs(const char *name)
                 }
             }
         }
-        ps->EndObject();
+        ps->EndObject(true);
     } 
     else 
     {
@@ -318,17 +318,17 @@ nRoot::SaveAs(const char *name)
 //------------------------------------------------------------------------------
 /**
 */
-nRoot*
+nObject*
 nRoot::Clone(const char *name)
 {
     n_assert(name);
-    nRoot *clone = NULL;
-    nPersistServer *ps = kernelServer->GetPersistServer();
+    nObject *clone = NULL;
+    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
-    nPersistServer::nSaveMode old_sm = ps->GetSaveMode();
+    nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
     ps->SetSaveMode(nPersistServer::SAVEMODE_CLONE);
-    if (ps->BeginObject(this, name)) 
+    if (ps->BeginObject(this, name, true)) 
     {
         // ...the usual behaviour...
         nRoot *c;
@@ -356,7 +356,7 @@ nRoot::Clone(const char *name)
                 }
             }
         }
-        ps->EndObject();
+        ps->EndObject(true);
         clone = ps->GetClone();
 
     } 
@@ -364,7 +364,7 @@ nRoot::Clone(const char *name)
     {
         n_error("nRoot::Clone(): BeginObject() failed!");
     }
-    ps->SetSaveMode(old_sm);
+    ps->SetSaveMode(oldMode);
 
     return clone;
 }

@@ -7,6 +7,8 @@
 
 nNebulaClass(nScriptServer, "nroot");
 
+nObject* nScriptServer::currentTargetObject = 0;
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -87,7 +89,7 @@ nScriptServer::Prompt()
 /**
 */
 nFile*
-nScriptServer::BeginWrite(const char* /* filename */, nRoot* /* obj */)
+nScriptServer::BeginWrite(const char* /* filename */, nObject* /* obj */)
 {
     // overwrite in subclass
     return false;

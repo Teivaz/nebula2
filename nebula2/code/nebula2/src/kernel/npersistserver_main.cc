@@ -135,18 +135,19 @@ nPersistServer::GetLoader(const char* loaderClass)
      - 04-Nov-98   floh    created
      - 05-Nov-98   floh    autonome Objects gekillt
      - 18-Dec-98   floh    + SAVEMODE_CLONE
+     - 09-Nov-04   enlight + nObject support
 */
 bool 
-nPersistServer::BeginObject(nRoot *o, const char *name)
+nPersistServer::BeginObject(nObject *o, const char *name, bool isObjNamed)
 {
     bool retval = false;
     switch (this->saveMode) 
     {
-        case SAVEMODE_FOLD:   
-            retval = this->BeginFoldedObject(o, NULL, name, false);
+        case SAVEMODE_FOLD:
+            retval = this->BeginFoldedObject(o, NULL, name, false, isObjNamed);
             break;
         case SAVEMODE_CLONE:
-            retval = this->BeginCloneObject(o, name);
+            retval = this->BeginCloneObject(o, name, isObjNamed);
             break;
     }
     return retval;
@@ -169,10 +170,10 @@ nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
     switch (this->saveMode) 
     {
         case SAVEMODE_FOLD:   
-            retval = this->BeginFoldedObject(o, cmd, name, sel_only);
+            retval = this->BeginFoldedObject(o, cmd, name, sel_only, true);
             break;
         case SAVEMODE_CLONE:
-            retval = this->BeginCloneObject(o, name);
+            retval = this->BeginCloneObject(o, name, true);
             break;
     }
     if (cmd) 
@@ -187,18 +188,19 @@ nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
      - 04-Nov-98   floh    created
      - 05-Nov-98   floh    autonome Objects gekillt
      - 18-Dec-98   floh    + SAVEMODE_CLONE
+     - 09-Nov-04   enlight + nObject support
 */
 bool 
-nPersistServer::EndObject()
+nPersistServer::EndObject(bool isObjNamed)
 {
     bool retval = false;
     switch (this->saveMode) 
     {
-        case SAVEMODE_FOLD:   
-            retval = this->EndFoldedObject();
+        case SAVEMODE_FOLD:
+            retval = this->EndFoldedObject(isObjNamed);
             break;
         case SAVEMODE_CLONE:
-            retval = this->EndCloneObject();
+            retval = this->EndCloneObject(isObjNamed);
             break;
     }
     return retval;
@@ -215,15 +217,23 @@ nPersistServer::EndObject()
                              sondern nCmdProto::NewCmd()
 */
 nCmd*
-nPersistServer::GetCmd(nRoot *o, nFourCC id)
+nPersistServer::GetCmd(nObject *o, nFourCC id)
 {
     n_assert(o);
     nCmdProto *cp = o->GetClass()->FindCmdById(id);
     if (!cp)
     {
-        nString fullname = o->GetFullName();
-        n_error("nPersistServer::GetCmd(): unknown command '%s' for object '%s'\n",
-            n_fourcctostr(id), fullname.Get());
+        if (o->IsA("nroot"))
+        {
+            nString fullname = ((nRoot *) o)->GetFullName();
+            n_error("nPersistServer::GetCmd(): unknown command '%s' for object '%s' of class %s\n",
+                    n_fourcctostr(id), fullname.Get(), o->GetClass()->GetName());
+        }
+        else
+        {
+            n_error("nPersistServer::GetCmd(): unknown command '%s' for object of class %s\n",
+                    n_fourcctostr(id), o->GetClass()->GetName());
+        }
         return 0;
     }
     return cp->NewCmd();
