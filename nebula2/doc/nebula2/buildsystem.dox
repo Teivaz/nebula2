@@ -11,33 +11,66 @@
 
     @section NebulaBuildSystemIntro Introduction
 
-    Nebula uses it's own build system. So you should be familiarize yourself with the build system
-    before you start using Nebula.
+    Nebula uses it's own build system. So you should familiarize
+    yourself with the build system before you start using Nebula.
 
-    The core part of the build system consists of two items which are:
+    @subsection NebulaBuildSystemIntroWhy Why do we have our own build system?
 
-      - module : A group of header and source files which can contain the source for an nRoot 
-                 derived class and/or arbitrary code.
-      - target : An executable (.exe), static library (.lib) or dynamic library (.dll)
-      .
-    One thing to remember about modules is that there can only be one nRoot derived class per
-    module. Therefore, you cannot have more than one source file (.cc) that contains the 
-    nNebulaScriptClass or nNebulaClass macro in any one module.
+    We have our own build system so that we can provide equal support
+    for all build systems on all platforms that we support or intend
+    to support.  Due to this, we're able to support, out of the box, the
+    following toolchains:
 
-    @see @ref NebulaWritingClass for more details about nNebulaClass/nNebulaScriptClass and 
-         nRoot derived classes.
+      - Microsoft Visual C++ 6.0
+      - Microsoft Visual C++ 7.0 (.NET)
+      - Microsoft Visual C++ 7.1 (.NET 2003)
+      - Microsoft Visual C++ 8.0 (.NET 2005, beta)
+      - Apple's XCode
 
-    The build system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
-    process any .bld files it finds in any of the following places:
-    - $home/code/nebula2/bldfiles and its subdirectories
-    - $home/code/*/bldfiles
-    - $home/code/contrib/*/bldfiles
-    .
-    and generates workspaces/solutions/projects/makefiles in $home/build/[compiler]. 
-    
-    Normally, to create your own project, all you need is to create a bunch of .bld files
-    (you could also put everything into a single .bld file, but we're using multiple files
-    here for clarity): 
+    And we will soon support:
+      - Linux via GNU Make and gcc
+      - Cygwin/MingW via GNU Make and gcc
+      - Possibly Eclipse's CDT
+
+    We use a set of descriptions stored in <tt>.bld</tt> files to generate the
+    workspaces, Makefiles, etc.  These files are implemented simply as
+    TCL scripts, but no knowledge of TCL is required.
+
+    @subsection NebulaBuildSystemIntroOverview Overview
+
+    The core part of the build system consists of three items which are:
+
+      - <b><tt>module</tt></b>: A group of header and source files which
+        can contain the source for an nRoot derived class and/or
+        arbitrary code.
+      - <b><tt>target</tt></b>: An executable (<tt>.exe</tt>),
+        static library (<tt>.lib</tt>) or dynamic library (<tt>.dll</tt>).
+        Targets contain modules.
+      - <b><tt>workspace</tt></b>: A collection of targets which are
+        commonly built together.
+
+    One thing to remember about modules is that there can only be one
+    nRoot derived class per module. Therefore, you cannot have more
+    than one source file (<tt>.cc</tt>) that contains the @c nNebulaScriptClass
+    or @c nNebulaClass macro in any one module.
+
+    @see @ref NebulaWritingClass for more details about
+    @c nNebulaClass / @c nNebulaScriptClass and nRoot derived classes.
+
+    The build system uses $home/update.tcl in combination with
+    <tt>$home/buildsys/*.tcl</tt> to process any <tt>.bld</tt> files
+    it finds in any of the following places:
+
+    - <tt>$home/code/nebula2/bldfiles</tt> and its subdirectories
+    - <tt>$home/code/*/bldfiles</tt>
+    - <tt>$home/code/contrib/*/bldfiles</tt>
+
+    and generates workspaces/solutions/projects/makefiles in
+    <tt>$home/build/[compiler]</tt>.
+
+    Normally, to create your own project, all you need is to create a bunch
+    of <tt>.bld</tt> files (you could also put everything into a single
+    <tt>.bld</tt> file, but we're using multiple files here for clarity):
 
 @verbatim
 #### $home/code/myproject/bldfiles/myModules.bld ####
@@ -53,15 +86,19 @@ endmodule
 
 beginmodule nmyclass2
 ...
+endmodule
 @endverbatim
 
-    The directory in setdir is given relative to $home/code/*/src or inc 
-    (or $home/code/contrib/*/src or inc for contrib modules). The files listed in 
-    setfiles are your source files (.cc) and your headers (.h) are listed in setheaders. 
-    Note that the .cc and .h extensions will be automatically appended to the files you list
-    in setfiles/setheaders. 
-    
-    Now you need to combine these modules into a "target" (project): 
+    The directory in @c setdir is given relative to <tt>$home/code/*/src</tt>
+    or @c inc (or <tt>$home/code/contrib/*/src</tt> or @c inc for contrib
+    modules). The files listed in @c setfiles are your source files
+    (<tt>.cc</tt>) and your headers (<tt>.h</tt>) are listed in @c setheaders.
+
+    Note that the <tt>.cc</tt> and <tt>.h</tt> extensions will be
+    automatically appended to the files you list in @c setfiles /
+    @c setheaders.
+
+    Now you need to combine these modules into a "target" (project):
 
 @verbatim
 #### $home/code/myproject/bldfiles/myLibrary.bld ####
@@ -71,40 +108,44 @@ begintarget mylibrary
 endtarget
 @endverbatim
 
-    The modules will be found automagically if they have been defined in a .bld file 
-    in the appropriate directory. Other valid settypes are exe and dll. 
+    The modules will be found automagically if they have been defined in
+    a <tt>.bld</tt> file in the appropriate directory. Other valid
+    @c settypes are <tt>exe</tt> and <tt>dll</tt>.
 
-    Finally, you need to define a workspace (aka solution), so you have something to 
-    load into Visual Studio (or whatever you're using). 
+    Finally, you need to define a workspace (aka solution), so you have
+    something to load into Visual Studio (or whatever you're using).
 
 @verbatim
 ####$home/code/myproject/bldfiles/myWorkspace.bld ####
 beginworkspace myProjectWorkspace
     setbinarydir ./bin/
-    settargets { 
-        mylibrary 
+    settargets {
+        mylibrary
         nkernel
         nnebula
     }
 endworkspace
 @endverbatim
 
-    setbinarydir is relative to $home. settargets should include a list of targets (aka projects) 
-    you want to appear in your solution/workspace, which means anything you'd like to be able to do 
-    source-level debugging on. The first target in the list will become the default 
-    active project for the solution/workspace. 
+    @c setbinarydir is relative to <tt>$home</tt>. @c settargets should
+    include a list of targets (aka projects) you want to appear in your
+    solution/workspace, which means anything you'd like to be able to do
+    source-level debugging on. The first target in the list will become
+    the default active project for the solution/workspace.
 
     @note
-    The old build system used $home/code/nebula2/src/update.tcl in combination with 
-    $home/bin/*.tcl to process .epk files located in $home/code/nebula2/src, and outputs 
-    to $home/code/nebula2/vstudio, so if you want to use the new system, you don't need 
-    any of these (and in fact they're no longer in CVS). 
-    $home/code/nebula2/src/dummy.cc is still used in the current build system, though.
+    The old build system used <tt>$home/code/nebula2/src/update.tcl</tt> in
+    combination with <tt>$home/bin/*.tcl</tt> to process <tt>.epk</tt> files
+    located in <tt>$home/code/nebula2/src</tt>, and outputs to
+    <tt>$home/code/nebula2/vstudio</tt>, so if you want to use the new
+    system, you don't need any of these (and in fact they're no longer in CVS).
+    <tt>$home/code/nebula2/src/dummy.cc</tt> is still used in the current
+    build system, though.
 
     @section NebulaBuildSystemCommands Commands
 
-    These commands can be used in the bld files. From parameters that are 
-    separated with a '/' you can only select one. From parameters that are 
+    These commands can be used in the bld files. From parameters that are
+    separated with a '/' you can only select one. From parameters that are
     separated with ',' you can select one or more.
 
     @subsection NebulaBuildSystemCommandsWorkspace Workspace
@@ -116,51 +157,55 @@ endworkspace
 
       <tr>
         <td>beginworkspace</td><td>name</td><td>no default</td>
-        <td>Begins a workspace definition with the specified name. Workspaces are containers 
-        for targets, a target can be listed in any number of workspaces (or none at all). 
-        The name of your workspace must be unique among all the workspaces that the
+        <td>Begins a workspace definition with the specified name.
+        Workspaces are containers for targets, a target can be listed in
+        any number of workspaces (or none at all).  The name of your
+        workspace must be unique among all the workspaces that the
         build system finds.</td>
       </tr>
-      
+
       <tr>
         <td>annotate</td><td>annotation</td><td>""</td>
-        <td>An optional description of the workspace, enclose it in double quotation marks if 
-        it's more than one word, e.g. "my description".</td>
+        <td>An optional description of the workspace, enclose it in double
+        quotation marks if it's more than one word, e.g.
+        <tt>"my description"</tt>.</td>
       </tr>
-      
+
       <tr>
-        <td>setdir</td> <td>dir</td> <td>no default</td> 
+        <td>setdir</td> <td>dir</td> <td>no default</td>
         <td>Sets the directory that a workspace should be created in.</td>
       </tr>
-      
+
       <tr>
-        <td>setbinarydir</td> <td>dir</td> <td>""</td> 
-        <td>Sets the root directory to be used for binary output - dll and exe</td>
+        <td>setbinarydir</td> <td>dir</td> <td>""</td>
+        <td>Sets the root directory to be used for binary output -
+        <tt>dll</tt> and <tt>exe</tt></td>
       </tr>
-      
+
       <tr>
-        <td>setlibdir</td> <td>dir</td> <td>""</td> 
-        <td>Sets the root directory to be used for intermediate compilation and possibly lib output. 
-        FIXME: For convention it should be decided by the powers that be # whether lib binarydir 
-        should mandatorily go in the inter dir, output dir, or leave it to the compiler generators 
-        discretion.</td>
+        <td>setlibdir</td> <td>dir</td> <td>""</td>
+        <td>Sets the root directory to be used for intermediate
+        compilation and possibly lib output.  FIXME: For convention it
+        should be decided by the powers that be # whether lib binarydir
+        should mandatorily go in the inter dir, output dir, or leave it
+        to the compiler generators discretion.</td>
       </tr>
-      
+
       <tr>
-        <td>settargets</td> <td>{ targetname ... }</td> <td>""</td> 
+        <td>settargets</td> <td>{ targetname ... }</td> <td>""</td>
         <td>Sets the list of targets that will be put in this workspace</td>
       </tr>
-      
+
       <tr>
-        <td>addglobaldef</td> <td>define_name value</td> <td>""</td> 
+        <td>addglobaldef</td> <td>define_name value</td> <td>""</td>
         <td>Sets a global define</td>
       </tr>
-      
+
       <tr>
-        <td>addtargetdef</td> <td>targetname define_name value</td> <td>""</td> 
+        <td>addtargetdef</td> <td>targetname define_name value</td> <td>""</td>
         <td>Sets a define for a target</td>
       </tr>
-      
+
       <tr>
         <td>endworkspace</td><td></td><td></td>
         <td>Ends the workspace definition.</td>
@@ -180,49 +225,53 @@ endworkspace
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> 
-        <td>An optional description of the target, enclose it in double quotation marks if 
-        it's more than one word, e.g. "my description".</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td>
+        <td>An optional description of the target, enclose it in double
+        quotation marks if it's more than one word, e.g.
+        <tt>"my description"</tt>.</td>
       </tr>
 
       <tr>
-        <td>setrtti</td> <td>true/false</td> <td>false</td> 
-        <td>Turns Run Time Type Identification on/off for this target (the regular C++ RTTI that is).</td>
+        <td>setrtti</td> <td>true/false</td> <td>false</td>
+        <td>Turns Run Time Type Identification on/off for this target
+        (the regular C++ RTTI that is).</td>
       </tr>
 
       <tr>
-        <td>setexceptions</td> <td>true/false</td> <td>false</td> 
+        <td>setexceptions</td> <td>true/false</td> <td>false</td>
         <td>Turns C++ exception handling on/off for this target.</td>
       </tr>
 
       <tr>
-        <td>seticon</td> <td>filename</td> <td>nebula.ico</td> 
+        <td>seticon</td> <td>filename</td> <td>nebula.ico</td>
         <td>Sets the icon for this target (ignored for libraries).</td>
       </tr>
 
       <tr>
-        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td> 
+        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td>
         <td>Sets the list of modules to be included in this target.</td>
       </tr>
 
       <tr>
-        <td>setbundles</td> <td>{ bundlename ... }</td> <td>""</td> 
-        <td>Adds bundles to the target. Modules listed in the bundle are treated the same as modules 
-        added to the target through setmodules. Targets listed in the bundle are treated the same as 
+        <td>setbundles</td> <td>{ bundlename ... }</td> <td>""</td>
+        <td>Adds bundles to the target. Modules listed in the bundle
+        are treated the same as modules added to the target through
+        setmodules. Targets listed in the bundle are treated the same as
         targets added through settargetdeps.</td>
       </tr>
 
       <tr>
-        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td> 
+        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td>
         <td>Specifies the targets that must be built before this target.</td>
       </tr>
 
       <tr>
-        <td>changedllextension</td> <td>extension</td> <td>dll</td> 
-        <td>Set the extension of generated dynamic link libraries to something other than 'dll'. 
-        If not set the default will remain 'dll'. This option is only evaluated for dll targets. 
-        One example where this is useful is for building plugins for Max and Maya, both of which
-        require dlls to have special extensions.</td>
+        <td>changedllextension</td> <td>extension</td> <td>dll</td>
+        <td>Set the extension of generated dynamic link libraries to
+        something other than 'dll'.  If not set the default will remain
+        'dll'. This option is only evaluated for dll targets.  One
+        example where this is useful is for building plugins for Max
+        and Maya, both of which require dlls to have special extensions.</td>
       </tr>
 
       <tr>
@@ -240,95 +289,107 @@ endworkspace
       </tr>
 
       <tr>
-        <td>beginmodule</td> <td>name</td> <td>no default</td> 
+        <td>beginmodule</td> <td>name</td> <td>no default</td>
         <td>Begins a module definition with the specified name.</td>
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> 
-        <td>An optional description of the target, enclose it in double quotation marks if 
-        it's more than one word, e.g. "my description".</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td>
+        <td>An optional description of the module, enclose it in double
+        quotation marks if it's more than one word, e.g.
+        <tt>"my description"</tt>.</td>
       </tr>
 
       <tr>
-        <td>setdir</td> <td>$dir</td> <td>""</td> 
-        <td>Sets the directory where the module's files can be found. The directory in setdir 
-        is given relative to $home/code/*/src or inc (or $home/code/contrib/*/src or inc for 
+        <td>setdir</td> <td>$dir</td> <td>""</td>
+        <td>Sets the directory where the module's files can be found. The
+        directory in @c setdir is given relative to <tt>$home/code/*/src</tt>
+        or @c inc (or <tt>$home/code/contrib/*/src</tt> or @c inc for
         contrib modules)</td>
       </tr>
 
       <tr>
-        <td>setplatform</td> <td>all, win32, linux, macosx</td> <td>all</td> 
+        <td>setplatform</td> <td>all, win32, linux, macosx</td> <td>all</td>
         <td>A list of valid platforms that this module will compile on.</td>
       </tr>
 
       <tr>
-        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td> 
-        <td>Specifies whether the files in the module should be compiled as C or C++.</td>
+        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td>
+        <td>Specifies whether the files in the module should be compiled as
+        C or C++.</td>
       </tr>
 
       <tr>
-        <td>setfiles</td> <td>{ filename1 filename2 ... }</td> <td>""</td> 
-        <td>The list of source files that make up this module. Filenames should be specified 
-        without path or extension, '.cc' is added automatically.</td>
+        <td>setfiles</td> <td>{ filename1 filename2 ... }</td> <td>""</td>
+        <td>The list of source files that make up this module. Filenames
+        should be specified without path or extension, <tt>.cc</tt> is
+        added automatically.</td>
       </tr>
 
       <tr>
-        <td>setheaders</td> <td>{ headername1 headername2 ... }</td> <td>""</td> 
-        <td>The list of header files that make up this module. Filenames should be specified 
-        without path and/or extension, '.h' is added automatically.</td>
+        <td>setheaders</td> <td>{ headername1 headername2 ... }</td> <td>""</td>
+        <td>The list of header files that make up this module. Filenames
+        should be specified without path and/or extension, <tt>.h</tt> is
+        added automatically.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32</td> <td>{ libname.lib ... }</td> <td>""</td> 
-        <td>A list of libs that this module requires to be linked against in both RELEASE and 
-        DEBUG builds on WIN32 platforms. Filenames should be specified without a path.</td>
+        <td>setlibs_win32</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>A list of libs that this module requires to be linked against
+        in both RELEASE and DEBUG builds on WIN32 platforms. Filenames
+        should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32_release</td> <td>{ libname.lib ... }</td> <td>""</td> 
-        <td>A list of libs that this module requires to be linked against in RELEASE builds 
-        on WIN32 platforms. Filenames should be specified without a path.</td>
+        <td>setlibs_win32_release</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>A list of libs that this module requires to be linked against in
+        RELEASE builds on WIN32 platforms. Filenames should be specified
+        without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32_debug</td> <td>{ libname.lib ... }</td> <td>""</td> 
-        <td>A list of libs that this module requires to be linked against in DEBUG builds 
-        on WIN32 platforms. Filenames should be specified without a path.</td>
+        <td>setlibs_win32_debug</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>A list of libs that this module requires to be linked against in
+        DEBUG builds on WIN32 platforms. Filenames should be specified
+        without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td> 
-        <td>A list of libs that this module requires to be linked against on Linux platforms.
-        Filenames should be specified without a path.</td>
+        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>A list of libs that this module requires to be linked against
+        on Linux platforms.  Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td> 
-        <td>A list of libs that this module requires to be linked against on Mac OSX.
-        Filenames should be specified without a path.</td>
+        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>A list of libs that this module requires to be linked against
+        on Mac OSX.  Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setmoduledeps</td> <td>{ modulename ... }</td> <td>""</td> 
-        <td>A list of modules that this module depends on for proper functioning. This list should 
-        include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated 
+        <td>setmoduledeps</td> <td>{ modulename ... }</td> <td>""</td>
+        <td>A list of modules that this module depends on for proper
+        functioning. This list should include both nRoot and non-nRoot
+        modules. Inherited nRoot class dependencies will be generated
         by the build system.</td>
       </tr>
 
       <tr>
-        <td>setnopkg</td> <td>true/false</td> <td>false</td> 
-        <td>Set this option to true if this module is nRoot-derived but you don't want it to appear in 
-        pkg_XXX.cc files. I think it's used for building the kernel, but you shouldn't need to worry
+        <td>setnopkg</td> <td>true/false</td> <td>false</td>
+        <td>Set this option to true if this module is nRoot-derived but
+        you don't want it to appear in <tt>pkg_XXX.cc</tt> files. I think
+        it's used for building the kernel, but you shouldn't need to worry
         about it.</td>
       </tr>
 
       <tr>
-        <td>setmoddeffile</td> <td>filename</td> <td>""</td> 
-        <td>Sets the Module Definition File to be used for dll targets, this is another way to define 
-        dllexports. This is needed for the MAX plugins, because MAX wants some dllexports that must be 
-        published this way. The file must be in src/$moduledir. It's not valid to have more than one 
-        module with a module def file set in a target. (Only the first found will be used, but it's 
+        <td>setmoddeffile</td> <td>filename</td> <td>""</td>
+        <td>Sets the Module Definition File to be used for dll targets,
+        this is another way to define dllexports. This is needed for the
+        MAX plugins, because MAX wants some dllexports that must be
+        published this way. The file must be in src/$moduledir. It's not
+        valid to have more than one module with a module def file set in
+        a target. (Only the first found will be used, but it's
         possible to have more than one for a target.)</td>
       </tr>
 
@@ -341,29 +402,34 @@ endworkspace
 
     @subsection NebulaBuildSystemCommandsBundle Bundle
 
+    @note No one currently uses bundles, so we have no clear explanation
+    on what they, what they're for, how they work, or if they even work
+    at all.
+
     <table>
       <tr>
       <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
       </tr>
 
       <tr>
-        <td>beginbundle</td> <td>$name</td> <td>no default</td> 
+        <td>beginbundle</td> <td>$name</td> <td>no default</td>
         <td>Begins a bundle definition with the specified name.</td>
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> 
-        <td>An optional description of the target, enclose it in double quotation marks if 
-        it's more than one word, e.g. "my description".</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td>
+        <td>An optional description of the bundle, enclose it in double
+        quotation marks if it's more than one word, e.g.
+        <tt>"my description"</tt>.</td>
       </tr>
 
       <tr>
-        <td>setmodules</td> <td>{ modulename ... } </td> <td>""</td> 
+        <td>setmodules</td> <td>{ modulename ... } </td> <td>""</td>
         <td>A list of modules to be included in this bundle.</td>
       </tr>
 
       <tr>
-        <td>settargets</td> <td>{ targetname ... } </td> <td>""</td> 
+        <td>settargets</td> <td>{ targetname ... } </td> <td>""</td>
         <td>A list of targets to be included in this bundle.</td>
       </tr>
 
