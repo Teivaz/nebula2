@@ -19,7 +19,8 @@ nGuiTextEntry::nGuiTextEntry() :
     firstFrameActive(false),
     lineEditor(0),
     fileMode(false),
-    overstrikeDefault(false)
+    overstrikeDefault(false),
+    initialCursorPos(Right)
 {
     this->SetMaxLength(48);
 }
@@ -90,6 +91,17 @@ nGuiTextEntry::SetOverstrike(bool overstrike)
     this->lineEditor->SetOverstrike( overstrike );
 }
 
+//------------------------------------------------------------------------------
+/**
+    @brief Whenever the field is activated, the cursor is reset to this position
+    Left means "before the first character"
+    Right means "after the last character"
+*/
+void nGuiTextEntry::SetInitialCursorPos(Alignment pos)
+{
+    n_assert( pos != Center )
+    this->initialCursorPos = pos;
+}
 //------------------------------------------------------------------------------
 /**
     Set max number of chars in text buffer. Discards old text buffer
@@ -166,7 +178,14 @@ nGuiTextEntry::SetActive(bool b)
             this->refInputServer->SetMute(true);
             this->active = true;
             this->firstFrameActive = true;
-            this->lineEditor->CursorEnd();
+            switch( this->initialCursorPos )
+            {
+                case Left:  this->lineEditor->CursorHome(); break;
+                case Right: this->lineEditor->CursorEnd(); break;
+                default: 
+                    n_error( "Invalid initialCursorPos: %d", 
+                             this->initialCursorPos );                
+            }
         }
     }
     else
@@ -252,6 +271,7 @@ nGuiTextEntry::OnKeyDown(nKey key)
                 break;
 
             case N_KEY_RETURN:
+            case N_KEY_ESCAPE:
                 if (!this->firstFrameActive)
                 {
                     this->CheckEmptyText();
