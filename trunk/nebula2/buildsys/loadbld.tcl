@@ -541,8 +541,9 @@ proc settargetdeps {target_list} {
 
 #----------------------------------------------------------------------------
 # changedllextension $ext
-# Set the extensition of the target. Only usefull for the dll targets.
-# Planed to be change the extensition to 'mll' or 'dle' for plugin dll creation.
+# Set the extension of the target. Only useful for the dll targets.
+# This is commonly used to change the extension to 'mll' or 'dle' for plugin
+# dll creation.
 #----------------------------------------------------------------------------
 proc changedllextension { ext } {
     global current_block
@@ -660,7 +661,7 @@ proc beginmodule {name} {
 
 #----------------------------------------------------------------------------
 # setmoddeffile $filename
-# set the moduledefinitionfilename, I think only usefull if you write max
+# set the moduledefinitionfilename. This is commonly used when writing a Max
 # plugin and need to set this additional dllexport description.
 #----------------------------------------------------------------------------
 proc setmoddeffile { filename } {
