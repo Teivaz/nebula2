@@ -573,15 +573,17 @@ nD3D9Server::UpdateCursor()
     {
         this->cursorDirty = false;
 	
-        nTexture2* tex = this->curMouseCursor.GetTexture();
-        if (tex)
+        if (this->curMouseCursor.GetFilename())
         {
-            if (!tex->IsValid())
+            if (!this->curMouseCursor.IsLoaded())
             {
-                bool mouseCursorLoaded = tex->Load();
+                bool mouseCursorLoaded = this->curMouseCursor.Load();
                 n_assert(mouseCursorLoaded);
                 this->cursorDirty = true;
             }
+
+            nTexture2* tex = this->curMouseCursor.GetTexture();
+            n_assert(tex && tex->IsValid());
 
             HRESULT hr;
             IDirect3DTexture9* d3d9Tex = ((nD3D9Texture*)tex)->GetTexture2D();

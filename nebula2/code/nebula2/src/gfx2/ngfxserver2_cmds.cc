@@ -11,6 +11,8 @@ static void n_closedisplay(void* slf, nCmd* cmd);
 static void n_getfeatureset(void* slf, nCmd* cmd);
 static void n_savescreenshot(void* slf, nCmd* cmd);
 static void n_setcursorvisibility(void* slf, nCmd* cmd);
+static void n_setmousecursor(void* slf, nCmd* cmd);
+static void n_seticon(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -31,12 +33,14 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_setdisplaymode_ssiiiib",  'SDMD', n_setdisplaymode);
-    cl->AddCmd("ssiiiib_getdisplaymode_v",   'GDMD', n_getdisplaymode);
+    cl->AddCmd("ssiiiib_getdisplaymode_v",  'GDMD', n_getdisplaymode);
     cl->AddCmd("b_opendisplay_v",           'ODSP', n_opendisplay);
     cl->AddCmd("v_closedisplay_v",          'CDSP', n_closedisplay);
     cl->AddCmd("s_getfeatureset_v",         'GFTS', n_getfeatureset);
     cl->AddCmd("v_savescreenshot_s",        'SSCS', n_savescreenshot);
     cl->AddCmd("v_setcursorvisibility_s",   'SCVS', n_setcursorvisibility);
+    cl->AddCmd("v_setmousecursor_sii",      'SMCS', n_setmousecursor);
+    cl->AddCmd("v_seticon_s",               'SICO', n_seticon);
     cl->EndCmds();
 }
 
@@ -179,7 +183,7 @@ n_savescreenshot(void *slf, nCmd *cmd)
     v
 
     @info
-    Set whether no cursor, a standard or a customer mouse
+    Set whether no cursor, a standard or a custom mouse
     cursor will be displayed.
 */
 static void
@@ -199,4 +203,50 @@ n_setcursorvisibility(void *slf, nCmd *cmd)
     self->SetCursorVisibility( visibility );
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setmousecursor
+
+    @input
+    s (texture resource name), ii (hotspot x, y)
+
+    @output
+    v
+
+    @info
+    Defines a custom mouse cursor.
+*/
+static void
+n_setmousecursor(void *slf, nCmd *cmd)
+{
+    nGfxServer2 *self = (nGfxServer2*) slf;
+    nMouseCursor cursor;
+    cursor.SetFilename(cmd->In()->GetS());
+    cursor.SetHotspotX(cmd->In()->GetI());
+    cursor.SetHotspotY(cmd->In()->GetI());
+    self->SetMouseCursor( cursor );
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    seticon
+    @input
+    v
+    @output
+    s(icon resource name)
+    @info
+    Sets the window's icon.  
+    This must happen outside opendisplay/closedisplay.
+*/
+static void
+n_seticon(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    nDisplayMode2 mode = self->GetDisplayMode();
+    mode.SetIcon(cmd->In()->GetS());
+    self->SetDisplayMode(mode);
+}
 
