@@ -23,7 +23,6 @@
 #include "map/bbox_qs.h"
 #include "scene/nsceneserver.h"
 #include "map/nmapnode.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/ngfxserver2.h"
 
 //---------------------------------------------------------------------------
@@ -74,7 +73,7 @@ private:
     int MapVertexToIndex(int x, int z) const;
 
 	void BeginRender(int meshGroupNumber);
-	void EndRender(nPrimitiveType primType);
+	void EndRender(nGfxServer2::PrimitiveType primType);
     void RenderTriangle(int a, int b, int c);
 
     void RenderNorthEdge(bool, bool);
@@ -261,19 +260,19 @@ MapBlock::BeginRender(int meshGroupNumber)
 */
 inline
 void
-MapBlock::EndRender(nPrimitiveType primType)
+MapBlock::EndRender(nGfxServer2::PrimitiveType primType)
 {
     n_assert(NULL != curIndexBuffer);
 	meshTriStrip->UnlockIndices();
 
 	if (curVertex > 2) {
-		map->refGfxServer->SetMesh(0, NULL);
-		map->refGfxServer->SetMesh(0, meshTriStrip);
+		map->refGfxServer->SetMesh(0);
+		map->refGfxServer->SetMesh(meshTriStrip);
 		nMeshGroup & meshGroup = meshTriStrip->GetGroup( this->curMeshGroupNumber );
 		meshGroup.SetNumIndices(curVertex);
 		map->refGfxServer->SetVertexRange(meshGroup.GetFirstVertex(), meshGroup.GetNumVertices());
 		map->refGfxServer->SetIndexRange(meshGroup.GetFirstIndex(), meshGroup.GetNumIndices());
-		map->refGfxServer->DrawIndexed(primType);
+		map->refGfxServer->DrawIndexedNS(primType);
 	}
 
 	curIndexBuffer = NULL;

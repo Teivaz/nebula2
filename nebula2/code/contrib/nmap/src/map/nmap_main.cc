@@ -15,6 +15,7 @@ nNebulaScriptClass(nMap, "nroot");
 */
 nMap::nMap() :
     nRoot(),
+    refFileServer("/sys/servers/file2"),
     isDataDirty(false),
     // Map variables
     imagePath(),
@@ -25,9 +26,9 @@ nMap::nMap() :
     // Derived variables
     mapDimension(0),
     boundingBox(),
-    pointData(NULL)
+    pointData(NULL)   
 {
-    refFileServer = "/sys/servers/file2";
+    //empty
 }
 
 //------------------------------------------------------------------------------
