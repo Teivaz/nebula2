@@ -1,6 +1,7 @@
 #ifndef N_SPATIALSECTOR_H
 #define N_SPATIALSECTOR_H
 
+#include "kernel/nroot.h"
 #include "spatialdb/nspatiallisthierarchy.h"
 #include "spatialdb/nspatialaabbtree.h"
 
