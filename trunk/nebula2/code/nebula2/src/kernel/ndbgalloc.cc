@@ -147,10 +147,40 @@ operator delete(void* p)
 
 //------------------------------------------------------------------------------
 /**
+    Replacement global delete operator to match the new with location
+    reporting.
+*/
+void
+operator delete(void* p, const char* /*file*/, int /*line*/)
+{
+    if (nMemoryLoggingEnabled)
+    {
+        n_printf("delete(ptr=%lx)\n", p);
+    }
+    _free_dbg(p, _NORMAL_BLOCK);
+}
+
+//------------------------------------------------------------------------------
+/**
     Replacement global delete[] operator.
 */
 void
 operator delete[](void* p)
+{
+    if (nMemoryLoggingEnabled)
+    {
+        n_printf("delete[](ptr=%lx)\n", p);
+    }
+    _free_dbg(p, _NORMAL_BLOCK);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Replacement global delete[] operator to match the new with location
+    reporting.
+*/
+void
+operator delete[](void* p, const char* /*file*/, int /*line*/)
 {
     if (nMemoryLoggingEnabled)
     {
@@ -167,7 +197,7 @@ void
 n_dbgmeminit()
 {
     // enable automatic memory leak check at end of application
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);    
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 }
 
 //------------------------------------------------------------------------------
@@ -181,7 +211,7 @@ n_dbgmemgetstats()
     _CrtMemCheckpoint(&crtState);
     nMemoryStats memStats = { 0 };
     memStats.highWaterSize = crtState.lHighWaterCount;
-    
+
     int i;
     for (i = 0; i < _MAX_BLOCKS; i++)
     {
@@ -190,7 +220,4 @@ n_dbgmemgetstats()
     }
     return memStats;
 }
-
-
-
 
