@@ -577,7 +577,7 @@ nApplication::CreateShadowServer()
 nAppCamera*
 nApplication::CreateAppCamera()
 {
-    return new nAppCamera;
+    return n_new(nAppCamera);
 }
 
 //------------------------------------------------------------------------------
