@@ -223,7 +223,8 @@ nVariable::Copy(const nVariable& from)
 /**
 */
 inline
-nVariable::nVariable(const nVariable& rhs)
+nVariable::nVariable(const nVariable& rhs) :
+    stringVal(0)
 {
     this->Copy(rhs);
 }
@@ -515,7 +516,8 @@ nVariable::nVariable(Handle h, const nFloat4& val) :
 inline
 nVariable::nVariable(Handle h, const char* str) :
     handle(h),
-    type(String)
+    type(String),
+    stringVal(0)
 {
     this->SetString(str);
 }
