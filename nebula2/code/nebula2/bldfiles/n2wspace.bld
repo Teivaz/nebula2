@@ -21,7 +21,6 @@ beginworkspace Nebula2
         ndinput8
         ndirect3d9
         ntoollib
-        nimagetool
         nmeshtool
         nremoteshell
         nsh

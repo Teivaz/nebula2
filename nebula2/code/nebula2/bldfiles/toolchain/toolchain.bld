@@ -3,31 +3,17 @@
 #  The Nebula2 toolchain for managing meshes and textures
 #
 #  Modules:
-#      nimagetool
 #      nmeshtool
 #      nmeshbuilder
 #      nanimbuilder
 #  Targets:
 #      ntoollib
-#      nimagetool
 #      nmeshtool
 #===============================================================================
 
 #===============================================================================
 #  toolchain modules
 #===============================================================================
-beginmodule nimagetool
-    annotate "Required module for nimagetool.exe"
-    setdir tools
-    setfiles { 
-        nimagetool
-    }
-    setmoduledeps  { nanimbuilder }
-    setlibs_win32  { DevIL.lib ilu.lib }
-    setlibs_linux  { IL ILU }
-    setlibs_macosx { IL ILU Carbon }
-endmodule
-#-------------------------------------------------------------------------------
 beginmodule nmeshtool
     annotate "Required module nmeshtool.exe"
     setdir tools
@@ -66,15 +52,6 @@ begintarget ntoollib
     settype lib
     setmodules {
         nmeshbuilder nanimbuilder
-    }
-endtarget
-#-------------------------------------------------------------------------------
-begintarget nimagetool
-    settype exe
-    setmodules { nimagetool nntxfile }
-    settargetdeps {
-        nkernel
-        ntoollib
     }
 endtarget
 #-------------------------------------------------------------------------------
