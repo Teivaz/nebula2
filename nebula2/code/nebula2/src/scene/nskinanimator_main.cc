@@ -136,7 +136,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
 
     // check if I am already uptodate for this frame
-    int curFrameId = renderContext->GetFrameId();
+    uint curFrameId = renderContext->GetFrameId();
     if (this->frameId != curFrameId)
     {
         this->frameId = curFrameId;
