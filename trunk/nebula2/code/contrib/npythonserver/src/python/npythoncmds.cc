@@ -265,27 +265,27 @@ PyObject* pythoncmd_Lookup( PyObject * /*self*/, PyObject *args) {
 */
 PyObject* pythoncmd_Psel( PyObject * /*self*/, PyObject *args)
 {
-  PyObject *results = NULL;
-
-  {
-    // No args, but ":<desc>" for a descriptive error if an exception is raised.
-    if(PyArg_ParseTuple(args, ":psel")) {
-      nRoot *o = nPythonServer::kernelServer->GetCwd();
-      if (o) {
-        // Display path acquired from GetCwd()
-        char buf[N_MAXPATH];
-        o->GetFullName(buf, sizeof(buf));
-        results = PyString_FromString(buf);
-      }
-      else {
-        // Report failure
-        PyErr_SetString(PyExc_AttributeError,
-                        "Could not acquire current working directory.");
-      }
+    PyObject *results = NULL;
+    {
+        // No args, but ":<desc>" for a descriptive error if an exception is raised.
+        if(PyArg_ParseTuple(args, ":psel")) {
+        nRoot *o = nPythonServer::kernelServer->GetCwd();
+        if(o) 
+        {
+                // Display path acquired from GetCwd()
+                //char buf[N_MAXPATH];
+                //o->GetFullName(buf, sizeof(buf));
+                results = PyString_FromString(o->GetFullName().Get());
+            }
+            else
+            {
+                // Report failure
+                PyErr_SetString(PyExc_AttributeError, "Could not acquire current working directory.");
+            }
+        }
     }
-  }
 
-  return results;
+    return results;
 }
 
 //-----------------------------------------------------------------------------

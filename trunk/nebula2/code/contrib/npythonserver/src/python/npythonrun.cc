@@ -14,30 +14,34 @@
 #include "python/npythonserver.h"
 
 //--------------------------------------------------------------------
-//  Prompt()
-//--------------------------------------------------------------------
+/**
+
+    @return 
+*/
 nString nPythonServer::Prompt()
 {
-    char buffer[N_MAXPATH];
-    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));       
+    nString prompt = kernelServer->GetCwd()->GetFullName();
     prompt.Append("> ");
     return prompt;
 }
 
-
 //--------------------------------------------------------------------
-//  Run(const char *cmdStr, const char *& result)
-//  Wraps Run() with mode
-//--------------------------------------------------------------------
+/**
+    Wraps Run() with mode
 
+    @param cmdStr
+    @param result
+    @return 
+*/
 bool nPythonServer::Run(const char *cmdStr, const char*& result)
 {
-  return this->Run(cmdStr, Py_single_input, result);
+    return this->Run(cmdStr, Py_single_input, result);
 }
 
 PyObject *NArg2PyObject(nArg *a) 
 {
-    switch (a->GetType()) {
+    switch (a->GetType())
+    {
         case nArg::Type::Void:
             return Py_None;
         case nArg::Type::Int:
@@ -57,6 +61,12 @@ PyObject *NArg2PyObject(nArg *a)
     return NULL;
 }
 
+//--------------------------------------------------------------------
+/**
+ 
+    @param c
+    @return 
+*/
 bool nPythonServer::RunCommand(nCmd *c) 
 {
     c->Rewind();
@@ -65,24 +75,32 @@ bool nPythonServer::RunCommand(nCmd *c)
     PyObject *main_module_dict = PyModule_GetDict(this->main_module);
     char *funcName = const_cast<char *>(c->In()->GetS());
     PyObject *f = PyDict_GetItemString(main_module_dict, funcName);
-    if (f) {
+    if (f)
+    {
         PyObject *args = PyTuple_New(len-1);
-        for (int i = 0; i < len-1; i++) {
+        for (int i = 0; i < len-1; i++)
+        {
             PyTuple_SET_ITEM(args, i, NArg2PyObject(c->In()));
         }
         if (PyObject_CallObject(f, args)) 
             return true;
-    } else {
+    }
+    else
+    {
         f = PyDict_GetItemString(module_dict, funcName);
     }
     return false;  
 }
 
 //--------------------------------------------------------------------
-//  Run(const char *cmdStr, const char *& result)
-//  Executes a given string as Python code
-//--------------------------------------------------------------------
+/**
+    Executes a given string as Python code
 
+    @param cmdStr
+    @param mode
+    @param result
+    @return 
+*/
 bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
 {
     // buffer was to small :(
@@ -97,60 +115,69 @@ bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
     module_dict = PyModule_GetDict(this->nmodule);
     main_module_dict = PyModule_GetDict(this->main_module);
 
-    if (strlen(cmdStr) > 0) {
-      output = PyRun_String((char *)cmdStr, mode, main_module_dict, module_dict);
+    if (strlen(cmdStr) > 0)
+    {
+        output = PyRun_String((char *)cmdStr, mode, main_module_dict, module_dict);
     }
-    else {
-      retval = true;
+    else
+    {
+        retval = true;
     }
 
     // Process output
 
-    if (output) {
-      if (output == Py_None) {
-        Py_DECREF(output);
-        strcpy(&buffer[0], "");   // TODO: More elegant solution here
-        result = (const char*)&buffer[0];
-        retval = true;
-      }
-      else {
-        // Copy the string, because it will be freed when output is decref'ed.
-        PyObject* temp;
-        temp = PyObject_Str(output);
-        strcpy(&buffer[0], PyString_AsString(temp));
-        Py_DECREF(temp);
-        Py_DECREF(output);
-        result = (const char*)&buffer[0];
-        retval = true;
-      }
+    if (output)
+    {
+        if (output == Py_None)
+        {
+            Py_DECREF(output);
+            strcpy(&buffer[0], "");   // TODO: More elegant solution here
+            result = (const char*)&buffer[0];
+            retval = true;
+        }
+        else
+        {
+            // Copy the string, because it will be freed when output is decref'ed.
+            PyObject* temp;
+            temp = PyObject_Str(output);
+            strcpy(&buffer[0], PyString_AsString(temp));
+            Py_DECREF(temp);
+            Py_DECREF(output);
+            result = (const char*)&buffer[0];
+            retval = true;
+        }
     }
-    else {
-      // There was an exception.
-      PyObject* exception = NULL;
-      exception = PyErr_Occurred();
-      if (exception) {
-        PyObject* temp;
-        temp = PyObject_Str(exception);
-        strcpy(&buffer[0], PyString_AsString(temp));
-        result = (const char*)&buffer[0];
-        Py_DECREF(temp);
-        PyErr_Print();
-      }
-      retval = false;
+    else
+    {
+        // There was an exception.
+        PyObject* exception = NULL;
+        exception = PyErr_Occurred();
+        if (exception)
+        {
+            PyObject* temp;
+            temp = PyObject_Str(exception);
+            strcpy(&buffer[0], PyString_AsString(temp));
+            result = (const char*)&buffer[0];
+            Py_DECREF(temp);
+            PyErr_Print();
+        }
+        retval = false;
     }
 
     return retval;
 }
 
-
 //--------------------------------------------------------------------
-//  RunScript()
-//  Executes the contents of a file as Python code
-//--------------------------------------------------------------------
-
+/**
+    Executes the contents of a file as Python code
+    
+    @param filename
+    @param result
+    @return 
+*/
 bool nPythonServer::RunScript(const char *filename, const char*& result)
 {
-    char filename_buf[N_MAXPATH];
+    //char filename_buf[N_MAXPATH];
     char buffer[1024];
     char *exec_str;
     int success = 0;
@@ -162,40 +189,44 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
     PyRun_SimpleString("from npython import *");
 
     // Open file
-    nFileServer2* file2 = kernelServer->GetFileServer();
-    file2->ManglePath(filename, filename_buf, sizeof(filename_buf));
+    //nFileServer2* file2 = kernelServer->GetFileServer();
+    nFileServer2* file2 = nFileServer2::Instance();
+    nString fname = file2->ManglePath(filename);
     nFile* file = file2->NewFileObject();
 
-    if (file->Open(filename_buf, "r")) {
-      // We only opened this to be able to report the error ourselves.
-      // So, go on, close it now.
-      file->Close();
+    if (file->Open(fname.Get(), "r")) 
+    {
+        // We only opened this to be able to report the error ourselves.
+        // So, go on, close it now.
+        file->Close();
 
-      // We go through this madness of using execfile() because under
-      // Windows, the FILE *fp is different between Debug and Release
-      // builds.  Because of this, PyRun_SimpleFile() doesn't work
-      // if you try to force a debug build of Nebula to use the Release
-      // build of Python.  Instead of requiring everyone who has
-      // a debug build of Nebula to build Python from source, we're using
-      // this work around here.
-      exec_str = (char*)malloc(strlen(filename_buf) + 13);
-      sprintf(exec_str, "execfile('%s')", filename_buf);
-      success = PyRun_SimpleString(exec_str);
-      free(exec_str);
+        // We go through this madness of using execfile() because under
+        // Windows, the FILE *fp is different between Debug and Release
+        // builds.  Because of this, PyRun_SimpleFile() doesn't work
+        // if you try to force a debug build of Nebula to use the Release
+        // build of Python.  Instead of requiring everyone who has
+        // a debug build of Nebula to build Python from source, we're using
+        // this work around here.
+        exec_str = (char*)malloc(strlen(fname.Get()) + 13);
+        sprintf(exec_str, "execfile('%s')", fname.Get());
+        success = PyRun_SimpleString(exec_str);
+        free(exec_str);
 
-      if (success == -1) {
-         // interpreter exits due to an exception
-         strcpy(&buffer[0], "Problem running script!");
-         if(PyErr_Occurred())
-           PyErr_Print();
-         result = (const char*)&buffer[0];
-         return false;
-      }
+        if (success == -1) 
+        {
+            // interpreter exits due to an exception
+            strcpy(&buffer[0], "Problem running script!");
+            if(PyErr_Occurred())
+                PyErr_Print();
+            result = (const char*)&buffer[0];
+            return false;
+        }
     }
-    else {
-      file->Release();
-      n_printf("Error unable to open file %s", filename);
-      return false;
+    else 
+    {
+        file->Release();
+        n_printf("Error unable to open file %s", filename);
+        return false;
     }
     file->Release();
     return true;
@@ -205,7 +236,7 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
 /**
     @brief Invoke a Python function.
 */
-bool nPythonServer::RunFunction(const char *funcName, const char*& result )
+bool nPythonServer::RunFunction(const char *funcName, const char*& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");
@@ -213,21 +244,20 @@ bool nPythonServer::RunFunction(const char *funcName, const char*& result )
 }
 
 //--------------------------------------------------------------------
-//  Trigger()
-//
-//  Process events gathered by Python.  This function checks to see if
-//  a callback has been registered by the Python layer, and if so, it
-//  calls it.
-//
-//  TODO: Add time delta calculation and pass the delta as an argument
-//--------------------------------------------------------------------
+/**
+    Process events gathered by Python.  This function checks to see if
+    a callback has been registered by the Python layer, and if so, it
+    calls it.
 
+    TODO: Add time delta calculation and pass the delta as an argument
+*/
 bool nPythonServer::Trigger(void)
 {
     PyObject *result = NULL;
     PyObject *delta  = NULL;
 
-    if (PyCallable_Check(this->callback)) {
+    if (PyCallable_Check(this->callback))
+    {
         result = PyEval_CallObject(this->callback, delta);
         Py_XDECREF(delta);
 
@@ -236,7 +266,6 @@ bool nPythonServer::Trigger(void)
           return false;
         else
           Py_XDECREF(result);
-
     }
 
     // Let's see what the rest of the trigger system has to say
