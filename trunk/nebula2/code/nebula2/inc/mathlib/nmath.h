@@ -31,6 +31,8 @@
 #define n_rad2deg(r)    (((r)*180.0f)/PI)
 #define n_sin(x) (float(sin(x)))
 #define n_cos(x) (float(cos(x)))
+#define n_tan(x) (float(tan(x)))
+#define n_atan(x) (float(atan(x)))
 
 //------------------------------------------------------------------------------
 /**
