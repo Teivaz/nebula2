@@ -28,6 +28,7 @@ puts ":: GENERATING buildfiles..."
 puts "==========================="
 gen_solution nebulalib 0
 gen_solution tools 0
+gen_makefile
 
 puts "done."
 
