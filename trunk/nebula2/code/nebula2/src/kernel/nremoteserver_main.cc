@@ -174,7 +174,7 @@ nRemoteServer::SetClientCwd(int clientId, nRoot* cwd)
     Process pending messages. Should either be called frequently (ie once
     per frame), or after a call to WaitMsg().
 
-    TODO: implement quitRequested functionality
+    @todo implement quitRequested functionality
 
     @return     true if a client has requested the remote server to quit
 */

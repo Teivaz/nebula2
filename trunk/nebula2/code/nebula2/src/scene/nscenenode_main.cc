@@ -195,7 +195,7 @@ nSceneNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext*
 /**
     Render the node's volume. This should be implemented by a subclass.
     The method will only be called by nSceneServer if the method 
-    HasVolume() returns true.
+    HasLightVolume() returns true.
 */
 void
 nSceneNode::RenderLightVolume(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightModelView)
