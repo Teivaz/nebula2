@@ -15,13 +15,13 @@ sel /usr/scene
 new ntransformnode light1
     sel light1
     .seteuler 0 -45 45
-    new nvolumelightnode l
+    new nspotlightnode l
         sel l
         .setposition -50 5 50
         .setscale 1000 1000 1000
-        .setvector lightDiffuse 1 1 1 1
-        .setvector lightSpecular 1 1 1 1
-        .setvector lightAmbient 1 1 1 1
+        .setvector LightDiffuse 0.5 0.5 0.5 0.5
+        .setvector LightSpecular 0.5 0.5 0.5 0.5
+        .setvector LightAmbient 1 1 1 0.5
     sel ..    
 sel ..    
 
@@ -36,14 +36,12 @@ new nmapnode map
     .seteuler 0 0 0
 
     .setactive true
-    .settexture "diffMap" "tg_tex.tga"
-    .settexture "normMap" "detailmap.tga"
-    .setvector "matDiffuse" 1.000000 1.000000 1.000000 1.000000
-    .setvector "matSpecular" 0.800000 0.800000 0.800000 1.000000
-    .setvector "matAmbient" 0.300000 0.300000 0.300000 1.000000
-    .setshader "dept" "shaders:depth.fx"
-    .setshader "colr" "shaders:color1.fx"
-    .setshader "diff" "shaders:diffuse.fx"
+    .settexture "DiffMap0" "tg_tex.tga"
+    .settexture "BumpMap0" "detailmap.tga"
+    .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+    .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
+    .setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
+    .setshader "colr" "shaders:default.fx"
 sel ..
 
 /sys/servers/console.watch *
