@@ -39,6 +39,8 @@ public:
         END,
     };
 
+    /// does the file physically exist on disk?
+    virtual bool Exists(const char* fileName) const;
     /// opens a file
     virtual bool Open(const char* fileName, const char* accessMode);
     /// closes the file
@@ -48,11 +50,11 @@ public:
     /// reads some bytes from the file
     virtual int Read(void* buffer, int numBytes);
     /// gets actual position in file
-    virtual int Tell();
+    virtual int Tell() const;
     /// sets new position in file
     virtual bool Seek(int byteOffset, nSeekType origin);
     /// is the file at the end
-    virtual bool Eof();
+    virtual bool Eof() const;
     /// get size of file in bytes
     virtual int GetSize() const;
     /// get the last write time

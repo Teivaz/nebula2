@@ -18,7 +18,7 @@
      - 30-Jan-2002   peter   created
      - 11-Feb-2002   floh    Linux stuff
 */
-nFile::nFile() : 
+nFile::nFile() :
     lineNumber(0),
     isOpen(false)
 {
@@ -41,6 +41,42 @@ nFile::~nFile()
     {
         this->Close();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Check if file exists physically on disk by opening it in read-only mode.
+    Close file if it was opened.
+*/
+bool
+nFile::Exists(const char* fileName) const
+{
+    n_assert(fileName != 0);
+
+    nString fullName = nFileServer2::Instance()->ManglePath(fileName);
+
+#ifdef __WIN32__
+    HANDLE fh = CreateFile(fullName.Get(),       // filename
+                           READ_CONTROL,         // access mode
+                           FILE_SHARE_READ,      // share mode
+                           0,                    // security flags
+                           OPEN_EXISTING,        // what to do if file doesn't exist
+                           FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,  // flags'n'attributes
+                           0);                   // template file
+    if (fh != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(fh);
+        return true;
+    }
+#else
+    FILE* fp = fopen(fullName.Get(), "r");
+    if (fp != 0)
+    {
+        fclose(fp);
+        return true;
+    }
+#endif
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +196,7 @@ int
 nFile::Write(const void* buffer, int numBytes)
 {
     n_assert(this->IsOpen());
-    
+
     // statistics
     nFileServer2::Instance()->AddBytesWritten(numBytes);
 
@@ -205,14 +241,14 @@ nFile::Read(void* buffer, int numBytes)
 //------------------------------------------------------------------------------
 /**
     gets current position of file pointer
-  
+
     @return          position of pointer
 
     history:
      - 30-Jan-2002   peter    created
 */
-int 
-nFile::Tell()
+int
+nFile::Tell() const
 {
     n_assert(this->IsOpen());
 #ifdef __WIN32__
@@ -233,7 +269,7 @@ nFile::Tell()
     history:
      - 30-Jan-2002   peter    created
 */
-bool 
+bool
 nFile::Seek(int byteOffset, nSeekType origin)
 {
     n_assert(this->IsOpen());
@@ -278,8 +314,8 @@ nFile::Seek(int byteOffset, nSeekType origin)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
-nFile::Eof()
+bool
+nFile::Eof() const
 {
     n_assert(this->IsOpen());
 
@@ -343,7 +379,7 @@ nFile::GetLastWriteTime() const
 //------------------------------------------------------------------------------
 /**
     writes a string to the file
-      
+
     @param buffer        the string to write
     @return              success
 
