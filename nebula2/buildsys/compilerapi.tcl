@@ -35,6 +35,7 @@
 #    get_tardefs            $tarname
 #    get_rtti               $tarname
 #    get_exceptions         $tarname
+#    get_icon               $tarname
 #    get_moddeffile         $tarname
 #    get_dllextensition     $tarname
 #    get_win32libs_release  $tarname
@@ -376,6 +377,19 @@ proc get_exceptions {tarname} {
 }
 
 #----------------------------------------------------------------------------
+#  get_icon
+#
+#  Returns the filename of the target's icon
+#
+#  In .bld file, write "seticon $filename"
+#----------------------------------------------------------------------------
+proc get_icon {tarname} {
+    global wspace
+    global cur_workspace
+    return $wspace($cur_workspace,$tarname,icon)
+}
+
+#----------------------------------------------------------------------------
 # get_moddeffile
 # Returns the file and path to the module definition file
 # Returns "" if not set
@@ -663,7 +677,7 @@ proc get_libsearchdirs { } {
 #  writes out pkg_XXX.cc files for the current workspace and fixs up the
 #  relevant project to use them.  Currently only dll and exe targets
 #  support pkg_XXX.cc files.  This also writes out the .rc files for
-#  win32 targets to point at the nebula.ico in /bin/win32
+#  win32 targets to point at the target's icon in /bin/win32
 #
 #  TODO: Find a better way of handling app icons. - includes linux and macosx
 #
@@ -688,7 +702,7 @@ proc write_pkgfiles { } {
         if {($wspace($cur_workspace,$target,type) != "lib") && ([llength $wspace($cur_workspace,$target,pakmods)] > 0)} {
 
             set cid [open $dir/res_$target.rc w]
-            puts $cid "nebula_icon ICON \"[findrelpath $pdir ./bin/win32]/nebula.ico\""
+            puts $cid "nebula_icon ICON \"[findrelpath $pdir ./bin/win32]/[get_icon $target]\""
             close $cid
 
             set cid [open $dir/pkg_$target.cc w]

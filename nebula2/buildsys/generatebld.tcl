@@ -357,6 +357,7 @@ proc fixworkspaces { wslist } {
             set wspace($i,$tarname,type)        $tar($idx,type)
             set wspace($i,$tarname,rtti)        $tar($idx,rtti)
             set wspace($i,$tarname,exceptions)  $tar($idx,exceptions)
+            set wspace($i,$tarname,icon)        $tar($idx,icon)
             set wspace($i,$tarname,dllextension) $tar($idx,dllextension)
             set wspace($i,$tarname,moddeffile)   $tar($idx,moddeffile)
             set wspace($i,$tarname,modules)        $tar($idx,mergedmods)
