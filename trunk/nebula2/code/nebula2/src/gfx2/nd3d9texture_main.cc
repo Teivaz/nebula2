@@ -284,7 +284,6 @@ nD3D9Texture::CreateRenderTarget()
     return true;
 }
 
-
 //------------------------------------------------------------------------------
 /**
     Query the texture attributes from the D3D texture object and
@@ -883,7 +882,7 @@ nD3D9Texture::GetByteSize()
     {
         // compute number of pixels
         int numPixels = this->GetWidth() * this->GetHeight();
-                
+
         // 3d or cube texture?
         switch (this->GetType())
         {
@@ -891,7 +890,7 @@ nD3D9Texture::GetByteSize()
             case TEXTURE_CUBE: numPixels *= 6; break;
             default: break;
         }
-    
+
         // mipmaps ?
         if (this->GetNumMipLevels() > 1)
         {

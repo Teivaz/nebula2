@@ -27,6 +27,7 @@ nD3D9Server::AddLight(const nLight& light)
         shd->SetVector4(nShaderState::LightDiffuse, light.GetDiffuse());
         shd->SetVector4(nShaderState::LightSpecular, light.GetSpecular());
         shd->SetVector4(nShaderState::LightAmbient, light.GetAmbient());
+        shd->SetVector4(nShaderState::LightDiffuse1, light.GetSecondaryDiffuse());
     }
     return numLights;
 }
@@ -86,8 +87,10 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         nD3D9Shader* shd = this->refSharedShader.get();
         bool setMVP = false;
         bool setEyePos = false;
+        bool setModelEyePos = false;
         bool setModelLightProjection = false;
         bool setLightPos = false;
+        bool setModelLightPos = false;
         switch (type)
         {
             case Model:
@@ -96,8 +99,9 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
                 setMVP = true;
-                setEyePos = true;
+                setModelEyePos = true;
                 setModelLightProjection = true;
+                setModelLightPos = true;
                 break;
             
             case View:
@@ -106,6 +110,7 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
                 setMVP = true;
+                setModelEyePos = true;
                 setEyePos = true;
                 break;
 
@@ -134,6 +139,7 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
             case Light:
                 setModelLightProjection = true;
                 setLightPos = true;
+                setModelLightPos = true;
                 break;
         }
         if (setMVP)
@@ -142,15 +148,22 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         }
         if (setEyePos)
         {
+            shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
+        }
+        if (setModelEyePos)
+        {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
         }
         if (setModelLightProjection)
         {
             shd->SetMatrix(nShaderState::ModelLightProjection, this->transform[ModelLightProjection]);
         }
-        if (setLightPos)
+        if (setModelLightPos)
         {
             shd->SetVector3(nShaderState::ModelLightPos, this->transform[InvModelLight].pos_component());
+        }
+        if (setLightPos)
+        {
             shd->SetVector3(nShaderState::LightPos, this->transform[Light].pos_component());
         }
     }
@@ -227,7 +240,7 @@ nD3D9Server::BeginScene()
         this->statsNumRenderStateChanges = 0;
         this->statsNumTextureChanges = 0;
         #endif
-        
+
         return true;
     }
     return false;
@@ -288,7 +301,7 @@ nD3D9Server::EndScene()
     // query statistics
     this->QueryStatistics();
     #endif
-    
+
     nGfxServer2::EndScene();
 }
 
@@ -326,7 +339,7 @@ nD3D9Server::SetTexture(int stage, nTexture2* tex)
     {
         HRESULT hr;
         n_assert(this->d3d9Device);
-        
+
         if (0 == tex)
         {
             // clear the texture stage
@@ -373,11 +386,15 @@ nD3D9Server::SetMesh(nMesh2* mesh)
             IDirect3DVertexDeclaration9* d3dVDecl = 0;
             UINT stride = 0;
             d3dVBuf  = ((nD3D9Mesh*)mesh)->GetVertexBuffer();
-            d3dIBuf  = ((nD3D9Mesh*)mesh)->GetIndexBuffer();
             d3dVDecl = ((nD3D9Mesh*)mesh)->GetVertexDeclaration();
             n_assert2(d3dVBuf, "The mesh must have a vertex buffer!\n");
-            n_assert2(d3dIBuf, "The mesh must have a index buffer!\n");
             n_assert(d3dVDecl);
+            
+            if (mesh->GetNumIndices() > 0)
+            {
+                d3dIBuf  = ((nD3D9Mesh*)mesh)->GetIndexBuffer();
+                n_assert2(d3dIBuf, "The mesh must have a index buffer!\n");
+            }
 
             stride = mesh->GetVertexWidth() << 2;
             
@@ -392,6 +409,15 @@ nD3D9Server::SetMesh(nMesh2* mesh)
             // indices are provided by the mesh associated with stream 0!
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
+
+		    if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (this->GetFeatureSet() < DX9))
+			{
+				this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
+			}
+			else
+			{
+				this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
+			}
         }
     }
     else
@@ -404,11 +430,12 @@ nD3D9Server::SetMesh(nMesh2* mesh)
             n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
         }
         
-        //clear the vertex declaration
-        hr = this->d3d9Device->SetVertexDeclaration(0);
-        n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
+        // clear the vertex declaration
+        // FIXME FLOH: Uncommented because this generates a D3D warning
+        // hr = this->d3d9Device->SetVertexDeclaration(0);
+        // n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
 
-        //clear the indexbuffer            
+        // clear the indexbuffer
         hr = this->d3d9Device->SetIndices(0);
         n_dxtrace(hr, "SetIndices() on D3D device failed!");
     }
@@ -441,6 +468,8 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             //clean old mesh array before set new
             this->SetMeshArray(0);
 
+            bool needSoftwareProcessing = false;
+
             // set the vertex stream source
             IDirect3DVertexBuffer9* d3dVBuf = 0;
             UINT stride = 0;
@@ -461,6 +490,11 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
                         hr = this->d3d9Device->SetStreamSource(i, d3dVBuf, 0, stride);
                         n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
                     }
+
+                    if (0 != (mesh->GetUsage() & nMesh2::NeedsVertexShader))
+                    {
+                        needSoftwareProcessing = true;
+                    }
                 }
             }
             
@@ -475,6 +509,15 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             n_assert2(d3dIBuf, "The mesh at stream 0 must provide a valid IndexBuffer!\n");
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
+            
+            if (this->GetFeatureSet() < DX9 && needSoftwareProcessing)
+            {                
+                this->d3d9Device->SetSoftwareVertexProcessing(true);
+            }
+            else
+            {
+                this->d3d9Device->SetSoftwareVertexProcessing(false);
+            }
         }
     }
     else
@@ -595,12 +638,8 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
     int curPass;
     for (curPass = 0; curPass < numPasses; curPass++)
     {
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
         shader->BeginPass(curPass);
-#else
-        shader->Pass(curPass);
-#endif
-        hr = this->d3d9Device->DrawIndexedPrimitive(
+		hr = this->d3d9Device->DrawIndexedPrimitive(
             d3dPrimType, 
             0,
             this->vertexRangeFirst,
@@ -608,13 +647,11 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
             this->indexRangeFirst,
             d3dNumPrimitives);
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
+        shader->EndPass();
 
         #ifdef __NEBULA_STATS__
         this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
         #endif
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-        shader->EndPass();
-#endif
     }
     shader->End();
 
@@ -647,20 +684,14 @@ nD3D9Server::Draw(PrimitiveType primType)
     int curPass;
     for (curPass = 0; curPass < numPasses; curPass++)
     {
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
         shader->BeginPass(curPass);
-#else
-        shader->Pass(curPass);
-#endif
         hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed!");
+        shader->EndPass();
 
         #ifdef __NEBULA_STATS__
         this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
         #endif
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-        shader->EndPass();
-#endif
     }
     shader->End();
 
@@ -696,7 +727,9 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
         D3DPRIMITIVETYPE d3dPrimType;
         int d3dNumPrimitives = this->GetD3DPrimTypeAndNumIndexed(primType, d3dPrimType);
 
-        hr = this->d3d9Device->DrawIndexedPrimitive(
+        this->refShader->CommitChanges();
+
+	    hr = this->d3d9Device->DrawIndexedPrimitive(
             d3dPrimType, 
             0,
             this->vertexRangeFirst,
@@ -711,7 +744,6 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
         this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
         #endif
     }
-
 }
 
 //------------------------------------------------------------------------------
@@ -738,6 +770,8 @@ nD3D9Server::DrawNS(PrimitiveType primType)
         // get primitive type and number of primitives
         D3DPRIMITIVETYPE d3dPrimType;
         int d3dNumPrimitives = this->GetD3DPrimTypeAndNum(primType, d3dPrimType);
+
+        this->refShader->CommitChanges();
 
         hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed!");
@@ -804,7 +838,8 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
         }
 
         // invoke DrawPrimitive()
-        hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
+        curShader->CommitChanges();        
+	    hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
     }
     instStream->Unlock();
@@ -870,7 +905,8 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
         }
 
         // invoke DrawPrimitive()
-        hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
+        curShader->CommitChanges();        
+	    hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed");
     }
     instStream->Unlock();

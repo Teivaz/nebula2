@@ -300,7 +300,7 @@ nDisplayMode2::TypeToString(Type t)
         case Windowed:      return "windowed";
         case AlwaysOnTop:   return "alwaysontop";
         case ChildWindow:   return "childwindow";
-        default:         return "fullscreen";
+        default:            return "fullscreen";
     }
 }
 

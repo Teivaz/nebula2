@@ -120,17 +120,24 @@ nD3D9Server::NewRenderTarget(const char* rsrcName,
 
 //------------------------------------------------------------------------------
 /**
-    Unloads all resources used by the D3D8Server2 object. This method must
+    Unloads all resources used by the nD3D9Server object. This method must
     be called when the d3d device has been lost.
 */
 void
-nD3D9Server::OnDeviceLost()
+nD3D9Server::OnDeviceLost(bool unloadManaged)
 {
     // close the text renderer
     this->CloseTextRenderer();
 
     // release other resources
-    this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    if (unloadManaged)
+    {
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+    }
+    else
+    {
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Shader);
+    }
 
     // release shape shader
     if (this->refShapeShader.isvalid())
@@ -157,7 +164,7 @@ nD3D9Server::OnDeviceLost()
         this->depthStencilSurface->Release();
         this->depthStencilSurface = 0;
     }
-    
+
     // inform line renderer
     HRESULT hr = this->d3dxLine->OnLostDevice();
     n_dxtrace(hr, "OnLostDevice() on d3dxLine failed");
@@ -199,7 +206,7 @@ nD3D9Server::OnRestoreDevice()
     // this will fail if not running the debug runtime, so this is not critical
     hr = this->d3d9Device->CreateQuery(D3DQUERYTYPE_RESOURCEMANAGER, &(this->queryResourceManager));
     #endif
-    
+
     // (re-)-load resources
     this->refResource->ReloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
 

@@ -41,7 +41,7 @@ public:
 
 private:
     class ParamAndArg
-{
+    {
     public:
         /// default constructor
         ParamAndArg();

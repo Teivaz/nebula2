@@ -50,21 +50,21 @@ nD3D9Font::LoadResource()
     int fontFlags = 0;
     switch(this->fontDesc.GetWeight()) 
     {
-    case nFontDesc::Thin: 
-        fontFlags |= FW_THIN;
-      break;
-    case nFontDesc::Light:
-        fontFlags |= FW_LIGHT;
-      break;
-    case nFontDesc::Normal:
-        fontFlags |= FW_NORMAL;
-        break;
-    case nFontDesc::Bold:
-        fontFlags |= FW_BOLD;
-        break;
-    case nFontDesc::ExtraBold:
-        fontFlags |= FW_EXTRABOLD;
-        break;
+        case nFontDesc::Thin:
+            fontFlags |= FW_THIN;
+            break;
+        case nFontDesc::Light:
+            fontFlags |= FW_LIGHT;
+            break;
+        case nFontDesc::Normal:
+            fontFlags |= FW_NORMAL;
+            break;
+        case nFontDesc::Bold:
+            fontFlags |= FW_BOLD;
+            break;
+        case nFontDesc::ExtraBold:
+            fontFlags |= FW_EXTRABOLD;
+            break;
     }
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
