@@ -46,9 +46,9 @@ public:
     /// get a variable handle by fourcc, if variable undeclared, create it
     nVariable::Handle GetVariableHandleByFourCC(nFourCC fourcc);
     /// find variable handle by name
-    nVariable::Handle FindVariableHandleByName(const char* varName);
+    nVariable::Handle FindVariableHandleByName(const char* varName) const;
     /// find variable handle by fourcc code
-    nVariable::Handle FindVariableHandleByFourCC(nFourCC fourcc);
+    nVariable::Handle FindVariableHandleByFourCC(nFourCC fourcc) const;
     /// get the name of a variable from its handle
     const char* GetVariableName(nVariable::Handle varHandle);
     /// get the fourcc code of a variable from its handle
