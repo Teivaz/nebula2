@@ -43,6 +43,9 @@ technique t0
 
         Sampler[0] = <DiffSampler>;
 
+        VertexShader = 0;
+        PixelShader = 0;
+
         LightEnable[0] = False;
         MaterialDiffuse = <MatDiffuse>;
         MaterialAmbient     = {1.0f, 1.0f, 1.0f, 1.0f};        
@@ -50,6 +53,7 @@ technique t0
 
         FVF = XYZ | TEX1;
         FogEnable        = False;
+        AlphaBlendEnable = True;
         
         TexCoordIndex[0] = 0;
         TextureTransformFlags[0] = Disable;
