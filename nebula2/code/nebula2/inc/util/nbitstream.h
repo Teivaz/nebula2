@@ -21,6 +21,8 @@ public:
     nBitStream();
     /// constructor, expects stream size in bytes
     nBitStream(int size);
+    /// copy constructor
+    nBitStream(const nBitStream& other);
     /// the destructor
     virtual ~nBitStream();
 
@@ -70,8 +72,8 @@ public:
     void BeginRead();
     /// Unlock for reading.
     void EndRead();
-    /// Writeable?
-    bool IsWriteable() const;
+    /// Writable?
+    bool IsWritable() const;
     /// Readable?
     bool IsReadable() const;
 
@@ -98,7 +100,7 @@ private:
     int streamSize;
     int currentByte;    /// Current index in the stream buffer.
     int currentBit;     /// Current bit offset int currentByte.
-    bool writeable;
+    bool writable;
     bool readable;
 };
 
@@ -111,7 +113,7 @@ nBitStream::nBitStream()
     streamSize  = 0;
     currentByte = 0;
     currentBit  = 0;
-    writeable   = false;
+    writable   = false;
     readable    = false;
     stream      = 0;
 }
@@ -129,17 +131,28 @@ nBitStream::nBitStream(int size)
     streamSize  = size;
     currentByte = 0;
     currentBit  = 0;
-    writeable   = false;
+    writable   = false;
     readable    = false;
 
     stream = n_new_array(unsigned char, size);
-    if (stream != 0)
-    {
-        memset(stream, 0, streamSize);
-    }
-
-    // ensure
     n_assert(stream != 0);
+    memset(stream, 0, streamSize);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nBitStream::nBitStream(const nBitStream& other) :
+    streamSize(other.streamSize),
+    currentByte(0),
+    currentBit(0),
+    writable(false),
+    readable(false)
+{
+    stream = n_new_array(unsigned char, streamSize);
+    n_assert(stream != 0);
+    Copy(other);
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +192,7 @@ inline
 void
 nBitStream::WriteBool(bool flag)
 {
-    n_assert(writeable);
+    n_assert(writable);
 
     WriteBit(flag);
 }
@@ -211,7 +224,7 @@ inline
 void
 nBitStream::WriteInt(int value, int numBits)
 {
-    n_assert(writeable);
+    n_assert(writable);
     n_assert((1 < numBits) && (numBits <= 32));
     n_assert(BitsLeft() >= numBits);
 
@@ -293,7 +306,7 @@ inline
 void
 nBitStream::WriteFloat(float value)
 {
-    n_assert(writeable);
+    n_assert(writable);
     n_assert(BitsLeft() >= 32);
 
     int tmp;
@@ -332,7 +345,7 @@ inline
 void
 nBitStream::WriteCustom(const void* ptr, int size)
 {
-    n_assert(writeable);
+    n_assert(writable);
     n_assert(ptr != 0);
     n_assert(size > 0);
     n_assert(BitsLeft() >= size * 8);
@@ -469,7 +482,7 @@ inline
 void
 nBitStream::SetPos(int pos)
 {
-    n_assert(!writeable);       // Can't change bit pos while writing!!!
+    n_assert(!writable);       // Can't change bit pos while writing!!!
     n_assert((0 <= pos) && (pos <= streamSize * 8));
 
     currentByte = pos / 8;
@@ -519,11 +532,11 @@ inline
 void
 nBitStream::BeginWrite()
 {
-    n_assert(!writeable);
+    n_assert(!writable);
     n_assert(!readable);
     Clear();
     SetPos(0);
-    writeable = true;
+    writable = true;
 }
 
 //------------------------------------------------------------------------------
@@ -533,9 +546,9 @@ inline
 void
 nBitStream::EndWrite()
 {
-    n_assert(writeable);
+    n_assert(writable);
     n_assert(!readable);
-    writeable = false;
+    writable = false;
 }
 
 //------------------------------------------------------------------------------
@@ -546,7 +559,7 @@ void
 nBitStream::BeginRead()
 {
     n_assert(!readable);
-    n_assert(!writeable);
+    n_assert(!writable);
     SetPos(0);
     readable = true;
 }
@@ -559,7 +572,7 @@ void
 nBitStream::EndRead()
 {
     n_assert(readable);
-    n_assert(!writeable);
+    n_assert(!writable);
     readable = false;
 }
 
@@ -568,9 +581,9 @@ nBitStream::EndRead()
 */
 inline
 bool
-nBitStream::IsWriteable() const
+nBitStream::IsWritable() const
 {
-    return writeable;
+    return writable;
 }
 
 //------------------------------------------------------------------------------
@@ -667,7 +680,7 @@ nBitStream::WriteBit(bool bit)
 {
     n_assert(stream != 0);
     n_assert(BitsLeft() >= 1);
-    n_assert(IsWriteable());
+    n_assert(writable);
 
     // Set bit at current bit in current byte;
     // assume that all upcomming bits are cleared
