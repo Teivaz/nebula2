@@ -39,4 +39,38 @@ sel /sys/servers/file2
 #   restore original directory
 #-------------------------------------------------------------------------------
 sel $oldCwd
-   
+
+#-------------------------------------------------------------------------------
+#   This procedure is called when the gui server is opened
+#-------------------------------------------------------------------------------
+proc OnGuiServerOpen {} {
+
+    set cwd [psel]
+
+    # define the system skin
+    set skin [/sys/servers/gui.newskin system]
+    sel $skin
+            
+        # set texture path pre- and postfix
+        .settextureprefix "home:export/textures/system/"
+        .settexturepostfix ".dds"
+        
+        # define brushes  
+        .beginbrushes
+
+        .addbrush n2logo n2logo 0 0 64 64 1.0 1.0 1.0 0.5
+
+        .endbrushes
+
+    /sys/servers/gui.setsystemskin $skin
+    /sys/servers/gui.setskin $skin
+
+    sel $cwd
+}
+
+#-------------------------------------------------------------------------------
+#   This proceducre is called when the gui server is closed
+#-------------------------------------------------------------------------------
+proc OnGuiServerClose {} {
+    # Empty
+}
