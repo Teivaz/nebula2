@@ -77,12 +77,10 @@ nAppLauncher::LaunchWait() const
 
 //------------------------------------------------------------------------------
 /**
-    Launches specified application(.exe)
-
     The path of executable file and directory are should be specified
     before launching the application by calling nAppLauncher::SetExecutable() and
     nAppLauncher::SetWorkingDirectory().  
-    And aguments should be specified by calling nAppLauncher::SetArguments() if 
+    And aguments can be specified by calling nAppLauncher::SetArguments() if 
     those are needed.
 
     - 15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and 
