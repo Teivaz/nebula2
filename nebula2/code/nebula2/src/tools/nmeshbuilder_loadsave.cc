@@ -80,15 +80,17 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
     n_assert(fileServer);
     n_assert(filename);
 
-    // sort triangles by group id
-    this->PackTrianglesByGroup();
+    // sort triangles by group id and create a group map
+    this->SortTrianglesByGroupId();
+    nArray<Group> groupMap;
+    this->BuildGroupMap(groupMap);
 
     bool retval = false;
     nFile* file = fileServer->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "wb"))
     {
-        const int numGroups = this->GetNumGroups();
+        const int numGroups = groupMap.Size();
         const int vertexWidth = this->GetVertexAt(0).GetWidth();
         const int numVertices = this->GetNumVertices();
         const int numTriangles = this->GetNumTriangles();
@@ -103,10 +105,9 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
 
         // write groups
         int curGroupIndex;
-        for (curGroupIndex = 0; curGroupIndex < numGroups; curGroupIndex++)
+        for (curGroupIndex = 0; curGroupIndex < groupMap.Size(); curGroupIndex++)
         {
-            // write group name (always 16 characters)
-            const Group& curGroup = this->GetGroupAt(curGroupIndex);
+            const Group& curGroup = groupMap[curGroupIndex];
             int firstTriangle = curGroup.GetFirstTriangle();
             int numTriangles  = curGroup.GetNumTriangles();
             int minVertexIndex, maxVertexIndex;
@@ -141,6 +142,13 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
             if (curVertex.HasComponent(Vertex::TANGENT))
             {
                 const vector3& v = curVertex.GetTangent();
+                *floatPtr++ = v.x;
+                *floatPtr++ = v.y;
+                *floatPtr++ = v.z;
+            }
+            if (curVertex.HasComponent(Vertex::BINORMAL))
+            {
+                const vector3& v = curVertex.GetBinormal();
                 *floatPtr++ = v.x;
                 *floatPtr++ = v.y;
                 *floatPtr++ = v.z;
@@ -218,8 +226,10 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
     n_assert(fileServer);
     n_assert(filename);
 
-    // sort triangles by group id
-    this->PackTrianglesByGroup();
+    // sort triangles by group id and create a group map
+    this->SortTrianglesByGroupId();
+    nArray<Group> groupMap;
+    this->BuildGroupMap(groupMap);
 
     bool retval = false;
     nFile* file = fileServer->NewFileObject();
@@ -230,7 +240,7 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
     {
         // write header
         file->PutS("type n3d2\n");
-        sprintf(lineBuffer, "numgroups %d\n", this->GetNumGroups());
+        sprintf(lineBuffer, "numgroups %d\n", groupMap.Size());
         file->PutS(lineBuffer);
         sprintf(lineBuffer, "numvertices %d\n", this->GetNumVertices());
         file->PutS(lineBuffer);
@@ -253,6 +263,10 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
         if (v.HasComponent(Vertex::TANGENT))
         {
             strcat(lineBuffer, "tangent ");
+        }
+        if (v.HasComponent(Vertex::BINORMAL))
+        {
+            strcat(lineBuffer, "binormal ");
         }
         if (v.HasComponent(Vertex::COLOR))
         {
@@ -287,10 +301,9 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
 
         // write groups
         int i;
-        int numGroups = this->GetNumGroups();
-        for (i = 0; i < numGroups; i++)
+        for (i = 0; i < groupMap.Size(); i++)
         {
-            Group& group = this->GetGroupAt(i);
+            const Group& group = groupMap[i];
             int firstTriangle = group.GetFirstTriangle();
             int numTriangles  = group.GetNumTriangles();
             int minVertexIndex, maxVertexIndex;
@@ -322,6 +335,11 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
             if (curVertex.HasComponent(Vertex::TANGENT))
             {
                 sprintf(charBuffer, "%f %f %f ", curVertex.tangent.x, curVertex.tangent.y, curVertex.tangent.z);
+                strcat(lineBuffer, charBuffer);
+            }
+            if (curVertex.HasComponent(Vertex::BINORMAL))
+            {
+                sprintf(charBuffer, "%f %f %f ", curVertex.binormal.x, curVertex.binormal.y, curVertex.binormal.z);
                 strcat(lineBuffer, charBuffer);
             }
             if (curVertex.HasComponent(Vertex::COLOR))
@@ -395,6 +413,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
     nFile* file = fileServer->NewFileObject();
     n_assert(file);
 
+    nArray<Group> groupMap;
     int numGroups = 0;
     int numVertices = 0;
     int vertexWidth = 0;
@@ -467,6 +486,10 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                     {
                         vertexComponents |= Vertex::TANGENT;
                     }
+                    else if (0 == strcmp(str, "binormal"))
+                    {
+                        vertexComponents |= Vertex::BINORMAL;
+                    }
                     else if (0 == strcmp(str, "color"))
                     {
                         vertexComponents |= Vertex::COLOR;
@@ -519,8 +542,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                 group.SetId(curGroup++);
                 group.SetFirstTriangle(atoi(firstTriangleString));
                 group.SetNumTriangles(atoi(numTriangleString));
-
-                this->AddGroup(group);
+                groupMap.Append(group);
             }
             else if (0 == strcmp(keyWord, "v"))
             {
@@ -550,6 +572,14 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                     const char* zStr = strtok(0, N_WHITESPACE);
                     n_assert(xStr && yStr && zStr);
                     vertex.SetTangent(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
+                }
+                if (vertexComponents & Vertex::BINORMAL)
+                {
+                    const char* xStr = strtok(0, N_WHITESPACE);
+                    const char* yStr = strtok(0, N_WHITESPACE);
+                    const char* zStr = strtok(0, N_WHITESPACE);
+                    n_assert(xStr && yStr && zStr);
+                    vertex.SetBinormal(vector3((float) atof(xStr), (float) atof(yStr), (float) atof(zStr)));
                 }
                 if (vertexComponents & Vertex::COLOR)
                 {
@@ -616,21 +646,6 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                 const char* i2Str = strtok(0, N_WHITESPACE);
                 Triangle triangle;
                 triangle.SetVertexIndices(atoi(i0Str), atoi(i1Str), atoi(i2Str));
-
-                // compute group index for this triangle
-                int curGroup = 0;
-                int i;
-                for (i = 0; i < curGroup; i++)
-                {
-                    const Group& g = this->GetGroupAt(i);
-                    int fromIndex = g.GetFirstTriangle();
-                    int toIndex   = fromIndex + g.GetNumTriangles();
-                    if ((curTriangle >= fromIndex) && (curTriangle < toIndex))
-                    {
-                        triangle.SetGroupId(i);
-                        break;
-                    }
-                }
                 curTriangle++;
                 this->AddTriangle(triangle);
             }
@@ -639,6 +654,9 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
         retval = true;
     }
     delete file;
+
+    // update the triangle group ids from the group map
+    this->UpdateTriangleGroupIds(groupMap);
     return retval;
 }
 
@@ -830,12 +848,6 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 				}
 			}
 		}
-
-		Group group;
-		group.SetId(0);
-		group.SetFirstTriangle(0);
-		group.SetNumTriangles(this->GetNumTriangles());
-		this->AddGroup(group);
 
 		file->Close();
 		delete file;
