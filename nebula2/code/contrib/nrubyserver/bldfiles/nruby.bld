@@ -5,8 +5,10 @@
 #
 #    Modules:
 #       nrubyserver
+#       nrubyviewer
 #    Targets:
-#       nruby
+#       nrubyserver
+#       nrubyviewer
 #===============================================================================
 beginmodule nrubyserver
     setdir ruby
@@ -15,27 +17,32 @@ beginmodule nrubyserver
     setlibs_win32 { msvcrt-ruby18.lib }
 endmodule
 
-begintarget nruby
+beginmodule nrubyviewer
+    setdir ruby
+    setfiles { nviewerapp nviewer }
+endmodule
+
+begintarget nrubyserver
     annotate "Nebula ruby script server"
     settype lib
     setmodules { nrubyserver }
-    settargetdeps { nkernel }
 endtarget
 
-begintarget nrubydemo
-    annotate "nViewer demo for ruby"
+begintarget nrubyviewer
+    annotate "nViewer for ruby"
     settype exe
-    setmodules { nviewer }
+    setmodules { nrubyviewer }
     settargetdeps { 
         nkernel 
         nnebula 
+        nnetwork
         ndirect3d9 
         ndinput8 
         ndsaudioserver3
         ndshow
         microtcl 
         ngui 
-        nruby         
+        nrubyserver
         ntoollib 
     }
 endtarget
@@ -46,6 +53,7 @@ beginworkspace rubyserver
     settargets { 
         nkernel 
         nnebula 
+        nnetwork
         ndirect3d9 
         ndinput8 
         ndsaudioserver3
@@ -53,8 +61,8 @@ beginworkspace rubyserver
         microtcl 
         ngui 
         ntoollib 
-        nruby 
-        nrubydemo 
+        nrubyserver 
+        nrubyviewer
     }
 endworkspace
 #--------------------------------------------------------------------

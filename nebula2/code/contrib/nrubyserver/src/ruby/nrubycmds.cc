@@ -146,7 +146,7 @@ static bool _getInArgs(nCmd *cmd, int argc, VALUE *argv)
                     if(len <=0)
                         return true;
 
-                    nArg* inargs = n_new nArg[len];
+                    nArg* inargs = n_new_array(nArg, len);
                     n_assert(inargs);
 
                     VALUE result,str;
@@ -361,13 +361,16 @@ VALUE rubycmd_Get(VALUE, VALUE filename)
 {
     rb_check_type(filename, T_STRING);
 
-    nRoot *o = (nRubyServer::kernelServer)->Load(RSTRING(filename)->ptr);
+    nObject *o = (nRubyServer::kernelServer)->Load(RSTRING(filename)->ptr);
     if (o)
     {
-        int * ip;
-        void* vp = (void*)o;
-        ip = (int*) vp;
-        return setRoot(o);
+        bool isRoot = o->IsA("nroot");
+        n_assert(isRoot);
+        if (isRoot)
+        {
+            return setRoot((nRoot*)o);
+        }
+        rb_raise(cNError,"Unable to load object %s, not an nRoot", RSTRING(filename)->ptr);
     }
     rb_raise(cNError,"Unable to load object %s", RSTRING(filename)->ptr);
     return Qnil;
