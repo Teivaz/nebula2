@@ -1,0 +1,38 @@
+#===============================================================================
+#  njava.bld
+#  The Nebula2 interface for Java.
+#
+#  Modules:
+#      njava
+#      njavautils
+#  Targets:
+#      njavalib
+#===============================================================================
+
+#===============================================================================
+#  njava modules
+#===============================================================================
+beginmodule njava
+    setdir java
+    setfiles { nebulajava }
+    setheaders { nebulajava }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule njavautils
+    setdir java
+    setfiles { njavautils }
+    setheaders { njavautils }
+endmodule
+
+#===============================================================================
+#  njava Targets
+#===============================================================================
+begintarget njavalib
+    annotate "Nebula Java library"
+    settype dll
+    setmodules { njava njavautils }
+    settargetdeps {
+        nkernel
+    }
+endtarget
+#-------------------------------------------------------------------------------
