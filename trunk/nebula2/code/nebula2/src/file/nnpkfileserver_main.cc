@@ -7,7 +7,6 @@
 #include "file/nnpktocentry.h"
 #include "file/nnpkfile.h"
 #include "file/nnpkdirectory.h"
-#include "tools/nnpkbuilder.h"
 
 nNebulaScriptClass(nNpkFileServer, "nfileserver2");
 
@@ -193,28 +192,6 @@ nNpkFileServer::FindTocEntry(const char* absPath)
     }
     // not found
     return 0;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Pack a directory into new NPK file. The directory will *NOT* be removed
-    after the operation.
-    NOTE: if the "noRootName" argument is set, there will be no directory
-    name stored in the npk file for the toplevel directory, instead, the
-    current filename of the npk file (without extension) will be used
-    for the toplevel directory's name when reading from the npk file. Use
-    with care, the default should be false.
-
-    @param  rootPath        path to directory where src directory is located
-    @param  dirName         single-component-directory name inside root dir
-    @param  npkName         filename of npk file
-    @param  noTopLevelName  do not fill out the toplevel directory name when packing
-*/
-bool
-nNpkFileServer::Pack(const nString& rootPath, const nString& dirName, const nString& npkName, bool noTopLevelName)
-{
-    nNpkBuilder npkBuilder;
-    return npkBuilder.Pack(rootPath, dirName, npkName, noTopLevelName);
 }
 
 //------------------------------------------------------------------------------
