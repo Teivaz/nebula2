@@ -370,11 +370,11 @@ proc spit_uber_group { name cid nodirgroups} {
 	        }
 
 	        # add header files
-	        #for {set j 0} {$j < [llength $mod($m,hdrs)]} {incr j} {
-	        #    puts $cid "				<File"
-	        #    puts $cid "					RelativePath=\"$headerPrefix\\$mod($m,dir)\\[lindex $mod($m,headers) $j].h\">"
-	        #    puts $cid "				</File>"
-	        #}
+	        for {set j 0} {$j < [llength $mod($m,hdrs)]} {incr j} {
+	            puts $cid "# Begin Source File"
+	            puts $cid "SOURCE=$headerPrefix\\$mod($m,dir)\\[lindex $mod($m,headers) $j].h"
+	            puts $cid "# End Source File"
+	        }
         	puts $cid "# End Group";
         }
 
