@@ -128,6 +128,15 @@ nGuiGraphicsBrowserWindow::OnEvent(const nGuiEvent& event)
         // reset time
         nTimeServer::Instance()->ResetTime();
     }
+    else if ((event.GetType() == nGuiEvent::SelectionDblClicked) && (event.GetWidget() == this->refCatBrowser))
+    {
+        // load object on doubleclick on selection text
+        nString objPath = this->refCatBrowser->GetSelectedPath();
+        if (!objPath.IsEmpty())
+        {
+            this->LoadObject(objPath);
+        }
+    }
 
     // hand to parent class
     nGuiClientWindow::OnEvent(event);
