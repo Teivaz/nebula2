@@ -115,6 +115,10 @@ private:
     void HandleInputMaya(float frameTime);
     /// handle input in Fly control mode
     void HandleInputFly(float frameTime);
+    /// handle movement of the 'play' objects using visibility
+    void HandleInputPlay(float frameTime);
+    /// handle state change--mainly switching play object
+    void HandlePlaySwitch(float framtTime);
     /// initialize the overlay GUI
     void InitOverlayGui();
 
@@ -156,10 +160,6 @@ private:
     vector3 defViewerZoom;
 
     float viewerVelocity;
-/*    polar2 viewerAngles;
-    vector3 viewerPos;
-    vector3 viewerZoom;
-*/
     int screenshotID;
 
     bool m_frustumclip, m_occludingfrustumclip;
@@ -183,14 +183,14 @@ private:
             xform.rotate_y(viewerAngles.rho);
             xform.translate(viewerPos);
             matrix44 xformcopy(xform);
-            xform.invert_simple();
+            //xformcopy.invert_simple();
             camerarc.SetTransform(xformcopy);
-            viewMatrix = xformcopy;
+            viewMatrix = xform;
         }
     };
 
     // these cameras are used to mark the objects
-    enum { CAMERACOUNT = 2 };
+    enum { CAMERACOUNT = 3 };
     CameraDescription markcameras[CAMERACOUNT];
     // which camera is used as the render view? which camera is the user controlling? which camera is used for visibility?
     int m_viewcamera, m_activecamera, m_viscamera;
