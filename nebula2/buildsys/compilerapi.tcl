@@ -136,7 +136,7 @@ proc set_workspacepath {path} {
     }
 
     set dir [findrelpath $home $cur_workspacepath]
-    check_makedir $dir/pkg
+    check_makedir $dir
 }
 
 #----------------------------------------------------------------------------
