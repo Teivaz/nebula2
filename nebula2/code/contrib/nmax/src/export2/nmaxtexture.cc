@@ -4,6 +4,7 @@
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
+#include "export2/nmaxinterface.h"
 #include "export2/nmaxtexture.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
@@ -58,8 +59,21 @@ void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
             n_maxlog(Midium, "'%s' is copied.", mapFileName.Get());
         }
 
-        // get uv transform if it exist.
-        // ...
+        ExportUVTransform(uvGen, shapeNode);
+
+        //TODO: add the implementations for uv animation export.
+        //ExportUVAnimator(uvGen, shapeNode);
+
+        BitmapInfo bi;
+        TheManager->GetImageInfo(&bi, mapFileName.Get());
+
+        if (bi.NumberFrames() > 1)
+        {
+            // we have animated textures.
+
+            //TODO: export a texture animator.
+            //...
+        }
     }
     else
     {
@@ -93,6 +107,8 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         textureName += mapFileName.ExtractFileName();
         shapeNode->SetTexture(param, textureName.Get());
 
+        //TODO: check the texture image file already exist and the overwrite option.
+
         // copy textures.
         if (CopyTexture(mapFileName.Get()))
         {
@@ -100,7 +116,23 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         }
 
         // get uv transform if it exist.
-        // ...
+        StdUVGen* uvGen = ((BitmapTex *)texmap)->GetUVGen();
+  
+        ExportUVTransform(uvGen, shapeNode);
+
+        //TODO: add the implementations for uv animation export.
+        //ExportUVAnimator(uvGen, shapeNode);
+
+        BitmapInfo bi;
+        TheManager->GetImageInfo(&bi, mapFileName.Get());
+
+        if (bi.NumberFrames() > 1)
+        {
+            // we have animated textures.
+
+            //TODO: export a texture animator.
+            //...
+        }
     }
     else
     {
@@ -159,10 +191,40 @@ bool nMaxTexture::CopyTexture(const char* textureName)
 
 //-----------------------------------------------------------------------------
 /**
+    Retrieves uv offset, scale angle then specifies it to the given shape.
 */
-void nMaxTexture::GetUvTransform(UVGen* uvGen)
+void nMaxTexture::ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode)
 {
     n_assert(uvGen);
+    n_assert(shapeNode);
+
+    TimeValue t = nMaxInterface::Instance()->GetAnimStartTime();
+
+    float offset_u = uvGen->GetUOffs(t);
+    float offset_v = uvGen->GetVOffs(t);
+    float scale_u  = uvGen->GetUScl(t);
+    float scale_v  = uvGen->GetVScl(t);
+    float rot_u    = uvGen->GetUAng(t); // radian value.
+    float rot_v    = uvGen->GetVAng(t); // radian value.
+
+    int mapChannel = uvGen->GetMapChannel();
+
+    // nebula needs degree value for its uv euler angle.
+    float angle_u = n_rad2deg(rot_u);
+    float angle_v = n_rad2deg(rot_v);
+
+    shapeNode->SetUvPos(mapChannel, vector2(offset_u, offset_v));
+    shapeNode->SetUvEuler(mapChannel, vector2(angle_u, angle_v));
+    shapeNode->SetUvScale(mapChannel, vector2(scale_u, scale_v));
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxTexture::ExportUVAnimator(StdUVGen* uvGen, nShapeNode* shapeNode)
+{
+    n_assert(uvGen);
+    n_assert(shapeNode);
 
     // check that given uvGen is StdUVGen type,
     // if not, we just return.
