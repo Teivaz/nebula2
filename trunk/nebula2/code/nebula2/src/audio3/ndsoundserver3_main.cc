@@ -347,7 +347,7 @@ bool nDSoundServer3::CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG u
 
     n_assert(0 == m_pDS);
     n_assert(0 != pbData);
-    n_assert(0 != ppSound3);
+    n_assert(0 != ppSound);
     n_assert(dwNumBuffers > 1);
 
     apDSBuffer = new LPDIRECTSOUNDBUFFER[dwNumBuffers];
