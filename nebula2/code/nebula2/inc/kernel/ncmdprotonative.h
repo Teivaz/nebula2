@@ -12,16 +12,10 @@
   nCmdProtoNative is licensed under the terms of the Nebula License
 */
 
-#ifndef N_CMDPROTO_H
 #include "kernel/ncmdproto.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nCmdProtoNative
-#include "kernel/ndefdllclass.h"
 
 //--------------------------------------------------------------------
-class N_PUBLIC nCmdProtoNative : public nCmdProto 
+class nCmdProtoNative : public nCmdProto 
 {
 public:
     /// constructor

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nHardRefServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  © 2001 Radon Labs GmbH
 

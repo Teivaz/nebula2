@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nRoot
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  kernel/nrootscript.cc
 //  This file was machine generated.

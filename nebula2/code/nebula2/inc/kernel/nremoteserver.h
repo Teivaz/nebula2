@@ -17,25 +17,13 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_IPCSERVER_H
 #include "kernel/nipcserver.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nRemoteServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nScriptServer;
-class N_PUBLIC nRemoteServer : public nRoot
+class nRemoteServer : public nRoot
 {
 public:
     /// constructor

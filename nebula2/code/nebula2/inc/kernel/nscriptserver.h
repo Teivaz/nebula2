@@ -22,17 +22,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nScriptServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nFile;
-class N_PUBLIC nScriptServer : public nRoot 
+class nScriptServer : public nRoot 
 {
 public:
     // the select methods (see below)

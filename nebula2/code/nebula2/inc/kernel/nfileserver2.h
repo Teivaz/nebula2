@@ -16,26 +16,14 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nFileServer2
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nDirectory;
 class nFile;
-class N_PUBLIC nFileServer2 : public nRoot
+class nFileServer2 : public nRoot
 {
 public:
     /// constructor

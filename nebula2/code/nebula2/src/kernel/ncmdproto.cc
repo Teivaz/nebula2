@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nCmdProto
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  ncmdproto.cc
 //  (C) 2002 RadonLabs GmbH

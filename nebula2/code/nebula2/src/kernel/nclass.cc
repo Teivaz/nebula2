@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nClass
-#define N_KERNEL
 //--------------------------------------------------------------------
 //  nclass.cc
 //  (C) 1998..2000 Andre Weissflog

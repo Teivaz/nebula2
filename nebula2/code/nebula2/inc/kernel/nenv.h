@@ -11,24 +11,12 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ARG_H
 #include "kernel/narg.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nEnv
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nEnv : public nRoot 
+class nEnv : public nRoot 
 {
 public:
     /// object persistency

@@ -11,26 +11,21 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
 #elif defined(__WIN32__)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winbase.h>
 #else
 #include <stdio.h>
 #endif
 
-#undef N_DEFINES
-#define N_DEFINES nFile
-#include "kernel/ndefdllclass.h"
-
 class nFileServer2;
 //------------------------------------------------------------------------------
-class N_PUBLIC nFile
+class nFile
 {
 public:
     /// start point for seeking in file

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nTimeServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  ntime_main.cc
 //  (C) 2002 RadonLabs GmbH

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nIpcServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nipcserver.cc
 //  (C) 2002 RadonLabs GmbH

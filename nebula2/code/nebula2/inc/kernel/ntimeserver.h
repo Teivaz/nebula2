@@ -10,14 +10,13 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 #ifdef __XBxX__
 #   include "xbox/nxbwrapper.h"
 #elif __WIN32__
 #   ifndef _INC_WINDOWS
+#   define WIN32_LEAN_AND_MEAN
 #   include <windows.h> 
 #   endif
 #else
@@ -25,28 +24,13 @@
 #include <unistd.h>
 #endif
 
-#ifndef N_PROFILER_H
 #include "kernel/nprofiler.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_ENV_H
 #include "kernel/nenv.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nTimeServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nTimeServer : public nRoot 
+class nTimeServer : public nRoot 
 {
 public:
     /// constructor

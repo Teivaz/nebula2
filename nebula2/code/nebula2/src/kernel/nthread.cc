@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nThread
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nthread.cc
 //  (C) 2002 RadonLabs GmbH

@@ -12,29 +12,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_MUTEX_H
 #include "kernel/nmutex.h"
-#endif
-
-#ifndef N_EVENT_H
 #include "kernel/nevent.h"
-#endif
-
-#ifndef N_THREADAFELIST_H
 #include "kernel/nthreadsafelist.h"
-#endif
-
-#ifndef N_MSGNODE_H
 #include "util/nmsgnode.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nThread
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 #ifdef __WIN32__
@@ -44,7 +26,7 @@
 #endif  
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nThread 
+class nThread 
 {
 public:
     /// constructor

@@ -10,28 +10,16 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_CMDPROTO_H
 #include "kernel/ncmdproto.h"
-#endif
-
-#ifndef N_KEYARRAY_H
 #include "util/nkeyarray.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nClass
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nCmdProtoNative;
 class nRoot;
 class nKernelServer;
 class nHashList;
-class N_PUBLIC nClass : public nHashNode
+class nClass : public nHashNode
 {
 public:
     /// constructor

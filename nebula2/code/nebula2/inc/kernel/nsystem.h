@@ -15,11 +15,12 @@
     #define __USE_SSE__ (0)   
 #endif
 
+#ifdef _DEBUG
+#define __NEBULA_STATS__ (1)
+#endif
+
 // use MicroTcl?
 #define __MICROTCL__ (1)
-
-// do console.watch stats
-#define N_DO_STATS
 
 #ifdef __WIN32__
 #undef __WIN32__
@@ -53,37 +54,53 @@
 #   define NOMCX
 #endif
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //  compiler identification:
 //  __VC__      -> Visual C
 //  __GNUC__    -> gcc
-//--------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef _MSC_VER
 #define __VC__ (1)
 #endif
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //  disable some VC warnings
-//--------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef __VC__
 #pragma warning( disable : 4251 )       // class XX needs DLL interface to be used...
 #pragma warning( disable : 4355 )       // initialization list uses 'this' 
 #pragma warning( disable : 4275 )       // base class has not dll interface...
 #pragma warning( disable : 4786 )       // symbol truncated to 255 characters
 #pragma warning( disable : 4530 )       // C++ exception handler used, but unwind semantics not enabled
+#pragma warning( disable : 4995 )       // _OLD_IOSTREAMS_ARE_DEPRECATED
 #endif
 
-//--------------------------------------------------------------------
-#ifdef __VC__
-#   ifndef N_STATIC
-#       define N_EXPORT __declspec(dllexport)
-#   else
-#       define N_EXPORT
-#   endif
-#else
-#   define __cdecl
-#   define N_EXPORT
-#endif
+//------------------------------------------------------------------------------
+// These are temporary until we finish getting rid of them
+//------------------------------------------------------------------------------
+#define __cdecl
+#define N_EXPORT
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// magically make the Nebula class module callbacks work (provide
+// the N_INIT, N_FINI, N_NEW and N_VERSION per-source file
+// via compiler command line switches, this is taken care of when
+// updsrc.tcl mechanism is used to create build files).
+//------------------------------------------------------------------------------
+#ifdef N_INIT
+#   define n_init N_INIT
+#endif
+#ifdef N_FINI
+#   define n_fini N_FINI
+#endif
+#ifdef N_NEW
+#   define n_create N_NEW
+#endif
+#ifdef N_VERSION
+#   define n_version N_VERSION
+#endif
+#ifdef N_INITCMDS
+#   define n_initcmds N_INITCMDS
+#endif
+//------------------------------------------------------------------------------
 #endif

@@ -32,29 +32,11 @@
 
     (C) 1999 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_STRLIST_H
 #include "util/nstrlist.h"
-#endif
-
-#ifndef N_STRNODE_H
 #include "util/nstrnode.h"
-#endif
-
-#ifndef N_CMD_H
 #include "kernel/ncmd.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nRoot
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
@@ -63,7 +45,7 @@ class nKernelServer;
 class nPersistServer;
 template<class TYPE> class nRef;
 
-class N_PUBLIC nRoot : public nStrNode 
+class nRoot : public nStrNode 
 {
 public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nEnv
-#define N_KERNEL
 //-------------------------------------------------------------------
 //  kernel/nenv_dispatch.cc
 //  This file was machine generated.

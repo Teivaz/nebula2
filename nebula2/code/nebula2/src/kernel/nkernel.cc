@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nKernelServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nkernel.cc
 //  (C) 2002 RadonLabs GmbH
@@ -29,21 +27,12 @@
 
      - 13-Dec-99   floh    created
      - 07-Feb-00   floh    should now also flush log channel 
-                        correctly if not on stdout
+                           correctly if not on stdout
 */
-N_EXPORT 
 void 
 n_barf(const char* exp, const char* file, int line)
 {
-    #ifndef __STANDALONE__
-    if (nKernelServer::ks)
-    {
-        nKernelServer::ks->Error("*** NEBULA ASSERTION ***\nexpression: %s\nfile: %s\nline: %d\n", exp, file, line);
-    }
-    #else
-        printf("*** NEBULA ASSERTION ***\nexpression: %s\nfile: %s\nline: %d\n", exp, file, line);
-    #endif
-    abort();
+    n_error("*** NEBULA ASSERTION ***\nexpression: %s\nfile: %s\nline: %d\n", exp, file, line);
 }
 
 //------------------------------------------------------------------------------
@@ -51,7 +40,6 @@ n_barf(const char* exp, const char* file, int line)
     This function is called when a serious situation is encountered which
     requires abortion of the program.
 */
-N_EXPORT
 void
 __cdecl
 n_error(const char* msg, ...)
@@ -63,8 +51,10 @@ n_error(const char* msg, ...)
         {
             nKernelServer::ks->GetLogHandler()->Error(msg, argList);
         }
+        else
+            vprintf(msg, argList);
     #else
-        vprintf(s, arglist);
+        vprintf(msg, arglist);
     #endif
     abort();
 };        
@@ -74,7 +64,6 @@ n_error(const char* msg, ...)
     This function is called when an important message should be displayed
     to the user, but which does not abort the program.
 */
-N_EXPORT
 void
 __cdecl
 n_message(const char* msg, ...)
@@ -87,7 +76,7 @@ n_message(const char* msg, ...)
             nKernelServer::ks->GetLogHandler()->Message(msg, argList);
         }
     #else
-        vprintf(s, arglist);
+        vprintf(msg, arglist);
     #endif
 };        
 
@@ -98,22 +87,21 @@ n_message(const char* msg, ...)
 
      - 27-Nov-98   floh    created
 */
-N_EXPORT 
 void 
 __cdecl
-n_printf(const char *s, ...)
+n_printf(const char *msg, ...)
 {
-    va_list arglist;
-    va_start(arglist,s);
-    #ifdef __STANDALONE__
-        vprintf(s, arglist);
-    #else
+    va_list argList;
+    va_start(argList,msg);
+    #ifndef __STANDALONE__
         if (nKernelServer::ks)
         {
-            nKernelServer::ks->GetLogHandler()->Print(s, arglist);
+            nKernelServer::ks->GetLogHandler()->Print(msg, argList);
         }
+    #else
+        vprintf(msg, argList);
     #endif
-    va_end(arglist);
+    va_end(argList);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +110,6 @@ n_printf(const char *s, ...)
 
      - 21-Dec-98   floh    created
 */
-N_EXPORT 
 void 
 n_sleep(double sec)
 {
@@ -148,7 +135,6 @@ n_sleep(double sec)
     
      - 17-Jan-99   floh    created
 */
-N_EXPORT 
 char*
 n_strdup(const char* from)
 {
@@ -167,7 +153,6 @@ n_strdup(const char* from)
 
      - 19-Feb-99   floh    created
 */
-N_EXPORT 
 char*
 n_strncpy2(char *dest, const char *src, size_t size)
 {
@@ -182,7 +167,6 @@ n_strncpy2(char *dest, const char *src, size_t size)
 
      - 06-Mar-00   floh    created
 */
-N_EXPORT 
 void 
 n_strcat(char *dest, const char *src, size_t dest_size)
 {
@@ -197,7 +181,7 @@ n_strcat(char *dest, const char *src, size_t dest_size)
 
      - 10-May-99   floh    created
      - 02-Aug-01   leaf    + error description in win32
-     - 03-Aug-01   leaf       + error description in linux, 
+     - 03-Aug-01   leaf    + error description in linux, 
                              thanks to Warren Baird
 */
 #ifdef N_STATIC

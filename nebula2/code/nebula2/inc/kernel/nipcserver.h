@@ -32,51 +32,12 @@
   
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_THREADSAFELIST_H
 #include "kernel/nthreadsafelist.h"
-#endif
-
-#ifndef N_MSGNODE_H
 #include "util/nmsgnode.h"
-#endif
-
-#ifndef N_MUTEX_H
 #include "kernel/nmutex.h"
-#endif
-
-#ifndef N_SOCKETDEFS_H
 #include "kernel/nsocketdefs.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
-
-#ifdef __XBxX__
-#   include "xbox/nxbwrapper.h"
-#elif __WIN32__
-#   ifndef _INC_WINDOWS
-#   include <windows.h> 
-#   endif
-#   ifndef _WINSOCKAPI_
-#   include <winsock.h>
-#   endif
-#else
-#   include <sys/types.h>
-#   include <sys/socket.h>
-#   include <netinet/in.h>
-#   include <arpa/inet.h>
-#   include <unistd.h>
-#   include <netdb.h>
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nIpcServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nThread;

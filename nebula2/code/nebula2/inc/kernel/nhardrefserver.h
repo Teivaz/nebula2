@@ -12,20 +12,14 @@
     (C) 2002 RadonLabs GmbH
 */
 
-#ifndef N_STRLIST_H
 #include "util/nstrlist.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nHardRefServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nHardRef;
 class nRoot;
 class nKernelServer;
 
-class N_PUBLIC nHardRefServer
+class nHardRefServer
 {
 public:
     /// default constructor.
