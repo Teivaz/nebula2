@@ -11,6 +11,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#include "kernel/nref.h"
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/ncamera2.h"
 #include "audio3/nlistener3.h"
