@@ -1,3 +1,30 @@
 /**
     @defgroup NebulaResourceSystem Resource System
+
+
+    @section NebulaResourceSystemCreateResource Creation of Platform Specific Resources
+    
+    When you create class instance of nResource derived class you should be 
+    careful not to directly create it by calling nKernelServer::New(). 
+    Some type of resources which are platform specific like nTexture2, nMesh2,
+    nShader2 are should be created from nGfxServer2.
+
+    For example, creation of nTexture2 instance by calling nKernelServer2::New() 
+    will not create correct nTexture2 object instance.
+    So there will be error on loading given texture.
+
+    Wrong:
+    @code
+nTexture2* tex = nKernelServer::Instance()->New("ntexture", "/textures/tex0");
+tex->SetFilename("data:textures/tex0");
+tex->Load();
+    @endcode
+    
+    Correct:
+    @code
+nTexture2* tex = nGfxServer2::Instance()->NewTexture("tex0");
+tex->SetFilename("data:textures/tex0");
+tex->Load();
+    @endcode
+
 */
