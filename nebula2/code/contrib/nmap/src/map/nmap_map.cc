@@ -22,16 +22,14 @@ nMap::LoadMap()
 
     
     const char * path = GetHeightMap();
-    char mangledPath[N_MAXPATH];
-    
-    this->refFileServer->ManglePath(path, mangledPath, N_MAXPATH);
+    nString mangledPath = this->refFileServer->ManglePath(path);
 
     // Load heightmap from image
-    if( mangledPath )
+    if( !mangledPath.IsEmpty() )
     {
         if( !LoadFromImage(mangledPath) )
         {
-            n_printf("nMap: Could not load height map '%s'\n", mangledPath);
+            n_printf("nMap: Could not load height map '%s'\n", mangledPath.Get() );
             n_error("Aborting!\n");
         }
         else
@@ -52,13 +50,12 @@ nMap::LoadMap()
     Read in heightmap info from image file.
 */
 bool 
-nMap::LoadFromImage(const char* abs_path)
+nMap::LoadFromImage(const nString& abs_path)
 {
-    n_assert(abs_path);
     bool retval = false;
     
     nBmpFile bmp_file;
-    if (bmp_file.Open(abs_path, "rb"))
+    if (bmp_file.Open(abs_path.Get(), "rb"))
     {
         // get width and height
         int w = bmp_file.GetWidth();

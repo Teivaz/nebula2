@@ -96,10 +96,9 @@ MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, in
 const char* 
 MapBlock::GenerateResourceLoaderString()
 {
-    char fullName[MAX_PATH];
-    map->GetFullName( fullName, MAX_PATH );
+    nString fullName = map->GetFullName();
     std::strstream resourceLoaderStr;
-    resourceLoaderStr << fullName
+    resourceLoaderStr << fullName.Get()
                       << nMapResourceLoader::SEPARATOR
                       << this->startX
                       << nMapResourceLoader::SEPARATOR

@@ -82,7 +82,7 @@ public:
 
 private:
     int ClampToBounds( int coord ) const;
-    bool LoadFromImage(const char* abs_path);
+    bool LoadFromImage(const nString& abs_path);
     void CalculateNormals();
     float Interpolate(float f, float a, float b) const;
     bool CheckIntersect(int x, int z, const line3&, vector3&) const;
