@@ -46,6 +46,53 @@ public:
         else                               return false;
     };
 
+    /**
+        @brief Check if sphere intersects with box.
+        Taken from "Simple Intersection Tests For Games",
+        Gamasutra, Oct 18 1999
+    */
+    bool intersects(const bbox3& box) const
+    {
+        float s, d = 0;
+
+        // find the square of the distance
+        // from the sphere to the box,
+        if (p.x < box.vmin.x)
+        {
+            s = p.x - box.vmin.x;
+            d += s*s;
+        }
+        else if (p.x > box.vmax.x)
+        {
+            s = p.x - box.vmax.x;
+            d += s*s;
+        }
+
+        if (p.y < box.vmin.y)
+        {
+            s = p.y - box.vmin.y;
+            d += s*s;
+        }
+        else if (p.y > box.vmax.y)
+        {
+            s = p.y - box.vmax.y;
+            d += s*s;
+        }
+
+        if (p.z < box.vmin.z)
+        {
+            s = p.z - box.vmin.z;
+            d += s*s;
+        }
+        else if (p.z > box.vmax.z)
+        {
+            s = p.z - box.vmax.z;
+            d += s*s;
+        }
+
+        return d <= r*r;
+    }
+
     //--- check if 2 moving spheres have contact --------------------
     //--- taken from "Simple Intersection Tests For Games" ----------
     //--- article in Gamasutra, Oct 18 1999 -------------------------
