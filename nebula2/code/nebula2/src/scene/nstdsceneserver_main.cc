@@ -14,6 +14,21 @@
 
 nNebulaClass(nStdSceneServer, "nsceneserver");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nstdsceneserver
+    
+    @cppclass
+    nStdSceneServer
+
+    @superclass
+    nsceneserver
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -12,6 +12,22 @@
 
 nNebulaClass(nSceneServer, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nsceneserver
+    
+    @cppclass
+    nSceneServer
+
+    @superclass
+    nroot
+    
+    @classinfo
+    Docs needed.
+*/
+
+
 // global data for qsort() compare function
 nSceneServer* nSceneServer::self = 0;
 vector3 nSceneServer::viewerPos;

@@ -12,6 +12,21 @@
 
 nNebulaClass(nResourceBundle, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nresourcebundle
+    
+    @cppclass
+    nResourceBundle
+
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
