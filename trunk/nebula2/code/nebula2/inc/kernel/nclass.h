@@ -66,10 +66,15 @@ public:
     void SetInstanceSize(int size);
     /// get instance size
     int GetInstanceSize() const;
+    /// set proper name
+    void SetProperName(const char* name);
+    /// get proper name
+    const char* GetProperName() const;
 
 private:
     nKernelServer* kernelServer;
     nClass* superClass;
+    nString properName;
     nHashList* cmdList;
     nKeyArray<nCmdProto*>* cmdTable;
     /// The hashed script commandlist of this class
@@ -173,6 +178,26 @@ nHashList*
 nClass::GetCmdList() const
 {
     return this->cmdList;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nClass::SetProperName(const char * name)
+{
+    this->properName = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char *
+nClass::GetProperName() const
+{
+    return this->properName.Get();
 }
 
 //------------------------------------------------------------------------------

@@ -25,6 +25,7 @@
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
+        clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         return true; \
@@ -48,6 +49,7 @@
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
+        clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         INITSTATICDATAFUNC(); \
@@ -76,6 +78,7 @@
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
+        clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         n_initcmds(clazz); \
@@ -101,6 +104,7 @@
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
+        clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         INITSTATICDATAFUNC(); \
@@ -126,6 +130,7 @@
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
+        clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         n_initcmds(clazz); \
         return true; \
