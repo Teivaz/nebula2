@@ -1062,7 +1062,7 @@ PhysDemoApp::InitOverlayGui()
     logoRect.v1.set(0.2f, 0.10f);
     this->guiCFMLabel->SetRect(logoRect);
     this->guiCFMLabel->SetText("0.0");
-    this->guiCFMLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiCFMLabel->SetAlignment(nGuiTextLabel::Left);
     this->guiCFMLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiCFMLabel->SetFont("physDefaultFont");
 
@@ -1073,7 +1073,7 @@ PhysDemoApp::InitOverlayGui()
     logoRect.v1.set(0.2f, 0.15f);
     this->guiERPLabel->SetRect(logoRect);
     this->guiERPLabel->SetText("0.0");
-    this->guiERPLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiERPLabel->SetAlignment(nGuiTextLabel::Left);
     this->guiERPLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiERPLabel->SetFont("physDefaultFont");
 
@@ -1084,7 +1084,7 @@ PhysDemoApp::InitOverlayGui()
     logoRect.v1.set(0.2f, 0.20f);
     this->guiFPSCutoffLabel->SetRect(logoRect);
     this->guiFPSCutoffLabel->SetText("0.0");
-    this->guiFPSCutoffLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiFPSCutoffLabel->SetAlignment(nGuiTextLabel::Left);
     this->guiFPSCutoffLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiFPSCutoffLabel->SetFont("physDefaultFont");
 
