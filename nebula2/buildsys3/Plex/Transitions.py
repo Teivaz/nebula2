@@ -82,12 +82,11 @@ class TransitionMap:
     else:
       self.get_special(event).update(new_set)
   
-  def get_epsilon(self,
-    None = None):
+  def get_epsilon(self, none = None):
     """
     Return the mapping for epsilon, or None.
     """
-    return self.special.get('', None)
+    return self.special.get('', none)
   
   def items(self,
     len = len):
