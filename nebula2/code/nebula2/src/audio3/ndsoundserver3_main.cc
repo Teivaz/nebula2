@@ -115,9 +115,9 @@ nDSoundServer3::Close()
     Begin the audio scene.
 */
 bool
-nDSoundServer3::BeginScene()
+nDSoundServer3::BeginScene(nTime time)
 {
-    return nAudioServer3::BeginScene();
+    return nAudioServer3::BeginScene(time);
 }
 
 //------------------------------------------------------------------------------

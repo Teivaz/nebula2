@@ -74,7 +74,7 @@ PhysDemoApp::Open()
     // initialize the physics-related classes
     this->refPhysWorld      = (nOpendeWorld*)    kernelServer->New("nopendeworld", "/phys/world");
     this->refPhysWorld->SetGravity(vector3(0.0f, -9.8f, 0.0f));
-    this->refPhysWorld->SetQuickStepNumIterations(5);
+    this->refPhysWorld->SetQuickStepNumIterations(20);
     this->refPhysColSpace   = (nOpendeHashSpace*)    kernelServer->New("nopendehashspace", "/phys/world/space");
     this->refPhysColSpace->Create();
 
@@ -764,7 +764,7 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     newObj->refFloatyText = (nGuiTextLabel *) kernelServer->New("nguitextlabel", name.Get());
     n_assert(newObj->refFloatyText.isvalid());
     newObj->refFloatyText->SetText(name.Get());
-    newObj->refFloatyText->SetAlignment(nGuiTextLabel::Alignment::Center);
+    newObj->refFloatyText->SetAlignment(nGuiTextLabel::Center);
     newObj->refFloatyText->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     newObj->refFloatyText->SetFont("physDefaultFont");
 
@@ -971,7 +971,7 @@ PhysDemoApp::InitOverlayGui()
     logoRect.v1.set(0.2f, 0.05f);
     this->guiFPSLabel->SetRect(logoRect);
     this->guiFPSLabel->SetText("0.0");
-    this->guiFPSLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiFPSLabel->SetAlignment(nGuiTextLabel::Left);
     this->guiFPSLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiFPSLabel->SetFont("physDefaultFont");
 

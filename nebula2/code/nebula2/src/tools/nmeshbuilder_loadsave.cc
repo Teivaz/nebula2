@@ -1004,7 +1004,7 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
                 int normalIndex = 0;
                 int uvIndex;
 
-                const char* vertexStr = strtok(0, N_WHITESPACE);
+                char* vertexStr = strtok(0, N_WHITESPACE);
                 int vertexNo;
                 for (vertexNo = 0; vertexStr != NULL; vertexNo++, vertexStr=strtok(0, N_WHITESPACE))
                 {
