@@ -4,7 +4,9 @@
 /**
     @class nParticleEmitter
     @ingroup NebulaParticleSystem
-    @brief
+    @brief Emit particles.
+
+    This class manages and renders particles which represented by nParticle.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -4,7 +4,7 @@
 /**    
     @class nParticle
     @ingroup NebulaParticleSystem
-    @brief
+    @brief This class represents a single particle in a particle system.
 
     (C) 2003 RadonLabs GmbH
 */
