@@ -38,7 +38,7 @@
 #include "scene/ntransformanimator.h"
 #include "scene/nshapenode.h"
 #include "scene/nskinshapenode.h"
-#include "scene/nspotlightnode.h"
+#include "scene/nlightnode.h"
 
 #define N_MAX_EXPORT_CLASS_ID	Class_ID(0x7bcf1e6d, 0xbaddf00d)
 

@@ -271,13 +271,22 @@ nMaxExport::~nMaxExport()
     this->CleanupData();
     
     if (this->scriptServer)
+    {
         this->scriptServer->Release();
+        this->scriptServer = 0;
+    }
 
-    if(this->varServer)
+    if (this->varServer)
+    {
         this->varServer->Release();
+        this->varserver = 0;
+    }
 
     if (this->task)
-        n_delete this->task;
+    {
+        n_delete(this->task);
+        this->task = 0;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -320,7 +329,7 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
 
     if (!this->task)
     {
-        this->task = n_new nMaxExportTask;
+        this->task = n_new(nMaxExportTask);
     }
 
     nPathString cfn;
@@ -504,12 +513,12 @@ nMaxExport::CleanupData()
     {
         if (this->meshPool[i].meshBuilder)
         {
-            n_delete this->meshPool[i].meshBuilder;
+            n_delete(this->meshPool[i].meshBuilder);
             this->meshPool[i].meshBuilder = 0;
         }
         if (this->meshPool[i].animBuilder)
         {
-            n_delete this->meshPool[i].animBuilder;
+            n_delete(this->meshPool[i].animBuilder);
             this->meshPool[i].animBuilder = 0;
         }
     }
@@ -708,7 +717,7 @@ nMaxExport::progressUpdate(int percent, nString msg)
 nString
 nMaxExport::checkChars(nString &string)
 {
-    char* temp = n_new char[string.Length()+1];
+    char* temp = n_new_array(char, string.Length() + 1);
     strcpy(temp, string.Get());
     string.Set(this->checkChars(temp));
     return string;
@@ -721,7 +730,7 @@ nMaxExport::checkChars(nString &string)
 char*
 nMaxExport::checkChars(const char* string)
 {
-    char* temp = n_new char[strlen(string)+1];
+    char* temp = n_new(char, strlen(string) + 1);
     strcpy(temp, string);
     temp = this->checkChars(temp);
     return temp;
