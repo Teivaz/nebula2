@@ -18,6 +18,7 @@
 #include "kernel/nautoref.h"
 #include "gfx2/nshaderparams.h"
 #include "util/nbucket.h"
+#include "scene/nrenderpath.h"
 
 class nRenderContext;
 class nSceneNode;
@@ -32,7 +33,15 @@ public:
     nSceneServer();
     /// destructor
     virtual ~nSceneServer();
-
+    /// return pointer to instance
+    static nSceneServer* Instance();
+    
+    /// open the scene server
+    bool Open();
+    /// close the scene server;
+    void Close();
+    /// return true if scene server open
+    bool IsOpen() const;
     /// set background color
     void SetBgColor(const vector4& c);
     /// get background color
@@ -50,17 +59,18 @@ public:
     /// present the scene
     virtual void PresentScene();
     /// set current model matrix
-    void SetModelTransform(const matrix44& m);
+    virtual void SetModelTransform(const matrix44& m);
     /// get current model matrix
-    const matrix44& GetModelTransform() const;
+    virtual const matrix44& GetModelTransform() const;
     /// begin a group node
-    void BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext);
+    virtual void BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// finish current group node
-    void EndGroup();
+    virtual void EndGroup();
+
+private:
+    static nSceneServer* Singleton;
 
 protected:
-    /// transfer standard parameters to shader (matrices, etc...)
-    virtual void UpdateShader(nShader2* shd, nRenderContext* renderContext);
     /// split scene nodes into light and shape nodes
     virtual void SplitNodes(uint shaderFourCC);
     /// make sure scene node resources are valid
@@ -77,7 +87,7 @@ protected:
     class Group
     {
     public:
-        Group* parent;
+        int parentIndex;                // index of parent in group array, or -1
         nRenderContext* renderContext;
         nSceneNode* sceneNode;
         matrix44 modelTransform;
@@ -91,15 +101,38 @@ protected:
     static nSceneServer* self;
     static vector3 viewerPos;
 
-    nAutoRef<nGfxServer2> refGfxServer;
+    bool isOpen;
     bool inBeginScene;
     uint stackDepth;
-    Group* groupStack[MaxHierarchyDepth];
+    nRenderPath renderPath;
+    nFixedArray<int> groupStack;
     nArray<Group> groupArray;
     nArray<ushort> lightArray;
-    nBucket<ushort,32> shapeBucket;   ///< contains indices of shape nodes, bucketsorted by shader
+    nArray<ushort> shadowArray;
+    nBucket<ushort,32> shapeBucket;                     // contains indices of shape nodes, bucketsorted by shader
     vector4 bgColor;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nSceneServer*
+nSceneServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::IsOpen() const
+{
+    return this->isOpen;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -119,26 +152,6 @@ const vector4&
 nSceneServer::GetBgColor() const
 {
     return this->bgColor;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nSceneServer::SetModelTransform(const matrix44& m)
-{
-    this->groupArray.Back().modelTransform = m;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const matrix44&
-nSceneServer::GetModelTransform() const
-{
-    return this->groupArray.Back().modelTransform;
 }
 
 //------------------------------------------------------------------------------

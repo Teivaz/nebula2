@@ -35,7 +35,9 @@ public:
     virtual bool SaveCmds(nPersistServer *ps);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// render geometry
+    /// perform pre-instance geometry setup
+    virtual bool ApplyGeometry(nSceneServer* sceneServer);
+    /// render per-instance geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the skin animator
     void SetSkinAnimator(const char* path);

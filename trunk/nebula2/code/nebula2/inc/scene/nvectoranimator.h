@@ -11,12 +11,11 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#include "scene/nanimator.h"
+#include "scene/nkeyanimator.h"
 #include "gfx2/nshader2.h"
-#include "util/nipolkeyarray.h"
 
 //------------------------------------------------------------------------------
-class nVectorAnimator : public nAnimator
+class nVectorAnimator : public nKeyAnimator
 {
 public:
     /// constructor
@@ -43,7 +42,7 @@ public:
 
 private:
     nShaderState::Param vectorParameter;
-    nIpolKeyArray<vector4> keyArray;
+    nArray<Key> keyArray;
 };
 
 //------------------------------------------------------------------------------

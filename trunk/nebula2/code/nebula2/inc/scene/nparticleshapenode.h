@@ -31,8 +31,12 @@ public:
     virtual void RenderContextCreated(nRenderContext* renderContext);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// perform pre-instancing rending of geometry
+    virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
 
@@ -77,7 +81,6 @@ public:
 
 protected:
     nAutoRef<nParticleServer> refParticleServer;
-    nAutoRef<nVariableServer> refVariableServer;
 
     int emitterVarIndex;    ///< index of the emitter in the rendercontext
     nTime           emissionDuration;       ///< how long shall be emitted ?
@@ -134,11 +137,6 @@ inline bool nParticleShapeNode::GetLoop() const
 inline void nParticleShapeNode::SetActivityDistance(float f)
 {
     this->activityDistance = f;
-    bbox3  box;
-    box.begin_extend();
-    box.extend(vector3(-activityDistance, -activityDistance, -activityDistance));
-    box.extend(vector3(activityDistance, activityDistance, activityDistance));
-    this->SetLocalBox(box);
 }
 
 //------------------------------------------------------------------------------

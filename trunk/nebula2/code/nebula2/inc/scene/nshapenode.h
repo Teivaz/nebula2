@@ -36,7 +36,9 @@ public:
 
     /// indicate to scene server that we offer geometry for rendering
     virtual bool HasGeometry() const;
-    /// render geometry
+    /// perform pre-instancing rending of geometry
+    virtual bool ApplyGeometry(nSceneServer* sceneServer);
+    /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// get the mesh usage flags required by this shape node
     int GetMeshUsage() const;

@@ -68,12 +68,14 @@ public:
     void BeginStates(int num);
     /// add an animation state
     void SetState(int stateIndex, int animGroupIndex, float fadeInTime);
+    /// set optional state name
+    void SetStateName(int stateIndex, const nString& name);
     /// finish adding states
     void EndStates();
     /// get number of states
     int GetNumStates() const;
     /// get state attributes
-    void GetStateAt(int stateIndex, int& animGroupIndex, float& fadeInTime);
+    const nAnimState& GetStateAt(int stateIndex);
 
     /// begin adding clips to a state
     void BeginClips(int stateIndex, int numClips);
