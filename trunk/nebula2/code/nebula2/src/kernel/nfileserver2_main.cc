@@ -313,7 +313,6 @@ nFileServer2::InitHomeAssign()
             homePath.StripTrailingSlash();
             homePath = homePath.ExtractDirName();
             this->SetAssign("home", homePath.Get());
-            n_printf("home: %s", homePath.Get());
         }
         else
         {
@@ -321,7 +320,6 @@ nFileServer2::InitHomeAssign()
             // use the exe's directory as home path
             nPathString homePath = pathToExe.ExtractDirName();
             this->SetAssign("home", homePath.Get());
-            n_printf("home: %s", homePath.Get());
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
