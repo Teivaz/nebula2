@@ -142,8 +142,23 @@ nString nLuaServer::Prompt()
 
 
 //--------------------------------------------------------------------
-//  Run(const char *cmdStr, const char *& result)
-//--------------------------------------------------------------------
+/**
+    @brief Execute a chunk of Lua code and provide a string 
+           representation of the result.
+    @param cmdStr A null-terminated string of Lua code.
+    @param result Address of pointer that will point to the result
+                  string when this method returns.
+    @return true if Lua code ran without any errors, false otherwise.
+    @warning The result string should not be freed, the string is
+             owned by the nLuaServer. Likewise don't pass in the 
+             address of a pointer to a string which you allocated
+             unless you have a means of freeing that string after
+             this method returns (since the pointer won't be pointing
+             to your string anymore). Best to just pass in the address
+             of a pointer to NULL. The result string may be modified 
+             the next time an nLuaServer method is called, so make a
+             copy of it if you want it to stick around for a bit.
+*/
 bool nLuaServer::Run(const char *cmdStr, const char*& result)
 {
     n_assert(cmdStr);
@@ -157,15 +172,26 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
     if (0 == status) // parse OK?
         return this->ExecuteLuaChunk(result, errfunc);
     else
-        result = 0;
+    {
+        // pop error message from the stack
+        this->outputStr.Set("");
+        result = this->StackToString(this->L, lua_gettop(this->L) - 1);
+        if (0 == result[0]) // empty string?
+            result = 0; // don't want a blank to be printed in the console
+    }
     return false;
 }
 
 //--------------------------------------------------------------------
-//  RunScript()
-//  This function will allow explicit return statements from the
-//  file - and requires it for output.
-//--------------------------------------------------------------------
+/**
+    @brief Read in Lua code from a file and execute it.
+    @param result Please refer to nLuaServer::Run() documentation 
+                  for important details about this parameter.
+    @return true if Lua code ran without any errors, false otherwise.
+
+    This function will allow explicit return statements from the
+    file - and requires it for output.
+*/
 bool nLuaServer::RunScript(const char *filename, const char*& result)
 {
     n_assert(filename);
@@ -196,6 +222,18 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     nfile->Release();
     
     retval = this->Run(cmdbuf, result);
+    if (!retval)
+    {
+        if (result)
+        {
+            n_message("nLuaServer::RunScript failed:\nfile: %s\nmessage:\n%s\n", 
+                      path.Get(), result);
+        }
+        else
+        {
+            n_message("nLuaServer::RunScript failed:\nfile: %s\n", path.Get());
+        }
+    }
     n_free(cmdbuf);
     return retval;
 }
