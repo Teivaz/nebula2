@@ -162,8 +162,6 @@ beginmodule nmaxcontrollers
         nmaxprscontroller_rot
         nmaxprscontroller_scale
         nmaxikcontroller
-        nmaxpoint3controller
-        nmaxfloatcontroller
         nmaxpathcontroller
     }
     setheaders {
@@ -171,8 +169,6 @@ beginmodule nmaxcontrollers
         nmaxcontroller
         nmaxprscontroller
         nmaxikcontroller
-        nmaxpoint3controller
-        nmaxfloatcontroller
         nmaxpathcontroller
     }
 endmodule
