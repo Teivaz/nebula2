@@ -135,14 +135,14 @@ beginmodule nkernel
     setfiles {
         nkernelserver nkernel nmemory nclass ncmdproto ncmdprotonative
         nhardrefserver nthread nloghandler ndefaultloghandler
-        nwin32loghandler nrefcounted
+        nwin32loghandler nrefcounted ncrc
     }
     setheaders {
         nsystem ntypes ndebug nkernelserver nprofiler nclass
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
-        nrefcounted nguid nshell32wrapper
+        nrefcounted nguid nshell32wrapper ncrc
     }
 endmodule
 
