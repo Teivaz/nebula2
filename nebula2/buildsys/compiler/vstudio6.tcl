@@ -53,12 +53,12 @@ proc emit_files {name cid} {
                 #build a new source entry
 
                 set more_syms "/D N_INIT=n_init_$module /D N_FINI=n_fini_$module /D N_NEW=n_new_$module /D N_VERSION=n_version_$module /D N_INITCMDS=n_initcmds_$module"
-                
+
                 puts $cid "# Begin Source File"
-    	        puts $cid ""
-    		            
+                puts $cid ""
+
                 puts $cid "SOURCE=[pathto [getfilenamewithextension $filename cc] ]"
-    
+
                 set cpp "/TP"
                 if { [get_modtype $module] == "c" } { set cpp "/TC" }
 
@@ -90,7 +90,7 @@ proc emit_files {name cid} {
         }
     }
     # resource file group
-    if {[get_tartype $name] != "lib"} {
+    if {[get_tartype $name] == "exe"} {
         puts $cid "# Begin Group \"resources\""
         puts $cid ""
         puts $cid "# PROP Default_Filter \"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\""
@@ -113,6 +113,8 @@ proc emit_dsp_header {name cid type} {
         set tagline "Static Library"
         set vernum  "0x0104"
     } elseif {$type == "dll"} {
+        set tagline "Dynamic-Link Library"
+        set vernum  "0x0102"
     } else {
         set tagline "Application"
         set vernum  "0x0101"
@@ -174,7 +176,7 @@ proc emit_dsp_settings {name cid use_debug} {
     puts $cid ""
     
     if {$use_debug == 1} {
-	puts $cid "!IF  \"\$(CFG)\" == \"$name - Win32 Debug\""    
+        puts $cid "!IF  \"\$(CFG)\" == \"$name - Win32 Debug\""    
         set idir [path_wspacetointer]/win32d
         set odir [path_wspacetooutput]/win32d
         set win32_libs [get_win32libs_debug $name]        
@@ -185,7 +187,7 @@ proc emit_dsp_settings {name cid use_debug} {
         }
         set lib_path "/libpath:Debug"
     } else {
-	puts $cid "!ELSEIF  \"\$(CFG)\" == \"$name - Win32 Release\""
+        puts $cid "!ELSEIF  \"\$(CFG)\" == \"$name - Win32 Release\""
         set idir [path_wspacetointer]/win32
         set odir [path_wspacetooutput]/win32
          set win32_libs [get_win32libs_release $name]        
@@ -221,6 +223,8 @@ proc emit_dsp_settings {name cid use_debug} {
     
     if {[get_tartype $name] == "lib"} {
         puts $cid "MTL=midl.exe"
+    } elseif {[get_tartype $name] == "dll"} {
+        puts $cid "MTL=midl.exe"
     }
     
     puts $cid "# ADD BASE MTL /nologo /win32"
@@ -239,19 +243,23 @@ proc emit_dsp_settings {name cid use_debug} {
     puts $cid "# ADD BSC32 /nologo"
 
     if {[get_tartype $name] == "lib" } {
-	puts $cid "LINK32=link.exe -lib"
-        puts $cid "# ADD BASE LIB32 $win32_libs /nologo $lib_path"
-        puts $cid "# ADD LIB32 $win32_libs /nologo $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
+        puts $cid "LINK32=link.exe -lib"
+        puts $cid "# ADD BASE LINK32 $win32_libs /nologo $lib_path"
+        puts $cid "# ADD LINK32 $win32_libs /nologo $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
+    } elseif {[get_tartype $name] == "dll"} {
+        puts $cid "LINK32=link.exe"
+        puts $cid "# ADD BASE LINK32 $win32_libs /nologo /dll /machine:I386 $lib_path"
+        puts $cid "# ADD LINK32 $win32_libs /nologo /dll /machine:I386 $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
     } else {
         set linkdbg ""
         if {$use_debug == 1} {
             set linkdbg "/debug "
         }
-	puts $cid "LINK32=link.exe"
-	puts $cid "# ADD BASE LINK32 user32.lib gdi32.lib advapi32.lib $win32_libs /nologo $linkdbg/machine:IX86 /pdbtype:sept $lib_path"
-	puts $cid "# SUBTRACT BASE LINK32 /pdb:none"
-	puts $cid "# ADD LINK32 user32.lib gdi32.lib advapi32.lib $win32_libs /nologo $linkdbg/machine:IX86 /pdbtype:sept $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
-	puts $cid "# SUBTRACT LINK32 /pdb:none"
+        puts $cid "LINK32=link.exe"
+        puts $cid "# ADD BASE LINK32 user32.lib gdi32.lib advapi32.lib $win32_libs /nologo $linkdbg/machine:IX86 /pdbtype:sept $lib_path"
+        puts $cid "# SUBTRACT BASE LINK32 /pdb:none"
+        puts $cid "# ADD LINK32 user32.lib gdi32.lib advapi32.lib $win32_libs /nologo $linkdbg/machine:IX86 /pdbtype:sept $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
+        puts $cid "# SUBTRACT LINK32 /pdb:none"
     }
     
     if {$use_debug == 0} {
@@ -264,7 +272,7 @@ proc emit_dsp_settings {name cid use_debug} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_lib_dsp $wspace_idx $tarname
+#   gen_lib_dsp $wspace_idx $tarname
 #   Creates a .dsp file for static lib targets (console or window)
 #-----------------------------------------------------------------------------------------
 proc gen_lib_dsp {name} {
@@ -285,7 +293,28 @@ proc gen_lib_dsp {name} {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_exe_dsp $name
+#   gen_dll_dsp $wspace_idx $tarname
+#   Creates a .dsp file for dynamic lib targets (console or window)
+#-----------------------------------------------------------------------------------------
+proc gen_dll_dsp {name} {
+    global home
+    global cur_workspacepath
+   
+    puts "Generate dll target: $name"
+
+    # write .dsp file
+    set cid [open [cleanpath $home/$cur_workspacepath/$name.dsp] w]
+
+    emit_dsp_header $name $cid dll
+    emit_dsp_settings $name $cid 1
+    emit_dsp_settings $name $cid 0
+    emit_files $name $cid
+   
+    close $cid
+}
+
+#-----------------------------------------------------------------------------------------
+#   gen_exe_dsp $name
 #   Creates a .dsp file for app targets (console or window)
 #-----------------------------------------------------------------------------------------
 proc gen_exe_dsp {name} {
@@ -307,7 +336,7 @@ proc gen_exe_dsp {name} {
 
 
 #-----------------------------------------------------------------------------------------
-#	gen_dsw $wspace_idx
+#   gen_dsw $wspace_idx
 #   Creates a .dsw file
 #-----------------------------------------------------------------------------------------
 proc gen_dsw { name } {
@@ -368,7 +397,7 @@ proc gen_dsw { name } {
 }
 
 #-----------------------------------------------------------------------------------------
-#	gen_workspace 
+#   gen_workspace 
 #   Generates the .dsp and .dsw file for all workspaces
 #-----------------------------------------------------------------------------------------
 proc generate {} {
@@ -398,8 +427,7 @@ proc generate {} {
             } elseif {$t == "exe" } {
                 gen_exe_dsp $target
             } elseif {$t == "dll" } {
-                #FIXME
-                #gen_dll_dsp $target
+                gen_dll_dsp $target
             } else {
                 puts "ERROR: Unknown target type $t for target $target"
                 exit
