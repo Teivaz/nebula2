@@ -2,10 +2,9 @@
 #define N_GUITEXTBUTTON_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiTextButton
+    @class nGuiTextButton
     @ingroup NebulaGuiSystem
-
-    A gui button which contains a label text.
+    @brief A gui button which contains a label text.
     
     (C) 2003 RadonLabs GmbH
 */

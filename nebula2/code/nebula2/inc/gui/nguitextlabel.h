@@ -2,10 +2,9 @@
 #define N_GUITEXTLABEL_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiTextLabel
+    @class nGuiTextLabel
     @ingroup NebulaGuiSystem
-
-    Uses the text server to render a gui label which contains ASCII
+    @brief Uses the text server to render a gui label which contains ASCII
     text.
     
     (C) 2003 RadonLabs GmbH

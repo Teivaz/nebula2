@@ -4,8 +4,7 @@
 /**
     @class nGuiTextEntry
     @ingroup NebulaGuiSystem
-
-    A text entry widget.
+    @brief A text entry widget.
     
     (C) 2003 RadonLabs GmbH
 */

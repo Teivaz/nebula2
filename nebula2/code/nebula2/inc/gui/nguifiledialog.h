@@ -2,11 +2,11 @@
 #define N_GUIFILEDIALOG_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiFileDialog
+    @class nGuiFileDialog
     @ingroup NebulaGuiSystem
+    @brief A file dialog base class.
 
-    A file dialog base class. Implement OnOk() and OnCancel() behaviour in a 
-    derived subclass.
+    Implement OnOk() and OnCancel() behaviour in a derived subclass.
     
     (C) 2004 RadonLabs GmbH
 */

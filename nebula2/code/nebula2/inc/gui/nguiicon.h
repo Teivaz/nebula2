@@ -4,8 +4,7 @@
 /**
     @class nGuiIcon
     @ingroup NebulaGuiSystem
-
-    A drag and drop icon widget.
+    @brief A drag and drop icon widget.
 
     (C) 2003 RadonLabs GmbH
 */

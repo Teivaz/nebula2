@@ -4,8 +4,7 @@
 /**
     @class nGuiSlider
     @ingroup NebulaGuiSystem
-
-    A scroll bar widget.
+    @brief A scroll bar widget.
     
     (C) 2003 RadonLabs GmbH
 */

@@ -4,8 +4,7 @@
 /**
     @class nGuiSystemInfoWindow
     @ingroup NebulaGuiSystem
-
-    A Nebula system information window.
+    @brief A Nebula system information window.
     
     (C) 2004 RadonLabs GmbH
 */

@@ -2,12 +2,13 @@
 #define N_GUIEVENT_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiEvent
+    @class nGuiEvent
     @ingroup NebulaGuiSystem
+    @brief A gui event class.
 
-    A gui event class. Gui events are fired through the nGuiServer::PutEvent()
-    method. Widgets can register with the nGuiServer to be notified 
-    through the nGuiWidget::OnEvent() method when events occur.
+    Gui events are fired through the nGuiServer::PutEvent() method. Widgets
+    can register with the nGuiServer to be notified through the
+    nGuiWidget::OnEvent() method when events occur.
     
     (C) 2004 RadonLabs GmbH
 */

@@ -2,10 +2,9 @@
 #define N_GUICHECKBUTTONGROUP_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiCheckButtonGroup
+    @class nGuiCheckButtonGroup
     @ingroup NebulaGuiSystem
-
-    Groups child check buttons so that only one is selected at any time.
+    @brief Groups child check buttons so that only one is selected at any time.
     
     (C) 2003 RadonLabs GmbH
 */

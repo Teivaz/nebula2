@@ -2,12 +2,12 @@
 #define N_GUICYCLEBUTTON_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiCycleButton
+    @class nGuiCycleButton
     @ingroup NebulaGuiSystem
-
-    A gui button which contains several text labels. Only one label can be
-    active at a time. If the button will be clicked, the next label becomes
-    active. (Note: The labels must be unique)
+    @brief A gui button which contains several text labels.
+    
+    Only one label can be active at a time. If the button will be clicked,
+    the next label becomes active. (Note: The labels must be unique)
     
     (C) 2003 RadonLabs GmbH
 */

@@ -4,9 +4,8 @@
 /**
     @class nGuiTexBrowserWindow
     @ingroup NebulaGuiSystem
-
-    A window to browse the currently loaded textures and display information
-    about them.
+    @brief A window to browse the currently loaded textures and display
+    information about them.
     
     (C) 2004 RadonLabs GmbH
 */
