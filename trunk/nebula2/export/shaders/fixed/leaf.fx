@@ -7,13 +7,13 @@
 //  
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 InvModelView;                 // inverse of model view
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelLightPos;             // the light's position in model space
-float4   ModelEyePos;               // the eye position in model space
+shared float4x4 InvModelView;               // inverse of model view
+shared float4x4 ModelViewProjection;        // the model*view*projection matrix
+shared float4x4 ModelLightProjection;       // the model*light*projection matrix
+shared float3   ModelLightPos;              // the light's position in model space
+shared float3   ModelEyePos;                // the eye position in model space
 
 float4 MatAmbient;
 float4 MatDiffuse;
@@ -71,7 +71,7 @@ struct PsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -123,7 +123,8 @@ VsOutput vsMain(const VsInput vsIn)
     
     // compute a fake lighting intensity (dot(N, L)
     float3 posCenter = vsIn.position - BoxCenter;
-    float diffIntensity = 1.0 + clamp(dot(normalize(posCenter), lVec), -1.0, 0.0); // max for angles < 90 degrees
+//    float diffIntensity = 1.0 + clamp(dot(normalize(posCenter), lVec), -1.0, 0.0); // max for angles < 90 degrees
+    float diffIntensity = (dot(normalize(posCenter), lVec) + 1.0)*0.5;
   
     // compute a selfshadowing value
     float relDistToCenter = length(posCenter) / distance(BoxMaxPos, BoxCenter);

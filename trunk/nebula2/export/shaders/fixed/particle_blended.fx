@@ -5,8 +5,8 @@
 //  
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 InvModelView;			    // the inverse model*view matrix
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 InvModelView;			    // the inverse model*view matrix
 
 texture DiffMap0;
 
@@ -53,18 +53,18 @@ VsOutput vsMain(const VsInput vsIn)
         0.0f,    0.0f,   1.0f,
     };
 
-    float4 position =  vsIn.position;
-    float3 extrude  =  float3(vsIn.extrude, 0.0f);
-    extrude        *= size;
-    extrude         =  mul(rot, extrude);    
-    extrude         =  mul(extrude, (float3x3) InvModelView);
-    position.xyz   += extrude.xyz;
+    float4	position    =  vsIn.position;
+    float3  extrude     =  float3(vsIn.extrude, 0.0f);
+    extrude             *= size;
+    extrude             =  mul(rot, extrude);    
+    extrude             =  mul(extrude, (float3x3) InvModelView);
+    position.xyz        += extrude.xyz;
         
 	VsOutput vsOut;
     // transform to projection space
     vsOut.position      = mul(position, ModelViewProjection);
     vsOut.uv0           = vsIn.uv0;
-    vsOut.diffuse       = vsIn.color * vsIn.color.a;
+    vsOut.diffuse       = vsIn.color;
 
     return vsOut;
 }
@@ -85,15 +85,16 @@ technique t0
         AlphaBlendEnable = True;
         SrcBlend		 = SRCALPHA;
         DestBlend		 = INVSRCALPHA;
-        
-        
+                
         AlphaTestEnable  = False;
         AlphaFunc        = Greaterequal;
         AlphaRef         = 100;
 
         CullMode   = <CullMode>;
         Texture[0] = <DiffMap0>;
-
+        
+        FogEnable = False;
+        
         VertexShader = compile vs_2_0 vsMain();
         PixelShader = 0;
 
@@ -105,7 +106,7 @@ technique t0
  
         AlphaOp[0] = Modulate;
         AlphaArg1[0] = Texture;
-        AlphaArg2[0] = Diffuse;
+        AlphaArg2[0] = Current;
 
         AlphaOp[1] = Disable;
     }

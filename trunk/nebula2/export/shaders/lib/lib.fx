@@ -290,7 +290,7 @@ fog(const float3 pos,
     @return                     a shadow modulation color
 */
 float4
-shadow(const float4 shadowPos, float distOffset, sampler noiseSampler, sampler shadowMapSampler, sampler shadowModSampler)
+shadow(const float4 shadowPos, float distOffset, sampler shadowMapSampler)
 {
     // get projected position in shadow space
     float3 projShadowPos = shadowPos.xyz / shadowPos.w;
@@ -303,33 +303,30 @@ shadow(const float4 shadowPos, float distOffset, sampler noiseSampler, sampler s
     
     // in/out test
     float4 shadowModulate;
-    if ((shadowDepth.x > projShadowPos.z) || (shadowPos.z > shadowPos.w))
+    if ((projShadowPos.x < 0.0f) || 
+        (projShadowPos.x > 1.0f) ||
+        (projShadowPos.y < 0.0f) ||
+        (projShadowPos.y > 1.0f))
+    {
+        // outside shadow projection
+        shadowModulate = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    else if ((shadowDepth.x > projShadowPos.z) || (shadowPos.z > shadowPos.w))
     {
         // not in shadow
         shadowModulate = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else
     {    
+        shadowModulate = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    
         // in shadow
-        shadowModulate = tex2D(shadowModSampler, projShadowPos.xy);
+        //shadowModulate = tex2D(shadowModSampler, projShadowPos.xy);
         //float4 shadowColor = tex2D(shadowModSampler, projShadowPos.xy);
         //float4 blendColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
         //float relDist = saturate((projShadowPos.z - shadowDepth.x) * 20.0f);
         //shadowModulate = lerp(shadowColor, blendColor, relDist);
     }
-    
-/*
-    CAN BE USED TO VISUALIZE SHADOW PROJECTION AREA    
-if ((shadowPos.x < -shadowPos.w) ||
-    (shadowPos.x > shadowPos.w) ||
-    (shadowPos.y < -shadowPos.w) ||
-    (shadowPos.y > shadowPos.w) ||
-    (shadowPos.z < -shadowPos.w) ||
-    (shadowPos.z > shadowPos.w))
-{
-    shadowModulate = float4(1.0f, 0.0f, 0.0f, 1.0f);
-}
-*/
     return shadowModulate;
 }
 
@@ -388,7 +385,7 @@ psLighting(in sampler diffSampler,
     float4 bumpColor = tex2D(bumpSampler, uv);
 
     // compute surface normal in tangent space
-    float3 tangentSurfaceNormal = 2.0f * (bumpColor.rgb - 0.5f);
+    float3 tangentSurfaceNormal = (2.0f * bumpColor.rgb) - 1.0f;
     
     // compute light intensities
     float primDiffIntensity = saturate(dot(tangentSurfaceNormal, normalize(primLightVec)));
@@ -399,8 +396,8 @@ psLighting(in sampler diffSampler,
     float4 specColor = primSpecIntensity * primSpecular;
     float4 envColor  = mapColor * primAmbient;
     float4 color;
-    color.rgb = (diffColor + specColor) + envColor;
-    color.a = mapColor.a;
+    color.rgba = (diffColor + specColor) + envColor;
+     // color.a = mapColor.a;
     return color;
 }
 
@@ -644,12 +641,10 @@ float3
 MieCoeffTotal()
 {
     const float3 K = {0.685, 0.679, 0.656};  // different for red, green and blue
-    //const float3 lambda = {650e-9, 570e-9, 475e-9};  // red, green, blue
-    const float3 lambda = {0.000000650, 0.000000570, 0.000000475};  // red, green, blue
+    const float3 lambda = {650e-9, 570e-9, 475e-9};  // red, green, blue
     float3 lambda2 = pow(lambda, 2.0);
 
-    //float c = lerp(6e-17, 25e-17, scatterTurbidiy);
-    float c = lerp(0.00000000000000006, 0.000000000000000025, scatterTurbidiy);
+    float c = lerp(6e-17, 25e-17, scatterTurbidiy);
     return 0.434 * c * pow(pi, 3.0) * 4.0 * K / lambda2;
 }
 
@@ -741,8 +736,7 @@ vsAthmoFog(in const float3 vertPos,
 
     float3 betaRTotal = 0.5 * RayleighCoeffTotal();
     float3 betaRAngular = RayleighCoeffAngular(betaRTotal, cosViewSunAngle);
-    //float3 betaMTotal = 1e-3 * MieCoeffTotal();
-    float3 betaMTotal = 0.001 * MieCoeffTotal();
+    float3 betaMTotal = 1e-3 * MieCoeffTotal();
     float3 betaMAngular = MieCoeffAngular(betaMTotal, cosViewSunAngle);
     
     outscattered = OutscatterCoeff(betaRTotal, betaMTotal, relVertDist*6);
@@ -792,8 +786,7 @@ vsSky(in const float3 vertPos,
     
     float3 betaRTotal = 0.5 * RayleighCoeffTotal();
     float3 betaRAngular = RayleighCoeffAngular(betaRTotal, cosViewSunAngle);
-    //float3 betaMTotal = 1e-3 * MieCoeffTotal();
-    float3 betaMTotal = 0.001 * MieCoeffTotal();
+    float3 betaMTotal = 1e-3 * MieCoeffTotal();
     float3 betaMAngular = MieCoeffAngular(betaMTotal, cosViewSunAngle);
 
     float3 outscattered = OutscatterCoeff(betaRTotal, betaMTotal, 8400.0 * relWay);

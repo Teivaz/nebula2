@@ -22,6 +22,9 @@ float  MatSpecularPower;
 
 int AlphaRef = 100;
 
+int AlphaSrcBlend = 5;              // SrcAlpha
+int AlphaDstBlend = 6;              // InvSrcAlpha
+
 texture DiffMap0;
 
 float4 LightAmbient;                // light's ambient component
@@ -45,24 +48,25 @@ technique t0
     	ProjectionTransform = <Projection>;
     	TextureTransform[0] = <TextureTransform0>;
 
-        ZWriteEnable     = True;
+        ZWriteEnable     = false;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
-        ZEnable          = True;
+        ZEnable          = true;
         ZFunc            = LessEqual;
-        AlphaBlendEnable = False;
-        NormalizeNormals = True;
-        
-        AlphaTestEnable  = True;
-        AlphaFunc        = Greaterequal;
-        AlphaRef         = <AlphaRef>;
-
         CullMode = <CullMode>;
 
+        AlphaBlendEnable = true;
+        SrcBlend         = <AlphaSrcBlend>;
+        DestBlend        = <AlphaDstBlend>;
+        
+        AlphaTestEnable  = false;
+
+        NormalizeNormals = true;
+        
         VertexShader = 0;
         PixelShader  = 0;
 
         MaterialDiffuse  = <MatDiffuse>;
-        MaterialAmbient  = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        MaterialAmbient  = <MatAmbient>;
         MaterialSpecular = <MatSpecular>;
         MaterialPower    = <MatSpecularPower>;
 

@@ -1,13 +1,15 @@
 //------------------------------------------------------------------------------
-//  gui.fx
+//  hdrfilter.fx
 //
-//  A 2d rectangle shader for GUI rendering.
+//  Post effect shader for the hdr renderer. Applies a filter kernel.
+//
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "shaders:../lib/lib.fx"
 
-shared float4x4 ModelViewProjection;   // the modelview*projection matrix
 texture DiffMap0;
-float4 MatDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+float4 SampleOffsets[15];
+float4 SampleWeights[15];
 
 //------------------------------------------------------------------------------
 //  declare shader input/output parameters
@@ -24,22 +26,17 @@ struct vsOutput
     float2 uv0 : TEXCOORD0;
 };
 
-struct psOutput
-{
-    float4 color : COLOR0;
-};
-
 //------------------------------------------------------------------------------
 //  Texture sampler definitions
 //------------------------------------------------------------------------------
-sampler ColorMap = sampler_state
+sampler SourceSampler = sampler_state
 {
     Texture = <DiffMap0>;
     AddressU = Clamp;
     AddressV = Clamp;
-    MinFilter = Linear;
-    MagFilter = Linear;
-    MipFilter = None;
+    MinFilter = Point;
+    MagFilter = Point;
+    MipFilter = Point;
 };
 
 //------------------------------------------------------------------------------
@@ -48,23 +45,25 @@ sampler ColorMap = sampler_state
 vsOutput vsMain(const vsInput vsIn)
 {
     vsOutput vsOut;
-    vsOut.position = mul(vsIn.position, ModelViewProjection);
+    vsOut.position = vsIn.position;
     vsOut.uv0 = vsIn.uv0;
     return vsOut;
 }
 
 //------------------------------------------------------------------------------
-//  the pixel shader function
+//  Pixel shader to apply a filter kernel with 15 samples.
 //------------------------------------------------------------------------------
-psOutput psMain(const vsOutput psIn)
+float4 psMain(const vsOutput psIn) : COLOR
 {
-    psOutput psOut;
-    psOut.color = tex2D(ColorMap, psIn.uv0) * MatDiffuse;
-    return psOut;
+    int i;
+    float4 color = { 0.0f, 0.0f, 0.0f, 1.0f };
+    for (i = 0; i < 15; i++)
+    {
+        color += SampleWeights[i] * tex2D(SourceSampler, psIn.uv0 + SampleOffsets[i].xy);
+    }
+    return color;
 }
 
-//------------------------------------------------------------------------------
-//  Technique: VertexShader 1.1, PixelShader 1.1, 1 Texture Layer
 //------------------------------------------------------------------------------
 technique t0
 {
@@ -74,14 +73,12 @@ technique t0
         ZEnable          = False;
         // ZFunc         = LessEqual;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = True;
-        SrcBlend         = SrcAlpha;
-        DestBlend        = InvSrcAlpha;
+        AlphaBlendEnable = False;
         AlphaTestEnable  = False;
-
-        CullMode = None;
+        CullMode         = None;
         
         VertexShader = compile vs_2_0 vsMain();
         PixelShader = compile ps_2_0 psMain();
     }
 }
+        

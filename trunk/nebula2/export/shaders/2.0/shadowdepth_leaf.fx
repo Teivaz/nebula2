@@ -5,10 +5,10 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 InvModelView;              // inverse of model view
-float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 InvModelView;              // inverse of model view
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
 
 texture DiffMap0;
 
@@ -46,7 +46,7 @@ struct VsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  the vertex shader

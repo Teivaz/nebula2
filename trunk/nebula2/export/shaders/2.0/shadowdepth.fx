@@ -5,9 +5,9 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;   // the modelview*projection matrix of the light source
+shared float4x4 ModelViewProjection;   // the modelview*projection matrix of the light source
 
 //------------------------------------------------------------------------------
 //  declare shader input/output parameters

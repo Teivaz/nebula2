@@ -7,14 +7,12 @@
 //  
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 Model;                     // the model matrix
-float4x4 InvModelView;              // inverse of model view
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelLightPos;             // the light's position in model space
-float4   ModelEyePos;               // the eye position in model space
+shared float4x4 InvModelView;           // inverse of model view
+shared float4x4 ModelViewProjection;    // the model*view*projection matrix
+shared float3   ModelLightPos;          // the light's position in model space
+shared float3   ModelEyePos;            // the eye position in model space
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color
@@ -59,16 +57,16 @@ struct VsOutput
 {
     float4 position : POSITION;         // position in projection space
     float2 uv0      : TEXCOORD0;        // texture coordinate
-    float3 F_ex         : TEXCOORD2;    // light outscatter coefficient
-    float3 L_in         : TEXCOORD3;    // light inscatter coefficient
+    // float3 F_ex         : TEXCOORD2;    // light outscatter coefficient
+    // float3 L_in         : TEXCOORD3;    // light inscatter coefficient
     float4 diffuse      : COLOR0;
 };
 
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
-#include "../lib/bumpsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
+#include "shaders:../lib/bumpsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -121,10 +119,11 @@ VsOutput vsMain(const VsInput vsIn)
     float selfShadow = lerp(InnerLightIntensity, OuterLightIntensity, relDistToCenter);
         
     // compute lighting
-    float diffIntensity = 1.0 + clamp(dot(normal, lVec), -1.0, 0.0);    // max for angles < 90 degrees
+//    float diffIntensity = 1.0 + clamp(dot(normal, lVec), -1.0, 0.0);    // max for angles < 90 degrees
+    float diffIntensity = (dot(normal, lVec) + 1.0)*0.5;
     vsOut.diffuse = diffIntensity * LightDiffuse * MatDiffuse * selfShadow;
 
-    vsAthmoFog(vsIn.position, ModelEyePos, ModelLightPos, vsOut.L_in, vsOut.F_ex);
+    // vsAthmoFog(vsIn.position, ModelEyePos, ModelLightPos, vsOut.L_in, vsOut.F_ex);
 
     return vsOut;
 }
@@ -137,7 +136,8 @@ float4 psMain(const VsOutput psIn) : COLOR
     // compute lit color
     float4 baseColor = psLightingLeaf(DiffSampler, psIn.uv0, psIn.diffuse, LightAmbient);
 
-    return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
+    // return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
+    return baseColor;
 }
 
 //------------------------------------------------------------------------------

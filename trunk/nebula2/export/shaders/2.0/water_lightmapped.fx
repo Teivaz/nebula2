@@ -5,12 +5,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 Model;                     // the model matrix
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4 ModelEyePos;                 // the eye position in model space
+shared float4x4 Model;                     // the model matrix
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 ModelLightProjection;      // the model*light*projection matrix
+shared float3 ModelEyePos;                 // the eye position in model space
 
 float4 MatDiffuse;                  // the water color
 float MatTransparency;              // the water color "intensity"
@@ -97,8 +97,8 @@ struct PsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/lightsampler.fx"
-#include "../lib/lightmapsampler.fx"
+#include "shaders:../lib/lightsampler.fx"
+#include "shaders:../lib/lightmapsampler.fx"
 
 sampler Bump0Sampler = sampler_state
 {

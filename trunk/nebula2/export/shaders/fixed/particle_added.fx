@@ -5,8 +5,8 @@
 //  
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 InvModelView;			    // the inverse model*view matrix
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 InvModelView;			    // the inverse model*view matrix
 
 texture DiffMap0;
 
@@ -89,6 +89,9 @@ technique t0
         AlphaTestEnable  = False;
         AlphaFunc        = Greaterequal;
         AlphaRef         = 100;
+
+        FogEnable = False;
+  
 
         CullMode = <CullMode>;
         Texture[0] = <DiffMap0>;

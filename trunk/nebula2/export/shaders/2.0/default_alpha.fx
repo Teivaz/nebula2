@@ -1,15 +1,13 @@
 //------------------------------------------------------------------------------
-//  ps2.0/default.fx
-//
-//  The default shader for dx9 cards using vertex/pixel shader 2.0.
+//  ps2.0/default_alpha.fx
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "shaders:../lib/lib.fx"
 
-shared float4x4 ModelViewProjection;       // the model*view*projection matrix
-shared float3   ModelEyePos;               // the eye position in model space
-shared float3   ModelLightPos;             // the light position in model space
+shared float4x4 ModelViewProjection;    // the model*view*projection matrix
+shared float3   ModelEyePos;            // the eye position in model space
+shared float3   ModelLightPos;          // the light position in model space
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color
@@ -21,8 +19,10 @@ float  MatSpecularPower;            // the material's specular power
 texture DiffMap0;                   // 2d texture
 texture BumpMap0;                   // 2d texture
 
-int  AlphaRef = 100;
-int  CullMode = 2;                   // CW
+int  CullMode = 2;                  // CW
+
+int AlphaSrcBlend = 5;              // SrcAlpha
+int AlphaDstBlend = 6;              // InvSrcAlpha
 
 static bool EnableShadows = true;
 
@@ -43,8 +43,8 @@ struct VsOutput
     float2 uv0          : TEXCOORD0;        // texture coordinate
     float3 primLightVec : TEXCOORD1;        // primary light vector
     float3 primHalfVec  : TEXCOORD2;        // primary half vector
-//    float3 F_ex         : TEXCOORD3;        // light outscatter coefficient
-//    float3 L_in         : TEXCOORD4;        // light inscatter coefficient
+    // float3 F_ex         : TEXCOORD3;        // light outscatter coefficient
+    // float3 L_in         : TEXCOORD4;        // light inscatter coefficient
 };
 
 //------------------------------------------------------------------------------
@@ -92,19 +92,17 @@ technique t0
 {
     pass p0
     {
-        ZWriteEnable = true;
+        ZWriteEnable = false;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
         ZEnable          = true;
         ZFunc            = LessEqual;
         CullMode         = <CullMode>;
 
-        AlphaBlendEnable = false;
+        AlphaBlendEnable = true;
+        SrcBlend         = <AlphaSrcBlend>;
+        DestBlend        = <AlphaDstBlend>;
         
-        AlphaTestEnable  = true;
-        AlphaFunc        = GreaterEqual;
-        AlphaRef         = <AlphaRef>;
-
-        FogEnable = false;
+        AlphaTestEnable  = false;
         
         VertexShader = compile vs_2_0 vsMain();
         PixelShader  = compile ps_2_0 psMain();

@@ -5,12 +5,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelLightPos;             // the light's position in model space
-float4   ModelEyePos;               // the eye position in model space
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 ModelLightProjection;      // the model*light*projection matrix
+shared float3   ModelLightPos;             // the light's position in model space
+shared float3   ModelEyePos;               // the eye position in model space
 matrix<float,4,3> JointPalette[72];            // the joint palette for skinning
 
 float4 MatAmbient;
@@ -51,7 +51,7 @@ struct VsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.

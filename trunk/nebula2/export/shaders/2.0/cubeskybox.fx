@@ -1,36 +1,40 @@
 //------------------------------------------------------------------------------
-//  ps2.0/additive.fx
+//  2.0/cubeskybox.fx
 //
-//  A simple unlit, additive transparency shader.
+//  A skybox textured by a cube map.
 //
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "shaders:../lib/lib.fx"
+#include "../lib/lib.fx"
 
-shared float4x4 ModelViewProjection;        // the model*view*projection matrix
-float4 MatDiffuse;                          // material diffuse color
-texture DiffMap0;                           // 2d texture
-int CullMode = 2;
+shared float4x4 ModelViewProjection;
+shared float4x4 Model;
 
-//------------------------------------------------------------------------------
-//  shader input/output declarations
+texture CubeMap0;
+float4 MatDiffuse;
+
 //------------------------------------------------------------------------------
 struct VsInput
 {
-    float4 position : POSITION;
-    float2 uv0 :      TEXCOORD0;
+    float4 position  : POSITION;  // the particle position in world space
 };
 
 struct VsOutput
 {
-    float4 position     : POSITION;
-    float2 uv0          : TEXCOORD0;
+    float4 position : POSITION;
+    float3 uv0 : TEXCOORD0;
 };
 
 //------------------------------------------------------------------------------
-//  Texture samplers
-//------------------------------------------------------------------------------
-#include "shaders:../lib/diffsampler.fx"
+sampler EnvMapSampler = sampler_state
+{
+    Texture = <CubeMap0>;
+	MinFilter = Linear;
+	MagFilter = Linear;
+	MipFilter = Linear;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -39,7 +43,7 @@ VsOutput vsMain(const VsInput vsIn)
 {
     VsOutput vsOut;
     vsOut.position = mul(vsIn.position, ModelViewProjection);
-    vsOut.uv0 = vsIn.uv0;
+    vsOut.uv0      = mul(vsIn.position, (float3x3)Model);
     return vsOut;
 }
 
@@ -48,7 +52,7 @@ VsOutput vsMain(const VsInput vsIn)
 //------------------------------------------------------------------------------
 float4 psMain(const VsOutput psIn) : COLOR
 {
-    return tex2D(DiffSampler, psIn.uv0) * MatDiffuse;
+    return texCUBE(EnvMapSampler, psIn.uv0) * MatDiffuse;
 }
 
 //------------------------------------------------------------------------------
@@ -58,18 +62,23 @@ technique t0
 {
     pass p0
     {
-        ZWriteEnable = false;
+        ZWriteEnable = true;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
-        ZEnable          = True;
+        ZEnable          = true;
         ZFunc            = LessEqual;
-        AlphaBlendEnable = True;
-        SrcBlend		 = One;
-        DestBlend		 = One;
-        CullMode         = <CullMode>;
-        
-        AlphaTestEnable  = False;
+        CullMode         = CCW;
+
+        AlphaBlendEnable = false;
+        AlphaTestEnable  = false;
+        FogEnable        = false;
         
         VertexShader = compile vs_2_0 vsMain();
         PixelShader  = compile ps_2_0 psMain();
     }
 }
+
+    
+
+    
+
+

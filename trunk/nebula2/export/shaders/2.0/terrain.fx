@@ -6,16 +6,16 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-/*
-float4 SunColor;
-float4 SunDir;
-*/
-float4x4 ModelLightProjection;
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float3 ModelEyePos;
+#include "shaders:../lib/lib.fx"
+
+shared float4x4 ModelShadowProjection;
+shared float4x4 ModelViewProjection;        // the model*view*projection matrix
+shared float3 ModelEyePos;
+shared float3 ModelLightPos;
+
 float4 MatDiffuse;                  // material diffuse color
-float3 ModelLightPos;
+
+float3 SunPos = float3(-100000, 2000, -26800);
 
 float4 TexGenS;                     // texgen parameters for u
 float4 TexGenT;                     // texgen parameters for v
@@ -25,6 +25,7 @@ texture DiffMap0;                   // grass tile texture
 texture DiffMap1;                   // rock tile texture
 texture DiffMap2;                   // ground tile texture
 texture DiffMap3;                   // snow tile texture
+texture ShadowMap;
 
 int AlphaRef = 100;
 int CullMode = 2;
@@ -35,6 +36,8 @@ float TexScale = 0.008f;
 float DetailTexScale = 0.1f;
 
 float4 SnowAmplify = { 1.2, 1.2, 1.3, 0.0 };
+
+static bool EnableShadows = true;
 
 //------------------------------------------------------------------------------
 //  shader input/output declarations
@@ -53,6 +56,7 @@ struct VsOutput
     float1 fog : TEXCOORD3;             // x: reldist
     float3 F_ex : TEXCOORD4;            // light outscatter coefficient
     float3 L_in : TEXCOORD5;            // light inscatter coefficient
+    float4 shadowPos : TEXCOORD6;        // the light position
 };
 
 //------------------------------------------------------------------------------
@@ -65,10 +69,20 @@ sampler WeightSampler = sampler_state
     AddressV  = Clamp;
     MinFilter = Linear;
     MagFilter = Linear;
+    MipFilter = Point;
+};
+
+sampler ShadowMapSampler = sampler_state
+{
+    Texture = <ShadowMap>;
+    AddressU = Clamp;
+    AddressV = Clamp;
+    MinFilter = Point;
+    MagFilter = Point;
     MipFilter = None;
 };
 
-sampler GrassSampler  = sampler_state
+sampler GrassSampler = sampler_state
 {
     Texture = <DiffMap0>;
     AddressU  = Wrap;
@@ -115,6 +129,7 @@ VsOutput vsMain(const VsInput vsIn)
 {
     VsOutput vsOut;
     vsOut.position = mul(vsIn.position, ModelViewProjection);
+    vsOut.shadowPos = mul(vsIn.position, ModelShadowProjection);
     
     // generate texture coordinates after OpenGL rules
     vsOut.uv0.x = dot(vsIn.position, TexGenS);
@@ -124,7 +139,7 @@ VsOutput vsMain(const VsInput vsIn)
     float eyeDist = distance(ModelEyePos, vsIn.position);
     vsOut.fog.x = 1.0f - saturate(eyeDist / DetailEnd);
 
-    vsAthmoFog(vsIn.position, ModelEyePos, ModelLightPos, vsOut.L_in, vsOut.F_ex);
+    vsAthmoFog(vsIn.position, ModelEyePos, SunPos, vsOut.L_in, vsOut.F_ex);
     vsOut.F_ex *= saturate(lerp(SunColor, 1.0, 0.3));
 
     return vsOut;
@@ -143,6 +158,12 @@ float4 psMain(const VsOutput psIn) : COLOR
     baseColor += matWeights.y * lerp(tex2D(RockSampler, psIn.uv1), tex2D(RockSampler, psIn.uv2), psIn.fog.x);
     baseColor += matWeights.z * lerp(tex2D(GroundSampler, psIn.uv1), tex2D(GroundSampler, psIn.uv2), psIn.fog.x);
     baseColor += matWeights.w * SnowAmplify * tex2D(SnowSampler, psIn.uv1);
+    
+    if (EnableShadows)
+    {
+        float4 shadowModulate = shadow(psIn.shadowPos, 0.0f, ShadowMapSampler);
+        baseColor *= shadowModulate;
+    }
     
     return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
 }                                     

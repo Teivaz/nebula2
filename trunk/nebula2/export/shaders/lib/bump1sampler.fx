@@ -10,5 +10,5 @@ sampler Bump1Sampler = sampler_state
     AddressV  = Wrap;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = Linear;
 };
