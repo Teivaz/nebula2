@@ -1,0 +1,269 @@
+/**
+
+    @page NebulaBuilddSystem Nebula2 Build System
+
+      - @ref NebulaBuildSystemIntro
+      - @ref NebulaBuildSystemCommands
+        - @ref NebulaBuildSystemCommandsWorkspace
+        - @ref NebulaBuildSystemCommandsTarget
+        - @ref NebulaBuildSystemCommandsModule
+        - @ref NebulaBuildSystemCommandsBundle
+
+    @section NebulaBuildSystemIntro Introduction
+
+    The new system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
+    process .bld files located in $home/code/nebula2/bldfiles and its subdirectories, 
+    and outputs to $home/build/[compiler]. Normally, to create your own project, 
+    all you need is to create a batch of .bld files: 
+
+    @verbatim
+#### $home/code/nebula2/bldfiles/myStuff/myModules.bld ####
+# a module is a collection of a few related files,
+# often just the source and header files for a single class.
+# Any files you wish to include in your library should be declared .here
+
+beginmodule nmyclass1
+    setdir wheretofindthefollowing
+    setfiles { nmyclass1_main }
+    setheaders { nmyclass1 }
+endmodule
+
+beginmodule nmyclass2
+...
+    @endverbatim
+
+    The directory in setdir is given relative to $home/code/nebula2/src or inc for 
+    the files listed under setfiles and setheaders respectively. Note that .cc will 
+    automatically be appended to "files", and .h to "headers". 
+    Now you need to combine these modules into a "target" (project): 
+
+    @verbatim
+#### $home/code/nebula2/bldfiles/myStuff/myLibrary.bld ####
+begintarget mylibrary
+    settype lib
+    setmodules {
+        nmyclass1 nmyclass2
+    }
+endtarget
+    @endverbatim
+
+    The modules will be found automagically if they have been defined in a .bld file 
+    in the appropriate directory. Other valid settypes are exe and dll. 
+
+    Finally, you need to define a workspace (aka solution), so you have something to 
+    load into (e.g.) Visual Studio. 
+
+    @verbatim
+####$home/code/nebula2/bldfiles/myWorkspace.bld ####
+beginworkspace myWorkspace
+    setbinarydir ./bin/
+    settargets {
+        mylibrary 
+        nkernel
+        nnebula
+    }
+endworkspace
+    @endverbatim
+
+    setbinarydir is relative to $home. settargets should include whatever you want to 
+    appear in your solution, which means anything you'd like to be able to do 
+    source-level debugging on. The first target in the list will become the default 
+    active project for the solution. 
+
+    @note
+    The old build system used $home/code/nebula2/src/update.tcl in combination with 
+    $home/bin/*.tcl to process .epk files located in $home/code/nebula2/src, and outputs 
+    to $home/code/nebula2/vstudio, so if you want to use the new system, you don't need 
+    any of these. $home/code/nebula2/src/dummy.cc is still used in the new system, though.
+
+    @section NebulaBuildSystemCommands Commands
+
+    This commands can be used in the bld files. From parameters that are 
+    sperated with a '/' you can only select one. From parameters that are 
+    sperated with ',' you can select a one or more
+
+    @subsection NebulaBuildSystemCommandsWorkspace Workspace
+
+    <table>
+      <tr>
+      <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
+      </tr>
+
+      <tr>
+      <td>beginworkspace</td><td>name</td><td></td>no default
+      <td>workspaces are containers to get many targets together in the workspaches/solutions. TODO: [The name should be/must be uniqe???]</td>
+      </tr>
+      <tr>
+      <td>annotate</td><td>annotation</td><td>""</td><td>A description, use "" for more than one word</td>
+      </tr>
+      <tr>
+      <td>setdir</td> <td>dir</td> <td>no default</td> 
+      <td>Sets the directory that a workspace should be written</td>
+      </tr>
+      <tr>
+      <td>setbinarydir</td> <td>dir</td> <td>""</td> <td>Sets the root directory to be used for binary output - dll and exe </td>
+      </tr>
+      <tr>
+      <td>setlibdir</td> <td>dir</td> <td>""</td> <td>Sets the root directory to be used for intermediate compilation and possibly lib output. FIXME: For convention it should be decided by the powers that be # whether lib binarydir should mandatorily go in the inter dir, output dir, or leave it to the compiler generators discretion.</td>
+      </tr>
+      <tr>
+      <td>settargets</td> <td>{ targetname ... }</td> <td>""</td> <td>Sets a list of targets</td>
+      </tr>
+      <tr>
+      <td>addglobaldef</td> <td>define_name value</td> <td>""</td> <td>Sets a global define</td>
+      </tr>
+      <tr>
+      <td>addtargetdef</td> <td>targetname define_name value</td> <td>""</td> <td>Sets a define for a target</td>
+      </tr>
+      <tr>
+      <td>endworkspace</td>
+      </tr>
+    </table>
+
+    @subsection NebulaBuildSystemCommandsTarget Target
+
+    <table>
+      <tr>
+      <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
+      </tr>
+
+      <tr>
+        <td>begintarget</td> <td>name</td> <td>no default</td>
+      </tr>
+
+      <tr>
+        <td>annotate</td> <td>annotation</td> <td>""</td> <td>Set the type for the target.</td>
+      </tr>
+
+      <tr>
+        <td>setrtti</td> <td>true/false</td> <td>false</td> <td>a boolean that determines whether Run Time Type Identification is allowed.</td>
+      </tr>
+
+      <tr>
+        <td>setexceptions</td> <td>true/false</td> <td>false</td> <td>a boolean that determines whether C++ exception handling is supported</td>
+      </tr>
+
+      <tr>
+        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td> <td>Sets a list of modules</td>
+      </tr>
+
+      <tr>
+        <td>setbundles</td> <td>{ bundlename ... }</td> <td>""</td> <td>Adds bundles to the target. Modules set to the bundle are treated the same as modules added to the target through the setmodules() call. Targets added to the bundle are treated the same as targets added through the settargetdeps() call.</td>
+      </tr>
+
+      <tr>
+        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td> <td>Specifies the targets that are required to be built before the current target</td>
+      </tr>
+
+      <tr>
+        <td>changedllextension</td> <td>extension</td> <td>dll</td> <td>So you can change the set the extension of a dll to somthing else than dll. If not set the default will remain 'dll'. This function is only evaluated for dll targettypes. This is needed to create dll's with special extensions, as required for plugins for Max or Maya. This is not yet supported in the VC6 generator.</td>
+      </tr>
+
+      <tr>
+        <td>endtarget</td>
+      </tr>
+
+    </table>
+
+    @subsection NebulaBuildSystemCommandsModule Module
+
+    <table>
+      <tr>
+      <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
+      </tr>
+
+      <tr>
+        <td>beginmodule</td> <td>name</td> <td>no default</td> <td></td>
+      </tr>
+
+      <tr>
+        <td>annotate</td> <td>annotation</td> <td>""</td> <td>A description, use "" for more than one word</td>
+      </tr>
+
+      <tr>
+        <td>setdir</td> <td>$dir</td> <td>""</td> <td>Sets the directory where the module's files can be found, inc/$dir and src/$dir are used.</td>
+      </tr>
+
+      <tr>
+        <td>setplatform</td> <td>all, win32, linux, macosx</td> <td>all</td> <td>A list of valid platforms that this module will compile on.</td>
+      </tr>
+
+      <tr>
+        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td> <td> defines if this are c or the c++ sources, so the right compiler/compilersetting is selected</td>
+      </tr>
+
+      <tr>
+        <td>setfiles</td> <td>{ filename ... }</td> <td>""</td> <td>The list of source files that make up this module. Filenames are specified without path or extension, '.cc' is added automatic.</td>
+      </tr>
+
+      <tr>
+        <td>setheaders</td> <td>{ headername ... }  </td> <td>""</td> <td>The list of header files that make up this module directly. Filenames are specified without path or extension, '.h' is added automatic.</td>
+      </tr>
+
+      <tr>
+        <td>setlibs_win32</td> <td>{ libname.lib ... }</td>  <td>""</td> <td>A list of libs that this module requires to be linked against in both release and debug builds. Filenames should be specified without path or extension.</td>
+      </tr>
+
+      <tr>
+        <td>setlibs_win32_release</td> <td>{ libname.lib ... }</td> <td>""</td> <td>As setlibs_win32 - but for libs that only apply to a release build</td>
+      </tr>
+
+      <tr>
+        <td>setlibs_win32_debug</td> <td>{ libname.lib ... }</td> <td>""</td> <td>As setlibs_win32_release - but for debug builds</td>
+      </tr>
+
+      <tr>
+        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td> <td>List of modules that this module depends on for proper functioning. This list should include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated by the build system.  </td>
+      </tr>
+
+      <tr>
+        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td> <td>Libs that are linked against on Mac OSX. Filenames are specified without path or extension  </td>
+      </tr>
+
+      <tr>
+        <td>setmoduledeps</td> <td>{ modulename ... }</td> <td>""</td> <td>List of modules that this module depends on for proper functioning. This list should include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated by the build system.</td>
+      </tr>
+
+      <tr>
+        <td>setnopkg</td> <td>true/false</td> <td>fale</td> <td>Set this value to true if this module is nRoot-derived and it is desired that it not appear in pkg_XXX.cc files.</td>
+      </tr>
+
+      <tr>
+        <td>setmoddeffile</td> <td>filename</td> <td>""</td> <td>So you can setup Module Defintion File, whats a other way to define dllexports. This is needed for the max plugins, because max want's some dllexports that must be published this way. The file must be in src/$moduledir. It's not valid to have more than one module with a module def file set in a target. (Only the first found will be used, but it's possible to have more than one for a target.)</td>
+      </tr>
+
+      <tr>
+        <td>endmodule</td>
+      </tr>
+
+    </table>
+
+    @subsection NebulaBuildSystemCommandsBundle Bundle
+
+    <table>
+      <tr>
+      <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
+      </tr>
+
+      <tr>
+        <td>beginbundle</td> <td>$name</td> <td>no default</td>
+      </tr>
+
+      <tr>
+        <td>annotate</td> <td>annotation</td> <td>""</td> <td>A description, use "" for more than one word</td>
+      </tr>
+
+      <tr>
+        <td>setmodules</td> <td>{ modulename ... } </td> <td>""</td> <td>Sets a list of modules</td>
+      </tr>
+
+      <tr>
+        <td>settargets</td> <td>{ targetname ... } </td> <td>""</td> <td>Sets a list of targets</td>
+      </tr>
+
+      <tr>
+        <td>endbundle</td>
+      </tr>
+
+    </table>
+*/
