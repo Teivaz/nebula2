@@ -243,7 +243,7 @@ nResourceCompiler::LoadObjects(const nArray<nString>& objs)
         n_printf("-> loading '%s'\n", objs[i].Get());
         if (0 == kernelServer->Load(objs[i].Get()))
         {
-            this->SetError("ERROR: Failed to load object '%s'\n", objs[i]);
+            this->SetError("ERROR: Failed to load object '%s'\n", objs[i].Get());
             return false;
         }
     }
