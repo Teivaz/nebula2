@@ -16,20 +16,12 @@
 //--------------------------------------------------------------------
 //  Prompt()
 //--------------------------------------------------------------------
-char *nPythonServer::Prompt(char *buf, int size)
+nString nPythonServer::Prompt()
 {
-    char buffer[1024];
-    const char* result;
-    buffer[0] = 0;
-
-    this->Run("psel()", Py_eval_input, result);
-
-    if (result)
-      strcat(buffer, result);
-
-    strcat(buffer, ">");
-    n_strncpy2(buf, buffer, size);
-    return buf;
+    char buffer[N_MAXPATH];
+    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));       
+    prompt.Append("> ");
+    return prompt;
 }
 
 
