@@ -73,13 +73,14 @@ beginmodule nkernel
     settype cpp
     setfiles {
         nkernelserver nkernel nmemory nclass ncmdproto ncmdprotonative nhardrefserver
-        nthread nloghandler ndefaultloghandler nwin32loghandler
+        nthread nloghandler ndefaultloghandler nwin32loghandler nrefcounted
     }
     setheaders {
         nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref ndynautoref nhardref
         nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
+        nrefcounted
     }
 endmodule
 
