@@ -340,6 +340,7 @@ n_getdetailscale(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    - 16-Mar-05 kims Fixed to save all commands. Thanks to Ville Ruusutie for the patch.
 */
 bool
 nCLODShapeNode::SaveCmds(nPersistServer* ps)
@@ -349,11 +350,30 @@ nCLODShapeNode::SaveCmds(nPersistServer* ps)
         nCmd* cmd;
 
         //--- setmesh ---
-        cmd = ps->GetCmd(this, 'SMSH');
+        cmd = ps->GetCmd(this, 'SMSN');
         cmd->In()->SetS(this->GetTerrainName());
         ps->PutCmd(cmd);
 
- 
+        //--- settqt ---
+        cmd = ps->GetCmd(this, 'STQN');
+        cmd->In()->SetS(this->GetTqtName());
+        ps->PutCmd(cmd);
+
+        //--- setscreenspaceerror ---
+        cmd = ps->GetCmd(this, 'SSSE');
+        cmd->In()->SetF((float)this->GetScreenSpaceError());
+        ps->PutCmd(cmd);
+
+        //--- setcollisionspace ---
+        const char* csName = this->GetCollisionSpace();
+        // only when we have a collision space
+        if (csName)
+        {
+            cmd = ps->GetCmd(this, 'SCSP');
+            cmd->In()->SetS(csName);
+            ps->PutCmd(cmd);
+        }
+
         //--- setmeshresourceloader ---
         const char* rlName = this->GetTerrainResourceLoader();
         // only when we have a resource loader
@@ -363,6 +383,29 @@ nCLODShapeNode::SaveCmds(nPersistServer* ps)
             cmd->In()->SetS(rlName);
             ps->PutCmd(cmd);
         }
+
+        //--- begindetailtextures ---
+        cmd = ps->GetCmd(this, 'BDTX');
+        cmd->In()->SetI(this->detailTextures.Size());
+        ps->PutCmd(cmd);
+
+        //--- setdetailtexture ---
+        for (int i=0; i<this->detailTextures.Size(); i++)
+        {
+            cmd = ps->GetCmd(this, 'SDTX');
+            cmd->In()->SetI(i);
+            cmd->In()->SetS(this->detailTextures.At(i)->GetFilename().Get());
+            ps->PutCmd(cmd);
+        }
+
+        //--- enddetailtextures ---
+        cmd = ps->GetCmd(this, 'EDTX');
+        ps->PutCmd(cmd);
+
+        //--- setdetailscale ---
+        cmd = ps->GetCmd(this, 'SDSC');
+        cmd->In()->SetF((float)this->GetDetailScale());
+        ps->PutCmd(cmd);
 
         return true;
     }
