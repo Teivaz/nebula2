@@ -28,9 +28,9 @@
 
 //--------------------------------------------------------------------
 class nFileServer2;
-class nPythonServer : public nScriptServer {
+class nPythonServer : public nScriptServer 
+{
 public:
-    nAutoRef<nFileServer2> refFileServer;
     static nPythonServer *Instance;
 
 public:
