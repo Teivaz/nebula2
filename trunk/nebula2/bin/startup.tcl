@@ -21,7 +21,8 @@ sel /sys/servers/file2
     .setassign "meshes"   "$proj/export/meshes/"
     .setassign "textures" "$proj/export/textures/"
     if {[exists /sys/servers/gfx]} {
-        if {[/sys/servers/gfx.getfeatureset] == "dx9"} {   
+        set featureSet [/sys/servers/gfx.getfeatureset]
+        if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {   
             .setassign "shaders" "$home/export/shaders/2.0/"
             puts "Shader directory: $home/export/shaders/2.0"
         } else {
@@ -34,6 +35,8 @@ sel /sys/servers/file2
     }
     .setassign "anims"    "$proj/export/anims/"
     .setassign "gfxlib"   "$proj/export/gfxlib/"
+    .setassign "lights"   "$proj/export/lightlib/"
+    .setassign "gui"      "$proj/export/gui/"
 
 #-------------------------------------------------------------------------------
 #   restore original directory
