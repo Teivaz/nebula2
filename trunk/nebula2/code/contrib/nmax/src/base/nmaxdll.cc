@@ -1,3 +1,4 @@
+
 #include "base/nmaxdll.h"
 
 ///the dllHandle
@@ -10,6 +11,7 @@ int controlsInit = FALSE;
 nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 
 nNebulaUsePackage(nnebula);
+//nNebulaUsePackage(nopende);
 
 //------------------------------------------------------------------------------
 /**
@@ -147,14 +149,19 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
             {
                 new nKernelServer();
 
-                //setup the new loghandler
+                //setup the new log handler
                 nKernelServer::ks->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
                 nKernelServer::ks->AddPackage(nnebula);
+                //nKernelServer::ks->AddPackage(nopende);
+
+                nMaxPluginInitialize();
             }
 		}
         break;
 		case DLL_PROCESS_DETACH: //DLL - unload
 		{
+            nMaxPluginUninitialize();
+
 		    //cleanup the the list of classes here
             if (registeredClassDesc::array != NULL)
             {
