@@ -44,7 +44,6 @@ beginmodule nresourceloader
     setdir resource
     setfiles {
         nresourceloader_main
-        nresourceloader_cmds
     }
     setheaders { nresourceloader }
 endmodule
