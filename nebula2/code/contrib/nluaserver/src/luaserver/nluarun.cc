@@ -32,7 +32,10 @@ bool nLuaServer::ExecuteLuaChunk( const char*& result, int errfunc )
                             LUA_MULTRET, 
                             errfunc /* stack index of error handler */ );
     if ( 0 != status ) // error occured
+    {
         result = this->outputStr.Get(); // contains the error info
+        n_message( result );
+    }
     else
     {
         this->outputStr.Set( "" );
