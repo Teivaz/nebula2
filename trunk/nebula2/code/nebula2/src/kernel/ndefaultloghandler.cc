@@ -66,7 +66,6 @@ nDefaultLogHandler::GetLineBuffer()
 /**
     Put a message into the argbuffer.
 
-    @param  prefix  a short message which will be put in front of the actual message
     @param  msg     the actual message
     @param  argList a var args list
 */
@@ -81,6 +80,4 @@ nDefaultLogHandler::PutLineBuffer(const char* msg, va_list argList)
     vsprintf(charBuffer, msg, argList);
     this->lineBuffer.Put(charBuffer);
 }
-
-
 
