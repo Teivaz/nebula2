@@ -1,0 +1,16 @@
+#--------------------------------------------------------------------
+#   nmaxplugins.bld
+#   the maxplugins workspace
+#   
+#   Modules:
+#   Targets:
+#-------------------------------------------------------------------------------
+beginworkspace nmaxplugins
+   settargets {
+      nmaxbase nmaxexport 
+      nkernel ntoollib
+      microtcl
+      nnebula
+   }
+endworkspace
+#-------------------------------------------------------------------------------
