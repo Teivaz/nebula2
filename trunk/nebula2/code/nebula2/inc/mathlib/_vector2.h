@@ -47,6 +47,10 @@ public:
     int compare(const _vector2& v, float tol) const;
     /// rotate around P(0,0)
     void rotate(float angle);
+    /// inplace linear interpolation
+    void lerp(const _vector2& v0, float lerpVal);
+    /// linear interpolation between v0 and v1
+    void lerp(const _vector2& v0, const _vector2& v1, float lerpVal);
 
     float x, y;
 };
@@ -279,6 +283,28 @@ inline
 _vector2 operator -(const _vector2& v)
 {
     return _vector2(-v.x, -v.y);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector2::lerp(const _vector2& v0, float lerpVal)
+{
+    x = v0.x + ((x - v0.x) * lerpVal);
+    y = v0.y + ((y - v0.y) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector2::lerp(const _vector2& v0, const _vector2& v1, float lerpVal)
+{
+    x = v0.x + ((v1.x - v0.x) * lerpVal);
+    y = v0.y + ((v1.y - v0.y) * lerpVal);
 }
 
 //------------------------------------------------------------------------------

@@ -5,9 +5,14 @@
     @class nIpolKeyArray
     @ingroup NebulaDataTypes
 
-    @brief A Array for interpolation between keys, used by the animators
-    for a linear interpolation the data type must have the function
-    lerp(TYPE val0, TYPE val1, float lerp)
+    @brief An Array for interpolation between keys, used by the animators
+    for a linear interpolation the data type.
+
+    The function
+    void lerp<TYPE>(TYPE & result, const TYPE & val0,
+                    const TYPE & val1, float lerpVal)
+    must be defined. These are already defined for vectors in vector.h
+    and int and float in nmath.h.
 
     This file is licensed under the terms of the Nebula License.
 
@@ -15,6 +20,7 @@
 */
 #include "kernel/ntypes.h"
 #include "scene/nanimator.h"
+#include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE>
@@ -132,11 +138,11 @@ nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimator::
             float time1 = key1.time;
 
             // compute the actual interpolated values
-            float lerp;
-            if (time1 > time0) lerp = (float) ((sampleTime - time0) / (time1 - time0));
-            else               lerp = 1.0f;
+            float lerpVal;
+            if (time1 > time0) lerpVal = (float) ((sampleTime - time0) / (time1 - time0));
+            else               lerpVal = 1.0f;
             
-            result.lerp(key0.value, key1.value, lerp);
+            lerp<TYPE>(result, key0.value, key1.value, lerpVal);
             return true;
         }
     }
