@@ -125,12 +125,11 @@ main(int argc, const char** argv)
     {
         scale.set(scaleArg, scaleArg, scaleArg);
     }
-/*
+
     if ((translate.len() > 0.0f) || (rotate.len() > 0.0f) || (scale.len() != 1.0f))
     {
         doTransform = true;
     }
-*/
 
     // startup Nebula
     nKernelServer* kernelServer = new nKernelServer;
