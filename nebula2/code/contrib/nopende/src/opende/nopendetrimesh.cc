@@ -91,7 +91,6 @@ void nOpendeTriMesh::Begin( int numVerts, int numTris )
     n_assert( !this->isLoaded );
     n_assert( !this->vertexData );
     n_assert( !this->faceData );
-    n_assert( numVerts == numTris * 3 );
     
     this->numVertices = numVerts;
     this->numFaces    = numTris;
@@ -155,48 +154,51 @@ bool nOpendeTriMesh::Load( nFileServer2* fs, const char* fname, int group )
 {
     n_assert( !this->isLoaded );
     
-    nMeshLoader* loader = 0;
-    
     if ( strstr( fname, ".n3d2" ) )
-        loader = n_new nN3d2Loader();
+        return this->LoadN3d2( fs, fname, group );
     else if ( strstr( fname, ".nvx2" ) )
-        loader = n_new nNvx2Loader();
+        return this->LoadNvx2( fs, fname, group );
     else
     {
         n_printf( "nOpendeTriMesh: Unknown file format '%s'\n", fname );
         return false;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
+{
+    nN3d2Loader loader;
+    loader.SetFilename( fname );
+    loader.SetIndexType( nMeshLoader::Index32 );
     
-    n_assert( loader );
-    
-    loader->SetFilename( fname );
-    loader->SetIndexType( nMeshLoader::Index32 );
-    
-    if ( loader->Open( fs ) )
+    if ( loader.Open( fs ) )
     {
-        n_assert( group >= loader->GetNumGroups() );
+        n_assert( group < loader.GetNumGroups() );
         // coord component must be present
-        n_assert( (loader->GetVertexComponents() & nMesh2::Coord)
+        n_assert( (loader.GetVertexComponents() & nMesh2::Coord)
                   && "Coord vertex component must be present!" );
         // coord component is the ONLY one that should be present
-        n_assert( (loader->GetVertexWidth() == sizeof(float) * 3)
+        n_assert( (loader.GetVertexWidth() == 3)
                   && "Only the Coord vertex component must be present!" );
                 
-        const nMeshGroup& meshGroup = loader->GetGroupAt( 0 );
+        const nMeshGroup& meshGroup = loader.GetGroupAt( group );
         this->Begin( meshGroup.GetNumVertices(), meshGroup.GetNumIndices() / 3 );
-        int vertexBufSize = loader->GetNumVertices() * 3 * sizeof(float);
-        int indexBufSize = loader->GetNumIndices() * sizeof(int);
-        if ( loader->GetNumGroups() > 1 )
+        int vertexBufSize = loader.GetNumVertices() * 3 * sizeof(float);
+        int indexBufSize = loader.GetNumIndices() * sizeof(int);
+        if ( loader.GetNumGroups() > 1 )
         {
             // load ALL vertices & indices from the file
             // FIXME: could the loader be modified to load only data for a group?
             // We wouldn't have to allocate all this extra memory if it could.
             float* vertices = (float*)n_malloc( vertexBufSize );
             n_assert( vertices );
-            loader->ReadVertices( vertices, vertexBufSize );
+            loader.ReadVertices( vertices, vertexBufSize );
             int* indices = (int*)n_malloc( indexBufSize );
             n_assert( indices );
-            loader->ReadIndices( indices, indexBufSize );
+            loader.ReadIndices( indices, indexBufSize );
             // copy the mesh group data we want
             memcpy( this->vertexData, 
                     vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float), 
@@ -213,17 +215,77 @@ bool nOpendeTriMesh::Load( nFileServer2* fs, const char* fname, int group )
         else
         {
             // just one group so no need to allocate any extra memory
-            loader->ReadVertices( this->vertexData, vertexBufSize );
-            loader->ReadIndices( this->faceData, indexBufSize );
+            loader.ReadVertices( this->vertexData, vertexBufSize );
+            loader.ReadIndices( this->faceData, indexBufSize );
         }
         this->End();
         
-        loader->Close();
-        n_delete loader;
+        loader.Close();
         return true;
     }
     
-    n_delete loader;
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
+{
+    nNvx2Loader loader;
+    loader.SetFilename( fname );
+    loader.SetIndexType( nMeshLoader::Index32 );
+    
+    if ( loader.Open( fs ) )
+    {
+        n_assert( group < loader.GetNumGroups() );
+        // coord component must be present
+        n_assert( (loader.GetVertexComponents() & nMesh2::Coord)
+                  && "Coord vertex component must be present!" );
+        // coord component is the ONLY one that should be present
+        n_assert( (loader.GetVertexWidth() == 3)
+                  && "Only the Coord vertex component must be present!" );
+                
+        const nMeshGroup& meshGroup = loader.GetGroupAt( group );
+        this->Begin( meshGroup.GetNumVertices(), meshGroup.GetNumIndices() / 3 );
+        int vertexBufSize = loader.GetNumVertices() * 3 * sizeof(float);
+        int indexBufSize = loader.GetNumIndices() * sizeof(int);
+        if ( loader.GetNumGroups() > 1 )
+        {
+            // load ALL vertices & indices from the file
+            // FIXME: could the loader be modified to load only data for a group?
+            // We wouldn't have to allocate all this extra memory if it could.
+            float* vertices = (float*)n_malloc( vertexBufSize );
+            n_assert( vertices );
+            loader.ReadVertices( vertices, vertexBufSize );
+            int* indices = (int*)n_malloc( indexBufSize );
+            n_assert( indices );
+            loader.ReadIndices( indices, indexBufSize );
+            // copy the mesh group data we want
+            memcpy( this->vertexData, 
+                    vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float), 
+                    meshGroup.GetNumVertices() * 3 * sizeof(float) );
+            memcpy( this->faceData, 
+                    indices + meshGroup.GetFirstIndex() * sizeof(int), 
+                    meshGroup.GetNumIndices() * sizeof(int) );
+            // release all the other data we don't need
+            if ( vertices )
+                n_free( vertices );
+            if ( indices )
+                n_free( indices );
+        }
+        else
+        {
+            // just one group so no need to allocate any extra memory
+            loader.ReadVertices( this->vertexData, vertexBufSize );
+            loader.ReadIndices( this->faceData, indexBufSize );
+        }
+        this->End();
+        
+        loader.Close();
+        return true;
+    }
+    
     return false;
 }
 

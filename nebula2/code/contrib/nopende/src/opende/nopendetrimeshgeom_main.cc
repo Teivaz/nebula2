@@ -65,6 +65,7 @@ void nOpendeTriMeshGeom::SetMesh( const char* triMeshId )
     
     // store pointer to new data
     this->triMesh = nOpendeServer::opendeServer->FindTriMesh( triMeshId );
+    this->triMesh->AddRef();
     
     n_assert( this->triMesh && "triMeshId does not match an existing mesh!" );
     
