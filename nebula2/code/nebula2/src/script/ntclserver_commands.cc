@@ -538,7 +538,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                 break;
 
             case nArg::ARGTYPE_LIST:
-                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                Tcl_ListObjAppendList(interp,res,_putOutListArg(interp,arg));
                 break;
         }
     }
