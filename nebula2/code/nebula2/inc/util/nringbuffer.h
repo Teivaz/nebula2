@@ -13,7 +13,7 @@
 #include "kernel/ntypes.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nRingBuffer 
+template<class TYPE> class nRingBuffer
 {
 public:
     /// constructor 1
@@ -41,7 +41,7 @@ public:
     /// return pointer to tail element
     TYPE* GetTail() const;
     /// return pointer to next element
-    TYPE* GetNext(TYPE* e) const; 
+    TYPE* GetNext(TYPE* e) const;
     /// return pointer to previous element
     TYPE* GetPrev(TYPE* e) const;
     /// return pointer to start of ringbuffer array
@@ -92,7 +92,7 @@ nRingBuffer<TYPE>::nRingBuffer<TYPE>() :
 /**
 */
 template<class TYPE>
-nRingBuffer<TYPE>::~nRingBuffer<TYPE>() 
+nRingBuffer<TYPE>::~nRingBuffer<TYPE>()
 {
     this->Delete();
 }
@@ -102,7 +102,7 @@ nRingBuffer<TYPE>::~nRingBuffer<TYPE>()
 */
 template<class TYPE>
 void
-nRingBuffer<TYPE>::Delete() 
+nRingBuffer<TYPE>::Delete()
 {
     if (this->start)
     {
@@ -148,15 +148,13 @@ nRingBuffer<TYPE>::Initialize(int capacity)
     this->end   = this->start + capacity;
     this->tail  = this->start;
     this->head  = this->start;
-
-    n_printf("nRingBuffer initialized with %d elelements of size %d\n", capacity, sizeof(TYPE));
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 template<class TYPE>
-nRingBuffer<TYPE>& 
+nRingBuffer<TYPE>&
 nRingBuffer<TYPE>::operator=(const nRingBuffer<TYPE>& src)
 {
     this->Delete();
@@ -169,7 +167,7 @@ nRingBuffer<TYPE>::operator=(const nRingBuffer<TYPE>& src)
     Return true if ring buffer is valid.
 */
 template<class TYPE>
-bool 
+bool
 nRingBuffer<TYPE>::IsValid() const
 {
     return (0 != this->start);
@@ -183,7 +181,7 @@ nRingBuffer<TYPE>::IsValid() const
     false.
 */
 template<class TYPE>
-bool 
+bool
 nRingBuffer<TYPE>::IsEmpty() const
 {
     return (this->head == this->tail);
@@ -194,7 +192,7 @@ nRingBuffer<TYPE>::IsEmpty() const
     Checks if ring buffer is full
 */
 template<class TYPE>
-bool 
+bool
 nRingBuffer<TYPE>::IsFull() const
 {
     TYPE* e = this->head;
@@ -216,12 +214,12 @@ nRingBuffer<TYPE>::IsFull() const
 */
 template<class TYPE>
 TYPE*
-nRingBuffer<TYPE>::Add() 
+nRingBuffer<TYPE>::Add()
 {
     n_assert(this->start);
     n_assert(!this->IsFull());
     TYPE *e = this->head;
-    if (this->head == this->end) 
+    if (this->head == this->end)
     {
         this->head = this->start;
     }
@@ -231,18 +229,18 @@ nRingBuffer<TYPE>::Add()
     }
     return e;
 }
-  
+
 //------------------------------------------------------------------------------
 /**
     Delete the oldest element
 */
 template<class TYPE>
 void
-nRingBuffer<TYPE>::DeleteTail() 
+nRingBuffer<TYPE>::DeleteTail()
 {
     n_assert(this->start);
     n_assert(!this->IsEmpty());
-    if (this->tail == this->end) 
+    if (this->tail == this->end)
     {
         this->tail = this->start;
     } else
@@ -250,7 +248,7 @@ nRingBuffer<TYPE>::DeleteTail()
         this->tail++;
     }
 }
-  
+
 //------------------------------------------------------------------------------
 /**
     Return head element (youngest element).
@@ -259,13 +257,13 @@ template<class TYPE>
 TYPE*
 nRingBuffer<TYPE>::GetHead() const
 {
-    if (this->head == this->tail) 
+    if (this->head == this->tail)
     {
         // empty ringbuffer
-        return 0;    
+        return 0;
     }
     TYPE *e = this->head - 1;
-    if (e < this->start) 
+    if (e < this->start)
     {
         e = this->end;
     }
@@ -280,8 +278,8 @@ template<class TYPE>
 TYPE*
 nRingBuffer<TYPE>::GetTail() const
 {
-    if (this->head == this->tail) 
-    {   
+    if (this->head == this->tail)
+    {
         // empty ringbuffer
         return 0;
     }
@@ -298,7 +296,7 @@ nRingBuffer<TYPE>::GetNext(TYPE* e) const
 {
     n_assert(e);
     n_assert(this->start);
-    if (e == this->end) 
+    if (e == this->end)
     {
         e = this->start;
     } else
@@ -352,7 +350,7 @@ nRingBuffer<TYPE>::GetStart() const
 
 //------------------------------------------------------------------------------
 /**
-    Return physical end of ringbuffer array.   
+    Return physical end of ringbuffer array.
     Only useful for accessing the ringbuffer array elements directly.
 */
 template<class TYPE>

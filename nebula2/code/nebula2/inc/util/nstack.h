@@ -14,7 +14,7 @@
 #include "util/nnode.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nStack 
+template<class TYPE> class nStack
 {
 public:
     /// destructor
@@ -52,7 +52,7 @@ private:
         const TYPE& Get() const
         {
             return this->elm;
-        }   
+        }
 
         TYPE elm;
     };
@@ -68,7 +68,7 @@ nStack<TYPE>::~nStack()
 {
     // delete any remaining elements on stack
     nStackNode* sn;
-    while (sn = (nStackNode*) l.RemHead()) 
+    while (sn = (nStackNode*) l.RemHead())
     {
         n_delete sn;
     }
@@ -78,8 +78,8 @@ nStack<TYPE>::~nStack()
 /**
 */
 template<class TYPE>
-void 
-nStack<TYPE>::Push(TYPE e) 
+void
+nStack<TYPE>::Push(TYPE e)
 {
     nStackNode* sn = n_new nStackNode(e);
     l.AddHead(sn);
@@ -93,13 +93,13 @@ TYPE
 nStack<TYPE>::Pop()
 {
     nStackNode* sn = (nStackNode*) l.RemHead();
-    if (sn) 
+    if (sn)
     {
         TYPE t = sn->Get();
         n_delete sn;
         return t;
-    } 
-    else 
+    }
+    else
     {
         return 0;
     }
@@ -129,3 +129,4 @@ nStack<TYPE>::IsEmpty() const
 
 //------------------------------------------------------------------------------
 #endif
+
