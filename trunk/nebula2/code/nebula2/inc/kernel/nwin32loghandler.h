@@ -47,6 +47,8 @@ public:
     virtual void Message(const char* msg, va_list argList);
     /// show an error message (may block the program until the user acks)
     virtual void Error(const char* msg, va_list argList);
+    /// send a message to the debugger window.
+    virtual void OutputDebug(const char* msg, va_list argList);
 
 private:
     enum MsgType

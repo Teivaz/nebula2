@@ -160,6 +160,29 @@ nWin32LogHandler::Error(const char* msg, va_list argList)
 
 //------------------------------------------------------------------------------
 /**
+    Send a message to debugger window.
+
+    - 26-Mar-05    kims    created
+*/
+void
+nWin32LogHandler::OutputDebug(const char* msg, va_list argList)
+{
+    if (this->logFile && this->logFile->IsOpen())
+    {
+        char buf[1024];
+        _vsnprintf(buf, sizeof(buf) - 1, msg, argList);
+        this->logFile->PutS(buf);
+    }
+
+    this->PutLineBuffer(msg, argList);
+
+    // put the last msg in the buffer to debugger window.
+    int lastline = this->lineBuffer.GetTailLine();
+    OutputDebugString(this->lineBuffer.GetLine(lastline));
+}
+
+//------------------------------------------------------------------------------
+/**
     Generate a Win32 message box.
 */
 void

@@ -42,6 +42,8 @@ public:
     virtual void Message(const char* msg, va_list argList);
     /// show an error message (may block the program until the user acks)
     virtual void Error(const char* msg, va_list argList);
+    /// sends a string to the debugger for display. 
+    virtual void OutputDebug(const char* msg, va_list argList);
     /// get pointer to (optional) internal line buffer
     virtual nLineBuffer* GetLineBuffer();
 

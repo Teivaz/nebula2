@@ -21,7 +21,7 @@
     @note
     See @b LogSys class for more information on log system of 3DS Max in the 3dsmax SDK.
 
-    The following code shows an example:
+    The following code shows an example of the usage:
     @code
     // 
     nMaxLogHandler* logHandler = n_new(nLogHandler);
@@ -54,7 +54,8 @@ public:
 	virtual void Message(const char* msg, va_list argList);
 	/// show an error message (may block the program until the user acks)
 	virtual void Error(const char* msg, va_list argList);
-	
+    /// send a message to debugger window.
+	virtual void OutputDebug(const char* msg, va_list argList);
 	///Setup the reference to Max Interface Log
 	void SetLogSys(LogSys* log);
 

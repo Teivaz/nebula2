@@ -71,6 +71,16 @@ nLogHandler::Error(const char* /* str */, va_list /* argList */)
 
 //------------------------------------------------------------------------------
 /**
+    - 26-Mar-05    kims    created
+*/
+void 
+nLogHandler::OutputDebug(const char* /* str */, va_list /* argList */)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
     Subclasses may log all messages in an internal line buffer. If they
     chose to do so, this must be a nLineBuffer class and override the
     GetLineBuffer() method.
