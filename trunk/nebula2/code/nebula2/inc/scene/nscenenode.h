@@ -13,34 +13,18 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_BBOX_H
 #include "mathlib/bbox.h"
-#endif
-
-#ifndef N_DYNAUTOREF_H
 #include "kernel/ndynautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nSceneNode
-#include "kernel/ndefdllclass.h"
+#include "gfx2/nshaderparams.h"
 
 class nSceneServer;
 class nRenderContext;
 class nGfxServer2;
 class nAnimator;
+class nVariableServer;
 
 //-------------------------------------------------------------------------------
 class nSceneNode : public nRoot
@@ -57,7 +41,9 @@ public:
     /// unload resources for this object
     virtual void UnloadResources();
     /// return true if resources for this object are valid
-    virtual bool AreResourcesValid() const;
+    bool AreResourcesValid() const;
+    /// recursively preload resources
+    void PreloadResources();
     /// called by app when new render context has been created for this object
     virtual void RenderContextCreated(nRenderContext* renderContext);
     /// called by app when render context is going to be released
@@ -70,18 +56,24 @@ public:
     virtual bool HasGeometry() const;
     /// return true if node provides shader
     virtual bool HasShader(uint fourcc) const;
-    /// return true if node provides a light volume
-    virtual bool HasLightVolume() const;
+    /// return true if node provides lighting information
+    virtual bool HasLight() const;
     /// render transformation
-    virtual void RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
+    virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
     /// render geometry
-    virtual void RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// render shader
-    virtual void RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// render light volume
-    virtual void RenderLightVolume(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightModelView);
+    virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// write light volume parameters into the provided shader params object
+    virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
+    /// set the local bounding box
+    void SetLocalBox(const bbox3& b);
     /// get the node's bounding box
-    const bbox3& GetBoundingBox() const;
+    const bbox3& GetLocalBox() const;
+    /// set render priority
+    void SetRenderPri(int pri);
+    /// get render priority
+    int GetRenderPri() const;
     /// add an animator object
     void AddAnimator(const char* path);
     /// get number of animator objects
@@ -96,21 +88,38 @@ public:
     static nKernelServer* kernelServer;
 
 protected:
-    /// set the bounding box
-    void SetBoundingBox(const bbox3& b);
-
-    bbox3 box;
+    nAutoRef<nVariableServer> refVariableServer;
+    nAutoRef<nSceneServer> refSceneServer;
+    bbox3 localBox;
     nArray< nDynAutoRef<nAnimator> > animatorArray;
+    bool resourcesValid;
+    int renderPri;
 };
 
 //------------------------------------------------------------------------------
 /**
+    Return true if the node's resources are valid.
+*/
+inline
+bool
+nSceneNode::AreResourcesValid() const
+{
+    return this->resourcesValid;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Define the local bounding box. Shape nodes compute their bounding
+    box automatically at load time. This method can be used to define
+    bounding boxes for other nodes. This may be useful for higher level
+    code like gameframeworks. Nebula itself only uses bounding boxes
+    defined on shape nodes.
 */
 inline
 void
-nSceneNode::SetBoundingBox(const bbox3& b)
+nSceneNode::SetLocalBox(const bbox3& b)
 {
-    this->box = b;
+    this->localBox = b;
 }
 
 //------------------------------------------------------------------------------
@@ -118,9 +127,33 @@ nSceneNode::SetBoundingBox(const bbox3& b)
 */
 inline
 const bbox3&
-nSceneNode::GetBoundingBox() const
+nSceneNode::GetLocalBox() const
 {
-    return this->box;
+    return this->localBox;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set the render priority. This should be a number between -127 and +127,
+    the default is 0. Smaller numbers will render first.
+*/
+inline
+void
+nSceneNode::SetRenderPri(int pri)
+{
+    n_assert((pri >= -127) && (pri <= 127));
+    this->renderPri = pri;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the render priority of this node.
+*/
+inline
+int
+nSceneNode::GetRenderPri() const
+{
+    return this->renderPri;
 }
 
 //------------------------------------------------------------------------------
