@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nResourceServer
 //------------------------------------------------------------------------------
 //  nresourceserver_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -12,13 +11,21 @@ nNebulaClass(nResourceServer, "nroot");
 /**
 */
 nResourceServer::nResourceServer() :
-    uniqueId(0)
+    uniqueId(0),
+    loaderThread(0)
 {
-    this->refMeshes        = kernelServer->New("nroot", "/sys/share/rsrc/meshes");
-    this->refTextures      = kernelServer->New("nroot", "/sys/share/rsrc/textures");
-    this->refShaders       = kernelServer->New("nroot", "/sys/share/rsrc/shaders");
-    this->refAnimations    = kernelServer->New("nroot", "/sys/share/rsrc/anims");
-    this->refSounds        = kernelServer->New("nroot", "/sys/share/rsrc/sounds");
+    this->meshPool    = kernelServer->New("nroot", "/sys/share/rsrc/mesh");
+    this->texPool     = kernelServer->New("nroot", "/sys/share/rsrc/tex");
+    this->shdPool     = kernelServer->New("nroot", "/sys/share/rsrc/shd");
+    this->animPool    = kernelServer->New("nroot", "/sys/share/rsrc/anim");
+    this->sndResPool  = kernelServer->New("nroot", "/sys/share/rsrc/sndrsrc");
+    this->sndInstPool = kernelServer->New("nroot", "/sys/share/rsrc/sndinst");
+    this->fontPool    = kernelServer->New("nroot", "/sys/share/rsrc/font");
+    this->bundlePool  = kernelServer->New("nroot", "/sys/share/rsrc/bundle");
+    this->otherPool   = kernelServer->New("nroot", "/sys/share/rsrc/other");
+    #ifndef __NEBULA_NO_THREADS__
+    this->StartLoaderThread();
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -26,12 +33,10 @@ nResourceServer::nResourceServer() :
 */
 nResourceServer::~nResourceServer()
 {
-    // unload any existing resources
-    this->UnloadResources(nResource::MESH);
-    this->UnloadResources(nResource::TEXTURE);
-    this->UnloadResources(nResource::SHADER);
-    this->UnloadResources(nResource::ANIMATION);
-    this->UnloadResources(nResource::SOUND);
+    #ifndef __NEBULA_NO_THREADS__
+    this->ShutdownLoaderThread();
+    #endif
+    this->UnloadResources(nResource::AllResourceTypes);
 }
 
 //------------------------------------------------------------------------------
@@ -98,12 +103,18 @@ nResourceServer::GetResourcePool(nResource::Type rsrcType)
 {
     switch(rsrcType)
     {
-        case nResource::MESH:       return this->refMeshes.get();
-        case nResource::TEXTURE:    return this->refTextures.get();
-        case nResource::SHADER:     return this->refShaders.get();
-        case nResource::ANIMATION:  return this->refAnimations.get();
-        case nResource::SOUND:      return this->refSounds.get();
-        default:                    n_assert(false);
+        case nResource::Mesh:              return this->meshPool.get();
+        case nResource::Texture:           return this->texPool.get();
+        case nResource::Shader:            return this->shdPool.get();
+        case nResource::Animation:         return this->animPool.get();
+        case nResource::SoundResource:     return this->sndResPool.get();
+        case nResource::SoundInstance:     return this->sndInstPool.get();
+        case nResource::Font:              return this->fontPool.get();
+        case nResource::Bundle:            return this->bundlePool.get();
+        case nResource::Other:             return this->otherPool.get();
+        default:
+            // can't happen
+            n_assert(false);
     }
     return 0;
 }
@@ -120,7 +131,7 @@ nResource*
 nResourceServer::FindResource(const char* rsrcName, nResource::Type rsrcType)
 {
     n_assert(rsrcName);
-    n_assert(nResource::NONE != rsrcType);
+    n_assert(nResource::InvalidResourceType != rsrcType);
 
     char rsrcId[N_MAXNAMELEN];
 
@@ -146,7 +157,7 @@ nResource*
 nResourceServer::NewResource(const char* className, const char* rsrcName, nResource::Type rsrcType)
 {
     n_assert(className);
-    n_assert(nResource::NONE != rsrcType);
+    n_assert(nResource::InvalidResourceType != rsrcType);
 
     char rsrcId[N_MAXNAMELEN];
     this->GetResourceId(rsrcName, rsrcId, sizeof(rsrcId));
@@ -173,67 +184,207 @@ nResourceServer::NewResource(const char* className, const char* rsrcName, nResou
 
 //------------------------------------------------------------------------------
 /**
-    Unload all resource matching the given resource type.
+    Unload all resources matching the given resource type mask.
 
-    @param  rsrcType    a resource type
+    @param  rsrcTypeMask    a mask of nResource::Type values
 */
 void
-nResourceServer::UnloadResources(nResource::Type rsrcType)
+nResourceServer::UnloadResources(int rsrcTypeMask)
 {
-    nRoot* rsrcPool = this->GetResourcePool(rsrcType);
-    n_assert(rsrcPool);
-
-    nResource* rsrc;
-    for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+    // also unload bundles?
+    if (0 != (rsrcTypeMask & (nResource::Mesh | nResource::Animation | nResource::Texture)))
     {
-        rsrc->Unload();
+        rsrcTypeMask |= nResource::Bundle;
+    }
+    int i;
+    for (i = 1; i < nResource::InvalidResourceType; i <<= 1)
+    {
+        if (0 != (rsrcTypeMask & i))
+        {
+            nRoot* rsrcPool = this->GetResourcePool((nResource::Type) i);
+            n_assert(rsrcPool);
+            nResource* rsrc;
+            for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+            {
+                rsrc->Unload();
+            }
+        }
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Reload all resources matching the given resource type. Returns false
+    Reload all resources matching the given resource type mask. Returns false
     if any of the resources didn't load correctly.
+
+    IMPLEMENTATION NOTE: since the Bundle resource type is defined
+    before all other resource types, it is guaranteed that bundled
+    resources are loaded before all others. 
 
     @param  rsrcType    a resource type
     @return             true if all resources loaded correctly
 */
 bool
-nResourceServer::ReloadResources(nResource::Type rsrcType)
+nResourceServer::ReloadResources(int rsrcTypeMask)
 {
-    nRoot* rsrcPool = this->GetResourcePool(rsrcType);
-    n_assert(rsrcPool);
-
-    bool retval = true;
-    nResource* rsrc;
-    for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+    // also reload bundles?
+    if (0 != (rsrcTypeMask & (nResource::Mesh | nResource::Animation | nResource::Texture)))
     {
-        retval &= rsrc->Load();
+        rsrcTypeMask |= nResource::Bundle;
+    }
+
+    int i;
+    bool retval = true;
+    for (i = 1; i < nResource::InvalidResourceType; i <<= 1)
+    {
+        if (0 != (rsrcTypeMask & i))
+        {
+            nRoot* rsrcPool = this->GetResourcePool((nResource::Type) i);
+            n_assert(rsrcPool);
+
+            nResource* rsrc;
+            for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+            {
+                // NOTE: if the resource is bundled, it could've been loaded already
+                // (if this is the actual resource object which has been created by the
+                // bundle, thus we check if the resource has already been loaded)
+                if (!rsrc->IsValid())
+                {
+                    retval &= rsrc->Load();
+                }
+            }
+        }
     }
     return retval;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Load a resource bundle file. This method is meant to be derived
-    by platform specific subclasses for platforms where all resources
-    can be packed into a single file.
+    Wakeup the loader thread. This will simply signal the jobList.
 */
-bool
-nResourceServer::LoadResourceBundle(const char* /* filename */)
+void
+nResourceServer::ThreadWakeupFunc(nThread* thread)
 {
-    // empty
-    return false;
+    nResourceServer* self = (nResourceServer*) thread->LockUserData();
+    thread->UnlockUserData();
+    self->jobList.SignalEvent();
 }
 
 //------------------------------------------------------------------------------
 /**
-    Unload the current resource bundle.
+    The background loader thread func. This will sit on the jobList until
+    it is signaled (when new jobs arrive), and for each job in the job
+    list, it will invoke the LoadResource() method of the resource object
+    and remove the resource object from the job list.
 */
-void
-nResourceServer::UnloadResourceBundle()
+int
+N_THREADPROC
+nResourceServer::LoaderThreadFunc(nThread* thread)
 {
-    // empty
+    // tell thread object that we have started
+    thread->ThreadStarted();
+
+    // get pointer to thread server object
+    nResourceServer* self = (nResourceServer*) thread->LockUserData();
+    thread->UnlockUserData();
+
+    // sit on the jobList signal until new jobs arrive
+    do
+    {
+        // do nothing until job list becomes signalled
+        self->jobList.WaitEvent();
+
+        // does our boss want us to shut down?
+        if (!thread->ThreadStopRequested())
+        {
+            // get all pending jobs
+            while (self->jobList.GetHead())
+            {
+                // keep the job object from joblist
+                self->jobList.Lock();
+                nNode* jobNode = self->jobList.RemHead();
+                nResource* res = (nResource*) jobNode->GetPtr();
+   
+                // take the resource's mutex and lock the resource,
+                // this prevents the resource to be deleted
+                res->LockMutex();
+                self->jobList.Unlock();
+
+                bool success = res->LoadResource();
+                res->SetValid(success);
+                res->UnlockMutex();
+
+                // proceed to next job
+            }
+        }
+    }
+    while (!thread->ThreadStopRequested());
+
+    // tell thread object that we are done
+    thread->ThreadHarakiri();
+    return 0;
 }
 
 //------------------------------------------------------------------------------
+/**
+    Start the loader thread.
+*/
+void
+nResourceServer::StartLoaderThread()
+{
+    n_assert(0 == this->loaderThread);
+
+    // give the thread sufficient stack size (2.5 MB) and a below
+    // normal priority (the purpose of the thread is to guarantee 
+    // a smooth framerate despite dynamic resource loading after all)
+    this->loaderThread = new nThread(LoaderThreadFunc, nThread::Normal, 2500000, ThreadWakeupFunc, 0, this);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Shutdown the loader thread.
+*/
+void
+nResourceServer::ShutdownLoaderThread()
+{
+    n_assert(this->loaderThread);
+    delete this->loaderThread;
+    this->loaderThread = 0;
+
+    // clear the job list
+    this->jobList.Lock();
+    while (this->jobList.RemHead());
+    this->jobList.Unlock();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add a resource to the job list for asynchronous loading.
+*/
+void
+nResourceServer::AddLoaderJob(nResource* res)
+{
+    n_assert(res);
+    n_assert(!res->IsPending());
+    n_assert(!res->IsValid());
+    this->jobList.Lock();
+    this->jobList.AddTail(&(res->jobNode));
+    this->jobList.Unlock();
+    this->jobList.SignalEvent();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Remove a resource from the job list for asynchronous loading.
+*/
+void
+nResourceServer::RemLoaderJob(nResource* res)
+{
+    n_assert(res);
+    this->jobList.Lock();
+    if (res->IsPending())
+    {
+        res->jobNode.Remove();
+    }
+    this->jobList.Unlock();
+}
