@@ -1,0 +1,85 @@
+#-----------------------------------------------------------------------------
+#    nlua.bld
+#    ============
+#    nLuaServer package definition
+#-----------------------------------------------------------------------------
+beginmodule nluaserver
+    setdir luaserver
+    setfiles      { nluaserver nluarun nluacmds ncmdprotolua }
+    setheaders    { nluaserver ncmdprotolua }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nluatest
+	setdir luaserver
+	setheaders { nluatest }
+	setfiles   { nluatest_main nluatest_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule luacorelib
+    setdir lua
+    settype c
+    setfiles { 	
+    	lapi lcode ldebug ldo ldump lfunc lgc llex
+        lmem lobject lopcodes lparser lstate lstring
+        ltable ltests ltm lundump lvm lzio
+    }
+    setheaders {
+        lapi lauxlib lcode ldebug ldo lfunc lgc llex
+        llimits lmem lobject lopcodes lparser lstate
+        lstring ltable ltm lua lualib lundump lvm lzio
+    }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule luastandardlib
+    setdir lua
+    settype c
+    setfiles {
+        lauxlib
+        lbaselib
+        lmathlib
+        loadlib
+        lstrlib
+        ltablib
+        ldblib
+        liolib
+    }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nlua
+    settype lib
+    setmodules    { nluaserver luacorelib luastandardlib }
+    settargetdeps { nkernel nnebula }
+endtarget
+#-----------------------------------------------------------------------------
+begintarget luatest
+  	settype lib
+  	setmodules    { nluatest }
+  	settargetdeps { nlua }
+endtarget
+#-----------------------------------------------------------------------------
+begintarget nshlua
+    annotate "Sample application: A Nebula2 console based interface using Lua."
+    settype exe
+    setmodules { nsh }
+    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nlua luatest }
+endtarget
+#-----------------------------------------------------------------------------
+beginworkspace luaserver
+    setdir ./code/contrib/nluaserver/
+    setbinarydir ./bin/
+    setlibdir ./code/contrib/lib/
+    settargets {
+    	nshlua
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        nremoteshell
+        microtcl
+        nlua
+        luatest
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
