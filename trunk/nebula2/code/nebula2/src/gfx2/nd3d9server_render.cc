@@ -552,18 +552,6 @@ nD3D9Server::SetShader(nShader2* shader)
     if (this->GetShader() != shader)
     {
         nGfxServer2::SetShader(shader);
-        
-        if (shader)
-        {
-            if (((nD3D9Shader*)shader)->NeedsSoftwareVertexProcessing())
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
-            }
-            else if (this->GetFeatureSet() > DX7)
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
-            }
-        }
     }
 }
 
