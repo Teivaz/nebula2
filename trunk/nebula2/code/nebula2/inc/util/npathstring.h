@@ -226,7 +226,7 @@ nPathString::ExtractFileName() const
 
 //------------------------------------------------------------------------------
 /**
-    Return a nPathString object containing the part before the last
+    Return a nPathString object containing the part up to and including the last
     directory separator.
 */
 inline
@@ -237,7 +237,7 @@ nPathString::ExtractDirName() const
     char* lastSlash = pathString.GetLastSlash();
     if (lastSlash)
     {
-        *lastSlash = 0;
+        *++lastSlash = 0;
     }
     return pathString;
 }
