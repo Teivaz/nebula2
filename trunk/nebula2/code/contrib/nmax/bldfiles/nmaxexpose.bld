@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+#   nmaxexpose.bld
+# 
+#   Build file for nmaxexpose package.
+#
+#   Modules: nmaxexpose
+#   Targets: nmaxexpose
+#   
+#   (C) 2004 Kim, Hyoun Woo
+#-------------------------------------------------------------------------------
+beginmodule nmaxexpose
+    settype cpp
+    setplatform win32
+    setdir expose
+    setmoduledeps { nmaxdll }
+    setfiles { nmaxexposecmds }
+    setheaders { nmaxexpose }
+    setlibs_win32 { maxutil.lib core.lib maxscrpt.lib }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nmaxexpose
+    settype dll
+    changedllextension dlu
+    setmodules { 
+        nmaxexpose 
+        nmaxlistener
+        nmaxdll 
+    }
+    settargetdeps { 
+        nmaxbase 
+        nkernel 
+        microtcl 
+        nnebula 
+    }
+endtarget
+#-------------------------------------------------------------------------------
+# EOF
+#-------------------------------------------------------------------------------
+
