@@ -12,16 +12,10 @@
   nCmdProtoLua is licensed under the terms of the Nebula License
 */
 
-#ifndef N_CMDPROTO_H
 #include "kernel/ncmdproto.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nCmdProtoLua
-#include "kernel/ndefdllclass.h"
 
 //--------------------------------------------------------------------
-class N_PUBLIC nCmdProtoLua : public nCmdProto 
+class nCmdProtoLua : public nCmdProto 
 {
   private:
 
