@@ -1,5 +1,5 @@
-#ifndef N_GENERICKEYARRAY_H
-#define N_GENERICARRAY_H
+#ifndef N_IPOLKEYARRAY_H
+#define N_IPOLKEYARRAY_H
 //------------------------------------------------------------------------------
 /**
     @class nIpolKeyArray

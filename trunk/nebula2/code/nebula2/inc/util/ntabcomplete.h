@@ -1,5 +1,5 @@
 #ifndef N_TABCOMPLETE_H
-#define N_TABCOMPLATE_H
+#define N_TABCOMPLETE_H
 //------------------------------------------------------------------------------
 /**
     @class nTabComplete
