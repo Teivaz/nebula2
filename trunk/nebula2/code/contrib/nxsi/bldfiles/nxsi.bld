@@ -1,0 +1,40 @@
+#--------------------------------------------------------------------
+#   nxsi.bld
+#   ===========
+#--------------------------------------------------------------------
+beginmodule nxsi
+    setdir nxsi
+    setfiles { nxsi.cpp nxsi_base nxsi_mesh nxsi_animation nxsi_material nxsi_convert nxsioptions }
+    setheaders { nxsi nxsitypes nxsioptions }
+    setmoduledeps {
+        nmeshbuilder
+        nanimbuilder
+    }
+    setlibs_win32 { XSIFtk.lib }
+endmodule
+#--------------------------------------------------------------------
+#
+#--------------------------------------------------------------------
+begintarget nxsi
+    settype exe
+    setexceptions true
+    setmodules { nxsi }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ntoollib
+    }
+endtarget
+#--------------------------------------------------------------------
+beginworkspace nxsi
+    setbinarydir ./bin/
+    annotate "The workspace for the dotxsi to nebula2 converter."
+    settargets {
+        nxsi
+        nkernel
+        nnebula
+        microtcl
+        ntoollib
+    }
+endworkspace
