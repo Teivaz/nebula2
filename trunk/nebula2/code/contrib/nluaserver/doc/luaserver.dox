@@ -381,6 +381,9 @@ nshlua -scriptserver nluaserver
     @c nebula2/code/contrib/nluaserver/data/luatest to @c nebula2/data/luatest, and
     then modify the assign at the top of @c start.lua to point to the new location, that
     way you have less to type :)<br>
-    
+    <br>
+    <br>
+    <br>
+    (c) 2004 Vadim Macagon & Matthew T. Welker
 */
 
