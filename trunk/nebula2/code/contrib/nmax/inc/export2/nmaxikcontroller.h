@@ -1,22 +1,26 @@
+//-----------------------------------------------------------------------------
+//  nmaxikanimator.h
+//
+//  (C)2004 Kim, Hyoun Woo
+//-----------------------------------------------------------------------------
 #ifndef N_MAXIKCONTROLLER_H
 #define N_MAXIKCONTROLLER_H
 
 //-----------------------------------------------------------------------------
 /**
-    @class nMaxIKController
+    @class nMaxIKAnimator
     @ingroup
 
     @brief A class for handling Inverse Kinemetics(IK).
 */
-class nMaxController;
-class nMaxPRSController;
+class nMaxTransformAnimator;
 
 //-----------------------------------------------------------------------------
-class nMaxIKController : public nMaxPRSController
+class nMaxIKAnimator : public nMaxTransformAnimator
 {
 public:
-    nMaxIKController();
-    virtual ~nMaxIKController();
+    nMaxIKAnimator();
+    virtual ~nMaxIKAnimator();
 
     virtual void Export(INode *inode);
 protected:
