@@ -56,6 +56,9 @@ nSceneNode::LoadResources()
     This method makes sure that all resources used by this object are
     unloaded. The method does NOT recurse into its children. 
 
+    If you ovverride this method, be sure to call the overridden version
+    in your destructor.
+
     @return     true, if resources have actually been unloaded
 */
 void
