@@ -128,7 +128,7 @@ protected:
     ///@}
 
     bool GetCustAttrib(INode* inode);
-    nSceneNode* CreateNebulaNode(INode* inode);
+    nSceneNode* CreateShapeNode(INode* inode, nString &name);
 
     void SetShapeGroup(nShapeNode* createdNode, int baseGroupIndex, int numMaterials);
 
