@@ -9,21 +9,6 @@
 
 nNebulaClass(nGuiSlider2, "nguiwidget");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguislider2
-
-    @cppclass
-    nGuiSlider2
-    
-    @superclass
-    nguiformlayout
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

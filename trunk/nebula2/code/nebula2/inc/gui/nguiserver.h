@@ -154,6 +154,7 @@ private:
     void FlushBrushes();
 
     static nGuiServer* Singleton;
+
     nDynAutoRef<nRoot>      refGui;
     nAutoRef<nInputServer>  refInputServer;
     nAutoRef<nScriptServer> refScriptServer;

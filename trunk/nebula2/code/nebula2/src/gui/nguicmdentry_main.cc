@@ -10,21 +10,6 @@
 
 nNebulaClass(nGuiCmdEntry, "nguitextview");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguicmdentry
-
-    @cppclass
-    nGuiCmdEntry
-    
-    @superclass
-    nguitextview
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

@@ -7,21 +7,6 @@
 
 nNebulaClass(nGuiIconCanvas, "nguiwidget");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguiiconcanvas
-
-    @cppclass
-    nGuiIconCanvas
-    
-    @superclass
-    nguiwidget
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

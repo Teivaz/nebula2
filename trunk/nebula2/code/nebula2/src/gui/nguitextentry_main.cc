@@ -113,7 +113,7 @@ nGuiTextEntry::SetMaxLength(int l)
 {
     if (this->lineEditor)
     {
-        delete this->lineEditor;
+        n_delete(this->lineEditor);
         this->lineEditor = 0;
     }
     this->lineEditor = n_new(nEditLine(l));

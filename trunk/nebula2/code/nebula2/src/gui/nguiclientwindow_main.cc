@@ -37,9 +37,6 @@ nGuiClientWindow::~nGuiClientWindow()
 //------------------------------------------------------------------------------
 /**
     Update child widget rectangles.
-
-    04-Aug-04    kims    changed this to public member function to enable to be
-                         scriptable.
 */
 void
 nGuiClientWindow::UpdateLayout(const rectangle& newRect)

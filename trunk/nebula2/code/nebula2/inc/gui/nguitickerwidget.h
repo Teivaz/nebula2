@@ -8,10 +8,11 @@
     @brief Ticker widget (for Genius). Not very useful for the general case.
 
     WARNING: becuase of a general bug in the GUI system the ticker must be placed
-    direct under the top window, or the right border will be false.
+    directly under the top window, or the right border will be false.
 
     A text label that moves from left to right.
 
+    @verbatim
                 |-----------------|
     |----------|| Parent Widget   ||------------|
     | End Pos. ||           <-----|| Start Pos. |
@@ -19,6 +20,7 @@
                 Î                  Î
                 |                  Text will be clipped to right border.
                 Must be left screen border!
+    @endverbatim
 
     (C) 2004 RadonLabs GmbH
 */

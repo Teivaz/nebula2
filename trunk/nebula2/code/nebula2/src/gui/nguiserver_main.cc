@@ -655,8 +655,8 @@ nGuiServer::Render()
         int curPass;
         int numPasses = shader->Begin(false);
         for (curPass = 0; curPass < numPasses; curPass++)
-        {            
-			shader->BeginPass(curPass);
+        {
+            shader->BeginPass(curPass);
 
             // begin rendering to dynamic mesh
             this->curTexture = 0;
@@ -684,7 +684,8 @@ nGuiServer::Render()
 
             // finish dynamic mesh rendering
             this->dynMesh.End(this->curVertexIndex);
-			shader->EndPass();
+
+            shader->EndPass();
         }
         shader->End();
         gfxServer->PopTransform(nGfxServer2::Model);
