@@ -68,12 +68,21 @@ set home ./
 #----------------------------------------------------------------------------
 #  Included scripts
 #----------------------------------------------------------------------------
+source $home/buildsys/lib/log.tcl
 source $home/buildsys/buildutil.tcl
 source $home/buildsys/loadbld.tcl
 source $home/buildsys/generatebld.tcl
 source $home/buildsys/validatebld.tcl
 source $home/buildsys/compilerapi.tcl
 source $home/buildsys/helperfunctions.tcl
+
+# set default verbosity level
+# allow all
+::log::lvSuppressLE emergency 0
+if (!$verbose) {
+    # suppress debug
+    ::log::lvSuppressLE debug 1
+}
 
 # generators
 set gen_list ""
@@ -133,32 +142,32 @@ if { $debug } {
 }
 
 # ETERNAL TODO: Properly validate data 
-puts "\n**** Validating bld files"
+::log::log info "\n**** Validating bld files"
  
 if { $debug } {
     dump_api_data validatebld   
 }
 add_pkgs $workspaces
 
-puts "\n->Done loading bld files."
+::log::log info "\n->Done loading bld files."
 #----------------------------------------------------------------------------
 #  Call the generators
 #----------------------------------------------------------------------------
-puts ""
-puts ":: GENERATING buildfiles..."
-puts "==========================="
+::log::log info ""
+::log::log info ":: GENERATING buildfiles..."
+::log::log info "==========================="
 
 if {$buildgen == ""} {
-    puts "Running all generators..."
+    ::log::log debug "Running all generators..."
     foreach gen $gen_list {
         namespace inscope $gen generate $workspaces
     }
 } else {
-    puts "Running $buildgen generator"
+    ::log::log debug "Running $buildgen generator"
     namespace inscope $buildgen generate $workspaces
 }
 
-puts "\ndone."
+::log::log info "\ndone."
 
 #----------------------------------------------------------------------------
 #   EOF

@@ -71,7 +71,7 @@ proc translate_platdefs { platform_list } {
         } elseif {$bit == "macosx"} {
             set bit __MACOSX__
         } else {
-           puts "ERROR: unknown platform: $bit"
+           ::log::log error "ERROR: unknown platform: $bit"
            exit
         }
         addtolist retval $bit
@@ -94,25 +94,25 @@ proc get_platform {} {
     if {$tcl_platform(platform) == "windows"} {
         if {$tcl_platform(os) == "Windows NT"} {
             if {$tcl_platform(osVersion) >= 5.0} {
-                puts "Windows 2000 detected"
+                ::log::log debug "Windows 2000 detected"
             } else {
-                puts "Windows NT detected"
+                ::log::log debug "Windows NT detected"
             }
         } else {
-            puts "Windows9x detected"
+            ::log::log debug "Windows9x detected"
         }
         set p "win32"
     } elseif {$tcl_platform(platform) == "unix"} {
         if {$tcl_platform(os) == "Darwin"} {
             set p "macosx"
-            puts "Mac OS X detected"
+            ::log::log debug "Mac OS X detected"
         } else {
             set p "linux"
-            puts "Linux detected"
+            ::log::log debug "Linux detected"
         }
     } else {
         set p "unknown"
-        puts "Unknown platform detected"
+        ::log::log debug "Unknown platform detected"
     }
     return $p
 }
@@ -130,7 +130,7 @@ proc findmodbyname {name} {
             return $i
         }
     }
-    puts "ERROR: module '$name' not defined!"
+    ::log::log error "ERROR: module '$name' not defined!"
     exit
 }
 
@@ -148,7 +148,7 @@ proc findtargetbyname { tname} {
         }
     }
 
-    puts "ERROR: target '$tname' not defined!"
+    ::log::log error "ERROR: target '$tname' not defined!"
     exit
 }
 
@@ -165,7 +165,7 @@ proc findbundlebyname {name} {
             return $i
         }
     }
-    puts "ERROR: bundle '$name' not defined!"
+    ::log::log error "ERROR: bundle '$name' not defined!"
     exit
 }
 
@@ -182,7 +182,7 @@ proc findwspacebyname {name} {
             return $i
         }
     }
-    puts "ERROR: workspace '$name' not defined!"
+    ::log::log error "ERROR: workspace '$name' not defined!"
     exit
 }
 
@@ -354,12 +354,12 @@ proc check_makedir {path} {
     global debug
     if {![file exists $path]} {
         if { $debug } {
-			puts "-> Creating directory $path"
+			::log::log debug "-> Creating directory $path"
 		}
         file mkdir $path
     } else {
 		if { $debug } {
-			puts "-> Directory $path exists"
+			::log::log debug "-> Directory $path exists"
 		}
     }	
 }
