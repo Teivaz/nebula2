@@ -21,62 +21,65 @@
 */
 int nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* animator)
 {
-    IKeyControl* iKeyControl = GetKeyControlInterface(control);
-
-    Control* xControl = control->GetXController();
-    Control* yControl = control->GetYController();
-    Control* zControl = control->GetZController();
-
-    if (iKeyControl)
+    if (control->NumKeys())
     {
-        int numKeys = iKeyControl->GetNumKeys();
-        if (numKeys > 0)
+    
+        IKeyControl* iKeyControl = GetKeyControlInterface(control);
+
+        Control* xControl = control->GetXController();
+        Control* yControl = control->GetYController();
+        Control* zControl = control->GetZController();
+
+        if (iKeyControl)
         {
-            nMaxControl::Type type = nMaxControl::GetType(control);
-
-            switch(type)
+            int numKeys = iKeyControl->GetNumKeys();
+            if (numKeys > 0)
             {
-            case nMaxControl::TCBPosition:
-                return ExportTCBPosition(iKeyControl, numKeys, animator);
+                nMaxControl::Type type = nMaxControl::GetType(control);
 
-            case nMaxControl::HybridPosition:
-                return ExportHybridPosition(iKeyControl, numKeys, animator);
+                switch(type)
+                {
+                case nMaxControl::TCBPosition:
+                    return ExportTCBPosition(iKeyControl, numKeys, animator);
 
-            case nMaxControl::LinearPosition:
-                return ExportLinearPosition(iKeyControl, numKeys, animator);
+                case nMaxControl::HybridPosition:
+                    return ExportHybridPosition(iKeyControl, numKeys, animator);
 
-            default:
+                case nMaxControl::LinearPosition:
+                    return ExportLinearPosition(iKeyControl, numKeys, animator);
+
+                default:
+                    return ExportSampledPosition(animator);
+                }
+            }
+            else
+            {
+                // we have Controller but it has no keys.
+                n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
+                return 0;
+            }
+        }
+        else
+        if (xControl || yControl || zControl)
+        {
+            if (HasSampledKeys(control))
+            {
                 return ExportSampledPosition(animator);
+            }
+            else
+            {
+                // got one of the xControl, yControl or zControl but any control of those has no keys.
+                //n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
+                return 0;
             }
         }
         else
         {
-            // we have Controller but it has no keys.
-            n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
-            return 0;
-        }
-
-    }
-    else
-    if (xControl || yControl || zControl)
-    {
-        if (HasSampledKeys(control))
-        {
+            // export sampled key position animation.
             return ExportSampledPosition(animator);
         }
-        else
-        {
-            // got one of the xControl, yControl or zControl but 
-            // any control of those has no keys.
-            //n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
-            return 0;
-        }
     }
-    else
-    {
-        // export sampled key position animation.
-        return ExportSampledPosition(animator);
-    }
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -154,7 +157,6 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
     {
         nMaxSampleKey sampleKey = sampleKeyArray[i];
 
-        //TimeValue time = sampleKey.time;
         float time = sampleKey.time;
 
         vector3 pos;
@@ -166,4 +168,46 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
     }
 
     return sampleKeyArray.Size();
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Check the given controller has any one of the xyz sub controller.
+
+    @note:
+    Controllers that have XYZ sub-controllers are the Euler angle controller 
+    or the Position XYZ controller.
+*/
+bool nMaxTransformAnimator::HasSampledKeys(Control *control)
+{
+    bool result = false;
+
+    Control* xControl = control->GetXController();
+    Control* yControl = control->GetYController();
+    Control* zControl = control->GetZController();
+
+    IKeyControl* ikeyControl;
+
+    if (xControl)
+    {
+        ikeyControl = GetKeyControlInterface(xControl);
+        if (ikeyControl && ikeyControl->GetNumKeys() > 0)
+            result = true;
+    }
+
+    if (yControl)
+    {
+        ikeyControl = GetKeyControlInterface(yControl);
+        if (yControl && ikeyControl->GetNumKeys() > 0)
+            result = true;
+    }
+
+    if (zControl)
+    {
+        ikeyControl = GetKeyControlInterface(zControl);
+        if (yControl && ikeyControl->GetNumKeys() > 0)
+            result = true;
+    }
+
+    return result;
 }

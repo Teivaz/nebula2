@@ -4,6 +4,7 @@
 //  (C)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
+#include "export2/nmaxoptions.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxtransformanimator.h"
 #include "pluginlibs/nmaxdlg.h"
@@ -18,40 +19,49 @@
 */
 int nMaxTransformAnimator::ExportRotation(Control *control, nTransformAnimator* animator)
 {
-    IKeyControl* iKeyControl = GetKeyControlInterface(control);
-
-    if (iKeyControl)
+    if (control->NumKeys())
     {
-        int numKeys = iKeyControl->GetNumKeys();
-        if (numKeys > 0)
+        IKeyControl* iKeyControl = GetKeyControlInterface(control);
+
+        if (iKeyControl)
         {
-            nMaxControl::Type type = nMaxControl::GetType(control);
-
-            switch(type)
+            int numKeys = iKeyControl->GetNumKeys();
+            if (numKeys)
             {
-            case nMaxControl::TCBRotation:
-                return ExportTCBRotation(iKeyControl, numKeys, animator);
+                nMaxControl::Type type = nMaxControl::GetType(control);
 
-            case nMaxControl::HybridRotation:
-                return ExportHybridRotation(iKeyControl, numKeys, animator);
+                switch(type)
+                {
+                case nMaxControl::TCBRotation:
+                    return ExportTCBRotation(iKeyControl, numKeys, animator);
 
-            case nMaxControl::LinearRotation:
-                return ExportLinearRotation(iKeyControl, numKeys, animator);
+                case nMaxControl::HybridRotation:
+                    return ExportHybridRotation(iKeyControl, numKeys, animator);
 
-            case nMaxControl::EulerRotation:
-                return ExportEulerRotation(control, numKeys, animator);
+                case nMaxControl::LinearRotation:
+                    return ExportLinearRotation(iKeyControl, numKeys, animator);
 
-            default:
-                return ExportSampledKeyRotation(animator);
+                case nMaxControl::EulerRotation:
+                    return ExportEulerRotation(control, numKeys, animator);
+
+                default:
+                    return ExportSampledKeyRotation(animator);
+                }
+            }
+            else
+            {
+                // we have Controller but it has no keys.
+                n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
+                return 0;
             }
         }
         else
-            return 0;
+        {
+            return ExportSampledKeyRotation(animator);
+        }
     }
-    else
-    {
-        return ExportSampledKeyRotation(animator);
-    }
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -142,9 +152,11 @@ int nMaxTransformAnimator::ExportEulerRotation(Control* control, int numKeys,
 */
 int nMaxTransformAnimator::ExportSampledKeyRotation(nTransformAnimator* animator)
 {
+    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
+
     nArray<nMaxSampleKey> sampleKeyArray;
 
-    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, 1, nMaxRot);
+    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxRot);
 
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)
