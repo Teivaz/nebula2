@@ -19,7 +19,7 @@
 #include "mathlib/matrix.h"
 #include "scene/nrendercontext.h"
 #include "gfx2/ncamera2.h"
-#include "spatialdb/nvisibilityvisitor.h"
+#include "spatialdb/nvisitorbase.h"
 #include <string>
 class nSceneServer;
 class CCCullingMgr;

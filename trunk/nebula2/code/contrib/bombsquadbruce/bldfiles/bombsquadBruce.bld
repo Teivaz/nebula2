@@ -43,7 +43,6 @@ begintarget bombsquadBruce
         microtcl
         nlua
         nmap
-        noctree
         nspatialdb
         ngui
         ndsaudioserver3

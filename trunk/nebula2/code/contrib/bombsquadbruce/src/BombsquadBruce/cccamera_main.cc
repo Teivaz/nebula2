@@ -136,7 +136,7 @@ nVisibilityVisitor* CCCamera::GetVisibilityVisitor( nVisibilityVisitor::VisibleE
     switch( m_CullMode )
     {
     case SPHERE:
-        {
+/*        {
             // create sphere that has the desired offset relative to the current pos,
             // where that offset is aligned to the camera's orientation.
             matrix44 sphereTransform;
@@ -144,7 +144,7 @@ nVisibilityVisitor* CCCamera::GetVisibilityVisitor( nVisibilityVisitor::VisibleE
             sphereTransform.mult_simple(GetTransform());
             sphere cullSphere(sphereTransform.pos_component(), m_CullSphereRadius);
             return n_new( nVisibleSphereGenArray( cullSphere, m_Elements ) );
-        }
+        }*/
     case FRUSTUM:
         return n_new( nVisibleFrustumGenArray(*this, this->GetTransform(), m_Elements) );
     default:

@@ -14,22 +14,16 @@ nNebulaScriptClass(CCCullingMgr, "nroot");
 // Helper function
 //------------------------------------------------------------------------------
 
-void DestroySpatialDB(nOctNode* pNode)
+void CCCullingMgr::DestroySpatialDB(nSpatialSector *cleanme)
 {
-    while( nSpatialElement* pElement = (nSpatialElement *)pNode->elm_list.GetHead() )
+    int i;
+    for (i=0; i < m_currentelements.Size(); ++i)
     {
-        pNode->RemoveElement( pElement );
-        delete pElement;
+        m_rRootSector->RemoveElement(m_currentelementhandles[i]);
+        n_delete(m_currentelements[i]);
     }
-    n_assert( 0 == pNode->num_elms );
-    if( 0 != pNode->all_num_elms )
-    {
-        for( int i = 0; i < 8; ++i ) // 8 is the magic number of children in an octree
-        {
-            DestroySpatialDB( pNode->c[i] );
-        }
-    }
-    n_assert( 0 == pNode->all_num_elms );
+    m_currentelementhandles.Clear();
+    m_currentelements.Clear();
 }
 
 ///////////////////////////////////////////
@@ -45,7 +39,8 @@ CCCullingMgr::CCCullingMgr() :
 CCCullingMgr::~CCCullingMgr()
 {
     n_delete(m_pCuller);
-    DestroySpatialDB(m_rRootSector->GetRoot());
+    if (m_rRootSector.isvalid())
+        DestroySpatialDB(m_rRootSector.get());
 }
 
 ///////////////////////////////////////////
@@ -56,9 +51,11 @@ void CCCullingMgr::StartElements()
 {
     if( m_rRootSector.isvalid() )
     {  // destroy and recreate to reinitialize the octree memory pool
-        DestroySpatialDB(m_rRootSector->GetRoot());
+        DestroySpatialDB(m_rRootSector.get());
         m_rRootSector->Release();
     }
+    n_assert(m_currentelements.Size() == 0);
+    n_assert(m_currentelementhandles.Size() == 0);
     nString rootSectorPath = this->GetFullName() + "/rootsector";
     m_rRootSector = (nSpatialSector *)kernelServer->New("nspatialsector", rootSectorPath.Get());
     m_rRootSector->Configure(matrix44());
@@ -66,20 +63,23 @@ void CCCullingMgr::StartElements()
 
 bool CCCullingMgr::AddElement(CCRoot& root)
 {
-    nSpatialElement* pElement = new nSpatialElement();
-    pElement->SetPtr( &root );
-    m_rRootSector->AddElement( pElement );
     n_assert( vector3( 1.0f, 1.0f, 1.0f ).isequal( root.GetShapeNode()->GetScale(), 0.0001f ) ); // otherwise scale the bounding box as well
     bbox3 worldSpaceBBox = root.GetShapeNode()->GetLocalBox();
     worldSpaceBBox.vmin += root.GetPosition();
     worldSpaceBBox.vmax += root.GetPosition();
-    m_rRootSector->UpdateElement( pElement, root.GetPosition(), worldSpaceBBox );
+
+    nSpatialElement* pElement = n_new(nBBoxSpatialElement(worldSpaceBBox));
+    pElement->SetPtr( &root );
+    nSpatialSector::ElementHandle elementhandle = m_rRootSector->AddElement( pElement );    
+    m_currentelements.PushBack(pElement);
+    m_currentelementhandles.PushBack(elementhandle);
+//    m_rRootSector->UpdateElement( pElement, root.GetPosition(), worldSpaceBBox );
     return true;
 }
 
 void CCCullingMgr::EndElements()
 {
-    m_rRootSector->BalanceTree();
+    //m_rRootSector->BalanceTree();
 }
 
 const nVisibilityVisitor::VisibleElements& CCCullingMgr::GetVisibleElements(const CCCamera& cullCamera)
@@ -87,7 +87,8 @@ const nVisibilityVisitor::VisibleElements& CCCullingMgr::GetVisibleElements(cons
     n_delete( m_pCuller );
     m_ObjectsToRender.Clear();
     m_pCuller = cullCamera.GetVisibilityVisitor(m_ObjectsToRender);
-    m_pCuller->Visit(m_rRootSector.get(),3);
+//    m_pCuller->Visit(m_rRootSector.get(),3);
+    m_rRootSector->Accept(*m_pCuller, 3, VisitorFlags());
     return m_ObjectsToRender;
 }
 
@@ -97,14 +98,18 @@ const nVisibilityVisitor::VisibleElements& CCCullingMgr::GetVisibleElements(cons
 */
 void CCCullingMgr::Visualize()
 { 
-    m_pCuller->VisualizeDebug(nGfxServer2::Instance());
     nGfxServer2::Instance()->SetTransform(nGfxServer2::Model, matrix44());
-    m_pCuller->Visit(m_rRootSector.get(),3);
+
+    m_pCuller->StartVisualizeDebug(nGfxServer2::Instance());
+    m_rRootSector->Accept(*m_pCuller, 3, VisitorFlags());
+    m_pCuller->EndVisualizeDebug();
+    //    m_pCuller->Visit(m_rRootSector.get(),3);
+
     nGfxServer2::Instance()->BeginShapes();
     int i; // VC6 compatibility
     for( i = m_ObjectsToRender.Size(); i > 0; --i )
     {
-        bbox3 nodebbox ( (m_ObjectsToRender[i-1]->minCorner + m_ObjectsToRender[i-1]->maxCorner)*0.5, (m_ObjectsToRender[i-1]->maxCorner - m_ObjectsToRender[i-1]->minCorner)*0.5);
+        bbox3 nodebbox ( m_ObjectsToRender[i-1]->GetAABB() );
         matrix44 m;
         m.scale( nodebbox.extents() * 2.0f );
         m.set_translation( nodebbox.center() );
