@@ -6,8 +6,8 @@
     @ingroup NebulaGraphicsSystem
     
     Encapsulates an argument for a shader parameter. This is similar 
-    to an nArg, but does only handle argument types which are
-    relevant for a shader.
+    to an nArg, but only handles argument types that are relevant 
+    for a shader.
     
     (C) 2003 RadonLabs GmbH
 */
