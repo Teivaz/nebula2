@@ -185,8 +185,18 @@ n_savescreenshot(void *slf, nCmd *cmd)
 static void
 n_setcursorvisibility(void *slf, nCmd *cmd)
 {
-//    nGfxServer2 *self = (nGfxServer2*) slf;   
-//    self->SetCursorVisibility( nGfxServer2::StringToCursorVisibility( cmd->In()->GetS() ) );
+    nGfxServer2 *self = (nGfxServer2*) slf;
+    const char *str = cmd->In()->GetS();
+    nGfxServer2::CursorVisibility visibility;
+    if (0 == strcmp(str, "none"))        visibility = nGfxServer2::None;
+    else if (0 == strcmp(str, "system")) visibility = nGfxServer2::System;
+    else if (0 == strcmp(str, "custom")) visibility = nGfxServer2::Custom;
+    else
+    {
+        n_error("setcursorvisibility: invalid string '%s'\n", str);
+        return;
+    }
+    self->SetCursorVisibility( visibility );
 }
 
 
