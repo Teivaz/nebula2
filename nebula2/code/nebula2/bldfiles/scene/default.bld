@@ -25,7 +25,6 @@
 #      nskinanimator
 #      nskinshapenode
 #      nshadowskinshapenode
-#      nkeyanimator
 #      ntransformcurveanimator
 #      nuvanimator
 #      nblendshapeanimator
@@ -169,12 +168,6 @@ beginmodule nshadowskinshapenode
     setdir scene
     setfiles { nshadowskinshapenode_main nshadowskinshapenode_cmds }
     setheaders nshadowskinshapenode
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nkeyanimator
-    setdir scene
-    setfiles { nkeyanimator_main }
-    setheaders nkeyanimator
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule ntransformcurveanimator
