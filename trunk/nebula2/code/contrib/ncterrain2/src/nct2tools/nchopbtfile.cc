@@ -2,7 +2,7 @@
 //  nchopbtfile.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "tools/nbtfile.h"
+#include "nct2tools/nbtfile.h"
 #include "tools/ncmdlineargs.h"
 #include "util/nfixedarray.h"
 #include "kernel/nfileserver2.h"
