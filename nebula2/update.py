@@ -122,7 +122,7 @@ def Profile(generatorName, workspaces):
 #--------------------------------------------------------------------------
 def LaunchGUI(generatorName, workspaceNames):
     try:
-        from buildsys3.gui import DisplayGUI
+        from buildsys3.gui.main import DisplayGUI
     except ImportError, err:
         print 'Error: Failed to import buildsys3.gui'
         print str(err)
