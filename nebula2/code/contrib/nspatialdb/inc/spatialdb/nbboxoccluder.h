@@ -54,8 +54,11 @@ public:
     // we'll reuse the frustum clipper result_info datatype
     typedef nFrustumClipper::result_info result_info;
 
+    /// test if a bounding box is occluded by this occluder
     result_info TestBBox(const bbox3 &boxtest, result_info in);
+    /// test if a sphere is occluded by this occluder
     result_info TestSphere(const sphere &spheretest, result_info in);
+    /// test if a point is occluded by this occluder
     result_info TestPoint(const vector3 &pointtest, result_info in);
 
     void VisualizeBBox(nGfxServer2 *gfx2, const vector4 &color);
@@ -69,6 +72,8 @@ protected:
     int m_numplanes;
     /// we also need to mask off the extra bits in the result_info if there are less than 6 planes
     int m_planemask;
+
+    vector3 m_debugverts[12];
 };
 
 inline
@@ -96,20 +101,25 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
 
     // degenerate case when the viewpoint is inside the occluder, maybe
     // we'll handle this smartly someday
-    n_assert(!occludingbox.contains(viewpoint));
+    if (occludingbox.contains(viewpoint))
+    {
+        m_numplanes = 0;
+        m_planemask = -1;
+        return;
+    }
 
     // we'll have to build the clipping planes manually be examing the
     // bounding box silhouette as seen from the viewpoint
     // here's some data arrays describing the cube faces and edges
     // array of normals for the cube faces
-    vector3 facenormals[6] = { vector3(0,-1,0), vector3(1,0,0), vector3(0,0,1), vector3(0,1,0), vector3(-1,0,0), vector3(0,0,-1) };
+    vector3 facenormals[6] = { vector3(0,0,-1), vector3(1,0,0), vector3(0,1,0), vector3(0,0,1), vector3(-1,0,0), vector3(0,-1,0) };
 
     // array telling what two faces each edge is part of--edges are
     // considered directional vectors from one vertex to another, and
     // the faces are specified with the left side face first.  In this
     // way we can determine which orientation of the edge to use
     // for the silhouette
-    int edgefacemap[12][2] = { {0,5}, {0,1}, {0,2}, {0,4}, {1,5}, {1,2}, {4,2}, {5,4}, {3,5}, {3,1}, {3,2}, {3,4} };
+    int edgefacemap[12][2] = { {0,5}, {0,1}, {0,2}, {0,4}, {1,5}, {2,1}, {4,2}, {5,4}, {3,5}, {3,1}, {3,2}, {3,4} };
 
     // array telling which vertices a given edge is connecting
     int edgevertexmap[12][2] = { {0,1}, {1,5}, {5,4}, {4,0}, {1,3}, {5,7}, {4,6}, {0,2}, {3,2}, {7,3}, {6,7}, {2,6} };
@@ -117,8 +127,8 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
     // array of vertex locations, specifying the relative point locations
     // from the bbox center
     vector3 vertexv[8] = { 
-        vector3(-1,-1,-1), vector3(1,-1,-1), vector3(-1,1,-1), vector3(1,1,-1),
-        vector3(-1,-1, 1), vector3(1,-1, 1), vector3(-1,1, 1), vector3(1,1, 1)
+        vector3(-1,-1,-1), vector3(1,-1,-1), vector3(-1,-1,1), vector3(1,-1,1),
+        vector3(-1, 1,-1), vector3(1, 1,-1), vector3(-1, 1,1), vector3(1, 1,1)
     };
 
     bool backfaces[6];
@@ -136,6 +146,10 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
         backfaces[faceix] = ((vp2face % n) > 0.0);
     }
 
+    // we commandeer the frustum corners and make them the points on the box silhouette, but
+    // we must also keep track of which vertices have already been added
+    int silhouettevertexindex=0;
+
     // back faces are marked; find the silhouette edges.  These are edges
     // bordering one front and one back face when we find and edge, build
     // a clip plane for it
@@ -143,8 +157,8 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
     for (int edgeix=0; edgeix < 12; edgeix++)
     {
         // this is a silhouette edge if one face is a front face and one
-	// face is a back face. it is important to know which face is the
-	// back face, so that we orient our edge (and thus the clipping plane)
+    	// face is a back face. it is important to know which face is the
+    	// back face, so that we orient our edge (and thus the clipping plane)
         // correctly
         bool b1 = backfaces[edgefacemap[edgeix][0]], b2 = backfaces[edgefacemap[edgeix][1]];
         if ( (b1 & !b2) || (!b1& b2) ) // try replacing w/ xor... GJH
@@ -160,22 +174,34 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
             vector3 v1(occludingbox.center() + vector3(occextents.x * vp1.x, occextents.y * vp1.y, occextents.z * vp1.z));
             vector3 v2(occludingbox.center() + vector3(occextents.x * vp2.x, occextents.y * vp2.y, occextents.z * vp2.z));
 
-            // we can construct the clipping plane using the viewpoint and
-	    // the two vertices on the edge.
+            // we can construct the clipping plane using the viewpoint and the two vertices on the silhouette edge.
             m_planes[m_numplanes++] = plane(viewpoint, v1, v2);
+
+            // add the vertices to the silhouette points if they're not already in there
+            m_debugverts[silhouettevertexindex++] = v1;
+            m_debugverts[silhouettevertexindex++] = v2;
         }
     }
 
     // there are only so many silhouette types you can make from a cube
     n_assert( (m_numplanes > 3) && (m_numplanes < 7) );
+    // there should the same # of silhouette vertices  as the number of silhouette edges
+    n_assert( silhouettevertexindex == (2 * m_numplanes) );
 
     int planemasks[3] = {0x0f, 0x1f, 0x3f};
     m_planemask = planemasks[m_numplanes-4];
+
 }
 
 inline
 nBBoxOccluder::result_info nBBoxOccluder::TestBBox(const bbox3 &boxtest, result_info in)
 {
+    // special degenerate case of the viewpoint inside the occluder--everything is occluded
+    if (m_planemask == -1)
+    {
+        return result_info(true,0);
+    }
+
     // first, mask off the extra planes.  This is needed if there are
     // less than 6 clipping planes
     in.active_planes &= m_planemask;
@@ -222,6 +248,29 @@ nBBoxOccluder::result_info nBBoxOccluder::TestPoint(const vector3 &pointtest, nB
 inline
 void nBBoxOccluder::VisualizeBBox(nGfxServer2 *gfx2, const vector4 &color)
 {
+    vector3 sprayline[4];
+
+    // draw lines from the viewpoint to the occluder
+    gfx2->BeginLines();
+    for (int lix=0; lix < m_numplanes; lix++)
+    {
+        // draw a line segment section of the silhouette, and project the endpoints of the
+        // segment out from the viewpoint
+        sprayline[1] = m_debugverts[lix*2];
+        sprayline[2] = m_debugverts[lix*2+1];
+
+        // the radiating line parts
+        sprayline[0] = sprayline[1] * 2 - m_viewpoint;
+        sprayline[3] = sprayline[2] * 2 - m_viewpoint;
+        gfx2->DrawLines3d(sprayline, 4, color);
+
+        // draw a plane normal in the center of the segment
+        sprayline[0] = (m_debugverts[lix*2] + m_debugverts[lix*2+1]) * 0.5;
+        sprayline[1] = sprayline[0] + m_planes[lix].normal();
+        gfx2->DrawLines3d(sprayline, 2, color);
+    }
+    gfx2->EndLines();
+
 }
 
 #endif
