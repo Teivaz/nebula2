@@ -3,7 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nConServer
-
+    @ingroup NebulaConsoleServer
+    @brief
     Implements the Nebula ingame console. Must live under the name
     /sys/servers/console in the Nebula object hierarchy.
 
