@@ -16,6 +16,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
     (
         -- default value of a radiobutton is '1'
         meshtype type:#integer default:1 animatable:false ui:rdoMeshTypes
+        --attachednode type:#boolean default:false animatable:false ui:chkAttachedNode
     )
 
     -- parameters for vertex options
@@ -31,6 +32,8 @@ nMeshOptionsCA = attributes "nMeshOptions"
     (
         -- mesh types
         radiobuttons rdoMeshTypes "Mesh Types" align:#left labels:#("Normal", "Swing", "Shadow", "Collision") columns:1
+        
+        --checkbox chkAttachedNode "Attached Node" align:#left
         
         -- vertex options
         label lblVertexOption "Vertex Options" align:#left
@@ -49,6 +52,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkUvs.checked   = true 
                                 
                 -- enables ui controls
+                --chkAttachedNode.enabled = true
                 
                 chkColor.enabled = true
                 chkUvs.enabled = true 
@@ -61,6 +65,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkUvs.checked   = true 
                                 
                 -- enables ui controls
+                --chkAttachedNode.enabled = false
                 
                 chkColor.enabled = true
                 chkUvs.enabled = true 
@@ -69,12 +74,15 @@ nMeshOptionsCA = attributes "nMeshOptions"
             -- 'shadow' mesh type
             if state == 3 do
             (
-                chkColor.checked = false
-                chkUvs.checked   = false 
+                chkNormal.checked  = false
+                chkColor.checked   = false
+                chkUvs.checked     = false 
+                chkTangent.checked = false
                 
                 -- disables ui controls
-                chkColor.enabled = false
-                chkUvs.enabled = false 
+                chkNormal.enabled  = false
+                chkColor.enabled   = false
+                chkUvs.enabled     = false 
                 chkTangent.enabled = false
             )
             -- 'collision' mesh type
@@ -84,6 +92,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkUvs.checked   = false 
                                 
                 -- disables ui controls
+                --chkAttachedNode.enabled = false
                 
                 chkColor.enabled = false
                 chkUvs.enabled = false
@@ -92,4 +101,3 @@ nMeshOptionsCA = attributes "nMeshOptions"
         )         
     )    
 )
-
