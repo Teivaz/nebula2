@@ -48,7 +48,6 @@ endmodule
 begintarget nlua
     settype lib
     setmodules    { nluaserver luacorelib luastandardlib }
-    settargetdeps { nkernel nnebula }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget luatest
@@ -65,7 +64,6 @@ begintarget nshlua
 endtarget
 #-----------------------------------------------------------------------------
 beginworkspace luaserver
-    setdir ./code/contrib/nluaserver/
     setbinarydir ./bin/
     setlibdir ./code/contrib/lib/
     settargets {
