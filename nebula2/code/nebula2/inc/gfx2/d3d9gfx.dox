@@ -1,4 +1,39 @@
 /**
     @defgroup NebulaD3D9GraphicsSystem DirectX 9 Graphics System
     @ingroup NebulaGraphicsSystem
+
+<h2>DirectX 9 Graphics Server</h2>
+
+...
+
+<h2>Shader support</h2>
+
+Nebula2's nD3D9Shader uses effect files to specify render state and
+vertex/pixel shaders. Effect files can be used to set not just the
+render state but also how many passes, so you can build up very complex
+effects. One of their best features is that each technique in an effect
+file will be validated by the Direct3D runtime and the first one that
+passes will be used, so you can have multiple techniques in each file
+for different graphics card capabilities; one that uses 4 textures in
+one pass, another that uses 2 textures in 2 passes, etc. This allows
+you to have more complex techniques for better cards and fall backs
+for older cards. In the example shaders that come with Nebula2 you
+can see there are two techniques, one for pixel shader hardware and
+one for cards that don't have pixel shaders.
+
+Effect files are part of Direct3D so the place to learn more about them
+is the Direct3D documentation. Here are some links:
+
+   - <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directx/graphics/reference/effectfilereference/effectfilereference.asp">Effect File Reference</a>
+   - <a href="http://msdn.microsoft.com/library/en-us/dndrive/html/directx03182003.asp?frame=true&_r=1">Using the Effects Framework</a>
+   - <a href="http://msdn.microsoft.com/library/en-us/dndrive/html/directx04152003.asp?frame=true&_r=1">Taking It Higher with the High Level Shader Language</a>
+
+<h2>Mesh support</h2>
+
+...
+
+<h2>Texture support</h2>
+
+(Talk about support for cube maps, compressed textures and other good things.)
+
 */
