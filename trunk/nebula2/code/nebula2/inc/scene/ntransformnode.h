@@ -19,13 +19,7 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_SCENENODE_H
 #include "scene/nscenenode.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nTransformNode
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nTransformNode : public nSceneNode
@@ -42,12 +36,12 @@ public:
     /// indicate the scene server that this node provides transformation
     virtual bool HasTransform() const;
     /// update transform and render into scene server
-    virtual void RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
+    virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
 
-    /// set view space flag
-    void SetViewSpace(bool b);
-    /// get view space flag
-    bool GetViewSpace() const;
+    /// lock to viewer position
+    void SetLockViewer(bool b);
+    /// locked to viewer position?
+    bool GetLockViewer() const;
     /// set active flag
     void SetActive(bool b);
     /// get active flag
@@ -71,7 +65,7 @@ public:
 
     static nKernelServer* kernelServer;
 
-private:
+protected:
     /// set a flags
     void SetFlags(ushort mask);
     /// unset a flags
@@ -83,13 +77,14 @@ private:
 
     enum
     {
-        DIRTY = (1<<0),         // the matrix is dirty
-        USEQUAT = (1<<1),       // compute orientation from quaternion, otherwise from euler
-        VIEWSPACE = (1<<2),     // this node lives in view space
-        ACTIVE = (1<<3),        // active/inactive
+        Dirty = (1<<0),         // the matrix is dirty
+        UseQuat = (1<<1),       // compute orientation from quaternion, otherwise from euler
+        Active = (1<<2),        // active/inactive
+        LockViewer = (1<<3),    // locked to viewer position
     };
 
 protected:
+    nAutoRef<nGfxServer2> refGfxServer;
     vector3 pos;
     vector3 euler;
     vector3 scale;
@@ -133,10 +128,10 @@ nTransformNode::CheckFlags(ushort mask) const
 */
 inline
 void
-nTransformNode::SetViewSpace(bool b)
+nTransformNode::SetLockViewer(bool b)
 {
-    if (b) this->SetFlags(VIEWSPACE);
-    else   this->UnsetFlags(VIEWSPACE);
+    if (b) this->SetFlags(LockViewer);
+    else   this->UnsetFlags(LockViewer);
 }
 
 //------------------------------------------------------------------------------
@@ -144,9 +139,9 @@ nTransformNode::SetViewSpace(bool b)
 */
 inline
 bool
-nTransformNode::GetViewSpace() const
+nTransformNode::GetLockViewer() const
 {
-    return this->CheckFlags(VIEWSPACE);
+    return this->CheckFlags(LockViewer);
 }
 
 //------------------------------------------------------------------------------
@@ -156,8 +151,8 @@ inline
 void
 nTransformNode::SetActive(bool b)
 {
-    if (b) this->SetFlags(ACTIVE);
-    else   this->UnsetFlags(ACTIVE);
+    if (b) this->SetFlags(Active);
+    else   this->UnsetFlags(Active);
 }
 
 //------------------------------------------------------------------------------
@@ -167,7 +162,7 @@ inline
 bool
 nTransformNode::GetActive() const
 {
-    return this->CheckFlags(ACTIVE);
+    return this->CheckFlags(Active);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +173,7 @@ void
 nTransformNode::SetPosition(const vector3& p)
 {
     this->pos = p;
-    this->SetFlags(DIRTY);
+    this->SetFlags(Dirty);
 }
 
 //------------------------------------------------------------------------------
@@ -199,8 +194,8 @@ void
 nTransformNode::SetEuler(const vector3& e)
 {
     this->euler = e;
-    this->SetFlags(DIRTY);
-    this->UnsetFlags(USEQUAT);
+    this->SetFlags(Dirty);
+    this->UnsetFlags(UseQuat);
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +216,7 @@ void
 nTransformNode::SetQuat(const quaternion& q)
 {
     this->quat = q;
-    this->SetFlags(DIRTY | USEQUAT);
+    this->SetFlags(Dirty | UseQuat);
 }
 
 //------------------------------------------------------------------------------
@@ -242,7 +237,7 @@ void
 nTransformNode::SetScale(const vector3& s)
 {
     this->scale = s;
-    this->SetFlags(DIRTY);
+    this->SetFlags(Dirty);
 }
 
 //------------------------------------------------------------------------------
@@ -262,9 +257,9 @@ inline
 void
 nTransformNode::UpdateMatrix()
 {
-    if (this->CheckFlags(DIRTY))
+    if (this->CheckFlags(Dirty))
     {
-        if (this->CheckFlags(USEQUAT))
+        if (this->CheckFlags(UseQuat))
         {
             // use quaternion
             this->matrix.ident();
@@ -282,8 +277,7 @@ nTransformNode::UpdateMatrix()
             this->matrix.rotate_z(this->euler.z);
             this->matrix.translate(this->pos);
         }
-
-        this->UnsetFlags(DIRTY);
+        this->UnsetFlags(Dirty);
     }
 }
 
