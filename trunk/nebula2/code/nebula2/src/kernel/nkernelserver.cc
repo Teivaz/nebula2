@@ -359,7 +359,7 @@ nKernelServer::~nKernelServer(void)
         do
         {
             nextClass = (nClass*) actClass->GetSucc();
-            if (actClass->GetRef() == 0)
+            if (actClass->GetRefCount() == 0)
             {
                 numZeroRefs++;
                 actClass->Remove();
@@ -377,7 +377,7 @@ nKernelServer::~nKernelServer(void)
              actClass;
              actClass = (nClass*) actClass->GetSucc())
         {
-            n_printf("%s: refcount %d\n", actClass->GetName(), actClass->GetRef());
+            n_printf("%s: refcount %d\n", actClass->GetName(), actClass->GetRefCount());
         }
         n_error("nKernelServer: Refcount errors occured during cleanup, check log for details!\n");
     }
@@ -620,7 +620,7 @@ nKernelServer::ReleaseClass(nClass* cl)
 {
     n_assert(cl);
     this->Lock();
-    cl->RemRef();
+    cl->Release();
     this->Unlock();
 }
 
