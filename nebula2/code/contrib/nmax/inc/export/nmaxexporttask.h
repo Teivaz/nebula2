@@ -15,16 +15,16 @@
 
 #define N_MAXEXPORT_ANIMS_ASSIGN    "home:export/anims/"
 #define N_MAXEXPORT_GFXLIB_ASSIGN   "home:export/gfxlib/"
-#define N_MAXEXPORT_GUI_ASSIGN      "home:export/gui/"
-#define N_MAXEXPORT_LIGHTS_ASSIGN   "home:export/lightlib/"
+#define N_MAXEXPORT_GUI_ASSIGN      "home:export/"
+#define N_MAXEXPORT_LIGHTS_ASSIGN   "home:export/"
 #define N_MAXEXPORT_MESHES_ASSIGN   "home:export/meshes/"
-#define N_MAXEXPORT_SHADERS_ASSIGN  "home:export/shaders/fixed/"
+#define N_MAXEXPORT_SHADERS_ASSIGN  "home:data/shaders/"
 #define N_MAXEXPORT_TEXTURES_ASSIGN "home:export/textures/"
 
 #define N_MAXEXPORT_ANIMS_PATH    "anims:examples/"
 #define N_MAXEXPORT_GFXLIB_PATH   "gfxlib:examples/"
-#define N_MAXEXPORT_GUI_PATH      "gui:examples/"
-#define N_MAXEXPORT_LIGHTS_PATH   "lights:examples/"
+#define N_MAXEXPORT_GUI_PATH      "gui:"
+#define N_MAXEXPORT_LIGHTS_PATH   "lights:"
 #define N_MAXEXPORT_MESHES_PATH   "meshes:examples/"
 #define N_MAXEXPORT_SHADERS_PATH  "shaders:"
 #define N_MAXEXPORT_TEXTURES_PATH "textures:examples/"
@@ -42,6 +42,8 @@ public:
     bool exportHiddenNodes;
     ///export tranformation or vector animations?
     bool exportAnimations;
+    /// When set to true, the scale of meshes will be set to 1/(length of longest dimension).
+    bool normalizeMeshScale;
     ///group the meshes by source object (increases the meshsize, but makes it possible to work with the original node, not only the materials used in the scene)
     bool groupMeshBySourceObject;
 

@@ -352,13 +352,24 @@ nMaxExport::storeDataPools()
                     groupMapIndex++; //next group
                 }
 
-                //???
-                vector3 v = entry.meshBuilder->GetBBox().size();
-                float s = max(v.x, max(v.y, v.z));
-                if (s != 0.0)
+                // When normalizeMeshScale is set, we scale
+                if (this->task->normalizeMeshScale)
                 {
-                    s = 1.0/s;
-                    shapeNode->SetScale(vector3(s, s, s));
+                    vector3 v = entry.meshBuilder->GetBBox().size();
+                    float s = max(v.x, max(v.y, v.z));
+                    if (s != 0.0)
+                    {
+                        s = 1.0/s;
+                        shapeNode->SetScale(vector3(s, s, s));
+                    }
+                    else
+                    {
+                        shapeNode->SetScale(vector3(1.0f, 1.0f, 1.0f));
+                    }
+                }
+                else
+                {
+                    shapeNode->SetScale(vector3(1.0f, 1.0f, 1.0f));
                 }
 
                 //set meshfile
