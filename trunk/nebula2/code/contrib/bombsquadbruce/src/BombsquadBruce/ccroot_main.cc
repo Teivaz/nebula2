@@ -2,7 +2,6 @@
 //  (C) 2004 Rafael Van Daele-Hunt
 //------------------------------------------------------------------------------
 #include "BombsquadBruce/ccroot.h"
-#include "BombsquadBruce/profile.h"
 #include "BombsquadBruce/general.h"
 #include "scene/nshapenode.h"
 #include "BombsquadBruce/ccsceneserver.h"
