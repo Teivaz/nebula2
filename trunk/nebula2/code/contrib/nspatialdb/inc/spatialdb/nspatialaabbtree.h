@@ -59,6 +59,7 @@ protected:
     nSpatialAABBTreeNode *m_treenodes;
 
     // other tree operations
+	nSpatialAABBTreeNode *FindSuitableNode(const vector3 &v_center);
     void collapse_node(nSpatialAABBTreeNode *collapseme);
     void split_node(nSpatialAABBTreeNode *splitme);
     void balance_tree(nSpatialAABBTreeNode *treeroot);

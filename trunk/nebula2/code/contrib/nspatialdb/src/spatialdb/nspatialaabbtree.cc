@@ -356,11 +356,10 @@ void nSpatialAABBTree::free_node(nSpatialAABBTreeNode *freeme)
     n_delete(freeme);
 }
 
-void nSpatialAABBTree::AddElement(nSpatialElement *appendme)
+
+nSpatialAABBTreeNode *nSpatialAABBTree::FindSuitableNode(const vector3 &v_center)
 {
-    n_assert(appendme->HasAABB());
-    vector3 elementpos(appendme->GetAABB().center());
-    float elementposcomponents[3] = {elementpos.x, elementpos.y, elementpos.z };
+    float elementposcomponents[3] = {v_center.x, v_center.y, v_center.z };
 
     // walk down until we hit a leaf node
     nSpatialAABBTreeNode *walknode = m_treenodes;
@@ -376,6 +375,15 @@ void nSpatialAABBTree::AddElement(nSpatialElement *appendme)
             walknode = walknode->m_children[1];
         }
     }
+
+	return walknode;
+}
+
+
+void nSpatialAABBTree::AddElement(nSpatialElement *appendme)
+{
+    n_assert(appendme->HasAABB());
+	nSpatialAABBTreeNode *walknode = FindSuitableNode(appendme->GetAABB().center());
 
     // stuff into that leaf node 
     n_assert(walknode->m_elementsinnode < nSpatialAABBTreeNode::MAX_ELEMENTSPERNODE);
@@ -399,9 +407,36 @@ void nSpatialAABBTree::RemoveElement(nSpatialElement *removeme)
     containingnode->RecomputeBoundingBox();
 }
 
+
 void nSpatialAABBTree::MoveElement(nSpatialElement *moveme, const bbox3 &newbox)
 {
-    // unimplemented
+	//in which node the element is
+	nSpatialAABBTreeNode *actualnode = m_treenodes->FindElement(moveme);
+	n_assert(actualnode);
+
+	//in which node element should be
+	nSpatialAABBTreeNode *suitablenode = FindSuitableNode(newbox.center());
+
+	//element remains in actual node -> just recalc node bbox
+	if (actualnode==suitablenode)
+	{
+		moveme->SetAABB(newbox);
+		actualnode->RecomputeBoundingBox();
+	}
+	//element moves under another node
+	else
+	{
+	    actualnode->RemoveElement(moveme);
+		actualnode->RecomputeElementCount();
+		actualnode->RecomputeBoundingBox();
+
+		moveme->SetAABB(newbox);
+		suitablenode->AddElement(moveme);
+	    if (suitablenode->m_elementsinnode > nSpatialAABBTreeNode::MAX_ELEMENTSPERNODE-2)
+		{
+			suitablenode->Subdivide(this);
+		}
+	}
 }
 
 

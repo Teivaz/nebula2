@@ -29,7 +29,8 @@ void nSpatialSector::UpdateElement(nSpatialSector::ElementHandle elementid,
                                 const bbox3 &newbbox)
 {
     // just update the element.  We don't need to do anything else
-    elementid->SetAABB(newbbox);
+		//elementid->SetAABB(newbbox);
+	m_Nodeset.MoveElement(elementid, newbbox);
 }
 
 void nSpatialSector::RemoveElement(nSpatialSector::ElementHandle elementid)
