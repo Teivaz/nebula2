@@ -12,6 +12,68 @@
     classes nN3d2Loader and nNvx2Loader to load mesh files of those
     formats.
     
+    The following shows that how to read vertices and indices from .n3d2 file.
+
+    @code
+    // create mesh loader for a .n3d2 file.
+    nMeshLoader* meshLoader = n_new (nN3d2Loader);
+
+    // open specified .n3d2 file.
+    meshLoader->SetIndexType(nMeshLoader::Index16);
+    meshLoader->SetFilename(filename);
+    meshLoader->Open(nFileServer2::Instance());
+
+    int numVertices = meshLoader->GetNumVertices();
+    int vertexWidth = meshLoader->GetVertexWidth();
+    int numTriangles = meshLoader->GetNumTriangles();
+
+    // read vertices.
+    const int bufferSize = numVertices * vertexWidth * sizeof(float);
+    float* vbuf = n_new_array(float, bufferSize);
+
+    meshLoader->ReadVertices(vbuf, bufferSize);
+
+    int i;
+    int idx = 0;
+    vector3 v;
+    for (i=0; i<numVertices; i++)
+    {
+        v.x = vbuf[idx];
+        v.y = vbuf[idx + 1];
+        v.z = vbuf[idx + 2];
+  
+        // Do some task whatever you want
+        // ...
+
+        idx += vertexWidth;
+    }
+    n_delete_array(vbuf);
+
+    // read indices.
+    ushort ibufSize = meshLoader->GetNumIndices() * sizeof(ushort);
+    ushort* ibuf = n_new_array(ushort, ibufSize); 
+
+    meshLoader->ReadIndices(ibuf, ibufSize);
+
+    idx = 0;
+    ushort i0, i1, i2;
+    for (i=0; i<numTriangles; i++)
+    {
+        i0 = ibuf[idx++];
+        i1 = ibuf[idx++];
+        i2 = ibuf[idx++];
+
+        // Do some task whatever you want
+        // ...
+    }
+    n_delete_array(ibuf);
+
+    // close the file.
+    meshLoader->Close();
+
+    n_delete (meshLoader);
+    @endcode
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
