@@ -75,6 +75,7 @@ main(int argc, const char** argv)
         while (!scriptServer->GetQuitRequested() && lineOk)
         {
             char line[1024];
+            line[0] = '\0';
 
             // generate prompt string
             char promptBuf[N_MAXPATH];

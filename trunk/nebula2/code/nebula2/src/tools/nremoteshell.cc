@@ -97,6 +97,7 @@ main(int argc, const char** argv)
     while (running && lineOk)
     {
         char line[2048];
+        line[0] = '\0';
 
         // generate prompt
         const char* pselCmd = "psel";
