@@ -35,16 +35,16 @@ static void n_getmousepos(void*, nCmd*);
     nroot
 
     @classinfo
-    The inputserver lives under /sys/servers/input and 
-    provides the global list of input events for you. The 
-    server does not in any case generate the input events 
-    by itself. The nGfxServer for example feeds the inputserver 
-    with key and mouse events. The inputsever has to be created 
-    after the gfxserver, because the gfxserver provides a windows 
-    handle which is needed by the inputserver(at least under win32 
-    for direct input). In /sys/share/input you can lookup which 
-    input devices the server has recognized and which channels a 
-    device provides. 
+    The inputserver lives under /sys/servers/input and
+    provides the global list of input events for you. The
+    server does not in any case generate the input events
+    by itself. The nGfxServer for example feeds the inputserver
+    with key and mouse events. The inputsever has to be created
+    after the gfxserver, because the gfxserver provides a windows
+    handle which is needed by the inputserver(at least under win32
+    for direct input). In /sys/share/input you can lookup which
+    input devices the server has recognized and which channels a
+    device provides.
 */
 void n_initcmds(nClass *cl)
 {
@@ -78,7 +78,7 @@ void n_initcmds(nClass *cl)
     @output
     v
     @info
-    Starts input logging to stdout. 
+    Starts input logging to stdout.
 */
 static void n_startlogging(void *o, nCmd *)
 {
@@ -95,7 +95,7 @@ static void n_startlogging(void *o, nCmd *)
     @output
     v
     @info
-    Stops input logging. 
+    Stops input logging.
 */
 static void n_stoplogging(void *o, nCmd *)
 {
@@ -112,7 +112,7 @@ static void n_stoplogging(void *o, nCmd *)
     @output
     b (Logging)
     @info
-    Returns the logging status. 
+    Returns the logging status.
 */
 static void n_islogging(void *o, nCmd *cmd)
 {
@@ -129,8 +129,8 @@ static void n_islogging(void *o, nCmd *cmd)
     @output
     v
     @info
-    Starts a block of mapping definitions. All earlier defined 
-    mappings are lost! 
+    Starts a block of mapping definitions. All earlier defined
+    mappings are lost!
 */
 static void n_beginmap(void *o, nCmd *)
 {
@@ -147,42 +147,33 @@ static void n_beginmap(void *o, nCmd *)
     @output
     b (Success)
     @info
-    Maps a input event to a input state. The 'EventName' 
-    defines an input event which controls the via 'StateName' 
-    given input state. The definition of a input event consists 
-    of a device ID, channel ID and channel modifier (not on axes): 
-    dev:channel[.up|down|pressed|long|double] 
+    Maps a input event to a input state. The 'EventName'
+    defines an input event which controls the via 'StateName'
+    given input state. The definition of a input event consists
+    of a device ID, channel ID and channel modifier (not on axes):
+    dev:channel[.up|down|pressed|long|double]
 
     For example:
-    keyb0:b.pressed - Key 'B' on Keyboard 0 pressed 
-    keyb0:a.down - Key 'A' on Keyboard 0 pressed down 
-    joy0:b0.up - Button 0 on Joystick 0 released 
-    joy1:b1.double - Button 1 on Joystick 1 doubble clicked 
-    joy0:b2.long - Button 2 on Joystick 2 pressed very long 
-    mouse0:-x - Mouse 0 moved to the left 
+     - keyb0:b.pressed - Key 'B' on Keyboard 0 pressed
+     - keyb0:a.down - Key 'A' on Keyboard 0 pressed down
+     - joy0:b0.up - Button 0 on Joystick 0 released
+     - joy1:b1.double - Button 1 on Joystick 1 doubble clicked
+     - joy0:b2.long - Button 2 on Joystick 2 pressed very long
+     - mouse0:-x - Mouse 0 moved to the left
 
-    A list of the accepted devices can be found under 
-    '/sys/share/input/devs', the list of the channels provided 
-    by the device can be found in the 'channels' subdirectory 
-    of each device. 
-
-    During the event definition you can combine two input 
-    events with an AND, the first input event is then a qualifier 
-    event, which must be active with the second event to 
-    control the input state. The combination is achieved through
-    a &' sign, the string must contain no spaces.
-
-    Example:
-    keyb0:ctrl&keyb0:left.down - Ctrl-Left on Keyboard 0
+    A list of the accepted devices can be found under
+    '/sys/share/input/devs', the list of the channels provided
+    by the device can be found in the 'channels' subdirectory
+    of each device.
 
     The list of the actual states is under '/sys/share/input/states'.
     Some examples for a complete mapping:
-    .map joy0:-x move_left
-    .map joy0:+x move_right
-    .map joy0:-y move_down
-    .map joy0:+y move_up
-    .map keyb0:f1.down "script:incr x"
-    .map keyb0:f2.down "script:newv sammler"
+     - .map joy0:-x move_left
+     - .map joy0:+x move_right
+     - .map joy0:-y move_down
+     - .map joy0:+y move_up
+     - .map keyb0:f1.down "script:incr x"
+     - .map keyb0:f2.down "script:newv sammler"
 */
 static void n_map(void *o, nCmd *cmd)
 {
@@ -201,7 +192,7 @@ static void n_map(void *o, nCmd *cmd)
     @output
     v
     @info
-    Closes a block of mapping definitions. 
+    Closes a block of mapping definitions.
 */
 static void n_endmap(void *o, nCmd *)
 {
@@ -218,7 +209,7 @@ static void n_endmap(void *o, nCmd *)
     @output
     f (Value)
     @info
-    Returns the state of the input state 
+    Returns the state of the input state
     as an analog slider value.
 */
 static void n_getslider(void *o, nCmd *cmd)
@@ -236,14 +227,14 @@ static void n_getslider(void *o, nCmd *cmd)
     @output
     b (ButtonPressed)
     @info
-    Returns the state of the input state as a button 
-    Depending on the input mapping the routine returns 
-    true if: 
-    - the button is pressed(.pressed) 
-    - the button is down(.down) 
+    Returns the state of the input state as a button
+    Depending on the input mapping the routine returns
+    true if:
+    - the button is pressed(.pressed)
+    - the button is down(.down)
     - the button is released(.up)
-    - the button is pressed for a longer time(.long) 
-    - the button is double clicked(.double) 
+    - the button is pressed for a longer time(.long)
+    - the button is double clicked(.double)
 */
 static void n_getbutton(void *o, nCmd *cmd)
 {
@@ -260,8 +251,8 @@ static void n_getbutton(void *o, nCmd *cmd)
     @output
     v
     @info
-    Sets the time it takes to trigger a long pressed event 
-    of an input mapping. 
+    Sets the time it takes to trigger a long pressed event
+    of an input mapping.
 */
 static void n_setlongpressedtime(void *o, nCmd *cmd)
 {
@@ -278,7 +269,7 @@ static void n_setlongpressedtime(void *o, nCmd *cmd)
     @output
     f (LongPressedTime)
     @info
-    Returns the via 'setlongpressedtime' set value. 
+    Returns the via 'setlongpressedtime' set value.
 */
 static void n_getlongpressedtime(void *o, nCmd *cmd)
 {
@@ -295,7 +286,7 @@ static void n_getlongpressedtime(void *o, nCmd *cmd)
     @output
     v
     @info
-    Sets the time interval for a double click event. 
+    Sets the time interval for a double click event.
 */
 static void n_setdoubleclicktime(void *o, nCmd *cmd)
 {
@@ -313,7 +304,7 @@ static void n_setdoubleclicktime(void *o, nCmd *cmd)
     f (DoubleClickTime)
     @info
     Returns the time interval of the double click event,
-    set via 'setdoubleclicktime'. 
+    set via 'setdoubleclicktime'.
 */
 static void n_getdoubleclicktime(void *o, nCmd *cmd)
 {
@@ -399,7 +390,7 @@ static void n_getmouseinvert(void* slf, nCmd* cmd)
     ff (x,y coords)
     @info
     Get the current mouse position.
-    (0,0) is the upper left hand corner, 
+    (0,0) is the upper left hand corner,
     (1,1) is the lower right.
 */
 static void n_getmousepos(void* slf, nCmd* cmd)
