@@ -148,7 +148,7 @@ inline
 void
 nSessionClientContext::GetClientAttrAt(int index, const char*& name, const char*& value)
 {
-    return this->clientAttrs.GetAttrAt(index, name, value);
+    this->clientAttrs.GetAttrAt(index, name, value);
 }
 
 //------------------------------------------------------------------------------
