@@ -86,18 +86,13 @@ public:
     /// get animation attributes
     void GetClipAt(int stateIndex, int animIndex, const char*& weightChannelName);
 
-/*
-    /// begin adding hard points
-    void BeginHardPoints(int num);
-    /// add a hard point
-    void AddHardPoint(int index, int jointIndex, const char* pathToNode);
-    /// finish defining hard points
-    void EndHardPoints();
-    /// get number of hard points
-    int GetNumHardPoints() const;
-    /// get hard point attributes
-    void GetHardPoint(int index, int& jointIndex, const char*& pathToNode);
-*/
+    /// add a joint name
+    void AddJointName(unsigned int joint, const char *name);
+    /// get a joint index by name
+    unsigned int GetJointByName(const char *name);
+
+    /// get the index of the nCharacter2 pointer used when accessing the render context in Animate()
+    int GetCharacterVarIndex();
 
 private:
     /// load anim resource
@@ -110,6 +105,7 @@ private:
     nAutoRef<nAnimationServer> refAnimServer;
     nRef<nAnimation> refAnim;
     nString animName;
+    nStrList jointNameList;
     int characterVarIndex;
     int frameIdVarIndex;
     nVariable::Handle animStateVarHandle;

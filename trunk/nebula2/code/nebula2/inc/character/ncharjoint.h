@@ -69,6 +69,8 @@ public:
     const matrix44& GetSkinMatrix44() const;
     /// get the skinning matrix without translation (for normals)
     const matrix33& GetSkinMatrix33() const;
+    /// get the standard transformation matrix
+    const matrix44& GetMatrix44() const;
 
 private:
     vector3 poseTranslate;
@@ -322,6 +324,16 @@ const matrix33&
 nCharJoint::GetSkinMatrix33() const
 {
     return this->skinMatrix33;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const matrix44&
+nCharJoint::GetMatrix44() const
+{
+    return this->matrix;
 }
 
 //------------------------------------------------------------------------------
