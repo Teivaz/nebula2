@@ -135,7 +135,7 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
             // find the surrounding keys
             n_assert(this->keyArray.Front().time == 0.0f);
             int i = 0;;
-            while (this->keyArray[i].time < curTime)
+            while (this->keyArray[i].time <= curTime)
             {
                 i++;
             }
