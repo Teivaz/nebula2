@@ -134,8 +134,6 @@ private:
     nRef<nOpendeGeom> geoms[NUMTHINGS];
     nRef<nOpendeBody> bodies[NUMTHINGS];
     nRef<nOpendeGeom> planegeom;
-    nOpendeTriMesh *testmesh;
-
 
     // body representing ode geoms/bodies
     nRef<nTransformNode> refSimplebody;
