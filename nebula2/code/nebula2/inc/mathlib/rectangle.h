@@ -26,6 +26,8 @@ public:
     float width() const;
     /// return height
     float height() const;
+    /// return size
+    vector2 size() const;
 
     vector2 v0;
     vector2 v1;
@@ -101,6 +103,16 @@ float
 rectangle::height() const
 {
     return this->v1.y - this->v0.y;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector2
+rectangle::size() const
+{
+    return this->v1 - this->v0;
 }
 
 //------------------------------------------------------------------------------
