@@ -24,9 +24,8 @@ At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the 
 @subsection Nebula2CompilingOSWin32Requirements Additional Requirements
 
   - Win2k or WinXP (other Win32 platforms may work but have not been tested)
-  - The Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>, including 
-  - The <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">"Summer Update"</A>.
-  - Visual C++ 6 or 7(.NET)
+  - Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>. Nebula2 needs the latest version which is the <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">"Summer Update"</A>.
+  - Visual C++ 6, 7.0 - 8.0 (.NET)
 
 If you are using Visual C++ 6, then you will need an updated <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/default.htm">Core SDK</a> from Microsoft.  Without this, Nebula will fail to compile due a missing @c shfolder.h.
   
@@ -34,9 +33,9 @@ If you are using Visual C++ 6, then you will need an updated <a href="http://www
 
   - Add @c nebula2/bin/win32 to your path
   - Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and
-    include directories are before VStudio's lib and include directory paths.
+    include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
 
-@subsubsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7
+@subsubsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7.0 - 8.0
 
 If you are using VC7 make sure the @c uuidgen.exe (usually found at Microsoft Visual Studio .NET 2003\\Common7\\Tools) is in your path.  The easiest way is to run the "Visual Studio .NET Command Prompt" (in the VStudio start menu) as your command shell, as this will set up all required paths.
 
