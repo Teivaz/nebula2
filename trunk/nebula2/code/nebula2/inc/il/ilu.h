@@ -17,7 +17,7 @@
 #define __ilu_h_
 #define __ILU_H__
 
-#include <IL/il.h>
+#include <il/il.h>
 
 #ifdef __cplusplus
 extern "C" {
