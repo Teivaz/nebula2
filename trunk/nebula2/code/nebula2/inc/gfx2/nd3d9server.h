@@ -158,6 +158,8 @@ public:
     virtual void AdjustGamma();
     /// restore gamma.
     virtual void RestoreGamma();
+    /// skip message loop in trigger
+    virtual void SetSkipMsgLoop(bool skip);
 
 private:
     /// initialize the text renderer

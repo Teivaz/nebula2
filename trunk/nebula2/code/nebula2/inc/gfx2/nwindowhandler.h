@@ -45,6 +45,10 @@ public:
     bool IsWindowMinimized() const;
     /// return true if quit has been requested
     bool IsQuitRequested() const;
+    /// skip message loop in trigger
+    void SetSkipMsgLoop(bool skip);
+    /// check skip message loop.
+    bool IsSkipMsgLoop() const;
 
 public:
     // NOTE: public because WinProc needs access!
@@ -53,6 +57,11 @@ public:
     bool windowOpen;
     bool windowMinimized;
     bool quitRequested;
+
+protected:
+    /// skip message loop
+    bool skipMsgLoop;
+
 };
 
 //------------------------------------------------------------------------------
@@ -108,5 +117,30 @@ nWindowHandler::GetDisplayMode() const
     return this->displayMode;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Specify to skip internal message loop of nWindowHandler::Trigger().
+
+    - 24-Nov-04 kims added
+*/
+inline 
+void
+nWindowHandler::SetSkipMsgLoop(bool skip)
+{
+    this->skipMsgLoop = skip;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true, if skip message loop is set on.
+
+    - 24-Nov-04 kims added
+*/
+inline 
+bool
+nWindowHandler::IsSkipMsgLoop() const
+{
+    return this->skipMsgLoop;
+}
 //------------------------------------------------------------------------------
 #endif

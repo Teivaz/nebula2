@@ -323,6 +323,8 @@ public:
     virtual void AdjustGamma();
     /// restore gamma.
     virtual void RestoreGamma();
+    /// skip message loop in trigger
+    virtual void SetSkipMsgLoop(bool skip);
 
 private:
     static nGfxServer2* Singleton;
@@ -665,7 +667,7 @@ nGfxServer2::SetIndexRange(int firstIndex, int numIndices)
 
     @param g value to set for gamma.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 void 
@@ -680,7 +682,7 @@ nGfxServer2::SetGamma(float g)
 
     @param b value to set for brightness.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 void 
@@ -695,7 +697,7 @@ nGfxServer2::SetBrightness(float b)
 
     @param c value to set for contrast.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 void 
@@ -708,7 +710,7 @@ nGfxServer2::SetContrast(float c)
 /**
     Retrieves the value of gamma.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 float nGfxServer2::GetGamma() const
@@ -720,7 +722,7 @@ float nGfxServer2::GetGamma() const
 /**
     Retrieves the value of brightness.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 float nGfxServer2::GetBrightness() const
@@ -732,7 +734,7 @@ float nGfxServer2::GetBrightness() const
 /**
     Retrieves the value of contrast.
 
-    23-Aug-04    kims    created
+     - 23-Aug-04    kims    created
 */
 inline
 float nGfxServer2::GetContrast() const

@@ -11,7 +11,8 @@ nWindowHandler::nWindowHandler() :
     refInputServer("/sys/servers/input"),
     windowOpen(false),
     windowMinimized(false),
-    quitRequested(false)
+    quitRequested(false),
+    skipMsgLoop(false)
 {
     // empty
 }
