@@ -186,7 +186,7 @@ def cmdsPageDoxygen(root):
 
 # parse all the cmd files
 scanFiles(dir_src)
-root = classes['nroot']
+root = classes['nobject']
 root.findSubclasses()
 
 # create class tree
@@ -198,7 +198,7 @@ out = """/**
 Select the class you're interested in from the tree below. Each class documents
 the commands that that class defines, plus a class also inherits commands from
 its parent. For example @c nanimator also accepts @c nscenenode
-commands, and every class inherits @c nroot commands.
+commands, and every class inherits @c nobject commands.
 
 You can use the command @c getcmds on any class to see a full
 list of commands for that class.
