@@ -8,12 +8,10 @@
 //------------------------------------------------------------------------------
 #include "../lib/lib.fx"
 
-float4x4 Model;                     // the model -> world matrix
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelLightPos;             // the light's position in model space
-float4   ModelEyePos;               // the eye position in model space
-matrix<float,4,3> JointPalette[72];            // the joint palette for skinning
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float3   ModelEyePos;               // the eye position in model space
+shared float3   ModelLightPos;             // the light position in model space
+matrix<float,4,3> JointPalette[72];        // the joint palette for skinning
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color

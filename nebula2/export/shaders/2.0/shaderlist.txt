@@ -1,0 +1,7 @@
+#-------------------------------------------------------------------------------
+#   List of shaders, sorted by render priority.
+#   (C) 2004 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+shaders:shared.fx
+shaders:default.fx
+shaders:default_skinned.fx
