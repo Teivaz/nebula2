@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nPythonServer
 //--------------------------------------------------------------------
 //  npythonserver.cc
 //  Created by Jason Asbahr, 2001
@@ -73,6 +72,7 @@ static PyMethodDef NebulaMethods[] = {
     {"GetCwdObject",  pythoncmd_GetCwdObject, METH_VARARGS, NULL},
     {"get",           pythoncmd_Get, METH_VARARGS, NULL},
     {"exit",          pythoncmd_Exit, METH_VARARGS, NULL},
+    {"lookup",        pythoncmd_Lookup, METH_VARARGS, NULL},
     {"set",           pythoncmd_Set, METH_VARARGS, NULL},
     {"puts",          pythoncmd_Puts, METH_VARARGS, NULL},
     {"ndir",          pythoncmd_Dir, METH_VARARGS, NULL},     // Renamed
@@ -93,7 +93,8 @@ static PyMethodDef NebulaMethods[] = {
    Called implicitly to extend an external interpreter or
    called explicitly when embedding the interpreter.
 */
-__declspec(dllexport) void initpynebula()
+__declspec(dllexport) void
+initpynebula()
 {
     PyObject *m, *d, *gd;
 
@@ -278,7 +279,8 @@ nPythonServer::EndWrite(nFile* file)
     TODO: Refactor indent logic as part of the object API wrapping phase.
           For now, simply zero out any indention.
 */
-static void _indent(long i, char *buf)
+static void
+_indent(long i, char *buf)
 {
     buf[0] = '\0';  // Cancel out the indent buffer
 }
@@ -286,7 +288,8 @@ static void _indent(long i, char *buf)
 //--------------------------------------------------------------------
 /**
 */
-bool nPythonServer::WriteComment(nFile *file, const char *str)
+bool
+nPythonServer::WriteComment(nFile *file, const char *str)
 {
     n_assert(file);
     n_assert(str);
@@ -301,7 +304,8 @@ bool nPythonServer::WriteComment(nFile *file, const char *str)
     Write the statement to select an object after its creation
     statement.
 */
-void nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
+void
+nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
 {
     switch (this->GetSelectMethod())
     {
@@ -324,7 +328,8 @@ void nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
     WriteBeginNewObject()
     Write start of persistent object with default constructor.
 */
-bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
+bool
+nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
     n_assert(o);
@@ -347,7 +352,8 @@ bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
     Write start of persistent object with custom constructor
     defined by command.
 */
-bool nPythonServer::WriteBeginNewObjectCmd(nFile *file, nRoot *o, nRoot *owner, nCmd *cmd)
+bool
+nPythonServer::WriteBeginNewObjectCmd(nFile *file, nRoot *o, nRoot *owner, nCmd *cmd)
 {
     n_assert(file);
     n_assert(o);
@@ -366,7 +372,8 @@ bool nPythonServer::WriteBeginNewObjectCmd(nFile *file, nRoot *o, nRoot *owner, 
     Write start of persisting object without constructor, only
     write the select statement.
 */
-bool nPythonServer::WriteBeginSelObject(nFile *file, nRoot *o, nRoot *owner)
+bool
+nPythonServer::WriteBeginSelObject(nFile *file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
     n_assert(o);
@@ -379,7 +386,8 @@ bool nPythonServer::WriteBeginSelObject(nFile *file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 /**
 */
-bool nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
+bool
+nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
     n_assert(o);
@@ -397,7 +405,8 @@ bool nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 /**
 */
-bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
+bool
+nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 {
     n_assert(file);
     n_assert(cmd);

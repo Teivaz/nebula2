@@ -38,7 +38,8 @@ PyObject *Npy_ErrorObject;
 /**
     @brief Create a new type of nebula object - that works like obj.func(..)
 */
-NebulaObject* NebulaObject_New(nRoot * nebulaObj)
+NebulaObject*
+NebulaObject_New(nRoot * nebulaObj)
 {
     NebulaObject *self;
     PyObject *cObject;
@@ -76,7 +77,8 @@ NebulaObject* NebulaObject_New(nRoot * nebulaObj)
 /**
     @brief Retrieve a path to the Nebula object from within the Python object.
 */
-const char * NebulaObject_GetPath(NebulaObject * self)
+const char *
+NebulaObject_GetPath(NebulaObject * self)
 {
     n_assert(NULL != self);
     if (self->internal_dict != NULL)
@@ -105,7 +107,8 @@ const char * NebulaObject_GetPath(NebulaObject * self)
     @brief Retrieve a pointer to the Nebula object from within the Python
     Object.
 */
-nRoot * NebulaObject_GetPointer(NebulaObject * self)
+nRoot *
+NebulaObject_GetPointer(NebulaObject * self)
 {
     n_assert(NULL != self);
 
@@ -123,7 +126,8 @@ nRoot * NebulaObject_GetPointer(NebulaObject * self)
 /**
     @brief Delete the real Nebula object pointed to by the python object
 */
-PyObject * NebulaObject_Delete(NebulaObject *self, PyObject *args)
+PyObject *
+NebulaObject_Delete(NebulaObject *self, PyObject *args)
 {
     PyObject * result = NULL;
     n_assert(NULL != self);
@@ -149,7 +153,8 @@ PyObject * NebulaObject_Delete(NebulaObject *self, PyObject *args)
 /**
     @brief Called when the python object goes out of existance.
 */
-void NebulaObject_Dealloc(NebulaObject *self)
+void
+NebulaObject_Dealloc(NebulaObject *self)
 {
     n_assert(NULL!=self);
 
@@ -189,7 +194,8 @@ void NebulaObject_Dealloc(NebulaObject *self)
     @brief Call this function to flag the python object to delete the
     nebula object as well.
 */
-PyObject * NebulaObject_SetAutoDel(NebulaObject *self, PyObject * /*args*/)
+PyObject *
+NebulaObject_SetAutoDel(NebulaObject *self, PyObject * /*args*/)
 {
     PyObject * result = NULL;
     n_assert(NULL!=self);
@@ -225,7 +231,8 @@ PyMethodDef Nebula_methods[] = {
     in the interpreter and need to call into Nebula. Makes the object
     stateful for one internal interpreter cycle.
 */
-PyObject* NebulaObject_Call(NebulaObject *self,
+PyObject*
+NebulaObject_Call(NebulaObject *self,
                             PyObject *args,
                             PyObject * /*kw*/)
 {
@@ -275,7 +282,8 @@ PyObject* NebulaObject_Call(NebulaObject *self,
     OPCODE (handled by the tp_call func) - hence we need to store
     the function  name in the object and pass a pointer back.
 */
-PyObject * NebulaObject_GetAttrO(NebulaObject *self, PyObject *name)
+PyObject*
+NebulaObject_GetAttrO(NebulaObject *self, PyObject *name)
 {
     n_assert(NULL != self);
     n_assert(NULL != name);
@@ -289,9 +297,10 @@ PyObject * NebulaObject_GetAttrO(NebulaObject *self, PyObject *name)
 /**
     @brief Call the actual Nebula function.
 */
-int NebulaObject_CallNebulaFunction(nRoot* o, char * name,
-                                    PyObject * commandArgs,
-                                    PyObject **returndata)
+int
+NebulaObject_CallNebulaFunction(nRoot* o, char * name,
+                                PyObject * commandArgs,
+                                PyObject **returndata)
 {
     int result = 0;
     if (o)
@@ -357,9 +366,10 @@ int NebulaObject_CallNebulaFunction(nRoot* o, char * name,
     @brief The main function to make a 'function' call on an object - used
     by 'Set', etc.
 */
-int NebulaObject_CallPObjectFunction(NebulaObject *self, char *name,
-                                     PyObject * args,
-                                     PyObject ** returndata)
+int
+NebulaObject_CallPObjectFunction(NebulaObject *self, char *name,
+                                 PyObject * args,
+                                 PyObject ** returndata)
 {
     n_assert(NULL != self);
     n_assert(NULL != name);
@@ -442,7 +452,8 @@ int NebulaObject_CallPObjectFunction(NebulaObject *self, char *name,
 
     Needed as the "default" setattr calls the nebula object.
 */
-extern int NebulaObject_SetAttr(NebulaObject *self, char *name, PyObject *v)
+int
+NebulaObject_SetAttr(NebulaObject *self, char *name, PyObject *v)
 {
     n_assert(NULL != self);
     n_assert(NULL != name);
@@ -471,7 +482,8 @@ extern int NebulaObject_SetAttr(NebulaObject *self, char *name, PyObject *v)
     }
 }
 
-static int NebulaObject_Dict_Length(NebulaObject *mp)
+static int
+NebulaObject_Dict_Length(NebulaObject *mp)
 {
     n_assert(mp->internal_dict != NULL);
     nRoot * o = NebulaObject_GetPointer(mp);
@@ -496,7 +508,8 @@ static int NebulaObject_Dict_Length(NebulaObject *mp)
     return 0;
 }
 
-static PyObject *NebulaObject_Dict_Subscript(NebulaObject *mp, register PyObject *key)
+static PyObject*
+NebulaObject_Dict_Subscript(NebulaObject *mp, register PyObject *key)
 {
     n_assert(mp->internal_dict != NULL);
     n_assert(key);
@@ -525,7 +538,7 @@ static PyObject *NebulaObject_Dict_Subscript(NebulaObject *mp, register PyObject
     }
 }
 
-staticforward PyObject *NebulaObjectIter_New(NebulaObject *nebulaObject);
+staticforward PyObject* NebulaObjectIter_New(NebulaObject *nebulaObject);
 
 static PyMappingMethods nebula_as_mapping = {
     (inquiry)NebulaObject_Dict_Length,              /*mp_length*/
@@ -597,7 +610,8 @@ typedef struct {
     nRoot *currentObject;
 } NebulaObjectIter;
 
-static PyObject *NebulaObjectIter_New(NebulaObject *nebulaObject)
+static PyObject*
+NebulaObjectIter_New(NebulaObject *nebulaObject)
 {
     NebulaObjectIter *iter = PyObject_NEW(NebulaObjectIter, &PyNebIter_Type);
     if (NULL == iter)
@@ -619,12 +633,15 @@ static PyObject *NebulaObjectIter_New(NebulaObject *nebulaObject)
     return (PyObject *)iter;
 }
 
-static void NebulaObjectIter_Dealloc(NebulaObjectIter *iter) {
+static void
+NebulaObjectIter_Dealloc(NebulaObjectIter *iter)
+{
     Py_DECREF(iter->ni_nebulaobject);
     PyObject_DEL(iter);
 }
 
-static PyObject *NebulaObjectIter_Next(NebulaObjectIter *iter, PyObject *args)
+static PyObject*
+NebulaObjectIter_Next(NebulaObjectIter *iter, PyObject *args)
 {
     if (NULL == iter->currentObject)
     {
@@ -651,7 +668,8 @@ static PyObject *NebulaObjectIter_Next(NebulaObjectIter *iter, PyObject *args)
     return NULL;
 }
 
-static PyObject *NebulaObjectIter_GetIter(PyObject *it) {
+static PyObject*
+NebulaObjectIter_GetIter(PyObject *it) {
     Py_INCREF(it);
     return it;
 }
@@ -662,7 +680,8 @@ static PyMethodDef NebulaObjectIter_Methods[] = {
   {NULL,    NULL}   /* sentinel */
 };
 
-static PyObject *NebulaObjectIter_IterNext(NebulaObjectIter *iter)
+static PyObject*
+NebulaObjectIter_IterNext(NebulaObjectIter *iter)
 {
     if (NULL == iter->currentObject)
     {

@@ -27,6 +27,11 @@ beginmodule pynebula
     setfiles { pynebula }
 endmodule
 #-----------------------------------------------------------------------------
+beginmodule npyviewer
+    setdir pythontest
+    setfiles { npyviewer }
+endmodule
+#-----------------------------------------------------------------------------
 begintarget pynebula
     annotate "Sample DLL for importing into Python"
     settype dll    
@@ -36,6 +41,24 @@ begintarget pynebula
         nnebula
         ndirect3d9
         ndinput8
+        nnetwork
+        npythonserver
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget npyviewer
+    annotate "Sample application:  Allows simple viewing of .n2 files and uses Python."
+    settype exe
+    setmodules { npyviewer }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        ndshow
+        ngui
         nnetwork
         npythonserver
     }
@@ -69,6 +92,10 @@ beginworkspace pythonserver
         microtcl
         npythonserver
         pynebula
+        ntoollib
+        ndshow
+        ngui
+        npyviewer
     }
 endworkspace
 #-----------------------------------------------------------------------------

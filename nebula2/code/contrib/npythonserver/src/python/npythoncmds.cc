@@ -26,12 +26,14 @@ extern PyObject *CreatedObjectsList_;
 extern PyObject *CreatedObjectsList_weak_refs_;
 extern PyObject *CreatedObjectsList_weakref_callback_;
 
-PyObject* GetReturnableObject(NebulaObject* pyobj, nRoot* /*nebobj*/)
+PyObject*
+GetReturnableObject(NebulaObject* pyobj, nRoot* /*nebobj*/)
 {
     return (PyObject *) pyobj;
 }
 
-PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args)
+PyObject*
+CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     PyObject *weak_ref = NULL;
@@ -55,7 +57,8 @@ PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *arg
     return result;
 }
 
-NebulaObject *CreatedObjectsList_GetObject(nRoot* real_neb_obj)
+NebulaObject*
+CreatedObjectsList_GetObject(nRoot* real_neb_obj)
 {
     if (NULL == real_neb_obj)
     {
@@ -89,7 +92,8 @@ NebulaObject *CreatedObjectsList_GetObject(nRoot* real_neb_obj)
     return nebula_wrapper;
 }
 
-int CreatedObjectsList_AddObject(NebulaObject *nebula_object, nRoot* real_neb_obj)
+int
+CreatedObjectsList_AddObject(NebulaObject *nebula_object, nRoot* real_neb_obj)
 {
     n_assert(real_neb_obj);
     n_assert(nebula_object);
@@ -108,7 +112,8 @@ int CreatedObjectsList_AddObject(NebulaObject *nebula_object, nRoot* real_neb_ob
     return res;
 }
 
-int CreatedObjectsList_DeleteObject(nRoot* real_neb_obj)
+int
+CreatedObjectsList_DeleteObject(nRoot* real_neb_obj)
 {
     // XXX: !!!
     return 0;
@@ -131,12 +136,13 @@ int CreatedObjectsList_DeleteObject(nRoot* real_neb_obj)
 /**
     Create an object by class name, and name it by object name.
 */
-PyObject* pythoncmd_New(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_New(PyObject * /*self*/, PyObject *args)
 {
     char *className;
     char *objectName;
     NebulaObject * rv = NULL;
-    nRoot *o;
+    nRoot *o = NULL;
 
     // Extract two strings from the Python args object
     // Also, ":<desc>" for a descriptive error if an exception is raised.
@@ -165,7 +171,8 @@ PyObject* pythoncmd_New(PyObject * /*self*/, PyObject *args)
 /**
     Delete an object by object name.
 */
-PyObject* pythoncmd_Delete(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Delete(PyObject * /*self*/, PyObject *args)
 {
     char *objectName;
     PyObject *result = NULL;
@@ -195,7 +202,8 @@ PyObject* pythoncmd_Delete(PyObject * /*self*/, PyObject *args)
 /**
     Move within the current graph path.
 */
-PyObject* pythoncmd_Sel_(PyObject *args, bool set_cwd) {
+PyObject*
+pythoncmd_Sel_(PyObject *args, bool set_cwd) {
     char *objectName;
     nRoot *object;
     NebulaObject * res_neb = NULL;
@@ -292,12 +300,14 @@ PyObject* pythoncmd_Sel_(PyObject *args, bool set_cwd) {
     return NULL;
 }
 
-PyObject* pythoncmd_Sel(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Sel(PyObject * /*self*/, PyObject *args)
 {
     return pythoncmd_Sel_(args, true);
 }
 
-PyObject* pythoncmd_Lookup(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Lookup(PyObject * /*self*/, PyObject *args)
 {
     return pythoncmd_Sel_(args, false);
 }
@@ -306,7 +316,8 @@ PyObject* pythoncmd_Lookup(PyObject * /*self*/, PyObject *args)
 /**
     Display the current graph path.
 */
-PyObject* pythoncmd_Psel(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Psel(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     // No args, but ":<desc>" for a descriptive error if an exception is raised.
@@ -333,7 +344,8 @@ PyObject* pythoncmd_Psel(PyObject * /*self*/, PyObject *args)
 /**
     Returns current object
 */
-PyObject* pythoncmd_GetCwdObject(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_GetCwdObject(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
 
@@ -366,7 +378,8 @@ PyObject* pythoncmd_GetCwdObject(PyObject * /*self*/, PyObject *args)
 /**
     Display objects in the current graph path.
 */
-PyObject* pythoncmd_Dir(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Dir(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
 
@@ -399,7 +412,8 @@ PyObject* pythoncmd_Dir(PyObject * /*self*/, PyObject *args)
 /**
     Loads an object from disk.
 */
-PyObject* pythoncmd_Get(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Get(PyObject * /*self*/, PyObject *args)
 {
     char *filename;
     PyObject *result = NULL;
@@ -684,7 +698,8 @@ PyObject* _putOutArgs(nCmd *cmd)
     tuple, forms a Nebula Cmd object from it, and passes it and the remaining
     tuple arguments to _getInArgs.
 */
-PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Set(PyObject * /*self*/, PyObject *args)
 {
     char cmdStr[N_MAXPATH];
     char *commandName;
@@ -860,7 +875,8 @@ PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
 //-----------------------------------------------------------------------------
 /**
 */
-PyObject* pythoncmd_Exit(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Exit(PyObject * /*self*/, PyObject *args)
 {
     PyObject* result = NULL;
 
@@ -886,7 +902,8 @@ PyObject* pythoncmd_Exit(PyObject * /*self*/, PyObject *args)
     Unlike the TclServer Puts(), this function doesn't check for options
     TODO: Should I pass the string on to Python's stdout?
 */
-PyObject* pythoncmd_Puts(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Puts(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     char     *outputString;
@@ -903,7 +920,8 @@ PyObject* pythoncmd_Puts(PyObject * /*self*/, PyObject *args)
 //-----------------------------------------------------------------------------
 /**
 */
-PyObject* pythoncmd_Exists(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Exists(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     char     *objectName;
@@ -927,7 +945,8 @@ PyObject* pythoncmd_Exists(PyObject * /*self*/, PyObject *args)
 /**
     Helper functions for directing output to Nebula's log system
 */
-PyObject* pythoncmd_Nprint(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_Nprint(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     char     *text;
@@ -950,7 +969,8 @@ PyObject* pythoncmd_Nprint(PyObject * /*self*/, PyObject *args)
     Utility function for setting a Python method to be called every
     frame, via the Trigger() system
 */
-PyObject* pythoncmd_SetTrigger(PyObject * /*self*/, PyObject *args)
+PyObject*
+pythoncmd_SetTrigger(PyObject * /*self*/, PyObject *args)
 {
     PyObject *result = NULL;
     PyObject *temp;
@@ -978,7 +998,8 @@ PyObject* pythoncmd_SetTrigger(PyObject * /*self*/, PyObject *args)
 
     06-Sep-04   Kim, H.W.    created
 */
-PyObject* pythoncmd_BeginCmds(PyObject* /*self*/, PyObject *args)
+PyObject*
+pythoncmd_BeginCmds(PyObject* /*self*/, PyObject *args)
 {
     char* className;
     int numArgs;
@@ -1012,7 +1033,8 @@ PyObject* pythoncmd_BeginCmds(PyObject* /*self*/, PyObject *args)
 
     06-Sep-04   Kim, H.W.    created
 */
-PyObject* pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
+PyObject*
+pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
 {
     char* className;
     char* cmdName;
@@ -1047,7 +1069,8 @@ PyObject* pythoncmd_AddCmds(PyObject* /*self*/, PyObject *args)
 
     06-Sep-04   Kim, H.W.    created
 */
-PyObject* pythoncmd_EndCmds(PyObject* /*self*/, PyObject *args)
+PyObject*
+pythoncmd_EndCmds(PyObject* /*self*/, PyObject *args)
 {
     char *className;
     PyObject *result = NULL;
