@@ -305,7 +305,7 @@ proc gen_sln { name } {
     global targetuuids
     set targetuuids(0) 0
 
-    puts "Generating Visual Studio Express 2005 solution file $name.sln..."
+    ::log::log info "Generating Visual Studio Express 2005 solution file $name.sln..."
 
     # write .sln file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.sln] w]
