@@ -12,8 +12,8 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclCompile.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclCompile.h"
 
 /*
  * The stuff below is a bit of a hack so that this file can be used in
@@ -22,7 +22,7 @@
  */
 
 #ifndef TCL_GENERIC_ONLY
-#include "tclPort.h"
+#include "microtcl/tclPort.h"
 #else
 #define NO_ERRNO_H
 #endif

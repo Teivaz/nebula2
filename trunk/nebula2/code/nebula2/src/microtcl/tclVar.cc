@@ -17,8 +17,8 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclPort.h"
 
 /*
  * The strings below are used to indicate what went wrong when a

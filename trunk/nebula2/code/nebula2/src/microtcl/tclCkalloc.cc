@@ -16,8 +16,8 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclPort.h"
 
 #define FALSE	0
 #define TRUE	1

@@ -6,8 +6,8 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-#include "tclInt.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclPort.h"
 
 /*
  *----------------------------------------------------------------------

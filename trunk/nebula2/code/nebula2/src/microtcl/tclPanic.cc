@@ -15,7 +15,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * The panicProc variable contains a pointer to an application

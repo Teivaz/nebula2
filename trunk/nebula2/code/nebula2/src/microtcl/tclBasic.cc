@@ -15,10 +15,10 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclCompile.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclCompile.h"
 #ifndef TCL_GENERIC_ONLY
-#   include "tclPort.h"
+#   include "microtcl/tclPort.h"
 #endif
 
 /*

@@ -15,7 +15,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * The following data structure is used to keep track of all the

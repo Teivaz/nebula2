@@ -17,8 +17,8 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclPort.h"
 
 /*
  * The following table provides parsing information about each possible
