@@ -54,6 +54,20 @@ nDefaultLogHandler::Error(const char* msg, va_list argList)
 
 //------------------------------------------------------------------------------
 /**
+    Send a message to debugger window.
+
+    - 26-Mar-05    kims    created
+*/
+void
+nDefaultLogHandler::OutputDebug(const char* msg, va_list argList)
+{
+    vprintf(msg, argList);
+    this->PutLineBuffer(msg, argList);
+    fflush(stdout);
+}
+
+//------------------------------------------------------------------------------
+/**
     Return a pointer to the internal line buffer.
 */
 nLineBuffer*
