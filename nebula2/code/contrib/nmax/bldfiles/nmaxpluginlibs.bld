@@ -1,0 +1,41 @@
+#-------------------------------------------------------------------------------
+#   nmaxpluginlibs.bld
+#
+#   Modules:
+#       nmaxdlg
+#   Targets:
+#
+#   (c)2004 Kim, Hyoun Woo
+#-------------------------------------------------------------------------------
+beginmodule nmaxdlg
+    settype cpp
+    setdir pluginlibs
+    setfiles {
+        nmaxdlg
+        nmaxdirdlg
+        nmaxlogdlg
+        ninifile
+    }
+    setheaders {
+        nmaxdlg
+        nmaxdirdlg
+        nmaxlogdlg
+        ninifile
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxutilityobj
+    settype cpp
+    setdir pluginlibs
+    setfiles {
+        nmaxutilityobj
+        nmaxoptionparammapdlg
+    }
+    setheaders {
+        nmaxutilityobj
+        nmaxoptionparammapdlg
+    }
+endmodule
+#-------------------------------------------------------------------------------
+# EOF
+#-------------------------------------------------------------------------------
