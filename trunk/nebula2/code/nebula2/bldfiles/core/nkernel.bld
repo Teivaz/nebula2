@@ -6,6 +6,7 @@
 #      ntimeserver
 #      npersistserver
 #      nfileserver2
+#      nfilenode
 #      nscriptserver
 #      nroot
 #      nenv
@@ -41,6 +42,12 @@ beginmodule nfileserver2
         nfile ndirectory
     }
     setheaders { nfileserver2 nfile ndirectory }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nfilenode
+    setdir kernel
+    setfiles { nfilenode_main nfilenode_cmds }
+    setheaders { nfilenode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nscriptserver
@@ -97,6 +104,7 @@ begintarget nkernel
         ntimeserver
         npersistserver
         nfileserver2
+        nfilenode
         nscriptserver
         nenv
         nremoteserver
