@@ -215,7 +215,7 @@ proc gen_dll_vcproj {name extension nodirgroups} {
 
     puts $cid "	<Files>"
     puts $cid "		<Filter"
-    puts $cid "			Name=\"Quellcodedateien\""
+    puts $cid "			Name=\"Source Files\""
     puts $cid "			Filter=\"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\">"
     for {set k 0} {$k < [llength $tar($i,mods)]} {incr k} {
         set m [findmodbyname [lindex $tar($i,mods) $k]]
@@ -623,7 +623,7 @@ proc gen_exe_vcproj {name} {
     # Source code group
     puts $cid "	<Files>"
     puts $cid "		<Filter"
-    puts $cid "			Name=\"Quellcodedateien\""
+    puts $cid "			Name=\"Source Files\""
     puts $cid "			Filter=\"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\">"
     for {set k 0} {$k < [llength $tar($i,mods)]} {incr k} {
         set m [findmodbyname [lindex $tar($i,mods) $k]]
@@ -661,7 +661,20 @@ proc gen_exe_vcproj {name} {
         }
     }
     puts $cid "		</Filter>"
-
+    
+    # resource file group
+    if {[llength $tar($i,rsrc_win32)] > 0} {
+        puts $cid "		<Filter"
+        puts $cid "            Name=\"Resource Files\""
+        puts $cid "			Filter=\"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\">"
+        for {set j 0} {$j < [llength $tar($i,rsrc_win32)]} {incr j} {
+            puts $cid "            <File"
+            puts $cid "                RelativePath=\"$sourcePrefix\\[lindex $tar($i,rsrc_win32) $j].rc\">"
+            puts $cid "            </File>"
+        }
+        puts $cid "        </Filter>"
+    }
+    
     # End Of File
     puts $cid "	</Files>"
     puts $cid "	<Globals>"
