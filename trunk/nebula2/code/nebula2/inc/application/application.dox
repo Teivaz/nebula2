@@ -92,13 +92,85 @@
 
     @section create_application How to I create an nApplication derived class?
 
-    ...
-    
+    Using nApplication for you own application framework is simple.
+    All you need to do is creating your own nApplication derived class instance then call
+      -# Open
+      -# Run
+      -# Close
+
+    as shown on below example code snipset:
+
+    @code
+    int main ()
+    {
+        ...   
+        nKerenelServer* kernelServer = new nKernelServer;
+        nMyApp* myApp = (nMyApp*)kernelServer->New("nmyapp","/app/myapp")
+
+        // you may need some other initializations before calling Open()
+        ...
+
+        if(myApp->Open())
+        {
+            myApp->Run();
+        }
+
+        myApp->Close();
+        myApp->Release();
+
+        return 0;
+    }
+    @endcode
+  
+    You should specify your oown nApplication derived class and
+    may need to override nApplication::Open() function for specifying your 
+    application states and some other initializations for your application.
+
+    @code
+    class nMyApp : public nApplication
+    {
+    public:
+        virtual bool Open();
+        ...
+
+    protected:
+        // user created nAppState derived
+        nMenuState*     menuState;
+        nGameState*     gameState;
+        nCutSceneState* exitState;
+        ...
+    };
+    @endcode
+
 
     @section init_application Application Initialization
 
-    ...
+    The most important thing you should do in your own nApplication::Open() 
+    overrieded function is creating application states which you aleady created
+    by deriving it from nAppState and specifying it to your application.
 
+    @code
+    bool nMyApp::Open()
+    {
+        nApplication::Open();
+
+        // create states.
+        this->menuState = (nMenuState*)nKernelServer::Instance()->New("nmenustate", "/app/states/menu");
+        this->gameState = (nGameState*)nKernelServer::Instance()->New("ngamestate", "/app/states/game");
+        this->exitState = (nExitState*)nKernelServer::Instance()->New("nexitstate", "/app/states/exit");
+
+        // we specify the first state by menu state.
+        this->SetState("/app/states/menu");
+
+        ...
+    }
+    @endcode
+
+    There are three nAppState derived class instances which were created on above code example. 
+    You can create states as many as you want then should specify a one of the states 
+    to the application with given name of the state, it will be the first state 
+    which is shown on screen.
+ 
 
     @section loop_application Application Game Loop
 
