@@ -40,7 +40,7 @@ n_initcmds(nClass* clazz)
     clazz->BeginCmds();
     clazz->AddCmd( "v_Create_s",                    'CREA', n_Create );
     clazz->AddCmd( "v_SetBody_s",                   'SBOD', n_SetBody );
-    clazz->AddCmd( "s_GetBody_v",                  'GBOD', n_GetBody );
+    clazz->AddCmd( "s_GetBody_v",                   'GBOD', n_GetBody );
     clazz->AddCmd( "v_SetPosition_fff",             'SPOS', n_SetPosition );
     clazz->AddCmd( "v_SetRotation_fffffffff",       'SROT', n_SetRotation );
     clazz->AddCmd( "v_SetQuaternion_ffff",          'SQUA', n_SetQuaternion );
