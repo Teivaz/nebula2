@@ -347,8 +347,10 @@ nMeshBuilder::Optimize()
 //------------------------------------------------------------------------------
 /**
     All indices and group id's will be incremented accordingly.
+
+    @return     the number of groups in the mesh prior to the append
 */
-void
+int
 nMeshBuilder::Append(const nMeshBuilder& source)
 {
     int baseVertexIndex = this->GetNumVertices();
@@ -383,6 +385,7 @@ nMeshBuilder::Append(const nMeshBuilder& source)
         triangle.groupId += baseGroupIndex;
         this->AddTriangle(triangle);
     }
+    return baseGroupIndex;
 }
 
 //------------------------------------------------------------------------------
