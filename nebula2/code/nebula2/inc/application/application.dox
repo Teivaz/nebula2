@@ -71,9 +71,18 @@
     Call nApplication::CreateState() for the creation of the state.
 
     @code
-    nCutSceneAppState* stateCutScene = (nCutSceneAppState*)CreateState("ncutsceneappstate", "/gamestates/cutscene");
+    nCutSceneAppState* stateCutScene = (nCutSceneAppState*)CreateState("ncutsceneappstate", "cutscene");
     @endcode
 
+    @note 
+    Be sure that pass the state name without any path for the second parameter of nApplication::CreateState().
+    nApplication has the pass, @e 'appstate' and put any created states under that path. 
+    Putting any path in front of the state name will be error.
+    @code
+// error! don't use the path '/myappstates/' but use only "cutscene" without slash.
+CreateState("ncutsceneappstate", "/myappstates/cutscene");
+    @endcode
+    
     Created state can be found with calling of nApplication::FindState() function.
 
     @code
@@ -86,8 +95,12 @@
     to the specified state when nApplication::DoStateTransition() is called in game loop.
 
     @code
-    SetState("/game/states/exit");
+    SetState("exit");
     @endcode
+
+    @note
+    Be sure that pass only the state name for the parameter of nApplication:SetState()
+    like the second parameter of nApplication::CreateState().  
 
 
     @section create_application How to I create an nApplication derived class?
@@ -108,7 +121,11 @@
         nMyApp* myApp = (nMyApp*)kernelServer->New("nmyapp","/app/myapp")
 
         // you may need some other initializations before calling Open()
+        // like specifying display mode, company name, application name and 
+        // startup script filename and so on.
+        myApp->SetDisplayMode(disp);
         ...
+        myApp->SetStartupScript(startupScript);
 
         if(myApp->Open())
         {
@@ -155,13 +172,12 @@
         nApplication::Open();
 
         // create states.
-        this->menuState = (nMenuState*)nKernelServer::Instance()->New("nmenustate", "/app/states/menu");
-        this->gameState = (nGameState*)nKernelServer::Instance()->New("ngamestate", "/app/states/game");
-        this->exitState = (nExitState*)nKernelServer::Instance()->New("nexitstate", "/app/states/exit");
+        this->menuState = (nMenuState*)this->CreateState("nmenustate", "menu");
+        this->gameState = (nGameState*)this->CreateState("ngamestate", "game");
+        this->exitState = (nExitState*)this->CreateState("nexitstate", "exit");
 
         // we specify the first state by menu state.
-        this->SetState("/app/states/menu");
-
+        this->SetState("menu");
         ...
     }
     @endcode
@@ -171,15 +187,34 @@
     to the application with given name of the state, it will be the first state 
     which is shown on screen.
  
+    When nApplication::Open() is called, it runs startup script file if that is specified
+    by calling nApplication::SetStartupScript() and run predefined script
+    if those are found in the script. Followings are those predefined script functions:
+
+      - OnStartup
+      - OnGraphicsStartup
+      - OnMapInput
+
+    You can run any script you want to by putting those in the above script function.
+    
 
     @section loop_application Application Game Loop
 
-    ...
+    There are three member functions those you might want to override for game loop.
     
+      - nAppState::OnFrame()
+      - nAppState::OnRender3D()
+      - nAppState::OnRender2D()
+    
+    Override OnFrame() and put the logic stuff of the state.
+    OnRedner3D() and OnRender2D() is for rendering of the state as its name represents.
+    Put any code of 3D rendering stuff on OnRender3D() and 2D rendering stuff on OnRender2D().
+
 
     @section shutdown_application Shutting Down nApplication
 
-    ...
+    nApplication::Close() is called when the application is shutdown. 
+    Override nApplication::Close() and drop any necessary lines on there.
 
 
 */
