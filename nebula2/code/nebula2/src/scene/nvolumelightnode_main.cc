@@ -75,7 +75,7 @@ nVolumeLightNode::AreResourcesValid() const
 
     The only hardcoded lighting parameter is:
 
-    modelLightMatrix    - 4x4 transform matrix of light in model space
+     - modelLightMatrix    - 4x4 transform matrix of light in model space
 
     Depending on the lighting system in the shader, any other parameters
     can be set in the nVolumeLightNode, which are then simply transfered

@@ -10,8 +10,8 @@
 
     Note that conversions through the GetXXX() method generally don't work.
     It is not possible to do a SetMatrix() and get the resulting
-    orientation as quaternion with GetQuaternion().
-    Similarly GetQuaternion() does NOT return the orientation set by
+    orientation as quaternion with GetQuat().
+    Similarly GetQuat() does NOT return the orientation set by
     SetEuler().
 
     See also @ref N2ScriptInterface_ntransformnode
