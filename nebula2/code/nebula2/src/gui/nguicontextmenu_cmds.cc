@@ -10,10 +10,10 @@ static void n_addentry(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguiwidget
-    @superclass
-    nroot
     @cppclass
     nGuiContextMenu
+    @superclass
+    nroot
     @classinfo
     Ancestor of all gui widgets.
 */
