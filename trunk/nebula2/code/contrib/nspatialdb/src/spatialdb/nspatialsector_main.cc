@@ -2,7 +2,7 @@
 // nspatialsector.cc
 // (C) 2004 Gary Haussmann
 //--------------------------------------------------
-
+#include "kernel/nkernelserver.h"
 #include "spatialdb/nspatialsector.h"
 
 nNebulaScriptClass(nSpatialSector, "nroot");
