@@ -30,9 +30,6 @@ nD3D9Server::SetCamera(const nCamera2& cam)
 
         // set projection matrices
         this->SetTransform(PROJECTION, projRH);
-
-        // FIXME: ueberfluessig???
-        this->d3d9Device->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*) &projRH);
     }
 }
 
