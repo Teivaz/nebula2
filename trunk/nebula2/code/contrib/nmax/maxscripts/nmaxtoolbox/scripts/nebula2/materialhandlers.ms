@@ -2,7 +2,9 @@
 --  materialhandlers.ms
 --
 --  Defines script plugin and parameters which of custom attribute 
---  event handlers.
+--  event handlers. 
+--  Each of handlers are called whenever parameters of the Nebula custom material 
+--  plugins are changed or the plugin is loaded.
 --  
 --  If you want to add additional event handlers, see GetEventHandler() function
 --  for parameter event handlers and AddPluginEventHandlers() function for
@@ -53,6 +55,11 @@ fn OnPluginPostLoad =
 -------------------------------------------------------------------------------
 --  'MapAmbient' parameter event handler
 --
+--  When the .max file is loaded which of the material is multi material,
+--  there is no activate slot. So we should check then skip it. 
+--  Also delegate of the material in activate slot can not be accessible
+--  in loading time.
+--   
 -------------------------------------------------------------------------------
 fn OnMatAmbientChanged val =  
 (
@@ -60,7 +67,8 @@ fn OnMatAmbientChanged val =
     (
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do
-            curMaterial.delegate.ambient = val
+            if curMaterial.delegate != undefined do
+                curMaterial.delegate.ambient = val
     )
 )
 
@@ -74,7 +82,8 @@ fn OnMatDiffuseChanged val =
     (
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do
-            curMaterial.delegate.diffuse = val
+            if curMaterial.delegate != undefined do
+                curMaterial.delegate.diffuse = val
     )
 )
 
@@ -88,7 +97,8 @@ fn OnMatSpecularChanged val =
     (
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do
-            curMaterial.delegate.specular = val
+            if curMaterial.delegate != undefined do
+                curMaterial.delegate.specular = val
     )
 )
 
@@ -103,10 +113,13 @@ fn OnDiffMap0Changed val =
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do
         (
-            curMaterial.delegate.diffuseMap = val
+            if curMaterial.delegate != undefined do
+            (
+                curMaterial.delegate.diffuseMap = val
 
-            if curMaterial.delegate.diffuseMap != undefined do
-                curMaterial.delegate.diffuseMapEnable = true
+                if curMaterial.delegate.diffuseMap != undefined do
+                    curMaterial.delegate.diffuseMapEnable = true
+            )
         )
     )
 )
@@ -122,10 +135,13 @@ fn OnBumpMap0Changed val =
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do        
         (
-            curMaterial.delegate.bumpMap = val
+            if curMaterial.delegate != undefined do
+            (
+                curMaterial.delegate.bumpMap = val
 
-            if curMaterial.delegate.bumpMap != undefined do
-                curMaterial.delegate.bumpMapEnable = true
+                if curMaterial.delegate.bumpMap != undefined do
+                    curMaterial.delegate.bumpMapEnable = true
+            )
         )
     )
 )
@@ -148,11 +164,17 @@ fn OnSpecMap0Changed val =
     (
         curMaterial = medit.GetCurMtl()
         if classof curMaterial != MultiMaterial do
-        (
-        curMaterial.delegate.specularMap  = val
+        (		 
+            if curMaterial.delegate != undefined do
+            (
+                curMaterial.delegate.specularMap  = val
 
-        if curMaterial.delegate.specularMap  != undefined do
-            curMaterial.delegate.specularMapEnable = true
+                if curMaterial.delegate.specularMap  != undefined do
+                    curMaterial.delegate.specularMapEnable = true
+            )
         )
     )
 )
+-------------------------------------------------------------------------------
+-- EOF
+-------------------------------------------------------------------------------
