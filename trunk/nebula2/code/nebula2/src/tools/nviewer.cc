@@ -68,7 +68,7 @@ main(int argc, const char** argv)
 #endif
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nstdsceneserver");
+    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nmrtsceneserver");
     const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
     const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
