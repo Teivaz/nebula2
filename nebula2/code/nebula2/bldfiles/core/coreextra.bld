@@ -10,6 +10,7 @@
 #      nresource
 #      nconserver
 #      nipc
+#      nlocaleserver
 #===============================================================================
 
 #===============================================================================
@@ -105,4 +106,10 @@ beginmodule nipc
     setlibs_win32 {
         wsock32.lib
     }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nlocaleserver
+    setdir locale
+    setfiles { nlocaleserver_main }
+    setheaders nlocaleserver
 endmodule

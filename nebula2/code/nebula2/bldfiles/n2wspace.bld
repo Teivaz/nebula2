@@ -32,5 +32,6 @@ beginworkspace Nebula2
         nshadow
         napplication
         tinyxml
+        nxml
     }
 endworkspace
