@@ -4,9 +4,6 @@
 /**
     Specialized nCmdLine subclass which accepts a cmd line string
     as provided by the Win32 WinMain function.
-
-    FIXME: currently has problems with args which have spaces in them
-    (for instance path name with spaces).
     
     (C) 2003 RadonLabs GmbH
 */
@@ -46,10 +43,30 @@ nWinMainCmdLineArgs::nWinMainCmdLineArgs(const char* cmdLine)
     // tokenize command line
     this->argString = cmdLine;
     char* ptr = (char*) argString.Get();    
-    while ((this->argc < MAXARGS) && (argv[this->argc] = strtok(ptr, N_WHITESPACE ";")))
+    char* end = ptr + strlen(ptr);
+
+    while ((this->argc < MAXARGS) && (ptr < end))
     {
-        this->argc++;
-        ptr = 0;
+        char* c;
+        while ((' ' == *ptr) || ('\t' == *ptr))
+            ptr++;        
+        if (('"' == *ptr) && (c = strchr(++ptr, '"')))
+        {
+            *c++ = 0;
+            argv[this->argc++] = ptr;
+            ptr = c;
+        }
+        else if ((c = strpbrk(ptr, N_WHITESPACE)))
+        {
+            *c++ = 0;
+            argv[this->argc++] = ptr;
+            ptr = c;
+        }
+        else
+        {
+            argv[this->argc] = ptr;
+            break;
+        }
     }
 
     // invoke parent constructor
