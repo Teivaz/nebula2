@@ -40,19 +40,19 @@ static void n_setf4(void*, nCmd*);
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("s_gettype_v",'GTYP',n_gettype);
-    cl->AddCmd("i_geti_v",'GETI',n_geti);
-    cl->AddCmd("f_getf_v",'GETF',n_getf);
-    cl->AddCmd("b_getb_v",'GETB',n_getb);
-    cl->AddCmd("s_gets_v",'GETS',n_gets);
-    cl->AddCmd("o_geto_v",'GETO',n_geto);
-    cl->AddCmd("ffff_getf4_v",'GTF4',n_getf4);
-    cl->AddCmd("v_seti_i",'SETI',n_seti);
-    cl->AddCmd("v_setf_f",'SETF',n_setf);
-    cl->AddCmd("v_setb_b",'SETB',n_setb);
-    cl->AddCmd("v_sets_s",'SETS',n_sets);
-    cl->AddCmd("v_seto_o",'SETO',n_seto);
-    cl->AddCmd("v_setf4_ffff",'STF4',n_setf4);
+    cl->AddCmd("s_gettype_v",   'GTYP', n_gettype);
+    cl->AddCmd("i_geti_v",      'GETI', n_geti);
+    cl->AddCmd("f_getf_v",      'GETF', n_getf);
+    cl->AddCmd("b_getb_v",      'GETB', n_getb);
+    cl->AddCmd("s_gets_v",      'GETS', n_gets);
+    cl->AddCmd("o_geto_v",      'GETO', n_geto);
+    cl->AddCmd("ffff_getf4_v",  'GTV4', n_getf4);
+    cl->AddCmd("v_seti_i",      'SETI', n_seti);
+    cl->AddCmd("v_setf_f",      'SETF', n_setf);
+    cl->AddCmd("v_setb_b",      'SETB', n_setb);
+    cl->AddCmd("v_sets_s",      'SETS', n_sets);
+    cl->AddCmd("v_seto_o",      'SETO', n_seto);
+    cl->AddCmd("v_setf4_ffff",  'STV4', n_setf4);
     cl->EndCmds();
 }
 

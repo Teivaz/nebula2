@@ -478,8 +478,8 @@ static void n_getname(void *o, nCmd *cmd)
 static void n_getfullname(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
-    char buf[N_MAXPATH];
-    cmd->Out()->SetS(self->GetFullName(buf,sizeof(buf)));
+    nString str = self->GetFullName();
+    cmd->Out()->SetS(str.Get());
 }
 
 //-------------------------------------------------------------------
@@ -500,8 +500,8 @@ static void n_getfullname(void *o, nCmd *cmd)
 static void n_getrelpath(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
-    char buf[N_MAXPATH];
-    cmd->Out()->SetS(self->GetRelPath((nRoot *)cmd->In()->GetO(),buf,sizeof(buf)));
+    nString str = self->GetRelPath((nRoot*) cmd->In()->GetO());
+    cmd->Out()->SetS(str.Get());
 }
 
 //-------------------------------------------------------------------

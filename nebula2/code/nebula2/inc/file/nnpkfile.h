@@ -18,7 +18,7 @@ class nNpkFile : public nFile
 {
 public:
     /// constructor
-    nNpkFile(nFileServer2* fs);
+    nNpkFile();
     /// destructor
     virtual ~nNpkFile();
 
@@ -34,9 +34,14 @@ public:
     virtual int Tell();
     /// sets new position in file
     virtual bool Seek(int byteOffset, nSeekType origin);
+    /// is the file at the end
+    virtual bool Eof();
+    /// get size of file in bytes
+    virtual int GetSize() const;
+    /// get the last write time
+    virtual nFileTime GetLastWriteTime() const;
 
 private:
-    nNpkFileServer* npkFileServer;  // pointer to nNpkFileServer interface 
     nNpkTocEntry* tocEntry;         // associated npk toc entry object
     bool isNpkFile;                 // true if access into into an npk file
     bool isAsciiAccess;             // true if ascii access, else binary access

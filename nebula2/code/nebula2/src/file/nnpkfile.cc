@@ -9,9 +9,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nNpkFile::nNpkFile(nFileServer2* fs) :
-    nFile(fs),
-    npkFileServer((nNpkFileServer*) fs),
+nNpkFile::nNpkFile() :
     isNpkFile(false),
     isAsciiAccess(false),
     tocEntry(0),
@@ -55,10 +53,9 @@ nNpkFile::Open(const char* filename, const char* accessMode)
     }
 
     // not a conventional file, try to open as npk file
-    char absPath[N_MAXPATH];
-    this->npkFileServer->ManglePath(filename, absPath, sizeof(absPath));
+    nString absPath = nFileServer2::Instance()->ManglePath(filename);
 
-    this->tocEntry = this->npkFileServer->FindTocEntry(absPath);
+    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath.Get());
     if (this->tocEntry && (nNpkTocEntry::FILE == this->tocEntry->GetType()))
     {
         this->isNpkFile     = true;
@@ -236,6 +233,65 @@ nNpkFile::Seek(int byteOffset, nSeekType origin)
         }
 
         return true;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the file size.
+*/
+int
+nNpkFile::GetSize() const
+{
+    n_assert(this->IsOpen());
+    if (!this->isNpkFile)
+    {
+        return nFile::GetSize();
+    }
+    else
+    {
+        n_assert(this->tocEntry);
+        return this->tocEntry->GetFileLength();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true if file pointer is at end of file.
+*/
+bool
+nNpkFile::Eof()
+{
+    n_assert(this->IsOpen());
+    if (!this->isNpkFile)
+    {
+        return nFile::Eof();
+    }
+    else
+    {
+        n_assert(this->tocEntry);
+        return (this->filePos >= this->tocEntry->GetFileLength());
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the last write access time. This returns a 0-access time if
+    this file is embedded into an NPK file.
+*/
+nFileTime
+nNpkFile::GetLastWriteTime() const
+{
+    n_assert(this->IsOpen());
+    if (!this->isNpkFile)
+    {
+        return nFile::GetLastWriteTime();
+    }
+    else
+    {
+        // return a dummy file time.
+        nFileTime fileTime;
+        return fileTime;
     }
 }
 

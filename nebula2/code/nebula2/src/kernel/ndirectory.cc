@@ -6,16 +6,13 @@
 //------------------------------------------------------------------------------
 /**
 */
-nDirectory::nDirectory(nFileServer2* server) : 
+nDirectory::nDirectory() : 
 #if __WIN32__
     handle(0),
 #endif
-    fs(server),
     empty(true)
 {
-    this->path[0] = 0;
-    this->apath[0] = 0;
-
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -49,7 +46,7 @@ nDirectory::Open(const char* dirName)
     n_assert(strlen(dirName)>0);
 
     // mangle path name
-    this->fs->ManglePath(dirName, this->path, sizeof(this->path));
+    this->path = nFileServer2::Instance()->ManglePath(dirName);
 
 #ifdef __WIN32__
     DWORD attr;
@@ -57,7 +54,7 @@ nDirectory::Open(const char* dirName)
     this->handle = NULL;
 
     // testen, ob File existiert und ein Dir ist...
-    attr = GetFileAttributes(this->path);
+    attr = GetFileAttributes(this->path.Get());
     if ((attr != 0xffffffff) && (attr & FILE_ATTRIBUTE_DIRECTORY))
     {
         retval = true;
@@ -66,7 +63,7 @@ nDirectory::Open(const char* dirName)
     else
     {
         retval = false;
-        this->path[0] = 0;
+        this->path.Clear();
     }
 
     return retval;
@@ -98,7 +95,7 @@ nDirectory::Close()
     // FIXME: LINUX NOT IMPLEMENTED YET
 #endif
 
-    this->path[0] = 0;
+    this->path.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -138,10 +135,9 @@ nDirectory::SetToFirstEntry()
         FindClose(this->handle);
     }
 
-    char tmpName[N_MAXPATH];
-    strcpy(tmpName,this->path);
-    strcat(tmpName,"\\*.*");
-    this->handle = FindFirstFile(tmpName, &(this->findData));
+    nString tmpName = this->path;
+    tmpName.Append("\\*.*");
+    this->handle = FindFirstFile(tmpName.Get(), &(this->findData));
 
     if (this->handle == INVALID_HANDLE_VALUE)
     {
@@ -207,10 +203,10 @@ nDirectory::GetEntryName()
     n_assert(this->handle);
     n_assert(this->handle != INVALID_HANDLE_VALUE);
 
-    strcpy(this->apath, this->path);
-    strcat(this->apath, "/");
-    strcat(this->apath, this->findData.cFileName);
-    return this->apath;
+    this->apath = this->path;
+    this->apath.Append("/");
+    this->apath.Append(this->findData.cFileName);
+    return this->apath.Get();
 #else
     // FIXME: LINUX NOT IMPLEMENTED YET
     return 0;

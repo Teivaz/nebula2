@@ -9,15 +9,13 @@
 //------------------------------------------------------------------------------
 /**
 */
-nNpkDirectory::nNpkDirectory(nFileServer2* fs) :
-    nDirectory(fs),
-    npkFileServer((nNpkFileServer*) fs),
+nNpkDirectory::nNpkDirectory() :
     isNpkDir(false),
     npkEntryOverride(false),
     tocEntry(0),
     curSearchEntry(0)
 {
-    npkEntryAbsPath[0] = 0;
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -42,16 +40,16 @@ nNpkDirectory::Open(const char* dirName)
     this->npkEntryOverride = false;
     this->tocEntry = 0;
     this->curSearchEntry = 0;
-    this->npkEntryAbsPath[0] = 0;
+    this->npkEntryAbsPath.Clear();
     if (nDirectory::Open(dirName))
     {
         return true;
     }
 
     // not a filesystem directory
-    this->npkFileServer->ManglePath(dirName, this->apath, sizeof(this->apath));
+    this->apath = nNpkFileServer::Instance()->ManglePath(dirName);
 
-    this->tocEntry = this->npkFileServer->FindTocEntry(this->apath);
+    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(this->apath.Get());
     if (this->tocEntry && (nNpkTocEntry::DIR == this->tocEntry->GetType()))
     {
         this->isNpkDir = true;
@@ -75,7 +73,7 @@ nNpkDirectory::Close()
         this->npkEntryOverride = false;
         this->tocEntry = 0;
         this->curSearchEntry = 0;
-        this->npkEntryAbsPath[0] = 0;
+        this->npkEntryAbsPath.Clear();
     }
     else
     {
@@ -157,7 +155,9 @@ nNpkDirectory::GetEntryName()
     if (this->isNpkDir || this->npkEntryOverride)
     {
         n_assert(this->curSearchEntry);
-        return this->curSearchEntry->GetFullName(this->npkEntryAbsPath, sizeof(this->npkEntryAbsPath));
+        char buf[N_MAXPATH];
+        return this->curSearchEntry->GetFullName(buf, sizeof(buf));
+        this->npkEntryAbsPath = buf;
     }
     else
     {
@@ -237,10 +237,10 @@ nNpkDirectory::CheckNpkEntryOverride()
 
     const char* entryName = nDirectory::GetEntryName();
     EntryType entryType  = nDirectory::GetEntryType();
-    if (this->npkFileServer->CheckExtension(entryName, "npk") && FILE == entryType)
+    if (((nNpkFileServer*)nFileServer2::Instance())->CheckExtension(entryName, "npk") && FILE == entryType)
     {
         // intercept!
-        this->curSearchEntry = this->npkFileServer->FindTocEntry(entryName);
+        this->curSearchEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(entryName);
         if (this->curSearchEntry)
         {
             this->npkEntryOverride = true;

@@ -95,19 +95,15 @@ nD3D9Shader::LoadResource()
 
     // mangle path name
     nString filename = this->GetFilename();
-    char mangledPath[N_MAXPATH];
-    this->refFileServer->ManglePath(filename.Get(), mangledPath, sizeof(mangledPath));
-   
-    // initialize shader index
-    this->shaderIndex = this->refGfxServer->GetShaderIndex(filename.Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
 
     //load fx file...
     nFile* file = this->refFileServer->NewFileObject();
 
     // open the file
-    if (!file->Open(mangledPath, "r"))
+    if (!file->Open(mangledPath.Get(), "r"))
     {
-        n_error("nD3D9Shader: could not load shader file '%s'!", mangledPath);
+        n_error("nD3D9Shader: could not load shader file '%s'!", mangledPath.Get());
         return false;
     }
 
@@ -129,7 +125,7 @@ nD3D9Shader::LoadResource()
     #endif
 
     // create include file handler
-    nPathString shaderPath(mangledPath);
+    nPathString shaderPath(mangledPath.Get());
     nD3D9ShaderInclude includeHandler(shaderPath.ExtractDirName());
 
     // get global effect pool from gfx server
@@ -152,7 +148,7 @@ nD3D9Shader::LoadResource()
     if (FAILED(hr))
     {
         n_error("nD3D9Shader: failed to load fx file '%s' with:\n\n%s\n",
-                mangledPath,
+                mangledPath.Get(),
                 errorBuffer ? errorBuffer->GetBufferPointer() : "No D3DX error message.");
         if (errorBuffer)
         {

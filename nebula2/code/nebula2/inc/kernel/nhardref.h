@@ -52,7 +52,7 @@ public:
     /// validate object pointer, invalidate name
     void set(TYPE *objPointer);
     /// get (current) target name
-    char *getname(char *buf, int bufSize) const;
+    nString getname() const;
     /// assign object pointer, invalidate name
     void operator=(TYPE* obj);
     /// assign name, invalidate object pointer
@@ -254,21 +254,19 @@ nHardRef<TYPE>::resolve()
     - 23-Jan-2001   floh    created
 */
 template<class TYPE>
-char*
-nHardRef<TYPE>::getname(char *buf, int bufSize) const
+nString
+nHardRef<TYPE>::getname() const
 {
+    nString str;
     if (this->isvalid())
     {
-        this->targetObject->GetFullName(buf, bufSize);   
-        return buf;
+        str = this->targetObject->GetFullName();
     }
-    const char *name = this->strNode.GetName();
-    if (name)
+    else
     {
-        n_strncpy2(buf, name, bufSize);
-        return buf;
+        str = this->strNode.GetName();
     }
-    return 0;
+    return str;
 }
 
 //------------------------------------------------------------------------------

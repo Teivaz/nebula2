@@ -38,7 +38,7 @@ n_barf(const char* exp, const char* file, int line)
 void
 n_barf2(const char* exp, const char* msg, const char* file, int line)
 {
-    n_error("*** NEBULA ASSERION ***\nprogrammer says:%s\nexpression: %s\nfile: %s\nline: %d\n", msg, exp, file, line);
+    n_error("*** NEBULA ASSERTION ***\nprogrammer says: %s\nexpression: %s\nfile: %s\nline: %d\n", msg, exp, file, line);
 }
 
 //------------------------------------------------------------------------------
@@ -378,5 +378,38 @@ match:
 }
 
 //------------------------------------------------------------------------------
-// EOF
+/**
+    Convert 4 character string to FourCC code.
+*/
+nFourCC
+n_strtofourcc(const char* str)
+{
+    n_assert(str);
+    n_assert(strlen(str) == 4);
+    n_assert(str);
+    char chr[4] = { 0 };
+    int i = 0;
+    while (str[i] && (i < 4))
+    {
+        chr[i] = str[i];
+        i++;
+    }
+    return MAKE_FOURCC(chr[0], chr[1], chr[2], chr[3]);
+}
+
 //------------------------------------------------------------------------------
+/**
+    Convert FourCC code into character string. Note: the returned string
+    will be destroyed on the next function invocation.
+*/
+const char*
+n_fourcctostr(nFourCC fourcc)
+{
+    static char buf[5];
+    buf[0] = (fourcc)     & 0xff;
+    buf[1] = (fourcc>>8)  & 0xff;
+    buf[2] = (fourcc>>16) & 0xff;
+    buf[3] = (fourcc>>24) & 0xff;
+    buf[4] = 0;
+    return buf;
+}

@@ -33,11 +33,12 @@
     (C) 1999 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
-#include "util/nstrlist.h"
-#include "util/nstrnode.h"
+#include "util/nlist.h"
+#include "util/nnode.h"
 #include "kernel/ncmd.h"
 #include "kernel/nref.h"
 #include "kernel/nmutex.h"
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
@@ -46,11 +47,11 @@ class nKernelServer;
 class nPersistServer;
 template<class TYPE> class nRef;
 
-class nRoot : public nStrNode 
+class nRoot : public nNode 
 {
 public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)
-    nRoot(void);
+    nRoot();
 
     /// initialize after linkage into name hierarchy
     virtual void Initialize();
@@ -81,7 +82,7 @@ public:
     nList *GetRefs();
     
     /// get pointer to my class object
-    nClass *GetClass(void) const;
+    nClass *GetClass() const;
     /// return true if part of class hierarchy
     bool IsA(nClass *) const;
     /// return true instance of class
@@ -104,10 +105,10 @@ public:
     /// get my name
     const char *GetName() const;
     /// get full path name of object
-    char *GetFullName(char *buf, int sizeof_buf);
+    nString GetFullName();
     /// get relative path name to other object
-    char *GetRelPath(nRoot *other, char *buf, int sizeof_buf);
-    /// find child object by name
+    nString GetRelPath(nRoot *other);
+    /// find child object by name using const char*
     nRoot *Find(const char *str);
     /// add child object at start of child list
     void AddHead(nRoot *n);
@@ -153,14 +154,15 @@ protected:
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nRoot();
     /// invalidate all references
-    void InvalidateAllRefs(void);
+    void InvalidateAllRefs();
     /// set pointer to my class object
     void SetClass(nClass *);
 
+    nString name;
     nList refList;
     nClass* instanceClass;
     nRoot* parent;
-    nStrList childList;
+    nList childList;
     ushort refCount;
     ushort saveModeFlags;
     nMutex mutex;
@@ -170,8 +172,28 @@ protected:
 /**
 */
 inline
+void 
+nRoot::SetName(const char *str)
+{
+    this->name = str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nRoot::GetName() const
+{
+    return this->name.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 nRoot*
-nRoot::GetParent(void) const
+nRoot::GetParent() const
 {
     return this->parent;
 }
@@ -203,7 +225,7 @@ inline
 nRoot*
 nRoot::GetSucc() const
 {
-    return (nRoot *) nStrNode::GetSucc();
+    return (nRoot *) nNode::GetSucc();
 }
 
 //------------------------------------------------------------------------------
@@ -213,17 +235,7 @@ inline
 nRoot*
 nRoot::GetPred() const
 { 
-    return (nRoot*) nStrNode::GetPred();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nRoot::GetName(void) const
-{
-    return nStrNode::GetName();
+    return (nRoot*) nNode::GetPred();
 }
 
 //------------------------------------------------------------------------------
@@ -285,19 +297,10 @@ inline
 void 
 nRoot::Remove()
 {
-    nStrNode::Remove();
+    nNode::Remove();
     this->parent = 0;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void 
-nRoot::SetName(const char *str)
-{
-    nStrNode::SetName(str);
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -309,6 +312,8 @@ nRoot*
 nRoot::Find(const char *str)
 {
     n_assert(str);
+
+    // handle special cases '.' and '..'
     if (str[0] == '.') 
     {
         if (str[1] == 0) 
@@ -320,7 +325,18 @@ nRoot::Find(const char *str)
             return this->parent;
         }
     }
-    return (nRoot*) this->childList.Find(str);
+
+    // find child with string compare
+    nRoot* child;
+    for (child = this->GetHead(); child; child = child->GetSucc())
+    {
+        if (strcmp(child->name.Get(), str) == 0)
+        {
+            return child;
+        }
+    }
+    // fallthrough: not found
+    return 0;
 }
 
 //------------------------------------------------------------------------------

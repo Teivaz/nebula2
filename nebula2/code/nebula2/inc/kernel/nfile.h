@@ -39,8 +39,6 @@ public:
         END,
     };
 
-    /// constructor
-    nFile(nFileServer2* server);
     /// opens a file
     virtual bool Open(const char* fileName, const char* accessMode);
     /// closes the file
@@ -60,9 +58,9 @@ public:
     /// get the last write time
     virtual nFileTime GetLastWriteTime() const;
     /// writes a string to the file
-    virtual bool PutS(const char* buffer);
+    bool PutS(const char* buffer);
     /// reads a string from the file
-    virtual bool GetS(char* buffer, int numChars);
+    bool GetS(char* buffer, int numChars);
     /// get current line number (incremented by PutS() and GetS())
     int GetLineNumber() const;
     /// determines whether the file is opened
@@ -93,10 +91,13 @@ public:
     double GetDouble();
 
 protected:
+    friend class nFileServer2;
+
+    /// NOTE: constructor is private because only nFileServer2 may create objects
+    nFile();
     /// destructor
     virtual ~nFile();
 
-    nFileServer2* fs;
     ushort lineNumber;
     bool isOpen;
 
@@ -244,7 +245,8 @@ nFile::GetChar()
 
 //------------------------------------------------------------------------------
 /**
-    @return         the value
+    @param  val     [out] 32 bit float value
+    @return         number of bytes read
 */
 inline
 float
@@ -257,7 +259,8 @@ nFile::GetFloat()
 
 //------------------------------------------------------------------------------
 /**
-    @return         the value
+    @param  val     [out] 32 bit float value
+    @return         number of bytes read
 */
 inline
 double

@@ -30,8 +30,12 @@ public:
     const char *getname() const;
     /// returns true if the object is valid
     bool isvalid();
-    /// reference operator
+    /// override -> operator
     TYPE* operator->();
+    /// dereference operator
+    TYPE& operator*();
+    /// cast operator
+    operator TYPE*();
     /// assign operator
     void operator=(const char *name);
 
@@ -90,10 +94,10 @@ nAutoRef<TYPE>::check()
         {
             return 0;
         }
-        this->targetObject = nKernelServer::ks->Lookup(this->targetName);
+        this->targetObject = (TYPE*) nKernelServer::ks->Lookup(this->targetName);
         if (this->targetObject) 
         {
-            this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+            ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
         }
     }
     return (TYPE *) this->targetObject;
@@ -111,7 +115,7 @@ nAutoRef<TYPE>::get()
     {
         n_error("nAutoRef: no target object '%s'!\n",  this->targetName ? this->targetName : "NOT INITIALIZED");
     }
-    return (TYPE*) this->targetObject;
+    return this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -143,6 +147,27 @@ template<class TYPE>
 inline
 TYPE*
 nAutoRef<TYPE>::operator->()
+{
+    return this->get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+TYPE&
+nAutoRef<TYPE>::operator*()
+{
+    return *this->get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nAutoRef<TYPE>::operator TYPE*()
 {
     return this->get();
 }

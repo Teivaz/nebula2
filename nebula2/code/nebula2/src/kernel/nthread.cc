@@ -71,6 +71,9 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
     }
 
 #   else
+    // fix gcc warning
+    pri = pri;
+
     // FIXME: ignore stack size under Linux
     int pok = pthread_create(&(this->thread),
                              NULL,
@@ -173,7 +176,7 @@ nThread::ThreadHarakiri()
     this->shutdownEvent.Wait();
     this->shutdownSignalReceived = true;
 #   ifdef __WIN32__
-    _endthreadex(0);
+//    _endthreadex(0);
 #   else
     pthread_exit(0);
 #   endif

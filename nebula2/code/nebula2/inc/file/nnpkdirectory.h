@@ -20,7 +20,7 @@ class nNpkDirectory : public nDirectory
 {
 public:
     /// constructor
-    nNpkDirectory(nFileServer2* fs);
+    nNpkDirectory();
     /// destructor
     virtual ~nNpkDirectory();
     /// open directory
@@ -48,12 +48,11 @@ private:
     /// handle npk file during nDirectory entry enumeration
     void CheckNpkEntryOverride();
 
-    nNpkFileServer* npkFileServer;    ///< pointer to nNpkFileServer interface 
     bool isNpkDir;                    ///< true if clean npk dir, otherwise may be mixed filesys/npk dir
     bool npkEntryOverride;            ///< true if npk file entered during filesystem dir enum
     nNpkTocEntry* tocEntry;           ///< pointer to current npk entry, or 0 if current entry is a filesys entry
     nNpkTocEntry* curSearchEntry;     ///< current search entry inside npk file
-    char npkEntryAbsPath[N_MAXPATH];  ///< storage buffer for current entry name
+    nString npkEntryAbsPath;          ///< storage buffer for current entry name
 };
 
 //------------------------------------------------------------------------------

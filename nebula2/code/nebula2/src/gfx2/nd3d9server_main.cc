@@ -219,11 +219,10 @@ nD3D9Server::SaveScreenshot(const char* fileName)
     ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.right));
 
     // mangle filename
-    char mangledPath[N_MAXPATH];
-    kernelServer->GetFileServer()->ManglePath(fileName, mangledPath, sizeof(mangledPath));
+    nString mangledPath = nFileServer2::Instance()->ManglePath(fileName);
 
     // save the front buffer surface to given filename.
-    hr = D3DXSaveSurfaceToFile(mangledPath, D3DXIFF_BMP, surf, 0, &rc);
+    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), D3DXIFF_BMP, surf, 0, &rc);
     if (FAILED(hr))
     {
         n_printf("nD3D9Server::Screenshot(): Failed to save file '%s'!\n", fileName);

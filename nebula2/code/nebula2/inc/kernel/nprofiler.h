@@ -8,53 +8,43 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#include "util/nstrnode.h"
+#include "kernel/nkernelserver.h"
 #include "kernel/nref.h"
 #include "kernel/nenv.h"
 
 //------------------------------------------------------------------------------
-class nKernelServer;
-class nProfiler : public nStrNode 
+class nProfiler
 {
 public:
     /// constuctor
-    nProfiler(nKernelServer* ks, nRoot* owner, const char* name);
+    nProfiler(const char* name);
     /// destructor
     ~nProfiler();
     /// start accumulated profiling 
     void Start();
-    /// stop accumulated profiling
+    /// stop accumulated profiling, value is written to watcher variable
     void Stop();
-    /// rewind profiler
-    void Rewind();
 
 private:
     nRef<nEnv> refEnv;
+    nTime startTime;
     bool isStarted;
-
-#ifdef __WIN32__
-    LONGLONG start;
-    LONGLONG accum;
-#   else
-    long long int start;
-    long long int accum;
-#   endif
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline 
-nProfiler::nProfiler(nKernelServer* ks, nRoot* owner, const char* name)
-    : nStrNode(name)
+nProfiler::nProfiler(const char* name)
 {
     char buf[N_MAXPATH];
-    sprintf(buf,"/sys/var/prof_%s",name);
-    nRoot *o = ks->Lookup(buf);
-    n_assert(NULL == o);
-    this->refEnv = (nEnv *) ks->New("nenv",buf);
-    this->start = 0;
-    this->accum = 0;
+    sprintf(buf, "/sys/var/%s", name);
+    this->refEnv = (nEnv*) nKernelServer::Instance()->Lookup(buf);
+    if (!this->refEnv.isvalid())
+    {
+        this->refEnv = (nEnv *) nKernelServer::Instance()->New("nenv",buf);
+    }
+    this->startTime = 0.0;
     this->isStarted = false;
 }
 
@@ -64,14 +54,9 @@ nProfiler::nProfiler(nKernelServer* ks, nRoot* owner, const char* name)
 inline 
 nProfiler::~nProfiler()
 {
-    if (refEnv.isvalid()) 
-    {
-        refEnv->Release();
-    }
+    // empty
 }
 
-
-#ifdef __WIN32__
 //------------------------------------------------------------------------------
 /**
 */
@@ -80,8 +65,7 @@ void
 nProfiler::Start() 
 {
     n_assert(!this->isStarted);
-
-    QueryPerformanceCounter((LARGE_INTEGER *) &(this->start));
+    this->startTime = nTimeServer::Instance()->GetTime();
     this->isStarted = true;
 }
 
@@ -93,81 +77,11 @@ void
 nProfiler::Stop() 
 {
     n_assert(this->isStarted);
-
-    LONGLONG stop;
-    QueryPerformanceCounter((LARGE_INTEGER *) &stop);
-    this->accum += (stop - this->start);
+    nTime stop = nTimeServer::Instance()->GetTime();
+    nTime diff = stop - this->startTime;
+    this->refEnv->SetF(float(diff));
     this->isStarted = false;
 }
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline 
-void 
-nProfiler::Rewind() 
-{
-    n_assert(!this->isStarted);
-    LONGLONG freq;
-    QueryPerformanceFrequency((LARGE_INTEGER *) &freq);
-    double d_accum = (double) this->accum;
-    double d_freq  = (double) freq;
-    double d_time  = d_accum / d_freq;
-    refEnv->SetF((float) d_time);
-    this->accum = 0;
-}
-
-#elif defined(__LINUX__) || defined(__MACOSX__)
-#define N_MICROSEC_INT    (1000000)
-#define N_MICROSEC_FLOAT  (1000000.0)
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline 
-void 
-nProfiler::Start() 
-{
-    n_assert(!this->isStarted);
-    struct timeval tv;
-    gettimeofday(&tv,NULL);
-    this->start = tv.tv_sec * N_MICROSEC_INT + tv.tv_usec;
-    this->isStarted = true;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline 
-void 
-nProfiler::Stop() 
-{
-    n_assert(this->isStarted);
-    struct timeval tv;
-    long long int stop;
-    gettimeofday(&tv,NULL);
-    stop = tv.tv_sec * N_MICROSEC_INT + tv.tv_usec;
-    this->accum += stop - this->start;
-    this->isStarted = false;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline 
-void 
-nProfiler::Rewind() 
-{
-    n_assert(!this->isStarted);
-    double d_accum = (double) this->accum;
-    double d_time = (d_accum / N_MICROSEC_FLOAT);
-    this->refEnv->SetF((float)d_time);
-    this->accum = 0;
-}
-
-#else
-#error "nProfiler class not supported"
-#endif
 
 //------------------------------------------------------------------------------
 #endif

@@ -96,7 +96,6 @@ nDShowServer::PlayFile(const char* filename)
     n_assert(0 == this->mediaEvent);
 
     HRESULT hr;
-    nFileServer2* fileServer = kernelServer->GetFileServer();
 
     // clear background
     this->refGfxServer->BeginScene();
@@ -105,10 +104,9 @@ nDShowServer::PlayFile(const char* filename)
     this->refGfxServer->PresentScene();
 
     // mangle Nebula path into absolute path wide character string
-    char mangledPath[N_MAXPATH];
     wchar_t widePath[N_MAXPATH];
-    fileServer->ManglePath(filename, mangledPath, sizeof(mangledPath));
-    mbstowcs(widePath, mangledPath, strlen(mangledPath) + 1);
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
+    mbstowcs(widePath, mangledPath.Get(), mangledPath.Length() + 1);
 
     // create DirectShow filter graph
     hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&this->graphBuilder);

@@ -32,8 +32,6 @@ public:
         INVALID,
     };
 
-    /// constructor
-    nDirectory(nFileServer2* server);
     /// destructor
     virtual ~nDirectory();
 
@@ -51,16 +49,20 @@ public:
     virtual bool SetToFirstEntry();
     /// set next entry as current
     virtual bool SetToNextEntry();
-    /// get name of current entry
+    /// get full path name of current entry
     virtual const char* GetEntryName();
     /// get type of current entry
     virtual EntryType GetEntryType();
 
 protected:
-    nFileServer2* fs;
+    friend class nFileServer2;
+
+    /// NOTE: constructor is private because only nFileServer2 may create objects
+    nDirectory();
+
     bool empty;
-    char path[N_MAXPATH];
-    char apath[N_MAXPATH];
+    nString path;
+    nString apath;
 
 #ifdef __WIN32__
     /// win32 directory search handle
@@ -77,7 +79,7 @@ inline
 bool
 nDirectory::IsOpen() const
 {
-    return ((this->path[0] == 0) ? false : true);
+    return ((this->path.IsEmpty()) ? false : true);
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +90,7 @@ const char*
 nDirectory::GetPathName() const
 {
     n_assert(this->IsOpen());
-    return this->apath;
+    return this->path.Get();
 }
 
 //------------------------------------------------------------------------------

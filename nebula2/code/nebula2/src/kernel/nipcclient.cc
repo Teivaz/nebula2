@@ -15,7 +15,7 @@ nIpcClient::nIpcClient() :
 #if __WIN32__
     struct WSAData wsaData;
     WSAStartup(0x101, &wsaData);
-#   endif
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ nIpcClient::~nIpcClient()
     }
 #if __WIN32__
     WSACleanup();
-#   endif
+#endif
 }
 
 //------------------------------------------------------------------------------
