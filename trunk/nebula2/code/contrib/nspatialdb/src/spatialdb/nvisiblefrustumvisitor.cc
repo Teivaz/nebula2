@@ -4,6 +4,7 @@
 //--------------------------------------------------
 
 #include "spatialdb/nvisiblefrustumvisitor.h"
+#include "gfx2/ngfxserver2.h"
 
 nVisibleFrustumVisitor::nVisibleFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform)
 : nVisibilityVisitor(cameratransform.pos_component()), m_cameraprojection(cameraprojection)
@@ -19,6 +20,15 @@ nVisibleFrustumVisitor::nVisibleFrustumVisitor(nCamera2 &cameraprojection, matri
 nVisibleFrustumVisitor::~nVisibleFrustumVisitor()
 {
 }
+
+void nVisibleFrustumVisitor::VisualizeDebug(nGfxServer2 *gfx2)
+{
+    // draw the frustum clipper
+    nFrustumClipper &clipper(m_viewfrustumstack.Front());
+    clipper.VisualizeFrustum(gfx2, vector4(1.0f,1.0f,0.0f,1.0f));
+
+}
+
 
 void nVisibleFrustumVisitor::Reset()
 {

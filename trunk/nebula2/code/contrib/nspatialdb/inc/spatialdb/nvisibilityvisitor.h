@@ -8,6 +8,7 @@
 
 class nSpatialSector;
 class nSpatialElement;
+class nGfxServer2;
 
 /**
     @class nVisibilityVisitor
@@ -63,6 +64,10 @@ public:
     /** @brief get the current viewpoint in local sector space
         Mainly used by hierarchy elements; needed for occlusion or LOD testing */
     vector3 &GetViewPoint() const;
+
+    /** @brief Render some debug visualization.
+        Comes in handy for debugging wierd occlusion artifacts. */
+    virtual void VisualizeDebug(nGfxServer2 *gfx2);
 
 protected:
     /// we have a stack of viewpoints to handle sector-local coordinate systems
