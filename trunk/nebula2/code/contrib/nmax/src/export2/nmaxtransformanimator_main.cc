@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------------
-//  nmaxprscontroller.cc
+//  nmaxtransformanimator_main.cc
 //
 //  (c)2005 Kim, Hyoun Woo.
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
-#include "export2/nmaxcontroller.h"
+#include "export2/nmaxcontrol.h"
 #include "scene/ntransformanimator.h"
-#include "export2/nmaxprscontroller.h"
+#include "export2/nMaxtransformanimator.h"
 
 #include "kernel/ntypes.h"
 

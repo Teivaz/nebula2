@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxinterface.h"
-#include "export2/nmaxcontroller.h"
+#include "export2/nmaxcontrol.h"
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxutil.h"
 

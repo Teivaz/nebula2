@@ -4,11 +4,11 @@
 //  (C)2004 Kim, Hyoiun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
-#include "export2/nmaxcontroller.h"
-#include "export2/nmaxprscontroller.h"
-#include "export2/nmaxikcontroller.h"
-#include "export2/nmaxpathcontroller.h"
-#include "export2/nmaxanim.h"
+#include "export2/nmaxcontrol.h"
+#include "export2/nmaxtransformanimator.h"
+#include "export2/nmaxikanimator.h"
+#include "export2/nmaxtransformcurveanimator.h"
+#include "export2/nMaxAnimator.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
