@@ -28,6 +28,7 @@ endtarget
 
 beginworkspace physdemo
     setbinarydir ./code/contrib/physdemo/bin/
+    annotate "The Physdemo workspace"
     settargets {
         physdemo
         nkernel
