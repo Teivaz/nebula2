@@ -256,7 +256,6 @@ proc dump_data { filename } {
         puts $cid "  Generated Items - generatebld.tcl:"
         puts $cid ""
 
-        puts $cid "  Module has kernel:   $mod($i,kernel)"
         puts $cid "  Module is not NOH:   $mod($i,autonopak)"
         puts $cid "  Module derived from: $mod($i,ancestor)"
 
@@ -290,7 +289,7 @@ proc dump_data { filename } {
 #
 #  Dumps the data collected and collated for the compiler API
 #----------------------------------------------------------------------------
-proc dump_api_data { filename } {
+proc dump_api_data { filename wslist } {
     global home
     global wspace
     global num_wspaces
@@ -307,6 +306,12 @@ proc dump_api_data { filename } {
     puts $cid ""
 
     for {set i 0} {$i < $num_wspaces} {incr i} {
+        if {$wslist != ""} {
+            if {[lsearch $wslist $wspace($i,name)] == -1} {
+                continue
+            }
+        }
+
         set_currentworkspace $wspace($i,name)
         puts $cid "Name: $wspace($i,name)"
 
@@ -380,11 +385,6 @@ proc dump_api_data { filename } {
             puts $cid "    Mac OSX Libs:"
             foreach lib [get_osxlibs $target] {
                 puts $cid "        $lib"
-            }
-
-            puts $cid " pakmod modules (ancestor dep ordered)"
-            foreach module $wspace($i,$target,pakmods) {
-                puts $cid "        $module"
             }
 
             puts $cid "-------------------------------"

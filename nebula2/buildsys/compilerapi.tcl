@@ -60,9 +60,9 @@
 #
 #    get_incsearchdirs
 #    get_libsearchdirs
+#    write_resfiles
 #    write_pkgfiles
 #    pathto                 $pathfile
-#    add_pkgs
 #
 #----------------------------------------------------------------------------
 
@@ -243,8 +243,7 @@ proc set_interpath {path} {
 #----------------------------------------------------------------------------
 #  use_workspace
 #
-#  Short hand version of the above set_??? procs.  Additionally calls
-#  write_pkgfiles.
+#  Short hand version of the above set_??? procs.
 #
 #  CAVEAT:  If not using the above set_??? procs then this must be used
 #           when creating workspace build files.  See the above files for
@@ -255,7 +254,6 @@ proc use_workspace {wspace_name wspacedir outputdir interdir} {
     set_workspacepath $wspacedir
     set_outputpath $outputdir
     set_interpath  $interdir
-    write_pkgfiles
 }
 
 
@@ -304,10 +302,10 @@ proc get_tarmods {tarname} {
 #  Returns true|false if the target is valid for this platform
 #----------------------------------------------------------------------------
 proc test_tarplatform {tarname platform_test} {
-    global wspace
-    global cur_workspace
+    global tar
 
-    return [test_platform $wspace($cur_workspace,$tarname,platform) $platform_test]
+    set idx [findtargetbyname $tarname]
+    return [test_platform $tar($idx,platform) $platform_test]
 }
 
 #----------------------------------------------------------------------------
@@ -385,9 +383,10 @@ proc get_exceptions {tarname} {
 #  In .bld file, write "seticon $filename"
 #----------------------------------------------------------------------------
 proc get_icon {tarname} {
-    global wspace
-    global cur_workspace
-    return $wspace($cur_workspace,$tarname,icon)
+    global tar
+
+    set idx [findtargetbyname $tarname]
+    return $tar($idx,icon)
 }
 
 #----------------------------------------------------------------------------
@@ -686,128 +685,167 @@ proc get_libsearchdirs { } {
 
 
 #----------------------------------------------------------------------------
-#  write_pkgfiles
+#  write_resfiles
 #
-#  writes out pkg_XXX.cc files for the current workspace and fixs up the
-#  relevant project to use them.  Currently only dll and exe targets
-#  support pkg_XXX.cc files.  This also writes out the .rc files for
-#  win32 targets to point at the target's icon in /bin/win32
+#  writes out res_XXX.rc files for each executable target that point to
+#  the target's icon in /bin/win32.
 #
 #  TODO: Find a better way of handling app icons. - includes linux and macosx
+#----------------------------------------------------------------------------
+proc write_resfiles { } {
+    global home
+    global tar
+    global num_tars
+
+    set pdir [cleanpath ./build/pkg]
+    set relpath [findrelpath $pdir ./bin/win32]
+    set dir  [cleanpath $home/$pdir]
+
+    for {set i 0} {$i < $num_tars} {incr i} {
+        if {$tar($i,type) != "exe"} {
+            continue
+        }
+        set target $tar($i,name)
+        # if {![test_tarplatform $target "win32"]} {
+        #     continue
+        # }
+        set cid [open $dir/res_$target.rc w]
+        puts $cid "nebula_icon ICON \"$relpath/[get_icon $target]\""
+        close $cid
+    }
+}
+
+#----------------------------------------------------------------------------
+#  write_pkgfiles
 #
-#  CAVEAT: This is only valid after the current workspace and directories
-#          are set and needs to be done once for each workspace and assumes
-#          that the /pkg directory already exists
+#  writes out pkg_XXX.cc files for the lib targets
 #----------------------------------------------------------------------------
 proc write_pkgfiles { } {
     global home
     global tar
+    global num_tars
     global mod
     global num_mods
-    global wspace
-    global num_wspaces
-    global cur_workspace
-    global cur_workspacepath
 
-    set pdir [cleanpath $cur_workspacepath/pkg]
+    set pkgdir "./build/pkg"
+    set pdir [cleanpath $pkgdir]
     set dir  [cleanpath $home/$pdir]
 
-    foreach target $wspace($cur_workspace,targets) {
-        if {($wspace($cur_workspace,$target,type) != "lib") && ([llength $wspace($cur_workspace,$target,pakmods)] > 0)} {
-
-            set cid [open $dir/res_$target.rc w]
-            puts $cid "nebula_icon ICON \"[findrelpath $pdir ./bin/win32]/[get_icon $target]\""
-            close $cid
-
-            set cid [open $dir/pkg_$target.cc w]
-
-            puts $cid "//----------------------------------------------------------"
-            puts $cid "// pkg_$target.cc"
-            puts $cid "// MACHINE GENERATED, DON'T EDIT!"
-            puts $cid "//----------------------------------------------------------"
-            puts $cid "#include \"kernel/ntypes.h\""
-            puts $cid "#include \"kernel/nkernelserver.h\""
-            puts $cid "#ifdef __XBxX__"
-            puts $cid "#undef __WIN32__"
-            puts $cid "#endif"
-            puts $cid ""
-            puts $cid "extern \"C\" void n_addmodules(nKernelServer *);"
-            puts $cid "extern \"C\" void n_remmodules(nKernelServer *);"
-            puts $cid ""
-
-            #collect the targets and platforms
-            set mod_list ""
-            foreach module $wspace($cur_workspace,$target,pakmods) {
-                #set tarowner [mod_findwspacetargetowner $wspace($cur_workspace,name) $module]
-                #set taridx [findtargetbyname $tarowner]
-                #set plat $tar($taridx,platform)
-                addtolist mod_list $module
-            }
-
-            foreach module $mod_list {
-                #write out the extern lines
-                set ifdefd false
-                set plat_list ""
-                if {![test_modplatform $module all]} {
-                    set ifdefd true
-                    set plat_list [translate_platdefs [get_modplatform $module]]
-                    set deflist [join $plat_list " || "]
-                    puts $cid "#ifdef $deflist"
-                }
-                puts $cid "extern bool n_init_$module (nClass *, nKernelServer *);"
-                puts $cid "extern void *n_new_$module (void);"
-
-                if {$ifdefd} {
-                    puts $cid "#endif"
-                }
-                puts $cid ""
-            }
-
-            puts $cid ""
-            puts $cid "void n_addmodules(nKernelServer *ks)"
-            puts $cid "\{"
-
-            foreach module $mod_list {
-                #write out the addmodules lines
-                set ifdefd false
-                set plat_list ""
-                if {![test_modplatform $module all]} {
-                    set ifdefd true
-                    set plat_list [translate_platdefs [get_modplatform $module]]
-                    set deflist [join $plat_list " || "]
-                    puts $cid "#ifdef $deflist"
-                }
-                puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_new_$module);"
-
-                if {$ifdefd} {
-                    puts $cid "#endif"
-                }
-            }
-
-            puts $cid "\}"
-            puts $cid ""
-            puts $cid "void n_remmodules(nKernelServer *)"
-            puts $cid "\{"
-            puts $cid "\}"
-            puts $cid "//----------------------------------------------------------"
-            puts $cid "// EOF"
-            puts $cid "//----------------------------------------------------------"
-
-            close $cid
-
-            #fix up the targets in the wspace array to generate the pkg_XXX.cc inclusions
-            #create a mod entry for it - needed
-            set mod($num_mods,name) pkg_$target
-            set mod($num_mods,platform) all
-            set mod($num_mods,trunkdir) ""
-            set mod($num_mods,dir) $dir
-            set mod($num_mods,type) cpp
-            set mod($num_mods,files) pkg_$target
-            set mod($num_mods,headers) ""
-            set mod($num_mods,srcs) $cur_workspacepath/pkg/pkg_$target
-            set mod($num_mods,hdrs) ""
-            incr num_mods
+    # Now, do the pkg files for each lib target
+    for {set i 0} {$i < $num_tars} {incr i} {
+        set target $tar($i,name)
+        if {$tar($i,type) != "lib"} {
+            continue
         }
+
+        # collect the targets
+        set mod_list ""
+        foreach module $tar($i,mergedmods) {
+            if {$mod([findmodbyname $module],forcenopkg)} {
+                continue
+            }
+            addtolist mod_list $module
+        }
+
+        set mod_list [sort_mods $mod_list]
+
+        if {[llength $mod_list] == 0} {
+            continue
+        }
+
+        set cid [open $dir/pkg_$target.cc w]
+
+        puts $cid "//----------------------------------------------------------"
+        puts $cid "// pkg_$target.cc"
+        puts $cid "// MACHINE GENERATED, DON'T EDIT!"
+        puts $cid "//----------------------------------------------------------"
+        puts $cid "#include \"kernel/ntypes.h\""
+        puts $cid "#include \"kernel/nkernelserver.h\""
+        puts $cid "#ifdef __XBxX__"
+        puts $cid "#undef __WIN32__"
+        puts $cid "#endif"
+        puts $cid ""
+        puts $cid "extern \"C\" void $target\();"
+        puts $cid ""
+
+        foreach module $mod_list {
+            #write out the extern lines
+            set ifdefd false
+            set plat_list ""
+            if {![test_modplatform $module all]} {
+                set ifdefd true
+                set plat_list [translate_platdefs [get_modplatform $module]]
+                set deflist [join $plat_list " || "]
+                puts $cid "#ifdef $deflist"
+            }
+            puts $cid "extern bool n_init_$module (nClass *, nKernelServer *);"
+            puts $cid "extern void *n_new_$module (void);"
+
+            if {$ifdefd} {
+                puts $cid "#endif"
+            }
+            puts $cid ""
+        }
+
+        puts $cid ""
+        puts $cid "void $target\()"
+        puts $cid "\{"
+
+        foreach module $mod_list {
+            #write out the addmodules lines
+            set ifdefd false
+            set plat_list ""
+            if {![test_modplatform $module all]} {
+                set ifdefd true
+                set plat_list [translate_platdefs [get_modplatform $module]]
+                set deflist [join $plat_list " || "]
+                puts $cid "#ifdef $deflist"
+            }
+            set initproc "n_init_$module"
+            set newproc  "n_new_$module"
+            puts $cid "    nKernelServer::ks->AddModule(\"$module\","
+            puts $cid "                                 $initproc,"
+            puts $cid "                                 $newproc);"
+
+            if {$ifdefd} {
+                puts $cid "#endif"
+            }
+        }
+
+        puts $cid "\}"
+        puts $cid ""
+        puts $cid "//----------------------------------------------------------"
+        puts $cid "// EOF"
+        puts $cid "//----------------------------------------------------------"
+
+        close $cid
+
+        #create a mod entry for it - needed
+        set mod($num_mods,name)                 pkg_$target
+        set mod($num_mods,dir)                  $dir
+        set mod($num_mods,annotate)             ""
+        set mod($num_mods,platform)             all
+        set mod($num_mods,type)                 cpp
+        set mod($num_mods,files)                pkg_$target
+        set mod($num_mods,headers)              ""
+        set mod($num_mods,moddeffile)           ""
+        set mod($num_mods,libs_win32)           ""
+        set mod($num_mods,libs_win32_release)   ""
+        set mod($num_mods,libs_win32_debug)     ""
+        set mod($num_mods,libs_linux)           ""
+        set mod($num_mods,libs_macosx)          ""
+        set mod($num_mods,moduledeps)           ""
+        set mod($num_mods,forcenopkg)           true
+        set mod($num_mods,trunkdir)             ""
+        set mod($num_mods,bldfile)              "** autogenerated **"
+        set mod($num_mods,hdrs)                 ""
+        set mod($num_mods,srcs)                 $pkgdir/pkg_$target
+        set mod($num_mods,autonopak)            true
+        set mod($num_mods,ancestor)             ""
+        incr num_mods
+
+        # And add it to the target so that it gets built
+        lappend tar($i,mergedmods) pkg_$target
     }
 }
 
@@ -819,27 +857,6 @@ proc pathto {pathfile} {
     global cur_workspacepath
 
     return [findrelpath $cur_workspacepath $pathfile]
-}
-
-#----------------------------------------------------------------------------
-#  add_pkgs
-#  Add the pkg_ files to the module list
-#----------------------------------------------------------------------------
-proc add_pkgs { wslist } {
-    global wspace
-    global num_wspaces
-    for {set i 0} {$i < $num_wspaces} {incr i} {
-        if {$wslist != ""} {
-            if {[lsearch $wslist $wspace($i,name)] == -1} {
-                continue
-            }
-        }
-        foreach target $wspace($i,targets) {
-            if {($wspace($i,$target,type) != "lib") && ([llength $wspace($i,$target,pakmods)] > 0)} {
-                lappend wspace($i,$target,modules) pkg_$target
-            }
-        }
-    }
 }
 
 #----------------------------------------------------------------------------

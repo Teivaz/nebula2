@@ -294,7 +294,10 @@ proc run_buildsystem {} {
     global chosen_workspaces
 
     if {[catch {run_buildsystem_worker $chosen_workspaces $buildgen} result]} {
+        global errorInfo
         ::log::log error $result
+        ::log::log debug "*** TRACE ***"
+        ::log::log debug $errorInfo
     }
 }
 
@@ -318,16 +321,15 @@ proc run_buildsystem_worker {workspaces buildgen} {
     fixworkspaces $workspaces
     if { $debug } {
         dump_data generatebld
-        dump_api_data generateapibld
+        dump_api_data generateapibld $workspaces
     }
 
     # ETERNAL TODO: Properly validate data 
     ::log::log info "\n**** Validating bld files"
  
     if { $debug } {
-        dump_api_data validatebld   
+        dump_api_data validatebld $workspaces
     }
-    add_pkgs $workspaces
 
     ::log::log info "\n->Done loading bld files."
     #---------------------------------------------------------------------------

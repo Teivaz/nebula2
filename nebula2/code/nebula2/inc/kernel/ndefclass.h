@@ -29,7 +29,7 @@
     }
     @endcode
 */
-#define nNebulaUsePackage(PACKAGE) extern void PACKAGE()
+#define nNebulaUsePackage(PACKAGE) extern "C" void PACKAGE()
 
 //------------------------------------------------------------------------------
 /**

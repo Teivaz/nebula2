@@ -704,7 +704,6 @@ proc beginmodule {name} {
     set mod($num_mods,bldfile)    $current_file
     set mod($num_mods,hdrs)       ""
     set mod($num_mods,srcs)       ""
-    set mod($num_mods,kernel)     false
     set mod($num_mods,autonopak)  true
     set mod($num_mods,ancestor)   ""
 }

@@ -99,7 +99,7 @@ proc emit_files {name cid} {
 
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
-            puts $cid "SOURCE=pkg/res_$name.rc"
+            puts $cid "SOURCE=../pkg/res_$name.rc"
         }
 
         # add any custom rsrc files

@@ -16,15 +16,13 @@
 
 nKernelServer *nKernelServer::ks = 0;
 
-#if 0
 nNebulaUsePackage(nkernel);
-#else
 // on static-linking platforms, a global n_addmodules() function must exist,
 // which adds all class modules to the kernel.
-#ifdef N_STATIC
-extern "C" void n_addmodules(nKernelServer*);
-#endif
-#endif
+// #ifdef N_STATIC
+// extern "C" void n_addmodules(nKernelServer*);
+// #endif
+// #endif
 
 //------------------------------------------------------------------------------
 /**
@@ -282,13 +280,8 @@ nKernelServer::nKernelServer() :
     #endif
     this->SetLogHandler(this->defaultLogHandler);
 
-#if 0
     // initialize the kernel package classes
     this->AddPackage(nkernel);
-#else
-    // initialize class modules on static link systems
-    n_addmodules(this);
-#endif
 
     // create hard ref server
     this->hardRefServer = n_new(nHardRefServer);
