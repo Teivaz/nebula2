@@ -25,8 +25,7 @@ nViewerApp::nViewerApp(nKernelServer* ks) :
     viewerPos(defViewerPos),
     viewerVelocity(500.0f),
     viewerAngles(defViewerAngles),
-    viewerZoom(defViewerZoom),
-    screenshotID(0)
+    viewerZoom(defViewerZoom)
 {
     // empty
 }
