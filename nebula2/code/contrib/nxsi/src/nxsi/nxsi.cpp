@@ -5,6 +5,7 @@
 // of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 //-----------------------------------------------------------------------------
 #include "nxsi/nxsi.h"
+#include <kernel/nfileserver2.h>
 #include <iostream>
 
 using std::cerr;
@@ -31,8 +32,35 @@ bool nXSI::Export()
     // init xsi parser
     if (!this->InitXSIParser()) return false;
 
+    // init group ids
+    this->meshGroupId = 0;
+    this->animGroupId = 0;
+
     // process scene
     this->HandleSIModel(this->xsiScene.Root());
+
+    // save merged mesh
+    if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MESH) &&
+        (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL) &&
+        (this->meshGroupId > 0))
+    {
+        this->meshBuilder.BuildTriangleTangents();
+        this->meshBuilder.BuildVertexTangents();
+        this->meshBuilder.Cleanup(0);
+        this->meshBuilder.Optimize();
+        this->meshBuilder.Save(nFileServer2::Instance(), this->options.GetMeshFilename().Get());
+        cerr << "merged mesh saved: " << this->options.GetMeshFilename().Get() << "\n";
+    }
+
+    // save merged anim
+    if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_ANIM) &&
+        (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL) &&
+        (this->animGroupId > 0))
+    {
+        this->animBuilder.Optimize();
+        this->animBuilder.Save(nFileServer2::Instance(), this->options.GetAnimFilename().Get());
+        cerr << "merged animation saved: " << this->options.GetAnimFilename().Get() << "\n";
+    }
 
     // save script
     if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_SCRIPT)

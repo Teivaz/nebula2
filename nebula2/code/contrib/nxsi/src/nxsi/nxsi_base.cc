@@ -125,7 +125,6 @@ void nXSI::HandleSILight(CSLLight* templ)
             diffuse = (vector4&)pointLight->GetColor();
 
             nLightNode* lightNode = (nLightNode*)this->kernelServer.New("nlightnode", pointLight->Name().GetText());
-            this->kernelServer.SetCwd(lightNode);
             lightNode->SetPosition(position);
             lightNode->SetVector(nShaderState::LightAmbient, ambient);
             lightNode->SetVector(nShaderState::LightAmbient1, ambient);

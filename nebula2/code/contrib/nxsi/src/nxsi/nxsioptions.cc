@@ -11,9 +11,10 @@
 
 static const char paramOutputMesh[]   = "--mesh=";
 static const char paramOutputAnim[]   = "--anim=";
-static const char paramOutputShader[] = "--shader=";
 static const char paramOutputScript[] = "--script=";
 static const char paramOutputAuto[]   = "--auto";
+static const char paramMergeAll[]     = "--mergeall";
+static const char paramBinary[]       = "--binary";
 static const char paramScriptServer[] = "--scriptserver=";
 static const char paramHelp[]         = "--help";
 
@@ -27,10 +28,8 @@ nXSIOptions::nXSIOptions()
     : xsiFilename("")
     , meshFilename("")
     , animFilename("")
-    , shaderFilename("")
     , scriptFilename("")
-    , scriptServerName("ntclserver")
-    , isOutputAutomatic(false)
+    , scriptServerName("")
     , outputFlags(0)
 {
 }
@@ -39,28 +38,29 @@ nXSIOptions::nXSIOptions()
 
 void nXSIOptions::Usage() const
 {
-    std::cerr   << "\nusage: nxsi <xsiFilename> --<output file type>=<filename> --<options>\n\n" 
-                << "output file types:\n"
-                << "------------------\n"
-                << "mesh (.n3d2 or .nvx2)\n"
-                << "anim (.nanim2 or .nax2)\n"
-//              << "shader (.fx)\n"
-                << "script (the .n2 script that will create the model)\n"
-                << "auto (creates all)\n\n"
-                << "options:\n"
-                << "--------\n"
-                << "help (display this help)\n\n"
+    std::cerr   << "\nusage: nxsi <xsiFilename> --<output type>\n\n" 
+                << "output types:\n"
+                << "-------------\n"
+                << "mesh=filename     (merges meshes in one .n3d2 or .nvx2 file)\n"
+                << "anim=filename     (merges anims in one .nanim2 or .nax2 file)\n"
+                << "script=filename   (creates the .n2 script that will create the model)\n\n"
+                << "auto              (creates all and names them automatically)\n"
+                << "mergeall          (merges all meshes and anims in one file)\n"
+                << "binary            (creates meshes and anims in binary format)\n\n"
+                << "scriptserver=name (default: ntclserver)\n"
+                << "help              (display this help)\n\n"
                 << "Example:\n"
-                << "nxsi c:\\\\xsi\\\\scenes\\\\cube.xsi --mesh=c:\\nebula2\\data\\cube.n3d2\n"
-                << "nxsi c:\\\\xsi\\\\scenes\\\\cube.xsi --auto\n";
+                << "nxsi cube.xsi --mesh=cube.n3d2  (will create only mesh file)\n"
+                << "nxsi cube.xsi --auto            (will create all automatically)\n\n";
 
     exit(1);
 }
 
 void nXSIOptions::Parse(int argc, char* argv[])
 {
-	nCmdLineArgs cmdLine;
-	cmdLine.Initialize(argc, argv);
+    nCmdLineArgs cmdLine;
+    cmdLine.Initialize(argc, (const char**)argv);
+    this->outputFlags = 0;
 
     // check that we enough arguments
     if (argc <= 2)
@@ -69,53 +69,30 @@ void nXSIOptions::Parse(int argc, char* argv[])
         return;
     }
 
+    // get xsi filename
     this->xsiFilename = argv[1];
-    this->scriptFilename = this->xsiFilename;
-    this->scriptFilename.StripExtension();
-    this->scriptFilename.Append(".n2");
 
-    // check params
-    for (int i = 2; i < argc; ++i)
+    // check script server
+    this->scriptServerName = cmdLine.GetStringArg(paramScriptServer, "ntclserver");
+
+    // check if help wanted
+    if (cmdLine.GetBoolArg(paramHelp))
     {
-        const char* currentSwitch = argv[i];
-        char* argument;
-
-        if (MatchSwitch(currentSwitch, paramOutputMesh, argument))
-        {
-            this->meshFilename = argument;
-            this->outputFlags |= OUTPUT_MESH;
-        }
-        else if (MatchSwitch(currentSwitch, paramOutputAnim, argument))
-        {
-            this->animFilename = argument;
-            this->outputFlags |= OUTPUT_ANIM;
-        }
-/*      else if (MatchSwitch(currentSwitch, paramOutputShader, argument))
-        {
-            m_shader_filename = argument;
-        }*/
-        else if (MatchSwitch(currentSwitch, paramOutputScript, argument))
-        {
-            this->scriptFilename.Set(argument);
-            this->outputFlags |= OUTPUT_SCRIPT;
-        }
-        else if (MatchSwitch(currentSwitch, paramOutputAuto, argument))
-        {
-            this->isOutputAutomatic = true;
-            this->outputFlags |= OUTPUT_MESH | OUTPUT_ANIM | OUTPUT_SCRIPT | OUTPUT_SHADER;
-        }
-        else if (MatchSwitch(currentSwitch, paramScriptServer, argument))
-        {
-            this->scriptServerName.Set(argument);
-        }
-        else if( MatchSwitch(currentSwitch, paramHelp, argument))
-        {
-            this->Usage();
-        }
+        this->Usage();
+        return;
     }
 
-    if (this->isOutputAutomatic)
+    // check if merge all requested
+    if (cmdLine.GetBoolArg(paramMergeAll))
     {
+        this->outputFlags |= OUTPUT_MERGEALL;
+    }
+
+    // check if automatic
+    if (cmdLine.GetBoolArg(paramOutputAuto))
+    {
+        this->outputFlags |= OUTPUT_MESH | OUTPUT_ANIM | OUTPUT_SCRIPT | OUTPUT_AUTO;
+
         nPathString filename = this->xsiFilename;
         filename.StripExtension();
 
@@ -128,24 +105,31 @@ void nXSIOptions::Parse(int argc, char* argv[])
         this->animFilename = filename;
         this->animFilename.Append(".nanim2");
     }
-}
+    else
+    {
+        this->outputFlags |= OUTPUT_MERGEALL;
 
-//-----------------------------------------------------------------------------
+        this->meshFilename = cmdLine.GetStringArg(paramOutputMesh, 0);
+        if (this->meshFilename.Get()) this->outputFlags |= OUTPUT_MESH;
 
-bool nXSIOptions::MatchSwitch(const char* currentSwitch, const char* appSwitch) const
-{
-    char* _;
-    return MatchSwitch(currentSwitch, appSwitch, _);
-}
+        this->animFilename = cmdLine.GetStringArg(paramOutputAnim, 0);
+        if (this->animFilename.Get()) this->outputFlags |= OUTPUT_ANIM;
 
-bool nXSIOptions::MatchSwitch(const char* currentSwitch, const char* appSwitch, const char* &argument) const
-{
-    bool isMatch = strncmp(currentSwitch, appSwitch, strlen(appSwitch)) == 0;
-    if (isMatch) {
-        argument = currentSwitch + strlen(appSwitch);
+        this->scriptFilename = cmdLine.GetStringArg(paramOutputScript, 0);
+        if (this->scriptFilename.Get()) this->outputFlags |= OUTPUT_SCRIPT;
     }
 
-    return isMatch;
+    // check if binary mode requested
+    if (cmdLine.GetBoolArg(paramBinary))
+    {
+        this->outputFlags |= OUTPUT_BINARY;
+
+        this->meshFilename.StripExtension();
+        this->meshFilename.Append(".nvx2");
+
+        this->animFilename.StripExtension();
+        this->animFilename.Append(".nax2");
+    }
 }
 
 //-----------------------------------------------------------------------------

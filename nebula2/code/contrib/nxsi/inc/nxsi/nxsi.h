@@ -35,12 +35,12 @@
 class nXSI
 {
 public:
-    // constructor
+    /// constructor
     nXSI(int argc, char *argv[]);
-    // destructor
+    /// destructor
     ~nXSI();
 
-    // export mesh
+    /// export scene
     bool Export();
 
 private:
@@ -48,32 +48,32 @@ private:
     void DeinitXSIParser();
 
     //@{
-    /** base type handling */
+    /// base type handling
     void HandleSIModel(CSLModel* templ);
     void HandleSICamera(CSLCamera* templ);
     void HandleSILight(CSLLight* templ);
     //@}
 
     //@{
-    /** mesh handling */
+    /// mesh handling
     void HandleSIMesh(CSLMesh* templ);
     void HandleSIMeshSkeleton(CSLMesh* templ, CSIBCString& skinName, nArray<nXSIWeight>& weightList);
     void HandleSITriangleList(CSLTriangleList* templ, CSLShape* shape, const nArray<nXSIWeight>& weightList, uint groupId);
     //@}
 
     //@{
-    /** animation handling */
-    void BuildJointAnimations(const nArray<CSLModel*>& joint_list);
+    /// animation handling
+    void BuildJointAnimations(const nArray<CSLModel*>& joint_list, int jointCount);
     //@}
 
     //@{
-    /** material handling */
+    /// material handling
     void HandleXSIMaterialVariables(CSLXSIMaterial* templ, nShapeNode* node, bool isSkinned);
     void HandleSIMaterialVariables(CSLMaterial* templ, nShapeNode* node, bool isSkinned);
     //@}
 
     //@{
-    /** data conversion */
+    /// data conversion
     void ConvertSIPolygonList(CSLPolygonList* templ);
     void ConvertSITriangleStripList(CSLTriangleStripList* templ);
     //@}
@@ -90,6 +90,9 @@ private:
     nKernelServer           kernelServer;
     nRef<nScriptServer>     scriptServer;
     nRef<nVariableServer>   variableServer;
+
+    uint                    meshGroupId;
+    uint                    animGroupId;
 };
 
 //-----------------------------------------------------------------------------
