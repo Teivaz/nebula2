@@ -243,9 +243,9 @@ proc emit_dsp_settings {name cid use_debug} {
     puts $cid "# ADD BSC32 /nologo"
 
     if {[get_tartype $name] == "lib" } {
-        puts $cid "LINK32=link.exe -lib"
-        puts $cid "# ADD BASE LINK32 $win32_libs /nologo $lib_path"
-        puts $cid "# ADD LINK32 $win32_libs /nologo $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
+        puts $cid "LIB32=link.exe -lib"
+        puts $cid "# ADD BASE LIB32 $win32_libs /nologo $lib_path"
+        puts $cid "# ADD LIB32 $win32_libs /nologo $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
     } elseif {[get_tartype $name] == "dll"} {
         puts $cid "LINK32=link.exe"
         puts $cid "# ADD BASE LINK32 $win32_libs /nologo /dll /machine:I386 $lib_path"
