@@ -63,22 +63,12 @@ nShapeNode::LoadMesh()
 {
     if ((!this->refMesh.isvalid()) && (!this->meshName.IsEmpty()))
     {
-        //get a mesh, maybe reuse an existing one.
-        nMesh2* mesh = this->refGfxServer->NewMesh(this->meshName.Get());
+        // append mesh usage to mesh resource name
+        nString resourceName = this->meshName.Get();
+        resourceName += "_"; resourceName += this->GetMeshUsage();
+        // get a new or shared mesh
+        nMesh2* mesh = this->refGfxServer->NewMesh(resourceName.Get());
         n_assert(mesh);        
-        
-        if (mesh->IsValid())
-        {
-            //if we got a mesh, validate that we can reuse it
-            if (mesh->GetUsage() != this->GetMeshUsage())
-            {
-                nString resourceName = this->meshName.Get();
-                resourceName += "_"; resourceName += this->GetMeshUsage();
-                //if the usage is not equal create a usage type specific one
-                mesh = this->refGfxServer->NewMesh(resourceName.Get());
-                n_assert(mesh);
-            }
-        }
         
         if (!mesh->IsValid())
         {
