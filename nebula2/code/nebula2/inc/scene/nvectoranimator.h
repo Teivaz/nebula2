@@ -11,13 +11,8 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMATORNODE_H
 #include "scene/nanimator.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nVectorAnimator
-#include "kernel/ndefdllclass.h"
+#include "gfx2/nshader2.h"
 
 //------------------------------------------------------------------------------
 class nVectorAnimator : public nAnimator
@@ -34,9 +29,9 @@ public:
     virtual AnimatorType GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
-    /// set the name of the vector variable to manipulate
+    /// set the name of the vector parameter to manipulate
     void SetVectorName(const char* name);
-    /// get the name of the vector variable to manipulate
+    /// get the name of the vector parameter to manipulate
     const char* GetVectorName();
     /// add a key 
     void AddKey(float time, const vector4& key);
@@ -60,7 +55,7 @@ private:
         vector4 value;
     };
 
-    nVariable::Handle vectorVarHandle;
+    nShader2::Parameter vectorParameter;
     nArray<Key> keyArray;
 };
 
