@@ -32,7 +32,7 @@ public:
     typedef uint Handle;
     enum
     {
-        InvalidHandle = -1,
+        InvalidHandle = 0xffffffff
     };
 
     /// default constructor
@@ -153,7 +153,7 @@ nVariable::Delete()
         delete this->matrixVal;
         this->matrixVal = 0;
     }
-    this->handle = -1;
+    this->handle = nVariable::InvalidHandle;
     this->type = Void;
 }
 
