@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 #include "nxsi/nxsioptions.h"
 #include <tools/ncmdlineargs.h>
-#include <iostream>
+
 //-----------------------------------------------------------------------------
 
 static const char paramOutputMesh[]   = "--mesh=";
@@ -38,20 +38,20 @@ nXSIOptions::nXSIOptions()
 
 void nXSIOptions::Usage() const
 {
-    std::cerr   << "\nusage: nxsi <xsiFilename> --<output type>\n\n" 
-                << "output types:\n"
-                << "-------------\n"
-                << "mesh=filename     (merges meshes in one .n3d2 or .nvx2 file)\n"
-                << "anim=filename     (merges anims in one .nanim2 or .nax2 file)\n"
-                << "script=filename   (creates the .n2 script that will create the model)\n\n"
-                << "auto              (creates all and names them automatically)\n"
-                << "mergeall          (merges all meshes and anims in one file)\n"
-                << "binary            (creates meshes and anims in binary format)\n\n"
-                << "scriptserver=name (default: ntclserver)\n"
-                << "help              (display this help)\n\n"
-                << "Example:\n"
-                << "nxsi cube.xsi --mesh=cube.n3d2  (will create only mesh file)\n"
-                << "nxsi cube.xsi --auto            (will create all automatically)\n\n";
+    n_printf("usage: nxsi <xsiFilename> --<output type>\n\n"
+             "output types:\n"
+             "-------------\n"
+             "mesh=filename     (merges meshes in one .n3d2 or .nvx2 file)\n"
+             "anim=filename     (merges anims in one .nanim2 or .nax2 file)\n"
+             "script=filename   (creates the .n2 script that will create the model)\n\n"
+             "auto              (creates all and names them automatically)\n"
+             "mergeall          (merges all meshes and anims in one file)\n"
+             "binary            (creates meshes and anims in binary format)\n\n"
+             "scriptserver=name (default: ntclserver)\n"
+             "help              (display this help)\n\n"
+             "Example:\n"
+             "nxsi cube.xsi --mesh=cube.n3d2  (will create only mesh file)\n"
+             "nxsi cube.xsi --auto            (will create all automatically)\n\n");
 
     exit(1);
 }
@@ -61,6 +61,9 @@ void nXSIOptions::Parse(int argc, char* argv[])
     nCmdLineArgs cmdLine;
     cmdLine.Initialize(argc, (const char**)argv);
     this->outputFlags = 0;
+
+    // print one empty line
+    n_printf("\n");
 
     // check that we enough arguments
     if (argc <= 2)

@@ -6,9 +6,11 @@
 //-----------------------------------------------------------------------------
 #include "nxsi/nxsi.h"
 #include <kernel/nfileserver2.h>
-#include <iostream>
 
-using std::cerr;
+//-----------------------------------------------------------------------------
+// used packages
+
+nNebulaUsePackage(nnebula);
 
 //-----------------------------------------------------------------------------
 
@@ -23,6 +25,9 @@ nXSI::~nXSI()
 
 bool nXSI::Export()
 {
+    // set packages
+    this->kernelServer.AddPackage(nnebula);
+
     // init all necessary for script export
     this->scriptServer = (nScriptServer*)this->kernelServer.New(this->options.GetScriptServerName().Get(), "/sys/servers/script");
     this->variableServer = (nVariableServer*)this->kernelServer.New("nvariableserver", "/sys/servers/variable");
@@ -39,7 +44,7 @@ bool nXSI::Export()
     // process scene
     this->HandleSIModel(this->xsiScene.Root());
 
-    // save merged mesh
+    // save merged meshes
     if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MESH) &&
         (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL) &&
         (this->meshGroupId > 0))
@@ -49,25 +54,28 @@ bool nXSI::Export()
         this->meshBuilder.Cleanup(0);
         this->meshBuilder.Optimize();
         this->meshBuilder.Save(nFileServer2::Instance(), this->options.GetMeshFilename().Get());
-        cerr << "merged mesh saved: " << this->options.GetMeshFilename().Get() << "\n";
+        n_printf("merged meshes saved: %s\n", this->options.GetMeshFilename().Get());
     }
 
-    // save merged anim
+    // save merged anims
     if ((this->options.GetOutputFlags() & nXSIOptions::OUTPUT_ANIM) &&
-        (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL) &&
         (this->animGroupId > 0))
     {
         this->animBuilder.Optimize();
+        this->animBuilder.FixKeyOffsets();
         this->animBuilder.Save(nFileServer2::Instance(), this->options.GetAnimFilename().Get());
-        cerr << "merged animation saved: " << this->options.GetAnimFilename().Get() << "\n";
+        n_printf("merged anims saved: %s\n", this->options.GetAnimFilename().Get());
     }
 
     // save script
     if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_SCRIPT)
     {
         sceneRoot->SaveAs(this->options.GetScriptFilename().Get());
-        cerr << "creation script saved: " << this->options.GetScriptFilename().Get() << "\n";
+        n_printf("creation script saved: %s\n", this->options.GetScriptFilename().Get());
     }
+
+    // print empty line
+    n_printf("\n");
 
     // uninit xsi parser
     this->xsiScene.Close();
@@ -93,13 +101,12 @@ bool nXSI::InitXSIParser()
         }
         else
         {
-            cerr << "ERROR: legacy xsi fileformat (" << major << "." << minor << "). Currently only supports 3.00+ files.\n";
             this->xsiScene.Close();
+            n_error("ERROR: legacy xsi fileformat (%i.%i). Currently only supports 3.00+ files.\n", major, minor);
             return false;
         }
     }
-
-    cerr << "ERROR: Failed to open xsi file.\n";
+    n_error("ERROR: Failed to open xsi file.\n");
     return false;
 }
 

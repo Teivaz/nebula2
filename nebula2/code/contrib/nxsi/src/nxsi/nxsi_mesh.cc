@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // Copyright (c) Ville Ruusutie, 2004. All Rights Reserved.
 //-----------------------------------------------------------------------------
-// You may choose to accept and redistribute this program under any of the following licenses:
-//   * Nebula License (http://nebuladevice.sourceforge.net/doc/source/license.txt)
+// See the file "nxsi_license.txt" for information on usage and redistribution
+// of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 //-----------------------------------------------------------------------------
 // nXSI mesh handling functions
 //-----------------------------------------------------------------------------
@@ -12,34 +12,33 @@
 #include <scene/nshapenode.h>
 #include <mathlib/quaternion.h>
 #include <kernel/nfileserver2.h>
-#include <iostream>
-
-using std::cerr;
 
 //-----------------------------------------------------------------------------
 
 void nXSI::HandleSIMesh(CSLMesh* mesh)
 {
-    CSIBCString skinPathName("../");
-    CSIBCString skinName;
     CSLModel* templ = mesh->ParentModel();
+    nString skinName(templ->Name().GetText());
+    nString animName(templ->Name().GetText());
+    bool hasAnimator = false;
+    bool isMultiMesh = false;
     bool isSkinned  = false;
     int groupCount  = 0;
     int groupId;
     int i;
 
     // get filename
-    CSIBCString meshFilename(this->options.GetMeshFilename().Get());
+    nString meshFilename(this->options.GetMeshFilename());
     if (!(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
     {
-        meshFilename = mesh->Name();
+        meshFilename = mesh->Name().GetText();
         if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_BINARY)
         {
-            meshFilename.Concat(".nvx2");
+            meshFilename.Append(".nvx2");
         }
         else
         {
-            meshFilename.Concat(".n3d2");
+            meshFilename.Append(".n3d2");
         }
     }
 
@@ -47,16 +46,16 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
     vector3 position = (vector3&)templ->Transform()->GetTranslation();
     vector3 rotation = (vector3&)templ->Transform()->GetEulerRotation();
     vector3 scale    = (vector3&)templ->Transform()->GetScale();
+    VECTOR3_DEG2RAD(rotation);
 
     // get shape
     CSLShape* shape = (CSLShape*)mesh->Shape();
     nArray<nXSIWeight> weightList;
 
-    // convert polygon_lists to triangle_lists
-    CSLPolygonList** polygonLists = mesh->PolygonLists();
-    for (i = 0; i < mesh->GetPolygonListCount(); i++)
+    // destroy FTK converted triangle lists
+    if (mesh->GetTriangleStripListCount() > 0)
     {
-        this->ConvertSIPolygonList(polygonLists[i]);
+        mesh->ClearTriangleLists();
     }
 
     // convert triangle_strip_lists to triangle_lists
@@ -66,13 +65,36 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
         this->ConvertSITriangleStripList(stripLists[i]);
     }
 
+    // convert polygon_lists to triangle_lists
+    CSLPolygonList** polygonLists = mesh->PolygonLists();
+    for (i = 0; i < mesh->GetPolygonListCount(); i++)
+    {
+        this->ConvertSIPolygonList(polygonLists[i]);
+    }
+
+    // check if multi mesh
+    if (mesh->GetTriangleListCount() > 1)
+    {
+        isMultiMesh = true;
+
+        nTransformNode* newNode = (nTransformNode*)this->kernelServer.New("ntransformnode", mesh->Name().GetText());
+        this->kernelServer.PushCwd(newNode);
+        newNode->SetPosition(position);
+        newNode->SetEuler(rotation);
+        newNode->SetScale(scale);
+
+        // build transform animation
+        if (this->BuildTransformAnimation(templ->Transform(), animName))
+        {
+            newNode->AddAnimator(animName.Get());
+        }
+    }
+
     // check if skinned mesh
-    int envelopeCount = templ->GetEnvelopeCount();
     if (templ->GetEnvelopeCount() > 0)
     {
         isSkinned = true;
         this->HandleSIMeshSkeleton(mesh, skinName, weightList);
-        skinPathName.Concat(&skinName);
     }
 
     // create mesh parts
@@ -96,23 +118,49 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
             }
             else
             {
-                cerr << "ERROR: repartitioning failed (" << mesh->Name().GetText() << ")\n";
+                n_printf("WARNING: repartitioning failed (%s)\n", mesh->Name().GetText());
             }
         }
 
         // create parts
         for (i = 0, groupId = this->meshGroupId; i < groupCount; i++, groupId++)
         {
+            // create part name
+            nString meshName(mesh->Name().GetText());
+            if (isMultiMesh)
+            {
+                meshName += "_";
+                meshName += groupId;
+            }
+
+            // create new mesh node
             nShapeNode* newNode;
-            if (isSkinned) newNode = (nShapeNode*)this->kernelServer.New("nskinshapenode", mesh->Name().GetText()); // groupId
-            else           newNode = (nShapeNode*)this->kernelServer.New("nshapenode", mesh->Name().GetText()); // groupId
+            if (isSkinned) newNode = (nShapeNode*)this->kernelServer.New("nskinshapenode", meshName.Get());
+            else           newNode = (nShapeNode*)this->kernelServer.New("nshapenode", meshName.Get());
 
             newNode->SetLocalBox(this->meshBuilder.GetGroupBBox(groupId));
-            newNode->SetPosition(position);
-            newNode->SetEuler(rotation);
-            newNode->SetScale(scale);
-            newNode->SetMesh(meshFilename.GetText());
+            newNode->SetMesh(meshFilename.Get());
             newNode->SetGroupIndex(groupId);
+
+            if (isMultiMesh)
+            {
+                newNode->SetPosition(vector3(0.0f, 0.0f, 0.0f));
+                newNode->SetEuler(vector3(0.0f, 0.0f, 0.0f));
+                newNode->SetScale(vector3(1.0f, 1.0f, 1.0f));
+            }
+            else
+            {
+                this->kernelServer.PushCwd(newNode);
+                newNode->SetPosition(position);
+                newNode->SetEuler(rotation);
+                newNode->SetScale(scale);
+
+                // build transform animation
+                if (this->BuildTransformAnimation(templ->Transform(), animName))
+                {
+                    newNode->AddAnimator(animName.Get());
+                }
+            }
 
             { // get material variables
                 CSLBaseMaterial* baseMaterial = triangleLists[i]->GetMaterial();
@@ -127,7 +175,7 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
                         break;
 
                     default:
-//                      this->scriptFile.InsertLine("# unknown material type");
+                        n_printf("WARNING: found unknown material type.\n");
                         break;
                 }
             }
@@ -138,7 +186,7 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
                 nSkinShapeNode* newSkinNode = (nSkinShapeNode*)newNode;
                 int partCount = this->skinPartioner.GetNumPartitions();
 
-                newSkinNode->SetSkinAnimator(skinPathName.GetText());
+                newSkinNode->SetSkinAnimator(("../" + skinName).Get());
                 newSkinNode->BeginFragments(partCount);
 
                 for (int p = 0; p < partCount; p++)
@@ -172,10 +220,18 @@ void nXSI::HandleSIMesh(CSLMesh* mesh)
             this->meshBuilder.BuildVertexTangents();
             this->meshBuilder.Cleanup(0);
             this->meshBuilder.Optimize();
-            this->meshBuilder.Save(nFileServer2::Instance(), meshFilename.GetText());
+            this->meshBuilder.Save(nFileServer2::Instance(), meshFilename.Get());
             this->meshBuilder.Clear();
-            cerr << "mesh saved: " << meshFilename.GetText() << "\n";
+            n_printf("mesh saved: %s\n", meshFilename.Get());
         }
+
+        // handle child models
+        CSLModel* *childList = templ->GetChildrenList();
+        for (int i = 0; i < templ->GetChildrenCount(); i++) {
+            HandleSIModel(childList[i]);
+        }
+
+        this->kernelServer.PopCwd();
     }
 }
 
@@ -195,28 +251,27 @@ void RemapBones(int boneId, const nArray<int>& boneParentList, int& remapId, nAr
     }
 }
 
-void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXSIWeight>& weightList)
+void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, nString& skinName, nArray<nXSIWeight>& weightList)
 {
     CSLShape* shape = (CSLShape*)mesh->Shape();
     CSLModel* templ = mesh->ParentModel();
-    CSIBCString animFilename;
+    nString animFilename;
     int vertexCount = shape->GetVertexCount();
     int i, j, b, w;
 
     // set name
-    skinName = mesh->Name();
-    skinName.Concat("_animator");
+    skinName.Append("_animator");
     animFilename = this->options.GetAnimFilename().Get();
     if (!(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
     {
-        animFilename = mesh->Name();
+        animFilename = mesh->Name().GetText();
         if (this->options.GetOutputFlags() & nXSIOptions::OUTPUT_BINARY)
         {
-            animFilename.Concat(".nax2");
+            animFilename.Append(".nax2");
         }
         else
         {
-            animFilename.Concat(".nanim2");
+            animFilename.Append(".nanim2");
         }
     }
 
@@ -259,10 +314,10 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
             if (boneParentList[i] == -1)
             {
                 RemapBones(i, boneParentList, b, envelopeRemapList);
-//              break;
+                break;
             }
         }
-//      envelopeCount = b;
+        envelopeCount = b;
 
         // remap bone list
         for (i = 0; i < envelopeCount; i++)
@@ -271,10 +326,10 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
         }
 
         // create skin animator
-        nSkinAnimator* newNode = (nSkinAnimator*)this->kernelServer.New("nskinanimator", skinName.GetText());
+        nSkinAnimator* newNode = (nSkinAnimator*)this->kernelServer.New("nskinanimator", skinName.Get());
         newNode->SetChannel("time");
         newNode->SetLoopType(nAnimator::Loop);
-        newNode->SetAnim(animFilename.GetText());
+        newNode->SetAnim(animFilename.Get());
 
         // add joints
         newNode->BeginJoints(envelopeCount);
@@ -291,9 +346,10 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
             vector3 translation = (vector3&)(joint->Transform()->GetTranslation());
             vector3 eulerRotation = (vector3&)(joint->Transform()->GetEulerRotation());
             vector3 scale = (vector3&)(joint->Transform()->GetScale());
+            VECTOR3_DEG2RAD(eulerRotation);
 
             quaternion rotation;
-            rotation.set_rotate_xyz(n_deg2rad(eulerRotation.x), n_deg2rad(eulerRotation.y), n_deg2rad(eulerRotation.z));
+            rotation.set_rotate_xyz(eulerRotation.x, eulerRotation.y, eulerRotation.z);
 
             // set joint
             newNode->SetJoint(i, parentId, translation, rotation, scale);
@@ -334,8 +390,9 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
     // fill weight list
     for (i = 0; i < envelopeCount; i++)
     {
-        SLVertexWeight* envelopeWeights = envelopeList[i]->GetVertexWeightListPtr();
-        int weightCount = envelopeList[i]->GetVertexWeightCount();
+        CSLEnvelope* envelope = envelopeList[envelopeRemapList[i]];
+        SLVertexWeight* envelopeWeights = envelope->GetVertexWeightListPtr();
+        int weightCount = envelope->GetVertexWeightCount();
 
         // get envelope weights
         for (w = 0; w < weightCount; w++)
@@ -343,13 +400,13 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
             nXSIWeight& weight = weightList[(int)(envelopeWeights[w].m_fVertexIndex)];
             if (weight.count < 4)
             {
-                weight.joints[weight.count] = (float)(envelopeRemapList[i]);
+                weight.joints[weight.count] = (float)(i);
                 weight.weights[weight.count] = envelopeWeights[w].m_fWeight / 100.f;
                 weight.count++;
             }
             else
             {
-                cerr << "ERROR: too much weights in one vertex\n";
+                n_printf("WARNING: too much weights in one vertex\n");
             }
         }
     }
@@ -365,9 +422,10 @@ void nXSI::HandleSIMeshSkeleton(CSLMesh* mesh, CSIBCString& skinName, nArray<nXS
         !(this->options.GetOutputFlags() & nXSIOptions::OUTPUT_MERGEALL))
     {
         this->animBuilder.Optimize();
-        this->animBuilder.Save(nFileServer2::Instance(), animFilename.GetText());
+        this->animBuilder.FixKeyOffsets();
+        this->animBuilder.Save(nFileServer2::Instance(), animFilename.Get());
         this->animBuilder.Clear();
-        cerr << "animation saved: " << animFilename.GetText() << "\n";
+        n_printf("animation saved: %s\n", animFilename.Get());
     }
 }
 
@@ -395,14 +453,18 @@ void nXSI::HandleSITriangleList(CSLTriangleList* templ, CSLShape* shapeOld, cons
     {
         if (uvsetCount > NXSI_MAX_UVSETS)
         {
+            n_printf("WARNING: found %i uvsets. clamping into %i sets.\n", uvsetCount, NXSI_MAX_UVSETS);
             uvsetCount = NXSI_MAX_UVSETS;
-            cerr << "WARNING: found over " << NXSI_MAX_UVSETS << " uvsets. clamping into " << NXSI_MAX_UVSETS << " sets.\n";
         }
     }
-    else if (uvsetCount > 0)
+    else if (uvsetCount > 1)
     {
-        if (uvsetCount > 1)
-            uvsetCount = 1;
+        uvsetCount = 1;
+    }
+
+    if (uvsetCount == 0)
+    {
+        n_printf("WARNING: uv coordinates not found (%s). may result strange lighting.\n", parentTempl->Name().GetText());
     }
 
     // fill vertex list
