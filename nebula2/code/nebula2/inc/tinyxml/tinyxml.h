@@ -27,8 +27,9 @@ distribution.
 #define TINYXML_INCLUDED
 
 #ifdef _MSC_VER
-#pragma warning( disable : 4530 )
-#pragma warning( disable : 4786 )
+#pragma warning( disable : 4530 )       // C++ exception handler used, but unwind semantics not enabled
+#pragma warning( disable : 4786 )       // symbol truncated to 255 characters
+#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE
 #endif
 
 #include <ctype.h>
