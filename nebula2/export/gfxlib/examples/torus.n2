@@ -19,8 +19,6 @@ new nshapenode shape0
     .setposition 0.000000 0.000000 0.000000
     .seteuler 0.000000 0.000000 0.000000
     .setscale 1.000000 1.000000 1.000000
-    .settexture "DiffMap0" "textures:examples/brick.bmp"
-    .settexture "BumpMap0" "textures:examples/bump.tga"
     .setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
     .setvector "MatDiffuse" 1.000000 1.000000 0.539320 0.539320
     .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
