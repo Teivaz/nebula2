@@ -97,3 +97,17 @@ begintarget noglviewer
     }
 endtarget
 #-------------------------------------------------------------------------------
+beginworkspace nopengl
+    setbinarydir ./bin/
+    settargets {
+        noglviewer
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndshow
+        ngui
+        nnetwork
+        nopengl
+    }
+endworkspace
