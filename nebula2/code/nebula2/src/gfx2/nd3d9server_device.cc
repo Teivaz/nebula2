@@ -82,7 +82,7 @@ nD3D9Server::FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3D
         { D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, D3DFMT_D16 },
         { D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN,  D3DFMT_UNKNOWN },
     };
-    if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
+    if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
     {
         // find fullscreen buffer formats
         dispFormat = D3DFMT_UNKNOWN;
@@ -205,11 +205,10 @@ nD3D9Server::UpdateFeatureSet()
 bool
 nD3D9Server::DeviceOpen()
 {
-    n_assert(this->hWnd);
     n_assert(this->d3d9);
     n_assert(!this->d3d9Device);
-    n_assert(this->windowOpen);
-    n_assert(this->windowMinimized);
+    n_assert(this->windowHandler.IsWindowOpen());
+    n_assert(this->windowHandler.IsWindowMinimized());
     n_assert(!this->inBeginScene);
     n_assert(0 == this->depthStencilSurface);
     n_assert(0 == this->backBufferSurface);
@@ -220,7 +219,7 @@ nD3D9Server::DeviceOpen()
     HRESULT hr;
 
     // prepare window...
-    this->AdjustWindowForChange();
+    this->windowHandler.AdjustWindowForChange();
 
     // find a valid combination of buffer formats
     D3DFORMAT dispFormat;
@@ -281,9 +280,14 @@ nD3D9Server::DeviceOpen()
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
     #endif
 
+    // check for dialog box mode
+    if (this->windowHandler.GetDisplayMode().GetDialogBoxMode())
+    {
+        this->presentParams.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+    }
 
     // define presentation parameters
-    if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
+    if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
     {
         this->presentParams.BackBufferCount  = 1;
         this->presentParams.Windowed         = FALSE;
@@ -294,7 +298,7 @@ nD3D9Server::DeviceOpen()
         this->presentParams.Windowed         = TRUE;
     }
 
-    if (this->displayMode.GetVerticalSync())
+    if (this->windowHandler.GetDisplayMode().GetVerticalSync())
     {
         this->presentParams.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
     }
@@ -303,13 +307,13 @@ nD3D9Server::DeviceOpen()
         this->presentParams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     }
 
-    this->presentParams.BackBufferWidth                 = this->displayMode.GetWidth();
-    this->presentParams.BackBufferHeight                = this->displayMode.GetHeight();
+    this->presentParams.BackBufferWidth                 = this->windowHandler.GetDisplayMode().GetWidth();
+    this->presentParams.BackBufferHeight                = this->windowHandler.GetDisplayMode().GetHeight();
     this->presentParams.BackBufferFormat                = backFormat;
     this->presentParams.MultiSampleType                 = D3DMULTISAMPLE_NONE;
     this->presentParams.MultiSampleQuality              = 0;
     this->presentParams.SwapEffect                      = D3DSWAPEFFECT_DISCARD;
-    this->presentParams.hDeviceWindow                   = this->hWnd;
+    this->presentParams.hDeviceWindow                   = this->windowHandler.GetParentHwnd();
     this->presentParams.EnableAutoDepthStencil          = TRUE;
     this->presentParams.AutoDepthStencilFormat          = zbufFormat;
     this->presentParams.FullScreen_RefreshRateInHz      = D3DPRESENT_RATE_DEFAULT;
@@ -317,7 +321,7 @@ nD3D9Server::DeviceOpen()
     // create d3d device
     hr = this->d3d9->CreateDevice(D3DADAPTER_DEFAULT,
                                   N_D3D9_DEVICETYPE,
-                                  this->hWnd,
+                                  this->windowHandler.GetHwnd(),
                                   this->deviceBehaviourFlags,
                                   &(this->presentParams),
                                   &(this->d3d9Device));
@@ -333,14 +337,14 @@ nD3D9Server::DeviceOpen()
     hr = this->d3d9Device->GetDisplayMode(0, &(this->d3dDisplayMode));
     n_assert(SUCCEEDED(hr));
 
-    // initialize d3d device state
-    this->InitDeviceState();
-
     // reload any resources if necessary
     this->OnRestoreDevice();
 
+    // initialize d3d device state
+    this->InitDeviceState();
+
     // restore window
-    this->RestoreWindow();
+    this->windowHandler.RestoreWindow();
     
     return true;
 }
@@ -354,9 +358,9 @@ nD3D9Server::DeviceClose()
 {
     n_assert(this->d3d9);
     n_assert(this->d3d9Device);
-    n_assert(this->windowOpen);
-    n_assert(!this->windowMinimized);
-    n_assert(this->hWnd);
+    n_assert(this->windowHandler.IsWindowOpen());
+    n_assert(!this->windowHandler.IsWindowMinimized());
+    n_assert(this->windowHandler.GetHwnd());
 
     // unload all resources
     this->OnDeviceLost();
@@ -369,7 +373,7 @@ nD3D9Server::DeviceClose()
     this->UpdateFeatureSet();
     
     // minimze the app window
-    this->MinimizeWindow();
+    this->windowHandler.MinimizeWindow();
 }
 
 //------------------------------------------------------------------------------
@@ -395,8 +399,8 @@ nD3D9Server::TestResetDevice()
         // if we are in windowed mode, the cause for the reset may be a display
         // mode change of the desktop, in this case we need to find new
         // buffer pixel formats
-        if (this->displayMode.GetType() == nDisplayMode2::Windowed)
-        {
+        //if (this->displayMode.GetType() == nDisplayMode2::Windowed)
+        //{
             D3DFORMAT dispFormat;
             D3DFORMAT backFormat;
             D3DFORMAT zbufFormat;
@@ -404,7 +408,7 @@ nD3D9Server::TestResetDevice()
 
             this->presentParams.BackBufferFormat       = backFormat;
             this->presentParams.AutoDepthStencilFormat = zbufFormat;
-        }
+        //}
 
         // try to reset the device
         hr = this->d3d9Device->Reset(&this->presentParams);

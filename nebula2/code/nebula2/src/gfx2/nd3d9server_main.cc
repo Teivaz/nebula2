@@ -32,18 +32,8 @@ nD3D9Server::nD3D9Server() :
     dbgQueryNumRenderStateChanges("gfxNumRenderStateChanges", nArg::Int),
     dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
     #endif
-    refInputServer("/sys/servers/input"),
-    hInst(0),
-    hWnd(0),
-    hAccel(0),
-    windowedStyle(WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE),
-    fullscreenStyle(WS_POPUP | WS_SYSMENU | WS_VISIBLE),
-	childStyle(WS_CHILD | WS_TABSTOP),
-    parentHWnd(0),
+    windowHandler(this),
 	deviceBehaviourFlags(0),
-    windowOpen(false),
-    windowMinimized(false),
-    quitRequested(false),
     d3dSprite(0),
     d3d9(0),
     d3d9Device(0),
@@ -53,21 +43,12 @@ nD3D9Server::nD3D9Server() :
     d3dxEffectPool(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
-
-    // get applications module handle
-    this->hInst = GetModuleHandle(0);
+    memset(&(this->presentParams), 0, sizeof(this->presentParams));
 
     // open the app window
-    this->WindowOpen();
+    this->windowHandler.OpenWindow();
 
-    // publish the window handle
-    nEnv *env;
-    if ((env = (nEnv *) kernelServer->New("nenv","/sys/env/hwnd"))) 
-    {
-        env->SetI((int)this->hWnd);
-    }
-
-    memset(&(this->presentParams), 0, sizeof(this->presentParams));
+    // initialize Direct3D
     this->D3dOpen();
 }
   
@@ -82,7 +63,7 @@ nD3D9Server::~nD3D9Server()
         this->CloseDisplay();
     }
     this->D3dClose();
-    this->WindowClose();
+    this->windowHandler.CloseWindow();
     n_assert(this->textNodeList.IsEmpty());
 }
 
@@ -169,35 +150,7 @@ nD3D9Server::CloseDisplay()
 bool
 nD3D9Server::Trigger()
 {
-    // handle all pending WM's
-    MSG msg;
-    // if exist parent window, this window is in child mode
-    if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
-    {
-        if (PeekMessage(&msg,NULL,WM_SIZE,WM_SIZE,PM_NOREMOVE))
-        {
-            int w = LOWORD(msg.lParam);
-            int h = HIWORD(msg.lParam);
-			///FIXME: whats to do with this w,h vars?
-        }
-    }
-    while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) 
-    {
-        if (GetMessage(&msg, NULL, 0, 0)) 
-        {
-            int msgHandled = false;
-            if (this->hWnd && this->hAccel) 
-            {
-                msgHandled = TranslateAccelerator(this->hWnd, this->hAccel, &msg);
-            }
-            if (!msgHandled) 
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-        }
-    }
-    return (!this->quitRequested);
+    return this->windowHandler.Trigger();
 }
 
 //-----------------------------------------------------------------------------
@@ -262,3 +215,53 @@ nD3D9Server::SaveScreenshot(const char* fileName)
 
     return true;
 }
+
+//-----------------------------------------------------------------------------
+/**
+    Enter dialog box mode.
+*/
+void
+nD3D9Server::EnterDialogBoxMode()
+{
+    n_assert(this->windowHandler.GetDisplayMode().GetDialogBoxMode());
+    n_assert(this->d3d9Device);
+    nGfxServer2::EnterDialogBoxMode();
+    HRESULT hr = this->d3d9Device->SetDialogBoxMode(TRUE);
+    n_assert(SUCCEEDED(hr));
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Leave dialog box mode.
+*/
+void
+nD3D9Server::LeaveDialogBoxMode()
+{
+    n_assert(this->windowHandler.GetDisplayMode().GetDialogBoxMode());
+    n_assert(this->d3d9Device);
+    nGfxServer2::LeaveDialogBoxMode();
+    HRESULT hr = this->d3d9Device->SetDialogBoxMode(FALSE);
+    n_assert(SUCCEEDED(hr));
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Set the current display mode. This will not take effect until
+    OpenDisplay() has been called!
+*/
+void
+nD3D9Server::SetDisplayMode(const nDisplayMode2& mode)
+{
+    this->windowHandler.SetDisplayMode(mode);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Get the current display mode.
+*/
+const nDisplayMode2&
+nD3D9Server::GetDisplayMode() const
+{
+    return this->windowHandler.GetDisplayMode();
+}
+

@@ -5,14 +5,17 @@
 #  Modules:
 #      nd3d9server
 #      nd3d9mesh
-#      nd3d9texture
 #      nd3d9shader
+#      nd3d9shaderinclude
+#      nd3d9surface
+#      nd3d9texture
+#      nd3d9windowhandler
 #  Targets:
 #      ndirect3d9
 #===============================================================================
 
 #===============================================================================
-#  n2apps modules
+#  ndirect3d9 modules
 #===============================================================================
 beginmodule nd3d9server
     setdir gfx2
@@ -70,15 +73,22 @@ beginmodule nd3d9surface
     setheaders { nd3d9surface }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nd3d9windowhandler
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9windowhandler }
+    setheaders { nd3d9windowhandler }
+endmodule
+#-------------------------------------------------------------------------------
 
 #===============================================================================
-#  n2apps Targets
+#  ndirect3d9 Targets
 #===============================================================================
 begintarget ndirect3d9
     settype lib
     setmodules {
         nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font nd3d9surface
-        nd3d9shaderinclude
+        nd3d9shaderinclude nd3d9windowhandler
     }
 endtarget
 #-------------------------------------------------------------------------------

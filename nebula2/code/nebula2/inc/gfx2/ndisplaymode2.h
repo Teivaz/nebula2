@@ -59,6 +59,14 @@ public:
     void SetVerticalSync(bool b);
     /// get vertical sync flag
     bool GetVerticalSync() const;
+    /// set optional window icon resource
+    void SetIcon(const char* resName);
+    /// get optional window icon resource
+    const char* GetIcon() const;
+    /// make this mode compatible with host system dialog boxes
+    void SetDialogBoxMode(bool b);
+    /// get dialog box mode
+    bool GetDialogBoxMode() const;
     /// convert type to string
     static const char* TypeToString(Type t);
     /// convert string to type
@@ -66,12 +74,14 @@ public:
 
 private:
     nString windowTitle;
+    nString iconName;
     Type type;
     ushort xpos;
     ushort ypos;
     ushort width;
     ushort height;
     bool verticalSync;
+    bool dialogBoxMode;
 };
 
 //------------------------------------------------------------------------------
@@ -79,13 +89,14 @@ private:
 */
 inline
 nDisplayMode2::nDisplayMode2() :
-    windowTitle("Nebula2"),
+    windowTitle("Nebula2 Viewer"),
     type(Windowed),
     xpos(0),
     ypos(0),
     width(640),
     height(480),
-    verticalSync(true)
+    verticalSync(true),
+    dialogBoxMode(false)
 {
     // empty
 }
@@ -101,7 +112,8 @@ nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, u
     ypos(y),
     width(w),
     height(h),
-    verticalSync(vSync)
+    verticalSync(vSync),
+    dialogBoxMode(false)
 {
     // empty
 }
@@ -303,6 +315,46 @@ nDisplayMode2::StringToType(const char* str)
     { 
         return Fullscreen;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetIcon(const char* resName)
+{
+    this->iconName = resName;
+}
+
+//------------------------------------------------------------------------------^M
+/**
+*/
+inline
+const char*
+nDisplayMode2::GetIcon() const
+{
+    return this->iconName.IsEmpty() ? 0 : this->iconName.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetDialogBoxMode(bool b)
+{
+    this->dialogBoxMode = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nDisplayMode2::GetDialogBoxMode() const
+{
+    return this->dialogBoxMode;
 }
 
 //------------------------------------------------------------------------------

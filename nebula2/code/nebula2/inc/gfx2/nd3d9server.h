@@ -12,6 +12,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "input/ninputserver.h"
 #include "misc/nwatched.h"
+#include "gfx2/nd3d9windowhandler.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -50,6 +51,10 @@ public:
     /// create a render target object
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
 
+    /// set display mode
+    virtual void SetDisplayMode(const nDisplayMode2& mode);
+    /// get display mode
+    virtual const nDisplayMode2& GetDisplayMode() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
     virtual void SetViewport(nViewport& vp);
@@ -60,7 +65,7 @@ public:
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
     /// parent window handle
-    virtual int GetParentHWnd();
+    virtual HWND GetParentHwnd() const;
 
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -101,20 +106,15 @@ public:
     /// get text extents
     virtual vector2 GetTextExtent(const char* text);
 
+    /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
+    virtual void EnterDialogBoxMode();
+    /// leave dialog box mode
+    virtual void LeaveDialogBoxMode();
+
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
 
 private:
-    /// open the window
-    bool WindowOpen();
-    /// close the window
-    void WindowClose();
-    /// prepare window for switching between windowd/fullscreen mode
-    void AdjustWindowForChange();
-    /// restore window from minimized state after d3d device has been created
-    void RestoreWindow();
-    /// minimize window when d3d device is destroyed
-    void MinimizeWindow();
     /// initialize the text renderer
     void OpenTextRenderer();
     /// shutdown the text renderer
@@ -158,18 +158,11 @@ private:
     friend class nD3D9Texture;
     friend class nD3D9Shader;
 
-    HINSTANCE hInst;
-    HWND      hWnd;                 ///< handle of this window
-    HWND      parentHWnd;           ///< handle of parent window  (child mode)
+    nD3D9WindowHandler windowHandler; ///< a Win32 window handler object
 
-    HACCEL    hAccel;
-    DWORD windowedStyle;            ///< WS_* flags for windowed mode
-    DWORD childStyle;               ///< WS_* flags for child mode
-    DWORD fullscreenStyle;          ///< WS_* flags for fullscreen mode
     DWORD deviceBehaviourFlags;     ///< the behaviour flags at device creation time
     D3DCAPS9 devCaps;               ///< device caps
     D3DDISPLAYMODE d3dDisplayMode;  ///< the current d3d display mode
-    bool windowOpen;                ///< window has been opened
     FeatureSet featureSet;
 
     class TextNode : public nNode
@@ -217,21 +210,9 @@ private:
     #endif
     
 public:
-    enum
-    {
-        ACCEL_TOGGLEFULLSCREEN = 1001,
-    };
-
     // NOTE: this stuff is public because WinProcs may need to access it
     IDirect3DDevice9* d3d9Device;               ///< pointer to device object
     IDirect3D9* d3d9;                           ///< pointer to D3D9 object
-
-    /// translate win32 keycode into Nebula keycode
-    nKey TranslateKey(int vkey);
-
-    nAutoRef<nInputServer> refInputServer;
-    bool windowMinimized;           ///< window is currently minimized
-    bool quitRequested;             ///< quit requested by WinProc()
 };
 
 //------------------------------------------------------------------------------
@@ -251,10 +232,10 @@ nD3D9Server::TextNode::TextNode(const char* str, const vector4& clr, float x, fl
 /**
 */
 inline
-int
-nD3D9Server::GetParentHWnd()
+HWND
+nD3D9Server::GetParentHwnd() const
 {
-    return (int)this->parentHWnd;
+    return this->windowHandler.GetParentHwnd();
 }
 //------------------------------------------------------------------------------
 /**

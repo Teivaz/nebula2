@@ -87,8 +87,8 @@ nD3D9Server::DrawTextBuffer()
         TextNode* textNode;
         while (textNode = (TextNode*) this->textNodeList.RemHead())
         {
-            int width = this->displayMode.GetWidth();
-            int height = this->displayMode.GetHeight();
+            int width = this->windowHandler.GetDisplayMode().GetWidth();
+            int height = this->windowHandler.GetDisplayMode().GetHeight();
             int len = textNode->string.Length();
             RECT r;
             r.right = width;
@@ -134,8 +134,8 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         {
             this->refFont->Load();
         }        
-        float dispWidth  = (float) this->displayMode.GetWidth();
-        float dispHeight = (float) this->displayMode.GetHeight();
+        float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
+        float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
         RECT r;
         r.left   = (LONG) (rect.v0.x * dispWidth);
         r.top    = (LONG) (rect.v0.y * dispHeight);
@@ -175,8 +175,8 @@ nD3D9Server::GetTextExtent(const char* text)
     n_assert(text);
     int width = 0;
     int height = 0;
-    float dispWidth  = (float) this->displayMode.GetWidth();
-    float dispHeight = (float) this->displayMode.GetHeight();
+    float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
+    float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
 
     if (this->refFont.isvalid())
     {

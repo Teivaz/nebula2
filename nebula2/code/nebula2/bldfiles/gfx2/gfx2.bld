@@ -3,10 +3,13 @@
 #  The ngfx2server base classes
 #
 #  Modules:
-#      nshader2
 #      ngfxserver2
 #      nmesh2
+#      nshader2
+#      nsurface
 #      ntexture2
+#      nwindowhandler
+#      nwin32windowhandler
 #===============================================================================
 
 #===============================================================================
@@ -49,6 +52,19 @@ beginmodule nsurface
     setdir gfx2
     setfiles   { nsurface }
     setheaders { nsurface }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nwindowhandler
+    setdir gfx2
+    setfiles   { nwindowhandler }
+    setheaders { nwindowhandler }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nwin32windowhandler
+    setdir gfx2
+    setplatform win32
+    setfiles { nwin32windowhandler }
+    setheaders { nwin32windowhandler }
 endmodule
 #-------------------------------------------------------------------------------
 
