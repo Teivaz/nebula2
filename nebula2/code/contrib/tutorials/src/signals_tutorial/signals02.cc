@@ -1,8 +1,12 @@
 /**
-   @file signals02.cc
-   @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
-   
-   (C) 2005 Tragnarion Studios
+    @file signals02.cc
+    @ingroup Nebula2TutorialsSignals
+    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
+
+    @brief Signal Example 02 - A demonstration of nearly all signal features
+    including scripting support.
+
+    (C) 2005 Tragnarion Studios
 */
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
