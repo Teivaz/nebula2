@@ -1,26 +1,47 @@
 //------------------------------------------------------------------------------
 /**
-    nmeshtool.cc
+    @page NebulaToolsnmeshtool nmeshtool
+
+    nmeshtool
     
     Command line tool for mesh manipulation.
 
-    -in             input mesh file (n3d, n3d2, nvx or nvx2 file)
-    -out            output mesh file (file extension defines output format)
-    -clean          clean the mesh before anything else
-    -tangent        generate tangents
-    -append         name of mesh to append (note: duplicate group names are renamed)
-    -group          optional group name, if exists, all operations only affect this group
-    -grename        rename the group defined by group
-    -tx             translate x
-    -ty             translate y
-    -tz             translate z
-    -rx             rotate x
-    -ry             rotate y
-    -rz             rotate z
-    -sx             scale x
-    -sy             scale y
-    -sz             scale z
-    -scale          uniform scale
+    <dl>
+     <dt>-in</dt>
+       <dd>input mesh file (n3d, n3d2, nvx or nvx2 file)</dd>
+     <dt>-out</dt>
+       <dd>output mesh file (file extension defines output format)</dd>
+     <dt>-clean</dt>
+       <dd>clean the mesh before anything else</dd>
+     <dt>-tangent</dt>
+       <dd>generate tangents</dd>
+     <dt>-append</dt>
+       <dd>name of mesh to append (note: duplicate group names are renamed)</dd>
+     <dt>-group</dt>
+       <dd>optional group name, if exists, all operations only affect this group</dd>
+     <dt>-grename</dt>
+       <dd>rename the group defined by group</dd>
+     <dt>-tx</dt>
+       <dd>translate x</dd>
+     <dt>-ty</dt>
+       <dd>translate y</dd>
+     <dt>-tz</dt>
+       <dd>translate z</dd>
+     <dt>-rx</dt>
+       <dd>rotate x</dd>
+     <dt>-ry</dt>
+       <dd>rotate y</dd>
+     <dt>-rz</dt>
+       <dd>rotate z</dd>
+     <dt>-sx</dt>
+       <dd>scale x</dd>
+     <dt>-sy</dt>
+       <dd>scale y</dd>
+     <dt>-sz</dt>
+       <dd>scale z</dd>
+     <dt>-scale</dt>
+       <dd>uniform scale</dd>
+    </dl>
 
     (C) 2003 RadonLabs GmbH
 */

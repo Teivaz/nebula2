@@ -1,0 +1,14 @@
+/**
+    @defgroup NebulaTools Nebula Tools
+
+Nebula provides some basic tools as part of the package.
+
+These include:
+    - @ref NebulaToolsnimagetool
+    - @ref NebulaToolsnmeshtool
+    - @ref NebulaToolsnnpktool
+    - @ref NebulaToolsnremoteshell
+    - @ref NebulaToolsnsh
+    - @ref NebulaToolsnviewer
+
+*/
