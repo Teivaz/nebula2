@@ -142,6 +142,8 @@ nAbstractShaderNode::SetTexture(nShader2::Parameter param, const char* texName)
         this->UnloadTexture(i);
         this->texNodeArray[i].texName = texName;
     }
+    // flag to load resources
+    this->resourcesValid = false;
 }
 
 //------------------------------------------------------------------------------
