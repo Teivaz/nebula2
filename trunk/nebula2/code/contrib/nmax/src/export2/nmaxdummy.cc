@@ -170,13 +170,11 @@ nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle
     nSceneNode* createdNode = NULL;
 
     TiXmlElement* child;
-
-    if (child = xmlHandle.FirstChild(paramName).FirstChild("attachmentnode").Child("", 0).Element())
+    if (child = xmlHandle.FirstChild(paramName).FirstChild("attachmentjoint").Child("", 0).Element())
     {
-        int isAttached = 0;
-        child->Attribute("value", &isAttached);
+        nString boneName = child->Attribute("value");
 
-        if (isAttached)
+        if (!boneName.IsEmpty())
         {
             nString objectname;
             objectname += nMaxUtil::CorrectName(inode->GetName());
@@ -188,13 +186,12 @@ nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle
                 INode* parent = inode->GetParentNode();
                 if (parent)
                 {
-                    // the parent node of the given node should be any one of the bone nodes,
-                    int boneID = nMaxBoneManager::Instance()->FindBoneIDByNode(parent);
+
+                    int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
                     if (boneID >= 0)
                     {
-                        //specifies a created attachment node.
-                        //attachNode->SetSkinAnimator("../skinanimator");
-                        //attachNode->SetJointByIndex(boneID);
+                        //specifies a joint of the attachment node.
+                        attachNode->SetJointByIndex(boneID);
                     }
                     else
                     {
@@ -218,10 +215,9 @@ nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle
         }
         else
         {
-            n_maxlog(Error, "Error: Failed to create attchment node for the dummy node '%s'.", inode->GetName());
+            n_maxlog(Error, "Error: Any bone node is not selected. You should select one of the bones for joint of the attachment node '%s'.", inode->GetName());
         }
     }
-    //HACK: may need any other type of a attachment node
 
     return createdNode;
 }
