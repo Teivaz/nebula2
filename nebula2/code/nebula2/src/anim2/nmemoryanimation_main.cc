@@ -1,4 +1,4 @@
-#define N_DEFINES nMemoryAllocation
+#define N_IMPLEMENTS nMemoryAnimation
 //------------------------------------------------------------------------------
 //  nmemoryanimation_main.cc
 //  (C) 2003 RadonLabs GmbH
