@@ -120,20 +120,28 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
     if (obj) 
     {
         bool isRoot = obj->IsA("nroot");
-        const char* result;
+        nString result;
         nScriptServer* loader = this->GetLoader(parserClass);
         
         if (isRoot)
+        {
             nKernelServer::Instance()->PushCwd((nRoot *)obj);
+        }
         else
+        {
             nScriptServer::SetCurrentTargetObject(obj);
+        }
         
         loader->RunScript(fname, result);
         
         if (isRoot)
+        {
             nKernelServer::Instance()->PopCwd();
+        }
         else
+        {
             nScriptServer::SetCurrentTargetObject(0);
+        }
     } 
     return obj; 
 }

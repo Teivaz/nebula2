@@ -205,13 +205,13 @@ nGuiServer::Open()
     this->isOpen = true;
 
     // call the OnGuiServerOpen script function
-    const char* scriptResult;
+    nString scriptResult;
     bool r;
     r = this->refScriptServer->RunFunction("OnGuiServerOpen", scriptResult);
     if (false == r)
     {
         n_error("OnGuiServerOpenFailed: %s",
-                scriptResult ? scriptResult : "Unknown error");
+                scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
     }
 
     // set root window to 0, this will hide the GUI
@@ -231,13 +231,13 @@ nGuiServer::Close()
     n_assert(this->isOpen);
 
     // call the OnGuiServerClose script function
-    const char* scriptResult;
+    nString scriptResult;
     bool r;
     r = this->refScriptServer->RunFunction("OnGuiServerClose", scriptResult);
     if (false == r)
     {
         n_error("OnGuiServerCloseFailed: %s",
-                scriptResult ? scriptResult : "Unknown error");
+                scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
     }
 
     // clear root window
@@ -1036,9 +1036,9 @@ nGuiServer::RunCommand(nGuiWidget* who, const nString& cmd)
     n_assert(who);
     if (!cmd.IsEmpty())
     {
-        const char* res;
+        nString result;
         kernelServer->PushCwd(who);
-        this->refScriptServer->Run(cmd.Get(), res);
+        this->refScriptServer->Run(cmd.Get(), result);
         kernelServer->PopCwd();
         return true;
     }

@@ -124,13 +124,13 @@ nViewerApp::Open()
     // run startup script (assigns must be setup before opening the display!)
     if (this->GetStartupScript())
     {
-        const char* result;
+        nString result;
         bool r;
         r = this->refScriptServer->RunScript(this->GetStartupScript(), result);
         if (false == r)
         {
             n_error("Executing startup script failed: %s",
-                    result ? result : "Unknown error");
+                    result.IsEmpty() ? result.Get() : "Unknown error");
         }
     }
     
@@ -170,7 +170,7 @@ nViewerApp::Open()
     {
         if (NULL != this->GetStageScript())
         {
-            const char* result;
+            nString result;
             bool r;
 
             // run the light stage script
@@ -178,7 +178,7 @@ nViewerApp::Open()
             if (false == r)
             {
                 n_error("Executing light stage script failed: %s",
-                        result ? result : "Unknown error");
+                        result.IsEmpty() ? result.Get() : "Unknown error");
             }
         }
 
@@ -394,13 +394,13 @@ nViewerApp::HandleInput(float frameTime)
 void
 nViewerApp::DefineInputMapping()
 {
-    const char* scriptResult;
+    nString scriptResult;
     bool r;
     r = this->refScriptServer->RunFunction("OnMapInput", scriptResult);
     if (false == r)
     {
         n_error("Executing OnMapInput failed: %s",
-                scriptResult ? scriptResult : "Unknown error");
+                scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
     }
 }
 

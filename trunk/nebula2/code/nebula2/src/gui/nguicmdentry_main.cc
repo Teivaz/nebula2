@@ -162,14 +162,14 @@ nGuiCmdEntry::ExecuteCommand()
     n_printf(line.Get());
 
     // and run the command through the script server
-    const char* result;
+    nString result;
     bool failOnError = scriptServer->GetFailOnError();
     scriptServer->SetFailOnError(false);
     scriptServer->Run(this->editLine.GetContent(), result);
     scriptServer->SetFailOnError(failOnError);
-    if (result && (*result))
+    if (false == result.IsEmpty())
     {
-        n_printf("%s\n", result);
+        n_printf("%s\n", result.Get());
     }
     this->AddCommandToHistory();
     this->editLine.ClearContent();

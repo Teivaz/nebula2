@@ -43,15 +43,15 @@ public:
     /// destructor
     virtual ~nScriptServer();
     /// evaluate a script command
-    virtual bool Run(const char *, const char*&); 
+    virtual bool Run(const char *, nString&); 
     /// invoke a script function by name, with no parameters
-    virtual bool RunFunction(const char *, const char *&);
+    virtual bool RunFunction(const char *, nString&);
+    /// evaluate a script file
+    virtual bool RunScript(const char *, nString&);
     /// set an unnamed object that will receive cmds instead of the cwd
     static void SetCurrentTargetObject(nObject *obj);
     /// get the currently set unnamed object
     static nObject* GetCurrentTargetObject();
-    /// evaluate a script file
-    virtual bool RunScript(const char *, const char*&);
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// write object header with default constructor

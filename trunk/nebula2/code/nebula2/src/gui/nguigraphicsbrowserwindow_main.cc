@@ -146,7 +146,7 @@ nGuiGraphicsBrowserWindow::LoadObject(const nString& objPath)
     kernelServer->New("ntransformnode", "/usr/scene");
 
     // source the light stage...
-    const char* result;
+    nString result;
     this->refScriptServer->RunScript("home:bin/stdlight.tcl", result);
 
     // load new object

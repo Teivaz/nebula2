@@ -303,7 +303,7 @@ nInputServer::EndScripts(void)
         const char *cmd = this->script_array[i];
         // n_printf("running script: %s\n",cmd);
 
-        const char* result;
+        nString result;
         this->ref_ss->Run(cmd, result);
 
         n_free((void *)this->script_array[i]);

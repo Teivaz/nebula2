@@ -24,11 +24,11 @@ public:
     /// destructor
     virtual ~nTclServer();
     /// evaluate a string
-    virtual bool Run(const char *, const char*&);
+    virtual bool Run(const char *, nString&);
     /// invoke a script function by name, with no parameters
-    virtual bool RunFunction(const char *, const char *&);
+    virtual bool RunFunction(const char *, nString&);
     /// evaluate a file
-    virtual bool RunScript(const char *, const char*&);
+    virtual bool RunScript(const char *, nString&);
 
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
