@@ -20,7 +20,6 @@ beginmodule nmaxloghandler
     setheaders { nmaxloghandler }
     
 endmodule
-
 #-------------------------------------------------------------------------------
 beginmodule nmaxdll
     annotate "The required dll exports for a max plugin"
@@ -34,7 +33,18 @@ beginmodule nmaxdll
     setmoddeffile nmaxdll
     setlibs_win32 { paramblk2.lib }
 endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxlistener
+    annotate "A module which enables log messages on maxscript listener"
 
+    settype cpp
+    setplatform win32
+
+    setdir base
+    setfiles { nmaxlistener }
+    setheaders { nmaxlistener }
+    setlibs_win32 { maxscrpt.lib }
+endmodule
 #-------------------------------------------------------------------------------
 begintarget nmaxbase
    settype lib
