@@ -70,18 +70,40 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
     if (posControl || rotControl || scaleControl)
     {
         // we have one of the animation controller at least.
+        Class_ID classID = control->ClassID();
 
-        if (control->ClassID() == IKSLAVE_CLASSID || 
-            posControl->ClassID() == IKSLAVE_CLASSID ||
-            rotControl->ClassID() == IKSLAVE_CLASSID)
+        if (classID == BIPBODY_CONTROL_CLASS_ID ||
+            classID == BIPSLAVE_CONTROL_CLASS_ID ||
+            classID == FOOTPRINT_CLASS_ID )
+        {
+            // check any biped controls, if any of it exists skip it.
+            // we don't need to check any other type of controls, so just return.
+            return NULL;
+        }
+
+        if (classID == IKCONTROL_CLASS_ID || classID == IKCHAINCONTROL_CLASS_ID)
+        {
+            n_maxlog(Warning, "Lookat control %s is not supported.", inode->GetName());
+            // we don't need to check any other type of controls, so just return.
+            return NULL;
+        }
+
+        if (classID == IKSLAVE_CLASSID || 
+            (posControl && posControl->ClassID() == IKSLAVE_CLASSID) ||
+            (rotControl && rotControl->ClassID() == IKSLAVE_CLASSID))
         {
             // the control is IK control.
             nMaxIKAnimator* ikAnimator = n_new(nMaxIKAnimator);
             ikAnimator->Export(inode);
             createdNode = ikAnimator;
         }
-        else
-        if (posControl->ClassID() == Class_ID(PATH_CONTROL_CLASS_ID, 0))
+
+        if (classID == Class_ID(LOOKAT_CONTROL_CLASS_ID, 0))
+        {
+            n_maxlog(Warning, "Lookat control %s is not supported.", inode->GetName());
+        }
+
+        if (posControl && posControl->ClassID() == Class_ID(PATH_CONTROL_CLASS_ID, 0))
         {
             // the control is path control.
             nMaxTransformCurveAnimator* tmCurveAnimator = n_new(nMaxTransformCurveAnimator);
@@ -90,16 +112,26 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 
         }
         else
+        if (posControl || rotControl || scaleControl)
         {
             nMaxTransformAnimator* prsController = n_new(nMaxTransformAnimator);
-            prsController->Export(inode, control);
-            createdNode = prsController;
+            if (prsController->Export(inode, control))
+            {
+                createdNode = prsController;
+            }
+            else
+            {
+                n_maxlog(Warning, "The control has animations but no animation was exported \
+                                  for the node %s.", inode->GetName());
+                return NULL;
+            }
         }
     }
     else
     {
         n_maxlog(High, "%s node has Control but it does not contain have any PRS controller.", 
                  inode->GetName());
+        return NULL;
     }
 
     return createdNode;
