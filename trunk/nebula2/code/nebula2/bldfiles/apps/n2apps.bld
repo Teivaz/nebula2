@@ -81,7 +81,6 @@ begintarget nviewer
         nvideo
         ndshow
         ngui
-        tinyxml
         nshadow
         nnetwork
     }
