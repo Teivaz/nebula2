@@ -104,7 +104,7 @@ nNpkToc::~nNpkToc()
 {
     if (this->rootDir)
     {
-        n_delete this->rootDir;
+        n_delete(this->rootDir);
     }
 }
 
@@ -128,7 +128,7 @@ nNpkToc::BeginDirEntry(const char* dirName)
         n_assert(0 == this->rootDir);
 
         // create the root entry
-        entry = n_new nNpkTocEntry(this->GetRootPath(), 0, dirName);
+        entry = n_new(nNpkTocEntry(this->GetRootPath(), 0, dirName));
         this->rootDir = entry;
     }
 
@@ -184,11 +184,11 @@ nNpkToc::FindEntry(const char* absName)
     }
 
     // make a copy of the name because we need to modify it
-    char tmpName[N_MAXPATH];
-    n_strncpy2(tmpName, strippedPath, sizeof(tmpName));
+    nString tmpName = strippedPath;
+    tmpName.ToLower();
 
     // for each path component...
-    char* curComponent = strtok(tmpName, "/\\");
+    char* curComponent = strtok((char*)tmpName.Get(), "/\\");
     nNpkTocEntry* curEntry = this->rootDir;
     if (0 == strcmp(curEntry->GetName(), curComponent))
     {

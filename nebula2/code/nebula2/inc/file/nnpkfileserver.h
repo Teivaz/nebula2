@@ -70,12 +70,18 @@ public:
     virtual nFile* NewFileObject();
     /// create new nNpkDirectory object
     virtual nDirectory* NewDirectoryObject();
+    /// parse one npk file
+    virtual bool ParseNpkFile(const nString& path);
     /// parse the given directory for npk files
-    virtual int ParseDirectory(const char* dir);
+    virtual int ParseDirectory(const nString& dirName, const nString& extension);
+    /// release npk file wrappers matching pattern
+    virtual void ReleaseNpkFiles(const nString& pattern);
+    /// pack a directory into a new NPK file
+    virtual bool Pack(const nString& rootPath, const nString& dirName, const nString& npkName, bool noTopLevelName);
 
 private:
-    /// parse the root dir (hardwired to "home:") for npk files
-    bool ParseNpkFile(const char* rootPath, const char* filename);
+    /// add one npk file to the internal list
+    bool AddNpkFile(const nString& rootPath, const nString& filename);
     /// check extension of a filename
     bool CheckExtension(const char* path, const char* ext);
     /// find a toc entry by name in the included npk file wrappers

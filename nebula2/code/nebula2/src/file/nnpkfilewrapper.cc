@@ -33,6 +33,10 @@ nNpkFileWrapper::~nNpkFileWrapper()
 /**
     Open the npk file, parse the table of contents, and create the open
     file handles for binary and ascii read mode.
+
+    @param  fs                  pointer to nFileServer2
+    @param  rootPath            root path (where npk file is located)
+    @param  absFilename         absolute filename of npk file
 */
 bool
 nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFilename)
@@ -77,6 +81,8 @@ nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFil
         n_printf("nNpkFileWrapper: could not parse table of contents in file '%s'!\n", this->absPath.Get());
         this->binaryFile->Close();
         this->asciiFile->Close();
+        this->binaryFile->Release();
+        this->asciiFile->Release();
         this->binaryFile = 0;
         this->asciiFile = 0;
         return 0;
@@ -99,6 +105,8 @@ nNpkFileWrapper::Close()
 
     this->binaryFile->Close();
     this->asciiFile->Close();
+    this->binaryFile->Release();
+    this->asciiFile->Release();
     this->binaryFile = 0;
     this->asciiFile = 0;
     this->isOpen = false;
@@ -181,6 +189,17 @@ nNpkFileWrapper::ReadTocEntries(nFile* file)
             file->Read(nameBuf, dirNameLen);
             nameBuf[dirNameLen] = 0;
 
+            // placeholder root directory name?
+            // if yes, replace the directory name
+            // with the actual NPK file's name
+            if (0 == strcmp(nameBuf, "<noname>"))
+            {
+                nString absolutePath = this->absPath;
+                nString newName = absolutePath.ExtractFileName();
+                newName.StripExtension();
+                newName.ToLower();
+                n_strncpy2(nameBuf, newName.Get(), sizeof(nameBuf));
+            }
             nNpkTocEntry* newEntry = this->toc.BeginDirEntry(nameBuf);
             newEntry->SetFileWrapper(this);
 

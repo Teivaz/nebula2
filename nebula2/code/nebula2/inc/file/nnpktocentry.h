@@ -114,9 +114,9 @@ nNpkTocEntry::~nNpkTocEntry()
         nNpkTocEntry* curEntry;
         while ((curEntry = (nNpkTocEntry*) this->entryList->RemHead()))
         {
-            n_delete curEntry;
+            n_delete(curEntry);
         }
-        n_delete this->entryList;
+        n_delete(this->entryList);
     }
 }
 
@@ -184,11 +184,11 @@ nNpkTocEntry::AddDirEntry(const char* entryName)
     // create entry list object on demand
     if (!this->entryList)
     {
-        this->entryList = n_new nHashList(32);
+        this->entryList = n_new(nHashList(32));
     }
 
     // create and add entry
-    nNpkTocEntry* newEntry = n_new nNpkTocEntry(this->GetRootPath(), this, entryName);
+    nNpkTocEntry* newEntry = n_new(nNpkTocEntry(this->GetRootPath(), this, entryName));
     this->entryList->AddTail(newEntry);
     return newEntry;
 }
@@ -205,11 +205,11 @@ nNpkTocEntry::AddFileEntry(const char* entryName, int fileOffset, int fileLength
     // create entry list object on demand
     if (!this->entryList)
     {
-        this->entryList = n_new nHashList(32);
+        this->entryList = n_new(nHashList(32));
     }
 
     // create and add entry
-    nNpkTocEntry* newEntry = n_new nNpkTocEntry(this->GetRootPath(), this, entryName, fileOffset, fileLength);
+    nNpkTocEntry* newEntry = n_new(nNpkTocEntry(this->GetRootPath(), this, entryName, fileOffset, fileLength));
     this->entryList->AddTail(newEntry);
     return newEntry;
 }

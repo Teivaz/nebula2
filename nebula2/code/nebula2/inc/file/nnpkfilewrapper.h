@@ -33,7 +33,7 @@ public:
     /// get embedded npk toc object
     nNpkToc& GetTocObject();
     /// get absolute path name of npk file
-    const char* GetAbsPath() const;
+    const nString& GetAbsPath() const;
 
 private:
     /// parse table of contents
@@ -50,6 +50,16 @@ private:
     nFile* binaryFile;          // binary file handle
     nFile* asciiFile;           // ascii file handle
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nNpkFileWrapper::GetAbsPath() const
+{
+    return this->absPath;
+}
 
 //------------------------------------------------------------------------------
 #endif
