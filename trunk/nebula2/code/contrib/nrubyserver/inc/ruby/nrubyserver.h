@@ -29,10 +29,18 @@
     -sel "nodename" 
     -psel "nodename"
     -puts 
+	-exit
         
 
-    -TODO
-        Client-Server behavior, ruby extensions like  tcl/tk
+    -TODO:
+        @todo Client-Server behavior, ruby extensions like  tcl/tk
+	
+	- Known bugs:
+    
+    @bug gets in ruby is recognized as a file operation and will cause an 
+	exception ! A workaround is to use the full qualified name and the command 
+	('mynode'.gets) 
+
 
     -18-Dec-03   Tom    created 
     -10-Feb-04   Tom    ported to nebula 2

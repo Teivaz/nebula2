@@ -26,12 +26,36 @@ begintarget nrubydemo
     annotate "nViewer demo for ruby"
     settype exe
     setmodules { nviewer }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nruby ntoollib }
+    settargetdeps { 
+	nkernel 
+	nnebula 
+	ndirect3d9 
+	ndinput8 
+        ndsaudioserver3
+        ndshow
+        nvideo
+	microtcl 
+	ngui 
+	nruby 	ntoollib 
+    }
 endtarget
 
 beginworkspace rubyserver
     #setbinarydir ./code/contrib/nrubyserver/bin/
-    settargets { nkernel nnebula ndirect3d9 ndinput8 ntoollib microtcl nruby nrubydemo }
+    settargets { 
+	nkernel 
+	nnebula 
+	ndirect3d9 
+	ndinput8 
+        ndsaudioserver3
+        ndshow
+        nvideo
+	ngui 
+	ntoollib 
+	microtcl 
+	nruby 
+	nrubydemo 
+    }
 endworkspace
 #--------------------------------------------------------------------
 # EOF
