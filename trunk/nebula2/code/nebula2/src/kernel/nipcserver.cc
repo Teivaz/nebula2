@@ -75,7 +75,8 @@ n_listener_tfunc(nThread *t)
 void 
 n_listener_wakeup(nThread *t)
 {
-    sockaddr_in my_addr = { 0 };
+    sockaddr_in my_addr;
+    memset(&my_addr, 0, sizeof(my_addr));
     
     nIpcServer *is = (nIpcServer *) t->LockUserData();
     t->UnlockUserData();
@@ -83,7 +84,11 @@ n_listener_wakeup(nThread *t)
     my_addr.sin_family = AF_INET;
     my_addr.sin_port   = is->hostAddr.sin_port; 
 
+#if defined(__WIN32__)
     my_addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+#elif defined(__LINUX__)
+    my_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+#endif
 
     SOCKET my_sock = socket(AF_INET, SOCK_STREAM, 0);
 

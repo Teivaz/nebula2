@@ -1,4 +1,4 @@
-#define N_IMPLEMENTS nIpcServer
+#define N_IMPLEMENTS nIpcMiniServer
 #define N_KERNEL
 //------------------------------------------------------------------------------
 //  nipcminiserver.cc
@@ -6,6 +6,10 @@
 //------------------------------------------------------------------------------
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __LINUX__
+#include "fcntl.h"
+#endif
 
 #include "kernel/nipcserver.h"
 #include "kernel/nthread.h"
@@ -21,7 +25,11 @@ nIpcMiniServer::CloseRcvrSocket()
 	if (this->rcvrSocket) 
     {
         shutdown(this->rcvrSocket, 2);
+#if defined(__WIN32__)
     	closesocket(this->rcvrSocket);
+#elif defined(__LINUX__)
+    	close(this->rcvrSocket);
+#endif
     	this->rcvrSocket = 0;
 	}
 }
@@ -60,6 +68,18 @@ nIpcMiniServer::Poll()
             // an error, filter out the would block error
             #ifdef __WIN32__
                 if (WSAGetLastError() == WSAEWOULDBLOCK)
+                {
+                    // no data pending, return immediately
+                    return true;
+                }
+                else
+                {
+                    // a real error, close socket!
+                    this->CloseRcvrSocket();
+                    connected = false;
+                }
+            #elif defined(__LINUX__)
+                if (errno == EWOULDBLOCK)
                 {
                     // no data pending, return immediately
                     return true;
@@ -192,9 +212,16 @@ bool nIpcMiniServer::Listen()
             n_printf("client %d: connection accepted.\n", (int) this);
 
             // put the socket into nonblocking mode
+#ifdef __WIN32__
             u_long argp = 1;
             ioctlsocket(this->rcvrSocket, FIONBIO, &argp);
-            
+#elif defined(__LINUX__)
+            int flags;
+            flags = fcntl(this->rcvrSocket, F_GETFL);
+            flags |= O_NONBLOCK;
+            fcntl(this->rcvrSocket, F_SETFL, flags);
+#endif
+ 
             retval = true;
         } 
         else 
