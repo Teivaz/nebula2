@@ -5,6 +5,30 @@
     @brief A cross platform set of file I/O and file system objects
     that also support access to virtualized file systems.
 
+    The features file system are:
+     - a fileserver object encapsulates the host filesystem.
+     - completely removes differences between Windows, Linux or XBox filesystem.
+     - OOP concepts <br>
+       File and Directory as comfortable C++ classes.
+     - support platform specific service. <br>
+       Nebula uses win32 file routines under Windows not the ANSI-C file 
+       routines.(CreateFile(), WriteFile(), ReadFile etc.)
+     - offers 'Directory Assigns'
+       - Use 'textures:image.dds' instead of 'c:\program files\...\textures\image.dds
+       - Let Nebula convert it to absoult path.
+       - This inspired by AmigaOS.
+
+    Nebula also support file archive system which is integrated with it's file sytem.
+
+    The features of file archive system are:
+     - similiar to Quake's PAK files
+     - packs directory hierarchies into one single file.
+     - no wasted disk space with many small files
+     - drastically reduced loading time 
+     - more cleaner application directory layout
+    
+    @see more details on @ref NebulaNPKFileManagement page.
+
     <h2>File Server Initialization</h2>
 
     By default, the kernel server will create an instance of the
