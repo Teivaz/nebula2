@@ -36,6 +36,9 @@ nSceneServer::nSceneServer() :
     this->groupStack.SetSize(MaxHierarchyDepth);
     this->groupStack.Clear(0);
     self = this;
+
+    // Set this to a reasonable default value
+    this->renderPath.SetFilename("shaders:renderpath.xml");
 }
 
 //------------------------------------------------------------------------------
@@ -50,6 +53,15 @@ nSceneServer::~nSceneServer()
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nSceneServer::SetRenderPathFilename(const nString& name)
+{
+    this->renderPath.SetFilename(name);
+}
+
+//------------------------------------------------------------------------------
+/**
     Open the scene server. This initializes the embedded render path
     object.
 */
@@ -59,7 +71,6 @@ nSceneServer::Open()
     n_assert(!this->isOpen);
     
     // read the renderpath definition file
-    this->renderPath.SetFilename("shaders:renderpath.xml");
     bool renderPathOpened = this->renderPath.Open();
     n_assert(renderPathOpened);
 
