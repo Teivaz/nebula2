@@ -58,7 +58,7 @@ nD3D9Font::LoadResource()
     {
         d3dFlags |= D3DFONT_ITALIC;
     }
-    this->d3dFont = new CD3DFont9((const unsigned char*) this->fontDesc.GetTypeFace(), this->fontDesc.GetHeight(), d3dFlags);
+    this->d3dFont = new CD3DFont9((const char*) this->fontDesc.GetTypeFace(), this->fontDesc.GetHeight(), d3dFlags);
 
     n_assert(0 != this->refD3D9Server->d3d9Device);
     this->d3dFont->InitDeviceObjects(this->refD3D9Server->d3d9Device);
