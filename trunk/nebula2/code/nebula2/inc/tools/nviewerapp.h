@@ -2,11 +2,13 @@
 #define N_VIEWER_H
 //------------------------------------------------------------------------------
 /**
-    @class nViewer
+    @class nViewerApp
     @ingroup Tools
 
-    A simple viewer app class.
-    
+    A simple viewer app class. This is for use for small sample apps
+    and for nviewer. It should not be used as the basis of your own
+    application that uses Nebula 2.  For that, see the @ref Application.
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gfx2/ndisplaymode2.h"
@@ -445,5 +447,5 @@ nViewerApp::GetOverlayEnabled() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 
