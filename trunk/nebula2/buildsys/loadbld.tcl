@@ -96,6 +96,7 @@ set current_file  ""
 #    recursepakdir         $dir
 #
 #    checknoblock
+#    getnameofblocktype    $block_type
 #
 #============================================================================
 
@@ -210,7 +211,7 @@ proc setdir {dir} {
         # not a direct path
         set mod($num_mods,dir) $dir
     } else {
-        ::log::log warning "FAILED to setdir for the currentblocktype $current_block"
+        ::log::log warning "FAILED to setdir for the current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -233,7 +234,7 @@ proc settargets {target_list} {
         global num_bundles
         set bundle($num_bundles,targets) $target_list
     } else {
-        ::log::log warning "FAILED to settargets for the currentblocktype $current_block"
+        ::log::log warning "FAILED to settargets for the current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 #----------------------------------------------------------------------------
@@ -254,7 +255,7 @@ proc settype {type} {
         global num_mods
         set mod($num_mods,type) $type
     } else {
-        ::log::log warning "FAILED to settype for the currentblocktype $current_block."
+        ::log::log warning "FAILED to settype for the current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -273,7 +274,7 @@ proc setrtti {allowrtti} {
             global num_tars
             set tar($num_tars,rtti) true
         } else {
-            ::log::log warning "FAILED to setrtti for currentblocktype $current_block"
+            ::log::log warning "FAILED to setrtti for current blocktype '[getnameofblocktype $current_block]'."
         }
     }
 }
@@ -293,7 +294,7 @@ proc setexceptions {allowexceptions} {
             global num_tars
             set tar($num_tars,exceptions) true
         } else {
-            ::log::log warning "FAILED to setexections for currentblocktype $current_block"
+            ::log::log warning "FAILED to setexections for current blocktype '[getnameofblocktype $current_block]'."
         }
     }
 }
@@ -312,7 +313,7 @@ proc seticon {filename} {
         global num_tars
         set tar($num_tars,icon) $filename
     } else {
-        ::log::log warning "FAILED to seticon for currentblocktype $current_block"
+        ::log::log warning "FAILED to seticon for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -329,7 +330,7 @@ proc setresource_win32 {filename} {
         global num_tars
         set tar($num_tars,resource_win32) $filename
     } else {
-        ::log::log warning "FAILED to setresource_win32 for currentblocktype $current_block"
+        ::log::log warning "FAILED to setresource_win32 for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -351,7 +352,7 @@ proc setmodules {module_list} {
         global num_bundles
         set bundle($num_bundles,modules) $module_list
     } else {
-        ::log::log warning "FAILED to setmodules for currentblocktype $current_blocktype"
+        ::log::log warning "FAILED to setmodules for current blocktype '[getnameofblocktype $current_blocktype]'."
     }
 }
 
@@ -384,7 +385,7 @@ proc annotate {annotation} {
         global num_mods
         set mod($num_mods,annotate) $annotation
     } else {
-        ::log::log warning "FAILED set annotate for currentblocktype $current_block"
+        ::log::log warning "FAILED set annotate for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -432,7 +433,7 @@ proc setbinarydir {dir} {
         global num_wspaces
         set wspace($num_wspaces,binarydir) [cleanpath $dir]
     } else {
-        ::log::log warning "FAILED to setbinarydir for currentblocktype $current_block"
+        ::log::log warning "FAILED to setbinarydir for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -453,7 +454,7 @@ proc setlibdir {dir} {
         global num_wspaces
         set wspace($num_wspaces,libdir) [cleanpath $dir]
     } else {
-        ::log::log warning "FAILED to setlibdir for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibdir for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -473,7 +474,7 @@ proc addglobaldef {defname value} {
 
         lappend wspace($num_wspaces,globaldefs) $defname $value
     } else {
-        ::log::log warning "FAILED to addglobaldef for currentblocktype $current_block"
+        ::log::log warning "FAILED to addglobaldef for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -492,7 +493,7 @@ proc addtargetdef {targetname defname value} {
 
         lappend wspace($num_wspaces,targetdefs) [list $targetname $defname $value]
     } else {
-        ::log::log warning "FAILED to addtargetdef for currentblocktype $current_block"
+        ::log::log warning "FAILED to addtargetdef for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -509,7 +510,7 @@ proc endworkspace { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a workspace but this is not the currentblocktype $current_block. EXIT NO."
+        ::log::log error "ERROR you have tryed to close a workspace but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
         exit -1
     }
 }
@@ -569,7 +570,7 @@ proc setbundles {bundle_list} {
         global num_tars
         addtolist tar($num_tars,bundles)  $bundle_list
     } else {
-        ::log::log warning "FAILED to setbundles for currentblocktype $current_block"
+        ::log::log warning "FAILED to setbundles for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -588,7 +589,7 @@ proc settargetdeps {target_list} {
 
         addtolist tar($num_tars,targetdeps)  $target_list
     } else {
-        ::log::log warning "FAILED to settargetdeps for currentblocktype $current_block"
+        ::log::log warning "FAILED to settargetdeps for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -608,7 +609,7 @@ proc changedllextension { ext } {
 
         set tar($num_tars,dllextension) $ext
     } else {
-        ::log::log warning "FAILED to changedllextension for currentblocktype $current_block"
+        ::log::log warning "FAILED to changedllextension for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -625,7 +626,7 @@ proc endtarget { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a target but this is not the currentblocktype $current_block. EXIT NO."
+        ::log::log error "ERROR you have tryed to close a target but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
         exit -1
     }
 }
@@ -667,7 +668,7 @@ proc endbundle { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a bundle but this is not the currentblocktype $current_block. EXIT NO."
+        ::log::log error "ERROR you have tryed to close a bundle but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
         exit -1
     }
 }
@@ -727,7 +728,7 @@ proc setmoddeffile { filename } {
 
         set mod($num_mods,moddeffile) $filename
     } else {
-        ::log::log warning "FAILED to setmoddeffile for currentblocktype $current_block"
+        ::log::log warning "FAILED to setmoddeffile for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -745,7 +746,7 @@ proc setplatform {platform_list} {
         global num_mods
         set mod($num_mods,platform)  $platform_list
     } else {
-        ::log::log warning "FAILED to setplatform for currentblocktype $current_block"
+        ::log::log warning "FAILED to setplatform for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -764,7 +765,7 @@ proc setfiles {file_list} {
 
         addtolist mod($num_mods,files)  $file_list
     } else {
-        ::log::log warning "FAILED to setfiles for currentblocktype $current_block"
+        ::log::log warning "FAILED to setfiles for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -783,7 +784,7 @@ proc setheaders {header_list} {
 
         addtolist mod($num_mods,headers)  $header_list
     } else {
-        ::log::log warning "FAILED to setheaders for currentblocktype $current_block"
+        ::log::log warning "FAILED to setheaders for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -803,7 +804,7 @@ proc setlibs_win32 {lib_list} {
 
         addtolist mod($num_mods,libs_win32)  $lib_list
     } else {
-        ::log::log warning "FAILED to setlibs_win32 for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibs_win32 for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -821,7 +822,7 @@ proc setlibs_win32_release {lib_list} {
 
         addtolist mod($num_mods,libs_win32_release)  $lib_list
     } else {
-        ::log::log warning "FAILED to setlibs_win32_release for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibs_win32_release for current blocktype '[getnameofblocktype $current_block]'."
     }
 
 }
@@ -840,7 +841,7 @@ proc setlibs_win32_debug {lib_list} {
 
         addtolist mod($num_mods,libs_win32_debug)  $lib_list
     } else {
-        ::log::log warning "FAILED to setlibs_win32_debug for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibs_win32_debug for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -859,7 +860,7 @@ proc setlibs_linux {lib_list} {
 
         addtolist mod($num_mods,libs_linux)  $lib_list
     } else {
-        ::log::log warning "FAILED to setlibs_linux for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibs_linux for current blocktype '[getnameofblocktype $current_block]'."
     }
 
 }
@@ -879,7 +880,7 @@ proc setlibs_macosx {lib_list} {
 
         addtolist mod($num_mods,libs_macosx)  $lib_list
     } else {
-        ::log::log warning "FAILED to setlibs_maxos for currentblocktype $current_block"
+        ::log::log warning "FAILED to setlibs_maxos for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -899,7 +900,7 @@ proc setmoduledeps {mod_list} {
 
         addtolist mod($num_mods,moduledeps)  $mod_list
     } else {
-        ::log::log warning "FAILED to setmoduledeps for currentblocktype $current_block"
+        ::log::log warning "FAILED to setmoduledeps for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -918,7 +919,7 @@ proc setnopkg {bool} {
 
         set mod($num_mods,forcenopkg)  $bool
     } else {
-        ::log::log warning "FAILED to setnopkg for currentblocktype $current_block"
+        ::log::log warning "FAILED to setnopkg for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
 
@@ -936,7 +937,30 @@ proc endmodule { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a module but this is not the currentblocktype $current_block. EXIT NO."
+        ::log::log error "ERROR you have tryed to close a module but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
         exit -1
+    }
+}
+
+#----------------------------------------------------------------------------
+#  getnameofblocktype
+#----------------------------------------------------------------------------
+proc getnameofblocktype { block_type } {
+    global noactive_block
+    global wspace_block
+    global target_block
+    global module_block
+    global bundle_block
+
+    if {$block_type == $noactive_block} {
+        return "no active block"
+    } elseif {$block_type == $wspace_block} {
+        return "workspace"
+    } elseif {$block_type == $target_block} {
+        return "target"
+    } elseif {$block_type == $module_block} {
+        return "module"
+    } elseif {$block_type == $bundle_block} {
+        return "bundle"
     }
 }
