@@ -3,14 +3,6 @@
 #ifndef _ODE_CONFIG_H_
 #define _ODE_CONFIG_H_
 
-/* shared lib definitions */
-#ifndef SHAREDLIBIMPORT
-#define SHAREDLIBIMPORT
-#endif
-#ifndef SHAREDLIBEXPORT
-#define SHAREDLIBEXPORT
-#endif
-
 /* standard system headers */
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +10,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <malloc.h>
+#include <float.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,18 +36,13 @@ typedef unsigned int intP;
 #define dSINGLE 1
 
 /* the floating point infinity */
-#define DINFINITY_DECL SHAREDLIBEXPORT union dInfBytes dInfinityValue = {{0,0,0x80,0x7f}};
-#if defined SHARED_CONFIG_H_INCLUDED_FROM_DEFINING_FILE
-  #define GLOBAL_SHAREDLIB_SPEC SHAREDLIBEXPORT
-#else 
-  #define GLOBAL_SHAREDLIB_SPEC SHAREDLIBIMPORT
-#endif
-union dInfBytes { unsigned char c[4]; float f; };
-extern GLOBAL_SHAREDLIB_SPEC union dInfBytes dInfinityValue;
-#define dInfinity (dInfinityValue.f)
-#undef GLOBAL_SHAREDLIB_SPEC
+#define dInfinity FLT_MAX
 
-/* ODE feature configuration */
+/* available functions */
+#define copysignf copysign
+#define copysign _copysign
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
 
 #ifdef __cplusplus
 }
