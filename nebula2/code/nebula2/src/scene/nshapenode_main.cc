@@ -15,7 +15,8 @@ nNebulaScriptClass(nShapeNode, "nmaterialnode");
 nShapeNode::nShapeNode() :
     groupIndex(0),
     meshUsage(nMesh2::WriteOnce),
-    renderWireframe(false)
+    renderWireframe(false),
+    refMeshResourceLoader(kernelServer)
 {
     // empty
 }
@@ -58,6 +59,12 @@ nShapeNode::LoadMesh()
         {
             mesh->SetFilename(this->meshName.Get());
             mesh->SetUsage(this->meshUsage);
+
+            if (refMeshResourceLoader.isvalid())
+            {
+                mesh->SetResourceLoader(refMeshResourceLoader.getname());
+            }
+
             if (!mesh->Load())
             {
                 n_printf("nMeshNode: Error loading mesh '%s'\n", this->meshName.Get());
@@ -180,3 +187,25 @@ nShapeNode::GetMesh() const
 {
     return this->meshName.IsEmpty() ? 0 : this->meshName.Get();
 }
+
+//------------------------------------------------------------------------------
+/**
+    Set the resource loader used to load the mesh data.  If this is NULL, then
+    the mesh is loaded through the default mesh loading code.
+*/
+void
+nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
+{
+    this->refMeshResourceLoader = resourceLoaderPath;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the mesh resource loader.
+*/
+const char *
+nShapeNode::GetMeshResourceLoader()
+{
+    return this->refMeshResourceLoader.getname();
+}
+

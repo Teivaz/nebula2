@@ -23,6 +23,14 @@
 #include "kernel/nautoref.h"
 #endif
 
+#ifndef N_DYNAUTOREF_H
+#include "kernel/ndynautoref.h"
+#endif
+
+#ifndef N_RESOURCELOADER_H
+#include "resource/nresourceloader.h"
+#endif
+
 #undef N_DEFINES
 #define N_DEFINES nResource
 #include "kernel/ndefdllclass.h"
@@ -55,6 +63,10 @@ public:
     void SetFilename(const char* path);
     /// get absolute filename to resource file
     const char* GetFilename() const;
+    /// set the NOH path to an nResourceLoader
+    void SetResourceLoader(const char* resourceLoader);
+    /// gets the NOH path to the nResourceLoader
+    const char* GetResourceLoader();
     /// is resource valid?
     bool IsValid() const;
     /// load the resource (sets the valid flag)
@@ -66,6 +78,7 @@ public:
 
 protected:
     nAutoRef<nFileServer2> refFileServer;
+    nDynAutoRef<nResourceLoader> refResourceLoader;
     nPathString filename;
     Type type;
     bool valid;

@@ -60,6 +60,13 @@ nD3D9Mesh::Load()
         this->CreateVertexDeclaration();
         this->valid = true;
     }
+    // This is placed AFTER IsEmpty(), because the IsEmpty() check is our hack-ish way of getting
+    // the mesh to create the vertex and index buffers for us for nResourceLoader.
+    else if (refResourceLoader.isvalid())
+    {
+        // if the resource loader reference is valid, let it take a stab at the file
+        this->valid = refResourceLoader->Load(this->filename.Get(), this);
+    }
     else if (this->filename.CheckExtension("nvx2"))
     {
         // load from nvx2 file
