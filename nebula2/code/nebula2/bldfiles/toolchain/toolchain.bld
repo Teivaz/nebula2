@@ -45,7 +45,6 @@ endmodule
 beginmodule nnpktool
     setdir tools
     setfiles { nnpktool }
-    setheaders { nnpktool }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nresourcecompiler
