@@ -56,10 +56,26 @@ public:
     void SetProjDir(const char* name);
     /// get project dir
     const char* GetProjDir() const;
-    /// set optional startup script
+    /// set the scene server (required)
+    void SetSceneServerClass(const char* name);
+    /// get the scene type
+    const char* GetSceneServerClass() const;
+    /// set the script type (ntclserver/nluaserver/etc - required)
+    void SetScriptServerClass(const char* name);
+    /// get the script type
+    const char* GetScriptServerClass() const;
+    /// set the startup script (required)
     void SetStartupScript(const char* name);
-    /// get optional startup script
+    /// get the startup script
     const char* GetStartupScript() const;
+    /// set the light stage script (required - if a scene file is specified)
+    void SetStageScript(const char* name);
+    /// get the light stage script
+    const char* GetStageScript() const;
+    /// set the input binding script (required)
+    void SetInputScript(const char* name);
+    /// get the input binding script
+    const char* GetInputScript() const;
     /// open the viewer
     bool Open();
     /// close the viewer
@@ -70,8 +86,6 @@ public:
     bool IsOpen() const;
 
 private:
-    /// define the input mapping
-    void DefineInputMapping();
     /// handle input in Maya control mode
     void HandleInputMaya(float frameTime);
     /// handle input in Fly control mode
@@ -94,7 +108,11 @@ private:
 
     nString sceneFilename;
     nString projDir;
+    nString sceneserverClass;
+    nString scriptserverClass;
     nString startupScript;
+    nString stageScript;
+    nString inputScript;
     bool isOpen;
     nDisplayMode2 displayMode;
     nCamera2 camera;
@@ -228,6 +246,46 @@ nViewerApp::GetProjDir() const
 */
 inline
 void
+nViewerApp::SetSceneServerClass(const char* type)
+{
+    this->sceneserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nViewerApp::GetSceneServerClass() const
+{
+    return this->sceneserverClass.IsEmpty() ? 0 : this->sceneserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetScriptServerClass(const char* type)
+{
+    this->scriptserverClass = type;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nViewerApp::GetScriptServerClass() const
+{
+    return this->scriptserverClass.IsEmpty() ? 0 : this->scriptserverClass.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nViewerApp::SetStartupScript(const char* script)
 {
     this->startupScript = script;
@@ -241,6 +299,46 @@ const char*
 nViewerApp::GetStartupScript() const
 {
     return this->startupScript.IsEmpty() ? 0 : this->startupScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetStageScript(const char* script)
+{
+    this->stageScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nViewerApp::GetStageScript() const
+{
+    return this->stageScript.IsEmpty() ? 0 : this->stageScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetInputScript(const char* script)
+{
+    this->inputScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nViewerApp::GetInputScript() const
+{
+    return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
 }
 
 //------------------------------------------------------------------------------
