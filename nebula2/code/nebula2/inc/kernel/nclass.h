@@ -17,7 +17,7 @@
 
 //------------------------------------------------------------------------------
 class nCmdProtoNative;
-class nRoot;
+class nObject;
 class nKernelServer;
 class nHashList;
 class nClass : public nHashNode
@@ -28,7 +28,7 @@ public:
     /// class destructor
     ~nClass();
     /// create a new instance of the class
-    nRoot* NewObject();
+    nObject* NewObject();
     /// start defining commands
     void BeginCmds();
     /// add a command to the class

@@ -5,10 +5,11 @@
     @class nRef
     @ingroup NebulaSmartPointers
 
-    nRef and nAutoRef implement safe pointers to nRoot derived objects which 
-    will invalidate themselves when the target object goes away. This
-    avoids dangling pointers and also protects against dereferencing
-    a null pointer.
+    nRef implements safe pointers to nReferenced derived objects which will 
+    invalidate themselves when the target object goes away. nAutoRef works
+    similarly to nRef but is also NOH aware and as such takes pointers to nRoot 
+    derived objects. Usage of nRef/nAutoRef helps you avoid dangling pointers and 
+    also protects against dereferencing a null pointer.
 
     Operations:
 
@@ -28,9 +29,8 @@
 
     (C) 1999 RadonLabs GmbH
 */
-#include "kernel/ntypes.h"
-#include "kernel/nkernelserver.h"
-#include "kernel/nroot.h"
+
+#include "kernel/nreferenced.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nRef : public nNode 
@@ -97,7 +97,7 @@ nRef<TYPE>::nRef(TYPE* o) :
     targetObject(o)
 {
     n_assert(o);
-    ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot>*)this);
+    ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced>*)this);
 }
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ nRef<TYPE>::nRef( const nRef<TYPE>& rhs ) :
 {
     if (targetObject) 
     {
-        ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
+        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
     }
 }
 
@@ -123,7 +123,7 @@ nRef<TYPE>::~nRef()
 {
     if (this->targetObject) 
     {
-        ((nRoot*)this->targetObject)->RemObjectRef((nRef<nRoot> *)this);
+        ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
         this->targetObject = 0;
     }
 }
@@ -138,7 +138,7 @@ nRef<TYPE>::invalidate()
 {
     if (this->targetObject) 
     {
-        ((nRoot*)this->targetObject)->RemObjectRef((nRef<nRoot> *)this);
+        ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
     }
     this->targetObject = 0;
 }
@@ -155,7 +155,7 @@ nRef<TYPE>::set(TYPE* obj)
     this->targetObject = obj;
     if (obj) 
     {
-        ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
+        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
     }
 }
 

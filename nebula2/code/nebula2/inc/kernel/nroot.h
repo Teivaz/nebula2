@@ -6,17 +6,19 @@
     @ingroup Kernel
 
     nRoot defines the basic functionality and interface for
-    the Nebula class hierarchy:
+    NOH dependent classes in the Nebula class hierarchy.
 
-    - reference counting
-    - RTTI a class is identified by a string name
+    It provides:
+    - reference counting and tracking (through nObject)
+    - Nebula RTTI (through nObject)
     - object serialization
     - script interface   
     - linkage into the hierarchical name space
 
     Rules for subclasses:
     - only the default constructor is allowed
-    - never create or destroy nRoot objects through delete
+    - never use new/delete (or variants like n_new/n_delete) with 
+      nRoot objects
     - use nKernelServer::New() to create an object and
       the objects Release() method to destroy it
 
@@ -33,22 +35,13 @@
 
     (C) 1999 RadonLabs GmbH
 */
-#include "kernel/ntypes.h"
-#include "util/nlist.h"
-#include "util/nnode.h"
-#include "kernel/ncmd.h"
-#include "kernel/nref.h"
-#include "kernel/nmutex.h"
+
 #include "util/nstring.h"
+#include "util/nnode.h"
+#include "kernel/nobject.h"
 
 //------------------------------------------------------------------------------
-class nCmd;
-class nClass;
-class nKernelServer;
-class nPersistServer;
-template<class TYPE> class nRef;
-
-class nRoot : public nNode 
+class nRoot : public nObject, public nNode
 {
 public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)
@@ -58,10 +51,6 @@ public:
     virtual void Initialize();
     /// release object (USE INSTEAD OF DESTRUCTOR!)
     virtual bool Release();
-    /// save object to persistent stream
-    virtual bool SaveCmds(nPersistServer* ps);
-    /// get instance size
-    virtual int GetInstanceSize() const;
     /// get summed instance including children
     int GetTreeSize() const;
 
@@ -69,37 +58,12 @@ public:
     void LockMutex();
     /// unlock the object's main mutex
     void UnlockMutex();
-
-    /// increment ref count of object 
-    int AddRef();
-    /// get refcount of object
-    int GetRefCount() const;
-
-    /// add external object reference
-    void AddObjectRef(nRef<nRoot> *);
-    /// remove external object reference
-    void RemObjectRef(nRef<nRoot> *);
-    /// get list of refs pointing to me
-    nList *GetRefs();
-    
-    /// get pointer to my class object
-    nClass *GetClass() const;
-    /// return true if part of class hierarchy
-    bool IsA(nClass *) const;
-    /// return true instance of class
-    bool IsInstanceOf(nClass *) const; 
-
     /// save object to persistency stream
     bool Save();
     /// save object under different name
     bool SaveAs(const char* name);
     /// create new object as clone of this object
     nRoot *Clone(const char *name);
-
-    /// invoke nCmd on object
-    bool Dispatch(nCmd *);
-    /// get cmd proto list from object
-    void GetCmdProtos(nHashList *);
 
     /// set name of object
     void SetName(const char *str);
@@ -142,9 +106,6 @@ public:
     /// unset savemode flags
     void UnsetSaveModeFlags(int);
 
-    /// pointer to kernel server
-    static nKernelServer* kernelServer;
-
     // object flags (use with SetSaveModeFlag, UnsetFlag, GetFlag)
     enum {
         N_FLAG_SAVEUPSIDEDOWN = (1<<0),     // save children first, then own state
@@ -152,22 +113,14 @@ public:
     };
 
 protected:
-    friend class nClass;
         
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nRoot();
-    /// invalidate all references
-    void InvalidateAllRefs();
-    /// set pointer to my class object
-    void SetClass(nClass *);
 
     // nAtom nameAtom;
     nString name;
-    nList refList;
-    nClass* instanceClass;
     nRoot* parent;
     nList childList;
-    int refCount;
     ushort saveModeFlags;
     nMutex mutex;
 };
@@ -397,112 +350,6 @@ void
 nRoot::UnsetSaveModeFlags(int f)
 {
     this->saveModeFlags &= ~f;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void 
-nRoot::SetClass(nClass* cl)
-{
-    this->instanceClass = cl;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nClass*
-nRoot::GetClass() const
-{
-    return this->instanceClass;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool 
-nRoot::IsA(nClass *cl) const
-{
-    nClass *actClass = this->instanceClass;
-    do 
-    {
-        if (actClass == cl) 
-        {
-            return true;
-        }
-    } while ((actClass = actClass->GetSuperClass()));
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool 
-nRoot::IsInstanceOf(nClass *cl) const
-{
-    return (cl == this->instanceClass);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nRoot::GetRefCount() const
-{
-    return this->refCount;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nRoot::AddRef()
-{
-    return ++this->refCount;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Hang the reference to an object on @c refList.
-
-     - 15-Jul-99   floh    created
-     - 30-Aug-00   floh    + removed call to nRoot::ValidRef()
-*/
-inline
-void 
-nRoot::AddObjectRef(nRef<nRoot> *r)
-{
-    this->refList.AddTail((nNode *)r);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Remove the reference to @c r from the @c refList.
-
-     - 15-Jul-99   floh    created
-     - 30-Aug-00   floh    + removed call to nRoot::InvalidRef()
-*/
-inline
-void 
-nRoot::RemObjectRef(nRef<nRoot> *r)
-{
-    ((nNode*)r)->Remove();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nList*
-nRoot::GetRefs()
-{
-    return &(this->refList);
 }
 
 //------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 #include "util/nhashlist.h"
 #include "util/nkeyarray.h"
 #include "kernel/nclass.h"
-#include "kernel/nroot.h"
+#include "kernel/nobject.h"
 #include "kernel/ncmdprotonative.h"
 
 //--------------------------------------------------------------------
@@ -84,12 +84,14 @@ nClass::~nClass(void)
 //--------------------------------------------------------------------
 /**
      - 08-Aug-99   floh    created
+     - 07-Nov-04   enlight now returns nObject* instead of nRoot*
 */
-nRoot*
+nObject*
 nClass::NewObject(void)
 {
-    nRoot *obj = (nRoot *) this->n_new_ptr();
+    nObject *obj = (nObject *) this->n_new_ptr();
     n_assert(obj);
+    obj->AddRef();
     obj->SetClass(this);
     return obj;
 }

@@ -61,8 +61,12 @@ public:
 
     /// create a Nebula object, fail hard if no object could be created
     nRoot* New(const char* className, const char* objectName);
+    /// create a Nebula object, fail hard if no object could be created
+    nObject* New(const char* className);
     /// create a Nebula object, don't fail when no object could be created
     nRoot* NewNoFail(const char* className, const char* objectName);
+    /// create a Nebula object, don't fail when no object could be created
+    nObject* NewNoFail(const char* className);
     /// create a Nebula object from a persistent object file
     nRoot* Load(const char* path);
     /// create a Nebula object from a persistent object file with given name
@@ -120,7 +124,7 @@ private:
     /// load a class and return pointer to it
     nClass* OpenClass(const char* className);
     /// create a new unnamed Nebula object
-    nRoot* NewUnnamedObject(const char* className);
+    nObject* NewUnnamedObject(const char* className);
 
     nFileServer2*   fileServer;     // private pointer to file server
     nPersistServer* persistServer;  // private pointer to persistency server
