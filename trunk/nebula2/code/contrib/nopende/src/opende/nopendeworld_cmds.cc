@@ -17,6 +17,18 @@ static void n_qstepgetnumiters( void* slf, nCmd* cmd );
 static void n_impulsetoforce( void* slf, nCmd* cmd );
 static void n_stepfast1( void* slf, nCmd* cmd );
 
+static void n_setautodisableflag( void* slf, nCmd* cmd );
+static void n_getautodisableflag( void* slf, nCmd* cmd );
+static void n_setautodisablelinearthreshold( void* slf, nCmd* cmd );
+static void n_getautodisablelinearthreshold( void* slf, nCmd* cmd );
+static void n_setautodisableangularthreshold( void* slf, nCmd* cmd );
+static void n_getautodisableangularthreshold( void* slf, nCmd* cmd );
+static void n_setautodisablesteps( void* slf, nCmd* cmd );
+static void n_getautodisablesteps( void* slf, nCmd* cmd );
+static void n_setautodisabletime( void* slf, nCmd* cmd );
+static void n_getautodisabletime( void* slf, nCmd* cmd );
+
+
 //------------------------------------------------------------------------------
 /**
     @scriptclass
@@ -32,18 +44,28 @@ void
 n_initcmds(nClass* clazz)
 {
     clazz->BeginCmds();
-    clazz->AddCmd( "v_SetGravity_fff",          'SGRV', n_setgravity );
-    clazz->AddCmd( "fff_GetGravity_v",          'GGRV', n_getgravity );
-    clazz->AddCmd( "v_SetERP_f",                'SERP', n_seterp );
-    clazz->AddCmd( "f_GetERP_v",                'GERP', n_geterp );
-    clazz->AddCmd( "v_SetCFM_f",                'SCFM', n_setcfm );
-    clazz->AddCmd( "f_GetCFM_v",                'GCFM', n_getcfm );
-    clazz->AddCmd( "v_Step_f",                  'STEP', n_step );
-    clazz->AddCmd( "v_QuickStep_f",             'QSTP', n_quickstep );
-    clazz->AddCmd( "v_SetQuickStepNumIterations_i", 'QSSI', n_qstepsetnumiters );
-    clazz->AddCmd( "i_GetQuickStepNumIterations_v", 'QSGI', n_qstepgetnumiters );
-    clazz->AddCmd( "fff_ImpulseToForce_ffff",   'ITOF', n_impulsetoforce );
-    clazz->AddCmd( "v_StepFast1_fi",            'STPF', n_stepfast1 );
+    clazz->AddCmd( "v_setgravity_fff",          'SGRV', n_setgravity );
+    clazz->AddCmd( "fff_getgravity_v",          'GGRV', n_getgravity );
+    clazz->AddCmd( "v_seterp_f",                'SERP', n_seterp );
+    clazz->AddCmd( "f_geterp_v",                'GERP', n_geterp );
+    clazz->AddCmd( "v_setcfm_f",                'SCFM', n_setcfm );
+    clazz->AddCmd( "f_getcfm_v",                'GCFM', n_getcfm );
+    clazz->AddCmd( "v_step_f",                  'STEP', n_step );
+    clazz->AddCmd( "v_quickstep_f",             'QSTP', n_quickstep );
+    clazz->AddCmd( "v_setquickstepnumiterations_i", 'QSSI', n_qstepsetnumiters );
+    clazz->AddCmd( "i_getquickstepnumiterations_v", 'QSGI', n_qstepgetnumiters );
+    clazz->AddCmd( "fff_impulsetoforce_ffff",   'ITOF', n_impulsetoforce );
+    clazz->AddCmd( "v_stepfast1_fi",            'STPF', n_stepfast1 );
+    clazz->AddCmd( "v_setautodisableflag_i",            'SADF', n_setautodisableflag );
+    clazz->AddCmd( "i_getautodisableflag_v",            'GADF', n_getautodisableflag );
+    clazz->AddCmd( "v_setautodisablelinearthreshold_f", 'SALT', n_setautodisablelinearthreshold );
+    clazz->AddCmd( "f_getautodisablelinearthreshold_v", 'GALT', n_getautodisablelinearthreshold );
+    clazz->AddCmd( "v_setautodisableangularthreshold_f", 'SAAT', n_setautodisableangularthreshold );
+    clazz->AddCmd( "f_getautodisableangularthreshold_v", 'GAAT', n_getautodisableangularthreshold );
+    clazz->AddCmd( "v_setautodisablesteps_i",            'SADS', n_setautodisablesteps );
+    clazz->AddCmd( "i_getautodisablesteps_v",            'GADS', n_getautodisablesteps );
+    clazz->AddCmd( "v_setautodisabletime_f",            'SADT', n_setautodisabletime );
+    clazz->AddCmd( "f_getautodisabletime_v",            'GADT', n_getautodisabletime );
     clazz->EndCmds();
 }
 
@@ -317,6 +339,217 @@ void n_stepfast1( void* slf, nCmd* cmd )
     self->StepFast1( stepSize, maxIterations );
 }
 
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    SetAutoDisableFlag
+
+    @input
+    i(0 or 1)
+
+    @output
+    v
+
+    @info
+    Set the AutoDisableFlag. Default is 0.
+*/
+static 
+void n_setautodisableflag( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    self->SetAutoDisableFlag( cmd->In()->GetI() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    GetAutoDisableFlag
+
+    @input
+    v
+
+    @output
+    i(0 or 1)
+
+    @info
+    Get the AutoDisableFlag. Default is 0.
+*/
+static 
+void n_getautodisableflag( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    cmd->Out()->SetI( self->GetAutoDisableFlag() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    SetAutoDisableLinearThreshold
+
+    @input
+    f(threshold)
+
+    @output
+    v
+
+    @info
+    Set the SetAutoDisableLinearThreshold. Default is 0.01.
+*/
+static 
+void n_setautodisablelinearthreshold( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    self->SetAutoDisableLinearThreshold( cmd->In()->GetF() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    GetAutoDisableLinearThreshold
+
+    @input
+    v
+
+    @output
+    f(threshold)
+
+    @info
+    Get the SetAutoDisableLinearThreshold. Default is 0.01.
+*/
+static 
+void n_getautodisablelinearthreshold( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    cmd->Out()->SetF( self->GetAutoDisableLinearThreshold() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    SetAutoDisableAngularThreshold
+
+    @input
+    f(threshold)
+
+    @output
+    v
+
+    @info
+    Set the SetAutoDisableAngularThreshold. Default is 0.01.
+*/
+static 
+void n_setautodisableangularthreshold( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    self->SetAutoDisableAngularThreshold( cmd->In()->GetF() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    GetAutoDisableAngularThreshold
+
+    @input
+    v
+
+    @output
+    f(threshold)
+
+    @info
+    Get the SetAutoDisableAngularThreshold. Default is 0.01.
+*/
+static 
+void n_getautodisableangularthreshold( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    cmd->Out()->SetF( self->GetAutoDisableAngularThreshold() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    SetAutoDisableSteps
+
+    @input
+    i(steps)
+
+    @output
+    v
+
+    @info
+    Set the SetAutoDisableSteps. Default is 10.
+*/
+static 
+void n_setautodisablesteps( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    self->SetAutoDisableSteps( cmd->In()->GetI() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    GetAutoDisableSteps
+
+    @input
+    v
+
+    @output
+    i(steps)
+
+    @info
+    Get the GetAutoDisableSteps. Default is 10.
+*/
+static 
+void n_getautodisablesteps( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    cmd->Out()->SetI( self->GetAutoDisableSteps() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    SetAutoDisableTime
+
+    @input
+    f(time)
+
+    @output
+    v
+
+    @info
+    Set the SetAutoDisableTime. Default is 0.
+*/
+static 
+void n_setautodisabletime( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    self->SetAutoDisableTime( cmd->In()->GetF() );
+}
+
+//------------------------------------------------------------------------------
+ /**
+    @cmd
+    GetAutoDisableTime
+
+    @input
+    v
+
+    @output
+    f(time)
+
+    @info
+    Get the GetAutoDisableTime. Default is 0.
+*/
+static 
+void n_getautodisabletime( void* slf, nCmd* cmd )
+{
+    nOpendeWorld* self = (nOpendeWorld*)slf;
+    cmd->Out()->SetF( self->GetAutoDisableTime() );
+}
+
 //------------------------------------------------------------------------------
 /**
     @param  ps          writes the nCmd object contents out to a file.
@@ -351,6 +584,31 @@ nOpendeWorld::SaveCmds( nPersistServer* ps )
         // SetQuickStepNumIterations
         cmd = ps->GetCmd( this, 'QSSI' );
         cmd->In()->SetI( this->GetQuickStepNumIterations() );
+        ps->PutCmd( cmd );
+
+        // SetAutoDisableFlag
+        cmd = ps->GetCmd( this, 'SADF' );
+        cmd->In()->SetI( this->GetAutoDisableFlag() );
+        ps->PutCmd( cmd );
+
+        // SetAutoDisableLinearThreshold
+        cmd = ps->GetCmd( this, 'SALT' );
+        cmd->In()->SetF( this->GetAutoDisableLinearThreshold() );
+        ps->PutCmd( cmd );
+
+        // SetAutoDisableAngularThreshold
+        cmd = ps->GetCmd( this, 'SAAT' );
+        cmd->In()->SetF( this->GetAutoDisableAngularThreshold() );
+        ps->PutCmd( cmd );
+
+        // SetAutoDisableSteps
+        cmd = ps->GetCmd( this, 'SADS' );
+        cmd->In()->SetI( this->GetAutoDisableSteps() );
+        ps->PutCmd( cmd );
+
+        // SetAutoDisableTime
+        cmd = ps->GetCmd( this, 'SADT' );
+        cmd->In()->SetF( this->GetAutoDisableTime() );
         ps->PutCmd( cmd );
 
         return true;
