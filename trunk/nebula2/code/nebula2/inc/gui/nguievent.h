@@ -56,6 +56,8 @@ public:
     Type GetType() const;
     /// convert event type to string
     static const char* TypeToString(Type t);
+    /// convert string to event type
+    static nGuiEvent::Type StringToType(const char* str);
 
 private:
     nRef<nGuiWidget> refWidget;
@@ -152,6 +154,52 @@ nGuiEvent::TypeToString(Type t)
         case DialogOk:         return "DialogOk";
         default:               return "InvalidType";
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Convert given string to type.
+
+    27-Aug-04   kims   created.
+*/
+inline
+nGuiEvent::Type
+nGuiEvent::StringToType(const char* str)
+{
+    if( strcmp(str, "ButtonDown") == 0)       return ButtonDown;
+    else
+    if( strcmp(str, "ButtonUp") == 0)         return ButtonUp;
+    else
+    if( strcmp(str, "RButtonDown") == 0)      return RButtonDown;
+    else
+    if( strcmp(str, "RButtonUp") == 0)        return RButtonUp;
+    else
+    if( strcmp(str, "DoubleClick") == 0)      return DoubleClick;
+    else
+    if( strcmp(str, "Char") == 0)             return Char;
+    else
+    if( strcmp(str, "KeyDown") == 0)          return KeyDown;
+    else
+    if( strcmp(str, "KeyUp") == 0)            return KeyUp;
+    else
+    if( strcmp(str, "Show") == 0)             return Show;
+    else
+    if( strcmp(str, "Hide") == 0)             return Hide;
+    else
+    if( strcmp(str, "Action") == 0)           return Action;
+    else
+    if( strcmp(str, "Enabled") == 0)          return Enabled;
+    else
+    if( strcmp(str, "Disabled") == 0)         return Disabled;
+    else
+    if( strcmp(str, "SliderChanged") == 0)    return SliderChanged;
+    else
+    if( strcmp(str, "SelectionChanged") == 0) return SelectionChanged;
+    else
+    if( strcmp(str, "DialogCancel") == 0)     return DialogCancel;
+    else
+    if( strcmp(str, "DialogOk") == 0)         return DialogOk;
+    else                                      return InvalidType;
 }
 //------------------------------------------------------------------------------
 #endif
