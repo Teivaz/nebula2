@@ -4,11 +4,12 @@
 //  (c)2004 Kim, Hyoun Woo
 //---------------------------------------------------------------------------
 #include "export2/nmax.h"
-#include "pluginlibs/nmaxdlg.h"
-#include "pluginlibs/nmaxlogdlg.h"
+#include "export2/nmaxnotetrack.h"
 #include "export2/nmaxbones.h"
 #include "export2/nmaxutil.h"
 #include "export2/nmaxtransform.h"
+#include "pluginlibs/nmaxdlg.h"
+#include "pluginlibs/nmaxlogdlg.h"
 
 nMaxBoneManager* nMaxBoneManager::Singleton = 0;
 
@@ -155,7 +156,6 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
     interface.
 
 */
-//void nMaxBoneManager::BuildBoneList(int parentID, INode* node)
 void nMaxBoneManager::BuildBoneList(INode* node)
 {
     INode* sceneRoot = node;
@@ -193,6 +193,11 @@ void nMaxBoneManager::BuildBoneList(INode* node)
     {
         Bone bone = this->boneArray[i];
         n_maxlog(High, "%s ID:%d", bone.name.Get(), bone.id);
+
+        // build animation states.
+        INode* boneNode = bone.node;
+
+        noteTrack.GetAnimState(boneNode);
     }
 }
 
