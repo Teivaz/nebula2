@@ -39,25 +39,25 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     {
         nMeshLoader* meshLoader = 0;
         if (path.CheckExtension("n3d2"))
-    {
-            meshLoader = n_new nN3d2Loader;
-    }
-    else if (path.CheckExtension("nvx2"))
-    {
-            meshLoader = n_new nNvx2Loader;
+        {
+            meshLoader = n_new(nN3d2Loader);
+        }
+        else if (path.CheckExtension("nvx2"))
+        {
+            meshLoader = n_new(nNvx2Loader);
         }
         
         if (0 != meshLoader)
         {
             bool retval = this->LoadFile(fileServer, meshLoader, filename);
-            n_delete meshLoader;
+            n_delete(meshLoader);
             return retval;
-    }
-    else
-    {
-        n_printf("nMeshBuilder::Load(): unsupported file extension in '%s'\n", filename);
-        return false;
-    }
+        }
+        else
+        {
+            n_printf("nMeshBuilder::Load(): unsupported file extension in '%s'\n", filename);
+            return false;
+        }
     }
 }
 
@@ -146,7 +146,7 @@ nMeshBuilder::SaveNvx2(nFile* file)
     }
 
     // write mesh block
-    float* floatBuffer = n_new float[this->GetNumVertices() * vertexWidth];
+    float* floatBuffer = n_new_array(float, this->GetNumVertices() * vertexWidth);
     float* floatPtr = floatBuffer;
     int curVertexIndex;
     for (curVertexIndex = 0; curVertexIndex < numVertices; curVertexIndex++)
@@ -216,11 +216,11 @@ nMeshBuilder::SaveNvx2(nFile* file)
         }
     }
     file->Write(floatBuffer, this->GetNumVertices() * vertexWidth * sizeof(float));
-    delete[] floatBuffer;
+    n_delete_array(floatBuffer);
     floatBuffer = 0;
 
     // write index block
-    ushort* ushortBuffer = n_new ushort[this->GetNumTriangles() * 3];
+    ushort* ushortBuffer = n_new_array(ushort, this->GetNumTriangles() * 3);
     ushort* ushortPtr = ushortBuffer;
     int curTriangleIndex;
     for (curTriangleIndex = 0; curTriangleIndex < numTriangles; curTriangleIndex++)
@@ -233,13 +233,13 @@ nMeshBuilder::SaveNvx2(nFile* file)
         *ushortPtr++ = (ushort) i2;
     }
     file->Write(ushortBuffer, this->GetNumTriangles() * 3 * sizeof(ushort));
-    delete[] ushortBuffer;
+    n_delete_array(ushortBuffer);
     ushortBuffer = 0;
 
     // write edge block
     if (numEdges > 0)
     {
-        nMesh2::Edge* edgeBuffer = n_new nMesh2::Edge[numEdges];
+        nMesh2::Edge* edgeBuffer = n_new_array(nMesh2::Edge, numEdges);
         int curEdgeIndex;
         for (curEdgeIndex = 0; curEdgeIndex < numEdges; curEdgeIndex++)
         {
@@ -252,7 +252,7 @@ nMeshBuilder::SaveNvx2(nFile* file)
         }
         file->Write((ushort*)edgeBuffer, numEdges * sizeof(nMesh2::Edge));
         //DEBUG
-        delete[] edgeBuffer;
+        n_delete_array(edgeBuffer);
     }
 
     return true;
@@ -268,20 +268,20 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
 {
     n_assert(fileServer);
     n_assert(filename);
-    
+
     bool retval = false;
     nFile* file = fileServer->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "wb"))
     {
         retval = this->SaveNvx2(file);        
-    file->Close();
-    retval = true;
+        file->Close();
+        retval = true;
     }
     file->Release();
     return retval;
 }
-        
+
 //------------------------------------------------------------------------------
 /**
     Load mesh data with the provided nMeshLoader.
@@ -330,58 +330,47 @@ nMeshBuilder::LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const 
             Vertex vertex;
             if (vertexComponents & nMesh2::Coord)
             {
-                vertex.SetCoord(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
-                vertexPtr += 3;
+                vertex.SetCoord(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Normal)
             {
-                vertex.SetNormal(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
-                vertexPtr += 3;
+                vertex.SetNormal(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Uv0)
             {
-                vertex.SetUv(0, vector2(vertexPtr[0], vertexPtr[1]));
-                vertexPtr += 2;
+                vertex.SetUv(0, vector2(*vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Uv1)
             {
-                vertex.SetUv(1, vector2(vertexPtr[0], vertexPtr[1]));
-                vertexPtr += 2;
+                vertex.SetUv(1, vector2(*vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Uv2)
             {
-                vertex.SetUv(2, vector2(vertexPtr[0], vertexPtr[1]));
-                vertexPtr += 2;
+                vertex.SetUv(2, vector2(*vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Uv3)
             {
-                vertex.SetUv(3, vector2(vertexPtr[0], vertexPtr[1]));
-                vertexPtr += 2;
+                vertex.SetUv(3, vector2(*vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Color)
             {
-                vertex.SetColor(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
-                vertexPtr += 4;
+                vertex.SetColor(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Tangent)
             {
-                vertex.SetTangent(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
-                vertexPtr += 3;
+                vertex.SetTangent(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Binormal)
             {
-                vertex.SetBinormal(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
-                vertexPtr += 3;
+                vertex.SetBinormal(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::Weights)
             {
-                vertex.SetWeights(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
-                vertexPtr += 4;
+                vertex.SetWeights(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             if (vertexComponents & nMesh2::JIndices)
             {
-                vertex.SetJointIndices(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
-                vertexPtr += 4;
+                vertex.SetJointIndices(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
             }
             this->AddVertex(vertex);
         }
@@ -425,7 +414,7 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
 {
     n_assert(fileServer);
     n_assert(filename);
- 
+
     // sort triangles by group id and create a group map
     this->SortTriangles();
     nArray<Group> groupMap;
