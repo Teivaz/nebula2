@@ -12,7 +12,7 @@
 */
 Value* NebulaExport_cf(Value** arg_list, int count)
 {
-    Value* result;
+    //Value* result;
 
     return &ok;
 }
