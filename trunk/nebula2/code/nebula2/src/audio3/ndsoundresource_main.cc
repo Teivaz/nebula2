@@ -57,7 +57,7 @@ nDSoundResource::LoadResource()
         // create a static sound object
         if (refSoundServer->Create(&(this->dsSound), mangledPath, creationFlags, DS3DALG_DEFAULT, this->numTracks) == false)
         {
-            n_error("nDSoundServer::LoadResource(): Creating static sound '%s' failed!", mangledPath);
+            n_printf("nDSoundServer::LoadResource(): Creating static sound '%s' failed!\n", mangledPath);
             return false;
         }
         n_assert(this->dsSound);
@@ -69,7 +69,7 @@ nDSoundResource::LoadResource()
         int blockSize = (1<<18) / numNotifications;
         if (refSoundServer->CreateStreaming(&(this->dsSound), mangledPath, creationFlags, DS3DALG_DEFAULT, numNotifications, blockSize) == false)
         {
-            n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", mangledPath);
+            n_printf("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!\n", mangledPath);
             return false;
         }
         n_assert(this->dsSound);

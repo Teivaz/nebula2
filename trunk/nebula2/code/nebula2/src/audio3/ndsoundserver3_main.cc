@@ -288,7 +288,7 @@ bool nDSoundServer3::Create( nDSound3** ppSound3, LPTSTR strWaveFileName, DWORD 
         
         // It might also fail if hardware buffer mixing was requested
         // on a device that doesn't support it.
-        n_error("CreateSoundBuffer: Buffer too small");
+        n_printf("CreateSoundBuffer: Wave file must be mono for 3D control. or using ambient sound setting by 2D sound.\n");
                     
         goto LFail;
     }
@@ -302,7 +302,7 @@ bool nDSoundServer3::Create( nDSound3** ppSound3, LPTSTR strWaveFileName, DWORD 
         {
             if( FAILED( hr = m_pDS->DuplicateSoundBuffer( apDSBuffer[0], &apDSBuffer[i] ) ) )
             {
-                n_error("DuplicateSoundBuffer");
+                n_printf("DuplicateSoundBuffer");
                 goto LFail;
             }
         }
@@ -314,7 +314,7 @@ bool nDSoundServer3::Create( nDSound3** ppSound3, LPTSTR strWaveFileName, DWORD 
             hr = m_pDS->CreateSoundBuffer( &dsbd, &apDSBuffer[i], NULL );
             if( FAILED(hr) )
             {
-                n_error("CreateSoundBuffer");
+                n_printf("CreateSoundBuffer");
                 goto LFail;
             }
         }
@@ -345,7 +345,7 @@ bool nDSoundServer3::CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG u
     DWORD                dwDSBufferSize = NULL;
     nDSound_WavFmt*     pWaveFile      = NULL;
 
-    n_assert(0 == m_pDS);
+    n_assert(0 != m_pDS);
     n_assert(0 != pbData);
     n_assert(0 != ppSound);
     n_assert(dwNumBuffers > 1);
@@ -382,7 +382,7 @@ bool nDSoundServer3::CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG u
 
     if( FAILED( hr = m_pDS->CreateSoundBuffer( &dsbd, &apDSBuffer[0], NULL ) ) )
     {
-        n_error("CreateSoundBuffer");
+        n_printf("CreateSoundBuffer");
         goto LFail;
     }
 
@@ -395,7 +395,7 @@ bool nDSoundServer3::CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG u
         {
             if( FAILED( hr = m_pDS->DuplicateSoundBuffer( apDSBuffer[0], &apDSBuffer[i] ) ) )
             {
-                n_error("DuplicateSoundBuffer");
+                n_printf("DuplicateSoundBuffer");
                 goto LFail;
             }
         }
@@ -407,7 +407,7 @@ bool nDSoundServer3::CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG u
             hr = m_pDS->CreateSoundBuffer( &dsbd, &apDSBuffer[i], NULL );
             if( FAILED(hr) )
             {
-                n_error("CreateSoundBuffer");
+                n_printf("CreateSoundBuffer");
                 goto LFail;
             }
         }

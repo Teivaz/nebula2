@@ -107,7 +107,7 @@ nDSound3::Start()
     }
 
     // playback flags
-    int flags = DSBPLAY_TERMINATEBY_PRIORITY;
+    int flags = 0;//DSBPLAY_TERMINATEBY_PRIORITY;
     if (this->GetLooping() || this->GetStreaming())
     {
         flags |= DSBPLAY_LOOPING;
@@ -124,8 +124,11 @@ nDSound3::Start()
     else
     {
         // play as 3D sound (FIXME: hmm, no volume???
-        ds3DProps->dwInsideConeAngle = 10;
-        ds3DProps->dwOutsideConeAngle = 100;
+
+        // DSBPLAY_TERMINATEBY_PRIORITY
+        // Select the buffer that has the lowest priority of candidate buffers, as set in the call to Play.
+        // If this is combined with one of the other two flags, the other flag is used only to resolve ties.
+        flags |= DSBPLAY_TERMINATEBY_PRIORITY;
 
         hr = this->Play3D(ds3DProps, this->GetPriority(), flags, 0);
         if (FAILED(hr))
@@ -394,7 +397,7 @@ long nDSound3::Play( DWORD dwPriority, DWORD dwFlags, LONG lVolume, LONG lFreque
     BOOL    bRestored;
 
     if( m_apDSBuffer == NULL )
-        return false;
+        this->LoadResource();   // if sound resource not opened yet, do it
 
     LPDIRECTSOUNDBUFFER pDSB = GetFreeBuffer();
 
@@ -441,7 +444,7 @@ bool nDSound3::Play3D( LPDS3DBUFFER p3DBuffer, DWORD dwPriority, DWORD dwFlags, 
     DWORD   dwBaseFrequency;
 
     if( m_apDSBuffer == NULL )
-        return false;
+        this->LoadResource();   // if sound resource not opened yet, do it
 
     LPDIRECTSOUNDBUFFER pDSB = GetFreeBuffer();
     if( pDSB == NULL )
