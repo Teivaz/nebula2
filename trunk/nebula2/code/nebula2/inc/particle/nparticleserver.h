@@ -2,6 +2,9 @@
 #define N_PARTICLESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nParticleServer
+    @ingroup NebulaParticleSystem
+    @brief
     Particle subsystem server. Holds an array of all particles and all particle
     emitters in the world. Take care when updating them, the rendering is a
     function of the emitters.

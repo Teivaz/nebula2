@@ -1,7 +1,11 @@
 #ifndef N_PARTICLEEMITTER_H
 #define N_PARTICLEEMITTER_H
 //------------------------------------------------------------------------------
-/**    
+/**
+    @class nParticleEmitter
+    @ingroup NebulaParticleSystem
+    @brief
+
     (C) 2003 RadonLabs GmbH
 */
 

@@ -2,6 +2,10 @@
 #define N_PARTICLE_H
 //------------------------------------------------------------------------------
 /**    
+    @class nParticle
+    @ingroup NebulaParticleSystem
+    @brief
+
     (C) 2003 RadonLabs GmbH
 */
 
