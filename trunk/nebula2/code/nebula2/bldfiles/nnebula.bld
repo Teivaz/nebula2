@@ -27,7 +27,8 @@ begintarget nnebula
         nswingshapenode nwindowhandler nwin32windowhandler
         nmousecursor nmesharray ninstancestream
         nkeyanimator ntransformcurveanimator nuvanimator
-        nprefserver nwin32prefserver nhdrsceneserver nmrtsceneserver
+        nprefserver nwin32prefserver 
+        nhdrsceneserver nstdsceneserver nmrtsceneserver
         nlocaleserver tinyxml xml
     }
     setbundles {

@@ -11,7 +11,7 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#include "scene/nsceneserver.h"
+#include "scene/nstdsceneserver.h"
 #include "kernel/nautoref.h"
 #include "variable/nvariable.h"
 #include "gfx2/nshaderparams.h"
@@ -23,7 +23,7 @@ class nShader2;
 class nMesh2;
 
 //------------------------------------------------------------------------------
-class nMRTSceneServer : public nSceneServer
+class nMRTSceneServer : public nStdSceneServer
 {
 public:
     /// constructor
@@ -34,8 +34,6 @@ public:
     virtual bool BeginScene(const matrix44& viewer);
     /// render the scene
     virtual void RenderScene();
-    /// present the scene
-    virtual void PresentScene();
     /// enable/disable frame compositing
     void SetCompositingEnabled(bool b);
     /// get compositing enabled state
@@ -54,17 +52,13 @@ public:
     /// get color balance
     const vector4& GetBalance() const;
 
-private:
+protected:
     /// initialize required resources
     bool LoadResources();
     /// unload resources
     void UnloadResources();
     /// check if resources are valid
     bool AreResourcesValid();
-    /// do the render path rendering
-    void DoRenderPath();
-    /// render shadow
-    void RenderShadow();
     /// perform the final frame compositing
     void DoCompositing();
     

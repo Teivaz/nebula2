@@ -13,7 +13,7 @@
 #include "scene/nshadownode.h"
 #include "scene/nlightnode.h"
 
-nNebulaScriptClass(nMRTSceneServer, "nsceneserver");
+nNebulaScriptClass(nMRTSceneServer, "nstdsceneserver");
 
 //------------------------------------------------------------------------------
 /**
@@ -60,7 +60,7 @@ nMRTSceneServer::AreResourcesValid()
             {
                 valid = false;
             }
-            if ((!(this->quadMesh.isvalid() && this->quadMesh->IsValid()) || 
+            if ((!(this->quadMesh.isvalid() && this->quadMesh->IsValid()) ||
                 (this->quadMesh->GetRefillBuffersMode() == nMesh2::NeededNow)))
             {
                 valid = false;
@@ -187,62 +187,6 @@ nMRTSceneServer::LoadResources()
 
 //------------------------------------------------------------------------------
 /**
-*/
-void
-nMRTSceneServer::RenderShadow()
-{
-    nShadowServer* shadowServer = this->refShadowServer.get();
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-
-    // for lights in light array
-    int numLights = this->lightArray.Size();
-    if (numLights > 0)
-    {
-        //begin shadow scene
-        if (this->refShadowServer->BeginScene()) // is shadow enabled?
-        {
-            //sort shadow nodes by shadow caster geometry
-            // TODO
-
-            int numLights = 1; //FIXME: only render the 1st light in the moment
-            int lightIndex;
-            for(lightIndex = 0; lightIndex < numLights; lightIndex++)
-            {
-                // get light
-                Group& lightGroup = this->groupArray[this->lightArray[lightIndex]];
-                nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
-                
-                // TODO: get light position in world space (without gfx server)
-                lightNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
-                vector3 lightPosition(gfxServer->GetTransform(nGfxServer2::Light).pos_component());
-                
-                // begin light
-                this->refShadowServer->BeginLight(lightNode->GetType(), lightPosition);
-            
-                // nShadowNode* prevShadowNode = 0;
-                // for shapes in shadow array
-                int numShapes = this->shadowArray.Size();
-                int shapeIndex;
-                for (shapeIndex = 0; shapeIndex < numShapes; shapeIndex++)
-                {
-                    // get shadow node
-                    Group& shapeGroup = this->groupArray[shadowArray[shapeIndex]];
-                    nShadowNode* shadowNode = (nShadowNode*) shapeGroup.sceneNode;                    
-                    
-                    // render the instance
-                    shadowNode->RenderShadow(this, shapeGroup.renderContext, shapeGroup.modelTransform);
-                    this->dbgNumInstances->SetI(this->dbgNumInstances->GetI() + 1);
-                }
-                this->refShadowServer->EndLight();
-            }            
-            // end scene (render shadow plane)
-            this->refShadowServer->EndScene();
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Prepare rendering & check if it can be done
 */
 bool
@@ -274,7 +218,7 @@ nMRTSceneServer::BeginScene(const matrix44& invView)
         this->dbgNumInstances->SetI(0);
     }
     return this->inBeginScene;
-}         
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -288,139 +232,15 @@ nMRTSceneServer::BeginScene(const matrix44& invView)
 void
 nMRTSceneServer::RenderScene()
 {
+    nStdSceneServer::RenderScene();
+
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-
-    // make sure node resources are loaded
-    this->ValidateNodeResources();
-
-    // split nodes into shapes and lights
-    this->SplitNodes(FOURCC('colr'));
-
-    // sort shape nodes for optimal rendering
-    this->SortNodes();
-
-    gfxServer->Clear(nGfxServer2::AllBuffers, this->bgColor.x, this->bgColor.y, this->bgColor.z, this->bgColor.w, 1.0f, 0);
-    this->DoRenderPath();
-    this->RenderShadow();
 
     // if compositing enabled, compose-blit render buffer to back buffer
     if (this->compositingEnabled && (gfxServer->GetFeatureSet() >= nGfxServer2::DX9))
     {
         gfxServer->EndScene();
-        this->DoCompositing();        
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This finalizes rendering and presents the scene to the user.
-*/
-void
-nMRTSceneServer::PresentScene()
-{
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    gfxServer->DrawTextBuffer();
-    gfxServer->EndScene();
-    gfxServer->PresentScene();
-}
-
-//------------------------------------------------------------------------------
-/**
-    This implements the complete render path scene rendering. A render
-    path is made of a shader hierarchy of passes, phases and sequences, designed
-    to eliminate redundant shader state switches as much as possible.
-
-    FIXME FIXME FIXME:
-    Implement phase SORTING and LIGHTING hints!
-        
-*/
-void
-nMRTSceneServer::DoRenderPath()
-{
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-
-    // apply lighting
-    // (NOTE: a more fine grained lighting model should set lights
-    // on a per-shape level(?) by implementing light links between
-    // lights and the shapes they are influencing
-    int numLights = this->lightArray.Size();
-    int i;
-    for (i = 0; i < numLights; i++)
-    {
-        const Group& lightGroup = this->groupArray[this->lightArray[0]];
-        lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
-    }
-
-    // for each scene pass...
-    uint numPasses = this->renderPath.GetNumPasses();
-    uint passIndex;
-    for (passIndex = 0; passIndex < numPasses; passIndex++)
-    {
-        this->renderPath.BeginPass(passIndex);
-
-        // for each phase in scene pass...
-        uint numPhases = this->renderPath.GetNumPhases();
-        uint phaseIndex;
-        for (phaseIndex = 0; phaseIndex < numPhases; phaseIndex++)
-        {
-            this->renderPath.BeginPhase(phaseIndex);
-            nFourCC shaderFourCC = renderPath.GetPhase().GetFourCC();
-
-            // for each sequence in pass...
-            uint numSeqs = this->renderPath.GetNumSequences();
-            uint seqIndex;
-            for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
-            {
-                // check if there is anything to render for the next sequence shader at all
-                const nRenderPath::Sequence& seq = this->renderPath.GetSequence(seqIndex);
-                nShader2* curShader = seq.GetShader();
-
-                int bucketIndex = curShader->GetShaderIndex();
-                const nArray<ushort>& shapeArray = this->shapeBucket[bucketIndex];
-                int numShapes = shapeArray.Size();
-                if (numShapes > 0)
-                {
-                    nShader2* shd = this->renderPath.GetSequenceShader(seqIndex);
-                    uint seqNumPasses = shd->Begin(false);
-                    uint seqPassIndex;
-                    for (seqPassIndex = 0; seqPassIndex < seqNumPasses; seqPassIndex++)
-                    {
-                        shd->BeginPass(seqPassIndex);
-
-                        // for each shape in bucket
-                        int shapeIndex;
-                        nMaterialNode* prevShapeNode = 0;
-                        for (shapeIndex = 0; shapeIndex < numShapes; shapeIndex++)
-                        {
-                            const Group& shapeGroup = this->groupArray[shapeArray[shapeIndex]];
-                            nMaterialNode* shapeNode = (nMaterialNode*) shapeGroup.sceneNode;
-                            if (shapeNode != prevShapeNode)
-                            {
-                                // start a new instance set
-                                shapeNode->ApplyShader(shaderFourCC, this);
-                                shapeNode->ApplyGeometry(this);
-                                this->dbgNumInstanceGroups->SetI(this->dbgNumInstanceGroups->GetI() + 1);
-                            }
-                            prevShapeNode = shapeNode;
-                        
-                            // set modelview matrix for the shape
-                            gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
-
-                            // set per-instance shader parameters
-                            shapeNode->RenderShader(shaderFourCC, this, shapeGroup.renderContext);
-
-                            // finally, render!
-                            shapeNode->RenderGeometry(this, shapeGroup.renderContext);
-                            this->dbgNumInstances->SetI(this->dbgNumInstances->GetI() + 1);
-                        }
-                        shd->EndPass();
-                    }
-                    shd->End();
-                }
-            }
-            this->renderPath.EndPhase();
-        }
-        this->renderPath.EndPass();
+        this->DoCompositing();
     }
 }
 

@@ -13,6 +13,7 @@
 #include "scene/nsceneserver.h"
 #include "kernel/nautoref.h"
 #include "variable/nvariable.h"
+#include "misc/nwatched.h"
 
 class nTexture2;
 class nShader2;
@@ -33,18 +34,21 @@ public:
     /// present the scene
     virtual void PresentScene();
 
-private:
+protected:
     /// initialize required resources
     bool LoadResources();
     /// unload resources
     void UnloadResources();
     /// check if resources are valid
     bool AreResourcesValid();
-    /// render shape objects in scene
-    void RenderShapes(nFourCC shaderFourCC);
-    /// render light/shape interaction for all lit shapes
-    void RenderLightShapes(nFourCC shaderFourCC);
+    /// do the render path rendering
+    void DoRenderPath();
+    /// render shadow
+    void RenderShadow();
+
+    nWatched dbgNumInstanceGroups;
+    nWatched dbgNumInstances;
 };
+
 //------------------------------------------------------------------------------
 #endif
-
