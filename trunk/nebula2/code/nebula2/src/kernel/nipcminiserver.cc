@@ -67,8 +67,15 @@ bool nIpcMiniServer::Listen()
             n_printf("client %d: connection accepted, socket %d.\n", this->clientId, this->rcvrSocket);
 
             // put the socket into nonblocking mode
-            u_long trueAsUlong = 1;
-            ioctlsocket(this->rcvrSocket, FIONBIO, &trueAsUlong);
+            #if defined(__WIN32__)
+                u_long trueAsUlong = 1;
+                ioctlsocket(this->rcvrSocket, FIONBIO, &trueAsUlong);
+            #elif defined(__LINUX__) || defined(__MACOSX__)
+                int flags;
+                flags = fcntl(this->rcvrSocket, F_GETFL);
+                flags |= O_NONBLOCK;
+                fcntl(this->rcvrSocket, F_SETFL, flags);
+            #endif
             retval = true;
 
             // set the connection status to false, this will only be set to true
@@ -178,7 +185,7 @@ nIpcMiniServer::Poll()
                     this->ipcServer->msgList.Unlock();
                     this->ipcServer->msgList.SignalEvent();
                 }
-            } while (curString = msgBuffer.GetNextString());
+            } while ((curString = msgBuffer.GetNextString()));
         }
         return this->isConnected;
     }

@@ -60,14 +60,27 @@ nIpcPeer::nIpcPeer(nIpcAddress* selfAddr, int peerFlags)
         // enable/disable blocking mode on the receiver socket
         if (peerFlags & Blocking)
         {
-            u_long falseAsUlong = 0;
-            res = ioctlsocket(this->recvSocket, FIONBIO, &falseAsUlong);
+            #if defined(__WIN32__)
+                u_long falseAsUlong = 0;
+                res = ioctlsocket(this->recvSocket, FIONBIO, &falseAsUlong);
+            #elif defined(__LINUX__) || defined(__MACOSX__)
+                int flags;
+                flags = fcntl(this->recvSocket, F_GETFL);
+                flags |= O_NONBLOCK;
+                res = fcntl(this->recvSocket, F_SETFL, flags);
+            #endif
             n_assert(0 == res);
         }
         else
         {
-            u_long trueAsUlong = 1;
-            res = ioctlsocket(this->recvSocket, FIONBIO, &trueAsUlong);
+            #if defined(__WIN32__)
+                u_long trueAsUlong = 1;
+                res = ioctlsocket(this->recvSocket, FIONBIO, &trueAsUlong);
+            #elif defined(__LINUX__) || defined(__MACOSX__)
+                int flags;
+                flags = fcntl(this->recvSocket, F_GETFL);
+                res = fcntl(this->recvSocket, F_SETFL, flags & ~O_NONBLOCK);
+            #endif
             n_assert(0 == res);
         }
 
@@ -141,7 +154,7 @@ nIpcPeer::ReceiveFrom(nIpcBuffer& msg, nIpcAddress& fromAddr)
 {
     n_assert(this->recvSocket != INVALID_SOCKET);
     sockaddr_in from;
-    int fromSize = sizeof(from);
+    socklen_t fromSize = sizeof(from);
     int result;
     result = recvfrom(this->recvSocket, msg.GetPointer(), msg.GetMaxSize(), 0, (sockaddr*) &from, &fromSize);
     if (result > 0)

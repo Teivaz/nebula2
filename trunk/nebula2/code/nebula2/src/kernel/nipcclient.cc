@@ -54,14 +54,27 @@ nIpcClient::ApplyBlocking(bool b)
 {
     if (b)
     {
-        u_long falseAsUlong = 0;
-        int res = ioctlsocket(this->sock, FIONBIO, &falseAsUlong);
+        #ifdef __WIN32__
+            u_long falseAsUlong = 0;
+            int res = ioctlsocket(this->sock, FIONBIO, &falseAsUlong);
+        #elif defined(__LINUX__) || defined(__MACOSX__)
+            int flags;
+            flags = fcntl(this->sock, F_GETFL);
+            flags |= O_NONBLOCK;
+            int res = fcntl(this->sock, F_SETFL, flags);
+        #endif
         n_assert(0 == res);
     }
     else
     {
-        u_long trueAsUlong = 1;
-        int res = ioctlsocket(this->sock, FIONBIO, &trueAsUlong);
+        #ifdef __WIN32__
+            u_long trueAsUlong = 1;
+            int res = ioctlsocket(this->sock, FIONBIO, &trueAsUlong);
+        #elif defined(__LINUX__) || defined(__MACOSX__)
+            int flags;
+            flags = fcntl(this->sock, F_GETFL);
+            int res = fcntl(this->sock, F_SETFL, flags & ~O_NONBLOCK);
+        #endif
         n_assert(0 == res);
     }
 }
@@ -215,7 +228,7 @@ nIpcClient::Receive(nIpcBuffer& msg)
     else
     {
         // either an error occured, or the method would block
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        if (N_SOCKET_LAST_ERROR == N_EWOULDBLOCK)
         {
             msg.SetSize(0);
         }
