@@ -12,7 +12,10 @@ beginmodule nmaxtoolbox
     settype cpp
     setplatform win32
     setdir export2
-    setfiles { dummy.cpp }
+    setfiles { 
+        dummy.cpp 
+        nmaxtoolbox
+    }
 endmodule
 #-------------------------------------------------------------------------------
 begintarget nmaxtoolbox
@@ -26,6 +29,7 @@ begintarget nmaxtoolbox
         nmaxdlg
         nmaxutilityobj
         nmaxexport2
+        nmaxoptions
         nmaxscene
         nmaxnode
         nmaxmesh
@@ -61,15 +65,10 @@ beginworkspace nmaxtoolbox
       nmaxtoolbox
       nkernel 
       nnebula
-      ndinput8
-      ndirect3d9
-      ndsaudioserver3
-      ndshow
-      ngui
       ntoollib
       microtcl
       npythonserver
-      napplication
+      nlua
    }
 endworkspace
 #-------------------------------------------------------------------------------
