@@ -24,7 +24,7 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("i_parsedirectory_s", 'PRSD', n_parsedirectory);
+    cl->AddCmd("i_parsedirectory_ss", 'PRSD', n_parsedirectory);
     cl->EndCmds();
 }
 
@@ -34,7 +34,7 @@ n_initcmds(nClass* cl)
     parsedirectory
 
     @input
-    s(AbsDirName)
+    s(AbsDirName) s(Extension, usually npk)
 
     @output
     i(NumberOfNpkFilesInDir)
@@ -48,6 +48,8 @@ void
 n_parsedirectory(void* slf, nCmd* cmd)
 {
     nNpkFileServer* self = (nNpkFileServer*) slf;
-    cmd->Out()->SetI(self->ParseDirectory(cmd->In()->GetS()));
+    const char* s0 = cmd->In()->GetS();
+    const char* s1 = cmd->In()->GetS();
+    cmd->Out()->SetI(self->ParseDirectory(s0, s1));
 }
 
