@@ -21,8 +21,8 @@
 global includePath
 set headerPrefix "../inc/"
 
-source "$env(RL_HOME)/bin/util.tcl"
-source "$env(RL_HOME)/bin/makedepend.tcl"
+source "$home/bin/util.tcl"
+source "$home/bin/makedepend.tcl"
 
 #--------------------------------------------------------------------
 #   structs
@@ -630,7 +630,7 @@ proc dumptargets { } {
 #
 #   Generate the global Nebula classes.toc file from all
 #   package targets. Expects the toc file's complete path
-#   as argument (i.e. $env(RL_HOME)/bin/win32/classes.toc)
+#   as argument (i.e. $home/bin/win32/classes.toc)
 #   
 #   09-Oct-02   floh    complete rewrite
 #--------------------------------------------------------------------
@@ -879,11 +879,11 @@ global num_tars
 #   Workspace files.
 #====================================================================
 #vc7
-source $env(RL_HOME)/bin/makesln.tcl
+source $home/bin/makesln.tcl
 #unix
-source $env(RL_HOME)/bin/makeunix.tcl
+source $home/bin/makeunix.tcl
 #vc6
-source $env(RL_HOME)/bin/makedsw.tcl
+source $home/bin/makedsw.tcl
 
 #TODO:
 #macosx and other build system script includes

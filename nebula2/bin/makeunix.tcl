@@ -171,7 +171,7 @@ proc gen_exe_unix {target cid} {
     global e_pre e_post l_pre l_post o_pre o_post
     
     set t [findtargetbyname $target]
-
+    
     # create a local pkg_ file with Nebula module declarations
     set component_list [gen_component_list $target]
     gen_package_source $target $component_list
@@ -334,7 +334,7 @@ proc gen_obj_unix {module cid} {
 #   write the end of the Makefile
 #--------------------------------------------------------------------
 proc gen_makefile { } {
-    global RL_HOME
+    global home
     
     global tar
     global num_tars
@@ -456,12 +456,12 @@ proc gen_makefile { } {
     puts $cid "# Generate docs"
     puts $cid "#----------------------------------------------------------"
     puts $cid "doc:"
-    puts $cid "\tpython \$(RL_HOME)/bin/autodoc.py"
-    puts $cid "\tcd \$(RL_HOME)/code/nebula2/doxycfg; doxygen nebula2.cfg"
+    puts $cid "\tpython \$home/bin/autodoc.py"
+    puts $cid "\tcd \$home/code/nebula2/doxycfg; doxygen nebula2.cfg"
     puts $cid ""
     puts $cid "ifeq (\$(N_PLATFORM),__WIN32__)"
     puts $cid "chm: doc"
-    puts $cid "\tcd \$(RL_HOME)/doc/doxydoc/nebula2/html/; \$(CHM_COMPILER) index.hhp"
+    puts $cid "\tcd \$home/doc/doxydoc/nebula2/html/; \$(CHM_COMPILER) index.hhp"
     puts $cid "endif"
 
     #write end of Makefile

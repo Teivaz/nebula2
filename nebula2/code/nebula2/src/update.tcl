@@ -3,7 +3,9 @@
 #   ==========
 #--------------------------------------------------------------------
 
-source $env(RL_HOME)/bin/makemake.tcl
+set home [file join [file dir [info script]] .. .. .. ]
+
+source $home/bin/makemake.tcl
 
 # set config variables
 set headerPrefix "..\\inc"

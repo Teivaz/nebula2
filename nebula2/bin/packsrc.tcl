@@ -69,7 +69,7 @@ return
 #--------------------------------------------------------------------------------
 # main
 #--------------------------------------------------------------------------------
-set home $env(RL_HOME)
+set home [file join [file dir [info script]] .. .. .. ]
 cd  $home
 set distributiondir "$home/temp/dist"
 
