@@ -35,7 +35,7 @@ nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderCont
         ProcessMap();
     }
 
-    nGfxServer2* gfx_server = refGfxServer.get();
+    nGfxServer2* gfx_server = refGfxServer;
 
     // Set visible
     for (int j = 0; j < numBlocks; ++j)
@@ -87,7 +87,7 @@ nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderCont
 int 
 nMapNode::Visualize()
 {
-    nGfxServer2* gfx_server = refGfxServer.get();
+    nGfxServer2* gfx_server = refGfxServer;
     if (NULL != mapQuadtree)
     {
         mapQuadtree->Visualize(gfx_server);

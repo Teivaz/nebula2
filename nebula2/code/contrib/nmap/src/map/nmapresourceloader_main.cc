@@ -25,22 +25,6 @@ nMapResourceLoader::nMapResourceLoader()
 nMapResourceLoader::~nMapResourceLoader()
 {
 }
-//------------------------------------------------------------------------------
-/**
-    @brief Forces the generic mesh loader to handle the basic initialization
-    @return     the valid nMesh2 (with empty buffers), or 0 if init fails
-*/
-nMesh2* 
-InitTriStrip(nResource* pRes)
-{  
-    nMesh2* retVal = 0;
-    nString oldFilename = pRes->GetFilename();
-    pRes->SetFilename("");
-    if (pRes->Load() && pRes->IsValid()) 
-        retVal = static_cast<nMesh2*>(pRes);
-    pRes->SetFilename(oldFilename);
-    return retVal;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -59,11 +43,8 @@ Base Load() function for the nMapResourceLoader
 bool 
 nMapResourceLoader::Load(const char *cmdString, nResource *callingResource)
 {
-    nMesh2* meshTriStrip = InitTriStrip(callingResource);
-    if(!meshTriStrip)
-    {
-        return false;
-    }
+    nMesh2* meshTriStrip = static_cast<nMesh2*>(callingResource);
+    n_verify(meshTriStrip->CreateEmpty());
 
     nString stringParser(cmdString);
     nAutoRef<nMapNode> map = stringParser.GetFirstToken(SEPARATOR);

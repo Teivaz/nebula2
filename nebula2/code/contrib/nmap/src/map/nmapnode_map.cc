@@ -20,12 +20,11 @@ nMapNode::ProcessMap()
     n_assert(true == refMap.isvalid());
 
     // Get or derive constants
-    nMap* map = refMap.get();
-    map->LoadMap();
-    int map_size = map->GetDimension();
+    this->refMap->LoadMap();
+    int map_size = this->refMap->GetDimension();
 
     // Figure out detail scale from detail size
-    detailScale = map_size * map->GetGridInterval() / detailSize;
+    detailScale = map_size * this->refMap->GetGridInterval() / detailSize;
 
     // Dodgy version of doing log(blockSize)/log(2) using logical shift,
     // could not help it so shoot me
@@ -40,26 +39,11 @@ nMapNode::ProcessMap()
     // Initialise octree
     if (!mapQuadtree)
     {
-        mapQuadtree = n_new MapQuadtree(refMap.get());
+        mapQuadtree = n_new MapQuadtree(refMap);
     }
     else // Remove existing
     {
-        if (blockArray)
-        {
-            for (int j = 0; j < numBlocks; ++j)
-            {
-                for (int i = 0; i < numBlocks; ++i)
-                {
-                    MapBlock* block = blockArray[j][i];
-                    MapQuadElement* oct_elm = block->GetQuadElement();
-                    mapQuadtree->RemElement(oct_elm);
-
-                    n_delete block;
-                }
-                n_delete[] blockArray[j];
-            }
-            n_delete[] blockArray;
-        }
+        DeleteBlocks();
     }
 
     // Create blocks
@@ -72,7 +56,7 @@ nMapNode::ProcessMap()
         for (int i = 0; i < numBlocks; ++i)
         {
             MapBlock* block = n_new MapBlock(this);
-            block->Init(this->resourceLoader, refGfxServer.get(), i + j*numBlocks, i, j);
+            block->Init(this->resourceLoader, refGfxServer, i + j*numBlocks, i, j);
 
             MapQuadElement* oct_elm = block->GetQuadElement();
             mapQuadtree->AddElement(oct_elm, block->GetBoundingBox().vmin, block->GetBoundingBox().vmax);
@@ -159,4 +143,26 @@ nMapNode::CalculateCFactor()
     float T = 2 * pixelError / float(v_res);
 
     return A/T;
+}
+
+void
+nMapNode::DeleteBlocks()
+{
+    if (blockArray)
+    {
+        for (int j = 0; j < numBlocks; ++j)
+        {
+            for (int i = 0; i < numBlocks; ++i)
+            {
+                MapBlock* block = blockArray[j][i];
+                MapQuadElement* oct_elm = block->GetQuadElement();
+                mapQuadtree->RemElement(oct_elm);
+
+                n_delete block;
+            }
+            n_delete[] blockArray[j];
+        }
+        n_delete[] blockArray;
+        blockArray = 0;
+    }
 }
