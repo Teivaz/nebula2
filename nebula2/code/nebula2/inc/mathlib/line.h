@@ -24,22 +24,27 @@ public:
 
     //--- minimal distance of point to line -------------------------
 /*
-    float distance(const vector2&) {
+    float distance(const vector2&)
+    {
         return 0.0f;
     };
 */
 
-    vector2& start(void) {
+    const vector2& start(void) const
+    {
         return b;
     };
-    vector2 end(void) {
+    vector2 end(void) const
+    {
         return (b+m);
     };
-    float len(void) {
+    float len(void) const
+    {
         return m.len();
     };
     //--- get 3d point on line given t ------------------------------
-    vector2 ipol(const float t) {
+    vector2 ipol(const float t) const
+    {
         return vector2(b + m*t);
     };
 };
@@ -62,7 +67,8 @@ public:
     line3(const vector3& v0, const vector3& v1) : b(v0), m(v1-v0) {};
     line3(const line3& l) : b(l.b), m(l.m) {};
 
-    void set(const vector3& v0, const vector3& v1) {
+    void set(const vector3& v0, const vector3& v1)
+    {
         b = v0;
         m = v1-v0;
     };
@@ -78,6 +84,10 @@ public:
     {
         return m.len();
     };
+    float len_squared(void) const
+    {
+        return m.lensquared();
+    }
     //--- minimal distance of point to line -------------------------
     float distance(const vector3& p) {
         vector3 diff(p-b);
@@ -94,7 +104,8 @@ public:
     };
 
     //--- get 3d point on line given t ------------------------------
-    vector3 ipol(const float t) {
+    vector3 ipol(const float t) const
+    {
         return vector3(b + m*t);
     };
 };
