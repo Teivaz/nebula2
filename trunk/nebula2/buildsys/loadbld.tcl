@@ -109,6 +109,9 @@ set current_file  ""
 #  nebula2/code/*/src
 #  nebula2/code/*/bldfiles
 #  nebula2/code/*/bldfiles/*
+#  nebula2/code/contrib/*/src
+#  nebula2/code/contrib/*/bldfiles
+#  nebula2/code/contrib/*/bldfiles/*
 #----------------------------------------------------------------------------
 proc loadbldfiles { } {
     global home
@@ -116,10 +119,20 @@ proc loadbldfiles { } {
     puts "\n****Loading bld files"
     puts "home = $home"
     set startdir "[string trim $home /]/code/"
+    set contribdir "[string trim $home /]/code/contrib/"
     
     puts "startdir = $startdir"
+    puts "contribdir = $contribdir"
 
     foreach ext [glob -nocomplain -directory $startdir */] {
+        set ext [string trim $ext '/']
+        puts "searching: $ext"
+        getpakdir $ext/src
+        
+        recursepakdir $ext/bldfiles
+    }
+    
+    foreach ext [glob -nocomplain -directory $contribdir */] {
         set ext [string trim $ext '/']
         puts "searching: $ext"
         getpakdir $ext/src

@@ -151,6 +151,25 @@ proc gen_filelists {i} {
             set mod($i,trunkdir) [lindex [file split $ext] end]
             break
         }
+        
+        # if current subdir is contrib search inside
+        if { [string compare contrib [lindex [file split $ext] end]] == 0 } {
+            foreach ext [glob -nocomplain -directory $startpath/code/contrib */] {
+                #ext will be the trunk path
+                set ext [string trim $ext '/']
+        
+                #need to search for $ext/inc/$dir or $ext/src/$dir directly
+                if { [file exists $ext/inc/$mod($i,dir)] && [file isdirectory $ext/inc/$mod($i,dir)]} {
+                    set mod($i,trunkdir) contrib/[lindex [file split $ext] end]
+                    break
+                }
+        
+                if { [file exists $ext/src/$mod($i,dir)] && [file isdirectory $ext/src/$mod($i,dir)]} {
+                    set mod($i,trunkdir) contrib/[lindex [file split $ext] end]
+                    break
+                }
+            }
+        }
     }
     
     # generate object file lists 
