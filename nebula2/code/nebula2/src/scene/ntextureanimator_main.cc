@@ -68,6 +68,7 @@ nTextureAnimator::AddTexture( const char* path )
 { 
     nRef<nTexture2> refTexture( this->refGfxServer->NewTexture( path ) );
     refTexture->SetFilename( path );
+    refTexture->Load();
     this->textureArray.PushBack( refTexture );
 }
 
