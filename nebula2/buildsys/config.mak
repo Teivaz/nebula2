@@ -199,7 +199,7 @@ ifeq ($(N_COMPILER),__GNUC__)
   TAR_OPT     = -o
   LIB_OPT     = -l
   LIB_OPT_POST= 
-  EXE         = .bin
+  EXE         = 
   OBJ         = .o
   DLL_PRE     = lib
   DLL_POST    = .so
