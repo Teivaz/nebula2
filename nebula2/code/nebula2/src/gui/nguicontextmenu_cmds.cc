@@ -9,13 +9,13 @@ static void n_addentry(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
-    nguiwidget
+    nguicontextmenu
     @cppclass
     nGuiContextMenu
     @superclass
-    nroot
+    nguiclientwindow
     @classinfo
-    Ancestor of all gui widgets.
+    A context menu.
 */
 void
 n_initcmds(nClass* cl)

@@ -10,11 +10,11 @@ static void n_getdragthreshold(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
-    nguiwidget
+    nguidragbox
     @cppclass
     nGuiDragBox
     @superclass
-    nroot
+    nguiwidget
     @classinfo
     A drag box widget.
 */
