@@ -4,8 +4,7 @@
 /**
     @class nProfiler
     @ingroup NebulaTimeManagement
-
-    A mini profiler class.
+    @brief nProfiler provides an easy way to measure time intervals.
 
     (C) 2002 RadonLabs GmbH
 */
