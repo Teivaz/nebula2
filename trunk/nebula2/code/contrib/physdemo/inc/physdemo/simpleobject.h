@@ -13,8 +13,8 @@
     (C) 2003    Megan Fox
 */
 #include "kernel/nroot.h"
+#include "mathlib/transform44.h"
 #include "scene/nrendercontext.h"
-#include "scene/nshapenode.h"
 
 #include "gui/nguitextlabel.h"
 
@@ -33,16 +33,15 @@ public:
     /// persistency
     virtual bool SaveCmds(nPersistServer* persistServer);
 
-    /// release method (to release all the referenced nRef's)
-    bool Release();
+    /// used to manipulate the object's transform (position, rotation, etc.)
+    transform44 Transform;
 
     /// variable handles for the render context
     nVariable::Handle timeHandle;
 
     // The object's render context
     nRenderContext renderContext;
-    // The root node of the object's nShapeNode hierarchy (usually only 1 node)
-    nRef<nShapeNode> refRootShapeNode;
+
     // The object's universal ID.
     int uID;
 
@@ -51,7 +50,7 @@ public:
     // The object's collision representation
     nRef<nOpendeGeom> refPhysGeom;
 
-    // Initialize this with the proper nGuiTextLabe pointer if the object is to have floaty text
+    // Initialize this with the proper nGuiTextLabel pointer if the object is to have floaty text
     nRef<nGuiTextLabel> refFloatyText;
     float textWidth, textHeight;
 };
