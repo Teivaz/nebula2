@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAudioServer3
+    @ingroup NebulaAudioSystem
 
     Audio subsystem 3 server.
     

@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nOpenALCore
-    @ingroup nOpenALGroup
+    @ingroup NOpenALDemoContribModule
 
     @brief
     @note 

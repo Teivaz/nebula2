@@ -39,7 +39,7 @@ class nSound3;
 //-----------------------------------------------------------------------------
 /**
     @class nOpenALServer
-    @ingroup nOpenALGroup
+    @ingroup NOpenALContribModule
 
     @brief
     @note 

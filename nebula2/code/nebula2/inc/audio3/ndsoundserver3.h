@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDSoundServer3
+    @ingroup NebulaDSAudioSystem
 
     nAudioServer3 implemention using DirectSound.
 

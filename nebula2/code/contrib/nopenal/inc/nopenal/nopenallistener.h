@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nOpenALListener3
+    @ingroup NOpenALContribModule
 
     Define listener properties for audio subsystem 3.
     

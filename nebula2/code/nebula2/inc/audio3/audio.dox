@@ -1,8 +1,12 @@
 /**
     @defgroup NebulaAudioSystem Nebula Audio System
-    @ingroup NebulaAudioSystem
 
     This section of the documentation covers Nebula audio system and it's
     subsystems.
 
+*/
+
+/**
+    @defgroup NebulaDSAudioSystem Nebula Direct Sound Audio System
+    @ingroup NebulaAudioSystem
 */
