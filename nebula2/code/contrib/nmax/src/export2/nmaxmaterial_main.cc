@@ -102,7 +102,9 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
                 }
             }
             else
-                ; //FIXME: multi material but no sub-material?
+            {
+                n_maxlog(Error, "multi material but no sub-material");
+            }
         }
         else 
         if (nMaxMaterial::Shell == materialType)
