@@ -28,6 +28,7 @@ struct gen_state;
 
 /**
  * @class nCLODChunkerNode
+ * @ingroup NCLODTerrainContribModule
  *
  * @classinfo Implements a node that will read in a heightfield and generate
  * the appropriate vertex chunks for use in a ChunkLOD renderer.

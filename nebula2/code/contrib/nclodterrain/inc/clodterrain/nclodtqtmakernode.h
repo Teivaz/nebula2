@@ -20,6 +20,7 @@ struct tqt_tile_layer;
 
 /**
  * @class nTQTMakerNode
+ * @ingroup NCLODTerrainContribModule
  *
  * @classinfo Implements a node that will read in an image and generate
  * a quadtree of images at various resolutions.

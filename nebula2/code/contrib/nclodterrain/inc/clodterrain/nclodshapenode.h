@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCLODShapeNode
-
+    @ingroup NCLODTerrainContribModule
     @brief Handles loading and rendering of ChunkedLOD terrain chunks
 */
 #include "scene/nmaterialnode.h"

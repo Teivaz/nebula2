@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
  *   @class nCLODTile
- *
+ *   @ingroup NCLODTerrainContribModule
  *   @brief nCLODTile manages the terrain texture resource applied to a specific terrain chunk
  */
 #include "resource/nresource.h"

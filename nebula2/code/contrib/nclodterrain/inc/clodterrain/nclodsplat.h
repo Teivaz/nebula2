@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCLODSplat
-    @ingroup nCLODTerrain
+    @ingroup NCLODTerrainContribModule
  */
 #include "resource/nresource.h"
 #include "gfx2/nmeshgroup.h"
