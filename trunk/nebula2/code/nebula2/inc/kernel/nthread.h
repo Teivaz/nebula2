@@ -29,8 +29,17 @@
 class nThread 
 {
 public:
+    /// thread priority levels
+    enum Priority
+    {
+        Low,
+        Normal,
+        High
+    };
+
     /// constructor
     nThread(int (N_THREADPROC *_thread_func)(nThread *),
+            Priority pri,
             int stack_size,
             void (*_wakeup_func)(nThread *),
             nThreadSafeList *_ext_msglist,

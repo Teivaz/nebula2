@@ -13,6 +13,7 @@
 #include "kernel/nroot.h"
 #include "util/nstack.h"
 #include "util/nhashlist.h"
+#include "kernel/nmutex.h"
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
@@ -27,13 +28,18 @@ class nRemoteServer;
 class nEnv;
 class nLogHandler;
 
-class nKernelServer 
+class nKernelServer
 {
 public:
     /// constructor
     nKernelServer();
     /// destructor
     ~nKernelServer();
+
+    /// take the kernel lock (to make the kernel multithreading safe)
+    void Lock();
+    /// release the kernel lock
+    void Unlock();
 
     /// add a class object to the kernel
     void AddClass(const char* superClassName, nClass* cl);
@@ -125,11 +131,33 @@ private:
     nLogHandler* curLogHandler;     // the current log handler
 
 #ifdef __NEBULA_MEM_MANAGER__
-    nEnv* varMemAlloc;                  // mem statistics
+    nEnv* varMemAlloc;              // mem statistics
     nEnv* varMemUsed;
     nEnv* varMemNumAlloc;
 #endif
+
+    nMutex mutex;                   // the kernel lock mutex
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nKernelServer::Lock()
+{
+    this->mutex.Lock();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nKernelServer::Unlock()
+{
+    this->mutex.Unlock();
+}
 
 //------------------------------------------------------------------------------
 /**
