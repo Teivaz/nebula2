@@ -83,6 +83,14 @@ public:
     void SetRenderOldestFirst(bool b);
     /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
+    /// scales the effect as a whole
+    void SetScale(float f);
+    /// scales the effect as a whole
+    float GetScale() const;
+    /// set whether particles, once created, follow the emitter if it moves
+    void SetParticlesFollowEmitter(bool b);
+    /// get whether particles, once created, follow the emitter if it moves
+    bool GetParticlesFollowEmitter() const;
 
     /// set one of the envelope curves
     void SetCurve(CurveType curveType, const nEnvelopeCurve& curve);
@@ -162,9 +170,10 @@ protected:
     nRef<nMesh2>               refEmitterMesh;
     int                        meshGroupIndex;
     bbox3                      box;
-    nFloat4 wind;
+    nFloat4                    wind;
 
     matrix44        matrix;                 ///< the world space matrix
+    float           scale;                  ///< the scale of the effect itself
  
     bool            alive;                  ///< is alive ?
     bool            active;                 ///< still emitting ?
@@ -179,11 +188,12 @@ protected:
     // emitter settings
     nTime           emissionDuration;       ///< how long shall be emitted ?
     bool            loop;                   ///< loop emitter ?
-    float           activityDistance;       ///< distance between viewer and emitter on witch emitter is active
+    float           activityDistance;       ///< distance between viewer and emitter beyond which emitter is inactive
     float           spreadAngle;            ///< angle of emitted particle cone
     float           birthDelay;             ///< maximum delay until particle starts to live
     float           startRotation;          ///< maximum start rotation angle of a new particle
     bool            renderOldestFirst;      ///< whether to render the oldest particles first or the youngest
+    bool            particlesFollowEmitter; ///< whether particles, once born, follow the emitter
 
     int             key;                    ///< unique key identifying the emitter
     static int      nextKey;
@@ -423,6 +433,7 @@ nParticleEmitter::SetRenderOldestFirst(bool b)
 {
     this->renderOldestFirst = b;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -431,6 +442,56 @@ bool
 nParticleEmitter::GetRenderOldestFirst() const
 {
     return this->renderOldestFirst;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nParticleEmitter::GetScale() const
+{
+    return this->scale;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nParticleEmitter::SetScale(float f)
+{
+    this->scale = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Whether particles, once born, follow the emitter.
+
+    Particles move about between their birth and death; this flag indicates
+    whether the movement occurs relative to their starting position, or
+    relative to the emitter's current position.  If the emitter is motionless,
+    these are equivalent and so the particlesFollowEmitter state is irrelevant.
+
+*/
+inline
+bool
+nParticleEmitter::GetParticlesFollowEmitter() const
+{
+    return this->particlesFollowEmitter;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Set whether particles follow the emitter around.
+
+    See GetParticlesFollowEmitter for details.
+*/
+inline
+void
+nParticleEmitter::SetParticlesFollowEmitter(bool b)
+{
+    this->particlesFollowEmitter = b;
 }
 
 //------------------------------------------------------------------------------
@@ -494,7 +555,7 @@ inline
 float
 nParticleEmitter::GetParticleScale(float pos) const
 {
-    return this->curves[ParticleScale].GetValue(pos);
+    return this->curves[ParticleScale].GetValue(pos) * this->scale;
 }
 
 //------------------------------------------------------------------------------

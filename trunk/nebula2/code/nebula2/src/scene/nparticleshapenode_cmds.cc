@@ -19,6 +19,10 @@ static void n_setstartrotation(void* slf, nCmd* cmd);
 static void n_getstartrotation(void* slf, nCmd* cmd);
 static void n_setrenderoldestfirst(void* slf, nCmd* cmd);
 static void n_getrenderoldestfirst(void* slf, nCmd* cmd);
+static void n_getglobalscale(void* slf, nCmd* cmd);
+static void n_setglobalscale(void* slf, nCmd* cmd);
+static void n_getparticlesfollownode(void* slf, nCmd* cmd);
+static void n_setparticlesfollownode(void* slf, nCmd* cmd);
 
 static void n_setemissionfrequency(void* slf, nCmd* cmd);
 static void n_getemissionfrequency(void* slf, nCmd* cmd);
@@ -77,6 +81,10 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getstartrotation_v", 'GSTR', n_getstartrotation);
     cl->AddCmd("v_setrenderoldestfirst_b", 'SROF', n_setrenderoldestfirst);
     cl->AddCmd("b_getrenderoldestfirst_v", 'GROF', n_getrenderoldestfirst);
+    cl->AddCmd("f_getglobalscale_v", 'GGSL', n_getglobalscale);
+    cl->AddCmd("v_setglobalscale_f", 'SGSL', n_setglobalscale);
+    cl->AddCmd("b_getparticlesfollownode_v", 'GPFN', n_getparticlesfollownode);
+    cl->AddCmd("v_setparticlesfollownode_b", 'SPFN', n_setparticlesfollownode);
 
     cl->AddCmd("v_setemissionfrequency_ffffffffi", 'SEFQ', n_setemissionfrequency);
     cl->AddCmd("ffffffffi_getemissionfrequency_v", 'GEFQ', n_getemissionfrequency);
@@ -263,6 +271,80 @@ n_setrenderoldestfirst(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     self->SetRenderOldestFirst(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getglobalscale
+    @input
+    v
+    @output
+    f(scale)
+    @info
+    Get the scale for the effect as a whole.
+*/
+static void
+n_getglobalscale(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    cmd->Out()->SetF(self->GetGlobalScale());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setglobalscale
+    @input
+    f(scale)
+    @output
+    v
+    @info
+    Set the scale for the effect as a whole.
+*/
+static void
+n_setglobalscale(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    self->SetGlobalScale(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getparticlesfollownode
+    @input
+    v
+    @output
+    b
+    @info
+    Get whether particle trajectories are interpreted in nodespace (true)
+    or worldspace (false).
+*/
+static void
+n_getparticlesfollownode(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    cmd->Out()->SetB(self->GetParticlesFollowNode());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setparticlesfollownode
+    @input
+    b
+    @output
+    v
+    @info
+    Set whether particle trajectories are interpreted in nodespace (true)
+    or worldspace (false).
+*/
+static void
+n_setparticlesfollownode(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    self->SetParticlesFollowNode(cmd->In()->GetB());
 }
 
 //------------------------------------------------------------------------------
@@ -1028,6 +1110,16 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
         //--- setrenderoldestfirst ---
         cmd = ps->GetCmd(this, 'SROF');
         cmd->In()->SetB(this->GetRenderOldestFirst());
+        ps->PutCmd(cmd);
+
+        //--- setglobalscale ---
+        cmd = ps->GetCmd(this, 'SGSL');
+        cmd->In()->SetF(this->GetGlobalScale());
+        ps->PutCmd(cmd);
+
+        //--- setparticlesfollownode ---
+        cmd = ps->GetCmd(this, 'SPFN');
+        cmd->In()->SetB(this->GetParticlesFollowNode());
         ps->PutCmd(cmd);
 
         return true;

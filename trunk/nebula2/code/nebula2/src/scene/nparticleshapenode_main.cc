@@ -22,7 +22,9 @@ nParticleShapeNode::nParticleShapeNode() :
     spreadAngle(0.0f),
     birthDelay(0.0f),
     emitterVarIndex(-1),
-    renderOldestFirst(true)
+    renderOldestFirst(true),
+    globalScale(1.0f),
+    particlesFollowNode(false)
 {
     this->SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
     int i;
@@ -95,6 +97,8 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetBirthDelay(this->birthDelay);
     emitter->SetStartRotation(this->startRotation);
     emitter->SetRenderOldestFirst(this->renderOldestFirst);
+    emitter->SetScale(this->globalScale);
+    emitter->SetParticlesFollowEmitter(this->particlesFollowNode);
     int curveType;
     for (curveType = 0; curveType < nParticleEmitter::CurveTypeCount; curveType++)
     {
