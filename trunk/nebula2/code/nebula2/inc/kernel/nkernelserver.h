@@ -91,7 +91,7 @@ public:
     /// add an extension class package to the kernel
     void AddPackage(void (*)());
     /// add a code module to the kernel
-    void AddModule(const char *, bool (*)(nClass *, nKernelServer *), void* (*)(void));
+    void AddModule(const char *, bool (*_init_func)(nClass *, nKernelServer *), void* (*_new_func)(void));
     /// get pointer to hard ref server
     nHardRefServer* GetHardRefServer() const;
     /// get pointer to file server
