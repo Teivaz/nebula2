@@ -226,7 +226,7 @@ nDirectory::GetEntryName()
     history:
      - 30-Jan-2002   peter    created
 */
-nDirectory::nEntryType 
+nDirectory::EntryType 
 nDirectory::GetEntryType()
 {
     n_assert(this->IsOpen());
