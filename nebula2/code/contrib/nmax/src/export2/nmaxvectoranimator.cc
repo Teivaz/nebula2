@@ -43,52 +43,58 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
 {
     nVectorAnimator* createdAnimator = NULL;
 
-    nShaderState::Param param = nShaderState::StringToParam(paramName);
-    if (param == nShaderState::InvalidParameter)
+    // the number of the keys in the control should be checked cause some of 
+    // the node has control even it has no animations.
+    if (control->NumKeys())
     {
-        n_maxlog(Error, "Invalid shader parameter for vector animator.");
-        return NULL;
-    }
-
-    // e.g. convert 'MatDiffuse' to 'matdiffuseanimator'
-    nString animatorName;
-    animatorName += paramName;
-    animatorName += "animator";
-    animatorName.ToLower();
-
-    createdAnimator = static_cast<nVectorAnimator*>(CreateNebulaObject("nvectoranimator", animatorName.Get()));
-
-    if (createdAnimator)
-    {
-        int numFrames = nMaxInterface::Instance()->GetNumFrames();;
-
-        // retrieves sampled keys from the control.
-        nArray<nMaxSampleKey> sampleKeyArray;
-        
-        int sampleRate;
-        sampleRate = nMaxOptions::Instance()->GetSampleRate();
-
-        nMaxControl::GetSampledKey(control, sampleKeyArray, sampleRate, nMaxPoint4, true);
-
-        // add key values to the animator.
-        for (int i=0; i<sampleKeyArray.Size(); i++)
+        nShaderState::Param param = nShaderState::StringToParam(paramName);
+        if (param == nShaderState::InvalidParameter)
         {
-            nMaxSampleKey key = sampleKeyArray[i];
-
-            vector4 color;
-            color.x = key.pt4.x; // r
-            color.y = key.pt4.y; // g
-            color.z = key.pt4.z; // b
-            color.w = key.pt4.w; // a
-
-            createdAnimator->AddKey(key.time, color);
+            n_maxlog(Error, "Invalid shader parameter for vector animator.");
+            return NULL;
         }
 
-        createdAnimator->SetVectorName(paramName);
-        createdAnimator->SetChannel("time");
+        // e.g. convert 'MatDiffuse' to 'matdiffuseanimator'
+        nString animatorName;
+        animatorName += paramName;
+        animatorName += "animator";
+        animatorName.ToLower();
 
-        //FIXME: 'oneshot' loop type should be available too.
-        createdAnimator->SetLoopType(nAnimator::Loop);
+        createdAnimator = static_cast<nVectorAnimator*>(CreateNebulaObject("nvectoranimator", 
+                                                                           animatorName.Get()));
+
+        if (createdAnimator)
+        {
+            int numFrames = nMaxInterface::Instance()->GetNumFrames();;
+
+            // retrieves sampled keys from the control.
+            nArray<nMaxSampleKey> sampleKeyArray;
+            
+            int sampleRate;
+            sampleRate = nMaxOptions::Instance()->GetSampleRate();
+
+            nMaxControl::GetSampledKey(control, sampleKeyArray, sampleRate, nMaxPoint4, true);
+
+            // add key values to the animator.
+            for (int i=0; i<sampleKeyArray.Size(); i++)
+            {
+                nMaxSampleKey key = sampleKeyArray[i];
+
+                vector4 color;
+                color.x = key.pt4.x; // r
+                color.y = key.pt4.y; // g
+                color.z = key.pt4.z; // b
+                color.w = key.pt4.w; // a
+
+                createdAnimator->AddKey(key.time, color);
+            }
+
+            createdAnimator->SetVectorName(paramName);
+            createdAnimator->SetChannel("time");
+
+            //FIXME: 'oneshot' loop type should be available too.
+            createdAnimator->SetLoopType(nAnimator::Loop);
+        }
     }
 
     return createdAnimator;
