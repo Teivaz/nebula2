@@ -76,11 +76,11 @@ nD3D9Mesh::LoadResource()
         this->CreateVertexDeclaration();
         success = true;
     }
-	else if (refResourceLoader.isvalid())
-	{
-		// if the resource loader reference is valid, let it take a stab at the file
-		success = refResourceLoader->Load(filename.Get(), this);
-	}
+    else if (refResourceLoader.isvalid())
+    {
+        // if the resource loader reference is valid, let it take a stab at the file
+        success = refResourceLoader->Load(filename.Get(), this);
+    }
     else if (filename.CheckExtension("nvx2"))
     {
         // load from nvx2 file
@@ -198,8 +198,9 @@ nD3D9Mesh::CreateVertexBuffer()
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-		if (this->refGfxServer->GetSoftwareVertexProcessing() || 
-			((NeedsVertexShader & this->usage) && (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
+        if (this->refGfxServer->GetSoftwareVertexProcessing() || 
+            ((NeedsVertexShader & this->usage) && 
+	    (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
         {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
@@ -254,11 +255,12 @@ nD3D9Mesh::CreateIndexBuffer()
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-		if (this->refGfxServer->GetSoftwareVertexProcessing() ||
-			((this->usage & NeedsVertexShader) && (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
-		{	
-			d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
-		}
+        if (this->refGfxServer->GetSoftwareVertexProcessing() ||
+            ((this->usage & NeedsVertexShader) &&
+            (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
+        {	
+            d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
+        }
 
         hr = this->refGfxServer->d3d9Device->CreateIndexBuffer(
                 this->indexBufferByteSize,
