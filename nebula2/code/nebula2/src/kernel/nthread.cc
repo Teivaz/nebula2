@@ -13,6 +13,7 @@
                              of _beginthread()
 */
 nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
+                 Priority pri,
                  int stack_size,
                  void (*_wakeup_func)(nThread *),
                  nThreadSafeList *_ext_msglist,
@@ -54,6 +55,21 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
                    0,       // init_flags
                    &thrdaddr);
     n_assert(this->thread);
+    switch (pri)
+    {
+        case Low:
+           SetThreadPriority(this->thread, THREAD_PRIORITY_BELOW_NORMAL);
+            break;
+
+        case Normal:
+           SetThreadPriority(this->thread, THREAD_PRIORITY_NORMAL);
+            break;
+
+        case High:
+            SetThreadPriority(this->thread, THREAD_PRIORITY_ABOVE_NORMAL);
+            break;
+    }
+
 #   else
     // FIXME: ignore stack size under Linux
     int pok = pthread_create(&(this->thread),

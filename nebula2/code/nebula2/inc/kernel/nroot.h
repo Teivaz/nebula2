@@ -37,6 +37,7 @@
 #include "util/nstrnode.h"
 #include "kernel/ncmd.h"
 #include "kernel/nref.h"
+#include "kernel/nmutex.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
@@ -61,6 +62,11 @@ public:
     virtual int GetInstanceSize() const;
     /// get summed instance including children
     int GetTreeSize() const;
+
+    /// lock the object's main mutex
+    void LockMutex();
+    /// unlock the object's main mutex
+    void UnlockMutex();
 
     /// increment ref count of object 
     int AddRef();
@@ -157,6 +163,7 @@ protected:
     nStrList childList;
     ushort refCount;
     ushort saveModeFlags;
+    nMutex mutex;
 };
 
 //------------------------------------------------------------------------------

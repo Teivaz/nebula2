@@ -161,6 +161,7 @@ nIpcServer::nIpcServer(const char *portName)
     
     // Start listener Thread...
     this->listenerThread = n_new nThread(n_listener_tfunc,
+                                         nThread::Normal,
                                          0,                  // Default-Stacksize
                                          n_listener_wakeup,
                                          &(this->msgList),

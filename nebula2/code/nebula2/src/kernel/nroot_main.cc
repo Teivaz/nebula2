@@ -122,6 +122,8 @@ nRoot::Release()
     this->refCount--;
     if (this->refCount == 0) 
     {
+        // do not delete as long as mutex is set
+        this->LockMutex();
         n_delete this;
         retval = true;
     }
@@ -548,6 +550,26 @@ nRoot::GetTreeSize() const
     // add own size
     size += this->GetInstanceSize();
     return size;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Lock the object's main mutex.
+*/ 
+void 
+nRoot::LockMutex()
+{
+    this->mutex.Lock();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Unlock the object's main mutex.
+*/
+void
+nRoot::UnlockMutex()
+{
+    this->mutex.Unlock();
 }
 
 //------------------------------------------------------------------------------

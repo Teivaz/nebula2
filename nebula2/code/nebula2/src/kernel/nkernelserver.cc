@@ -48,13 +48,10 @@ extern "C" void n_addmodules(nKernelServer*);
 nClass*
 nKernelServer::OpenClass(const char* className)
 {
+    this->Lock();
     n_assert(className);
-
-    // class already loaded?
     nClass *cl = (nClass*) this->classList.Find(className);
-
-    // handle systems which don't support dynamic class loading
-
+    this->Unlock();
     return cl;
 }
 
@@ -74,15 +71,15 @@ nKernelServer::NewUnnamedObject(const char* className)
 {
     n_assert(className);
 
+    this->Lock();
     nClass *cl = this->OpenClass(className);
+    nRoot *obj = 0;
     if (cl)
     {
-        return cl->NewObject();
+        obj = cl->NewObject();
     }
-    else
-    {
-        return 0;
-    }
+    this->Unlock();
+    return obj;
 }
 
 //------------------------------------------------------------------------------
@@ -103,38 +100,39 @@ nRoot*
 nKernelServer::Lookup(const char* path)
 {
     n_assert(path);
-
-    nRoot* cur;
-    char* nextPathComponent;
-    char strBuf[N_MAXPATH];
+    this->Lock();
+    nRoot* cur = 0;
 
     // check for empty string
-    if (0 == path[0])
+    if (path[0])
     {
-        return 0;
-    }
+        char* nextPathComponent;
+        char strBuf[N_MAXPATH];
 
-    // copy path to scratch buffer
-    char *str = strBuf;
-    n_strncpy2(strBuf, path, sizeof(strBuf));
+        // copy path to scratch buffer
+        char *str = strBuf;
+        n_strncpy2(strBuf, path, sizeof(strBuf));
 
-    if (this->IsAbsolutePath(str))
-    {
-        cur = this->root;
-    }
-    else
-    {
-        cur = this->cwd;
-    }
-
-    while ((nextPathComponent = strtok(str, "/")) && cur)
-    {
-        if (str)
+        if (this->IsAbsolutePath(str))
         {
-            str = NULL;
+            cur = this->root;
         }
-        cur = cur->Find(nextPathComponent);
+        else
+        {
+            cur = this->cwd;
+        }
+
+        while ((nextPathComponent = strtok(str, "/")) && cur)
+        {
+            if (str)
+            {
+                str = NULL;
+            }
+            cur = cur->Find(nextPathComponent);
+        }
     }
+
+    this->Unlock();
     return (nRoot *) cur;
 }
 
@@ -313,6 +311,8 @@ nKernelServer::nKernelServer() :
 */
 nKernelServer::~nKernelServer(void)
 {
+    this->Lock();
+
     // kill time and file server
     if (this->timeServer)
     {
@@ -391,6 +391,7 @@ nKernelServer::~nKernelServer(void)
 
     // reset static kernelserver pointer
     ks = 0;
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -406,6 +407,7 @@ nKernelServer::~nKernelServer(void)
 void
 nKernelServer::SetLogHandler(nLogHandler* logHandler)
 {
+    this->Lock();
     if (logHandler)
     {
         this->curLogHandler = logHandler;
@@ -414,6 +416,7 @@ nKernelServer::SetLogHandler(nLogHandler* logHandler)
     {
         this->curLogHandler = this->defaultLogHandler;
     }
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -436,11 +439,13 @@ nKernelServer::GetLogHandler() const
 void
 nKernelServer::Print(const char* str, ...)
 {
+    this->Lock();
     n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
     this->curLogHandler->Print(str, argList);
     va_end(argList);
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -452,11 +457,13 @@ nKernelServer::Print(const char* str, ...)
 void
 nKernelServer::Message(const char* str, ...)
 {
+    this->Lock();
     n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
     this->curLogHandler->Message(str, argList);
     va_end(argList);
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -468,11 +475,13 @@ nKernelServer::Message(const char* str, ...)
 void
 nKernelServer::Error(const char* str, ...)
 {
+    this->Lock();
     n_assert(this->curLogHandler);
     va_list argList;
     va_start(argList, str);
     this->curLogHandler->Error(str, argList);
     va_end(argList);
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -487,6 +496,7 @@ nKernelServer::Error(const char* str, ...)
 void
 nKernelServer::AddClass(const char *superClassName, nClass *cl)
 {
+    this->Lock();
     n_assert(superClassName);
     n_assert(cl);
 
@@ -499,6 +509,7 @@ nKernelServer::AddClass(const char *superClassName, nClass *cl)
     {
         n_error("nKernelServer::AddClass(): Could not open super class '%s'\n", superClassName);
     }
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -512,12 +523,14 @@ nKernelServer::AddClass(const char *superClassName, nClass *cl)
 void
 nKernelServer::RemClass(nClass *cl)
 {
+    this->Lock();
     n_assert(cl);
 
     nClass *superClass = cl->GetSuperClass();
     n_assert(superClass);
     superClass->RemSubClass(cl);
     this->ReleaseClass(superClass);
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -534,8 +547,10 @@ nKernelServer::RemClass(nClass *cl)
 nClass*
 nKernelServer::FindClass(const char* className)
 {
+    this->Lock();
     n_assert(className);
     nClass *cl = (nClass *) this->classList.Find(className);
+    this->Unlock();
     return cl;
 }
 
@@ -551,11 +566,13 @@ nClass*
 nKernelServer::CreateClass(const char* className)
 {
     n_assert(className);
+    this->Lock();
     nClass *cl = this->OpenClass(className);
     if (cl)
     {
         cl->AddRef();
     }
+    this->Unlock();
     return cl;
 }
 
@@ -572,7 +589,9 @@ void
 nKernelServer::ReleaseClass(nClass* cl)
 {
     n_assert(cl);
+    this->Lock();
     cl->RemRef();
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -597,8 +616,10 @@ nRoot*
 nKernelServer::New(const char* className, const char* path)
 {
     n_assert(className && path);
+    this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, true);
     n_assert(o);
+    this->Unlock();
     return o;
 }
 
@@ -616,14 +637,17 @@ nRoot*
 nKernelServer::NewNoFail(const char* className, const char *path)
 {
     n_assert(className && path);
+    this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, false);
     n_assert(o);
+    this->Unlock();
     return o;
 }
 
 //------------------------------------------------------------------------------
 /*
-    Create a Nebula object from a persistent object file.
+    Create a Nebula object from a persistent object file. The created
+    object's name is derived from the path name.
 
     @param  path    path of persistent object file in host filesystem
     @return         pointer to created object, or 0
@@ -636,7 +660,10 @@ nRoot*
 nKernelServer::Load(const char* path)
 {
     n_assert(path);
-    return this->persistServer->LoadObject(path);
+    this->Lock();
+    nRoot* obj = this->persistServer->LoadObject(path);
+    this->Unlock();
+    return obj;
 }
 
 //------------------------------------------------------------------------------
@@ -651,6 +678,7 @@ nKernelServer::Load(const char* path)
 void
 nKernelServer::SetCwd(nRoot* o)
 {
+    this->Lock();
     if (o)
     {
         this->cwd = o;
@@ -659,6 +687,7 @@ nKernelServer::SetCwd(nRoot* o)
     {
         this->cwd = this->root;
     }
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -686,9 +715,11 @@ nKernelServer::GetCwd()
 void
 nKernelServer::PushCwd(nRoot* o)
 {
+    this->Lock();
     n_assert(o);
     this->cwdStack.Push(this->cwd);
     this->cwd = o;
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -701,8 +732,10 @@ nKernelServer::PushCwd(nRoot* o)
 nRoot*
 nKernelServer::PopCwd()
 {
+    this->Lock();
     nRoot *prevCwd = this->cwd;
     this->cwd = this->cwdStack.Pop();
+    this->Unlock();
     return prevCwd;
 }
 
@@ -732,12 +765,14 @@ nKernelServer::AddModule(const char *name,
                          void (*_fini_func)(void),
                          void *(*_new_func)(void))
 {
+    this->Lock();
     nClass *cl = (nClass *) this->classList.Find(name);
     if (!cl)
     {
         cl = n_new nClass(name, this, _init_func, _fini_func, _new_func);
         this->classList.AddTail(cl);
     }
+    this->Unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -749,6 +784,7 @@ nKernelServer::ReplaceFileServer(const char* className)
 {
     n_assert(className);
 
+    this->Lock();
     if (this->fileServer)
     {
         this->fileServer->Release();
@@ -757,4 +793,5 @@ nKernelServer::ReplaceFileServer(const char* className)
 
     this->fileServer = (nFileServer2*) this->New(className, "/sys/servers/file2");
     n_assert(this->fileServer);
+    this->Unlock();
 }
