@@ -201,6 +201,16 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
     return true;
 }
 
+//--------------------------------------------------------------------
+/**
+    @brief Invoke a Python function.
+*/
+bool nPythonServer::RunFunction(const char *funcName, const char*& result )
+{
+    nString cmdStr = funcName;
+    cmdStr.Append("()");
+    return this->Run(cmdStr.Get(), result);
+}
 
 //--------------------------------------------------------------------
 //  Trigger()

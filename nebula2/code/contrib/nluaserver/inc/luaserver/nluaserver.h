@@ -42,6 +42,7 @@ public:
  
     virtual bool Run(const char *, const char*&);
     virtual bool RunScript(const char *, const char*&);
+    virtual bool RunFunction(const char *, const char*&);
     virtual nString Prompt();
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  

@@ -153,6 +153,16 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     return retval;
 }
 
+//--------------------------------------------------------------------
+/**
+    @brief Invoke a Lua function.
+*/
+bool nLuaServer::RunFunction(const char *funcName, const char*& result )
+{
+    nString cmdStr = funcName;
+    cmdStr.Append("()");
+    return this->Run(cmdStr.Get(), result);
+}
 
 //--------------------------------------------------------------------
 //  Trigger()

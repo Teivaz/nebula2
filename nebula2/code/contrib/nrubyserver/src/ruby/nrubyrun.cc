@@ -231,6 +231,17 @@ bool nRubyServer::RunScript(const char *fname, const char*& result)
 
 //--------------------------------------------------------------------
 /**
+    @brief Invoke a Ruby function.
+*/
+bool nRubyServer::RunFunction(const char *funcName, const char*& result )
+{
+    nString cmdStr = funcName;
+    cmdStr.Append("()");
+    return this->Run(cmdStr.Get(), result);
+}
+
+//--------------------------------------------------------------------
+/**
     Trigger
     Check for shutdown flag
 
