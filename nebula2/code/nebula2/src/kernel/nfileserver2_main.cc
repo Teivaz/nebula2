@@ -286,7 +286,7 @@ nFileServer2::InitHomeAssign(void)
                 p++;
             }
             // if last char is not a /, append one
-            if (buf[strlen(buf)] != '/') strcat(buf,"/");
+            if (buf[strlen(buf)-1] != '/') strcat(buf,"/");
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
@@ -301,7 +301,7 @@ nFileServer2::InitHomeAssign(void)
             n_error("Env variable NEBULADIR not set! Aborting.");
         }
         // if last char is not a /, append one
-        if (buf[strlen(buf)] != '/') strcat(buf,"/");
+        if (buf[strlen(buf)-1] != '/') strcat(buf,"/");
     #elif defined(__MACOSX__)
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
@@ -309,7 +309,7 @@ nFileServer2::InitHomeAssign(void)
         CFURLGetFSRef(bundleURL, &bundleFSRef);
         FSRefMakePath(&bundleFSRef, (unsigned char*)buf, N_MAXPATH);
         // if last char is not a /, append one
-        if (buf[strlen(buf)] != '/') strcat(buf,"/");
+        if (buf[strlen(buf)-1] != '/') strcat(buf,"/");
     #else
     #error nFileServer::initHomeAssign() not implemented!
     #endif
