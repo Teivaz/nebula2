@@ -37,7 +37,11 @@ private:
     /// a private stack node class
     class nStackNode : public nNode
     {
+#ifdef __VC__
+        friend nStack;
+#else
         friend class nStack;
+#endif 
 
         /// constructor
         nStackNode(const TYPE& e)
