@@ -1,0 +1,4 @@
+/**
+    @defgroup NebulaFileManagement File I/O and File System Access
+    @ingroup NebulaKernel
+*/

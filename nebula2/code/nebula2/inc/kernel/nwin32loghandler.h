@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nWin32LogHandler
+    @ingroup NebulaLogging
 
     A log handler class for Win32 apps:
     

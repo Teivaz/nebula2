@@ -1,0 +1,4 @@
+/**
+    @defgroup NebulaTimeManagement Time Management
+    @ingroup NebulaKernel
+*/

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nProfiler
+    @ingroup NebulaTimeManagement
 
     A mini profiler class.
 
