@@ -34,21 +34,25 @@ static void n_getinstancesize(void*, nCmd*);
 static void n_gettreesize(void*, nCmd*);
 
 //-------------------------------------------------------------------
-//  CLASS
-//  nroot
-//  SUPERCLASS
-//  ---
-//  INCLUDE
-//  kernel/nroot.h
-//  INFO
-//  nroot is the superclass of all higher level Nebula class
-//  and defines the basic behaviour and properties for all 
-//  nroot derived classes:
-//  - linkage into hierarchical name space of objects
-//  - runtime type information
-//  - object persistency
-//  - language independent scripting interface 
-//-------------------------------------------------------------------
+/**
+    @class
+    nroot
+
+    @superclass
+    ---
+
+    @include
+    kernel/nroot.h
+
+    @classinfo
+    nroot is the superclass of all higher level Nebula class
+    and defines the basic behaviour and properties for all 
+    nroot derived classes:
+    - linkage into hierarchical name space of objects
+    - runtime type information
+    - object persistency
+    - language independent scripting interface 
+*/
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
@@ -78,15 +82,19 @@ void n_initcmds(nClass *cl)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getrefcount
-//  INPUT
-//  v
-//  OUTPUT
-//  i (Refcount)
-//  INFO
-//  Return current ref count of object.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getrefcount
+
+    @input
+    v
+
+    @output
+    i (Refcount)
+
+    @info
+    Return current ref count of object.
+*/
 static void n_getrefcount(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -94,15 +102,19 @@ static void n_getrefcount(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getclass
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Classname)
-//  INFO
-//  Return name of class which the object is an instance of.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getclass
+
+    @input
+    v
+
+    @output
+    s (Classname)
+
+    @info
+    Return name of class which the object is an instance of.
+*/
 static void n_getclass(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -110,16 +122,20 @@ static void n_getclass(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  isa
-//  INPUT
-//  s (Classname)
-//  OUTPUT
-//  b (Success)
-//  INFO
-//  Check whether the object is instantiated or derived from the
-//  class given by 'Classname'.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    isa
+
+    @input
+    s (Classname)
+
+    @output
+    b (Success)
+
+    @info
+    Check whether the object is instantiated or derived from the
+    class given by 'Classname'.
+*/
 static void n_isa(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -130,16 +146,20 @@ static void n_isa(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  isinstanceof
-//  INPUT
-//  s (Classname)
-//  OUTPUT
-//  b (Success)
-//  INFO
-//  Check whether the object is an instance of the class given
-//  by 'Classname'.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    isinstanceof
+
+    @input
+    s (Classname)
+
+    @output
+    b (Success)
+
+    @info
+    Check whether the object is an instance of the class given
+    by 'Classname'.
+*/
 static void n_isinstanceof(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -150,15 +170,19 @@ static void n_isinstanceof(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getcmds
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Commands)
-//  INFO
-//  Return a list of all script command prototypes the object accepts.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getcmds
+
+    @input
+    v
+
+    @output
+    l (Commands)
+
+    @info
+    Return a list of all script command prototypes the object accepts.
+*/
 static void n_getcmds(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -189,18 +213,22 @@ static void n_getcmds(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  save
-//  INPUT
-//  v
-//  OUTPUT
-//  b (Success)
-//  INFO
-//  Save the object under its current name into a filesystem
-//  file. The filename will be 'name_of_object.n'. Such a
-//  persistent object file must be read back with the
-//  nsh 'get' command.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    save
+
+    @input
+    v
+
+    @output
+    b (Success)
+
+    @info
+    Save the object under its current name into a filesystem
+    file. The filename will be 'name_of_object.n'. Such a
+    persistent object file must be read back with the
+    nsh 'get' command.
+*/
 static void n_save(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -208,16 +236,20 @@ static void n_save(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  saveas
-//  INPUT
-//  s (Name)
-//  OUTPUT
-//  b (Success)
-//  INFO
-//  Save the object under a given name into a file. A trailing
-//  '.n' will be appended.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    saveas
+
+    @input
+    s (Name)
+
+    @output
+    b (Success)
+
+    @info
+    Save the object under a given name into a file. A trailing
+    '.n' will be appended.
+*/
 static void n_saveas(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -225,16 +257,20 @@ static void n_saveas(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  clone
-//  INPUT
-//  s (CloneName)
-//  OUTPUT
-//  o (CloneHandle)
-//  INFO
-//  Creates a clone with the name 'CloneName' of the object.
-//  If the original has child objects they will be cloned as well.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    clone
+
+    @input
+    s (CloneName)
+
+    @output
+    o (CloneHandle)
+
+    @info
+    Creates a clone with the name 'CloneName' of the object.
+    If the original has child objects, they will be cloned as well.
+*/
 static void n_clone(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -242,17 +278,21 @@ static void n_clone(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getparent
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Return the full pathname of the parent object. If the object
-//  doesn't have a parent object (this is only valid for the
-//  root object '/'), 'null' will be returned.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getparent
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Return the full pathname of the parent object. If the object
+    doesn't have a parent object (this is only valid for the
+    root object '/'), 'null' will be returned.
+*/
 static void n_getparent(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -260,16 +300,20 @@ static void n_getparent(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gethead
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Return full pathname of first child object, or 'null'
-//  if no child objects exist.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gethead
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Return full pathname of first child object, or 'null'
+    if no child objects exist.
+*/
 static void n_gethead(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -277,16 +321,20 @@ static void n_gethead(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gettail
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Return full pathname of last child object, or 'null'
-//  if no child objects exist.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gettail
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Return full pathname of last child object, or 'null'
+    if no child objects exist.
+*/
 static void n_gettail(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -294,16 +342,20 @@ static void n_gettail(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getsucc
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Return full pathname of next object in the same hierarchie
-//  level, zero if no next object exists.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getsucc
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Return full pathname of next object in the same hierarchie
+    level, zero if no next object exists.
+*/
 static void n_getsucc(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -311,16 +363,20 @@ static void n_getsucc(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getpred
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Return full pathname of previous object in the same
-//  hierarchie level, zero if no previous object exists. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getpred
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Return full pathname of previous object in the same
+    hierarchy level, zero if no previous object exists. 
+*/
 static void n_getpred(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -328,15 +384,19 @@ static void n_getpred(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getchildren
-//  INPUT
-//  v
-//  OUTPUT
-//  l (ListArg)
-//  INFO
-//  Return a list of all children.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getchildren
+
+    @input
+    v
+
+    @output
+    l (ListArg)
+
+    @info
+    Return a list of all children.
+*/
 static void n_getchildren(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -363,16 +423,20 @@ static void n_getchildren(void *o, nCmd *cmd)
     }
 }
 //-------------------------------------------------------------------
-//  CMD
-//  setname
-//  INPUT
-//  s (Name)
-//  OUTPUT
-//  v
-//  INFO
-//  Give the object a new name ('Name' may not contain any path
-//  components!).
-//-------------------------------------------------------------------
+/**
+    @cmd
+    setname
+
+    @input
+    s (Name)
+
+    @output
+    v
+
+    @info
+    Give the object a new name ('Name' may not contain any path
+    components!).
+*/
 static void n_setname(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -380,15 +444,19 @@ static void n_setname(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getname
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Name)
-//  INFO
-//  Return the object's name without path.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getname
+
+    @input
+    v
+
+    @output
+    s (Name)
+
+    @info
+    Return the object's name without path.
+*/
 static void n_getname(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -396,15 +464,19 @@ static void n_getname(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getfullname
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Name)
-//  INFO
-//  Return the full pathname of the object.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getfullname
+
+    @input
+    v
+
+    @output
+    s (Name)
+
+    @info
+    Return the full pathname of the object.
+*/
 static void n_getfullname(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -413,16 +485,20 @@ static void n_getfullname(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getrelpath
-//  INPUT
-//  o (OtherObject)
-//  OUTPUT
-//  s (Path)
-//  INFO
-//  Return the shortest relative path leading from this object
-//  to the given object. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getrelpath
+
+    @input
+    o (OtherObject)
+
+    @output
+    s (Path)
+
+    @info
+    Return the shortest relative path leading from this object
+    to the given object. 
+*/
 static void n_getrelpath(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -431,16 +507,20 @@ static void n_getrelpath(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  find
-//  INPUT
-//  s (Name)
-//  OUTPUT
-//  o (PathName)
-//  INFO
-//  Find a child object with name 'Name'. Return full path
-//  of child if found, or 'null' if not found.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    find
+
+    @input
+    s (Name)
+
+    @output
+    o (PathName)
+
+    @info
+    Find a child object with name 'Name'. Return full path
+    of child if found, or 'null' if not found.
+*/
 static void n_find(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
@@ -448,15 +528,19 @@ static void n_find(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  sort
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Sort all child objects alphabetically.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    sort
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Sort all child objects alphabetically.
+*/
 static void n_sort(void *o, nCmd *)
 {
     nRoot *self = (nRoot *) o;
@@ -464,17 +548,21 @@ static void n_sort(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getinstancesize
-//  INPUT
-//  v
-//  OUTPUT
-//  i (InstanceSize)
-//  INFO
-//  Get byte size of this object. This may or may not accurate,
-//  depending on whether the object uses external allocated memory,
-//  and if the object's class takes this into account.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getinstancesize
+
+    @input
+    v
+
+    @output
+    i (InstanceSize)
+
+    @info
+    Get byte size of this object. This may or may not accurate,
+    depending on whether the object uses external allocated memory,
+    and if the object's class takes this into account.
+*/
 static void n_getinstancesize(void* o, nCmd* cmd)
 {
     nRoot* self = (nRoot*) o;
@@ -482,15 +570,19 @@ static void n_getinstancesize(void* o, nCmd* cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gettreesize
-//  INPUT
-//  v
-//  OUTPUT
-//  i (TreeInstanceSize)
-//  INFO
-//  This is the recursive version of getinstancesize.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gettreesize
+
+    @input
+    v
+
+    @output
+    i (TreeInstanceSize)
+
+    @info
+    This is the recursive version of getinstancesize.
+*/
 static void n_gettreesize(void* o, nCmd* cmd)
 {
     nRoot* self = (nRoot*) o;

@@ -23,16 +23,20 @@ static void n_sets(void *, nCmd *);
 static void n_seto(void *, nCmd *);
 
 //-------------------------------------------------------------------
-//  CLASS
-//  nenv
-//  SUPERCLASS
-//  nroot
-//  INCLUDE
-//  kernel/nenv.h
-//  INFO
-//  The nenv class is similar to an environment variable.
-//  Just create, set getypten value and query it 
-//-------------------------------------------------------------------
+/**
+    @class
+    nenv
+
+    @superclass
+    nroot
+
+    @include
+    kernel/nenv.h
+
+    @classinfo
+    The nenv class is similar to an environment variable.
+    Just create, set the type and value, and query it 
+*/
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
@@ -51,16 +55,17 @@ void n_initcmds(nClass *cl)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gettype
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Type = [void int float bool string object]
-//  INFO
-//  Returns the datatype the variable is set to. If void 
-//  is returned the variable is empty. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gettype
+    @input
+    v
+    @output
+    s (Type = [void int float bool string object]
+    @info
+    Returns the datatype the variable is set to. If void 
+    is returned the variable is empty. 
+*/
 static void n_gettype(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -78,17 +83,21 @@ static void n_gettype(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  geti
-//  INPUT
-//  v
-//  OUTPUT
-//  i (Value)
-//  INFO
-//  Returns the content of the variable if it is an int 
-//  variable. If it's not an int variable 0 is returned and 
-//  an error message. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    geti
+
+    @input
+    v
+
+    @output
+    i (Value)
+
+    @info
+    Returns the content of the variable if it is an int 
+    variable. If it's not an int variable, 0 is returned and 
+    an error message is printed.
+*/
 static void n_geti(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -99,16 +108,21 @@ static void n_geti(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getf
-//  INPUT
-//  v
-//  OUTPUT
-//  f (Value)
-//  INFO
-//  Returns the content of the variable if it is a float 
-//  variable. If it's not a float variable 0.0 is returned. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getf
+
+    @input
+    v
+
+    @output
+    f (Value)
+
+    @info
+    Returns the content of the variable if it is a float 
+    variable. If it's not a float variable, 0.0 is returned
+    and an error message is printed.
+*/
 static void n_getf(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -121,16 +135,21 @@ static void n_getf(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getb
-//  INPUT
-//  v
-//  OUTPUT
-//  b (Value)
-//  INFO
-//  Returns the content of the variable if it is a bool 
-//  variable. If it's not a bool false is returned. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getb
+
+    @input
+    v
+
+    @output
+    b (Value)
+
+    @info
+    Returns the content of the variable if it is a bool 
+    variable. If it's not a bool, false is returned and an
+    error message is printed.
+*/
 static void n_getb(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -143,16 +162,21 @@ static void n_getb(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gets
-//  INPUT
-//  v
-//  OUTPUT
-//  s (Value)
-//  INFO
-//  Returns the content of the variable if it is a string 
-//  variable. If it's not a string variable "" is returned. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gets
+
+    @input
+    v
+
+    @output
+    s (Value)
+
+    @info
+    Returns the content of the variable if it is a string 
+    variable. If it's not a string variable, "" is returned
+    and an error message is printed.
+*/
 static void n_gets(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -165,15 +189,20 @@ static void n_gets(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  geto
-//  INPUT
-//  v
-//  OUTPUT
-//  o (ObjectHandle)
-//  INFO
-//  Returns the content of the variable as an object handle. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    geto
+
+    @input
+    v
+
+    @output
+    o (ObjectHandle)
+
+    @info
+    Returns the content of the variable as an object handle. If it's
+    not an object handle, NULL is returned and an error message is printed.
+*/
 static void n_geto(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -186,15 +215,19 @@ static void n_geto(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  seti
-//  INPUT
-//  i (Value)
-//  OUTPUT
-//  v
-//  INFO
-//  Sets the content of the variable to the passed integer value. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    seti
+
+    @input
+    i (Value)
+
+    @output
+    v
+
+    @info
+    Sets the content of the variable to the passed integer value. 
+*/
 static void n_seti(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -202,15 +235,19 @@ static void n_seti(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  setf
-//  INPUT
-//  f (Value)
-//  OUTPUT
-//  v
-//  INFO
-//  Sets the content of the variable to the passed float value. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    setf
+
+    @input
+    f (Value)
+
+    @output
+    v
+
+    @info
+    Sets the content of the variable to the passed float value. 
+*/
 static void n_setf(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -218,15 +255,19 @@ static void n_setf(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  setb
-//  INPUT
-//  b (Value)
-//  OUTPUT
-//  v
-//  INFO
-//  Sets the content of the variable to the passed boolean value. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    setb
+
+    @input
+    b (Value)
+
+    @output
+    v
+
+    @info
+    Sets the content of the variable to the passed boolean value. 
+*/
 static void n_setb(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -234,15 +275,19 @@ static void n_setb(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  sets
-//  INPUT
-//  s (Value)
-//  OUTPUT
-//  v
-//  INFO
-//  Sets the content of the variable to the passed string. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    sets
+
+    @input
+    s (Value)
+
+    @output
+    v
+
+    @info
+    Sets the content of the variable to the passed string. 
+*/
 static void n_sets(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -250,15 +295,19 @@ static void n_sets(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  seto
-//  INPUT
-//  s (ObjectHandle)
-//  OUTPUT
-//  v
-//  INFO
-//  Sets the content of the variable to the passed object handle. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    seto
+
+    @input
+    s (ObjectHandle)
+
+    @output
+    v
+
+    @info
+    Sets the content of the variable to the passed object handle. 
+*/
 static void n_seto(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
@@ -266,8 +315,9 @@ static void n_seto(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  SaveCmds()
-//  02-Jan-99   floh    machine generated
+/**
+     - 02-Jan-99   floh    machine generated
+*/
 //-------------------------------------------------------------------
 bool nEnv::SaveCmds(nPersistServer *fs)
 {
