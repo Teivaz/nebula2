@@ -26,7 +26,6 @@ nWin32LogHandler::nWin32LogHandler(const char* app) :
     nPathString appFileName(buf);
     appFileName.ConvertBackslashes();
     nPathString logFileName = appFileName.ExtractDirName();
-    logFileName.Append("/");
     logFileName.Append(appName.Get());
     logFileName.Append(".log");
 
