@@ -118,6 +118,15 @@ nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
             nGuiEvent event(this, nGuiEvent::SelectionChanged);
             nGuiServer::Instance()->PutEvent(event);
         }
+    } 
+    else if (event.GetType() == nGuiEvent::SelectionDblClicked)
+    {
+        // pass through doubleclick event
+        if (event.GetWidget() == this->refFileLister.get())
+        {
+            nGuiEvent event(this, nGuiEvent::SelectionDblClicked);
+            nGuiServer::Instance()->PutEvent(event);
+        }
     }
 }
 
