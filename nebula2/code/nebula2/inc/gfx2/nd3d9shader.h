@@ -98,14 +98,6 @@ protected:
     nShaderParams curParams;    // mirrored to avoid redundant parameters setting
 };
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool nD3D9Shader::NeedsSoftwareVertexProcessing()
-{
-    return this->needSoftwareVertexProcessing;
-}
 
 //------------------------------------------------------------------------------
 #endif

@@ -13,7 +13,9 @@
     @brief
 */
 
+#include <d3d9.h>
 #include "gfx2/nsurface.h"
+
 
 class nD3D9Surface : public nSurface
 {

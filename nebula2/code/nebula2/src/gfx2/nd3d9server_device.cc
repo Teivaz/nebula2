@@ -364,7 +364,7 @@ nD3D9Server::DeviceOpen()
                                   &(this->d3d9Device));
     if (FAILED(hr))
     {
-        n_dxtrace(hr, "nD3D9Server: Could not create d3d device!\nDirectX Error is: %s\n", DXGetErrorString9(hr));
+        n_error("nD3D9Server: Could not create d3d device!\nDirectX Error is: %s\n", DXGetErrorString9(hr));
         return false;
     }
     n_assert(this->d3d9Device);
@@ -794,7 +794,7 @@ void nD3D9Server::CreateDisplayModeEnvVars()
         nRoot* cwd = kernelServer->GetCwd();
 
         D3DFORMAT dispFormat, dummy1, dummy2;
-        this->FindBufferFormats( dispFormat, dummy1, dummy2 );
+        this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, dummy1, dummy2);
 
         HRESULT hr;
         D3DADAPTER_IDENTIFIER9 identifier;
