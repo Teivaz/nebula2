@@ -589,7 +589,7 @@ inline
 void JointDestroy( dJointID id ) { dJointDestroy( id ); }
 
 inline
-dJointGroupID JointGroupCreate( int max_size ) { dJointGroupCreate( max_size ); }
+dJointGroupID JointGroupCreate( int max_size ) { return dJointGroupCreate( max_size ); }
 
 inline
 void JointGroupDestroy( dJointGroupID id ) { dJointGroupDestroy( id ); }
