@@ -9,6 +9,7 @@ beginmodule npythonserver
          npythonobject npythonserver npythoncmds npythonrun ncmdprotopython
     }
     setheaders { npythonobject npythonserver ncmdprotopython }
+    setlibs_linux { python2.4 }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget npythonserver
