@@ -27,6 +27,10 @@ sel /sys/servers/input
     .map "keyb0:f7.down"           "setpos2"
     .map "keyb0:f8.down"           "setpos3"
     .map "keyb0:f12.down"          "screenshot"
+    # added for the penguin example
+    # press "w" to wave
+    .map "keyb0:w.down"             "script:/sys/servers/variable.setintvariable charState 1"
+    .map "keyb0:w.up"               "script:/sys/servers/variable.setintvariable charState 0"
     .endmap
 sel ..
 
