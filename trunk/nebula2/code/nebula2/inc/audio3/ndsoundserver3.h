@@ -34,7 +34,7 @@ public:
     /// close the audio device
     virtual void Close();
     /// begin an audio frame
-    virtual bool BeginScene();
+    virtual bool BeginScene(nTime time);
     /// update listener attributes
     virtual void UpdateListener(const nListener3& l);
     /// start a sound

@@ -35,7 +35,7 @@
 #include "opende/nopendespheregeom.h"
 #include "opende/nopendeplanegeom.h"
 
-#define PHYSICS_STEPSIZE 0.016f
+#define PHYSICS_STEPSIZE 0.01f
 #define PHYS_LINEAR_VEL_THRESHOLD 0.01
 #define PHYS_ANGULAR_VEL_THRESHOLD 0.01
 #define PHYS_VEL_THRESHOLD_TIMEOUT 10
