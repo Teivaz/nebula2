@@ -13,25 +13,28 @@ static void n_watch(void *, nCmd *);
 static void n_unwatch(void *, nCmd *);
 
 //-------------------------------------------------------------------
-//  CLASS
-//  nconserver
-//  SUPERCLASS
-//  nroot
-//  INCLUDE
-//  misc/nconserver.h
-//  INFO
-//  The console server can be found at "/sys/servers/console", it 
-//  implements an interactive console in the actual graphics mode. 
-//  For the console server to be functioning, the following objects 
-//  have to exist: 
-//  /sys/servers/input 
-//  /sys/servers/gfx 
-//  /sys/servers/script 
-//  The console server is activated via the "esc (escape)" key and 
-//  from there on it intercepts all key events. If activated the complete 
-//  key input will be interpreted as command line input ans the 
-//  resulting commands will be passed to the scrip server. 
-//-------------------------------------------------------------------
+/**
+    @class
+    nconserver
+
+    @superclass
+    nroot
+
+    @info
+    The console server can be found at "/sys/servers/console", it 
+    implements an interactive console in the actual graphics mode. 
+    For the console server to be functioning, the following objects 
+    have to exist: 
+
+    /sys/servers/input 
+    /sys/servers/gfx 
+    /sys/servers/script 
+
+    The console server is activated via the "esc (escape)" key and 
+    from there on it intercepts all key events. If activated the complete 
+    key input will be interpreted as command line input ans the 
+    resulting commands will be passed to the scrip server. 
+*/
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
@@ -44,15 +47,16 @@ void n_initcmds(nClass *cl)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  open
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Opens the console.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    open
+    @input
+    v
+    @output
+    v
+    @info
+    Opens the console.
+*/
 static void n_open(void *o, nCmd *cmd)
 {
     nConServer *self = (nConServer *) o;
@@ -60,15 +64,16 @@ static void n_open(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  close
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Closes the console. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    close
+    @input
+    v
+    @output
+    v
+    @info
+    Closes the console. 
+*/
 static void n_close(void *o, nCmd *cmd)
 {
     nConServer *self = (nConServer *) o;
@@ -76,15 +81,16 @@ static void n_close(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  toggle
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Toggles the console state. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    toggle
+    @input
+    v
+    @output
+    v
+    @info
+    Toggles the console state. 
+*/
 static void n_toggle(void *o, nCmd *)
 {
     nConServer *self = (nConServer *) o;
@@ -92,18 +98,19 @@ static void n_toggle(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  watch
-//  INPUT
-//  s (Pattern)
-//  OUTPUT
-//  v
-//  INFO
-//  Hereby you can monitor diverse status variables 
-//  under '/sys/var'. By pattern matching it is possible 
-//  to decide which variables will be shown after the 
-//  console itself has been closed. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    watch
+    @input
+    s (Pattern)
+    @output
+    v
+    @info
+    Hereby you can monitor diverse status variables 
+    under '/sys/var'. By pattern matching it is possible 
+    to decide which variables will be shown after the 
+    console itself has been closed. 
+*/
 static void n_watch(void *o, nCmd *cmd)
 {
     nConServer *self = (nConServer *) o;
@@ -111,15 +118,16 @@ static void n_watch(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  unwatch
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Closes the with 'watch' activated watchmode. 
-//-------------------------------------------------------------------
+/**
+    @cmd
+    unwatch
+    @input
+    v
+    @output
+    v
+    @info
+    Closes the with 'watch' activated watchmode. 
+*/
 static void n_unwatch(void *o, nCmd *)
 {
     nConServer *self = (nConServer *) o;
