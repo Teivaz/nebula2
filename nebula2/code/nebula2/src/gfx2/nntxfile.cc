@@ -541,10 +541,10 @@ nNtxFile::updateDataBlockOffsets()
     Open file for writing. Writing a nNtxFile object should be done like
     this:
 
-    (1) configure block headers (SetNumBlocks(), SetCurrentBlock(), SetWidth(), ...)
-    (2) OpenWrite()
-    (3) for each block WriteBlock()
-    (4) CloseWrite()
+       -# configure block headers (SetNumBlocks(), SetCurrentBlock(), SetWidth(), ...)
+       -# OpenWrite()
+       -# for each block WriteBlock()
+       -# CloseWrite()
 */
 bool
 nNtxFile::OpenWrite(const char* fileName)
