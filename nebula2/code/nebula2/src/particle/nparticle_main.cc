@@ -32,8 +32,9 @@ nParticle::~nParticle()
 //------------------------------------------------------------------------------
 /**
 */
-void nParticle::Initialize(nParticleEmitter* emitter, vector3& position, vector3& velocity,
-                           nTime birthTime, nTime lifeTime, float rotation)
+void nParticle::Initialize(nParticleEmitter* emitter, const vector3& position,
+                           const vector3& velocity, nTime birthTime,
+                           nTime lifeTime, float rotation)
 {
     this->emitter = emitter;
     this->curPosition = position;
