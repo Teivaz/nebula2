@@ -50,7 +50,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(renderContext);
     this->InvokeTransformAnimators(renderContext);
     this->UpdateMatrix();
-    sceneServer->SetModelTransform(matrix44());
+    sceneServer->SetModelTransform(this->matrix * parentMatrix);
     return true;
 }
 
