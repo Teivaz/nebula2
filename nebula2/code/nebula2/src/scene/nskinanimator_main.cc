@@ -117,12 +117,12 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
         this->LoadResources();
     }
 
-    nCharacter2* character = new nCharacter2(this->character);
-    n_assert(character);
+    nCharacter2* curCharacter = new nCharacter2(this->character);
+    n_assert(curCharacter);
 
     // put frame persistent data in render context
     this->frameIdVarIndex = renderContext->AddLocalVar(nVariable(0, (int) this->frameId));
-    this->characterVarIndex = renderContext->AddLocalVar(nVariable(0, character));
+    this->characterVarIndex = renderContext->AddLocalVar(nVariable(0, curCharacter));
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +146,8 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 
     nVariable var;
     var = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* character = (nCharacter2*) var.GetObj();
-    n_assert(character);
+    nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
+    n_assert(curCharacter);
 
     var = renderContext->GetLocalVar(this->frameIdVarIndex);
     this->frameId = var.GetInt();
@@ -172,12 +172,12 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         {
             animState = var->GetInt();
         }
-        if (animState != character->GetActiveState())
+        if (animState != curCharacter->GetActiveState())
         {
             // activate new state
-            if (character->ValidStateIndex(animState))
+            if (curCharacter->ValidStateIndex(animState))
             {
-                character->SetActiveState(animState, curTime);
+                curCharacter->SetActiveState(animState, curTime);
             }
             else
             {
@@ -186,11 +186,11 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         }
 
         // evaluate the current state of the character skeleton
-        character->EvaluateSkeleton(curTime, renderContext);
+        curCharacter->EvaluateSkeleton(curTime, renderContext);
     }
 
     // update the source node with the new char skeleton state
-    skinShapeNode->SetCharSkeleton(&character->GetSkeleton());
+    skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
 }
 
 //------------------------------------------------------------------------------
@@ -201,10 +201,10 @@ nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
 {
     nVariable var;
     var = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* character = (nCharacter2*) var.GetObj();
-    n_assert(character);
+    nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
+    n_assert(curCharacter);
 
-    delete character;
+    delete curCharacter;
 }
 //------------------------------------------------------------------------------
 /**
