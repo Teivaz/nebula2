@@ -161,7 +161,7 @@ TCHAR* nNebulaInterface::New(TCHAR *className, TCHAR *objectName)
         result = const_cast<char*>(o->GetName ());
     }
     else
-        n_listener ("NEW: Unable to create a NebulaObject or type %s\n", class_name);
+        n_listener ("NEW: Unable to create a NebulaObject or type '%s'\n", class_name);
 
     return result;
 }
