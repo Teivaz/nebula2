@@ -37,6 +37,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_getignoresubdirs_v",  'GISD', n_getignoresubdirs);
     cl->AddCmd("v_setignorefiles_b",    'SIFL', n_setignorefiles);
     cl->AddCmd("b_getignorefiles_v",    'GIFL', n_getignorefiles);
+    cl->AddCmd("v_setpattern_s",        'SPTN', n_setpattern);
+    cl->AddCmd("s_getpattern_v",        'GPTN', n_getpattern);
     cl->EndCmds();
 }
 
