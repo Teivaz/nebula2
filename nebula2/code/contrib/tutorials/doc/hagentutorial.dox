@@ -6,6 +6,7 @@
 @section Nebula2HagenTutorialContents Contents
 
 - @ref Nebula2HagenTutorialPreparation
+- @ref Nebula2HagenTutorialSampleSource
 - @ref Nebula2HagenTutorialCreateNewProject
   - @ref Nebula2HagenTutorialCreateNewProjectUpdateTCL
   - @ref Nebula2HagenTutorialCreateNewProjectBldFile
@@ -17,6 +18,38 @@
 
 @section Nebula2HagenTutorialPreparation Preparation    
 Read @ref Nebula2Compiling before starting this one!
+
+
+@section Nebula2HagenTutorialSampleSource Sample Source
+
+The sample source code that you can use as a referrence while
+reading this tutorial is available under contrib and is structured
+as follows:
+@verbatim
+nebula2/
+    code/
+        contrib/
+            tutorials/
+                bldfiles/
+                    napplication/
+                        nApplicationTutorial.bld
+                inc/
+                    napplication_tutorial/
+                        ntutorialapp.h
+                        ntutorialappstate.h
+                src/
+                    napplication_tutorial/
+                        ntutorialapp_main.cc
+                        tutorialapp_entry.cc
+                        ntutorialappstate_main.cc
+                scripts/
+                    startup.tcl
+@endverbatim
+Note that it is structured differently to how you'd structure your own
+projects and the reason for that is explained later on. Also, if you want
+to try creating the sample application from scratch you'll need to rename
+the provided .bld, .h and .cc files to .old to prevent conflicts with
+your own files. 
 
 
 @section Nebula2HagenTutorialCreateNewProject Creating a new project
@@ -46,17 +79,36 @@ a new project it is recommended you put it in nebula2/code/myprojectname, unless
 you're working on code you're planning on contributing, in which case you should 
 put it in nebula2/contrib/mycontribution.
 
-So to create our new project for this tutorial:
--# Create a myProjectName subdirectory in nebula2/code.
--# Create the subdirs bldfiles, src, and inc in nebula2/code/myProjectName.
+Since the source code for this tutorial is a contribution it is located under 
+nebula2/code/contrib/tutorials, not directly under nebula2/code. The following
+is what you'd need to do if you wanted to create the application from
+scratch: 
+-# Create an napplication_tutorial subdirectory in nebula2/code.
+-# Create the subdirs bldfiles, src, and inc in 
+   nebula2/code/napplication_tutorial.
    Nebula project directories are always structured this way.
--# Create a myApp subdir in both src and inc.
--# In inc/myApp, create a text file called myAppClass.h, and in src/myApp one 
-   called myAppClass.cc.
+-# Create the subdir scripts in nebula2/code/napplication_tutorial.
+-# Create an napplication_tutorial subdir in both src and inc.
+-# In inc/napplication_tutorial, create a text file called ntutorialapp.h, and in 
+   src/napplication_tutorial one called ntutorialapp_main.cc.
 -# Since we're programming C++ here, and not Java, we need an extra "main" 
-   routine: create myAppMain.cc in your src dir. We don't need a corresponding 
-   header.
--# Finally, create a text file called myProjectName.bld in your bldfiles dir.
+   routine: create tutorialapp_entry.cc in your src dir. We don't need a 
+   corresponding header.
+-# Finally, create a text file called nApplicationTutorial.bld in your bldfiles dir.
+
+If you followed the steps above the resulting directory structure will look 
+like this:
+@verbatim
+nebula2/
+    code/
+        napplication_tutorial/
+            bldfiles/
+            inc/
+                napplication_tutorial/
+            src/
+                napplication_tutorial/
+            scripts/
+@endverbatim
 
 
 @subsection Nebula2HagenTutorialCreateNewProjectBldFile myProjectName.bld
@@ -64,7 +116,7 @@ So to create our new project for this tutorial:
 Now open up the .bld file in a text editor, which we'll use to describe our
 solution.
 
-First of all, we define the so-called "Module". Each module will become a 
+First of all, we define the so-called <i>module</i>. Each module will become a 
 subfolder of a project within a Visual Studio solution. Modules are used 
 to group closely related source files together.
 
@@ -73,13 +125,12 @@ of its descendants) derived class, and nothing else. However, a module may
 also contain a bunch of classes so long as they don't use 
 nNebulaClass/nNebulaScriptClass macros (i.e. they aren't nObject derived). 
 
-The module for myAppClass will include just main.cc, which doesn't define
-any class at all. Thus, we write the following in our build file:
+We write the following in our build file to define the ntutorialapp module:
 @verbatim
-beginmodule myAppClass
-     setdir myApp
-     setheaders { myAppClass }
-     setfiles { myAppClass myAppMain }
+beginmodule ntutorialapp
+    setdir napplication_tutorial
+    setheaders { ntutorialapp }
+    setfiles { ntutorialapp_main tutorialapp_entry }
 endmodule
 @endverbatim
 
@@ -91,24 +142,31 @@ file extensions you can do so by specifying the extension as part of the
 filename in the bld file.
 
 The next step is to tell update.tcl what we want our compiled 
-"finished product" to be, and how it should be linked, thus:
+"finished product" to be, and how it should be linked. We do this by adding
+the following to our bld file:
 @verbatim
-begintarget myApplication
-     settype exe               # We could write dll or lib here instead.
-     setmodules { myAppClass } # We list all the modules we want to use here.
-     settargetdeps {           # This lists projects (usually the Nebula core) we need to link.
-          napplication         # These names come from "begintarget" lines in other build files. 
-          nkernel
-          nnebula
-          ndinput8
-          ndirect3d9
-          ndshow
-          microtcl
-          ngui
-          ndsaudioserver3
-     }
+begintarget tutorialapp_exe
+    settype exe 
+    setmodules { 
+        ntutorialapp
+    }
+    settargetdeps {
+        napplication
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ndshow
+        microtcl
+        ngui
+        ndsaudioserver3
+    }
 endtarget
 @endverbatim
+
+I've named our target <b>tutorialapp_exe</b>, rather than the more aesthetically 
+pleasing <b>tutorialapp</b> so you can clearly distinguish between the module
+<b>ntutorialapp</b> and the target <b>tutorialapp_exe</b>.
 
 The last thing we need is the workspace definition - which files from the 
 Nebula directory tree should appear and be editable in the Visual Studio 
@@ -121,21 +179,22 @@ the .sln/.vcproj files for Visual Studio 7 or higher.
 It is, however, also possible to include targets in the workspace that are 
 not required by the target - for reference.
 
-For example here's how we define a workspace:
+We add the following to our bld file to define our sample workspace:
 @verbatim
-beginworkspace myApplication
-     settargets {
-          myApplication
-          napplication
-          nkernel
-          nnebula
-          ndinput8
-          ndirect3d9
-          ndshow
-          microtcl
-          ngui
-          ndaudioserver3
-     }
+beginworkspace nApplicationIntroTutorial
+    annotate "Introduction to nApplication tutorial."
+    settargets {
+        tutorialapp_exe
+        napplication
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ndshow
+        microtcl
+        ngui
+        ndsaudioserver3
+    }
 endworkspace
 @endverbatim
 
@@ -183,32 +242,37 @@ application class. As already mentioned, we must do this by hand, not with
 a Visual Studio wizard.
 
 
-In myAppClass.h, we write:
+In ntutorialapp.h, we write:
 
 @code
+#ifndef N_TUTORIALAPP_H
+#define N_TUTORIALAPP_H
+
 #include "application/napplication.h"
 
-class nMyApp : public nApplication
+class nTutorialApp : public nApplication
 {
 public:
-    nMyApp();
-    virtual ~nMyApp();
-}
+    nTutorialApp();
+    virtual ~nTutorialApp();
+};
+
+#endif // N_TUTORIALAPP_H
 @endcode
 
-And in myAppClass.cc:
+And in ntutorialapp_main.cc:
 
 @code
-#include "myApp/myAppClass.h"
+#include "napplication_tutorial/ntutorialapp.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nMyApp, "napplication")
+nNebulaClass(nTutorialApp, "napplication")
 
-nMyApp::nMyApp()
+nTutorialApp::nTutorialApp()
 {
 }
 
-nMyApp::~nMyApp()
+nTutorialApp::~nTutorialApp()
 {
 }
 @endcode
@@ -229,12 +293,12 @@ Now we need to write the standard "main" routine. Its only job is to ensure
 that all nebula components and myAppClass are correctly instantiated on startup
 and cleaned up on exit.
 
-The first step is to include a bit of Nebula in myAppMain.cc:
+The first step is to include a bit of Nebula in ntutorialapp_entry.cc:
 
 @code
 #include "kernel/nkernelserver.h"
 #include "gfx2/ndisplaymode2.h"
-#include "myApp/myAppClass.h"
+#include "napplication_tutorial/ntutorialapp.h"
 @endcode
 
 Now we get to a concept that always confuses beginners: the kernel server. 
@@ -259,9 +323,9 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(ndinput8);
-nNebulaUsePackage(ndaudioserver3);
+nNebulaUsePackage(ndsaudioserver3);
 nNebulaUsePackage(napplication);
-nNebulaUsePackage(myApplication);
+nNebulaUsePackage(tutorialapp_exe);
 @endcode
 
 Now, at last, we can write the main routine, and instantiate our first and 
@@ -289,45 +353,42 @@ And so, alas, the whole bit one more time:
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(ndinput8);
-    kernelServer.AddPackage(ndaudioserver3);
+    kernelServer.AddPackage(ndsaudioserver3);
     kernelServer.AddPackage(napplication);
-    kernelServer.AddPackage(myApplication);
+    kernelServer.AddPackage(tutorialapp_exe);
 }
 @endcode
-
-We've done it! Our first runnable Nebula 2 program!
 
 But we're missing something for a proper "Hello, Nebula2", namely that it 
 doesn't yet output anything. Let's fix that:
 
 @code
-    n_printf("Go back to sleep, bruce.")
+    n_printf("Go back to sleep, bruce.\n")
 @endcode
 
-Now call update.tcl (as above) one more time, to create the myApplication 
-package. In Visual Studio, you should see the files pkg_myApplication.cc 
-in the data view. This transforms our module into a package. Now we can build 
-our project!
+Now call update.tcl (as above) one more time, to create the tutorialapp_exe 
+package. In Visual Studio, you should see the file pkg_tutorialapp_exe.cc 
+in the VC Solution Explorer. This transforms our code into a package.
 
 To get our first reaction from the Nebula system, let's try running the 
-program from a command prompt. It should be at nebula2/bin/win32d/myApplication.exe.
+program from a command prompt. It should be at nebula2/bin/win32d/tutorialapp_exe.exe.
 
 As we'll see, n_printf is useful for more than ordering bruce around: it's an 
 important debugging tool. When we run Nebula in windowed mode, we can display a 
 text window (console) in the background, into which Nebula prints status messages. 
 You, too, can output to the console (or a log file) using n_printf!
 
-In the next step, we'll instantiate our myAppClass. We don't use the normal 
-<b>n_new</b> operator for this, nor can we create an nMyApp instance on the 
+In the next step, we'll instantiate our nTutorialApp. We don't use the normal 
+<b>n_new</b> operator for this, nor can we create an nTutorialApp instance on the 
 stack. We're dealing with Nebula classes now, and they must be created through 
 the kernel server, like so:
 
 @code
-    nMyApp* theApp = static_cast<nMyApp*>(kernelServer.New("myAppClass", "theApp"));
+    nTutorialApp* theApp = static_cast<nTutorialApp*>(kernelServer.New("ntutorialapp", "theApp"));
 @endcode
 
 Now we have a running instance of the Nebula Application Subsystem. This is 
-where it gets exciting, because nMyApp, as a child of nApplication, has a 
+where it gets exciting, because nTutorialApp, as a child of nApplication, has a 
 whole lot of functionality for us to play with.
 
 nApplication allows us to create and manage a Nebula program of arbitrary 
@@ -335,7 +396,7 @@ complexity using simple, easy-to-understand methods.
 
 First, we open a rendering window, or, if you prefer, take over the full screen.
 To do this, we'll need to create another Nebula class, nDisplayMode2, and pass it 
-to nMyApp. Here's the code:
+to nTutorialApp. Here's the code:
 
 @code
     nDisplayMode2 myDisplayMode("Window Title", FLAG, posX, posY, width, height, vSynch);
@@ -354,16 +415,16 @@ So we write:
 
 There are a few more tasks to take care of before we can open our window.
 Perhaps you are starting to feel that this is too much work to initialize an
-empty window. Consider though, that nMyApp is intended as the foundation for 
+empty window. Consider though, that nApplication is intended as the foundation for 
 entire games, it needs a certain amount of flexibility and hence complexity. 
 It will all be worth it in the end.
 
-First, we need to point nMyApp to our project directory and a startup script, 
-which will be run when nMyApp::Open() is called.
+First, we need to point nTutorialApp to our project directory and a startup script, 
+which will be run when nTutorialApp::Open() is called.
 
 @code
-    theApp->SetProjectDirectory("C:/nebula2/code/myProjectName");
-    theApp->SetStartupScript("proj:myscripts/startup.tcl");
+    theApp->SetProjectDirectory("path_to_your_project");
+    theApp->SetStartupScript("proj:scripts/startup.tcl");
 @endcode
 
 That first line above defines the alias "proj:" to be the path to our project,
@@ -371,10 +432,6 @@ which allows us to reference additional files abstractly, as shown in the
 second line. Later, an installer could write the install path to a registry key,
 which we would look up for the SetProjectDirectory call and then not have to 
 worry about it in the rest of the program.
-
-You've probably noticed that the path we provided for SetStartupScript doesn't 
-actually exist. Create the myscripts folder in code/myProjectName, and put an 
-empty text file called startup.tcl in it.
 
 At this point, we could initialize much more - just take a look at the Set* 
 methods in nApplication - but we have everything we need for now. Next comes 
@@ -389,26 +446,35 @@ the application class' main loop, which is always the same:
     theApp->Release();
 @endcode
 
-Unfortunately, we still aren't quite ready to open our window.  First, we must
-fill in the empty startup.tcl script.
+Unfortunately, we still aren't quite ready to open our window. First, we must
+create the startup.tcl script (it should go into 
+nebula2/code/napplication_tutorial/scripts).
 
 
 @section Nebula2HagenTutorialStartupTCL Our first TCL script - startup.tcl
 
-theApp->Open() tries to call the following funtions in startup.tcl, one after
+nApplication::Open() tries to call the following script functions one after
 the other:
 @verbatim
-OnStartup()
-OnGraphicsStartup()
-OnMapInput()
+OnStartup
+OnGraphicsStartup
+OnMapInput
+@endverbatim
+
+The Nebula 2 GUI Server also calls these two script functions:
+@verbatim
+OnGuiServerOpen
+OnGuiServerClose
 @endverbatim
 
 For now, just add three empty TCL stubs:
 
 @verbatim
-proc OnStartup{} {}
-proc OnGraphicsStartup{} {}
-proc OnMapInput{} {}
+proc OnStartup {} {}
+proc OnGraphicsStartup {} {}
+proc OnMapInput {} {}
+proc OnGuiServerOpen {} {}
+proc OnGuiServerClose {} {}
 @endverbatim
 
 We can do whatever we like in the script, but the graphics server needs at 
@@ -447,7 +513,8 @@ proc OnStartup {} {
 @endverbatim
 
 If you have an old card change the last command to
-@verbatim 
+
+@verbatim
         .setassign "shaders" "proj:data/shaders/fixed/" 
 @endverbatim
 
@@ -482,23 +549,46 @@ every frame and then renders a new image to the screen. Sometimes, though,
 the usual loop is interrupted, e.g. to show a cut scene or the main menu. 
 To handle this, nApplication uses <i>states</i>.
 
-In myApp->Open(), we set the application's initial state. To create a state,
-we need a new Nebula object, this time derived from nAppState:
+In nTutorialApp::Open() (that we'll need to add to ntutorialapp_main.cc/
+ntutorialapp.h), 
+we set the application's initial state. To create a state, we need a new 
+Nebula object, this time derived from nAppState:
 
 -# Add the following to your .bld file:
 @verbatim
-beginmodule myappappstate
-    setdir myApp
-    setheaders { myappappstate }
-    setfiles { myappappstate }
+beginmodule ntutorialappstate
+    setdir napplication_tutorial
+    setheaders { ntutorialappstate }
+    setfiles { ntutorialappstate_main }
 endmodule
 @endverbatim
--# Enter the new module in the module list (setmodules) for the myApplication
+-# Enter the new module in the module list (setmodules) for the tutorialapp_exe
    target.
--# Create src/myApp/myAppState.cc and inc/myApp/myAppState.h.
+@verbatim
+begintarget tutorialapp_exe
+    settype exe 
+    setmodules { 
+        ntutorialapp 
+        ntutorialappstate
+    }
+    settargetdeps {          
+        napplication
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ndshow
+        microtcl
+        ngui
+        ndsaudioserver3
+    }
+endtarget
+@endverbatim
+-# Create src/napplication_tutorial/ntutorialappstate_main.cc and 
+   inc/napplication_tutorial/ntutorialappstate.h.
 -# Create the usual class declaration in these files, don't forget the 
-   nNebulaClass(myAppState, "nappstate") macro in the .cc file.
--# Rerun update.tcl.
+   nNebulaClass(nTutorialAppState, "nappstate") macro in the .cc file.
+-# Rerun update.tcl and reload the Visual Studio solution.
 .
 
 Take a look at nAppState now. We inherit three methods, each of which is
@@ -517,44 +607,50 @@ To help us do this, we use another couple of classes from the
 Application Subsystem: nAppCamera and nGfxObject. Before we can create them 
 though, we need to include them.
 
-Put it all together, and what do we get? In myAppState.h:
+Put it all together, and what do we get? In ntutorialappstate.h:
 
 @code
+#ifndef N_TUTORIALAPPSTATE_H
+#define N_TUTORIALAPPSTATE_H
+
 #include "application/nappstate.h"
 #include "application/ngfxobject.h"
 #include "application/nappcamera.h"
 
-class myAppState: public nAppState
+class nTutorialAppState: public nAppState
 {
 public:
-    myAppState();
-    virtual ~myAppState();
+    nTutorialAppState();
+    virtual ~nTutorialAppState();
     virtual void OnStateEnter(const nString& prevState);
     virtual void OnRender3D();
     virtual void OnRender2D();
     virtual void OnFrame();
+    
 protected:
     nGfxObject* world;
     nGfxObject* testObject;
 };
+
+#endif // N_TUTORIALAPPSTATE_H
 @endcode
 
 Note the pointers to our test object and game world in the protected section.
 
-Next, we implement all this in myappstate.cc:
+Next, we implement all this in ntutorialappstate_main.cc:
 
 @code
-#include "myApp/myappstate.h"
+#include "napplication_tutorial/ntutorialappstate.h"
 
-nNebulaClass(myAppState, "nappstate");
+nNebulaClass(nTutorialAppState, "nappstate");
 
-myAppState::myAppState()
+nTutorialAppState::nTutorialAppState()
 {
     this->world = 0;
     this->testObject = 0;
 }
 
-myAppState::~myAppState()
+nTutorialAppState::~nTutorialAppState()
 {
     if (this->testObject)
     {
@@ -568,6 +664,27 @@ myAppState::~myAppState()
         this->world = 0;
     }
 }
+
+void nTutorialAppState::OnStateEnter(const nString& prevState)
+{
+ 
+}
+
+void nTutorialAppState::OnRender3D()
+{
+
+}
+
+void nTutorialAppState::OnRender2D()
+{
+    // empty
+}
+
+void nTutorialAppState::OnFrame()
+{
+    // empty
+}
+
 @endcode
 
 Now we implement the OnStateEnter method, which, logically enough, will be 
@@ -582,21 +699,22 @@ It is important to note that <i>world</i> also just comes from an ordinary .n2
 file, in which a light is created, so that we can see what we're doing.
 
 @code
-void myAppState::OnStateEnter(const nString& prevState)
+void nTutorialAppState::OnStateEnter(const nString& prevState)
 {
     this->world = n_new(nGfxObject);
-    this->world->SetResourceName("gfxlib:stdlight.n2");
+    this->world->SetResourceName("gfxlib:examples/stdlight.n2");
     this->world->Load();
     this->testObject = n_new(nGfxObject);
-    this->testObject->SetResourceName("gfxlib:torus.n2");
+    this->testObject->SetResourceName("gfxlib:examples/torus.n2");
     this->testObject->Load();  
 }
 @endcode
 
-Last but not least, we tell our AppState to render those loaded resources in 3D.
+Last but not least, we tell our nTutorialAppState to render those loaded 
+resources in 3D.
 
 @code
-void myAppState::OnRender3D()
+void nTutorialAppState::OnRender3D()
 {
     this->world->Render();
     this->testObject->Render();
@@ -607,27 +725,31 @@ Look at that! Getting this far may have seemed pretty hard, but when we
 actually get around to *doing* the stuff that we want Nebula to do, it's
 a one-line triviality.
 
-However, we still need to add our AppSate to our AppClass before we can 
-compile. In the AppClass' header file, we add:
+However, we still need to add our nTutorialAppSate to our nTutorialApp before
+we can build. In the nTutorialApp header file, we add:
 
 @code
 protected:
-    myAppState* gameState;
+    nTutorialAppState* gameState;
 @endcode
 
-and in the .cc, we instantiate gameState in the Open method, so that our 
-application enters the state upon startup:
+and in the .cc, we instantiate gameState in the nTutorialApp::Open method, so 
+that our application enters the state upon startup:
 
 @code
-bool myAppClass::Open()
+bool nTutorialApp::Open()
 {
-    this->gameState = (myAppState*)this->CreateState("myappstate", "gamestate");
+    nApplication::Open();
+    this->gameState = (nTutorialAppState*)this->CreateState("ntutorialappstate", "gamestate");
     this->SetState("gamestate");
+    return true;
 }
 @endcode
 
 And now, the moment you've been waiting for! You can now build, run, and see 
-something worthwhile.
+something. This is what you should see:
+
+@image html napplication_tutorial_screen.jpg 
 
 
 @section Nebula2HagenTutorialPartingComments Parting Comments
