@@ -40,6 +40,25 @@ nOpendePickServer::~nOpendePickServer()
     @param mouseX   [in] Absolute x coordinate of cursor in pixels.
     @param mouseY   [in] Absolute y coordinate of cursor in pixels.
     @param pickRay  [out] The generated pick ray.
+    
+    You'd typically obtain the mouseX/mouseY from the input server like so:
+    
+    Assuming 'is' is a pointer to an nInputServer.
+    @code
+    int mouseX = 0;
+    int mouseY = 0;
+    nInputEvent* event = is->FirstEvent();
+    while (event)
+    {
+        if (N_INPUT_MOUSE_MOVE == event->GetType())
+        {
+                mouseX = event->GetAbsXPos();
+                mouseY = event->GetAbsYPos();
+        }
+        
+        event = is->NextEvent(event);
+    }
+    @endcode
 */
 void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
 {
@@ -77,9 +96,28 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
   
 //----------------------------------------------------------------------------
 /**
-    @param mouseX  [in] Normalized x coordinate of cursor (-1.0 to 1.0)
-    @param mouseY  [in] Normalized y coordinate of cursor (-1.0 to 1.0)
+    @param mouseX  [in] x coordinate of cursor (0.0 to 1.0)
+    @param mouseY  [in] y coordinate of cursor (0.0 to 1.0)
     @param pickRay [out] The generated pick ray.
+    
+    You'd typically obtain the mouseX/mouseY from the input server like so:
+    
+    Assuming 'is' is a pointer to an nInputServer.
+    @code
+    int mouseX = 0;
+    int mouseY = 0;
+    nInputEvent* event = is->FirstEvent();
+    while (event)
+    {
+        if (N_INPUT_MOUSE_MOVE == event->GetType())
+        {
+                mouseX = event->GetRelXPos();
+                mouseY = event->GetRelYPos();
+        }
+        
+        event = is->NextEvent(event);
+    }
+    @endcode
 */      
 void nOpendePickServer::CreatePickRay( float mouseX, float mouseY, 
                                        line3& pickRay )
@@ -95,6 +133,9 @@ void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
     {
         float nearp, farp, minx, maxx, miny, maxy;
         camera.GetViewVolume( minx, maxx, miny, maxy, nearp, farp );
+        // normalize the mouse coords to (-1, 1)
+        start.x = 2.0f * mouseX - 1.0f;
+        start.y = 1.0f - 2.0f * mouseY;
         // map the normalized coords to the near plane
         start.x *= maxx;
         start.y *= maxy;

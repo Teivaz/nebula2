@@ -69,7 +69,7 @@ class nOpendePickServer : public nRoot
         
         /// generate a pick ray from the specified screen coordinates
         void CreatePickRay( int mouseX, int mouseY, line3& pickRay );
-        /// generate a pick ray from the specified normalized screen coordinates
+        /// generate a pick ray from the specified screen coordinates
         void CreatePickRay( float mouseX, float mouseY, line3& pickRay );
         
         void RayPick( dSpaceID, void* data, dNearCallback*, 
