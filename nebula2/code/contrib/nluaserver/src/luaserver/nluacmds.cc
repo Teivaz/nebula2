@@ -76,13 +76,24 @@ int _luaDispatch(lua_State* L, nRoot* root, nCmdProto* cmd_proto, bool print)
 int luacmd_Error(lua_State* L)
 {
     if (nLuaServer::Instance->GetFailOnError())
-        nLuaServer::Instance->SetQuitRequested(1);
+        nLuaServer::Instance->SetQuitRequested(true);
     // The line buffer is being ignorant
     // without the \n (nDefaultLogHandler)
     n_message("%s\n", lua_tostring(L, -1));
     lua_settop(L, 0);
-    lua_pushnil(L);
-    return 1;
+    return 0;
+}
+
+//--------------------------------------------------------------------
+//  luacmd_StackDump()
+//--------------------------------------------------------------------
+int luacmd_StackDump(lua_State* L)
+{
+    if (nLuaServer::Instance->GetFailOnError())
+        nLuaServer::Instance->SetQuitRequested(true);
+    nLuaServer::Instance->GenerateStackTrace();
+    lua_settop(L, 0);
+    return 0;
 }
 
 //--------------------------------------------------------------------
@@ -94,8 +105,7 @@ int luacmd_Panic(lua_State* L)
     nScriptServer* ss = (nScriptServer*)lua_touserdata(L, lua_upvalueindex(1));
     ss->SetQuitRequested(1);
     lua_settop(L, 0);
-    lua_pushnil(L);
-    return 1;
+    return 0;
 }
 
 //--------------------------------------------------------------------

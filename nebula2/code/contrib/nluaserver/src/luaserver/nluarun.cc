@@ -19,29 +19,57 @@
 #endif
 
 //--------------------------------------------------------------------
-//  _lua_tostring(lua_State* L)
+/**
+    @brief Executes the chunk at the top of the Lua stack.
+*/
+bool nLuaServer::ExecuteLuaChunk( const char*& result, int errfunc )
+{
+    n_assert( (errfunc > 0) && "Error function stack index must be absolute!" );
+    
+    // call chunk main
+    int status = lua_pcall( this->L, 
+                            0 /* no args */, 
+                            LUA_MULTRET, 
+                            errfunc /* stack index of error handler */ );
+    if ( 0 != status ) // error occured
+        result = this->outputStr.Get(); // contains the error info
+    else
+    {
+        this->outputStr.Set( "" );
+        result = this->StackToString( this->L, 0 );
+        if ( 0 == result[0] ) // empty string?
+            result = 0; // don't want a blank to be printed in the console
+    }
+    
+    return (0 == status);
+}
+
 //--------------------------------------------------------------------
 /**
-    @brief _lua_tostring empties the Lua stack and returns a string
-    represntation for the contents.
+    @brief Empties the Lua stack and returns a string representation 
+           of the contents.
+           
+    @param L Pointer to the Lua state.
+    @param bottom Absolute index of the bottom stack item.
     
-    @todo The list handling ought to recurse, but doing so crashes  
-    the console if the returned value is a thunk.  rawget doesn't 
-    seem to help this any either and it seems that Lua is still
-    calling the __index metatable values.
+    Only items between the bottom index and the stack top
+    (excluding the bottom index) will be crammed into the 
+    string, passing 0 for the bottom will dump all the 
+    items in the stack.
 */
-const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
+const char* nLuaServer::StackToString( lua_State* L, int bottom )
 {
-    nString* buf = nLuaServer::Instance->output;
-    buf->Set("");
+    nString* buf = &nLuaServer::Instance->outputStr;
     while (bottom < lua_gettop(L))
     {
         switch (lua_type(L,-1))
         {
             case LUA_TBOOLEAN:
             {
-                if(lua_toboolean(L,-1)) buf->Append("true");
-                else buf->Append("false");
+                if (lua_toboolean(L,-1)) 
+                    buf->Append("true");
+                else 
+                    buf->Append("false");
                 break;  
             }
             case LUA_TNUMBER:
@@ -53,7 +81,7 @@ const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
             case LUA_TUSERDATA:
             case LUA_TLIGHTUSERDATA:
             {
-                buf->Append("<obect>");
+                buf->Append("<userdata>");
                 break;
             }
             case LUA_TNIL:
@@ -63,25 +91,35 @@ const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
             }
             case LUA_TTABLE:
             {
-                buf->Append("{ ");
-                lua_pushnil(L);
-                lua_gettable(L, -2);
-
-                while (lua_next(L, -2) != 0) //pops a key and pushes key and value
+                // check if it's a thunk
+                lua_pushstring(L, "_");
+                lua_rawget(L,-2);
+                if ( lua_isuserdata(L,-1) )
                 {
-                    if(lua_isstring(L,-1))
+                    // assume it's a thunk
+                    buf->Append("<thunk>");
+                }
+                else
+                {
+                    buf->Append("{ ");
+                    lua_pushnil(L);
+                    lua_gettable(L,-2);
+                    bool firstItem = true;
+                    while (lua_next(L,-2) != 0)
                     {
-                        buf->Append(lua_tostring(L,-1));
+                        if ( !firstItem )
+                            buf->Append(", ");
+                        else
+                            firstItem = false;
+                        nLuaServer::StackToString(L,lua_gettop(L)-1);
                     }
                     lua_pop(L,1);
-                    buf->Append(" ");
+                    buf->Append(" }");
                 }
-                lua_pop(L,1);
-                buf->Append(" }");
                 break;
             }
             default:
-                buf->Append("???");
+                //buf->Append("???");
                 break;  
         }
         lua_pop(L,-1);
@@ -107,11 +145,16 @@ nString nLuaServer::Prompt()
 bool nLuaServer::Run(const char *cmdStr, const char*& result)
 {
     n_assert(cmdStr);
-
-    bool retval = lua_dostring(this->L, cmdStr);
-
-    result = _lua_tostring(this->L, 0);
-    return !retval;
+    // push the error handler on stack
+    lua_pushstring( this->L, "_LUASERVER_STACKDUMP" );
+    lua_gettable( this->L, LUA_GLOBALSINDEX );
+    n_assert( lua_isfunction( this->L, -1 ) && "Error handler not registered!" );
+    int errfunc = lua_gettop( this->L );
+    // load chunk
+    int status = luaL_loadbuffer( this->L, cmdStr, strlen(cmdStr), cmdStr );
+    if ( 0 == status ) // parse OK?
+        return this->ExecuteLuaChunk( result, errfunc );
+    return false;
 }
 
 //--------------------------------------------------------------------
@@ -122,6 +165,7 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
 bool nLuaServer::RunScript(const char *filename, const char*& result)
 {
     n_assert(filename);
+    
     char buf[N_MAXPATH];
     int filesize;
     char *cmdbuf;
@@ -140,9 +184,10 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     nfile->Seek(0, nFile::END);
     filesize = nfile->Tell();
     nfile->Seek(0, nFile::START);
-    
-    cmdbuf = (char*)n_malloc(filesize+1);
-    nfile->Read(cmdbuf, filesize+1);
+       
+    cmdbuf = (char*)n_malloc(filesize + 1);
+    n_assert(cmdbuf && "Failed to allocate command buffer!");
+    nfile->Read(cmdbuf, filesize + 1);
     cmdbuf[filesize] = 0;
     
     nfile->Close();

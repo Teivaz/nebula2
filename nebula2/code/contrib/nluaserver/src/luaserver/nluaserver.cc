@@ -28,6 +28,7 @@ extern "C" {
 } // extern "C"
 
 // External declaration of Nebula commands
+extern int luacmd_StackDump(lua_State*);
 extern int luacmd_Error(lua_State*);
 extern int luacmd_Panic(lua_State*);
 extern int luacmd_New(lua_State*);
@@ -75,8 +76,6 @@ nLuaServer::nLuaServer() :
 {
     this->indent_level = 0;
     this->indent_buf[0] = 0;
-
-    this->output = n_new nString;
     
     // Store a handy reference to this instance
     if ( !nLuaServer::Instance )
@@ -108,6 +107,7 @@ nLuaServer::nLuaServer() :
     }
 
     // Get a global table of Neb funcs up
+    reg_globalfunc(luacmd_StackDump,        "_LUASERVER_STACKDUMP");
     reg_globalfunc(luacmd_Error,            "_ALERT");
     reg_globalfunc(luacmd_New,              "new");
     reg_globalfunc(luacmd_NewThunk,         "newthunk");
@@ -161,7 +161,62 @@ nLuaServer::~nLuaServer()
 {
     lua_close(this->L);
     this->L = 0;
-    n_delete(this->output);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Generates a stack trace.
+    @return A pointer to the string containing the stack trace.
+    
+    @warning The pointer points to an internal buffer that is likely to change,
+             therefore you should copy the string before any further Lua 
+             server methods are called.
+*/
+const char* nLuaServer::GenerateStackTrace()
+{
+    n_assert( this->L );
+    n_assert( (1 == lua_gettop( this->L )) && 
+              "Only error message should be on stack!" );
+    
+    this->outputStr.Set( "nLuaServer encountered a problem...\n" );
+    this->outputStr.Append( lua_tostring( this->L, -1 ) );
+    this->outputStr.Append( "\n\n-- Stack Trace --\n" );
+    
+    lua_Debug debugInfo;
+    int level = 0;
+    char buffer[1024];
+    buffer[0] = 0;
+    const char* namewhat = 0;
+    const char* funcname = 0;
+    while ( lua_getstack( this->L, level, &debugInfo ) )
+    {
+        if ( lua_getinfo( this->L, "nSl", &debugInfo ) )
+        {
+            if ( 0 == debugInfo.namewhat[0] )
+                namewhat = "???";
+            else
+                namewhat = debugInfo.namewhat;
+                
+            if ( 0 == debugInfo.name )
+                funcname = "???";
+            else
+                funcname = debugInfo.name;
+                    
+            snprintf( buffer, sizeof(buffer), 
+                      "%s - #%d: %s (%s/%s)\n", 
+                      debugInfo.short_src,
+                      debugInfo.currentline,
+                      funcname,
+                      namewhat,
+                      debugInfo.what );
+            buffer[sizeof(buffer)-1] = 0; // null terminate in case snprintf doesn't!
+            this->outputStr.Append( buffer );
+        }
+        else
+            this->outputStr.Append( "Failed to generate stack trace.\n" );
+        level++;
+    }
+    return this->outputStr.Get();
 }
 
 //------------------------------------------------------------------------------

@@ -44,6 +44,8 @@ public:
     virtual bool RunScript(const char *, const char*&);
     virtual bool RunFunction(const char *, const char*&);
     virtual nString Prompt();
+    
+    const char* GenerateStackTrace();
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
     virtual bool WriteComment(nFile *, const char *);
@@ -84,16 +86,17 @@ private:
 
     static void ArgToStack( lua_State*, nArg* );
     static bool StackToArg( lua_State*, nArg*, int index );
-    const char* _lua_tostring( lua_State*, int );
+    static const char* StackToString( lua_State*, int );
     void reg_globalfunc(lua_CFunction, const char*);
     void write_select_statement(nFile *, nRoot *, nRoot *);
+    bool ExecuteLuaChunk(const char *&, int errfunc);
 
     long indent_level;
     char indent_buf[N_MAXPATH];
     lua_State* L;   
     bool echo;
     bool selgrab;
-    nString* output;
+    nString outputStr;
 };
 
 
