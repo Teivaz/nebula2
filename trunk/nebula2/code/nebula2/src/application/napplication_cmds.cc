@@ -30,7 +30,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_getcompanyname_v",  'GCPN', n_getcompanyname);
     cl->AddCmd("v_setappname_s",      'SAPN', n_setappname);
     cl->AddCmd("s_getappname_v",      'GAPN', n_getappname);
-    cl->AddCmd("v_getcurrentstate_s", 'GCRS', n_getcurrentstate);
+    cl->AddCmd("s_getcurrentstate_v", 'GCRS', n_getcurrentstate);
     cl->AddCmd("v_setstate_s",        'SETS', n_setstate);
     cl->EndCmds();
 }
