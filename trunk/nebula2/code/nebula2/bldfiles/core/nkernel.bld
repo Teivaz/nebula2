@@ -150,7 +150,7 @@ beginmodule nkernel
     setfiles {
         nkernelserver nkernel nclass ncmdproto ncmdprotonative
         nhardrefserver nthread nloghandler ndefaultloghandler
-        nwin32loghandler nrefcounted ncrc
+        nwin32loghandler nrefcounted ncrc ndbgalloc
     }
     setheaders {
         nsystem ntypes ndebug nkernelserver nprofiler nclass
