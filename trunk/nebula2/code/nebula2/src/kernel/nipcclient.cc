@@ -54,26 +54,29 @@ nIpcClient::ApplyBlocking(bool b)
 {
     if (b)
     {
+        // enable blocking
         #ifdef __WIN32__
             u_long falseAsUlong = 0;
             int res = ioctlsocket(this->sock, FIONBIO, &falseAsUlong);
         #elif defined(__LINUX__) || defined(__MACOSX__)
             int flags;
             flags = fcntl(this->sock, F_GETFL);
-            flags |= O_NONBLOCK;
+            flags &= ~O_NONBLOCK;
             int res = fcntl(this->sock, F_SETFL, flags);
         #endif
         n_assert(0 == res);
     }
     else
     {
+        // disable blocking
         #ifdef __WIN32__
             u_long trueAsUlong = 1;
             int res = ioctlsocket(this->sock, FIONBIO, &trueAsUlong);
         #elif defined(__LINUX__) || defined(__MACOSX__)
             int flags;
             flags = fcntl(this->sock, F_GETFL);
-            int res = fcntl(this->sock, F_SETFL, flags & ~O_NONBLOCK);
+            flags |= O_NONBLOCK;
+            int res = fcntl(this->sock, F_SETFL, flags);
         #endif
         n_assert(0 == res);
     }
@@ -153,7 +156,6 @@ nIpcClient::Connect(nIpcAddress& addr)
         this->isConnected = true;
     }
     return true;
-
 }                                                                  
         
 //------------------------------------------------------------------------------

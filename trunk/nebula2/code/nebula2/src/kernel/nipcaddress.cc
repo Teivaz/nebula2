@@ -101,17 +101,18 @@ nIpcAddress::GetPortName() const
 bool
 nIpcAddress::IsInternetAddress(const in_addr& addr)
 {
-#if defined(__LINUX__) || defined(__MACOSX__)
-    uchar b1 = addr.s_addr << 24;
-    uchar b2 = addr.s_addr << 16;
-    uchar b3 = addr.s_addr << 8;
-#else
-    uchar b1 = addr.S_un.S_un_b.s_b1;
-    uchar b2 = addr.S_un.S_un_b.s_b2;
-    uchar b3 = addr.S_un.S_un_b.s_b3;
-    uchar b4 = addr.S_un.S_un_b.s_b4;
-#endif
+    // generate address string from addr
+    char* addrString = inet_ntoa(addr);
 
+    // tokenize string into its members
+    nArray<nString> tokens;
+    nString str = addrString;
+    str.Tokenize(".", tokens);
+    n_assert(tokens.Size() == 4);
+    int b1 = atoi(tokens[0].Get());
+    int b2 = atoi(tokens[1].Get());
+    int b3 = atoi(tokens[2].Get());
+    // int b4 = atoi(tokens[3].Get());
     if ((b1 == 10) && (b2 >= 0) && (b2 <= 254))
     {
         // Class A net
