@@ -12,7 +12,6 @@ nNebulaScriptClass(nPersistServer, "nroot");
 /**
 */
 nPersistServer::nPersistServer() :
-    refFileServer("/sys/servers/file2"),
     refSaver("/sys/servers/script"),
     file(0),
     saveMode(SAVEMODE_FOLD),

@@ -116,7 +116,6 @@ private:
     /// get a valid loader script server from class name
     nScriptServer* GetLoader(const char* loaderClass);
 
-    nAutoRef<nFileServer2> refFileServer;
     nDynAutoRef<nScriptServer> refSaver;
     nFile *file;
     nStack<nRoot*> objectStack;

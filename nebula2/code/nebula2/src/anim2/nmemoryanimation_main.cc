@@ -92,7 +92,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
 {
     n_assert(!this->IsValid());
 
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
 
     // open the file
@@ -221,7 +221,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
 {
     n_assert(!this->IsValid());
 
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
 
     // open the file

@@ -103,7 +103,7 @@ nD3D9Shader::LoadResource()
     this->shaderIndex = this->refGfxServer->GetShaderIndex(filename.Get());
     
     //load fx file...
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
 
     // open the file
     if (!file->Open(mangledPath.Get(), "r"))
