@@ -34,8 +34,6 @@ public:
     virtual bool IsValidDropPos(const vector2& mousePos, nGuiIcon* icon);
     /// render the canvas background
     virtual bool Render();
-
-    static nKernelServer* kernelServer;
 };
 //------------------------------------------------------------------------------
 #endif

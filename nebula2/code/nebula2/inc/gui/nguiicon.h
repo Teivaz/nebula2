@@ -41,8 +41,6 @@ public:
     /// return true if the icon thinks that this is a valid drop position
     virtual bool IsValidDropPos(const vector2& mousePos);
 
-    static nKernelServer* kernelServer;
-
 private:
     bool dragging;
     vector2 dragStartMousePos;
