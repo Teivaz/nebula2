@@ -78,7 +78,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                     decl[curElement].Method = D3DDECLMETHOD_DEFAULT;
                     switch (mask)
                     {
-                        case nMesh2::VertexComponent::Coord:
+                        case nMesh2::Coord:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
                             // usageIndex specifies the index in the vertex shader semantic, i.e.
@@ -87,35 +87,35 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             curOffset += 3 * sizeof(float);
                             break;
                                       
-                        case nMesh2::VertexComponent::Normal:
+                        case nMesh2::Normal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_NORMAL;
                             decl[curElement].UsageIndex = normalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
                                                            
-                        case nMesh2::VertexComponent::Tangent:
+                        case nMesh2::Tangent:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
                             decl[curElement].UsageIndex = tangentUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;                           
                                                          
-                        case nMesh2::VertexComponent::Binormal:
+                        case nMesh2::Binormal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
                             decl[curElement].UsageIndex = binormalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
                                                            
-                        case nMesh2::VertexComponent::Color:
+                        case nMesh2::Color:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_COLOR;
                             decl[curElement].UsageIndex = colorUsageIndex++;
                             curOffset += 4 * sizeof(float);
                             break;  
 
-                        case nMesh2::VertexComponent::Uv0:
+                        case nMesh2::Uv0:
                             if (meshIndex == 0)
                             {
                                 decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
@@ -129,7 +129,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             }
                             break;
                                       
-                        case nMesh2::VertexComponent::Uv1:
+                        case nMesh2::Uv1:
                             if (meshIndex == 0)
                             {
                                 decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
@@ -143,7 +143,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             }
                             break;
 
-                        case nMesh2::VertexComponent::Uv2:
+                        case nMesh2::Uv2:
                             if (meshIndex == 0)
                             {
                                 decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
@@ -157,7 +157,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             }
                             break;
 
-                        case nMesh2::VertexComponent::Uv3:
+                        case nMesh2::Uv3:
                             if (meshIndex == 0)
                             {
                                 decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
@@ -171,14 +171,14 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             }
                             break;  
                         
-                        case nMesh2::VertexComponent::Weights:
+                        case nMesh2::Weights:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_BLENDWEIGHT;
                             decl[curElement].UsageIndex = weightsUsageIndex++;
                             curOffset += 4 * sizeof(float);
                             break;
 
-                        case nMesh2::VertexComponent::JIndices:
+                        case nMesh2::JIndices:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_BLENDINDICES;
                             decl[curElement].UsageIndex = jindciesUsageIndex++;
