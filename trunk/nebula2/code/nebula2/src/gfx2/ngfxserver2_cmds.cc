@@ -11,7 +11,6 @@ static void n_closedisplay(void* slf, nCmd* cmd);
 static void n_getfeatureset(void* slf, nCmd* cmd);
 static void n_savescreenshot(void* slf, nCmd* cmd);
 
-
 //------------------------------------------------------------------------------
 /**
     @scriptclass

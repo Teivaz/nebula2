@@ -163,6 +163,7 @@ nShaderParams::SetBool(nShader2::Parameter p, bool val)
     this->valid[p] = true;
     this->args[p].SetBool(val);
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -173,6 +174,7 @@ nShaderParams::GetBool(nShader2::Parameter p) const
     n_assert(p < nShader2::NumParameters);
     return this->args[p].GetBool();
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -305,3 +307,4 @@ nShaderParams::Reset()
 
 //------------------------------------------------------------------------------
 #endif
+

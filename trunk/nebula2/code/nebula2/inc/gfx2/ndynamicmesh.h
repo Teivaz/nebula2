@@ -246,7 +246,6 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
     this->gfxServer->SetMesh(0);
 }
 
-
 //------------------------------------------------------------------------------
 /**
     Begin non-indexed rendering to the dynamic mesh. 

@@ -160,13 +160,10 @@ public:
     int GetVertexBufferByteSize() const;
     /// returns the byte size of the embedded index buffer
     int GetIndexBufferByteSize() const;
-
     /// get the buffer refill mode
     RefillBuffersMode GetRefillBuffersMode() const;
     /// set the buffer refill mode
     void SetRefillBuffersMode(RefillBuffersMode mode);
-
-
 
 protected:
     /// unload resource

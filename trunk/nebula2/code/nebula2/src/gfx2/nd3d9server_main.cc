@@ -39,8 +39,8 @@ nD3D9Server::nD3D9Server() :
     d3d9Device(0),
     depthStencilSurface(0),
     backBufferSurface(0),
-    featureSet(InvalidFeatureSet),
-    d3dxEffectPool(0)
+    d3dxEffectPool(0),
+    featureSet(InvalidFeatureSet)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
@@ -266,4 +266,3 @@ nD3D9Server::GetDisplayMode() const
 {
     return this->windowHandler.GetDisplayMode();
 }
-
