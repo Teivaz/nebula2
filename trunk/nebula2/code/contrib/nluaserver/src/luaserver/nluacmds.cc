@@ -735,7 +735,7 @@ int luacmd_DeleteNRef(lua_State* L)
     n_assert((1 == lua_gettop(L)) && lua_isuserdata(L, -1));
     nRef<nRoot>* ref = (nRef<nRoot>*)lua_unboxpointer(L, -1);
     if (ref)
-        n_delete ref;
+        n_delete(ref);
     return 0;
 }
 
