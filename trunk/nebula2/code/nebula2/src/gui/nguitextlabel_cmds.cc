@@ -12,6 +12,7 @@ static void n_setcolor(void* slf, nCmd* cmd);
 static void n_getcolor(void* slf, nCmd* cmd);
 static void n_settext(void* slf, nCmd* cmd);
 static void n_gettext(void* slf, nCmd* cmd);
+static void n_gettextextent(void* slf, nCmd* cmd);
 static void n_setint(void* slf, nCmd* cmd);
 static void n_getint(void* slf, nCmd* cmd);
 static void n_setborder(void* slf, nCmd* cmd);
@@ -45,6 +46,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getcolor_v",       'GCLR', n_getcolor);
     cl->AddCmd("v_settext_s",           'STXT', n_settext);
     cl->AddCmd("s_gettext_v",           'GTXT', n_gettext);
+    cl->AddCmd("ff_gettextextent_v",    'GEXT', n_gettextextent);
     cl->AddCmd("v_setint_i",            'SINT', n_setint);
     cl->AddCmd("i_getint_v",            'GINT', n_getint);
     cl->AddCmd("v_setborder_ff",        'SBRD', n_setborder);
@@ -220,6 +222,26 @@ n_gettext(void* slf, nCmd* cmd)
 {
     nGuiTextLabel* self = (nGuiTextLabel*) slf;
     cmd->Out()->SetS(self->GetText());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    gettextextent
+    @input
+    v
+    @output
+    f
+    @info
+    Get the text extent for the currently set text and font.
+*/
+static void
+n_gettextextent(void* slf, nCmd* cmd)
+{
+    nGuiTextLabel* self = (nGuiTextLabel*) slf;
+    const vector2& extent = self->GetTextExtent();
+    cmd->Out()->SetF(extent.x);
+    cmd->Out()->SetF(extent.y);
 }
 
 //-----------------------------------------------------------------------------
