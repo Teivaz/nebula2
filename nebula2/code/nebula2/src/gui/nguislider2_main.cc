@@ -7,7 +7,7 @@
 #include "gui/nguilabel.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiSlider2, "nguiwidget");
+nNebulaClass(nGuiSlider2, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
