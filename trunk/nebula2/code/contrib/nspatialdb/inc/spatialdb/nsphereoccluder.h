@@ -7,7 +7,7 @@
     @brief Encapsulates the occlusion region and flags of an
     occluding sphere, with handling of 'active occluding' flags.
 
-    This class is similar to the nSphereOccluder class but represents an
+    This class is similar to the nBBoxOccluder class but represents an
     occluding sphere, which obscures objects as seen from a specific
     viewpoint.  It determines if an object is occluded by the sphere;
     that is, there is no line segment connecting the viewpoint and the
