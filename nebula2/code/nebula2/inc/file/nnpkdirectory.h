@@ -27,6 +27,8 @@ public:
     virtual bool Open(const char* dirName);
     /// close directory
     virtual void Close();
+    /// determines wether the directory is opened
+    virtual bool IsOpen() const;
     /// check if directory is empty
     virtual bool IsEmpty();
     /// set first entry as current
@@ -39,8 +41,6 @@ public:
     virtual nEntryType GetEntryType();
 
 private:
-    /// determines wether the directory is opened
-    virtual bool IsOpen() const;
     /// set to first npk entry
     bool SetToFirstNpkEntry();
     /// set to next npk entry
