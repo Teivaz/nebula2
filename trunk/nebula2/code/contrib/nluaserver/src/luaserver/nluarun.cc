@@ -38,8 +38,8 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
     }
     else
     {
-        this->outputStr.Set("");
-        result = this->StackToString(this->L, 0);
+        result.Clear();
+        this->StackToString(this->L, 0, result);
     }
     
     return (0 == status);
@@ -58,9 +58,8 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
     string, passing 0 for the bottom will dump all the 
     items in the stack.
 */
-const char* nLuaServer::StackToString(lua_State* L, int bottom)
+void nLuaServer::StackToString(lua_State* L, int bottom, nString& result)
 {
-    nString* buf = &nLuaServer::Instance->outputStr;
     while (bottom < lua_gettop(L))
     {
         switch (lua_type(L, -1))
@@ -68,26 +67,26 @@ const char* nLuaServer::StackToString(lua_State* L, int bottom)
             case LUA_TBOOLEAN:
             {
                 if (lua_toboolean(L, -1)) 
-                    buf->Append("true");
+                    result.Append("true");
                 else 
-                    buf->Append("false");
+                    result.Append("false");
                 break;  
             }
             case LUA_TNUMBER:
             case LUA_TSTRING:
             {
-                buf->Append(lua_tostring(L, -1));
+                result.Append(lua_tostring(L, -1));
                 break;
             }
             case LUA_TUSERDATA:
             case LUA_TLIGHTUSERDATA:
             {
-                buf->Append("<userdata>");
+                result.Append("<userdata>");
                 break;
             }
             case LUA_TNIL:
             {
-                buf->Append("<nil>");
+                result.Append("<nil>");
                 break;
             }
             case LUA_TTABLE:
@@ -98,34 +97,33 @@ const char* nLuaServer::StackToString(lua_State* L, int bottom)
                 if (lua_isuserdata(L, -1))
                 {
                     // assume it's a thunk
-                    buf->Append("<thunk>");
+                    result.Append("<thunk>");
                 }
                 else
                 {
-                    buf->Append("{ ");
+                    result.Append("{ ");
                     lua_pushnil(L);
                     lua_gettable(L, -2);
                     bool firstItem = true;
                     while (lua_next(L, -2) != 0)
                     {
                         if (!firstItem)
-                            buf->Append(", ");
+                            result.Append(", ");
                         else
                             firstItem = false;
-                        nLuaServer::StackToString(L, lua_gettop(L) - 1);
+                        nLuaServer::StackToString(L, lua_gettop(L) - 1, result);
                     }
                     lua_pop(L, 1);
-                    buf->Append(" }");
+                    result.Append(" }");
                 }
                 break;
             }
             default:
-                //buf->Append("???");
+                //result.Append("???");
                 break;  
         }
         lua_pop(L, -1);
     }
-    return buf->Get();
 }
 
 //--------------------------------------------------------------------
@@ -164,8 +162,8 @@ bool nLuaServer::Run(const char *cmdStr, nString& result)
     else
     {
         // pop error message from the stack
-        this->outputStr.Set("");
-        result = this->StackToString(this->L, lua_gettop(this->L) - 1);
+        result.Clear();
+        this->StackToString(this->L, lua_gettop(this->L) - 1, result);
     }
     return false;
 }
