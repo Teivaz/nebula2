@@ -233,6 +233,12 @@ endworkspace
       </tr>
 
       <tr>
+        <td>settype</td> <td>exe/lib/dll</td> <td>lib</td>
+        <td>Specifies whether to generate an executable, static library or 
+        dynamic library.<td>
+      </tr>
+
+      <tr>
         <td>setrtti</td> <td>true/false</td> <td>false</td>
         <td>Turns Run Time Type Identification on/off for this target
         (the regular C++ RTTI that is).</td>
