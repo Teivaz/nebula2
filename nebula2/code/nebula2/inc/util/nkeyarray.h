@@ -98,7 +98,7 @@ nKeyArray<TYPE>::grow()
 /**
 */
 template<class TYPE>
-nKeyArray<TYPE>::nKAElement*
+typename nKeyArray<TYPE>::nKAElement*
 nKeyArray<TYPE>::bsearch(int key)
 {
     n_assert(this->numElms > 0);

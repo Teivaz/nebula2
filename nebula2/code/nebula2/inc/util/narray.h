@@ -586,7 +586,7 @@ nArray<TYPE>::EraseQuick(int index)
 /**
 */
 template<class TYPE>
-nArray<TYPE>::iterator
+typename nArray<TYPE>::iterator
 nArray<TYPE>::Erase(nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
@@ -600,7 +600,7 @@ nArray<TYPE>::Erase(nArray<TYPE>::iterator iter)
     or destructor, so be careful about that!
 */
 template<class TYPE>
-nArray<TYPE>::iterator
+typename nArray<TYPE>::iterator
 nArray<TYPE>::EraseQuick(nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
@@ -650,7 +650,7 @@ nArray<TYPE>::Clear()
 /**
 */
 template<class TYPE>
-nArray<TYPE>::iterator
+typename nArray<TYPE>::iterator
 nArray<TYPE>::Begin() const
 {
     return this->elements;
@@ -660,7 +660,7 @@ nArray<TYPE>::Begin() const
 /**
 */
 template<class TYPE>
-nArray<TYPE>::iterator
+typename nArray<TYPE>::iterator
 nArray<TYPE>::End() const
 {
     return this->elements + this->numElements;
@@ -670,7 +670,7 @@ nArray<TYPE>::End() const
 /**
 */
 template<class TYPE>
-nArray<TYPE>::iterator
+typename nArray<TYPE>::iterator
 nArray<TYPE>::Find(const TYPE& elm) const
 {
     int index;
