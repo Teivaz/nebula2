@@ -158,6 +158,8 @@ public:
     virtual void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     virtual const nDisplayMode2& GetDisplayMode() const;
+    /// set the window title
+    virtual void SetWindowTitle(const char* title);
     /// set global scale factor for fonts
     void SetFontScale(float s);
     /// get global scale factor for fonts
