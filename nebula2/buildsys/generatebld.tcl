@@ -91,65 +91,123 @@ proc gen_ancestor {i} {
 #   CAVEAT:  No file extensions are added so that compiler generators may
 #            add needed extensions as desired.
 #----------------------------------------------------------------------------
-proc gen_filelists {i} {
+proc gen_filelists {i hintdir} {
     global mod
     global home
     global num_mods
     global global_gendeps
 
-    #get the trunk dir at ????/$dir/(inc/src)/$mod($i,dir)
+    set moddir $mod($i,dir)
+    set founddir ""
+    set found false
+
+    # get the trunk dir at ????/$dir/(inc/src)/$mod($i,dir)
+
+    # First, check the hint dir
+    if { ![string equal "invalid" $hintdir] } {
+        if { [file exists $hintdir/inc/$moddir] && [file isdirectory $hintdir/inc/$moddir]} {
+            set founddir $hintdir
+            if { [string match "*contrib*" $hintdir] } {
+                set trunkdir contrib/[lindex [file split $hintdir] end]
+            } else {
+                set trunkdir [lindex [file split $hintdir] end]
+            }
+            set found true
+        }
+
+        if { $found == false } {
+            if { [file exists $hintdir/src/$moddir] && [file isdirectory $hintdir/src/$moddir]} {
+                set founddir $hintdir
+                if { [string match "*contrib*" $hintdir] } {
+                    set trunkdir contrib/[lindex [file split $hintdir] end]
+                } else {
+                    set trunkdir [lindex [file split $hintdir] end]
+                }
+                set found true
+            }
+        }
+    }
     set startpath [string trim $home '/']
-    foreach ext [glob -nocomplain -directory $startpath/code */] {
-        #ext will be the trunk path
-        set ext [string trim $ext '/']
+    if { $found == false } {
+        # The hint wasn't correct, so now search the core directories
+        foreach ext [glob -nocomplain -directory $startpath/code */] {
+            #ext will be the trunk path
+            set ext [string trim $ext '/']
 
-        #need to search for $ext/inc/$dir or $ext/src/dir directly
-        if { [file exists $ext/inc/$mod($i,dir)] && [file isdirectory $ext/inc/$mod($i,dir)]} {
-            set mod($i,trunkdir) [lindex [file split $ext] end]
-            break
-        }
+            # Skip CVS and contrib dirs in this pass
+            if { [string equal contrib [lindex [file split $ext] end]] } {
+                continue
+            }
+            if { [string equal CVS [lindex [file split $ext] end]] } {
+                continue
+            }
 
-        if { [file exists $ext/src/$mod($i,dir)] && [file isdirectory $ext/src/$mod($i,dir)]} {
-            set mod($i,trunkdir) [lindex [file split $ext] end]
-            break
-        }
+            #need to search for $ext/inc/$dir or $ext/src/dir directly
+            if { [file exists $ext/inc/$moddir] && [file isdirectory $ext/inc/$moddir]} {
+                set founddir $ext
+                set trunkdir [lindex [file split $ext] end]
+                set found true
+                break
+            }
 
-        # if current subdir is contrib search inside
-        if { [string compare contrib [lindex [file split $ext] end]] == 0 } {
-            foreach ext [glob -nocomplain -directory $startpath/code/contrib */] {
-                #ext will be the trunk path
-                set ext [string trim $ext '/']
-
-                #need to search for $ext/inc/$dir or $ext/src/$dir directly
-                if { [file exists $ext/inc/$mod($i,dir)] && [file isdirectory $ext/inc/$mod($i,dir)]} {
-                    set mod($i,trunkdir) contrib/[lindex [file split $ext] end]
-                    break
-                }
-
-                if { [file exists $ext/src/$mod($i,dir)] && [file isdirectory $ext/src/$mod($i,dir)]} {
-                    set mod($i,trunkdir) contrib/[lindex [file split $ext] end]
-                    break
-                }
+            if { [file exists $ext/src/$moddir] && [file isdirectory $ext/src/$moddir]} {
+                set founddir $ext
+                set trunkdir [lindex [file split $ext] end]
+                set found true
+                break
             }
         }
     }
 
-    # generate object file lists
-    set mod($i,objs) ""
-    set num_files [llength $mod($i,files)]
-    for {set j 0} {$j < $num_files} {incr j} {
-        set cur_file "./code/$mod($i,trunkdir)/src/$mod($i,dir)/[lindex $mod($i,files) $j]"
-        lappend mod($i,srcs) [cleanpath $cur_file]
+    if { $found == false } {
+        # We didn't find it, so now search contrib...
+        foreach ext [glob -nocomplain -directory $startpath/code/contrib */] {
+            #ext will be the trunk path
+            set ext [string trim $ext '/']
+
+            # Skip the CVS dir
+            if { [string equal CVS [lindex [file split $ext] end]] } {
+                continue
+            }
+
+            #need to search for $ext/inc/$dir or $ext/src/$dir directly
+            if { [file exists $ext/inc/$moddir] && [file isdirectory $ext/inc/$moddir]} {
+                set founddir $ext
+                set trunkdir contrib/[lindex [file split $ext] end]
+                set found true
+                break
+            }
+
+            if { [file exists $ext/src/$moddir] && [file isdirectory $ext/src/$moddir]} {
+                set founddir $ext
+                set trunkdir contrib/[lindex [file split $ext] end]
+                set found true
+                break
+            }
+        }
     }
+
+    set mod($i,trunkdir) $trunkdir
+
+    # generate object file lists
+    # XXX: Why do we set objs here?
+    set mod($i,objs) {}
+    set srcslist {}
+    foreach file $mod($i,files) {
+        set cur_file "./code/$trunkdir/src/$moddir/$file"
+        lappend srcslist [cleanpath $cur_file]
+    }
+    set mod($i,srcs) $srcslist
 
     # append header files to 'hdrs'
-    set mod($i,hdrs) ""
-    set num_headers [llength $mod($i,headers)]
-    for {set j 0} {$j < $num_headers} {incr j} {
-        set cur_hdr "./code/$mod($i,trunkdir)/inc/$mod($i,dir)/[lindex $mod($i,headers) $j]"
-        lappend mod($i,hdrs) [cleanpath $cur_hdr]
+    set hdrlist {}
+    foreach header $mod($i,headers) {
+        set cur_hdr "./code/$trunkdir/inc/$moddir/$header"
+        lappend hdrlist [cleanpath $cur_hdr]
     }
+    set mod($i,hdrs) $hdrlist
 
+    return $founddir
 }
 
 #----------------------------------------------------------------------------
@@ -163,11 +221,12 @@ proc fixmods { } {
 
     ::log::log info "\n**** Fixing modules"
 
-    set lmods ""
+    set hintdir "invalid"
+    set lmods {}
     for {set i 0} {$i < $num_mods} {incr i} {
          ::log::log debug "  $mod($i,name)"
          lappend lmods $mod($i,name)
-         gen_filelists $i
+         set hintdir [gen_filelists $i $hintdir]
          gen_ancestor $i
 
          #Fix up the forcenopkg indice for use
