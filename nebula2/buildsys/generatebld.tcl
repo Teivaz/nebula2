@@ -47,7 +47,7 @@ proc gen_ancestor {i} {
     foreach filename $mod($i,srcs) {
 
         if {[catch { set cid [open [cleanpath $home/[getfilenamewithextension $filename cc]] r] } result]} {
-            ::log::log error "ERROR: $result"
+            ::log::log error "ERROR in module $mod($i,name): $result"
             return
         }
 
