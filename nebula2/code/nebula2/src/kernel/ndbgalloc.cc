@@ -1,3 +1,4 @@
+#if (defined __WIN32__ && !defined(__XBxX__)) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 //  ndbgalloc.cc
 //  (C) 2004 RadonLabs GmbH
@@ -220,4 +221,5 @@ n_dbgmemgetstats()
     }
     return memStats;
 }
+#endif
 
