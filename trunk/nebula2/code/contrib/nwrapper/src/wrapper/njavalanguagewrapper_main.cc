@@ -73,6 +73,8 @@ nJavaLanguageWrapper::~nJavaLanguageWrapper()
 void
 nJavaLanguageWrapper::OpenClass(nClass * cl)
 {
+    n_printf("Generating code for %s...", cl->GetProperName());
+
     nString fileName;
     fileName = "src/java/org/cubik/nebuladevice/";
     fileName += cl->GetProperName();
@@ -120,6 +122,8 @@ nJavaLanguageWrapper::CloseClass(nClass * cl)
     }
     this->javaFile->PutS("};\n");
     this->javaFile->Close();
+
+    n_printf(" Done.\n");
 }
 
 //------------------------------------------------------------------------------
