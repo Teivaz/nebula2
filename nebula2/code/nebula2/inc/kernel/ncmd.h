@@ -189,7 +189,7 @@ nCmd::CopyInArgsFrom(nCmd * cmd)
         nArg * argSrc = cmd->In();
         nArg * argDst = this->In();
         n_assert(argSrc->GetType() == argDst->GetType());
-        argDst->Copy(*argDst);
+        argDst->Copy(*argSrc);
     }
 }
 
