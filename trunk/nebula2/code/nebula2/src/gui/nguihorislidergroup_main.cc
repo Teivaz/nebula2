@@ -137,9 +137,9 @@ nGuiHoriSliderGroup::OnFrame()
 
         // update left and right label formatted strings
         char buf[1024];
-        _snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
+        snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
         this->refLeftLabel->SetText(buf);
-        _snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
+        snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
         this->refRightLabel->SetText(buf);
     }
     nGuiFormLayout::OnFrame();
