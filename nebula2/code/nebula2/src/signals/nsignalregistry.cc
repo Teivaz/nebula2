@@ -104,13 +104,13 @@ nSignalRegistry::AddSignal(const char * proto_def, nFourCC id)
     }
 
     // check the signal name does not already exist
-    if (0 == this->FindSignalByName(info.name))
+    if (this->FindSignalByName(info.name))
     {
         return false;
     }
 
     // check the signal id does not already exist
-    if (0 == this->FindSignalById(id))
+    if (this->FindSignalById(id))
     {
         return false;
     }
