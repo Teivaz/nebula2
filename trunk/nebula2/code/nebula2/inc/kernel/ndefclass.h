@@ -19,20 +19,18 @@
 #define nNebulaClass(CLASS, SUPERCLASSNAME) \
     static nClass* cl = 0; \
     nKernelServer* CLASS::kernelServer = 0; \
-    extern "C" bool N_EXPORT n_init(nClass* clazz, nKernelServer* kernelServer); \
-    extern "C" void N_EXPORT n_fini(); \
-    extern "C" N_EXPORT void* n_create(); \
-    extern "C" N_EXPORT char* n_version(); \
-    N_EXPORT bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
+    extern "C" bool n_init(nClass* clazz, nKernelServer* kernelServer); \
+    extern "C" void n_fini(); \
+    extern "C" void* n_create(); \
+    bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         return true; \
     }; \
-    N_EXPORT void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
-    N_EXPORT void* n_create() { return n_new CLASS(); }; \
-    N_EXPORT char* n_version() { return "x"; };
+    void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
+    void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
 /*
@@ -44,11 +42,10 @@
 #define nNebulaClassStaticInit(CLASS, SUPERCLASSNAME, INITSTATICDATAFUNC) \
     static nClass* cl = 0; \
     nKernelServer* CLASS::kernelServer = 0; \
-    extern "C" bool N_EXPORT n_init(nClass* clazz, nKernelServer* kernelServer); \
-    extern "C" void N_EXPORT n_fini(); \
-    extern "C" N_EXPORT void* n_create(); \
-    extern "C" N_EXPORT char* n_version(); \
-    N_EXPORT bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
+    extern "C" bool n_init(nClass* clazz, nKernelServer* kernelServer); \
+    extern "C" void n_fini(); \
+    extern "C" void* n_create(); \
+    bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
         clazz->SetInstanceSize(sizeof(CLASS)); \
@@ -56,9 +53,8 @@
         INITSTATICDATAFUNC(); \
         return true; \
     }; \
-    N_EXPORT void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
-    N_EXPORT void* n_create() { return n_new CLASS(); }; \
-    N_EXPORT char* n_version() { return "x"; };
+    void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
+    void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
 /*
@@ -73,12 +69,11 @@
 #define nNebulaScriptClass(CLASS, SUPERCLASSNAME) \
     static nClass* cl = 0; \
     nKernelServer* CLASS::kernelServer = 0; \
-    extern "C" bool N_EXPORT n_init(nClass* clazz, nKernelServer* kernelServer); \
-    extern "C" void N_EXPORT n_fini(); \
-    extern "C" N_EXPORT void* n_create(); \
-    extern "C" N_EXPORT char* n_version(); \
+    extern "C" bool n_init(nClass* clazz, nKernelServer* kernelServer); \
+    extern "C" void n_fini(); \
+    extern "C" void* n_create(); \
     extern void n_initcmds(nClass *); \
-    N_EXPORT bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
+    bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
         clazz->SetInstanceSize(sizeof(CLASS)); \
@@ -86,9 +81,8 @@
         n_initcmds(clazz); \
         return true; \
     }; \
-    N_EXPORT void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
-    N_EXPORT void* n_create() { return n_new CLASS(); }; \
-    N_EXPORT char* n_version() { return "x"; };
+    void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
+    void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
 /*
@@ -100,12 +94,11 @@
 #define nNebulaScriptClassStaticInit(CLASS, SUPERCLASSNAME, INITSTATICDATAFUNC) \
     static nClass* cl = 0; \
     nKernelServer* CLASS::kernelServer = 0; \
-    extern "C" bool N_EXPORT n_init(nClass* clazz, nKernelServer* kernelServer); \
-    extern "C" void N_EXPORT n_fini(); \
-    extern "C" N_EXPORT void* n_create(); \
-    extern "C" N_EXPORT char* n_version(); \
+    extern "C" bool n_init(nClass* clazz, nKernelServer* kernelServer); \
+    extern "C" void n_fini(); \
+    extern "C" void* n_create(); \
     extern void n_initcmds(nClass *); \
-    N_EXPORT bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
+    bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
         clazz->SetInstanceSize(sizeof(CLASS)); \
@@ -114,9 +107,8 @@
         n_initcmds(clazz); \
         return true; \
     }; \
-    N_EXPORT void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
-    N_EXPORT void* n_create() { return n_new CLASS(); }; \
-    N_EXPORT char* n_version() { return "x"; };
+    void n_fini() { CLASS::kernelServer->RemClass(cl); }; \
+    void* n_create() { return n_new CLASS(); };
 
 
 //------------------------------------------------------------------------------
@@ -127,21 +119,19 @@
 #define nNebulaRootClass(CLASS) \
     static nClass* cl = 0; \
     nKernelServer* CLASS::kernelServer = 0; \
-    extern "C" bool N_EXPORT n_init(nClass* clazz, nKernelServer* kernelServer); \
-    extern "C" void N_EXPORT n_fini(); \
-    extern "C" N_EXPORT void* n_create(); \
-    extern "C" N_EXPORT char* n_version(); \
+    extern "C" bool n_init(nClass* clazz, nKernelServer* kernelServer); \
+    extern "C" void n_fini(); \
+    extern "C" void* n_create(); \
     extern void n_initcmds(nClass *); \
-    N_EXPORT bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
+    bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         cl = clazz; \
         CLASS::kernelServer = kernelServer; \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         n_initcmds(clazz); \
         return true; \
     }; \
-    N_EXPORT void n_fini() {  }; \
-    N_EXPORT void* n_create() { return n_new CLASS(); }; \
-    N_EXPORT char* n_version() { return "x"; };
+    void n_fini() {  }; \
+    void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
 #endif

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nIpcClient
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nipcclient.cc
 //  (C) 2003 RadonLabs GmbH

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nPersistServer
-#define N_KERNEL
 //-------------------------------------------------------------------
 //  npersistserver_cmds.cc
 //  (C) 2002 RadonLabs GmbH

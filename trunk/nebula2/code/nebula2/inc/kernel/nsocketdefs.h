@@ -6,8 +6,25 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
+
+#if __XBxX__
+#   include "xbox/nxbwrapper.h"
+#elif defined(__WIN32__)
+#   ifndef _INC_WINDOWS
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   endif
+#   ifndef _WINSOCKAPI_
+#   include <winsock.h>
+#   endif
+#else
+#   include <sys/types.h>
+#   include <sys/socket.h>
+#   include <netinet/in.h>
+#   include <arpa/inet.h>
+#   include <unistd.h>
+#   include <netdb.h>
 #endif
 
 //------------------------------------------------------------------------------

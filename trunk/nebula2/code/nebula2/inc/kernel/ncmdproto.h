@@ -36,21 +36,12 @@
 
     (C) 1999 A.Weissflog
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_HASHNODE_H
 #include "util/nhashnode.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nCmdProto
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
-class N_PUBLIC nCmdProto : public nHashNode 
+class nCmdProto : public nHashNode 
 {
 public:
     /// constructor

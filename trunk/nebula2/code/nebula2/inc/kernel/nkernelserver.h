@@ -8,33 +8,15 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_CLASS_H
 #include "kernel/nclass.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_STACK_H
 #include "util/nstack.h"
-#endif
-
-#ifndef N_HASHLIST_H
 #include "util/nhashlist.h"
-#endif
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
 #endif
-
-#undef N_DEFINES
-#define N_DEFINES nKernelServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nTimeServer;
@@ -45,7 +27,7 @@ class nRemoteServer;
 class nEnv;
 class nLogHandler;
 
-class N_PUBLIC nKernelServer 
+class nKernelServer 
 {
 public:
     /// constructor
@@ -98,7 +80,7 @@ public:
     /// set an alternative file server
     void ReplaceFileServer(const char* className);
     /// add a code module to the kernel
-    void AddModule(const char *, bool (*)(nClass *, nKernelServer *), void (*)(void), void *(*)(void), char *(*)(void));
+    void AddModule(const char *, bool (*)(nClass *, nKernelServer *), void (*)(void), void *(*)(void));
     /// get pointer to hard ref server
     nHardRefServer* GetHardRefServer() const;
     /// get pointer to file server
@@ -127,28 +109,6 @@ private:
     /// determine binary path
     void InitBinPath();
 
-#ifndef N_STATIC
-    /// read the global table of contents file
-    bool ReadToc();
-    /// load a Nebula class package
-    bool LoadPackage(const char* packageName);
-
-    class nPckgTocEntry : public nHashNode 
-    {
-    public:
-        /// constructor
-        nPckgTocEntry(const char* cl, const char* pk);
-        /// get package name
-        const char* GetPackageName();
-
-    private:
-        char pckgName[N_MAXNAMELEN];
-    };
-
-    nHashList tocList;              // list of nPckgTocEntry objects
-    nString binDir;                 // path to nkernel.dll including terminating /
-#endif
-
     nFileServer2*   fileServer;     // private pointer to file server
     nPersistServer* persistServer;  // private pointer to persistency server
     nTimeServer*    timeServer;     // private pointer to timeserver
@@ -170,30 +130,6 @@ private:
     nEnv* varMemNumAlloc;
 #endif
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-#ifndef N_STATIC
-inline
-nKernelServer::nPckgTocEntry::nPckgTocEntry(const char* cl, const char* pk) :
-    nHashNode(cl)
-{
-    n_strncpy2(this->pckgName, pk, sizeof(this->pckgName));
-}
-#endif
-
-//------------------------------------------------------------------------------
-/**
-*/
-#ifndef N_STATIC
-inline
-const char*
-nKernelServer::nPckgTocEntry::GetPackageName()
-{
-    return this->pckgName;
-}
-#endif
 
 //------------------------------------------------------------------------------
 /**

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nRoot
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nroot_main.cc
 //  (C) 2000 A.Weissflog

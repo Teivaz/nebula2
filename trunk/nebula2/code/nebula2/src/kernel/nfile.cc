@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nFile
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nfile.cc
 //  (C) 2002 RadonLabs GmbH

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nDefaultLogHandler
 //------------------------------------------------------------------------------
 //  ndefaultloghandler.cc
 //  (C) 2003 RadonLabs GmbH

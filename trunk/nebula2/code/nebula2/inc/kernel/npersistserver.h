@@ -45,35 +45,17 @@
 
     (C) 2002 A.Weissflog
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_STACK_H
 #include "util/nstack.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_DYNAUTOREF_H
 #include "kernel/ndynautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nFileServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nScriptServer;
 class nFileServer2;
 class nFile;
-class N_PUBLIC nPersistServer : public nRoot 
+class nPersistServer : public nRoot 
 {
 public:
     /// Savemodes

@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nCmdProtoNative
-#define N_KERNEL
 //--------------------------------------------------------------------
 #include "kernel/ncmdprotonative.h"
 

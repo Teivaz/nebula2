@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nLogHandler
 //------------------------------------------------------------------------------
 //  nloghandler.cc
 //  (C) 2003 RadonLabs GmbH

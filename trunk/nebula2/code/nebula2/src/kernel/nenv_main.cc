@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nEnv
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nenv_main.cc
 //  (C) 2002 RadonLabs GmbH

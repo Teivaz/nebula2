@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nRemoteServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nremoteserver_main.cc
 //  (C) 2002 RadonLabs GmbH

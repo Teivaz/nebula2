@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nTimeServer
-#define N_KERNEL
 //-------------------------------------------------------------------
 //  kernel/ntime_dispatch.cc
 //  This file was machine generated.

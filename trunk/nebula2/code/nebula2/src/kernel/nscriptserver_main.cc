@@ -1,5 +1,3 @@
-#define N_IMPLEMENTS nScriptServer
-#define N_KERNEL
 //------------------------------------------------------------------------------
 //  nscriptserver_main.cc
 //  (C) 2002 RadonLabs GmbH
