@@ -87,6 +87,7 @@ beginmodule nwin32windowhandler
     setplatform win32
     setfiles { nwin32windowhandler }
     setheaders { nwin32windowhandler }
+    setlibs_win32 { user32.lib }
 endmodule
 #-------------------------------------------------------------------------------
 
