@@ -41,6 +41,9 @@ nMap::~nMap()
 /**
     @brief Set heightmap file to load terrain from
     Replaces an existing heightmap.
+    The heightmap must be square, and if it is n pixels wide,
+    then (n-1) / (blockSize-1) should have zero remainder
+    (blockSize is from nMapNode).
 */
 void nMap::SetHeightMap(const char *name)
 {
