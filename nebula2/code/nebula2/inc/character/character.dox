@@ -49,6 +49,8 @@
     An animation state is a collection of clips and an animation clip is an
     animation with a specific blend value.
 
+    @subsection NebulaCharAnimChangingState Changing Animation State
+ 
     A transition from one animation to another animation is done by the 
     change of the state. 
     Following shows a simple example how you can transite one animation to another
@@ -79,6 +81,11 @@
     @endverbatim
 
     Above will change the animation from @e 'idle' to @e 'walk'.
+
+
+    @subsection NebulaCharAnimBlending Blending Animations
+
+    ...
 
     @note All relevant animations for a skeleton should be exist in the one animation
     file(.anim2) to be blended with each other.
