@@ -19,7 +19,7 @@
     numvertices [numVertices] 
     vertexwidth [vertexWidth]
     numtris [numTriangles]
-    vertexcomps [coord normal tangent color uv0 uv1 uv2 uv3 weights jindices]
+    vertexcomps [coord normal tangent binormal color uv0 uv1 uv2 uv3 weights jindices]
     g [firstVertex] [numVertices] [firstTriangle] [numTriangles]
     ...
     v 0.0 0.0 0.0 ....
@@ -38,14 +38,15 @@
     int vertexWidth;
     int numTriangles;
     int vertexComponents:   one bit set for each vertex component
-        Coord   = (1<<0)
-        Normal  = (1<<1)
-        Tangent = (1<<2)
-        Color   = (1<<3)
-        Uv0     = (1<<4)
-        Uv1     = (1<<5)
-        Uv2     = (1<<6)
-        Uv3     = (1<<7)
+        Coord    = (1<<0)
+        Normal   = (1<<1)
+        Tangent  = (1<<2)
+        Binormal = (1<<3)
+        Color    = (1<<4)
+        Uv0      = (1<<5)
+        Uv1      = (1<<6)
+        Uv2      = (1<<7)
+        Uv3      = (1<<8)
         ...
 
     for each group...
@@ -95,13 +96,14 @@ public:
         Coord    = (1<<0),
         Normal   = (1<<1),
         Tangent  = (1<<2),
-        Color    = (1<<3),
-        Uv0      = (1<<4),
-        Uv1      = (1<<5),
-        Uv2      = (1<<6),
-        Uv3      = (1<<7),
-        Weights  = (1<<8),
-        JIndices = (1<<9),
+        Binormal = (1<<3),
+        Color    = (1<<4),
+        Uv0      = (1<<5),
+        Uv1      = (1<<6),
+        Uv2      = (1<<7),
+        Uv3      = (1<<8),
+        Weights  = (1<<9),
+        JIndices = (1<<10),
     };
 
     /// constructor
@@ -261,6 +263,7 @@ nMesh2::SetVertexComponents(int compMask)
     if (compMask & Coord)    this->vertexWidth += 3;
     if (compMask & Normal)   this->vertexWidth += 3;
     if (compMask & Tangent)  this->vertexWidth += 3;
+    if (compMask & Binormal) this->vertexWidth += 3;
     if (compMask & Color)    this->vertexWidth += 4;
     if (compMask & Uv0)      this->vertexWidth += 2;
     if (compMask & Uv1)      this->vertexWidth += 2;
