@@ -178,9 +178,9 @@ function OnGuiServerOpen()
 
         skin:endbrushes()
 
-    --nebula.sys.servers.gui:setsystemskin(skin)
-    --nebula.sys.servers.gui:setskin(skin)
-    --nebula.sys.servers.gui:newwindow('guidockwindow',1)
+    nebula.sys.servers.gui:setsystemskin(skin)
+    nebula.sys.servers.gui:setskin(skin)
+    nebula.sys.servers.gui:newwindow('guidockwindow',1)
 
     sel(cwd)
 end
