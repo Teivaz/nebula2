@@ -145,6 +145,7 @@ public:
             NORMAL           = (1<<3),
             TANGENT          = (1<<4),
             BINORMAL         = (1<<5),
+            EDGEINDICIES     = (1<<6),
         };
 
         /// constructor
@@ -156,6 +157,10 @@ public:
         void SetVertexIndices(int i0, int i1, int i2);
         /// get vertex indices
         void GetVertexIndices(int& i0, int& i1, int& i2) const;
+        /// set edge indices
+        void SetEdgeIndices(int e0, int e1, int e2);
+        /// get vertex indices
+        void GetEdgeIndices(int& e0, int& e1, int& e2) const;
         /// set group id
         void SetGroupId(int i);
         /// get group id
@@ -184,6 +189,7 @@ public:
         const vector3& GetBinormal() const;
 
         int vertexIndex[3];
+        int edgeIndex[3];
         int usageFlags;
         int groupId;
         int materialId;
@@ -227,35 +233,41 @@ public:
         int numTriangles;
     };
 
+    struct GroupedEdge
+    {
+        ushort vIndex[2];
+        ushort fIndex[2];
+        int GroupID;
+    };
+    
     /// constructor
     nMeshBuilder();
     /// destructor
     ~nMeshBuilder();
     
     //--- loading / saving ---
+    /// load any of the above (use file extension for format decision)
+    bool Load(nFileServer2* fileServer, const char* filename);
+    /// save any of the above (use file extension for format decision)
+    bool Save(nFileServer2* fileServer, const char* filename);
 
-    /// binary save to open file handle
-    bool SaveNvx2(nFile* file);
-    /// save to nvx2 file
-    bool SaveNvx2(nFileServer2* fileServer, const char* filename);
-    /// load from nvx2 file
-    bool LoadNvx2(nFileServer2* fileServer, const char* filename);
-    /// save to n3d2 file
-    bool SaveN3d2(nFileServer2* fileServer, const char* filename);
-    /// load from n3d2 file
-    bool LoadN3d2(nFileServer2* fileServer, const char* filename);
-    /// save as legacy n3d files (one file per group)
-    bool SaveN3d(nFileServer2* fileServer, const char* filename);
+    /// load file with provided nMeshLoader
+    bool LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const char* filename);
     /// load from (old-style) n3d file
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
     /// load from wavefront object file
     bool LoadObj(nFileServer2* fileServer, const char* filename);
     /// load OLD n3d2 file (saved before Dec-2003)
     bool LoadOldN3d2(nFileServer2* fileServer, const char* filename);
-    /// load any of the above (use file extension for format decision)
-    bool Load(nFileServer2* fileServer, const char* filename);
-    /// save any of the above (use file extension for format decision)
-    bool Save(nFileServer2* fileServer, const char* filename);
+
+    /// binary save to open file handle
+    bool SaveNvx2(nFile* file);
+    /// save to nvx2 file
+    bool SaveNvx2(nFileServer2* fileServer, const char* filename);
+    /// save to n3d2 file
+    bool SaveN3d2(nFileServer2* fileServer, const char* filename);
+    /// save as legacy n3d files (one file per group)
+    bool SaveN3d(nFileServer2* fileServer, const char* filename);
 
     //--- mesh building ---
     /// check if vertex component exists
@@ -272,6 +284,10 @@ public:
     int GetNumVertices() const;
     /// get vertex at index
     Vertex& GetVertexAt(int index) const;
+    /// get number of edges
+    int GetNumEdges() const;
+    /// get edge at index
+    GroupedEdge& GetEdgeAt(int index) const;
     /// sort triangles by group id and material id
     void SortTriangles();
     /// find the first triangle matching group id, material id and usage flags
@@ -280,6 +296,8 @@ public:
     int GetNumGroupTriangles(int groupId, int materialId, int usageFlags, int startTriangleIndex) const;
     /// get the minimum vertex index referenced by a group
     bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex) const; 
+    /// get the minimum edge index referenced by a group
+    bool GetGroupEdgeRange(int groupId, int& minEdgeIndex, int& maxEdgeIndex) const; 
     /// build a group mapping array
     void BuildGroupMap(nArray<Group>& groupMap);
     /// update triangle group ids from a group map
@@ -301,8 +319,8 @@ public:
     void Transform(const matrix44& m);
     /// remove redundant vertices
     void Cleanup(nArray< nArray<int> >* collapseMap);
-    /// build adjacency information (only works on clean meshes)
-    void BuildAdjacency();
+    /// build edge information (only works on clean meshes, and it not alowed to change the mesh later)
+    void CreateEdges();
     /// optimize for t&l hardware vertex cache
     void Optimize();
     /// append mesh from mesh builder object
@@ -331,18 +349,35 @@ public:
     void FlipUvs();
 
 private:
+    struct TempEdge // used as temp data for the generation
+    {
+        ushort vIndex[2];
+        ushort fIndex;
+    };
+
+    struct UngroupedEdge // used as temp data for the generation
+    {
+        ushort vIndex[2];
+        ushort fIndex[2];
+    };
+
     /// static userdata pointer for qsort hook
     static nMeshBuilder* nMeshBuilder::qsortData;
     /// a qsort() hook for generating a sorted index array
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
     /// qsort hook for sorting triangles by their group index
     static int __cdecl TriangleGroupSorter(const void* elm0, const void* elm1);
+    /// qsort hook for sorting temp edges by vertex indicies
+    static int __cdecl TempEdgeSorter(const void* elm0, const void* elm1);
+    /// qsort hook for sorting temp edges by groupID and face indicies
+    static int __cdecl GroupedEdgeSorter(const void* elm0, const void* elm1);
     /// do an inflated component copy using a source mesh and a collapseMap
     void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask);
 
 public:
     nArray<Vertex>   vertexArray;
     nArray<Triangle> triangleArray;
+    nArray<GroupedEdge>     edgeArray;
 };
 
 //------------------------------------------------------------------------------
@@ -912,6 +947,7 @@ nMeshBuilder::Triangle::Triangle() :
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
+        this->edgeIndex[i] = nMesh2::InvalidIndex;
     }
 }
 
@@ -946,6 +982,31 @@ nMeshBuilder::Triangle::GetVertexIndices(int& i0, int& i1, int& i2) const
     i0 = this->vertexIndex[0];
     i1 = this->vertexIndex[1];
     i2 = this->vertexIndex[2];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetEdgeIndices(int e0, int e1, int e2)
+{
+    this->edgeIndex[0] = e0;
+    this->edgeIndex[1] = e1;
+    this->edgeIndex[2] = e2;
+    this->compMask |= EDGEINDICIES;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::GetEdgeIndices(int& e0, int& e1, int& e2) const
+{
+    e0 = this->edgeIndex[0];
+    e1 = this->edgeIndex[1];
+    e2 = this->edgeIndex[2];
 }
 
 //------------------------------------------------------------------------------
@@ -1173,6 +1234,16 @@ nMeshBuilder::Group::SetNumTriangles(int i)
 /**
 */
 inline
+int
+nMeshBuilder::Group::GetNumTriangles() const
+{
+    return this->numTriangles;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void
 nMeshBuilder::Group::SetUsageFlags(int f)
 {
@@ -1187,16 +1258,6 @@ int
 nMeshBuilder::Group::GetUsageFlags() const
 {
     return this->usageFlags;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nMeshBuilder::Group::GetNumTriangles() const
-{
-    return this->numTriangles;
 }
 
 //------------------------------------------------------------------------------
@@ -1274,6 +1335,26 @@ nMeshBuilder::Triangle&
 nMeshBuilder::GetTriangleAt(int index) const
 {
     return this->triangleArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshBuilder::GetNumEdges() const
+{
+    return this->edgeArray.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nMeshBuilder::GroupedEdge&
+nMeshBuilder::GetEdgeAt(int index) const
+{
+    return this->edgeArray[index];
 }
 
 //------------------------------------------------------------------------------
