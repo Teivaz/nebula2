@@ -64,7 +64,7 @@ nWinMainCmdLineArgs::nWinMainCmdLineArgs(const char* cmdLine)
         }
         else
         {
-            argv[this->argc] = ptr;
+            argv[this->argc++] = ptr;
             break;
         }
     }
