@@ -6,53 +6,70 @@
 #ifndef N_MAXNOTETRACK_H
 #define N_MAXNOTETRACK_H 
 //---------------------------------------------------------------------------
-/**
-    @class nMaxNoteTack
-    @ingroup
-
-    @brief
-*/
 #include "export2/nmaxinterface.h"
 
 #include "util/nstring.h"
 
 //---------------------------------------------------------------------------
+/**
+    @class nMaxAnimState 
+    @ingroup NebulaMaxExport2Contrib
+
+    @brief A class which represents animation states.
+
+*/
 class nMaxAnimState 
 {
 public:
     nMaxAnimState();
 
+    /// Adds clip.
     void AddClip(const char* weightChannelName);
 
+    /// Get clip name from the given index.
     const nString& GetClip(int index) const;
 
+    /// state first frame.
     int firstFrame;
+    /// frame duration, number of frames of the state.
     int duration;
-
+    /// fade time.
     float fadeInTime;
-
+    /// state name.
     nString name;
-
+    /// array for clips.
     nArray<nString> clipArray;
 };
 
 //---------------------------------------------------------------------------
+/**
+    @class nMaxNoteTack
+    @ingroup NebulaMaxExport2Contrib
+
+    @brief Collect animation states and clips in note track of a max node.
+           The collected animation states and clips are used when we build
+           skin animator.
+
+*/
 class nMaxNoteTrack
 {
 public:
     nMaxNoteTrack();
     virtual ~nMaxNoteTrack();
 
-    void CreateAnimState(INode* inode);
+    void GetAnimState(INode* inode);
 
+    /// Get the number of animation states which collected.
     int GetNumStates() const;
 
+    /// Get animation state from the given index.
     const nMaxAnimState& GetState(int index);
 
 protected:
     int GetNextFrame(int index, DefNoteTrack* n);
 
 protected:
+    /// array for animation states which collected from note track.
     nArray<nMaxAnimState> stateArray;
 
 };
