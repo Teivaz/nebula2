@@ -654,10 +654,12 @@ proc path_wspacetointer {} {
 proc get_incsearchdirs { } {
     global cur_workspacepath
 
-    set retlist ""
+    set clean_cur_workspacepath [cleanpath $cur_workspacepath]
+    set retlist {}
     foreach target [get_targets] {
         foreach module [get_tarmods $target] {
-            lappend retlist [findrelpath $cur_workspacepath [get_modpath $module inc]]
+            # get_modpath returns a clean path...
+            lappend retlist [findrelpath_clean $clean_cur_workspacepath [get_modpath $module inc]]
         }
     }
     return [lsort -unique $retlist]
@@ -674,10 +676,12 @@ proc get_incsearchdirs { } {
 proc get_libsearchdirs { } {
     global cur_workspacepath
 
-    set retlist ""
+    set clean_cur_workspacepath [cleanpath $cur_workspacepath]
+    set retlist {}
     foreach target [get_targets] {
         foreach module [get_tarmods $target] {
-            lappend retlist [findrelpath $cur_workspacepath [get_modpath $module lib]]
+            # get_modpath returns a clean path...
+            lappend retlist [findrelpath_clean $clean_cur_workspacepath [get_modpath $module lib]]
         }
     }
     return [lsort -unique $retlist]
@@ -726,6 +730,7 @@ proc write_pkgfiles { } {
     global num_tars
     global mod
     global num_mods
+    global modsbyname
 
     set pkgdir "./build/pkg"
     set pdir [cleanpath $pkgdir]
@@ -839,6 +844,7 @@ proc write_pkgfiles { } {
         set mod($num_mods,srcs)                 $pkgdir/pkg_$target
         set mod($num_mods,autonopak)            true
         set mod($num_mods,ancestor)             ""
+        set modsbyname(pkg_$target) $num_mods
         incr num_mods
 
         # And add it to the target so that it gets built

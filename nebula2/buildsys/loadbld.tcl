@@ -13,6 +13,8 @@ global tar
 global mod
 global bundle
 
+global modsbyname
+
 global num_wspaces
 global num_tars
 global num_mods
@@ -681,6 +683,7 @@ proc endbundle { } {
 proc beginmodule {name} {
     global mod
     global num_mods
+    global modsbyname
     global current_block
     global module_block
     global current_file
@@ -712,6 +715,9 @@ proc beginmodule {name} {
     set mod($num_mods,srcs)       ""
     set mod($num_mods,autonopak)  true
     set mod($num_mods,ancestor)   ""
+
+    # And cross-reference by name...
+    set modsbyname($name) $num_mods
 }
 
 #----------------------------------------------------------------------------

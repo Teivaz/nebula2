@@ -15,19 +15,26 @@
 #    addtolist destlist $srclist
 #    translate_platdefs $platform_list
 #    get_platform
-#    findmodbyname    $name
-#    findtargetbyname $name
-#    findbundlebyname $name
-#    findwspacebyname $name
-#    sort_mods        $mod_list
-#    findrelpath      $frompath $topath
-#    cleanpath        $path
-#    test_platform    $platform_list $platform_test
-#    check_makedir    $path
+#    findmodbyname      $name
+#    findtargetbyname   $name
+#    findbundlebyname   $name
+#    findwspacebyname   $name
+#    sort_mods          $mod_list
+#    findrelpath        $frompath $topath
+#    findrelpath_clean  $frompath $topath
+#    cleanpath          $path
+#    test_platform      $platform_list $platform_test
+#    check_makedir      $path
 #
 #--------------------------------------------------------------------
 
 global modulename_to_sortedindex
+
+# This is a K combinator that is used to get the value of a list
+# and unset the variable to avoid extra data copies.
+proc K {a b} {
+    return $a
+}
 
 #--------------------------------------------------------------------
 #   addtolist dest_list $list
@@ -124,12 +131,10 @@ proc get_platform {} {
 #   Find module index by name.
 #--------------------------------------------------------------------
 proc findmodbyname {name} {
-    global mod
-    global num_mods
-    for {set i 0} {$i < $num_mods} {incr i} {
-        if {$name == $mod($i,name)} {
-            return $i
-        }
+    global modsbyname
+    set results [array get modsbyname $name]
+    if { [llength $results] > 0 } {
+        return [lindex $results 1]
     }
     error "ERROR: module '$name' not defined!"
 }
@@ -225,8 +230,8 @@ proc sort_mods_old { orig_list } {
 
     # sort the modules for proper dep order (for init)
     # eek!
-    set mod_source ""
-    set mod_sorted ""
+    set mod_source {}
+    set mod_sorted {}
 
     # dump all non nRoot derived mods in the list
     for {set i 0} {$i < [llength $orig_list]} {incr i} {
@@ -242,7 +247,7 @@ proc sort_mods_old { orig_list } {
     set i [lsearch $mod_source "nobject"]
     if {$i != -1} {
         lappend mod_sorted "nobject"
-        set mod_source [lreplace $mod_source $i $i]
+        set mod_source [lreplace [K $mod_source [set mod_source {}]] $i $i]
     }
 
     set count [llength $mod_sorted]
@@ -253,7 +258,7 @@ proc sort_mods_old { orig_list } {
             set source_idx [findmodbyname [lindex $mod_source $i]]
             if {[string match -nocase $test $mod($source_idx,ancestor)]} {
                 lappend mod_sorted $mod($source_idx,name)
-                set mod_source [lreplace $mod_source $i $i]
+                set mod_source [lreplace [K $mod_source [set mod_source {}]] $i $i]
             } else {
                 incr i
             }
@@ -276,13 +281,23 @@ proc sort_mods_old { orig_list } {
 #  relative path without a leading ./ or trailing /
 #--------------------------------------------------------------------
 proc findrelpath { relfrom relto } {
-    set lfrom [split [cleanpath $relfrom] /]
-    set lto [split [cleanpath $relto] /]
+    return [findrelpath_clean [cleanpath $relfrom] [cleanpath $relto]]
+}
+
+#--------------------------------------------------------------------
+#  findrelpath_clean $relfrom $relto
+#
+#  Helper method for findrelpath, but pulled out so that things
+#  that know they have clean paths can save the work.
+#--------------------------------------------------------------------
+proc findrelpath_clean { relfrom relto } {
+    set lfrom [split $relfrom /]
+    set lto [split $relto /]
 
     #remove identical bits from both paths
     while {[lindex $lfrom 0] == [lindex $lto 0]} {
-        set lfrom [lreplace $lfrom 0 0]
-        set lto   [lreplace $lto 0 0]
+        set lfrom [lreplace [K $lfrom [set lfrom {}]]  0 0]
+        set lto   [lreplace [K $lto [set lto {}]] 0 0]
     }
 
     set retval ""
@@ -294,6 +309,7 @@ proc findrelpath { relfrom relto } {
     set ret [file join $retval [join $lto /]]
     return $ret
 }
+
 
 
 #--------------------------------------------------------------------
@@ -310,26 +326,25 @@ proc findrelpath { relfrom relto } {
 #--------------------------------------------------------------------
 proc cleanpath {path} {
     set p [split $path /]
-    set p1 ""
+    set p1 {}
 
     # strip all '.' path bits - [file join] will not
     # this also has the effect of collapsing all '//' to '/'
     # this also has the effect of trimming '/' off the ends
     foreach bit $p {
         if {$bit != "." && $bit != ""} {
-            set p1 [lappend p1 $bit]
+            lappend p1 $bit
         }
     }
 
-    set p2 ""
+    set p2 {}
     set prior false
     # walk the list and resolve all necessary '..' bits
     # [file join] does not....
-    for {set i 0} {$i < [llength $p1]} {incr i} {
-        set t [lindex $p1 $i]
+    foreach t $p1 {
         if {$t == ".." && $prior} {
             #rewind
-            set p2 [lreplace p2 end end]
+            set p2 [lreplace [K $p2 [set p2 {}]] end end]
             if {[lindex $p2 end] != ".." && [llength $p2] > 0} {
                 set prior true
                 continue
