@@ -43,11 +43,10 @@ nOpendePickServer::~nOpendePickServer()
     
     You'd typically obtain the mouseX/mouseY from the input server like so:
     
-    Assuming 'is' is a pointer to an nInputServer.
     @code
     int mouseX = 0;
     int mouseY = 0;
-    nInputEvent* event = is->FirstEvent();
+    nInputEvent* event = inputServer->FirstEvent();
     while (event)
     {
         if (N_INPUT_MOUSE_MOVE == event->GetType())
@@ -56,7 +55,7 @@ nOpendePickServer::~nOpendePickServer()
                 mouseY = event->GetAbsYPos();
         }
         
-        event = is->NextEvent(event);
+        event = inputServer->NextEvent(event);
     }
     @endcode
 */
@@ -102,11 +101,10 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
     
     You'd typically obtain the mouseX/mouseY from the input server like so:
     
-    Assuming 'is' is a pointer to an nInputServer.
     @code
     int mouseX = 0;
     int mouseY = 0;
-    nInputEvent* event = is->FirstEvent();
+    nInputEvent* event = inputServer->FirstEvent();
     while (event)
     {
         if (N_INPUT_MOUSE_MOVE == event->GetType())
@@ -115,7 +113,7 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
                 mouseY = event->GetRelYPos();
         }
         
-        event = is->NextEvent(event);
+        event = inputServer->NextEvent(event);
     }
     @endcode
 */      
