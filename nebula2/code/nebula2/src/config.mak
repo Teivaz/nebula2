@@ -40,6 +40,9 @@ endif
 ifeq ($(N_PLATFORM),__WIN32__)
     N_TARGETDIR = ../../../bin/win32/
 endif
+ifeq ($(N_PLATFORM),__MACOSX__)
+    N_TARGETDIR = ../../../bin/macosx/
+endif
 N_OBJECTDIR = ../make/
 
 #---------------------------------------------------------------------
@@ -137,11 +140,11 @@ endif
 ifeq ($(N_COMPILER),__GNUC__)
 # GCC in Linux
   ifeq ($(N_PLATFORM),__MACOSX__)
-    CC        = c++
+    CXX       = c++
+    CC        = c++ -x c
   else
-    CXX        = g++-3.0
-    CC         = gcc-3.0 -x c
-    #CC        = g++
+    CXX       = g++-3.0
+    CC        = gcc-3.0 -x c
   endif
   TCL         = tclsh
   AR          = ar
@@ -164,6 +167,7 @@ ifeq ($(N_COMPILER),__GNUC__)
   SYM_OPT     = -D
   #flags
   N_WARNFLAGS     = -W -Wall -Wno-multichar -Wno-reorder
+  N_WARNFLAGS_C   = -W -Wall -Wno-multichar
   #N_WARNFLAGS    = 
   N_OPTIMIZEFLAGS = -O3 -ffast-math -fomit-frame-pointer
   N_PROFILEFLAGS  = -p
@@ -213,9 +217,17 @@ endif
 # release - default , debug   , profile
 #---------------------------------------------------------------------
 ifeq ($(N_COMPILER),__GNUC__)
+    BASECFLAGS = $(CFLAGS)
     CFLAGS += $(SYM_OPT)$(N_PLATFORM) -DN_STATIC
-    CFLAGS += $(N_WARNFLAGS)
+    CFLAGS += $(N_WARNFLAGS_C)
     CFLAGS-d = $(CFLAGS) $(N_DEBUGFLAGS)
     CFLAGS-p = $(CFLAGS) $(N_PROFILEFLAGS)
     CFLAGS  += $(N_OPTIMIZEFLAGS)
+
+    CXXFLAGS += $(BASECFLAGS)
+    CXXFLAGS += $(SYM_OPT)$(N_PLATFORM) -DN_STATIC
+    CXXFLAGS += $(N_WARNFLAGS)
+    CXXFLAGS-d = $(CXXFLAGS) $(N_DEBUGFLAGS)
+    CXXFLAGS-p = $(CXXFLAGS) $(N_PROFILEFLAGS)
+    CXXFLAGS  += $(N_OPTIMIZEFLAGS)
 endif
