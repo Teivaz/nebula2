@@ -18,55 +18,35 @@
     trivially add them all without doing any more clipping checks.
 */
 
+#include "spatialdb/nplaneclipper.h"
 #include "gfx2/ncamera2.h"
 #include "gfx2/ngfxserver2.h"
-#include "mathlib/plane.h"
-#include "mathlib/sphere.h"
-#include "mathlib/bbox.h"
 
-class nFrustumClipper {
+class nFrustumClipper : public nPlaneClipper {
 public:
     nFrustumClipper();
     nFrustumClipper(const nFrustumClipper &copyme);
     nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform);
     nFrustumClipper(const plane clipplanes[6]);
 
-    /// helper class for culling
-    class result_info {
-        public:
-            bool    culled; ///< true when the volume is not visible
-            unsigned char   active_planes;  ///< one bit per frustum plane
-        
-            // 0x3F=b111111 => 6 planes for view frustum. Front,
-	    // back and 4 side planes. (Pyramid with top cut off).     
-            result_info(bool c = false, unsigned char a = 0x3f) : 
-                culled(c), active_planes(a) 
-            { }
-    };
-
-    result_info TestBBox(const bbox3 &boxtest, result_info in);
-    result_info TestSphere(const sphere &spheretest, result_info in);
-    result_info TestPoint(const vector3 &pointtest, result_info in);
-
     void VisualizeFrustum(nGfxServer2 *gfx2, const vector4 &color);
 
 protected:
-    plane m_planes[6];
 
     // for debug visualizing
     vector3 m_frustumcorners[8];
 };
 
 inline
-nFrustumClipper::nFrustumClipper()
+nFrustumClipper::nFrustumClipper() : nPlaneClipper()
 {
 }
 
 inline
 nFrustumClipper::nFrustumClipper(const nFrustumClipper &copyme)
+    : nPlaneClipper(copyme)
 {
-    for (int i=0; i < 6; i++)
-        m_planes[i] = copyme.m_planes[i];
+
     for (int i2=0; i2 < 8; i2++)
         m_frustumcorners[i2] = copyme.m_frustumcorners[i2];
 }
@@ -74,7 +54,11 @@ nFrustumClipper::nFrustumClipper(const nFrustumClipper &copyme)
 
 inline
 nFrustumClipper::nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform)
+: nPlaneClipper()
 {
+
+    m_numplanes = 6;
+
     // initialize clip planes from the projection and transform info
     // stolen from nOctFrustum code, 
     matrix44 proj(camera.GetProjection());
@@ -148,86 +132,10 @@ nFrustumClipper::nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform
 }
 
 inline
-nFrustumClipper::nFrustumClipper(const plane clipplanes[6])
+nFrustumClipper::nFrustumClipper(const plane clipplanes[6]) : nPlaneClipper(clipplanes, 6)
 {
-    // initialize from user-supplied planes
-    for (int i=0; i < 6; i++)
-    {
-        m_planes[i] = clipplanes[i];
-    }
 }
 
-inline
-nFrustumClipper::result_info nFrustumClipper::TestBBox(const bbox3 &boxtest, result_info in)
-{
-    // Returns a visibility code indicating the culling status of the
-    // given axis-aligned box.  The result_info passed in should indicate
-    // which planes might cull the box, by setting the corresponding
-    // bit in in.active_planes.
-    vector3 center = boxtest.center();
-    vector3 extent = boxtest.extents();
-
-    // Check the box against each active frustum plane.
-    int bit = 1;
-    for (int i = 0; i < 6; i++, bit <<= 1)
-    {
-        // do the test only if the plane is still not definately
-	// containing/clipping the box
-        if ((bit & in.active_planes) != 0)
-        {
-
-            const plane&    p       = m_planes[i];
-            const vector3 normal    = p.normal();
-            
-            // Check box against this plane.
-            float   d = normal % center + p.d; //Calculate closest distance from center point to plane.
-            float   extent_toward_plane = n_abs(extent.x * normal.x)
-                + n_abs(extent.y * normal.y)
-                + n_abs(extent.z * normal.z);
-            if (d < 0)
-            {  
-                if (-d > extent_toward_plane)
-                {
-                    // Box is culled by plane; it's not visible.
-                    return result_info(true, 0);
-                } // else this plane is ambiguous so leave it active.
-            } else {
-                if (d > extent_toward_plane)
-                {
-                    // Box is accepted by this plane, so
-                    // deactivate it, since neither this
-                    // box or any contained part of it can
-                    // ever be culled by this plane.
-                    in.active_planes &= ~bit;
-                    if (in.active_planes == 0)
-                    {
-                        // This box is definitively inside all the culling
-                        // planes, so there's no need to continue.
-                        return in;
-                    }
-                } // else this plane is ambigious so leave it active.
-            }
-        }
-    }
-
-    return in;  // Box not definitively culled.  Return updated active plane flags.
-}
-
-inline
-nFrustumClipper::result_info nFrustumClipper::TestSphere(const sphere &spheretest, nFrustumClipper::result_info ri)
-{
-    // build a bbox from the sphere and test that
-    bbox3 mybbox(spheretest.p, vector3(spheretest.r, spheretest.r, spheretest.r));
-    return TestBBox(mybbox, ri);
-}
-
-inline
-nFrustumClipper::result_info nFrustumClipper::TestPoint(const vector3 &pointtest, nFrustumClipper::result_info ri)
-{
-    // build a bbox from the point and test that
-    bbox3 mybbox(pointtest, vector3(0,0,0));
-    return TestBBox(mybbox, ri);
-}
 
 inline
 void nFrustumClipper::VisualizeFrustum(nGfxServer2 *gfx2, const vector4 &color)

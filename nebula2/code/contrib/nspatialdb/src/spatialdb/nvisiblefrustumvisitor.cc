@@ -9,12 +9,12 @@
 nVisibleFrustumVisitor::nVisibleFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform)
 : nVisibilityVisitor(cameratransform.pos_component()), m_cameraprojection(cameraprojection)
 {
-   // initialize the view frustum, matrix, etc.
+     // initialize the view frustum, matrix, etc.
 
-   m_viewertransformstack.PushBack(cameratransform);
+     m_viewertransformstack.PushBack(cameratransform);
 
-   nFrustumClipper clipper(m_cameraprojection, cameratransform);
-   m_viewfrustumstack.PushBack(clipper);
+     nFrustumClipper clipper(m_cameraprojection, cameratransform);
+     m_viewfrustumstack.PushBack(clipper);
 }
 
 nVisibleFrustumVisitor::~nVisibleFrustumVisitor()
@@ -23,78 +23,48 @@ nVisibleFrustumVisitor::~nVisibleFrustumVisitor()
 
 void nVisibleFrustumVisitor::Reset()
 {
-  // the stacks should be size 1 at this point
-  n_assert(m_viewertransformstack.Size() == 1);
-  n_assert(m_viewfrustumstack.Size() == 1);
+    // the stacks should be size 1 at this point
+    n_assert(m_viewertransformstack.Size() == 1);
+    n_assert(m_viewfrustumstack.Size() == 1);
 
-  nVisibilityVisitor::Reset();
+    nVisibilityVisitor::Reset();
 }
 
-void nVisibleFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
+void nVisibleFrustumVisitor::Reset(const nCamera2 &newcamera, const matrix44 &newxform)
 {
-    // bug out if we're hit the bottom of our allowed recursion
-    if (recursedepth < 1)
-        return;
+    m_cameraprojection = newcamera;
+    nVisibilityVisitor::Reset(newxform.pos_component());
 
-    //n_assert(visitee->GetOctree() != NULL);
-    nOctNode *rootnode = visitee->/*GetOctree()->*/GetRoot();
-    nFrustumClipper::result_info clipinfo;
-    nFrustumClipper frustum = m_viewfrustumstack.Back();
-    if (m_gfxdebug)
-    {
-        frustum.VisualizeFrustum(m_gfxdebug, vector4(1.0f,1.0f,0.0f,1.0f));
-    }
+    m_viewertransformstack.Clear();
+    m_viewfrustumstack.Clear();
 
-    // recursively descend the octree checking each node for clipping
-    CheckOctNode(rootnode, frustum, clipinfo, recursedepth);
+    m_viewertransformstack.PushBack(newxform);
+
+    nFrustumClipper clipper(m_cameraprojection, newxform);
+    m_viewfrustumstack.PushBack(clipper);
 }
 
-void nVisibleFrustumVisitor::CheckOctNode(nOctNode *testnode, nFrustumClipper &clipper, nFrustumClipper::result_info clipstatus, int recursivedepth)
+void nVisibleFrustumVisitor::StartVisualizeDebug(nGfxServer2 *gfx2)
 {
-    // if the node is totally enclosed, trivially accept all the children nodes.  otherwise, do a frustum clip test
-    if (clipstatus.active_planes != 0)
-    {
-        bbox3 nodebbox ( (testnode->minCorner + testnode->maxCorner)*0.5, (testnode->maxCorner - testnode->minCorner)*0.5);
-        clipstatus = clipper.TestBBox(nodebbox, clipstatus);
-    }
-
-    // if the node is culled, then ignore this node and all nodes below it
-    if (clipstatus.culled)
-        return;
-
-    // this node is not culled.  Test all the elements in this node, and then recurse to child nodes.
-    nOctElement *oe;
-    for (oe = (nOctElement *) testnode->elm_list.GetHead();
-         oe;
-         oe = (nOctElement *) oe->GetSucc())
-    {
-        bbox3 thisbbox( (oe->minCorner + oe->maxCorner)*0.5, (oe->maxCorner - oe->minCorner)*0.5);
-        nFrustumClipper::result_info ri(clipper.TestBBox(thisbbox, clipstatus));
-        if (!ri.culled)
-        {
-            nSpatialElement *se = (nSpatialElement *)oe;
-            se->Accept(*this, recursivedepth);
-        }
-    }
-
-    // now check the children of this node
-    if (testnode->c[0])
-    for (int childix=0; childix < 8; childix++)
-    {
-        this->CheckOctNode(testnode->c[childix], clipper, clipstatus, recursivedepth);
-    }
+    nVisibilityVisitor::StartVisualizeDebug(gfx2);
+    m_viewfrustumstack.Back().VisualizeFrustum(gfx2, vector4(1.0,0.0,1.0,0.5));
 }
 
-bool nVisibleFrustumVisitor::VisibilityTest(nSpatialElement *visitee)
+void nVisibleFrustumVisitor::Visit(nSpatialElement *visitee)
+{
+}
+
+VisitorFlags nVisibleFrustumVisitor::VisibilityTest(const bbox3 &testbox, VisitorFlags flags)
+{
+    nFrustumClipper &clipper = GetFrustumClipper();
+    return clipper.TestBBox(testbox, flags);
+}
+
+VisitorFlags nVisibleFrustumVisitor::VisibilityTest(const sphere &testsphere, VisitorFlags flags)
 {
     // test against the current frustum clipper
     nFrustumClipper &clipper = GetFrustumClipper();
-
-    nFrustumClipper::result_info in, out;
-    bbox3 totest( (visitee->minCorner + visitee->maxCorner)*0.5, (visitee->maxCorner - visitee->minCorner)*0.5);
-    out = clipper.TestBBox(totest, in);
-    
-    return !out.culled;
+    return clipper.TestSphere(testsphere, flags);
 }
 
 void nVisibleFrustumVisitor::EnterLocalSpace(matrix44 &warp)

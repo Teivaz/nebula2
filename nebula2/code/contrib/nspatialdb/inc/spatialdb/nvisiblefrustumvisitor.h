@@ -15,10 +15,9 @@
     visible.
 */
 
-#include "spatialdb/nvisibilityvisitor.h"
+#include "spatialdb/nvisitorbase.h"
 #include "spatialdb/nfrustumclipper.h"
 #include "spatialdb/nspatialelements.h"
-#include "spatialdb/nspatialsector.h"
 
 class nGfxServer2;
 
@@ -27,13 +26,29 @@ public:
     nVisibleFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform); 
     ~nVisibleFrustumVisitor();
 
+    // reset any accumulated state.  The view frustum is unchanged
     void Reset();
 
-    using nVisibilityVisitor::Visit;
+    // reset any data and reposition the frustum
+    void Reset(const nCamera2 &newcamera, const matrix44 &newxform);
 
-    void Visit(nSpatialSector *visitee, int recursedepth);
+    void Visit(nSpatialElement *visitee);
 
-    bool VisibilityTest(nSpatialElement *visitee);
+    /** Check if an element should be culled.  If the returned VisitorFlags produces
+    a TestResult() of true, the element is visible.  The returned VisitorFlags can be used
+    for more efficient visibility tests of primitives enclosed in this bounding box */
+    virtual VisitorFlags VisibilityTest(const bbox3 &testbox, VisitorFlags flags);
+    virtual VisitorFlags VisibilityTest(const sphere &testsphere, VisitorFlags flags);
+
+    void StartVisualizeDebug(nGfxServer2 *gfx2);
+
+    // entering a new local space; the matrix given will transform from the current local system into
+    // the new space local coordinate system.  This is used to possibly update a transform matrix
+    // or to transform the spatial region to a new coordinate system.
+    virtual void EnterLocalSpace(matrix44 &warp);
+
+    // leave a local space
+    virtual void LeaveLocalSpace();
 
 protected:
     // represents the camera position/rotation in the current space.
@@ -50,17 +65,6 @@ protected:
 
     matrix44 &GetCameraTransform() const;
     nFrustumClipper &GetFrustumClipper() const;
-
-    // entering a new local space; the matrix given will transform from the current local system into
-    // the new space local coordinate system.  This is used to possibly update a transform matrix
-    // or to transform the spatial region to a new coordinate system.
-    virtual void EnterLocalSpace(matrix44 &warp);
-
-    // leave a local space
-    virtual void LeaveLocalSpace();
-
-    // recursive descent of the octree embedded inside a sector
-    void CheckOctNode(nOctNode *testnode, nFrustumClipper &clipper, nFrustumClipper::result_info clipstatus, int recursivedepth);
 };
 
 inline

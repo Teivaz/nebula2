@@ -52,7 +52,6 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nlua);
-nNebulaUsePackage(noctree);
 nNebulaUsePackage(nspatialdb);
 
 //------------------------------------------------------------------------------
@@ -120,7 +119,6 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(ndirect3d9);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nlua);
-    kernelServer.AddPackage(noctree);
     kernelServer.AddPackage(nspatialdb);
 
     // initialize a viewer app object

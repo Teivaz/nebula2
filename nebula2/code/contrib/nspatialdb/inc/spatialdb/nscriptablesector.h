@@ -4,6 +4,7 @@
 #include "spatialdb/nspatialsector.h"
 #include "spatialdb/nspatialelements.h"
 #include "scene/nrendercontext.h"
+#include "kernel/ndynautoref.h"
 
 // the data associated with a specific spatial element
 class nScriptableSectorObject;
@@ -15,7 +16,7 @@ class nScriptableSectorObject;
 
    This is really just a subclass that allows you to add and position spatial elements
    using script messges.  Such a thing may be useful for real production code, but it is
-   mainly used for testing the spatial database, where various script files are used to setup different
+   mainly used for testing the spatial database where various script files are used to setup different
    spatial configurations.
 */
 
@@ -45,7 +46,7 @@ private:
     nString AutoName(const char *suggestname);
 
     /// list of the scriptable elements in the sector-for easy access later
-    nArray<nSpatialElement *> scriptelm_array;
+    nArray<nScriptableSectorObject *> m_scriptobject_array;
 };
 
 // your visitors will return nSpatialElements, and a GetPtr() on them will return a pointer to these things

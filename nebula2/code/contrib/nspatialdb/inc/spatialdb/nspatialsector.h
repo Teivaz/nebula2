@@ -1,7 +1,7 @@
 #ifndef N_SPATIALSECTOR_H
 #define N_SPATIALSECTOR_H
 
-#include "octree/noctree.h"
+#include "nspatiallisthierarchy.h"
 
 //--------------------------------------------------------------------
 /**
@@ -23,13 +23,29 @@
     can also nest sectors within each other using the NOH; a sector
     contains all the sectors that are child nodes of this sector.
 */
-class nSpatialSector : public nOctree {
+class nSpatialSector : public nRoot
+{
 public:
     nSpatialSector();
     ~nSpatialSector();
 
+    /// Somewhat-opaque handle to elements within the sector
+    typedef nSpatialElement * ElementHandle;
+
+    /// set the local coordinate system of the sector
     void Configure(const matrix44 &transformtoglobalspace);
+
+    virtual ElementHandle AddElement(nSpatialElement *addme);
+    virtual void UpdateElement(ElementHandle elementid, const bbox3 &newbbox);
+    virtual void RemoveElement(ElementHandle elementid);
+
+    virtual void Accept(nVisibilityVisitor &v, int recursiondepth, VisitorFlags flags);
+    virtual void Accept(nSpatialVisitor &v, int recursiondepth, VisitorFlags flags);
+    virtual void Accept(nOcclusionVisitor &v, int recursiondepth, VisitorFlags flags);
+
 protected:
+    // The elements of the sector are stashed in here...
+    nSpatialListHierarchy m_Nodeset;
 };
 
 

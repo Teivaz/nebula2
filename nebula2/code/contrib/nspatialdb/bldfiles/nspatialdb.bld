@@ -7,18 +7,16 @@ beginmodule nspatialsector
     setdir spatialdb
     setfiles {
         nspatialsector_main nspatialsector_cmds 
-        nspatialelements nvisibilityvisitor
-        nvisiblefrustumvisitor nvisiblespherevisitor 
-        noccludingfrustumvisitor noccludingspherevisitor
-        nspatialvisitor nspatialspherevisitor
+        nspatialelements nvisitorbase nspatialelements
+        nspatiallisthierarchy nvisiblefrustumvisitor 
+        ngeometryocclusionvisitor noccludedfrustumvisitor
     }
     setheaders {
-        nspatialsector nspatialelements nvisibilityvisitor
-        nvisiblefrustumvisitor nvisiblespherevisitor 
-        noccludingfrustumvisitor nspatialvisitor 
-        nbboxoccluder nfrustumclipper ngenarrayvisitors
-        nsphereclipper noccludingspherevisitor
-        nspatialspherevisitor
+        nspatialsector nspatialelements nvisitorbase
+        nplaneclipper nfrustumclipper nspatialelements
+        nspatiallisthierarchy ngenarrayvisitors
+        nvisiblefrustumvisitor ngeometryocclusionvisitor
+        noccludedfrustumvisitor
     }
 endmodule
 
@@ -37,14 +35,13 @@ endmodule
 begintarget nspatialdb
   	settype lib
   	setmodules    { nspatialsector nscriptablesector }
-  	settargetdeps { noctree }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget nspatialdbapp
     settype exe
     setmodules { nsdbviewer }
     settargetdeps {
-        nkernel nnebula noctree ndirect3d9 ndinput8 microtcl nlua
+        nkernel nnebula ndirect3d9 ndinput8 microtcl nlua
         ntoollib ngui ndshow nspatialdb
     }
 endtarget
@@ -65,7 +62,6 @@ beginworkspace nspatialdb
         ndshow
         nkernel
         nnebula
-        noctree
     }
 endworkspace
 #-----------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 
 #include "spatialdb/nspatialelements.h"
 #include "spatialdb/nscriptablesector.h"
-#include "spatialdb/nvisibilityvisitor.h"
+#include "spatialdb/nvisitorbase.h"
 
 //------------------------------------------------------------------------------
 class nSDBViewerApp
