@@ -29,12 +29,21 @@ nBinScriptServer::~nBinScriptServer()
 //------------------------------------------------------------------------------
 /**
     Begin writing a persistent object.
+
+    27-Feb-04   cubejk  check for already existing file and delete before creating the new
 */
 nFile*
 nBinScriptServer::BeginWrite(const char* filename, nRoot* obj)
 {
     n_assert(filename);
     n_assert(obj);
+
+    //check if the file already exist
+    if (kernelServer->GetFileServer()->FileExists(filename))
+    {
+        //delete the old file before writing the new
+        kernelServer->GetFileServer()->DeleteFile(filename);
+    }
 
     nFile* file = this->refFileServer->NewFileObject();
     n_assert(file);
