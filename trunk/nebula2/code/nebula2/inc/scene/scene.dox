@@ -1,5 +1,11 @@
 /**
     @defgroup NebulaSceneSystem Scene System
+
+      - @ref NebulaSceneSystemServers
+      - @ref NebulaSceneSystemNodes
+      - @ref NebulaSceneSystemAnimators
+      - @ref NebulaSceneLightNodes
+
 */
 
 /**
@@ -8,14 +14,10 @@
 */
 
 /**
-    @defgroup NebulaSceneSystemNodes Scene Nodes
-    @ingroup NebulaSceneSystem
-*/
-
-/**
     @defgroup NebulaSceneSystemAnimators Scene Animators
     @ingroup NebulaSceneSystem
 */
+
 /**
     @defgroup NebulaSceneLightNodes Scene Lighting
     @ingroup NebulaSceneSystem
