@@ -60,9 +60,9 @@ technique t0
     pass p0
     {
         ZWriteEnable = True; // this makes the alpha prettier -- does it cause other problems?
-
         AlphaTestEnable  = True;
         AlphaRef         = 50;
+        AlphaFunc        = Greaterequal;
 
         VertexShader = compile vs_1_1 vsMain();
 
