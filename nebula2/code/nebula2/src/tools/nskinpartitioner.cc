@@ -28,15 +28,12 @@ nSkinPartitioner::~nSkinPartitioner()
     - add it to an existing partition object if it has enough space in
       its joint palette
     - otherwise add it to a new empty partition
-    - build a new mesh containing one triangle group for each partition
-    
-    The number or ordering of vertices will not be changed. The number
-    of triangles will not change, the ordering will change so that
-    triangles belonging to one group are packed together. An internal 
-    group mapping array will contain for each new group index the index
-    of the original mesh group.
+    - update the triangle group id in the mesh to account for the
+      additional partitions
+    - a group id mapping array will be created which maps new
+      group ids to old group ids
 
-    @param  srcMesh                 the source mesh
+    @param  srcMesh                 the source mesh to partition
     @param  dstMesh                 the destination mesh
     @param  maxJointPaletteSize     max number of joints in a joint palette
 */
@@ -47,47 +44,39 @@ nSkinPartitioner::PartitionMesh(nMeshBuilder& srcMesh,
 {
     this->partitionArray.Clear();
 
-    // pack group triangles together
-    srcMesh.PackTrianglesByGroup();
-
-    // for each group in source mesh...
-    int numGroups = srcMesh.GetNumGroups();
-    int groupIndex;
-    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+    // for each triangle...
+    int triIndex;
+    int numTriangles = srcMesh.GetNumTriangles();
+    for (triIndex = 0; triIndex < numTriangles; triIndex++)
     {
-        const nMeshBuilder::Group group = srcMesh.GetGroupAt(groupIndex);
-        int firstTriIndex = group.GetFirstTriangle();
-        int lastTriIndex  = firstTriIndex + group.GetNumTriangles();
-        int triIndex;
-        for (triIndex = firstTriIndex; triIndex < lastTriIndex; triIndex++)
+        const nMeshBuilder::Triangle& triangle = srcMesh.GetTriangleAt(triIndex);
+
+        // try to add the triangle to an existing partition
+        bool triangleAdded = false;
+        int numPartitions = this->partitionArray.Size();
+        int partitionIndex;
+        for (partitionIndex = 0; partitionIndex < numPartitions; partitionIndex++)
         {
-            // try to add the triangle to an existing partition
-            bool triangleAdded = false;
-            int numPartitions = this->partitionArray.Size();
-            int partitionIndex;
-            for (partitionIndex = 0; partitionIndex < numPartitions; partitionIndex++)
+            if (this->partitionArray[partitionIndex].GetGroupId() == triangle.GetGroupId())
             {
-                if (this->partitionArray[partitionIndex].GetGroupIndex() == groupIndex)
+                if (this->partitionArray[partitionIndex].CheckAddTriangle(triIndex))
                 {
-                    if (this->partitionArray[partitionIndex].CheckAddTriangle(triIndex))
-                    {
-                        triangleAdded = true;
-                        break;
-                    }
+                    triangleAdded = true;
+                    break;
                 }
             }
-            if (!triangleAdded)
-            {
-                // triangle didn't fit into any existing partition, create a new partition
-                Partition newPartition(&srcMesh, maxJointPaletteSize, groupIndex);
-                triangleAdded = newPartition.CheckAddTriangle(triIndex);
-                n_assert(triangleAdded);
-                this->partitionArray.PushBack(newPartition);
-            }
+        }
+        if (!triangleAdded)
+        {
+            // triangle didn't fit into any existing partition, create a new partition
+            Partition newPartition(&srcMesh, maxJointPaletteSize, triangle.GetGroupId());
+            triangleAdded = newPartition.CheckAddTriangle(triIndex);
+            n_assert(triangleAdded);
+            this->partitionArray.PushBack(newPartition);
         }
     }
 
-    // build a new mesh with one group per partition
+    // update the triangle group ids
     this->BuildDestMesh(srcMesh, dstMesh);
 
     return true;
@@ -103,7 +92,6 @@ nSkinPartitioner::BuildDestMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh)
 {
     dstMesh.vertexArray.Clear();
     dstMesh.triangleArray.Clear();
-    dstMesh.groupArray.Clear();
 
     int partitionIndex;
     int numPartitions = this->GetNumPartitions();
@@ -111,17 +99,8 @@ nSkinPartitioner::BuildDestMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh)
     {
         const Partition& partition = this->partitionArray[partitionIndex];
         
-        // add a new group for the partition
-        char groupName[N_MAXPATH];
-        nMeshBuilder::Group newGroup;
-        sprintf(groupName, "g%d", partitionIndex);
-        newGroup.SetId(partitionIndex);
-        newGroup.SetFirstTriangle(dstMesh.GetNumTriangles());
-        newGroup.SetNumTriangles(partition.GetTriangleIndices().Size());
-        dstMesh.AddGroup(newGroup);
-
         // record the original group id in the groupMapArray
-        this->groupMappingArray.PushBack(partition.GetGroupIndex());
+        this->groupMappingArray.PushBack(partition.GetGroupId());
 
         // transfer the partition vertices and triangles
         int i;
