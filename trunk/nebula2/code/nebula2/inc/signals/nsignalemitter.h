@@ -47,6 +47,8 @@ public:
 
     /// get signal registry data
     nSignalRegistry * GetSignalRegistry() const;
+    /// store the emitter's signal list in <tt>signal_list</tt>
+    void GetSignals(nHashList *signal_list) const;
 
     /** @name Binding
         Methods for binding a signal. */
