@@ -10,13 +10,9 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ARRAY_H
-#include "util/narray.h"
-#endif
 
-#ifndef N_VARIABLE_H
+#include "util/narray.h"
 #include "variable/nvariable.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nVariableContext
@@ -103,7 +99,7 @@ inline
 void
 nVariableContext::AddVariable(const nVariable& var)
 {
-    this->varArray.PushBack(var);
+    this->varArray.Append(var);
 }
 
 //------------------------------------------------------------------------------
