@@ -223,3 +223,4 @@ nStaticShadowCaster::GetCoords() const
     n_assert(this->refCoordMesh.isvalid() && this->refCoordMesh->IsValid());
     return (vector3*) this->refCoordMesh->LockVertices();
 }
+

@@ -106,3 +106,4 @@ nSetter(nGuiSettingsForm::SetCancelText, const nString&, cancelText);
 nGetter(const nString&, nGuiSettingsForm::GetCancelText, cancelText);
 //------------------------------------------------------------------------------
 #endif    
+

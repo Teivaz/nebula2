@@ -198,3 +198,4 @@ n_setlabelfont(void* slf, nCmd* cmd)
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
     self->SetLabelFont(cmd->In()->GetS());
 }
+

@@ -83,3 +83,4 @@ nHttpResponseCracker::GetValue(const nString& key) const
 
 //------------------------------------------------------------------------------
 #endif
+
