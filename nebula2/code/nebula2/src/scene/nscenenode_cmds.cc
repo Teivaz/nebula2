@@ -35,7 +35,7 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_addanimator_s",       'ADDA', n_addanimator);
-		cl->AddCmd("v_removeanimator_s",    'REMA', n_removeanimator);
+    cl->AddCmd("v_removeanimator_s",    'REMA', n_removeanimator);
     cl->AddCmd("i_getnumanimators_v",   'GNMA', n_getnumanimators);
     cl->AddCmd("s_getanimatorat_i",     'GAAT', n_getanimatorat);
     cl->AddCmd("b_loadresources_v",     'LORE', n_loadresources);
