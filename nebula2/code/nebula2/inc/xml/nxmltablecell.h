@@ -5,9 +5,11 @@
     @class nXmlTableCell
     @ingroup Xml
 
-    A single cell in an XML table. The primary representation is as string,
-    but bool, int and float values can be returned (converted values are
-    cached for efficiency). Conversion happens during Set().
+    @brief A single cell in an XML table.
+
+    The primary representation is as string, but bool, int and float values
+    can be returned (converted values are cached for efficiency). Conversion
+    happens during Set().
     
     (C) 2004 RadonLabs GmbH
 */

@@ -5,7 +5,7 @@
     @class nXmlTable
     @ingroup Xml
 
-    A table in a nXmlSpreadSheet object.
+    @brief A table in a nXmlSpreadSheet object.
 
     (C) 2004 RadonLabs GmbH
 */
