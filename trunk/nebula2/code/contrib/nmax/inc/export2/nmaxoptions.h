@@ -10,9 +10,10 @@
     @class nMaxOptions
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief A class for global options of the exporter.
+
 */
-class nString;
+#include "util/nstring.h"
 
 //-----------------------------------------------------------------------------
 class nMaxOptions
@@ -29,8 +30,8 @@ public:
     const nString& GetSaveFilePath() const;
     bool GroupMeshes();
 
-    /// @name mesh options access functions.
-    /// @{
+    // @name Mesh options
+    // @{
     void SetExportNormals(bool status);
     void SetExportColors(bool status);
     void SetExportUvs(bool status);
@@ -44,8 +45,14 @@ public:
     bool ExportHiddenNodes();
     /// @}
 
-    /// @name assign and path access functions.
-    /// @{
+    // @name Animation options
+    // @{
+    void SetSampleRate(int val);
+    int GetSampleRate() const;
+    // @}
+
+    // @name assign and path access functions.
+    // @{
     const nString& GetHomePath() const;
     const nString& GetAnimAssgin() const;
     const nString& GetAnimPath() const;
@@ -95,13 +102,18 @@ protected:
     bool exportAnimations;
     bool groupMeshes;
 
+    /// mesh file extension '.n3d2' or 'nvx2'
     nString meshFileExtension;
+    /// animation file extension '.nanim2' or 'nax2'
     nString animFileExtension;
 
     nString sceneFilename;
 
+    /// animation sample rate.
     int sampleRate;
+    /// maximum number of joint palette.
     int maxJointPaletteSize;
+    /// weight trashold.
     int weightTrashHold;
     /// @}
 
@@ -134,7 +146,8 @@ protected:
 
     bool runViewer;
 
-    int verboseLevel; /// -1: errors only, 0:low, 1:midium, 2:high
+    /// -1: errors only, 0:warning, 1:low, 2:midium, 3:high
+    int verboseLevel; 
 
     bool overwriteExistTexture;
 
@@ -216,7 +229,6 @@ nMaxOptions::GetSaveScriptServer()
 {
     return this->saveScriptServer;
 }
-
 //-----------------------------------------------------------------------------
 /**
 */
