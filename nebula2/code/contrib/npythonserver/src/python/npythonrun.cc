@@ -186,7 +186,7 @@ bool nPythonServer::RunScript(const char *filename, const char*& result)
     // Initialize Python commands in __main__
     // Note, this could be done via the Python C API, but it would
     //       require many more lines.  :-)
-    PyRun_SimpleString("from npython import *");
+    PyRun_SimpleString("from pynebula import *");
 
     // Open file
     //nFileServer2* file2 = kernelServer->GetFileServer();
