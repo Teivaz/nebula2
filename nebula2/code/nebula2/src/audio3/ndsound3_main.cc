@@ -46,6 +46,8 @@ nDSound3::~nDSound3()
     {
         this->Unload();
     }
+    n_delete_array(this->m_apDSBuffer);
+    n_delete(this->m_pWaveFile);
 }
 
 //------------------------------------------------------------------------------
@@ -198,8 +200,8 @@ nDSound3::createDSBuffer(LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize,
                 DWORD dwNumBuffers, nDSound_WavFmt* pWaveFile, DWORD dwCreationFlags )
 {
     DWORD i;
-
-    m_apDSBuffer = new LPDIRECTSOUNDBUFFER[dwNumBuffers];
+    n_delete_array( m_apDSBuffer );
+    m_apDSBuffer = n_new_array(LPDIRECTSOUNDBUFFER,dwNumBuffers);
     if( NULL != m_apDSBuffer )
     {
         for( i=0; i<dwNumBuffers; i++ )
