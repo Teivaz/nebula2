@@ -26,13 +26,13 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 // Dialog
 //
 
-IDD_UTILITY_OPTION DIALOGEX 0, 0, 108, 368
+IDD_UTILITY_OPTION DIALOGEX 0, 0, 108, 394
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Mesh",IDC_STATIC,3,1,102,177
-    GROUPBOX        "Animation",IDC_STATIC,3,179,102,83
-    GROUPBOX        "Script Server",IDC_STATIC,3,293,101,46
+    GROUPBOX        "Mesh",IDC_STATIC,3,1,102,213
+    GROUPBOX        "Animation",IDC_STATIC,3,218,102,83
+    GROUPBOX        "Script Server",IDC_STATIC,3,332,101,46
     CONTROL         "Normal",IDC_VERTEX_NORMAL,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,25,78,8
     CONTROL         "Color",IDC_VERTEX_COLOR,"Button",BS_AUTOCHECKBOX | 
@@ -40,38 +40,41 @@ BEGIN
     CONTROL         "Uv",IDC_VERTEX_UV,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     11,47,80,8
     CONTROL         "n3d2",IDC_N3D2,"Button",BS_AUTORADIOBUTTON | WS_GROUP,9,
-                    157,37,11
-    CONTROL         "nvx2",IDC_NVX2,"Button",BS_AUTORADIOBUTTON,54,157,37,11
+                    193,37,11
+    CONTROL         "nvx2",IDC_NVX2,"Button",BS_AUTORADIOBUTTON,54,193,37,11
     CONTROL         "nanim2",IDC_NANIM2,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP,11,201,45,11
-    CONTROL         "nax2",IDC_NAX2,"Button",BS_AUTORADIOBUTTON,60,201,35,11
-    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,318,88,82,CBS_DROPDOWN | 
+                    WS_GROUP,11,240,45,11
+    CONTROL         "nax2",IDC_NAX2,"Button",BS_AUTORADIOBUTTON,60,240,35,11
+    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,357,88,82,CBS_DROPDOWN | 
                     WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Save As",IDC_STATIC,7,148,95,25
-    GROUPBOX        "Save As",IDC_STATIC,7,191,95,26
+    GROUPBOX        "Save As",IDC_STATIC,7,184,95,25
+    GROUPBOX        "Save As",IDC_STATIC,7,230,95,26
     GROUPBOX        "Vertex ",IDC_STATIC,7,12,94,60
-    GROUPBOX        "Skin",IDC_STATIC,7,73,94,71
-    LTEXT           "Max Joint Palette:",IDC_STATIC,12,85,82,11
-    LTEXT           "Weight Trash Hold:",IDC_STATIC,12,113,82,11
+    GROUPBOX        "Skin",IDC_STATIC,7,109,94,71
+    LTEXT           "Max Joint Palette:",IDC_STATIC,12,121,82,11
+    LTEXT           "Weight Trash Hold:",IDC_STATIC,12,149,82,11
     CONTROL         "Tangent",IDC_VERTEX_TANGENT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,58,80,8
-    GROUPBOX        "Hidden Nodes",IDC_STATIC,3,265,102,24
+    GROUPBOX        "Hidden Nodes",IDC_STATIC,3,304,102,24
     CONTROL         "Export Hidden Nodes",IDC_HIDDEN_OBJ,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,275,80,9
-    LTEXT           "Select Script Server:",IDC_STATIC,8,307,91,8
-    CONTROL         "",IDC_EDIT_MAXJOINTPALETTE,"CustEdit",WS_TABSTOP,12,97,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,314,80,9
+    LTEXT           "Select Script Server:",IDC_STATIC,8,346,91,8
+    CONTROL         "",IDC_EDIT_MAXJOINTPALETTE,"CustEdit",WS_TABSTOP,12,133,
                     69,10
-    CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,97,7,
-                    10
-    CONTROL         "",IDC_EDIT_WEIGHTRASHOLD,"CustEdit",WS_TABSTOP,12,124,
+    CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,133,
+                    7,10
+    CONTROL         "",IDC_EDIT_WEIGHTRASHOLD,"CustEdit",WS_TABSTOP,12,160,
                     69,10
-    CONTROL         "",IDC_SPIN_WEIGHTRASHOLD,"SpinnerControl",0x0,84,124,7,
+    CONTROL         "",IDC_SPIN_WEIGHTRASHOLD,"SpinnerControl",0x0,84,160,7,
                     10
-    LTEXT           "Sample Rate:",IDC_STATIC,8,219,82,11
-    CONTROL         "",IDC_EDIT_SAMPLERATE,"CustEdit",WS_TABSTOP,8,230,69,10
-    CONTROL         "",IDC_SPIN_SAMPLERATE,"SpinnerControl",0x0,80,230,7,10
+    LTEXT           "Sample Rate:",IDC_STATIC,8,258,82,11
+    CONTROL         "",IDC_EDIT_SAMPLERATE,"CustEdit",WS_TABSTOP,8,269,69,10
+    CONTROL         "",IDC_SPIN_SAMPLERATE,"SpinnerControl",0x0,80,269,7,10
     CONTROL         "Add Joint Name",IDC_ADDJOINTNAME,"Button",
-                    BS_AUTOCHECKBOX,8,246,79,8
+                    BS_AUTOCHECKBOX,8,285,79,8
+    GROUPBOX        "Scale Geometry By",IDC_STATIC,7,76,94,30
+    CONTROL         "",IDC_EDIT_GEOMSCALE,"CustEdit",WS_TABSTOP,13,89,69,10
+    CONTROL         "",IDC_SPIN_GEOMSCALE,"SpinnerControl",0x0,85,89,7,10
 END
 
 
@@ -85,7 +88,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_UTILITY_OPTION, DIALOG
     BEGIN
-        BOTTOMMARGIN, 367
+        BOTTOMMARGIN, 393
     END
 END
 #endif    // APSTUDIO_INVOKED
