@@ -1,11 +1,11 @@
 #============================================================================
 #  Compiler Generator Helper API
 #
-#  Compiler generator authors should only use the data exposed by these 
+#  Compiler generator authors should only use the data exposed by these
 #  functions to prevent the generators from being broken when and if the
 #  back end data structures change in the future.
 #
-#  If data you need isn't exposed here don't go after the data directly - 
+#  If data you need isn't exposed here don't go after the data directly -
 #  write a routine and add it here.  The only coding convention is to try to
 #  keep all data returns within TCL's 'foreach' syntax to make everyone's
 #  life easy.
@@ -46,7 +46,7 @@
 #    get_modplatform        $tarname
 #    get_modheaders         $modname
 #    get_modsources         $modname
-#    get_modheaders_dressed $modname - path, no ext 
+#    get_modheaders_dressed $modname - path, no ext
 #    get_modsources_dressed $modname - path, no ext
 #    get_modtype            $modname
 #    get_modpath            $modname [inc|src]
@@ -60,7 +60,7 @@
 #    get_libsearchdirs
 #    write_pkgfiles
 #    pathto                 $pathfile
-#    addpkgs   
+#    addpkgs
 #
 #----------------------------------------------------------------------------
 
@@ -76,9 +76,9 @@ global cur_workpacepath
 proc get_workspaces { } {
     global wspace
     global num_wspaces
-    
+
     set wlist ""
-    
+
     for {set i 0} {$i < $num_wspaces} {incr i} {
         addtolist wlist $wspace($i,name)
     }
@@ -121,13 +121,13 @@ proc set_workspacepath {path} {
     global cur_workspace
     global wspace
     global home
-    
+
     if {$wspace($cur_workspace,dir) == "" } {
         set cur_workspacepath $path
     } else {
         set cur_workspacepath $wspace($cur_workspace,dir)
     }
-    
+
     set dir [findrelpath $home $cur_workspacepath]
     check_makedir $dir/pkg
 }
@@ -147,37 +147,37 @@ proc set_workspacepath {path} {
 #          $path/win32
 #          $path/win32d
 #          $path/win32p
-#          $path/linux    
+#          $path/linux
 #          $path/linuxd
 #          $path/linuxp
 #          $path/macosx
-#          $path/macosxd    
-#          $path/macosxp          
+#          $path/macosxd
+#          $path/macosxp
 #----------------------------------------------------------------------------
 proc set_outputpath {path} {
     global cur_outputpath
     global cur_workspace
     global wspace
     global home
-    
+
     if {$wspace($cur_workspace,binarydir) == "" } {
         set cur_outputpath $path
     } else {
         set cur_outputpath $wspace($cur_workspace,binarydir)
     }
 
-    set dir [findrelpath $home $cur_outputpath]    
+    set dir [findrelpath $home $cur_outputpath]
     if {[get_platform] == "win32"} {
         check_makedir $dir/win32
         check_makedir $dir/win32d
     }
     if {[get_platform] == "linux"} {
-        check_makedir $dir/linux    
+        check_makedir $dir/linux
         check_makedir $dir/linuxd
     }
     if {[get_platform] == "macosx"} {
         check_makedir $dir/macosx
-        check_makedir $dir/macosxd    
+        check_makedir $dir/macosxd
     }
 }
 
@@ -196,19 +196,19 @@ proc set_outputpath {path} {
 #          $path/win32
 #          $path/win32d
 #          $path/win32p
-#          $path/linux    
+#          $path/linux
 #          $path/linuxd
 #          $path/linuxp
 #          $path/macosx
-#          $path/macosxd    
-#          $path/macosxp          
+#          $path/macosxd
+#          $path/macosxp
 #----------------------------------------------------------------------------
 proc set_interpath {path} {
     global cur_interpath
     global cur_workspace
     global wspace
     global home
-    
+
     #if {$wspace($cur_workspace,libdir) == "" } {
     #    set cur_interpath $path
     #} else {
@@ -216,19 +216,19 @@ proc set_interpath {path} {
     #}
     set cur_interpath $path
 
-    set dir [findrelpath $home $cur_interpath]   
+    set dir [findrelpath $home $cur_interpath]
     if {[get_platform] == "win32"} {
         check_makedir $dir/win32
         check_makedir $dir/win32d
     }
     if {[get_platform] == "linux"} {
-        check_makedir $dir/linux    
+        check_makedir $dir/linux
         check_makedir $dir/linuxd
     }
     if {[get_platform] == "macosx"} {
         check_makedir $dir/macosx
-        check_makedir $dir/macosxd    
-    }          
+        check_makedir $dir/macosxd
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -259,7 +259,7 @@ proc use_workspace {wspace_name wspacedir outputdir interdir} {
 proc get_targets { } {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,targets)
 }
 
@@ -285,7 +285,7 @@ proc get_tardeps {tarname} {
 proc get_tarmods {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,modules)
 }
 
@@ -297,20 +297,20 @@ proc get_tarmods {tarname} {
 proc test_tarplatform {tarname platform_test} {
     global wspace
     global cur_workspace
-    
+
     return [test_platform $wspace($cur_workspace,$tarname,platform) $platform_test]
 }
 
 #----------------------------------------------------------------------------
 #  get_tarplatform
 #
-#  returns the unadulterated tar platform list (this is generated from 
+#  returns the unadulterated tar platform list (this is generated from
 #  the modules this target depends on)
 #----------------------------------------------------------------------------
 proc get_tarplatform {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,platform)
 }
 
@@ -322,7 +322,7 @@ proc get_tarplatform {tarname} {
 proc get_tartype {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,type)
 }
 
@@ -337,7 +337,7 @@ proc get_tartype {tarname} {
 proc get_tardefs {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,defs)
 }
 
@@ -401,7 +401,7 @@ proc get_dllextension {tarname} {
 proc get_win32libs_release {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,libs_win32_release)
 }
 
@@ -415,7 +415,7 @@ proc get_win32libs_release {tarname} {
 proc get_win32libs_debug {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,libs_win32_debug)
 }
 
@@ -429,7 +429,7 @@ proc get_win32libs_debug {tarname} {
 proc get_linuxlibs {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,libs_linux)
 }
 
@@ -443,7 +443,7 @@ proc get_linuxlibs {tarname} {
 proc get_osxlibs {tarname} {
     global wspace
     global cur_workspace
-    
+
     return $wspace($cur_workspace,$tarname,libs_macosx)
 }
 
@@ -454,9 +454,9 @@ proc get_osxlibs {tarname} {
 #----------------------------------------------------------------------------
 proc get_modheaders {modname} {
     global mod
-    
+
     set i [findmodbyname $modname]
-    
+
     return $mod($i,headers)
 }
 
@@ -468,9 +468,9 @@ proc get_modheaders {modname} {
 #----------------------------------------------------------------------------
 proc get_modsources {modname} {
     global mod
-    
+
     set i [findmodbyname $modname]
-    
+
     return $mod($i,files)
 }
 
@@ -482,9 +482,9 @@ proc get_modsources {modname} {
 #----------------------------------------------------------------------------
 proc get_modheaders_dressed {modname} {
     global mod
-    
+
     set i [findmodbyname $modname]
-    
+
     return $mod($i,hdrs)
 }
 
@@ -492,14 +492,14 @@ proc get_modheaders_dressed {modname} {
 #----------------------------------------------------------------------------
 #  get_modsources_dressed
 #
-#  Returns a list of undressed source file names (path, no ext) for the 
+#  Returns a list of undressed source file names (path, no ext) for the
 #  given module.
 #----------------------------------------------------------------------------
 proc get_modsources_dressed {modname} {
     global mod
-    
+
     set i [findmodbyname $modname]
-    
+
     return $mod($i,srcs)
 }
 
@@ -511,9 +511,9 @@ proc get_modsources_dressed {modname} {
 #----------------------------------------------------------------------------
 proc get_modtype {modname} {
     global mod
-    
+
     set i [findmodbyname $modname]
-    
+
     return $mod($i,type)
 }
 
@@ -525,7 +525,7 @@ proc get_modtype {modname} {
 #----------------------------------------------------------------------------
 proc get_modpath {modname type} {
     global mod
-    
+
     set i [findmodbyname $modname]
     set path_part ./code/$mod($i,trunkdir)
     set src_part "src"
@@ -545,7 +545,7 @@ proc get_modpath {modname type} {
 #----------------------------------------------------------------------------
 proc test_modplatform {modname platform_test} {
     global mod
-    
+
     return [test_platform $mod([findmodbyname $modname],platform) $platform_test]
 }
 
@@ -556,7 +556,7 @@ proc test_modplatform {modname platform_test} {
 #----------------------------------------------------------------------------
 proc get_modplatform {modname} {
     global mod
-    
+
     return $mod([findmodbyname $modname],platform)
 }
 
@@ -569,7 +569,7 @@ proc get_modplatform {modname} {
 proc path_srctoinc {modname} {
     set pfrom [get_modpath $modname "src"]
     set pto   [get_modpath $modname "inc"]
-    
+
     return [findrelpath $pfrom $pto]
 }
 
@@ -581,20 +581,20 @@ proc path_srctoinc {modname} {
 #----------------------------------------------------------------------------
 proc path_wspacetosrc {modname} {
     global cur_workspacepath
-    
-    set pto [getmodpath $modname "src"]    
+
+    set pto [getmodpath $modname "src"]
     return [findrelpath $cur_workspacepath $pto]
 }
 
 #----------------------------------------------------------------------------
 #  path_wspacetooutput
 #
-#  Returns the path from the wspace directory to the binary binarydir dir 
+#  Returns the path from the wspace directory to the binary binarydir dir
 #----------------------------------------------------------------------------
 proc path_wspacetooutput {} {
     global cur_workspacepath
     global cur_outputpath
-    
+
     return [findrelpath $cur_workspacepath $cur_outputpath]
 }
 
@@ -606,7 +606,7 @@ proc path_wspacetooutput {} {
 proc path_wspacetointer {} {
     global cur_workspacepath
     global cur_interpath
-    
+
     return [findrelpath $cur_workspacepath $cur_interpath]
 }
 
@@ -620,7 +620,7 @@ proc path_wspacetointer {} {
 proc get_incsearchdirs { } {
     global cur_workspacepath
 
-    set retlist ""    
+    set retlist ""
     foreach target [get_targets] {
         foreach module [get_tarmods $target] {
             lappend retlist [findrelpath $cur_workspacepath [get_modpath $module inc]]
@@ -640,7 +640,7 @@ proc get_incsearchdirs { } {
 proc get_libsearchdirs { } {
     global cur_workspacepath
 
-    set retlist ""    
+    set retlist ""
     foreach target [get_targets] {
         foreach module [get_tarmods $target] {
             lappend retlist [findrelpath $cur_workspacepath [get_modpath $module lib]]
@@ -653,7 +653,7 @@ proc get_libsearchdirs { } {
 #----------------------------------------------------------------------------
 #  write_pkgfiles
 #
-#  writes out pkg_XXX.cc files for the current workspace and fixs up the 
+#  writes out pkg_XXX.cc files for the current workspace and fixs up the
 #  relevant project to use them.  Currently only dll and exe targets
 #  support pkg_XXX.cc files.  This also writes out the .rc files for
 #  win32 targets to point at the nebula.ico in /bin/win32
@@ -673,19 +673,19 @@ proc write_pkgfiles { } {
     global num_wspaces
     global cur_workspace
     global cur_workspacepath
-    
+
     set pdir [cleanpath $cur_workspacepath/pkg]
     set dir  [cleanpath $home/$pdir]
-    
+
     foreach target $wspace($cur_workspace,targets) {
         if {($wspace($cur_workspace,$target,type) != "lib") && ([llength $wspace($cur_workspace,$target,pakmods)] > 0)} {
-        
+
             set cid [open $dir/res_$target.rc w]
             puts $cid "nebula_icon ICON \"[findrelpath $pdir ./bin/win32]/nebula.ico\""
-            close $cid    
+            close $cid
 
             set cid [open $dir/pkg_$target.cc w]
-            
+
             puts $cid "//----------------------------------------------------------"
             puts $cid "// pkg_$target.cc"
             puts $cid "// MACHINE GENERATED, DON'T EDIT!"
@@ -699,7 +699,7 @@ proc write_pkgfiles { } {
             puts $cid "extern \"C\" void n_addmodules(nKernelServer *);"
             puts $cid "extern \"C\" void n_remmodules(nKernelServer *);"
             puts $cid ""
-    
+
             #collect the targets and platforms
             set mod_list ""
             foreach module $wspace($cur_workspace,$target,pakmods) {
@@ -708,7 +708,7 @@ proc write_pkgfiles { } {
                 #set plat $tar($taridx,platform)
                 addtolist mod_list $module
             }
-                
+
             foreach module $mod_list {
                 #write out the extern lines
                 set ifdefd false
@@ -722,17 +722,17 @@ proc write_pkgfiles { } {
                 puts $cid "extern \"C\" bool n_init_$module (nClass *, nKernelServer *);"
                 puts $cid "extern \"C\" void n_fini_$module (void);"
                 puts $cid "extern \"C\" void *n_new_$module (void);"
-                
+
                 if {$ifdefd} {
                     puts $cid "#endif"
                 }
                 puts $cid ""
-            }         
-                
+            }
+
             puts $cid ""
             puts $cid "void n_addmodules(nKernelServer *ks)"
             puts $cid "\{"
-       
+
             foreach module $mod_list {
                 #write out the addmodules lines
                 set ifdefd false
@@ -744,12 +744,12 @@ proc write_pkgfiles { } {
                     puts $cid "#ifdef $deflist"
                 }
                 puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_fini_$module,n_new_$module);"
-                
+
                 if {$ifdefd} {
                     puts $cid "#endif"
                 }
             }
-    
+
             puts $cid "\}"
             puts $cid ""
             puts $cid "void n_remmodules(nKernelServer *)"
@@ -758,9 +758,9 @@ proc write_pkgfiles { } {
             puts $cid "//----------------------------------------------------------"
             puts $cid "// EOF"
             puts $cid "//----------------------------------------------------------"
-    
+
             close $cid
-        
+
             #fix up the targets in the wspace array to generate the pkg_XXX.cc inclusions
             #create a mod entry for it - needed
             set mod($num_mods,name) pkg_$target
@@ -783,7 +783,7 @@ proc write_pkgfiles { } {
 #----------------------------------------------------------------------------
 proc pathto {pathfile} {
     global cur_workspacepath
-    
+
     return [findrelpath $cur_workspacepath $pathfile]
 }
 
@@ -797,7 +797,7 @@ proc add_pkgs {} {
     for {set i 0} {$i < $num_wspaces} {incr i} {
         foreach target $wspace($i,targets) {
             if {($wspace($i,$target,type) != "lib") && ([llength $wspace($i,$target,pakmods)] > 0)} {
-                lappend wspace($i,$target,modules) pkg_$target 
+                lappend wspace($i,$target,modules) pkg_$target
             }
         }
     }

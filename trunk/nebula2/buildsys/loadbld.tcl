@@ -44,7 +44,7 @@ set current_file  ""
 
 #============================================================================
 # procs:
-#    
+#
 #    beginworkspace        $name
 #    annotate              $annotation
 #    setdir                $dir
@@ -53,8 +53,8 @@ set current_file  ""
 #    settargets            { $targetname $targetname ... }
 #    addglobaldef          $defname $value
 #    addtargetdef          $targetname $defname $value
-#    endworkspace          
-#                          
+#    endworkspace
+#
 #    begintarget           $name
 #    annotate              $annotation
 #    settype               lib|exe|dll
@@ -64,14 +64,14 @@ set current_file  ""
 #    setmodules            { $modulename $modulename ... }
 #    setbundles            { $bundlename $bundlename ... }
 #    settargetdeps         { $targetname $targetname ... }
-#    endtarget             
-#                          
+#    endtarget
+#
 #    beginbundle           $name
 #    annotate              $annotation
 #    setmodules            { $modulename $modulename ... }
 #    settargets            { $targetname $targetname ... }
-#    endbundle             
-#                          
+#    endbundle
+#
 #    beginmodule           $name
 #    annotate              $annotation
 #    setdir                $dir
@@ -103,7 +103,7 @@ set current_file  ""
 
 #----------------------------------------------------------------------------
 #  loadbldfiles
-#  Simply finds all relevant bld files laying out there and 
+#  Simply finds all relevant bld files laying out there and
 #  'source's them - This is the generic entry point for this file.
 #
 #  nebula2/code/*/src
@@ -115,12 +115,12 @@ set current_file  ""
 #----------------------------------------------------------------------------
 proc loadbldfiles { } {
     global home
-    
+
     puts "\n****Loading bld files"
     puts "home = $home"
     set startdir "[string trim $home /]/code/"
     set contribdir "[string trim $home /]/code/contrib/"
-    
+
     puts "startdir = $startdir"
     puts "contribdir = $contribdir"
 
@@ -128,15 +128,15 @@ proc loadbldfiles { } {
         set ext [string trim $ext '/']
         puts "searching: $ext"
         getpakdir $ext/src
-        
+
         recursepakdir $ext/bldfiles
     }
-    
+
     foreach ext [glob -nocomplain -directory $contribdir */] {
         set ext [string trim $ext '/']
         puts "searching: $ext"
         getpakdir $ext/src
-        
+
         recursepakdir $ext/bldfiles
     }
 }
@@ -147,10 +147,10 @@ proc loadbldfiles { } {
 #----------------------------------------------------------------------------
 proc getpakdir { sdir } {
     global current_file
-    
+
     foreach ext [glob -nocomplain $sdir/*.bld] {
         set current_file $ext
-        puts "  [file tail $ext]"    
+        puts "  [file tail $ext]"
         source $ext
     }
 }
@@ -179,7 +179,7 @@ proc check_noblock { } {
     global current_block
     global noactive_block
     global current_file
-    
+
     if {$current_block != $noactive_block} {
         puts "ERROR: previous begin/end block not closed in file: $current_file"
         exit
@@ -188,7 +188,7 @@ proc check_noblock { } {
 
 #----------------------------------------------------------------------------
 #  setdir $dir
-#  Sets the directory that a workspace should be written to or a module's 
+#  Sets the directory that a workspace should be written to or a module's
 #  files can be found in
 #----------------------------------------------------------------------------
 proc setdir {dir} {
@@ -197,16 +197,16 @@ proc setdir {dir} {
     global module_block
 
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
+        global wspace
+        global num_wspaces
         set wspace($num_wspaces,dir) [cleanpath $dir]
         return
     } elseif {$current_block == $module_block} {
         global mod
         global num_mods
-    # This is not cleaned as this is a naming convention
-    # not a direct path
-    set mod($num_mods,dir) $dir
+        # This is not cleaned as this is a naming convention
+        # not a direct path
+        set mod($num_mods,dir) $dir
     } else {
         puts "FAILED to setdir for the currentblocktype $current_block"
     }
@@ -222,14 +222,14 @@ proc settargets {target_list} {
     global bundle_block
 
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
+        global wspace
+        global num_wspaces
         set wspace($num_wspaces,targets) $target_list
         return
     } elseif {$current_block == $bundle_block} {
         global bundle
         global num_bundles
-    set bundle($num_bundles,targets) $target_list
+        set bundle($num_bundles,targets) $target_list
     } else {
         puts "FAILED to settargets for the currentblocktype $current_block"
     }
@@ -244,13 +244,13 @@ proc settype {type} {
     global module_block
 
     if {$current_block == $target_block} {
-    global tar
-    global num_tars
+        global tar
+        global num_tars
         set tar($num_tars,type) $type
     } elseif {$current_block == $module_block} {
         global mod
         global num_mods
-    set mod($num_mods,type) $type
+        set mod($num_mods,type) $type
     } else {
         puts "FAILED to settype for the currentblocktype $current_block."
     }
@@ -263,17 +263,17 @@ proc settype {type} {
 #----------------------------------------------------------------------------
 proc setrtti {allowrtti} {
     if {$allowrtti == true} {
-    global current_block
+        global current_block
         global target_block
 
         if {$current_block == $target_block} {
-    global tar
-    global num_tars
-          set tar($num_tars,rtti) true
+            global tar
+            global num_tars
+            set tar($num_tars,rtti) true
         } else {
             puts "FAILED to setrtti for currentblocktype $current_block"
         }
-    }    
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -283,17 +283,17 @@ proc setrtti {allowrtti} {
 #----------------------------------------------------------------------------
 proc setexceptions {allowexceptions} {
     if {$allowexceptions == true } {
-    global current_block
+        global current_block
         global target_block
 
         if {$current_block == $target_block} {
-    global tar
-    global num_tars
-          set tar($num_tars,exceptions) true
+            global tar
+            global num_tars
+            set tar($num_tars,exceptions) true
         } else {
             puts "FAILED to setexections for currentblocktype $current_block"
         }
-    }    
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -306,13 +306,13 @@ proc setmodules {module_list} {
     global bundle_block
 
     if {$current_block == $target_block} {
-    global tar
-    global num_tars
+        global tar
+        global num_tars
         set tar($num_tars,modules) $module_list
     } elseif { $current_block == $bundle_block } {
         global bundle
         global num_bundles
-    set bundle($num_bundles,modules) $module_list
+        set bundle($num_bundles,modules) $module_list
     } else {
         puts "FAILED to setmodules for currentblocktype $current_blocktype"
     }
@@ -331,8 +331,8 @@ proc annotate {annotation} {
     global module_block
 
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
+        global wspace
+        global num_wspaces
         set wspace($num_tars,annotate) $annotation
     } elseif {$current_block == $target_block} {
         global tar
@@ -364,10 +364,10 @@ proc beginworkspace {name} {
     global current_block
     global wspace_block
     global current_file
-    
+
     check_noblock
     set current_block $wspace_block
-    
+
     #bld file data
     set wspace($num_wspaces,name)       $name
     set wspace($num_wspaces,dir)        ""
@@ -377,8 +377,8 @@ proc beginworkspace {name} {
     set wspace($num_wspaces,targets)    ""
     set wspace($num_wspaces,globaldefs) ""
     set wspace($num_wspaces,targetdefs) ""
-    
-    #generated data 
+
+    #generated data
     set wspace($num_wspaces,bldfile)    $current_file
 }
 
@@ -391,9 +391,9 @@ proc setbinarydir {dir} {
     global wspace_block
 
     if {$current_block == $wspace_block } {
-    global wspace
-    global num_wspaces
-    set wspace($num_wspaces,binarydir) [cleanpath $dir]
+        global wspace
+        global num_wspaces
+        set wspace($num_wspaces,binarydir) [cleanpath $dir]
     } else {
         puts "FAILED to setbinarydir for currentblocktype $current_block"
     }
@@ -403,7 +403,7 @@ proc setbinarydir {dir} {
 #  setlibdir $dir
 #  Sets the root directory to be used for intermediate compilation and
 #  possibly lib output - see the fixme.
-#  FIXME:  For convention it should be decided by the powers that be 
+#  FIXME:  For convention it should be decided by the powers that be
 #          whether lib binarydir should mandatorily go in the inter dir,
 #          output dir, or leave it to the compiler generators discretion.
 #----------------------------------------------------------------------------
@@ -412,9 +412,9 @@ proc setlibdir {dir} {
     global wspace_block
 
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
-    set wspace($num_wspaces,libdir) [cleanpath $dir]
+        global wspace
+        global num_wspaces
+        set wspace($num_wspaces,libdir) [cleanpath $dir]
     } else {
         puts "FAILED to setlibdir for currentblocktype $current_block"
     }
@@ -431,11 +431,10 @@ proc addglobaldef {defname value} {
     global wspace_block
 
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
-    
+        global wspace
+        global num_wspaces
 
-    lappend wspace($num_wspaces,globaldefs) $defname $value
+        lappend wspace($num_wspaces,globaldefs) $defname $value
     } else {
         puts "FAILED to addglobaldef for currentblocktype $current_block"
     }
@@ -450,10 +449,10 @@ proc addtargetdef {targetname defname value} {
     global current_block
     global wspace_block
     if {$current_block == $wspace_block} {
-    global wspace
-    global num_wspaces
-    
-    lappend wspace($num_wspaces,targetdefs) [list $targetname $defname $value]
+        global wspace
+        global num_wspaces
+
+        lappend wspace($num_wspaces,targetdefs) [list $targetname $defname $value]
     } else {
         puts "FAILED to addtargetdef for currentblocktype $current_block"
     }
@@ -465,10 +464,10 @@ proc addtargetdef {targetname defname value} {
 proc endworkspace { } {
     global current_block
     global wspace_block
-    
+
     if {$current_block == $wspace_block} {
         global num_wspaces
-    incr num_wspaces
+        incr num_wspaces
         global noactive_block
         set current_block $noactive_block
     } else {
@@ -486,10 +485,10 @@ proc begintarget {name} {
     global current_block
     global target_block
     global current_file
-    
+
     check_noblock
     set current_block $target_block
-    
+
     #bld file data
     set tar($num_tars,name)        $name
     set tar($num_tars,annotate)    ""
@@ -500,7 +499,7 @@ proc begintarget {name} {
     set tar($num_tars,modules)     ""
     set tar($num_tars,bundles)     ""
     set tar($num_tars,targetdeps)  ""
-    
+
     #generated data
     set tar($num_tars,bldfile)            $current_file
     set tar($num_tars,mergedmods)         ""
@@ -508,7 +507,7 @@ proc begintarget {name} {
     set tar($num_tars,libs_win32_release) ""
     set tar($num_tars,libs_win32_debug)   ""
     set tar($num_tars,libs_linux)         ""
-    set tar($num_tars,libs_macosx)        ""   
+    set tar($num_tars,libs_macosx)        ""
     set tar($num_tars,platform)           ""
     set tar($num_tars,moddeffile)         ""
 }
@@ -525,9 +524,9 @@ proc setbundles {bundle_list} {
     global target_block
 
     if {$current_block == $target_block} {
-    global tar
-    global num_tars
-    addtolist tar($num_tars,bundles)  $bundle_list
+        global tar
+        global num_tars
+        addtolist tar($num_tars,bundles)  $bundle_list
     } else {
         puts "FAILED to setbundles for currentblocktype $current_block"
     }
@@ -543,10 +542,10 @@ proc settargetdeps {target_list} {
     global target_block
 
     if {$current_block == $target_block} {
-    global tar
-    global num_tars
-    
-    addtolist tar($num_tars,targetdeps)  $target_list
+        global tar
+        global num_tars
+
+        addtolist tar($num_tars,targetdeps)  $target_list
     } else {
         puts "FAILED to settargetdeps for currentblocktype $current_block"
     }
@@ -578,10 +577,10 @@ proc changedllextension { ext } {
 proc endtarget { } {
     global current_block
     global target_block
-    
+
     if {$current_block == $target_block} {
         global num_tars
-    incr num_tars
+        incr num_tars
         global noactive_block
         set current_block $noactive_block
     } else {
@@ -599,19 +598,19 @@ proc beginbundle {name} {
     global current_block
     global bundle_block
     global current_file
-    
+
     check_noblock
     set current_block $bundle_block
-    
+
     #bld file data
     set bundle($num_bundles,name)     $name
     set bundle($num_bundles,annotate) ""
     set bundle($num_bundles,modules)  ""
     set bundle($num_bundles,targets)  ""
-    
+
     #generated data
     set bundle($num_bundles,bldfile)  $current_file
-    
+
 }
 
 #----------------------------------------------------------------------------
@@ -620,10 +619,10 @@ proc beginbundle {name} {
 proc endbundle { } {
     global current_block
     global bundle_block
-    
+
     if {$current_block == $bundle_block} {
         global num_bundles
-    incr num_bundles
+        incr num_bundles
         global noactive_block
         set current_block $noactive_block
     } else {
@@ -641,10 +640,10 @@ proc beginmodule {name} {
     global current_block
     global module_block
     global current_file
-    
+
     check_noblock
     set current_block $module_block
-    
+
     #bld file data
     set mod($num_mods,name)              $name
     set mod($num_mods,dir)               ""
@@ -661,7 +660,7 @@ proc beginmodule {name} {
     set mod($num_mods,libs_macosx)        ""
     set mod($num_mods,moduledeps)        ""
     set mod($num_mods,forcenopkg)        false
-    
+
     #generated data
     set mod($num_mods,trunkdir)   "nebula2"
     set mod($num_mods,bldfile)    $current_file
@@ -701,9 +700,9 @@ proc setplatform {platform_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
-    set mod($num_mods,platform)  $platform_list
+        global mod
+        global num_mods
+        set mod($num_mods,platform)  $platform_list
     } else {
         puts "FAILED to setplatform for currentblocktype $current_block"
     }
@@ -711,7 +710,7 @@ proc setplatform {platform_list} {
 
 #----------------------------------------------------------------------------
 #  setfiles $file_list
-#  The list of source files that make up this module.  Filenames are 
+#  The list of source files that make up this module.  Filenames are
 #  specified without path or extension
 #----------------------------------------------------------------------------
 proc setfiles {file_list} {
@@ -719,10 +718,10 @@ proc setfiles {file_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,files)  $file_list
+        addtolist mod($num_mods,files)  $file_list
     } else {
         puts "FAILED to setfiles for currentblocktype $current_block"
     }
@@ -738,10 +737,10 @@ proc setheaders {header_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,headers)  $header_list
+        addtolist mod($num_mods,headers)  $header_list
     } else {
         puts "FAILED to setheaders for currentblocktype $current_block"
     }
@@ -758,10 +757,10 @@ proc setlibs_win32 {lib_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,libs_win32)  $lib_list
+        addtolist mod($num_mods,libs_win32)  $lib_list
     } else {
         puts "FAILED to setlibs_win32 for currentblocktype $current_block"
     }
@@ -776,10 +775,10 @@ proc setlibs_win32_release {lib_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,libs_win32_release)  $lib_list
+        addtolist mod($num_mods,libs_win32_release)  $lib_list
     } else {
         puts "FAILED to setlibs_win32_release for currentblocktype $current_block"
     }
@@ -795,10 +794,10 @@ proc setlibs_win32_debug {lib_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,libs_win32_debug)  $lib_list
+        addtolist mod($num_mods,libs_win32_debug)  $lib_list
     } else {
         puts "FAILED to setlibs_win32_debug for currentblocktype $current_block"
     }
@@ -814,10 +813,10 @@ proc setlibs_linux {lib_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,libs_linux)  $lib_list
+        addtolist mod($num_mods,libs_linux)  $lib_list
     } else {
         puts "FAILED to setlibs_linux for currentblocktype $current_block"
     }
@@ -834,10 +833,10 @@ proc setlibs_macosx {lib_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,libs_macosx)  $lib_list
+        addtolist mod($num_mods,libs_macosx)  $lib_list
     } else {
         puts "FAILED to setlibs_maxos for currentblocktype $current_block"
     }
@@ -845,7 +844,7 @@ proc setlibs_macosx {lib_list} {
 
 #----------------------------------------------------------------------------
 #  setmoduledeps $mod_list
-#  List of modules that this module depends on for proper functioning.  This 
+#  List of modules that this module depends on for proper functioning.  This
 #  list should include both nRoot and non-nRoot modules.  Inherited nRoot
 #  class dependencies will be generated by the build system.
 #----------------------------------------------------------------------------
@@ -854,10 +853,10 @@ proc setmoduledeps {mod_list} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
+        global mod
+        global num_mods
 
-    addtolist mod($num_mods,moduledeps)  $mod_list
+        addtolist mod($num_mods,moduledeps)  $mod_list
     } else {
         puts "FAILED to setmoduledeps for currentblocktype $current_block"
     }
@@ -873,10 +872,10 @@ proc setnopkg {bool} {
     global module_block
 
     if {$current_block == $module_block} {
-    global mod
-    global num_mods
-    
-    set mod($num_mods,forcenopkg)  $bool
+        global mod
+        global num_mods
+
+        set mod($num_mods,forcenopkg)  $bool
     } else {
         puts "FAILED to setnopkg for currentblocktype $current_block"
     }
@@ -888,10 +887,10 @@ proc setnopkg {bool} {
 proc endmodule { } {
     global current_block
     global module_block
-    
+
     if {$current_block == $module_block} {
         global num_mods
-    incr num_mods
+        incr num_mods
 
         global noactive_block
         set current_block $noactive_block
