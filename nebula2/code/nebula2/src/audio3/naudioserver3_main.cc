@@ -29,6 +29,10 @@ nAudioServer3::nAudioServer3() :
 */
 nAudioServer3::~nAudioServer3()
 {
+    if (this->isOpen)
+    {
+        this->Close();
+    }
     n_assert(Singleton);
     Singleton = 0;
 }
