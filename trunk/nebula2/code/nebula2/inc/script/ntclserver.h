@@ -9,10 +9,7 @@
     by a few Nebula specific Tcl commands and the ability
     to route script cmds to Nebula C++ objects.
 */
-//--------------------------------------------------------------------
-
 #include "tcl.h"
-
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
 #include "kernel/nautoref.h"
@@ -67,7 +64,8 @@ private:
     void Indent(int i, char* buf);
 
 public:                         // note: public because C functions need to access this
-    enum {
+    enum
+    {
         MAXINDENT = 64,         // max hierarchy depth
     };
     Tcl_Interp* interp;
