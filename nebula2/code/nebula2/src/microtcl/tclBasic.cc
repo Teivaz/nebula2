@@ -2572,8 +2572,8 @@ Tcl_EvalObjEx(interp, objPtr, flags)
     int evalFlags;          /* Interp->evalFlags value when the
                      * procedure was called. */
     register ByteCode* codePtr;     /* Tcl Internal type of bytecode. */
-    int oldCount = iPtr->cmdCount;  /* Used to tell whether any commands
-                     * at all were executed. */
+    // int oldCount = iPtr->cmdCount;  /* Used to tell whether any commands
+    //                 * at all were executed. */
     int numSrcBytes;
     int result;
     CallFrame *savedVarFramePtr;    /* Saves old copy of iPtr->varFramePtr
