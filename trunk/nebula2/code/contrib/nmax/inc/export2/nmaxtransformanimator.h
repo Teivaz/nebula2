@@ -16,6 +16,25 @@
     Controller</b> which interpolates between animation keys by evenly dividing 
     the change from one key value to the next by the amount of time between the 
     keys.
+
+    The followings are currently supported type of controllers:
+      - Position
+        -# Linear Key
+        -# Sampled Key 
+      - Rotation
+        -# Bezier  Key
+        -# Linear Key
+        -# Sampled Key
+      - Scale
+        -# TCB  Key
+        -# Bezier  Key
+        -# Linear Key
+        -# Sampled Key
+
+    The support TCB controller is not exactly what 3dsmax does due to there's no
+    animator similar to that in Nebula. 
+    The exporter try to export it as it possible for ones convenient.
+
 */
 #include "export2/nmaxnode.h"
 
@@ -34,11 +53,11 @@ protected:
     // @name position
     // @{
     virtual int ExportPosition(Control*, nTransformAnimator*);
-
 	virtual int ExportTCBPosition(IKeyControl*, int numKeys, nTransformAnimator*);
 	virtual int ExportHybridPosition(IKeyControl*, int numKeys, nTransformAnimator*);
 	virtual int ExportLinearPosition(IKeyControl*, int numKeys, nTransformAnimator*);
     virtual int ExportSampledPosition(nTransformAnimator*);
+    bool HasSampledKeys(Control *control);
     // @}
 
     // @name rotation
@@ -60,8 +79,6 @@ protected:
     virtual int ExportSampledScale(nTransformAnimator*);
     // @}    
 	
-    bool HasSampledKeys(Control *control);
-
 protected:
     INode* maxNode;
 
