@@ -24,7 +24,7 @@ At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the 
 @subsection Nebula2CompilingOSWin32Requirements Additional Requirements
 
   - Win2k or WinXP (other Win32 platforms may work but have not been tested)
-  - Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>. Nebula2 needs the 2003 version which is the <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">"Summer Update"</A>. We do not currently support the 2004 Summer SDK (Direct X 9.0c) due to bugs in that SDK.
+  - Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>. Nebula2 does not work with versions earlier than the <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">2003 "Summer Update" version</A>. We do not support the 2004 Summer SDK due to bugs in that SDK, but the October 2004 version is fine.
   - Visual C++ 6, 7.0 - 8.0 (.NET)
 
 If you are using Visual C++ 6, then you will need an updated <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/default.htm">Core SDK</a> from Microsoft.  Without this, Nebula will fail to compile due a missing @c shfolder.h.
