@@ -1,0 +1,44 @@
+#-------------------------------------------------------------------------------
+beginmodule physdemo
+    setdir physdemo
+    setplatform win32
+    setfiles { physdemo }
+endmodule
+#-------------------------------------------------------------------------------
+
+#-------------
+#BEGIN TARGETS
+#-------------
+
+begintarget physdemo
+    settype exe
+    setplatform all
+    setmodules { physdemo }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+		microtcl
+		ntoollib
+		nopende
+		physdemo_core
+    	}
+endtarget
+
+beginworkspace PhysdemoProject
+    setdir ./code/contrib/physdemo/
+    setbinarydir ./code/contrib/physdemo/bin/
+    setlibdir ./code/contrib/physdemo/lib
+    settargets {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        microtcl
+        ntoollib
+		physdemo_core
+		physdemo
+		nopende
+    	}
+endworkspace
