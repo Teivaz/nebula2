@@ -255,11 +255,21 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
      - 20-Jan-00   floh    + no SetScriptServer() anymore
 */
 nKernelServer::nKernelServer() :
-    classList(64),
+#ifdef __NEBULA_MEM_MANAGER__
+    varMemAlloc(0),
+    varMemused(0),
+    varmemNumAlloc(0),
+#endif
     fileServer(0),
     persistServer(0),
+    timeServer(0),
     remoteServer(0),
-    timeServer(0)
+    hardRefServer(0),
+    root(0),
+    cwd(0),
+    classList(64),
+    defaultLogHandler(0),
+    curLogHandler(0)
 {
     // initialize static kernelserver pointer
     ks = this;
