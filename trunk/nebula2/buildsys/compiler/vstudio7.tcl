@@ -350,20 +350,32 @@ proc generate {} {
     set outputpath  ./bin
     set interpath   $vstudiopath/inter
     
+    # list of required targets - project files
+    set targets ""
+    
     foreach workspace [get_workspaces]  {    
         # let the buildsys know which workspace we are currently working
         # with and what the default directories for that workspace should
         # be - default directories may be overridden - this particular
         # call also writes the pkg_XXX.cc files for the workspace out.
+        
         use_workspace $workspace $vstudiopath $outputpath $interpath
         
         gen_sln $workspace
-        
-        #create the project files
+		
+		# collect targetlist from workspace
         foreach target [get_targets] {
-            gen_vcproj $target
-        }    
+			lappend targets [list $target $workspace]
+		}
     }
+    
+    #remove double entrys - ignore workspace numbers
+    set targets [lsort -unique -index 0 $targets]
+    
+    foreach target $targets {
+		use_workspace [lindex $target 1] $vstudiopath $outputpath $interpath
+		gen_vcproj [lindex $target 0]
+	}
 }
 
 #-------------------------------------------------------------------------------
