@@ -348,11 +348,20 @@ nSceneServer::SortNodes()
         int numIndices = this->shapeBucket[i].Size();
         if (numIndices > 0)
         {
-            qsort(indexPtr, numIndices, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) Compare);
+            DoSort( indexPtr, numIndices );
         }
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    The actual sort call is separated out to make overriding Compare possible.
+*/
+void
+nSceneServer::DoSort( ushort* indexPtr, int numIndices )
+{
+    qsort(indexPtr, numIndices, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) Compare);
+}
 //------------------------------------------------------------------------------
 /**
     Get shader object valid for a whole bucket.
