@@ -53,22 +53,31 @@ function CreateObj( objDir, collisionRadius, xpos, zpos, initActorFunc, showErro
 	local uniqueName = objDir..'Actor-'..uniqueID 
 	local retVal = false
 	sel( actorsPath )
-	selNew('ccactor', uniqueName )
-		call('setshapenode', modelsPath..'/'..objDir )
-		call('setposition', xpos, 0, zpos )
+	local createdObj = renew('ccactor', uniqueName )
+	if createdObj then
+		createdObj:setshapenode( modelsPath..'/'..objDir )
+		createdObj:setposition( xpos, 0, zpos )
 		if collisionRadius == nil then
-            collisionRadius = -1
-        end
-		call('setcollisionradius', collisionRadius )
-		call('setrotation', math.random() * math.pi * 2 )
+			collisionRadius = -1
+		end
+		createdObj:setcollisionradius( collisionRadius )
+		createdObj:setrotation( math.random() * math.pi * 2 )
 		if initActorFunc ~= nil then
-            initActorFunc()
-        end
-	sel(worldPath)
-		retVal = call('addgameobject', actorsPath..'/'..uniqueName )	
+			initActorFunc()
+		end
+		sel(worldPath)
+		retVal = call('addgameobject', createdObj:getfullname() )
 		if false == retVal and false ~= showErrorOnFail then
-            writeDebug( 'Failed to CreateObj '..uniqueName..' ('..objDir..') at '..xpos..', '..zpos )
-        end
+			writeDebug( 'Failed to addgameobject '..createdObj:getfullname()..' at '..xpos..', '..zpos )
+		end
+	else
+		writeDebug( 'modelLib::CreateGameObject (renew) failed!' )
+		writeDebug( { className=className } )
+		writeDebug( { nodeName=nodeName } )
+		writeDebug( { pos=pos } )
+		writeDebug( { collisionRadius=collisionRadius } )
+		writeDebug( { initFunc=initFunc } )
+	end
 	sel(cwd)
 	return retVal
 end
