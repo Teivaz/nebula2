@@ -19,7 +19,7 @@ function createAvatar()
     writeDebug( 'Create avatar' )
     local cwd = psel()
     determineStartPos()
-    selNew( 'ccmobileactor',playerPath )
+    selNew( 'bbmobileactor',playerPath )
         avatar.object = lookup( getCwd() )
         
     avatar.object:setshapenode( modelsPath..'/'..avatarModelName..'/model/skinned0' )

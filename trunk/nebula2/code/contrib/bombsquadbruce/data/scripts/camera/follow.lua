@@ -18,7 +18,7 @@ chaseCamera = {
     decelFactor = 3.5, -- the higher  this is, the slower the camera approaches its final target position
     lockHeight = false, 
     path = gamePath..'/followcamera',
-    class = 'ccchasecamera'
+    class = 'bbchasecamera'
 }
 
 
@@ -29,9 +29,9 @@ function chaseCamera.Init()
     writeDebug( 'chaseCamera.Init()' )
     
     -- Declare some additional script cmds 
-    begincmds( 'ccchasecamera', 1 )
-        addcmd( 'ccchasecamera', 'fff_AdjustPosition_ffff' ) --see below for definition
-    endcmds( 'ccchasecamera' )	
+    begincmds( 'bbchasecamera', 1 )
+        addcmd( 'bbchasecamera', 'fff_AdjustPosition_ffff' ) --see below for definition
+    endcmds( 'bbchasecamera' )	
 
 	chaseCamera.object = lookup( chaseCamera.path )
 	pin( chaseCamera.object  )
@@ -50,7 +50,7 @@ function chaseCamera.Init()
 	
 	--define the commands for this instance of the camera object
 	
-	-- AdjustPosition is called automatically by CCChaseCamera::Trigger(),
+	-- AdjustPosition is called automatically by BBChaseCamera::Trigger(),
 	-- which is in turn called by the game
 	function chaseCamera.object:AdjustPosition( x, y, z, deltaTime )
         obstacleCamera.object:trigger(deltaTime)

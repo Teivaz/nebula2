@@ -68,7 +68,7 @@ soundMgr = {
     CreateSound = function( self, filename, loop, ambient, initialVolume )
         self.fadeInSounds[filename] = nil 
         self.fadeOutSounds[filename] = nil 
-        selSafe( 'ccsound', filename )
+        selSafe( 'bbsound', filename )
             local retVal = Instantiate( SoundT, { name = filename, object = lookup(getCwd()) } ) 
             retVal.object:init( 'sounds:'..filename..'.wav', loop, ambient )
             if initialVolume ~= nil and initialVolume < 1 then -- 1 is the default

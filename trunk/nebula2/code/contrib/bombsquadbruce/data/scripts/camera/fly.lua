@@ -11,7 +11,7 @@ flyCamera = { -- for debugging purposes; allows free movement around the world
   moveSpeed = 80,
   rotateSpeed = 0.15,
   path = gamePath..'/flycamera',
-  class = 'ccfreecamera',
+  class = 'bbfreecamera',
   isDebugCam = true
 }
 

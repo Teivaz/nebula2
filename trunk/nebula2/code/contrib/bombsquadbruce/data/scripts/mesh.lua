@@ -22,7 +22,7 @@ function loadmesh (uniqueName, dir,mesh,texture, initFunc )
         initFunc = defaultInitShaderFunc
     end
     dir = dir..'/'
-    selNew ('ccshapenode', uniqueName )
+    selNew ('bbshapenode', uniqueName )
         writeDebug( 'loadmesh created '..getCwd() )
         initFunc()
         call('setmesh',  'objects:'..dir..mesh )
@@ -53,7 +53,7 @@ function CreateObj( objDir, collisionRadius, xpos, zpos, initActorFunc, showErro
 	local uniqueName = objDir..'Actor-'..uniqueID 
 	local retVal = false
 	sel( actorsPath )
-	local createdObj = renew('ccactor', uniqueName )
+	local createdObj = renew('bbactor', uniqueName )
 	if createdObj then
 		createdObj:setshapenode( modelsPath..'/'..objDir )
 		createdObj:setposition( xpos, 0, zpos )
@@ -63,7 +63,9 @@ function CreateObj( objDir, collisionRadius, xpos, zpos, initActorFunc, showErro
 		createdObj:setcollisionradius( collisionRadius )
 		createdObj:setrotation( math.random() * math.pi * 2 )
 		if initActorFunc ~= nil then
-			initActorFunc()
+                        sel( uniqueName )
+                            initActorFunc()
+                        sel('..')
 		end
 		sel(worldPath)
 		retVal = call('addgameobject', createdObj:getfullname() )

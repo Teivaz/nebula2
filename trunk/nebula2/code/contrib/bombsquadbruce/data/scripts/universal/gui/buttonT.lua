@@ -14,7 +14,7 @@ ButtonT = Instantiate( ItemT,
     --inherited methods:
     Create = function(self, upperEdge )
         self.lego = { size = guiServer:CalcBrushSize("inactiveItemTopMid"),
-                          type = 'ccguibuttonlego',
+                          type = 'bbguibuttonlego',
                           Init = function( brushSuffix )
                             call( 'setdefaultbrush', "inactiveItem"..brushSuffix )
                             call( 'setpressedbrush', "inactiveItem"..brushSuffix)

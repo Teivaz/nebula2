@@ -15,9 +15,9 @@ function runscript(script)
 end
 
 function initServers()
-	new('ccsceneserver', '/sys/servers/scene')
+	new('bbsceneserver', '/sys/servers/scene')
 	new("nconserver", "/sys/servers/console")
-	new("cccullingmgr", "/sys/servers/culling" )
+	new("bbcullingmgr", "/sys/servers/culling" )
 	new("nshadowserver", "/sys/servers/shadow" )
     initGfxServer()
     new('ndi8server', '/sys/servers/input')
@@ -73,7 +73,7 @@ runscript( 'universal/util/util.lua' )
 runscript( 'universal/gameUniversal.lua' )
 runscript( 'universal/gui/guiServer.lua' )
 runscript( 'universal/sound.lua' )
--- Now creates the initial CCGame object 
+-- Now creates the initial BBGame object 
 runscript( 'game.lua' ) 
 -- now create the game text strings
 runscript('strings/'..language..'.lua') -- this should come last
