@@ -137,11 +137,17 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
         // check the given node is bone node.
         bool isBone = this->IsBone(node);
 
-        //HACK: if the dummy node is just like a group node or something not 
-        //      actually bone?
-        bool isDummy = this->IsDummy(node);
+        //HACK: if the dummy node is just like a group node or something 
+        //      which is not actually bone?
+        //      dummy node can be used in various way in 3dsmax.
+        //      so it should be considered when it actually used for bone.
+        //      A dummy node which used for bone should be added when it has modifier 
+        //      in GetBoneByModifier() func
 
-        if (isBone || isDummy)
+        //bool isDummy = this->IsDummy(node);
+
+        //if (isBone || isDummy)
+        if (isBone)
         {
             if (!boneNodeArray.Find(node))
             {
@@ -159,6 +165,11 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
     We should a object has any physique or skin modifier and if the
     object has it, retrieve bone from it refer via physique(or skin)
     interface.
+
+    It uses two way to collect bones from the given scene.
+    One is that by node class ID and the other is that by check the modifier
+    of the node. Functions for each of the way are GetBoneByModifier() and
+    GetBoneByClassID().
 
 */
 void nMaxBoneManager::Build(INode* node)
