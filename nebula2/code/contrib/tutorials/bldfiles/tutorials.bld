@@ -7,6 +7,7 @@ beginworkspace tutorials
     settargets {
         basic01
         basic02
+        signals01
         nkernel
         nnebula
         ndirect3d9

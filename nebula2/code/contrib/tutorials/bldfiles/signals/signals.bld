@@ -1,0 +1,41 @@
+#-------------------------------------------------------------------------------
+#   Basic Examples
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+#   Modules
+#-------------------------------------------------------------------------------
+beginmodule nsignaltestreceiver
+    setdir "signals_tutorial"
+    setheaders { nsignaltestreceiver }
+    setfiles { nsignaltestreceiver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nsignaltestemitter
+    setdir "signals_tutorial"
+    setheaders { nsignaltestemitter }
+    setfiles { nsignaltestemitter_main nsignaltestemitter_cmds }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule signals01
+    setdir "signals_tutorial"
+    setfiles { signals01 }
+endmodule
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+#   Targets
+#-------------------------------------------------------------------------------
+begintarget signals01
+    annotate "Example of defining, binding, emitting and posting signals"
+    settype exe
+    setmodules {
+        nsignaltestreceiver
+        nsignaltestemitter
+        signals01
+    }
+    settargetdeps {
+        nkernel
+    }
+endtarget
