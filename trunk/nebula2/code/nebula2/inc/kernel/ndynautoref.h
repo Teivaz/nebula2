@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDynAutoRef
+    @ingroup NebulaSmartPointers
 
     nAutoRef with dynamically allocated name string.
 */

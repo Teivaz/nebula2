@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkTocEntry
+    @ingroup NebulaNPKFileManagement
 
     A table of content entry in a nNpkToc object. Toc entries are organized
     in a tree of nodes. A node can be a dir node, or a file node. File nodes

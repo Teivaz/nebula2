@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkDirectory
+    @ingroup NebulaNPKFileManagement
 
     npk File Directory Wrapper.
 

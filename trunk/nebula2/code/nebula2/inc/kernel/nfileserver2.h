@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFileServer2
+    @ingroup NebulaFileManagement
 
     New fileserver.
 

@@ -1,3 +1,4 @@
 /**
     @defgroup NebulaDataTypes Data Types
+    @ingroup NebulaKernel
 */

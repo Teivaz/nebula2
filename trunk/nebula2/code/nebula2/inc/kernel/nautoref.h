@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAutoRef
+    @ingroup NebulaSmartPointers
 
     An nRef with the ability to resolve itself from a static object name.
 

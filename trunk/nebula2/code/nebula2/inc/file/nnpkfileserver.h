@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkFileServer
+    @ingroup NebulaNPKFileManagement
 
     Implement reading from npk files.
 

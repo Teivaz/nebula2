@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFile
+    @ingroup NebulaFileManagement
 
     wrapper for file routines
 

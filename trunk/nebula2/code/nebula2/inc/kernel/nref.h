@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRef
+    @ingroup NebulaSmartPointers
 
     nRef and nAutoRef implement safe pointers to objects.
     If one object keeps a pointer to another object,

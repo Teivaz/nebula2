@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nHardRefServer
+    @ingroup NebulaSmartPointers
 
     immediately validates nHardRefs.
 

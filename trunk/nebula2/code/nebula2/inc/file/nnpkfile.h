@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkFile
+    @ingroup NebulaNPKFileManagement
 
     File access into a npk file.
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTimeServer
+    @ingroup NebulaTimeManagement
 
     nTimeServer provides a high resolution time source.
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nHardRef
+    @ingroup NebulaSmartPointers
 
     implements reference to moveable target object.
 
