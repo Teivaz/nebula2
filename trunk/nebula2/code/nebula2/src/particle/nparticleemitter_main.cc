@@ -27,13 +27,13 @@ nParticleEmitter::nParticleEmitter():
     lastEmission(0.0),
     randomKey(0),
     lastEmissionVertex(0),
-    refEmitterMesh(0),
     meshGroupIndex(0),
     curves(CurveTypeCount, 0, nEnvelopeCurve())
 {
     int i;
     for (i=0; i<4; i++)
         this->curves[ParticleVelocityFactor].keyFrameValues[i] = 1.0;
+    refEmitterMesh.invalidate();
 }
 
 
