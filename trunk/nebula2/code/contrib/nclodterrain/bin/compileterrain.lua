@@ -5,8 +5,8 @@
 --this code is released under the Nebula License
 --
 
-tree_depth = 2
-space_error = 1.00
+tree_depth = 3
+space_error = 0.50
 tqt_tilesize = 128
 --------------------------------------------------------------------------------
 --
@@ -19,14 +19,14 @@ tqt_tilesize = 128
 
 new('nclodchunker','/usr/chunker')
 chunker = nebula.usr.chunker
-chunker:setchunkfilename('home:export/terrains/examples/sample.clod')
-chunker:setspacings(0.5,0.5,0.5)
+chunker:setchunkfilename('nclodterrains:examples/sample.clod')
+chunker:setspacings(2.0,2.0,0.5)
 chunker:setchunkparameters(tree_depth, space_error)
 chunker:setvalidateflag(true)
 
 -- do the chunking...
 
-chunker:compilechunksfromfile('home:work/textures/heightfield.bmp')
+chunker:compilechunksfromfile('nclodtextures:examples/heightfield.bmp')
 
 --------------------------------------------------------------------------------
 --
@@ -62,8 +62,8 @@ chunker:compilechunksfromfile('home:work/textures/heightfield.bmp')
 new('nclodtqtmaker','/usr/tqtcompiler')
 tqtcompiler = nebula.usr.tqtcompiler
 tqtcompiler:settqtparameters(tree_depth, tqt_tilesize)
-tqtcompiler:settqtfilename('home:export/terrains/examples/sample.tqt')
-tqtcompiler:compiletqtfromfile('home:work/textures/cloddiffuse.bmp')
+tqtcompiler:settqtfilename('nclodterrains:examples/sample.tqt')
+tqtcompiler:compiletqtfromfile('nclodtextures:examples/cloddiffuse.bmp')
 
 --and exit
 
