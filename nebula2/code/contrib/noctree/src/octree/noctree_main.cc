@@ -495,34 +495,6 @@ void nOctree::BalanceTree(void)
 
 //-------------------------------------------------------------------
 /**
-    Renders a wireframe cube
-
-    - 31-May-99   floh    created
-*/
-//-------------------------------------------------------------------
-/*
-static void cube(nPrimitiveServer *prim,
-                 float x0, float y0, float z0,
-                 float x1, float y1, float z1)
-{
-    prim->Coord(x0,y0,z0); prim->Coord(x1,y0,z0);
-    prim->Coord(x1,y0,z0); prim->Coord(x1,y1,z0);
-    prim->Coord(x1,y1,z0); prim->Coord(x0,y1,z0);
-    prim->Coord(x0,y1,z0); prim->Coord(x0,y0,z0);
-
-    prim->Coord(x0,y0,z1); prim->Coord(x1,y0,z1);
-    prim->Coord(x1,y0,z1); prim->Coord(x1,y1,z1);
-    prim->Coord(x1,y1,z1); prim->Coord(x0,y1,z1);
-    prim->Coord(x0,y1,z1); prim->Coord(x0,y0,z1);
-
-    prim->Coord(x0,y0,z0); prim->Coord(x0,y0,z1);
-    prim->Coord(x1,y0,z0); prim->Coord(x1,y0,z1);
-    prim->Coord(x1,y1,z0); prim->Coord(x1,y1,z1);
-    prim->Coord(x0,y1,z0); prim->Coord(x0,y1,z1);
-}
-*/
-//-------------------------------------------------------------------
-/**
     Visualizes a node. For each nOctNode a green cube is drawn.
     All elements in the node are drawn as red boxes which are
     connected to the center of the node with an orange line.
@@ -531,52 +503,43 @@ static void cube(nPrimitiveServer *prim,
     - 31-May-99   floh    created
 */
 //-------------------------------------------------------------------
-/*
-void nOctree::visualize_node(nOctNode *on, nPrimitiveServer *prim)
+
+void nOctree::visualize_node(nOctNode *on)
 {
-    float x0 = on->minCorner.x;
-    float x1 = on->maxCorner.x;
-    float y0 = on->minCorner.y;
-    float y1 = on->maxCorner.y;
-    float z0 = on->minCorner.z;
-    float z1 = on->maxCorner.z;
-    float x = (x0 + x1)*0.5f;
-    float y = (y0 + y1)*0.5f;
-    float z = (z0 + z1)*0.5f;
-
     // nOctNode as green cube
-    prim->Rgba(0.0f, 0.7f, 0.0f, 1.0f);
-    cube(prim, x0,y0,z0,x1,y1,z1);
-
+    const vector3 nodeCenter( ( on->maxCorner + on->minCorner ) / 2.0f );
+    matrix44 m;
+    m.scale( on->maxCorner - on->minCorner );
+    m.set_translation( nodeCenter );
+    nGfxServer2::Instance()->DrawShape( nGfxServer2::Box, m, vector4( 0, 1.0f, 0, 0.2f ) );
+ 
     // Draw each element...
+    const vector4 red( 1.0f, 0, 0, 0.4f );
+    //const vector4 orange( 0.7f, 0.7f, 0, 1.0f );
     nOctElement *oe;
     for (oe = (nOctElement *) on->elm_list.GetHead();
          oe;
          oe = (nOctElement *) oe->GetSucc())
     {
-        x0 = oe->minCorner.x;
-        x1 = oe->maxCorner.x;
-        y0 = oe->minCorner.y;
-        y1 = oe->maxCorner.y;
-        z0 = oe->minCorner.z;
-        z1 = oe->maxCorner.z;
+        vector3 elementCenter( ( oe->maxCorner + oe->minCorner ) / 2.0f );
+        m.ident();
+        m.scale( oe->maxCorner - oe->minCorner );
+        m.set_translation( elementCenter );
+        nGfxServer2::Instance()->DrawShape( nGfxServer2::Box, m, red );      
 
-        prim->Rgba(1.0f, 0.0f, 0.0f, 1.0f);
-        cube(prim, x0,y0,z0,x1,y1,z1);
-       
-        // Line to the node's center      
-        prim->Rgba(0.7f, 0.7f, 0.0f, 1.0f);
-        prim->Coord(x,y,z); prim->Coord(x0,y0,z0);
-        prim->Coord(x,y,z); prim->Coord(x1,y1,z1);
+        // Line to the node's center
+        //vector3 lineToCenter[] = { elementCenter, nodeCenter };
+        //nGfxServer2::Instance()->DrawLines3d( lineToCenter, 2, orange );
     }
 
     // and recurse all children
-    if (on->c[0]) {
+    if (on->c[0])
+    {
         int i;
-        for (i=0; i<8; i++) this->visualize_node(on->c[i], prim);
+        for (i=0; i<8; i++) this->visualize_node(on->c[i]);
     }
 }
-*/
+
 //-------------------------------------------------------------------
 /**
     @brief Render a visualization of the nOctree.
@@ -585,32 +548,23 @@ void nOctree::visualize_node(nOctNode *on, nPrimitiveServer *prim)
     squares, which point with oranges lines to the center of the nOctNode,
     in which they're situated.
 
-    This only appears under the OpenGL renderer.
-
     - 31-May-99   floh    created
     - 06-Jul-99   floh    stellt jetzt Renderstates etc. selbst ein
 */
 //-------------------------------------------------------------------
-/*
-void nOctree::Visualize(nGfxServer *gs)
+
+void nOctree::Visualize()
 {
-    if (this->visualize) {
+    if (this->visualize) 
+    {
         n_assert(this->tree_root);
-        nPrimitiveServer *prim;
-        prim = (nPrimitiveServer *)this->ks->Lookup("/sys/servers/primitive");
-        if (prim) {
-            prim->EnableLighting(false);
-            prim->Begin(N_PTYPE_LINE_LIST);
-            matrix44 vwr;
-            gs->GetMatrix(N_MXM_VIEWER,vwr);
-            vwr.invert_simple();
-            gs->SetMatrix(N_MXM_MODELVIEW,vwr);
-            this->visualize_node(this->tree_root, prim);
-            prim->End();
-        }
+        nGfxServer2::Instance()->SetTransform(nGfxServer2::Model, matrix44());
+        nGfxServer2::Instance()->BeginShapes();
+        this->visualize_node(this->tree_root);
+        nGfxServer2::Instance()->EndShapes();
     }
 }
-*/
+
 //-------------------------------------------------------------------
 //  EOF
 //-------------------------------------------------------------------
