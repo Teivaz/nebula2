@@ -101,10 +101,16 @@ nIpcAddress::GetPortName() const
 bool
 nIpcAddress::IsInternetAddress(const in_addr& addr)
 {
+#ifdef __LINUX__
+    uchar b1 = add.s_addr << 24;
+    uchar b2 = add.s_addr << 16;
+    uchar b3 = add.s_addr << 8;
+#else
     uchar b1 = addr.S_un.S_un_b.s_b1;
     uchar b2 = addr.S_un.S_un_b.s_b2;
     uchar b3 = addr.S_un.S_un_b.s_b3;
     uchar b4 = addr.S_un.S_un_b.s_b4;
+#endif
 
     if ((b1 == 10) && (b2 >= 0) && (b2 <= 254))
     {
