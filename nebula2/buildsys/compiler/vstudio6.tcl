@@ -16,8 +16,7 @@
 #    Globals
 #-----------------------------------------------------------------------------------------
 
-set release_lib_flags1 "/nologo /G6 /MT /W3 /GX /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /TP /c"
-set release_lib_flags2 "/nologo /GB /MD /W3 /GX- /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /TP /c"
+set release_lib_flags "/nologo /GB /MD /W3 /GX- /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /TP /c /FD"
 
 set debug_cpp_flags   "/nologo /MDd /W3 /ZI /Od /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"_DEBUG\" /D \"NT_PLUGIN\" /c /GX /FD"
 set release_cpp_flags  "/nologo /G6 /GB /MD /W3 /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /c /GX /FD"
@@ -158,8 +157,7 @@ proc emit_dsp_header {name cid type} {
 proc emit_dsp_settings {name cid use_debug} {
     variable debug_cpp_flags
     variable release_cpp_flags
-    variable release_lib_flags1
-    variable release_lib_flags2
+    variable release_lib_flags
     global cur_workspacepath
     variable neb_libpath_win32
 
@@ -192,7 +190,7 @@ proc emit_dsp_settings {name cid use_debug} {
         set odir [path_wspacetooutput]/win32
          set win32_libs [get_win32libs_release $name]        
         if {[get_tartype $name] == "lib"} {
-            set cpp_flags $release_lib_flags2
+            set cpp_flags $release_lib_flags
         } else {
             set cpp_flags $release_cpp_flags
         }
