@@ -80,7 +80,7 @@ nGuiWidget::GetOwnerWindow()
 
 //-----------------------------------------------------------------------------
 /**
-    Render the widget and all it's child widgets.
+    Render the widget and all its child widgets.
 */
 bool
 nGuiWidget::Render()
