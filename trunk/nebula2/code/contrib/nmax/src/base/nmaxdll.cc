@@ -1,7 +1,5 @@
 #include "base/nmaxdll.h"
 
-nNebulaUsePackage(nnebula);
-
 ///the dllHandle
 HINSTANCE hInstance; 
 
@@ -148,8 +146,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
             if (nKernelServer::ks == 0)
             {
                 new nKernelServer();
-
-                nKernelServer::ks->AddPackage(nnebula);
 
                 //setup the new loghandler
                 nKernelServer::ks->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
