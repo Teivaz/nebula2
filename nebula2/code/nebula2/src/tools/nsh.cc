@@ -22,6 +22,10 @@
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
 
+//------------------------------------------------------------------------------
+/**
+    Main function.
+*/
 int
 main(int argc, const char** argv)
 {
@@ -83,7 +87,7 @@ main(int argc, const char** argv)
             fflush(stdout);
 
             // get user input
-            lineOk = (gets(line) > 0);
+            bool lineOk = (gets(line) > 0);
             if (strlen(line) > 0)
             {
                 const char* result = 0;

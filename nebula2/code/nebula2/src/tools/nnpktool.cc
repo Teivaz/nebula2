@@ -29,8 +29,6 @@
 
     (C) 2002 RadonLabs GmbH
 */
-//------------------------------------------------------------------------------
-
 #include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"

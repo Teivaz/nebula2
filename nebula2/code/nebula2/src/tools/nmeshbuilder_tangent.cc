@@ -6,10 +6,12 @@
 
 //------------------------------------------------------------------------------
 /**
-    Build triangle normals, tangents and binormals. The tangents require a valid 
+    Build triangle normals and tangents. The tangents require a valid 
     uv-mapping in texcoord layer 0. A new mesh reduced to coord and uv0 
     components will be used for the computation to ensure proper vertex sharing 
     between triangles.
+
+    02-Sep-03   floh    no longer generates Binormals
 */
 void
 nMeshBuilder::BuildTriangleNormals()
@@ -37,21 +39,21 @@ nMeshBuilder::BuildTriangleNormals()
         n.norm();
         tri.SetNormal(n);
 
-        // compute the tangent and binormal
+        // compute the tangents
         uv0 = vertex1.GetUv(0) - vertex0.GetUv(0);
         uv1 = vertex2.GetUv(0) - vertex0.GetUv(0);
         t = (v0 * uv1.y) - (v1 * uv0.y);
-        b = (v0 * uv1.x) - (v1 * uv0.x);
+        // b = (v0 * uv1.x) - (v1 * uv0.x);
         t.norm();
-        b.norm();
+        // b.norm();
         tri.SetTangent(t);
-        tri.SetBinormal(b);
+        // tri.SetBinormal(b);
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Generates the per-vertex tangents and binormals by averaging the
+    Generates the per-vertex tangents by averaging the
     per-triangle tangents and binormals which must be computed
     beforehand. Note that the vertex normals will not be touched!
     Internally, the method will create a clean mesh which contains
@@ -59,9 +61,11 @@ nMeshBuilder::BuildTriangleNormals()
     information from the resulting mesh. The result is that 
     tangents and binormals are averaged for smooth edges, as defined
     by the existing normal set.
+
+    02-Sep-03   floh    no longer generates Binormals
 */
 void
-nMeshBuilder::BuildVertexTangentBinormals()
+nMeshBuilder::BuildVertexTangents()
 {
     // create a clean coord/normal-only mesh, record the cleanup operation
     // in a collaps map so that we can inflate-copy the new vertex
@@ -80,11 +84,11 @@ nMeshBuilder::BuildVertexTangentBinormals()
     // for each vertex...
     int vertexIndex = 0;
     int numVertices = cleanMesh.GetNumVertices();
-    vector3 avgTangent, avgBinormal;
+    vector3 avgTangent;
     for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
     {
         avgTangent.set(0.0f, 0.0f, 0.0f);
-        avgBinormal.set(0.0f, 0.0f, 0.0f);
+        // avgBinormal.set(0.0f, 0.0f, 0.0f);
 
         // for each triangle sharing this vertex...
         int numVertexTris = vertexTriangleMap[vertexIndex].Size();
@@ -94,17 +98,17 @@ nMeshBuilder::BuildVertexTangentBinormals()
         {
             const Triangle& tri = cleanMesh.GetTriangleAt(vertexTriangleMap[vertexIndex][vertexTriIndex]);
             avgTangent += tri.GetTangent();
-            avgBinormal += tri.GetBinormal();
+            // avgBinormal += tri.GetBinormal();
         }
 
         // renormalize averaged tangent and binormal
         avgTangent.norm();
-        avgBinormal.norm();
+        // avgBinormal.norm();
 
         cleanMesh.GetVertexAt(vertexIndex).SetTangent(avgTangent);
-        cleanMesh.GetVertexAt(vertexIndex).SetBinormal(avgBinormal);
+        // cleanMesh.GetVertexAt(vertexIndex).SetBinormal(avgBinormal);
     }
 
     // inflate-copy the generated vertex tangents and binormals to the original mesh
-    this->InflateCopyComponents(cleanMesh, collapsMap, Vertex::TANGENT | Vertex::BINORMAL);
+    this->InflateCopyComponents(cleanMesh, collapsMap, Vertex::TANGENT);
 }

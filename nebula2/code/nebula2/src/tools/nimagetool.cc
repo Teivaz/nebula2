@@ -132,7 +132,7 @@ CreateNormCubeMap(ILuint image[numImages], int size)
     Creates a specular lookup table.
 */
 bool
-CreateSpecularMap(ILuint image, int width, int height, double power)
+CreateSpecularMap(ILuint image, int width, int height)
 {
     // bind and resize empty source image
     ilBindImage(image);
@@ -141,8 +141,8 @@ CreateSpecularMap(ILuint image, int width, int height, double power)
 
     // fill image data
     int x, y;
-    float dx = 1.0f / float(width);
-    float dy = 1.0f / float(height);
+    float dx = 1.0f / float(width - 1);
+    float dy = 1.0f / float(height - 1);
     double fy = 0.0;
     for (y = 0; y < height; y++, fy += dy)
     {
@@ -150,12 +150,12 @@ CreateSpecularMap(ILuint image, int width, int height, double power)
         for (x = 0; x < width; x++, fx += dx)
         {
             uchar* ptr = data + (((width * y) + x) * 4);
-            double val = pow(fy, power);
+            double val = pow(fx, double((height - 1) - y));
             int c = int(val * 255.0f);
             ptr[0] = c;
             ptr[1] = c;
             ptr[2] = c;
-            ptr[3] = int(fx);
+            ptr[3] = 255;
         }
     }
 
@@ -450,7 +450,6 @@ main(int argc, const char** argv)
     bool normCubeMapArg        = args.GetBoolArg("-normcubemap");
     bool specMapArg            = args.GetBoolArg("-specmap");
     bool whiteArg              = args.GetBoolArg("-white");
-    float powerArg             = args.GetFloatArg("-power", 16.0f);
 
     // show help?
     if (helpArg)
@@ -476,8 +475,7 @@ main(int argc, const char** argv)
                "-flip                   flip image vertically\n"
                "-normcubemap            generate a normalization cube map (only for .ntx files)\n"
                "-specmap                generate a specular lookup map\n"
-               "-white                  fill uninitialized images with white instead of black\n"
-               "-power                  defines a power value for the specular map\n");
+               "-white                  fill uninitialized images with white instead of black\n");
         return 5;
     }
 
@@ -513,7 +511,7 @@ main(int argc, const char** argv)
     }
     else if (specMapArg)
     {
-        success = CreateSpecularMap(images[0], widthArg, heightArg, (double) powerArg);
+        success = CreateSpecularMap(images[0], widthArg, heightArg);
     }
     else if (cubeMapArg)
     {
