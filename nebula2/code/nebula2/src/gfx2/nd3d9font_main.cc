@@ -47,23 +47,38 @@ nD3D9Font::LoadResource()
         n_assert(numFonts > 0);
     }
 
-    // create a CD3DFont object
-    int d3dFlags = 0;
-    if ((nFontDesc::Bold == this->fontDesc.GetWeight()) ||
-        (nFontDesc::ExtraBold == this->fontDesc.GetWeight()))
+    int fontFlags = 0;
+    switch(this->fontDesc.GetWeight()) 
     {
-        d3dFlags |= D3DFONT_BOLD;
+    case nFontDesc::Thin: 
+        fontFlags |= FW_THIN;
+    	break;
+    case nFontDesc::Light:
+        fontFlags |= FW_LIGHT;
+    	break;
+    case nFontDesc::Normal:
+        fontFlags |= FW_NORMAL;
+        break;
+    case nFontDesc::Bold:
+        fontFlags |= FW_BOLD;
+        break;
+    case nFontDesc::ExtraBold:
+        fontFlags |= FW_EXTRABOLD;
+        break;
     }
-    if (this->fontDesc.GetItalic())
-    {
-        d3dFlags |= D3DFONT_ITALIC;
-    }
-    this->d3dFont = new CD3DFont9((const char*) this->fontDesc.GetTypeFace(), this->fontDesc.GetHeight(), d3dFlags);
 
-    n_assert(0 != this->refD3D9Server->d3d9Device);
-    this->d3dFont->InitDeviceObjects(this->refD3D9Server->d3d9Device);
-    this->d3dFont->RestoreDeviceObjects();
+    HRESULT hr = D3DXCreateFont(this->refD3D9Server->d3d9Device,
+        this->fontDesc.GetHeight(), 0,
+        fontFlags, 0,
+        this->fontDesc.GetItalic(),
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        this->fontDesc.GetAntiAliased() ? ANTIALIASED_QUALITY : NONANTIALIASED_QUALITY,
+        DEFAULT_PITCH|FF_DONTCARE,
+        this->fontDesc.GetTypeFace(),
+        &this->d3dFont);
 
+    n_assert(SUCCEEDED(hr));        
     n_assert(this->d3dFont);
     this->SetValid(true);
     return true;
@@ -79,7 +94,7 @@ nD3D9Font::UnloadResource()
     n_assert(this->d3dFont);
 
     // delete d3d font object
-    delete this->d3dFont;
+    this->d3dFont->Release();
     this->d3dFont = 0;
 
     // remove optional Win32 font resource (if font loaded from file)

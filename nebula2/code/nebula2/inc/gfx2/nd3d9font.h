@@ -8,6 +8,7 @@
     
     (C) 2003 RadonLabs GmbH
 */
+#include <d3dx9.h>
 #include "gfx2/d3dfont9.h"
 #include "gfx2/nfont2.h"
 #include "kernel/nautoref.h"
@@ -23,7 +24,7 @@ public:
     /// destructor
     virtual ~nD3D9Font();
     /// access to the internal CD3DFont object.
-    CD3DFont9* GetD3DFont() const;
+    ID3DXFont* GetD3DFont() const;
 
     static nKernelServer* kernelServer;
 
@@ -35,14 +36,14 @@ protected:
 
 private:
     nAutoRef<nD3D9Server> refD3D9Server;
-    CD3DFont9* d3dFont;
+    ID3DXFont* d3dFont;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-CD3DFont9*
+ID3DXFont*
 nD3D9Font::GetD3DFont() const
 {
     n_assert(this->d3dFont);
