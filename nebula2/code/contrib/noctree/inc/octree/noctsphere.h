@@ -17,12 +17,10 @@ public:
     void SetSphere(const sphere& sphere);
     const sphere& GetSphere();
 private:
-    void recurse_collect_by_sphere(nOctree* octree, 
-                                   nOctNode* on, 
+    void recurse_collect_by_sphere(nOctNode* on, 
                                    const sphere& clip,
                                    bool full_intersect);
-    void collect_nodes_in_sphere(nOctree* octree, 
-                                 nOctNode* on, 
+    void collect_nodes_in_sphere(nOctNode* on, 
                                  const sphere& clip,
                                  bool full_intersect);
 

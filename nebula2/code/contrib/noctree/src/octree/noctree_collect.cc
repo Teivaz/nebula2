@@ -26,27 +26,11 @@ int nOctree::Collect(nOctVisitor& culler,
     this->ext_collect_array = ext_array;
     this->ext_array_size    = size;
 
-	culler.DoCulling(this);
+    culler.DoCulling(this);
 
     this->ext_collect_array = 0;
     this->ext_array_size = 0;
     return num_collected;
-}
-
-//-------------------------------------------------------------------
-/**
-    Collects an element and ensures that collect_array doesn't
-    overflow.
-
-    - 02-Jun-99   floh    created
-*/
-void nOctree::collect(nOctElement *oe)
-{
-    if (this->num_collected < this->ext_array_size) {
-        this->ext_collect_array[this->num_collected++] = oe;
-    } else {
-        n_printf("nOctree::collect(): Overflow in collect array!\n");
-    }
 }
 
 //-------------------------------------------------------------------
@@ -64,7 +48,12 @@ void nOctree::recurse_collect_nodes_with_flags(nOctNode *on, int c_flags)
          oe = (nOctElement *) oe->GetSucc())
     {
         oe->SetCollectFlags(c_flags);
-        this->collect(oe);
+		// ensures that collect_array doesn't overflow.
+		if (this->num_collected < this->ext_array_size) {
+			this->ext_collect_array[this->num_collected++] = oe;
+		} else {
+			n_printf("nOctree::recurse_collect_nodes_with_flags(): Overflow in collect array!\n");
+		}
     }
     if (on->c[0]) {
         int i;

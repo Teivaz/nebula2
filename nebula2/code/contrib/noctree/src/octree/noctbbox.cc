@@ -7,14 +7,15 @@ nNebulaScriptClass(nOctBBox, "noctvisitor");
 */
 void nOctBBox::DoCulling(nOctree* octree)
 {
-    this->recurse_collect_by_bbox(octree, octree->GetRoot());
+    nOctVisitor::DoCulling(octree);
+    this->recurse_collect_by_bbox(octree->GetRoot());
 }
 
 //-------------------------------------------------------------------
 /**
     - 17-Aug-00   floh    created
 */
-void nOctBBox::recurse_collect_by_bbox(nOctree* octree, nOctNode *on)
+void nOctBBox::recurse_collect_by_bbox(nOctNode *on)
 {
     // clip status of current node
     int bbox_c = this->box_clip_box(on->minCorner,on->maxCorner);
@@ -26,10 +27,10 @@ void nOctBBox::recurse_collect_by_bbox(nOctree* octree, nOctNode *on)
         // node is partly contained in box, all elements in
         // the node need to be checked further, and recurse
         // to children
-        this->collect_nodes_in_bbox(octree, on);
+        this->collect_nodes_in_bbox(on);
         if (on->c[0]) {
             int i;
-            for (i=0; i<8; i++) this->recurse_collect_by_bbox(octree, on->c[i]);
+            for (i=0; i<8; i++) this->recurse_collect_by_bbox(on->c[i]);
         }
     }
 }
@@ -38,7 +39,7 @@ void nOctBBox::recurse_collect_by_bbox(nOctree* octree, nOctNode *on)
 /**
     - 17-Aug-00   floh    created
 */
-void nOctBBox::collect_nodes_in_bbox(nOctree* octree, nOctNode *on)
+void nOctBBox::collect_nodes_in_bbox(nOctNode *on)
 {
     nOctElement *oe;
     for (oe = (nOctElement *) on->elm_list.GetHead();
@@ -48,7 +49,7 @@ void nOctBBox::collect_nodes_in_bbox(nOctree* octree, nOctNode *on)
         int c = this->box_clip_box(oe->minCorner,oe->maxCorner);
         if (c >= 0) {
             oe->SetCollectFlags(nOctElement::N_COLLECT_BBOX);
-            octree->collect(oe);
+            this->Collect(oe);
         }
     }
 }
