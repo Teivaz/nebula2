@@ -11,21 +11,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_RESOURCE_H
 #include "resource/nresource.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nResourceServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nResourceServer : public nRoot
@@ -39,29 +27,46 @@ public:
     virtual nResource* FindResource(const char* rsrcName, nResource::Type rsrcType);
     /// create a resource object
     virtual nResource* NewResource(const char* className, const char* rsrcName, nResource::Type rsrcType);
-    /// unload all resources matching type
-    virtual void UnloadResources(nResource::Type rsrcType);
+    /// unload all resources matching resource type (OR'ed nResource::Type's)
+    virtual void UnloadResources(int resTypeMask);
     /// reload all resources matching type
-    virtual bool ReloadResources(nResource::Type rsrcType);
-    /// load a resource bundle (only supported on some architectures)
-    virtual bool LoadResourceBundle(const char* filename);
-    /// unload current resource bundle and free all associated resource
-    virtual void UnloadResourceBundle();
+    virtual bool ReloadResources(int resTypeMask);
+    /// return the resource pool directory for a given resource type
+    nRoot* GetResourcePool(nResource::Type rsrcType);
+    /// generate a valid resource id from a resource path
+    char* GetResourceId(const char* rsrcName, char* buf, int bufSize);
 
     static nKernelServer* kernelServer;
 
 protected:
-    /// generate a valid resource id from a resource path
-    char* GetResourceId(const char* rsrcName, char* buf, int bufSize);
-    /// find the right resource pool object for a given resource type
-    nRoot* GetResourcePool(nResource::Type rsrcType);
+    friend class nResource;
 
-    int uniqueId;                       // unique id counter for non-shared resources
-    nRef<nRoot> refMeshes;
-    nRef<nRoot> refTextures;
-    nRef<nRoot> refShaders;
-    nRef<nRoot> refAnimations;
-    nRef<nRoot> refSounds;
+    /// add a resource to the loader job list
+    void AddLoaderJob(nResource* res);
+    /// remove a resource from the loader job list
+    void RemLoaderJob(nResource* res);
+    /// start the loader thread
+    void StartLoaderThread();
+    /// shutdown the loader thread
+    void ShutdownLoaderThread();
+    /// the loader thread function
+    static int N_THREADPROC LoaderThreadFunc(nThread* thread);
+    /// the thread wakeup function
+    static void ThreadWakeupFunc(nThread* thread);
+
+    int uniqueId;
+    nRef<nRoot> meshPool;
+    nRef<nRoot> texPool;
+    nRef<nRoot> shdPool;
+    nRef<nRoot> animPool;
+    nRef<nRoot> sndResPool;
+    nRef<nRoot> sndInstPool;
+    nRef<nRoot> fontPool;
+    nRef<nRoot> bundlePool;
+    nRef<nRoot> otherPool;
+
+    nThreadSafeList jobList;    // list for outstanding background loader jobs
+    nThread* loaderThread;      // background thread for handling async resource loading
 };
 //------------------------------------------------------------------------------
 #endif
