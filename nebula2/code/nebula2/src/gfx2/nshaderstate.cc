@@ -5,6 +5,18 @@
 #include "gfx2/nshaderstate.h"
 #include <string.h>
 
+/// the shader parameter type string table
+static const char* TypeTable[nShaderState::NumTypes] = 
+{
+    "v",
+    "b",
+    "i",
+    "f",
+    "f4",
+    "m44",
+    "t"
+};
+
 /// the shader parameter name string table
 static const char* StateTable[nShaderState::NumParameters] = 
 {
@@ -122,6 +134,35 @@ static const char* StateTable[nShaderState::NumParameters] =
     "StencilBackZFailOp",
     "StencilBackPassOp"
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+const char*
+nShaderState::TypeToString(nShaderState::Type t)
+{
+    n_assert((t >= 0) && (t < nShaderState::NumTypes));
+    return TypeTable[t];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+nShaderState::Type
+nShaderState::StringToType(const char* str)
+{
+    n_assert(str);
+    int i;
+    for (i = 0; i < nShaderState::NumTypes; i++)
+    {
+        if (0 == strcmp(str, TypeTable[i]))
+        {
+            return (nShaderState::Type) i;
+        }
+    }
+    // fallthrough: state not found 
+    return nShaderState::InvalidType;
+}
 
 //------------------------------------------------------------------------------
 /**
