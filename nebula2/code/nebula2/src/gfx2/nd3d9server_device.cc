@@ -657,3 +657,68 @@ nD3D9Server::GetNumDepthBits() const
             return 16;
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Adjust gamma with given gamma, brightness and contrast.
+    Gamma, brightness and contrast can be specified with SetGamma(), SetBrightness()
+    and SetContrast(). 
+    (The default value of those are 0.8 for gamma, 0.8 for brightness and 0.7 for 
+    contrast)
+    If you want to change gamma, first call SetGamma() with given gamma value which
+    you want to change then call AdjustGamma() to apply the specified value.
+
+    23-Aug-04    kims    created
+*/
+void nD3D9Server::AdjustGamma()
+{
+    D3DGAMMARAMP	ramp;
+
+    int val;
+    
+    for (int i=0; i<256; i++)
+    {
+        val = (int)((this->contrast+0.5f)*pow(i/255.f,1.0f/this->gamma)*65535.f + 
+                    (this->brightness-0.5f)*32768.f - this->contrast*32768.f + 16384.f);
+        ramp.red[i] = ramp.green[i] = ramp.blue[i] = n_iclamp(val, 0, 65535);
+    }
+
+    nDisplayMode2 dispMode = this->windowHandler.GetDisplayMode();
+    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) && 
+        this->d3d9Device && 
+        (this->devCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA))
+    {
+        this->d3d9Device->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
+    }
+    else
+    {
+        HWND hwnd = this->windowHandler.GetHwnd();
+        HDC hdc = GetDC(hwnd);
+        SetDeviceGammaRamp(hdc, &ramp);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    RestoreGamma() is automatically called when the display is closed.
+    (called in nGfxServer2::CloseDisplay())
+
+    23-Aug-04    kims    created
+*/
+void nD3D9Server::RestoreGamma()
+{
+    D3DGAMMARAMP	ramp;
+
+    for (int i=0; i<256; i++)
+        ramp.red[i] = ramp.green[i] = ramp.blue[i] = i << 8;
+
+    nDisplayMode2 dispMode = this->windowHandler.GetDisplayMode();
+    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) && 
+        this->d3d9Device && 
+        (this->devCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA))
+    {
+        this->d3d9Device->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
+    }
+    else
+        SetDeviceGammaRamp(GetDC(GetDesktopWindow()), &ramp );
+}

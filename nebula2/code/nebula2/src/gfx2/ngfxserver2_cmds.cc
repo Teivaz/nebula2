@@ -13,6 +13,12 @@ static void n_savescreenshot(void* slf, nCmd* cmd);
 static void n_setcursorvisibility(void* slf, nCmd* cmd);
 static void n_setmousecursor(void* slf, nCmd* cmd);
 static void n_seticon(void* slf, nCmd* cmd);
+static void n_setgamma(void* slf, nCmd* cmd);
+static void n_setbrightness(void* slf, nCmd* cmd);
+static void n_setcontrast(void* slf, nCmd* cmd);
+static void n_adjustgamma(void* slf, nCmd* cmd);
+static void n_restoregamma(void* slf, nCmd* cmd);
+
 
 //------------------------------------------------------------------------------
 /**
@@ -27,6 +33,9 @@ static void n_seticon(void* slf, nCmd* cmd);
 
     @classinfo
     Generation 2 gfx server. Completely vertex/pixel shader based.
+
+    23-Aug-04    kims    added setgamma, setbrightness, setcontrast, adjustgamma
+                         and restoregamma command.
 */
 void
 n_initcmds(nClass* cl)
@@ -41,6 +50,11 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setcursorvisibility_s",   'SCVS', n_setcursorvisibility);
     cl->AddCmd("v_setmousecursor_sii",      'SMCS', n_setmousecursor);
     cl->AddCmd("v_seticon_s",               'SICO', n_seticon);
+    cl->AddCmd("v_setgamma_f",              'SETG', n_setgamma);
+    cl->AddCmd("v_setbrightness_f",         'SETB', n_setbrightness);
+    cl->AddCmd("v_setcontrast_f",           'SETC', n_setcontrast);
+    cl->AddCmd("v_adjustgamma_v",           'ADJG', n_adjustgamma);
+    cl->AddCmd("v_restoregamma_v",          'RESG', n_restoregamma);
     cl->EndCmds();
 }
 
@@ -250,3 +264,97 @@ n_seticon(void* slf, nCmd* cmd)
     self->SetDisplayMode(mode);
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    
+    @input
+    f
+    @output
+    v
+    @info
+
+    23-Aug-04    kims    created
+*/
+static 
+void n_setgamma(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    self->SetGamma(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    
+    @input
+    f
+    @output
+    v
+    @info
+
+    23-Aug-04    kims    created
+*/
+static
+void n_setbrightness(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    self->SetBrightness(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    
+    @input
+    f
+    @output
+    v
+    @info
+
+    23-Aug-04    kims    created
+*/
+static void 
+n_setcontrast(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    self->SetContrast(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    
+    @input
+    v
+    @output
+    v
+    @info
+
+    23-Aug-04    kims    created
+*/
+static void 
+n_adjustgamma(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    self->AdjustGamma();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    
+    @input
+    v
+    @output
+    v
+    @info
+    
+    23-Aug-04    kims    created
+*/
+static void 
+n_restoregamma(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    self->RestoreGamma();
+}

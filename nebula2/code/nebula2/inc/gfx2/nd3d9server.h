@@ -144,6 +144,11 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
 
+    /// adjust gamma.
+    virtual void AdjustGamma();
+    /// restore gamma.
+    virtual void RestoreGamma();
+
 private:
     /// initialize the text renderer
     void OpenTextRenderer();

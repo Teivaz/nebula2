@@ -293,6 +293,24 @@ public:
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
 
+    /// get gamma value.
+    void SetGamma(float g);
+    /// get brightness value.
+    void SetBrightness(float b);
+    /// set contrast value.
+    void SetContrast(float c);
+    /// get gamma value.
+    float GetGamma() const;
+    /// get brightness value.
+    float GetBrightness() const;
+    /// get contrast value.
+    float GetContrast() const;
+
+    /// adjust gamma.
+    virtual void AdjustGamma();
+    /// restore gamma.
+    virtual void RestoreGamma();
+
 private:
     static nGfxServer2* Singleton;
 
@@ -328,6 +346,10 @@ protected:
     bool inDialogBoxMode;
 
     nArray<nLight> lightArray;
+
+    float gamma;
+    float brightness;
+    float contrast;
 
 public:
     // note: this stuff is public because WinProcs may need to access it
@@ -605,6 +627,87 @@ nGfxServer2::GetShaderIndex(const char* shaderName)
         n_error("Shader '%s' not defined in 'shaders:shaderlist.txt'!", shaderName);
     }
     return index;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Specify 'gamma' value.
+
+    @param g value to set for gamma.
+
+    23-Aug-04    kims    created
+*/
+inline
+void 
+nGfxServer2::SetGamma(float g)
+{
+    this->gamma = g;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sepecify 'brightness' value.
+
+    @param b value to set for brightness.
+
+    23-Aug-04    kims    created
+*/
+inline
+void 
+nGfxServer2::SetBrightness(float b)
+{
+    this->brightness = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Specify 'contrast' value.
+
+    @param c value to set for contrast.
+
+    23-Aug-04    kims    created
+*/
+inline
+void 
+nGfxServer2::SetContrast(float c)
+{
+    this->contrast = c;
+}
+  
+//------------------------------------------------------------------------------
+/**
+    Retrieves the value of gamma.
+
+    23-Aug-04    kims    created
+*/
+inline
+float nGfxServer2::GetGamma() const
+{
+    return this->gamma;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieves the value of brightness.
+
+    23-Aug-04    kims    created
+*/
+inline
+float nGfxServer2::GetBrightness() const
+{
+    return this->brightness;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieves the value of contrast.
+
+    23-Aug-04    kims    created
+*/
+inline
+float nGfxServer2::GetContrast() const
+{
+    return this->contrast;
 }
 
 #endif
