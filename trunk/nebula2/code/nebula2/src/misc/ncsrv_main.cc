@@ -222,11 +222,9 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
         yPos += dy;
     }
 
-    // finally render the current edit line
-    int lenInputBuffer = strlen(this->inputBuffer);
-
     // start final line with prompt from script server
-    this->refScriptServer->Prompt(line, sizeof(line));
+    nString cmdLine = this->refScriptServer->Prompt();
+    strcpy(line, cmdLine.Get());
     char* to = line + strlen(line);
     const char* from = this->inputBuffer;
 
@@ -326,7 +324,7 @@ void
 nConServer::Render()
 {
     int displayHeight = this->refGfxServer->GetDisplayMode().GetHeight();
-    const int fontHeight = 18;
+    const int fontHeight = 16;
 
     if (this->consoleOpen)
     {
@@ -532,11 +530,10 @@ nConServer::ExecuteCommand()
     this->AddCommandToHistory();
 
     // print to log
-    char line[1024];
-    this->refScriptServer->Prompt(line, sizeof(line));
-    n_strcat(line, this->inputBuffer, sizeof(line));
-    n_strcat(line, "\n", sizeof(line));
-    n_printf(line);
+    nString line = this->refScriptServer->Prompt();
+    line.Append(this->inputBuffer);
+    line.Append("\n");
+    n_printf(line.Get());
 
     // execute the command
     if (this->inputBuffer[0])

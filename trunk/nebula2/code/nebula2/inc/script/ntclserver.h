@@ -46,7 +46,7 @@ public:
     /// process the tcl event queue
     virtual bool Trigger();
     /// generate a prompt string
-    virtual char *Prompt(char *buf, int bufSize);
+    virtual nString Prompt();
 
 #ifndef __MICROTCL__
     /// register Nebula as a Tcl extension

@@ -24,6 +24,7 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nFile;
@@ -59,7 +60,7 @@ public:
     virtual bool WriteEndObject(nFile* fp, nRoot *o, nRoot *owner);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
-    /// abort program on script error?
+    /// abort program on error?
     void SetFailOnError(bool b);
     /// get abort program status
     bool GetFailOnError() const;
@@ -77,7 +78,7 @@ public:
 
 #ifndef __XBxX__
     /// generate a prompt string for interactive mode
-    virtual char *Prompt(char *, int); 
+    virtual nString Prompt(); 
 #endif
 
 private:

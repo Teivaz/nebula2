@@ -82,8 +82,8 @@ main(int argc, const char** argv)
             line[0] = '\0';
 
             // generate prompt string
-            char promptBuf[N_MAXPATH];
-            printf("%s", scriptServer->Prompt(promptBuf, sizeof(promptBuf)));
+            nString prompt = scriptServer->Prompt();
+            printf("%s", prompt.Get());
             fflush(stdout);
 
             // get user input

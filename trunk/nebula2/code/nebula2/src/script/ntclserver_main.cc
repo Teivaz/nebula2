@@ -446,18 +446,13 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
 /**
     Generate a prompt string for interactive mode.
 */
-char*
-nTclServer::Prompt(char *buf, int size)
+nString
+nTclServer::Prompt()
 {
-    buf[0] = 0;
-    char buffer[1024];
-    const char* res;
-    buffer[0] = 0;
-    this->Run("psel", res);
-    strcat(buffer, res);
-    strcat(buffer, ">");
-    n_strncpy2(buf, buffer, size);
-    return buf;
+    char buffer[N_MAXPATH];
+    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));
+    prompt.Append("> ");
+    return prompt;
 }
 
 //------------------------------------------------------------------------------

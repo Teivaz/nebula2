@@ -257,8 +257,8 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
 nKernelServer::nKernelServer() :
 #ifdef __NEBULA_MEM_MANAGER__
     varMemAlloc(0),
-    varMemused(0),
-    varmemNumAlloc(0),
+    varMemUsed(0),
+    varMemNumAlloc(0),
 #endif
     fileServer(0),
     persistServer(0),
@@ -398,7 +398,6 @@ nKernelServer::~nKernelServer(void)
     this->SetLogHandler(0);
     delete this->defaultLogHandler;
     this->defaultLogHandler = 0;
-    this->curLogHandler = 0;
 
     // reset static kernelserver pointer
     ks = 0;

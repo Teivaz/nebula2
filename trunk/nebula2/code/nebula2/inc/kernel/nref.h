@@ -47,6 +47,10 @@ public:
     void operator=(TYPE *obj);
     /// assign nRef object
     nRef& operator=(const nRef& rhs);
+    /// equality operator
+    friend bool operator==(const nRef&a, const nRef& b);
+    /// inequality operator
+    friend bool operator!=(const nRef&a, const nRef& b);
 
 protected:
     nRoot *targetObject;
@@ -71,10 +75,8 @@ inline
 nRef<TYPE>::nRef(TYPE* o) :
     targetObject(o)
 {
-    if (o) 
-    {
-        this->targetObject->AddObjectRef((nRef<nRoot> *)this);
-    }
+    n_assert(o);
+    this->targetObject->AddObjectRef((nRef<nRoot> *)this);
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +103,7 @@ nRef<TYPE>::~nRef()
     if (this->targetObject) 
     {
         this->targetObject->RemObjectRef((nRef<nRoot> *)this);
+        this->targetObject = 0;
     }
 }
 
@@ -201,6 +204,30 @@ nRef<TYPE>::operator=(const nRef<TYPE>& rhs)
         this->invalidate();
     }
     return *this;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Equality operator.
+*/
+template<class TYPE>
+inline
+bool
+operator==(const nRef<TYPE>& a, const nRef<TYPE>& b)
+{
+    return (a.targetObject == b.targetObject);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Inequality operator.
+*/
+template<class TYPE>
+inline
+bool
+operator!=(const nRef<TYPE>& a, const nRef<TYPE>& b)
+{
+    return (a.targetObject != b.targetObject);
 }
 
 //------------------------------------------------------------------------------

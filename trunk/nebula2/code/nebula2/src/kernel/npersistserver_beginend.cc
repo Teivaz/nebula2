@@ -28,26 +28,28 @@ nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, n
 /**
     Start writing a persistent object into a persistent object file.
 
-     - 04-Nov-98   floh    created
-     - 11-Nov-98    floh   + Removed support for root dir,
-                             now always saves to cwd
-     - 20-Jan-00   floh    + rewritten for ref_ss
-     - 29-Feb-00   floh    + optional constructor cmd object
-     - 06-Mar-00   floh    + 'sel_only' argument
-                           + 'owner' object handling, which is the
-                             object at the top of stack
+     - 04-Nov-98    floh     created
+     - 11-Nov-98    floh    + Removed support for root dir,
+                               now always saves to cwd
+     - 20-Jan-00    floh    + rewritten for ref_ss
+     - 29-Feb-00    floh    + optional constructor cmd object
+     - 06-Mar-00    floh    + 'sel_only' argument
+                            + 'owner' object handling, which is the
+                              object at the top of stack
+     - 16-Feb-04    floh    + no longer appends an ".n2" to path
 */
 bool 
 nPersistServer::BeginFoldedObject(nRoot *obj, nCmd *cmd, const char *name, bool selOnly)
 {
+    n_assert(obj);
+    n_assert(name);
+
     // if no objects on stack, create a new file...
     bool fileOk = false;
     if (this->objectStack.IsEmpty()) 
     {
         n_assert(0 == this->file);
-        char fname[N_MAXPATH];
-        sprintf(fname, "%s.n2", name);
-        this->file = this->PutFoldedObjectHeader(this->refSaver.get(), fname, obj);
+        this->file = this->PutFoldedObjectHeader(this->refSaver.get(), name, obj);
         if (this->file) 
         {
             fileOk = true;

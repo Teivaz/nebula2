@@ -59,11 +59,11 @@ nScriptServer::RunScript(const char* /* filename */, const char*& /* result */)
 /**
 */
 #ifndef __XBxX__
-char*
-nScriptServer::Prompt(char* buf, int bufSize)
+nString
+nScriptServer::Prompt()
 {
-    buf[0] = 0;
-    return buf;
+    nString emptyString;
+    return emptyString;
 }
 #endif
 
