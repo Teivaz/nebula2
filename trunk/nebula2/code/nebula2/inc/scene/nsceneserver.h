@@ -60,11 +60,13 @@ protected:
     /// transfer standard parameters to shader (matrices, etc...)
     virtual void UpdateShader(nShader2* shd, nRenderContext* renderContext);
     /// split scene nodes into light and shape nodes
-    void SplitNodes(uint shaderFourCC);
+    virtual void SplitNodes(uint shaderFourCC);
     /// make sure scene node resources are valid
     void ValidateNodeResources();
     /// sort shape nodes for optimal rendering
     void SortNodes();
+    /// the actual sorting call is virtual, since Compare can't be
+    virtual void DoSort( ushort* indexPtr, int numIndices );
     /// static qsort() compare function
     static int __cdecl Compare(const ushort* i1, const ushort* i2);
     /// get shader object from shape bucket (may return 0)
