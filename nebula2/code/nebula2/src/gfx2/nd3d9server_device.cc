@@ -395,7 +395,7 @@ nD3D9Server::TestResetDevice()
         // if we are in windowed mode, the cause for the reset may be a display
         // mode change of the desktop, in this case we need to find new
         // buffer pixel formats
-        if (this->displayMode.GetType() == nDisplayMode2::WINDOWED)
+        if (this->displayMode.GetType() == nDisplayMode2::Windowed)
         {
             D3DFORMAT dispFormat;
             D3DFORMAT backFormat;
