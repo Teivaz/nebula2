@@ -26,7 +26,6 @@ nNebulaClass(nDShowServer, "nvideoserver");
 /**
 */
 nDShowServer::nDShowServer() :
-    refGfxServer("/sys/servers/gfx"),
     refInputServer("/sys/servers/input"),
     refHwnd("/sys/env/hwnd"),
     graphBuilder(0),
@@ -98,10 +97,10 @@ nDShowServer::PlayFile(const char* filename)
     HRESULT hr;
 
     // clear background
-    this->refGfxServer->BeginScene();
-    this->refGfxServer->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
-    this->refGfxServer->EndScene();
-    this->refGfxServer->PresentScene();
+    nGfxServer2::Instance()->BeginScene();
+    nGfxServer2::Instance()->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
+    nGfxServer2::Instance()->EndScene();
+    nGfxServer2::Instance()->PresentScene();
 
     // mangle Nebula path into absolute path wide character string
     wchar_t widePath[N_MAXPATH];
@@ -133,21 +132,32 @@ nDShowServer::PlayFile(const char* filename)
     n_assert(SUCCEEDED(hr));
     hr = this->graphBuilder->QueryInterface(IID_IBasicVideo, (void**) &this->basicVideo);
 
-    // get the width and height of the video stream
-    long videoWidth;
-    long videoHeight;
+    // compute video window size
+    OAHWND ownerHwnd = (OAHWND) this->refHwnd->GetI();
+    RECT rect;
+    GetClientRect((HWND)ownerHwnd, &rect);
+    LONG videoLeft, videoTop, videoWidth, videoHeight;
+    if (this->GetEnableScaling())
+    {
+        // scale to fullscreen....
+        videoLeft   = 0;
+        videoTop    = 0;
+        videoWidth  = rect.right;
+        videoHeight = rect.bottom;
+    }
+    else
+    {
+        // render video in original size, centered
     hr = this->basicVideo->GetVideoSize(&videoWidth, &videoHeight);
     n_assert(SUCCEEDED(hr));
 
     // get public window handle, which has been initialized by the gfx subsystem
-    OAHWND ownerHwnd = (OAHWND) this->refHwnd->GetI();
-    RECT rect;
-    GetClientRect((HWND)ownerHwnd, &rect);
-    LONG videoLeft = ((rect.right + rect.left) - videoWidth) / 2;
-    LONG videoTop = ((rect.bottom + rect.top) - videoHeight) / 2;
+        videoLeft = ((rect.right + rect.left) - videoWidth) / 2;
+        videoTop = ((rect.bottom + rect.top) - videoHeight) / 2;
+    }
 
     // enable dialog box mode in gfx server
-    this->refGfxServer->EnterDialogBoxMode();
+    nGfxServer2::Instance()->EnterDialogBoxMode();
 
     // setup video window
     hr = this->videoWindow->put_AutoShow(OATRUE);
@@ -180,7 +190,7 @@ nDShowServer::Stop()
     n_assert(this->IsPlaying());
 
     // end dialog box mode in gfx server
-    this->refGfxServer->LeaveDialogBoxMode();
+    nGfxServer2::Instance()->LeaveDialogBoxMode();
 
     if (this->basicVideo)
     {
