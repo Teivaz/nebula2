@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _vector3_sse
+    @ingroup NebulaMathDataTypes
 
     SSE based vector3 class.
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @enum nPrimitiveType
+    @ingroup NebulaGraphicsSystem
 
     Rendering primitive types.
 

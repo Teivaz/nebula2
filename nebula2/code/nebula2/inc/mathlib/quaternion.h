@@ -1,14 +1,15 @@
 #ifndef N_QUATERNION_H
 #define N_QUATERNION_H
 //-------------------------------------------------------------------
-//  CLASSES
-//  quaternion
-//
-//  OVERVIEW
-//  quaternion class with some basic operators.
-//
-//  08-Dec-00   floh    extended, ATTENTION: argument ordering in
-//                      constructor has changed!
+/**
+    @class quaternion
+    @ingroup NebulaMathDataTypes
+
+    quaternion class with some basic operators.
+
+     - 08-Dec-00   floh    extended, ATTENTION: argument ordering in
+                           constructor has changed!
+*/
 //-------------------------------------------------------------------
 #include <stdlib.h>
 #include <stdio.h>

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _matrix33_sse
+    @ingroup NebulaMathDataTypes
 
     An SSE based matrix33 class.
 

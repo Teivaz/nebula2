@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMesh2
+    @ingroup NebulaGraphicsSystem
 
     Internally holds opaque vertex and index data to feed a vertex shader.
     Vertices in a mesh are simply an array of floats. 

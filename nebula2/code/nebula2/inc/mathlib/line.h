@@ -1,11 +1,12 @@
 #ifndef N_LINE_H
 #define N_LINE_H
 //-------------------------------------------------------------------
-//  CLASSES
-//  line2  - a line in 2d space
-//  line3  - a line in 3d space
-//
-//  04-Dec-01   floh    bugfix: line3::len() was broken
+/**
+    @class line2
+    @ingroup NebulaMathDataTypes  
+
+    a line in 2d space
+*/
 //-------------------------------------------------------------------
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"
@@ -42,6 +43,15 @@ public:
         return vector2(b + m*t);
     };
 };
+
+/**
+    @class line3
+    @ingroup NebulaMathDataTypes
+
+    a line in 3d space
+
+     - 04-Dec-01   floh    bugfix: line3::len() was broken
+*/
 //-------------------------------------------------------------------
 class line3 {
 public:

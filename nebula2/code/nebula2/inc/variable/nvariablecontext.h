@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVariableContext
+    @ingroup NebulaVariableSystem
 
     A variable context is a container for nVariable objects. Variables
     are accessed by their global nVariableHandle.

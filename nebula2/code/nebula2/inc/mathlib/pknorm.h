@@ -1,8 +1,12 @@
 #ifndef N_PKNORM_H
 #define N_PKNORM_H
 //-------------------------------------------------------------------
-//  CLASS
-//  pknorm -- a normal packed into 16 bits
+/**
+    @class pknorm
+    @ingroup NebulaMathDataTypes
+
+    a normal packed into 16 bits
+*/
 //-------------------------------------------------------------------
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _vector3
+    @ingroup NebulaMathDataTypes
 
     Generic vector3 class. Uses 16 Byte of mem instead of 12 (!)
 

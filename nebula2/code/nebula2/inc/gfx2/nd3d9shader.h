@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Shader
+    @ingroup NebulaD3D9GraphicsSystem
 
     A nShader2 subclass using the D3D9FX framework.
 

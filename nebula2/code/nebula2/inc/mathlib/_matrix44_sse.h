@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _matrix44_sse
+    @ingroup NebulaMathDataTypes
 
     SSE based matrix44 class.
 

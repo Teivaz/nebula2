@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Server
+    @ingroup NebulaD3D9GraphicsSystem
 
     D3D9 based gfx server.
 

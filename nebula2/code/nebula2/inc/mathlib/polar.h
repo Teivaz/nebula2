@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class polar2
+    @ingroup NebulaMathDataTypes
 
     A polar coordinate inline class, consisting of 2 angles theta (latitude)
     and rho (longitude). Also offers conversion between cartesian and 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVariable
+    @ingroup NebulaVariableSystem
 
     A variable contains typed data and is identified by a variable handle.
 

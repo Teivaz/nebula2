@@ -13,7 +13,10 @@
 #endif
 
 //-------------------------------------------------------------------
-//  quaternion
+/**
+    @class nEulerAngles
+    @ingroup NebulaMathDataTypes
+*/
 //-------------------------------------------------------------------
 class nEulerAngles {
 public:

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCamera2
+    @ingroup NebulaGraphicsSystem
 
     Hold camera attributes for nGfxServer2.
 

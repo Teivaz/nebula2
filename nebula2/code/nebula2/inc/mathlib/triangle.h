@@ -1,8 +1,12 @@
 #ifndef N_TRIANGLE_H
 #define N_TRIANGLE_H
 //-------------------------------------------------------------------
-//  CLASS
-//  triangle -- defines a triangle in 3d space
+/**
+    @class triangle
+    @ingroup NebulaMathDataTypes
+
+    defines a triangle in 3d space
+*/
 //-------------------------------------------------------------------
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"

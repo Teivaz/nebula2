@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVariableServer
+    @ingroup NebulaVariableSystem
 
     The variable server implements a registry for named, typed variables,
     and offers variable context object. The name registry guarantees a

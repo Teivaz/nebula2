@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNtxFile
+    @ingroup NebulaGraphicsSystem
 
     Implement a Nebula texture file format optimized for fast loading.
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class _vector4_sse
+    @ingroup NebulaMathDataTypes
 
     A vector4 class using SSE.
 

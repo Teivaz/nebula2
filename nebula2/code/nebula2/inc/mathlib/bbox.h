@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class bbox3
+    @ingroup NebulaMathDataTypes
 
     (non-oriented) bounding box
 */
