@@ -30,6 +30,7 @@ nMaxOptions::nMaxOptions() :
     maxJointPaletteSize(24),
     weightTrashHold(0.0001f),
     sampleRate (2),
+    addJointName(false),
     runViewer(true),
     saveScriptServer("ntclserver"),
     useIndivisualMesh(false),
