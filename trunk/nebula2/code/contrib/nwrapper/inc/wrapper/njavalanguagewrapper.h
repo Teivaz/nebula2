@@ -36,9 +36,9 @@ public:
     static nKernelServer* kernelServer;
 
 private:
-    nFile javaFile;
-    nFile headerFile;
-    nFile implFile;
+    nFile* javaFile;
+    nFile* headerFile;
+    nFile* implFile;
 };
 
 //------------------------------------------------------------------------------
