@@ -161,7 +161,9 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         // get the sample time from the render context
         nVariable* var = renderContext->GetVariable(this->channelVarHandle);
         if (var == 0)
+        {
             n_error("nSkinAnimator::Animate: TimeChannel Variable '%s' not found in the RenderContext!\n", this->refVariableServer->GetVariableName(this->channelVarHandle));
+        }
         float curTime = var->GetFloat();
 
         // get the current anim state from the anim state channel
@@ -206,6 +208,7 @@ nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
 
     delete curCharacter;
 }
+
 //------------------------------------------------------------------------------
 /**
     Begin configuring the joint skeleton.

@@ -79,6 +79,7 @@ public:
     void GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const;
     /// check if 2 view volumes intersect
     ClipStatus GetClipStatus(const matrix44& myTransform, const matrix44& otherViewProjection);
+
 private:
     /// update the internal projection and inverse projection matrices
     void UpdateProjInvProj();

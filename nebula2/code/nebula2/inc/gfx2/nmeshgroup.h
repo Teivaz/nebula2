@@ -10,13 +10,8 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_BBOX_H
 #include "mathlib/bbox.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nMeshGroup

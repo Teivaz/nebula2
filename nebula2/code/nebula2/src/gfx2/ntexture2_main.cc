@@ -47,7 +47,7 @@ nTexture2::~nTexture2()
     data and the surface pitch in the provided lockInfo structure.
 */
 bool
-nTexture2::Lock(LockType lockType, int level, LockInfo& lockInfo)
+nTexture2::Lock(LockType /*lockType*/, int /*level*/, LockInfo& /*lockInfo*/)
 {
     return false;
 }
@@ -56,7 +56,7 @@ nTexture2::Lock(LockType lockType, int level, LockInfo& lockInfo)
 /**
 */
 void
-nTexture2::Unlock(int level)
+nTexture2::Unlock(int /*level*/)
 {
     // empty
 }
@@ -66,7 +66,7 @@ nTexture2::Unlock(int level)
     Locks a single surface of a cube texture.
 */
 bool 
-nTexture2::LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo)
+nTexture2::LockCubeFace(LockType /*lockType*/, CubeFace /*face*/, int /*level*/, LockInfo& /*lockInfo*/)
 {
     return false;
 }
@@ -77,7 +77,7 @@ nTexture2::LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& l
     Unlocks a single surface of a cube texture.
 */
 void
-nTexture2::UnlockCubeFace(CubeFace face, int level)
+nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
 {
     // empty
 }
@@ -86,7 +86,7 @@ nTexture2::UnlockCubeFace(CubeFace face, int level)
 /**
     - Feb-04 Kim, H.W. added to support ngameswf.
 */
-void nTexture2::GetSurfaceLevel(const char* objName, int level, nSurface** surface)
+void nTexture2::GetSurfaceLevel(const char* /*objName*/, int /*level*/, nSurface** /*surface*/)
 {
     // reimplemented in derived class's member function.
 }
@@ -99,3 +99,4 @@ void nTexture2::GenerateMipMaps()
 {
     // reimplemented in derived class's member function.
 }
+

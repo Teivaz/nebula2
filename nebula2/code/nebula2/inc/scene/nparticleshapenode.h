@@ -6,7 +6,7 @@
 
     A shape node representing a particle system.
 
-    (C) 2003 RadonLabs GmbH
+    (C) 2004 RadonLabs GmbH
 */
 #include "scene/nshapenode.h"
 #include "gfx2/ndynamicmesh.h"
@@ -76,11 +76,7 @@ protected:
     nAutoRef<nVariableServer> refVariableServer;
 
     int emitterVarIndex;    // index of the emitter in the rendercontext
-
-    // copy of emitter settings
-
     nTime           emissionDuration;       // how long shall be emitted ?
- 
     bool            loop;                   // loop emitter ?
 
     float           activityDistance;       // distance between viewer and emitter on witch emitter is active
@@ -111,7 +107,6 @@ inline void nParticleShapeNode::SetEmissionDuration(nTime time)
     this->emissionDuration = time;
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -119,7 +114,6 @@ inline nTime nParticleShapeNode::GetEmissionDuration() const
 {
     return this->emissionDuration;
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -129,7 +123,6 @@ inline void nParticleShapeNode::SetLoop(bool b)
     this->loop = b;
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -137,7 +130,6 @@ inline bool nParticleShapeNode::GetLoop() const
 {
     return this->loop;
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -151,7 +143,6 @@ inline void nParticleShapeNode::SetActivityDistance(float f)
     box.extend(vector3(activityDistance, activityDistance, activityDistance));
     this->SetLocalBox(box);
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -192,7 +183,6 @@ inline float nParticleShapeNode::GetSpreadAngle() const
 {
     return this->spreadAngle;
 }
-
 
 //------------------------------------------------------------------------------
 /**

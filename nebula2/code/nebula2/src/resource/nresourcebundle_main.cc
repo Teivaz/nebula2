@@ -190,7 +190,7 @@ bool
 nResourceBundle::LoadAnimation(const char* resId, 
                                int dataOffset, 
                                int dataSize, 
-                               int flags, 
+                               int /*flags*/, 
                                nFile* dataFile)
 {
     n_assert(resId && dataFile);
@@ -221,7 +221,7 @@ bool
 nResourceBundle::LoadTexture(const char* resId, 
                              int dataOffset, 
                              int dataSize, 
-                             int flags, 
+                             int /*flags*/, 
                              nFile* dataFile)
 {
     n_assert(resId && dataFile);

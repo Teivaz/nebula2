@@ -76,10 +76,10 @@ nD3D9Mesh::LoadResource()
         this->CreateVertexDeclaration();
         success = true;
     }
-    else if (refResourceLoader.isvalid())
+    else if (this->refResourceLoader.isvalid())
     {
         // if the resource loader reference is valid, let it take a stab at the file
-        success = refResourceLoader->Load(filename.Get(), this);
+        success = this->refResourceLoader->Load(filename.Get(), this);
     }
     else if (filename.CheckExtension("nvx2"))
     {

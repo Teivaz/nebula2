@@ -11,7 +11,6 @@
 */
 #include "kernel/nfile.h"
 
-
 //------------------------------------------------------------------------------
 class nNpkFileServer;
 class nNpkTocEntry;

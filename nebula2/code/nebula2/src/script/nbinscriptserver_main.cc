@@ -225,6 +225,10 @@ nBinScriptServer::GetArgLength(nCmd* cmd)
 
             case nArg::Void:
                 break;
+
+            default:
+                n_error("nBinScriptServer::GetArgLength(): unsupported data type!");
+                break;
         }
     }
     n_assert(len < (1<<15));
@@ -279,6 +283,10 @@ nBinScriptServer::WriteCmd(nFile* file, nCmd* cmd)
                 break;
 
             case nArg::Void:
+                break;
+
+            default:
+                n_error("nBinScriptServer::WriteCmd(): unsupported data type!");
                 break;
         }
     }
@@ -594,6 +602,10 @@ nBinScriptServer::GetInArgs(nFile* file, nCmd* cmd)
                 break;
 
             case nArg::Void:
+                break;
+
+            default:
+                n_error("nBinScriptServer::GetInArgs(): unsupported data type!");
                 break;
         }
 

@@ -36,6 +36,8 @@ public:
     void SetRootNode(nSceneNode* node);
     /// get the render context's root scene node
     nSceneNode* GetRootNode() const;
+    /// return true if valid (if root node is set)
+    bool IsValid() const;
     /// reset the link array
     void ClearLinks();
     /// add a link to another render context
@@ -46,11 +48,12 @@ public:
     nRenderContext* GetLinkAt(int index) const;
     /// access to shader parameter overrides
     nShaderParams& GetShaderOverrides();
-
     /// appends a new var to localVarArray, returns the index
     int AddLocalVar(const nVariable& value);
     /// returns local variable at given index
     nVariable& GetLocalVar(int index);
+    /// clear local variables
+    void ClearLocalVars();
 
 protected:
     uint frameId;
@@ -199,7 +202,8 @@ nRenderContext::GetShaderOverrides()
 /**    
 */
 inline
-int nRenderContext::AddLocalVar(const nVariable& value)
+int
+nRenderContext::AddLocalVar(const nVariable& value)
 {
     this->localVarArray.Append(value);
     return this->localVarArray.Size()-1;
@@ -209,10 +213,32 @@ int nRenderContext::AddLocalVar(const nVariable& value)
 /**    
 */
 inline
-nVariable& nRenderContext::GetLocalVar(int index)
+nVariable&
+nRenderContext::GetLocalVar(int index)
 {
     return this->localVarArray.At(index);
 }
 
 //------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::ClearLocalVars()
+{
+    this->localVarArray.Clear();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nRenderContext::IsValid() const
+{
+    return this->rootNode.isvalid();
+}
+
+//------------------------------------------------------------------------------
 #endif
+

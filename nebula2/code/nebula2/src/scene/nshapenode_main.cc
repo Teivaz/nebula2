@@ -177,8 +177,7 @@ nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
 //------------------------------------------------------------------------------
 /**
     Set the resource name. The mesh resource name consists of the
-    filename of the mesh, and optionally a mesh group name, delimited by '|'.
-    If no group name exists, the first group in the mesh file will be used.
+    filename of the mesh.
 */
 void
 nShapeNode::SetMesh(const char* name)
@@ -218,8 +217,12 @@ const char *
 nShapeNode::GetMeshResourceLoader()
 {
     if (this->refMeshResourceLoader.isvalid())
+    {
         return this->refMeshResourceLoader.getname();
+    }
     else
+    {
         return 0;
+    }
 }
 
