@@ -90,22 +90,14 @@ const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
 }
 
 //--------------------------------------------------------------------
-// Prompt(char* buf, int size);
+// Prompt()
 //--------------------------------------------------------------------
-char *nLuaServer::Prompt(char *buf, int size)
+nString nLuaServer::Prompt()
 {
-    char buffer[1024];
-    const char* result;
-    buffer[0] = 0;
-
-    this->Run("return call('getfullname')", result);
-
-    if (result)
-        n_strcat(buffer, result, size-1);
-        
-    n_strcat(buffer, ">", size);
-    n_strncpy2(buf, buffer, size);
-    return buf;
+    char buffer[N_MAXPATH];
+    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));       
+    prompt.Append("> ");
+    return prompt;
 }
 
 

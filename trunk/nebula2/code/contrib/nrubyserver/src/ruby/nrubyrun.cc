@@ -19,23 +19,25 @@ extern "C" VALUE cNRoot;
 /**
     Prompt
     Pass a prompt string to the interactive shell.
-    Will be cald each frame so I omitted any fancy stuff
+    Will be called each frame so I omitted any fancy stuff
 
     - 02-01-04   tom    created
 */
 //--------------------------------------------------------------------
-char *nRubyServer::Prompt(char *buf, int size)
+nString nRubyServer::Prompt()
 {
-//    no custom prompt as Propmt will be called   every frame :-(
-    n_strncpy2(buf, ">", size);
-    return buf;
+    // no custom prompt as Prompt will be called every frame :-(
+    nString prompt;
+    prompt.Append("> ");
+    return prompt;
+
 }
 
 //--------------------------------------------------------------------
 /**
     Run
     Evaluate a ruby command string
-    Result will be null, as any errors get prited out by ruby itself for
+    Result will be null, as any errors get printed out by ruby itself for
     ease of use.
     
     - 02-01-04  Tom     created

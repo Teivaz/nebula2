@@ -41,21 +41,10 @@
 #include <ruby.h>
 #include <rubyio.h> 
 
-#ifndef N_KERNELSERVER_H
 #include "kernel/nkernelserver.h"
-#endif
-
-#ifndef N_SCRIPTSERVER_H
 #include "kernel/nscriptserver.h"
-#endif
-
-#ifndef N_AUTOREF_H 
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nRubyServer
-#include "kernel/ndefdllclass.h"
+#include "util/nstring.h"
 
 //--------------------------------------------------------------------
 class nFileServer2; 
@@ -77,7 +66,7 @@ public:
     virtual bool RunScript(const char *, const char*&); 
     /// Not tested so far where is it used anyway ? 
     virtual bool RunCommand(nCmd *);
-    virtual char *Prompt(char *, int);
+    virtual nString Prompt();
     
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
     virtual bool WriteComment(nFile *, const char *);

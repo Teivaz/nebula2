@@ -24,6 +24,7 @@
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
 #include "kernel/nautoref.h"
+#include "util/nstring.h"
 
 // Lua requires it's headers to be explicitly extern'd
 extern "C" {
@@ -41,7 +42,7 @@ public:
  
     virtual bool Run(const char *, const char*&);
     virtual bool RunScript(const char *, const char*&);
-    virtual char *Prompt(char *, int);
+    virtual nString Prompt();
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
     virtual bool WriteComment(nFile *, const char *);

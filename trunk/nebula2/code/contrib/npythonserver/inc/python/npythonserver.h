@@ -24,10 +24,7 @@
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
 #include "kernel/nautoref.h"
-
-#undef N_DEFINES
-#define N_DEFINES nPythonServer
-#include "kernel/ndefdllclass.h"
+#include "util/nstring.h"
 
 //--------------------------------------------------------------------
 class nFileServer2;
@@ -44,7 +41,7 @@ public:
     virtual bool Run(const char *, int mode, const char*&);
     virtual bool RunScript(const char *, const char*&);
     virtual bool RunCommand(nCmd *);
-    virtual char *Prompt(char *, int);
+    virtual nString Prompt();
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
     virtual bool WriteComment(nFile *, const char *);
