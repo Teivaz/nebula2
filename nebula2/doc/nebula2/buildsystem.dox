@@ -26,10 +26,11 @@
       - Microsoft Visual C++ 7.0 (.NET)
       - Microsoft Visual C++ 7.1 (.NET 2003)
       - Microsoft Visual C++ 8.0 (.NET 2005, beta)
+      - Microsoft Visual C++ Toolkit 2003 via GNU Make
+      - Linux via GNU Make and gcc
       - Apple's XCode
 
     And we will soon support:
-      - Linux via GNU Make and gcc
       - Cygwin/MingW via GNU Make and gcc
       - Possibly Eclipse's CDT
 
