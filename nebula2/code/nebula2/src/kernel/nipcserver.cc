@@ -70,7 +70,7 @@ ListenerWakeupFunc(nThread* t)
     t->UnlockUserData();
     myAddr.sin_family = AF_INET;
     myAddr.sin_port   = ipcServer->selfAddr.GetAddrStruct().sin_port;
-    myAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+    myAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     n_assert(INVALID_SOCKET != sock);
     int res = connect(sock, (struct sockaddr *) &myAddr, sizeof(myAddr));
@@ -172,7 +172,7 @@ nIpcServer::Poll()
             cur = 0;
         }
     }
-    while (cur = next);
+    while ((cur = next));
     this->miniServerList.Unlock();
 
     // check for new messages on the msg list...

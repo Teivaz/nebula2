@@ -119,6 +119,7 @@ nIpcAddress::IsInternetAddress(const in_addr& addr)
     else if ((b1 == 192) && (b2 == 168) && (b3 >= 0) && (b3 <= 254))
     {
         // Class C net
+        return false;
     }
     else if (b1 < 224)
     {
@@ -143,12 +144,12 @@ nIpcAddress::ValidateIpAddr()
     if (this->hostName == "any")
     {
         // the "ANY" address
-        this->ipAddr.S_un.S_addr = htonl(INADDR_ANY);
+        this->ipAddr.s_addr = htonl(INADDR_ANY);
     }
     else if (this->hostName == "broadcast")
     {
         // the "BROADCAST" address
-        this->ipAddr.S_un.S_addr = htonl(INADDR_BROADCAST);
+        this->ipAddr.s_addr = htonl(INADDR_BROADCAST);
     }
     else if ((this->hostName == "self") || (this->hostName == "inetself"))
     {
