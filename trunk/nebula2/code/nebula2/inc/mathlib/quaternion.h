@@ -324,5 +324,17 @@ static inline quaternion operator*(const quaternion& q0, const quaternion& q1) {
                       q0.w*q1.z + q0.z*q1.w + q0.x*q1.y - q0.y*q1.x,
                       q0.w*q1.w - q0.x*q1.x - q0.y*q1.y - q0.z*q1.z);
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<>
+static inline
+void
+lerp<quaternion>(quaternion & result, const quaternion & val0, const quaternion & val1, float lerpVal)
+{
+    result.lerp(val0, val1, lerpVal);
+}
+
 //-------------------------------------------------------------------
 #endif
