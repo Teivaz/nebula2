@@ -18,14 +18,16 @@ nD3D9Server::OpenTextRenderer()
     {
         nFontDesc fontDesc;
         fontDesc.SetAntiAliased(true);
-        fontDesc.SetHeight(18);
-        fontDesc.SetWeight(nFontDesc::Normal);
+        fontDesc.SetHeight(16);
+        fontDesc.SetWeight(nFontDesc::Bold);
         fontDesc.SetTypeFace("Arial");
         nFont2* font = this->NewFont("Default", fontDesc);
         if (!font->Load())
+        {
             n_error("nD3D9Server: Failed to load default font!");
-
+        }
         this->refDefaultFont = font;
+        this->SetFont(font);
     }
 
     // create sprite object for batched rendering
@@ -48,7 +50,9 @@ nD3D9Server::CloseTextRenderer()
     }
 
     if (this->d3dSprite)
+    {
         this->d3dSprite->Release();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -114,9 +118,14 @@ nD3D9Server::DrawTextBuffer()
 //------------------------------------------------------------------------------
 /**
     New style immediate text rendering method.
+
+    @param  text    the text to draw
+    @param  color   the text color
+    @param  rect    screen space rectangle in which to draw the text
+    @param  flags   combination of nFont2::RenderFlags
 */
 void
-nD3D9Server::DrawText(const char* text, const vector4& color, float xPos, float yPos)
+nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
 {
     n_assert(text);
     if (this->refFont.isvalid())
@@ -128,9 +137,21 @@ nD3D9Server::DrawText(const char* text, const vector4& color, float xPos, float 
         float dispWidth  = (float) this->displayMode.GetWidth();
         float dispHeight = (float) this->displayMode.GetHeight();
         RECT r;
-        r.left = (LONG) (xPos * dispWidth);
-        r.top = (LONG) (yPos * dispHeight);
-    
+        r.left   = (LONG) (rect.v0.x * dispWidth);
+        r.top    = (LONG) (rect.v0.y * dispHeight);
+        r.right  = (LONG) (rect.v1.x * dispWidth);
+        r.bottom = (LONG) (rect.v1.y * dispHeight);
+
+        DWORD d3dFlags = 0;
+        if (flags & nFont2::Bottom)     d3dFlags |= DT_BOTTOM;
+        if (flags & nFont2::Top)        d3dFlags |= DT_TOP;
+        if (flags & nFont2::Center)     d3dFlags |= DT_CENTER;
+        if (flags & nFont2::Left)       d3dFlags |= DT_LEFT;
+        if (flags & nFont2::Right)      d3dFlags |= DT_RIGHT;
+        if (flags & nFont2::VCenter)    d3dFlags |= DT_VCENTER;
+        if (flags & nFont2::NoClip)     d3dFlags |= DT_NOCLIP;
+        if (flags & nFont2::ExpandTabs) d3dFlags |= DT_EXPANDTABS;
+
         DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
         n_assert(d3dFont);
@@ -138,7 +159,7 @@ nD3D9Server::DrawText(const char* text, const vector4& color, float xPos, float 
         d3dFont->DrawText(this->d3dSprite,
             text,
             -1,&r,
-            DT_LEFT|DT_NOCLIP|DT_SINGLELINE,
+            d3dFlags,
             d3dColor);
         this->d3dSprite->End();
     }
@@ -163,20 +184,11 @@ nD3D9Server::GetTextExtent(const char* text)
         {
             this->refFont->Load();
         }        
-        RECT r;
-        r.left = 0;
-        r.top = 0;
-        r.bottom = 0;
-        r.right = 0;
-
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
-        n_assert(d3dFont);
-        height = d3dFont->DrawText(0,
-            text,
-            -1,&r,
-            DT_LEFT|DT_NOCLIP|DT_SINGLELINE|DT_CALCRECT,
-            0);
-        width = r.right;
+        RECT rect = { 0 };
+        int h = d3dFont->DrawTextA(NULL, text, -1, &rect, DT_LEFT | DT_NOCLIP | DT_CALCRECT, 0);
+        width = rect.right - rect.left;
+        height = rect.bottom - rect.top;
     }
     return vector2((float(width) / dispWidth), (float(height) / dispHeight));
 }

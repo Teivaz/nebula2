@@ -23,7 +23,10 @@ nD3D9Font::nD3D9Font() :
 */
 nD3D9Font::~nD3D9Font()
 {
-    // empty
+    if (this->IsValid())
+    {
+        this->Unload();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -92,6 +95,13 @@ nD3D9Font::UnloadResource()
 {
     n_assert(this->IsValid());
     n_assert(this->d3dFont);
+    nD3D9Server* gfxServer = this->refD3D9Server.get();
+
+    // if this i the currently set font, unlink from gfx server
+    if (gfxServer->GetFont() == this)
+    {
+        gfxServer->SetFont(0);
+    }
 
     // delete d3d font object
     this->d3dFont->Release();
@@ -109,8 +119,4 @@ nD3D9Font::UnloadResource()
     }
     this->SetValid(false);
 }
-
-
-            
-
 
