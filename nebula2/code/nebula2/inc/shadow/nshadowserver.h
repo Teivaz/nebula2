@@ -5,7 +5,7 @@
     @class nShadowServer
     @ingroup Shadow
 
-    The central server object in the stencil shadow buffer subsystem.
+    @brief The central server object in the stencil shadow buffer subsystem.
 
     (C) 2004 RadonLabs GmbH
 */

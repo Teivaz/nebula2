@@ -5,7 +5,7 @@
     @class nShadowCaster
     @ingroup Shadow
 
-    A generic shadow caster class in the stencil buffer shadow subsystem.
+    @brief A generic shadow caster class in the stencil buffer shadow subsystem.
 
     (C) 2004 RadonLabs GmbH
 */

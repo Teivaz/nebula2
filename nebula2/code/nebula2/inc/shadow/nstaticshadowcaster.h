@@ -5,7 +5,7 @@
     @class nStaticShadowCaster
     @ingroup Shadow
 
-    A shadow caster for static geometry.
+    @brief A shadow caster for static geometry.
 
     (C) 2004 RadonLabs GmbH
 */
