@@ -103,6 +103,8 @@ public:
     void rotate(const _vector3_sse& vec, float a);
     /// translate
     void translate(const _vector3_sse& t);
+    /// set absolute translation
+    void set_translation(const _vector3_sse& t);
     /// scale
     void scale(const _vector3_sse& s);
     /// unrestricted lookat
@@ -667,6 +669,17 @@ _matrix44_sse::translate(const _vector3_sse& t)
 {
     m4 = _mm_add_ps(m4, t.m128);
 }
+
+//------------------------------------------------------------------------------
+/**
+FIXME: RAFAEL HAS NO CLUE ABOUT SSE!
+*/
+inline
+void
+_matrix44_sse::set_translation(const _vector3_sse& t) 
+{
+    m4 = t.m128;
+};
 
 //------------------------------------------------------------------------------
 /**
