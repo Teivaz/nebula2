@@ -22,11 +22,11 @@
 // now, Character Studio entirely included in 3dsmax7
 // for other version of 3dsmax, specify include path of character studio
 // in 'project > directory' page of 'tool > option' menu.
-//#if (MAX_RELEASE == 7000 || MAX_RELEASE == 6900)   // 3dsmax R7 or R7 alpha
 #if (MAX_RELEASE >= 6900)   // 3dsmax R7 or R7 alpha
     #include <cs/bipexp.h>
     #include <cs/phyexp.h>
 #else
+    #include <bipexp.h>
     #include <phyexp.h>    // for other version
 #endif
 
