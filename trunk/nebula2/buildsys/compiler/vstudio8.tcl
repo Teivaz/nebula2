@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-#    makesln8.tcl
+#    vstudio8.tcl
 #
 #  FIXME:  This needs severly cleaned up and finished to use all relevant
 #          bits as an example for other compiler generator authors.
@@ -128,7 +128,7 @@ proc emit_vcproj_config {name cid debug} {
         puts $cid "\t\t\t\tDebugInformationFormat=\"4\"/>"
     } else {
         puts $cid "\t\t\t\tStringPooling=\"TRUE\""
-        puts $cid "\t\t\t\tGlobalOptimizations=\"TRUE\""
+        puts $cid "\t\t\t\tGlobalOptimizations=\"FALSE\""
         puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
         puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
         puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
