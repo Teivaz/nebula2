@@ -262,9 +262,7 @@ proc emit_dsp_settings {name cid use_debug} {
 
         # change dll extension if the extension is not '.dll' (dle or mll whatever it is)
         set dllextension [get_dllextension $name]
-        if { $dllextension != "dll"} {
         set out "\"$odir/$name.$dllextension\""
-        }
  
         puts $cid "# ADD LINK32 $win32_libs /nologo /dll /machine:I386 /out:$out $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
 
