@@ -134,9 +134,7 @@ bool nMaxScene::Preprocess(INode* root)
     n_maxlog(Midium, "Start to build bone list.");
 
     this->boneManager = nMaxBoneManager::Instance();
-    this->boneManager->BuildBoneList(root);
-
-    n_maxlog(Midium, "Found %d bones", this->boneManager->GetNumBones());
+    this->boneManager->Build(root);
 
     this->globalMeshBuilder.Clear();
 
@@ -151,9 +149,7 @@ bool nMaxScene::Preprocess(INode* root)
 */
 void SetFlags(ReferenceMaker *pRefMaker, int iStat)
 {
-    int i;
-
-    for (i = 0; i < pRefMaker->NumRefs(); i++) 
+    for (int i = 0; i < pRefMaker->NumRefs(); i++) 
     {
         ReferenceMaker *pChildRef = pRefMaker->GetReference(i);
         if (pChildRef) 
@@ -413,7 +409,9 @@ bool nMaxScene::Postprocess()
     animFilename = nMaxOptions::Instance()->GetAnimPath() + animFilename;
 
     //FIXME: we should add error handling code.
-    if (!this->ExportAnimation(animFilename))
+    //if (!this->ExportAnimation(animFilename))
+    //    return false;
+    if (!nMaxBoneManager::Instance()->Export(animFilename.Get()))
         return false;
 // end animation save
 
@@ -726,137 +724,4 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     {
         n_maxlog(High, "Exported XForm of the node '%s'", inode->GetName());
     }
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-bool nMaxScene::ExportAnimation(const nString &filename)
-{
-    nAnimBuilder animBuilder;
-
-    if (!CreateAnimation(animBuilder))
-    {
-        n_maxlog(Error, "Failed to create animation.");
-        return false;
-    }
-
-    if (animBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get()))
-    {
-        n_maxlog(Low, "'%s' animation file saved.", filename.Get());
-    }
-    else
-    {
-        n_maxlog(Error, "Failed to save '%s' animation file.", filename.Get());
-        return false;
-    }
-
-    return true;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
-{
-    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
-    float keyDuration = (float)sampleRate / GetFrameRate();
-    int sceneFirstKey = 0;
-
-    int numBones = nMaxBoneManager::Instance()->GetNumBones();
-
-    typedef nArray<nMaxSampleKey> Keys;
-    Keys keys;
-    keys.SetFixedSize(numBones);
-
-    nArray<Keys> keysArray;
-    keysArray.SetFixedSize(numBones+1);
-
-    for (int boneIndex=0; boneIndex<numBones; boneIndex++)
-    {
-        const nMaxBoneManager::Bone &bone = nMaxBoneManager::Instance()->GetBone(boneIndex);
-        INode* boneNode = bone.node;
-
-        nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
-    }
-
-    nMaxNoteTrack& noteTrack = nMaxBoneManager::Instance()->GetNoteTrack();
-    int numAnimStates = noteTrack.GetNumStates();
-
-    for (int state=0; state<numAnimStates; state++)
-    {
-        const nMaxAnimState& animState = noteTrack.GetState(state);
-
-        nAnimBuilder::Group animGroup;
-
-        TimeValue stateStart = animState.firstFrame * GetTicksPerFrame();
-        TimeValue stateEnd   = animState.duration * GetTicksPerFrame();
-
-        int numClips = animState.clipArray.Size();
-
-        int firstKey     = animState.firstFrame / sampleRate;
-        int numStateKeys = animState.duration / sampleRate;
-        int numClipKeys  = numStateKeys / numClips;
-
-        // do not add anim group, if the number of the state key or the clip keys are 0.
-        if (numStateKeys <= 0 || numClipKeys <= 0)
-            continue;
-
-        animGroup.SetLoopType(nAnimBuilder::Group::REPEAT);
-        animGroup.SetKeyTime(keyDuration);
-        animGroup.SetNumKeys(numClipKeys);
-
-        for (int clip=0; clip<numClips; clip++)
-        {
-            int numBones = nMaxBoneManager::Instance()->GetNumBones();
-
-            for (int boneIdx=0; boneIdx<numBones; boneIdx++)
-            {
-                nArray<nMaxSampleKey> tmpSampleArray = keysArray[boneIdx];
-
-                nAnimBuilder::Curve animCurveTrans;
-                nAnimBuilder::Curve animCurveRot;
-                nAnimBuilder::Curve animCurveScale;
-
-                animCurveTrans.SetIpolType(nAnimBuilder::Curve::LINEAR);
-                animCurveRot.SetIpolType(nAnimBuilder::Curve::QUAT);
-                animCurveScale.SetIpolType(nAnimBuilder::Curve::LINEAR);
-
-                for (int clipKey=0; clipKey<numClipKeys; clipKey++)
-                {
-                    nAnimBuilder::Key keyTrans;
-                    nAnimBuilder::Key keyRot;
-                    nAnimBuilder::Key keyScale;
-
-                    int key_idx = firstKey - sceneFirstKey + clip * numClipKeys + clipKey;
-                    n_iclamp(key_idx, 0, tmpSampleArray.Size());
-
-                    nMaxSampleKey& skey = tmpSampleArray[key_idx];
-
-                    keyTrans.Set(vector4(-skey.pos.x, skey.pos.z, skey.pos.y, 0.0f));
-                    animCurveTrans.SetKey(clipKey, keyTrans);
-
-                    keyRot.Set(vector4(-skey.rot.x, skey.rot.z, skey.rot.y, -skey.rot.w));
-                    animCurveRot.SetKey(clipKey, keyRot);
-
-                    keyScale.Set(vector4(skey.scale.x, skey.scale.z, skey.scale.y, 0.0f));
-                    animCurveScale.SetKey(clipKey, keyScale);
-                }
-
-                animGroup.AddCurve(animCurveTrans);
-                animGroup.AddCurve(animCurveRot);
-                animGroup.AddCurve(animCurveScale);
-            }
-        }
-
-        animBuilder.AddGroup(animGroup);
-    }
-
-    n_maxlog(Midium, "Optimizing animation curves...");
-    int numOptimizedCurves = animBuilder.Optimize();
-    n_maxlog(Midium, "Number of optimized curves : %d", numOptimizedCurves);
-
-    animBuilder.FixKeyOffsets();
-
-    return true;
 }

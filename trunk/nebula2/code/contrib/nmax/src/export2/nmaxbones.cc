@@ -4,12 +4,17 @@
 //  (c)2004 Kim, Hyoun Woo
 //---------------------------------------------------------------------------
 #include "export2/nmax.h"
+#include "export2/nmaxoptions.h"
 #include "export2/nmaxnotetrack.h"
 #include "export2/nmaxbones.h"
 #include "export2/nmaxutil.h"
 #include "export2/nmaxtransform.h"
+#include "export2/nmaxcontrol.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
+
+#include "kernel/nkernelserver.h"
+#include "tools/nanimbuilder.h"
 
 nMaxBoneManager* nMaxBoneManager::Singleton = 0;
 
@@ -112,7 +117,7 @@ void nMaxBoneManager::GetRootBones(INode* sceneRoot, const nArray<INode*> &boneN
 
         if (node->GetParentNode() == sceneRoot)
         {
-            // it's the first node in bone node hierarcy.
+            // it's the first node in bone node hierarchy.
             rootBoneArray.Append(node);
         }
     }
@@ -156,7 +161,7 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
     interface.
 
 */
-void nMaxBoneManager::BuildBoneList(INode* node)
+void nMaxBoneManager::Build(INode* node)
 {
     INode* sceneRoot = node;
 
@@ -199,6 +204,8 @@ void nMaxBoneManager::BuildBoneList(INode* node)
 
         noteTrack.GetAnimState(boneNode);
     }
+
+    n_maxlog(Midium, "Found %d bones", this->GetNumBones());
 }
 
 //-----------------------------------------------------------------------------
@@ -320,7 +327,6 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod, nArray<IN
                 int	boneNr	= context->GetAssignedBone(i, b);
                 if (boneNr < 0)
                 {
-                    //MCore::LOG("Help! BoneNr is < 0 (%d)", boneNr);
                     boneNr = 0;
                     continue;
                 }
@@ -507,4 +513,129 @@ INode* nMaxBoneManager::FindBoneNodeByIndex(int index)
     }
 
     return 0;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Build skeletal animations and saves it to the disc.
+
+    @param animFileName .nanim2(or .nax2) file name
+*/
+bool nMaxBoneManager::Export(const char* animFileName)
+{
+    n_assert(animFileName);
+
+    nAnimBuilder animBuilder;
+
+    // retrieves smapled keys.
+    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
+    float keyDuration = (float)sampleRate / GetFrameRate();
+    int sceneFirstKey = 0;
+
+    int numBones = this->GetNumBones();
+
+    typedef nArray<nMaxSampleKey> Keys;
+    Keys keys;
+    keys.SetFixedSize(numBones);
+
+    nArray<Keys> keysArray;
+    keysArray.SetFixedSize(numBones+1);
+
+    for (int boneIndex=0; boneIndex<numBones; boneIndex++)
+    {
+        const nMaxBoneManager::Bone &bone = this->GetBone(boneIndex);
+        INode* boneNode = bone.node;
+
+        nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
+    }
+
+    // builds skeletal animations.
+    int numAnimStates = noteTrack.GetNumStates();
+
+    for (int state=0; state<numAnimStates; state++)
+    {
+        const nMaxAnimState& animState = noteTrack.GetState(state);
+
+        nAnimBuilder::Group animGroup;
+
+        TimeValue stateStart = animState.firstFrame * GetTicksPerFrame();
+        TimeValue stateEnd   = animState.duration * GetTicksPerFrame();
+
+        int numClips = animState.clipArray.Size();
+
+        int firstKey     = animState.firstFrame / sampleRate;
+        int numStateKeys = animState.duration / sampleRate;
+        int numClipKeys  = numStateKeys / numClips;
+
+        // do not add anim group, if the number of the state key or the clip keys are 0.
+        if (numStateKeys <= 0 || numClipKeys <= 0)
+            continue;
+
+        animGroup.SetLoopType(nAnimBuilder::Group::REPEAT);
+        animGroup.SetKeyTime(keyDuration);
+        animGroup.SetNumKeys(numClipKeys);
+
+        for (int clip=0; clip<numClips; clip++)
+        {
+            int numBones = this->GetNumBones();
+
+            for (int boneIdx=0; boneIdx<numBones; boneIdx++)
+            {
+                nArray<nMaxSampleKey> tmpSampleArray = keysArray[boneIdx];
+
+                nAnimBuilder::Curve animCurveTrans;
+                nAnimBuilder::Curve animCurveRot;
+                nAnimBuilder::Curve animCurveScale;
+
+                animCurveTrans.SetIpolType(nAnimBuilder::Curve::LINEAR);
+                animCurveRot.SetIpolType(nAnimBuilder::Curve::QUAT);
+                animCurveScale.SetIpolType(nAnimBuilder::Curve::LINEAR);
+
+                for (int clipKey=0; clipKey<numClipKeys; clipKey++)
+                {
+                    nAnimBuilder::Key keyTrans;
+                    nAnimBuilder::Key keyRot;
+                    nAnimBuilder::Key keyScale;
+
+                    int key_idx = firstKey - sceneFirstKey + clip * numClipKeys + clipKey;
+                    n_iclamp(key_idx, 0, tmpSampleArray.Size());
+
+                    nMaxSampleKey& skey = tmpSampleArray[key_idx];
+
+                    keyTrans.Set(vector4(-skey.pos.x, skey.pos.z, skey.pos.y, 0.0f));
+                    animCurveTrans.SetKey(clipKey, keyTrans);
+
+                    keyRot.Set(vector4(-skey.rot.x, skey.rot.z, skey.rot.y, -skey.rot.w));
+                    animCurveRot.SetKey(clipKey, keyRot);
+
+                    keyScale.Set(vector4(skey.scale.x, skey.scale.z, skey.scale.y, 0.0f));
+                    animCurveScale.SetKey(clipKey, keyScale);
+                }
+
+                animGroup.AddCurve(animCurveTrans);
+                animGroup.AddCurve(animCurveRot);
+                animGroup.AddCurve(animCurveScale);
+            }
+        }
+
+        animBuilder.AddGroup(animGroup);
+    }
+
+    n_maxlog(Midium, "Optimizing animation curves...");
+    int numOptimizedCurves = animBuilder.Optimize();
+    n_maxlog(Midium, "Number of optimized curves : %d", numOptimizedCurves);
+
+    animBuilder.FixKeyOffsets();
+
+    if (animBuilder.Save(nKernelServer::Instance()->GetFileServer(), animFileName))
+    {
+        n_maxlog(Low, "'%s' animation file saved.", animFileName);
+    }
+    else
+    {
+        n_maxlog(Error, "Failed to save '%s' animation file.", animFileName);
+        return false;
+    }
+
+    return true;
 }

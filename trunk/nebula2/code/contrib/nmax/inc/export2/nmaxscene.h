@@ -13,7 +13,6 @@
     @brief A class for 3dsmax scene which to be exported.
 
 */
-#include "tools/nanimbuilder.h"
 
 class nMaxMesh;
 class nVariableServer;
@@ -54,15 +53,10 @@ protected:
     nSceneNode* ExportParticle();
 
     void ExportBackgroudColor();
+    Point3 GetBackgroundColor() const;
 
     void ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &animStart);
-
-    bool ExportAnimation(const nString &filename);
-
-    Point3 GetBackgroundColor() const;
     // @}
-
-    bool CreateAnimation(nAnimBuilder &animBuilder);
 
     void CollectTopLevelNodes(INode* inode);
     bool IsExportedNode(INode* inode);
@@ -70,7 +64,8 @@ protected:
 protected:
     nRef<nVariableServer> varServer;
     
-    // bone manager for all bones in the scene.
+    /// bone manager for all bones in the scene.
+    /// we keep the pointer to delete the singleton at the end of the export stage.
     nMaxBoneManager* boneManager;
 
     /// scene root node.
