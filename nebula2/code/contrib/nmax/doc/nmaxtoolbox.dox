@@ -1,6 +1,6 @@
 /**
     @defgroup NebulaMaxExport2Contrib 3DSMax Toolkit
-    @ingroup NebulaContribExporterModules
+    @ingroup NebulaContribAssetToolchainModules
     @brief nMaxToolBox is a toolkit for 3DS Max for Nebula2.
 
     @section NMAXToolBoxInstallation Installation

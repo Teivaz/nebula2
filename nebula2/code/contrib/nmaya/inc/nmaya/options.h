@@ -5,6 +5,10 @@
 #include <maya/MGlobal.h>
 #include <cassert>
 
+/**
+    @class Options
+    @ingroup NMayaContribModule
+*/
 class Options
 {
 public:

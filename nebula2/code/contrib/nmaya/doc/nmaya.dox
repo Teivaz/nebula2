@@ -1,0 +1,11 @@
+/**
+    @defgroup NMayaContribModule nMaya
+    @ingroup NebulaContribAssetToolchainModules
+    @brief nMaya is a Maya exporter.
+
+nMaya is currently unmaintained and obsolete.
+
+We recommend using the commercially supported and maintained
+<a href="http://www.radonlabs.de/toolkit.html">Nebula2 Toolkit for Maya</a>
+available from <a href="http://www.radonlabs.de/">Radon Labs</a>.
+*/
