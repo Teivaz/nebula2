@@ -45,3 +45,10 @@ beginmodule ntexture2
     setheaders { ntexture2 }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nsurface
+    setdir gfx2
+    setfiles   { nsurface }
+    setheaders { nsurface }
+endmodule
+#-------------------------------------------------------------------------------
+
