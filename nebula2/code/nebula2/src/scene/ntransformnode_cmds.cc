@@ -439,13 +439,15 @@ nTransformNode::SaveCmds(nPersistServer* ps)
     if (nSceneNode::SaveCmds(ps))
     {
         nCmd* cmd;
+        static const vector3 nullVec;
+        static const vector3 oneVec(1.0f, 1.0f, 1.0f);
 
         //--- setactive ---
         if (!this->GetActive())
         {
-        cmd = ps->GetCmd(this, 'SACT');
-        cmd->In()->SetB(this->GetActive());
-        ps->PutCmd(cmd);
+            cmd = ps->GetCmd(this, 'SACT');
+            cmd->In()->SetB(this->GetActive());
+            ps->PutCmd(cmd);
         }
 
         //--- setlockviewer ---
@@ -457,37 +459,54 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         }
 
         //--- setposition ---
-        cmd = ps->GetCmd(this, 'SPOS');
-        cmd->In()->SetF(this->pos.x);
-        cmd->In()->SetF(this->pos.y);
-        cmd->In()->SetF(this->pos.z);
-        ps->PutCmd(cmd);
+        const vector3& pos = this->tform.gettranslation();
+        if (!pos.isequal(nullVec, 0.0f))
+        {
+            cmd = ps->GetCmd(this, 'SPOS');
+            cmd->In()->SetF(pos.x);
+            cmd->In()->SetF(pos.y);
+            cmd->In()->SetF(pos.z);
+            ps->PutCmd(cmd);
+        }
 
         //--- seteuler/setquat ---
-        if (this->CheckFlags(UseQuat))
+        if (this->tform.iseulerrotation())
         {
-            cmd = ps->GetCmd(this, 'SQUT');
-            cmd->In()->SetF(this->quat.x);
-            cmd->In()->SetF(this->quat.y);
-            cmd->In()->SetF(this->quat.z);
-            cmd->In()->SetF(this->quat.w);
-            ps->PutCmd(cmd);
+            const vector3& euler = this->tform.geteulerrotation();
+            if (!euler.isequal(nullVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SEUL');
+                cmd->In()->SetF(n_rad2deg(euler.x));
+                cmd->In()->SetF(n_rad2deg(euler.y));
+                cmd->In()->SetF(n_rad2deg(euler.z));
+                ps->PutCmd(cmd);
+            }
         }
         else
         {
-            cmd = ps->GetCmd(this, 'SEUL');
-            cmd->In()->SetF(n_rad2deg(this->euler.x));
-            cmd->In()->SetF(n_rad2deg(this->euler.y));
-            cmd->In()->SetF(n_rad2deg(this->euler.z));
-            ps->PutCmd(cmd);
+            static const quaternion identQuat;
+            const quaternion& quat = this->tform.getquatrotation();
+            if (!quat.isequal(identQuat, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SQUT');
+                cmd->In()->SetF(quat.x);
+                cmd->In()->SetF(quat.y);
+                cmd->In()->SetF(quat.z);
+                cmd->In()->SetF(quat.w);
+                ps->PutCmd(cmd);
+            }
         }
 
         //--- setscale ---
-        cmd = ps->GetCmd(this, 'SSCL');
-        cmd->In()->SetF(this->scale.x);
-        cmd->In()->SetF(this->scale.y);
-        cmd->In()->SetF(this->scale.z);
-        ps->PutCmd(cmd);
+        const vector3& scale = this->tform.getscale();
+        if (!scale.isequal(oneVec, 0.0f))
+        {
+            cmd = ps->GetCmd(this, 'SSCL');
+            cmd->In()->SetF(scale.x);
+            cmd->In()->SetF(scale.y);
+            cmd->In()->SetF(scale.z);
+            ps->PutCmd(cmd);
+        }
 
         return true;
     }
