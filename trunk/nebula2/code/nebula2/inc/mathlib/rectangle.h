@@ -146,10 +146,10 @@ rectangle operator *(const rectangle& r0, const rectangle& r1)
     }
     else
     {
-        v0x = max(r0.v0.x, r1.v0.x);
-        v0y = max(r0.v0.y, r1.v0.y);
-        v1x = min(r0.v1.x, r1.v1.x);
-        v1y = min(r0.v1.y, r1.v1.y);
+        v0x = n_max(r0.v0.x, r1.v0.x);
+        v0y = n_max(r0.v0.y, r1.v0.y);
+        v1x = n_min(r0.v1.x, r1.v1.x);
+        v1y = n_min(r0.v1.y, r1.v1.y);
     }
 
     return rectangle(vector2(v0x, v0y), vector2(v1x, v1y));
