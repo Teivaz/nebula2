@@ -1,0 +1,58 @@
+#-------------------------------------------------------------------------------
+#   ncterrain2-tools.bld
+#   ==============
+#   Nebula2 ChunkLOD terrain tools.
+#   (C) 2003 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+beginmodule nmaketqt2
+    setdir nct2tools
+    setfiles { nmaketqt2 ntqt2compressor ntqt2filemaker }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nbttotga
+    setdir nct2tools
+    setfiles { nbttotga }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaketerraintexture
+    setdir nct2tools
+    setfiles { nmaketerraintexture }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nchopbtfile
+    setdir nct2tools
+    setfiles { nchopbtfile }
+endmodule
+
+#===============================================================================
+begintarget nmaketqt2
+    settype exe
+    setmodules { nmaketqt2 }
+    settargetdeps {
+        nkernel nnebula ncterrain2 
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nbttotga
+    settype exe
+    setmodules { nbttotga }
+    settargetdeps {
+        nkernel nnebula ncterrain2
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nchopbtfile
+    settype exe
+    setmodules { nchopbtfile }
+    settargetdeps {
+        nkernel nnebula ncterrain2
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nmaketerraintexture
+    settype exe
+    setmodules { nmaketerraintexture }
+    settargetdeps {
+        nkernel nnebula ncterrain2
+    }
+endtarget
