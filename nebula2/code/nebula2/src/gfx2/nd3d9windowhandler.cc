@@ -101,10 +101,26 @@ nD3D9WindowHandler::OnClose()
     n_assert(this->d3d9Server);
 
     // *** HACK *** HACK *** HACK ***
-/*
-    int res = MessageBox(this->hWnd, "Really Quit?", "Hack Hack Hack", MB_OKCANCEL);
-    return (res == IDOK);
-*/
-return true;
+    /*
+        int res = MessageBox(this->hWnd, "Really Quit?", "Hack Hack Hack", MB_OKCANCEL);
+        return (res == IDOK);
+    */
+    return true;
+}
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9WindowHandler::OnSize(bool minimize)
+{
+    // only handle show requests when the d3ddevice is initiated
+    if (!minimize && this->d3d9Server->d3d9Device)
+    {
+        nWin32WindowHandler::OnSize(minimize);
+    }
+    else
+    {
+        nWin32WindowHandler::OnSize(minimize);
+    }
 }

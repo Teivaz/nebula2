@@ -102,3 +102,10 @@ nWindowHandler::Trigger()
 {
     return true;
 }
+
+
+
+
+
+
+    

@@ -7,20 +7,6 @@
 
 nNebulaClass(nShader2, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nshader2
-
-    @cppclass
-    nShader2
-    
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
 //------------------------------------------------------------------------------
 /**
 */
@@ -213,18 +199,26 @@ nShader2::SetParams(const nShaderParams& /*params*/)
 int
 nShader2::Begin(bool saveState)
 {
-    // empty
+    // empty, implement this method in a subclass
     return 0;
 }
 
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
 //------------------------------------------------------------------------------
 /**
 */
 void
 nShader2::BeginPass(int pass)
 {
-    // empty
+    // empty, implement this method in a subclass
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nShader2::CommitChanges()
+{
+    // empty, implement this method in a subclass
 }
 
 //------------------------------------------------------------------------------
@@ -233,18 +227,8 @@ nShader2::BeginPass(int pass)
 void
 nShader2::EndPass()
 {
-    // empty
+    // empty, implement this method in a subclass
 }
-#else
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nShader2::Pass(int /*pass*/)
-{
-    // empty
-}
-#endif
 
 //------------------------------------------------------------------------------
 /**
@@ -252,7 +236,7 @@ nShader2::Pass(int /*pass*/)
 void
 nShader2::End()
 {
-    // empty
+    // empty, implement this method in a subclass
 }
 
 //------------------------------------------------------------------------------

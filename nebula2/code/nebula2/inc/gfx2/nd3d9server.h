@@ -144,6 +144,16 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
 
+    enum WinVersion
+    {
+        Win32_NT = 0,  //NT4, 2000, XP...
+        Win32_Windows, //95, 98, ME...
+        UnknownWin,
+    };
+
+    /// get the detected windows version
+    WinVersion GetWindowsVersion() const;
+
     /// adjust gamma.
     virtual void AdjustGamma();
     /// restore gamma.
@@ -159,7 +169,7 @@ private:
     /// check a buffer format combination for compatibility
     bool CheckDepthFormat(D3DFORMAT adapterFormat, D3DFORMAT backbufferFormat, D3DFORMAT depthFormat);
     /// find the best possible buffer format combination
-    void FindBufferFormats(D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3DFORMAT& zbufFormat);
+    void FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3DFORMAT& backFormat, D3DFORMAT& zbufFormat);
     /// open d3d
     void D3dOpen();
     /// close d3d
@@ -169,7 +179,7 @@ private:
     /// release the d3d device
     void DeviceClose();
     /// unload resource data (call when device lost)
-    void OnDeviceLost();
+    void OnDeviceLost(bool unloadManaged);
     /// reload resource data (call when device restored)
     void OnRestoreDevice();
     /// initialize device default state
@@ -196,6 +206,11 @@ private:
     void DrawInstancedNS(PrimitiveType primType);
     /// update shared shader parameters
     void UpdateSharedShaderParams();
+    /// return number of bits for a D3DFORMAT
+    int GetD3DFormatNumBits(D3DFORMAT fmt);
+
+    void DetectWindowsVersion();
+    WinVersion winVersion;
     /// add nEnvs describing display modes (for all adapters) to the NOH
     void CreateDisplayModeEnvVars();
 
@@ -383,5 +398,16 @@ nD3D9Server::GetEffectPool() const
 {
     return this->effectPool;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nD3D9Server::WinVersion
+nD3D9Server::GetWindowsVersion() const
+{
+    return this->winVersion;
+}
+
 //------------------------------------------------------------------------------
 #endif

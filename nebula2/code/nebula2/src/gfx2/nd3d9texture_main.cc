@@ -2,7 +2,6 @@
 //  nd3d9texture_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include <d3d9.h>
 #include "gfx2/nsurface.h"
 #include "gfx2/nd3d9surface.h"
 #include "gfx2/nd3d9texture.h"
@@ -10,21 +9,6 @@
 #include "kernel/nfile.h"
 
 nNebulaClass(nD3D9Texture, "ntexture2");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9texture
-
-    @cppclass
-    nD3D9Texture
-    
-    @superclass
-    ntexture2
-    
-    @classinfo
-    Docs needed.
-*/
 
 //------------------------------------------------------------------------------
 /**

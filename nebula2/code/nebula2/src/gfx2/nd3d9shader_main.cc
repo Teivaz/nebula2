@@ -12,31 +12,12 @@
 
 nNebulaClass(nD3D9Shader, "nshader2");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9shader
-
-    @cppclass
-    nD3D9Shader
-    
-    @superclass
-    nshader2
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
 nD3D9Shader::nD3D9Shader() :
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    inBeginPass(false),
-#endif
     refGfxServer("/sys/servers/gfx"),
     effect(0),
-    needSoftwareVertexProcessing(false),
     hasBeenValidated(false),
     didNotValidate(false)
 {
@@ -100,9 +81,6 @@ nD3D9Shader::LoadResource()
     nString filename = this->GetFilename();
     nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
 
-    // initialize shader index
-    this->shaderIndex = this->refGfxServer->GetShaderIndex(filename.Get());
-    
     //load fx file...
     nFile* file = nFileServer2::Instance()->NewFileObject();
 
@@ -189,13 +167,6 @@ nD3D9Shader::SetBool(nShaderState::Param p, bool val)
     #endif
     n_dxtrace(hr, "SetInt() on shader failed!");
 
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -210,13 +181,6 @@ nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetIntArray() on shader failed!");    
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -232,13 +196,6 @@ nD3D9Shader::SetInt(nShaderState::Param p, int val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetInt() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -253,13 +210,6 @@ nD3D9Shader::SetIntArray(nShaderState::Param p, const int* array, int count)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetIntArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -275,13 +225,6 @@ nD3D9Shader::SetFloat(nShaderState::Param p, float val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetFloat() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -296,13 +239,6 @@ nD3D9Shader::SetFloatArray(nShaderState::Param p, const float* array, int count)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetFloatArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -318,13 +254,6 @@ nD3D9Shader::SetVector4(nShaderState::Param p, const vector4& val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetVector() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -342,13 +271,6 @@ nD3D9Shader::SetVector3(nShaderState::Param p, const vector3& val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetVector() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -364,13 +286,6 @@ nD3D9Shader::SetFloat4(nShaderState::Param p, const nFloat4& val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetVector() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -385,13 +300,6 @@ nD3D9Shader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int cou
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetVectorArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -406,13 +314,6 @@ nD3D9Shader::SetVector4Array(nShaderState::Param p, const vector4* array, int co
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetVectorArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -428,13 +329,6 @@ nD3D9Shader::SetMatrix(nShaderState::Param p, const matrix44& val)
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetMatrix() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -449,13 +343,6 @@ nD3D9Shader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int co
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetMatrixArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -470,13 +357,6 @@ nD3D9Shader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
     n_dxtrace(hr, "SetMatrixPointerArray() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -496,13 +376,6 @@ nD3D9Shader::SetTexture(nShaderState::Param p, nTexture2* tex)
         this->refGfxServer->statsNumTextureChanges++;
         #endif
         n_dxtrace(hr, "SetTexture() on shader failed!");
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-        if (this->inBeginPass)
-        {
-            hr = this->effect->CommitChanges();
-            n_dxtrace(hr, "CommitChanges() on shader failed!");
-        }
-#endif
     }
 }
 
@@ -583,13 +456,6 @@ nD3D9Shader::SetParams(const nShaderParams& params)
             }
         }
     }
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    if (this->inBeginPass)
-    {
-        hr = this->effect->CommitChanges();
-        n_dxtrace(hr, "CommitChanges() on shader failed!");
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -654,11 +520,10 @@ nD3D9Shader::ValidateEffect()
     n_assert(this->refGfxServer->d3d9Device);
 
     // set on first technique that validates correctly
-    D3DXHANDLE technique = this->effect->GetTechnique(0);
-    n_assert(NULL != technique);
+    D3DXHANDLE technique = NULL;
+    HRESULT	hr = this->effect->FindNextValidTechnique(0, &technique);
 
-    HRESULT hr = this->effect->ValidateTechnique(technique);
-    if (SUCCEEDED(hr))
+    if (S_OK == hr) 
     {
         // technique could be validated
         this->effect->SetTechnique(technique);
@@ -675,17 +540,16 @@ nD3D9Shader::ValidateEffect()
         if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
         {
             this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing( TRUE );
-            hr = this->effect->ValidateTechnique(technique);
+            hr = this->effect->FindNextValidTechnique(0, &technique);
             this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing(oldSoftwareVertexProcessing);
 
             this->hasBeenValidated = true;
-            if (SUCCEEDED(hr))
+            if (S_OK == hr)
             {
                 n_printf("nD3D9Shader() info: shader '%s' needs software vertex processing\n",  this->GetFilename());
                 // technique could be validated
                 this->effect->SetTechnique(technique);
                 this->didNotValidate = false;
-                this->needSoftwareVertexProcessing = true;
                 this->UpdateParameterHandles();
             }
             else
@@ -729,10 +593,10 @@ nD3D9Shader::Begin(bool saveState)
         UINT numPasses;
         DWORD flags;
         if (saveState) flags = 0;
-        else           flags = D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESHADERSTATE;
+        else           flags = D3DXFX_DONOTSAVESTATE;
 
         HRESULT hr = this->effect->Begin(&numPasses, flags);
-        n_dxtrace(hr, "Begin() failed on effect");
+        n_dxtrace(hr, "nD3D9Shader: Begin() failed on effect");
         return numPasses;
     }
 }
@@ -740,16 +604,35 @@ nD3D9Shader::Begin(bool saveState)
 //------------------------------------------------------------------------------
 /**
 */
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
 void
 nD3D9Shader::BeginPass(int pass)
 {
-    HRESULT hr;
     n_assert(this->effect);
-    n_assert(!this->inBeginPass);
-    hr = this->effect->BeginPass(pass);
-    n_dxtrace(hr, "BeginPass() failed on effect");
-    this->inBeginPass = true;
+    n_assert(this->hasBeenValidated && !this->didNotValidate);
+
+/*
+    FIXME: DX9.0c implementation
+
+    HRESULT hr = this->effect->BeginPass(pass);
+    n_dxtrace(hr, "nD3D9Shader:BeginPass() failed on effect");
+*/
+    HRESULT hr = this->effect->Pass(pass);
+    n_dxtrace(hr, "nD3D9Shader: Pass() failed on effect");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9Shader::CommitChanges()
+{
+/*
+    n_assert(this->effect);
+    n_assert(this->hasBeenValidated && !this->didNotValidate);
+
+    HRESULT hr = this->effect->CommitChanges();
+    n_dxtrace(hr, "nD3D9Shader: CommitChanges() failed on effect");
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -758,30 +641,16 @@ nD3D9Shader::BeginPass(int pass)
 void
 nD3D9Shader::EndPass()
 {
-    HRESULT hr;
+/*
+    FIXME: DX9.0c implementation
+
     n_assert(this->effect);
-    n_assert(this->inBeginPass);
-    hr = this->effect->EndPass();
-    n_dxtrace(hr, "EndPass() failed on effect");
-    this->inBeginPass = false;
-}
-#else
-//------------------------------------------------------------------------------
-/**
+    n_assert(this->hasBeenValidated && !this->didNotValidate);
+    
+    HRESULT hr = this->effect->EndPass();
+    n_dxtrace(hr, "nD3D9Shader: EndPass() failed on effect");
 */
-void
-nD3D9Shader::Pass(int pass)
-{
-    HRESULT hr;
-    n_assert(this->effect);
-    #if (D3D_SDK_VERSION >= 32)
-    hr = this->effect->BeginPass(pass);
-    #else
-    hr = this->effect->Pass(pass);
-    #endif
-    n_dxtrace(hr, "Pass() failed on effect");
 }
-#endif
 
 //------------------------------------------------------------------------------
 /**
@@ -791,9 +660,8 @@ nD3D9Shader::End()
 {
     HRESULT hr;
     n_assert(this->effect);
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    n_assert(!this->inBeginPass);
-#endif
+    n_assert(this->hasBeenValidated);
+
     if (!this->didNotValidate)
     {
         hr = this->effect->End();

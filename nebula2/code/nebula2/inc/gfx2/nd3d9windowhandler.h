@@ -28,6 +28,8 @@ public:
     virtual void OnToggleFullscreenWindowed();
     /// called when WM_CLOSE is received, return true if app should quit
     virtual bool OnClose();
+    /// called when WM_SIZE is received
+    virtual void OnSize(bool minimize);
 
 private:
     nD3D9Server* d3d9Server;

@@ -20,7 +20,6 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#include <d3d9.h> // DELETE ME - Workaround (to have the define) to support the summer 2004 update sdk
 #include "resource/nresource.h"
 #include "mathlib/matrix.h"
 #include "variable/nvariable.h"
@@ -89,15 +88,12 @@ public:
 
     /// begin applying the shader, returns number of passes
     virtual int Begin(bool saveState);
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    /// render a begin a pass
+    /// begin a pass
     virtual void BeginPass(int pass);
-    /// render a end a pass
+    /// commit changes during pass before rendering
+    virtual void CommitChanges();
+    /// end a pass
     virtual void EndPass();
-#else
-    /// render a pass
-    virtual void Pass(int pass);
-#endif
     /// finish applying the shader
     virtual void End();
  

@@ -8,21 +8,6 @@
 
 nNebulaClass(nTexture2, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    ntexture2
-
-    @cppclass
-    nTexture2
-    
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

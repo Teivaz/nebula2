@@ -8,21 +8,6 @@
 
 nNebulaClass(nD3D9Font, "nfont2");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9font
-
-    @cppclass
-    nD3D9Font
-    
-    @superclass
-    nfont2
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -82,8 +67,14 @@ nD3D9Font::LoadResource()
         break;
     }
 
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    UINT height = UINT(float(this->fontDesc.GetHeight()) * gfxServer->GetFontScale());
+    if (height < UINT(gfxServer->GetMinFontHeight()))
+    {
+        height = gfxServer->GetMinFontHeight();
+    }
     HRESULT hr = D3DXCreateFont(this->refD3D9Server->d3d9Device,
-        this->fontDesc.GetHeight(), 0,
+        height, 0,
         fontFlags, 0,
         this->fontDesc.GetItalic(),
         DEFAULT_CHARSET,

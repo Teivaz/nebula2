@@ -47,6 +47,14 @@ public:
     void SetAmbient(const vector4& c);
     /// get light's ambient color
     const vector4& GetAmbient() const;
+    /// set secondary diffuse color
+    void SetSecondaryDiffuse(const vector4& c);
+    /// get secondary diffuse color
+    const vector4& GetSecondaryDiffuse() const;
+    /// set secondary specular color
+    void SetSecondarySpecular(const vector4& c);
+    /// get secondary specular color
+    const vector4& GetSecondarySpecular() const;
 
 private:
     matrix44 transform;
@@ -54,6 +62,8 @@ private:
     vector4 diffuse;
     vector4 specular;
     vector4 ambient;
+    vector4 secDiffuse;
+    vector4 secSpecular;
 };
 
 //------------------------------------------------------------------------------
@@ -64,7 +74,9 @@ nLight::nLight() :
     type(Point),
     diffuse(1.0f, 1.0f, 1.0f, 1.0f),
     specular(1.0f, 1.0f, 1.0f, 1.0f),
-    ambient(0.0f, 0.0f, 0.0f, 0.0f)
+    ambient(0.0f, 0.0f, 0.0f, 0.0f),
+    secDiffuse(0.0f, 0.0f, 0.0f, 0.0f),
+    secSpecular(0.0f, 0.0f, 0.0f, 0.0f)
 {
     // empty
 }
@@ -176,6 +188,46 @@ const vector4&
 nLight::GetAmbient() const
 {
     return this->ambient;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nLight::SetSecondaryDiffuse(const vector4& c)
+{
+    this->secDiffuse = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nLight::GetSecondaryDiffuse() const
+{
+    return this->secDiffuse;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nLight::SetSecondarySpecular(const vector4& c)
+{
+    this->secSpecular;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nLight::GetSecondarySpecular() const
+{
+    return this->secSpecular;
 }
 
 //------------------------------------------------------------------------------

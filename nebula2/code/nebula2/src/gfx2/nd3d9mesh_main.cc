@@ -6,21 +6,6 @@
 
 nNebulaClass(nD3D9Mesh, "nmesh2");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9mesh
-
-    @cppclass
-    nD3D9Mesh
-    
-    @superclass
-    nmesh2
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

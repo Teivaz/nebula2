@@ -70,18 +70,18 @@
 
     float[] vertices;
     ushort[] indices;
-    ushort[] edge;
+    ushort[] edge [ 2 * faceIndex, 2 * vertexIndex ]
     @endverbatim
 
     (C) 2002 RadonLabs GmbH
 */
 #include "resource/nresource.h"
 #include "gfx2/nmeshgroup.h"
-#include "gfx2/nmeshloader.h"
 #include "gfx2/ngfxserver2.h"
 
 class nGfxServer2;
 class nVariableServer;
+class nMeshLoader;
 
 //------------------------------------------------------------------------------
 class nMesh2 : public nResource
@@ -132,7 +132,7 @@ public:
 
     enum
     {
-        InvalidIndex = -1, // invalid index constant
+        InvalidIndex = 0xffff, // invalid index constant
     };
 
     struct Edge
@@ -182,8 +182,12 @@ public:
     void SetVertexComponents(int compMask);
     /// get vertex components
     int GetVertexComponents() const;
+    /// get the stride distance between the begin of a element and the requested component
+    int GetVertexComponentDistance(VertexComponent component) const;
     /// get vertex width (number of floats in one vertex)
     int GetVertexWidth() const;
+    /// get the vertex width for component mask
+    static int GetVertexWidthFormMask(int compMask);
     /// set number of groups
     void SetNumGroups(int num);
     /// get number of groups
@@ -321,7 +325,7 @@ nMesh2::SetNumGroups(int num)
     n_assert(num > 0);
     n_assert(0 == this->groups);
     this->numGroups = num;
-    this->groups = new nMeshGroup[num];
+    this->groups = n_new_array(nMeshGroup,num);
 }
 
 //------------------------------------------------------------------------------
@@ -353,18 +357,77 @@ void
 nMesh2::SetVertexComponents(int compMask)
 {
     this->vertexComponentMask = compMask & AllComponents;
-    this->vertexWidth = 0;
-    if (compMask & Coord)    this->vertexWidth += 3;
-    if (compMask & Normal)   this->vertexWidth += 3;
-    if (compMask & Uv0)      this->vertexWidth += 2;
-    if (compMask & Uv1)      this->vertexWidth += 2;
-    if (compMask & Uv2)      this->vertexWidth += 2;
-    if (compMask & Uv3)      this->vertexWidth += 2;
-    if (compMask & Color)    this->vertexWidth += 4;
-    if (compMask & Tangent)  this->vertexWidth += 3;
-    if (compMask & Binormal) this->vertexWidth += 3;
-    if (compMask & Weights)  this->vertexWidth += 4;
-    if (compMask & JIndices) this->vertexWidth += 4;
+    this->vertexWidth = nMesh2::GetVertexWidthFormMask(compMask);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMesh2::GetVertexWidthFormMask(int compMask)
+{
+    n_assert(0 != compMask);
+    int width = 0;
+    if (compMask & Coord)    width += 3;
+    if (compMask & Normal)   width += 3;
+    if (compMask & Uv0)      width += 2;
+    if (compMask & Uv1)      width += 2;
+    if (compMask & Uv2)      width += 2;
+    if (compMask & Uv3)      width += 2;
+    if (compMask & Color)    width += 4;
+    if (compMask & Tangent)  width += 3;
+    if (compMask & Binormal) width += 3;
+    if (compMask & Weights)  width += 4;
+    if (compMask & JIndices) width += 4;
+
+    return width;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMesh2::GetVertexComponentDistance(VertexComponent component) const
+{
+    int ret = 0; 
+    if (Coord == component) return ret;
+    if (this->vertexComponentMask & Coord)    ret += 3;
+
+    if (Normal == component) return ret;
+    if (this->vertexComponentMask & Normal)   ret += 3;
+
+    if (Uv0 == component) return ret;
+    if (this->vertexComponentMask & Uv0)      ret += 2;
+
+    if (Uv1 == component) return ret;
+    if (this->vertexComponentMask & Uv1)      ret += 2;
+
+    if (Uv2 == component) return ret;
+    if (this->vertexComponentMask & Uv2)      ret += 2;
+
+    if (Uv3 == component) return ret;
+    if (this->vertexComponentMask & Uv3)      ret += 2;
+
+    if (Color == component) return ret;
+    if (this->vertexComponentMask & Color)    ret += 4;
+
+    if (Tangent == component) return ret;
+    if (this->vertexComponentMask & Tangent)  ret += 3;
+
+    if (Binormal == component) return ret;
+    if (this->vertexComponentMask & Binormal) ret += 3;
+
+    if (Weights == component) return ret;    
+    if (this->vertexComponentMask & Weights)  ret += 4;
+
+    if (JIndices == component) return ret;
+    if (this->vertexComponentMask & JIndices) ret += 4;
+    
+    // add more components here
+    n_error("Requested component('%i') was not found!\n", (int) component);
+    return -1;
 }
 
 //------------------------------------------------------------------------------

@@ -19,17 +19,17 @@ public:
     /// constructor
     nN3d2Loader();
     /// destructor
-    ~nN3d2Loader();
+    virtual ~nN3d2Loader();
     /// open file and read header data
     virtual bool Open(nFileServer2* fs);
     /// close the file
     virtual void Close();
     /// read vertex data
-    virtual bool ReadVertices(void* buffer, unsigned int bufferSize);
+    virtual bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    virtual bool ReadIndices(void* buffer, unsigned int bufferSize);
+    virtual bool ReadIndices(void* buffer, int bufferSize);
     /// read edge data
-    virtual bool ReadEdges(void* buffer, unsigned int bufferSize);
+    virtual bool ReadEdges(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -121,19 +121,19 @@ nN3d2Loader::Open(nFileServer2* fs)
             // vertex components
             char* str;
             this->vertexComponents = 0;
-            while ((str = strtok(0, N_WHITESPACE)))
+            while (str = strtok(0, N_WHITESPACE))
             {
-                    if (0 == strcmp(str, "coord"))          this->vertexComponents |= nMesh2::Coord;
-                    else if (0 == strcmp(str, "normal"))    this->vertexComponents |= nMesh2::Normal;
-                    else if (0 == strcmp(str, "uv0"))       this->vertexComponents |= nMesh2::Uv0;
-                    else if (0 == strcmp(str, "uv1"))       this->vertexComponents |= nMesh2::Uv1;
-                    else if (0 == strcmp(str, "uv2"))       this->vertexComponents |= nMesh2::Uv2;
-                    else if (0 == strcmp(str, "uv3"))       this->vertexComponents |= nMesh2::Uv3;
-                    else if (0 == strcmp(str, "color"))     this->vertexComponents |= nMesh2::Color;
-                    else if (0 == strcmp(str, "tangent"))   this->vertexComponents |= nMesh2::Tangent;
-                    else if (0 == strcmp(str, "binormal"))  this->vertexComponents |= nMesh2::Binormal;
-                    else if (0 == strcmp(str, "weights"))   this->vertexComponents |= nMesh2::Weights;
-                    else if (0 == strcmp(str, "jindices"))  this->vertexComponents |= nMesh2::JIndices;
+                    if (0 == strcmp(str, "coord"))          this->fileVertexComponents |= nMesh2::Coord;
+                    else if (0 == strcmp(str, "normal"))    this->fileVertexComponents |= nMesh2::Normal;
+                    else if (0 == strcmp(str, "uv0"))       this->fileVertexComponents |= nMesh2::Uv0;
+                    else if (0 == strcmp(str, "uv1"))       this->fileVertexComponents |= nMesh2::Uv1;
+                    else if (0 == strcmp(str, "uv2"))       this->fileVertexComponents |= nMesh2::Uv2;
+                    else if (0 == strcmp(str, "uv3"))       this->fileVertexComponents |= nMesh2::Uv3;
+                    else if (0 == strcmp(str, "color"))     this->fileVertexComponents |= nMesh2::Color;
+                    else if (0 == strcmp(str, "tangent"))   this->fileVertexComponents |= nMesh2::Tangent;
+                    else if (0 == strcmp(str, "binormal"))  this->fileVertexComponents |= nMesh2::Binormal;
+                    else if (0 == strcmp(str, "weights"))   this->fileVertexComponents |= nMesh2::Weights;
+                    else if (0 == strcmp(str, "jindices"))  this->fileVertexComponents |= nMesh2::JIndices;
             }
         }
         else if (0 == strcmp(keyWord, "numtris"))
@@ -163,12 +163,6 @@ nN3d2Loader::Open(nFileServer2* fs)
             
             n_assert(firstVertString && numVertsString);
             n_assert(firstTriString && numTrisString);
-            // FIXME: quick tweak to handle old mesh files
-            if (!firstEdgeString)
-            {
-                firstEdgeString = "0";
-                numEdgeString = "0";
-            }
             n_assert(firstEdgeString && numEdgeString);
             
             nMeshGroup meshGroup;
@@ -187,7 +181,8 @@ nN3d2Loader::Open(nFileServer2* fs)
             }
         }
     }
-    return true;
+
+    return nMeshLoader::Open(fileServer);
 }
 
 //------------------------------------------------------------------------------
@@ -213,37 +208,116 @@ nN3d2Loader::Close()
 */
 inline
 bool
-nN3d2Loader::ReadVertices(void* buffer, unsigned int bufferSize)
+nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
 
     // check required buffer size
     n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
-    void* endOfBuffer = ((float*)buffer) + (this->numVertices * this->vertexWidth);
+    float* endOfBuffer = ((float*)buffer) + (this->numVertices * this->vertexWidth);
 
     // load vertices
-    int vertexIndex;
-    for (vertexIndex = 0; vertexIndex < this->numVertices; vertexIndex++)
+    if (this->vertexComponents == this->fileVertexComponents)
     {
-        char line[1024];
-        bool res = this->file->GetS(line, sizeof(line));
-        n_assert(res);
-
-        char* keyWord = strtok(line, N_WHITESPACE);
-        n_assert(0 == strcmp(keyWord, "v"));
-
-        float* vPtr = ((float*)buffer) + (vertexIndex * this->vertexWidth);
-        int i;
-        for (i = 0; i < this->vertexWidth; i++)
+        n_assert(this->vertexWidth == this->fileVertexWidth);
+        int vertexIndex;
+        for (vertexIndex = 0; vertexIndex < this->numVertices; vertexIndex++)
         {
-            const char* curFloatStr = strtok(0, N_WHITESPACE);
-            n_assert(curFloatStr);
-            float curFloat = (float) atof(curFloatStr);
-            vPtr[i] = curFloat;
-            n_assert(&(vPtr[i]) < endOfBuffer);
+            char line[1024];
+            bool res = this->file->GetS(line, sizeof(line));
+            n_assert(res);
+
+            char* keyWord = strtok(line, N_WHITESPACE);
+            n_assert(0 == strcmp(keyWord, "v"));
+
+            float* vPtr = ((float*)buffer) + (vertexIndex * this->vertexWidth);
+            int i;
+            for (i = 0; i < this->vertexWidth; i++)
+            {
+                const char* curFloatStr = strtok(0, N_WHITESPACE);
+                n_assert(curFloatStr);
+                float curFloat = (float) atof(curFloatStr);
+                vPtr[i] = curFloat;
+                n_assert(&(vPtr[i]) < endOfBuffer);
+            }
         }
     }
+    else
+    {
+        int vertexIndex;
+        for (vertexIndex = 0; vertexIndex < this->numVertices; vertexIndex++)
+        {
+            char line[1024];
+            bool res = this->file->GetS(line, sizeof(line));
+            n_assert(res);
+
+            char* keyWord = strtok(line, N_WHITESPACE);
+            n_assert(0 == strcmp(keyWord, "v"));
+
+            float* vPtr = ((float*)buffer) + (vertexIndex * this->vertexWidth);
+            int mask;
+            for (mask = 1; mask <= this->vertexComponents; mask <<= 1)
+            {                
+                int num = 0;
+                switch (mask)
+                {
+                // float 2
+                case nMesh2::Uv0:
+                case nMesh2::Uv1:
+                case nMesh2::Uv2:
+                case nMesh2::Uv3:
+                    num = 2;
+                    break;
+
+                // float 3
+                case nMesh2::Coord:
+                case nMesh2::Normal:
+                case nMesh2::Tangent:
+                case nMesh2::Binormal:
+                    num = 3;
+                    break;
+
+                // float 4
+                case nMesh2::Color:
+                case nMesh2::Weights:
+                case nMesh2::JIndices:
+                    num = 4;
+                    break;
+
+                default:
+                    n_error("Unknown vertex component in vertex component mask");
+                    break;
+                }
+
+                n_assert(num > 0);
+                if (this->vertexComponents & mask)
+                {
+                    // read
+                    int f;
+                    for (f = 0; f < num; f++)
+                    {
+                        const char* curFloatStr = strtok(0, N_WHITESPACE);
+                        n_assert(curFloatStr);
+                        float curFloat = (float) atof(curFloatStr);
+                        *(vPtr++) = curFloat;
+                        n_assert(vPtr <= endOfBuffer)
+                    }
+                }
+                else
+                {
+                    // skip
+                    int f;
+                    for (f = 0; f < num; f++)
+                    {
+                        const char* curFloatStr = strtok(0, N_WHITESPACE);
+                        n_assert(curFloatStr);
+                    }                        
+                }
+            }
+        }
+    }
+
     return true;
 }
 
@@ -252,7 +326,7 @@ nN3d2Loader::ReadVertices(void* buffer, unsigned int bufferSize)
 */
 inline
 bool
-nN3d2Loader::ReadIndices(void* buffer, unsigned int bufferSize)
+nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
@@ -319,7 +393,7 @@ nN3d2Loader::ReadIndices(void* buffer, unsigned int bufferSize)
 */
 inline
 bool
-nN3d2Loader::ReadEdges(void* buffer, unsigned int bufferSize)
+nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);

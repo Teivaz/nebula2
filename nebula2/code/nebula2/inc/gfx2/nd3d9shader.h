@@ -67,27 +67,20 @@ public:
 
     /// begin applying the shader, returns number of passes
     virtual int Begin(bool saveState);
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    /// begin a render pass
+    /// begin a pass
     virtual void BeginPass(int pass);
-    /// end a render pass
+    /// commit changes during pass before rendering
+    virtual void CommitChanges();
+    /// end a pass
     virtual void EndPass();
-#else
-    /// render a pass
-    virtual void Pass(int pass);
-#endif
     /// finish applying the shader
     virtual void End();
-    
-    bool NeedsSoftwareVertexProcessing();
 
 protected:
     /// load the shader resource file
     virtual bool LoadResource();
     /// unload shader resources
     virtual void UnloadResource();
-
-private:
     /// find the first valid technique and make current
     void ValidateEffect();
     /// update the parameter handle mapper table
@@ -103,12 +96,6 @@ private:
     bool didNotValidate;
     D3DXHANDLE parameterHandles[nShaderState::NumParameters];     // map shader states to D3DX handles
     nShaderParams curParams;    // mirrored to avoid redundant parameters setting
-    
-    bool needSoftwareVertexProcessing;
-
-#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
-    bool inBeginPass;
-#endif
 };
 
 //------------------------------------------------------------------------------
