@@ -3,6 +3,7 @@
 //  nwin32windowhandler.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "gfx2/nwin32windowhandler.h"
 #include "kernel/nenv.h"
 

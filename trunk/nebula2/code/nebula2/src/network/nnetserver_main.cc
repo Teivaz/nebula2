@@ -2,6 +2,7 @@
 //  nnetserver_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "network/nnetserver.h"
 
 nNebulaScriptClass(nNetServer, "nroot");

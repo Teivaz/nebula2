@@ -2,6 +2,7 @@
 //  nvariableserver_main.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "variable/nvariableserver.h"
 #include "variable/nvariablecontext.h"
 

@@ -2,6 +2,7 @@
 //  nprefserver_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "misc/nprefserver.h"
 
 nNebulaScriptClass(nPrefServer, "nroot");

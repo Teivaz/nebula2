@@ -4,6 +4,7 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/nsystem.h"
+#include "kernel/nkernelserver.h"
 #include "kernel/nwin32loghandler.h"
 #include "kernel/nfileserver2.h"
 #include "util/npathstring.h"

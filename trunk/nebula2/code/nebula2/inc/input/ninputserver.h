@@ -16,6 +16,7 @@
 #include "kernel/nautoref.h"
 #include "input/ninputevent.h"
 #include "input/ninputstate.h"
+#include "util/nhashlist.h"
 
 //------------------------------------------------------------------------------
 class nScriptServer;

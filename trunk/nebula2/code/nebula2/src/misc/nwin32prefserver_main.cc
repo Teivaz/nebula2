@@ -2,6 +2,7 @@
 //  nwin32prefserver_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "misc/nwin32prefserver.h"
 
 nNebulaClass(nWin32PrefServer, "nprefserver");

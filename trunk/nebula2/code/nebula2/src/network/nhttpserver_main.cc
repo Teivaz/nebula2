@@ -2,6 +2,7 @@
 //  nhttpserver_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "network/nhttpserver.h"
 
 nNebulaScriptClass(nHttpServer, "nroot");

@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 //  © 2001 Radon Labs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "kernel/nhardrefserver.h"
 #include "kernel/nhardref.h"
 #include "kernel/nroot.h"

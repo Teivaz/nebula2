@@ -2,6 +2,7 @@
 //  nd3d9shaderinclude.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "gfx2/nd3d9shaderinclude.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
