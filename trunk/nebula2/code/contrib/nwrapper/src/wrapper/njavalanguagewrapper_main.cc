@@ -259,7 +259,7 @@ nJavaLanguageWrapper::WriteCommand(nClass * cl, nCmdProto * cmdProto)
     sprintf(buf, "    int fourcc = %d;\n", cmdProto->GetId());
     implString += buf;
     implString += "    nClass * ncls = kernelServer->FindClass(\"";
-    implString += cl->GetProperName();
+    implString += cl->GetName();
     implString += "\");\n";
     implString += "    nCmdProto * cmdProto = ncls->FindCmdById(fourcc);\n";
     implString += "    if (cmdProto)\n";
