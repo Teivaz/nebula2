@@ -161,7 +161,7 @@ proc select_workspaces {} {
     }
     toplevel .workspaces
     frame .workspaces.f
-    label .workspaces.f.l -text "Available workspaces:\nDouble click for a description" -justify left
+    label .workspaces.f.l -text "Available workspaces:"
     pack .workspaces.f.l -side top -anchor w
     frame .workspaces.f.b
     button .workspaces.f.b.cancel -text "Cancel" \
@@ -184,7 +184,7 @@ proc select_workspaces {} {
     pack .workspaces.f.b -side bottom -anchor e
     frame .workspaces.f.f
     listbox .workspaces.f.f.list -yscroll ".workspaces.f.f.scroll set" \
-        -selectmode multiple -width 20
+        -selectmode extended -width 20
     scrollbar .workspaces.f.f.scroll -orient vertical \
         -command ".workspaces.f.f.list yview"
     pack .workspaces.f.f.scroll -side right -fill y
@@ -194,7 +194,7 @@ proc select_workspaces {} {
     pack  .workspaces.f.description -side right -fill both -anchor nw \
         -expand 1
 
-    bind .workspaces.f.f.list <Double-Button-1> {
+    bind .workspaces.f.f.list <ButtonRelease-1> {
         global wspace
         set active [.workspaces.f.f.list index @%x,%y]
         set description $wspace($active,annotate)
