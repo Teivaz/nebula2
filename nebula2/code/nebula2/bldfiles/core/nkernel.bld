@@ -13,9 +13,57 @@
 #      nremoteserver
 #      nipc
 #      nkernel
+#      nmath - the math headers
+#      nutil - the utility headers
 #  Targets:
 #      nkernel
 #===============================================================================
+
+#===============================================================================
+#  mathlib and utilitys 
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nmath
+    setdir mathlib
+    setheaders { 
+        nmath
+        line triangle rectangle plane bbox sphere
+        euler eulerangles polar pknorm quaternion
+        envelopecurve vector3envelopecurve
+        matrix matrixdefs 
+        _matrix33 _matrix44
+        _matrix33_sse _matrix44_sse
+        vector
+        _vector2 _vector3 _vector4
+        _vector3_sse _vector4_sse
+    }
+endmodule
+
+#-------------------------------------------------------------------------------
+beginmodule nutil
+    setdir util
+    setheaders {
+        narray
+        nbitstream
+        neditline
+        nhashlist
+        nhashnode
+        nhashtable
+        nkeyarray
+        nlinebuffer
+        nlist
+        nmsgnode
+        nnode
+        npathstring
+        npriorityarray
+        nringbuffer
+        nstack
+        nstring
+        nstrlist
+        nstrnode
+        nthreadvariable
+    }
+endmodule
 
 #===============================================================================
 #  nkernel modules
@@ -109,7 +157,9 @@ begintarget nkernel
         nscriptserver
         nenv
         nremoteserver
-        nipc 
+        nipc
+        nmath
+        nutil
     }
 endtarget
 #-------------------------------------------------------------------------------
