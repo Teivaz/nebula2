@@ -15,6 +15,7 @@
 #define n_verify(exp) (exp)
 #define n_verify2(exp,msg) (exp)
 #define n_assert2(exp,msg)
+#define n_dxtrace(hr,msg)
 #else
 #define n_assert(exp) { if (!(exp)) n_barf(#exp,__FILE__,__LINE__); }
 #define n_verify(exp) { if (!(exp)) n_barf(#exp,__FILE__,__LINE__); }
