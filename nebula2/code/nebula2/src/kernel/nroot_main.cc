@@ -170,7 +170,7 @@ nRoot::GetFullName(char *buf, int sizeof_buf)
         const char *curName = stack[i]->GetName();
         strcat(tmp,curName);
         
-        // add slash if not hierarchie root, and not last element in path
+        // add slash if not hierarchy root, and not last element in path
         if ((curName[0] != '/') && (i>0)) 
         {
             strcat(tmp,"/");

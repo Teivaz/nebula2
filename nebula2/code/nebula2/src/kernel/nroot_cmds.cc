@@ -350,7 +350,7 @@ static void n_gettail(void *o, nCmd *cmd)
     o (ObjectHandle)
 
     @info
-    Return full pathname of next object in the same hierarchie
+    Return full pathname of next object in the same hierarchy
     level, zero if no next object exists.
 */
 static void n_getsucc(void *o, nCmd *cmd)

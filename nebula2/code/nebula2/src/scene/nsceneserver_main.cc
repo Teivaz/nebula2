@@ -52,7 +52,7 @@ nSceneServer::BeginScene(const matrix44& viewer)
 //------------------------------------------------------------------------------
 /**
     Attach a scene node to the scene. This will simply invoke 
-    nSceneNode::Attach() on the scene node hierarchie's root object.
+    nSceneNode::Attach() on the scene node hierarchy's root object.
 */
 void
 nSceneServer::Attach(nSceneNode* sceneNode, nRenderContext* renderContext)

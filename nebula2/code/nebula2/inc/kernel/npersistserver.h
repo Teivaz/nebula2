@@ -39,7 +39,7 @@
     be saved into a single file. Unfolded means that for each
     object, a directory will be create in the host filesystem,
     so that a saved object hierarchy will result in a
-    corresponding directory hierarchie.
+    corresponding directory hierarchy.
 
     (C) 2002 A.Weissflog
 */
