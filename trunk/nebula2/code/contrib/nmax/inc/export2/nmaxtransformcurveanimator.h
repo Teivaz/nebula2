@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nMaxTransformCurveAnimator
-    @ingroup
+    @ingroup NebulaMaxExport2Contrib
 
     @brief A class for handling path in 3dsmax.
            (This handles procedure controllers of 3dsmax)
