@@ -85,7 +85,7 @@ nAppLauncher::LaunchWait() const
     And aguments should be specified by calling nAppLauncher::SetArguments() if 
     those are needed.
 
-    15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and 
+    - 15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and 
                    'dirMangled' variables.
 */
 bool
