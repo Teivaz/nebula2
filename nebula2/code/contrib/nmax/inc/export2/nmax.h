@@ -16,6 +16,8 @@
 #include <stdmat.h>
 #include <shaders.h>
 #include <decomp.h>
+#include <bmmlib.h>
+#include <guplib.h>
 
 // now, Character Studio entirely included in 3dsmax7
 // for other version of 3dsmax, specify include path of character studio
