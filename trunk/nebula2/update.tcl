@@ -293,7 +293,9 @@ proc run_buildsystem {} {
     global buildgen
     global chosen_workspaces
 
-    return [run_buildsystem_worker $chosen_workspaces $buildgen]
+    if {[catch {run_buildsystem_worker $chosen_workspaces $buildgen} result]} {
+        ::log::log error $result
+    }
 }
 
 proc run_buildsystem_worker {workspaces buildgen} {

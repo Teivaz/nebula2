@@ -184,8 +184,7 @@ proc check_noblock { } {
     global current_file
 
     if {$current_block != $noactive_block} {
-        ::log::log error "ERROR: previous begin/end block not closed in file: $current_file"
-        exit
+        error "ERROR: previous begin/end block not closed in file: $current_file"
     }
 }
 
@@ -510,8 +509,7 @@ proc endworkspace { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a workspace but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
-        exit -1
+        error "ERROR you have tryed to close a workspace but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
     }
 }
 
@@ -626,8 +624,7 @@ proc endtarget { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a target but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
-        exit -1
+        error "ERROR you have tryed to close a target but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
     }
 }
 
@@ -668,8 +665,7 @@ proc endbundle { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a bundle but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
-        exit -1
+        error "ERROR you have tryed to close a bundle but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
     }
 }
 
@@ -937,8 +933,7 @@ proc endmodule { } {
         global noactive_block
         set current_block $noactive_block
     } else {
-        ::log::log error "ERROR you have tryed to close a module but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
-        exit -1
+        error "ERROR you have tryed to close a module but this is not the current blocktype '[getnameofblocktype $current_block]'. EXIT NOW."
     }
 }
 
