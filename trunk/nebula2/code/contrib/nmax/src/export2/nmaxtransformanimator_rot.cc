@@ -109,7 +109,6 @@ void nMaxTransformAnimator::ExportEulerRotation(Control* control, int numKeys)
 void nMaxTransformAnimator::ExportSampledKeyRotation(int numKeys, nTransformAnimator* animator)
 {
     nArray<nMaxSampleKey> sampleKeyArray;
-    sampleKeyArray.SetFixedSize(numKeys + 1);
 
     nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, 1, nMaxRot);
 
