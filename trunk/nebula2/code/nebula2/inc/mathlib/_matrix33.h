@@ -257,11 +257,11 @@ _matrix33::to_euler() const
         if (sy > 16*FLT_EPSILON) 
         {
             ea.x = (float) atan2(tmp.M12, tmp.M13);
-            ea.y = (float) atan2(sy, tmp.M11);
+            ea.y = (float) atan2((float)sy, tmp.M11);
             ea.z = (float) atan2(tmp.M21, -tmp.M31);
         } else {
             ea.x = (float) atan2(-tmp.M23, tmp.M22);
-            ea.y = (float) atan2(sy, tmp.M11);
+            ea.y = (float) atan2((float)sy, tmp.M11);
             ea.z = 0;
         }
     } 
@@ -271,13 +271,13 @@ _matrix33::to_euler() const
         if (cy > 16*FLT_EPSILON) 
         {
             ea.x = (float) atan2(tmp.M32, tmp.M33);
-            ea.y = (float) atan2(-tmp.M31, cy);
+            ea.y = (float) atan2(-tmp.M31, (float)cy);
             ea.z = (float) atan2(tmp.M21, tmp.M11);
         } 
         else 
         {
             ea.x = (float) atan2(-tmp.M23, tmp.M22);
-            ea.y = (float) atan2(-tmp.M31, cy);
+            ea.y = (float) atan2(-tmp.M31, (float)cy);
             ea.z = 0;
         }
     }
