@@ -7,11 +7,15 @@
 #define N_MAXTRANSFROMANIMATOR_H
 //-----------------------------------------------------------------------------
 /**
-    @class nMaxPRSController
+    @class nMaxTransformAnimator
     @ingroup NebulaMaxExport2Contrib
 
     @brief A class for handling Position/Rotation/Scale(PRS) transform animation.
 
+    The most similar controller for nebula's transform animator is <b>Linear
+    Controller</b> which interpolates between animation keys by evenly dividing 
+    the change from one key value to the next by the amount of time between the 
+    keys.
 */
 #include "export2/nmaxnode.h"
 
@@ -24,33 +28,36 @@ public:
     nMaxTransformAnimator();
     virtual ~nMaxTransformAnimator();
 
-    virtual void Export(INode* inode, Control *control);
+    virtual bool Export(INode* inode, Control *control);
 
 protected:
     // @name position
     // @{
-    virtual void ExportPosition(Control *control, nTransformAnimator* animator);
+    virtual int ExportPosition(Control*, nTransformAnimator*);
 
-	virtual void ExportTCBPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
-	virtual void ExportHybridPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
-	virtual void ExportLinearPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
-    virtual void ExportSampledKeyPosition(int numKeys, nTransformAnimator* animator);
+	virtual int ExportTCBPosition(IKeyControl*, int numKeys, nTransformAnimator*);
+	virtual int ExportHybridPosition(IKeyControl*, int numKeys, nTransformAnimator*);
+	virtual int ExportLinearPosition(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportSampledPosition(nTransformAnimator*);
     // @}
 
     // @name rotation
     // @{
-    virtual void ExportRotation(Control *control, nTransformAnimator* animator);
-
-    virtual void ExportTCBRotation(IKeyControl* ikc, int numKeys);
-    virtual void ExportHybridRotation(IKeyControl* ikc, int numKeys);
-    virtual void ExportLinearRotation(IKeyControl* ikc, int numKeys);
-    virtual void ExportEulerRotation(Control* control, int numKeys);
-    virtual void ExportSampledKeyRotation(int numKeys, nTransformAnimator* animator);
+    virtual int ExportRotation(Control*, nTransformAnimator*);
+    virtual int ExportTCBRotation(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportHybridRotation(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportLinearRotation(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportEulerRotation(Control*, int numKeys, nTransformAnimator*);
+    virtual int ExportSampledKeyRotation(nTransformAnimator*);
     // @}
 
     // @name scale
     // @{
-    virtual void ExportScale(Control *control, nTransformAnimator* animator);
+    virtual int ExportScale(Control*, nTransformAnimator*);
+    virtual int ExportTCBScale(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportHybridScale(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportLinearScale(IKeyControl*, int numKeys, nTransformAnimator*);
+    virtual int ExportSampledScale(nTransformAnimator*);
     // @}    
 	
     bool HasSampledKeys(Control *control);
