@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nScriptServer
+    @ingroup NebulaScriptServices
 
     The script server object is the communication point between
     a nRoot object's Dispatch() method and a specific scripting

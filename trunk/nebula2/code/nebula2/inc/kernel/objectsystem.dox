@@ -1,0 +1,9 @@
+/**
+    @defgroup NebulaObjectSystem Object System
+    @ingroup NebulaKernel
+
+    @brief Nebula provides an object system to provide metadata for
+    the scripting system.  This is a key part of what allows Nebula
+    to support multiple languages with relative ease.
+*/
+

@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nCmdProto
+    @ingroup NebulaObjectSystem
+    @ingroup NebulaScriptServices
 
     An nCmdProto object holds the prototype description for an nCmd
     object and can construct nCmd objects based on the prototype

@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nMsgNode
+    @ingroup NebulaThreadingSupport
     @ingroup NebulaDataTypes
 
-    A doubly linked list node which can carry a msg.
+    @brief A doubly linked list node which can carry a msg.
 
     (C) 2002 RadonLabs GmbH
 */

@@ -1,0 +1,7 @@
+/**
+    @defgroup NebulaThreadingSupport Threading Support
+    @ingroup NebulaKernel
+
+    @brief Nebula provides basic support for threading along with
+    integration into some of the Core Nebula systems.
+*/

@@ -52,8 +52,10 @@ application processes input events, to allow the console server to consume
 any key press events when it is open.
 
 The console server also offers the ability to display the value of any nEnv 
-nodes under @c /sys/share/vars. To do this call nConServer::Watch with a
-string pattern that matches the names of any nEnv nodes.
+nodes under @c /sys/var. To do this call nConServer::Watch with a
+string pattern that matches the names of any nEnv nodes.  See
+@ref NebulaWatchedVariables for further information about creating watched
+variables.
 
 @code
 	// display all vars

@@ -51,6 +51,8 @@
     nFile objects are reference-counted (via nRefCounted), so they must
     be released when you are done with them rather than simply deleted.
 
+    @todo Talk about nFileTime
+
 @code
     // file input
     if (file->Open(fileName, "rb"))
@@ -68,6 +70,8 @@
     file->Close();
     file->Release();
 @endcode
+
+    @todo Talk about nFileNode
 
     The nDirectory class can be used to search directories.
 
@@ -122,6 +126,8 @@
     /sys/share/assigns/home  - Nebula's home directory
     /sys/share/assigns/bin   - Nebula's application directory
 @endverbatim
+
+    @todo Mention the @c proj assign.
 
     @todo Talk about how to mangle paths to process assigns and so on.
 

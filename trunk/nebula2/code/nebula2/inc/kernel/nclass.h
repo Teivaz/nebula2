@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nClass
+    @ingroup NebulaObjectSystem
 
     Nebula metaclass. nRoot derived objects are not created directly
     in C++, but by nClass objects. nClass objects wrap dynamic demand-loading
