@@ -96,14 +96,26 @@ proc gen_lib_unix {target cid} {
     global l_pre l_post o_pre o_post
     
     set t [findtargetbyname $target]
-    
+
     #collect depend - lib
-    set depend_list { }
+    set win32_depend_list { }
+    set unix_depend_list { }
+    set macosx_depend_list { }
     foreach depend $tar($t,depends) {
-        lappend depend_list $depend
+        set d [findtargetbyname $depend]
+        if {$tar($d,platform)=="all"} {
+            lappend win32_depend_list $depend
+            lappend unix_depend_list $depend
+            lappend macosx_depend_list $depend
+        } elseif {$tar($d,platform)=="win32"} {
+            lappend win32_depend_list $depend
+        } elseif {$tar($d,platform)=="unix"} {
+            lappend unix_depend_list $depend
+        } elseif {$tar($d,platform)=="macosx"} {
+            lappend macosx_depend_list $depend
+        }
     }
-    
-    
+
     #collect modules and generate the obj files from this
     set module_list { }
     set obj_list { }
@@ -119,15 +131,25 @@ proc gen_lib_unix {target cid} {
     }
     
     #write entry
+    puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
     puts $cid "$target$bt_post: $l_pre$target$l_post"
     puts $cid ""
     puts $cid "$l_pre$target$l_post: \
-                  [make_list $depend_list $l_pre $l_post]\
+                  [make_list $macosx_depend_list $l_pre $l_post]\
                   [make_list $obj_list $o_pre $o_post]"
     
     puts $cid "\t\${AR} rus $l_pre$target$l_post\
               [make_list $obj_list $o_pre $o_post]"
+    puts $cid "else"
+    puts $cid "$target$bt_post: $l_pre$target$l_post"
+    puts $cid ""
+    puts $cid "$l_pre$target$l_post: \
+                  [make_list $unix_depend_list $l_pre $l_post]\
+                  [make_list $obj_list $o_pre $o_post]"
 
+    puts $cid "\t\${AR} rus $l_pre$target$l_post\
+              [make_list $obj_list $o_pre $o_post]"
+    puts $cid "endif"
     puts $cid ""
     
     #return all depending modules
@@ -147,9 +169,22 @@ proc gen_exe_unix {target cid} {
     set t [findtargetbyname $target]
     
     #collect depend
-    set depend_list { }
+    set win32_depend_list { }
+    set unix_depend_list { }
+    set macosx_depend_list { }
     foreach depend $tar($t,depends) {
-        lappend depend_list $depend
+        set d [findtargetbyname $depend]
+        if {$tar($d,platform)=="all"} {
+            lappend win32_depend_list $depend
+            lappend unix_depend_list $depend
+            lappend macosx_depend_list $depend
+        } elseif {$tar($d,platform)=="win32"} {
+            lappend win32_depend_list $depend
+        } elseif {$tar($d,platform)=="unix"} {
+            lappend unix_depend_list $depend
+        } elseif {$tar($d,platform)=="macosx"} {
+            lappend macosx_depend_list $depend
+        }
     }
     
     #collect unix libs
@@ -188,23 +223,23 @@ proc gen_exe_unix {target cid} {
     puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
     puts $cid "$target$bt_post: $e_pre$target$e_post"
     puts $cid ""
-    puts $cid "$e_pre$target$e_post: [make_list $depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
+    puts $cid "$e_pre$target$e_post: [make_list $macosx_depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
     puts $cid "\t\$(CXX) \$(CXXFLAGS$bt_post) \$(INCDIR) \$(LIBDIR)\
                 \$(SYM_OPT)$bt_def \
                 \$(OUT_OPT) $e_pre$target$e_post\
                 [make_list $obj_list $o_pre $o_post] \
-                [make_pre_list $depend_list \$(LIB_OPT)] \
+                [make_pre_list $macosx_depend_list \$(LIB_OPT)] \
                 \$(LIBS) [make_pre_list $mlib_list \$(LIB_OPT)] \
                 [make_pre_list $mframework_list \$(FWORK_OPT)]"
     puts $cid "else"
     puts $cid "$target$bt_post: $e_pre$target$e_post"
     puts $cid ""
-    puts $cid "$e_pre$target$e_post: [make_list $depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
+    puts $cid "$e_pre$target$e_post: [make_list $unix_depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
     puts $cid "\t\$(CXX) \$(CXXFLAGS$bt_post) \$(INCDIR) \$(LIBDIR)\
                 \$(SYM_OPT)$bt_def \
                 \$(OUT_OPT) $e_pre$target$e_post\
                 [make_list $obj_list $o_pre $o_post] \
-                [make_pre_list $depend_list \$(LIB_OPT)] \
+                [make_pre_list $unix_depend_list \$(LIB_OPT)] \
                 \$(LIBS) [make_pre_list $ulib_list \$(LIB_OPT)]"
     puts $cid "endif"
     puts $cid ""
