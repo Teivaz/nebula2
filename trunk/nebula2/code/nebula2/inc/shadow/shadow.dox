@@ -35,7 +35,9 @@
          which nSkinAnimator controls the mesh.
        - The mesh must also include the "weights" and "jindices" vertex
          components.
-       - There's no bounding box hack.
+       - Instead of the bounding box hack, there is a hard-coded maximum distance
+         (to the camera) beyond which the shadow won't render.  You can set this 
+         in nShadowSkinShapeNode.cc
 
     - nShadowServer : manages resources and scene.
        - Call nShadowServer::SetDebugShadows to make the actual meshes
@@ -46,6 +48,11 @@
 
     The steps to get a shadow rendered are:
     
+    - Ensure that the following (currently hardcoded) shaders are in your
+      "shaders:"-assigned directory:
+       - stencil_plane.fx
+       - shadow_volume.fx
+       - shadow_debug.fx
     - Create the nShadowServer (see e.g. nViewerApp::Open)
     - For each shadow caster, create either an nShadowNode or an
       nShadowSkinShapeNode, as described above.
