@@ -11,7 +11,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "tools/ncmdlineargs.h"
-#include "utils/nstring.h"
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nWinMainCmdLineArgs : public nCmdLineArgs
