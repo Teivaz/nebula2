@@ -11,9 +11,7 @@
     #define __USE_SSE__ (0)   
 #endif
 
-#ifdef _DEBUG
 #define __NEBULA_STATS__ (1)
-#endif
 
 // use MicroTcl?
 #define __MICROTCL__ (1)
