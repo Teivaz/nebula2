@@ -734,9 +734,6 @@ proc write_pkgfiles { } {
     # Now, do the pkg files for each lib target
     for {set i 0} {$i < $num_tars} {incr i} {
         set target $tar($i,name)
-        if {$tar($i,type) != "lib"} {
-            continue
-        }
 
         # collect the targets
         set mod_list ""
