@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaNPKFileManagement NPK File Management
-    @ingroup NebulaFileManagement
+    @defgroup NPKFile NPK File Management
+    @ingroup File
 
     nNpkFileServer implements the nFileServer2 interface,
     but works with @c npk files instead of the regular file

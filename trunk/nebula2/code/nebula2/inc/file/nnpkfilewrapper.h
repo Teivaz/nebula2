@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkFileWrapper
-    @ingroup NebulaNPKFileManagement
+    @ingroup NPKFile
 
     Wraps file operations on a npk file.
 

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nLogHandler
-    @ingroup NebulaLogging
+    @ingroup Logging
 
     The nLogHandler class provides a flexible way to provide text output
     to the user. Whenever the Print(), Message() or Error()

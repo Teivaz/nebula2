@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDefaultLogHandler
-    @ingroup NebulaLogging
+    @ingroup Logging
 
     The default log handler routes all messages to stdout.
     

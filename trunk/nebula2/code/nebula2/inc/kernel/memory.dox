@@ -1,4 +1,4 @@
 /**
     @defgroup NebulaKernelMemory Memory Management
-    @ingroup NebulaKernel
+    @ingroup Kernel
 */

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFileServer2
-    @ingroup NebulaFileManagement
+    @ingroup File
 
     @brief Central server object of Nebula2's file system subsystem.
     Provides functions for creating file and directory objects and assigns.

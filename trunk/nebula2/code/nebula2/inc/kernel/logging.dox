@@ -1,4 +1,4 @@
 /**
-    @defgroup NebulaLogging Logging
-    @ingroup NebulaKernel
+    @defgroup Logging Logging
+    @ingroup Kernel
 */

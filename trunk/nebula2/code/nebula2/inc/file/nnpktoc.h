@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNpkToc
-    @ingroup NebulaNPKFileManagement
+    @ingroup NPKFile
 
     Hold table of content entries for npk files.
 

@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaTimeManagement Time Management
-    @ingroup NebulaKernel
+    @defgroup Time Time Management
+    @ingroup Kernel
 
     @brief Nebula provides a single realtime time source to assist
     in decoupling simulation speed from the frame rate.

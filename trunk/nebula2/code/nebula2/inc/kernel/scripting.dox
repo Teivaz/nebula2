@@ -1,6 +1,6 @@
 /**
     @defgroup NebulaScriptServices Scripting Support
-    @ingroup NebulaKernel
+    @ingroup Kernel
 
     @brief Nebula's scripting system integrates with its
     @ref NebulaObjectSystem to provide scripting support
