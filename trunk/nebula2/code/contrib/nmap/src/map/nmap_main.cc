@@ -33,6 +33,7 @@ nMap::nMap() :
 */
 nMap::~nMap()
 {
+    n_delete_array(pointData);
 }
 
 /**
