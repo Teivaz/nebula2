@@ -43,12 +43,12 @@ nOpenALServer::~nOpenALServer()
 bool
 nOpenALServer::Open()
 {
+    n_printf( "nOpenALServer Open\n" );
     n_assert(!this->isOpen);
 
     // get public window handle, which has been initialized by the gfx subsystem
     HWND hwnd = (HWND) this->refHwnd->GetI();
-
-    n_printf( "ALServer Open\n" );
+    n_assert2( hwnd, "/sys/env/hwnd is NULL -- perhaps nWin32LogHandler::OpenWindow() has not been called." )
 
     alutInit (NULL, 0); // init OpenAL
 
@@ -91,7 +91,7 @@ nOpenALServer::Open()
         return false;
     }
 
-    n_printf("Successed to Initialize Open AL\n");
+    n_printf("Successfully initialized OpenAL\n");
 
     return nAudioServer3::Open();
 }
@@ -103,6 +103,8 @@ nOpenALServer::Open()
 void
 nOpenALServer::Close()
 {
+    n_printf( "nOpenALServer Close\n" );
+
     n_assert(this->isOpen);
 
     alutExit();
@@ -110,7 +112,7 @@ nOpenALServer::Close()
     // release sound resources
     this->refResourceServer->UnloadResources(nResource::SoundResource | nResource::SoundInstance);
 
-    n_printf( "ALServer Close\n" );
+    n_printf("Successfully shut down OpenAL\n");
 
     nAudioServer3::Close();
 }

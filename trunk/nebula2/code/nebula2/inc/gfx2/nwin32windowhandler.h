@@ -68,6 +68,9 @@ public:
     {
         ACCEL_TOGGLEFULLSCREEN = 1001,
     };
+private:
+    /// Sets the window icon based on the display mode
+    HICON SetIcon();
 };
 
 //------------------------------------------------------------------------------

@@ -20,6 +20,11 @@ nWin32WindowHandler::nWin32WindowHandler() :
 {
     // get applications module handle
     this->hInst = GetModuleHandle(0);
+    nEnv *env;
+    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd"))) 
+    {
+        env->SetI(NULL);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -69,8 +74,11 @@ nWin32WindowHandler::OpenWindow()
     this->hAccel = CreateAcceleratorTable(acc, 1);
 
     // initialize application icon
-    HICON icon;
-    icon = LoadIcon(NULL, IDI_APPLICATION);
+    HICON icon = SetIcon();
+    if (!icon)
+    {
+        n_verify( icon = LoadIcon(NULL, IDI_APPLICATION) );
+    }
 
     // initialize wndclass structure and call RegisterClass()
     WNDCLASSEX wc;
@@ -109,11 +117,8 @@ nWin32WindowHandler::OpenWindow()
     SetWindowLong(this->hWnd, 0, (LONG)this);
 
     // publish the window handle under a well defined name
-    nEnv *env;
-    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd"))) 
-    {
-        env->SetI((int)this->hWnd);
-    }
+    nEnv* envHwnd = (nEnv*) nKernelServer::Instance()->Lookup("/sys/env/hwnd");
+    envHwnd->SetI((int)this->hWnd);
 
     // minimize the window
     this->windowOpen       = true;
@@ -201,15 +206,7 @@ nWin32WindowHandler::RestoreWindow()
     SetWindowText(this->hWnd, this->displayMode.GetWindowTitle());
 
     // update icon (if exists)
-    const char* iconName = this->displayMode.GetIcon();
-    if (iconName)
-    {
-        HICON icon = LoadIcon(this->hInst, iconName);
-        if (icon)
-        {
-            SetClassLong(this->hWnd, GCL_HICON, (LONG)icon);
-        }
-    }
+    SetIcon();
 
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
@@ -813,6 +810,27 @@ nWin32WindowHandler::TranslateKey(int vkey)
         default:            nk=N_KEY_NONE; break;
     }
     return nk;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a custom icon if so requested by the current display mode.
+    Returns the created icon's handle, or NULL if the display mode didn't 
+    set an icon or the create failed.
+*/
+HICON nWin32WindowHandler::SetIcon()
+{
+    HICON icon = NULL;
+    const char* iconName = this->displayMode.GetIcon();
+    if (iconName)
+    {
+        icon = LoadIcon(this->hInst, iconName);
+        if (icon)
+        {
+            SetClassLong(this->hWnd, GCL_HICON, (LONG)icon);
+        }
+    }
+    return icon;    
 }
 
 #endif __WIN32__
