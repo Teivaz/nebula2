@@ -22,7 +22,8 @@ PhysDemoApp::PhysDemoApp(nKernelServer* ks) :
     viewerAngles(defViewerAngles),
     viewerZoom(defViewerZoom),
     screenshotID(0),
-    fontSize(20)
+    fontSize(20),
+    objectID(0)
 {
     // empty
 }
@@ -793,21 +794,24 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
         physTime -= PHYSICS_STEPSIZE;
     }
 
-    // And now step through each object, updating the nshapenode position to match the physical
-    // position - in this case, the physical position is authortative.
-    nNode *node = objectList.GetHead();
-    while(node)
+    // And now step through each object, updating the object's position to match the physical
+    // object's position
+    nRoot* objects = kernelServer->Lookup("/objects");
+    SimpleObject* curObj;
+    for (curObj = (SimpleObject*) objects->GetHead();
+         curObj;
+         curObj = (SimpleObject*) curObj->GetSucc())
     {
-        SimpleObject *obj = (SimpleObject *)node->GetPtr();
-
-        if (obj->refPhysBody.isvalid())
+        if (curObj->refPhysBody.isvalid())
         {
             // If the object has fallen below -10.0f y coord, kill it
-            if (obj->refPhysBody->GetPosition().y < -10.0f)
+            if (curObj->refPhysBody->GetPosition().y < -10.0f)
             {
-                node = node->GetSucc();
-
-                this->DestroyObject(obj->uID);
+                // we need to do this because we are about to remove an
+                // object from the same linked list that we are iterating through.
+                SimpleObject* pred = (SimpleObject*) curObj->GetPred();
+                curObj->Release();
+                curObj = pred;
             }
             // Otherwise, update the position
             else
@@ -832,11 +836,8 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
                     screenCoords.v1.set(projCoords.x + curObj->textWidth / 2.0f, projCoords.y + curObj->textHeight / 2.0f - 0.05f);
                     curObj->refFloatyText->SetRect(screenCoords);
                 }
-
-                node = node->GetSucc();
             }
         }
-        else node = node->GetSucc();
     }
 }
 
@@ -846,28 +847,28 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
 */
 void PhysDemoApp::RenderWorld(nTime time, uint frameId)
 {
-    nNode *node = objectList.GetHead();
-
     // Begin rendering
     this->refSceneServer->BeginScene(viewMatrix);
 
+    // move this to a simpleobject
     // Render a single default light (PhysDemo only needs the one)
-    nTransformNode *lightNode = (nTransformNode *)kernelServer->Lookup("/objects/default_light");
+    nTransformNode *lightNode = (nTransformNode *)kernelServer->Lookup("/scenenodes/default_light");
     if (lightNode)
         this->refSceneServer->Attach(&lightRenderContext);
 
-    while(node)
+    // loop through all objects in "/scenenodes"
+    nRoot* objects = kernelServer->Lookup("/objects");
+    SimpleObject* curObj;
+    for (curObj = (SimpleObject*) objects->GetHead();
+         curObj;
+         curObj = (SimpleObject*) curObj->GetSucc())
     {
-        SimpleObject *obj = (SimpleObject *)node->GetPtr();
-
         // update render context variables
-        obj->renderContext.GetVariable(obj->timeHandle)->SetFloat((float)time);
-        obj->renderContext.SetFrameId(frameId);
+        curObj->renderContext.GetVariable(curObj->timeHandle)->SetFloat((float)time);
+        curObj->renderContext.SetFrameId(frameId);
 
         // render the object        
-        this->refSceneServer->Attach(&obj->renderContext);
-
-        node = node->GetSucc();
+        this->refSceneServer->Attach(&curObj->renderContext);
     }
 
     // Complete the rendering of the scene
@@ -917,7 +918,7 @@ PhysDemoApp::InitOverlayGui()
     logoRect.v0.set(0.0f, 0.0f);
     logoRect.v1.set(0.2f, 0.05f);
     this->guiFPSLabel->SetRect(logoRect);
-    this->guiFPSLabel->SetText("30.0");
+    this->guiFPSLabel->SetText("0.0");
     this->guiFPSLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
     this->guiFPSLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiFPSLabel->SetFont("physDefaultFont");
