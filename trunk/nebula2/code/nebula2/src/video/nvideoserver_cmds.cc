@@ -10,6 +10,8 @@ static void n_isopen(void* slf, nCmd* cmd);
 static void n_playfile(void* slf, nCmd* cmd);
 static void n_stop(void* slf, nCmd* cmd);
 static void n_isplaying(void* slf, nCmd* cmd);
+static void n_setenablescaling(void* slf, nCmd* cmd);
+static void n_getenablescaling(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -35,6 +37,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_playfile_s",  'PLFL', n_playfile);
     cl->AddCmd("v_stop_v",      'STOP', n_stop);
     cl->AddCmd("b_isplaying_v", 'ISPL', n_isplaying);
+    cl->AddCmd("v_setenablescaling_b",  'SESC', n_setenablescaling);
+    cl->AddCmd("b_getenablescaling_v",  'GESC', n_getenablescaling);
     cl->EndCmds();
 }
 
@@ -113,7 +117,7 @@ n_playfile(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    stop
+    stopfile
     @input
     v
     @output
@@ -144,6 +148,42 @@ n_isplaying(void* slf, nCmd* cmd)
 {
     nVideoServer* self = (nVideoServer*) slf;
     cmd->Out()->SetB(self->IsPlaying());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setenablescaling
+    @input
+    b(Scaling)
+    @output
+    v
+    @info
+    Enable/disable scaling to screen size.
+*/
+static void
+n_setenablescaling(void* slf, nCmd* cmd)
+{
+    nVideoServer* self = (nVideoServer*) slf;
+    self->SetEnableScaling(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getenablescaling
+    @input
+    v
+    @output
+    b(Scaling)
+    @info
+    Get the scale-to-screensize flag.
+*/
+static void
+n_getenablescaling(void* slf, nCmd* cmd)
+{
+    nVideoServer* self = (nVideoServer*) slf;
+    cmd->Out()->SetB(self->GetEnableScaling());
 }
 
 

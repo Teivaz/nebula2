@@ -6,14 +6,18 @@
 
 nNebulaScriptClass(nVideoServer, "nroot");
 
+nVideoServer* nVideoServer::Singleton = 0;
+
 //------------------------------------------------------------------------------
 /**
 */
 nVideoServer::nVideoServer() :
     isOpen(false),
-    isPlaying(false)
+    isPlaying(false),
+    scalingEnabled(false)
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
 }
 
 //------------------------------------------------------------------------------
@@ -23,6 +27,8 @@ nVideoServer::~nVideoServer()
 {
     n_assert(!this->isOpen);
     n_assert(!this->isPlaying);
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
