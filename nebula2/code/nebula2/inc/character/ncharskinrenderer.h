@@ -11,25 +11,12 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
+
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_DYNAMICMESH_H
 #include "gfx2/ndynamicmesh.h"
-#endif
-
-#ifndef N_CHARSKELETON_H
 #include "character/ncharskeleton.h"
-#endif
-
-#ifndef N_CHARJOINTPALETTE_H
 #include "character/ncharjointpalette.h"
-#endif
-
-#ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
-#endif
 
 //-----------------------------------------------------------------------------
 class nCharSkinRenderer

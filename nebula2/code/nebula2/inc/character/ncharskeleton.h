@@ -9,13 +9,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_CHARJOINT_H
-#include "character/ncharjoint.h"
-#endif
 
-#ifndef N_ARRAY_H
+#include "character/ncharjoint.h"
 #include "util/narray.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nCharSkeleton
@@ -25,6 +21,10 @@ public:
     nCharSkeleton();
     /// destructor
     ~nCharSkeleton();
+    /// copy constructor
+    nCharSkeleton(const nCharSkeleton& src);
+    /// assignment operator
+    nCharSkeleton& operator=(const nCharSkeleton& src);
     /// clear content
     void Clear();
     /// begin adding joints
@@ -50,6 +50,41 @@ nCharSkeleton::nCharSkeleton() :
     jointArray(0, 0)
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCharSkeleton::nCharSkeleton(const nCharSkeleton& src) :
+    jointArray(0, 0)
+{
+    *this = src;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCharSkeleton& 
+nCharSkeleton::operator=(const nCharSkeleton& src)
+{
+    if(&src == this) return (*this);
+
+    this->jointArray = src.jointArray;
+
+    // update parent joint references 
+    int i;
+    for(i=0; i<jointArray.Size(); i++)
+    {
+        int parentJointIndex = jointArray[i].GetParentJointIndex();
+        if(parentJointIndex != -1)
+        {
+            nCharJoint* parentJoint = &jointArray[parentJointIndex];
+            jointArray[i].SetParentJoint(parentJoint);
+        }
+    }
+    return *this;
 }
 
 //------------------------------------------------------------------------------
