@@ -10,7 +10,22 @@
     @section NMaxExportCompiling Compiling
 
     Before building the package, 3dsmax, the 3dsmax SDK and IGame should
-    be installed on your system.
+    be installed on your system. 
+    Also check what compiler you use and the version of 3dsmax which you use.
+    When developing plug-ins for 3ds max, it is important to consider which compiler is used. 
+
+      - Microsoft Visual C++ 6 (VC 6)           : Recommended for 3ds max 5.1
+      - Microsoft Visual C++ .NET 2002 (VC 7.0) : Recommended for 3ds max 6
+      - Microsoft Visual C++ .NET 2003 (VC 7.1) : Not recommended
+
+    @note
+    If you compile a plug-in with VC7.1 and run under 3ds max6,it cannot safely allocate 
+    any memory which will be deleted by 3ds max. 
+    See 'MAX_Mem Tutorial' for more details about memory allocation problem on the following 
+    page of discreet's site.
+      - http://sparks.discreet.com/downloads/
+    
+    Then, do followings:
 
       -# Run @c update.tcl to generate workspace.
       -# Ensure that you have a recent version (at least v1.122) of
