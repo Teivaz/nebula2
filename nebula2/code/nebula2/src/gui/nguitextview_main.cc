@@ -9,6 +9,7 @@
 #include "gui/nguislider2.h"
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
+#include "input/ninputserver.h"
 
 nNebulaScriptClass(nGuiTextView, "nguiwidget");
 
@@ -160,6 +161,18 @@ nGuiTextView::UpdateSliderVisibility()
 void
 nGuiTextView::OnFrame()
 {
+    // check for mousewheel movement
+    if (this->Inside(nGuiServer::Instance()->GetMousePos()) && this->HasFocus())
+    {
+        if (nInputServer::Instance()->GetButton("ScrollUp"))
+        {
+            this->ScrollUp(3);
+        }
+        else if (nInputServer::Instance()->GetButton("ScrollDown"))
+        {
+            this->ScrollDown(3);
+        }
+    }
     this->UpdateSliderVisibility();
     nGuiFormLayout::OnFrame();
 }
@@ -174,7 +187,19 @@ nGuiTextView::OnEvent(const nGuiEvent& event)
     if ((event.GetWidget() == this->refSlider.get()) &&
         (event.GetType() == nGuiEvent::SliderChanged))
     {
-        this->lineOffset = int(this->refSlider->GetVisibleRangeStart());
+        this->lineOffset = n_frnd(this->refSlider->GetVisibleRangeStart());
+    }
+
+    // check for doubble click into the text
+    if (event.GetType() == nGuiEvent::DoubleClick)
+    {
+        if (!this->refSlider->IsShown() || !this->refSlider->Inside(nGuiServer::Instance()->GetMousePos()))
+        {
+            // only react on double clicks that do not mean the slider.
+            // throw a SelectionDblClicked message
+            nGuiEvent event(this, nGuiEvent::SelectionDblClicked);
+            nGuiServer::Instance()->PutEvent(event);
+        }
     }
     nGuiFormLayout::OnEvent(event);
 }
@@ -222,6 +247,42 @@ nGuiTextView::OnButtonDown(const vector2& mousePos)
 
 //------------------------------------------------------------------------------
 /**
+    Scroll up one line.
+*/
+void
+nGuiTextView::ScrollUp(int numLines)
+{
+    n_assert(numLines > 0);
+    this->lineOffset += numLines;
+    if ((this->lineOffset + this->GetNumVisibleLines()) > this->GetNumLines())
+    {
+        this->lineOffset = this->GetNumLines() - this->GetNumVisibleLines();
+        if (this->lineOffset < 0)
+        {
+            this->lineOffset = 0;
+        }
+    }
+    this->UpdateSliderValues();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Scroll down one line.
+*/
+void
+nGuiTextView::ScrollDown(int numLines)
+{
+    n_assert(numLines > 0);
+    this->lineOffset -= numLines;
+    if (this->lineOffset < 0)
+    {
+        this->lineOffset = 0;
+    }
+    this->UpdateSliderValues();
+}
+
+//------------------------------------------------------------------------------
+/**
     Render the widget.
 */
 bool
@@ -231,6 +292,8 @@ nGuiTextView::Render()
     {
         // render background
         nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
+
+        n_assert(this->textArray.Size() == this->colorArray.Size());
 
         int beginIndex = this->lineOffset;
         int endIndex = beginIndex + this->GetNumVisibleLines();
@@ -262,7 +325,7 @@ nGuiTextView::Render()
                 {
                     nGuiServer::Instance()->DrawBrush(curRect, this->highlightBrush);
                 }
-                nGuiServer::Instance()->DrawText(this->textArray[i].Get(), this->textColor, curTextRect, renderFlags);
+                nGuiServer::Instance()->DrawText(this->textArray[i].Get(), this->colorArray[i], curTextRect, renderFlags);
                 curRect.v0.y = curRect.v1.y;
                 curTextRect.v0.y = curTextRect.v1.y;
                 curRect.v1.y += this->lineHeight;
@@ -272,4 +335,14 @@ nGuiTextView::Render()
         return nGuiFormLayout::Render();
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiTextView::ActivateFont()
+{
+    n_assert(this->refFont.isvalid()); 
+    nGfxServer2::Instance()->SetFont(this->refFont.get());
 }

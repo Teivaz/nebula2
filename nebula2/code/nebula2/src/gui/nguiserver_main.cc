@@ -17,6 +17,7 @@
 #include "audio3/naudioserver3.h"
 #include "gui/nguiresource.h"
 #include "gui/nguibrush.h"
+#include "gui/nguidragbox.h"
 
 nNebulaScriptClass(nGuiServer, "nroot");
 nGuiServer* nGuiServer::Singleton = 0;
@@ -30,14 +31,19 @@ nGuiServer::nGuiServer() :
     refInputServer("/sys/servers/input"),
     isOpen(false),
     curTime(0.0),
-    referenceSize(1.0f, 1.0f),
     uniqueId(0),
     systemGuiActive(false),
     globalColor(1.0f, 1.0f, 1.0f, 1.0f),
     curTexture(0),
     curMaxNumVertices(0),
     curVertexPointer(0),
-    curVertexIndex(0)
+    curVertexIndex(0),
+    displaySize(1024, 768),
+    texelMappingRatio(1.0f),
+    toolTipSet(false),
+    toolTipEnabled(true),
+    toolTipFadeInTime(0.15),
+    toolTipActivationTime(0.2f)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -172,27 +178,8 @@ nGuiServer::Open()
     n_assert(!this->refShader.isvalid());
 
     // create a few default fonts
-    nFontDesc defaultFont;
-    defaultFont.SetAntiAliased(true);
-    defaultFont.SetHeight(16);
-    defaultFont.SetWeight(nFontDesc::Normal);
-    defaultFont.SetTypeFace("Arial");
-    this->refDefaultFont = nGfxServer2::Instance()->NewFont("GuiDefault", defaultFont);
-    if ((!this->refDefaultFont->IsValid()) && (!this->refDefaultFont->Load()))
-    {
-        n_error("nGuiServer: Failed to load default gui font!");
-    }
-    nFontDesc smallFont;
-    smallFont.SetAntiAliased(true);
-    smallFont.SetHeight(14);
-    smallFont.SetWeight(nFontDesc::Normal);
-    smallFont.SetTypeFace("Arial");
-    this->refSmallFont = nGfxServer2::Instance()->NewFont("GuiSmall", smallFont);
-    if ((!this->refSmallFont->Load()) && (!this->refSmallFont->Load()))
-    {
-        n_error("nGuiServer: Failed to load small gui font!");
-    }
-
+    this->AddSystemFont("GuiDefault", "Arial", 16, false, false, false);
+    this->AddSystemFont("GuiSmall", "Arial", 14, false, false, false);
     if (!this->refGui.isvalid())
     {
         kernelServer->PushCwd(kernelServer->Lookup("/"));
@@ -335,7 +322,7 @@ nGuiServer::GetRootWindowPointer() const
 */
 void
 nGuiServer::Trigger()
-{
+{      
     n_assert(this->guiWindowClass);
 
     if (this->refCurrentRootWindow.isvalid())
@@ -391,6 +378,10 @@ nGuiServer::Trigger()
                     {
                         this->refToolTip->OnMouseMoved(this->curMousePos);
                     }
+                    if (this->refDragBox.isvalid())
+                    {
+                        this->refDragBox->OnMouseMoved(this->curMousePos);
+                    }
                 }
 
                 // handle button actions
@@ -400,10 +391,18 @@ nGuiServer::Trigger()
                     if (i->GetButton() == 0)
                     {
                         rootWindow->OnButtonDown(this->curMousePos);
+                        if (this->refDragBox.isvalid() && !this->IsMouseOverGui())
+                        {
+                            this->refDragBox->OnButtonDown(this->curMousePos);
+                        }
                     }
                     else if (i->GetButton() == 1)
                     {
                         rootWindow->OnRButtonDown(this->curMousePos);
+                        if (this->refDragBox.isvalid())
+                        {
+                            this->refDragBox->OnRButtonDown(this->curMousePos);
+                        }
                     }
                 }
                 if (i->GetType() == N_INPUT_BUTTON_UP)
@@ -412,10 +411,18 @@ nGuiServer::Trigger()
                     if (i->GetButton() == 0)
                     {
                         rootWindow->OnButtonUp(this->curMousePos);
+                        if (this->refDragBox.isvalid())
+                        {
+                            this->refDragBox->OnButtonUp(this->curMousePos);
+                        }
                     }
                     else if (i->GetButton() == 1)
                     {
                         rootWindow->OnRButtonUp(this->curMousePos);
+                        if (this->refDragBox.isvalid())
+                        {
+                            this->refDragBox->OnRButtonUp(this->curMousePos);
+                        }
                     }
                 }
             }
@@ -647,7 +654,6 @@ nGuiServer::Render()
         nGfxServer2::Instance()->SetShader(shader);
         int curPass;
         int numPasses = shader->Begin(false);
-		
         for (curPass = 0; curPass < numPasses; curPass++)
         {            
 			#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
@@ -664,10 +670,20 @@ nGuiServer::Render()
             this->refCurrentRootWindow->Render();
 
             // render optional tooltip
-            if (this->IsToolTipShown())
+            if (this->toolTipEnabled && this->refToolTip.isvalid())
             {
+                if (this->refToolTip->IsShown() && !this->toolTipSet)
+                {
+                    this->refToolTip->Hide();      
+                }
                 this->refToolTip->Render();
-                this->HideToolTip();
+                this->toolTipSet = false;
+            }
+
+            // render optional drag box
+            if (this->refDragBox.isvalid())
+            {
+                this->refDragBox->Render();
             }
 
             // finish dynamic mesh rendering
@@ -714,8 +730,18 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
     fontDesc.SetUnderline(underline);
     fontDesc.SetAntiAliased(true);
     
-    // ... and create the font
-    nGfxServer2::Instance()->NewFont(fontName, fontDesc);
+    // change the font's desc if it already exists
+    // otherwise, create the font
+    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
+    if (pFont)
+    {
+        pFont->SetFontDesc( fontDesc );
+        pFont->Unload();
+    }
+    else
+    {
+        nGfxServer2::Instance()->NewFont(fontName, fontDesc);
+    }
 }
 
 
@@ -753,8 +779,18 @@ nGuiServer::AddCustomFont(const char* fontName, const char* fontFile, const char
     fontDesc.SetUnderline(underline);
     fontDesc.SetAntiAliased(true);
     
-    // ... and create the font
-    nGfxServer2::Instance()->NewFont(fontName, fontDesc);
+    // change the font's desc if it already exists
+    // otherwise, create the font
+    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
+    if (pFont)
+    {
+        pFont->SetFontDesc( fontDesc );
+        pFont->Unload();
+    }
+    else
+    {
+        nGfxServer2::Instance()->NewFont(fontName, fontDesc);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -838,56 +874,6 @@ nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
     }
     this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
 }
-//-----------------------------------------------------------------------------
-/**
-    Set a coordinate space reference size.
-*/
-void
-nGuiServer::SetReferenceSize(const vector2& v)
-{
-    this->referenceSize = v;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Get the current coordinate space reference size.
-*/
-const vector2&
-nGuiServer::GetReferenceSize() const
-{
-    return this->referenceSize;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Convert a reference size rectangle (i.e. 640x480) to a screen space
-    rectangle (0..1).
-*/
-rectangle
-nGuiServer::ConvertRefToScreenSpace(const rectangle& src)
-{
-    rectangle r;
-    r.v0.x = src.v0.x / this->referenceSize.x;
-    r.v0.y = src.v0.y / this->referenceSize.y;
-    r.v1.x = src.v1.x / this->referenceSize.x;
-    r.v1.y = src.v1.y / this->referenceSize.y;
-    return r;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Convert a screen space rectangle to reference space.
-*/
-rectangle
-nGuiServer::ConvertScreenToRefSpace(const rectangle& src)
-{
-    rectangle r;
-    r.v0.x = src.v0.x * this->referenceSize.x;
-    r.v0.y = src.v0.y * this->referenceSize.y;
-    r.v1.x = src.v1.x * this->referenceSize.x;
-    r.v1.y = src.v1.y * this->referenceSize.y;
-    return r;
-}
 
 //-----------------------------------------------------------------------------
 /**
@@ -931,17 +917,31 @@ void
 nGuiServer::ShowToolTip(const char* text, const vector4& textColor)
 {
     n_assert(text);
+
+    // setting current tool tip widget avoids hiding the tool tip
+    this->toolTipSet = true;
+
     if (!this->refToolTip.isvalid())
     {
         // initialize the optional tooltip
         this->refToolTip = (nGuiToolTip*) this->refGui->Find("Tooltip");
+        if(this->refToolTip.isvalid()) 
+        {
+            this->refToolTip->Hide();
+        }
     }
-    if (this->refToolTip.isvalid())
+    else
     {
-        this->HideToolTip();
-        this->refToolTip->SetText(text);
-        this->refToolTip->SetColor(textColor);
-        this->refToolTip->Show();
+        // update tool tip
+        if(strcmp(this->refToolTip->GetText(), text) != 0)
+        {
+            this->refToolTip->SetColor(textColor);
+            this->refToolTip->SetText(text);      
+        }
+        if(!this->refToolTip->IsShown())
+        {
+            this->refToolTip->Show();
+        }
     }
 }
 
@@ -1090,13 +1090,10 @@ nGuiServer::ComputeScreenSpaceBrushSize(const char* brushName)
     nGuiResource* guiResource = tmpBrush.GetGuiResource();
     n_assert(guiResource);
     const rectangle& uvRect = guiResource->GetRelUvRect();
-    float texWidth   = (float) guiResource->GetTextureWidth();
-    float texHeight  = (float) guiResource->GetTextureHeight();
-    const nDisplayMode2& dispMode = nGfxServer2::Instance()->GetDisplayMode();
-    float dispWidth  = (float) dispMode.GetWidth();
-    float dispHeight = (float) dispMode.GetHeight();
-    size.x = (uvRect.width() * texWidth) / dispWidth;
-    size.y = (uvRect.height() * texHeight) / dispHeight;
+    float texWidth  = (float) guiResource->GetTextureWidth() * this->texelMappingRatio;
+    float texHeight = (float) guiResource->GetTextureHeight() * this->texelMappingRatio;
+    size.x = (uvRect.width() * texWidth) / this->displaySize.x;
+    size.y = (uvRect.height() * texHeight) / this->displaySize.y;
     return size;
 }
 
@@ -1117,3 +1114,122 @@ nGuiServer::PlaySound(nGuiSkin::Sound snd)
         }
     }
 }
+
+//-----------------------------------------------------------------------------
+/**
+    Discard all windows.
+*/
+void
+nGuiServer::DiscardWindows(const char* className)
+{
+    nGuiWindow* rootWindow = this->GetRootWindowPointer();
+    if (rootWindow)
+    {
+        nClass* windowClass = nKernelServer::Instance()->FindClass(className);
+        n_assert(windowClass);
+        nGuiWidget* child = (nGuiWidget*) rootWindow->GetHead();
+        nGuiWidget* nextChild = 0;
+        if (child) do
+        {
+            nextChild = (nGuiWidget*) child->GetSucc();
+            if (child->IsA(windowClass))
+            {
+                child->Release();
+            }
+        }
+        while (child = nextChild);
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Find next window of given class.
+
+    @param  className   window class name
+    @param  curWindow   window to start searching, 0 for begin
+    @return             pointer to window, or 0
+*/
+nGuiWindow*
+nGuiServer::FindWindowByClass(const char* className, nGuiWindow* curWindow)
+{
+    nGuiWindow* rootWindow = this->GetRootWindowPointer();
+    if (rootWindow)
+    {
+        nClass* windowClass = nKernelServer::Instance()->FindClass(className);
+        n_assert(windowClass);
+        nGuiWidget* child;
+        if (curWindow)
+        {
+            child = (nGuiWidget*) curWindow->GetSucc();
+        }
+        else
+        {
+            child = (nGuiWidget*) rootWindow->GetHead();
+        }
+        nGuiWidget* nextChild = 0;
+        if (child) do
+        {
+            nextChild = (nGuiWidget*) child->GetSucc();
+            if (child->IsA(windowClass))
+            {
+                return (nGuiWindow*) child;
+            }
+        } while (child = nextChild);
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Make sure that the rectangle is within screen boundaries.
+*/
+void
+nGuiServer::MoveRectToVisibleArea(rectangle& r) const
+{
+    vector2 size = r.v1 - r.v0;
+    if (r.v0.x < 0.0f)
+    {
+        r.v0.x = 0.0f;
+        r.v1.x = size.x;
+    }
+    else if (r.v1.x > 1.0f)
+    {
+        r.v1.x = 1.0f;
+        r.v0.x = 1.0f - size.x;
+    }
+    if (r.v0.y < 0.0f)
+    {
+        r.v0.y = 0.0f;
+        r.v1.y = size.y;
+    }
+    else if (r.v1.y > 1.0f)
+    {
+        r.v1.y = 1.0f;
+        r.v0.y = 1.0f - size.y;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the size of 1 pixel.
+*/
+vector2
+nGuiServer::GetPixelSize() const
+{
+    vector2 pixelSize(1.0f / this->displaySize.x, 1.0f / this->displaySize.y);
+    return pixelSize;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void
+nGuiServer::SetDragBox(nGuiDragBox* dragBox)
+{
+    if (dragBox)
+    {
+        n_assert(dragBox->IsA(kernelServer->FindClass("nguidragbox")));
+    }
+    this->refDragBox = dragBox;
+}
+

@@ -59,17 +59,15 @@ nGuiWatcherWindow::OnShow()
     nGuiFormLayout* layout = this->refFormLayout.get();
     kernelServer->PushCwd(layout);
 
-    // compute a vertical size for the text entry widget
-    vector2 textSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("textentry_n");
-    vector2 textMinSize(0.0f, textSize.y);
-    vector2 textMaxSize(1.0f, textSize.y);
-
     // create text label
     nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "TextLabel");
     n_assert(textLabel);
     textLabel->SetText("Pattern:");
     textLabel->SetFont("GuiSmall");
     textLabel->SetAlignment(nGuiTextLabel::Right);
+    vector2 textSize = textLabel->GetTextExtent();
+    vector2 textMinSize(0.0f, textSize.y * 1.25f);
+    vector2 textMaxSize(1.0f, textSize.y * 1.25f);
     textLabel->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
     textLabel->SetMinSize(textMinSize);
     textLabel->SetMaxSize(textMaxSize);

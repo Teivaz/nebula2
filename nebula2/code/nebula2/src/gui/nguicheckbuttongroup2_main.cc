@@ -93,6 +93,12 @@ nGuiCheckButtonGroup2::OnShow()
         {
             btn->SetHighlightBrush("button_h");
         }
+        
+        if (this->tooltips.Size() > 0)
+        {
+            btn->SetTooltip(this->tooltips[i].Get());
+        }
+
         btn->SetMinSize(btnSize);
         btn->SetMaxSize(btnSize);
         btn->SetText(this->options[i].Get());
@@ -148,18 +154,28 @@ nGuiCheckButtonGroup2::OnEvent(const nGuiEvent& event)
     {
         int i;
         int num = this->refCheckButtons.Size();
+        bool replicateEvent = false;
         for (i = 0; i < num; i++)
         {
             if (this->refCheckButtons[i].isvalid())
             {
                 if (event.GetWidget() == this->refCheckButtons[i].get())
                 {
+                    replicateEvent = true;
                     this->selIndex = i;
                     this->UpdateCheckButtons();
                 }
             }
         }
+
+        if (replicateEvent)
+        {
+            // replicate event
+            nGuiEvent event(this, nGuiEvent::Action);
+            nGuiServer::Instance()->PutEvent(event);
+        }
     }
+
     nGuiFormLayout::OnEvent(event);
 }
 
@@ -176,6 +192,7 @@ nGuiCheckButtonGroup2::UpdateCheckButtons()
         int num = this->refCheckButtons.Size();
         for (i = 0; i < num; i++)
         {
+            this->refCheckButtons[i]->SetIsPartOfGroup(true);
             this->refCheckButtons[i]->SetState(false);
         }
 
@@ -184,7 +201,32 @@ nGuiCheckButtonGroup2::UpdateCheckButtons()
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nGuiCheckButtonGroup2::OnMouseMoved(const vector2& mousePos)
+{
+    int i, j;
 
+    for (i = 0; i < this->refCheckButtons.Size(); i++)
+    {
+        nGuiCheckButton* btn = this->refCheckButtons.At(i).get();
+        if (btn->Inside(mousePos))
+        {
+            for (j = 0; j < this->refCheckButtons.Size(); j++)
+            {
+                this->refCheckButtons.At(j)->SetMouseOver(false);
+            }
+            btn->SetMouseOver(true);
+        }
+        else
+        {
+            this->refCheckButtons.At(i)->SetMouseOver(false);
+        }
+    }
 
-
-
+    nGuiFormLayout::OnMouseMoved(mousePos);
+    
+    return true;
+}

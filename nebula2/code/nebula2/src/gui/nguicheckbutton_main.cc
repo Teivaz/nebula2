@@ -13,6 +13,7 @@ nNebulaScriptClass(nGuiCheckButton, "nguitextlabel");
 nGuiCheckButton::nGuiCheckButton() :
     mouseOver(false),
     pressed(false)
+    partOfGroup(false)
 {
     // empty
 }
@@ -32,13 +33,16 @@ nGuiCheckButton::~nGuiCheckButton()
 bool
 nGuiCheckButton::OnMouseMoved(const vector2& mousePos)
 {
-    if (this->Inside(mousePos))
+    if(!this->IsPartOfGroup())
     {
-        this->mouseOver = true;
-    }
-    else
-    {
-        this->mouseOver = false;
+        if (this->Inside(mousePos))
+        {
+            this->mouseOver = true;
+        }
+        else
+        {
+            this->mouseOver = false;
+        }
     }
     return nGuiWidget::OnMouseMoved(mousePos);
 }
@@ -93,6 +97,16 @@ nGuiCheckButton::GetMouseOver() const
 //-----------------------------------------------------------------------------
 /**
 */
+void
+nGuiCheckButton::SetMouseOver(bool b)
+{
+    this->mouseOver = b;
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
 bool
 nGuiCheckButton::Render()
 {
@@ -107,6 +121,10 @@ nGuiCheckButton::Render()
         else if (this->pressed)
         {
             brush = &this->pressedBrush;
+        }
+        else if ( this->GetMouseOver() )
+        {
+            brush = &this->highlightBrush;
         }
         else if (this->blinking)
         {

@@ -56,9 +56,9 @@ nGuiClientWindow::UpdateLayout(const rectangle& newRect)
     if (this->refCloseButton.isvalid())
     {
         vector2 closeSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("close_n");
-        closeRect.v0.x = newRect.width() - closeSize.x;
+        closeRect.v0.x = newRect.width() - (closeSize.x + 0.005f);
         closeRect.v0.y = (this->titleHeight - closeSize.y) * 0.5f;
-        closeRect.v1.x = newRect.width();
+        closeRect.v1.x = newRect.width() - 0.005f;
         closeRect.v1.y = closeRect.v0.y + closeSize.y;
         this->refCloseButton->SetRect(closeRect);
     }

@@ -13,6 +13,7 @@ nNebulaScriptClass(nGuiTextLabel, "nguilabel");
 */
 nGuiTextLabel::nGuiTextLabel() :
     color(1.0f, 1.0f, 1.0f, 1.0f),
+    blinkColor(0.9f, 0.9f, 0.9f, 1.0f),
     align(Center),
     border(0.005f, 0.0f),
     pressedOffset(0.0015f, 0.0015f),
@@ -134,6 +135,18 @@ nGuiTextLabel::RenderText(bool pressed)
     if (pressed)
     {
         nGuiServer::Instance()->DrawText(this->GetText(), this->color, pressedRect, renderFlags);
+    }
+    else if (this->blinking)
+    {
+        double time = nGuiServer::Instance()->GetTime();
+        if (fmod(time, this->blinkRate) > this->blinkRate/3.0)
+        {
+            nGuiServer::Instance()->DrawText(this->GetText(), this->blinkColor, screenSpaceRect, renderFlags);
+        }
+        else
+        {
+            nGuiServer::Instance()->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
+        }
     }
     else
     {

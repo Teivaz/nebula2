@@ -27,29 +27,6 @@ nGuiTextButton::~nGuiTextButton()
 
 //-----------------------------------------------------------------------------
 /**
-    If mouse is over sensitive area, set the focus flag. Clear focus and
-    pressed flag otherwise.
-*/
-bool
-nGuiTextButton::OnMouseMoved(const vector2& mousePos)
-{
-    if (this->Inside(mousePos))
-    {
-        this->focus = true;
-    }
-    else
-    {
-        if (!this->IsStickyMouse())
-        {
-            this->focus = false;
-            this->pressed = false;
-        }
-    }
-    return nGuiWidget::OnMouseMoved(mousePos);
-}
-
-//-----------------------------------------------------------------------------
-/**
     If button has focus, set the pressed flag.
 */
 bool
@@ -85,6 +62,29 @@ nGuiTextButton::OnButtonUp(const vector2& mousePos)
 
 //-----------------------------------------------------------------------------
 /**
+    
+*/
+void
+nGuiTextButton::OnFrame()
+{
+    const vector2 mousePos = nGuiServer::Instance()->GetMousePos();
+    if (this->Inside(mousePos))
+    {
+        this->focus = true;
+    }
+    else
+    {
+        if (!this->IsStickyMouse())
+        {
+            this->focus = false;
+            this->pressed = false;
+        }
+    }
+    return nGuiWidget::OnFrame();
+}
+
+//-----------------------------------------------------------------------------
+/**
 */
 bool
 nGuiTextButton::Render()
@@ -98,6 +98,18 @@ nGuiTextButton::Render()
         else if (this->focus)
         {
             nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
+        }
+        else if (this->blinking)
+        {
+            nTime time = nGuiServer::Instance()->GetTime();
+            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
+            {
+                nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
+            }
+            else
+            {
+                nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
+            }
         }
         else
         {

@@ -152,10 +152,27 @@ nGuiHoriSliderGroup::OnFrame()
 
         // update left and right label formatted strings
         char buf[1024];
-        snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
+        _snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
         this->refLeftLabel->SetText(buf);
-        snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
+        _snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
         this->refRightLabel->SetText(buf);
     }
     nGuiFormLayout::OnFrame();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiHoriSliderGroup::OnEvent(const nGuiEvent& event)
+{
+    if (event.GetType() == nGuiEvent::SliderChanged)
+    {
+        if (this->refSlider.isvalid() && (event.GetWidget() == this->refSlider))
+        {
+            // replicate event
+            nGuiEvent event(this, nGuiEvent::SliderChanged);
+            nGuiServer::Instance()->PutEvent(event);
+        }
+    }
 }

@@ -22,6 +22,8 @@ static void n_setentrytextcolor(void* slf, nCmd* cmd);
 static void n_getentrytextcolor(void* slf, nCmd* cmd);
 static void n_settextcolor(void* slf, nCmd* cmd);
 static void n_gettextcolor(void* slf, nCmd* cmd);
+static void n_setmenutextcolor(void* slf, nCmd* cmd);
+static void n_getmenutextcolor(void* slf, nCmd* cmd);
 static void n_setwindowborder(void* slf, nCmd* cmd);
 static void n_getwindowborder(void* slf, nCmd* cmd);
 static void n_beginbrushes(void* slf, nCmd* cmd);
@@ -31,7 +33,15 @@ static void n_setbuttonsound(void* slf, nCmd* cmd);
 static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
+static void n_setmastervolume(void* slf, nCmd* cmd);
 static void n_setsoundvolume(void* slf, nCmd* cmd);
+static void n_getsoundvolume(void* slf, nCmd* cmd);
+static void n_setwindowfont(void* slf, nCmd* cmd);
+static void n_getwindowfont(void* slf, nCmd* cmd);
+static void n_setbuttonfont(void* slf, nCmd* cmd);
+static void n_getbuttonfont(void* slf, nCmd* cmd);
+static void n_setlabelfont(void* slf, nCmd* cmd);
+static void n_getlabelfont(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -76,7 +86,15 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endbrushes_v",                'EDBR', n_endbrushes);
     cl->AddCmd("v_setsound_ss",                 'SBTS', n_setsound);
     cl->AddCmd("s_getsound_s",                  'GBTS', n_getsound);
-    cl->AddCmd("v_setsoundvolume_f",            'SVOL', n_setsoundvolume);
+    cl->AddCmd("v_setmastervolume_f",           'SVOL', n_setmastervolume);
+    cl->AddCmd("v_setsoundvolume_sf",           'SSVO', n_setsoundvolume);
+    cl->AddCmd("f_getsoundvolume_s",            'GSVO', n_getsoundvolume);
+    cl->AddCmd("v_setwindowfont_s",             'SWNF', n_setwindowfont);
+    cl->AddCmd("s_getwindowfont_v",             'GWNF', n_getwindowfont);
+    cl->AddCmd("v_setbuttonfont_s",             'SBTF', n_setbuttonfont);
+    cl->AddCmd("s_getbuttonfont_v",             'GBTF', n_getbuttonfont);
+    cl->AddCmd("v_setlabelfont_s",              'SLBF', n_setlabelfont);
+    cl->AddCmd("s_getlabelfont_v",              'GLBF', n_getlabelfont);
     cl->EndCmds();
 }
 
@@ -470,6 +488,51 @@ n_getentrytextcolor(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    setmenutextcolor
+    @input
+    ffff(Color)
+    @output
+    v
+    @info
+    Set the menu entry text color.
+*/
+static void
+n_setmenutextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    vector4 c;
+    c.x = cmd->In()->GetF();
+    c.y = cmd->In()->GetF();
+    c.z = cmd->In()->GetF();
+    c.w = cmd->In()->GetF();
+    self->SetMenuTextColor(c);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getmenutextcolor
+    @input
+    v
+    @output
+    ffff(Color)
+    @info
+    Get the menu entry text color.
+*/
+static void
+n_getmenutextcolor(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    const vector4& c = self->GetMenuTextColor();
+    cmd->Out()->SetF(c.x);
+    cmd->Out()->SetF(c.y);
+    cmd->Out()->SetF(c.z);
+    cmd->Out()->SetF(c.w);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     setwindowborder
     @input
     ffff(BorderRect: left, top, right, bottom)
@@ -493,7 +556,7 @@ n_setwindowborder(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
-    getwindowborder
+    getwindowbordersize
     @input
     v
     @output
@@ -583,6 +646,44 @@ n_endbrushes(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    setsoundvolume
+    @input
+    s(Sound), f(Volume)
+    @output
+    v
+    @info
+    Define the volume for a sound.
+*/
+static void
+n_setsoundvolume(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
+    self->SetSoundVolume(snd, cmd->In()->GetF());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getsoundvolume
+    @input
+    s(Sound)
+    @output
+    f(Volume)
+    @info
+    Returns the volume of a sound.
+*/
+static void
+n_getsoundvolume(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
+    cmd->Out()->SetF(self->GetSoundVolume(snd));
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     setsound
     @input
     s(Sound), s(Filename)
@@ -618,21 +719,110 @@ n_getsound(void* slf, nCmd* cmd)
     nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
     cmd->Out()->SetS(self->GetSound(snd));
 }
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setwindowfont
+    @input
+    s(WindowFont)
+    @output
+    v
+    @info
+    Set name of font to use for text inside windows.
+*/
+static void
+n_setwindowfont(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    self->SetWindowFont(cmd->In()->GetS());
+}
 
 //-----------------------------------------------------------------------------
 /**
     @cmd
-    setsoundvolume
+    getwindowfont
     @input
-    f
+    v
+    @output
+    s(WindowFont)
+    @info
+    Get name of font to use for text inside windows.
+*/
+static void
+n_getwindowfont(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    cmd->Out()->SetS(self->GetWindowFont());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setbuttonfont
+    @input
+    s(ButtonFont)
     @output
     v
     @info
-    Sets the master volume for this skin (0 == silence, 1 == max).
+    Set name of font to use for buttons.
 */
 static void
-n_setsoundvolume(void* slf, nCmd* cmd)
+n_setbuttonfont(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    self->SetSoundVolume(cmd->In()->GetF());
+    self->SetButtonFont(cmd->In()->GetS());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getbuttonfont
+    @input
+    v
+    @output
+    s(ButtonFont)
+    @info
+    Get name of font to use for buttons.
+*/
+static void
+n_getbuttonfont(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    cmd->Out()->SetS(self->GetButtonFont());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setlabelfont
+    @input
+    s(LabelFont)
+    @output
+    v
+    @info
+    Set name of font to use for labels.
+*/
+static void
+n_setlabelfont(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    self->SetLabelFont(cmd->In()->GetS());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getlabelfont
+    @input
+    v
+    @output
+    s(LabelFont)
+    @info
+    Get name of font to use for labels.
+*/
+static void
+n_getlabelfont(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    cmd->Out()->SetS(self->GetLabelFont());
 }

@@ -17,7 +17,8 @@ nGuiDirLister::nGuiDirLister() :
     pattern("*"),
     ignoreSubDirs(false),
     ignoreFiles(false),
-    dirty(true)
+    dirty(true),
+    stripExtension(false)
 {
     // empty
 }
@@ -88,14 +89,19 @@ nGuiDirLister::UpdateContent()
             {
                 continue;
             }
-            // a positive match
+            
+            // if in strip extension mode, strip the extension from the file
+            if (this->stripExtension)
+            {
+                entryName.StripExtension();
+            }
             this->AppendLine(entryName.Get());
         }
         while (dir->SetToNextEntry());
 
         dir->Close();
     }
-    delete dir;
+    n_delete(dir);
     this->EndAppend();
     this->dirty = false;
 }

@@ -10,8 +10,6 @@ static void n_setrootwindow(void* slf, nCmd* cmd);
 static void n_getrootwindow(void* slf, nCmd* cmd);
 static void n_addsystemfont(void* slf, nCmd* cmd);
 static void n_addcustomfont(void* slf, nCmd* cmd);
-static void n_setreferencesize(void* slf, nCmd* cmd);
-static void n_getreferencesize(void* slf, nCmd* cmd);
 static void n_ismouseovergui(void* slf, nCmd* cmd);
 static void n_newwindow(void* slf, nCmd* cmd);
 static void n_newskin(void* slf, nCmd* cmd);
@@ -20,6 +18,8 @@ static void n_getskin(void* slf, nCmd* cmd);
 static void n_setsystemskin(void* slf, nCmd* cmd);
 static void n_getsystemskin(void* slf, nCmd* cmd);
 static void n_togglesystemgui(void* slf, nCmd* cmd);
+static void n_setdragbox(void* slf, nCmd* cmd);
+static void n_getdragbox(void* slf, nCmd* cmd);
 static void n_computescreenspacebrushsize(void* slf, nCmd* cmd);
 static void n_runcommand(void* slf, nCmd* cmd);
 static void n_putevent(void* slf, nCmd* cmd);
@@ -48,8 +48,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_getrootwindow_v",                'GRTW', n_getrootwindow);
     cl->AddCmd("v_addsystemfont_ssibbb",           'ADSF', n_addsystemfont);
     cl->AddCmd("v_addcustomfont_sssibbb",          'ADCF', n_addcustomfont);
-    cl->AddCmd("v_setreferencesize_ff",            'SRFS', n_setreferencesize);
-    cl->AddCmd("ff_getreferencesize_v",            'GRFS', n_getreferencesize);
     cl->AddCmd("b_ismouseovergui_v",               'IMOG', n_ismouseovergui);
     cl->AddCmd("o_newwindow_sb",                   'NEWW', n_newwindow);
     cl->AddCmd("o_newskin_s",                      'NSKN', n_newskin);
@@ -58,6 +56,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setsystemskin_o",                'SSSK', n_setsystemskin);
     cl->AddCmd("o_getsystemskin_v",                'GSSK', n_getsystemskin);
     cl->AddCmd("v_togglesystemgui_v",              'TGSG', n_togglesystemgui);
+    cl->AddCmd("v_setdragbox_o",                   'SDGB', n_setdragbox);
+    cl->AddCmd("o_getdragbox_v",                   'GDGB', n_getdragbox);
     cl->AddCmd("ff_computescreenspacebrushsize_s", 'CSBS', n_computescreenspacebrushsize);
     cl->AddCmd("b_runcommand_os",                  'RUNC', n_runcommand);
     cl->AddCmd("v_putevent_os",                    'PUTE', n_putevent);
@@ -188,47 +188,6 @@ n_addcustomfont(void* slf, nCmd* cmd)
     bool b1 = cmd->In()->GetB();
     bool b2 = cmd->In()->GetB();
     self->AddCustomFont(s0, s1, s2, i0, b0, b1, b2);
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    setreferencesize
-    @input
-    f(xRef), f(yRef)
-    @output
-    v
-    @info
-    Set a reference size for coordinates.
-*/
-static void
-n_setreferencesize(void* slf, nCmd* cmd)
-{
-    nGuiServer* self = (nGuiServer*) slf;
-    static vector2 v;
-    v.x = cmd->In()->GetF();
-    v.y = cmd->In()->GetF();
-    self->SetReferenceSize(v);
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @cmd
-    getreferencesize
-    @input
-    v
-    @output
-    f(xRef), f(yRef)
-    @info
-    Get the current reference size for coordinates.
-*/
-static void
-n_getreferencesize(void* slf, nCmd* cmd)
-{
-    nGuiServer* self = (nGuiServer*) slf;
-    const vector2& v = self->GetReferenceSize();
-    cmd->Out()->SetF(v.x);
-    cmd->Out()->SetF(v.y);
 }
 
 //-----------------------------------------------------------------------------
@@ -448,4 +407,38 @@ static void n_putevent(void* slf, nCmd* cmd)
 
     self->PutEvent(nGuiEvent(widget, type));
 }
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setdragbox
+    @input
+    o(DragBoxObject)
+    @output
+    v
+    @info
+    Set pointer to optional global nGuiDragBox object.
+*/
+static void
+n_setdragbox(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;
+    self->SetDragBox((nGuiDragBox*)cmd->In()->GetO());
+}
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getdragbox
+    @input
+    v
+    @output
+    o(DragBoxObject)
+    @info
+    Get pointer to optional global nGuiDragBox object.
+*/
+static void
+n_getdragbox(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;
+    cmd->Out()->SetO(self->GetDragBox());
+}

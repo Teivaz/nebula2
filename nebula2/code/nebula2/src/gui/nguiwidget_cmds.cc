@@ -36,6 +36,7 @@ static void n_sethighlightbrush(void* slf, nCmd* cmd);
 static void n_gethighlightbrush(void* slf, nCmd* cmd);
 static void n_setdisabledbrush(void* slf, nCmd* cmd);
 static void n_getdisabledbrush(void* slf, nCmd* cmd);
+static void n_hasfocus(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -74,7 +75,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getrect_v",                'GTPS', n_getrect);
     cl->AddCmd("v_settooltip_s",                'STTP', n_settooltip);
     cl->AddCmd("s_gettooltip_v",                'GTTP', n_gettooltip);
-    cl->AddCmd("v_setblinking_b",               'SBLK', n_setblinking);
+    cl->AddCmd("v_setblinking_bf",              'SBLK', n_setblinking);
     cl->AddCmd("v_setblinkrate_f",              'SBLR', n_setblinkrate);
     cl->AddCmd("b_getblinking_v",               'GBLK', n_getblinking);
     cl->AddCmd("v_setdefaultbrush_s",           'SDFB', n_setdefaultbrush);
@@ -85,6 +86,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_gethighlightbrush_v",         'GHLB', n_gethighlightbrush);
     cl->AddCmd("v_setdisabledbrush_s",          'SDSB', n_setdisabledbrush);
     cl->AddCmd("s_getdisabledbrush_v",          'GDSB', n_getdisabledbrush);
+    cl->AddCmd("b_hasfocus_v",                  'HASF', n_hasfocus);
     cl->EndCmds();
 }
 
@@ -396,7 +398,7 @@ n_setrect(void* slf, nCmd* cmd)
     r.v1.x = cmd->In()->GetF();
     r.v0.y = cmd->In()->GetF();
     r.v1.y = cmd->In()->GetF();
-    self->SetRect(nGuiServer::Instance()->ConvertRefToScreenSpace(r));
+    self->SetRect(r);
 }
 
 //-----------------------------------------------------------------------------
@@ -414,7 +416,7 @@ static void
 n_getrect(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
-    rectangle r = nGuiServer::Instance()->ConvertScreenToRefSpace(self->GetRect());
+    const rectangle& r = self->GetRect();
     cmd->Out()->SetF(r.v0.x);
     cmd->Out()->SetF(r.v1.x);
     cmd->Out()->SetF(r.v0.y);
@@ -462,17 +464,21 @@ n_gettooltip(void* slf, nCmd* cmd)
     @cmd
     setblinking
     @input
-    b(BlinkingState)
+    b(BlinkingState), f(TimeOut)
     @output
     v
     @info
     Set blinking state of widget (only implemented by some widget classes).
+    If blinking is turned on, it will turn off automatically after TimeOut
+    time has elapsed.
 */
 static void
 n_setblinking(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
-    self->SetBlinking(cmd->In()->GetB());
+    bool b = cmd->In()->GetB();
+    float t = cmd->In()->GetF();
+    self->SetBlinking(b, t);
 }
 
 //-----------------------------------------------------------------------------
@@ -655,3 +661,20 @@ n_getdisabledbrush(void* slf, nCmd* cmd)
     cmd->Out()->SetS(self->GetDisabledBrush());
 }
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    hasfocus
+    @input
+    v
+    @output
+    b(Focus)
+    @info
+    Return true if widget has focus.
+*/
+static void
+n_hasfocus(void* slf, nCmd* cmd)
+{
+    nGuiWidget* self = (nGuiWidget*) slf;
+    cmd->Out()->SetB(self->HasFocus());
+}

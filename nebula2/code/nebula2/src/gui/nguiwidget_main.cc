@@ -4,8 +4,10 @@
 //-----------------------------------------------------------------------------
 #include "gui/nguiwidget.h"
 #include "kernel/nkernelserver.h"
+#include "kernel/ntimeserver.h"
 #include "gui/nguiserver.h"
 #include "gui/nguievent.h"
+#include "gui/nguiresource.h"
 
 nNebulaScriptClass(nGuiWidget, "nroot");
 
@@ -18,15 +20,18 @@ nClass* nGuiWidget::windowClass=0;
 nGuiWidget::nGuiWidget() :
     rect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
     lastButtonDownTime(0.0),
+    mouseWithinTime(0.0),
     shown(true),
-    blinking(false),
-    blinkRate(1.0),
     enabled(true),
     stickyMouse(false),
     hasFocus(false),
     backGround(false),
+    mouseWithin(false),
     minSize(0.0f, 0.0f),
-    maxSize(1.0f, 1.0f)
+    maxSize(1.0f, 1.0f),
+    blinkStarted(0.0),
+    blinkTimeOut(0.0),
+    blinkRate(1.0)
 {
     this->widgetClass = kernelServer->FindClass("nguiwidget");
     this->windowClass = kernelServer->FindClass("nguiwindow");
@@ -100,12 +105,16 @@ nGuiWidget::Inside(const vector2& p)
 {
     if (this->IsShown())
     {
-        return this->GetScreenSpaceRect().inside(p);
-    }
-    else
-    {
+        rectangle screenSpaceRect = this->GetScreenSpaceRect();
+        screenSpaceRect.v0 += this->clickRectBorder;
+        screenSpaceRect.v1 -= this->clickRectBorder;
+        if (screenSpaceRect.inside(p))
+        {
+            return true;
+        }
         return false;
     }
+    return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -161,7 +170,7 @@ nGuiWidget::OnButtonDown(const vector2& mousePos)
             // store button down time, and probably shoot a double click event
             nTime time = nGuiServer::Instance()->GetTime();
             nTime timeDiff = time - this->lastButtonDownTime;
-            if (timeDiff < 0.2f)
+            if ((timeDiff > 0.0) && (timeDiff < 0.2))
             {
                 this->OnDoubleClick(mousePos);
             }
@@ -391,10 +400,36 @@ nGuiWidget::OnFrame()
 {
     if (this->IsShown())
     {
-        // activate tooltip if mouse is over widget
-        if (this->Inside(nGuiServer::Instance()->GetMousePos()) && (!this->tooltip.IsEmpty()) && this->HasFocus())
+        // activate tooltip after mouse was over widget for a while
+        if (this->Inside(nGuiServer::Instance()->GetMousePos())/* && this->HasFocus()*/ && !this->tooltip.IsEmpty())            
         {
-            nGuiServer::Instance()->ShowToolTip(this->tooltip.Get(), vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            nTime time = nTimeServer::Instance()->GetTime();
+            if(!this->mouseWithin)
+            {
+                this->mouseWithinTime = time;
+                this->mouseWithin = true;
+            }
+            else if(time > this->mouseWithinTime + nGuiServer::Instance()->GetToolTipActivationTime())
+            {
+                nGuiServer::Instance()->ShowToolTip(this->tooltip.Get(), vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            }
+        }
+        else
+        {
+            this->mouseWithin = false;
+        }
+
+        // Set blinking time
+        if (this->blinking)
+        {
+            if (this->blinkTimeOut > 0.0)
+            {
+                nTime curTime = nGuiServer::Instance()->GetTime();
+                if (curTime >= (this->blinkStarted + this->blinkTimeOut))
+                {
+                    this->SetBlinking(false, 0.0);
+                }
+            }
         }
 
         // run the per-frame command
@@ -515,4 +550,15 @@ nGuiWidget::GetScreenSpaceRect(const rectangle& src) const
         widget = (nGuiWidget*) widget->GetParent();
     }
     return r;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void
+nGuiWidget::SetBlinking(bool b, nTime timeOut)
+{
+    this->blinking = b;
+    this->blinkStarted = nGuiServer::Instance()->GetTime();
+    this->blinkTimeOut = timeOut;
 }

@@ -4,22 +4,37 @@
 //------------------------------------------------------------------------------
 
 #include "gui/nguidiagramcanvas.h"
-#include "gui/nguiwindow.h"
+#include "gui/nguicanvas.h"
+#include "gui/nguitextlabel.h"
 
-nNebulaClass(nGuiDiagramCanvas, "nguicanvas");
+nNebulaClass(nGuiDiagramCanvas, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
 */
 nGuiDiagramCanvas::nGuiDiagramCanvas() :
-    axisColor(0.8f, 0.8f, 0.8f, 1.0f),
-    numHMarkers(10),
-    numVMarkers(10)
+    hasXAxisLabels(false),
+    hasYAxisLabels(false),
+    hasAxisLabels(false),
+    xLabel("x"),
+    yLabel("y"),
+    hasHeader(false),
+    numXMarkers(5),
+    numYMarkers(5)
 {
-    border.top = 0.015f;
-    border.bottom = 0.015f;
-    border.left = 0.015f;
-    border.right = 0.015f;
+    this->refTextLabel.SetFixedSize(nGuiDiagramCanvas::numTextLabels);
+
+    this->blackColor = vector4(0.0f, 0.0f, 0.0f, 1.0f);
+    this->whiteColor = vector4(1.0f, 1.0f, 1.0f, 1.0f);
+    this->grayColor = vector4(0.7f, 0.7f, 0.7f, 1.0f);
+    this->redColor = vector4(1.0f, 0.0f, 0.0f, 1.0f);
+    this->greenColor = vector4(0.0f, 1.0f, 0.0f, 1.0f);
+
+    this->curveOffset[Left] = 0.01f;
+    this->curveOffset[Right] = 0.00f;
+    this->curveOffset[Top] = 0.00f;
+    this->curveOffset[Bottom] = 0.01f;
+    this->curveOffset[ArrowLength] = 0.01f;
 }
 
 //------------------------------------------------------------------------------
@@ -36,141 +51,296 @@ nGuiDiagramCanvas::~nGuiDiagramCanvas()
 void
 nGuiDiagramCanvas::OnShow()
 {
-    nFont2* textfont = (nFont2*) nResourceServer::Instance()->FindResource(this->axisFont.Get(), nResource::Font);
-    nGfxServer2::Instance()->SetFont(textfont);
+    n_assert(!this->refCanvas.isvalid());
+
+    kernelServer->PushCwd(this);
+
+    nGuiTextLabel* label;
+    vector2 size;
+    nString line;
+
+    // create optional axis labels
+
+    // create Y-Axis label
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yaxislabel");
+    n_assert(label);
     
-    vector2 textextentBottom = nGfxServer2::Instance()->GetTextExtent(this->xLabel.Get());
+    if ( this->HasAxisLabels() )
+    {
+        label->SetText(this->yLabel.Get());
+    }
 
-    // Setup up the X- und Y-Axis 
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetColor(this->axisTextColor);
+    this->AttachForm(label, nGuiFormLayout::Top, 0.005f);
+    this->AttachForm(label, nGuiFormLayout::Left, 0.005f);
+    label->OnShow();
+    this->refTextLabel[YLabel] = label;
 
-    line2 arrowUp1 = line2( vector2(this->border.left - (1.0f - this->border.left   - this->border.right) / 65, 
-                                    this->border.top  + (1.0f - this->border.bottom - border.top)         / 65),
-                            vector2(this->border.left, this->border.top));
-
-    line2 arrowUp2 = line2( vector2(this->border.left, this->border.top), 
-                            vector2(this->border.left + (1.0f - this->border.left - this->border.right) / 65, 
-                                    this->border.top  + (1.0f - border.bottom     - border.top)         / 65));
-
-    line2 arrowRight1 = line2 ( vector2(1.0f - this->border.right  - (1.0f - this->border.left - this->border.right) / 65, 
-                                        1.0f - this->border.bottom - textextentBottom.y - (1.0f - this->border.bottom - this->border.top) / 65 ),
-                                vector2(1.0f - this->border.right, 1.0f - this->border.bottom - textextentBottom.y) );
-
-    line2 arrowRight2 = line2 ( vector2(1.0f - this->border.right, 1.0f - this->border.bottom - textextentBottom.y),
-                                vector2(1.0f - this->border.right  - (1.0f - this->border.left - this->border.right) / 65, 
-                                        1.0f - this->border.bottom - textextentBottom.y + (1.0f - this->border.top - this->border.bottom) / 65 ));
-
-    line2 axisX = line2( vector2(0.0f + this->border.left, 1.0f - this->border.bottom - textextentBottom.y),
-                         vector2(1.0f - this->border.right, 1.0f - this->border.bottom - textextentBottom.y));
-
-    line2 axisY = line2( vector2(0.0f + this->border.left, 0.0f + this->border.top),
-                         vector2(0.0f + this->border.left, 1.0f - this->border.bottom - textextentBottom.y) );
-
-    // Append Lines to Curves
-    this->BeginCurve(this->axisColor);
-    this->AppendLineToCurve(arrowUp1);
-    this->AppendLineToCurve(arrowUp2);
-    this->EndCurve();
+    // create X-Axis label
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xaxislabel");
+    n_assert(label);
     
-    this->BeginCurve(this->axisColor);
-    this->AppendLineToCurve(axisY);
-    this->AppendLineToCurve(axisX);
-    this->EndCurve();
-
-    this->BeginCurve(this->axisColor);
-    this->AppendLineToCurve(arrowRight1);
-    this->AppendLineToCurve(arrowRight2);
-    this->EndCurve();
+    if ( this->HasAxisLabels() )
+    {
+        label->SetText(this->xLabel.Get());
+    }
     
-    // Setup X-Axis
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent(); 
+    label->SetMinSize(size); 
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetColor(this->axisTextColor);
+    this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
+    this->AttachForm(label, nGuiFormLayout::Right, 0.005f);
+    label->OnShow();
+    this->refTextLabel[XLabel] = label;
+    
+
+    // create Y-Axis value-labels
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yminlabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMinYAxisValue() );
+
+    if (this->HasYAxisLabels())
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+
+
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
+    this->AttachForm(label, nGuiFormLayout::Bottom, 0.0005f + size.y);
+    label->OnShow();
+    this->refTextLabel[Ymin] = label;
+
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yhalflabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMaxYAxisValue() / 2);
+
+    if (this->HasYAxisLabels() && !(line == this->refTextLabel[Ymin]->GetText()))
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
+    // FIXME: This is just the vertical center of the widget
+    // and does not fit to the canvas marker in the middle
+    this->AttachPos(label, nGuiFormLayout::VCenter, 0.5f);
+    label->OnShow();
+    this->refTextLabel[Yhalf] = label;
+
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "ymaxlabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMaxYAxisValue() );
+    
+    if (this->HasYAxisLabels())
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
+    this->AttachWidget(label, nGuiFormLayout::Top, this->refTextLabel[YLabel].get(), 0.0005f);
+    label->OnShow();
+    this->refTextLabel[Ymax] = label;
+
+    // create X-Axis value-labels
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xminlabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMinXAxisValue() );
+    
+    if (this->HasXAxisLabels())
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
+    this->AttachWidget(label, nGuiFormLayout::Left, this->refTextLabel[Ymax].get(), 0.005f);
+    label->OnShow();
+    this->refTextLabel[Xmin] = label;
+
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xhalflabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMinXAxisValue() + ( (this->GetMaxXAxisValue() - this->GetMinXAxisValue()) / 2));
+    
+    if (this->HasXAxisLabels() && !(line == this->refTextLabel[Xmin]->GetText()))
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
+    // FIXME: This is just the horizontal center of the widget
+    // and does not fit to the canvas marker in the middle
+    this->AttachPos(label, nGuiFormLayout::HCenter, 0.5f);
+    label->OnShow();
+    this->refTextLabel[Xhalf] = label;
+
+    label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xmaxlabel");
+    n_assert(label);
+    line="";
+    line.AppendInt( this->GetMaxXAxisValue() );
+    
+    if (this->HasXAxisLabels())
+    {    
+        label->SetText(line.Get());
+    }
+    else
+    {
+        label->SetText(" ");
+    }
+    
+    label->SetColor(this->axisTextColor);
+    label->SetFont(this->axisFont.Get());
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
+    label->SetMaxSize(size);
+    label->SetBorder(vector2(0.0f, 0.0f));
+    this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
+    this->AttachWidget(label, nGuiFormLayout::Right, this->refTextLabel[XLabel].get(), 0.005f);
+    label->OnShow();
+    this->refTextLabel[Xmax] = label;
+    
+
+    if ( this->HasHeader() )
+    {
+        // FIXME: create an optional headerlabel
+    }
+    
+    // create Canvas
+    nGuiCanvas* canvas = (nGuiCanvas*) kernelServer->New("nguicanvas", "diagramcanvas");
+    n_assert(canvas);
+
+    this->AttachWidget(canvas, nGuiFormLayout::Top, this->refTextLabel[YLabel].get(), 0.005f);
+    this->AttachWidget(canvas, nGuiFormLayout::Bottom, this->refTextLabel[Xmin].get(), 0.005f);
+    this->AttachWidget(canvas, nGuiFormLayout::Left, this->refTextLabel[Ymax].get(), 0.005f);
+    this->AttachWidget(canvas, nGuiFormLayout::Right, this->refTextLabel[XLabel].get(), 0.005f);
+
+    // Y-Axis
+    canvas->BeginCurve(this->axisTextColor);
+    canvas->AppendLineToCurve( line2(
+                            /* start */ vector2(this->curveOffset[Left], this->curveOffset[Top]),
+                            /* end */ vector2(this->curveOffset[Left], 1.0f - this->curveOffset[Bottom]) ));
+    canvas->EndCurve();
+
+    // X-Axis
+    canvas->BeginCurve(this->axisTextColor);
+    canvas->AppendLineToCurve( line2(
+                          /* start */ vector2(this->curveOffset[Left], 1.0f - this->curveOffset[Bottom]),
+                          /* end */ vector2(1.0f - this->curveOffset[Right], 1.0f - this->curveOffset[Bottom]) ));
+    canvas->EndCurve();
+
+    // Y-Arrow
+    canvas->BeginCurve(this->axisTextColor);
+    canvas->AppendLineToCurve( line2(
+                          /* start */ vector2(0.0f, this->curveOffset[ArrowLength]),
+                            /* end */ vector2(this->curveOffset[ArrowLength], 0.0f) ));
+    canvas->AppendLineToCurve( line2(
+                          /* start */ vector2(this->curveOffset[ArrowLength], 0.0f),
+                            /* end */ vector2(2 * this->curveOffset[ArrowLength], this->curveOffset[ArrowLength]) ));
+    canvas->EndCurve();
+
+    // X-Arrow
+    canvas->BeginCurve(this->axisTextColor);
+    canvas->AppendLineToCurve( line2(
+                          /* start */ vector2(1.0f - this->curveOffset[ArrowLength], 1.0f - ( 2 * this->curveOffset[ArrowLength]) ),
+                            /* end */ vector2(1.0f, 1.0f - this->curveOffset[ArrowLength] ) ));
+    canvas->AppendLineToCurve( line2(
+                          /* start */ vector2(1.0f, 1.0f - this->curveOffset[ArrowLength]),
+                            /* end */ vector2(1.0f - this->curveOffset[ArrowLength], 1.0f) ));
+    canvas->EndCurve();
+
     int i;
+    rectangle canvasrect = this->GetRect();
+    const vector2& v0 = rect.v0;
+    const vector2& v1 = rect.v1;
 
-    for (i = 1; i < this->numHMarkers; i++ )
+    // Markers on the Y-Axis
+    for (i = 1; i < numYMarkers; i++ )
     {
-        line2 marker = line2( vector2( this->border.left + ((1.0f - this->border.left     - this->border.right) / (numHMarkers)) * i,
-                                       1.0f - this->border.bottom - textextentBottom.y -(1.0f - border.bottom  - this->border.top)   / 75),
-                              vector2( this->border.left + ((1.0f - this->border.left     - this->border.right) / (numHMarkers)) * i,
-                                       1.0f - this->border.bottom + (1.0f - border.bottom - this->border.top)   / 75 - textextentBottom.y) );
-        
-        this->BeginCurve(this->axisColor);
-        this->AppendLineToCurve(marker);
-        this->EndCurve();
+        line2 marker = line2(
+                        /* start */ vector2(0.0f ,  (1.0f / numYMarkers) * i),
+                          /* end */ vector2(2*this->curveOffset[Left] , (1.0f / numYMarkers) * i));
+
+        canvas->BeginCurve(this->axisTextColor);
+        canvas->AppendLineToCurve(marker);
+        canvas->EndCurve();
     }
 
-    // Setup Y-Axis
-    for (i = 1; i < this->numVMarkers; i++)
+    // Markers on the X-Axis
+    for (i = 1; i < numXMarkers; i++ )
     {
-        line2 marker = line2( vector2( 0.5f * this->border.left, 
-                                       1.0f - this->border.bottom - ((1.0f - this->border.bottom - this->border.top) / (numVMarkers)) * i),
-                              vector2( 1.5f * this->border.left, 
-                                       1.0f - this->border.bottom - ((1.0f - this->border.bottom - this->border.top) / (numVMarkers)) * i) );
-        
-        this->BeginCurve(this->axisColor);
-        this->AppendLineToCurve(marker);
-        this->EndCurve();
+        line2 marker = line2(
+                        /* start */ vector2((1.0f / numXMarkers) * i, 1.0f),
+                          /* end */ vector2((1.0f / numXMarkers) * i, 1.0f - ( 2 * this->curveOffset[Bottom])));
+
+        canvas->BeginCurve(this->axisTextColor);
+        canvas->AppendLineToCurve(marker);
+        canvas->EndCurve();
     }
 
-    nGuiCanvas::Update();
+    this->refCanvas = canvas;
+    canvas->OnShow();
 
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-bool
-nGuiDiagramCanvas::Render()
-{
-    if(this->IsShown())
-    {
-        nGuiCanvas::Render();
-
-        rectangle textRect;
-        vector2 textextent;
-        rectangle screenSpaceRect = this->GetScreenSpaceRect();;
-
-        const vector4& activeWindowColor = ((nGuiWindow*) this->GetOwnerWindow())->GetWindowColor();
-        const int renderFlags = nFont2::Left | nFont2::ExpandTabs;
-        vector4 textcolor = this->axisColor;
-
-        // Label for the X-Axis
-        nFont2* textfont = (nFont2*) nResourceServer::Instance()->FindResource(this->axisFont.Get(), nResource::Font);
-        nGfxServer2::Instance()->SetFont(textfont);
-        textextent = nGfxServer2::Instance()->GetTextExtent(this->xLabel.Get());
-            
-        textRect = rectangle( vector2(
-                                    screenSpaceRect.v1.x - (screenSpaceRect.v1.x - screenSpaceRect.v0.x) * this->border.right - textextent.x,
-                                    screenSpaceRect.v1.y - (screenSpaceRect.v1.y - screenSpaceRect.v0.y) * this->border.bottom - 0.3f * textextent.y),
-                                vector2(
-                                    screenSpaceRect.v1.x - (screenSpaceRect.v1.x - screenSpaceRect.v0.x) * this->border.right,
-                                    screenSpaceRect.v1.y - (screenSpaceRect.v1.y - screenSpaceRect.v0.y) * this->border.bottom + 0.7f * textextent.y)
-                    );
-
-        textcolor.w = activeWindowColor.w;
-        nGuiServer::Instance()->DrawText( this->xLabel.Get(),
-                                        textcolor,
-                                        textRect,
-                                        renderFlags );
-
-        // Label for the Y-Axis
-        textextent = nGfxServer2::Instance()->GetTextExtent(this->yLabel.Get());
-            
-        textRect = rectangle( vector2(
-                                    screenSpaceRect.v0.x + (screenSpaceRect.v1.x - screenSpaceRect.v0.x) / 30,
-                                    screenSpaceRect.v0.y + (screenSpaceRect.v1.y - screenSpaceRect.v0.y) / 30),
-                                vector2(
-                                    screenSpaceRect.v0.x + (screenSpaceRect.v1.x - screenSpaceRect.v0.x) / 30 + textextent.x,
-                                    screenSpaceRect.v0.y + (screenSpaceRect.v1.y - screenSpaceRect.v0.y) / 30 + textextent.y )
-                    );
-
-        // Draw the content of the textlabel
-        textcolor.w = activeWindowColor.w;
-        nGuiServer::Instance()->DrawText( this->yLabel.Get(),
-                                        this->axisColor,
-                                        textRect,
-                                        renderFlags );
-
-        return true;
-    }
-    return false;
+    this->UpdateLayout(this->rect);
 }
 
 //------------------------------------------------------------------------------
@@ -179,15 +349,21 @@ nGuiDiagramCanvas::Render()
 void
 nGuiDiagramCanvas::OnHide()
 {
-    // empty
-}
+    if(this->refCanvas.isvalid())
+    {
+        this->refCanvas->Release();
+        n_assert(!this->refCanvas.isvalid());
+    }
 
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nGuiDiagramCanvas::OnFrame()
-{
-    // empty
+    int i;
+    for (i = 0; i < nGuiDiagramCanvas::numTextLabels; i++)
+    {
+        if(this->refTextLabel[i].isvalid())
+        {
+            this->refTextLabel[i]->Release();
+            n_assert(!this->refTextLabel[i].isvalid());
+        }
+    }
+    this->ClearAttachRules();
 }
 
