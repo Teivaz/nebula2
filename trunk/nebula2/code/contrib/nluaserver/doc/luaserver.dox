@@ -7,9 +7,10 @@
     <h2>Installation</h2>
     This module should be checked out to @c nebula2/code/contrib/nluaserver,
     after that just re-run @c nebula2/update.tcl and you should be ready
-    to go. Open up the solution/workspace in @c nebula2/code/contrib/nluaserver
-    and build everything. You do not need to download and build Lua itself,
-    that's integrated into this module.<br>
+    to go. Open up the @c luaserver solution/workspace in the appropriate
+    build directory (@c nebula2/build/XXXX) and build everything. You do
+    not need to download and build Lua itself, that's integrated into this
+    module.<br>
     <br>
     The Lua core (located under @c nebula2/code/contrib/nluaserver/inc/lua and
     @c nebula2/code/contrib/nluaserver/src/lua) is subject to the terms
