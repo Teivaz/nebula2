@@ -27,8 +27,8 @@
 /**
     This function is called by n_assert() when the assertion fails.
 
-    13-Dec-99   floh    created
-    07-Feb-00   floh    should now also flush log channel 
+     - 13-Dec-99   floh    created
+     - 07-Feb-00   floh    should now also flush log channel 
                         correctly if not on stdout
 */
 N_EXPORT 
@@ -96,7 +96,7 @@ n_message(const char* msg, ...)
     Nebula's printf replacement. Will redirect the text to the console
     and/or logfile.
 
-    27-Nov-98   floh    created
+     - 27-Nov-98   floh    created
 */
 N_EXPORT 
 void 
@@ -120,7 +120,7 @@ n_printf(const char *s, ...)
 /**
     Put process to sleep.
 
-    21-Dec-98   floh    created
+     - 21-Dec-98   floh    created
 */
 N_EXPORT 
 void 
@@ -144,7 +144,7 @@ n_sleep(double sec)
 /**
     A strdup() implementation using Nebula's malloc() override.
     
-    17-Jan-99   floh    created
+     - 17-Jan-99   floh    created
 */
 N_EXPORT 
 char*
@@ -163,7 +163,7 @@ n_strdup(const char* from)
 /**
     A safe strncpy() implementation.
 
-    19-Feb-99   floh    created
+     - 19-Feb-99   floh    created
 */
 N_EXPORT 
 char*
@@ -178,7 +178,7 @@ n_strncpy2(char *dest, const char *src, size_t size)
 /**
     A safe strcat implementation.
 
-    06-Mar-00   floh    created
+     - 06-Mar-00   floh    created
 */
 N_EXPORT 
 void 
@@ -193,10 +193,10 @@ n_strcat(char *dest, const char *src, size_t dest_size)
 /**
     A wrapper for loading a dll.
 
-    10-May-99   floh    created
-    02-Aug-01	leaf	+ error description in win32
-    03-Aug-01	leaf	+ error description in linux, 
-  						  thanks to Warren Baird
+     - 10-May-99   floh    created
+     - 02-Aug-01   leaf    + error description in win32
+     - 03-Aug-01   leaf       + error description in linux, 
+                             thanks to Warren Baird
 */
 #ifdef N_STATIC
     // NOTHING
@@ -213,11 +213,11 @@ n_dllopen(const char* name)
     {
         n_printf("Could not load dll '%s'\n", dll_name);
         // Find out why we failed
-		char *err = dlerror();
-		if (err) 
+        char *err = dlerror();
+        if (err) 
         {
-	  		n_printf("Error was:\n%s\n",err);
-		}
+              n_printf("Error was:\n%s\n",err);
+        }
     }
     return dll;
 }
@@ -226,31 +226,31 @@ n_dllopen(const char* name)
     void*
     n_dllopen(const char *name)
     {
-	    HINSTANCE dll;
-	    dll = LoadLibrary((LPCSTR) name);
+        HINSTANCE dll;
+        dll = LoadLibrary((LPCSTR) name);
         if (!dll) 
         {
-		    // Find out why we failed
-		    LPVOID lpMsgBuf;
-		    FormatMessage( 
-			    FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-			    FORMAT_MESSAGE_FROM_SYSTEM | 
-			    FORMAT_MESSAGE_IGNORE_INSERTS,
-			    NULL,
-			    GetLastError(),
-			    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			    (LPTSTR) &lpMsgBuf,
-			    0,
-			    NULL 
-			    );
-		    
-		    // Display the string.
-		    n_printf("Could not load dll '%s'\nError was:\n%s\n", name, lpMsgBuf);
+            // Find out why we failed
+            LPVOID lpMsgBuf;
+            FormatMessage( 
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                FORMAT_MESSAGE_FROM_SYSTEM | 
+                FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL,
+                GetLastError(),
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPTSTR) &lpMsgBuf,
+                0,
+                NULL 
+                );
+            
+            // Display the string.
+            n_printf("Could not load dll '%s'\nError was:\n%s\n", name, lpMsgBuf);
 
-		    // Free the buffer.
-		    LocalFree( lpMsgBuf );
+            // Free the buffer.
+            LocalFree( lpMsgBuf );
         }
-	    return (void*) dll;
+        return (void*) dll;
     }
 #else
 #error "n_dllopen() NOT IMPLEMENTED"
@@ -260,7 +260,7 @@ n_dllopen(const char* name)
 /**
     Wrapper for unloading a dll.
 
-    10-May-99   floh    created
+     - 10-May-99   floh    created
 */
 #ifdef N_STATIC
     
@@ -276,7 +276,7 @@ n_dllclose(void* dll)
     void 
     n_dllclose(void* dll)
     {
-	    FreeLibrary((HMODULE) dll);
+        FreeLibrary((HMODULE) dll);
     }
 #else
 #error "n_dllclose() NOT IMPLEMENTED"
@@ -302,9 +302,9 @@ n_dllclose(void* dll)
     void*
     n_dllsymbol(void *dll, const char *sym)
     {
-	    FARPROC h = GetProcAddress((HMODULE)dll, (LPCSTR)sym);
-	    if (!h) n_error("n_dllsymbol(%s) failed!\n", sym);
-	    return (void *) h;
+        FARPROC h = GetProcAddress((HMODULE)dll, (LPCSTR)sym);
+        if (!h) n_error("n_dllsymbol(%s) failed!\n", sym);
+        return (void *) h;
     }
 #else
 #error "n_dllsymbol() NOT IMPLEMENTED"

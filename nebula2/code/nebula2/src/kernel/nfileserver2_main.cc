@@ -14,8 +14,8 @@ nNebulaScriptClass(nFileServer2, "nroot");
 //------------------------------------------------------------------------------
 /**
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 nFileServer2::nFileServer2() :
     bytesRead(0),
@@ -30,8 +30,8 @@ nFileServer2::nFileServer2() :
 //------------------------------------------------------------------------------
 /**
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 nFileServer2::~nFileServer2()
 {
@@ -43,18 +43,18 @@ nFileServer2::~nFileServer2()
 
 //------------------------------------------------------------------------------
 /**
-	creates new or modifies existing assign under /sys/share/assigns
+    creates new or modifies existing assign under /sys/share/assigns
 
-    @param assignName   the name of the assign
-    @param pathName		the path to which the assign links
+    @param assignName      the name of the assign
+    @param pathName        the path to which the assign links
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 bool
 nFileServer2::SetAssign(const char* assignName, const char* pathName)
 {
-	if (pathName[strlen(pathName)-1] != '/') 
+    if (pathName[strlen(pathName)-1] != '/') 
     {
         n_error("nFileServer2::SetAssign: Path '%s' must end with a '/'\n", pathName);
         return false;
@@ -75,13 +75,13 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
 
 //------------------------------------------------------------------------------
 /**
-	queries existing assign under /sys/share/assigns
+    queries existing assign under /sys/share/assigns
 
-    @param assignName   the name of the assign
-    @return				the path to which the assign links
+    @param assignName      the name of the assign
+    @return                the path to which the assign links
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 const char*
 nFileServer2::GetAssign(const char* assignName)
@@ -89,10 +89,10 @@ nFileServer2::GetAssign(const char* assignName)
     nEnv *env = (nEnv *) this->assignDir->Find(assignName);
     if (env) 
     {
-		return env->GetS();
+        return env->GetS();
     }
     else 
-	{
+    {
         return 0;
     }
 }
@@ -159,14 +159,14 @@ nFileServer2::CleanupPathName(char* path)
     Please note that Nebula does not know the concept of a current working
     directory, thus, all paths MUST be absolute (please note that Nebula
     assigns can be used to create position independent absolute paths).
-	  
-	@param pathName		the path to expand
-	@param buf			buffer for result
-	@param bufSize		size of the buffer
-    @return				result buffer
+      
+    @param pathName        the path to expand
+    @param buf             buffer for result
+    @param bufSize         size of the buffer
+    @return                result buffer
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 const char* 
 nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
@@ -179,14 +179,14 @@ nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
     // suche Assign-Zeichen
     colon = strchr(pathBuf,':');
     if (colon)
-	{
+    {
         *colon++ = 0;
         // suche Assign selbst
         if (strlen(pathBuf) > 1)
-		{
+        {
             const char *replace = this->GetAssign(pathBuf);
             if (replace)
-			{
+            {
                 strcpy(buf, replace);
                 strcat(buf, colon);
                 this->CleanupPathName(buf);
@@ -203,32 +203,32 @@ nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
 
 //------------------------------------------------------------------------------
 /**
-	creates a new nDirectory object
+    creates a new nDirectory object
 
     @return          the nDirectory object
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 nDirectory* 
 nFileServer2::NewDirectoryObject()
 {
-	return new nDirectory(this);
+    return new nDirectory(this);
 }
 
 //------------------------------------------------------------------------------
 /**
-	creates a new nFile object
+    creates a new nFile object
   
-	@return          the nFile object
+    @return          the nFile object
 
-	history:
-    - 30-Jan-2002   peter    created
+    history:
+     - 30-Jan-2002   peter    created
 */
 nFile*
 nFileServer2::NewFileObject()
 {
-	return new nFile(this);
+    return new nFile(this);
 }
 
 //------------------------------------------------------------------------------
@@ -321,6 +321,6 @@ nFileServer2::InitBinAssign(void)
 #endif
 }
 
-
-
+//------------------------------------------------------------------------------
+// EOF
 //------------------------------------------------------------------------------

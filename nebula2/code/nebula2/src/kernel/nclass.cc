@@ -41,9 +41,9 @@ nClass::nClass(const char *name,
 
 //--------------------------------------------------------------------
 /**
-    04-Aug-99   floh    boeser Bug: nCmdProto-Liste wurde als nCmd 
-						Objekte freigegeben...
-    18-Feb-00   floh    + cmd_table is now a nKeyArray
+     - 04-Aug-99   floh    boeser Bug: nCmdProto-Liste wurde als nCmd 
+                           Objekte freigegeben...
+     - 18-Feb-00   floh    + cmd_table is now a nKeyArray
 */
 nClass::~nClass(void)
 {
@@ -76,7 +76,7 @@ nClass::~nClass(void)
 
 //--------------------------------------------------------------------
 /**
-    08-Aug-99   floh    created
+     - 08-Aug-99   floh    created
 */
 nRoot*
 nClass::NewObject(void)
@@ -89,7 +89,7 @@ nClass::NewObject(void)
 
 //--------------------------------------------------------------------
 /**
-    08-Aug-99   floh    created
+     - 08-Aug-99   floh    created
 */
 void 
 nClass::BeginCmds(void)
@@ -131,10 +131,10 @@ nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
 /**
     Build sorted array of attached cmds for a bsearch() by ID. 
 
-    08-Aug-99   floh    created
-    24-Oct-99   floh    checks for identical cmd ids and throws
-                        an error 
-    18-Feb-00   floh    cmd_table now a nKeyArray
+     - 08-Aug-99   floh    created
+     - 24-Oct-99   floh    checks for identical cmd ids and throws
+                           an error 
+     - 18-Feb-00   floh    cmd_table now a nKeyArray
 */
 void 
 nClass::EndCmds(void)
@@ -201,7 +201,7 @@ nClass::EndCmds(void)
     @param  name    name of command to be found
     @return         pointer to nCmdProto object, or 0
 
-    08-Aug-99   floh    Header
+     - 08-Aug-99   floh    Header
 */
 nCmdProto*
 nClass::FindCmdByName(const char *name)
@@ -227,12 +227,12 @@ nClass::FindCmdByName(const char *name)
     @param  id      the fourcc code of the command to be found
     @return         pointer to nCmdProto object, or 0
 
-    08-Aug-99   floh    Header
-    08-Aug-99   floh    + macht jetzt einen Binary-Search auf die
-                          Cmd-Table, anstatt sich linear durch die
-                          Cmd-Liste zu hangeln.
-    25-Jan-99   floh    + bsearch() slightly optimized
-    18-Feb-00   floh    + cmd_table now nKeyArray
+     - 08-Aug-99   floh    Header
+     - 08-Aug-99   floh    + macht jetzt einen Binary-Search auf die
+                             Cmd-Table, anstatt sich linear durch die
+                             Cmd-Liste zu hangeln.
+     - 25-Jan-99   floh    + bsearch() slightly optimized
+     - 18-Feb-00   floh    + cmd_table now nKeyArray
 */
 nCmdProto*
 nClass::FindCmdById(uint id)

@@ -27,7 +27,7 @@ n_listener_tfunc(nThread *t)
 
     do 
     {
-		nIpcMiniServer *ims;
+        nIpcMiniServer *ims;
         n_printf("nIpcServer: listening on port %d...\n", ntohs(is->hostAddr.sin_port));
         ims = n_new nIpcMiniServer(is);
         if (ims) 
@@ -51,7 +51,7 @@ n_listener_tfunc(nThread *t)
         }                     
     } while (!t->ThreadStopRequested());
 
-	n_printf("nIpcServer: shutting down listener thread.\n");
+    n_printf("nIpcServer: shutting down listener thread.\n");
     t->ThreadHarakiri();
     return 0;
 }
@@ -66,11 +66,11 @@ n_listener_tfunc(nThread *t)
     dann, dass er sich beenden soll (in ThreadStopRequested()),
     und faehrt dann auch alle nIpcMiniServers runter.
 
-    28-Oct-98   floh    created
-    31-Oct-98   floh    Linux reagiert offensichtlich sehr
-                        empfindlich darauf, einfach accept() den
-                        Socket unterm Arsch wegzuschliessen, also
-                        nochmal die traditionelle Methode...
+     - 28-Oct-98   floh    created
+     - 31-Oct-98   floh    Linux reagiert offensichtlich sehr
+                           empfindlich darauf, einfach accept() den
+                           Socket unterm Arsch wegzuschliessen, also
+                           nochmal die traditionelle Methode...
 */
 void 
 n_listener_wakeup(nThread *t)
@@ -107,7 +107,7 @@ n_listener_wakeup(nThread *t)
 
 //------------------------------------------------------------------------------
 /**
-    31-Oct-98   floh    created
+     - 31-Oct-98   floh    created
 */
 short 
 nIpcServer::GetPortNumFromName(const char* portName)
@@ -118,11 +118,11 @@ nIpcServer::GetPortNumFromName(const char* portName)
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
-    08-Dec-98   floh    hmm, boese Falle, bind() kam im Fehlerfall
-                        mit -98 zurueck..., ich habe auf 1 
-                        getestet...
-    08-Jun-99   floh    + nThreadSafeList
+     - 28-Oct-98   floh    created
+     - 08-Dec-98   floh    hmm, boese Falle, bind() kam im Fehlerfall
+                           mit -98 zurueck..., ich habe auf 1 
+                           getestet...
+     - 08-Jun-99   floh    + nThreadSafeList
 */
 nIpcServer::nIpcServer(const char *portName)
 {
@@ -144,12 +144,12 @@ nIpcServer::nIpcServer(const char *portName)
     this->hostAddr.sin_family = AF_INET;
     this->hostAddr.sin_addr.s_addr = INADDR_ANY;   // die eigene bitte
     memset(&(this->hostAddr.sin_zero), 0, sizeof(this->hostAddr.sin_zero));
-	
+    
     bool bound = false;
-	int portNum = this->GetPortNumFromName(portName);
-	while (!bound) 
+    int portNum = this->GetPortNumFromName(portName);
+    while (!bound) 
     {
-	    this->hostAddr.sin_port = htons(portNum);
+        this->hostAddr.sin_port = htons(portNum);
         res = bind(this->sock, (struct sockaddr *) &(this->hostAddr), sizeof(this->hostAddr));
         if (res != 0) 
         {
@@ -180,7 +180,7 @@ nIpcServer::nIpcServer(const char *portName)
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 nIpcServer::~nIpcServer()
 {
@@ -246,7 +246,7 @@ nIpcServer::Poll()
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 nMsgNode*
 nIpcServer::GetMsg(int& outClientId)
@@ -270,7 +270,7 @@ nIpcServer::GetMsg(int& outClientId)
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 void 
 nIpcServer::ReplyMsg(nMsgNode* nd)
@@ -280,7 +280,7 @@ nIpcServer::ReplyMsg(nMsgNode* nd)
     
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 bool 
 nIpcServer::AnswerMsg(void* buf, int size, int clientId)

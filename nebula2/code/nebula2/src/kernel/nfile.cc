@@ -10,8 +10,8 @@
 //------------------------------------------------------------------------------
 /**
     history:
-    - 30-Jan-2002   peter   created
-    - 11-Feb-2002   floh    Linux stuff
+     - 30-Jan-2002   peter   created
+     - 11-Feb-2002   floh    Linux stuff
 */
 nFile::nFile(nFileServer2* server) : 
     fs(server),
@@ -28,7 +28,7 @@ nFile::nFile(nFileServer2* server) :
 /**
 
     history:
-    - 30-Jan-2002   peter    created
+     - 30-Jan-2002   peter    created
 */
 nFile::~nFile()
 {
@@ -61,8 +61,8 @@ nFile::IsOpen()
     @return             success
 
     history:
-      - 30-Jan-2002   peter   created
-      - 11-Feb-2002   floh    Linux stuff
+     - 30-Jan-2002   peter   created
+     - 11-Feb-2002   floh    Linux stuff
 */
 bool
 nFile::Open(const char* fileName, const char* accessMode)
@@ -132,8 +132,8 @@ nFile::Open(const char* fileName, const char* accessMode)
     closes the file
 
     history:
-    - 30-Jan-2002   peter   created
-    - 11-Feb-2002   floh    Linux stuff
+     - 30-Jan-2002   peter   created
+     - 11-Feb-2002   floh    Linux stuff
 */
 void
 nFile::Close()
@@ -164,8 +164,8 @@ nFile::Close()
     @return                number of bytes written
 
     history:
-    - 30-Jan-2002   peter    created
-    - 11-Feb-2002   floh    Linux stuff
+     - 30-Jan-2002   peter    created
+     - 11-Feb-2002   floh    Linux stuff
 */
 int
 nFile::Write(const void* buffer, int numBytes)
@@ -193,7 +193,7 @@ nFile::Write(const void* buffer, int numBytes)
     @return                number of bytes read
 
     history:
-    - 30-Jan-2002   peter    created
+     - 30-Jan-2002   peter    created
 */
 int
 nFile::Read(void* buffer, int numBytes)
@@ -220,7 +220,7 @@ nFile::Read(void* buffer, int numBytes)
     @return          position of pointer
 
     history:
-    - 30-Jan-2002   peter    created
+     - 30-Jan-2002   peter    created
 */
 int 
 nFile::Tell()
@@ -242,7 +242,7 @@ nFile::Tell()
     @return                    success
 
     history:
-    - 30-Jan-2002   peter    created
+     - 30-Jan-2002   peter    created
 */
 bool 
 nFile::Seek(int byteOffset, nSeekType origin)
@@ -295,8 +295,8 @@ nFile::Seek(int byteOffset, nSeekType origin)
     @return                success
 
     history:
-    30-Jan-02   peter   created
-    29-Jan-03   floh    the method suddenly wrote a newLine. WRONG!
+     - 30-Jan-02   peter   created
+     - 29-Jan-03   floh    the method suddenly wrote a newLine. WRONG!
 */
 bool
 nFile::PutS(const char* buffer)
@@ -326,7 +326,7 @@ nFile::PutS(const char* buffer)
     @return                    succes (false if eof is reached)
 
     history:
-    - 30-Jan-2002   peter    created
+     - 30-Jan-2002   peter    created
 */
 bool
 nFile::GetS(char* buffer, int numChars)

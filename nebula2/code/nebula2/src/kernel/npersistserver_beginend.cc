@@ -13,9 +13,9 @@
 /**
     Write persistent file header.
 
-    05-Nov-98   floh    created
-    29-Mar-99   floh    + rewritten to FOpen()
-    23-May-02   floh    + rewritten to nFile
+     - 05-Nov-98   floh    created
+     - 29-Mar-99   floh    + rewritten to FOpen()
+     - 23-May-02   floh    + rewritten to nFile
 */
 nFile *
 nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, nRoot* obj)
@@ -30,14 +30,14 @@ nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, n
 /**
     Start writing a persistent object into a persistent object file.
 
-    04-Nov-98   floh    created
-    11-Nov-98	floh	+ Removed support for root dir,
-    					  now always saves to cwd
-    20-Jan-00   floh    + rewritten for ref_ss
-    29-Feb-00   floh    + optional constructor cmd object
-    06-Mar-00   floh    + 'sel_only' argument
-                        + 'owner' object handling, which is the
-                          object at the top of stack
+     - 04-Nov-98   floh    created
+     - 11-Nov-98    floh   + Removed support for root dir,
+                             now always saves to cwd
+     - 20-Jan-00   floh    + rewritten for ref_ss
+     - 29-Feb-00   floh    + optional constructor cmd object
+     - 06-Mar-00   floh    + 'sel_only' argument
+                           + 'owner' object handling, which is the
+                             object at the top of stack
 */
 bool 
 nPersistServer::BeginFoldedObject(nRoot *obj, nCmd *cmd, const char *name, bool selOnly)
@@ -49,12 +49,12 @@ nPersistServer::BeginFoldedObject(nRoot *obj, nCmd *cmd, const char *name, bool 
         n_assert(0 == this->file);
         char fname[N_MAXPATH];
         sprintf(fname, "%s.n2", name);
-		this->file = this->PutFoldedObjectHeader(this->refSaver.get(), fname, obj);
-		if (this->file) 
+        this->file = this->PutFoldedObjectHeader(this->refSaver.get(), fname, obj);
+        if (this->file) 
         {
             fileOk = true;
         }
-		else 
+        else 
         {
             n_printf("nPersistServer: could not open file '%s' for writing!\n", name);
         }
@@ -90,10 +90,10 @@ nPersistServer::BeginFoldedObject(nRoot *obj, nCmd *cmd, const char *name, bool 
 /** 
     Finish writing persistent object.
 
-    04-Nov-98   floh    created
-    20-Jan-00   floh    + rewritten for ref_ss
-    06-Mar-00   floh    + object_stack/fp_stack now templates
-                        + owner object handling
+     - 04-Nov-98   floh    created
+     - 20-Jan-00   floh    + rewritten for ref_ss
+     - 06-Mar-00   floh    + object_stack/fp_stack now templates
+                           + owner object handling
 */
 bool 
 nPersistServer::EndFoldedObject()
@@ -121,7 +121,7 @@ nPersistServer::EndFoldedObject()
 /** 
     Begin an object clone operation.
  
-    18-Dec-98   floh    created
+     - 18-Dec-98   floh    created
 */
 bool 
 nPersistServer::BeginCloneObject(nRoot *obj, const char *name)
@@ -152,7 +152,7 @@ nPersistServer::BeginCloneObject(nRoot *obj, const char *name)
 /** 
     Finish an object clone operation.
   
-    18-Dec-98   floh    created
+     - 18-Dec-98   floh    created
 */
 bool 
 nPersistServer::EndCloneObject(void)
@@ -170,7 +170,7 @@ nPersistServer::EndCloneObject(void)
 /** 
     Get the pointer to the cloned object.
 
-    18-Dec-98   floh    created
+     - 18-Dec-98   floh    created
 */
 nRoot*
 nPersistServer::GetClone(void)

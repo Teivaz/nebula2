@@ -230,13 +230,13 @@ void
 nTimeServer::LockDeltaT(double dt)
 {
     n_assert(dt >= 0.0);
-	if (dt == 0.0)
+    if (dt == 0.0)
     {
-		this->SetTime(this->lock_time);
+        this->SetTime(this->lock_time);
     }
-	else
+    else
     {
-		this->lock_time = this->GetTime();
+        this->lock_time = this->GetTime();
     }
     this->lock_delta_t = dt;
 }

@@ -144,9 +144,9 @@ nScriptServer::EndWrite(nFile* /* file */)
     This method should be called frequently (normally once per frame) when
     the script server is not run in interactive mode.
 
-    21-Dec-98   floh    created
-    31-Aug-99   floh    'quit_requested' wird zurueckgesetzt, wenn
-                        es einmal true war
+     - 21-Dec-98   floh    created
+     - 31-Aug-99   floh    'quit_requested' wird zurueckgesetzt, wenn
+                           es einmal true war
 */
 bool 
 nScriptServer::Trigger()

@@ -22,16 +22,16 @@
 void
 nIpcMiniServer::CloseRcvrSocket()
 {
-	if (this->rcvrSocket) 
+    if (this->rcvrSocket) 
     {
         shutdown(this->rcvrSocket, 2);
 #if defined(__WIN32__)
-    	closesocket(this->rcvrSocket);
+        closesocket(this->rcvrSocket);
 #elif defined(__LINUX__)
-    	close(this->rcvrSocket);
+        close(this->rcvrSocket);
 #endif
-    	this->rcvrSocket = 0;
-	}
+        this->rcvrSocket = 0;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -115,10 +115,10 @@ nIpcMiniServer::Poll()
                         }
                         else 
                         {
-							// ooops, wrong port, shut down connection
-							result	  = "~false";
-							connected = false;
-						}
+                            // ooops, wrong port, shut down connection
+                            result      = "~false";
+                            connected = false;
+                        }
                     } 
                     else 
                     {
@@ -158,9 +158,9 @@ nIpcMiniServer::Poll()
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
-    28-May-99   floh    + memleak fixed if nobody connected to the
-                          minimserver
+     - 28-Oct-98   floh    created
+     - 28-May-99   floh    + memleak fixed if nobody connected to the
+                             miniserver
 */
 nIpcMiniServer::nIpcMiniServer(nIpcServer *_server)
 {
@@ -179,7 +179,7 @@ nIpcMiniServer::nIpcMiniServer(nIpcServer *_server)
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 nIpcMiniServer::~nIpcMiniServer()
 {
@@ -188,8 +188,8 @@ nIpcMiniServer::~nIpcMiniServer()
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
-    31-Oct-98   floh    divided into Listen(), Accept() und Ignore()
+     - 28-Oct-98   floh    created
+     - 31-Oct-98   floh    divided into Listen(), Accept() und Ignore()
 */
 bool nIpcMiniServer::Listen()
 {
@@ -238,7 +238,7 @@ bool nIpcMiniServer::Listen()
 
 //------------------------------------------------------------------------------
 /**
-    31-Oct-98   floh    created
+     - 31-Oct-98   floh    created
 */
 void 
 nIpcMiniServer::Ignore()
@@ -248,18 +248,18 @@ nIpcMiniServer::Ignore()
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
+     - 28-Oct-98   floh    created
 */
 bool 
 nIpcMiniServer::Send(void *buf, int size)
 {
     n_assert(buf);
     n_assert(size > 0);
-	
+    
     if (this->rcvrSocket) 
     {
         int res = 0;
-		res = send(this->rcvrSocket, (char *)buf, size, 0);
+        res = send(this->rcvrSocket, (char *)buf, size, 0);
         if (-1 == res)
         {
             n_printf("nIpcMiniServer::Send(): send() failed!\n");

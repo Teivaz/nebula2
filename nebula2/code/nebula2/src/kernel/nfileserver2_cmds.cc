@@ -41,7 +41,7 @@ n_initcmds(nClass* cl)
     v
     @info
     Defines an assign with the specified name and links it to the specified
-	path.
+    path.
 */
 static
 void
@@ -60,9 +60,9 @@ n_setassign(void* slf, nCmd* cmd)
     @input
     s(AssignName)
     @output
-	s(Path)
+    s(Path)
     @info
-	Get a path associated with an assign.
+    Get a path associated with an assign.
 */
 static
 void
@@ -79,9 +79,9 @@ n_getassign(void* slf, nCmd* cmd)
     @input
     s(UnmangledPath
     @output
-	s(MangledPath)
+    s(MangledPath)
     @info
-	Convert a path with assigns into a native absolute path.
+    Convert a path with assigns into a native absolute path.
 */
 static
 void

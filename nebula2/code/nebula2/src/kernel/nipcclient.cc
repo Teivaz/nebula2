@@ -14,8 +14,8 @@ nIpcClient::nIpcClient() :
     sock(0)
 {
 #   ifdef __WIN32__
-	struct WSAData wsa_data;
-	WSAStartup(0x101, &wsa_data);
+    struct WSAData wsa_data;
+    WSAStartup(0x101, &wsa_data);
 #   endif
 
     memset(&(this->serverAddr), 0, sizeof(this->serverAddr));
@@ -113,12 +113,12 @@ nIpcClient::GetPortNumFromName(const char *portName)
 
 //------------------------------------------------------------------------------
 /**
-    28-Oct-98   floh    created
-    31-Oct-98   floh    falls ein Port nicht zuhoerte, wurde kein
-                        neuer Socket aufgemacht, was dazu fuehrte,
-                        dass sich die Routine in einer Endlosschleife
-                       aufhing, weil keine Connection mehr geklappt
-                        hatte.
+     - 28-Oct-98   floh    created
+     - 31-Oct-98   floh    falls ein Port nicht zuhoerte, wurde kein
+                           neuer Socket aufgemacht, was dazu fuehrte,
+                           dass sich die Routine in einer Endlosschleife
+                           aufhing, weil keine Connection mehr geklappt
+                           hatte.
 */
 bool 
 nIpcClient::Connect(const char* portName)
@@ -140,18 +140,18 @@ nIpcClient::Connect(const char* portName)
             // falls Retry, alten Socket killen
             if (this->sock) 
             {
-				shutdown(this->sock,2);
+                shutdown(this->sock,2);
                 closesocket(this->sock);
                 this->sock = 0;
                 num_retries++;
             }
             
             // einen neuen Socket initialisieren                
-        	this->sock = socket(AF_INET, SOCK_STREAM, 0);
+            this->sock = socket(AF_INET, SOCK_STREAM, 0);
             if (this->sock == INVALID_SOCKET) 
             {
-		        n_printf("nIpcClient::nIpcClient(): could not create socket!");
-		        return false;		
+                n_printf("nIpcClient::nIpcClient(): could not create socket!");
+                return false;        
             }
 
             n_printf("nIpcClient: trying %s:%s, port %d...\n",
@@ -160,52 +160,52 @@ nIpcClient::Connect(const char* portName)
 
             res = connect(this->sock, (struct sockaddr *) &(this->serverAddr),
                           sizeof(struct sockaddr));
-			if (res != -1) 
+            if (res != -1) 
             {
-				// eine Verbindung steht, richtiger Port?
+                // eine Verbindung steht, richtiger Port?
                 sprintf(msg_buf, "~handshake %s", this->serverPortName.Get());
-        	    res = send(this->sock, msg_buf, strlen(msg_buf)+1, 0);
+                res = send(this->sock, msg_buf, strlen(msg_buf)+1, 0);
             
-            	// warte auf Antwort...
-            	if (res != -1) 
+                // warte auf Antwort...
+                if (res != -1) 
                 {
-                	n_printf("nIpcClient: sending handshake... ");
-                	res = recv(this->sock, msg_buf, sizeof(msg_buf), 0);
+                    n_printf("nIpcClient: sending handshake... ");
+                    res = recv(this->sock, msg_buf, sizeof(msg_buf), 0);
                     if ((res==-1)||(res==0)) 
                     {
-                    	n_printf("nIpcClient::Connect(): ~handshake recv() failed!\n");
-                    	error = true;
+                        n_printf("nIpcClient::Connect(): ~handshake recv() failed!\n");
+                        error = true;
                     } 
                     else 
                     {                    
-                    	// positive Antwort?
-                    	if (strcmp(msg_buf,"~true") == 0) 
+                        // positive Antwort?
+                        if (strcmp(msg_buf,"~true") == 0) 
                         {
-							connected = true;
-							n_printf("accepted.\n");
-                    	} 
+                            connected = true;
+                            n_printf("accepted.\n");
+                        } 
                         else 
                         {
-                        	// falscher Portname, neue probieren...
-                        	this->serverPortNum++;
-                        	this->serverAddr.sin_port = htons(this->serverPortNum);
-							n_printf("wrong portname.\n");
-                    	}
-                	}
-            	} 
+                            // falscher Portname, neue probieren...
+                            this->serverPortNum++;
+                            this->serverAddr.sin_port = htons(this->serverPortNum);
+                            n_printf("wrong portname.\n");
+                        }
+                    }
+                } 
                 else 
                 {
-                	n_printf("nIpcClient::Connect(): ~handshake send() failed!");
-                	error = true;
-            	}
-        	} 
+                    n_printf("nIpcClient::Connect(): ~handshake send() failed!");
+                    error = true;
+                }
+            } 
             else 
             {
-				// auf diesem Port hoert niemand zu, naechste Portnummer...
-              	this->serverPortNum++;
-               	this->serverAddr.sin_port = htons(this->serverPortNum);
-			}
-		}
+                // auf diesem Port hoert niemand zu, naechste Portnummer...
+                  this->serverPortNum++;
+                   this->serverAddr.sin_port = htons(this->serverPortNum);
+            }
+        }
         if (connected) 
         {
             n_printf("nIpcClient: connected.\n");
@@ -215,9 +215,9 @@ nIpcClient::Connect(const char* portName)
         {
             n_printf("nIpcClient: Could not connect to a valid server!\n");
             shutdown(this->sock,2);
-			closesocket(this->sock);
-			this->sock = 0;
-		}
+            closesocket(this->sock);
+            this->sock = 0;
+        }
     }
     return retval;
 }                                                                  
@@ -261,8 +261,8 @@ nIpcClient::Disconnect()
 nMsgNode*
 nIpcClient::SendMsg(void* buf, int size)
 {
-	n_assert(buf);
-	n_assert(size > 0);
+    n_assert(buf);
+    n_assert(size > 0);
 
     nMsgNode *nd = NULL;
     int res;
