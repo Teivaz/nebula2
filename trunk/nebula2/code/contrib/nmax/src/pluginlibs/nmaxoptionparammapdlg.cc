@@ -20,6 +20,7 @@ const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
 /**
 */
 nMaxOptionParamMapDlg::nMaxOptionParamMapDlg() :
+    spinGeomScale(0),
     spinMaxJointPalette(0),
     spinWeightTrashold(0),
     spinSampleRate(0)
@@ -32,38 +33,64 @@ nMaxOptionParamMapDlg::nMaxOptionParamMapDlg() :
 */
 nMaxOptionParamMapDlg::~nMaxOptionParamMapDlg()
 {
+    if (spinGeomScale)
+        ReleaseISpinner(spinGeomScale);
+
     if (spinMaxJointPalette)
         ReleaseISpinner(spinMaxJointPalette);
 
     if (spinWeightTrashold)
         ReleaseISpinner(spinWeightTrashold);
+
+    if (spinSampleRate)
+        ReleaseISpinner(spinSampleRate);
 }
 
 //------------------------------------------------------------------------------
 /**
     Initialize dialog controls.
+
+    - 22-Mar-05 kims fixed specifying value of spinner.
+                     The value, TRUE should be passed for the flag of SetValue()
+                     to it correctly update its value.
 */
 void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
 {
+    if (NULL == hwnd)
+    {
+        n_message("Failed to initialize option dialog: NULL window handle is passed.");
+        return;
+    }
+
     // mesh
     CheckDlgButton(hwnd, IDC_VERTEX_NORMAL, BST_CHECKED);
     CheckDlgButton(hwnd, IDC_VERTEX_COLOR, BST_CHECKED);
     CheckDlgButton(hwnd, IDC_VERTEX_UV, BST_CHECKED);
     CheckDlgButton(hwnd, IDC_VERTEX_TANGENT, BST_CHECKED);
 
+    // geometry scale.
+    float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+
+    spinGeomScale = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_GEOMSCALE));
+    spinGeomScale->SetScale(0.001f);
+    spinGeomScale->SetLimits(0.001f, 1.0f);
+    HWND editGeomScale = GetDlgItem(hwnd, IDC_EDIT_GEOMSCALE);
+    spinGeomScale->LinkToEdit(editGeomScale, EDITTYPE_FLOAT);
+    spinGeomScale->SetResetValue(0.01f);
+    spinGeomScale->SetValue(geomScale, TRUE);
+
     // max joint palette.
     int maxJointPalett = nMaxOptions::Instance()->GetMaxJointPaletteSize();
     
-    nString strJointPalette;
-    strJointPalette.AppendInt(maxJointPalett);
-
     spinMaxJointPalette = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_MAXJOINTPALETTE));
-    spinMaxJointPalette->SetScale(1.0f);
-    spinMaxJointPalette->SetLimits(1, 24);
+    spinMaxJointPalette->SetScale(1);
+    // The minimum joint palette size is 4. under that value causes error when
+    // the mesh is partitioned.
+    spinMaxJointPalette->SetLimits(4, 24);
     HWND editJointPalette = GetDlgItem(hwnd, IDC_EDIT_MAXJOINTPALETTE);
     spinMaxJointPalette->LinkToEdit(editJointPalette, EDITTYPE_INT);
     spinMaxJointPalette->SetResetValue(24);
-    spinMaxJointPalette->SetValue(maxJointPalett, FALSE);
+    spinMaxJointPalette->SetValue(maxJointPalett, TRUE);
 
     //FIXME: sending 'ES_RIGHT' message causes abnormal error on 3dsmax.
     //SendMessage(editJointPalette, ES_RIGHT, 0, 0L);
@@ -71,16 +98,13 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     // weight trash hold.
     float weightTrashold = nMaxOptions::Instance()->GetWeightTrashold();
     
-    nString strWeightTrashold;
-    strWeightTrashold.AppendFloat(weightTrashold);
-
     spinWeightTrashold = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_WEIGHTRASHOLD));
     spinWeightTrashold->SetScale(0.00001f);
     spinWeightTrashold->SetLimits(0.00001f, 1.0f);
     HWND editWeigihtTrashold = GetDlgItem(hwnd, IDC_EDIT_WEIGHTRASHOLD);
     spinWeightTrashold->LinkToEdit(editWeigihtTrashold, EDITTYPE_FLOAT);
     spinWeightTrashold->SetResetValue(0.0001f);
-    spinWeightTrashold->SetValue(weightTrashold, FALSE);
+    spinWeightTrashold->SetValue(weightTrashold, TRUE);
 
     //SendMessage(editWeigihtTrashold, ES_RIGHT, 0, 0L);
 
@@ -92,7 +116,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     HWND editSampleRate = GetDlgItem(hwnd, IDC_EDIT_SAMPLERATE);
     spinSampleRate->LinkToEdit(editSampleRate, EDITTYPE_INT);
     spinSampleRate->SetResetValue(2);
-    spinSampleRate->SetValue(sampleRate, FALSE);
+    spinSampleRate->SetValue(sampleRate, TRUE);
 
     CheckDlgButton(hwnd, IDC_ADDJOINTNAME, 0);
 
@@ -141,6 +165,41 @@ BOOL nMaxOptionParamMapDlg::DlgProc(TimeValue t, IParamMap *map, HWND hWnd,
         }
         break;
 
+    case CC_SPINNER_CHANGE:
+    case WM_CUSTEDIT_ENTER:
+        {
+            int id;
+            if (msg == CC_SPINNER_CHANGE)
+                id = LOWORD(wParam);
+            else// WM_CUSTEDIT_ENTER
+                id = wParam;
+
+            if (spinGeomScale && id == IDC_SPIN_GEOMSCALE)
+            {
+                float geomScale = spinGeomScale->GetFVal();
+                nMaxOptions::Instance()->SetGeomScaleValue(geomScale);
+            }
+
+            if (spinMaxJointPalette && id == IDC_SPIN_MAXJOINTPALETTE)
+            {
+                int jointPalette = spinMaxJointPalette->GetIVal();
+                nMaxOptions::Instance()->SetMaxJointPaletteSize(jointPalette);
+            }
+
+            if (spinWeightTrashold && id == IDC_SPIN_WEIGHTRASHOLD)
+            {
+                float weightTrashold = spinWeightTrashold->GetFVal();
+                nMaxOptions::Instance()->SetWeightTrashold(weightTrashold);
+            }
+
+            if (spinSampleRate && id == IDC_SPIN_SAMPLERATE)
+            {
+                int sampleRate = spinSampleRate->GetIVal();
+                nMaxOptions::Instance()->SetSampleRate(sampleRate);
+            }
+        }
+        break;
+
     default:
         return FALSE;
     }
@@ -160,20 +219,6 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
     case IDC_VERTEX_UV:
     case IDC_VERTEX_TANGENT:
         OnVertexComponent(hwnd);
-        break;
-
-    case CC_SPINNER_CHANGE:
-    case WM_CUSTEDIT_ENTER:
-        {
-            int jointPalette = spinMaxJointPalette->GetIVal();
-            nMaxOptions::Instance()->SetMaxJointPaletteSize(jointPalette);
-
-            float weightTrashold = spinWeightTrashold->GetFVal();
-            nMaxOptions::Instance()->SetWeightTrashold(weightTrashold);
-
-            int sampleRate = spinSampleRate->GetIVal();
-            nMaxOptions::Instance()->SetSampleRate(sampleRate);
-        }
         break;
 
     case IDC_ADDJOINTNAME:
