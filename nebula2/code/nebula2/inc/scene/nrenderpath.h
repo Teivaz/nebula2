@@ -19,25 +19,25 @@
 
     Thus rendering a pass actually looks like this:
 
-        * Begin Pass Shader
-            * Begin Phase Shader
-                * Begin Sequence Shader
-                    * Render Instance
-                    * Render Instance
-                    * ...
-                * End Sequence Shader
-                * Begin Sequence Shader
-                    * Render Instance
-                    * Render Instance
-                    * ...
-                * End Sequence Shader
-                * ...
-            * End Phase Shader
-            * Begin Phase Shader
-                * ...
-            * End Phase Shader
-        * End Pass Shader
-        * ...
+        - Begin Pass Shader
+            - Begin Phase Shader
+                - Begin Sequence Shader
+                    - Render Instance
+                    - Render Instance
+                    - ...
+                - End Sequence Shader
+                - Begin Sequence Shader
+                    - Render Instance
+                    - Render Instance
+                    - ...
+                - End Sequence Shader
+                - ...
+            - End Phase Shader
+            - Begin Phase Shader
+                - ...
+            - End Phase Shader
+        - End Pass Shader
+        - ...
 
     (C) 2004 RadonLabs GmbH
 */
