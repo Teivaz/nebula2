@@ -61,6 +61,7 @@ nViewerApp::Open()
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/vdeo");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -103,6 +104,13 @@ nViewerApp::Open()
     if (NULL != this->GetInputScript())
     {
         this->refScriptServer->RunScript(this->GetInputScript(), result);
+    }
+
+    // open the scene server
+    if (!this->refSceneServer->Open())
+    {
+        n_error("nViewerApp::Open(): Failed to open nSceneServer!");
+        return false;
     }
 
     // initialize gui
@@ -153,10 +161,12 @@ nViewerApp::Close()
 {
     n_assert(this->IsOpen());
 
+    this->refSceneServer->Close();
     this->refGuiServer->Close();
     this->refVideoServer->Close();
     this->refGfxServer->CloseDisplay();
 
+    this->refShadowServer->Release();
     this->refRootNode->Release();
     this->refGuiServer->Release();
     this->refVideoServer->Release();
