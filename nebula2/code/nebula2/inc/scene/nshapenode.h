@@ -38,7 +38,9 @@ public:
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
+    int GetMeshUsage() const;
+    /// override the default mesh usage for this shape node
+    void SetMeshUsage(int);
 
     /// set the mesh resource name
     void SetMesh(const char* name);
@@ -63,6 +65,7 @@ protected:
     nString meshName;
     int groupIndex;
     nDynAutoRef<nResourceLoader> refMeshResourceLoader;
+    int meshUsage;
 };
 
 //------------------------------------------------------------------------------

@@ -136,6 +136,10 @@ public:
     void SetUsage(int useFlags);
     /// get the mesh use type
     int GetUsage() const;
+    /// helper function for setting Usage from script
+    static nString ConvertUsageFlagsToString( int flags );
+    /// helper function for getting Usage from script
+    static int ConvertUsageStringToFlags( const char* flagString );
     /// set number of vertices
     void SetNumVertices(int num);
     /// get number of vertices in mesh

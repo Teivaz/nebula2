@@ -42,8 +42,8 @@ n_initcmds(nClass* clazz)
     clazz->AddCmd("i_geterror_v",      'GERR', n_geterror);
     clazz->AddCmd("v_setdetailsize_f", 'SDTS', n_setdetailsize);
     clazz->AddCmd("f_getdetailsize_v", 'GDTS', n_getdetailsize);
-    clazz->AddCmd("v_setmeshusage_i",     'SMSU', n_setmeshusage);
-    clazz->AddCmd("i_getmeshusage_v",     'GMSU', n_getmeshusage);
+    clazz->AddCmd("v_setmeshusage_s",     'SMSU', n_setmeshusage);
+    clazz->AddCmd("s_getmeshusage_v",     'GMSU', n_getmeshusage);
     clazz->EndCmds();
 }
 
@@ -221,7 +221,7 @@ void n_getdetailsize(void *o, nCmd *cmd)
     @cmd
     setmeshusage
     @input
-    i(usageflags)
+    s(usage flag string)
     @output
     v
     @info
@@ -231,7 +231,8 @@ static void
 n_setmeshusage(void* slf, nCmd* cmd)
 {
     nMapNode* self = (nMapNode*) slf;
-    self->SetMeshUsage(cmd->In()->GetI());
+    const int flags = nMesh2::ConvertUsageStringToFlags( cmd->In()->GetS() );
+    self->SetMeshUsage(flags);
 }
 
 //------------------------------------------------------------------------------
@@ -241,7 +242,7 @@ n_setmeshusage(void* slf, nCmd* cmd)
     @input
     v
     @output
-    i(usageflags)
+    s(usage flag string)
     @info
     Gets the usage flags for the mesh.
 */
@@ -249,7 +250,8 @@ static void
 n_getmeshusage(void* slf, nCmd* cmd)
 {
     nMapNode* self = (nMapNode*) slf;
-    cmd->Out()->SetI(self->GetMeshUsage());
+    const nString& flagString= nMesh2::ConvertUsageFlagsToString( self->GetMeshUsage() );
+    cmd->Out()->SetS(flagString.Get());
 }
 //------------------------------------------------------------------------------
 /**
