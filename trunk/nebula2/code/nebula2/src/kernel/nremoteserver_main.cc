@@ -47,7 +47,7 @@ nRemoteServer::Open(const char* portName)
         xbNetStartup();
     #endif    
     struct WSAData wsa_data;
-	WSAStartup(0x101, &wsa_data);
+    WSAStartup(0x101, &wsa_data);
 #endif
 
     // create an ipc server object

@@ -136,9 +136,9 @@ nPersistServer::GetLoader(const char* loaderClass)
 
 //------------------------------------------------------------------------------
 /**
-    04-Nov-98   floh    created
-    05-Nov-98   floh    autonome Objects gekillt
-    18-Dec-98   floh    + SAVEMODE_CLONE
+     - 04-Nov-98   floh    created
+     - 05-Nov-98   floh    autonome Objects gekillt
+     - 18-Dec-98   floh    + SAVEMODE_CLONE
 */
 bool 
 nPersistServer::BeginObject(nRoot *o, const char *name)
@@ -163,7 +163,7 @@ nPersistServer::BeginObject(nRoot *o, const char *name)
     no constructor statement will be written, just the select
     statement.
 
-    29-Feb-00   floh    created
+     - 29-Feb-00   floh    created
 */
 bool 
 nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
@@ -188,9 +188,9 @@ nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
 
 //------------------------------------------------------------------------------
 /**
-    04-Nov-98   floh    created
-    05-Nov-98   floh    autonome Objects gekillt
-    18-Dec-98   floh    + SAVEMODE_CLONE
+     - 04-Nov-98   floh    created
+     - 05-Nov-98   floh    autonome Objects gekillt
+     - 18-Dec-98   floh    + SAVEMODE_CLONE
 */
 bool 
 nPersistServer::EndObject()
@@ -210,13 +210,13 @@ nPersistServer::EndObject()
 
 //------------------------------------------------------------------------------
 /**
-    04-Nov-98   floh    created
-    19-Dec-98   floh    neues Arg, id
-                        + jetzt doch etwas komplexer, sucht das
-                          Command selbst raus, indem es die
-                          Klassen des Objekts durchsucht
-    08-Aug-99   floh    + benutzt nicht mehr nCmdProto::GetCmd(),
-                          sondern nCmdProto::NewCmd()
+     - 04-Nov-98   floh    created
+     - 19-Dec-98   floh    neues Arg, id
+                           + jetzt doch etwas komplexer, sucht das
+                             Command selbst raus, indem es die
+                             Klassen des Objekts durchsucht
+     - 08-Aug-99   floh    + benutzt nicht mehr nCmdProto::GetCmd(),
+                             sondern nCmdProto::NewCmd()
 */
 nCmd*
 nPersistServer::GetCmd(nRoot *o, uint id)
@@ -232,7 +232,7 @@ nPersistServer::GetCmd(nRoot *o, uint id)
     Ignore if level is less or equal the internal save level
     defined by 'SetSaveLevel'.
     
-    16-Jun-00   floh    created
+     - 16-Jun-00   floh    created
 */
 bool 
 nPersistServer::PutCmd(int level, nCmd *cmd)
@@ -261,10 +261,10 @@ nPersistServer::PutCmd(int level, nCmd *cmd)
 /**
     This is the same as a PutCmd(0,cmd).
 
-    04-Nov-98   floh    created
-    08-Aug-99   floh    nCmd wird nicht mehr per delete(), sondern
-                        per Cmd-Proto freigegeben
-    20-Jan-00   floh    rewritten to ref_ss
+     - 04-Nov-98   floh    created
+     - 08-Aug-99   floh    nCmd wird nicht mehr per delete(), sondern
+                           per Cmd-Proto freigegeben
+     - 20-Jan-00   floh    rewritten to ref_ss
 */
 bool 
 nPersistServer::PutCmd(nCmd *cmd)
@@ -274,7 +274,7 @@ nPersistServer::PutCmd(nCmd *cmd)
 
 //------------------------------------------------------------------------------
 /**
-    05-Nov-98   floh    created
+     - 05-Nov-98   floh    created
 */
 void 
 nPersistServer::SetSaveMode(nPersistServer::nSaveMode sm)
@@ -284,7 +284,7 @@ nPersistServer::SetSaveMode(nPersistServer::nSaveMode sm)
 
 //------------------------------------------------------------------------------
 /**
-    05-Nov-98   floh    created
+     - 05-Nov-98   floh    created
 */
 nPersistServer::nSaveMode 
 nPersistServer::GetSaveMode()

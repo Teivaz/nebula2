@@ -91,12 +91,12 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
 /**
     Create a Nebula object from a persistent object file.
 
-    10-Nov-98   floh    created
-    30-Nov-98   floh    + wertet jetzt override_class aus
-    10-Jan-99   floh    + Fehlermeldungen verbessert
-    30-Jul-99   floh    + Override-Class gekillt
-    20-Jan-00   floh    + rewritten for ref_ss
-    28-Sep-00   floh    + PushCwd()/PopCwd()
+     - 10-Nov-98   floh    created
+     - 30-Nov-98   floh    + wertet jetzt override_class aus
+     - 10-Jan-99   floh    + Fehlermeldungen verbessert
+     - 30-Jul-99   floh    + Override-Class gekillt
+     - 20-Jan-00   floh    + rewritten for ref_ss
+     - 28-Sep-00   floh    + PushCwd()/PopCwd()
 */
 nRoot*
 nPersistServer::LoadFoldedObject(const char *fname, const char *objName)
@@ -136,26 +136,26 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName)
 /**
     Frontend to load an object from a persistent object file.
 
-    10-Nov-98   floh    created
-    01-Dec-98   floh    im Test, ob das Objekt schon existiert,
-                        wird jetzt einfach der RefCount erhoeht
-    13-Jan-99   floh    + oops, unter Linux kann auch Directory per
-                        fopen() geoeffnet werden, damit wollte ich
-                        aber herausfinden, ob es sich um einen 
-                        .n FILE oder ein .n DIR handelt, deshalb
-                        jetzt Erkennung per nDir.
-    08-Feb-99   floh    Im Folded Modus wird jetzt zuerst das
-                        cwd auf die Diretory-Komponente des
-                        Filenamens eingestellt.
-    17-Feb-99   floh    Ooops, boeser Bug beim Laden von Einzelfiles...
-                        zwar wurde auf das aktuelle Directory gewechselt,
-                        dann aber trotzdem der komplette Pfadname
-                        an den Lader uebergeben...
-    29-Mar-99   floh    + kommt jetzt mit Assigns zurecht
-    26-Apr-01   floh    + Bugfix: _loadUnfoldedObject() didn't use
-                          mangled path
-    30-Jul-02   floh    + many simplifications
-    29-Jan-03   floh    + simplified by using nPathString
+     - 10-Nov-98   floh    created
+     - 01-Dec-98   floh    im Test, ob das Objekt schon existiert,
+                           wird jetzt einfach der RefCount erhoeht
+     - 13-Jan-99   floh    + oops, unter Linux kann auch Directory per
+                           fopen() geoeffnet werden, damit wollte ich
+                           aber herausfinden, ob es sich um einen 
+                           .n FILE oder ein .n DIR handelt, deshalb
+                           jetzt Erkennung per nDir.
+     - 08-Feb-99   floh    Im Folded Modus wird jetzt zuerst das
+                           cwd auf die Diretory-Komponente des
+                           Filenamens eingestellt.
+     - 17-Feb-99   floh    Ooops, boeser Bug beim Laden von Einzelfiles...
+                           zwar wurde auf das aktuelle Directory gewechselt,
+                           dann aber trotzdem der komplette Pfadname
+                           an den Lader uebergeben...
+     - 29-Mar-99   floh    + kommt jetzt mit Assigns zurecht
+     - 26-Apr-01   floh    + Bugfix: _loadUnfoldedObject() didn't use
+                             mangled path
+     - 30-Jul-02   floh    + many simplifications
+     - 29-Jan-03   floh    + simplified by using nPathString
 */
 nRoot*
 nPersistServer::LoadObject(const char* fname)

@@ -9,10 +9,10 @@
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
-    27-Apr-99   floh    + support for __NEBULA_NO_THREADS__
-    20-Feb-00   floh    + Win32: rewritten to _beginthreadx() instead
-                          of _beginthread()
+     - 20-Oct-98   floh    created
+     - 27-Apr-99   floh    + support for __NEBULA_NO_THREADS__
+     - 20-Feb-00   floh    + Win32: rewritten to _beginthreadx() instead
+                             of _beginthread()
 */
 nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
                  int stack_size,
@@ -72,34 +72,34 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
-    30-Oct-98   floh    Wenn sich der Thread lange vor
-                        dem Aufruf des Destruktors selbst terminiert
-                        hat, konnte es passieren, das WaitForSingleObject()
-                        endlos haengen blieb, weil das Signal
-                        offensichtlich schon lange verraucht war.
-                        ThreadHarakiri() blockiert den Thread jetzt
-                        solange, bis der Destruktor das shutdown_event
-                        signalisiert
-    31-Oct-98   floh    das shutdown_event konnte signalisiert werden,
-                        bevor der Thread in ThreadHarakiri() darauf
-                        warten konnte... deshalb setzt der Destruktor
-                        jetzt das Signal in einer ausgebremsten Schleife 
-                        sooft, bis ThreadHarakiri() das Signal wirklich
-                        empfangen konnte.   
-    26-Dec-98   floh    auf das shutdown-Signal vom Thread wird jetzt
-                        nicht mehr in einer Schleife gewartet, weil
-                        nEvent unter Linux jetzt auf Posix-Semaphoren
-                        umgeschrieben wurde (welche hoffentlich 
-                        funktionieren).
-    27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
-    03-Feb-00   floh    + changed WaitForSingleObject() from
-                          INFINITE to 1000 milliseconds
-    20-Feb-00   floh    + Win32: rewritten to _beginthreadx(), _endthreadx()
-    08-Nov-00   floh    + WaitForSingleObject() waits 500 milliseconds.
-                          under WinNT/2000 with several socket threads
-                          open, it can still happen that the socket
-                          does not return
+     - 20-Oct-98   floh    created
+     - 30-Oct-98   floh    Wenn sich der Thread lange vor
+                           dem Aufruf des Destruktors selbst terminiert
+                           hat, konnte es passieren, das WaitForSingleObject()
+                           endlos haengen blieb, weil das Signal
+                           offensichtlich schon lange verraucht war.
+                           ThreadHarakiri() blockiert den Thread jetzt
+                           solange, bis der Destruktor das shutdown_event
+                           signalisiert
+     - 31-Oct-98   floh    das shutdown_event konnte signalisiert werden,
+                           bevor der Thread in ThreadHarakiri() darauf
+                           warten konnte... deshalb setzt der Destruktor
+                           jetzt das Signal in einer ausgebremsten Schleife 
+                           sooft, bis ThreadHarakiri() das Signal wirklich
+                           empfangen konnte.   
+     - 26-Dec-98   floh    auf das shutdown-Signal vom Thread wird jetzt
+                           nicht mehr in einer Schleife gewartet, weil
+                           nEvent unter Linux jetzt auf Posix-Semaphoren
+                           umgeschrieben wurde (welche hoffentlich 
+                           funktionieren).
+     - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
+     - 03-Feb-00   floh    + changed WaitForSingleObject() from
+                             INFINITE to 1000 milliseconds
+     - 20-Feb-00   floh    + Win32: rewritten to _beginthreadx(), _endthreadx()
+     - 08-Nov-00   floh    + WaitForSingleObject() waits 500 milliseconds.
+                             under WinNT/2000 with several socket threads
+                             open, it can still happen that the socket
+                             does not return
 */
 nThread::~nThread()
 {
@@ -146,10 +146,10 @@ nThread::~nThread()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
-    30-Oct-98   floh    wartet jetzt auf den Destruktor
-    27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
-    20-Feb-00   floh    + rewritten to _endthreadex()
+     - 20-Oct-98   floh    created
+     - 30-Oct-98   floh    wartet jetzt auf den Destruktor
+     - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
+     - 20-Feb-00   floh    + rewritten to _endthreadex()
 */
 void 
 nThread::ThreadHarakiri()
@@ -168,8 +168,8 @@ nThread::ThreadHarakiri()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
-    27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
+     - 20-Oct-98   floh    created
+     - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
 */
 void 
 nThread::ThreadStarted()
@@ -181,8 +181,8 @@ nThread::ThreadStarted()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
-    27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
+     - 20-Oct-98   floh    created
+     - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
 */
 bool 
 nThread::ThreadStopRequested()
@@ -196,7 +196,7 @@ nThread::ThreadStopRequested()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void 
 nThread::ThreadSleep(float sec)
@@ -208,7 +208,7 @@ nThread::ThreadSleep(float sec)
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 nMsgNode*
 nThread::GetMsg()
@@ -226,7 +226,7 @@ nThread::GetMsg()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void 
 nThread::ReplyMsg(nMsgNode *nd)
@@ -238,7 +238,7 @@ nThread::ReplyMsg(nMsgNode *nd)
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void 
 nThread::WaitMsg()
@@ -250,7 +250,7 @@ nThread::WaitMsg()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void 
 nThread::PutMsg(void* buf, int size)
@@ -268,7 +268,7 @@ nThread::PutMsg(void* buf, int size)
  
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void*
 nThread::LockUserData()
@@ -286,7 +286,7 @@ nThread::LockUserData()
 
 //------------------------------------------------------------------------------
 /**
-    20-Oct-98   floh    created
+     - 20-Oct-98   floh    created
 */
 void 
 nThread::UnlockUserData()

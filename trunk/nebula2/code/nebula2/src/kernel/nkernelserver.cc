@@ -41,13 +41,13 @@ extern "C" void n_addmodules(nKernelServer*);
     @param    className   name of the class to be opened
     @return               pointer to class object
 
-    08-Oct-98 floh    created
-    04-Oct-98 floh    char * -> const char *
-    10-Aug-99 floh    + if class not loaded, now first looks into
-                      package tocs before trying to load directly
-                      from dll
-    24-Oct-99 floh    returns zero if class could not be loaded
-    29-Jul-02 floh    loading from dll's no longer supported, all classes
+     - 08-Oct-98 floh    created
+     - 04-Oct-98 floh    char * -> const char *
+     - 10-Aug-99 floh    + if class not loaded, now first looks into
+                         package tocs before trying to load directly
+                         from dll
+     - 24-Oct-99 floh    returns zero if class could not be loaded
+     - 29-Jul-02 floh    loading from dll's no longer supported, all classes
                       must now be part of a class package!                      
 */
 nClass*
@@ -92,8 +92,8 @@ nKernelServer::OpenClass(const char* className)
     @return             pointer to created object or 0
 
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
 */
 nRoot*
 nKernelServer::NewUnnamedObject(const char* className)
@@ -120,10 +120,10 @@ nKernelServer::NewUnnamedObject(const char* className)
     @param  path    the path of the object to be found
     @return         pointer to object, or 0
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
-    11-Dec-01   floh    bugfix: returned 'cwd' if "" string given,
-                        now return 0
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
+     - 11-Dec-01   floh    bugfix: returned 'cwd' if "" string given,
+                           now return 0
 */
 nRoot*
 nKernelServer::Lookup(const char* path)
@@ -174,10 +174,10 @@ nKernelServer::Lookup(const char* path)
     @param  path        Path where the object should be created
     @param  dieOnError  Flag on true creates a n_error message "Aborting\n", on false doesn't
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
-    01-Dec-98   floh    if object exists, increase ref count
-    24-Oct-99   floh    don't break on problems, instead return NULL
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
+     - 01-Dec-98   floh    if object exists, increase ref count
+     - 24-Oct-99   floh    don't break on problems, instead return NULL
 */
 nRoot*
 nKernelServer::CheckCreatePath(const char* className, const char *path, bool dieOnError)
@@ -265,22 +265,22 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
 /**
     nKernelServer constructor.
 
-    08-Oct-98   floh    created
-    04-Nov-98   floh    + nFileServer Object
-    07-Dec-98   floh    + nTimeServer Object
-                        + nFileServer Object is now called 
-                        "/sys/servers/file"
-    15-Jan-99   floh    + there is no nRoot::Init() anymore.
-    22-Feb-99   floh    + char_buf initialising
-    26-Feb-99   floh    + initialising MemHandler
-    11-May-99   floh    + loads by default the Nebula-Package-DLL
-    25-May-99   floh    + logmsg redirection
-    26-May-99   floh    + num_objects, var_memnumalloc
-    10-Aug-99   floh    + HashTable size for Classlist and toc_list 
-                        set to 128
-                        + doesn't load the nclasses package overall 
-                        but reads in TOC-Files
-    20-Jan-00   floh    + no SetScriptServer() anymore
+     - 08-Oct-98   floh    created
+     - 04-Nov-98   floh    + nFileServer Object
+     - 07-Dec-98   floh    + nTimeServer Object
+                           + nFileServer Object is now called 
+                           "/sys/servers/file"
+     - 15-Jan-99   floh    + there is no nRoot::Init() anymore.
+     - 22-Feb-99   floh    + char_buf initialising
+     - 26-Feb-99   floh    + initialising MemHandler
+     - 11-May-99   floh    + loads by default the Nebula-Package-DLL
+     - 25-May-99   floh    + logmsg redirection
+     - 26-May-99   floh    + num_objects, var_memnumalloc
+     - 10-Aug-99   floh    + HashTable size for Classlist and toc_list 
+                           set to 128
+                           + doesn't load the nclasses package overall 
+                           but reads in TOC-Files
+     - 20-Jan-00   floh    + no SetScriptServer() anymore
 */
 nKernelServer::nKernelServer() :
     #ifndef N_STATIC
@@ -340,11 +340,11 @@ nKernelServer::nKernelServer() :
 /**
     nKernelServer destructor.
 
-    08-Oct-98   floh    created
-    07-Dec-98   floh    + TimeServer
-    26-Feb-99   floh    + kills MemHandler
-    25-May-99   floh    + Stdout redirection
-    07-Feb-00   floh    + more detailed shutdown messages
+     - 08-Oct-98   floh    created
+     - 07-Dec-98   floh    + TimeServer
+     - 26-Feb-99   floh    + kills MemHandler
+     - 25-May-99   floh    + Stdout redirection
+     - 07-Feb-00   floh    + more detailed shutdown messages
 */
 nKernelServer::~nKernelServer(void)
 {
@@ -526,7 +526,7 @@ nKernelServer::Error(const char* str, ...)
     @param  superClassName   name of super class
     @param  cl               class object to add
 
-  - 17-May-00   floh    created
+     - 17-May-00   floh    created
 */
 void 
 nKernelServer::AddClass(const char *superClassName, nClass *cl)
@@ -551,7 +551,7 @@ nKernelServer::AddClass(const char *superClassName, nClass *cl)
 
     @param  cl  Pointer to class to be removed
 
-    17-May-00   floh    created
+     - 17-May-00   floh    created
 */
 void 
 nKernelServer::RemClass(nClass *cl)
@@ -572,8 +572,8 @@ nKernelServer::RemClass(nClass *cl)
     @param  className   Name of the class
     @return             pointer to class object or 0
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
 */
 nClass*
 nKernelServer::FindClass(const char* className)
@@ -588,8 +588,8 @@ nKernelServer::FindClass(const char* className)
     Create a class object by name, this increments the refcount of the class 
     object.
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
 */
 nClass*
 nKernelServer::CreateClass(const char* className)
@@ -610,7 +610,7 @@ nKernelServer::CreateClass(const char* className)
 
     @param  cl  pointer to class object
 
-    08-Oct-98   floh    created
+     - 08-Oct-98   floh    created
 */
 void 
 nKernelServer::ReleaseClass(nClass* cl)
@@ -629,13 +629,13 @@ nKernelServer::ReleaseClass(nClass* cl)
     @param  path        Path where to create the new object in the hierarchy
     @return             pointer to class object
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
-    15-Jul-99   floh    uses Link() on object
-    29-Jul-99   floh    Link() killed
-    24-Oct-99   floh    throws a fatal error if object could not 
-                        be created
-    04-Oct-00   floh    + keep pointer to last created object
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
+     - 15-Jul-99   floh    uses Link() on object
+     - 29-Jul-99   floh    Link() killed
+     - 24-Oct-99   floh    throws a fatal error if object could not 
+                           be created
+     - 04-Oct-00   floh    + keep pointer to last created object
 */
 nRoot*
 nKernelServer::New(const char* className, const char* path)
@@ -654,7 +654,7 @@ nKernelServer::New(const char* className, const char* path)
     @param className    Name of the object
     @param path         Path where to create the new object in the hierarchy
 
-    24-Oct-99   floh    created
+     - 24-Oct-99   floh    created
 */
 nRoot*
 nKernelServer::NewNoFail(const char* className, const char *path)
@@ -672,9 +672,9 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     @param  path    path of persistent object file in host filesystem
     @return         pointer to created object, or 0
 
-    08-Oct-98   floh    created
-    04-Oct-98   floh    char * -> const char *
-    11-Nov-98   floh    implementiert
+     - 08-Oct-98   floh    created
+     - 04-Oct-98   floh    char * -> const char *
+     - 11-Nov-98   floh    implementiert
 */
 nRoot*
 nKernelServer::Load(const char* path)
@@ -689,8 +689,8 @@ nKernelServer::Load(const char* path)
 
     @param  o   pointer to new current working object
 
-    08-Oct-98   floh    created
-    13-May-99   floh    + if NULL pointer given, set root object
+     - 08-Oct-98   floh    created
+     - 13-May-99   floh    + if NULL pointer given, set root object
 */
 void
 nKernelServer::SetCwd(nRoot* o)
@@ -711,7 +711,7 @@ nKernelServer::SetCwd(nRoot* o)
 
     @return     pointer to current working object
 
-  - 08-Oct-98   floh    created
+     - 08-Oct-98   floh    created
 */
 nRoot*
 nKernelServer::GetCwd()
@@ -725,7 +725,7 @@ nKernelServer::GetCwd()
 
     @param  o   pointer to new current working object
 
-    28-Sep-00   floh    created
+     - 28-Sep-00   floh    created
 */
 void 
 nKernelServer::PushCwd(nRoot* o)
@@ -740,7 +740,7 @@ nKernelServer::PushCwd(nRoot* o)
     Pop working object from stack, and set as new working object.
     Return previous working object.
 
-    28-Sep-00   floh    created
+     - 28-Sep-00   floh    created
 */
 nRoot*
 nKernelServer::PopCwd()
@@ -754,7 +754,7 @@ nKernelServer::PopCwd()
 /**
     Update mem status variables from mem manager.
 
-    13-May-99   floh    created
+     - 13-May-99   floh    created
 */
 void nKernelServer::Trigger(void)
 {
@@ -799,12 +799,14 @@ nKernelServer::LoadPackage(const char*name)
     mappings.
 
     Format:
+    @verbatim
     $dllname
     %classname
     %classname
     $dllname
     %classname
     %classname
+    @endverbatim
 */  
 #ifndef N_STATIC
 bool 
