@@ -6,10 +6,7 @@
 //  matrix34    -- 3x4 matrix
 //  matrix44    -- 4x4 matrix
 //-------------------------------------------------------------------
-
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 #ifdef __USE_SSE__
 

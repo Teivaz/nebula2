@@ -10,26 +10,11 @@
     (C) 2002 RadonLabs GmbH
 */
 #include <xmmintrin.h>
-
-#ifndef _VECTOR4_SSE_H
 #include "mathlib/_vector4_sse.h"
-#endif
-
-#ifndef _VECTOR3_SSE_H
 #include "mathlib/_vector3_sse.h"
-#endif
-
-#ifndef N_QUATERNION_H
 #include "mathlib/quaternion.h"
-#endif
-
-#ifndef N_EULERANGLES_H
 #include "mathlib/euler.h"
-#endif
-
-#ifndef M_MATRIXDEFS_H
 #include "mathlib/matrixdefs.h"
-#endif
 
 static float _matrix44_sse_ident[16] = 
 {

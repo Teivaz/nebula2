@@ -9,13 +9,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_LINE_H
 #include "mathlib/line.h"
-#endif
 
 //------------------------------------------------------------------------------
 class plane 

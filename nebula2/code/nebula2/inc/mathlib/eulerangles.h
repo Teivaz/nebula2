@@ -3,14 +3,8 @@
 //------------------------------------------------------------------------------
 #include <stdlib.h>
 #include <math.h>
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef _H_EulerAngles
 #include "mathlib/euler.h"
-#endif
 
 //-------------------------------------------------------------------
 /**

@@ -9,21 +9,10 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_VECTOR_H
 #include "mathlib/_vector3_sse.h"
-#endif
-
-#ifndef N_QUATERNION_H
 #include "mathlib/quaternion.h"
-#endif
-
-#ifndef N_EULERANGLES_H
 #include "mathlib/euler.h"
-#endif
-
-#ifndef N_MATRIXDEFS_H
 #include "matrixdefs.h"
-#endif
 
 #include <string.h>
 
