@@ -4,7 +4,9 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiadjustdisplaywindow.h"
 #include "gui/nguihorislidergroup.h"
+#if 0
 #include "scene/nmrtsceneserver.h"
+#endif
 
 nNebulaClass(nGuiAdjustDisplayWindow, "nguiclientwindow");
 
@@ -237,6 +239,7 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
 void
 nGuiAdjustDisplayWindow::UpdateSlidersFromSceneServer()
 {
+#if 0
     if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
     {
         nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
@@ -253,6 +256,7 @@ nGuiAdjustDisplayWindow::UpdateSlidersFromSceneServer()
         this->refLuminanceGreen->SetValue(int(lum.y * 255.0f));
         this->refLuminanceBlue->SetValue(int(lum.z * 255.0f));
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -262,6 +266,7 @@ nGuiAdjustDisplayWindow::UpdateSlidersFromSceneServer()
 void
 nGuiAdjustDisplayWindow::UpdateSceneServerFromSliders()
 {
+#if 0
     if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
     {
         nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
@@ -282,6 +287,7 @@ nGuiAdjustDisplayWindow::UpdateSceneServerFromSliders()
         sceneServer->SetBalance(balance);
         sceneServer->SetLuminance(lum);
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -291,6 +297,7 @@ nGuiAdjustDisplayWindow::UpdateSceneServerFromSliders()
 void
 nGuiAdjustDisplayWindow::ResetValues()
 {
+#if 0
     if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
     {
         nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
@@ -299,4 +306,5 @@ nGuiAdjustDisplayWindow::ResetValues()
         sceneServer->SetLuminance(vector4(0.299f, 0.587f, 0.114f, 0.0f));
         this->UpdateSlidersFromSceneServer();
     }
+#endif
 }
