@@ -12,9 +12,9 @@
 #include "kernel/ntypes.h"
 #endif
 
-#if __XBxX__
+#ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
-#elif __WIN32__
+#elif defined(__WIN32__)
 #include <windows.h>
 #include <winbase.h>
 #else
