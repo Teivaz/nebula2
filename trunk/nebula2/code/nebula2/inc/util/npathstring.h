@@ -226,6 +226,9 @@ nPathString::ExtractFileName() const
 /**
     Return a nPathString object containing the part up to and including the last
     directory separator.
+    
+    NOTE: I left my fix in that returns the last slash (or colon), this was 
+    necessary to tell if a dirname is a normal directory or an assign. 
 */
 inline
 nPathString
