@@ -59,9 +59,9 @@ public:
     void ThreadStarted();
     /// called by thread func to determine when it should terminate
     bool ThreadStopRequested();
-	/// called by thread func if it wants to sleep
+    /// called by thread func if it wants to sleep
     void ThreadSleep(float sec);
-	/// must be called by thread func right before termination
+    /// must be called by thread func right before termination
     void ThreadHarakiri();
     /// wait for next message
     void WaitMsg();

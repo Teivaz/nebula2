@@ -17,9 +17,9 @@
 template<class TYPE> class nAutoRef : public nRef<TYPE> 
 {
 public:
-	/// constructor
+    /// constructor
     nAutoRef();
-	/// constructor with nKernelServer pointer
+    /// constructor with nKernelServer pointer
     nAutoRef(nKernelServer *ks);
     /// constructor with nKernelServer pointer and target object name
     nAutoRef(nKernelServer* ks, const char* tarName);
@@ -27,16 +27,16 @@ public:
     /// initialize if default constructor is used
     void initialize(nKernelServer *ks);
     /// sets the object name
-	void set(const char* name);
+    void set(const char* name);
     /// get object pointer
     TYPE* get();
-	/// returns the object name
+    /// returns the object name
     const char *getname() const;
-	/// returns true if the object is valid
+    /// returns true if the object is valid
     bool isvalid();
-	/// reference operator
+    /// reference operator
     TYPE* operator->();
-	/// assign operator
+    /// assign operator
     void operator=(const char *name);
 
 protected:

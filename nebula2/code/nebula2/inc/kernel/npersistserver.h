@@ -83,9 +83,9 @@ public:
         SAVEMODE_CLONE,  
     };
 
-	/// constructor
+    /// constructor
     nPersistServer();
-	/// destructor
+    /// destructor
     virtual ~nPersistServer();
     /// set the save mode
     void SetSaveMode(nSaveMode);

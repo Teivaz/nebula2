@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------
 class nStrList: public nList 
 {
-public:	
+public:    
     /// return first element of list
     nStrNode* GetHead() const;
     /// return last element of list

@@ -31,29 +31,29 @@
 class N_PUBLIC nEnv : public nRoot 
 {
 public:
-	/// object persistency
+    /// object persistency
     virtual bool SaveCmds(nPersistServer *);
-	/// Returns the type of this nEnv instance
+    /// Returns the type of this nEnv instance
     nArg::ArgType GetType(void);
-	/// Sets the value of this object to the passed integer
+    /// Sets the value of this object to the passed integer
     void SetI(int i);
-	/// Sets the value of this object to the passes boolean value
+    /// Sets the value of this object to the passes boolean value
     void SetB(bool b);
-	/// Sets the value of this object to the passed float value
+    /// Sets the value of this object to the passed float value
     void SetF(float f);
-	/// Sets the value of this object to the passed string
+    /// Sets the value of this object to the passed string
     void SetS(const char *s);
-	/// Sets the value of this objet to the passed object
+    /// Sets the value of this objet to the passed object
     void SetO(nRoot *o); 
-	/// Returns the integer value
+    /// Returns the integer value
     int GetI(void);
-	/// Returns the boolean value
+    /// Returns the boolean value
     bool GetB(void);
-	/// Returns the float value
+    /// Returns the float value
     float GetF(void);
-	/// Returns the string
+    /// Returns the string
     const char *GetS(void);
-	/// Returns the object
+    /// Returns the object
     nRoot *GetO(void);
 
     static nKernelServer* kernelServer;

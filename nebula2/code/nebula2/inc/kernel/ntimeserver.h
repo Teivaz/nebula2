@@ -96,7 +96,7 @@ private:
     double lock_delta_t;
     double wait_delta_t;
     double lock_time;
-	/// list of living nProfiler objects
+    /// list of living nProfiler objects
     nStrList prof_list;             
 
 #   ifdef __WIN32__

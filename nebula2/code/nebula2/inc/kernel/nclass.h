@@ -42,20 +42,20 @@ public:
     /// start defining commands
     void BeginCmds();
     /// add a command to the class
-	void AddCmd(const char *proto_def, uint id, void (*)(void *, nCmd *));
+    void AddCmd(const char *proto_def, uint id, void (*)(void *, nCmd *));
     /// finish defining commands
     void EndCmds();
-	/// find command by name
+    /// find command by name
     nCmdProto* FindCmdByName(const char *name);
-	/// find command by fourcc code
+    /// find command by fourcc code
     nCmdProto* FindCmdById(uint id);
-	/// get pointer to command list
+    /// get pointer to command list
     nHashList* GetCmdList() const;
-	/// get super class of this class
+    /// get super class of this class
     nClass *GetSuperClass() const;
-	/// add a sub class to this class
+    /// add a sub class to this class
     void AddSubClass(nClass* cl);
-	/// remove a subclass from this class
+    /// remove a subclass from this class
     void RemSubClass(nClass* cl);
     /// increment ref count of class object
     int AddRef();

@@ -73,7 +73,7 @@ public:
     nCmd* NewCmd();
     /// release nCmd object
     void RelCmd(nCmd* cmd);
-	/// pointer to C style command handler
+    /// pointer to C style command handler
     void (*cmdProc)(void *, nCmd *);
 
 private:

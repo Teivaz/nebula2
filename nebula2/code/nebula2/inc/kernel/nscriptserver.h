@@ -46,21 +46,21 @@ public:
     nScriptServer();
     /// destructor
     virtual ~nScriptServer();
-	/// evaluate a script command
+    /// evaluate a script command
     virtual bool Run(const char *, const char*&); 
-	/// evaluate a script file
+    /// evaluate a script file
     virtual bool RunScript(const char *, const char*&);
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);
-	/// write object header with default constructor
+    /// write object header with default constructor
     virtual bool WriteBeginNewObject(nFile* fp, nRoot *o, nRoot *owner);
-	/// write object header with constructor cmd 
+    /// write object header with constructor cmd 
     virtual bool WriteBeginNewObjectCmd(nFile* fp, nRoot *o, nRoot *owner, nCmd *cmd);  
-	/// write object header without constructor (select only)
+    /// write object header without constructor (select only)
     virtual bool WriteBeginSelObject(nFile* fp, nRoot *o, nRoot *owner); 
-	/// translate and write a cmd message
+    /// translate and write a cmd message
     virtual bool WriteCmd(nFile*, nCmd *);   
-	/// write object footer
+    /// write object footer
     virtual bool WriteEndObject(nFile* fp, nRoot *o, nRoot *owner);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);

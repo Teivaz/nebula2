@@ -43,16 +43,16 @@ public:
     /// destructor
     virtual ~nFileServer2();
 
-	/// sets a path alias
-	bool SetAssign(const char* assignName, const char* pathName);
-	/// gets a path alias
-	const char* GetAssign(const char* assignName);
-	/// expand path alias to real path
-	const char* ManglePath(const char* pathName, char* buf, int bufSize);
+    /// sets a path alias
+    bool SetAssign(const char* assignName, const char* pathName);
+    /// gets a path alias
+    const char* GetAssign(const char* assignName);
+    /// expand path alias to real path
+    const char* ManglePath(const char* pathName, char* buf, int bufSize);
 
-	/// creates a new nDirectory object
-	virtual nDirectory* NewDirectoryObject();
-	/// creates a new nFile object
+    /// creates a new nDirectory object
+    virtual nDirectory* NewDirectoryObject();
+    /// creates a new nFile object
     virtual nFile* NewFileObject();
 
     /// reset statistics
