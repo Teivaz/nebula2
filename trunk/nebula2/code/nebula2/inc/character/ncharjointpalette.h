@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCharJointPalette
+    @ingroup NebulaCharacterAnimationSystem
 
     A joint palette defines a subset of a character skeleton to deal with
     hardware which can process only a limited number of joints for skinned

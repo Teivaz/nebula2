@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimClip
+    @ingroup NebulaAnimationSystem
 
     An animation clip bundles several animation curves into a unit and
     associates them with a weight value.

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimState
+    @ingroup NebulaAnimationSystem
 
     An animation state contains any number of nAnimClip objects of identical
     size (number of anim curves contained in the clip) and can sample a 
