@@ -22,6 +22,7 @@
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
+#include "shadow/nshadowserver.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -119,6 +120,7 @@ private:
     nRef<nParticleServer> refParticleServer;
     nRef<nVideoServer> refVideoServer;
     nRef<nGuiServer> refGuiServer;
+    nRef<nShadowServer> refShadowServer;
 
     nRef<nTransformNode> refRootNode;
 
