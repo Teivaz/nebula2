@@ -772,7 +772,7 @@ void nD3D9Server::CreateDisplayModeEnvVars()
             const uint numModes = this->d3d9->GetAdapterModeCount( adapterIdx, dispFormat );
             for (uint modeIdx = 0; modeIdx < numModes; ++modeIdx)
             {
-                sprintf( modeSubDirStr, "mode%u", modeIdx );
+                sprintf( modeSubDirStr, "modes/mode%u", modeIdx );
                 nRoot* modeSubDir = kernelServer->New( "nroot", modeSubDirStr );
                 kernelServer->SetCwd( modeSubDir );
 
@@ -800,10 +800,14 @@ void nD3D9Server::CreateDisplayModeEnvVars()
             envVar->SetI( caps.MaxTextureHeight );
             envVar = (nEnv*)kernelServer->New( "nenv", "maxTexWidth" );
             envVar->SetI( caps.MaxTextureWidth );
-            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShaderVer" );
-            envVar->SetI( caps.PixelShaderVersion );
-            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShaderVer" );
-            envVar->SetI( caps.VertexShaderVersion );
+            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShader/majorVerNum" );
+            envVar->SetI( D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion) );
+            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShader/minorVerNum" );
+            envVar->SetI( D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion) );
+            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShader/majorVerNum" );
+            envVar->SetI( D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion) );
+            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShader/minorVerNum" );
+            envVar->SetI( D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion) );
         }
 
         kernelServer->SetCwd( cwd );    
