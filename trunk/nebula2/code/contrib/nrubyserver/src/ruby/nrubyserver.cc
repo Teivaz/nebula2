@@ -31,7 +31,7 @@ bool nRubyServer::finished       = false;
 ///finish up rubyserver
 void nRubyServer::Terminate(void)
 {
-	finished = true;
+    finished = true;
 }
 
 //--------------------------------------------------------------------
@@ -45,55 +45,55 @@ nRubyServer::nRubyServer()
     this->indent_buf[0]     = 0;
 
     // initialize data internal to RUBY to make encodings work.
-	ruby_init();
-	// not realy used anymore but extensions could come here
-	register_manglepath("home:bin/ruby/ruby1.8/lib");
-	register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8");
-	register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8/i386-mswin32");
-	register_manglepath("home:bin/ruby/ruby1.8/ext");
-		
-	// restrict ruby in its access to the system a little bit
-	rb_set_safe_level(1);
-	ruby_script("nRubyServer");
-	ruby_show_version();
-	ruby_init_loadpath();
-	// our calls into the ruby world
-	register_commands();
+    ruby_init();
+    // not realy used anymore but extensions could come here
+    register_manglepath("home:bin/ruby/ruby1.8/lib");
+    register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8");
+    register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8/i386-mswin32");
+    register_manglepath("home:bin/ruby/ruby1.8/ext");
+        
+    // restrict ruby in its access to the system a little bit
+    rb_set_safe_level(1);
+    ruby_script("nRubyServer");
+    ruby_show_version();
+    ruby_init_loadpath();
+    // our calls into the ruby world
+    register_commands();
 }
 
 //--------------------------------------------------------------------
 /**
-	register_manglepath()
-	resolve assign and register the resulting path with ruby as a library 
-	search path. Like "home:bin/ruby/ruby1.8/lib"
+    register_manglepath()
+    resolve assign and register the resulting path with ruby as a library 
+    search path. Like "home:bin/ruby/ruby1.8/lib"
 
-	-TODO
-		rb_p conversion in N2
+    -TODO
+        rb_p conversion in N2
 
-	-18-Dec-03	Tom	created
+    -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
 void nRubyServer::register_manglepath(const char* param_path)
 {
-	int ret =0;
+    int ret =0;
     char buf[N_MAXPATH];
-	char path[N_MAXPATH+10];
-	kernelServer->GetFileServer()->ManglePath(param_path,buf,sizeof(buf));
-	strcpy(path, "$: << \"");
-	strcat(path, buf);
-	strcat(path, "\"");
-	//int ret=0;
-	rb_p(rb_eval_string_protect(path, &ret));
+    char path[N_MAXPATH+10];
+    kernelServer->GetFileServer()->ManglePath(param_path,buf,sizeof(buf));
+    strcpy(path, "$: << \"");
+    strcat(path, buf);
+    strcat(path, "\"");
+    //int ret=0;
+    rb_p(rb_eval_string_protect(path, &ret));
     if (ret) {
         rb_p(ruby_errinfo);
     }
 }
 //--------------------------------------------------------------------
 /**
-	~nRubyServer()
-	finish up the ruby environment
+    ~nRubyServer()
+    finish up the ruby environment
 
-	-18-Dec-03	Tom	created
+    -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
 nRubyServer::~nRubyServer()
@@ -104,13 +104,13 @@ nRubyServer::~nRubyServer()
 
 //--------------------------------------------------------------------
 /**
-	BeginWrite()
-	start writinig a persistent script object
+    BeginWrite()
+    start writinig a persistent script object
 
-	-TODO
-		TEST it.
+    -TODO
+        TEST it.
 
-	-18-Dec-03	Tom	created
+    -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
 nFile* 
@@ -143,13 +143,13 @@ nRubyServer::BeginWrite(const char* filename, nRoot* obj)
 
 //--------------------------------------------------------------------
 /**
-	EndWrite()
-	End writing persistent script file
+    EndWrite()
+    End writing persistent script file
 
-	-TODO
-		TEST it.
+    -TODO
+        TEST it.
 
-	-18-Dec-03	Tom	created
+    -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
 bool 
@@ -168,7 +168,7 @@ nRubyServer::EndWrite(nFile* file)
 //--------------------------------------------------------------------
 //  _indent()
 //  04-Nov-98   floh    created
-//  18-Dec-03	Tom		copied over from ntclserver.cc
+//  18-Dec-03   Tom     copied over from ntclserver.cc
 //--------------------------------------------------------------------
 static void _indent(long i, char *buf)
 {
@@ -179,13 +179,13 @@ static void _indent(long i, char *buf)
 
 //--------------------------------------------------------------------
 /**
-	WriteComment()
-	Write a ruby comment line to the script file
+    WriteComment()
+    Write a ruby comment line to the script file
 
-	-TODO
-		TEST it.
+    -TODO
+        TEST it.
 
-	-18-Dec-03	Tom	created
+    -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteComment(nFile *file, const char *str)
@@ -200,15 +200,15 @@ bool nRubyServer::WriteComment(nFile *file, const char *str)
 
 //--------------------------------------------------------------------
 /**
-	write_select_statement()
-	Write the statement to select an object after its creation
-	statement.
+    write_select_statement()
+    Write the statement to select an object after its creation
+    statement.
 
-	-TODO
-		TEST it.
+    -TODO
+        TEST it.
 
-	-05-Oct-00	floh    created
-	-18-Dec-03	Tom		adopted for ruby
+    -05-Oct-00  floh    created
+    -18-Dec-03  Tom     adopted for ruby
 */
 //--------------------------------------------------------------------
 void nRubyServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
@@ -234,14 +234,14 @@ void nRubyServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
 
 //--------------------------------------------------------------------
 /**
-	WriteBeginNewObject()
-	Write start of persistent object with default constructor.
-	
-	-TODO
-		TEST it.
+    WriteBeginNewObject()
+    Write start of persistent object with default constructor.
+    
+    -TODO
+        TEST it.
 
-	-06-Mar-00   floh    created
-	-05-Sep-00   floh    + support for optional enter/leave syntax
+    -06-Mar-00   floh    created
+    -05-Sep-00   floh    + support for optional enter/leave syntax
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
@@ -268,15 +268,15 @@ bool nRubyServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
 
 //--------------------------------------------------------------------
 /**
-	WriteBeginNewObjectCmd()
-	Write start of persistent object with custom constructor
-	defined by command.
-	
-	-TODO
-		TEST it.
+    WriteBeginNewObjectCmd()
+    Write start of persistent object with custom constructor
+    defined by command.
+    
+    -TODO
+        TEST it.
 
-	-06-Mar-00  floh	created
-	-18-Dec-03	Tom		adapted fro ruby
+    -06-Mar-00  floh    created
+    -18-Dec-03  Tom     adapted fro ruby
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nCmd *cmd)
@@ -295,15 +295,15 @@ bool nRubyServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nC
 
 //--------------------------------------------------------------------
 /**
-	WriteBeginSelObject()
-	Write start of persisting object without constructor, only
-	write the select statement.
+    WriteBeginSelObject()
+    Write start of persisting object without constructor, only
+    write the select statement.
 
-	-TODO
-		TEST it.
+    -TODO
+        TEST it.
 
-	-06-Mar-00   floh    created
-	-18-Dec-03	Tom		adapted fro ruby
+    -06-Mar-00   floh    created
+    -18-Dec-03  Tom     adapted fro ruby
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
@@ -318,13 +318,13 @@ bool nRubyServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
 
 //--------------------------------------------------------------------
 /**
-	WriteEndObject()
-	
-	-TODO
-		TEST it.
+    WriteEndObject()
+    
+    -TODO
+        TEST it.
 
-	-04-Nov-98  floh    created
-	-18-Dec-03	Tom		adapted fro ruby
+    -04-Nov-98  floh    created
+    -18-Dec-03  Tom     adapted fro ruby
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
@@ -347,13 +347,13 @@ bool nRubyServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
 
 //--------------------------------------------------------------------
 /**
-	WriteCmd()
-	
-	-TODO
-		TEST it.
+    WriteCmd()
+    
+    -TODO
+        TEST it.
 
-	-04-Nov-98  floh    created
-	-18-Dec-03	Tom		adapted to ruby syntax
+    -04-Nov-98  floh    created
+    -18-Dec-03  Tom     adapted to ruby syntax
 */
 //--------------------------------------------------------------------
 bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
@@ -367,7 +367,7 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
     // write the command name
     file->PutS(this->indent_buf);
     file->PutS(name);
-	file->PutS(" ");
+    file->PutS(" ");
 
     // write command arguments
     cmd->Rewind();
@@ -440,9 +440,9 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
                 break;
         }
         file->PutS(buf);
-		// check for argument seperator
-		if(i < (num_args-1))
-			file->PutS(" , ");
+        // check for argument seperator
+        if(i < (num_args-1))
+            file->PutS(" , ");
     }
     return file->PutS("\n");
 }
