@@ -18,8 +18,7 @@
      - 30-Jan-2002   peter   created
      - 11-Feb-2002   floh    Linux stuff
 */
-nFile::nFile(nFileServer2* server) : 
-    fs(server),
+nFile::nFile() : 
     lineNumber(0),
     isOpen(false)
 {
@@ -64,9 +63,7 @@ nFile::Open(const char* fileName, const char* accessMode)
     n_assert(fileName);
     n_assert(accessMode);
 
-    char buf[N_MAXPATH];
-    this->fs->ManglePath(fileName, buf, sizeof(buf));
-
+    nString mangledPath = nFileServer2::Instance()->ManglePath(fileName);
     this->lineNumber = 0;
 
 #ifdef __WIN32__
@@ -95,7 +92,7 @@ nFile::Open(const char* fileName, const char* accessMode)
             disposition = OPEN_EXISTING;
             shareMode   = FILE_SHARE_READ;
     }
-    this->handle = CreateFile(buf,              // filename
+    this->handle = CreateFile(mangledPath.Get(),    // filename
                               access,           // access mode
                               shareMode,        // share mode
                               0,                // security flags
@@ -108,7 +105,7 @@ nFile::Open(const char* fileName, const char* accessMode)
         return false;
     }
 #else
-    this->fp = fopen(buf, accessMode);
+    this->fp = fopen(mangledPath.Get(), accessMode);
     if (!this->fp)
     {
         return false;
@@ -165,7 +162,7 @@ nFile::Write(const void* buffer, int numBytes)
     n_assert(this->IsOpen());
     
     // statistics
-    this->fs->AddBytesWritten(numBytes);
+    nFileServer2::Instance()->AddBytesWritten(numBytes);
 
 #ifdef __WIN32__
     DWORD written;
@@ -193,7 +190,7 @@ nFile::Read(void* buffer, int numBytes)
     n_assert(this->IsOpen());
 
     // statistics
-    this->fs->AddBytesRead(numBytes);
+    nFileServer2::Instance()->AddBytesRead(numBytes);
 
 #ifdef __WIN32__
     DWORD read;
@@ -241,7 +238,7 @@ nFile::Seek(int byteOffset, nSeekType origin)
 {
     n_assert(this->IsOpen());
 
-    this->fs->AddSeek();
+    nFileServer2::Instance()->AddSeek();
 
 #ifdef __WIN32__
     DWORD method;

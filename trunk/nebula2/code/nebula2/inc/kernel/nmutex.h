@@ -63,7 +63,11 @@ nMutex::nMutex()
     #ifdef __WIN32__
         this->wmutex = CreateMutex(NULL, FALSE, NULL);
     #else
-        pthread_mutex_init(&(this->pmutex),NULL);
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+        pthread_mutex_init(&this->pmutex, &attr);
+        pthread_mutexattr_destroy(&attr);
     #endif
 #endif
 }

@@ -42,12 +42,11 @@ nHardRefServer::RegisterHardRef(nKernelServer* kernelServer, nHardRef<nRoot>* ha
     n_assert(!hardRef->isvalid());
     n_assert(kernelServer);
     
-    char nameBuffer[N_MAXPATH];
-    char* namePtr = hardRef->getname(nameBuffer, sizeof(nameBuffer));
-    n_assert(namePtr);
+    nString name = hardRef->getname();
+    n_assert(!name.IsEmpty());
     
     // \todo calls Lookup twice...
-    if (kernelServer->Lookup(nameBuffer))
+    if (kernelServer->Lookup(name.Get()))
     {
         // object exists, nHardRef can be resolved
         hardRef->resolve();
@@ -73,8 +72,7 @@ nHardRefServer::RegisterHardRef(nKernelServer* kernelServer, nHardRef<nRoot>* ha
 void
 nHardRefServer::RegisterTargetObject(nRoot& targetObject)
 {
-    char nameBuffer[N_MAXPATH];
-    targetObject.GetFullName(nameBuffer, sizeof(nameBuffer));
+    nString targetName = targetObject.GetFullName();
     
     // parse list of nHardRef for list of matches
     nStrNode* strNode = (nStrNode*) this->strList.GetHead();
@@ -82,7 +80,7 @@ nHardRefServer::RegisterTargetObject(nRoot& targetObject)
     {
         nStrNode* nextNode = (nStrNode*) strNode->GetSucc();
         
-        if (0 == strcmp(nameBuffer, strNode->GetName()))
+        if (0 == strcmp(targetName.Get(), strNode->GetName()))
         {
             // match found, resolve hardref
             //

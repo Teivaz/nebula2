@@ -20,7 +20,6 @@ nNebulaRootClass(nRoot);
 nRoot::nRoot() :
     instanceClass(0),
     parent(0),
-//    childList(0),
     refCount(1),
     saveModeFlags(0)
 {
@@ -55,14 +54,6 @@ nRoot::~nRoot()
     {
         this->Remove();   
     }
-        
-    // clean up
-/*
-    if (this->childList) 
-    {
-        n_delete this->childList;
-    }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -113,39 +104,37 @@ nRoot::InvalidateAllRefs()
 /**
      - 08-Oct-98   floh    created
      - 23-Jan-01   floh    why the f*ck was this method recursive???
+     - 24-May-04    floh    returns nString
 */
-char *
-nRoot::GetFullName(char *buf, int sizeof_buf)
+nString
+nRoot::GetFullName()
 {
     // build stack of pointers leading from me to root
     const int maxDepth = 128;
-    nRoot *stack[maxDepth];
-    nRoot *cur = this;
+    nRoot* stack[maxDepth];
+    nRoot* cur = this;
     int i = 0;
     do 
     {
         stack[i++] = cur;
-    } while ((cur = cur->GetParent()) && (i<maxDepth));
+    } 
+    while ((cur = cur->GetParent()) && (i < maxDepth));
 
     // traverse stack in reverse order and build filename    
-    char tmp[N_MAXPATH];
-    tmp[0] = 0;
+    nString str;
     i--;
-    for (; i>=0; i--) 
+    for (; i >= 0; i--) 
     {
         const char *curName = stack[i]->GetName();
-        strcat(tmp,curName);
+        str.Append(curName);
         
         // add slash if not hierarchy root, and not last element in path
-        if ((curName[0] != '/') && (i>0)) 
+        if ((curName[0] != '/') && (i > 0)) 
         {
-            strcat(tmp,"/");
+            str.Append("/");
         }
     }
-
-    // copy result to provided buffer
-    n_strncpy2(buf,tmp,sizeof_buf);
-    return buf;
+    return str;
 }
 
 //------------------------------------------------------------------------------
@@ -156,92 +145,84 @@ nRoot::GetFullName(char *buf, int sizeof_buf)
     
      - 06-Mar-00    floh    created
      - 21-Feb-04    floh    now accepts "other == this" (returns a dot)
+     - 24-May-04    floh    rewritten to nString
 */
-char *
-nRoot::GetRelPath(nRoot *other, char *buf, int sizeof_buf)
+nString
+nRoot::GetRelPath(nRoot *other)
 {
     n_assert(other);
-    n_assert(buf);
-    n_assert(sizeof_buf > 0);
 
-    buf[0] = 0;
+    nString str;
     if (other == this)
     {
-        n_strcat(buf, ".", sizeof_buf);
+        str = ".";
     }
     else if (other == this->GetParent()) 
     {
-        // special case optimize: other is parent of this
-        n_strcat(buf,"..",sizeof_buf);
+        str = "..";
     } 
     else if (other->GetParent() == this) 
     {
-        // special case optimize: this is parent of other
-        n_strcat(buf,other->GetName(),sizeof_buf);
+        str = other->GetName();
     } 
     else 
     {
         // normal case
-        nList this_hier;
-        nList other_hier;
-        nRoot *o;
+        nArray<nRoot*> thisHierarchy;
+        nArray<nRoot*> otherHierarchy;
 
         // for both objects, create lists of all parents up to root 
-        o = this;
+        nRoot *o = this;
         do 
         {
-            nNode *n = n_new nNode(o);
-            this_hier.AddHead(n);
-        } while ((o=o->GetParent()));
+            thisHierarchy.Insert(0, o);
+        } 
+        while ((o = o->GetParent()));
         o = other;
         do 
         {
-            nNode *n = n_new nNode(o);
-            other_hier.AddHead(n);
-        } while ((o=o->GetParent()));
+            otherHierarchy.Insert(0, o);
+        } 
+        while ((o = o->GetParent()));
 
         // remove identical parents
         bool running = true;
         do 
         {
-            nNode *n0 = this_hier.GetHead();
-            nNode *n1 = other_hier.GetHead();
-            if (n0 && n1) 
+            if ((thisHierarchy.Size() > 0) && (otherHierarchy.Size() > 0))
             {
-                if (n0->GetPtr() == n1->GetPtr()) 
+                nRoot* o0 = thisHierarchy[0];
+                nRoot* o1 = otherHierarchy[0];
+                if (o0 == o1)
                 {
-                    n0->Remove();
-                    n1->Remove();
-                    n_delete n0;
-                    n_delete n1;
+                    thisHierarchy.Erase(0);
+                    otherHierarchy.Erase(0);
                 } 
                 else running = false;
             } 
             else running = false;
-        } while (running);
+        } 
+        while (running);
 
         // create path leading upward from this to the identical parent
-        nNode *n;
-        while ((n=this_hier.RemTail())) 
+        while (thisHierarchy.Size() > 0)
         {
-            n_delete n;
-            n_strcat(buf,"../",sizeof_buf);
+            str.Append("../");
+            thisHierarchy.Erase(thisHierarchy.Size() - 1);
         }
-        // create path leading downward from parent to 'other'
-        while ((n=other_hier.RemHead())) 
+        while (otherHierarchy.Size() > 0)
         {
-            o = (nRoot *) n->GetPtr();
-            n_delete n;
-            n_strcat(buf,o->GetName(),sizeof_buf);
-            n_strcat(buf,"/",sizeof_buf);
+            str.Append(otherHierarchy[0]->GetName());
+            str.Append("/");
+            otherHierarchy.Erase(0);
         }
 
         // eliminate trailing '/'
-        buf[strlen(buf)-1] = 0;
+        str.StripTrailingSlash();
     }
 
     // done
-    return buf;
+    return str;
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +279,7 @@ child_cmp(const void *e0, const void *e1)
 {
     nRoot *r0 = *((nRoot **)e0);
     nRoot *r1 = *((nRoot **)e1);
-    return strcmp(r1->GetName(),r0->GetName());
+    return strcmp(r1->GetName(), r0->GetName());
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +300,7 @@ nRoot::Sort()
     if (num > 0) 
     {
         nRoot **c_array = (nRoot **) n_malloc(num * sizeof(nRoot *));
-        n_assert(c_array);\
+        n_assert(c_array);
         for (i = 0, c = this->GetHead(); c; c = c->GetSucc(), i++) 
         {
             c_array[i] = c;

@@ -99,8 +99,8 @@ static void
 n_manglepath(void* slf, nCmd* cmd)
 {
     nFileServer2* self = (nFileServer2*) slf;
-    char buf[N_MAXPATH];
-    cmd->Out()->SetS(self->ManglePath(cmd->In()->GetS(), buf, sizeof(buf)));
+    nString str = self->ManglePath(cmd->In()->GetS());
+    cmd->Out()->SetS(str.Get());
 }
 
 //------------------------------------------------------------------------------

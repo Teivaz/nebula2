@@ -220,7 +220,13 @@ nPersistServer::GetCmd(nRoot *o, uint id)
 {
     n_assert(o);
     nCmdProto *cp = o->GetClass()->FindCmdById(id);
-    n_assert(cp);
+    if (!cp)
+    {
+        nString fullname = o->GetFullName();
+        n_error("nPersistServer::GetCmd(): unknown command '%s' for object '%s'\n",
+            n_fourcctostr(id), fullname.Get());
+        return 0;
+    }
     return cp->NewCmd();
 }
 

@@ -12,7 +12,7 @@ static void tclUnknownObject(Tcl_Interp* interp, const char *objName)
 {
     n_assert(objName);
     char buf[N_MAXPATH];
-    sprintf(buf, "Object '%s' does not exist.", objName);
+    snprintf(buf, sizeof(buf), "Object '%s' does not exist.", objName);
     Tcl_SetResult(interp, buf, TCL_VOLATILE);
 }
 
@@ -70,8 +70,7 @@ int tclcmd_New(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
         nRoot *o = nTclServer::kernelServer->NewNoFail(className, objName);
         if (o) 
         {
-            char buf[N_MAXPATH];
-            Tcl_SetResult(interp, o->GetFullName(buf,sizeof(buf)), TCL_VOLATILE);
+            Tcl_SetResult(interp, (char*) o->GetFullName().Get(), TCL_VOLATILE);
             retval = TCL_OK;
         }
     }
@@ -125,9 +124,7 @@ tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         if (obj)
         {
             nTclServer::kernelServer->SetCwd(obj);
-
-            char buf[N_MAXPATH];
-            Tcl_SetResult(interp, obj->GetFullName(buf, sizeof(buf)), TCL_VOLATILE);
+            Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
             retval = TCL_OK;
 
         } 
@@ -155,8 +152,7 @@ tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /
     {
         nRoot *obj = nTclServer::kernelServer->GetCwd();
         n_assert(obj);
-        char buf[N_MAXPATH];
-        Tcl_SetResult(interp, obj->GetFullName(buf,sizeof(buf)), TCL_VOLATILE);
+        Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
         retval = TCL_OK;
     }    
     return retval;
@@ -210,8 +206,7 @@ tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         nRoot *obj = nTclServer::kernelServer->Load(objName);
         if (obj) 
         {
-            char buf[N_MAXPATH];
-            Tcl_SetResult(interp, obj->GetFullName(buf, sizeof(buf)), TCL_VOLATILE);
+            Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
             retval = TCL_OK;
         } 
         else 
@@ -390,19 +385,17 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
 
             case nArg::Object:
             {
-                char buf[N_MAXPATH];
-                const char *s;
+                nString str;
                 nRoot *o = (nRoot *) arg->GetO();
                 if (o)
                 {
-                    o->GetFullName(buf,sizeof(buf));
-                    s = buf;
+                    str = o->GetFullName();
                 }
                 else
                 {
-                    s = "null";
+                    str = "null";
                 }
-                Tcl_Obj *so = Tcl_NewStringObj(s,strlen(s));
+                Tcl_Obj *so = Tcl_NewStringObj(str.Get(), str.Length());
                 Tcl_ListObjAppendElement(interp,res,so);
             }
             break;
@@ -415,7 +408,7 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
                 break;
 
             default:
-                n_error("nTclServer::_putOutListArg(): unsupported argument type!");
+                n_error("nTclServer _putOutListArg(): unsupported argument type!");
                 break;
         }
         arg++;
@@ -478,19 +471,17 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
 
             case nArg::Object:
                 {
-                    char buf[N_MAXPATH];
-                    const char *s;
+                    nString str;
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) 
                     {
-                        o->GetFullName(buf,sizeof(buf));
-                        s = buf;
+                        str = o->GetFullName();
                     } 
                     else 
                     {
-                        s = "null";
+                        str = "null";
                     }
-                    Tcl_SetStringObj(res,(char *)s,strlen(s));
+                    Tcl_SetStringObj(res, (char *) str.Get(), str.Length());
                 }
                 break;
 
@@ -551,19 +542,17 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
 
                 case nArg::Object:
                     {
-                        char buf[N_MAXPATH];
-                        const char *s;
+                        nString str;
                         nRoot *o = (nRoot *) arg->GetO();
                         if (o) 
                         {
-                            o->GetFullName(buf,sizeof(buf));
-                            s = buf;
+                            str = o->GetFullName();
                         } 
                         else 
                         {
-                            s = "null";
+                            str = "null";
                         }
-                        Tcl_Obj *so = Tcl_NewStringObj(s,strlen(s));
+                        Tcl_Obj *so = Tcl_NewStringObj(str.Get(), str.Length());
                         Tcl_ListObjAppendElement(interp,res,so);
                     }
                     break;
@@ -596,8 +585,7 @@ tcl_objcmderror(Tcl_Interp *interp,
                 char *cmd_name)     // 2nd '%s'
 {
     char errorBuf[1024];
-    char nameBuf[N_MAXPATH];
-    sprintf(errorBuf, msg, o->GetFullName(nameBuf, sizeof(nameBuf)), cmd_name);
+    snprintf(errorBuf, sizeof(errorBuf), msg, o->GetFullName().Get(), cmd_name);
     Tcl_SetResult(interp,  errorBuf, TCL_VOLATILE);
     n_printf("*** %s\n", errorBuf);
 }

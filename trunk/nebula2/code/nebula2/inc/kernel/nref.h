@@ -5,6 +5,10 @@
     @class nRef
     @ingroup NebulaSmartPointers
 
+    nRef and nAutoRef implement safe pointers to nRoot derived objects which 
+    will invalidate themselves when the target object goes away. This
+    avoids dangling pointers and also protects against dereferencing
+    a null pointer.
     nRef and nAutoRef implement safe pointers to objects.
     If one object keeps a pointer to another object,
     and the pointed-to object goes away, the first object is
@@ -14,6 +18,22 @@
     holding the reference will be notified.
 
     Technically, it's a class template implementing a smart pointer.
+
+    Operations:
+
+    Assigning ptr to ref:
+    ref=ptr OR ref.set(ptr)
+
+    Invalidating:
+    ref=0 OR ref.invalidate() OR ref.set(0)
+
+    Checking if pointer is valid (non-null):
+    ref.isvalid()
+
+
+
+    - 06-May-04     floh    added more operator, so that nRef's can be
+                            used more like normal C++ pointers
 
     (C) 1999 RadonLabs GmbH
 */
@@ -30,30 +50,38 @@ public:
     /// constructor with target object
     nRef(TYPE* o);
     /// copy constructor
-    nRef( const nRef& );
+    nRef(const nRef&);
     /// destructor
     ~nRef();
+    /// assign TYPE pointer
+    nRef& operator=(TYPE *obj);
+    /// assign nRef object
+    nRef& operator=(const nRef& rhs);
+    /// equality operator
+    bool operator==( const nRef& rhs);
+    /// inequality operator
+    bool operator!=(const nRef<TYPE>& rhs);
+    /// shortcut equality operator
+    bool operator==(TYPE* obj);
+    /// shortcut inequality operator
+    bool operator!=(TYPE* obj);
+    /// override -> operator
+    TYPE* operator->() const;
+    /// dereference operator
+    TYPE& operator*() const;
+    /// cast operator
+    operator TYPE*() const;
+    /// check if target object exists
+    bool isvalid() const;
     /// invalidate the ref
     void invalidate();
     /// set target object
     void set(TYPE *obj);
     /// get target object
     TYPE* get() const;
-    /// check if target object exists
-    bool isvalid() const;
-    /// override -> operator
-    TYPE* operator->() const;
-    /// assign TYPE pointer
-    void operator=(TYPE *obj);
-    /// assign nRef object
-    nRef& operator=(const nRef& rhs);
-    /// equality operator
-    bool operator==(const nRef& rhs);
-    /// inequality operator
-    bool operator!=(const nRef& rhs);
 
 protected:
-    nRoot *targetObject;
+    TYPE* targetObject;
 };
 
 //------------------------------------------------------------------------------
@@ -76,7 +104,7 @@ nRef<TYPE>::nRef(TYPE* o) :
     targetObject(o)
 {
     n_assert(o);
-    this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+    ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot>*)this);
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +117,7 @@ nRef<TYPE>::nRef( const nRef<TYPE>& rhs ) :
 {
     if (targetObject) 
     {
-        this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+        ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
     }
 }
 
@@ -102,7 +130,7 @@ nRef<TYPE>::~nRef()
 {
     if (this->targetObject) 
     {
-        this->targetObject->RemObjectRef((nRef<nRoot> *)this);
+        ((nRoot*)this->targetObject)->RemObjectRef((nRef<nRoot> *)this);
         this->targetObject = 0;
     }
 }
@@ -117,7 +145,7 @@ nRef<TYPE>::invalidate()
 {
     if (this->targetObject) 
     {
-        this->targetObject->RemObjectRef((nRef<nRoot> *)this);
+        ((nRoot*)this->targetObject)->RemObjectRef((nRef<nRoot> *)this);
     }
     this->targetObject = 0;
 }
@@ -131,10 +159,10 @@ void
 nRef<TYPE>::set(TYPE* obj)
 {
     this->invalidate();
-    this->targetObject = (nRoot *) obj;
+    this->targetObject = obj;
     if (obj) 
     {
-        this->targetObject->AddObjectRef((nRef<nRoot> *)this);
+        ((nRoot*)this->targetObject)->AddObjectRef((nRef<nRoot> *)this);
     }
 }
 
@@ -146,11 +174,8 @@ inline
 TYPE*
 nRef<TYPE>::get() const
 {    
-    if (!this->targetObject) 
-    {
-        n_error("nRef: No target object!\n");
-    }
-    return (TYPE *) this->targetObject;
+    n_assert2(this->targetObject, "Null pointer access through nRef!");
+    return (TYPE*) this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -172,7 +197,8 @@ inline
 TYPE*
 nRef<TYPE>::operator->() const
 {
-    return this->get();
+    n_assert2(this->targetObject, "Null pointer access through nRef!");
+    return this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -180,10 +206,11 @@ nRef<TYPE>::operator->() const
 */
 template<class TYPE>
 inline
-void 
-nRef<TYPE>::operator=(TYPE *obj)
+TYPE&
+nRef<TYPE>::operator*() const
 {
-    this->set(obj);
+    n_assert2(this->targetObject, "Null pointer access through nRef!");
+    return *this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -195,15 +222,31 @@ inline
 nRef<TYPE>&
 nRef<TYPE>::operator=(const nRef<TYPE>& rhs)
 {
-    if (rhs.isvalid())
-    {
-        this->set(rhs.get());
-    }
-    else
-    {
-        this->invalidate();
-    }
+    this->set(rhs.targetObject);
     return *this;
+    }
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nRef<TYPE>&
+nRef<TYPE>::operator=(TYPE *obj)
+    {
+    this->set(obj);
+    return *this;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nRef<TYPE>::operator TYPE*() const
+{
+    n_assert2(this->targetObject, "Null pointer access through nRef!");
+    return this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -215,7 +258,7 @@ inline
 bool
 nRef<TYPE>::operator==(const nRef<TYPE>& rhs)
 {
-    return (targetObject == rhs.targetObject);
+    return (this->targetObject == rhs.targetObject);
 }
 
 //------------------------------------------------------------------------------
@@ -227,7 +270,31 @@ inline
 bool
 nRef<TYPE>::operator!=(const nRef<TYPE>& rhs)
 {
-    return (targetObject != rhs.targetObject);
+    return (this->targetObject != rhs.targetObject);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Equality operator.
+*/
+template<class TYPE>
+inline
+bool
+nRef<TYPE>::operator==(TYPE* obj)
+{
+    return (obj == this->targetObject);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Inequality operator.
+*/
+template<class TYPE>
+inline
+bool
+nRef<TYPE>::operator!=(TYPE* obj)
+{
+    return (obj != this->targetObject);
 }
 
 //------------------------------------------------------------------------------

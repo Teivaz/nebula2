@@ -114,6 +114,9 @@ void *n_dllopen(const char *);
 void  n_dllclose(void *);
 void *n_dllsymbol(void *, const char *);
 
+nFourCC n_strtofourcc(const char*);
+const char* n_fourcctostr(nFourCC);
+
 //------------------------------------------------------------------------------
 //  Nebula mem manager wrappers.
 //------------------------------------------------------------------------------

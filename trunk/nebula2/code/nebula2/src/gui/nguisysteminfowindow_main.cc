@@ -117,44 +117,38 @@ nGuiSystemInfoWindow::UpdateTextView()
     textView->BeginAppend();
 
     // home assign
-    char buf[N_MAXPATH];
-    fileServer->ManglePath("home:", buf, sizeof(buf));
     str = "Home Directory:\t\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("home:"));
     textView->AppendLine(str.Get());
 
     // user assign
-    fileServer->ManglePath("user:", buf, sizeof(buf));
     str = "User Directory:\t\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("user:"));
     textView->AppendLine(str.Get());
 
     // proj assign
-    fileServer->ManglePath("proj:", buf, sizeof(buf));
     str = "Project Directory:\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("proj:"));
     textView->AppendLine(str.Get());
 
     // texture assign
-    fileServer->ManglePath("textures:", buf, sizeof(buf));
     str = "Texture Directory:\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("textures:"));
     textView->AppendLine(str.Get());
 
     // mesh assign
-    fileServer->ManglePath("meshes:", buf, sizeof(buf));
     str = "Mesh Directory:\t\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("meshes:"));
     textView->AppendLine(str.Get());
 
     // shader assign
-    fileServer->ManglePath("shaders:", buf, sizeof(buf));
     str = "Shader Directory:\t";
-    str.Append(buf);
+    str.Append(nFileServer2::Instance()->ManglePath("shaders:"));
     textView->AppendLine(str.Get());
 
     // time
-    sprintf(buf, "Nebula Time:\t\t%.4f", kernelServer->GetTimeServer()->GetTime());
+    char buf[128];
+    snprintf(buf, sizeof(buf), "Nebula Time:\t\t%.4f", kernelServer->GetTimeServer()->GetTime());
     textView->AppendLine(buf);
 
     // resource numbers

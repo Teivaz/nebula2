@@ -35,19 +35,23 @@ public:
     nFileServer2();
     /// destructor
     virtual ~nFileServer2();
+    /// get instance pointer
+    static nFileServer2* Instance();
 
     /// sets a path alias
     bool SetAssign(const char* assignName, const char* pathName);
     /// gets a path alias
     const char* GetAssign(const char* assignName);
     /// expand path alias to real path
-    const char* ManglePath(const char* pathName, char* buf, int bufSize);
+    nString ManglePath(const char* pathName);
     /// make path components
     bool MakePath(const char* path);
     /// copy a file
     bool CopyFile(const char* from, const char* to);
     /// delete a file
     bool DeleteFile(const char* filename);
+    /// compute the Crc checksum for a file
+    bool Checksum(const char* filename, uint& crc);
 
     /// creates a new nDirectory object
     virtual nDirectory* NewDirectoryObject();
@@ -55,6 +59,8 @@ public:
     virtual nFile* NewFileObject();
     /// check if file exists
     virtual bool FileExists(const char* pathName);
+    /// check if directory exists
+    virtual bool DirectoryExists(const char* pathName);
     /// creates a file node (only useful for scripting languages)
     virtual nFileNode* CreateFileNode(const char* name);
 
@@ -75,7 +81,7 @@ public:
 
 protected:
     /// cleanup a path name in place
-    void CleanupPathName(char* path);
+    void CleanupPathName(nString& str);
     
 private:
     /// initialize standard home: assign
@@ -84,6 +90,8 @@ private:
     void InitBinAssign();
     /// initialize the standard user: assign
     void InitUserAssign();
+
+    static nFileServer2* Singleton;
 
     nRef<nRoot> assignDir;
 
@@ -95,6 +103,17 @@ private:
     nShell32Wrapper shell32Wrapper;
     #endif
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nFileServer2*
+nFileServer2::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
 
 //------------------------------------------------------------------------------
 /**

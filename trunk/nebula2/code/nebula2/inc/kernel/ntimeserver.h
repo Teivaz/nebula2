@@ -24,7 +24,6 @@
 #include <unistd.h>
 #endif
 
-#include "kernel/nprofiler.h"
 #include "kernel/nroot.h"
 #include "kernel/nref.h"
 #include "kernel/nenv.h"
@@ -37,6 +36,8 @@ public:
     nTimeServer();
     /// destructor
     virtual ~nTimeServer();
+    /// get instance pointer
+    static nTimeServer* Instance();
     /// trigger time server
     void Trigger();
     /// reset time to 0
@@ -49,12 +50,6 @@ public:
     double GetTime();
     /// set current time
     void SetTime(double);
-    /// create a profiler object
-    nProfiler *NewProfiler(const char *);
-    /// release a profiler object
-    void ReleaseProfiler(nProfiler*);
-    /// get profiler list
-    nStrList* GetProfilers();
     /// lock frame time
     void LockDeltaT(double);
     /// set a wait period
@@ -71,14 +66,14 @@ public:
     void DisableFrameTime();
 
 private:
+    static nTimeServer* Singleton;
+
     bool stopped;
     bool frame_enabled;
     double frame_time;
     double lock_delta_t;
     double wait_delta_t;
     double lock_time;
-    /// list of living nProfiler objects
-    nStrList prof_list;             
 
 #   ifdef __WIN32__
     LONGLONG time_diff;
@@ -88,5 +83,17 @@ private:
     long long int time_stop; 
 #   endif
 };
-//--------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nTimeServer*
+nTimeServer::Instance()
+{
+    n_assert(0 != Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
 #endif

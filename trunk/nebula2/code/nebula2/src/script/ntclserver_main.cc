@@ -222,7 +222,7 @@ nTclServer::BeginWrite(const char* filename, nRoot* obj)
     if (file->Open(filename, "w"))
     {
         char buf[N_MAXPATH];
-        sprintf(buf, "# $parser:ntclserver$ $class:%s$\n", obj->GetClass()->GetName());
+        snprintf(buf, sizeof(buf), "# $parser:ntclserver$ $class:%s$\n", obj->GetClass()->GetName());
 
         file->PutS("# ---\n");
         file->PutS(buf);
@@ -281,15 +281,16 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
     switch (this->GetSelectMethod()) 
     {
         case SELCOMMAND:
+            {
             // get relative path from owner to o and write select statement
-            char relpath[N_MAXPATH];
             this->Indent(++this->indentLevel, indentBuf);
-            owner->GetRelPath(o, relpath, sizeof(relpath));
+                nString relPath = owner->GetRelPath(o);
             
             file->PutS(indentBuf);
             file->PutS("sel ");
-            file->PutS(relpath);
+                file->PutS(relPath.Get());
             file->PutS("\n");
+            }
           break;
 
         case NOSELCOMMAND:
@@ -374,13 +375,12 @@ nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
     char indentBuf[MAXINDENT];
 
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
     this->Indent(--this->indentLevel, indentBuf);
-    o->GetRelPath(owner, relpath, sizeof(relpath));
+    nString relPath = o->GetRelPath(owner);
 
     file->PutS(indentBuf);
     file->PutS("sel ");
-    file->PutS(relpath);
+    file->PutS(relPath.Get());
     file->PutS("\n");
 
     return true;
@@ -411,25 +411,34 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
     int i;
     for (i = 0; i < numArgs; i++) 
     {
-        char buf[N_MAXPATH];
+        nString str(" ");
         arg = cmd->In();
 
         switch(arg->GetType()) {
 
             case nArg::Int:
-                sprintf(buf, " %d", arg->GetI());
+                str.AppendInt(arg->GetI());
                 break;
 
             case nArg::Float:
-                sprintf(buf, " %.6f", arg->GetF());
+                str.AppendFloat(arg->GetF());
                 break;
 
             case nArg::String:
-                sprintf(buf, " \"%s\"", arg->GetS());
+                str.Append("\"");
+                str.Append(arg->GetS());
+                str.Append("\"");
                 break;
 
             case nArg::Bool:
-                sprintf(buf," %s",(arg->GetB() ? "true" : "false"));
+                if (arg->GetB())
+                {
+                    str.Append("true");
+                }
+                else
+                {
+                    str.Append("false");
+                }
                 break;
 
             case nArg::Object:
@@ -437,22 +446,21 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) 
                     {
-                        char buf[N_MAXPATH];
-                        sprintf(buf, " %s", o->GetFullName(buf, sizeof(buf)));
+                        str.Append(o->GetFullName());
                     } 
                     else 
                     {
-                        sprintf(buf, " null");
+                        str.Append("null");
                     }
                 }
                 break;
 
             default:
-                sprintf(buf, " ???");
+                str.Append("???");
                 break;
         }
 
-        file->PutS(buf);
+        file->PutS(str.Get());
     }
     return file->PutS("\n");
 }
@@ -464,8 +472,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
 nString
 nTclServer::Prompt()
 {
-    char buffer[N_MAXPATH];
-    nString prompt = kernelServer->GetCwd()->GetFullName(buffer, sizeof(buffer));
+    nString prompt = kernelServer->GetCwd()->GetFullName();
     prompt.Append("> ");
     return prompt;
 }

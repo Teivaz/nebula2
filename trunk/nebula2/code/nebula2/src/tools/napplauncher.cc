@@ -38,11 +38,8 @@ nAppLauncher::LaunchWait() const
     PROCESS_INFORMATION processInfo = { 0 };
 
     // mangle paths
-    char execMangled[N_MAXPATH];
-    char dirMangled[N_MAXPATH];
-    nFileServer2* fileServer = kernelServer->GetFileServer();
-    fileServer->ManglePath(this->exec.Get(), execMangled, sizeof(execMangled));
-    fileServer->ManglePath(this->dir.Get(), dirMangled, sizeof(dirMangled));
+    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
+    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
 
     // build a command line
     nString cmdLine = execMangled;
@@ -61,7 +58,7 @@ nAppLauncher::LaunchWait() const
                        FALSE,               // bInheritsHandle
                        creationFlags,       // dwCreationFlags
                        NULL,                // lpEnvironment
-                       dirMangled,          // lpCurrentDirectory
+                       dirMangled.Get(),    // lpCurrentDirectory
                        &startupInfo,        // lpStartupInfo
                        &processInfo))       // lpProcessInformation
     {
@@ -88,17 +85,14 @@ nAppLauncher::Launch() const
     n_assert(this->kernelServer);
 
     // mangle paths
-    char execMangled[N_MAXPATH];
-    char dirMangled[N_MAXPATH];
-    nFileServer2* fileServer = kernelServer->GetFileServer();
-    fileServer->ManglePath(this->exec.Get(), execMangled, sizeof(execMangled));
-    fileServer->ManglePath(this->dir.Get(), dirMangled, sizeof(dirMangled));
+    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
+    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
 
     HINSTANCE retval = ShellExecute(NULL,                   // hWnd
                                     "open",                 // lpOperation
-                                    execMangled,            // lpFile
+                                    execMangled.Get(),      // lpFile
                                     this->args.Get(),       // lpParameters
-                                    dirMangled,             // lpDirectory
+                                    dirMangled.Get(),       // lpDirectory
                                     SW_SHOW);               // nShowCmd
     return ((int)retval > 32);
 }

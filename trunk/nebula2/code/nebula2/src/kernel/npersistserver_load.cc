@@ -161,8 +161,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
     nRoot *obj = kernelServer->Lookup(objName);
     if (obj)
     {
-        char buf[N_MAXPATH];
-        n_error("nPersistServer: trying to overwrite existing object '%s'!\n", obj->GetFullName(buf, sizeof(buf)));
+        n_error("nPersistServer: trying to overwrite existing object '%s'!\n", obj->GetFullName().Get());
         return 0;
     }
     else 

@@ -7,6 +7,7 @@
 #include "kernel/nwin32loghandler.h"
 #include "kernel/nfileserver2.h"
 #include "util/npathstring.h"
+#include "kernel/nenv.h"
 #include <windows.h>
 #include <shfolder.h>
 #include <assert.h>
@@ -158,6 +159,22 @@ nWin32LogHandler::Error(const char* msg, va_list argList)
 void
 nWin32LogHandler::PutMessageBox(MsgType type, const char* msg, va_list argList)
 {
+    // find app window, and minimize it
+    // this is necessary when in Fullscreen mode, otherwise
+    // the MessageBox() may not be visible
+    if (MsgTypeError == type)
+    {
+        nEnv* envHwnd = (nEnv*) nKernelServer::Instance()->Lookup("/sys/env/hwnd");
+        if (envHwnd)
+        {
+            HWND hwnd = (HWND) envHwnd->GetI();
+            if (hwnd)
+            {
+                ShowWindow(hwnd, SW_MINIMIZE);
+            }
+        }
+    }
+
     UINT boxType = (MB_OK | MB_APPLMODAL | MB_SETFOREGROUND | MB_TOPMOST);
     switch (type)
     {
@@ -168,7 +185,6 @@ nWin32LogHandler::PutMessageBox(MsgType type, const char* msg, va_list argList)
             boxType |= MB_ICONERROR;
             break;
     }
-    // FIXME: unsafe!
     char msgBuf[2048];
     vsnprintf(msgBuf, sizeof(msgBuf), msg, argList);
     MessageBox(0, msgBuf, this->appName.Get(), boxType);

@@ -397,6 +397,8 @@ nD3D9Texture::QueryD3DTextureAttributes()
 //------------------------------------------------------------------------------
 /**
     Create texture from file via D3DX.
+
+    31-May-04   floh    use nFile for file IO
 */
 bool
 nD3D9Texture::LoadD3DXFile(bool genMipMaps)
@@ -409,16 +411,30 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
  
-    // mangle pathname
-    char mangledPath[N_MAXPATH];
-    this->refFileServer->ManglePath(this->GetFilename().Get(), mangledPath, sizeof(mangledPath));
+    // read file into temp mem buffer
+    nFile* file = nFileServer2::Instance()->NewFileObject();
+    if (!file->Open(this->GetFilename().Get(), "rb"))
+    {
+        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", this->GetFilename().Get());
+        file->Release();
+        return false;
+    }
+    int fileSize = file->GetSize();
+    n_assert(fileSize > 0);
+    void* fileBuffer = n_malloc(fileSize);
+    int bytesRead = file->Read(fileBuffer, fileSize);
+    n_assert(bytesRead == fileSize);
+    file->Close();
+    file->Release();
 
     // check whether this is a 2d texture or a cube texture
     D3DXIMAGE_INFO imgInfo = { 0 };
-    hr = D3DXGetImageInfoFromFile(mangledPath, &imgInfo);
+    hr = D3DXGetImageInfoFromFileInMemory(fileBuffer, fileSize, &imgInfo);
     if (FAILED(hr))
     {
-        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'\n", mangledPath);
+        n_error("nD3D9Texture::LoadD3DXFile(): Failed to obtain image info for file '%s'!", this->GetFilename().Get());
+        n_free(fileBuffer);
+        fileBuffer = 0;
         return false;
     }
 
@@ -441,9 +457,10 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     if (D3DRTYPE_TEXTURE == imgInfo.ResourceType)
     {
         // load 2D texture
-        hr = D3DXCreateTextureFromFileEx(
+        hr = D3DXCreateTextureFromFileInMemoryEx(
                 d3d9Dev,                    // pDevice
-                mangledPath,                // pSrcFile
+                fileBuffer,                 // pSrcData
+                fileSize,                   // SrcDataSize
                 D3DX_DEFAULT,               // Width
                 D3DX_DEFAULT,               // Height
                 D3DX_DEFAULT,               // MipLevels
@@ -458,7 +475,9 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
                 &(this->texture2D));
         if (FAILED(hr))
         {
-            n_error("nD3D9Texture::LoadD3DXFile(): Failed to load 2D texture '%s'\n", mangledPath);
+            n_error("nD3D9Texture::LoadD3DXFile(): Failed to load 2D texture '%s'!", this->GetFilename().Get());
+            n_free(fileBuffer);
+            fileBuffer = 0;
             return false;
         }
         this->SetType(TEXTURE_2D);
@@ -468,9 +487,10 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     else if (D3DRTYPE_CUBETEXTURE == imgInfo.ResourceType)
     {
         // load cube texture
-        hr = D3DXCreateCubeTextureFromFileEx(
+        hr = D3DXCreateCubeTextureFromFileInMemoryEx(
                 d3d9Dev,                    // pDevice
-                mangledPath,                // pSrcFile
+                fileBuffer,                 // pSrcData
+                fileSize,                   // SrcDataSize
                 D3DX_DEFAULT,               // Size
                 D3DX_DEFAULT,               // MipLevels
                 d3dUsage,                   // Usage
@@ -484,7 +504,9 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
                 &(this->textureCube));
         if (FAILED(hr))
         {
-            n_error("nD3D9Texture::LoadD3DXFile(): Failed to load cube texture '%s'\n", mangledPath);
+            n_error("nD3D9Texture::LoadD3DXFile(): Failed to load cube texture '%s'!", this->GetFilename().Get());
+            n_free(fileBuffer);
+            fileBuffer = 0;
             return false;
         }
         this->SetType(TEXTURE_CUBE);
@@ -494,10 +516,16 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     else
     {
         // unsupported texture type
-        n_error("nD3D9Texture::LoadD3DXFile(): Unsupported texture type (cube texture?) in file '%s'\n", mangledPath);
+        n_error("nD3D9Texture::LoadD3DXFile(): Unsupported texture type (cube texture?) in file '%s'!", this->GetFilename().Get());
+        n_free(fileBuffer);
+        fileBuffer = 0;
         return false;
     }
     this->baseTexture->PreLoad();
+
+    // free file buffer
+    n_free(fileBuffer);
+    fileBuffer = 0;
 
     // query texture attributes 
     this->QueryD3DTextureAttributes();

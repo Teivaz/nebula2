@@ -37,7 +37,7 @@ nNpkFileServer::~nNpkFileServer()
 nFile*
 nNpkFileServer::NewFileObject()
 {
-    return n_new nNpkFile(this);
+    return n_new nNpkFile;
 }
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ nNpkFileServer::NewFileObject()
 nDirectory*
 nNpkFileServer::NewDirectoryObject()
 {
-    return n_new nNpkDirectory(this);
+    return n_new nNpkDirectory;
 }
 
 //------------------------------------------------------------------------------
@@ -77,15 +77,13 @@ nNpkFileServer::CheckExtension(const char* path, const char* ext)
 int
 nNpkFileServer::ParseDirectory(const char* dirName)
 {
-    // absolutize directory name
-    char absPath[N_MAXPATH];
-    this->ManglePath(dirName, absPath, sizeof(absPath));
+    nString absPath = this->ManglePath(dirName);
 
     // scan directory for npk files...
     int numNpks = 0;
     nDirectory* dir = nFileServer2::NewDirectoryObject();
     n_assert(dir);
-    if (dir->Open(absPath))
+    if (dir->Open(absPath.Get()))
     {
         if (!dir->IsEmpty()) do
         {
@@ -94,7 +92,7 @@ nNpkFileServer::ParseDirectory(const char* dirName)
             if ((entryType == nDirectory::FILE) && this->CheckExtension(entryName, "npk"))
             {
                 n_printf("*** Reading npk file '%s'\n", entryName);
-                if (this->ParseNpkFile(absPath, entryName))
+                if (this->ParseNpkFile(absPath.Get(), entryName))
                 {
                     numNpks++;
                 }
@@ -104,7 +102,7 @@ nNpkFileServer::ParseDirectory(const char* dirName)
     }
     else
     {
-        n_printf("nNpkFileServer::ParseDirectory(): could not open dir '%s'\n", absPath);
+        n_printf("nNpkFileServer::ParseDirectory(): could not open dir '%s'\n", absPath.Get());
     }
     n_delete dir;
     return numNpks;

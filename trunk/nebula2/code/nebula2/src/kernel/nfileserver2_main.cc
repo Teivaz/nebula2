@@ -7,6 +7,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
+#include "kernel/ncrc.h"
 #include "util/npathstring.h"
 #ifdef __WIN32__
 #include <direct.h>
@@ -21,6 +22,8 @@
 
 nNebulaScriptClass(nFileServer2, "nroot");
 
+nFileServer2* nFileServer2::Singleton = 0;
+
 //------------------------------------------------------------------------------
 /**
 
@@ -32,6 +35,9 @@ nFileServer2::nFileServer2() :
     bytesWritten(0),
     numSeeks(0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     this->assignDir = kernelServer->New("nroot", "/sys/share/assigns");
     this->InitHomeAssign();
     this->InitBinAssign();
@@ -50,6 +56,8 @@ nFileServer2::~nFileServer2()
     {
         this->assignDir->Release();
     }
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -65,11 +73,13 @@ nFileServer2::~nFileServer2()
 bool
 nFileServer2::SetAssign(const char* assignName, const char* pathName)
 {
-    if (pathName[strlen(pathName)-1] != '/') 
-    {
-        n_error("nFileServer2::SetAssign: Path '%s' must end with a '/'\n", pathName);
-        return false;
-    }
+    n_assert(assignName);
+    n_assert(pathName);
+
+    // make sure trailing slash exists
+    nString pathString = pathName;
+    pathString.StripTrailingSlash();
+    pathString.Append("/");
         
     // ex. das Assign schon?
     kernelServer->PushCwd(this->assignDir.get());
@@ -79,7 +89,7 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
         env = (nEnv *) kernelServer->New("nenv", assignName);
         n_assert(env);
     }
-    env->SetS(pathName);
+    env->SetS(pathString.Get());
     kernelServer->PopCwd();
     return true;
 }
@@ -104,7 +114,7 @@ nFileServer2::GetAssign(const char* assignName)
     }
     else 
     {
-        return 0;
+        return "<unknown_assign>";
     }
 }
 
@@ -113,10 +123,16 @@ nFileServer2::GetAssign(const char* assignName)
     Cleanup the path name inplace (replace any backslashes with slashes),
     removes a trailing slash if exists.
 */
-void
-nFileServer2::CleanupPathName(char* path)
+void nFileServer2::CleanupPathName(nString& str)
 {
-    n_assert(path);
+    // FIXME: include PathString functionality in nString and
+    // ditch nPathString completely???
+    nPathString pathString(str.Get());
+    pathString.ConvertBackslashes();
+    pathString.StripTrailingSlash();
+    str = pathString.Get();
+
+/*    n_assert(path);
 
     char* ptr = path;
     char c;
@@ -160,6 +176,7 @@ nFileServer2::CleanupPathName(char* path)
         *ptr = 0;
     }
 #endif
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -172,44 +189,37 @@ nFileServer2::CleanupPathName(char* path)
     assigns can be used to create position independent absolute paths).
       
     @param pathName        the path to expand
-    @param buf             buffer for result
-    @param bufSize         size of the buffer
-    @return                result buffer
+    @return             resulting string
 
     history:
      - 30-Jan-2002   peter    created
 */
-const char* 
-nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
+nString
+nFileServer2::ManglePath(const char* pathName)
 {
-    char pathBuf[N_MAXPATH];
-    char *colon;
-    n_strncpy2(pathBuf, pathName, N_MAXPATH);
-    buf[0] = 0;
+    nString pathString = pathName;
 
     // check for assigns
-    while ((colon = strchr(pathBuf,':')))
+    int colonIndex;
+    while ((colonIndex = pathString.FindChar(':', 0)) > 0)
     {
-        *colon++ = 0;
-        if (strlen(pathBuf) > 1)
+        // special case: ignore one-caracter "assigns" becayse they are 
+        // really DOS drive letters
+        if (colonIndex > 1)
         {
-            const char *replace = this->GetAssign(pathBuf);
-            if (replace)
+            nString assignString = pathString.ExtractRange(0, colonIndex);
+            nString postAssignString = pathString.ExtractRange(colonIndex + 1, pathString.Length() - (colonIndex + 1));
+            nString replace = this->GetAssign(assignString.Get());
+            if (!replace.IsEmpty())
             {
-                n_strncpy2(buf, replace, bufSize);
-                n_strcat(buf, colon, bufSize);
-                n_strncpy2(pathBuf, buf, N_MAXPATH); //copy back for the next round
+                replace.Append(postAssignString);
             }
+            pathString = replace;
         }
+        else break;
     }
-    
-    // no assigns, just do a copy.
-    if (0 == buf[0])
-    {
-        n_strncpy2(buf, pathName, bufSize);
-    }
-    this->CleanupPathName(buf);
-    return buf;
+    this->CleanupPathName(pathString);
+    return pathString;
 }
 
 //------------------------------------------------------------------------------
@@ -224,7 +234,7 @@ nFileServer2::ManglePath(const char* pathName, char* buf, int bufSize)
 nDirectory* 
 nFileServer2::NewDirectoryObject()
 {
-    return new nDirectory(this);
+    return new nDirectory;
 }
 
 //------------------------------------------------------------------------------
@@ -239,12 +249,15 @@ nFileServer2::NewDirectoryObject()
 nFile*
 nFileServer2::NewFileObject()
 {
-    return new nFile(this);
+    return new nFile;
 }
 
 //------------------------------------------------------------------------------
 /**
     Initialize Nebula's home directory assign ("home:").
+
+    - 14-May-04  floh   Win32: if parent directory not "win32", use the executable's
+                        directory as home:
 */
 void 
 nFileServer2::InitHomeAssign()
@@ -275,7 +288,6 @@ nFileServer2::InitHomeAssign()
         else
         {
         */
-
             // use the executable's directory to locate the home directory
             DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
             if (res == 0) 
@@ -283,32 +295,28 @@ nFileServer2::InitHomeAssign()
                 n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
             }
 
-            // "x\y\bin\win32\xxx.exe" -> "x\y\"
-            int i;
-            char *p;
-            for (i=0; i<3; i++) 
-            {
-                p = strrchr(buf,'\\');
-                n_assert(p);
-                p[0] = 0;
-            }
-        // }
+        nPathString pathToExe(buf);
+        pathToExe.ConvertBackslashes();
 
-        if (strlen(buf) > 0)
+        // check if executable resides in a win32 directory
+        nPathString pathToDir = pathToExe.ExtractLastDirName();
+        if (pathToDir == "win32" || pathToDir == "win32d")
         {
-            // convert all backslashes to slashes
-            char c, *p;
-            p = buf;
-            while ((c = *p)) 
-            {
-                if (c == '\\') *p = '/';
-                p++;
-            }
-            // if last char is not a /, append one
-            if (buf[strlen(buf)-1] != '/')
-            {
-                strcat(buf,"/");
-            }
+            // normal home:bin/win32 directory structure
+            // strip bin/win32
+            nPathString homePath = pathToExe.ExtractDirName();
+            homePath.StripTrailingSlash();
+            homePath = homePath.ExtractDirName();
+            homePath.StripTrailingSlash();
+            homePath = homePath.ExtractDirName();
+            this->SetAssign("home", homePath.Get());
+        }
+        else
+        {
+            // not in normal home:bin/win32 directory structure, 
+            // use the exe's directory as home path
+            nPathString homePath = pathToExe.ExtractDirName();
+            this->SetAssign("home", homePath.Get());
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
@@ -327,6 +335,9 @@ nFileServer2::InitHomeAssign()
         {
             strcat(buf,"/");
         }
+        // finally, set the assign
+        this->SetAssign("home", buf);
+
     #elif defined(__MACOSX__)
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
@@ -338,12 +349,13 @@ nFileServer2::InitHomeAssign()
         {
             strcat(buf,"/");
         }
+        // finally, set the assign
+        this->SetAssign("home", buf);
+
     #else
     #error nFileServer::initHomeAssign() not implemented!
     #endif
     
-    // finally, set the assign
-    this->SetAssign("home", buf);
 #endif
 }
 
@@ -356,23 +368,41 @@ nFileServer2::InitBinAssign()
 #ifdef __XBxX__
     this->SetAssign("bin", "d:/");
 #else
+    #ifdef __WIN32__
+        // use the executable's directory to locate the bin directory
     char buf[N_MAXPATH];
+        DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
+        if (res == 0) 
+        {
+            n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
+        }
+        nPathString pathToExe = buf;
+        pathToExe.ConvertBackslashes();
+        nPathString binPath = pathToExe.ExtractDirName();
+        this->SetAssign("bin", binPath.Get());
 
+    #elif defined(__LINUX__)
+
+        char buf[N_MAXPATH];
     const char *home_dir = this->GetAssign("home");
     n_assert(home_dir);
     n_strncpy2(buf,home_dir,sizeof(buf));
-
-    #ifdef __WIN32__
-        strcat(buf,"bin/win32/");
-    #elif defined(__LINUX__)
         strcat(buf,"bin/linux/");
+        this->SetAssign("bin",buf);
+
     #elif defined(__MACOSX__)
+
+        char buf[N_MAXPATH];
+        const char *home_dir = this->GetAssign("home");
+        n_assert(home_dir);
+        n_strncpy2(buf,home_dir,sizeof(buf));
         strcat(buf, "bin/macosx/");
+        this->SetAssign("bin",buf);
+
     #else
     #error nFileServer::initBinAssign() not implemented!
     #endif
 
-    this->SetAssign("bin",buf);
 #endif
 }
 
@@ -398,11 +428,11 @@ nFileServer2::InitUserAssign()
     this->SetAssign("user", "d:/");
 #elif __WIN32__
     char rawPath[MAX_PATH];
-    HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,        // hwndOver
+    HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
                     CSIDL_PERSONAL | CSIDL_FLAG_CREATE,         // nFolder
                     NULL,                                       // hToken
                     0,                                          // dwFlags
-                    rawPath);                                   // psxPath
+                    rawPath);                                  // pszPath
     n_assert(S_OK == hr);
 
     nPathString path(rawPath);
@@ -420,6 +450,7 @@ nFileServer2::InitUserAssign()
 bool
 nFileServer2::FileExists(const char* pathName)
 {
+    n_assert(pathName);
     nFile* file = this->NewFileObject();
     if (file->Open(pathName, "r"))
     {
@@ -428,6 +459,24 @@ nFileServer2::FileExists(const char* pathName)
         return true;
     }
     file->Release();
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nFileServer2::DirectoryExists(const char* pathName)
+{
+    n_assert(pathName);
+    nDirectory* dir = this->NewDirectoryObject();
+    if (dir->Open(pathName))
+    {
+        dir->Close();
+        delete dir;
+        return true;
+    }
+    delete dir;
     return false;
 }
 
@@ -443,13 +492,8 @@ nFileServer2::MakePath(const char* dirName)
     nDirectory* dir = this->NewDirectoryObject();
     n_assert(dir);
 
-    // mangle path name
-    char mangledPath[N_MAXPATH];
-    this->ManglePath(dirName, mangledPath, sizeof(mangledPath));
-
     // build stack of non-existing dir components
-    nPathString path(mangledPath);
-    path.ConvertBackslashes();
+    nPathString path = this->ManglePath(dirName).Get();
     nArray<nPathString> pathStack;
     while ((!path.IsEmpty()) && (!dir->Open(path.Get())))
     {
@@ -501,19 +545,17 @@ nFileServer2::CopyFile(const char* from, const char* to)
 
     #ifdef __WIN32__
         // Win32 specific method is more efficient
-        char mangledFromPath[N_MAXPATH];
-        char mangledToPath[N_MAXPATH];
-        this->ManglePath(from, mangledFromPath, sizeof(mangledFromPath));
-        this->ManglePath(to, mangledToPath, sizeof(mangledToPath));
+        nString mangledFromPath = this->ManglePath(from);
+        nString mangledToPath   = this->ManglePath(to);
 
         // if the target file exists, remove the read/only file attribute
-        if (this->FileExists(mangledToPath))
+        if (this->FileExists(mangledToPath.Get()))
         {
-            DWORD fileAttrs = GetFileAttributes(mangledToPath);
+            DWORD fileAttrs = GetFileAttributes(mangledToPath.Get());
             fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
-            SetFileAttributes(mangledToPath, fileAttrs);
+            SetFileAttributes(mangledToPath.Get(), fileAttrs);
         }
-        return ::CopyFile(mangledFromPath, mangledToPath, FALSE) ? true : false;
+        return ::CopyFile(mangledFromPath.Get(), mangledToPath.Get(), FALSE) ? true : false;
     #else
         nFile* fromFile = this->NewFileObject();
         if (!fromFile->Open(from, "rb"))
@@ -558,13 +600,12 @@ bool
 nFileServer2::DeleteFile(const char* filename)
 {
     n_assert(filename);
-    char mangledPath[N_MAXPATH];
-    this->ManglePath(filename, mangledPath, sizeof(mangledPath));
+    nString mangledPath = this->ManglePath(filename);
 
     #ifdef __WIN32__
-        return ::DeleteFile(mangledPath) ? true : false;
-    #elif defined(__LINUX__) || defined(__MACOSX__)
-        return (0 == unlink(mangledPath)) ? true : false;
+        return ::DeleteFile(mangledPath.Get()) ? true : false;
+    #elif defined(__LINUX__)
+        return (0 == unlink(mangledPath.Get())) ? true : false;
     #else
     #error "nFileServer2::DeleteFile() not implemented yet!"
     #endif
@@ -593,3 +634,43 @@ nFileServer2::CreateFileNode(const char* name)
     return fileNode;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Compute the CRC checksum for a file.
+    FIXME: the current implementation loads the entire file into memory.
+
+    @param  filename    [in]    a Nebula filename
+    @param  crc         [out]   the computed CRC checksum
+    @return             true if all ok, false if file could not be opened
+*/
+bool
+nFileServer2::Checksum(const char* filename, uint& crc)
+{
+    n_assert(filename);
+    crc = 0;
+    bool success = false;
+    nFile* file = this->NewFileObject();
+    n_assert(file);
+    if (file->Open(filename, "rb"))
+    {
+        // read file into RAM buffer
+        int numBytes = file->GetSize();
+        uchar* buf = (uchar*) n_malloc(numBytes);
+        n_assert(buf);
+        
+        int numRead = file->Read(buf, numBytes);
+        n_assert(numRead == numBytes);
+
+        // compute CRC
+        nCRC crcSummer;
+        crc = crcSummer.Checksum(buf, numBytes);
+        
+        // free and close everything
+        n_free(buf);
+        file->Close();
+        success = true;
+    }
+    file->Release();
+    return success;
+}
+    

@@ -45,7 +45,7 @@ nBinScriptServer::~nBinScriptServer()
 /**
     Begin writing a persistent object.
 
-    27-Feb-04   cubejk  check for already existing file and delete before creating the new
+    27-Feb-04   Johannes    added for nMax: check for already existing file and delete before creating the new
 */
 nFile*
 nBinScriptServer::BeginWrite(const char* filename, nRoot* obj)
@@ -180,12 +180,12 @@ nBinScriptServer::WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, nScriptServ
     switch (selMethod)
     {
         case SELCOMMAND:
+            {
             // get relative path from obj1 to obj0 and write select statement
-            char relPath[N_MAXPATH];
-            obj1->GetRelPath(obj0, relPath, sizeof(relPath));
-            
+                nString relPath = obj1->GetRelPath(obj0);
             this->PutInt(file, '_sel');
-            this->PutString(file, relPath);
+                this->PutString(file, relPath.Get());
+            }
           break;
 
         case NOSELCOMMAND:
@@ -230,11 +230,10 @@ nBinScriptServer::GetArgLength(nCmd* cmd)
 
             case nArg::Object:
                 {
-                    char buf[N_MAXPATH];
                     nRoot* obj = (nRoot*) arg->GetO();
                     n_assert(obj);
-                    obj->GetFullName(buf, sizeof(buf));
-                    len += strlen(buf) + sizeof(ushort);
+                    nString str = obj->GetFullName();
+                    len += str.Length() + sizeof(ushort);
                 }
                 break;
 
@@ -382,9 +381,8 @@ nBinScriptServer::PutObject(nFile* file, nRoot* obj)
     n_assert(file);
     if (obj)
     {
-        char buf[N_MAXPATH];
-        obj->GetFullName(buf, sizeof(buf));
-        this->PutString(file, buf);
+        nString str = obj->GetFullName();
+        this->PutString(file, str.Get());
     }
     else
     {
@@ -720,9 +718,8 @@ nBinScriptServer::ReadBlock(nFile* file)
             bool success = obj->Dispatch(cmd);
             if (!success)
             {
-                char buf[N_MAXPATH];
                 n_printf("nBinScriptServer::ReadBlock(): obj '%s' doesn't accept cmd '%s'\n", 
-                    obj->GetFullName(buf, sizeof(buf)), cmdProto->GetName());
+                    obj->GetFullName().Get(), cmdProto->GetName());
             }
             cmdProto->RelCmd(cmd);
         }

@@ -57,11 +57,8 @@ nD3D9Font::LoadResource()
     if (this->fontDesc.GetFilename())
     {
         // mangle path
-        nFileServer2* fileServer = kernelServer->GetFileServer();
-        char mangledPath[N_MAXPATH];
-        fileServer->ManglePath(this->fontDesc.GetFilename(), mangledPath, sizeof(mangledPath));
-
-        int numFonts = AddFontResource(mangledPath);
+        nString mangledPath = nFileServer2::Instance()->ManglePath(this->fontDesc.GetFilename());
+        int numFonts = AddFontResource(mangledPath.Get());
         n_assert(numFonts > 0);
     }
 
@@ -125,11 +122,8 @@ nD3D9Font::UnloadResource()
     // remove optional Win32 font resource (if font loaded from file)
     if (this->fontDesc.GetFilename())
     {
-        nFileServer2* fileServer = kernelServer->GetFileServer();
-        char mangledPath[N_MAXPATH];
-        fileServer->ManglePath(this->fontDesc.GetFilename(), mangledPath, sizeof(mangledPath));
-
-        BOOL res = RemoveFontResource(mangledPath);
+        nString mangledPath = nFileServer2::Instance()->ManglePath(this->fontDesc.GetFilename());
+        BOOL res = RemoveFontResource(mangledPath.Get());
         n_assert(0 != res);
     }
     this->SetValid(false);

@@ -81,3 +81,5 @@ nDefaultLogHandler::PutLineBuffer(const char* msg, va_list argList)
     this->lineBuffer.Put(charBuffer);
 }
 
+
+

@@ -9,6 +9,7 @@
 #endif
 
 nNebulaScriptClass(nTimeServer, "nroot");
+nTimeServer* nTimeServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -22,6 +23,9 @@ nTimeServer::nTimeServer() :
     lock_time(0.0),
     time_stop(0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
 #ifdef __WIN32__
     QueryPerformanceCounter((LARGE_INTEGER *) &(this->time_diff));
 #elif defined(__LINUX__) || defined(__MACOSX__)
@@ -38,9 +42,8 @@ nTimeServer::nTimeServer() :
 */
 nTimeServer::~nTimeServer()
 {
-    // Profilers killen
-    nProfiler *p;
-    while ((p=(nProfiler *) this->prof_list.RemHead())) n_delete p;
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -191,39 +194,6 @@ nTimeServer::GetTime()
 //------------------------------------------------------------------------------
 /**
 */
-nProfiler*
-nTimeServer::NewProfiler(const char *name)
-{
-    n_assert(name);
-    nProfiler *p;
-    p = n_new nProfiler(kernelServer,this,name);
-    this->prof_list.AddTail(p);
-    return p;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void 
-nTimeServer::ReleaseProfiler(nProfiler *p)
-{
-    n_assert(p);
-    p->Remove();
-    n_delete p;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-nStrList*
-nTimeServer::GetProfilers(void)
-{
-    return &(this->prof_list);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
 void 
 nTimeServer::LockDeltaT(double dt)
 {
@@ -282,15 +252,6 @@ nTimeServer::Trigger()
     }
     if (this->wait_delta_t > 0.0) n_sleep(this->wait_delta_t);
     if (this->frame_enabled) this->frame_time = this->GetTime(); 
-
-    // update profile watcher variables 
-    nProfiler *p;
-    for (p = (nProfiler *) prof_list.GetHead();
-         p;
-         p = (nProfiler *) p->GetSucc())
-    {
-        p->Rewind();
-    }
 }
 
 //------------------------------------------------------------------------------
