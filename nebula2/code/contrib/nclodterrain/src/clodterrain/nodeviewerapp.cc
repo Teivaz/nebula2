@@ -53,15 +53,15 @@ nODEViewerApp::nODEViewerApp(nKernelServer* ks) :
     kernelServer(ks),
     isOpen(false),
     camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
-    controlMode(Maya),
-    defViewerPos(240.0f, 0.0f, 300.0f),
+    controlMode(Fly),
+    defViewerPos(240.0f, 50.0f, 100.0f),
 //  defViewerAngles(n_deg2rad(90.0f), n_deg2rad(0.0f)),
-    defViewerAngles(n_deg2rad(70.0f),n_deg2rad(20.0f)),
+    defViewerAngles(n_deg2rad(70.0f),n_deg2rad(80.0f)),
 //  defViewerPos(300.0f, 2000.0f, 300.0f),
 //  defViewerAngles(n_deg2rad(-80.0f), n_deg2rad(-180.0f)),
     defViewerZoom(0.0f, 0.0f, 9.0f),
     viewerPos(defViewerPos),
-    viewerVelocity(500.0f),
+    viewerVelocity(50.0f),
     viewerAngles(defViewerAngles),
     viewerZoom(defViewerZoom)
 {
@@ -124,7 +124,7 @@ nODEViewerApp::Open()
 
     // load the default Nebula startup.tcl script
     const char* result;
-    this->refScriptServer->RunScript("home:bin/startup.lua", result);
+    this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/startup.lua", result);
 
     // initialize the main render context
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
@@ -152,7 +152,7 @@ nODEViewerApp::Open()
     {
         // load the stage (normally stdlight.tcl)
         const char* result;
-        this->refScriptServer->RunScript("home:bin/stdlight.lua", result);
+        this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/stdlight.lua", result);
 
         // load the object to look at
         kernelServer->PushCwd(this->refRootNode.get());
@@ -301,7 +301,7 @@ void nODEViewerApp::Run()
         }
 
         // update body positions and velocity
-        this->refDyWorld->StepFast1(0.1f,10);
+        this->refDyWorld->StepFast1(0.15f,10);
 
         // sleep for a very little while because we
         // are multitasking friendly
@@ -612,7 +612,7 @@ void nODEViewerApp::InitDynamics()
             spheregeom->Create(this->refDySpace->GetFullName(bufferthing,200));
             //spheregeom->SetRadius(1.5);
             spheregeom->SetBody(bodypath.Get());
-            spheregeom->SetLengths(2.0,2.0,2.0);
+            spheregeom->SetLengths(4.0,4.0,4.0);
             this->geoms[thingix] = spheregeom;
         }
     }
