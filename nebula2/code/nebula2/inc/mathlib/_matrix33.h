@@ -84,6 +84,8 @@ public:
     void operator *= (const _matrix33& m1);
     /// multiply source vector into target vector
     void mult(const _vector3& src, _vector3& dst) const;
+    /// translate, this treats the matrix as a 2x2 rotation + translate matrix
+    void translate(const _vector2& t);
 
     float m[3][3];
 };
@@ -633,6 +635,17 @@ _matrix33::mult(const _vector3& src, _vector3& dst) const
     dst.x = M11*src.x + M21*src.y + M31*src.z;
     dst.y = M12*src.x + M22*src.y + M32*src.z;
     dst.z = M13*src.x + M23*src.y + M33*src.z;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix33::translate(const _vector2& t)
+{
+    M31 += t.x;
+    M32 += t.y;
 }
 
 //------------------------------------------------------------------------------
