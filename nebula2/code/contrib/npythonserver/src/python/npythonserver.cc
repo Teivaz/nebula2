@@ -1,4 +1,4 @@
-#define N_IMPLEMENTS nPythonServer
+//#define N_IMPLEMENTS nPythonServer
 //--------------------------------------------------------------------
 //  npythonserver.cc
 //  Created by Jason Asbahr, 2001

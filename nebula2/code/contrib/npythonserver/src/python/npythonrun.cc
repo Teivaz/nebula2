@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nPythonServer
 //--------------------------------------------------------------------
 //  npythonrun.cc -- Command processing
 //  Created by Jason Asbahr, 2001

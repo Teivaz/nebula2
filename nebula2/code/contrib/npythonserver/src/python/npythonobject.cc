@@ -1,4 +1,4 @@
-#define N_IMPLEMENTS nPythonServer
+//#define N_IMPLEMENTS nPythonServer
 //-----------------------------------------------------------------------------
 //  npythonobject.cc --  implements Python/Nebula Objects
 //  Created by Andy Miller, 2002
