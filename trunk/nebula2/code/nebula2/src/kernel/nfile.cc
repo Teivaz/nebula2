@@ -344,11 +344,10 @@ nFile::GetS(char* buffer, int numChars)
     char* readPos = buffer;
 
     bool retval = false;
-    int bytesRead;
+    int bytesRead = 0;
     int curIndex = 0;
     for (curIndex = 0; curIndex < (numChars - 1); curIndex++)
     {
-        bytesRead = 0;
         // read next chunk of data?
         if (0 == (curIndex % chunkSize))
         {
