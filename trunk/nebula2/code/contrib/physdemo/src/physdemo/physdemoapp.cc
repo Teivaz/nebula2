@@ -107,14 +107,24 @@ PhysDemoApp::Open()
     this->refGuiServer->Open();
     this->InitOverlayGui();
 
-
-    // create the floor for the physical world
-    this->CreateFloor(0.0f, -5.0f, 0.0f);
-
     // create a single default light
-    nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/objects/default_light");
+    nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/scenenodes/default_light");
     lightNode->RenderContextCreated(&this->lightRenderContext);
     lightRenderContext.SetRootNode(lightNode);
+    
+    // create a nroot to hold all objects
+    kernelServer->New("nroot", "/objects");
+
+    // create the scene nodes that will be used to represent the objects.
+    // these scene nodes will be shared so every box on screen is actually using
+    // the same scene node.
+    kernelServer->LoadAs("shapes:box/box.n2", "/scenenodes/box");
+    kernelServer->LoadAs("shapes:sphere/sphere.n2", "/scenenodes/sphere");
+    kernelServer->LoadAs("shapes:sphere/bigsphere.n2", "/scenenodes/bigsphere");
+    kernelServer->LoadAs("shapes:big_flat_plane.n2", "/scenenodes/floor");
+    
+    // create the floor for the physical world
+    this->CreateFloor(0.0f, -5.0f, 0.0f);
 
     this->isOpen = true;
     return true;
@@ -461,57 +471,44 @@ PhysDemoApp::HandleMovementInput(float frameTime)
 SimpleObject *
 PhysDemoApp::CreateFloor(float x, float y, float z)
 {
-    // First get the new universal ID for the object
-    int uID = refUIDServer->GetNewID();
-    // ... and turn it into a string, to work as an object name
-    char *strUID = new char[10];
-    itoa(uID, strUID, 10);
+    // create unique name for this object
+    nString name = "floor";
+    name.Append(nString(this->objectID++));
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
-    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", strUID);
-    nNode *objListNode = new nNode;
-    objListNode->SetPtr(newObj);
+    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", name.Get());
     kernelServer->PopCwd();
-    delete(strUID);
 
-    // Make sure the obj knows its new uID
-    newObj->uID = uID;
-
-    // ... and add the newly-created container for the object to the object list
-    objectList.AddTail(objListNode);
-
-    // All other NOH classes used by this object will be defined under it in the NOH hierarchy, for organizational purposes
-    kernelServer->PushCwd(newObj);
-
-    // Create the box shapenode
-    nShapeNode *objShapeNode = (nShapeNode *)kernelServer->LoadAs("shapes:big_flat_plane.n2", "shapenode");
-    newObj->refRootShapeNode = objShapeNode;
-
-    // Now set the data for the newly created shapenode
-    newObj->refRootShapeNode->SetPosition(vector3(x, y, z));
-
-    // ... and update the render context
+    // Find the scene node to use with this object
+    nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/floor");
+    
+    // Set the scene node in the render context
+    newObj->renderContext.SetRootNode(scenenode);
+    
+    // update the render context variables
     newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    
+    // tell the scene node that it is being used by (another) render context
+    scenenode->RenderContextCreated(&newObj->renderContext);
 
-    // ... and let the shapenode and the rendercontext know about eachother.
-    newObj->refRootShapeNode->RenderContextCreated(&newObj->renderContext);
-    newObj->renderContext.SetRootNode(objShapeNode);
-
-    n_assert(newObj == kernelServer->GetCwd());
+    // set the position
+    newObj->Transform.settranslation(vector3(x, y, z));
 
     // Now create the physical representation
     // (the floor has no body, only a geom, which is connected to body 0, "the world")
-
+    
+    // The physics nodes are created as children of the curren object.
+    kernelServer->PushCwd(newObj);
     nOpendeBoxGeom *physGeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom", "physgeom");
     physGeom->Create("/phys/world/space");
     physGeom->SetPosition(vector3(x, y, z));
     physGeom->SetLengths(20.0f, 1.0f, 20.0f);
-    physGeom->SetBody((dBodyID)0);
+    //physGeom->SetBody((dBodyID)0);
     newObj->refPhysGeom = physGeom;    
 
-    // Finished defining objects, pop the Cwd
+    // pop the Cwd
     kernelServer->PopCwd();
 
     return newObj;
@@ -524,47 +521,34 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
 SimpleObject *
 PhysDemoApp::CreateBox(float x, float y, float z)
 {
-    // First get the new universal ID for the object
-    int uID = refUIDServer->GetNewID();
-    // ... and turn it into a string, to work as an object name
-    char *strUID = new char[10];
-    itoa(uID, strUID, 10);
+    // create unique name for this object
+    nString name = "box";
+    name.Append(nString(this->objectID++));
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
-    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", strUID);
-    nNode *objListNode = new nNode;
-    objListNode->SetPtr(newObj);
+    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", name.Get());
     kernelServer->PopCwd();
-    delete(strUID);
 
-    // Make sure the obj knows its new uID
-    newObj->uID = uID;
-
-    // ... and add the newly-created container for the object to the object list
-    objectList.AddTail(objListNode);
-
-    // All other NOH classes used by this object will be defined under it in the NOH hierarchy, for organizational purposes
-    kernelServer->PushCwd(newObj);
-
-    // Create the box shapenode
-    nShapeNode *objShapeNode = (nShapeNode *)kernelServer->LoadAs("shapes:box/box.n2", "shapenode");
-    newObj->refRootShapeNode = objShapeNode;
-
-    // Now set the data for the newly created shapenode
-    newObj->refRootShapeNode->SetPosition(vector3(x, y, z));
-
-    // ... and update the render context
+    // Find the scene node to use with this object
+    nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/box");
+    
+    // Set the scene node in the render context
+    newObj->renderContext.SetRootNode(scenenode);
+    
+    // update the render context variables
     newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    
+    // tell the scene node that it is being used by (another) render context
+    scenenode->RenderContextCreated(&newObj->renderContext);
 
-    // ... and let the shapenode and the rendercontext know about eachother.
-    newObj->refRootShapeNode->RenderContextCreated(&newObj->renderContext);
-    newObj->renderContext.SetRootNode(objShapeNode);
-
-    n_assert(newObj == kernelServer->GetCwd());
+    // set the position
+    newObj->Transform.settranslation(vector3(x, y, z));
 
     // Now create the physical representation
+    // The physics nodes are created as children of the curren object.
+    kernelServer->PushCwd(newObj);
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
@@ -591,47 +575,35 @@ PhysDemoApp::CreateBox(float x, float y, float z)
 SimpleObject *
 PhysDemoApp::CreateSphere(float x, float y, float z)
 {
-    // First get the new universal ID for the object
-    int uID = refUIDServer->GetNewID();
-    // ... and turn it into a string, to work as an object name
-    char *strUID = new char[10];
-    itoa(uID, strUID, 10);
+    
+    // create unique name for this object
+    nString name = "sphere";
+    name.Append(nString(this->objectID++));
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
-    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", strUID);
-    nNode *objListNode = new nNode;
-    objListNode->SetPtr(newObj);
+    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", name.Get());
     kernelServer->PopCwd();
-    delete(strUID);
 
-    // Make sure the obj knows its new uID
-    newObj->uID = uID;
-
-    // ... and add the newly-created container for the object to the object list
-    objectList.AddTail(objListNode);
-
-    // All other NOH classes used by this object will be defined under it in the NOH hierarchy, for organizational purposes
-    kernelServer->PushCwd(newObj);
-
-    // Create the box shapenode
-    nShapeNode *objShapeNode = (nShapeNode *)kernelServer->LoadAs("shapes:sphere/sphere.n2", "shapenode");
-    newObj->refRootShapeNode = objShapeNode;
-
-    // Now set the data for the newly created shapenode
-    newObj->refRootShapeNode->SetPosition(vector3(x, y, z));
-
-    // ... and update the render context
+    // Find the scene node to use with this object
+    nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/sphere");
+    
+    // Set the scene node in the render context
+    newObj->renderContext.SetRootNode(scenenode);
+    
+    // update the render context variables
     newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    
+    // tell the scene node that it is being used by (another) render context
+    scenenode->RenderContextCreated(&newObj->renderContext);
 
-    // ... and let the shapenode and the rendercontext know about eachother.
-    newObj->refRootShapeNode->RenderContextCreated(&newObj->renderContext);
-    newObj->renderContext.SetRootNode(objShapeNode);
-
-    n_assert(newObj == kernelServer->GetCwd());
+    // set the position
+    newObj->Transform.settranslation(vector3(x, y, z));
 
     // Now create the physical representation
+    // The physics nodes are created as children of the curren object.
+    kernelServer->PushCwd(newObj);
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
@@ -658,49 +630,34 @@ PhysDemoApp::CreateSphere(float x, float y, float z)
 SimpleObject *
 PhysDemoApp::CreateBigSphere(float x, float y, float z)
 {
-    // First get the new universal ID for the object
-    int uID = refUIDServer->GetNewID();
-    // ... and turn it into a string, to work as an object name
-    char *strUID = new char[10];
-    itoa(uID, strUID, 10);
-
+    // create unique name for this object
+    nString name = "bigsphere";
+    name.Append(nString(this->objectID++));
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
-    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", strUID);
-    nNode *objListNode = new nNode;
-    objListNode->SetPtr(newObj);
+    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", name.Get());
     kernelServer->PopCwd();
-    delete(strUID);
 
-    // Make sure the obj knows its new uID
-    newObj->uID = uID;
-
-    // ... and add the newly-created container for the object to the object list
-    objectList.AddTail(objListNode);
-
-    // All other NOH classes used by this object will be defined under it in the NOH hierarchy, for organizational purposes
-    kernelServer->PushCwd(newObj);
-
-    // Create the box shapenode
-    nShapeNode *objShapeNode = (nShapeNode *)kernelServer->LoadAs("shapes:sphere/sphere.n2", "shapenode");
-    objShapeNode->SetScale(vector3(2.0f, 2.0f, 2.0f));
-    newObj->refRootShapeNode = objShapeNode;
-
-    // Now set the data for the newly created shapenode
-    newObj->refRootShapeNode->SetPosition(vector3(x, y, z));
-
-    // ... and update the render context
+    // Find the scene node to use with this object
+    nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/bigsphere");
+    
+    // Set the scene node in the render context
+    newObj->renderContext.SetRootNode(scenenode);
+    
+    // update the render context variables
     newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    
+    // tell the scene node that it is being used by (another) render context
+    scenenode->RenderContextCreated(&newObj->renderContext);
 
-    // ... and let the shapenode and the rendercontext know about eachother.
-    newObj->refRootShapeNode->RenderContextCreated(&newObj->renderContext);
-    newObj->renderContext.SetRootNode(objShapeNode);
-
-    n_assert(newObj == kernelServer->GetCwd());
-
+    // set the position
+    newObj->Transform.settranslation(vector3(x, y, z));
+    
     // Now create the physical representation
+    // The physics nodes are created as children of the curren object.
+    kernelServer->PushCwd(newObj);
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
@@ -727,46 +684,35 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
 SimpleObject *
 PhysDemoApp::CreateBullet(float x, float y, float z)
 {
-    // First get the new universal ID for the object
-    int uID = refUIDServer->GetNewID();
-    // ... and turn it into a string, to work as an object name
-    char *strUID = new char[10];
-    itoa(uID, strUID, 10);
+    // create unique name for this object
+    nString name = "bullet";
+    name.Append(nString(this->objectID++));
 
     // Establish the containers for the new object.
     kernelServer->PushCwd(kernelServer->Lookup("/objects"));
-    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", strUID);
-    nNode *objListNode = new nNode;
-    objListNode->SetPtr(newObj);
+    SimpleObject *newObj = (SimpleObject *)kernelServer->New("simpleobject", name.Get());
     kernelServer->PopCwd();
 
-    // Make sure the obj knows its new uID
-    newObj->uID = uID;
-
-    // ... and add the newly-created container for the object to the object list
-    objectList.AddTail(objListNode);
-
-    // All other NOH classes used by this object will be defined under it in the NOH hierarchy, for organizational purposes
-    kernelServer->PushCwd(newObj);
-
-    // Create the box shapenode
-    nShapeNode *objShapeNode = (nShapeNode *)kernelServer->LoadAs("shapes:sphere/sphere.n2", "shapenode");
-    newObj->refRootShapeNode = objShapeNode;
-
-    // Now set the data for the newly created shapenode
-    newObj->refRootShapeNode->SetPosition(vector3(x, y, z));
-
-    // ... and update the render context
+    // Find the scene node to use with this object
+    nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/sphere");
+    
+    // Set the scene node in the render context
+    newObj->renderContext.SetRootNode(scenenode);
+    
+    // update the render context variables
     newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    
+    // tell the scene node that it is being used by (another) render context
+    // this gives the scene nodes(s) a chance to create any per-instance data
+    scenenode->RenderContextCreated(&newObj->renderContext);
 
-    // ... and let the shapenode and the rendercontext know about eachother.
-    newObj->refRootShapeNode->RenderContextCreated(&newObj->renderContext);
-    newObj->renderContext.SetRootNode(objShapeNode);
-
-    n_assert(newObj == kernelServer->GetCwd());
+    // set the position
+    newObj->Transform.settranslation(vector3(x, y, z));
 
     // Now create the physical representation
+    // The physics nodes are created as children of the current object.
+    kernelServer->PushCwd(newObj);
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
@@ -786,18 +732,15 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     // Let's give the bullet some floaty text
     this->kernelServer->PushCwd(this->refGuiServer->GetRootWindowPointer());
 
-    newObj->refFloatyText = (nGuiTextLabel *) kernelServer->New("nguitextlabel", strUID);
+    newObj->refFloatyText = (nGuiTextLabel *) kernelServer->New("nguitextlabel", name.Get());
     n_assert(newObj->refFloatyText.isvalid());
-    newObj->refFloatyText->SetText("bullet");
+    newObj->refFloatyText->SetText(name.Get());
     newObj->refFloatyText->SetAlignment(nGuiTextLabel::Alignment::Center);
     newObj->refFloatyText->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     newObj->refFloatyText->SetFont("physDefaultFont");
 
-    newObj->textWidth = 0.15;
-    newObj->textHeight = 0.05;
-
-    // Now we're REALLY finished with strUID, so delete it
-    delete(strUID);
+    newObj->textWidth = 0.15f;
+    newObj->textHeight = 0.05f;
 
     this->kernelServer->PopCwd();
 
