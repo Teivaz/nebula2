@@ -26,36 +26,44 @@
 */
 int nMaxTransformAnimator::ExportScale(Control *control, nTransformAnimator* animator)
 {
-    IKeyControl* iKeyControl = GetKeyControlInterface(control);
-    if (iKeyControl)
+    if (control->NumKeys())
     {
-        int numKeys = iKeyControl->GetNumKeys();
-        if (numKeys > 0)
+        IKeyControl* iKeyControl = GetKeyControlInterface(control);
+        if (iKeyControl)
         {
-            nMaxControl::Type type = nMaxControl::GetType(control);
-
-            switch(type)
+            int numKeys = iKeyControl->GetNumKeys();
+            if (numKeys > 0)
             {
-            case nMaxControl::TCBScale:
-                return ExportTCBScale(iKeyControl, numKeys, animator);
+                nMaxControl::Type type = nMaxControl::GetType(control);
 
-            case nMaxControl::HybridScale:
-                return ExportHybridScale(iKeyControl, numKeys, animator);
+                switch(type)
+                {
+                case nMaxControl::TCBScale:
+                    return ExportTCBScale(iKeyControl, numKeys, animator);
 
-            case nMaxControl::LinearScale:
-                return ExportLinearScale(iKeyControl, numKeys, animator);
+                case nMaxControl::HybridScale:
+                    return ExportHybridScale(iKeyControl, numKeys, animator);
 
-            default:
-                return ExportSampledScale(animator);
+                case nMaxControl::LinearScale:
+                    return ExportLinearScale(iKeyControl, numKeys, animator);
+
+                default:
+                    return ExportSampledScale(animator);
+                }
+            }
+            else
+            {
+                // we have Controller but it has no keys.
+                n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
+                return 0;
             }
         }
         else
-            return 0;
+        {
+            return ExportSampledScale(animator);
+        }
     }
-    else
-    {
-        return ExportSampledScale(animator);
-    }
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -68,8 +76,7 @@ int nMaxTransformAnimator::ExportScale(Control *control, nTransformAnimator* ani
 int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys, 
                                           nTransformAnimator* animator)
 {
-    n_maxlog(Warning, "The TCB controller is used for scaling. \
-                      Only scale value will be exported.");
+    n_maxlog(Warning, "The TCB controller is used for scaling. Only scale value will be exported.");
 
     for (int i=0; i<numKeys; i++)
     {
@@ -99,8 +106,7 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys, 
                                              nTransformAnimator* animator)
 {
-    n_maxlog(Warning, "Warning: The bezier controller is used for scaling. \
-                       Only scale value will be exported.");
+    n_maxlog(Warning, "Warning: The bezier controller is used for scaling. Only scale value will be exported.");
 
     for (int i=0; i<numKeys; i++)
     {

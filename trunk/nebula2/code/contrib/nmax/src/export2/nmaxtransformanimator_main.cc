@@ -4,6 +4,8 @@
 //  (c)2005 Kim, Hyoun Woo.
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
+#include "export2/nmaxinterface.h"
+#include "export2/nmaxoptions.h"
 #include "export2/nmaxcontrol.h"
 #include "scene/ntransformanimator.h"
 #include "export2/nMaxtransformanimator.h"
@@ -55,19 +57,22 @@ bool nMaxTransformAnimator::Export(INode* inode, Control *control)
     {
         int numKeys = 0;
 
-        if (control->GetPositionController())
+        if (posControl)
         {
             numKeys += ExportPosition(posControl, animator);
+            n_maxlog(High, "A position animation of the node: %s Num keys: %d", inode->GetName(), numKeys);
         }
 
-        if (control->GetRotationController())
+        if (rotControl)
         {
             numKeys += ExportRotation(rotControl, animator);
+            n_maxlog(High, "A rotation animation of the node: %s Num keys: %d", inode->GetName(), numKeys);
         }
 
-        if (control->GetScaleController())
+        if (scaleControl)
         {
             numKeys += ExportScale(scaleControl, animator);
+            n_maxlog(High, "A scale animation of the node: %s Num keys: %d", inode->GetName(), numKeys);
         }
 
         if (numKeys)
@@ -78,54 +83,21 @@ bool nMaxTransformAnimator::Export(INode* inode, Control *control)
         }
         else
         {
-            // no keys are actually exported, so release created transform animator.
+            // no keys are exported, so release created transform animator and pop cwd.
+            nKernelServer::Instance()->PopCwd();
             animator->Release();
+
+            n_maxlog(Warning, "Waring: The node %s has animation controllers but it has no keys.", 
+                     inode->GetName());
+            return false;
         }
     }
     else
     {
         animator->Release();
-        n_maxlog(Error, "Failed to create Nebula object for the node '%s'.", inode->GetName());
+        n_maxlog(Error, "Error: Failed to create Nebula object for the node '%s'.", inode->GetName());
         return false;
     }
 
     return true;
-}
-
-
-//-----------------------------------------------------------------------------
-/**
-*/
-bool nMaxTransformAnimator::HasSampledKeys(Control *control)
-{
-    bool result = false;
-
-    Control* xControl = control->GetXController();
-    Control* yControl = control->GetYController();
-    Control* zControl = control->GetZController();
-
-    IKeyControl* ikeyControl;
-
-    if (xControl)
-    {
-        ikeyControl = GetKeyControlInterface(xControl);
-        if (ikeyControl && ikeyControl->GetNumKeys() > 0)
-            result = true;
-    }
-
-    if (yControl)
-    {
-        ikeyControl = GetKeyControlInterface(yControl);
-        if (yControl && ikeyControl->GetNumKeys() > 0)
-            result = true;
-    }
-
-    if (zControl)
-    {
-        ikeyControl = GetKeyControlInterface(zControl);
-        if (yControl && ikeyControl->GetNumKeys() > 0)
-            result = true;
-    }
-
-    return result;
 }

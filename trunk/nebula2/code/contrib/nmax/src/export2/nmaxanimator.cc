@@ -53,8 +53,12 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 {
     n_assert(inode);
 
+    // retrieves the node's transform controller. 
     Control* control = inode->GetTMController();
-    if (!control)
+    // retrieves the node's visibility controller.
+    //Control* visctrl = inode->GetVisController();
+    //if (!control && !visctrl)
+    if (!control )
     {
         return NULL;
     }
@@ -115,15 +119,13 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
         else
         if (posControl || rotControl || scaleControl)
         {
-            nMaxTransformAnimator* prsController = n_new(nMaxTransformAnimator);
-            if (prsController->Export(inode, control))
+            nMaxTransformAnimator* prsTM = n_new(nMaxTransformAnimator);
+            if (prsTM->Export(inode, control))
             {
-                createdNode = prsController;
+                createdNode = prsTM;
             }
             else
             {
-                n_maxlog(Warning, "Waring: The control has animations but no animation was \
-                                   exported for the node %s.", inode->GetName());
                 return NULL;
             }
         }
