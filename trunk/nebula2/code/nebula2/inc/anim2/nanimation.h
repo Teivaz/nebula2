@@ -66,10 +66,8 @@
         int32 startKey          // first key index
         int32 numKeys           // number of keys in group
         int32 keyStride         // key stride in key pool
-        int32 keyOffset;        // file offset to start of interleaved key data of this group
         float keyTime           // key duration
         int32 loopType          // nAnimation::LoopType
-        int32 curveOffset;      // file offset to start of first curve header of this group
     }
 
     FOR EACH CURVE {
@@ -85,21 +83,9 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_RESOURCE_H
 #include "resource/nresource.h"
-#endif
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nResource
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nAnimation : public nResource
@@ -202,10 +188,6 @@ public:
     nAnimation();
     /// destructor
     virtual ~nAnimation();
-    /// load the resource (sets the valid flag)
-    virtual bool Load();
-    /// unload the resource (clears the valid flag)
-    virtual void Unload();
     /// sample values from curve range
     virtual void SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray);
     /// set number of groups in animation
@@ -218,6 +200,8 @@ public:
     static nKernelServer* kernelServer;
 
 protected:
+    /// unload the resource (clears the valid flag)
+    virtual void UnloadResource();
     /// fix the firstKeyIndex and keyStride members in the contained anim curve objects
     void FixKeyOffsets();
 
