@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     @brief A simple Nebula string class.
-    
+
     Very handy when strings must be stored or manipulated. Note that many
     Nebula interfaces hand strings around as char pointers, not nString
     objects.
@@ -18,6 +18,7 @@
 */
 #include <ctype.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "kernel/ntypes.h"
 #include "util/narray.h"
@@ -136,6 +137,8 @@ public:
     nString ExtractToLastSlash() const;
     /// check if this string matches the given pattern
     bool MatchPattern(const nString& pattern) const;
+    /// format string printf-style
+    void __cdecl Format(const char* fmtString, ...);
 
 protected:
     /// copy contents
@@ -500,12 +503,13 @@ operator != (const nString& a, const nString& b)
 
 //------------------------------------------------------------------------------
 /**
+     - 21-Sep-04    Johannes        the '\0' is a valid part of the string
 */
 inline
 const char
 nString::operator[](int i) const
 {
-    n_assert((0 <= i) && (i <= (strLen - 1)));
+    n_assert((0 <= i) && (i <= strLen));
     if (this->string != 0)
     {
         return this->string[i];
@@ -518,12 +522,13 @@ nString::operator[](int i) const
 
 //------------------------------------------------------------------------------
 /**
+     - 21-Sep-04    Johannes        the '\0' is a valid part of the string
 */
 inline
 char&
 nString::operator[](int i)
 {
-    n_assert((0 <= i) && (i <= (strLen - 1)));
+    n_assert((0 <= i) && (i <= strLen));
     if (this->string != 0)
     {
         return this->string[i];
@@ -809,7 +814,7 @@ nString::StripTrailingSlash()
 
 //------------------------------------------------------------------------------
 /**
-    Returns a new string which is this string, stripped on the left side 
+    Returns a new string which is this string, stripped on the left side
     by all characters in the char set.
 */
 inline
@@ -855,7 +860,7 @@ nString::TrimLeft(const char* charSet) const
 
 //------------------------------------------------------------------------------
 /**
-    Returns a new string, which is this string, stripped on the right side 
+    Returns a new string, which is this string, stripped on the right side
     by all characters in the char set.
 */
 inline
@@ -1185,7 +1190,7 @@ nString::ExtractLastDirName() const
 {
     nString pathString(*this);
     char* lastSlash = pathString.GetLastSlash();
-    
+
     // special case if path ends with a slash
     if (lastSlash)
     {
@@ -1214,9 +1219,9 @@ nString::ExtractLastDirName() const
 /**
     Return a nString object containing the part before the last
     directory separator.
-    
-    NOTE: I left my fix in that returns the last slash (or colon), this was 
-    necessary to tell if a dirname is a normal directory or an assign.     
+
+    NOTE: I left my fix in that returns the last slash (or colon), this was
+    necessary to tell if a dirname is a normal directory or an assign.
 
     - 17-Feb-04     floh    fixed a bug when the path ended with a slash
 */
@@ -1277,5 +1282,20 @@ nString::MatchPattern(const nString& pattern) const
 }
 
 //------------------------------------------------------------------------------
+/**
+*/
+inline
+void __cdecl
+nString::Format(const char* fmtString, ...)
+{
+    va_list argList;
+    va_start(argList, fmtString);
+    char buf[1024];
+    _vsnprintf(buf, sizeof(buf), fmtString, argList);
+    this->Set(buf);
+    va_end(argList);
+}
+
+//-----------------------------------------------------------------------------
 #endif
 
