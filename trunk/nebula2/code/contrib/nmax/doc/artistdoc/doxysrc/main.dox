@@ -63,12 +63,15 @@
 
     These are the people who have contributed to <b>Nebula2 Toolkit for 3DS Max</b>.
 
-        - Kim, Hyoun Woo - principal author.
-        - Ben Wooller - nmaxfloatanimator and nmaxuvanimator.
+        - <tt>Kim, Hyoun Woo</tt> - principal author.
+        - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
 
     Thanks to:
-        - Johannes Kellner and Dmitriy Peter for their previous efforts on the 
+        - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts on the 
           3DS Max exports. That gave many helps on this toolkit.
+
+
+    (C)2005 Kim, Hyoun Woo
 
 */
 
