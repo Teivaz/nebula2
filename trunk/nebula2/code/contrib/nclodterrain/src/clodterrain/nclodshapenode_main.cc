@@ -439,8 +439,8 @@ public:
             n_assert(IsValidChunk());
 
             // set the morph value for the shader to use and draw the mesh
-            n_assert(someshader->IsParameterUsed(nShader2::Height));
-            someshader->SetFloat(nShader2::Height, morphscale);
+            n_assert(someshader->IsParameterUsed(nShader2::Scale));
+            someshader->SetFloat(nShader2::Scale, morphscale);
             // if a tiled chunk exists (either this chunk or an ancestor passed in as
             // the third parameter) map the tile for that chunk.
             if (tiledchunk != NULL)
@@ -581,11 +581,11 @@ public:
                 drapematrix.set_translation(-chunkorigin);
                 drapematrix.scale(chunkscale);
 
-                n_assert(splatshader->IsParameterUsed(nShader2::Height));
+                n_assert(splatshader->IsParameterUsed(nShader2::Scale));
                 n_assert(splatshader->IsParameterUsed(nShader2::TextureTransform0));
                 n_assert(splatshader->IsParameterUsed(nShader2::TextureTransform1));
 
-                splatshader->SetFloat(nShader2::Height, morphscale);
+                splatshader->SetFloat(nShader2::Scale, morphscale);
                 splatshader->SetMatrix(nShader2::TextureTransform0, drapematrix);
 
                 if (tiledchunk->tiledata->GetNumTextures() > 1)
@@ -1082,7 +1082,7 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     }
 
     // remove the mesh from the gfx thingy
-    gfx->SetMesh(0,0);
+    gfx->SetMesh(0);
     
 //  RenderDebug(sceneServer, renderContext);
 
@@ -1224,7 +1224,7 @@ void nCLODShapeNode::RenderDebug(nSceneServer *sceneServer, nRenderContext *rend
     }
     if (!this->dynmesh->IsValid())
     {
-        this->dynmesh->Initialize(gfx, LineList, nMesh2::Coord, 0, true);
+        this->dynmesh->Initialize(gfx, nGfxServer2::LineList, nMesh2::Coord, 0, true);
     }
     n_assert(this->dynmesh->IsValid());
 

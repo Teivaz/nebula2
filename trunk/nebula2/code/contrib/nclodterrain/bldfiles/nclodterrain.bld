@@ -61,7 +61,7 @@ begintarget nclododeviewer
     annotate "Sample usage of using ode with CLOD terrain system"
     settype exe
     setmodules { nodeviewerapp }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nlua ntoollib nclodterrain nopende }
+    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nlua ntoollib nclodterrain nopende ngui }
     setlibs_win32 { oded.lib OPCODEd.lib }
 endtarget
 
@@ -80,6 +80,7 @@ beginworkspace nchunklod
         nclodterrain
         nopende
         ntoollib
+        ngui
     }
 endworkspace
 #-----------------------------------------------------------------------------

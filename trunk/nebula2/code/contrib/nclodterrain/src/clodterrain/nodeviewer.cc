@@ -61,9 +61,12 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* scriptArg = args.GetStringArg("-script", 0);
+    const char* scriptserverArg = args.GetStringArg("-scriptserver", "nluaserver");
+    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nstdsceneserver");
+    const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/nclodterrain/bin/startup.lua");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
+    const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/nclodterrain/bin/stdlight.lua");
+    const char* inputArg  = args.GetStringArg("-input", "home:code/contrib/nclodterrain/bin/stdinput.lua");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     int xPosArg           = args.GetIntArg("-x", 0);
@@ -72,9 +75,9 @@ main(int argc, const char** argv)
     int heightArg         = args.GetIntArg("-h", 480);
     const char* projDir   = args.GetStringArg("-projdir", 0);
 
-//    scriptArg = "home:code/contrib/nclodterrain/bin/compilesplatterrain.lua";
+//    viewArg = "home:code/contrib/nclodterrain/bin/compilesplatterrain.lua";
 //    scriptArg = "home:code/contrib/nclodterrain/bin/compileterrain.lua";
-    if (scriptArg == NULL)
+    if (viewArg == NULL)
         viewArg = "home:code/contrib/nclodterrain/bin/clod.n2";
     
     // initialize a display mode object
@@ -117,10 +120,12 @@ main(int argc, const char** argv)
     {
         viewerApp.SetProjDir(projDir);
     }
-    if (scriptArg)
-    {
-        viewerApp.SetStartupScript(scriptArg);
-    }
+    viewerApp.SetScriptServerClass(scriptserverArg);
+    viewerApp.SetSceneServerClass(sceneserverArg);
+    viewerApp.SetStartupScript(startupArg);
+    viewerApp.SetStageScript(stageArg);
+    viewerApp.SetInputScript(inputArg);
+
 
     // open and run viewer
     if (viewerApp.Open())

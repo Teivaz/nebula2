@@ -45,13 +45,13 @@ void nCLODMesh::DrawMesh(nGfxServer2 *gfx2) const
     n_assert(meshData.isvalid());
 
     // render the mesh in normal mode (always at stream 0)
-    gfx2->SetMesh(0, this->meshData.get());
+    gfx2->SetMesh(this->meshData.get());
 
     // set the vertex and index range
     const nMeshGroup& curGroup = this->meshData->GetGroup(0);
     gfx2->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfx2->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
-    gfx2->DrawIndexed(TriangleStrip);
+    gfx2->DrawIndexedNS(nGfxServer2::TriangleStrip);
 }
 
 

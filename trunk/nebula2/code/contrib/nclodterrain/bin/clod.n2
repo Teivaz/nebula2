@@ -10,14 +10,15 @@ new nclodshapenode shape0
     .setposition 0.000000 0.000000 0.000000
     .seteuler 0.000000 0.000000 0.000000
     .setscale 1.000000 1.000000 1.000000
-#    .settexture "DiffMap0" "nclodtextures:examples/cloddiffuse.bmp"
+    .settexture "DiffMap0" "nclodtextures:examples/cloddiffuse.bmp"
     .settexture "BumpMap0" "textures:examples/bump.tga"
     .setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
     .setvector "MatDiffuse" 1.000000 1.000000 0.539320 0.539320
     .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
     .setfloat "MatSpecularPower" 32.000000
-    .setfloat "Height" 0.0
+    .setfloat "Scale" 0.0
     .setshader "colr" "nclodshaders:splatterrain.fx"
+    #.setshader "colr" "shaders:default.fx"
     .setcollisionspace /usr/dynamics/terrainspace
     .setterrainname "nclodterrains:examples/sample.clod"
     .settqtname "nclodterrains:examples/sample.tqt"

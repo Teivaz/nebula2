@@ -7,7 +7,6 @@
  *   @brief nCLODTile manages the terrain texture resource applied to a specific terrain chunk
  */
 #include "resource/nresource.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/ntexture2.h"
 
