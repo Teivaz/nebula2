@@ -3,7 +3,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nGuiButton
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A GUI button class.
 
     (C) 2001 RadonLabs GmbH
@@ -26,6 +26,8 @@ public:
     virtual bool OnButtonDown(const vector2& mousePos);
     /// handle button up event
     virtual bool OnButtonUp(const vector2& mousePos);
+    /// called per frame when parent widget is visible
+    virtual void OnFrame();
 
 protected:
     bool focus;

@@ -98,18 +98,23 @@ public:
     /// vector4 inequality operator
     bool operator!=(const vector4& rhs) const;
 
-    /// int cast operator
-    int operator*() const;
-    /// float cast operator
-    float operator*() const;
-    /// bool cast operator
-    bool operator*() const;
-    /// string cast operator
-    const char* operator*() const;
-    /// vector3 cast operator
-    const vector3& operator*() const;
-    /// vector4 cast operator
-    const vector4& operator*() const;
+    /// get integer content
+    int GetInt() const;
+    /// get float content
+    float GetFloat() const;
+    /// get bool content
+    bool GetBool() const;
+    /// get string content
+    const char* GetString() const;
+    /// get vector3 content
+    const vector3& GetVector3() const;
+    /// get vector4 content
+    const vector4& GetVector4() const;
+
+    /// convert type to string
+    static const char* TypeToString(Type t);
+    /// convert string to type
+    static Type StringToType(const char* str);
 
 private:
     /// delete current content
@@ -148,7 +153,7 @@ nVariant::Delete()
     if (String == this->type)
     {
         n_assert(this->str);
-        n_free(this->str);
+        n_free((void*)this->str);
         this->str = 0;
     }
     this->type = Void;
@@ -222,10 +227,9 @@ nVariant::nVariant(int rhs) :
 */
 inline
 nVariant::nVariant(float rhs) :
-    type(Float),
-    f(rhs)
+    type(Float)
 {
-    // empty
+    this->f[0] = rhs;
 }
 
 //------------------------------------------------------------------------------
@@ -313,7 +317,7 @@ nVariant::operator=(int val)
 {
     this->Delete();
     this->type = Int;
-    this->i = v;
+    this->i = val;
 }
 
 //------------------------------------------------------------------------------
@@ -427,7 +431,7 @@ bool
 nVariant::operator==(int rhs) const
 {
     n_assert(Int == this->type);
-    return (this->i == rhs.i);
+    return (this->i == rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -438,7 +442,7 @@ bool
 nVariant::operator==(float rhs) const
 {
     n_assert(Float == this->type);
-    return (this->f[0] == rhs.f[0]);
+    return (this->f[0] == rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -449,7 +453,7 @@ bool
 nVariant::operator==(bool rhs) const
 {
     n_assert(Bool == this->type);
-    return (this->b == rhs.b);
+    return (this->b == rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -536,7 +540,7 @@ bool
 nVariant::operator!=(int rhs) const
 {
     n_assert(Int == this->type);
-    return (this->i != rhs.i);
+    return (this->i != rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -547,7 +551,7 @@ bool
 nVariant::operator!=(float rhs) const
 {
     n_assert(Float == this->type);
-    return (this->f[0] != rhs.f[0]);
+    return (this->f[0] != rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -558,7 +562,7 @@ bool
 nVariant::operator!=(bool rhs) const
 {
     n_assert(Bool == this->type);
-    return (this->b != rhs.b);
+    return (this->b != rhs);
 }
 
 //------------------------------------------------------------------------------
@@ -604,7 +608,7 @@ nVariant::operator!=(const vector4& rhs) const
 */
 inline
 int
-nVariant::operator*() const
+nVariant::GetInt() const
 {
     n_assert(Int == this->type);
     return this->i;
@@ -615,7 +619,7 @@ nVariant::operator*() const
 */
 inline
 float
-nVariant::operator*() const
+nVariant::GetFloat() const
 {
     n_assert(Float == this->type);
     return this->f[0];
@@ -626,7 +630,7 @@ nVariant::operator*() const
 */
 inline
 bool
-nVariant::operator*() const
+nVariant::GetBool() const
 {
     n_assert(Bool == this->type);
     return this->b;
@@ -637,7 +641,7 @@ nVariant::operator*() const
 */
 inline
 const char*
-nVariant::operator*() const
+nVariant::GetString() const
 {
     n_assert(String == this->type);
     return this->str;
@@ -648,7 +652,7 @@ nVariant::operator*() const
 */
 inline
 const vector3&
-nVariant::operator*() const
+nVariant::GetVector3() const
 {
     n_assert(Vector3 == this->type);
     return *(vector3*)this->f;
@@ -659,10 +663,53 @@ nVariant::operator*() const
 */
 inline
 const vector4&
-nVariant::operator*() const
+nVariant::GetVector4() const
 {
     n_assert(Vector4 == this->type);
     return *(vector4*)this->f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nVariant::TypeToString(Type t)
+{
+    switch (t)
+    {
+        case Void:      return "void";
+        case Int:       return "int";
+        case Float:     return "float";
+        case Bool:      return "bool";
+        case Vector3:   return "vector3";
+        case Vector4:   return "vector4";
+        case String:    return "string";
+        default:
+            n_error("nVariant::TypeToString(): invalid type enum '%d'!", t);
+            return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariant::Type
+nVariant::StringToType(const char* str)
+{
+    if      (0 == strcmp(str, "void"))    return Void;
+    else if (0 == strcmp(str, "int"))     return Int;
+    else if (0 == strcmp(str, "float"))   return Float;
+    else if (0 == strcmp(str, "bool"))    return Bool;
+    else if (0 == strcmp(str, "vector3")) return Vector3;
+    else if (0 == strcmp(str, "vector4")) return Vector4;
+    else if (0 == strcmp(str, "string"))  return String;
+    else
+    {
+        n_error("nVariant::StringToType(): invalid type string '%s'!", str);
+        return Void;
+    }
 }
 
 //------------------------------------------------------------------------------

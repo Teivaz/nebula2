@@ -66,7 +66,7 @@ nFixedArray<TYPE>::Delete()
 {
     if (this->elements)
     {
-        delete[] this->elements;
+        n_delete_array(this->elements);
         this->elements = 0;
     }
     this->size = 0;
@@ -82,7 +82,7 @@ nFixedArray<TYPE>::Allocate(int s)
     this->Delete();
     if (s > 0)
     {
-        this->elements = new TYPE[s];
+        this->elements = n_new_array(TYPE,s);
         this->size = s;
     }
 }
@@ -135,7 +135,7 @@ nFixedArray<TYPE>::~nFixedArray()
 {
     if (0 != this->elements)
     {
-        delete[] this->elements;
+        n_delete_array(this->elements);
         this->elements = 0;
     }
 }

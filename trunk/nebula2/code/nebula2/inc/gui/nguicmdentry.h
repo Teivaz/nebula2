@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiCmdEntry
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A specialized text view widget which displays the current 
     kernel server's line buffer and lets the user enter script commands.
     

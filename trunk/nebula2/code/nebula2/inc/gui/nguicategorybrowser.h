@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiCategoryBrowser
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A category/file browser widget.
     
     (C) 2004 RadonLabs GmbH

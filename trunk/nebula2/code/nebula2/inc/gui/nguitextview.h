@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiTextView
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A multiline text viewing widgets, which can display lines of
     text.
     
@@ -38,9 +38,11 @@ public:
     /// get horizontal border
     float GetBorder() const;
     /// begin appending text
-    void BeginAppend();
+    virtual void BeginAppend();
     /// append a line of text (copies the text)
-    void AppendLine(const char* t);
+    virtual void AppendLine(const char* t);
+    /// append a colored line of text (copies the text)
+    virtual void AppendColoredLine(const char* t, const vector4& color);
     /// finish appending text
     void EndAppend();
     /// get line at index
@@ -60,7 +62,7 @@ public:
     /// get the currently selected text, or 0 if nothing selected
     const char* GetSelection() const;
     /// get overall number of lines
-    int GetNumLines() const;
+    virtual int GetNumLines() const;
     /// get the number of lines that would currently fit into the text view
     int GetNumVisibleLines();
     /// called when widget is becoming visible
@@ -77,6 +79,8 @@ public:
     virtual bool OnButtonDown(const vector2& mousePos);
     /// rendering
     virtual bool Render();
+    /// set the font in the gfxserver
+    void ActivateFont();
 
 protected:
     /// validate the font resource
@@ -85,6 +89,10 @@ protected:
     void UpdateSliderValues();
     /// update slider visibility status
     void UpdateSliderVisibility();
+    /// scroll up one line
+    void ScrollUp(int numLines);
+    /// scroll down one line
+    void ScrollDown(int numLines);
 
     nRef<nFont2> refFont;
     nRef<nGuiSlider2> refSlider;
@@ -94,6 +102,7 @@ protected:
     float border;
     vector4 textColor;
     nArray<nString> textArray;
+    nArray<vector4> colorArray;
     bool selectionEnabled;
     int lineOffset;
     int selectionIndex;
@@ -201,6 +210,7 @@ void
 nGuiTextView::BeginAppend()
 {
     this->textArray.Clear();
+    this->colorArray.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +222,21 @@ nGuiTextView::AppendLine(const char* t)
 {
     n_assert(t);
     this->textArray.Append(t);
+    this->colorArray.Append(this->textColor);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextView::AppendColoredLine(const char* t, const vector4& color)
+{
+    n_assert(t);
+    this->textArray.Append(t);
+    this->colorArray.Append(color);
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -224,6 +248,7 @@ nGuiTextView::UpdateSliderValues()
     if (this->refSlider.isvalid())
     {
         this->refSlider->SetRangeSize(float(this->textArray.Size()));
+        this->refSlider->SetVisibleRangeStart(float(this->lineOffset));
         this->refSlider->SetVisibleRangeSize(float(this->GetNumVisibleLines()));
     }
 }

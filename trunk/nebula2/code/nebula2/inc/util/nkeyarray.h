@@ -71,7 +71,7 @@ nKeyArray<TYPE>::alloc(int num)
 {
     n_assert(0 == this->elmArray);
     n_assert(0 == this->curElm);
-    this->elmArray = n_new nKAElement[num];
+    this->elmArray = n_new_array(nKAElement, num);
     this->maxElms  = num;
 }
 
@@ -86,10 +86,10 @@ nKeyArray<TYPE>::grow()
     n_assert(this->growElms > 0);
     
     int newNum = this->maxElms + this->growElms;
-    nKAElement* newArray = n_new nKAElement[newNum];
+    nKAElement* newArray = n_new_array(nKAElement, newNum);
     
     memcpy(newArray, this->elmArray, this->numElms * sizeof(nKAElement));
-    n_delete[] this->elmArray;
+    n_delete_array(this->elmArray);
     this->elmArray = newArray;
     this->maxElms  = newNum;
     this->curElm   = 0;
@@ -187,7 +187,7 @@ nKeyArray<TYPE>::~nKeyArray()
 {
     if (this->elmArray) 
     {
-        n_delete[] this->elmArray;
+        n_delete_array(this->elmArray);
     }
 }
 

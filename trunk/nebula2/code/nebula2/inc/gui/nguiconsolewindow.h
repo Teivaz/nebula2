@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiConsoleWindow
-    @ingroup NebulaGuiSystem
-    @brief A Nebula command console window.
+    @ingroup Gui
+    @brief A complete Nebula command console window.
     
     (C) 2004 RadonLabs GmbH
 */

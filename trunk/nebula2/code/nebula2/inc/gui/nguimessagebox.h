@@ -2,11 +2,15 @@
 #define N_GUIMESSAGEBOX_H
 //------------------------------------------------------------------------------
 /**
-    A complete modal message box window. The message box will emit a gui 
-    event (Dialog*) and call one of its OnOk(), OnCancel()
-    virtual methods right before it is closed. You can either derive
-    a subclass and override those methods, or check for the gui event 
-    to get the user's reaction.
+    @class nGuiMessageBox
+    @ingroup Gui
+
+    @brief A complete modal message box window.
+
+    The message box will emit a gui event (Dialog*) and call one of its
+    OnOk(), OnCancel() virtual methods right before it is closed. You can
+    either derive a subclass and override those methods, or check for the gui
+    event to get the user's reaction.
 
     (C) 2004 RadonLabs GmbH
 */    
@@ -48,6 +52,10 @@ public:
     void SetIconBrush(const char* t);
     /// get icon brush
     const char* GetIconBrush() const;
+    /// enable/disable automatic size computation
+    void SetAutoSize(bool b);
+    /// get automatic size flag
+    bool GetAutoSize() const;
     /// called when widget is becoming visible
     virtual void OnShow();
     /// called when widget is becoming invisible
@@ -70,7 +78,28 @@ protected:
     nString cancelText;
     nString iconBrush;
     Type type;
+    bool autoSize;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiMessageBox::SetAutoSize(bool b)
+{
+    this->autoSize = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiMessageBox::GetAutoSize() const
+{
+    return this->autoSize;
+}
 
 //------------------------------------------------------------------------------
 /**

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiResource
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A gui resource for Nebula2's gui subsystem.
     
     (C) 2003 RadonLabs GmbH
@@ -220,6 +220,10 @@ inline
 nTexture2*
 nGuiResource::GetTexture()
 {
+    if (!this->IsValid())
+    {
+        this->Load();
+    }
     return this->refTexture.isvalid() ? this->refTexture.get() : 0;
 }
 

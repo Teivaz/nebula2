@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiIpAddressEntry
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief An text entry gadget which restricts input to ip addresses.
 
     (C) 2003 RadonLabs GmbH

@@ -149,7 +149,7 @@ nArray<TYPE>::nArray(int initialSize, int grow) :
     n_assert(initialSize >= 0);
     if (initialSize > 0)
     {
-        this->elements = new TYPE[this->allocSize];
+        this->elements = n_new_array(TYPE,this->allocSize);
     }
     else
     {
@@ -171,7 +171,7 @@ nArray<TYPE>::nArray(int initialSize, int grow, TYPE initialValue) :
     n_assert(initialSize >= 0);
     if (initialSize > 0)
     {
-        this->elements = new TYPE[this->allocSize];
+        this->elements = n_new_array(TYPE, this->allocSize);
         int i;
         for (i = 0; i < initialSize; i++)
         {
@@ -199,7 +199,7 @@ nArray<TYPE>::Copy(const nArray<TYPE>& src)
     this->flags       = src.flags;
     if (this->allocSize > 0)
     {
-        this->elements = new TYPE[this->allocSize];
+        this->elements = n_new_array(TYPE, this->allocSize);
         int i;
         for (i = 0; i < this->numElements; i++)
         {
@@ -221,7 +221,7 @@ nArray<TYPE>::Delete()
     this->flags = 0;
     if (this->elements)
     {
-        delete[] this->elements;
+        n_delete_array(this->elements);
         this->elements = 0;
     }
 }
@@ -292,7 +292,7 @@ nArray<TYPE>::Reallocate(int initialSize, int grow)
     this->numElements = 0;
     if (initialSize > 0)
     {
-        this->elements = new TYPE[initialSize];
+        this->elements = n_new_array(TYPE, initialSize);
     }
     else
     {
@@ -333,7 +333,7 @@ template<class TYPE>
 void
 nArray<TYPE>::GrowTo(int newAllocSize)
 {
-    TYPE* newArray = new TYPE[newAllocSize];
+    TYPE* newArray = n_new_array(TYPE, newAllocSize);
 
     if (this->elements)
     {
@@ -345,7 +345,7 @@ nArray<TYPE>::GrowTo(int newAllocSize)
         }
 
         // discard old array and update contents
-        delete[] this->elements;
+        n_delete_array(this->elements);
     }
     this->elements  = newArray;
     this->allocSize = newAllocSize;

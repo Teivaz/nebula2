@@ -70,7 +70,7 @@ nPriorityArray<TYPE>::nPriorityArray(int size) :
     minPriElementIndex(0)
 {
     n_assert(size > 0);
-    this->elements = new Element[size];
+    this->elements = n_new_array(Element, size);
 }
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src) :
     minPriElementIndex(src.minPriElementIndex)
 {
     n_assert(0 == this->elements);
-    this->elements = new Element[this->maxElements];
+    this->elements = n_new_array(Element, this->maxElements);
     int i;
     for (i = 0; i < this->numElements; i++)
     {
@@ -104,7 +104,7 @@ nPriorityArray<TYPE>::Delete()
     this->minPriElementIndex = 0;
     if (this->elements)
     {
-        delete[] this->elements;
+        n_delete_array(this->elements);
         this->elements = 0;
     }
 }

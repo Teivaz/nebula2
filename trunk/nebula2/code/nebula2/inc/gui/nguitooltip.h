@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiToolTip
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A tooltip widget with text which always positions itself
     relative to the mouse.
     
@@ -25,12 +25,21 @@ public:
     virtual void OnShow();
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
+    /// render the widget
+    virtual bool Render();
+    /// set the text as string
+    virtual void SetText(const char* text);
 
 private:
-    /// make sure rectangle is within screen area
-    void ClipRect(rectangle& r) const;
+    /// compute current rect
+    void UpdateRect();
+    /// compute current color
+    void UpdateColor();
 
-    nAutoRef<nInputServer> refInputServer;
+    bool openFirstFrame;
+    bool fadeinRequested;
+    nTime fadeinRequestTime;
+    vector4 windowColor;
 };
 
 //------------------------------------------------------------------------------

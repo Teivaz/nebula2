@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nPathString
-    @ingroup NebulaDataTypes
+    @ingroup Obsolete
 
-    @brief A special nString subclass for file paths.
+    A special nString subclass for file paths (OBSOLETE), all nPathString
+    methods are now included in nString.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -114,14 +115,14 @@ nPathString::ConvertBackslashes()
         return;
     }
 
-    char *buf = new char[this->strLen + 1];
+    char *buf = n_new_array(char, this->strLen + 1);
 
     for (int i = 0; i <= this->strLen; i++)
     {
         buf[i] = (ptr[i] == '\\') ? '/' : ptr[i];
     }
     this->Set(buf);
-    delete[] buf;
+    n_delete_array(buf);
 }
 
 //------------------------------------------------------------------------------

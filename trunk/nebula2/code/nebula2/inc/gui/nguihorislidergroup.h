@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiHoriSliderGroup
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
 
     A horizontal slider group consisting of a label, a horizontal slider,
     and a text label which displays the current slider's numerical value
@@ -65,6 +65,8 @@ public:
     virtual void OnHide();
     /// called per frame when parent widget is visible
     virtual void OnFrame();
+    /// notify widget of an event
+    virtual void OnEvent(const nGuiEvent& event);
 
 protected:
     nString labelFont;

@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiCheckButtonGroup
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief Groups child check buttons so that only one is selected at any time.
+    (OBSOLETE)
     
     (C) 2003 RadonLabs GmbH
 */
@@ -20,8 +21,6 @@ public:
     virtual ~nGuiCheckButtonGroup();
     /// rendering
     virtual bool Render();
-    /// audio rendering
-    //virtual bool RenderAudio();
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down

@@ -68,7 +68,7 @@ template<class TYPE>
 nRingBuffer<TYPE>::nRingBuffer<TYPE>(int capacity)
 {
     //_num++; // there is always 1 empty element in buffer
-    this->start = n_new TYPE[capacity+1];
+    this->start = n_new_array(TYPE, capacity+1);
     this->end   = this->start + capacity;
     this->tail  = this->start;
     this->head  = this->start;
@@ -106,7 +106,7 @@ nRingBuffer<TYPE>::Delete()
 {
     if (this->start)
     {
-        n_delete[] this->start;
+        n_delete_array(this->start);
     }
     start = 0;
     end = 0;
@@ -124,7 +124,7 @@ nRingBuffer<TYPE>::Copy(const nRingBuffer<TYPE>& src)
     if(0 != this->start)
     {
         int capacity = src.end - src.start;
-        this->start = n_new TYPE[capacity+1];
+        this->start = n_new_array(TYPE, capacity+1);
         this->end   = this->start + capacity;
         this->tail  = this->start;
         this->head  = this->start;
@@ -144,7 +144,7 @@ nRingBuffer<TYPE>::Initialize(int capacity)
 {
     n_assert(!this->start);
     //_num++; // there is always 1 empty element in buffer
-    this->start = n_new TYPE[capacity+1];
+    this->start = n_new_array(TYPE, capacity+1);
     this->end   = this->start + capacity;
     this->tail  = this->start;
     this->head  = this->start;

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiSkin
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief A GUI skin object holds a user-defined table of gui resources which
     are used by the GUI widgets to render themselves.
     
@@ -73,10 +73,26 @@ public:
     void SetEntryTextColor(const vector4& c);
     /// get text entry text color
     const vector4& GetEntryTextColor() const;
+    /// set menu entry text color
+    void SetMenuTextColor(const vector4& c);
+    /// get menu entry text color
+    const vector4& GetMenuTextColor() const;
     /// set window broder size
     void SetWindowBorder(const rectangle& v);
     /// get window border size
     const rectangle& GetWindowBorder() const;
+    /// set window font
+    void SetWindowFont(const char* fnt);
+    /// get window font
+    const char* GetWindowFont() const;
+    /// set button font
+    void SetButtonFont(const char* fnt);
+    /// get button font
+    const char* GetButtonFont() const;
+    /// set label font
+    void SetLabelFont(const char* fnt);
+    /// get label font
+    const char* GetLabelFont() const;
     /// begin adding brushes
     void BeginBrushes();
     /// add a skin brush
@@ -85,12 +101,16 @@ public:
     void EndBrushes();
     /// lookup gui resource for a brush
     nGuiResource* FindBrush(const char* name);
+    /// get sound object
+    nSound3* GetSoundObject(Sound snd);
     /// set button sound filename
     void SetSound(Sound snd, const char* name);
     /// get button sound filename
     const char* GetSound(Sound snd) const;
-    /// get sound object
-    nSound3* GetSoundObject(Sound snd);
+    /// set volume for sounds objects
+    void SetSoundVolume(Sound snd, float volume);
+    /// get volume for sound object
+    float GetSoundVolume(Sound snd);
     /// convert sound string to enum
     static Sound StringToSound(const char* str);
     /// convert sound enum to string
@@ -112,8 +132,13 @@ private:
     vector4 labelTextColor;
     vector4 entryTextColor;
     vector4 textColor;
+    vector4 menuTextColor;
     rectangle windowBorder;
-    
+
+    nString windowFont;
+    nString buttonFont;
+    nString labelFont;
+
     nFixedArray<nString> soundNames;
     nFixedArray<nRef<nSound3> > sounds;
     float soundVolume;
@@ -271,6 +296,26 @@ nGuiSkin::GetTextColor() const
 */
 inline
 void
+nGuiSkin::SetMenuTextColor(const vector4& c)
+{
+    this->menuTextColor = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nGuiSkin::GetMenuTextColor() const
+{
+    return this->menuTextColor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nGuiSkin::SetWindowBorder(const rectangle& r)
 {
     this->windowBorder = r;
@@ -364,6 +409,69 @@ const vector4&
 nGuiSkin::GetInactiveWindowColor() const
 {
     return this->inactiveWindowColor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetWindowFont(const char* fnt)
+{
+    n_assert(fnt);
+    this->windowFont = fnt;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiSkin::GetWindowFont() const
+{
+    return this->windowFont.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetButtonFont(const char* fnt)
+{
+    n_assert(fnt);
+    this->buttonFont = fnt;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiSkin::GetButtonFont() const
+{
+    return this->buttonFont.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetLabelFont(const char* fnt)
+{
+    n_assert(fnt);
+    this->labelFont = fnt;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiSkin::GetLabelFont() const
+{
+    return this->labelFont.Get();
 }
 
 //------------------------------------------------------------------------------

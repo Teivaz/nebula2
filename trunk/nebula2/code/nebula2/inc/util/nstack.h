@@ -70,7 +70,7 @@ nStack<TYPE>::~nStack()
     nStackNode* sn;
     while (sn = (nStackNode*) l.RemHead())
     {
-        n_delete sn;
+        n_delete(sn);
     }
 }
 
@@ -81,7 +81,7 @@ template<class TYPE>
 void
 nStack<TYPE>::Push(TYPE e)
 {
-    nStackNode* sn = n_new nStackNode(e);
+    nStackNode* sn = n_new(nStackNode(e));
     l.AddHead(sn);
 }
 
@@ -96,7 +96,7 @@ nStack<TYPE>::Pop()
     if (sn)
     {
         TYPE t = sn->Get();
-        n_delete sn;
+        n_delete(sn);
         return t;
     }
     else

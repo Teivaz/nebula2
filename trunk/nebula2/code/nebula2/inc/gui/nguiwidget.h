@@ -3,7 +3,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nGuiWidget
-    @ingroup NebulaGuiSystem
+    @ingroup Gui
     @brief An abstract gui widget (a rectangular click area)
 
     (C) 2003 RadonLabs GmbH
@@ -81,11 +81,11 @@ public:
     virtual bool IsEnabled() const;
     /// has focus?
     bool HasFocus() const;
-    /// turn blinking on/off
-    void SetBlinking(bool b);
+    /// widget blinking on/off
+    void SetBlinking(bool b, nTime timeOut);
     /// set length of blink cycle in seconds
     void SetBlinkRate(double rate);
-    /// get blinking state
+    /// get current blinking state
     bool GetBlinking() const;
     /// set sticky mouse behaviour
     void SetStickyMouse(bool b);
@@ -93,8 +93,6 @@ public:
     bool IsStickyMouse() const;
     /// rendering
     virtual bool Render();
-    /// audio rendering
-    //virtual bool RenderAudio();
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down
@@ -161,6 +159,10 @@ public:
     void SetBackground(bool b);
     /// get clickthrough flag
     bool IsBackground() const;
+    /// set an optional click rect border
+    void SetClickRectBorder(const vector2& b);
+    /// get click rect border
+    const vector2& GetClickRectBorder() const;
 
 protected:
     /// Get owner-window of widget
@@ -175,25 +177,50 @@ protected:
     static nClass* widgetClass;
     static nClass* windowClass;
     nTime lastButtonDownTime;
-    
-    bool triggerSound;
+    nTime mouseWithinTime;
+
     bool shown;
-    bool blinking;
-    double blinkRate;
     bool enabled;
     bool stickyMouse;
     bool hasFocus;
     bool backGround;
+    bool mouseWithin;
 
     rectangle rect;
+    vector2 clickRectBorder;
     vector2 minSize;
     vector2 maxSize;
+
+    bool blinking;
+    nTime blinkStarted;
+    nTime blinkTimeOut;
+    double blinkRate;
 
     nGuiBrush defaultBrush;
     nGuiBrush pressedBrush;
     nGuiBrush highlightBrush;
     nGuiBrush disabledBrush;
 };
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWidget::SetClickRectBorder(const vector2& b)
+{
+    this->clickRectBorder = b;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nGuiWidget::GetClickRectBorder() const
+{
+    return this->clickRectBorder;
+}
 
 //-----------------------------------------------------------------------------
 /**
@@ -440,25 +467,13 @@ nGuiWidget::GetRect() const
 */
 inline
 void
-nGuiWidget::SetBlinking(bool b)
-{
-    this->blinking = b;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-inline
-void
 nGuiWidget::SetBlinkRate(double rate)
 {
     this->blinkRate = rate;
 }
-
 //-----------------------------------------------------------------------------
 /**
 */
-inline
 bool
 nGuiWidget::GetBlinking() const
 {

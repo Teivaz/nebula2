@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nGuiFormLayout
-    @ingroup NebulaGuiSystem
-    @brief Layouts size and position of child widgets based on own position.
+    @ingroup Gui
+    @brief Lays out size and position of child widgets based on own position.
 
     This works similar to a MEL formLayout.
     
