@@ -92,9 +92,7 @@ nGLServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
     @param  width       width of render target
     @param  height      height of render target
     @param  format      pixel format of render target
-    @param  hasColor    true if render target has a color buffer
-    @param  hasDepth    true if render target has a depth buffer
-    @param  hasStencil  true if render target has a stencil buffer
+    @param  usageFlags  combination of #nTexture2::Usage flags
 */
 nTexture2*
 nGLServer2::NewRenderTarget(const char* rsrcName,
