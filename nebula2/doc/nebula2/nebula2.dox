@@ -100,6 +100,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
   - @ref Nebula2GSObtaining
   - @ref Nebula2GSCompiling
   - @ref Nebula2GSExtending
+  - @ref Nebula2GSUsing
 
 @section Nebula2GSObtaining Obtaining Nebula 2
 
@@ -117,8 +118,10 @@ information on the specialized build system that Nebula 2 uses, see
 
 @section Nebula2GSExtending Extending Nebula 2
 
-Until we get some basic tutorials going, see this for now:
-
   - @ref NebulaWritingClass
+
+@section Nebula2GSUsing Using Nebula 2
+
+  - @ref Nebula2Tutorials
 */
 
