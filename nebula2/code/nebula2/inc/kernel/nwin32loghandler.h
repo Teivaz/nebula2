@@ -27,7 +27,7 @@ class nWin32LogHandler : public nDefaultLogHandler
 {
 public:
     /// constructor
-    nWin32LogHandler(const char* appName);
+    nWin32LogHandler(const char* appName, const char* subDir = 0);
     /// destructor
     virtual ~nWin32LogHandler();
     /// open the log handler (called by nKernelServer when necessary)
@@ -52,6 +52,7 @@ private:
     void PutMessageBox(MsgType msgType, const char* msg, va_list argList);
 
     nString appName;
+    nString subDir;
     nFile* logFile;
 
     #ifdef __WIN32__

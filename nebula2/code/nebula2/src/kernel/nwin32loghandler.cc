@@ -22,10 +22,15 @@
 
     @param  app     an application name
 */
-nWin32LogHandler::nWin32LogHandler(const char* app) :
-    logFile(0)
+nWin32LogHandler::nWin32LogHandler(const char* app, const char* subDir) :
+    logFile(0),
+    subDir("RadonLabs/Nebula2")
 {
     this->appName = app;
+    if (subDir)
+    {
+        this->subDir = subDir;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +68,9 @@ nWin32LogHandler::Open()
         // construct path
         nPathString path(rawPath);
         path.ConvertBackslashes();
-        path.Append("/RadonLabs/Nebula2/");
+        path.Append( "/" );
+        path.Append(this->subDir);
+        path.Append( "/" );
 
         // make sure path exists
         fileServer->MakePath(path.Get());
