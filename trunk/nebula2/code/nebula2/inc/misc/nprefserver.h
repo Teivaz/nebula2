@@ -6,7 +6,7 @@
     @ingroup Misc
 
     The pref server stores key/value pairs in a location where it will
-    persist between application invokations (for instance by using the
+    persist between application invocations (for instance by using the
     registry under Win32).
 
     NOTE: the interesting stuff happens in platform-specific subclasses.
