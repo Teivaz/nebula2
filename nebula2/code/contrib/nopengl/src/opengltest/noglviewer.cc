@@ -43,7 +43,7 @@
 */
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
-#include "opengltest/noglviewerapp.h"
+#include "tools/nviewerapp.h"
 
 #ifdef __WIN32__
 #include "kernel/nwin32loghandler.h"
@@ -199,7 +199,7 @@ main(int argc, const char** argv)
     #endif
 
     // initialize a viewer app object
-    nOGLViewerApp viewerApp;
+    nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);
