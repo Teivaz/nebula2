@@ -179,3 +179,4 @@ nCmdLineArgs::GetStringArg(const char* option, const char* defaultValue)
 
 //------------------------------------------------------------------------------
 #endif
+
