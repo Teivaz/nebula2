@@ -9,17 +9,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_HASHTABLE_H
 #include "util/nhashtable.h"
-#endif
-
-#ifndef N_HASHNODE_H
 #include "util/nhashnode.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nHashList : public nList 
