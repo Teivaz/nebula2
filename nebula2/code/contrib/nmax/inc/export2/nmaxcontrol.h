@@ -11,6 +11,7 @@
 
 //-----------------------------------------------------------------------------
 /**
+    sampled key type of a control.
 */
 enum nMaxControlType 
 {
@@ -24,7 +25,6 @@ enum nMaxControlType
     nMaxEulerY,     /// Euler Y controller
     nMaxEulerZ,     /// Euler Z controller
     nMaxPoint4,     /// Point4 based controllers - This is available from 3ds max 6.
-
 };
 
 //-----------------------------------------------------------------------------
@@ -39,13 +39,14 @@ enum nMaxControlType
 */
 struct nMaxSampleKey 
 {
-    Matrix3 tm;    // use it for nMaxTM
-    Point3  pos;   // use it for nMaxPoint3 
-    Quat    rot;   // use if for nMaxRot
-    Point3  scale; // use it for nMaxScale
-    float   fVal;  // use it for nMaxFloat
+    Matrix3    tm;    // use it for nMaxTM
+    Point3     pos;   // use it for nMaxPoint3 
+    Quat       rot;   // use if for nMaxRot
+    Point3     scale; // use it for nMaxScale
+    Point4     pt4;      // use if for nMaxPoint4
+    float      fval;  // use it for nMaxFloat
 
-    float time;
+    float      time;  // key time.
 };
 
 //-----------------------------------------------------------------------------
