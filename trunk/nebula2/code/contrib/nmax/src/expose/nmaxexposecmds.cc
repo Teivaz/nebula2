@@ -362,7 +362,7 @@ Tab<FPValue*>* nNebulaInterface::CallV(TCHAR* command)
 */
 Tab<FPValue*>* nNebulaInterface::Call(TCHAR* command, Tab<FPValue*> *val)
 {
-    Tab<FPValue*>* result;
+    Tab<FPValue*>* result = 0;
 
     char cmd[N_MAXPATH];
     char *commandName;
