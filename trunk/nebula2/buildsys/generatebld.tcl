@@ -64,9 +64,9 @@ proc gen_ancestor {i} {
             set idx [lindex $line 0]
             
             if {$idx == "nNebulaRootClass"} {
-            	set mod($i,ancestor)   ""
+                set mod($i,ancestor)   ""
                 set mod($i,autonopak)  false
-            	break
+                break
             } 
             
             if {[string match -nocase "nNebula*Class*" $idx]} {
