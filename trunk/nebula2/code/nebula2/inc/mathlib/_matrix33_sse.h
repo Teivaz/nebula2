@@ -451,6 +451,7 @@ inline
 void 
 _matrix33_sse::transpose() 
 {
+    #undef n_swap
     #define n_swap(x,y) { float t=x; x=y; y=t; }
     n_swap(m[0][1],m[1][0]);
     n_swap(m[0][2],m[2][0]);
