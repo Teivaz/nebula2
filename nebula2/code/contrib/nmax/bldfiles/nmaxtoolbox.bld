@@ -33,7 +33,7 @@ begintarget nmaxtoolbox
         nmaxtransform
         nmaxcamera
         nmaxlight
-        nmaxcontrollers
+        nmaxanimator
         nmaxnotetrack
         nmaxdummy
         nmaxcustattrib
