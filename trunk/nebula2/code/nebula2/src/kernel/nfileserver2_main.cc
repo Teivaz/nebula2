@@ -440,7 +440,7 @@ nFileServer2::InitUserAssign()
     path.ConvertBackslashes();
     path.Append("/");
     this->SetAssign("user", path.Get());
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__MACOSX__)
     nPathString path(getenv("HOME"));
     path.Append("/");
     this->SetAssign("user", path.Get());
@@ -609,7 +609,7 @@ nFileServer2::DeleteFile(const char* filename)
 
     #ifdef __WIN32__
         return ::DeleteFile(mangledPath.Get()) ? true : false;
-    #elif defined(__LINUX__)
+    #elif defined(__LINUX__) || defined(__MACOSX__)
         return (0 == unlink(mangledPath.Get())) ? true : false;
     #else
     #error "nFileServer2::DeleteFile() not implemented yet!"
@@ -628,7 +628,7 @@ nFileServer2::DeleteDirectory(const char* dirName)
 
     #ifdef __WIN32__
     return ::RemoveDirectory(mangledPath.Get()) ? true : false;
-    #elif defined(__LINUX__)
+    #elif defined(__LINUX__) || defined(__MACOSX__)
     return (rmdir(mangledPath.Get()) == 0) ? true : false;
     #else
     #error "nFileServer2::DeleteDirectory() not implemented yet!"
