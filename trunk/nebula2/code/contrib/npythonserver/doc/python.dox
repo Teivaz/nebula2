@@ -146,6 +146,16 @@ the Nebula Device.  All functions take arguments formated as strings.
 
     Go back to the root object.
 
+<h2> Testing </h2>
+
+From the command line in <code>/bin/win32<code> or <code>/bin/win32d<code> type:
+
+@verbatim
+    nshpython -scriptserver npythonserver 
+@endverbatim
+
+And test some commands whatever you want to.
+
 */
 ---
 EOF
