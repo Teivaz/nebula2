@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFile
-    @ingroup NebulaFileManagement
+    @ingroup File
 
     @brief Wrapper class for accessing file system files.
 

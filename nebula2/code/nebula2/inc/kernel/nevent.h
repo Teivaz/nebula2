@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nEvent
-    @ingroup NebulaThreadingSupport
+    @ingroup Threading
 
     @brief Event wrapper for multithreading synchronization.
 

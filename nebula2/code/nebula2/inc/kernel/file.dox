@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaFileManagement File I/O and File System Access
-    @ingroup NebulaKernel
+    @defgroup File File I/O and File System Access
+    @ingroup Kernel
 
     @brief A cross platform set of file I/O and file system objects
     that also support access to virtualized file systems.

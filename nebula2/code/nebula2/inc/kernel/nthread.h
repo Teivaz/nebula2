@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nThread
-    @ingroup NebulaThreadingSupport
+    @ingroup Threading
     @brief A thread wrapper class for Nebula.
 
     Wraps a user defined thread function into a c++ object, 

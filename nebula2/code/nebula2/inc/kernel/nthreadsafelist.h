@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nThreadSafeList
-    @ingroup NebulaThreadingSupport
+    @ingroup Threading
     @brief A thread safe doubly linked list.
 
     Offers method to manipulate lists in a thread safe way,

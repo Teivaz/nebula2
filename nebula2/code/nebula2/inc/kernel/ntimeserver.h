@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTimeServer
-    @ingroup NebulaTimeManagement
+    @ingroup Time
     @brief nTimeServer provides a high resolution time source.
 
     See also @ref N2ScriptInterface_ntimeserver

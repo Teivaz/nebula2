@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nProfiler
-    @ingroup NebulaTimeManagement
+    @ingroup Time
     @brief nProfiler provides an easy way to measure time intervals.
 
     (C) 2002 RadonLabs GmbH

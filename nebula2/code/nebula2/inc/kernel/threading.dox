@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaThreadingSupport Threading Support
-    @ingroup NebulaKernel
+    @defgroup Threading Threading Support
+    @ingroup Kernel
 
     @brief Nebula provides basic support for threading along with
     integration into some of the Core Nebula systems.

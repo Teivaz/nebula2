@@ -1,0 +1,4 @@
+/**
+    @defgroup Ipc Inter-Process Communication
+    @ingroup Kernel
+*/

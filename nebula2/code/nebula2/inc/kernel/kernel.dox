@@ -1,5 +1,5 @@
 /**
-    @defgroup NebulaKernel Nebula Kernel
+    @defgroup Kernel Nebula Kernel
 
     <h2> A Folding Object System </h2>
 
@@ -45,10 +45,10 @@
     There's a easy way to load whole resources using folding object system.
 
     Consider that you have a directory for a character. The directory consists 
-    of a mesh file(<i>.n3d2</i>), some animation files (<i>.nanim2</i>), 
-    texture files(<i>.dds</i> and script file (<i>.n2</i>)
+    of a mesh file(<tt>.n3d2</tt>), some animation files (<tt>.nanim2</tt>), 
+    texture files(<tt>.dds</tt> and a script file (<tt>.n2</tt>)
     
-    Let's consider the directory like below;
+    Let's consider a directory like this one:
 
 @verbatim
     /mycharacter.n2 - the directory which contains resource files 
@@ -68,11 +68,11 @@
     ...
     @endcode
 
-    If you use folding object system, it is good to use '.n2' for a postfix 
-    of the directory name but it's not crucial. But the script file which 
-    exist in the directory should be <b>'_main.n2'</b> for it's name. 
-    nKernelServer lookup <i>_main.n2</i> when loading object as a foding 
-    object.
+    If you use folding object system, it is good to use <tt>.n2</tt> for
+    a postfix of the directory name but it's not crucial. But the script
+    file which exist in the directory should be <tt>_main.n2</tt> for
+    it's name.  nKernelServer looks up <tt>_main.n2</tt> when loading
+    object as a folding object.
     
 
 */

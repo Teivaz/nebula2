@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDirectory
-    @ingroup NebulaFileManagement
+    @ingroup File
 
     wrapper for directory functions
 
