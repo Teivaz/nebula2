@@ -21,6 +21,7 @@
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
+#include "shadow/nshadowserver.h"
 
 #include "spatialdb/nspatialelements.h"
 #include "spatialdb/nscriptablesector.h"
@@ -134,6 +135,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<nGuiServer> refGuiServer;
+    nRef<nShadowServer> refShadowServer;
 
     nRef<nTransformNode> refRootNode;
     nRef<nTransformNode> refCameraMarkerNode;
