@@ -33,6 +33,16 @@ beginmodule nfileserver2
     }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nfilenode
+    setdir kernel
+    setfiles {
+        nfilenode_main nfilenode_cmds
+    }
+    setheaders {
+        nfilenode
+    }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nscriptserver
     setdir kernel
     setfiles {
@@ -57,6 +67,14 @@ beginmodule nenv
     setheaders nenv
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nipc
+    setdir kernel
+    setmodtype cpplib
+    setfiles { nipcaddress nipcclient nipcminiserver nipcpeer nipcserver }
+    setheaders { nipcaddress nipcbuffer nipcclient nipcminiserver nipcpeer nipcserver }
+endmodule
+
+#-------------------------------------------------------------------------------
 beginmodule nremoteserver
     setdir kernel
     setfiles {
@@ -71,16 +89,15 @@ beginmodule nkernel
     setdir kernel
     setmodtype cpplib
     setfiles {
-        nkernelserver nkernel nmemory nclass ncmdproto ncmdprotonative nhardrefserver
-        nipcminiserver nipcserver nipcclient nthread
-        nloghandler ndefaultloghandler nwin32loghandler
+        nkernelserver nkernel nmemory nclass ncmdproto nhardrefserver
+        ncmdprotonative nthread nloghandler ndefaultloghandler
+        nwin32loghandler nrefcounted
     }
     setheaders {
         nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
-        ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref ndynautoref nhardref
-        nevent nmutex nsocketdefs nthread nthreadsafelist
-        nipcminiserver nipcserver nipcclient
-        nloghandler ndefaultloghandler nwin32loghandler
+        ncmdprotonative ncmdproto ncmd narg nhardrefserver nref nautoref
+        ndynautoref nhardref nevent nmutex nsocketdefs nthread nthreadsafelist
+        nloghandler ndefaultloghandler nwin32loghandler nrefcounted
     }
 endmodule
 
@@ -88,7 +105,8 @@ endmodule
 begintarget nkernel
     settype lib
     setmods { 
-        nkernel nroot ntimeserver npersistserver nfileserver2 nscriptserver nenv nremoteserver         
+        nkernel nroot ntimeserver npersistserver nfileserver2 nfilenode nscriptserver nenv
+        nipc nremoteserver         
     }
 endtarget
 #-------------------------------------------------------------------------------
