@@ -18,7 +18,7 @@ nNebulaClass(nGuiSlider2, "nguiwidget");
     nGuiSlider2
     
     @superclass
-    nguiwidget
+    nguiformlayout
     
     @classinfo
     Docs needed.
