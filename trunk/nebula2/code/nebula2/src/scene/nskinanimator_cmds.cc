@@ -20,6 +20,7 @@ static void n_setstatename(void* slf, nCmd* cmd);
 static void n_endstates(void* slf, nCmd* cmd);
 static void n_getnumstates(void* slf, nCmd* cmd);
 static void n_getstateat(void* slf, nCmd* cmd);
+static void n_getstatenameat(void* slf, nCmd* cmd);
 static void n_beginclips(void* slf, nCmd* cmd);
 static void n_setclip(void* slf, nCmd* cmd);
 static void n_endclips(void* slf, nCmd* cmd);
@@ -60,6 +61,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endstates_v",             'ENDS', n_endstates);
     cl->AddCmd("i_getnumstates_v",          'GNST', n_getnumstates);
     cl->AddCmd("if_getstateat_i",           'GSTA', n_getstateat);
+    cl->AddCmd("s_getstatenameat_i",        'GSNA', n_getstatenameat);
     cl->AddCmd("v_beginclips_ii",           'BGCL', n_beginclips);
     cl->AddCmd("v_setclip_iis",             'STCL', n_setclip);
     cl->AddCmd("v_endclips_i",              'EDCL', n_endclips);
@@ -390,6 +392,25 @@ n_getstateat(void* slf, nCmd* cmd)
     const nAnimState& state = self->GetStateAt(cmd->In()->GetI());
     cmd->Out()->SetI(state.GetAnimGroupIndex());
     cmd->Out()->SetF(state.GetFadeInTime());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getstatenameat
+    @input
+    i(StateIndex)
+    @output
+    s(StateName)
+    @info
+    Get state name at index.
+*/
+static void
+n_getstatenameat(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    const nAnimState& state = self->GetStateAt(cmd->In()->GetI());
+    cmd->Out()->SetS(state.GetName().Get());
 }
 
 //------------------------------------------------------------------------------
