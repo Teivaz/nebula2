@@ -16,6 +16,8 @@
        clean the mesh before anything else
      @par -tangent
        generate tangents
+     @par -edge
+       generate edges
      @par -append
        name of mesh to append (note: duplicate group names are renamed)
      @par -group
@@ -210,6 +212,7 @@ main(int argc, const char** argv)
         mesh.BuildVertexTangents();
     }
 
+    // generate edges?
     if (edgeArg)
     {
         n_printf("-> generating edges...\n");
