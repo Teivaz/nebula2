@@ -90,7 +90,7 @@ template<class TYPE, uint NUMBUCKETS>
 nArray<TYPE>&
 nBucket<TYPE, NUMBUCKETS>::operator[](uint bucketIndex)
 {
-    n_assert((bucketIndex >= 0) && (bucketIndex < NUMBUCKETS));
+    n_assert(bucketIndex < NUMBUCKETS);
     return this->arrays[bucketIndex];
 }
 
