@@ -293,6 +293,9 @@ main(int argc, const char** argv)
     uint frameId = 0;
     while (gfxServer->Trigger() && running)
     {
+        kernelServer->Trigger();
+        timeServer->Trigger();
+
         double time = timeServer->GetTime();
         if (prevTime == 0.0)
         {
