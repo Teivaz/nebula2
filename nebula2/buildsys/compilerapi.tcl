@@ -666,8 +666,8 @@ proc write_pkgfiles { } {
             puts $cid "#undef __WIN32__"
             puts $cid "#endif"
             puts $cid ""
-            puts $cid "extern \"C\" void N_EXPORT n_addmodules(nKernelServer *);"
-            puts $cid "extern \"C\" void N_EXPORT n_remmodules(nKernelServer *);"
+            puts $cid "extern \"C\" void n_addmodules(nKernelServer *);"
+            puts $cid "extern \"C\" void n_remmodules(nKernelServer *);"
             puts $cid ""
     
             #collect the targets and platforms
@@ -692,7 +692,6 @@ proc write_pkgfiles { } {
                 puts $cid "extern \"C\" bool n_init_$module (nClass *, nKernelServer *);"
                 puts $cid "extern \"C\" void n_fini_$module (void);"
                 puts $cid "extern \"C\" void *n_new_$module (void);"
-                puts $cid "extern \"C\" char *n_version_$module (void);"
                 
                 if {$ifdefd} {
                     puts $cid "#endif"
@@ -701,7 +700,7 @@ proc write_pkgfiles { } {
             }         
                 
             puts $cid ""
-            puts $cid "void N_EXPORT n_addmodules(nKernelServer *ks)"
+            puts $cid "void n_addmodules(nKernelServer *ks)"
             puts $cid "\{"
        
             foreach module $mod_list {
@@ -714,7 +713,7 @@ proc write_pkgfiles { } {
                     set deflist [join $plat_list " || "]
                     puts $cid "#ifdef $deflist"
                 }
-                puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_fini_$module,n_new_$module,n_version_$module);"
+                puts $cid "    ks->AddModule(\"$module\",n_init_$module,n_fini_$module,n_new_$module);"
                 
                 if {$ifdefd} {
                     puts $cid "#endif"
@@ -723,7 +722,7 @@ proc write_pkgfiles { } {
     
             puts $cid "\}"
             puts $cid ""
-            puts $cid "void N_EXPORT n_remmodules(nKernelServer *)"
+            puts $cid "void n_remmodules(nKernelServer *)"
             puts $cid "\{"
             puts $cid "\}"
             puts $cid "//----------------------------------------------------------"
