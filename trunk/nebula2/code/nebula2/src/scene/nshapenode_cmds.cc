@@ -10,6 +10,8 @@ static void n_setmesh(void* slf, nCmd* cmd);
 static void n_getmesh(void* slf, nCmd* cmd);
 static void n_setgroupindex(void* slf, nCmd* cmd);
 static void n_getgroupindex(void* slf, nCmd* cmd);
+static void n_setmeshresourceloader(void* slf, nCmd* cmd);
+static void n_getmeshresourceloader(void* slf, nCmd* cmd);
 static void n_setrenderwireframe(void* slf, nCmd* cmd);
 static void n_getrenderwireframe(void* slf, nCmd* cmd);
 
@@ -28,12 +30,14 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setmesh_s",            'SMSH', n_setmesh);
-    cl->AddCmd("s_getmesh_v",            'GMSH', n_getmesh);
-    cl->AddCmd("v_setgroupindex_i",      'SGRI', n_setgroupindex);
-    cl->AddCmd("i_getgroupindex_v",      'GGRI', n_getgroupindex);
-    cl->AddCmd("v_setrenderwireframe_b", 'SRWF', n_setrenderwireframe);
-    cl->AddCmd("b_getrenderwireframe_v", 'GRWF', n_getrenderwireframe);
+    cl->AddCmd("v_setmesh_s",               'SMSH', n_setmesh);
+    cl->AddCmd("s_getmesh_v",               'GMSH', n_getmesh);
+    cl->AddCmd("v_setgroupindex_i",         'SGRI', n_setgroupindex);
+    cl->AddCmd("i_getgroupindex_v",         'GGRI', n_getgroupindex);
+    cl->AddCmd("v_setmeshresourceloader_s", 'SMRL', n_setmeshresourceloader);
+    cl->AddCmd("s_getmeshresourceloader_v", 'GMRL', n_getmeshresourceloader);
+    cl->AddCmd("v_setrenderwireframe_b",    'SRWF', n_setrenderwireframe);
+    cl->AddCmd("b_getrenderwireframe_v",    'GRWF', n_getrenderwireframe);
     cl->EndCmds();
 }
 
@@ -112,6 +116,42 @@ n_getgroupindex(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    setmeshresourceloader
+    @input
+    o(ResourceLoader)
+    @output
+    v
+    @info
+    Set the NOH path for the mesh resource loader.
+*/
+static void
+n_setmeshresourceloader(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    self->SetMeshResourceLoader(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getmeshresourceloader
+    @input
+    v
+    @output
+    o(ResourceLoader)
+    @info
+    Get the NOH path for the mesh resource loader.
+*/
+static void
+n_getmeshresourceloader(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    cmd->Out()->SetS(self->GetMeshResourceLoader());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     setrenderwireframe
     @input
     b(WireframeFlag)
@@ -165,7 +205,13 @@ nShapeNode::SaveCmds(nPersistServer* ps)
         cmd->In()->SetI(this->GetGroupIndex());
         ps->PutCmd(cmd);
 
+        //--- setmeshresourceloader ---
+        cmd = ps->GetCmd(this, 'SMRL');
+        cmd->In()->SetS(this->GetMeshResourceLoader());
+        ps->PutCmd(cmd);
+
         return true;
     }
     return false;
 }
+

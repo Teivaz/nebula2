@@ -13,6 +13,7 @@ nNebulaClass(nResource, "nroot");
 */
 nResource::nResource() :
     refFileServer(kernelServer),
+    refResourceLoader(kernelServer),
     type(NONE),
     valid(false)
 {
@@ -75,6 +76,30 @@ const char*
 nResource::GetFilename() const
 {
     return this->filename.IsEmpty() ? 0 : this->filename.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sets a resource loader for the nResource
+
+    @param  resourceLoader    nResourceLoader instance
+*/
+void
+nResource::SetResourceLoader(const char* resourceLoaderPath)
+{
+    this->refResourceLoader = resourceLoaderPath;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Gets the currently-set resource loader
+
+    @return    the currently-set nResourceLoader
+*/
+const char*
+nResource::GetResourceLoader()
+{
+    return this->refResourceLoader.getname();
 }
 
 //------------------------------------------------------------------------------

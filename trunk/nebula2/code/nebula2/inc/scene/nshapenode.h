@@ -56,6 +56,10 @@ public:
     void SetGroupIndex(int i);
     /// get the mesh group index
     int GetGroupIndex() const;
+    /// set the NOH path to the mesh's resource loader
+    void SetMeshResourceLoader(const char* resourceLoaderPath);
+    /// get the mesh's resource loader
+    const char* GetMeshResourceLoader();
 
     /// turn wireframe rendering on/off
     void SetRenderWireframe(bool b);
@@ -79,6 +83,7 @@ protected:
     int groupIndex;
     nMesh2::Usage meshUsage;
     bool renderWireframe;
+    nDynAutoRef<nResourceLoader> refMeshResourceLoader;
 };
 
 //------------------------------------------------------------------------------

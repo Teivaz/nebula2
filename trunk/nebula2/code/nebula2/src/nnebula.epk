@@ -127,6 +127,12 @@ beginmodule nresourceserver
     setheaders { nresourceserver }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nresourceloader
+    setdir resource
+    setfiles { nresourceloader_main nresourceloader_cmds }
+    setheaders { nresourceloader }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nresource
     setdir resource
     setfiles { nresource_main }
@@ -211,7 +217,7 @@ begintarget nnebula
     settype lib
     setmods {
         nbinscriptserver ntclserver nnpkfileserver nvariableserver 
-        ninputserver nresourceserver nresource nntxfile nmesh2 
+        ninputserver nresourceserver nresourceloader nresource nntxfile nmesh2 
         ntexture2 nshader2 ngfxserver2
         nsceneserver nstdsceneserver 
         nscenenode ntransformnode nabstractshadernode 
