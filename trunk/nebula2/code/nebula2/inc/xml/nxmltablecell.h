@@ -94,8 +94,7 @@ nXmlTableCell::Set(const char* str)
 
     nArray<nString> tokens;
     this->valueAsString.Tokenize(" ,", tokens);
-    int i;
-    for (i = 0; (i < 4) && (i < tokens.Size()); i++)
+    for (int i = 0; (i < 4) && (i < tokens.Size()); i++)
     {
         this->valueAsVector[i] = float(atof(tokens[i].Get()));
     }
@@ -107,14 +106,15 @@ nXmlTableCell::Set(const char* str)
     };
     const char* cur;
     int index = -1;
-    while ((cur = boolOptions[i]) != 0)
+    int boIdx = 0;
+    while ((cur = boolOptions[boIdx]) != 0)
     {
         if (0 == n_stricmp(cur, str))
         {
-            index = i;
+            index = boIdx;
             break;
         }
-        i++;
+        boIdx++;
     }
     if (index != -1)
     {
