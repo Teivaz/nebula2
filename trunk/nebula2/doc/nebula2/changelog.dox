@@ -1,13 +1,47 @@
 /**
    @page Nebula2ChangeLog Nebula 2 Change Log
 
+A full changelog can be found online at
+http://nebuladevice.sourceforge.net/changelog2.html.gz
+
+@section Nebula2ChangesMay2004 May 2004 Release
+
+   - Two merges with Radon Labs including:
+      - A particle system.
+      - Optimization work.
+      - Rendering enhancements.
+      - A full blown in-game GUI system.
+      - Asynchronous loading of resources using threads.
+      - Totally rewritten shader library.
+      - Sound support using DirectSound.
+      - Video playback support using DirectShow.
+   - Parent window handle support on Windows.
+   - Screenshot support.
+   - Improved font rendering on Windows.
+   - A new build system with improved support for Windows, contributed
+     packages, and OS X.  Linux support is pending.
+   - More Linux and OS X support in general.
+   - Many documentation improvements.
+   - Many new contributed modules, including:
+      - Lua, Python and Ruby scripting support.
+      - Partial Java and .NET support.
+      - A port of the ChunkLOD terrain renderer.
+      - A geomipmapping terrain renderer.
+      - A 3D Studio Max exporter.
+      - Support for GameSWF, a Flash renderer.
+      - An OpenAL wrapper.
+      
+
 @section Nebula2ChangesSept022003 September 2, 2003 Release
 
    - Lots of documentation improvements
    - Reworked script API docs and made them part of the Doxygen output
-   - Fixed command line parsing to handle args with spaces in them by allowing them to be quoted.
-   - Build system support for Linux, MacOS X and the use of Visual Studio 6 on Windows.
-   - Non-rendering, non-input portions of Nebula compile and run on Linux and OS X.
+   - Fixed command line parsing to handle args with spaces in them by
+     allowing them to be quoted.
+   - Build system support for Linux, MacOS X and the use of Visual Studio 6
+     on Windows.
+   - Non-rendering, non-input portions of Nebula compile and run on Linux
+     and OS X.
    - Fix handling of alt-tab.
    - Fix /sys/servers/console.watch * crash.
    - nArg supports list args.
