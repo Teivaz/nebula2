@@ -16,7 +16,7 @@
 
     <dl>
      <dt>-startup</dt>
-       <dd>startup script to run, default is: home:bin/startup.py</dd>
+       <dd>startup script to run, default is: home:code/contrib/npythonserver/bin/startup.py</dd>
      <dt>-sceneserver</dt>
        <dd>scene server to use</dd>
      <dt>-scriptserver</dt>
@@ -24,7 +24,7 @@
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
 	 <dt>-stage</dt>
-		<dd>the light stage to load, default is: home:bin/stdlight.py </dd>
+		<dd>the light stage to load, default is: home:code/contrib/npythonserver/bin/stdlight.py </dd>
      <dt>-fullscreen</dt>
        <dd>if present, then npyviewer will go fullscreen</dd>
 	 <dt>-alwaysontop</dt>
@@ -129,9 +129,9 @@ main(int argc, const char** argv)
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "npythonserver");
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.py");
+    const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/npythonserver/bin/startup.py");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.py");
+    const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/npythonserver/bin/stdlight.py");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg           = args.GetBoolArg("-help");
@@ -152,13 +152,13 @@ main(int argc, const char** argv)
                "Command line args:\n"
                "------------------\n"
                "-help                   show this help\n"
-               "-startup                startup script to run, default is: home:bin/startup.py\n"
+               "-startup                startup script to run, default is: home:code/contrib/npythonserver/bin/startup.py\n"
                "-sceneserver            scene server to use, default is nmrtsceneserver\n"
                "-scriptserver           script server to use\n"
                "-gfxserver              graphics server to use; default is platform dependent\n"
                "-featureset             Which shader feature set to use; One of: dx7, dx8, dx8sb, dx9, dx9flt\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
-               "-stage                  light stage to load, default is: home:bin/stdlight.py\n"
+               "-stage                  light stage to load, default is: home:code/contrib/npythonserver/bin/stdlight.py\n"
                "-fullscreen             if present, then npyviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"
