@@ -512,7 +512,6 @@ bool
 nBinScriptServer::GetObject(nFile* file, nRoot*& val)
 {
     n_assert(file);
-    nRoot* obj;
 
     // get object string handle from file
     nString objHandle;
@@ -521,12 +520,12 @@ nBinScriptServer::GetObject(nFile* file, nRoot*& val)
         if (strcmp(objHandle.Get(), "null") == 0)
         {
             // special case null object
-            obj = 0;
+            val = 0;
         }
         else
         {
             // lookup object
-            obj = kernelServer->Lookup(objHandle.Get());
+            val = kernelServer->Lookup(objHandle.Get());
         }
         return true;
     }
@@ -679,7 +678,8 @@ nBinScriptServer::ReadBlock(nFile* file)
         }
         else
         {
-            n_error("nBinScriptServer::ReadBlock(): '_new %s %s' failed!\n", objClass, objName);
+            n_error("nBinScriptServer::ReadBlock(): '_new %s %s' failed!\n",
+                    objClass.Get(), objName.Get());
         }
     }
     else if ('_sel' == fourcc)
@@ -696,7 +696,8 @@ nBinScriptServer::ReadBlock(nFile* file)
         }
         else
         {
-            n_error("nBinScriptServer::ReadBlock(): '_sel %s' failed!\n", relPath);
+            n_error("nBinScriptServer::ReadBlock(): '_sel %s' failed!\n",
+                    relPath.Get());
         }
     }
     else

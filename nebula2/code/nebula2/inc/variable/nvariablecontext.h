@@ -125,3 +125,4 @@ nVariableContext::GetVariableAt(int index) const
 
 //------------------------------------------------------------------------------
 #endif
+

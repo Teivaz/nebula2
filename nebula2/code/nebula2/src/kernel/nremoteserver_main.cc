@@ -69,7 +69,7 @@ nRemoteServer::Close()
 
     // release all client context objects
     nClientContext* curContext;
-    while (curContext = (nClientContext*) this->clientContexts.RemHead())
+    while ((curContext = (nClientContext*) this->clientContexts.RemHead()))
     {
         n_delete curContext;
     }
@@ -196,7 +196,7 @@ nRemoteServer::Trigger()
             // for each pending message...
             nMsgNode* msg;
             int msgClientId;
-            while (msg = this->ipcServer->GetMsg(msgClientId))
+            while ((msg = this->ipcServer->GetMsg(msgClientId)))
             {
                 // make sure the message is a valid string
                 const char* msgPtr = (const char*) msg->GetMsgPtr();

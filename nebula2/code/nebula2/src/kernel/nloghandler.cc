@@ -25,7 +25,7 @@ nLogHandler::~nLogHandler()
 /**
 */
 void
-nLogHandler::Print(const char* str, va_list argList)
+nLogHandler::Print(const char* /* str*/, va_list /* argList */)
 {
     // empty
 }
@@ -34,7 +34,7 @@ nLogHandler::Print(const char* str, va_list argList)
 /**
 */
 void
-nLogHandler::Message(const char* str, va_list argList)
+nLogHandler::Message(const char* /* str */, va_list /* argList */)
 {
     // empty
 }
@@ -43,7 +43,7 @@ nLogHandler::Message(const char* str, va_list argList)
 /**
 */
 void
-nLogHandler::Error(const char* str, va_list argList)
+nLogHandler::Error(const char* /* str */, va_list /* argList */)
 {
     // empty
 }

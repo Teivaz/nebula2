@@ -61,7 +61,7 @@ nClass::~nClass(void)
     if (this->cmdList)
     {
         nCmdProto* cmdProto;
-        while (cmdProto = (nCmdProto*) this->cmdList->RemHead())
+        while ((cmdProto = (nCmdProto*) this->cmdList->RemHead()))
         {
             n_delete cmdProto;
         }

@@ -114,7 +114,7 @@ nNpkTocEntry::~nNpkTocEntry()
     if (this->entryList)
     {
         nNpkTocEntry* curEntry;
-        while (curEntry = (nNpkTocEntry*) this->entryList->RemHead())
+        while ((curEntry = (nNpkTocEntry*) this->entryList->RemHead()))
         {
             n_delete curEntry;
         }
