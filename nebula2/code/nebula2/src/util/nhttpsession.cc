@@ -2,6 +2,7 @@
 //  nhttpsession.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#if defined(__WIN32__) || defined(DOXYGEN)
 #include "kernel/nkernelserver.h"
 #include "util/nhttpsession.h"
 #include "util/nhttpresponsecracker.h"
@@ -339,6 +340,5 @@ nHttpSession::SendPostRequest(const nString& object,
     InternetCloseHandle(hRequest);
     return true;
 }
-
-
+#endif /* __WIN32__ or DOXYGEN */
 

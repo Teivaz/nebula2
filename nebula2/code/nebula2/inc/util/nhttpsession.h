@@ -1,5 +1,10 @@
 #ifndef N_HTTPSESSION_H
 #define N_HTTPSESSION_H
+#ifndef __WIN32__
+#error "nHttpSession not implemented!"
+#endif
+
+#if defined(__WIN32__) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 /**
     @class nHttpSession
@@ -202,5 +207,6 @@ nHttpSession::GetError() const
 }
 
 //------------------------------------------------------------------------------
+#endif /* __WIN32__ or DOXYGEN */
 #endif
 

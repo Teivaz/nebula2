@@ -1,5 +1,10 @@
 #ifndef N_HTTPRESPONSECRACKER_H
 #define N_HTTPRESPONSECRACKER_H
+#ifndef __WIN32__
+#error "nHttpResponseCracker not implemented!"
+#endif
+
+#if defined(__WIN32__) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 /**
     @class nHttpResponseCracker
@@ -82,5 +87,6 @@ nHttpResponseCracker::GetValue(const nString& key) const
 }
 
 //------------------------------------------------------------------------------
+#endif /* __WIN32__ or DOXYGEN */
 #endif
 
