@@ -20,7 +20,7 @@ nViewerApp::nViewerApp() :
     gfxServerClass("nglserver2"),
 #endif
     startupScript("home:bin/startup.tcl"),
-    sceneServerClass("nmrtsceneserver"),
+    sceneServerClass("nstdsceneserver"),
     isOpen(false),
     isOverlayEnabled(true),
     controlMode(Maya),

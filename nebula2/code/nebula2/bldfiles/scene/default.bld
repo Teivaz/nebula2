@@ -6,6 +6,7 @@
 #      nsceneserver
 #      nhdrsceneserver
 #      ninstsceneserver
+#      nstdsceneserver
 #      nmrtsceneserver
 #      nscenenode
 #      ntransformnode
@@ -53,6 +54,12 @@ beginmodule ninstsceneserver
     setdir scene
     setfiles { ninstsceneserver_main }
     setheaders { ninstsceneserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nstdsceneserver
+    setdir scene
+    setfiles { nstdsceneserver_main }
+    setheaders { nstdsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmrtsceneserver
