@@ -118,7 +118,7 @@ nCmdProto::~nCmdProto()
 
 //------------------------------------------------------------------------------
 /**
-    Create a new cmd object rom the internal template object. Optimization:
+    Create a new cmd object from the internal template object. Optimization:
     normally just returns the template object (if nobody else uses it), instead
     of creating a new object.
 
