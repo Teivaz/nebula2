@@ -1,5 +1,68 @@
 /**
     @defgroup Shadow Shadow Subsystem
 
-    ...
+    This page describes the Nebula stencil shadow system.
+
+    @section ShadowClasses Important Classes
+
+    Nebula2 provides several classes to simplify creating shadows.
+    Those of interest to a shadow system user are:
+
+    - nShadowNode : similar to an nShapeNode in that it requires a mesh (use 
+    nShadowNode::SetMesh to point to an appropriate .n3d2 or .nvx2 file); unlike
+    nShapeNode, nShadowNode doesn't display the actual mesh -- only its shadow,
+    that is, the projection of its silhouette onto the rest of the world's 
+    geometry.  
+       - If you want to see an actual object that appears to cast the shadow, 
+         rather than just the "naked" shadow itself, you'll need a corresponding
+         nShapeNode for each nShadowNode.  The advantage to separating
+         responsibilities like this is that a different mesh can be used for the
+         apparent (nShapeNode) and actual (nShadowNode) shadow casters, which is
+         useful because a simplified shadow casting mesh can speed the shadow
+         calculations and still look plausible.
+       - nShadowNode requires its meshes to have specified edges (see nMeshTool).
+       - nShadowNode uses only the "coord" component from its mesh's vertices,
+         so a mesh intended only for use by nShadowNodes can leave the other 
+         components out.
+       - It may be necessary to specify a bounding box with 
+         nSceneNode::SetLocalBox, since there is currently a hack in 
+         nShadowNode::RenderShadow that culls objects with small bounding boxes,
+         and the default size for the local bounding box is 0.
+
+    - nShadowSkinShapeNode : used instead of nShadowNode for skinned meshes. 
+      Works as above, except that:
+       - nShadowSkinShapeNode::SetSkinAnimator should also be called, to specify 
+         which nSkinAnimator controls the mesh.
+       - The mesh must also include the "weights" and "jindices" vertex
+         components.
+       - There's no bounding box hack.
+
+    - nShadowServer : manages resources and scene.
+       - Call nShadowServer::SetDebugShadows to make the actual meshes
+         used by the nShadow[SkinShape]Node visible, with color coded 
+         silhouette edges and lit & unlit faces.
+
+    @section ShadowHowTo Step By Step
+
+    The steps to get a shadow rendered are:
+    
+    - Create the nShadowServer (see e.g. nViewerApp::Open)
+    - For each shadow caster, create either an nShadowNode or an
+      nShadowSkinShapeNode, as described above.
+    - Every frame:
+       - Ensure that these nodes are attached to the scene graph where 
+         appropriate (for example, each could be the child of its
+         corresponding nShapeNode).
+       - Ensure that the scene server uses nSceneNode::HasShadow to identify
+         them as shadow nodes (see nSceneServer::SplitNodes).
+       - Do a shadow pass in the scene server (see
+         nMRTSceneServer::RenderShadow).
+
+    @section ShadowMisc Other Notes
+
+    Note that the Nebula shadow system doesn't take the "render the world
+    with only ambient light, then render the unshadowed areas again with 
+    light" approach, but rather the faster "display the shadow as a dark
+    patch" approach.  The disadvantage is that specular highlights are
+    still visible in shadowed areas (albeit darkened).
 */
