@@ -30,6 +30,7 @@ endmodule
 #===============================================================================
 beginmodule ndsound_wavfmt
     setdir audio3
+    setplatform win32
     setfiles { 
         ndsound_wavfmt
     }
