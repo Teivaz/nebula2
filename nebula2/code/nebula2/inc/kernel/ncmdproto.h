@@ -145,7 +145,6 @@ nCmdProto::IsValidArg(char c)
         case 'v':
         case 'b':
         case 'o':
-        case 'c':
         case 'l':
             return true;
         default:
