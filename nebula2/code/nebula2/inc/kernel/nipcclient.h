@@ -41,7 +41,7 @@ public:
     /// return true if currently connected
     bool IsConnected() const;
     /// send a message to the server
-    bool Send(nIpcBuffer& msg);
+    bool Send(const nIpcBuffer& msg);
     /// receive a message from the server (optionally blocks)
     bool Receive(nIpcBuffer& msg);
 

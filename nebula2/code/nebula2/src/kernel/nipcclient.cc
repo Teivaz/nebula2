@@ -195,7 +195,7 @@ nIpcClient::IsConnected() const
 /**
 */
 bool
-nIpcClient::Send(nIpcBuffer& msg)
+nIpcClient::Send(const nIpcBuffer& msg)
 {
     if (this->isConnected)
     {
