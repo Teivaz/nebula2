@@ -48,7 +48,7 @@ begintarget networkdemo
 endtarget
 
 beginworkspace networkdemo
-    setbinarydir ./code/contrib/networkdemo/bin/
+    setbinarydir ./code/contrib/nnetwork/bin/
     annotate "The Networkdemo workspace"
     settargets {
         networkdemo
