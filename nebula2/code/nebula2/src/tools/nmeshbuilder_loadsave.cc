@@ -286,8 +286,8 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
 /**
     Load mesh data with the provided nMeshLoader.
 
-    WARN: the egde data is not loaded from file, because it will be invalid when
-    data change. Use BuildEdges() to rebuild edge data.
+    WARNING: the edge data is not loaded from file, because it will be invalid when
+    data changes. Use CreateEdges() to rebuild edge data.
 */
 bool
 nMeshBuilder::LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const char* filename)
