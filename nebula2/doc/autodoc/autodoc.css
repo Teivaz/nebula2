@@ -1,0 +1,11 @@
+a:link { color: #0066CC; text-decoration: none; }
+a:visited { color: #436976; text-decoration: none; }
+a:hover{ color: #B52010; text-decoration: underline; }
+body, td { background: #ffffff; color: #000000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 70%; }
+li { list-style: square; color: #436970; margin-left: -2em; text-indent: 0; }
+p.nb{ background: #FFEAE8; border: #999999 dashed; border-width: 1px 0px; color: #000000; font-size: smaller; font-style: italic; padding-bottom: 2pt; padding-left: 1ex; padding-top: 2pt; }
+pre.code{ background: #FFFFCC; border: 1px #CCCCCC solid; color: #000000; margin-left: 2em; margin-right: 2em; padding-bottom: 2pt; padding-left: 1ex; padding-top: 2pt; }
+td.cmd{ padding-right: 2em; }
+pre {
+	font-size: 110%;
+}
