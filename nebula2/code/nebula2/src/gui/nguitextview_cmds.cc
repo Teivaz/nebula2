@@ -22,13 +22,13 @@ static void n_getselectionindex(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
-    nguitextlabel
+    nguitextview
 
     @cppclass
     nGuiTextView
 
     @superclass
-    nguiformlayout
+    nguiwidget
 
     @classinfo
     Simple widget which renders a vertical list of text lines.
