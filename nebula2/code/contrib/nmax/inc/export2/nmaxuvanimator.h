@@ -10,7 +10,7 @@
     @class nMaxUVAnimator
     @ingroup NebulaMaxExport2Contrib
 
-    @brief A class for exporting nVectorAnimator.
+    @brief A class for exporting nUvAnimator.
 */
 #include "export2/nmaxnode.h"
 
