@@ -71,13 +71,13 @@ beginmodule nkernel
     setdir kernel
     setmodtype cpplib
     setfiles {
-        nkernelserver nkernel nmemory nclass ncmdproto nhardrefserver
+        nkernelserver nkernel nmemory nclass ncmdproto ncmdprotonative nhardrefserver
         nipcminiserver nipcserver nipcclient nthread
         nloghandler ndefaultloghandler nwin32loghandler
     }
     setheaders {
         nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
-        ncmdproto ncmd narg nhardrefserver nref nautoref ndynautoref nhardref
+        ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref ndynautoref nhardref
         nevent nmutex nsocketdefs nthread nthreadsafelist
         nipcminiserver nipcserver nipcclient
         nloghandler ndefaultloghandler nwin32loghandler
