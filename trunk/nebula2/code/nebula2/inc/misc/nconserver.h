@@ -11,29 +11,11 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_LINEBUFFER_H
 #include "util/nlinebuffer.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_INPUTEVENT_H
 #include "input/ninputevent.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nConServer
-#include "kernel/ndefdllclass.h"
 
 class nInputServer;
 class nGfxServer2;
