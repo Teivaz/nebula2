@@ -318,7 +318,8 @@ int luacmd_PinThunk(lua_State* L)
 int luacmd_Sel(lua_State* L)
 {
     // takes 1 string as an argument
-    // returns 1 object or thunk table or nil
+    // returns false on incorrect usage, nil if there is no such object, 
+    // or true on success
     nRoot* o;
 
     if ((1 != lua_gettop(L)) || (!lua_isstring(L, -1) && !lua_istable(L, -1)))
