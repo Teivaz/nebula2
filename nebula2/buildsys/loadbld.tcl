@@ -619,7 +619,13 @@ proc endtarget { } {
     global target_block
 
     if {$current_block == $target_block} {
+        global tar
         global num_tars
+        if {$tar($num_tars,modules) == ""} {
+            ::log::log warning "The target $tar($num_tars,name) has no modules. Defaulting to 'dummy'."
+            set tar($num_tars,modules) "dummy"
+        }
+        # Now increment the global counter for the next target
         incr num_tars
         global noactive_block
         set current_block $noactive_block
