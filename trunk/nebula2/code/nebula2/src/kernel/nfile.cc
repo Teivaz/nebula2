@@ -239,7 +239,7 @@ nFile::Tell()
 
     @param byteOffset        the offset
     @param origin            position from which to count
-    @return                    success
+    @return                  success
 
     history:
      - 30-Jan-2002   peter    created
@@ -292,7 +292,7 @@ nFile::Seek(int byteOffset, nSeekType origin)
     writes a string to the file
       
     @param buffer        the string to write
-    @return                success
+    @return              success
 
     history:
      - 30-Jan-02   peter   created
@@ -322,8 +322,8 @@ nFile::PutS(const char* buffer)
     or up to the end of the buffer
 
     @param buffer            buffer for string
-    @param numChars            maximum number of chars to read
-    @return                    succes (false if eof is reached)
+    @param numChars          maximum number of chars to read
+    @return                  success (false if eof is reached)
 
     history:
      - 30-Jan-2002   peter    created
