@@ -36,6 +36,14 @@ beginmodule nguibutton
     setheaders nguibutton
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguicyclebutton
+    setdir gui
+    setfiles {
+        nguicyclebutton_main nguicyclebutton_cmds
+    }
+    setheaders nguicyclebutton
+endmodule
+#--------------------------------------------------------------------
 beginmodule nguilabel
     setdir gui
     setfiles {
@@ -254,13 +262,14 @@ begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
     setmodules {
-        nguiwidget nguiformlayout nguislider2 nguibutton nguilabel nguitextlabel 
-        nguitextbutton nguitextentry nguiipaddressentry nguicheckbutton 
-        nguicheckbuttongroup nguicheckbuttongroup2 nguitextview nguicmdentry nguitextureview
-        nguiwindow nguiclientwindow nguiconsolewindow nguidockwindow nguitexbrowserwindow
-        nguiwatcherwindow nguisysteminfowindow nguitooltip nguidirlister nguicategorybrowser
-        nguihorislidergroup nguifiledialog nguiskin nguitickerwidget nguitabbedlayout 
-        nguimessagebox nguiserver nguicanvas nguidiagramcanvas
+        nguiwidget nguiformlayout nguislider2 nguibutton nguicyclebutton
+        nguilabel nguitextlabel nguitextbutton nguitextentry nguiipaddressentry
+        nguicheckbutton nguicheckbuttongroup nguicheckbuttongroup2
+        nguitextview nguicmdentry nguitextureview nguiwindow nguiclientwindow
+        nguiconsolewindow nguidockwindow nguitexbrowserwindow nguiwatcherwindow
+        nguisysteminfowindow nguitooltip nguidirlister nguicategorybrowser
+        nguihorislidergroup nguifiledialog nguiskin nguitickerwidget
+        nguitabbedlayout nguimessagebox nguiserver nguicanvas nguidiagramcanvas
     }
 endtarget
 
