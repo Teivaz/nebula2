@@ -463,10 +463,10 @@ proc generate { wslist } {
 
 #-------------------------------------------------------------------------------
 #   description
-#   Output a description of this generator.                                     
+#   Return a description of this generator.                                     
 #-------------------------------------------------------------------------------
 proc description { } {
-    puts "Support for Apple's XCode IDE."
+    return "Support for Apple's XCode IDE."
 }
 
 #-------------------------------------------------------------------------------

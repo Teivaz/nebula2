@@ -405,11 +405,10 @@ proc generate { wslist } {
 
 #-------------------------------------------------------------------------------
 #   description
-#   Output a description of this generator.                                     #-------------------------------------------------------------------------------
+#   Return a description of this generator.
+#-------------------------------------------------------------------------------
 proc description { } {
-    puts "Support for Microsoft Visual Studio 8. This is also known as Visual"
-    puts "Studio .NET 2005. This generator also works with the Visual C++"
-    puts "2005 Express Edition."
+    return "Support for Microsoft Visual Studio 8. This is also known as Visual Studio .NET 2005. This generator also works with the Visual C++ 2005 Express Edition."
 }
 
 #-------------------------------------------------------------------------------
