@@ -300,8 +300,9 @@ CXXFLAGS += $(BASECFLAGS) $(N_WARNFLAGS) $(INCDIR)
 # Generic compiler targets
 #---------------------------------------------------------------------
 ifeq ($(N_COMPILER),__VC__)
-pkg/%.res: ../pkg/%.rc
+%.res: %.rc
 	$(RC) $(RCFLAGS) $(OBJ_OPT)$@ $(<)
 else
     %.res:
 endif
+

@@ -128,7 +128,7 @@ proc gen_target_make {name cid} {
         puts $cid "# Resource files"
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
-            addtolist rsrc_files "./pkg/res_$name.res"
+            addtolist rsrc_files "../pkg/res_$name.res"
         }
 
         # add any custom rsrc files
@@ -363,6 +363,7 @@ proc gen_makefile {name list_of_targets} {
     }
     
     puts $cid "\n"
+    close $cid
 }
 
 #-------------------------------------------------------------------------------
