@@ -15,46 +15,20 @@ class nShapeNode;
 class nSkinShapeNode;
 
 //-----------------------------------------------------------------------------
-class nMaxGroupMesh
+/**
+    @class nMaxSkinMeshData
+    @ingroup NebulaMaxExport2Contrib
+
+    @brief Storage which contains skinned shape node and its group map id in its
+           mesh data. It is needed when we do partitioning the mesh to specifies
+           the fragments and joint palette for the skinned shape node.
+*/
+struct nMaxSkinMeshData
 {
+    /// skinned shape node.
     nSkinShapeNode* node;
+    /// group map index.
     int groupIndex;
-public:
-    nMaxGroupMesh() : node(0), groupIndex(-1) {}
-
-    void SetNode(nSkinShapeNode* shape) { 
-        n_assert(shape);
-        this->node= shape; 
-    }
-
-    nSkinShapeNode* GetNode() const { 
-        return this->node; 
-    }
-
-    void SetGroupIndex (const int& index) { 
-        this->groupIndex = index; 
-    }
-
-    int GetGroupIndex() const { 
-        return this->groupIndex; 
-    }
-
-};
-
-//-----------------------------------------------------------------------------
-class nMaxMeshFragment
-{
-public:
-    struct Fragment
-    {
-        int groupMapIndex;
-        nArray<int> bonePaletteArray;
-    };
-
-    nSkinShapeNode* node;
-
-    nArray<Fragment> fragmentArray;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -62,7 +36,12 @@ public:
     @class nMaxMesh
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief A class for exporting nShapeNode and its derive classes.
+
+    It extracts mesh data such as vertex, normal, color, uvs and so on
+    from the 3dsmax mesh geometry node then stores that data to the given
+    mesh builder.
+
 */
 class nMaxMesh : public nMaxNode
 {
@@ -73,11 +52,9 @@ public:
     nSceneNode* Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool useIndivisualMesh);
 
     int GetNumGroupMeshes() const;
-    const nMaxGroupMesh& GetGroupMesh(const int index);
+    const nMaxSkinMeshData& GetGroupMesh(const int index);
 
     const nMeshBuilder& GetLocalMeshBuilder();
-
-    static void BulldMeshFragments(nArray<nMaxMeshFragment>& meshFragmentArray);
 
     static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
 
@@ -112,10 +89,7 @@ protected:
     void GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &weights);
     //@}
 
-    //void SaveMeshFile(const char* nodeName);
     void SetMeshFile(nShapeNode* shapeNode, nString &nodeName, bool useIndivisualMesh);
-
-    void PartitionMesh();
 
 protected:
     int GetGroupIndex (nMeshBuilder *meshBuilder);
@@ -179,10 +153,13 @@ protected:
         VertexTangent = 0x08,
     };
 
+    /// vertex option of the mesh.
     uint vertexFlag;
 
+    /// check the given node is attached node which for nAttachmentNode.
     bool isAttachedNode;
 
+    /// 3dsmax geometry node which we extract the mesh data.
     INode* maxNode;
 
     ReferenceMaker *refMaker;
@@ -190,10 +167,13 @@ protected:
     BOOL deleteMesh;
     TriObject* triObj;
 
-    nMeshBuilder localMeshBuilder; /// used for local mesh file.
+    /// used for local mesh file.
+    nMeshBuilder localMeshBuilder; 
 
-    nArray<nMaxGroupMesh> groupMeshArray;
+    /// Array which contains meshes which extracted from this node.
+    nArray<nMaxSkinMeshData> skinmeshArray;
 
+    /// pivot matrix.
     Matrix3 pivMat;
 
 };
@@ -204,17 +184,17 @@ inline
 int 
 nMaxMesh::GetNumGroupMeshes() const
 {
-    return this->groupMeshArray.Size();
+    return this->skinmeshArray.Size();
 }
 //-----------------------------------------------------------------------------
 /**
 */
 inline
-const nMaxGroupMesh&
+const nMaxSkinMeshData&
 nMaxMesh::GetGroupMesh(const int index)
 {
     n_assert(index >= 0);
-    return this->groupMeshArray[index];
+    return this->skinmeshArray[index];
 }
 //-----------------------------------------------------------------------------
 /**

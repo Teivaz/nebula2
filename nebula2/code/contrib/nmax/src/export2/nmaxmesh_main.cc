@@ -16,6 +16,7 @@
 #include "export2/nmaxinterface.h"
 #include "export2/nmaxutil.h"
 #include "export2/nmaxcustattrib.h"
+#include "export2/nmaxskinpartitioner.h"
 
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
@@ -304,6 +305,11 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
 
 //-----------------------------------------------------------------------------
 /**
+    Create proper nebula scene node object.
+
+    @param inode 3dsmax geometry node for the mesh.
+
+    @return created nebula scene node object.
 */
 nSceneNode* nMaxMesh::CreateNebulaNode(INode* inode)
 {
@@ -399,9 +405,10 @@ nSceneNode* nMaxMesh::CreateNebulaNode(INode* inode)
     Get mesh and material data from the given node.
 
     @param inode
-    @param globalMeshBuilder
-    @param useIndivisualMesh
-    @return 
+    @param globalMeshBuilder mesh builder to merge each of mesh data into it.
+    @param useIndivisualMesh save mesh data per 3dsmax geometry node if it is true.
+
+    @return return created nebula object. 
 */
 nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool useIndivisualMesh)
 {
@@ -431,14 +438,8 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
     {
         // we have single material.
      
-        //nShapeNode* shapeNode = 0;
-
         nString nodename(inode->GetName());
 
-        //if (skinnedMesh)
-        //    shapeNode = (nShapeNode*)CreateNebulaObject("nskinshapenode", nodename.Get());
-        //else
-        //    shapeNode = (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
         createdNode = this->CreateNebulaNode(inode);
 
         nMeshBuilder* meshBuilder = (useIndivisualMesh ? &this->localMeshBuilder : globalMeshBuilder);
@@ -470,7 +471,7 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         //    shader += "default_skinned.fx";
         //    skinShapeNode->SetShader(nShapeNode::StringToFourCC("colr"), shader.Get());
 
-        //    nMaxGroupMesh groupMesh;
+        //    nMaxSkinMeshData groupMesh;
         //    groupMesh.SetNode(skinShapeNode);
         //    groupMesh.SetGroupIndex(baseGroupIndex);
 
@@ -515,7 +516,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         transformNode = (nTransformNode*)CreateNebulaObject("ntransformnode", inode->GetName());
 
         bbox3 parentLocalBox;
-        //nShapeNode* shapeNode = 0;
 
         for (int matIdx=0; matIdx<numMaterials; matIdx++)
         {
@@ -525,10 +525,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             nodename += "_";
             nodename.AppendInt(matIdx);
 
-            //if (skinnedMesh)
-            //    shapeNode = (nShapeNode*)CreateNebulaObject("nskinshapenode", nodename.Get());
-            //else
-            //    shapeNode = (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
             createdNode = this->CreateNebulaNode(inode);
 
             // build mesh.
@@ -567,7 +563,7 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             //    shader += "default_skinned.fx";
             //    skinShapeNode->SetShader(nShapeNode::StringToFourCC("colr"), shader.Get());
 
-            //    nMaxGroupMesh groupMesh;
+            //    nMaxSkinMeshData groupMesh;
             //    groupMesh.SetNode(skinShapeNode);
             //    groupMesh.SetGroupIndex(baseGroupIndex);
 
@@ -594,8 +590,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         // specifies local bouding box of multi-sub transform node's.
         transformNode->SetLocalBox(parentLocalBox);
         
-        
-        
         //nKernelServer::Instance()->PopCwd();
 
         createdNode = transformNode;
@@ -603,7 +597,12 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
 
     if (useIndivisualMesh)
     {
-        PartitionMesh();
+        //PartitionMesh();
+        nArray<nMaxMesh*> meshArray;
+        meshArray.Append(this);
+
+        nMaxSkinPartitioner skinPartitioner;
+        skinPartitioner.Partitioning(meshArray, this->localMeshBuilder);
     }
 
     //if(skinnedMesh)
@@ -1240,17 +1239,11 @@ void nMaxMesh::SetShapeGroup(nShapeNode* createdNode, int baseGroupIndex, int nu
         else
             skinShapeNode->SetSkinAnimator("../skinanimator");
 
-        //nString shader;
-        ////FIXME: get shader assign from nMaxOptions
-        //shader += "shaders:";
-        //shader += "default_skinned.fx";
-        //skinShapeNode->SetShader(nShapeNode::StringToFourCC("colr"), shader.Get());
+        nMaxSkinMeshData groupMesh;
+        groupMesh.node       = skinShapeNode;
+        groupMesh.groupIndex = baseGroupIndex;
 
-        nMaxGroupMesh groupMesh;
-        groupMesh.SetNode(skinShapeNode);
-        groupMesh.SetGroupIndex(baseGroupIndex);
-
-        this->groupMeshArray.Append(groupMesh);
+        this->skinmeshArray.Append(groupMesh);
     }
     else
     {
