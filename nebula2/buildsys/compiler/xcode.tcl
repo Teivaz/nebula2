@@ -442,7 +442,7 @@ proc gen_xcode { workspace } {
 #   "main"
 #-------------------------------------------------------------------------------
 
-proc generate {} {
+proc generate { wslist } {
     global platform
     
     if { $platform == "macosx" }  {
@@ -453,7 +453,7 @@ proc generate {} {
         set outpath     ./bin
         set interpath   $xcodepath/inter
 
-        foreach workspace [get_workspaces]  {
+        foreach workspace [get_workspaces $wslist]  {
             use_workspace $workspace $xcodepath $outpath $interpath
             gen_xcode $workspace
         }

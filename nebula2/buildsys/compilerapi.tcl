@@ -73,13 +73,18 @@ global cur_workpacepath
 #  Retrieves a list of all valid workspace names.  Only proc that may be
 #  called before setting the current workspace.
 #----------------------------------------------------------------------------
-proc get_workspaces { } {
+proc get_workspaces { wslist } {
     global wspace
     global num_wspaces
 
     set wlist ""
 
     for {set i 0} {$i < $num_wspaces} {incr i} {
+        if {$wslist != ""} {
+            if {[lsearch $wslist $wspace($i,name)] == -1} {
+                break
+            }
+        }
         addtolist wlist $wspace($i,name)
     }
     return $wlist
@@ -792,10 +797,15 @@ proc pathto {pathfile} {
 #  add_pkgs
 #  Add the pkg_ files to the module list
 #----------------------------------------------------------------------------
-proc add_pkgs {} {
+proc add_pkgs { wslist } {
     global wspace
     global num_wspaces
     for {set i 0} {$i < $num_wspaces} {incr i} {
+        if {$wslist != ""} {
+            if {[lsearch $wslist $wspace($i,name)] == -1} {
+                break
+            }
+        }
         foreach target $wspace($i,targets) {
             if {($wspace($i,$target,type) != "lib") && ([llength $wspace($i,$target,pakmods)] > 0)} {
                 lappend wspace($i,$target,modules) pkg_$target

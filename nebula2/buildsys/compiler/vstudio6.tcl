@@ -416,13 +416,13 @@ proc gen_dsw { name } {
 #   gen_workspace 
 #   Generates the .dsp and .dsw file for all workspaces
 #-------------------------------------------------------------------------------
-proc generate {} {
+proc generate { wslist } {
     
     set vstudiopath ./build/vstudio6
     set outputpath  ./bin
     set interpath   $vstudiopath/inter
     
-    foreach workspace [get_workspaces]  {    
+    foreach workspace [get_workspaces $wslist]  {    
         puts "Generating vstudio workspace file $workspace.dsw..."
 
         # let the buildsys know which workspace we are currently working
