@@ -29,5 +29,9 @@ begintarget nnebula
         nkeyanimator ntransformcurveanimator nuvanimator
         nprefserver nwin32prefserver
     }
+    settargetdeps {
+        nshadow
+        tinyxml
+    }
 endtarget
 

@@ -29,5 +29,7 @@ beginworkspace Nebula2
         nvideo
         ngui
         nnpktool
+        nshadow
+        tinyxml
     }
 endworkspace
