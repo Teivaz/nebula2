@@ -58,6 +58,7 @@ begintarget nmaxtoolbox
 endtarget
 #-------------------------------------------------------------------------------
 beginworkspace nmaxtoolbox
+   annotate "The workspace for the 3DS Max toolkit for Nebula2."
    settargets {
       nmaxbase 
       nmaxtoolbox
