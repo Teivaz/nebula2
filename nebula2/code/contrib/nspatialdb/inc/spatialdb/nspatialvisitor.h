@@ -1,6 +1,16 @@
 #ifndef N_SPATIALVISITOR_H
 #define N_SPATIALVISITOR_H
 
+#include "mathlib/vector.h"
+#include "mathlib/matrix.h"
+
+#include "util/narray.h"
+
+
+class nSpatialSector;
+class nSpatialElement;
+class nGfxServer2;
+
 /**
     @class nSpatialVisitor
     @ingroup NSpatialDBContribModule
@@ -9,10 +19,14 @@
 */
 class nSpatialVisitor {
 public:
-    nSpatialVisitor() {
+    typedef nArray<nSpatialElement *> SpatialElements;
+
+    nSpatialVisitor() : m_gfxdebug(NULL) {
     }
     ~nSpatialVisitor() {
     }
+
+    virtual void Reset();
 
     /** process a sector-override this to do your special spatial culling
         This function will Visit() for each spatial element or sector it decides
@@ -34,7 +48,14 @@ public:
         Mainly used by hierarchy elements. */
     virtual bool ContainmentTest(nSpatialElement *visitee) = 0;
 
+    /** @brief Specify gfxserver to use for debug visualization.
+        Comes in handy for debugging wierd culling artifacts. You can turn off
+        debug visualization by setting this value to NULL (the default) */
+    void VisualizeDebug(nGfxServer2 *gfx);
+
 protected:
+    nGfxServer2 *m_gfxdebug;
+
     /**
        entering a new local space; the matrix given will transform from
        the current local system into the new space local coordinate
@@ -46,5 +67,8 @@ protected:
     /// leave a local space
     virtual void LeaveLocalSpace() = 0;
 };
+
+inline void nSpatialVisitor::VisualizeDebug(nGfxServer2 *gfx) { m_gfxdebug = gfx; }
+
 
 #endif
