@@ -550,7 +550,7 @@ proc begintarget {name} {
     set tar($num_tars,libs_win32_debug)   ""
     set tar($num_tars,libs_linux)         ""
     set tar($num_tars,libs_macosx)        ""
-    set tar($num_tars,platform)           ""
+    set tar($num_tars,platform)           "all"
     set tar($num_tars,moddeffile)         ""
 }
 

@@ -296,7 +296,7 @@ proc gen_sln { name } {
 
     #for each project in the list
     foreach target [get_targets] {
-        if { [test_tarplatform $target $platform ] } {
+        if { ![test_tarplatform $target $platform ] } {
             continue
         }
 
@@ -317,7 +317,7 @@ proc gen_sln { name } {
     foreach target [get_targets] {
         set depcount 0
         foreach dep [get_tardeps $target] {
-            if {[test_tarplatform $dep $platform]} {
+            if {![test_tarplatform $dep $platform]} {
                 continue
             }
 
@@ -330,7 +330,7 @@ proc gen_sln { name } {
     # Configurations
     puts $cid "\tGlobalSection(ProjectConfiguration) = postSolution"
     foreach target [get_targets] {
-        if {[test_tarplatform $target $platform]} {
+        if {![test_tarplatform $target $platform]} {
             continue
         }
         puts $cid "\t\t{$targetuuids($target)}.Debug_Win32.ActiveCfg = Debug|Win32"
