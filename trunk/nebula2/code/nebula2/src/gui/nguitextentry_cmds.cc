@@ -12,6 +12,7 @@ static void n_setactive(void* slf, nCmd* cmd);
 static void n_getactive(void* slf, nCmd* cmd);
 static void n_setemptytext(void* slf, nCmd* cmd);
 static void n_getemptytext(void* slf, nCmd* cmd);
+static void n_setoverstrike(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -39,6 +40,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_getactive_v",         'GACT', n_getactive);
     cl->AddCmd("v_setemptytext_s",      'SEMT', n_setemptytext);
     cl->AddCmd("s_getemptytext_v",      'GEMT', n_getemptytext);
+    cl->AddCmd("v_setoverstrike_b",     'SOST', n_setoverstrike);
     cl->EndCmds();
 }
 
@@ -184,4 +186,22 @@ n_getemptytext(void* slf, nCmd* cmd)
 {
     nGuiTextEntry* self = (nGuiTextEntry*) slf;
     cmd->Out()->SetS(self->GetEmptyText());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setoverstrike
+    @input
+    b(defaultOverstrikeState)
+    @output
+    v
+    @info
+    Set whether the text entry has overstrike on or off by default.
+*/
+static void
+n_setoverstrike(void* slf, nCmd* cmd)
+{
+    nGuiTextEntry* self = (nGuiTextEntry*) slf;
+    self->SetOverstrike(cmd->In()->GetB());
 }
