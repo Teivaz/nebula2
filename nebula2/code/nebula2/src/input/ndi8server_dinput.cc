@@ -208,12 +208,12 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
             // set data format and axis properties
             diDev->SetDataFormat(&c_dfDIJoystick);
             di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE);
-		    di8SetDWordProp(diDev, DIPROP_AXISMODE,   DIPROPAXISMODE_ABS);
-		    di8SetDWordProp(diDev, DIPROP_DEADZONE,   250);
-		    di8SetDWordProp(diDev, DIPROP_SATURATION, 9999);
-		    
+            di8SetDWordProp(diDev, DIPROP_AXISMODE,   DIPROPAXISMODE_ABS);
+            di8SetDWordProp(diDev, DIPROP_DEADZONE,   250);
+            di8SetDWordProp(diDev, DIPROP_SATURATION, 9999);
+            
             // get the range and store in the device object
-		    di8GetRangeProp(diDev, DIPROP_RANGE, DIJOFS_X, minRange, maxRange);
+            di8GetRangeProp(diDev, DIPROP_RANGE, DIJOFS_X, minRange, maxRange);
             dev->SetRange(minRange, maxRange);
             break;
 
@@ -224,9 +224,9 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
         case nDI8Device::MOUSE:
             // set data format and axis properties
             diDev->SetDataFormat(&c_dfDIMouse2);
-    		di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE); 
-	    	di8SetDWordProp(diDev, DIPROP_AXISMODE, DIPROPAXISMODE_REL);
-		    dev->SetRange(-50, +50);
+            di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE); 
+            di8SetDWordProp(diDev, DIPROP_AXISMODE, DIPROPAXISMODE_REL);
+            dev->SetRange(-50, +50);
             break;
 
         default:

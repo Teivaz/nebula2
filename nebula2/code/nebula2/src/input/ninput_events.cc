@@ -72,17 +72,17 @@ nInputServer::FlushInput()
          curMapping;
          curMapping = (nInputMapping*) curMapping->GetSucc())
     {
-		curMapping->Clear();
-	}
+        curMapping->Clear();
+    }
 
-	// flush input states
-	nInputState* curState;
-	for (curState = (nInputState*) this->is_list.GetHead();
-		 curState;
-		 curState = (nInputState*) curState->GetSucc())
-	{
-		curState->Clear();
-	}
+    // flush input states
+    nInputState* curState;
+    for (curState = (nInputState*) this->is_list.GetHead();
+         curState;
+         curState = (nInputState*) curState->GetSucc())
+    {
+        curState->Clear();
+    }
 }
 
 //------------------------------------------------------------------------------

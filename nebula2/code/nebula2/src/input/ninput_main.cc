@@ -350,21 +350,21 @@ float nInputServer::GetDoubleClickTime(void)
     Do the usual per frame stuff, especially mapping raw events
     to cooked input states.
 
-    09-Mar-99   floh    created
-    22-Jul-99   floh    + nInputState-Handling
-    26-Nov-99   floh    + oops, boeser Bug, innerhalb der Mapping-
-                          Schleife konnten Scripts ausgefuehrt werden,
-                          die die Mapping-Liste selbst aendern konnten,
-                          wodurch die Schleife vollkommen aus dem
-                          Tritt geriet und abstuerzen konnte!
-    10-Dec-99   floh    + Disabled-Events werden jetzt beim Mapping
-                          ignoriert (der Console-Server darf Tasten-
-                          Events nicht mehr loeschen, sondern disabled
-                          sie, das ganze, damit das Input-Recording auch
-                          bei offener Konsole klappt)
-    21-Dec-99   floh    + Modifier-Handling fuer Input-States
-                        + neues Script-Handling (nicht mehr
-                          generell bei Button-Down, sondern bei "Active"
+     - 09-Mar-99   floh    created
+     - 22-Jul-99   floh    + nInputState-Handling
+     - 26-Nov-99   floh    + oops, boeser Bug, innerhalb der Mapping-
+                             Schleife konnten Scripts ausgefuehrt werden,
+                             die die Mapping-Liste selbst aendern konnten,
+                             wodurch die Schleife vollkommen aus dem
+                             Tritt geriet und abstuerzen konnte!
+     - 10-Dec-99   floh    + Disabled-Events werden jetzt beim Mapping
+                             ignoriert (der Console-Server darf Tasten-
+                             Events nicht mehr loeschen, sondern disabled
+                             sie, das ganze, damit das Input-Recording auch
+                             bei offener Konsole klappt)
+     - 21-Dec-99   floh    + Modifier-Handling fuer Input-States
+                           + neues Script-Handling (nicht mehr
+                             generell bei Button-Down, sondern bei "Active"
 */
 void 
 nInputServer::Trigger(double time)
