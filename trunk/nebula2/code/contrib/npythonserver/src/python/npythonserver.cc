@@ -431,7 +431,11 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 
             case nArg::Type::String:
                 strPtr = arg->GetS();
-                strLen = strlen(strPtr);
+                if (strPtr != NULL)
+                    strLen = strlen(strPtr);
+                else
+                    strLen = 0
+
                 bufLen = sizeof(buf)-1;
             
                 file->PutS("r'");
