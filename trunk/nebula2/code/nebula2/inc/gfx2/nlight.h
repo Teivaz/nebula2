@@ -217,7 +217,7 @@ inline
 void
 nLight::SetSecondarySpecular(const vector4& c)
 {
-    this->secSpecular;
+    this->secSpecular = c;
 }
 
 //------------------------------------------------------------------------------
