@@ -61,6 +61,7 @@ set current_file  ""
 #    changedllextension    $ext
 #    setrtti               true|false
 #    setexceptions         true|false
+#    seticon               $filename
 #    setmodules            { $modulename $modulename ... }
 #    setbundles            { $bundlename $bundlename ... }
 #    settargetdeps         { $targetname $targetname ... }
@@ -297,6 +298,24 @@ proc setexceptions {allowexceptions} {
 }
 
 #----------------------------------------------------------------------------
+#  seticon $filename
+#  the filename of the target's icon (has no effect on library targets)
+#  nebula.ico is the default
+#----------------------------------------------------------------------------
+proc seticon {filename} {
+    global current_block
+    global target_block
+
+    if {$current_block == $target_block} {
+        global tar
+        global num_tars
+        set tar($num_tars,icon) $filename
+    } else {
+        puts "FAILED to seticon for currentblocktype $current_block"
+    }
+}
+
+#----------------------------------------------------------------------------
 #  setmodules $module_list
 #  sets the modules to a target or bundle
 #----------------------------------------------------------------------------
@@ -497,6 +516,7 @@ proc begintarget {name} {
     set tar($num_tars,dllextension) "dll"
     set tar($num_tars,rtti)        false
     set tar($num_tars,exceptions)  false
+    set tar($num_tars,icon)        "nebula.ico"
     set tar($num_tars,modules)     ""
     set tar($num_tars,bundles)     ""
     set tar($num_tars,targetdeps)  ""

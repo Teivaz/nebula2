@@ -196,6 +196,11 @@ endworkspace
       </tr>
 
       <tr>
+        <td>seticon</td> <td>filename</td> <td>nebula.ico</td> 
+        <td>Sets the icon for this target (ignored for libraries).</td>
+      </tr>
+
+      <tr>
         <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td> 
         <td>Sets the list of modules to be included in this target.</td>
       </tr>

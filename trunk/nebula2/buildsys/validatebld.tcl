@@ -107,6 +107,7 @@ proc dump_data { filename } {
         puts $cid "  DLL Extension: $tar($i,dllextension)"
         puts $cid "  Enabled RTTI: $tar($i,rtti)"
         puts $cid "  Enabled Exceptions: $tar($i,exceptions)"
+        puts $cid "  Icon Filename: $tar($i,icon)"
 
         puts $cid "  Modules:"
         foreach module $tar($i,modules) {
@@ -339,6 +340,7 @@ proc dump_api_data { filename } {
             puts $cid ""
             puts $cid "    RTTI:       [get_rtti $target]"
             puts $cid "    Exceptions: [get_exceptions $target]"
+            puts $cid "    Icon Filename: [get_icon $target]"
             puts $cid "    ModDefFile: [get_moddeffile $target]"
             puts $cid "    DLL Extension: [get_dllextension $target]"
             puts $cid ""
