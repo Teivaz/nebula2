@@ -28,8 +28,9 @@ public:
     virtual ~nParticle();
 
     /// initializes all values and sets state to Used
-    void Initialize(nParticleEmitter* emitter, vector3& position, 
-        vector3& velocity, nTime birthTime, nTime lifeTime, float rotation);
+    void Initialize(nParticleEmitter* emitter, const vector3& position, 
+        const vector3& velocity, nTime birthTime, nTime lifeTime,
+        float rotation);
 
     /// update the particle
     virtual void Trigger(nTime curTime, const vector3& absAccel);
