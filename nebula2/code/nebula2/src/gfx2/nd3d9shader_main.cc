@@ -7,9 +7,80 @@
 #include "gfx2/nd3d9server.h"
 #include "gfx2/nd3d9texture.h"
 #include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
 #include "variable/nvariableserver.h"
 
 nNebulaClass(nD3D9Shader, "nshader2");
+
+//------------------------------------------------------------------------------
+// ID3DXInclude interface
+// class to handle includes within effect files
+class nD3D9ShaderInclude : public ID3DXInclude
+{
+public:
+    nD3D9ShaderInclude(nKernelServer* kernel, nPathString& sDir)
+    {
+        kernelServer = kernel;
+        shaderDir = sDir;
+    }
+    STDMETHOD(Open)(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
+    STDMETHOD(Close)(LPCVOID pData);
+private:
+    nKernelServer* kernelServer;
+    nPathString shaderDir;
+};
+
+HRESULT nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+{
+    nFile* file = this->kernelServer->GetFileServer()->NewFileObject();
+    if (!file)
+    {
+        return E_FAIL;
+    }
+
+    // open the file
+    // try absolute path first
+    if (!file->Open(pName, "r"))
+    {
+        // try in shader dir
+        this->shaderDir += pName;
+        if (!file->Open(this->shaderDir.Get(), "r"))
+        {
+            n_printf("nD3D9Shader: could not open include file '%s'!\n", pName);
+            delete file;
+            return E_FAIL;
+        }
+    }
+
+    // get size of file
+    file->Seek(0,nFile::END);
+    int fileSize = file->Tell();
+    file->Seek(0,nFile::START);
+
+    // allocate data for file and read it
+    void* buffer = n_malloc(fileSize);
+    if (!buffer)
+    {
+        delete file;
+        return E_FAIL;
+    }
+    file->Read(buffer, fileSize);
+
+    *ppData = buffer;
+    *pBytes = fileSize;
+
+    file->Close();
+    delete file;
+
+    return S_OK;
+}
+
+HRESULT nD3D9ShaderInclude::Close(LPCVOID pData)
+{
+    n_free((void*)pData);
+    return S_OK;
+}
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 /**
@@ -83,25 +154,53 @@ nD3D9Shader::Load()
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
 
-    // mangle path name
-    char mangledPath[N_MAXPATH];
-    this->refFileServer->ManglePath(this->GetFilename(), mangledPath, sizeof(mangledPath));
+    nFile* file = this->refFileServer->NewFileObject();
+    n_assert(file);
 
-    // load fx file...
+    // open the file
+    if (!file->Open(this->filename.Get(), "r"))
+    {
+        n_printf("nD3D9Shader: could not open file '%s'!\n", this->filename.Get());
+        delete file;
+        return false;
+    }
+
+    // get size of file
+    file->Seek(0,nFile::END);
+    int fileSize = file->Tell();
+    file->Seek(0,nFile::START);
+
+    // allocate data for file and read it
+    void* buffer = n_malloc(fileSize);
+    n_assert(buffer);
+    file->Read(buffer, fileSize); 
+    file->Close();   
+    delete file;
+    
     ID3DXBuffer* errorBuffer = 0;
     #if N_D3D9_DEBUG
         DWORD compileFlags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION;
     #else
         DWORD compileFlags = 0;
     #endif
-    hr = D3DXCreateEffectFromFile(d3d9Dev,          // pDevice
-                                  mangledPath,      // pSrcFile
-                                  NULL,             // pDefines
-                                  NULL,             // pInclude
-                                  compileFlags,     // Flags
-                                  NULL,             // pPool
-                                  &(this->effect),  // ppEffect
-                                  &errorBuffer);    // ppCompilationErrors
+
+    // create include file handler
+    nD3D9ShaderInclude includeHandler(kernelServer, this->filename.ExtractDirName());
+
+    // create effect
+    hr = D3DXCreateEffect(
+        d3d9Dev,            // pDevice
+        buffer,             // pFileData
+        fileSize,           // DataSize
+        NULL,               // pDefines
+        &includeHandler,    // pInclude
+        compileFlags,       // Flags
+        NULL,               // pPool
+        &(this->effect),    // ppEffect
+        &errorBuffer);      // ppCompilationErrors
+
+    n_free(buffer);
+
     if (FAILED(hr))
     {
         n_error("nD3D9Shader: failed to load fx file '%s' with:\n\n%s\n", 
