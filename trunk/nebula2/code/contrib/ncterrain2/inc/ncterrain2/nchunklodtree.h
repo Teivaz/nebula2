@@ -5,8 +5,8 @@
     @class nChunkLodTree
     @ingroup NCTerrain2
 
-    A tree of ChunkLOD nodes. Takes the path to a .chu file and
-    constructs a dynamically updated quadtree from it.
+    @brief A tree of ChunkLOD nodes. Takes the path to a <tt>.chu</tt> file
+    and constructs a dynamically updated quadtree from it.
 
     (C) 2003 RadonLabs GmbH
 */

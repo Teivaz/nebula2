@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nGenTerrainTexture
-    @ingroup Tools
+    @ingroup NCTerrain2Tools
 
-    Generate a terrain texture controlled by an xml config file from
-    an input bt file.
+    @brief Generate a terrain texture controlled by an xml config file from
+    an input BT file.
 
     (C) 2003 RadonLabs GmbH
 */    

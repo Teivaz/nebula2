@@ -5,7 +5,7 @@
     @class nTerrainNode
     @ingroup NCTerrain2
 
-    Scene graph node for the ncterrain2 package.
+    @brief Scene graph node for the ncterrain2 package.
 
     (C) 2003 RadonLabs GmbH
 */

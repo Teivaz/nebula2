@@ -5,7 +5,7 @@
     @class nCLODEventHandler
     @ingroup NCTerrain2
 
-    Subclass and attach to nChunkLodTree to get notified about various
+    @brief Subclass and attach to nChunkLodTree to get notified about various
     events, like loading, unloading and rendering chunk lod nodes.
     
     (C) 2003 RadonLabs GmbH

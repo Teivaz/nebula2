@@ -3,13 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class nTqt2FileMaker
-    @ingroup Tools
+    @ingroup NCTerrain2Tools
 
-    Create a TQT2 Texture Quadtree file from a large tga image.
+    @brief Create a TQT2 Texture Quadtree file from a large tga image.
+
     Differences to Thatcher Ulrich's orginal tqt fileformat:
-    
-    Replace the jpeg compression with an uncompressed format (3 or 4 bytes
-    per pixel), or a compressed DDS format (done in a second pass).
+     - Replace the jpeg compression with an uncompressed format (3 or 4 bytes
+       per pixel), or a compressed DDS format (done in a second pass).
     
     (C) 2003 RadonLabs GmbH
 */
