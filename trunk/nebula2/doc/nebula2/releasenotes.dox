@@ -4,7 +4,11 @@
 
 @section Nebula2RNIntro Intro
 
-This is the first source code release of Nebula2. Please note that much 
+@note This page is historical and some information contained here may be
+out of date as the codebase has evolved significantly since the initial
+release of Nebula 2.
+
+This is the first source code release of Nebula 2. Please note that much 
 of this code is early, experimental, buggy and not optimized at all.
 
    - @ref Nebula2RNOpenSourceIntegration
@@ -23,7 +27,7 @@ of this code is early, experimental, buggy and not optimized at all.
       - @ref Nebula2RNTools
    - @ref Nebula2RNKnownBugs
 
-This is the first source code release of Nebula2. Please note that much
+This is the first source code release of Nebula 2. Please note that much
 of this code is early, experimental, buggy and not optimized at all.
 
 @section Nebula2RNOpenSourceIntegration Integration with Open Source Nebula
@@ -398,7 +402,7 @@ statically into the application and has a code size of about 160KB
 Xbox port, but it should prove useful for other things as well.
 Nebula comiles with MicroTcl as default, but can be configured to
 run under the classic Tcl environment as well (undef the
-@c __MICROTCL__ define in @c kernel/system.h).
+@c __MICROTCL__ define in <tt>kernel/system.h</tt>).
   
 @subsection Nebula2RNTools File Formats, Tools and Toolkit Classes
 
@@ -424,7 +428,7 @@ run under the classic Tcl environment as well (undef the
    - The nMeshBuilder class is a general geometry processing class which offers
      many useful operations on meshes. It's main purpose is to simplify writing
      command line tools or modelling package plugins which must generate, conert
-     or process mesh data for Nebula2. Some useful operations on meshes are 
+     or process mesh data for Nebula 2. Some useful operations on meshes are 
      @c Transform(), @c BuildTangents() (uses the NVMeshMender lib), @c Append(), @c Copy(), 
      @c Split() etc...
   
@@ -439,10 +443,10 @@ run under the classic Tcl environment as well (undef the
      data for Nebula.
   
    - My work focus has been on a Maya exporter plugin recently that's why some
-     of the command line tools may not be quite uptodate.
+     of the command line tools may not be quite up to date.
   
-   - @c ngfxserver.exe is now called @c nviewer.exe and is a proper Win32 application 
-     if compiled under Win32 (no ugly console window).
+   - @c ngfxserver.exe is now called @c nviewer.exe and is a proper Win32
+     application if compiled under Win32 (no ugly console window).
   
    - the @c nremoteshell.exe is a standalone remote control client, remote 
      functionality has been removed from @c nsh.exe.
@@ -451,34 +455,36 @@ run under the classic Tcl environment as well (undef the
 
 @section Nebula2RNKnownBugs Known Bugs
 
-@bug The code has been tested on GForce3, and briefly on GForce2,4MX and Radeon8500.
-Get the latest reference drivers! If vertex shaders/pixel shaders 1.1 are not
-supported, the current .fx files will fall back to software vertex shaders 
-and pixel rendering through the classical multitexture pipeline (this
-still gives you bumped per-pixel-lighting, but no specular highlights).
+@bug The code has been tested on GForce3, and briefly on GForce2,4MX and
+Radeon8500.  Get the latest reference drivers! If vertex shaders/pixel
+shaders 1.1 are not supported, the current .fx files will fall back to
+software vertex shaders and pixel rendering through the classical
+multitexture pipeline (this still gives you bumped per-pixel-lighting,
+but no specular highlights).
 
-@bug the tangent generation for per pixel lighting in nMeshBuilder sometimes has problems
-with too simple or too complex geometry
+@bug the tangent generation for per pixel lighting in nMeshBuilder
+sometimes has problems with too simple or too complex geometry
 
 @bug Nebula should have a consistent nTime datatype which could either be set 
 to float or double, depending on the applicaion needs.
 
 @bug memleak in nD3D9Server because of a non-released nD3D9Mesh
 
-@bug routing of shader parameters from scene graph to shader object should be more
-efficient
+@bug routing of shader parameters from scene graph to shader object
+should be more efficient
 
-@bug the ingame console sometimes display older chars past the current end-of-line
-  (this is a new bug)
+@bug the ingame console sometimes display older chars past the current
+end-of-line (this is a new bug)
 
 @bug transfer of joint palette data from character skeleton to shader should
 be more optimized
 
-@bug Weird rendering slowdown and stuttering on some systems with the nMRTSceneServer.
-Seems like the graphics subsystem or DX9 steps itself on the feet because if the
-console is opened rendering becomes smoother.
+@bug Weird rendering slowdown and stuttering on some systems with the
+nMRTSceneServer.  Seems like the graphics subsystem or DX9 steps itself
+on the feet because if the console is opened rendering becomes smoother.
 
 
 Thats it! Have fun,
 -Floh.
 */
+
