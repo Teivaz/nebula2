@@ -29,7 +29,7 @@ beginmodule nscriptablesector
 endmodule
 #-----------------------------------------------------------------------------
 beginmodule nsdbviewer
-    setdir spatialdb
+    setdir sdbviewer
     setfiles      { nsdbviewerapp nsdbviewer }
     setheaders    { nsdbviewerapp }
 endmodule

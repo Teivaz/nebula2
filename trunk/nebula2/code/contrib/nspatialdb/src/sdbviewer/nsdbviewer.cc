@@ -37,7 +37,7 @@
 */
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
-#include "spatialdb/nsdbviewerapp.h"
+#include "sdbviewer/nsdbviewerapp.h"
 
 #ifdef __WIN32__
 #include "kernel/nwin32loghandler.h"
