@@ -7,7 +7,7 @@ Nebula2 Compile Instructions
 The latest documentation is within the Doxygen generated docs.
 An online link to the latest compiling docs is here:
 
-http://nebuladevice.sourceforge.net/doc2/doxydoc/nebula2/html/Nebula2Compiling.html
+http://nebuladevice.cubik.org/documentation/nebula2/Nebula2Compiling.shtml
   
   
 
