@@ -5,6 +5,19 @@
     @class nGuiSlider2
     @ingroup Gui
     @brief A vertical or horizontal slider widget.
+
+    A slider requires that normal, pressed, and highlighted brushes be
+    defined for each of its two arrow buttons (for a horizontal slider,
+    arrowleft_n, arrowleft_p, arrowleft_h, and arrowright_n/p/h; for a
+    vertical slider, arrowup/down_n/p/h) and for its thumb aka drag
+    button (sliderknobhori_n/p/h or sliderknobvert_n/p/h); all are 
+    expected to be the same size.
+
+    Two optional background brushes are also supported (these lie under
+    the button brushes):
+    sliderbg fills the entire background of the slider, including the
+    area behind the arrow buttons.
+    slidertrack lies between the arrows.
     
     (C) 2004 RadonLabs GmbH
 */
@@ -37,8 +50,6 @@ public:
     void SetHorizontal(bool b);
     /// get horizontal flag
     bool GetHorizontal() const;
-    /// Determine how much of the slider the sliderbg brush will cover
-    void UseBigBackground(bool b);
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// called when widget is becoming visible
@@ -88,7 +99,6 @@ private:
     bool horizontal;
     vector2 startDragMousePos;
     float dragVisibleStart;
-    bool backgroundIsBig;
 };
 
 //------------------------------------------------------------------------------
@@ -111,15 +121,6 @@ nGuiSlider2::GetHorizontal() const
     return this->horizontal;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiSlider2::UseBigBackground(bool b)
-{
-    this->backgroundIsBig = b;
-}
 //------------------------------------------------------------------------------
 /**
 */

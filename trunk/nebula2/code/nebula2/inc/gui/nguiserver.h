@@ -98,6 +98,8 @@ public:
     void DrawBrush(const rectangle& r, nGuiBrush& brush);
     /// compute brush size in screen space, assume 1:1 texel/pixel mapping
     vector2 ComputeScreenSpaceBrushSize(const char* brushName);
+    /// return true iff the named brush exists in the current skin
+    bool BrushExists(const char* brushName);
     /// get the size of 1 pixel
     vector2 GetPixelSize() const;
     /// check if mouse is over a GUI element
@@ -138,7 +140,6 @@ public:
     nTime GetToolTipFadeInTime() const;
     /// display tooltip window
     void ShowToolTip(const char* text, const vector4& textColor);
-
 private:
     /// validate embedded rectangle mesh
     void ValidateMesh();
