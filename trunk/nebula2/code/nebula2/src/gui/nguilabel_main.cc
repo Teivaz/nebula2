@@ -68,15 +68,23 @@ nGuiLabel::Render()
 {
     if (this->IsShown())
     {
-        if (this->mouseOver && this->GetHighlightBrush())
+        nGuiBrush* brush = &this->defaultBrush;
+        if (!this->enabled)
         {
-            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
+            brush = &this->disabledBrush;
         }
-        else
+        else if (this->blinking)
         {
-            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
+            double time = nGuiServer::Instance()->GetTime();
+            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
+            {
+                brush = &this->highlightBrush;
+            }
         }
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), *brush);
         return true;
     }
     return false;
+
+    //return nGuiWidget::Render();
 }

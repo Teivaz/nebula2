@@ -21,9 +21,12 @@ nGuiSkin::nGuiSkin() :
     labelTextColor(0.0f, 0.0f, 0.0f, 1.0f),
     entryTextColor(0.0f, 0.0f, 0.0f, 1.0f),
     textColor(0.0f, 0.0f, 0.0f, 1.0f),
+    menuTextColor(0.0f, 0.0f, 0.0f, 1.0f),
     soundNames(NumSounds),
     sounds(NumSounds),
-    soundVolume(1.0f)
+    windowFont("GuiDefault"),
+    buttonFont("GuiSmall"),
+    labelFont("GuiSmall")
 {
     // empty
 }
@@ -90,6 +93,7 @@ nGuiSkin::ValidateBrush(nGuiResource* res)
     @param  tex     path to texture
     @param  uvPos   top left position of rectangle in uv space
     @param  uvSize  size of rectangle in uv space
+    @param  uvRect  uv coordinates (position and size 
     @param  color   modulation color
 */
 void
@@ -154,10 +158,13 @@ nGuiSkin::GetSoundObject(Sound snd)
             // initialize sound
             nSound3* sound = nAudioServer3::Instance()->NewSound();
             sound->SetStreaming(false);
-            sound->SetNumTracks(2);
+            sound->SetNumTracks(5);
             sound->SetLooping(false);
             sound->SetAmbient(true);
-            sound->SetVolume(this->soundVolume);
+            sound->SetVolume(1.0f);
+            sound->SetPriority(10);
+            sound->SetMinDist(500.0f);
+            sound->SetMaxDist(5000.0f);
             sound->SetFilename(this->soundNames[snd]);
             if (!sound->Load())
             {
@@ -175,17 +182,21 @@ nGuiSkin::GetSoundObject(Sound snd)
 /**
 */
 void
-nGuiSkin::SetSoundVolume(float volume)
+nGuiSkin::SetSoundVolume(Sound snd, float volume)
 {
-    n_assert( volume >= 0 && volume <= 1.0f );
-    this->soundVolume = volume;
-    int i;
-    int num = this->sounds.Size();
-    for (i = 0; i < num; i++)
+    nSound3* sound = this->GetSoundObject(snd);
+    if(sound)
     {
-        if (this->sounds[i].isvalid())
-        {
-            this->sounds[i]->SetVolume(volume);
-        }
+        sound->SetVolume(volume);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+float
+nGuiSkin::GetSoundVolume(Sound snd)
+{
+    nSound3* sound = this->GetSoundObject(snd);
+    return sound ? sound->GetVolume() : 0.0f;
 }

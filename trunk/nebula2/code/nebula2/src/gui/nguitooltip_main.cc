@@ -3,9 +3,10 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "gui/nguitooltip.h"
-#include "input/ninputserver.h"
 #include "resource/nresourceserver.h"
 #include "gfx2/ngfxserver2.h"
+#include "gui/nguiserver.h"
+#include "kernel/ntimeserver.h"
 
 nNebulaClass(nGuiToolTip, "nguitextlabel");
 
@@ -28,7 +29,10 @@ nNebulaClass(nGuiToolTip, "nguitextlabel");
 /**
 */
 nGuiToolTip::nGuiToolTip() :
-    refInputServer("/sys/servers/input")
+    openFirstFrame(false),
+    fadeinRequested(false),
+    fadeinRequestTime(0.0),
+    windowColor(1.0f, 1.0f, 1.0f, 1.0f)
 {
     // empty
 }
@@ -41,35 +45,6 @@ nGuiToolTip::~nGuiToolTip()
     // empty
 }
 
-//------------------------------------------------------------------------------
-/**
-    Make sure that the rectangle is within screen boundaries.
-*/
-void
-nGuiToolTip::ClipRect(rectangle& r) const
-{
-    vector2 size = r.v1 - r.v0;
-    if (r.v0.x < 0.0f)
-    {
-        r.v0.x = 0.0f;
-        r.v1.x = size.x;
-    }
-    else if (r.v1.x > 1.0f)
-    {
-        r.v1.x = 1.0f;
-        r.v0.x = 1.0f - size.x;
-    }
-    if (r.v0.y < 0.0f)
-    {
-        r.v0.y = 0.0f;
-        r.v1.y = size.y;
-    }
-    else if (r.v1.y > 1.0f)
-    {
-        r.v1.y = 1.0f;
-        r.v0.y = 1.0f - size.y;
-    }
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -79,8 +54,122 @@ nGuiToolTip::ClipRect(rectangle& r) const
 void
 nGuiToolTip::OnShow()
 {
+    this->UpdateRect();
+
+    this->openFirstFrame = true;
+    this->fadeinRequested = true;
+
+    nGuiTextLabel::OnShow();
+}
+
+
+
+//------------------------------------------------------------------------------
+/**
+    Update the tooltips position when the mouse moves.
+*/
+bool
+nGuiToolTip::OnMouseMoved(const vector2& mousePos)
+{
+    this->UpdateRect();
+    return nGuiTextLabel::OnMouseMoved(mousePos);
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiToolTip::SetText(const char* text)
+{    
+    nGuiTextLabel::SetText(text);
+    this->UpdateRect();
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nGuiToolTip::Render()
+{     
+    if (this->IsShown())
+    {
+        nGuiServer* guiServer = nGuiServer::Instance();
+
+        this->UpdateColor();
+
+        vector4 globalColor = guiServer->GetGlobalColor();
+        guiServer->SetGlobalColor(this->windowColor);
+
+        // take opened time stamp AFTER first rendering to take resource
+        // loading delays into account
+        if (this->openFirstFrame)
+        {
+            // NOTE: the use on nTimeServer is intentional, as the current
+            // frame time stamp is useless (would give fade delays when
+            // resources are loaded)
+            this->fadeinRequestTime = nTimeServer::Instance()->GetTime();
+            this->openFirstFrame = false;
+        }
+
+        nGuiTextLabel::Render();
+
+        // restore previous global color
+        guiServer->SetGlobalColor(globalColor);
+        return true;
+    }
+    return false;
+}
+
+
+/**
+    This computes the color (takes fade in and fade out effect into account).
+*/
+void
+nGuiToolTip::UpdateColor()
+{    
+    this->windowColor = vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // NOTE: the use on nTimeServer is intentional, as the current
+    // frame time stamp is useless (would give fade delays when
+    // resources are loaded)
+    nTime time = nTimeServer::Instance()->GetTime();
+    nTime fadeInTime = nGuiServer::Instance()->GetToolTipFadeInTime();
+
+    // to obscure resource loading delays, the actual fadein snapshot
+    // is only taken after the first rendering (where resources
+    // are demand-loaded)
+    if (this->openFirstFrame && (fadeInTime > 0.0f))
+    {
+        // window is always invisible in first frame
+        this->windowColor.w = 0.0f;
+    }
+    else if (this->fadeinRequested)
+    {
+        // fade in?
+        if ((fadeInTime > 0.01f) && (time < (this->fadeinRequestTime + fadeInTime)))
+        {
+            // fade alpha
+            float lerp = n_saturate((float) ((time - this->fadeinRequestTime) / fadeInTime));
+            this->windowColor.w *= lerp;
+        }
+        else
+        {
+            fadeinRequested = false;
+        }
+    }
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiToolTip::UpdateRect()
+{
     // get current mouse pos directly from input server
-    const vector2& mousePos = this->refInputServer->GetMousePos();
+    const vector2& mousePos = nGuiServer::Instance()->GetMousePos();
 
     // (re-)validate the font object
     if (!this->refFont.isvalid())
@@ -95,6 +184,7 @@ nGuiToolTip::OnShow()
     // get text size
     nGfxServer2::Instance()->SetFont(this->refFont.get());
     vector2 size = nGfxServer2::Instance()->GetTextExtent(this->GetText()) + this->border * 2.0f;
+    size.x += 0.0025f; // some extra space
 
     // compute tooltip offset to mouse hot spot
     // we assume a 32x32 mouse pointer
@@ -103,32 +193,8 @@ nGuiToolTip::OnShow()
 
     // update screen space rectangle
     rectangle r(mousePos + offset, mousePos + size + offset);
-    this->ClipRect(r);
+    nGuiServer::Instance()->MoveRectToVisibleArea(r);
+    
     this->SetRect(r);
-
-    nGuiTextLabel::OnShow();
 }
 
-//------------------------------------------------------------------------------
-/**
-    Update the tooltips position when the mouse moves.
-*/
-bool
-nGuiToolTip::OnMouseMoved(const vector2& mousePos)
-{
-    rectangle r = this->GetRect();
-    vector2 size = r.v1 - r.v0;
-
-    // compute tooltip offset to mouse hot spot
-    // we assume a 32x32 mouse pointer
-    const nDisplayMode2& mode = nGfxServer2::Instance()->GetDisplayMode();
-    vector2 offset(0.0f, 32.0f / mode.GetHeight());
-
-    r.v0 = mousePos + offset;
-    r.v1 = mousePos + size + offset;
-
-    this->ClipRect(r);
-    this->SetRect(r);
-
-    return nGuiTextLabel::OnMouseMoved(mousePos);
-}

@@ -20,6 +20,7 @@ nGuiTextEntry::nGuiTextEntry() :
     lineEditor(0),
     fileMode(false),
     overstrikeDefault(false),
+    passwordMode(false),
     initialCursorPos(Right)
 {
     this->SetMaxLength(48);
@@ -32,7 +33,7 @@ nGuiTextEntry::~nGuiTextEntry()
 {
     if (this->lineEditor)
     {
-        delete this->lineEditor;
+        n_delete(this->lineEditor);
         this->lineEditor = 0;
     }
 }
@@ -115,7 +116,7 @@ nGuiTextEntry::SetMaxLength(int l)
         delete this->lineEditor;
         this->lineEditor = 0;
     }
-    this->lineEditor = new nEditLine(l);
+    this->lineEditor = n_new(nEditLine(l));
     this->lineEditor->SetOverstrike(this->overstrikeDefault);
 }
 
@@ -175,7 +176,9 @@ nGuiTextEntry::SetActive(bool b)
     {
         if (!this->active)
         {
-            this->refInputServer->SetMute(true);
+            // FIXME: this may cause trouble when the
+            // widget isn't cleanly deactivated for some reason.
+            // this->refInputServer->SetMute(true);
             this->active = true;
             this->firstFrameActive = true;
             switch( this->initialCursorPos )
@@ -190,7 +193,7 @@ nGuiTextEntry::SetActive(bool b)
     }
     else
     {
-        this->refInputServer->SetMute(false);
+        // this->refInputServer->SetMute(false);
         this->active = false;
     }
 }
@@ -320,6 +323,42 @@ nGuiTextEntry::OnKeyDown(nKey key)
 
 //------------------------------------------------------------------------------
 /**
+    Returns a text for display in a password entry field.
+*/
+nString
+nGuiTextEntry::GetPwdText() const
+{
+    nString text = this->GetText();
+    nString pwdText;
+    int length = text.Length();
+    int i;
+    for (i = 0; i < length; i++)
+    {
+        pwdText.Append("#");
+    }
+    return pwdText;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the displayed text. When the widget is in password mode,
+    this will consist of dummy characters.
+*/
+nString
+nGuiTextEntry::GetDisplayedText() const
+{
+    if (this->passwordMode)
+    {
+        return this->GetPwdText();
+    }
+    else
+    {
+        return this->GetText();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Renders the text entry widget.
 */
 bool
@@ -375,7 +414,7 @@ nGuiTextEntry::Render()
         {
             // get x position and width of cursor
             int cursorIndex = this->lineEditor->GetCursorPos();
-            nString lineText = this->lineEditor->GetContent();
+            nString lineText = this->GetDisplayedText();
 
             // build a string from the character under the cursor
             char charUnderCursor[2];
@@ -427,8 +466,7 @@ nGuiTextEntry::Render()
         }
 
         // draw the text
-        nGuiServer::Instance()->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
-
+        nGuiServer::Instance()->DrawText(this->GetDisplayedText().Get(), this->color, screenSpaceRect, renderFlags);
         return true;
     }
     return false;

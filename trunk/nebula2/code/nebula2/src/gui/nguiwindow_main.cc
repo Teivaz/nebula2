@@ -419,9 +419,12 @@ nGuiWindow::Render()
 {
     if (this->IsShown())
     {
+        nGuiServer* guiServer = nGuiServer::Instance();
+
         this->UpdateWindowColor();
-        nGuiServer::Instance()->SetGlobalColor(this->windowColor);
-        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
+        vector4 globalColor = guiServer->GetGlobalColor();
+        guiServer->SetGlobalColor(this->windowColor);
+        guiServer->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
 
         // take opened time stamp AFTER first rendering to take resource
         // loading delays into account
@@ -436,6 +439,9 @@ nGuiWindow::Render()
 
         // render contained widgets
         nGuiWidget::Render();
+
+        // restore previous global color
+        guiServer->SetGlobalColor(globalColor);
         return true;
     }
     return false;

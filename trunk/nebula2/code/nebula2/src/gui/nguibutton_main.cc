@@ -30,29 +30,23 @@ nGuiButton::~nGuiButton()
     If mouse is over sensitive area, set the focus flag. Clear focus and
     pressed flag otherwise.
 */
-bool
-nGuiButton::OnMouseMoved(const vector2& mousePos)
+void
+nGuiButton::OnFrame()
 {
+    const vector2 mousePos = nGuiServer::Instance()->GetMousePos();
     if (this->Inside(mousePos) && this->GetOwnerWindow()->HasFocus())
     {
         this->focus = true;
     }
     else
     {
-        if (this->IsStickyMouse())
-        {
-            if (!this->pressed)
-            {
-                this->focus = false;
-            }
-        }
-        else
+        if (!this->IsStickyMouse())
         {
             this->focus = false;
             this->pressed = false;
         }
     }
-    return nGuiWidget::OnMouseMoved(mousePos);
+    return nGuiWidget::OnFrame();
 }
 
 //-----------------------------------------------------------------------------

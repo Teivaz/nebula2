@@ -16,7 +16,8 @@ nNebulaClass(nGuiMessageBox, "nguiclientwindow");
 nGuiMessageBox::nGuiMessageBox() :
     okText("Ok"),
     cancelText("Cancel"),
-    type(Ok)
+    type(Ok),
+    autoSize(false)
 {
     // empty
 }
@@ -41,14 +42,10 @@ nGuiMessageBox::OnShow()
     this->SetMovable(true);
     this->SetResizable(false);
     this->SetCloseButton(false);
-
-    // compute our size
-    vector2 windowSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize(this->GetDefaultBrush());
-    vector2 windowPos = vector2(0.5f, 0.5f) - (windowSize * 0.5f);
-    rectangle windowRect(windowPos, windowPos + windowSize);
-    this->SetMinSize(windowSize);
-    this->SetMaxSize(windowSize);
-    this->SetRect(windowRect);
+    if (0 == this->GetDefaultBrush())
+    {
+        this->SetDefaultBrush("bgmessagebox");
+    }
 
     nGuiClientWindow::OnShow();
 
@@ -56,9 +53,50 @@ nGuiMessageBox::OnShow()
     nGuiFormLayout* layout = this->refFormLayout.get();
     kernelServer->PushCwd(layout);
 
-    vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
+    // message text field
+    nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "TextLabel");
+    n_assert(textLabel);
+    textLabel->SetText(this->GetMessageText());
+    textLabel->SetFont(skin->GetWindowFont());
+    textLabel->SetColor(skin->GetTextColor());
+    textLabel->SetClipping(false);
+    textLabel->SetAlignment(nGuiTextLabel::Center);
+    textLabel->SetWordBreak(true);
+    textLabel->SetVCenter(true);
+    //textfield layout
+    layout->AttachForm(textLabel, nGuiFormLayout::Top, 0.0f);
 
+    if (!this->iconBrush.IsEmpty())
+    {
+        // add optional icon
+        vector2 iconSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize(this->iconBrush.Get());
+
+        nGuiButton* iconButton = (nGuiButton*) kernelServer->New("nguibutton", "iconbutton");
+        n_assert(iconButton);
+
+        iconButton->SetDisabledBrush(this->iconBrush.Get());
+        
+        iconButton->SetMinSize(iconSize);
+        iconButton->SetMaxSize(iconSize);
+        iconButton->Disable();  // use it as a icon - so disable it.
+        iconButton->OnShow();
+
+        this->refIconButton = iconButton;
+
+        layout->AttachForm(iconButton, nGuiFormLayout::Left, -0.007f);
+        layout->AttachForm(iconButton, nGuiFormLayout::Top, -0.01f);
+        //textfield layout
+        layout->AttachWidget(textLabel, nGuiFormLayout::Left, iconButton, 0.0f);
+    }
+    else
+    {    
+        //textfield layout
+        layout->AttachForm(textLabel, nGuiFormLayout::Left, 0.0f);
+    }
+  
+    vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
     // create ok button
+
     if (this->type != NoButtons)
     {
         if ((OkCancel == this->type) || (Ok == this->type))
@@ -66,7 +104,7 @@ nGuiMessageBox::OnShow()
             nGuiTextButton* okButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "OkButton");
             n_assert(okButton);
             okButton->SetText(this->GetOkText());
-            okButton->SetFont("GuiSmall");
+            okButton->SetFont(skin->GetButtonFont());
             okButton->SetAlignment(nGuiTextButton::Center);
             okButton->SetDefaultBrush("button_n");
             okButton->SetPressedBrush("button_p");
@@ -74,17 +112,29 @@ nGuiMessageBox::OnShow()
             okButton->SetMinSize(buttonSize);
             okButton->SetMaxSize(buttonSize);
             okButton->SetColor(skin->GetButtonTextColor());
-            if (Ok == this->type)
+            if (this->iconBrush.IsEmpty())
             {
-                layout->AttachPos(okButton, nGuiFormLayout::HCenter, 0.5f);
+                if (Ok == this->type)
+                {
+                    layout->AttachPos(okButton, nGuiFormLayout::HCenter, 0.5f);
+                }
+                else
+                {
+                    layout->AttachForm(okButton, nGuiFormLayout::Left, 0.005f);
+                }
             }
             else
             {
-                layout->AttachForm(okButton, nGuiFormLayout::Left, 0.005f);
+                layout->AttachWidget(okButton, nGuiFormLayout::Left, this->refIconButton, 0.005f);
             }
+
             layout->AttachForm(okButton, nGuiFormLayout::Bottom, 0.005f);
             okButton->OnShow();
             this->refOkButton = okButton;
+
+            //textfield layout
+            layout->AttachForm(textLabel, nGuiFormLayout::Right, 0.005f);
+            layout->AttachWidget(textLabel, nGuiFormLayout::Bottom, okButton, 0.005f);
         }
 
         // create cancel button
@@ -93,7 +143,7 @@ nGuiMessageBox::OnShow()
             nGuiTextButton* cancelButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "CancelButton");
             n_assert(cancelButton);
             cancelButton->SetText(this->GetCancelText());
-            cancelButton->SetFont("GuiSmall");
+            cancelButton->SetFont(skin->GetButtonFont());
             cancelButton->SetAlignment(nGuiTextButton::Center);
             cancelButton->SetDefaultBrush("button_n");
             cancelButton->SetPressedBrush("button_p");
@@ -107,55 +157,39 @@ nGuiMessageBox::OnShow()
             this->refCancelButton = cancelButton;
         }
     }
-
-    // message text field
-    nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "TextLabel");
-    n_assert(textLabel);
-    textLabel->SetText(this->GetMessageText());
-    textLabel->SetFont("GuiDefault");
-    textLabel->SetColor(skin->GetTextColor());
-    textLabel->SetClipping(false);
-    textLabel->SetAlignment(nGuiTextLabel::Center);
-    textLabel->SetWordBreak(true);
-    textLabel->SetVCenter(false);
-    textLabel->SetClipping(false);
-    layout->AttachForm(textLabel, nGuiFormLayout::Top, 0.0f);
-
-    if (!this->iconBrush.IsEmpty())
-    {
-        // add optional icon
-        vector2 iconSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize(this->iconBrush.Get());
-
-        nGuiButton* iconButton = (nGuiButton*) kernelServer->New("nguibutton", "iconbutton");
-        n_assert(iconButton);
-
-        iconButton->SetDisabledBrush(this->iconBrush.Get());
-
-        iconButton->SetMinSize(iconSize);
-        iconButton->SetMaxSize(iconSize);
-        iconButton->Disable();  // use it as a icon - so disable it.
-        iconButton->OnShow();
-
-        this->refIconButton = iconButton;
-
-        layout->AttachForm(iconButton, nGuiFormLayout::Left, 0.0f);
-        layout->AttachForm(iconButton, nGuiFormLayout::Top, 0.0f);
-    
-        //text
-        layout->AttachWidget(textLabel, nGuiFormLayout::Left, iconButton, 0.0f);
-    }
     else
-    {    
-        layout->AttachForm(textLabel, nGuiFormLayout::Left, 0.0f);
+    {
+        //textfield layout
+        layout->AttachForm(textLabel, nGuiFormLayout::Right, 0.005f);
+        layout->AttachForm(textLabel, nGuiFormLayout::Bottom, 0.005f);
     }
 
-    layout->AttachForm(textLabel, nGuiFormLayout::Right, 0.0f);
-    layout->AttachForm(textLabel, nGuiFormLayout::Bottom, 0.0f);
     textLabel->OnShow();
     this->refTextLabel = textLabel;
 
-    
     kernelServer->PopCwd();
+
+    // compute our size
+    vector2 windowSize;
+    windowSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize(this->GetDefaultBrush());
+    if (this->autoSize)
+    {
+        vector2 msgSize = textLabel->GetTextExtent() * 1.2f;
+        if (msgSize.x > windowSize.x)
+        {
+            windowSize.x = msgSize.x;
+        }
+        if (msgSize.y > windowSize.y)
+        {
+            windowSize.y = msgSize.y;
+        }
+    }
+    vector2 windowPos = vector2(0.5f, 0.5f) - (windowSize * 0.5f);
+    rectangle windowRect(windowPos, windowPos + windowSize);
+    this->SetMinSize(windowSize);
+    this->SetMaxSize(windowSize);
+    this->SetRect(windowRect);
+
     this->UpdateLayout(this->rect);
 }
 

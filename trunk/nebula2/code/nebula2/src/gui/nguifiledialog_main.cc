@@ -34,7 +34,9 @@ nNebulaClass(nGuiFileDialog, "nguiclientwindow");
 */
 nGuiFileDialog::nGuiFileDialog() :
     dirPath("home:"),
-    saveMode(false)
+    saveMode(false),
+    stripExtension(false),
+    pattern("*")
 {
     this->SetText(Ok, "Ok");
     this->SetText(Cancel, "Cancel");
@@ -169,9 +171,12 @@ nGuiFileDialog::OnShow()
     dirLister->SetIgnoreSubDirs(true);
     dirLister->SetIgnoreFiles(false);
     dirLister->SetSelectionEnabled(true);
+    dirLister->SetPattern(this->GetPattern());
+    dirLister->SetStripExtension(this->GetStripExtension());
     layout->AttachForm(dirLister, nGuiFormLayout::Top, 0.005f);
     layout->AttachForm(dirLister, nGuiFormLayout::Right, 0.005f);
     layout->AttachForm(dirLister, nGuiFormLayout::Left, 0.005f);
+
     if (this->GetSaveMode())
     {
         layout->AttachWidget(dirLister, nGuiFormLayout::Bottom, this->refTextEntry.get(), 0.005f);
@@ -180,7 +185,18 @@ nGuiFileDialog::OnShow()
     {
         layout->AttachWidget(dirLister, nGuiFormLayout::Bottom, okButton, 0.005f);
     }
+
+    if ( this->initialSelection )
+    {
+        dirLister->SetSelectionIndex(0);
+    }
+    else
+    {
+        dirLister->SetSelectionIndex(-1);
+    }
+
     dirLister->OnShow();
+
     this->refDirLister = dirLister;
 
     kernelServer->PopCwd();
@@ -191,7 +207,7 @@ nGuiFileDialog::OnShow()
         const char* curSel = this->refDirLister->GetSelection();
         if (curSel)
         {
-            this->refTextEntry->SetText(curSel);
+            this->refTextEntry->SetText("");
         }
     }
 
@@ -251,13 +267,20 @@ nGuiFileDialog::OnEvent(const nGuiEvent& event)
     {
         if (event.GetWidget() == this->refDeleteMessageBox.get())
         {
-            if(event.GetType() == nGuiEvent::DialogOk)
+            if (event.GetType() == nGuiEvent::DialogOk)
             {
                 // delete the item
-                if(this->DeleteFile())
+                if (this->DeleteFile())
                 {
                     this->refDirLister->OnShow();
-                    this->refTextEntry->SetText(this->refDirLister->GetSelection());
+                    if (this->refDirLister->GetSelection())
+                    {
+                        this->refTextEntry->SetText(this->refDirLister->GetSelection());
+                    }
+                    else
+                    {
+                        this->refTextEntry->SetText("");
+                    }
                 }
             }
             else if (event.GetType() == nGuiEvent::DialogCancel)
@@ -295,7 +318,7 @@ nGuiFileDialog::OnEvent(const nGuiEvent& event)
         (this->refDirLister->GetSelection()))
     {
         this->refTextEntry->SetText(this->refDirLister->GetSelection());
-            }
+    }
 
     // handle Ok, Delete and Cancel button
     if (event.GetType() == nGuiEvent::ButtonUp)
@@ -317,11 +340,13 @@ nGuiFileDialog::OnEvent(const nGuiEvent& event)
             this->HandleDelete();
         }
     }
-    else if (event.GetType() == nGuiEvent::DoubleClick)
+    else if (event.GetType() == nGuiEvent::SelectionDblClicked
+        && event.GetWidget() == this->refDirLister.get())
     {
-        // in load mode, accept double click on DirLister as Ok
-        if (event.GetWidget() == this->refDirLister)
+        // accept selection double click on DirLister as Ok
+        if (!this->GetSaveMode() || !this->refMessageBox.isvalid())
         {
+            // handle the save only once (the event is generated more than once, and so more than one msg are created)
             this->HandleOk();
         }
     }
@@ -372,6 +397,7 @@ nGuiFileDialog::HandleDelete()
         msgBox->SetType(nGuiMessageBox::OkCancel);
         msgBox->SetTitleBar(false);
         msgBox->SetDefaultBrush("bg300x150");
+        msgBox->SetModal(true);
         this->refDeleteMessageBox = msgBox;
         msgBox->Show();
     }
@@ -445,12 +471,18 @@ nGuiFileDialog::ExtractFilename()
     nString fname;
     if (this->refTextEntry.isvalid())
     {
-        this->SetFilename(this->refTextEntry->GetText());
+        fname = this->refTextEntry->GetText();
     }
     else
     {
-        this->SetFilename(this->refDirLister->GetSelection());
+        fname = this->refDirLister->GetSelection();
     }
+    if (!fname.IsEmpty() && !this->extension.IsEmpty())
+    {
+        fname.Append(".");
+        fname.Append(this->extension);
+    }
+    this->SetFilename(fname.Get());
 }
 
 //------------------------------------------------------------------------------
@@ -478,6 +510,7 @@ nGuiFileDialog::CheckFileExists()
         msgBox->SetType(nGuiMessageBox::OkCancel);
         msgBox->SetTitleBar(false);
         msgBox->SetDefaultBrush("bg300x150");
+        msgBox->SetModal(true);
         this->refMessageBox = msgBox;
         msgBox->Show();
         return true;

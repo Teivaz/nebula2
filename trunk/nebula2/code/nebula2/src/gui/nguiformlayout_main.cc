@@ -281,7 +281,40 @@ nGuiFormLayout::UpdateLayout(const rectangle& newRect)
         }
     }
 
-    // second pass: handle all layout rules which attach the widgets
+    // second pass: handle hcenter and vcenter
+    for (i = 0; i < num; i++)
+    {
+        const Rule& rule = this->attachRules[i];
+        if (Pos == rule.attachType)
+        {
+            rectangle widgetRect = rule.widget->GetRect();
+            switch (rule.edge)
+            {
+                case HCenter:
+                    {
+                        float center = newRect.width() * rule.offset;
+                        float halfSize = widgetRect.width() * 0.5f;
+                        widgetRect.v0.x = center - halfSize;
+                        widgetRect.v1.x = center + halfSize;
+                        this->FixMinMaxSize(rule.widget.get(), HCenter, widgetRect);
+                    }
+                    break;
+
+                case VCenter:
+                    {
+                        float center = newRect.height() * rule.offset;
+                        float halfSize = widgetRect.height() * 0.5f;
+                        widgetRect.v0.y = center - halfSize;
+                        widgetRect.v1.y = center + halfSize;
+                        this->FixMinMaxSize(rule.widget.get(), VCenter, widgetRect);
+                    }
+                    break;
+            }
+            rule.widget->SetRect(widgetRect);
+        }
+    }
+
+    // third pass: handle all layout rules which attach the widgets
     // to other widgets.
     for (i = 0; i < num; i++)
     {
