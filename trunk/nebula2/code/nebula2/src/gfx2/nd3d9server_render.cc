@@ -317,7 +317,7 @@ nD3D9Server::Draw()
             break;
 
         case D3DPT_LINESTRIP:
-            d3dNumPrimitives = this->indexRangeNum;
+            d3dNumPrimitives = this->indexRangeNum - 1;
             break;
 
         case D3DPT_TRIANGLELIST:
@@ -325,11 +325,11 @@ nD3D9Server::Draw()
             break;
 
         case D3DPT_TRIANGLESTRIP:
-            d3dNumPrimitives = this->indexRangeNum;
+            d3dNumPrimitives = this->indexRangeNum - 2;
             break;
 
         case D3DPT_TRIANGLEFAN:
-            d3dNumPrimitives = this->indexRangeNum;
+            d3dNumPrimitives = this->indexRangeNum - 2;
             break;
     }
 
