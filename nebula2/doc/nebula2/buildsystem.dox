@@ -8,6 +8,7 @@
         - @ref NebulaBuildSystemCommandsTarget
         - @ref NebulaBuildSystemCommandsModule
         - @ref NebulaBuildSystemCommandsBundle
+      - @ref NebulaBuildSystemFAQ
 
     @section NebulaBuildSystemIntro Introduction
 
@@ -439,4 +440,30 @@ endworkspace
       </tr>
 
     </table>
+
+
+    @section NebulaBuildSystemFAQ FAQ
+    
+    @subsection Error01 When I run update.tcl, I met the error, 'ERROR: target 'my_target' not defined!'
+
+    This error means that there's no correspond target in the bld file. 
+    Check the bld file, there's the target and target name is correct. 
+
+    @subsection Error02 When I run update.tcl, I met the error, '"can't read "modulename_to_sortedindex<my_module>": no such element in array' How do I correct this?
+                        
+    This error means that there's no module which has the name @e my_module.    
+    Also this error can be occured when the superclass name which is defined in nNebulaScriptClass
+    macro in the implementation file is incorrect.
+    Check the bld file first, the module is correctly defined, either check nNebulaScriptClass macro
+    in the .cc implementation file of @e my_module, the superclass name is correct. 
+
+    @code
+    // check the superclass name is correct either the module which contains superclass
+    // exist in any other bld files. 
+    nNebulaScriptClass("class", "superclass");
+    @endcode
+
+    
+     
+
 */
