@@ -14,10 +14,10 @@
 int
 main(int /*argc*/, const char** /*argv*/)
 {
-    nKernelServer* kernelServer = new nKernelServer();
+    nKernelServer* kernelServer = n_new (nKernelServer());
 
     n_printf("Goodbye Cruel World");
 
-    delete kernelServer;
+    n_delete (kernelServer);
     return 0;
 }
