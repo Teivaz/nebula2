@@ -4,11 +4,15 @@
 // this file contains subclasses of the various visitors that take the found
 // nSpatialElements and put them into an array container that is specified
 // by the user.  Note that all of these "GenArray" classes are designed such
-// that you perform a Reset(), then a Visit() to get a new set of found objects in
+// that you use them by performing a Reset(), then an Accept() on the target
+// sector/hierarchy to get a new set of found objects in
 // the array.  Without the Reset(), doing multiple visits will just append found
-// objects, which can be used in some situations where, for example, you want to get 
+// objects. This appending behavior can be used in some situations where, for example, you want to get 
 // all the objects found in two sphere regions.
 
+
+#include "spatialdb/nvisiblefrustumvisitor.h"
+#include "spatialdb/noccludedfrustumvisitor.h"
 
 /**
     @class nVisibleFrustumGenArray
@@ -20,8 +24,6 @@
     just override Visit() to append the given element to the array
 */
 
-#include "spatialdb/nvisiblefrustumvisitor.h"
-
 class nVisibleFrustumGenArray : public nVisibleFrustumVisitor {
 public:
     nVisibleFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, VisibleElements &foundarray)
@@ -31,9 +33,7 @@ public:
 
 	void Reset() { ClearArray(); nVisibleFrustumVisitor::Reset(); }
 
-    using nVisibleFrustumVisitor::Visit;
-
-	void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
+	void Visit(nSpatialElement *visitee) { m_visarray.Append(visitee); }
 
 
 protected:
@@ -42,125 +42,28 @@ protected:
     VisibleElements &m_visarray;
 };
 
-
-/**
-    @class nOccludingFrustumGenArray
-    @ingroup NSpatialDBContribModule
-    @brief Visits all elements visible in a view frustum and populates
-    an nArray with the visible elements.
-
-    This is a simple example of how to override visibilityvisitor.  We
-    just override Visit() to append the given element to the array
-*/
-
-#include "spatialdb/noccludingfrustumvisitor.h"
-
-class nOccludingFrustumGenArray : public nOccludingFrustumVisitor {
+class nOccludedFrustumGenArray : public nOccludedFrustumVisitor {
 public:
-    nOccludingFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, VisibleElements &foundarray)
-		: nOccludingFrustumVisitor(cam, camxform), m_visarray(foundarray) { }
+    nOccludedFrustumGenArray(const nCamera2 &cam, 
+        const matrix44 &camxform, 
+        nOcclusionVisitor &occlusion,
+        VisibleElements &foundarray)
+        : nOccludedFrustumVisitor(cam, camxform, occlusion), m_visarray(foundarray) { }
 
-	~nOccludingFrustumGenArray() { }
+    ~nOccludedFrustumGenArray() {}
 
-    virtual void Reset() { ClearArray(); }
+    void Reset() { ClearArray(); nOccludedFrustumVisitor::Reset(); }
+    void Reset(const nCamera2 &newcamera, const matrix44 &newxform)
+    { ClearArray(); nOccludedFrustumVisitor::Reset(newcamera, newxform); }
 
-    virtual void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
+
+    void Visit(nSpatialElement *visitee) { m_visarray.Append(visitee); }
 
 protected:
     void ClearArray() { m_visarray.Clear(); }
 
     VisibleElements &m_visarray;
 };
-
-
-/**
-    @class nVisibleSphereGenArray
-    @ingroup NSpatialDBContribModule
-    @brief Visits all elements visible in a sphere and populates an
-    nArray with the visible elements.
-
-    This is a simple example of how to override visibilityvisitor.  We
-    just override Visit() to append the given element to the array
-*/
-
-#include "spatialdb/nvisiblespherevisitor.h"
-
-class nVisibleSphereGenArray : public nVisibleSphereVisitor {
-public:
-    nVisibleSphereGenArray(const sphere &viewsphere, VisibleElements &foundarray)
-        : nVisibleSphereVisitor(viewsphere), m_visarray(foundarray) { }
-
-    ~nVisibleSphereGenArray() { }
-
-    virtual void Reset() { ClearArray(); }
-
-    virtual void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
-
-protected:
-    void ClearArray() { m_visarray.Clear(); }
-
-    VisibleElements &m_visarray;
-};
-
-/**
-    @class nOccludingSphereGenArray
-    @ingroup NSpatialDBContribModule
-    @brief Visits all elements visible in a sphere and populates an
-    nArray with the visible elements.
-
-    This is a simple example of how to override visibilityvisitor.  We
-    just override Visit() to append the given element to the array
-*/
-
-#include "spatialdb/noccludingspherevisitor.h"
-
-class nOccludingSphereGenArray : public nOccludingSphereVisitor {
-public:
-    nOccludingSphereGenArray(const sphere &viewsphere, VisibleElements &foundarray)
-        : nOccludingSphereVisitor(viewsphere), m_visarray(foundarray) { }
-
-    ~nOccludingSphereGenArray() { }
-
-    virtual void Reset() { ClearArray(); }
-
-    virtual void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
-
-protected:
-    void ClearArray() { m_visarray.Clear(); }
-
-    VisibleElements &m_visarray;
-};
-
-/**
-    @class nSpatialSphereGenArray
-    @ingroup NSpatialDBContribModule
-    @brief Visits all elements contained in a sphere and populates an
-    nArray with the visible elements.
-
-    This is a simple example of how to override spatialvisitor.  We
-    just override Visit() to append the given element to the array
-*/
-
-#include "spatialdb/nspatialspherevisitor.h"
-
-class nSpatialSphereGenArray : public nSpatialSphereVisitor {
-public:
-    nSpatialSphereGenArray(const sphere &viewsphere, SpatialElements &foundarray)
-        : nSpatialSphereVisitor(viewsphere), m_visarray(foundarray) { }
-
-    ~nSpatialSphereGenArray() { }
-
-    virtual void Reset() { ClearArray(); }
-
-    virtual void Visit(nSpatialElement *visitee, int recursedepth) { m_visarray.Append(visitee); }
-
-protected:
-    void ClearArray() { m_visarray.Clear(); }
-
-    SpatialElements &m_visarray;
-};
-
-
 
 #endif
 

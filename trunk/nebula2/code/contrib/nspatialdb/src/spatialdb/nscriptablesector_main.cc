@@ -17,10 +17,10 @@ nScriptableSector::nScriptableSector() : nSpatialSector()
 nScriptableSector::~nScriptableSector()
 {
     // trash all elements in the sector
-    for (int i=0; i < scriptelm_array.Size(); i++)
+    for (int i=0; i < m_scriptobject_array.Size(); i++)
     {
-        nSpatialElement *element = scriptelm_array[i];
-        nScriptableSectorObject *object = (nScriptableSectorObject *)element->GetPtr();
+        nScriptableSectorObject *object = m_scriptobject_array[i];
+        nSpatialElement *element = object->spatialinfo;
         RemoveElement(element);
         n_delete(object);
         n_delete(element);
@@ -30,8 +30,11 @@ nScriptableSector::~nScriptableSector()
 /// Create a renderable object and put it in the sector space
 nSpatialElement *nScriptableSector::AddVisibleObject(const char *objname, const char *scenenodetorender, const vector3 &pos, float radius)
 {
-    nSpatialElement *element = n_new(nSpatialElement);
+    bbox3 newbox(pos, vector3(radius, radius, radius));
+
+    nSpatialElement *element = n_new(nBBoxSpatialElement(0,newbox));
     nScriptableSectorObject *newobject = n_new(nScriptableSectorObject(AutoName(objname), element));
+    element->SetPtr(newobject);
     newobject->rendernode = scenenodetorender;
     if (newobject->rendernode.isvalid())
     {
@@ -39,10 +42,8 @@ nSpatialElement *nScriptableSector::AddVisibleObject(const char *objname, const 
         newobject->rendernode->RenderContextCreated(&(newobject->rc));
     }
 
-    element->SetPtr(newobject);
-
     this->AddElement(element);
-    UpdateElement(element, pos, radius);
+//    UpdateElement(element, newbox);
 
     matrix44 newtransform;
     newtransform.ident();
@@ -50,7 +51,7 @@ nSpatialElement *nScriptableSector::AddVisibleObject(const char *objname, const 
     newtransform.translate(pos);
     newobject->rc.SetTransform(newtransform);
 
-    scriptelm_array.PushBack(element);
+    m_scriptobject_array.PushBack(newobject);
 
     return element;
 }
@@ -59,17 +60,16 @@ nSpatialElement *nScriptableSector::AddVisibleObject(const char *objname, const 
 /// Create a (non-visible) occluder object from the specified bounding box
 nSpatialOccluderElement *nScriptableSector::AddOccludingObject(const char *objname, const vector3 &min, const vector3 &max)
 {
-    nSpatialOccluderElement *element = n_new(nSpatialOccluderElement);
+    vector3 boxcenter((min+max)*0.5), boxextents((max-min)*0.5);
+    bbox3 thisbbox(boxcenter, boxextents);
+
+    nSpatialOccluderElement *element = n_new(nSpatialOccluderElement(thisbbox));
     nScriptableSectorObject *newobject = n_new(nScriptableSectorObject(AutoName(objname), element));
     element->SetPtr(newobject);
 
     this->AddElement(element);
-    vector3 boxcenter((min+max)*0.5), boxextents((max-min)*0.5);
-    bbox3 thisbbox(boxcenter, boxextents);
 
-    UpdateElement(element, boxcenter, thisbbox);
-
-    scriptelm_array.PushBack(element);
+    m_scriptobject_array.PushBack(newobject);
 
     return element;
 }
@@ -78,15 +78,15 @@ nSpatialOccluderElement *nScriptableSector::AddOccludingObject(const char *objna
 /// Create a non-visible portal object that connects to another sector
 nSpatialPortalElement *nScriptableSector::AddPortalObject(const char *objname, const char *othersector,  const vector3 &pos, float radius)
 {
-    nSpatialPortalElement *element = n_new(nSpatialPortalElement(this, NULL));
+    bbox3 portalbox(pos, vector3(radius, radius, radius));
+
+    nSpatialPortalElement *element = n_new(nSpatialPortalElement(portalbox, this, NULL));
     nScriptableSectorObject *newobject = n_new(nScriptableSectorObject(AutoName(objname), element));
     element->SetPtr(newobject);
 
     this->AddElement(element);
 
-    UpdateElement(element, pos, radius);
-
-    scriptelm_array.PushBack(element);
+    m_scriptobject_array.PushBack(newobject);
 
     return element;
 }
@@ -96,17 +96,17 @@ nSpatialPortalElement *nScriptableSector::AddPortalObject(const char *objname, c
 bool nScriptableSector::RemObject(const char *objname)
 {
     // find the element in here somewhere...
-    for (int i=0; i < scriptelm_array.Size(); i++)
+    for (int i=0; i < m_scriptobject_array.Size(); i++)
     {
-        nSpatialElement *walknodes = scriptelm_array[i];
-        nScriptableSectorObject *walkobject = (nScriptableSectorObject *)walknodes->GetPtr();
-
-        if (walkobject->objectname == objname)
+        nScriptableSectorObject *object = m_scriptobject_array[i];
+        nSpatialElement *element = object->spatialinfo;
+                
+        if (object->objectname == objname)
         {
-            scriptelm_array.Erase(i);
-            RemoveElement(walknodes);
-            n_delete(walkobject);
-            n_delete(walknodes);
+            m_scriptobject_array.Erase(i);
+            RemoveElement(element);
+            n_delete(object);
+            n_delete(element);
             return true;
         }
     }

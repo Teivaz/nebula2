@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 #include "sdbviewer/nsdbviewerapp.h"
 #include "spatialdb/ngenarrayvisitors.h"
+#include "spatialdb/ngeometryocclusionvisitor.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
@@ -126,7 +127,7 @@ nSDBViewerApp::Open()
     this->refGfxServer->OpenDisplay();
 
     // define the input mapping
-    // late initialization of input server, because it relies on
+    // late initialization of input server, because it relies on 
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     if (NULL != this->GetInputScript())
@@ -219,7 +220,7 @@ void nSDBViewerApp::Close()
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
-    this->refSceneServer->Release();
+    this->refSceneServer->Release();    
     this->refInputServer->Release();
     this->refGfxServer->Release();
     this->refScriptServer->Release();
@@ -310,7 +311,7 @@ void nSDBViewerApp::Run()
                 if ( curobject->rendernode.isvalid() )
                     this->refSceneServer->Attach(&(curobject->rc));
             }
-
+            
             // attach camera markers-note that camera transforms were updated in UpdateObjectMarks()
             for (int camix=0; camix < nSDBViewerApp::CAMERACOUNT; camix++)
             {
@@ -319,7 +320,7 @@ void nSDBViewerApp::Run()
                 // turn off lighting for all cameras but the active one
                 nFloat4 camlight = {0.f,0.f,0.f,1.0f};
                 if (camix == m_activecamera)
-                {
+                {   
                     camlight.x = camlight.w = 1.0f;
                     camlight.y = camlight.z = 1.0f;
                 }
@@ -342,13 +343,18 @@ void nSDBViewerApp::Run()
                 identmatrix.ident();
                 this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
                 this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
-			    if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
+			    //if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
                 {
-                    nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visibleobjects);
-                    generator.VisualizeDebug(this->refGfxServer.get());
-                    generator.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
+                    //nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visibleobjects);
+                    nGeometryOcclusionVisitor occlusion(cameraxform0.pos_component());
+                    nOccludedFrustumGenArray generator(this->playcamera, cameraxform0, occlusion, visibleobjects);
+                    generator.StartVisualizeDebug(this->refGfxServer.get());
+                    // collect occluders on the first pass and do visibility on the second pass
+                    m_rootsector->Accept(occlusion, 3, VisitorFlags());
+                    m_rootsector->Accept(generator, 3, VisitorFlags());
+                    generator.EndVisualizeDebug();
                 }
-                if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
+/*                if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
                 {
                     nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, visibleobjects);
                     generator2.VisualizeDebug(this->refGfxServer.get());
@@ -377,7 +383,7 @@ void nSDBViewerApp::Run()
 			        nSpatialSphereGenArray generator(cameraviewsphere, visibleobjects);
 				    generator.VisualizeDebug(this->refGfxServer.get());
 		            generator.nSpatialSphereVisitor::Visit(m_rootsector.get(),3);
-			    }
+			    }*/
             }
 
             this->refSceneServer->PresentScene();            // present the frame
@@ -387,7 +393,7 @@ void nSDBViewerApp::Run()
 
         // update watchers
         nSDBViewerApp::CameraDescription &activecamera = this->markcameras[m_activecamera];
-        watchViewerPos->SetV4(vector4(activecamera.viewMatrix.M41, activecamera.viewMatrix.M42, activecamera.viewMatrix.M43,
+        watchViewerPos->SetV4(vector4(activecamera.viewMatrix.M41, activecamera.viewMatrix.M42, activecamera.viewMatrix.M43, 
             n_rad2deg(activecamera.viewerAngles.rho)));
 
         // flush input events
@@ -408,7 +414,7 @@ void
 nSDBViewerApp::HandleInput(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-
+    
     if (Maya == this->controlMode)
     {
         this->HandleInputMaya(frameTime);
@@ -446,7 +452,7 @@ nSDBViewerApp::HandleInput(float frameTime)
 void nSDBViewerApp::HandleInputPlay(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-
+    
     // process 'play' commands like move/turn for the active object
 
     CameraDescription &playcamera = markcameras[m_activecamera];
@@ -480,7 +486,7 @@ void nSDBViewerApp::HandleInputPlay(float frameTime)
 
     matrix44 dummy;
     playcamera.GenerateTransform(dummy);
-
+    
 }
 /// handle state change--mainly switching play object
 void nSDBViewerApp::HandlePlaySwitch(float framtTime)
@@ -497,7 +503,7 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
         m_activecamera = 2;
         m_viscamera = 2;
     }
-
+    
 	if (inputServer->GetButton("changeclipstyle"))
     {
 		switch (CurrentClipState)
@@ -578,7 +584,7 @@ nSDBViewerApp::HandleInputMaya(float frameTime)
     if (inputServer->GetButton("zoom"))
     {
         zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up");
+        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
     }
 
     // toggle console
@@ -710,7 +716,7 @@ nSDBViewerApp::HandleInputFly(float frameTime)
 //------------------------------------------------------------------------------
 /**
     Initialize the overlay GUI.
-*/
+*/  
 void
 nSDBViewerApp::InitOverlayGui()
 {
@@ -788,7 +794,7 @@ void nSDBViewerApp::UpdateObjectMarks(nVisibilityVisitor::VisibleElements &v)
     if (!m_rootsector.isvalid())
         return;
 
-	m_rootsector->BalanceTree();
+//	m_rootsector->BalanceTree();
     v.Clear();
 
 	// compute the stuff for an appropriate visitor
@@ -797,8 +803,9 @@ void nSDBViewerApp::UpdateObjectMarks(nVisibilityVisitor::VisibleElements &v)
     markcameras[m_viscamera].GenerateTransform(cameraxform0);
     sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
 
-	nVisibleFrustumGenArray generator1(this->playcamera, cameraxform0, v);
-	nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, v);
+    nGeometryOcclusionVisitor occlusion(cameraxform0.pos_component());
+	nOccludedFrustumGenArray generator1(this->playcamera, cameraxform0, occlusion, v);
+/*	nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, v);
 	nVisibleSphereGenArray generator3(cameraviewsphere, v);
 	nOccludingSphereGenArray generator4(cameraviewsphere, v);
     nSpatialSphereGenArray generator5(cameraviewsphere, v);
@@ -821,5 +828,7 @@ void nSDBViewerApp::UpdateObjectMarks(nVisibilityVisitor::VisibleElements &v)
             generator5.nSpatialSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
         break;
 	}
-
+*/
+    m_rootsector.get()->Accept(occlusion, 3, VisitorFlags() );
+    m_rootsector.get()->Accept(generator1, 3, VisitorFlags() );
 }

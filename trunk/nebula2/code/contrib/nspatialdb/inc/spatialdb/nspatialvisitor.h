@@ -6,8 +6,6 @@
 
 #include "util/narray.h"
 
-
-class nSpatialSector;
 class nSpatialElement;
 class nGfxServer2;
 
@@ -28,15 +26,10 @@ public:
 
     virtual void Reset();
 
-    /** process a sector-override this to do your special spatial culling
-        This function will Visit() for each spatial element or sector it decides
-        is in the specified region */
-    virtual void Visit(nSpatialSector *visitee,int recursiondepth=0);
-
     /** process an element that is known to be in the region (i.e., don't
         do a clip check)
     */
-    virtual void Visit(nSpatialElement *visitee, int recursiondepth=0);
+    virtual void Visit(nSpatialElement *visitee, int recursiondepth=0, VisitorFlags flags=EmptyVisitoFlags());
 
     /** Check if an element is in the region.
         Returns true if the element is in the region, false if the element

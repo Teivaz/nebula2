@@ -135,48 +135,56 @@ nScriptableSector::SaveCmds(nPersistServer* ps)
         // find the element in here somewhere...
         nCmd* cmd;
 
-        for (int i=0; i < scriptelm_array.Size(); i++)
+        for (int i=0; i < m_scriptobject_array.Size(); i++)
         {
-            nSpatialElement *walknodes = scriptelm_array[i];
-            nScriptableSectorObject *walkobject = (nScriptableSectorObject *)walknodes->GetPtr();
-
+            nScriptableSectorObject *object = m_scriptobject_array[i];
+            
             // dump this object out--what type is it?
-            nSpatialElement *se = walkobject->spatialinfo;
+            nSpatialElement *se = object->spatialinfo;
             if (se->GetSpatialType() & nSpatialElement::N_SPATIAL_OCCLUDER)
             {
                 // write out an occluder
+                n_assert(se->HasAABB());
+                bbox3 box = se->GetAABB();
+
                 cmd = ps->GetCmd(this, 'AOOB');
-                cmd->In()->SetS(walkobject->objectname.Get());
-                cmd->In()->SetF(se->minCorner.x);
-                cmd->In()->SetF(se->minCorner.y);
-                cmd->In()->SetF(se->minCorner.z);
-                cmd->In()->SetF(se->maxCorner.x);
-                cmd->In()->SetF(se->maxCorner.y);
-                cmd->In()->SetF(se->maxCorner.z);
+                cmd->In()->SetS(object->objectname.Get());
+                cmd->In()->SetF(box.vmin.x);
+                cmd->In()->SetF(box.vmin.y);
+                cmd->In()->SetF(box.vmin.z);
+                cmd->In()->SetF(box.vmax.x);
+                cmd->In()->SetF(box.vmax.y);
+                cmd->In()->SetF(box.vmax.z);
                 ps->PutCmd(cmd);
             }
             else if (se->GetSpatialType() & nSpatialElement::N_SPATIAL_PORTAL)
             {
                 // write out a portal object
+                n_assert(se->HasAABB());
+                bbox3 box = se->GetAABB();
+
                 cmd = ps->GetCmd(this, 'APOB');
-                cmd->In()->SetS(walkobject->objectname.Get());
+                cmd->In()->SetS(object->objectname.Get());
                 cmd->In()->SetS("argh");
-                cmd->In()->SetF(se->pos.x);
-                cmd->In()->SetF(se->pos.y);
-                cmd->In()->SetF(se->pos.z);
-                cmd->In()->SetF(se->radius);
+                cmd->In()->SetF(box.center().x);
+                cmd->In()->SetF(box.center().y);
+                cmd->In()->SetF(box.center().z);
+                cmd->In()->SetF(box.extents().x);
                 ps->PutCmd(cmd);
             }
             else
             {
                 // write out a visible object
+                n_assert(se->HasAABB());
+                bbox3 box = se->GetAABB();
+
                 cmd = ps->GetCmd(this, 'AVOB');
-                cmd->In()->SetS(walkobject->objectname.Get());
-                cmd->In()->SetS(walkobject->rendernode.getname());
-                cmd->In()->SetF(se->pos.x);
-                cmd->In()->SetF(se->pos.y);
-                cmd->In()->SetF(se->pos.z);
-                cmd->In()->SetF(se->radius);
+                cmd->In()->SetS(object->objectname.Get());
+                cmd->In()->SetS(object->rendernode.getname());
+                cmd->In()->SetF(box.center().x);
+                cmd->In()->SetF(box.center().y);
+                cmd->In()->SetF(box.center().z);
+                cmd->In()->SetF(box.extents().x);
                 ps->PutCmd(cmd);
             }
         }
