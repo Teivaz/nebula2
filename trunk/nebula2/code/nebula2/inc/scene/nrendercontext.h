@@ -15,6 +15,7 @@
 #include "variable/nvariablecontext.h"
 #endif
 
+#include "mathlib/matrix.h"
 //------------------------------------------------------------------------------
 class nRenderContext : public nVariableContext
 {
