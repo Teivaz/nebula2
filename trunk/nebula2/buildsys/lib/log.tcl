@@ -128,7 +128,7 @@ namespace eval ::log {
         alert     red
         critical  red
         error     red
-        warning   yellow
+        warning   orange
         notice    seagreen
         info      {}
         debug     lightsteelblue
