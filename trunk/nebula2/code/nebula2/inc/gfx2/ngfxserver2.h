@@ -529,6 +529,7 @@ nGfxServer2::StringToCursorVisibility(const char* str)
     { 
         n_error( "Invalid string '%s' passed to StringToCursorVisibility!", str );
     }
+    return nGfxServer2::None;
 }
 //------------------------------------------------------------------------------
 #endif
