@@ -83,7 +83,7 @@ public:
 private:
     static void ArgToStack( lua_State*, nArg* );
     static bool StackToArg( lua_State*, nArg*, int index );
-    static const char* StackToString( lua_State*, int );
+    static void StackToString( lua_State*, int, nString& );
     void reg_globalfunc(lua_CFunction, const char*);
     void write_select_statement(nFile *, nRoot *, nRoot *);
     bool ExecuteLuaChunk(nString&, int errfunc);
