@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShapeNode
-    @ingroup NebulaSceneSystem
+    @ingroup NebulaSceneSystemNodes
 
     A shape node is the simplest actually visible object in the scene node
     class hierarchy. It is derived from nMaterialNode, and thus inherits

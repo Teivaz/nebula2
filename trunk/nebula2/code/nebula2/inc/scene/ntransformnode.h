@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformNode
-    @ingroup NebulaSceneSystem
+    @ingroup NebulaSceneSystemNodes
 
     A transform node groups its child nodes and defines position, orientation 
     and scale of a scene node. Transformation hierarchies can be created 
