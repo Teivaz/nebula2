@@ -89,10 +89,12 @@ protected:
     properly so that spatial data structures have something to work with.
 
     Example:
-    <code>typedef BBoxSpatialElement<nSpatialPortal> nBoxPortalElement;
+    @code
+    typedef BBoxSpatialElement<nSpatialPortal> nBoxPortalElement;
+
     nBoxPortalElement portal(bboxlocation); // a bbox-based portal
     portal.Accept(viewfrustumvisitor);
-    </code>
+    @endcode
 
 */
 class nBBoxSpatialElement : public nSpatialElement
