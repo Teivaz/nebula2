@@ -11,6 +11,7 @@ static void n_saveas(void *, nCmd *);
 static void n_clone(void *, nCmd *);
 static void n_getrefcount(void *, nCmd *);
 static void n_getclass(void *, nCmd *);
+static void n_getclasses(void *, nCmd *);
 static void n_isa(void *, nCmd *);
 static void n_isinstanceof(void *, nCmd *);
 static void n_getcmds(void *, nCmd *);
@@ -29,11 +30,11 @@ static void n_getinstancesize(void*, nCmd*);
 
     @classinfo
     nobject is the superclass of all higher level Nebula classes
-    and defines this basic behaviour and properties for all 
+    and defines this basic behaviour and properties for all
     nobject derived classes:
     - runtime type information
     - object persistency
-    - language independent scripting interface 
+    - language independent scripting interface
 */
 void n_initcmds(nClass *cl)
 {
@@ -42,6 +43,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("o_clone_s",             'CLON', n_clone);
     cl->AddCmd("i_getrefcount_v",       'GRCT', n_getrefcount);
     cl->AddCmd("s_getclass_v",          'GCLS', n_getclass);
+    cl->AddCmd("l_getclasses_v",        'GCLL', n_getclasses);
     cl->AddCmd("b_isa_s",               'ISA_', n_isa);
     cl->AddCmd("b_isinstanceof_s",      'ISIO', n_isinstanceof);
     cl->AddCmd("l_getcmds_v",           'GMCD', n_getcmds);
@@ -82,10 +84,10 @@ static void n_saveas(void *o, nCmd *cmd)
 
     @info
     Creates a clone of this object.
-    - If the object's class hierarchy doesn't contain nroot then 
+    - If the object's class hierarchy doesn't contain nroot then
     'CloneName' is ignored. Otherwise 'CloneName' is the name given
     to the new cloned object.
-    - If the original object has child objects, they will be cloned 
+    - If the original object has child objects, they will be cloned
     as well.
 */
 static void n_clone(void *o, nCmd *cmd)
@@ -137,6 +139,46 @@ static void n_getclass(void *o, nCmd *cmd)
 //-------------------------------------------------------------------
 /**
     @cmd
+    getclasses
+
+    @input
+    v
+
+    @output
+    l (ClassnameList)
+
+    @info
+    Return the list of classes which the object is an instance of.
+*/
+static void n_getclasses(void *o, nCmd *cmd)
+{
+    nObject *self = (nObject *) o;
+    nClass* classObject;
+
+    // count classes
+    int numClasses = 0;
+    for (classObject = self->GetClass();
+         classObject;
+         classObject = classObject->GetSuperClass())
+    {
+        numClasses++;
+    }
+    // Allocate
+    nArg* args = n_new_array(nArg, numClasses);
+    // And fill
+    int i = 0;
+    classObject = self->GetClass();
+    do
+    {
+        args[i++].SetS(classObject->GetName());
+    }
+    while ((classObject = classObject->GetSuperClass()));
+    cmd->Out()->SetL(args, numClasses);
+}
+
+//-------------------------------------------------------------------
+/**
+    @cmd
     isa
 
     @input
@@ -154,8 +196,14 @@ static void n_isa(void *o, nCmd *cmd)
     nObject *self = (nObject *) o;
     const char *arg0 = cmd->In()->GetS();
     nClass *cl = nRoot::kernelServer->FindClass(arg0);
-    if (cl) cmd->Out()->SetB(self->IsA(cl));
-    else    cmd->Out()->SetB(false);
+    if (cl)
+    {
+        cmd->Out()->SetB(self->IsA(cl));
+    }
+    else
+    {
+        cmd->Out()->SetB(false);
+    }
 }
 
 //-------------------------------------------------------------------
@@ -178,8 +226,14 @@ static void n_isinstanceof(void *o, nCmd *cmd)
     nObject *self = (nObject *) o;
     const char *arg0 = cmd->In()->GetS();
     nClass *cl = nRoot::kernelServer->FindClass(arg0);
-    if (cl) cmd->Out()->SetB(self->IsInstanceOf(cl));
-    else    cmd->Out()->SetB(false);
+    if (cl)
+    {
+        cmd->Out()->SetB(self->IsInstanceOf(cl));
+    }
+    else
+    {
+        cmd->Out()->SetB(false);
+    }
 }
 
 //-------------------------------------------------------------------
@@ -199,30 +253,25 @@ static void n_isinstanceof(void *o, nCmd *cmd)
 static void n_getcmds(void *o, nCmd *cmd)
 {
     nObject *self = (nObject *) o;
+    nHashList cmdList;
+    nHashNode* node;
+    int numCmds = 0;
+
+    self->GetCmdProtos(&cmdList);
+    // count commands
+    for (node = cmdList.GetHead(); node; node = node->GetSucc())
     {
-        nHashList *cmd_list = n_new(nHashList);
-        nHashNode* node;
-        int num_cmds = 0;
-        
-        self->GetCmdProtos(cmd_list);
-        // count commands
-        for (node = cmd_list->GetHead();
-             node;
-             node = node->GetSucc())
-        {
-            num_cmds++;
-        }
-        
-        nArg* args = n_new_array(nArg,num_cmds);
-        int i = 0;
-        while ((node = cmd_list->RemHead()))
-        {
-            args[i++].SetS(((nCmdProto*) node->GetPtr())->GetProtoDef());
-            n_delete(node);
-        }
-        cmd->Out()->SetL(args, num_cmds);
-        n_delete(cmd_list);
+        numCmds++;
     }
+
+    nArg* args = n_new_array(nArg, numCmds);
+    int i = 0;
+    while ((node = cmdList.RemHead()))
+    {
+        args[i++].SetS(((nCmdProto*) node->GetPtr())->GetProtoDef());
+        n_delete(node);
+    }
+    cmd->Out()->SetL(args, numCmds);
 }
 
 //-------------------------------------------------------------------
