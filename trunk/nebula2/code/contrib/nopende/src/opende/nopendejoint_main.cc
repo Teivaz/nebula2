@@ -8,6 +8,8 @@ nNebulaScriptClass(nOpendeJoint, "nroot");
 #include "opende/nopendeworld.h"
 #include "opende/nopendebody.h"
 
+const int nOpendeJoint::NUM_JOINT_PARAMS = 11;
+
 const char* nOpendeJoint::JOINT_PARAM_NAMES[] = { 
             "lostop", "histop", "vel", "fmax",
             "fudgefactor", "bounce", "cfm",

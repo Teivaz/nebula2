@@ -65,7 +65,7 @@ class nOpendeJoint : public nRoot
     protected:
         nDynAutoRef<nOpendeWorld> ref_World;
     
-        static const int NUM_JOINT_PARAMS = 11;
+        static const int NUM_JOINT_PARAMS;
         static const char* JOINT_PARAM_NAMES[];
         
     private:
