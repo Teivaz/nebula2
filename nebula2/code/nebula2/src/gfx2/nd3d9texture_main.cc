@@ -271,22 +271,18 @@ nD3D9Texture::CreateRenderTarget()
             return false;
         }
 
-        // create render target surface
-        hr = d3d9Dev->CreateTexture(
-            this->width,                // Width
-            this->height,               // Height
-            1,                          // Levels
-            D3DUSAGE_DEPTHSTENCIL,      // Usage
-            depthFormat,                // Format
-            D3DPOOL_DEFAULT,            // Pool (must be default)
-            &(this->depthStencil),
-            NULL);
-        n_assert(SUCCEEDED(hr));
-        n_assert(this->depthStencil);
+        // create z-buffer surface
+        hr = d3d9Dev->CreateDepthStencilSurface(
+            this->width,
+            this->height,
+            depthFormat,
+            D3DMULTISAMPLE_NONE,
+            0,
+            false,
+            &(this->depthStencilSurface), NULL);
 
-        // get pointer to highest mipmap surface
-        hr = this->depthStencil->GetSurfaceLevel(0, &(this->depthStencilSurface));
         n_assert(SUCCEEDED(hr));
+        n_assert(this->depthStencilSurface);
     }
 
     return true;
