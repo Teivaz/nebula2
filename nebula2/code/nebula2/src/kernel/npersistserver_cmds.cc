@@ -14,18 +14,21 @@ static void n_setsaverclass(void*, nCmd*);
 static void n_getsaverclass(void*, nCmd*);
 
 //-------------------------------------------------------------------
-//  CLASS
-//  npersistserver
-//  SUPERCLASS
-//  nroot
-//  INFO
-//  The nPersistServer object can be found under /sys/servers/file 
-//  and offers some commands to influence the way how objects 
-//  are saved. All load/save operations of objects run finally through 
-//  the fileserver. That's all you need to know about it... 
-//  In addition the fileserver provides an interface to define and 
-//  resolve assigns. 
-//-------------------------------------------------------------------
+/**
+    @class
+    npersistserver
+
+    @superclass
+    nroot
+
+    @classinfo
+    The nPersistServer object can be found under /sys/servers/file 
+    and offers some commands to influence the way how objects 
+    are saved. All load/save operations of objects run finally through 
+    the fileserver. That's all you need to know about it... 
+    In addition the fileserver provides an interface to define and 
+    resolve assigns. 
+*/
 void n_initcmds(nClass *cl)
 {
     cl->BeginCmds();
@@ -37,21 +40,26 @@ void n_initcmds(nClass *cl)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  setsavelevel
-//  INPUT
-//  i (SaveLevel)
-//  OUTPUT
-//  v
-//  INFO
-//  Set the save level which filters commands to be saved.
-//  The default save level of 0 will let all commands through,
-//  a save level of 1 will only let commands with a level of
-//  1 or greater through. 
-//  This is useful for selectively saving a set of object attributes
-//  without having to write several save routines (savegames are
-//  an example).
-//-------------------------------------------------------------------
+/**
+    @cmd
+    setsavelevel
+
+    @input
+    i (SaveLevel)
+
+    @output
+    v
+
+    @info
+    Set the save level which filters commands to be saved.
+    The default save level of 0 will let all commands through,
+    a save level of 1 will only let commands with a level of
+    1 or greater through. 
+
+    This is useful for selectively saving a set of object attributes
+    without having to write several save routines (savegames are
+    an example).
+*/
 static void n_setsavelevel(void *o, nCmd *cmd)
 {
     nPersistServer *self = (nPersistServer *) o;
@@ -59,15 +67,19 @@ static void n_setsavelevel(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getsavelevel
-//  INPUT
-//  v
-//  OUTPUT
-//  i (SaveLevel)
-//  INFO
-//  Get the current save level.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getsavelevel
+
+    @input
+    v
+
+    @output
+    i (SaveLevel)
+
+    @info
+    Get the current save level.
+*/
 static void n_getsavelevel(void *o, nCmd *cmd)
 {
     nPersistServer *self = (nPersistServer *) o;
@@ -75,16 +87,20 @@ static void n_getsavelevel(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  setsaverclass
-//  INPUT
-//  s(SaverClass)
-//  OUTPUT
-//  v
-//  INFO
-//  Set name of nScriptServer derived class which should be
-//  used for saving objects.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    setsaverclass
+
+    @input
+    s(SaverClass)
+
+    @output
+    v
+
+    @info
+    Set name of nScriptServer derived class which should be
+    used for saving objects.
+*/
 static void n_setsaverclass(void* slf, nCmd* cmd)
 {
     nPersistServer* self = (nPersistServer*) slf;
@@ -92,15 +108,19 @@ static void n_setsaverclass(void* slf, nCmd* cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getsaverclass
-//  INPUT
-//  v
-//  OUTPUT
-//  s(SaverClass)
-//  INFO
-//  Get class name of saver nScriptServer.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getsaverclass
+
+    @input
+    v
+
+    @output
+    s(SaverClass)
+
+    @info
+    Get class name of saver nScriptServer.
+*/
 static void n_getsaverclass(void* slf, nCmd* cmd)
 {
     nPersistServer* self = (nPersistServer*) slf;

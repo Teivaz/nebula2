@@ -23,16 +23,20 @@ static void n_disableframetime(void *, nCmd *);
 static void n_getframetime(void *, nCmd *);
 
 //-------------------------------------------------------------------
-//  CLASS
-//  ntimeserver
-//  SUPERCLASS
-//  nroot
-//  INCLUDE
-//  kernel/ntimeserver.h
-//  INFO
-//  The ntimeserver object lives under the name /sys/servers/time
-//  and provides a central time source for Nebula. 
-//-------------------------------------------------------------------
+/**
+    @class
+    ntimeserver
+
+    @superclass
+    nroot
+
+    @include
+    kernel/ntimeserver.h
+
+    @info
+    The ntimeserver object lives under the name /sys/servers/time
+    and provides a central time source for Nebula. 
+*/
 void ntime_initcmds(nClass *cl)
 {
     cl->BeginCmds();
@@ -52,15 +56,19 @@ void ntime_initcmds(nClass *cl)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  resettime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Reset global time to 0.0.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    resettime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Reset global time to 0.0.
+*/
 static void n_resettime(void *o, nCmd *)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -68,15 +76,19 @@ static void n_resettime(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  stoptime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Freeze global time.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    stoptime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Freeze global time.
+*/
 static void n_stoptime(void *o, nCmd *)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -84,15 +96,19 @@ static void n_stoptime(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  starttime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Unfreeze global time.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    starttime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Unfreeze global time.
+*/
 static void n_starttime(void *o, nCmd *)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -100,16 +116,20 @@ static void n_starttime(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  gettime
-//  INPUT
-//  v
-//  OUTPUT
-//  f (Time)
-//  INFO
-//  Return current global time in seconds since the time server
-//  was created.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    gettime
+
+    @input
+    v
+
+    @output
+    f (Time)
+
+    @info
+    Return current global time in seconds since the time server
+    was created.
+*/
 static void n_gettime(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -120,15 +140,19 @@ static void n_gettime(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  settime
-//  INPUT
-//  f (Time)
-//  OUTPUT
-//  v
-//  INFO
-//  Set global time in seconds.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    settime
+
+    @input
+    f (Time)
+
+    @output
+    v
+
+    @info
+    Set global time in seconds.
+*/
 static void n_settime(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -136,18 +160,22 @@ static void n_settime(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  lockdeltat
-//  INPUT
-//  f (DeltaT)
-//  OUTPUT
-//  v
-//  INFO
-//  If DeltaT is greater then 0.0, the frame time will be advanced
-//  in steps of size DeltaT. A value of 0.0 switches back to the
-//  proper timing behaviour. Useful to lock virtual frame rate to
-//  a fixed value.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    lockdeltat
+
+    @input
+    f (DeltaT)
+
+    @output
+    v
+
+    @info
+    If DeltaT is greater then 0.0, the frame time will be advanced
+    in steps of size DeltaT. A value of 0.0 switches back to the
+    proper timing behaviour. Useful to lock virtual frame rate to
+    a fixed value.
+*/
 static void n_lockdeltat(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -155,17 +183,21 @@ static void n_lockdeltat(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  waitdeltat
-//  INPUT
-//  f (DeltaT)
-//  OUTPUT
-//  v
-//  INFO
-//  If DeltaT is greater then 0.0, then the time server will
-//  actually sleep this amount of time in each frame. This is
-//  usefull to simulate a slow machine.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    waitdeltat
+
+    @input
+    f (DeltaT)
+
+    @output
+    v
+
+    @info
+    If DeltaT is greater then 0.0, then the time server will
+    actually sleep this amount of time in each frame. This is
+    useful for simulating a slow machine.
+*/
 static void n_waitdeltat(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -173,15 +205,19 @@ static void n_waitdeltat(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getlockdeltat
-//  INPUT
-//  v
-//  OUTPUT
-//  f (DeltaT)
-//  INFO
-//  Return the value set by 'lockdeltat'.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getlockdeltat
+
+    @input
+    v
+
+    @output
+    f (DeltaT)
+
+    @info
+    Return the value set by 'lockdeltat'.
+*/
 static void n_getlockdeltat(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -189,15 +225,19 @@ static void n_getlockdeltat(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getwaitdeltat
-//  INPUT
-//  v
-//  OUTPUT
-//  f (DeltaT)
-//  INFO
-//  Return the value set by 'waitdeltat'.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getwaitdeltat
+
+    @input
+    v
+
+    @output
+    f (DeltaT)
+
+    @info
+    Return the value set by 'waitdeltat'.
+*/
 static void n_getwaitdeltat(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -205,19 +245,23 @@ static void n_getwaitdeltat(void *o, nCmd *cmd)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  enableframetime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Enable the 'frame time' mode of the 'getframetime'
-//  command. In this mode 'getframetime' will return exactly
-//  the same value each time it is called within a frame.
-//  Otherwise 'getframetime' returns the same value 'gettime'
-//  would.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    enableframetime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Enable the 'frame time' mode of the 'getframetime'
+    command. In this mode 'getframetime' will return exactly
+    the same value each time it is called within a frame.
+    Otherwise 'getframetime' returns the same value 'gettime'
+    would.
+*/
 static void n_enableframetime(void *o, nCmd *)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -225,17 +269,21 @@ static void n_enableframetime(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  disableframetime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Turn off frame time mode of 'getframetime'. Further
-//  calls to 'getframetime' will return exactly the same value
-//  as 'gettime'.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    disableframetime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Turn off frame time mode of 'getframetime'. Further
+    calls to 'getframetime' will return exactly the same value
+    as 'gettime'.
+*/
 static void n_disableframetime(void *o, nCmd *)
 {
     nTimeServer *self = (nTimeServer *) o;
@@ -243,18 +291,22 @@ static void n_disableframetime(void *o, nCmd *)
 }
 
 //-------------------------------------------------------------------
-//  CMD
-//  getframetime
-//  INPUT
-//  v
-//  OUTPUT
-//  v
-//  INFO
-//  Get the current frame time stamp. This value differs from the
-//  value returned by 'gettime' because 'gettime' will return
-//  a different value each time it is called, while 'getframetime'
-//  returns the same timestamp within one frame.
-//-------------------------------------------------------------------
+/**
+    @cmd
+    getframetime
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Get the current frame time stamp. This value differs from the
+    value returned by 'gettime' because 'gettime' will return
+    a different value each time it is called, while 'getframetime'
+    returns the same timestamp within one frame.
+*/
 static void n_getframetime(void *o, nCmd *cmd)
 {
     nTimeServer *self = (nTimeServer *) o;
