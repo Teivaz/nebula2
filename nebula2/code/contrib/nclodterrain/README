@@ -3,7 +3,7 @@ implementation for The Nebula Device.
 
 To compile, unpack into code/contrib and re-run the update.tcl script in
 the Nebula root directory (typically whatever $RL_HOME is set to).
-You should then see a 'chunklod' project/solution which you can compile.
+You should then see a 'nchunklod' workspace/solution which you can compile.
 Note that you also need nopende installed in contrib, since clodterrain
 uses the nopende code for collision and dynamics.
 
@@ -21,7 +21,20 @@ assertion error if you try to compile or view chunked LOD terrain.  There
 is an example program 'nclododeviewer' that you can run to compile or
 view terrain data.
 
+You will also have to add the splatterrain.fx shader to Nebula2's
+shaderlist.txt so that the scene server will know what the rendering
+priority of the shader is.  This requires editing one of these files:
 
+
+    nebula2/export/shaders/2.0/shaderlist.txt
+    nebula2/export/shaders/fixed/shaderlist.txt
+
+and adding the following line:
+
+    nclodshaders:splatterrain.fx
+
+after shaders:terraingrass.fx and before shaders:default.fx.  If this is not
+done, then you will get an assert when you try to view an nclodterrain sample.
 
 
 
@@ -51,7 +64,8 @@ TQT output:   code/contrib/export/terrains/examples/sample.tqt
 You can of course edit the script file to change these locations.
 
 To do the compilation execute the script using nclododeviewer:
-"nclododeviewer -script compileterrain.lua"
+
+    nclododeviewer -view compileterrain.lua
 
 
 ***To compile a tile-mapped terrain:
@@ -59,11 +73,12 @@ To do the compilation execute the script using nclododeviewer:
 First, decide on which textures to use as your tiles.  For example, let's
 use grass, dirt, rock, and water.  We'll map these to indices 0,1,2, and 3.
 
-Select your input and output files. You need as input a greyscale or RGB heightmap
-and an indexed terrain texture.  The indexed texture should contain
+Select your input and output files. You need as input a greyscale or RGB
+heightmap and an indexed terrain texture.  The indexed texture should contain
 indexed values at each pixel to indicate which tile texture to put there. 
 For instance, paint pixels with index 0 everywhere you want grass, index 1
 where you want dirt, etc.
+
 The output is a tesselated mesh quadtree (a .clod file) and a texture quadtree
 (a .tqt file).  I have included an example script "compilesplatterrain.lua" for
 this which is setup like:
@@ -76,13 +91,16 @@ Mesh output:  code/contrib/export/terrains/examples/sample.clod
 TQT output:   code/contrib/export/terrains/examples/sample.tqt
 
 The actual command is:
-"nclododeviewer -script compilesplatterrain.lua"
+
+    nclododeviewer -view compilesplatterrain.lua
 
 
 ***To view the resultant terrain:
 
 To view your terrain execute
-"nclododeviewer -view clod.n2"
+
+    nclododeviewer -view clod.n2
+
 Again, you can edit the script file clod.n2 to use other terrain files
 if you want.
 
