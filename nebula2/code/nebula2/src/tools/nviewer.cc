@@ -17,6 +17,8 @@
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
+     <dt>-sceneserver</dt>
+       <dd>Class name of the scene server to instantiate.</dd>
     </dl>
 
     nviewer also defines some default input handling:
@@ -189,11 +191,12 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* scriptArg     = args.GetStringArg("-script", 0);
-    const char* viewArg       = args.GetStringArg("-view", 0);
-    bool fullscreenArg        = args.GetBoolArg("-fullscreen");
-    int widthArg              = args.GetIntArg("-w", 640);
-    int heightArg             = args.GetIntArg("-h", 480);
+    const char* scriptArg       = args.GetStringArg("-script", 0);
+    const char* viewArg         = args.GetStringArg("-view", 0);
+    const char* sceneServerArg  = args.GetStringArg("-sceneserver", "nstdsceneserver");
+    bool fullscreenArg          = args.GetBoolArg("-fullscreen");
+    int widthArg                = args.GetIntArg("-w", 640);
+    int heightArg               = args.GetIntArg("-h", 480);
 
     // initialize Nebula runtime
     nKernelServer* kernelServer = new nKernelServer;
@@ -207,6 +210,7 @@ main(int argc, const char** argv)
     nTimeServer* timeServer     = kernelServer->GetTimeServer();
     nRemoteServer* remoteServer = kernelServer->GetRemoteServer();
     nScriptServer* scriptServer = (nScriptServer*) kernelServer->New("ntclserver", "/sys/servers/script");
+    n_assert(scriptServer);
 
     nGfxServer2* gfxServer          = 0;
     nInputServer* inputServer       = 0;
@@ -220,7 +224,7 @@ main(int argc, const char** argv)
     inputServer     = (nInputServer*)     kernelServer->New("ndi8server",      "/sys/servers/input");
     consoleServer   = (nConServer*)       kernelServer->New("nconserver",      "/sys/servers/console");
     resourceServer  = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
-    sceneServer     = (nSceneServer*)     kernelServer->New("nstdsceneserver", "/sys/servers/scene");
+    sceneServer     = (nSceneServer*)     kernelServer->New(sceneServerArg,    "/sys/servers/scene");
     varServer       = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     animServer      = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     n_assert(gfxServer);
