@@ -14,6 +14,7 @@
 #include "export2/nmaxcontrol.h"
 
 #include "scene/nshapenode.h"
+#include "scene/nvectoranimator.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -79,7 +80,8 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
 
                 if (nMaxMaterial::Standard == subMtlType)
                 {
-                 #if (MAX_RELEASE >= 6000)   // 3dsmax R6
+                 #if (MAX_RELEASE >= 6000)   
+                    // available on 3dsmax R6 or higher.
                     IDxMaterial* dxMaterial = (IDxMaterial*)mtl->GetInterface(IDXMATERIAL_INTERFACE);
                     if (dxMaterial)
                     {
@@ -238,8 +240,17 @@ void nMaxMaterial::SetStatndardNebulaShader(nShapeNode* shapeNode)
 //-----------------------------------------------------------------------------
 /**
     Export shader animations if it exist. (nvectoranimator is created for it)
+
+    The followings are supported material type:
+      -# MatAmbient - ambient color of the material.
+      -# MatDiffuse - diffuse color of the material.
+      -# MatSpecular - specular color of the material.
+
+    @note
+        Use Nebula2 custom material as it possible. 
+        It support various type of material animations.
 */
-void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
+void nMaxMaterial::ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode)
 {
     Control* ctrlAlpha = NULL;
 
@@ -254,7 +265,6 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
         if (control)
         {
             ctrlAlpha = control;
-
         }
     }
 
@@ -276,35 +286,44 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl)
         ctrlColor = pblock->GetController(shdr_ambient);
         if (ctrlColor)
         {
-            CreateShaderAnimator(GetShaderParam("MatAmbient"), ctrlColor, ctrlAlpha);
+            CreateShaderAnimator(shapeNode, GetShaderParam("MatAmbient"), ctrlColor, ctrlAlpha);
         }
 
         // diffuse
         ctrlColor = pblock->GetController(shdr_diffuse);
         if (ctrlColor)
         {
-            CreateShaderAnimator(GetShaderParam("MatDiffuse"), ctrlColor, ctrlAlpha);
+            CreateShaderAnimator(shapeNode, GetShaderParam("MatDiffuse"), ctrlColor, ctrlAlpha);
         }
 
         // specular
         ctrlColor = pblock->GetController(shdr_specular);
         if (ctrlColor)
         {
-            CreateShaderAnimator(GetShaderParam("MatSpecular"), ctrlColor, ctrlAlpha);
+            CreateShaderAnimator(shapeNode, GetShaderParam("MatSpecular"), ctrlColor, ctrlAlpha);
         }
     }
 }
 
 //-----------------------------------------------------------------------------
 /**
+    Create nVectorAnimator for 3DS Max standard material animations and add it
+    to the given shapenode.
+
+    @param shapeNode nebula node which the created animator is attached.
+    @param param A valid parameter of nShaderState.
+    @param ctrlColor Control for material color. 
+                     (Only ambient, diffuse and specular are supported)
+    @param ctrlAlpha Control for material opacity(aka alpha)
 */
-void nMaxMaterial::CreateShaderAnimator(nShaderState::Param vectorParameter, 
+void nMaxMaterial::CreateShaderAnimator(nShapeNode* shapeNode, 
+                                        nShaderState::Param param, 
                                         Control* ctrlColor, Control* ctrlAlpha)
 {
     if (!ctrlColor && !ctrlAlpha)
         return;
 
-    if (vectorParameter == nShaderState::InvalidParameter)
+    if (param == nShaderState::InvalidParameter)
     {
         n_maxlog(Error, "Invalid shader parameter for vector animator.");
         return;
@@ -326,27 +345,54 @@ void nMaxMaterial::CreateShaderAnimator(nShaderState::Param vectorParameter,
     nArray<nMaxSampleKey> colorKeyArray;
     colorKeyArray.SetFixedSize(numFrames + 1);
 
-    nMaxControl::GetSampledKey(ctrlColor, colorKeyArray, 1, nMaxPoint3);
+    const int sampleRate = 1;
+    nMaxControl::GetSampledKey(ctrlColor, colorKeyArray, sampleRate, nMaxPoint3);
 
-    //FIXME: what happened if color and alpha aniamtion has different time line?
+    nKernelServer* ks = nKernelServer::Instance();
 
-    //
-    //TODO: create nvectoranimator based on mergedSample
-    //...
+    // make a valid name of animator. e.g. 'MatDiffuse' to 'matdiffuseanimator'
+    nString animatorName;
+    animatorName += nShaderState::ParamToString(param);
+    animatorName += "animator";
+    animatorName.ToLower();
 
-    // merge color and alpha values to a vector4.
-    for (int i=0; i<numFrames; i++)
+    nVectorAnimator* animator = (nVectorAnimator*)ks->NewNoFail("nvectoranimator", animatorName.Get());
+    if (animator)
     {
-        nMaxSampleKey colorKey = colorKeyArray[i];
-        nMaxSampleKey alphaKey = alphaKeyArray[i];
+        // merge color and alpha values to a vector4.
+        for (int i=0; i<numFrames; i++)
+        {
+            nMaxSampleKey colorKey = colorKeyArray[i];
 
-        vector4 color;
-        color.x = colorKey.pos.x; // r
-        color.y = colorKey.pos.y; // g
-        color.z = colorKey.pos.z; // b
-        color.w = alphaKey.fVal;  // a
+            nMaxSampleKey alphaKey;
+
+            if (ctrlAlpha)
+                alphaKey = alphaKeyArray[i];
+
+            vector4 color;
+            color.x = colorKey.pos.x; // r
+            color.y = colorKey.pos.y; // g
+            color.z = colorKey.pos.z; // b
+
+            if (ctrlAlpha)
+                color.w = alphaKey.fval;  // a
+            else
+                color.w = 1.0f;
+
+            //FIXME: what happened if color and alpha aniamtion has different time line?
+            animator->AddKey(colorKey.time, color);
+        }
+
+        animator->SetVectorName(nShaderState::ParamToString(param));
+        animator->SetChannel("time");
+
+        //FIXME: 'oneshot' loop type should be available too.
+        animator->SetLoopType(nAnimator::Loop);
+
+        shapeNode->AddAnimator(animator->GetName());
     }
-
+    else
+        n_maxlog(Error, "Failed to create nvectoranimator for 3dsmax standard material");
 }
 
 //-----------------------------------------------------------------------------
