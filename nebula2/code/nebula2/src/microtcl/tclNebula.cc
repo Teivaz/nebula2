@@ -24,10 +24,10 @@
  * Side effects:
  *	Depends on the commands in the file.
  *
- *
- *  NOTE
- *  This is a Nebula specific replacement file for the MicroTcl
- *  implementation, max size for a single script is 128 kByte!
+ * - 20-Feb-04  floh    get script buffer size from file size
+ * - 19-Mar-04  floh    important bugfix: script buffer must be 1 byte
+ *                      bigger than filesize, otherwise, Tcl may
+ *                      trigger a very subtle internal bug
  *
  *----------------------------------------------------------------------
  */
@@ -39,7 +39,7 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
 
     // get fileobject
     n_assert(nKernelServer::ks);
-    nFileServer2* fileServer = nKernelServer::ks->GetFileServer();
+    nFileServer2* fileServer = nKernelServer::Instance()->GetFileServer();
     n_assert(fileServer);
 
     int result = TCL_ERROR;
@@ -48,24 +48,23 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
     nFile* file = fileServer->NewFileObject();
     if (file->Open(fileName, "r"))
     {
-        // allocate a 512 kByte buffer 
-        const int bufSize = (1<<17);
-        char* buffer = (char*) n_malloc(bufSize);
-        n_assert(buffer);
+        // get size of buffer to allocate
+        const int fileSize = file->GetSize();
+        char* scriptBuffer = (char*) n_malloc(fileSize + 1);
+        n_assert(scriptBuffer);
+        memset(scriptBuffer, 0, fileSize + 1);
 
         // read file into buffer
-        int bytesRead = file->Read(buffer, bufSize);
+        int bytesRead = file->Read(scriptBuffer, fileSize);
         file->Close();
         file->Release();
-
-        n_assert(bytesRead < (bufSize - 1));
-        buffer[bytesRead] = 0;
+        n_assert(bytesRead == fileSize);
 
         // evaluate contents
-        result = Tcl_EvalEx(interp, buffer, -1, 0);
+        result = Tcl_EvalEx(interp, scriptBuffer, fileSize, 0);
 
         // free buffer
-        n_free(buffer);
+        n_free(scriptBuffer);
 
         // handle result
         if (result == TCL_RETURN) 
