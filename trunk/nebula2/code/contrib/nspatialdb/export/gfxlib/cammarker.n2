@@ -1,0 +1,20 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new nshapenode shape0
+    sel shape0
+    .setposition 0.000000 0.000000 0.000000
+    .seteuler 0.000000 0.000000 0.000000
+    .setscale 1.000000 1.000000 1.000000
+    .setvector "MatAmbient" 1.000000 1.000000 1.000000 1.000000
+    .setvector "MatDiffuse" 1.000000 1.000000 0.539320 0.539320
+    .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
+    .setfloat "MatSpecularPower" 32.000000
+    .settexture "DiffMap0" "localtextures:camtex.tga"
+    .settexture "BumpMap0" "textures:examples/bump.tga"
+    .setshader "colr" "shaders:default.fx"
+    .setmesh "localmeshes:cammesh.n3d2"
+    .setgroupindex 0
+sel ..
+# ---
+# Eof

@@ -1,0 +1,58 @@
+#-----------------------------------------------------------------------------
+#    nspatialdb.bld
+#    ============
+#    Spatial database package definition
+#-----------------------------------------------------------------------------
+beginmodule nspatialsector
+    setdir spatialdb
+    setfiles      { nspatialsector_main nspatialsector_cmds 
+           nspatialelements nvisibilityvisitor nvisiblefrustumvisitor nvisiblefrustumgenarray nvisiblespherevisitor
+           nvisiblespheregenarray noccludingfrustumvisitor noccludingfrustumgenarray
+           }
+    setheaders    { nspatialsector nspatialelements nvisibilityvisitor nvisiblefrustumvisitor 
+           nvisiblefrustumgenarray nvisiblespherevisitor nvisiblespheregenarray noccludingfrustumvisitor noccludingfrustumgenarray
+           nspatialvisitor nbboxoccluder
+           }
+endmodule
+
+beginmodule nsdbviewer
+    setdir spatialdb
+    setfiles      { nsdbviewerapp nsdbviewer }
+    setheaders    { nsdbviewerapp }
+endmodule
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+begintarget nspatialdb
+  	settype lib
+  	setmodules    { nspatialsector }
+  	settargetdeps { noctree }
+endtarget
+
+begintarget nspatialdbapp
+    settype exe
+    setmodules { nsdbviewer }
+    settargetdeps { nkernel nnebula noctree ndirect3d9 ndinput8 microtcl nlua ntoollib ngui nvideo ndshow nspatialdb }
+endtarget
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
+
+beginworkspace nspatialdb
+    setbinarydir ./bin/
+    setlibdir ./code/contrib/lib/
+    settargets {
+        nspatialdbapp
+        nspatialdb
+        ndirect3d9
+        ndinput8
+        microtcl
+        nlua
+        ntoollib
+        ngui
+        nvideo
+        ndshow
+        nkernel
+        nnebula
+        noctree
+    }
+endworkspace
