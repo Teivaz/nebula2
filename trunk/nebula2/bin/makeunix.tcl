@@ -97,6 +97,10 @@ proc gen_lib_unix {target cid} {
     
     set t [findtargetbyname $target]
 
+    # create a local pkg_ file with Nebula module declarations
+    set component_list [gen_component_list $target]
+    gen_package_source $target $component_list
+
     #collect depend - lib
     set win32_depend_list { }
     set unix_depend_list { }
@@ -167,7 +171,11 @@ proc gen_exe_unix {target cid} {
     global e_pre e_post l_pre l_post o_pre o_post
     
     set t [findtargetbyname $target]
-    
+
+    # create a local pkg_ file with Nebula module declarations
+    set component_list [gen_component_list $target]
+    gen_package_source $target $component_list
+ 
     #collect depend
     set win32_depend_list { }
     set unix_depend_list { }
