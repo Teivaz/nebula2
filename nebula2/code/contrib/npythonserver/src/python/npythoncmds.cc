@@ -363,11 +363,20 @@ PyObject* pythoncmd_Get( PyObject * /*self*/, PyObject *args)
     // Extract a filename string from the Python args object
     // Also, "s:<desc>" for a descriptive error if an exception is raised.
     if(PyArg_ParseTuple(args, "s:get", &filename)) {
-      nRoot *o = nPythonServer::kernelServer->Load(filename);
+      nObject *o = nPythonServer::kernelServer->Load(filename);
       if (o) {
-        // Return "success" values
-        Py_INCREF(Py_None);
-        results = Py_None;
+        bool isRoot = o->IsA("nroot");
+        n_assert(isRoot);
+        if (isRoot) {
+          // Return "success" values
+          Py_INCREF(Py_None);
+          results = Py_None;
+        }
+        else {
+          // Report failure
+          PyErr_Format(PyExc_IOError,
+                       "Could not load object [name=%s], not an nRoot.", filename);
+        }
       }
       else {
         // Report failure
@@ -664,11 +673,14 @@ PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
 
       if (*command_name != '\0') {
         // find object to invoke command on
-        nRoot *o;
+        nObject *o;
         if (obj_name)
           o = nPythonServer::kernelServer->Lookup(obj_name);
-        else
-          o = nPythonServer::kernelServer->GetCwd();
+        else {
+          o = nScriptServer::GetCurrentTargetObject();
+          if (!o)
+            o = nPythonServer::kernelServer->GetCwd();
+        }
 
         if (o) {
           // Form a Nebula Cmd object from command string
@@ -687,9 +699,18 @@ PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
             // Pass Cmd object and the remaining tuple arguments to _getInArgs.
             // Retrieve input args (skip the 'unknown' and cmd statement)
             if (!_getInArgs(ncmd, commandArgs)) {
-              PyErr_Format(PyExc_Exception,
-                           "Broken input args, object '%s', command '%s'",
-                           o->GetName(), command_name);
+              if (o->IsA("nroot")) {
+                PyErr_Format(PyExc_Exception,
+                             "Broken input args, object '%s' of class '%s', command '%s'",
+                             ((nRoot *)o)->GetName(), 
+                             o->GetClass()->GetName(), 
+                             command_name);
+              }
+              else {
+                PyErr_Format(PyExc_Exception,
+                             "Broken input args, object of class '%s', command '%s'",
+                             o->GetClass()->GetName(), command_name);
+              }
               results = NULL;
             }
             else if (o->Dispatch(ncmd)) {
@@ -700,9 +721,18 @@ PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
               // a null return is done as a null Tuple..
             }
             else {
-              PyErr_Format(PyExc_Exception,
-                           "Dispatch error, object '%s', command '%s'",
-                           o->GetName(), command_name);
+              if (o->IsA("nroot")) {
+                PyErr_Format(PyExc_Exception,
+                             "Dispatch error, object '%s' of class '%s', command '%s'",
+                             ((nRoot *)o)->GetName(), 
+                             o->GetClass()->GetName(), 
+                             command_name);
+              }
+              else {
+                PyErr_Format(PyExc_Exception,
+                             "Dispatch error, object of class '%s', command '%s'",
+                             o->GetClass()->GetName(), command_name);
+              }
               results = NULL;
             }
             // In any case, cleanup the cmd object
@@ -710,9 +740,16 @@ PyObject* pythoncmd_Set(PyObject * /*self*/, PyObject *args)
           }
           else {
             // Set exception, the object doesn't know about the command!
-            PyErr_Format(PyExc_AttributeError,
-                         "Unknown command, object '%s', command '%s'",
-                         o->GetName(), command_name);
+            if (o->IsA("nroot")) {
+              PyErr_Format(PyExc_AttributeError,
+                           "Unknown command, object '%s' of class '%s', command '%s'",
+                           ((nRoot *)o)->GetName(), o->GetClass()->GetName(), command_name);
+            }
+            else {
+              PyErr_Format(PyExc_AttributeError,
+                           "Unknown command, object of class '%s', command '%s'",
+                           o->GetClass()->GetName(), command_name);
+            }
             results = NULL;
           }
         }
