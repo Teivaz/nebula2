@@ -15,6 +15,14 @@
 #include "kernel/nroot.h"
 #endif
 
+#ifndef N_WATCHVAR_H
+#include "util/nwatchvar.h"
+#endif
+
+#ifndef N_TIMESERVER_H
+#include "kernel/ntimeserver.h"
+#endif
+
 #ifndef N_CAMERA2_H
 #include "gfx2/ncamera2.h"
 #endif
@@ -182,6 +190,12 @@ protected:
     matrix44 transform[NUM_TRANSFORMTYPES];
     int transformTopOfStack[NUM_TRANSFORMTYPES];
     matrix44 transformStack[NUM_TRANSFORMTYPES][MAX_TRANSFORMSTACKDEPTH];
+    
+#if defined(N_DO_STATS)
+    nWatchVar FrameRate;
+    double timeStamp;
+    uint totalFrames;
+#endif    
 
 public:
     // note: this stuff is public because WinProcs may need to access it

@@ -162,6 +162,9 @@ nD3D9Server::Trigger()
             }
         }
     }
+
+    nGfxServer2::Trigger();
+
     return (!this->quitRequested);
 }
 
