@@ -112,8 +112,11 @@ nApplication::Open()
     this->refScriptServer->Run("OnStartup", scriptResult);
 
     // initialize locale server
-    this->refLocaleServer->SetLocaleTableFilename("data:tables/locale.xml");
-    this->refLocaleServer->Open();
+    if (!this->localeTable.IsEmpty())
+    {
+        this->refLocaleServer->SetLocaleTableFilename(this->localeTable.Get());
+        this->refLocaleServer->Open();
+    }
 
     // make sure the read/write appdata directories exists
     fileServer->MakePath("appdata:");
@@ -205,7 +208,8 @@ nApplication::Close()
     }
     if (this->refLocaleServer.isvalid())
     {
-        this->refLocaleServer->Close();
+        if (this->refLocaleServer->IsOpen())
+            this->refLocaleServer->Close();
     }
 
     // close the remote port
