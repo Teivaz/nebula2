@@ -46,7 +46,7 @@ public:
 private:
     enum
     {
-        MAXLIGHTSPERSHAPE = 16,
+        MaxLightsPerShape = 16,
     };
 
     /// render shape objects in scene
@@ -59,13 +59,13 @@ private:
     void CollectShapeLights(const Group& shapeGroup);
 
     int numLights;
-    ushort lightArray[nSceneServer::MAX_GROUPS];    // indices of light nodes in scene
+    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
 
     int numShapes;
-    ushort shapeArray[nSceneServer::MAX_GROUPS];    // indices of shape nodes in scene
+    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
 
     int numShapeLights;
-    ushort shapeLightArray[MAXLIGHTSPERSHAPE];      // indices of light nodes intersecting a shape
+    ushort shapeLightArray[MaxLightsPerShape];      // indices of light nodes intersecting a shape
 };
 //------------------------------------------------------------------------------
 #endif
