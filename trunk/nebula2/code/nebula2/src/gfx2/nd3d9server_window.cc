@@ -33,8 +33,7 @@ nD3D9Server::WindowOpen()
 
     // add for parent HWND handling
     // check if an environment variable named "/sys/env/parent_hwnd" exists
-    nAutoRef<nEnv> parent_hwnd(this->kernelServer);
-    parent_hwnd = "/sys/env/parent_hwnd";
+    nAutoRef<nEnv> parent_hwnd("/sys/env/parent_hwnd");
 
     if (parent_hwnd.isvalid()) 
     {

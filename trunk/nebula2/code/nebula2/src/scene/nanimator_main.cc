@@ -12,7 +12,7 @@ nNebulaScriptClass(nAnimator, "nscenenode");
 /**
 */
 nAnimator::nAnimator() :
-    refVariableServer(kernelServer, "/sys/servers/variable"),
+    refVariableServer("/sys/servers/variable"),
     loopType(LOOP),
     channelVarHandle(nVariable::INVALID_HANDLE)
 {

@@ -12,7 +12,7 @@ nNebulaClass(nAnimationServer, "nroot");
 /**
 */
 nAnimationServer::nAnimationServer() :
-    refResourceServer(kernelServer, "/sys/servers/resource")
+    refResourceServer("/sys/servers/resource")
 {
     // empty
 }

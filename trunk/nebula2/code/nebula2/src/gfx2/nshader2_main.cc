@@ -12,7 +12,7 @@ nNebulaClass(nShader2, "nresource");
 /**
 */
 nShader2::nShader2() :
-    refVariableServer(kernelServer, "/sys/servers/variable")
+    refVariableServer("/sys/servers/variable")
 {
     // empty
 }

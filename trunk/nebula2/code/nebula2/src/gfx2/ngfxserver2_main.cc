@@ -22,14 +22,13 @@ nGfxServer2::nGfxServer2() :
 #endif
     displayOpen(false),
     inBeginScene(false),
-    refResource(kernelServer),
+    refResource("/sys/servers/resource"),
     vertexRangeFirst(0),
     vertexRangeNum(0),
     indexRangeFirst(0),
     indexRangeNum(0),
     windowTitle("nGfxServer2 window")
 {
-    this->refResource = "/sys/servers/resource";
     int i;
     for (i = 0; i < NUM_TRANSFORMTYPES; i++)
     {

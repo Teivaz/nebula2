@@ -12,7 +12,7 @@
 */
 nNtxFile::nNtxFile(nKernelServer* ks) :
     kernelServer(ks),
-    refFileServer(kernelServer),
+    refFileServer("/sys/servers/file2"),
     openRead(false),
     openWrite(false),
     fileObject(0),
@@ -20,7 +20,7 @@ nNtxFile::nNtxFile(nKernelServer* ks) :
     curBlock(0),
     blocks(0)
 {
-    this->refFileServer = "/sys/servers/file2";
+    // empty
 }
 
 //------------------------------------------------------------------------------

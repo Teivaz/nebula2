@@ -13,7 +13,6 @@ nCharSkinRenderer nSkinShapeNode::charSkinRenderer;
 /**
 */
 nSkinShapeNode::nSkinShapeNode() :
-    refSkinAnimator(kernelServer),
     extCharSkeleton(0),
     jointPaletteVarHandle(nVariable::INVALID_HANDLE)
 {

@@ -86,7 +86,7 @@ HRESULT nD3D9ShaderInclude::Close(LPCVOID pData)
 /**
 */
 nD3D9Shader::nD3D9Shader() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
+    refGfxServer("/sys/servers/gfx"),
     effect(0),
     hasBeenValidated(false),
     didNotValidate(false)

@@ -16,7 +16,7 @@ nNebulaClass(nD3D9Texture, "ntexture2");
 /**
 */
 nD3D9Texture::nD3D9Texture() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
+    refGfxServer("/sys/servers/gfx"),
     baseTexture(0),
     texture2D(0),
     depthStencil(0),

@@ -14,7 +14,7 @@ nNebulaClass(nSceneServer, "nroot");
 /**
 */
 nSceneServer::nSceneServer() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
+    refGfxServer("/sys/servers/gfx"),
     inBeginScene(false),
     numGroups(0),
     stackDepth(0)

@@ -12,12 +12,11 @@ nNebulaClass(nResource, "nroot");
 /**
 */
 nResource::nResource() :
-    refFileServer(kernelServer),
-    refResourceLoader(kernelServer),
+    refFileServer("/sys/servers/file2"),
     type(NONE),
     valid(false)
 {
-    this->refFileServer = "/sys/servers/file2";
+    // empty
 }
 
 //------------------------------------------------------------------------------

@@ -14,9 +14,9 @@ nNebulaClass(nBinScriptServer, "nscriptserver");
 /**
 */
 nBinScriptServer::nBinScriptServer() :
-    refFileServer(kernelServer)
+    refFileServer("/sys/servers/file2")
 {
-    this->refFileServer = "/sys/servers/file2";
+    // empty
 }
 
 //------------------------------------------------------------------------------
