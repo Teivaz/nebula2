@@ -6,7 +6,7 @@
 #      njava
 #      njavautils
 #  Targets:
-#      njavalib
+#      nebula2java
 #===============================================================================
 
 #===============================================================================
@@ -27,7 +27,7 @@ endmodule
 #===============================================================================
 #  njava Targets
 #===============================================================================
-begintarget njavalib
+begintarget nebula2java
     annotate "Nebula Java library"
     settype dll
     setmodules { njava njavautils }
