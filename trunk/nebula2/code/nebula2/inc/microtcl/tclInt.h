@@ -45,9 +45,9 @@
 #   include <stdlib.h>
 #endif
 #ifdef NO_STRING_H
-#include "../compat/string.h"
+#   include "../compat/string.h"
 #else
-#include <string.h>
+#   include <string.h>
 #endif
 
 #undef TCL_STORAGE_CLASS
