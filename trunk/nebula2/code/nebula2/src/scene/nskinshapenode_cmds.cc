@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nSkinShapeNode
 //------------------------------------------------------------------------------
 //  nskinshapenode_cmds.cc
 //  (C) 2003 RadonLabs GmbH

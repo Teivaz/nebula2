@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nSkinAnimator
 //------------------------------------------------------------------------------
 //  nskinanimator_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -19,7 +18,9 @@ nNebulaScriptClass(nSkinAnimator, "nanimator");
 */
 nSkinAnimator::nSkinAnimator() :
     refAnimServer("/sys/servers/anim"),
-    animStateVarHandle(nVariable::INVALID_HANDLE),
+    characterVarIndex(0),
+    frameIdVarIndex(0),
+    animStateVarHandle(nVariable::InvalidHandle),
     frameId(0xffffffff)
 {
     // empty
@@ -104,16 +105,24 @@ nSkinAnimator::UnloadResources()
 
 //------------------------------------------------------------------------------
 /**
-    Check if resources are valid.
 */
-bool
-nSkinAnimator::AreResourcesValid() const
+void
+nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
 {
-    if (nSceneNode::AreResourcesValid())
+    nAnimator::RenderContextCreated(renderContext);
+
+    // see if resources need to be reloaded
+    if (!this->AreResourcesValid())
     {
-        return this->refAnim.isvalid();
+        this->LoadResources();
     }
-    return false;
+
+    nCharacter2* character = new nCharacter2(this->character);
+    n_assert(character);
+
+    // put frame persistent data in render context
+    this->frameIdVarIndex = renderContext->AddLocalVar(nVariable(0, (int) this->frameId));
+    this->characterVarIndex = renderContext->AddLocalVar(nVariable(0, character));
 }
 
 //------------------------------------------------------------------------------
@@ -124,7 +133,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::INVALID_HANDLE != this->channelVarHandle);
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     // load anim resource if necessary
     if (!this->AreResourcesValid())
@@ -135,6 +144,14 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     // FIXME: assume that the sceneNode is a nSkinShapeNode
     nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
 
+    nVariable var;
+    var = renderContext->GetLocalVar(this->characterVarIndex);
+    nCharacter2* character = (nCharacter2*) var.GetObj();
+    n_assert(character);
+
+    var = renderContext->GetLocalVar(this->frameIdVarIndex);
+    this->frameId = var.GetInt();
+
     // check if I am already uptodate for this frame
     uint curFrameId = renderContext->GetFrameId();
     if (this->frameId != curFrameId)
@@ -143,7 +160,8 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 
         // get the sample time from the render context
         nVariable* var = renderContext->GetVariable(this->channelVarHandle);
-        n_assert(var);
+        if (var == 0)
+            n_error("nSkinAnimator::Animate: TimeChannel Variable '%s' not found in the RenderContext!\n", this->refVariableServer->GetVariableName(this->channelVarHandle));
         float curTime = var->GetFloat();
 
         // get the current anim state from the anim state channel
@@ -154,20 +172,40 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         {
             animState = var->GetInt();
         }
-        if (animState != this->character.GetActiveState())
+        if (animState != character->GetActiveState())
         {
             // activate new state
-            this->character.SetActiveState(animState, curTime);
+            if (character->ValidStateIndex(animState))
+            {
+                character->SetActiveState(animState, curTime);
+            }
+            else
+            {
+                // n_printf("Warning: Invalid state index %d. State switch ignored. \n", animState);
+            }
         }
 
         // evaluate the current state of the character skeleton
-        this->character.EvaluateSkeleton(curTime, renderContext);
+        character->EvaluateSkeleton(curTime, renderContext);
     }
 
     // update the source node with the new char skeleton state
-    skinShapeNode->SetCharSkeleton(&this->character.GetSkeleton());
+    skinShapeNode->SetCharSkeleton(&character->GetSkeleton());
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
+{
+    nVariable var;
+    var = renderContext->GetLocalVar(this->characterVarIndex);
+    nCharacter2* character = (nCharacter2*) var.GetObj();
+    n_assert(character);
+
+    delete character;
+}
 //------------------------------------------------------------------------------
 /**
     Begin configuring the joint skeleton.
@@ -257,13 +295,14 @@ nSkinAnimator::SetStateChannel(const char* name)
 
 //------------------------------------------------------------------------------
 /**
-    Returns the name of the animation variable which drives this animation. This variable
-    exists within the variable server located at @c /sys/servers/variable.
+    Returns the name of the animation variable which drives this animation. 
+    This variable exists within the variable server located at 
+    @c /sys/servers/variable.
 */
 const char*
 nSkinAnimator::GetStateChannel()
 {
-    if (nVariable::INVALID_HANDLE == this->animStateVarHandle)
+    if (nVariable::InvalidHandle == this->animStateVarHandle)
     {
         return 0;
     }
@@ -348,7 +387,7 @@ nSkinAnimator::SetClip(int stateIndex, int clipIndex, const char* weightChannelN
 
     // get the variable handle for the weightChannel
     nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(weightChannelName);
-    n_assert(nVariable::INVALID_HANDLE != varHandle);
+    n_assert(nVariable::InvalidHandle != varHandle);
 
     nAnimClip newClip(firstCurve, numCurves, varHandle);
     this->animStateArray.GetStateAt(stateIndex).SetClip(clipIndex, newClip);

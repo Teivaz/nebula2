@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nSceneNode
 //------------------------------------------------------------------------------
 //  nscenenode_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -12,7 +11,11 @@ nNebulaScriptClass(nSceneNode, "nroot");
 /**
 */
 nSceneNode::nSceneNode() :
-    animatorArray(1, 4)
+    animatorArray(1, 4),
+    refVariableServer("/sys/servers/variable"),
+    refSceneServer("/sys/servers/scene"),
+    resourcesValid(false),
+    renderPri(0)
 {
     // empty
 }
@@ -40,6 +43,11 @@ nSceneNode::~nSceneNode()
 bool
 nSceneNode::LoadResources()
 {
+#ifdef _DEBUG
+    char buf[N_MAXPATH];
+    n_printf("-> Loading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
+#endif
+    this->resourcesValid = true;
     return true;
 }
 
@@ -53,18 +61,36 @@ nSceneNode::LoadResources()
 void
 nSceneNode::UnloadResources()
 {
-    // empty
+#ifdef _DEBUG
+    char buf[N_MAXPATH];
+    n_printf("-> Unloading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
+#endif
+    this->resourcesValid = false;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Returns true if all resources are valid. Subclasses should return
-    false if at least one of their resources are invalid.
+    Recursively preload required resources. Call this method after loading
+    or creation and before the first rendering. It will load all required
+    resources (textures, meshes, animations, ...) from disk and thus
+    prevent stuttering during rendering.
 */
-bool
-nSceneNode::AreResourcesValid() const
+void
+nSceneNode::PreloadResources()
 {
-    return true;
+    if (!this->AreResourcesValid())
+    {
+        this->LoadResources();
+    }
+
+    // recurse...
+    nSceneNode* curChild;
+    for (curChild = (nSceneNode*) this->GetHead();
+         curChild;
+         curChild = (nSceneNode*) curChild->GetSucc())
+    {
+        curChild->PreloadResources();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -157,10 +183,10 @@ nSceneNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
     The method will only be called by nSceneServer if the method 
     HasTransform() returns true.
 */
-void
+bool
 nSceneNode::RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix)
 {
-    // empty
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -169,10 +195,10 @@ nSceneNode::RenderTransform(nSceneServer* sceneServer, nRenderContext* renderCon
     The method will only be called by nSceneServer if the method 
     HasGeometry() returns true.
 */
-void
+bool
 nSceneNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
-    // empty
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -184,23 +210,24 @@ nSceneNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
     @param  fourcc          a fourcc code that identifies the "shader stage"
     @param  sceneServer     pointer to scene server object
     @param  renderContext   pointer to render context object
+    @return     must return true if current shader in gfx server has been altered
 */
-void
+bool
 nSceneNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
 {
-    // empty
+    return false;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Render the node's volume. This should be implemented by a subclass.
+    Render the node's light data. This should be implemented by a subclass.
     The method will only be called by nSceneServer if the method 
-    HasLightVolume() returns true.
+    HasLight() returns true.
 */
-void
-nSceneNode::RenderLightVolume(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightModelView)
+bool
+nSceneNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)
 {
-    // empty
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -239,11 +266,11 @@ nSceneNode::HasShader(uint fourcc) const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides light volume information. Should be 
+    Return true if this node provides light information. Should be 
     overriden by subclasses.
 */
 bool
-nSceneNode::HasLightVolume() const
+nSceneNode::HasLight() const
 {
     return false;
 }
@@ -259,7 +286,7 @@ nSceneNode::AddAnimator(const char* relPath)
 
     nDynAutoRef<nAnimator> newDynAutoRef;
     newDynAutoRef.set(relPath);
-    this->animatorArray.PushBack(newDynAutoRef);
+    this->animatorArray.Append(newDynAutoRef);
 }
 
 //------------------------------------------------------------------------------
