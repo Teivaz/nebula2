@@ -43,9 +43,6 @@ begintarget physdemo_core
     setmodules {
         physdemoapp euidserver simpleobject
     }
-    setmoduledeps {
-		nkernel nnebula ndinput8 ndirect3d9 microtcl ntoollib nopende
-    }
 endtarget
 
 #--------------------------------------------------------------------
