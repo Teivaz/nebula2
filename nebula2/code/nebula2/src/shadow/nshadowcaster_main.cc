@@ -246,7 +246,7 @@ nShadowCaster::RenderShadow(const matrix44& modelMatrix, int groupIndex)
     const vector4 green(0.0, 1.0, 0.0, 1.0);
     const vector4 blue(0.0, 0.0, 1.0, 1.0);
 
-    // debug shadw geometry
+    // debug shadow geometry
     if (shdServer->GetDebugShadows())
     {
         float groupColor = 1.0f - (1.0f / this->meshGroups.Size() * groupIndex);
@@ -495,7 +495,7 @@ nShadowCaster::DrawSides(nShadowServer::DrawType type, const nLight::Type lightT
     const int numSrcCoords = this->GetNumCoords();
     n_assert(numSrcCoords > 0);
 
-    // make shure that we got a even amount of indices (this must be becuase there are always both indices of edge added)
+    // make sure that we have an even number of indices (this must be, because both indices of each edge are added)
     n_assert(this->numSilhouetteIndices % 2 == 0);
 
     // data destination
