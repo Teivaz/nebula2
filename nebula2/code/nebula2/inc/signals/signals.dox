@@ -43,8 +43,9 @@
 
     Below, we can see an explanation of the most common use cases. This section
     is focused in the usage from native C++ code, with some use examples from 
-    scripting. To hidden the complexities of the signal subsystem, some preprocessor 
-    macros have been defined. Check the examples to see how to use them.
+    scripting. To hide the complexities of the signal subsystem, some
+    preprocessor macros have been defined. Check the examples to see how to
+    use them.
 
     @subsection NebulaSignalsUsageDeclaration Signal declaration
     
@@ -145,9 +146,9 @@
     see all signal objects are created with the 'Signal' prefix to avoid
     name clashing, but this is not necessary.
 
-    Also is possible to use the Macro NSIGNAL_OBJECT and don't use the prefix 
-    'Signal'. This Macro is useful in all the calls that required the object
-    signal.
+    It is also possible to use the macro <tt>NSIGNAL_OBJECT</tt> and to not
+    use the prefix 'Signal'. This macro is useful in all the calls that
+    required the object signal.
     
 @code
         cl->AddSignal( NSIGNAL_OBJECT( MyClass, Trigger ) );
@@ -200,7 +201,7 @@
 @endcode
 
     There are other ways of emitting signals, which are valid for any type
-    of signal, but don' check at compile time like the previous way. Examples:
+    of signal, but don't check at compile time like the previous way. Examples:
 
 @code
     emitter->EmitSignal( "onkey", 1024 );
@@ -237,21 +238,22 @@
 
     @subsection NebulaSignalsUsageTCL Scripting from TCL
     
-    You can define signals from scripting code, this signals can be bound and 
-    emitted from script and from C++ code. The add signal command takes two parameters,
-    the first one is the signal definition and the second one is the FOURCC.
+    You can define signals from scripting code, these signals can be bound and 
+    emitted from script and from C++ code. The <tt>addsignal</tt> command
+    takes two parameters, the first one is the signal definition and the
+    second one is the FOURCC.
     
 @code
     /emitter.addsignal "v_newsignal_i" "SFS1"
 @endcode
 
-    The BindSignal method is visible from scripting. A posible call will be:
+    The BindSignal method is visible to script. A posible call will be:
 
 @code
     /emitter.bindsignal "onkey" /receiver "onkeyreceiver" 0 
 @endcode
 
-    The bind from scripting needs that the method is a cmd method.
+    The bind from scripting requires that the method be a cmd method.
 
     From TCL scripting the signals are emitted this way:
 
@@ -263,7 +265,7 @@
 @endcode
     
     Emit and Post take the object plus signal name, but if the object isn't 
-    present and the signal name is preceded with a point, they take the actual 
+    present and the signal name is preceded with a period, they take the actual 
     pwd.
 
     From scripting it is also possible to post signals and regular commands:
@@ -370,13 +372,13 @@
     end
 @endcode
 
-    The block addcmds/endcmds from Lua don't affect the C++ block AddCmds/EndCmds of 
-    the same class. Only add new cmds of the scripting side.
+    The block addcmds/endcmds from Lua don't effect the C++ block
+    AddCmds/EndCmds of the same class, only add new cmds on the scripting side.
 
     The script command names are case-sensitive and not lower-case like the cmds 
     from C++ code.
     
-    The emit/post signal only affects the bound objects that have a script 
+    The emit/post signal only effects the bound objects that have a script 
     implementation of the script cmds.
     
 @code
@@ -410,15 +412,16 @@
     nSignalBindingCmdProto for invocation through nCmd (used for scripting),
     and nSignalBindingNative for invocation of native C++ code.
     
-    - In the registration of signals the call <tt>cl->BeginSignals(NumberOfSignals)</tt>
-    specifies the number of signals to add. This number is a hint to create
-    a hash table to put on the signals. It's possible to add more signals or 
-    less signals that the parameter without crashing the application.
+    - In the registration of signals the call
+    <tt>cl->BeginSignals(NumberOfSignals)</tt> specifies the number of
+    signals to add. This number is a hint to create a hash table to put
+    on the signals. It's possible to add more signals or less signals that
+    the parameter without crashing the application.
     
-    - In the registration of script-side cmds (in Lua for example) the call to endcmds
-    actually does not do anything, and the begincmds(NumberOfSignals) is also a hint
-    to create a hash table. So it's posible to addcmds, after the begincmds, for the same
-    class 'ad eternum'. It is important to remember to call only one single time to
-    begincmds for that class in all scripting code of all script servers.
-
+    - In the registration of script-side cmds (in Lua for example) the call to
+    endcmds actually does not do anything, and the begincmds(NumberOfSignals)
+    is also a hint to create a hash table. So it's posible to addcmds, after
+    the begincmds, for the same class 'ad eternum'. It is important to
+    remember to call only one single time to begincmds for that class in all
+    scripting code of all script servers.
 */
