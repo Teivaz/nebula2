@@ -361,12 +361,12 @@ nMRTSceneServer::RenderLightShapes(uint shaderFourCC)
 /**
     Render the scene. Rendering happens in multiple passes:
 
-    (1) clear the screen
-    (2) render scene into the depth buffer only
-    (3) render diffuse lighting 
-    (4) render pixel colors and modulate into frame buffer
-    (5) render specular light and add onto frame buffer
-    (6) apply various post-special-effects
+     -# clear the screen
+     -# render scene into the depth buffer only
+     -# render diffuse lighting 
+     -# render pixel colors and modulate into frame buffer
+     -# render specular light and add onto frame buffer
+     -# apply various post-special-effects
 */
 void
 nMRTSceneServer::RenderScene()
