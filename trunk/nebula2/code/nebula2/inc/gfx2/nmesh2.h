@@ -67,7 +67,6 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "resource/nresource.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/nmeshgroup.h"
 
 class nGfxServer2;
