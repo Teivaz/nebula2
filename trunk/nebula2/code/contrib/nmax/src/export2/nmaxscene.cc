@@ -761,69 +761,6 @@ bool nMaxScene::ExportAnimation(const nString &filename)
     return true;
 }
 
-/*
-struct SampleKey {
-    Matrix3 tm;
-
-    // decomposed elements for easy to use.
-    Point3 pos; 
-    Quat rot;
-    Point3 scale;
-
-    float time;
-};
-
-
-void GetFullSampledKey(INode* node, nArray<SampleKey> & sampleKeyArray, int sampleRate)
-{
-    TimeValue t;
-    TimeValue start	= nMaxInterface::Instance()->GetAnimStartTime();
-    TimeValue end	= nMaxInterface::Instance()->GetAnimEndTime();
-
-    int  delta	= GetTicksPerFrame() * sampleRate;
-
-    int numKeys = 0;
-
-    for (t=start; t<end; t+=delta, numKeys++)
-    {
-        SampleKey sampleKey;
-
-        sampleKey.tm = nMaxTransform::GetLocalTM(node, t);
-
-        AffineParts ap;
-
-        decomp_affine(sampleKey.tm, &ap );
-
-        sampleKey.pos   = ap.t;
-        sampleKey.rot   = ap.q;
-        sampleKey.scale = ap.k;
-
-        sampleKey.time  = t * SECONDSPERTICK;
-
-        sampleKeyArray.Append(sampleKey);
-    }
-
-    // sample last key for exact looping.
-    //if (t != end)
-    {
-        t = end;
-  
-        SampleKey sampleKey;
-        sampleKey.tm = nMaxTransform::GetLocalTM(node, t);
-
-        AffineParts ap;
-
-        decomp_affine(sampleKey.tm, &ap );
-
-        sampleKey.pos   = ap.t;
-        sampleKey.rot   = ap.q;
-        sampleKey.scale = ap.k;
-
-        sampleKeyArray.Append(sampleKey);
-    }
-}
-*/
-
 //-----------------------------------------------------------------------------
 /**
 */
@@ -848,7 +785,6 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
         const nMaxBoneManager::Bone &bone = nMaxBoneManager::Instance()->GetBone(boneIndex);
         INode* boneNode = bone.node;
 
-        //GetFullSampledKey(boneNode, keysArray[boneIndex], sampleRate);
         nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
     }
 
