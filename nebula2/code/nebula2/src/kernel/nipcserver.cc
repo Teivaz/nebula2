@@ -65,7 +65,8 @@ static
 void
 ListenerWakeupFunc(nThread* t)
 {
-    sockaddr_in myAddr = { 0 };
+    sockaddr_in myAddr;
+    memset(&myAddr, 0, sizeof(sockaddr_in));
     nIpcServer* ipcServer = (nIpcServer*) t->LockUserData();
     t->UnlockUserData();
     myAddr.sin_family = AF_INET;
