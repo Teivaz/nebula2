@@ -60,11 +60,10 @@ PhysDemoApp::Open()
     this->refVarServer      = (nVariableServer*) kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
-    this->refUIDServer      = (eUIDServer*)      kernelServer->New("euidserver", "/sys/servers/uidserver");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
 
     // run the startup script
-    this->refScriptServer->RunScript("startup.tcl", result);
+    this->refScriptServer->RunScript("home:bin/startup.tcl", result);
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)

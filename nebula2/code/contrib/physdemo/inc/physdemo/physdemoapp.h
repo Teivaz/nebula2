@@ -26,7 +26,6 @@
 #include "gui/nguilabel.h"
 #include "gui/nguitextlabel.h"
 
-#include "physdemo/euidserver.h"
 #include "physdemo/simpleobject.h"
 
 #include "opende/nopendeworld.h"
@@ -120,7 +119,6 @@ private:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
-    nRef<eUIDServer> refUIDServer;
     nRef<nGuiServer> refGuiServer;
 
     nString sceneFilename;

@@ -55,7 +55,7 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* inputArg  = args.GetStringArg("-input", "stdinput.tcl");
+    const char* inputArg  = args.GetStringArg("-input", "home:bin/stdinput.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg           = args.GetBoolArg("-help");

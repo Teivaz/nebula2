@@ -16,23 +16,25 @@ sel /sys/servers/file2
     set proj [.manglepath "proj:"]
     set home [.manglepath "home:"]
     
-    .setassign "meshes"   "data/meshes/"
-    .setassign "textures" "data/textures/"
+    .setassign "data" "home:export/"
+    .setassign "nebula2" "home:../../../"
+    
     if {[exists /sys/servers/gfx]} {
-        if {[/sys/servers/gfx.getfeatureset] == "dx9"} {   
-            .setassign "shaders" "data/shaders/2.0/"
-            puts "Shader directory: data/shaders/2.0"
+        set featureset [/sys/servers/gfx.getfeatureset]
+        if {($featureset == "dx9") || ($featureset == "dx9flt")} {   
+            .setassign "shaders" "nebula2:export/shaders/2.0/"
         } else {
-            .setassign "shaders" "data/shaders/fixed/"
-            puts "Shader directory: data/shaders/fixed"
+            .setassign "shaders" "nebula2:export/shaders/fixed/"
         }
     } else {
-        .setassign "shaders" "data/shaders/2.0/"
-        puts "Shader directory: data/shaders/2.0"
+        .setassign "shaders" "nebula2:export/shaders/2.0/"
+        puts "Shader directory: [.getassign shaders]"
     }
-    .setassign "anims"    "data/anims/"
-    .setassign "shapes"   "data/shapedefs/"
-    .setassign "lights"   "data/lightdefs/"
+    .setassign "meshes"   "data:meshes/"
+    .setassign "textures" "data:textures/"
+    .setassign "anims"    "data:anims/"
+    .setassign "shapes"   "data:shapedefs/"
+    .setassign "lights"   "data:lightdefs/"
     .setassign "gui"      "$proj/export/gui/"
 
 #-------------------------------------------------------------------------------
@@ -65,7 +67,7 @@ proc OnGuiServerOpen {} {
     sel $skin
             
         # set texture path pre- and postfix
-        .settextureprefix "data/textures/system/"
+        .settextureprefix "nebula2:export/textures/system/"
         .settexturepostfix ".dds"
         
         # active and inactive window modulation color
