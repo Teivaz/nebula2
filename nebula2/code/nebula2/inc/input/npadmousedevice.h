@@ -9,16 +9,10 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_INPUTDEVICE_H
 #include "input/ninputdevice.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nPadMouseDevice
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nPadMouseDevice : public nInputDevice
+class nPadMouseDevice : public nInputDevice
 {
 public:
     /// constructor
