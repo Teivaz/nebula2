@@ -79,7 +79,7 @@ private:
     nHashList* cmdList;
     nKeyArray<nCmdProto*>* cmdTable;
     /// The hashed script commandlist of this class
-    nHashList* script_cmd_list;
+    nHashList* scriptCmdList;
     int refCount;
     int instanceSize;
 
