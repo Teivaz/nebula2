@@ -523,7 +523,7 @@ bool nLuaServer::ThunkNebObject(lua_State* L, nRoot* root)
     lua_pushstring(L, "_"); // 2
     //lua_pushlightuserdata(L, root); // 3
     // create and push heavy user data on stack
-    nRef<nRoot>* ref_Root = n_new(nRef<nRoot>());
+    nRef<nRoot>* ref_Root = n_new(nRef<nRoot>);
     ref_Root->set(root);
     lua_boxpointer(L, ref_Root); // 3
     // give the nRef userdata the proper metatable
