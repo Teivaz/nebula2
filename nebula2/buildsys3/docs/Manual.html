@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Nebula 2 Build System GUI User Manual</title>
+</head>
+<body>
+<h1>Nebula 2 Build System GUI User Manual</h1>
+<h2>Introduction</h2>
+<p>
+A long time ago in a land far away some good folks at Radon Labs wrote a multi-platform build system for Nebula 1 in TCL. Sometime later Nebula 2 came along and it was decided that the old build system could use a make over, and so the second generation build system was born. Unfortunately the 2nd generation build system was still written in TCL, and ran somewhat slowly for a rather long time before Bruce Mitchener optimized it. Still, one problem remained with the 2nd generation build system, it was written in TCL and as such - struck mortal fear into the heart of any man/woman/other that dared to maintain it. Only two brave souls dared to wonder into those dark woods, Sir Bruce Grumpalot and Sir Leaf Awayalot, but they grew weary of battle, life in general, and really were just quite fed up with it all. At the same time I grew tired of standing at the edge of the woods along with the rest of the village folk, and being pestered by a broad called Martha, who didn't look much like a broad I must say... 
+</p>
+<p>
+Anyway, I decided to rewrite the build system, but this time in Python so it could be more easily maintained by the village folk, and wxPython could be used to give it a nice looking GUI front-end. And so the 3rd generation build system was born, may it live long and prosper, unlike Martha who I'd love to see get lost in the woods, or fall off a cliff, I'm not picky really.
+</p>
+<h2>Installation</h2>
+<p>
+The only thing you need to get the GUI running is wxPython 2.5.x (or later), available at <a href="http://www.wxpython.org">www.wxpython.org</a>. Then just run "python update.py -gui" in the root Nebula 2 directory (within a cmd prompt that has access to uuidgen.exe).
+</p>
+<h2>The GUI front-end</h2>
+<p>
+The front-end is very straightforward to use, follow the steps below.
+<ol>
+  <li>Select a generator.</li>
+  <li>Tick the workspaces you want to build.</li>
+  <li>Click on the Run button.</li>
+</ol>
+</p>
+<h2>Credits</h2>
+<p>
+Thanks go to...
+  <ul>
+    <li>Radon Labs for writing the original build system.</li>
+    <li>Matthew Welker for writing the 2nd generation build system.</li>
+    <li>Bruce Mitchener and Leaf Garland for maintaining the build systems.</li>
+    <li>Greg Ewing for writing the very useful Python module Plex for building lexical analyzers.</li>
+  </ul>
+<p>
+<hr/>
+<p align="center">
+&#169; 2005 Vadim Macagon
+</p>
+</body>
+</html>
