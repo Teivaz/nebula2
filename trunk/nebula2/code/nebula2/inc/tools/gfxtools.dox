@@ -1,0 +1,8 @@
+/**
+
+@defgroup NebulaGraphicsSystemTools Nebula Graphics Tools
+@ingroup NebulaGraphicsSystem
+
+Nebula provides some useful classes for building Nebula graphics data files.
+
+*/

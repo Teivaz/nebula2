@@ -2,11 +2,16 @@
 #define N_ANIMBUILDER_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimBuilder
+    @ingroup NebulaGraphicsSystemTools
+
     The nAnimBuilder class is similar to the nMeshBuilder class, but
     assists in creating, loading, saving and processing of animation data.
 
     Supported file formats are nanim2 and nax2 (ascii and binary
     animation file formats).
+
+    @todo Write the nax2 save code.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -2,6 +2,9 @@
 #define N_BSPBUILDER_H
 //------------------------------------------------------------------------------
 /**
+    @class nBspBuilder
+    @ingroup NebulaGraphicsSystemTools
+
     A simple BSP builder. Recursively splits a mesh along the world axes 
     until a defined recursion depth has been reached.
     

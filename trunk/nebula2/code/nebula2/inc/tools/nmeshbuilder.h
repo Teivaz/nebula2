@@ -2,7 +2,10 @@
 #define N_MESHBUILDER_H
 //------------------------------------------------------------------------------
 /**
-    Nebula mesh builder helper class.
+    @class nMeshBuilder
+    @ingroup NebulaGraphicsSystemTools
+
+    Nebula mesh builder helper class. This class is useful for writing mesh exporters.
     
     (C) 2002 RadonLabs GmbH
 */
