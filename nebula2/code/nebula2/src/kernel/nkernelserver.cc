@@ -684,6 +684,8 @@ nKernelServer::New(const char* className)
     @param path         Path where to create the new object in the hierarchy
 
      - 24-Oct-99   floh    created
+     - 30-Jan-05   kims    removed assertion even when it failed to create a object.
+                           null pointer should be done on the caller side.
 */
 nRoot*
 nKernelServer::NewNoFail(const char* className, const char *path)
@@ -691,7 +693,10 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     n_assert(className && path);
     this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, false);
-    n_assert(o);
+    if (!o) 
+    {
+        n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
+    }
     this->Unlock();
     return o;
 }
