@@ -178,24 +178,26 @@ _matrix44_sse::_matrix44_sse(float _m11, float _m12, float _m13, float _m14,
 inline
 _matrix44_sse::_matrix44_sse(const quaternion& q) 
 {
-    float xx = q.x * q.x; float yy = q.y * q.y; float zz = q.z * q.z;
-    float xy = q.x * q.y; float xz = q.x * q.z; float yz = q.y * q.z;
-    float wx = q.w * q.x; float wy = q.w * q.y; float wz = q.w * q.z;
+    float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+    x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
+    xx = q.x * x2;   xy = q.x * y2;   xz = q.x * z2;
+    yy = q.y * y2;   yz = q.y * z2;   zz = q.z * z2;
+    wx = q.w * x2;   wy = q.w * y2;   wz = q.w * z2;
 
-    m[0][0] = 1.0f - 2.0f * (yy + zz);
-    m[0][1] =        2.0f * (xy - wz);
-    m[0][2] =        2.0f * (xz + wy);
+    m[0][0] = 1.0f - (yy + zz);
+    m[1][0] = xy - wz;
+    m[2][0] = xz + wy;
 
-    m[1][0] =        2.0f * (xy + wz);
-    m[1][1] = 1.0f - 2.0f * (xx + zz);
-    m[1][2] =        2.0f * (yz - wx);
+    m[0][1] = xy + wz;
+    m[1][1] = 1.0f - (xx + zz);
+    m[2][1] = yz - wx;
 
-    m[2][0] =        2.0f * (xz - wy);
-    m[2][1] =        2.0f * (yz + wx);
-    m[2][2] = 1.0f - 2.0f * (xx + yy);
+    m[0][2] = xz - wy;
+    m[1][2] = yz + wx;
+    m[2][2] = 1.0f - (xx + yy);
 
-    m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[3][0] = m[3][1] = m[3][2] = 0.0f;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[3][3] = 1.0f;
 }
 
@@ -300,24 +302,26 @@ inline
 void 
 _matrix44_sse::set(const quaternion& q) 
 {
-    float xx = q.x*q.x; float yy = q.y*q.y; float zz = q.z*q.z;
-    float xy = q.x*q.y; float xz = q.x*q.z; float yz = q.y*q.z;
-    float wx = q.w*q.x; float wy = q.w*q.y; float wz = q.w*q.z;
+    float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+    x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
+    xx = q.x * x2;   xy = q.x * y2;   xz = q.x * z2;
+    yy = q.y * y2;   yz = q.y * z2;   zz = q.z * z2;
+    wx = q.w * x2;   wy = q.w * y2;   wz = q.w * z2;
 
-    m[0][0] = 1.0f - 2.0f * (yy + zz);
-    m[0][1] =        2.0f * (xy - wz);
-    m[0][2] =        2.0f * (xz + wy);
+    m[0][0] = 1.0f - (yy + zz);
+    m[1][0] = xy - wz;
+    m[2][0] = xz + wy;
 
-    m[1][0] =        2.0f * (xy + wz);
-    m[1][1] = 1.0f - 2.0f * (xx + zz);
-    m[1][2] =        2.0f * (yz - wx);
+    m[0][1] = xy + wz;
+    m[1][1] = 1.0f - (xx + zz);
+    m[2][1] = yz - wx;
 
-    m[2][0] =        2.0f * (xz - wy);
-    m[2][1] =        2.0f * (yz + wx);
-    m[2][2] = 1.0f - 2.0f * (xx + yy);
+    m[0][2] = xz - wy;
+    m[1][2] = yz + wx;
+    m[2][2] = 1.0f - (xx + yy);
 
-    m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[3][0] = m[3][1] = m[3][2] = 0.0f;
+    m[0][3] = m[1][3] = m[2][3] = 0.0f;
     m[3][3] = 1.0f;
 }
 
