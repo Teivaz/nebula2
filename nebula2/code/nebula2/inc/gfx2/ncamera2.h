@@ -103,6 +103,8 @@ private:
 inline
 nCamera2::nCamera2() :
     type(Perspective),
+    width(0),
+    height(0),
     angleOfView(n_deg2rad(60.0f)),
     aspectRatio(4.0f / 3.0f),
     nearPlane(0.1f),
@@ -119,6 +121,8 @@ nCamera2::nCamera2() :
 inline
 nCamera2::nCamera2(float aov, float aspect, float nearp, float farp) :
     type(Perspective),
+    width(0),
+    height(0),
     angleOfView(n_deg2rad(aov)),
     aspectRatio(aspect),
     nearPlane(nearp),
