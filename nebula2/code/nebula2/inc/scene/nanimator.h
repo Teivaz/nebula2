@@ -13,21 +13,9 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_SCENENODE_H
 #include "scene/nscenenode.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nAnimator
-#include "kernel/ndefdllclass.h"
 
 class nVariableServer;
 

@@ -16,13 +16,7 @@
 
     (C) 2003 Megan Fox
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nResourceLoader
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nResource;

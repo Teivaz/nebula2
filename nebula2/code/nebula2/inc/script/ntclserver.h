@@ -13,21 +13,9 @@
 
 #include "tcl.h"
 
-#ifndef N_KERNELSERVER_H
 #include "kernel/nkernelserver.h"
-#endif
-
-#ifndef N_SCRIPTSERVER_H
 #include "kernel/nscriptserver.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nTclServer
-#include "kernel/ndefdllclass.h"
 
 //--------------------------------------------------------------------
 class nFileServer2;
