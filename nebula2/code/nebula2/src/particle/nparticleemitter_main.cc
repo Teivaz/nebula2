@@ -12,8 +12,6 @@ int nParticleEmitter::nextKey = 0;
 /**
 */
 nParticleEmitter::nParticleEmitter():
-    refParticleServer("/sys/servers/particle"),
-    refGfxServer("/sys/servers/gfx"),
     key(nextKey++),
     alive(true),
     active(true),
@@ -26,6 +24,7 @@ nParticleEmitter::nParticleEmitter():
     startRotation(0.0f),
     startTime(-1.0),
     lastEmission(0.0),
+    prevTime(0.0),
     randomKey(0),
     lastEmissionVertex(0),
     meshGroupIndex(0),
@@ -44,7 +43,15 @@ nParticleEmitter::nParticleEmitter():
 */
 nParticleEmitter::~nParticleEmitter()
 {
-    // empty
+    nParticleServer* particleServer = nParticleServer::Instance();
+    nParticle** bufferElement = 0;
+    // free particles
+    while (!this->particleBuffer.IsEmpty())
+    {
+        bufferElement = this->particleBuffer.GetTail();
+        this->particleBuffer.DeleteTail();
+        particleServer->TakeBackParticle(*bufferElement);
+    }
 }
 
 
@@ -54,7 +61,12 @@ nParticleEmitter::~nParticleEmitter()
 void
 nParticleEmitter::Trigger(nTime curTime)
 {
-    nParticleServer* particleServer = this->refParticleServer.get();
+    nParticleServer* particleServer = nParticleServer::Instance();
+    if (!particleServer->IsEnabled())
+    {
+        return;
+    }
+
     const vector3& globalAccel = particleServer->GetGlobalAccel();
     this->SetAlive(true);
 
@@ -64,11 +76,12 @@ nParticleEmitter::Trigger(nTime curTime)
         this->lastEmission = curTime;
         return;
     }
-    nTime diffTime  = curTime - this->lastEmission;
-    if (diffTime < 0.0)
+    float diffTime  = float(curTime - this->lastEmission);
+    float frameTime = float(curTime - this->prevTime);
+    this->prevTime = curTime;
+    if ((diffTime < 0.0) || (frameTime < 0.0))
     {
-        // a time exception, throw the emitter away, so that it will restart 
-        // in the next frame
+        // a time exception, throw the emitter away, so that it will restart in the next frame
         this->SetFatalException(true);
         return;
     }
@@ -83,19 +96,21 @@ nParticleEmitter::Trigger(nTime curTime)
         {
             bufferElement = this->particleBuffer.GetTail();
             if (nParticle::Dead != (*bufferElement)->GetState())
+            {
                 break; //stop when found the 1. not dead element
+            }
             this->particleBuffer.DeleteTail();
             particleServer->TakeBackParticle(*bufferElement);
         }
-        
+
         // trigger living particles and update the bounding box
         this->box.begin_extend();
         while(bufferElement)
         {
-            (*bufferElement)->Trigger(curTime, globalAccel);
-            this->box.extend((*bufferElement)->GetCurPosition());
+            (*bufferElement)->Trigger(this, float(curTime), frameTime, globalAccel);
+            this->box.extend((*bufferElement)->GetPosition());
             bufferElement = this->particleBuffer.GetNext(bufferElement);
-        }       
+        }
     }
 
     if (this->AreResourcesValid() && this->alive)
@@ -109,7 +124,7 @@ nParticleEmitter::Trigger(nTime curTime)
             this->particleBuffer.Initialize(maxParticles);
         }
 
-        const matrix44& viewer = this->refGfxServer->GetTransform(nGfxServer2::InvView);
+        const matrix44& viewer = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
         vector3 emitterViewer = viewer.pos_component() - this->matrix.pos_component();
         float distance = emitterViewer.len();
         if (distance < this->activityDistance)
@@ -170,21 +185,21 @@ nParticleEmitter::Trigger(nTime curTime)
                         normal.rotate(ortho1, n_deg2rad(ortho1Angle * this->spreadAngle));
                         normal.rotate(ortho2, n_deg2rad(ortho2Angle * this->spreadAngle));
 
-                        nTime birthTime = curTime + ((particleServer->PseudoRandomFloat(this->randomKey++) + 1.0f) / 2.0f * this->birthDelay);
+                        float birthTime = float(curTime) + ((particleServer->PseudoRandomFloat(this->randomKey++) + 1.0f) / 2.0f * this->birthDelay);
                         float startVelocity = this->curves[ParticleStartVelocity].GetValue(relAge);
                         float startRotation = particleServer->PseudoRandomFloat(this->randomKey++) * this->startRotation;
-                        particle->Initialize(this, position, 
-                            normal * startVelocity, 
-                            birthTime, 
+                        particle->Initialize(position, normal * startVelocity, birthTime, 
                             this->curves[ParticleLifeTime].GetValue(relAge),
                             startRotation);
 
                         curEmitted++;
                     }
+                    /*
                     if (this->particleBuffer.IsFull())
                     {
                         n_printf("nParticleEmitter::Trigger: particle ring buffer full!\n");
                     }
+                    */
                 }
                 this->refEmitterMesh->UnlockVertices();
                 this->refEmitterMesh->UnlockIndices();
@@ -208,11 +223,16 @@ nParticleEmitter::Trigger(nTime curTime)
 //------------------------------------------------------------------------------
 /**
 */
-void nParticleEmitter::Render()
+void nParticleEmitter::Render(nTime curTime)
 {
-    nGfxServer2* gfxServer = this->refGfxServer.get();
+    nParticleServer* particleServer = nParticleServer::Instance();
+    if (!particleServer->IsEnabled())
+    {
+        return;
+    }
+
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     #ifdef __NEBULA_STATS__
-    nParticleServer*    particleServer = this->refParticleServer.get();
     int numDrawnParticles  = particleServer->numDrawnParticles->GetI();
     int numDrawnPrimitives = particleServer->numDrawnPrimitives->GetI();
     #endif
@@ -225,44 +245,40 @@ void nParticleEmitter::Render()
         n_assert(this->dynMesh.IsValid());
     }
 
-    float* dstVertices;
-    int    maxVertices;
-
     vector2 spriteCorners[4] = {vector2(-1.0, -1.0),
                                 vector2(-1.0,  1.0),
                                 vector2(1.0,   1.0),
                                 vector2(1.0,  -1.0)};
 
-    nParticle** curParticle;
-    if (this->renderOldestFirst)
-    {
-        curParticle = this->particleBuffer.GetTail();
-    }
-    else
-    {
-        curParticle = this->particleBuffer.GetHead();
-    }
+    float* dstVertices = 0;
+    int maxVertices = 0;
     int curIndex  = 0;
     int curVertex = 0;
 
     this->dynMesh.Begin(dstVertices, maxVertices);
 
-    while (0 != curParticle)
+    nParticle** curParticlePtr;
+    if (this->renderOldestFirst)
     {
-        if (nParticle::Living == (*curParticle)->GetState())
+        curParticlePtr = this->particleBuffer.GetTail();
+    }
+    else
+    {
+        curParticlePtr = this->particleBuffer.GetHead();
+    }
+    while (0 != curParticlePtr)
+    {
+        nParticle* particle = *curParticlePtr;
+        if (nParticle::Living == particle->GetState())
         {
             curVertex += 6;
 
-            float   relParticleAge  = (*curParticle)->GetRelAge();
-            if (relParticleAge > 1.0)
-                relParticleAge = 1.0f;
-            else if (relParticleAge <= 0.0)
-                relParticleAge = 1e-6f;
-            vector3 curPosition     = (*curParticle)->GetCurPosition();
-            float   curRotation     = (*curParticle)->GetCurRotation();
-            float   curScale        = this->GetParticleScale(relParticleAge);
-            vector3 curRGB          = this->GetParticleRGB(relParticleAge);
-            float   curAlpha        = this->GetParticleAlpha(relParticleAge);
+            float relParticleAge = particle->GetRelativeAge(float(curTime));
+            const vector3& curPosition = particle->GetPosition();
+            float curRotation = particle->GetRotation();
+            float curScale = this->GetParticleScale(relParticleAge);
+            const vector3& curRGB = this->GetParticleRGB(relParticleAge);
+            float curAlpha = this->GetParticleAlpha(relParticleAge);
 
             // point 1
             dstVertices[curIndex++] = curPosition.x;
@@ -383,7 +399,7 @@ void nParticleEmitter::Render()
             {
                 this->dynMesh.Swap(curVertex, dstVertices);
                 #ifdef __NEBULA_STATS__
-                numDrawnPrimitives += curVertex/3;
+                numDrawnPrimitives += curVertex / 3;
                 #endif
                 curIndex  = 0;
                 curVertex = 0;
@@ -394,11 +410,11 @@ void nParticleEmitter::Render()
         #endif
         if (this->renderOldestFirst)
         {
-        curParticle = this->particleBuffer.GetNext(curParticle);
+            curParticlePtr = this->particleBuffer.GetNext(curParticlePtr);
         }
         else
         {
-            curParticle = this->particleBuffer.GetPrev(curParticle);
+            curParticlePtr = this->particleBuffer.GetPrev(curParticlePtr);
         }
     }
 

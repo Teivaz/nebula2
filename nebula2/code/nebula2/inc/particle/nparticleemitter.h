@@ -102,7 +102,7 @@ public:
     /// get the particle scale from the particle scale envelope curve
     float GetParticleWeight(float) const;
     /// get the particle rgb color from the particle color envelope curve
-    vector3 GetParticleRGB(float) const;
+    const vector3& GetParticleRGB(float) const;
     /// get the particle alpha from the particle alpha envelope curve
     float GetParticleAlpha(float) const;
     /// get the first particle side velocity from the envelope curve
@@ -126,7 +126,7 @@ public:
     /// erase dead particles, create new
     virtual void Trigger(nTime curTime);
     /// called by particle server
-    void Render();
+    void Render(nTime curTime);
 
     /// initializes particle ring buffer; may only be called once
     void SetParticleCount(int count);
@@ -162,9 +162,6 @@ protected:
     bbox3                      box;
     nFloat4 wind;
 
-    nAutoRef<nParticleServer>  refParticleServer;
-    nAutoRef<nGfxServer2>      refGfxServer;
-
     matrix44        matrix;                 ///< the world space matrix
  
     bool            alive;                  ///< is alive ?
@@ -175,6 +172,7 @@ protected:
 
     nTime           startTime;              ///< timestamp of creation
     nTime           lastEmission;           ///< timestamp of last emission in visual time frame
+    nTime           prevTime;               ///< timestamp of preview frame
 
     // emitter settings
     nTime           emissionDuration;       ///< how long shall be emitted ?
@@ -511,7 +509,7 @@ nParticleEmitter::GetParticleWeight(float pos) const
 /**
 */
 inline
-vector3
+const vector3&
 nParticleEmitter::GetParticleRGB(float pos) const
 {
     return this->rgbCurve.GetValue(pos);

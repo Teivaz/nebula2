@@ -11,15 +11,15 @@
 
 #include "mathlib/vector.h"
 #include "mathlib/matrix.h"
-#include "util/nnode.h"
 
 class nParticleEmitter;
 
 //------------------------------------------------------------------------------
-class nParticle : public nNode
+class nParticle
 {
 public:
-    enum State {
+    enum State 
+    {
         Unborn,
         Living,
         Dead
@@ -28,64 +28,50 @@ public:
     /// constructor
     nParticle();
     /// destructor
-    virtual ~nParticle();
-
+    ~nParticle();
     /// initializes all values and sets state to Used
-    void Initialize(nParticleEmitter* emitter, const vector3& position, 
-    const vector3& velocity, nTime birthTime, nTime lifeTime, float rotation);
-
+    void Initialize(const vector3& position, const vector3& velocity, float birthTime, float lifeTime, float rotation);
     /// update the particle
-    virtual void Trigger(nTime curTime, const vector3& absAccel);
+    void Trigger(nParticleEmitter* emitter, float curTime, float frameTime, const vector3& absAccel);
 
     /// get the current particle position
-    vector3 GetCurPosition();
+    const vector3& GetPosition() const;
+    /// get the current particle velocity
+    const vector3& GetVelocity() const;
     /// get the current particle rotation
-    float GetCurRotation();
-
+    float GetRotation();
     /// set the birth time of the particle
-    void SetBirthTime(nTime time);
+    void SetBirthTime(float time);
+    /// get birth time of particle
+    float GetBirthTime() const;
     /// set the life time of the particle
-    void SetLifeTime(nTime time);
-
-    /// get the state of the particle
-    State GetState();
+    void SetLifeTime(float time);
+    /// get life time of particle
+    float GetLifeTime() const;
     /// set the state of the particle
     void SetState(State state);
-
+    /// get the state of the particle
+    State GetState() const;
     /// returns the age of the particle
-    nTime GetAge() const;
-    /// returns the relative age of the particle (0.0 .. 1.0), negative if unborn
-    float GetRelAge() const;
+    // nTime GetAge() const;
+    /// computes the current relative age of the particle, clamped to 0.0 -> 1.0
+    float GetRelativeAge(float curTime) const;
 
 protected:
-    State       state;
-
-    nTime       birthTime;
-    nTime       lifeTime;
-    nTime       lastTrigger;
-
-    vector3     curVelocity;
-    vector3     sideVector;     // vector that is always orthogonal to curVelocity
-    vector3     curPosition;
-    float       curRotation;
-
-    nParticleEmitter* emitter;
+    vector3 velocity;
+    vector3 position;
+    State state;
+    float birthTime;
+    float lifeTime;
+    float rotation;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nParticle::State nParticle::GetState()
-{
-    return this->state;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void nParticle::SetState(State state)
+void 
+nParticle::SetState(State state)
 {
     this->state = state;
 }
@@ -94,7 +80,18 @@ void nParticle::SetState(State state)
 /**
 */
 inline
-void nParticle::SetBirthTime(nTime time)
+nParticle::State 
+nParticle::GetState() const
+{
+    return this->state;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticle::SetBirthTime(float time)
 {
     this->birthTime = time;
 }
@@ -103,7 +100,18 @@ void nParticle::SetBirthTime(nTime time)
 /**
 */
 inline
-void nParticle::SetLifeTime(nTime time)
+float
+nParticle::GetBirthTime() const
+{
+    return this->birthTime;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticle::SetLifeTime(float time)
 {
     this->lifeTime = time;
 }
@@ -112,36 +120,61 @@ void nParticle::SetLifeTime(nTime time)
 /**
 */
 inline
-vector3 nParticle::GetCurPosition()
+float
+nParticle::GetLifeTime() const
 {
-    return this->curPosition;
+    return this->lifeTime;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-float nParticle::GetCurRotation()
+const vector3&
+nParticle::GetPosition() const
 {
-    return this->curRotation;
+    return this->position;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
+inline
+const vector3&
+nParticle::GetVelocity() const
+{
+    return this->velocity;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float 
+nParticle::GetRotation()
+{
+    return this->rotation;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+/*
 inline
 nTime nParticle::GetAge() const
 {
     return (this->lastTrigger - this->birthTime);
 }
+*/
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-float nParticle::GetRelAge() const
+float 
+nParticle::GetRelativeAge(float curTime) const
 {
-    return (float) ((this->lastTrigger - this->birthTime) / this->lifeTime);
+    return n_saturate(((curTime - this->birthTime) / this->lifeTime));
 }
 
 //------------------------------------------------------------------------------
