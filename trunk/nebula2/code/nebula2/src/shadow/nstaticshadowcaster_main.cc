@@ -11,7 +11,7 @@ nNebulaClass(nStaticShadowCaster, "nshadowcaster");
 /**
 */
 nStaticShadowCaster::nStaticShadowCaster() :
-    faceNormales(0), numFaceNormales(0)
+    faceNormals(0), numFaceNormals(0)
 {
     //empty
 }
@@ -37,8 +37,8 @@ nStaticShadowCaster::LoadShadowData(nMesh2* sourceMesh)
 
     nShadowCaster::LoadShadowData(sourceMesh);
     
-    this->LoadVerticies(sourceMesh);
-    this->CreateFaceNormales();
+    this->LoadVertices(sourceMesh);
+    this->CreateFaceNormals();
 }
 
 //------------------------------------------------------------------------------
@@ -55,11 +55,11 @@ nStaticShadowCaster::UnloadResource()
         this->refCoordMesh.invalidate();
     }
 
-    if (0 != this->faceNormales)
+    if (0 != this->faceNormals)
     {
-        n_delete_array(this->faceNormales);
-        this->faceNormales = 0;
-        this->numFaceNormales = 0;
+        n_delete_array(this->faceNormals);
+        this->faceNormals = 0;
+        this->numFaceNormals = 0;
     }
 }
 
@@ -67,7 +67,7 @@ nStaticShadowCaster::UnloadResource()
 /**
 */
 void
-nStaticShadowCaster::LoadVerticies(nMesh2* sourceMesh)
+nStaticShadowCaster::LoadVertices(nMesh2* sourceMesh)
 {
     n_assert(sourceMesh);
     n_assert(sourceMesh->IsValid());
@@ -129,16 +129,16 @@ nStaticShadowCaster::LoadVerticies(nMesh2* sourceMesh)
 /**
 */
 void
-nStaticShadowCaster::CreateFaceNormales()
+nStaticShadowCaster::CreateFaceNormals()
 {
-    n_assert(0 == this->faceNormales);
+    n_assert(0 == this->faceNormals);
     
     // allocate memory
-    this->numFaceNormales = this->numFaces;
-    n_assert(this->numFaceNormales > 0);
+    this->numFaceNormals = this->numFaces;
+    n_assert(this->numFaceNormals > 0);
 
-    this->faceNormales = n_new_array(vector3, this->numFaceNormales);
-    n_assert(0 != this->faceNormales);
+    this->faceNormals = n_new_array(vector3, this->numFaceNormals);
+    n_assert(0 != this->faceNormals);
 
     vector3* coords = (vector3*) this->refCoordMesh->LockVertices();
     
@@ -151,8 +151,8 @@ nStaticShadowCaster::CreateFaceNormales()
         const vector3& vertex2 = *(coords + face.index[2]);
 
         // compute the face normal
-        this->faceNormales[i] = (vertex1 - vertex0) * (vertex2 - vertex0);
-        this->faceNormales[i].norm();
+        this->faceNormals[i] = (vertex1 - vertex0) * (vertex2 - vertex0);
+        this->faceNormals[i].norm();
     }
     this->refCoordMesh->UnlockVertices();
 }
@@ -191,7 +191,7 @@ nStaticShadowCaster::DebugSetupGeometry()
             if (face.lightFacing)
             {
                 int f;
-                for(f = 0; f < 3; f++)
+                for (f = 0; f < 3; f++)
                 {
                     *(dstVtxPtr++) = srcVtxPtr[face.index[f]].x;
                     *(dstVtxPtr++) = srcVtxPtr[face.index[f]].y;

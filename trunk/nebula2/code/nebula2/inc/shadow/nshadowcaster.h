@@ -85,8 +85,8 @@ protected:
     int numEdges;
 
     /// indicies of the current silhouette
-    nArray<ushort> silhouetteIndicies;
-    int numSilhouetteIndicies;
+    nArray<ushort> silhouetteIndices;
+    int numSilhouetteIndices;
 
     nArray<nMeshGroup> meshGroups;
     

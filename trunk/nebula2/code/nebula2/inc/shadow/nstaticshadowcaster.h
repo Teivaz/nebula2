@@ -36,13 +36,13 @@ protected:
 
 private:
     /// read vertex data from source mesh
-    void LoadVerticies(nMesh2* sourceMesh);
+    void LoadVertices(nMesh2* sourceMesh);
     /// generate face normals
-    void CreateFaceNormales();
+    void CreateFaceNormals();
 
-    /// array of the face normals of the current load triangels
-    vector3* faceNormales;
-    int numFaceNormales;
+    /// array of the face normals of the current load triangles
+    vector3* faceNormals;
+    int numFaceNormals;
 
     /// coordiantes of the all groups of the shadow geometry, is shared via resource system
     nRef<nMesh2> refCoordMesh;
@@ -55,8 +55,8 @@ inline
 vector3*
 nStaticShadowCaster::GetFaceNormals() const
 {
-    n_assert(0 != this->faceNormales)
-    return this->faceNormales;
+    n_assert(0 != this->faceNormals)
+    return this->faceNormals;
 }
 
 //------------------------------------------------------------------------------
