@@ -5,35 +5,20 @@
     @class nSkinAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Provide an animated joint skeleton for a nSkinShapeNode. On
+    Provide an animated joint skeleton for an nSkinShapeNode. On
     Animate() invocation, the nSkinAnimator will update its joint
     skeleton and invoke SetCharSkeleton() on the calling 
-    scene node (which must be a nSkinShapeNode) with a pointer
+    scene node (which must be an nSkinShapeNode) with a pointer
     to an uptodate nCharSkeleton object.
 
     See also @ref N2ScriptInterface_nskinanimator
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMATOR_H
 #include "scene/nanimator.h"
-#endif
-
-#ifndef N_CHARSKELETON_H
 #include "character/ncharskeleton.h"
-#endif
-
-#ifndef N_CHARACTER2_H
 #include "character/ncharacter2.h"
-#endif
-
-#ifndef N_ANIMSTATE_H
 #include "anim2/nanimstate.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nSkinAnimator
-#include "kernel/ndefdllclass.h"
 
 class nAnimation;
 class nAnimationServer;
@@ -52,8 +37,10 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
-    /// return true if resources for this object are valid
-    virtual bool AreResourcesValid() const;
+    /// called by app when new render context has been created for this object
+    virtual void RenderContextCreated(nRenderContext* renderContext);
+    /// called by app when render context is going to be released
+    virtual void RenderContextDestroyed(nRenderContext* renderContext);
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// begin configuring the character skeleton
@@ -71,9 +58,9 @@ public:
     /// get name of an anim resource
     const char* GetAnim() const;
 
-    /// set the nVariable name which delivers the current anim state index
+    /// set channel name which delivers the current anim state index
     void SetStateChannel(const char* name);
-    /// get anim state nVariable name 
+    /// get anim state channel name 
     const char* GetStateChannel();
 
     /// begin anim state definition
@@ -124,6 +111,8 @@ private:
     nAutoRef<nAnimationServer> refAnimServer;
     nRef<nAnimation> refAnim;
     nString animName;
+    int characterVarIndex;
+    int frameIdVarIndex;
     nVariable::Handle animStateVarHandle;
     uint frameId;
 };
