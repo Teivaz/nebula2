@@ -12,7 +12,12 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
 {
     n_assert(format!=NULL);
 
-    va_list argListSave = argList;
+    va_list argListSave;
+#ifdef __LINUX__
+    va_copy(argListSave, argList);
+#else
+    argListSave = argList;
+#endif
     int max_len = 0;
 
     for (const char* fm_tmp = format; *fm_tmp != '\0'; ++fm_tmp)
