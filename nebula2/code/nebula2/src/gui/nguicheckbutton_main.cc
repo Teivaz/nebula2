@@ -12,7 +12,7 @@ nNebulaScriptClass(nGuiCheckButton, "nguitextlabel");
 */
 nGuiCheckButton::nGuiCheckButton() :
     mouseOver(false),
-    pressed(false)
+    pressed(false),
     partOfGroup(false)
 {
     // empty
@@ -129,7 +129,7 @@ nGuiCheckButton::Render()
         else if (this->blinking)
         {
             double time = nGuiServer::Instance()->GetTime();
-            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
+            if (fmod(time, 1.0f) > 0.5f)
             {
                 brush = &this->highlightBrush;
             }

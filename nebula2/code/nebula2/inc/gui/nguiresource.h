@@ -58,7 +58,6 @@ private:
     nString texName;
     rectangle absUvRect;
     rectangle relUvRect;
-    bool relUvRectDirty;
     vector4 color;
     nRef<nTexture2> refTexture;
 };
@@ -68,8 +67,7 @@ private:
 */
 inline
 nGuiResource::nGuiResource() :
-    color(1.0f, 1.0f, 1.0f, 1.0f),
-    relUvRectDirty(true)
+    color(1.0f, 1.0f, 1.0f, 1.0f)
 {
     // empty
 }
@@ -119,7 +117,6 @@ nGuiResource::SetTextureName(const char* name)
         this->Unload();
     }
     this->texName = name;
-    this->relUvRectDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +137,6 @@ void
 nGuiResource::SetAbsUvRect(const rectangle& r)
 {
     this->absUvRect = r;
-    this->relUvRectDirty = true;
 }
 
 //------------------------------------------------------------------------------
@@ -151,36 +147,6 @@ const rectangle&
 nGuiResource::GetAbsUvRect() const
 {
     return this->absUvRect;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const rectangle&
-nGuiResource::GetRelUvRect()
-{
-    if (this->relUvRectDirty)
-    {
-        if (!this->IsValid())
-        {
-            this->Load();
-        }
-        this->relUvRectDirty = false;
-
-        vector2 corrUvPos(this->absUvRect.v0.x + 0.5f, this->absUvRect.v0.y + 0.5f);
-        vector2 absUvSize = this->absUvRect.size();
-        vector2 corrUvSize(absUvSize.x - 1.0f, absUvSize.y - 1.0f);
-
-        float texHeight = float(this->GetTextureHeight());
-        float texWidth  = float(this->GetTextureWidth());
-
-        this->relUvRect.v0.x = (corrUvPos.x + 0.5f) / texWidth;
-        this->relUvRect.v0.y = 1.0f - ((corrUvPos.y + corrUvSize.y) / texHeight);
-        this->relUvRect.v1.x = (corrUvPos.x + 0.5f + corrUvSize.x) / texWidth;
-        this->relUvRect.v1.y = 1.0f - ((corrUvPos.y + 0.5f) / texHeight);
-    }
-    return this->relUvRect;
 }
 
 //------------------------------------------------------------------------------

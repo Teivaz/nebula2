@@ -10,21 +10,6 @@
 
 nNebulaClass(nGuiSystemInfoWindow, "nguiclientwindow");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguisysteminfowindow
-
-    @cppclass
-    nGuiSystemInfoWindow
-    
-    @superclass
-    nguiclientwindow
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

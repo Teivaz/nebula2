@@ -8,21 +8,6 @@
 
 nNebulaScriptClass(nGuiHoriSliderGroup, "nguiformlayout");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguihorislidergroup
-
-    @cppclass
-    nGuiHoriSliderGroup
-    
-    @superclass
-    nguiformlayout
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

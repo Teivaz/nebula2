@@ -11,21 +11,6 @@
 
 nNebulaClass(nGuiTexBrowserWindow, "nguiclientwindow");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguitexbrowserwindow
-
-    @cppclass
-    nGuiTexBrowserWindow
-    
-    @superclass
-    nguiclientwindow
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */

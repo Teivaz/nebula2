@@ -7,21 +7,6 @@
 
 nNebulaClass(nGuiIcon, "nguilabel");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nguiicon
-
-    @cppclass
-    nGuiIcon
-    
-    @superclass
-    nguilabel
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
