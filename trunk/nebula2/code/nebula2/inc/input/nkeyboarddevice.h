@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nKeyboardDevice
+    @ingroup NebulaInputSystem
 
     A Nebula input device wrapping around a keyboard.
 

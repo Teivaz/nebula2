@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDI8Server
+    @ingroup NebulaDI8InputSystem
 
     A DirectInput8 based input server class.
 

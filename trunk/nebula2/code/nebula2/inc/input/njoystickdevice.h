@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nJoystickDevice
+    @ingroup NebulaInputSystem
 
     A Nebula joystick input device. Nebula joystick device have buttons, axes
     and button-axes. POVs are tranlated into normal axes. For each hardware

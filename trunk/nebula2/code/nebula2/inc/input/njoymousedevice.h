@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nJoyMouseDevice
+    @ingroup NebulaInputSystem
 
     A Nebula input device which takes as input mouse data and emulates
     a recentering joystick.

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nInputDevice
+    @ingroup NebulaInputSystem
 
     A generic Nebula input translates data from an API-specific input device
     into Nebula input events. 
