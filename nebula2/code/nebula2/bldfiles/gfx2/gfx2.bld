@@ -25,12 +25,9 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule ngfxserver2
     setdir gfx2
-    setfiles { ngfxserver2_main ngfxserver2_cmds nmousecursor 
-        nwindowhandler nwin32windowhandler nshaderstate nshaderlist }
+    setfiles { ngfxserver2_main ngfxserver2_cmds nshaderstate nshaderlist }
     setheaders {
-        ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nfontdesc 
-        nmousecursor nwindowhandler nwin32windowhandler
-        nshaderstate
+        ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nfontdesc nshaderstate
     }
 endmodule
 #-------------------------------------------------------------------------------
