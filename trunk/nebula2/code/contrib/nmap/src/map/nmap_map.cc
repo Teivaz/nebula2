@@ -15,23 +15,23 @@
 */
 void nMap::LoadMap()
 {
-    if (false == isDataDirty)
+    if (!isDataDirty)
+    {
         return;
+    }
 
-	const char * path;
-	path = imagePath.Get();
+	const char * path = GetHeightMap();
 
     // Load heightmap from image
-    if (NULL != path)
+    if( path )
     {
-        if (false == LoadFromImage(path))
+        if( !LoadFromImage(path) )
         {
             n_printf("nMap: Could not load height map '%s'\n", path);
             n_error("Aborting!\n");
         }
-        // Process result
         else
-        {
+        { // Process result
             CalculateNormals();
         }
     }
@@ -53,7 +53,7 @@ bool nMap::LoadFromImage(const char* abs_path)
     bool retval = false;
     
     nBmpFile bmp_file;
-    if (true == bmp_file.Open(abs_path, "rb"))
+    if (bmp_file.Open(abs_path, "rb"))
     {
         // get width and height
         int w = bmp_file.GetWidth();
@@ -62,8 +62,10 @@ bool nMap::LoadFromImage(const char* abs_path)
 
         // Initialise map data
         mapDimension = w;
-        if (NULL != pointData)
+        if (pointData)
+        {
             delete[] pointData;
+        }
         pointData = n_new MapPoint[mapDimension * mapDimension];
 
         // allocate a line buffer for pixelformat conversion
