@@ -41,7 +41,7 @@ public:
     virtual bool Open(const char* dirName);
     /// closes the directory
     virtual void Close();
-	/// determines whether the directory is open
+    /// determines whether the directory is open
     virtual bool IsOpen() const;
     /// get the full path name of the directory itself
     const char* GetPathName() const;
