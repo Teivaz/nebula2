@@ -552,7 +552,7 @@ nApplication::CreateAppCamera()
 nAudioServer3*
 nApplication::CreateAudioServer()
 {
-    return (nAudioServer3*) kernelServer->New("ndsoundserver3", "/sys/servers/audio3");
+    return (nAudioServer3*) kernelServer->New("ndsoundserver3", "/sys/servers/audio");
 }
 
 //------------------------------------------------------------------------------
