@@ -547,8 +547,8 @@ nKernelServer::RemClass(nClass *cl)
 nClass*
 nKernelServer::FindClass(const char* className)
 {
-    this->Lock();
     n_assert(className);
+    this->Lock();
     nClass *cl = (nClass *) this->classList.Find(className);
     this->Unlock();
     return cl;
@@ -738,9 +738,15 @@ void
 nKernelServer::PushCwd(nRoot* o)
 {
     this->Lock();
-    n_assert(o);
     this->cwdStack.Push(this->cwd);
-    this->cwd = o;
+    if (o)
+    {
+        this->cwd = o;
+    }
+    else
+    {
+        this->cwd = this->root;
+    }
     this->Unlock();
 }
 
@@ -822,7 +828,6 @@ nKernelServer::ReplaceFileServer(const char* className)
         this->fileServer->Release();
         this->fileServer = 0;
     }
-
     this->fileServer = (nFileServer2*) this->New(className, "/sys/servers/file2");
     n_assert(this->fileServer);
     this->Unlock();

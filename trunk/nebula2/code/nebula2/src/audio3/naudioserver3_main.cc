@@ -72,7 +72,7 @@ nAudioServer3::EndScene()
 /**
 */
 void
-nAudioServer3::UpdateListener(const nListener3& l)
+nAudioServer3::UpdateListener(const nListener3& /*l*/)
 {
     n_assert(this->inBeginScene);
 }
@@ -111,7 +111,7 @@ nAudioServer3::StopSound(nSound3* s)
 /**
 */
 nSoundResource*
-nAudioServer3::NewSoundResource(const char* rsrcName)
+nAudioServer3::NewSoundResource(const char* /*rsrcName*/)
 {
     return 0;
 }

@@ -66,7 +66,6 @@ nCharSkinRenderer::Render(int meshGroupIndex, const nCharJointPalette& jointPale
     int paletteSize = jointPalette.GetNumJoints();
     n_assert(paletteSize <= maxJointPaletteSize);
     int paletteIndex;
-    int jointArrayIndex = 0;
     for (paletteIndex = 0; paletteIndex < paletteSize; paletteIndex++)
     {
         const nCharJoint& joint = this->charSkeleton->GetJointAt(jointPalette.GetJointIndexAt(paletteIndex));

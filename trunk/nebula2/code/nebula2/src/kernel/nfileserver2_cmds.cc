@@ -22,7 +22,7 @@ static void n_createfilenode(void* slf, nCmd* cmd);
     nroot
 
     @classinfo
-    da nu fileserver 
+    New style fileserver.
 */
 void
 n_initcmds(nClass* cl)

@@ -126,7 +126,7 @@ nResource::Load()
     @return     true if resource data successfully loaded
 */
 bool
-nResource::Load(nFile* file, int offset, int length)
+nResource::Load(nFile* /*file*/, int /*offset*/, int /*length*/)
 {
     n_error("nResource::Load(file, offset, length) not implemented yet!");
     return false;

@@ -66,7 +66,7 @@ void
 ListenerWakeupFunc(nThread* t)
 {
     sockaddr_in myAddr;
-    memset(&myAddr, 0, sizeof(sockaddr_in));
+    memset(&myAddr, 0, sizeof(myAddr));
     nIpcServer* ipcServer = (nIpcServer*) t->LockUserData();
     t->UnlockUserData();
     myAddr.sin_family = AF_INET;
@@ -74,7 +74,7 @@ ListenerWakeupFunc(nThread* t)
     myAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     n_assert(INVALID_SOCKET != sock);
-    int res = connect(sock, (struct sockaddr *) &myAddr, sizeof(myAddr));
+    connect(sock, (struct sockaddr *) &myAddr, sizeof(myAddr));
     shutdown(sock, 2);
     closesocket(sock);
 } 

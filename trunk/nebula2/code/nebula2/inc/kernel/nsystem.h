@@ -7,17 +7,14 @@
     (C) 2002 RadonLabs GmbH
 */
 #ifdef __XBxX__
-    #ifndef N_STATIC
-    #define N_STATIC
-    #endif
-
     // temporarly disabled because of bugs in SSE math classes
     #define __USE_SSE__ (0)   
 #endif
 
-#ifdef _DEBUG
+// FIXME!
+// #ifdef _DEBUG
 #define __NEBULA_STATS__ (1)
-#endif
+// #endif
 
 // use MicroTcl?
 #define __MICROTCL__ (1)

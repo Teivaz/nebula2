@@ -37,6 +37,16 @@ n_barf(const char* exp, const char* file, int line)
 
 //------------------------------------------------------------------------------
 /**
+    This function is called by n_assert2() when the assition fails.
+*/
+void
+n_barf2(const char* exp, const char* msg, const char* file, int line)
+{
+    n_error("*** NEBULA ASSERION ***\nprogrammer says:%s\nexpression: %s\nfile: %s\nline: %d\n", msg, exp, file, line);
+}
+
+//------------------------------------------------------------------------------
+/**
     This function is called when a serious situation is encountered which
     requires abortion of the program.
 */
@@ -52,7 +62,9 @@ n_error(const char* msg, ...)
             nKernelServer::ks->GetLogHandler()->Error(msg, argList);
         }
         else
+        {
             vprintf(msg, argList);
+        }
     #else
         vprintf(msg, argList);
     #endif

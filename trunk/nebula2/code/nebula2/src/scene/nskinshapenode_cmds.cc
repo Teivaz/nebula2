@@ -221,7 +221,7 @@ n_endjointpalette(void* slf, nCmd* cmd)
     Finish defining fragments.
 */
 static void
-n_endfragments(void* slf, nCmd* cmd)
+n_endfragments(void* slf, nCmd* /*cmd*/)
 {
     nSkinShapeNode* self = (nSkinShapeNode*) slf;
     self->EndFragments();

@@ -183,7 +183,7 @@ nSceneNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
     HasTransform() returns true.
 */
 bool
-nSceneNode::RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix)
+nSceneNode::RenderTransform(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*parentMatrix*/)
 {
     return false;
 }
@@ -195,7 +195,7 @@ nSceneNode::RenderTransform(nSceneServer* sceneServer, nRenderContext* renderCon
     HasGeometry() returns true.
 */
 bool
-nSceneNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
+nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     return false;
 }
@@ -212,7 +212,7 @@ nSceneNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
     @return     must return true if current shader in gfx server has been altered
 */
 bool
-nSceneNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nSceneNode::RenderShader(uint /*fourcc*/, nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     return false;
 }
@@ -224,7 +224,7 @@ nSceneNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext*
     HasLight() returns true.
 */
 bool
-nSceneNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)
+nSceneNode::RenderLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*lightTransform*/)
 {
     return false;
 }
@@ -258,7 +258,7 @@ nSceneNode::HasGeometry() const
     @param  fourcc  a fourcc code identifying the shader
 */
 bool
-nSceneNode::HasShader(uint fourcc) const
+nSceneNode::HasShader(uint /*fourcc*/) const
 {
     return false;
 }
@@ -383,9 +383,4 @@ nSceneNode::InvokeTransformAnimators(nRenderContext* renderContext)
         kernelServer->PopCwd();
     }
 }
-
-
-
-
-
 

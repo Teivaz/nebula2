@@ -75,7 +75,7 @@ n_open(void* slf, nCmd* cmd)
     Closes a file.
 */
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nFileNode* self = (nFileNode*) slf;
     self->Close();
