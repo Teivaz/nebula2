@@ -98,7 +98,8 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
     queries existing assign under /sys/share/assigns
 
     @param assignName      the name of the assign
-    @return                the path to which the assign links
+    @return                the path to which the assign links, or NULL if 
+                           assign is undefined
 
     history:
      - 30-Jan-2002   peter    created
@@ -113,7 +114,8 @@ nFileServer2::GetAssign(const char* assignName)
     }
     else 
     {
-        return "<unknown_assign>";
+        n_printf("Assign '%s' not defined!\n", assignName);
+        return NULL;
     }
 }
 
@@ -232,7 +234,7 @@ nFileServer2::ManglePath(const char* pathName)
 nDirectory* 
 nFileServer2::NewDirectoryObject()
 {
-	return n_new(nDirectory);
+    return n_new(nDirectory);
 }
 
 //------------------------------------------------------------------------------
@@ -247,7 +249,7 @@ nFileServer2::NewDirectoryObject()
 nFile*
 nFileServer2::NewFileObject()
 {
-	return n_new(nFile);
+    return n_new(nFile);
 }
 
 //------------------------------------------------------------------------------
