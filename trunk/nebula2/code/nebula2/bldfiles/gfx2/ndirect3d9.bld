@@ -51,6 +51,13 @@ beginmodule nd3d9shader
     setheaders { nd3d9shader }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nd3d9shaderinclude
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9shaderinclude }
+    setheaders { nd3d9shaderinclude }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nd3d9font
     setdir gfx2
     setfiles { nd3d9font_main }
@@ -71,6 +78,7 @@ begintarget ndirect3d9
     settype lib
     setmodules {
         nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font nd3d9surface
+        nd3d9shaderinclude
     }
 endtarget
 #-------------------------------------------------------------------------------
