@@ -11,7 +11,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * Include the static character classification tables and macros.

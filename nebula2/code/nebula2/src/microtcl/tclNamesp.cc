@@ -22,7 +22,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * Flag passed to TclGetNamespaceForQualName to indicate that it should

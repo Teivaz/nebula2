@@ -14,8 +14,8 @@
  */
 
 #include <math.h>
-#include "tclInt.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclPort.h"
 
 /*
  * The following constants are used by GetFormatSpec to indicate various

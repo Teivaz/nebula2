@@ -15,9 +15,9 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclCompile.h"
-#include "tclPort.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclCompile.h"
+#include "microtcl/tclPort.h"
 /*
  * When there are this many entries per bucket, on average, rebuild
  * a literal's hash table to make it larger.

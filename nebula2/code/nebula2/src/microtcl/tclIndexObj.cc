@@ -13,7 +13,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * Prototypes for procedures defined later in this file:

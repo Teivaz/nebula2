@@ -16,7 +16,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * For each linked variable there is a data structure of the following

@@ -13,8 +13,8 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
-#include "tclCompile.h"
+#include "microtcl/tclInt.h"
+#include "microtcl/tclCompile.h"
 
 /*
  * Table of all AuxData types.

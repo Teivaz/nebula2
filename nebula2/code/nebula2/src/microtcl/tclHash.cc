@@ -13,7 +13,7 @@
  * RCS: @(#) $Id$
  */
 
-#include "tclInt.h"
+#include "microtcl/tclInt.h"
 
 /*
  * Prevent macros from clashing with function definitions.
