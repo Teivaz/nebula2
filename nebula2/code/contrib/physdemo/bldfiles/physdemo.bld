@@ -12,7 +12,6 @@ endmodule
 
 begintarget physdemo
     settype exe
-    setplatform all
     setmodules { physdemo }
     settargetdeps {
         nkernel
@@ -29,6 +28,7 @@ endtarget
 beginworkspace PhysdemoProject
     setbinarydir ./code/contrib/physdemo/bin/
     settargets {
+        physdemo
         nkernel
         nnebula
         ndinput8
@@ -36,7 +36,6 @@ beginworkspace PhysdemoProject
         microtcl
         ntoollib
         physdemo_core
-        physdemo
         nopende
     }
 endworkspace
