@@ -4,6 +4,7 @@
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
+#include "export2/nmaxoptions.h"
 #include "export2/nmaxnotetrack.h"
 #include "export2/nmaxbones.h"
 #include "export2/nmaxskinanimator.h"
@@ -64,11 +65,12 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
 
 //-----------------------------------------------------------------------------
 /**
-    .nanim2(or .nax2) animation filename
-    note track
-    bone array
+    Specifies joints of skin animator.
+
+    - 01-Mar-05 kims added joint name export option.
 */
-void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator, const nArray<nMaxBoneManager::Bone> &boneArray)
+void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator, 
+                                   const nArray<nMaxBoneManager::Bone> &boneArray)
 {
     Matrix3 localTM;
     AffineParts ap;
@@ -95,6 +97,10 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator, const nArray<nMaxBon
                            poseTranlator,
                            poseRotate,
                            poseScale);
+
+        // add joint name
+        if (nMaxOptions::Instance()->HasJointName())
+            animator->AddJointName(bone.id, bone.name.Get());
     }
 
     animator->EndJoints();
@@ -106,7 +112,6 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator, const nArray<nMaxBon
 */
 void nMaxSkinAnimator::BuildAnimStates(nSkinAnimator* animator, nMaxNoteTrack& noteTrack)
 {
-    
     int numStates = noteTrack.GetNumStates();
 
     animator->BeginStates(numStates);
