@@ -13,6 +13,7 @@
 #   winnt   -> Windows NT 4
 #   win2k   -> Windows 2000
 #   unix    -> Unix variant
+#   macosx  -> Mac OS X
 #   unknown -> unknown
 #--------------------------------------------------------------------
 proc get_platform {} {
@@ -32,8 +33,13 @@ proc get_platform {} {
             puts "Windows9x detected"
         }
     } elseif {$tcl_platform(platform) == "unix"} {
-        set p "unix"
-        puts "Unix detected"
+        if {$tcl_platform(os) == "Darwin"} {
+            set p "macosx"
+            puts "Mac OS X detected"
+        } else {
+            set p "unix"
+            puts "Unix detected"
+        }
     } else {
         set p "unknown"
         puts "Unknown platform detected"
