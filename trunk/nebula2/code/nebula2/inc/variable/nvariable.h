@@ -119,8 +119,7 @@ inline
 nVariable::nVariable() :
     handle(InvalidHandle),
     type(Void),
-    stringVal(0),
-    matrixVal(0)
+    stringVal(0)
 {
     // empty
 }
@@ -132,8 +131,7 @@ inline
 nVariable::nVariable(Type t, Handle h) :
     handle(h),
     type(t),
-    stringVal(0),
-    matrixVal(0)
+    stringVal(0)
 {
     // empty
 }
@@ -213,9 +211,8 @@ nVariable::Copy(const nVariable& from)
 /**
 */
 inline
-nVariable::nVariable(const nVariable& rhs)
-    stringVal(0),
-    matrixVal(0)
+nVariable::nVariable(const nVariable& rhs) :
+    stringVal(0)
 {
     this->Copy(rhs);
 }
