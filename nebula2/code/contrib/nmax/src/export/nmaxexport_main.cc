@@ -84,7 +84,7 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                 GetDlgItemText(hWnd, IDC_EXT_DIRNAME,         str, 512); exp->SetHomeDir(str);
                 GetDlgItemText(hWnd, IDC_EXT_BINARY_PATH,     str, 512); exp->binaryPath = str;
 
-				exp->exportAnimations = (0 == IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM) ? true : false);
+				exp->exportAnimations = (BST_CHECKED == IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM) ? true : false);
 
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     str, 512); exp->animsAssign = str;
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   str, 512); exp->gfxlibAssign = str;
