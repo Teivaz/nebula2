@@ -86,6 +86,8 @@ public:
     bool IsOpen() const;
 
 private:
+    /// handle general input
+    void HandleInput(float frameTime);
     /// handle input in Maya control mode
     void HandleInputMaya(float frameTime);
     /// handle input in Fly control mode
@@ -129,6 +131,7 @@ private:
 
     nRenderContext renderContext;
     matrix44 viewMatrix;
+    int screenshotID;
 };
 
 //------------------------------------------------------------------------------

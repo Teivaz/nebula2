@@ -15,8 +15,8 @@ sel /sys/servers/input
     .map "relmouse0:+x"            "right"
     .map "relmouse0:-y"            "up"
     .map "relmouse0:+y"            "down"
-    .map "relmouse0:-z"            "zoomIn"
-    .map "relmouse0:+z"            "zoomOut"
+    .map "relmouse0:+zbtn.down"    "zoomIn"
+    .map "relmouse0:-zbtn.down"    "zoomOut"
     .map "keyb0:f1.down"           "mayacontrols"
     .map "keyb0:f2.down"           "flycontrols"
     .map "keyb0:1.down"            "speed0"
@@ -26,6 +26,7 @@ sel /sys/servers/input
     .map "keyb0:f6.down"           "setpos1"
     .map "keyb0:f7.down"           "setpos2"
     .map "keyb0:f8.down"           "setpos3"
+    .map "keyb0:f12.down"          "screenshot"
     .endmap
 sel ..
 
