@@ -140,18 +140,18 @@ private:
 
     enum 
     {                          
-        DYNAMIC_VERTEXBUFFER_SIZE = (1<<16),    // number of vertices in buffer
-        DYNAMIC_INDEXBUFFER_SIZE  = (1<<16),    // number of indices in buffer
+        DYNAMIC_VERTEXBUFFER_SIZE = (1<<16),    ///< number of vertices in buffer
+        DYNAMIC_INDEXBUFFER_SIZE  = (1<<16),    ///< number of indices in buffer
     };
 
     HINSTANCE hInst;
     HWND      hWnd;
     HACCEL    hAccel;
-    DWORD windowedStyle;            // WS_* flags for windowed mode
-    DWORD fullscreenStyle;          // WS_* flags for fullscreen mode
-    DWORD deviceBehaviourFlags;     // the behaviour flags at device creation time
-    D3DCAPS9 devCaps;               // device caps
-    bool windowOpen;                // window has been opened
+    DWORD windowedStyle;            ///< WS_* flags for windowed mode
+    DWORD fullscreenStyle;          ///< WS_* flags for fullscreen mode
+    DWORD deviceBehaviourFlags;     ///< the behaviour flags at device creation time
+    D3DCAPS9 devCaps;               ///< device caps
+    bool windowOpen;                ///< window has been opened
 
     class TextNode : public nNode
     {
@@ -165,12 +165,12 @@ private:
     nList textNodeList;
     CD3DFont9* d3dFont;
 
-    D3DPRESENT_PARAMETERS presentParams;        // current presentation parameters
+    D3DPRESENT_PARAMETERS presentParams;        ///< current presentation parameters
     D3DPRIMITIVETYPE d3dPrimType;
-    IDirect3DSurface9* backBufferSurface;       // the original back buffer surface
-    IDirect3DSurface9* depthStencilSurface;     // the original depth stencil surface
-    nRef<nMesh2> refDynMesh;                    // the global dynamic mesh
-    bool dynMeshLocked;                         // is the dynamic mesh currently owned by some client?
+    IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface
+    IDirect3DSurface9* depthStencilSurface;     ///< the original depth stencil surface
+    nRef<nMesh2> refDynMesh;                    ///< the global dynamic mesh
+    bool dynMeshLocked;                         ///< is the dynamic mesh currently owned by some client?
 
 public:
     enum
@@ -179,15 +179,15 @@ public:
     };
 
     // NOTE: this stuff is public because WinProcs may need to access it
-    IDirect3DDevice9* d3d9Device;               // pointer to device object
-    IDirect3D9* d3d9;                           // pointer to D3D9 object
+    IDirect3DDevice9* d3d9Device;               ///< pointer to device object
+    IDirect3D9* d3d9;                           ///< pointer to D3D9 object
 
     /// translate win32 keycode into Nebula keycode
     nKey TranslateKey(int vkey);
 
     nAutoRef<nInputServer> refInputServer;
-    bool windowMinimized;           // window is currently minimized
-    bool quitRequested;             // quit requested by WinProc()
+    bool windowMinimized;           ///< window is currently minimized
+    bool quitRequested;             ///< quit requested by WinProc()
 };
 
 //------------------------------------------------------------------------------
