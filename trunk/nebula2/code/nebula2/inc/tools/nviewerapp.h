@@ -43,7 +43,7 @@ public:
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
     /// set optional feature set override
-    void SetFeaturSetOverride(nGfxServer2::FeatureSet f);
+    void SetFeatureSetOverride(nGfxServer2::FeatureSet f);
     /// get optional feature set override
     nGfxServer2::FeatureSet GetFeatureSetOverride() const;
     /// set camera parameters
@@ -155,7 +155,7 @@ private:
 */
 inline
 void
-nViewerApp::SetFeaturSetOverride(nGfxServer2::FeatureSet f)
+nViewerApp::SetFeatureSetOverride(nGfxServer2::FeatureSet f)
 {
     this->featureSetOverride = f;
 }
