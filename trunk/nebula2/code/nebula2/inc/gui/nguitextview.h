@@ -2,6 +2,9 @@
 #define N_GUITEXTVIEW_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTextView
+    @ingroup NebulaGuiSystem
+
     A multiline text viewing widgets, which can display lines of
     text. This is the basis for more advanced widgets which need
     to display text in multiple lines.

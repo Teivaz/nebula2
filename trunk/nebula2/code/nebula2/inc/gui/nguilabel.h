@@ -2,6 +2,9 @@
 #define N_GUILABEL_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiLabel
+    @ingroup NebulaGuiSystem
+
     A widget which is a graphical level.
     
     (C) 2003 RadonLabs GmbH

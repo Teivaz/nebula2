@@ -2,6 +2,9 @@
 #define N_GUISKIN_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiSkin
+    @ingroup NebulaGuiSystem
+
     A GUI skin object holds a user-defined table of gui resources which
     are used by the GUI widgets to render themselves. Each gui resource
     describes a rectangular texture area. That way it is possible to 

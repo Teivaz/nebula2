@@ -1,0 +1,6 @@
+/**
+    @defgroup NebulaGuiSystem Graphical User Interface
+
+    This section of the documentation covers the Nebula GUI system that 
+    can be used to create an in-game graphical user interface.
+*/

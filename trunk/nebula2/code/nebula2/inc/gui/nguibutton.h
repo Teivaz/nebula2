@@ -2,6 +2,9 @@
 #define N_GUIBUTTON_H
 //-----------------------------------------------------------------------------
 /**
+    @class nGuiButton
+    @ingroup NebulaGuiSystem
+
     A GUI button class.
 
     (C) 2001 RadonLabs GmbH

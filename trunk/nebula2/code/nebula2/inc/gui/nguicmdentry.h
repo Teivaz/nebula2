@@ -2,6 +2,9 @@
 #define N_GUICMDENTRY_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiCmdEntry
+    @ingroup NebulaGuiSystem
+
     A specialized text view widget which displays the current 
     kernel server's line buffer and lets the user enter script commands.
     

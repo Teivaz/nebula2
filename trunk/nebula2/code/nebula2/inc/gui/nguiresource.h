@@ -2,6 +2,9 @@
 #define N_GUIRESOURCE_H
 //------------------------------------------------------------------------------
 /**
+	@class nGuiResource
+    @ingroup NebulaGuiSystem
+    
     A gui resource for Nebula2's gui subsystem.
     
     (C) 2003 RadonLabs GmbH

@@ -2,6 +2,9 @@
 #define N_GUITEXTUREVIEW_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTextureView
+    @ingroup NebulaGuiSystem
+
     A label widget which directly renders a texture. Used by the texture
     browser.
     

@@ -2,6 +2,9 @@
 #define N_GUIDIRLISTER_H
 //------------------------------------------------------------------------------
 /**
+	@class nGuiDirLister
+    @ingroup NebulaGuiSystem
+
     A complete directory listing widget.
     
     (C) 2004 RadonLabs GmbH

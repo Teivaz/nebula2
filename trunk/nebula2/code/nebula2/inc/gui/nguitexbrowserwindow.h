@@ -2,6 +2,9 @@
 #define N_GUITEXBROWSERWINDOW_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTexBrowserWindow
+    @ingroup NebulaGuiSystem
+
     A window to browse the currently loaded textures and display information
     about them.
     

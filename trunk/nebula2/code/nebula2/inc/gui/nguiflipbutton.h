@@ -2,6 +2,9 @@
 #define N_GUIFLIPBUTTON_H
 //------------------------------------------------------------------------------
 /**
+	@class nGuiFlipButton
+    @ingroup NebulaGuiSystem
+
     A button which flips through several settings on click.
     
     (C) 2003 RadonLabs GmbH

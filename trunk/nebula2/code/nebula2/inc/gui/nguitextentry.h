@@ -2,6 +2,9 @@
 #define N_GUITEXTENTRY_H
 //------------------------------------------------------------------------------
 /**
+    @class nGuiTextEntry
+    @ingroup NebulaGuiSystem
+
     A text entry widget.
     
     (C) 2003 RadonLabs GmbH

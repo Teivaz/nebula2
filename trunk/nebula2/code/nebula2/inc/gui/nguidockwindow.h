@@ -2,6 +2,9 @@
 #define N_GUIDOCKWINDOW_H
 //------------------------------------------------------------------------------
 /**
+	@class nGuiDockWindow
+    @ingroup NebulaGuiSystem
+
     The global dock window which replaces the old scripting console as 
     Nebula's default ingame console.
     
