@@ -2,11 +2,13 @@
 #define N_STACKTRACE_H
 
 //------------------------------------------------------------------------------
-/* Copyright (c) 2002 Radon Labs
- *
-	class nStackTrace
-		class for tracing the stack in win32
- */
+/**
+     @class nStackTrace
+
+     class for tracing the stack in win32
+
+     Copyright (c) 2002 Radon Labs
+*/
 //------------------------------------------------------------------------------
 
 #include <stdio.h>

@@ -2,7 +2,9 @@
 #define N_HARDREFSERVER_H
 //------------------------------------------------------------------------------
 /**
-    immediatly validates nHardRefs.
+    @class nHardRefServer
+
+    immediately validates nHardRefs.
 
     Validate nHardRef objects as soon as target object is created.
 

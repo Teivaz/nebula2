@@ -2,6 +2,8 @@
 #define N_HARDREF_H
 //------------------------------------------------------------------------------
 /**
+    @class nHardRef
+
     implements reference to moveable target object.
 
     Use the nHardRef object to reference other objects if you
@@ -121,12 +123,11 @@ nHardRef<TYPE>::~nHardRef()
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     When using the default constructor, the object must be
     initialized via this method.    
 
-    @param kServer      pointer to the Nebula kernel server
-    @param ownerObject  pointer to object "owning" this ref, may be NULL
+    @param kernelServer      pointer to the Nebula kernel server
 
     history:
     - 23-Jan-2001   floh    created
@@ -139,7 +140,7 @@ nHardRef<TYPE>::initialize(nKernelServer* kernelServer)
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Invalidate the internal target object name.
 
     history:
@@ -160,7 +161,7 @@ nHardRef<TYPE>::invalidate_name()
 }        
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Set name of target object, this will invalidate the current
     internal object pointer. The object pointer will NOT be 
     resolved, because the target object may not even exist yet.
@@ -197,7 +198,7 @@ nHardRef<TYPE>::set(const char* objName)
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Set the pointer to target object, the target object must
     exist (naturally), invalidates any target object name inside
     the nHardRef.
@@ -220,7 +221,7 @@ nHardRef<TYPE>::set(TYPE* objPointer)
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     If the ref is already resolved, do nothing, otherwise lookup
     target object from name, and invalidate name. Trying to resolve
     uninitialized hardrefs is allowed.
@@ -247,7 +248,7 @@ nHardRef<TYPE>::resolve()
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Get the name of the target object. Return either embedded
     name (if valid), or if a valid pointer has been resolved,
     dynamically build the name from the target object.
@@ -279,7 +280,7 @@ nHardRef<TYPE>::getname(char *buf, int bufSize) const
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Overloaded = operator to set target object name.
 
     @param objName  full path to target object
@@ -296,7 +297,7 @@ nHardRef<TYPE>::operator=(const char* objName)
 }
 
 //------------------------------------------------------------------------------
-/**.
+/**
     Overloaded = operator to set target object pointer.
 
     @param objPointer   pointer to target object
@@ -314,7 +315,3 @@ nHardRef<TYPE>::operator=(TYPE* objPointer)
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-

@@ -2,6 +2,8 @@
 #define N_DEFAULTLOGHANDLER_H
 //------------------------------------------------------------------------------
 /**
+    @class nDefaultLogHandler
+
     The default log handler routes all messages to stdout.
     
     (C) 2003 RadonLabs GmbH

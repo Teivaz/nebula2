@@ -2,6 +2,8 @@
 #define N_PRIMITIVETYPES_H
 //------------------------------------------------------------------------------
 /**
+    @enum nPrimitiveType
+
     Rendering primitive types.
 
     (C) 2002 RadonLabs GmbH

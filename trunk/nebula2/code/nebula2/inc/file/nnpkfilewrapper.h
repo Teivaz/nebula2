@@ -2,6 +2,8 @@
 #define N_NPKFILEWRAPPER_H
 //------------------------------------------------------------------------------
 /**
+    @class nNpkFileWrapper
+
     Wraps file operations on a npk file.
 
     (C) 2002 RadonLabs GmbH

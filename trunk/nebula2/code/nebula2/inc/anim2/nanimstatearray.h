@@ -2,6 +2,8 @@
 #define N_ANIMSTATEARRAY_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimStateArray
+
     An anim state array holds several mutually exclusive nAnimState objects
     and allows switching between them.
     

@@ -2,6 +2,8 @@
 #define N_MESH2_H
 //------------------------------------------------------------------------------
 /**
+    @class nMesh2
+
     Internally holds opaque vertex and index data to feed a vertex shader.
     Vertices in a mesh are simply an array of floats. 
     Meshes are generally static and loaded from mesh resource files.
@@ -11,6 +13,7 @@
 
     Mesh Fileformats:
 
+    @verbatim
     --------------------------------------------------------
     ASCII: n3d2
 
@@ -58,6 +61,7 @@
 
     float[] vertices;
     ushort[] indices;
+    @endverbatim
 
     (C) 2002 RadonLabs GmbH
 */

@@ -2,6 +2,8 @@
 #define N_D3D9SHADER_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9Shader
+
     A nShader2 subclass using the D3D9FX framework.
 
     (C) 2003 RadonLabs GmbH

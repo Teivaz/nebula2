@@ -2,6 +2,8 @@
 #define _VECTOR2_H
 //------------------------------------------------------------------------------
 /**
+    @class _vector2
+
     Generic vector2 class.
 
     (C) 2002 RadonLabs GmbH

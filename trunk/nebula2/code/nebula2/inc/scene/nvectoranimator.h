@@ -2,7 +2,11 @@
 #define N_VECTORANIMATOR_H
 //------------------------------------------------------------------------------
 /**
+    @class nVectorAnimator
+
     Animates a vector attribute of a nAbstrachShaderNode.
+
+    See also @ref N2ScriptInterface_nvectoranimator
     
     (C) 2003 RadonLabs GmbH
 */

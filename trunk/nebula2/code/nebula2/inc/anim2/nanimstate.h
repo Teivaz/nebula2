@@ -2,6 +2,8 @@
 #define N_ANIMSTATE_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimState
+
     An animation state contains any number of nAnimClip objects of identical
     size (number of anim curves contained in the clip) and can sample a 
     weight-blended result from them. Each anim clip is associated with a weight 

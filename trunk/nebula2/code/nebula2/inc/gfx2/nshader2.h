@@ -2,6 +2,8 @@
 #define N_SHADER2_H
 //------------------------------------------------------------------------------
 /**
+    @class nShader2
+
     A shader object loads itself from a shader resource file, and contains
     everything to render a mesh and texture. It may be completely
     render state based, use vertex and pixel shader programs, or both.

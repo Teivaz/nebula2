@@ -2,9 +2,13 @@
 #define N_SKINSHAPENODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nSkinShapeNode
+
     A smooth skinned shape node. Requires that a nSkinAnimator is
     attached as animator which is called back by the skin shape before
     rendering to provide a valid joint palett.
+
+    See also @ref N2ScriptInterface_nskinshapenode
 
     (C) 2003 RadonLabs GmbH
 */

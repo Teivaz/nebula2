@@ -386,6 +386,13 @@ proc gen_makefile { } {
         puts $cid "#--- end of: $bt_name --------------------------------------"
     }
 
+    puts $cid "#----------------------------------------------------------"
+    puts $cid "# Generate docs"
+    puts $cid "#----------------------------------------------------------"
+    puts $cid "doc:"
+    puts $cid "\tpython \$(RL_HOME)/bin/autodoc.py"
+    puts $cid "\tcd \$(RL_HOME)/code/nebula2/doxycfg; doxygen nebula2.cfg"
+
     #write end of Makefile
     puts $cid "#----------------------------------------------------------"
     puts $cid "# Makefile"

@@ -2,6 +2,9 @@
 #define N_MSGNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nMsgNode
+    @ingroup NebulaDataTypes
+
     A doubly linked list node which can carry a msg.
 
     (C) 2002 RadonLabs GmbH

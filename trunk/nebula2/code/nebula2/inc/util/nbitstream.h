@@ -1,9 +1,13 @@
 #ifndef N_BITSTREAM_H
 #define N_BITSTREAM_H
 //------------------------------------------------------------------------------
-//  network/nbitstream.h
-//  author: mark
-//  (C) 2000 Radon Labs GmbH
+/**
+    @class nBitStream
+    @ingroup NebulaDataTypes
+
+    author: mark
+    (C) 2000 Radon Labs GmbH
+*/
 //------------------------------------------------------------------------------
 #include <memory.h>
 
@@ -310,7 +314,7 @@ nBitStream::WriteFloat(float value)
 /**
     Read a float value (encoded in 32 bit) from the stream.
 
-    @param      the float value
+    @return      the float value
 */
 inline
 float

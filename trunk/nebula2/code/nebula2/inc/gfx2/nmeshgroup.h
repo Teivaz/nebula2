@@ -2,6 +2,8 @@
 #define N_MESHGROUP_H
 //------------------------------------------------------------------------------
 /**
+    @class nMeshGroup
+
     A nMeshGroup object defines a group of vertices and indices inside
     a mesh.
     

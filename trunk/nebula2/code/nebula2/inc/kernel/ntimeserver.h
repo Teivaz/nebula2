@@ -2,6 +2,8 @@
 #define N_TIMESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nTimeServer
+
     nTimeServer provides a high resulotion time source.
 
     (C) 2002 RadonLabs GmbH

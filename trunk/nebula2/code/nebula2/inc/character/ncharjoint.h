@@ -2,6 +2,8 @@
 #define N_CHARJOINT_H
 //------------------------------------------------------------------------------
 /**
+    @class nCharJoint
+
     A joint in a character skeleton.
 
     06-Feb-03   floh    fixed for Nebula2

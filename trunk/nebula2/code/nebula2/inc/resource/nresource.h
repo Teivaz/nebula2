@@ -2,6 +2,8 @@
 #define N_RESOURCE_H
 //------------------------------------------------------------------------------
 /**
+    @class nResource
+
     Super class for all resource classes. Resources are mostly loaded
     from a file, can be shared, and unloaded to free runtime space.
     They are managed by a central resource server.

@@ -2,6 +2,8 @@
 #define _VECTOR4_H
 //------------------------------------------------------------------------------
 /**
+    @class _vector4
+
     A generic vector4 class.
 
     (C) 2002 RadonLabs GmbH

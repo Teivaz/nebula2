@@ -1,10 +1,13 @@
 #ifndef N_INPUTSTATE_H
 #define N_INPUTSTATE_H
 //-------------------------------------------------------------------
-//  OVERVIEW
-//  nInputState objects are named input 'slots' which are
-//  bound to input events (or a simple combination of ie's)
-//  through a user defined mapping table.
+/**
+    @class nInputState
+
+    nInputState objects are named input 'slots' which are
+    bound to input events (or a simple combination of ie's)
+    through a user defined mapping table.
+*/
 //-------------------------------------------------------------------
 #ifndef N_TYPES_H
 #include "kernel/ntypes.h"
@@ -76,9 +79,12 @@ public:
 };
 
 //-------------------------------------------------------------------
-//  nInputMapping
-//  Bind an input event to a named state. Automatically handle complex
-//  mappings with .down, .up, .double, .long modifiers...
+/**
+    @class nInputMapping
+
+    Bind an input event to a named state. Automatically handle complex
+    mappings with .down, .up, .double, .long modifiers...
+*/
 //-------------------------------------------------------------------
 class nInputServer;
 class nInputMapping : public nHashNode 

@@ -2,10 +2,15 @@
 #define N_NPKFILESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nNpkFileServer
+
     Implement reading from npk files.
+
+    See also @ref N2ScriptInterface_nnpkfileserver
 
     npk file format:
 
+    @verbatim
     # header
     block HEADER {
         uint32 'NPK0'       // magic number
@@ -41,6 +46,7 @@
         uint32 blockLen             // number of following bytes in block
         char[] data                 // the data
     }
+    @endverbatim
 
     (C) 2002 RadonLabs GmbH
 */

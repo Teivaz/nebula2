@@ -2,6 +2,8 @@
 #define N_CHARSKELETON_H
 //------------------------------------------------------------------------------
 /**
+    @class nCharSkeleton
+
     Implements a character skeleton made of nCharJoint objects.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_D3D9TEXTURE_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9Texture
+
     Direct3D9 subclass for nTexture2.
 
     (C) 2003 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_MEMORYANIMATION_H
 //------------------------------------------------------------------------------
 /**
+    @class nMemoryAnimation
+
     An nMemoryAnimation object holds its entire animation data in memory.
     Since all the animation is in memory all the time, the animation
     can be shared between many client objects. The disadvantage is of

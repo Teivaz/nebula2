@@ -2,6 +2,8 @@
 #define _VECTOR4_SSE_H
 //------------------------------------------------------------------------------
 /**
+    @class _vector4_sse
+
     A vector4 class using SSE.
 
     (C) 2002 RadonLabs GmbH

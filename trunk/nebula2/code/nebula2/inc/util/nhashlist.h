@@ -2,6 +2,9 @@
 #define N_HASHLIST_H
 //------------------------------------------------------------------------------
 /**
+    @class nHashList
+    @ingroup NebulaDataTypes
+
     A doubly linked list of named nodes with fast hashtable based search.
 
     (C) 2002 RadonLabs GmbH

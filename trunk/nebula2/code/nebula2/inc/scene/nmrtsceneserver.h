@@ -2,6 +2,8 @@
 #define N_MRTSCENESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nMTRSceneServer
+
     "Multiple Render Target" scene server, spreads rendering across various
     specialized offscreen buffers, which are combined to the final result
     by specific "compositing" pixel shaders.

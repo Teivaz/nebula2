@@ -2,6 +2,8 @@
 #define N_THREADSAFELIST_H
 //------------------------------------------------------------------------------
 /**
+    @class nThreadSafeList
+
     A thread safe doubly linked list.
 
     Offers method to manipulate lists in a thread safe way,

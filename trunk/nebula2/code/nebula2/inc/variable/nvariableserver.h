@@ -2,11 +2,15 @@
 #define N_VARIABLESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nVariableServer
+
     The variable server implements a registry for named, typed variables,
     and offers variable context object. The name registry guarantees a
     systemwide consistent mapping between variable names and handles.
     Variables are usually accessed by through their handle, as this is
     much faster.
+
+    See also @ref N2ScriptInterface_nvariableserver
 
     (C) 2002 RadonLabs GmbH
 */

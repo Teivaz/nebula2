@@ -2,6 +2,8 @@
 #define N_SCRIPTSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nScriptServer
+
     The script server object is the communication point between
     a nRoot object's Dispatch() method and a specific scripting
     language. More specifically, the script server's main task is to

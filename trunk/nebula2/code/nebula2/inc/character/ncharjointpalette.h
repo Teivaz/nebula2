@@ -2,6 +2,8 @@
 #define N_CHARJOINTPALETTE_H
 //------------------------------------------------------------------------------
 /**
+    @class nCharJointPalette
+
     A joint palette defines a subset of a character skeleton to deal with
     hardware which can process only a limited number of joints for skinned
     mesh rendering.

@@ -2,6 +2,8 @@
 #define N_CMDPROTO_H
 //------------------------------------------------------------------------------
 /**
+    @class nCmdProto
+
     An nCmdProto object holds the prototype description for an nCmd
     object and can construct nCmd objects based on the prototype
     description "blue print".
@@ -17,18 +19,20 @@
 
     The following datatypes are defined:
 
-      'v'     - void
-      'i'     - int
-      'f'     - float
-      's'     - string
-      'b'     - bool
-      'l'     - list
+      - 'v'     - void
+      - 'i'     - int
+      - 'f'     - float
+      - 's'     - string
+      - 'b'     - bool
+      - 'l'     - list
 
     Examples of prototype descriptions:
 
+    @verbatim
       v_rotate_fff    - name is 'rotate', no output args, 3 float input args, 
       v_set_si        - name is 'set', no output args, one string and one int input arg
       fff_getrotate_v - 3 float output args, no input arg, name is 'getrotate'
+    @endverbatim
 
     (C) 1999 A.Weissflog
 */

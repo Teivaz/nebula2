@@ -2,11 +2,14 @@
 #define N_ARRAY_H
 //------------------------------------------------------------------------------
 /**
+    @class nArray
+    @ingroup NebulaDataTypes
+
     A dynamic array template class, similar to the stl vector class. Can
     also be set to a fixed size (SetFixedSize()) if the size of
     the array is known beforehand. This eliminates the memory overhead
     for pre-allocated elements if the array works in dynamic mode. To
-    pevent the array from pre-allocate any memory on constructor
+    prevent the array from pre-allocating any memory on construction
     call the nArray(0, 0) constructor.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_AUTOREF_H
 //------------------------------------------------------------------------------
 /**
+    @class nAutoRef
+
     An nRef with the ability to resolve itself from a static object name.
 
     (C) 2002 RadonLabs GmbH

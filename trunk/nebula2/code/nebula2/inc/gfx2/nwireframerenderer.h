@@ -2,6 +2,8 @@
 #define N_WIREFRAMERENDERER_H
 //------------------------------------------------------------------------------
 /**
+    @class nWireframeRenderer
+
     Renders a source mesh as wireframe through the global dynamic mesh.
     Requires the system shader file "wireframe.fx" to work.
     

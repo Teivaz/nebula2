@@ -2,6 +2,9 @@
 #define N_KEYARRAY_H
 //------------------------------------------------------------------------------
 /**
+    @class nKeyArray
+    @ingroup NebulaDataTypes
+
     Implements growable array of key-pointer pairs. The array
     is kept sorted for fast bsearch() by key.
 

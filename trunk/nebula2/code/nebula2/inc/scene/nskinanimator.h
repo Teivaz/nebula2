@@ -2,11 +2,15 @@
 #define N_SKINANIMATOR_H
 //------------------------------------------------------------------------------
 /**
+    @class nSkinAnimator
+
     Provide an animated joint skeleton for a nSkinShapeNode. On
     Animate() invocation, the nSkinAnimator will update its joint
     skeleton and invoke SetCharSkeleton() on the calling 
     scene node (which must be a nSkinShapeNode) with a pointer
     to an uptodate nCharSkeleton object.
+
+    See also @ref N2ScriptInterface_nskinanimator
     
     (C) 2003 RadonLabs GmbH
 */

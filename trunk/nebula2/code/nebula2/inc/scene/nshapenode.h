@@ -2,10 +2,14 @@
 #define N_SHAPENODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nShapeNode
+
     A shape node is the simplest actually visible object in the scene node
     class hierarchy. It is derived from nMaterialNode, and thus inherits
     transform and shader information. It adds a simple mesh which it 
     can render.
+
+    See also @ref N2ScriptInterface_nshapenode
     
     (C) 2002 RadonLabs GmbH
 */

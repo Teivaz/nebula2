@@ -2,6 +2,9 @@
 #define N_NODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nNode
+    @ingroup NebulaDataTypes
+
     Implement a node in a doubly linked list.
 
     (C) 2002 RadonLabs GmbH
@@ -50,7 +53,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-/**.
+/**
 */
 inline 
 nNode::nNode(void)
@@ -62,7 +65,7 @@ nNode::nNode(void)
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
 */
 inline 
 nNode::nNode(void *_ptr)
@@ -74,7 +77,7 @@ nNode::nNode(void *_ptr)
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
     The destructor will throw an assertion if the node is still linked
     into a list!
 */
@@ -85,7 +88,7 @@ nNode::~nNode(void)
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
     Get the node after this node in the list, return 0 if there is no
     next node.
 
@@ -103,7 +106,7 @@ nNode::GetSucc(void) const
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
     Get the node before this node in the list, return 0 if there is no
     previous node.
     
@@ -121,8 +124,8 @@ nNode::GetPred(void) const
 }
 
 //-----------------------------------------------------------------------------
-/**.
-    @param node in front of which this node should be inserted
+/**
+    @param succ    node in front of which this node should be inserted
 */
 inline 
 void 
@@ -138,8 +141,8 @@ nNode::InsertBefore(nNode *succ)
 }
 
 //-----------------------------------------------------------------------------
-/**.
-    @param the node after which this node should be inserted
+/**
+    @param pred     the node after which this node should be inserted
 */
 inline 
 void 
@@ -155,7 +158,7 @@ nNode::InsertAfter(nNode *pred)
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
 */
 inline 
 void 
@@ -171,8 +174,8 @@ nNode::Remove(void)
 }
 
 //-----------------------------------------------------------------------------
-/**.
-    @param the new user data pointer
+/**
+    @param p       the new user data pointer
 */
 inline 
 void 
@@ -182,7 +185,7 @@ nNode::SetPtr(void *p)
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
     @return the user data pointer
 */
 inline
@@ -193,7 +196,7 @@ nNode::GetPtr() const
 }
 
 //-----------------------------------------------------------------------------
-/**.
+/**
     @return true if node is currently linked into a list
 */
 inline 

@@ -2,9 +2,13 @@
 #define N_SCENENODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nSceneNode
+
     The nSceneNode is the base class of all objects which can be attached
     to a scene managed by the nSceneServer class. A scene node object
     may provide transform, geometry, shader and volume information.
+
+    See also @ref N2ScriptInterface_nscenenode
 
     (C) 2002 RadonLabs GmbH
 */

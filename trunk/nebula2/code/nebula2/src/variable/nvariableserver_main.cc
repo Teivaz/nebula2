@@ -37,7 +37,7 @@ nVariableServer::~nVariableServer()
     declared before used will get a valid name AND fourcc code.
 
     @param  varName     name of a new variable
-    @param  fourcc      associated fourcc code of variable
+    @param  varFourCC   associated fourcc code of variable
     @return             variable handle of new variable
 */
 nVariable::Handle

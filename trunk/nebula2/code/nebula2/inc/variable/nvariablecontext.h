@@ -2,6 +2,8 @@
 #define N_VARIABLECONTEXT_H
 //------------------------------------------------------------------------------
 /**
+    @class nVariableContext
+
     A variable context is a container for nVariable objects. Variables
     are accessed by their global nVariableHandle.
     

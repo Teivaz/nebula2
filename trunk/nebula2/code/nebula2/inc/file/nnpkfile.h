@@ -2,6 +2,8 @@
 #define N_NPKFILE_H
 //------------------------------------------------------------------------------
 /**
+    @class nNpkFile
+
     File access into a npk file.
 
     (C) 2002 RadonLabs GmbH

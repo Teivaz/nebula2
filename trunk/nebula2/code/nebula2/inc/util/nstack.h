@@ -2,6 +2,9 @@
 #define N_STACK_H
 //------------------------------------------------------------------------------
 /**
+    @class nStack
+    @ingroup NebulaDataTypes
+
     A stack template class.
 
     (C) 2002 RadonLabs GmbH

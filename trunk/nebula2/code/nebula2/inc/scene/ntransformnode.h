@@ -2,6 +2,8 @@
 #define N_TRANSFORMNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nTransformNode
+
     A transform node groups its child nodes and defines position, orientation 
     and scale of a scene node. Transformation hierarchies can be created 
     using the Nebula object name space hierarchy.
@@ -11,6 +13,8 @@
     orientation as quaternion with GetQuaternion().
     Similarly GetQuaternion() does NOT return the orientation set by
     SetEuler().
+
+    See also @ref N2ScriptInterface_ntransformnode
     
     (C) 2002 RadonLabs GmbH
 */

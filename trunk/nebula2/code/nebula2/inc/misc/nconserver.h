@@ -2,8 +2,12 @@
 #define N_CONSERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nConServer
+
     Implements the Nebula ingame console. Must live under the name
-    /sys/servers/console in the Nebula object hierarchie.
+    /sys/servers/console in the Nebula object hierarchy.
+
+    See also @ref N2ScriptInterface_nconserver
 
     (C) 2003 RadonLabs GmbH
 */

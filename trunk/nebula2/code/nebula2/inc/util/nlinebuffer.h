@@ -2,6 +2,9 @@
 #define N_LINEBUFFER_H
 //------------------------------------------------------------------------------
 /**
+    @class nLineBuffer
+    @ingroup NebulaDataTypes
+
     A ring buffer for strings.
 
     (C) 2002 RadonLabs GmbH

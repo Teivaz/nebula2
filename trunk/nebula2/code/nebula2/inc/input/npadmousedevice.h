@@ -2,6 +2,8 @@
 #define N_PADMOUSEDEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nPadMouseDevice
+
     A Nebula mouse device which emulates a non-centering joystick.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_SCENESERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nSceneServer
+
     The scene server builds a scene from nSceneNode objects and then
     renders it. The scene is rebuilt every frame, so some sort of
     culling should happen externally before building the scene. 

@@ -2,6 +2,8 @@
 #define N_ENV_H
 //------------------------------------------------------------------------------
 /**
+    @class nEnv
+
     A typed value in a named object. Technically, a nArg object
     wrapped into a nRoot.
     

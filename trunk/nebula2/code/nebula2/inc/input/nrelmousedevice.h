@@ -2,6 +2,8 @@
 #define N_RELMOUSEDEVICE_H
 //------------------------------------------------------------------------------
 /**
+    @class nRelMouseDevice
+
     Directly emit mouse movement events.
 
     (C) 2002 RadonLabs GmbH

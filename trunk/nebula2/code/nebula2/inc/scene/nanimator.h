@@ -2,10 +2,14 @@
 #define N_ANIMATOR_H
 //------------------------------------------------------------------------------
 /**
+    @class nAnimator
+
     Animator nodes manipulate properties of other scene object. They will
     not attach to the scene, instead they are called back by scene objects
     which wish to be manipulated.
-    
+
+    See also @ref N2ScriptInterface_nanimator
+
     (C) 2003 RadonLabs GmbH
 */
 #ifndef N_SCENENODE_H

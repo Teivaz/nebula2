@@ -2,6 +2,9 @@
 #define N_RINGBUFFER_H
 //------------------------------------------------------------------------------
 /**
+    @class nRingBuffer
+    @ingroup NebulaDataTypes
+
     A ring buffer class.
 
     (C) 2003 RadonLabs GmbH

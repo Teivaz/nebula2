@@ -2,6 +2,8 @@
 #define N_PLANE_H
 //------------------------------------------------------------------------------
 /**
+    @class plane
+
     A plane in 3d space.
 
     (C) 2003 RadonLabs GmbH

@@ -3,6 +3,8 @@
 #define N_WIN32LOGHANDLER_H
 //------------------------------------------------------------------------------
 /**
+    @class nWin32LogHandler
+
     A log handler class for Win32 apps:
     
     - maintains a log file in the application directory where ALL

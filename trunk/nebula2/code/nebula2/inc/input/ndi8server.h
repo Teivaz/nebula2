@@ -2,6 +2,8 @@
 #define N_DI8SERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nDI8Server
+
     A DirectInput8 based input server class.
 
     (C) 2002 RadonLabs GmbH

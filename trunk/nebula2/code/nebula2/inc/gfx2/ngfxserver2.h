@@ -2,6 +2,8 @@
 #define N_GFXSERVER2_H
 //------------------------------------------------------------------------------
 /**
+    @class nGfxServer2
+
     New generation gfx server, completely vertex and pixel shader based.
 
     (C) 2002 RadonLabs GmbH

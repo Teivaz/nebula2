@@ -2,6 +2,8 @@
 #define N_VARIABLE_H
 //------------------------------------------------------------------------------
 /**
+    @class nVariable
+
     A variable contains typed data and is identified by a variable handle.
 
     (C) 2002 RadonLabs GmbH

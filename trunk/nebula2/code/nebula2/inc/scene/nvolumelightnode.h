@@ -2,6 +2,8 @@
 #define N_VOLUMELIGHTNODE_H
 //------------------------------------------------------------------------------
 /**
+    @class nVolumeLightNode
+
     A nVolumeLightNode defines a bounding box volume, influencing the
     lighting of shape nodes that intersect. Lighting happens inside
     RenderLightVolume(), which will modify the light parameters 

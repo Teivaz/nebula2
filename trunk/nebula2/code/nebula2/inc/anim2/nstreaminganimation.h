@@ -2,6 +2,8 @@
 #define N_STREAMINGANIMATION_H
 //------------------------------------------------------------------------------
 /**
+    @class nStreamingAnimation
+
     A streaming animation streams its animation data from disk into
     a small memory buffer. They can generally not be shared like 
     nMemoryAnimation objects (since animations with different sample

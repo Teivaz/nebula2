@@ -2,6 +2,8 @@
 #define N_D3D9MESH_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9Mesh
+
     nMesh2 subclass for Direct3D9.
 
     (C) 2003 RadonLabs GmbH

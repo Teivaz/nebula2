@@ -2,6 +2,8 @@
 #define N_CHARACTER2_H
 //------------------------------------------------------------------------------
 /**
+    @class nCharacter2
+
     Holds all the data necessary to animate an character in one place.    
 
     (C) 2003 RadonLabs GmbH

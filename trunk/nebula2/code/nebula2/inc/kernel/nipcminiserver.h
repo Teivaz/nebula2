@@ -2,6 +2,8 @@
 #define N_IPCMINISERVER_H
 //------------------------------------------------------------------------------
 /**
+    @class nIpcMiniServer
+
     A nIpcServer creates one nIpcMiniServer for each connecting client.
 
     (C) 2002 RadonLabs GmbH

@@ -2,6 +2,8 @@
 #define N_PROFILER_H
 //------------------------------------------------------------------------------
 /**
+    @class nProfiler
+
     A mini profiler class.
 
     (C) 2002 RadonLabs GmbH

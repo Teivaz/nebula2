@@ -2,6 +2,8 @@
 #define N_THREAD_H
 //------------------------------------------------------------------------------
 /**
+    @class nThread
+
     A thread wrapper class for Nebula.
 
     Wraps a user defined thread function into a c++ object, 

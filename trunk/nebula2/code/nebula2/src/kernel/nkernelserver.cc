@@ -118,7 +118,7 @@ nKernelServer::NewUnnamedObject(const char* className)
     pointer or NULL.
 
     @param  path    the path of the object to be found
-    @param          pointer to object, or 0
+    @return         pointer to object, or 0
 
     08-Oct-98   floh    created
     04-Oct-98   floh    char * -> const char *
@@ -523,8 +523,8 @@ nKernelServer::Error(const char* str, ...)
 /**
     Add a class object to the kernel.
 
-    @param  super   name of super class
-    @param  cl      class object to add
+    @param  superClassName   name of super class
+    @param  cl               class object to add
 
   - 17-May-00   floh    created
 */

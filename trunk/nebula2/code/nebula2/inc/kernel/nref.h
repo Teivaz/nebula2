@@ -2,6 +2,8 @@
 #define N_REF_H
 //------------------------------------------------------------------------------
 /**
+    @class nRef
+
     nRef and nAutoRef implement safe pointers to objects.
     If one object keeps a pointer to another object,
     and the pointed-to object goes away, the first object is
