@@ -6,11 +6,9 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-
-float4x4 Model;
-float4x4 View;
-float4x4 Projection;
+shared float4x4 Model;
+shared float4x4 View;
+shared float4x4 Projection;
 
 float4x4 TextureTransform0;
 float4x4 TextureTransform1;
@@ -38,10 +36,6 @@ float4 SnowAmplify = { 1.2, 1.2, 1.3, 0.0 };
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/shadowmapsampler.fx"
-#include "../lib/shadowmodsampler.fx"
-#include "../lib/noisesampler.fx"
-
 sampler WeightSampler = sampler_state
 {
     Texture = <AmbientMap0>;

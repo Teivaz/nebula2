@@ -5,15 +5,11 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;
-float4x4 ModelView;
-float4x4 Model;
-float3 ModelEyePos;
-float3 ModelLightPos;
-float4x4 View;
-float4x4 Projection;
+shared float4x4 ModelViewProjection;
+
+float3 SunPos = float3(-100000, 2000, -26800);
 
 texture DiffMap0;
 
@@ -23,7 +19,6 @@ struct VsInput
 {
     float4 position  : POSITION;  // the particle position in world space
     float2 uv0       : TEXCOORD0; // the particle texture coordinates
-    float4 color     : COLOR0;    // the particle color
 };
 
 struct VsOutput
@@ -36,7 +31,7 @@ struct VsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -49,7 +44,7 @@ VsOutput vsMain(const VsInput vsIn)
     vsOut.position      = mul(vsIn.position, ModelViewProjection);
     vsOut.uv0           = vsIn.uv0;
     
-    vsSky(vsIn.position, ModelLightPos, vsOut.diffuse);
+    vsSky(vsIn.position, SunPos, vsOut.diffuse);
 
     return vsOut;
 }
@@ -71,10 +66,6 @@ technique t0
 {
     pass p0
     {
-        WorldTransform[0]	= <Model>;
-        ViewTransform		= <View>;
-        ProjectionTransform = <Projection>;
-
         ZWriteEnable     = true;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
         ZEnable          = True;

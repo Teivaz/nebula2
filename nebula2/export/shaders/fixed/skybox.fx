@@ -5,11 +5,9 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-
-float4x4 Model;
-float4x4 View;
-float4x4 Projection;
+shared float4x4 Model;
+shared float4x4 View;
+shared float4x4 Projection;
 float4x4 TextureTransform0 = {1.0f, 0.0f, 0.0f, 0.0f,
                               0.0f, 1.0f, 0.0f, 0.0f, 
                               0.0f, 0.0f, 1.0f, 0.0f,
@@ -22,7 +20,7 @@ int CullMode = 2;                   // default value (CW); must not be 0 for sof
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The technique.

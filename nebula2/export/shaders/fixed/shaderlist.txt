@@ -3,26 +3,17 @@
 #   (C) 2004 RadonLabs GmbH
 #-------------------------------------------------------------------------------
 shaders:shared.fx
-shaders:shadowdepth.fx
-shaders:shadowdepth_skinned.fx
-shaders:shadowdepth_leaf.fx
-shaders:shadowdepth_tree.fx
 shaders:skybox.fx
 shaders:cubeskybox.fx
 shaders:terrain.fx
 shaders:terraingrass.fx
 shaders:default.fx
+shaders:default_blended.fx
 shaders:default_lightmapped.fx
 shaders:default_skinned.fx
 shaders:default_layered.fx
-shaders:default_blended.fx
-shaders:ground.fx
-shaders:ground_lightmapped.fx
-shaders:grass.fx
-shaders:grass_lightmapped.fx
 shaders:leaf.fx
 shaders:tree.fx
-shaders:rect2d.fx
 shaders:water.fx
 shaders:ocean.fx
 shaders:additive.fx
@@ -31,8 +22,5 @@ shaders:default_alpha2.fx
 shaders:particle_added.fx
 shaders:particle_blended.fx
 shaders:gui.fx
-shaders:hdrcompose.fx
-shaders:hdrextract.fx
-shaders:hdrfilter.fx
 
 

@@ -5,13 +5,11 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 Model;                     // the model -> world matrix
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelLightPos;             // the light's position in model space
-float4   ModelEyePos;               // the eye position in model space
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float3   ModelLightPos;             // the light's position in model space
+shared float3   ModelEyePos;               // the eye position in model space
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color
@@ -49,8 +47,8 @@ struct VsOutput
     float2 uv0          : TEXCOORD0;        // texture coordinate
     float3 primLightVec : TEXCOORD1;        // primary light vector
     float3 primHalfVec  : TEXCOORD2;        // primary half vector
-    float3 F_ex         : TEXCOORD3;        // light outscatter coefficient
-    float3 L_in         : TEXCOORD4;        // light inscatter coefficient
+    // float3 F_ex         : TEXCOORD3;        // light outscatter coefficient
+    // float3 L_in         : TEXCOORD4;        // light inscatter coefficient
     float4 diffuse      : COLOR0;
     float4 specular     : COLOR1;
 };
@@ -58,8 +56,8 @@ struct VsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
-#include "../lib/bumpsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
+#include "shaders:../lib/bumpsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -92,7 +90,7 @@ VsOutput vsMain(const VsInput vsIn)
                ModelLightPos, ModelEyePos,
                vsOut.primLightVec, vsOut.primHalfVec);
 
-    vsAthmoFog(vsIn.position, ModelEyePos, ModelLightPos, vsOut.L_in, vsOut.F_ex);
+    // vsAthmoFog(vsIn.position, ModelEyePos, ModelLightPos, vsOut.L_in, vsOut.F_ex);
 
     return vsOut;
 }
@@ -107,7 +105,8 @@ float4 psMain(const VsOutput psIn) : COLOR
                                   psIn.uv0, psIn.primLightVec, psIn.primHalfVec,
                                   psIn.diffuse, psIn.specular, LightAmbient, MatSpecularPower);                                 
 
-    return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
+    // return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
+    return baseColor;
 }
 
 //------------------------------------------------------------------------------

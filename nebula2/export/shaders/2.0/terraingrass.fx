@@ -5,12 +5,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-#include "../lib/randtable.fx"
+#include "shaders:../lib/lib.fx"
+#include "shaders:../lib/randtable.fx"
 
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4   ModelEyePos;               // the eye position in model space
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 ModelLightProjection;      // the model*light*projection matrix
+shared float3   ModelEyePos;               // the eye position in model space
 
 float4 LightDiffuse;
 

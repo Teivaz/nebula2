@@ -10,6 +10,6 @@ sampler Diff2Sampler = sampler_state
     AddressV  = Wrap;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = Linear;
 };
 

@@ -5,16 +5,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 Model;                     // the model matrix
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float4 ModelEyePos;                 // the eye position in model space
-
-//float4 MatDiffuse;          // water dark color
-//float4 MatSpecular;         // water light color
-//float MatTransparency;      // color intensity
+shared float4x4 Model;                     // the model matrix
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float4x4 ModelLightProjection;      // the model*light*projection matrix
+shared float3 ModelEyePos;                 // the eye position in model space
 
 float4 WaterColor = float4(0.299f, 0.392f, 0.452f, 1.0f); 
 float WaterColorIntensity = 0.6;
@@ -25,7 +21,7 @@ texture LightModMap;                // the light modulation map
 
 float Time;                         // the current time
 
-float Height = 10.0f;
+float Scale = 10.0f;
 float Frequency = 10.0f;
 
 float Wave0Speed = 2.5f;
@@ -134,7 +130,7 @@ VsOutput vsMain(const VsInput vsIn)
     float4 height = { 0.0f, 0.0f, 0.0f, 0.0f };
     for (i = 0; i < 5; i++)
     {
-        height.y += WaveParams[i].x * Height * 
+        height.y += WaveParams[i].x * Scale * 
              (float) sin(WaveParams[i].y * WaveParams[i].z * WaveParams[i].w * Frequency * 
              (Time + WaveDirs[i].x * vsIn.position.x + WaveDirs[i].y * vsIn.position.z));             
     }

@@ -5,11 +5,10 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+shared float4x4 Model;
+shared float4x4 View;
+shared float4x4 Projection;
 
-float4x4 Model;
-float4x4 View;
-float4x4 Projection;
 float4 MatDiffuse;                  // material diffuse color
 texture DiffMap0;                   // 2d texture
 int CullMode = 2;
@@ -17,7 +16,7 @@ int CullMode = 2;
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The technique.

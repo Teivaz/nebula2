@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
-//  fixed/smoke.fx
+//  ps2.0/smoke.fx
 //
-//  The smoke shader for DX7 cards
+//  The smoke shader for DX9 cards
 //  
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 InvModelView;			    // the inverse model*view matrix
+shared float4x4 ModelViewProjection;    // the model*view*projection matrix
+shared float4x4 InvModelView;           // the inverse model*view matrix
 
 texture DiffMap0;
 
@@ -41,8 +41,8 @@ struct VsOutput
 //------------------------------------------------------------------------------
 VsOutput vsMain(const VsInput vsIn)
 {	
-	float   rotation   = radians(vsIn.transform[0]);
-	float   size       = vsIn.transform[1];
+    float rotation   = radians(vsIn.transform[0]);
+    float size       = vsIn.transform[1];
 	
     // build rotation matrix
     float sinAng, cosAng;
@@ -53,18 +53,18 @@ VsOutput vsMain(const VsInput vsIn)
         0.0f,    0.0f,   1.0f,
     };
 
-    float4	position    =  vsIn.position;
-    float3  extrude     =  float3(vsIn.extrude, 0.0f);
-    extrude             *= size;
-    extrude             =  mul(rot, extrude);    
-    extrude             =  mul(extrude, (float3x3) InvModelView);
-    position.xyz        += extrude.xyz;
+    float4 position    =  vsIn.position;
+    float3 extrude     =  float3(vsIn.extrude, 0.0f);
+    extrude           *= size;
+    extrude            =  mul(rot, extrude);    
+    extrude            =  mul(extrude, (float3x3) InvModelView);
+    position.xyz      += extrude.xyz;
         
 	VsOutput vsOut;
     // transform to projection space
     vsOut.position      = mul(position, ModelViewProjection);
     vsOut.uv0           = vsIn.uv0;
-    vsOut.diffuse       = vsIn.color * vsIn.color.a;
+    vsOut.diffuse       = vsIn.color;
 
     return vsOut;
 }
@@ -89,6 +89,8 @@ technique t0
         AlphaTestEnable  = False;
         AlphaFunc        = Greaterequal;
         AlphaRef         = 100;
+
+        FogEnable = false;
 
         CullMode   = <CullMode>;
         Texture[0] = <DiffMap0>;

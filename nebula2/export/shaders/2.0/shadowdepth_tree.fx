@@ -5,12 +5,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;   // the modelview*projection matrix of the light source
-float3x3 Swing;                     // the swing rotation matrix
-float3 BoxMinPos;                   // model space bounding box min
-float3 BoxMaxPos;                   // model space bounding box max
+shared float4x4 ModelViewProjection;    // the modelview*projection matrix of the light source
+float3x3 Swing;                         // the swing rotation matrix
+float3 BoxMinPos;                       // model space bounding box min
+float3 BoxMaxPos;                       // model space bounding box max
 
 texture DiffMap0;
 
@@ -33,7 +33,7 @@ struct VsOutput
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 //  the vertex shader

@@ -3,11 +3,9 @@
 //
 //  A 2d rectangle shader for GUI rendering.
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-
-float4x4 Model;
-float4x4 View;
-float4x4 Projection;
+shared float4x4 Model;
+shared float4x4 View;
+shared float4x4 Projection;
 
 texture DiffMap0;
 float4 MatDiffuse;

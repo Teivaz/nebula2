@@ -6,12 +6,12 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-shared float4x4 ModelViewProjection;       // the model*view*projection matrix
-shared float3   ModelEyePos;               // the eye position in model space
-shared float3   ModelLightPos;             // the light position in model space
-matrix<float,4,3> JointPalette[72];        // the joint palette for skinning
+shared float4x4 ModelViewProjection;    // the model*view*projection matrix
+shared float3   ModelLightPos;          // the light's position in model space
+shared float3   ModelEyePos;            // the eye position in model space
+matrix<float,4,3> JointPalette[72];     // the joint palette for skinning
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color
@@ -46,15 +46,13 @@ struct VsOutput
     float2 uv0          : TEXCOORD0;        // texture coordinate
     float3 primLightVec : TEXCOORD1;        // primary light vector
     float3 primHalfVec  : TEXCOORD2;        // primary half vector
-    float4 diffuse      : COLOR0;           // the light's diffuse color
-    float4 specular     : COLOR1;           // the light's specular color    
 };
 
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-#include "../lib/diffsampler.fx"
-#include "../lib/bumpsampler.fx"
+#include "shaders:../lib/diffsampler.fx"
+#include "shaders:../lib/bumpsampler.fx"
 
 //------------------------------------------------------------------------------
 //  The vertex shader.
@@ -74,8 +72,6 @@ VsOutput vsMain(const VsInput vsIn)
     vsLighting(skinPos, skinNormal, skinTangent,
                ModelLightPos, ModelEyePos,
                vsOut.primLightVec, vsOut.primHalfVec);
-    vsOut.diffuse  = MatDiffuse * LightDiffuse;
-    vsOut.specular = MatSpecular * LightSpecular;                      
     return vsOut;
 }
 
@@ -85,9 +81,11 @@ VsOutput vsMain(const VsInput vsIn)
 float4 psMain(const VsOutput psIn) : COLOR
 {
     // compute lit color
+    float4 diffuse  = MatDiffuse * LightDiffuse;
+    float4 specular = MatSpecular * LightSpecular;
     float4 color = psLighting(DiffSampler, BumpSampler,
                               psIn.uv0, psIn.primLightVec, psIn.primHalfVec,
-                              psIn.diffuse, psIn.specular, LightAmbient, MatSpecularPower);
+                              diffuse, specular, LightAmbient, MatSpecularPower);
     return color;                                 
 }
 

@@ -3,9 +3,9 @@
 //
 //  A simple 2d rect shader for debug purposes.
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;   // the modelview*projection matrix
+shared float4x4 ModelViewProjection;   // the modelview*projection matrix
 texture DiffMap0;
 
 //------------------------------------------------------------------------------

@@ -5,10 +5,10 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
+#include "shaders:../lib/lib.fx"
 
-float4x4 ModelViewProjection;   // the modelview*projection matrix of the light source
-matrix<float,4,3> JointPalette[72];            // the joint palette for skinning
+shared float4x4 ModelViewProjection;    // the modelview*projection matrix of the light source
+matrix<float,4,3> JointPalette[72];     // the joint palette for skinning
 
 //------------------------------------------------------------------------------
 //  declare shader input/output parameters
