@@ -51,9 +51,6 @@ nD3D9Server::nD3D9Server() :
     // detect windows version
     this->DetectWindowsVersion();
 
-    // open the app window
-    this->windowHandler.OpenWindow();
-
     // initialize Direct3D
     this->D3dOpen();
 }
@@ -123,6 +120,8 @@ nD3D9Server::OpenDisplay()
     if (!this->windowHandler.IsWindowOpen())
     {
         // lazy initialization: open the app window
+        // don't do this in the constructor because the window's name and icon
+        // won't have been set at that time.
         this->windowHandler.OpenWindow();
     }
 
