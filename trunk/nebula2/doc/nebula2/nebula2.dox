@@ -56,6 +56,9 @@ Nebula2 is the next step in the evolution, fully unleashing the power of program
     between a "Nebula script" and a "Nebula data file".  A binary
     "script server" also allows objects to be saved out in a compact,
     efficient binary representation that can be loaded quickly.
+
+  - @ref NebulaGuiSystem: Nebula2 provides a full blown system for providing
+    themeable user interfaces within the game.
     
 @section Nebula2IntroSystems Systems
 
@@ -67,10 +70,13 @@ Here are pointers to some of the different systems that make up Nebula2.
   - @ref NebulaInputSystem
   - @ref NebulaSceneSystem
   - @ref NebulaParticleSystem
+  - @ref NebulaGuiSystem
   
 @section Nebula2IntroCompiling Compiling
 
-For information on compiling The Nebula Device, see @ref Nebula2Compiling.
+For information on compiling The Nebula Device, see @ref Nebula2Compiling. For
+information on the specialized build system that Nebula2 uses, see
+@ref NebulaBuildSystem.
 
 @section Nebula2IntroRelease Release Notes
 
