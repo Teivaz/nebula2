@@ -6,6 +6,12 @@
     @ref NebulaObjectSystem to provide scripting support
     in multiple languages.
 
+    Scripting in Nebula2 means invoking script commands directly on C++
+    objects. It can be possible if a class is derived from nRoot.
+    Saying other, every nRoot derived class is scriptable.
+
+    @see @ref NebulaWritingClass page for more details about scriptable class.
+
     Out of the box, Nebula supports TCL and a binary
     script server (which is for persistence rather than
     scripting directly).  However, there are contributed modules
@@ -13,8 +19,13 @@
 
        - @ref NLuaServerContribModule
        - @ref PythonScriptServices
+       - @ref RubyScriptServices
        - nJava
        - nDotNet
 
-    ...
+    @note
+    MiroTcl is light-weight version of Tcl. It is written for Nebula2 based 
+    on Tcl and reduced it's command to 36 commands and it's size to 160KB from 
+    660KB. It is good for minimal envrionments like game consoles.
+    
 */

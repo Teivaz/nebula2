@@ -4,4 +4,20 @@
 
     @brief Nebula provides basic support for threading along with
     integration into some of the Core Nebula systems.
+
+    The supporting Nebula2 provides for threading is wrapper classes
+    for multithreading.
+
+    The way Nebula2 support for threading by platform are:
+     - Windows : win32 threading routines
+     - Linux : POSIX threads
+
+    Nebula2 uses threads only when it is needed. 
+    It is used for these tasks at this moment:
+     - blocking socket routines
+     - background loading of resources
+
+    The feature of threading is probably more important in the future in 
+    some circumstance like multi-core CPU.
+
 */
