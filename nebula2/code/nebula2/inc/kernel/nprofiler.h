@@ -8,17 +8,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_STRNODE_H
 #include "util/nstrnode.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_ENV_H
 #include "kernel/nenv.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nKernelServer;

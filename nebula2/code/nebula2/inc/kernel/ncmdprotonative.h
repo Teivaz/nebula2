@@ -11,7 +11,6 @@
   
   nCmdProtoNative is licensed under the terms of the Nebula License
 */
-
 #include "kernel/ncmdproto.h"
 
 //--------------------------------------------------------------------

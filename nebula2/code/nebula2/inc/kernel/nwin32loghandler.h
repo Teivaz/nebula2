@@ -15,13 +15,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_DEFAULTLOGHANDLER_H
 #include "kernel/ndefaultloghandler.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nWin32LogHandler : public nDefaultLogHandler

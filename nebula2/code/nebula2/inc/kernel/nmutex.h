@@ -10,15 +10,14 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 #ifndef __NEBULA_NO_THREADS__
 #   if __XBxX__
 #       include "xbox/nxbwrapper.h"
 #   elif __WIN32__
 #       ifndef _INC_WINDOWS
+#       define WIN32_LEAN_AND_MEAN
 #       include <windows.h>
 #       endif
 #       ifndef _INC_PROCESS
