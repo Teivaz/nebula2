@@ -6,6 +6,8 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "misc/nwatched.h"
+#include "gui/nguiwindow.h"
+#include "gui/nguilabel.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -14,7 +16,9 @@ nViewerApp::nViewerApp(nKernelServer* ks) :
     startupScript("home:bin/startup.tcl"),
     kernelServer(ks),
     isOpen(false),
+    isOverlayEnabled(true),
     controlMode(Maya),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet),
     defViewerPos(0.0f, 0.0f, 0.0f),
     defViewerAngles(0.0f, 0.0f),
     defViewerZoom(0.0f, 0.0f, 9.0f),
@@ -45,22 +49,26 @@ bool
 nViewerApp::Open()
 {
     const char* result;
-
     n_assert(!this->isOpen);
-    n_assert(this->GetSceneServerClass());
-    n_assert(this->GetScriptServerClass());
-    n_assert(this->GetInputScript());
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)   kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
+    this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refInputServer    = (nInputServer*)    kernelServer->New("ndi8server", "/sys/servers/input");
-    this->refConServer      = (nConServer*)      kernelServer->New("nconserver", "/sys/servers/console");
-    this->refResourceServer = (nResourceServer*) kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)    kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
-    this->refVarServer      = (nVariableServer*) kernelServer->New("nvariableserver", "/sys/servers/variable");
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
+    this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
+    this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
+    this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/vdeo");
+    this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+
+    // set the gfx server feature set override
+    if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
+    {
+        this->refGfxServer->SetFeatureSetOverride(this->featureSetOverride);
+    }
 
     // initialize the proj: assign
     if (this->GetProjDir())
@@ -72,9 +80,6 @@ nViewerApp::Open()
         kernelServer->GetFileServer()->SetAssign("proj", kernelServer->GetFileServer()->GetAssign("home"));
     }
 
-    // define the input mapping
-    this->refScriptServer->RunScript(this->GetInputScript(), result);
-
     // create scene graph root node
     this->refRootNode = (nTransformNode*) kernelServer->New("ntransformnode",  "/usr/scene");
 
@@ -84,22 +89,39 @@ nViewerApp::Open()
     // run startup script (assigns must be setup before opening the display!)
     if (this->GetStartupScript())
     {
-        const char* result;
         this->refScriptServer->RunScript(this->GetStartupScript(), result);
     }
     
+    // define the input mapping
+    if (NULL != this->GetInputScript())
+    {
+        this->refScriptServer->RunScript(this->GetInputScript(), result);
+    }
+
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+    this->refVideoServer->Open();
+
+    // initialize gui
+    this->refGuiServer->SetRootPath("/gui");
+    this->refGuiServer->Open();
+    if (this->isOverlayEnabled)
+    {
+        this->InitOverlayGui();
+    }
 
     // set the stage and load the object
     if (this->GetSceneFile())
     {
-        n_assert(this->GetStageScript());
+        if (NULL != this->GetStageScript())
+        {
+            const char* result;
 
-        // run the light stage script
-        this->refScriptServer->RunScript(this->GetStageScript(), result);
+            // run the light stage script
+            this->refScriptServer->RunScript(this->GetStageScript(), result);
+        }
 
         // load the object to look at
         kernelServer->PushCwd(this->refRootNode.get());
@@ -130,9 +152,13 @@ nViewerApp::Close()
 {
     n_assert(this->IsOpen());
 
+    this->refGuiServer->Close();
+    this->refVideoServer->Close();
     this->refGfxServer->CloseDisplay();
 
     this->refRootNode->Release();
+    this->refGuiServer->Release();
+    this->refVideoServer->Release();
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
@@ -167,6 +193,7 @@ nViewerApp::Run()
             prevTime = time;
         }
         float frameTime = (float) (time - prevTime);
+        this->refGuiServer->SetTime(time);
 
         // trigger remote server
         kernelServer->GetRemoteServer()->Trigger();
@@ -179,8 +206,16 @@ nViewerApp::Run()
 
         // handle input
         this->refInputServer->Trigger(time);
-        this->HandleInput(frameTime);
-        this->refInputServer->FlushEvents();
+        if (!this->refGuiServer->IsMouseOverGui())
+        {
+            this->HandleInput(frameTime);
+        }
+
+        // trigger gui server
+        this->refGuiServer->Trigger();
+
+        // trigger video server
+        this->refVideoServer->Trigger();
 
         // update render context variables
         this->renderContext.GetVariable(timeHandle)->SetFloat((float)time);
@@ -188,21 +223,30 @@ nViewerApp::Run()
         this->renderContext.SetFrameId(frameId++);
 
         // render
-        this->refSceneServer->BeginScene(viewMatrix);
-        this->refSceneServer->Attach(&this->renderContext);
-        this->refSceneServer->EndScene();
-        this->refSceneServer->RenderScene();             // renders the 3d scene
-        this->refConServer->Render();                    // render the console or watch variables
-        this->refSceneServer->PresentScene();            // present the frame
+        if (!this->refGfxServer->InDialogBoxMode())
+        {
+            if (this->refSceneServer->BeginScene(viewMatrix))
+            {
+                this->refSceneServer->Attach(&this->renderContext);
+                this->refSceneServer->EndScene();
+                this->refSceneServer->RenderScene();             // renders the 3d scene
+                this->refGuiServer->Render();
+                this->refConServer->Render();                    // do additional rendering before presenting the frame
+                this->refSceneServer->PresentScene();            // present the frame
+            }
+        }
 
         prevTime = time;
 
         // update watchers
         watchViewerPos->SetV4(vector4(viewMatrix.M41, viewMatrix.M42, viewMatrix.M43, n_rad2deg(this->viewerAngles.rho)));
 
+        // flush input events
+        this->refInputServer->FlushEvents();
+
         // sleep for a very little while because we
         // are multitasking friendly
-        n_sleep(0.005);
+        n_sleep(0.0);
     }
 }
 
@@ -461,3 +505,38 @@ nViewerApp::HandleInputFly(float frameTime)
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    Initialize the overlay GUI.
+*/  
+void
+nViewerApp::InitOverlayGui()
+{
+    const float borderSize = 0.02f;
+
+    // create a dummy root window
+    this->refGuiServer->SetRootWindowPointer(0);
+    nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
+    n_assert(userRootWindow);
+    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
+    userRootWindow->SetRect(nullRect);
+
+    kernelServer->PushCwd(userRootWindow);
+
+    // create logo label
+    nGuiLabel* logoLabel = (nGuiLabel*) kernelServer->New("nguilabel", "n2logo");
+    n_assert(logoLabel);
+    vector2 logoLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
+    rectangle logoRect;
+    logoRect.v0.set(1.0f - logoLabelSize.x - borderSize, 1.0f - logoLabelSize.y - borderSize);
+    logoRect.v1.set(1.0f - borderSize, 1.0f - borderSize);
+    logoLabel->SetRect(logoRect);
+    logoLabel->SetDefaultBrush("n2logo");
+    logoLabel->SetPressedBrush("n2logo");
+    logoLabel->SetHighlightBrush("n2logo");
+
+    kernelServer->PopCwd();
+
+    // set the new user root window
+    this->refGuiServer->SetRootWindowPointer(userRootWindow);
+}
