@@ -51,14 +51,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
-
-#ifndef N_FILESERVER2_H
 #include "kernel/nfileserver2.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nNpkFileServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nNpkTocEntry;
