@@ -55,12 +55,15 @@ private:
     const char* GetScriptServer(const char* item);
 
 private:
+    /// spinner control for setting of geometry scaling.
+    ISpinnerControl* spinGeomScale;
     /// spinner control for setting of maximum joint palette.
     ISpinnerControl* spinMaxJointPalette;
     /// spinner control for setting of weight trash hold.
     ISpinnerControl* spinWeightTrashold;
     /// spinner control for setting global animation sample rate.
     ISpinnerControl* spinSampleRate;
+
 
 };
 //------------------------------------------------------------------------------
