@@ -128,7 +128,7 @@ n_beginjoints(void* slf, nCmd* cmd)
     i(parentJointIndex),
     fff(poseTranslate)
     ffff(poseRotate)
-    fff(poseScale
+    fff(poseScale)
     @output
     v
     @info
@@ -205,7 +205,7 @@ n_getnumjoints(void* slf, nCmd* cmd)
     i(ParentJointIndex)
     fff(poseTranslate)
     ffff(poseRotate)
-    fff(poseScale
+    fff(poseScale)
     @info
     Get joint attributes at given joint index.
 */
