@@ -24,8 +24,6 @@
 #include "gfx2/nshaderstate.h"
 
 class nShapeNode;
-class nMaxController;
-class nMaxFloatController;
 
 //-----------------------------------------------------------------------------
 //  Class_ID for Nebula2 custom material.
@@ -73,7 +71,9 @@ protected:
     
     void GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode);
 
-    void CreateShaderAnim(Control* control, nMaxFloatController& alpha);
+    //void CreateShaderAnim(Control* control, nMaxFloatController& alpha);
+    void CreateShaderAnimator(nShaderState::Param vectorParameter, 
+                              Control* ctrlColor, Control* ctrlAlpha);
 
     bool SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode);
     void SetStatndardNebulaShader(nShapeNode* shapeNode);
@@ -81,10 +81,6 @@ protected:
     nShaderState::Param GetShaderParam(const char* param);
 
 protected:
-    struct Sample {
-        float time;
-        vector4 key;
-    };
 
 };
 //-----------------------------------------------------------------------------
