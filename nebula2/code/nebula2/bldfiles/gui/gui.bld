@@ -36,14 +36,6 @@ beginmodule nguibutton
     setheaders nguibutton
 endmodule
 #--------------------------------------------------------------------
-beginmodule nguicyclebutton
-    setdir gui
-    setfiles {
-        nguicyclebutton_main nguicyclebutton_cmds
-    }
-    setheaders nguicyclebutton
-endmodule
-#--------------------------------------------------------------------
 beginmodule nguilabel
     setdir gui
     setfiles {
@@ -258,11 +250,67 @@ beginmodule nguidiagramcanvas
     setheaders nguidiagramcanvas
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguiadjustdisplaywindow
+    setdir gui
+    setfiles {
+        nguiadjustdisplaywindow_main
+    }
+    setheaders nguiadjustdisplaywindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicontextmenu
+    setdir gui
+    setfiles {
+        nguicontextmenu_main nguicontextmenu_cmds
+    }
+    setheaders nguicontextmenu
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidragbox
+    setdir gui
+    setfiles {
+        nguidragbox_main nguidragbox_cmds
+    }
+    setheaders nguicontextmenu
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguigraphicsbrowserwindow
+    setdir gui
+    setfiles {
+        nguigraphicsbrowserwindow_main
+    }
+    setheaders nguigraphicsbrowserwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguisettingsform
+    setdir gui
+    setfiles {
+        nguisettingsform_main
+    }
+    setheaders nguisettingsform
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitexttable
+    setdir gui
+    setfiles {
+        nguitexttable_main
+    }
+    setheaders nguitexttable
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextwindow
+    setdir gui
+    setfiles {
+        nguitextwindow_main
+    }
+    setheaders nguitextwindow
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
     setmodules {
-        nguiwidget nguiformlayout nguislider2 nguibutton nguicyclebutton
+        nguiwidget nguiformlayout nguislider2 nguibutton 
         nguilabel nguitextlabel nguitextbutton nguitextentry nguiipaddressentry
         nguicheckbutton nguicheckbuttongroup nguicheckbuttongroup2
         nguitextview nguicmdentry nguitextureview nguiwindow nguiclientwindow
@@ -270,6 +318,8 @@ begintarget ngui
         nguisysteminfowindow nguitooltip nguidirlister nguicategorybrowser
         nguihorislidergroup nguifiledialog nguiskin nguitickerwidget
         nguitabbedlayout nguimessagebox nguiserver nguicanvas nguidiagramcanvas
+        nguiadjustdisplaywindow nguicontextmenu nguidragbox
+        nguigraphicsbrowserwindow nguisettingsform nguitexttable nguitextwindow
     }
 endtarget
 

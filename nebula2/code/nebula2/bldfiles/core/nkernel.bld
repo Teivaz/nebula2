@@ -67,6 +67,16 @@ beginmodule nutil
         nstrnode
         ntabcomplete
         nthreadvariable
+        nangularpfeedbackloop
+        npquatfeedbackloop
+        npfeedbackloop
+        natom
+        ndie
+        nhttpresponsecracker
+        nhttpformdatawrapper
+        nhttpsession
+        nhashmap
+        nquadtree
     }
 endmodule
 
