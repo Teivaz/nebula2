@@ -13,7 +13,6 @@ beginworkspace nmaxplugins
    settargets {
       nmaxbase 
       nmaxexport 
-      nmaxexpose
       nkernel 
       ntoollib
       microtcl
