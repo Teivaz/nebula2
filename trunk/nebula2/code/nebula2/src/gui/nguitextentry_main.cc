@@ -18,7 +18,8 @@ nGuiTextEntry::nGuiTextEntry() :
     active(false),
     firstFrameActive(false),
     lineEditor(0),
-    fileMode(false)
+    fileMode(false),
+    overstrikeDefault(false)
 {
     this->SetMaxLength(48);
 }
@@ -81,6 +82,16 @@ nGuiTextEntry::GetEmptyText() const
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nGuiTextEntry::SetOverstrike(bool overstrike) 
+{
+    this->overstrikeDefault = overstrike;
+    this->lineEditor->SetOverstrike( overstrike );
+}
+
+//------------------------------------------------------------------------------
+/**
     Set max number of chars in text buffer. Discards old text buffer
     content.
 */
@@ -93,6 +104,7 @@ nGuiTextEntry::SetMaxLength(int l)
         this->lineEditor = 0;
     }
     this->lineEditor = new nEditLine(l);
+    this->lineEditor->SetOverstrike(this->overstrikeDefault);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +190,6 @@ nGuiTextEntry::OnButtonDown(const vector2& /*mousePos*/)
     if (this->mouseOver)
     {
         this->SetActive(true);
-        return true;
     }
     else
     {
@@ -188,7 +199,6 @@ nGuiTextEntry::OnButtonDown(const vector2& /*mousePos*/)
             this->CheckEmptyText();
             this->OnAction();
             this->SetActive(false);
-            return true;
         }
     }
     return false;
@@ -346,7 +356,6 @@ nGuiTextEntry::Render()
             // get x position and width of cursor
             int cursorIndex = this->lineEditor->GetCursorPos();
             nString lineText = this->lineEditor->GetContent();
-            nString textToCursor = lineText.ExtractRange(0, cursorIndex);
 
             // build a string from the character under the cursor
             char charUnderCursor[2];
@@ -354,7 +363,6 @@ nGuiTextEntry::Render()
             charUnderCursor[1] = 0;
             
             // get text extents
-            vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
             vector2 cursorSize = nGfxServer2::Instance()->GetTextExtent(charUnderCursor);
 
             // FIXME: GetTextExtent() thinks that spaces are 0 pixels wide!!!
@@ -364,9 +372,35 @@ nGuiTextEntry::Render()
             }
 
             // prepare matrix to render cursor resource
-            rectangle cursorRect(vector2(screenSpaceRect.v0.x + textToCursorSize.x, 
+            float leftMargin = 0;
+            switch (this->align)
+            {
+                case Center:
+                {
+                    vector2 totalTextSize = nGfxServer2::Instance()->GetTextExtent(lineText.Get());
+                    leftMargin = (screenSpaceRect.v1.x - screenSpaceRect.v0.x - totalTextSize.x) * 0.5f;
+                    // fallthrough!
+                }
+                case Left:  
+                {  
+                    nString textToCursor = lineText.ExtractRange(0, cursorIndex);
+                    vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
+                    leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
+                    break;
+                }
+                case Right:
+                {   
+                    nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
+                    vector2 textAfterCursorSize = nGfxServer2::Instance()->GetTextExtent(textAfterCursor.Get());
+                    leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
+                    break;
+                }
+            }
+
+            // prepare matrix to render cursor resource
+            rectangle cursorRect(vector2(leftMargin, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() - cursorSize.y) * 0.5f),
-                                 vector2(screenSpaceRect.v0.x + textToCursorSize.x + cursorSize.x, 
+                                 vector2(leftMargin + cursorSize.x, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() + cursorSize.y) * 0.5f));
 
             nGuiServer::Instance()->DrawBrush(cursorRect, this->cursorBrush);
