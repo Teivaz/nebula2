@@ -13,6 +13,7 @@
 */
 #include "scene/nanimator.h"
 #include "gfx2/nshader2.h"
+#include "util/nipolkeyarray.h"
 
 //------------------------------------------------------------------------------
 class nVectorAnimator : public nAnimator
@@ -43,41 +44,9 @@ public:
     static nKernelServer* kernelServer;
 
 private:
-    class Key
-    {
-    public:
-        /// default constructor
-        Key();
-        /// constructor
-        Key(float t, const vector4& v);
-
-        float time;
-        vector4 value;
-    };
-
     nShader2::Parameter vectorParameter;
-    nArray<Key> keyArray;
+    nIpolKeyArray<vector4> keyArray;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nVectorAnimator::Key::Key()
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nVectorAnimator::Key::Key(float t, const vector4& v) :
-    time(t),
-    value(v)
-{
-    // empty
-}
 
 //------------------------------------------------------------------------------
 #endif

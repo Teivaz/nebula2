@@ -66,6 +66,8 @@ public:
     int mincompmask() const;
     /// inplace linear interpolation
     void lerp(const _vector4& v0, float lerpVal);
+    /// linear interpolation between v0 and v1
+    void lerp(const _vector4& v0, const _vector4& v1, float lerpVal);
     /// saturate components between 0 and 1
     void saturate();
 
@@ -403,6 +405,20 @@ _vector4::lerp(const _vector4& v0, float lerpVal)
     z = v0.z + ((z - v0.z) * lerpVal);
     w = v0.w + ((w - v0.w) * lerpVal);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector4::lerp(const _vector4& v0, const _vector4& v1, float lerpVal)
+{
+    x = v0.x + ((v1.x - v0.x) * lerpVal);
+    y = v0.y + ((v1.y - v0.y) * lerpVal);
+    z = v0.z + ((v1.z - v0.z) * lerpVal);
+    w = v0.w + ((v1.w - v0.w) * lerpVal);
+}
+
 
 //------------------------------------------------------------------------------
 /**
