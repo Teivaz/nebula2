@@ -33,32 +33,21 @@
 */
 nMaxScene::nMaxScene() :
     sceneRoot (0),
-    nohBase ("export"),
+    exportRoot(0),
     boneManager(0)
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
+    @note
+        Be careful, the destructor is called when the log dialog box is closed.
+        So put all necessary tasks for releasing, deallocating resources etc.
+        under the End() function.
 */
 nMaxScene::~nMaxScene()
 {
-    // release scene base object.
-    nRoot* sceneRoot = nKernelServer::Instance()->Lookup(this->nohBase.Get());
-    if (sceneRoot)
-    {
-        sceneRoot->Release();
-    }
-
-    // clean up any exist instance of nMaxMesh
-    for (int i=0;i<this->meshArray.Size(); i++)
-    {
-        nMaxMesh* mesh = this->meshArray[i];
-        n_delete(mesh);
-    }
-
-    // remove bone manager.
-    n_delete(this->boneManager);
+    //empty.
 }
 
 //-----------------------------------------------------------------------------
@@ -268,21 +257,14 @@ bool nMaxScene::OpenNebula()
     // need to create nskinanimator.
     varServer = (nVariableServer*)ks->NewNoFail("nvariableserver", "/sys/servers/variable");
 
-    // Be sure to make the cwd to be root.
-    nRoot* nohRoot = ks->Lookup("/");
-    ks->PushCwd(nohRoot);
-
     // Make the scene base object which to be exported in final export stage.
     // All nodes which exported should be under this node as child node of this.
-    nString nodeName = nMaxUtil::CorrectName(this->nohBase);
-
-    nRoot* baseObj = ks->NewNoFail("ntransformnode", nodeName.Get());
-    if (baseObj)
+    exportRoot = static_cast<nSceneNode*>(ks->NewNoFail("ntransformnode", "/export"));
+    if (exportRoot)
     {
-        nRoot* cwd = ks->Lookup(baseObj->GetFullName().Get());
-        ks->PushCwd(cwd);
+        ks->PushCwd(exportRoot);
 
-        n_maxlog(Midium, "Created '%s' scene base object.", baseObj->GetFullName().Get());
+        n_maxlog(Midium, "Created '%s' scene base object.", exportRoot->GetFullName().Get());
     }
     else
     {
@@ -307,19 +289,46 @@ bool nMaxScene::End()
     if (!this->CloseNebula())
         return false;
 
+    // clean up any exist instance of nMaxMesh
+    for (int i=0;i<this->meshArray.Size(); i++)
+    {
+        nMaxMesh* mesh = this->meshArray[i];
+        n_delete(mesh);
+    }
+
+    // remove bone manager.
+    n_delete(this->boneManager);
+
     return true;
 }
 
 //-----------------------------------------------------------------------------
 /**
     Uninitialize for nebula specifics.
-    (Be sure to call after calling Postprocess())
 
+    @note
+        Be sure to call after calling Postprocess().
 */
 bool nMaxScene::CloseNebula()
 {
+    // release export base object.
+    if (this->exportRoot)
+    {
+        if (!exportRoot->Release())
+        {
+            n_maxlog(Error, "Failed to release Nebula object %s", exportRoot->GetName());
+            return false;
+        }
+
+        exportRoot = 0;
+    }
+
+    // release variable server.
     if (!this->varServer->Release())
+    {
+        n_maxlog(Error, "Failed to release Nebula object %s", this->varServer->GetName());
         return false;
+    }
 
     return true;
 }
@@ -420,10 +429,8 @@ bool nMaxScene::Postprocess()
     if (nMaxBoneManager::Instance()->GetNumBones() > 0)
     {
         //nString animatorName;
-        //animatorName += "/";
-        //animatorName += this->nohBase;
         //animatorName += "/skinanimator";
-        //this->CreateSkinAnimator(animatorName, animFilename);
+
         nSkinAnimator* createdAnimator = NULL;
 
         nMaxSkinAnimator skinAnimator;
@@ -437,7 +444,7 @@ bool nMaxScene::Postprocess()
     // save node.
     nString exportNodeName;
     exportNodeName += "/";
-    exportNodeName += this->nohBase;
+    exportNodeName += this->exportRoot->GetName();
 
     nKernelServer* ks = nKernelServer::Instance();
 
@@ -753,8 +760,7 @@ bool nMaxScene::ExportAnimation(const nString &filename)
 */
 bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
 {
-    //FIXME: should be get from nMaxOption.
-    int sampleRate = 2;
+    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
     float keyDuration = (float)sampleRate / GetFrameRate();
     int sceneFirstKey = 0;
 
