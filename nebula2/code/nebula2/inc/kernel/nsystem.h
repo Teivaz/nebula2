@@ -78,6 +78,7 @@
 #       define N_EXPORT
 #   endif
 #else
+#   define __cdecl
 #   define N_EXPORT
 #endif
 
