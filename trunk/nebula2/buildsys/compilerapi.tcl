@@ -519,7 +519,7 @@ proc get_modheaders_dressed {modname} {
 
     set i [findmodbyname $modname]
 
-    return $mod($i,hdrs)
+    return [lsort $mod($i,hdrs)]
 }
 
 
@@ -534,7 +534,7 @@ proc get_modsources_dressed {modname} {
 
     set i [findmodbyname $modname]
 
-    return $mod($i,srcs)
+    return [lsort $mod($i,srcs)]
 }
 
 #----------------------------------------------------------------------------
