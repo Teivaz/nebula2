@@ -1,10 +1,8 @@
-//-------------------------------------------------------------------
-//  noctsphere.cc
-//  
-//-------------------------------------------------------------------
 #include "mathlib/bbox.h"
 #include "mathlib/sphere.h"
 #include "octree/noctsphere.h"
+
+nNebulaScriptClass(nOctSphere, "noctvisitor");
 
 //-----------------------------------------------------------------------------
 /**

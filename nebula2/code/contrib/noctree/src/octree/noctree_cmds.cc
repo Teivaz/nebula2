@@ -1,15 +1,16 @@
-#define N_IMPLEMENTS nOctree
 //-------------------------------------------------------------------
 //  misc/noctree_dispatch.cc
 //  This file was machine generated.
 //  (C) 2000 A.Weissflog/A.Flemming
 //-------------------------------------------------------------------
 #include "octree/noctree.h"
+#include "octree/noctvisitor.h"
 
 static void n_setsubdivnum(void *, nCmd *);
 static void n_getsubdivnum(void *, nCmd *);
 static void n_setvisualize(void *, nCmd *);
 static void n_getvisualize(void *, nCmd *);
+static void n_collect(void*, nCmd*);
 
 //------------------------------------------------------------------------------
 /**
@@ -32,6 +33,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("i_getsubdivnum_v",'GSDN',n_getsubdivnum);
     cl->AddCmd("v_setvisualize_b",'SVIS',n_setvisualize);
     cl->AddCmd("b_getvisualize_v",'GVIS',n_getvisualize);
+    cl->AddCmd("i_collect_o",'COLL',n_collect);
     cl->EndCmds();
 }
 
@@ -118,6 +120,29 @@ static void n_getvisualize(void *o, nCmd *cmd)
 {
     nOctree *self = (nOctree *) o;
     cmd->Out()->SetB(self->GetVisualize());
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    collect
+
+    @input
+    o (nOctVisitor*)
+
+    @output
+    i (number of objects collected)
+
+    @info
+    Determines the number of objects inside the provided culling area.
+*/
+static void n_collect(void *o, nCmd *cmd)
+{
+    nOctree *self = (nOctree *) o;
+    nRef<nOctVisitor> rCuller = (nOctVisitor*)cmd->In()->GetO();
+    const short maxNumObjs = self->GetRoot()->all_num_elms;
+    nOctElement** objectsToRender = n_new nOctElement*[ maxNumObjs ]; // this could no doubt be made more efficient
+    cmd->Out()->SetI( self->Collect( *rCuller.get(), objectsToRender, maxNumObjs ) );
+    n_delete[] objectsToRender;
 }
 
 //-------------------------------------------------------------------

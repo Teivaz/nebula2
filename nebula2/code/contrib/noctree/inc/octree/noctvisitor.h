@@ -1,6 +1,7 @@
 #ifndef N_OCTREE_VISITOR_H
 #define N_OCTREE_VISITOR_H
 
+#include "kernel/nroot.h"
 #include "octree/noctree.h"
 
 //-----------------------------------------------------------------------------
@@ -9,13 +10,14 @@
     @ingroup NOctreeConribModule
     @brief super class of octree visitor
 
-    All nOctVIsitor derived class should declare DoCulling() member function.
+    All nOctVisitor derived class should declare DoCulling() member function.
 */
-class nOctVisitor
+class nOctVisitor : public nRoot
 {
 public:
-    virtual void DoCulling (nOctree* octree) = 0;
-
+    nOctVisitor() {};
+    virtual ~nOctVisitor() {}
+    virtual void DoCulling (nOctree* octree) { n_assert( 0 ); } // "pure virtual"
 };
 
 #endif /*N_OCTREE_VISITOR_H*/

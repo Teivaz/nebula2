@@ -13,9 +13,7 @@ class nOctFrustum : public nOctVisitor
 {
 public:
     nOctFrustum();
-
     virtual void DoCulling (nOctree* octree);
-
 protected:
     void init_clip_planes_for_frustum (nOctree* octree);
     void recurse_collect_within_clip_planes (nOctree* octree, 
