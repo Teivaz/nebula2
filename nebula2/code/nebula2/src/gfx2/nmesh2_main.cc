@@ -119,7 +119,7 @@ nMesh2::LoadResource()
     if (filename.IsEmpty())
     {
         // no filename, just create empty vertex and/or index buffers        
-        success = CreateEmpty();
+        success = this->CreateEmpty();
     }
     else if (this->refResourceLoader.isvalid())
     {
