@@ -39,7 +39,7 @@ proc emit_vcproj_header {name cid} {
 #-------------------------------------------------------------------------------
 #   emit_vcproj_config $name $cid $debug
 #-------------------------------------------------------------------------------
-proc emit_vcproj_config {name cid debug} {
+proc emit_vcproj_config {name cid debug inc_list lib_list} {
     variable debug_preprocessor_defs
     variable release_preprocessor_defs
     global cur_workspacepath
@@ -75,8 +75,6 @@ proc emit_vcproj_config {name cid debug} {
         }
     }
 
-    set inc_list [join [get_incsearchdirs] ";"]
-    set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
     foreach def [get_tardefs $name] {
         if { [llength [lindex $def 0]] && [llength [lindex $def 1]] } {
             append def_list "[lindex $def 0]=[lindex $def 1];"
@@ -257,7 +255,7 @@ proc emit_vcproj_tail {cid} {
 #   gen_vcproj $name
 #   Creates a .vcproj file
 #-------------------------------------------------------------------------------
-proc gen_vcproj {name} {
+proc gen_vcproj {name inc_list lib_list} {
     global home
     global cur_workspacepath
 
@@ -268,8 +266,8 @@ proc gen_vcproj {name} {
 
     emit_vcproj_header $name $cid
     puts $cid "\t<Configurations>"
-    emit_vcproj_config $name $cid 1
-    emit_vcproj_config $name $cid 0
+    emit_vcproj_config $name $cid 1 $inc_list $lib_list
+    emit_vcproj_config $name $cid 0 $inc_list $lib_list
     puts $cid "\t</Configurations>"
 
     emit_vcproj_files $name $cid
@@ -392,7 +390,11 @@ proc generate { wslist } {
 
     foreach target $targets {
 		use_workspace [lindex $target 1] $vstudiopath $outputpath $interpath
-		gen_vcproj [lindex $target 0]
+
+        set inc_list [join [get_incsearchdirs] ";"]
+        set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
+
+		gen_vcproj [lindex $target 0] $inc_list $lib_list
 	}
 }
 
