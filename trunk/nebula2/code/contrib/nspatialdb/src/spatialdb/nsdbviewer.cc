@@ -46,6 +46,15 @@
 #include "tools/ncmdlineargs.h"
 #endif
 
+nNebulaUsePackage(nnebula);
+nNebulaUsePackage(ndinput8);
+nNebulaUsePackage(ndirect3d9);
+nNebulaUsePackage(ndshow);
+nNebulaUsePackage(ngui);
+nNebulaUsePackage(nlua);
+nNebulaUsePackage(noctree);
+nNebulaUsePackage(nspatialdb);
+
 //------------------------------------------------------------------------------
 /*
 */
@@ -106,6 +115,13 @@ main(int argc, const char** argv)
         nWin32LogHandler logHandler("nsdbviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
+    kernelServer.AddPackage(nnebula);
+    kernelServer.AddPackage(ndinput8);
+    kernelServer.AddPackage(ndirect3d9);
+    kernelServer.AddPackage(ngui);
+    kernelServer.AddPackage(nlua);
+    kernelServer.AddPackage(noctree);
+    kernelServer.AddPackage(nspatialdb);
 
     // initialize a viewer app object
     nSDBViewerApp viewerApp(&kernelServer);
