@@ -43,7 +43,8 @@ nGuiServer::nGuiServer() :
     toolTipSet(false),
     toolTipEnabled(true),
     toolTipFadeInTime(0.15),
-    toolTipActivationTime(0.2f)
+    toolTipActivationTime(0.2f),
+    clipRectStack(0, 1)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -867,7 +868,38 @@ nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
         bool success = guiResource->Load();
         n_assert(success);
     }
-    this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
+    
+    rectangle rectMesh, rectUV, clipRect;
+    
+    // default values
+    rectMesh = rect;
+    rectUV = guiResource->GetRelUvRect();
+
+    // clipping
+    if (this->GetClipRect(clipRect))
+    {
+        // get intersection of brush rectangle and clipping recttangle
+        rectMesh = clipRect * rect;
+
+        // check if rectangles really intersect
+        if (rectMesh.area() == 0.0f)
+        {
+            return;
+        }
+
+        float widthScale, heightScale;
+
+        widthScale = rectUV.width() / rect.width();
+        heightScale = rectUV.height() / rect.height();
+
+        // scale UV rectangle (y is swapped)
+        rectUV.v0.x += (rectMesh.v0.x - rect.v0.x) * widthScale;
+        rectUV.v0.y -= (rectMesh.v1.y - rect.v1.y) * heightScale;
+        rectUV.v1.x += (rectMesh.v1.x - rect.v1.x) * widthScale;
+        rectUV.v1.y -= (rectMesh.v0.y - rect.v0.y) * heightScale;
+    }
+
+    this->DrawTexture(rectMesh, rectUV, guiResource->GetColor(), guiResource->GetTexture());
 }
 
 //-----------------------------------------------------------------------------
@@ -1242,5 +1274,22 @@ nGuiServer::SetDragBox(nGuiDragBox* dragBox)
         n_assert(dragBox->IsA(kernelServer->FindClass("nguidragbox")));
     }
     this->refDragBox = dragBox;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Find intersection with previous clipping rectangle and push result in stack
+*/
+void
+nGuiServer::PushClipRect(rectangle& cr)
+{
+    if (cr.area() > 0.0f && this->clipRectStack.Size() > 0)
+    {
+        this->clipRectStack.Append(this->clipRectStack.Back() * cr);
+    }
+    else
+    {
+        this->clipRectStack.Append(cr);
+    }
 }
 
