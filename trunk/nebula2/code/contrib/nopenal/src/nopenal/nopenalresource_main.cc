@@ -42,8 +42,7 @@ nOpenALResource::LoadResource()
     nFileServer2* fileServer = kernelServer->GetFileServer();
 
     // get mangled path name
-    char mangledPath[N_MAXPATH];
-    fileServer->ManglePath(this->GetFilename().Get(), mangledPath, sizeof(mangledPath));
+    nString mangledPath = fileServer->ManglePath(this->GetFilename().Get());
 
     n_assert(this->refSoundServer->createBufSrc());
 
@@ -52,7 +51,7 @@ nOpenALResource::LoadResource()
     unsigned int buffer = this->refSoundServer->getBuffer();
     unsigned int source = this->refSoundServer->getSource();
 
-    nPathString dstFileName (mangledPath);
+    nPathString dstFileName (mangledPath.Get());
 
    // load data into buffer
 #ifdef WINDOWS
