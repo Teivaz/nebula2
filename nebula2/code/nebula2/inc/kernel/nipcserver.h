@@ -33,9 +33,9 @@ public:
     /// receive a message from a client, will never block!
     bool GetMsg(nIpcBuffer& msg, int& fromClientId);
     /// send a message to a client
-    bool Send(int toClientId, nIpcBuffer& msg);
+    bool Send(int toClientId, const nIpcBuffer& msg);
     /// send a message to all clients
-    bool SendAll(nIpcBuffer& msg);
+    bool SendAll(const nIpcBuffer& msg);
 
     nIpcAddress selfAddr;
     nThread *listenerThread;

@@ -216,7 +216,7 @@ nIpcServer::GetMsg(nIpcBuffer& msg, int& fromClientId)
     @return true on success
 */
 bool
-nIpcServer::Send(int toClientId, nIpcBuffer& msg)
+nIpcServer::Send(int toClientId, const nIpcBuffer& msg)
 {
     bool retval = false;
 
@@ -243,7 +243,7 @@ nIpcServer::Send(int toClientId, nIpcBuffer& msg)
     Send a message to all clients.
 */
 bool
-nIpcServer::SendAll(nIpcBuffer& msg)
+nIpcServer::SendAll(const nIpcBuffer& msg)
 {
     nIpcMiniServer* ipcMiniServer;
     this->miniServerList.Lock();

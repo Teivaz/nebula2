@@ -198,7 +198,7 @@ nIpcMiniServer::Poll()
 /**
 */
 bool 
-nIpcMiniServer::Send(nIpcBuffer& msg)
+nIpcMiniServer::Send(const nIpcBuffer& msg)
 {
     if ((INVALID_SOCKET != this->rcvrSocket) && (this->isConnected))
     {

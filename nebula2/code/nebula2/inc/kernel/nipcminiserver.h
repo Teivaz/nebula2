@@ -29,7 +29,7 @@ public:
     /// check for and pull incoming messages, call this frequently!
     bool Poll();
     /// send a message to the client
-    bool Send(nIpcBuffer& msg);
+    bool Send(const nIpcBuffer& msg);
     /// get the client id
     int GetClientId() const;
     /// return connection status
