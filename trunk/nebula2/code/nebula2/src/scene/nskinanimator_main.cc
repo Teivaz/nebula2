@@ -127,6 +127,7 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
 
 //------------------------------------------------------------------------------
 /**
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 void
 nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
@@ -134,12 +135,6 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(sceneNode);
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
-
-    // load anim resource if necessary
-    if (!this->AreResourcesValid())
-    {
-        this->LoadResources();
-    }
 
     // FIXME: assume that the sceneNode is a nSkinShapeNode
     nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;

@@ -6,7 +6,6 @@
 #include "variable/nvariableserver.h"
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
-#include "kernel/ntimeserver.h"
 
 nNebulaScriptClass(nParticleShapeNode, "nshapenode");
 
@@ -145,21 +144,13 @@ nParticleShapeNode::GetMeshUsage() const
 
 //------------------------------------------------------------------------------
 /**
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
 nParticleShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-	nGfxServer2* gfx = this->refGfxServer.get();
-
-    nTime curTime = kernelServer->GetTimeServer()->GetTime();
-
-    // see if resources need to be reloaded
-    if (!this->AreResourcesValid())
-    {
-        this->LoadResources();
-    }
 
     nVariableServer* varServer = this->refVariableServer.get();
     const nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);

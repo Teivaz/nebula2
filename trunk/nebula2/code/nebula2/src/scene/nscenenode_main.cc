@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "scene/nscenenode.h"
 #include "scene/nanimator.h"
+#include "scene/nrendercontext.h"
 
 nNebulaScriptClass(nSceneNode, "nroot");
 
@@ -44,8 +45,8 @@ bool
 nSceneNode::LoadResources()
 {
 #ifdef _DEBUG
-    char buf[N_MAXPATH];
-    n_printf("-> Loading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
+    // char buf[N_MAXPATH];
+    // n_printf("-> Loading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
 #endif
     this->resourcesValid = true;
     return true;
@@ -62,8 +63,8 @@ void
 nSceneNode::UnloadResources()
 {
 #ifdef _DEBUG
-    char buf[N_MAXPATH];
-    n_printf("-> Unloading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
+    // char buf[N_MAXPATH];
+    // n_printf("-> Unloading resources for scene node '%s'\n", this->GetFullName(buf, sizeof(buf)));
 #endif
     this->resourcesValid = false;
 }
@@ -127,7 +128,7 @@ nSceneNode::RenderContextCreated(nRenderContext* renderContext)
 /**
     Called by the client app when a render context for this scene node
     hierarchy should be destroyed. This is usually the case when the
-    game object associated with this scene node hierarchie goes away.
+    game object associated with this scene node hierarchy goes away.
 
     The method will be invoked recursively on all child and depend nodes
     of the scene node object.
@@ -146,6 +147,7 @@ nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
     {
         curChild->RenderContextDestroyed(renderContext);
     }
+    renderContext->ClearLocalVars();
 }
 
 //------------------------------------------------------------------------------
@@ -383,4 +385,3 @@ nSceneNode::InvokeTransformAnimators(nRenderContext* renderContext)
         kernelServer->PopCwd();
     }
 }
-

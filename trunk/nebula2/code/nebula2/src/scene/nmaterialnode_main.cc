@@ -11,7 +11,6 @@
 #include "scene/nsceneserver.h"
 #include "kernel/ndebug.h"
 
-
 nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 
 //------------------------------------------------------------------------------
@@ -83,7 +82,6 @@ nMaterialNode::LoadShaders()
 			}
         }
     }
-    
     return true;
 }
 
@@ -149,6 +147,8 @@ nMaterialNode::HasShader(uint fourcc) const
 //------------------------------------------------------------------------------
 /**
     Update shader and set as current shader in the gfx server.
+
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResources() moved to scene server
 */
 bool
 nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
@@ -164,12 +164,6 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
             n_printf("WARNING:" __FILE__ "Shader '%i' not found!", fourcc);
         #endif
         return false;
-    }
-
-    // see if any resources need to be reloaded
-    if (!this->AreResourcesValid())
-    {
-        this->LoadResources();
     }
 
     // do nothing if shader could not be loaded
@@ -233,8 +227,6 @@ nMaterialNode::GetShader(uint fourcc) const
 bool
 nMaterialNode::IsTextureUsed(nShader2::Parameter param)
 {
-	bool result	= false;
- 
 	// check in all shaders if anywhere the texture specified by param is used
     int	i;
     int numShaders = this->shaderArray.Size();
