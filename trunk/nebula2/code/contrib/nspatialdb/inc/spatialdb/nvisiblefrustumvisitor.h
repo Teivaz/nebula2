@@ -26,10 +26,10 @@ public:
     nVisibleFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform); 
     ~nVisibleFrustumVisitor();
 
-    // reset any accumulated state.  The view frustum is unchanged
+    /// reset any accumulated state.  The view frustum is unchanged
     void Reset();
 
-    // reset any data and reposition the frustum
+    /// reset any data and reposition the frustum.
     void Reset(const nCamera2 &newcamera, const matrix44 &newxform);
 
     void Visit(nSpatialElement *visitee);
@@ -38,6 +38,10 @@ public:
     a TestResult() of true, the element is visible.  The returned VisitorFlags can be used
     for more efficient visibility tests of primitives enclosed in this bounding box */
     virtual VisitorFlags VisibilityTest(const bbox3 &testbox, VisitorFlags flags);
+
+    /** Check if an element should be culled.  If the returned VisitorFlags produces
+    a TestResult() of true, the element is visible.  The returned VisitorFlags can be used
+    for more efficient visibility tests of primitives enclosed in this bounding sphere */
     virtual VisitorFlags VisibilityTest(const sphere &testsphere, VisitorFlags flags);
 
     void StartVisualizeDebug(nGfxServer2 *gfx2);

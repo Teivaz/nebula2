@@ -16,6 +16,11 @@ nScriptableSector::nScriptableSector() : nSpatialSector()
 
 nScriptableSector::~nScriptableSector()
 {
+    ClearObjects();
+}
+
+void nScriptableSector::ClearObjects()
+{
     // trash all elements in the sector
     for (int i=0; i < m_scriptobject_array.Size(); i++)
     {
@@ -25,6 +30,8 @@ nScriptableSector::~nScriptableSector()
         n_delete(object);
         n_delete(element);
     }
+
+    m_scriptobject_array.Clear();
 }
 
 /// Create a renderable object and put it in the sector space

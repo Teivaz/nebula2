@@ -16,6 +16,7 @@ call('setassign', 'luascript', 'home:code/contrib/nspatialdb/bin/')
 
 dofile (mangle('luascript:nebthunker.lua'))
 dofile (mangle('luascript:console.lua'))
+dofile (mangle('luascript:buildfuncs.lua'))
 
 
 ---------------------------------------------------------------------------------

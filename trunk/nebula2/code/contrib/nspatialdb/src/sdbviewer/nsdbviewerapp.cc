@@ -343,32 +343,33 @@ void nSDBViewerApp::Run()
                 identmatrix.ident();
                 this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
                 this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
-			    //if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
+			    if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Frustum)
                 {
-                    //nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visibleobjects);
+                    nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visibleobjects);
+                    generator.StartVisualizeDebug(this->refGfxServer.get());
+                    m_rootsector->Accept(generator, 3 );
+                    generator.EndVisualizeDebug();
+                }
+                if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
+                {
                     nGeometryOcclusionVisitor occlusion(cameraxform0.pos_component());
                     nOccludedFrustumGenArray generator(this->playcamera, cameraxform0, occlusion, visibleobjects);
                     generator.StartVisualizeDebug(this->refGfxServer.get());
                     // collect occluders on the first pass and do visibility on the second pass
-                    m_rootsector->Accept(occlusion, 3, VisitorFlags());
-                    m_rootsector->Accept(generator, 3, VisitorFlags());
+                    m_rootsector->Accept(occlusion, 3 );
+                    m_rootsector->Accept(generator, 3 );
                     generator.EndVisualizeDebug();
-                }
-/*                if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingFrustum)
-                {
-                    nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, visibleobjects);
-                    generator2.VisualizeDebug(this->refGfxServer.get());
-                    generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
                 }
 			    if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::Sphere)
 			    {
 		            // create a clipper
 				    sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
 			        nVisibleSphereGenArray generator(cameraviewsphere, visibleobjects);
-				    generator.VisualizeDebug(this->refGfxServer.get());
-		            generator.nVisibleSphereVisitor::Visit(m_rootsector.get(),3);
+				    generator.StartVisualizeDebug(this->refGfxServer.get());
+                    m_rootsector->Accept(generator, 3, VisitorFlags());
+                    generator.EndVisualizeDebug();
 			    }
-			    if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingSphere)
+/*			    if (nSDBViewerApp::CurrentClipState == nSDBViewerApp::OccludingSphere)
 			    {
 		            // create a clipper
 				    sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
@@ -510,9 +511,9 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
 		{
 		case nSDBViewerApp::Frustum: CurrentClipState = nSDBViewerApp::OccludingFrustum; break;
 		case nSDBViewerApp::OccludingFrustum: CurrentClipState = nSDBViewerApp::Sphere; break;
-		case nSDBViewerApp::Sphere: CurrentClipState = nSDBViewerApp::OccludingSphere; break;
-		case nSDBViewerApp::OccludingSphere: CurrentClipState = nSDBViewerApp::SpatialSphere; break;
-        case nSDBViewerApp::SpatialSphere: CurrentClipState = nSDBViewerApp::Frustum; break;
+		case nSDBViewerApp::Sphere: CurrentClipState = nSDBViewerApp::Frustum; break;
+//		case nSDBViewerApp::OccludingSphere: CurrentClipState = nSDBViewerApp::SpatialSphere; break;
+//        case nSDBViewerApp::SpatialSphere: CurrentClipState = nSDBViewerApp::Frustum; break;
 		}
     }
 
@@ -803,32 +804,34 @@ void nSDBViewerApp::UpdateObjectMarks(nVisibilityVisitor::VisibleElements &v)
     markcameras[m_viscamera].GenerateTransform(cameraxform0);
     sphere cameraviewsphere(markcameras[m_viscamera].viewerPos, 10.0f);
 
-    nGeometryOcclusionVisitor occlusion(cameraxform0.pos_component());
-	nOccludedFrustumGenArray generator1(this->playcamera, cameraxform0, occlusion, v);
-/*	nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, v);
-	nVisibleSphereGenArray generator3(cameraviewsphere, v);
-	nOccludingSphereGenArray generator4(cameraviewsphere, v);
-    nSpatialSphereGenArray generator5(cameraviewsphere, v);
 	switch (this->CurrentClipState)
 	{
 	case nSDBViewerApp::Frustum:
-			generator1.nVisibleFrustumVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
+        {
+            nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, v);
+            m_rootsector->Accept( generator, 3 );
+        }
 		break;
 	case nSDBViewerApp::OccludingFrustum:
-			// create a clipper
-			generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
+        {
+            nGeometryOcclusionVisitor occlusion(cameraxform0.pos_component());
+	        nOccludedFrustumGenArray generator(this->playcamera, cameraxform0, occlusion, v);
+            m_rootsector->Accept( occlusion, 3 );
+            m_rootsector->Accept( generator, 3 );
+        }
 		break;
 	case nSDBViewerApp::Sphere:
-			generator3.nVisibleSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
+        {
+            nVisibleSphereGenArray generator(cameraviewsphere, v);
+            m_rootsector->Accept( generator, 3);
+        }
 		break;
-	case nSDBViewerApp::OccludingSphere:
+/*	case nSDBViewerApp::OccludingSphere:
 			generator4.nOccludingSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
 		break;
     case nSDBViewerApp::SpatialSphere:
             generator5.nSpatialSphereVisitor::Visit(m_rootsector.get(),allowedrecursiondepth);
-        break;
+        break;*/
 	}
-*/
-    m_rootsector.get()->Accept(occlusion, 3, VisitorFlags() );
-    m_rootsector.get()->Accept(generator1, 3, VisitorFlags() );
+
 }
