@@ -4,9 +4,8 @@
 /**
     @class nNetClient
     @ingroup Network
-
-    A client in a multiplayer session. Works together with nNetServer,
-    should be subclassed for a specific application or protocol.
+    @brief A client in a multiplayer session.  Works together with
+    nNetServer, should be subclassed for a specific application or protocol.
     
     (C) 2003 RadonLabs GmbH
 */

@@ -4,8 +4,7 @@
 /**
     @class nSessionClientContext
     @ingroup Network
-
-    Represents a session client on the server side.
+    @brief Represents a session client on the server side.
 
     The session server object creates one nSessionClientContext object
     for each connected client. The session client context contains

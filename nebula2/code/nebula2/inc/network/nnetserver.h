@@ -4,8 +4,7 @@
 /**
     @class nNetServer
     @ingroup Network
-
-    A server in a multiplayer session. Should be subclasses for specific
+    @brief A server in a multiplayer session. Should be subclasses for specific
     applications or protocols.
 
     After the session server has collected information about the network clients
@@ -24,26 +23,32 @@
 
     This is the net client/server protocol:
 
+@verbatim
     ---
     client: "~joinsession clientGuid"
     server: "~joinaccepted" OR "~joindenied"
+@endverbatim
 
     A client requestes to join the server. A client must send a guid
     to the server for authentification. This must be one of the 
     guids set by nNetServer::SetClientGuid(). This guid is usually
     the result of the session setup process. The server answers with
-    a "~joinaccepted" or "~joindenied"
+    a <tt>~joinaccepted</tt> or <tt>~joindenied</tt>.
 
+@verbatim
     ---
     server: "~start"
     client: ---
+@endverbatim
 
     This message is sent by the server once to all clients, when all
     clients have connected.
 
+@verbatim
     ---
     server: "~closesession"
     client: ---
+@endverbatim
 
     This is sent by the server to all clients when the session is
     ended by the host. Only the host may close the session. No
