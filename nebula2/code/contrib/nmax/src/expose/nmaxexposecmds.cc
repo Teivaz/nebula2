@@ -640,15 +640,11 @@ void putOutSingleArg(nArg* arg, Tab<FPValue*>* out)
             // FIXME: return object name for the object type
             //        there's no way to return nebula-object type at this moment.
 
-            char buf[N_MAXPATH];
-            memset (buf, '\0', sizeof(buf));
-
-            const char* s;
+            nString s;
             nRoot* o = (nRoot*)arg->GetO();
             if (o)
             {
-                o->GetFullName(buf, sizeof(buf));
-                s = buf;
+                s = o->GetFullName();
             }
             else
                 s = "";
@@ -658,7 +654,7 @@ void putOutSingleArg(nArg* arg, Tab<FPValue*>* out)
 
             //HACK: FPValue type doesn't allocate memory for string type
             //      so, we should allocate memory explicitly.
-            result->s = ::strdup(s);
+            result->s = ::strdup(s.Get());
             out->Append(1, &result);
         }
         break;
