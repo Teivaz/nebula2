@@ -348,6 +348,7 @@ nFile::GetS(char* buffer, int numChars)
     int curIndex = 0;
     for (curIndex = 0; curIndex < (numChars - 1); curIndex++)
     {
+        bytesRead = 0;
         // read next chunk of data?
         if (0 == (curIndex % chunkSize))
         {
@@ -382,3 +383,4 @@ nFile::GetS(char* buffer, int numChars)
     this->lineNumber++;
     return retval;
 }
+
