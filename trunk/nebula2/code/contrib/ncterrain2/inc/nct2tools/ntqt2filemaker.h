@@ -14,7 +14,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
-#include "tools/ntgafile.h"
+#include "nct2tools/ntgafile.h"
 #include <IL/il.h>
 #include <IL/ilu.h>
 #include <stdarg.h>
