@@ -1,0 +1,29 @@
+#-----------------------------------------------------------------------------
+#    noctree.bld
+#    ============
+#    nOctree package definition
+#-----------------------------------------------------------------------------
+beginmodule octree
+    setdir octree
+    setfiles      { noctree_main noctree_collect noctree_cmds }
+    setheaders    { noctree }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget noctree
+  	settype lib
+  	setmodules    { octree }
+  	settargetdeps { nnebula }
+endtarget
+#-----------------------------------------------------------------------------
+beginworkspace octree
+    setbinarydir ./bin/
+    setlibdir ./code/contrib/lib/
+    settargets {
+        nkernel
+        nnebula
+        noctree
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
