@@ -444,8 +444,7 @@ proc generate { wslist } {
             } elseif {$t == "dll" } {
                 gen_dll_dsp $target
             } else {
-                ::log::log error "ERROR: Unknown target type $t for target $target"
-                exit
+                error "ERROR: Unknown target type $t for target $target"
             }
         }
     }
