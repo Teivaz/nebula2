@@ -65,8 +65,16 @@ It provides some flags for optimal allocation of buffer like this:
  - NPatch
  - RTPatch
  - PointSprite
+ - NeedsVertexShader
 
-There's some other vertex components for tangent, binormals which for per-pixellighting and weights and joint indices for vertex skinning.
+These flags are specified by nShapeNode::SetMeshUsage. 
+One of the example of these flags, skinned mesh is specified to use 'WriteOnce' 
+and 'NeedsVertexShader' flag.   
+This means that CPU does not process any vertices for skinned animation but vertex
+shader does.
+
+There's some other vertex components for tangent, binormals which for 
+per-pixellighting and weights and joint indices for vertex skinning.
                                                      
 Another special helper class for mesh is DynamicMesh(@class nDynamicMesh) for CPU 
 generated geometry. (i.e. @ref NebulaParticleSystem)
