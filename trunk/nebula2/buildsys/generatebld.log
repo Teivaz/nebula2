@@ -1,0 +1,2372 @@
+Build Data dump
+
+--------------------------------------------------------
+ Workspaces
+--------------------------------------------------------
+
+Name: Nebula2
+Bldfile: ./code/nebula2/bldfiles/n2wspace.bld
+  Project file dir:  
+  Binary output dir: ./bin
+  Scratch build dir: 
+  Annotation:
+
+
+
+  Global preprocessor defines:
+  Target specific preprocessor defines:
+  Targets to build:
+        buildall
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        nimagetool
+        nmeshtool
+        nremoteshell
+        nsh
+        nviewer
+
+--------------------------------------------------------
+
+
+
+
+--------------------------------------------------------
+ Targets
+--------------------------------------------------------
+
+Name: buildall
+Bldfile: ./code/nebula2/bldfiles/dummy.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+Simply used as a build all target in VC6
+
+  Modules:
+      dummy
+  Bundles:
+  Target Dependencies:
+      nkernel
+      nnebula
+      microtcl
+      ndinput8
+      ndirect3d9
+      ntoollib
+      nimagetool
+      nmeshtool
+      nremoteshell
+      nsh
+      nviewer
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      dummy
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: nnebula
+Bldfile: ./code/nebula2/bldfiles/nnebula.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+
+
+  Modules:
+      nbinscriptserver
+      ntclserver
+      nnpkfileserver
+      nvariableserver
+      ninputserver
+      nresourceserver
+      nresource
+      nntxfile
+      nmesh2
+      ntexture2
+      nshader2
+      ngfxserver2
+      nsceneserver
+      nstdsceneserver
+      nscenenode
+      ntransformnode
+      nabstractshadernode
+      nmaterialnode
+      nvolumelightnode
+      nshapenode
+      nanimator
+      nvectoranimator
+      ntransformanimator
+      nskinanimator
+      nskinshapenode
+      ncharacter
+      nanimationserver
+      nanimation
+      nmemoryanimation
+      nconserver
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nabstractshadernode
+      nanimation
+      nanimationserver
+      nanimator
+      nbinscriptserver
+      ncharacter
+      nconserver
+      ngfxserver2
+      ninputserver
+      nmaterialnode
+      nmemoryanimation
+      nmesh2
+      nnpkfileserver
+      nntxfile
+      nresource
+      nresourceserver
+      nscenenode
+      nsceneserver
+      nshader2
+      nshapenode
+      nskinanimator
+      nskinshapenode
+      nstdsceneserver
+      ntclserver
+      ntexture2
+      ntransformanimator
+      ntransformnode
+      nvariableserver
+      nvectoranimator
+      nvolumelightnode
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: nremoteshell
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:     exe
+  Platform: 
+  Annotation:
+
+Sample application: A remote console over IPX for debugging Nebula2.
+
+  Modules:
+      nremoteshell
+      nipcclient
+  Bundles:
+  Target Dependencies:
+      nkernel
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nipcclient
+      nremoteshell
+  Merged win32 libs:
+      wsock32.lib
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+      Carbon
+
+--------------------------------------------------------
+
+Name: nsh
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:     exe
+  Platform: 
+  Annotation:
+
+Sample application: A Nebula2 console based interface.
+
+  Modules:
+      nsh
+  Bundles:
+  Target Dependencies:
+      nkernel
+      nnebula
+      ndirect3d9
+      ndinput8
+      microtcl
+      ntoollib
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nsh
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+      Carbon
+
+--------------------------------------------------------
+
+Name: nviewer
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:     exe
+  Platform: 
+  Annotation:
+
+Sample application:  Allows simple viewing of .n2 files
+
+  Modules:
+      nviewer
+  Bundles:
+  Target Dependencies:
+      nkernel
+      nnebula
+      microtcl
+      ndinput8
+      ndirect3d9
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nviewer
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+      Carbon
+
+--------------------------------------------------------
+
+Name: nkernel
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+The Nebula2 Kernel and required servers and bits.
+
+  Modules:
+      nkernel
+      nroot
+      ntimeserver
+      npersistserver
+      nfileserver2
+      nscriptserver
+      nenv
+      nremoteserver
+      nipc
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nenv
+      nfileserver2
+      nipc
+      nkernel
+      npersistserver
+      nremoteserver
+      nroot
+      nscriptserver
+      ntimeserver
+  Merged win32 libs:
+      wsock32.lib
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: ndirect3d9
+Bldfile: ./code/nebula2/bldfiles/gfx2/ndirect3d9.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+
+
+  Modules:
+      nd3d9server
+      nd3d9mesh
+      nd3d9texture
+      nd3d9shader
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nd3d9mesh
+      nd3d9server
+      nd3d9shader
+      nd3d9texture
+  Merged win32 libs:
+      d3d9.lib
+      d3dx9.lib
+      dxguid.lib
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: ndinput8
+Bldfile: ./code/nebula2/bldfiles/input/ndinput8.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+
+
+  Modules:
+      ndi8server
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      ndi8server
+  Merged win32 libs:
+      dinput8.lib
+      dxguid.lib
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: microtcl
+Bldfile: ./code/nebula2/bldfiles/script/microtcl.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+Complete microTCL nScriptServer implementation for Nebula2
+
+  Modules:
+      nmicrotclnebula
+      nmicrotcl
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nmicrotcl
+      nmicrotclnebula
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: ntoollib
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:     lib
+  Platform: 
+  Annotation:
+
+Lib that holds the core tool functionality
+
+  Modules:
+      nmeshbuilder
+      nanimbuilder
+  Bundles:
+  Target Dependencies:
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nanimbuilder
+      nmeshbuilder
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+
+--------------------------------------------------------
+
+Name: nimagetool
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:     exe
+  Platform: 
+  Annotation:
+
+
+
+  Modules:
+      nimagetool
+      nntxfile
+  Bundles:
+  Target Dependencies:
+      nkernel
+      ntoollib
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nimagetool
+      nntxfile
+  Merged win32 libs:
+      DevIL.lib
+      ilu.lib
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+      IL
+      ILU
+  Merged macosx libs:
+      Carbon
+      IL
+      ILU
+
+--------------------------------------------------------
+
+Name: nmeshtool
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:     exe
+  Platform: 
+  Annotation:
+
+
+
+  Modules:
+      nmeshtool
+  Bundles:
+  Target Dependencies:
+      nkernel
+      ntoollib
+  Generated Items - generatebld.tcl:
+
+  Merged modules:
+      nmeshtool
+  Merged win32 libs:
+  Merged win32 debug libs:
+  Merged win32 release libs:
+  Merged linux libs:
+  Merged macosx libs:
+      Carbon
+
+--------------------------------------------------------
+
+
+
+
+--------------------------------------------------------
+ Bundles
+--------------------------------------------------------
+
+
+
+
+--------------------------------------------------------
+ Modules
+--------------------------------------------------------
+
+Name: dummy
+Bldfile: ./code/nebula2/bldfiles/dummy.bld
+  Type:         cpp
+  Dir:          .
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      dummy
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/dummy
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nremoteshell
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nremoteshell
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+      Carbon
+  Module dependencies:
+      nipcclient
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nremoteshell
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nsh
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nsh
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+      Carbon
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nsh
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nviewer
+Bldfile: ./code/nebula2/bldfiles/apps/n2apps.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nviewer
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+      Carbon
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nviewer
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nvariableserver
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          variable
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nvariableserver_main
+      nvariableserver_cmds
+  Headers:
+      nvariableserver
+      nvariablecontext
+      nvariable
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/variable/nvariableserver_main
+      ./code/nebula2/src/variable/nvariableserver_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/variable/nvariableserver
+      ./code/nebula2/inc/variable/nvariablecontext
+      ./code/nebula2/inc/variable/nvariable
+
+--------------------------------------------------------
+
+Name: nnpkfileserver
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          file
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nnpkfileserver_main
+      nnpkfileserver_cmds
+      nnpkfilewrapper
+      nnpkfile
+      nnpkdirectory
+  Headers:
+      nnpkfileserver
+      nnpkfilewrapper
+      nnpktoc
+      nnpktocentry
+      nnpkfile
+      nnpkdirectory
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nfileserver2
+  Fixed Sources:
+      ./code/nebula2/src/file/nnpkfileserver_main
+      ./code/nebula2/src/file/nnpkfileserver_cmds
+      ./code/nebula2/src/file/nnpkfilewrapper
+      ./code/nebula2/src/file/nnpkfile
+      ./code/nebula2/src/file/nnpkdirectory
+  Fixed Headers:
+      ./code/nebula2/inc/file/nnpkfileserver
+      ./code/nebula2/inc/file/nnpkfilewrapper
+      ./code/nebula2/inc/file/nnpktoc
+      ./code/nebula2/inc/file/nnpktocentry
+      ./code/nebula2/inc/file/nnpkfile
+      ./code/nebula2/inc/file/nnpkdirectory
+
+--------------------------------------------------------
+
+Name: nresourceserver
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          resource
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nresourceserver_main
+  Headers:
+      nresourceserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/resource/nresourceserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/resource/nresourceserver
+
+--------------------------------------------------------
+
+Name: nresource
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          resource
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nresource_main
+  Headers:
+      nresource
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/resource/nresource_main
+  Fixed Headers:
+      ./code/nebula2/inc/resource/nresource
+
+--------------------------------------------------------
+
+Name: nconserver
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          misc
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ncsrv_main
+      ncsrv_cmds
+  Headers:
+      nconserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/misc/ncsrv_main
+      ./code/nebula2/src/misc/ncsrv_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/misc/nconserver
+
+--------------------------------------------------------
+
+Name: nipc
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nipcminiserver
+      nipcserver
+  Headers:
+      nsocketdefs
+      nipcminiserver
+      nipcserver
+  win32 libs:
+      wsock32.lib
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nipcminiserver
+      ./code/nebula2/src/kernel/nipcserver
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nsocketdefs
+      ./code/nebula2/inc/kernel/nipcminiserver
+      ./code/nebula2/inc/kernel/nipcserver
+
+--------------------------------------------------------
+
+Name: nipcclient
+Bldfile: ./code/nebula2/bldfiles/core/coreextra.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nipcclient
+  Headers:
+      nsocketdefs
+      nipcclient
+  win32 libs:
+      wsock32.lib
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nipcclient
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nsocketdefs
+      ./code/nebula2/inc/kernel/nipcclient
+
+--------------------------------------------------------
+
+Name: ntimeserver
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ntime_main
+      ntime_cmds
+  Headers:
+      ntimeserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/ntime_main
+      ./code/nebula2/src/kernel/ntime_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/ntimeserver
+
+--------------------------------------------------------
+
+Name: npersistserver
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      npersistserver_main
+      npersistserver_beginend
+      npersistserver_load
+      npersistserver_cmds
+  Headers:
+      npersistserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/npersistserver_main
+      ./code/nebula2/src/kernel/npersistserver_beginend
+      ./code/nebula2/src/kernel/npersistserver_load
+      ./code/nebula2/src/kernel/npersistserver_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/npersistserver
+
+--------------------------------------------------------
+
+Name: nfileserver2
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nfileserver2_main
+      nfileserver2_cmds
+      nfile
+      ndirectory
+  Headers:
+      nfileserver2
+      nfile
+      ndirectory
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nfileserver2_main
+      ./code/nebula2/src/kernel/nfileserver2_cmds
+      ./code/nebula2/src/kernel/nfile
+      ./code/nebula2/src/kernel/ndirectory
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nfileserver2
+      ./code/nebula2/inc/kernel/nfile
+      ./code/nebula2/inc/kernel/ndirectory
+
+--------------------------------------------------------
+
+Name: nscriptserver
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nscriptserver_main
+  Headers:
+      nscriptserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nscriptserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nscriptserver
+
+--------------------------------------------------------
+
+Name: nroot
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nroot_main
+      nroot_cmds
+  Headers:
+      nroot
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nroot_main
+      ./code/nebula2/src/kernel/nroot_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nroot
+
+--------------------------------------------------------
+
+Name: nenv
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nenv_main
+      nenv_cmds
+  Headers:
+      nenv
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nenv_main
+      ./code/nebula2/src/kernel/nenv_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nenv
+
+--------------------------------------------------------
+
+Name: nremoteserver
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nremoteserver_main
+  Headers:
+      nremoteserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+      nipc
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nremoteserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nremoteserver
+
+--------------------------------------------------------
+
+Name: nkernel
+Bldfile: ./code/nebula2/bldfiles/core/nkernel.bld
+  Type:         cpp
+  Dir:          kernel
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nkernelserver
+      nkernel
+      nmemory
+      nclass
+      ncmdproto
+      nhardrefserver
+      nthread
+      nloghandler
+      ndefaultloghandler
+      nwin32loghandler
+  Headers:
+      nsystem
+      ntypes
+      ndebug
+      ndefdllclass
+      nkernelserver
+      nprofiler
+      nclass
+      ncmdproto
+      ncmd
+      narg
+      nhardrefserver
+      nref
+      nautoref
+      ndynautoref
+      nhardref
+      nevent
+      nmutex
+      nthread
+      nthreadsafelist
+      nloghandler
+      ndefaultloghandler
+      nwin32loghandler
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/kernel/nkernelserver
+      ./code/nebula2/src/kernel/nkernel
+      ./code/nebula2/src/kernel/nmemory
+      ./code/nebula2/src/kernel/nclass
+      ./code/nebula2/src/kernel/ncmdproto
+      ./code/nebula2/src/kernel/nhardrefserver
+      ./code/nebula2/src/kernel/nthread
+      ./code/nebula2/src/kernel/nloghandler
+      ./code/nebula2/src/kernel/ndefaultloghandler
+      ./code/nebula2/src/kernel/nwin32loghandler
+  Fixed Headers:
+      ./code/nebula2/inc/kernel/nsystem
+      ./code/nebula2/inc/kernel/ntypes
+      ./code/nebula2/inc/kernel/ndebug
+      ./code/nebula2/inc/kernel/ndefdllclass
+      ./code/nebula2/inc/kernel/nkernelserver
+      ./code/nebula2/inc/kernel/nprofiler
+      ./code/nebula2/inc/kernel/nclass
+      ./code/nebula2/inc/kernel/ncmdproto
+      ./code/nebula2/inc/kernel/ncmd
+      ./code/nebula2/inc/kernel/narg
+      ./code/nebula2/inc/kernel/nhardrefserver
+      ./code/nebula2/inc/kernel/nref
+      ./code/nebula2/inc/kernel/nautoref
+      ./code/nebula2/inc/kernel/ndynautoref
+      ./code/nebula2/inc/kernel/nhardref
+      ./code/nebula2/inc/kernel/nevent
+      ./code/nebula2/inc/kernel/nmutex
+      ./code/nebula2/inc/kernel/nthread
+      ./code/nebula2/inc/kernel/nthreadsafelist
+      ./code/nebula2/inc/kernel/nloghandler
+      ./code/nebula2/inc/kernel/ndefaultloghandler
+      ./code/nebula2/inc/kernel/nwin32loghandler
+
+--------------------------------------------------------
+
+Name: nntxfile
+Bldfile: ./code/nebula2/bldfiles/gfx2/gfx2.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nntxfile
+  Headers:
+      nntxfile
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nntxfile
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nntxfile
+
+--------------------------------------------------------
+
+Name: nshader2
+Bldfile: ./code/nebula2/bldfiles/gfx2/gfx2.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nshader2_main
+  Headers:
+      nshader2
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nresource
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nshader2_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nshader2
+
+--------------------------------------------------------
+
+Name: ngfxserver2
+Bldfile: ./code/nebula2/bldfiles/gfx2/gfx2.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ngfxserver2_main
+      ngfxserver2_cmds
+      nwireframerenderer
+  Headers:
+      ngfxserver2
+      ncamera2
+      ndisplaymode2
+      ndynamicmesh
+      nprimitivetypes
+      nwireframerenderer
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/ngfxserver2_main
+      ./code/nebula2/src/gfx2/ngfxserver2_cmds
+      ./code/nebula2/src/gfx2/nwireframerenderer
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/ngfxserver2
+      ./code/nebula2/inc/gfx2/ncamera2
+      ./code/nebula2/inc/gfx2/ndisplaymode2
+      ./code/nebula2/inc/gfx2/ndynamicmesh
+      ./code/nebula2/inc/gfx2/nprimitivetypes
+      ./code/nebula2/inc/gfx2/nwireframerenderer
+
+--------------------------------------------------------
+
+Name: nmesh2
+Bldfile: ./code/nebula2/bldfiles/gfx2/gfx2.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nmesh2_main
+  Headers:
+      nmesh2
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nresource
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nmesh2_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nmesh2
+
+--------------------------------------------------------
+
+Name: ntexture2
+Bldfile: ./code/nebula2/bldfiles/gfx2/gfx2.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ntexture2_main
+  Headers:
+      ntexture2
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nresource
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/ntexture2_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/ntexture2
+
+--------------------------------------------------------
+
+Name: nd3d9server
+Bldfile: ./code/nebula2/bldfiles/gfx2/ndirect3d9.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nd3d9server_main
+      nd3d9server_window
+      nd3d9server_resource
+      nd3d9server_device
+      nd3d9server_render
+      nd3d9server_text
+      d3dfont9
+  Headers:
+      nd3d9server
+      d3dfont9
+  win32 libs:
+      d3d9.lib
+      d3dx9.lib
+      dxguid.lib
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+      nd3d9mesh
+      nd3d9texture
+      nd3d9shader
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: ngfxserver2
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nd3d9server_main
+      ./code/nebula2/src/gfx2/nd3d9server_window
+      ./code/nebula2/src/gfx2/nd3d9server_resource
+      ./code/nebula2/src/gfx2/nd3d9server_device
+      ./code/nebula2/src/gfx2/nd3d9server_render
+      ./code/nebula2/src/gfx2/nd3d9server_text
+      ./code/nebula2/src/gfx2/d3dfont9
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nd3d9server
+      ./code/nebula2/inc/gfx2/d3dfont9
+
+--------------------------------------------------------
+
+Name: nd3d9mesh
+Bldfile: ./code/nebula2/bldfiles/gfx2/ndirect3d9.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nd3d9mesh_main
+  Headers:
+      nd3d9mesh
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nmesh2
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nd3d9mesh_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nd3d9mesh
+
+--------------------------------------------------------
+
+Name: nd3d9texture
+Bldfile: ./code/nebula2/bldfiles/gfx2/ndirect3d9.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nd3d9texture_main
+  Headers:
+      nd3d9texture
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: ntexture2
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nd3d9texture_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nd3d9texture
+
+--------------------------------------------------------
+
+Name: nd3d9shader
+Bldfile: ./code/nebula2/bldfiles/gfx2/ndirect3d9.bld
+  Type:         cpp
+  Dir:          gfx2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nd3d9shader_main
+  Headers:
+      nd3d9shader
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nshader2
+  Fixed Sources:
+      ./code/nebula2/src/gfx2/nd3d9shader_main
+  Fixed Headers:
+      ./code/nebula2/inc/gfx2/nd3d9shader
+
+--------------------------------------------------------
+
+Name: ninputserver
+Bldfile: ./code/nebula2/bldfiles/input/input.bld
+  Type:         cpp
+  Dir:          input
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ninput_main
+      ninput_events
+      ninput_states
+      ninput_log
+      ninput_inpmap
+      ninput_cmds
+      ninputdevice
+      njoystickdevice
+      nrelmousedevice
+      nkeyboarddevice
+  Headers:
+      ninputserver
+      ninputdevice
+      njoystickdevice
+      nrelmousedevice
+      nkeyboarddevice
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/input/ninput_main
+      ./code/nebula2/src/input/ninput_events
+      ./code/nebula2/src/input/ninput_states
+      ./code/nebula2/src/input/ninput_log
+      ./code/nebula2/src/input/ninput_inpmap
+      ./code/nebula2/src/input/ninput_cmds
+      ./code/nebula2/src/input/ninputdevice
+      ./code/nebula2/src/input/njoystickdevice
+      ./code/nebula2/src/input/nrelmousedevice
+      ./code/nebula2/src/input/nkeyboarddevice
+  Fixed Headers:
+      ./code/nebula2/inc/input/ninputserver
+      ./code/nebula2/inc/input/ninputdevice
+      ./code/nebula2/inc/input/njoystickdevice
+      ./code/nebula2/inc/input/nrelmousedevice
+      ./code/nebula2/inc/input/nkeyboarddevice
+
+--------------------------------------------------------
+
+Name: ndi8server
+Bldfile: ./code/nebula2/bldfiles/input/ndinput8.bld
+  Type:         cpp
+  Dir:          input
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ndi8server_main
+      ndi8server_dinput
+      ndi8server_trigger
+      ndi8server_error
+  Headers:
+      ndi8server
+  win32 libs:
+      dxguid.lib
+      dinput8.lib
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: ninputserver
+  Fixed Sources:
+      ./code/nebula2/src/input/ndi8server_main
+      ./code/nebula2/src/input/ndi8server_dinput
+      ./code/nebula2/src/input/ndi8server_trigger
+      ./code/nebula2/src/input/ndi8server_error
+  Fixed Headers:
+      ./code/nebula2/inc/input/ndi8server
+
+--------------------------------------------------------
+
+Name: nanimationserver
+Bldfile: ./code/nebula2/bldfiles/scene/anim.bld
+  Type:         cpp
+  Dir:          anim2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nanimationserver_main
+  Headers:
+      nanimationserver
+      nanimclip
+      nanimstate
+      nanimstatearray
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/anim2/nanimationserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/anim2/nanimationserver
+      ./code/nebula2/inc/anim2/nanimclip
+      ./code/nebula2/inc/anim2/nanimstate
+      ./code/nebula2/inc/anim2/nanimstatearray
+
+--------------------------------------------------------
+
+Name: nanimation
+Bldfile: ./code/nebula2/bldfiles/scene/anim.bld
+  Type:         cpp
+  Dir:          anim2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nanimation_main
+  Headers:
+      nanimation
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nresource
+  Fixed Sources:
+      ./code/nebula2/src/anim2/nanimation_main
+  Fixed Headers:
+      ./code/nebula2/inc/anim2/nanimation
+
+--------------------------------------------------------
+
+Name: nmemoryanimation
+Bldfile: ./code/nebula2/bldfiles/scene/anim.bld
+  Type:         cpp
+  Dir:          anim2
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nmemoryanimation_main
+  Headers:
+      nmemoryanimation
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nanimation
+  Fixed Sources:
+      ./code/nebula2/src/anim2/nmemoryanimation_main
+  Fixed Headers:
+      ./code/nebula2/inc/anim2/nmemoryanimation
+
+--------------------------------------------------------
+
+Name: ncharacter
+Bldfile: ./code/nebula2/bldfiles/scene/anim.bld
+  Type:         cpp
+  Dir:          character
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      ncharacter2
+      ncharskinrenderer
+  Headers:
+      ncharacter2
+      ncharskeleton
+      ncharskinrenderer
+      ncharjoint
+      ncharjointpalette
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/character/ncharacter2
+      ./code/nebula2/src/character/ncharskinrenderer
+  Fixed Headers:
+      ./code/nebula2/inc/character/ncharacter2
+      ./code/nebula2/inc/character/ncharskeleton
+      ./code/nebula2/inc/character/ncharskinrenderer
+      ./code/nebula2/inc/character/ncharjoint
+      ./code/nebula2/inc/character/ncharjointpalette
+
+--------------------------------------------------------
+
+Name: nsceneserver
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nsceneserver_main
+  Headers:
+      nsceneserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/scene/nsceneserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nsceneserver
+
+--------------------------------------------------------
+
+Name: nstdsceneserver
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nstdsceneserver_main
+  Headers:
+      nstdsceneserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nsceneserver
+  Fixed Sources:
+      ./code/nebula2/src/scene/nstdsceneserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nstdsceneserver
+
+--------------------------------------------------------
+
+Name: nscenenode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nscenenode_main
+      nscenenode_cmds
+  Headers:
+      nscenenode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nroot
+  Fixed Sources:
+      ./code/nebula2/src/scene/nscenenode_main
+      ./code/nebula2/src/scene/nscenenode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nscenenode
+
+--------------------------------------------------------
+
+Name: ntransformnode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ntransformnode_main
+      ntransformnode_cmds
+  Headers:
+      ntransformnode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nscenenode
+  Fixed Sources:
+      ./code/nebula2/src/scene/ntransformnode_main
+      ./code/nebula2/src/scene/ntransformnode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/ntransformnode
+
+--------------------------------------------------------
+
+Name: nabstractshadernode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nabstractshadernode_main
+      nabstractshadernode_cmds
+  Headers:
+      nabstractshadernode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: ntransformnode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nabstractshadernode_main
+      ./code/nebula2/src/scene/nabstractshadernode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nabstractshadernode
+
+--------------------------------------------------------
+
+Name: nmaterialnode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nmaterialnode_main
+      nmaterialnode_cmds
+  Headers:
+      nmaterialnode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nabstractshadernode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nmaterialnode_main
+      ./code/nebula2/src/scene/nmaterialnode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nmaterialnode
+
+--------------------------------------------------------
+
+Name: nvolumelightnode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nvolumelightnode_main
+  Headers:
+      nvolumelightnode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nabstractshadernode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nvolumelightnode_main
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nvolumelightnode
+
+--------------------------------------------------------
+
+Name: nshapenode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nshapenode_main
+      nshapenode_cmds
+  Headers:
+      nshapenode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nmaterialnode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nshapenode_main
+      ./code/nebula2/src/scene/nshapenode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nshapenode
+
+--------------------------------------------------------
+
+Name: nanimator
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nanimator_main
+      nanimator_cmds
+  Headers:
+      nanimator
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nscenenode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nanimator_main
+      ./code/nebula2/src/scene/nanimator_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nanimator
+
+--------------------------------------------------------
+
+Name: nvectoranimator
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nvectoranimator_main
+      nvectoranimator_cmds
+  Headers:
+      nvectoranimator
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nanimator
+  Fixed Sources:
+      ./code/nebula2/src/scene/nvectoranimator_main
+      ./code/nebula2/src/scene/nvectoranimator_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nvectoranimator
+
+--------------------------------------------------------
+
+Name: ntransformanimator
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ntransformanimator_main
+      ntransformanimator_cmds
+  Headers:
+      ntransformanimator
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nanimator
+  Fixed Sources:
+      ./code/nebula2/src/scene/ntransformanimator_main
+      ./code/nebula2/src/scene/ntransformanimator_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/ntransformanimator
+
+--------------------------------------------------------
+
+Name: nskinanimator
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nskinanimator_main
+      nskinanimator_cmds
+  Headers:
+      nskinanimator
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nanimator
+  Fixed Sources:
+      ./code/nebula2/src/scene/nskinanimator_main
+      ./code/nebula2/src/scene/nskinanimator_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nskinanimator
+
+--------------------------------------------------------
+
+Name: nskinshapenode
+Bldfile: ./code/nebula2/bldfiles/scene/default.bld
+  Type:         cpp
+  Dir:          scene
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nskinshapenode_main
+      nskinshapenode_cmds
+  Headers:
+      nskinshapenode
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nshapenode
+  Fixed Sources:
+      ./code/nebula2/src/scene/nskinshapenode_main
+      ./code/nebula2/src/scene/nskinshapenode_cmds
+  Fixed Headers:
+      ./code/nebula2/inc/scene/nskinshapenode
+
+--------------------------------------------------------
+
+Name: nmicrotclnebula
+Bldfile: ./code/nebula2/bldfiles/script/microtcl.bld
+  Type:         cpp
+  Dir:          microtcl
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      tclNebula
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+      nmicrotcl
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/microtcl/tclNebula
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nmicrotcl
+Bldfile: ./code/nebula2/bldfiles/script/microtcl.bld
+  Type:         c
+  Dir:          microtcl
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      tclAlloc
+      tclBasic
+      tclBinary
+      tclCkalloc
+      tclCmdAH
+      tclCmdIL
+      tclCmdMZ
+      tclCompCmds
+      tclCompExpr
+      tclCompile
+      tclExecute
+      tclGet
+      tclHash
+      tclHistory
+      tclIndexObj
+      tclInterp
+      tclLink
+      tclListObj
+      tclLiteral
+      tclNamesp
+      tclObj
+      tclPanic
+      tclParse
+      tclParseExpr
+      tclPreserve
+      tclProc
+      tclResult
+      tclStringObj
+      tclUtf
+      tclUtil
+      tclVar
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/microtcl/tclAlloc
+      ./code/nebula2/src/microtcl/tclBasic
+      ./code/nebula2/src/microtcl/tclBinary
+      ./code/nebula2/src/microtcl/tclCkalloc
+      ./code/nebula2/src/microtcl/tclCmdAH
+      ./code/nebula2/src/microtcl/tclCmdIL
+      ./code/nebula2/src/microtcl/tclCmdMZ
+      ./code/nebula2/src/microtcl/tclCompCmds
+      ./code/nebula2/src/microtcl/tclCompExpr
+      ./code/nebula2/src/microtcl/tclCompile
+      ./code/nebula2/src/microtcl/tclExecute
+      ./code/nebula2/src/microtcl/tclGet
+      ./code/nebula2/src/microtcl/tclHash
+      ./code/nebula2/src/microtcl/tclHistory
+      ./code/nebula2/src/microtcl/tclIndexObj
+      ./code/nebula2/src/microtcl/tclInterp
+      ./code/nebula2/src/microtcl/tclLink
+      ./code/nebula2/src/microtcl/tclListObj
+      ./code/nebula2/src/microtcl/tclLiteral
+      ./code/nebula2/src/microtcl/tclNamesp
+      ./code/nebula2/src/microtcl/tclObj
+      ./code/nebula2/src/microtcl/tclPanic
+      ./code/nebula2/src/microtcl/tclParse
+      ./code/nebula2/src/microtcl/tclParseExpr
+      ./code/nebula2/src/microtcl/tclPreserve
+      ./code/nebula2/src/microtcl/tclProc
+      ./code/nebula2/src/microtcl/tclResult
+      ./code/nebula2/src/microtcl/tclStringObj
+      ./code/nebula2/src/microtcl/tclUtf
+      ./code/nebula2/src/microtcl/tclUtil
+      ./code/nebula2/src/microtcl/tclVar
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nbinscriptserver
+Bldfile: ./code/nebula2/bldfiles/script/script.bld
+  Type:         cpp
+  Dir:          script
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      nbinscriptserver_main
+  Headers:
+      nbinscriptserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nscriptserver
+  Fixed Sources:
+      ./code/nebula2/src/script/nbinscriptserver_main
+  Fixed Headers:
+      ./code/nebula2/inc/script/nbinscriptserver
+
+--------------------------------------------------------
+
+Name: ntclserver
+Bldfile: ./code/nebula2/bldfiles/script/script.bld
+  Type:         cpp
+  Dir:          script
+  Platforms:    all
+  Force No Pak: false
+  Trunkdir:     nebula2
+  Files:
+      ntclserver_main
+      ntclserver_commands
+  Headers:
+      ntclserver
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   false
+  Module derived from: nscriptserver
+  Fixed Sources:
+      ./code/nebula2/src/script/ntclserver_main
+      ./code/nebula2/src/script/ntclserver_commands
+  Fixed Headers:
+      ./code/nebula2/inc/script/ntclserver
+
+--------------------------------------------------------
+
+Name: nimagetool
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nimagetool
+  Headers:
+  win32 libs:
+      DevIL.lib
+      ilu.lib
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+      IL
+      ILU
+  macosx libs:
+      IL
+      ILU
+      Carbon
+  Module dependencies:
+      nanimbuilder
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nimagetool
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nmeshtool
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nmeshtool
+  Headers:
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+      Carbon
+  Module dependencies:
+      nmeshbuilder
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nmeshtool
+  Fixed Headers:
+
+--------------------------------------------------------
+
+Name: nmeshbuilder
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nmeshbuilder
+      nmeshbuilder_loadsave
+      nmeshbuilder_tangent
+      nskinpartitioner
+      nbspbuilder
+  Headers:
+      nmeshbuilder
+      nskinpartitioner
+      nbspbuilder
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nmeshbuilder
+      ./code/nebula2/src/tools/nmeshbuilder_loadsave
+      ./code/nebula2/src/tools/nmeshbuilder_tangent
+      ./code/nebula2/src/tools/nskinpartitioner
+      ./code/nebula2/src/tools/nbspbuilder
+  Fixed Headers:
+      ./code/nebula2/inc/tools/nmeshbuilder
+      ./code/nebula2/inc/tools/nskinpartitioner
+      ./code/nebula2/inc/tools/nbspbuilder
+
+--------------------------------------------------------
+
+Name: nanimbuilder
+Bldfile: ./code/nebula2/bldfiles/toolchain/toolchain.bld
+  Type:         cpp
+  Dir:          tools
+  Platforms:    all
+  Force No Pak: true
+  Trunkdir:     nebula2
+  Files:
+      nanimbuilder
+  Headers:
+      nanimbuilder
+  win32 libs:
+  win32 libs release:
+  win32 libs debug:
+  linux libs:
+  macosx libs:
+  Module dependencies:
+  Generated Items - generatebld.tcl:
+
+  Module has kernel:   false
+  Module is not NOH:   true
+  Module derived from: 
+  Fixed Sources:
+      ./code/nebula2/src/tools/nanimbuilder
+  Fixed Headers:
+      ./code/nebula2/inc/tools/nanimbuilder
+
+--------------------------------------------------------
+
+
+
+--------------------------------------------------------
+ EoF
+--------------------------------------------------------
+
