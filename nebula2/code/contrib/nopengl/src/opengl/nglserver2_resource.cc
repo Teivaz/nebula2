@@ -26,6 +26,19 @@ nGLServer2::NewMesh(const char* rsrcName)
 
 //------------------------------------------------------------------------------
 /**
+    Create a new mesh array object.
+
+    @return             pointer to a nGLMeshArray object
+*/
+nMeshArray*
+nGLServer2::NewMeshArray(const char* rsrcName)
+{
+    //return ((nMeshArray*) this->refResource->NewResource("nglmesharray", rsrcName, nResource::Mesh));
+    return NULL;
+}
+
+//------------------------------------------------------------------------------
+/**
     Create a new shared texture object. If the object already exists, its
     refcount is incremented.
 
@@ -90,7 +103,7 @@ nGLServer2::NewRenderTarget(const char* rsrcName,
                              nTexture2::Format format,
                              int usageFlags)
 {
-    nTexture2* renderTarget = (nTexture2*) this->refResource->NewResource("ngltexture2", rsrcName, nResource::Texture);
+    nTexture2* renderTarget = (nTexture2*) this->refResource->NewResource("ngltexture", rsrcName, nResource::Texture);
     n_assert(renderTarget);
     if (!renderTarget->IsValid())
     {
@@ -117,14 +130,28 @@ nGLServer2::NewRenderTarget(const char* rsrcName,
     be called when the gl device has been lost.
 */
 void
-nGLServer2::OnDeviceLost()
+nGLServer2::OnDeviceLost(bool unloadManaged)
 {
     // close the text renderer
     //this->CloseTextRenderer();
 
     // release other resources
-    this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    if (unloadManaged)
+    {
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+    }
+    else
+    {
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Shader);
+    }
 
+    // release shape shader
+/*    if (this->refShapeShader.isvalid())
+    {
+        this->refShapeShader->Release();
+        this->refShapeShader.invalidate();
+    }
+*/
     // release the shared state shader
     if (this->refSharedShader.isvalid())
     {

@@ -5,10 +5,10 @@
     @class nGLServer2
     @ingroup OpenGL
 
-    OpenGL 1.4 based gfx server.
+    @brief OpenGL 1.4 based gfx server.
 
     2003        cubejk    created
-    2003-2004    Haron
+    2003-2004   Haron
 */
 #include "gfx2/ngfxserver2.h"
 #include "input/ninputserver.h"
@@ -43,17 +43,17 @@
     //#include <X11/extensions/xf86vmode.h>
 #endif
 
-#include "GL/glext.h"
+#include <GL/glext.h>
 
 #ifdef __WIN32__
-    #include "GL/wglext.h"
+    #include <GL/wglext.h>
 #else
     #include "GL/glxext.h"
 #endif
 
+void n_gltrace(const char *msg);
 
 //------------------------------------------------------------------------------
-class nGLMesh;
 class nGLServer2 : public nGfxServer2
 {
 public:
@@ -64,6 +64,8 @@ public:
 
     /// create a shared mesh object
     virtual nMesh2* NewMesh(const char* rsrcName);
+    /// create a mesh array object
+    virtual nMeshArray* NewMeshArray(const char* rsrcName);
     /// create a shared texture object
     virtual nTexture2* NewTexture(const char* rsrcName);
     /// create a shared shader object
@@ -79,7 +81,7 @@ public:
     virtual const nDisplayMode2& GetDisplayMode() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
-    /// set the current viewport
+    /// set the viewport
     virtual void SetViewport(nViewport& vp);
     /// open the display
     virtual bool OpenDisplay();
@@ -88,7 +90,11 @@ public:
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
     /// parent window handle
-    virtual HWND GetParentHWnd() const;
+    virtual HWND GetParentHwnd() const;
+    /// returns the number of available stencil bits
+    //virtual int GetNumStencilBits() const;
+    /// returns the number of available z bits
+    //virtual int GetNumDepthBits() const;
 
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -142,7 +148,7 @@ public:
     /// trigger the window system message pump
     virtual bool Trigger();
 /*  /// draw 2d text (will be buffered until end of frame)
-    virtual void Text(const char* text, float x, float y);
+    virtual void Text(const char* text, const vector4& color, float x, float y);
     /// draw the text buffer
     virtual void DrawTextBuffer();
 
@@ -151,7 +157,6 @@ public:
     /// get text extents
     virtual vector2 GetTextExtent(const char* text);
     */
-
     /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
     virtual void EnterDialogBoxMode();
     /// leave dialog box mode
@@ -160,84 +165,10 @@ public:
     /// save a screen shot
     //virtual bool SaveScreenshot(const char*);
 
-    /// OpenGL error handling
-    bool getGLErrors(char *src = NULL);
-
-private:
-    /// initialize all possible extention that we are need
-    void initExtensions();
-    /// GL Extensition Lookup
-    bool hasExtension(const char* extName);
-    void printExtensions(const char* ext);
-
-    /// OpenGL extensitions
-    bool support_GL_ARB_vertex_buffer_object;
-    #ifdef GL_ARB_vertex_buffer_object
-    #ifdef __WIN32__
-    PFNGLBINDBUFFERARBPROC              procBindBufferARB;
-    PFNGLDELETEBUFFERSARBPROC           procDeleteBuffersARB;
-    PFNGLGENBUFFERSARBPROC              procGenBuffersARB;
-    PFNGLISBUFFERARBPROC                procIsBufferARB;
-    PFNGLBUFFERDATAARBPROC              procBufferDataARB;
-    PFNGLBUFFERSUBDATAARBPROC           procBufferSubDataARB;
-    PFNGLGETBUFFERSUBDATAARBPROC        procGetBufferSubDataARB;
-    PFNGLMAPBUFFERARBPROC               procMapBufferARB;
-    PFNGLUNMAPBUFFERARBPROC             procUnmapBufferARB;
-    PFNGLGETBUFFERPARAMETERIVARBPROC    procGetBufferParameterivARB;
-    PFNGLGETBUFFERPOINTERVARBPROC       procGetBufferPointervARB;
-    #endif __WIN32__
-    #endif
-
-    bool support_WGL_ARB_render_texture;
-    bool support_WGL_ARB_make_current_read;
-    #ifdef WGL_ARB_render_texture
-    #ifdef __WIN32__
-    PFNWGLBINDTEXIMAGEARBPROC           procBindTexImageARB;
-    PFNWGLRELEASETEXIMAGEARBPROC        procReleaseTexImageARB;
-    PFNWGLSETPBUFFERATTRIBARBPROC       procSetPbufferAttribARB;    
-    //WGL_ARB_pbuffer functions
-    PFNWGLCREATEPBUFFERARBPROC          procCreatePbufferARB;
-    PFNWGLGETPBUFFERDCARBPROC           procGetPbufferDCARB;
-    PFNWGLRELEASEPBUFFERDCARBPROC       procReleasePbufferDCARB;
-    PFNWGLDESTROYPBUFFERARBPROC         procDestroyPbufferARB;
-    PFNWGLQUERYPBUFFERARBPROC           procQueryPbufferARB;
-    //WGL_ARB_pixel_format functions
-    PFNWGLGETPIXELFORMATATTRIBIVARBPROC procGetPixelFormatAttribivARB;
-    PFNWGLGETPIXELFORMATATTRIBFVARBPROC procGetPixelFormatAttribfvARB;
-    PFNWGLCHOOSEPIXELFORMATARBPROC      procChoosePixelFormatARB;
-
-        #ifdef WGL_ARB_make_current_read
-        PFNWGLMAKECONTEXTCURRENTARBPROC procMakeContextCurrentARB;
-        PFNWGLGETCURRENTREADDCARBPROC   procGetCurrentReadDCARB;
-        #endif
-
-    #endif __WIN32__
-    #endif
-
-    bool support_GL_EXT_texture_compression_s3tc;
-    bool support_GL_ARB_texture_compression;
-    #ifdef GL_ARB_texture_compression
-    #ifdef __WIN32__
-    PFNGLCOMPRESSEDTEXIMAGE3DARBPROC    procCompressedTexImage3DARB;
-    PFNGLCOMPRESSEDTEXIMAGE2DARBPROC    procCompressedTexImage2DARB;
-    PFNGLCOMPRESSEDTEXIMAGE1DARBPROC    procCompressedTexImage1DARB;
-    PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC procCompressedTexSubImage3DARB;
-    PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC procCompressedTexSubImage2DARB;
-    PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC procCompressedTexSubImage1DARB;
-    PFNGLGETCOMPRESSEDTEXIMAGEARBPROC   procGetCompressedTexImageARB;
-    #endif __WIN32__
-    #endif
-
-    bool support_GL_ARB_texture_cube_map;
-
-    bool support_GL_ARB_multitexture;
-    #ifdef GL_ARB_multitexture
-    #ifdef __WIN32__
-    PFNGLCLIENTACTIVETEXTUREARBPROC     procActiveTextureARB;
-    PFNGLMULTITEXCOORD2FARBPROC         procMultiTexCoord2fARB;
-    PFNGLACTIVETEXTUREARBPROC           procClientActiveTextureARB;
-    #endif __WIN32__
-    #endif
+    /// adjust gamma.
+    //virtual void AdjustGamma();
+    /// restore gamma.
+    //virtual void RestoreGamma();
 
 private:
     /// initialize the text renderer
@@ -253,10 +184,9 @@ private:
     /// open the gl device
     bool DeviceOpen();
     /// close the gl device
-    void DeviceClose();
-    
+    void DeviceClose();    
     /// unload resource data (call when device lost)
-    void OnDeviceLost();
+    void OnDeviceLost(bool unloadManaged);
     /// reload resource data (call when device restored)
     void OnRestoreDevice();
     /// initialize device default state
@@ -287,7 +217,6 @@ private:
     /// minimize window when d3d device is destroyed
     //void MinimizeWindow();
 
-
     friend class nGLMesh;
     friend class nGLTexture;
     friend class nCgFXShader;
@@ -302,7 +231,6 @@ private:
 
     //bool windowOpen;               ///< window has been opened
     FeatureSet featureSet;
-
 
 private:
 
@@ -348,7 +276,6 @@ public:
     /// translate win32 keycode into Nebula keycode
     //nKey TranslateKey(int vkey);
 */
-    nAutoRef<nInputServer> refInputServer;
     
     //bool windowMinimized;           ///< window is currently minimized
     //bool quitRequested;             ///< quit requested by WinProc()
@@ -428,10 +355,11 @@ private:
 */
 inline
 HWND
-nGLServer2::GetParentHWnd() const
+nGLServer2::GetParentHwnd() const
 {
     return this->windowHandler.GetParentHwnd();
 }
+
 //------------------------------------------------------------------------------
 /**
 */

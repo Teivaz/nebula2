@@ -10,12 +10,10 @@
     13-Dec-2003  Haron  created
 	27-Mar-2004  Haron  CgFX 1.2 support added
 */
-#include "kernel/nfileserver2.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/nshaderparams.h"
 #include <CgFX/ICgFXEffect.h>
 
-class nGfxServer2;
 class nGLServer2;
 
 //------------------------------------------------------------------------------
@@ -80,29 +78,25 @@ protected:
     /// unload shader resources
     virtual void UnloadResource();
 
-private:
-	friend class nGLServer2;
-
+protected:
     /// find the first valid technique and make current
     void ValidateEffect();
     /// update the parameter handle mapper table
     void UpdateParameterHandles();
-	/// equivalent for nD3D9ShaderInclude class
-	bool resolveIncludes(nFile *dstfile, nPathString *srcfile, nArray<nString> &includes);
 
-    nAutoRef<nGfxServer2> refGfxServer;
-	nAutoRef<nFileServer2>  refFileServer;
 	ICgFXEffect *effect;						///< pointer to shader effect object
     bool hasBeenValidated;
     bool didNotValidate;
     CGFXHANDLE parameterHandles[nShaderState::NumParameters]; ///< map shader states to CgFX handles
     nShaderParams curParams;					///< mirrored to avoid redundant parameters setting
 
+	friend class nGLServer2;
+
 	/// singletone variables and functions for CgFX device initialization
 	static bool deviceInit;	///< initialization flag
 	static CgFXMode mode;	///< one of CgFX modes: CgFX_Unknown, CgFX_OpenGL, CgFX_Direct3D8, CgFX_Direct3D9
-	static bool CreateDevice(nGfxServer2* srv);
-	static bool ReleaseDevice(nGfxServer2 *srv);
+	static bool CreateDevice();
+	static bool ReleaseDevice();
 	static bool IsDeviceInit();
 };
 

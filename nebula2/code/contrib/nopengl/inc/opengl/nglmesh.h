@@ -7,7 +7,7 @@
 
     nMesh2 subclass for OpenGL.
 
-    Haron
+    2004 Haron
 */
 #include "gfx2/nmesh2.h"
 #include "opengl/nglserver2.h"
@@ -30,6 +30,8 @@ public:
     virtual ushort* LockIndices();
     /// unlock index buffer
     virtual void UnlockIndices();
+    /// get an estimated byte size of the resource data (for memory statistics)
+    virtual int GetByteSize();
 
 protected:
     /// load mesh resource
@@ -37,69 +39,44 @@ protected:
     /// unload mesh resource
     virtual void UnloadResource();
 
+    /// create the gl vertex buffer
+    virtual void CreateVertexBuffer();
+    /// create the gl index buffer
+    virtual void CreateIndexBuffer();
+
 private:
     friend class nGLServer2;
+    friend class nGLMeshArray;
 
-    /// create the gl vertex buffer
-    void CreateVertexBuffer();
-    /// create the gl index buffer
-    void CreateIndexBuffer();
-    /// load n3d2 file
-    bool LoadN3d2File();
-    /// load nvx2 file
-    bool LoadNvx2File();
-    /// update the group bounding boxes (slow!)
-    void UpdateGroupBoundingBoxes();
-
+    /// create the vertex declaration
+    void CreateVertexDeclaration();
+    ///
     bool BeginRender(int vertexStart, bool useIndex = false, int indexStart = 0);
+    ///
     void EndRender(bool useIndex = false);
 
     //void* indexBufferOffset(int offset);
     //void* vertexBufferOffset(int offset);
 
-    //bool Begin(int vertexStart, bool useIndex, int indexStart);
-    //void End();
+    void* VertexOffset(int vertexStart, int component);
+    void* IndexOffset(int indexStart);
 
-    void* vertexOffset(int vertexStart, int component);
-    void* indexOffset(int indexStart);
-    void CreateVertexDeclaration();
-
-    nAutoRef<nGLServer2> refGfxServer;
     bool VBMapFlag;
     bool IBMapFlag;
     uint vertexBuffer;
     uint indexBuffer;
-    float*  privVertexBuffer;
-    ushort* privIndexBuffer;
-
-public:
-    enum VertexComponentIndex
-    {
-        CoordIndex    = 0,
-        NormalIndex   = 1,
-        Uv0Index      = 2,
-        Uv1Index      = 3,
-        Uv2Index      = 4,
-        Uv3Index      = 5,
-        ColorIndex    = 6,
-        TangentIndex  = 7,
-        BinormalIndex = 8,
-        WeightsIndex  = 9,
-        JIndicesIndex = 10,
-
-        ComponentsNum
-    };
-private:
+    void*  privVertexBuffer;
+    void* privIndexBuffer;
 
     ushort texCoordNum;
     int texCoordFirst;
-    ushort componentOffset[nGLMesh::ComponentsNum];
-    static const ushort componentSize[nGLMesh::ComponentsNum];
+    ushort *componentOffset;
+    static const ushort componentSize[];
 };
 
 inline
 GLsizei
-indexStride()
+IndexStride()
 {
     return sizeof(GLshort); //??? depend of nMeshLoader::IndexType
 }

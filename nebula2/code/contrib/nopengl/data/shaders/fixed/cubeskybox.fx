@@ -22,7 +22,7 @@ texture DiffMap0;
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-// #include "../lib/diffsampler.fx"
+#include "../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 technique t0
@@ -42,7 +42,7 @@ technique t0
         TexCoordIndex[0] = 0;
         TextureTransformFlags[0] = Count2;
    
-        // Sampler[0] = <DiffSampler>;
+        Sampler[0] = <DiffSampler>;
 
         ColorOp[0]   = Modulate;
         ColorArg1[0] = Diffuse;
