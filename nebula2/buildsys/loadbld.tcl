@@ -448,6 +448,7 @@ proc addglobaldef {defname value} {
 proc addtargetdef {targetname defname value} {
     global current_block
     global wspace_block
+
     if {$current_block == $wspace_block} {
         global wspace
         global num_wspaces
@@ -499,6 +500,7 @@ proc begintarget {name} {
     set tar($num_tars,modules)     ""
     set tar($num_tars,bundles)     ""
     set tar($num_tars,targetdeps)  ""
+    set tar($num_tars,defs)        ""
 
     #generated data
     set tar($num_tars,bldfile)            $current_file
