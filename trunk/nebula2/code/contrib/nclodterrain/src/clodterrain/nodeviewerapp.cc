@@ -59,6 +59,7 @@ nODEViewerApp::nODEViewerApp(nKernelServer* ks) :
     camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
     controlMode(Fly),
     defViewerPos(240.0f, 50.0f, 100.0f),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet),
 //  defViewerAngles(n_deg2rad(90.0f), n_deg2rad(0.0f)),
     defViewerAngles(n_deg2rad(70.0f),n_deg2rad(80.0f)),
 //  defViewerPos(300.0f, 2000.0f, 300.0f),
@@ -633,7 +634,7 @@ void nODEViewerApp::InitDynamics()
     // load visnodes to mark ode bodies
     this->refSimplebody = (nTransformNode *)kernelServer->New("ntransformnode", "/usr/dynamics/odemarker");
     kernelServer->PushCwd(this->refSimplebody.get());
-    kernelServer->Load("home:export/gfxlib/examples/torus.n2");
+    kernelServer->Load("gfxlib:examples/torus.n2");
     kernelServer->PopCwd();
 
     // initialize ODE render context for ode bodies
