@@ -336,8 +336,6 @@ bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
     sprintf(buf, "\n%s__NDobj = new('%s','%s')\nsel(__NDobj)\n", this->indent_buf, o_class, o_name);
     file->PutS(buf);
     
-    // write select object statement
-    this->write_select_statement(file,o,owner);
     return true;
 }
 
