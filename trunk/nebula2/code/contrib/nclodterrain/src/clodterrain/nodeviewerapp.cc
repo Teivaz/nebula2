@@ -390,7 +390,7 @@ nODEViewerApp::HandleInput(float frameTime)
         {
             filename = "screenshot";
         }
-        filename.Append(nString(this->screenshotID++));
+        filename.AppendInt(this->screenshotID++);
         filename.Append(".bmp");
 
         this->refGfxServer->SaveScreenshot(filename.Get());
@@ -651,7 +651,7 @@ void nODEViewerApp::InitDynamics()
     for (thingix=0; thingix < NUMTHINGS; thingix++)
     {
         nString bodypath = "/usr/dynamics/things/body";
-        bodypath += nString(thingix);
+        bodypath.AppendInt(thingix);
         nOpendeBody *thisbody = (nOpendeBody *)kernelServer->New("nopendebody",bodypath.Get());
         this->bodies[thingix] = thisbody;
 
@@ -663,7 +663,7 @@ void nODEViewerApp::InitDynamics()
         thisbody->SetPosition(thisposition);
 
         nString geompath = "/usr/dynamics/things/geom";
-        geompath += nString(thingix);
+        geompath.AppendInt(thingix);
         {
             nOpendeBoxGeom *spheregeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom",geompath.Get());
             spheregeom->Create(this->refDySpace->GetFullName(bufferthing,200));
