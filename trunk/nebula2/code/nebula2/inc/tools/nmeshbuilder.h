@@ -370,9 +370,9 @@ private:
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
     /// qsort hook for sorting triangles by their group index
     static int __cdecl TriangleGroupSorter(const void* elm0, const void* elm1);
-    /// qsort hook for sorting temp edges by vertex indicies
+    /// qsort hook for sorting temp edges by vertex indices
     static int __cdecl TempEdgeSorter(const void* elm0, const void* elm1);
-    /// qsort hook for sorting temp edges by groupID and face indicies
+    /// qsort hook for sorting temp edges by groupID and face indices
     static int __cdecl GroupedEdgeSorter(const void* elm0, const void* elm1);
     /// do an inflated component copy using a source mesh and a collapseMap
     void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask);

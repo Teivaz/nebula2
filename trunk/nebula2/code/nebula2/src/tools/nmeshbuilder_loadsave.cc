@@ -507,7 +507,7 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
             const Group& group = groupMap[i];
             int firstTriangle = group.GetFirstTriangle();
             int numTriangles  = group.GetNumTriangles();
-            //verticies
+            //vertices
             int minVertexIndex, maxVertexIndex;
             this->GetGroupVertexRange(group.GetId(), minVertexIndex, maxVertexIndex);
             //edges
@@ -1127,7 +1127,7 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
 
 //------------------------------------------------------------------------------
 /**
-    The old n3d2 load code, so you can convert you data.
+    The old n3d2 load code, so you can convert your data.
 */
 bool
 nMeshBuilder::LoadOldN3d2(nFileServer2* fileServer, const char* filename)
