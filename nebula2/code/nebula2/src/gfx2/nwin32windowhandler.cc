@@ -543,7 +543,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     case nWin32WindowHandler::ACCEL_TOGGLEFULLSCREEN:
                     {
-                        //self->OnToggleFullscreenWindowed();
+                        self->OnToggleFullscreenWindowed();
                     }
                     break;
                 }
