@@ -120,25 +120,20 @@ div.header{
 	text-transform: lowercase;
 }
 
-div.header a {
-	margin-right: 1em;
-}
-
 div.header a, div.footer a{
 	color: #436976;
-	font-weight: bold;
+	font-size: 90%;
+	margin-right: 1em;
+	font-weight: normal;
 	white-space: nowrap;
 }
 
 div.header a:visited, div.footer a:visited {
 	color: #436976;
-	font-weight: bold;
 }
 
 div.header a:hover, div.footer a:hover {
 	color: #B52010;
-	font-weight: bold;
-	text-decoration: none;
 }
 
 div.index {
