@@ -34,7 +34,7 @@ static void n_getframetime(void *, nCmd *);
     The ntimeserver object lives under the name /sys/servers/time
     and provides a central time source for Nebula. 
 */
-void ntime_initcmds(nClass *cl)
+void n_initcmds_ntimeserver(nClass *cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_resettime_v",         'REST', n_resettime);
