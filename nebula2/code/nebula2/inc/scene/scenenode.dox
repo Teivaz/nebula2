@@ -2,42 +2,96 @@
     @defgroup NebulaSceneSystemNodes Scene Nodes
     @ingroup NebulaSceneSystem
 
-    This page describes scene node of Nebula2 and some notable inforamtion
-    about it.
+    This page describes Nebula2 scene nodes.
 
       - @ref NebulaSceneNodesSceneNodes
+      - @ref NebulaSceneNodesVisualNodes
+      - @ref NebulaSceneNodesHierarchies
       - @ref NebulaSceneNodesMultipleMaterials
       - @ref NebulaSceneNodesAttachMultipleTimes
 
     @section NebulaSceneNodesSceneNodes Scene Nodes
 
-    Usually a scenegraph is used to represent objects in a 3D world and 
-    this scenegraph can be thought as a data structure like a tree.
-    So each of node in tree can be thought as a object in a 3D world.
-
-    What a node is related to what you see in the scene and a node is
-    represented by nSceneNode derived classes in Nebula2.
-
-    Each node of a scene needs some processing like transformation, lighting, 
-    texturing and specifying shaders and primitives before it is sent to
-    rendering API. nSceneNode has it's memeber functions for
-    those processing like this:
+    nSceneNodes are the basic components of a Nebula2 <b>scene</b>
+    (see @ref NebulaSceneSystem): they represent (some information
+    about) a visible object in the world, and know how to render
+    themselves.
+   
+    Each node of a scene needs some processing -- transformation, lighting, 
+    texturing and specifying shaders and primitives -- before it is sent to
+    rendering API. nSceneNode uses the following member functions to achieve
+    this:
 
       - nSceneNode::RenderTransform <br>
-        Transform is done for translation and rotation of the scene node.
+        Translates, rotates, and scales the scene node.
       - nSceneNode::RenderShader <br>
-        Adjusting and specifying shader before the node is sent to renderer
-        if it is necessary.
+        Specifies and sets parameters for the shader.
       - nSceneNode::RenderGeometry <br>
         Pass primitives to rendering API.
       - nSceneNode::RenderLight <br>
-        Specify light for the node
+        Specify light for the node.
 
-    So, if you want to make your own scene node, derive it from nSceneNode 
-    class then override above member functions as it's necessary.
+    The implementation of these methods is left to subclasses.  Thus,
+    if you want to make your own scene node type, derive it from nSceneNode 
+    (or a descendent), then override the above methods as necessary.
+    Usually, however, you'll use one of the standard subclasses: the
+    "visual nodes".
 
+    @section NebulaSceneNodesVisualNodes Visual Nodes
+
+    The most common nSceneNode subclasses are the so called "visual nodes",
+    descendents of nSceneNode, whose class hierarchy looks like this:
+
+    @verbatim
+    nSceneNode
+        nTransformNode
+            nAbstractShaderNode
+                nMaterialNode
+                    nShapeNode
+                        nSkinShapeNode
+                        nParticleShapeNode
+    @endverbatim
+
+       - nTransformNode : groups subobjects into hierarchies and describes 3D
+         position and rotation.
+       - nAbstractShaderNode : base class for handling materials; also
+         provides an interface for handling textures.
+       - nMaterialNode : handles shader
+       - nShapeNode : defines geometry to be rendered 
+       - nSkinShapeNode : defines skinned geometry
+       - nParticleShapeNode : geometry that emits particles
+    
+    You'll most often use nShapeNodes, since it implements all the Render methods 
+    described under @ref NebulaSceneNodesSceneNodes.  Thus, a single nShapeNode 
+    is all that's needed to transform and render a mesh.
+
+    @section NebulaSceneNodesHierarchies Scene Node Hierarchies
+
+    However, it is also possible to construct a hierarchy of nSceneNode
+    objects, usually to form complex objects out of component subobjects.
+
+    For example, a bicyle could be organized, within the Nebula Object Hierarchy,
+    as a tree of nShapeNodes:
+
+    @verbatim
+    body
+        wheelFront        
+        wheelBack
+            brake
+    @endverbatim
+
+    If a given nSceneNode is attached to the scene (see 
+    @ref NebulaSceneSystemRenderingLoop), all of its descendents will 
+    automatically and recursively be attached as well.  In the example, 
+    attaching @c body would also attach @c wheelFront,
+    @c wheelBack, and @c brake.
+
+    Geometric transformations are inherited, so e.g. the position specified by
+    @c wheelFront would be relative to that of @c body.
 
     @section NebulaSceneNodesMultipleMaterials Handling Multiple Materials
+
+    @note Extracted from an email, needs cleaning up.
 
     If you have multiple materials then you also need multiple meshes to 
     specify which polygons have which materials. If a model (I'm using model 
@@ -46,16 +100,16 @@
 
     example:
     @verbatim
-transformnode knight
-    shapenode armour
-    shapenode fleshybits
+    transformnode knight
+        shapenode armour
+        shapenode fleshybits
     @endverbatim
 
-or just:
+    or just:
 
     @verbatim
-shapenode knight
-    shapenode fleshybits
+    shapenode knight
+        shapenode fleshybits
     @endverbatim
 
     As for sharing and sorting that is already handled by the scene server and
@@ -67,9 +121,8 @@ shapenode knight
     file). As it is aleady mentioned, materials can be made up of multiple 
     shaders, so we're better off sorting shaders instead of materials.
     
-
     @section NebulaSceneNodesAttachMultipleTimes Attaching A Node Multiple Times
-
+    
     At first sight, it might seem that the best way of utilising nSceneServer 
     would be to follow the example in nViewerApp; that is, to construct the 
     entire in-game scene graph in /usr/scene, with duplicate structures for 
@@ -87,32 +140,36 @@ shapenode knight
     (in the terms of ArchitectingYourN2Application, each nEntity would have 
     its own nRenderContext); 
 
-    Thus, if you have a blue car, a red car, and a bug eyed alien in your 
-    game, you might have a structure like the following: 
+    Thus, if you have a blue car, a red car, and a bug eyed alien in 
+    your game, you might have a structure like the following that 
+    describes each model in your game: 
 
     @verbatim
-/lib/visuals/car (an nSceneNode?)
-        /body (an nShapeNode, as are the following)
-            /wheel1
-            /wheel2
-            /wheel3
-            /wheel4
-        /exhaust (nParticleNode)
-    /bugeyedalien (an nSkinShapeNode)
+   /lib/visuals/
+       car (nTransformNode)
+           body (an nShapeNode, as are the following)
+               wheel1
+               wheel2
+               wheel3
+               wheel4
+           exhaust (nParticleNode)
+       bugeyedalien (an nSkinShapeNode)
     @endverbatim
 
-the following are of MyGameObjectClass, which you wrote for your game needs. 
+    And then something like this for your actual game objects (these would be some 
+    game specific entity/actor/object class).
 
     @verbatim
-/game/world/objects/car1 
-           /car2
-           /bugeyedalien1
+    /game/world/objects/
+        car1 
+        car2
+        bugeyedalien1
     @endverbatim
 
     car1 and car2 would both create an nRenderContext whose rootNode was 
     /lib/visuals/car, and would attach this to the scene server whenever 
     they were visible. To ensure that they are differently coloured, each 
-    would set a variable in their render context (eg. "MatDiffuse") to its 
+    could set a variable in their render context (eg. "MatDiffuse") to its 
     desired colour, and that shader for the "car" node would use that to set 
     the colour when rendering. 
 
@@ -121,14 +178,15 @@ the following are of MyGameObjectClass, which you wrote for your game needs.
     @code
 void MyGameObjectClass::DoThisOncePerFrame()
 {
-    renderContext.GetShaderOverrides().SetFloat4(nShader2::Parameter(nShader2::MatDiffuse), myColour);
+    renderContext.GetShaderOverrides().SetFloat4(
+        nShader2::Parameter(nShader2::MatDiffuse), myColour);
     refSceneServer->Attach(&renderContext);
 }
     @endcode
 
     Another example is an animation's time value. Rather than the animation 
     scene nodes obtaining that time value from the time server, they are 
-    given the name of a variable in the render context to use like "time" and 
+    given the name of a variable in the render context to use, eg. "time" and 
     the nodes can then extract that value from the render context when they 
     need it. The entity can feed whatever time value it wants to the scene 
     nodes, or have different time values for different nodes. A tank object 
