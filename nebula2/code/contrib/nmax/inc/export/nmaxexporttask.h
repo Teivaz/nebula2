@@ -9,6 +9,7 @@
     Aug 2004 Oleg Kreptul (Haron)
 */
 
+#include "util/nstring.h"
 
 #define N_MAXEXPORT_BINARY_PATH    "home:bin/win32d/"
 
