@@ -42,6 +42,12 @@ beginmodule nanimbuilder
     setheaders { nanimbuilder }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nnpktool
+    setdir tools
+    setfiles { nnpktool }
+    setheaders { nnpktool }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nresourcecompiler
     setdir tools
     setfiles { nresourcecompiler }
@@ -79,6 +85,14 @@ begintarget nmeshtool
     settargetdeps {
         nkernel
         ntoollib
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nnpktool
+    settype exe
+    setmodules { nnpktool nnpkfileserver}
+    settargetdeps {
+        nkernel
     }
 endtarget
 #-------------------------------------------------------------------------------
