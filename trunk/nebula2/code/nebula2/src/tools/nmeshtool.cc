@@ -65,6 +65,7 @@ main(int argc, const char** argv)
     const char* appendFileArg  = args.GetStringArg("-append", 0);
     bool cleanArg              = args.GetBoolArg("-clean");
     bool tangentArg            = args.GetBoolArg("-tangent");
+    bool edgeArg               = args.GetBoolArg("-edge");
     const char* groupArg       = args.GetStringArg("-group", 0);
     const char* groupRenameArg = args.GetStringArg("-grename", 0);
     float txArg                = args.GetFloatArg("-tx", 0.0f);
@@ -92,6 +93,7 @@ main(int argc, const char** argv)
                  "-append [filename]    optional mesh file to append to input mesh\n"
                  "-clean                clean up mesh (removes redundant vertices)\n"
                  "-tangent              generate vertex tangents for per pixel lighting\n"
+                 "-edge                 generate edge data\n"
                  "-group [groupname]    select a group inside the mesh\n"
                  "-grename [newname]    rename the selected group\n"
                  "-tx [float]           translate vertices along x\n"
@@ -206,6 +208,12 @@ main(int argc, const char** argv)
         n_printf("-> generating tangents...\n");
         mesh.BuildTriangleNormals();
         mesh.BuildVertexTangents();
+    }
+
+    if (edgeArg)
+    {
+        n_printf("-> generating edges...\n");
+        mesh.CreateEdges();
     }
 
     // FIXME: group renaming
