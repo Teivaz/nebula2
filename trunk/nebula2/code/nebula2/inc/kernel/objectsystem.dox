@@ -7,6 +7,7 @@
     object persistence and multiple scripting languages with relative 
     ease.
 
+
     @section NebulaObjectSystemNamedObjectHierarchy Named Object Hierarchy
 
     An instance of a class that is derived from nRoot is called a 
@@ -21,6 +22,7 @@
     navigated with the built-in command console (see @ref 
     NebulaConsoleServer). Within C++ named objects are accessible 
     through references (see @ref NebulaSmartPointers). 
+
 
     @section NebulaObjectSystemCreation Creation
 
@@ -39,6 +41,42 @@
     As mentioned above, Nebula object uses <I>class name</I> and <I>object name</I> 
     for it's creation. 'nshapenode' is the class name and '/usr/scene/node1' is
     the object name in the code example.
+
+
+    @section NebulaObjectSystemPersistence Persistence
+
+    A Nebula object can be serialized. You can save an object from the Nebula console. 
+    (Assume that you use ntclserver for script server)
+@verbatim
+    > sel /usr/scene
+    > <objectname>.save
+@endverbatim
+
+    @note
+    You should reimplement nRoot::SaveCmds() to use object serialization.
+    See @ref NebulaWritingClass more details.
+
+    The <i><objectname></i> is whatever the name of the node which you want to save.
+
+    You can change the script server that is used to save objects by:
+@verbatim
+    > /sys/servers/persist.setsaverclass <script server class>
+@endverbatim
+
+    It is possible to have more than one script server if you want to.
+    A .n2 file will only have nebula commands in it(sel, and any valid node commands).
+    Those commands can all be saved and loaded by any script server.
+    So you can use tcl script server on runtime and use python script server when
+    you save an object if you want.
+
+    If you want to produce binary script from nebula object script try this:
+@verbatim
+    > /sys/serers/persist.setsaverclass nbinsriptserver
+@endverbatim
+
+    @note
+    Using binary script server dramaticaly reduces loading time when it reads script 
+    file.
 
 */
 
