@@ -101,6 +101,8 @@ void __cdecl n_error(const char*, ...)
     __attribute__((format(printf,1,2)));
 void __cdecl n_message(const char*, ...)
     __attribute__((format(printf,1,2)));
+void __cdecl n_dbgout(const char*, ...)
+    __attribute__((format(printf,1,2)));
 void n_sleep(double);
 char *n_strdup(const char *);
 char *n_strncpy2(char *, const char *, size_t);

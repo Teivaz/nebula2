@@ -124,6 +124,33 @@ n_printf(const char *msg, ...)
 
 //------------------------------------------------------------------------------
 /**
+    Put the message to the debug window.
+
+    - 26-Mar-05    kims    created
+*/
+void
+__cdecl
+n_dbgout(const char *msg, ...)
+{
+    va_list argList;
+    va_start(argList,msg);
+#ifndef __STANDALONE__
+    if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
+    {
+        nKernelServer::ks->GetLogHandler()->OutputDebug(msg, argList);
+    }
+    else
+    {
+        vprintf(msg, argList);
+    }
+#else
+    vprintf(msg, argList);
+#endif
+    va_end(argList);
+}
+
+//------------------------------------------------------------------------------
+/**
     Put process to sleep.
 
      - 21-Dec-98   floh    created
