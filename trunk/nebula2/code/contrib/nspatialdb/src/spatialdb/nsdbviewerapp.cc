@@ -23,7 +23,8 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     kernelServer(ks),
     isOpen(false),
     isOverlayEnabled(true),
-    camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
+    chasecamera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
+    playcamera(chasecamera),
     controlMode(Maya),
     defViewerPos(0.0f, 0.0f, 0.0f),
 //  defViewerAngles(n_deg2rad(90.0f), n_deg2rad(0.0f)),
@@ -36,7 +37,7 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
 //    viewerAngles(defViewerAngles),
 //    viewerZoom(defViewerZoom),
     screenshotID(0),
-    m_frustumclip(true), m_occludingfrustumclip(false), m_sphereclip(false), m_occludingsphereclip(false),
+    m_frustumclip(false), m_occludingfrustumclip(true), m_sphereclip(false), m_occludingsphereclip(false),
     m_viewcamera(0), m_activecamera(1), m_viscamera(1), m_testobjects(10,10)
 {
     // initialize test cameras
@@ -49,6 +50,11 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     markcameras[2].viewerAngles = this->defViewerAngles;
     markcameras[2].viewerPos = this->defViewerPos + vector3(7.0f,0.0f,0.0f);;
     markcameras[2].viewerZoom = this->defViewerZoom;
+
+    // tweak the play camera settings to be smaller
+    playcamera.SetFarPlane(40.0f);
+    playcamera.SetNearPlane(4.0f);
+
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +122,7 @@ nSDBViewerApp::Open()
 
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
-    this->refGfxServer->SetCamera(this->camera);
+    this->refGfxServer->SetCamera(this->chasecamera);
     this->refGfxServer->OpenDisplay();
 
     // define the input mapping
@@ -320,16 +326,23 @@ void nSDBViewerApp::Run()
 
             // draw the visitor debug info
             matrix44 cameraxform0, identmatrix;
+            identmatrix.ident();
             this->markcameras[m_viscamera].GenerateTransform(cameraxform0);
             nVisibleFrustumGenArray::VisibleElements dummyarray(10,10);
-            nCamera2 newcamera(this->camera);
-            newcamera.SetFarPlane(40.f);
-            newcamera.SetNearPlane(2.0f);
-            nVisibleFrustumGenArray generator(newcamera, cameraxform0, dummyarray);
-            identmatrix.ident();
-            this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
-            generator.VisualizeDebug(this->refGfxServer.get());
-
+            if (m_frustumclip)
+            {
+                nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, dummyarray);
+                generator.VisualizeDebug(this->refGfxServer.get());
+                this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
+                generator.Visit(m_rootsector.get(),3);
+            }
+            if (m_occludingfrustumclip)
+            {
+                nOccludingFrustumGenArray generator2(this->playcamera, cameraxform0, dummyarray);
+                generator2.VisualizeDebug(this->refGfxServer.get());
+                this->refGfxServer->SetTransform(nGfxServer2::Model, identmatrix);
+                generator2.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
+            }
 
             this->refSceneServer->PresentScene();            // present the frame
         }
@@ -734,8 +747,8 @@ void nSDBViewerApp::ResetTestObjects()
     // add two occluders for now
     for (int oix=0; oix < 2; oix++)
     {
-        vector3 elementpos(oix * 8 - 4, oix * 4 - 4,0);
-        float elementradius = 6.0;
+        vector3 elementpos(oix * 10 - 4, oix * 2 - 1,-10);
+        float elementradius = 2.0;
         nSDBViewerApp::SDBTestObject *newobject = new SDBTestObject;
         m_rootsector->AddElement(&(newobject->occluderinfo) );
         newobject->occluderinfo.Set(elementpos, elementradius);
@@ -793,7 +806,7 @@ void nSDBViewerApp::UpdateObjectMarks()
         matrix44 cameraxform0;
         markcameras[m_viscamera].GenerateTransform(cameraxform0);
         nVisibleFrustumGenArray::VisibleElements visiblearray(100,100);
-        nVisibleFrustumGenArray generator(this->camera, cameraxform0, visiblearray);
+        nVisibleFrustumGenArray generator(this->playcamera, cameraxform0, visiblearray);
 
         generator.nVisibleFrustumVisitor::Visit(m_rootsector.get(),3);
 
@@ -839,7 +852,7 @@ void nSDBViewerApp::UpdateObjectMarks()
         matrix44 cameraxform0;
         markcameras[m_viscamera].GenerateTransform(cameraxform0);
         nOccludingFrustumGenArray::VisibleElements visiblearray(100,100);
-        nOccludingFrustumGenArray generator(this->camera, cameraxform0, visiblearray);
+        nOccludingFrustumGenArray generator(this->playcamera, cameraxform0, visiblearray);
 
         generator.nOccludingFrustumVisitor::Visit(m_rootsector.get(),3);
 
@@ -868,7 +881,7 @@ void nSDBViewerApp::MoveObject(SDBTestObject *object, const vector3 &newpos)
         if (object->usingoccluder)
         {
             // for an occluder we need to provide a conservative bounding box
-            vector3 boxextent(vector3(1,1,1) * (object->occluderinfo.radius / sqrt(3.0f)) );
+            vector3 boxextent(vector3(1,1,1) * object->occluderinfo.radius);
             bbox3 occluderbbox(newpos, boxextent);
             m_rootsector->UpdateElement(&(object->occluderinfo), newpos, occluderbbox);
             effectiveradius = boxextent.x;
