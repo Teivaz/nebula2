@@ -20,6 +20,7 @@ static void n_getskin(void* slf, nCmd* cmd);
 static void n_setsystemskin(void* slf, nCmd* cmd);
 static void n_getsystemskin(void* slf, nCmd* cmd);
 static void n_togglesystemgui(void* slf, nCmd* cmd);
+static void n_computescreenspacebrushsize(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -39,22 +40,23 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setrootpath_s",           'SRTP', n_setrootpath);
-    cl->AddCmd("s_getrootpath_v",           'GRTP', n_getrootpath);
-    cl->AddCmd("v_setrootwindow_s",         'SRTW', n_setrootwindow);
-    cl->AddCmd("s_getrootwindow_v",         'GRTW', n_getrootwindow);
-    cl->AddCmd("v_addsystemfont_ssibbb",    'ADSF', n_addsystemfont);
-    cl->AddCmd("v_addcustomfont_sssibbb",   'ADCF', n_addcustomfont);
-    cl->AddCmd("v_setreferencesize_ff",     'SRFS', n_setreferencesize);
-    cl->AddCmd("ff_getreferencesize_v",     'GRFS', n_getreferencesize);
-    cl->AddCmd("b_ismouseovergui_v",        'IMOG', n_ismouseovergui);
-    cl->AddCmd("o_newwindow_sb",            'NEWW', n_newwindow);
-    cl->AddCmd("o_newskin_s",               'NSKN', n_newskin);
-    cl->AddCmd("v_setskin_o",               'SSKN', n_setskin);
-    cl->AddCmd("o_getskin_v",               'GSKN', n_getskin);
-    cl->AddCmd("v_setsystemskin_o",         'SSSK', n_setsystemskin);
-    cl->AddCmd("o_getsystemskin_v",         'GSSK', n_getsystemskin);
-    cl->AddCmd("v_togglesystemgui_v",       'TGSG', n_togglesystemgui);
+    cl->AddCmd("v_setrootpath_s",                  'SRTP', n_setrootpath);
+    cl->AddCmd("s_getrootpath_v",                  'GRTP', n_getrootpath);
+    cl->AddCmd("v_setrootwindow_s",                'SRTW', n_setrootwindow);
+    cl->AddCmd("s_getrootwindow_v",                'GRTW', n_getrootwindow);
+    cl->AddCmd("v_addsystemfont_ssibbb",           'ADSF', n_addsystemfont);
+    cl->AddCmd("v_addcustomfont_sssibbb",          'ADCF', n_addcustomfont);
+    cl->AddCmd("v_setreferencesize_ff",            'SRFS', n_setreferencesize);
+    cl->AddCmd("ff_getreferencesize_v",            'GRFS', n_getreferencesize);
+    cl->AddCmd("b_ismouseovergui_v",               'IMOG', n_ismouseovergui);
+    cl->AddCmd("o_newwindow_sb",                   'NEWW', n_newwindow);
+    cl->AddCmd("o_newskin_s",                      'NSKN', n_newskin);
+    cl->AddCmd("v_setskin_o",                      'SSKN', n_setskin);
+    cl->AddCmd("o_getskin_v",                      'GSKN', n_getskin);
+    cl->AddCmd("v_setsystemskin_o",                'SSSK', n_setsystemskin);
+    cl->AddCmd("o_getsystemskin_v",                'GSSK', n_getsystemskin);
+    cl->AddCmd("v_togglesystemgui_v",              'TGSG', n_togglesystemgui);
+    cl->AddCmd("ff_computescreenspacebrushsize_s", 'CSBS', n_computescreenspacebrushsize);
     cl->EndCmds();
 }
 
@@ -105,12 +107,16 @@ n_getrootpath(void* slf, nCmd* cmd)
     v
     @info
     Set a new root window.
+    An empty window identifier implies the null window.
 */
 static void 
 n_setrootwindow(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
-    self->SetRootWindow(cmd->In()->GetS());
+    const char* rootWindow = cmd->In()->GetS();
+    if( rootWindow && rootWindow[0] == 0 )
+        rootWindow = 0;
+    self->SetRootWindow(rootWindow);
 }
 
 //-----------------------------------------------------------------------------
@@ -370,4 +376,24 @@ n_togglesystemgui(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     self->ToggleSystemGui();
+}
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    computescreenspacebrushsize
+    @input
+    v
+    @output
+    v
+    @info
+    Initialize the gui server.
+*/
+static void
+n_computescreenspacebrushsize(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;    
+    const vector2& brushSize = 
+        self->ComputeScreenSpaceBrushSize( cmd->In()->GetS() );
+    cmd->Out()->SetF( brushSize.x );
+    cmd->Out()->SetF( brushSize.y );
 }
