@@ -116,7 +116,7 @@ nGuiSettingsForm::OnShow()
         nGuiCheckButtonGroup2* checkButtons = (nGuiCheckButtonGroup2*) kernelServer->New("nguicheckbuttongroup", checkButtonsName.Get());
         int optionIndex;
         int numOptions = choiceOption.options.Size();
-        for (optionIndex = 0; optionIndex < numOptions; optionIndex)
+        for (optionIndex = 0; optionIndex < numOptions; optionIndex++)
         {
             checkButtons->AppendOption(choiceOption.options[optionIndex].Get());
         }
