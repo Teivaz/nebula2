@@ -15,6 +15,9 @@ static void n_getswingtime(void* slf, nCmd* cmd);
     @scriptclass
     nswingshapenode
 
+    @cppclass
+    nSwingShapeNode
+
     @superclass
     nshapenode
 

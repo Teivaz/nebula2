@@ -27,8 +27,13 @@ static void n_getclipping(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguitextlabel
+
+    @cppclass
+    nGuiTextLabel
+
     @superclass
     nguilabel
+
     @classinfo
     A gui label which can render ASCII text with optional background bitmap.
 */

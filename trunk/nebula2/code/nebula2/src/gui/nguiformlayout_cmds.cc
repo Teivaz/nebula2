@@ -11,7 +11,7 @@ static void n_attachpos(void* slf, nCmd* cmd);
 //-----------------------------------------------------------------------------
 /**
     @scriptclass
-    nguiwidget
+    nguiformlayout
 
     @cppclass
     nGuiFormLayout

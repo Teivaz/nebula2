@@ -11,8 +11,13 @@ static void n_getstate(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguicheckbutton
+
+    @cppclass
+    nGuiCheckButton
+
     @superclass
-    nguiwidget
+    nguitextlabel
+
     @classinfo
     A on/off check button.
 */

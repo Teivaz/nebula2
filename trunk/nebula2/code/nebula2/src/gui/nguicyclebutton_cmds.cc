@@ -13,8 +13,13 @@ static void n_removealltextlabels(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguicyclebutton
+
+    @cppclass
+    nGuiCycleButton
+
     @superclass
-    ntextlabel
+    nguitextlabel
+
     @classinfo
     A cycle button widget.
 */

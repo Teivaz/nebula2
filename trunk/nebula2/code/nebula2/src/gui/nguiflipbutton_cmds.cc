@@ -12,8 +12,13 @@ static void n_getstate(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguiflipbutton
+
+    @cppclass
+    nGuiFlipButton
+
     @superclass
     nguitextlabel
+
     @classinfo
     A button which flips through different states.
 */

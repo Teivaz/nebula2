@@ -16,6 +16,9 @@ static void n_isplaying(void* slf, nCmd* cmd);
     @scriptclass
     nvideoserver
 
+    @cppclass
+    nVideoServer
+
     @superclass
     nroot
 

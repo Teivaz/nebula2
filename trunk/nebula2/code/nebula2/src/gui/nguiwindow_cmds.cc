@@ -13,8 +13,13 @@ static void n_ismodal(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguiwindow
+
+    @cppclass
+    nGuiWindow
+
     @superclass
     nguiwidget
+
     @classinfo
     A button widget.
 */

@@ -244,8 +244,7 @@ nFile::GetChar()
 
 //------------------------------------------------------------------------------
 /**
-    @param  val     [out] 32 bit float value
-    @return         number of bytes read
+    @return         the value
 */
 inline
 float
@@ -258,8 +257,7 @@ nFile::GetFloat()
 
 //------------------------------------------------------------------------------
 /**
-    @param  val     [out] 32 bit float value
-    @return         number of bytes read
+    @return         the value
 */
 inline
 double

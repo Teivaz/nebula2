@@ -59,7 +59,6 @@ nGuiSkin::EndBrushes()
     @param  tex     path to texture
     @param  uvPos   top left position of rectangle in uv space
     @param  uvSize  size of rectangle in uv space
-    @param  uvRect  uv coordinates (position and size 
     @param  color   modulation color
 */
 void
