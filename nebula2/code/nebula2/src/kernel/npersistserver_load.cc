@@ -161,6 +161,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         return 0;
         
     nObject *obj = 0;
+    nPathString tmpName;
         
     // if we need to create an nRoot make sure it will have a valid name
     if (nKernelServer::Instance()->FindClass(objClass)->IsA("nroot"))
@@ -170,7 +171,6 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         //  (1) xxx/blub.n/_main.n      -> a folded object
         //  (2) xxx/blub.n              -> an unfolded object
         //
-        nPathString tmpName;
         if (0 == objName)
         {
             nPathString path(fileName);
