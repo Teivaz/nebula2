@@ -35,7 +35,7 @@ nPythonServer::Prompt()
     @return 
 */
 bool
-nPythonServer::Run(const char *cmdStr, const char*& result)
+nPythonServer::Run(const char *cmdStr, nString& result)
 {
     return this->Run(cmdStr, Py_single_input, result);
 }
@@ -106,15 +106,14 @@ nPythonServer::RunCommand(nCmd *c)
     @return 
 */
 bool
-nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
+nPythonServer::Run(const char *cmdStr, int mode, nString& result)
 {
-    char buffer[1<<12];
     PyObject *module_dict;
     PyObject *main_module_dict;
     PyObject *output = NULL;
     bool     retval = true;
 
-    result = NULL;
+    result.Clear();
 
     module_dict = PyModule_GetDict(this->nmodule);
     main_module_dict = PyModule_GetDict(this->main_module);
@@ -140,13 +139,11 @@ nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
         }
         else
         {
-            // Copy the string, because it will be freed when output is decref'ed.
             PyObject* temp;
             temp = PyObject_Str(output);
-            strcpy(&buffer[0], PyString_AsString(temp));
+            result = PyString_AsString(temp);
             Py_DECREF(temp);
             Py_DECREF(output);
-            result = (const char*)&buffer[0];
             retval = true;
         }
     }
@@ -175,11 +172,11 @@ nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
     @return 
 */
 bool
-nPythonServer::RunScript(const char *filename, const char*& result)
+nPythonServer::RunScript(const char *filename, nString& result)
 {
     char *exec_str;
     int success = 0;
-    result = NULL;
+    result.Clear();
 
     // Initialize Python commands in __main__
     // Note, this could be done via the Python C API, but it would
@@ -235,7 +232,7 @@ nPythonServer::RunScript(const char *filename, const char*& result)
     @brief Invoke a Python function.
 */
 bool
-nPythonServer::RunFunction(const char *funcName, const char*& result)
+nPythonServer::RunFunction(const char *funcName, nString& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");

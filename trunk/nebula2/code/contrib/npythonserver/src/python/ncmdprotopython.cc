@@ -34,7 +34,7 @@ nCmdProtoPython::nCmdProtoPython(const nCmdProtoPython& rhs)
 bool
 nCmdProtoPython::Dispatch(void* obj, nCmd* cmd)
 {
-    const char* result;
+    nString result;
     const char* funcName = cmd->GetProto()->GetName();
 
     return nPythonServer::Instance->RunFunction(funcName, result);
