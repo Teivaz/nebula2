@@ -136,7 +136,7 @@ beginmodule nkernel
         nwin32loghandler nrefcounted
     }
     setheaders {
-        nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
+        nsystem ntypes ndebug nkernelserver nprofiler nclass
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
