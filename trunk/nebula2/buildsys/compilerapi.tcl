@@ -57,6 +57,7 @@
 #    path_wspacetointer
 #
 #    get_incsearchdirs
+#    get_libsearchdirs
 #    write_pkgfiles
 #    pathto                 $pathfile
 #    addpkgs   
@@ -517,9 +518,9 @@ proc get_modtype {modname} {
 }
 
 #----------------------------------------------------------------------------
-#  get_modpath $modname inc|src
+#  get_modpath $modname inc|src|lib
 #
-#  Returns the relative path from $home to the inc or src dir root for the
+#  Returns the relative path from $home to the inc, src or lib dir root for the
 #  given module. eg. for nkernel = ./code/nebula2/inc
 #----------------------------------------------------------------------------
 proc get_modpath {modname type} {
@@ -530,6 +531,9 @@ proc get_modpath {modname type} {
     set src_part "src"
     if {$type == "inc"} {
         set src_part "inc"
+    }
+    if {$type == "lib"} {
+        set src_part "lib"
     }
     return [cleanpath $path_part/$src_part]
 }
@@ -594,7 +598,6 @@ proc path_wspacetooutput {} {
     return [findrelpath $cur_workspacepath $cur_outputpath]
 }
 
-
 #----------------------------------------------------------------------------
 #  path_wspacetointer
 #
@@ -621,6 +624,26 @@ proc get_incsearchdirs { } {
     foreach target [get_targets] {
         foreach module [get_tarmods $target] {
             lappend retlist [findrelpath $cur_workspacepath [get_modpath $module inc]]
+        }
+    }
+    return [lsort -unique $retlist]
+}
+
+
+#----------------------------------------------------------------------------
+#  get_libsearchdirs
+#
+#  Simply returns a list of all valid lib dir paths as a relative from the
+#  current workspace path generated from a list of all modules used within
+#  the workspace
+#----------------------------------------------------------------------------
+proc get_libsearchdirs { } {
+    global cur_workspacepath
+
+    set retlist ""    
+    foreach target [get_targets] {
+        foreach module [get_tarmods $target] {
+            lappend retlist [findrelpath $cur_workspacepath [get_modpath $module lib]]
         }
     }
     return [lsort -unique $retlist]
