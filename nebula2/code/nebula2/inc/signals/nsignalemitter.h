@@ -66,7 +66,7 @@ public:
         typename TSignalNative::Traits::template TCmdDispatcher<TClass>::TMemberFunction memf,
         int priority)
     {
-        typedef TSignalNative::TBindingNative<TClass>::Type TBinding;
+        typedef typename TSignalNative::TBindingNative<TClass>::Type TBinding;
         TBinding * binding = n_new(TBinding)(receiver, memf, priority);
         return this->BindSignal(signal.GetId(), binding);
     }
@@ -109,7 +109,7 @@ public:
     bool PostSignal(nTime t, const char * signalName, ...);
 
 protected:
-    friend nSignal;
+    friend class nSignal;
 
     nSignalBindingSet * FindSignalBindingSet(nFourCC signal4cc);
 
