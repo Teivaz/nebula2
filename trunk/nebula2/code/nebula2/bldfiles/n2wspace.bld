@@ -26,5 +26,8 @@ beginworkspace Nebula2
         nremoteshell
         nsh
         nviewer
+        ndshow
+        nvideo
+        ngui
     }
 endworkspace

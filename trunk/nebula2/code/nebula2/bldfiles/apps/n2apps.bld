@@ -77,5 +77,8 @@ begintarget nviewer
         ndinput8
         ndirect3d9
         ntoollib
+        nvideo
+        ndshow
+        ngui
     }
 endtarget
