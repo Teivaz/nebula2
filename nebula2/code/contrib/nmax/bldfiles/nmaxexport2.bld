@@ -149,27 +149,27 @@ beginmodule nmaxlight
     }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nmaxcontrollers
+beginmodule nmaxanimator
     annotate "exporter module for 3dsmax controller animation"
     settype cpp
     setplatform win32
     setdir export2
     setfiles {
-        nmaxanim
-        nmaxcontroller
-        nmaxprscontroller_main
-        nmaxprscontroller_pos
-        nmaxprscontroller_rot
-        nmaxprscontroller_scale
-        nmaxikcontroller
-        nmaxpathcontroller
+        nmaxanimator
+        nmaxcontrol
+        nmaxtransformanimator_main
+        nmaxtransformanimator_pos
+        nmaxtransformanimator_rot
+        nmaxtransformanimator_scale
+        nmaxikanimator
+        nmaxtransformcurveanimator
     }
     setheaders {
-        nmaxanim
-        nmaxcontroller
-        nmaxprscontroller
-        nmaxikcontroller
-        nmaxpathcontroller
+        nmaxanimator
+        nmaxcontrol
+        nmaxtransformanimator
+        nmaxikanimator
+        nmaxtransformcurveanimator
     }
 endmodule
 #-------------------------------------------------------------------------------
