@@ -31,6 +31,8 @@ public:
     public:
         /// constructor
         Key();
+        /// constructor with value
+        Key(const vector4& val);
         /// set value
         void Set(const vector4& val);
         /// get value
@@ -63,7 +65,7 @@ public:
         /// default constructor
         Curve();
         /// fixed size constructor
-        Curve(int numKeys);
+        Curve(int numKeys, const Key& fillKey);
         /// add a key to the end of the array
         void SetKey(int index, const Key& key);
         /// get number of keys
@@ -141,8 +143,6 @@ public:
         int GetKeyStride() const;
         /// check if the curves are valid
         bool Validate() const;
-        /// compress all compressible curves
-        int Optimize();
         /// convert loop type to string
         static const char* LoopType2String(LoopType t);
         /// convert string to loop type
@@ -182,7 +182,7 @@ public:
     /// clear all
     void Clear();
     /// add an animation group
-    void AddGroup(const Group& group);
+    void AddGroup(Group& group);
     /// get number of groups
     int GetNumGroups() const;
     /// get group at index
@@ -203,6 +203,16 @@ private:
 */
 inline
 nAnimBuilder::Key::Key()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimBuilder::Key::Key(const vector4& val) :
+    value(val)
 {
     // empty
 }
@@ -284,12 +294,13 @@ nAnimBuilder::Curve::Curve() :
 /**
 */
 inline
-nAnimBuilder::Curve::Curve(int numKeys) :
+nAnimBuilder::Curve::Curve(int numKeys, const Key& fillKey) :
     ipolType(NONE),
     isCollapsed(true),
     firstKeyIndex(-1)
 {
     this->keyArray.SetFixedSize(numKeys);
+    this->keyArray.Fill(0, this->keyArray.Size(), fillKey);
 }
 
 //------------------------------------------------------------------------------
@@ -635,29 +646,6 @@ nAnimBuilder::Group::Validate() const
 
 //------------------------------------------------------------------------------
 /**
-    Optimize curves. At the moment this will just collapse curves where
-    all keys are identical. Returns number of collapsed curves.
-*/
-inline
-int
-nAnimBuilder::Group::Optimize()
-{
-    int numOptimizedCurves = 0;
-    int numCurves = this->GetNumCurves();
-    int curveIndex;
-    for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
-    {
-        Curve& curve = this->GetCurveAt(curveIndex);
-        if (curve.Optimize())
-        {
-            ++numOptimizedCurves;
-        }
-    }
-    return numOptimizedCurves;
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 inline
 const char*
@@ -689,7 +677,7 @@ nAnimBuilder::Group::String2LoopType(const char* str)
 */
 inline
 void
-nAnimBuilder::AddGroup(const Group& group)
+nAnimBuilder::AddGroup(Group& group)
 {
     this->groupArray.Append(group);
 }
@@ -716,3 +704,4 @@ nAnimBuilder::GetGroupAt(int index)
 
 //------------------------------------------------------------------------------
 #endif
+

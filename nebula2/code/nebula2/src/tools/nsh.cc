@@ -51,12 +51,11 @@ main(int argc, const char** argv)
     }
 
     // create minimal Nebula runtime
-    nKernelServer* kernelServer = new nKernelServer;
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer->New(scriptServerArg, "/sys/servers/script");
+    nKernelServer kernelServer;
+    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg, "/sys/servers/script");
     if (0 == scriptServer)
     {
         n_printf("Could not create script server of class '%s'\n", scriptServerArg);
-        delete kernelServer;
         return 10;
     }
 
@@ -100,6 +99,5 @@ main(int argc, const char** argv)
         }
     }
     scriptServer->Release();
-    delete kernelServer;
     return 0;
 }

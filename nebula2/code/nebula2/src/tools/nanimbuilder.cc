@@ -188,7 +188,7 @@ nAnimBuilder::SaveNax2(nFile* file)
         const int keyStride = group.GetKeyStride();
         const float keyTime = group.GetKeyTime();
         nAnimation::Group::LoopType loopType = nAnimation::Group::Clamp;
-        if (group.GetLoopType() == nAnimation::Group::Repeat)
+        if (nAnimation::Group::LoopType(group.GetLoopType()) == nAnimation::Group::Repeat)
         {
             loopType = nAnimation::Group::Repeat;
         }
@@ -297,7 +297,16 @@ nAnimBuilder::Optimize()
     for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
     {
         Group& group = this->GetGroupAt(groupIndex);
-        numOptimizedCurves += group.Optimize();
+        int numCurves = group.GetNumCurves();
+        int curveIndex;
+        for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
+        {
+            Curve& curve = group.GetCurveAt(curveIndex);
+            if (curve.Optimize())
+            {
+                numOptimizedCurves++;
+            }
+        }
     }
     return numOptimizedCurves;
 }

@@ -21,6 +21,8 @@ public:
     nMeshBundle();
     /// destructor
     ~nMeshBundle();
+    /// clear array
+    void Clear();
     /// constructs the mesh bundle from a single input mesh and a max number of vertices
     void BuildMeshBundle(const nMeshBuilder& srcMesh, int maxVertices);
     /// return number of created meshes
@@ -34,3 +36,4 @@ private:
 
 //------------------------------------------------------------------------------
 #endif
+
