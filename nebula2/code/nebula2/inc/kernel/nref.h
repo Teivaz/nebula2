@@ -17,17 +17,9 @@
 
     (C) 1999 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_KERNELSERVER_H
 #include "kernel/nkernelserver.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nRef : public nNode 
@@ -35,6 +27,8 @@ template<class TYPE> class nRef : public nNode
 public:
     /// default constructor
     nRef();
+    /// constructor with target object
+    nRef(TYPE* o);
     /// destructor
     ~nRef();
     /// invalidate the ref
@@ -61,10 +55,23 @@ protected:
 */
 template<class TYPE> 
 inline
-nRef<TYPE>::nRef()
+nRef<TYPE>::nRef() :
+    targetObject(0)
 {
-    this->targetObject = 0;
+    // empty
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nRef<TYPE>::nRef(TYPE* o) :
+    targetObject(o)
+{
+    // empty
+}
+
 
 //------------------------------------------------------------------------------
 /**
