@@ -297,16 +297,7 @@ nAnimBuilder::Optimize()
     for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
     {
         Group& group = this->GetGroupAt(groupIndex);
-        int numCurves = group.GetNumCurves();
-        int curveIndex;
-        for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
-        {
-            Curve& curve = group.GetCurveAt(curveIndex);
-            if (curve.Optimize())
-            {
-                numOptimizedCurves++;
-            }
-        }
+        numOptimizedCurves += group.Optimize();
     }
     return numOptimizedCurves;
 }
