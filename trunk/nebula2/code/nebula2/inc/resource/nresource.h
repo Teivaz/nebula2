@@ -113,8 +113,6 @@ protected:
     nDynAutoRef<nResourceLoader> refResourceLoader;
 
 private:
-    friend class nResourceServer;
-
     nAutoRef<nResourceServer> refResourceServer;
     nString filename;
     Type type;
