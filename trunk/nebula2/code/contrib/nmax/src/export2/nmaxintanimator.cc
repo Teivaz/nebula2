@@ -78,7 +78,7 @@ nAnimator* nMaxIntAnimator::Export(const char* paramName, Control* control)
                 createdAnimator->AddKey(key.time, val);
             }
 
-            createdAnimator->SetVectorName(paramName);
+            createdAnimator->SetIntName(paramName);
             createdAnimator->SetChannel("time");
 
             //FIXME: 'oneshot' loop type should be available too.
