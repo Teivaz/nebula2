@@ -57,6 +57,11 @@ beginmodule npixelformat
     setheaders { npixelformat}
 endmodule
 #--------------------------------------------------------------------
+beginmodule mapviewer
+    setdir mapviewer
+    setfiles { mapviewer }
+endmodule
+#--------------------------------------------------------------------
 begintarget nmap
     settype lib
     setmodules {
@@ -77,7 +82,10 @@ endtarget
 begintarget nmapviewer
     annotate "Sample application:  Allows simple viewing of .n2 files"
     settype exe
-    setmodules { nviewer nviewerapp }
+    setmodules {
+        mapviewer
+        nviewerapp
+    }
     settargetdeps {
         nkernel
         nnebula
@@ -87,13 +95,14 @@ begintarget nmapviewer
         ndshow
         ngui
         nmap
+        nnetwork
     }
 endtarget
 #--------------------------------------------------------------------
 beginworkspace nmap
     setbinarydir ./bin/
     settargets {
-    nmapviewer
+        nmapviewer
         nkernel
         nnebula
         microtcl
@@ -102,5 +111,6 @@ beginworkspace nmap
         ndshow
         ngui
         nmap
+        nnetwork
     }
 endworkspace
