@@ -420,7 +420,7 @@ nGuiSlider2::HandleDrag(const vector2& mousePos)
 
 //------------------------------------------------------------------------------
 /**
-    Move slider one position into the position direction.
+    Move slider one position into the positive direction.
 */
 void
 nGuiSlider2::MoveSliderPos()
