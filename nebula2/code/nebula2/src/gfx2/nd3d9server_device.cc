@@ -243,15 +243,6 @@ nD3D9Server::DeviceOpen()
     }
     n_assert(this->d3d9Device);
 
-    // get a pointer to the back buffer and depth/stencil surface
-    hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
-    n_assert(SUCCEEDED(hr));
-    n_assert(this->backBufferSurface);
-
-    hr = this->d3d9Device->GetDepthStencilSurface(&this->depthStencilSurface);
-    n_assert(SUCCEEDED(hr));
-    n_assert(this->depthStencilSurface);
-
     // initialize d3d device state
     this->InitDeviceState();
 
