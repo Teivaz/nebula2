@@ -70,6 +70,7 @@
 #pragma warning( disable : 4786 )       // symbol truncated to 255 characters
 #pragma warning( disable : 4530 )       // C++ exception handler used, but unwind semantics not enabled
 #pragma warning( disable : 4995 )       // _OLD_IOSTREAMS_ARE_DEPRECATED
+#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE
 #endif
 
 //------------------------------------------------------------------------------
