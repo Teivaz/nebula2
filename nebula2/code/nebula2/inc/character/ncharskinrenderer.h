@@ -25,7 +25,7 @@ public:
     /// constructor
     nCharSkinRenderer();
     /// begin rendering the skin
-    void Begin(nGfxServer2* gfxServer, nMesh2* mesh, nVariable::Handle jointPaletteVarHandle, const nCharSkeleton* skeleton);
+    void Begin(nGfxServer2* gfxServer, nMesh2* mesh, const nCharSkeleton* skeleton);
     /// render a single skin fragment
     void Render(int meshGroupIndex, const nCharJointPalette& jointPalette);
     /// finish rendering
@@ -35,7 +35,6 @@ private:
     nGfxServer2* gfxServer;
     nMesh2* mesh;
     nShader2* shader;
-    nVariable::Handle jointPaletteVarHandle;
     const nCharSkeleton* charSkeleton;
     bool inBegin;
 };
