@@ -21,15 +21,6 @@ nVisibleFrustumVisitor::~nVisibleFrustumVisitor()
 {
 }
 
-void nVisibleFrustumVisitor::VisualizeDebug(nGfxServer2 *gfx2)
-{
-    // draw the frustum clipper
-    nFrustumClipper &clipper(m_viewfrustumstack.Front());
-    clipper.VisualizeFrustum(gfx2, vector4(1.0f,1.0f,0.0f,1.0f));
-
-}
-
-
 void nVisibleFrustumVisitor::Reset()
 {
   // the stacks should be size 1 at this point
@@ -49,6 +40,10 @@ void nVisibleFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
     nOctNode *rootnode = visitee->GetOctree()->GetRoot();
     nFrustumClipper::result_info clipinfo;
     nFrustumClipper frustum = m_viewfrustumstack.Back();
+    if (m_gfxdebug)
+    {
+        frustum.VisualizeFrustum(m_gfxdebug, vector4(1.0f,1.0f,0.0f,1.0f));
+    }
 
     // recursively descend the octree checking each node for clipping
     CheckOctNode(rootnode, frustum, clipinfo, recursedepth);

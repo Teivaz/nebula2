@@ -20,9 +20,12 @@ public:
     nVisibleFrustumGenArray(nCamera2 &cam, matrix44 &camxform, VisibleElements &foundarray);
     ~nVisibleFrustumGenArray();
 
-    virtual void Reset();
+    void Reset();
 
-    virtual void Visit(nSpatialElement *visitee, int recursedepth); 
+    using nVisibleFrustumVisitor::Visit;
+
+    void Visit(nSpatialElement *visitee, int recursedepth); 
+
 
 protected:
     void ClearArray();

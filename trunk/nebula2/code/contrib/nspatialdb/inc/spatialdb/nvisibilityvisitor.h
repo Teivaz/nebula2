@@ -65,13 +65,15 @@ public:
         Mainly used by hierarchy elements; needed for occlusion or LOD testing */
     vector3 &GetViewPoint() const;
 
-    /** @brief Render some debug visualization.
-        Comes in handy for debugging wierd occlusion artifacts. */
-    virtual void VisualizeDebug(nGfxServer2 *gfx2);
+    /** @brief Specify gfxserver to use for debug visualization.
+        Comes in handy for debugging wierd occlusion artifacts. You can turn off
+        debug visualization by setting this value to NULL (the default) */
+    void VisualizeDebug(nGfxServer2 *gfx);
 
 protected:
     /// we have a stack of viewpoints to handle sector-local coordinate systems
     nArray<vector3> m_viewpointstack;
+    nGfxServer2 *m_gfxdebug;
 
     /**
        entering a new local space; the matrix given will transform from
@@ -84,4 +86,7 @@ protected:
     /// leave a local space
     virtual void LeaveLocalSpace();
 };
+
+inline void nVisibilityVisitor::VisualizeDebug(nGfxServer2 *gfx) { m_gfxdebug = gfx; }
+
 #endif

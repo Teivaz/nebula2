@@ -7,6 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 
 nVisibilityVisitor::nVisibilityVisitor(const vector3 &viewpoint)
+: m_gfxdebug(NULL)
 {
     m_viewpointstack.PushBack(viewpoint);
 }
@@ -18,13 +19,6 @@ nVisibilityVisitor::~nVisibilityVisitor()
 void nVisibilityVisitor::Reset()
 {
 }
-
-/** @brief Render some debug visualization.
-    Comes in handy for debugging wierd occlusion artifacts. */
-void nVisibilityVisitor::VisualizeDebug(nGfxServer2 *gfx2)
-{
-}
-
 
 
 void nVisibilityVisitor::Visit(nSpatialElement *visitee, int recursedepth)

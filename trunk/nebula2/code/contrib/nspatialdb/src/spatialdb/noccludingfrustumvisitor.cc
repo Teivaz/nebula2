@@ -33,12 +33,23 @@ void nOccludingFrustumVisitor::Visit(nSpatialSector *visitee, int recursedepth)
     nOctNode *rootnode = visitee->GetOctree()->GetRoot();
     nFrustumClipper::result_info clipinfo;
     nFrustumClipper frustum = m_viewfrustumstack.Back();
-
     // record the size of the occluder array before doing this sector
     int previousoccludersize = m_occluders.Size();
 
     // get up to 3 occluders for this sector
     CollectOccluders(rootnode, frustum, clipinfo, 3);
+
+    // if in debug mode, render the view frustum and occluders
+    if (m_gfxdebug)
+    {
+        frustum.VisualizeFrustum(m_gfxdebug, vector4(1.0f,0.0f,1.0f,1.0f));
+        // draw the occluders
+        for (nArray<nBBoxOccluder>::iterator bboxi = m_occluders.Begin(); bboxi != m_occluders.End(); bboxi++)
+        {
+            bboxi->VisualizeBBox(m_gfxdebug, vector4(0.0f,1.0f,1.0f,1.0f));
+        }
+    }
+
 
     // recursively descend the octree checking each node for clipping
     CheckOctNode(rootnode, frustum, clipinfo, recursedepth);
