@@ -10,6 +10,7 @@ static void n_getdisplaymode(void* slf, nCmd* cmd);
 static void n_opendisplay(void* slf, nCmd* cmd);
 static void n_closedisplay(void* slf, nCmd* cmd);
 static void n_savescreenshot(void *, nCmd *);
+static void n_setwindowtitle(void *, nCmd *);
 
 //------------------------------------------------------------------------------
 /**
@@ -31,6 +32,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_opendisplay_v",      'ODSP', n_opendisplay);
     cl->AddCmd("v_closedisplay_v",     'CDSP', n_closedisplay);
     cl->AddCmd("b_savescreenshot_s",   'SSHT', n_savescreenshot);
+    cl->AddCmd("v_setwindowtitle_s",   'STTL', n_setwindowtitle);
     cl->EndCmds();
 }
 
@@ -140,3 +142,25 @@ n_savescreenshot(void *slf, nCmd *cmd)
     nGfxServer2 *self = (nGfxServer2*) slf;
     cmd->Out()->SetB(self->SaveScreenshot(cmd->In()->GetS()));
 }
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setwindowtitle
+
+    @input
+    s (Title)
+
+    @output
+    v
+
+    @info
+    Sets the title of the display window.
+*/
+static void
+n_setwindowtitle(void *slf, nCmd *cmd)
+{
+    nGfxServer2 *self = (nGfxServer2*) slf;
+    self->SetWindowTitle(cmd->In()->GetS());
+}
+
