@@ -38,8 +38,8 @@ void nOctFrustum::init_clip_planes_for_frustum()
 {
     nGfxServer2* gfx_server = octree->GetGfxServer2();
 
-    const matrix44& viewer = gfx_server->GetTransform(nGfxServer2::TransformType::View);
-    const matrix44& projection = gfx_server->GetTransform(nGfxServer2::TransformType::Projection);
+    const matrix44& viewer = gfx_server->GetTransform(nGfxServer2::View);
+    const matrix44& projection = gfx_server->GetTransform(nGfxServer2::Projection);
 
     matrix44 m = viewer * projection;
 
