@@ -92,6 +92,7 @@ beginmodule nwin32prefserver
     setplatform win32
     setfiles { nwin32prefserver_main }
     setheaders { nwin32prefserver }
+    setlibs_win32 { advapi32.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nipc
