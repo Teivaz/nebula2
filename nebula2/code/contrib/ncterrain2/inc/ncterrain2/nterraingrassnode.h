@@ -5,9 +5,10 @@
     @class nTerrainGrassNode
     @ingroup NCTerrain2
 
-    A very specialized terrain grass scene node. Receives a list of
-    triangles to render as grass from the application through
-    a render context variable. The triangles will be subdivided and
+    @brief A very specialized terrain grass scene node.
+
+    Receives a list of triangles to render as grass from the application
+    through a render context variable. The triangles will be subdivided and
     rendered as point sprites.
     
     (C) 2003 RadonLabs GmbH

@@ -5,15 +5,15 @@
     @class nChunkLodMesh
     @ingroup NCTerrain2
 
-    A single mesh chunk in a CunkLOD vertex tree. This is basically a port
-    of the original nChunkData class to Nebula2's resource subsystem.
+    @brief A single mesh chunk in a CunkLOD vertex tree. This is basically
+    a port of the original nChunkData class to Nebula2's resource subsystem.
 
-    A nChunkLodMesh object takes the filename of a .chu file, and a position
-    and byte size inside the file which identifies a mesh chunk and creates
-    a Nebula2 nMesh2 object from it.
+    A nChunkLodMesh object takes the filename of a <tt>.chu</tt> file, and a
+    position and byte size inside the file which identifies a mesh chunk and
+    creates a Nebula2 nMesh2 object from it.
 
     Based on Thatcher Ulrich's original ChunkLOD implementation, and Magnus
-    Anderholms and Gary Haussmann's Nebula implementation of ChunkLOD.
+    Anderholm's and Gary Haussmann's Nebula implementation of ChunkLOD.
     
     Copyright (c) 2002 Magnus Anderholm
     Modified 2003 Gary Haussmann

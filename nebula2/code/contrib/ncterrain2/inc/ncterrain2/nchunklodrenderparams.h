@@ -5,7 +5,7 @@
     @class nChunkLodRenderParams
     @ingroup NCTerrain2
 
-    Define render parameters for the ChunkLOD classes.
+    @brief Define render parameters for the ChunkLOD classes.
     
     (C) 2003 RadonLabs GmbH
 */

@@ -5,7 +5,7 @@
     @class nChunkLodNode
     @ingroup NCTerrain2
 
-    A node in a quad tree of LOD chunks.
+    @brief A node in a quad tree of LOD chunks.
 
     (C) 2003 RadonLabs GmbH
 */

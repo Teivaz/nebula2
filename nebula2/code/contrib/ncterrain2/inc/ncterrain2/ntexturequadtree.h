@@ -5,9 +5,9 @@
     @class nTextureQuadTree
     @ingroup NCTerrain2
 
-    Provides read-access to a chunked texture tqt2 file. Takes a tree level,
-    and a chunk x/y coordinate in the level, and constructs a texture from
-    it's contents.
+    @brief Provides read-access to a chunked texture tqt2 file. Takes a tree
+    level, and a chunk x/y coordinate in the level, and constructs a texture
+    from it's contents.
     
     FIXME: find a texture object caching solution if creating/destroying
     texture objects on the fly is too slow (or move the problem out of

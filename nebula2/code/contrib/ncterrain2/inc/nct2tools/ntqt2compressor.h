@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nTqt2Compressor
-    @ingroup Tools
+    @ingroup NCTerrain2Tools
 
-    Compress a TQT2 file from RAW to DDS format. Uses D3DX for compressing
-    texture data.
+    @brief Compress a TQT2 file from RAW to DDS format. Uses D3DX for
+    compressing texture data.
     
     (C) 2003 RadonLabs GmbH
 */

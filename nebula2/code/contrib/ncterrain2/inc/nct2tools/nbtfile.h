@@ -3,10 +3,15 @@
 //------------------------------------------------------------------------------
 /**
     @class nBtFile
-    @ingroup Tools
+    @ingroup NCTerrain2Tools
 
-    A bt (binary terrain) file access class. The bt file data must fit into
-    memory (why do bt files have such a strange data layout???)
+    @brief A BT (binary terrain) file access class.
+
+    The BT file data must fit into memory (why do BT files have such a
+    strange data layout???)
+
+    Information on the BT format can be found at
+    http://www.vterrain.org/Implementation/Formats/BT.html
 
     (C) 2003 RadonLabs GmbH
 */
