@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 #include "../lib/lib.fx"
 
-float4x4 ModelViewProjection;   // the modelview*projection matrix
+shared float4x4 ModelViewProjection;   // the modelview*projection matrix
 texture DiffMap0;
 float4 MatDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -37,8 +37,8 @@ sampler ColorMap = sampler_state
     Texture = <DiffMap0>;
     AddressU = Clamp;
     AddressV = Clamp;
-    MinFilter = Point;
-    MagFilter = Point;
+    MinFilter = Linear;
+    MagFilter = Linear;
     MipFilter = None;
 };
 
