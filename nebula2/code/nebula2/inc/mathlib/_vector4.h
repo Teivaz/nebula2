@@ -9,10 +9,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_MATH_H
 #include "mathlib/nmath.h"
-#endif
-
 #include <float.h>
 
 //------------------------------------------------------------------------------
@@ -33,10 +30,14 @@ public:
     _vector4(const float _x, const float _y, const float _z, const float _w);
     /// constructor 3
     _vector4(const _vector4& vec);
+    /// constructor from vector3 (w will be set to 1.0)
+    _vector4(const _vector3& vec3);
     /// set elements 1
     void set(const float _x, const float _y, const float _z, const float _w);
     /// set elements 2 
     void set(const _vector4& v);
+    /// set to vector3 (w will be set to 1.0)
+    void set(const _vector3& v);
     /// return length
     float len() const;
     /// normalize
@@ -47,6 +48,8 @@ public:
     void operator -=(const _vector4& v);
     /// inplace scalar mul
     void operator *=(const float s);
+    /// vector3 assignment operator (w set to 1.0f)
+    _vector4& operator=(const _vector3& v);
     /// fuzzy compare
     bool isequal(const _vector4& v, float tol) const;
     /// fuzzy compare, return -1, 0, +1
@@ -63,6 +66,8 @@ public:
     int mincompmask() const;
     /// inplace linear interpolation
     void lerp(const _vector4& v0, float lerpVal);
+    /// saturate components between 0 and 1
+    void saturate();
 
     float x, y, z, w;
 };
@@ -110,6 +115,19 @@ _vector4::_vector4(const _vector4& v) :
 /**
 */
 inline
+_vector4::_vector4(const _vector3& v) :
+    x(v.x),
+    y(v.y),
+    z(v.z),
+    w(1.0f)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void
 _vector4::set(const float _x, const float _y, const float _z, const float _w)
 {
@@ -130,6 +148,19 @@ _vector4::set(const _vector4& v)
     y = v.y;
     z = v.z;
     w = v.w;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector4::set(const _vector3& v)
+{
+    x = v.x;
+    y = v.y;
+    z = v.z;
+    w = 1.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -197,6 +228,17 @@ _vector4::operator *=(const float s)
     y *= s; 
     z *= s; 
     w *= s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+_vector4&
+_vector4::operator=(const _vector3& v)
+{
+    this->set(v);
+    return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -360,6 +402,19 @@ _vector4::lerp(const _vector4& v0, float lerpVal)
     y = v0.y + ((y - v0.y) * lerpVal);
     z = v0.z + ((z - v0.z) * lerpVal);
     w = v0.w + ((w - v0.w) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector4::saturate()
+{
+    x = n_saturate(x);
+    y = n_saturate(y);
+    z = n_saturate(z);
+    w = n_saturate(w);
 }
 
 //------------------------------------------------------------------------------
