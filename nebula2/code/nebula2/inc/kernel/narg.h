@@ -269,7 +269,18 @@ nArg::Copy(va_list & marker)
             break;
 
         case Bool:     
-            this->b = va_arg(marker, bool); 
+            // bool is promoted to int when passed through ...
+            {
+                int tmp = va_arg(marker, int);
+                if (tmp)
+                {
+                    this->b = true;
+                }
+                else
+                {
+                    this->b = false;
+                }
+            }
             break;
 
         case Object:
