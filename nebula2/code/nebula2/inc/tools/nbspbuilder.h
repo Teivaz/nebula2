@@ -3,8 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     A simple BSP builder. Recursively splits a mesh along the world axes 
-    until a defined triangle count per node has been reached. Does not 
-    try to be overly smart about choosing the clip plane.
+    until a defined recursion depth has been reached.
     
     (C) 2003 RadonLabs GmbH
 */
@@ -55,15 +54,15 @@ public:
     /// destructor
     ~nBspBuilder();
     /// build bsp tree
-    bool BuildBsp(const nMeshBuilder& srcMesh, nMeshBuilder& dstMesh, int maxLeafVertices);
+    bool BuildBsp(nMeshBuilder& srcMesh, int maxDepth);
     /// get pointer to resulting bsp tree
     BspNode* GetBspTree() const;
 
 private:
     /// append dstMesh to srcMesh, and update groups in dstMesh
-    int AppendMesh(const nMeshBuilder& srcMesh, nMeshBuilder& dstMesh);
+    int AppendMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh);
     /// recursively create new bsp nodes
-    BspNode* Split(const nMeshBuilder& srcMesh, nMeshBuilder& dstMesh, int maxVertices);
+    BspNode* Split(nMeshBuilder& srcMesh, int groupId, int maxDepth, int depth, int& nextGroupId);
 
     BspNode* rootNode;      // root node of bsp tree
 };
