@@ -53,7 +53,7 @@ nBinScriptServer::BeginWrite(const char* filename, nRoot* obj)
     else
     {
         n_printf("nBinScriptServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        delete file;
+        file->Release();
         return 0;
     }
 }
@@ -67,7 +67,7 @@ nBinScriptServer::EndWrite(nFile* file)
 {
     n_assert(file);
     file->Close();
-    delete file;
+    file->Release();
     return true;
 }
 
@@ -782,7 +782,7 @@ nBinScriptServer::RunScript(const char* filename, const char*& result)
     {
         n_printf("nBinScriptServer::RunScript(): could not open file '%s'\n", filename);
     }
-    delete file;
+    file->Release();
     return retval;
 }
 

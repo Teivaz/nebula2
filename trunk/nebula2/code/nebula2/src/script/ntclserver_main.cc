@@ -124,9 +124,8 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool isStandAlone)
     Unlink from tcl interpreter if running as extension.
 */
 void 
-nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool isStandAlone)
+nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
 {
-    (void)isStandAlone; // avoid 'unused argument warning'
 
     n_assert(interp);
 
@@ -213,7 +212,7 @@ nTclServer::BeginWrite(const char* filename, nRoot* obj)
     else
     {
         n_printf("nTclServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        delete file;
+        file->Release();
         return 0;
     }
 }
@@ -231,7 +230,7 @@ nTclServer::EndWrite(nFile* file)
     file->PutS("# Eof\n");
     
     file->Close();
-    delete file;
+    file->Release();
     return (this->indentLevel == 0);
 }
 

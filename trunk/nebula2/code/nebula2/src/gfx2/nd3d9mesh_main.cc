@@ -497,7 +497,7 @@ nD3D9Mesh::LoadNvx2File()
     if (!file->Open(this->filename.Get(), "rb"))
     {
         n_printf("nD3D9Mesh: could not open file '%s'!\n", this->filename.Get());
-        delete file;
+        file->Release();
         return false;
     }
 
@@ -506,19 +506,19 @@ nD3D9Mesh::LoadNvx2File()
     int numGrps, numVerts, numTris, vertexComponents;
     int vertWidth;
 
-    file->GetInt(magic);
+    magic = file->GetInt();
     if (magic != 'NVX2')
     {
         n_printf("nD3D9Mesh: '%s' is not a NVX2 file!\n", this->filename.Get());
         file->Close();
-        delete file;
+        file->Release();
         return false;
     }
-    file->GetInt(numGrps);
-    file->GetInt(numVerts);
-    file->GetInt(vertWidth);
-    file->GetInt(numTris);
-    file->GetInt(vertexComponents);
+    numGrps = file->GetInt();
+    numVerts = file->GetInt();
+    vertWidth = file->GetInt();
+    numTris = file->GetInt();
+    vertexComponents = file->GetInt();
 
     // set nMesh2 attributes
     this->SetNumGroups(numGrps);
@@ -538,10 +538,10 @@ nD3D9Mesh::LoadNvx2File()
     for (groupIndex = 0; groupIndex < numGrps; groupIndex++)
     {
         int firstVertex, numVertices, firstTriangle, numTriangles;
-        file->GetInt(firstVertex);
-        file->GetInt(numVertices);
-        file->GetInt(firstTriangle);
-        file->GetInt(numTriangles);
+        firstVertex = file->GetInt();
+        numVertices = file->GetInt();
+        firstTriangle = file->GetInt();
+        numTriangles = file->GetInt();
 
         nMeshGroup& group = this->GetGroup(groupIndex);
         group.SetFirstVertex(firstVertex);
@@ -573,7 +573,7 @@ nD3D9Mesh::LoadNvx2File()
 
     // cleanup
     file->Close();
-    delete file;
+    file->Release();
 
     return true;
 }
@@ -594,7 +594,7 @@ nD3D9Mesh::LoadN3d2File()
     if (!file->Open(this->filename.Get(), "r"))
     {
         n_printf("nD3D9Mesh: could not open file '%s'!\n", this->filename.Get());
-        delete file;
+        file->Release();
         return false;
     }
 
@@ -622,7 +622,7 @@ nD3D9Mesh::LoadN3d2File()
             {
                 n_printf("nD3D9Mesh::Load(%s): Invalid type '%s', must be 'n3d2'\n", filename.Get(), typeString);
                 file->Close();
-                delete file;
+                file->Release();
                 return false;
             }
         }
@@ -756,7 +756,7 @@ nD3D9Mesh::LoadN3d2File()
 
     // cleanup
     file->Close();
-    delete file;
+    file->Release();
 
     return true;
 }

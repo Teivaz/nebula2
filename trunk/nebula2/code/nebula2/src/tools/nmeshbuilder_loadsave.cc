@@ -212,7 +212,7 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
         file->Close();
         retval = true;
     }
-    delete file;
+    file->Release();
     return retval;
 }
         
@@ -395,7 +395,7 @@ nMeshBuilder::SaveN3d2(nFileServer2* fileServer, const char* filename)
         file->Close();
         retval = true;
     }
-    delete file;
+    file->Release();
     return retval;
 }
 
@@ -441,7 +441,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                 {
                     n_printf("nMeshBuilder::Load(%s): Invalid type '%s', must be 'n3d2'\n", filename, typeString);
                     file->Close();
-                    delete file;
+                    file->Release();
                     return false;
                 }
             }
@@ -522,7 +522,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
                     {
                         n_printf("nMeshBuilder::Load(%s): Invalid vertex component '%s'\n", filename, str);
                         file->Close();
-                        delete file;
+                        file->Release();
                         return false;
                     }
                 }
@@ -653,7 +653,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
         file->Close();
         retval = true;
     }
-    delete file;
+    file->Release();
 
     // update the triangle group ids from the group map
     this->UpdateTriangleGroupIds(groupMap);
@@ -704,7 +704,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'v' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -722,7 +722,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'vn' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -741,7 +741,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'rgba' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -758,7 +758,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'vt' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -775,7 +775,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'vt1' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -792,7 +792,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'vt2' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -809,7 +809,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'vt3' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				} 
@@ -842,7 +842,7 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 					{
 						n_printf("Broken 'f' line in '%s'!\n", filename);
 						file->Close();
-						delete file;
+						file->Release();
 						return false;
 					}
 				}
@@ -850,11 +850,11 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 		}
 
 		file->Close();
-		delete file;
+		file->Release();
 		return true;
 	}
 
-	delete file;
+	file->Release();
 	return false;
 }
 
