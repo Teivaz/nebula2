@@ -9,8 +9,8 @@
 .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
 .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
 .setfloat "MatSpecularPower" 32.000000
-.settexture "DiffMap0" "textures:box/sandy.tga"
-.settexture "BumpMap0" "textures:box/bump.tga"
+.settexture "DiffMap0" "textures:ball.png"
+.settexture "BumpMap0" "textures:ball_nrm.png"
 .setshader "colr" "shaders:default.fx"
 .setmesh "meshes:sphere/sphere.n3d2"
 .setgroupindex 0

@@ -3,12 +3,12 @@
 # ---
 new nspotlightnode l0
     sel l0
-    .setposition 0 8 0
+    .setposition 0 8 5
     .seteuler 0 0 0
     .setorthogonal 1000 1000 0.25 175
-    .setvector LightDiffuse 1 1 1 1
-    .setvector LightSpecular 1 1 1 1
-    .setvector LightAmbient 0 0 0 0
+    .setvector LightDiffuse 1 0.8 0.7 1
+    .setvector LightSpecular 0.9 0.8 0.5 1
+    .setvector LightAmbient 0.5 0.4 0.4 1
     .settexture LightModMap "textures:system/white.dds"
 sel ..
 # ---
