@@ -34,13 +34,13 @@ char *nPythonServer::Prompt(char *buf, int size)
 
 
 //--------------------------------------------------------------------
-//  Run(const char *cmd_str, const char *& result)
+//  Run(const char *cmdStr, const char *& result)
 //  Wraps Run() with mode
 //--------------------------------------------------------------------
 
-bool nPythonServer::Run(const char *cmd_str, const char*& result)
+bool nPythonServer::Run(const char *cmdStr, const char*& result)
 {
-  return this->Run(cmd_str, Py_single_input, result);
+  return this->Run(cmdStr, Py_single_input, result);
 }
 
 PyObject *NArg2PyObject(nArg *a) 
@@ -87,11 +87,11 @@ bool nPythonServer::RunCommand(nCmd *c)
 }
 
 //--------------------------------------------------------------------
-//  Run(const char *cmd_str, const char *& result)
+//  Run(const char *cmdStr, const char *& result)
 //  Executes a given string as Python code
 //--------------------------------------------------------------------
 
-bool nPythonServer::Run(const char *cmd_str, int mode, const char*& result)
+bool nPythonServer::Run(const char *cmdStr, int mode, const char*& result)
 {
     // buffer was to small :(
     char buffer[1<<12];
@@ -105,8 +105,8 @@ bool nPythonServer::Run(const char *cmd_str, int mode, const char*& result)
     module_dict = PyModule_GetDict(this->nmodule);
     main_module_dict = PyModule_GetDict(this->main_module);
 
-    if (strlen(cmd_str) > 0) {
-      output = PyRun_String((char *)cmd_str, mode, main_module_dict, module_dict);
+    if (strlen(cmdStr) > 0) {
+      output = PyRun_String((char *)cmdStr, mode, main_module_dict, module_dict);
     }
     else {
       retval = true;
@@ -156,9 +156,9 @@ bool nPythonServer::Run(const char *cmd_str, int mode, const char*& result)
 //  Executes the contents of a file as Python code
 //--------------------------------------------------------------------
 
-bool nPythonServer::RunScript(const char *fname, const char*& result)
+bool nPythonServer::RunScript(const char *filename, const char*& result)
 {
-    char fname_buf[N_MAXPATH];
+    char filename_buf[N_MAXPATH];
     char buffer[1024];
     char *exec_str;
     int success = 0;
@@ -171,10 +171,10 @@ bool nPythonServer::RunScript(const char *fname, const char*& result)
 
     // Open file
     nFileServer2* file2 = kernelServer->GetFileServer();
-    file2->ManglePath(fname, fname_buf, sizeof(fname_buf));
+    file2->ManglePath(filename, filename_buf, sizeof(filename_buf));
     nFile* file = file2->NewFileObject();
 
-    if (file->Open(fname_buf, "r")) {
+    if (file->Open(filename_buf, "r")) {
       // We only opened this to be able to report the error ourselves.
       // So, go on, close it now.
       file->Close();
@@ -186,8 +186,8 @@ bool nPythonServer::RunScript(const char *fname, const char*& result)
       // build of Python.  Instead of requiring everyone who has
       // a debug build of Nebula to build Python from source, we're using
       // this work around here.
-      exec_str = (char*)malloc(strlen(fname_buf) + 13);
-      sprintf(exec_str, "execfile('%s')", fname_buf);
+      exec_str = (char*)malloc(strlen(filename_buf) + 13);
+      sprintf(exec_str, "execfile('%s')", filename_buf);
       success = PyRun_SimpleString(exec_str);
       free(exec_str);
 
@@ -202,7 +202,7 @@ bool nPythonServer::RunScript(const char *fname, const char*& result)
     }
     else {
       file->Release();
-      n_printf("Error unable to open file %s", fname);
+      n_printf("Error unable to open file %s", filename);
       return false;
     }
     file->Release();

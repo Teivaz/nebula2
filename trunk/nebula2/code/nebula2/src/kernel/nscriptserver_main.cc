@@ -29,12 +29,12 @@ nScriptServer::~nScriptServer()
 /**
     Run a script statement.
 
-    @param  str         the statement to execute
+    @param  cmdStr      the statement to execute
     @param  result      [out] will be filled with pointer to result
     @return             false if an error occured during execution
 */
 bool 
-nScriptServer::Run(const char* /* str */, const char*& /* result */)
+nScriptServer::Run(const char* /* cmdStr */, const char*& /* result */)
 {
     // overwrite in subclass
     return false;
