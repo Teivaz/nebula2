@@ -2,7 +2,6 @@
 //  (c) 2004 Rafael Van Daele-Hunt
 //------------------------------------------------------------------------------
 #include "BombsquadBruce/ccworld.h"
-#include "BombsquadBruce/profile.h"
 #include "map/nmap.h"
 #include "BombsquadBruce/ccmobileactor.h"
 #include "scene/nshapenode.h"

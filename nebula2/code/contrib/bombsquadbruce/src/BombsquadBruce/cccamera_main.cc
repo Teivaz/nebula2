@@ -4,7 +4,6 @@
 #include "BombsquadBruce/cccamera.h"
 #include "BombsquadBruce/ccroot.h"
 #include "input/ninputserver.h"
-#include "BombsquadBruce/profile.h"
 #include "BombsquadBruce/general.h"
 #include "gfx2/ngfxserver2.h"
 #include "scene/nscenenode.h"

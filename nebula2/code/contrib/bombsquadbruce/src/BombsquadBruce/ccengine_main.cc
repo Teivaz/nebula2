@@ -13,8 +13,6 @@
 #include "gfx2/nd3d9server.h"
 #include "variable/nvariableserver.h"
 
-#include "BombsquadBruce/profile.h"
-
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
 
