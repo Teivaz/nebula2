@@ -60,8 +60,7 @@ nDSoundResource::LoadResource()
     nFileServer2* fileServer = kernelServer->GetFileServer();
 
     // get mangled path name
-    char mangledPath[N_MAXPATH];
-    fileServer->ManglePath(this->GetFilename().Get(), mangledPath, sizeof(mangledPath));
+    nString mangledPath = fileServer->ManglePath(this->GetFilename().Get());
     
     DWORD creationFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_LOCDEFER;
     if (!this->ambient)
@@ -71,7 +70,7 @@ nDSoundResource::LoadResource()
     if (!this->streaming)
     {
         // create a static sound object
-        if (refSoundServer->Create(&(this->dsSound), mangledPath, creationFlags, DS3DALG_DEFAULT, this->numTracks) == false)
+        if (refSoundServer->Create(&(this->dsSound), (LPTSTR)mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, this->numTracks) == false)
         {
             n_printf("nDSoundServer::LoadResource(): Creating static sound '%s' failed!\n", mangledPath);
             return false;
@@ -83,7 +82,7 @@ nDSoundResource::LoadResource()
         // create a streaming sound object (with a 64 KByte streaming buffer)
         int numNotifications = 2;
         int blockSize = (1<<18) / numNotifications;
-        if (refSoundServer->CreateStreaming(&(this->dsSound), mangledPath, creationFlags, DS3DALG_DEFAULT, numNotifications, blockSize) == false)
+        if (refSoundServer->CreateStreaming(&(this->dsSound), (LPTSTR)mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, numNotifications, blockSize) == false)
         {
             n_printf("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!\n", mangledPath);
             return false;

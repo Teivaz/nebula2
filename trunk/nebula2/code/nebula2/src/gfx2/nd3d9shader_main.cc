@@ -97,6 +97,9 @@ nD3D9Shader::LoadResource()
     nString filename = this->GetFilename();
     nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
 
+    // initialize shader index
+    this->shaderIndex = this->refGfxServer->GetShaderIndex(filename.Get());
+    
     //load fx file...
     nFile* file = this->refFileServer->NewFileObject();
 
