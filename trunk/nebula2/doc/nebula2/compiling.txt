@@ -2,92 +2,12 @@ Nebula2 Compile Instructions
 ============================
 15-Mar-03   floh    created
 13-Feb-04   leaf    added "out of date" note
+08-Mar-04   rafael  removed out of date material
 
-NOTE: The text files here are out of date, the latest documentation is within 
-the Doxygen generated docs. An online link to the latest compiling docs is here:
+The latest documentation is within the Doxygen generated docs.
+An online link to the latest compiling docs is here:
 
 http://nebuladevice.sourceforge.net/doc2/doxydoc/nebula2/html/Nebula2Compiling.html
-
-NOTE:
-
-* Please read the release notes first, since a lot has changed in the build process.
-* At the moment, Nebula2 only comiles under Win32 with VS.NET.
-
-
-REQUIRED:
-
-* Win2k or WinXP (other Win32 platforms may work but have not been tested)
-* VisualStudio 7 (.NET)
-* DirectX 9 SDK (http://msdn.microsoft.com/directx)
-* a working Tcl8.4 installation (http://www.scripts.com)
-
-
-PREPARATIONS:
-
-* put the bin/win32 directory into your path
-
-* make sure the uuidgen.exe is in your path, the easiest way 
-  is to run the "Visual Studio .NET Command Prompt" (in the VStudio start menu)
-  as your command shell, as this will set up all required paths.
-
-* Verify that VS.NET knows the .cc file extension by checking 
-  "Tools->Options->Projects->VC++ Build->C/C++ File Extensions"
-  (I think this is enabled by default now).
-  
-* Under "Tools->Options->Projects->VC++ Directories" make sure
-  that the DX9 libs and include directories are before 
-  VStudio's lib and include directory paths.
-  
-* In your system settings, create an environment variable
-  named RL_HOME which points to your nebula2 installation
-  directory. There should be no spaces in your install path
-  (this is not tested and may result in, uhm, "unexpected behaviour").
-  
-  Make sure you use forward slashes. E.g.:
-  
-  Name:  RL_HOME
-  Value: c:/nebula2
-  
-  
-CREATING THE BUILD FILES:
-
-* In the command line, go to code/nebula2/src and type
-
-    tclsh84 update.tcl
-    
-  This should generate VStudio7 project and solution files in the code/vstudio directory.
-   
-
-COMPILING:
-
-* double click the file /code/nebula2/vstudio/tools.sln
-
-* in VStudio, do a "Rebuild Solution", this will compile the Nebula executables
-  into the /bin/win32 directory
-
-TESTING:
-
-* double click the nviewer.exe or nsh.exe programs for a first test
-
-* In /export/gfxlib/examples, do a "nviewer -view torus.n2", this should display
-  a bumpy shiny donut (hit '1' to switch to 1024x768 fullscreen).
-
-* The schwirl.n2 sample is a quick'n'dirty vertex skinning demo, forgive the
-  shitty animation and uv mapping.
-
-* Note that the samples will not look very impressive unless you have
-  a graphics card that can do vertex and pixel shaders 1.1 (GForce3 and up,
-  but not GForce4MX, ATI Radeon 8500 and up). On lesser hardware the 
-  specular lighting will not work.
-  
-* If you experience stuttering in windowed mode, try switching to
-  fullscreen mode (Alt-Enter, or '1' for a higher resulotion), this seems to 
-  fix the problem.
-
-* The DX9 HLSL shader files are in /export/shaders/dx9
- 
--Floh.
-
   
   
 
