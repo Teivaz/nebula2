@@ -16,7 +16,8 @@ nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 //------------------------------------------------------------------------------
 /**
 */
-nMaterialNode::nMaterialNode()
+nMaterialNode::nMaterialNode() :
+    shaderArray(4, 4)
 {
     // empty
 }
@@ -155,6 +156,7 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
 {
     n_assert(sceneServer);
     n_assert(renderContext);
+    nGfxServer2* gfxServer = this->refGfxServer.get();
 
     // find shader matching fourcc code, do nothing if shader not exists
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
@@ -175,6 +177,21 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
 
     // invoke shader manipulators
     this->InvokeShaderAnimators(renderContext);
+
+    // set texture transforms
+    n_assert(nGfxServer2::MaxTextureStages >= 4);
+    static matrix44 m;
+    this->textureTransform[0].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture0, m);
+
+    this->textureTransform[1].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture1, m);
+
+    this->textureTransform[2].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture2, m);
+
+    this->textureTransform[3].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture3, m);
 
     // transfer shader parameters en block
     shader->SetParams(this->shaderParams);

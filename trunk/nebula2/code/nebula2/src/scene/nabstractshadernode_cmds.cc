@@ -5,6 +5,12 @@
 #include "scene/nabstractshadernode.h"
 #include "kernel/npersistserver.h"
 
+static void n_setuvpos(void* slf, nCmd* cmd);
+static void n_getuvpos(void* slf, nCmd* cmd);
+static void n_setuveuler(void* slf, nCmd* cmd);
+static void n_getuveuler(void* slf, nCmd* cmd);
+static void n_setuvscale(void* slf, nCmd* cmd);
+static void n_getuvscale(void* slf, nCmd* cmd);
 static void n_settexture(void* slf, nCmd* cmd);
 static void n_gettexture(void* slf, nCmd* cmd);
 static void n_setint(void* slf, nCmd* cmd);
@@ -35,6 +41,12 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
+    cl->AddCmd("v_setuvpos_iff",    'SUVP', n_setuvpos);
+    cl->AddCmd("ff_getuvpos_i",     'GUVP', n_getuvpos);
+    cl->AddCmd("v_setuveuler_iff",  'SUVE', n_setuveuler);
+    cl->AddCmd("ff_getuveuler_i",   'GUVE', n_getuveuler);
+    cl->AddCmd("v_setuvscale_iff",  'SUVS', n_setuvscale);
+    cl->AddCmd("ff_getuvscale_i",   'GUVS', n_getuvscale);
     cl->AddCmd("v_settexture_ss",   'STXT', n_settexture);
     cl->AddCmd("s_gettexture_s",    'GTXT', n_gettexture);
     cl->AddCmd("v_setint_si",       'SINT', n_setint);
@@ -46,6 +58,132 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setvector_sffff", 'SVEC', n_setvector);
     cl->AddCmd("ffff_getvector_s",  'GVEC', n_getvector);
     cl->EndCmds();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setuvpos
+    @input
+    i(Layer), fff(Pos)
+    @output
+    v
+    @info
+    Set uv coordinate translation for given uv set.
+*/
+static void
+n_setuvpos(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    static vector2 v;
+    int i = cmd->In()->GetI();
+    v.x = cmd->In()->GetF();
+    v.y = cmd->In()->GetF();
+    self->SetUvPos(i, v);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getuvpos
+    @input
+    i(Layer)
+    @output
+    fff(Pos)
+    @info
+    Get uv coordinate translation for given uv set.
+*/
+static void
+n_getuvpos(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    const vector2& v = self->GetUvPos(cmd->In()->GetI());
+    cmd->Out()->SetF(v.x);
+    cmd->Out()->SetF(v.y);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setuveuler
+    @input
+    i(Layer), fff(EulerAngles)
+    @output
+    v
+    @info
+    Set uv coordinate euler rotation for given uv set.
+*/
+static void
+n_setuveuler(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    static vector2 v;
+    int i = cmd->In()->GetI();
+    v.x = cmd->In()->GetF();
+    v.y = cmd->In()->GetF();
+    self->SetUvEuler(i, v);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getuveuler
+    @input
+    i(Layer)
+    @output
+    fff(EulerAngles)
+    @info
+    Get uv coordinate euler rotation for given uv set.
+*/
+static void
+n_getuveuler(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    const vector2& v = self->GetUvEuler(cmd->In()->GetI());
+    cmd->Out()->SetF(v.x);
+    cmd->Out()->SetF(v.y);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setuvscale
+    @input
+    i(Layer), fff(Scale)
+    @output
+    v
+    @info
+    Set uv coordinate scale for given uv set.
+*/
+static void
+n_setuvscale(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    static vector2 v;
+    int i = cmd->In()->GetI();
+    v.x = cmd->In()->GetF();
+    v.y = cmd->In()->GetF();
+    self->SetUvScale(i, v);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getuvscale
+    @input
+    i(Layer)
+    @output
+    fff(Scale)
+    @info
+    Get uv coordinate scale for given uv set.
+*/
+static void
+n_getuvscale(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    const vector2& v = self->GetUvScale(cmd->In()->GetI());
+    cmd->Out()->SetF(v.x);
+    cmd->Out()->SetF(v.y);
 }
 
 //------------------------------------------------------------------------------
@@ -256,6 +394,40 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
         nCmd* cmd;
         int i;
         int num;
+        static const vector2 nullVec;
+        static const vector2 oneVec(1.0f, 1.0f);
+
+        //--- setuvpos/setuveuler/setuvscale ---
+        for (i = 0; i < nGfxServer2::MaxTextureStages; i++)
+        {
+            const vector2& p = this->textureTransform[i].gettranslation();
+            const vector2& e = this->textureTransform[i].geteulerrotation();
+            const vector2& s = this->textureTransform[i].getscale();
+            if (!p.isequal(nullVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SUVP');
+                cmd->In()->SetI(i);
+                cmd->In()->SetF(p.x);
+                cmd->In()->SetF(p.y);
+                ps->PutCmd(cmd);
+            }
+            if (!e.isequal(nullVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SUVE');
+                cmd->In()->SetI(i);
+                cmd->In()->SetF(e.x);
+                cmd->In()->SetF(e.y);
+                ps->PutCmd(cmd);
+            }
+            if (!s.isequal(oneVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SUVS');
+                cmd->In()->SetI(i);
+                cmd->In()->SetF(s.x);
+                cmd->In()->SetF(s.y);
+                ps->PutCmd(cmd);
+            }
+        }
 
         //--- settexture ---
         num = this->texNodeArray.Size();
