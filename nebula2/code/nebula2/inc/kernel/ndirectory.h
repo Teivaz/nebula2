@@ -41,6 +41,8 @@ public:
     virtual bool Open(const char* dirName);
     /// closes the directory
     virtual void Close();
+	/// determines whether the directory is open
+    virtual bool IsOpen() const;
     /// get the full path name of the directory itself
     const char* GetPathName() const;
     /// check if the directory is empty
@@ -55,9 +57,6 @@ public:
     virtual nEntryType GetEntryType();
 
 protected:
-    /// determines wether the directory is opened
-    virtual bool IsOpen() const;
-
     nFileServer2* fs;
     bool empty;
     char path[N_MAXPATH];
