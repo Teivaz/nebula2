@@ -12,6 +12,8 @@
       output is recorded
     - creates a message box for nKernelServer::Message() 
       and nKernelServer::Error()
+    - Places log files in C:\Documents and Settings\<your username>\
+      Local Settings\Application Data\RadonLabs\Nebula2
 
     (C) 2003 RadonLabs GmbH
 */
