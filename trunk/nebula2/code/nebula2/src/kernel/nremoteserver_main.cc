@@ -68,7 +68,7 @@ nRemoteServer::Close()
 
     // release all client context objects
     nClientContext* curContext;
-    while (curContext = (nClientContext*) this->clientContexts.RemHead())
+    while ((curContext = (nClientContext*) this->clientContexts.RemHead()))
     {
         n_delete curContext;
     }
@@ -227,7 +227,7 @@ nRemoteServer::Trigger()
                         // restore the original cwd
                         kernelServer->PopCwd();
                     }
-                    while (curString = recvMsg.GetNextString());
+                    while ((curString = recvMsg.GetNextString()));
                 }
                 else
                 {
