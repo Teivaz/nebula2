@@ -210,12 +210,10 @@ static int getInt(const char *str, const char *attr)
 
 //------------------------------------------------------------------------------
 /**
-    Mappt einen String der Form "devN:channel" in ein
-    Input-Event. Anhand der Directory-Struktur unter
-    /sys/share/input/devs wird ermittelt, ob das Device existiert
-    und ob der Channel unterstuetzt wird. Ist das nicht der
-    Fall ist das InputEvent ungueltig und die Routine
-    kehrt false zurueck. 
+    Maps a string of the form "devN:channel" to an nInputEvent.
+    The directory structure under /sys/share/input/devs is used to
+    determine if the device exists and the channel is supported.
+    If not, the nInputEvent is invalid and the function returns false.
 */
 bool 
 nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
@@ -226,7 +224,7 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
     nRoot *dev;
     bool retval = false;
 
-    // loesse Device und Channel auf...
+    // separate device and channel strings...
     n_strncpy2(buf,str,sizeof(buf));
     dev_str  = buf;
     chnl_str = strchr(buf,':');
@@ -240,14 +238,14 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
         return false;
     }
 
-    // suche Device
+    // search for device
     sprintf(fname,"/sys/share/input/devs/%s",dev_str);
     dev = kernelServer->Lookup(fname);
     if (dev) 
     {
         nEnv *channel;
         kernelServer->PushCwd(dev);
-        // suche Channel
+        // search for channel
         sprintf(fname,"channels/%s",chnl_str);
         channel = (nEnv *) kernelServer->Lookup(fname);
         if (channel) 
