@@ -4,7 +4,7 @@
 //  (C) 1999 A.Weissflog
 //-------------------------------------------------------------------
 #include "kernel/nenv.h"
-#include "gfx2/ngfxserver2.h"
+
 #include "octree/noctree.h"
 //#include "gfx2/nprimitiveserver.h"
 
@@ -16,7 +16,8 @@ nNebulaScriptClass(nOctree, "nroot");
 */
 //-------------------------------------------------------------------
 nOctree::nOctree() :
-    clipPlanes()
+    refGfxServer("/sys/servers/gfx")
+    //clipPlanes()
 {
     int i;
     this->visualize  = false;

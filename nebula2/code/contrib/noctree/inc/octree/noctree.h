@@ -32,9 +32,8 @@
 #include "kernel/ntypes.h"
 #include "kernel/nroot.h"
 #include "kernel/nref.h"
-#include "mathlib/matrix.h"
-#include "mathlib/bbox.h"
-#include "mathlib/sphere.h"
+#include "gfx2/ngfxserver2.h"
+#include "mathlib/vector.h"
 
 //--------------------------------------------------------------------
 /**
@@ -165,6 +164,8 @@ public:
 #define N_OCT_MAXRADIUS (199999.0f)
 
 class nGfxServer2;
+class nOctVisitor;
+
 class nOctree : public nRoot {
 protected:
     enum {
@@ -180,8 +181,6 @@ protected:
         N_OCT_CLIPZ1 = (1<<5),
     };
 
-    matrix44 vp_matrix;
-    bbox3 collect_bbox;
     int subdiv_num;                 ///< Subdivision threshold.  Subdivides when the number of elements reaches this value.
     bool visualize;
 
@@ -193,8 +192,7 @@ protected:
     int ext_array_size;
     nOctElement **ext_collect_array;
 
-    /// Clip planes for frustum collection
-    vector4 clipPlanes[32];
+    nAutoRef<nGfxServer2> refGfxServer;
 
 public:
     static nClass *local_cl;
@@ -204,7 +202,7 @@ public:
     virtual ~nOctree();
 
     virtual void SetSubdivNum(int);
-    virtual int GetSubdivNum(void);
+    virtual int  GetSubdivNum(void);
     virtual void SetVisualize(bool);
     virtual bool GetVisualize(void);
 
@@ -213,12 +211,15 @@ public:
     virtual void UpdateElement(nOctElement *, const vector3&, float);
     virtual void BalanceTree(void);
 
-    virtual int CollectByBBox(bbox3& bbox, nOctElement **, int);
-    virtual int CollectByViewvolOrBBox(matrix44& mv, matrix44& p, bbox3& bbox, nOctElement **, int);
-    virtual int CollectByFrustum(nGfxServer2* gfx_server, nOctElement**, int);
-    virtual int CollectBySphere(const sphere& clip, nOctElement**, int);
+    nOctNode* GetRoot() const;
+    nGfxServer2* GetGfxServer2();
+
+	virtual int Collect(nOctVisitor& culler, nOctElement** ext_array, int size);
 
     virtual void Visualize(nGfxServer2 *);
+
+    void collect(nOctElement *);
+    void recurse_collect_nodes_with_flags(nOctNode *, int);
 
 protected:
     nOctNode *alloc_node(nOctNode *p, float x0, float x1, float y0, float y1, float z0, float z1);
@@ -234,29 +235,25 @@ protected:
     void balance(nOctNode *);
     //void visualize_node(nOctNode *, nPrimitiveServer *);
 
-    int box_clip_viewvol(vector3&, vector3&);
-    int box_clip_box(vector3&, vector3&);
-    void collect(nOctElement *);
-    void recurse_collect_nodes_with_flags(nOctNode *, int);
-    void collect_nodes_in_viewvol_or_bbox(nOctNode *);
-    void recurse_collect_by_viewvol_or_bbox(nOctNode *);
-    void collect_nodes_in_bbox(nOctNode *);
-    void recurse_collect_by_bbox(nOctNode *);
-
-    // CollectByFrustum methods
-    void init_clip_planes_for_frustum(nGfxServer2* gfx_server);
-    void recurse_collect_within_clip_planes(nOctNode* on, unsigned int clip_mask);
-    bool box_clip_against_clip_planes(vector3& p0, vector3& p1, vector4* planes,
-                                      unsigned int& out_clip_mask,
-                                      unsigned int in_clip_mask);
-    void collect_nodes_within_clip_planes(nOctNode* on, unsigned int clip_mask);
-
-    // CollectBySphere methods
-    void recurse_collect_by_sphere(nOctNode* on, const sphere& clip,
-                                                 bool full_intersect);
-    void collect_nodes_in_sphere(nOctNode* on, const sphere& clip,
-                                               bool full_intersect);
 };
+
+//--------------------------------------------------------------------
+/**
+*/
+inline 
+nOctNode* nOctree::GetRoot() const
+{
+    return this->tree_root;
+}
+
+//--------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2* nOctree::GetGfxServer2()
+{
+    return refGfxServer.get();
+}
 //--------------------------------------------------------------------
 #endif
 
