@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nAnimationServer
 //------------------------------------------------------------------------------
 //  nanimationserver_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -23,7 +22,7 @@ nAnimationServer::nAnimationServer() :
 nAnimationServer::~nAnimationServer()
 {
     // unload all animation resources
-    this->refResourceServer->UnloadResources(nResource::ANIMATION);
+    this->refResourceServer->UnloadResources(nResource::Animation);
 }
 
 //------------------------------------------------------------------------------
@@ -38,14 +37,14 @@ nAnimation*
 nAnimationServer::NewMemoryAnimation(const char* rsrcName)
 {
     n_assert(rsrcName);
-    return (nAnimation*) this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::ANIMATION);
+    return (nAnimation*) this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::Animation);
 }
 
 //------------------------------------------------------------------------------
 /**
     Create a new streaming animation. Streaming animations stream their
     data from disk, which has the advantage that animations can be very
-    long (hours if you want), but each streaming animation needs it
+    long (hours if you want), but each streaming animation needs its
     own small streaming buffer, which may add up when many objects are driven
     by streamed animations, also disk bandwidth and seek latency may become
     a limiting factor.
@@ -56,5 +55,5 @@ nAnimationServer::NewMemoryAnimation(const char* rsrcName)
 nAnimation*
 nAnimationServer::NewStreamingAnimation()
 {
-    return (nAnimation*) this->refResourceServer->NewResource("nstreaminganimation", 0, nResource::ANIMATION);
+    return (nAnimation*) this->refResourceServer->NewResource("nstreaminganimation", 0, nResource::Animation);
 }
