@@ -43,7 +43,8 @@ nebula2/
                         tutorialapp_entry.cc
                         ntutorialappstate_main.cc
                 scripts/
-                    startup.tcl
+                    napplication_tutorial/
+                        startup.tcl
 @endverbatim
 Note that it is structured differently to how you'd structure your own
 projects and the reason for that is explained later on. Also, if you want
