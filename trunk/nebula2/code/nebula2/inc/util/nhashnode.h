@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nHashNode
+    @ingroup NebulaDataTypes
 
     A node element in a nHashList.
 

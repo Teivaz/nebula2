@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nEditLine
+    @ingroup NebulaDataTypes
 
     A line edit object.
     

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nThreadVariable
+    @ingroup NebulaDataTypes
 
     A thread safe variable of any type. Protects assignments with a mutex.
     
