@@ -1,0 +1,6 @@
+/**
+    @defgroup NNetworkContribModule Networking Contributed Module
+    @ingroup NebulaContribModules
+    @brief nNetwork implements basic networking functionality.
+*/
+
