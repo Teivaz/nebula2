@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -10,11 +10,11 @@
 #include "map/mapquadtree.h"
 #include "map/mapblock.h"
 #include "map/nmapnode.h"
-//#include "util/nwatchvar.h"
 #include "map/nmap.h"
 
 
-bool nMapNode::HasGeometry() const
+bool 
+nMapNode::HasGeometry() const
 {
     return true;
 }
@@ -23,7 +23,8 @@ bool nMapNode::HasGeometry() const
 /**
     Compute
 */
-bool nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderContext)
+bool 
+nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderContext)
 {
     int i;
     n_assert(scene_graph);
@@ -47,9 +48,9 @@ bool nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * rende
 
     // Calculate mipmaps
     matrix44 view;
-	view = gfx_server->GetTransform(nGfxServer2::View);
+    view = gfx_server->GetTransform(nGfxServer2::View);
     vector3 camera_pos = view.pos_component();
-	
+    
     for (i = 0; i < num_blocks; ++i)
     {
         MapBlock* block = (MapBlock*)collect_array[i]->GetPtr();
@@ -75,7 +76,7 @@ bool nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * rende
     for (i = 0; i < num_blocks; ++i)
     {
         MapBlock* block = (MapBlock*)collect_array[i]->GetPtr();
-		block->Render(scene_graph);
+        block->Render(scene_graph);
     }
     return true;
 }
@@ -83,7 +84,8 @@ bool nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * rende
 /**
     Visualises terrain occlusion details
 */
-int nMapNode::Visualize()
+int 
+nMapNode::Visualize()
 {
     nGfxServer2* gfx_server = refGfxServer.get();
     if (NULL != mapQuadtree)

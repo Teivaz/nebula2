@@ -1,13 +1,11 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
 //-----------------------------------------------------------------------------
-//#include "gfx/nindexbuffer.h"
 #include "scene/nsceneserver.h"
-//#include "gfx/nvertexbuffer.h"
 #include "map/nmapnode.h"
 #include "map/nmap.h"
 
@@ -23,38 +21,52 @@ nMapNode::nMapNode() :
     numMipMapLevels(0),
     numBlocks(0),
     blockArray(),
-    mapQuadtree(NULL),
+    mapQuadtree(0),
     renderDebug(false),
-    meshUsage(nMesh2::WriteOnce)
+    meshUsage(nMesh2::WriteOnce),
+    resourceLoader(0)
 {
     refGfxServer = "/sys/servers/gfx";
-    sprintf(edgebuf_name, "%08xe", (unsigned int)this);
-    sprintf(stripbuf_name, "%08xs", (unsigned int)this);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 nMapNode::~nMapNode()
-{	
+{   
 }
 
 /**
 */
-bool nMapNode::LoadResources()
+bool 
+nMapNode::LoadResources()
 {
     nMaterialNode::LoadResources();
     if (true == this->refMap.isvalid())
+    {
         refMap->LoadMap();
-	return true;
+    }
+    return true;
 }
 
+void 
+nMapNode::SetResourceLoader( const char* resourceLoader )
+{
+    this->resourceLoader = resourceLoader;
+}
+
+const char* 
+nMapNode::GetResourceLoader() const
+{
+    return this->resourceLoader;
+}
 
 /**
     If this replaces an existing heightmap,
     it forces a reload immediately to ensure sim runs without a hitch.
 */
-void nMapNode::SetMapPath(const char* name)
+void 
+nMapNode::SetMapPath(const char* name)
 {
     refMap = name;
     isDirty = true;
@@ -63,7 +75,8 @@ void nMapNode::SetMapPath(const char* name)
 /**
     @return The filename for the heightmap data.
 */
-const char* nMapNode::GetMapPath()
+const char* 
+nMapNode::GetMapPath()
 {
     return refMap.getname();
 }
@@ -82,7 +95,8 @@ const char* nMapNode::GetMapPath()
         
     @param size A value of 2^n+1
 */
-void nMapNode::SetBlockSize(int size)
+void 
+nMapNode::SetBlockSize(int size)
 {
     n_assert(0 < size);
     n_assert(size%2);
@@ -90,13 +104,15 @@ void nMapNode::SetBlockSize(int size)
     isDirty = true;
 }
 
-void nMapNode::SetError(int error)
+void 
+nMapNode::SetError(int error)
 {
     pixelError = error;
     isDirty = true;
 }
 
-int nMapNode::GetError() const
+int 
+nMapNode::GetError() const
 {
     return pixelError;
 }
@@ -104,7 +120,8 @@ int nMapNode::GetError() const
 /**
     @param size Size of the texture detail in metres.
 */
-void nMapNode::SetDetailSize(float size)
+void 
+nMapNode::SetDetailSize(float size)
 {
     n_assert(0.0f < size);
     detailSize = size;
@@ -114,7 +131,8 @@ void nMapNode::SetDetailSize(float size)
 /**
     @return Size of a single detail texture.
 */
-float nMapNode::GetDetailSize()
+float 
+nMapNode::GetDetailSize()
 {
     return detailSize;
 }

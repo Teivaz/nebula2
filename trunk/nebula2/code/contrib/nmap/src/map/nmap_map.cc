@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -12,7 +12,8 @@
     Load height map from image file.
     Set isDirty to false when done.
 */
-void nMap::LoadMap()
+void 
+nMap::LoadMap()
 {
     if (!isDataDirty)
     {
@@ -20,10 +21,10 @@ void nMap::LoadMap()
     }
 
     
-	const char * path = GetHeightMap();
-	char mangledPath[N_MAXPATH];
-	
-	this->refFileServer->ManglePath(path, mangledPath, N_MAXPATH);
+    const char * path = GetHeightMap();
+    char mangledPath[N_MAXPATH];
+    
+    this->refFileServer->ManglePath(path, mangledPath, N_MAXPATH);
 
     // Load heightmap from image
     if( mangledPath )
@@ -50,7 +51,8 @@ void nMap::LoadMap()
 /**
     Read in heightmap info from image file.
 */
-bool nMap::LoadFromImage(const char* abs_path)
+bool 
+nMap::LoadFromImage(const char* abs_path)
 {
     n_assert(abs_path);
     bool retval = false;
@@ -99,8 +101,14 @@ bool nMap::LoadFromImage(const char* abs_path)
                 ushort dbl_byte = (highByte<<8) | lowByte;
                 dbl_byte >>= 8;
 
-                if (max_height < dbl_byte)  max_height = dbl_byte;
-                if (min_height > dbl_byte) min_height = dbl_byte;
+                if (max_height < dbl_byte)
+                {
+                    max_height = dbl_byte;
+                }
+                if (min_height > dbl_byte)
+                {
+                    min_height = dbl_byte;
+                }
  
                 float height = heightMin + heightScale*float(dbl_byte);
                 pointData[x + y*mapDimension].coord.set(gridInterval * float(x), height, gridInterval * float(y));
@@ -139,7 +147,8 @@ bool nMap::LoadFromImage(const char* abs_path)
         -1   0   1          -1  -2  -1
 
 */
-void nMap::CalculateNormals()
+void 
+nMap::CalculateNormals()
 {
     vector3 ns, we, normal;
 

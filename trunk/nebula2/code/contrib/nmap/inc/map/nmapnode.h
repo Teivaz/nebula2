@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -34,7 +34,7 @@
 
     @bug Not more than one of these nodes can be rendered at a time.
 
-    (C)	2002    ling
+    (C) 2002    ling
 */
 
 #include "scene/nscenenode.h"
@@ -58,16 +58,21 @@ public:
     /// persistency
     virtual bool SaveCmds(nPersistServer* persistServer);
     /// Preload resources
-	virtual bool LoadResources();
+    virtual bool LoadResources();
 
-	virtual bool HasGeometry() const;
+    virtual bool HasGeometry() const;
     /// update internal state and render
-	virtual bool RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderContext);
+    virtual bool RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderContext);
 
     /// get the mesh usage flags required by this node
     int GetMeshUsage() const;
     /// override the default mesh usage for this node
     void SetMeshUsage(int);
+
+    /// sets the identifier of an nMapResourceLoader to be used by MapBlocks
+    void SetResourceLoader( const char* );
+    /// gets the identifier of an nMapResourceLoader to be used by MapBlocks
+    const char* GetResourceLoader() const;
 
     void SetMapPath(const char*);
     const char* GetMapPath();
@@ -81,7 +86,6 @@ public:
     virtual void SetDetailSize(float);
     /// Get number of times detail texture is repeated
     virtual float GetDetailSize();
-
     int GetNumMipMapLevels() const;
     float GetDetailScale() const;
 
@@ -93,7 +97,6 @@ public:
     nAutoRef<nGfxServer2> refGfxServer;
 
 private:
-
     // Map loading methods
     void ProcessMap();
     void LinkBlocks();
@@ -123,10 +126,10 @@ private:
     MapQuadtree* mapQuadtree;
     /// Debug method
     bool renderDebug;
-    /// to generate unique buf_name
-    char edgebuf_name[10], stripbuf_name[10];
     /// used for nMesh2::SetUsage:
     int meshUsage;
+    /// the identifier of an nMapResourceLoader to be used by MapBlocks
+    const char* resourceLoader;
 };
 
 //---------------------------------------------------------------------------

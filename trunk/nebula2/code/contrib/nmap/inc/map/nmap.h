@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -26,15 +26,13 @@
     @todo Make nMapNode register itself as a dependent node to be notified
     whenever the heightmap data changes.
 
-    (C)	2002	ling
+    (C) 2002    ling
 */
 #include "kernel/nroot.h"
 #include "kernel/nfileserver2.h"
 #include "mathlib/bbox.h"
 #include "kernel/nautoref.h"
 #include "resource/nresource.h"
-
-//#include "util/nwatchvar.h"
 
 //---------------------------------------------------------------------------
 /**
@@ -96,7 +94,7 @@ private:
 
     /// Heightmap image file
     //nResource imagePath;
-	nString imagePath; 
+    nString imagePath; 
     /// Grid spacing
     float gridInterval;
     /// Minimum terrain height
@@ -112,7 +110,6 @@ private:
     bbox3 boundingBox;
     /// Point data, or heightmap data
     MapPoint* pointData;
-
 };
 
 //---------------------------------------------------------------------------
@@ -142,7 +139,9 @@ nMap::GetPoint(int x, int z) const
     @brief Standard interpolate method.
     Is there one in Nebula I have not seen?
 */
-inline float nMap::Interpolate(float scale, float a, float b) const
+inline 
+float 
+nMap::Interpolate(float scale, float a, float b) const
 {
     return scale*(1-b) + (a*b);
 }

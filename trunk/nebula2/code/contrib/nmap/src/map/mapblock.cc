@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -8,7 +8,8 @@
 #include "map/nmap.h"
 #include "map/mapquadtree.h"
 #include "map/mapblock.h"
-
+#include "map/nmapresourceloader.h"
+#include <strstream> 
 /**
     Automatically infer map position and obtain centre and all that.
 */
@@ -24,30 +25,35 @@ MapBlock::MapBlock(nMapNode* m) :
     currentStep(1),
     quadElement(NULL),
     curVertex(0),
-	curIndexBuffer(NULL)
+    curIndexBuffer(NULL)
 {
     memset(neighborBlock, 0, 4 * sizeof(MapBlock*));
-    //sprintf(mapvbuf_name, "%08xm", (unsigned int)this);
 }
 
 MapBlock::~MapBlock()
 {
-	if (meshTriStrip != NULL) {
-		n_delete meshTriStrip; 
-	}
+    if (meshTriStrip != NULL) 
+    {
+        n_delete meshTriStrip; 
+    }
 
     // Assume someone else has removed it for us
     if (NULL != quadElement)
+    {
         n_delete quadElement;
+    }
 
     if (NULL != minD2)
+    {
         delete[] minD2;
+    }
 }
 
 /**
     @brief Initialise vertex buffer
 */
-void MapBlock::Init(nGfxServer2 * gfx_server, int num, int x, int z)
+void 
+MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, int x, int z)
 {
     startX = blockSize * x - x;
     startZ = blockSize * z - z;
@@ -65,70 +71,41 @@ void MapBlock::Init(nGfxServer2 * gfx_server, int num, int x, int z)
         }
     }
 
-    //char vbuf_name[80];
-    //sprintf(vbuf_name, "%s%d", mapvbuf_name, num);
-
-	// Create a mesh for each node for triangle strips
-	meshTriStrip = map->refGfxServer->NewMesh(0);
-	n_assert(meshTriStrip);
-	meshTriStrip->SetNumGroups(2);
-	meshTriStrip->SetVertexComponents( 
-		nMesh2::Coord | 
-		nMesh2::Normal |
-		nMesh2::Uv0 |
-		nMesh2::Uv1 );
+    // Create a mesh for each node for triangle strips
+    meshTriStrip = map->refGfxServer->NewMesh(0);
+    n_assert(meshTriStrip);
+    meshTriStrip->SetVertexComponents( 
+        nMesh2::Coord | 
+        nMesh2::Normal |
+        nMesh2::Uv0 |
+        nMesh2::Uv1 );
     meshTriStrip->SetUsage( map->GetMeshUsage() );
-	int num_vertices = map->GetBlockSize() * map->GetBlockSize();
-	meshTriStrip->SetNumVertices(num_vertices);
-	// indices needed by the patch
-	int num_indices = 6 * map->GetBlockSize() * map->GetBlockSize();
-	// indices needed by the crack fixes
-	num_indices += (map->GetBlockSize()-1) * (map->GetBlockSize()-1) * 4;
-	meshTriStrip->SetNumIndices(num_indices);
+    int num_vertices = map->GetBlockSize() * map->GetBlockSize();
+    meshTriStrip->SetNumVertices(num_vertices);
+    // indices needed by the patch
+    int num_indices = 6 * map->GetBlockSize() * map->GetBlockSize();
+    // indices needed by the crack fixes
+    num_indices += (map->GetBlockSize()-1) * (map->GetBlockSize()-1) * 4;
+    meshTriStrip->SetNumIndices(num_indices);
+    
+    meshTriStrip->SetResourceLoader( resourceLoader );
+    meshTriStrip->SetFilename( GenerateResourceLoaderString() );
+    meshTriStrip->Load();
+}
 
-	// mesh vertex and index buffers are created empty
-	meshTriStrip->Load();
-
-	float * vbuf = meshTriStrip->LockVertices();
-	n_assert(vbuf);
-
-    float dim = float(map_data->GetDimension()-1);
-
-    // Create a bounding box for the vertex buffer
-    vector2 uv;
-    for (int j = 0; j < map->GetBlockSize(); ++j)
-    {
-        int z = startZ + j;
-        for (int i = 0; i < map->GetBlockSize(); ++i)
-        {
-            int x = startX + i;
-            const MapPoint& pt = map_data->GetPoint(x, z);
-
-            int index = i + j * map->GetBlockSize();
-
-			*(vbuf++) = pt.coord.x;
-			*(vbuf++) = pt.coord.y;
-			*(vbuf++) = pt.coord.z;
-			*(vbuf++) = pt.normal.x;
-			*(vbuf++) = pt.normal.y;
-			*(vbuf++) = pt.normal.z;
-
-            float u = x / dim;
-            float v = 1.0f - z / dim;
-
-			*(vbuf++) = u;
-			*(vbuf++) = v;
-
-			*(vbuf++) = u * map->GetDetailScale();
-			*(vbuf++) = v * map->GetDetailScale();
-        }
-    }
-	meshTriStrip->UnlockVertices();
-	meshTriStrip->GetGroup(0).SetFirstVertex(0);
-	meshTriStrip->GetGroup(0).SetNumVertices(num_vertices);
-	meshTriStrip->GetGroup(0).SetFirstIndex(0);
-	meshTriStrip->GetGroup(0).SetNumIndices(num_indices);
-	meshTriStrip->GetGroup(0).SetBoundingBox(boundingBox);
+const char* 
+MapBlock::GenerateResourceLoaderString()
+{
+    char fullName[MAX_PATH];
+    map->GetFullName( fullName, MAX_PATH );
+    std::strstream resourceLoaderStr;
+    resourceLoaderStr << fullName
+                      << nMapResourceLoader::SEPARATOR
+                      << this->startX
+                      << nMapResourceLoader::SEPARATOR
+                      << this->startZ
+                      << '\0';
+    return resourceLoaderStr.str();
 }
 
 /**
@@ -138,7 +115,8 @@ void MapBlock::Init(nGfxServer2 * gfx_server, int num, int x, int z)
     For each mip map level, it takes the greatest delta from that level
     to the missing vertices.
 */
-void MapBlock::CalculateMinD2Levels(float c2)
+void 
+MapBlock::CalculateMinD2Levels(float c2)
 {
     nMap* map_data = map->GetMap();
     // d for level 0 is always 0
@@ -200,10 +178,11 @@ float MapBlock::BilinearInterpolate(float* h, float x, float z) const
 /**
     Render block
 */
-void MapBlock::Render(nSceneServer * scene_graph)
+void 
+MapBlock::Render(nSceneServer * scene_graph)
 {
-	BeginRender(0);
-	ushort * pIndex = curIndexBuffer;
+    BeginRender();
+    ushort * pIndex = curIndexBuffer;
 
     currentStep = 1 << currentLevel;
 
@@ -220,13 +199,21 @@ void MapBlock::Render(nSceneServer * scene_graph)
     int end_z = blockSize-1;
 
     if (true == align_north)
+    {
         start_z += currentStep;
+    }
     if (true == align_south)
+    {
         end_z -= currentStep;
+    }
     if (true == align_west)
+    {
         start_x += currentStep;
+    }
     if (true == align_east)
+    {
         end_x -= currentStep;
+    }
 
     // Strip diagonals towards se, i.e. trailing diagonals
     bool downwards = true;
@@ -237,41 +224,54 @@ void MapBlock::Render(nSceneServer * scene_graph)
         {
             for (int z = start_z; z <= end_z; z += currentStep)
             {
-				pIndex[curVertex++] = MapVertexToIndex(x+currentStep, z);
-				pIndex[curVertex++] = MapVertexToIndex(x, z);
+                pIndex[curVertex++] = MapVertexToIndex(x+currentStep, z);
+                pIndex[curVertex++] = MapVertexToIndex(x, z);
             }
         }
         // Walk up, add two degenerate triangles at start and each of strip
         // to generate correctly ordered vertices
         else
         {
-			pIndex[curVertex++] = MapVertexToIndex(x, end_z);
-			pIndex[curVertex++] = MapVertexToIndex(x, end_z);
+            pIndex[curVertex++] = MapVertexToIndex(x, end_z);
+            pIndex[curVertex++] = MapVertexToIndex(x, end_z);
             for (int z = end_z; z >= start_z; z -= currentStep)
             {
-				pIndex[curVertex++] = MapVertexToIndex(x, z);
-				pIndex[curVertex++] = MapVertexToIndex(x+currentStep, z);
+                pIndex[curVertex++] = MapVertexToIndex(x, z);
+                pIndex[curVertex++] = MapVertexToIndex(x+currentStep, z);
             }
-			pIndex[curVertex++] = MapVertexToIndex(x+currentStep, start_z);
-			pIndex[curVertex++] = MapVertexToIndex(x+currentStep, start_z);
+            pIndex[curVertex++] = MapVertexToIndex(x+currentStep, start_z);
+            pIndex[curVertex++] = MapVertexToIndex(x+currentStep, start_z);
         }
 
         downwards = !downwards;
     }
     EndRender(nGfxServer2::TriangleStrip);
 
-	BeginRender(0);
-    if (true == align_west) RenderWestEdge(align_north, align_south);
-    if (true == align_east) RenderEastEdge(align_north, align_south);
-    if (true == align_north) RenderNorthEdge(align_west, align_east);
-    if (true == align_south) RenderSouthEdge(align_west, align_east);
+    BeginRender();
+    if (true == align_west)
+    {
+        RenderWestEdge(align_north, align_south);
+    }
+    if (true == align_east)
+    {
+        RenderEastEdge(align_north, align_south);
+    }
+    if (true == align_north)
+    {
+        RenderNorthEdge(align_west, align_east);
+    }
+    if (true == align_south)
+    {
+        RenderSouthEdge(align_west, align_east);
+    }
     EndRender(nGfxServer2::TriangleList);
 }
 
 /**
     Render triangle fans starting from northwest corners
 */
-void MapBlock::RenderNorthEdge(bool align_west, bool align_east)
+void 
+MapBlock::RenderNorthEdge(bool align_west, bool align_east)
 {
     int vertices[5];
 
@@ -303,7 +303,9 @@ void MapBlock::RenderNorthEdge(bool align_west, bool align_east)
 
         // Omit last triangle
         if (true == align_west && 0 == x)
+        {
             continue;
+        }
 
         RenderTriangle(vertices[0], vertices[1], vertices[2]);
     }
@@ -312,7 +314,8 @@ void MapBlock::RenderNorthEdge(bool align_west, bool align_east)
 /**
     Render triangle fans starting from southwest corners
 */
-void MapBlock::RenderSouthEdge(bool align_west, bool align_east)
+void 
+MapBlock::RenderSouthEdge(bool align_west, bool align_east)
 {
     int vertices[5];
 
@@ -344,7 +347,9 @@ void MapBlock::RenderSouthEdge(bool align_west, bool align_east)
 
         // Omit last triangle
         if (true == align_east && last_x == x)
+        {
             continue;
+        }
 
         RenderTriangle(vertices[0], vertices[1], vertices[2]);
     }
@@ -353,7 +358,8 @@ void MapBlock::RenderSouthEdge(bool align_west, bool align_east)
 /**
     Render triangle fans starting from northwest corners
 */
-void MapBlock::RenderWestEdge(bool align_north, bool align_south)
+void 
+MapBlock::RenderWestEdge(bool align_north, bool align_south)
 {
     int vertices[5];
 
@@ -385,7 +391,9 @@ void MapBlock::RenderWestEdge(bool align_north, bool align_south)
 
         // Omit last triangle
         if (true == align_north && 0 == z)
+        {
             continue;
+        }
 
         RenderTriangle(vertices[0], vertices[3], vertices[4]);
     }
@@ -394,7 +402,8 @@ void MapBlock::RenderWestEdge(bool align_north, bool align_south)
 /**
     Render triangle fans starting from southeast corners
 */
-void MapBlock::RenderEastEdge(bool align_north, bool align_south)
+void 
+MapBlock::RenderEastEdge(bool align_north, bool align_south)
 {
     int vertices[5];
 
@@ -426,16 +435,21 @@ void MapBlock::RenderEastEdge(bool align_north, bool align_south)
 
         // Omit last triangle
         if (true == align_south && last_z == z)
+        {
             continue;
+        }
 
         RenderTriangle(vertices[0], vertices[3], vertices[4]);
     }
 }
 
-MapQuadElement* MapBlock::GetQuadElement()
+MapQuadElement* 
+MapBlock::GetQuadElement()
 {
     if (NULL == quadElement)
+    {
         quadElement = n_new MapQuadElement(this);
+    }
 
     return quadElement;
 }

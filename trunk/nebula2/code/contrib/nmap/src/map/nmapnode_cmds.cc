@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -18,6 +18,7 @@ static void n_setdetailsize(void* slf, nCmd* cmd);
 static void n_getdetailsize(void* slf, nCmd* cmd);
 static void n_setmeshusage(void* slf, nCmd* cmd);
 static void n_getmeshusage(void* slf, nCmd* cmd);
+static void n_setresourceloader(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -37,16 +38,17 @@ void
 n_initcmds(nClass* clazz)
 {
     clazz->BeginCmds();
-    clazz->AddCmd("v_setmap_s",        'SMAP', n_setmap);
-    clazz->AddCmd("s_getmap_v",        'GMAP', n_getmap);
-    clazz->AddCmd("v_setblocksize_i",  'SBLK', n_setblocksize);
-    clazz->AddCmd("i_getblocksize_v",  'GBLK', n_getblocksize);
-    clazz->AddCmd("v_seterror_i",      'SERR', n_seterror);
-    clazz->AddCmd("i_geterror_v",      'GERR', n_geterror);
-    clazz->AddCmd("v_setdetailsize_f", 'SDTS', n_setdetailsize);
-    clazz->AddCmd("f_getdetailsize_v", 'GDTS', n_getdetailsize);
-    clazz->AddCmd("v_setmeshusage_s",     'SMSU', n_setmeshusage);
-    clazz->AddCmd("s_getmeshusage_v",     'GMSU', n_getmeshusage);
+    clazz->AddCmd("v_setmap_s",            'SMAP', n_setmap);
+    clazz->AddCmd("s_getmap_v",            'GMAP', n_getmap);
+    clazz->AddCmd("v_setblocksize_i",      'SBLK', n_setblocksize);
+    clazz->AddCmd("i_getblocksize_v",      'GBLK', n_getblocksize);
+    clazz->AddCmd("v_seterror_i",          'SERR', n_seterror);
+    clazz->AddCmd("i_geterror_v",          'GERR', n_geterror);
+    clazz->AddCmd("v_setdetailsize_f",     'SDTS', n_setdetailsize);
+    clazz->AddCmd("f_getdetailsize_v",     'GDTS', n_getdetailsize);
+    clazz->AddCmd("v_setmeshusage_s",      'SMSU', n_setmeshusage);
+    clazz->AddCmd("s_getmeshusage_v",      'GMSU', n_getmeshusage);
+    clazz->AddCmd("v_setresourceloader_s", 'SREL', n_setresourceloader);
     clazz->EndCmds();
 }
 
@@ -258,6 +260,23 @@ n_getmeshusage(void* slf, nCmd* cmd)
 }
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    setresourceloader
+    @input
+    s (nMapResourceLoader identifier)
+    @output
+    v
+    @info
+    Set the resource loader for the terrain meshes.
+*/
+static void
+n_setresourceloader(void* slf, nCmd* cmd)
+{
+    nMapNode* self = (nMapNode*) slf;
+    self->SetResourceLoader( cmd->In()->GetS() );
+}
+//------------------------------------------------------------------------------
+/**
     @param  ps  writes the nCmd object contents out to a file.
     @return     success or failure
 */
@@ -297,6 +316,14 @@ nMapNode::SaveCmds(nPersistServer* ps)
         if (NULL != cmd)
         {
             cmd->In()->SetI(GetMeshUsage());
+            ps->PutCmd(cmd);
+        }
+
+        // setresourceloader
+        cmd = ps->GetCmd(this, 'SREL');
+        if (NULL != cmd)
+        {
+            cmd->In()->SetS(GetResourceLoader());
             ps->PutCmd(cmd);
         }
 
