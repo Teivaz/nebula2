@@ -1,3 +1,4 @@
+#line 1 "lightsampler.fx"
 //------------------------------------------------------------------------------
 //  lightsampler.h
 //  Declare the standard light modulation sampler for all shaders.

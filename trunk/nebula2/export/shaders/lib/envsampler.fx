@@ -1,3 +1,4 @@
+#line 1 "envsampler.fx"
 //------------------------------------------------------------------------------
 //  envsampler.fx
 //  An environment cube map sampler.

@@ -1,3 +1,4 @@
+#line 1 "default_lightmapped.fx"
 //------------------------------------------------------------------------------
 //  fixed/default_lightmapped.fx
 //
