@@ -59,6 +59,8 @@ public:
     const char* GetEmptyText() const;
     /// set initial overstrike state (default is off)
     void SetOverstrike(bool);
+    /// Whenever the field is activated, the cursor is reset to this position
+    void SetInitialCursorPos(Alignment);
 
 protected:
     /// check if text edit line contains empty text and replace with provided empty replacement text
@@ -73,6 +75,7 @@ protected:
     nString emptyText;
     nGuiBrush cursorBrush;
     bool overstrikeDefault;
+    Alignment initialCursorPos;
 };
 
 //------------------------------------------------------------------------------
