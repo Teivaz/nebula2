@@ -133,7 +133,7 @@ VisitorFlags nPlaneClipper::TestBBox(const bbox3 &boxtest, VisitorFlags in)
                 if (-d > extent_toward_plane)
                 {
                     // Box is definitively on the negative side of the plane, so it's culled
-                    return VisitorFlags(false);
+                    return VisitorFlags(false,true);
                 } // else this plane is ambiguous so leave it active.
             } else {
                 if (d > extent_toward_plane)
@@ -147,8 +147,7 @@ VisitorFlags nPlaneClipper::TestBBox(const bbox3 &boxtest, VisitorFlags in)
                     {
                         // This box is definitively inside all the culling
                         // planes, so there's no need to continue.
-                        in.m_test = true;
-                        return in;
+                        return VisitorFlags(true,false);
                     }
                 } // else this plane is ambigious so leave it active.
             }

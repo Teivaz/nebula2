@@ -139,3 +139,79 @@ function buildgridofstuff(xlow,ylow,zlow, xhigh,yhigh,zhigh, spacing, objectsize
     
 end
 
+
+--
+--
+--
+function cleanrootsector()
+    r = nebula.world.rootsector
+    r:clearobjects()
+end
+
+--
+-- construct test configuration one, with a large amount of objects spread out
+--
+function testconfig1()
+    cleanrootsector()
+
+    -- should be 25*25*25 = 15,625 objects, but they are spaced pretty far apart,
+    -- so not very many are visible at once
+    buildgridofstuff(-120,-120,-120, 120,120,120, 10, 1)
+end
+
+--
+-- construct test configuration two, which is like config one but packed into a smaller space
+-- so that more are visible at one time
+--
+function testconfig2()
+    cleanrootsector()
+
+    -- should be 16*16*16 = 4096 object, spaced closely together, so a lot of them
+    -- will be displayed at once
+    buildgridofstuff(-40,-40,-40, 40,40,40, 5, 0.8)
+end
+
+--
+-- test configuration 3, with several occluders, a few of which are visible at once
+--
+function testconfig3()
+    cleanrootsector()
+
+    buildfence(0,0,0, 9,9, 3, true, false)
+    buildfence(50,0,0, 9,9, 3, true, false)
+    buildfence(0,50,0, 9,9, 3, true, false)
+    buildfence(0,0,50, 9,9, 3, true, false)
+    buildfence(-50,0,0, 9,9, 3, true, false)
+    buildfence(0,-50,0, 9,9, 3, true, false)
+    buildfence(0,0,-50, 9,9, 3, true, false)
+
+    buildfence(100,0,0, 9,9, 3, true, false)
+    buildfence(0,100,0, 9,9, 3, true, false)
+    buildfence(0,0,100, 9,9, 3, true, false)
+    buildfence(-100,0,0, 9,9, 3, true, false)
+    buildfence(0,-100,0, 9,9, 3, true, false)
+    buildfence(0,0,-100, 9,9, 3, true, false)
+end
+
+--
+-- test configuration 4, with several occluders, several of which are visible at once
+-- and a buttload of objects
+--
+function testconfig4()
+    cleanrootsector()
+
+    buildfence(0,0,0, 9,9, 3, true, false)
+    buildfence(27,0,0, 9,9, 3, true, false)
+    buildfence(0,0,27, 9,9, 3, true, false)
+    buildfence(-27,0,0, 9,9, 3, true, false)
+    buildfence(0,0,-27, 9,9, 3, true, false)
+    buildfence(27,0, 27, 9,9, 3, true, false)
+    buildfence(27,0, -27, 9,9, 3, true, false)
+    buildfence(-27,0, 27, 9,9, 3, true, false)
+    buildfence(27,0, -27, 9,9, 3, true, false)
+
+    buildgridofstuff(-54,0,-54,54,0,54, 7, 1)
+    buildgridofstuff(-52,0,-52,52,0,52, 11, 1)
+
+end
+

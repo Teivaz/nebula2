@@ -23,6 +23,7 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     kernelServer(ks),
     isOpen(false),
     isOverlayEnabled(true),
+    showVisualDebug(true),
     chasecamera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
     playcamera(chasecamera),
     controlMode(Maya),
@@ -53,8 +54,8 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     markcameras[2].viewerZoom = this->defViewerZoom;
 
     // tweak the play camera settings to be smaller
-    playcamera.SetFarPlane(40.0f);
-    playcamera.SetNearPlane(4.0f);
+    playcamera.SetFarPlane(50.0f);
+    playcamera.SetNearPlane(2.0f);
 
 }
 
@@ -337,7 +338,7 @@ void nSDBViewerApp::Run()
             this->refConServer->Render();
 
             // draw the visitor debug info
-            if (m_rootsector.isvalid())
+            if (showVisualDebug && m_rootsector.isvalid())
             {
                 matrix44 cameraxform0, identmatrix;
                 identmatrix.ident();
@@ -541,6 +542,11 @@ void nSDBViewerApp::HandlePlaySwitch(float framtTime)
     if (inputServer->GetButton("cycleviscamera"))
     {
         m_viscamera = (m_viscamera+1) % nSDBViewerApp::CAMERACOUNT;
+    }
+
+    if (inputServer->GetButton("toggledebugviz"))
+    {
+        this->showVisualDebug = !this->showVisualDebug;
     }
 }
 
@@ -747,7 +753,7 @@ nSDBViewerApp::InitOverlayGui()
     // create a help text label
     nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "HelpLabel");
     n_assert(textLabel);
-    textLabel->SetText("Esc: toggle GUI\n1: Activate Camera 1\n2: Activate Camera 2\nF1: Change clip style\nF4: Cycle visibility camera\nF5: Cycle view camera");
+    textLabel->SetText("Esc: toggle GUI\n1: Activate Camera 1\n2: Activate Camera 2\nF1: Change clip style\nF4: Cycle visibility camera\nF5: Cycle view camera\nF6: toggle debug visualization\nEnter 'testconfig1()' through 'testconfig4()' at the console prompt for various object configurations");
     textLabel->SetFont("GuiSmall");
     textLabel->SetAlignment(nGuiTextLabel::Left);
     textLabel->SetColor(vector4(1.0f, 1.0f, 1.0f, 1.0f));
