@@ -5,7 +5,7 @@
     @class nCharSkeleton
     @ingroup NebulaCharacterAnimationSystem
 
-    Implements a character skeleton made of nCharJoint objects.
+    @brief Implements a character skeleton made of nCharJoint objects.
 
     (C) 2002 RadonLabs GmbH
 */

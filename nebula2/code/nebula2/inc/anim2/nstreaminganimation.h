@@ -5,7 +5,7 @@
     @class nStreamingAnimation
     @ingroup NebulaAnimationSystem
 
-    A streaming animation streams its animation data from disk into
+    @brief A streaming animation streams its animation data from disk into
     a small memory buffer. They can generally not be shared like 
     nMemoryAnimation objects (since animations with different sample
     times would thrash their stream buffers all the time). The advantage
@@ -15,10 +15,10 @@
     Streaming animations are generally created through the 
     nAnimationServer::NewStreamingAnimation() method. 
 
-    See the nAnimation class header for more information.
+    See the nAnimation class documentation for more information.
 
-    Note that ascii nanim2 files cannot be streamed, only binary
-    nax2 files.
+    Note that ascii <tt>nanim2</tt> files cannot be streamed, only binary
+    <tt>nax2</tt> files.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -45,11 +45,11 @@ private:
     /// fill the stream buffer with a new data block
     bool StreamData(int firstKey, int numKeys);
 
-    nFile* streamFile;          // file object pointing to the stream file
-    int groupSeekPos;           // seek pos to start of animation group keys
-    float4* streamBuffer;       // stream buffer, layout is the same as described in nmemoryanimation.h
-    int bufferStartKey;         // the key index at the start of the stream buffer
-    int bufferNumKeys;          // number of keys in buffer
+    nFile* streamFile;          //< file object pointing to the stream file
+    int groupSeekPos;           //< seek pos to start of animation group keys
+    float4* streamBuffer;       //< stream buffer, layout is the same as described in nmemoryanimation.h
+    int bufferStartKey;         //< the key index at the start of the stream buffer
+    int bufferNumKeys;          //< number of keys in buffer
 };
 //------------------------------------------------------------------------------
 #endif

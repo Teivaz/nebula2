@@ -5,9 +5,9 @@
     @class nCharJoint
     @ingroup NebulaCharacterAnimationSystem
 
-    A joint in a character skeleton.
+    @brief A joint in a character skeleton.
 
-    06-Feb-03   floh    fixed for Nebula2
+     - 06-Feb-03   floh    fixed for Nebula2
 
     (C) 2002 RadonLabs GmbH
 */

@@ -5,7 +5,7 @@
     @class nCharacter2
     @ingroup NebulaCharacterAnimationSystem
 
-    Holds all the data necessary to animate an character in one place.    
+    @brief Holds all the data necessary to animate an character in one place.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -5,11 +5,11 @@
     @class nAnimState
     @ingroup NebulaAnimationSystem
 
-    An animation state contains any number of nAnimClip objects of identical
-    size (number of anim curves contained in the clip) and can sample a 
-    weight-blended result from them. Each anim clip is associated with a weight 
-    value between 0 and 1 which defines how much that anim clip influences 
-    the resulting animation.
+    @brief An animation state contains any number of nAnimClip objects of
+    identical size (number of anim curves contained in the clip) and can
+    sample a weight-blended result from them. Each anim clip is associated
+    with a weight value between 0 and 1 which defines how much that anim
+    clip influences the resulting animation.
     
     An nAnimation object connected to the nAnimState object delivers
     the actual animation data.

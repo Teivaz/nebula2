@@ -5,7 +5,7 @@
     @class nAnimation
     @ingroup NebulaAnimationSystem
 
-    An nAnimation is a nResource subclass which holds one or more
+    @brief An nAnimation is a nResource subclass which holds one or more
     animation curves, which must all share the same number of
     keys, framerate and loop type. The nAnimation object
     can be sampled for a given curve index at a given sample time.
