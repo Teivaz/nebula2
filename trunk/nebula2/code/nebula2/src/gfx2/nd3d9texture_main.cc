@@ -802,11 +802,12 @@ nD3D9Texture::UnlockCubeFace(CubeFace face, int level)
 
 //------------------------------------------------------------------------------
 /**
-    - Feb-04 Kim, H.W. added to support ngameswf.
 
     @param objName  name of nSurafce which to be created.
     @param level    mipmap level
     @param surface
+
+    - Feb-04 Kim, H.W. added to support ngameswf.
 */
 void nD3D9Texture::GetSurfaceLevel(const char* objName, int level, nSurface** surface)
 {
@@ -823,7 +824,7 @@ void nD3D9Texture::GetSurfaceLevel(const char* objName, int level, nSurface** su
 
 //------------------------------------------------------------------------------
 /**
-    Generante mipmap.
+    Generante mip maps for surface data.
 
     - Feb-04 Kim, H.W. added to support ngameswf.
 */
