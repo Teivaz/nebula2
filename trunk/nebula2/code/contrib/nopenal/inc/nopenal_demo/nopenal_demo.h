@@ -1,13 +1,16 @@
-//------------------------------------------------------------------------------
-//  nopenal_demo.h
-//  (C) 2004 Bang, Chang Kyu
-//------------------------------------------------------------------------------
 #ifndef N_OPENAL_DEMO_H
 #define N_OPENAL_DEMO_H
-
+//------------------------------------------------------------------------------
+/**
+    A nOpenAL app class.
+    
+    (C) 2004 Bang, Chang Kyu
+*/
+/// nebula2
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/ncamera2.h"
 #include "gfx2/ngfxserver2.h"
+#include "video/nvideoserver.h"
 #include "scene/nsceneserver.h"
 #include "scene/nrendercontext.h"
 #include "kernel/nscriptserver.h"
@@ -19,25 +22,16 @@
 #include "particle/nparticleserver.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
+#include "gui/nguiserver.h"
 #include "audio3/nlistener3.h"
 
+/// nopenal contrib
 #include "nopenal/nopenalserver.h"
 #include "nopenal/nopenalobj.h"
 #include "nopenal/nopenalresource.h"
 
+/// nopenal demo core
 #include "nopenal_demo/nopenal_core.h"
-
-//-----------------------------------------------------------------------------
-const int soundMax = 255;
-
-//-----------------------------------------------------------------------------
-/**
-    @class nOpenALDemo
-    @ingroup nOpenALGroup
-
-    @brief
-    @note 
-*/
 
 //------------------------------------------------------------------------------
 class nOpenALDemo
@@ -58,6 +52,10 @@ public:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// set optional feature set override
+    void SetFeatureSetOverride(nGfxServer2::FeatureSet f);
+    /// get optional feature set override
+    nGfxServer2::FeatureSet GetFeatureSetOverride() const;
     /// set camera parameters
     void SetCamera(const nCamera2& camera);
     /// get camera parameters
@@ -94,6 +92,10 @@ public:
     void SetInputScript(const char* name);
     /// get the input binding script
     const char* GetInputScript() const;
+    /// enable/disable the logo overlay
+    void SetOverlayEnabled(bool b);
+    /// get overlay enabled status
+    bool GetOverlayEnabled() const;
     /// open the viewer
     bool Open();
     /// close the viewer
@@ -104,14 +106,6 @@ public:
     bool IsOpen() const;
 
 private:
-    /// Listener Init
-    void InitListener( const matrix44& m, const vector3& v );
-    void InitListener( const vector3& pos,
-                       const vector3& vel,
-                       const vector3& at,
-                       const vector3& up );
-    /// MapInput
-    void MapInput();
     /// handle general input
     void HandleInput(float frameTime);
     /// handle input in Maya control mode
@@ -120,6 +114,8 @@ private:
     void HandleInputFly(float frameTime);
     /// transfer global variables from variable server to render context
     void TransferGlobalVariables();
+    /// initialize the overlay GUI
+    void InitOverlayGui();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -131,7 +127,8 @@ private:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
-    nRef<nAudioServer3> refAudioServer;
+    nRef<nVideoServer> refVideoServer;
+    nRef<nGuiServer> refGuiServer;
 
     nRef<nTransformNode> refRootNode;
 
@@ -143,9 +140,11 @@ private:
     nString stageScript;
     nString inputScript;
     bool isOpen;
+    bool isOverlayEnabled;
     nDisplayMode2 displayMode;
     nCamera2 camera;
     ControlMode controlMode;
+    nGfxServer2::FeatureSet featureSetOverride;
 
     polar2 defViewerAngles;
     vector3 defViewerPos;
@@ -160,9 +159,41 @@ private:
     matrix44 viewMatrix;
     int screenshotID;
 
+private:
+    nRef<nAudioServer3> refAudioServer;
+
+    /// Listener Init
+    void InitListener( const matrix44& m, const vector3& v );
+    void InitListener( const vector3& pos,
+                       const vector3& vel,
+                       const vector3& at,
+                       const vector3& up );
+    /// MapInput
+    void MapInput();
+
     nListener3      m_Listener;
     nOpenALCore*    m_pOalCore;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nOpenALDemo::SetFeatureSetOverride(nGfxServer2::FeatureSet f)
+{
+    this->featureSetOverride = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::FeatureSet
+nOpenALDemo::GetFeatureSetOverride() const
+{
+    return this->featureSetOverride;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -375,4 +406,24 @@ nOpenALDemo::GetInputScript() const
 }
 
 //------------------------------------------------------------------------------
-#endif // N_OPENAL_DEMO_H
+/**
+*/
+inline
+void
+nOpenALDemo::SetOverlayEnabled(bool b)
+{
+    this->isOverlayEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nOpenALDemo::GetOverlayEnabled() const
+{
+    return this->isOverlayEnabled;
+}
+
+//------------------------------------------------------------------------------
+#endif /// N_OPENAL_DEMO_H

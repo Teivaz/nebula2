@@ -16,6 +16,9 @@ beginworkspace nopenal
         microtcl
 	nopenal
         nopenaldemo
+        ndshow
+        nvideo
+        ngui
     }
 endworkspace
 #-----------------------------------------------------------------------------
