@@ -6,7 +6,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/nabstractshadernode.h"
 
-nNebulaScriptClass(nUvAnimator, "nkeyanimator");
+nNebulaScriptClass(nUvAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -55,26 +55,23 @@ nUvAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(var);
     float curTime = var->GetFloat();
 
+    const nAnimator::LoopType loopType = this->GetLoopType();
     int texLayer;
     for (texLayer = 0; texLayer < nGfxServer2::MaxTextureStages; texLayer++)
     {
         // sample key arrays and manipulate target object
-        static vector4 key4;
-        static vector2 key2;
-        if (this->SampleKey(curTime, this->posArray[texLayer], key4))
+        vector2 key;
+        if (this->posArray[texLayer].SampleKey(curTime, key, loopType))
         {
-            key2.set(key4.x, key4.y);
-            targetNode->SetUvPos(texLayer, key2);
+            targetNode->SetUvPos(texLayer, key);
         }
-        if (this->SampleKey(curTime, this->eulerArray[texLayer], key4))
+        if (this->eulerArray[texLayer].SampleKey(curTime, key, loopType))
         {
-            key2.set(key4.x, key4.y);
-            targetNode->SetUvEuler(texLayer, key2);
+            targetNode->SetUvEuler(texLayer, key);
         }
-        if (this->SampleKey(curTime, this->scaleArray[texLayer], key4))
+        if (this->scaleArray[texLayer].SampleKey(curTime, key, loopType))
         {
-            key2.set(key4.x, key4.y);
-            targetNode->SetUvScale(texLayer, key2);
+            targetNode->SetUvScale(texLayer, key);
         }
     }
 }

@@ -6,7 +6,7 @@
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nVectorAnimator, "nkeyanimator");
+nNebulaScriptClass(nVectorAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -65,8 +65,7 @@ nVectorAnimator::GetVectorName()
 void
 nVectorAnimator::AddKey(float time, const vector4& key)
 {
-    Key newKey(time, key);
-    this->keyArray.Append(newKey);
+    this->keyArray.AddKey(time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -76,7 +75,7 @@ nVectorAnimator::AddKey(float time, const vector4& key)
 int
 nVectorAnimator::GetNumKeys() const
 {
-    return this->keyArray.Size();
+    return this->keyArray.GetNumKeys();
 }
 
 //------------------------------------------------------------------------------
@@ -86,9 +85,7 @@ nVectorAnimator::GetNumKeys() const
 void
 nVectorAnimator::GetKeyAt(int index, float& time, vector4& key) const
 {
-    const Key& animKey = this->keyArray[index];
-    time = animKey.time;
-    key  = animKey.value;
+    this->keyArray.GetKeyAt(index, time, key);
 }
 
 //------------------------------------------------------------------------------
@@ -121,25 +118,10 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 
     // get sampled key
     vector4 key;
-    if (this->SampleKey(curTime, this->keyArray, key))
+    if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
     {
         // manipulate the target object
         targetNode->SetVector(this->vectorParameter, key);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -26,7 +26,7 @@ begintarget nnebula
         nparticle nparticleserver nparticleemitter nparticleshapenode
         nswingshapenode nwindowhandler nwin32windowhandler
         nmousecursor nmesharray ninstancestream
-        nkeyanimator ntransformcurveanimator nuvanimator
+        ntransformcurveanimator nuvanimator
         nprefserver nwin32prefserver 
         nhdrsceneserver nstdsceneserver nmrtsceneserver
         nlocaleserver tinyxml xml

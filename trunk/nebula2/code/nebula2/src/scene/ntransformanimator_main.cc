@@ -6,7 +6,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/ntransformnode.h"
 
-nNebulaScriptClass(nTransformAnimator, "nkeyanimator");
+nNebulaScriptClass(nTransformAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -67,27 +67,23 @@ nTransformAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext
     }
 
     // sample key arrays and manipulate target object
-    static vector4 key4;
-    static vector3 key3;
-    static quaternion quat;
-    if (this->SampleKey(curTime, this->posArray, key4))
+    const nAnimator::LoopType loopType = this->GetLoopType();
+    vector3 key3;
+    quaternion quat;
+    if (this->posArray.SampleKey(curTime, key3, loopType))
     {
-        key3.set(key4.x, key4.y, key4.z);
         targetNode->SetPosition(key3);
     }
-    if (this->SampleKey(curTime, this->quatArray, key4))
+    if (this->quatArray.SampleKey(curTime, quat, loopType))
     {
-        quat.set(key4.x, key4.y, key4.z, key4.w);
         targetNode->SetQuat(quat);
     }
-    if (this->SampleKey(curTime, this->eulerArray, key4))
+    if (this->eulerArray.SampleKey(curTime, key3, loopType))
     {
-        key3.set(key4.x, key4.y, key4.z);
         targetNode->SetEuler(key3);
     }
-    if (this->SampleKey(curTime, this->scaleArray, key4))
+    if (this->scaleArray.SampleKey(curTime, key3, loopType))
     {
-        key3.set(key4.x, key4.y, key4.z);
         targetNode->SetScale(key3);
     }
 }
