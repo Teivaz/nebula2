@@ -89,10 +89,15 @@ Created: %(asctime)s
     
     def __init__(self, parentWindow, title, record):
         wx.Dialog.__init__(self, parentWindow, -1, title)
+        formatter = logging.Formatter('%(message)s')
+        args = { 'name' : record.name,
+                 'levelname' : record.levelname,
+                 'asctime' : record.asctime,
+                 'message' : formatter.format(record) }
         self.panel = wx.Panel(self)
         style = wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_LINEWRAP
         self.textBox = wx.TextCtrl(self.panel, -1, 
-                                   self.LOG_RECORD_INFO_TEXT % record.__dict__,
+                                   self.LOG_RECORD_INFO_TEXT % args,
                                    (0, 0), (400, 100), style)
         self.okBtn = wx.Button(self.panel, wx.ID_OK, 'OK')
         # layout
@@ -202,8 +207,12 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     # list.
     def OnGetItemText(self, item, col):
         assert len(self.displayedRecIndices) > 0
-        return self.logHandler.format(
-                   self.logRecs[self.displayedRecIndices[item]])
+        text =  self.logHandler.format(
+                    self.logRecs[self.displayedRecIndices[item]])
+        lines = string.split(text, '\n')
+        if len(lines) > 0:
+            return lines[0]
+        return ''
 
     def OnGetItemImage(self, item):
         # TODO ?
@@ -305,7 +314,7 @@ class BuildLogCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         
     #--------------------------------------------------------------------------
     def OnItemActivated(self, evt):
-        assert evt.m_itemIndex < len(self.displayedRecs)
+        assert evt.m_itemIndex < len(self.displayedRecIndices)
         dlg = LogRecordDialog(self, 'Log Entry Details',
                   self.logRecs[self.displayedRecIndices[evt.m_itemIndex]])
         dlg.ShowModal()

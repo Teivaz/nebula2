@@ -177,23 +177,26 @@ class BuildSys:
     #--------------------------------------------------------------------------
     # Generate pkg files, resource files and project/make files
     def Run(self, generatorName, workspacesToBuild):
-        # first spit out the pkg and resource files
-        for target in self.targets.values():
-            target.GeneratePkgFile()
-            target.GenerateResFile()
-        # figure out which workspaces to generate
-        if len(workspacesToBuild) == 0: # build all workspaces
-            workspacesToBuild = self.workspaces.keys()
-        else:
-            availableWorkspaces = self.workspaces.keys()
-            for workspaceName in workspacesToBuild:
-                if workspaceName not in availableWorkspaces:
-                    self.logger.error('Workspace %s is undefined!', 
-                                      workspaceName)
-                    return
-        # create the generator and get it running
-        generator = self.generatorFactory.GetGenerator(generatorName)
-        generator.Generate(workspacesToBuild)
+        try:
+            # first spit out the pkg and resource files
+            for target in self.targets.values():
+                target.GeneratePkgFile()
+                target.GenerateResFile()
+            # figure out which workspaces to generate
+            if len(workspacesToBuild) == 0: # build all workspaces
+                workspacesToBuild = self.workspaces.keys()
+            else:
+                availableWorkspaces = self.workspaces.keys()
+                for workspaceName in workspacesToBuild:
+                    if workspaceName not in availableWorkspaces:
+                        self.logger.error('Workspace %s is undefined!', 
+                                          workspaceName)
+                        return
+            # create the generator and get it running
+            generator = self.generatorFactory.GetGenerator(generatorName)
+            generator.Generate(workspacesToBuild)
+        except:
+            self.logger.exception('Exception in BuildSys.Run()')
 
     #-------------------------------------------------------------------------
     # Private Stuff
