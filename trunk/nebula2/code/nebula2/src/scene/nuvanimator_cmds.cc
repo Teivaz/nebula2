@@ -27,7 +27,7 @@ static void n_getscalekeyat(void* slf, nCmd* cmd);
     nkeyanimator
 
     @classinfo
-    Animate uv coordinates of a shape node.
+    Animate UV coordinates of a shape node.
 */
 void
 n_initcmds(nClass* cl)

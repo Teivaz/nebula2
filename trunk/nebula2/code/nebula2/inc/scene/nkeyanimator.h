@@ -2,9 +2,14 @@
 #define N_KEYANIMATOR_H
 //------------------------------------------------------------------------------
 /**
-    A common base class for animator classes which need to sample
+    @class nKeyAnimator
+    @ingroup NebulaSceneSystemAnimators
+
+    @brief A common base class for animator classes which need to sample
     vectors from key arrays.
-    
+
+    See also @ref N2ScriptInterface_nkeyanimator
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nanimator.h"

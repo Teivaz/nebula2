@@ -5,9 +5,10 @@
     @class nAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Animator nodes manipulate properties of other scene objects. They are
-    not attached to the scene, instead they are called back by scene objects
-    which wish to be manipulated.
+    @brief Animator nodes manipulate properties of other scene objects.
+    
+    They are not attached to the scene, instead they are called back by scene
+    objects which wish to be manipulated.
 
     See also @ref N2ScriptInterface_nanimator
 

@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nLightNode
+    @ingroup NebulaSceneLightNodes
 
-    Base class of scene node which provide lighting information.
+    @brief Base class of scene node which provide lighting information.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -256,7 +256,7 @@ n_setstartrotation(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Set wether to render oldest particles first.
+    Set whether to render oldest particles first.
 */
 static void
 n_setrenderoldestfirst(void* slf, nCmd* cmd)
@@ -664,7 +664,7 @@ n_getstartrotation(void* slf, nCmd* cmd)
     @output
     b
     @info
-    Get wether to render oldest particles first.
+    Get whether to render oldest particles first.
 */
 static void
 n_getrenderoldestfirst(void* slf, nCmd* cmd)

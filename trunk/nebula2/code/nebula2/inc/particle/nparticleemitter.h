@@ -73,9 +73,9 @@ public:
     void SetStartRotation(float f);
     /// get the maximum particle start rotation angle
     float GetStartRotation() const;
-    /// set wether to render oldest or youngest particles first
+    /// set whether to render oldest or youngest particles first
     void SetRenderOldestFirst(bool b);
-    /// get wether to render oldest or youngest particles first
+    /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
 
     /// set one of the envelope curves
@@ -161,31 +161,31 @@ protected:
     nAutoRef<nParticleServer>  refParticleServer;
     nAutoRef<nGfxServer2>      refGfxServer;
 
-    matrix44        matrix;                 // the world space matrix
+    matrix44        matrix;                 ///< the world space matrix
  
-    bool            alive;                  // is alive ?
-    bool            active;                 // still emitting ?
-    bool            fatalException;         // a fatal exception occured (emitter will be removed)                 
-    int             lastEmissionVertex;     // last vertex that emitted
-    int             randomKey;              // random number key
+    bool            alive;                  ///< is alive ?
+    bool            active;                 ///< still emitting ?
+    bool            fatalException;         ///< a fatal exception occured (emitter will be removed)                 
+    int             lastEmissionVertex;     ///< last vertex that emitted
+    int             randomKey;              ///< random number key
 
-    nTime           startTime;              // timestamp of creation
-    nTime           lastEmission;           // timestamp of last emission in visual time frame
+    nTime           startTime;              ///< timestamp of creation
+    nTime           lastEmission;           ///< timestamp of last emission in visual time frame
 
     // emitter settings
-    nTime           emissionDuration;       // how long shall be emitted ?
-    bool            loop;                   // loop emitter ?
-    float           activityDistance;       // distance between viewer and emitter on witch emitter is active
-    float           spreadAngle;            // angle of emitted particle cone   
-    float           birthDelay;             // maximum delay until particle starts to live
-    float           startRotation;          // maximum start rotation angle of a new particle
-    bool            renderOldestFirst;      // wether to render the oldest particles first or the youngest
+    nTime           emissionDuration;       ///< how long shall be emitted ?
+    bool            loop;                   ///< loop emitter ?
+    float           activityDistance;       ///< distance between viewer and emitter on witch emitter is active
+    float           spreadAngle;            ///< angle of emitted particle cone
+    float           birthDelay;             ///< maximum delay until particle starts to live
+    float           startRotation;          ///< maximum start rotation angle of a new particle
+    bool            renderOldestFirst;      ///< whether to render the oldest particles first or the youngest
 
-    int             key;                    // unique key identifying the emitter
+    int             key;                    ///< unique key identifying the emitter
     static int      nextKey;
 
     nArray<nEnvelopeCurve> curves;
-    nVector3EnvelopeCurve rgbCurve;     // curve for the color modulation of the particles
+    nVector3EnvelopeCurve rgbCurve;     ///< curve for the color modulation of the particles
 
 private:
     /// not implemented operator to prevent '=' - assignment

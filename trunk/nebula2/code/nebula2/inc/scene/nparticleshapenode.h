@@ -3,8 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nParticleShapeNode
+    @ingroup NebulaSceneSystemNodes
 
-    A shape node representing a particle system.
+    @brief A shape node representing a particle system.
+
+    See also @ref N2ScriptInterface_nparticleshapenode
 
     (C) 2004 RadonLabs GmbH
 */
@@ -57,9 +60,9 @@ public:
     void SetStartRotation(float f);
     /// get the maximum start rotation angle
     float GetStartRotation() const;
-    /// set wether to render oldest or youngest particles first
+    /// set whether to render oldest or youngest particles first
     void SetRenderOldestFirst(bool b);
-    /// get wether to render oldest or youngest particles first
+    /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
 
     /// set one of the envelope curves (not the color)
@@ -76,15 +79,15 @@ protected:
     nAutoRef<nParticleServer> refParticleServer;
     nAutoRef<nVariableServer> refVariableServer;
 
-    int emitterVarIndex;    // index of the emitter in the rendercontext
-    nTime           emissionDuration;       // how long shall be emitted ?
-    bool            loop;                   // loop emitter ?
+    int emitterVarIndex;    ///< index of the emitter in the rendercontext
+    nTime           emissionDuration;       ///< how long shall be emitted ?
+    bool            loop;                   ///< loop emitter ?
 
-    float           activityDistance;       // distance between viewer and emitter on witch emitter is active
-    float           spreadAngle;            // angle of emitted particle cone
-    float           birthDelay;             // maximum delay until particle starts to live
-    float           startRotation;          // maximum angle of rotation at birth
-    bool  renderOldestFirst;        // wether to render the oldest particles first or the youngest
+    float           activityDistance;       ///< distance between viewer and emitter on witch emitter is active
+    float           spreadAngle;            ///< angle of emitted particle cone
+    float           birthDelay;             ///< maximum delay until particle starts to live
+    float           startRotation;          ///< maximum angle of rotation at birth
+    bool  renderOldestFirst;        ///< whether to render the oldest particles first or the youngest
 
     nEnvelopeCurve curves[nParticleEmitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;

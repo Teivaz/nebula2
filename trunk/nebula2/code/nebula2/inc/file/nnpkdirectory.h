@@ -27,17 +27,17 @@ public:
     virtual bool Open(const char* dirName);
     /// close directory
     virtual void Close();
-    /// determines wether the directory is opened
+    /// determines whether the directory is opened
     virtual bool IsOpen() const;
     /// check if directory is empty
     virtual bool IsEmpty();
     /// set first entry as current
     virtual bool SetToFirstEntry();
-	/// set next entry as current
+    /// set next entry as current
     virtual bool SetToNextEntry();
-	/// get name of current entry
+    /// get name of current entry
     virtual const char* GetEntryName();
-	/// get type of current entry
+    /// get type of current entry
     virtual EntryType GetEntryType();
 
 private:
@@ -48,12 +48,12 @@ private:
     /// handle npk file during nDirectory entry enumeration
     void CheckNpkEntryOverride();
 
-    nNpkFileServer* npkFileServer;      // pointer to nNpkFileServer interface 
-    bool isNpkDir;                      // true if clean npk dir, otherwise may be mixed filesys/npk dir
-    bool npkEntryOverride;              // true if npk file entered during filesystem dir enum
-    nNpkTocEntry* tocEntry;             // pointer to current npk entry, or 0 if current entry is a filesys entry
-    nNpkTocEntry* curSearchEntry;       // current search entry inside npk file
-    char npkEntryAbsPath[N_MAXPATH];    // storage buffer for current entry name
+    nNpkFileServer* npkFileServer;    ///< pointer to nNpkFileServer interface 
+    bool isNpkDir;                    ///< true if clean npk dir, otherwise may be mixed filesys/npk dir
+    bool npkEntryOverride;            ///< true if npk file entered during filesystem dir enum
+    nNpkTocEntry* tocEntry;           ///< pointer to current npk entry, or 0 if current entry is a filesys entry
+    nNpkTocEntry* curSearchEntry;     ///< current search entry inside npk file
+    char npkEntryAbsPath[N_MAXPATH];  ///< storage buffer for current entry name
 };
 
 //------------------------------------------------------------------------------

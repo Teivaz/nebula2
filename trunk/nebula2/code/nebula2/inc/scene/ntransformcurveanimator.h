@@ -5,7 +5,9 @@
     @class nTransformCurveAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    A Transform Curve Animator defines a animation resource.
+    @brief A Transform Curve Animator defines a animation resource.
+
+    See also @ref N2ScriptInterface_ntransformcurveanimator
  
     (C) 2004 RadonLabs GmbH
 */

@@ -5,7 +5,7 @@
     @class nTransformAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Animate position, orientation and scaling of a nTransformNode from
+    @brief Animate position, orientation and scaling of a nTransformNode from
     directly defined key arrays.
 
     See also @ref N2ScriptInterface_ntransformanimator

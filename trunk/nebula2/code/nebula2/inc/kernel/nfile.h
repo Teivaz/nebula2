@@ -65,7 +65,7 @@ public:
     virtual bool GetS(char* buffer, int numChars);
     /// get current line number (incremented by PutS() and GetS())
     int GetLineNumber() const;
-    /// determines wether the file is opened
+    /// determines whether the file is opened
     bool IsOpen() const;
     /// append one file to another file
     virtual int AppendFile(nFile* other);

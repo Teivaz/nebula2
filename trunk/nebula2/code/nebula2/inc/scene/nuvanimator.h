@@ -5,8 +5,10 @@
     @class nUvAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Animates the uv transform parameters on an abstractshapenode.
+    @brief Animates the UV transform parameters on an nAbstractShaderNode.
     
+    See also @ref N2ScriptInterface_nuvanimator
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nkeyanimator.h"

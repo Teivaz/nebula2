@@ -5,7 +5,7 @@
     @class nMaterialNode
     @ingroup NebulaSceneSystemNodes
 
-    A material node defines a shader resource and associated shader
+    @brief A material node defines a shader resource and associated shader
     variables. A shader resource is an external file (usually a text file)
     which defines a surface shader.
     
