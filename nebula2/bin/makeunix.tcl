@@ -158,6 +158,18 @@ proc gen_exe_unix {target cid} {
         lappend ulib_list $lib
     }
     
+    #collect macos x libs
+    set mlib_list { }
+    foreach lib $tar($t,libs_macosx) {
+        lappend mlib_list $lib
+    }
+
+    #collect macos x frameworks
+    set mframework_list { }
+    foreach framework $tar($t,frameworks_macosx) {
+        lappend mframework_list $framework
+    }
+
     #collect modules and generate the obj files from this
     set module_list { }
     set obj_list { }
@@ -173,6 +185,18 @@ proc gen_exe_unix {target cid} {
     }
     
     #write entry
+    puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
+    puts $cid "$target$bt_post: $e_pre$target$e_post"
+    puts $cid ""
+    puts $cid "$e_pre$target$e_post: [make_list $depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
+    puts $cid "\t\$(CXX) \$(CXXFLAGS$bt_post) \$(INCDIR) \$(LIBDIR)\
+                \$(SYM_OPT)$bt_def \
+                \$(OUT_OPT) $e_pre$target$e_post\
+                [make_list $obj_list $o_pre $o_post] \
+                [make_pre_list $depend_list \$(LIB_OPT)] \
+                \$(LIBS) [make_pre_list $mlib_list \$(LIB_OPT)] \
+                [make_pre_list $mframework_list \$(FWORK_OPT)]"
+    puts $cid "else"
     puts $cid "$target$bt_post: $e_pre$target$e_post"
     puts $cid ""
     puts $cid "$e_pre$target$e_post: [make_list $depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
@@ -182,7 +206,7 @@ proc gen_exe_unix {target cid} {
                 [make_list $obj_list $o_pre $o_post] \
                 [make_pre_list $depend_list \$(LIB_OPT)] \
                 \$(LIBS) [make_pre_list $ulib_list \$(LIB_OPT)]"
-
+    puts $cid "endif"
     puts $cid ""
     
     #return all depending modules

@@ -46,12 +46,14 @@ source "$env(RL_HOME)/bin/makedepend.tcl"
 #   tar(i,depends)              - list of other targets, which this target depends on
 #   tar(i,libs_win32)           - general win32 specific link libs
 #   tar(i,libs_unix)            - unix specific link libs
+#   tar(i,libs_macosx)          - macos x specific link libs
 #   tar(i,libs_xbox)            - xbox specific link libs
 #   tar(i,libs_win32_debug)     - debug/win32 specific link libs 
 #   tar(i,libs_win32_release)   - release/win32 specific link libs
 #   tar(i,libs_xbox_debug)      - debug/xbox specific link libs
 #   tar(i,libs_xbox_release)    - release/xbox specific link libs
 #   tar(i,rsrc_win32)           - win32 specific resource files
+#   tar(i,frameworks_macosx)    - macosx specific frameworks
 #   tar(i,doxycfg)              - location of Doxygen config file
 #--------------------------------------------------------------------
 
@@ -81,6 +83,8 @@ set source_post ".cc"
 #       setdepend $target $target...
 #       setlibs_win32 $lib $lib...
 #       setlibs_unix  $lib $lib...
+#       setlibs_macosx  $lib $lib...
+#       setframeworks_macosx $lib $lib...
 #   endtarget
 #--------------------------------------------------------------------
 
@@ -382,8 +386,10 @@ proc begintarget {name} {
     set tar($num_tars,libs_xbox_debug)      ""
     set tar($num_tars,libs_xbox_release)    ""
     set tar($num_tars,libs_unix)            ""
+    set tar($num_tars,libs_macosx)          ""
     set tar($num_tars,libs_xbox)            ""
     set tar($num_tars,rsrc_win32)           ""
+    set tar($num_tars,frameworks_macosx)    ""
     set tar($num_tars,doxycfg)              ""
     set tar($num_tars,doxytitle)            ""
 }
@@ -522,6 +528,26 @@ proc setlibs_unix {libs} {
 }
 
 #--------------------------------------------------------------------
+#   setlibs_macosx $libs
+#   04-Mar-00   floh    created
+#--------------------------------------------------------------------
+proc setlibs_macosx {libs} {
+    global num_tars
+    global tar
+    addtolist tar($num_tars,libs_macosx) $libs
+}
+
+#--------------------------------------------------------------------
+#   setframeworks_macosx $libs
+#   04-Mar-00   floh    created
+#--------------------------------------------------------------------
+proc setframeworks_macosx {libs} {
+    global num_tars
+    global tar
+    addtolist tar($num_tars,frameworks_macosx) $libs
+}
+
+#--------------------------------------------------------------------
 #   setlibs_xbox $libs
 #   18-Dec-02   floh    created
 #--------------------------------------------------------------------
@@ -583,13 +609,15 @@ proc dumptargets { } {
     puts " "
     for {set i 0} {$i < $num_tars} {incr i} {
         puts "-------------------------------------------------------"
-        puts " target:      $tar($i,name)"
-        puts " type:        $tar($i,type)"
-        puts " mods:        $tar($i,mods)"
-        puts " depends:     $tar($i,depends)"
-        puts " libs_win32:  $tar($i,libs_win32)"
-        puts " libs_unix:   $tar($i,libs_unix)"
-        puts " rsrc_win32:  $tar($i,rsrc_win32)"
+        puts " target:              $tar($i,name)"
+        puts " type:                $tar($i,type)"
+        puts " mods:                $tar($i,mods)"
+        puts " depends:             $tar($i,depends)"
+        puts " libs_win32:          $tar($i,libs_win32)"
+        puts " libs_unix:           $tar($i,libs_unix)"
+        puts " libs_macosx:         $tar($i,libs_macosx)"
+        puts " frameworks_macosx:   $tar($i,frameworks_macosx)"
+        puts " rsrc_win32:          $tar($i,rsrc_win32)"
     }
 }
 
