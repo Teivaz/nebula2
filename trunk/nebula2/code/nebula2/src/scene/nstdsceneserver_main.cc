@@ -147,9 +147,11 @@ nStdSceneServer::Compare(const ushort* i1, const ushort* i2)
 void
 nStdSceneServer::SortNodes()
 {
-    // initialize the static viewer pos vector                                      viewerPos = this->refGfxServer->GetTransform(nGfxServer2::InvView).pos_component();
+    // initialize the static viewer pos vector                                      
+    viewerPos = this->refGfxServer->GetTransform(nGfxServer2::InvView).pos_component();
 
-    // call the sorter hook                                                         qsort(this->shapeArray, this->numShapes, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) Compare);
+    // call the sorter hook                                                         
+    qsort(this->shapeArray, this->numShapes, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) Compare);
 }
 
 //------------------------------------------------------------------------------
