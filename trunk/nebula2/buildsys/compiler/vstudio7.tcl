@@ -242,7 +242,7 @@ proc gen_vcproj {name} {
     global home
     global cur_workspacepath
     
-    puts "Generate vcproj target: $name"
+    ::log::log debug "Generate vcproj target: $name"
 
     # write .vcproj file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.vcproj] w]
@@ -338,12 +338,12 @@ proc gen_sln { name } {
 #-------------------------------------------------------------------------------
 proc generate { wslist } {
     
-    puts "Looking for uuidgen...."
+    ::log::log debug "Looking for uuidgen...."
     if { [catch { exec uuidgen }] } {
-        puts "uuidgen.exe not found skipping Visual Studio Solutions."
+        ::log::log error "uuidgen.exe not found skipping Visual Studio Solutions."
         return
     } else {
-        puts "uuidgen.exe found"
+        ::log::log debug "uuidgen.exe found"
     }
     
     set vstudiopath ./build/vstudio7
