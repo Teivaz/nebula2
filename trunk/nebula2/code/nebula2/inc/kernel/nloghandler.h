@@ -18,6 +18,10 @@
 #include "kernel/ntypes.h"
 #include "util/nlinebuffer.h"
 
+#ifdef __LINUX__
+#include <stdarg.h>
+#endif
+
 //------------------------------------------------------------------------------
 class nLogHandler 
 {
