@@ -22,7 +22,7 @@
 /**
     @brief Executes the chunk at the top of the Lua stack.
 */
-bool nLuaServer::ExecuteLuaChunk(const char*& result, int errfunc)
+bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
 {
     n_assert2(errfunc > 0, "Error function stack index must be absolute!");
     
@@ -33,15 +33,13 @@ bool nLuaServer::ExecuteLuaChunk(const char*& result, int errfunc)
                            errfunc /* stack index of error handler */);
     if (0 != status) // error occured
     {
-        result = this->outputStr.Get(); // contains the error info
-        n_message(result);
+        result = this->outputStr; // contains the error info
+        n_message(result.Get());
     }
     else
     {
         this->outputStr.Set("");
         result = this->StackToString(this->L, 0);
-        if (0 == result[0]) // empty string?
-            result = 0; // don't want a blank to be printed in the console
     }
     
     return (0 == status);
@@ -146,20 +144,10 @@ nString nLuaServer::Prompt()
     @brief Execute a chunk of Lua code and provide a string 
            representation of the result.
     @param cmdStr A null-terminated string of Lua code.
-    @param result Address of pointer that will point to the result
-                  string when this method returns.
+    @param result The result (if any) of the execution of the Lua code.
     @return true if Lua code ran without any errors, false otherwise.
-    @warning The result string should not be freed, the string is
-             owned by the nLuaServer. Likewise don't pass in the 
-             address of a pointer to a string which you allocated
-             unless you have a means of freeing that string after
-             this method returns (since the pointer won't be pointing
-             to your string anymore). Best to just pass in the address
-             of a pointer to NULL. The result string may be modified 
-             the next time an nLuaServer method is called, so make a
-             copy of it if you want it to stick around for a bit.
 */
-bool nLuaServer::Run(const char *cmdStr, const char*& result)
+bool nLuaServer::Run(const char *cmdStr, nString& result)
 {
     n_assert(cmdStr);
     // push the error handler on stack
@@ -170,14 +158,14 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
     // load chunk
     int status = luaL_loadbuffer(this->L, cmdStr, strlen(cmdStr), cmdStr);
     if (0 == status) // parse OK?
+    {
         return this->ExecuteLuaChunk(result, errfunc);
+    }
     else
     {
         // pop error message from the stack
         this->outputStr.Set("");
         result = this->StackToString(this->L, lua_gettop(this->L) - 1);
-        if (0 == result[0]) // empty string?
-            result = 0; // don't want a blank to be printed in the console
     }
     return false;
 }
@@ -185,14 +173,13 @@ bool nLuaServer::Run(const char *cmdStr, const char*& result)
 //--------------------------------------------------------------------
 /**
     @brief Read in Lua code from a file and execute it.
-    @param result Please refer to nLuaServer::Run() documentation 
-                  for important details about this parameter.
+    @param result Result (if any) of executing the Lua code.
     @return true if Lua code ran without any errors, false otherwise.
 
     This function will allow explicit return statements from the
     file - and requires it for output.
 */
-bool nLuaServer::RunScript(const char *filename, const char*& result)
+bool nLuaServer::RunScript(const char *filename, nString& result)
 {
     n_assert(filename);
     
@@ -204,7 +191,7 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     nString path = nFileServer2::Instance()->ManglePath(filename);
     if (!nfile->Open(path.Get(), "r"))
     {
-        result = 0;
+        result.Clear();
         nfile->Release();
         return false;
     }
@@ -224,10 +211,10 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
     retval = this->Run(cmdbuf, result);
     if (!retval)
     {
-        if (result)
+        if (!result.IsEmpty())
         {
             n_message("nLuaServer::RunScript failed:\nfile: %s\nmessage:\n%s\n", 
-                      path.Get(), result);
+                      path.Get(), result.Get());
         }
         else
         {
@@ -242,7 +229,7 @@ bool nLuaServer::RunScript(const char *filename, const char*& result)
 /**
     @brief Invoke a Lua function.
 */
-bool nLuaServer::RunFunction(const char *funcName, const char*& result)
+bool nLuaServer::RunFunction(const char *funcName, nString& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");

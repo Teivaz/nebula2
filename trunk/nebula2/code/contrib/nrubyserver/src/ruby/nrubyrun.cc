@@ -37,17 +37,17 @@ nString nRubyServer::Prompt()
 /**
     Run
     Evaluate a ruby command string
-    Result will be null, as any errors get printed out by ruby itself for
+    Result will be empty, as any errors get printed out by ruby itself for
     ease of use.
     
     - 02-01-04  Tom     created
     - 11-02-04  Tom     error printing for N2
 */
 //--------------------------------------------------------------------
-bool nRubyServer::Run(const char *cmd_str, const char*& result)
+bool nRubyServer::Run(const char *cmd_str, nString& result)
 {
-    result = 0;
-    int ret =0;
+    result.Clear();
+    int ret = 0;
     rb_p(rb_eval_string_protect((char *)cmd_str, &ret));
     if (ret) 
     {
@@ -192,17 +192,17 @@ bool nRubyServer::RunCommand(nCmd *c)
 /**
     RunScript
     Load and evaluate a ruby script then switches over to interactive mode
-    Result is left to null as errors get printed out by nebula itself for 
+    Result is left empty as errors get printed out by nebula itself for 
     ease of use.
 
     - 18-12-03  Tom     created
     - 11-02-04  Tom     error printing for N2
 */
 //--------------------------------------------------------------------
-bool nRubyServer::RunScript(const char *fname, const char*& result)
+bool nRubyServer::RunScript(const char *fname, nString& result)
 {
     char buf[N_MAXPATH];
-    result = 0;
+    result.Clear();
     strcpy(buf,(kernelServer->GetFileServer()->ManglePath(fname).Get()));
     this->print_error = true;
     ruby_script(buf);  
@@ -233,7 +233,7 @@ bool nRubyServer::RunScript(const char *fname, const char*& result)
 /**
     @brief Invoke a Ruby function.
 */
-bool nRubyServer::RunFunction(const char *funcName, const char*& result )
+bool nRubyServer::RunFunction(const char *funcName, nString& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");

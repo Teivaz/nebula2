@@ -40,9 +40,9 @@ public:
     nLuaServer();
     virtual ~nLuaServer();
  
-    virtual bool Run(const char *, const char*&);
-    virtual bool RunScript(const char *, const char*&);
-    virtual bool RunFunction(const char *, const char*&);
+    virtual bool Run(const char *, nString&);
+    virtual bool RunScript(const char *, nString&);
+    virtual bool RunFunction(const char *, nString&);
     virtual nString Prompt();
     
     const char* GenerateStackTrace();
@@ -86,7 +86,7 @@ private:
     static const char* StackToString( lua_State*, int );
     void reg_globalfunc(lua_CFunction, const char*);
     void write_select_statement(nFile *, nRoot *, nRoot *);
-    bool ExecuteLuaChunk(const char *&, int errfunc);
+    bool ExecuteLuaChunk(nString&, int errfunc);
 
     long indent_level;
     char indent_buf[N_MAXPATH];
