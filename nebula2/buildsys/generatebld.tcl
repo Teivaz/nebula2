@@ -46,8 +46,11 @@ proc gen_ancestor {i} {
     
     foreach filename $mod($i,srcs) {
     
-        # no cache hit, process files normally...
-        set cid [open [cleanpath $home/[getfilenamewithextension $filename cc] ] r]
+        if {[catch { set cid [open [cleanpath $home/[getfilenamewithextension $filename cc]] r] } result]} {
+            puts stderr "ERROR: $result"
+            return
+        }
+
         while {![eof $cid]} {
             set line [gets $cid]
 
@@ -100,8 +103,11 @@ proc gen_kernel {i} {
     #play "Lets find the kernel!"
     foreach filename $mod($i,hdrs) {
     
-        # no cache hit, process files normally...
         set cid [open [cleanpath $home/$filename.h] r]
+        if {[catch { set cid [open [cleanpath $home/$filename.h] r] } result]} {
+            puts stderr "ERROR: $result"
+            return
+        }
         while {![eof $cid]} {
             set line [gets $cid]
 
