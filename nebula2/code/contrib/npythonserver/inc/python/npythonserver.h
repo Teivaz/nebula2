@@ -37,10 +37,10 @@ public:
     nPythonServer();
     virtual ~nPythonServer();
  
-    virtual bool Run(const char *, const char*&);
-    virtual bool Run(const char *, int mode, const char*&);
-    virtual bool RunScript(const char *, const char*&);
-    virtual bool RunFunction(const char *, const char*&);
+    virtual bool Run(const char *, nString&);
+    virtual bool Run(const char *, int mode, nString&);
+    virtual bool RunScript(const char *, nString&);
+    virtual bool RunFunction(const char *, nString&);
     virtual bool RunCommand(nCmd *);
     virtual nString Prompt();
  

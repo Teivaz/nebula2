@@ -81,14 +81,14 @@ main(int argc, const char** argv)
 
     if (runArg)
     {
-        const char* result;
+        nString result;
         scriptServer->RunScript(runArg, result);
     }
     else
     {
         if (startupArg)
         {
-            const char* result;
+            nString result;
             scriptServer->RunScript(startupArg, result);
         }
 
@@ -109,11 +109,11 @@ main(int argc, const char** argv)
             bool lineOk = (gets(line) > 0);
             if (strlen(line) > 0)
             {
-                const char* result = 0;
+                nString result;
                 scriptServer->Run(line, result);
-                if (result)
+                if (false == result.IsEmpty())
                 {
-                    printf("%s\n", result);
+                    printf("%s\n", result.Get());
                 }
             }
         }
