@@ -97,6 +97,7 @@ nIpcBuffer&
 nIpcBuffer::operator=(const nIpcBuffer& rhs)
 {
     this->Set(rhs.buffer, rhs.contentSize);
+    return *this;
 }
 
 //------------------------------------------------------------------------------
