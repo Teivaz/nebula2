@@ -32,6 +32,7 @@ begintarget nimagetool
     setdepends {
         nkernel
     }
+    setrsrc_win32 { nebula2 }
     setlibs_win32 { wsock32.lib DevIL.lib ilu.lib }
     setlibs_unix  { IL ILU }
     setframeworks_macosx { IL ILU Carbon }
@@ -58,6 +59,7 @@ begintarget nmeshtool
         nkernel
         ntoollib
     }
+    setrsrc_win32 { nebula2 }
     setlibs_win32 { wsock32.lib nv_math.lib }
     setframeworks_macosx { Carbon }
 endtarget
@@ -80,6 +82,7 @@ begintarget nremoteshell
     setdepends {
         nkernel
     }
+    setrsrc_win32 { nebula2 }
     setlibs_win32 { 
         wsock32.lib 
     }
@@ -109,6 +112,7 @@ begintarget nsh
         microtcl
         ntoollib
     }
+    setrsrc_win32 { nebula2 }
     setlibs_win32 { 
         d3d9.lib d3dx9.lib dinput8.lib dxguid.lib dsound.lib wsock32.lib 
     }
@@ -137,6 +141,7 @@ begintarget nviewer
         ndinput8
         ndirect3d9
     }
+    setrsrc_win32 { nebula2 }
     setlibs_win32 { wsock32.lib nv_math.lib dinput8.lib d3d9.lib d3dx9.lib dxguid.lib }
     setframeworks_macosx { Carbon }
 endtarget
