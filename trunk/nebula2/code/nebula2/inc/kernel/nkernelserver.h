@@ -63,6 +63,8 @@ public:
     void ReleaseClass(nClass* cl);
     /// find a loaded class object by name
     nClass* FindClass(const char* className);
+    /// return the list of classes
+    const nHashList * GetClassList() const;
 
     /// create a Nebula object, fail hard if no object could be created
     nRoot* New(const char* className, const char* objectName);
@@ -252,6 +254,17 @@ nTimeServer*
 nKernelServer::GetTimeServer() const
 {
     return this->timeServer;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const
+nHashList*
+nKernelServer::GetClassList() const
+{
+    return &(this->classList);
 }
 
 //--------------------------------------------------------------------
