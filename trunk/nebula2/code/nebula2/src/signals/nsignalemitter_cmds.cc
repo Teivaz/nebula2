@@ -70,7 +70,7 @@ static void n_unbindobject(void* o, nCmd* cmd)
 }
 
 //------------------------------------------------------------------------------
-static void n_unbindall(void* o, nCmd* cmd)
+static void n_unbindall(void* o, nCmd* /*cmd*/)
 {
     nObject* self = (nObject*) o;
 
