@@ -11,12 +11,14 @@
 nNebulaClass(nOpendePickServer, "nroot");
 
 #include "opende/nopendetrimesh.h"
+#include "gfx2/ngfxserver2.h"
 
 //----------------------------------------------------------------------------
 /**
 */
 nOpendePickServer::nOpendePickServer() :
-    contactArray(0)
+    contactArray(0),
+    ref_GfxServer("/sys/servers/gfx")
 {
     this->rayGeom = nOpende::CreateRay( 0, 1 );
 }
@@ -30,6 +32,84 @@ nOpendePickServer::~nOpendePickServer()
     {
         nOpende::GeomDestroy( this->rayGeom );
         this->rayGeom = 0;
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+    @param [in] mouseX   Absolute x coordinate of cursor in pixels.
+    @param [in] mouseY   Absolute y coordinate of cursor in pixels.
+    @param [out] pickRay The generated pick ray.
+*/
+void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
+{
+    n_assert( this->ref_GfxServer.isvalid() );
+    
+    vector3 start, end;
+        
+    const nDisplayMode2& displayMode = this->ref_GfxServer->GetDisplayMode();
+    nCamera2& camera = this->ref_GfxServer->GetCamera();
+    
+    if ( nCamera2::Perspective == camera.GetType() )
+    {
+        float nearp, farp, minx, maxx, miny, maxy;
+        camera.GetViewVolume( minx, maxx, miny, maxy, nearp, farp );
+        // normalize screen coords to [-1.0f, 1.0f]
+        start.x = float(mouseX) / (displayMode.GetWidth() * 0.5f) - 1.0f;
+        start.y = 1.0f - float(mouseY) / (displayMode.GetHeight() * 0.5f);
+        // map the normalized coords to the near plane
+        start.x *= maxx;
+        start.y *= maxy;
+        start.z = -nearp;
+        // the ratio of the far plane to the near plane is the same as
+        // the ratio of the x/y coord on the far plane to the x/y coord 
+        // on the near plane
+        float planeRatio = farp / nearp;
+        // map the coords from the near plane to the far plane
+        end.x = start.x * planeRatio;
+        end.y = start.y * planeRatio;
+        end.z = -farp;
+        // transform ray endpoints to world space and create the ray
+        matrix44 mat = this->ref_GfxServer->GetTransform( nGfxServer2::InvView );
+        pickRay.set( mat * start, mat * end );
+    }
+}
+  
+//----------------------------------------------------------------------------
+/**
+    @param [in]  mouseX  Normalized x coordinate of cursor (-1.0 to 1.0)
+    @param [in]  mouseY  Normalized y coordinate of cursor (-1.0 to 1.0)
+    @param [out] pickRay The generated pick ray.
+*/      
+void nOpendePickServer::CreatePickRay( float mouseX, float mouseY, 
+                                       line3& pickRay )
+{
+    n_assert( this->ref_GfxServer.isvalid() );
+    
+    vector3 start, end;
+        
+    const nDisplayMode2& displayMode = this->ref_GfxServer->GetDisplayMode();
+    nCamera2& camera = this->ref_GfxServer->GetCamera();
+    
+    if ( nCamera2::Perspective == camera.GetType() )
+    {
+        float nearp, farp, minx, maxx, miny, maxy;
+        camera.GetViewVolume( minx, maxx, miny, maxy, nearp, farp );
+        // map the normalized coords to the near plane
+        start.x *= maxx;
+        start.y *= maxy;
+        start.z = -nearp;
+        // the ratio of the far plane to the near plane is the same as
+        // the ratio of the x/y coord on the far plane to the x/y coord 
+        // on the near plane
+        float planeRatio = farp / nearp;
+        // map the coords from the near plane to the far plane
+        end.x = start.x * planeRatio;
+        end.y = start.y * planeRatio;
+        end.z = -farp;
+        // transform ray endpoints to world space and create the ray
+        matrix44 mat = this->ref_GfxServer->GetTransform( nGfxServer2::InvView );
+        pickRay.set( mat * start, mat * end );
     }
 }
 
@@ -100,8 +180,9 @@ int nOpendePickServer::RayPickSimple( dSpaceID space, const line3& line,
         // for the closest geom (or we may not find the closest one!)
         nOpende::SpaceCollide2( this->rayGeom, (dGeomID)space, this, 
                                 &PickClosestCallback );
+        int retVal = (0 == this->contactArray[0].g2) ? 0:1;
         this->contactArray = 0;
-        return 1;
+        return retVal;
     }
     
     return 0;
