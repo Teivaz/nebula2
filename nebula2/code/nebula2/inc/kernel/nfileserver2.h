@@ -19,6 +19,9 @@
 #include "kernel/nroot.h"
 #include "kernel/nref.h"
 #include "util/nstring.h"
+#ifdef __WIN32__
+#include "kernel/nshell32wrapper.h"
+#endif
 
 //------------------------------------------------------------------------------
 class nDirectory;
@@ -79,12 +82,18 @@ private:
     void InitHomeAssign();
     /// initialize the standard bin: assign
     void InitBinAssign();
-    
+    /// initialize the standard user: assign
+    void InitUserAssign();
+
     nRef<nRoot> assignDir;
 
     int bytesRead;
     int bytesWritten;
     int numSeeks;
+
+    #ifdef __WIN32__
+    nShell32Wrapper shell32Wrapper;
+    #endif
 };
 
 //------------------------------------------------------------------------------

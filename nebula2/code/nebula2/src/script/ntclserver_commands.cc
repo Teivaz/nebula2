@@ -712,9 +712,10 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         // so we will just barf.
         if (has_dot) 
         {
-            // this is not very critical...
+            // NOTE: use SetFailOnError(false) before loading script
+            // files if you don't want the program to abort
             tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept command '%s'",o,cmd_name);
-            retval = TCL_OK;
+            retval = TCL_ERROR;
         }
         else
         {

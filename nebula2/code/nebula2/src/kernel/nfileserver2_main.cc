@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nsystem.h"
 #include "kernel/nkernelserver.h"
 #include "kernel/nenv.h"
 #include "kernel/nfileserver2.h"
@@ -34,6 +35,7 @@ nFileServer2::nFileServer2() :
     this->assignDir = kernelServer->New("nroot", "/sys/share/assigns");
     this->InitHomeAssign();
     this->InitBinAssign();
+    this->InitUserAssign();
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ nFileServer2::GetAssign(const char* assignName)
 //------------------------------------------------------------------------------
 /**
     Cleanup the path name inplace (replace any backslashes with slashes),
-    removes a trailing slash if exists, and does a tolower on each char.
+    removes a trailing slash if exists.
 */
 void
 nFileServer2::CleanupPathName(char* path)
@@ -245,7 +247,7 @@ nFileServer2::NewFileObject()
     Initialize Nebula's home directory assign ("home:").
 */
 void 
-nFileServer2::InitHomeAssign(void)
+nFileServer2::InitHomeAssign()
 {
 #ifdef __XBxX__
     this->SetAssign("home", "d:/");
@@ -255,6 +257,16 @@ nFileServer2::InitHomeAssign(void)
         // Win32: Check for the NEBULADIR environment variable first,
         // then try to find the nkernel.dll module handle's filename
         // and cut off the last 2 directories
+        //
+        // *** NOTE BY FLOH ***
+        // Checking for a NEBULADIR env variable is a bad idea because it may
+        // lead to hard to find end-user problems if several shipped Nebula
+        // application exist on the machine and the user has defined
+        // the NEBULADIR variable (for instance because the user happens
+        // to be a Nebula developer). This happened when we shipped Nomads
+        // and people had the Nebula SDK installed which required a
+        // NOMADS_HOME variable :(
+        /*
         char* s = getenv("NEBULADIR");
         if (s)
         {
@@ -262,11 +274,13 @@ nFileServer2::InitHomeAssign(void)
         }
         else
         {
-            HMODULE hmod = GetModuleHandle("nkernel.dll");
-            DWORD res = GetModuleFileName(hmod,buf,sizeof(buf));
+        */
+
+            // use the executable's directory to locate the home directory
+            DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
             if (res == 0) 
             {
-                n_printf("nFileServer::initHomeAssign(): GetModuleFileName() failed!\n");
+                n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
             }
 
             // "x\y\bin\win32\xxx.exe" -> "x\y\"
@@ -278,7 +292,7 @@ nFileServer2::InitHomeAssign(void)
                 n_assert(p);
                 p[0] = 0;
             }
-        }
+        // }
 
         if (strlen(buf) > 0)
         {
@@ -291,7 +305,10 @@ nFileServer2::InitHomeAssign(void)
                 p++;
             }
             // if last char is not a /, append one
-            if (buf[strlen(buf)-1] != '/') strcat(buf,"/");
+            if (buf[strlen(buf)-1] != '/')
+            {
+                strcat(buf,"/");
+            }
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
@@ -334,7 +351,7 @@ nFileServer2::InitHomeAssign(void)
 /**
 */
 void 
-nFileServer2::InitBinAssign(void)
+nFileServer2::InitBinAssign()
 {
 #ifdef __XBxX__
     this->SetAssign("bin", "d:/");
@@ -356,6 +373,44 @@ nFileServer2::InitBinAssign(void)
     #endif
 
     this->SetAssign("bin",buf);
+#endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Initialize the user assign. This is where the application should
+    save any type of data, like save games or config options, since
+    applications may not have write access to the home: directory (which is by
+    tradition the application directory.
+
+    On the Xbox, the user assign points to the application's
+    hard disk partition.
+
+    On Windows, the user assign points to CSIDL_PERSONAL.
+
+    On Unix, the user assign should point to the user's home
+    directory.
+*/
+void
+nFileServer2::InitUserAssign()
+{
+#ifdef __XBxX__
+    this->SetAssign("user", "d:/");
+#elif __WIN32__
+    char rawPath[MAX_PATH];
+    HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,        // hwndOver
+                    CSIDL_PERSONAL | CSIDL_FLAG_CREATE,         // nFolder
+                    NULL,                                       // hToken
+                    0,                                          // dwFlags
+                    rawPath);                                   // psxPath
+    n_assert(S_OK == hr);
+
+    nPathString path(rawPath);
+    path.ConvertBackslashes();
+    path.Append("/");
+    this->SetAssign("user", path.Get());
+#else
+#error "IMPLEMENT ME!"
 #endif
 }
 
@@ -435,6 +490,9 @@ nFileServer2::MakePath(const char* dirName)
 /**
     Copy a file.
     FIXME: the Non-Win32 version reads the entire file is into RAM!
+
+    - 09-Mar-04     floh    Win32 version now removes write protection on
+                            target file before copying.
 */
 bool
 nFileServer2::CopyFile(const char* from, const char* to)
@@ -447,6 +505,14 @@ nFileServer2::CopyFile(const char* from, const char* to)
         char mangledToPath[N_MAXPATH];
         this->ManglePath(from, mangledFromPath, sizeof(mangledFromPath));
         this->ManglePath(to, mangledToPath, sizeof(mangledToPath));
+
+        // if the target file exists, remove the read/only file attribute
+        if (this->FileExists(mangledToPath))
+        {
+            DWORD fileAttrs = GetFileAttributes(mangledToPath);
+            fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
+            SetFileAttributes(mangledToPath, fileAttrs);
+        }
         return ::CopyFile(mangledFromPath, mangledToPath, FALSE) ? true : false;
     #else
         nFile* fromFile = this->NewFileObject();

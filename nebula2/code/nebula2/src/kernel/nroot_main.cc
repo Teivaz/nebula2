@@ -154,18 +154,22 @@ nRoot::GetFullName(char *buf, int sizeof_buf)
     This is a slow operation, unless one object is the parent of
     the other (this is a special case optimization).
     
-     - 06-Mar-00   floh    created
+     - 06-Mar-00    floh    created
+     - 21-Feb-04    floh    now accepts "other == this" (returns a dot)
 */
 char *
 nRoot::GetRelPath(nRoot *other, char *buf, int sizeof_buf)
 {
     n_assert(other);
-    n_assert(other != this);
     n_assert(buf);
     n_assert(sizeof_buf > 0);
 
     buf[0] = 0;
-    if (other == this->GetParent()) 
+    if (other == this)
+    {
+        n_strcat(buf, ".", sizeof_buf);
+    }
+    else if (other == this->GetParent()) 
     {
         // special case optimize: other is parent of this
         n_strcat(buf,"..",sizeof_buf);
