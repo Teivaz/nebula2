@@ -4,11 +4,11 @@
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
-#include "util/nstring.h"
 #include "export2/nmaxoptions.h"
 #include "pluginlibs/ninifile.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
+
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
@@ -29,6 +29,7 @@ nMaxOptions::nMaxOptions() :
     animFileExtension(".nanim2"),
     maxJointPaletteSize(24),
     weightTrashHold(0.0001f),
+    sampleRate (2),
     runViewer(true),
     saveScriptServer("ntclserver"),
     useIndivisualMesh(false),
@@ -276,13 +277,22 @@ bool nMaxOptions::ExportHiddenNodes()
     return this->exportHiddenNodes;
 }
 //-----------------------------------------------------------------------------
+void nMaxOptions::SetSampleRate(int val)
+{
+    this->sampleRate = val;
+}
+//-----------------------------------------------------------------------------
+int nMaxOptions::GetSampleRate() const
+{
+    return this->sampleRate;
+}
+//-----------------------------------------------------------------------------
 /**
 */
 const char* nMaxOptions::GetViewerDir() const
 {
     return this->binaryPath.Get();
 }
-
 //-----------------------------------------------------------------------------
 /**
 */
