@@ -86,8 +86,6 @@ nParticleEmitter::Trigger(nTime curTime)
         }       
     }
 
-
-
     if (this->AreResourcesValid() && this->alive)
     {
         // do the emission
@@ -124,7 +122,7 @@ nParticleEmitter::Trigger(nTime curTime)
 
                     const nMeshGroup& meshGroup = this->refEmitterMesh->GetGroup(this->meshGroupIndex);
                     int firstIndex  = meshGroup.GetFirstIndex();
-                    int lastIndex = firstIndex + meshGroup.GetNumIndices();
+                    int lastIndex = firstIndex + meshGroup.GetNumIndices() - 1;
 
                     while ((curEmitted < curEmissionCount) && (!this->particleBuffer.IsFull()))
                     {
