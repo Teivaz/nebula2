@@ -312,6 +312,7 @@ inline
 void 
 _matrix44::transpose() 
 {
+    #undef n_swap
     #define n_swap(x,y) { float t=x; x=y; y=t; }
     n_swap(M12, M21);
     n_swap(M13, M31);
