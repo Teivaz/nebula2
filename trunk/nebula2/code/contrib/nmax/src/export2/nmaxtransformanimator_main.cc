@@ -87,7 +87,7 @@ bool nMaxTransformAnimator::Export(INode* inode, Control *control)
             nKernelServer::Instance()->PopCwd();
             animator->Release();
 
-            n_maxlog(Warning, "Waring: The node %s has animation controllers but it has no keys.", 
+            n_maxlog(Warning, "Warning: The node %s has animation controllers but it has no keys.", 
                      inode->GetName());
             return false;
         }
