@@ -88,7 +88,6 @@ void
 nWindowHandler::MinimizeWindow()
 {
     n_assert(this->windowOpen);
-    n_assert(!this->windowMinimized);
 }
 
 //------------------------------------------------------------------------------

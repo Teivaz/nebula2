@@ -314,14 +314,16 @@ nWin32WindowHandler::MinimizeWindow()
 {
     n_assert(this->hWnd);
     n_assert(this->windowOpen);
-    n_assert(!this->windowMinimized);
 
-    // minimize window for all mode except child
-    if (this->displayMode.GetType() != nDisplayMode2::ChildWindow) 
+    if (!this->windowMinimized)
     {
-        ShowWindow(this->hWnd, SW_MINIMIZE);
+        // minimize window for all mode except child
+        if (this->displayMode.GetType() != nDisplayMode2::ChildWindow) 
+        {
+            ShowWindow(this->hWnd, SW_MINIMIZE);
+        }
+        this->windowMinimized = true;
     }
-    this->windowMinimized = true;
 }
 
 //-----------------------------------------------------------------------------
