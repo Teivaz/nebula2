@@ -827,6 +827,23 @@ proc add_pkgs { wslist } {
         }
     }
 }
+
+#----------------------------------------------------------------------------
+# get_generator_info
+# List info about the loaded generator scripts
+#----------------------------------------------------------------------------
+proc get_generator_info {} {
+    global loaded_generators
+    set results {}
+    foreach gen $loaded_generators {
+        if {[catch { set desc [namespace inscope $gen description] } result]} {
+            set desc "  ERROR: $result"
+        } else {
+            lappend results [list $gen $desc]
+        }
+    }
+    return $results
+}
 #----------------------------------------------------------------------------
 # EOF
 #----------------------------------------------------------------------------
