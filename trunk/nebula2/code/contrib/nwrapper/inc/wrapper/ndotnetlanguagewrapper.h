@@ -12,7 +12,7 @@
 
 class nFile;
 //------------------------------------------------------------------------------
-class N_PUBLIC nDotNetLanguageWrapper : public nLanguageWrapper
+class nDotNetLanguageWrapper : public nLanguageWrapper
 {
 public:
     /// constructor

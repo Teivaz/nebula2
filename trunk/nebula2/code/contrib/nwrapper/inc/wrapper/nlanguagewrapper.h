@@ -11,16 +11,10 @@
     This file is licensed under the terms of the Nebula License.
     (C) 2003 Bruce Mitchener, Jr.
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nLanguageWrapper
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nLanguageWrapper : public nRoot 
+class nLanguageWrapper : public nRoot 
 {
 public:
     /// constructor
