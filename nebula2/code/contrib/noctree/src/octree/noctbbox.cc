@@ -2,16 +2,7 @@
 //  noctbox.cc
 //  
 //-------------------------------------------------------------------
-#include "mathlib/bbox.h"
 #include "octree/noctbbox.h"
-
-//-------------------------------------------------------------------
-/**
-    Constructor.
-*/
-nOctBBox::nOctBBox()
-{
-}
 
 //-------------------------------------------------------------------
 /**
@@ -28,7 +19,7 @@ void nOctBBox::DoCulling(nOctree* octree)
 void nOctBBox::recurse_collect_by_bbox(nOctree* octree, nOctNode *on)
 {
     // clip status of current node
-    int bbox_c = this->box_clip_box(on->p0,on->p1);
+    int bbox_c = this->box_clip_box(on->minCorner,on->maxCorner);
     if (bbox_c > 0) {
         // node is contained completely inside the
         // collection box, trivially accept all child nodes
@@ -56,7 +47,7 @@ void nOctBBox::collect_nodes_in_bbox(nOctree* octree, nOctNode *on)
          oe;
          oe = (nOctElement *) oe->GetSucc())
     {
-        int c = this->box_clip_box(oe->p0,oe->p1);
+        int c = this->box_clip_box(oe->minCorner,oe->maxCorner);
         if (c >= 0) {
             oe->SetCollectFlags(nOctElement::N_COLLECT_BBOX);
             octree->collect(oe);
@@ -77,9 +68,11 @@ void nOctBBox::collect_nodes_in_bbox(nOctree* octree, nOctNode *on)
 
     - 02-Jun-00   floh    created
 */
-int nOctBBox::box_clip_box(vector3& p0, vector3& p1)
+int nOctBBox::box_clip_box(vector3& minCorner, vector3& maxCorner)
 {
-    bbox3 b(p0,p1);
+    bbox3 b;
+    b.vmin = minCorner;
+    b.vmax = maxCorner;
     int res = b.intersect(this->collect_bbox);
     if (bbox3::OUTSIDE == res) {
         return -1;

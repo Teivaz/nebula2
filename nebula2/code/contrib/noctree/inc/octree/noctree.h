@@ -55,8 +55,8 @@ class nOctElement : public nNode {
 public:
     nOctNode *octnode;          ///< The containing nOctNode
     vector3 pos;                ///< The position of the element
-    vector3 p0;
-    vector3 p1;
+    vector3 minCorner;
+    vector3 maxCorner;
     float radius;               ///< The radius of the element
     int collect_flags;
 
@@ -81,12 +81,12 @@ public:
         n_assert(r > 0.0f);
         pos    = p;
         radius = r;
-        p0.x = pos.x - r;
-        p1.x = pos.x + r;
-        p0.y = pos.y - r;
-        p1.y = pos.y + r;
-        p0.z = pos.z - r;
-        p1.z = pos.z + r;
+        minCorner.x = pos.x - r;
+        maxCorner.x = pos.x + r;
+        minCorner.y = pos.y - r;
+        maxCorner.y = pos.y + r;
+        minCorner.z = pos.z - r;
+        maxCorner.z = pos.z + r;
     };
     //----------------------------------------------------------------
     void SetCollectFlags(int f) {
@@ -113,8 +113,8 @@ public:
         nOctNode *next;
     };
     nOctNode *c[8];             ///< Children nodes
-    vector3 p0;                 ///< Bounding Box 0
-    vector3 p1;                 ///< Bounding Box 1
+    vector3 minCorner;          ///< Bounding Box 0
+    vector3 maxCorner;          ///< Bounding Box 1
     short num_elms;             ///< Number of elements in elm_list for this node.
     short all_num_elms;         ///< Total number of elements in elm_list, in this code and all children, recursively.
     nList elm_list;             ///< List of nOctElement's
@@ -196,7 +196,7 @@ protected:
 
 public:
     static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer *kernelServer;
 
     nOctree();
     virtual ~nOctree();
@@ -216,7 +216,7 @@ public:
 
 	virtual int Collect(nOctVisitor& culler, nOctElement** ext_array, int size);
 
-    virtual void Visualize(nGfxServer2 *);
+    //virtual void Visualize(nGfxServer2 *);
 
     void collect(nOctElement *);
     void recurse_collect_nodes_with_flags(nOctNode *, int);

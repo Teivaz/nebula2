@@ -126,8 +126,8 @@ nOctNode *nOctree::alloc_node(nOctNode *p,
     n_assert(n);
     this->free_root = n->next;
     n->parent = p;
-    n->p0.x=x0; n->p0.y=y0; n->p0.z=z0;
-    n->p1.x=x1; n->p1.y=y1; n->p1.z=z1;
+    n->minCorner.x=x0; n->minCorner.y=y0; n->minCorner.z=z0;
+    n->maxCorner.x=x1; n->maxCorner.y=y1; n->maxCorner.z=z1;
     // n_printf("# new octnode %d\n",n);
     return n;
 }
@@ -168,12 +168,12 @@ void nOctree::freenode(nOctNode *n)
 bool nOctree::elm_inside_node(nOctElement *oe, nOctNode *n)
 {
     int clip = 0;
-    if (oe->p0.x < n->p0.x) clip |= N_OCT_CLIPX0;
-    if (oe->p1.x > n->p1.x) clip |= N_OCT_CLIPX1;
-    if (oe->p0.y < n->p0.y) clip |= N_OCT_CLIPY0;
-    if (oe->p1.y > n->p1.y) clip |= N_OCT_CLIPY1;
-    if (oe->p0.z < n->p0.z) clip |= N_OCT_CLIPZ0;
-    if (oe->p1.z > n->p1.z) clip |= N_OCT_CLIPZ1;
+    if (oe->minCorner.x < n->minCorner.x) clip |= N_OCT_CLIPX0;
+    if (oe->maxCorner.x > n->maxCorner.x) clip |= N_OCT_CLIPX1;
+    if (oe->minCorner.y < n->minCorner.y) clip |= N_OCT_CLIPY0;
+    if (oe->maxCorner.y > n->maxCorner.y) clip |= N_OCT_CLIPY1;
+    if (oe->minCorner.z < n->minCorner.z) clip |= N_OCT_CLIPZ0;
+    if (oe->maxCorner.z > n->maxCorner.z) clip |= N_OCT_CLIPZ1;
     return (0 == clip);
 }
 
@@ -196,18 +196,18 @@ void nOctree::subdivide(nOctNode *n)
     // n_printf("# subdividing octnode %d\n",n);
 
     // create new child-nodes
-    float x = (n->p0.x + n->p1.x) * 0.5f;
-    float y = (n->p0.y + n->p1.y) * 0.5f;
-    float z = (n->p0.z + n->p1.z) * 0.5f;
+    float x = (n->minCorner.x + n->maxCorner.x) * 0.5f;
+    float y = (n->minCorner.y + n->maxCorner.y) * 0.5f;
+    float z = (n->minCorner.z + n->maxCorner.z) * 0.5f;
     int i;
     for (i=0; i<8; i++) {
         float x0,x1,y0,y1,z0,z1;
-        if (i & 1) { x0=n->p0.x; x1=x; }
-        else       { x0=x; x1=n->p1.x; }
-        if (i & 2) { y0=n->p0.y; y1=y; }
-        else       { y0=y; y1=n->p1.y; }
-        if (i & 4) { z0=n->p0.z; z1=z; }
-        else       { z0=z; z1=n->p1.z; }
+        if (i & 1) { x0=n->minCorner.x; x1=x; }
+        else       { x0=x; x1=n->maxCorner.x; }
+        if (i & 2) { y0=n->minCorner.y; y1=y; }
+        else       { y0=y; y1=n->maxCorner.y; }
+        if (i & 4) { z0=n->minCorner.z; z1=z; }
+        else       { z0=z; z1=n->maxCorner.z; }
         n->c[i] = this->alloc_node(n,x0,x1,y0,y1,z0,z1);
     }
 
@@ -510,12 +510,12 @@ static void cube(nPrimitiveServer *prim,
 /*
 void nOctree::visualize_node(nOctNode *on, nPrimitiveServer *prim)
 {
-    float x0 = on->p0.x;
-    float x1 = on->p1.x;
-    float y0 = on->p0.y;
-    float y1 = on->p1.y;
-    float z0 = on->p0.z;
-    float z1 = on->p1.z;
+    float x0 = on->minCorner.x;
+    float x1 = on->maxCorner.x;
+    float y0 = on->minCorner.y;
+    float y1 = on->maxCorner.y;
+    float z0 = on->minCorner.z;
+    float z1 = on->maxCorner.z;
     float x = (x0 + x1)*0.5f;
     float y = (y0 + y1)*0.5f;
     float z = (z0 + z1)*0.5f;
@@ -530,12 +530,12 @@ void nOctree::visualize_node(nOctNode *on, nPrimitiveServer *prim)
          oe;
          oe = (nOctElement *) oe->GetSucc())
     {
-        x0 = oe->p0.x;
-        x1 = oe->p1.x;
-        y0 = oe->p0.y;
-        y1 = oe->p1.y;
-        z0 = oe->p0.z;
-        z1 = oe->p1.z;
+        x0 = oe->minCorner.x;
+        x1 = oe->maxCorner.x;
+        y0 = oe->minCorner.y;
+        y1 = oe->maxCorner.y;
+        z0 = oe->minCorner.z;
+        z1 = oe->maxCorner.z;
 
         prim->Rgba(1.0f, 0.0f, 0.0f, 1.0f);
         cube(prim, x0,y0,z0,x1,y1,z1);

@@ -1,4 +1,3 @@
-
 #ifndef N_OCTSPHERE_H
 #define N_OCTSPHERE_H
 
@@ -14,8 +13,6 @@
 class nOctSphere : public nOctVisitor
 {
 public:
-    nOctSphere() {;}
-
     virtual void DoCulling (nOctree* oct);
 
     void SetSphere(const sphere& sphere);
