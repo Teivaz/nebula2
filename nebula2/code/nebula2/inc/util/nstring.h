@@ -927,7 +927,7 @@ nString::Substitute(const char* matchStr, const char* substStr) const
 
     // walk original string for occurances of str
     const char* occur;
-    while (occur = strstr(ptr, matchStr))
+    while ((occur = strstr(ptr, matchStr)))
     {
         // append string fragment until match
         dest.AppendRange(ptr, occur - ptr);
@@ -981,7 +981,7 @@ nString::UTF8toANSI()
     uchar* src = (uchar*) this->Get();
     uchar* dst = src;
     uchar c;
-    while (c = *src++)
+    while ((c = *src++))
     {
         if (c >= 0x80)
         {
@@ -1041,7 +1041,7 @@ nString::ANSItoUTF8()
     char* dstPtr = buffer;
     const char* srcPtr = this->Get();
     unsigned char c;
-    while (c = *srcPtr++)
+    while ((c = *srcPtr++))
     {
         // note: this only covers the 2 cases that the character
         // is between 0 and 127 and between 128 and 255
