@@ -101,7 +101,7 @@ nD3D9Server::UnloadResources()
     // release the dynamic mesh object
     this->refDynMesh->Release();
 
-    // release the stencil surface... might be necessary.
+    // release the backbuffer and stencil surface
     this->backBufferSurface->Release();
     this->depthStencilSurface->Release();
 
