@@ -247,7 +247,7 @@ n_dllopen(const char* name)
                 0,
                 NULL 
                 );
-            
+
             // Display the string.
             n_printf("Could not load dll '%s'\nError was:\n%s\n", name, lpMsgBuf);
 

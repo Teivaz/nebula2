@@ -104,10 +104,6 @@ void __cdecl n_message(const char*, ...)
 void n_sleep(double);
 char *n_strdup(const char *);
 char *n_strncpy2(char *, const char *, size_t);
-void *nn_malloc(size_t, const char *, int);
-void *nn_calloc(size_t, size_t, const char *, int);
-void *nn_realloc(void *, size_t, const char *, int);
-void n_free(void *);
 bool n_strmatch(const char *, const char *);
 void n_strcat(char *, const char *, size_t);
 

@@ -4,7 +4,8 @@
 /**
     @class nFileTimePosix
 
-    Implement POSIX nFileTime class.
+    Implement POSIX nFileTime class. Please use the platform neutral
+    nFileTime class for indirect access to _nFileTimePosix.
     
     (C) 2003 RadonLabs GmbH
 */

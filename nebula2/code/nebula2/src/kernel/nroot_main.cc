@@ -477,7 +477,7 @@ nRoot::GetTreeSize() const
 //------------------------------------------------------------------------------
 /**
     Lock the object's main mutex.
-*/ 
+*/
 void 
 nRoot::LockMutex()
 {

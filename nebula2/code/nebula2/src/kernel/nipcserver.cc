@@ -77,7 +77,7 @@ ListenerWakeupFunc(nThread* t)
     connect(sock, (struct sockaddr *) &myAddr, sizeof(myAddr));
     shutdown(sock, 2);
     closesocket(sock);
-} 
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -88,7 +88,7 @@ nIpcServer::nIpcServer(nIpcAddress& addr) :
     uniqueMiniServerId(0),
     selfAddr(addr)
 {
-        // create a socket
+    // create a socket
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
     n_assert(INVALID_SOCKET != this->sock);
 
@@ -103,11 +103,11 @@ nIpcServer::nIpcServer(nIpcAddress& addr) :
 
     // start the listener thread
     this->listenerThread = n_new(nThread(ListenerThreadFunc,
-                                       nThread::Normal,
-                                       0,
-                                       ListenerWakeupFunc,
-                                       &(this->msgList),
-                                       (void*) this);
+                                         nThread::Normal,
+                                         0,
+                                         ListenerWakeupFunc,
+                                         &(this->msgList),
+                                         (void*) this));
 }
 
 //------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ nIpcServer::~nIpcServer()
         n_delete(ipcMiniServer);
     }
     this->miniServerList.Unlock();
-    
+
     // shutdown the server socket
     if (INVALID_SOCKET != this->sock)
     {
@@ -138,7 +138,7 @@ nIpcServer::~nIpcServer()
         closesocket(this->sock);
         this->sock = 0;
     }
-    
+
     // delete pending messages
     nMsgNode* msgNode;
     this->msgList.Lock();
@@ -209,7 +209,7 @@ nIpcServer::GetMsg(nIpcBuffer& msg, int& fromClientId)
         return false;
     }
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Send a message to a specific client.

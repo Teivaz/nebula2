@@ -4,7 +4,8 @@
 /**
     @class nFileTimeWin32
 
-    Implement Win32 specific nFileTime class.
+    Implement Win32 specific nFileTime class. Please use the platform neutral
+    nFileTime class for indirect access to _nFileTimeWin32.
     
     (C) 2003 RadonLabs GmbH
 */
