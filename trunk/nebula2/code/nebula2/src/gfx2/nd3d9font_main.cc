@@ -8,6 +8,21 @@
 
 nNebulaClass(nD3D9Font, "nfont2");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9font
+
+    @cppclass
+    nD3D9Font
+    
+    @superclass
+    nfont2
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -55,10 +70,10 @@ nD3D9Font::LoadResource()
     {
     case nFontDesc::Thin: 
         fontFlags |= FW_THIN;
-    	break;
+      break;
     case nFontDesc::Light:
         fontFlags |= FW_LIGHT;
-    	break;
+      break;
     case nFontDesc::Normal:
         fontFlags |= FW_NORMAL;
         break;

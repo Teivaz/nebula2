@@ -7,6 +7,20 @@
 
 nNebulaClass(nMesh2, "nresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nmesh2
+
+    @cppclass
+    nMesh2
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
 //------------------------------------------------------------------------------
 /**
 */

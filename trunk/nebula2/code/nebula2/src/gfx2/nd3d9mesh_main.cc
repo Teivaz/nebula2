@@ -10,6 +10,21 @@
 
 nNebulaClass(nD3D9Mesh, "nmesh2");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9mesh
+
+    @cppclass
+    nD3D9Mesh
+    
+    @superclass
+    nmesh2
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -286,7 +301,7 @@ nD3D9Mesh::CreateIndexBuffer()
         if (this->refGfxServer->GetSoftwareVertexProcessing() ||
             ((NeedsVertexShader & this->usage) && 
             (this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9)))
-        {	
+        { 
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
 

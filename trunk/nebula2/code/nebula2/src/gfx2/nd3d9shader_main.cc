@@ -12,6 +12,21 @@
 
 nNebulaClass(nD3D9Shader, "nshader2");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9shader
+
+    @cppclass
+    nD3D9Shader
+    
+    @superclass
+    nshader2
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -553,7 +568,7 @@ nD3D9Shader::ValidateEffect()
         BOOL oldSoftwareVertexProcessing = this->refGfxServer->d3d9Device->GetSoftwareVertexProcessing( );
 
         // if not DX9, give it another chance with software vertex processing
-		if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
+    if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
         {
             this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing( TRUE );
             hr = this->effect->ValidateTechnique(technique);

@@ -10,6 +10,22 @@
 
 nNebulaClass(nD3D9Surface, "nsurface");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9surface
+
+    @cppclass
+    nD3D9Surface
+    
+    @superclass
+    nsurface
+    
+    @classinfo
+    Docs needed.
+*/
+
+
 D3DFORMAT getD3DFormat(nTexture2::Format format);
 
 //-----------------------------------------------------------------------------
@@ -44,10 +60,10 @@ D3DFORMAT getD3DFormat(nTexture2::Format format)
     {
     case nTexture2::Format::X8R8G8B8:
         d3dFormat = D3DFMT_X8R8G8B8;
-    	break;
+      break;
     case nTexture2::Format::A8R8G8B8:
         d3dFormat = D3DFMT_A8R8G8B8;
-    	break;
+      break;
     case nTexture2::Format::R5G6B5:
         d3dFormat = D3DFMT_R5G6B5;
         break;
@@ -86,7 +102,7 @@ D3DFORMAT getD3DFormat(nTexture2::Format format)
 }
 //-----------------------------------------------------------------------------
 /**
-	Load surface data from memory.
+  Load surface data from memory.
 */
 void nD3D9Surface::LoadFromMemory(void* data, nTexture2::Format format,
                                   int width, int height, int pitch)

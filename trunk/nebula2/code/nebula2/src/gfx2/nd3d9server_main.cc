@@ -8,6 +8,21 @@
 
 nNebulaClass(nD3D9Server, "ngfxserver2");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9server
+
+    @cppclass
+    nD3D9Server
+    
+    @superclass
+    ngfxserver2
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -33,7 +48,7 @@ nD3D9Server::nD3D9Server() :
     dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
     #endif
     windowHandler(this),
-	deviceBehaviourFlags(0),
+  deviceBehaviourFlags(0),
     d3dSprite(0),
     d3d9(0),
     d3d9Device(0),

@@ -8,6 +8,21 @@
 
 nNebulaClass(nSurface, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nsurface
+
+    @cppclass
+    nSurface
+    
+    @superclass
+    nresource
+    
+    @classinfo
+    Docs needed.
+*/
+
 //-----------------------------------------------------------------------------
 /**
     Constructor.

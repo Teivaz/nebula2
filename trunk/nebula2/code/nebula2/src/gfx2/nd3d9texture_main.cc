@@ -11,6 +11,21 @@
 
 nNebulaClass(nD3D9Texture, "ntexture2");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nd3d9texture
+
+    @cppclass
+    nD3D9Texture
+    
+    @superclass
+    ntexture2
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
