@@ -6,6 +6,7 @@
 #include "resource/nresourceserver.h"
 #include "gfx2/nmesh2.h"
 #include "gfx2/nfont2.h"
+#include "gfx2/nd3d9shader.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -118,6 +119,13 @@ nD3D9Server::OnDeviceLost()
     // release other resources
     this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
 
+    // release the shared state shader
+    if (this->refSharedShader.isvalid())
+    {
+        this->refSharedShader->Release();
+        this->refSharedShader.invalidate();
+    }
+
     // release refs on original backbuffer and depth/stencil surfaces
     if (this->backBufferSurface)
     {
@@ -148,6 +156,9 @@ nD3D9Server::OnDeviceLost()
 void
 nD3D9Server::OnRestoreDevice()
 {
+    n_assert(!this->refSharedShader.isvalid());
+    n_assert(0 == this->depthStencilSurface);
+
     HRESULT hr;
 
     // get a pointer to the back buffer and depth/stencil surface
@@ -171,6 +182,23 @@ nD3D9Server::OnRestoreDevice()
     // open the text renderer
     this->OpenTextRenderer();
 
-    // flag the mouse cursor to be reset
+    // update mouse cursor
     this->cursorDirty = true;
+    this->UpdateCursor();
+
+    // create the shared effect parameter reference shader
+    this->refSharedShader = (nD3D9Shader*) this->NewShader("shared");
+    if (!this->refSharedShader->IsValid())
+    {
+        this->refSharedShader->SetFilename("shaders:shared.fx");
+        if (!this->refSharedShader->Load())
+        {
+            this->refSharedShader->Release();
+            this->refSharedShader.invalidate();
+        }
+    }
+
+    // refresh projection matrix (necessary AFTER sharedShader has been created
+    // so that the shared transform matrices can be set after a DeviceReset)
+    this->SetCamera(this->GetCamera());
 }

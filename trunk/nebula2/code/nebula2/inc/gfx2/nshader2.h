@@ -37,24 +37,27 @@ public:
     enum Parameter
     {
         Model = 0,                      // matrix: the model matrix (aka World)
+        InvModel,                       // matrix: the inverse model matrix
         View,                           // matrix: the view matrix
+        InvView,                        // matrix: the inverse view matrix
         Projection,                     // matrix: the projection matrix
         ModelView,                      // matrix: the model*view matrix
         InvModelView,                   // matrix: the inverse of the model view matrix
         ModelViewProjection,            // matrix: the model*view*projection matrix
         ModelLightProjection,           // matrix: the model*light*projection matrix
+        ModelShadowProjection,          // matrix: the model*shadow*projection matrix (shadow == shadow source)
         ModelEyePos,                    // vector: the eye position in model space
         ModelLightPos,                  // vector[]: the light position in model space
         LightPos,                       // vector[]: the light position in world space
-        LightDirection,                 // vector[]: the light direction in world space
+        //LightDirection,                 // vector[]: the light direction in world space
         MatAmbient,                     // color: material ambient component
         MatDiffuse,                     // color: material diffuse component
         MatSpecular,                    // color: material specular component
         MatSpecularPower,               // float: material specular power
         MatTransparency,                // float: material transparency
         MatFresnel,                     // float: material fresnel term
-        Frequency,                      // float: material frequency (for waves, etc...)
-        Height,                         // float: material scale (for waves, etc...)
+        //Frequency,                      // float: material frequency (for waves, etc...)
+        Scale,                          // float: material scale (for waves, etc...)
         Noise,			                // float: material noise scale (for wavec, etc...)
         MatTranslucency,                // float: material translucency
         AlphaRef,                       // int: alpha ref (0 - 255)
@@ -114,14 +117,31 @@ public:
         SpriteSwingTime,                // float: swing time for sprites
         SpriteSwingTranslate,           // float3: sprite swing translation
         DisplayResolution,              // float2: current display width in pixels
-        TexGenS,                        // float4: texgen parameters for first coordinate
-        TexGenT,                        // float4: texgen parameters for second coordinate
-        TexGenR,                        // float4: texgen parameters for third coordinate
-        TexGenQ,                        // float4: texgen parameters for fourth coordinate
+        TexGenS,                        // float4: texgen parameter
+        TexGenT,                        // float4: texgen parameter
+        TexGenR,                        // float4: texgen parameter
+        TexGenQ,                        // float4: texgen parameter
         TextureTransform0,              // matrix: the texture matrix for layer 0
         TextureTransform1,              // matrix: the texture matrix for layer 1
         TextureTransform2,              // matrix: the texture matrix for layer 2
         TextureTransform3,              // matrix: the texture matrix for layer 3
+        SampleOffsets,                  // float4[]: filter kernel sample offsets
+        SampleWeights,                  // float4[]: filter kernel sample weights
+        VertexStreams,                  // int: number of parallel vertex streams
+        VertexWeights1,                 // float4: weights of streams 1-4
+        VertexWeights2,                 // float4: weights of streams 5-8
+        AlphaSrcBlend,                  // int: Alpha Source Blend Factor
+        AlphaDstBlend,                  // int: Alpha Dest Blend Factor
+        BumpScale,                      // float
+        FresnelBias,                    // float
+        FresnelPower,                   // float
+        Intensity0,                     // float
+        Intensity1,                     // float
+        Intensity2,                     // float
+        Intensity3,                     // float
+        Amplitude,                      // float
+        Frequency,                      // float
+        Velocity,                       // float3
 
         NumParameters,                  // keep this always at the end!
         InvalidParameter,
@@ -131,11 +151,16 @@ public:
     nShader2();
     /// destructor
     virtual ~nShader2();
-
+    /// get shader priority index (valid after Load())
+    int GetShaderIndex() const;
+    /// set a technique
+    virtual bool SetTechnique(const char* t);
+    /// get current technique
+    virtual const char* GetTechnique() const;
     /// is parameter used by effect?
     virtual bool IsParameterUsed(Parameter p);
     /// set bool parameter
-    virtual void SetBool(Parameter p, bool val);
+    //virtual void SetBool(Parameter p, bool val);
     /// set int parameter
     virtual void SetInt(Parameter p, int val);
     /// set float parameter
@@ -152,7 +177,7 @@ public:
     virtual void SetTexture(Parameter p, nTexture2* tex);
 
     /// set bool[] parameter
-    virtual void SetBoolArray(Parameter p, const bool* array, int count);
+    //virtual void SetBoolArray(Parameter p, const bool* array, int count);
     /// set int[] parameter
     virtual void SetIntArray(Parameter p, const int* array, int count);
     /// set float[] parameter
@@ -182,7 +207,20 @@ public:
 
 protected:
     static const char* StringTable[NumParameters];
+    int shaderIndex;
 };
+
+//------------------------------------------------------------------------------
+/**
+    Returns the global shader priority index (as defined in
+    "shaders:shaderlist.txt"). Only valid between Load()/Unload()!
+*/
+inline
+int
+nShader2::GetShaderIndex() const
+{
+    return this->shaderIndex;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -213,7 +251,7 @@ nShader2::StringToParameter(const char* str)
             return (Parameter) i;
         }
     }
-    n_printf("WARNING: '%s' it not a valid/supported ShaderParameter!\n", str);
+    //n_printf("WARNING: '%s' it not a valid/supported ShaderParameter!\n", str);
     // fallthrough: state not found
     return InvalidParameter;
 }

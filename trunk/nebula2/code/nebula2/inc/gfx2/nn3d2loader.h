@@ -25,9 +25,9 @@ public:
     /// close the file
     void Close();
     /// read vertex data
-    bool ReadVertices(void* buffer, uint bufferSize);
+    bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    bool ReadIndices(void* buffer, uint bufferSize);
+    bool ReadIndices(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ nN3d2Loader::Close()
 */
 inline
 bool
-nN3d2Loader::ReadVertices(void* buffer, uint bufferSize)
+nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);
@@ -232,7 +232,7 @@ nN3d2Loader::ReadVertices(void* buffer, uint bufferSize)
 */
 inline
 bool
-nN3d2Loader::ReadIndices(void* buffer, uint bufferSize)
+nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
 {
     n_assert(buffer);
     n_assert(this->file);

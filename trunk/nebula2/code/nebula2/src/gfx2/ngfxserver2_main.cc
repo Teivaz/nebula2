@@ -22,6 +22,7 @@ nGfxServer2::nGfxServer2() :
     vertexRangeNum(0),
     indexRangeFirst(0),
     indexRangeNum(0),
+    featureSetOverride(InvalidFeatureSet),
     cursorVisibility(System),
     cursorDirty(true),
     inDialogBoxMode(false)
@@ -182,6 +183,7 @@ nGfxServer2::CloseDisplay()
 {
     n_assert(this->displayOpen);
     this->displayOpen = false;
+    this->shaderList.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -262,16 +264,16 @@ void
 nGfxServer2::SetRenderTarget(nTexture2* t)
 {
     n_assert(!this->inBeginScene);
+    if (t)
+    {
+        t->AddRef();
+    }
     if (this->refRenderTarget.isvalid())
     {
         this->refRenderTarget->Release();
         this->refRenderTarget.invalidate();
     }
-    if (t)
-    {
         this->refRenderTarget = t;
-        t->AddRef();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -280,25 +282,27 @@ nGfxServer2::SetRenderTarget(nTexture2* t)
     This will increment its refcount and decrement the refcount 
     of the previous object.
 
-    @param  stream      vertex stream index 
     @param  mesh        pointer to a nMesh2 object
 */
 void
-nGfxServer2::SetMesh(int stream, nMesh2* mesh)
+nGfxServer2::SetMesh(nMesh2* mesh)
 {
-    n_assert((stream >= 0) && (stream < MAX_VERTEXSTREAMS));
+    this->meshSource = NoSource;
 
-    if (this->refMeshes[stream].isvalid())
-    {
-        this->refMeshes[stream]->Release();
-        this->refMeshes[stream].invalidate();
-    }
     if (mesh)
     {
-        this->refMeshes[stream] = mesh;
         mesh->AddRef();
     }
+    if (this->refMesh.isvalid())
+    {
+        this->refMesh->Release();
+        this->refMesh.invalidate();
+    }
+    this->refMesh = mesh;
+    this->meshSource = SingleMesh;
 }
+
+
 
 //------------------------------------------------------------------------------
 /**
@@ -312,18 +316,18 @@ nGfxServer2::SetMesh(int stream, nMesh2* mesh)
 void
 nGfxServer2::SetTexture(int stage, nTexture2* texture)
 {
-    n_assert((stage >= 0) && (stage < MAX_TEXTURESTAGES));
+    n_assert((stage >= 0) && (stage < MaxTextureStages));
 
+    if (texture)
+    {
+        texture->AddRef();
+    }
     if (this->refTextures[stage].isvalid())
     {
         this->refTextures[stage]->Release();
         this->refTextures[stage].invalidate();
     }
-    if (texture)
-    {
         this->refTextures[stage] = texture;
-        texture->AddRef();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -337,16 +341,16 @@ nGfxServer2::SetTexture(int stage, nTexture2* texture)
 void
 nGfxServer2::SetShader(nShader2* shd)
 {
+    if (shd)
+    {
+        shd->AddRef();
+    }
     if (this->refShader.isvalid())
     {
         this->refShader->Release();
         this->refShader.invalidate();
     }
-    if (shd)
-    {
-        this->refShader = shd;
-        shd->AddRef();
-    }
+    this->refShader = shd;
 }
 
 //------------------------------------------------------------------------------
@@ -407,6 +411,7 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 {
     n_assert(type < NumTransformTypes);
     bool updModelView = false;
+    bool updViewProjection = false;
     switch (type)
     {
         case Model:
@@ -421,10 +426,19 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
             this->transform[InvView] = matrix;
             this->transform[InvView].invert_simple();
             updModelView = true;
+            updViewProjection = true;
             break;
 
         case Projection:
             this->transform[Projection] = matrix;
+            updViewProjection = true;
+            break;
+
+        case Texture0:
+        case Texture1:
+        case Texture2:
+        case Texture3:
+            this->transform[type] = matrix;
             break;
 
         default:
@@ -438,9 +452,16 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
         this->transform[InvModelView] = this->transform[ModelView];
         this->transform[InvModelView].invert_simple();
     }
+    if (updViewProjection)
+    {
+        this->transform[ViewProjection] = this->transform[View] * this->transform[Projection];
+    }
 
     // update the modelview/projection matrix
+    if (updModelView || updViewProjection)
+    {
     this->transform[ModelViewProjection] = this->transform[ModelView] * this->transform[Projection];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -454,7 +475,7 @@ void
 nGfxServer2::PushTransform(TransformType type, const matrix44& matrix)
 {
     n_assert(type < NumTransformTypes);
-    n_assert(this->transformTopOfStack[type] < MAX_TRANSFORMSTACKDEPTH);
+    n_assert(this->transformTopOfStack[type] < MaxTransformStackDepth);
     this->transformStack[type][this->transformTopOfStack[type]++] = this->transform[type];
     this->SetTransform(type, matrix);
 }
@@ -476,7 +497,7 @@ nGfxServer2::PopTransform(TransformType type)
     Draw current mesh with indexed primitives.
 */
 void
-nGfxServer2::DrawIndexed(nPrimitiveType primType)
+nGfxServer2::DrawIndexed(PrimitiveType /*primType*/)
 {
     // empty
 }
@@ -486,7 +507,7 @@ nGfxServer2::DrawIndexed(nPrimitiveType primType)
     Draw current mesh with non-indexed primitives.
 */
 void
-nGfxServer2::Draw(nPrimitiveType primType)
+nGfxServer2::Draw(PrimitiveType /*primType*/)
 {
     // empty
 }
@@ -498,7 +519,7 @@ nGfxServer2::Draw(nPrimitiveType primType)
     yourself as needed.
 */
 void
-nGfxServer2::DrawIndexedNS(nPrimitiveType primType)
+nGfxServer2::DrawIndexedNS(PrimitiveType /*primType*/)
 {
     // empty
 }
@@ -510,7 +531,7 @@ nGfxServer2::DrawIndexedNS(nPrimitiveType primType)
     yourself as needed.
 */
 void
-nGfxServer2::DrawNS(nPrimitiveType primType)
+nGfxServer2::DrawNS(PrimitiveType /*primType*/)
 {
     // empty
 }

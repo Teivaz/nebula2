@@ -12,7 +12,6 @@
 */
 
 #include "gfx2/ngfxserver2.h"
-#include "gfx2/nprimitivetypes.h"
 #include "gfx2/nmesh2.h"
 
 //------------------------------------------------------------------------------
@@ -24,7 +23,7 @@ public:
     /// destructor
     ~nDynamicMesh();
 	/// initialize the dynamic mesh
-    bool Initialize(nGfxServer2* gfxServer, nPrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering);
+    bool Initialize(nGfxServer2* gfxServer, nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering);
     /// if this returns false, call Initialize()
     bool IsValid() const;
     /// begin indexed rendering
@@ -49,7 +48,7 @@ private:
     nGfxServer2* gfxServer;
     bool indexedRendering;
     nRef<nMesh2> refMesh;
-    nPrimitiveType primitiveType;
+    nGfxServer2::PrimitiveType primitiveType;
 };
 
 //------------------------------------------------------------------------------
@@ -59,7 +58,7 @@ inline
 nDynamicMesh::nDynamicMesh() :
     gfxServer(0),
     indexedRendering(true),
-    primitiveType(TriangleList)
+    primitiveType(nGfxServer2::TriangleList)
 {
     // empty
 }
@@ -107,7 +106,7 @@ nDynamicMesh::IsValid() const
 inline
 bool
 nDynamicMesh::Initialize(nGfxServer2* gfxServ, 
-                         nPrimitiveType primType, 
+                         nGfxServer2::PrimitiveType primType, 
                          int vertexComponents, 
                          int usageFlags, 
                          bool indexed)
@@ -134,6 +133,8 @@ nDynamicMesh::Initialize(nGfxServer2* gfxServ,
     if (vertexComponents & nMesh2::Uv3)         resName[charIndex++] = 'i';
     if (vertexComponents & nMesh2::Weights)     resName[charIndex++] = 'f';
     if (vertexComponents & nMesh2::JIndices)    resName[charIndex++] = 'g';
+    if (usageFlags & nMesh2::NPatch)            resName[charIndex++] = 'h';
+    if (usageFlags & nMesh2::RTPatch)           resName[charIndex++] = 'i';
     if (usageFlags & nMesh2::PointSprite)       resName[charIndex++] = 'j';
     resName[charIndex] = 0;
 
@@ -178,7 +179,7 @@ nDynamicMesh::BeginIndexed(float*& vertexPointer,
     n_assert(this->gfxServer);
     nMesh2* mesh = this->refMesh.get();
 
-    this->gfxServer->SetMesh(0, mesh);
+    this->gfxServer->SetMesh(mesh);
 
     vertexPointer  = mesh->LockVertices();
     indexPointer   = mesh->LockIndices();
@@ -215,7 +216,7 @@ nDynamicMesh::SwapIndexed(int numVertices, int numIndices, float*& vertexPointer
     mesh->UnlockIndices();
     this->gfxServer->SetVertexRange(0, numVertices);
     this->gfxServer->SetIndexRange(0, numIndices);
-    this->gfxServer->DrawIndexed(this->primitiveType);
+    this->gfxServer->DrawIndexedNS(this->primitiveType);
     vertexPointer = mesh->LockVertices();
     indexPointer  = mesh->LockIndices();
 }
@@ -241,8 +242,8 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
     mesh->UnlockIndices();
     this->gfxServer->SetVertexRange(0, numVertices);
     this->gfxServer->SetIndexRange(0, numIndices);
-    this->gfxServer->DrawIndexed(this->primitiveType );
-    this->gfxServer->SetMesh(0, 0);
+    this->gfxServer->DrawIndexedNS(this->primitiveType );
+    this->gfxServer->SetMesh(0);
 }
 
 
@@ -262,7 +263,7 @@ nDynamicMesh::Begin(float*& vertexPointer, int& maxNumVertices)
     n_assert(this->gfxServer);
     nMesh2* mesh = this->refMesh.get();
 
-    this->gfxServer->SetMesh(0, mesh);
+    this->gfxServer->SetMesh(mesh);
 
     vertexPointer  = mesh->LockVertices();
     maxNumVertices = mesh->GetNumVertices();
@@ -286,7 +287,7 @@ nDynamicMesh::Swap(int numVertices, float*& vertexPointer)
 
     mesh->UnlockVertices();
     this->gfxServer->SetVertexRange(0, numVertices);
-    this->gfxServer->Draw(this->primitiveType);
+    this->gfxServer->DrawNS(this->primitiveType);
     vertexPointer = mesh->LockVertices();
 }
 
@@ -308,9 +309,9 @@ nDynamicMesh::End(int numVertices)
     if (0 != numVertices)
     {
         this->gfxServer->SetVertexRange(0, numVertices);
-        this->gfxServer->Draw(this->primitiveType);
+        this->gfxServer->DrawNS(this->primitiveType);
     }
-    this->gfxServer->SetMesh(0, 0);
+    this->gfxServer->SetMesh(0);
 }
 
 //------------------------------------------------------------------------------

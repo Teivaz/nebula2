@@ -80,10 +80,10 @@ nD3D9Server::DrawTextBuffer()
         n_assert(this->d3d9Device);
 
         // flush the mesh at stream 0 because we cannot preserve its state
-        this->SetMesh(0, 0);
+        this->SetMesh(0);
 
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refDefaultFont.get())->GetD3DFont();
-        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND|D3DXSPRITE_SORT_TEXTURE);
+        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
         TextNode* textNode;
         while (textNode = (TextNode*) this->textNodeList.RemHead())
         {
@@ -140,7 +140,7 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         r.left   = (LONG) (rect.v0.x * dispWidth);
         r.top    = (LONG) (rect.v0.y * dispHeight);
         r.right  = (LONG) (rect.v1.x * dispWidth);
-        r.bottom = (LONG) (rect.v1.y * dispHeight);
+        r.bottom = (LONG) (rect.v1.y * dispHeight);     
 
         DWORD d3dFlags = 0;
         if (flags & nFont2::Bottom)     d3dFlags |= DT_BOTTOM;
@@ -151,14 +151,14 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         if (flags & nFont2::VCenter)    d3dFlags |= DT_VCENTER;
         if (flags & nFont2::NoClip)     d3dFlags |= DT_NOCLIP;
         if (flags & nFont2::ExpandTabs) d3dFlags |= DT_EXPANDTABS;
-
+    
         DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
         n_assert(d3dFont);
-        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND|D3DXSPRITE_SORT_TEXTURE);
+        this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
         d3dFont->DrawText(this->d3dSprite,
             text,
-            -1,&r,
+            -1, &r,
             d3dFlags,
             d3dColor);
         this->d3dSprite->End();
@@ -168,6 +168,9 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
 //------------------------------------------------------------------------------
 /**
     Get text extents.
+
+    - 16-Feb-04     floh    hmm, ID3DXFont extent computation is confused by spaces,
+                            now uses GDI functions to compute text extents
 */
 vector2
 nD3D9Server::GetTextExtent(const char* text)
