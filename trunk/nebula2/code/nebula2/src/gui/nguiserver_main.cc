@@ -544,6 +544,34 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
 {
     n_assert(tex);
 
+    // clipping
+    rectangle rectMesh, rectUV, clipRect;
+    rectMesh = rect;
+    rectUV = uvRect;
+
+    if (this->GetClipRect(clipRect))
+    {
+        // get intersection of brush rectangle and clipping recttangle
+        rectMesh = clipRect * rect;
+
+        // check if rectangles really intersect
+        if (rectMesh.area() == 0.0f)
+        {
+            return;
+        }
+
+        float widthScale, heightScale;
+
+        widthScale = rectUV.width() / rect.width();
+        heightScale = rectUV.height() / rect.height();
+
+        // scale UV rectangle (y is swapped)
+        rectUV.v0.x += (rectMesh.v0.x - rect.v0.x) * widthScale;
+        rectUV.v0.y -= (rectMesh.v1.y - rect.v1.y) * heightScale;
+        rectUV.v1.x += (rectMesh.v1.x - rect.v1.x) * widthScale;
+        rectUV.v1.y -= (rectMesh.v0.y - rect.v0.y) * heightScale;
+    }
+
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // compute modulated color
@@ -595,16 +623,16 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
     this->curVertexIndex += 6;
 
     rectangle r;
-    r.v0.x = rect.v0.x - 0.5f;
-    r.v0.y = -(rect.v0.y - 0.5f);
-    r.v1.x = rect.v1.x - 0.5f;
-    r.v1.y = -(rect.v1.y - 0.5f);
+    r.v0.x = rectMesh.v0.x - 0.5f;
+    r.v0.y = -(rectMesh.v0.y - 0.5f);
+    r.v1.x = rectMesh.v1.x - 0.5f;
+    r.v1.y = -(rectMesh.v1.y - 0.5f);
 
     rectangle uv;
-    uv.v0.x = uvRect.v0.x;
-    uv.v0.y = 1.0f - uvRect.v1.y;
-    uv.v1.x = uvRect.v1.x;
-    uv.v1.y = 1.0f - uvRect.v0.y;
+    uv.v0.x = rectUV.v0.x;
+    uv.v0.y = 1.0f - rectUV.v1.y;
+    uv.v1.x = rectUV.v1.x;
+    uv.v1.y = 1.0f - rectUV.v0.y;
 
     // triangle 1
     // top left
@@ -879,37 +907,7 @@ nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
         n_assert(success);
     }
     
-    rectangle rectMesh, rectUV, clipRect;
-    
-    // default values
-    rectMesh = rect;
-    rectUV = guiResource->GetRelUvRect();
-
-    // clipping
-    if (this->GetClipRect(clipRect))
-    {
-        // get intersection of brush rectangle and clipping recttangle
-        rectMesh = clipRect * rect;
-
-        // check if rectangles really intersect
-        if (rectMesh.area() == 0.0f)
-        {
-            return;
-        }
-
-        float widthScale, heightScale;
-
-        widthScale = rectUV.width() / rect.width();
-        heightScale = rectUV.height() / rect.height();
-
-        // scale UV rectangle (y is swapped)
-        rectUV.v0.x += (rectMesh.v0.x - rect.v0.x) * widthScale;
-        rectUV.v0.y -= (rectMesh.v1.y - rect.v1.y) * heightScale;
-        rectUV.v1.x += (rectMesh.v1.x - rect.v1.x) * widthScale;
-        rectUV.v1.y -= (rectMesh.v0.y - rect.v0.y) * heightScale;
-    }
-
-    this->DrawTexture(rectMesh, rectUV, guiResource->GetColor(), guiResource->GetTexture());
+    this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
 }
 
 //-----------------------------------------------------------------------------
