@@ -9,44 +9,54 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
+#include <memory.h>
 #include "kernel/ntypes.h"
-#endif
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nRingBuffer 
 {
 public:
     /// constructor 1
-    nRingBuffer(int _num);
+    nRingBuffer(int capacity);
     /// default constructor
     nRingBuffer();
     /// destructor
     ~nRingBuffer();
+    /// assignment operator
+    nRingBuffer<TYPE>& operator=(const nRingBuffer<TYPE>& src);
     /// initialize, only use when default constructor has been used
-    void Initialize(int _num);
+    void Initialize(int capacity);
     /// returns true if ringbuffer is valid
     bool IsValid() const;
     /// return true if ringbuffer is empty
     bool IsEmpty() const;
+    /// return true if ringbuffer is full
+    bool IsFull() const;
     /// add unitialized element to buffer
     TYPE* Add();
+    /// deletes the oldest element
+    void DeleteTail();
     /// return pointer to head element
     TYPE* GetHead() const;
     /// return pointer to tail element
     TYPE* GetTail() const;
     /// return pointer to next element
-    TYPE* GetSucc(TYPE* e) const; 
+    TYPE* GetNext(TYPE* e) const; 
     /// return pointer to previous element
-    TYPE* GetPred(TYPE* e) const;
+    TYPE* GetPrev(TYPE* e) const;
     /// return pointer to start of ringbuffer array
     TYPE* GetStart() const;
     /// return pointer to end of ringbuffer array
     TYPE *GetEnd() const;
 
 private:
+    /// copy content
+    void Copy(const nRingBuffer<TYPE>& src);
+    /// delete all content
+    void Delete();
+
     TYPE *start;                        // start of ring buffer array
-    TYPE *end;                          // end+1 of ring buffer array
+    TYPE *end;                          // last element of ring buffer array
     TYPE *tail;                         // oldest valid element
     TYPE *head;                         // youngest element+1
 };
@@ -55,13 +65,13 @@ private:
 /**
 */
 template<class TYPE>
-nRingBuffer<TYPE>::nRingBuffer<TYPE>(int _num)
+nRingBuffer<TYPE>::nRingBuffer<TYPE>(int capacity)
 {
-    _num++; // there is always 1 empty element in buffer
-    start = n_new TYPE[_num];
-    end   = start + _num;
-    tail  = start;
-    head  = start;
+    //_num++; // there is always 1 empty element in buffer
+    this->start = n_new TYPE[capacity+1];
+    this->end   = this->start + capacity;
+    this->tail  = this->start;
+    this->head  = this->start;
 }
 
 //------------------------------------------------------------------------------
@@ -84,11 +94,44 @@ nRingBuffer<TYPE>::nRingBuffer<TYPE>() :
 template<class TYPE>
 nRingBuffer<TYPE>::~nRingBuffer<TYPE>() 
 {
-    if (start)
+    this->Delete();
+}
+
+//---------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
+nRingBuffer<TYPE>::Delete() 
+{
+    if (this->start)
     {
-        n_delete[] start;
+        n_delete[] this->start;
     }
-};
+    start = 0;
+    end = 0;
+    tail = 0;
+    head = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
+nRingBuffer<TYPE>::Copy(const nRingBuffer<TYPE>& src)
+{
+    if(0 != this->start)
+    {
+        int capacity = src.end - src.start;
+        this->start = n_new TYPE[capacity+1];
+        this->end   = this->start + capacity;
+        this->tail  = this->start;
+        this->head  = this->start;
+
+        memcpy(src.start, this->start, capacity+1);
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -97,16 +140,28 @@ nRingBuffer<TYPE>::~nRingBuffer<TYPE>()
 */
 template<class TYPE>
 void
-nRingBuffer<TYPE>::Initialize(int _num)
+nRingBuffer<TYPE>::Initialize(int capacity)
 {
-    n_assert(!start);
-    _num++; // there is always 1 empty element in buffer
-    start = n_new TYPE[_num];
-    end   = start + _num;
-    tail  = start;
-    head  = start;
+    n_assert(!this->start);
+    //_num++; // there is always 1 empty element in buffer
+    this->start = n_new TYPE[capacity+1];
+    this->end   = this->start + capacity;
+    this->tail  = this->start;
+    this->head  = this->start;
 
-n_printf("nRingBuffer initialized with %d elelements of size %d\n", _num, sizeof(TYPE));
+    n_printf("nRingBuffer initialized with %d elelements of size %d\n", capacity, sizeof(TYPE));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+nRingBuffer<TYPE>& 
+nRingBuffer<TYPE>::operator=(const nRingBuffer<TYPE>& src)
+{
+    this->Delete();
+    this->Copy(src);
+    return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +172,7 @@ template<class TYPE>
 bool 
 nRingBuffer<TYPE>::IsValid() const
 {
-    return start ? true : false;
+    return (0 != this->start);
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +186,28 @@ template<class TYPE>
 bool 
 nRingBuffer<TYPE>::IsEmpty() const
 {
-    return (head == tail) ? true : false;
+    return (this->head == this->tail);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Checks if ring buffer is full
+*/
+template<class TYPE>
+bool 
+nRingBuffer<TYPE>::IsFull() const
+{
+    TYPE* e = this->head;
+    if (e == this->end)
+    {
+        e = this->start;
+    }
+    else
+    {
+        e++;
+    }
+
+    return (e == this->tail);
 }
 
 //------------------------------------------------------------------------------
@@ -142,22 +218,37 @@ template<class TYPE>
 TYPE*
 nRingBuffer<TYPE>::Add() 
 {
-    n_assert(start);
-    TYPE *e = head;
-    head++;
-    if (head == end) 
+    n_assert(this->start);
+    n_assert(!this->IsFull());
+    TYPE *e = this->head;
+    if (this->head == this->end) 
     {
-        head = start;
+        this->head = this->start;
     }
-    if (head == tail) 
+    else
     {
-        tail++;
-        if (tail == end) 
-        {
-            tail = start;
-        }
+        this->head++;
     }
     return e;
+}
+  
+//------------------------------------------------------------------------------
+/**
+    Delete the oldest element
+*/
+template<class TYPE>
+void
+nRingBuffer<TYPE>::DeleteTail() 
+{
+    n_assert(this->start);
+    n_assert(!this->IsEmpty());
+    if (this->tail == this->end) 
+    {
+        this->tail = this->start;
+    } else
+    {
+        this->tail++;
+    }
 }
   
 //------------------------------------------------------------------------------
@@ -168,15 +259,15 @@ template<class TYPE>
 TYPE*
 nRingBuffer<TYPE>::GetHead() const
 {
-    if (head == tail) 
+    if (this->head == this->tail) 
     {
         // empty ringbuffer
         return 0;    
     }
-    TYPE *e = head - 1;
-    if (e < start) 
+    TYPE *e = this->head - 1;
+    if (e < this->start) 
     {
-        e = end - 1;
+        e = this->end;
     }
     return e;
 }
@@ -189,59 +280,63 @@ template<class TYPE>
 TYPE*
 nRingBuffer<TYPE>::GetTail() const
 {
-    if (head == tail) 
+    if (this->head == this->tail) 
     {   
         // empty ringbuffer
         return 0;
     }
-    return tail;
+    return this->tail;
 };
 
 //------------------------------------------------------------------------------
 /**
-    Get next element (from head to tail).
+    Get next element (from tail to head).
 */
 template<class TYPE>
 TYPE*
-nRingBuffer<TYPE>::GetSucc(TYPE* e) const
+nRingBuffer<TYPE>::GetNext(TYPE* e) const
 {
     n_assert(e);
-    if (e == tail) 
+    n_assert(this->start);
+    if (e == this->end) 
+    {
+        e = this->start;
+    } else
+    {
+        e++;
+    }
+    if (e == this->head)
     {
         return 0;
-    }
-    e--;
-    if (e < start) 
-    {
-        e = end - 1;
-    }
-    return e;
-};
-
-//------------------------------------------------------------------------------
-/**
-    Get previous element (from tail to head).
-*/
-template<class TYPE>
-TYPE*
-nRingBuffer<TYPE>::GetPred(TYPE* e) const
-{
-    n_assert(e);
-    e++;
-    if (e == end)  
-    {
-        e = start;
-    }
-
-    if (e == head) 
-    {
-        return 0;
-    }
-    else         
+    } else
     {
         return e;
     }
-};
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get previous element (from head to tail).
+*/
+template<class TYPE>
+TYPE*
+nRingBuffer<TYPE>::GetPrev(TYPE* e) const
+{
+    n_assert(e);
+    if (e == tail)
+    {
+        return 0;
+    }
+
+    if (e == start)
+    {
+        return end;
+    }
+    else
+    {
+        return e-1;
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
