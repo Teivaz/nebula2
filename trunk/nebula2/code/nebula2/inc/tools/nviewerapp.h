@@ -147,7 +147,6 @@ private:
 
     nRenderContext renderContext;
     matrix44 viewMatrix;
-    int screenshotID;
 };
 
 //------------------------------------------------------------------------------

@@ -311,10 +311,16 @@ nViewerApp::HandleInput(float frameTime)
         {
             filename = "screenshot";
         }
-        filename.AppendInt(this->screenshotID++);
-        filename.Append(".bmp");
-
-        this->refGfxServer->SaveScreenshot(filename.Get());
+        
+        int screenshotID = 0;
+        char buf[N_MAXPATH];
+        do
+        {
+            snprintf(buf, sizeof(buf), "%s%03d.bmp", filename.Get(), screenshotID++);
+        } 
+        while (nFileServer2::Instance()->FileExists(buf));
+            
+        this->refGfxServer->SaveScreenshot(buf);
     }
 }
 
