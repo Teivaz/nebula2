@@ -16,10 +16,6 @@
 #include "kernel/nkernelserver.h"
 #endif
 
-//#undef N_DEFINES
-//#define N_DEFINES nLuaTest
-//#include "kernel/ndefdllclass.h"
-
 //------------------------------------------------------------------------------
 class nLuaTest : public nRoot
 {
