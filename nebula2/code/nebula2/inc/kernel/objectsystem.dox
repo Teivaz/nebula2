@@ -8,7 +8,20 @@
 
     @section NebulaObjectSystemNamedObjectHierarchy Named Object Hierarchy
 
-    ...
+    An instance of a class which derived from nRoot is called <b>Nebula Object</b>.
+    Nebula object have a string name and it can be converted to a C++ pointer
+    and back. This feature is useful for scripting and object persistency.
+
+    Nebula objects are arranged in a hierarchy which is similiar to a filesystem.
+    This is what called for <b>"Named Object Hierarchy".</b>
+    One can navigate the tree of named objects within built-in command console
+    (see @ref NebulaConsoleServer)and invoke script command on C++ objects.
+    
+    All objects of the hierarchy can be accessible through Reference Counting
+    and smart-pointer(see @ref NebulaSmartPointers). 
+    Either it can be easily saved and loaded by object persistent mechanism 
+    provided by nPersistServer. 
+    
 
     @section NebulaObjectSystemCreation Creation
 
