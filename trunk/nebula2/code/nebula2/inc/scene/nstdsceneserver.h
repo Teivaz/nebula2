@@ -32,6 +32,25 @@ public:
 
     static nKernelServer* kernelServer;
 
+protected:
+    /// split scene nodes into light and shape nodes
+    virtual void SplitNodes();
+    /// sort shape nodes for optimal rendering
+    virtual void SortNodes();
+    /// render light/shape interaction for all lit shapes
+    virtual void RenderLightShapes(uint shaderFourCC, ushort* shapeArray, int numShapes );
+
+    int numLights;
+    int numShapes;
+
+    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
+    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
+
+    /// static qsort() compare function
+    static int __cdecl Compare(const ushort* i1, const ushort* i2);
+
+    // Used for sorting.
+    static vector3 viewerPos;
 private:
     /// initialize required resources
     bool LoadResources();
@@ -39,31 +58,14 @@ private:
     void UnloadResources();
     /// check if resources are valid
     bool AreResourcesValid();
-    /// render shape objects in scene
-    void RenderShapes(uint shaderFourCC);
-    /// render light/shape interaction for all lit shapes
-    void RenderLightShapes(uint shaderFourCC);
-    /// split scene nodes into light and shape nodes
-    void SplitNodes();
-    /// sort shape nodes for optimal rendering
-    void SortNodes();
-    /// static qsort() compare function
-    static int __cdecl Compare(const ushort* i1, const ushort* i2);
-
-    // Used for sorting.
-    static nStdSceneServer* self;
-    static vector3 viewerPos;
 
     enum
     {
         MaxLightsPerShape = 2
     };
 
-    int numLights;
-    int numShapes;
-
-    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
-    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
+    // Used for sorting.
+    static nStdSceneServer* self;
 };
 //------------------------------------------------------------------------------
 #endif
