@@ -516,6 +516,9 @@ bool nMaxScene::Postprocess()
 bool nMaxScene::ExportNodes(INode* inode)
 {
     n_assert(inode);
+#ifdef _DEBUG
+    n_dbgout("Current Node: %s.\n", inode->GetName());
+#endif
 
     //TODO: check any errors exist in stack. 
     //      if there, return false then exit export.
@@ -741,6 +744,7 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     // get local transform of the given node.
     Matrix3 tm = nMaxTransform::GetLocalTM(inode, animStart);
 
+    tm.ValidateFlags();
     DWORD flag = tm.GetIdentFlags();
 
     AffineParts ap;
@@ -753,7 +757,8 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
 
     // we only export xform if there's actual xform modifier exist
     // to prevent redundant call of SetPosition() or SetQuat().
-    if (flag & POS_IDENT)
+    // note: 'POS_IDENT' means position elements are identity.
+    if (!(flag & POS_IDENT))
     {
         vector3 trans (-ap.t.x, ap.t.z, ap.t.y);
         tn->SetPosition(trans);
@@ -761,10 +766,18 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
         bXForm = true;
     }
     
-    if (flag & ROT_IDENT)
+    if (!(flag & ROT_IDENT))
     {
         quaternion rot (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);
         tn->SetQuat(rot);
+
+        bXForm = true;
+    }
+
+    if (!(flag & SCL_IDENT))
+    {
+        vector3 scale (ap.k.x, ap.k.y, ap.k.z);
+        tn->SetScale(scale);
 
         bXForm = true;
     }
