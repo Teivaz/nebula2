@@ -334,7 +334,7 @@ proc spit_uber_group { name cid nodirgroups} {
         set m  [lindex $smod_list $k]
         if {$mod($m,name) != $cur_dir} {
             set cur_dir $mod($m,name)
-            puts $cid "# Begin Group \"$cur_dir\""
+            puts $cid "# Begin Group \"$cur_dir source\""
             puts $cid "";
             puts $cid "# PROP Default_Filter \"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\""
 			###############################################
@@ -377,8 +377,22 @@ proc spit_uber_group { name cid nodirgroups} {
 	        }
         	puts $cid "# End Group";
         }
-
 	}
+	
+	# resource file group
+    if {[llength $tar($i,rsrc_win32)] > 0} {
+        puts $cid "# Begin Group \"resources\""
+        puts $cid ""
+        puts $cid "# PROP Default_Filter \"cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc\""
+        for {set j 0} {$j < [llength $tar($i,rsrc_win32)]} {incr j} {
+            puts $cid "# Begin Source File"
+            puts $cid ""
+            puts $cid "SOURCE=..\\src\\[lindex $tar($i,rsrc_win32) $j].rc"
+            puts $cid "# End Source File"
+        }
+        puts $cid "# End Group"
+    }
+	
 	puts $cid "# End Group"
 }
 
