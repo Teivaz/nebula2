@@ -26,7 +26,7 @@ begintarget physdemo
     }
 endtarget
 
-beginworkspace PhysdemoProject
+beginworkspace physdemo
     setbinarydir ./code/contrib/physdemo/bin/
     settargets {
         physdemo
