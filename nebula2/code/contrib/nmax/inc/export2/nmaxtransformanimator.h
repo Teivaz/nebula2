@@ -8,13 +8,12 @@
 //-----------------------------------------------------------------------------
 /**
     @class nMaxPRSController
-    @ingroup 
+    @ingroup NebulaMaxExport2Contrib
 
-    @brief A class for handling Position/Rotation/Scale(PRS)
+    @brief A class for handling Position/Rotation/Scale(PRS) transform animation.
 
 */
 #include "export2/nmaxnode.h"
-
 
 class nTransformAnimator;
 
@@ -32,9 +31,9 @@ protected:
     // @{
     virtual void ExportPosition(Control *control, nTransformAnimator* animator);
 
-	virtual void ExportTCBPosition(IKeyControl* ikc, int numKeys);
-	virtual void ExportHybridPosition(IKeyControl* ikc, int numKeys);
-	virtual void ExportLinearPosition(IKeyControl* ikc, int numKeys);
+	virtual void ExportTCBPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
+	virtual void ExportHybridPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
+	virtual void ExportLinearPosition(IKeyControl* ikc, int numKeys, nTransformAnimator* animator);
     virtual void ExportSampledKeyPosition(int numKeys, nTransformAnimator* animator);
     // @}
 
