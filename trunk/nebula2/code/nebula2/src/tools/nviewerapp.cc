@@ -44,15 +44,21 @@ nViewerApp::~nViewerApp()
 bool
 nViewerApp::Open()
 {
+    const char* result;
+
     n_assert(!this->isOpen);
+    n_assert(this->GetStartupScript());
+    n_assert(this->GetSceneServerClass());
+    n_assert(this->GetScriptServerClass());
+    n_assert(this->GetInputScript());
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)   kernelServer->New("ntclserver", "/sys/servers/script");
+    this->refScriptServer   = (nScriptServer*)   kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
     this->refInputServer    = (nInputServer*)    kernelServer->New("ndi8server", "/sys/servers/input");
     this->refConServer      = (nConServer*)      kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*) kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)    kernelServer->New("nstdsceneserver", "/sys/servers/scene");
+    this->refSceneServer    = (nSceneServer*)    kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
     this->refVarServer      = (nVariableServer*) kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
@@ -67,8 +73,8 @@ nViewerApp::Open()
         kernelServer->GetFileServer()->SetAssign("proj", kernelServer->GetFileServer()->GetAssign("home"));
     }
 
-    // define the simple input mapping
-    this->DefineInputMapping();
+    // define the input mapping
+    this->refScriptServer->RunScript(this->GetInputScript(), result);
 
     // create scene graph root node
     this->refRootNode = (nTransformNode*) kernelServer->New("ntransformnode",  "/usr/scene");
@@ -81,21 +87,16 @@ nViewerApp::Open()
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
 
-    // load the default Nebula startup.tcl script
-    const char* result;
-    this->refScriptServer->RunScript("home:bin/startup.tcl", result);
-
-    // run scripts
-    if (this->GetStartupScript())
-    {
-        const char* result;
-        this->refScriptServer->RunScript(this->GetStartupScript(), result);
-    }
+    // run the startup script
+    this->refScriptServer->RunScript(this->GetStartupScript(), result);
+    
+    // run the scene file script (if specified)
     if (this->GetSceneFile())
     {
-        // load the stage (normally stdlight.tcl)
-        const char* result;
-        this->refScriptServer->RunScript("home:bin/stdlight.tcl", result);
+        n_assert(this->GetStageScript());
+
+        // run the light stage script
+        this->refScriptServer->RunScript(this->GetStageScript(), result);
 
         // load the object to look at
         kernelServer->PushCwd(this->refRootNode.get());
@@ -234,38 +235,6 @@ nViewerApp::TransferGlobalVariables()
             this->renderContext.AddVariable(newVar);
         }
     }
-}
-
-//------------------------------------------------------------------------------
-/*
-    Define the input mapping.
-*/
-void
-nViewerApp::DefineInputMapping()
-{
-    nInputServer* inputServer = this->refInputServer.get();
-    inputServer->BeginMap();
-    inputServer->Map("keyb0:space.down",        "reset");
-    inputServer->Map("keyb0:esc.down",          "console");
-    inputServer->Map("relmouse0:btn0.pressed",  "look");    
-    inputServer->Map("relmouse0:btn1.pressed",  "zoom");
-    inputServer->Map("relmouse0:btn2.pressed",  "pan");
-    inputServer->Map("relmouse0:-x",            "left");
-    inputServer->Map("relmouse0:+x",            "right");
-    inputServer->Map("relmouse0:-y",            "up");
-    inputServer->Map("relmouse0:+y",            "down");
-    inputServer->Map("relmouse0:-z",            "zoomIn");
-    inputServer->Map("relmouse0:+z",            "zoomOut");
-    inputServer->Map("keyb0:f1.down",           "mayacontrols");
-    inputServer->Map("keyb0:f2.down",           "flycontrols");
-    inputServer->Map("keyb0:1.down",            "speed0");
-    inputServer->Map("keyb0:2.down",            "speed1");
-    inputServer->Map("keyb0:3.down",            "speed2");
-    inputServer->Map("keyb0:f5.down",           "setpos0");
-    inputServer->Map("keyb0:f6.down",           "setpos1");
-    inputServer->Map("keyb0:f7.down",           "setpos2");
-    inputServer->Map("keyb0:f8.down",           "setpos3");
-    inputServer->EndMap();
 }
 
 //------------------------------------------------------------------------------
