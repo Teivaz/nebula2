@@ -4,9 +4,40 @@
     This section of the documentation covers Nebula audio system and it's
     subsystems.
 
+        - @ref audio_init
+        - @ref audio_usage
+        - @ref audio_shutdown
+
+    @section audio_init Audio Server Initialization
+
+    The audio server can be created from C++ or from script code. The default
+    location is @c /sys/servers/audio.
+
+    @code
+    nDSoundServer3* audioServer = (nDSoundServer3*)kernelserver->New("ndsoundserver3", "/sys/servers/audio");
+    @endcode
+
+    @verbatim
+    new ndsoundserver3 /sys/servers/audio
+    @endverbatim
+
+    In these snippets, we created instances of the nDSoundServer3.  You could
+    use one of the other sound servers as well.
+
+    @section audio_usage Audio Server Usage
+
+    ...
+
+    @section audio_shutdown Audio Server Shutdown
+
+    ...
 */
 
 /**
     @defgroup NebulaDSAudioSystem Nebula Direct Sound Audio System
     @ingroup NebulaAudioSystem
+
+    @brief The @ref NebulaDSAudioSystem is a wrapper around the Microsoft
+    <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directX/htm/directsound.asp">DirectSound</a> library that implements the
+    @ref NebulaAudioSystem interface.
 */
