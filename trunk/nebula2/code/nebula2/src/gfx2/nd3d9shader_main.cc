@@ -239,6 +239,38 @@ nD3D9Shader::LoadResource()
 /**
 */
 void
+nD3D9Shader::SetBool(Parameter p, bool val)
+{   
+    n_assert(this->effect && (p < NumParameters));
+    if (this->curParams.GetArg(p).GetBool() != val)
+    {
+        this->curParams.SetBool(p, val);
+        HRESULT hr = this->effect->SetBool(this->parameterHandles[p], val);
+        #ifdef __NEBULA_STATS__
+        this->refGfxServer->statsNumRenderStateChanges++;
+        #endif
+        n_assert(SUCCEEDED(hr));
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9Shader::SetBoolArray(Parameter p, const bool* array, int count)
+{
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*)array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_assert(SUCCEEDED(hr));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 nD3D9Shader::SetInt(Parameter p, int val)
 {   
     n_assert(this->effect && (p < NumParameters));

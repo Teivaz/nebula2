@@ -26,6 +26,8 @@ public:
     
 	/// is parameter used by effect?
     virtual bool IsParameterUsed(Parameter p);
+    /// set bool parameter
+    virtual void SetBool(Parameter p, bool val);
     /// set int parameter
     virtual void SetInt(Parameter p, int val);
     /// set float parameter
@@ -41,6 +43,8 @@ public:
     /// set texture parameter
     virtual void SetTexture(Parameter p, nTexture2* tex);
 
+    /// set int[] parameter
+    virtual void SetBoolArray(Parameter p, const bool* array, int count);
     /// set int[] parameter
     virtual void SetIntArray(Parameter p, const int* array, int count);
     /// set float[] parameter

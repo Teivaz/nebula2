@@ -9,6 +9,8 @@ static void n_settexture(void* slf, nCmd* cmd);
 static void n_gettexture(void* slf, nCmd* cmd);
 static void n_setint(void* slf, nCmd* cmd);
 static void n_getint(void* slf, nCmd* cmd);
+static void n_setbool(void* slf, nCmd* cmd);
+static void n_getbool(void* slf, nCmd* cmd);
 static void n_setfloat(void* slf, nCmd* cmd);
 static void n_getfloat(void* slf, nCmd* cmd);
 static void n_setvector(void* slf, nCmd* cmd);
@@ -37,6 +39,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_gettexture_s",    'GTXT', n_gettexture);
     cl->AddCmd("v_setint_si",       'SINT', n_setint);
     cl->AddCmd("i_getint_s",        'GINT', n_getint);
+    cl->AddCmd("v_setbool_sb",      'SBOO', n_setbool);
+    cl->AddCmd("b_getbool_s",       'GBOO', n_getbool);
     cl->AddCmd("v_setfloat_sf",     'SFLT', n_setfloat);
     cl->AddCmd("f_getfloat_s",      'GFLT', n_getfloat);
     cl->AddCmd("v_setvector_sffff", 'SVEC', n_setvector);
@@ -118,6 +122,43 @@ n_getint(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     cmd->Out()->SetI(self->GetInt(nShader2::StringToParameter(cmd->In()->GetS())));
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setbool
+    @input
+    s(VarName), b(BoolVal)
+    @output
+    v
+    @info
+    Set a boolean shader variable.
+*/
+static void
+n_setbool(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    const char* s0 = cmd->In()->GetS();
+    bool b0 = cmd->In()->GetB();
+    self->SetBool(nShader2::StringToParameter(s0), b0);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getbool
+    @input
+    s(VarName)
+    @output
+    b(BoolVal)
+    @info
+    Get a boolean shader variable.
+*/
+static void
+n_getbool(void* slf, nCmd* cmd)
+{
+    nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
+    cmd->Out()->SetB(self->GetBool(nShader2::StringToParameter(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -227,7 +268,7 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
             ps->PutCmd(cmd);
         }
 
-        //--- setint/setfloat/setvector ---
+        //--- setint/setbool/setfloat/setvector ---
         for (i = 0; i < nShader2::NumParameters; i++)
         {
             const nShaderArg& param = this->shaderParams.GetArg((nShader2::Parameter)i);
@@ -240,6 +281,12 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                     cmd = ps->GetCmd(this, 'SINT');
                     cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
                     cmd->In()->SetI(param.GetInt());
+                    ps->PutCmd(cmd);
+                    break;
+               case nShaderArg::Bool:
+                    cmd = ps->GetCmd(this, 'SBOO');
+                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                    cmd->In()->SetB(param.GetBool());
                     ps->PutCmd(cmd);
                     break;
 
