@@ -40,7 +40,7 @@ enum nMaxControlType
 struct nMaxSampleKey 
 {
     Matrix3    tm;    // use it for nMaxTM
-    Point3     pos;   // use it for nMaxPoint3 
+    Point3     pos;   // use it for nMaxPos and nMaxPoint3
     Quat       rot;   // use if for nMaxRot
     Point3     scale; // use it for nMaxScale
     Point4     pt4;      // use if for nMaxPoint4
@@ -90,6 +90,8 @@ public:
         int sampleRate, nMaxControlType type, bool optimize = false);
 
 	static Type GetType(Control *control);
+
+static bool AreKeysEqual(nMaxSampleKey& key1, nMaxSampleKey& key2, nMaxControlType type);
 
 };
 //-----------------------------------------------------------------------------
