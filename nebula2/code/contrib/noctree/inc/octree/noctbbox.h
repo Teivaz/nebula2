@@ -13,12 +13,12 @@
 class nOctBBox : public nOctVisitor
 {
 public:
-    virtual void DoCulling (nOctree* oct);
+    virtual void DoCulling(nOctree* oct);
 
-    void SetBBox (const bbox3& bbox);
-    const bbox3& GetBBox ();
+    void SetBBox(const bbox3& bbox);
+    const bbox3& GetBBox();
 private:
-    void recurse_collect_by_bbox (nOctNode *on);
+    void recurse_collect_by_bbox(nOctNode *on);
     void collect_nodes_in_bbox(nOctNode *on);
     int  box_clip_box(vector3& minCorner, vector3& maxCorner);
 
