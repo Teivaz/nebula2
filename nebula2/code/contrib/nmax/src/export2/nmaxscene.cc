@@ -72,25 +72,20 @@ bool nMaxScene::Export()
         n_maxlog(Error, "No root node exist.");
         return false;
     }
-
+    
+    // prepares export and do needed preprocess.
     if(!this->Begin(rootNode))
     {
         return false;
     }
 
-    //int numChildren = rootNode->NumberOfChildren();
-
-    //for (int i=0; i<numChildren; i++)
-    //{
-    //    INode* child = rootNode->GetChildNode(i);
-    //    // export nodes.
-    //    this->ExportNodes(child);
-    //}
+    // recursively exports nodes in the scene.
     if (!this->ExportNodes(rootNode))
     {
         return false;
     }
 
+    // release resources and save the results.
     if (!this->End())
     {
         return false;
@@ -135,28 +130,13 @@ bool nMaxScene::Preprocess(INode* root)
 
     //this->InitializeNodes(root);
 
-// begin build bone array
     // Build bone list.
     n_maxlog(Midium, "Start to build bone list.");
 
     this->boneManager = nMaxBoneManager::Instance();
-    
-    //for (int i=0;i<this->topLevelNodes.Size(); i++)
-    //{
-    //    INode* inode = this->topLevelNodes[i];
-    //    
-    //    boneList->BuildBoneList(-1, inode);
-    //}
-    //for (int i=0; i<root->NumberOfChildren(); i++)
-    //{
-    //    boneList->BuildBoneList(-1, root->GetChildNode(i));
-    //}
-    //boneList->BuildBoneList(-1, root);
-
     this->boneManager->BuildBoneList(root);
 
     n_maxlog(Midium, "Found %d bones", this->boneManager->GetNumBones());
-// end build bone array
 
     this->globalMeshBuilder.Clear();
 
@@ -166,6 +146,9 @@ bool nMaxScene::Preprocess(INode* root)
     return true;
 }
 
+//-----------------------------------------------------------------------------
+/**
+*/
 void SetFlags(ReferenceMaker *pRefMaker, int iStat)
 {
     int i;
@@ -523,7 +506,11 @@ bool nMaxScene::ExportNodes(INode* inode)
             break;
 
         case LIGHT_CLASS_ID:
-            ExportLightObject(inode);
+            //ExportLightObject(inode);
+            {
+                nMaxLight light;
+                createdNode = light.Export(inode, obj);
+            }
             break;
 
         case GEOMOBJECT_CLASS_ID:
@@ -591,13 +578,10 @@ bool nMaxScene::ExportNodes(INode* inode)
 
 //-----------------------------------------------------------------------------
 /**
-*/
-void nMaxScene::ExportLightObject(INode* inode)
-{
-}
+    Export geometry type of nodes. 
 
-//-----------------------------------------------------------------------------
-/**
+    @note
+    A geometry class type of objects are normally meshes or bones in 3dsmax.
 */
 nSceneNode* nMaxScene::ExportGeomObject(INode* inode)
 {
