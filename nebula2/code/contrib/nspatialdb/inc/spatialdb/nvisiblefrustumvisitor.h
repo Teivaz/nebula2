@@ -27,13 +27,13 @@ public:
     nVisibleFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform); 
     ~nVisibleFrustumVisitor();
 
-    virtual void Reset();
+    void Reset();
 
-    virtual void Visit(nSpatialSector *visitee, int recursedepth);
+    using nVisibilityVisitor::Visit;
 
-    virtual bool VisibilityTest(nSpatialElement *visitee);
+    void Visit(nSpatialSector *visitee, int recursedepth);
 
-    virtual void VisualizeDebug(nGfxServer2 *gfx2);
+    bool VisibilityTest(nSpatialElement *visitee);
 
 protected:
     // represents the camera position/rotation in the current space.
