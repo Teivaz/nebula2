@@ -159,6 +159,8 @@ nLuaServer::nLuaServer() :
 nLuaServer::~nLuaServer()
 {
     lua_close(this->L);
+    if (nLuaServer::Instance == this)
+        nLuaServer::Instance = 0;
     this->L = 0;
 }
 
