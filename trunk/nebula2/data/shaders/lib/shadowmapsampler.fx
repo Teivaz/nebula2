@@ -1,3 +1,4 @@
+#line 1 "shadowmapsampler.fx"
 //------------------------------------------------------------------------------
 //  shadowmapsampler.h
 //  Declare the shadow map sampler.

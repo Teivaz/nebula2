@@ -1,5 +1,6 @@
+#line 1 "grass.fx"
 //------------------------------------------------------------------------------
-//  terraingrass.fx
+//  grass.fx
 //
 //  The default shader for dx7 cards using fixed function pipeline,
 //  running in 1 render pass.

@@ -1,3 +1,4 @@
+#line 1 "default_environment_alpha.fx"
 //------------------------------------------------------------------------------
 //  fixed/default_environment_alpha.fx
 //

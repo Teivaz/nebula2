@@ -1,3 +1,4 @@
+#line 1 "default_environment.fx"
 //------------------------------------------------------------------------------
 //  fixed/default_environment.fx
 //

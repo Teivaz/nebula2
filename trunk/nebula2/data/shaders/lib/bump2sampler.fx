@@ -1,3 +1,4 @@
+#line 1 "bump2sampler.fx"
 //------------------------------------------------------------------------------
 //  bump2sampler.fx
 //  Declare the standard bump sampler for all shaders.

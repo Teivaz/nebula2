@@ -1,5 +1,6 @@
+#line 1 "grass_lightmapped.fx"
 //------------------------------------------------------------------------------
-//  ps2.0/grass.fx
+//  ps2.0/grass_lightmapped.fx
 //
 //  The default shader for dx9 cards using vertex/pixel shader 2.0.
 //

@@ -1,3 +1,4 @@
+#line 1 "diff2sampler.fx"
 //------------------------------------------------------------------------------
 //  diff2sampler.h
 //  Declare the standard diffuse sampler for all shaders.

@@ -1,5 +1,6 @@
+#line 1 "default_environment_alpha.fx"
 //------------------------------------------------------------------------------
-//  ps2.0/default_environment.fx
+//  ps2.0/default_environment_alpha.fx
 //
 //  A spherical environment shader.
 //
