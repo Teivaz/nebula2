@@ -104,7 +104,7 @@ void SplatGenerator::emit_triangle(int i1, int i2, int i3)
     chunkvertex &va = m_vertices[ai], &vr = m_vertices[ri], &vl = m_vertices[li];
     unsigned int numtiles = m_if->specifyTileIndices(va.x,va.y, vr.x,vr.y, vl.x,vl.y, tileflags);
 
-    // add the triangle to the appropriate splats; we may need to add splats if there
+    // add the triangle to the appropriate splats; we may need to make a new splat if there
     // is no splat for a given tile
     for (int tileix=0; tileix < TileIndexData::maxtileindex; tileix++)
     {
@@ -200,6 +200,33 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
     SI32SPEW(destfile, m_indices.Size()+1);       // size of orig. triangle strip
 
     // write out splat info
+
+    // first find the splat w/ the largest number of triangles.  This is because
+    // the first splat is always drawn with the full triangle sets, in order to
+    // put down the base (black) color in addition to displaying the first texture.
+    // Further splats use a subset of these triangles--only the triangles needed to
+    // draw the splat texture are drawn, blended on top of the base.  If the first
+    // splat has very few actual triangles with textures, we waste a lot of fill drawing
+    // in black areas, where we could be using a splat which covers more of the chunk, and
+    // get more out of our fill rate.
+    nArray<splat>::iterator biggestsplat = m_splats.Begin();
+    int biggestsplatsize = biggestsplat->indices.Size();
+    for (nArray<splat>::iterator cursplat = m_splats.Begin();
+                                 cursplat != m_splats.End();
+                                 cursplat++)
+    {
+        int currentsplatsize = cursplat->indices.Size();
+        if (currentsplatsize > biggestsplatsize)
+        {
+            biggestsplatsize = currentsplatsize;
+            biggestsplat = cursplat;
+        }
+    }
+    // swap the biggest splat into the first slot--there's a lot of implicit copying
+    // from this swap, but it's not like we're sorting the whole array or anything...
+    splat tempsplat = *biggestsplat;
+    *biggestsplat = *(m_splats.Begin());
+    *(m_splats.Begin()) = tempsplat;
 
     // # of splats
     SI32SPEW(destfile, m_splats.Size());
