@@ -8,6 +8,8 @@ static void n_setcompanyname(void* slf, nCmd* cmd);
 static void n_getcompanyname(void* slf, nCmd* cmd);
 static void n_setappname(void* slf, nCmd* cmd);
 static void n_getappname(void* slf, nCmd* cmd);
+static void n_getcurrentstate(void* slf, nCmd* cmd);
+static void n_setstate(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -24,10 +26,12 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setcompanyname_s", 'SCPN', n_setcompanyname);
-    cl->AddCmd("s_getcompanyname_v", 'GCPN', n_getcompanyname);
-    cl->AddCmd("v_setappname_s",     'SAPN', n_setappname);
-    cl->AddCmd("s_getappname_v",     'GAPN', n_getappname);
+    cl->AddCmd("v_setcompanyname_s",  'SCPN', n_setcompanyname);
+    cl->AddCmd("s_getcompanyname_v",  'GCPN', n_getcompanyname);
+    cl->AddCmd("v_setappname_s",      'SAPN', n_setappname);
+    cl->AddCmd("s_getappname_v",      'GAPN', n_getappname);
+    cl->AddCmd("v_getcurrentstate_s", 'GCRS', n_getcurrentstate);
+    cl->AddCmd("v_setstate_s",        'SETS', n_setstate);
     cl->EndCmds();
 }
 
@@ -107,5 +111,40 @@ n_getappname(void* slf, nCmd* cmd)
     cmd->Out()->SetS(self->GetAppName().Get());
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getcurrentstate
+    @input
+    v
+    @output
+    s
+    @info
+    Retrieve name of the current state.
+*/
+static 
+void n_getcurrentstate(void* slf, nCmd* cmd)
+{
+    nApplication* self = (nApplication*) slf;
+    cmd->Out()->SetS(self->GetCurrentState().Get());
+}
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setstate
+    @input
+    s
+    @output
+    v
+    @info
+    Specify the state with given string of the state name.
+*/
+static 
+void n_setstate(void* slf, nCmd* cmd)
+{
+    nApplication* self = (nApplication*) slf;
+    nString stateName = cmd->In()->GetS();
+    self->SetState(stateName);
+}
 
