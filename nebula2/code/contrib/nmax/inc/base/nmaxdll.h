@@ -214,7 +214,7 @@ private:
 #define LIB_CANAUTODEFER 0
 #endif
 
-/// the dll entry funtion, called from the automatic added static init funtion
+/// the dll entry funtion, called from the automatic added static init function
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved);
 /// return the i'th class description of the published classes to max
 __declspec( dllexport ) ClassDesc* LibClassDesc(int i);
@@ -226,5 +226,28 @@ __declspec( dllexport ) const TCHAR* LibDescription();
 __declspec( dllexport ) ULONG LibVersion();
 /// return if plugin can be loaded on demand
 __declspec( dllexport ) ULONG CanAutoDefer();
+
+//-----------------------------------------------------------------------------
+/**
+    Do initializations when plugin startup. 
+
+    One should define one's own nMaxPluginInitialize() function.
+
+    @note
+        This is called when a dll is loaded
+*/
+extern void nMaxPluginInitialize();
+
+//-----------------------------------------------------------------------------
+/**
+    Do Uninitializations when 3ds max is closed.
+
+    One should define one's own nMaxPlugUninInitialize() function.
+
+    @note
+        This is called when a dll is unloaded.
+
+*/
+extern void nMaxPluginUninitialize();
 
 #endif
