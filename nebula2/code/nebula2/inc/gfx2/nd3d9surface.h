@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // nd3d9surface.h
-// (c) 2003, 2004 Gerge Mcbay, Kim, Hyoun Woo
+// (c) 2003, 2004 Goerge Mcbay, Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 
 #ifndef N_D3D9SURFACE_H
@@ -9,6 +9,8 @@
 //-----------------------------------------------------------------------------
 /**
     @class nD3DSurface	
+    @ingroup NGameSwfContribModule
+    @brief
 */
 
 #include "gfx2/nsurface.h"

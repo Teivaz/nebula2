@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // nsurface.h
-// (c) 2003, 2004 Gerge Mcbay, Kim, Hyoun Woo
+// (c) 2003, 2004 George Mcbay, Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #ifndef N_SURFACE_H
 #define N_SURFACE_H
@@ -8,6 +8,9 @@
 //-----------------------------------------------------------------------------
 /**
     @class nSurface
+    @ingroup NGameSwfConribModule
+
+    @brief
 */
 #include "kernel/nroot.h"
 #include "gfx2/ntexture2.h"
@@ -27,4 +30,4 @@ public:
     static nKernelServer* kernelServer;
 
 };
-#endif /*N_SURFACE*/
+#endif /*N_SURFACE_H*/
