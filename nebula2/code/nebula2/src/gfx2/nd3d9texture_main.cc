@@ -388,7 +388,7 @@ nD3D9Texture::LoadNtxFile()
 
     ntxFile.SetCurrentBlock(firstBlock);
     int curLevel;
-	int curBlockIndex = 0;
+    int curBlockIndex = 0;
     int imgWidth  = ntxFile.GetWidth();
     int imgHeight = ntxFile.GetHeight();
 
@@ -443,34 +443,34 @@ nD3D9Texture::LoadNtxFile()
     this->SetNumMipLevels(numLevels);
     for (curLevel = 0; curLevel < numLevels; curLevel++)
     {
-		// find the next block index which first into maxTextureSize
+        // find the next block index which first into maxTextureSize
         int curBlock = ntxFile.FindBlock(ntxType, ntxFormat, curBlockIndex++);
         if (curBlock != -1)
         {            
-			ntxFile.SetCurrentBlock(curBlock);
-			int mipWidth  = ntxFile.GetWidth();
-			int mipHeight = ntxFile.GetHeight();
-			
-			// skip blocks which don't fit into maxTextureSize
-			while ((mipWidth > imgWidth) || (mipHeight > imgHeight))
-			{
-				curBlock = ntxFile.FindBlock(nNtxFile::TYPE_TEXTURE2D, ntxFormat, curBlockIndex++);
-    			ntxFile.SetCurrentBlock(curBlock);
-				mipWidth  = ntxFile.GetWidth();
-				mipHeight = ntxFile.GetHeight();
-			}
+            ntxFile.SetCurrentBlock(curBlock);
+            int mipWidth  = ntxFile.GetWidth();
+            int mipHeight = ntxFile.GetHeight();
+            
+            // skip blocks which don't fit into maxTextureSize
+            while ((mipWidth > imgWidth) || (mipHeight > imgHeight))
+            {
+                curBlock = ntxFile.FindBlock(nNtxFile::TYPE_TEXTURE2D, ntxFormat, curBlockIndex++);
+                ntxFile.SetCurrentBlock(curBlock);
+                mipWidth  = ntxFile.GetWidth();
+                mipHeight = ntxFile.GetHeight();
+            }
 
-			if (curBlock != -1)
-			{
+            if (curBlock != -1)
+            {
                 // read block data
-				ntxFile.ReadBlock(imageData, dataSize);
+                ntxFile.ReadBlock(imageData, dataSize);
 
-				// fill a RECT structure with width and height
-				RECT srcRect;
-				srcRect.left   = 0;
-				srcRect.top    = 0;
-				srcRect.right  = mipWidth;
-				srcRect.bottom = mipHeight;
+                // fill a RECT structure with width and height
+                RECT srcRect;
+                srcRect.left   = 0;
+                srcRect.top    = 0;
+                srcRect.right  = mipWidth;
+                srcRect.bottom = mipHeight;
 
                 if (this->GetType() == TEXTURE_CUBE)
                 {
@@ -490,14 +490,14 @@ nD3D9Texture::LoadNtxFile()
                         hr = D3DXLoadSurfaceFromMemory(
                             cubeSurface,            // pDestSurface
                             NULL,                   // pDestPalette (none)
-    					    NULL,                   // pDestRect (entire surface)
+                            NULL,                   // pDestRect (entire surface)
                             faceData,               // pSrcMemory
-					        d3dSrcFormat,               // SrcFormat
-					        ntxFile.GetBytesPerRow(),   // SrcPitch
-					        NULL,                       // pSrcPalette
-					        &srcRect,                   // pSrcRect
-					        D3DX_FILTER_NONE,           // Filter (no filtering since no scaling takes place)
-					        0);                         // ColorKey (none)
+                            d3dSrcFormat,               // SrcFormat
+                            ntxFile.GetBytesPerRow(),   // SrcPitch
+                            NULL,                       // pSrcPalette
+                            &srcRect,                   // pSrcRect
+                            D3DX_FILTER_NONE,           // Filter (no filtering since no scaling takes place)
+                            0);                         // ColorKey (none)
                         n_assert(SUCCEEDED(hr));
 
                         cubeSurface->Release();
@@ -506,30 +506,30 @@ nD3D9Texture::LoadNtxFile()
                 }
                 else
                 {
-				    // get current d3d mipmap surface
+                    // get current d3d mipmap surface
                     IDirect3DSurface9* mipSurface;
-				    hr = this->texture2D->GetSurfaceLevel(curLevel, &mipSurface);
+                    hr = this->texture2D->GetSurfaceLevel(curLevel, &mipSurface);
                     n_assert(SUCCEEDED(hr));
 
-				    // transfer image data to d3d8 surface
-				    hr = D3DXLoadSurfaceFromMemory(
-					    mipSurface,                 // pDestSurface
-					    NULL,                       // pDestPalette (none)
-					    NULL,                       // pDestRect (entire surface)
-					    imageData,                  // pSrcMemory
-					    d3dSrcFormat,               // SrcFormat
-					    ntxFile.GetBytesPerRow(),   // SrcPitch
-					    NULL,                       // pSrcPalette
-					    &srcRect,                   // pSrcRect
-					    D3DX_FILTER_NONE,           // Filter (no filtering since no scaling takes place)
-					    0);                         // ColorKey (none)
+                    // transfer image data to d3d8 surface
+                    hr = D3DXLoadSurfaceFromMemory(
+                        mipSurface,                 // pDestSurface
+                        NULL,                       // pDestPalette (none)
+                        NULL,                       // pDestRect (entire surface)
+                        imageData,                  // pSrcMemory
+                        d3dSrcFormat,               // SrcFormat
+                        ntxFile.GetBytesPerRow(),   // SrcPitch
+                        NULL,                       // pSrcPalette
+                        &srcRect,                   // pSrcRect
+                        D3DX_FILTER_NONE,           // Filter (no filtering since no scaling takes place)
+                        0);                         // ColorKey (none)
                     n_assert(SUCCEEDED(hr));
 
                     // release the mipSurface (as required by GetSurfaceLevel())
-				    mipSurface->Release();
-				    mipSurface = 0;
+                    mipSurface->Release();
+                    mipSurface = 0;
                 }
-			}
+            }
         }
     }
 
