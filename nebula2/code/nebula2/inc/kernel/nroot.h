@@ -318,7 +318,6 @@ nRoot*
 nRoot::Find(const char *str)
 {
     n_assert(str);
-    nRoot *n = 0;
     if (str[0] == '.') 
     {
         if (str[1] == 0) 
