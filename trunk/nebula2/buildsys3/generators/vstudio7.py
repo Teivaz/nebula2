@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 import os, string
+import buildsys3.guid
 
 #--------------------------------------------------------------------------
 
@@ -150,10 +151,6 @@ class vstudio7:
         
     #--------------------------------------------------------------------------
     def Generate(self, workspaceNames):
-        if not self.UUIDGenPresent():
-            self.buildSys.logger.error("uuidgen.exe not found, can't " \
-                "generate Microsoft Visual Studio Projects and Solutions.")
-        
         defaultLocation = os.path.join('build', 'vstudio7')
         
         progressVal = 0
@@ -270,25 +267,12 @@ class vstudio7:
             projFile.close()
     
     #--------------------------------------------------------------------------
-    # Checks if uuidgen.exe is present, if it is found the return value is True
-    # otherwise it's False.
-    def UUIDGenPresent(self):
-        cmdPipe = os.popen('uuidgen', 'r')
-        uuidStr = cmdPipe.readline()
-        if uuidStr != '':
-            return True
-        return False
-        
-    #--------------------------------------------------------------------------
     # Generates and returns a UUID (a string).
-    # If an error occured like uuidgen.exe wasn't found, the return value will
-    # be an empty string.
+    # If an error occured the return value will be an empty string.
     def GenerateUUID(self):
-        cmdPipe = os.popen('uuidgen', 'r')
-        uuidStr = cmdPipe.readline()
+        uuidStr = buildsys3.guid.GenerateGUID()
         if uuidStr != '':
             uuidStr = string.upper(string.strip(uuidStr))
-        cmdPipe.close()
         return uuidStr
         
     #--------------------------------------------------------------------------
