@@ -7,7 +7,7 @@
     @brief Encapsulates the clipping region and flags of a sphere, with
     handling of 'active clipping plane' flags.
 
-    This class is similar to the nSphereClipper class but represents a
+    This class is similar to the nFrustumClipper class but represents a
     clipping sphere.  It determines if an object is totally outside the
     clipping sphere.  Also, the @c active_flag of the return value will be
     @c 0 if an object is totally inside the sphere; typically you can use
@@ -124,6 +124,12 @@ nSphereClipper::result_info nSphereClipper::TestPoint(const vector3 &pointtest, 
 inline
 void nSphereClipper::VisualizeSphere(nGfxServer2 *gfx2, const vector4 &color)
 {
+    matrix44 m;
+    m.scale( vector3( m_sphere.r, m_sphere.r, m_sphere.r ) );
+    m.set_translation( m_sphere.p );
+    gfx2->BeginShapes();
+    gfx2->DrawShape( nGfxServer2::Sphere, m, color );
+    gfx2->EndShapes();
 }
 
 #endif

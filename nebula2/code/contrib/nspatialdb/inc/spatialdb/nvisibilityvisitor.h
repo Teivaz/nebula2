@@ -39,8 +39,10 @@ class nGfxServer2;
 
 class nVisibilityVisitor {
 public:
+    typedef nArray<nSpatialElement *> VisibleElements;
+
     nVisibilityVisitor(const vector3 &viewpoint);
-    ~nVisibilityVisitor();
+    virtual ~nVisibilityVisitor();
 
     /** Reset any state use during a visibility sweep.
         If you use a visitor multiple times, reset it between each visibility collection */

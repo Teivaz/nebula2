@@ -15,9 +15,7 @@
 
 class nOccludingFrustumGenArray : public nOccludingFrustumVisitor {
 public:
-    typedef nArray<nSpatialElement *> VisibleElements;
-
-    nOccludingFrustumGenArray(nCamera2 &cam, matrix44 &camxform, VisibleElements &foundarray);
+    nOccludingFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, VisibleElements &foundarray);
     ~nOccludingFrustumGenArray();
 
     virtual void Reset();

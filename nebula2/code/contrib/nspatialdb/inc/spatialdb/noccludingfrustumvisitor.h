@@ -21,7 +21,7 @@
 
 class nOccludingFrustumVisitor : public nVisibleFrustumVisitor {
 public:
-    nOccludingFrustumVisitor(nCamera2 &cameraprojection, matrix44 &cameratransform); 
+    nOccludingFrustumVisitor(const nCamera2 &cameraprojection, const matrix44 &cameratransform); 
     ~nOccludingFrustumVisitor();
 
     virtual void Reset();

@@ -1,13 +1,7 @@
 #ifndef N_SPATIALSECTOR_H
 #define N_SPATIALSECTOR_H
 
-#include "kernel/nroot.h"
-#include "kernel/nref.h"
-#include "mathlib/vector.h"
-#include "mathlib/bbox.h"
 #include "octree/noctree.h"
-#include "spatialdb/nspatialelements.h"
-#include "spatialdb/nsphereoccluder.h"
 
 //--------------------------------------------------------------------
 /**
@@ -29,25 +23,13 @@
     can also nest sectors within each other using the NOH; a sector
     contains all the sectors that are child nodes of this sector.
 */
-class nSpatialSector : public nRoot {
+class nSpatialSector : public nOctree {
 public:
     nSpatialSector();
     ~nSpatialSector();
 
     void Configure(const matrix44 &transformtoglobalspace);
-
-    void AddElement(nSpatialElement *addme);
-    void RemoveElement(nSpatialElement *removeme);
-    void UpdateElement(nSpatialElement *updateme, const vector3 &pos, float radius);
-    void UpdateElement(nSpatialElement *updateme, const vector3 &pos, const bbox3 &bbox);
-
-    /// get the octree containing spatial elements in this sector.
-    nOctree const *GetOctree() const;
-
 protected:
-    /// holds all the spatial elements in a given sector
-    nRef<nOctree> m_octree;
-
 };
 
 

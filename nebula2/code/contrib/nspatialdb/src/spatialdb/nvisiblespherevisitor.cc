@@ -32,10 +32,14 @@ void nVisibleSphereVisitor::Visit(nSpatialSector *visitee, int recursedepth)
     if (recursedepth < 1)
         return;
 
-    n_assert(visitee->GetOctree() != NULL);
-    nOctNode *rootnode = visitee->GetOctree()->GetRoot();
+    //n_assert(visitee->GetOctree() != NULL);
+    nOctNode *rootnode = visitee->/*GetOctree()->*/GetRoot();
     nSphereClipper::result_info clipinfo;
     nSphereClipper sphereclip = m_sphereclipperstack.Back();
+    if (m_gfxdebug)
+    {
+        sphereclip.VisualizeSphere(m_gfxdebug, vector4(1.0f,1.0f,0.0f,0.5f));
+    }
 
     // recursively descend the octree checking each node for clipping
     CheckOctNode(rootnode, sphereclip, clipinfo, recursedepth);

@@ -5,7 +5,7 @@
 
 #include "spatialdb/noccludingfrustumgenarray.h"
 
-nOccludingFrustumGenArray::nOccludingFrustumGenArray(nCamera2 &cam, matrix44 &camxform, nOccludingFrustumGenArray::VisibleElements &foundarray)
+nOccludingFrustumGenArray::nOccludingFrustumGenArray(const nCamera2 &cam, const matrix44 &camxform, nVisibilityVisitor::VisibleElements &foundarray)
 : nOccludingFrustumVisitor(cam, camxform), m_visarray(foundarray)
 {
 }
