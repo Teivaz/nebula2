@@ -7,6 +7,13 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+beginmodule ntgafile
+    setdir tools
+    setmodtype cpplib
+    setfiles { ntgafile }
+    setheaders { ntgafile }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nmeshbuilder
     setdir tools
     setmodtype cpplib
@@ -16,8 +23,9 @@ beginmodule nmeshbuilder
         nmeshbuilder_tangent 
         nskinpartitioner
         nbspbuilder
+        nmeshbundle
     }
-    setheaders { nmeshbuilder nskinpartitioner nbspbuilder }
+    setheaders { nmeshbuilder nskinpartitioner nbspbuilder nmeshbundle }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nanimbuilder
@@ -27,10 +35,32 @@ beginmodule nanimbuilder
     setheaders { nanimbuilder }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nresourcecompiler
+    setdir tools
+    setmodtype cpplib
+    setfiles { nresourcecompiler }
+    setheaders { nresourcecompiler }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule napplauncher
+    setdir tools
+    setmodtype cpplib
+    setfiles { napplauncher }
+    setheaders { napplauncher }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nviewerapp
+    setdir tools
+    setmodtype cpplib
+    setfiles { nviewerapp }
+    setheaders { nviewerapp }
+endmodule
+#-------------------------------------------------------------------------------
 begintarget ntoollib
     settype lib
     setmods {
-        nmeshbuilder nanimbuilder
+        nmeshbuilder nanimbuilder nresourcecompiler 
+        napplauncher nviewerapp
     }
 endtarget
 #-------------------------------------------------------------------------------

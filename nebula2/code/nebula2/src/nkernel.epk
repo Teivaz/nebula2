@@ -96,8 +96,8 @@ beginmodule nkernel
     setheaders {
         nsystem ntypes ndebug ndefdllclass nkernelserver nprofiler nclass
         ncmdprotonative ncmdproto ncmd narg nhardrefserver nref nautoref
-        ndynautoref nhardref nevent nmutex nsocketdefs nthread nthreadsafelist
-        nloghandler ndefaultloghandler nwin32loghandler nrefcounted
+        ndynautoref nhardref nevent nmutex nsocketdefs nthread
+        nthreadsafelist nloghandler ndefaultloghandler nwin32loghandler
     }
 endmodule
 

@@ -5,38 +5,6 @@
 #
 #   (C) 2003 RadonLabs GmbH
 #-------------------------------------------------------------------------------
-beginmodule nntxfile
-    setdir gfx2
-    setmodtype cpplib
-    setfiles nntxfile
-    setheaders nntxfile
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nimagetool
-    setdir tools
-    setmodtype cpplib
-    setfiles { 
-        nimagetool
-    }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule pkg_nimagetool
-    setdir packages
-    setmodtype cpplib
-    setfiles { pkg_nimagetool }
-endmodule
-#-------------------------------------------------------------------------------
-begintarget nimagetool
-    settype exe
-    setmods { nimagetool nntxfile pkg_nimagetool }
-    setdepends {
-        nkernel
-    }
-    setrsrc_win32 { nebula2 }
-    setlibs_win32 { wsock32.lib DevIL.lib ilu.lib }
-    setlibs_unix  { IL ILU }
-    setframeworks_macosx { IL ILU Carbon }
-endtarget
 #===============================================================================
 beginmodule nmeshtool
     setdir tools
@@ -60,7 +28,7 @@ begintarget nmeshtool
         ntoollib
     }
     setrsrc_win32 { nebula2 }
-    setlibs_win32 { wsock32.lib nv_math.lib }
+    setlibs_win32 { wsock32.lib }
     setframeworks_macosx { Carbon }
 endtarget
 #===============================================================================
@@ -113,6 +81,8 @@ begintarget nsh
         ntoollib
     }
     setrsrc_win32 { nebula2 }
+    setlibs_win32_debug { DevIL-d.lib ILU-d.lib }
+    setlibs_win32_release { DevIL.lib ILU.lib }
     setlibs_win32 { 
         d3d9.lib d3dx9.lib dinput8.lib dxguid.lib dsound.lib wsock32.lib 
     }
@@ -140,13 +110,65 @@ begintarget nviewer
         microtcl
         ndinput8
         ndirect3d9
+        ntoollib
     }
     setrsrc_win32 { nebula2 }
-    setlibs_win32 { wsock32.lib nv_math.lib dinput8.lib d3d9.lib d3dx9.lib dxguid.lib }
+    setlibs_win32_debug { DevIL-d.lib ILU-d.lib }
+    setlibs_win32_release { DevIL.lib ILU.lib }
+    setlibs_win32 { wsock32.lib dinput8.lib d3d9.lib d3dx9.lib dxguid.lib }
     setframeworks_macosx { Carbon }
 endtarget
 
 #===============================================================================
+beginmodule nbundler
+    setmodtype cpplib
+    setdir tools
+    setfiles { nbundler }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule pkg_nbundler
+    setdir packages
+    setmodtype cpplib
+    setfiles { pkg_nbundler }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nbundler
+    settype exe
+    setmods { nbundler pkg_nbundler }
+    setdepends {
+        nkernel
+        nnebula
+        microtcl
+        ntoollib
+    }
+    setrsrc_win32 { nebula2 }
+    setlibs_win32 { 
+        wsock32.lib    
+    }
+endtarget
+#===============================================================================
+beginmodule nbumprev
+    setmodtype cpplib
+    setdir tools
+    setfiles { nbumprev }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule pkg_nbumprev
+    setdir packages
+    setmodtype cpplib
+    setfiles { pkg_nbumprev }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nbumprev
+    settype exe
+    setmods { nbumprev pkg_nbumprev }
+    setdepends {
+        nkernel
+    }
+    setlibs_win32 { 
+        wsock32.lib    
+    }
+endtarget
 #   A hack to get all tools into one workspace. This will create an
 #   additional static lib file which is bogus.
 #===============================================================================
@@ -166,10 +188,11 @@ begintarget tools
         ndinput8
         ndirect3d9
         ntoollib
-        nimagetool
         nmeshtool
         nremoteshell
         nsh
         nviewer
+        nbundler
+        nbumprev
     }
 endtarget        
