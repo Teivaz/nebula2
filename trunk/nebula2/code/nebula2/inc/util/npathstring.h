@@ -117,7 +117,7 @@ nPathString::ConvertBackslashes()
 
     char *buf = n_new_array(char, this->strLen + 1);
 
-    for (int i = 0; i <= this->strLen; i++)
+    for (size_t i = 0; i <= this->strLen; i++)
     {
         buf[i] = (ptr[i] == '\\') ? '/' : ptr[i];
     }
