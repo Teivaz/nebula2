@@ -13,6 +13,10 @@
 #include "kernel/ntypes.h"
 #endif
 
+#ifndef N_MATH_H
+#include "mathlib/nmath.h"
+#endif
+
 //------------------------------------------------------------------------------
 class nCamera2
 {
@@ -35,6 +39,8 @@ public:
     void SetFarPlane(float v);
     /// set far clip plane
     float GetFarPlane() const;
+    // get the view volume
+    void GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const;
 
 private:
     float angleOfView;
@@ -134,6 +140,36 @@ float
 nCamera2::GetFarPlane() const
 {
     return this->farPlane;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Get the view volume.
+
+    @param  minx    the left x coord where view volume cuts near plane
+    @param  maxx    the right x coord where view volume cuts near plane
+    @param  miny    the upper y coord where view volume cuts near plane
+    @param  maxy    the lower y coord where view volume cuts near plane
+    @param  minz    distance from eye to near plane of view volume
+    @param  maxz    distance from eye to far plane of view volume
+*/
+inline
+void
+nCamera2::GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const
+{
+    float b2, cosA, c, raddiv2;
+
+    b2 = (this->nearPlane * this->nearPlane);
+    raddiv2 = this->angleOfView * float(N_PI / 360);
+    cosA = float(cos(raddiv2));
+    c = float(sqrt(b2 * (1 / (cosA * cosA) - 1)));
+    minx = -c;
+    maxx = c;
+    c *= this->aspectRatio;
+    miny = -c;
+    maxy = c;
+    minz = this->nearPlane;
+    maxz = this->farPlane;
 }
 
 //------------------------------------------------------------------------------
