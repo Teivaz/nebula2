@@ -33,6 +33,14 @@ begintarget nebula2java
     setmodules { njava njavautils }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        nvideo
+        ndshow
+        ngui
     }
 endtarget
 #-------------------------------------------------------------------------------
