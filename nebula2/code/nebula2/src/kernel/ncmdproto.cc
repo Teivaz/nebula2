@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nCmdProto::nCmdProto(const char *proto_def, uint id)
+nCmdProto::nCmdProto(const char *proto_def, nFourCC id)
 {
     char tmp[128];
     char inArgs[64];

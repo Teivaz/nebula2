@@ -19,7 +19,7 @@ class nCmdProtoNative : public nCmdProto
 {
 public:
     /// constructor
-    nCmdProtoNative(const char *_proto_def, ulong _id, void (*)(void *, nCmd *));
+    nCmdProtoNative(const char *_proto_def, nFourCC _id, void (*)(void *, nCmd *));
     /// copy constructor
     nCmdProtoNative(const nCmdProtoNative& rhs);
     

@@ -47,7 +47,7 @@ class nCmdProto : public nHashNode
 {
 public:
     /// constructor
-    nCmdProto(const char *proto_def, uint id);
+    nCmdProto(const char *proto_def, nFourCC id);
     /// copy constructor
     nCmdProto(const nCmdProto& rhs);
     /// destructor
@@ -55,7 +55,7 @@ public:
     /// execute a command on the provided object
     virtual bool Dispatch(void *, nCmd *) = 0;
     /// get fourcc code
-    uint GetId() const;
+    nFourCC GetId() const;
     /// get number of input args
     int GetNumInArgs() const;
     /// get number of output args
@@ -73,7 +73,7 @@ private:
     /// check if the provided data type character is a valid argument
     bool IsValidArg(char c);
 
-    uint fourcc;
+    nFourCC fourcc;
     uchar numInArgs;
     uchar numOutArgs;
     bool cmdLocked;
@@ -86,7 +86,7 @@ private:
 /**
 */
 inline
-uint
+nFourCC
 nCmdProto::GetId() const
 {
     return this->fourcc;
