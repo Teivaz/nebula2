@@ -56,6 +56,9 @@ extern int luacmd_EndCmds(lua_State*);
 extern int luacmd_IsZombieThunk(lua_State*);
 extern int luacmd_DeleteNRef(lua_State*);
 
+extern int luaobject_Emit(lua_State*);
+extern int luaobject_Post(lua_State*);
+
 void nLuaServer::reg_globalfunc(lua_CFunction func, const char* name)
 {
     lua_pushstring(this->L, name);
@@ -556,6 +559,14 @@ bool nLuaServer::ThunkNebObject(lua_State* L, nRoot* root)
     lua_pushstring(L, "_nebthunker"); // 2
     lua_gettable(L, LUA_GLOBALSINDEX); // 2
     lua_setmetatable(L, -2);
+
+    // put signal functions in object
+    lua_pushstring(L, "emit" );
+    lua_pushcfunction(L, luaobject_Emit );
+    lua_settable(L, -3);
+    lua_pushstring(L, "post" );
+    lua_pushcfunction(L, luaobject_Post );
+    lua_settable(L, -3);
     // leave the thunk on the stack and return
     return true;
 }

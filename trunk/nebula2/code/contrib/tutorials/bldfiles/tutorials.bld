@@ -8,9 +8,13 @@ beginworkspace tutorials
         basic01
         basic02
         signals01
+        signals02
         nkernel
         nnebula
         ndirect3d9
         microtcl
+        npythonserver
+        nlua
+        nnetwork
     }
 endworkspace

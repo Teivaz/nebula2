@@ -21,8 +21,31 @@ endmodule
 beginmodule signals01
     setdir "signals_tutorial"
     setfiles { signals01 }
+    setheaders { }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule emitter
+    setdir "signals_tutorial"
+    setfiles { emitter_main emitter_cmds }
+    setheaders { emitter }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule receiver
+    setdir "signals_tutorial"
+    setfiles { receiver_main }
+    setheaders { receiver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule receiverscript
+    setdir "signals_tutorial"
+    setfiles { receiverscript_main receiverscript_cmds }
+    setheaders { receiverscript }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule signals02
+    setdir "signals_tutorial"
+    setfiles { signals02 }
+endmodule
 
 #-------------------------------------------------------------------------------
 #   Targets
@@ -39,3 +62,22 @@ begintarget signals01
         nkernel
     }
 endtarget
+
+begintarget signals02
+    annotate "Example of signals, and signals from scripting"
+    settype exe
+    setmodules {
+        emitter
+        receiver
+        receiverscript
+        signals02        
+    }
+    settargetdeps {
+        nkernel
+        npythonserver
+        microtcl
+        nlua
+        nnebula
+        nnetwork
+    }
+endtarget    
