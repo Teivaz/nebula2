@@ -26,7 +26,7 @@ nNpkFileServer::~nNpkFileServer()
 {
     // delete npk file wrappers
     nNpkFileWrapper* cur;
-    while (cur = (nNpkFileWrapper*) this->npkFiles.RemHead())
+    while ((cur = (nNpkFileWrapper*) this->npkFiles.RemHead()))
     {
         n_delete cur;
     }
