@@ -23,8 +23,10 @@ void nOctSphere::recurse_collect_by_sphere(nOctree* octree,
                                         const sphere& clip,
                                         bool full_intersect)
 {
-    bbox3 box(on->p0, on->p1);
-    if (false == clip.intersects(box))
+    bbox3 box;
+    box.vmin=on->minCorner;
+    box.vmax=on->maxCorner;
+    if (!clip.intersects(box))
         return;
 
     // Check for full intersect

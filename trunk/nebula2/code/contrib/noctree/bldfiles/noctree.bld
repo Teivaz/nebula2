@@ -3,7 +3,7 @@
 #    ============
 #    nOctree package definition
 #-----------------------------------------------------------------------------
-beginmodule octree
+beginmodule noctree
     setdir octree
     setfiles      { noctree_main noctree_collect noctree_cmds  
                     noctfrustum noctsphere noctbbox }
@@ -12,7 +12,7 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget noctree
   	settype lib
-  	setmodules    { octree }
+  	setmodules    { noctree }
   	settargetdeps { nnebula }
 endtarget
 #-----------------------------------------------------------------------------

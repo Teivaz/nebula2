@@ -35,10 +35,10 @@ void nOctFrustum::init_clip_planes_for_frustum(nOctree* octree)
 {
     nGfxServer2* gfx_server = octree->GetGfxServer2();
 
-    const matrix44& inv_viewer = gfx_server->GetTransform(nGfxServer2::TransformType::InvView);
+    const matrix44& viewer = gfx_server->GetTransform(nGfxServer2::TransformType::View);
     const matrix44& projection = gfx_server->GetTransform(nGfxServer2::TransformType::Projection);
 
-    matrix44 m = inv_viewer * projection;
+    matrix44 m = viewer * projection;
 
     // front
     clipPlanes[0].x = m.M13;
@@ -76,7 +76,7 @@ void nOctFrustum::init_clip_planes_for_frustum(nOctree* octree)
     clipPlanes[5].z = (m.M34 + m.M32);
     clipPlanes[5].w = (m.M44 + m.M42);
 
-    //normaize planes.
+    //normalize planes.
     float denom;
     vector3 tmp;
     
@@ -102,7 +102,7 @@ void nOctFrustum::recurse_collect_within_clip_planes(nOctree* octree,
     uint out_clip_mask;
 
     // Clip-Status der aktuellen Node...
-    if (false == box_clip_against_clip_planes(on->p0, on->p1, clipPlanes, 
+    if (false == box_clip_against_clip_planes(on->minCorner, on->maxCorner, clipPlanes, 
 							                  out_clip_mask, clip_mask))
         return;
 
@@ -126,27 +126,27 @@ void nOctFrustum::recurse_collect_within_clip_planes(nOctree* octree,
 
 //-------------------------------------------------------------------
 /**
-    Clip AABB defined by p0, p1 to supplied planes.
+    Clip AABB defined by minCorner, maxCorner to supplied planes.
 
     This code is derived from code provided by Ville Miettinen of Hybrid.fi
     on the Algorithms mailing list.  It is similar to the code that
     Hybrid uses in their product dPVS (http://www.hybrid.fi/dpvs.html).
 
-    @param p0 Lower corner of AABB
-    @param p1 Upper corner of AABB
+    @param minCorner Lower corner of AABB
+    @param maxCorner Upper corner of AABB
     @param planes the array of planes to clip against (up to 32)
     @param out_clip_mask returned clip plane overlap
     @param in_clip_mask planes to clip against
     @return true if the AABB is at least partially inside clip
 */
-bool nOctFrustum::box_clip_against_clip_planes(vector3& p0, vector3& p1, 
+bool nOctFrustum::box_clip_against_clip_planes(vector3& minCorner, vector3& maxCorner, 
                                                vector4* planes,
                                                uint& out_clip_mask,
                                                uint in_clip_mask)
 {
     // Figure out centre and half diagonal of AABB
-    vector3 centre = (p0 + p1) / 2.0f;
-    vector3 half_diagonal = p1 - centre;
+    vector3 centre = (minCorner + maxCorner) / 2.0f;
+    vector3 half_diagonal = maxCorner - centre;
 
     uint mk = 1;
     out_clip_mask = 0;
@@ -195,7 +195,7 @@ void nOctFrustum::collect_nodes_within_clip_planes(nOctree* octree,
          oe = (nOctElement *) oe->GetSucc())
     {
         uint out_clip_mask = 0;
-        if (true == box_clip_against_clip_planes(oe->p0,oe->p1, clipPlanes, 
+        if (true == box_clip_against_clip_planes(oe->minCorner,oe->maxCorner, clipPlanes, 
                                                  out_clip_mask, clip_mask))
         {
             oe->SetCollectFlags(nOctElement::N_COLLECT_CLIP_PLANES);
