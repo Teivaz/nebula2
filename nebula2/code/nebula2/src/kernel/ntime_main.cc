@@ -5,6 +5,8 @@
 #include "kernel/ntimeserver.h"
 
 #if defined(__LINUX__) || defined(__MACOSX__)
+#define N_MICROSEC_INT    (1000000)
+#define N_MICROSEC_FLOAT  (1000000.0)
 #define tv2micro(x) (x.tv_sec * N_MICROSEC_INT + x.tv_usec);
 #endif
 
