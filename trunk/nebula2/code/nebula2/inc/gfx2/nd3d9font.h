@@ -9,7 +9,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include <d3dx9.h>
-#include "gfx2/d3dfont9.h"
 #include "gfx2/nfont2.h"
 #include "kernel/nautoref.h"
 
