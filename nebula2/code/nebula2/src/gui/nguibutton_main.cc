@@ -114,7 +114,7 @@ nGuiButton::Render()
         else if (this->blinking)
         {
             double time = this->refGuiServer->GetTime();
-            if (fmod(time, 1.0f) > 0.5f)
+            if (fmod(time, 1.0) > 0.5f)
             {
                 brush = this->GetHighlightBrush();
             }
