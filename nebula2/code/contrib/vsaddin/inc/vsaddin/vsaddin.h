@@ -1,3 +1,6 @@
+#ifndef VSADDIN_H
+#define VSADDIN_H
+
 #include <windows.h>
 
 typedef struct tagDEBUGHELPER
@@ -26,3 +29,4 @@ typedef HRESULT (WINAPI *CUSTOMVIEWER)(DWORD dwAddress,
                                        size_t max,
                                        DWORD reserved);
 
+#endif /* VSADDIN_H */
