@@ -55,7 +55,7 @@ nODEViewerApp::nODEViewerApp(nKernelServer* ks) :
     startupScript("home:code/contrib/nclodterrain/bin/startup.lua"),
     kernelServer(ks),
     isOpen(false),
-    isOverlayEnabled(false),
+    isOverlayEnabled(true),
     camera(60.0f, 4.0f/3.0f, 0.1f, 1000.0f),
     controlMode(Fly),
     defViewerPos(240.0f, 50.0f, 100.0f),
@@ -290,7 +290,8 @@ void nODEViewerApp::Run()
 
             this->refSceneServer->EndScene();
             this->refSceneServer->RenderScene();             // renders the 3d scene
-            this->refConServer->Render();                    // do additional rendering before presenting the frame
+            this->refGuiServer->Render();                    // do additional rendering before presenting the frame
+            this->refConServer->Render();
 
             this->refSceneServer->PresentScene();            // present the frame
         }
