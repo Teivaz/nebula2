@@ -124,7 +124,8 @@ main(int argc, const char** argv)
         scale.set(scaleArg, scaleArg, scaleArg);
     }
 
-    if ((translate.len() > 0.0f) || (rotate.len() > 0.0f) || !(scale.x == scale.y == scale.z == 1.0f))
+    if ((translate.len() > 0.0f) || (rotate.len() > 0.0f) || 
+        !(scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f))
     {
         doTransform = true;
     }
