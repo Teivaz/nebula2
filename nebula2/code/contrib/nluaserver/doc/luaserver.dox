@@ -335,17 +335,19 @@ nLuaServer encountered a problem...
     is the first function called. Each entry has the following format (all fields are part 
     of the lua_Debug structure):
 @verbatim
-short_src - #currentline: name (namewhat/what)\n"
+short_src - #currentline: name (namewhat/what)
 @endverbatim
-    Lookup lua_Debug in the Lua manual for a description of the fields.
+    Lookup <a href="http://www.lua.org/manual/5.0/manual.html#4.1">lua_Debug</a> in the 
+    <a href="http://www.lua.org/manual/5.0/">Lua</a> manual for a description 
+    of the fields.
     
     If you want error messages and stack traces to be as helpful as possible you should
     always identify each script file by putting it's name as a comment on the first line
     of the script file, or any other short one line comment that uniquely identifies that
     file. For example...
 @verbatim
-    -- startup.lua
-    ... the rest of the file ...
+-- startup.lua
+... the rest of the file ...
 @endverbatim
     The short_src field is usually obtained from that first line so it will help you 
     locate the script file in which the error occured.
