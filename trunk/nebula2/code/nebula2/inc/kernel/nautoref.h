@@ -110,7 +110,7 @@ nAutoRef<TYPE>::get()
 {
     if (!this->check()) 
     {
-        n_error("nAutoRef: no target object '%s'!\n",  this->targetName ? this->targetName : "NOT INTIIALIZED");
+        n_error("nAutoRef: no target object '%s'!\n",  this->targetName ? this->targetName : "NOT INITIALIZED");
     }
     return (TYPE*) this->targetObject;
 }
