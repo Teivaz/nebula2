@@ -2,11 +2,12 @@
 #   makefile.tcl
 #   ============
 #   Functions to generate GNU Make files.
-#   (C) 2000 A.Weissflog
+#   Original (C) 2000 A.Weissflog
 #
 #   01-Feb-2001     floh      added Doxygen support
 #   07-Jan-2005     jurquhart initial conversion to nebula2 build sys
 #   10-Jan-2005     jurquhart more or less compiles on linux now
+#   22-Jan-2005     jurquhart fixed windows build via vc++ toolkit
 #--------------------------------------------------------------------
 
 #--------------------------------------------------------------------
@@ -30,21 +31,27 @@ proc gen_module_make {name cid} {
         "cpp" { set compileas 2 }
         default { set compileas 0 }
     }
-        
+    
+    puts $cid "\n# Module $name"
+    
+    # Print the important module compiling statement
+    if { $compileas <= 1 } {
+        puts $cid "DO_COMPILE_$name = \$(CC) \$(NOLINK_OPT) \$(CFLAGS) $more_syms \$< \$(OBJ_OPT)\$@\n"
+    } elseif { $compileas == 2 } {
+        puts $cid "DO_COMPILE_$name = \$(CXX) \$(NOLINK_OPT) \$(CXXFLAGS) $more_syms \$< \$(OBJ_OPT)\$@\n"    
+    } else {
+        puts $cid "DO_COMPILE_$name = @echo \"Warning: Dummy Target for $name\"\n"
+    }
+      
     # Plonk in build lines for each source
     foreach sourcefile [get_modsources_dressed $name] {
         set basename [join [list [lindex [split $sourcefile /] end] ""] ""]
         puts -nonewline $cid "\$(N_INTERDIR)$basename\$(OBJ): [pathto [getfilenamewithextension $sourcefile cc] ]"
-        # NOTE: doesn't seem like we need to plonk in the headers...
+        # NOTE: headers used to be included in the dependancy list, but it is not neccesary
         #foreach headerfile [get_modheaders_dressed $name] {
         #        puts -nonewline $cid "../../$headerfile.h "
         #}
-            
-        if { $compileas <= 1 } {
-            puts $cid "\n\t\$(DO_COMPILE_C) $more_syms"
-        } elseif { $compileas == 2 } {
-            puts $cid "\n\t\$(DO_COMPILE_CC) $more_syms"
-        }
+        puts $cid "\n\t\$(DO_COMPILE_$name)"
     }
 }
 
@@ -65,7 +72,6 @@ proc get_compiledfiles {module} {
 #   Generate *.mak file for given target.
 #
 #   TODO:
-#   - Finish .res support
 #   - Fix messy compiler statements
 #--------------------------------------------------------------------
 proc gen_target_make {name cid} {
@@ -75,6 +81,7 @@ proc gen_target_make {name cid} {
     
     log::log debug "Generating target line for $name"
 
+    puts $cid "\n# Target $name"
     # handle platform specific targets (unless non-specified)
     set needend 0
     if {![test_tarplatform $name "all"]} {
@@ -118,27 +125,23 @@ proc gen_target_make {name cid} {
     # handle resource files
     set rsrc_files ""
     if {$tartype == "exe" || $tartype == "dll"} {
+        puts $cid "# Resource files"
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
-            puts $cid "ifeq (\$(N_PLATFORM),__WIN32__)"
-            puts $cid  "./pkg/build/pkg/res_$name.res\: ../../build/pkg/res_$name.rc"
-            puts $cid "endif"
             addtolist rsrc_files "./pkg/res_$name.res"
         }
 
         # add any custom rsrc files
         set resfile [get_win32resource $name]
         if { $resfile != "" } {
-            global cur_workspacepath
-            global home
             global mod
 
             set startpath [string trim $home '/']
             set i [findmodbyname $name]
-            set resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile.rc]
-            # addtolist rsrc_files "../build/pkg/res_$name.res"
-            log::log debug "TODO: extra resource $name"
+            set base_resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile]
+            addtolist rsrc_files $resfile
         }
+        puts $cid ""
     }
 
     # Get a list of libs to plonk on command
@@ -160,46 +163,54 @@ proc gen_target_make {name cid} {
     set dep_linux  ""
     set dep_macosx ""
     foreach dep [get_tardeps $name] {
-        if {[get_tartype $dep] == "dll"} {
-            set targname "\$(LIB_OPT)$dep"
-        } elseif {[get_tartype $dep] == "lib"} {
-            set targname "\$(LIB_OPT)$dep"
+        set dep_tartype [get_tartype $dep]
+        if {$dep_tartype == "dll"} {
+            set targname "\$(LIB_OPT)$dep\$(LIB_OPT_POST)"
+        } elseif {$dep_tartype == "lib"} {
+            set targname "\$(LIB_OPT)$dep\$(LIB_OPT_POST)"
         } else {
-            log::log error "Target depends on an executable ($name, $dep) ?"
+            # We likely depend on an executable, so we don't need to link in
             set targname ""
         }
         if {![test_tarplatform $dep "all"]} {
             if {[test_tarplatform $dep "win32"]} {
                 addtolist dep_win32 $dep
-                addtolist libs_win32 $targname
+                if {$targname != ""} { addtolist libs_win32 $targname }
             } elseif {[test_tarplatform $dep "linux"]} {
                 addtolist dep_linux $dep
-                addtolist libs_linux $targname
+                if {$targname != ""} { addtolist libs_linux $targname }
             } elseif {[test_tarplatform $dep "macosx"]} {
                 addtolist dep_macosx $dep
-                addtolist libs_macosx $targname
+                if {$targname != ""} { addtolist libs_macosx $targname }
             } else {
                 log::log error "Dependancy \"$dep\" not found on any regular platform! RUN!!!"
             }
         } else {
+            # All dependancy's...
             addtolist dep_win32  $dep
-            addtolist libs_win32 $targname
             addtolist dep_linux  $dep
-            addtolist libs_linux $targname
             addtolist dep_macosx $dep
-            addtolist libs_macosx $targname
+            # Library's to link in...
+            if {$targname != ""} {
+                addtolist libs_win32 $targname
+                addtolist libs_linux $targname
+                addtolist libs_macosx $targname
+            }
         } 
     }
+    
+    puts $cid "# Linking targets"
 
     # compile target itself
     # TODO: fix erroneous "only __VC__ must be win32" assumption
     if {$tartype == "dll"} {
+        # A Dynamic Lazy Lounger (or Shared Library)
         set t "\$(DLL_PRE)$name\$(DLL_POST)"
         set tarpath "\$(N_TARGETDIR)$t"
         puts $cid "ifeq (\$(N_COMPILER),__VC__)"
         puts $cid "$name : $dep_win32 $tarpath"
         puts $cid "$tarpath : $files_win32 $rsrc_files"
-        puts $cid "\t\$(LD) \$^ /OUT:\$@ \$(LFLAGS) \$(LIBDIR) \$(LIBS) $libs_win32 /DLL"
+        puts $cid "\t\$(LD) \$(LFLAGS) \$^ /OUT:\$@ \$(LIBDIR) \$(LIBS) $libs_win32 /DLL"
         puts $cid "else"
         puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
         set t2 "\$(DLL_PRE)$name.dylib"
@@ -214,12 +225,13 @@ proc gen_target_make {name cid} {
         puts $cid "endif"
         puts $cid "endif"
     } elseif {$tartype == "exe"} {
+        # Our trusty executable
         set t "$name\$(EXE)"
         set tarpath "\$(N_TARGETDIR)$t"
         puts $cid "ifeq (\$(N_COMPILER),__VC__)"
         puts $cid "$name : $dep_win32 $tarpath"
         puts $cid "$tarpath : $files_linux $rsrc_files"
-        puts $cid "\t\$(LD) \$^ /OUT:\$@ \$(LFLAGS) \$(LIBDIR) \$(LIBS) $libs_win32"
+        puts $cid "\t\$(LD) \$(LFLAGS) \$^ /OUT:\$@ \$(LIBDIR) \$(LIBS) $libs_win32"
         puts $cid "else"
         puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
         puts $cid "$name : $dep_macosx $tarpath"
@@ -232,14 +244,14 @@ proc gen_target_make {name cid} {
         puts $cid "endif"
         puts $cid "endif"
     } elseif {$tartype == "lib"} {
-        # NOTE: previously known as a "package"
+        # Our static lib; previously known as a "package"
         # TODO: need to fix the MACOSX options...
         set t "\$(LIB_PRE)$name\$(LIB_POST)"
         set tarpath "\$(N_TARGETDIR)$t"
         puts $cid "ifeq (\$(N_COMPILER),__VC__)"
         puts $cid "$name : $dep_win32 $tarpath"
         puts $cid "$tarpath : $files_win32 $rsrc_files"
-        puts $cid "\t\$(AR) \$^ /OUT:\$@ \$(LFLAGS) \$(LIBDIR) \$(LIBS) $libs_win32"
+        puts $cid "\t\$(AR) \$(LFLAGS) \$^ /OUT:\$@ \$(LIBDIR) \$(LIBS) $libs_win32"
         puts $cid "else"
         puts $cid "ifeq (\$(N_PLATFORM),__MACOSX__)"
         puts $cid "$name : $dep_macosx $tarpath"
@@ -254,20 +266,19 @@ proc gen_target_make {name cid} {
         puts $cid "endif"
         puts $cid "endif"
     } elseif {$tartype == "mll"} {
+        # Same as the DLL, but a Maya plugin
         set t "\$(DLL_PRE)$name.mll"
         set tarpath "\$(N_TARGETDIR)$t"
         puts $cid "ifeq (\$(N_COMPILER),__VC__)"
         puts $cid "$name : $dep_win32 $tarpath"
         puts $cid "$tarpath : $files_linux $rsrc_files"
-        puts $cid "\t\$(LD) \$^ /OUT:\$@ \$(LFLAGS) \$(LIBDIR) \$(LIBS) $libs_win32 /DLL /export:initializePlugin /export:uninitializePlugin"
+        puts $cid "\t\$(LD) \$^ \$(LFLAGS) /OUT:\$@ \$(LIBDIR) \$(LIBS) $libs_win32 /DLL /export:initializePlugin /export:uninitializePlugin"
         puts $cid "endif"
     }
 
-    # handle platform specific targets
+    # Put the end on if we are platform specific
     if {$needend == 1} {
-        puts $cid "endif\n"
-    } else {
-        puts $cid ""
+        puts $cid "endif"
     }
 }
 
@@ -317,10 +328,11 @@ proc gen_makefile {name list_of_targets} {
 
     puts $cid "#--------------------------------------------------------------------"
     puts $cid "#    $name.mak"
-    puts $cid "#    MACHINE GENERATED, DON'T EDIT!"
+    puts $cid "#    AUTOMATICALLY GENERATED, DO NOT EDIT"
     puts $cid "#--------------------------------------------------------------------"
     puts $cid "include ../../buildsys/config.mak"
-    puts $cid "BASECFLAGS += \$(EXTRAS)"
+    puts $cid "BASECFLAGS += \$(EXTRA_CFLAGS)"
+    puts $cid "LIBDIR += \$(EXTRA_LIBDIR)"
     puts $cid ""
     puts $cid "ifeq (\$(N_PLATFORM),__WIN32__)"
     puts $cid "$name: $tarlist_win32"
@@ -333,10 +345,6 @@ proc gen_makefile {name list_of_targets} {
     puts $cid "endif"
     puts $cid ""
     
-    # Important compiling statements
-    puts $cid "DO_COMPILE_C  = \$(CC) \$< \$(OBJ_OPT)\$@ \$(NOLINK_OPT) \$(CFLAGS)"
-    puts $cid "DO_COMPILE_CC = \$(CXX) \$< \$(OBJ_OPT)\$@ \$(NOLINK_OPT) \$(CXXFLAGS)"
-    
     # First, we need to print out all the possible modules
     foreach module $list_of_modules {
         gen_module_make $module $cid
@@ -347,6 +355,14 @@ proc gen_makefile {name list_of_targets} {
         gen_target_make $target $cid
     }
     puts $cid ""
+    
+    # Add appropriate .PHONY targets
+    puts -nonewline $cid  ".PHONY: "
+    foreach target [$list_of_targets] {
+        puts -nonewline $cid "$target "
+    }
+    
+    puts $cid "\n"
 }
 
 #-------------------------------------------------------------------------------
@@ -361,6 +377,7 @@ proc generate { wslist } {
 
     # list of required targets - makefile's
     set targets ""
+    check_makedir $makepath
     set cid [open [cleanpath $makepath/Makefile] w]
     
     puts $cid "# Makefile for nebula"
@@ -382,11 +399,12 @@ proc generate { wslist } {
         # Add in default target
         puts $cid "$workspace: "
         
-        # Add inc_list and lib_list to an EXTRAS variable, passing onto the workspace makefile
-        puts -nonewline $cid "\t@$\(MAKE) -f ./$workspace.mak EXTRAS=\""
+        # Add inc_list and lib_list to an EXTRA* variables, passing onto the workspace makefile
+        puts -nonewline $cid "\t@$\(MAKE) -f ./$workspace.mak EXTRA_CFLAGS=\""
         foreach include $inc_list {
             puts -nonewline $cid "$\(IPATH_OPT)$include "
         }
+        puts -nonewline $cid "\" EXTRA_LIBDIR=\""
         foreach libpath $lib_list {
             puts -nonewline $cid "$\(LPATH_OPT)$libpath "
         }
