@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------
+#    vsaddin.bld
+#    ============
+#    Visual Studio Add-in package definition
+#-----------------------------------------------------------------------------
+beginmodule nvsdebugger
+    setdir vsaddin
+    setfiles {
+        nvsdebugger
+    }
+    setheaders {
+        nvsdebugger
+    }
+    setmoddeffile nvsdebugger
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nvsdebugger
+    annotate "DLL for extending the Visual Studio Debugger"
+    settype dll
+    setmodules { nvsdebugger }
+    settargetdeps {
+        nkernel
+    }
+endtarget
+#-------------------------------------------------------------------------------
+beginworkspace nvsdebugger
+    settargets {
+        nvsdebugger
+        nkernel
+    }
+endworkspace
+#-------------------------------------------------------------------------------
