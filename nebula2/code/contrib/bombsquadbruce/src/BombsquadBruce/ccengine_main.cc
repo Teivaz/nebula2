@@ -22,8 +22,7 @@ nNebulaScriptClass( CCEngine, "nroot" );
 
 CCEngine::CCEngine() :
 	m_IsRunning(false),
-	m_Game(0),
-	m_ConsoleServer( "/sys/servers/console" )
+	m_Game(0)
 {
     srand((uint)time(0));
 }
