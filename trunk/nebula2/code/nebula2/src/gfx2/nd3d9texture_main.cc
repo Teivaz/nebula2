@@ -320,7 +320,7 @@ nD3D9Texture::LoadNtxFile()
         return false;
     }
 
-    // agree on a d3d8 format
+    // agree on a d3d9 format
     D3DFORMAT d3dSrcFormat;
     D3DFORMAT d3dDstFormat;
     Format texFormat;
@@ -438,7 +438,7 @@ nD3D9Texture::LoadNtxFile()
     dataSize = ntxFile.GetSize();
     imageData = n_malloc(dataSize);
 
-    // read each block and write to d3d8 texture
+    // read each block and write to d3d9 texture
     numLevels = this->baseTexture->GetLevelCount();
     this->SetNumMipLevels(numLevels);
     for (curLevel = 0; curLevel < numLevels; curLevel++)
@@ -511,7 +511,7 @@ nD3D9Texture::LoadNtxFile()
                     hr = this->texture2D->GetSurfaceLevel(curLevel, &mipSurface);
                     n_assert(SUCCEEDED(hr));
 
-                    // transfer image data to d3d8 surface
+                    // transfer image data to d3d9 surface
                     hr = D3DXLoadSurfaceFromMemory(
                         mipSurface,                 // pDestSurface
                         NULL,                       // pDestPalette (none)
@@ -675,7 +675,7 @@ nD3D9Texture::LoadILFile()
     // always convert the image to BGRA format
     ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
 
-    // get relevant image data and create an empty d3d8 texture
+    // get relevant image data and create an empty d3d9 texture
     int imageWidth = ilGetInteger(IL_IMAGE_WIDTH);
     int imageHeight = ilGetInteger(IL_IMAGE_HEIGHT);
     hr = D3DXCreateTexture(d3d9Dev,             // pDevice,
