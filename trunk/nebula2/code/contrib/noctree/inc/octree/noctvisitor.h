@@ -17,7 +17,7 @@ class nOctVisitor : public nRoot
 public:
     nOctVisitor() {};
     virtual ~nOctVisitor() {}
-    virtual void DoCulling (nOctree* oct);
+    virtual void DoCulling(nOctree* oct);
 
     void SetOctree(nOctree* oct);
     nOctree* GetOctree(void) const;

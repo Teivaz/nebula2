@@ -48,12 +48,15 @@ void nOctree::recurse_collect_nodes_with_flags(nOctNode *on, int c_flags)
          oe = (nOctElement *) oe->GetSucc())
     {
         oe->SetCollectFlags(c_flags);
-		// ensures that collect_array doesn't overflow.
-		if (this->num_collected < this->ext_array_size) {
-			this->ext_collect_array[this->num_collected++] = oe;
-		} else {
-			n_printf("nOctree::recurse_collect_nodes_with_flags(): Overflow in collect array!\n");
-		}
+        // ensures that collect_array doesn't overflow.
+        if (this->num_collected < this->ext_array_size)
+        {
+            this->ext_collect_array[this->num_collected++] = oe;
+        }
+        else
+        {
+            n_printf("nOctree::recurse_collect_nodes_with_flags(): Overflow in collect array!\n");
+        }
     }
     if (on->c[0]) {
         int i;

@@ -13,14 +13,14 @@
 class nOctSphere : public nOctVisitor
 {
 public:
-    virtual void DoCulling (nOctree* oct);
+    virtual void DoCulling(nOctree* oct);
     void SetSphere(const sphere& sphere);
     const sphere& GetSphere();
 private:
-    void recurse_collect_by_sphere(nOctNode* on, 
+    void recurse_collect_by_sphere(nOctNode* on,
                                    const sphere& clip,
                                    bool full_intersect);
-    void collect_nodes_in_sphere(nOctNode* on, 
+    void collect_nodes_in_sphere(nOctNode* on,
                                  const sphere& clip,
                                  bool full_intersect);
 

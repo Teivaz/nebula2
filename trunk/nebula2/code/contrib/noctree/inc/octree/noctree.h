@@ -4,7 +4,7 @@
 /**
     @class nOctree
     @ingroup NOctreeContribModule
-    @brief Base octree space partitioning class.    
+    @brief Base octree space partitioning class.
 
     Administers a number nOctElement's, which are defined by
     position, radius and optionally a boundingbox. nOctree is composed
@@ -22,11 +22,11 @@
     There are different methods for collecting a subset of the items,
     e.g. all items which are within the view volume.
 
-    - 14-May-04   child  Added support to modify the bounding box of an 
+    - 14-May-04   child  Added support to modify the bounding box of an
                          element for more exact culling and to minimize
                          overlaps of objects. See the additional
-                         UpdateElement(nOctElement *oe, 
-                                        const vector3& p, 
+                         UpdateElement(nOctElement *oe,
+                                        const vector3& p,
                                         const bbox3& box)
     - 14-May-04   child  Cleaned up all nOctVisitors. Put an end to all this
                          nOctree overloading and added a general nOctree *octree
@@ -146,19 +146,19 @@ public:
         num_elms = 0;
         all_num_elms = 0;
         memset(c,0,sizeof(c));
-    };    
+    };
     //----------------------------------------------------------------
     ~nOctNode() {
         n_assert(0 == all_num_elms);
         n_assert(elm_list.IsEmpty());
-    };    
+    };
     //----------------------------------------------------------------
     void AddElm(nOctElement *oe) {
         num_elms++;
         nOctNode *on = this;
         do {
             on->all_num_elms++;
-        } while ((on=on->parent)); 
+        } while ((on=on->parent));
         oe->octnode = this;
         elm_list.AddTail(oe);
     };
@@ -189,11 +189,11 @@ class nOctVisitor;
 
 class nOctree : public nRoot {
 
-	friend class nOctVisitor;
+    friend class nOctVisitor;
 
 protected:
     enum {
-        N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool 
+        N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool
         N_OCT_MAXNUMCOLLECT = 1024,     ///< max. number of collected elements
     };
     enum {
@@ -230,7 +230,7 @@ public:
     virtual void AddElement(nOctElement *);
     virtual void RemoveElement(nOctElement *);
     virtual void UpdateElement(nOctElement *, const vector3&, float);
-	virtual void UpdateElement(nOctElement *oe, const vector3& p, const bbox3& box);
+    virtual void UpdateElement(nOctElement *oe, const vector3& p, const bbox3& box);
     virtual void BalanceTree(void);
 
     nOctNode* GetRoot() const;
@@ -244,7 +244,7 @@ public:
 
 protected:
     nOctNode *alloc_node(nOctNode *p, float x0, float x1, float y0, float y1, float z0, float z1);
-    void freenode(nOctNode *); 
+    void freenode(nOctNode *);
 
     bool elm_inside_node(nOctElement *, nOctNode *);
     void subdivide(nOctNode *);
@@ -261,7 +261,7 @@ protected:
 //--------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nOctNode* nOctree::GetRoot() const
 {
     return this->tree_root;
