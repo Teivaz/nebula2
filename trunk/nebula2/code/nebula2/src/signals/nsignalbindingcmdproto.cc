@@ -52,6 +52,7 @@ nSignalBindingCmdProto::Invoke(nCmd * cmdArg)
     nCmd * cmd = cmdProto->NewCmd();
     n_assert(cmd);
     cmd->CopyInArgsFrom(cmdArg);
+    cmd->Rewind();
     // execute the bound command with the arguments provided
     cmdProto->Dispatch(this->refObject.get(), cmd);
     cmdProto->RelCmd(cmd);

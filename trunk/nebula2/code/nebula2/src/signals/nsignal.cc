@@ -21,7 +21,7 @@ nSignal::Dispatch(void * emitter, nCmd * cmd)
 {
     // get binding list for emitter for this signal
     nSignalBindingSet * bs = this->GetBindingSet(
-        reinterpret_cast<nSignalEmitter *> (emitter),
+        reinterpret_cast<nObject *> (emitter),
         this->GetId()
     );
 
