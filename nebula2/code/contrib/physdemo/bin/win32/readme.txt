@@ -9,7 +9,9 @@ Megan Fox's PhysDemo
 '7' - drops a sphere from the camera's position
 '8' - creates a block stack at the position under the camera
 
-'p' - (very dangerous) creates an entire row (or two) of stacked blocks straight across the floor, using the camera's position as a reference.  This can very easily bring your system to a griding halt, so be ready to explode the boxes away.
+'p' - creates an entire row (or two) of stacked blocks straight across the floor, using the camera's position as a reference.
+
+'w' - creates a (very) large wall, using the camera's position as a reference.
 
 '0' - creates an explosion, useful for clearing away a pile of objects.
 

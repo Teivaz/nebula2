@@ -32,6 +32,8 @@ sel /sys/servers/input
     .map "keyb0:space.down"        "fire_bullet"
 
     .map "keyb0:p.down"    "create_stack_line"
+    .map "keyb0:w.down"    "create_wall"
+
     .endmap
 sel ..
 

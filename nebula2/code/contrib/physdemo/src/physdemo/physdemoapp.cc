@@ -73,10 +73,8 @@ PhysDemoApp::Open()
 
     // initialize the physics-related classes
     this->refPhysWorld      = (nOpendeWorld*)    kernelServer->New("nopendeworld", "/phys/world");
-    // We're setting the gravity higher, and later, using big forces, to make everything "feel" right
-    // (this is mostly because of the scale of the objects in the demo not being terrifically great)
-    this->refPhysWorld->SetGravity(vector3(0.0f, -19.8f, 0.0f));
-    this->refPhysWorld->SetERP(0.2f);
+    this->refPhysWorld->SetGravity(vector3(0.0f, -9.8f, 0.0f));
+    this->refPhysWorld->SetQuickStepNumIterations(5);
     this->refPhysColSpace   = (nOpendeHashSpace*)    kernelServer->New("nopendehashspace", "/phys/world/space");
     this->refPhysColSpace->Create();
 
@@ -344,6 +342,43 @@ PhysDemoApp::HandleInput(float frameTime)
             }
         }
     }
+    // Create a wall aligned with the view's position
+    if (inputServer->GetButton("create_wall"))
+    {
+        float x = cameraPos.x;
+        float z = cameraPos.z;
+
+        int height = 1;
+
+        if (x > -10 && x < 10)
+        {
+            for (float index = -10; index < 10.0f; index += 1.0f)
+            {
+                for (float height_index = 0; height_index < height; height_index++)
+                    this->CreateBox(x, height_index - 4, index);
+
+                n_printf("height: %i\n", height);
+
+                if (index < 0)
+                    height++;
+                else
+                    height--;
+            }
+        }
+        else if (z > -10 && z < 10)
+        {
+            for (float index = -10; index < 10.0f; index += 1.0f)
+            {
+                for (float height_index = 0; height_index < height; height_index++)
+                    this->CreateBox(index, height_index - 4, z);
+
+                if (index < 0)
+                    height++;
+                else
+                    height--;
+            }
+        }
+    }
     // Fire a super-massive bullet from the camera in the direction the camera is looking
     if (inputServer->GetButton("fire_bullet"))
     {
@@ -493,10 +528,13 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
     // The physics nodes are created as children of the curren object.
     kernelServer->PushCwd(newObj);
     nOpendeBoxGeom *physGeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom", "physgeom");
+    
+    n_assert(physGeom);
+    
     physGeom->Create("/phys/world/space");
     physGeom->SetPosition(vector3(x, y, z));
     physGeom->SetLengths(20.0f, 1.0f, 20.0f);
-    //physGeom->SetBody((dBodyID)0);
+    physGeom->SetBody((dBodyID)0);
     newObj->refPhysGeom = physGeom;    
 
     // pop the Cwd
@@ -551,7 +589,6 @@ PhysDemoApp::CreateBox(float x, float y, float z)
     physGeom->SetLengths(1.0f, 1.0f, 1.0f);
     physGeom->SetBody(newObj->refPhysBody->id);
     physGeom->SetData((void *)newObj);
-    physGeom->SetCategoryBits(PHYS_COLBITS_OBJECT);
     newObj->refPhysGeom = physGeom;
 
     // Finished defining objects, pop the Cwd
@@ -607,7 +644,6 @@ PhysDemoApp::CreateSphere(float x, float y, float z)
     physGeom->SetRadius(0.5f);
     physGeom->SetBody(newObj->refPhysBody->id);
     physGeom->SetData((void *)newObj);
-    physGeom->SetCategoryBits(PHYS_COLBITS_OBJECT);
     newObj->refPhysGeom = physGeom;
 
     // Finished defining objects, pop the Cwd
@@ -662,7 +698,6 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
     physGeom->SetRadius(1.0f);
     physGeom->SetBody(newObj->refPhysBody->id);
     physGeom->SetData((void *)newObj);
-    physGeom->SetCategoryBits(PHYS_COLBITS_OBJECT);
     newObj->refPhysGeom = physGeom;
 
     // Finished defining objects, pop the Cwd
@@ -718,7 +753,6 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     physGeom->SetRadius(0.5f);
     physGeom->SetBody(newObj->refPhysBody->id);
     physGeom->SetData((void *)newObj);
-    physGeom->SetCategoryBits(PHYS_COLBITS_OBJECT);
     newObj->refPhysGeom = physGeom;
 
     // Finished defining objects, pop the Cwd
@@ -773,7 +807,7 @@ PhysDemoApp::CreateExplosion(float x, float y, float z, float force)
 void PhysDemoApp::PhysCollisionCallback(void *data, dGeomID o1, dGeomID o2)
 {
     PhysDemoApp *app = (PhysDemoApp *)data;
-    int numContacts = nOpende::Collide(o1, o2, 3, &app->physContactArray[0].geom, sizeof(dContact));
+    int numContacts = nOpende::Collide(o1, o2, 2, &app->physContactArray[0].geom, sizeof(dContact));
 
     for (int index = 0; index < numContacts; index++)
     {
@@ -795,7 +829,7 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
         this->refPhysColSpace->Collide(this, this->PhysCollisionCallback);
 
         // Step the world by frameTime (the amount of time since the last frame)
-        this->refPhysWorld->Step(PHYSICS_STEPSIZE);
+        this->refPhysWorld->QuickStep(PHYSICS_STEPSIZE);
         
         physTime -= PHYSICS_STEPSIZE;
     }
@@ -810,6 +844,18 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
     {
         if (curObj->refPhysBody.isvalid())
         {
+            // If the object isn't moving above the specified threshold, disable it
+            if (curObj->refPhysBody->GetLinearVel().lensquared() < PHYS_LINEAR_VEL_THRESHOLD && curObj->refPhysBody->GetAngularVel().lensquared() < PHYS_ANGULAR_VEL_THRESHOLD)
+            {
+                curObj->disableTimeout++;
+
+                if (curObj->disableTimeout > PHYS_VEL_THRESHOLD_TIMEOUT)
+                {
+                    curObj->refPhysBody->Disable();
+                    curObj->disableTimeout = 0;
+                }
+            }
+
             // If the object has fallen below -10.0f y coord, kill it
             if (curObj->refPhysBody->GetPosition().y < -10.0f)
             {
