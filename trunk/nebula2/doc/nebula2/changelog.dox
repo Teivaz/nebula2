@@ -1,7 +1,7 @@
 /**
    @page Nebula2ChangeLog Nebula 2 Change Log
 
-@section September 2, 2003 Release
+@section Nebula2ChangesSept022003 September 2, 2003 Release
 
    - Lots of documentation improvements
    - Reworked script API docs and made them part of the Doxygen output
