@@ -29,7 +29,6 @@ nNebulaClass(nResource, "nroot");
 */
 nResource::nResource() :
     refResourceServer("/sys/servers/resource"),
-    refFileServer("/sys/servers/file2"),
     type(InvalidResourceType),
     asyncEnabled(false),
     isValid(false),

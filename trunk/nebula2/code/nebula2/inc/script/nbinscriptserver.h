@@ -77,7 +77,6 @@ private:
     /// get byte length of in args in file
     int GetArgLength(nCmd* cmd);
 
-    nAutoRef<nFileServer2> refFileServer;
 };
 //------------------------------------------------------------------------------
 #endif

@@ -27,8 +27,7 @@ nNebulaClass(nBinScriptServer, "nscriptserver");
 //------------------------------------------------------------------------------
 /**
 */
-nBinScriptServer::nBinScriptServer() :
-    refFileServer("/sys/servers/file2")
+nBinScriptServer::nBinScriptServer()
 {
     // empty
 }
@@ -60,7 +59,7 @@ nBinScriptServer::BeginWrite(const char* filename, nRoot* obj)
         kernelServer->GetFileServer()->DeleteFile(filename);
     }
 
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "wb"))
     {
@@ -744,7 +743,7 @@ nBinScriptServer::RunScript(const char* filename, const char*& result)
     result = 0;
 
     // create and open file object
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
     if (file->Open(filename, "rb"))
     {

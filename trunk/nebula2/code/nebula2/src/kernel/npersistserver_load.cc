@@ -19,7 +19,7 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
 {
     char header_buf[256];
     int num_bytes;
-    nFile* file = this->refFileServer->NewFileObject();
+    nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
     if (file->Open(fname, "r"))
     {
