@@ -654,8 +654,8 @@ _matrix44::perspOffCenterLh(float minX, float maxX, float minY, float maxY, floa
 {
     M11 = 2.0f * zn / (maxX - minX); M12 = 0.0f, M13 = 0.0f; M14 = 0.0f;
     M21 = 0.0f; M22 = 2.0f * zn / (maxY - minY); M23 = 0.0f; M24 = 0.0f;
-    M31 = (minX + maxX) / (minX - maxX); M32 = (maxY + minY) / (minY - maxY); M33 = zf / (zf - zn); 1.0f;
-    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); 0.0f;
+    M31 = (minX + maxX) / (minX - maxX); M32 = (maxY + minY) / (minY - maxY); M33 = zf / (zf - zn); M34 = 1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); M44 = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -667,8 +667,8 @@ _matrix44::perspOffCenterRh(float minX, float maxX, float minY, float maxY, floa
 {
     M11 = 2.0f * zn / (maxX - minX); M12 = 0.0f, M13 = 0.0f; M14 = 0.0f;
     M21 = 0.0f; M22 = 2.0f * zn / (maxY - minY); M23 = 0.0f; M24 = 0.0f;
-    M31 = (minX + maxX) / (maxX - minX); M32 = (maxY + minY) / (maxY - minY); M33 = zf / (zn - zf); -1.0f;
-    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); 0.0f;
+    M31 = (minX + maxX) / (maxX - minX); M32 = (maxY + minY) / (maxY - minY); M33 = zf / (zn - zf); M34 = -1.0f;
+    M41 = 0.0f; M42 = 0.0f; M43 = zn * zf / (zn - zf); M44 = 0.0f;
 }
 
 //------------------------------------------------------------------------------
