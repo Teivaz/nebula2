@@ -204,3 +204,4 @@ beginmodule nrenderpath
     setfiles { nrenderpath }
     setheaders { nrenderpath }
 endmodule
+#-------------------------------------------------------------------------------
