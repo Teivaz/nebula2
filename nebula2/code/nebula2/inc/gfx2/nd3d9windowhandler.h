@@ -22,6 +22,8 @@ public:
     ~nD3D9WindowHandler();
     /// called by WinProc on WM_SETCURSOR
     virtual bool OnSetCursor();
+    /// called when WM_MOUSEMOVE is received
+    virtual bool OnMouseMove();
     /// called by WinProc on WM_PAINT
     virtual void OnPaint();
     /// called when fullscreen/windowed should be toggled
