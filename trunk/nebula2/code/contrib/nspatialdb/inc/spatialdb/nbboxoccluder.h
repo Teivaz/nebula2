@@ -1,27 +1,34 @@
 #ifndef N_BBOXOCCLUDER_H
 #define N_BBOXOCCLUDER_H
 
-
 // warning:: bboxoccluder is not finished yet.  -GJH 2004-24-07
 
 /**
-   @class nBBoxOccluder
-   @brief Encapsulates the occlusion region and flags of an occluding bounding box, with handling of 'active occluding' flags.
+    @class nBBoxOccluder
+    @ingroup NSpatialDBContribModule
+    @brief Encapsulates the occlusion region and flags of an occluding
+    bounding box, with handling of 'active occluding' flags.
 
-   This class is similar to the nBBoxOccluder class but represents an occluding bbox, which obscures objects behind a bounding box
-   as seen from a specific viewpoint.  It determines if an object is occluded by the box; that is, there is
-   no line segment connecting the viewpoint and the test object that does not intersect the box.
+    This class is similar to the nBBoxOccluder class but represents an
+    occluding bbox, which obscures objects behind a bounding box as seen
+    from a specific viewpoint.  It determines if an object is occluded by
+    the box; that is, there is no line segment connecting the viewpoint
+    and the test object that does not intersect the box.
 
-   The return value of an occlusion test is a two-member result_info, which is designed for efficient use 
-   by heirarchical objects.  In many spatial heirarchies it holds true that if a specific tree node is
-   fully occluded/not occluded then all the children of that node are also occluded/not occluded, and so
-   we can avoid doing additional tests on the nodes children when we already know what the answer will be.
+    The return value of an occlusion test is a two-member result_info,
+    which is designed for efficient use by hierarchical objects.  In
+    many spatial hierarchies it holds true that if a specific tree node is
+    fully occluded/not occluded then all the children of that node are also
+    occluded/not occluded, and so we can avoid doing additional tests on
+    the nodes children when we already know what the answer will be.
 
-   The result_info has three possible return values:
+    The result_info has three possible return values:
+    @verbatim
    "culled" "active_flag"
       true     0          this node is fully occluded, so all children are occluded
      false     0          this node is fully visible, so all children will be fully visible
      false     !0         this node is partially visible, so children will have to be tested individually
+@endverbatim
 */
 
 #include "gfx2/ncamera2.h"
@@ -32,10 +39,11 @@
 #include "spatialdb/nfrustumclipper.h"
 
 
-// in fact, for a bounding box occluder we are really just checking objects against six clipping planes
-// representing the silhouette, which is remarkably like the frustum clipper.  So we'll re-use that and
-// basically invert the culling flag, plus check that the occluder is closer to the viewpoint than the object
-// under test
+// in fact, for a bounding box occluder we are really just checking
+// objects against six clipping planes representing the silhouette,
+// which is remarkably like the frustum clipper.  So we'll re-use
+// that and basically invert the culling flag, plus check that the
+// occluder is closer to the viewpoint than the object under test
 
 class nBBoxOccluder : public nFrustumClipper {
 public:
@@ -53,10 +61,14 @@ public:
     void VisualizeBBox(nGfxServer2 *gfx2, const vector4 &color);
 
 protected:
-    vector3 m_viewpoint; // we need a viewpoint for checking if objects are in front of the occluder
-    float m_occluderdistance; // distance of occluder from the viewpoint
-    int m_numplanes; // there may be less than 6 planes, so we need to track however many planes there are
-    int m_planemask; // we also need to mask off the extra bits in the result_info if there are less than 6 planes
+    /// we need a viewpoint for checking if objects are in front of the occluder
+    vector3 m_viewpoint;
+    /// distance of occluder from the viewpoint
+    float m_occluderdistance;
+    /// there may be less than 6 planes, so we need to track however many planes there are
+    int m_numplanes;
+    /// we also need to mask off the extra bits in the result_info if there are less than 6 planes
+    int m_planemask;
 };
 
 inline
@@ -82,24 +94,28 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
     vector3 occextents(occludingbox.extents());
     m_occluderdistance = occludervector.len() - occextents.len();
 
-    // degenerate case when the viewpoint is inside the occluder, maybe we'll handle this smartly someday
+    // degenerate case when the viewpoint is inside the occluder, maybe
+    // we'll handle this smartly someday
     n_assert(!occludingbox.contains(viewpoint));
 
-    // we'll have to build the clipping planes manually be examing the bounding box silhouette as seen from the
-    // viewpoint
+    // we'll have to build the clipping planes manually be examing the
+    // bounding box silhouette as seen from the viewpoint
     // here's some data arrays describing the cube faces and edges
     // array of normals for the cube faces
     vector3 facenormals[6] = { vector3(0,-1,0), vector3(1,0,0), vector3(0,0,1), vector3(0,1,0), vector3(-1,0,0), vector3(0,0,-1) };
 
-    // array telling what two faces each edge is part of--edges are considered directional vectors from one vertex to another, and
-    // the faces are specified with the left side face first.  In this way we can determine which orientation of the edge to use
+    // array telling what two faces each edge is part of--edges are
+    // considered directional vectors from one vertex to another, and
+    // the faces are specified with the left side face first.  In this
+    // way we can determine which orientation of the edge to use
     // for the silhouette
     int edgefacemap[12][2] = { {0,5}, {0,1}, {0,2}, {0,4}, {1,5}, {1,2}, {4,2}, {5,4}, {3,5}, {3,1}, {3,2}, {3,4} };
 
     // array telling which vertices a given edge is connecting
     int edgevertexmap[12][2] = { {0,1}, {1,5}, {5,4}, {4,0}, {1,3}, {5,7}, {4,6}, {0,2}, {3,2}, {7,3}, {6,7}, {2,6} };
 
-    // array of vertex locations, specifying the relative point locations from the bbox center
+    // array of vertex locations, specifying the relative point locations
+    // from the bbox center
     vector3 vertexv[8] = { 
         vector3(-1,-1,-1), vector3(1,-1,-1), vector3(-1,1,-1), vector3(1,1,-1),
         vector3(-1,-1, 1), vector3(1,-1, 1), vector3(-1,1, 1), vector3(1,1, 1)
@@ -107,7 +123,8 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
 
     bool backfaces[6];
 
-    // find back faces.  We compare the face normal with a vector from the viewpoint to the face
+    // find back faces.  We compare the face normal with a vector from
+    // the viewpoint to the face
     for (int faceix=0; faceix < 6; faceix++)
     {
         // project out from the boxx center to the center of the face
@@ -119,13 +136,15 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
         backfaces[faceix] = ((vp2face % n) > 0.0);
     }
 
-    // back faces are marked; find the silhouette edges.  These are edges bordering one front and one back face
-    // when we find and edge, build a clip plane for it
+    // back faces are marked; find the silhouette edges.  These are edges
+    // bordering one front and one back face when we find and edge, build
+    // a clip plane for it
     m_numplanes = 0;
     for (int edgeix=0; edgeix < 12; edgeix++)
     {
-        // this is a silhouette edge if one face is a front face and one face is a back face.
-        // it is important to know which face is the back face, so that we orient our edge (and thus the clipping plane)
+        // this is a silhouette edge if one face is a front face and one
+	// face is a back face. it is important to know which face is the
+	// back face, so that we orient our edge (and thus the clipping plane)
         // correctly
         bool b1 = backfaces[edgefacemap[edgeix][0]], b2 = backfaces[edgefacemap[edgeix][1]];
         if ( (b1 & !b2) || (!b1& b2) ) // try replacing w/ xor... GJH
@@ -141,7 +160,8 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
             vector3 v1(occludingbox.center() + vector3(occextents.x * vp1.x, occextents.y * vp1.y, occextents.z * vp1.z));
             vector3 v2(occludingbox.center() + vector3(occextents.x * vp2.x, occextents.y * vp2.y, occextents.z * vp2.z));
 
-            // we can construct the clipping plane using the viewpoint and the two vertices on the edge.
+            // we can construct the clipping plane using the viewpoint and
+	    // the two vertices on the edge.
             m_planes[m_numplanes++] = plane(viewpoint, v1, v2);
         }
     }
@@ -156,10 +176,12 @@ nBBoxOccluder::nBBoxOccluder(const vector3 &viewpoint, const bbox3 &occludingbox
 inline
 nBBoxOccluder::result_info nBBoxOccluder::TestBBox(const bbox3 &boxtest, result_info in)
 {
-    // first, mask off the extra planes.  This is needed if there are less than 6 clipping planes
+    // first, mask off the extra planes.  This is needed if there are
+    // less than 6 clipping planes
     in.active_planes &= m_planemask;
 
-    // if the bbox is closer to the viewpoint than the occluder, it is obviously not occluded
+    // if the bbox is closer to the viewpoint than the occluder, it is
+    // obviously not occluded
     vector3 testobjectvector(boxtest.center() - m_viewpoint);
     if (testobjectvector.len() - boxtest.extents().len() < m_occluderdistance)
         return result_info(false,0);
@@ -167,9 +189,11 @@ nBBoxOccluder::result_info nBBoxOccluder::TestBBox(const bbox3 &boxtest, result_
     // process the bbox using the view frustum stuff
     in = nFrustumClipper::TestBBox(boxtest, in);
 
-    // we have to the reverse the result, since the frustum clipper says 'yes' when an object is not inside all the clipping
-    // planes.  However, for an occluder a 'yes' result means the test object is not behind the occluder.  A similar situation
-    // occurs when the object is actually occluded.  So we have to reverse the sense of the culling.
+    // we have to the reverse the result, since the frustum clipper says
+    // 'yes' when an object is not inside all the clipping planes.  However,
+    // for an occluder a 'yes' result means the test object is not behind
+    // the occluder.  A similar situation occurs when the object is
+    // actually occluded.  So we have to reverse the sense of the culling.
     // so we do some logic swizzling here to compute that
     if (in.culled)
         return result_info(false,0);

@@ -2,13 +2,16 @@
 #define N_SPHERECLIPPER_H
 
 /**
-   @class nSphereClipper
-   @brief Encapsulates the clipping region and flags of a sphere, with handling of 'active clipping plane' flags.
+    @class nSphereClipper
+    @ingroup NSpatialDBContribModule
+    @brief Encapsulates the clipping region and flags of a sphere, with
+    handling of 'active clipping plane' flags.
 
-   This class is similar to the nSphereClipper class but represents a clipping sphere.  It determines if an object
-   is totally outside the clipping sphere.  Also, the active_flag of the return value will be 0 if an object is
-   totally inside the sphere; typically you can use this for heirarchical objects to avoid doing cull checks on
-   the children.
+    This class is similar to the nSphereClipper class but represents a
+    clipping sphere.  It determines if an object is totally outside the
+    clipping sphere.  Also, the @c active_flag of the return value will be
+    @c 0 if an object is totally inside the sphere; typically you can use
+    this for hierarchical objects to avoid doing cull checks on the children.
 */
 
 #include "gfx2/ncamera2.h"
@@ -27,8 +30,8 @@ public:
     // helper class for culling
     class result_info {
         public:
-            bool    culled; // true when the volume is not visible
-            unsigned char   active_flag;  // one bit tells if we need to do the clipping check
+            bool    culled; ///< true when the volume is not visible
+            unsigned char   active_flag;  ///< one bit tells if we need to do the clipping check
         
             result_info(bool c = false, unsigned char a = 1) : 
                 culled(c), active_flag(a) 
@@ -86,13 +89,16 @@ nSphereClipper::result_info nSphereClipper::TestSphere(const sphere &spheretest,
     float rsum = m_sphere.r + spheretest.r;
     float dsquared = d.lensquared();
 
-    // if the spheres are more distant than the sum of their two radii, then cull it totally
+    // if the spheres are more distant than the sum of their two radii,
+    // then cull it totally
     if (dsquared > (rsum*rsum))
         return nSphereClipper::result_info(true,0);
 
-    // if the test sphere is of smaller radius than the clip sphere, and the centers are closer than the
-    // differences of the two radii, the test sphere is completely enclosed within the clip sphere and we should turn
-    // the active_flag off, so that children within the test sphere don't need to be clip tested at all
+    // if the test sphere is of smaller radius than the clip sphere, and
+    // the centers are closer than the differences of the two radii, the
+    // test sphere is completely enclosed within the clip sphere and we
+    // should turn the active_flag off, so that children within the test
+    // sphere don't need to be clip tested at all
     if (spheretest.r < m_sphere.r)
     {
         float rdiff = m_sphere.r - spheretest.r;
