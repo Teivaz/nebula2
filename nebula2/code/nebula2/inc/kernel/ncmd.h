@@ -4,21 +4,13 @@
 /**
     @class nCmd
 
-    Encapsulate a function call into a C++ object. 
+    Encapsulates a function call into a C++ object. 
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ARG_H
 #include "kernel/narg.h"
-#endif
-
-#ifndef N_CMDPROTO_H
 #include "kernel/ncmdproto.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nCmdProto;
@@ -80,7 +72,7 @@ nCmd::nCmd(const nCmd& rhs)
     int numArgs = this->cmdProto->GetNumArgs();
     for (i = 0; i < numArgs; i++)
     {
-        this->args[i].Set(rhs.args[i]);
+        this->args[i] = rhs.args[i];
     }
 }
 

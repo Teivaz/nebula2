@@ -68,10 +68,8 @@ nTclServer::~nTclServer()
     Link to a tcl interpreter.
 */
 void
-nTclServer::LinkToInterp(Tcl_Interp* interp, bool isStandAlone)
+nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
 {
-    (void)isStandAlone; // avoid 'unused argument warning'
-
     n_assert(interp);
 
 #ifndef __MICROTCL__
@@ -396,27 +394,23 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
 
         switch(arg->GetType()) {
 
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 sprintf(buf, " %d", arg->GetI());
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 sprintf(buf, " %.6f", arg->GetF());
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 sprintf(buf, " \"%s\"", arg->GetS());
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                sprintf(buf, " { %s }", arg->GetC());
-                break;
-
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 sprintf(buf," %s",(arg->GetB() ? "true" : "false"));
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 {
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) 

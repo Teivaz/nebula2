@@ -91,6 +91,7 @@ nConServer::nConServer() :
     refInputServer("/sys/servers/input"),
     refGfxServer("/sys/servers/gfx"),
     refScriptServer("/sys/servers/script"),
+    envClass(0),
     consoleOpen(false),
     watchersOpen(false),
     historyIndex(0),
@@ -99,8 +100,9 @@ nConServer::nConServer() :
     ctrlDown(false),
     scrollOffset(0)
 {
-    envClass = kernelServer->FindClass("nenv");
     memset(this->inputBuffer, 0, sizeof(this->inputBuffer));
+    this->envClass = kernelServer->FindClass("nenv");
+    n_assert(this->envClass);
 }
 
 //------------------------------------------------------------------------------
@@ -277,20 +279,27 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
                 {
                     switch (curVar->GetType())
                     {
-                        case nArg::ARGTYPE_INT:
+                        case nArg::Int:
                             sprintf(line,"%s: %d\n", varName, curVar->GetI());
                             break;
 
-                        case nArg::ARGTYPE_FLOAT:
+                        case nArg::Float:
                             sprintf(line,"%s: %f\n", varName, curVar->GetF());
                             break;
 
-                        case nArg::ARGTYPE_STRING:
+                        case nArg::String:
                             sprintf(line,"%s: %s\n", varName, curVar->GetS());
                             break;
 
-                        case nArg::ARGTYPE_BOOL:
+                        case nArg::Bool:
                             sprintf(line,"%s: %s\n", varName, curVar->GetB() ? "true" : "false");
+                            break;
+
+                        case nArg::Float4:
+                            {
+                                const nFloat4& f4 = curVar->GetF4();
+                                sprintf(line, "%s: %f %f %f %f\n", varName, f4.x, f4.y, f4.z, f4.w);
+                            }
                             break;
 
                         default:

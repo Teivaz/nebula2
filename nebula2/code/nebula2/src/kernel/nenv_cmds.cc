@@ -14,11 +14,13 @@ static void n_getf(void *, nCmd *);
 static void n_getb(void *, nCmd *);
 static void n_gets(void *, nCmd *);
 static void n_geto(void *, nCmd *);
+static void n_getf4(void*, nCmd*);
 static void n_seti(void *, nCmd *);
 static void n_setf(void *, nCmd *);
 static void n_setb(void *, nCmd *);
 static void n_sets(void *, nCmd *);
 static void n_seto(void *, nCmd *);
+static void n_setf4(void*, nCmd*);
 
 //-------------------------------------------------------------------
 /**
@@ -41,11 +43,13 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("b_getb_v",'GETB',n_getb);
     cl->AddCmd("s_gets_v",'GETS',n_gets);
     cl->AddCmd("o_geto_v",'GETO',n_geto);
+    cl->AddCmd("ffff_getf4_v",  'GTV4', n_getf4);
     cl->AddCmd("v_seti_i",'SETI',n_seti);
     cl->AddCmd("v_setf_f",'SETF',n_setf);
     cl->AddCmd("v_setb_b",'SETB',n_setb);
     cl->AddCmd("v_sets_s",'SETS',n_sets);
     cl->AddCmd("v_seto_o",'SETO',n_seto);
+    cl->AddCmd("v_setf4_ffff",  'STV4', n_setf4);
     cl->EndCmds();
 }
 
@@ -56,7 +60,7 @@ void n_initcmds(nClass *cl)
     @input
     v
     @output
-    s (Type = [void int float bool string object]
+    s (Type = [void int float bool string object float4])
     @info
     Returns the datatype the variable is set to. If void 
     is returned the variable is empty. 
@@ -65,13 +69,14 @@ static void n_gettype(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
     char *st;
-    nArg::ArgType t = self->GetType();
+    nArg::Type t = self->GetType();
     switch (t) {
-        case nArg::ARGTYPE_INT:    st="int"; break;
-        case nArg::ARGTYPE_FLOAT:  st="float"; break;
-        case nArg::ARGTYPE_STRING: st="string"; break;
-        case nArg::ARGTYPE_BOOL:   st="bool"; break;
-        case nArg::ARGTYPE_OBJECT: st="object"; break;
+        case nArg::Int:            st = "int"; break;
+        case nArg::Float:          st = "float"; break;
+        case nArg::String:         st = "string"; break;
+        case nArg::Bool:           st = "bool"; break;
+        case nArg::Object:         st = "object"; break;
+        case nArg::Float4:         st = "float4"; break;
         default:                   st="void"; break;
     }
     cmd->Out()->SetS(st);
@@ -96,10 +101,7 @@ static void n_gettype(void *o, nCmd *cmd)
 static void n_geti(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
-    int i = 0;
-    if (self->GetType() == nArg::ARGTYPE_INT) i=self->GetI();
-    else n_printf("Not an integer object!\n");
-    cmd->Out()->SetI(i);
+    cmd->Out()->SetI(self->GetI());
 }
 
 //-------------------------------------------------------------------
@@ -121,12 +123,7 @@ static void n_geti(void *o, nCmd *cmd)
 static void n_getf(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
-    {
-        float f = 0.0;
-        if (self->GetType() == nArg::ARGTYPE_FLOAT) f=self->GetF();
-        else n_printf("Not a float object!\n");
-        cmd->Out()->SetF(f);
-    }
+    cmd->Out()->SetF(self->GetF());
 }
 
 //-------------------------------------------------------------------
@@ -148,12 +145,7 @@ static void n_getf(void *o, nCmd *cmd)
 static void n_getb(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
-    {
-        bool b = false;
-        if (self->GetType() == nArg::ARGTYPE_BOOL) b=self->GetB();
-        else n_printf("Not a bool object!\n");
-        cmd->Out()->SetB(b);
-    }
+    cmd->Out()->SetB(self->GetB());
 }
 
 //-------------------------------------------------------------------
@@ -175,12 +167,7 @@ static void n_getb(void *o, nCmd *cmd)
 static void n_gets(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
-    {
-        const char *s = "<error>";
-        if (self->GetType() == nArg::ARGTYPE_STRING) s=self->GetS();
-        else n_printf("Not a string object!\n");
-        cmd->Out()->SetS(s);
-    }
+    cmd->Out()->SetS(self->GetS());
 }
 
 //-------------------------------------------------------------------
@@ -201,12 +188,31 @@ static void n_gets(void *o, nCmd *cmd)
 static void n_geto(void *o, nCmd *cmd)
 {
     nEnv *self = (nEnv *) o;
-    {
-        void *o = NULL;
-        if (self->GetType() == nArg::ARGTYPE_OBJECT) o=self->GetO();
-        else n_printf("Not an object handle!\n");
-        cmd->Out()->SetO(o);
-    }
+    cmd->Out()->SetO(self->GetO());
+}
+
+//-------------------------------------------------------------------
+/**
+    @cmd
+    getf4
+    
+    @input
+    v
+    
+    @output
+    f(X), f(Y), f(Z), f(W)
+    
+    @info
+    Return content as 4D vector.
+*/
+static void n_getf4(void* slf, nCmd* cmd)
+{
+    nEnv* self = (nEnv*) slf;
+    const nFloat4& f = self->GetF4();
+    cmd->Out()->SetF(f.x);
+    cmd->Out()->SetF(f.y);
+    cmd->Out()->SetF(f.z);
+    cmd->Out()->SetF(f.w);
 }
 
 //-------------------------------------------------------------------
@@ -311,9 +317,33 @@ static void n_seto(void *o, nCmd *cmd)
 
 //-------------------------------------------------------------------
 /**
+    @cmd
+    setf4
+    
+    @input
+    f(X), f(Y), f(Z), f(W)
+    
+    @output
+    v
+    
+    @info
+    Sets the content of the variable to a 4D vector.
+*/
+static void n_setf4(void* slf, nCmd* cmd)
+{
+    nEnv* self = (nEnv*) slf;
+    nFloat4 f;
+    f.x = cmd->In()->GetF();
+    f.y = cmd->In()->GetF();
+    f.z = cmd->In()->GetF();
+    f.w = cmd->In()->GetF();
+    self->SetF4(f);
+}
+
+//-------------------------------------------------------------------
+/**
      - 02-Jan-99   floh    machine generated
 */
-//-------------------------------------------------------------------
 bool nEnv::SaveCmds(nPersistServer *fs)
 {
     bool retval = false;
@@ -322,34 +352,46 @@ bool nEnv::SaveCmds(nPersistServer *fs)
         nCmd *cmd;
         switch (this->GetType()) 
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 cmd = fs->GetCmd(this, 'SETI');
                 cmd->In()->SetI(this->GetI());
                 fs->PutCmd(cmd);
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 cmd = fs->GetCmd(this, 'SETF');
                 cmd->In()->SetF(this->GetF());
                 fs->PutCmd(cmd);
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 cmd = fs->GetCmd(this, 'SETS');
                 cmd->In()->SetS(this->GetS());
                 fs->PutCmd(cmd);
                 break;
 
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 cmd = fs->GetCmd(this, 'SETB');
                 cmd->In()->SetB(this->GetB());
                 fs->PutCmd(cmd);
                 break;
 
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 cmd = fs->GetCmd(this, 'SETO');
                 cmd->In()->SetO(this->GetO());
                 fs->PutCmd(cmd);
+                break;
+
+            case nArg::Float4:
+                {
+                    cmd = fs->GetCmd(this, 'STF4');
+                    const nFloat4& f = this->GetF4();
+                    cmd->In()->SetF(f.x);
+                    cmd->In()->SetF(f.y);
+                    cmd->In()->SetF(f.z);
+                    cmd->In()->SetF(f.w);
+                    fs->PutCmd(cmd);
+                }
                 break;
 
             default: break;

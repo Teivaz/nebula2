@@ -68,10 +68,9 @@ nCmdProto::nCmdProto(const char *proto_def, uint id)
             case 'i':   this->cmdTemplate->In()->SetI(0);      break;
             case 'f':   this->cmdTemplate->In()->SetF(0.0f);   break;
             case 'b':   this->cmdTemplate->In()->SetB(false);  break;
-            case 's':   this->cmdTemplate->In()->SetS(NULL);   break;
-            case 'o':   this->cmdTemplate->In()->SetO(NULL);   break;
-            case 'c':   this->cmdTemplate->In()->SetC(NULL);   break;
-            case 'l':   this->cmdTemplate->In()->SetL(NULL,0); break;
+            case 's':   this->cmdTemplate->In()->SetS(0);      break;
+            case 'o':   this->cmdTemplate->In()->SetO(0);      break;
+            case 'l':   this->cmdTemplate->In()->SetL(0,0);    break;
             default:    break;
        } 
     }
@@ -84,10 +83,9 @@ nCmdProto::nCmdProto(const char *proto_def, uint id)
             case 'i':   this->cmdTemplate->Out()->SetI(0);      break;
             case 'f':   this->cmdTemplate->Out()->SetF(0.0f);   break;
             case 'b':   this->cmdTemplate->Out()->SetB(false);  break;
-            case 's':   this->cmdTemplate->Out()->SetS(NULL);   break;
-            case 'o':   this->cmdTemplate->Out()->SetO(NULL);   break;
-            case 'c':   this->cmdTemplate->Out()->SetC(NULL);   break;
-            case 'l':   this->cmdTemplate->Out()->SetL(NULL,0); break;
+            case 's':   this->cmdTemplate->Out()->SetS(0);      break;
+            case 'o':   this->cmdTemplate->Out()->SetO(0);      break;
+            case 'l':   this->cmdTemplate->Out()->SetL(0,0);    break;
             default:    break;
        } 
     }
