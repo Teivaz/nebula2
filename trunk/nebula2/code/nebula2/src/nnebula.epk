@@ -90,6 +90,12 @@ beginmodule ntransformanimator
     setheaders { ntransformanimator }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule ntextureanimator
+    setdir scene
+    setfiles { ntextureanimator_main ntextureanimator_cmds }
+    setheaders { ntextureanimator }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nbinscriptserver
     setdir script
     setfiles nbinscriptserver_main
@@ -261,7 +267,7 @@ begintarget nnebula
         nsceneserver nstdsceneserver
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nlightnode nspotlightnode nshapenode
-        nanimator nvectoranimator ntransformanimator
+        nanimator nvectoranimator ntransformanimator ntextureanimator
         nskinanimator nskinshapenode ncharacter nanimationserver nanimation
         nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
