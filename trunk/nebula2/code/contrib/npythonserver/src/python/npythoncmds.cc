@@ -1,4 +1,4 @@
-#define N_IMPLEMENTS nPythonServer
+//#define N_IMPLEMENTS nPythonServer
 //-----------------------------------------------------------------------------
 //  npythoncmds.cc --  implements Python interpreter commands
 //  Created by Jason Asbahr, 2001
