@@ -29,9 +29,9 @@
           (@c path_to_nebula2/code/contrib/nopende/lib/win32_vc_i386) to your VC
           Project Directories (under the Libraries section).
        -# Generate a config.h for OpenDE (make configure), read INSTALL in the
-          OpenDE directory to find out how. Alternatively you can download my
-          pre-generated <a href="http://nebuladevice.sourceforge.net/twiki/Nebula/N2TaskNOpenDE/config.h">config.h</a>
-          and put it into @c path_to_ode/include/ode (but I can't guarantee it will work for everyone).
+          OpenDE directory to find out how. Alternatively you can use my pre-generated
+          config.h (found at @c path_to_nebula2/code/contrib/nopende/extra) and put it 
+          into @c path_to_ode/include/ode (but I can't guarantee it will work for everyone).
        -# You can now build any project that uses nOpenDE.
        .
     .
