@@ -192,7 +192,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 
     // initialize the device
     HWND hwnd = (HWND) diServer->refHwnd->GetI();
-    n_assert2( hwnd, "/sys/env/hwnd is NULL -- perhaps nWin32LogHandler::OpenWindow() has not been called." )
+    n_assert2( hwnd, "/sys/env/hwnd is NULL -- perhaps nWin32WindowHandler::OpenWindow() has not been called." )
     hr = diDev->SetCooperativeLevel(hwnd, (DISCL_FOREGROUND | DISCL_NOWINKEY | DISCL_NONEXCLUSIVE));
     if (FAILED(hr))
     {
