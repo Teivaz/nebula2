@@ -88,6 +88,10 @@ public:
     nTime GetFrameTime() const;
     /// get current state time (time since last state switch)
     nTime GetStateTime() const;
+    /// set the locale table filename
+    void SetLocaleTable(const nString& s);
+    /// get the locale table filename
+    const nString& GetLocaleTable() const;
 
 protected:
     /// create a new state object
@@ -165,6 +169,7 @@ private:
     nString companyName;
     nString appName;
     nString startupScript;
+    nString localeTable;
     nDisplayMode2 displayMode;
     nCamera2 gfxCamera;
 
@@ -346,6 +351,24 @@ bool
 nApplication::GetQuitRequested() const
 {
     return this->quitRequested;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nApplication::SetLocaleTable(const nString& s)
+{
+    this->localeTable = s;
+}
+
+//------------------------------------------------------------------------------
+inline
+const nString& 
+nApplication::GetLocaleTable() const
+{
+    return this->localeTable;
 }
 
 //------------------------------------------------------------------------------
