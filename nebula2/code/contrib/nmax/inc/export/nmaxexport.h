@@ -45,7 +45,7 @@
 #define MESSAGE1    "This file is licensed under the terms of the Nebula License"
 #define MESSAGE2	"(c) 2004 J. Kellner"
 #define NUM_EXT		1
-#define EXTENSION   ".n2"
+#define EXTENSION   "n2"
 
 #define VERSION			100				 // Version number * 100
 #define CFGFILENAME		"nMaxExport.cfg" // Configuration file
