@@ -69,11 +69,10 @@ inline
 nSignal::nSignal(const char * signalName, const char *proto_def, nFourCC id) :
     nCmdProto(proto_def, id)
 {
-    char name[N_MAXNAMELEN];
-    strcpy(name, signalName);
-    strlwr(name);
+    nString name(signalName);
+    name.ToLower();
     // set name of the signal
-    this->SetName(name);
+    this->SetName(name.Get());
 }
 
 //------------------------------------------------------------------------------
