@@ -1,0 +1,24 @@
+#--------------------------------------------------------------------
+#   ndinput8.pak
+#   ============
+#   DirectInput8 class package definition.
+#   (C) 2002 RadonLabs GmbH
+#--------------------------------------------------------------------
+beginmodule ndi8server
+    setdir input
+    setfiles {
+        ndi8server_main ndi8server_dinput ndi8server_trigger ndi8server_error
+    }
+    setheaders { ndi8server }
+endmodule
+
+#--------------------------------------------------------------------
+begintarget ndinput8
+    settype lib
+    setplatform win32
+    setmods {
+        ndi8server
+    }
+endtarget
+
+#--------------------------------------------------------------------

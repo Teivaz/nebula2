@@ -1,0 +1,60 @@
+#-------------------------------------------------------------------------------
+#   microtcl.xpk
+#   
+#   A minimal Tcl environment.
+#-------------------------------------------------------------------------------
+
+beginmodule nmicrotclnebula
+    setdir microtcl
+    setmodtype cpplib
+    setfiles tclNebula
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmicrotcl
+    setdir microtcl
+    setmodtype clib
+    setfiles {
+        tclAlloc
+        tclBasic
+        tclBinary
+        tclCkalloc
+        tclCmdAH
+        tclCmdIL
+        tclCmdMZ
+        tclCompCmds
+        tclCompExpr
+        tclCompile
+        tclExecute
+        tclGet
+        tclHash
+        tclHistory
+        tclIndexObj
+        tclInterp
+        tclLink
+        tclListObj
+        tclLiteral
+        tclNamesp
+        tclObj
+        tclPanic
+        tclParse
+        tclParseExpr
+        tclPreserve
+        tclProc
+        tclResult
+        tclStringObj
+        tclUtf
+        tclUtil
+        tclVar
+    }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget microtcl
+    settype lib
+    setmods {
+        nmicrotclnebula nmicrotcl
+    }
+endtarget
+#-------------------------------------------------------------------------------
+
+        
+        

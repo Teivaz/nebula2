@@ -1,0 +1,37 @@
+#-------------------------------------------------------------------------------
+#   ntoollib.epk
+#   
+#   Contains various tool classes.
+#
+#   (C) 2002 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+beginmodule nmeshbuilder
+    setdir tools
+    setmodtype cpplib
+    setfiles { 
+        nmeshbuilder 
+        nmeshbuilder_loadsave 
+        nmeshbuilder_tangent 
+        NVMeshMender 
+        nskinpartitioner
+        nbspbuilder
+    }
+    setheaders { nmeshbuilder nskinpartitioner nbspbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimbuilder
+    setdir tools
+    setmodtype cpplib
+    setfiles { nanimbuilder }
+    setheaders { nanimbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget ntoollib
+    settype lib
+    setmods {
+        nmeshbuilder nanimbuilder
+    }
+endtarget
+#-------------------------------------------------------------------------------

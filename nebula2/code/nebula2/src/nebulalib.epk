@@ -1,0 +1,25 @@
+#-------------------------------------------------------------------------------
+#   nebula.epk
+#   ==========
+#   Create one big Nebula static link lib.
+#
+#   (C) 2003 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+beginmodule dummy
+    settype cpplib
+    setdir "."
+    setfiles { dummy }
+endmodule 
+#-------------------------------------------------------------------------------
+begintarget nebulalib
+    settype lib
+    setmods dummy
+    setdepends {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+    }
+endtarget        
+        
