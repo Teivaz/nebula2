@@ -291,6 +291,28 @@ nSceneNode::AddAnimator(const char* relPath)
 
 //------------------------------------------------------------------------------
 /**
+    Remove an animator object from this scene node.
+*/
+void
+nSceneNode::RemoveAnimator(const char* relPath)
+{
+    n_assert(relPath);
+
+	const int numAnimators = this->GetNumAnimators();
+    int i;
+    for (i = 0; i < numAnimators; i++)
+    {
+		if (!strcmp( relPath, this->animatorArray[i]->GetName()))
+        {
+            this->animatorArray[i].set(0); //unset/clear the nDynAutoRef
+			this->animatorArray.Erase(i);  //delete the nDynAutoRef from array
+			break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Get number of animator objects.
 */
 int
