@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMapResourceLoader
-
+    @ingroup NMapContribModule
     @brief Loads nMap height information into an nMesh2 for use by MapBlock
 
     Only one instance of nMapResourceLoader need be created per game.  

@@ -3,12 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class SimpleObject
-
+    @ingroup PhysDemoContribModule
     @brief A simple object designed to hold data relevant to a rigid body
 
-    This is a simple object container designed to hold all data relevant to a rigid body existing
-    in the PhysDemo world.  It also serves as a (very) basic example of how entities might function in
-    user-made applications, and how they would integrate with Nebula 2.
+    This is a simple object container designed to hold all data relevant to
+    a rigid body existing in the PhysDemo world.  It also serves as a (very)
+    basic example of how entities might function in user-made applications,
+    and how they would integrate with Nebula 2.
 
     (C) 2003    Megan Fox
 */

@@ -1,5 +1,6 @@
 /**
    @file receiver_main.cc
+   @ingroup Nebula2TutorialsSignals
    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
    
    (C) 2005 Tragnarion Studios

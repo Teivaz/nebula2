@@ -1,7 +1,8 @@
 /**
-    @defgroup NCLODTerrainContribModule Chunked LOD terrain Contributed Module
-    @ingroup NebulaContribModules
-    @brief nCLODTerrain implements a chunked LOD terrain renderer
+    @defgroup NCLODTerrainContribModule Chunked LOD Terrain Renderer (nclodterrain)
+    @ingroup NebulaContribTerrainModules
+    @brief nCLODTerrain implements a chunked LOD terrain renderer with
+    integrated physics.
     
     <h2>Introduction</h2>
     This module holds the implementation for nCLODShapeNode, which

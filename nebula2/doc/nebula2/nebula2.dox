@@ -73,7 +73,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
   - <b>Networking</b>: A running instance of Nebula 2 can be controlled, via
     the script server, from another process on the local machine or another
     remote machine.  This is mainly used for debugging. There is also a
-    game oriented networking layer (see @ref NNetworkContribModule).
+    game oriented networking layer (see @ref Network).
 
   - <b>Object Persistence</b>: Nebula 2 objects survive on disk as 
     scripts that contain exactly the sequence of script commands

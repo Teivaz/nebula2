@@ -9,6 +9,7 @@
 /**
     @class nCmdProtoPython
     @ingroup ScriptServices
+    @ingroup PythonScriptServices
     @brief A factory for nCmd objects that correspond to Python
            implemented script commands.
 

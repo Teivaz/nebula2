@@ -1,6 +1,6 @@
 /**
-    @defgroup NLuaServerContribModule nLuaServer Contributed Module
-    @ingroup NebulaContribModules
+    @defgroup NLuaServerContribModule nLuaServer
+    @ingroup NebulaContribLanguageModules
     @brief nLuaServer provides Lua 5 based scripting services for
     Nebula
     

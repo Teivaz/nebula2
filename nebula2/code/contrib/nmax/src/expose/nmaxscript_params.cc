@@ -19,7 +19,7 @@
     @param fMax
     @param bAcross
     @param uiAcrossCnt
-    @param uiFiledWidth
+    @param uiFieldWidth
     @param bOffset
 */
 nString CreateFloatUI(nString strVarName, nString strCaption, float fVal, 

@@ -1,6 +1,6 @@
 /**
 @defgroup WxNebula wxNebula
-@ingroup NebulaContribModules
+@ingroup NebulaContribMiscModules
 @brief wxNebula demonstrates the usage of wxPython with Nebula
 
 Usage notes:

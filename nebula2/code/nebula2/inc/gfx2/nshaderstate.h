@@ -2,7 +2,7 @@
 #define N_SHADERSTATE_H
 //------------------------------------------------------------------------------
 /**
-    @class nShaderState
+    @namespace nShaderState
     @ingroup NebulaGraphicsSystem
 
     Shader state parameters and data types.

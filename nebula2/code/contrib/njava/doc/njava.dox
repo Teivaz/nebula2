@@ -1,7 +1,11 @@
 /**
-@defgroup NJavaContribModule nJava Contributed Module
-@ingroup NebulaContribModules
+@defgroup NJavaContribModule nJava
+@ingroup NebulaContribLanguageModules
 @brief nJava provides access to the Nebula script API from within Java.
+
+<h2>Status</h2>
+
+This is currently unmaintained.
 
 <h2>Compilation</h2>
 

@@ -1077,7 +1077,7 @@ bool nMaxMesh::HasSameMaterial(Mesh* mesh, int faceIdx, const int matIdx, const 
     The mirrored objects has negative scale factor and the vertices of that 
     should be exported with counter clockwise order not to be inverted.
 
-    @param matrix of a node.
+    @param m matrix of a node.
     @return true if the given matrix has negative scaling.
 */
 bool nMaxMesh::HasNegativeScale(Matrix3& m)

@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class bbox3_qs
+    @ingroup NMapContribModule
     @brief (non-oriented) bounding box streamlined for 	quadtree navigation
     by caching up heavily used data
 */

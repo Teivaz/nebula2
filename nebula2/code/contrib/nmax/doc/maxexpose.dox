@@ -1,8 +1,8 @@
 /**
-    @defgroup NMaxExposeContrib 3DSMax Function Publishing for Nebula2
-    @ingroup NebulaContribModules
-    @brief nMaxExpose package enables to call Nebula script commands
-           with maxscript.
+    @defgroup NMaxExposeContrib 3DSMax Function Publishing
+    @ingroup NebulaContribExporterModules
+    @ingroup NebulaContribLanguageModules
+    @brief nMaxExpose package exposes Nebula script commands to maxscript.
 
     <h2>Introduction</h2>
     nMaxExpose package is 3dsmax plugin which enables to call

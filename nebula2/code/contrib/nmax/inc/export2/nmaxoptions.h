@@ -121,7 +121,7 @@ protected:
     bool addJointName;
     /// @}
 
-    /// @nanme assign and path variables.
+    /// @name assign and path variables.
     /// @{
     nString homeDir;
     nString binaryPath;

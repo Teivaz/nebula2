@@ -39,7 +39,7 @@ public:
     nMaxExport2();
     virtual ~nMaxExport2();
 
-    /// @nanme Overrided functions from 3dsmax
+    /// @name Overridden functions from 3dsmax
     /// @{
 	int	DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
     void ShowAbout(HWND hWnd) { return; }

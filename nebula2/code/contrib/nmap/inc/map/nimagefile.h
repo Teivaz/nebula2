@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class nImageFile
-
+    @ingroup NMapContribModule
     @brief Superclass for image file loader/saver
 
     17-Dec-99   floh    interface for saving files

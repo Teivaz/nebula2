@@ -39,9 +39,6 @@ n_initcmds(nClass* cl)                                      \
     @def NCMDPROTONATIVECPP_ADDCMD(MemberName)
     @brief Adds the command to the nClass in n_initcmds functions.
     @param MemberName       name of the C++ member function
-
-    @param ClassName        name of the C++ class
-    @param ClassObject      pointer to nClass object
 */
 #define NCMDPROTONATIVECPP_ADDCMD(MemberName)                     \
     ScriptClass_::AddCmd_ ## MemberName(cl);
@@ -78,8 +75,8 @@ n_initcmds(nClass* cl)                                      \
     @param PREFIX       function prefix to allow definition of virtual, static, ...
     @param TR           return type
     @param MemberName   name of the function in C++
-    @param NUMPARAM     number of input parameters
-    @param PARAM        list of input parameter types between parenthesis and separated by commas
+    @param NUMINPARAM   number of input parameters
+    @param INPARAM      list of input parameter types between parenthesis and separated by commas
     @param NUMOUTPARAM  number of output parameters
     @param OUTPARAM     list of output parameter types between parenthesis and separated by commas
 */
@@ -97,8 +94,8 @@ n_initcmds(nClass* cl)                                      \
     @param PREFIX       function prefix to allow definition of virtual, static, ...
     @param TR           return type
     @param MemberName   name of the function in C++
-    @param NUMPARAM     number of input parameters
-    @param PARAM        list of input parameter types between parenthesis and separated by commas
+    @param NUMINPARAM   number of input parameters
+    @param INPARAM      list of input parameter types between parenthesis and separated by commas
     @param NUMOUTPARAM  number of output parameters
     @param OUTPARAM     list of output parameter types between parenthesis and separated by commas
 */
@@ -153,8 +150,8 @@ n_initcmds(nClass* cl)                                      \
     @param PREFIX       function prefix to allow definition of virtual, static, ...
     @param TR           return type
     @param MemberName   name of the function in C++
-    @param NUMPARAM     number of input parameters
-    @param PARAM        list of input parameter types between parenthesis and separated by commas
+    @param NUMINPARAM   number of input parameters
+    @param INPARAM      list of input parameter types between parenthesis and separated by commas
     @param NUMOUTPARAM  number of output parameters
     @param OUTPARAM     list of output parameter types between parenthesis and separated by commas
 */

@@ -90,8 +90,8 @@ GetDefault(TiXmlElement* elemParam)
 /**
     Convert string of enum values to items of dropdownlist UI.
 
-    @param enums string of enum values. e.g. enum = "None=1:CW:CCW"
-    @param array to contain each enum values string.
+    @param enums   string of enum values. e.g. enum = "None=1:CW:CCW"
+    @param values  to contain each enum values string.
 */
 static
 void 

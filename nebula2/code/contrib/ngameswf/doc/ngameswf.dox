@@ -1,8 +1,8 @@
 /**
-    @defgroup nGameSwfGroup nGameSwf Contributed Module
-    @ingroup NebulaContribModules
+    @defgroup nGameSwfGroup nGameSwf
+    @ingroup NebulaContribRendererModules
 
-    @brief nGameSwf is a port of gameswf
+    @brief nGameSwf is a port of gameswf, a Flash renderer
 
     <h2>Introduction</h2>
     <a href="http://sourceforge.net/projects/tu-testbed/">gameswf</a>

@@ -5,7 +5,7 @@
     @class nChunkLodMesh
     @ingroup NCTerrain2
 
-    @brief A single mesh chunk in a CunkLOD vertex tree. This is basically
+    @brief A single mesh chunk in a ChunkLOD vertex tree. This is basically
     a port of the original nChunkData class to Nebula2's resource subsystem.
 
     A nChunkLodMesh object takes the filename of a <tt>.chu</tt> file, and a
@@ -173,10 +173,10 @@ nChunkLodMesh::GetFileLocation()
 //------------------------------------------------------------------------------
 /**
     Set vertex decompression parameters (sx, sy, sz).
-	Terrain vertices are quantized in the terrain file. They need to be dequantized to 
-	be of any use.
+    Terrain vertices are quantized in the terrain file. They need to be
+    dequantized to be of any use.
 
-    @param  params      vector3 with the (sx, sy, sz) params
+    @param  s       vector3 with the (sx, sy, sz) params
 */
 inline
 void

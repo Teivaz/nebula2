@@ -1,11 +1,11 @@
 /**
     @defgroup NNetworkContribDemoModule Networking Demo
-    @ingroup NNetworkContribModule
+    @ingroup NebulaContribSampleModules
     @brief Example usage of nNetwork module.
 
-    For running this example it's necessary to run several times the executable.
-    One of these in the role of the server and the others are the clients. This is a
-    normal test:
+    For running this example it's necessary to run the executable several times.
+    One of these in the role of the server and the others are the clients.
+    This is a normal test:
     
     - @b server: press key 's' to begin the role of server. The server
          begin to broadcast the address.
@@ -20,8 +20,9 @@
          'f11' key to get the console and see the network messages.
     
     - @b client: press key 'm' to send a 'Hello World' message. The
-         message is send to the server and the server send the message to the others
-         clients. In the server console ('f11' to show the console) the message is print.
+         message is send to the server and the server send the message to
+	 the others clients. In the server console ('f11' to show the console)
+	 the message is print.
     
     - @b client: press 'q' or write 'exit' in the console to quit the
          demo.

@@ -1,6 +1,6 @@
 /**
-    @defgroup NSpatialDBContribModule Spatial Database Contrib Module
-    @ingroup NebulaContribModules
+    @defgroup NSpatialDBContribModule Spatial Database
+    @ingroup NebulaContribVisibilityModules
     @brief Basic spatial database for visibility and spatial region queries.
 
 The spatialdb
