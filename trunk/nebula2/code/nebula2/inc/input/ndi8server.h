@@ -12,17 +12,8 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#ifndef N_INPUTSERVER_H
 #include "input/ninputserver.h"
-#endif
-
-#ifndef N_DI8DEVICE_H
 #include "input/ndi8device.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nDI8Server
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nDI8Server : public nInputServer

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nJoyMouseDevice
 //------------------------------------------------------------------------------
 //  njoymousedevice.cc
 //  (C) 2002 RadonLabs GmbH

@@ -10,20 +10,14 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nInputDevice
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nKernelServer;
 class nInputServer;
 class nRoot;
 
-class N_PUBLIC nInputDevice : public nNode
+class nInputDevice : public nNode
 {
 public:
     /// constructor

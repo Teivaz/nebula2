@@ -11,34 +11,16 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_INPUTEVENT_H
 #include "input/ninputevent.h"
-#endif
-
-#ifndef N_INPUTSTATE_H
 #include "input/ninputstate.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nInputServer
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nScriptServer;
 class nConServer;
-class N_PUBLIC nInputServer : public nRoot 
+class nInputServer : public nRoot 
 {
 public:
     /// constructor

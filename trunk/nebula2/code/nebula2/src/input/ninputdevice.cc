@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nInputDevice
 //------------------------------------------------------------------------------
 //  ninputdevice.cc
 //  (C) 2002 RadonLabs GmbH

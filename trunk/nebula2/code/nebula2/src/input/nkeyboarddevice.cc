@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nKeyboardDevice
 //------------------------------------------------------------------------------
 //  nkeyboarddevice.cc
 //  (C) 2002 RadonLabs GmbH

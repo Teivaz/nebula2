@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nInputServer
 //-------------------------------------------------------------------
 //  input/ninput_dispatch.cc
 //  This file was machine generated.

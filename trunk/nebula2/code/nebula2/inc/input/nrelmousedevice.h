@@ -9,20 +9,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_INPUTDEVICE_H
 #include "input/ninputdevice.h"
-#endif
-
-#ifndef N_AXISFILTER_H
 #include "input/naxisfilter.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nRelMouseDevice
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nRelMouseDevice : public nInputDevice
+class nRelMouseDevice : public nInputDevice
 {
 public:
     /// constructor
