@@ -155,7 +155,7 @@ void* n_calloc_dbg(size_t num, size_t size, const char* file, int line);
 void* n_realloc_dbg(void* memblock, size_t size, const char* file, int line);
 void n_free_dbg(void* memblock, const char* file, int line);
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(__WIN32__)
 #define n_new(type) new(__FILE__,__LINE__) type
 #define n_new_array(type,size) new(__FILE__,__LINE__) type[size]
 #define n_delete(ptr) delete ptr
