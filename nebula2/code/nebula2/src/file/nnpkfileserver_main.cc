@@ -204,14 +204,17 @@ nNpkFileServer::ReleaseNpkFiles(const nString& pattern)
 {
     nNpkFileWrapper* cur = 0;
     nNpkFileWrapper* next = 0;
-    if (cur = (nNpkFileWrapper*) this->npkFiles.GetHead()) do
+    if ((cur = (nNpkFileWrapper*) this->npkFiles.GetHead()))
     {
-        next = (nNpkFileWrapper*) cur->GetSucc();
-        if (cur->GetAbsPath().MatchPattern(pattern))
+        do
         {
-            cur->Remove();
-            n_delete(cur);
+            next = (nNpkFileWrapper*) cur->GetSucc();
+            if (cur->GetAbsPath().MatchPattern(pattern))
+            {
+                cur->Remove();
+                n_delete(cur);
+            }
         }
+        while ((cur = next));
     }
-    while (cur = next);
 }
