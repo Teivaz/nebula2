@@ -10,6 +10,18 @@
 #include "mathlib/triangle.h"
 
 /**
+    @brief Ensures that the given map point is actually on the map
+*/
+int nMap::ClampToBounds( int coord ) const 
+{
+    if (coord < 0 )
+        coord = 0;
+    else if( coord > mapDimension-2 )
+        coord = mapDimension-2;
+    return coord;
+}
+
+/**
     @brief Return the interpolated height at a supplied point.
 */
 float nMap::GetHeight(float x, float z) const
@@ -17,14 +29,9 @@ float nMap::GetHeight(float x, float z) const
     n_assert( 0 != mapDimension && "nMap::GetHeight: Perhaps the map hasn't been loaded yet?" );
     float temp;
     float x_frac = modff(x / gridInterval, &temp);
-    int x_int = int(temp);
+    int x_int = ClampToBounds(temp);
     float z_frac = modff(z / gridInterval, &temp);
-    int z_int = int(temp);
-
-    // Hack to stop app from crashing
-    if (x_int < 0 || x_int > mapDimension-2 ||
-        z_int < 0 || z_int > mapDimension-2)
-        return 0.0f;
+    int z_int = ClampToBounds(temp);
 
     float nw = GetPoint(x_int, z_int).coord.y;
     float se = GetPoint(x_int+1, z_int+1).coord.y;
@@ -60,17 +67,9 @@ void nMap::GetNormal(float x, float z, vector3& normal) const
 {
     float temp;
     float x_frac = modff(x / gridInterval, &temp);
-    int x_int = int(temp);
+    int x_int = ClampToBounds(temp);
     float z_frac = modff(z / gridInterval, &temp);
-    int z_int = int(temp);
-
-    // Hack to stop app from crashing
-    if (x_int < 0 || x_int > mapDimension-2 ||
-        z_int < 0 || z_int > mapDimension-2)
-    {
-        normal.set(0.0f, 1.0f, 0.0f);
-        return;
-    }
+    int z_int = ClampToBounds(temp);
 
     // Northeast triangle
     if (x_frac > z_frac)
