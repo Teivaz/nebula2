@@ -133,40 +133,7 @@ nMesh2::LoadResource()
     if (filename.IsEmpty())
     {
         // no filename, just create empty vertex and/or index buffers        
-        if (this->GetNumVertices() > 0)
-        {
-            int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-            this->SetVertexBufferByteSize(verticesByteSize);
-            this->CreateVertexBuffer();
-        }
-
-        if (this->GetNumIndices() > 0)
-        {
-            int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
-            this->SetIndexBufferByteSize(indicesByteSize);
-            this->CreateIndexBuffer();
-        }
-
-        // load edges ?
-        if (this->GetNumEdges() > 0)
-        {
-            int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
-            this->SetEdgeBufferByteSize(edgesByteSize);
-            this->CreateEdgeBuffer();
-        }
-        
-        switch (this->refillBuffersMode)
-        {
-            case DisabledOnce:
-                this->refillBuffersMode = Enabled;
-                break;
-            case Enabled:
-                this->refillBuffersMode = NeededNow;
-                break;
-            default:
-                break;
-        }
-        success = true;
+        success = CreateEmpty();
     }
     else if (this->refResourceLoader.isvalid())
     {
@@ -405,6 +372,51 @@ nMesh2::GetByteSize()
     {
         return 0;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called to create uninitialized buffers, etc., for a mesh 
+    that is not to be loaded from a file.  Can also be called by custom 
+    resource loaders, to do the basic preinitialization.
+*/
+bool
+nMesh2::CreateEmpty()
+{
+    if (this->GetNumVertices() > 0)
+    {
+        int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
+        this->SetVertexBufferByteSize(verticesByteSize);
+        this->CreateVertexBuffer();
+    }
+
+    if (this->GetNumIndices() > 0)
+    {
+        int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
+        this->SetIndexBufferByteSize(indicesByteSize);
+        this->CreateIndexBuffer();
+    }
+
+    // load edges ?
+    if (this->GetNumEdges() > 0)
+    {
+        int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
+        this->SetEdgeBufferByteSize(edgesByteSize);
+        this->CreateEdgeBuffer();
+    }
+    
+    switch (this->refillBuffersMode)
+    {
+        case RefillBuffersMode::DisabledOnce:
+            this->refillBuffersMode = RefillBuffersMode::Enabled;
+            break;
+        case RefillBuffersMode::Enabled:
+            this->refillBuffersMode = RefillBuffersMode::NeededNow;
+            break;
+        default:
+            break;
+    }
+    return true;
 }
 
 //------------------------------------------------------------------------------
