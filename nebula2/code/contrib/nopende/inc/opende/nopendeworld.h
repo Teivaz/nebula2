@@ -45,19 +45,17 @@ class nOpendeWorld : public nRoot
         void QuickStep( float );
         void SetQuickStepNumIterations( int );
         int  GetQuickStepNumIterations();
-
-        void SetAutoDisableFlag(int);
+    
+        void SetAutoDisableFlag( int );
         int  GetAutoDisableFlag();
-        void SetAutoDisableLinearThreshold(float);
+        void SetAutoDisableLinearThreshold( float );
         float GetAutoDisableLinearThreshold();
-        void SetAutoDisableAngularThreshold(float);
+        void SetAutoDisableAngularThreshold( float );
         float GetAutoDisableAngularThreshold();
-        void SetAutoDisableSteps(int);
+        void SetAutoDisableSteps( int );
         int  GetAutoDisableSteps();
-        void SetAutoDisableTime(float);
+        void SetAutoDisableTime( float );
         float GetAutoDisableTime();
-
-
         /// the actual ODE object (do NOT destroy!)
         dWorldID id;
 };
