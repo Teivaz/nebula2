@@ -114,20 +114,19 @@ nParticleServer::GetParticleEmitter(int key)
 nParticleEmitter*
 nParticleServer::NewParticleEmitter()
 {
-    nTime curTime = this->kernelServer->GetTimeServer()->GetTime();
-
-    nParticleEmitter* particleEmitter = new nParticleEmitter();
-    this->emitterPool.PushBack(particleEmitter);
-
+    nParticleEmitter* particleEmitter = n_new nParticleEmitter();
+    this->emitterPool.Append(particleEmitter);
+    // n_printf("nParticleServer: particle emitter created!\n");
     return particleEmitter;
 }
 
 //------------------------------------------------------------------------------
 /**
+    - 13-Feb-04 floh    triggering emitters now in nParticleEmitter::Trigger()
+
 */
 void nParticleServer::Trigger()
 {
-    nTime curTime = this->kernelServer->GetTimeServer()->GetTime();
     #ifdef __NEBULA_STATS__
     int numEmitters  = 0;
     int numParticles = 0;
@@ -144,14 +143,17 @@ void nParticleServer::Trigger()
         while (emitterIter != this->emitterPool.End())
         {
             nParticleEmitter* emitter = *emitterIter;
-            if (!emitter->GetAlive() && !emitter->HasParticles())
+            if (((!emitter->IsAlive()) && (!emitter->HasParticles())) ||
+                emitter->GetFatalException())
             {
-                delete emitter;
+                n_delete emitter;
+                // n_printf("nParticleServer: Deleting particle emitter!\n");
                 emitterIter = emitterPool.EraseQuick(emitterIter);
             }
             else
             {
-                emitter->Trigger(curTime);
+                // FIXME: now in nParticleEmitter::Trigger()
+                emitter->SetAlive(false);
                 ++emitterIter;
                 #ifdef __NEBULA_STATS__
                 numEmitters++;
@@ -160,21 +162,6 @@ void nParticleServer::Trigger()
         }
     }
 
-    // Update all particles
-    ParticlePool::iterator particleIter = this->particlePool.Begin();
-    ParticlePool::iterator particlePoolEnd = this->particlePool.End();
-    while (particleIter != particlePoolEnd)
-    {
-        if ((nParticle::Unborn == particleIter->GetState()) ||
-            (nParticle::Living == particleIter->GetState()))
-        {
-            particleIter->Trigger(curTime, this->globalAccel);
-            #ifdef __NEBULA_STATS__
-            numParticles++;
-            #endif
-        }
-        ++particleIter;
-    }
     #ifdef __NEBULA_STATS__
     //update stats
     this->numEmitters->SetI(numEmitters);
@@ -182,27 +169,3 @@ void nParticleServer::Trigger()
     #endif 
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-nParticle* nParticleServer::GiveFreeParticle()
-{
-    if (this->freeParticlePool.Empty())
-    {
-        return 0;
-    }
-    else
-    {
-        nParticle* particle = *(this->freeParticlePool.EraseQuick(this->freeParticlePool.End()-1));
-        return particle;
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void nParticleServer::TakeBackParticle(nParticle* particle)
-{
-    particle->SetState(nParticle::Unborn);
-    this->freeParticlePool.PushBack(particle);
-}

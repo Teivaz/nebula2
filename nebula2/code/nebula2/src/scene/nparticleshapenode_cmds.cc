@@ -17,6 +17,8 @@ static void n_setbirthdelay(void* slf, nCmd* cmd);
 static void n_getbirthdelay(void* slf, nCmd* cmd);
 static void n_setstartrotation(void* slf, nCmd* cmd);
 static void n_getstartrotation(void* slf, nCmd* cmd);
+static void n_setrenderoldestfirst(void* slf, nCmd* cmd);
+static void n_getrenderoldestfirst(void* slf, nCmd* cmd);
 
 static void n_setemissionfrequency(void* slf, nCmd* cmd);
 static void n_getemissionfrequency(void* slf, nCmd* cmd);
@@ -73,6 +75,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getbirthdelay_v", 'GBRD', n_getbirthdelay);
     cl->AddCmd("v_setstartrotation_f", 'SSTR', n_setstartrotation);
     cl->AddCmd("f_getstartrotation_v", 'GSTR', n_getstartrotation);
+    cl->AddCmd("v_setrenderoldestfirst_b", 'SROF', n_setrenderoldestfirst);
+    cl->AddCmd("b_getrenderoldestfirst_v", 'GROF', n_getrenderoldestfirst);
 
     cl->AddCmd("v_setemissionfrequency_ffffffffi", 'SEFQ', n_setemissionfrequency);
     cl->AddCmd("ffffffffi_getemissionfrequency_v", 'GEFQ', n_getemissionfrequency);
@@ -241,6 +245,24 @@ n_setstartrotation(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     self->SetStartRotation(cmd->In()->GetF());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setrenderoldestfirst
+    @input
+    b
+    @output
+    v
+    @info
+    Set wether to render oldest particles first.
+*/
+static void
+n_setrenderoldestfirst(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    self->SetRenderOldestFirst(cmd->In()->GetB());
 }
 
 //------------------------------------------------------------------------------
@@ -636,6 +658,24 @@ n_getstartrotation(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    getrenderoldestfirst
+    @input
+    v
+    @output
+    b
+    @info
+    Get wether to render oldest particles first.
+*/
+static void
+n_getrenderoldestfirst(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    cmd->Out()->SetB(self->GetRenderOldestFirst());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     getemissionfrequency
     @input
     v
@@ -965,6 +1005,11 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
         //--- setstartrotation ---
         cmd = ps->GetCmd(this, 'SSTR');
         cmd->In()->SetF(this->GetStartRotation());
+        ps->PutCmd(cmd);
+
+        //--- setrenderoldestfirst ---
+        cmd = ps->GetCmd(this, 'SROF');
+        cmd->In()->SetB(this->GetRenderOldestFirst());
         ps->PutCmd(cmd);
 
         return true;

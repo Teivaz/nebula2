@@ -6,6 +6,7 @@
 #include "variable/nvariableserver.h"
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
+#include "kernel/ntimeserver.h"
 
 nNebulaScriptClass(nParticleShapeNode, "nshapenode");
 
@@ -20,11 +21,18 @@ nParticleShapeNode::nParticleShapeNode() :
     activityDistance(10.0f),
     spreadAngle(0.0f),
     birthDelay(0.0f),
-    emitterVarIndex(-1)
+    emitterVarIndex(-1),
+    renderOldestFirst(true)
 {
     int i;
     for (i=0; i<4; i++)
+    {
         this->curves[nParticleEmitter::ParticleVelocityFactor].keyFrameValues[i] = 1.0;
+    }
+
+    // obtain variable handles
+    this->timeHandle = this->refVariableServer->GetVariableHandleByName("time");
+    this->windHandle = this->refVariableServer->GetVariableHandleByName("wind");
 }
 
 //------------------------------------------------------------------------------
@@ -39,6 +47,12 @@ nParticleShapeNode::~nParticleShapeNode()
 /**
     Compute the resulting modelview matrix and set it in the scene
     server as current modelview matrix.
+
+    *** FIXME FIXME FIXME ***
+    * why is emitter setup in RenderTransform() and not in RenderGeometry()???
+    * generally do some cleanup on the particle subsystem
+
+    - 28-Jan-04     daniel  emitter setup moved here from RenderTransform()
 */
 bool
 nParticleShapeNode::RenderTransform(nSceneServer* sceneServer, 
@@ -50,17 +64,12 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     this->InvokeTransformAnimators(renderContext);
 
     // get emitter from render context
-    nVariableServer* varServer = this->refVariableServer.get();
     nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
     int emitterKey = varEmitter.GetInt();
     nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
 
     // keep emitter alive
-    if (0 != emitter)
-    {
-        emitter->KeepAlive();
-    }
-    else
+    if (0 == emitter)
     {
         // need new emitter
         emitter = this->refParticleServer.get()->NewParticleEmitter();
@@ -73,8 +82,8 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetMeshGroupIndex(this->groupIndex);
     emitter->SetEmitterMesh(this->refMesh.get());
     emitter->SetTransform(this->tform.getmatrix() * parentMatrix);
-    int windVarHandle = this->refVariableServer->GetVariableHandleByName("wind");
-    nVariable* windVar = renderContext->GetVariable(windVarHandle);
+    nVariable* windVar = renderContext->GetVariable(this->windHandle);
+    n_assert2(windVar, "No 'wind' variable provided by application!");
     emitter->SetWind(windVar->GetFloat4());
 
     // set emitter settings
@@ -84,6 +93,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetSpreadAngle(this->spreadAngle);
     emitter->SetBirthDelay(this->birthDelay);
     emitter->SetStartRotation(this->startRotation);
+    emitter->SetRenderOldestFirst(this->renderOldestFirst);
     int curveType;
     for (curveType = 0; curveType < nParticleEmitter::CurveTypeCount; curveType++)
     {
@@ -116,16 +126,15 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
     this->emitterVarIndex = renderContext->AddLocalVar(nVariable(0, emitter->GetKey()));
 }
 
-
 //------------------------------------------------------------------------------
 /**
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
+    - 28-Jan-04     daniel  emitter setup moved to RenderTransform()
 */
 void
 nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     nShapeNode::Attach(sceneServer, renderContext);
-
-    
 }
 
 //------------------------------------------------------------------------------
@@ -152,12 +161,16 @@ nParticleShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* re
     n_assert(sceneServer);
     n_assert(renderContext);
 
-    nVariableServer* varServer = this->refVariableServer.get();
     const nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
     int emitterKey = varEmitter.GetInt();
+    nVariable* timeVar = renderContext->GetVariable(this->timeHandle);
+    n_assert2(timeVar, "No 'time' variable provided by application!");
+    float curTime = timeVar->GetFloat();
+    n_assert(curTime >= 0.0f);
 
     nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
     n_assert(0 != emitter);
+    emitter->Trigger(curTime);
     emitter->Render();
 
     return true;

@@ -3,6 +3,7 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "particle/nparticle.h"
+#include "particle/nparticleemitter.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -32,9 +33,8 @@ nParticle::~nParticle()
 //------------------------------------------------------------------------------
 /**
 */
-void nParticle::Initialize(nParticleEmitter* emitter, const vector3& position,
-                           const vector3& velocity, nTime birthTime,
-                           nTime lifeTime, float rotation)
+void nParticle::Initialize(nParticleEmitter* emitter, const vector3& position, const vector3& velocity,
+                           nTime birthTime, nTime lifeTime, float rotation)
 {
     this->emitter = emitter;
     this->curPosition = position;
@@ -84,8 +84,8 @@ nParticle::Trigger(nTime curTime, const vector3& absAccel)
                 // absolute acceleration
                 float airResistance = this->emitter->GetParticleAirResistance(relAge);
                 const nFloat4& wind = this->emitter->GetWind();
-                vector3 finalVelocity = vector3(wind.x, wind.y, wind.z) * wind.w;
-                finalVelocity.lerp(this->curVelocity, airResistance);
+                vector3 windVelocity = vector3(wind.x, wind.y, wind.z) * wind.w * airResistance;
+                vector3 finalVelocity = this->curVelocity + windVelocity;
                 finalVelocity *= this->emitter->GetParticleVelocityFactor(relAge);
                 this->curPosition += finalVelocity * (float) frameTime;
 

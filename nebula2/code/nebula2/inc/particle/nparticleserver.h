@@ -143,4 +143,33 @@ nParticleServer::PseudoRandomVector3(int key)
 };
 
 //------------------------------------------------------------------------------
+/**
+*/
+inline
+nParticle* 
+nParticleServer::GiveFreeParticle()
+{
+    if (this->freeParticlePool.Empty())
+    {
+        return 0;
+    }
+    else
+    {
+        nParticle* particle = *(this->freeParticlePool.EraseQuick(this->freeParticlePool.End()-1));
+        return particle;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticleServer::TakeBackParticle(nParticle* particle)
+{
+    particle->SetState(nParticle::Unborn);
+    this->freeParticlePool.PushBack(particle);
+}
+
+//------------------------------------------------------------------------------
 #endif    

@@ -30,8 +30,6 @@ public:
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// return true if node provides transformion
-    virtual bool HasTransform() const;
     /// get the mesh usage flags required by this shape node
     virtual int GetMeshUsage() const;
     /// update transform and render into scene server
@@ -39,29 +37,32 @@ public:
 
     /// set the end time
     void SetEmissionDuration(nTime time);
-    /// set if loop emitter or not
-    void SetLoop(bool b);
-    /// set the activity distance
-    void SetActivityDistance(float f);
-    /// set the inner cone
-    void SetSpreadAngle(float f);
-    /// set the maximum birth delay
-    void SetBirthDelay(float f);
-    /// set the maximum start rotation angle
-    void SetStartRotation(float f);
-
     /// get the emission duration
     nTime GetEmissionDuration() const;
+    /// set if loop emitter or not
+    void SetLoop(bool b);
     /// is loop emitter ?
     bool GetLoop() const;
+    /// set the activity distance
+    void SetActivityDistance(float f);
     /// get the activity distance
     float GetActivityDistance() const;
+    /// set the inner cone
+    void SetSpreadAngle(float f);
     /// get the spread angle
     float GetSpreadAngle() const;
+    /// set the maximum birth delay
+    void SetBirthDelay(float f);
     /// get the maximum birth delay
     float GetBirthDelay() const;
+    /// set the maximum start rotation angle
+    void SetStartRotation(float f);
     /// get the maximum start rotation angle
     float GetStartRotation() const;
+    /// set wether to render oldest or youngest particles first
+    void SetRenderOldestFirst(bool b);
+    /// get wether to render oldest or youngest particles first
+    bool GetRenderOldestFirst() const;
 
     /// set one of the envelope curves (not the color)
     void SetCurve(nParticleEmitter::CurveType curveType, const nEnvelopeCurve& curve);
@@ -85,21 +86,14 @@ protected:
     float           spreadAngle;            // angle of emitted particle cone
     float           birthDelay;             // maximum delay until particle starts to live
     float           startRotation;          // maximum angle of rotation at birth
+    bool  renderOldestFirst;        // wether to render the oldest particles first or the youngest
 
     nEnvelopeCurve curves[nParticleEmitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;
+
+    nVariable::Handle timeHandle;
+    nVariable::Handle windHandle;
 };
-
-
-//------------------------------------------------------------------------------
-/**
-    particleshape node does not provide transformation.
-*/
-inline bool
-nParticleShapeNode::HasTransform() const
-{
-    return false;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -186,6 +180,7 @@ inline float nParticleShapeNode::GetSpreadAngle() const
     return this->spreadAngle;
 }
 
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -200,6 +195,25 @@ inline float nParticleShapeNode::GetBirthDelay() const
 inline float nParticleShapeNode::GetStartRotation() const
 {
     return this->startRotation;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nParticleShapeNode::SetRenderOldestFirst(bool b)
+{
+    this->renderOldestFirst = b;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticleShapeNode::GetRenderOldestFirst() const
+{
+    return this->renderOldestFirst;
 }
 
 //------------------------------------------------------------------------------
