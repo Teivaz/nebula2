@@ -40,8 +40,7 @@ nMaxMesh::nMaxMesh() :
     beginSkin(false),
     isSkinned(false),
     isPhysique(false),
-    meshType (Shape),
-    isAttachedNode (false)
+    meshType (Shape)
 {
     vertexFlag = VertexNormal | VertexColor | VertexUvs;
 }
@@ -240,18 +239,6 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
                 break;
             }
         }
-
-        // see the node is attached node.
-        child = xmlHandle.FirstChild(mtParamName).FirstChild("attachednode").Child("", 0).Element();
-        if (child)
-        {
-            int flag;
-            child->Attribute("value", &flag);
-            if (flag)
-                this->isAttachedNode = true;
-            else
-                this->isAttachedNode = false;
-        }
     }
 
     // parameter name of vertex options
@@ -326,62 +313,18 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
 
     if (!skinnedMesh)
     {
-        // the given node is not a skinned mesh.
-
-        if (nMaxBoneManager::Instance()->GetNumBones() > 0)
-        {
-            // we have skinned mesh elsewhere in the scene,
-            // so this node may be shape node of a attachment node or collision mesh.
-
-            if (this->isAttachedNode)
-            {
-                INode* parent = inode->GetParentNode();
-                int boneID = nMaxBoneManager::Instance()->FindBoneIDByNode(parent);
-                if (boneID >= 0)
-                {
-                    // the parent node is any one of the bones,
-                    // so create nAttachmentNode for this shape node
-                    nAttachmentNode* attachNode = (nAttachmentNode*)CreateNebulaObject("nattachmentnode", nodename.Get());
-
-                    //specify attachment node.
-                    //FIXME: WIP
-                    attachNode->SetSkinAnimator("../skinanimator");
-                    attachNode->SetJointByIndex(boneID);
-                }
-
-                if (this->meshType == Shadow)
-                    sceneNode =  (nShapeNode*)CreateNebulaObject("nshadowshapenode", nodename.Get());
-                else
-                if (this->meshType == Shape)
-                    sceneNode =  (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
-                else
-                {
-                    sceneNode = 0; // collision mesh
-                }
-            }
-            else
-            {
-                // error
-                n_maxlog(Error, "The node '%s' is suspected to be attached node but does not have 'attached' option. \n \
-                                 Be sure that it is attached node.", inode->GetName());
-            }
-        }
+        // we do not have any skinned mesh in the scene (only static meshes are exist)
+        if (this->meshType == Shadow)
+            sceneNode =  (nShapeNode*)CreateNebulaObject("nshadowshapenode", nodename.Get());
         else
-        {   // we do not have any skinned mesh in the scene
-            // and the given mesh is shape node which has static mesh.
-            if (this->meshType == Shadow)
-                sceneNode =  (nShapeNode*)CreateNebulaObject("nshadowshapenode", nodename.Get());
-            else
-            if (this->meshType == Shape)
-                sceneNode =  (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
-            else
-            if (this->meshType == Swing)
-                sceneNode = (nSwingShapeNode*)CreateNebulaObject("nswingshapenode", nodename.Get());
-            else
-            {
-                n_assert(this->isAttachedNode != false);
-                sceneNode = 0; // collision mesh
-            }
+        if (this->meshType == Shape)
+            sceneNode =  (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
+        else
+        if (this->meshType == Swing)
+            sceneNode = (nSwingShapeNode*)CreateNebulaObject("nswingshapenode", nodename.Get());
+        else
+        {
+            sceneNode = 0; // collision mesh
         }
     }
     else
@@ -394,7 +337,6 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
             sceneNode = (nShapeNode*)CreateNebulaObject("nskinshapenode", nodename.Get());
         else
         {
-            n_assert(this->isAttachedNode != false);
             sceneNode = 0; // collision mesh
         }
     }
@@ -469,8 +411,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
 
         // save mesh file and specifies it to the shape node.
         SetMeshFile((nShapeNode*)createdNode, nodename, useIndivisualMesh);
-
-        //createdNode = shapeNode;
     }
     else
     {
@@ -491,8 +431,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         nTransformNode* transformNode = 0;
 
         nString transformNodeName;
-        //transformNodeName = nMaxUtil::CorrectName(inode->GetName());
-        //transformNode = (nTransformNode*)CreateNebulaObject("ntransformnode", transformNodeName.Get());
         transformNode = (nTransformNode*)CreateNebulaObject("ntransformnode", inode->GetName());
 
         bbox3 parentLocalBox;
@@ -551,7 +489,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
 
     if (useIndivisualMesh)
     {
-        //PartitionMesh();
         nArray<nMaxMesh*> meshArray;
         meshArray.Append(this);
 
@@ -559,17 +496,9 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         skinPartitioner.Partitioning(meshArray, this->localMeshBuilder);
     }
 
-    //if(skinnedMesh)
     if (this->IsSkinned() || this->IsPhysique())
     {
         EndSkin();
-    }
-
-    //FIXME:
-    if (this->isAttachedNode)
-    {
-        // if the mesh is attachement node, we should pop cwd once more for attachment node.
-        nKernelServer::Instance()->PopCwd();
     }
 
     return createdNode;
