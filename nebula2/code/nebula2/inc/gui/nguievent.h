@@ -133,22 +133,25 @@ nGuiEvent::TypeToString(Type t)
 {
     switch(t)
     {
-        case ButtonDown:    return "ButtonDown";
-        case ButtonUp:      return "ButtonUp";
-        case RButtonDown:   return "RButtonDown";
-        case RButtonUp:     return "RButtonUp";
-        case DoubleClick:   return "DoubleClick";
-        case Char:          return "Char";
-        case KeyDown:       return "KeyDown";
-        case KeyUp:         return "KeyUp";
-        case Show:          return "Show";
-        case Hide:          return "Hide";
-        case Action:        return "Action";
-        case Enabled:       return "Enabled";
-        case Disabled:      return "Disabled";
-        default:            return "InvalidType";
+        case ButtonDown:       return "ButtonDown";
+        case ButtonUp:         return "ButtonUp";
+        case RButtonDown:      return "RButtonDown";
+        case RButtonUp:        return "RButtonUp";
+        case DoubleClick:      return "DoubleClick";
+        case Char:             return "Char";
+        case KeyDown:          return "KeyDown";
+        case KeyUp:            return "KeyUp";
+        case Show:             return "Show";
+        case Hide:             return "Hide";
+        case Action:           return "Action";
+        case Enabled:          return "Enabled";
+        case Disabled:         return "Disabled";
+        case SliderChanged:    return "SliderChanged";
+        case SelectionChanged: return "SelectionChanged";
+        case DialogCancel:     return "DialogCancel";
+        case DialogOk:         return "DialogOk";
+        default:               return "InvalidType";
     }
 }
-
 //------------------------------------------------------------------------------
 #endif
