@@ -288,6 +288,46 @@ void *nMemManager::Malloc(int size, const char *src_name, int src_line)
     return p;
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    Custom simplistic Realloc which just uses malloc & memcpy rather than
+    actually trying to 'grow' the memory in place. 
+    
+    @param oldp pointer to memory which should be grown/shrunk
+    @param size amount of memory to reallocate
+    @param src_name name of source file
+    @param src_line line number within source file
+*/
+void *nMemManager::Realloc(void *oldp, int size, const char *src_name, int src_line)
+{
+    if(oldp == NULL)
+    {
+        return this->Malloc(size, src_name, src_line);
+    }
+
+    if(size == 0)
+    {
+        this->Free(oldp);
+    }
+
+    char *oldpc = (char *) oldp;
+    nBlockHeader  *bh = (nBlockHeader *) (oldpc - sizeof(nBlockHeader));
+
+    int old_size = bh->size;
+
+    void *p = this->Malloc(size, src_name, src_line);
+
+    if(p != NULL)
+    {
+        memcpy(p, oldp, (size > old_size) ? old_size : size);
+        this->Free(oldp);
+    }
+
+    return p;
+}
+
+
 //------------------------------------------------------------------------------
 /**
     Frees a previously allocated block of memory.
@@ -370,6 +410,16 @@ void *nn_calloc(size_t num, size_t size, const char *file, int line)
     return p;
 }
 
+//------------------------------------------------------------------------------
+/**
+    @ingroup NebulaKernelMemory
+    
+    Uses the memory manager.
+*/
+void *nn_realloc(void *p, size_t size, const char *file, int line)
+{
+    return mem.Realloc(p, size, file, line);
+}
 //-------------------------------------------------------------------
 #elif __WIN32__
 //-------------------------------------------------------------------
@@ -413,6 +463,17 @@ void *nn_calloc(size_t num, size_t size, const char *, int)
     return ptr;
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    Uses Windows memory management.
+*/
+void *nn_realloc(void *p, size_t size, const char *, int)
+{
+    HGLOBAL ptr = GlobalReAlloc((HGLOBAL)p, size, GMEM_MOVEABLE);
+    n_assert(ptr);
+    return ptr;
+}
 //-------------------------------------------------------------------
 #else
 //-------------------------------------------------------------------
@@ -442,6 +503,15 @@ void n_free(void *p)
 void *nn_calloc(size_t num, size_t size, const char *, int)
 {
     return calloc(num,size);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Uses standard memory management.
+*/
+void *nn_realloc(void *p, size_t size, const char *, int)
+{
+    return realloc(p, size);
 }
 
 //-------------------------------------------------------------------
