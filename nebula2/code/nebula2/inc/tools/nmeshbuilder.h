@@ -780,7 +780,7 @@ nMeshBuilder::Vertex::GetWidth() const
     if (this->HasComponent(UV0))        w += 2;
     if (this->HasComponent(UV1))        w += 2;
     if (this->HasComponent(UV2))        w += 2;
-    if (this->HasComponent(UV2))        w += 2;
+    if (this->HasComponent(UV3))        w += 2;
     if (this->HasComponent(WEIGHTS))    w += 4;
     if (this->HasComponent(JINDICES))   w += 4;
     return w;
