@@ -50,7 +50,6 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(sceneServer);
     n_assert(renderContext);
     this->InvokeTransformAnimators(renderContext);
-    this->UpdateMatrix();
 
     // get emitter from render context
     nVariableServer* varServer = this->refVariableServer.get();
@@ -75,7 +74,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     // setup emitter
     emitter->SetMeshGroupIndex(this->groupIndex);
     emitter->SetEmitterMesh(this->refMesh.get());
-    emitter->SetTransform(this->matrix * parentMatrix);
+    emitter->SetTransform(this->tform.getmatrix() * parentMatrix);
     int windVarHandle = this->refVariableServer->GetVariableHandleByName("wind");
     nVariable* windVar = renderContext->GetVariable(windVarHandle);
     emitter->SetWind(windVar->GetFloat4());
