@@ -4,17 +4,23 @@
     @ingroup NebulaAudioSystem
 
     @brief nOpenAL is a wrapper around
-    <a href://www.openal.org target=blank>OpenAL</a> that implements the
-    i@ref NebulaAudioSystem interface.
+    <a href="http://www.openal.org/">OpenAL</a> that implements the
+    @ref NebulaAudioSystem interface.
 
     <h2>Introduction</h2>
     ...
 
     <h2>Installation</h2>
-    This module should be checked out to @c 'nebula2/code/contrib/nopenal',
-    and run @c 'nebula2/update.tcl'.<br>
+    This module should be checked out to <tt>nebula2/code/contrib/nopenal</tt>,
+    and run <tt>nebula2/update.tcl</tt>.
 
     ...
 
     (c) 2004 Bang, Chang Kyu
+*/
+
+/**
+    @defgroup NOpenALDemoContribModule nOpenAL Demo
+    @ingroup NOpenALContribModule
+
 */

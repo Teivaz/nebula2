@@ -4,8 +4,8 @@
 /**
     @class nDSound_WavFmt
     @ingroup NebulaDSAudioSystem
-
-    Wav Format Control
+    @brief Encapsulates reading or writing sound data to or from a
+    <tt>.wav</tt> file.
 
     (C) 2004 Bang, Chang Kyu
 */
@@ -20,9 +20,6 @@
 #define WAVEFILE_WRITE  2
 
 //------------------------------------------------------------------------------
-/**
-    Encapsulates reading or writing sound data to or from a wave file
-*/
 class nDSound_WavFmt
 {
 public:
