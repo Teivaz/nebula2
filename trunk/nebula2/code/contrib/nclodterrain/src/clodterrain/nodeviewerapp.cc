@@ -122,7 +122,7 @@ nODEViewerApp::Open()
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
 
-    // load the default Nebula startup.tcl script
+    // load the clod-specific startup.lua script
     const char* result;
     this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/startup.lua", result);
 
@@ -150,7 +150,7 @@ nODEViewerApp::Open()
     }
     if (this->GetSceneFile())
     {
-        // load the stage (normally stdlight.tcl)
+        // load the stage (normally stdlight.lua)
         const char* result;
         this->refScriptServer->RunScript("home:code/contrib/nclodterrain/bin/stdlight.lua", result);
 
@@ -596,7 +596,7 @@ void nODEViewerApp::InitDynamics()
             spheregeom->Create(this->refDySpace->GetFullName(bufferthing,200));
             //spheregeom->SetRadius(1.5);
             spheregeom->SetBody(bodypath.Get());
-            spheregeom->SetLengths(4.0,4.0,4.0);
+            spheregeom->SetLengths(4.2f,4.2f,4.2f);
             this->geoms[thingix] = spheregeom;
         }
     }

@@ -84,7 +84,7 @@ main(int argc, const char** argv)
         title.Append(viewArg);
         title.Append(" - ");
     }
-    title.Append("Nebula2 viewer");
+    title.Append("CLOD-ODE viewer");
     nDisplayMode2 displayMode;
     if (fullscreenArg)
     {
