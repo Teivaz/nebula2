@@ -55,6 +55,7 @@ nWin32WindowHandler::OpenWindow()
         GetClientRect(this->parentHwnd, &r);
         this->displayMode.SetWidth(r.right - r.left);
         this->displayMode.SetHeight(r.bottom - r.top);
+        this->displayMode.SetType(nDisplayMode2::ChildWindow);
     } 
     else
     {
