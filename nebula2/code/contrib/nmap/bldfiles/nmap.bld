@@ -27,6 +27,12 @@ beginmodule nmapnode
     setheaders { nmapnode mapblock mapquadtree }
 endmodule
 #--------------------------------------------------------------------
+beginmodule nmapresourceloader
+    setdir map
+    setfiles { nmapresourceloader_cmds nmapresourceloader_main }
+    setheaders { nmapresourceloader }
+endmodule
+#--------------------------------------------------------------------
 beginmodule bboxqs
     setdir map
     setfiles { }
@@ -56,6 +62,7 @@ begintarget nmap
     setmodules {
         nmap
         nmapnode
+        nmapresourceloader
         bboxqs
         nbmpfile
         nimagefile

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -57,8 +57,8 @@
 class MapBlock;
 class MapQuadNode;
 
-//class N_INLINECLASS MapQuadElement : public nNode {
-class MapQuadElement : public nNode {
+class MapQuadElement : public nNode
+{
 public:
     MapQuadNode *octnode;          // bin zur Zeit Mitglied dieser OctNode
     vector3 pos;
@@ -66,7 +66,8 @@ public:
     vector3 p1;
     int collect_flags;
 
-    enum {
+    enum
+    {
         N_COLLECT_VIEWVOL = (1<<0)
     };
 
@@ -75,7 +76,8 @@ public:
     {
     };
     //----------------------------------------------------------------
-    ~MapQuadElement() {
+    ~MapQuadElement()
+    {
         n_assert(octnode == NULL);
     };
     //----------------------------------------------------------------
@@ -83,14 +85,16 @@ public:
     {
         p0 = min;
         p1 = max;
-        //pos = (max + min) / 2.0f;
-		pos = (max + min) * (1 / 2.0f);
+        pos = (max + min) * (1 / 2.0f);
     }
     //----------------------------------------------------------------
-    void SetCollectFlags(int f) {
+    void SetCollectFlags(int f)
+    {
         this->collect_flags = f;
     };
-    int GetCollectFlags(void) {
+    //----------------------------------------------------------------
+    int GetCollectFlags(void)
+    {
         return this->collect_flags;
     };
 };
@@ -102,10 +106,11 @@ public:
    @brief An internal implementation class for MapQuadtree.
 */
 //--------------------------------------------------------------------
-//class N_INLINECLASS MapQuadNode {
-class MapQuadNode {
+class MapQuadNode
+{
 public:
-    union {
+    union 
+    {
         MapQuadNode *parent;
         MapQuadNode *next;
     };
@@ -118,32 +123,38 @@ public:
     nList elm_list;             // List von MapQuadElement's
 
     //----------------------------------------------------------------
-    MapQuadNode() {
+    MapQuadNode()
+    {
         parent   = NULL;
         num_elms = 0;
         all_num_elms = 0;
         memset(c,0,sizeof(c));
     };    
     //----------------------------------------------------------------
-    ~MapQuadNode() {
+    ~MapQuadNode()
+    {
         n_assert(0 == all_num_elms);
         n_assert(elm_list.IsEmpty());
     };    
     //----------------------------------------------------------------
-    void AddElm(MapQuadElement *oe) {
+    void AddElm(MapQuadElement *oe)
+    {
         num_elms++;
         MapQuadNode *on = this;
-        do {
+        do
+        {
             on->all_num_elms++;
         } while ((on=on->parent)); 
         oe->octnode = this;
         elm_list.AddTail(oe);
     };
     //----------------------------------------------------------------
-    void RemElm(MapQuadElement *oe) {
+    void RemElm(MapQuadElement *oe)
+    {
         num_elms--;
         MapQuadNode *on = this;
-        do {
+        do
+        {
             on->all_num_elms--;
         } while ((on=on->parent));
         oe->octnode = NULL;
@@ -176,7 +187,8 @@ public:
     void Visualize(nGfxServer2*);
 
 private:
-    enum {
+    enum 
+    {
         N_OCT_MAXNUMNODES   = 2048,     // max. Anzahl Elemente in free_pool 
         N_OCT_MAXNUMCOLLECT = 1024,     // max. Anzahl collected Elemente
     };

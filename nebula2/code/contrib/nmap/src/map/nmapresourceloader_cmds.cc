@@ -1,6 +1,6 @@
 #define N_IMPLEMENTS nMapResourceLoader
 //------------------------------------------------------------------------------
-//  (C) 2003	Rafael Van Daele-Hunt
+//  (C) 2004	Rafael Van Daele-Hunt
 //------------------------------------------------------------------------------
 #include "map/nmapresourceloader.h"
 #include "kernel/npersistserver.h"
@@ -31,7 +31,7 @@ n_initcmds(nClass* clazz)
 bool
 nMapResourceLoader::SaveCmds(nPersistServer* ps)
 {
-    if (nRoot::SaveCmds(fs))
+    if (nRoot::SaveCmds(ps))
     {
         return true;
     }

@@ -11,17 +11,10 @@
     The MapBlock from which meshTriStrip is initialized must be assigned with meshTriStrip->SetFilename().
     Both should be set prior to any other use of meshTriStrip.
 
-    (C)	2003	Rafael Van Daele-Hunt
+    (C)	2004	Rafael Van Daele-Hunt
 */
 
-#undef N_DEFINES
-#define N_DEFINES nMapResourceLoader
-#include "kernel/ndefdllclass.h"
-
-#ifndef N_RESOURCELOADER_H
 #include "resource/nresourceloader.h"
-#endif
-
 class nResource;
 
 //------------------------------------------------------------------------------
@@ -37,7 +30,9 @@ public:
     virtual bool SaveCmds(nPersistServer* persistServer);
 
     /// Primary load method, the one called by an nResource.
-    bool Load(const char *nMapBlockPath, nResource *callingResource);
+    bool Load(const char *cmdString, nResource *callingResource);
+
+    static const char* const SEPARATOR;
 };
 //------------------------------------------------------------------------------
 #endif

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -14,18 +14,15 @@ nNebulaScriptClass(nMap, "nroot");
 /**
 */
 nMap::nMap() :
-    nRoot(),
     refFileServer("/sys/servers/file2"),
     isDataDirty(false),
     // Map variables
-    imagePath(),
     gridInterval(1.0f),
     heightMin(0.0f),
     heightMax(256.0f),
     heightScale(1.0f),
     // Derived variables
     mapDimension(0),
-    boundingBox(),
     pointData(NULL)   
 {
     //empty
@@ -45,9 +42,10 @@ nMap::~nMap()
     then (n-1) / (blockSize-1) should have zero remainder
     (blockSize is from nMapNode).
 */
-void nMap::SetHeightMap(const char *name)
+void 
+nMap::SetHeightMap(const char *name)
 {
-	imagePath.Set(name);
+    imagePath.Set(name);
     isDataDirty = true;
 }
 
@@ -55,17 +53,18 @@ void nMap::SetHeightMap(const char *name)
     @brief Get heightmap file terrain was loaded from
     @return The filename for the heightmap data.
 */
-const char* nMap::GetHeightMap()
+const char* 
+nMap::GetHeightMap()
 {
-    //return imagePath.GetFilename();
-	return imagePath.Get();
+    return imagePath.Get();
 }
 
 /**
     @brief Set the spacing between grid points in metres
     @param spacing The grid spacing in metres.
 */
-void nMap::SetGridInterval(float spacing)
+void 
+nMap::SetGridInterval(float spacing)
 {
     n_assert(0.0f < spacing);
     gridInterval = spacing;
@@ -76,7 +75,8 @@ void nMap::SetGridInterval(float spacing)
     @brief Get the spacing between grid points in metres
     @return The grid spacing in metres.
 */
-float nMap::GetGridInterval() const
+float 
+nMap::GetGridInterval() const
 {
     return gridInterval;
 }
@@ -84,7 +84,8 @@ float nMap::GetGridInterval() const
 /**
     @brief Set the range of heights
 */
-void nMap::SetHeightRange(float min, float max)
+void 
+nMap::SetHeightRange(float min, float max)
 {
     n_assert(min < max);
     heightMin = min;
@@ -96,7 +97,8 @@ void nMap::SetHeightRange(float min, float max)
 /**
     @brief Get the minimum height of the terrain
 */
-float nMap::GetHeightRangeMin() const
+float 
+nMap::GetHeightRangeMin() const
 {
     return heightMin;
 }
@@ -104,7 +106,8 @@ float nMap::GetHeightRangeMin() const
 /**
     @brief Set the maximum height of the terrain
 */
-float nMap::GetHeightRangeMax() const
+float 
+nMap::GetHeightRangeMax() const
 {
     return heightMax;
 }

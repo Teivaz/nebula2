@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -13,7 +13,8 @@
 /**
     Initialise map vertex buffer.
 */
-void nMapNode::ProcessMap()
+void 
+nMapNode::ProcessMap()
 {
     n_assert(true == isDirty);
     n_assert(true == refMap.isvalid());
@@ -71,7 +72,7 @@ void nMapNode::ProcessMap()
         for (int i = 0; i < numBlocks; ++i)
         {
             MapBlock* block = n_new MapBlock(this);
-            block->Init(refGfxServer.get(), i + j*numBlocks, i, j);
+            block->Init(this->resourceLoader, refGfxServer.get(), i + j*numBlocks, i, j);
 
             MapQuadElement* oct_elm = block->GetQuadElement();
             mapQuadtree->AddElement(oct_elm, block->GetBoundingBox().vmin, block->GetBoundingBox().vmax);
@@ -92,7 +93,8 @@ void nMapNode::ProcessMap()
 /**
     Link all the terrain blocks together.
 */
-void nMapNode::LinkBlocks()
+void 
+nMapNode::LinkBlocks()
 {
     for (int j = 0; j < numBlocks; ++j)
     {
@@ -119,16 +121,19 @@ void nMapNode::LinkBlocks()
 
 /**
 */
-void nMapNode::CalculateMinD2Levels()
+void 
+nMapNode::CalculateMinD2Levels()
 {
     float c2 = CalculateCFactor();
     c2 *= c2;
 
     for (int j = 0; j < numBlocks; ++j)
+    {
         for (int i = 0; i < numBlocks; ++i)
         {
             blockArray[j][i]->CalculateMinD2Levels(c2);
         }
+    }
 }
 
 /**
@@ -136,26 +141,21 @@ void nMapNode::CalculateMinD2Levels()
     It is a factor related to the distance from the camera for a given pixel
     pop to occur.
 */
-float nMapNode::CalculateCFactor()
+float 
+nMapNode::CalculateCFactor()
 {
     float minx, maxx, miny, maxy, minz, maxz;
-	refGfxServer->GetCamera().GetViewVolume(minx, maxx, miny, maxy, minz, maxz);
-	//const nCamera2 & cam = refGfxServer->GetCamera();
-	//float minz = cam.GetNearPlane();
-	//float miny = cam.GetAngleOfView() * 
+    refGfxServer->GetCamera().GetViewVolume(minx, maxx, miny, maxy, minz, maxz);
 
     int x0, x1, y0, y1;
-    //refGfxServer->GetDisplayDesc(x0, y0, x1, y1);
-	nDisplayMode2 dm = refGfxServer->GetDisplayMode();
-	x0 = 0;
-	x1 = dm.GetWidth();
-	y0 = 0;
-	y1 = dm.GetHeight();
+    nDisplayMode2 dm = refGfxServer->GetDisplayMode();
+    x0 = 0;
+    x1 = dm.GetWidth();
+    y0 = 0;
+    y1 = dm.GetHeight();
     int v_res = y1 - y0;
 
-    // float A = near_clip_plane / fabs(coord_top_clip_plane)
     float A = minz / fabsf(miny);
-    // float T = 2 * tau / vertical screen resolution 
     float T = 2 * pixelError / float(v_res);
 
     return A/T;

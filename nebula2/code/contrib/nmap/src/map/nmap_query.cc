@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -12,19 +12,25 @@
 /**
     @brief Ensures that the given map point is actually on the map
 */
-int nMap::ClampToBounds( int coord ) const 
+int 
+nMap::ClampToBounds( int coord ) const 
 {
     if (coord < 0 )
+    {
         coord = 0;
+    }
     else if( coord > mapDimension-2 )
+    {
         coord = mapDimension-2;
+    }
     return coord;
 }
 
 /**
     @brief Return the interpolated height at a supplied point.
 */
-float nMap::GetHeight(float x, float z) const
+float 
+nMap::GetHeight(float x, float z) const
 {
     n_assert( 0 != mapDimension && "nMap::GetHeight: Perhaps the map hasn't been loaded yet?" );
     float temp;
@@ -40,14 +46,14 @@ float nMap::GetHeight(float x, float z) const
     // ne triangle
     if (z_frac <= x_frac)
     {
-	ne = GetPoint(x_int+1, z_int).coord.y;
-	sw = nw+se - ne;
+        ne = GetPoint(x_int+1, z_int).coord.y;
+        sw = nw+se - ne;
     }
     // sw triangle
     else
     {
-	sw = GetPoint(x_int, z_int+1).coord.y;
-	ne = nw+se - sw;
+        sw = GetPoint(x_int, z_int+1).coord.y;
+        ne = nw+se - sw;
     }
 
     float top = Interpolate(nw, ne, x_frac);
@@ -63,7 +69,8 @@ float nMap::GetHeight(float x, float z) const
     @param z
     @param normal the output normal result
 */
-void nMap::GetNormal(float x, float z, vector3& normal) const
+void 
+nMap::GetNormal(float x, float z, vector3& normal) const
 {
     float temp;
     float x_frac = modff(x / gridInterval, &temp);
@@ -157,12 +164,15 @@ void nMap::GetNormal(float x, float z, vector3& normal) const
     @bug Sometimes does not deal with near vertical rays.
     @bug Occassionally misses sharp peaks on the terrain.
 */
-bool nMap::GetIntersect(const line3& line, vector3& contact) const
+bool 
+nMap::GetIntersect(const line3& line, vector3& contact) const
 {
     // Obtain point on or inside terrain bounding box
     // to save doing irrelevant terrain checks
     if (false == boundingBox.intersect(line, contact))
+    {
         return false;
+    }
     vector3 pos = contact;
     
     // Special case, vertical ray
@@ -179,7 +189,9 @@ bool nMap::GetIntersect(const line3& line, vector3& contact) const
 
     // Near vertical ray, shorten so it does not skip terrain
     if (fabsf(contact.y - boundingBox.vmin.y) < fabsf(dir.y))
+    {
         dir *= 0.5f * (fabsf(dir.y) / (boundingBox.vmax.y - boundingBox.vmin.y));
+    }
 
     // :HACK: Counter to track whether the line goes out of scope,
     // this is needed to let checks come in from east and south edges where
@@ -188,7 +200,7 @@ bool nMap::GetIntersect(const line3& line, vector3& contact) const
 
     line3 ray(contact, line.end());
     //int iterations = 1 + int(ray.m.len_squared() / (ray.m % dir));
-	int iterations = 1 + int(ray.m.lensquared() / (ray.m % dir));
+    int iterations = 1 + int(ray.m.lensquared() / (ray.m % dir));
     for (int i = 0; i < iterations; ++i)
     {
         int x = int(floorf(pos.x / this->gridInterval));
@@ -202,7 +214,9 @@ bool nMap::GetIntersect(const line3& line, vector3& contact) const
         {
             ++boundary;
             if (boundary > 4)
+            {
                 return false;
+            }
         }
         // Intersects, check against triangle for exact intersection
         // Duplicated checks for subsequent loops, could probably speed it up
@@ -220,11 +234,15 @@ bool nMap::GetIntersect(const line3& line, vector3& contact) const
             if (true == CheckIntersect(x+x_offset, z+z_offset, line, contact) ||
                 true == CheckIntersect(x+x_offset, z, line, contact) ||
                 true == CheckIntersect(x, z+z_offset, line, contact))
+            {
                 return true;
+            }
 
             // Check against present and adjacent quads
             if (true == CheckIntersect(x, z, line, contact))
+            {
                 return true;
+            }
         }
 
         // Does not intersect, next
@@ -238,14 +256,17 @@ bool nMap::GetIntersect(const line3& line, vector3& contact) const
     @brief Check intersection between a point on line and map tile.
     Makes two line-triangle intersection checks for each tile, i.e. quad.
 */
-bool nMap::CheckIntersect(int x, int z,
+bool 
+nMap::CheckIntersect(int x, int z,
                           const line3& line,
                           vector3& contact) const
 {
     // Always false for out of bounds
     if (x < 0 || x >= this->mapDimension-1 ||
         z < 0 || z >= this->mapDimension-1)
+    {
         return false;
+    }
 
     float ipos;
     triangle tri(GetPoint(x, z).coord,

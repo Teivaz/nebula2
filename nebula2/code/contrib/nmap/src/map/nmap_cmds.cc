@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-/* Copyright (c) 2002 Ling Lo.
+/* Copyright (c) 2002 Ling Lo, adapted to N2 by Rafael Van Daele-Hunt (c) 2004
  *
  * See the file "nmap_license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -32,14 +32,14 @@ void
 n_initcmds(nClass* clazz)
 {
     clazz->BeginCmds();
-    clazz->AddCmd("v_setheightmap_s", 'SHGT', n_setheightmap);
-    clazz->AddCmd("s_getheightmap_v", 'GHGT', n_getheightmap);
+    clazz->AddCmd("v_setheightmap_s",    'SHGT', n_setheightmap);
+    clazz->AddCmd("s_getheightmap_v",    'GHGT', n_getheightmap);
     clazz->AddCmd("v_setgridinterval_f", 'SGIT', n_setgridinterval);
     clazz->AddCmd("f_getgridinterval_v", 'GGIT', n_getgridinterval);
     clazz->AddCmd("v_setheightrange_ff", 'SHRG', n_setheightrange);
     clazz->AddCmd("ff_getheightrange_v", 'GHRG', n_getheightrange);
-    clazz->AddCmd("f_getheight_ff",'GHXY', n_getheight);
-    clazz->AddCmd("fff_getnormal_ff",'GNXY', n_getnormal);
+    clazz->AddCmd("f_getheight_ff",      'GHXY', n_getheight);
+    clazz->AddCmd("fff_getnormal_ff",    'GNXY', n_getnormal);
     clazz->EndCmds();
 }
 
