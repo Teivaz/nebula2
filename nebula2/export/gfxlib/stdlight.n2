@@ -1,0 +1,14 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new nlightnode l
+	sel l
+	.setposition 1000.000000 500.000000 1000.000000
+	.setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
+	.setvector "LightSpecular" 1.000000 1.000000 1.000000 1.000000
+	.setvector "LightAmbient" 1.000000 1.000000 1.000000 1.000000
+	.setvector "LightDiffuse1" 0.300000 0.300000 0.300000 1.000000
+	.setvector "LightSpecular1" 0.300000 0.300000 0.300000 1.000000
+sel ..
+# ---
+# Eof
