@@ -9,17 +9,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_LIST_H
 #include "util/nlist.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nStack 
@@ -40,11 +32,7 @@ private:
     /// a private stack node class
     class nStackNode : public nNode
     {
-#ifdef __VC__
-        friend nStack;
-#else
         friend class nStack;
-#endif 
 
         /// constructor
         nStackNode(const TYPE& e)
