@@ -125,7 +125,7 @@ proc gen_lib_unix {target cid} {
                   [make_list $depend_list $l_pre $l_post]\
                   [make_list $obj_list $o_pre $o_post]"
     
-    puts $cid "\t\${AR} ru $l_pre$target$l_post\
+    puts $cid "\t\${AR} rus $l_pre$target$l_post\
               [make_list $obj_list $o_pre $o_post]"
 
     puts $cid ""
