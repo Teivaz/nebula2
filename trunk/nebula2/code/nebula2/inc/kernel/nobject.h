@@ -16,6 +16,8 @@
     - use nKernelServer::New() to create an object and
       the object's Release() method to destroy it
 
+    See also @ref N2ScriptInterface_nobject
+
     (c) 2004 Vadim Macagon
     Refactored out of nRoot.
 */

@@ -78,7 +78,7 @@ public:
     void SetCwd(nRoot* newCwd);
     /// get current working object
     nRoot* GetCwd();
-    /// push current working object ob stack, and set new cwd
+    /// push current working object on stack, and set new cwd
     void PushCwd(nRoot* newCwd);
     /// restore previous working object
     nRoot* PopCwd();
