@@ -20,6 +20,7 @@ begintarget nebulalib
         microtcl
         ndinput8
         ndirect3d9
+        ntoollib
     }
 endtarget        
         
