@@ -19,6 +19,7 @@ static void n_setborder(void* slf, nCmd* cmd);
 static void n_getborder(void* slf, nCmd* cmd);
 static void n_setclipping(void* slf, nCmd* cmd);
 static void n_getclipping(void* slf, nCmd* cmd);
+static void n_setvcenter(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -53,6 +54,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ff_getborder_v",        'GBRD', n_getborder);
     cl->AddCmd("v_setclipping_b",       'SCLP', n_setclipping);
     cl->AddCmd("b_getclipping_v",       'GCLP', n_getclipping);
+    cl->AddCmd("v_setvcenter_b",        'SVCR', n_setvcenter);
     cl->EndCmds();
 }
 
@@ -355,4 +357,21 @@ n_getclipping(void* slf, nCmd* cmd)
 {
     nGuiTextLabel* self = (nGuiTextLabel*) slf;
     cmd->Out()->SetB(self->GetClipping());
+}
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setvcenter
+    @input
+    b(vertical centering flag)
+    @output
+    v
+    @info
+    Enable/disable vertical text centering. Default is enabled.
+*/
+static void
+n_setvcenter(void* slf, nCmd* cmd)
+{
+    nGuiTextLabel* self = (nGuiTextLabel*) slf;
+    self->SetVCenter(cmd->In()->GetB());
 }
