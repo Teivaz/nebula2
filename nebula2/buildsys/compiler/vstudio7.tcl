@@ -76,6 +76,7 @@ proc emit_vcproj_config {name cid debug} {
     }
     
     set inc_list [join [get_incsearchdirs] ";"]
+    set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
     foreach def [get_tardefs $name] {
         if { [llength [lindex $def 0]] && [llength [lindex $def 1]] } {
             append def_list "[lindex $def 0]=[lindex $def 1];"
