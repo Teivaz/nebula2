@@ -5,7 +5,7 @@
 #          bits as an example for other compiler generator authors.
 #  FIXME:  Make sure the functions are properly commented on.
 #
-#   Cobbled up from the original buildsys courtesy of Radon Labs and 
+#   Cobbled up from the original buildsys courtesy of Radon Labs and
 #   Leaf Garland's Nebula2 VC7 project files.
 #   Copyright (c) 2003 Radon Labs
 #
@@ -44,15 +44,15 @@ proc emit_vcproj_config {name cid debug} {
     variable release_preprocessor_defs
     global cur_workspacepath
     variable neb_libpath_win32
-    
+
     set tartype [get_tartype $name]
     set def_list ""
-    
+
     set moddeffile [get_moddeffile $name]
         if { $moddeffile != "" } {
             set moddeffile [findrelpath $cur_workspacepath $moddeffile]
     }
-    
+
     set typenumber 0
     set prefix ""
     switch -exact $tartype {
@@ -74,7 +74,7 @@ proc emit_vcproj_config {name cid debug} {
             append def_list "N_STATIC;"
         }
     }
-    
+
     set inc_list [join [get_incsearchdirs] ";"]
     set lib_list [join [get_libsearchdirs] "/win32_vc_i386;"]
     foreach def [get_tardefs $name] {
@@ -86,23 +86,23 @@ proc emit_vcproj_config {name cid debug} {
     }
 
     set lib_path [findrelpath $cur_workspacepath $neb_libpath_win32]
-    
+
     if { $debug == 1 } {
         set confname "Debug|Win32"
-        set idir ".\\Debug" 
-        #[path_wspacetointer]/win32d   
+        set idir ".\\Debug"
+        #[path_wspacetointer]/win32d
         set odir [path_wspacetooutput]/win32d
         set win32_libs [get_win32libs_debug $name]
         append def_list $debug_preprocessor_defs
     } else {
         set confname "Release|Win32"
-        set idir ".\\Release" 
-        #[path_wspacetointer]/win32   
+        set idir ".\\Release"
+        #[path_wspacetointer]/win32
         set odir [path_wspacetooutput]/win32
         set win32_libs [get_win32libs_release $name]
         append def_list $release_preprocessor_defs
     }
-    
+
     puts $cid "\t\t<Configuration"
     puts $cid "\t\t\tName=\"$confname\""
     puts $cid "\t\t\tOutputDirectory=\"$odir\""
@@ -159,7 +159,7 @@ proc emit_vcproj_config {name cid debug} {
         puts $cid "\t\t\t\tPreprocessorDefinitions=\"_DEBUG\""
         puts $cid "\t\t\t\tCulture=\"1033\" />"
     }
-    
+
     puts $cid "\t\t</Configuration>"
 }
 
@@ -168,19 +168,19 @@ proc emit_vcproj_config {name cid debug} {
 #-------------------------------------------------------------------------------
 proc emit_vcproj_files {name cid} {
     global platform
-    
+
     puts $cid "\t<Files>"
-    
+
     foreach module [get_tarmods $name] {
         switch -exact [get_modtype $module] {
             "c" { set compileas 1 }
             "cpp" { set compileas 2 }
             default { set compileas 0 }
         }
-        
+
         set more_syms "N_INIT=n_init_$module;N_NEW=n_new_$module;N_INITCMDS=n_initcmds_$module"
         puts $cid "\t\t<Filter Name=\"$module\" Filter=\"cpp;c;cxx;cc;h;hxx;hcc\" >"
-        
+
         # Source files
         foreach sourcefile [get_modsources_dressed $module] {
             regsub -all "/" [pathto [getfilenamewithextension $sourcefile cc] ] "\\" filename
@@ -194,13 +194,13 @@ proc emit_vcproj_files {name cid} {
             puts $cid "\t\t\t\t</FileConfiguration>"
             puts $cid "\t\t\t</File>"
         }
-        
+
         # Header files
         foreach headerfile [get_modheaders_dressed $module] {
             regsub -all "/" [pathto $headerfile.h] "\\" filename
             puts $cid "\t\t\t<File RelativePath=\"$filename\" />"
         }
-        
+
         puts $cid "\t\t</Filter>"
     }
 
@@ -214,24 +214,24 @@ proc emit_vcproj_files {name cid} {
         puts $cid "\t\t\t<File RelativePath=\"$filename\" />"
         puts $cid "\t\t</Filter>"
     }
-    
+
     # Resource files
     set tartype [get_tartype $name]
-    if {$tartype == "exe" || $tartype == "dll"} {        
+    if {$tartype == "exe" || $tartype == "dll"} {
         puts $cid "\t\t<Filter Name=\"Resource Files\" Filter=\"rc\" >"
 
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
             puts $cid "\t\t\t<File RelativePath=\"pkg\\res_$name.rc\" />"
         }
-        
+
         # add any custom rsrc files
         set resfile [get_win32resource $name]
         if { $resfile != "" } {
             global cur_workspacepath
             global home
             global mod
-    
+
             set startpath [string trim $home '/']
             set i [findmodbyname $name]
             set resfile [findrelpath $cur_workspacepath $startpath/code/$mod($i,trunkdir)/res/$resfile.rc]
@@ -260,7 +260,7 @@ proc emit_vcproj_tail {cid} {
 proc gen_vcproj {name} {
     global home
     global cur_workspacepath
-    
+
     ::log::log debug "Generate vcproj target: $name"
 
     # write .vcproj file
@@ -275,7 +275,7 @@ proc gen_vcproj {name} {
     emit_vcproj_files $name $cid
 
     emit_vcproj_tail $cid
-    
+
     close $cid
 }
 
@@ -288,9 +288,9 @@ proc gen_sln { name } {
     global home
     global cur_workspacepath
     set targetuuids(0) 0
-    
+
     ::log::log info "Generating Visual Studio .NET 2002 solution file $name.sln..."
-    
+
     # write .sln file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.sln] w]
 
@@ -301,9 +301,9 @@ proc gen_sln { name } {
         if { [test_tarplatform $target $platform ] } {
             continue
         }
-        
+
         set targetuuids($target) [string toupper [exec uuidgen]]
-        
+
         puts $cid "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"$target\", \"$target.vcproj\", \"{$targetuuids($target)}\""
         puts $cid "EndProject"
     }
@@ -313,7 +313,7 @@ proc gen_sln { name } {
     puts $cid "\t\tConfigName.0 = Debug_Win32"
     puts $cid "\t\tConfigName.1 = Release_Win32"
     puts $cid "\tEndGlobalSection"
-    
+
     # And now, for each project, its dependencies
     puts $cid "\tGlobalSection(ProjectDependencies) = postSolution    "
     foreach target [get_targets] {
@@ -322,13 +322,13 @@ proc gen_sln { name } {
             if {[test_tarplatform $dep $platform]} {
                 continue
             }
-            
+
             puts $cid "\t\t{$targetuuids($target)}.$depcount = {$targetuuids($dep)}"
             incr depcount
         }
     }
     puts $cid "\tEndGlobalSection"
-    
+
     # Configurations
     puts $cid "\tGlobalSection(ProjectConfiguration) = postSolution"
     foreach target [get_targets] {
@@ -340,7 +340,7 @@ proc gen_sln { name } {
         puts $cid "\t\t{$targetuuids($target)}.Release_Win32.ActiveCfg = Release|Win32"
         puts $cid "\t\t{$targetuuids($target)}.Release_Win32.Build.0 = Release|Win32"
     }
-    
+
     puts $cid "\tEndGlobalSection"
     puts $cid "\tGlobalSection(ExtensibilityGlobals) = postSolution"
     puts $cid "\tEndGlobalSection"
@@ -356,7 +356,6 @@ proc gen_sln { name } {
 #   Generates the .sln and .vcproj file for the specified workspaces
 #-------------------------------------------------------------------------------
 proc generate { wslist } {
-    
     ::log::log debug "Looking for uuidgen...."
     if { [catch { exec uuidgen }] } {
         ::log::log error "uuidgen.exe not found skipping Visual Studio Solutions."
@@ -364,22 +363,22 @@ proc generate { wslist } {
     } else {
         ::log::log debug "uuidgen.exe found"
     }
-    
+
     set vstudiopath ./build/vstudio7
     set outputpath  ./bin
     set interpath   $vstudiopath/inter
-    
+
     # list of required targets - project files
     set targets ""
-    
-    foreach workspace [get_workspaces $wslist]  {    
+
+    foreach workspace [get_workspaces $wslist]  {
         # let the buildsys know which workspace we are currently working
         # with and what the default directories for that workspace should
         # be - default directories may be overridden - this particular
         # call also writes the pkg_XXX.cc files for the workspace out.
-        
+
         use_workspace $workspace $vstudiopath $outputpath $interpath
-        
+
         gen_sln $workspace
 		
 		# collect targetlist from workspace
@@ -387,10 +386,10 @@ proc generate { wslist } {
 			lappend targets [list $target $workspace]
 		}
     }
-    
+
     #remove double entrys - ignore workspace numbers
     set targets [lsort -unique -index 0 $targets]
-    
+
     foreach target $targets {
 		use_workspace [lindex $target 1] $vstudiopath $outputpath $interpath
 		gen_vcproj [lindex $target 0]
