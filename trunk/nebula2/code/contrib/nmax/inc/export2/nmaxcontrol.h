@@ -46,7 +46,7 @@ struct nMaxSampleKey
     Point4     pt4;      // use if for nMaxPoint4
     float      fval;  // use it for nMaxFloat
 
-    float      time;  // key time.
+    float      time;  // time in seconds 
 };
 
 //-----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public:
                            int sampleRate, nMaxControlType type);
 
     static void GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
-        int sampleRate, nMaxControlType type);
+        int sampleRate, nMaxControlType type, bool optimize = false);
 
 	static Type GetType(Control *control);
 
