@@ -29,7 +29,7 @@ beginmodule ngfxserver2
         ngfxserver2_main 
         ngfxserver2_cmds 
         nshaderstate nshaderlist 
-        ndynamicshadermesh 
+        ndynamicmesh ndynamicshadermesh 
     }
     setheaders {
         ngfxserver2 

@@ -11,22 +11,7 @@
 #include "kernel/ntimeserver.h"
 
 nNebulaClass(nSceneServer, "nroot");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nsceneserver
-    
-    @cppclass
-    nSceneServer
-
-    @superclass
-    nroot
-    
-    @classinfo
-    Docs needed.
-*/
-
+nSceneServer* nSceneServer::Singleton = 0;
 
 // global data for qsort() compare function
 nSceneServer* nSceneServer::self = 0;

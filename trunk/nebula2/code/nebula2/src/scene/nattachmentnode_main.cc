@@ -39,12 +39,12 @@ nAttachmentNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(sceneServer);
     n_assert(renderContext);
 
-    this->InvokeTransformAnimators(renderContext);
+    this->InvokeAnimators(nAnimator::Transform, renderContext);
     this->UpdateFinalTransform();
     if (this->GetLockViewer())
     {
         // if lock viewer active, copy viewer position
-        const matrix44& viewMatrix = this->refGfxServer->GetTransform(nGfxServer2::InvView);
+        const matrix44& viewMatrix = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
         matrix44 m = this->finalMatrix;
         m.M41 = viewMatrix.M41;
         m.M42 = viewMatrix.M42;

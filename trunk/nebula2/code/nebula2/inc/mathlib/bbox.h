@@ -55,6 +55,8 @@ public:
     vector3 extents() const;
     /// get size of box
     vector3 size() const;
+    /// get diagonal size of box
+    float diagonal_size() const;
     /// set from matrix44
     void set(const matrix44& m);
     /// set from center point and extents
@@ -597,5 +599,15 @@ int bbox3::intersect(bbox3 box)
         else                return OUTSIDE;
     }
 }
+
+/**
+*/
+inline
+float
+bbox3::diagonal_size() const
+{
+    return vector3::distance(this->vmin, this->vmax);
+}
+
 //------------------------------------------------------------------------------
 #endif
