@@ -91,7 +91,7 @@ nViewerApp::Open()
     this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/video");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
     this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
-    //this->refHttpServer     = (nHttpServer*)      kernelServer->New("nhttpserver", "/sys/servers/http");
+    this->refHttpServer     = (nHttpServer*)      kernelServer->New("nhttpserver", "/sys/servers/http");
     this->refPrefServer     = (nPrefServer*)      kernelServer->New("nwin32prefserver", "/sys/servers/pref");
 
     // initialize the preferences server
@@ -211,7 +211,7 @@ nViewerApp::Close()
     this->refGfxServer->CloseDisplay();
 
     this->refPrefServer->Release();
-    //this->refHttpServer->Release();
+    this->refHttpServer->Release();
     this->refShadowServer->Release();
     this->refRootNode->Release();
     this->refGuiServer->Release();
