@@ -9,7 +9,7 @@
     Use the nHardRef object to reference other objects if you
     need deferred pointer resolve, but require the reference
     to keep uptodate if the target objects path in the
-    hierarchie changes. The nHardRef objects can either
+    hierarchy changes. The nHardRef objects can either
     be initialized by name (requires a manual call to
     nHardRef::resolve() when it's guaranteed that the
     target object exists), or by pointer (which implies that

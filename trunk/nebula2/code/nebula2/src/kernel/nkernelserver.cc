@@ -370,7 +370,7 @@ nKernelServer::~nKernelServer(void)
         this->remoteServer = 0;
     }
 
-    // kill object hierarchie
+    // kill object hierarchy
     this->root->Release();
 
     // kill class list
@@ -622,7 +622,7 @@ nKernelServer::ReleaseClass(nClass* cl)
 //------------------------------------------------------------------------------
 /**
     Create a Nebula object given a class name and a path in the 
-    Nebula object hierarchie. This method will abort the Nebula app with
+    Nebula object hierarchy. This method will abort the Nebula app with
     a fatal error if the object couldn't be created.
 
     @param  className   Name of the object

@@ -5,7 +5,7 @@
     @class nRoot
 
     nRoot defines the basic functionality and interface for
-    the Nebula class hierarchie:
+    the Nebula class hierarchy:
 
     - reference counting
     - RTTI a class is identified by a string name
@@ -67,7 +67,7 @@ public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)
     nRoot(void);
 
-    /// initialize after linkage into name hierarchie
+    /// initialize after linkage into name hierarchy
     virtual void Initialize();
     /// release object (USE INSTEAD OF DESTRUCTOR!)
     virtual bool Release();
@@ -92,7 +92,7 @@ public:
     
     /// get pointer to my class object
     nClass *GetClass(void) const;
-    /// return true if part of class hierarchie
+    /// return true if part of class hierarchy
     bool IsA(nClass *) const;
     /// return true instance of class
     bool IsInstanceOf(nClass *) const; 

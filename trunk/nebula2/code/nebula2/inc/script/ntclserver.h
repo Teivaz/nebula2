@@ -81,7 +81,7 @@ private:
 
 public:                         // note: public because C functions need to access this
     enum {
-        MAXINDENT = 64,         // max hierarchie depth
+        MAXINDENT = 64,         // max hierarchy depth
     };
     Tcl_Interp* interp;
     bool redirectUnknown;

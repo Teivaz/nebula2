@@ -100,7 +100,7 @@ nSceneNode::RenderContextCreated(nRenderContext* renderContext)
 //------------------------------------------------------------------------------
 /**
     Called by the client app when a render context for this scene node
-    hierarchie should be destroyed. This is usually the case when the
+    hierarchy should be destroyed. This is usually the case when the
     game object associated with this scene node hierarchie goes away.
 
     The method will be invoked recursively on all child and depend nodes

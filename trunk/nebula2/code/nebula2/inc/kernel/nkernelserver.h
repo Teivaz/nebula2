@@ -70,7 +70,7 @@ public:
     nRoot* NewNoFail(const char* className, const char* objectName);
     /// create a Nebula object from a persistent object file
     nRoot* Load(const char* path);
-    /// lookup a Nebula object in the hierarchie
+    /// lookup a Nebula object in the hierarchy
     nRoot* Lookup(const char* path);
 
     /// set current working object
@@ -155,7 +155,7 @@ private:
     nHardRefServer* hardRefServer;  // private pointer to hardrefserver
 
     nHashList classList;            // list of nClass objects
-    nRoot* root;                    // the root object of the Nebula object hierarchie
+    nRoot* root;                    // the root object of the Nebula object hierarchy
     nRoot* cwd;                     // the current working object
     nStack<nRoot*> cwdStack;        // stack of previous cwd's
 
