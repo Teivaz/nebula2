@@ -352,7 +352,7 @@ bool nMaxScene::Postprocess()
     //    }
     //}
 
-    // we assume any one of the meshes is shadow type, export shadow mesh.
+    // we assume any one of the meshes are shadow type, consider it to a shadow mesh.
     // FIXME: it would be good to use more intuitive way.
     bool isShadowMesh = false;
     for (int i=0; i<this->meshArray.Size(); i++)
@@ -365,10 +365,9 @@ bool nMaxScene::Postprocess()
         }
     }
 
+    // if the global mesh has skinned animation, it might be needed to be partitioning. 
     if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
-        // if the global mesh is skinned mesh, 
-        // create skin animator and partition the mesh.
         if (!isShadowMesh)
         {
             if (this->globalMeshBuilder.GetNumVertices())
@@ -418,6 +417,22 @@ bool nMaxScene::Postprocess()
             // check the mesh for geometry error.
             nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
 
+            //FIXME: commented out until applying scaling to bones.
+            // do geometry scaling.
+            //float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+            //if (geomScale != 0.0f)
+            //{
+            //    vector3 scale;
+            //    matrix44 m;
+
+            //    scale.set(geomScale, geomScale, geomScale);
+            //    if (scale.len() != 1.0f)
+            //    {
+            //        m.scale(scale);
+            //        this->globalMeshBuilder.Transform(m);
+            //    }
+            //}
+
             // specifies bounding box.
             rootBBox = globalMeshBuilder.GetBBox();
 
@@ -425,6 +440,7 @@ bool nMaxScene::Postprocess()
             this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
         }
     }
+/*  FIXME: it should be done on mesh exporting side.
     else
     {
         for (int i=0; i<this->meshArray.Size(); i++)
@@ -435,6 +451,7 @@ bool nMaxScene::Postprocess()
             rootBBox.extend(localBox);
         }
     }
+*/
 
 // begin animation save
     nString animFilename;
@@ -443,8 +460,6 @@ bool nMaxScene::Postprocess()
     animFilename = nMaxOptions::Instance()->GetAnimPath() + animFilename;
 
     //FIXME: we should add error handling code.
-    //if (!this->ExportAnimation(animFilename))
-    //    return false;
     if (!nMaxBoneManager::Instance()->Export(animFilename.Get()))
         return false;
 // end animation save
