@@ -75,6 +75,19 @@ public:
     /// finish detail textures
     void EndDetailTextures();
 
+    /**
+     * @brief Set scaling of the detail image
+     *
+     * All detail images are mapped via texture generation, where a vertex (x,y) coordinate is mapped directly into
+     * a (u,v) coordinate.  If you have a large distance between points of your heightfield, this can result in a high
+     * repetition of the detail texture and very obvious tiling.  If you want to strech out the detail textures to avoid a
+     * tiled appearance, reduce this number to 0.1 or maybe 0.01
+     */
+    void SetDetailScale(double detailscale);
+
+    /// Get current scaling of the detail images
+    double GetDetailScale() const;
+
     /// set the NOH path to the opende space for terrain collision geoms; creates an nOpendeSpace if needed
     void SetCollisionSpace(const char *collisionSpacePath);
 
@@ -134,6 +147,9 @@ protected:
     nDynAutoRef<nOpendeSpace> refTerrainSpace;
 
     nRef<nTexture2> refWhiteTexture; // white texture used for base texture writing
+
+    // scaling use on detail textures
+    double detailScaling;
 };
 
 #endif
