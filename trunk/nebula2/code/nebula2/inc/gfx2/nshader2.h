@@ -20,6 +20,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
+#include <d3d9.h> // DELETE ME - Workaround (to have the define) to support the summer 2004 update sdk
 #include "resource/nresource.h"
 #include "mathlib/matrix.h"
 #include "variable/nvariable.h"
