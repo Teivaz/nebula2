@@ -370,8 +370,8 @@ nGuiTextEntry::Render()
         screenSpaceRect.v0 += this->border;
         screenSpaceRect.v1 -= this->border;
 
-        // if currently active, render the cursor
-        if (this->active)
+        // render the cursor, if necessary
+        if (this->IsCursorVisible())
         {
             // get x position and width of cursor
             int cursorIndex = this->lineEditor->GetCursorPos();
@@ -432,4 +432,31 @@ nGuiTextEntry::Render()
         return true;
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Returns true iff the cursor should be rendered this frame.
+    For the cursor to be shown, the nGuiTextEntry must be active
+    and the cursor itself unblinking or in the "on" phase of a blink.
+*/
+bool nGuiTextEntry::IsCursorVisible() const
+{   
+    bool retVal = false;
+    if( this->active )
+    {
+        if( this->blinking )
+        {
+            double time = nGuiServer::Instance()->GetTime();
+            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
+            {
+                retVal = true;
+            }
+        }
+        else
+        {
+            retVal = true;
+        }
+    }
+    return retVal;
 }

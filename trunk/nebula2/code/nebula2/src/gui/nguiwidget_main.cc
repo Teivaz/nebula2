@@ -20,6 +20,7 @@ nGuiWidget::nGuiWidget() :
     lastButtonDownTime(0.0),
     shown(true),
     blinking(false),
+    blinkRate(1.0),
     enabled(true),
     stickyMouse(false),
     hasFocus(false),

@@ -26,6 +26,7 @@ static void n_getrect(void* slf, nCmd* cmd);
 static void n_settooltip(void* slf, nCmd* cmd);
 static void n_gettooltip(void* slf, nCmd* cmd);
 static void n_setblinking(void* slf, nCmd* cmd);
+static void n_setblinkrate(void* slf, nCmd* cmd);
 static void n_getblinking(void* slf, nCmd* cmd);
 static void n_setdefaultbrush(void* slf, nCmd* cmd);
 static void n_getdefaultbrush(void* slf, nCmd* cmd);
@@ -74,6 +75,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_settooltip_s",                'STTP', n_settooltip);
     cl->AddCmd("s_gettooltip_v",                'GTTP', n_gettooltip);
     cl->AddCmd("v_setblinking_b",               'SBLK', n_setblinking);
+    cl->AddCmd("v_setblinkrate_f",              'SBLR', n_setblinkrate);
     cl->AddCmd("b_getblinking_v",               'GBLK', n_getblinking);
     cl->AddCmd("v_setdefaultbrush_s",           'SDFB', n_setdefaultbrush);
     cl->AddCmd("s_getdefaultbrush_v",           'GDFB', n_getdefaultbrush);
@@ -473,6 +475,24 @@ n_setblinking(void* slf, nCmd* cmd)
     self->SetBlinking(cmd->In()->GetB());
 }
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setblinkrate
+    @input
+    f(BlinkRate)
+    @output
+    v
+    @info
+    Sets the number of seconds for a complete blink cycle (on & off once).
+    Only implemented by some widget classes.
+*/
+static void
+n_setblinkrate(void* slf, nCmd* cmd)
+{
+    nGuiWidget* self = (nGuiWidget*) slf;
+    self->SetBlinkRate(cmd->In()->GetF());
+}
 //-----------------------------------------------------------------------------
 /**
     @cmd

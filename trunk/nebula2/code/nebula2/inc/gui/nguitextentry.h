@@ -65,6 +65,8 @@ public:
 protected:
     /// check if text edit line contains empty text and replace with provided empty replacement text
     void CheckEmptyText();
+    /// return true iff the cursor should be displayed this frame
+    bool IsCursorVisible() const;
 
     nAutoRef<nInputServer> refInputServer;
     bool mouseOver;
