@@ -115,13 +115,12 @@ nKeyArray<TYPE>::bsearch(int key)
         if ((half = num/2)) 
         {
             mid = lo + ((num & 1) ? half : (half - 1));
-            int diff = key - mid->key;
-            if (diff < 0) 
+            if (key < mid->key) 
             {
                 hi = mid - 1;
                 num = num & 1 ? half : half-1;
             } 
-            else if (diff > 0) 
+            else if (key > mid->key) 
             {
                 lo = mid + 1;
                 num = half;
