@@ -79,6 +79,10 @@ public:
     /// get texture shader parameter at index
     nShaderState::Param GetTextureParamAt(int index) const;
 
+    int GetNumParams() const;
+    const char* GetParamNameByIndex(int index) const;
+    const char* GetParamTypeByIndex(int index) const;
+
 protected:
     /// load a texture resource
     bool LoadTexture(int index);
@@ -330,6 +334,36 @@ nAbstractShaderNode::GetTextureParamAt(int index) const
 {
     return this->texNodeArray[index].shaderParameter;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAbstractShaderNode::GetNumParams() const
+{
+    return shaderParams.GetNumValidParams();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nAbstractShaderNode::GetParamNameByIndex(int index) const
+{
+  return nShaderState::ParamToString(shaderParams.GetParamByIndex(index));
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nAbstractShaderNode::GetParamTypeByIndex(int index) const
+{
+  return nShaderState::TypeToString(shaderParams.GetArgByIndex(index).GetType());
+}
+
 
 //------------------------------------------------------------------------------
 #endif
