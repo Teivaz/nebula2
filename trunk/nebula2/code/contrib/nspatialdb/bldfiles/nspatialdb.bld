@@ -67,6 +67,9 @@ beginworkspace nspatialdb
         nkernel
         nnebula
         noctree
+        nshadow
+        tinyxml
+        xml
     }
 endworkspace
 #-----------------------------------------------------------------------------
