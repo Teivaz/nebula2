@@ -9,7 +9,7 @@
 
 //------------------------------------------------------------------------------
 /**
-	history:
+    history:
     - 30-Jan-2002   peter   created
     - 11-Feb-2002   floh    Linux stuff
 */
@@ -27,15 +27,15 @@ nFile::nFile(nFileServer2* server) :
 //------------------------------------------------------------------------------
 /**
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
 */
 nFile::~nFile()
 {
-	if(this->IsOpen())
-	{
-		this->Close();
-	}
+    if(this->IsOpen())
+    {
+        this->Close();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -67,55 +67,55 @@ nFile::IsOpen()
 bool
 nFile::Open(const char* fileName, const char* accessMode)
 {
-	n_assert(!this->IsOpen());
+    n_assert(!this->IsOpen());
 
     n_assert(fileName);
     n_assert(accessMode);
 
-	char buf[N_MAXPATH];
-	this->fs->ManglePath(fileName, buf, sizeof(buf));
+    char buf[N_MAXPATH];
+    this->fs->ManglePath(fileName, buf, sizeof(buf));
 
     this->lineNumber = 0;
 
 #ifdef __WIN32__
-	DWORD access = 0;
-	DWORD disposition = 0;
+    DWORD access = 0;
+    DWORD disposition = 0;
     DWORD shareMode = 0;
         
-	switch (accessMode[0]) {
-	    case 'r':
-	    case 'R':
+    switch (accessMode[0]) {
+        case 'r':
+        case 'R':
             disposition = OPEN_EXISTING;
             access      = GENERIC_READ;
             shareMode   = FILE_SHARE_READ;
-		    break;
-	    case 'w':
-	    case 'W':
-	        disposition = CREATE_ALWAYS;
-	        access      = GENERIC_WRITE;
+            break;
+        case 'w':
+        case 'W':
+            disposition = CREATE_ALWAYS;
+            access      = GENERIC_WRITE;
             shareMode   = 0;
 
             break;
-	    case 'a':
-	    case 'A':
-			disposition = OPEN_ALWAYS;
-			access      = GENERIC_WRITE;
+        case 'a':
+        case 'A':
+            disposition = OPEN_ALWAYS;
+            access      = GENERIC_WRITE;
             shareMode   = 0;
             break;
-	};
+    };
 
-	this->handle = CreateFile(buf,              // filename
+    this->handle = CreateFile(buf,              // filename
                               access,           // access mode
                               shareMode,        // share mode
                               0,                // security flags
-			                  disposition,      // what to do if file doesn't exist
+                              disposition,      // what to do if file doesn't exist
                               FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,  // flags'n'attributes
                               0);               // template file
-	if (this->handle == INVALID_HANDLE_VALUE)
-	{
-		this->handle = 0;
-		return false;
-	}
+    if (this->handle == INVALID_HANDLE_VALUE)
+    {
+        this->handle = 0;
+        return false;
+    }
 #else
     this->fp = fopen(buf, accessMode);
     if (!this->fp)
@@ -124,27 +124,27 @@ nFile::Open(const char* fileName, const char* accessMode)
     }
 #endif
 
-	return true;
+    return true;
 }
 
 //------------------------------------------------------------------------------
 /**
-	closes the file
+    closes the file
 
-	history:
+    history:
     - 30-Jan-2002   peter   created
     - 11-Feb-2002   floh    Linux stuff
 */
 void
 nFile::Close()
 {
-	n_assert(this->IsOpen());
+    n_assert(this->IsOpen());
 
 #ifdef __WIN32__
-	if (this->handle)
+    if (this->handle)
     {
-		CloseHandle(this->handle);
-    	this->handle = 0;
+        CloseHandle(this->handle);
+        this->handle = 0;
     }
 #else
     if (this->fp)
@@ -159,26 +159,26 @@ nFile::Close()
 /**
     writes a number of bytes to the file
 
-	@param buffer		buffer with data
-	@param numBytes		number of bytes to write
-    @return				number of bytes written
+    @param buffer        buffer with data
+    @param numBytes        number of bytes to write
+    @return                number of bytes written
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
     - 11-Feb-2002   floh    Linux stuff
 */
 int
 nFile::Write(const void* buffer, int numBytes)
 {
-	n_assert(this->IsOpen());
+    n_assert(this->IsOpen());
     
     // statistics
     this->fs->AddBytesWritten(numBytes);
 
 #ifdef __WIN32__
-	DWORD written;
-	WriteFile(this->handle, buffer, numBytes, &written, NULL);
-	return written;
+    DWORD written;
+    WriteFile(this->handle, buffer, numBytes, &written, NULL);
+    return written;
 #else
     return fwrite(buffer, 1, numBytes, this->fp);
 #endif
@@ -188,25 +188,25 @@ nFile::Write(const void* buffer, int numBytes)
 /**
     reads a number of bytes from the file
 
-	@param buffer		buffer for data
-	@param numBytes		number of bytes to read
-	@return				number of bytes read
+    @param buffer        buffer for data
+    @param numBytes        number of bytes to read
+    @return                number of bytes read
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
 */
 int
 nFile::Read(void* buffer, int numBytes)
 {
-	n_assert(this->IsOpen());
+    n_assert(this->IsOpen());
 
     // statistics
     this->fs->AddBytesRead(numBytes);
 
 #ifdef __WIN32__
-	DWORD read;
-	ReadFile(this->handle, buffer, numBytes, &read, NULL);
-	return read;
+    DWORD read;
+    ReadFile(this->handle, buffer, numBytes, &read, NULL);
+    return read;
 #else
     return fread(buffer, 1, numBytes, this->fp);
 #endif
@@ -215,19 +215,19 @@ nFile::Read(void* buffer, int numBytes)
 
 //------------------------------------------------------------------------------
 /**
-	gets current position of file pointer
+    gets current position of file pointer
   
-	@return          position of pointer
+    @return          position of pointer
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
 */
 int 
 nFile::Tell()
 {
-	n_assert(this->IsOpen());
+    n_assert(this->IsOpen());
 #ifdef __WIN32__
-	return SetFilePointer(this->handle, 0, NULL, FILE_CURRENT);
+    return SetFilePointer(this->handle, 0, NULL, FILE_CURRENT);
 #else
     return ftell(this->fp);
 #endif
@@ -235,39 +235,39 @@ nFile::Tell()
 
 //------------------------------------------------------------------------------
 /**
-	sets the file pointer to given absolute or relative position
+    sets the file pointer to given absolute or relative position
 
-    @param byteOffset		the offset
-	@param origin			position from which to count
-	@return					success
+    @param byteOffset        the offset
+    @param origin            position from which to count
+    @return                    success
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
 */
 bool 
 nFile::Seek(int byteOffset, nSeekType origin)
 {
-	n_assert(this->IsOpen());
+    n_assert(this->IsOpen());
 
     this->fs->AddSeek();
 
 #ifdef __WIN32__
-	DWORD method;
-	switch (origin)
+    DWORD method;
+    switch (origin)
     {
-	    case CURRENT:
-		    method = FILE_CURRENT;
-		    break;
-	    case START:
-		    method = FILE_BEGIN;
-		    break;
-	    case END:
-		    method = FILE_END;
-		    break;
-	}
+        case CURRENT:
+            method = FILE_CURRENT;
+            break;
+        case START:
+            method = FILE_BEGIN;
+            break;
+        case END:
+            method = FILE_END;
+            break;
+    }
 
-	DWORD ret = SetFilePointer(this->handle, (LONG)byteOffset, NULL, method);
-	return (ret != 0xffffffff);
+    DWORD ret = SetFilePointer(this->handle, (LONG)byteOffset, NULL, method);
+    return (ret != 0xffffffff);
 #else
     int whence = SEEK_SET;
     switch (origin)
@@ -290,11 +290,11 @@ nFile::Seek(int byteOffset, nSeekType origin)
 //------------------------------------------------------------------------------
 /**
     writes a string to the file
-	  
-	@param buffer		the string to write
-	@return				success
+      
+    @param buffer        the string to write
+    @return                success
 
-	history:
+    history:
     30-Jan-02   peter   created
     29-Jan-03   floh    the method suddenly wrote a newLine. WRONG!
 */
@@ -303,29 +303,29 @@ nFile::PutS(const char* buffer)
 {
     n_assert(this->IsOpen());
 
-	int len = strlen(buffer);
-	int written = this->Write(buffer, len);
-	if (written != len)
+    int len = strlen(buffer);
+    int written = this->Write(buffer, len);
+    if (written != len)
     {
-		return false;
+        return false;
     }
-	else
+    else
     {
         this->lineNumber++;
-		return true;
+        return true;
     }
 }
 
 //------------------------------------------------------------------------------
 /**
     reads a string from the file up to and including the first newline character
-	or up to the end of the buffer
+    or up to the end of the buffer
 
-	@param buffer			buffer for string
-	@param numChars			maximum number of chars to read
-	@return					succes (false if eof is reached)
+    @param buffer            buffer for string
+    @param numChars            maximum number of chars to read
+    @return                    succes (false if eof is reached)
 
-	history:
+    history:
     - 30-Jan-2002   peter    created
 */
 bool
