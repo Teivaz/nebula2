@@ -206,7 +206,13 @@ nGuiServer::Open()
 
     // call the OnGuiServerOpen script function
     const char* scriptResult;
-    this->refScriptServer->RunFunction("OnGuiServerOpen", scriptResult);
+    bool r;
+    r = this->refScriptServer->RunFunction("OnGuiServerOpen", scriptResult);
+    if (false == r)
+    {
+        n_error("OnGuiServerOpenFailed: %s",
+                scriptResult ? scriptResult : "Unknown error");
+    }
 
     // set root window to 0, this will hide the GUI
     this->refCurrentRootWindow->Hide();
@@ -226,7 +232,13 @@ nGuiServer::Close()
 
     // call the OnGuiServerClose script function
     const char* scriptResult;
-    this->refScriptServer->RunFunction("OnGuiServerClose", scriptResult);
+    bool r;
+    r = this->refScriptServer->RunFunction("OnGuiServerClose", scriptResult);
+    if (false == r)
+    {
+        n_error("OnGuiServerCloseFailed: %s",
+                scriptResult ? scriptResult : "Unknown error");
+    }
 
     // clear root window
     this->SetRootWindow(0);
