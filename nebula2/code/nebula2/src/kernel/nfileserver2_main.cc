@@ -429,7 +429,7 @@ nFileServer2::InitUserAssign()
 {
 #ifdef __XBxX__
     this->SetAssign("user", "d:/");
-#elif __WIN32__
+#elif defined(__WIN32__)
     char rawPath[MAX_PATH];
     HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
                     CSIDL_PERSONAL | CSIDL_FLAG_CREATE,         // nFolder
@@ -440,6 +440,10 @@ nFileServer2::InitUserAssign()
 
     nPathString path(rawPath);
     path.ConvertBackslashes();
+    path.Append("/");
+    this->SetAssign("user", path.Get());
+#elif defined(__LINUX__)
+    nPathString path(getenv("HOME"));
     path.Append("/");
     this->SetAssign("user", path.Get());
 #else
