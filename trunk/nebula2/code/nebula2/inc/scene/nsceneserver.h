@@ -11,25 +11,15 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nSceneServer
-#include "kernel/ndefdllclass.h"
+#include "gfx2/nshaderparams.h"
 
 class nRenderContext;
 class nSceneNode;
 class nGfxServer2;
+class nShader2;
 
 //------------------------------------------------------------------------------
 class nSceneServer : public nRoot
@@ -40,22 +30,22 @@ public:
     /// destructor
     virtual ~nSceneServer();
 
+    /// returns true if scene graph uses a specific shader type (override in subclasses!)
+    virtual bool IsShaderUsed(uint fourcc) const;
     /// begin the scene
     virtual void BeginScene(const matrix44& viewer);
     /// attach the toplevel object of a scene node hierarchy to the scene
-    virtual void Attach(nSceneNode* sceneNode, nRenderContext* renderContext);
+    virtual void Attach(nRenderContext* renderContext);
     /// finish the scene
     virtual void EndScene();
     /// render the scene
     virtual void RenderScene();
-    /// get the view matrix as defined in BeginScene()
-    const matrix44& GetViewMatrix() const;
-    /// get the inverse of the view matrix as defined in BeginScene()
-    const matrix44& GetInvViewMatrix() const;
-    /// set current modelview matrix
-    void SetModelView(const matrix44& m);
-    /// get current modelview matrix
-    const matrix44& GetModelView() const;
+    /// present the scene
+    virtual void PresentScene();
+    /// set current model matrix
+    void SetModelTransform(const matrix44& m);
+    /// get current model matrix
+    const matrix44& GetModelTransform() const;
     /// begin a group node
     void BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// finish current group node
@@ -64,6 +54,8 @@ public:
     static nKernelServer* kernelServer;
 
 protected:
+    /// transfer standard parameters to shader (matrices, etc...)
+    virtual void UpdateShader(nShader2* shd, nRenderContext* renderContext);
 
     class Group
     {
@@ -71,23 +63,21 @@ protected:
         Group* parent;
         nRenderContext* renderContext;
         nSceneNode* sceneNode;
-        matrix44 modelView;
+        matrix44 modelTransform;
     };
 
     enum
     {
-        MAX_GROUPS = 2024,
-        MAX_HIERARCHY_DEPTH = 64,
+        MaxGroups = 2024,
+        MaxHierarchyDepth = 64,
     };
 
     nAutoRef<nGfxServer2> refGfxServer;
     bool inBeginScene;
-
-    uint numGroups;
-    Group groupArray[MAX_GROUPS];
-
     uint stackDepth;
-    Group* groupStack[MAX_HIERARCHY_DEPTH];
+    Group* groupStack[MaxHierarchyDepth];
+    uint numGroups;
+    Group groupArray[MaxGroups];
 };
 
 //------------------------------------------------------------------------------
@@ -95,10 +85,10 @@ protected:
 */
 inline
 void
-nSceneServer::SetModelView(const matrix44& m)
+nSceneServer::SetModelTransform(const matrix44& m)
 {
-    n_assert((this->numGroups > 0) && (this->numGroups < MAX_GROUPS));
-    this->groupArray[this->numGroups - 1].modelView = m;
+    n_assert((this->numGroups > 0) && (this->numGroups < MaxGroups));
+    this->groupArray[this->numGroups - 1].modelTransform = m;
 }
 
 //------------------------------------------------------------------------------
@@ -106,10 +96,10 @@ nSceneServer::SetModelView(const matrix44& m)
 */
 inline
 const matrix44&
-nSceneServer::GetModelView() const
+nSceneServer::GetModelTransform() const
 {
-    n_assert((this->numGroups > 0) && (this->numGroups < MAX_GROUPS));
-    return this->groupArray[this->numGroups - 1].modelView;
+    n_assert((this->numGroups > 0) && (this->numGroups < MaxGroups));
+    return this->groupArray[this->numGroups - 1].modelTransform;
 }
 
 //------------------------------------------------------------------------------
