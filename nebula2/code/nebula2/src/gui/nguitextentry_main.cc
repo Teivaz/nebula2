@@ -15,7 +15,8 @@ nGuiTextEntry::nGuiTextEntry() :
     mouseOver(false),
     active(false),
     firstFrameActive(false),
-    lineEditor(0)
+    lineEditor(0),
+    overstrikeDefault(false)
 {
     this->SetMaxLength(32);
 }
@@ -56,6 +57,9 @@ nGuiTextEntry::GetText() const
 
 //------------------------------------------------------------------------------
 /**
+    @brief Set optional "empty" replacement text
+    This will not appear until focus is gained *and lost again*.
+    If you want initial default text, use SetText.
 */
 void
 nGuiTextEntry::SetEmptyText(const char* text)
@@ -72,7 +76,15 @@ nGuiTextEntry::GetEmptyText() const
 {
     return this->emptyText.Get();
 }
-
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiTextEntry::SetOverstrike(bool overstrike) 
+{
+    this->overstrikeDefault = overstrike;
+    this->lineEditor->SetOverstrike( overstrike );
+}
 //------------------------------------------------------------------------------
 /**
     Set max number of chars in text buffer. Discards old text buffer
@@ -87,6 +99,7 @@ nGuiTextEntry::SetMaxLength(int l)
         this->lineEditor = 0;
     }
     this->lineEditor = new nEditLine(l);
+    this->lineEditor->SetOverstrike(this->overstrikeDefault);
 }
 
 //------------------------------------------------------------------------------
@@ -364,15 +377,12 @@ nGuiTextEntry::Render()
             // get x position and width of cursor
             int cursorIndex = this->lineEditor->GetCursorPos();
             nString lineText = this->lineEditor->GetContent();
-            nString textToCursor = lineText.ExtractRange(0, cursorIndex);
 
             // build a string from the character under the cursor
             char charUnderCursor[2];
             charUnderCursor[0] = (lineText.Get()[cursorIndex] == 0) ? ' ' : lineText.Get()[cursorIndex];
             charUnderCursor[1] = 0;
             
-            // get text extents
-            vector2 textToCursorSize = this->refGfxServer->GetTextExtent(textToCursor.Get());
             vector2 cursorSize = this->refGfxServer->GetTextExtent(charUnderCursor);
 
             // FIXME: GetTextExtent() thinks that spaces are 0 pixels wide!!!
@@ -382,9 +392,34 @@ nGuiTextEntry::Render()
             }
 
             // prepare matrix to render cursor resource
-            rectangle cursorRect(vector2(screenSpaceRect.v0.x + textToCursorSize.x, 
+            float leftMargin = 0;
+            switch (this->align)
+            {
+                case Center:
+                {
+                    vector2 totalTextSize = this->refGfxServer->GetTextExtent(lineText.Get());
+                    leftMargin = (screenSpaceRect.v1.x - screenSpaceRect.v0.x - totalTextSize.x) * 0.5f;
+                    // fallthrough!
+                }
+                case Left:  
+                {  
+                    nString textToCursor = lineText.ExtractRange(0, cursorIndex);
+                    vector2 textToCursorSize = this->refGfxServer->GetTextExtent(textToCursor.Get());
+                    leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
+                    break;
+                }
+                case Right:
+                {   
+                    nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
+                    vector2 textAfterCursorSize = this->refGfxServer->GetTextExtent(textAfterCursor.Get());
+                    leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
+                    break;
+                }
+            }
+
+            rectangle cursorRect(vector2(leftMargin, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() - cursorSize.y) * 0.5f),
-                                 vector2(screenSpaceRect.v0.x + textToCursorSize.x + cursorSize.x, 
+                                 vector2(leftMargin + cursorSize.x, 
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() + cursorSize.y) * 0.5f));
 
             this->refGuiServer->DrawBrush(cursorRect, this->GetCursorBrush());

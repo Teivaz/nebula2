@@ -51,6 +51,8 @@ public:
     void SetEmptyText(const char* text);
     /// get optional "empty" replacement text
     const char* GetEmptyText() const;
+    /// set initial overstrike state (default is off)
+    void SetOverstrike(bool);
 
 protected:
     /// check if text edit line contains empty text and replace with provided empty replacement text
@@ -62,6 +64,7 @@ protected:
     nEditLine* lineEditor;
     nString emptyText;
     nString cursorBrush;
+    bool overstrikeDefault;
 };
 
 //------------------------------------------------------------------------------
