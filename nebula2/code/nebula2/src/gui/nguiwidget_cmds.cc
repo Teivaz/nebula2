@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 #include "gui/nguiwidget.h"
 #include "gui/nguiserver.h"
+#include "kernel/npersistserver.h"
 
 static void n_show(void* slf, nCmd* cmd);
 static void n_hide(void* slf, nCmd* cmd);
@@ -677,4 +678,143 @@ n_hasfocus(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
     cmd->Out()->SetB(self->HasFocus());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    05-Oct-04    kims    created
+*/
+bool
+nGuiWidget::SaveCmds(nPersistServer* ps)
+{
+    if (nRoot::SaveCmds(ps))
+    {
+        nCmd* cmd;
+        nString str;
+
+        //--- hide ---
+        if (!this->IsShown())
+        {
+            cmd = ps->GetCmd(this, 'HIDE');
+            ps->PutCmd(cmd);
+        }
+
+        //--- disable ---
+        if (!this->IsEnabled())
+        {
+            cmd = ps->GetCmd(this, 'DISB');
+            ps->PutCmd(cmd);
+        }
+
+        //--- setcommand ---
+        str = this->GetCommand();
+        if (!str.IsEmpty())
+        {
+            cmd = ps->GetCmd(this, 'STCM');
+            cmd->In()->SetS(this->GetCommand());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setshowcommand ---
+        str = this->GetShowCommand();
+        if (!str.IsEmpty())
+        {
+            cmd = ps->GetCmd(this, 'SSHC');
+            cmd->In()->SetS(this->GetShowCommand());
+            ps->PutCmd(cmd);
+        }
+
+        //--- sethidecommand ---
+        str = this->GetHideCommand();
+        if (!str.IsEmpty())
+        {
+            cmd = ps->GetCmd(this, 'SHDC');
+            cmd->In()->SetS(this->GetHideCommand());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setframecommand ---
+        str = this->GetFrameCommand();
+        if (!str.IsEmpty())
+        {
+            cmd = ps->GetCmd(this, 'SFRC');
+            cmd->In()->SetS(this->GetFrameCommand());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setbuttondowdncommand ---
+        str = this->GetButtonDownCommand();
+        if (!str.IsEmpty())
+        {
+            cmd = ps->GetCmd(this, 'SBDC');
+            cmd->In()->SetS(this->GetButtonDownCommand());
+            ps->PutCmd(cmd);
+        }
+
+        //--- settooltip ---
+        if (this->GetTooltip())
+        {
+            cmd = ps->GetCmd(this, 'STTP');
+            cmd->In()->SetS(this->GetTooltip());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setblinking ---
+        if (this->GetBlinking())
+        {
+            cmd = ps->GetCmd(this, 'SBLK');
+            cmd->In()->SetB(this->GetBlinking());
+            cmd->In()->SetF((float)this->blinkTimeOut);
+            ps->PutCmd(cmd);
+
+            cmd = ps->GetCmd(this, 'SBLR');
+            cmd->In()->SetF((float)this->blinkRate);
+            ps->PutCmd(cmd);
+        }
+
+        //--- setdefaultbrush ---
+        if (this->GetDefaultBrush())
+        {
+            cmd = ps->GetCmd(this, 'SDFB');
+            cmd->In()->SetS(this->GetDefaultBrush());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setpressedbrush ---
+        if (this->GetPressedBrush())
+        {
+            cmd = ps->GetCmd(this, 'SPRB');
+            cmd->In()->SetS(this->GetPressedBrush());
+            ps->PutCmd(cmd);
+        }
+
+        //--- sethighlightbrush ---
+        if (this->GetHighlightBrush())
+        {
+            cmd = ps->GetCmd(this, 'SHLB');
+            cmd->In()->SetS(this->GetHighlightBrush());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setdisabledbrush ---
+        if (this->GetDisabledBrush())
+        {
+            cmd = ps->GetCmd(this, 'SDSB');
+            cmd->In()->SetS(this->GetDisabledBrush());
+            ps->PutCmd(cmd);
+        }
+
+        //--- setrect ---
+        rectangle rc = this->GetRect();
+        cmd = ps->GetCmd(this, 'STPS');
+        cmd->In()->SetF(rc.v0.x);
+        cmd->In()->SetF(rc.v1.x);
+        cmd->In()->SetF(rc.v0.y);
+        cmd->In()->SetF(rc.v1.y);
+        ps->PutCmd(cmd);
+ 
+        return true;
+    }
+
+    return false;
 }
