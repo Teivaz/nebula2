@@ -7,19 +7,9 @@
 
     defines a triangle in 3d space
 */
-//-------------------------------------------------------------------
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_LINE_H
 #include "mathlib/line.h"
-#endif
-
-#ifndef N_PLANE_H
 #include "mathlib/plane.h"
-#endif
-
 #include <math.h>
 #include <stdlib.h>
 

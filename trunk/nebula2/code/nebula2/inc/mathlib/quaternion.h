@@ -10,14 +10,10 @@
      - 08-Dec-00   floh    extended, ATTENTION: argument ordering in
                            constructor has changed!
 */
-//-------------------------------------------------------------------
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
 
 //-------------------------------------------------------------------
 //  quaternion
