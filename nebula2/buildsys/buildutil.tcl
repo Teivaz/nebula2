@@ -30,7 +30,7 @@
 #--------------------------------------------------------------------
 #   addtolist dest_list $list
 #
-#   This strips each element out of $list and appends it with a 
+#   This strips each element out of $list and appends it with a
 #   single trailing space to dest_list.
 #
 #   CAVEAT:  If dest_list has a trailing space then this function
@@ -60,7 +60,7 @@ proc addtolist {var list} {
 #--------------------------------------------------------------------
 proc translate_platdefs { platform_list } {
     set retval ""
-    
+
     foreach bit $platform_list {
         if {$bit == "all"} {
             continue
@@ -147,7 +147,7 @@ proc findtargetbyname { tname} {
             return $i
         }
     }
-    
+
     puts "ERROR: target '$tname' not defined!"
     exit
 }
@@ -201,12 +201,12 @@ proc findwspacebyname {name} {
 proc sort_mods { orig_list } {
     global mod
     global num_mods
-    
+
     # sort the modules for proper dep order (for init)
     # eek!
     set mod_source ""
     set mod_sorted ""
-    
+
     # dump all non nRoot derived mods in the list
     for {set i 0} {$i < [llength $orig_list]} {incr i} {
         set idx [findmodbyname [lindex $orig_list $i]]
@@ -223,9 +223,9 @@ proc sort_mods { orig_list } {
         lappend mod_sorted "nroot"
         set mod_source [lreplace $mod_source $i $i]
     }
-    
+
     set count [llength $mod_sorted]
-    #while { [llength mod_sorted] < $num_mods } 
+    #while { [llength mod_sorted] < $num_mods }
     while {$count < $num_mods } {
         set test [lindex $mod_sorted [expr $count - 1]]
         set i 0
@@ -239,15 +239,15 @@ proc sort_mods { orig_list } {
             }
         }
         incr count
-    }    
-    
+    }
+
     return $mod_sorted
 }
 
 #--------------------------------------------------------------------
 #  findrelpath $relfrom $relto
 #
-#  Will return the relative path from the relfrom to the relto 
+#  Will return the relative path from the relfrom to the relto
 #  dirs.  Both inputs will be cleaned through cleanpath first and
 #  the clenapath caveat that both input dirs be relative to home
 #  applies. $relto may contain a filename as it's last path part.
@@ -258,13 +258,13 @@ proc sort_mods { orig_list } {
 proc findrelpath { relfrom relto } {
     set lfrom [split [cleanpath $relfrom] /]
     set lto [split [cleanpath $relto] /]
-    
+
     #remove identical bits from both paths
     while {[lindex $lfrom 0] == [lindex $lto 0]} {
         set lfrom [lreplace $lfrom 0 0]
         set lto   [lreplace $lto 0 0]
     }
-    
+
     set retval ""
     for {set i 0} {$i < [llength $lfrom]} {incr i} {
         if {[llength [lindex $lfrom $i]] > 0} {
@@ -291,7 +291,7 @@ proc findrelpath { relfrom relto } {
 proc cleanpath {path} {
     set p [split $path /]
     set p1 ""
-    
+
     # strip all '.' path bits - [file join] will not
     # this also has the effect of collapsing all '//' to '/'
     # this also has the effect of trimming '/' off the ends
@@ -321,7 +321,7 @@ proc cleanpath {path} {
             set prior true
             continue
         }
-        
+
         # .. and !prior
         lappend p2 $t
         set prior false
