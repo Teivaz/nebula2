@@ -193,41 +193,57 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
 
     if (optimize)
     {
-        // remove redundant keys which is same to previous key.
+        // remove redundant keys
         nArray<nMaxSampleKey> tmpKeyArray;
 
-        int i;
-
-        for (i=0; i<sampleKeyArray.Size(); i++)
+        for(int i = 0; i < sampleKeyArray.Size(); ++i)
         {
-            nMaxSampleKey key1 = sampleKeyArray[i];
-            bool diff = false;
-
-            if (i==0)
-                diff = true;
+            if((i == 0) || (i == sampleKeyArray.Size() - 1))
+            {
+                // first and last keys are important
+                tmpKeyArray.Append(sampleKeyArray[i]);
+            }
             else
             {
-                // previous key.
-                nMaxSampleKey key2 = sampleKeyArray[i-1];
-
-                if (key1.pt4.x != key2.pt4.x ||
-                    key1.pt4.y != key2.pt4.y ||
-                    key1.pt4.z != key2.pt4.z ||
-                    key1.pt4.w != key2.pt4.w )
+                // current key is important if keys on either side are different to it.
+                nMaxSampleKey previousKey = sampleKeyArray[i - 1];
+                nMaxSampleKey currentKey = sampleKeyArray[i];
+                nMaxSampleKey nextKey = sampleKeyArray[i + 1];
+                if(!AreKeysEqual(currentKey, previousKey, type) || 
+                   !AreKeysEqual(currentKey, nextKey, type))
                 {
-                    diff = true;
+                    tmpKeyArray.Append(currentKey);
                 }
             }
-
-            // this key is a new one.
-            if (diff)
-                tmpKeyArray.Append(key1);
         }
 
         sampleKeyArray.Clear();
         sampleKeyArray = tmpKeyArray;
     }
 }
+
+//-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxControl::AreKeysEqual(nMaxSampleKey& key1, nMaxSampleKey& key2, nMaxControlType type)
+{
+    if(type == nMaxPoint4)
+    {
+        return (key1.pt4.Equals(key2.pt4) != 0);
+    }
+    else if(type == nMaxPoint3)
+    {
+        return (key1.pos.Equals(key2.pos) != 0);
+    }
+    else if(type == nMaxFloat)
+    {
+        return key1.fval == key2.fval;
+    }
+
+    // TO DO: support other types 
+    return false;
+}
+
 //-----------------------------------------------------------------------------
 /**
     Get Controller type with given Control.
