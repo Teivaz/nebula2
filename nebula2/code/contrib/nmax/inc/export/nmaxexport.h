@@ -12,9 +12,9 @@
 #include <Max.h>
 #include <decomp.h> //the decompose functions for matrix3
 
-#include <IGame.h>
-#include <IGameProperty.h>
-#include <IGameModifier.h>
+#include <IGame/IGame.h>
+#include <IGame/IGameProperty.h>
+#include <IGame/IGameModifier.h>
 
 #include "base/nmaxdll.h"
 #include "base/nmaxloghandler.h"
