@@ -9,7 +9,7 @@
 //--------------------------------------------------------------------
 /** 
     @class nRubyServer
-    @ingroup ScriptServices 
+    @ingroup RubyScriptServices 
 
     @brief wraps around Ruby interpreter
 
