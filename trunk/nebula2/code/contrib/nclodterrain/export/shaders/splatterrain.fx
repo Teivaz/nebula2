@@ -1,17 +1,17 @@
 //------------------------------------------------------------------------------
-//  fixed/default.fx
+//  splatterrain.fx
 //
-//  The default shader for DX7 cards
-//  
+//  The terrain shader for splatted chunked LOD, using morphing on LOD chunks
+//
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 shared float4x4 ModelViewProjection;
 float4x4 TextureTransform0 = {1.0f, 0.0f, 0.0f, 0.0f,
-                              0.0f, 1.0f, 0.0f, 0.0f, 
+                              0.0f, 1.0f, 0.0f, 0.0f,
                               0.0f, 0.0f, 1.0f, 0.0f,
                               0.0f, 0.0f, 0.0f, 1.0f };
 float4x4 TextureTransform1 = {1.0f, 0.0f, 0.0f, 0.0f,
-                              0.0f, 1.0f, 0.0f, 0.0f, 
+                              0.0f, 1.0f, 0.0f, 0.0f,
                               0.0f, 0.0f, 1.0f, 0.0f,
                               0.0f, 0.0f, 0.0f, 1.0f };
 float Scale;
@@ -52,7 +52,7 @@ sampler DetailSampler = sampler_state
 float4
 transformStatic(const float3 pos, const float4x4 mvp)
 {
-	return mul(float4(pos, 1.0), mvp);
+    return mul(float4(pos, 1.0), mvp);
 }
 
 struct vsInput {
@@ -95,19 +95,19 @@ technique t0
     {
 //        WorldTransform[0]   = <Model>;
 //        ViewTransform       = <View>;
-//    	ProjectionTransform = <Projection>;
-//    	TextureTransform[0] = <TextureTransform0>;
+//        ProjectionTransform = <Projection>;
+//        TextureTransform[0] = <TextureTransform0>;
 
         ZWriteEnable     = True;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         ZEnable          = True;
         ZFunc            = LessEqual;
 
         AlphaBlendEnable = <MatTranslucency>;
-	SrcBlend         = One;
-	DestBlend        = One;
+        SrcBlend         = One;
+        DestBlend        = One;
         NormalizeNormals = True;
-        
+
         AlphaTestEnable  = False;
         AlphaFunc        = Greaterequal;
         AlphaRef         = <AlphaRef>;
@@ -117,16 +117,16 @@ technique t0
         VertexShader = compile vs_2_0 vsMain();
         PixelShader  = 0;
 
-        SpecularEnable	= false;
-        
+        SpecularEnable = false;
+
         Sampler[0] = <WeightSampler>;
         Sampler[1] = <DetailSampler>;
 
         ColorOp[0]   = SelectArg1;
         ColorArg1[0] = Texture;
-        
+
         ColorOp[1]   = Modulate;
-	ColorArg1[1] = Texture;
+        ColorArg1[1] = Texture;
         ColorArg2[1] = Current;
 
         ColorOp[2]   = Disable;
