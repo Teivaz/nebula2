@@ -65,6 +65,19 @@ nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext
     // apply int, float and vector variables to the shader
     shader->SetParams(this->shaderParams);
 
+    // apply texture shader variables to the shader
+    /*
+    int numTextureVariables = this->texNodeArray.Size();
+    int i;
+    for (i = 0; i < numTextureVariables; i++)
+    {
+        TexNode& texNode = this->texNodeArray[i];
+        if (shader->IsParameterUsed(texNode.shaderParameter))
+        {
+            shader->SetTexture(texNode.shaderParameter, texNode.refTexture.get());
+        }
+    }
+    */
     return true;
 }
 

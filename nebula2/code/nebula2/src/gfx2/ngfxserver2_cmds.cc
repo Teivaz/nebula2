@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nGfxServer2
 //------------------------------------------------------------------------------
 //  ngfxserver2_cmds.cc
 //  (C) 2002 RadonLabs GmbH
@@ -9,8 +8,9 @@ static void n_setdisplaymode(void* slf, nCmd* cmd);
 static void n_getdisplaymode(void* slf, nCmd* cmd);
 static void n_opendisplay(void* slf, nCmd* cmd);
 static void n_closedisplay(void* slf, nCmd* cmd);
-static void n_savescreenshot(void *, nCmd *);
-static void n_setwindowtitle(void *, nCmd *);
+static void n_getfeatureset(void* slf, nCmd* cmd);
+static void n_savescreenshot(void* slf, nCmd* cmd);
+
 
 //------------------------------------------------------------------------------
 /**
@@ -27,12 +27,12 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setdisplaymode_siib", 'SDMD', n_setdisplaymode);
-    cl->AddCmd("siib_getdisplaymode_v", 'GDMD', n_getdisplaymode);
+    cl->AddCmd("v_setdisplaymode_ssiiiib",  'SDMD', n_setdisplaymode);
+    cl->AddCmd("siiiib_getdisplaymode_v",   'GDMD', n_getdisplaymode);
     cl->AddCmd("b_opendisplay_v",      'ODSP', n_opendisplay);
     cl->AddCmd("v_closedisplay_v",     'CDSP', n_closedisplay);
-    cl->AddCmd("b_savescreenshot_s",   'SSHT', n_savescreenshot);
-    cl->AddCmd("v_setwindowtitle_s",   'STTL', n_setwindowtitle);
+    cl->AddCmd("s_getfeatureset_v",         'GFTS', n_getfeatureset);
+    cl->AddCmd("v_savescreenshot_s",        'SSCS', n_savescreenshot);
     cl->EndCmds();
 }
 
@@ -41,7 +41,7 @@ n_initcmds(nClass* cl)
     @cmd
     setdisplaymode
     @input
-    s(Type=windowed,fullscreen,child), i(Width), i(Height), b(vSync)
+    s(WindowTitle), s(Type=windowed,fullscreen|alwaysontop), i(XPos), i(YPos), i(Width), i(Height), b(VSync)
     @output
     v
     @info
@@ -51,12 +51,15 @@ static void
 n_setdisplaymode(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
-    nDisplayMode2::Type t = nDisplayMode2::StringToType(cmd->In()->GetS());
+	const char* title = cmd->In()->GetS();
+    nDisplayMode2::Type type = nDisplayMode2::StringToType(cmd->In()->GetS());
+    int x = cmd->In()->GetI();
+    int y = cmd->In()->GetI();
     int w = cmd->In()->GetI();
     int h = cmd->In()->GetI();
-    bool vs = cmd->In()->GetB();
+    bool vsync = cmd->In()->GetB();
 
-    self->SetDisplayMode(nDisplayMode2(t, w, h, vs));
+    self->SetDisplayMode(nDisplayMode2(title, type, x, y, w, h, vsync));
 }
 
 //------------------------------------------------------------------------------
@@ -66,7 +69,7 @@ n_setdisplaymode(void* slf, nCmd* cmd)
     @input
     v
     @output
-    s(Type=windowed,fullscreen,child), i(Width), i(Height), b(vSync)
+    s(WindowTitle), s(Type=windowed,fullscreen|alwaysontop), i(XPos), i(YPos), i(Width), i(Height), b(VSync)
     @info
     Get the current display mode.
 */
@@ -74,15 +77,14 @@ static void
 n_getdisplaymode(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
-    bool vs = self->GetDisplayMode().GetVerticalSync();
-    int w = self->GetDisplayMode().GetWidth();
-    int h = self->GetDisplayMode().GetHeight();
-    const char* t = nDisplayMode2::TypeToString(self->GetDisplayMode().GetType());
-    
-    cmd->Out()->SetS(t);
-    cmd->Out()->SetI(w);
-    cmd->Out()->SetI(h);
-    cmd->Out()->SetB(vs);
+    const nDisplayMode2& mode = self->GetDisplayMode();
+    cmd->Out()->SetS(mode.GetWindowTitle());
+    cmd->Out()->SetS(nDisplayMode2::TypeToString(mode.GetType()));
+    cmd->Out()->SetI(mode.GetXPos());
+    cmd->Out()->SetI(mode.GetYPos());
+    cmd->Out()->SetI(mode.GetWidth());
+    cmd->Out()->SetI(mode.GetHeight());
+    cmd->Out()->SetB(mode.GetVerticalSync());
 }
 
 //------------------------------------------------------------------------------
@@ -124,10 +126,28 @@ n_closedisplay(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    savescreenshot
-
+    getfeatureset
     @input
-    s (FileName)
+    v
+    @output
+    s(FeatureSet = dx7, dx8, dx8sb, dx9, invalid)
+    @info
+    Get the feature set implemented by the graphics card.
+*/
+static void
+n_getfeatureset(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    nGfxServer2::FeatureSet feat = self->GetFeatureSet();
+    switch (feat)
+    {
+        case nGfxServer2::DX7:                      cmd->Out()->SetS("dx7"); break;
+        case nGfxServer2::DX8:                      cmd->Out()->SetS("dx8"); break;
+        case nGfxServer2::DX8SB:                    cmd->Out()->SetS("dx8sb"); break;
+        case nGfxServer2::DX9:                      cmd->Out()->SetS("dx9"); break;
+        default:                                    cmd->Out()->SetS("invalid"); break;
+    }
+}
 
     @output
     v
@@ -146,21 +166,22 @@ n_savescreenshot(void *slf, nCmd *cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setwindowtitle
+    savescreenshot
 
     @input
-    s (Title)
+    s(Filename)
 
     @output
     v
 
     @info
-    Sets the title of the display window.
+    Save a screenshot to the provided filename.
 */
 static void
-n_setwindowtitle(void *slf, nCmd *cmd)
+n_savescreenshot(void *slf, nCmd *cmd)
 {
     nGfxServer2 *self = (nGfxServer2*) slf;
-    self->SetWindowTitle(cmd->In()->GetS());
+    self->SaveScreenshot(cmd->In()->GetS());
 }
+
 

@@ -11,70 +11,66 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ROOT_H
 #include "kernel/nroot.h"
-#endif
-
-#ifndef N_WATCHVAR_H
-#include "util/nwatchvar.h"
-#endif
-
-#ifndef N_TIMESERVER_H
-#include "kernel/ntimeserver.h"
-#endif
-
-#ifndef N_CAMERA2_H
 #include "gfx2/ncamera2.h"
-#endif
-
-#ifndef N_DISPLAYMODE2_H
 #include "gfx2/ndisplaymode2.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_TEXTURE2_H
 #include "gfx2/ntexture2.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nGfxServer2
-#include "kernel/ndefdllclass.h"
+#include "mathlib/rectangle.h"
+#include "gfx2/nprimitivetypes.h"
+#include "gfx2/nmousecursor.h"
 
 //------------------------------------------------------------------------------
 class nMesh2;
 class nShader2;
 class nResourceServer;
-class N_PUBLIC nGfxServer2 : public nRoot
+class nFont2;
+class nFontDesc;
+
+class nGfxServer2 : public nRoot
 {
 public:
     /// transform types
-    enum nTransformType
+    enum TransformType
     {
-        MODELVIEW = 0,          ///< current modelview matrix (read/write)
-        PROJECTION,             ///< current projection matrix (read/write)
-        INVMODELVIEW,           ///< inverse of current modelview matrix (read only)
-        MODELVIEWPROJECTION,    ///< the combined modelview-projection matrix (read only)
-        VIEW,                   ///< current view matrix (read/write)
-        INVVIEW,                ///< current inverse view matrix (read only)
-        MODEL,                  ///< the model (world) matrix (read only)
+        Model = 0,              ///< model -> world matrix (read/write)
+        View,                   ///< world -> view matrix (read/write)
+        Projection,             ///< view  -> projection matrix (read/write)
+        InvModel,               ///< world -> model matrix (read only)
+        InvView,                ///< view  -> world matrix (read only)
+        ModelView,              ///< model -> view matrix (read only)
+        InvModelView,           ///< view -> model matrix (read only)
+        ModelViewProjection,    ///< model -> projection matrix (read only)
 
-        NUM_TRANSFORMTYPES,
+        NumTransformTypes
     };
 
     /// buffer types
-    enum nBufferType
+    enum BufferType
     {
-        COLOR = (1<<0),
-        DEPTH = (1<<1),
-        STENCIL = (1<<2),
-        ALL = (COLOR | DEPTH | STENCIL),
+        ColorBuffer   = (1<<0),
+        DepthBuffer   = (1<<1),
+        StencilBuffer = (1<<2),
+        AllBuffers    = (ColorBuffer | DepthBuffer | StencilBuffer),
+    };
+
+    /// feature sets (from worst to best)
+    enum FeatureSet
+    {
+        InvalidFeatureSet = 0,      // Open() hasn't been called yet
+        DX7,                        // a typical dx7 card with fixed function pipeline
+        DX8,                        // a typical dx8 card with at least vs/ps 1.1
+        DX8SB,                      // a typical dx8 card with support for shadow buffers
+        DX9,                        // a dx9 card with at least vs/ps 2.0 AND float textures
+    };
+
+    /// the visible mouse cursor type
+    enum CursorVisibility
+    {
+        None,               // no mouse cursor visible
+        System,             // use Window's system mouse cursor
+        Custom,             // use the custom mouse cursor
     };
 
     /// constructor
@@ -88,31 +84,27 @@ public:
     virtual nTexture2* NewTexture(const char* rsrcName);
     /// create a shared shader object
     virtual nShader2* NewShader(const char* rsrcName);
+    /// create a font object
+    virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
-    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, bool hasColor, bool hasDepth, bool hasStencil);
-    /// claim access rights to dynamic mesh
-    virtual nMesh2* LockDynamicMesh();
-    /// give up access to dynamic mesh
-    virtual void UnlockDynamicMesh(nMesh2* dynMesh);
+    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
 
     /// set display mode
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
-    /// set window title
-    virtual void SetWindowTitle(const char* title);
-    /// get window title
-    const char* GetWindowTitle() const;
     /// set the current camera description
-    virtual void SetCamera(const nCamera2& cam);
+    virtual void SetCamera(nCamera2& cam);
     /// get the current camera description
-    const nCamera2& GetCamera() const;
+    nCamera2& GetCamera();
     /// open the display
     virtual bool OpenDisplay();
     /// close the display
     virtual void CloseDisplay();
     /// trigger the window system message pump
     virtual bool Trigger();
+    /// get the best supported feature set
+    virtual FeatureSet GetFeatureSet();
     
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -140,29 +132,56 @@ public:
     virtual void SetShader(nShader2* shader);
     /// get current shader
     nShader2* GetShader() const;
+    /// set current font
+    virtual void SetFont(nFont2* font);
+    /// get current font
+    nFont2* GetFont() const;
     /// set transform
-    virtual void SetTransform(nTransformType type, const matrix44& matrix);
+    virtual void SetTransform(TransformType type, const matrix44& matrix);
     /// get transform
-    const matrix44& GetTransform(nTransformType type) const;
+    const matrix44& GetTransform(TransformType type) const;
     /// push transform
-    void PushTransform(nTransformType type, const matrix44& matrix);
+    void PushTransform(TransformType type, const matrix44& matrix);
     /// pop transform
-    const matrix44& PopTransform(nTransformType type);
+    const matrix44& PopTransform(TransformType type);
     /// set vertex range to render from current mesh
     void SetVertexRange(int firstVertex, int numVertices);
     /// set index range to render from current mesh
     void SetIndexRange(int firstIndex, int numIndices);
+    /// set npatch tesselation level
+    void SetNPatchSegments(float segments);
+    /// get npatch tesselation level
+    float GetNPatchSegments() const;
 
-    /// draw the current mesh, texture and shader
-    virtual void Draw();
+    /// draw the current mesh with indexed primitives
+    virtual void DrawIndexed(nPrimitiveType primType);
+    /// draw the current mesh with non-indexed primitives
+    virtual void Draw(nPrimitiveType primType);
+    /// render indexed primitives without applying shader state (NS == No Shader)
+    virtual void DrawIndexedNS(nPrimitiveType primType);
+    /// render non-indexed primitives without applying shader state (NS == No Shader)
+    virtual void DrawNS(nPrimitiveType primType);
+    /// draw text (immediately)
+    virtual void DrawText(const char* text, const vector4& color, float xPos, float yPos);
+    /// get text extents
+    virtual vector2 GetTextExtent(const char* text);
 
-    /// add text to the text buffer
-    virtual void Text(const char* text, float x, float y);
+    /// add text to the text buffer (OLD STYLE)
+    virtual void Text(const char* text, const vector4& color, float xPos, float yPos);
     /// draw the text buffer
     virtual void DrawTextBuffer();
 
+    /// set mouse cursor image and hotspot
+    virtual void SetMouseCursor(const nMouseCursor& cursor);
+    /// get mouse cursor image
+    virtual const nMouseCursor& GetMouseCursor() const;
+    /// show/hide the mouse cursor
+    virtual void SetCursorVisibility(CursorVisibility type);
+    /// get mouse cursor display status
+    virtual CursorVisibility GetCursorVisibility() const;
+    
     /// save a screen shot
-    virtual bool SaveScreenshot(const char*);
+    virtual bool SaveScreenshot(const char* filename);    
 
     static nKernelServer* kernelServer;
 
@@ -174,7 +193,6 @@ public:
     };
 
 protected:
-    nString windowTitle;
     bool displayOpen;
     bool inBeginScene;
 
@@ -184,25 +202,24 @@ protected:
     nRef<nTexture2> refRenderTarget;
     nRef<nMesh2>    refMeshes[MAX_VERTEXSTREAMS];
     nRef<nTexture2> refTextures[MAX_TEXTURESTAGES];
+    nRef<nFont2>    refFont;
     nRef<nShader2>  refShader;
+    nMouseCursor curMouseCursor;
     int vertexRangeFirst;
     int vertexRangeNum;
     int indexRangeFirst;
     int indexRangeNum;
+    float nPatchSegments;
     
-    matrix44 transform[NUM_TRANSFORMTYPES];
-    int transformTopOfStack[NUM_TRANSFORMTYPES];
-    matrix44 transformStack[NUM_TRANSFORMTYPES][MAX_TRANSFORMSTACKDEPTH];
-    
-#if defined(N_DO_STATS)
-    nWatchVar FrameRate;
-    double timeStamp;
-    uint totalFrames;
-#endif    
+    matrix44 transform[NumTransformTypes];
+    int transformTopOfStack[NumTransformTypes];
+    matrix44 transformStack[NumTransformTypes][MAX_TRANSFORMSTACKDEPTH];
+    bool cursorDirty;
 
 public:
     // note: this stuff is public because WinProcs may need to access it
     nDisplayMode2 displayMode;
+    CursorVisibility cursorVisibility;
 };
 
 //------------------------------------------------------------------------------
@@ -215,23 +232,14 @@ nGfxServer2::GetDisplayMode() const
     return this->displayMode;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGfxServer2::GetWindowTitle() const
-{
-    return this->windowTitle.Get();
-}
 
 //------------------------------------------------------------------------------
 /**
     Get the current camera object.
 */
 inline
-const nCamera2&
-nGfxServer2::GetCamera() const
+nCamera2&
+nGfxServer2::GetCamera()
 {
     return this->camera;
 }
@@ -294,6 +302,19 @@ nGfxServer2::GetShader() const
 
 //------------------------------------------------------------------------------
 /**
+    Get the current font object.
+
+    @return             pointer to nFont2 object
+*/
+inline
+nFont2*
+nGfxServer2::GetFont() const
+{
+    return this->refFont.isvalid() ? this->refFont.get() : 0;
+}
+
+//------------------------------------------------------------------------------
+/**
     Set transformation matrix.
 
     @param  type        transform type
@@ -301,9 +322,9 @@ nGfxServer2::GetShader() const
 */
 inline
 const matrix44&
-nGfxServer2::GetTransform(nTransformType type) const
+nGfxServer2::GetTransform(TransformType type) const
 {
-    n_assert(type < NUM_TRANSFORMTYPES);
+    n_assert(type < NumTransformTypes);
     return this->transform[type];
 }
 

@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nSceneNode
 //------------------------------------------------------------------------------
 //  nscenenode_cmds.cc
 //  (C) 2002 RadonLabs GmbH
@@ -123,7 +124,7 @@ n_loadresources(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Define the local bounding box. Shape nodes compute their bounding
+    Define the local bounding box. Shape node compute their bounding
     box automatically at load time. This method can be used to define
     bounding boxes for other nodes. This may be useful for higher level
     code like gameframeworks. Nebula itself only uses bounding boxes

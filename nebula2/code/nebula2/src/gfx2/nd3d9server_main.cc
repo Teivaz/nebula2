@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Server
 //------------------------------------------------------------------------------
 //  nd3d9server_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -7,6 +6,7 @@
 #include "kernel/nenv.h"
 #include "il/il.h"
 #include "il/ilu.h"
+#include "kernel/nfileserver2.h"
 
 nNebulaClass(nD3D9Server, "ngfxserver2");
 
@@ -14,25 +14,45 @@ nNebulaClass(nD3D9Server, "ngfxserver2");
 /**
 */
 nD3D9Server::nD3D9Server() :
+    #ifdef __NEBULA_STATS__
+    timeStamp(0.0),
+    queryResourceManager(0),
+    dbgQueryTextureTrashing("gfxTexTrashing", nArg::Bool),
+    dbgQueryTextureApproxBytesDownloaded("gfxTexApproxBytesDownloaded", nArg::Int),
+    dbgQueryTextureNumEvicts("gfxTexNumEvicts", nArg::Int),
+    dbgQueryTextureNumVidCreates("gfxTexNumVidCreates", nArg::Int),
+    dbgQueryTextureLastPri("gfxTexLastPri", nArg::Int),
+    dbgQueryTextureNumUsed("gfxTexNumUsed", nArg::Int),
+    dbgQueryTextureNumUsedInVidMem("gfxTexNumUsedInVidMem", nArg::Int),
+    dbgQueryTextureWorkingSet("gfxTexWorkingSet", nArg::Int),
+    dbgQueryTextureWorkingSetBytes("gfxTexWorkingSetBytes", nArg::Int),
+    dbgQueryTextureTotalManaged("gfxTexTotalManaged", nArg::Int),
+    dbgQueryTextureTotalBytes("gfxTexTotalBytes", nArg::Int),
+    dbgQueryNumPrimitives("gfxNumPrimitives", nArg::Int),
+    dbgQueryFPS("gfxFPS", nArg::Float),
+    dbgQueryNumDrawCalls("gfxNumDrawCalls", nArg::Int),
+    dbgQueryNumRenderStateChanges("gfxNumRenderStateChanges", nArg::Int),
+    dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
+    #endif
     refInputServer("/sys/servers/input"),
     hInst(0),
     hWnd(0),
     hAccel(0),
     windowedStyle(WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE),
     fullscreenStyle(WS_POPUP | WS_SYSMENU | WS_VISIBLE),
-    deviceBehaviourFlags(0),
+	childStyle(WS_CHILD | WS_TABSTOP),
+    parentHWnd(0),
+	deviceBehaviourFlags(0),
     windowOpen(false),
     windowMinimized(false),
     quitRequested(false),
     d3dFont(0),
     d3d9(0),
     d3d9Device(0),
-    d3dPrimType(D3DPT_LINELIST),
     depthStencilSurface(0),
     backBufferSurface(0),
-    dynMeshLocked(false),
-    childStyle(WS_CHILD | WS_TABSTOP),
-    parentHWnd(0)
+    featureSet(InvalidFeatureSet),
+    d3dxEffectPool(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
 
@@ -83,11 +103,16 @@ nD3D9Server::D3dOpen()
 {
     n_assert(0 == this->d3d9);
 
+    // create the d3d object
     this->d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
     if (!this->d3d9)
     {
         n_error("nD3D9Server: could not initialize Direct3D!\n");
     }
+
+    // create the global effect parameter pool
+    HRESULT hr = D3DXCreateEffectPool(&(this->d3dxEffectPool));
+    n_assert(SUCCEEDED(hr));
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +124,13 @@ nD3D9Server::D3dClose()
 {
     n_assert(this->d3d9);
     n_assert(0 == this->d3d9Device);
+    n_assert(this->d3dxEffectPool);
 
+    // release the global effect parameter pool
+    this->d3dxEffectPool->Release();
+    this->d3dxEffectPool = 0;
+
+    // release the d3d object
     int refCount = this->d3d9->Release();
     if (0 < refCount) 
     {
@@ -149,12 +180,13 @@ nD3D9Server::Trigger()
     // handle all pending WM's
     MSG msg;
     // if exist parent window, this window is in child mode
-    if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
+    if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
     {
         if (PeekMessage(&msg,NULL,WM_SIZE,WM_SIZE,PM_NOREMOVE))
         {
             int w = LOWORD(msg.lParam);
             int h = HIWORD(msg.lParam);
+			///FIXME: whats to do with this w,h vars?
         }
     }
     while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) 
@@ -173,9 +205,6 @@ nD3D9Server::Trigger()
             }
         }
     }
-
-    nGfxServer2::Trigger();
-
     return (!this->quitRequested);
 }
 
@@ -227,8 +256,12 @@ nD3D9Server::SaveScreenshot(const char* fileName)
     ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.left));
     ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.right));
 
+    // mangle filename
+    char mangledPath[N_MAXPATH];
+    kernelServer->GetFileServer()->ManglePath(fileName, mangledPath, sizeof(mangledPath));
+
     // save the front buffer surface to given filename.
-    hr = D3DXSaveSurfaceToFile(fileName, D3DXIFF_BMP, surf, 0, &rc);
+    hr = D3DXSaveSurfaceToFile(mangledPath, D3DXIFF_BMP, surf, 0, &rc);
     if (FAILED(hr))
     {
         n_printf("nD3D9Server::Screenshot(): Failed to save file '%s'!\n", fileName);

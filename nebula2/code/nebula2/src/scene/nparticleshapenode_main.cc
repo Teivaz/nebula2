@@ -150,7 +150,7 @@ nParticleShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* re
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    nGfxServer2* gfx = this->refGfxServer.get();
+	nGfxServer2* gfx = this->refGfxServer.get();
 
     nTime curTime = kernelServer->GetTimeServer()->GetTime();
 

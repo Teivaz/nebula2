@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nShapeNode
 //------------------------------------------------------------------------------
 //  nshapenode_cmds.cc
 //  (C) 2002 RadonLabs GmbH
@@ -11,6 +12,8 @@ static void n_setgroupindex(void* slf, nCmd* cmd);
 static void n_getgroupindex(void* slf, nCmd* cmd);
 static void n_setmeshresourceloader(void* slf, nCmd* cmd);
 static void n_getmeshresourceloader(void* slf, nCmd* cmd);
+static void n_setrenderwireframe(void* slf, nCmd* cmd);
+static void n_getrenderwireframe(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -33,6 +36,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_getgroupindex_v",         'GGRI', n_getgroupindex);
     cl->AddCmd("v_setmeshresourceloader_s", 'SMRL', n_setmeshresourceloader);
     cl->AddCmd("s_getmeshresourceloader_v", 'GMRL', n_getmeshresourceloader);
+    cl->AddCmd("v_setrenderwireframe_b",    'SRWF', n_setrenderwireframe);
+    cl->AddCmd("b_getrenderwireframe_v",    'GRWF', n_getrenderwireframe);
     cl->EndCmds();
 }
 
@@ -142,6 +147,42 @@ n_getmeshresourceloader(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
     cmd->Out()->SetS(self->GetMeshResourceLoader());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setrenderwireframe
+    @input
+    b(WireframeFlag)
+    @output
+    v
+    @info
+    Turn wireframe rendering on/off.
+*/
+static void
+n_setrenderwireframe(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    self->SetRenderWireframe(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getrenderwireframe
+    @input
+    v
+    @output
+    b
+    @info
+    Get the wireframe render status.
+*/
+static void
+n_getrenderwireframe(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    cmd->Out()->SetB(self->GetRenderWireframe());
 }
 
 //------------------------------------------------------------------------------

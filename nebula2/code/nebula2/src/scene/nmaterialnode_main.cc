@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nMaterialNode
 //------------------------------------------------------------------------------
 //  nmaterialnode_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -7,17 +6,18 @@
 #include "gfx2/ngfxserver2.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/ntexture2.h"
+#include "kernel/ntimeserver.h"
+#include "scene/nrendercontext.h"
+#include "scene/nsceneserver.h"
+#include "kernel/ndebug.h"
+
 
 nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**
 */
-nMaterialNode::nMaterialNode() :
-    modelViewVarHandle(nVariable::INVALID_HANDLE),
-    modelViewProjectionVarHandle(nVariable::INVALID_HANDLE),
-    modelEyePosVarHandle(nVariable::INVALID_HANDLE),
-    modelVarHandle(nVariable::INVALID_HANDLE)
+nMaterialNode::nMaterialNode()
 {
     // empty
 }
@@ -28,57 +28,6 @@ nMaterialNode::nMaterialNode() :
 nMaterialNode::~nMaterialNode()
 {
     // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    Compute the "shader variable mask". Each variable which is used by
-    this shader gets a 1-bit in the mask.
-    NOTE: this implementation is limited to at most 32 shader and texture
-    variables.
-*/
-void
-nMaterialNode::UpdateShaderVariableMasks()
-{
-    int shaderIndex;
-    for (shaderIndex = 0; shaderIndex < this->shaderArray.Size(); shaderIndex++)
-    {
-        if (!this->shaderArray[shaderIndex].IsVariableMaskValid())
-        {
-            nShader2* shd = this->shaderArray[shaderIndex].GetShader();
-            n_assert(shd);
-
-            nVariableServer* varServer = this->refVariableServer.get();
-            uint mask = 0;
-            int bitMask = 1;
-
-            // handle shader variables
-            int numVariables = this->varContext.GetNumVariables();
-            int varIndex;
-            for (varIndex = 0; varIndex < numVariables; varIndex++, bitMask <<= 1)
-            {
-                const nVariable& var = this->varContext.GetVariableAt(varIndex);
-                if (shd->IsParameterUsed(var.GetHandle()))
-                {
-                    mask |= bitMask;
-                }
-            }
-
-            // handle texture variables
-            int numTextures = this->texNodeArray.Size();
-            int texIndex;
-            for (texIndex = 0; texIndex < numTextures; texIndex++, bitMask <<= 1)
-            {
-                if (shd->IsParameterUsed(this->texNodeArray[texIndex].varHandle))
-                {
-                    mask |= bitMask;
-                }
-            }
-            
-            this->shaderArray[shaderIndex].SetVariableMask(mask);
-            this->shaderArray[shaderIndex].SetVariableMaskValid(true);
-        }
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +60,9 @@ nMaterialNode::LoadShaders()
     for (i = 0; i < this->shaderArray.Size(); i++)
     {
         ShaderEntry& shaderEntry = this->shaderArray[i];
-        if ((!shaderEntry.IsShaderValid()) && (shaderEntry.GetName()))
+        if ((!shaderEntry.IsShaderValid()) && 
+            (shaderEntry.GetName()) &&
+            (this->refSceneServer->IsShaderUsed(shaderEntry.GetFourCC())))
         {
             // create a new empty shader object
             nShader2* shd = this->refGfxServer->NewShader(shaderEntry.GetName());
@@ -122,12 +73,14 @@ nMaterialNode::LoadShaders()
                 shd->SetFilename(shaderEntry.GetName());
                 if (!shd->Load())
                 {
-                    n_printf("nMaterialNode: Error loading shader '%s'\n", shaderEntry.GetName());
-                    return false;
+                    shd->Release();
+                    shd = 0;
                 }
             }
-            shaderEntry.SetShader(shd);
-            shaderEntry.SetVariableMaskValid(false);
+            if (shd)
+            {
+            	shaderEntry.SetShader(shd);
+			}
         }
     }
     
@@ -141,34 +94,10 @@ nMaterialNode::LoadShaders()
 bool
 nMaterialNode::LoadResources()
 {
-    if (nAbstractShaderNode::LoadResources())
+    if (this->LoadShaders())
     {
-        if (this->LoadShaders())
+		if (nAbstractShaderNode::LoadResources())
         {
-            // validate internal variable handles
-            if (nVariable::INVALID_HANDLE == this->modelEyePosVarHandle)
-            {
-                this->modelEyePosVarHandle = this->refVariableServer->GetVariableHandleByName("modelEyePos");
-                n_assert(nVariable::INVALID_HANDLE != this->modelEyePosVarHandle);
-            }
-            if (nVariable::INVALID_HANDLE == this->modelViewVarHandle)
-            {
-                this->modelViewVarHandle = this->refVariableServer->GetVariableHandleByName("modelView");
-                n_assert(nVariable::INVALID_HANDLE != this->modelViewVarHandle);
-            }
-            if (nVariable::INVALID_HANDLE == this->modelViewProjectionVarHandle)
-            {
-                this->modelViewProjectionVarHandle = this->refVariableServer->GetVariableHandleByName("modelViewProjection");
-                n_assert(nVariable::INVALID_HANDLE != this->modelViewProjectionVarHandle);
-            }
-            if (nVariable::INVALID_HANDLE == this->modelVarHandle)
-            {
-                this->modelVarHandle = this->refVariableServer->GetVariableHandleByName("model");
-                n_assert(nVariable::INVALID_HANDLE != this->modelVarHandle);
-            }
-
-            // validate shader variable masks
-            this->UpdateShaderVariableMasks();
             return true;
         }
     }
@@ -188,36 +117,6 @@ nMaterialNode::UnloadResources()
 
 //------------------------------------------------------------------------------
 /**
-    Check if resources are valid.
-*/
-bool
-nMaterialNode::AreResourcesValid() const
-{
-    if (nAbstractShaderNode::AreResourcesValid())
-    {
-        bool valid = true;
-
-        // check shaders
-        int i;
-        for (i = 0; i < this->shaderArray.Size(); i++)
-        {
-            valid &= this->shaderArray[i].IsShaderValid();
-            valid &= this->shaderArray[i].IsVariableMaskValid();
-        }
-
-        // check internal variable handles
-        valid &= (this->modelEyePosVarHandle != nVariable::INVALID_HANDLE);
-        valid &= (this->modelViewVarHandle != nVariable::INVALID_HANDLE);
-        valid &= (this->modelViewProjectionVarHandle != nVariable::INVALID_HANDLE);
-        valid &= (this->modelVarHandle != nVariable::INVALID_HANDLE);
-
-        return valid;
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
     Find shader object associated with fourcc code.
 */
 nMaterialNode::ShaderEntry*
@@ -227,12 +126,13 @@ nMaterialNode::FindShaderEntry(uint fourcc) const
     int numShaders = this->shaderArray.Size();
     for (i = 0; i < numShaders; i++)
     {
-        if (this->shaderArray[i].GetFourCC() == fourcc)
+        ShaderEntry& shaderEntry = this->shaderArray[i];
+        if (shaderEntry.GetFourCC() == fourcc)
         {
-            return &(this->shaderArray[i]);
+            return &shaderEntry;
         }
     }
-    // fallthrough: no shader matches this fourcc code
+    // fallthrough: no loaded shader matches this fourcc code
     return 0;
 }
 
@@ -250,19 +150,20 @@ nMaterialNode::HasShader(uint fourcc) const
 /**
     Update shader and set as current shader in the gfx server.
 */
-void
+bool
 nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    nVariableServer* varServer = this->refVariableServer.get();
-    nGfxServer2* gfxServer = this->refGfxServer.get();
 
     // find shader matching fourcc code, do nothing if shader not exists
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
     if (0 == shaderEntry)
     {
-        return;
+        #ifdef _DEBUG
+            n_printf("WARNING:" __FILE__ "Shader '%i' not found!", fourcc);
+        #endif
+        return false;
     }
 
     // see if any resources need to be reloaded
@@ -270,81 +171,38 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
     {
         this->LoadResources();
     }
+
+    // do nothing if shader could not be loaded
+    if (!shaderEntry->IsShaderValid())
+    {
+        return false;
+    }
     nShader2* shader = shaderEntry->GetShader();
 
     // invoke shader manipulators
     this->InvokeShaderAnimators(renderContext);
 
-    // apply int, float and vector variables to the shader
-    uint usedBit = 1;
-    uint usedMask = shaderEntry->GetVariableMask();
-    int numShaderVariables = this->varContext.GetNumVariables();
-    int i;
-    for (i = 0; i < numShaderVariables; i++, usedBit <<= 1)
-    {
-        // check if the variable is actually used by the shader
-        if (usedMask & usedBit)
-        {
-            const nVariable& var = this->varContext.GetVariableAt(i);
-            nVariable::Handle varHandle = var.GetHandle();
-            switch (var.GetType())
-            {
-                case nVariable::INT:
-                    shader->SetInt(varHandle, var.GetInt());
-                    break;
-
-                case nVariable::FLOAT:
-                    shader->SetFloat(varHandle, var.GetFloat());
-                    break;
-
-                case nVariable::VECTOR:
-                    shader->SetVector(varHandle, var.GetVector());
-                    break;
-
-                default:
-                    n_assert(false);
-                    break;
-            }
-        }
-    }
+    // transfer shader parameters en block
+    shader->SetParams(this->shaderParams);
 
     // apply texture shader variables to the shader
+    /*
     int numTextureVariables = this->texNodeArray.Size();
-    for (i = 0; i < numTextureVariables; i++, usedBit <<= 1)
+    int i;
+    for (i = 0; i < numTextureVariables; i++)
     {
         // check if the texture variable is actually used by the shader
-        if (usedMask & usedBit)
+        TexNode& texNode = this->texNodeArray[i];
+        if (shader->IsParameterUsed(texNode.shaderParameter))
         {
-            TexNode& texNode = this->texNodeArray[i];
-            shader->SetTexture(texNode.varHandle, texNode.refTexture.get());
+            shader->SetTexture(texNode.shaderParameter, texNode.refTexture.get());
         }
     }
+    */
 
-    // transfer matrices to the shader
-    if (shader->IsParameterUsed(this->modelViewVarHandle))
-    {
-        const matrix44& modelView = gfxServer->GetTransform(nGfxServer2::MODELVIEW);
-        shader->SetMatrix(this->modelViewVarHandle, modelView);
-    }
-    if (shader->IsParameterUsed(this->modelViewProjectionVarHandle))
-    {
-        const matrix44& modelViewProj = gfxServer->GetTransform(nGfxServer2::MODELVIEWPROJECTION);
-        shader->SetMatrix(this->modelViewProjectionVarHandle, modelViewProj);
-    }
-    if (shader->IsParameterUsed(this->modelVarHandle))
-    {
-        const matrix44& model = gfxServer->GetTransform(nGfxServer2::MODEL);
-        shader->SetMatrix(this->modelVarHandle, model);
-    }
-    if (shader->IsParameterUsed(this->modelEyePosVarHandle))
-    {
-        const matrix44& invModelView  = refGfxServer->GetTransform(nGfxServer2::INVMODELVIEW);
-        float4 modelEyePos = { invModelView.M41, invModelView.M42, invModelView.M43, 1.0f };
-        shader->SetVector(this->modelEyePosVarHandle, modelEyePos);
-    }
-
-    // render the shader
+    // make shader current
     this->refGfxServer->SetShader(shader);
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -363,7 +221,7 @@ nMaterialNode::SetShader(uint fourcc, const char* name)
     else
     {
         ShaderEntry newShaderEntry(fourcc, name);
-        this->shaderArray.PushBack(newShaderEntry);
+        this->shaderArray.Append(newShaderEntry);
     }
 }
 
@@ -384,3 +242,31 @@ nMaterialNode::GetShader(uint fourcc) const
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nMaterialNode::IsTextureUsed(nShader2::Parameter param)
+{
+	bool result	= false;
+ 
+	// check in all shaders if anywhere the texture specified by param is used
+    int	i;
+    int numShaders = this->shaderArray.Size();
+    for (i = 0; i < numShaders; i++)
+    {
+		const ShaderEntry& shaderEntry = this->shaderArray[i];
+
+		// first be sure that the shader entry could be loaded
+		if (shaderEntry.IsShaderValid())
+		{		
+			nShader2* shader = shaderEntry.GetShader();
+			if (shader->IsParameterUsed(param))
+            {
+                return true;
+            }
+		}
+	}
+    // fallthrough: texture not used by any shader
+	return false;
+}

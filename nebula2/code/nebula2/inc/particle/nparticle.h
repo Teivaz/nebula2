@@ -27,9 +27,9 @@ public:
     /// destructor
     virtual ~nParticle();
 
-    /// initializes all values and sets state to Unborn
+    /// initializes all values and sets state to Used
     void Initialize(nParticleEmitter* emitter, vector3& position, 
-                    vector3& velocity, nTime birthTime, nTime lifeTime, float rotation);
+        vector3& velocity, nTime birthTime, nTime lifeTime, float rotation);
 
     /// update the particle
     virtual void Trigger(nTime curTime, const vector3& absAccel);

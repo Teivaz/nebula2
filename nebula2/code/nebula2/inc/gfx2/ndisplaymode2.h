@@ -9,9 +9,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nDisplayMode2
@@ -20,28 +19,45 @@ public:
     /// display mode types
     enum Type
     {
-        WINDOWED,
-        FULLSCREEN,
-        CHILDWINDOWED
+        Windowed,       // windowed mode
+        Fullscreen,     // fullscreen mode
+        AlwaysOnTop,    // windowed, always on top
+        ChildWindow,    // windowed, as child window
     };
 
     /// constructor
     nDisplayMode2();
     /// constructor
-    nDisplayMode2(Type t, ushort w, ushort h, bool vs);
+    nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync);
     /// set display mode
-    void Set(Type t, ushort w, ushort h, bool vs);
+    void Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync);
+    /// set x position
+    void SetXPos(int x);
+    /// get x position
+    int GetXPos() const;
+    /// set y position
+    void SetYPos(int y);
+    /// get y position
+    int GetYPos() const;
+    /// set display width
+    void SetWidth(int w);
     /// get display width
     int GetWidth() const;
-    /// get display mode height
+    /// set display height
+    void SetHeight(int h);
+    /// get display height
     int GetHeight() const;
-    /// set display width
-    void SetWidth(ushort w);
-    /// set display mode height
-    void SetHeight(ushort h);   
-    /// get display mode type
+    /// set display type
+    void SetType(Type t);
+    /// get display type
     Type GetType() const;
-    /// return vsync value
+    /// set window title
+    void SetWindowTitle(const char* t);
+    /// get window title
+    const char* GetWindowTitle() const;
+    /// set vertical sync flag
+    void SetVerticalSync(bool b);
+    /// get vertical sync flag
     bool GetVerticalSync() const;
     /// convert type to string
     static const char* TypeToString(Type t);
@@ -49,11 +65,13 @@ public:
     static Type StringToType(const char* str);
 
 private:
+    nString windowTitle;
     Type type;
+    ushort xpos;
+    ushort ypos;
     ushort width;
     ushort height;
-    int parentHWnd;
-    bool vSync;
+    bool verticalSync;
 };
 
 //------------------------------------------------------------------------------
@@ -61,10 +79,13 @@ private:
 */
 inline
 nDisplayMode2::nDisplayMode2() :
-    type(WINDOWED),
+    windowTitle("Nebula2"),
+    type(Windowed),
+    xpos(0),
+    ypos(0),
     width(640),
     height(480),
-    vSync(true)
+    verticalSync(true)
 {
     // empty
 }
@@ -73,11 +94,14 @@ nDisplayMode2::nDisplayMode2() :
 /**
 */
 inline
-nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h, bool vs) :
+nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync) :
+    windowTitle(winTitle),
     type(t),
+    xpos(x),
+    ypos(y),
     width(w),
     height(h),
-    vSync(vs)
+    verticalSync(vSync)
 {
     // empty
 }
@@ -88,12 +112,65 @@ nDisplayMode2::nDisplayMode2(Type t, ushort w, ushort h, bool vs) :
 */
 inline
 void
-nDisplayMode2::Set(Type t, ushort w, ushort h, bool vs)
+nDisplayMode2::Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync)
 {
+    this->windowTitle = winTitle;
     this->type   = t;
+    this->xpos   = x;
+    this->ypos   = y;
     this->width  = w;
     this->height = h;
-    this->vSync = vs;
+    this->verticalSync = vSync;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetXPos(int x)
+{
+    this->xpos = x;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nDisplayMode2::GetXPos() const
+{
+    return this->xpos;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetYPos(int y)
+{
+    this->ypos = y;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nDisplayMode2::GetYPos() const
+{
+    return this->ypos;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetWidth(int w)
+{
+    this->width = w;
 }
 
 //------------------------------------------------------------------------------
@@ -110,19 +187,20 @@ nDisplayMode2::GetWidth() const
 /**
 */
 inline
-int
-nDisplayMode2::GetHeight() const
+void
+nDisplayMode2::SetHeight(int h)
 {
-    return this->height;
+    this->height = h;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void
-nDisplayMode2::SetWidth(ushort w) 
+int
+nDisplayMode2::GetHeight() const
 {
-   this->width = w;
+    return this->height;
 }
 
 //------------------------------------------------------------------------------
@@ -130,9 +208,9 @@ nDisplayMode2::SetWidth(ushort w)
 */
 inline
 void
-nDisplayMode2::SetHeight(ushort h)
+nDisplayMode2::SetType(Type t)
 {
-    this->height = h;
+    this->type = t;
 }
 
 //------------------------------------------------------------------------------
@@ -149,9 +227,40 @@ nDisplayMode2::GetType() const
 /**
 */
 inline
-bool nDisplayMode2::GetVerticalSync() const
+void
+nDisplayMode2::SetWindowTitle(const char* t)
 {
-    return this->vSync;
+    this->windowTitle = t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nDisplayMode2::GetWindowTitle() const
+{
+    return this->windowTitle.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetVerticalSync(bool b)
+{
+    this->verticalSync = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nDisplayMode2::GetVerticalSync() const
+{
+    return this->verticalSync;
 }
 
 //------------------------------------------------------------------------------
@@ -163,8 +272,9 @@ nDisplayMode2::TypeToString(Type t)
 {
     switch (t)
     {
-        case WINDOWED:   return "windowed";
-        case CHILDWINDOWED: return "child";
+        case Windowed:      return "windowed";
+        case AlwaysOnTop:   return "alwaysontop";
+        case ChildWindow:   return "childwindow";
         default:         return "fullscreen";
     }
 }
@@ -179,15 +289,19 @@ nDisplayMode2::StringToType(const char* str)
     n_assert(str);
     if (0 == strcmp(str, "windowed"))
     {
-        return WINDOWED;
+        return Windowed;
     }
-    else if (0 == strcmp(str, "child"))
+    else if (0 == strcmp(str, "alwaysontop"))
     {
-        return CHILDWINDOWED;
+        return AlwaysOnTop;
+    }
+    else if (0 == strcmp(str, "childwindow"))
+    {
+        return ChildWindow;
     }
     else
     { 
-        return FULLSCREEN;
+        return Fullscreen;
     }
 }
 

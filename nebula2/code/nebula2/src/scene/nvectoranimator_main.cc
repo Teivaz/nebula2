@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nVectorAnimator
 //------------------------------------------------------------------------------
 //  nvectoranimator_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -5,6 +6,7 @@
 #include "scene/nvectoranimator.h"
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
+#include "variable/nvariableserver.h"
 
 nNebulaScriptClass(nVectorAnimator, "nanimator");
 
@@ -12,7 +14,7 @@ nNebulaScriptClass(nVectorAnimator, "nanimator");
 /**
 */
 nVectorAnimator::nVectorAnimator() :
-    vectorParameter(nShader2::InvalidParameter),
+    vectorVarHandle(nVariable::INVALID_HANDLE),
     keyArray(0, 4)
 {
     // empty
@@ -35,7 +37,7 @@ void
 nVectorAnimator::SetVectorName(const char* name)
 {
     n_assert(name);
-    this->vectorParameter = nShader2::StringToParameter(name);
+    this->vectorVarHandle = this->refVariableServer->GetVariableHandleByName(name);
 }
 
 //------------------------------------------------------------------------------
@@ -45,13 +47,13 @@ nVectorAnimator::SetVectorName(const char* name)
 const char*
 nVectorAnimator::GetVectorName()
 {
-    if (nShader2::InvalidParameter == this->vectorParameter)
+    if (nVariable::INVALID_HANDLE == this->vectorVarHandle)
     {
         return 0;
     }
     else
     {
-        return nShader2::ParameterToString(this->vectorParameter);
+        return this->refVariableServer->GetVariableName(this->vectorVarHandle);
     }
 }
 
@@ -63,7 +65,7 @@ void
 nVectorAnimator::AddKey(float time, const vector4& key)
 {
     Key newKey(time, key);
-    this->keyArray.Append(newKey);
+    this->keyArray.PushBack(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +108,8 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
+    n_assert(nVariable::INVALID_HANDLE != this->channelVarHandle);
+    n_assert(nVariable::INVALID_HANDLE != this->vectorVarHandle);
 
     // FIXME: dirty cast, make sure that it is a nAbstractShaderNode!
     nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
@@ -153,7 +156,7 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
             vector4 curValue = key0.value + ((key1.value - key0.value) * lerp);
             
             // manipulate the target object
-            targetNode->SetVector(this->vectorParameter, curValue);
+            targetNode->SetVector(this->vectorVarHandle, curValue);
         }
     }
 }

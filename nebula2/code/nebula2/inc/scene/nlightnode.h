@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nLightNode
- 
-    Base class of scene nodes that provide lighting information.
+
+    Base class of scene node which provide lighting information.
 
     (C) 2003 RadonLabs GmbH
 */

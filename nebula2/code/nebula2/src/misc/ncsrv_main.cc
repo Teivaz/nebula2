@@ -177,6 +177,8 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     n_assert(fontHeight > 0);
     n_assert(displayHeight > 0);
 
+    const vector4 textColor(1.0f, 0.69f, 0.43f, 1.0f);
+
     // get pointer to the kernel server's line buffer entries
     nLineBuffer* lineBuffer = kernelServer->GetLogHandler()->GetLineBuffer();
     if (!lineBuffer)
@@ -217,7 +219,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     {
         n_strncpy2(line, lineArray[curLine], sizeof(line) - 3);
         n_strcat(line, "\n", sizeof(line));
-        gfxServer->Text(line, xPos, yPos);
+        gfxServer->Text(line, textColor, xPos, yPos);
         yPos += dy;
     }
 
@@ -242,7 +244,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     while ((*to++ = *from++));
 
     // and render it
-    gfxServer->Text(line, xPos, yPos);
+    gfxServer->Text(line, textColor, xPos, yPos);
 }
 
 //------------------------------------------------------------------------------
@@ -256,6 +258,8 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
     n_assert(this->envClass);
     n_assert(fontHeight > 0);
     n_assert(displayHeight > 0);
+
+    const vector4 textColor(1.0f, 0.69f, 0.43f, 1.0f);
 
     nRoot* watcherVars = kernelServer->Lookup("/sys/var");
     if (watcherVars)
@@ -306,7 +310,7 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
                             sprintf(line,"%s: <unknown data type>\n", varName);
                             break;
                     }
-                    gfxServer->Text(line, xPos, yPos);
+                    gfxServer->Text(line, textColor, xPos, yPos);
                     yPos += dy;
                 }
             }

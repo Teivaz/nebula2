@@ -23,7 +23,7 @@
     numvertices [numVertices] 
     vertexwidth [vertexWidth]
     numtris [numTriangles]
-    vertexcomps [coord normal tangent binormal color uv0 uv1 uv2 uv3 weights jindices]
+    vertexcomps [coord normal uv0 uv1 uv2 uv3 color tangent binormal weights jindices]
     g [firstVertex] [numVertices] [firstTriangle] [numTriangles]
     ...
     v 0.0 0.0 0.0 ....
@@ -44,13 +44,13 @@
     int vertexComponents:   one bit set for each vertex component
         Coord    = (1<<0)
         Normal   = (1<<1)
-        Tangent  = (1<<2)
-        Binormal = (1<<3)
-        Color    = (1<<4)
-        Uv0      = (1<<5)
-        Uv1      = (1<<6)
-        Uv2      = (1<<7)
-        Uv3      = (1<<8)
+        Uv0      = (1<<2)
+        Uv1      = (1<<3)
+        Uv2      = (1<<4)
+        Uv3      = (1<<5)
+        Color    = (1<<6)
+        Tangent  = (1<<7)
+        Binormal = (1<<8)
         ...
 
     for each group...
@@ -66,57 +66,52 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_RESOURCE_H
 #include "resource/nresource.h"
-#endif
-
-#ifndef N_PRIMITIVETYPES_H
 #include "gfx2/nprimitivetypes.h"
-#endif
-
-#ifndef N_MESHGROUP_H
 #include "gfx2/nmeshgroup.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nMesh2
-#include "kernel/ndefdllclass.h"
 
 class nGfxServer2;
 class nVariableServer;
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nMesh2 : public nResource
+class nMesh2 : public nResource
 {
 public:
-    enum Usage
-    {
-        WriteOnce,      // (default) CPU only fills the vertex buffer once, and never touches it again
-        ReadOnly,       // CPU reads from the vertex buffer, which can never be rendered
-        WriteOnly,      // CPU writes frequently to vertex buffer, but never read data back
-    };
-
     enum VertexComponent
     {
         Coord    = (1<<0),
         Normal   = (1<<1),
-        Tangent  = (1<<2),
-        Binormal = (1<<3),
-        Color    = (1<<4),
-        Uv0      = (1<<5),
-        Uv1      = (1<<6),
-        Uv2      = (1<<7),
-        Uv3      = (1<<8),
+        Uv0      = (1<<2),
+        Uv1      = (1<<3),
+        Uv2      = (1<<4),
+        Uv3      = (1<<5),
+        Color    = (1<<6),
+        Tangent  = (1<<7),
+        Binormal = (1<<8),
         Weights  = (1<<9),
         JIndices = (1<<10),
+
+        AllComponents = ((1<<11) - 1),
+    };
+
+    enum Usage
+    {
+        // read/write behaviour (mutually exclusive)
+        WriteOnce = (1<<0),     // (default) CPU only fills the vertex buffer once, and never touches it again
+        ReadOnly  = (1<<1),     // CPU reads from the vertex buffer, which can never be rendered
+        WriteOnly = (1<<2),     // CPU writes frequently to vertex buffer, but never read data back
+      
+        // use as point sprite buffer?
+        PointSprite = (1<<5),
+
+		// needs vertex shader?
+		NeedsVertexShader = (1<<6),
     };
 
     /// constructor
     nMesh2();
     /// destructor
     virtual ~nMesh2();
-    /// unload mesh resource
-    virtual void Unload();
     /// lock vertex buffer
     virtual float* LockVertices();
     /// unlock vertex buffer
@@ -125,13 +120,11 @@ public:
     virtual ushort* LockIndices();
     /// unlock index buffer
     virtual void UnlockIndices();
-    /// render the mesh in wireframe mode (as debug visualization)
-    virtual void RenderWireframe(nGfxServer2* gfxServer, nVariableServer* varServer, const char* shaderName, int groupIndex);
 
     /// set the mesh use type
-    void SetUsage(Usage t);
+    void SetUsage(int useFlags);
     /// get the mesh use type
-    Usage GetUsage() const;
+    int GetUsage() const;
     /// set number of vertices
     void SetNumVertices(int num);
     /// get number of vertices in mesh
@@ -146,10 +139,6 @@ public:
     int GetVertexComponents() const;
     /// get vertex width (number of floats in one vertex)
     int GetVertexWidth() const;
-    /// set the primitive type
-    void SetPrimitiveType(nPrimitiveType t);
-    /// get the primitive type
-    nPrimitiveType GetPrimitiveType() const;
     /// set number of groups
     void SetNumGroups(int num);
     /// get number of groups
@@ -164,18 +153,19 @@ public:
     static nKernelServer* kernelServer;
 
 protected:
+    /// unload resource
+    virtual void UnloadResource();
     /// set the byte size of the vertex buffer
     void SetVertexBufferByteSize(int s);
     /// set the byte size of the index buffer
     void SetIndexBufferByteSize(int s);
 
-    Usage usage;
+    int usage;
     int vertexComponentMask;
     int vertexWidth;                // depends on vertexComponentMask
     int numVertices;
     int numIndices;
     int numGroups;
-    nPrimitiveType primType;
     nMeshGroup* groups;
     int vertexBufferByteSize;
     int indexBufferByteSize;
@@ -186,16 +176,16 @@ protected:
 */
 inline
 void
-nMesh2::SetUsage(Usage t)
+nMesh2::SetUsage(int useFlags)
 {
-    this->usage = t;
+    this->usage = useFlags;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nMesh2::Usage
+int
 nMesh2::GetUsage() const
 {
     return this->usage;
@@ -263,17 +253,17 @@ inline
 void
 nMesh2::SetVertexComponents(int compMask)
 {
-    this->vertexComponentMask = compMask;
+    this->vertexComponentMask = compMask & AllComponents;
     this->vertexWidth = 0;
     if (compMask & Coord)    this->vertexWidth += 3;
     if (compMask & Normal)   this->vertexWidth += 3;
-    if (compMask & Tangent)  this->vertexWidth += 3;
-    if (compMask & Binormal) this->vertexWidth += 3;
-    if (compMask & Color)    this->vertexWidth += 4;
     if (compMask & Uv0)      this->vertexWidth += 2;
     if (compMask & Uv1)      this->vertexWidth += 2;
     if (compMask & Uv2)      this->vertexWidth += 2;
     if (compMask & Uv3)      this->vertexWidth += 2;
+    if (compMask & Color)    this->vertexWidth += 4;
+    if (compMask & Tangent)  this->vertexWidth += 3;
+    if (compMask & Binormal) this->vertexWidth += 3;
     if (compMask & Weights)  this->vertexWidth += 4;
     if (compMask & JIndices) this->vertexWidth += 4;
 }
@@ -296,26 +286,6 @@ int
 nMesh2::GetVertexWidth() const
 {
     return this->vertexWidth;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMesh2::SetPrimitiveType(nPrimitiveType t)
-{
-    this->primType = t;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nPrimitiveType
-nMesh2::GetPrimitiveType() const
-{
-    return this->primType;
 }
 
 //------------------------------------------------------------------------------

@@ -9,33 +9,16 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
-
-#ifndef N_PLANE_H
 #include "mathlib/plane.h"
-#endif
-
-#ifndef N_BBOX_H
 #include "mathlib/bbox.h"
-#endif
+#include "gfx2/nmesh2.h"
+#include "kernel/nfile.h"
+
 
 class nFileServer2;
 
@@ -52,13 +35,13 @@ public:
         {
             COORD    = (1<<0),
             NORMAL   = (1<<1),
-            TANGENT  = (1<<2),
-            BINORMAL = (1<<3),
-            COLOR    = (1<<4),
-            UV0      = (1<<5),
-            UV1      = (1<<6),
-            UV2      = (1<<7),
-            UV3      = (1<<8),
+            UV0      = (1<<2),
+            UV1      = (1<<3),
+            UV2      = (1<<4),
+            UV3      = (1<<5),
+            COLOR    = (1<<6),
+            TANGENT  = (1<<7),
+            BINORMAL = (1<<8),
             WEIGHTS  = (1<<9),
             JINDICES = (1<<10), 
 
@@ -133,7 +116,9 @@ public:
         /// fill vertex data with interpolated result (ignores weights and joint indices!)
         void Interpolate(const Vertex& v0, const Vertex& v1, float lerp);
         /// component-wise copy from source vertex
-        void ComponentCopy(const Vertex& src, int compMask);
+        void CopyComponentFromVertex(const Vertex& src, int compMask);
+        /// copy component from component, only if source vertex component is valid
+        void CopyComponentFromComponent(Component from, Component to);
 
         vector3 coord;
         vector3 normal;
@@ -157,9 +142,10 @@ public:
         {
             VERTEXINDICES    = (1<<0),
             GROUPID          = (1<<1),
-            NORMAL           = (1<<2),
-            TANGENT          = (1<<3),
-            BINORMAL         = (1<<4),
+            MATERIALID       = (1<<2),
+            NORMAL           = (1<<3),
+            TANGENT          = (1<<4),
+            BINORMAL         = (1<<5),
         };
 
         /// constructor
@@ -171,10 +157,18 @@ public:
         void SetVertexIndices(int i0, int i1, int i2);
         /// get vertex indices
         void GetVertexIndices(int& i0, int& i1, int& i2) const;
-        /// set group index
+        /// set group id
         void SetGroupId(int i);
-        /// get group index
+        /// get group id
         int GetGroupId() const;
+        /// set usage flags (== combination of nMesh2::Usage flags)
+        void SetUsageFlags(int f);
+        /// get usage flags
+        int GetUsageFlags() const;
+        /// set material id
+        void SetMaterialId(int i);
+        /// get material id
+        int GetMaterialId() const;
         /// check if component is valid
         bool HasComponent(Component c) const;
         /// set triangle normal
@@ -191,7 +185,9 @@ public:
         const vector3& GetBinormal() const;
 
         int vertexIndex[3];
+        int usageFlags;
         int groupId;
+        int materialId;
         vector3 normal;
         vector3 tangent;
         vector3 binormal;
@@ -208,6 +204,10 @@ public:
         void SetId(int i);
         /// get group id
         int GetId() const;
+        /// set material id
+        void SetMaterialId(int i);
+        /// get material id
+        int GetMaterialId() const;
         /// set first triangle index (optional)
         void SetFirstTriangle(int i);
         /// get first triangle index
@@ -216,8 +216,14 @@ public:
         void SetNumTriangles(int i);
         /// get number of triangles
         int GetNumTriangles() const;
+        /// set usage flags (see nMesh2::Usage)
+        void SetUsageFlags(int f);
+        /// get usage flags
+        int GetUsageFlags() const;
     private:
         int id;
+        int usageFlags;
+        int materialId;
         int firstTriangle;
         int numTriangles;
     };
@@ -229,6 +235,8 @@ public:
     
     //--- loading / saving ---
 
+    /// binary save to open file handle
+    bool SaveNvx2(nFile* file);
     /// save to nvx2 file
     bool SaveNvx2(nFileServer2* fileServer, const char* filename);
     /// load from nvx2 file
@@ -237,8 +245,12 @@ public:
     bool SaveN3d2(nFileServer2* fileServer, const char* filename);
     /// load from n3d2 file
     bool LoadN3d2(nFileServer2* fileServer, const char* filename);
+    /// save as legacy n3d files (one file per group)
+    bool SaveN3d(nFileServer2* fileServer, const char* filename);
     /// load from (old-style) n3d file
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
+    /// load OLD n3d2 file (saved before Dec-2003)
+    bool LoadOldN3d2(nFileServer2* fileServer, const char* filename);
     /// load any of the above (use file extension for format decision)
     bool Load(nFileServer2* fileServer, const char* filename);
     /// save any of the above (use file extension for format decision)
@@ -259,23 +271,29 @@ public:
     int GetNumVertices() const;
     /// get vertex at index
     Vertex& GetVertexAt(int index) const;
-    /// sort triangles by group id
-    void SortTrianglesByGroupId();
-    /// find the first triangle matching group id
-    int GetFirstGroupTriangle(int groupId) const;
-    /// count number of triangles matching group starting at index
-    int GetNumGroupTriangles(int groupId, int startTriangleIndex) const;
+    /// sort triangles by group id and material id
+    void SortTriangles();
+    /// find the first triangle matching group id, material id and usage flags
+    int GetFirstGroupTriangle(int groupId, int materialId, int usageFlags) const;
+    /// count number of triangles matching group and material id starting at index
+    int GetNumGroupTriangles(int groupId, int materialId, int usageFlags, int startTriangleIndex) const;
     /// get the minimum vertex index referenced by a group
     bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex) const; 
     /// build a group mapping array
     void BuildGroupMap(nArray<Group>& groupMap);
     /// update triangle group ids from a group map
-    void UpdateTriangleGroupIds(const nArray<Group>& groupMap);
+    void UpdateTriangleIds(const nArray<Group>& groupMap);
+    /// copy triangle with its vertices, do not generate redundant vertices
+    void CopyTriangle(const nMeshBuilder& srcMesh, int triIndex, nArray<int>& indexMap);
 
     //--- mesh operations ---
 
     /// erase/duplicate vertex components
     void ForceVertexComponents(int compMask);
+    /// copy vertex components to another
+    void CopyVertexComponents(Vertex::Component from, Vertex::Component to);
+    /// extend all vertices to have the same vertex components
+    void ExtendVertexComponents();
     /// transform vertices
     void Transform(const matrix44& m);
     /// remove redundant vertices
@@ -289,17 +307,21 @@ public:
     /// copy from mesh builder object
     void Copy(const nMeshBuilder& source);
     /// compute the bounding box of the mesh, filtered by a group id
-    bbox3 ComputeGroupBBox(int groupId) const;
+    bbox3 GetGroupBBox(int groupId) const;
+    /// compute the complete bounding box of the mesh
+    bbox3 GetBBox() const;
     /// count vertices in bounding box
     int CountVerticesInBBox(const bbox3& box) const;
     /// split triangle group in place, using a clip plane, return 2 new group indices
-    void Split(const plane& clipPlane, int groupId, int posGroupId, int negGroupId);
+    void Split(const plane& clipPlane, int groupId, int posGroupId, int negGroupId, int& numPosTriangles, int& numNegTriangles);
     /// fill a vertex-triangle mapping array
     void BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) const;
-    /// create face normals, tangents and binormals (requires a valid uv-mapping at layer 0)
+    /// create face normals and tangents (requires a valid uv-mapping at layer 0)
     void BuildTriangleNormals();
-    /// generate averaged vertex tangents and binormals
-    void BuildVertexTangentBinormals();
+    /// generate averaged vertex tangents
+    void BuildVertexTangents();
+    /// flip v texture coordinates
+    void FlipUvs();
 
 private:
     /// static userdata pointer for qsort hook
@@ -807,7 +829,7 @@ nMeshBuilder::Vertex::Interpolate(const Vertex& v0, const Vertex& v1, float lerp
 */
 inline
 void
-nMeshBuilder::Vertex::ComponentCopy(const Vertex& src, int mask)
+nMeshBuilder::Vertex::CopyComponentFromVertex(const Vertex& src, int mask)
 {
     if (mask & Vertex::COORD)       this->SetCoord(src.coord);
     if (mask & Vertex::NORMAL)      this->SetNormal(src.normal);
@@ -824,17 +846,64 @@ nMeshBuilder::Vertex::ComponentCopy(const Vertex& src, int mask)
 
 //------------------------------------------------------------------------------
 /**
+    Copy one vertex component to another vertex component in this vertex.
+
+    @param  from    the source vertex component type
+    @param  to      the target vertex component type
+*/
+inline
+void
+nMeshBuilder::Vertex::CopyComponentFromComponent(Component from, Component to)
+{
+    if (this->HasComponent(from))
+    {
+        static vector4 tmp;
+        switch (from)
+        {
+            case COORD:     tmp.set(this->coord.x, this->coord.y, this->coord.z, 0.0f); break;
+            case NORMAL:    tmp.set(this->normal.x, this->normal.y, this->normal.z, 0.0f); break;
+            case TANGENT:   tmp.set(this->tangent.x, this->tangent.y, this->tangent.z, 0.0f); break;
+            case BINORMAL:  tmp.set(this->binormal.x, this->binormal.y, this->binormal.z, 0.0f); break;
+            case COLOR:     tmp.set(this->color); break;
+            case UV0:       tmp.set(this->uv[0].x, this->uv[0].y, 0.0f, 0.0f); break;
+            case UV1:       tmp.set(this->uv[1].x, this->uv[1].y, 0.0f, 0.0f); break;
+            case UV2:       tmp.set(this->uv[2].x, this->uv[2].y, 0.0f, 0.0f); break;
+            case UV3:       tmp.set(this->uv[3].x, this->uv[3].y, 0.0f, 0.0f); break;
+            case WEIGHTS:   tmp.set(this->weights); break;
+            case JINDICES:  tmp.set(this->jointIndices); break;
+        }
+        switch (to)
+        {
+            case COORD:     this->coord.set(tmp.x, tmp.y, tmp.z); break;
+            case NORMAL:    this->normal.set(tmp.x, tmp.y, tmp.z); break;
+            case TANGENT:   this->tangent.set(tmp.x, tmp.y, tmp.z); break;
+            case BINORMAL:  this->binormal.set(tmp.x, tmp.y, tmp.z); break;
+            case COLOR:     this->color.set(tmp); break;
+            case UV0:       this->uv[0].set(tmp.x, tmp.y); break;
+            case UV1:       this->uv[1].set(tmp.x, tmp.y); break;
+            case UV2:       this->uv[2].set(tmp.x, tmp.y); break;
+            case UV3:       this->uv[3].set(tmp.x, tmp.y); break;
+            case WEIGHTS:   this->weights.set(tmp); break;
+            case JINDICES:  this->jointIndices.set(tmp); break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 nMeshBuilder::Triangle::Triangle() :
-    compMask(0)
+    usageFlags(nMesh2::WriteOnce),
+    compMask(0),
+    groupId(0),
+    materialId(0)
 {
     int i;
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
     }
-    this->groupId = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -889,6 +958,47 @@ int
 nMeshBuilder::Triangle::GetGroupId() const
 {
     return this->groupId;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetUsageFlags(int f)
+{
+    this->usageFlags = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshBuilder::Triangle::GetUsageFlags() const
+{
+    return this->usageFlags;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Triangle::SetMaterialId(int i)
+{
+    this->materialId = i;
+    this->compMask |= MATERIALID;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshBuilder::Triangle::GetMaterialId() const
+{
+    return this->materialId;
 }
 
 //------------------------------------------------------------------------------
@@ -973,6 +1083,7 @@ nMeshBuilder::Triangle::GetBinormal() const
 inline
 nMeshBuilder::Group::Group() :
     id(0),
+    usageFlags(nMesh2::WriteOnce),
     firstTriangle(0),
     numTriangles(0)
 {
@@ -997,6 +1108,26 @@ int
 nMeshBuilder::Group::GetId() const
 {
     return this->id;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::Group::SetMaterialId(int i)
+{
+    this->materialId = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshBuilder::Group::GetMaterialId() const
+{
+    return this->materialId;
 }
 
 //------------------------------------------------------------------------------
@@ -1033,6 +1164,26 @@ nMeshBuilder::Group::SetNumTriangles(int i)
 /**
 */
 inline
+void
+nMeshBuilder::Group::SetUsageFlags(int f)
+{
+    this->usageFlags = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshBuilder::Group::GetUsageFlags() const
+{
+    return this->usageFlags;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 int
 nMeshBuilder::Group::GetNumTriangles() const
 {
@@ -1063,7 +1214,7 @@ inline
 void
 nMeshBuilder::AddVertex(const Vertex& v)
 {
-    this->vertexArray.PushBack(v);
+    this->vertexArray.Append(v);
 }
 
 //------------------------------------------------------------------------------
@@ -1073,7 +1224,7 @@ inline
 void
 nMeshBuilder::AddTriangle(const Triangle& t)
 {
-    this->triangleArray.PushBack(t);
+    this->triangleArray.Append(t);
 }
 
 //------------------------------------------------------------------------------
@@ -1117,5 +1268,48 @@ nMeshBuilder::GetTriangleAt(int index) const
 }
 
 //------------------------------------------------------------------------------
-#endif
+/**
+    This method copies a triangle with its vertices from the source mesh
+    to this mesh. Vertices will only be copied if they don't already exist
+    in this mesh. To accomplish this, an indexMap array must be provided. The
+    array must contain int enties and its size must be identical to the
+    number of vertices in the source mesh. The array elements must be
+    initialized with -1. The copy method will record any copied vertices
+    into the index map, so that it can find out at a later iteration if
+    the vertex has already been copied. This method makes an extra cleanup
+    pass unnecessary, since not redundant vertex data will be generated 
+    during the copy.
+*/
+inline
+void
+nMeshBuilder::CopyTriangle(const nMeshBuilder& srcMesh, int triIndex, nArray<int>& indexMap)
+{
+    const Triangle& tri = srcMesh.GetTriangleAt(triIndex);
+    int index[3];
+    tri.GetVertexIndices(index[0], index[1], index[2]);
 
+    // add vertices, if they don't exist yet, and update indexMap
+    int i;
+    for (i = 0; i < 3; i++)
+    {
+        if (indexMap[index[i]] != -1)
+        {
+            index[i] = indexMap[index[i]];
+        }
+        else
+        {
+            this->AddVertex(srcMesh.GetVertexAt(index[i]));
+            int newIndex = this->GetNumVertices() - 1;
+            indexMap[index[i]] = newIndex;
+            index[i] = newIndex;
+        }
+    }
+
+    // add triangle and update triangle indices
+    this->AddTriangle(tri);
+    Triangle& newTri = this->GetTriangleAt(this->GetNumTriangles() - 1);
+    newTri.SetVertexIndices(index[0], index[1], index[2]);
+}
+
+//------------------------------------------------------------------------------
+#endif

@@ -10,9 +10,7 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_MESHBUILDER_H
 #include "tools/nmeshbuilder.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nBspBuilder
@@ -38,6 +36,10 @@ public:
         void SetPlane(const plane& p);
         /// get plane used to split this node
         const plane& GetPlane() const;
+        /// set the node's bounding box
+        void SetBox(const bbox3& box);
+        /// get the node's bounding box
+        const bbox3& GetBox() const;
         /// return true if this is a leaf node (contains geometry)
         bool IsLeaf() const;
         /// set mesh group index containing node geometry
@@ -49,6 +51,7 @@ public:
         BspNode* negChild;
         BspNode* posChild;
         plane splitPlane;
+        bbox3 bbox;
         int meshGroupIndex;
     };
 
@@ -57,7 +60,7 @@ public:
     /// destructor
     ~nBspBuilder();
     /// build bsp tree
-    bool BuildBsp(nMeshBuilder& srcMesh, int maxDepth);
+    bool BuildBsp(nMeshBuilder& srcMesh, float maxNodeSize, const bbox3& box);
     /// get pointer to resulting bsp tree
     BspNode* GetBspTree() const;
 
@@ -65,7 +68,7 @@ private:
     /// append dstMesh to srcMesh, and update groups in dstMesh
     int AppendMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh);
     /// recursively create new bsp nodes
-    BspNode* Split(nMeshBuilder& srcMesh, int groupId, int maxDepth, int depth, int& nextGroupId);
+    BspNode* Split(nMeshBuilder& srcMesh, const bbox3& box, int groupId, float maxNodeSize, int depth, int& nextGroupId);
 
     BspNode* rootNode;      // root node of bsp tree
 };
@@ -160,6 +163,26 @@ const plane&
 nBspBuilder::BspNode::GetPlane() const
 {
     return this->splitPlane;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nBspBuilder::BspNode::SetBox(const bbox3& b)
+{
+    this->bbox = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const bbox3&
+nBspBuilder::BspNode::GetBox() const
+{
+    return this->bbox;
 }
 
 //------------------------------------------------------------------------------
