@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nVariableServer
 //------------------------------------------------------------------------------
 //  nvariableserver_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -49,7 +48,7 @@ nVariableServer::DeclareVariable(const char* varName, nFourCC varFourCC)
     // check if the variable already exists, either by name or by fourcc
     nVariable::Handle nameHandle = this->FindVariableHandleByName(varName);
     nVariable::Handle fourccHandle = this->FindVariableHandleByFourCC(varFourCC);
-    if ((nameHandle != nVariable::INVALID_HANDLE) || (fourccHandle != nVariable::INVALID_HANDLE))
+    if ((nameHandle != nVariable::InvalidHandle) || (fourccHandle != nVariable::InvalidHandle))
     {
         // variable is already declared, make sure that the declaration is consistent
         if (nameHandle != fourccHandle)
@@ -58,7 +57,7 @@ nVariableServer::DeclareVariable(const char* varName, nFourCC varFourCC)
             n_error("Inconsistent variable declaration: '%s'/'%s'!\n"
                     "Either the name or the fourcc code is already used", 
                     varName, this->FourCCToString(varFourCC, buf, sizeof(buf)));
-            return nVariable::INVALID_HANDLE;
+            return nVariable::InvalidHandle;
         }
         return nameHandle;
     }
@@ -66,7 +65,7 @@ nVariableServer::DeclareVariable(const char* varName, nFourCC varFourCC)
     {
         // a new variable declaration
         VariableDeclaration newDecl(varName, varFourCC);
-        this->registry.PushBack(newDecl);
+        this->registry.Append(newDecl);
         return this->registry.Size() - 1;
     }
 }
@@ -102,10 +101,10 @@ nVariableServer::GetVariableAt(int index, const char*& varName, nFourCC& varFour
 //------------------------------------------------------------------------------
 /**
     Find a variable handle by variable name. The variable must have been
-    declared before. Otherwise returns nVariable::INVALID_HANDLE.
+    declared before. Otherwise returns nVariable::InvalidHandle.
 
     @param  varName     name of a variable
-    @return             variable handle, or nVariable::INVALID_HANDLE
+    @return             variable handle, or nVariable::InvalidHandle
 */
 nVariable::Handle
 nVariableServer::FindVariableHandleByName(const char* varName)
@@ -122,16 +121,16 @@ nVariableServer::FindVariableHandleByName(const char* varName)
         }
     }
     // fallthrough: not found
-    return nVariable::INVALID_HANDLE;
+    return nVariable::InvalidHandle;
 }
 
 //------------------------------------------------------------------------------
 /**
     Find a variable handle by the variable's fourcc code. The variable must have been
-    declared before. Otherwise returns nVariable::INVALID_HANDLE.
+    declared before. Otherwise returns nVariable::InvalidHandle.
 
     @param  varFourCC   fourcc code of a variable
-    @return             variable handle, or nVariable::INVALID_HANDLE
+    @return             variable handle, or nVariable::InvalidHandle
 */
 nVariable::Handle
 nVariableServer::FindVariableHandleByFourCC(nFourCC varFourCC)
@@ -148,7 +147,7 @@ nVariableServer::FindVariableHandleByFourCC(nFourCC varFourCC)
         }
     }
     // fallthrough: not found
-    return nVariable::INVALID_HANDLE;
+    return nVariable::InvalidHandle;
 }
 
 //------------------------------------------------------------------------------
@@ -161,7 +160,7 @@ nVariableServer::GetVariableHandleByName(const char* varName)
 {
     n_assert(varName);
     nVariable::Handle varHandle = this->FindVariableHandleByName(varName);
-    if (nVariable::INVALID_HANDLE != varHandle)
+    if (nVariable::InvalidHandle != varHandle)
     {
         return varHandle;
     }
@@ -169,7 +168,7 @@ nVariableServer::GetVariableHandleByName(const char* varName)
     {
         // a new variable declaration
         VariableDeclaration newDecl(varName);
-        this->registry.PushBack(newDecl);
+        this->registry.Append(newDecl);
         return this->registry.Size() - 1;
     }
 }
@@ -184,7 +183,7 @@ nVariableServer::GetVariableHandleByFourCC(nFourCC fourcc)
 {
     n_assert(0 != fourcc);
     nVariable::Handle varHandle = this->FindVariableHandleByFourCC(fourcc);
-    if (nVariable::INVALID_HANDLE != varHandle)
+    if (nVariable::InvalidHandle != varHandle)
     {
         return varHandle;
     }
@@ -192,7 +191,7 @@ nVariableServer::GetVariableHandleByFourCC(nFourCC fourcc)
     {
         // a new variable declaration
         VariableDeclaration newDecl(fourcc);
-        this->registry.PushBack(newDecl);
+        this->registry.Append(newDecl);
         return this->registry.Size() - 1;
     }
 }
@@ -207,7 +206,7 @@ nVariableServer::GetVariableHandleByFourCC(nFourCC fourcc)
 const char*
 nVariableServer::GetVariableName(nVariable::Handle h)
 {
-    n_assert(nVariable::INVALID_HANDLE != h);
+    n_assert(nVariable::InvalidHandle != h);
     return this->registry[h].GetName();
 }
 
@@ -221,7 +220,7 @@ nVariableServer::GetVariableName(nVariable::Handle h)
 nFourCC
 nVariableServer::GetVariableFourCC(nVariable::Handle h)
 {
-    n_assert(nVariable::INVALID_HANDLE != h);
+    n_assert(nVariable::InvalidHandle != h);
     return this->registry[h].GetFourCC();
 }
 
@@ -271,12 +270,12 @@ nVariableServer::SetIntVariable(nVariable::Handle varHandle, int i)
     context.
 */
 void
-nVariableServer::SetVectorVariable(nVariable::Handle varHandle, const float4& v)
+nVariableServer::SetVectorVariable(nVariable::Handle varHandle, const nFloat4& v)
 {
     nVariable* var = this->globalVariableContext.GetVariable(varHandle);
     if (var)
     {
-        var->SetVector(v);
+        var->SetFloat4(v);
     }
     else
     {
