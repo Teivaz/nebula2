@@ -40,19 +40,8 @@ nIpcClient::~nIpcClient()
 
 //------------------------------------------------------------------------------
 /**
-    Der uebergebene Name hat folgenden Aufbau:
-  
-    [hostname:]portname 
-
-    Hostname ist optional und nur notwendig, wenn
-    sich die Adresse auf einem anderen Rechner befindet.
-    Statt eines Namens kann auch eine TCP/IP Adresse
-    angegeben sein.
-    "portname" bezeichnet den Namen des Ports, der auf
-    "hostname" angesprochen werden soll.
-  
-    Die Routine fuellt die [server_addr] Struktur in
-    this aus.
+    Sets the address of the server. 
+    See nIpcClient::Connect() for more information.
 */
 bool 
 nIpcClient::FillServerAddr(const char* name)
@@ -81,8 +70,7 @@ nIpcClient::FillServerAddr(const char* name)
     this->serverPortName = portname;
     n_assert(hostname[0] != 0);
     n_assert(portname[0] != 0);
-    
-    // Hostname und initiale Portnummer eintragen
+
     he = gethostbyname(hostname);
     if (!he) {
         n_printf("nIpcClient(): unknown host!");
@@ -113,12 +101,13 @@ nIpcClient::GetPortNumFromName(const char *portName)
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
-     - 31-Oct-98   floh    falls ein Port nicht zuhoerte, wurde kein
-                           neuer Socket aufgemacht, was dazu fuehrte,
-                           dass sich die Routine in einer Endlosschleife
-                           aufhing, weil keine Connection mehr geklappt
-                           hatte.
+    Connects to the given server. The server name has the following structure:
+  
+    [hostname:]portname
+
+    Hostname is the usual address or IP of the server, this can be left blank
+    for the local machine. Portname is the string name of the port as set by the
+    server.
 */
 bool 
 nIpcClient::Connect(const char* portName)
@@ -137,7 +126,6 @@ nIpcClient::Connect(const char* portName)
         
         while ((!connected) && (!error) && (num_retries < 4)) 
         {    
-            // falls Retry, alten Socket killen
             if (this->sock) 
             {
                 shutdown(this->sock,2);
@@ -146,7 +134,7 @@ nIpcClient::Connect(const char* portName)
                 num_retries++;
             }
             
-            // einen neuen Socket initialisieren                
+            // intialise new socket
             this->sock = socket(AF_INET, SOCK_STREAM, 0);
             if (this->sock == INVALID_SOCKET) 
             {
@@ -162,11 +150,11 @@ nIpcClient::Connect(const char* portName)
                           sizeof(struct sockaddr));
             if (res != -1) 
             {
-                // eine Verbindung steht, richtiger Port?
+                // check for correct port
                 sprintf(msg_buf, "~handshake %s", this->serverPortName.Get());
                 res = send(this->sock, msg_buf, strlen(msg_buf)+1, 0);
             
-                // warte auf Antwort...
+                // wait for response
                 if (res != -1) 
                 {
                     n_printf("nIpcClient: sending handshake... ");
@@ -178,7 +166,7 @@ nIpcClient::Connect(const char* portName)
                     } 
                     else 
                     {                    
-                        // positive Antwort?
+                        // correct response
                         if (strcmp(msg_buf,"~true") == 0) 
                         {
                             connected = true;
@@ -186,7 +174,7 @@ nIpcClient::Connect(const char* portName)
                         } 
                         else 
                         {
-                            // falscher Portname, neue probieren...
+                            // wrong response, try next port
                             this->serverPortNum++;
                             this->serverAddr.sin_port = htons(this->serverPortNum);
                             n_printf("wrong portname.\n");
@@ -201,9 +189,9 @@ nIpcClient::Connect(const char* portName)
             } 
             else 
             {
-                // auf diesem Port hoert niemand zu, naechste Portnummer...
-                  this->serverPortNum++;
-                   this->serverAddr.sin_port = htons(this->serverPortNum);
+                // no response, try next port
+                this->serverPortNum++;
+                this->serverAddr.sin_port = htons(this->serverPortNum);
             }
         }
         if (connected) 
@@ -224,6 +212,7 @@ nIpcClient::Connect(const char* portName)
         
 //------------------------------------------------------------------------------
 /**
+    Disconnect from the current server.
 */
 void 
 nIpcClient::Disconnect()
@@ -232,11 +221,11 @@ nIpcClient::Disconnect()
     int res;
     char *cmd = "~close";
     
-    // sende ~close Befehl
+    // send ~close cmd
     res = send(this->sock, cmd, strlen(cmd)+1, 0);
     if (res != -1) 
     {
-        // Antwort abholen
+        // get response
         char buf[128];
         res = recv(this->sock, buf, sizeof(buf), 0);
         if ((res == -1) || (res == 0)) 
@@ -257,6 +246,12 @@ nIpcClient::Disconnect()
 
 //------------------------------------------------------------------------------
 /**
+    Sends a message to the current server.
+    
+    @param buf pointer to data to send
+    @param size size of data
+    
+    @return a pointer to a new nMsgNode with the response
 */
 nMsgNode*
 nIpcClient::SendMsg(void* buf, int size)
@@ -281,7 +276,6 @@ nIpcClient::SendMsg(void* buf, int size)
         } 
         else if (res > 0) 
         {
-            // baue eine nMsgNode mit dem Ergebnis
             nd = new nMsgNode(this->receiveBuffer, res);
         }
     }
@@ -290,6 +284,10 @@ nIpcClient::SendMsg(void* buf, int size)
 
 //------------------------------------------------------------------------------
 /**
+    Frees the reply nMsgNode. Should be called once you have finished processing a
+    response from nIpcClient::SendMsg()
+    
+    @param nd pointer to the nMsgNode you want to free.
 */
 void 
 nIpcClient::FreeReplyMsgNode(nMsgNode *nd)
@@ -299,6 +297,9 @@ nIpcClient::FreeReplyMsgNode(nMsgNode *nd)
 
 //------------------------------------------------------------------------------
 /**
+    Get the current server's hostname.
+    
+    @return hostname
 */
 const char*
 nIpcClient::GetHostName() const
@@ -308,6 +309,9 @@ nIpcClient::GetHostName() const
 
 //------------------------------------------------------------------------------
 /**
+    Get the current server's portname.
+    
+    @return portname
 */
 const char*
 nIpcClient::GetPortName() const
