@@ -33,6 +33,8 @@ public:
     int Set(const char* buf, int numBytes);
     /// get pointer to buffer content
     char* GetPointer();
+    /// get const pointer to buffer content
+    const char* GetPointer() const;
     /// set size of buffer content manually
     void SetSize(int s);
     /// get size of buffer content
@@ -165,6 +167,16 @@ nIpcBuffer::GetMaxSize() const
 inline
 char*
 nIpcBuffer::GetPointer()
+{
+    return this->buffer;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nIpcBuffer::GetPointer() const
 {
     return this->buffer;
 }
