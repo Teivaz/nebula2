@@ -22,6 +22,7 @@
       'f'     - float
       's'     - string
       'b'     - bool
+      'l'     - list
 
     Examples of prototype descriptions:
 
@@ -141,7 +142,8 @@ inline
 bool 
 nCmdProto::IsValidArg(char c)
 {
-    switch(c) {
+    switch (c)
+    {
         case 'i':
         case 'f':
         case 's':
@@ -149,6 +151,7 @@ nCmdProto::IsValidArg(char c)
         case 'b':
         case 'o':
         case 'c':
+        case 'l':
             return true;
         default:
             return false;

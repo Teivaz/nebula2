@@ -19,8 +19,8 @@ nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nC
     
     // copy prototype definition
     this->protoDef = proto_def;
-	this->fourcc   = id;
-	this->cmdProc  = cmd_proc; // can be NULL if legacy cmd handling used
+    this->fourcc   = id;
+    this->cmdProc  = cmd_proc; // can be NULL if legacy cmd handling used
     
     // isolate and validate outargs, cmd name and in args...
     n_strncpy2(tmp, proto_def, sizeof(tmp));
@@ -29,34 +29,34 @@ nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nC
     char* inArgStr  = strtok(0, "_");
     n_assert(outArgStr && nameStr && inArgStr);
 
-   	// set cmd proto name in own hash node
+    // set cmd proto name in own hash node
     this->SetName(nameStr);
  
-	// parse in args
-	this->numInArgs = 0;
+    // parse in args
+    this->numInArgs = 0;
     while ((c = *inArgStr++)) 
     {
-		// ignore void arguments
-		if (c != 'v') 
+        // ignore void arguments
+        if (c != 'v') 
         {
-	        n_assert(this->IsValidArg(c)) 
-			inArgs[this->numInArgs++] = c;
-		}					
+            n_assert(this->IsValidArg(c)) 
+            inArgs[this->numInArgs++] = c;
+        }
     }
-	inArgs[this->numInArgs] = 0;
-		
-	// parse out args
-	this->numOutArgs = 0;
+    inArgs[this->numInArgs] = 0;
+
+    // parse out args
+    this->numOutArgs = 0;
     while ((c = *outArgStr++)) 
     {
-		// ignore void arguments
-		if (c != 'v') 
+        // ignore void arguments
+        if (c != 'v') 
         {
-	        n_assert(this->IsValidArg(c)) 
-			outArgs[this->numOutArgs++] = c;
-		}					
+            n_assert(this->IsValidArg(c)) 
+            outArgs[this->numOutArgs++] = c;
+        }
     }
-	outArgs[this->numOutArgs] = 0;
+    outArgs[this->numOutArgs] = 0;
 
 
     // create template cmd object
@@ -68,12 +68,13 @@ nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nC
     {
         switch (inArgs[i]) 
         {
-            case 'i':   this->cmdTemplate->In()->SetI(0);     break;
-            case 'f':   this->cmdTemplate->In()->SetF(0.0f);  break;
-            case 'b':   this->cmdTemplate->In()->SetB(false); break;
-            case 's':   this->cmdTemplate->In()->SetS(NULL);  break;
-            case 'o':   this->cmdTemplate->In()->SetO(NULL);  break;
-            case 'c':   this->cmdTemplate->In()->SetC(NULL);  break;
+            case 'i':   this->cmdTemplate->In()->SetI(0);      break;
+            case 'f':   this->cmdTemplate->In()->SetF(0.0f);   break;
+            case 'b':   this->cmdTemplate->In()->SetB(false);  break;
+            case 's':   this->cmdTemplate->In()->SetS(NULL);   break;
+            case 'o':   this->cmdTemplate->In()->SetO(NULL);   break;
+            case 'c':   this->cmdTemplate->In()->SetC(NULL);   break;
+            case 'l':   this->cmdTemplate->In()->SetL(NULL,0); break;
             default:    break;
        } 
     }
@@ -83,12 +84,13 @@ nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nC
     {
         switch (outArgs[i]) 
         {
-            case 'i':   this->cmdTemplate->Out()->SetI(0);     break;
-            case 'f':   this->cmdTemplate->Out()->SetF(0.0f);  break;
-            case 'b':   this->cmdTemplate->Out()->SetB(false); break;
-            case 's':   this->cmdTemplate->Out()->SetS(NULL);  break;
-            case 'o':   this->cmdTemplate->Out()->SetO(NULL);  break;
-            case 'c':   this->cmdTemplate->Out()->SetC(NULL);  break;
+            case 'i':   this->cmdTemplate->Out()->SetI(0);      break;
+            case 'f':   this->cmdTemplate->Out()->SetF(0.0f);   break;
+            case 'b':   this->cmdTemplate->Out()->SetB(false);  break;
+            case 's':   this->cmdTemplate->Out()->SetS(NULL);   break;
+            case 'o':   this->cmdTemplate->Out()->SetO(NULL);   break;
+            case 'c':   this->cmdTemplate->Out()->SetC(NULL);   break;
+            case 'l':   this->cmdTemplate->Out()->SetL(NULL,0); break;
             default:    break;
        } 
     }

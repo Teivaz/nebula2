@@ -60,7 +60,7 @@ static int tclPipeCommand(Tcl_Interp *interp, const char *cmd, int objc, Tcl_Obj
 int tclcmd_New(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer*) cdata;
+    nTclServer *tcl = (nTclServer*) cdata;
 
     if (objc != 3) 
     {
@@ -89,13 +89,13 @@ int
 tclcmd_Delete(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer*) cdata;
+    nTclServer *tcl = (nTclServer*) cdata;
 
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'delete name'", TCL_STATIC);
     }
-	else 
+    else 
     {
         nRoot *o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
         if (o) 
@@ -119,15 +119,15 @@ int
 tclcmd_Sel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer*) cdata;
+    nTclServer *tcl = (nTclServer*) cdata;
 
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = sel name'", TCL_STATIC);
     }
-	else 
+    else 
     {
-	    char *objName = Tcl_GetString(objv[1]);
+        char *objName = Tcl_GetString(objv[1]);
         nRoot* obj = nTclServer::kernelServer->Lookup(objName);
         if (obj)
         {
@@ -154,13 +154,13 @@ int
 tclcmd_Psel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer*) cdata;
+    nTclServer *tcl = (nTclServer*) cdata;
 
     if (objc != 1) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = psel'", TCL_STATIC);
     }
-	else 
+    else 
     {
         nRoot *obj = nTclServer::kernelServer->GetCwd();
         n_assert(obj);
@@ -210,10 +210,10 @@ tclcmd_Dir(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]
 int 
 tclcmd_Get(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer*) cdata;
+    int retval = TCL_ERROR;
+    nTclServer *tcl = (nTclServer*) cdata;
 
-	if (objc != 2) 
+    if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = get filename'", TCL_STATIC);
     }
@@ -276,7 +276,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                     double d;
                     if (Tcl_GetDoubleFromObj(interp,objv[i],&d)==TCL_OK) 
                     {
-						float f = (float) d;
+                        float f = (float) d;
                         arg->SetF(f);
                         arg_ok = true;
                     }
@@ -344,12 +344,113 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                     
                 case nArg::ARGTYPE_VOID:
                     break;
+
+                case nArg::ARGTYPE_LIST:
+                    n_printf("List values aren't acceptable in arguments.");
+                    arg_ok = false;
+                    break;
             }
             if (!arg_ok) return false;
         }
         return true;
     }
     return false;
+}
+
+//--------------------------------------------------------------------
+/**
+    utility function for nArg of type ARGTYPE_LIST
+*/
+static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
+{
+    n_assert(nArg::ARGTYPE_LIST == listArg->GetType());
+    
+    nArg* args;
+    int num_args = listArg->GetL(args);
+
+    Tcl_Obj* res = Tcl_NewListObj(0,0);
+
+    nArg* arg = args;
+    for (int i=0; i<num_args; i++)
+    {
+        switch (arg->GetType())
+        {
+            case nArg::ARGTYPE_INT:
+            {
+                Tcl_Obj *io = Tcl_NewIntObj(arg->GetI());
+                Tcl_ListObjAppendElement(interp,res,io);
+            }
+            break;
+
+            case nArg::ARGTYPE_FLOAT:
+            {
+                Tcl_Obj *fo = Tcl_NewDoubleObj((double)arg->GetF());
+                Tcl_ListObjAppendElement(interp,res,fo);
+            }
+            break;
+
+            case nArg::ARGTYPE_STRING:
+            {
+                const char *s = arg->GetS();
+                if (!s)
+                {
+                    s = ":null:";
+                }
+                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
+                Tcl_ListObjAppendElement(interp,res,so);
+            }
+            break;
+
+            case nArg::ARGTYPE_CODE:
+            {
+                const char *s = arg->GetC();
+                if (!s)
+                {
+                    s = "";
+                }
+                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
+                Tcl_ListObjAppendElement(interp,res,so);
+            }
+            break;
+
+            case nArg::ARGTYPE_BOOL:
+            {
+                const char *s = arg->GetB() ? "true" : "false";
+                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
+                Tcl_ListObjAppendElement(interp,res,so);
+            }
+            break;
+
+            case nArg::ARGTYPE_OBJECT:
+            {
+                char buf[N_MAXPATH];
+                const char *s;
+                nRoot *o = (nRoot *) arg->GetO();
+                if (o)
+                {
+                    o->GetFullName(buf,sizeof(buf));
+                    s = buf;
+                }
+                else
+                {
+                    s = "null";
+                }
+                Tcl_Obj *so = Tcl_NewStringObj(s,strlen(s));
+                Tcl_ListObjAppendElement(interp,res,so);
+            }
+            break;
+
+            case nArg::ARGTYPE_LIST:
+                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                break;
+
+            case nArg::ARGTYPE_VOID:
+                break;
+        }
+        arg++;
+    }
+
+    return res;
 }
 
 //------------------------------------------------------------------------------
@@ -435,15 +536,20 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
 
             case nArg::ARGTYPE_VOID:
                 break;
-        }
-    } else {
 
+            case nArg::ARGTYPE_LIST:
+                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                break;
+        }
+    }
+    else
+    {
         // more then one output arg, create a list
         int i;
         for (i=0; i<num_args; i++) 
         {
             arg = cmd->Out();
-            switch(arg->GetType()) 
+            switch (arg->GetType()) 
             {
                 case nArg::ARGTYPE_INT:
                     {
@@ -511,6 +617,10 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     break;
 
                 case nArg::ARGTYPE_VOID:
+                    break;
+
+                case nArg::ARGTYPE_LIST:
+                    Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
                     break;
             }
         }
@@ -626,11 +736,11 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         }
 
         // let object handle the command
-		if (o->Dispatch(cmd)) 
+        if (o->Dispatch(cmd)) 
         {
             retval = TCL_OK;
             _putOutArgs(interp,cmd);
-		} 
+        } 
         else 
         {
             tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', command '%s'",o,cmd_name);
@@ -674,15 +784,15 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
 int 
 tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	int retval = TCL_ERROR;
+    int retval = TCL_ERROR;
     nTclServer *tcl = (nTclServer *) cdata;
-	if (objc != 1) 
+    if (objc != 1) 
     {
         Tcl_SetResult(interp, "Syntax is 'exit'", TCL_STATIC);
     }
-	else 
+    else 
     {
-		// turn off the interactive mode and set the quit requested flag,
+        // turn off the interactive mode and set the quit requested flag,
         // if the Tcl server is in standalone mode (thus a Nebula application
         // wraps has loaded Tcl), this is the signal for the application
         // that the script server requested to quit the application. 
@@ -691,7 +801,7 @@ tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
         // Tcl_Exit() which does the basic cleanup stuff, and then exits
         // the process, Nebula then gets unloaded in the detach handler
         // of the extension dll.
-		tcl->SetQuitRequested(true);
+        tcl->SetQuitRequested(true);
 
 #ifndef __MICROTCL__
         if (!tcl->isStandAloneTcl) 
@@ -700,8 +810,8 @@ tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
         }
 #endif
 
-		retval = TCL_OK;
-	}
+        retval = TCL_OK;
+    }
     return retval;
 }
 
@@ -769,13 +879,13 @@ int
 tclcmd_Exists(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-	nTclServer *tcl = (nTclServer *) cdata;
+    nTclServer *tcl = (nTclServer *) cdata;
 
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'exists name'", TCL_STATIC);
     }
-	else 
+    else 
     {
         nRoot *o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
         if (o) Tcl_SetResult(interp, "1", TCL_STATIC);
