@@ -57,13 +57,13 @@ public:
     /// transform types
     enum nTransformType
     {
-        MODELVIEW = 0,          // current modelview matrix (read/write)
-        PROJECTION,             // current projection matrix (read/write)
-        INVMODELVIEW,           // inverse of current modelview matrix (read only)
-        MODELVIEWPROJECTION,    // the combined modelview-projection matrix (read only)
-        VIEW,                   // current view matrix (read/write)
-        INVVIEW,                // current inverse view matrix (read only)
-        MODEL,                  // the model (world) matrix (read only)
+        MODELVIEW = 0,          ///< current modelview matrix (read/write)
+        PROJECTION,             ///< current projection matrix (read/write)
+        INVMODELVIEW,           ///< inverse of current modelview matrix (read only)
+        MODELVIEWPROJECTION,    ///< the combined modelview-projection matrix (read only)
+        VIEW,                   ///< current view matrix (read/write)
+        INVVIEW,                ///< current inverse view matrix (read only)
+        MODEL,                  ///< the model (world) matrix (read only)
 
         NUM_TRANSFORMTYPES,
     };
