@@ -98,7 +98,7 @@ System::Object* Nebula2::NebulaObject::UnpackArgToRetVal(nArg* arg)
 
     switch(arg->GetType())
     {
-    case arg->ARGTYPE_LIST:
+    case nArg::List:
         {
             nArg* args;
             int len = arg->GetL(args);
@@ -115,7 +115,7 @@ System::Object* Nebula2::NebulaObject::UnpackArgToRetVal(nArg* arg)
             retval = array;
         }
         break;
-    case arg->ARGTYPE_OBJECT:
+    case nArg::Object:
         {
             nRoot* nobj = (nRoot*)arg->GetO();
             if(!nobj) return retval;//null pointer, possible, no error
@@ -140,22 +140,22 @@ System::Object* Nebula2::NebulaObject::UnpackArgToRetVal(nArg* arg)
             retval = inst;
         }
         break;
-    case arg->ARGTYPE_STRING:
+    case nArg::String:
         {
             retval = new System::String(arg->GetS());
         }
         break;
-    case arg->ARGTYPE_BOOL:
+    case nArg::Bool:
         {
             retval = __box(arg->GetB());
         }
         break;
-    case arg->ARGTYPE_INT:
+    case nArg::Int:
         {
             retval = __box(arg->GetI());
         }
         break;
-    case arg->ARGTYPE_FLOAT:
+    case nArg::Float:
         {
             retval = __box(arg->GetF());
         }
