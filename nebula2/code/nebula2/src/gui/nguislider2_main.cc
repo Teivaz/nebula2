@@ -164,6 +164,48 @@ nGuiSlider2::OnShow()
     }
     knob->OnShow();
     this->refKnob = knob;
+    
+    // these buttons are used to detect mouse presses in the gutter/track
+	// they are usually invisible
+    nGuiButton* negTrack = (nGuiButton*) kernelServer->New("nguibutton", "NegTrack");
+    n_assert(negTrack);
+    if (this->horizontal)
+    {
+        negTrack->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
+        negTrack->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
+        this->AttachForm(negTrack, Top, 0.0f);
+        this->AttachWidget(negTrack, Left, negBtn, 0);
+        this->AttachWidget(negTrack, Right, knob, 0);
+    }
+    else
+    {
+        negTrack->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
+        negTrack->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
+        this->AttachForm(negTrack, Left, 0.0f);
+        this->AttachWidget(negTrack, Top, negBtn, 0);
+        this->AttachWidget(negTrack, Bottom, knob, 0);
+    }
+    this->refNegTrack = negTrack;
+    
+    nGuiButton* posTrack = (nGuiButton*) kernelServer->New("nguibutton", "PosTrack");
+    n_assert(posTrack);
+    if (this->horizontal)
+    {
+        posTrack->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
+        posTrack->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
+        this->AttachForm(posTrack, Top, 0.0f);
+        this->AttachWidget(posTrack, Left, knob, 0);
+        this->AttachWidget(posTrack, Right, posBtn, 0);
+    }
+    else
+    {
+        posTrack->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
+        posTrack->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
+        this->AttachForm(posTrack, Left, 0.0f);
+        this->AttachWidget(posTrack, Top, knob, 0);
+        this->AttachWidget(posTrack, Bottom, posBtn, 0);
+    }
+    this->refPosTrack = posTrack;
 
     kernelServer->PopCwd();     // pop this
     
@@ -323,14 +365,28 @@ nGuiSlider2::OnEvent(const nGuiEvent& event)
     {
         if (event.GetType() == nGuiEvent::ButtonUp)
         {
-            this->MoveSliderPos();
+            this->MoveSliderPos(false);
         }
     }
     else if (event.GetWidget() == this->refNegButton.get())
     {
         if (event.GetType() == nGuiEvent::ButtonUp)
         {
-            this->MoveSliderNeg();
+            this->MoveSliderNeg(false);
+        }
+    }
+    else if (event.GetWidget() == this->refNegTrack.get())
+    {
+        if (event.GetType() == nGuiEvent::ButtonUp)
+        {
+            this->MoveSliderNeg(true);
+        }
+    }
+    else if (event.GetWidget() == this->refPosTrack.get())
+    {
+        if (event.GetType() == nGuiEvent::ButtonUp)
+        {
+            this->MoveSliderPos(true);
         }
     }
 
@@ -440,12 +496,21 @@ nGuiSlider2::HandleDrag(const vector2& mousePos)
 
 //------------------------------------------------------------------------------
 /**
-    Move slider one position into the positive direction.
+    The slider is moved either one line or one page depending on the value
+    of pageJump.
 */
 void
-nGuiSlider2::MoveSliderPos()
+nGuiSlider2::MoveSliderPos(bool pageJump)
 {
-    this->visibleStart++;
+    if (pageJump)
+    {
+        this->visibleStart += this->visibleSize;
+    }
+    else
+    {
+        this->visibleStart++;
+    }
+    
     if ((this->visibleStart + this->visibleSize) >= this->overallSize)
     {
         this->visibleStart = this->overallSize - this->visibleSize;
@@ -456,12 +521,21 @@ nGuiSlider2::MoveSliderPos()
 
 //------------------------------------------------------------------------------
 /**
-    Move slider one position into the negative direction.
+    The slider is moved either one line or one page depending on the value
+    of pageJump.
 */
 void
-nGuiSlider2::MoveSliderNeg()
+nGuiSlider2::MoveSliderNeg(bool pageJump)
 {
-    this->visibleStart--;
+    if (pageJump)
+    {
+        this->visibleStart -= this->visibleSize;
+    }
+    else
+    {
+        this->visibleStart--;
+    }
+    
     if (this->visibleStart < 0)
     {
         this->visibleStart = 0;

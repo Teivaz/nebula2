@@ -77,9 +77,9 @@ private:
     /// handle knob dragging
     void HandleDrag(const vector2& mousePos);
     /// move slider one position into positive direction
-    void MoveSliderPos();
+    void MoveSliderPos(bool pageJump);
     /// move slider one position into negative direction
-    void MoveSliderNeg();
+    void MoveSliderNeg(bool pageJump);
 
     float overallSize;
     float visibleStart;
@@ -90,6 +90,8 @@ private:
     nRef<nGuiButton>     refPosButton;
     nRef<nGuiButton>     refKnob;
     nRef<nGuiLabel>      refBgLabel;
+    nRef<nGuiButton>     refNegTrack;
+    nRef<nGuiButton>     refPosTrack;
 
     vector2 arrowBtnSize;
     int knobNegEdgeLayoutIndex;
