@@ -496,12 +496,12 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
 {
     float frame  = time / this->keyTime;
     int intFrame = int(frame);
-    keyIndex0    = intFrame - startKey;
+    keyIndex0    = intFrame;
     keyIndex1    = keyIndex0 + 1;
     inbetween    = frame - float(intFrame);
     if (Clamp == this->loopType)
     {
-        // 'clam' loop type
+        // 'clamp' loop type
         if (keyIndex0 < 0)                   keyIndex0 = 0;
         else if (keyIndex0 >= this->numKeys) keyIndex0 = this->numKeys - 1;
         if (keyIndex1 < 0)                   keyIndex1 = 0;
@@ -513,8 +513,8 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
         keyIndex0 %= this->numKeys;
         keyIndex1 %= this->numKeys;
     }
-    keyIndex0 *= this->keyStride;
-    keyIndex1 *= this->keyStride;
+    keyIndex0 = (keyIndex0 * this->keyStride) + this->startKey;
+    keyIndex1 = (keyIndex1 * this->keyStride) + this->startKey;
 }
 
 //------------------------------------------------------------------------------
