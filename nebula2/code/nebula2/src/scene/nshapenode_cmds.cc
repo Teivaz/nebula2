@@ -166,6 +166,7 @@ nShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setmeshresourceloader ---
         const char* rlName = this->GetMeshResourceLoader();
+        // only when we have a resource loader
         if (rlName)
         {
             cmd = ps->GetCmd(this, 'SMRL');

@@ -208,6 +208,8 @@ nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
 //------------------------------------------------------------------------------
 /**
     Get the mesh resource loader.
+    
+    @return resource loader name or null when there is no resource loader
 */
 const char *
 nShapeNode::GetMeshResourceLoader()
