@@ -163,6 +163,7 @@ beginmodule nkernel
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
         nrefcounted nguid nshell32wrapper ncrc nreferenced
+        ndefclass
     }
 endmodule
 
