@@ -20,6 +20,7 @@ const char* nShader2::StringTable[nShader2::NumParameters] =
     "ModelEyePos",
     "ModelLightPos",
     "LightPos",
+    "LightDirection",
     "MatAmbient",
     "MatDiffuse",
     "MatSpecular",
