@@ -24,10 +24,6 @@
 //------------------------------------------------------------------------------
 /**
     This function is called by n_assert() when the assertion fails.
-
-     - 13-Dec-99   floh    created
-     - 07-Feb-00   floh    should now also flush log channel 
-                           correctly if not on stdout
 */
 void 
 n_barf(const char* exp, const char* file, int line)
@@ -37,7 +33,7 @@ n_barf(const char* exp, const char* file, int line)
 
 //------------------------------------------------------------------------------
 /**
-    This function is called by n_assert2() when the assition fails.
+    This function is called by n_assert2() when the assertion fails.
 */
 void
 n_barf2(const char* exp, const char* msg, const char* file, int line)

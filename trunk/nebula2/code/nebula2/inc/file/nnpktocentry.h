@@ -11,13 +11,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_HASHNODE_H
 #include "util/nhashnode.h"
-#endif
-
-#ifndef N_HASHLIST_H
 #include "util/nhashlist.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nNpkFileWrapper;

@@ -121,7 +121,7 @@ nShader2::~nShader2()
 /**
 */
 bool
-nShader2::IsParameterUsed(Parameter p)
+nShader2::IsParameterUsed(Parameter /*p*/)
 {
     return false;
 }
@@ -130,7 +130,7 @@ nShader2::IsParameterUsed(Parameter p)
 /**
 */
 void
-nShader2::SetBool(Parameter p, bool val)
+nShader2::SetBool(Parameter /*p*/, bool /*val*/)
 {
     // empty
 }
@@ -139,7 +139,7 @@ nShader2::SetBool(Parameter p, bool val)
 /**
 */
 void
-nShader2::SetBoolArray(Parameter p, const bool* array, int count)
+nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -148,7 +148,7 @@ nShader2::SetBoolArray(Parameter p, const bool* array, int count)
 /**
 */
 void
-nShader2::SetInt(Parameter p, int val)
+nShader2::SetInt(Parameter /*p*/, int /*val*/)
 {
     // empty
 }
@@ -157,7 +157,7 @@ nShader2::SetInt(Parameter p, int val)
 /**
 */
 void
-nShader2::SetIntArray(Parameter p, const int* array, int count)
+nShader2::SetIntArray(Parameter /*p*/, const int* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -166,7 +166,7 @@ nShader2::SetIntArray(Parameter p, const int* array, int count)
 /**
 */
 void
-nShader2::SetFloat(Parameter p, float val)
+nShader2::SetFloat(Parameter /*p*/, float /*val*/)
 {
     // empty
 }
@@ -175,7 +175,7 @@ nShader2::SetFloat(Parameter p, float val)
 /**
 */
 void
-nShader2::SetFloatArray(Parameter p, const float* array, int count)
+nShader2::SetFloatArray(Parameter /*p*/, const float* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -184,7 +184,7 @@ nShader2::SetFloatArray(Parameter p, const float* array, int count)
 /**
 */
 void
-nShader2::SetVector4(Parameter p, const vector4& val)
+nShader2::SetVector4(Parameter /*p*/, const vector4& /*val*/)
 {
     // empty
 }
@@ -193,7 +193,7 @@ nShader2::SetVector4(Parameter p, const vector4& val)
 /**
 */
 void
-nShader2::SetVector3(Parameter p, const vector3& val)
+nShader2::SetVector3(Parameter /*p*/, const vector3& /*val*/)
 {
     // empty
 }
@@ -202,7 +202,7 @@ nShader2::SetVector3(Parameter p, const vector3& val)
 /**
 */
 void
-nShader2::SetFloat4(Parameter p, const nFloat4& val)
+nShader2::SetFloat4(Parameter /*p*/, const nFloat4& /*val*/)
 {
     // empty
 }
@@ -211,7 +211,7 @@ nShader2::SetFloat4(Parameter p, const nFloat4& val)
 /**
 */
 void
-nShader2::SetFloat4Array(Parameter p, const nFloat4* array, int count)
+nShader2::SetFloat4Array(Parameter /*p*/, const nFloat4* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -220,7 +220,7 @@ nShader2::SetFloat4Array(Parameter p, const nFloat4* array, int count)
 /**
 */
 void
-nShader2::SetVector4Array(Parameter p, const vector4* array, int count)
+nShader2::SetVector4Array(Parameter /*p*/, const vector4* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -229,7 +229,7 @@ nShader2::SetVector4Array(Parameter p, const vector4* array, int count)
 /**
 */
 void
-nShader2::SetMatrix(Parameter p, const matrix44& val)
+nShader2::SetMatrix(Parameter /*p*/, const matrix44& /*val*/)
 {
     // empty
 }
@@ -238,7 +238,7 @@ nShader2::SetMatrix(Parameter p, const matrix44& val)
 /**
 */
 void
-nShader2::SetMatrixArray(Parameter p, const matrix44* array, int count)
+nShader2::SetMatrixArray(Parameter /*p*/, const matrix44* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -247,7 +247,7 @@ nShader2::SetMatrixArray(Parameter p, const matrix44* array, int count)
 /**
 */
 void
-nShader2::SetMatrixPointerArray(Parameter p, const matrix44** array, int count)
+nShader2::SetMatrixPointerArray(Parameter /*p*/, const matrix44** /*array*/, int /*count*/)
 {
     // empty
 }
@@ -256,7 +256,7 @@ nShader2::SetMatrixPointerArray(Parameter p, const matrix44** array, int count)
 /**
 */
 void
-nShader2::SetTexture(Parameter p, nTexture2* val)
+nShader2::SetTexture(Parameter /*p*/, nTexture2* /*val*/)
 {
     // empty
 }
@@ -265,7 +265,7 @@ nShader2::SetTexture(Parameter p, nTexture2* val)
 /**
 */
 void
-nShader2::SetParams(const nShaderParams& params)
+nShader2::SetParams(const nShaderParams& /*params*/)
 {
     // empty
 }

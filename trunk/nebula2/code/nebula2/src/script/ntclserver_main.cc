@@ -123,7 +123,6 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
 void 
 nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
 {
-
     n_assert(interp);
 
     Tcl_DeleteCommand(this->interp, "exists");

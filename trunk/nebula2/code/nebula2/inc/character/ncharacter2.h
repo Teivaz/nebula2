@@ -9,7 +9,6 @@
 
     (C) 2003 RadonLabs GmbH
 */
-
 #include "anim2/nanimstatearray.h"
 #include "character/ncharskeleton.h"
 

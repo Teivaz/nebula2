@@ -56,11 +56,9 @@ static int tclPipeCommand(Tcl_Interp *interp, const char *cmd, int objc, Tcl_Obj
 /**
     Implement 'new' command.
 */
-int tclcmd_New(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+int tclcmd_New(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     if (objc != 3) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = new class name'", TCL_STATIC);
@@ -85,11 +83,9 @@ int tclcmd_New(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     Implement 'delete' command.
 */
 int 
-tclcmd_Delete(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'delete name'", TCL_STATIC);
@@ -115,11 +111,9 @@ tclcmd_Delete(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST obj
     Implement 'sel' command.
 */
 int 
-tclcmd_Sel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = sel name'", TCL_STATIC);
@@ -150,11 +144,9 @@ tclcmd_Sel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]
     Implement 'psel' command.
 */
 int 
-tclcmd_Psel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     if (objc != 1) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = psel'", TCL_STATIC);
@@ -175,11 +167,9 @@ tclcmd_Psel(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     Implement 'dir' command.
 */
 int 
-tclcmd_Dir(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Dir(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     Tcl_ResetResult(interp);
     if (objc != 1) 
     {
@@ -207,11 +197,9 @@ tclcmd_Dir(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]
     Implement 'get' command.
 */
 int 
-tclcmd_Get(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer*) cdata;
-
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'name = get filename'", TCL_STATIC);
@@ -336,6 +324,10 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
                     n_printf("List values aren't acceptable in arguments.");
                     arg_ok = false;
                     break;
+
+                default:
+                    n_error("nTclServer::_getInArg(): unsupported data type!");
+                    break;
             }
             if (!arg_ok) return false;
         }
@@ -421,6 +413,10 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
 
             case nArg::Void:
                 break;
+
+            default:
+                n_error("nTclServer::_putOutListArg(): unsupported argument type!");
+                break;
         }
         arg++;
     }
@@ -504,6 +500,10 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
             case nArg::List:
                 Tcl_ListObjAppendList(interp,res,_putOutListArg(interp,arg));
                 break;
+
+            default:
+                n_error("nTclServer::_putOutArgs(): unsupported data type!");
+                break;
         }
     }
     else
@@ -573,6 +573,10 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
 
                 case nArg::List:
                     Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                    break;
+
+                default:
+                    n_error("nTclServer::_putOutArgs(): unsupported data type!");
                     break;
             }
         }
@@ -734,7 +738,7 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     Implement the 'exit' command.
 */
 int 
-tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
 {
     int retval = TCL_ERROR;
     nTclServer *tcl = (nTclServer *) cdata;
@@ -828,11 +832,9 @@ tclcmd_Puts(ClientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
     Implement the 'exists' command.
 */
 int 
-tclcmd_Exists(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
-
     if (objc != 2) 
     {
         Tcl_SetResult(interp, "Syntax is 'exists name'", TCL_STATIC);

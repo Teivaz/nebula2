@@ -50,7 +50,7 @@ typedef double nTime;
 
 //------------------------------------------------------------------------------
 #define N_MAXPATH (512)     // maximum length for complete path
-#define N_MAXNAMELEN (32)   // maximum lentgh for single path component
+#define N_MAXNAMELEN (32)   // maximum length for single path component
 
 //------------------------------------------------------------------------------
 #define nID(a,b,c,d) ((a<<24)|(b<<16)|(c<<8)|(d))
