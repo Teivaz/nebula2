@@ -1,5 +1,5 @@
 /**
-    @defgroup NebulaAudioSystem Audio System
+    @defgroup NebulaAudioSystem Audio Subsystem
 
     This section of the documentation covers Nebula audio system and it's
     subsystems.
@@ -34,7 +34,7 @@
 */
 
 /**
-    @defgroup NebulaDSAudioSystem Nebula Direct Sound Audio System
+    @defgroup NebulaDSAudioSystem Nebula Direct Sound Audio Subsystem
     @ingroup NebulaAudioSystem
 
     @brief The @ref NebulaDSAudioSystem is a wrapper around the Microsoft
