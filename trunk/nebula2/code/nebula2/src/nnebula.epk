@@ -48,16 +48,28 @@ beginmodule nmaterialnode
     setheaders { nmaterialnode }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nvolumelightnode
+beginmodule nlightnode
     setdir scene
-    setfiles { nvolumelightnode_main }
-    setheaders { nvolumelightnode }
+    setfiles { nlightnode_main }
+    setheaders { nlightnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nspotlightnode
+    setdir scene
+    setfiles { nspotlightnode_main nspotlightnode_cmds }
+    setheaders { nspotlightnode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nshapenode
     setdir scene
     setfiles { nshapenode_main nshapenode_cmds }
     setheaders { nshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticleshapenode
+    setdir scene
+    setfiles { nparticleshapenode_main nparticleshapenode_cmds }
+    setheaders { nparticleshapenode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nanimator
@@ -148,7 +160,7 @@ endmodule
 beginmodule nmesh2
     setdir gfx2
     setfiles { nmesh2_main }
-    setheaders { nmesh2 }
+    setheaders { nmesh2 nmeshloader nn3d2loader nnvx2loader }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule ntexture2
@@ -157,23 +169,24 @@ beginmodule ntexture2
     setheaders { ntexture2 }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nntxfile
-    setmodtype cpplib
-    setdir gfx2
-    setfiles { nntxfile }
-    setheaders { nntxfile }
-endmodule
-#-------------------------------------------------------------------------------
 beginmodule nshader2
     setdir gfx2
     setfiles { nshader2_main }
     setheaders { nshader2 }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nfont2
+    setdir gfx2
+    setfiles { nfont2_main }
+    setheaders { nfont2 }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule ngfxserver2
     setdir gfx2
-    setfiles { ngfxserver2_main ngfxserver2_cmds nwireframerenderer }
-    setheaders { ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nprimitivetypes nwireframerenderer }
+    setfiles { ngfxserver2_main ngfxserver2_cmds }
+    setheaders { 
+        ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nprimitivetypes nfontdesc 
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nskinanimator
@@ -219,17 +232,39 @@ beginmodule nconserver
     setheaders { nconserver }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nparticle
+    setmodtype cpplib
+    setdir particle
+    setfiles nparticle_main
+    setheaders nparticle
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticleserver
+    setdir particle
+    setfiles nparticleserver_main
+    setheaders nparticleserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticleemitter
+    setmodtype cpplib
+    setdir particle
+    setfiles nparticleemitter_main
+    setheaders nparticleemitter
+endmodule
+#-------------------------------------------------------------------------------
 begintarget nnebula
     settype lib
     setmods {
         nbinscriptserver ntclserver nnpkfileserver nvariableserver 
-        ninputserver nresource nresourceserver nresourceloader nresourcebundle
-        nntxfile nmesh2 ntexture2 nshader2 ngfxserver2
-        nsceneserver nstdsceneserver 
+        ninputserver nresourceserver nresource nresourceloader nresourcebundle
+        nmesh2 ntexture2 nshader2 nfont2 ngfxserver2
+        nsceneserver nstdsceneserver
         nscenenode ntransformnode nabstractshadernode 
-        nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
-        ntransformanimator nskinanimator nskinshapenode
-        ncharacter nanimationserver nanimation nmemoryanimation nconserver
+        nmaterialnode nlightnode nspotlightnode nshapenode
+        nanimator nvectoranimator ntransformanimator
+        nskinanimator nskinshapenode ncharacter nanimationserver nanimation
+        nmemoryanimation nconserver
+        nparticle nparticleserver nparticleemitter nparticleshapenode
     }
 endtarget
 
