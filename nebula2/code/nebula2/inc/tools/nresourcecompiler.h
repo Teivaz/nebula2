@@ -352,7 +352,7 @@ nResourceCompiler::SetError(const char* err, ...)
     va_list argList;
     va_start(argList, err);
     char msg[1024];
-    vsprintf(msg, err, argList);
+    vsnprintf(msg, sizeof(msg), err, argList);
     this->error = msg;
     va_end(argList);
 }
@@ -369,3 +369,4 @@ nResourceCompiler::GetError() const
 
 //------------------------------------------------------------------------------
 #endif
+

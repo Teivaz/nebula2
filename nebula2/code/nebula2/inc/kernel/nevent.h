@@ -144,6 +144,8 @@ nEvent::TimedWait(int ms)
         }
         return false;
     #endif
+#else
+    return false;
 #endif
 }
 

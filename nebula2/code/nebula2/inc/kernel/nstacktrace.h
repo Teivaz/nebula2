@@ -1,6 +1,5 @@
 #ifndef N_STACKTRACE_H
 #define N_STACKTRACE_H
-
 //------------------------------------------------------------------------------
 /**
      @class nStackTrace

@@ -171,7 +171,7 @@ n_setjoint(void* slf, nCmd* cmd)
     Finish defining joints
 */
 static void
-n_endjoints(void* slf, nCmd* cmd)
+n_endjoints(void* slf, nCmd* /*cmd*/)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
     self->EndJoints();
@@ -323,7 +323,7 @@ n_setstate(void* slf, nCmd* cmd)
     Finish defining animation states.
 */
 static void
-n_endstates(void* slf, nCmd* cmd)
+n_endstates(void* slf, nCmd* /*cmd*/)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
     self->EndStates();

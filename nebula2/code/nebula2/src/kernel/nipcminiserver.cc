@@ -44,7 +44,6 @@ nIpcMiniServer::CloseRcvrSocket()
     if (INVALID_SOCKET != this->rcvrSocket) 
     {
         shutdown(this->rcvrSocket, 2);
-
         closesocket(this->rcvrSocket);
         this->rcvrSocket = INVALID_SOCKET;
     }

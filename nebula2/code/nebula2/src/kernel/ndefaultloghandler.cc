@@ -76,7 +76,7 @@ nDefaultLogHandler::PutLineBuffer(const char* msg, va_list argList)
     n_assert(strlen(msg) < 1024);
 
     char charBuffer[2 * 1024];
-    vsprintf(charBuffer, msg, argList);
+    vsnprintf(charBuffer, sizeof(charBuffer), msg, argList);
     this->lineBuffer.Put(charBuffer);
 }
 

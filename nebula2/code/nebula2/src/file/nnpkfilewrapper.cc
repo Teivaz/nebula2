@@ -151,7 +151,7 @@ nNpkFileWrapper::ReadHeader(nFile* file)
     {
         return false;
     }
-    int blockLen = file->GetInt();
+    file->GetInt(); // read blocklen
     int dataBlockStart = file->GetInt();
 
     this->dataOffset = dataBlockStart + 8;
@@ -172,7 +172,7 @@ nNpkFileWrapper::ReadTocEntries(nFile* file)
     {
         // read next fourcc code and block len
         int fourcc = file->GetInt();
-        int blockLen = file->GetInt();
+        file->GetInt();
 
         if ('DIR_' == fourcc)
         {

@@ -26,7 +26,6 @@ nAnimation::~nAnimation()
     }
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -41,7 +40,7 @@ nAnimation::UnloadResource()
     This method should be overwritten by subclasses.
 */
 void 
-nAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray)
+nAnimation::SampleCurves(float /*time*/, int /*groupIndex*/, int /*firstCurveIndex*/, int /*numCurves*/, vector4* /*keyArray*/)
 {
     // empty
 }

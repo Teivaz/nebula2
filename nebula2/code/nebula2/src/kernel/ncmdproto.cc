@@ -96,9 +96,9 @@ nCmdProto::nCmdProto(const char *proto_def, uint id)
 //------------------------------------------------------------------------------
 /**
 */
-nCmdProto::nCmdProto(const nCmdProto& rhs)
+nCmdProto::nCmdProto(const nCmdProto& rhs) :
+    nHashNode(rhs.GetName())
 {
-    this->SetName(rhs.GetName());
     this->fourcc      = rhs.fourcc;
     this->numInArgs   = rhs.numInArgs;
     this->numOutArgs  = rhs.numOutArgs;

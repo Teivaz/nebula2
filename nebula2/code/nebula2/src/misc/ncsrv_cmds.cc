@@ -59,7 +59,7 @@ void n_initcmds(nClass *cl)
     @info
     Opens the console.
 */
-static void n_open(void *o, nCmd *cmd)
+static void n_open(void* o, nCmd* /*cmd*/)
 {
     nConServer *self = (nConServer *) o;
     self->Open();
@@ -76,7 +76,7 @@ static void n_open(void *o, nCmd *cmd)
     @info
     Closes the console. 
 */
-static void n_close(void *o, nCmd *cmd)
+static void n_close(void* o, nCmd* /*cmd*/)
 {
     nConServer *self = (nConServer *) o;
     self->Close();
@@ -93,7 +93,7 @@ static void n_close(void *o, nCmd *cmd)
     @info
     Toggles the console state. 
 */
-static void n_toggle(void *o, nCmd *)
+static void n_toggle(void* o, nCmd* /*cmd*/)
 {
     nConServer *self = (nConServer *) o;
     self->Toggle();
@@ -130,12 +130,9 @@ static void n_watch(void *o, nCmd *cmd)
     @info
     Closes the with 'watch' activated watchmode. 
 */
-static void n_unwatch(void *o, nCmd *)
+static void n_unwatch(void* o, nCmd* /*cmd*/)
 {
     nConServer *self = (nConServer *) o;
     self->Unwatch();
 }
 
-//-------------------------------------------------------------------
-//  EOF
-//-------------------------------------------------------------------

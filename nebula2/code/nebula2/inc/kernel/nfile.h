@@ -26,6 +26,7 @@
 #endif
 
 class nFileServer2;
+
 //------------------------------------------------------------------------------
 class nFile : public nRefCounted
 {

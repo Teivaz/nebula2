@@ -29,25 +29,6 @@ nRoot::nRoot() :
 
 //------------------------------------------------------------------------------
 /**
-     - 08-Oct-98   floh    created
-     - 01-Dec-98   floh    wiederholt jetzt Release() auf Child solange,
-                           bis es wirklich tot ist (es kann sein, dass
-                           dessen RefCount nicht 1 ist).
-     - 13-May-99   floh    + Cwd-Safe-Code. Wenn dieses Objekt das
-                             Cwd ist, wird das Cwd auf '/' gesetzt,
-                             damit der Kernel keinen ungueltigen Pointer
-                             mit sich rumschleppt
-     - 17-May-99   floh    + Listenhandling umgeschrieben
-     - 26-May-99   floh    + ks->num_objects
-     - 14-May-99   floh    + gibt alle Childs frei, die noch uebrig
-                             sind...
-     - 02-May-00   floh    + release parse file name
-     - 12-Sep-00   floh    + InvalidateAllRefs() moved here
-     - 12-Dec-00   floh    + BUG! when removing child objects, the loop
-                             used a RemHead() to remove the child object
-                             from the list, which in turn invalidates
-                             the parent pointer, this caused the "am I the
-                             current cwd" check to fail!
 */
 nRoot::~nRoot()
 {
@@ -99,21 +80,6 @@ nRoot::Initialize()
 
 //------------------------------------------------------------------------------
 /**
-     - 08-Oct-98   floh    created
-     - 11-Nov-98   floh    Rueckgabewert von long auf bool
-     - 10-Dec-98   floh    + wertet jetzt zuerst Objekt-Flags aus
-     - 24-Apr-99   floh    + Release() auf Childobjekts (war vorher
-                             im Destruktor)
-     - 14-Jun-99   floh    + Irgendwie ham se mir wahrscheinlich ins
-                             Gehirn geschissen. Das Killen der Subobjekte
-                             SOLLTE im Destruktor passieren, weil damit
-                             Subklassen die Objekte selbst auf
-                             spezialisierte Weise wegraeumen koennen. Das
-                             sei hiermit definiert!
-     - 16-Jul-99   floh    + N_FLAGS_PROTECTED gekillt
-                           + InvalidateAllRefs()
-     - 12-Sep-00   floh    + InvalidateAllRefs() has been moved to
-                             destructor
 */
 bool 
 nRoot::Release()
@@ -290,18 +256,6 @@ nRoot::Dispatch(nCmd *cmd)
 
 //------------------------------------------------------------------------------
 /**
-     - 19-Oct-98   floh    created
-     - 03-Nov-98   floh    umbenannt nach GetCmdProtos()
-     - 17-May-99   floh    neues Listenhandling
-     - 05-Feb-01   floh    + simplified: no longer checks
-                             for duplicate names, this is illegal
-                             anyway
-     - 19-Nov-03   vadim   cloning of cmd protos is no longer
-                           feasable since their exact type can't be
-                           known without C++ RTTI. so instead hashlist
-                           is populated with plain hashnodes that
-                           have the same name as the cmd proto and hold
-                           a pointer to the real cmd proto.
 */
 void 
 nRoot::GetCmdProtos(nHashList *cmd_list)
@@ -389,16 +343,6 @@ nRoot::Save()
 
 //------------------------------------------------------------------------------
 /**
-     - 04-Nov-98   floh    created
-     - 11-Dec-98   floh    + beachtet jetzt das N_FLAG_SAVEUPSIDEDOWN,
-                             und speichert in diesem Fall die
-                             Child-Objekte zuerst ab
-     - 02-May-00   floh    + support for Import(). if an import filename
-                             is set, only the import statement will be
-                             written instead of the sequence of commands.
-                             Subobjects will be skipped as well.
-     - 09-Aug-00   floh    + support for N_FLAG_SAVESHALLOW (don't save
-                             child objects)
 */
 bool 
 nRoot::SaveAs(const char *name)
@@ -448,12 +392,6 @@ nRoot::SaveAs(const char *name)
 
 //------------------------------------------------------------------------------
 /**
-     - 18-Dec-98   floh    created
-     - 02-May-00   floh    + support for Import(). if an import filename
-                             is set, only the import statement will be
-                             written instead of the sequence of commands.
-                             Subobjects will be skipped as well.
-     - 09-Aug-00   floh    + support for shallow copy
 */
 nRoot*
 nRoot::Clone(const char *name)
@@ -510,8 +448,6 @@ nRoot::Clone(const char *name)
 /**
     This method is usually derived by subclasses to write their peristent 
     attributes to the file server.
-  
-     - 04-Nov-98   floh    created
 */
 bool 
 nRoot::SaveCmds(nPersistServer *)

@@ -64,6 +64,11 @@ typedef double nTime;
 #define n_stricmp stricmp
 #endif
 
+#ifdef __WIN32__
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#endif
+
 // maps unsigned 8 bits/channel to D3DCOLOR
 #define N_ARGB(a,r,g,b) ((uint)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 #define N_RGBA(r,g,b,a) N_ARGB(a,r,g,b)
@@ -73,30 +78,7 @@ typedef double nTime;
 //------------------------------------------------------------------------------
 //  public kernel C functions
 //------------------------------------------------------------------------------
-#if defined(N_KERNEL)
-
 void __cdecl n_printf(const char *, ...);
-void __cdecl n_error(const char*, ...);
-void __cdecl n_message(const char*, ...);
-void n_sleep(double);
-char *n_strdup(const char *);
-char *n_strncpy2(char *, const char *, size_t);
-void *nn_malloc(size_t, const char *, int);
-void *nn_calloc(size_t, size_t, const char *, int);
-void *nn_realloc(void *, size_t, const char *, int);  
-void n_free(void *);
-bool n_strmatch(const char *, const char *);
-void n_strcat(char *, const char *, size_t);
-
-void n_barf(const char *, const char *, int);
- 
-void *n_dllopen(const char *);
-void  n_dllclose(void *);
-void *n_dllsymbol(void *, const char *);
-
-#else
-
-void __cdecl n_printf(const char *,...);
 void __cdecl n_error(const char*, ...);
 void __cdecl n_message(const char*, ...);
 void n_sleep(double);
@@ -110,8 +92,11 @@ bool n_strmatch(const char *, const char *);
 void n_strcat(char *, const char *, size_t);
 
 void n_barf(const char *, const char *, int);
+void n_barf2(const char*, const char*, const char*, int);
 
-#endif
+void *n_dllopen(const char *);
+void  n_dllclose(void *);
+void *n_dllsymbol(void *, const char *);
 
 //------------------------------------------------------------------------------
 //  Nebula mem manager wrappers.

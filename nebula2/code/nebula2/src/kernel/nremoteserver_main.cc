@@ -210,8 +210,8 @@ nRemoteServer::Trigger()
                         // this seems to be a valid message, send the message
                         // to the scriptserver for validation
                         const char* result = 0;
-                        bool success = scriptServer->Run(curString, result);
-    
+                        scriptServer->Run(curString, result);
+ 
                         // send the result string back to the client
                         nIpcBuffer resultMsg(4096);
                         resultMsg.SetString("");
