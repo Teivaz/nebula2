@@ -158,7 +158,7 @@ nVariable::Delete()
     }
     else if ((Matrix == this->type) && (this->matrixVal))
     {
-        delete this->matrixVal;
+        n_delete(this->matrixVal);
         this->matrixVal = 0;
     }
     this->handle = nVariable::InvalidHandle;
@@ -204,7 +204,7 @@ nVariable::Copy(const nVariable& from)
             n_assert(0 == this->matrixVal);
             if (from.matrixVal)
             {
-                this->matrixVal = new matrix44;
+                this->matrixVal = n_new(matrix44);
                 *(this->matrixVal) = *(from.matrixVal);
             }
             break;
@@ -435,7 +435,7 @@ nVariable::SetMatrix(const matrix44& val)
     n_assert(Matrix == this->type);
     if (0 == this->matrixVal)
     {
-        this->matrixVal = new matrix44;
+        this->matrixVal = n_new(matrix44);
     }
     *(this->matrixVal) = val;
 }
