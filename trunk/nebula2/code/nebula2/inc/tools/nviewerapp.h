@@ -9,6 +9,7 @@
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/ncamera2.h"
 #include "gfx2/ngfxserver2.h"
+#include "video/nvideoserver.h"
 #include "scene/nsceneserver.h"
 #include "scene/nrendercontext.h"
 #include "kernel/nscriptserver.h"
@@ -20,6 +21,7 @@
 #include "particle/nparticleserver.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
+#include "gui/nguiserver.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -40,6 +42,10 @@ public:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// set optional feature set override
+    void SetFeaturSetOverride(nGfxServer2::FeatureSet f);
+    /// get optional feature set override
+    nGfxServer2::FeatureSet GetFeatureSetOverride() const;
     /// set camera parameters
     void SetCamera(const nCamera2& camera);
     /// get camera parameters
@@ -76,6 +82,10 @@ public:
     void SetInputScript(const char* name);
     /// get the input binding script
     const char* GetInputScript() const;
+    /// enable/disable the logo overlay
+    void SetOverlayEnabled(bool b);
+    /// get overlay enabled status
+    bool GetOverlayEnabled() const;
     /// open the viewer
     bool Open();
     /// close the viewer
@@ -94,6 +104,8 @@ private:
     void HandleInputFly(float frameTime);
     /// transfer global variables from variable server to render context
     void TransferGlobalVariables();
+    /// initialize the overlay GUI
+    void InitOverlayGui();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -105,6 +117,8 @@ private:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
+    nRef<nVideoServer> refVideoServer;
+    nRef<nGuiServer> refGuiServer;
 
     nRef<nTransformNode> refRootNode;
 
@@ -116,9 +130,11 @@ private:
     nString stageScript;
     nString inputScript;
     bool isOpen;
+    bool isOverlayEnabled;
     nDisplayMode2 displayMode;
     nCamera2 camera;
     ControlMode controlMode;
+    nGfxServer2::FeatureSet featureSetOverride;
 
     polar2 defViewerAngles;
     vector3 defViewerPos;
@@ -133,6 +149,26 @@ private:
     matrix44 viewMatrix;
     int screenshotID;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetFeaturSetOverride(nGfxServer2::FeatureSet f)
+{
+    this->featureSetOverride = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::FeatureSet
+nViewerApp::GetFeatureSetOverride() const
+{
+    return this->featureSetOverride;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -342,6 +378,26 @@ const char*
 nViewerApp::GetInputScript() const
 {
     return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetOverlayEnabled(bool b)
+{
+    this->isOverlayEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nViewerApp::GetOverlayEnabled() const
+{
+    return this->isOverlayEnabled;
 }
 
 //------------------------------------------------------------------------------
