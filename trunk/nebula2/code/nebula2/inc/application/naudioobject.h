@@ -5,7 +5,7 @@
     @class nAudioObject
     @ingroup Application
 
-    A wrapper object for Nebula2 sounds.
+    @brief A wrapper object for Nebula2 sounds.
     
     (C) 2004 RadonLabs GmbH
 */

@@ -5,8 +5,8 @@
     @class nCutSceneAppState
     @ingroup Application
 
-    An application state which will playback a video and then proceed to
-    the next configured application state.
+    @brief An application state which will playback a video and then proceed
+    to the next configured application state.
     
     (C) 2004 RadonLabs GmbH
 */

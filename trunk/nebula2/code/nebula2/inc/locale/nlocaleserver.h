@@ -5,11 +5,9 @@
     @class nLocaleServer
     @ingroup Locale
 
-    The nLocaleServer object simplifies localization of Nebula2 applications
-    to international markets. It reads a "locale table", which is an 
-    Excel spreadsheet in XML format, which contains 2 columns for original
-    text and localized text. Actual translation is done through the 
-    nLocale() macro.
+    The nLocaleServer reads a "locale table", which is an Excel spreadsheet
+    in XML format, which contains 2 columns for original text and localized
+    text. Actual translation is done through the nLocale() macro.
 */
 #include "kernel/nroot.h"
 #include "util/nhashmap.h"
