@@ -149,8 +149,19 @@ nGuiClientWindow* wnd = (nGuiClientWindow*)guiServer->NewWindow("nguiclientwindo
     calling nGuiServer::NewWindow().  The first window is @c 'window0',
     the second is @c 'window1', and so on.
 
-    Windows of the type nGuiClientWindow have Titlebar, CloseButton,
-    SizeButton and Layout elements by default.
+    After creating the window, you will be directly moved to the created object 
+    hierarchy.
+    Therefore you can specify the title of the window by calling @c 'settitle'
+    command. Then you can specify position and size of the window by calling
+    @c 'setrect' command.
+
+    @verbatim
+/gui/SystemRootWindow/window3>.settitle MyWindow
+/gui/SystemRootWindow/window3>.setrect 0.48 0.9 0.52 1.0
+    @endverbatim
+
+    Windows of the type nGuiClientWindow have @c Titlebar, @c CloseButton,
+    @c SizeButton and @c Layout elements by default.
 
     You can check this by typing @c 'dir' command under the created window:
 
@@ -167,6 +178,7 @@ TitleBar CloseButton SizeButton Layout
 /gui/SystemRootWindow/window3>sel Layout
 /gui/SystemRootWindow/window3/Layout>new nguibutton mybutton
 /gui/SystemRootWindow/window3/Layout>sel mybutton
+/gui/SystemRootWindow/window3/Layout/mybutton>.setrect 0.05 0.35 0.05 0.15
 /gui/SystemRootWindow/window3/Layout/mybutton>.setdefaultbrush terminal_n
 /gui/SystemRootWindow/window3/Layout/mybutton>.setpressedbrush terminal_p
 /gui/SystemRootWindow/window3/Layout/mybutton>.sethighlightbrush terminal_h
@@ -176,8 +188,6 @@ TitleBar CloseButton SizeButton Layout
 /gui/SystemRootWindow/window3/Layout>.attachform mybutton top 0.0
 /gui/SystemRootWindow/window3/Layout>.attachform mybutton bottom 0.0
 /gui/SystemRootWindow/window3/Layout>.attachpos mybutton right 0.3
-/gui/SystemRootWindow/window3/Layout>sel .. 
-/gui/SystemRootWindow/window3>.updatelayout
     @endverbatim
 
     or on C++:
@@ -197,10 +207,13 @@ layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
 layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
 // assume btnSize is 0.3
 layout->AttachPos(btn, nGuiFormLayout::Right, 1 * btnSize);
-// update window's layout
-wnd->UpdateLayout(wnd->GetRect());
     @endcode
-
+   
+    As like the creation of the window, you should spcecify the position and size 
+    of the button by calling @c 'setrect' command.   
+    Note that all widgets should be specified its position and size after it is 
+    created by its SetRect() member function.
+    
     nGuiWidget and all classes that derived from it have four states:
      - Normal
      - Pressed
@@ -221,8 +234,17 @@ wnd->UpdateLayout(wnd->GetRect());
     @c 'mybutton' has its left, top and bottom edges aligned with the form.
     Its right edge is placed at 30% of the width of the form.
 
-    Call the @c 'updatelayout' script method or the C++ method 
-    @c nGuiClientWindow::UpdateLayout() on the button to update the position
-    and size of the window.
+    nGuiFormLayout provides three type of layout scheme.
+     - nGuiFormLayout::AttachForm()
+     - nGuiFormLayout::AttachWidget()
+     - nGuiFormLayout::AttachPosition()
+
+    A position and size of the widget is specified by its SetRect() member
+    function. But nGuiWidget::SetRect() doesn't affect the change of the size of 
+    child widget when the parent widget changes its size.
+    Applying the layout scheme with nGuiFormLayout enables that
+    relative change of the size of the child widget whenever its parent widget 
+    changes its size. 
+    
     
 */
