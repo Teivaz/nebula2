@@ -79,7 +79,7 @@ bool TileIndexData::readBitmap(nString bitmapfilename)
     ILuint desiredheight = nextPOW2p1(height);
     if ( (desiredwidth != width) || (desiredheight != height) )
     {
-        n_printf("image sizes are not 2^N!  Tileindex load failed\n");
+        n_printf("image sizes are not 2^N+1!  Tileindex load failed\n");
         iluDeleteImage(pixelImage);
         return false;
     }

@@ -25,13 +25,14 @@ dofile (mangle('luascript:console.lua'))
 f = nebula.sys.servers.file2
 proj = f:manglepath('proj:')
 home = f:manglepath('home:')
+clodterraindir = proj .. '/code/contrib/nclodterrain'
 
 f:setassign('meshes', proj .. '/export/meshes/')
 f:setassign('textures', proj .. '/export/textures/')
 if (exists('/sys/servers/gfx')) then
     featureSet = nebula.sys.servers.gfx:getfeatureset()
     if ((featureSet == 'dx9') or (featureSet == 'dx9flt')) then
-        f:setassign('shaders', home .. '/data/shaders/2.0/')
+        f:setassign('shaders', home .. '/data/shaders/2.0')
         puts('Shader directory: ' .. home .. '/data/shaders/2.0')
     else
         f:setassign('shaders', home .. '/data/shaders/fixed/')
@@ -42,7 +43,7 @@ else
     puts('Shader directory: ' .. home .. '/data/shaders/2.0')
 end
 f:setassign('anims', proj .. '/export/anims/')
-f:setassign('gfxlib', proj .. '/export/gfxlib/examples/')
+f:setassign('gfxlib', proj .. '/export/gfxlib/')
 
 -- nclod directories
 f:setassign('nclodscripts',  proj .. '/code/contrib/nclodterrain/bin/')

@@ -22,7 +22,7 @@ tqt_tilesize = 128
 new('nclodchunker','/usr/chunker')
 chunker = nebula.usr.chunker
 chunker:setchunkfilename('nclodterrains:examples/sample.clod')
-chunker:setspacings(2.0,2.0,0.5)
+chunker:setspacings(1.0,1.0,0.25)
 chunker:setchunkparameters(tree_depth, space_error)
 chunker:setvalidateflag(true)
 
