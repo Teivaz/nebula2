@@ -1,0 +1,59 @@
+#===============================================================================
+#  nwrapper.bld
+#  The Nebula2 tool for generating static wrappers around the script interface.
+#
+#  Modules:
+#      njavalanguagewrapper
+#      nlanguagewrapper
+#      nwrapper
+#  Targets:
+#      nlangwrapperlib
+#      nwrapper
+#===============================================================================
+
+#===============================================================================
+#  nwrapper modules
+#===============================================================================
+beginmodule nwrapper
+    annotate "Required module nwrapper.exe"
+    setdir wrapper
+    setfiles { 
+        nwrapper
+    }
+    setmoduledeps  { nlanguagewrapper }
+    setlibs_macosx { Carbon }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nlanguagewrapper
+    setdir wrapper
+    setfiles { nlanguagewrapper_main }
+    setheaders { nlanguagewrapper }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule njavalanguagewrapper
+    setdir wrapper
+    setfiles { njavalanguagewrapper_main }
+    setheaders { njavalanguagewrapper }
+endmodule
+
+#===============================================================================
+#  nwrapper Targets
+#===============================================================================
+begintarget nlangwrapperlib
+    annotate "Lib that holds the core language wrapping functionality"
+    settype lib
+    setmodules {
+        nlanguagewrapper
+        njavalanguagewrapper
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nwrapper
+    settype exe
+    setmodules { nwrapper }
+    settargetdeps {
+        nkernel
+        nlangwrapperlib
+    }
+endtarget
+#-------------------------------------------------------------------------------
