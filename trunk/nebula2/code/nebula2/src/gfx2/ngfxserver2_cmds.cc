@@ -10,6 +10,7 @@ static void n_opendisplay(void* slf, nCmd* cmd);
 static void n_closedisplay(void* slf, nCmd* cmd);
 static void n_getfeatureset(void* slf, nCmd* cmd);
 static void n_savescreenshot(void* slf, nCmd* cmd);
+static void n_setcursorvisibility(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -35,6 +36,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_closedisplay_v",          'CDSP', n_closedisplay);
     cl->AddCmd("s_getfeatureset_v",         'GFTS', n_getfeatureset);
     cl->AddCmd("v_savescreenshot_s",        'SSCS', n_savescreenshot);
+    cl->AddCmd("v_setcursorvisibility_s",   'SCVS', n_setcursorvisibility);
     cl->EndCmds();
 }
 
@@ -164,6 +166,27 @@ n_savescreenshot(void *slf, nCmd *cmd)
 {
     nGfxServer2 *self = (nGfxServer2*) slf;
     self->SaveScreenshot(cmd->In()->GetS());
+}
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setcursorvisibility
+
+    @input
+    s('none', 'system', or 'custom')
+
+    @output
+    v
+
+    @info
+    Set whether no cursor, a standard or a customer mouse
+    cursor will be displayed.
+*/
+static void
+n_setcursorvisibility(void *slf, nCmd *cmd)
+{
+    nGfxServer2 *self = (nGfxServer2*) slf;   
+    self->SetCursorVisibility( nGfxServer2::StringToCursorVisibility( cmd->In()->GetS() ) );
 }
 
 
