@@ -1132,7 +1132,7 @@ nGuiServer::DiscardWindows(const char* className)
                 child->Release();
             }
         }
-        while (child = nextChild);
+        while ((child = nextChild));
     }
 }
 
@@ -1169,7 +1169,7 @@ nGuiServer::FindWindowByClass(const char* className, nGuiWindow* curWindow)
             {
                 return (nGuiWindow*) child;
             }
-        } while (child = nextChild);
+        } while ((child = nextChild));
     }
     return 0;
 }
