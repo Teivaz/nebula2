@@ -312,7 +312,7 @@ nD3D9Server::DeviceOpen()
                                   &(this->d3d9Device));
     if (FAILED(hr))
     {
-        n_error("nD3D9Server: Could not create d3d device!\n");
+        n_dxtrace(hr, "nD3D9Server: Could not create d3d device!");
         return false;
     }
     n_assert(this->d3d9Device);
