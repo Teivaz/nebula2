@@ -262,7 +262,6 @@ nMeshBuilder::LoadNvx2(nFileServer2* fileServer, const char* filename)
         int numGroups        = meshLoader.GetNumGroups();
         int numVertices      = meshLoader.GetNumVertices();
         int vertexWidth      = meshLoader.GetVertexWidth();
-        int numTriangles     = meshLoader.GetNumTriangles();
         int numIndices       = meshLoader.GetNumIndices();
         int vertexComponents = meshLoader.GetVertexComponents();
 
@@ -783,8 +782,8 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
             else if (0 == strcmp(keyWord, "g"))
             {
                 // a triangle group
-                const char* firstVertexString   = strtok(0, N_WHITESPACE);
-                const char* numVerticesString   = strtok(0, N_WHITESPACE);
+                strtok(0, N_WHITESPACE);    // firstVertex
+                strtok(0, N_WHITESPACE);    // numVertices
                 const char* firstTriangleString = strtok(0, N_WHITESPACE);
                 const char* numTriangleString   = strtok(0, N_WHITESPACE);
 
@@ -1132,7 +1131,6 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
     int curGroup = 0;
     int numVertices = 0;
     int firstTriangle = 0;
-    int vertexWidth = 0;
     int numTriangles = 0;
     int vertexComponents = 0;
     nArray<vector3> coordArray;
@@ -1206,7 +1204,7 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
             else if (0 == strcmp(keyWord, "f"))
             {
                 int coordIndex;
-                int normalIndex;
+                int normalIndex = 0;
                 int uvIndex;
 
                 const char* vertexStr = strtok(0, N_WHITESPACE);
@@ -1217,26 +1215,32 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
 
                     // check if uv info exists
                     char* uvStr = strchr(vertexStr, '/');
-                    if (uvStr != NULL) {
+                    if (uvStr != NULL)
+                    {
                         uvStr[0] = 0;
                         uvStr++;
                         coordIndex = atoi(vertexStr);
 
                         // check if normal info exits
                         char* normalStr = strchr(uvStr, '/');
-                        if (normalStr != NULL) {
+                        if (normalStr != NULL)
+                        {
                             normalStr[0] = 0;
                             normalStr++;
 
                             normalIndex = 0;
                             if (normalStr[0] != 0)
+                            {
                                 normalIndex = atoi(normalStr);
+                            }
                         }
                         
                         uvIndex = 0;
                         if (uvStr[0] != 0)
                             uvIndex = atoi(uvStr);
-                    } else {
+                    }
+                    else
+                    {
                         // no uv and normal info found so presume
                         // that the value is used for all of them
                         coordIndex = atoi(vertexStr);
@@ -1246,11 +1250,17 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
 
                     // if index is negative then calculate positive index
                     if (coordIndex < 0)
+                    {
                         coordIndex += coordArray.Size() + 1;
+                    }
                     if (uvIndex < 0)
+                    {
                         uvIndex += uvArray.Size() + 1;
+                    }
                     if (normalIndex < 0)
+                    {
                         normalIndex += normalArray.Size() + 1;
+                    }
 
                     // obj files first index is 1 when in c++ it's 0
                     coordIndex--;
@@ -1259,11 +1269,17 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
 
                     Vertex vertex;
                     if (vertexComponents & Vertex::COORD)
+                    {
                         vertex.SetCoord(coordArray[coordIndex]);
+                    }
                     if (vertexComponents & Vertex::NORMAL)
+                    {
                         vertex.SetNormal(normalArray[normalIndex]);
+                    }
                     if (vertexComponents & Vertex::UV0)
+                    {
                         vertex.SetUv(0, uvArray[uvIndex]);
+                    }
                     this->AddVertex(vertex);
                     numVertices++;
                 }
@@ -1271,7 +1287,8 @@ nMeshBuilder::LoadObj(nFileServer2* fileServer, const char* filename)
                 // create triangles from convex polygon
                 int firstTriangleVertex = numVertices - vertexNo;
                 int lastTriangleVertex = firstTriangleVertex + 2;
-                for (; lastTriangleVertex < (numVertices); lastTriangleVertex++) {
+                for (; lastTriangleVertex < (numVertices); lastTriangleVertex++)
+                {
                     Triangle triangle;
                     triangle.SetVertexIndices(firstTriangleVertex, lastTriangleVertex-1, lastTriangleVertex);
                     this->AddTriangle(triangle);
@@ -1432,8 +1449,8 @@ nMeshBuilder::LoadOldN3d2(nFileServer2* fileServer, const char* filename)
             else if (0 == strcmp(keyWord, "g"))
             {
                 // a triangle group
-                const char* firstVertexString   = strtok(0, N_WHITESPACE);
-                const char* numVerticesString   = strtok(0, N_WHITESPACE);
+                strtok(0, N_WHITESPACE);    // firstVertex
+                strtok(0, N_WHITESPACE);    // numVertices
                 const char* firstTriangleString = strtok(0, N_WHITESPACE);
                 const char* numTriangleString   = strtok(0, N_WHITESPACE);
 

@@ -19,7 +19,6 @@
 #include "gfx2/nmesh2.h"
 #include "kernel/nfile.h"
 
-
 class nFileServer2;
 
 //------------------------------------------------------------------------------
@@ -290,6 +289,8 @@ public:
 
     //--- mesh operations ---
 
+    /// clear buffers
+    void Clear();
     /// erase/duplicate vertex components
     void ForceVertexComponents(int compMask);
     /// copy vertex components to another
@@ -305,7 +306,7 @@ public:
     /// optimize for t&l hardware vertex cache
     void Optimize();
     /// append mesh from mesh builder object
-    int Append(const nMeshBuilder& source);
+    void Append(const nMeshBuilder& source);
     /// copy from mesh builder object
     void Copy(const nMeshBuilder& source);
     /// compute the bounding box of the mesh, filtered by a group id
@@ -877,6 +878,7 @@ nMeshBuilder::Vertex::CopyComponentFromComponent(Component from, Component to)
             case UV3:       tmp.set(this->uv[3].x, this->uv[3].y, 0.0f, 0.0f); break;
             case WEIGHTS:   tmp.set(this->weights); break;
             case JINDICES:  tmp.set(this->jointIndices); break;
+            default: break;
         }
         switch (to)
         {
@@ -891,6 +893,7 @@ nMeshBuilder::Vertex::CopyComponentFromComponent(Component from, Component to)
             case UV3:       this->uv[3].set(tmp.x, tmp.y); break;
             case WEIGHTS:   this->weights.set(tmp); break;
             case JINDICES:  this->jointIndices.set(tmp); break;
+            default: break;
         }
     }
 }
@@ -1319,3 +1322,4 @@ nMeshBuilder::CopyTriangle(const nMeshBuilder& srcMesh, int triIndex, nArray<int
 
 //------------------------------------------------------------------------------
 #endif
+

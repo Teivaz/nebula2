@@ -17,12 +17,22 @@ nMeshBundle::nMeshBundle()
 */
 nMeshBundle::~nMeshBundle()
 {
+    this->Clear();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nMeshBundle::Clear()
+{
     int i;
     for (i = 0; i < this->meshBundleArray.Size(); i++)
     {
         delete this->meshBundleArray[i];
         this->meshBundleArray[i] = 0;
     }
+    this->meshBundleArray.Clear();
 }
 
 //------------------------------------------------------------------------------

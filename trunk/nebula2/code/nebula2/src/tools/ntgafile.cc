@@ -50,17 +50,17 @@ nTgaFile::OpenRead(const char* filename)
 
     // read header
     char idFieldSize     = file->GetChar();
-    char colorMapType    = file->GetChar();
-    char imageType       = file->GetChar();
-    short colorMapStart  = file->GetShort();
-    short colorMapLength = file->GetShort();
-    char  colorMapBits   = file->GetChar();
-    short xStart         = file->GetShort();
-    short yStart         = file->GetShort();
+    file->GetChar();     // colorMapType
+    file->GetChar();     // imageType
+    file->GetShort();    // colorMapStart
+    file->GetShort();    // colorMapLength
+    file->GetChar();     // colorMapBits
+    file->GetShort();    // xStart
+    file->GetShort();    // yStart
     this->width          = file->GetShort();
     this->height         = file->GetShort();
     char bitsPerPixel    = file->GetChar();
-    char descriptor      = file->GetChar();
+    file->GetChar();     // descriptor
 
     // correct pixel format?
     if (bitsPerPixel != 32)
