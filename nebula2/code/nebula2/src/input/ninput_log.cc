@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nInputServer
 //------------------------------------------------------------------------------
 //  ninput_log.cc
 //  (C) 2002 RadonLabs GmbH

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nJoystickDevice
 //------------------------------------------------------------------------------
 //  njoystickdevice.cc
 //  (C) 2002 RadonLabs GmbH

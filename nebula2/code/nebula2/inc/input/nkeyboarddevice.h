@@ -9,16 +9,10 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_INPUTDEVICE_H
 #include "input/ninputdevice.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nKeyboardDevice
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nKeyboardDevice : public nInputDevice
+class nKeyboardDevice : public nInputDevice
 {
 public:
     /// constructor

@@ -20,20 +20,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_INPUTDEVICE_H
 #include "input/ninputdevice.h"
-#endif
-
-#ifndef N_AXISFILTER_H
 #include "input/naxisfilter.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nJoystickDevice
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nJoystickDevice : public nInputDevice
+class nJoystickDevice : public nInputDevice
 {
 public:
     /// constructor

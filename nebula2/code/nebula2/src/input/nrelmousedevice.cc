@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nRelMouseDevice
 //------------------------------------------------------------------------------
 //  nrelmousedevice.cc
 //  (C) 2002 RadonLabs GmbH

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nDI8Server
 //------------------------------------------------------------------------------
 //  ndi8server_trigger.cc
 //  (C) 2002 RadonLabs GmbH
