@@ -34,7 +34,7 @@
 const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
 {
     nString* buf = nLuaServer::Instance->output;
-    buf->Set(0);
+    buf->Set("\0");
     while (bottom < lua_gettop(L))
     {
         switch (lua_type(L,-1))
@@ -142,6 +142,7 @@ bool nLuaServer::RunScript(const char *fname, const char*& result)
     if (!nfile->Open(buf, "r"))
     {
         result = 0;
+        nfile->Release();
         return false;
     }
     
@@ -154,7 +155,7 @@ bool nLuaServer::RunScript(const char *fname, const char*& result)
     cmdbuf[filesize] = 0;
     
     nfile->Close();
-    n_delete nfile;
+    nfile->Release();
     
     retval = this->Run(cmdbuf, result);
     n_free(cmdbuf);

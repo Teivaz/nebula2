@@ -70,11 +70,10 @@ void nLuaServer::reg_globalfunc(lua_CFunction func, const char* name)
 //  Initialize Lua5 interpreter
 //--------------------------------------------------------------------
 nLuaServer::nLuaServer() :
-    ref_FileServer(kernelServer),
+    ref_FileServer("/sys/servers/file2"),
     echo(true),
     selgrab(false)
 {
-    this->ref_FileServer = "/sys/servers/file2";
     this->indent_level = 0;
     this->indent_buf[0] = 0;
 
@@ -193,7 +192,7 @@ nLuaServer::BeginWrite(const char* filename, nRoot* obj)
     else
     {
         n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        delete file;
+        file->Release();
         return 0;
     }
 }
@@ -210,7 +209,7 @@ nLuaServer::EndWrite(nFile* file)
     file->PutS("-- Eof\n");
 
     file->Close();
-    delete file;
+    file->Release();
     return (this->indent_level == 0);
 }
 
@@ -369,31 +368,25 @@ bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
 
         switch(arg->GetType()) {
 
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
                 sprintf(buf,"%d",arg->GetI());
                 break;
 
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
                 sprintf(buf,"%.6f",arg->GetF());
                 break;
 
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
                 file->PutS("[[");
                 file->PutS(arg->GetS());
                 sprintf(buf,"]]");
                 break;
 
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
                 sprintf(buf,"%s",(arg->GetB() ? "true" : "false"));
                 break;
 
-            case nArg::ARGTYPE_CODE:
-                file->PutS("[[");
-                file->PutS(arg->GetS());
-                sprintf(buf,"]]");
-                break;
-
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
                 {
                     nRoot *o = (nRoot *) arg->GetO();
                     if (o) {
@@ -632,7 +625,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
         lua_pushnumber(L, j);
         switch (listArg->GetType())
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
             {
                 lua_pushnumber(L, listArg->GetI());
                 if (print)
@@ -644,7 +637,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
             {
                 lua_pushnumber(L, listArg->GetF());
                 if (print)
@@ -656,7 +649,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
             {
                 lua_pushstring(L, listArg->GetS());
                 if (print)
@@ -668,12 +661,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_CODE:
-            {
-                lua_pushstring(L, listArg->GetC());
-                break;
-            }
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
             {
                 lua_pushboolean(L, listArg->GetB());
                 if (print)
@@ -685,7 +673,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
             {
                 nRoot* o = (nRoot*)listArg->GetO();
                 if (o)
@@ -713,7 +701,7 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_LIST:
+            case nArg::List:
             {
                 if (print && (j > 0))
                     n_printf(", ");
@@ -747,7 +735,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
         narg = cmd->Out();
         switch (narg->GetType())
         {
-            case nArg::ARGTYPE_INT:
+            case nArg::Int:
             {
                 lua_pushnumber(L, narg->GetI());
                 if (print)
@@ -759,7 +747,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_FLOAT:
+            case nArg::Float:
             {
                 lua_pushnumber(L, narg->GetF());
                 if (print)
@@ -771,7 +759,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_STRING:
+            case nArg::String:
             {
                 lua_pushstring(L, narg->GetS());
                 if (print)
@@ -783,12 +771,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_CODE:
-            {
-                lua_pushstring(L, narg->GetC());
-                break;
-            }
-            case nArg::ARGTYPE_BOOL:
+            case nArg::Bool:
             {
                 lua_pushboolean(L, narg->GetB());
                 if (print)
@@ -800,7 +783,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_OBJECT:
+            case nArg::Object:
             {
                 nRoot* o = (nRoot*)narg->GetO();
                 if (o)
@@ -828,12 +811,12 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
                 }
                 break;
             }
-            case nArg::ARGTYPE_VOID:
+            case nArg::Void:
             {
                 lua_pushnil(L);
                 break;
             }
-            case nArg::ARGTYPE_LIST:
+            case nArg::List:
             {
                 nLuaServer::ListArgToTable(L, narg, print);
                 break;
@@ -879,35 +862,31 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
 {
     switch (arg->GetType())
     {
-        case nArg::ARGTYPE_VOID:
+        case nArg::Void:
             lua_pushnil(L);
             break;
     
-        case nArg::ARGTYPE_INT:
+        case nArg::Int:
             lua_pushnumber(L, arg->GetI());
             break;
     
-        case nArg::ARGTYPE_FLOAT:
+        case nArg::Float:
             lua_pushnumber(L, arg->GetF());
             break;
     
-        case nArg::ARGTYPE_STRING:
+        case nArg::String:
             lua_pushstring(L, arg->GetS());
             break;
         
-        case nArg::ARGTYPE_CODE:
-            lua_pushstring(L, arg->GetC());
-            break;
-        
-        case nArg::ARGTYPE_BOOL:
+        case nArg::Bool:
             lua_pushboolean(L, arg->GetB());
             break;
       
-        case nArg::ARGTYPE_OBJECT:
+        case nArg::Object:
             nLuaServer::ThunkNebObject(L, (nRoot*)arg->GetO());
             break;
       
-        case nArg::ARGTYPE_LIST:
+        case nArg::List:
             nLuaServer::ListArgToTable(L, arg, false);
             break;
     }
@@ -924,42 +903,35 @@ bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
 {
     switch (arg->GetType())
     {
-        case nArg::ARGTYPE_INT:
+        case nArg::Int:
         {
             if (!lua_isnumber(L, index)) 
                 return false;
             arg->SetI(static_cast<int>(lua_tonumber(L, index)));
             break;
         }
-        case nArg::ARGTYPE_FLOAT:
+        case nArg::Float:
         {
             if (!lua_isnumber(L, index)) 
                 return false;
             arg->SetF(static_cast<float>(lua_tonumber(L, index)));
             break;
         }
-        case nArg::ARGTYPE_STRING:
+        case nArg::String:
         {
             if (!lua_isstring(L, index)) 
                 return false;
             arg->SetS(lua_tostring(L, index));
             break;
         }
-        case nArg::ARGTYPE_CODE:
-        {
-            if (!lua_isstring(L, index)) 
-                return false;
-            arg->SetC(lua_tostring(L, index));
-            break;
-        }
-        case nArg::ARGTYPE_BOOL:
+        case nArg::Bool:
         {
             if (!lua_isboolean(L, index)) 
                 return false;
             arg->SetB(lua_toboolean(L, index) == 1);
             break;
         }
-        case nArg::ARGTYPE_OBJECT:
+        case nArg::Object:
         {
             if (lua_isuserdata(L, index))
             {
@@ -978,7 +950,7 @@ bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
             }
             break;
         }
-        case nArg::ARGTYPE_LIST:
+        case nArg::List:
         {
             n_message("List nArgs can't be used as input args.");
             return false;
