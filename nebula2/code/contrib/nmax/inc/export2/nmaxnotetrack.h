@@ -62,6 +62,8 @@ public:
     /// Get the number of animation states which collected.
     int GetNumStates() const;
 
+    nMaxAnimState& AddAnimState(int firstframe, int duration, float fadeintime, bool loop = true);
+
     /// Get animation state from the given index.
     const nMaxAnimState& GetState(int index);
 
@@ -94,6 +96,18 @@ nMaxNoteTrack::GetState(int index)
 {
     n_assert(index >= 0);
     return this->stateArray[index];
+}
+//---------------------------------------------------------------------------
+inline
+nMaxAnimState&
+nMaxNoteTrack::AddAnimState(int firstframe, int duration, float fadeintime, bool loop)
+{
+    nMaxAnimState animState;
+    animState.firstFrame = firstframe;
+    animState.duration   = duration;
+    animState.fadeInTime = fadeintime;
+
+    return this->stateArray.PushBack(animState);
 }
 //---------------------------------------------------------------------------
 #endif
