@@ -4,6 +4,11 @@
 
     nremoteshell
 
+    The Nebula2 Remote Shell (nremoteshell.exe) allows to remote-control active 
+    Nebula2 applications much like Telnet allows to remote-control a Unix machine.
+    Most Nebula2 applications open a remote port which nremoteshell can connect 
+    to and issue commands.
+
     <dl>
      <dt>-help</dt>
        <dd>show this help</dd>
@@ -15,9 +20,20 @@
 
     Examples:
 
+    To connect to a running nviewer instance on the local machine:
     @verbatim
     nremoteshell -host localhost -port nviewer
-    nremoteshell -host 192.168.0.1 -port test
+    @endverbatim
+
+    To connect to a running nviewer instance on a remote machine with TCP/IP 
+    number 192.168.0.1
+    @verbatim
+    nremoteshell -host 192.168.0.1 -port nviewer
+    @endverbatim
+
+    To connect to a running nviewer instance on a remote machine with the DNS or 
+    SMB name @e zeus :
+    @verbatim
     nremoteshell -host zeus -port nviewer
     @endverbatim
 
