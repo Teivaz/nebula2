@@ -45,7 +45,7 @@ beginmodule nmaxexport2
         nmaxscriptcall
         nmax
     }
-    setlibs_win32 { maxutil.lib core.lib geom.lib mesh.lib poly.lib paramblk2.lib }
+    setlibs_win32 { maxutil.lib core.lib geom.lib mesh.lib poly.lib paramblk2.lib bmm.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmaxscene
