@@ -179,7 +179,7 @@ void luaO_chunkid (char *out, const char *source, int bufflen) {
       strcat(out, source);
     }
     else {  /* out = [string "string"] */
-      int len = strcspn(source, "\n");  /* stop at first newline */
+      int len = strcspn(source, "\n\r");  /* stop at first newline */
       bufflen -= sizeof(" [string \"...\"] ");
       if (len > bufflen) len = bufflen;
       strcpy(out, "[string \"");
