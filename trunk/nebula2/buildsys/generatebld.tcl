@@ -345,6 +345,7 @@ proc fixworkspaces { } {
     for {set i 0} {$i < $num_wspaces} {incr i} {
         #format
         # wspace(idx,tar#name#,#fields#)
+        puts "  $wspace($i,name)"
         foreach tarname $wspace($i,targets) {
             set idx [findtargetbyname $tarname]
             set wspace($i,$tarname,type)        $tar($idx,type)
