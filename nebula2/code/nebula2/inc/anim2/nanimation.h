@@ -174,6 +174,8 @@ public:
         static LoopType StringToLoopType(const char* str);
         /// convert a time stamp into 2 global key indices and an inbetween value
         void TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float& inbetween) const;
+        /// get animation duration
+        nTime GetDuration() const;
 
     private:
         int startKey;           ///< index of start key
@@ -190,6 +192,8 @@ public:
     virtual ~nAnimation();
     /// sample values from curve range
     virtual void SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray);
+    /// get duration of entire animation
+    nTime GetDuration(int groupIndex) const;
     /// set number of groups in animation
     void SetNumGroups(int g);
     /// get number of groups in animation
@@ -494,7 +498,7 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
 {
     float frame  = time / this->keyTime;
     int intFrame = int(frame);
-    keyIndex0    = intFrame;
+    keyIndex0    = intFrame - startKey;
     keyIndex1    = keyIndex0 + 1;
     inbetween    = frame - float(intFrame);
     if (Clamp == this->loopType)
@@ -511,8 +515,18 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
         keyIndex0 %= this->numKeys;
         keyIndex1 %= this->numKeys;
     }
-    keyIndex0 = (keyIndex0 * this->keyStride) + this->startKey;
-    keyIndex1 = (keyIndex1 * this->keyStride) + this->startKey;
+    keyIndex0 *= this->keyStride;
+    keyIndex1 *= this->keyStride;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+nAnimation::Group::GetDuration() const
+{
+    return this->numKeys * this->keyTime;
 }
 
 //------------------------------------------------------------------------------
