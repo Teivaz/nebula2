@@ -9,15 +9,15 @@ nNebulaScriptClass(nOctSphere, "noctvisitor");
 */
 void nOctSphere::DoCulling(nOctree* octree)
 {
-    recurse_collect_by_sphere (octree, octree->GetRoot(), this->clip, false);
+    nOctVisitor::DoCulling(octree);
+    recurse_collect_by_sphere (octree->GetRoot(), this->clip, false);
 }
 
 //-------------------------------------------------------------------
 /**
     @brief Recursively collect within the clip planes.
 */
-void nOctSphere::recurse_collect_by_sphere(nOctree* octree, 
-                                        nOctNode* on,
+void nOctSphere::recurse_collect_by_sphere(nOctNode* on,
                                         const sphere& clip,
                                         bool full_intersect)
 {
@@ -42,13 +42,13 @@ void nOctSphere::recurse_collect_by_sphere(nOctree* octree,
     }
 
     // Intersects with clipping sphere, go collect
-    this->collect_nodes_in_sphere(octree, on, clip, full_intersect);
+    this->collect_nodes_in_sphere( on, clip, full_intersect);
 
     // Recurse if possible
     if (on->c[0])
     {
         for (int i = 0; i < 8; ++i)
-            this->recurse_collect_by_sphere(octree, on->c[i], clip, full_intersect);
+            this->recurse_collect_by_sphere( on->c[i], clip, full_intersect);
     }
 }
 
@@ -56,8 +56,7 @@ void nOctSphere::recurse_collect_by_sphere(nOctree* octree,
 /**
     @brief Collect nodes in this node only.
 */
-void nOctSphere::collect_nodes_in_sphere(nOctree* octree, 
-                                      nOctNode* on,
+void nOctSphere::collect_nodes_in_sphere(nOctNode* on,
                                       const sphere& clip,
                                       bool full_intersect)
 {
@@ -67,14 +66,14 @@ void nOctSphere::collect_nodes_in_sphere(nOctree* octree,
          oe = (nOctElement *)oe->GetSucc())
     {
         if (true == full_intersect)
-            octree->collect(oe);
+			this->Collect(oe);
         else
         {
             sphere sphere(oe->pos, oe->radius);
             if (true == clip.intersects(sphere))
             {
                 // oe->SetCollectFlags(nOctElement::N_COLLECT_SPHERE);
-                octree->collect(oe);
+				this->Collect(oe);
             }
         }
     }

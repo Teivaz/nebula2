@@ -7,7 +7,7 @@
     @brief Base octree space partitioning class.    
 
     Administers a number nOctElement's, which are defined by
-    position and radius (for the time being). nOctree is composed
+    position, radius and optionally a boundingbox. nOctree is composed
     of nOctNode's, which can also contain nOctNodes. Each nOctElement
     lives in the nOctNode, in which it fits in completely. If the
     number of elements in an nOctNode exceeds an adjustable threshold,
@@ -22,7 +22,19 @@
     There are different methods for collecting a subset of the items,
     e.g. all items which are within the view volume.
 
-    - 02-Jan-06   Kim    CollectByViewvol() is removed.
+    - 14-May-04   child  Added support to modify the bounding box of an 
+                         element for more exact culling and to minimize
+                         overlaps of objects. See the additional
+                         UpdateElement(nOctElement *oe, 
+                                        const vector3& p, 
+                                        const bbox3& box)
+    - 14-May-04   child  Cleaned up all nOctVisitors. Put an end to all this
+                         nOctree overloading and added a general nOctree *m_Octree
+                         to the nOctVisitor-Baseclass. Added Set/Get functions
+                         for it, too.
+                         nOctree::collect(nOctElement *oe) has been moved to
+                         nOctVisitor (Visitor State).
+    - 02-Jan-04   Kim    CollectByViewvol() is removed.
                          (use CollectByFrustum() function)
     - 02-Jan-04   Kim    ported from N1.
                          change the name RemElements() to RemoveElement() and
@@ -34,6 +46,7 @@
 #include "kernel/nref.h"
 #include "gfx2/ngfxserver2.h"
 #include "mathlib/vector.h"
+#include "mathlib/bbox.h"
 
 //--------------------------------------------------------------------
 /**
@@ -87,6 +100,14 @@ public:
         maxCorner.y = pos.y + r;
         minCorner.z = pos.z - r;
         maxCorner.z = pos.z + r;
+    };
+    //----------------------------------------------------------------
+    void Set(const vector3& p, float r, const vector3& min, const vector3& max) {
+        n_assert(r > 0.0f);
+        pos    = p;
+        radius = r;
+        minCorner = min;
+        maxCorner = max;
     };
     //----------------------------------------------------------------
     void SetCollectFlags(int f) {
@@ -167,6 +188,9 @@ class nGfxServer2;
 class nOctVisitor;
 
 class nOctree : public nRoot {
+
+	friend class nOctVisitor;
+
 protected:
     enum {
         N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool 
@@ -206,16 +230,16 @@ public:
     virtual void AddElement(nOctElement *);
     virtual void RemoveElement(nOctElement *);
     virtual void UpdateElement(nOctElement *, const vector3&, float);
+	virtual void UpdateElement(nOctElement *oe, const vector3& p, const bbox3& box);
     virtual void BalanceTree(void);
 
     nOctNode* GetRoot() const;
     nGfxServer2* GetGfxServer2();
 
-	virtual int Collect(nOctVisitor& culler, nOctElement** ext_array, int size);
+    virtual int Collect(nOctVisitor& culler, nOctElement** ext_array, int size);
 
     //virtual void Visualize(nGfxServer2 *);
 
-    void collect(nOctElement *);
     void recurse_collect_nodes_with_flags(nOctNode *, int);
 
 protected:

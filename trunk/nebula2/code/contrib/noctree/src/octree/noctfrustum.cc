@@ -13,13 +13,18 @@ nOctFrustum::nOctFrustum() :
 
 //-------------------------------------------------------------------
 /**
+    Do frustum culling for given octree.
+
+    @param octree octree spatial database which we do culling
 */
 void nOctFrustum::DoCulling(nOctree* octree)
 {
-    init_clip_planes_for_frustum(octree);
+    nOctVisitor::DoCulling(octree);
+
+    init_clip_planes_for_frustum();
 
     uint active_clips = 0x003F;
-    recurse_collect_within_clip_planes(octree, octree->GetRoot(), active_clips);
+    recurse_collect_within_clip_planes(octree->GetRoot(), active_clips);
 }
 
 //-------------------------------------------------------------------
@@ -29,7 +34,7 @@ void nOctFrustum::DoCulling(nOctree* octree)
     this code from at:
     http://www2.ravensoft.com/users/ggribb/plane%20extraction.pdf
 */
-void nOctFrustum::init_clip_planes_for_frustum(nOctree* octree)
+void nOctFrustum::init_clip_planes_for_frustum()
 {
     nGfxServer2* gfx_server = octree->GetGfxServer2();
 
@@ -93,15 +98,15 @@ void nOctFrustum::init_clip_planes_for_frustum(nOctree* octree)
 /**
     @brief Recursively collect within the clip planes.
 */
-void nOctFrustum::recurse_collect_within_clip_planes(nOctree* octree, 
-                                                     nOctNode* on, 
+void nOctFrustum::recurse_collect_within_clip_planes(nOctNode* on, 
                                                      uint clip_mask)
 {
     uint out_clip_mask;
 
     // Clip-Status der aktuellen Node...
-    if (false == box_clip_against_clip_planes(on->minCorner, on->maxCorner, clipPlanes, 
-							                  out_clip_mask, clip_mask))
+    if (false == box_clip_against_clip_planes(on->minCorner, 
+                                              on->maxCorner, clipPlanes, 
+                                              out_clip_mask, clip_mask))
         return;
 
     // Node completely contained, gotta catch them all!
@@ -113,11 +118,11 @@ void nOctFrustum::recurse_collect_within_clip_planes(nOctree* octree,
     // with passing in clip mask to reduce number of checks recursively
     else
     {
-        this->collect_nodes_within_clip_planes(octree, on, out_clip_mask);
+        this->collect_nodes_within_clip_planes( on, out_clip_mask);
         if (on->c[0])
         {
             for (int i = 0; i < 8; ++i)
-                this->recurse_collect_within_clip_planes(octree, on->c[i], out_clip_mask);
+                this->recurse_collect_within_clip_planes( on->c[i], out_clip_mask);
         }
     }
 }
@@ -183,8 +188,7 @@ bool nOctFrustum::box_clip_against_clip_planes(vector3& minCorner, vector3& maxC
 /**
     @brief Collect nodes in this node only.
 */
-void nOctFrustum::collect_nodes_within_clip_planes(nOctree* octree, 
-                                                   nOctNode* on, 
+void nOctFrustum::collect_nodes_within_clip_planes(nOctNode* on, 
                                                    uint clip_mask)
 {
     nOctElement *oe;
@@ -197,7 +201,7 @@ void nOctFrustum::collect_nodes_within_clip_planes(nOctree* octree,
                                                  out_clip_mask, clip_mask))
         {
             oe->SetCollectFlags(nOctElement::N_COLLECT_CLIP_PLANES);
-            octree->collect(oe);
+            this->Collect(oe);
         }
     }
 }

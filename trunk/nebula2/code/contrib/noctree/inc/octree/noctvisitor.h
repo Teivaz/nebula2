@@ -17,7 +17,16 @@ class nOctVisitor : public nRoot
 public:
     nOctVisitor() {};
     virtual ~nOctVisitor() {}
-    virtual void DoCulling (nOctree* octree) { n_assert( 0 ); } // "pure virtual"
+    virtual void DoCulling (nOctree* oct);
+
+    void SetOctree(nOctree* oct);
+    nOctree* GetOctree(void) const;
+
+    void Collect(nOctElement *oe);
+
+protected:
+    nOctree *octree;
+
 };
 
 #endif /*N_OCTREE_VISITOR_H*/

@@ -453,6 +453,31 @@ void nOctree::UpdateElement(nOctElement *oe, const vector3& p, float r)
 
 //-------------------------------------------------------------------
 /**
+    @brief Update position and the bounding-box of an item.
+    
+    Sets the boundingbox of an object directly rather than using the
+    radius. Overlapping of objects is minimized to a certain amount.
+    Since we have a fast sphere-vs-sphere test in the sphere culler
+    we still supply the radius for the element.
+    The item is sorted into the tree, however the tree should
+    be balanced again prior to executing another CollectX(), so that
+    the collection process to some extent brings optimal results.
+
+    - 14-May-04   child    created
+*/
+//-------------------------------------------------------------------
+void nOctree::UpdateElement(nOctElement *oe, const vector3& p, const bbox3& box)
+{
+    n_assert(oe->octnode);
+    const vector3& extents = box.extents();
+    float rad = n_max( extents.y, n_max( extents.x, extents.z ) );
+    if (rad <= 0.0f) rad=N_OCT_MAXRADIUS;
+    oe->Set(p,rad,box.vmin,box.vmax);
+    this->move_element(oe);
+}
+
+//-------------------------------------------------------------------
+/**
     @brief Balances the tree.
 
     This should always be run directly before a collection is made,
