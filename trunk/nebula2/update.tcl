@@ -317,6 +317,9 @@ proc run_buildsystem {} {
         ::log::log error $result
         ::log::log debug "*** TRACE ***"
         ::log::log debug $errorInfo
+        if {[::log::lvIsSuppressed debug]} {
+            ::log::log error "To get more information about this error, exit update.tcl and run again with 'Verbose' (-verbose) turned on."
+        }
     }
 }
 
