@@ -7,14 +7,15 @@ sel /usr/scene
 
 new ntransformnode stdlight
     sel stdlight
-    .seteuler 0 -45 45
-    new nvolumelightnode l
-        sel l
-        .setposition 50 0 0
-        .setscale 1000 1000 1000
-        .setvector lightDiffuse 1 1 1 1
-        .setvector lightSpecular 1 1 1 1
-        .setvector lightAmbient 1 1 1 1
+    new nspotlightnode l0
+        sel l0
+        .setposition 25 20 25
+        .seteuler -30 45 0
+        .setorthogonal 1000 1000 0.25 175
+        .setvector LightDiffuse 1 1 1 1
+        .setvector LightSpecular 1 1 1 1
+        .setvector LightAmbient 0 0 0 0
+        .settexture LightModMap "textures:system/white.dds"
     sel ..    
 sel ..    
 sel $oldCwd
