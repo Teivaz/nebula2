@@ -66,8 +66,5 @@ begintarget nmaxexport
         microtcl
         nnebula
     }
-    
-    #setup fileserver behavior for plugins
-    addtargetdef nkernel N_MAXPLUGIN 1
 endtarget
 #-------------------------------------------------------------------------------
