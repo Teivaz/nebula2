@@ -29,16 +29,17 @@ home = f:manglepath('home:')
 f:setassign('meshes', proj .. '/export/meshes/')
 f:setassign('textures', proj .. '/export/textures/')
 if (exists('/sys/servers/gfx')) then
-	if (nebula.sys.servers.gfx:getfeatureset() == 'dx9') then
-		f:setassign('shaders', home .. '/export/shaders/2.0/')
-		puts('Shader directory: ' .. home .. '/export/shaders/2.0')
-	else
-		f:setassign('shaders', home .. '/export/shaders/fixed/')
-		puts('Shader directory: ' .. home .. '/export/shaders/fixed')
-	end
+    featureSet = nebula.sys.servers.gfx:getfeatureset()
+    if ((featureSet == 'dx9') or (featureSet == 'dx9flt')) then
+        f:setassign('shaders', home .. '/export/shaders/2.0/')
+        puts('Shader directory: ' .. home .. '/export/shaders/2.0')
+    else
+        f:setassign('shaders', home .. '/export/shaders/fixed/')
+        puts('Shader directory: ' .. home .. '/export/shaders/fixed')
+    end
 else
-	f:setassign('shaders', home .. '/export/shaders/2.0/')
-	puts('Shader directory: ' .. home .. '/export/shaders/2.0')
+    f:setassign('shaders', home .. '/export/shaders/2.0/')
+    puts('Shader directory: ' .. home .. '/export/shaders/2.0')
 end
 f:setassign('anims', proj .. '/export/anims/')
 f:setassign('gfxlib', proj .. '/export/gfxlib/')
@@ -180,7 +181,7 @@ function OnGuiServerOpen()
 
     nebula.sys.servers.gui:setsystemskin(skin)
     nebula.sys.servers.gui:setskin(skin)
-    nebula.sys.servers.gui:newwindow('guidockwindow',1)
+    nebula.sys.servers.gui:newwindow('nguidockwindow', true)
 
     sel(cwd)
 end
