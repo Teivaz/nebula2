@@ -468,9 +468,9 @@ nTclServer::Prompt()
     Evaluate a Tcl statement.
 */
 bool 
-nTclServer::Run(const char *cmdStr, const char*& result)
+nTclServer::Run(const char *cmdStr, nString& result)
 {
-    result = 0;
+    result.Clear();
     int errCode = Tcl_EvalEx(this->interp, (char *) cmdStr, -1, TCL_EVAL_DIRECT);
 
     result = "NO RESULT";
@@ -497,7 +497,7 @@ nTclServer::Run(const char *cmdStr, const char*& result)
     Invoke a TCL procedure
 */
 bool
-nTclServer::RunFunction(const char *functionName, const char *& result)
+nTclServer::RunFunction(const char *functionName, nString& result)
 {
     return this->Run(functionName, result);
 }
@@ -508,9 +508,9 @@ nTclServer::RunFunction(const char *functionName, const char *& result)
     Evaluate a Tcl script.
 */
 bool 
-nTclServer::RunScript(const char *filename, const char*& result)
+nTclServer::RunScript(const char *filename, nString& result)
 {
-    result = 0;
+    result.Clear();
 
 #ifdef __MICROTCL__
     // the microtcl Tcl_EvalFile() implementation accepts Nebula paths
@@ -534,11 +534,11 @@ nTclServer::RunScript(const char *filename, const char*& result)
     {
         if (this->GetFailOnError())
         {
-            n_error("*** Tcl error '%s' in file %s line %d.\n", result, filename, this->interp->errorLine);
+            n_error("*** Tcl error '%s' in file %s line %d.\n", result.Get(), filename, this->interp->errorLine);
         }
         else
         {
-            n_printf("*** Tcl error '%s' in file %s line %d.\n", result, filename, this->interp->errorLine);
+            n_printf("*** Tcl error '%s' in file %s line %d.\n", result.Get(), filename, this->interp->errorLine);
         }
         return false;
     }             

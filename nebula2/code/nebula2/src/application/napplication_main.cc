@@ -108,7 +108,7 @@ nApplication::Open()
     kernelServer->GetRemoteServer()->Open(this->GetAppName().Get());
 
     // run startup script (assigns must be setup before opening the display!)
-    const char* scriptResult;
+    nString scriptResult;
     this->refScriptServer->RunScript(this->startupScript.Get(), scriptResult);
     this->refScriptServer->Run("OnStartup", scriptResult);
 

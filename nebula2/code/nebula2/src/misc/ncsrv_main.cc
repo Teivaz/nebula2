@@ -543,14 +543,14 @@ nConServer::ExecuteCommand()
     // execute the command
     if (this->inputBuffer[0])
     {
-        const char* result;
+        nString result;
         bool failOnError = this->refScriptServer->GetFailOnError();
         this->refScriptServer->SetFailOnError(false);
         this->refScriptServer->Run(this->inputBuffer, result);
         this->refScriptServer->SetFailOnError(failOnError);
-        if (result && (*result))
+        if (false == result.IsEmpty())
         {
-            n_printf("%s\n", result);
+            n_printf("%s\n", result.Get());
         }
     }
 

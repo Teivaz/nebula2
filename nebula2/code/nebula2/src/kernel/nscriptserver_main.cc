@@ -33,11 +33,11 @@ nScriptServer::~nScriptServer()
     Run a script statement.
 
     @param  cmdStr      the statement to execute
-    @param  result      [out] will be filled with pointer to result
+    @param  result      [out] will be filled with the result
     @return             false if an error occured during execution
 */
 bool 
-nScriptServer::Run(const char* /* cmdStr */, const char*& /* result */)
+nScriptServer::Run(const char* /* cmdStr */, nString& /* result */)
 {
     // overwrite in subclass
     return false;
@@ -48,11 +48,11 @@ nScriptServer::Run(const char* /* cmdStr */, const char*& /* result */)
     Run a script function with the specified name without any args
 
     @param functionName     the function to invoke
-    @param result           [out] will be filled with pointer to result
+    @param result           [out] will be filled with the result
     @return                 false if an error occured during execution
 */
 bool
-nScriptServer::RunFunction(const char* /*functionName*/, const char*& /*result*/)
+nScriptServer::RunFunction(const char* /*functionName*/, nString& /*result*/)
 {
     // overwrite in subclass
     return false;
@@ -63,11 +63,11 @@ nScriptServer::RunFunction(const char* /*functionName*/, const char*& /*result*/
     Run a script file.
 
     @param  filename    the script filename (ABSOLUTE PATH!)
-    @param  result      [out] will be filled with pointer to result
+    @param  result      [out] will be filled with the result
     @return             false if an error occured during execution
 */
 bool
-nScriptServer::RunScript(const char* /* filename */, const char*& /* result */)
+nScriptServer::RunScript(const char* /* filename */, nString& /* result */)
 {
     // overwrite in subclass
     return false;

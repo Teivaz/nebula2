@@ -210,15 +210,15 @@ nRemoteServer::Trigger()
 
                         // this seems to be a valid message, send the message
                         // to the scriptserver for validation
-                        const char* result = 0;
+                        nString result;
                         scriptServer->Run(curString, result);
 
                         // send the result string back to the client
                         nIpcBuffer resultMsg(4096);
                         resultMsg.SetString("");
-                        if (result && (result[0] != 0))
+                        if (false == result.IsEmpty())
                         {
-                            resultMsg.SetString(result);
+                            resultMsg.SetString(result.Get());
                         }
                         this->ipcServer->Send(fromClientId, resultMsg);
 
