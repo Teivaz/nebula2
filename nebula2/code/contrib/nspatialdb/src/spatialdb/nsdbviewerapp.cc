@@ -25,6 +25,7 @@ nSDBViewerApp::nSDBViewerApp(nKernelServer* ks) :
     playcamera(chasecamera),
     controlMode(Maya),
     defViewerPos(0.0f, 0.0f, 0.0f),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet),
 //  defViewerAngles(n_deg2rad(90.0f), n_deg2rad(0.0f)),
     defViewerAngles(0,0),
 //  defViewerPos(300.0f, 2000.0f, 300.0f),
