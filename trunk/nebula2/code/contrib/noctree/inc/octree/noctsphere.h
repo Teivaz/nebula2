@@ -2,6 +2,7 @@
 #ifndef N_OCTSPHERE_H
 #define N_OCTSPHERE_H
 
+#include "mathlib/sphere.h"
 #include "octree/noctvisitor.h"
 
 //-----------------------------------------------------------------------------
