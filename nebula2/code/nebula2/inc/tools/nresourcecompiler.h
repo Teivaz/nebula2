@@ -33,6 +33,7 @@
 #include "resource/nresource.h"
 #include "kernel/nfile.h"
 #include "resource/nresourceserver.h"
+#include <stdarg.h>
 
 //------------------------------------------------------------------------------
 class nResourceCompiler
