@@ -53,6 +53,14 @@ else
 endif
 
 #---------------------------------------------------------------------
+# CHM_COMPILER = path to hhc from HTML Workshop
+# Only for Windows
+#---------------------------------------------------------------------
+ifeq ($(N_PLATFORM),__WIN32__)
+  CHM_COMPILER = c:/Program\ Files/HTML\ Help\ Workshop/hhc.exe
+endif
+
+#---------------------------------------------------------------------
 # N_NOTHREADS = true/false (default=false, except on OS X)
 # Set to 'true' when you want to compile without multithreading
 # support. This is mainly for debugging reasons. Please note
