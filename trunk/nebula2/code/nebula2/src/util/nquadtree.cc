@@ -152,7 +152,7 @@ nQuadTree::Element::~Element()
     matrix and the element's bounding box should be performed.
 */
 void
-nQuadTree::Element::Render(const matrix44& viewProj, bbox3::ClipStatus clipStatus)
+nQuadTree::Element::Render(const matrix44& /*viewProj*/, bbox3::ClipStatus /*clipStatus*/)
 {
     // empty
 }
@@ -164,7 +164,7 @@ nQuadTree::Element::Render(const matrix44& viewProj, bbox3::ClipStatus clipStatu
     method is called.
 */
 void
-nQuadTree::Element::RenderDebug(const matrix44& viewProj, bbox3::ClipStatus clipStatus)
+nQuadTree::Element::RenderDebug(const matrix44& /*viewProj*/, bbox3::ClipStatus /*clipStatus*/)
 {
     // empty
 }
