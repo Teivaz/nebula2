@@ -3,6 +3,7 @@
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/nenv.h"
+#include "kernel/nkernelserver.h"
 
 nNebulaScriptClass(nEnv, "nroot");
 

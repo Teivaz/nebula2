@@ -3,6 +3,7 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "video/nvideoserver.h"
+#include "kernel/nkernelserver.h"
 
 nNebulaScriptClass(nVideoServer, "nroot");
 
