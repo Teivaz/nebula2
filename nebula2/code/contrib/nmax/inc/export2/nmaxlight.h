@@ -15,12 +15,19 @@
 */
 #include "export2/nmaxnode.h"
 
+class nLightNode;
+
 //---------------------------------------------------------------------------
 class nMaxLight : public nMaxNode
 {
 public:
     nMaxLight();
     virtual ~nMaxLight();
+
+    nSceneNode* Export(INode* inode, Object* obj);
+
+protected:
+    bool BuildLight(Object *obj, nLightNode* light);
 
 };
 //---------------------------------------------------------------------------
