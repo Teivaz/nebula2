@@ -12,11 +12,9 @@
 
     @brief
 */
-#include "export2/nmaxnotetrack.h"
 #include "tools/nanimbuilder.h"
 
 class nMaxMesh;
-class nMaxNoteTrack;
 class nVariableServer;
 class nSceneNode;
 class nMaxBoneManager;
@@ -30,10 +28,9 @@ public:
 
     bool Export();
 
-    void AddNode(INode* inode);
-    bool IsExistNode(INode* inode);
-
 protected:
+    // @name
+    // @{
     bool Begin(INode* root);
     bool End();
 
@@ -45,10 +42,11 @@ protected:
 
     void InitializeNodes(INode* inode);
     void UnInitializeNodes(INode* inode);
+    // @}
 
-    // @name
+    // @name Functions for export
     // @{
-    void ExportNodes(INode* inode);
+    bool ExportNodes(INode* inode);
 
     void ExportLightObject(INode* inode);
     nSceneNode* ExportGeomObject(INode* inode);
@@ -61,17 +59,16 @@ protected:
     void ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &animStart);
 
     bool ExportAnimation(const nString &filename);
+
+    Point3 GetBackgroundColor() const;
     // @}
 
-    void CreateAnimStates();
     bool CreateAnimation(nAnimBuilder &animBuilder);
 
     void CollectTopLevelNodes(INode* inode);
+    bool IsExportedNode(INode* inode);
 
     void PartitionMesh();
-    void CreateSkinAnimator(const nString& animatorName, const nString& animFileName);
-
-    Point3 GetBackgroundColor() const;
 
 protected:
     nRef<nVariableServer> varServer;
@@ -88,12 +85,13 @@ protected:
     /// array for exported nMaxMesh instances.
     nArray<nMaxMesh*> meshArray;
 
+    /// Mesh builder for meshes in the mesh array.
     nMeshBuilder globalMeshBuilder;
 
+    /// array for top level nodes.
     nArray<INode*> topLevelNodes;
 
-    nMaxNoteTrack noteTrack;
-
+    /// viewport background color.
     Point3 backgroudCol;
 
 };
