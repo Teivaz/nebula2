@@ -1,15 +1,27 @@
 //------------------------------------------------------------------------------
-//  nsh.cc
-//  (C) 2003 RadonLabs GmbH
+/**
+    @page NebulaToolsnsh nsh
+
+    nsh
+
+    <dl>
+     <dt>-help</dt>
+       <dd>show this help</dd>
+     <dt>-startup</dt>
+       <dd>run script and go into interactive mode</dd>
+     <dt>-run</dt>
+       <dd>run script and exit</dd>
+     <dt>-scriptserver</dt>
+       <dd>define an alternative script server class (default is ntclserver)</dd>
+    </dl>
+
+    (C) 2003 RadonLabs GmbH
+*/
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
 
-//------------------------------------------------------------------------------
-/**
-    Main function.
-*/
 int
 main(int argc, const char** argv)
 {

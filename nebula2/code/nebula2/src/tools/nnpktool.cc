@@ -1,11 +1,34 @@
 //------------------------------------------------------------------------------
-//  nnpktool.cc
-//
-//  Manage npk files.
-//
-//  nnpktool [-pack dirname] [-list dirname] [-out filename]
-//
-//  (C) 2002 RadonLabs GmbH
+/**
+    @page NebulaToolsnnpktool nnpktool
+
+    nnpktool
+
+    Manage npk files.
+
+    <dl>
+     <dt>-help</dt>
+       <dd>show help</dd>
+     <dt>-pack</dt>
+       <dd>pack this input directory</dd>
+     <dt>-list</dt>
+       <dd>list contents of npk files</dd>
+     <dt>-out</dt>
+       <dd>name of output file (def pack.npk)</dd>
+     <dt>-diff</dt>
+       <dd>build upgrade file of two npk files</dd>
+     <dt>-listdiff</dt>
+       <dd>list difference of two npk files</dd>
+     <dt>-old</dt>
+       <dd>the 'older' npk file to compare</dd>
+     <dt>-new</dt>
+       <dd>the 'newer' npk file to compare</dd>
+     <dt>-unpack</dt>
+       <dd>unpack given npk file</dd>
+    </dl>
+
+    (C) 2002 RadonLabs GmbH
+*/
 //------------------------------------------------------------------------------
 #include "tools/wftools.h"
 #include "kernel/nkernelserver.h"
@@ -1189,7 +1212,7 @@ main(int argc, char* argv[])
     // show help
     if (help)
     {
-        printf("npacknpk [-help] [-in] [-out]\n"
+        printf("nnpktool [-help] [-in] [-out]\n"
                "(C) 2002 RadonLabs GmbH\n"
                "-help       show help\n"
                "-pack       pack this input directory\n"
@@ -1262,10 +1285,4 @@ main(int argc, char* argv[])
     // success
     return 0;
 }
-
-
-
-
-
-
 

@@ -1,7 +1,30 @@
 //------------------------------------------------------------------------------
-//  nviewer.cc
-//  Selfcontained viewer application for Nebula.
-//  (C) 2002 RadonLabs GmbH
+/**
+    @page NebulaToolsnviewer nviewer
+
+    nviewer
+
+    Selfcontained viewer application for Nebula.
+
+    <dl>
+     <dt>-script</dt>
+       <dd>script to run</dd>
+     <dt>-view</dt>
+       <dd>data to load and view with the default lighting setup</dd>
+     <dt>-fullscreen</dt>
+       <dd>if present, then nviewer will go fullscreen</dd>
+     <dt>-w</dt>
+       <dd>width of window to open (default: 640)</dd>
+     <dt>-h</dt>
+       <dd>height of window to open (default: 480)</dd>
+    </dl>
+
+    nviewer also defines some default input handling:
+
+     - Document this
+
+    (C) 2002 RadonLabs GmbH
+*/
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
 #include "kernel/ntimeserver.h"

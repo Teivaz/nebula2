@@ -1,6 +1,26 @@
 //------------------------------------------------------------------------------
-//  nremoteshell.cc
-//  (C) 2003 RadonLabs GmbH
+/**
+    @page NebulaToolsnremoteshell nremoteshell
+
+    nremoteshell
+
+    <dl>
+     <dt>-help</dt>
+       <dd>show this help</dd>
+     <dt>-port</dt>
+       <dd>defines target port in the form address:portname (see below)</dd>
+    </dl>
+
+    Examples:
+
+    @verbatim
+    nremoteshell -port localhost:nviewer
+    nremoteshell -port 192.168.0.1:test
+    nremoteshell -port zeus:nviewer
+    @endverbatim
+
+    (C) 2003 RadonLabs GmbH
+*/
 //------------------------------------------------------------------------------
 #include <stdio.h>
 #include "kernel/nkernelserver.h"
@@ -27,9 +47,6 @@ getMsg(nMsgNode* msgNode)
     return str;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
 int
 main(int argc, const char** argv)
 {
@@ -41,16 +58,16 @@ main(int argc, const char** argv)
     if (helpArg)
     {
         printf("(C) 2003 RadonLabs GmbH\n"
-               "nrsh - Nebula2 remote shell\n"
+               "nremoteshell - Nebula2 remote shell\n"
                "Command line args:\n"
                "------------------\n"
                "-help       show this help\n"
                "-port       defines target port in the form address:portname (see below)\n\n"
                "Examples:\n"
                "---------\n"
-               "nrsh -port localhost:nviewer\n"
-               "nrsh -port 192.168.0.1:test\n"
-               "nrsh -port zeus:nviewer\n");
+               "nremoteshell -port localhost:nviewer\n"
+               "nremoteshell -port 192.168.0.1:test\n"
+               "nremoteshell -port zeus:nviewer\n");
         return 5;
     }
     if (!portArg)

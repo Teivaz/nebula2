@@ -1,19 +1,33 @@
 //------------------------------------------------------------------------------
 /**
-    nimagetool.cc
+    @page NebulaToolsnimagetool nimagetool
+
+    nimagetool
     
     Nebula image processing tool.
     
-    -in             filename of input file
-    -out            filename of output file (extension must be .tga or .ntx)
-    -mipmap         generate mipmaps (only for .ntx output)
-    -cubemap        generate a cubemap
-    -w              target width
-    -h              target height
-    -smalleronly    only scale image if target size is smaller
-    -flip           flip image vertically
-    -normcubemap    generate a normalization cube map
-    -specmap        generate a specular map
+    <dl>
+     <dt>-in</dt>
+       <dd>filename of input file</dd>
+     <dt>-out</dt>
+       <dd>filename of output file (extension must be @c .tga or @c .ntx)</dd>
+     <dt>-mipmap</dt>
+       <dd>generate mipmaps (only for @c .ntx output)</dd>
+     <dt>-cubemap</dt>
+       <dd>generate a cubemap</dd>
+     <dt>-w</dt>
+       <dd>target width</dd>
+     <dt>-h</dt>
+       <dd>target height</dd>
+     <dt>-smalleronly</dt>
+       <dd>only scale image if target size is smaller</dd>
+     <dt>-flip</dt>
+       <dd>flip image vertically</dd>
+     <dt>-normcubemap</dt>
+       <dd>generate a normalization cube map</dd>
+     <dt>-specmap</dt>
+       <dd>generate a specular map</dd>
+    </dl>
 
     (C) 2003 RadonLabs GmbH
 */
