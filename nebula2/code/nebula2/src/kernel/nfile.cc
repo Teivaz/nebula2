@@ -73,29 +73,28 @@ nFile::Open(const char* fileName, const char* accessMode)
     DWORD access = 0;
     DWORD disposition = 0;
     DWORD shareMode = 0;
-        
-    switch (accessMode[0]) {
-        case 'r':
-        case 'R':
+    const char* ptr = accessMode;
+    char c;
+    while (c = *ptr++)
+    {
+        if ((c == 'r') || (c == 'R'))
+        {
+            access |= GENERIC_READ;
+        }
+        else if ((c == 'w') || (c == 'W'))
+        {
+            access |= GENERIC_WRITE;
+        }
+    }
+    if (access & GENERIC_WRITE)
+    {
+        disposition = CREATE_ALWAYS;
+    }
+    else
+    {
             disposition = OPEN_EXISTING;
-            access      = GENERIC_READ;
             shareMode   = FILE_SHARE_READ;
-            break;
-        case 'w':
-        case 'W':
-            disposition = CREATE_ALWAYS;
-            access      = GENERIC_WRITE;
-            shareMode   = 0;
-
-            break;
-        case 'a':
-        case 'A':
-            disposition = OPEN_ALWAYS;
-            access      = GENERIC_WRITE;
-            shareMode   = 0;
-            break;
-    };
-
+    }
     this->handle = CreateFile(buf,              // filename
                               access,           // access mode
                               shareMode,        // share mode
