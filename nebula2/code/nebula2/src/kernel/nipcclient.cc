@@ -86,12 +86,16 @@ nIpcClient::FillServerAddr(const char* name)
     he = gethostbyname(hostname);
     if (!he) {
         n_printf("nIpcClient(): unknown host!");
-        return FALSE;
+        return false;
     }
     this->serverPortNum = this->GetPortNumFromName(portname);
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port   = htons(this->serverPortNum);
+#if defined(__WIN32__)
     this->serverAddr.sin_addr.S_un.S_addr = inet_addr(hostname);
+#elif defined(__LINUX__)
+    this->serverAddr.sin_addr.s_addr = inet_addr(hostname);
+#endif
     this->serverAddr.sin_addr   = *((struct in_addr *)he->h_addr);
     return true;
 }
@@ -147,7 +151,7 @@ nIpcClient::Connect(const char* portName)
             if (this->sock == INVALID_SOCKET) 
             {
 		        n_printf("nIpcClient::nIpcClient(): could not create socket!");
-		        return FALSE;		
+		        return false;		
             }
 
             n_printf("nIpcClient: trying %s:%s, port %d...\n",
@@ -177,7 +181,7 @@ nIpcClient::Connect(const char* portName)
                     	// positive Antwort?
                     	if (strcmp(msg_buf,"~true") == 0) 
                         {
-							connected=TRUE;
+							connected = true;
 							n_printf("accepted.\n");
                     	} 
                         else 
@@ -192,7 +196,7 @@ nIpcClient::Connect(const char* portName)
                 else 
                 {
                 	n_printf("nIpcClient::Connect(): ~handshake send() failed!");
-                	error = TRUE;
+                	error = true;
             	}
         	} 
             else 

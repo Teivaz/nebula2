@@ -157,7 +157,7 @@ nThread::ThreadHarakiri()
 #ifndef __NEBULA_NO_THREADS__
     // synchronize with destructor
     this->shutdownEvent.Wait();
-    this->shutdownSignalReceived = TRUE;
+    this->shutdownSignalReceived = true;
 #   ifdef __WIN32__
     _endthreadex(0);
 #   else
