@@ -39,7 +39,7 @@ public:
     void Rewind();
 
     /// Set input arguments in nCmd from a C variable argument list
-    void CopyInArgsFrom(va_list & marker);
+    void CopyInArgsFrom(va_list marker);
     /// Copy input arguments from another nCmd
     void CopyInArgsFrom(nCmd * cmd);
 
@@ -162,12 +162,18 @@ nCmd::Out()
 //------------------------------------------------------------------------------
 inline
 void 
-nCmd::CopyInArgsFrom(va_list & marker)
+nCmd::CopyInArgsFrom(va_list marker)
 {
+    va_list markerCopy;
+#ifdef __LINUX__
+    va_copy(markerCopy, marker);
+#else
+    markerCopy = marker;
+#endif
     for(int i = 0;i < this->GetNumInArgs();i++)
     {
         nArg * arg = this->In();
-        arg->Copy(marker);
+        arg->Copy(&markerCopy);
     }
 }
 
