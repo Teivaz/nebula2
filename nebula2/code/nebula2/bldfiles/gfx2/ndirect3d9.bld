@@ -46,6 +46,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nd3d9mesharray
     setdir gfx2
+    setplatform win32
     setfiles { nd3d9mesharray_main }
     setheaders { nd3d9mesharray }
 endmodule
