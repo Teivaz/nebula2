@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nParticleShapeNode
-    @ingroup NebulaSceneSystemNodes
+    @ingroup SceneNodes
 
     @brief A shape node representing a particle system.
 

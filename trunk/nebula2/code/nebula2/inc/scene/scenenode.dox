@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaSceneSystemNodes Scene Nodes
-    @ingroup NebulaSceneSystem
+    @defgroup SceneNodes Scene Nodes
+    @ingroup Scene
 
     This page describes Nebula2 scene nodes.
 
@@ -13,7 +13,7 @@
     @section NebulaSceneNodesSceneNodes Scene Nodes
 
     nSceneNodes are the basic components of a Nebula2 <b>scene</b>
-    (see @ref NebulaSceneSystem): they represent (some information
+    (see @ref Scene): they represent (some information
     about) a visible object in the world, and know how to render
     themselves.
    
@@ -81,7 +81,7 @@
     @endverbatim
 
     If a given nSceneNode is attached to the scene (see 
-    @ref NebulaSceneSystemRenderingLoop), all of its descendents will 
+    @ref SceneRenderingLoop), all of its descendents will 
     automatically and recursively be attached as well.  In the example, 
     attaching @c body would also attach @c wheelFront,
     @c wheelBack, and @c brake.

@@ -3,9 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nShadowSkinShapeNode
-    @ingroup Scene
+    @ingroup SceneNodes
 
-    A shadow skin node is 'visible' object that provide shadow to the scene.
+    @brief A shadow skin node is 'visible' object that provide shadow to
+    the scene.
+
     It can be animated like a skinshape node, and provides shadow
     for skinned meshes.
 

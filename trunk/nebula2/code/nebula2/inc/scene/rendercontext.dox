@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaRenderContext Render Context
-    @ingroup NebulaSceneSystem
+    @defgroup SceneRenderContext Render Context
+    @ingroup Scene
 
     This document explains what render contexts are, and how to use them. 
 

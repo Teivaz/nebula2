@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nStdSceneServer
-    @ingroup NebulaSceneSystemServers
+    @ingroup SceneServers
 
     @brief Default scene server. A simple example of how to write a scene
     server class.

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nLightNode
-    @ingroup NebulaSceneLightNodes
+    @ingroup SceneNodes
 
     @brief Base class of scene node which provide lighting information.
 

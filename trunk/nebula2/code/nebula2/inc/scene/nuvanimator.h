@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nUvAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief Animates the UV transform parameters on an nAbstractShaderNode.
     

@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nInstSceneServer
-    @ingroup Scene
+    @ingroup SceneServers
 
-    An experimental scene server which uses instance streams for rendering
-    identical objects.
+    @brief An experimental scene server which uses instance streams for
+    rendering identical objects.
 
     The instance server's central data structure is this:
 

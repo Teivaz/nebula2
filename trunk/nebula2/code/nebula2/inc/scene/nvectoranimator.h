@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVectorAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief Animates a vector attribute of an nAbstractShaderNode.
 

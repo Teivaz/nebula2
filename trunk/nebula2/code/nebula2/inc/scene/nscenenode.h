@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSceneNode
-    @ingroup NebulaSceneSystemNodes
+    @ingroup SceneNodes
 
     @brief The nSceneNode is the base class of all objects which can be attached
     to a scene managed by the nSceneServer class. A scene node object

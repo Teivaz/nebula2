@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nMTRSceneServer
-    @ingroup Scene
+    @ingroup SceneServers
 
-    "Multiple Render Target" scene server, spreads rendering across various
-    specialized offscreen buffers, which are combined to the final result
-    by specific "compositing" pixel shaders.
+    @brief "Multiple Render Target" scene server, spreads rendering across
+    various specialized offscreen buffers, which are combined to the final
+    result by specific "compositing" pixel shaders.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShapeNode
-    @ingroup NebulaSceneSystemNodes
+    @ingroup SceneNodes
 
     @brief A shape node is the simplest actually visible object in the
     scene node class hierarchy.

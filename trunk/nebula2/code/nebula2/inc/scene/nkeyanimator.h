@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nKeyAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief A common base class for animator classes which need to sample
     vectors from key arrays.

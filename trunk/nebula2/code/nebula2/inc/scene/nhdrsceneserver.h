@@ -3,14 +3,14 @@
 //------------------------------------------------------------------------------
 /**
     @class nHdrSceneServer
-    @ingroup Scene
+    @ingroup SceneServers
 
-    A scene server which implements an HDR lighting model.
+    @brief A scene server which implements an HDR lighting model.
     
-    (1) scene is rendered into a fullsize R16G16B16A16 offscreen buffer
-    (2) overbright areas from scene is rendered into offscreen "bloom" buffer.
-    (3) bloom buffer is blurred
-    (4) final frame is composed
+     -# scene is rendered into a fullsize R16G16B16A16 offscreen buffer
+     -# overbright areas from scene are rendered into offscreen "bloom" buffer.
+     -# bloom buffer is blurred
+     -# final frame is composed
     
     (C) 2004 RadonLabs GmbH
 */

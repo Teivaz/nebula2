@@ -3,10 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nLodNode
-    @ingroup Scene
+    @ingroup SceneNodes
     
-    A lod node switches its child nodes according to its current camera distance on and off
-    to accomplish different representations with different levels of detail.
+    @brief A lod node switches its child nodes on and off according to its
+    current camera distance to accomplish different representations with
+    different levels of detail.
 
     (C) 2002 RadonLabs GmbH
 */

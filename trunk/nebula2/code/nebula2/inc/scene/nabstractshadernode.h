@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAbstractShaderNode
-    @ingroup NebulaSceneSystemNodes
+    @ingroup SceneNodes
 
     @brief This is the base class for all shader related scene node classes
     (for instance material and light nodes).

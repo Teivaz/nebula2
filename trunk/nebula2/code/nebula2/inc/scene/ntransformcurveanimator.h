@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformCurveAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief A Transform Curve Animator defines a animation resource.
 

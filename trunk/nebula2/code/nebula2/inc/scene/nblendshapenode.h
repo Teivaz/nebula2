@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nBlendShapeNode
-    @ingroup Scene
+    @ingroup SceneNodes
 
     See also @ref N2ScriptInterface_nblendshapenode
     

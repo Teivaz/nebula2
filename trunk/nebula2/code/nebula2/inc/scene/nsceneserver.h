@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSceneServer
-    @ingroup NebulaSceneSystemServers
+    @ingroup SceneServers
 
     @brief The scene server builds a scene from nSceneNode objects and then
     renders it.

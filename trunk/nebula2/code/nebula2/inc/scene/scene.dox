@@ -1,39 +1,39 @@
 /**
-    @defgroup NebulaSceneSystem Scene System
+    @defgroup Scene Scene System
 
     This page describes the scene system and general rendering process of Nebula.
     
     A Nebula2 @b scene is a collection of <b>scene node hierarchies</b>, each
     of which normally represents a visible object in the 3-D world.
     
-    @ref NebulaSceneSystemNodes is the root class of all objects that can be 
+    @ref SceneNodes is the root class of all objects that can be 
     grouped into such hierarchies.  Read @ref NebulaSceneNodesSceneNodes,
     @ref NebulaSceneNodesVisualNodes, and @ref NebulaSceneNodesHierarchies now.
 
-    @ref NebulaSceneSystemServers set up and optimize the scene before passing
+    @ref SceneServers set up and optimize the scene before passing
     it off to the lower-level graphics API (@ref NebulaGraphicsSystem).
 
     If your application is complicated or large, you will probably need to write
     you own custom scene server.  This document should help you understand
     enough to do so.
 
-    @section NebulaSceneSystemRenderingLoop
+    @section SceneRenderingLoop
 
     The rendering loop of Nebula looks roughly like this:
 
        -# nSceneServer::BeginScene
-       -# nSceneServer::Attach is invoked on each visual hierarchy root object that wants
-          to be rendered.
+       -# nSceneServer::Attach is invoked on each visual hierarchy root
+          object that wants to be rendered.
        -# nSceneServer::EndScene
        -# nSceneServer::RenderScene
        -# nSceneServer::PresentScene
 
-    Step (1) prepares rendering. It contains initializing per frame variables and
-    loading resources if necessary.
+    Step (1) prepares rendering. It contains initializing per frame variables
+    and loading resources if necessary.
 
     Step (2) determines which visual objects are part of ("attached to") the 
     scene this frame and what parameters they are using.  The @e application 
-    accomplishes this by passing the @ref NebulaRenderContext of every 
+    accomplishes this by passing the @ref SceneRenderContext of every 
     (potentially) visible object to nSceneServer::Attach.
 
     A render context contains a pointer to the root of a scene node
@@ -81,24 +81,19 @@
 
     See below sections for more details of each scene system modules:
 
-      - @ref NebulaSceneSystemServers
-      - @ref NebulaSceneSystemNodes
-      - @ref NebulaSceneSystemAnimators
-      - @ref NebulaSceneLightNodes
+      - @ref SceneServers
+      - @ref SceneNodes
+      - @ref SceneAnimators
 
 */
 
 /**
-    @defgroup NebulaSceneSystemServers Scene Servers
-    @ingroup NebulaSceneSystem
+    @defgroup SceneServers Scene Servers
+    @ingroup Scene
 */
 
 /**
-    @defgroup NebulaSceneSystemAnimators Scene Animators
-    @ingroup NebulaSceneSystem
+    @defgroup SceneAnimators Scene Animators
+    @ingroup Scene
 */
 
-/**
-    @defgroup NebulaSceneLightNodes Scene Lighting
-    @ingroup NebulaSceneSystem
-*/
