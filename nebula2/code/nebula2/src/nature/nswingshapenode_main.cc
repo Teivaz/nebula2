@@ -38,8 +38,8 @@ nSwingShapeNode::LoadResources()
 {
     if (nShapeNode::LoadResources())
     {
-        this->timeVarHandle = this->refVariableServer->GetVariableHandleByName("time");
-        this->windVarHandle = this->refVariableServer->GetVariableHandleByName("wind");
+        this->timeVarHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
+        this->windVarHandle = nVariableServer::Instance()->GetVariableHandleByName("wind");
         return true;
     }
     return false;
@@ -103,7 +103,7 @@ nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderCon
         vector3 windVec(wind.x, wind.y, wind.z);
 
         // get current position in world space
-        const matrix44& model = this->refGfxServer->GetTransform(nGfxServer2::Model);
+        const matrix44& model = nGfxServer2::Instance()->GetTransform(nGfxServer2::Model);
 
         // implement swinging by permuting angle by time and position
         float permutedAngle = this->ComputeAngle(model.pos_component(), time);
@@ -114,7 +114,7 @@ nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderCon
         rotMatrix.rotate(windVec * up, permutedAngle);
 
         // set shader parameter
-        nShader2* shader = this->refGfxServer->GetShader();
+        nShader2* shader = nGfxServer2::Instance()->GetShader();
         n_assert(shader);
         if (shader->IsParameterUsed(nShaderState::Swing))
         {
@@ -126,7 +126,6 @@ nSwingShapeNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderCon
         {
             shader->SetFloat4(nShaderState::Wind, windVar->GetFloat4());
         }
-
         return true;
     }
     return false;

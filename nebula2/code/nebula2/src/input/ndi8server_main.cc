@@ -6,22 +6,6 @@
 
 nNebulaClass(nDI8Server, "ninputserver");
 
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    ndi8server
-
-    @cppclass
-    nDI8Server
-    
-    @superclass
-    ninputserver
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
