@@ -18,7 +18,7 @@ nNebulaScriptClass(nSkinAnimator, "nanimator");
 /**
 */
 nSkinAnimator::nSkinAnimator() :
-    refAnimServer(kernelServer, "/sys/servers/anim"),
+    refAnimServer("/sys/servers/anim"),
     animStateVarHandle(nVariable::INVALID_HANDLE),
     frameId(0xffffffff)
 {

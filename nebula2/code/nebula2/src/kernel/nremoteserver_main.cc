@@ -13,11 +13,11 @@ nNebulaClass(nRemoteServer, "nroot");
 /**
 */
 nRemoteServer::nRemoteServer() :
-    refScriptServer(kernelServer),
+    refScriptServer("/sys/servers/script"),
     isOpen(false),
     ipcServer(0)
 {
-    this->refScriptServer = "/sys/servers/script";
+    // empty
 }
 
 //------------------------------------------------------------------------------

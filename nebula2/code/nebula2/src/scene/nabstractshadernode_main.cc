@@ -12,8 +12,8 @@ nNebulaScriptClass(nAbstractShaderNode, "ntransformnode");
 /**
 */
 nAbstractShaderNode::nAbstractShaderNode() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
-    refVariableServer(kernelServer, "/sys/servers/variable")
+    refGfxServer("/sys/servers/gfx"),
+    refVariableServer("/sys/servers/variable")
 {
     // empty
 }

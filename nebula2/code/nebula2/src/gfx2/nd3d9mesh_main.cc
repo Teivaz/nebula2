@@ -13,7 +13,7 @@ nNebulaClass(nD3D9Mesh, "nmesh2");
 /**
 */
 nD3D9Mesh::nD3D9Mesh() :
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
+    refGfxServer("/sys/servers/gfx"),
     d3dVBLockFlags(0),
     d3dIBLockFlags(0),
     vertexBuffer(0),

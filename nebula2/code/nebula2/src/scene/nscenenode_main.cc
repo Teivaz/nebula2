@@ -257,7 +257,7 @@ nSceneNode::AddAnimator(const char* relPath)
 {
     n_assert(relPath);
 
-    nDynAutoRef<nAnimator> newDynAutoRef(kernelServer);
+    nDynAutoRef<nAnimator> newDynAutoRef;
     newDynAutoRef.set(relPath);
     this->animatorArray.PushBack(newDynAutoRef);
 }

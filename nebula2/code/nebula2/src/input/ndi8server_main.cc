@@ -11,8 +11,8 @@ nNebulaClass(nDI8Server, "ninputserver");
 /**
 */
 nDI8Server::nDI8Server() :
-    refDevices(kernelServer),
-    refHwnd(kernelServer),
+    refDevices("/sys/share/input/devs"),
+    refHwnd("/sys/env/hwnd"),
     di8(0),
     hwnd(0),
     curJoyMouse(0),
@@ -21,8 +21,6 @@ nDI8Server::nDI8Server() :
     curJoystick(0),
     curKeyboard(0)
 {
-    this->refDevices = "/sys/share/input/devs";
-    this->refHwnd = "/sys/env/hwnd";
     if (!this->InitDirectInput())
     {
         n_error("nDI8Server: Could not initialize DirectInput8!\n");

@@ -14,7 +14,7 @@ nNebulaClass(nD3D9Server, "ngfxserver2");
 /**
 */
 nD3D9Server::nD3D9Server() :
-    refInputServer(kernelServer, "/sys/servers/input"),
+    refInputServer("/sys/servers/input"),
     hInst(0),
     hWnd(0),
     hAccel(0),

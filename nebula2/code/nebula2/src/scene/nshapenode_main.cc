@@ -15,8 +15,7 @@ nNebulaScriptClass(nShapeNode, "nmaterialnode");
 nShapeNode::nShapeNode() :
     groupIndex(0),
     meshUsage(nMesh2::WriteOnce),
-    renderWireframe(false),
-    refMeshResourceLoader(kernelServer)
+    renderWireframe(false)
 {
     // empty
 }

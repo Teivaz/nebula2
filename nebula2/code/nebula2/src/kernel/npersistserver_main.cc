@@ -14,16 +14,15 @@ nNebulaScriptClass(nPersistServer, "nroot");
 /**
 */
 nPersistServer::nPersistServer() :
-    refFileServer(kernelServer),
-    refSaver(kernelServer),
+    refFileServer("/sys/servers/file2"),
+    refSaver("/sys/servers/script"),
     file(0),
     saveMode(SAVEMODE_FOLD),
     cloneTarget(0),
     origCwd(0),
     saveLevel(0)
 {
-    this->refFileServer = "/sys/servers/file2";
-    this->refSaver      = "/sys/servers/script";
+    // empty
 }
 
 //------------------------------------------------------------------------------

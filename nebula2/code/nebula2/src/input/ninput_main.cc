@@ -211,13 +211,11 @@ nInputServer::ExportDefaultMouse(void)
 /**
 */
 nInputServer::nInputServer() :
-    ref_ss(kernelServer),
-    ref_con(kernelServer),
+    ref_ss("/sys/servers/script"),
+    ref_con("/sys/servers/console"),
     mouseFactor(1.0f),
     mouseInvert(false)
 {
-    this->ref_ss         = "/sys/servers/script";
-    this->ref_con        = "/sys/servers/console";
     this->ref_statedir   = kernelServer->New("nroot","/sys/share/input/states");
     this->ref_inpdir     = kernelServer->New("nroot","/sys/share/input");
 

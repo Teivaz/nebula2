@@ -88,9 +88,9 @@ static int keyKillSet[] = {
 /**
 */
 nConServer::nConServer() :
-    refInputServer(kernelServer, "/sys/servers/input"),
-    refGfxServer(kernelServer, "/sys/servers/gfx"),
-    refScriptServer(kernelServer, "/sys/servers/script"),
+    refInputServer("/sys/servers/input"),
+    refGfxServer("/sys/servers/gfx"),
+    refScriptServer("/sys/servers/script"),
     consoleOpen(false),
     watchersOpen(false),
     historyIndex(0),
