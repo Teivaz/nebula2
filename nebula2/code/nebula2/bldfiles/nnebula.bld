@@ -19,7 +19,7 @@ begintarget nnebula
         naudioserver3 nsound3 nlistener3 nsoundresource
         nsceneserver nstdsceneserver
         nscenenode ntransformnode nabstractshadernode 
-        nmaterialnode nshapenode nanimator nvectoranimator
+        nmaterialnode nshapenode nattachmentnode nanimator nvectoranimator
         ntextureanimator nlightnode nspotlightnode
         ntransformanimator nskinanimator nskinshapenode 
         ncharacter nanimationserver nanimation nmemoryanimation nconserver

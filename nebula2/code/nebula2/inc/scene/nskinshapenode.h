@@ -33,6 +33,8 @@ public:
     virtual ~nSkinShapeNode();
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
+    /// called by nSceneServer when object is attached to scene
+    virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the skin animator
@@ -41,6 +43,8 @@ public:
     const char* GetSkinAnimator() const;
     /// set pointer to an uptodate character skeleton object (called exclusively by nSkinAnimator)
     void SetCharSkeleton(const nCharSkeleton* charSkeleton);
+    /// get pointer to an uptodate character skeleton object (called exclusively by nAttachmentNode)
+    const nCharSkeleton* GetCharSkeleton();
     /// begin defining mesh fragments
     void BeginFragments(int num);
     /// set mesh group index of a skin fragment

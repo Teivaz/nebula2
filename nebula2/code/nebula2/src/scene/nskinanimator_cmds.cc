@@ -24,6 +24,7 @@ static void n_setclip(void* slf, nCmd* cmd);
 static void n_endclips(void* slf, nCmd* cmd);
 static void n_getnumclips(void* slf, nCmd* cmd);
 static void n_getclipat(void* slf, nCmd* cmd);
+static void n_addjointname(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -62,6 +63,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endclips_i",              'EDCL', n_endclips);
     cl->AddCmd("i_getnumclips_i",           'GNCL', n_getnumclips);
     cl->AddCmd("s_getclipat_ii",            'GCLA', n_getclipat);
+    cl->AddCmd("v_addjointname_is",         'ADJN', n_addjointname);
     cl->EndCmds();
 }
 
@@ -474,6 +476,27 @@ n_getclipat(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    addjointname
+    @input
+    i(JointIndex), s(JointName)
+    @output
+    v
+    @info
+    Add a joint name to the skin animator
+*/
+static void
+n_addjointname(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int jointIndex = cmd->In()->GetI();
+    const char *nameStr = cmd->In()->GetS();
+    
+    self->AddJointName(jointIndex, nameStr);
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nSkinAnimator::SaveCmds(nPersistServer* ps)
@@ -525,6 +548,19 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
         //--- endjoints ---
         cmd = ps->GetCmd(this, 'EJNT');
         ps->PutCmd(cmd);
+
+        // Add all the joint names
+        nStrNode *strNode = this->jointNameList.GetHead();
+        while (strNode)
+        {
+            //--- addjointname ---
+            cmd = ps->GetCmd(this, 'ADJN');
+            cmd->In()->SetI((unsigned int)strNode->GetPtr());
+            cmd->In()->SetS(strNode->GetName());
+            ps->PutCmd(cmd);
+            
+            strNode = strNode->GetSucc();
+        }
 
         //--- setstatechannel ---
         cmd = ps->GetCmd(this, 'SSCN');

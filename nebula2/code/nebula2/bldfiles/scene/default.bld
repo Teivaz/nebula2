@@ -12,6 +12,7 @@
 #      nlightnode
 #      nspotlightnode
 #      nshapenode
+#      nattachmentnode
 #      nanimator
 #      nvectoranimator
 #      ntransformanimator
@@ -79,6 +80,12 @@ beginmodule nshapenode
     setdir scene
     setfiles { nshapenode_main nshapenode_cmds }
     setheaders { nshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nattachmentnode
+    setdir scene
+    setfiles { nattachmentnode_main nattachmentnode_cmds }
+    setheaders { nattachmentnode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nanimator
