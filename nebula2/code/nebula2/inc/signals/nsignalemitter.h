@@ -21,7 +21,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/ntypes.h"
 #include "kernel/ncmd.h"
-#include "kernel/ncmdprotonative.h"
+#include "kernel/ncmdprototraits.h"
 #include "util/nkeyarray.h"
 #include "signals/nsignal.h"
 #include "signals/nsignalregistry.h"
