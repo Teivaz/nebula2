@@ -1,0 +1,17 @@
+/**
+    @defgroup NOppenALContribModule nOpenAL Contributed Module
+    @ingroup NebulaContribModules
+
+    @brief nOpenAL is a port of <a href://www.openal.org target=blank>OpenAL</a>
+
+    <h2>Introduction</h2>
+    ...
+
+    <h2>Installation</h2>
+    This module should be checked out to @c 'nebula2/code/contrib/nopenal',
+    and run @c 'nebula2/update.tcl'.<br>
+
+    ...
+
+    (c) 2004 Bang, Chang Kyu
+*/

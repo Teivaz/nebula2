@@ -1,0 +1,21 @@
+#-----------------------------------------------------------------------------
+#   nopenaldemo.bld
+#   ================
+#   
+#   by Bang, Chang Kyu.
+#-----------------------------------------------------------------------------
+beginmodule nopenalapp
+    setdir nopenal_demo
+    setfiles   { nopenal_demomain nopenal_demo }
+    setheaders { nopenal_demo }
+    setlibs_win32 { ALut.lib OpenAL32.lib }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nopenaldemo
+    settype exe
+    setmodules { nopenalapp }
+    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nopenal }
+endtarget
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
