@@ -6,8 +6,8 @@
 #include "export2/nmax.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxtransformanimator.h"
-#include "export2/nmaxinterface.h"
 #include "export2/nmaxtransform.h"
+#include "export2/nmaxoptions.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -17,8 +17,9 @@
 
 //-----------------------------------------------------------------------------
 /**
+    @return the number of the keys which to be used for the actual aniamtion.
 */
-void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* animator)
+int nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* animator)
 {
     IKeyControl* iKeyControl = GetKeyControlInterface(control);
 
@@ -26,10 +27,9 @@ void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator*
     Control* yControl = control->GetYController();
     Control* zControl = control->GetZController();
 
-    int numKeys = iKeyControl->GetNumKeys();
-
     if (iKeyControl)
     {
+        int numKeys = iKeyControl->GetNumKeys();
         if (numKeys > 0)
         {
             nMaxControl::Type type = nMaxControl::GetType(control);
@@ -37,27 +37,23 @@ void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator*
             switch(type)
             {
             case nMaxControl::TCBPosition:
-                ExportTCBPosition(iKeyControl, numKeys, animator);
-                break;
+                return ExportTCBPosition(iKeyControl, numKeys, animator);
 
             case nMaxControl::HybridPosition:
-                ExportHybridPosition(iKeyControl, numKeys, animator);
-                break;
+                return ExportHybridPosition(iKeyControl, numKeys, animator);
 
             case nMaxControl::LinearPosition:
-                ExportLinearPosition(iKeyControl, numKeys, animator);
-                break;
+                return ExportLinearPosition(iKeyControl, numKeys, animator);
 
             default:
-                ExportSampledKeyPosition(numKeys, animator);
-                break;
+                return ExportSampledPosition(animator);
             }
         }
         else
         {
             // we have Controller but it has no keys.
             n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
-            return;
+            return 0;
         }
 
     }
@@ -66,28 +62,28 @@ void nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator*
     {
         if (HasSampledKeys(control))
         {
-            ExportSampledKeyPosition(numKeys, animator);
+            return ExportSampledPosition(animator);
         }
         else
         {
             // got one of the xControl, yControl or zControl but 
             // any control of those has no keys.
-            n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
-            return;
+            //n_maxlog(Warning, "The node '%s' has Control but no keys.", this->maxNode->GetName());
+            return 0;
         }
     }
     else
     {
         // export sampled key position animation.
-        ExportSampledKeyPosition(numKeys, animator);
+        return ExportSampledPosition(animator);
     }
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys, 
-                                              nTransformAnimator* animator)
+int nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys, 
+                                             nTransformAnimator* animator)
 {
     //for (int i=0; i<numKeys; i++)
     //{
@@ -95,14 +91,16 @@ void nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys,
     //    ikc->GetKey(i, &key);
     //}
 
-    n_maxlog(Warning, "The 'TCBPosition' type of control is not supported.");
+    n_maxlog(Warning, "The 'TCB Position' type of control is not supported.");
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys, 
-                                                 nTransformAnimator* animator)
+int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys, 
+                                                nTransformAnimator* animator)
 {
     //for (int i=0; i<numKeys; i++)
     //{
@@ -110,13 +108,16 @@ void nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys,
     //    ikc->GetKey(i, &key);
     //}
 
-    n_maxlog(Warning, "The 'HybridPosition' type of control is not supported.");
+    n_maxlog(Warning, "The 'Hybrid Position' type of control is not supported.");
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
 /**
+    @return the number of the keys which to be used for the actual aniamtion.
 */
-void nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
                                                  nTransformAnimator* animator)
 {
     for (int i=0; i<numKeys; i++)
@@ -129,27 +130,32 @@ void nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
         pos.y = key.val.z;
         pos.z = key.val.y;
 
-        animator->AddPosKey(key.time * SECONDSPERTICK, pos);
+        float time = key.time * SECONDSPERTICK;
+        animator->AddPosKey(time, pos);
     }
 
-    n_maxlog(Warning, "The 'LinearPosition' type of control is not supported.");
+    return numKeys;
 }
 
 //-----------------------------------------------------------------------------
 /**
+    @return the number of the keys which to be used for the actual aniamtion.
 */
-void nMaxTransformAnimator::ExportSampledKeyPosition(int numKeys, nTransformAnimator* animator)
+int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
 {
+    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
+
     nArray<nMaxSampleKey> sampleKeyArray;
 
-    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, 1, nMaxPos);
+    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxPos);
 
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)
     {
         nMaxSampleKey sampleKey = sampleKeyArray[i];
 
-        TimeValue time = sampleKey.time;
+        //TimeValue time = sampleKey.time;
+        float time = sampleKey.time;
 
         vector3 pos;
         pos.x = -(sampleKey.pos.x);
@@ -158,4 +164,6 @@ void nMaxTransformAnimator::ExportSampledKeyPosition(int numKeys, nTransformAnim
 
         animator->AddPosKey(time, pos);
     }
+
+    return sampleKeyArray.Size();
 }
