@@ -7,6 +7,8 @@
 #include "export2/nmaxcontrol.h"
 #include "scene/ntransformanimator.h"
 #include "export2/nMaxtransformanimator.h"
+#include "pluginlibs/nmaxdlg.h"
+#include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/ntypes.h"
 
@@ -28,7 +30,7 @@ nMaxTransformAnimator::~nMaxTransformAnimator()
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxTransformAnimator::Export(INode* inode, Control *control)
+bool nMaxTransformAnimator::Export(INode* inode, Control *control)
 {
     n_assert(inode);
     n_assert(control);
@@ -40,27 +42,54 @@ void nMaxTransformAnimator::Export(INode* inode, Control *control)
     rotControl   = control->GetRotationController();
     scaleControl = control->GetScaleController();
 
+    nString animatorName;
+    animatorName += inode->GetName();
+    animatorName += "animator";
+    animatorName.ToLower();
+
     // create nTransformAnimator.
     nTransformAnimator* animator;
-    animator = static_cast<nTransformAnimator*>(CreateNebulaObject("ntransformanimator", "animator"));
+    animator = static_cast<nTransformAnimator*>(CreateNebulaObject("ntransformanimator", 
+                                                                   animatorName.Get()));
+    if (animator)
+    {
+        int numKeys = 0;
 
-	if (control->GetPositionController())
-	{
-		ExportPosition(posControl, animator);
-	}
+        if (control->GetPositionController())
+        {
+            numKeys += ExportPosition(posControl, animator);
+        }
 
-	if (control->GetRotationController())
-	{
-		ExportRotation(rotControl, animator);
-	}
+        if (control->GetRotationController())
+        {
+            numKeys += ExportRotation(rotControl, animator);
+        }
 
-	if (control->GetScaleController())
-	{
-		ExportScale(scaleControl, animator);
-	}
+        if (control->GetScaleController())
+        {
+            numKeys += ExportScale(scaleControl, animator);
+        }
 
-    //
-    //animator->SetChannel("time");
+        if (numKeys)
+        {
+            // specifies the created animator to the parent node.
+            nSceneNode* parent = static_cast<nSceneNode*>(animator->GetParent());
+            parent->AddAnimator(animator->GetName());
+        }
+        else
+        {
+            // no keys are actually exported, so release created transform animator.
+            animator->Release();
+        }
+    }
+    else
+    {
+        animator->Release();
+        n_maxlog(Error, "Failed to create Nebula object for the node '%s'.", inode->GetName());
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -100,4 +129,3 @@ bool nMaxTransformAnimator::HasSampledKeys(Control *control)
 
     return result;
 }
-
