@@ -352,18 +352,34 @@ bool nMaxScene::Postprocess()
     //    }
     //}
 
+    // we assume any one of the meshes is shadow type, export shadow mesh.
+    // FIXME: it would be good to use more intuitive way.
+    bool isShadowMesh = false;
+    for (int i=0; i<this->meshArray.Size(); i++)
+    {
+        if (this->meshArray[i]->GetType() == nMaxMesh::Shadow)
+        {
+            // we don't check anymore.
+            isShadowMesh = true;
+            break;
+        }
+    }
+
     if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
         // if the global mesh is skinned mesh, 
         // create skin animator and partition the mesh.
-        if (this->globalMeshBuilder.GetNumVertices())
+        if (!isShadowMesh)
         {
-            nMeshBuilder::Vertex& v = this->globalMeshBuilder.GetVertexAt(0);
-            if (v.HasComponent(nMeshBuilder::Vertex::WEIGHTS) && 
-                v.HasComponent(nMeshBuilder::Vertex::JINDICES))
+            if (this->globalMeshBuilder.GetNumVertices())
             {
-                nMaxSkinPartitioner skinPartitioner;
-                skinPartitioner.Partitioning(this->meshArray, this->globalMeshBuilder);
+                nMeshBuilder::Vertex& v = this->globalMeshBuilder.GetVertexAt(0);
+                if (v.HasComponent(nMeshBuilder::Vertex::WEIGHTS) && 
+                    v.HasComponent(nMeshBuilder::Vertex::JINDICES))
+                {
+                    nMaxSkinPartitioner skinPartitioner;
+                    skinPartitioner.Partitioning(this->meshArray, this->globalMeshBuilder);
+                }
             }
         }
     }
@@ -376,15 +392,29 @@ bool nMaxScene::Postprocess()
         {
             nString filename;
             filename += nMaxOptions::Instance()->GetMeshesAssign();
+            
+            // add '_shadow' postfix for shadow node.
+            //if (isShadowMesh)
+            //    filename += "_shadow";
+
             filename += nMaxOptions::Instance()->GetSaveFileName();
             filename += nMaxOptions::Instance()->GetMeshFileType();
 
             // remove redundant vertices.
             this->globalMeshBuilder.Cleanup(0);
 
-            // build mesh tangents and normals (also vertex normal if it does not exist)
-            nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
-            
+            //FIXME: no need for shadow node
+            if (!isShadowMesh)
+            {
+                // build mesh tangents and normals (also vertex normal if it does not exist)
+                nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
+            }
+            else
+            {
+                // shadow mesh needs to call CreateEdges() which should be called after Cleanup()
+                this->globalMeshBuilder.CreateEdges();
+            }
+                       
             // check the mesh for geometry error.
             nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
 
