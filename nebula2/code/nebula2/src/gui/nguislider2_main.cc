@@ -21,7 +21,8 @@ nGuiSlider2::nGuiSlider2() :
     knobPosEdgeLayoutIndex(0),
     dragging(false),
     horizontal(false),
-    dragVisibleStart(0.0)
+    dragVisibleStart(0.0),
+    backgroundIsBig(false)
 {
     // empty
 }
@@ -40,21 +41,20 @@ nGuiSlider2::~nGuiSlider2()
 void
 nGuiSlider2::OnShow()
 {
-    this->SetDefaultBrush("sliderbg");
-
     nGuiFormLayout::OnShow();
 
     kernelServer->PushCwd(this);
 
     // get some brush sizes
-    this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowup_n");
     if (this->horizontal)
     {
+        this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowleft_n");
         this->SetMinSize(vector2(2.0f * this->arrowBtnSize.x, this->arrowBtnSize.y));
         this->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
     }
     else
     {
+        this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowup_n");
         this->SetMinSize(vector2(this->arrowBtnSize.x, 2.0f * this->arrowBtnSize.y));
         this->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
     }
@@ -105,6 +105,35 @@ nGuiSlider2::OnShow()
     posBtn->OnShow();
     this->refPosButton = posBtn;
 
+    // The background image either covers the whole slider, including the 
+    // arrow buttons (big), or it lies between those buttons (small).
+    if (this->backgroundIsBig)
+    {
+        this->SetDefaultBrush("sliderbg");
+    }
+    else
+    {
+        nGuiLabel* backgroundLabel = (nGuiLabel*) kernelServer->New("nguilabel", "BackgroundLabel");
+        n_assert(backgroundLabel);
+        backgroundLabel->SetMinSize( vector2( 0, this->arrowBtnSize.y ) );
+        backgroundLabel->SetMaxSize( vector2( 1.0f - 2*this->arrowBtnSize.x, this->arrowBtnSize.y ) );
+        backgroundLabel->SetDefaultBrush("sliderbg");
+        if (this->horizontal)
+        {
+            this->AttachForm(backgroundLabel, Top, 0.0f);
+            this->AttachWidget(backgroundLabel, Left, negBtn, 0 );
+            this->AttachWidget(backgroundLabel, Right, posBtn, 0 );
+        }
+        else
+        {
+            this->AttachForm(backgroundLabel, Left, 0.0f);
+            this->AttachWidget(backgroundLabel, Top, negBtn, 0 );
+            this->AttachWidget(backgroundLabel, Bottom, posBtn, 0 );
+        }
+        backgroundLabel->OnShow();
+        this->refBgLabel = backgroundLabel;
+    }
+
     // create the slider knob
     nGuiButton* knob = (nGuiButton*) kernelServer->New("nguibutton", "Knob");
     n_assert(knob);
@@ -151,6 +180,11 @@ nGuiSlider2::OnHide()
     nGuiServer::Instance()->UnregisterEventListener(this);
 
     this->ClearAttachRules();
+    if (this->refBgLabel.isvalid())
+    {
+        this->refBgLabel->Release();
+        n_assert(!this->refBgLabel.isvalid());
+    }
     if (this->refNegButton.isvalid())
     {
         this->refNegButton->Release();

@@ -37,6 +37,8 @@ public:
     void SetHorizontal(bool b);
     /// get horizontal flag
     bool GetHorizontal() const;
+    /// Determine how much of the slider the sliderbg brush will cover
+    void UseBigBackground(bool b);
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// called when widget is becoming visible
@@ -76,6 +78,7 @@ private:
     nRef<nGuiButton>     refNegButton;
     nRef<nGuiButton>     refPosButton;
     nRef<nGuiButton>     refKnob;
+    nRef<nGuiLabel>      refBgLabel;
 
     vector2 arrowBtnSize;
     int knobNegEdgeLayoutIndex;
@@ -85,6 +88,7 @@ private:
     bool horizontal;
     vector2 startDragMousePos;
     float dragVisibleStart;
+    bool backgroundIsBig;
 };
 
 //------------------------------------------------------------------------------
@@ -107,6 +111,15 @@ nGuiSlider2::GetHorizontal() const
     return this->horizontal;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSlider2::UseBigBackground(bool b)
+{
+    this->backgroundIsBig = b;
+}
 //------------------------------------------------------------------------------
 /**
 */
