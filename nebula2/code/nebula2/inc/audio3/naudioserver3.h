@@ -5,7 +5,7 @@
     @class nAudioServer3
     @ingroup NebulaAudioSystem
 
-    Audio subsystem 3 server.
+    @brief Audio subsystem 3 server.
     
     (C) 2003 RadonLabs GmbH
 */

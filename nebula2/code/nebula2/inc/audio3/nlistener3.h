@@ -5,7 +5,7 @@
     @class nListener3
     @ingroup NebulaAudioSystem
 
-    Define listener properties for audio subsystem 3.
+    @brief Define listener properties for audio subsystem 3.
     
     (C) 2003 RadonLabs GmbH
 */

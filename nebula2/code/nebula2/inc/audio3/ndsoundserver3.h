@@ -5,7 +5,7 @@
     @class nDSoundServer3
     @ingroup NebulaDSAudioSystem
 
-    nAudioServer3 implemention using DirectSound.
+    @brief nAudioServer3 implemention using DirectSound.
 
     (C) 2003 RadonLabs GmbH
 */
