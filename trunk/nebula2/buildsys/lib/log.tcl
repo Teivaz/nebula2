@@ -40,52 +40,52 @@ namespace eval ::log {
     variable  levelMap
     array set levelMap {
         a                alert
-        al                alert
-        ale                alert
-        aler                alert
-        alert                alert
+        al               alert
+        ale              alert
+        aler             alert
+        alert            alert
         c                critical
-        cr                critical
-        cri                critical
-        crit                critical
-        criti                critical
-        critic                critical
-        critica                critical
-        critical        critical
+        cr               critical
+        cri              critical
+        crit             critical
+        criti            critical
+        critic           critical
+        critica          critical
+        critical         critical
         d                debug
-        de                debug
-        deb                debug
-        debu                debug
-        debug                debug
-        em                emergency
-        eme                emergency
-        emer                emergency
-        emerg                emergency
-        emerge                emergency
-        emergen                emergency
-        emergenc        emergency
+        de               debug
+        deb              debug
+        debu             debug
+        debug            debug
+        em               emergency
+        eme              emergency
+        emer             emergency
+        emerg            emergency
+        emerge           emergency
+        emergen          emergency
+        emergenc         emergency
         emergency        emergency
-        er                error
-        err                error
-        erro                error
-        error                error
+        er               error
+        err              error
+        erro             error
+        error            error
         i                info
-        in                info
-        inf                info
-        info                info
+        in               info
+        inf              info
+        info             info
         n                notice
-        no                notice
-        not                notice
-        noti                notice
-        notic                notice
-        notice                notice
+        no               notice
+        not              notice
+        noti             notice
+        notic            notice
+        notice           notice
         w                warning
-        wa                warning
-        war                warning
-        warn                warning
-        warni                warning
-        warnin                warning
-        warning                warning
+        wa               warning
+        war              warning
+        warn             warning
+        warni            warning
+        warnin           warning
+        warning          warning
     }
 
     # Map from log-levels to the commands to execute when a message
@@ -349,7 +349,7 @@ proc ::log::lvCompare {level1 level2} {
 #        too.
 #
 # Arguments:
-#        level                The name of the level to suppress or
+#        level           The name of the level to suppress or
 #                        unsuppress. Unique abbreviations are allowed
 #                        too.
 #        suppress        Boolean flag. Optional. Defaults to the value
@@ -384,7 +384,7 @@ proc ::log::lvSuppress {level {suppress 1}} {
 #        level are allowed here too.
 #
 # Arguments:
-#        level                The name of the level to suppress or
+#        level           The name of the level to suppress or
 #                        unsuppress. Unique abbreviations are allowed
 #                        too.
 #        suppress        Boolean flag. Optional. Defaults to the value
@@ -451,7 +451,7 @@ proc ::log::lvIsSuppressed {level} {
 #        order.
 #
 # Arguments:
-#        level        The level the command prefix is for.
+#        level      The level the command prefix is for.
 #        cmd        The command prefix to use for the specified level.
 #
 # Side Effects:
@@ -504,7 +504,7 @@ proc ::log::lvCmdForall {cmd} {
 #        and the message itself, in this order.
 #
 # Arguments:
-#        level        The level the channel is for.
+#        level       The level the channel is for.
 #        chan        The channel to use for the specified level.
 #
 # Side Effects:
@@ -613,7 +613,7 @@ proc ::log::lvColorForall {color} {
 #        code itself.
 #
 # Arguments:
-#        level        The level of the message.
+#        level       The level of the message.
 #        text        The message to log.
 #
 # Side Effects:
@@ -728,7 +728,7 @@ proc ::log::logError {text} {
 #        abbreviations are *not allowed*.
 #
 # Arguments:
-#        level        The level of the message. 
+#        level       The level of the message. 
 #        text        The message to log.
 #
 # Side Effects:
