@@ -109,7 +109,6 @@ protected:
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();
 
-    nAutoRef<nFileServer2> refFileServer;
     nDynAutoRef<nResourceLoader> refResourceLoader;
 
 private:
