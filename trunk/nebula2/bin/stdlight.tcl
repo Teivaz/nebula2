@@ -6,18 +6,18 @@ set oldCwd [psel]
 sel /usr/scene
 
 new ntransformnode stdlight
-    sel stdlight
-    new nspotlightnode l0
-        sel l0
-        .setposition 25 20 25
-        .seteuler -30 45 0
-        .setorthogonal 1000 1000 0.25 175
-        .setvector LightDiffuse 1 1 1 1
-        .setvector LightSpecular 1 1 1 1
-        .setvector LightAmbient 0.25 0.25 0.25 1
-        .settexture LightModMap "textures:system/white.dds"
-    sel ..    
+    sel stdlight   
+    new nlightnode l
+        sel l
+        .setposition 1000 500 1000
+        .setvector LightDiffuse   1 1 1 1
+        .setvector LightSpecular  1 1 1 1
+        .setvector LightAmbient   1 1 1 1
+        .setvector LightDiffuse1  0.3 0.3 0.3 1.0
+        .setvector LightSpecular1 0.3 0.3 0.3 1.0
+    sel ..
 sel ..    
+
 sel $oldCwd
 
 
