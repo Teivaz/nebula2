@@ -278,11 +278,12 @@ audioThunk = lookup('/sys/servers/audio')
          <br>
 
     <h2>nebthunker.lua</h2>
-         This script is automatically executed by the Lua server on startup, just
-         make sure it's in the nebula bin dir. nebthunker.lua defines the metatable 
-         for thunks, this metatable allows for a cleaner syntax than that provided 
-         when using call(). When nebthunker.lua is executed it creates a new nebula 
-         thunk that refers to the NOH root, this is done for your convenience. 
+         This script should be run on startup before trying to run any other script 
+         (refer to the Luatest startup.lua script for an example).
+         nebthunker.lua defines the metatable for thunks, this metatable allows for a 
+         cleaner syntax than that provided when using call(). When nebthunker.lua is 
+         executed it creates a new nebula thunk that refers to the NOH root, this is 
+         done for your convenience. 
          nebthunker.lua also defines the PruneNebThunks() function.<br>
          <br>
          nebthunker.lua allows for syntax like this:<br>
