@@ -13,6 +13,11 @@
 
 typedef _nFileTimeWin32 nFileTime;
 
+#elif defined(__LINUX__)
+#include "kernel/_nfiletime_posix.h"
+
+typedef _nFileTimePosix nFileTime;
+
 #else
 #error "nFileTime not implemented for this platform"
 #endif
