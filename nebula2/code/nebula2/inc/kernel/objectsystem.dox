@@ -6,7 +6,11 @@
     the scripting system.  This is a key part of what allows Nebula
     to support multiple languages with relative ease.
 
-    <h2> Object Creation </h2>
+    @section NebulaObjectSystemNamedObjectHierarchy Named Object Hierarchy
+
+    ...
+
+    @section NebulaObjectSystemCreation Creation
 
     To use Nebula scripting interface, the class instance which you want to create 
     should be derived from nRoot class.
