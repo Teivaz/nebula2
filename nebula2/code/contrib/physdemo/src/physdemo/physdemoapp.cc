@@ -52,15 +52,16 @@ PhysDemoApp::Open()
     n_assert(this->GetInputScript());
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)   kernelServer->New("ntclserver", "/sys/servers/script");
+    this->refScriptServer   = (nScriptServer*)    kernelServer->New("ntclserver", "/sys/servers/script");
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
-    this->refConServer      = (nConServer*)      kernelServer->New("nconserver", "/sys/servers/console");
-    this->refResourceServer = (nResourceServer*) kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)    kernelServer->New("nstdsceneserver", "/sys/servers/scene");
-    this->refVarServer      = (nVariableServer*) kernelServer->New("nvariableserver", "/sys/servers/variable");
+    this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
+    this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New("nmrtsceneserver", "/sys/servers/scene");
+    this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
 
     // run the startup script
     this->refScriptServer->RunScript("home:bin/startup.tcl", result);
@@ -93,13 +94,20 @@ PhysDemoApp::Open()
     }
     
     // open the remote port
-    this->kernelServer->GetRemoteServer()->Open("nviewer");
+    this->kernelServer->GetRemoteServer()->Open("physdemo");
 
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->camera.SetFarPlane(500.0f);
     this->refGfxServer->SetCamera(this->camera);
     this->refGfxServer->OpenDisplay();
+
+    // open the scene server
+    if (!this->refSceneServer->Open())
+    {
+        n_error("PhysDemoApp::Open(): Failed to open nSceneServer!");
+        return false;
+    }
 
     // define the input mapping
     // late initialization of input server, because it relies on 
@@ -115,11 +123,6 @@ PhysDemoApp::Open()
     this->timeHandle = this->refVarServer->GetVariableHandleByName("time");
     this->windHandle = this->refVarServer->GetVariableHandleByName("wind");
 
-    // create a single default light
-    nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/scenenodes/default_light");
-    lightNode->RenderContextCreated(&this->lightRenderContext);
-    lightRenderContext.SetRootNode(lightNode);
-    
     // create a nroot to hold all objects
     kernelServer->New("nroot", "/objects");
 
@@ -130,6 +133,11 @@ PhysDemoApp::Open()
     kernelServer->LoadAs("shapes:sphere/sphere.n2", "/scenenodes/sphere");
     kernelServer->LoadAs("shapes:sphere/bigsphere.n2", "/scenenodes/bigsphere");
     kernelServer->LoadAs("shapes:big_flat_plane.n2", "/scenenodes/floor");
+
+    // create a single default light
+    nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/scenenodes/default_light");
+    lightNode->RenderContextCreated(&this->lightRenderContext);
+    lightRenderContext.SetRootNode(lightNode);
     
     // create the floor for the physical world
     this->CreateFloor(0.0f, -5.0f, 0.0f);
@@ -154,6 +162,9 @@ PhysDemoApp::Close()
     // clear the objects
     kernelServer->Lookup("/objects")->Release();
 
+    // clear the scene nodes
+    kernelServer->Lookup("/scenenodes")->Release();
+
     // Destroy the collision joint group
     nOpende::JointGroupDestroy(this->physColJointGroupId);
 
@@ -161,6 +172,7 @@ PhysDemoApp::Close()
     delete(this->physContactArray);
 
     // Finally, move on to releasing the servers/etc
+    this->refShadowServer->Release();
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
@@ -265,7 +277,7 @@ PhysDemoApp::Run()
 
         // sleep for a very little while because we
         // are multitasking friendly
-        n_sleep(0.005);
+        n_sleep(0.0);
     }
 }
 
