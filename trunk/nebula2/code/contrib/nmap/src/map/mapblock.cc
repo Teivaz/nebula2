@@ -258,14 +258,14 @@ void MapBlock::Render(nSceneServer * scene_graph)
 
         downwards = !downwards;
     }
-    EndRender(TriangleStrip);
+    EndRender(nGfxServer2::TriangleStrip);
 
 	BeginRender(0);
     if (true == align_west) RenderWestEdge(align_north, align_south);
     if (true == align_east) RenderEastEdge(align_north, align_south);
     if (true == align_north) RenderNorthEdge(align_west, align_east);
     if (true == align_south) RenderSouthEdge(align_west, align_east);
-    EndRender(TriangleList);
+    EndRender(nGfxServer2::TriangleList);
 }
 
 /**

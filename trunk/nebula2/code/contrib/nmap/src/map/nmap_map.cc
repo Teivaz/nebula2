@@ -19,14 +19,18 @@ void nMap::LoadMap()
         return;
     }
 
+    
 	const char * path = GetHeightMap();
+	char mangledPath[N_MAXPATH];
+	
+	this->refFileServer->ManglePath(path, mangledPath, N_MAXPATH);
 
     // Load heightmap from image
-    if( path )
+    if( mangledPath )
     {
-        if( !LoadFromImage(path) )
+        if( !LoadFromImage(mangledPath) )
         {
-            n_printf("nMap: Could not load height map '%s'\n", path);
+            n_printf("nMap: Could not load height map '%s'\n", mangledPath);
             n_error("Aborting!\n");
         }
         else

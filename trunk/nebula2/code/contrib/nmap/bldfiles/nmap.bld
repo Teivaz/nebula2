@@ -77,6 +77,9 @@ begintarget nmapviewer
         microtcl
         ndinput8
         ndirect3d9
+        nvideo
+        ndshow
+        ngui
         nmap
     }
 endtarget
@@ -84,12 +87,15 @@ endtarget
 beginworkspace nmap
     setbinarydir ./bin/
     settargets {
-	nmapviewer
+    nmapviewer
         nkernel
         nnebula
-	microtcl
-	ndinput8
-	ndirect3d9
+        microtcl
+        ndinput8
+        ndirect3d9
+        nvideo
+        ndshow
+        ngui
         nmap
     }
 endworkspace

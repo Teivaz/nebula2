@@ -9,12 +9,15 @@ Author: Ling Lo
 Version: 1.03
 License: Same as Nebula, see nebula/doc/source/nmap_license.txt
 
-Building & Running
+Building
 ==================
 Run nebula2/updsrc.tcl
 Build the project or solution thus created -- this should create nebula2/bin/[os]/nmapviewer.exe
-Copy the files in nebula2/code/contrib/nmap/export/ into the same directory as nmapviewer.exe
-Run nsh2.bat
+
+Running the example
+==================
+Copy nmapexample.bat to the place where nmapviewer.exe
+Run nmapexample.bat
 
 Controls:
    see nViewer

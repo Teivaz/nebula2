@@ -29,6 +29,7 @@
     (C)	2002	ling
 */
 #include "kernel/nroot.h"
+#include "kernel/nfileserver2.h"
 #include "mathlib/bbox.h"
 #include "kernel/nautoref.h"
 #include "resource/nresource.h"

@@ -1,1 +1,0 @@
-nmapviewer.exe -startup n2start.tcl
