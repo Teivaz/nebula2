@@ -33,8 +33,6 @@
 #include "util/narray.h"
 #include "util/nstring.h"
 
-//class nMaxNoteTrack;
-
 //---------------------------------------------------------------------------
 class nMaxBoneManager
 {
@@ -60,7 +58,11 @@ public:
 
     virtual ~nMaxBoneManager();
 
-    void BuildBoneList(INode* node);
+    // @name Primary methods for handling bones.
+    // @{
+    void Build(INode* node);
+    bool Export(const char* animFileName);
+    // @}
 
     int GetNumBones() const;
 
@@ -81,6 +83,8 @@ public:
     nMaxNoteTrack& GetNoteTrack();
 
 protected:
+    // @name Helper functions to collect bones in the scene.
+    // @{
     void GetNodes(INode* node, nArray<INode*>& nodeArray);
     
     void GetBoneByModifier(const nArray<INode*>& nodeArray, nArray<INode*> &boneNodeArray);
@@ -95,19 +99,25 @@ protected:
                               nArray<INode*> &boneNodeArray);
     void ExtractSkinBones(INode* node, Modifier* skinMod,nArray<INode*> &boneNodeArray);
     bool IsGeomObject(INode *node);
+    // @}
 
 protected:
+    /// array for collected bones of the scene.
     nArray<Bone>      boneArray;
 
     typedef nArray<nMaxBoneManager::Bone> BONE_ARRAY;
 
+    /// note track object which we retrieves states and clips.
     nMaxNoteTrack noteTrack;
 
 private:
+    // @name Singleton
+    // @{
     nMaxBoneManager();
     nMaxBoneManager(const nMaxBoneManager&) {};
 
     static nMaxBoneManager* Singleton;
+    // @}
 
 };
 //---------------------------------------------------------------------------
