@@ -48,6 +48,9 @@
     that is returned may be a subclass of nFile, such as nNpkFile,
     if you are using one of the more specialized nFileServer2 implementations.
 
+    nFile objects are reference-counted (via nRefCounted), so they must
+    be released when you are done with them rather than simply deleted.
+
 @code
     // file input
     if (file->Open(fileName, "rb"))
@@ -55,14 +58,15 @@
         void* buf = n_malloc(dataSize);
         int num = file->Read(buf, dataSize);
     }
-    file->Close()
+    file->Close();
 
     // file output
     if (file->Open("todo.txt", "w"))
     {
         file->PutS("Must write scene graph demo\n");
     }
-    file->Close()
+    file->Close();
+    file->Release();
 @endcode
 
     The nDirectory class can be used to search directories.
