@@ -30,6 +30,7 @@ begintarget nnebula
         nprefserver nwin32prefserver 
         nhdrsceneserver nstdsceneserver nmrtsceneserver
         nlocaleserver tinyxml xml
+        nblendshapenode nblendshapeanimator
     }
     setbundles {
         nshadow
