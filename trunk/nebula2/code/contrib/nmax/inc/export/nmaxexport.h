@@ -12,6 +12,7 @@
 #include <decomp.h> //the decompose functions for matrix3
 
 #include <IGame/IGame.h>
+#include <IGame/IGameProperty.h>
 #include <IGame/IGameModifier.h>
 
 #include "base/nmaxdll.h"
@@ -28,7 +29,9 @@
 #include "variable/nvariableserver.h"
 
 #include "tools/nskinpartitioner.h"
+#include "scene/nskinanimator.h"
 #include "tools/nmeshbuilder.h"
+#include "tools/nanimbuilder.h"
 
 #include "scene/ntransformnode.h"
 #include "scene/ntransformanimator.h"
@@ -52,9 +55,6 @@
 
 //FIXME: create GUI options for this
 #define N_MAXEXPORT_TIMECHANNELNAME     "time"
-#define N_MAXEXPORT_ASSIGN_GFXLIB       "home:export/gfxlib/"    
-#define N_MAXEXPORT_ASSIGN_MESHES       "home:export/meshes/"
-#define N_MAXEXPORT_ASSIGN_TEXTURE
 
 #define N_MAXEXPORT_SCRIPTSERVER        "ntclserver"
 
@@ -123,11 +123,12 @@ private:
 	TCHAR* propertyFile;
     ///the IGameScene pointer
 	IGameScene* iGameScene;
+
+    /// 
+    int ticksPerFrame;
+    int startFrame;
+    int endFrame;
 	
-	///the pointer to the dll-global kernelserver
-	nKernelServer* kernelServer;
-    ///the pointer to the fileserver
-	nFileServer2* fileServer;
     ///the pointer to the scriptserver
     nScriptServer* scriptServer;
     ///the pointer to the max loghandler
@@ -162,6 +163,12 @@ private:
         nPathString meshFileName;       ///< sceneName + (int)vertexComponets + (int) vertexUsage
         nMeshBuilder* meshBuilder;      ///< storage of mesh data
         nArray<MeshObject> meshObjects; ///< array of meshObjects that are stored in this pool/in the meshBuilder
+
+        bool skinned;                   ///< define wheather mesh skinned or not
+        nPathString animFileName;       ///< animation file name
+		nString animNodePath;           ///< the NOH path
+        nAnimBuilder* animBuilder;      ///< storage of animation data
+        nArray<int> boneIDs;            ///< bones ID
     };
 
     ///progess 
@@ -174,18 +181,28 @@ private:
     ///update the progress bar
     void progressUpdate(int percent, nString msg);
 
+    ///get config path
+    void GetCfgFilename(nPathString& fileName);
+    ///init 'home', 'anims', 'gfxlib', 'meshes', 'shaders', 'textures' assigns
+    void InitAssigns();
+
     ///array of all materials used by the exported objects
     nArray<Material>  materials;
     ///array of the mesh pools that are created(divided by used vertexcomponents) to export the mesh objects
     nArray<PoolEntry> meshPool;  
     
+    Matrix3 GetNodeTM(IGameNode *igNode, int time, int type = 0); // type: 0 - NodeTM, 1 - LocalTM, 2 - WorldTM
+    void GetPRS(Matrix3 m, int time, vector4& pos, quaternion& rot, vector4& scale);
+    void GetPRS(IGameNode *igNode, int time, vector4& pos, quaternion& rot, vector4& scale, int type = 0);
+    void GetPRSBoneSpace(IGameNode *igNode, int time, vector4& pos, quaternion& rot, vector4& scale, int type = 0);
+
     //---main loop---
     ///export a IGameNode, check the type and do the needed nodeTypeExport (mesh/light...) - recurse to subnodes - must return true if ok.
     bool exportNode(IGameNode* igNode, nString node);
       
     //---node handling---
     /// export a material - setup the nebula material node     
-    void exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameMaterial* material);
+    void exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameMaterial* material, bool skinned);
    
     ///@todo: export a light node
     bool exportLight(nString nodeName, IGameNode* igNode);
@@ -194,13 +211,25 @@ private:
     
     //---mesh export---
     ///export the mesh data 
-    void exportMesh(IGameNode* igNode, nSceneNode* nNode = 0, const nString nodeName = "", matrix44* transform = 0);     
+    void exportMesh(IGameNode* igNode, /*nSceneNode* nNode = 0,*/ const nString nodeName = ""/*, matrix44* transform = 0*/);     
     ///export the faces of a mesh
-    void exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &meshObject, nMeshBuilder* meshBuilder);
+    void exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &meshObject, nMeshBuilder* meshBuilder, bool skinned);
     ///save the meshPools to disk and create the needed nShape-/nSkinShape- Nodes
-    void storeMeshPools();
+    void storeDataPools();
     ///append a meshObeject and the meshBuilder with the data of this object to the meshPools (finds a fitting pool, or create a new one)
-    void appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder);
+    void appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, nAnimBuilder *animBuilder, bool skinned);
+
+    //---animation export---
+    void exportSkinnedAnim(IGameNode *igNode, nString nodeName, nAnimBuilder *animBuilder);
+    nAnimBuilder::Group createAnimGroup(int numFrames, nAnimBuilder::Group::LoopType loopType);
+    bool writeCurves(IGameNode *igNode, nAnimBuilder::Group& animGroup, int& numUncompressedCurves);
+    int getCurve(IGameControl *igControl, IGameControlType type, nAnimBuilder::Curve &curve);
+    void getBipedCurves(IGameNode *igNode, nAnimBuilder::Curve &posCurve, nAnimBuilder::Curve &rotCurve, nAnimBuilder::Curve &scaleCurve);
+	int GetBoneByID(int id, bool insert = true);
+    void findBones(IGameSkin *igSkin, int vertNum);
+    void traceBonesTree(IGameNode *igBone, nArray<int>& tmpIDs);
+	nArray<int> boneIDs;
+
 
     //---tranformations---
     ///create the matrix for this node to convert the data from world back to nodes local system.

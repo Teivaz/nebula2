@@ -9,6 +9,103 @@
 
 //------------------------------------------------------------------------------
 /**
+*/
+Matrix3
+nMaxExport::GetNodeTM(IGameNode *igNode, int time, int type)
+{
+	// initialize matrix with the identity
+	Matrix3 tm;
+	tm.IdentityMatrix();
+
+	// only do this for valid nodes
+	if(igNode != 0)
+	{
+		// get the node transformation
+        switch (type)
+        {
+        case 0:
+            tm = igNode->GetMaxNode()->GetNodeTM(time);
+            break;
+        case 1:
+            tm = igNode->GetLocalTM(time).ExtractMatrix3();
+            break;
+        case 2:
+            tm = igNode->GetWorldTM(time).ExtractMatrix3();
+            break;
+        }
+
+		// make the transformation uniform
+		tm.NoScale();
+	}
+
+	return tm;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nMaxExport::GetPRS(IGameNode *igNode, int time, vector4& pos, quaternion& rot, vector4& scale, int type)
+{
+    Matrix3 m = this->GetNodeTM(igNode, time, type);
+
+    Point3 p = m.GetTrans();
+    pos.x = p[0];
+    pos.y = p[1];
+    pos.z = p[2];
+    pos.w = 0.0;
+
+    Quat q(m);
+    q.Invert();
+    rot.x = q[0];
+    rot.y = q[1];
+    rot.z = q[2];
+    rot.w = q[3];
+
+    // !!! check this
+    scale.x = 1.0;
+    scale.y = 1.0;
+    scale.z = 1.0;
+    scale.w = 1.0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nMaxExport::GetPRSBoneSpace(IGameNode *igNode, int time, vector4& pos, quaternion& rot, vector4& scale, int type)
+{
+    Matrix3 m;
+    if (igNode->GetNodeParent())
+    {
+        m = this->GetNodeTM(igNode, time, type) * Inverse(this->GetNodeTM(igNode->GetNodeParent(), time, type));
+    }
+    else
+    {
+        m = Inverse(this->GetNodeTM(igNode, time, type));
+    }
+
+    Point3 p = m.GetTrans();
+    pos.x = p[0];
+    pos.y = p[1];
+    pos.z = p[2];
+    pos.w = 0.0;
+
+    Quat q(m);
+    rot.x = q[0];
+    rot.y = q[1];
+    rot.z = q[2];
+    rot.w = q[3];
+
+    // !!! check this
+    scale.x = 1.0;
+    scale.y = 1.0;
+    scale.z = 1.0;
+    scale.w = 1.0;
+}
+
+//------------------------------------------------------------------------------
+/**
     build the matrix to transform the object from worldspace back to modelspace
 */
 matrix44*
@@ -101,7 +198,7 @@ nMaxExport::ScaleComponent(const Quat &u, const Point3 &k, const TCHAR* nodeName
     if (u.IsIdentity() == 0)
     {
         //convert the scale from max scale axis to nebula scale axis system       
-        n_printf("WARNING: '%s': There is a nonuniform scale, this nay reusult in unecpected data!.\n", nodeName ? nodeName : "UNKNOWN NODE");        
+        n_printf("WARNING: '%s': There is a nonuniform scale, this may result in unecpected data!.\n", nodeName ? nodeName : "UNKNOWN NODE");        
 
         Matrix3 scaleAxis;
         u.MakeMatrix(scaleAxis, false);
@@ -172,7 +269,7 @@ nMaxExport::exportPosition(nTransformNode* nNode, nString nodeName, IGameNode* i
             //create positon animator
             nString anim(nodeName);
             anim += "/posAnim";
-            nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(this->kernelServer->New("ntransformanimator", anim.Get()));
+            nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(nKernelServer::Instance()->New("ntransformanimator", anim.Get()));
             
             for (int i = 0; i < posKeys.Count(); i++)
             {
@@ -227,7 +324,7 @@ nMaxExport::exportRotation(nTransformNode* nNode, nString nodeName, IGameNode* i
                         //create animator
                         nString anim(nodeName);
                         anim += "/rotAnim";
-                        nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(this->kernelServer->New("ntransformanimator", anim.Get()));
+                        nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(nKernelServer::Instance()->New("ntransformanimator", anim.Get()));
 
                         for (int i = 0; i < keys.Count(); i++)
                         {
@@ -300,7 +397,7 @@ nMaxExport::exportScale(nTransformNode* nNode, nString nodeName, IGameNode* igNo
             //create animator
             nString anim(nodeName);
             anim += "/scaleAnim";
-            nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(this->kernelServer->New("ntransformanimator", anim.Get()));
+            nTransformAnimator* nAnim = static_cast<nTransformAnimator*>(nKernelServer::Instance()->New("ntransformanimator", anim.Get()));
             
             for (int i = 0; i < scaleKeys.Count(); i++)
             {

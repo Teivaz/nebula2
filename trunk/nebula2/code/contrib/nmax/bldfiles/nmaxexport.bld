@@ -37,6 +37,7 @@ beginmodule nmaxexport
     setfiles   { 
         nmaxexport_main
         nmaxexport_mesh
+        nmaxexport_anim
         nmaxexport_transformation
         nmaxexport_material
         nmaxexport_light

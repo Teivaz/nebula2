@@ -18,7 +18,7 @@
     @param meshBuilder  the meshBuilder to add
 */
 void
-nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
+nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, nAnimBuilder *animBuilder, bool skinned)
 {
     n_assert(meshBuilder);
     n_assert(meshBuilder->GetNumTriangles() > 0 && meshBuilder->GetNumVertices() > 0);
@@ -36,14 +36,15 @@ nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
     const int sourceUsage = meshBuilder->GetTriangleAt(0).GetUsageFlags();
     
     //check if we have to split the group for skinning
-    if ((sourceVC & ( nMeshBuilder::Vertex::JINDICES | nMeshBuilder::Vertex::WEIGHTS )) == ( nMeshBuilder::Vertex::JINDICES | nMeshBuilder::Vertex::WEIGHTS ) )
+    //if ((sourceVC & ( nMeshBuilder::Vertex::JINDICES | nMeshBuilder::Vertex::WEIGHTS )) == ( nMeshBuilder::Vertex::JINDICES | nMeshBuilder::Vertex::WEIGHTS ) )
+    if ((sourceVC & nMeshBuilder::Vertex::JINDICES) && (sourceVC & nMeshBuilder::Vertex::WEIGHTS ))
     {
         nSkinPartitioner skinPartitioner;
         destMeshBuilder = n_new nMeshBuilder();
         skinPartitioner.PartitionMesh(*meshBuilder, *destMeshBuilder, this->task->maxJointPaletteSize);
         
         const int numPartitions = skinPartitioner.GetNumPartitions();
-        if (numPartitions > 1) //only do this if the mesh was splitted in more than one partition
+        if (numPartitions/* > 1*/) //only do this if the mesh was splitted in more than one partition
         {
             //store the new groups in the meshObject
             meshObject.groupIDs.Clear();
@@ -60,7 +61,7 @@ nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
             //store the JointPalettes in the meshObject
             for (i = 0; i < numPartitions; i++)
             {
-                meshObject.jointPalettes.Append( skinPartitioner.GetJointPalette(i) );
+                meshObject.jointPalettes.Append(skinPartitioner.GetJointPalette(i));
             }
 
             //clean the data
@@ -113,6 +114,21 @@ nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
         }
         entry.meshObjects.Append(meshObject);
 
+        //set the animBuilder and boneIDs for current mesh
+        if (skinned)
+        {
+            entry.skinned = true;
+            entry.animBuilder = animBuilder;
+            entry.boneIDs = this->boneIDs;
+
+            // clean bones id
+            this->boneIDs.Reset();
+        }
+        else //without animation
+        {
+            entry.skinned = false;
+            entry.animBuilder = NULL;
+        }
     }
     else
     {
@@ -123,11 +139,27 @@ nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
         
         //FIXME: use the dynVertexBuffer naming sheme for the naming of the meshFile.
         nPathString fileName = this->task->meshFileName;
-        fileName += sourceVC;
-        fileName += sourceUsage;
+		fileName.AppendInt(sourceVC);
+		fileName.AppendInt(sourceUsage);
         fileName += this->task->meshFileExtension;
 
         entry.meshFileName = fileName;
+
+        //set the animBuilder and boneIDs for current mesh
+        if (skinned)
+        {
+            entry.skinned = true;
+            entry.animBuilder = animBuilder;
+            entry.boneIDs = this->boneIDs;
+
+            // clean bones id
+            this->boneIDs.Reset();
+        }
+        else //without animation
+        {
+            entry.skinned = false;
+            entry.animBuilder = NULL;
+        }
 
         this->meshPool.Append(entry);
     }
@@ -140,7 +172,7 @@ nMaxExport::appendMeshToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder)
     Export the materials.
 */
 void
-nMaxExport::storeMeshPools()
+nMaxExport::storeDataPools()
 {  
     const int numPools = this->meshPool.Size();
 
@@ -154,6 +186,7 @@ nMaxExport::storeMeshPools()
     {
         const PoolEntry &entry = this->meshPool[poolIndex];
         this->progressNumTotal += entry.meshBuilder->GetNumVertices();
+		//entry.meshBuilder->Cleanup(NULL);
     }
 
     //update statistics
@@ -185,9 +218,14 @@ nMaxExport::storeMeshPools()
         this->progressUpdate(75, "vertex tangents");
         entry.meshBuilder->BuildVertexTangents();
   
-        this->progressUpdate(100, "save file");
+        // cleanup
+        //nArray< nArray<int> > collapsMap(0, 0);
+		//collapsMap.SetFixedSize(entry.meshBuilder->GetNumVertices());
+		//entry.meshBuilder->Cleanup(&collapsMap);
+
+		this->progressUpdate(100, "save file");
         //store the meshfile
-        if (! entry.meshBuilder->Save(this->fileServer, entry.meshFileName.Get()))
+        if (!entry.meshBuilder->Save(nFileServer2::Instance(), (this->task->meshesPath + entry.meshFileName).Get()))
         {
             n_printf("ERROR: Meshfile '%s' could not be written!\n", entry.meshFileName.Get());
         }
@@ -199,7 +237,7 @@ nMaxExport::storeMeshPools()
             int groupMapIndex = 0;
             const int numGroupMaps = groupMap.Size();
             
-            const bool isSkinned = (entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::JINDICES) && entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::WEIGHTS));
+            //const bool isSkinned = (entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::JINDICES) && entry.meshBuilder->HasVertexComponent(nMeshBuilder::Vertex::WEIGHTS));
 
             //for every group in the groupMapping
             while (groupMapIndex < numGroupMaps)
@@ -210,9 +248,9 @@ nMaxExport::storeMeshPools()
                 this->progressCount += (group.GetNumTriangles() * 3);
                 nString msg;
                 msg = "vertex ";
-                msg += this->progressCount;
+				msg.AppendInt(this->progressCount);
                 msg += "/";
-                msg += this->progressNumTotal;
+				msg.AppendInt(this->progressNumTotal);
                 const int percent = (int) ((float) (this->progressCount+1) * this->progressOnePercent);
                 this->progressUpdate(percent, msg);
 
@@ -264,19 +302,26 @@ nMaxExport::storeMeshPools()
                 nodeName += "/";
                 nodeName += this->checkChars(this->materials[groupMaterialID].igMaterial->GetMaterialName());
 
-                //create the shapenode for this mesh part
+                //create the skinshapenode or shapenode for this mesh part
                 nShapeNode* shapeNode = 0;
-                if (isSkinned)
+                if (entry.skinned)
                 {
-                    //FIXME: !!! UNTESTED CODE !!!
-                    //if this mesh is skinned than the groupID's are fragments of the mesh as produced by nSkinPartioner                   
-                    nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(this->kernelServer->New("nskinshapenode", nodeName.Get()));
+                    nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(nKernelServer::Instance()->New("nskinshapenode", nodeName.Get()));
                     n_assert(skinShapeNode);
                     
+                    //convert the skinshape node for later usage
+                    shapeNode = static_cast<nShapeNode*>(skinShapeNode);
+
                     const int numFragments = meshObject.groupIDs.Size();
                     n_assert(numFragments == meshObject.jointPalettes.Size());
 
-                    //store framents & joint palettes
+					// set path to skin animator
+					nString skinAnimPath;
+					skinAnimPath = "../";
+					skinAnimPath += "skinanimator";
+					skinShapeNode->SetSkinAnimator(skinAnimPath.Get());
+
+					//store framents & joint palettes
                     skinShapeNode->BeginFragments(numFragments);
                     for (int index = 0; index < numFragments; index++)
                     {
@@ -292,28 +337,118 @@ nMaxExport::storeMeshPools()
                     }
                     skinShapeNode->EndFragments();
                     
+                    //store group index
+                    shapeNode->SetGroupIndex(groupMapIndex);
                     groupMapIndex += numFragments; //increment the current index into the groupMapping by all the handled fragments
-
-                    //convert the skinshape node for later usage
-                    shapeNode = static_cast<nShapeNode*>(skinShapeNode);
                 }
                 else
                 {
-                    shapeNode = static_cast<nShapeNode*>(this->kernelServer->New("nshapenode", nodeName.Get()));
+                    shapeNode = static_cast<nShapeNode*>(nKernelServer::Instance()->New("nshapenode", nodeName.Get()));
                     n_assert(shapeNode);
 
                     //store group index
                     shapeNode->SetGroupIndex(groupMapIndex);
                     groupMapIndex++; //next group
                 }
-                
+
+                //???
+                vector3 v = entry.meshBuilder->GetBBox().size();
+                float s = max(v.x, max(v.y, v.z));
+                if (s != 0.0)
+                {
+                    s = 1.0/s;
+                    shapeNode->SetScale(vector3(s, s, s));
+                }
+
                 //set meshfile
-                shapeNode->SetMesh(entry.meshFileName.Get());
+                shapeNode->SetMesh((this->task->meshesPath + entry.meshFileName).Get());
                 
                 //export material setup
-                this->exportMaterial(static_cast<nMaterialNode*>(shapeNode), nodeName, this->materials[groupMaterialID].igMaterial);
+                this->exportMaterial(static_cast<nMaterialNode*>(shapeNode), nodeName, this->materials[groupMaterialID].igMaterial, entry.skinned);
             }
 
+            //skinanimator
+            if (entry.skinned)
+            {
+                nString animFileName(this->task->animsPath);
+                animFileName += entry.meshObjects[0].igNode->GetName(); //???
+                animFileName += ".nanim2"; //should be choosen in the dialog box
+
+                entry.animBuilder->Optimize();
+                if (entry.animBuilder->Save(nFileServer2::Instance(), animFileName.Get()))
+                {
+                    IGameNode *igBone, *igParentBone;
+                    nString animPath(entry.meshObjects[0].nNodeName);
+                    animPath += "/skinanimator";
+
+                    nSkinAnimator *skinAnim = (nSkinAnimator*) nKernelServer::Instance()->New("nskinanimator", animPath.Get());
+                    skinAnim->SetChannel("time");
+                    skinAnim->SetLoopType(nAnimator::Loop);
+                    skinAnim->SetAnim(animFileName.Get());
+                    
+	                int i, boneNum;
+                    boneNum = entry.boneIDs.Size();
+
+                    skinAnim->BeginJoints(boneNum);
+                    for (i = 0; i < boneNum; i++)
+	                {
+		                igBone = this->iGameScene->GetIGameNode(entry.boneIDs[i]);
+
+                        int parentBone;
+                        igParentBone = igBone->GetNodeParent();
+
+                        if (igParentBone)
+                        {
+                            n_printf("Pair %d: %d -> %d (%s -> %s)", i,
+                                igBone->GetNodeID(), igParentBone->GetNodeID(),
+                                igBone->GetName(), igParentBone->GetName());
+                        }
+                        else
+                        {
+                            n_printf("Pair %d: %d -> -1 (%s)", i,
+                                igBone->GetNodeID(), igBone->GetName());
+                        }
+
+                        if (!igParentBone)
+                        {
+                            n_printf("Parent bone ID = %d", igBone->GetNodeID());
+                            parentBone = -1;
+                        }
+                        else
+                        {
+                            parentBone = entry.boneIDs.FindIndex(igParentBone->GetNodeID());
+                            n_assert(parentBone != -1);
+                        }
+
+                        vector4 p;
+                        quaternion r;
+                        vector4 s;
+                        this->GetPRS(igBone, 0, p, r, s, 1);
+
+                        if (s.x == 0.0) s.x = 1.0;
+                        if (s.y == 0.0) s.y = 1.0;
+                        if (s.z == 0.0) s.z = 1.0;
+                        skinAnim->SetJoint(i, parentBone,
+                            vector3(p.x, p.y, p.z), r, vector3(s.x, s.y, s.z));
+	                }
+                    skinAnim->EndJoints();
+
+                    skinAnim->SetStateChannel("charState");
+
+                    //TODO: more animation states
+                    skinAnim->BeginStates(1);
+                        skinAnim->SetState(0, 0, 0.3);
+                        skinAnim->BeginClips(0,1);
+                            skinAnim->SetClip(0, 0, "one");
+                        skinAnim->EndClips(0);
+                    skinAnim->EndStates();
+
+                    //clean up data
+                    n_delete this->meshPool[poolIndex].animBuilder;
+                    this->meshPool[poolIndex].animBuilder = 0;
+                }
+            }
+            
             //clean up data
             n_delete this->meshPool[poolIndex].meshBuilder;
             this->meshPool[poolIndex].meshBuilder = 0;
@@ -339,15 +474,19 @@ nMaxExport::storeMeshPools()
     @param transform    a possible transform that should be applied to the meshBuilder after data gathering from max
 */
 void
-nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeName, matrix44* transform)
+nMaxExport::exportMesh(IGameNode* igNode, /*nSceneNode* nNode,*/ const nString nodeName/*, matrix44* transform*/)
 {
     n_assert(igNode);
 
     //get the IGameMesh
-    IGameObject* igObject = igNode->GetIGameObject();
+    IGameObject *igObject = igNode->GetIGameObject();
     n_assert(igObject && igObject->GetIGameType() == IGameObject::IGAME_MESH);
-    IGameMesh* igMesh = static_cast<IGameMesh*>(igObject);
-        
+    IGameMesh *igMesh = static_cast<IGameMesh*>(igObject);
+    bool skinned;
+
+    //create a transformnode as root node for for the material shapennodes the mesh will use
+    nTransformNode* nNode = static_cast<nTransformNode*>(nKernelServer::Instance()->New("ntransformnode", nodeName.Get()));
+
     //setup mesh for data init
     if (this->task->UseWeightedNormals())
     {
@@ -362,8 +501,21 @@ nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeN
         meshObject.igNode = igNode;
         meshObject.nNode = nNode;
         meshObject.nNodeName = nodeName;
+        
+        if (this->task->ExportStatic() || !igMesh->IsObjectSkinned())
+        {
+            skinned = false;
+        }
+        else
+        {
+            skinned = true;
 
-        nMeshBuilder* meshBuilder = n_new nMeshBuilder;
+            this->findBones(igMesh->GetIGameSkin(), igMesh->GetNumberOfVerts());
+        }
+
+
+        nMeshBuilder *meshBuilder = n_new nMeshBuilder;
+        nAnimBuilder *animBuilder = NULL;
         
         //get all used material ID's
         Tab<int> objectMatIDs = igMesh->GetActiveMatIDs();
@@ -390,7 +542,7 @@ nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeN
                             found = true;
                             
                             //export the faces
-                            this->exportFaces(matFaces, materialIndex, meshObject, meshBuilder);
+                            this->exportFaces(matFaces, materialIndex, meshObject, meshBuilder, skinned);
                         }
                     }
                         
@@ -404,7 +556,7 @@ nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeN
                         this->materials.Append(newMaterial);
                         
                         //export the faces
-                        this->exportFaces(matFaces, numMaterials, meshObject, meshBuilder);
+                        this->exportFaces(matFaces, numMaterials, meshObject, meshBuilder, skinned);
                     }
                 }
                 else
@@ -420,20 +572,27 @@ nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeN
         
         if (meshBuilder->GetNumTriangles() > 0 && meshBuilder->GetNumVertices() > 0)
         {
+            if (skinned)
+            {
+                IGameNode *igBone, *igParentBone;
+                int i, boneNum;
+                boneNum = this->boneIDs.Size();
+
+                n_printf("Bones num: %d", this->boneIDs.Size());
+
+                animBuilder = n_new nAnimBuilder;
+
+                // export animation
+                this->exportSkinnedAnim(igNode, nodeName, animBuilder);
+            }
+
             //setup the group used in this meshObject
             const int groupID = this->task->groupMeshBySourceObject ? 1 : 0;
             meshObject.groupIDs.Append(groupID);
             
-            //apply the transform (from world to object space)
-            if (transform)
-                meshBuilder->Transform(*transform);
-
-            this->appendMeshToPool(meshObject, meshBuilder);
+            this->appendDataToPool(meshObject, meshBuilder, animBuilder, skinned);
         }
     }
-    
-    //free memory
-    igNode->ReleaseIGameObject();
 }
 
 
@@ -446,7 +605,7 @@ nMaxExport::exportMesh(IGameNode* igNode, nSceneNode* nNode, const nString nodeN
     @param meshBuilder  the meshBuilder to store the faces/vertex data
 */
 void
-nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &meshObject, nMeshBuilder* meshBuilder)
+nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &meshObject, nMeshBuilder* meshBuilder, bool skinned)
 {  
     n_assert(meshBuilder);
     const int numFaces = matFaces.Count();
@@ -482,6 +641,8 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
         {
             FaceEx* &igFace = matFaces[faceIndex];
             n_assert(igFace);
+
+            //n_printf("Face %d, flags %d:", igFace->meshFaceIndex, igFace->flags);
         
             nMeshBuilder::Triangle face;
             
@@ -496,9 +657,15 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
             for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++)
             {
                 nMeshBuilder::Vertex vertex;
+				int faceVertex;
                 //coord
                 Point3 coord;
-                if (igMesh->GetVertex(igFace->vert[vertexIndex],coord))
+
+				faceVertex = igFace->vert[vertexIndex];
+
+                //n_printf("\tVert %d:", faceVertex);
+
+                if (igMesh->GetVertex(faceVertex,coord))
                 {
                     vector3 vector(coord.x, coord.y, coord.z);
                     vertex.SetCoord(vector);
@@ -520,79 +687,117 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                 Tab<int> mapChannels = igMesh->GetActiveMapChannelNum();
                 if (mapChannels.Count() > nMeshBuilder::Vertex::MAX_TEXTURE_LAYERS)
                 {
-                    n_printf("Warning: mesh: %s vertex: %i more uvChannels(%i) used than exported(%i).\n");
+                    n_printf("Warning: mesh: %s vertex: %i more uvChannels(%i) used than exported(%i).\n",
+                        igNode->GetName(), vertexIndex, mapChannels.Count(), nMeshBuilder::Vertex::MAX_TEXTURE_LAYERS);
                 }
                 
                 //access to max to get uvw source type of the mapChannel
-                IGameMaterial* igMaterial = igMesh->GetMaterialFromFace(igFace);
+                IGameMaterial *igMaterial = igMesh->GetMaterialFromFace(igFace);
                 if (igMaterial)
                 {
+                    int channelsNum = min(mapChannels.Count(), nMeshBuilder::Vertex::MAX_TEXTURE_LAYERS);
+                    int uvLayer;
+
+                    //get the indicies into the mapChannel for this face
                     Mtl* mtl = igMaterial->GetMaxMaterial();
-                    for (int uvLayer = 0; uvLayer < nMeshBuilder::Vertex::MAX_TEXTURE_LAYERS; uvLayer++)
+
+                    for (uvLayer = 0; uvLayer < channelsNum; uvLayer++)
                     {
+                        IGameTextureMap *igTextureMap;
+                        IGameUVGen *igUVGen = NULL;
                         Point3 mapCoord;
-                        UVGen* uvGen = 0;
+                        DWORD mapIndicies[3];
+                        UVGen* uvGen = NULL;
 
-                        if (uvLayer < mapChannels.Count())
+                        if (igMesh->GetMapFaceIndex(mapChannels[uvLayer], igFace->meshFaceIndex, &mapIndicies[0]))
                         {
-                            //find the 1st texmap that uses this map channel
-                            /**
-                                WARNING: if you use the same map channel for more than one texture, but
-                                use diffent UVWSouces the export will do a false result.
-                            */
-                            int subTx = 0;
-                            while (subTx < mtl->NumSubTexmaps() && uvGen == 0)
+                            igMesh->GetMapVertex(mapChannels[uvLayer], mapIndicies[vertexIndex], mapCoord);
+                            if (igFace->texCoord[0] != mapIndicies[0] ||
+                                igFace->texCoord[1] != mapIndicies[1] ||
+                                igFace->texCoord[2] != mapIndicies[2])
                             {
-                                Texmap* tex = mtl->GetSubTexmap(subTx++);
-                                if (tex)
-                                {
-                                    switch (tex->GetUVWSource())
-	                                {
-		                                case UVWSRC_EXPLICIT:
-			                                if (mapChannels[uvLayer] == tex->GetMapChannel())
-			                                    uvGen = tex->GetTheUVGen();
-			                                break;
-		                                case UVWSRC_EXPLICIT2:
-			                                if (mapChannels[uvLayer] == 0)  //the vertexcolorchannel
-			                                    uvGen = tex->GetTheUVGen();
-			                                break;
-		                                case UVWSRC_OBJXYZ:		//Generate planar UVW mapping coordinates from the object local XYZ on-the-fly.
-		                                case UVWSRC_WORLDXYZ:	//Generate planar UVW mapping coordinates from the world XYZ on-the-fly. This corresponds to the "Planar From World XYZ" option. Note: this value used for the UVW is the world XYZ, taken directly, with out normalization to the objects bounding box. This differs from "Planar from Object XYZ", where the values are normalized to the object's bounding box.
-			                                break;
-	                                }
-	                            }    
+                                n_printf("\t\tTex&Map diff: t[%d %d %d] m[%d %d %d]",
+                                    igFace->texCoord[0], igFace->texCoord[1], igFace->texCoord[2],
+                                    mapIndicies[0], mapIndicies[1], mapIndicies[2]);
                             }
-                            
-                            //get the indicies into the mapChannel for this face
-                            DWORD mapIndicies[3];
-                            if (igMesh->GetMapFaceIndex(mapChannels[uvLayer], faceIndex, &mapIndicies[0]))
-                            {
-                                igMesh->GetMapVertex(mapChannels[uvLayer], mapIndicies[vertexIndex], mapCoord);
-                            }
-
-                            vector2 vector;
-                            if (uvGen)
-                            {
-                                switch (uvGen->GetAxis())
-                                {
-				                    case AXIS_UV:
-					                    vector.set(mapCoord.x,mapCoord.y);
-					                    break;
-				                    case AXIS_VW:
-					                    vector.set(mapCoord.y,mapCoord.z);
-					                    break;
-				                    case AXIS_WU:
-					                    vector.set(mapCoord.z,mapCoord.x);
-					                    break;
-                                }
-                            }
-                            else
-                            {
-                                //default xy
-                                vector.set(mapCoord.x,mapCoord.y);
-                            }
-                            vertex.SetUv(uvLayer, vector);    
                         }
+
+                        //find the 1st texmap that uses this map channel
+                        //  WARNING: if you use the same map channel for more than one texture, but
+                        //  use diffent UVWSouces the export will do a false result.
+
+                        int texMapsNum = igMaterial->GetNumberOfTextureMaps();
+                        int texMap;
+                        for (texMap = 0; texMap < mtl->NumSubTexmaps() && uvGen == NULL; texMap++)
+                        {
+                            igTextureMap = igMaterial->GetIGameTextureMap(texMap);
+                            Texmap* tex = igTextureMap->GetMaxTexmap();
+                            if (tex)
+                            {
+                                switch (tex->GetUVWSource())
+	                            {
+		                            case UVWSRC_EXPLICIT:
+                                        //n_printf("%d: UVWSRC_EXPLICIT", vertexIndex);
+			                            if (mapChannels[uvLayer] == tex->GetMapChannel())
+                                        {
+			                                uvGen = tex->GetTheUVGen();
+                                            igUVGen = igTextureMap->GetIGameUVGen();
+                                        }
+			                            break;
+		                            case UVWSRC_EXPLICIT2:
+                                        //n_printf("%d: UVWSRC_EXPLICIT2", vertexIndex);
+			                            if (mapChannels[uvLayer] == 0)  //the vertexcolorchannel
+                                        {
+			                                uvGen = tex->GetTheUVGen();
+                                            igUVGen = igTextureMap->GetIGameUVGen();
+                                        }
+			                            break;
+		                            //Generate planar UVW mapping coordinates from the
+                                    //object local XYZ on-the-fly.
+                                    case UVWSRC_OBJXYZ:
+                                        //n_printf("%d: UVWSRC_OBJXYZ", vertexIndex);
+                                        break;
+                                    //Generate planar UVW mapping coordinates from the
+                                    //world XYZ on-the-fly. This corresponds to the
+                                    //"Planar From World XYZ" option. Note: this value
+                                    //used for the UVW is the world XYZ, taken directly,
+                                    //with out normalization to the objects bounding box.
+                                    //This differs from "Planar from Object XYZ", where the
+                                    //values are normalized to the object's bounding box.
+                                    case UVWSRC_WORLDXYZ:
+                                        //n_printf("%d: UVWSRC_WORLDXYZ", vertexIndex);
+			                            break;
+	                            }
+	                        }    
+                        }
+                        
+                        //choose axis
+                        vector2 vector;                        
+                        if (uvGen)
+                        {
+                            switch (uvGen->GetAxis())
+                            {
+				                case AXIS_UV:
+                                    //n_printf("%d: AXIS_UV", vertexIndex);
+					                vector.set(mapCoord.x,mapCoord.y);
+					                break;
+				                case AXIS_VW:
+                                    //n_printf("%d: AXIS_VW", vertexIndex);
+					                vector.set(mapCoord.y,mapCoord.z);
+					                break;
+				                case AXIS_WU:
+                                    //n_printf("%d: AXIS_WU", vertexIndex);
+					                vector.set(mapCoord.z,mapCoord.x);
+					                break;
+                            }
+                        }
+                        else
+                        {
+                            //default xy
+                            vector.set(mapCoord.x, mapCoord.y);
+                        }
+
+                        vertex.SetUv(uvLayer, vector);    
                     }
                 }
 
@@ -605,9 +810,8 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                     vector4 vector(color.x, color.y, color.z, alpha);
                     vertex.SetColor(vector);
                 }
-                
-                //skinned?
-                if (this->task->ExportStatic() || !igMesh->IsObjectSkinned())
+                //weights and jindices
+                if (!skinned)
                 {
                     face.SetUsageFlags(nMesh2::WriteOnce);
                 }
@@ -617,51 +821,168 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
 
                     IGameSkin* igSkin = igMesh->GetIGameSkin();
                     n_assert(igSkin);
-                    
-                    if (igSkin->GetSkinType() != IGameSkin::IGAME_RIGID)
-                    {
-                        n_printf("The SkinType:%i is not supported, only RIGID skins are supported!\n",igSkin->GetSkinType());
-                    }
-                    else
-                    {                                    
-                        int numBones = igSkin->GetNumberOfBones(igFace->vert[vertexIndex]);
-                        
-                        if (numBones > MAX_NUM_BONES)
-                        {
-                            n_printf("Warning: %s: More than 4 Bones affect vertex: %i. This is not supported!\n", igNode->GetName(), igFace->vert[vertexIndex]);
-                            numBones = MAX_NUM_BONES;
-                        }
-                        
-                        int i; // to resolve redefinition error in vc6.
 
-                        //Weigths
-                        float weights[MAX_NUM_BONES];
-                        float sum = 0.0f;
+                    IGameSkin::VertexType vertexType;
+					vertexType = igSkin->GetVertexType(faceVertex);
+					/*if (vertexType != IGameSkin::IGAME_RIGID)
+                    {
+						switch(vertexType)
+						{
+						case IGameSkin::IGAME_RIGID_BLENDED:
+							n_printf("nMaxExport::exportFaces(): IGAME_RIGID_BLENDED is not supported, only RIGID skins are supported!\n");
+							break;
+						case IGameSkin::IGAME_UNKNOWN:
+							n_printf("nMaxExport::exportFaces(): IGAME_UNKNOWN, only RIGID skins are supported!\n");
+							break;
+						}
+                    }*/
+					if (vertexType == IGameSkin::IGAME_UNKNOWN)
+					{
+						n_printf("nMaxExport::exportFaces(): IGAME_UNKNOWN, only RIGID skins are supported!\n");
+					}
+                    else /*if (igSkin->GetSkinType() != IGameSkin::IGAME_SKIN)
+					{
+                        if (igSkin->GetSkinType() == IGameSkin::IGAME_PHYSIQUE)
+                        {
+						    n_printf("nMaxExport::exportFaces(): IGAME_PHYSIQUE skining is not supported!\n");
+                        }
+                        else
+                        {
+						    n_printf("nMaxExport::exportFaces(): Unknown skinning (%d). Only IGAME_SKIN skining are supported!\n", igSkin->GetSkinType());
+                        }
+					}
+					else*/ if (igMesh->GetNumberOfVerts() != igSkin->GetNumOfSkinnedVerts())
+					{
+                        /*n_printf("nMaxExport::exportFaces(): Mesh vertices(%d) and skin vertices(%d) does not match!",
+                            igMesh->GetNumberOfVerts(), igSkin->GetNumOfSkinnedVerts());*/
+					}
+                    else
+                    {                        
+                        int i, j, k; // to resolve redefinition error in vc6.
+						float *weights, wt;
+						int *jindices, *jiNum, ji, jiCount;
+                        int numBones = igSkin->GetNumberOfBones(faceVertex), realNumBones;
+
+                        //create at least MAX_NUM_BONES weights and jindices elements
+                        realNumBones = max(numBones, MAX_NUM_BONES);
+                        weights = new float[realNumBones];
+                        jindices = new int[realNumBones];
+                        jiNum = new int[realNumBones];
+
+                        //set default values
+                        for (i = 0; i < realNumBones; i++)
+                        {
+                            weights[i] = 0.0;
+                            jindices[i] = -1;
+                            jiNum[i] = 0;
+                        }
+
+                        jiCount = 0;
+
+                        // read bones and sort by weights
                         for (i = 0; i < numBones; i++)
                         {
-                            weights[i] = igSkin->GetWeight(igFace->vert[vertexIndex], i);
-                            sum += weights[i];
+                            wt = igSkin->GetWeight(faceVertex, i);
+                           	
+                            // 3ds max weird behaviour: zero out epsilon weights
+                            //if(wt < 0.0005f) wt = 0.0f;
+
+							ji = this->GetBoneByID(igSkin->GetBoneID(faceVertex, i), false);
+                            n_assert(ji != -1);
+
+                            bool inserted = false;
+                            // sorted insert
+                            for (j = 0; j < jiCount; j++)
+                            {
+                                //we already have this bone id
+                                if (jindices[j] == ji)
+                                {
+                                    weights[j] += wt;
+                                    jiNum[j]++;
+                                    inserted = true;
+                                    break;
+                                }
+                                else if (wt > weights[j]) //new bone with greater weight
+                                {
+                                    //shift the tail of array
+                                    for (k = jiCount; k > j; k--)
+                                    {
+                                        weights[k] = weights[k - 1];
+                                        jindices[k] = jindices[k - 1];
+                                    }
+                                    
+                                    //insert new bone
+                                    weights[j] = wt;
+                                    jindices[j] = ji;
+                                    jiNum[j] = 1;
+                                    jiCount++;
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            
+                            //set bone as last element
+                            if (!inserted)
+                            {
+                                weights[jiCount] = wt;
+                                jindices[jiCount] = ji;
+                                jiNum[jiCount] = 1;
+                                jiCount++;
+                            }
+                        }
+
+                        //
+                        for (i = 0; i < jiCount; i++)
+                        {
+                            weights[i] /= (float)jiNum[i];
+                        }
+
+                        //use only MAX_NUM_BONES elements or less
+                        if (jiCount > MAX_NUM_BONES)
+                        {
+							//n_printf("Warning: %s: More than 4 Bones affect vertex: v(%i) b(%d). This is not supported!\n", igNode->GetName(), faceVertex, numBones);
+                            jiCount = MAX_NUM_BONES;
+                        }
+                        else if (jiCount < MAX_NUM_BONES) // fill not used weights and jindices
+                        {
+                            for (i = jiCount; i < MAX_NUM_BONES; i++)
+                            {
+                                weights[i] = 0.0;
+                                jindices[i] = 0;
+                            }
+                        }
+
+                        float sum = 0.0f;
+                        for (i = 0; i < jiCount; i++)
+                        {
+							sum += weights[i];
                         }
                             
                         //renormal the weights up to 1.0f
-                        float coeff = 1.0 / sum;
-                        for (i = 0; i < numBones; i++)
-                            weights[i] *= coeff;
-                            
-                        vector4 vector(weights[0], weights[1], weights[2], weights[3]);
-                        vertex.SetWeights(vector);
-                        
-                        //JIndices
-                        int jindices[4];
-                        for (i = 0; i < numBones; i++)
+                        float coeff = 0.0;
+						if (sum != 0.0)
                         {
-                            jindices[i] = igSkin->GetBoneID(igFace->vert[vertexIndex], i);
+							coeff = 1.0 / sum;
                         }
+
+                        for (i = 0; i < jiCount; i++)
+                        {
+                            weights[i] *= coeff;
+                        }
+                            
+                        vector4 vector;
+                        vector.set(weights[0], weights[1], weights[2], weights[3]);
+                        vertex.SetWeights(vector);
                             
                         vector.set((float)jindices[0], (float)jindices[1], (float)jindices[2], (float)jindices[3]);
                         vertex.SetJointIndices(vector);
+
+                        delete[] weights;
+                        delete[] jindices;
+                        delete[] jiNum;
                     }
                 }                        
+
                 meshBuilder->AddVertex(vertex);    
             }
             meshBuilder->AddTriangle(face);
