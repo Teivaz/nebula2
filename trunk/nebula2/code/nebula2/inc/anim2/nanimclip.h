@@ -10,13 +10,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMATION_H
 #include "anim2/nanimation.h"
-#endif
-
-#ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nAnimClip
@@ -52,7 +47,7 @@ nAnimClip::nAnimClip() :
     numCurves(0),
     firstCurveIndex(0),
     weight(0.0f),
-    weightChannelHandle(nVariable::INVALID_HANDLE)
+    weightChannelHandle(nVariable::InvalidHandle)
 {
     // empty
 }
@@ -69,7 +64,7 @@ nAnimClip::nAnimClip(int firstAnimCurveIndex, int numAnimCurves, nVariable::Hand
 {
     n_assert(numAnimCurves >= 0);
     n_assert(firstAnimCurveIndex >= 0);
-    n_assert(weightChnHandle != nVariable::INVALID_HANDLE);
+    n_assert(weightChnHandle != nVariable::InvalidHandle);
 }
 
 //------------------------------------------------------------------------------
