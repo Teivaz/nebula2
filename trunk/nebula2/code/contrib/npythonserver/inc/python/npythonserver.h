@@ -31,7 +31,7 @@
 
 //--------------------------------------------------------------------
 class nFileServer2;
-class N_PUBLIC nPythonServer : public nScriptServer {
+class nPythonServer : public nScriptServer {
 public:
     static nClass *local_cl;
     static nKernelServer *kernelServer;
