@@ -151,7 +151,7 @@ private:
     bool isOpen;
     bool isOverlayEnabled;
     nDisplayMode2 displayMode;
-    nCamera2 camera;
+    nCamera2 chasecamera, playcamera;
     ControlMode controlMode;
     nGfxServer2::FeatureSet featureSetOverride;
 
@@ -272,7 +272,7 @@ inline
 void
 nSDBViewerApp::SetCamera(const nCamera2& cam)
 {
-    this->camera = cam;
+    this->chasecamera = cam;
 }
 
 //------------------------------------------------------------------------------
@@ -282,7 +282,7 @@ inline
 const nCamera2&
 nSDBViewerApp::GetCamera() const
 {
-    return this->camera;
+    return this->chasecamera;
 }
 
 //------------------------------------------------------------------------------
