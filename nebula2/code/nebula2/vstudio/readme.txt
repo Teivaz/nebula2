@@ -1,1 +1,0 @@
-VisualStudio files live here.
