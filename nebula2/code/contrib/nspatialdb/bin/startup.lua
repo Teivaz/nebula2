@@ -132,7 +132,7 @@ function OnGuiServerOpen()
         skin:addbrush('arrowdown_p','skin',52,40,16,16,1.0,1.0,1.0,1.0)
 
         -- sliders
-        skin:addbrush('sliderbg','skin', 228,77,40,13,0.5,0.5,0.5,1.0)
+        skin:addbrush('sliderbg','skin', 228, 40, 16, 16, 0.5, 0.5, 0.5, 1.0)
         skin:addbrush('sliderknobhori_n','skin',276,40,16,16,1.0,1.0,1.0,1.0)
         skin:addbrush('sliderknobhori_p','skin',292,40,16,16,1.0,1.0,1.0,1.0)
         skin:addbrush('sliderknobhori_h','skin',308,40,16,16,1.0,1.0,1.0,1.0)
@@ -218,6 +218,7 @@ function OnGuiServerOpen()
     nebula.sys.servers.gui:setsystemskin(skin)
     nebula.sys.servers.gui:setskin(skin)
     nebula.sys.servers.gui:newwindow('nguidockwindow', true)
+    nebula.sys.servers.gui:setdisplaysize(640,480)
 
     sel(cwd)
 end
