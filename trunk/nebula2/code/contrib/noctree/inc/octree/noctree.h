@@ -193,7 +193,7 @@ class nOctree : public nRoot {
 
 protected:
     enum {
-        N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool
+        N_OCT_MAXNUMNODES   = 4096,     ///< max. number of elements in free_pool
         N_OCT_MAXNUMCOLLECT = 1024,     ///< max. number of collected elements
     };
     enum {
@@ -238,7 +238,7 @@ public:
 
     virtual int Collect(nOctVisitor& culler, nOctElement** ext_array, int size);
 
-    //virtual void Visualize(nGfxServer2 *);
+    virtual void Visualize();
 
     void recurse_collect_nodes_with_flags(nOctNode *, int);
 
@@ -254,8 +254,7 @@ protected:
     void insert_element(nOctElement *);
     void move_element(nOctElement *);
     void balance(nOctNode *);
-    //void visualize_node(nOctNode *, nPrimitiveServer *);
-
+    void visualize_node(nOctNode *);
 };
 
 //--------------------------------------------------------------------
