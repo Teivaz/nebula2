@@ -220,7 +220,6 @@ proc sort_mods { orig_list } {
     }
 
     set count [llength $mod_sorted]
-    #while { [llength mod_sorted] < $num_mods }
     while {$count < $num_mods } {
         set test [lindex $mod_sorted [expr $count - 1]]
         set i 0

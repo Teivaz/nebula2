@@ -17,7 +17,6 @@
 #
 #    generateblddata
 #    gen_ancestor  $moduleindex
-#    gen_kernel    $moduleindex
 #    gen_filelists $moduleindex
 #    fixmods
 #    fixbundles
@@ -33,7 +32,7 @@
 #----------------------------------------------------------------------------
 #   gen_ancestor $module
 #
-#   Automagically fixes up autonopak, kernel, and ancestor fields
+#   Automagically fixes up autonopak and ancestor fields
 #   of mod the index handed off
 #
 #   CAVEAT:  All these tests break if the relevant line is indented
@@ -78,50 +77,6 @@ proc gen_ancestor {i} {
                 break
             }
 
-        }
-        close $cid
-    }
-}
-
-#----------------------------------------------------------------------------
-#   gen_kernel $module_index
-#
-#   Simply sifts throught the header files looking for the kernel.  If found
-#   the module will be flagged.  This is for use later on in validation
-#   routings.
-#
-#   CAVEAT:  This test breaks if the relevant line is indented
-#   CAVEAT:  This requires that all the filenames (hdr,src) have
-#            been fixed for the proper path already.
-#----------------------------------------------------------------------------
-proc gen_kernel {i} {
-    global mod
-    global home
-
-    set kernel    false
-
-    #play "Lets find the kernel!"
-    foreach filename $mod($i,hdrs) {
-
-        set cid [open [cleanpath $home/$filename.h] r]
-        if {[catch { set cid [open [cleanpath $home/$filename.h] r] } result]} {
-            ::log::log error "ERROR: $result"
-            return
-        }
-        while {![eof $cid]} {
-            set line [gets $cid]
-
-            # remove any characters that may confuse list manipulation routines...
-            set line [string map { \( " " \) " " "," " " \{ " " \} " " \" ""} $line]
-
-            #valid line - no leading spaces
-            #   #define N_DEFINES nKernelServer
-
-            if {[string match "#define" [lindex $line 0]] && [string match "N_DEFINES" [lindex $line 1]] && [string match "nKernelServer" [lindex $line 2]]} {
-                ::log::log debug "\n->Found the kernel!\n"
-                set mod($i,kernel) true
-                break
-            }
         }
         close $cid
     }
@@ -265,6 +220,7 @@ proc fixtargets { } {
     global mod
     global tar
     global num_tars
+    global home
 
     ::log::log info "\n**** Fixing targets"
     for {set i 0} {$i < $num_tars} {incr i} {
@@ -315,6 +271,11 @@ proc fixtargets { } {
         set tar($i,libs_macosx) [lsort -unique $tar($i,libs_macosx)]
     }
 
+    check_makedir $home/build/pkg
+    ::log::log info "\n*** Generating resource files"
+    write_resfiles
+    ::log::log info "\n*** Generating package files"
+    write_pkgfiles
     #this is all we can do until the workspace is resolved
 }
 
@@ -373,11 +334,7 @@ proc fixworkspaces { wslist } {
             set wspace($i,$tarname,libs_macosx) $tar($idx,libs_macosx)
             set wspace($i,$tarname,targetdeps)  $tar($idx,targetdeps)
             set wspace($i,$tarname,platform)    $tar($idx,platform)
-            set wspace($i,$tarname,depmods)     ""
-            set wspace($i,$tarname,pakmods)     ""
             set wspace($i,$tarname,defs)        ""
-
-            addtolist wspace($i,$tarname,pakmods)     $tar($idx,mergedmods)
 
             # fix up the preproc defines
             lappend wspace($i,$tarname,defs) $wspace($i,globaldefs)
@@ -387,7 +344,7 @@ proc fixworkspaces { wslist } {
                 }
             }
 
-            # 3. percolate libs and pakmods
+            # 3. percolate libs
             if {$tar($idx,type) != "lib"} {
                 # all tardeps are expected to be libs (no dlls)
                 # and libs are expected to depend on each other
@@ -402,34 +359,16 @@ proc fixworkspaces { wslist } {
 
                     addtolist wspace($i,$tarname,libs_linux) $tar($depidx,libs_linux)
                     addtolist wspace($i,$tarname,libs_macosx) $tar($depidx,libs_macosx)
-                    addtolist wspace($i,$tarname,depmods) $tar($depidx,mergedmods)
-                    addtolist wspace($i,$tarname,pakmods) $tar($depidx,mergedmods)
                 }
                 set wspace($i,$tarname,libs_win32_release) [lsort -unique $wspace($i,$tarname,libs_win32_release)]
                 set wspace($i,$tarname,libs_win32_debug) [lsort -unique $wspace($i,$tarname,libs_win32_debug)]
                 set wspace($i,$tarname,libs_linux) [lsort -unique $wspace($i,$tarname,libs_linux)]
                 set wspace($i,$tarname,libs_macosx) [lsort -unique $wspace($i,$tarname,libs_macosx)]
-                set wspace($i,$tarname,depmods) [lsort -unique $wspace($i,$tarname,depmods)]
-                set wspace($i,$tarname,pakmods) [lsort -unique $wspace($i,$tarname,pakmods)]
-
-                # clean the pakmods up
-                set cleaned ""
-                foreach module $wspace($i,$tarname,pakmods) {
-                    if {!$mod([findmodbyname $module],forcenopkg)} {
-                        addtolist cleaned  $module
-                    }
-                }
-                set wspace($i,$tarname,pakmods) $cleaned
-
-                set wspace($i,$tarname,depmods) [sort_mods $wspace($i,$tarname,depmods)]
-                set wspace($i,$tarname,pakmods) [sort_mods $wspace($i,$tarname,pakmods)]
             }
         }
 
     }
 }
-
-
 
 #----------------------------------------------------------------------------
 # EOF

@@ -254,7 +254,7 @@ proc emit_vcproj_files {name cid} {
 
         # add standard nebula rsrc to exe
         if {$tartype == "exe"} {
-            puts $cid "\t\t\t<File RelativePath=\"pkg\\res_$name.rc\" />"
+            puts $cid "\t\t\t<File RelativePath=\"..\\pkg\\res_$name.rc\" />"
         }
 
         # add any custom rsrc files
