@@ -4,4 +4,87 @@
     @brief A high-performance skinned mesh renderer with multiple
     animation clips per state and blending between different states.
 
+
+    @section NebulaCharAnimIntro Introduction
+    
+    Nebula2 uses palette-skinning vertex shader to perform skinning and it is 
+    the most effective way to perform skinning on the Win32 or Xbox platforms.
+
+    The followings are what the feature of the Nebula2 character animation system.
+
+      - using vertex shader for its skinning (faster than CPU based skinning)
+      - support unlimited number of skeleton joints and 4 influences per a vertex.
+      - fully support joint traslation, rotation and scaling
+      - provide a simple implementation to animate a character
+      - provide a way to access to a skeleton's joint translation via nAttachmentNode
+
+    Generally a exported script from a tool(3ds max, maya etc) for a character is made
+    up a nSkinAnimator class instance for skin animation and more than one nSkinShapeNode 
+    class instances for skinned mesh object. And those instances need @e .anim animation 
+    file and @e .n3d2 mesh file.
+
+
+    @section NebulaCharAnimSkinPartion Skin Partitioning
+
+    Nebula2 performs smooth skinning completely in the vertex shader.
+    The skining with the vertex shader has two important issues, the maximum 
+    number of joints which the hardware can handle and the maximum number of 
+    joints which can influence a vertex. There is a limitation on the number of
+    joints in the vertex shader. This limitation can be overcome by breaking
+    the skinned mesh apart into pieces. The apart pieces are refered as 
+    <em>skin partitions</em>.
+  
+    @note Nebula2 offers the way to patition the skinned mesh by using nSkinPartitioner. 
+    See nSkinPartitioner for more details.
+
+    Each of skin partitions are rendered in a sperating rendering call.
+    This means that less partitions the mesh is broken, more faster when it rendered.
+    For instance, There is a character with 30 bones which broken into 25 partitions.
+    So we become to render 25 pieces for its rendering. Keeping as few partitions as 
+    are visually acceptable is good way for the performance.
+
+
+    @section NebulaCharAnimStateAndClip Animation State And Clip
+  
+    An animation state is a collection of clips and an animation clip is an
+    animation with a specific blend value.
+
+    A transition from one animation to another animation is done by the 
+    change of the state. 
+    Following shows a simple example how you can transite one animation to another
+    one by changing aniamtion state of nSkinAnimator::SetStateChannel().
+
+    There are three diffrent animation states in you animation file(.anim2) and
+    each of those are @e 'idle', @e 'walk' and @e 'run' animation.
+    If the first animation state in the animation file is 'idle' animation,
+    that is defaultly specified and animated when the skinned object is rendered.
+
+    Each of animation state needs its own variable with given integer type of value
+    which is used when an animation is changed.
+
+    The variable for animation state is created by nVariableServer.
+    Supposing that you create those on Nebula console system, it will looks like this:
+
+    @verbatim
+    >/sys/servers/variable/.setintvariable "idle" 0
+    >/sys/servers/variable/.setintvariable "walk" 1
+    >/sys/servers/variable/.setintvariable "run"  2
+    @endverbatim
+
+    You can change the animation from @e 'idle' to @e 'walk' by changing of the state
+    channel by nSkinAnimator::SetStateChannel().
+    
+    @verbatim
+    >/usr/scene/mychar/skinanimator/.setstatechannel "walk"
+    @endverbatim
+
+    Above will change the animation from @e 'idle' to @e 'walk'.
+
+    @note All relevant animations for a skeleton should be exist in the one animation
+    file(.anim2) to be blended with each other.
+
+
+    @section NebulaCharAnimAttach Using Attachment Node
+    ...
+
 */
