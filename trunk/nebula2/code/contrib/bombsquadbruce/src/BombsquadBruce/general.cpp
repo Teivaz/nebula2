@@ -37,7 +37,7 @@ void CCUtil::RunScript( const char* fileName )
     InitScriptServer( );
 	if( pScriptSrv && fileName )
 	{
-		static const char* result = 0;
+		nString result;
 		n_verify( pScriptSrv->RunScript( fileName, result) );
 	}
 }
@@ -47,14 +47,14 @@ void CCUtil::RunScriptFunction( const char* functionName )
     InitScriptServer( );
 	if( pScriptSrv && functionName )
 	{
-		static const char* result = 0;
+		nString result;
 		n_verify( pScriptSrv->Run( functionName, result) );
 	}
 }
 
 bool CCUtil::ApproximatelyEqual( float lhs, float rhs ) 
 {
-	static const float FUDGE_FACTOR = 0.001f;
+	const float FUDGE_FACTOR = 0.001f;
 	return lhs < rhs + FUDGE_FACTOR && lhs > rhs - FUDGE_FACTOR; 
 }
 
