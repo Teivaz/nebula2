@@ -132,10 +132,10 @@ proc get_platform {} {
 #--------------------------------------------------------------------
 proc findmodbyname {name} {
     global modsbyname
-    set results [array get modsbyname $name]
-    if { [llength $results] > 0 } {
-        return [lindex $results 1]
+    if {[catch {set result $modsbyname($name)} err]} {
+        error "ERROR: module '$name' not defined!"
     }
+    return $result
     error "ERROR: module '$name' not defined!"
 }
 
@@ -192,7 +192,7 @@ proc findwspacebyname {name} {
 #--------------------------------------------------------------------
 #  sort_mods $modname_list
 #
-#  Sorts mods for nRoot init dependence based on generated ancestors.
+#  Sorts mods for nObject init dependence based on generated ancestors.
 #--------------------------------------------------------------------
 
 proc sort_mods { orig_list } {
@@ -216,8 +216,8 @@ proc sort_mods { orig_list } {
 #--------------------------------------------------------------------
 #  sort_mods_old $modname_list
 #
-#  Sorts mods for nRoot init dependence based on generated ancestors.
-#  non nRoot derived modules (generated) are placed first in the list
+#  Sorts mods for nObject init dependence based on generated ancestors.
+#  non nObject derived modules (generated) are placed first in the list
 #  in all cases, but are not removed so that validation routines may
 #  use this data
 #
@@ -233,7 +233,7 @@ proc sort_mods_old { orig_list } {
     set mod_source {}
     set mod_sorted {}
 
-    # dump all non nRoot derived mods in the list
+    # dump all non nObject derived mods in the list
     for {set i 0} {$i < [llength $orig_list]} {incr i} {
         set idx [findmodbyname [lindex $orig_list $i]]
         if {$mod($idx,autonopak)} {
@@ -243,7 +243,7 @@ proc sort_mods_old { orig_list } {
         }
     }
 
-    #handle nRoot
+    #handle nObject
     set i [lsearch $mod_source "nobject"]
     if {$i != -1} {
         lappend mod_sorted "nobject"
