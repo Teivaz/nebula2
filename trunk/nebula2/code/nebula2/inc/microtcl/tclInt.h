@@ -61,6 +61,10 @@
 # endif
 #endif
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE
+#endif
+
 /*
  * The following procedures allow namespaces to be customized to
  * support special name resolution rules for commands/variables.
