@@ -11,6 +11,8 @@
 #      nconserver
 #      nipc
 #      nlocaleserver
+#      tinyxml
+#      xml
 #===============================================================================
 
 #===============================================================================
@@ -113,3 +115,20 @@ beginmodule nlocaleserver
     setfiles { nlocaleserver_main }
     setheaders nlocaleserver
 endmodule
+#-------------------------------------------------------------------------------
+beginmodule tinyxml
+    setdir tinyxml
+    setfiles { tinystr tinyxml tinyxmlerror tinyxmlparser }
+    setheaders { tinystr tinyxml }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule xml
+    setdir xml
+    setfiles { xmltable nxmlspreadsheet }
+    setheaders { xmltable xmltablecell nxmlspreadsheet nxmltable nxmltablecell }
+endmodule    
+#-------------------------------------------------------------------------------
+begintarget xml
+    settype lib
+    setmodules { tinyxml xml }
+endtarget

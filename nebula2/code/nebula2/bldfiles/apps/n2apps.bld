@@ -63,6 +63,7 @@ begintarget nsh
         ndinput8
         microtcl
         ntoollib
+        nnetwork
     }
 endtarget
 #-------------------------------------------------------------------------------
@@ -82,5 +83,6 @@ begintarget nviewer
         ngui
         tinyxml
         nshadow
+        nnetwork
     }
 endtarget
