@@ -19,6 +19,7 @@
 
 class nOpendeSpace;
 class nOpendeTriMesh;
+class nGfxServer2;
 //------------------------------------------------------------------------------
 class nOpendePickServer : public nRoot
 {
@@ -36,7 +37,11 @@ class nOpendePickServer : public nRoot
         nOpendePickServer();
         /// destructor
         virtual ~nOpendePickServer();
-    
+        
+        /// generate a pick ray from the specified screen coordinates
+        void CreatePickRay( int mouseX, int mouseY, line3& pickRay );
+        /// generate a pick ray from the specified normalized screen coordinates
+        void CreatePickRay( float mouseX, float mouseY, line3& pickRay );
         
         void RayPick( dSpaceID, void* data, dNearCallback*, 
                       const line3&, int flags );
@@ -53,6 +58,7 @@ class nOpendePickServer : public nRoot
     
         dGeomID rayGeom;
         dContactGeom* contactArray;
+        nAutoRef<nGfxServer2> ref_GfxServer;
 };
 
 //------------------------------------------------------------------------------
