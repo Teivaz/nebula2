@@ -35,7 +35,6 @@ public:
 private:
     nAutoRef<nEnv> refHwnd;
     nAutoRef<nInputServer> refInputServer;
-    nAutoRef<nGfxServer2> refGfxServer;
     IGraphBuilder* graphBuilder;
     IMediaControl* mediaControl;
     IMediaEvent* mediaEvent;

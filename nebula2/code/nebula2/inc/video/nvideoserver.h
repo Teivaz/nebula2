@@ -16,12 +16,18 @@ public:
     nVideoServer();
     /// destructor
     virtual ~nVideoServer();
+    /// get instance pointer
+    static nVideoServer* Instance();
     /// open the video server
     virtual bool Open();
     /// close the video server
     virtual void Close();
     /// currently open?
     bool IsOpen() const;
+    /// enable/disable scaling to screen size
+    void SetEnableScaling(bool b);
+    /// get scaling enabled flag
+    bool GetEnableScaling() const;
     /// start playback of a video file
     virtual bool PlayFile(const char* filename);
     /// stop playback
@@ -32,9 +38,43 @@ public:
     virtual void Trigger();
 
 protected:
+    static nVideoServer* Singleton;
+
     bool isOpen;
     bool isPlaying;
+    bool scalingEnabled;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVideoServer*
+nVideoServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nVideoServer::SetEnableScaling(bool b)
+{
+    this->scalingEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nVideoServer::GetEnableScaling() const
+{
+    return this->scalingEnabled;
+}
 
 //------------------------------------------------------------------------------
 /**
