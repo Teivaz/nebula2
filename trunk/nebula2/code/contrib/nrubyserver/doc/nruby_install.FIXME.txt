@@ -1,0 +1,41 @@
+About nruby 0.5
+
+This sourcecode extends nebula with a sript server understanding the ruby language. Ruby has a simple syntax, very powerfull features and does not rely on any formating as tcl or pyhton do. For further ruby infos have a look at www.ruby-lang.org
+See license.txt for licensing information. Should any problems arise you can email me : tom@3d-inferno.com 
+
+Requirements
+
+This package uses ruby version 1.8 but any other version should be all right. Place the runtime libraries (msvcrt-ruby18.dll etc.) into your bin/yourOS directory. This example does only provide windows libraries and dlls. 
+
+Installing
+1) Extract the zipfile into a nebula 1 directory.  The zip file creates these directories: 
+
+bin/
+    ruby/
+       ruby1.8/
+          lib/... 	
+code/
+    inc/
+       script/
+    lib/
+       win32_vc_i386/
+    src/
+       script/
+data/
+    tekdemos/
+       ruby/
+
+
+You will find the headers in inc/script and the source files in src/script. In the nruby distribution including the windows library files the ruby.lib files for compiling are placed in the win32_vc_i386 directory. Additionaly a file called 
+nruby_3di.epk is placed to the source directory to integrate the package into your project.
+
+3) Update and compile
+Run update.tcl to incorporate nruby then compile nruby with whatever compiler you use. Be sure code/lib/win32_vc_i386 is in your include path of your compiler. Make sure you compiled nterrain, as the test relies on it.
+You should now be ready to test the release.
+
+Testing
+
+First be sure your normal demos are running and you have nterrain compiled. Go to one of your bin/win32* directories and trie the placed nruby_demo.bat file. Have a look at it in doubt. It just starts the nebula shell with nrubyserver as scripting engine and loads the data/tekdemos/ruby/startup.rb script. For scripting take a look in your tekdemos directory. You will find a new directory called ruby. You can play with it to get going with the syntax of the ruby / nebula commands. Also take a look at the header of nrubyserver.h for some documentation of nebula commands ported to ruby.
+As time comes I will port most demos and some utilities to ruby. Pleaae also take a look at Michael Wittrand's nrubyserver implementation if you are looking for inspiration on how to extend ruby with nebula (like ruby's opengl feature where ogl is callable from a plain ruby interpreter and not the other way round)
+
+Enjoy.
