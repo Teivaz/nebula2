@@ -22,6 +22,7 @@ static void n_getsystemskin(void* slf, nCmd* cmd);
 static void n_togglesystemgui(void* slf, nCmd* cmd);
 static void n_computescreenspacebrushsize(void* slf, nCmd* cmd);
 static void n_runcommand(void* slf, nCmd* cmd);
+static void n_putevent(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -59,6 +60,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_togglesystemgui_v",              'TGSG', n_togglesystemgui);
     cl->AddCmd("ff_computescreenspacebrushsize_s", 'CSBS', n_computescreenspacebrushsize);
     cl->AddCmd("b_runcommand_os",                  'RUNC', n_runcommand);
+    cl->AddCmd("v_putevent_os",                    'PUTE', n_putevent);
     cl->EndCmds();
 }
 
@@ -423,3 +425,27 @@ n_runcommand(void* slf, nCmd* cmd)
     bool ret = self->RunCommand(widget, command);
     cmd->Out()->SetB(ret);
 }
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    putevent
+    @input
+    os (widget object, event type)
+    @output
+    v 
+    @info
+    put an event to given widget object.
+
+    27-Aug-04   kims   created.
+*/
+static void n_putevent(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;
+
+    nGuiWidget* widget   = (nGuiWidget*) cmd->In()->GetO();    
+    nGuiEvent::Type type = nGuiEvent::StringToType(cmd->In()->GetS());
+
+    self->PutEvent(nGuiEvent(widget, type));
+}
+
