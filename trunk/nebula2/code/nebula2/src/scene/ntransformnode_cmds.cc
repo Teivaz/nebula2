@@ -470,9 +470,9 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         else
         {
             cmd = ps->GetCmd(this, 'SEUL');
-            cmd->In()->SetF(this->euler.x);
-            cmd->In()->SetF(this->euler.y);
-            cmd->In()->SetF(this->euler.z);
+            cmd->In()->SetF(n_rad2deg(this->euler.x));
+            cmd->In()->SetF(n_rad2deg(this->euler.y));
+            cmd->In()->SetF(n_rad2deg(this->euler.z));
             ps->PutCmd(cmd);
         }
 
