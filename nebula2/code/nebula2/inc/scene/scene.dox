@@ -1,3 +1,18 @@
 /**
     @defgroup NebulaSceneSystem Scene System
 */
+
+/**
+    @defgroup NebulaSceneSystemServers Scene Servers
+    @ingroup NebulaSceneSystem
+*/
+
+/**
+    @defgroup NebulaSceneSystemNodes Scene Nodes
+    @ingroup NebulaSceneSystem
+*/
+
+/**
+    @defgroup NebulaSceneSystemAnimators Scene Animators
+    @ingroup NebulaSceneSystem
+*/

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSkinShapeNode
-    @ingroup NebulaSceneSystem
+    @ingroup NebulaSceneSystemNodes
 
     A smooth skinned shape node. Requires that a nSkinAnimator is
     attached as animator which is called back by the skin shape before
