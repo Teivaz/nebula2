@@ -1,15 +1,19 @@
-#
+#--------------------------------------------------------------------------
 # 3rd Generation Nebula 2 Build System
-#
 #
 # (c) 2005 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
-#
+#--------------------------------------------------------------------------
+
+import sys
+
+if not hasattr(sys, 'hexversion') or sys.hexversion < 0x020300f0:
+    sys.exit('Python 2.3 or later is required to run the build system.')
 
 from buildsys3.bldscanner import *
 from buildsys3.buildsys import *
-import os, dircache, string, time, sys
+import os, dircache, string, time
 import hotshot, hotshot.stats
 
 updateDir = os.getcwd()
