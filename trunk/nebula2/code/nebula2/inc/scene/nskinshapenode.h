@@ -33,6 +33,8 @@ public:
     virtual bool SaveCmds(nPersistServer *ps);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// set the skin animator
     void SetSkinAnimator(const char* path);
     /// get the skin animator

@@ -32,6 +32,8 @@ public:
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// return true if node provides transformion
     virtual bool HasTransform() const;
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
 

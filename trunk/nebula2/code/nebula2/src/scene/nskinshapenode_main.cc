@@ -14,7 +14,7 @@ nCharSkinRenderer nSkinShapeNode::charSkinRenderer;
 nSkinShapeNode::nSkinShapeNode() :
     extCharSkeleton(0)
 {
-    SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader );
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -23,6 +23,20 @@ nSkinShapeNode::nSkinShapeNode() :
 nSkinShapeNode::~nSkinShapeNode()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nSkinShapeNode::GetMeshUsage() const
+{
+    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
