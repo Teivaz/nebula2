@@ -4,18 +4,18 @@
 //  nipcserver.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "kernel/nthread.h" 
+#include "kernel/nthread.h"
 #include "kernel/nipcserver.h"
 #include "util/nhashtable.h"
 #include "kernel/nipcminiserver.h"
 
 //------------------------------------------------------------------------------
 /**
-    The listener thread. Simply creates one nIpcMiniServer object
+    The listener thread. Creates one nIpcMiniServer object
     for each client which connects.
 */
-int 
-N_THREADPROC 
+int
+N_THREADPROC
 n_listener_tfunc(nThread *t)
 {
     // tell thread object that we have started
@@ -25,30 +25,30 @@ n_listener_tfunc(nThread *t)
     nIpcServer *is = (nIpcServer *) t->LockUserData();
     t->UnlockUserData();
 
-    do 
+    do
     {
         nIpcMiniServer *ims;
         n_printf("nIpcServer: listening on port %d...\n", ntohs(is->hostAddr.sin_port));
         ims = n_new nIpcMiniServer(is);
-        if (ims) 
+        if (ims)
         {
-            if (ims->Listen()) 
+            if (ims->Listen())
             {
-                // Eine Verbindung wurde beantragt. Die kann
-                // von der Wakeupfunc kommen, deshalb hier den
-                // ThreadStopRequested() Status abfragen, ob
-                // dem so ist...
-                if (t->ThreadStopRequested()) 
+                // a connection was requested
+                // requests can come from the Wakeupfunc.
+                // query ThreadStopRequested()
+                // to find out...
+                if (t->ThreadStopRequested())
                 {
                     ims->Ignore();
                     n_printf("nIpcServer: wakeupfunc client connected, shutting down.\n");
-                } 
-                else 
+                }
+                else
                 {
                     n_printf("nIpcServer: a client has connected.\n");
                 }
             }
-        }                     
+        }
     } while (!t->ThreadStopRequested());
 
     n_printf("nIpcServer: shutting down listener thread.\n");
@@ -58,21 +58,9 @@ n_listener_tfunc(nThread *t)
 
 //------------------------------------------------------------------------------
 /**
-    Weckt den Listener-Thread auf, indem ein Dummy-Socket
-    erzeugt wird, der mit dem Listener-Socket Verbindung 
-    aufnimmt. Damit sollte accept() aufwachen und ein
-    neues nIpcMiniServer-Object erzeugen (ok, das ist etwas 
-    Overhead, aber sauber), der Listener-Thread merkt
-    dann, dass er sich beenden soll (in ThreadStopRequested()),
-    und faehrt dann auch alle nIpcMiniServers runter.
-
-     - 28-Oct-98   floh    created
-     - 31-Oct-98   floh    Linux reagiert offensichtlich sehr
-                           empfindlich darauf, einfach accept() den
-                           Socket unterm Arsch wegzuschliessen, also
-                           nochmal die traditionelle Methode...
+    Wake up the Listener Thread
 */
-void 
+void
 n_listener_wakeup(nThread *t)
 {
     sockaddr_in my_addr;
@@ -107,7 +95,12 @@ n_listener_wakeup(nThread *t)
 
 //------------------------------------------------------------------------------
 /**
-     - 31-Oct-98   floh    created
+     This computes the actual port number given a portname. Portnames are 
+     converted to number by a simple hash. 
+
+     @param portName pointer to the portname
+
+     @return the port number
 */
 short 
 nIpcServer::GetPortNumFromName(const char* portName)
@@ -118,11 +111,10 @@ nIpcServer::GetPortNumFromName(const char* portName)
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
-     - 08-Dec-98   floh    hmm, boese Falle, bind() kam im Fehlerfall
-                           mit -98 zurueck..., ich habe auf 1 
-                           getestet...
-     - 08-Jun-99   floh    + nThreadSafeList
+    This constructor starts up the server and sets it listening on the 
+    portname given.
+
+    @param portName pointer to the portname 
 */
 nIpcServer::nIpcServer(const char *portName)
 {
@@ -140,9 +132,9 @@ nIpcServer::nIpcServer(const char *portName)
     int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&true_int, sizeof(true_int)); 
     n_assert(res != -1);
         
-    // Socket an eine Adresse (Portnummer) binden
+    // Bind the socket to an address
     this->hostAddr.sin_family = AF_INET;
-    this->hostAddr.sin_addr.s_addr = INADDR_ANY;   // die eigene bitte
+    this->hostAddr.sin_addr.s_addr = INADDR_ANY;
     memset(&(this->hostAddr.sin_zero), 0, sizeof(this->hostAddr.sin_zero));
     
     bool bound = false;
@@ -169,7 +161,7 @@ nIpcServer::nIpcServer(const char *portName)
         }
     }     
     
-    // Listener Thread starten... 
+    // Start listener Thread...
     this->listenerThread = n_new nThread(n_listener_tfunc,
                                          0,                  // Default-Stacksize
                                          n_listener_wakeup,
@@ -180,17 +172,16 @@ nIpcServer::nIpcServer(const char *portName)
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
+     The destructor deletes the list of current mini servers.
 */
 nIpcServer::~nIpcServer()
 {
     n_printf("-> ~nIpcServer()\n");
     
-    // der Thread muss vor den Miniservers gekillt werden, weil
-    // im Thread noch ein MiniServer "lebt".
+    // the listener thread must be killed before the mini servers
+    // as it uses it's own mini server
     n_delete this->listenerThread;
 
-    // kille alle MiniServers...
     nIpcMiniServer *ims;
     this->miniServerList.Lock();
     while ((ims = (nIpcMiniServer *) this->miniServerList.RemHead())) 
@@ -199,15 +190,13 @@ nIpcServer::~nIpcServer()
     }
     this->miniServerList.Unlock();
     
-    // Thread und Socket killen
-    if (this->sock) 
+    if (this->sock)
     {
         shutdown(this->sock, 2);
         closesocket(this->sock);
         this->sock = 0;
     }
     
-    // alle noch ausstehenden Messages killen
     nMsgNode *nd;
     while ((nd = (nMsgNode *) this->msgList.RemHead())) 
     {
@@ -219,13 +208,14 @@ nIpcServer::~nIpcServer()
 
 //------------------------------------------------------------------------------
 /**
-    Poll ipc mini servers for new messages. If there are any to process, poll
-    will return true.
+    Poll the mini servers for new messages. 
+    
+    @return true if there are any to process
 */
 bool
 nIpcServer::Poll()
 {
-    // poll all our miniservers...
+    // poll miniservers...
     nIpcMiniServer *ims;
     this->miniServerList.Lock();
     for (ims = (nIpcMiniServer *) this->miniServerList.GetHead();
@@ -246,17 +236,20 @@ nIpcServer::Poll()
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
+     Get next message. This checks for messages from any connected clients.
+
+     @param outClientId [out] the client id, it will be -1 if there is no message.
+
+     @return nMsgNode with message
 */
 nMsgNode*
 nIpcServer::GetMsg(int& outClientId)
 {
-    // check if any messages came in...
+    // check for messages
     this->msgList.Lock();
     nMsgNode* nd = (nMsgNode *) this->msgList.RemHead();
     this->msgList.Unlock();
 
-    // fill outClientId with the client id which has send the message
     if (nd) 
     {
         outClientId = (int) nd->GetPtr();
@@ -270,7 +263,7 @@ nIpcServer::GetMsg(int& outClientId)
 
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
+     Tells the listener thread that you are done with this nMsgNode.
 */
 void 
 nIpcServer::ReplyMsg(nMsgNode* nd)
@@ -280,7 +273,11 @@ nIpcServer::ReplyMsg(nMsgNode* nd)
     
 //------------------------------------------------------------------------------
 /**
-     - 28-Oct-98   floh    created
+     @param buf pointer to message data
+     @param size size of message data
+     @param clientId the client to send the message to
+
+     @return true on success
 */
 bool 
 nIpcServer::AnswerMsg(void* buf, int size, int clientId)
@@ -290,7 +287,7 @@ nIpcServer::AnswerMsg(void* buf, int size, int clientId)
     n_assert(clientId >= 0);
     bool retval = false;
     
-    // suche den richtigen Client
+    // find client
     nIpcMiniServer *ims;
     this->miniServerList.Lock();
     for (ims = (nIpcMiniServer *) this->miniServerList.GetHead();
@@ -299,7 +296,7 @@ nIpcServer::AnswerMsg(void* buf, int size, int clientId)
     {
         if (clientId == ims->id) 
         {
-            // das ist der richtige Client
+            // send msg
             ims->Send(buf, size);
             retval = true;
             break;
@@ -312,7 +309,10 @@ nIpcServer::AnswerMsg(void* buf, int size, int clientId)
 
 //------------------------------------------------------------------------------
 /**
-    Broadcast a message to all clients.
+    Sends a message to all connected clients
+
+    @param buf message data
+    @param size size of message
 */
 void
 nIpcServer::BroadcastMsg(void* buf, int size)

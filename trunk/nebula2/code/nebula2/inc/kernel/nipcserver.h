@@ -21,9 +21,9 @@
   
     For instance:
   
-        192.168.0.90:nebula
-        nomad:testport
-        localhost:nebula
+        - 192.168.0.90:nebula
+        - nomad:testport
+        - localhost:nebula
   
     The hostaddress field can be empty if the port is on the localhost.
   
