@@ -18,7 +18,6 @@ nNebulaUsePackage( ndinput8 );
 nNebulaUsePackage( ndirect3d9 );
 nNebulaUsePackage( nlua );
 nNebulaUsePackage( nmap );
-nNebulaUsePackage( noctree );
 nNebulaUsePackage( nspatialdb );
 nNebulaUsePackage( ngui );
 nNebulaUsePackage( ndsaudioserver3 );
@@ -56,7 +55,6 @@ int main( int argc, char * argv[] )
     kernelServer->AddPackage( ndirect3d9 );
     kernelServer->AddPackage( nlua );
     kernelServer->AddPackage( nmap );
-    kernelServer->AddPackage( noctree );
     kernelServer->AddPackage( nspatialdb );
     kernelServer->AddPackage( ngui );
     kernelServer->AddPackage( ndsaudioserver3 );

@@ -10,8 +10,8 @@
 */
 #include "kernel/nroot.h"
 #include "kernel/nref.h"
-#include "spatialdb/nvisibilityvisitor.h"
-class nSpatialSector;
+#include "spatialdb/nvisitorbase.h"
+#include "spatialdb/nspatialsector.h"
 class CCCamera;
 class CCRoot;
 
@@ -29,10 +29,15 @@ public:
     void Visualize();
 
 private:
+    void DestroySpatialDB(nSpatialSector *cleanme);
+
     nVisibilityVisitor::VisibleElements m_ObjectsToRender;
     nVisibilityVisitor* m_pCuller;
 
+    nArray<nSpatialElement *> m_currentelements;
+    nArray<nSpatialSector::ElementHandle> m_currentelementhandles;
     nRef<nSpatialSector> m_rRootSector;    
+
 };
 
 #endif N_CCULLINGMGR_H
