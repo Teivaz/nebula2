@@ -19,6 +19,7 @@
 #include "mathlib/bbox.h"
 #include "kernel/ndynautoref.h"
 #include "gfx2/nshaderparams.h"
+#include "gfx2/ninstancestream.h"
 
 class nSceneServer;
 class nRenderContext;
@@ -58,14 +59,24 @@ public:
     virtual bool HasShader(uint fourcc) const;
     /// return true if node provides lighting information
     virtual bool HasLight() const;
+    /// return true if node provides shadow
+    virtual bool HasShadow() const;
     /// render transformation
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
-    /// render geometry
+    /// perform pre-instancing rendering of geometry
+    virtual bool ApplyGeometry(nSceneServer* sceneServer);
+    /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// render shader
+    /// perform pre-instancing rending of shader
+    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    /// perform per-instance-rendering of shader
     virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
     /// write light volume parameters into the provided shader params object
-    virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
+     virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
+    /// perform pre-instancing rendering of shadow
+    virtual bool ApplyShadow(nSceneServer* sceneServer);
+    /// perform per-instance-rendering of shadow
+    virtual bool RenderShadow(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the local bounding box
     void SetLocalBox(const bbox3& b);
     /// get the node's bounding box
@@ -82,14 +93,15 @@ public:
     int GetNumAnimators() const;
     /// get animator object at index
     const char* GetAnimatorAt(int index);
-    /// invoke all shader animators
-    void InvokeShaderAnimators(nRenderContext* renderContext);
-    /// invoke all transform animators
-    void InvokeTransformAnimators(nRenderContext* renderContext);
+    /// invoke all animators
+    void InvokeAnimators(int animatorType, nRenderContext* renderContext);
+    /// get an instance stream object for this node hierarchy, create if not exists yet
+    // nInstanceStream* GetInstanceStream();
 
 protected:
-    nAutoRef<nVariableServer> refVariableServer;
-    nAutoRef<nSceneServer> refSceneServer;
+    /// recursively append instance parameters to provided instance stream declaration
+    virtual void UpdateInstStreamDecl(nInstanceStream::Declaration& decl);
+
     bbox3 localBox;
     nArray< nDynAutoRef<nAnimator> > animatorArray;
     bool resourcesValid;

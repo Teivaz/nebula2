@@ -11,9 +11,9 @@
     
     (C) 2002 RadonLabs GmbH
 */
+#include "kernel/nref.h"
 #include "variable/nvariablecontext.h"
 #include "gfx2/nshaderparams.h"
-#include "kernel/nref.h"
 
 class nSceneNode;
 
@@ -55,6 +55,8 @@ public:
     nVariable& GetLocalVar(int index);
     /// clear local variables
     void ClearLocalVars();
+    /// find local variable by variable handle
+    nVariable* FindLocalVar(nVariable::Handle handle);
 
 protected:
     uint frameId;
@@ -218,6 +220,26 @@ nVariable&
 nRenderContext::GetLocalVar(int index)
 {
     return this->localVarArray.At(index);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariable*
+nRenderContext::FindLocalVar(nVariable::Handle handle)
+{
+    int i;
+    int num = this->localVarArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->localVarArray[i].GetHandle() == handle)
+        {
+            return &(this->localVarArray[i]);
+        }
+    }
+    // fallthrough: not found
+    return 0;
 }
 
 //------------------------------------------------------------------------------

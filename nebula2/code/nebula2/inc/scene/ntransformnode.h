@@ -79,7 +79,6 @@ protected:
     };
 
 protected:
-    nAutoRef<nGfxServer2> refGfxServer;
     transform44 tform;
     ushort transformFlags;
 };

@@ -42,7 +42,9 @@ public:
 
     /// indicate to scene graph that we provide a surface shader
     virtual bool HasShader(uint fourcc) const;
-    /// render shader
+    /// perform pre-instancing rending of shader
+    virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
+    /// perform per-instance-rendering of shader
     virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
 
     /// set shader resource name
@@ -60,6 +62,10 @@ public:
     static uint StringToFourCC(const char* str);
     /// get string from fourcc code
     static const char* FourCCToString(uint fourcc, char* buf, int bufSize);
+
+protected:
+    /// recursively append instance parameters to provided instance stream declaration
+    virtual void UpdateInstStreamDecl(nInstanceStream::Declaration& decl);
 
 private:
     class ShaderEntry
