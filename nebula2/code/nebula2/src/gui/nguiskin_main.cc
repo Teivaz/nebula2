@@ -22,7 +22,8 @@ nGuiSkin::nGuiSkin() :
     entryTextColor(0.0f, 0.0f, 0.0f, 1.0f),
     textColor(0.0f, 0.0f, 0.0f, 1.0f),
     soundNames(NumSounds),
-    sounds(NumSounds)
+    sounds(NumSounds),
+    soundVolume(1.0f)
 {
     // empty
 }
@@ -156,7 +157,7 @@ nGuiSkin::GetSoundObject(Sound snd)
             sound->SetNumTracks(2);
             sound->SetLooping(false);
             sound->SetAmbient(true);
-            sound->SetVolume(0.9f);
+            sound->SetVolume(this->soundVolume);
             sound->SetFilename(this->soundNames[snd]);
             if (!sound->Load())
             {
@@ -168,4 +169,23 @@ nGuiSkin::GetSoundObject(Sound snd)
         return this->sounds[snd];
     }
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiSkin::SetSoundVolume(float volume)
+{
+    n_assert( volume >= 0 && volume <= 1.0f );
+    this->soundVolume = volume;
+    int i;
+    int num = this->sounds.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->sounds[i].isvalid())
+        {
+            this->sounds[i]->SetVolume(volume);
+        }
+    }
 }

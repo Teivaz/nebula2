@@ -31,6 +31,7 @@ static void n_setbuttonsound(void* slf, nCmd* cmd);
 static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
+static void n_setsoundvolume(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -75,6 +76,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endbrushes_v",                'EDBR', n_endbrushes);
     cl->AddCmd("v_setsound_ss",                 'SBTS', n_setsound);
     cl->AddCmd("s_getsound_s",                  'GBTS', n_getsound);
+    cl->AddCmd("v_setsoundvolume_f",            'SVOL', n_setsoundvolume);
     cl->EndCmds();
 }
 
@@ -615,4 +617,22 @@ n_getsound(void* slf, nCmd* cmd)
     nGuiSkin* self = (nGuiSkin*) slf;
     nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
     cmd->Out()->SetS(self->GetSound(snd));
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setsoundvolume
+    @input
+    f
+    @output
+    v
+    @info
+    Sets the master volume for this skin (0 == silence, 1 == max).
+*/
+static void
+n_setsoundvolume(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    self->SetSoundVolume(cmd->In()->GetF());
 }
