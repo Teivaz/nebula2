@@ -12,7 +12,6 @@
 #include "tools/nmeshbuilder.h"
 
 #include "export2/nmaxmesh.h"
-#include "export2/nmaxnotetrack.h"
 #include "export2/nmaxscene.h"
 #include "export2/nmaxoptions.h"
 #include "export2/nmaxbones.h"
@@ -20,7 +19,7 @@
 #include "export2/nmaxlight.h"
 #include "export2/nmaxdummy.h"
 #include "export2/nmaxtransform.h"
-
+#include "export2/nmaxskinanimator.h"
 #include "export2/nmaxcontrol.h"
 
 #include "kernel/npersistserver.h"
@@ -96,7 +95,10 @@ bool nMaxScene::Export()
     //    // export nodes.
     //    this->ExportNodes(child);
     //}
-    this->ExportNodes(rootNode);
+    if (!this->ExportNodes(rootNode))
+    {
+        return false;
+    }
 
     if (!this->End())
     {
@@ -110,7 +112,7 @@ bool nMaxScene::Export()
 
 //-----------------------------------------------------------------------------
 /**
-
+    Begin scene.
 */
 bool nMaxScene::Begin(INode *rootNode)
 {
@@ -131,10 +133,10 @@ bool nMaxScene::Begin(INode *rootNode)
 
 //-----------------------------------------------------------------------------
 /**
-Do any preprocessing for this scene. 
-This is called before the scene is exported.
+    Do any preprocessing for this scene. 
+    This is called before the scene is exported.
 
-@param root scene root node which retrieved from core interface.
+    @param root scene root node which retrieved from core interface.
 */
 bool nMaxScene::Preprocess(INode* root)
 {
@@ -166,9 +168,6 @@ bool nMaxScene::Preprocess(INode* root)
 // end build bone array
 
     this->globalMeshBuilder.Clear();
-
-    // Create animation states.
-    this->CreateAnimStates();
 
     // Disable physique modifier to get skin in the initial pose.
     // ...
@@ -262,6 +261,7 @@ void nMaxScene::UnInitializeNodes(INode* inode)
 bool nMaxScene::OpenNebula()
 {
     nKernelServer* ks = nKernelServer::Instance();
+
     // prepare persistence server.
     nPersistServer* persisitServer = ks->GetPersistServer();
     persisitServer->SetSaverClass(nMaxOptions::Instance()->GetSaveScriptServer());
@@ -296,27 +296,8 @@ bool nMaxScene::OpenNebula()
 
 //-----------------------------------------------------------------------------
 /**
-*/
-void nMaxScene::CreateAnimStates()
-{
-    for (int i=0;i<this->topLevelNodes.Size(); i++)
-    {
-        INode* inode = this->topLevelNodes[i];
-
-        if (!nMaxBoneManager::IsBone(inode))
-            continue;
-
-        if (inode->NumNoteTracks() > 0)
-        {
-            noteTrack.CreateAnimState(inode);
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
     -# save mesh, animation file and .n2 scene file.
-    -# release if necessary.
+    -# do any release job if it is necessary.
 */
 bool nMaxScene::End()
 {
@@ -437,11 +418,19 @@ bool nMaxScene::Postprocess()
     // if the exported scene has skinned mesh.
     if (nMaxBoneManager::Instance()->GetNumBones() > 0)
     {
-        nString animatorName;
-        animatorName += "/";
-        animatorName += this->nohBase;
-        animatorName += "/skinanimator";
-        this->CreateSkinAnimator(animatorName, animFilename);
+        //nString animatorName;
+        //animatorName += "/";
+        //animatorName += this->nohBase;
+        //animatorName += "/skinanimator";
+        //this->CreateSkinAnimator(animatorName, animFilename);
+        nSkinAnimator* createdAnimator = NULL;
+
+        nMaxSkinAnimator skinAnimator;
+        createdAnimator = (nSkinAnimator*)skinAnimator.Export("skinanimator", animFilename.Get());
+        if (createdAnimator)
+        {
+            nKernelServer::Instance()->PopCwd();
+        }
     }
 
     // save node.
@@ -450,7 +439,7 @@ bool nMaxScene::Postprocess()
     exportNodeName += this->nohBase;
 
     nKernelServer* ks = nKernelServer::Instance();
-    //nSceneNode* exportNode = static_cast<nSceneNode*>(nKernelServer::Instance()->Lookup(exportNodeName.Get()));
+
     nTransformNode* exportNode = static_cast<nTransformNode*>(ks->Lookup(exportNodeName.Get()));
     exportNode->SetLocalBox(rootBBox);
 
@@ -469,33 +458,26 @@ bool nMaxScene::Postprocess()
     return true;
 }
 
-
-/*
-nMaxScene::CollectTopLevelNodes(INode* inode)
-{
-    if (
-    const int numChilds = inode->NumberofChilderen();
-    for (int i=0; i<numChilds; i++)
-    {
-        CollectTopLevelNodes(inode->GetChildNode(i));
-    }
-}
-*/
-
 //-----------------------------------------------------------------------------
 /**
+    Recursively export the scene. Call with the scene root.
+
+    @param inode 3dsmax node.
 */
-void nMaxScene::ExportNodes(INode* inode)
+bool nMaxScene::ExportNodes(INode* inode)
 {
     n_assert(inode);
+
+    //TODO: check any errors exist in stack. 
+    //      if there, return false then exit export.
 
     nSceneNode* createdNode = 0;
 
     // check the node that we have already exported it.
-    if (this->IsExistNode(inode))
+    if (this->IsExportedNode(inode))
     {
         // already processed this node, so just instant node.
-        return;
+        return true;
     }
 
     TimeValue animStart = nMaxInterface::Instance()->GetAnimStartTime();
@@ -569,7 +551,10 @@ void nMaxScene::ExportNodes(INode* inode)
     {
         INode* child = inode->GetChildNode(i);
 
-        ExportNodes(child);
+        if (!ExportNodes(child))
+        {
+            return false;
+        }
     }
 
     // if any created node is exist, pop cwd and set cwd to the parent.
@@ -577,6 +562,8 @@ void nMaxScene::ExportNodes(INode* inode)
     {
         nKernelServer::Instance()->PopCwd();
     }
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -638,11 +625,10 @@ nSceneNode* nMaxScene::ExportParticle()
     return createdNode;
 }
 
-void nMaxScene::AddNode(INode* inode)
-{
-}
-
-bool nMaxScene::IsExistNode(INode* inode)
+//-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxScene::IsExportedNode(INode* inode)
 {
     return false;
 }
@@ -788,11 +774,12 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
         nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
     }
 
-    int numAnimStates = this->noteTrack.GetNumStates();
+    nMaxNoteTrack& noteTrack = nMaxBoneManager::Instance()->GetNoteTrack();
+    int numAnimStates = noteTrack.GetNumStates();
 
     for (int state=0; state<numAnimStates; state++)
     {
-        const nMaxAnimState& animState = this->noteTrack.GetState(state);
+        const nMaxAnimState& animState = noteTrack.GetState(state);
 
         nAnimBuilder::Group animGroup;
 
@@ -821,8 +808,6 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
             {
                 nArray<nMaxSampleKey> tmpSampleArray = keysArray[boneIdx];
 
-                //INode* bone = nMaxBoneManager::Instance()->FindBoneNodeByIndex(boneIdx);
-
                 nAnimBuilder::Curve animCurveTrans;
                 nAnimBuilder::Curve animCurveRot;
                 nAnimBuilder::Curve animCurveScale;
@@ -839,7 +824,7 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
 
                     int key_idx = firstKey - sceneFirstKey + clip * numClipKeys + clipKey;
                     n_iclamp(key_idx, 0, tmpSampleArray.Size());
-                    //Matrix3 tm = tmpSampleArray[key_idx].tm;
+
                     nMaxSampleKey& skey = tmpSampleArray[key_idx];
 
                     keyTrans.Set(vector4(-skey.pos.x, skey.pos.z, skey.pos.y, 0.0f));
@@ -973,80 +958,4 @@ void nMaxScene::PartitionMesh()
     //        node->EndFragments();
     //    }
     //}
-}
-
-//-----------------------------------------------------------------------------
-/**
-    
-*/
-void nMaxScene::CreateSkinAnimator(const nString& animatorName, const nString& animFileName)
-{
-    //nString animatorName = "";
-
-    nSkinAnimator* skinAnimator = (nSkinAnimator*)nKernelServer::Instance()->NewNoFail("nskinanimator", animatorName.Get());
-
-    if (skinAnimator)
-    {
-        Matrix3 localTM;
-        AffineParts ap;
-
-        int numJoints = nMaxBoneManager::Instance()->GetNumBones();
-
-        skinAnimator->BeginJoints(numJoints);
-
-        for (int i=0; i<numJoints; i++)
-        {
-            const nMaxBoneManager::Bone &bone = nMaxBoneManager::Instance()->GetBone(i);
-
-            localTM = bone.localTransform;
-
-            decomp_affine(localTM, &ap);
-
-            vector3 poseTranlator (-ap.t.x, ap.t.z, ap.t.y);
-            quaternion poseRotate (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);
-            vector3 poseScale (ap.k.x, ap.k.z, ap.k.y);
-
-            skinAnimator->SetJoint(bone.id, 
-                                   bone.parentID,
-                                   poseTranlator,
-                                   poseRotate,
-                                   poseScale);
-        }
-
-        skinAnimator->EndJoints();
-
-        skinAnimator->SetChannel("time");
-        skinAnimator->SetLoopType(nSkinAnimator::Loop);
-
-        skinAnimator->SetAnim(animFileName.Get());
-        skinAnimator->SetStateChannel("charState");
-
-        int numStates = this->noteTrack.GetNumStates();
-
-        skinAnimator->BeginStates(numStates);
-
-        for (int j=0; j<numStates; j++)
-        {
-            const nMaxAnimState& state = this->noteTrack.GetState(j);
-
-            skinAnimator->SetState(j, j, state.fadeInTime);
-
-            int numClips = state.clipArray.Size();
-            skinAnimator->BeginClips(j, numClips);
-            
-            for (int k=0; k<numClips; k++)
-            {
-                const nString& weightChannelName = state.GetClip(k);
-                skinAnimator->SetClip(j, k, weightChannelName.Get());
-            }
-
-            skinAnimator->EndClips(j);
-        }
-
-        skinAnimator->EndStates();
-    }
-    else
-    {
-        n_maxlog(Error, "Failed to create nskinanimator");
-    }
 }
