@@ -9,8 +9,9 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxuvanimator.h"
 #include "scene/nshapenode.h"
-
+#include "scene/nuvanimator.h"
 #include "kernel/nfileserver2.h"
 
 //-----------------------------------------------------------------------------
@@ -120,8 +121,15 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
   
         ExportUVTransform(uvGen, shapeNode);
 
-        //TODO: add the implementations for uv animation export.
-        //ExportUVAnimator(uvGen, shapeNode);
+        nMaxUVAnimator maxAnimator;
+        nUvAnimator* animator = static_cast<nUvAnimator*>(maxAnimator.Export(texmap));
+        if (animator)
+        {
+            // add the animator to the shapenode.
+            shapeNode->AddAnimator(animator->GetName());
+
+            nKernelServer::Instance()->PopCwd();
+        }
 
         BitmapInfo bi;
         TheManager->GetImageInfo(&bi, mapFileName.Get());
@@ -207,7 +215,7 @@ void nMaxTexture::ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode)
     float rot_u    = uvGen->GetUAng(t); // radian value.
     float rot_v    = uvGen->GetVAng(t); // radian value.
 
-    int mapChannel = uvGen->GetMapChannel();
+    int mapChannel = uvGen->GetMapChannel() - 1; // TO DO: there must be a way to get the channel automatically from the shader material??
 
     // nebula needs degree value for its uv euler angle.
     float angle_u = n_rad2deg(rot_u);
@@ -216,86 +224,6 @@ void nMaxTexture::ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode)
     shapeNode->SetUvPos(mapChannel, vector2(offset_u, offset_v));
     shapeNode->SetUvEuler(mapChannel, vector2(angle_u, angle_v));
     shapeNode->SetUvScale(mapChannel, vector2(scale_u, scale_v));
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-void nMaxTexture::ExportUVAnimator(StdUVGen* uvGen, nShapeNode* shapeNode)
-{
-    n_assert(uvGen);
-    n_assert(shapeNode);
-
-    // check that given uvGen is StdUVGen type,
-    // if not, we just return.
-    StdUVGen* stdUvGen = 0;
-    if (uvGen)
-    {
-        if (uvGen->IsStdUVGen())
-            stdUvGen = (StdUVGen*)uvGen;
-        else
-        {
-            n_maxlog(Error, "");
-            return;
-        }
-    }
-
-    // there should be more than one sub-anim.
-    if (stdUvGen->NumSubs() < 1)
-    {
-        n_maxlog(Error, "");
-        return;
-    }
-
-    // get 'Animatable' from StdUVGen.
-    Animatable* subAnim = stdUvGen->SubAnim(0);
-    if (subAnim->SuperClassID() != PARAMETER_BLOCK_CLASS_ID)
-    {
-        n_maxlog(Error, "");
-        return;
-    }
-    // get param block from animatable.
-    IParamBlock* pblock = (IParamBlock*)subAnim;
-
-    // we only support these 5 type of transforms at the moment.
-    enum {
-        UvTransU = 0, // translate of u coord
-        UvTransV = 1, // translate of v coord
-        UvScaleU = 2, // scale of u
-        UvScaleV = 3, // scale of v
-        UvRotate = 6, // rotate of uv
-    };
-
-    // the number of uv transform type in 3dsmax.
-    const int MaxTransformType = 12;
-
-    for (int i=0; i<MaxTransformType; i++)
-    {
-        // get i'th controller from the param block.
-        Control* ctrl = pblock->GetController(i);
-        if (ctrl)
-        {
-            // we have controller, so a transform exist on there.
-
-            // determine transform type.
-            switch(i)
-            {
-            case UvTransU:
-                break;
-            case UvTransV:
-                break;           
-            case UvScaleU:
-                break;
-            case UvScaleV:
-                break;
-            case UvRotate:
-                break;
-            }
-
-            // determine animation type (loop or not)
-
-        }
-    }// end of for each transform type.
 }
 
 //-----------------------------------------------------------------------------
