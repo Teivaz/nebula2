@@ -49,6 +49,7 @@ beginmodule nodeviewerapp
     setdir clodterrain
     setfiles      { nodeviewerapp nodeviewer }
     setheaders    { nodeviewerapp }
+    setlibs_win32 { ode.lib }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget nclodterrain
@@ -62,7 +63,6 @@ begintarget nclododeviewer
     settype exe
     setmodules { nodeviewerapp }
     settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nlua ntoollib nclodterrain nopende ngui nvideo ndshow }
-    setlibs_win32 { oded.lib OPCODEd.lib }
 endtarget
 
 #-----------------------------------------------------------------------------
