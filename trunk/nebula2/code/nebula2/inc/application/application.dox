@@ -1,3 +1,113 @@
 /**
     @defgroup Application Application Subsystem
+
+    
+    This section of the documentation covers Nebula application system and its
+    subsystems.
+
+        - @ref what_application
+        - @ref what_states
+        - @ref handle_states
+        - @ref create_application
+        - @ref init_application
+        - @ref loop_application
+        - @ref shutdown_application
+        
+ 
+    @section what_application What is the purpose of nApplication?
+
+    nApplication is a base Nebula Device application. It is not complete in itself 
+    and you will have to derive your own class from nApplication to write your
+    application.  nApplication shows proper set up and shut down of all the core
+    nebula systems and operates on the idea of game states.
+    
+    You can think of nApplication as the core engine loop manager
+
+
+    @section what_states What is the purpose of nAppState?
+    
+    Your game can be thought of as a large state machine, where states might be
+      - play intro movie
+      - show main menu
+      - in the actual game
+      - play exit movie
+      - show credits
+     
+    and of course anything else you can think of.  
+    
+    When a state is active, nApplication will give it a chance to render its own 3D
+    environment, and 2D environment and handle any input.  
+    
+    nApplication lets you set up and switch to different states in your game.
+    
+    like nApplication, you will have to derive your own game state classes from nAppState.
+    There are a couple example states you can use included in the Application Subsystem
+      - nExitAppState
+      - nCutSceneAppState
+
+    nAppState class has serveral virtual functions for its member functions and one should 
+    appropriately override these functions in one's own derived class.
+
+      - nAppState::OnCreate()
+      - nAppState::OnStateEnter()
+      - nAppState::OnStateLeave()
+      - nAppState::OnFrame()
+      - nAppState::OnRender3D()
+      - nAppState::OnRender2D()
+    
+    The login and rendering part are separately implemented in nAppState derived class.
+
+    You should put logic part of the state to nAppState::OnFrame() overrided function and
+    rendering part to nAppState::OnRender3D() overried function if the rendering stuffs 
+    are for 3D scene or nAppState::OnRender2D() overrided function which for 2D rendering
+    stuffs like GUI rendering.
+
+
+    @section handle_states How do I handle States in an application?
+
+    nApplication supports several member functions for handling states like creation,
+    finding, transition and so on.
+
+    Call nApplication::CreateState() for the creation of the state.
+
+    @code
+    nCutSceneAppState* stateCutScene = (nCutSceneAppState*)CreateState("ncutsceneappstate", "/gamestates/cutscene");
+    @endcode
+
+    Created state can be found with calling of nApplication::FindState() function.
+
+    @code
+    nAppState* stateCutScene = FindState("/game/states/cutscene");
+    @endcode
+
+    You can change the state by calling nApplication::SetState() member function with
+    given state name for its parameter. 
+    Once the state is specified by nApplication::SetState(), current state will be changed
+    to the specified state when nApplication::DoStateTransition() is called in game loop.
+
+    @code
+    SetState("/game/states/exit");
+    @endcode
+
+
+    @section create_application How to I create an nApplication derived class?
+
+    ...
+    
+
+    @section init_application Application Initialization
+
+    ...
+
+
+    @section loop_application Application Game Loop
+
+    ...
+    
+
+    @section shutdown_application Shutting Down nApplication
+
+    ...
+
+
 */
