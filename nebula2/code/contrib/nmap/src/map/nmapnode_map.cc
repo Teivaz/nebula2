@@ -38,12 +38,13 @@ void nMapNode::ProcessMap()
     }
 
     // Initialise octree
-    if (NULL == mapQuadtree)
-        mapQuadtree = n_new MapQuadtree(refMap.get());
-    // Remove existing
-    else
+    if (!mapQuadtree)
     {
-        if (NULL != blockArray)
+        mapQuadtree = n_new MapQuadtree(refMap.get());
+    }
+    else // Remove existing
+    {
+        if (blockArray)
         {
             for (int j = 0; j < numBlocks; ++j)
             {
@@ -55,7 +56,6 @@ void nMapNode::ProcessMap()
 
                     n_delete block;
                 }
-
                 n_delete[] blockArray[j];
             }
             n_delete[] blockArray;
