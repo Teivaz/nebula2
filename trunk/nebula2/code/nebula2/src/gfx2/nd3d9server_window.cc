@@ -40,7 +40,7 @@ nD3D9Server::WindowOpen()
 
     // initialize application icon
     HICON icon;
-    icon = LoadIcon(NULL, IDI_APPLICATION);
+    icon = LoadIcon(NULL, "nebula_icon");
 
     // initialize wndclass structure and call RegisterClass()
     WNDCLASSEX wc;
