@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
+nCmdProto::nCmdProto(const char *proto_def, uint id)
 {
     char tmp[128];
     char inArgs[64];
@@ -20,7 +20,6 @@ nCmdProto::nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nC
     // copy prototype definition
     this->protoDef = proto_def;
     this->fourcc   = id;
-    this->cmdProc  = cmd_proc; // can be NULL if legacy cmd handling used
     
     // isolate and validate outargs, cmd name and in args...
     n_strncpy2(tmp, proto_def, sizeof(tmp));
@@ -110,7 +109,6 @@ nCmdProto::nCmdProto(const nCmdProto& rhs)
     this->cmdTemplate = n_new nCmd(*(rhs.cmdTemplate));
     this->cmdLocked   = false;
     this->protoDef    = rhs.protoDef;
-    this->cmdProc     = rhs.cmdProc;
 }
 
 
