@@ -78,7 +78,7 @@ public:
     /// disable the widget
     void Disable();
     /// currently enabled?
-    bool IsEnabled() const;
+    virtual bool IsEnabled() const;
     /// has focus?
     bool HasFocus() const;
     /// turn blinking on/off

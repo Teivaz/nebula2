@@ -99,7 +99,7 @@ nGuiButton::Render()
     if (this->IsShown())
     {
         nGuiBrush* brush = &this->defaultBrush;
-        if (!this->enabled)
+        if (!this->IsEnabled())
         {
             brush = &this->disabledBrush;
         }
