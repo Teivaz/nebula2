@@ -22,7 +22,7 @@ void nSpatialElement::Accept(nSpatialVisitor &visitor, int recursiondepth)
 
 // visitor processing for a basic portal.  We call accept on the underlying sector,
 // unless we've hit the bottom of the allow recursion, in which case the portal is accepted instead
-void nSpatialPortal::Accept(nVisibilityVisitor &visitor, int recursiondepth)
+void nSpatialPortalElement::Accept(nVisibilityVisitor &visitor, int recursiondepth)
 {
     if ( (recursiondepth > 0) && (m_otherside.isvalid()))
     {
@@ -35,6 +35,6 @@ void nSpatialPortal::Accept(nVisibilityVisitor &visitor, int recursiondepth)
 }
 
 // actually, portals, are ignored for spatial queries
-void nSpatialPortal::Accept(nSpatialVisitor &visitor, int recursiondepth)
+void nSpatialPortalElement::Accept(nSpatialVisitor &visitor, int recursiondepth)
 {
 }

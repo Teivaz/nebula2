@@ -22,8 +22,9 @@
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
 
-#include "spatialdb/nspatialsector.h"
 #include "spatialdb/nspatialelements.h"
+#include "spatialdb/nscriptablesector.h"
+#include "spatialdb/nvisibilityvisitor.h"
 
 //------------------------------------------------------------------------------
 class nSDBViewerApp
@@ -106,7 +107,7 @@ public:
     void DeleteTestObjects();
 
     /// mark objects with the three cameras
-    void UpdateObjectMarks();
+    void UpdateObjectMarks(nVisibilityVisitor::VisibleElements &v);
 
 private:
     /// handle general input
@@ -166,7 +167,7 @@ private:
 	enum { Frustum, OccludingFrustum, Sphere, OccludingSphere, SpatialSphere } CurrentClipState;
 
     // spatial db reference-just a sector, really
-    nRef<nSpatialSector> m_rootsector;
+    nAutoRef<nScriptableSector> m_rootsector;
 
     struct CameraDescription {
         polar2 viewerAngles;
@@ -195,24 +196,6 @@ private:
     // which camera is used as the render view? which camera is the user controlling? which camera is used for visibility?
     int m_viewcamera, m_activecamera, m_viscamera;
 
-    // data for test objects; we store a pointer back to nSpatialElement for spatial info,
-    // and an integer for storing multiple bit flags; the visibility and spatial tests
-    // enable/disable various bits
-    struct SDBTestObject {
-        nSpatialElement spatialinfo;
-        nSpatialOccluderElement occluderinfo; // optional occluder
-        nRenderContext renderc;
-        int spatialmarkflags;
-        bool usingoccluder;
-
-        SDBTestObject() : spatialinfo(), renderc(), spatialmarkflags(), usingoccluder(false) {}
-    };
-
-    void MoveObject(SDBTestObject *object, const vector3 &newpos);
-
-    // list of the current objects we're using.  The nNode data pointer points to a
-    // testobject structure
-    nArray<SDBTestObject *> m_testobjects;
 };
 
 //------------------------------------------------------------------------------

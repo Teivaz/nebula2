@@ -56,13 +56,14 @@ protected:
     Visibility queries cull away non-visible portals and use the visible
     portals to determine what other sectors are visible.
 */
-class nSpatialPortal : public nSpatialElement {
-    nSpatialPortal(nSpatialSector *parentsector, nSpatialSector *connecttosector) : 
+class nSpatialPortalElement : public nSpatialElement {
+public:
+    nSpatialPortalElement(nSpatialSector *parentsector, nSpatialSector *connecttosector) : 
         nSpatialElement(), m_parentsector(parentsector), m_otherside(connecttosector)
     {
         m_spatialtype |= N_SPATIAL_PORTAL;
     }
-    ~nSpatialPortal() {
+    ~nSpatialPortalElement() {
     }
 
     virtual void Accept(nVisibilityVisitor &visitor, int recursiondepth);
@@ -103,7 +104,7 @@ public:
     ~nSpatialHierarchyElement() {
     }
 
-    // note you will need to subclass and override the Visit() methods!
+    // note you will need to subclass and override the Accept() methods!
 
 protected:
 };
