@@ -1,0 +1,31 @@
+#===============================================================================
+#  ndotnet.bld
+#  The Nebula2 interface for any .Net compatible language.
+#
+#  Modules:
+#      ndotnet
+#  Targets:
+#      ndotnetlib
+#===============================================================================
+
+#===============================================================================
+#  ndotnet modules
+#===============================================================================
+beginmodule ndotnet
+    setdir dotnet
+    setfiles { nebuladotnet }
+    setheaders { nebuladotnet }
+endmodule
+
+#===============================================================================
+#  ndotnet Targets
+#===============================================================================
+begintarget ndotnetlib
+    annotate "Nebula DotNet library"
+    settype dll
+    setmodules { ndotnet }
+    settargetdeps {
+        nkernel
+    }
+endtarget
+#-------------------------------------------------------------------------------
