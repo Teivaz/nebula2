@@ -21,8 +21,8 @@
       -# Support unlimited type of object for bones.
          (any type of object can be bone like 3DS Max does)
     
-    nMaxBoneManager collect all bones even the bones are not actually used
-    in the animation. 
+    nMaxBoneManager collect only bones which actually used in the animation.
+
     It happens at the start time of the export to provide easy access to the
     joint indexes when it is needed.
 
@@ -60,26 +60,30 @@ public:
 
     // @name Primary methods for handling bones.
     // @{
-    void Build(INode* node);
+    bool BuildBones(INode* node);
     bool Export(const char* animFileName);
     // @}
 
+    /// Retrieves the number of bones which are actually used in the animation.
     int GetNumBones() const;
 
     static bool IsBone(INode *inode);
     static bool IsDummy(INode* inode);
     static bool IsFootStep(INode* inode);
 
+    // @name Find functions
+    // @{
     int FindBoneIDByNode(INode* inode);
-
     int FindBoneIDByName(const nString &name);
     int FindBoneIndexByNodeId(int nodeID);
     INode* FindBoneNodeByIndex(int index);
+    // @}
 
+    /// Retrieves bone by the given index.
     const Bone& GetBone(int index);
-
+    /// Retrieves bone array.
     nArray<nMaxBoneManager::Bone>& GetBoneArray();
-
+    /// Retrievs note track.
     nMaxNoteTrack& GetNoteTrack();
 
 protected:
@@ -89,23 +93,19 @@ protected:
     
     void GetBoneByModifier(const nArray<INode*>& nodeArray, nArray<INode*> &boneNodeArray);
     void GetBoneByClassID(const nArray<INode*>& nodeArray, nArray<INode*> &boneNodeArray);
-    void GetRootBones(INode* sceneRoot, const nArray<INode*> &boneNodeArray, 
-                       nArray<INode*> &rootBoneArray);
-
-    void BuildBones(int parentID, INode* node);
-    void BuildBoneArray(const nArray<INode*> &rootBoneArray);
 
     void ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os, 
                               nArray<INode*> &boneNodeArray);
     void ExtractSkinBones(INode* node, Modifier* skinMod,nArray<INode*> &boneNodeArray);
     bool IsGeomObject(INode *node);
+
+    INode* GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeArray);
+    void ReconstructBoneHierarchy(int parentID, INode* node, nArray<INode*> &boneNodeArray);
     // @}
 
 protected:
     /// array for collected bones of the scene.
     nArray<Bone>      boneArray;
-
-    typedef nArray<nMaxBoneManager::Bone> BONE_ARRAY;
 
     /// note track object which we retrieves states and clips.
     nMaxNoteTrack noteTrack;
