@@ -180,7 +180,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
 
     // export ambient color animation.
     control = nMaxInterface::Instance()->GetInterface()->GetAmbientController();
-    if (control)
+    if (control && control->NumKeys())
     {
         // the color of the light is animated.
         nVectorAnimator* animator = 0;
@@ -196,7 +196,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
         }
         else
         {
-            n_maxlog(Warning, "Warning: No animations in the ambient light %s", animator->GetName());
+            n_maxlog(Error, "Failed to create vector animator for ambient color of the light.");
             return false;
         }
     }
