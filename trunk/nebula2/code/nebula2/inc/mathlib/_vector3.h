@@ -287,6 +287,17 @@ _vector3 operator -(const _vector3& v)
 
 //------------------------------------------------------------------------------
 /**
+*/
+static 
+inline 
+_vector3 operator /(const _vector3& v0, const float s)
+{
+    float one_over_s = 1.0f/s;
+    return _vector3(v0.x*one_over_s, v0.y*one_over_s, v0.z*one_over_s);
+}
+
+//------------------------------------------------------------------------------
+/**
     Dot product.
 */
 static
