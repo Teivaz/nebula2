@@ -28,7 +28,7 @@ public:
     typedef uint Handle;
     enum
     {
-        INVALID_HANDLE = -1,
+        INVALID_HANDLE = 0xffffffff,
     };
 
     /// default constructor
@@ -136,7 +136,7 @@ nVariable::Delete()
         n_free((void*) this->stringVal);
         this->stringVal = 0;
     }
-    this->handle = -1;
+    this->handle = INVALID_HANDLE;
     this->type = NOTYPE;
 }
 
