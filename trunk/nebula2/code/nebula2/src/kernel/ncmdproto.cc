@@ -139,8 +139,14 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     {
         if (!nArg::IsVoid(c))
         {
-            n_assert(nArg::IsValidArg(c));
-            this->outArgs[this->numOutArgs++] = c;
+            if (nArg::IsValidArg(c))
+            {
+                this->outArgs[this->numOutArgs++] = c;
+            }
+            else
+            {
+                return;
+            }
         }
     }
     this->outArgs[this->numOutArgs] = 0;
@@ -170,8 +176,14 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     {
         if (!nArg::IsVoid(c))
         {
-            n_assert(nArg::IsValidArg(c));
-            this->inArgs[this->numInArgs++] = c;
+            if (nArg::IsValidArg(c))
+            {
+                this->inArgs[this->numInArgs++] = c;
+            }
+            else
+            {
+                return;
+            }
         }
     }
     this->inArgs[this->numInArgs] = 0;
