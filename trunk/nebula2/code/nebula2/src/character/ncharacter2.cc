@@ -21,6 +21,16 @@ nCharacter2::nCharacter2() :
 //------------------------------------------------------------------------------
 /**
 */
+nCharacter2::nCharacter2(const nCharacter2& src) :
+    animStateArray(0),
+    animation(0)
+{
+    *this = src;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 nCharacter2::~nCharacter2()
 {
     // empty

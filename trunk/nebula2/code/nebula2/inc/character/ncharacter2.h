@@ -9,13 +9,9 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMSTATEARRAY_H
-#include "anim2/nanimstatearray.h"
-#endif
 
-#ifndef N_CHARSKELETON_H
+#include "anim2/nanimstatearray.h"
 #include "character/ncharskeleton.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nCharacter2
@@ -23,6 +19,8 @@ class nCharacter2
 public:
     /// constructor
     nCharacter2();
+    /// copy constructor
+    nCharacter2(const nCharacter2& src);
     /// destructor
     ~nCharacter2();
     /// get the embedded character skeleton
@@ -39,6 +37,8 @@ public:
     void SetActiveState(int stateIndex, float time);
     /// get the current state index
     int GetActiveState() const;
+    /// Is `i' a valid state index?
+    bool ValidStateIndex(int i) const;
     /// evaluate the joint skeleton
     void EvaluateSkeleton(float time, nVariableContext* varContext);
 
@@ -199,6 +199,7 @@ inline
 void
 nCharacter2::SetActiveState(int stateIndex, float time)
 {
+    n_assert(ValidStateIndex(stateIndex));
     this->prevStateInfo = this->curStateInfo;
     this->curStateInfo.SetStateIndex(stateIndex);
     this->curStateInfo.SetStateStarted(time);
@@ -212,6 +213,16 @@ int
 nCharacter2::GetActiveState() const
 {
     return this->curStateInfo.GetStateIndex();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nCharacter2::ValidStateIndex(int i) const
+{
+    return 0 <= i && i < animStateArray->GetNumStates();
 }
 
 //------------------------------------------------------------------------------
