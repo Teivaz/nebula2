@@ -205,13 +205,18 @@ proc select_generator {} {
     pack .generators.f -fill both -expand 1
 
     set idx 0
+    set activeIdx -1
     foreach generator $generator_info {
         .generators.f.f.list insert end [lindex $generator 0]
-        incr idx
         if {[lindex $generator 0] eq $buildgen} {
-            # XXX: This doesn't seem to activate it in the UI!
-            .generators.f.f.list activate $idx
+            set activeIdx $idx
         }
+        incr idx
+    }
+    if {$activeIdx != -1} {
+        .generators.f.f.list selection set $activeIdx
+        .generators.f.f.list activate $activeIdx
+        .generators.f.f.list see $activeIdx
     }
 
     focus .generators
