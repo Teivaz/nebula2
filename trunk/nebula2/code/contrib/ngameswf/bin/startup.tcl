@@ -25,15 +25,15 @@ sel /sys/servers/file2
 
     if {[exists /sys/servers/gfx]} {
         if {[/sys/servers/gfx.getfeatureset] == "dx9"} {   
-            .setassign "shaders" "$home/export/shaders/2.0/"
-            puts "Shader directory: $home/export/shaders/2.0"
+            .setassign "shaders" "$home/data/shaders/2.0/"
+            puts "Shader directory: $home/data/shaders/2.0"
         } else {
-            .setassign "shaders" "$home/export/shaders/fixed/"
-            puts "Shader directory: $home/export/shaders/fixed"
+            .setassign "shaders" "$home/data/shaders/fixed/"
+            puts "Shader directory: $home/data/shaders/fixed"
         }
     } else {
-        .setassign "shaders" "$home/export/shaders/2.0/"
-        puts "Shader directory: $home/export/shaders/2.0"
+        .setassign "shaders" "$home/data/shaders/2.0/"
+        puts "Shader directory: $home/data/shaders/2.0"
     }
     #.setassign "anims"    "$proj/export/anims/"
     #.setassign "gfxlib"   "$proj/export/gfxlib/"

@@ -32,11 +32,11 @@ function start()
     -- setup assigns
     local featureSet = gGfxServer:getfeatureset()
     if ((featureSet == "dx9") or (featureSet == "dx9flt")) then
-        gFileServer:setassign('shaders', 'home:export/shaders/2.0/')
-        puts('Shader directory: ../export/shaders/2.0')
+        gFileServer:setassign('shaders', 'home:data/shaders/2.0/')
+        puts('Shader directory: ../data/shaders/2.0')
     else
-        gFileServer:setassign('shaders', 'home:export/shaders/fixed/')
-        puts('Shader directory: ../export/shaders/fixed')
+        gFileServer:setassign('shaders', 'home:data/shaders/fixed/')
+        puts('Shader directory: ../data/shaders/fixed')
     end
     gGfxServer:setdisplaymode('nLuaTest', 'windowed', 10, 10, 640, 480, false)
     gGfxServer:opendisplay()
