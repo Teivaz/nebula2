@@ -12,11 +12,8 @@ class nOpenALObj;
 
 //-----------------------------------------------------------------------------
 /**
-    @class nOpenALServer
+    @class nOpenALResource
     @ingroup NOpenALContribModule
-
-    @brief
-    @note 
 */
 //------------------------------------------------------------------------------
 class nOpenALResource : public nSoundResource
