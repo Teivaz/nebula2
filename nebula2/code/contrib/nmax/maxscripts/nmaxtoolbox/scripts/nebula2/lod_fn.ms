@@ -17,8 +17,7 @@ fn nAddLODCustomAttributes =
     (
         if obj.isSelected do
         (
-            cid = obj.classID
-            if cid[1] == 8872500 do
+            if classof obj == Dummy do
             (
                 include "nebula2/lod_ca.ms"
 
