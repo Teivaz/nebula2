@@ -255,7 +255,7 @@ nD3D9Mesh::CreateVertexDeclaration()
     n_assert(0 == this->vertexDeclaration);
     n_assert(this->refGfxServer->d3d9Device);
 
-    const int maxElements = 10;
+    const int maxElements = 11;
     D3DVERTEXELEMENT9 decl[maxElements];
     int curElement = 0;
     int curOffset  = 0;
@@ -287,6 +287,13 @@ nD3D9Mesh::CreateVertexDeclaration()
                 case Tangent:
                     decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                     decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 3 * sizeof(float);
+                    break;
+
+                case Binormal:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
+                    decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
                     decl[curElement].UsageIndex = 0;
                     curOffset += 3 * sizeof(float);
                     break;
@@ -635,6 +642,7 @@ nD3D9Mesh::LoadN3d2File()
                     if (0 == strcmp(str, "coord"))          vertexComps |= Coord;
                     else if (0 == strcmp(str, "normal"))    vertexComps |= Normal;
                     else if (0 == strcmp(str, "tangent"))   vertexComps |= Tangent;
+                    else if (0 == strcmp(str, "binormal"))  vertexComps |= Binormal;
                     else if (0 == strcmp(str, "color"))     vertexComps |= Color;
                     else if (0 == strcmp(str, "uv0"))       vertexComps |= Uv0;
                     else if (0 == strcmp(str, "uv1"))       vertexComps |= Uv1;
