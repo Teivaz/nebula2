@@ -10,7 +10,6 @@
 */
 
 #include "util/nlist.h"
-#include "kernel/nref.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nRef;
