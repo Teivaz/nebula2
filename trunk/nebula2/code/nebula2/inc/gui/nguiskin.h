@@ -115,8 +115,6 @@ public:
     static Sound StringToSound(const char* str);
     /// convert sound enum to string
     static const char* SoundToString(Sound snd);
-    /// set the skin's master volume
-    void SetSoundVolume(float);
 
 private:
     /// initialize a brush
