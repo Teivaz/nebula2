@@ -345,17 +345,17 @@ nTransformAnimator::SaveCmds(nPersistServer* ps)
         numKeys = this->GetNumEulerKeys();
         if (numKeys > 0)
         {
-        for (curKey = 0; curKey < numKeys; curKey++)
-        {
-            float time;
-            vector3 val;
-            cmd = ps->GetCmd(this, 'ADEK');
-            this->GetEulerKeyAt(curKey, time, val);
-            cmd->In()->SetF(time);
-            cmd->In()->SetF(n_rad2deg(val.x));
-            cmd->In()->SetF(n_rad2deg(val.y));
-            cmd->In()->SetF(n_rad2deg(val.z));
-            ps->PutCmd(cmd);
+            for (curKey = 0; curKey < numKeys; curKey++)
+            {
+                float time;
+                vector3 val;
+                cmd = ps->GetCmd(this, 'ADEK');
+                this->GetEulerKeyAt(curKey, time, val);
+                cmd->In()->SetF(time);
+                cmd->In()->SetF(n_rad2deg(val.x));
+                cmd->In()->SetF(n_rad2deg(val.y));
+                cmd->In()->SetF(n_rad2deg(val.z));
+                ps->PutCmd(cmd);
             }
         }
         else
