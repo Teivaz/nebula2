@@ -3,7 +3,6 @@
 #  The ngfx2server base classes
 #
 #  Modules:
-#      nntxfile
 #      nshader2
 #      ngfxserver2
 #      nmesh2
@@ -13,10 +12,10 @@
 #===============================================================================
 #  gfx2 modules
 #===============================================================================
-beginmodule nntxfile
+beginmodule nfont2
     setdir gfx2
-    setfiles { nntxfile }
-    setheaders { nntxfile }
+    setfiles { nfont2_main }
+    setheaders { nfont2 }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nshader2
@@ -27,8 +26,11 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule ngfxserver2
     setdir gfx2
-    setfiles { ngfxserver2_main ngfxserver2_cmds nwireframerenderer }
-    setheaders { ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh nprimitivetypes nwireframerenderer }
+    setfiles { ngfxserver2_main ngfxserver2_cmds }
+    setheaders {
+        ngfxserver2 ncamera2 ndisplaymode2 ndynamicmesh
+        nprimitivetypes nfontdesc
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmesh2

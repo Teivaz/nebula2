@@ -41,8 +41,25 @@ beginmodule nanimbuilder
     setfiles { nanimbuilder }
     setheaders { nanimbuilder }
 endmodule
-
-
+#-------------------------------------------------------------------------------
+beginmodule nresourcecompiler
+    setdir tools
+    setfiles { nresourcecompiler }
+    setheaders { nresourcecompiler }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule napplauncher
+    setdir tools
+    setfiles { napplauncher }
+    setheaders { napplauncher }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nviewerapp
+    setdir tools
+    setfiles { nviewerapp }
+    setheaders { nviewerapp }
+endmodule
+#-------------------------------------------------------------------------------
 
 #===============================================================================
 #  toolchain Targets
@@ -51,7 +68,8 @@ begintarget ntoollib
     annotate "Lib that holds the core tool functionality"
     settype lib
     setmodules {
-        nmeshbuilder nanimbuilder
+        nmeshbuilder nanimbuilder nresourcecompiler
+        napplauncher nviewerapp
     }
 endtarget
 #-------------------------------------------------------------------------------
