@@ -29,6 +29,10 @@ public:
     int GetNumStates() const;
     /// get an anim state object at given index
     nAnimState& GetStateAt(int index) const;
+    /// find state by name
+    nAnimState* FindState(const nString& n) const;
+    /// find a state index by name
+    int FindStateIndex(const nString& n) const;
 
 private:
     nArray<nAnimState> stateArray;
@@ -95,6 +99,47 @@ nAnimState&
 nAnimStateArray::GetStateAt(int index) const
 {
     return this->stateArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimState*
+nAnimStateArray::FindState(const nString& n) const
+{
+    int i;
+    int num = this->stateArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        nAnimState& state = this->stateArray[i];
+        if (state.GetName() == n)
+        {
+            return &state;
+        }
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finds a state index by name. Returns -1 if state not found.
+*/
+inline
+int
+nAnimStateArray::FindStateIndex(const nString& n) const
+{
+    int i;
+    int num = this->stateArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        nAnimState& state = this->stateArray[i];
+        if (state.GetName() == n)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 //------------------------------------------------------------------------------
