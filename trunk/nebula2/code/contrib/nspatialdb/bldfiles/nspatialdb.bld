@@ -14,7 +14,7 @@ beginmodule nspatialsector
     }
     setheaders {
         nspatialsector nspatialelements nvisitorbase
-        nplaneclipper nfrustumclipper nsphereclipper nspatialelements
+        nplaneclipper nfrustumclipper nsphereclipper 
         nspatiallisthierarchy nspatialaabbtree
         nvisiblefrustumvisitor nvisiblespherevisitor
         ngeometryocclusionvisitor noccludedfrustumvisitor
