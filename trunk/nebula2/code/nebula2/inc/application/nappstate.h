@@ -9,8 +9,7 @@
     application behaviour and rendering when they are active.
 
     State behaviour is implemented by deriving subclasses from nAppState.
-    Add state objects to nApplication before calling nApplication::Open().
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -32,7 +31,7 @@ public:
     virtual void OnStateEnter(const nString& prevState);
     /// called when state is becoming inactive
     virtual void OnStateLeave(const nString& nextState);
-    /// called on state to perform state logic 
+    /// called on state to perform state logic
     virtual void OnFrame();
     /// called on state to perform 3d rendering
     virtual void OnRender3D();
