@@ -247,34 +247,43 @@ nFileServer2::InitHomeAssign(void)
 #else    
     char buf[N_MAXPATH];
     #if __WIN32__
-        // Win32: try to find the nkernel.dll module handle's filename
+        // Win32: Check for the NEBULADIR environment variable first,
+        // then try to find the nkernel.dll module handle's filename
         // and cut off the last 2 directories
-        HMODULE hmod = GetModuleHandle("nkernel.dll");
-        DWORD res = GetModuleFileName(hmod,buf,sizeof(buf));
-        if (res == 0) 
+        char* s = getenv("NEBULADIR");
+        if (s)
         {
-            n_printf("nFileServer::initHomeAssign(): GetModuleFileName() failed!\n");
+            n_strncpy2(buf,s,sizeof(buf));
         }
+        else
+        {
+            HMODULE hmod = GetModuleHandle("nkernel.dll");
+            DWORD res = GetModuleFileName(hmod,buf,sizeof(buf));
+            if (res == 0) 
+            {
+                n_printf("nFileServer::initHomeAssign(): GetModuleFileName() failed!\n");
+            }
 
-        // "x\y\bin\win32\xxx.exe" -> "x\y\"
-        int i;
-        char c;
-        char *p;
-        for (i=0; i<3; i++) 
-        {
-            p = strrchr(buf,'\\');
-            n_assert(p);
-            p[0] = 0;
-        }
+            // "x\y\bin\win32\xxx.exe" -> "x\y\"
+            int i;
+            char c;
+            char *p;
+            for (i=0; i<3; i++) 
+            {
+                p = strrchr(buf,'\\');
+                n_assert(p);
+                p[0] = 0;
+            }
     
-        // convert all backslashes to slashes
-        p = buf;
-        while ((c = *p)) 
-        {
-            if (c == '\\') *p = '/';
-            p++;
+            // convert all backslashes to slashes
+            p = buf;
+            while ((c = *p)) 
+            {
+                if (c == '\\') *p = '/';
+                p++;
+            }
+            strcat(buf,"/");
         }
-        strcat(buf,"/");
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
         // otherwise the current working directory will be used
