@@ -29,7 +29,7 @@ nMeshBundle::Clear()
     int i;
     for (i = 0; i < this->meshBundleArray.Size(); i++)
     {
-        delete this->meshBundleArray[i];
+        n_delete(this->meshBundleArray[i]);
         this->meshBundleArray[i] = 0;
     }
     this->meshBundleArray.Clear();
@@ -50,7 +50,7 @@ nMeshBundle::BuildMeshBundle(const nMeshBuilder& srcMesh, int maxVertices)
     indexMap.SetFixedSize(srcMesh.GetNumVertices());
     indexMap.Fill(0, indexMap.Size(), -1);
 
-    nMeshBuilder* curMeshBuilder = new nMeshBuilder;
+    nMeshBuilder* curMeshBuilder = n_new(nMeshBuilder);
     int triIndex;
     int numTris = srcMesh.GetNumTriangles();
     for (triIndex = 0; triIndex < numTris; triIndex++)
@@ -59,7 +59,7 @@ nMeshBundle::BuildMeshBundle(const nMeshBuilder& srcMesh, int maxVertices)
         if (curMeshBuilder->GetNumVertices() >= (maxVertices - 3))
         {
             this->meshBundleArray.Append(curMeshBuilder);
-            curMeshBuilder = new nMeshBuilder;
+            curMeshBuilder = n_new(nMeshBuilder);
             indexMap.Fill(0, indexMap.Size(), -1);
         }
 

@@ -2,14 +2,15 @@
 #define N_WINMAINCMDLINEARGS_H
 //------------------------------------------------------------------------------
 /**
+    @class nWinMainCmdLineArgs
+    @ingroup Tools
+
     Specialized nCmdLine subclass which accepts a cmd line string
     as provided by the Win32 WinMain function.
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_CMDLINEARGS_H
 #include "tools/ncmdlineargs.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nWinMainCmdLineArgs : public nCmdLineArgs

@@ -2,6 +2,9 @@
 #define N_MESHBUNDLE_H
 //------------------------------------------------------------------------------
 /**
+    @class nMeshBundle
+    @ingroup Tools
+
     A mesh bundle splits a single input nMeshBuilder object into several
     internal mesh builder objects based on common attributes and maximum
     number of vertices in a single meshbuilder object.

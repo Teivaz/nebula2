@@ -2,6 +2,9 @@
 #define N_TGAFILE_H
 //------------------------------------------------------------------------------
 /**
+    @class nTgaFile
+    @ingroup Tools
+
     A simple tga file reader which can read subsegments of very large 
     files.  DevIL cannot read subchunks, that's why this class exists. Can 
     only read uncompressed 32 bit TGA files.

@@ -251,8 +251,6 @@ public:
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
     /// load from wavefront object file
     bool LoadObj(nFileServer2* fileServer, const char* filename);
-    /// load OLD n3d2 file (saved before Dec-2003)
-    bool LoadOldN3d2(nFileServer2* fileServer, const char* filename);
 
     /// binary save to open file handle
     bool SaveNvx2(nFile* file);

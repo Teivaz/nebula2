@@ -2,6 +2,9 @@
 #define N_VIEWER_H
 //------------------------------------------------------------------------------
 /**
+    @class nViewer
+    @ingroup Tools
+
     A simple viewer app class.
     
     (C) 2003 RadonLabs GmbH
@@ -23,6 +26,8 @@
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
 #include "shadow/nshadowserver.h"
+#include "network/nhttpserver.h"
+#include "misc/nprefserver.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -36,7 +41,7 @@ public:
     };
 
     /// constructor
-    nViewerApp(nKernelServer* ks);
+    nViewerApp();
     /// destructor
     virtual ~nViewerApp();
     /// set display mode
@@ -55,6 +60,11 @@ public:
     void SetControlMode(ControlMode c);
     /// get control mode
     ControlMode GetControlMode() const;
+    /// set the gfx server class to use
+    void SetGfxServerClass(const char* cl);
+    /// get the gfx server class
+    const char* GetGfxServerClass() const;
+    /// set scene server class to use
     /// set scene file name
     void SetSceneFile(const char* name);
     /// get scene file name
@@ -88,17 +98,23 @@ public:
     /// get overlay enabled status
     bool GetOverlayEnabled() const;
     /// open the viewer
-    bool Open();
+    virtual bool Open();
     /// close the viewer
-    void Close();
+    virtual void Close();
     /// run the viewer, returns when app should exit
-    void Run();
+    virtual void Run();
+    /// called before nSceneServer::BeginScene()
+    virtual void OnFrameBefore();
+    /// called after nSceneServer::RenderScene()
+    virtual void OnFrameRendered();
     /// return true if currently open
     bool IsOpen() const;
 
-private:
+protected:
     /// handle general input
     void HandleInput(float frameTime);
+    /// define the input mapping
+    void DefineInputMapping();
     /// handle input in Maya control mode
     void HandleInputMaya(float frameTime);
     /// handle input in Fly control mode
@@ -107,6 +123,8 @@ private:
     void TransferGlobalVariables();
     /// initialize the overlay GUI
     void InitOverlayGui();
+    /// validate the root node (and render context), if necessary
+    void ValidateRootNode();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -121,16 +139,19 @@ private:
     nRef<nVideoServer> refVideoServer;
     nRef<nGuiServer> refGuiServer;
     nRef<nShadowServer> refShadowServer;
+    nRef<nHttpServer> refHttpServer;
+    nRef<nPrefServer> refPrefServer;
 
     nRef<nTransformNode> refRootNode;
 
     nString sceneFilename;
     nString projDir;
-    nString sceneserverClass;
-    nString scriptserverClass;
+    nString sceneServerClass;
+    nString scriptServerClass;
     nString startupScript;
     nString stageScript;
     nString inputScript;
+    nString gfxServerClass;
     bool isOpen;
     bool isOverlayEnabled;
     nDisplayMode2 displayMode;
@@ -288,7 +309,7 @@ inline
 void
 nViewerApp::SetSceneServerClass(const char* type)
 {
-    this->sceneserverClass = type;
+    this->sceneServerClass = type;
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +319,7 @@ inline
 const char*
 nViewerApp::GetSceneServerClass() const
 {
-    return this->sceneserverClass.IsEmpty() ? 0 : this->sceneserverClass.Get();
+    return this->sceneServerClass.IsEmpty() ? 0 : this->sceneServerClass.Get();
 }
 
 //------------------------------------------------------------------------------
@@ -308,7 +329,7 @@ inline
 void
 nViewerApp::SetScriptServerClass(const char* type)
 {
-    this->scriptserverClass = type;
+    this->scriptServerClass = type;
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +339,7 @@ inline
 const char*
 nViewerApp::GetScriptServerClass() const
 {
-    return this->scriptserverClass.IsEmpty() ? 0 : this->scriptserverClass.Get();
+    return this->scriptServerClass.IsEmpty() ? 0 : this->scriptServerClass.Get();
 }
 
 //------------------------------------------------------------------------------
@@ -379,6 +400,28 @@ const char*
 nViewerApp::GetInputScript() const
 {
     return this->inputScript.IsEmpty() ? 0 : this->inputScript.Get();
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetGfxServerClass(const char* cl)
+{
+    n_assert(cl);
+    this->gfxServerClass = cl;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nViewerApp::GetGfxServerClass() const
+{
+    return this->gfxServerClass.Get();
 }
 
 //------------------------------------------------------------------------------

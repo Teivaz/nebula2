@@ -13,6 +13,8 @@
 #include "tools/nresourcecompiler.h"
 #include "kernel/nscriptserver.h"
 
+nNebulaUsePackage(nnebula);
+
 //------------------------------------------------------------------------------
 /**
     Open text file with one Nebula2 object name per line, and read it into
@@ -98,6 +100,8 @@ main(int argc, const char** argv)
 
     // create and initialize Nebula environment
     nKernelServer kernelServer;
+    kernelServer.AddPackage(nnebula);
+
     nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerClassArg, "/sys/servers/script");
     kernelServer.New("nvariableserver", "/sys/servers/variable");
     kernelServer.New("nanimationserver", "/sys/servers/anim");

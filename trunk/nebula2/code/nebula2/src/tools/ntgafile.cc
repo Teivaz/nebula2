@@ -119,7 +119,7 @@ nTgaFile::OpenWrite(const char* filename)
     this->dataOffset = 18;
 
     // write data (all violet pixels)
-    uint* row = new uint[this->width];
+    uint* row = n_new_array(uint, this->width);
     int i;
     for (i = 0; i < this->width; i++)
     {
@@ -129,7 +129,7 @@ nTgaFile::OpenWrite(const char* filename)
     {
         file->Write(row, this->width * sizeof(uint));
     }
-    delete[] row; 
+    n_delete_array(row); 
     return true;
 }
 

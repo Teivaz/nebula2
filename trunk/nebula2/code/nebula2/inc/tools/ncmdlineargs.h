@@ -2,13 +2,16 @@
 #define N_CMDLINEARGS_H
 //------------------------------------------------------------------------------
 /**
+    @class nCmdLineArgs
+    @ingroup Tools
+
     Helper class to extract arguments from a ANSI-C command line.
 
     (C) 2003 RadonLabs GmbH
 */
-#include "stdlib.h"
-#include "math.h"
-#include "string.h"
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 //------------------------------------------------------------------------------
 class nCmdLineArgs

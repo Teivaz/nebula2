@@ -93,11 +93,11 @@ nBspBuilder::BspNode::~BspNode()
 {
     if (this->negChild)
     {
-        delete this->negChild;
+        n_delete(this->negChild);
     }
     if (this->posChild)
     {
-        delete this->posChild;
+        n_delete(this->posChild);
     }
 }
 
