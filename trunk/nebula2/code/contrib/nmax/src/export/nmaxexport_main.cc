@@ -279,7 +279,7 @@ nMaxExport::~nMaxExport()
     if (this->varServer)
     {
         this->varServer->Release();
-        this->varserver = 0;
+        this->varServer = 0;
     }
 
     if (this->task)
