@@ -60,6 +60,9 @@ class nOpendeTriMesh : public nHashNode
         
     private:
     
+        bool LoadN3d2( nFileServer2*, const char* fname, int group );
+        bool LoadNvx2( nFileServer2*, const char* fname, int group );
+    
         int refCount;
 
         int numVertices;
