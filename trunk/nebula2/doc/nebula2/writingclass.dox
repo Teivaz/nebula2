@@ -37,7 +37,7 @@
 
     #nNebulaScriptClass is a macro that sets up the class to be used for
     scripting and in the NOH. There are a few different versions of this macro
-    (see ndefclass.h), the most commonly used are:
+    (see ndefclass.h and @ref NebulaObjectSystem), the most commonly used are:
 
      - #nNebulaClass:
        Use for classes that don't have any script commands.
@@ -150,8 +150,8 @@
 
     We also provide documentation for each and every script method that fits
     into the auto-generated documentation.  This requires some special
-    comments before the implementation of the static function.  @see
-    NebulaTwoScriptInterfaceForDevelopers for some details on how to
+    comments before the implementation of the static function.  See
+    @ref NebulaTwoScriptInterfaceForDevelopers for some details on how to
     format this documentation.
 
     Next, we make @c nMyClass support object persistence.
