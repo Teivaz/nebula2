@@ -11,6 +11,7 @@
 */
 #include "scene/nanimator.h"
 #include "gfx2/nshader2.h"
+#include "util/nipolkeyarray.h"
 
 //------------------------------------------------------------------------------
 class nIntAnimator : public nAnimator
@@ -38,46 +39,10 @@ public:
     /// get key at
     void GetKeyAt(int index, float& time, int& key) const;
 
-protected:
-    /// a key class with a time and a int key value
-    class Key
-    {
-    public:
-        /// default constructor
-        Key();
-        /// constructor
-        Key(float t, const int& v);
-
-        float time;
-        int value;
-    };
-    /// get an interpolated key
-    bool SampleKey(float time, const nArray<Key>& keyArray, int& result);
-
 private:
     nShaderState::Param vectorParameter;
-    nArray<Key> keyArray;
+    nIpolKeyArray<int> keyArray;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nIntAnimator::Key::Key()
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nIntAnimator::Key::Key(float t, const int& i) :
-    time(t),
-    value(i)
-{
-    // empty
-}
 
 //------------------------------------------------------------------------------
 #endif
