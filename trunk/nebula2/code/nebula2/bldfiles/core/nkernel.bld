@@ -20,7 +20,7 @@
 #===============================================================================
 
 #===============================================================================
-#  mathlib and utilities
+#  mathlib
 #===============================================================================
 #-------------------------------------------------------------------------------
 beginmodule nmath
@@ -39,6 +39,42 @@ beginmodule nmath
     }
 endmodule
 
+#===============================================================================
+#  signals
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nsignal
+    setdir signals
+    setheaders {
+        nsignal
+        nsignalbinding
+        nsignalbindingcmdproto
+        nsignalbindingset
+        nsignalemitter
+        nsignalregistry
+        nsignalserver
+        nsignalnative
+        nsignalbindingnative
+    }
+    setfiles {
+        nsignal
+        nsignalbindingcmdproto
+        nsignalbindingset
+        nsignalemitter
+        nsignalemitter_cmds
+        nsignalregistry
+        nsignalserver
+    }
+endmodule
+beginmodule lokiheaders
+    setdir "loki"
+    setheaders {
+        TypeManip.h Typelist.h static_check.h
+    }
+endmodule
+#===============================================================================
+#  utilities
+#===============================================================================
 #-------------------------------------------------------------------------------
 beginmodule nutil
     setdir util
@@ -163,7 +199,7 @@ beginmodule nkernel
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
         nrefcounted nguid nshell32wrapper ncrc nreferenced
-        ndefclass
+        ndefclass ncmdprotonativecpp ncmdprototraits
     }
     setlibs_linux {
         uuid
@@ -190,6 +226,8 @@ begintarget nkernel
         nipc
         nmath
         nutil
+        nsignal
+        lokiheaders
     }
 endtarget
 #-------------------------------------------------------------------------------

@@ -31,7 +31,7 @@
     Examples of prototype descriptions:
 
     @verbatim
-      v_rotate_fff    - name is 'rotate', no output args, 3 float input args, 
+      v_rotate_fff    - name is 'rotate', no output args, 3 float input args,
       v_set_si        - name is 'set', no output args, one string and one int input arg
       fff_getrotate_v - 3 float output args, no input arg, name is 'getrotate'
     @endverbatim
@@ -42,10 +42,24 @@
 #include "util/nhashnode.h"
 
 //------------------------------------------------------------------------------
+struct ProtoDefInfo
+{
+    ProtoDefInfo(const char * proto_def);
+
+    char outArgs[64];
+    char inArgs[64];
+    char name[128];
+    uchar numOutArgs;
+    uchar numInArgs;
+    bool valid;
+};
+
+//------------------------------------------------------------------------------
 class nCmd;
-class nCmdProto : public nHashNode 
+class nCmdProto : public nHashNode
 {
 public:
+
     /// constructor
     nCmdProto(const char *proto_def, nFourCC id);
     /// copy constructor
@@ -70,8 +84,6 @@ public:
     void RelCmd(nCmd* cmd);
 
 private:
-    /// check if the provided data type character is a valid argument
-    bool IsValidArg(char c);
 
     nFourCC fourcc;
     uchar numInArgs;
@@ -133,28 +145,5 @@ nCmdProto::GetProtoDef() const
 }
 
 //------------------------------------------------------------------------------
-/**
-*/
-inline
-bool 
-nCmdProto::IsValidArg(char c)
-{
-    switch (c)
-    {
-        case 'i':
-        case 'f':
-        case 's':
-        case 'v':
-        case 'b':
-        case 'o':
-        case 'l':
-            return true;
-        default:
-            return false;
-    }
-}
+#endif
 
-//------------------------------------------------------------------------------
-#endif    
-    
-    

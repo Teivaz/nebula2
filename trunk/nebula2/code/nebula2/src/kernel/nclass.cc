@@ -21,6 +21,7 @@ nClass::nClass(const char *name,
                nKernelServer *kserv,
                bool (*initFunc)(nClass *, nKernelServer *),
                void *(*newFunc)(void)) :
+    nSignalRegistry(),
     nHashNode(name),
     kernelServer(kserv),
     superClass(0),
@@ -120,6 +121,18 @@ nClass::BeginCmds(void)
 
 //--------------------------------------------------------------------
 /**
+    @param  cmdProto    pointer to nCmdProto object to be added
+*/
+void
+nClass::AddCmd(nCmdProto * cmdProto)
+{
+    n_assert(cmdProto);
+    n_assert(this->cmdList);
+    this->cmdList->AddTail(cmdProto);
+}
+
+//--------------------------------------------------------------------
+/**
     @param  proto_def   the command's prototype definition
     @param  id          the command's unique fourcc code
     @param  cmd_proc    the command's stub function
@@ -133,7 +146,7 @@ nClass::AddCmd(const char *proto_def, nFourCC id, void (*cmd_proc)(void *, nCmd 
     n_assert(this->cmdList);
     nCmdProtoNative *cp = n_new(nCmdProtoNative(proto_def, id, cmd_proc));
     n_assert(cp);
-    this->cmdList->AddTail(cp);
+    this->AddCmd(cp);
 }
 
 //--------------------------------------------------------------------

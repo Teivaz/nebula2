@@ -38,6 +38,11 @@ public:
     /// rewind internal next args
     void Rewind();
 
+    /// Set input arguments in nCmd from a C variable argument list
+    void CopyInArgsFrom(va_list & marker);
+    /// Copy input arguments from another nCmd
+    void CopyInArgsFrom(nCmd * cmd);
+
     int GetInArgIndex() const;
 
 private:
@@ -151,6 +156,41 @@ nCmd::Out()
 {
     n_assert(this->outArgIndex < this->GetNumOutArgs());
     return &(this->args[this->outArgIndex++]);
+}
+
+
+//------------------------------------------------------------------------------
+inline
+void 
+nCmd::CopyInArgsFrom(va_list & marker)
+{
+    for(int i = 0;i < this->GetNumInArgs();i++)
+    {
+        nArg * arg = this->In();
+        arg->Copy(marker);
+    }
+}
+
+//------------------------------------------------------------------------------
+inline
+void
+nCmd::CopyInArgsFrom(nCmd * cmd)
+{
+    n_assert(cmd);
+    n_assert(cmd->GetNumInArgs() == this->cmdProto->GetNumInArgs());
+
+    // rewind both commands
+    cmd->Rewind();
+    this->Rewind();
+
+    // copy the arguments from the cmd provided 
+    for(int i = 0;i < cmd->GetNumInArgs();i++)
+    {
+        nArg * argSrc = cmd->In();
+        nArg * argDst = this->In();
+        n_assert(argSrc->GetType() == argDst->GetType());
+        argDst->Copy(*argDst);
+    }
 }
 
 //------------------------------------------------------------------------------
