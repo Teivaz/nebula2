@@ -33,12 +33,12 @@ nLanguageWrapper::OpenClass(nClass * cl)
 {
     if (NULL != cl->GetSuperClass())
     {
-        n_printf("class %s : %s {\n", cl->GetName(),
-                 cl->GetSuperClass()->GetName());
+        n_printf("class %s : %s {\n", cl->GetProperName(),
+                 cl->GetSuperClass()->GetProperName());
     }
     else
     {
-        n_printf("class %s {\n", cl->GetName());
+        n_printf("class %s {\n", cl->GetProperName());
     }
 }
 
