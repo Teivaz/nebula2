@@ -18,6 +18,9 @@ static void n_getvector(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nabstractshadernode
+
+    @cppclass
+    nAbstractShaderNode
     
     @superclass
     ntransformnode

@@ -12,6 +12,9 @@ static void n_setorthogonal(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nspotlightnode
+
+    @cppclass
+    nSpotLightNode
     
     @superclass
     nlightnode

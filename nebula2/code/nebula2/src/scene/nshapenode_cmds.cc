@@ -16,6 +16,9 @@ static void n_getmeshresourceloader(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nshapenode
+
+    @cppclass
+    nShapeNode
     
     @superclass
     nmaterialnode

@@ -16,8 +16,13 @@ static void n_setstringvariable(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nvariableserver    
+
+    @cppclass
+    nVariableServer
+
     @superclass
     nroot
+
     @classinfo
     Manages variable declarations. A variable declaration consists
     of a variable name and an associated variable fourcc code.

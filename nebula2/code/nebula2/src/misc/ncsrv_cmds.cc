@@ -17,6 +17,9 @@ static void n_unwatch(void *, nCmd *);
     @scriptclass
     nconserver
 
+    @cppclass
+    nConServer
+
     @superclass
     nroot
 

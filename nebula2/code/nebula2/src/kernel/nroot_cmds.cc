@@ -36,6 +36,9 @@ static void n_gettreesize(void*, nCmd*);
     @scriptclass
     nroot
 
+    @cppclass
+    nRoot
+
     @superclass
     ---
 

@@ -14,6 +14,9 @@ static void n_createfilenode(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nfileserver2
+
+    @cppclass
+    nFileServer2
     
     @superclass
     nroot

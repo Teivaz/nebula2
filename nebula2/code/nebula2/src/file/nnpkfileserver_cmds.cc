@@ -11,6 +11,9 @@ static void n_parsedirectory(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nnpkfileserver
+
+    @cppclass
+    nNpkFileServer
     
     @superclass
     nfileserver2

@@ -28,6 +28,9 @@ static void n_getscale(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ntransformnode
+
+    @cppclass
+    nTransformNode
     
     @superclass
     nscenenode

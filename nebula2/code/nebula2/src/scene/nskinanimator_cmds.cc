@@ -29,6 +29,9 @@ static void n_getclipat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nskinanimator
+
+    @cppclass
+    nSkinAnimator
     
     @superclass
     nanimator

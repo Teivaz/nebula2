@@ -27,6 +27,9 @@ static void n_getmouseinvert(void*, nCmd*);
     @scriptclass
     ninputserver
 
+    @cppclass
+    nInputServer
+
     @superclass
     nroot
 

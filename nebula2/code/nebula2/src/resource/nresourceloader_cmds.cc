@@ -9,6 +9,9 @@
 /**
     @scriptclass
     nresourceloader
+
+    @cppclass
+    nResourceLoader
     
     @superclass
     nroot

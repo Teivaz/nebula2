@@ -19,8 +19,13 @@ static void n_getscalekeyat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ntransformanimator
+
+    @cppclass
+    nTransformAnimator
+
     @superclass
     nanimator
+
     @classinfo
     Animate attributes of a transform node.
 */

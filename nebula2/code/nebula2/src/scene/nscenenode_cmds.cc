@@ -18,6 +18,9 @@ static void n_getrenderpri(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nscenenode
+
+    @cppclass
+    nSceneNode
     
     @superclass
     nroot

@@ -14,6 +14,9 @@ static void n_getlooptype(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nanimator
+
+    @cppclass
+    nAnimator
     
     @superclass
     nscenenode
