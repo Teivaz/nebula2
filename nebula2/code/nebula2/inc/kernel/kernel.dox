@@ -1,3 +1,78 @@
 /**
     @defgroup NebulaKernel Nebula Kernel
+
+    <h2> A Folding Object System </h2>
+
+    @par What a folding object is? 
+
+    You can see <b>$parser</b> and <b>$class</b> tag in <i>torus.n2</i> 
+    script file.
+
+    @code
+    # ---
+    # $parser:ntclserver$ $class:ntransformnode$
+    # ---
+
+    ...
+    @endcode
+
+    This code means that <b>'Create nTransformNode object  for it's name 
+    with filename of script file'</b> by nTclServer. Other object which 
+    are created by next to be a child node of a folding object. A folding 
+    object at this is a nTransformNode object and the object name of it 
+    is script filename.
+
+    So it's identical to this
+
+    @code
+    new ntransformnode torus
+        sel torus
+        ...
+    
+        new ntransformanimator rot
+            sel rot
+            ...
+            sel ..
+
+        new nshapenode shape0
+            sel shape0
+            sel ..
+        sel ..
+    @endcode
+
+    @par How to use a folding object?
+
+    There's a easy way to load whole resources using folding object system.
+
+    Consider that you have a directory for a character. The directory consists 
+    of a mesh file(<i>.n3d2</i>), some animation files (<i>.nanim2</i>), 
+    texture files(<i>.dds</i> and script file (<i>.n2</i>)
+    
+    Let's consider the directory like below;
+
+@verbatim
+    /mycharacter.n2 - the directory which contains resource files 
+        /_main.n2 - script file
+        /body.dds  - texture for character 
+        /walk.nanim2  - animation data file 
+        /body.n3d2 - mesh data file 
+@endverbatim
+
+    And you can load all resources in the directory with given directory name;
+
+    @code
+    ...
+    kernelServer->PushCwd(this->refRootNode.get());
+    kernelServer->Load("mycharacter.n2"); // just pass directory name.
+    kernelServer->PopCwd();
+    ...
+    @endcode
+
+    If you use folding object system, it is good to use '.n2' for a postfix 
+    of the directory name but it's not crucial. But the script file which 
+    exist in the directory should be <b>'_main.n2'</b> for it's name. 
+    nKernelServer lookup <i>_main.n2</i> when loading object as a foding 
+    object.
+    
+
 */
