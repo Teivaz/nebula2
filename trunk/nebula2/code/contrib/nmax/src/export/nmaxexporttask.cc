@@ -49,30 +49,67 @@ nMaxExportTask::ReadConfig()
     }
 
     char hd[512];
+	nString s;
 
     file->GetS(hd, 512);
-    this->homeDir = hd;
+	s = hd; s.Strip("\r"); 
+    this->homeDir = s.Get();
 
-    file->GetS(hd, 512); this->animsAssign = hd;
-    file->GetS(hd, 512); this->animsPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->animsAssign = s.Get();
 
-    file->GetS(hd, 512); this->gfxlibAssign = hd;
-    file->GetS(hd, 512); this->gfxlibPath = hd;
+    file->GetS(hd, 512);
+	s = hd; s.Strip("\r");
+	this->animsPath = s.Get();
 
-    file->GetS(hd, 512); this->guiAssign = hd;
-    file->GetS(hd, 512); this->guiPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->gfxlibAssign = s.Get();
 
-    file->GetS(hd, 512); this->lightsAssign = hd;
-    file->GetS(hd, 512); this->lightsPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->gfxlibPath = s.Get();
 
-    file->GetS(hd, 512); this->meshesAssign = hd;
-    file->GetS(hd, 512); this->meshesPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->guiAssign = s.Get();
+    
+	file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->guiPath = s.Get();
 
-    file->GetS(hd, 512); this->shadersAssign = hd;
-    file->GetS(hd, 512); this->shadersPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->lightsAssign = s.Get();
 
-    file->GetS(hd, 512); this->texturesAssign = hd;
-    file->GetS(hd, 512); this->texturesPath = hd;
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->lightsPath = s.Get();
+
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->meshesAssign = s.Get();
+
+    file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->meshesPath = s.Get();
+
+	file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->shadersAssign = s.Get();
+
+	file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->shadersPath = s.Get();
+
+	file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->texturesAssign = s.Get();
+
+	file->GetS(hd, 512); 
+	s = hd; s.Strip("\r");
+	this->texturesPath = s.Get();
 
     file->Close();
 	return true;
