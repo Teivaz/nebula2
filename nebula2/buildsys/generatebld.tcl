@@ -277,10 +277,15 @@ proc fixtargets { } {
         foreach bit $tar($i,mergedmods) {
             set ext [findmodbyname $bit]
             addtolist tar($i,libs_win32)  $mod($ext,libs_win32)
+            addtolist tar($i,libs_win32_debug)  $mod($ext,libs_win32_debug)
+            addtolist tar($i,libs_win32_release)  $mod($ext,libs_win32_release)
             addtolist tar($i,libs_linux)  $mod($ext,libs_linux)
             addtolist tar($i,libs_macosx) $mod($ext,libs_macosx)
+
         }
         set tar($i,libs_win32) [lsort -unique $tar($i,libs_win32)]
+        set tar($i,libs_win32_debug) [lsort -unique $tar($i,libs_win32_debug)]
+        set tar($i,libs_win32_release) [lsort -unique $tar($i,libs_win32_release)]
         set tar($i,libs_linux) [lsort -unique $tar($i,libs_linux)]
         set tar($i,libs_macosx) [lsort -unique $tar($i,libs_macosx)]
     }

@@ -205,15 +205,11 @@ proc set_interpath {path} {
     global wspace
     global home
     
-    puts "\n\n****** ****** =-=-=-=-=- : $path"
-    
     if {$wspace($cur_workspace,libdir) == "" } {
         set cur_interpath $path
     } else {
         set cur_interpath $wspace($cur_workspace,libdir)
     }
-
-    puts "****** ****** =-=-=-=-=- : $cur_interpath\n\n"
 
     set dir [findrelpath $home $cur_interpath]
     check_makedir $dir/win32
