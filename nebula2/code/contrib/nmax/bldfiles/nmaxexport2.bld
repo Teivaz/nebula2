@@ -38,14 +38,25 @@ beginmodule nmaxexport2
     }
     setheaders {
         nmaxexport2
-        nmaxtypes
         nmaxinterface
         nmaxutil
-        nmaxoptions
         nmaxscriptcall
         nmax
     }
     setlibs_win32 { maxutil.lib core.lib geom.lib mesh.lib poly.lib paramblk2.lib bmm.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxoptions
+    annotate "exporter module for 3dsmax options"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { 
+        nmaxoptions
+    }
+    setheaders {
+        nmaxoptions
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmaxscene
@@ -193,6 +204,8 @@ beginmodule nmaxanimator
         nmaxskinanimator
         nmaxvectoranimator
         nmaxintanimator
+        nmaxfloatanimator
+        nmaxuvanimator
     }
     setheaders {
         nmaxanimator
@@ -203,6 +216,8 @@ beginmodule nmaxanimator
         nmaxskinanimator
         nmaxvectoranimator
         nmaxintanimator
+        nmaxfloatanimator
+        nmaxuvanimator
     }
 endmodule
 #-------------------------------------------------------------------------------
