@@ -104,7 +104,7 @@ n_getfont(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Set the (horizontal) text alignment) in the text widget.
+    Set the (horizontal) text alignment in the text widget.
 */
 static void
 n_setalignment(void* slf, nCmd* cmd)
@@ -132,7 +132,7 @@ n_setalignment(void* slf, nCmd* cmd)
     @output
     s(Alignment = left | center | right)
     @info
-    Get the (horizontal) text alignment) in the text widget.
+    Get the (horizontal) text alignment in the text widget.
 */
 static void
 n_getalignment(void* slf, nCmd* cmd)
