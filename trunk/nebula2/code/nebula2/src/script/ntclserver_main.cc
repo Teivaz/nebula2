@@ -31,6 +31,18 @@ nTclServer::nTclServer() :
     isStandAloneTcl(true),
     printError(false)
 {
+#ifndef __MICROTCL__
+    // initialize data internal to TCL to make encodings work.
+    char buf[N_MAXPATH];
+    kernelServer->GetFileServer()->ManglePath("home:bin/tcl/tcl8.4",buf,sizeof(buf));
+    #ifdef __WIN32__
+        // under Windows let's be nice with backslashes
+        char *tmp;
+        while ((tmp = strchr(buf,'/'))) *tmp='\\';
+    #endif
+    Tcl_FindExecutable(buf);
+#endif
+
     // create interpreter
     this->interp = Tcl_CreateInterp();
     n_assert(this->interp);
