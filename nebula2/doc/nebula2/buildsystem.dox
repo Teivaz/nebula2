@@ -441,29 +441,31 @@ endworkspace
 
     </table>
 
-
     @section NebulaBuildSystemFAQ FAQ
-    
-    @subsection Error01 When I run update.tcl, I met the error, 'ERROR: target 'my_target' not defined!'
 
-    This error means that there's no correspond target in the bld file. 
-    Check the bld file, there's the target and target name is correct. 
+    @subsection Error01 When I run update.tcl, I get the error, <tt>'ERROR: target 'my_target' not defined!'</tt>
 
-    @subsection Error02 When I run update.tcl, I met the error, '"can't read "modulename_to_sortedindex<my_module>": no such element in array' How do I correct this?
-                        
-    This error means that there's no module which has the name @e my_module.    
-    Also this error can be occured when the superclass name which is defined in nNebulaScriptClass
-    macro in the implementation file is incorrect.
-    Check the bld file first, the module is correctly defined, either check nNebulaScriptClass macro
-    in the .cc implementation file of @e my_module, the superclass name is correct. 
+    This error means that there is no corresponding target in the bld files.
+    Check the appropriate bld file, and make sure the target and target name
+    are setup correctly.
+
+    @subsection Error02 When I run update.tcl, I get the error, <tt>'can't read "modulename_to_sortedindex&lt;my_module&gt;": no such element in array'</tt>
+
+    This error means that there's no module named @e my_module.
+
+    This error can also occur when the superclass name which is defined in
+    the nNebulaClass or nNebulaScriptClass macro in the implementation file
+    is incorrect.
+
+    Check the bld file first, if the module is defined correctly, check the
+    nNebulaClass or nNebulaScriptClass macro in the <tt>.cc</tt>
+    implementation file of @e my_module to be sure that the superclass name
+    is correct.
 
     @code
-    // check the superclass name is correct either the module which contains superclass
-    // exist in any other bld files. 
+    // check that the superclass name is correct and that the module which
+    // contains superclass exists in one of the bld files.
     nNebulaScriptClass("class", "superclass");
     @endcode
-
-    
-     
 
 */
