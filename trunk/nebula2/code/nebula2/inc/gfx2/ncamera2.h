@@ -71,7 +71,7 @@ public:
     float GetFarPlane() const;
     /// get a projection matrix representing the camera
     const matrix44& GetProjection();
-	/// get the inverse of the projection
+    /// get the inverse of the projection
     const matrix44& GetInvProjection();
     /// get a bounding box enclosing the camera
     const bbox3& GetBox();
@@ -330,17 +330,10 @@ inline
 void
 nCamera2::GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const
 {
-    float b2, cosA, c, raddiv2;
-
-    b2 = (this->nearPlane * this->nearPlane);
-    raddiv2 = this->angleOfView * float(N_PI / 360);
-    cosA = float(cos(raddiv2));
-    c = float(sqrt(b2 * (1 / (cosA * cosA) - 1)));
-    minx = -c;
-    maxx = c;
-    c *= this->aspectRatio;
-    miny = -c;
-    maxy = c;
+    maxy = this->nearPlane * n_tan(this->angleOfView * 0.5f);
+    miny = -maxy;
+    maxx = this->aspectRatio * maxy;
+    minx = -maxx;
     minz = this->nearPlane;
     maxz = this->farPlane;
 }
