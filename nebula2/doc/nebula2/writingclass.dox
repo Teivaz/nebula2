@@ -3,8 +3,8 @@
 
     This page describes how to create nRoot derived classes, that is classes 
     that have nRoot somewhere in their ancestry. Instances of a nRoot derived 
-    class are placed in the Named Object Hierarchy (NOH) [@b FIXME: Need to link 
-    to page describing NOH], so each instance is a node in a tree structure with 
+    class are placed in the @ref NebulaObjectSystemNamedObjectHierarchy (NOH) , 
+    so each instance is a node in a tree structure with 
     a path name like @c /sys/servers/gfx. nRoot derived classes can also have 
     script commands that can be called from script and used for object 
     persistence.
