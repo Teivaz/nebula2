@@ -144,7 +144,7 @@ public:
     bool MatchPattern(const nString& pattern) const;
     /// format string printf-style
     void __cdecl Format(const char* fmtString, ...)
-            __attribute__((format(printf,1,2)));
+            __attribute__((format(printf,2,3)));
 
 protected:
     /// copy contents
