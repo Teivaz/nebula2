@@ -143,6 +143,7 @@ nD3D9Server::ReloadResources()
     // create the global dynamic mesh object
     n_assert(!this->refDynMesh.isvalid());
     this->refDynMesh = this->NewMesh(0);
+    this->refDynMesh->AddRef();
     this->refDynMesh->SetUsage(nMesh2::WriteOnly);
     this->refDynMesh->SetNumVertices(DYNAMIC_VERTEXBUFFER_SIZE);
     this->refDynMesh->SetNumIndices(DYNAMIC_INDEXBUFFER_SIZE);
