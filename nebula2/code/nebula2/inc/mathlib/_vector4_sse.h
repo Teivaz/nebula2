@@ -45,6 +45,8 @@ public:
     void maximum(const _vector4_sse& v);
     /// inplace linear interpolation
     void lerp(const _vector4_sse& v0, float lerpVal);
+    /// linear interpolation between v0 and v1
+    void lerp(const _vector4_sse& v0, const _vector4_sse& v1, float lerpVal);
 
     union
     {
@@ -300,6 +302,19 @@ _vector4_sse::lerp(const _vector4_sse& v0, float lerpVal)
     y = v0.y + ((y - v0.y) * lerpVal);
     z = v0.z + ((z - v0.z) * lerpVal);
     w = v0.w + ((w - v0.w) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector4_sse::lerp(const _vector4_sse& v0, const _vector4_sse& v1, float lerpVal)
+{
+    x = v0.x + ((v1.x - v0.x) * lerpVal);
+    y = v0.y + ((v1.y - v0.y) * lerpVal);
+    z = v0.z + ((v1.z - v0.z) * lerpVal);
+    w = v0.w + ((v1.w - v0.w) * lerpVal);
 }
 
 //------------------------------------------------------------------------------

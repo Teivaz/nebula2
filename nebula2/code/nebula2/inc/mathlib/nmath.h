@@ -39,9 +39,9 @@
     log2() function.
 */
 const float LN_2 = 0.693147180559945f;
-static inline float n_log2(float f) 
-{ 
-    return logf(f) / LN_2; 
+static inline float n_log2(float f)
+{
+    return logf(f) / LN_2;
 }
 
 //------------------------------------------------------------------------------
@@ -217,6 +217,41 @@ static inline int n_frnd(float f)
 static inline float n_lerp(float x, float y, float l)
 {
     return x + l * (y - x);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Template-based linear interpolation function used by nIpolKeyArray that
+    can be specialized for any type.
+*/
+template<class TYPE>
+static inline
+void
+lerp(TYPE & result, const TYPE & val0, const TYPE & val1, float lerpVal)
+{
+    n_error("Unimplemented lerp function!");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<>
+static inline
+void
+lerp<int>(int & result, const int & val0, const int & val1, float lerpVal)
+{
+    result = n_frnd((float)val0 + (((float)val1 - (float)val0) * lerpVal));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<>
+static inline
+void
+lerp<float>(float & result, const float & val0, const float & val1, float lerpVal)
+{
+    result = val0 + ((val1 - val0) * lerpVal);
 }
 
 //------------------------------------------------------------------------------
