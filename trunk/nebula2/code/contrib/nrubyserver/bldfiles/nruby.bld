@@ -4,9 +4,9 @@
 #    nRubyServer class package definition
 #
 #    Modules:
-#	nrubyserver
+#   nrubyserver
 #    Targets:
-#	nruby
+#   nruby
 #===============================================================================
 beginmodule nrubyserver
     setdir ruby
@@ -30,7 +30,7 @@ begintarget nrubydemo
 endtarget
 
 beginworkspace rubyserver
-    setbinarydir ./code/contrib/nrubyserver/bin/
+    #setbinarydir ./code/contrib/nrubyserver/bin/
     settargets { nkernel nnebula ndirect3d9 ndinput8 ntoollib microtcl nruby nrubydemo }
 endworkspace
 #--------------------------------------------------------------------
