@@ -77,66 +77,32 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
             specularPower = 0.000001f;
         shapeNode->SetFloat(nShaderState::MatSpecularPower, specularPower);
 
-        //if (stdMat->GetTransparencyType() == TRANSP_SUBTRACTIVE)
-        //{
-        //    //srcBlend  = NiAlphaProperty::ALPHA_ZERO;
-        //    //destBlend = NiAlphaProperty::ALPHA_SRCCOLOR;
-        //}
-        //else 
-        //if (stdMat->GetTransparencyType() == TRANSP_ADDITIVE)
-        //{
-        //    //srcBlend  = NiAlphaProperty::ALPHA_SRCALPHA;
-        //    //destBlend = NiAlphaProperty::ALPHA_ONE;
-        //}
+        if (stdMat->GetTransparencyType() == TRANSP_SUBTRACTIVE)
+        {
+            shapeNode->SetInt(nShaderState::AlphaSrcBlend, 1/*Zero*/);
+            shapeNode->SetInt(nShaderState::AlphaDstBlend, 3/*SrcColor*/)
+        }
+        else 
+        if (stdMat->GetTransparencyType() == TRANSP_ADDITIVE)
+        {
+            shapeNode->SetInt(nShaderState::AlphaSrcBlend, 5/*SrcAlpha*/);
+            shapeNode->SetInt(nShaderState::AlphaDstBlend, 2/*One*/)
+        }
         bool hasAlpha = this->SetAlphaParam(stdMat, shapeNode);
 
-        //int shading = stdMat->GetShading();
-        //if (shading == SHADE_CONST)
-        //{
-        //}
-        //if (shinStr > 0.5f)
-        //{
-        //}
-        //if (opacity < 1.0f)
-        //{
-        //}
-
         // self-illumination is enabled
-        if (stdMat->MapEnabled(ID_SI))
-        {
-            Texmap* tex;
-            tex = (BitmapTex*)stdMat->GetSubTexmap(ID_SI);
-            if (tex)
-            {
-                //if (tex->ClassID() == Class_ID(VCOL_CLASS_ID, 0) || 
-                //    tex->ClassID() == PARTAGE_CLASSID)
-                //{
-                //    // vertex color lit
-                //}
-            }
-        }
-
-        // opacity is enabled: for particle 
-        //if (stdMap->MapEnabled(ID_OP))
+        //if (stdMat->MapEnabled(ID_SI))
         //{
+        //    Texmap* tex;
+        //    tex = (BitmapTex*)stdMat->GetSubTexmap(ID_SI);
+        //    if (tex)
+        //    {
+        //        ;
+        //    }
         //}
 
         this->SetStatndardNebulaShader(shapeNode);
 
-        // export textures.
-        /*
-        nMaxTexture tex;
-        //if (HasMultiTexture(stdMat))
-        if (GetNumMaps(stdMat) > 1)
-        {
-        // we have multi texture maps.
-        tex.ExportMultiTexture(stdMat);
-        }
-        else
-        {
-        tex.ExportSingleTexture(stdMat);
-        }
-        */
         nMaxTexture texture;
         for (int i=0; i<stdMat->NumSubTexmaps(); i++)
         {
@@ -160,10 +126,9 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
     }
 
     // export shader animations.
-    //if (Class_ID(DMTL_CLASS_ID, 0) == mtl->ClassID())
     if (IsClassID(mtl, DMTL_CLASS_ID))
     {
         // we only export shader animation for original standard material type.
-        ExportShaderAnimations(mtl);
+        ExportShaderAnimations(mtl, shapeNode);
     }
 }

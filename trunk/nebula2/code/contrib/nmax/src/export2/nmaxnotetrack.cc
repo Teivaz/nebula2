@@ -7,6 +7,7 @@
 
 #include "export2/nmaxnotetrack.h"
 #include "export2/nmaxutil.h"
+#include "export2/nmaxbones.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -61,11 +62,14 @@ nMaxNoteTrack::~nMaxNoteTrack()
 
 //---------------------------------------------------------------------------
 /**
-    call before scene is exported.
+    Collect note key from the given node and creates animation states.
 
-    @param inode
+    A note key is used for representing animation state.
+
+    @param inode A node which we collect animation states from.
+                 The node should be bone.
 */
-void nMaxNoteTrack::CreateAnimState(INode* inode)
+void nMaxNoteTrack::GetAnimState(INode* inode)
 {
     n_assert(inode);
 
@@ -105,11 +109,12 @@ void nMaxNoteTrack::CreateAnimState(INode* inode)
                     duration = nextFrame - frame;
                 }
 
-                // add animation note.
+                // add animation state.
                 nMaxAnimState animState;
-                animState.name = strNote;
+
+                animState.name       = strNote;
                 animState.firstFrame = frame;
-                animState.duration = duration;
+                animState.duration   = duration;
                 animState.fadeInTime = 0.0f;
 
                 this->stateArray.Append(animState);
