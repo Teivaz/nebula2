@@ -4,9 +4,9 @@
 #    nRubyServer class package definition
 #
 #    Modules:
-#   nrubyserver
+#       nrubyserver
 #    Targets:
-#   nruby
+#       nruby
 #===============================================================================
 beginmodule nrubyserver
     setdir ruby
