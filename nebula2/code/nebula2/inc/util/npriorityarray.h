@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nPriorityArray
+    @ingroup NebulaDataTypes
 
     A fixed size priority array. Elements are associated with a priority.
     New Elements are added to the end of the array until the array is full.
