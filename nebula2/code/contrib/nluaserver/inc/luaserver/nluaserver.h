@@ -47,7 +47,7 @@ public:
     
     const char* GenerateStackTrace();
  
-    virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
+    virtual nFile* BeginWrite(const char* filename, nObject* obj);  
     virtual bool WriteComment(nFile *, const char *);
     virtual bool WriteBeginNewObject(nFile *, nRoot *, nRoot *);
     virtual bool WriteBeginNewObjectCmd(nFile *, nRoot *, nRoot *, nCmd *);

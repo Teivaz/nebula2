@@ -24,9 +24,9 @@
 //--------------------------------------------------------------------    
 /**
     @brief Static function that will handle Lua to nCmd translations
-    and dispatch to the provided nRoot* pointer.
+    and dispatch to the provided nObject* pointer.
 */
-int _luaDispatch(lua_State* L, nRoot* root, nCmdProto* cmd_proto, bool print)
+int _luaDispatch(lua_State* L, nObject* obj, nCmdProto* cmd_proto, bool print)
 {
     n_assert(cmd_proto); // -- unfriendly isn't it?
     nCmd* cmd = cmd_proto->NewCmd();
@@ -54,7 +54,7 @@ int _luaDispatch(lua_State* L, nRoot* root, nCmdProto* cmd_proto, bool print)
 
     lua_settop(L, 0);
 
-    if (!root->Dispatch(cmd))
+    if (!obj->Dispatch(cmd))
     {
         n_message("Could not dispatch the command: %s\n",
                     cmd_proto->GetProtoDef());
@@ -400,16 +400,23 @@ int luacmd_Get(lua_State* L)
         lua_pushboolean(L, false);
         return 1;
     }
-    nRoot* o = nLuaServer::kernelServer->Load(lua_tostring(L, -1));
-    lua_settop(L, 0);
+    nObject* o = nLuaServer::kernelServer->Load(lua_tostring(L, -1));
+    bool isRoot = o->IsA("nroot");
+    n_assert(o && isRoot);
     if (!o)
     {
-        n_message("Could not load file '%s'\n", lua_tostring(L, -1));
-        lua_pushnil(L);
+        n_message("Could not load object '%s'\n", lua_tostring(L, -1));
+        lua_settop(L, 0); // clear stack
     }
-    else 
+    else if (!isRoot)
     {
-        nLuaServer::Instance->ThunkNebObject(L, o);
+        n_message("Could not load object '%s', not an nRoot", lua_tostring(L, -1));
+        lua_settop(L, 0); // clear stack
+    }
+    else
+    {
+        lua_settop(L, 0); // clear stack
+        nLuaServer::Instance->ThunkNebObject(L, (nRoot *)o);
     }
     return 1;   
 }
@@ -517,9 +524,11 @@ int luacmd_Call(lua_State* L)
         return 1;
     }
 
-    nRoot* root = nLuaServer::kernelServer->GetCwd();
+    nObject* obj = nScriptServer::GetCurrentTargetObject();
+    if (!obj)
+        obj = nKernelServer::Instance()->GetCwd();
     const char* cmdname = lua_tostring(L, 1);
-    nClass* cl = root->GetClass();
+    nClass* cl = obj->GetClass();
     nCmdProto* cmd_proto = (nCmdProto*) cl->FindCmdByName(cmdname);
     if (!cmd_proto)
     {
@@ -529,7 +538,7 @@ int luacmd_Call(lua_State* L)
         return 1;
     }
 
-    return _luaDispatch(L, root, cmd_proto, false);
+    return _luaDispatch(L, obj, cmd_proto, false);
 }
 
 //--------------------------------------------------------------------
