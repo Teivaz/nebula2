@@ -300,5 +300,33 @@ nSignalEmitter::PostSignal(nTime t, nSignal * signal, va_list args)
 }
 
 //------------------------------------------------------------------------------
+/**
+*/
+void 
+nSignalEmitter::GetSignals(nHashList *signal_list) const
+{
+    // for each superclass attach it's signal names to the list
+    nClass *cl = static_cast<nClass *> (this->GetSignalRegistry());
+    
+    // for each superclass...
+    do 
+    {
+        nHashList *cl_signals = cl->GetSignalList();
+        if (cl_signals)
+        {
+            nSignal * signal;
+            for (signal=(nSignal *) cl_signals->GetHead(); 
+                 signal; 
+                 signal=(nSignal *) signal->GetSucc()) 
+            {
+                nHashNode* node = n_new(nHashNode(signal->GetName()));
+                node->SetPtr((void*)signal);
+                signal_list->AddTail(node);
+            }
+        }
+    } while ((cl = cl->GetSuperClass()));
+}
+
+//------------------------------------------------------------------------------
 //  EOF
 //------------------------------------------------------------------------------

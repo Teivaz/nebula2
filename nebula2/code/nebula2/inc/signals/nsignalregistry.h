@@ -41,6 +41,8 @@ public:
     nSignal * FindSignalByName(const char * name);
     /// find a signal by fourcc code
     nSignal * FindSignalById(nFourCC id);
+    /// Get list of signals
+    nHashList* GetSignalList() const;
     //@}
 
     /// get number of signals
@@ -80,6 +82,17 @@ bool
 nSignalRegistry::AddSignal(nSignal & signal)
 {
     return this->AddSignal(&signal);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @return the list of signals
+*/
+inline
+nHashList* 
+nSignalRegistry::GetSignalList() const
+{
+    return this->signalList;
 }
 
 //------------------------------------------------------------------------------

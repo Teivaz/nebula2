@@ -80,8 +80,27 @@ static void n_unbindall(void* o, nCmd* cmd)
 //-------------------------------------------------------------------
 static void n_getsignals(void *o, nCmd *cmd)
 {
-    //XXX: implement get signals command
-    cmd->Out()->SetL(0, 0);
+    nObject *self = (nObject *) o;
+    nHashList signalList;
+    nHashNode* node;
+    int numSignals = 0;
+
+    self->GetSignals(&signalList);
+
+    // count signals
+    for (node = signalList.GetHead(); node; node = node->GetSucc())
+    {
+        numSignals++;
+    }
+
+    nArg* args = n_new_array(nArg, numSignals);
+    int i = 0;
+    while ((node = signalList.RemHead()))
+    {
+        args[i++].SetS(((nSignal*) node->GetPtr())->GetProtoDef());
+        n_delete(node);
+    }
+    cmd->Out()->SetL(args, numSignals);
 }
 
 //-------------------------------------------------------------------
