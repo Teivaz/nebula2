@@ -1,8 +1,14 @@
+//------------------------------------------------------------------------------
+//  nmaxdll.h
+//
+//  (C)2004 Johannes Kellner
+//------------------------------------------------------------------------------
 #ifndef N_MAXDLL_H
 #define N_MAXDLL_H
 //------------------------------------------------------------------------------
 /**
-    @ingroup NebulaMaxPlugin
+    @class registeredClassDesc
+    @ingroup NebulaMaxExport2Contrib
 
     This is wrapper to generate all needed functions an exports to create
     a 3ds max plugin.
