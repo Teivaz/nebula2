@@ -96,11 +96,11 @@ nGuiCycleButton::Render()
     {
         if (this->pressed)
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetPressedBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->pressedBrush);
         }
         else
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetHighlightBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
         }
 
         // render the text on top
