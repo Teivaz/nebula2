@@ -167,8 +167,8 @@ ifeq ($(N_COMPILER),__GNUC__)
   NOLINK_OPT  = -c
   SYM_OPT     = -D
   #flags
-  N_WARNFLAGS     = -W -Wall -Wno-multichar -Wno-reorder
-  N_WARNFLAGS_C   = -W -Wall -Wno-multichar
+  N_WARNFLAGS     = -W -Wall -Wno-multichar -Wno-reorder -Wno-unused
+  N_WARNFLAGS_C   = -W -Wall -Wno-multichar -Wno-unused
   #N_WARNFLAGS    = 
   N_OPTIMIZEFLAGS = -O3 -ffast-math -fomit-frame-pointer
   N_PROFILEFLAGS  = -p
