@@ -125,7 +125,7 @@ nSignalBinding::GetPriority() const
 */
 inline
 bool
-nSignalBinding::IsBoundWithObject(const nObject * objectPtr) const
+nSignalBinding::IsBoundWithObject(const nObject * /*objectPtr*/) const
 {
     return false;
 }
@@ -136,7 +136,7 @@ nSignalBinding::IsBoundWithObject(const nObject * objectPtr) const
 */
 inline
 bool
-nSignalBinding::IsBoundWithCmdProto(const nCmdProto * cmdProto) const
+nSignalBinding::IsBoundWithCmdProto(const nCmdProto * /*cmdProto*/) const
 {
     return false;
 }
@@ -147,7 +147,7 @@ nSignalBinding::IsBoundWithCmdProto(const nCmdProto * cmdProto) const
 */
 inline
 bool
-nSignalBinding::IsBoundWithCmdName(const char * name) const
+nSignalBinding::IsBoundWithCmdName(const char * /*name*/) const
 {
     return false;
 }
@@ -158,7 +158,7 @@ nSignalBinding::IsBoundWithCmdName(const char * name) const
 */
 inline
 bool
-nSignalBinding::IsBoundWithCmdFourCC(nFourCC fourcc) const
+nSignalBinding::IsBoundWithCmdFourCC(nFourCC /*fourcc*/) const
 {
     return false;
 }
