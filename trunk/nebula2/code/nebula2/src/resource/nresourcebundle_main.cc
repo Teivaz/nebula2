@@ -58,7 +58,7 @@ nResourceBundle::LoadResource()
 
         if (magic != 'NRB0')
         {
-            n_printf("nResourceBundle: magic number mismatch in file '%s'\n", this->GetFilename());
+            n_printf("nResourceBundle: magic number mismatch in file '%s'\n", this->GetFilename().Get());
             hdrFile->Close();
             dataFile->Close();
             hdrFile->Release();
