@@ -7,6 +7,7 @@
 #include "export2/nmaxinterface.h"
 #include "export2/nmaxvectoranimator.h"
 #include "export2/nmaxcontrol.h"
+#include "export2/nmaxoptions.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -30,6 +31,9 @@ nMaxVectorAnimator::~nMaxVectorAnimator()
 //-----------------------------------------------------------------------------
 /**
     Create a nVectorAnimator from the given shader parameter and control.
+
+    FIXME: only full sampled keys are supported at the moment.
+           Do we need any other control type supporting via IKeyControl?
 
     @param paramName A valid shader parameter name. e.g. "MatDiffuse"
     @param control Controller which is animatable. 
@@ -60,12 +64,14 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
 
         // retrieves sampled keys from the control.
         nArray<nMaxSampleKey> sampleKeyArray;
-        sampleKeyArray.SetFixedSize(numFrames + 1);
+        
+        int sampleRate;
+        sampleRate = nMaxOptions::Instance()->GetSampleRate();
 
-        nMaxControl::GetSampledKey(control, sampleKeyArray, 1, nMaxPoint4);
+        nMaxControl::GetSampledKey(control, sampleKeyArray, sampleRate, nMaxPoint4, true);
 
         // add key values to the animator.
-        for (int i=0; i<numFrames; i++)
+        for (int i=0; i<sampleKeyArray.Size(); i++)
         {
             nMaxSampleKey key = sampleKeyArray[i];
 
