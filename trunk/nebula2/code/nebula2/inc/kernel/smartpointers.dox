@@ -17,6 +17,8 @@
       nRef<nSkinAnimator> refSkinAnimator;
   @endcode
 
+  @note Only nRoot derived classes can be used with nRef or its subclasses.
+
   Here a nRef is checked for validity and assigned to as if it
   were a pointer.
 
