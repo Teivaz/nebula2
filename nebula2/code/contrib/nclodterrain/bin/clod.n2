@@ -10,35 +10,35 @@ new nclodshapenode shape0
     .setposition 0.000000 0.000000 0.000000
     .seteuler 0.000000 0.000000 0.000000
     .setscale 1.000000 1.000000 1.000000
-    .settexture "DiffMap0" "textures:examples/cloddiffuse.bmp"
+#    .settexture "DiffMap0" "nclodtextures:examples/cloddiffuse.bmp"
     .settexture "BumpMap0" "textures:examples/bump.tga"
     .setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
     .setvector "MatDiffuse" 1.000000 1.000000 0.539320 0.539320
     .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
     .setfloat "MatSpecularPower" 32.000000
     .setfloat "Height" 0.0
-    .setshader "colr" "shaders:splatterrain.fx"
+    .setshader "colr" "nclodshaders:splatterrain.fx"
     .setcollisionspace /usr/dynamics/terrainspace
-    .setterrainname "home:export/terrains/examples/sample.clod"
-    .settqtname "home:export/terrains/examples/sample.tqt"
+    .setterrainname "nclodterrains:examples/sample.clod"
+    .settqtname "nclodterrains:examples/sample.tqt"
     .setscreenspaceerror 2.5
     .begindetailtextures 16
-    .setdetailtexture 0 "textures:terrainsplat/dirt1.bmp"
-    .setdetailtexture 1 "textures:terrainsplat/sand1.bmp"
-    .setdetailtexture 2 "textures:terrainsplat/grass6.bmp"
-    .setdetailtexture 3 "textures:terrainsplat/!water1.bmp"
-    .setdetailtexture 4 "textures:terrainsplat/grass7.bmp"
-    .setdetailtexture 5 "textures:terrainsplat/dirt3.bmp"
-    .setdetailtexture 6 "textures:terrainsplat/dirt2.bmp"
-    .setdetailtexture 7 "textures:terrainsplat/snow4.bmp"
-    .setdetailtexture 8 "textures:terrainsplat/snow5.bmp"
-    .setdetailtexture 9 "textures:terrainsplat/r_rock1.bmp"
-    .setdetailtexture 10 "textures:terrainsplat/r_rock2.bmp"
-    .setdetailtexture 11 "textures:terrainsplat/r_rock6.bmp"
-    .setdetailtexture 12 "textures:terrainsplat/sand1.bmp"
-    .setdetailtexture 13 "textures:terrainsplat/sand2.bmp"
-    .setdetailtexture 14 "textures:terrainsplat/grass6.bmp"
-    .setdetailtexture 15 "textures:terrainsplat/grass7.bmp"
+    .setdetailtexture 0 "nclodtextures:terrainsplat/dirt1.bmp"
+    .setdetailtexture 1 "nclodtextures:terrainsplat/r_rock1.bmp"
+    .setdetailtexture 2 "nclodtextures:terrainsplat/grass7.bmp"
+    .setdetailtexture 3 "nclodtextures:terrainsplat/grass6.bmp"
+    .setdetailtexture 4 "nclodtextures:terrainsplat/grass1.bmp"
+    .setdetailtexture 5 "nclodtextures:terrainsplat/mossy3.bmp"
+    .setdetailtexture 6 "nclodtextures:terrainsplat/!water1.bmp"
+    .setdetailtexture 7 "nclodtextures:terrainsplat/snow4.bmp"
+    .setdetailtexture 8 "nclodtextures:terrainsplat/snow5.bmp"
+    .setdetailtexture 9 "nclodtextures:terrainsplat/r_rock1.bmp"
+    .setdetailtexture 10 "nclodtextures:terrainsplat/r_rock2.bmp"
+    .setdetailtexture 11 "nclodtextures:terrainsplat/r_rock6.bmp"
+    .setdetailtexture 12 "nclodtextures:terrainsplat/sand1.bmp"
+    .setdetailtexture 13 "nclodtextures:terrainsplat/sand2.bmp"
+    .setdetailtexture 14 "nclodtextures:terrainsplat/grass6.bmp"
+    .setdetailtexture 15 "nclodtextures:terrainsplat/grass7.bmp"
     .enddetailtextures
     new nvectoranimator diff
         sel diff

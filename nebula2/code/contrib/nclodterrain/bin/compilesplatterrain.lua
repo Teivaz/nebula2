@@ -5,11 +5,13 @@
 --this code is released under the Nebula License
 --
 
-tree_depth = 2 
-space_error = 1.00
+tree_depth = 3
+tile_tree_depth = 3
+space_error = 0.25
 
--- this value needs to be (size of tile map / (1<<tree_depth)) * 2
+-- this value needs to be (size of tile map / (1<<(tile_tree_depth-1))) * 2
 tqt_tilesize = 256
+
 --------------------------------------------------------------------------------
 --
 -- Convert the heightfield bitmap into a quadtree of meshes described by triangle strips
@@ -21,15 +23,15 @@ tqt_tilesize = 256
 
 new('nclodchunker','/usr/chunker')
 chunker = nebula.usr.chunker
-chunker:setchunkfilename('home:export/terrains/examples/sample.clod')
-chunker:settileindexfilename('home:work/textures/tiles.bmp')
-chunker:setspacings(0.5,0.5,0.5)
+chunker:setchunkfilename('nclodterrains:examples/sample.clod')
+chunker:settileindexfilename('nclodtextures:examples/tiles.bmp')
+chunker:setspacings(1.0,1.0,0.25)
 chunker:setchunkparameters(tree_depth, space_error)
 chunker:setvalidateflag(true)
 
 -- do the chunking...
 
-chunker:compilechunksfromfile('home:work/textures/heightfield.bmp')
+chunker:compilechunksfromfile('nclodtextures:examples/heightfield.bmp')
 
 --------------------------------------------------------------------------------
 --
@@ -67,9 +69,25 @@ max_tiles = 16
 
 new('nclodtqtsplatter','/usr/tqtcompiler')
 tqtcompiler = nebula.usr.tqtcompiler
-tqtcompiler:settqtparameters(tree_depth, tqt_tilesize, max_tiles)
-tqtcompiler:settqtfilename('home:export/terrains/examples/sample.tqt')
-tqtcompiler:compiletqtfromfile('home:work/textures/tiles.bmp')
+tqtcompiler:settqtparameters(tile_tree_depth, tqt_tilesize, max_tiles)
+tqtcompiler:settqtfilename('nclodterrains:examples/sample.tqt')
+tqtcompiler:setdetailtexture(0,'nclodtextures:terrainsplat/dirt1.bmp')
+tqtcompiler:setdetailtexture(1,'nclodtextures:terrainsplat/r_rock1.bmp')
+tqtcompiler:setdetailtexture(2,'nclodtextures:terrainsplat/grass7.bmp')
+tqtcompiler:setdetailtexture(3,'nclodtextures:terrainsplat/grass6.bmp')
+tqtcompiler:setdetailtexture(4,'nclodtextures:terrainsplat/grass1.bmp')
+tqtcompiler:setdetailtexture(5,'nclodtextures:terrainsplat/mossy3.bmp')
+tqtcompiler:setdetailtexture(6,'nclodtextures:terrainsplat/!water1.bmp')
+tqtcompiler:setdetailtexture(7,'nclodtextures:terrainsplat/snow4.bmp')
+tqtcompiler:setdetailtexture(8,'nclodtextures:terrainsplat/snow5.bmp')
+tqtcompiler:setdetailtexture(9,'nclodtextures:terrainsplat/r_rock1.bmp')
+tqtcompiler:setdetailtexture(10,'nclodtextures:terrainsplat/r_rock2.bmp')
+tqtcompiler:setdetailtexture(11,'nclodtextures:terrainsplat/r_rock6.bmp')
+tqtcompiler:setdetailtexture(12,'nclodtextures:terrainsplat/sand1.bmp')
+tqtcompiler:setdetailtexture(13,'nclodtextures:terrainsplat/sand2.bmp')
+tqtcompiler:setdetailtexture(14,'nclodtextures:terrainsplat/grass6.bmp')
+tqtcompiler:setdetailtexture(15,'nclodtextures:terrainsplat/grass7.bmp')
+tqtcompiler:compiletqtfromfile('nclodtextures:examples/tiles.bmp')
 
 --and exit
 
