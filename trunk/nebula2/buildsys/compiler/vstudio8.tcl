@@ -164,6 +164,7 @@ proc emit_vcproj_config {name cid debug} {
         }
         puts $cid "\t\t\t\tAdditionalLibraryDirectories=\"$lib_path;$idir;$lib_list\""
         puts $cid "\t\t\t\tModuleDefinitionFile=\"$moddeffile\""
+        puts $cid "\t\t\t\tIgnoreDefaultLibraryNames=\"libcp.lib\""
         puts $cid "\t\t\t\tSubSystem=\"0\""
         puts $cid "\t\t\t\tTargetMachine=\"1\"/>"
     }
