@@ -48,10 +48,11 @@ n_initcmds(nClass* cl)
     @input
     s(VariableName), s(VariableFourCC)
     @output
-    v
+    i
     @info
     Add a new variable declaration. Declaring variables is not required but
     the only way to get variables with both a valid name and a valid fourcc code.
+    Returns the variable's handle.
 */
 static void
 n_declarevariable(void* slf, nCmd* cmd)
