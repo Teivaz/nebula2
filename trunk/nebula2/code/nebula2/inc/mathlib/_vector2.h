@@ -42,6 +42,8 @@ public:
     void operator-=(const _vector2& v0);
     /// in place scalar mul
     void operator*=(const float s);
+    /// in place scalar div
+    void operator/=(const float s);
     /// fuzzy compare operator
     bool isequal(const _vector2& v, const float tol) const;
     /// fuzzy compare, returns -1, 0, +1
@@ -183,6 +185,17 @@ _vector2::operator *=(const float s)
 {
     x *= s;
     y *= s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_vector2::operator /=(const float s) 
+{
+    x /= s;
+    y /= s;
 }
 
 //------------------------------------------------------------------------------

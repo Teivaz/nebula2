@@ -99,6 +99,8 @@ public:
     void rotate(const _vector3& vec, float a);
     /// translate
     void translate(const _vector3& t);
+    /// set absolute translation
+    void set_translation(const _vector3& t);
     /// scale
     void scale(const _vector3& s);
     /// unrestricted lookat
@@ -551,6 +553,18 @@ _matrix44::translate(const _vector3& t)
     M42 += t.y;
     M43 += t.z;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+_matrix44::set_translation(const _vector3& t) 
+{
+    M41 = t.x;
+    M42 = t.y;
+    M43 = t.z;
+};
 
 //------------------------------------------------------------------------------
 /**
