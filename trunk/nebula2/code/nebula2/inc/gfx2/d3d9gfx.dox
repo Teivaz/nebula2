@@ -2,11 +2,28 @@
     @defgroup NebulaD3D9GraphicsSystem DirectX 9 Graphics System
     @ingroup NebulaGraphicsSystem
 
-<h2>DirectX 9 Graphics Server</h2>
+This page describes Nebula DirectX 9 graphics system and it's subsystems.
 
-...
+ - @ref NebulaD3D9GraphicsSystemServer
+ - @ref NebulaD3D9GraphicsSystemShader
+ - @ref NebulaD3D9GraphicsSystemMesh
+ - @ref NebulaD3D9GraphicsSystemTexture
 
-<h2>Shader support</h2>
+
+@section NebulaD3D9GraphicsSystemServer DirectX 9 Graphics Server
+
+Nebula DirectX 9 Graphics Server(@class nD3D9Server) wraps functionality and 
+implementation of D3D9. 
+
+The main features of this system includes something like this:
+
+ - create window and handle windows message loop.
+ - factory for mesh, texture, shader
+ - completely encapsulates device lost/restore (application doesn't need
+   to care about those dirty details)
+
+
+@section NebulaD3D9GraphicsSystemShader Shader support
 
 Nebula2's nD3D9Shader uses effect files to specify render state and
 vertex/pixel shaders. Effect files can be used to set not just the
@@ -32,11 +49,30 @@ Here are some links to information about effect files and HLSL:
    - <a href="http://www.fairyengine.com/articles/hlsl2sided.htm">Another Introduction</a>
    
 
-<h2>Mesh support</h2>
+@section NebulaD3D9GraphicsSystemMesh Mesh support
 
-...
+nD3D9Mesh encapsulates vertex and index buffer of D3D9.
 
-<h2>Texture support</h2>
+A mesh is loaded from a mesh resource file.(.n3d2 for ASCII and .nvx2 for 
+binary). Loaded mesh can be accessed to it's vertex and index data through
+Lock()/Unlock() for reading and writing. 
+
+It provides some flags for optimal allocation of buffer like this:
+
+ - WriteOnce :CPU only fills the vertex buffer once, and never touches it again.(default value)  
+ - WriteOnly : CPU writes frequently to vertex buffer, but never read data back. 
+ - ReadOnly : CPU reads from the vertex buffer, which can never be rendered.
+ - NPatch
+ - RTPatch
+ - PointSprite
+
+There's some other vertex components for tangent, binormals which for per-pixellighting and weights and joint indices for vertex skinning.
+                                                     
+Another special helper class for mesh is DynamicMesh(@class nDynamicMesh) for CPU 
+generated geometry. (i.e. @ref NebulaParticleSystem)
+
+
+@section NebulaD3D9GraphicsSystemTexture Texture support
 
 (Talk about support for cube maps, compressed textures and other good things.)
 
