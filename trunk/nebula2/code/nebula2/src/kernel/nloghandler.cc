@@ -7,7 +7,8 @@
 //------------------------------------------------------------------------------
 /**
 */
-nLogHandler::nLogHandler()
+nLogHandler::nLogHandler() :
+    isOpen(false)
 {
     // empty
 }
@@ -18,6 +19,27 @@ nLogHandler::nLogHandler()
 nLogHandler::~nLogHandler()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nLogHandler::Open()
+{
+    n_assert(!this->isOpen);
+    this->isOpen = true;
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nLogHandler::Close()
+{
+    n_assert(this->isOpen);
+    this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------

@@ -385,6 +385,7 @@ nKernelServer::~nKernelServer(void)
     this->hardRefServer = 0;
 
     // delete default log handler
+    this->SetLogHandler(0);
     delete this->defaultLogHandler;
     this->defaultLogHandler = 0;
     this->curLogHandler = 0;
@@ -408,13 +409,23 @@ void
 nKernelServer::SetLogHandler(nLogHandler* logHandler)
 {
     this->Lock();
+    if (this->curLogHandler)
+    {
+        if (this->curLogHandler->IsOpen())
+        {
+            this->curLogHandler->Close();
+        }
+        this->curLogHandler = 0;
+    }
     if (logHandler)
     {
         this->curLogHandler = logHandler;
+        this->curLogHandler->Open();
     }
     else
     {
         this->curLogHandler = this->defaultLogHandler;
+        this->curLogHandler->Open();
     }
     this->Unlock();
 }

@@ -140,7 +140,7 @@ beginmodule nkernel
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
-        nrefcounted
+        nrefcounted nguid nshell32wrapper
     }
 endmodule
 
