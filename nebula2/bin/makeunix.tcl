@@ -456,12 +456,12 @@ proc gen_makefile { } {
     puts $cid "# Generate docs"
     puts $cid "#----------------------------------------------------------"
     puts $cid "doc:"
-    puts $cid "\tpython \$home/bin/autodoc.py"
-    puts $cid "\tcd \$home/code/nebula2/doxycfg; doxygen nebula2.cfg"
+    puts $cid "\tpython ../../../bin/autodoc.py"
+    puts $cid "\tcd ../../../code/nebula2/doxycfg; doxygen nebula2.cfg"
     puts $cid ""
     puts $cid "ifeq (\$(N_PLATFORM),__WIN32__)"
     puts $cid "chm: doc"
-    puts $cid "\tcd \$home/doc/doxydoc/nebula2/html/; \$(CHM_COMPILER) index.hhp"
+    puts $cid "\tcd ../../../doc/doxydoc/nebula2/html/; \$(CHM_COMPILER) index.hhp"
     puts $cid "endif"
 
     #write end of Makefile
