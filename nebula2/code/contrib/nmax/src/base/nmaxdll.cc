@@ -9,6 +9,8 @@ int controlsInit = FALSE;
 ///the array where a 'unique' instances of the classDesc are registered 
 nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 
+nNebulaUsePackage(nnebula);
+
 //------------------------------------------------------------------------------
 /**
     To make plugin Classes like a ExporterClass to Max it's required:
@@ -81,7 +83,7 @@ registeredClassDesc::registeredClassDesc(
         So we can run in the case where the static implentation of the tRegisteredClassDesc
         calls this constructor but the static nArray isn't initiated. 
         */
-        this->array = n_new nArray<registeredClassDesc*>(1,1);
+        this->array = n_new(nArray<registeredClassDesc*>(1,1));
     }
     else
     {
@@ -146,6 +148,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
                 new nKernelServer();
                 //setup the new loghandler
                 nKernelServer::ks->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
+                nKernelServer::ks->AddPackage(nnebula);
             }
 		}
         break;
@@ -154,7 +157,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 		    //cleanup the the list of classes here
             if (registeredClassDesc::array != NULL)
             {
-		        n_delete registeredClassDesc::array;
+		        n_delete(registeredClassDesc::array);
             }
 
             if (nKernelServer::ks)

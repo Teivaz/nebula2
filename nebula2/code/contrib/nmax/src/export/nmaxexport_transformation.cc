@@ -116,7 +116,7 @@ nMaxExport::buildInverseModelWorldMatrix(IGameNode* igNode)
     AffineParts parts;
     decomp_affine(ObjectTM, &parts);//!!!expensive
 
-    matrix44* m = n_new matrix44;
+    matrix44* m = n_new(matrix44);
 
     m->scale(this->ScaleComponent(parts, igNode->GetName()));
     m->mult_simple(matrix44(this->RotationComponent(parts)));

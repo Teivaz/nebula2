@@ -57,7 +57,7 @@ nMaxLogHandler::doLog(logType type, const char* msg, va_list argList)
 		{
 			SIZE = 2048
 		};
-		char* buf = n_new char[SIZE];
+		char* buf = n_new_array(char, SIZE);
 		int len = vsprintf(buf, msg, argList); 
 				
 		switch (type)
@@ -72,7 +72,7 @@ nMaxLogHandler::doLog(logType type, const char* msg, va_list argList)
 				this->log->LogEntry(SYSLOG_ERROR, DISPLAY_DIALOG, "Nebula2 - Error", buf);
 				break;
 		}
-		n_delete[] buf;
+		n_delete_array(buf);
 	}
 	else
 		this->numMsgDismissed++;

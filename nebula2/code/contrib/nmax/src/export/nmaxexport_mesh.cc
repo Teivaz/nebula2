@@ -43,7 +43,7 @@ nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, 
     if ((sourceVC & nMeshBuilder::Vertex::JINDICES) && (sourceVC & nMeshBuilder::Vertex::WEIGHTS ))
     {
         nSkinPartitioner skinPartitioner;
-        destMeshBuilder = n_new nMeshBuilder();
+        destMeshBuilder = n_new(nMeshBuilder());
         skinPartitioner.PartitionMesh(*meshBuilder, *destMeshBuilder, this->task->maxJointPaletteSize);
         
         const int numPartitions = skinPartitioner.GetNumPartitions();
@@ -68,14 +68,14 @@ nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, 
             }
 
             //clean the data
-            n_delete meshBuilder;
+            n_delete(meshBuilder);
 
             //setup the destMesh as the used mesh
             meshBuilder = destMeshBuilder;
         }
         else
         {
-            n_delete destMeshBuilder;
+            n_delete(destMeshBuilder);
         }
     }
     
@@ -99,7 +99,7 @@ nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, 
         }
     }
 
-    if(found)
+    if (found)
     {
         PoolEntry &entry = this->meshPool[poolIndex];
 
@@ -107,7 +107,7 @@ nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, 
         const int baseGroupIndex = entry.meshBuilder->Append(*meshBuilder);
 
         //cleanup the data
-        n_delete meshBuilder;
+        n_delete(meshBuilder);
         
         //update the groupIDs -- WARNING: when something in nMeshBuilder::Append() is changed this will maybe fail!
         const int numGroupIDs = meshObject.groupIDs.Size();
@@ -446,13 +446,13 @@ nMaxExport::storeDataPools()
                     skinAnim->EndStates();
 
                     //clean up data
-                    n_delete this->meshPool[poolIndex].animBuilder;
+                    n_delete(this->meshPool[poolIndex].animBuilder);
                     this->meshPool[poolIndex].animBuilder = 0;
                 }
             }
             
             //clean up data
-            n_delete this->meshPool[poolIndex].meshBuilder;
+            n_delete(this->meshPool[poolIndex].meshBuilder);
             this->meshPool[poolIndex].meshBuilder = 0;
         }
     }
@@ -514,7 +514,7 @@ nMaxExport::exportMesh(IGameNode* igNode, const nString nodeName)
         }
 
 
-        nMeshBuilder *meshBuilder = n_new nMeshBuilder;
+        nMeshBuilder *meshBuilder = n_new(nMeshBuilder);
         nAnimBuilder *animBuilder = NULL;
         
         //get all used material ID's
@@ -580,7 +580,7 @@ nMaxExport::exportMesh(IGameNode* igNode, const nString nodeName)
 
                 n_printf("Bones num: %d", this->boneIDs.Size());
 
-                animBuilder = n_new nAnimBuilder;
+                animBuilder = n_new(nAnimBuilder);
 
                 // export animation
                 this->exportSkinnedAnim(igNode, nodeName, animBuilder);
@@ -856,9 +856,9 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
 
                         //create at least MAX_NUM_BONES weights and jindices elements
                         realNumBones = max(numBones, MAX_NUM_BONES);
-                        weights = new float[realNumBones];
-                        jindices = new int[realNumBones];
-                        jiNum = new int[realNumBones];
+                        weights = n_new_array(float, realNumBones);
+                        jindices = n_new_array(int, realNumBones);
+                        jiNum = n_new_array(int, realNumBones);
 
                         //set default values
                         for (i = 0; i < realNumBones; i++)
@@ -970,9 +970,9 @@ nMaxExport::exportFaces(Tab<FaceEx*> matFaces, const int matID, MeshObject &mesh
                         vector.set((float)jindices[0], (float)jindices[1], (float)jindices[2], (float)jindices[3]);
                         vertex.SetJointIndices(vector);
 
-                        delete[] weights;
-                        delete[] jindices;
-                        delete[] jiNum;
+                        n_delete_array(weights);
+                        n_delete_array(jindices);
+                        n_delete_array(jiNum);
                     }
                 }                        
 

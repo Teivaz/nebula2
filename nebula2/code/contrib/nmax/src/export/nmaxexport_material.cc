@@ -175,7 +175,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
 
     if (!hasBumpMap)
     {
-        materialNode->SetTexture(nShaderState::BumpMap0, "textures:system/nobump.tga");
+        materialNode->SetTexture(nShaderState::BumpMap0, "textures:system/nobump.dds");
     }
     
     nString shdFile(this->task->shadersPath);
