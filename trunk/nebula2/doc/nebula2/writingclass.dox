@@ -9,6 +9,11 @@
     script commands that can be called from script and used for object
     persistence.
 
+    To compile your new class, you will need to add it to the build system
+    files (the <tt>.bld</tt> files). See @ref NebulaBuildSystem for details.
+    After adding your new files to the new buildsystem, make sure that you
+    re-run <tt>update.tcl</tt> to regenerate the new project files.
+
     First, we create a header file, @c nmyclass.h and write a class which
     derives from nRoot. We will later bind some of the methods to the script
     interface so that they can be called from script.
@@ -156,7 +161,7 @@
 
     Next, we make @c nMyClass support object persistence.
 
-    To make the class to support object persistency, we override @c SaveCmds().
+    To make the class to support object persistence, we override @c SaveCmds().
 
     Declare @c SaveCmds of @c nMyClass in header file like this:
 
