@@ -21,7 +21,7 @@ nSkinShadowCaster::nSkinShadowCaster() :
     weightsAndJIndices(0), 
     numWeightsAndJIndices(0)
 {
-    //empty
+    this->SetMeshUsage(this->GetMeshUsage() | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------

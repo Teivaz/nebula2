@@ -19,6 +19,7 @@ nShadowCaster::nShadowCaster() :
     lightPosition(0.0f, 0.0f, 0.0f),
     faces(0),
     edges(0),
+    meshUsage(nMesh2::ReadOnly),
     silhouetteIndices(0, 64),
     lastGroupIndex(-1),
     dirty(true)
@@ -93,7 +94,7 @@ nShadowCaster::LoadResource()
     nMesh2* sourceMesh = gfxServer->NewMesh(meshName.Get());
     if (!sourceMesh->IsValid())
     {
-        sourceMesh->SetUsage(nMesh2::ReadOnly);
+        sourceMesh->SetUsage(this->GetMeshUsage());
         sourceMesh->SetFilename(this->GetFilename());
         sourceMesh->SetAsyncEnabled(false); //needs to be loaded directly
     }
@@ -121,6 +122,24 @@ nShadowCaster::LoadShadowData(nMesh2* sourceMesh)
     this->LoadEdges(sourceMesh);
     this->LoadFaces(sourceMesh);
     this->LoadGroups(sourceMesh);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nShadowCaster::SetMeshUsage(int usage)
+{
+    this->meshUsage = usage;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+int
+nShadowCaster::GetMeshUsage() const
+{
+    return this->meshUsage;
 }
 
 //------------------------------------------------------------------------------
