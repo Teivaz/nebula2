@@ -29,18 +29,27 @@ technique t0
 {
     pass p0
     {
+        WorldTransform[0] = <Model>;
+        ViewTransform = <View>;
+    	ProjectionTransform = <Projection>;
+    	
         ZEnable          = False;
-
+        
         CullMode = None;
+
+        StencilEnable = false;
+        StencilZFail = KEEP;
+        StencilPass =  KEEP;
 
         Sampler[0] = <DiffSampler>;
 
         LightEnable[0] = False;
-        SpecularEnable = False;
-        MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
+        MaterialDiffuse = <MatDiffuse>;
+        MaterialAmbient     = {1.0f, 1.0f, 1.0f, 1.0f};        
         Ambient = <MatDiffuse>;
 
         FVF = XYZ | TEX1;
+        FogEnable        = False;
         
         TexCoordIndex[0] = 0;
         TextureTransformFlags[0] = Disable;

@@ -16,8 +16,12 @@ technique t0
 {
     pass p0
     {
+        WorldTransform[0] = <Model>;
+        ViewTransform = <View>;
+    	ProjectionTransform = <Projection>;    
         ZEnable             = True;
 
+        MaterialAmbient     = {1.0f, 1.0f, 1.0f, 1.0f};
         Ambient          = {0.3, 0.3, 0.3, 1.0f};
         LightEnable[0]   = True;	
         LightAmbient[0]  = {0.3, 0.3, 0.3, 1.0f};
@@ -33,6 +37,7 @@ technique t0
         LightType[0] = POINT;
 
         CullMode            = Cw;
+        FogEnable        = False;
 
         FVF = XYZ | NORMAL | TEX1;
         
