@@ -172,6 +172,7 @@ bool nLuaServer::Run(const char *cmdStr, nString& result)
 //--------------------------------------------------------------------
 /**
     @brief Read in Lua code from a file and execute it.
+    @param filename The name of the file to be read and executed.
     @param result Result (if any) of executing the Lua code.
     @return true if Lua code ran without any errors, false otherwise.
 

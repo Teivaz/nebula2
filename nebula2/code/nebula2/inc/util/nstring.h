@@ -511,7 +511,7 @@ operator != (const nString& a, const nString& b)
 
 //------------------------------------------------------------------------------
 /**
-     - 21-Sep-04    Johannes        the '\0' is a valid part of the string
+     - 21-Sep-04    Johannes        the '\\0' is a valid part of the string
 */
 inline
 const char
@@ -530,7 +530,7 @@ nString::operator[](int i) const
 
 //------------------------------------------------------------------------------
 /**
-     - 21-Sep-04    Johannes        the '\0' is a valid part of the string
+     - 21-Sep-04    Johannes        the '\\0' is a valid part of the string
 */
 inline
 char&

@@ -28,8 +28,8 @@ nCmdProtoPython::nCmdProtoPython(const nCmdProtoPython& rhs)
 /**
     Dispatch specified command.
 
-    @param obj pointer to nebula object(derives nRoot)
-    @cmd pointer to nCmd which contains in-args and out-args.
+    @param obj pointer to nebula object (Must be derived from nObject)
+    @param cmd pointer to nCmd which contains in-args and out-args.
 */
 bool
 nCmdProtoPython::Dispatch(void* obj, nCmd* cmd)
