@@ -76,6 +76,8 @@ public:
     int GetRenderPri() const;
     /// add an animator object
     void AddAnimator(const char* path);
+    /// remove an animator object
+    void RemoveAnimator(const char* path);
     /// get number of animator objects
     int GetNumAnimators() const;
     /// get animator object at index

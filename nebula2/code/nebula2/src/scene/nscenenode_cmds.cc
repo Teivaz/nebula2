@@ -6,6 +6,7 @@
 #include "kernel/npersistserver.h"
 
 static void n_addanimator(void* slf, nCmd* cmd);
+static void n_removeanimator(void* slf, nCmd* cmd);
 static void n_getnumanimators(void* slf, nCmd* cmd);
 static void n_getanimatorat(void* slf, nCmd* cmd);
 static void n_loadresources(void* slf, nCmd* cmd);
@@ -34,6 +35,7 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_addanimator_s",       'ADDA', n_addanimator);
+		cl->AddCmd("v_removeanimator_s",    'REMA', n_removeanimator);
     cl->AddCmd("i_getnumanimators_v",   'GNMA', n_getnumanimators);
     cl->AddCmd("s_getanimatorat_i",     'GAAT', n_getanimatorat);
     cl->AddCmd("b_loadresources_v",     'LORE', n_loadresources);
@@ -61,6 +63,24 @@ n_addanimator(void* slf, nCmd* cmd)
 {
     nSceneNode* self = (nSceneNode*) slf;
     self->AddAnimator(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    removeanimator
+    @input
+    s(AnimatorPath)
+    @output
+    v
+    @info
+    Removes an animator from the node's animator list
+*/
+static void
+n_removeanimator(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    self->RemoveAnimator(cmd->In()->GetS());
 }
 
 //------------------------------------------------------------------------------
