@@ -156,32 +156,6 @@ nStdSceneServer::SortNodes()
 
 //------------------------------------------------------------------------------
 /**
-    Render the shape objects in the scene, using the shader defined by
-    the fourcc code. If no such shader exists, no rendering is done.
-*/
-void
-nStdSceneServer::RenderShapes(uint shaderFourCC)
-{
-    nGfxServer2* gfxServer = this->refGfxServer.get();
-
-    // for each shape object...
-    int i;
-    for (i = 0; i < this->numShapes; i++)
-    {
-        Group& group = this->groupArray[this->shapeArray[i]];
-        if (group.sceneNode->HasShader(shaderFourCC))
-        {
-            gfxServer->SetTransform(nGfxServer2::Model, group.modelTransform);
-            group.sceneNode->RenderShader(shaderFourCC, this, group.renderContext);
-            nShader2* curShader = gfxServer->GetShader();
-            this->UpdateShader(curShader, group.renderContext);
-            group.sceneNode->RenderGeometry(this, group.renderContext);
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Render all light/shape interactions matching a given fourcc shader code.
 
     @todo the intersection check happens once for the diffuse and
@@ -189,15 +163,15 @@ nStdSceneServer::RenderShapes(uint shaderFourCC)
     shapes should be collected and stored once during SplitNodes()!
 */
 void
-nStdSceneServer::RenderLightShapes(uint shaderFourCC)
+nStdSceneServer::RenderLightShapes(uint shaderFourCC, ushort* someShapeArray, int numShapesInArray )
 {
     nGfxServer2* gfxServer = this->refGfxServer.get();
 
     // for each shape object...
     int curShapeIndex;
-    for (curShapeIndex = 0; curShapeIndex < this->numShapes; curShapeIndex++)
+    for (curShapeIndex = 0; curShapeIndex < numShapesInArray; curShapeIndex++)
     {
-        Group& shapeGroup = this->groupArray[this->shapeArray[curShapeIndex]];
+        Group& shapeGroup = this->groupArray[someShapeArray[curShapeIndex]];
         if (shapeGroup.sceneNode->HasShader(shaderFourCC))
         {
             // set the modelview matrix for the shape
@@ -255,7 +229,7 @@ nStdSceneServer::RenderScene()
     {
         // clear, render depth, diffuse, color and specular into the back buffer
         gfxServer->Clear(nGfxServer2::AllBuffers, 0.3f, 0.3f, 0.3f, 1.0f, 1.0f, 0);
-        this->RenderLightShapes(FOURCC('colr'));
+        this->RenderLightShapes(FOURCC('colr'), this->shapeArray, this->numShapes );
     }
 }
 
