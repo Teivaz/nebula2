@@ -283,7 +283,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
         int keyArraySize = numKeys * sizeof(vector4);
         file->Read(&(this->keyArray[0]), keyArraySize);
     }
-    
+
     // cleanup
     file->Close();
     file->Release();
@@ -293,7 +293,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
 //------------------------------------------------------------------------------
 /**
     Samples the current values for a number of curves in the given
-    animation group. The sampled values will be written to a client provided 
+    animation group. The sampled values will be written to a client provided
     vector4 array.
 
     @param  time                a point in time
@@ -302,8 +302,14 @@ nMemoryAnimation::LoadNax2(const char* filename)
     @param  numCurves           number of curves to sample
     @param  dstKeyArray         pointer to vector4 array with numCurves element which
                                 will be filled with the results
+    - 18-Oct-2004   floh    Fixed collapsed curve check (now checks if start key
+                            is -1, instead of the curveIpolType). The curve ipol type
+                            MUST be set to something sane even for collapsed curves,
+                            because it's used at various places for deviding whether
+                            quaternion-interpolation must be used instead of simple
+                            linear interpolation!!
 */
-void 
+void
 nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* dstKeyArray)
 {
     // convert the time into 2 global key indices and an inbetween value
@@ -318,44 +324,50 @@ nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, 
     static quaternion q;
     for (i = 0; i < numCurves; i++)
     {
-        const Curve& curve            = group.GetCurveAt(i + firstCurveIndex);
-        Curve::IpolType curveIpolType = curve.GetIpolType();
-
-        switch (curveIpolType)
+        const Curve& curve = group.GetCurveAt(i + firstCurveIndex);
+        if (curve.GetFirstKeyIndex() == -1)
         {
-            case Curve::None:
-                dstKeyArray[i] = curve.GetConstValue();
-                break;
+            // a collapsed curve
+            dstKeyArray[i] = curve.GetConstValue();
+        }
+        else
+        {
+            switch (curve.GetIpolType())
+            {
+                case Curve::Step:
+                    {
+                        int index0 = curve.GetFirstKeyIndex() + keyIndex[0];
+                        dstKeyArray[i] = this->keyArray[index0];
+                    }
+                    break;
 
-            case Curve::Step:
-                {
-                    int index0 = curve.GetFirstKeyIndex() + keyIndex[0];
-                    dstKeyArray[i] = this->keyArray[index0];
-                }
-                break;
+                case Curve::Quat:
+                    {
+                        int curveFirstKeyIndex = curve.GetFirstKeyIndex();
+                        int index0 = curveFirstKeyIndex + keyIndex[0];
+                        int index1 = curveFirstKeyIndex + keyIndex[1];
+                        q0.set(this->keyArray[index0].x, this->keyArray[index0].y, this->keyArray[index0].z, this->keyArray[index0].w);
+                        q1.set(this->keyArray[index1].x, this->keyArray[index1].y, this->keyArray[index1].z, this->keyArray[index1].w);
+                        q.slerp(q0, q1, inbetween);
+                        dstKeyArray[i].set(q.x, q.y, q.z, q.w);
+                    }
+                    break;
 
-            case Curve::Quat:
-                {
-                    int curveFirstKeyIndex = curve.GetFirstKeyIndex();
-                    int index0 = curveFirstKeyIndex + keyIndex[0];
-                    int index1 = curveFirstKeyIndex + keyIndex[1];
-                    q0.set(this->keyArray[index0].x, this->keyArray[index0].y, this->keyArray[index0].z, this->keyArray[index0].w);
-                    q1.set(this->keyArray[index1].x, this->keyArray[index1].y, this->keyArray[index1].z, this->keyArray[index1].w);
-                    q.slerp(q0, q1, inbetween);
-                    dstKeyArray[i].set(q.x, q.y, q.z, q.w);
-                }
-                break;
+                case Curve::Linear:
+                    {
+                        int curveFirstKeyIndex = curve.GetFirstKeyIndex();
+                        int index0 = curveFirstKeyIndex + keyIndex[0];
+                        int index1 = curveFirstKeyIndex + keyIndex[1];
+                        const vector4& v0 = this->keyArray[index0];
+                        const vector4& v1 = this->keyArray[index1];
+                        dstKeyArray[i] = v0 + ((v1 - v0) * inbetween);
+                    }
+                    break;
 
-            default:
-                {
-                    int curveFirstKeyIndex = curve.GetFirstKeyIndex();
-                    int index0 = curveFirstKeyIndex + keyIndex[0];
-                    int index1 = curveFirstKeyIndex + keyIndex[1];
-                    const vector4& v0 = this->keyArray[index0];
-                    const vector4& v1 = this->keyArray[index1];
-                    dstKeyArray[i] = v0 + ((v1 - v0) * inbetween);
-                }
-                break;
+                default:
+                    n_error("nMemoryAnimation::SampleCurves(): invalid curveIpolType %d!", curve.GetIpolType());
+                    break;
+            }
         }
     }
 }

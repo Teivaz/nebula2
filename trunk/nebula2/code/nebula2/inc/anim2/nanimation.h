@@ -31,7 +31,7 @@
 
     <b>ASCII: .nanim2      (not streamable)</b>
 
-    @verbatim    
+    @verbatim
     type nanim2
     numgroups [numGroups]
     numkeys [numKeys]
@@ -53,8 +53,8 @@
     @endverbatim
 
     <b>BINARY: .nax2   (optionally streamable)</b>
-    
-    @verbatim            
+
+    @verbatim
     HEADER {
         int32 magic         // NAX2
         int32 numGroups     // number of groups in file
@@ -72,7 +72,7 @@
 
     FOR EACH CURVE {
         int16 ipolType          // nAnimation::Curve::IpolType
-        int32 firstKeyIndex     // index of first curve key in key pool
+        int32 firstKeyIndex     // index of first curve key in key pool (-1 if collapsed!)
         float[4] collapsedKey   // the key value if this is a collapsed curve
     }
 
@@ -181,7 +181,7 @@ public:
         int startKey;           ///< index of start key
         int numKeys;            ///< number of keys shared by all curves
         int keyStride;          ///< key stride in key array
-        float keyTime;          ///< number of keys 
+        float keyTime;          ///< number of keys
         LoopType loopType;      ///< the loop type
         nArray<Curve> curveArray;
     };
@@ -310,7 +310,7 @@ nAnimation::Curve::StringToIpolType(const char* str)
     {
         return Quat;
     }
-    else 
+    else
     {
         return Linear;
     }
@@ -491,6 +491,7 @@ nAnimation::Group::StringToLoopType(const char* str)
 
 //------------------------------------------------------------------------------
 /**
+     - 18-Oct-04    floh        fixed case where returned indices could be <0
 */
 inline
 void
@@ -498,7 +499,7 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
 {
     float frame  = time / this->keyTime;
     int intFrame = int(frame);
-    keyIndex0    = intFrame - startKey;
+    keyIndex0    = intFrame - this->startKey;
     keyIndex1    = keyIndex0 + 1;
     inbetween    = frame - float(intFrame);
     if (Clamp == this->loopType)
@@ -512,9 +513,14 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
     else
     {
         // 'repeat' loop type
+        if (keyIndex0 < 0) keyIndex0 += this->numKeys;
+        if (keyIndex1 < 0) keyIndex1 += this->numKeys;
         keyIndex0 %= this->numKeys;
         keyIndex1 %= this->numKeys;
     }
+    n_assert((keyIndex0 >= 0) && (keyIndex0 < this->numKeys));
+    n_assert((keyIndex1 >= 0) && (keyIndex1 < this->numKeys));
+
     keyIndex0 *= this->keyStride;
     keyIndex1 *= this->keyStride;
 }
