@@ -99,3 +99,4 @@ nSkinShadowCaster::SetCharSkeleton(const nCharSkeleton* charSkeleton)
 
 //------------------------------------------------------------------------------
 #endif
+
