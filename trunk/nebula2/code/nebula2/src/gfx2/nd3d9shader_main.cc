@@ -172,7 +172,6 @@ nD3D9Shader::LoadResource()
 //------------------------------------------------------------------------------
 /**
 */
-/*
 void
 nD3D9Shader::SetBool(Parameter p, bool val)
 {
@@ -187,11 +186,10 @@ nD3D9Shader::SetBool(Parameter p, bool val)
         n_assert(SUCCEEDED(hr));
     }
 }
-*/
+
 //------------------------------------------------------------------------------
 /**
 */
-/*
 void
 nD3D9Shader::SetBoolArray(Parameter p, const bool* array, int count)
 {
@@ -202,7 +200,7 @@ nD3D9Shader::SetBoolArray(Parameter p, const bool* array, int count)
     #endif
     n_assert(SUCCEEDED(hr));
 }
-*/
+
 //------------------------------------------------------------------------------
 /**
 */

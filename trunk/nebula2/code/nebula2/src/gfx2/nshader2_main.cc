@@ -150,20 +150,20 @@ nShader2::IsParameterUsed(Parameter /*p*/)
 //------------------------------------------------------------------------------
 /**
 */
-//void
-//nShader2::SetBool(Parameter /*p*/, bool /*val*/)
-//{
+void
+nShader2::SetBool(Parameter /*p*/, bool /*val*/)
+{
     // empty
-//}
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-//void
-//nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
-//{
+void
+nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
+{
     // empty
-//}
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -337,3 +337,5 @@ nShader2::GetTechnique() const
 {
     return 0;
 }
+
+
