@@ -462,11 +462,21 @@ nGuiServer::Trigger()
 void
 nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
 {
+    rectangle cr, r;
+    if (this->GetClipRect(cr))
+    {
+        r = rect * cr;
+    }
+    else
+    {
+        r = rect;
+    }
+
     // need to flush graphics rendering before rendering text
     this->FlushBrushes();
     static vector4 modColor;
     modColor.set(color.x, color.y, color.z, color.w * this->globalColor.w);
-    nGfxServer2::Instance()->DrawText(text, modColor, rect, flags);
+    nGfxServer2::Instance()->DrawText(text, modColor, r, flags);
 }
 
 //-----------------------------------------------------------------------------
