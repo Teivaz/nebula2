@@ -179,7 +179,7 @@ nMaxTransform::Convert(matrix33 &m)
 */
 //------------------------------------------------------------------------------
 /**
-    Retrieves local transformation from given INode.
+    Retrieves local transformation from the given node.
 */
 Matrix3 nMaxTransform::GetLocalTM(INode *inode, TimeValue time)
 {
