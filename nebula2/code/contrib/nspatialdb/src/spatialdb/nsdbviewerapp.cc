@@ -85,6 +85,7 @@ nSDBViewerApp::Open()
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
+    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -131,6 +132,13 @@ nSDBViewerApp::Open()
     {
         const char* result;
         this->refScriptServer->RunScript(this->GetInputScript(), result);
+    }
+
+    // open the scene server
+    if (!this->refSceneServer->Open())
+    {
+        n_error("nSDBViewerApp::Open(): Failed to open nSceneServer!");
+        return false;
     }
 
     // initialize gui
