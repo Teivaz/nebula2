@@ -35,6 +35,14 @@ public:
         Clipped,
     };
 
+    enum {
+        OUTSIDE     = 0,
+        ISEQUAL     = (1<<0),
+        ISCONTAINED = (1<<1),
+        CONTAINS    = (1<<2),
+        CLIPS       = (1<<3),
+    };
+
     /// constructor 1
     bbox3();
     /// constructor 3
@@ -69,6 +77,9 @@ public:
     ClipStatus clipstatus(const bbox3& other) const;
     /// check for intersection with projection volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;  
+
+    int line_test(float v0, float v1, float w0, float w1);
+    int intersect(bbox3 box);
 
     /**
         @brief Gets closest intersection with AABB.
@@ -431,7 +442,7 @@ bbox3::clipstatus(const matrix44& viewProjection) const
     else                    return Clipped;
 }
 
-
+//------------------------------------------------------------------------------
 /**
     @brief Gets closest intersection with AABB.
     If the line starts inside the box,  start point is returned in ipos.
@@ -486,6 +497,44 @@ inline bool bbox3::intersect(const line3& line, vector3& ipos) const
     return false;
 }
 
+//------------------------------------------------------------------------------
+/**
+    check if box intersects, contains or is contained in other box
+    by doing 3 projection tests for each dimension, if all 3 test
+    return true, then the 2 boxes intersect
+*/
+inline
+int bbox3::line_test(float v0, float v1, float w0, float w1)
+{
+    // quick rejection test
+    if ((v1<w0) || (v0>w1)) return OUTSIDE;
+    else if ((v0==w0) && (v1==w1)) return ISEQUAL;
+    else if ((v0>=w0) && (v1<=w1)) return ISCONTAINED;
+    else if ((v0<=w0) && (v1>=w1)) return CONTAINS;
+    else return CLIPS;
+}
 
+inline
+int bbox3::intersect(bbox3 box)
+{
+    int and_code = 0xffff;
+    int or_code  = 0;
+    int cx,cy,cz;
+    cx = line_test(vmin.x,vmax.x,box.vmin.x,box.vmax.x);
+    and_code&=cx; or_code|=cx;
+    cy = line_test(vmin.y,vmax.y,box.vmin.y,box.vmax.y);
+    and_code&=cy; or_code|=cy;
+    cz = line_test(vmin.z,vmax.z,box.vmin.z,box.vmax.z);
+    and_code&=cz; or_code|=cz;
+    if (or_code == 0) return OUTSIDE;
+    else if (and_code != 0) {
+        return and_code;
+    } else {
+        // only if all test produced a non-outside result,
+        // an intersection has occured
+        if (cx && cy && cz) return CLIPS;
+        else                return OUTSIDE;
+    }
+}
 //------------------------------------------------------------------------------
 #endif
