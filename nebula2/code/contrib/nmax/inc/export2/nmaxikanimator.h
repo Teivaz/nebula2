@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nMaxIKAnimator
-    @ingroup
+    @ingroup NebulaMaxExport2Contrib
 
     @brief A class for handling Inverse Kinemetics(IK).
 */
