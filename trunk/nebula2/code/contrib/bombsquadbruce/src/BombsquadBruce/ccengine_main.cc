@@ -12,6 +12,7 @@
 #include "audio3/naudioserver3.h"
 #include "gfx2/nd3d9server.h"
 #include "variable/nvariableserver.h"
+#include "kernel/nfileserver2.h"
 
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"

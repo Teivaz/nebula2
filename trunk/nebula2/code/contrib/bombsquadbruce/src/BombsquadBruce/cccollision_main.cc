@@ -88,7 +88,7 @@ bool CCCollision::AddStaticObject( /*const*/ CCRoot& gameObj )
     bool retVal = ( 0 == GetCollision( gameObj ) );
     if( retVal ) 
     {
-        CollVolT* collVol = n_new CollVolT( GenCollVol( gameObj ) );
+        CollVolT* collVol = n_new( CollVolT( GenCollVol( gameObj ) ) );
         if( collVol->m_Diameter > 0.0f )
         {
             m_BoundingVolumes.push_back( CCRef<CollVolT>( collVol ) );
@@ -102,7 +102,7 @@ bool CCCollision::AddDynamicObject( /*const*/ CCRoot& gameObj )
     bool retVal = ( 0 == GetCollision( gameObj ) );
     if( retVal ) 
     {
-        CollVolT* collVol = n_new CollVolT( GenCollVol( gameObj ) );
+        CollVolT* collVol = n_new( CollVolT( GenCollVol( gameObj ) ) );
         if( collVol->m_Diameter > 0.0f )
         {
             m_DynamicVolumes.push_back( CCRef<CollVolT>( collVol ) );

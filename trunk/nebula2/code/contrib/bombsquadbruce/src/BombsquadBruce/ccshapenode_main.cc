@@ -40,14 +40,14 @@ CCShapeNode::RenderTransform(nSceneServer* sceneServer,
         {
             matrix44 m = this->tform.getmatrix();
             // this part ensures that we don't move relative to the camera
-            const matrix44& viewMatrix = this->refGfxServer->GetTransform(nGfxServer2::InvView);
+            const matrix44& viewMatrix = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
             m.M41 = viewMatrix.M41;
             m.M43 = viewMatrix.M43;
             // this part provided data that allows the shader to move the texture around so
             // so that we _appear_ to move relative to the camera
             if( m_TexCoordScale > 0.0f )
             {
-                const matrix44& m44 = this->refGfxServer->GetTransform(nGfxServer2::View);
+                const matrix44& m44 = nGfxServer2::Instance()->GetTransform(nGfxServer2::View);
                 matrix33 m33( viewMatrix.x_component(), viewMatrix.y_component(), viewMatrix.z_component() );
                 const vector3& camPos = m44.pos_component();
                 vector3 newCamPos;
