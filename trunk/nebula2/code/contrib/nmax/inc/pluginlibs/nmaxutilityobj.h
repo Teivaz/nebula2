@@ -14,7 +14,6 @@
 */
 #include "Max.h"
 #include "notify.h"
-#include "resource.h"
 #include "utilapi.h"
 #include "istdplug.h"
 
