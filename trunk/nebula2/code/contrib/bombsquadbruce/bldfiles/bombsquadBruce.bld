@@ -1,0 +1,51 @@
+#===============================================================================
+#  bombsquadBruce.bld
+#  The default Bombsquad Bruce distribution exe
+#
+#  Targets:
+#      bombsquadBruce.exe
+#===============================================================================
+
+#===============================================================================
+#  bombsquadBruce.exe Targets
+#===============================================================================
+begintarget bombsquadBruce
+    settype exe
+    setrtti true
+    setexceptions true
+    setmodules {
+        ccgeneral
+        ccref
+        ccgame
+        cccamera
+        ccchasecamera
+        ccfreecamera
+        ccworld
+        ccofmworld
+        ccshapenode
+        ccrenderer
+        ccroot
+        ccactor
+        ccmobileactor
+        ccwater
+        ccsceneserver
+	cccollision
+	ccengine
+	ccguibuttonlego
+	ccsound
+        cccullingmgr
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        microtcl
+        nlua
+        nmap
+        noctree
+        nspatialdb
+        ngui
+        ndsaudioserver3
+    }
+endtarget

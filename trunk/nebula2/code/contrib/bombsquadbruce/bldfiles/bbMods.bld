@@ -1,0 +1,153 @@
+#===============================================================================
+#  bbMods.bld
+#  The Bombsquad Bruce base classes
+#===============================================================================
+beginmodule ccgeneral
+    setdir BombsquadBruce
+    setfiles { general.cpp }
+    setheaders { general }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccref
+    setdir BombsquadBruce
+    setfiles { }
+    setheaders { ccref }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccworld
+    setdir BombsquadBruce
+    setfiles { ccworld_main ccworld_cmds }
+    setheaders { ccworld }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccgame
+    setdir BombsquadBruce
+    setfiles { 	ccgame_cmds ccgame_main }
+    setheaders { ccgame }
+endmodule
+#--------------------------------------------------------------------
+beginmodule cccamera
+    setdir BombsquadBruce
+    setfiles { cccamera_main cccamera_cmds }
+    setheaders { cccamera }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccchasecamera
+    setdir BombsquadBruce
+    setfiles { ccchasecamera_main ccchasecamera_cmds }
+    setheaders { ccchasecamera }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccfreecamera
+    setdir BombsquadBruce
+    setfiles { ccfreecamera_main ccfreecamera_cmds }
+    setheaders { ccfreecamera }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccshapenode
+    setdir BombsquadBruce
+    setfiles { ccshapenode_main ccshapenode_cmds }
+    setheaders { ccshapenode }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccrenderer
+    setdir BombsquadBruce
+    setfiles {
+        ccrenderer_main ccrenderer_cmds
+    }
+    setheaders {
+        ccrenderer
+    }
+endmodule
+
+#--------------------------------------------------------------------
+beginmodule ccroot
+    setdir BombsquadBruce
+    setfiles {
+        ccroot_main ccroot_cmds
+    }
+    setheaders {
+        ccroot
+    }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccactor
+    setdir BombsquadBruce
+    setfiles {
+        ccactor_main ccactor_cmds
+    }
+    setheaders {
+        ccactor
+    }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccmobileactor
+    setdir BombsquadBruce
+    setfiles {
+        ccmobileactor_main ccmobileactor_cmds
+    }
+    setheaders {
+        ccmobileactor
+    }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccsceneserver
+    setdir BombsquadBruce
+    setfiles {
+        ccsceneserver_main ccsceneserver_cmds
+    }
+    setheaders {
+        ccsceneserver
+    }
+endmodule
+#--------------------------------------------------------------------
+beginmodule cccollision
+    setdir BombsquadBruce
+    setfiles {
+        cccollision_main 
+    }
+    setheaders {
+        cccollision
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ccengine
+    setdir BombsquadBruce
+    setfiles { ccengine_main ccengine_cmds ccmain.cpp }
+    setheaders { ccengine }
+    setlibs_win32 { dxguid.lib dsound.lib winmm.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ccguibuttonlego
+    setdir BombsquadBruce/gui
+    setfiles { ccguibuttonlego_main ccguibuttonlego_cmds }
+    setheaders { ccguibuttonlego }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ccsound
+	setdir BombsquadBruce
+	setfiles { ccsound_main ccsound_cmds }
+	setheaders { ccsound }	
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule cccullingmgr
+	setdir BombsquadBruce
+	setfiles { cccullingmgr_main cccullingmgr_cmds }
+	setheaders { cccullingmgr }	
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccofmworld
+    setdir BombsquadBruce
+    setfiles { ccofmworld_main ccofmworld_cmds }
+    setheaders { ccofmworld }
+endmodule
+#--------------------------------------------------------------------
+beginmodule ccwater
+    setdir BombsquadBruce
+    setfiles {
+        ccwater_main ccwater_cmds
+    }
+    setheaders {
+        ccwater
+    }
+endmodule
