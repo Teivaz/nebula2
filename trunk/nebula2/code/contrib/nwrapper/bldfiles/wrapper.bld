@@ -35,6 +35,12 @@ beginmodule njavalanguagewrapper
     setfiles { njavalanguagewrapper_main }
     setheaders { njavalanguagewrapper }
 endmodule
+#-------------------------------------------------------------------------------
+beginmodule ndotnetlanguagewrapper
+    setdir wrapper
+    setfiles { ndotnetlanguagewrapper_main }
+    setheaders { ndotnetlanguagewrapper }
+endmodule
 
 #===============================================================================
 #  nwrapper Targets
@@ -45,6 +51,7 @@ begintarget nlangwrapperlib
     setmodules {
         nlanguagewrapper
         njavalanguagewrapper
+        ndotnetlanguagewrapper
     }
 endtarget
 #-------------------------------------------------------------------------------
