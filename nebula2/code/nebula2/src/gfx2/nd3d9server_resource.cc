@@ -98,9 +98,6 @@ nD3D9Server::NewRenderTarget(const char* rsrcName,
 void
 nD3D9Server::UnloadResources()
 {
-    // release the dynamic mesh object
-    this->refDynMesh->Release();
-
     // release the backbuffer and stencil surface
     this->backBufferSurface->Release();
     this->depthStencilSurface->Release();
@@ -112,6 +109,12 @@ nD3D9Server::UnloadResources()
     this->refResource->UnloadResources(nResource::MESH);
     this->refResource->UnloadResources(nResource::TEXTURE);
     this->refResource->UnloadResources(nResource::SHADER);
+    
+    if (this->refDynMesh.isvalid())
+    {
+        // release the dynamic mesh object
+        this->refDynMesh->Release();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +146,6 @@ nD3D9Server::ReloadResources()
     // create the global dynamic mesh object
     n_assert(!this->refDynMesh.isvalid());
     this->refDynMesh = this->NewMesh(0);
-    this->refDynMesh->AddRef();
     this->refDynMesh->SetUsage(nMesh2::WriteOnly);
     this->refDynMesh->SetNumVertices(DYNAMIC_VERTEXBUFFER_SIZE);
     this->refDynMesh->SetNumIndices(DYNAMIC_INDEXBUFFER_SIZE);
