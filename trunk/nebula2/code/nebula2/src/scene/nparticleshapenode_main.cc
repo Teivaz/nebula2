@@ -134,7 +134,7 @@ nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderCont
     this shape node class. Subclasses should override this method
     based on their requirements.
 
-    @return     a combination on nMesh2::Usage flags
+    @return     a combination of nMesh2::Usage flags
 */
 int
 nParticleShapeNode::GetMeshUsage() const
