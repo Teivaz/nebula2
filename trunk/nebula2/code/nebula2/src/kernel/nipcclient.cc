@@ -174,7 +174,7 @@ nIpcClient::Disconnect()
         int res = send (this->sock, cmd, strlen(cmd) + 1, 0);
         if (res == -1)
         {
-            n_printf("nIpcClient: failed to send close msg to host %s port %d\n",
+            n_printf("nIpcClient: failed to send close msg to host %s port %s\n",
                 this->serverAddr.GetHostName(), this->serverAddr.GetPortName());
         }
         this->DestroySocket();
