@@ -5,7 +5,7 @@
     @class nSceneNode
     @ingroup NebulaSceneSystemNodes
 
-    The nSceneNode is the base class of all objects which can be attached
+    @brief The nSceneNode is the base class of all objects which can be attached
     to a scene managed by the nSceneServer class. A scene node object
     may provide transform, geometry, shader and volume information.
 

@@ -5,7 +5,7 @@
     @class nRenderContext
     @ingroup NebulaSceneSystem
 
-    A nRenderContext object holds frame persistent data for nSceneNode
+    @brief A nRenderContext object holds frame persistent data for nSceneNode
     hierarchies and serves as the central communication point between
     the client app and nSceneNode hierarchies.
     

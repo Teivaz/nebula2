@@ -5,7 +5,7 @@
     @class nVectorAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Animates a vector attribute of a nAbstrachShaderNode.
+    @brief Animates a vector attribute of an nAbstractShaderNode.
 
     See also @ref N2ScriptInterface_nvectoranimator
     

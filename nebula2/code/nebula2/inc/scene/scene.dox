@@ -16,3 +16,7 @@
     @defgroup NebulaSceneSystemAnimators Scene Animators
     @ingroup NebulaSceneSystem
 */
+/**
+    @defgroup NebulaSceneLightNodes Scene Lighting
+    @ingroup NebulaSceneSystem
+*/

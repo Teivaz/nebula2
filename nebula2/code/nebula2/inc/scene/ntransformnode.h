@@ -5,9 +5,9 @@
     @class nTransformNode
     @ingroup NebulaSceneSystemNodes
 
-    A transform node groups its child nodes and defines position, orientation 
-    and scale of a scene node. Transformation hierarchies can be created 
-    using the Nebula object name space hierarchy.
+    @brief A transform node groups its child nodes and defines position,
+    orientation and scale of a scene node. Transformation hierarchies
+    can be created using the Nebula object name space hierarchy.
 
     Note that conversions through the GetXXX() method generally don't work.
     GetQuat() does NOT return the orientation set by

@@ -5,9 +5,11 @@
     @class nSceneServer
     @ingroup NebulaSceneSystemServers
 
-    The scene server builds a scene from nSceneNode objects and then
-    renders it. The scene is rebuilt every frame, so some sort of
-    culling should happen externally before building the scene. 
+    @brief The scene server builds a scene from nSceneNode objects and then
+    renders it.
+    
+    The scene is rebuilt every frame, so some sort of culling should happen
+    externally before building the scene. 
 
     (C) 2002 RadonLabs GmbH
 */

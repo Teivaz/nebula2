@@ -5,9 +5,11 @@
     @class nSkinShapeNode
     @ingroup NebulaSceneSystemNodes
 
-    A smooth skinned shape node. Requires that a nSkinAnimator is
-    attached as animator which is called back by the skin shape before
-    rendering to provide a valid joint palette.
+    @brief A smooth skinned shape node.
+    
+    Requires that a nSkinAnimator is attached as an animator which is
+    called back by the skin shape before rendering to provide a valid
+    joint palette.
 
     See also @ref N2ScriptInterface_nskinshapenode
 

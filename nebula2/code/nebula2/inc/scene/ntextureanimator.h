@@ -5,7 +5,7 @@
     @class nTextureAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    nTextureAnimator selects between one of several possible textures.
+    @brief nTextureAnimator selects between one of several possible textures.
 
     See also @ref N2ScriptInterface_ntextureanimator
 

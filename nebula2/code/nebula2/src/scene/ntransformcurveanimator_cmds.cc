@@ -14,8 +14,13 @@ static void n_getanimationgroup(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ntransformcurveanimator
+
+    @cppclass
+    nTransformCurveAnimator
+
     @superclass
     nanimator
+
     @classinfo
     Animate attributes of a transform node using a nAnimation.
 */

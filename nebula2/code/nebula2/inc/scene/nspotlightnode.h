@@ -3,8 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nSpotLightNode
+    @ingroup NebulaSceneLightNodes
+    @brief A light node with a projection matrix describing a pyramidal
+    light cone.
 
-    A light node with a projection matrix describing a pyramidal light cone.
+    See also @ref N2ScriptInterface_nspotlightnode
 
     (C) 2003 RadonLabs GmbH
 */

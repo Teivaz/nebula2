@@ -5,7 +5,8 @@
     @class nStdSceneServer
     @ingroup NebulaSceneSystemServers
 
-    Default scene server. A simple example of how to write a scene server class.
+    @brief Default scene server. A simple example of how to write a scene
+    server class.
 
     (C) 2003 RadonLabs GmbH
 */
