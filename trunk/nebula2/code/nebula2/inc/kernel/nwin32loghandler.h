@@ -1,4 +1,4 @@
-#if defined(__WIN32__) && !defined(__XBxX__)
+#if (defined(__WIN32__) && !defined(__XBxX__)) || defined(DOXYGEN)
 #ifndef N_WIN32LOGHANDLER_H
 #define N_WIN32LOGHANDLER_H
 //------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-#if defined __WIN32__ && !defined(__XBxX__)
+#if (defined __WIN32__ && !defined(__XBxX__)) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 //  nwin32loghandler.cc
 //  (C) 2003 RadonLabs GmbH
