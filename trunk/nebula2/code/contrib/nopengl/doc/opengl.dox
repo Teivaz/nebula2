@@ -1,8 +1,9 @@
 /**
 @defgroup OpenGL OpenGL Graphics Subsystem
 @ingroup NebulaGraphicsSystem
+@ingroup NebulaContribRendererModules
+@brief This is an initial implementation of an OpenGL-based renderer for Nebula 2.
 
-This is an initial implementation of an OpenGL-based renderer for Nebula 2.
 This implementation uses CgFX from nVidia to provide an equivalent to the
 Effects Framework from Microsoft.
 

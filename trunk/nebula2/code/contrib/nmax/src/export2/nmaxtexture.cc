@@ -443,7 +443,7 @@ bool nMaxTexture::IsClassID(Texmap* texmap, ulong classID)
 /**
     Get map type from given texture map.
 
-    @param 
+    @param map
 */
 nMaxTexture::Type nMaxTexture::GetType(Texmap* map)
 {

@@ -3,7 +3,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nMaxDirDlg
-    @ingroup
+    @ingroup NebulaMaxExport2Contrib
 
     @brief directory setting dialog
 */

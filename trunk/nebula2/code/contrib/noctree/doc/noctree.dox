@@ -1,6 +1,6 @@
 /**
 @defgroup NOctreeContribModule Octree Visibility System
-@ingroup NebulaContribModules
+@ingroup NebulaContribVisibilityModules
 @brief nOctTree administers a number nOctElement's, which are defined by 
 position and radius (for the time being).
 

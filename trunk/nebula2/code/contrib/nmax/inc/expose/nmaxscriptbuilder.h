@@ -8,7 +8,8 @@
 
 //------------------------------------------------------------------------------
 /**
-    @class
+    @class nMaxScriptBuilder
+    @ingroup NMaxExposeContrib
 */
 
 class nMaxScriptBuilder

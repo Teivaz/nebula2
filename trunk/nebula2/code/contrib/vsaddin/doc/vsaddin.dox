@@ -1,6 +1,6 @@
 /**
 @defgroup VisualStudioAddin Visual Studio Add-in
-@ingroup NebulaContribModules
+@ingroup NebulaContribMiscModules
 @brief An extension for the Visual Studio debugger to better display Nebula data.
 
 This extension to the Visual Studio debugger allows for the proper display of nString objects.  While this doesn't seem that exciting at first, doing so enables you to get better displays of other objects as well.

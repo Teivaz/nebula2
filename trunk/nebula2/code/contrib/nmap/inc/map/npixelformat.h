@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class nPixelFormat
-
+    @ingroup NMapContribModule
     @brief describe a pixelformat and convert between then
 
     restrictions:

@@ -1,6 +1,6 @@
 /**
-    @defgroup NOpenDEContribModule nOpenDE Contributed Module
-    @ingroup NebulaContribModules
+    @defgroup NOpenDEContribModule nOpenDE
+    @ingroup NebulaContribPhysicsModules
     @brief nOpenDE is a lightweight wrapper for the Open Dynamics Engine.
     
     <h2>Introduction</h2>

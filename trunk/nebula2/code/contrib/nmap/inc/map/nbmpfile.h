@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class nBmpFile
-
+    @ingroup NMapContribModule
     @brief loader/saver class for BMP file format
 */
 //-------------------------------------------------------------------

@@ -14,6 +14,6 @@ interface (nRemoteServer, @ref NebulaToolsnremoteshell).  This is mainly
 useful for debugging, not for providing actual communications within a
 game.
 
-There is also a higher level @ref NNetworkContribModule.
+There is also a higher level @ref Network.
 
 */

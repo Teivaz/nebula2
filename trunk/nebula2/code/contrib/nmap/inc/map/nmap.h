@@ -9,12 +9,6 @@
 #define N_MAP_H
 //---------------------------------------------------------------------------
 /**
-    @defgroup NMapContribModule nMap Contributed Module
-    @ingroup NebulaContribModules
-    @brief nMap provides a terrain renderer that uses geometric mipmaps
-    to provide level of detail.
-*/
-/**
     @class nMap
     @ingroup NMapContribModule
     @brief Provides data source for nMapNode.

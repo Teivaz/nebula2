@@ -2,8 +2,9 @@
 #define N_PHYSDEMOAPP_H
 //------------------------------------------------------------------------------
 /**
-    A simple viewer app class.
-    (modified for PhysDemo use)
+    @class PhysDemoApp
+    @ingroup PhysDemoContribModule
+    @brief A simple viewer app class (modified for PhysDemo use).
     
     (C) 2003 RadonLabs GmbH
 */

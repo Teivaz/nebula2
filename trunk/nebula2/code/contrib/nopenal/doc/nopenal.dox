@@ -1,6 +1,6 @@
 /**
-    @defgroup NOpenALContribModule nOpenAL Contributed Module
-    @ingroup NebulaContribModules
+    @defgroup NOpenALContribModule nOpenAL
+    @ingroup NebulaContribSoundModules
     @ingroup NebulaAudioSystem
 
     @brief nOpenAL is a wrapper around
@@ -21,6 +21,7 @@
 /**
     @defgroup NOpenALDemoContribModule nOpenAL Demo
     @ingroup NOpenALContribModule
+    @ingroup NebulaContribSampleModules
     @brief A small example of how to use nOpenAL for positional audio and music.
 
     <h2>Running the demo</h2>

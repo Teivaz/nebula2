@@ -1,6 +1,6 @@
 /**
-@defgroup NCTerrain2 Chunked LOD Terrain Renderer
-@ingroup NebulaContribModules
+@defgroup NCTerrain2 Chunked LOD Terrain Renderer (ncterrain2)
+@ingroup NebulaContribTerrainModules
 @brief A port of Thatcher Ulrich's ChunkLOD terrain renderer to Nebula2.
 
 NCTerrain2 is based on the original port of ChunkLOD to Nebula 1 done by

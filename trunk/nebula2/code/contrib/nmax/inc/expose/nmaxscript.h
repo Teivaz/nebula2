@@ -2,7 +2,8 @@
 #define N_MAXSCRIPT_H
 //------------------------------------------------------------------------------
 /**
-    @class
+    @class nMaxConverter
+    @ingroup NMaxExposeContrib
 */
 class nMaxConverter
 {

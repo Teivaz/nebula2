@@ -1,8 +1,12 @@
 /**
-@defgroup NWrapperContribModule nwrapper Contributed Module
-@ingroup NebulaContribModules
+@defgroup NWrapperContribModule nwrapper
+@ingroup NebulaContribLanguageModules
 @brief nwrapper helps generate language-specific wrappers around the Nebula
 scripting interface.
+
+<h2>Status</h2>
+
+This is currently unmaintained.
 
 <h2>Compilation</h2>
 

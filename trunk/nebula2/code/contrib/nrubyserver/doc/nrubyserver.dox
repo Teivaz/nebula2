@@ -1,6 +1,6 @@
 /**
-@defgroup RubyScriptServices nRubyServer Contribute Module
-@ingroup NebulaContribModules
+@defgroup RubyScriptServices nRubyServer
+@ingroup NebulaContribLanguageModules
 @brief
 nRubyServer provides Ruby based scripting services for Nebula.
 

@@ -1,6 +1,6 @@
 /**
-    @defgroup NXSIContribModule nXSI Contributed Module
-    @ingroup NebulaContribModules
+    @defgroup NXSIContribModule nXSI
+    @ingroup NebulaContribExporterModules
     @brief nXSI is a dotXSI to Nebula2 converter.
 
     @section NXSIIntroduction Introduction

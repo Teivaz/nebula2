@@ -1,6 +1,6 @@
 /**
     @defgroup BombsquadBruceContribModule Bombsquad Bruce
-    @ingroup NebulaContribModules
+    @ingroup NebulaContribSampleModules
     @brief A simple demo, intended to help learn N2.
 
 Includes lighting, models (including shared nShapeNode instances), Lua scripting, a skybox, vertex shaders, a custom camera and scene server, brutally simple handmade collision detection, frustum culling, simple LOD with billboards, a menu system using nGuiServer, mouse and keyboard input, skinned characters (bone animation), and DirectSounds.  It uses various contributed modules:
