@@ -65,6 +65,8 @@ public:
     virtual bool OpenDisplay();
     /// close the display
     virtual void CloseDisplay();
+    /// parent window handle
+    virtual int GetParentHWnd();
 
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -145,9 +147,12 @@ private:
     };
 
     HINSTANCE hInst;
-    HWND      hWnd;
+    HWND      hWnd;                 ///< handle of this window
+    HWND      parentHWnd;           ///< handle of parent window  (child mode)
+
     HACCEL    hAccel;
     DWORD windowedStyle;            ///< WS_* flags for windowed mode
+    DWORD childStyle;               ///< WS_* flags for child mode
     DWORD fullscreenStyle;          ///< WS_* flags for fullscreen mode
     DWORD deviceBehaviourFlags;     ///< the behaviour flags at device creation time
     D3DCAPS9 devCaps;               ///< device caps
@@ -202,5 +207,9 @@ nD3D9Server::TextNode::TextNode(const char* str, float x, float y) :
     // empty
 }
 
+inline int nD3D9Server::GetParentHWnd()
+{
+    return (int)this->parentHWnd;
+}
 //------------------------------------------------------------------------------
 #endif

@@ -154,7 +154,7 @@ nD3D9Server::DeviceOpen()
     n_assert(0 == this->backBufferSurface);
     
     HRESULT hr;
-    
+
     // prepare window...
     this->AdjustWindowForChange();
 
@@ -217,6 +217,16 @@ nD3D9Server::DeviceOpen()
         this->presentParams.BackBufferCount  = 1;
         this->presentParams.Windowed         = TRUE;
     }
+
+    if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED) 
+    {
+        // if parent window exist, get parent dimension
+        RECT r;
+        GetClientRect(this->parentHWnd, &r);
+        this->displayMode.SetWidth((ushort)(r.right - r.left));
+        this->displayMode.SetHeight((ushort)(r.bottom - r.top));
+    }
+
     this->presentParams.BackBufferWidth                 = this->displayMode.GetWidth();
     this->presentParams.BackBufferHeight                = this->displayMode.GetHeight();
     this->presentParams.BackBufferFormat                = backFormat;

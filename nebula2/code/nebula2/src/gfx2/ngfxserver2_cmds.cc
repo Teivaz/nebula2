@@ -37,7 +37,7 @@ n_initcmds(nClass* cl)
     @cmd
     setdisplaymode
     @input
-    s(Type=windowed,fullscreen), i(Width), i(Height)
+    s(Type=windowed,fullscreen,child), i(Width), i(Height)
     @output
     v
     @info
@@ -61,7 +61,7 @@ n_setdisplaymode(void* slf, nCmd* cmd)
     @input
     v
     @output
-    s(Type=windowed,fullscreen), i(Width), i(Height)
+    s(Type=windowed,fullscreen,child), i(Width), i(Height)
     @info
     Get the current display mode.
 */

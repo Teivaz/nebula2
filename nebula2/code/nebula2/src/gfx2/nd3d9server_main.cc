@@ -30,7 +30,9 @@ nD3D9Server::nD3D9Server() :
     d3dPrimType(D3DPT_LINELIST),
     depthStencilSurface(0),
     backBufferSurface(0),
-    dynMeshLocked(false)
+    dynMeshLocked(false),
+    childStyle(WS_CHILD | WS_TABSTOP),
+    parentHWnd(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
 
@@ -146,6 +148,15 @@ nD3D9Server::Trigger()
 {
     // handle all pending WM's
     MSG msg;
+    // if exist parent window, this window is in child mode
+    if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
+    {
+        if (PeekMessage(&msg,NULL,WM_SIZE,WM_SIZE,PM_NOREMOVE))
+        {
+            int w = LOWORD(msg.lParam);
+            int h = HIWORD(msg.lParam);
+        }
+    }
     while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) 
     {
         if (GetMessage(&msg, NULL, 0, 0)) 
