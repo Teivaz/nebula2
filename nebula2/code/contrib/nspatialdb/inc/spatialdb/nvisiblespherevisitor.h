@@ -2,13 +2,17 @@
 #define N_VISIBLESPHEREVISITOR_H
 
 /**
-   @class nVisibleSphereVisitor
-   @brief Visits all elements visible in a view sphere, useful for determining a character's LOS.
+    @class nVisibleSphereVisitor
+    @ingroup NSpatialDBContribModule
+    @brief Visits all elements visible in a view sphere, useful for
+    determining a character's LOS.
 
-   This visitor finds all the elements possible visible from a given viewpoint within a
-   view sphere.  This is useful for determining objects visible by a character in all directions.
+    This visitor finds all the elements possible visible from a given
+    viewpoint within a view sphere.  This is useful for determining
+    objects visible by a character in all directions.
 
-   The visitor will call Visit() for every element determined possibly visible.
+    The visitor will call Visit() for every element determined possibly
+    visible.
 */
 
 #include "spatialdb/nvisibilityvisitor.h"
@@ -33,7 +37,7 @@ protected:
     nArray<sphere> m_viewspherestack;
     nArray<nSphereClipper> m_sphereclipperstack;
 
-    // gets the current sphere clipper used
+    /// gets the current sphere clipper used
     nSphereClipper &GetSphereClipper() const;
 
     // entering a new local space; the matrix given will transform from the current local system into
@@ -41,10 +45,10 @@ protected:
     // or to transform the spatial region to a new coordinate system.
     virtual void EnterLocalSpace(matrix44 &warp);
 
-    // leave a local space
+    /// leave a local space
     virtual void LeaveLocalSpace();
 
-    // recursive descent of the octree embedded inside a sector
+    /// recursive descent of the octree embedded inside a sector
     void CheckOctNode(nOctNode *testnode, nSphereClipper &clipper, nSphereClipper::result_info clipstatus, int recursivedepth);
 };
 

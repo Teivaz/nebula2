@@ -2,14 +2,17 @@
 #define N_VISIBLEFRUSTUMVISITOR_H
 
 /**
-   @class nVisibleFrustumVisitor
-   @brief Visits all elements visible in a view frustum, useful for rendering to a camera.
+    @class nVisibleFrustumVisitor
+    @ingroup NSpatialDBContribModule
+    @brief Visits all elements visible in a view frustum, useful for
+    rendering to a camera.
 
-   This visitor finds all the elements possible visible from a given viewpoint within a
-   view frustum.  This is useful for determining objects that appear onscreen with a given
-   projective camera.
+    This visitor finds all the elements possible visible from a given
+    viewpoint within a view frustum.  This is useful for determining
+    objects that appear on screen with a given projective camera.
 
-   The visitor will call Visit() for every element determined possibly visible.
+    The visitor will call Visit() for every element determined possibly
+    visible.
 */
 
 #include "spatialdb/nvisibilityvisitor.h"

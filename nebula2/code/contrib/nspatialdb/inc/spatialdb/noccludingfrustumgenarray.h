@@ -1,13 +1,14 @@
-
 #ifndef N_OCCLUDINGFRUSTUMGENARRAY_H
 #define N_OCCLUDINGFRUSTUMGENARRAY_H
 
 /**
-   @class nOccludingFrustumGenList
-   @brief Visits all elements visible in a view frustum and populates an nArray with the visible elements.
+    @class nOccludingFrustumGenList
+    @ingroup NSpatialDBContribModule
+    @brief Visits all elements visible in a view frustum and populates
+    an nArray with the visible elements.
 
-    This is a simple example of how to override visibilityvisitor.  We just override Visit()
-    to append the given element to the array
+    This is a simple example of how to override visibilityvisitor.  We
+    just override Visit() to append the given element to the array
 */
 
 #include "spatialdb/noccludingfrustumvisitor.h"
@@ -23,13 +24,11 @@ public:
 
     virtual void Visit(nSpatialElement *visitee, int recursedepth); 
 
-
 protected:
     void ClearArray();
 
     VisibleElements &m_visarray;
 };
-
 
 #endif
 

@@ -2,15 +2,20 @@
 #define N_FRUSTUMCLIPPER_H
 
 /**
-   @class nFrustumClipper
-   @brief Encapsulates the clipping planes of a frustum, with handling of 'active clipping plane' flags.
+    @class nFrustumClipper
+    @ingroup NSpatialDBContribModule
+    @brief Encapsulates the clipping planes of a frustum, with handling
+    of 'active clipping plane' flags.
 
-   This is just a simple frustum class, allowing you to construct a frustum and test object against it.
-   Also included is the concept of 'active planes' for recursive object testing (i.e., octrees and quadtrees).
-   When a given tree node is determine to be fully on the inside of a given plane, you know all the child
-   objects will be fully inside that plane as well so there is no need to test any child objects against
-   that plane.  When there are no active planes, you know the object and all its children are fully inside the frustum
-   and so can trivially add them all without doing any more clipping checks.
+    This is just a simple frustum class, allowing you to construct a
+    frustum and test object against it.  Also included is the concept
+    of 'active planes' for recursive object testing (i.e., octrees and
+    quadtrees).  When a given tree node is determine to be fully on the
+    inside of a given plane, you know all the child objects will be fully
+    inside that plane as well so there is no need to test any child objects
+    against that plane.  When there are no active planes, you know the
+    object and all its children are fully inside the frustum and so can
+    trivially add them all without doing any more clipping checks.
 */
 
 #include "gfx2/ncamera2.h"
@@ -26,13 +31,14 @@ public:
     nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform);
     nFrustumClipper(const plane clipplanes[6]);
 
-    // helper class for culling
+    /// helper class for culling
     class result_info {
         public:
-            bool    culled; // true when the volume is not visible
-            unsigned char   active_planes;  // one bit per frustum plane
+            bool    culled; ///< true when the volume is not visible
+            unsigned char   active_planes;  ///< one bit per frustum plane
         
-            //0x3F=b111111 => 6 planes for view frustum. Front, back and 4 side planes. (Pyramid with top cut off).     
+            // 0x3F=b111111 => 6 planes for view frustum. Front,
+	    // back and 4 side planes. (Pyramid with top cut off).     
             result_info(bool c = false, unsigned char a = 0x3f) : 
                 culled(c), active_planes(a) 
             { }
@@ -161,7 +167,8 @@ nFrustumClipper::result_info nFrustumClipper::TestBBox(const bbox3 &boxtest, res
     int bit = 1;
     for (int i = 0; i < 6; i++, bit <<= 1)
     {
-        // do the test only if the plane is still not definately containing/clipping the box
+        // do the test only if the plane is still not definately
+	// containing/clipping the box
         if ((bit & in.active_planes) != 0)
         {
 
