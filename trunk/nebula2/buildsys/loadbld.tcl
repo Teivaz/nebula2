@@ -46,6 +46,8 @@ set current_file  ""
 #    begintarget           $name
 #    annotate              $annotation
 #    settype               lib|exe|dll
+#    setrtti               true|false
+#    setexceptions         true|false
 #    setmodules            { $modulename $modulename ... }
 #    setbundles            { $bundlename $bundlename ... }
 #    settargetdeps         { $targetname $targetname ... }
@@ -219,6 +221,41 @@ proc settype {type} {
 }
 
 #----------------------------------------------------------------------------
+#  setrtti $allowrtti
+#  a boolean that determines whether Run Time Type Identification is allowed.
+#  false is the default (see begintarget)
+#----------------------------------------------------------------------------
+proc setrtti {allowrtti} {
+    global current_block
+    global tar
+    global num_tars
+    
+    if {$current_block == 2} {
+        if { $allowrtti == true } {
+          set tar($num_tars,rtti) true
+        }
+    }    
+}
+
+#----------------------------------------------------------------------------
+#  setexceptions $allowexceptions
+#  a boolean that determines whether C++ exception handling is supported.
+#  false is the default (see begintarget)
+#----------------------------------------------------------------------------
+proc setexceptions {allowexceptions} {
+    global current_block
+    global tar
+    global num_tars
+    
+    if {$current_block == 2} {
+        if { $allowexceptions == true } {
+          set tar($num_tars,exceptions) true
+        }
+    }    
+}
+
+
+#----------------------------------------------------------------------------
 #  setmodules $module_list
 #  sets the modules to a target or bundle
 #----------------------------------------------------------------------------
@@ -373,6 +410,8 @@ proc begintarget {name} {
     set tar($num_tars,name)        $name
     set tar($num_tars,annotate)    ""
     set tar($num_tars,type)        lib
+    set tar($num_tars,rtti)        false
+    set tar($num_tars,exceptions)  false
     set tar($num_tars,modules)     ""
     set tar($num_tars,bundles)     ""
     set tar($num_tars,targetdeps)  ""

@@ -110,9 +110,10 @@ proc emit_vcproj_config {name cid debug} {
     puts $cid "\t\t\t\tOptimization=\"0\""
     puts $cid "\t\t\t\tAdditionalIncludeDirectories=\"$inc_list\""
     puts $cid "\t\t\t\tPreprocessorDefinitions=\"__WIN32__;$def_list\""
-    puts $cid "\t\t\t\tExceptionHandling=\"FALSE\""
+    puts $cid "\t\t\t\tExceptionHandling=\"[get_exceptions $name]\""
     puts $cid "\t\t\t\tBasicRuntimeChecks=\"0\""
     puts $cid "\t\t\t\tRuntimeLibrary=\"1\""
+    puts $cid "\t\t\t\tRuntimeTypeInfo=\"[get_rtti $name]\""
     puts $cid "\t\t\t\tUsePrecompiledHeader=\"0\""
     puts $cid "\t\t\t\tAssemblerListingLocation=\"$idir\\$name\""
     puts $cid "\t\t\t\tObjectFile=\"$idir\\$name\\\""
@@ -175,7 +176,7 @@ proc emit_vcproj_files {name cid} {
         
         # Source files
         foreach sourcefile [get_modsources_dressed $module] {
-            regsub -all "/" [pathto $sourcefile.cc] "\\" filename
+            regsub -all "/" [pathto [getfilenamewithextension $sourcefile cc] ] "\\" filename
             puts $cid "\t\t\t<File"
             puts $cid "\t\t\t\tRelativePath=\"$filename\" >"
             puts $cid "\t\t\t\t<FileConfiguration Name=\"Debug|Win32\">"

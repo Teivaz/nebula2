@@ -57,7 +57,7 @@ proc emit_files {name cid} {
                 puts $cid "# Begin Source File"
     	        puts $cid ""
     		            
-                puts $cid "SOURCE=[pathto $filename.cc]"
+                puts $cid "SOURCE=[pathto [getfilenamewithextension $filename cc] ]"
     
                 set cpp "/TP"
                 if { [get_modtype $module] == "c" } { set cpp "/TC" }
