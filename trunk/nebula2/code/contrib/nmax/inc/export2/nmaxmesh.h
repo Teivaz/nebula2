@@ -46,6 +46,15 @@ struct nMaxSkinMeshData
 class nMaxMesh : public nMaxNode
 {
 public:
+    // mesh types
+    enum Type {
+        None      = 0,  // 0,  none of selected in radiobutton of max script ui
+        Shape     = 1,  // static or skinned mesh 
+        Swing     = 2,  // swing shape node
+        Shadow    = 3,  // shadow mesh
+        Collision = 4,  // collision mesh only
+    };
+
     nMaxMesh();
     virtual ~nMaxMesh();
 
@@ -58,6 +67,8 @@ public:
 
     static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
     static void CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename);
+
+    Type GetType() const;
 
 protected:
     Mesh* LockMesh(INode* node);
@@ -90,7 +101,7 @@ protected:
     void GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &weights);
     //@}
 
-    void SetMeshFile(nShapeNode* shapeNode, nString &nodeName, bool useIndivisualMesh);
+    void SetMeshFile(nSceneNode* shapeNode, nString &nodeName, bool useIndivisualMesh);
 
 protected:
     int GetGroupIndex (nMeshBuilder *meshBuilder);
@@ -131,17 +142,9 @@ protected:
     bool GetCustAttrib(INode* inode);
     nSceneNode* CreateShapeNode(INode* inode, nString &name);
 
-    void SetShapeGroup(nShapeNode* createdNode, int baseGroupIndex, int numMaterials);
+    void SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int numMaterials);
 
 protected:
-    // mesh types
-    enum Type {
-        None      = 0,  // 0,  none of selected in radiobutton of max script ui
-        Shape     = 1,  // static or skinned mesh 
-        Swing     = 2,  // swing shape node
-        Shadow    = 3,  // shadow mesh
-        Collision = 4,  // collision mesh only
-    };
 
     Type meshType;
 
@@ -212,9 +215,16 @@ nMaxMesh::GetGroupIndex (nMeshBuilder *meshBuilder)
 }
 //-----------------------------------------------------------------------------
 inline
-const nMeshBuilder& nMaxMesh::GetLocalMeshBuilder()
+const nMeshBuilder& 
+nMaxMesh::GetLocalMeshBuilder()
 {
     return this->localMeshBuilder;
+}
+//-----------------------------------------------------------------------------
+inline
+nMaxMesh::Type nMaxMesh::GetType() const
+{
+    return this->meshType;
 }
 //-----------------------------------------------------------------------------
 #endif
