@@ -32,7 +32,7 @@ beginmodule nmaxdll
     setfiles   { nmaxdll }
     setheaders { nmaxdll }
     setmoddeffile nmaxdll
-    
+    setlibs_win32 { paramblk2.lib }
 endmodule
 
 #-------------------------------------------------------------------------------
