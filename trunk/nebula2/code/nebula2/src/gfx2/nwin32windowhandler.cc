@@ -20,11 +20,6 @@ nWin32WindowHandler::nWin32WindowHandler() :
 {
     // get applications module handle
     this->hInst = GetModuleHandle(0);
-    nEnv *env;
-    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv", "/sys/env/hwnd"))) 
-    {
-        env->SetI(NULL);
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -74,11 +69,8 @@ nWin32WindowHandler::OpenWindow()
     this->hAccel = CreateAcceleratorTable(acc, 1);
 
     // initialize application icon
-    HICON icon = SetIcon();
-    if (!icon)
-    {
-        n_verify( icon = LoadIcon(NULL, IDI_APPLICATION) );
-    }
+    HICON icon;
+    icon = LoadIcon(NULL, IDI_APPLICATION);
 
     // initialize wndclass structure and call RegisterClass()
     WNDCLASSEX wc;
