@@ -1,0 +1,92 @@
+/**
+@defgroup misc_console_server Console Server
+@ingroup NebulaMiscModule
+@brief The console server implements an interactive console, which allows script commands to be executed on objects in the named object hierarchy and provides an output for messages. Functions are also given for creating and deleting objects, and navigating the named object hierarchy.
+
+The console server implements an interactive console, which allows script commands to be executed on objects in the named object hierarchy and provides an output for messages. Functions are also given for creating and deleting objects, and navigating the named object hierarchy.
+
+	- @ref misc_con_gen
+	- @ref misc_con_init
+	- @ref misc_con_usage
+	- @ref misc_con_shutdown
+
+*/
+
+/**
+@page misc_con_gen Console Server
+
+	- @ref misc_con_init
+	- @ref misc_con_usage
+	- @ref misc_con_shutdown
+
+@section misc_con_init Console Server Initialization
+
+The console server depends on the following servers, which should be created
+before creating the console server.
+
+	- @c /sys/servers/input
+	- @c /sys/servers/gfx
+	- @c /sys/servers/script
+
+The console server can be created from C++ or from script code. The default 
+location is @c /sys/servers/console.
+
+@code
+	nConServer* cs = (nConServer*) Kernelserver->New("nconserver", "/sys/servers/console");
+@endcode
+
+@verbatim
+	new nconserver /sys/servers/console
+@endverbatim
+
+@section misc_con_usage Console Server Usage
+
+The console server must be open before it can display anything or accept input. 
+To open the console use nConServer::Open, and to close it use 
+nConServer::Close, to switch the state of the console use nConServer::Toggle. 
+These are also accessible via script as the @c open, @c close, and @c toggle methods.
+
+The console server should be triggered frequently, usually every frame, by 
+calling nConServer::Trigger. nConServer::Trigger should be called before your 
+application processes input events, to allow the console server to consume 
+any key press events when it is open.
+
+The console server also offers the ability to display the value of any nEnv 
+nodes under @c /sys/share/vars. To do this call nConServer::Watch with a
+string pattern that matches the names of any nEnv nodes.
+
+@code
+	// display all vars
+	conServer->Watch("*");
+	
+	// display vars starting with 'gfx'
+	conServer->Watch("gfx*");
+	
+	// stop displaying vars
+	conServer->Unwatch();
+@endcode
+
+Or, in TCL:
+
+@verbatim
+    # display all vars
+    /sys/server/console.watch *
+
+    # display vars starting with 'gfx'
+    /sys/server/console.watch gfx*
+
+    # stop displaying vars
+    /sys/servers/console.unwatch
+@endverbatim
+
+@section misc_con_shutdown Console Server Shutdown
+
+The console server can be released in the normal manner.
+
+@code
+    if (conServer != NULL)
+        conServer->Release();
+    conServer = NULL;
+@endcode
+
+*/
