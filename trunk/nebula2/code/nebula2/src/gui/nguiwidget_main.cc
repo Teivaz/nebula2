@@ -29,6 +29,7 @@ nGuiWidget::nGuiWidget() :
     mouseWithin(false),
     minSize(0.0f, 0.0f),
     maxSize(1.0f, 1.0f),
+    blinking(false),
     blinkStarted(0.0),
     blinkTimeOut(0.0),
     blinkRate(1.0)
