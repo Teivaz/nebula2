@@ -18,6 +18,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/ntypes.h"
 #include "kernel/nobject.h"
+#include "kernel/nroot.h"
 #include "kernel/nref.h"
 #include "util/nlist.h"
 
@@ -29,7 +30,7 @@ class nCmd;
 class nSignal;
 
 //------------------------------------------------------------------------------
-class nSignalServer
+class nSignalServer : nRoot
 {
 public:
     /// constructor
@@ -43,6 +44,9 @@ public:
 
     /// Post a signals and commands for later execution by the signal server
     bool PostCmd(nTime relT, nObject * emitter, nCmd * cmd);
+
+    /// say if there are signals waiting to be posted
+    bool AreSignalsPending() const;
 
 protected:
 
@@ -109,6 +113,14 @@ nSignalServer::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+inline
+bool
+nSignalServer::AreSignalsPending()const
+{
+    return ( ! this->postedSignals.IsEmpty() );
 }
 
 //------------------------------------------------------------------------------
