@@ -19,8 +19,8 @@
 set release_lib_flags1 "/nologo /G6 /MT /W3 /GX /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /TP /c"
 set release_lib_flags2 "/nologo /GB /MD /W3 /GX- /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /TP /c"
 
-set debug_cpp_flags   "/nologo /MDd /W3 /ZI /Od /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"_DEBUG\" /D \"NT_PLUGIN\" /c /GX"
-set release_cpp_flags  "/nologo /G6 /GB /MD /W3 /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /c /GX"
+set debug_cpp_flags   "/nologo /MDd /W3 /ZI /Od /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"_DEBUG\" /D \"NT_PLUGIN\" /c /GX /FD"
+set release_cpp_flags  "/nologo /G6 /GB /MD /W3 /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /c /GX /FD"
 set neb_libpath_win32 "./code/nebula2/lib/win32_vc_i386"
 
 
