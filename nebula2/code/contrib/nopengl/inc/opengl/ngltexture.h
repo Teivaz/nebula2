@@ -29,7 +29,7 @@
 #define N_GLTEXTURE_H
 //------------------------------------------------------------------------------
 /**
-    @class nD3D9Texture
+    @class nGLTexture
     @ingroup OpenGL
 
     OpenGL subclass for nTexture2.
