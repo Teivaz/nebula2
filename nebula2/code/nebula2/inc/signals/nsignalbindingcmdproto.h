@@ -2,17 +2,16 @@
 #define N_SIGNALBINDINGCMDPROTO_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalbindingcmdproto.h
     @class nSignalBindingCmdProto
     @ingroup NebulaSignals
 
     nSignalBindingCmdProto is a subclass of nSignalBinding used mainly in two
     cases:
 
-    * When the binding callback invocates code on the script side through the
-    Nebula scripting system.
+     - When the binding callback invocates code on the script side through the
+       Nebula scripting system.
 
-    * When the binding itself has been created from the scripting side.
+     - When the binding itself has been created from the scripting side.
 
     (C) 2004 Tragnarion Studios
 */
@@ -26,7 +25,7 @@
 class nSignalBindingCmdProto : public nSignalBinding
 {
 public:
-    /// binding constructor from nCmdProto (not rebind done)
+    /// binding constructor from nCmdProto (no rebind done)
     nSignalBindingCmdProto(nObject * obj, nCmdProto * proto, int priority);
     /// binding constructor from fourcc code (rebind optional)
     nSignalBindingCmdProto(nObject * obj, nFourCC fcc, int priority, bool rebindOnCall = false);
@@ -35,23 +34,27 @@ public:
     /// destructor
     virtual ~nSignalBindingCmdProto();
 
+    /** @name Invocation
+        Methods for invoking a signal binding. */
+    //@{
     /// Invocation used from scripting side
     virtual bool Invoke(nCmd * cmd);
     /// Invocation used from native side
     virtual bool Invoke(va_list args);
+    //@}
 
-    /// @return prototype string
+    /// Return prototype string
     virtual const char * GetProtoDef() const;
 
-    /// @return true if binding points to the object provided
+    /// Return true if binding points to the object provided
     virtual bool IsBoundWithObject(const nObject * objectPtr) const;
-    /// @return true if binding bounds to a command with the cmdproto provided
+    /// Return true if binding bounds to a command with the cmdproto provided
     virtual bool IsBoundWithCmdProto(const nCmdProto * functionPtr) const;
-    /// @return true if binding bounds to a command with the name provided
+    /// Return true if binding bounds to a command with the name provided
     virtual bool IsBoundWithCmdName(const char * name) const;
-    /// @return true if binding bounds to a command with the fourcc provided
+    /// Return true if binding bounds to a command with the fourcc provided
     virtual bool IsBoundWithCmdFourCC(nFourCC fourcc) const;
-    /// @return true if the binding is valid
+    /// Return true if the binding is valid
     virtual bool IsValid() const;
 
 protected:

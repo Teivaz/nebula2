@@ -2,11 +2,9 @@
 #define N_SIGNALBINDINGNATIVE_H
 //------------------------------------------------------------------------------
 /**
-    @file nSignalBindingNative.h
     @class nSignalBindingNative
     @ingroup NebulaSignals
-
-    nSignalBindingNative
+    @brief Fast binding in native world.
 
     (C) 2004 Tragnarion Studios
 */
@@ -15,10 +13,6 @@
 #include "kernel/ncmdprototraits.h"
 #include "signals/nsignalbinding.h"
 
-//------------------------------------------------------------------------------
-/**
-    Fast binding in native world.
-*/
 template <class TClass, class TR, class TListIn, class TListOut>
 class nSignalBindingNative : public nSignalBinding
 {
@@ -35,17 +29,21 @@ public:
     /// destructor
     virtual ~nSignalBindingNative();
 
+    /** @name Invocation
+        Methods for invoking a signal binding. */
+    //@{
     /// Invocation used from scripting side
     virtual bool Invoke(nCmd * cmd);
     /// Invocation used from native side
     virtual bool Invoke(va_list args);
+    //@}
 
-    /// @return prototype string
+    /// Return prototype string
     virtual const char * GetProtoDef() const;
 
-    /// @return true if binding points to the object provided
+    /// Return true if binding points to the object provided
     virtual bool IsBoundWithObject(const nObject * objectPtr) const;
-    /// @return true if the binding is valid
+    /// Return true if the binding is valid
     virtual bool IsValid() const;
 
 protected:

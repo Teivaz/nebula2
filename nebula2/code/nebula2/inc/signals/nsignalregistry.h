@@ -2,18 +2,9 @@
 #define N_SIGNALREGISTRY_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalregistry.h
     @class nSignalRegistry
     @ingroup NebulaSignals
-
-    nSignalRegistry is the interface needed to add to nClass to handle signals.
-    Not yet sure about how to merge it with it, rather moving this code into
-    nClass or just use multiple inheritance.
-
-    Much as nClass currently tracks the commands that a class supports, it will
-    also come to track the signals that it may emit.  The signal setup could
-    probably happen within the existing implementations of n_initcmds functions
-    Perhaps we should consider renaming this function to n_initclass?
+    @brief nSignalRegistry is the interface for adding signals to an nClass.
 
     (C) 2004 Tragnarion Studios
 */
@@ -33,6 +24,9 @@ public:
     /// destructor
     ~nSignalRegistry();
 
+    /** @name Management
+        Methods for managing signals on an nClass. */
+    //@{
     /// start defining signals
     void BeginSignals(int numSignals);
     /// add a signal object already created
@@ -47,6 +41,7 @@ public:
     nSignal * FindSignalByName(const char * name);
     /// find a signal by fourcc code
     nSignal * FindSignalById(nFourCC id);
+    //@}
 
     /// get number of signals
     int GetNumSignals() const;

@@ -42,12 +42,12 @@ nSignalRegistry::BeginSignals(int numSignals)
 
 //------------------------------------------------------------------------------
 /**
-    AddSignal adds the signal provided as parameter @signal to the internal list
-    of signals supported by the class.
+    AddSignal adds the signal provided as parameter <tt>signal</tt> to the
+    internal list of signals supported by the class.
 
-    * This will error when the signal already exists
-    * This will error if the FourCC isn't unique for that class
-    and its ancestors.
+     - This will error when the signal already exists
+     - This will error if the nFourCC isn't unique for that class
+       and its ancestors.
 */
 bool
 nSignalRegistry::AddSignal(nSignal * signal)
@@ -75,12 +75,13 @@ nSignalRegistry::AddSignal(nSignal * signal)
     AddSignal creates a new signal with the parameters provided
 
     @param  proto_def   the signal prototype definition
-    @param  id          the signal unique fourcc code
+    @param  id          the signal unique nFourCC code
     @returns true if the signal was added sucessfully, otherwise false
 
-    * This will error when the signal already exists
-    * This will error if the FourCC isn't unique for that class and its ancestors.
-    * This will error if the type signature is not valid.
+     - This will error when the signal already exists
+     - This will error if the nFourCC isn't unique for that class and its
+       ancestors.
+     - This will error if the type signature is not valid.
 */
 bool
 nSignalRegistry::AddSignal(const char * proto_def, nFourCC id)
@@ -166,7 +167,8 @@ nSignalRegistry::FindSignalByName(const char * name)
 
 //------------------------------------------------------------------------------
 /**
-    Find signal by fourcc identifier
+    Find signal by nFourCC identifier.
+
     @return the signal object when found, otherwise NULL
 */
 nSignal *

@@ -2,18 +2,26 @@
 #define N_SIGNAL_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignal.h
     @class nSignal
     @ingroup NebulaSignals
+    @brief nSignal, while largely internal, is a key concept in the signal
+    system.
 
-    nSignal, while largely internal, is a key concept involved here in the
-    signal system. It is really just a name and a type signature:
+    It is really just a name and a type signature:
 
-   * Name of signal
-   * FourCC for signal
-   * Type signature of the signal
+    - Name of signal
+    - FourCC for signal
+    - Type signature of the signal
 
-   nSignal is a per-nClass structure.
+    nSignal is a per-nClass structure.
+
+    nSignal is used to store signal objects. It may seem a bit strange to
+    make it a subclass of nCmdProto, but it is quite convenient and it saves
+    some coding.  In the same way, nCmd will prove useful in order to
+    represent the invocation of signals.
+
+    Signals created from script are instances of the nSignal class, while
+    signals created from C++ side are instances of the nSignalNative subclass.
 
     (C) 2004 Tragnarion Studios
 */
@@ -25,18 +33,6 @@
 //------------------------------------------------------------------------------
 class nSignalEmitter;
 class nSignalBindingSet;
-
-//------------------------------------------------------------------------------
-/**
-    nSignal is used to store signal objects. It may seem a bit strange to
-    make it a subclass of nCmdProto, but it is quite convenient and it saves
-    some coding.  In the same way, nCmd will prove useful in order to
-    represent the invocation of signals.
-
-    Signals created from scripting are objects from the class nSignal, while
-    signals created from C++ side are from nSignalNative subclasses
-    (@see nSignalNative).
-*/
 class nSignal : public nCmdProto
 {
 public:
@@ -44,17 +40,21 @@ public:
     nSignal(const char * signalName, const char *proto_def, nFourCC id);
     /// destructor
     virtual ~nSignal();
-    /// delete signal in the case it is possible
+    /// Delete signal if possible
     virtual void Release(void);
 
+    /** @name Invocation
+        Methods for invoking a signal. */
+    //@{
     /// Emit a signal from scripting
     virtual bool Dispatch(void *, nCmd *);
     /// Emit a signal with arguments in va_list type
     virtual bool Dispatch(nSignalEmitter *, va_list args);
     /// Emit a signal with variable argument list
     bool Emit(nSignalEmitter *, ...);
+    //@}
 
-    /// @return true if the prototype and the signal are compatible
+    /// Return true if the prototype and the signal are compatible
     bool CheckCompatibleProto(const char * proto) const;
 
 protected:

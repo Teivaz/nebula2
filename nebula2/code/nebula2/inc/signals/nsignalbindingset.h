@@ -2,11 +2,13 @@
 #define N_SIGNALBINDINGSET_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalbindingset.h
     @class nSignalBindingSet
     @ingroup NebulaSignals
+    @brief nSignalBindingSet is a container of bindings.
 
-    nSignalBindingSet is a container of bindings.
+    nSignalBindingSet is just a container of signal bindings, it has no logic
+    about signal emission or binding invocation. It keeps a list of signal
+    bindings sorted by priority.
 
     (C) 2004 Tragnarion Studios
 */
@@ -18,12 +20,6 @@
 //------------------------------------------------------------------------------
 class nSignal;
 
-//------------------------------------------------------------------------------
-/**
-    nSignalBindingSet is just a container of signal bindings, it has no logic
-    about signal emission or binding invocation. It keeps a list of signal
-    bindings sorted by priority.
-*/
 class nSignalBindingSet : public nHashNode
 {
 public:
@@ -32,6 +28,9 @@ public:
     /// destructor
     virtual ~nSignalBindingSet();
 
+    /** @name Managemetn
+        Methods for managing the bindings in a signal binding set. */
+    //@{
     /// add a binding to a binding set
     bool AddBinding(nSignalBinding * binding);
     /// remove a binding
@@ -46,13 +45,18 @@ public:
     bool RemoveBinding(const nObject * objectPtr, const char * name);
     /// remove all bindings
     void RemoveAllBindings();
-    /// @returns true if signal binding found in list
+    /// returns true if signal binding found in list
     bool HasBinding(const nSignalBinding * binding) const;
+    //@}
 
+    /** @name Methods for iterating over the bindings in a signal binding set.
+    */
+    //@{
     /// get first binding
     nSignalBinding * GetHead() const;
     /// get last binding
     nSignalBinding * GetTail() const;
+    //@}
 
 private:
     nList bindings;
