@@ -96,7 +96,7 @@ function OnGuiServerOpen()
         -- define brushes  
         skin:beginbrushes()
 
-        -- window title skin:ar, window background, tooltip background
+        -- window title bar, window background, tooltip background
         skin:addbrush('titlebar','skin',0,52,43,20,1.0,1.0,1.0,1.0)
         skin:addbrush('window','skin',0,77,15,13,1.0,1.0,1.0,1.0)
         skin:addbrush('tooltip','skin',0,77,15,13,1.0,1.0,1.0,1.0)
@@ -118,7 +118,7 @@ function OnGuiServerOpen()
         skin:addbrush('size_h','skin',352,136,16,16,1.3,1.3,1.3,1.0)
         skin:addbrush('size_p','skin',352,136,16,16,1.2,1.2,1.2,1.0)
 
-        --skin:arrows
+        -- arrows
         skin:addbrush('arrowleft_n','skin',0,136,16,16,1.0,1.0,1.0,1.0)
         skin:addbrush('arrowleft_h','skin',16,136,16,16,1.3,1.3,1.3,1.0)
         skin:addbrush('arrowleft_p','skin',32,136,16,16,1.0,1.0,1.0,1.0)
@@ -141,7 +141,7 @@ function OnGuiServerOpen()
         skin:addbrush('sliderknobvert_p','skin',320,136,16,16,1.0,1.0,1.0,1.0)
         skin:addbrush('sliderknobvert_h','skin',336,136,16,16,1.3,1.3,1.3,1.0)
 
-        -- sskin:andard buttons
+        -- standard buttons
         skin:addbrush('button_n','skin',226,0,73,24,1.0,1.0,1.0,1.0)
         skin:addbrush('button_p','skin',76,0,73,24,1.0,1.0,1.0,1.0)
         skin:addbrush('button_h','skin',1,0,73,24,1.3,1.3,1.3,1.0)
