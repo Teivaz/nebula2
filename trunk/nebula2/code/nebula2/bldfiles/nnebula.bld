@@ -30,8 +30,6 @@ begintarget nnebula
         nprefserver nwin32prefserver nhdrsceneserver nmrtsceneserver
         nlocaleserver tinyxml xml
     }
-    settargetdeps {
-        nshadow
-    }
+    setbundles { nshadow }
 endtarget
 

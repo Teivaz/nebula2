@@ -29,7 +29,6 @@ beginworkspace Nebula2
         nvideo
         ngui
         nnpktool
-        nshadow
         nnetwork
         napplication
         xml
