@@ -105,9 +105,12 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
 /**
     Samples the float or point3 controllers and specifies retrieved keys to 
     the given sampleKeyArray.
+
+    - 21-Feb-05 kims added optimize routine which remove a key if the key has
+                     same value except time value to previous key.
 */
 void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
-                                    int sampleRate, nMaxControlType type)
+                                    int sampleRate, nMaxControlType type, bool optimize)
 {
     TimeValue t;
     TimeValue start	= nMaxInterface::Instance()->GetAnimStartTime();
@@ -186,6 +189,43 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
         sampleKey.time  = t * SECONDSPERTICK;
 
         sampleKeyArray.Append(sampleKey);
+    }
+
+    if (optimize)
+    {
+        // remove redundant keys which is same to previous key.
+        nArray<nMaxSampleKey> tmpKeyArray;
+
+        int i,j;
+
+        for (i=0; i<sampleKeyArray.Size(); i++)
+        {
+            nMaxSampleKey key1 = sampleKeyArray[i];
+            bool diff = false;
+
+            if (i==0)
+                diff = true;
+            else
+            {
+                // previous key.
+                nMaxSampleKey key2 = sampleKeyArray[i-1];
+
+                if (key1.pt4.x != key2.pt4.x ||
+                    key1.pt4.y != key2.pt4.y ||
+                    key1.pt4.z != key2.pt4.z ||
+                    key1.pt4.w != key2.pt4.w )
+                {
+                    diff = true;
+                }
+            }
+
+            // this key is a new one.
+            if (diff)
+                tmpKeyArray.Append(key1);
+        }
+
+        sampleKeyArray.Clear();
+        sampleKeyArray = tmpKeyArray;
     }
 }
 //-----------------------------------------------------------------------------
