@@ -33,7 +33,7 @@ public:
 private:
     nKernelServer* kernelServer;
     bool noConsoleWindow;
-    nString exec;;
+    nString exec;
     nString dir;
     nString args;
 };
