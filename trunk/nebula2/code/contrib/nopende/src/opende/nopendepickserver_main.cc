@@ -37,9 +37,9 @@ nOpendePickServer::~nOpendePickServer()
 
 //----------------------------------------------------------------------------
 /**
-    @param [in] mouseX   Absolute x coordinate of cursor in pixels.
-    @param [in] mouseY   Absolute y coordinate of cursor in pixels.
-    @param [out] pickRay The generated pick ray.
+    @param mouseX   [in] Absolute x coordinate of cursor in pixels.
+    @param mouseY   [in] Absolute y coordinate of cursor in pixels.
+    @param pickRay  [out] The generated pick ray.
 */
 void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
 {
@@ -77,9 +77,9 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
   
 //----------------------------------------------------------------------------
 /**
-    @param [in]  mouseX  Normalized x coordinate of cursor (-1.0 to 1.0)
-    @param [in]  mouseY  Normalized y coordinate of cursor (-1.0 to 1.0)
-    @param [out] pickRay The generated pick ray.
+    @param mouseX  [in] Normalized x coordinate of cursor (-1.0 to 1.0)
+    @param mouseY  [in] Normalized y coordinate of cursor (-1.0 to 1.0)
+    @param pickRay [out] The generated pick ray.
 */      
 void nOpendePickServer::CreatePickRay( float mouseX, float mouseY, 
                                        line3& pickRay )

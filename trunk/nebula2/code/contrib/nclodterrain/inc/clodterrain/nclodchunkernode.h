@@ -72,8 +72,8 @@ public:
     /**
      * @brief Specify tree depth and maximum error at deepest depth
      *
-     * @param xspacing depth of the quadtree to generate
-     * @param yspacing maximum error allowed at the deepest quadtree level
+     * @param depth depth of the quadtree to generate
+     * @param maxerror maximum error allowed at the deepest quadtree level
      */
     void setChunkParameters(unsigned int depth, float maxerror);
 

@@ -62,9 +62,9 @@ public:
     /**
      * @brief Specify tree depth and size of the chunk texture size for each node
      *
-     * @param depth depth of the quadtree to generate
-     * @param chunktex size of the chunk textures (chunktexes are square) to generate at each level
-           * @param maxtexindex the highest texture index for which we generate a blend texture
+     * @param splatdepth depth of the quadtree to generate
+     * @param chunktexsize size of the chunk textures (chunktexes are square) to generate at each level
+     * @param maxtexindex the highest texture index for which we generate a blend texture
      */
     void setTQTParameters(unsigned int splatdepth, unsigned int chunktexsize, unsigned int maxtexindex);
 

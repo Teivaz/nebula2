@@ -16,12 +16,14 @@ static void n_releaseid(void* slf, nCmd* cmd);
     nroot
 
     @classinfo
-    The eUIDserver just hands out unique IDs from an internal pool.  Any deleted IDs are returned
-    to the pool, and all new uIDs recieved from a single server are guaranteed to be unique. Of
-    course, uIDs from two separately-created servers could be identical, but that should be obvious.
+    The eUIDserver just hands out unique IDs from an internal pool.  Any
+    deleted IDs are returned to the pool, and all new uIDs recieved from a
+    single server are guaranteed to be unique. Of course, uIDs from two
+    separately-created servers could be identical, but that should be obvious.
 
-    Be careful if you request more than 2^31 unique IDs - the server is using signed integers internally,
-    and the negative integers you're get after the wrap-around may or may not work for your purposes.
+    Be careful if you request more than 2^31 unique IDs - the server is
+    using signed integers internally, and the negative integers you're
+    get after the wrap-around may or may not work for your purposes.
 */
 void
 n_initcmds(nClass* clazz)
@@ -80,13 +82,13 @@ n_releaseid(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    @param  fileServer  writes the nCmd object contents out to a file.
-    @return             success or failure
+    @param  ps  writes the nCmd object contents out to a file.
+    @return     success or failure
 */
 bool
-eUIDServer::SaveCmds(nPersistServer* fs)
+eUIDServer::SaveCmds(nPersistServer* ps)
 {
-    if (nRoot::SaveCmds(fs))
+    if (nRoot::SaveCmds(ps))
     {
         return true;
     }
