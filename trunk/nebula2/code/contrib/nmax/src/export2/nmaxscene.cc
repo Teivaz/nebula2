@@ -21,13 +21,12 @@
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxskinanimator.h"
 #include "export2/nmaxcontrol.h"
+#include "export2/nmaxskinpartitioner.h"
 
 #include "kernel/npersistserver.h"
 #include "variable/nvariableserver.h"
 #include "scene/ntransformnode.h"
 #include "scene/nskinshapenode.h"
-#include "tools/nskinpartitioner.h"
-#include "scene/nskinanimator.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -366,7 +365,9 @@ bool nMaxScene::Postprocess()
         if (v.HasComponent(nMeshBuilder::Vertex::WEIGHTS) && 
             v.HasComponent(nMeshBuilder::Vertex::JINDICES))
         {
-            this->PartitionMesh();
+            nMaxSkinPartitioner skinPartitioner;
+            skinPartitioner.Partitioning(this->meshArray, this->globalMeshBuilder);
+            //this->PartitionMesh();
         }
     }
 
@@ -853,109 +854,4 @@ bool nMaxScene::CreateAnimation(nAnimBuilder &animBuilder)
     animBuilder.FixKeyOffsets();
 
     return true;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    call this only when group meshes by source object.
-*/
-void nMaxScene::PartitionMesh()
-{
-    nArray<nMaxMeshFragment> meshFragmentArray;
-
-    nMeshBuilder tmpMeshBuilder;
-    nSkinPartitioner skinPartitioner;
-
-    int maxJointPaletteSize = nMaxOptions::Instance()->GetMaxJointPaletteSize();
-
-    // do skin partitioning.
-    if (skinPartitioner.PartitionMesh(this->globalMeshBuilder, tmpMeshBuilder, maxJointPaletteSize))
-    {
-        n_maxlog(Midium, "Number of partitions: %d", skinPartitioner.GetNumPartitions());
-
-        for (int i=0; i<this->meshArray.Size(); i++)
-        {
-            nMaxMesh* mesh = this->meshArray[i];
-
-            for (int j=0; j<mesh->GetNumGroupMeshes(); j++)
-            {
-                const nMaxGroupMesh& groupMesh = mesh->GetGroupMesh(j);
-
-                nSkinShapeNode* node = groupMesh.GetNode(); 
-                n_assert(node);
-
-                int groupIndex = groupMesh.GetGroupIndex();
-
-                // create per shape.
-                nMaxMeshFragment meshFragment;
-                meshFragment.node = node;
-
-                if (groupIndex >= 0)
-                {
-                    const nArray<int>& groupMapArray = skinPartitioner.GetGroupMappingArray();
-
-                    for ( int k=0; k<groupMapArray.Size(); k++ )
-                    {
-                        if ( groupMapArray[k] == groupIndex )
-                        {                          
-                            nArray<int> bonePaletteArray = skinPartitioner.GetJointPalette(k);
-
-                            if (bonePaletteArray.Size() > 0)
-                            {
-                                // fragment group index : k
-                                // fragment bone palette array : bonePaletteArray;
-
-                                // create per shape fragment
-                                nMaxMeshFragment::Fragment frg;
-
-                                frg.groupMapIndex    = k;
-                                frg.bonePaletteArray = bonePaletteArray;
-
-                                meshFragment.fragmentArray.Append(frg);
-                            }
-                        }
-                    }
-                }
-
-                meshFragmentArray.Append(meshFragment);
-            }
-        }
-    }
-
-    this->globalMeshBuilder = tmpMeshBuilder;
-
-    // build skin shape node's fragments.
-    nMaxMesh::BulldMeshFragments(meshFragmentArray);
-
-    //for (int i=0; i<meshFragmentArray.Size(); i++)
-    //{
-    //    nMaxMeshFragment& meshFragment = meshFragmentArray[i];
-
-    //    int numFragments = meshFragment.fragmentArray.Size();
-    //    if (numFragments > 0)
-    //    {
-    //        nSkinShapeNode* node = meshFragment.node;
-
-    //        node->BeginFragments(numFragments);
-
-    //        for (int j=0; j<numFragments; j++)
-    //        {
-    //            nMaxMeshFragment::Fragment& frag = meshFragment.fragmentArray[j];
-    //         
-    //            node->SetFragGroupIndex(j, frag.groupMapIndex);
-
-    //            int numJointPaletteSize = frag.bonePaletteArray.Size();
-    //            node->BeginJointPalette(j, numJointPaletteSize);
-
-    //            for (int k=0; k<numJointPaletteSize; k++)
-    //            {
-    //                node->SetJointIndex(j, k, frag.bonePaletteArray[k]);
-    //            }
-
-    //            node->EndJointPalette(j);
-    //        }
-
-    //        node->EndFragments();
-    //    }
-    //}
 }

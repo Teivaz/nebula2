@@ -15,6 +15,7 @@
 
 //-----------------------------------------------------------------------------
 /**
+    @return True, if the given 3dsmax geometry node has skin modifier.
 */
 bool nMaxMesh::IsSkinned()
 {
@@ -22,6 +23,7 @@ bool nMaxMesh::IsSkinned()
 }
 //-----------------------------------------------------------------------------
 /**
+    @return True, if the given 3dsmax geometry node has physique modifier.
 */
 bool nMaxMesh::IsPhysique()
 {
@@ -29,6 +31,7 @@ bool nMaxMesh::IsPhysique()
 }
 //-----------------------------------------------------------------------------
 /**
+    Retrieves vertex interface of the vertex which has given vertex iD.
 */
 IPhyVertexExport* nMaxMesh::GetVertexInterface(int vertexId)
 {
@@ -36,14 +39,15 @@ IPhyVertexExport* nMaxMesh::GetVertexInterface(int vertexId)
 }
 //-----------------------------------------------------------------------------
 /**
+    Release retrieved vertex interface.
 */
 void nMaxMesh::ReleaseVertexInterface(IPhyVertexExport* phyVertexExport)
 {
-    //IPhyVertexExport* vertexExport = static_cast<IPhyVertexExport*>(phyContextExport);
     phyContextExport->ReleaseVertexInterface(phyVertexExport);
 }
 //-----------------------------------------------------------------------------
 /**
+    Retrieves interface of skin context data.
 */
 ISkinContextData* nMaxMesh::GetSkinContextData()
 {
@@ -51,6 +55,7 @@ ISkinContextData* nMaxMesh::GetSkinContextData()
 }
 //-----------------------------------------------------------------------------
 /**
+    Retrieves skin interface.
 */
 ISkin* nMaxMesh::GetSkin()
 {
@@ -61,7 +66,7 @@ ISkin* nMaxMesh::GetSkin()
     Determine if the given mesh has physique or skin modifier.
 
     @note
-    DO NOT FORGET TO CALL EndSkin()
+        DO NOT FORGET TO CALL EndSkin()
 
     @param node 3dsmax's node.
     @return true, if the given mesh has physique or skin modifier
@@ -165,113 +170,4 @@ void nMaxMesh::EndSkin()
     modifier = 0;
     phyExport = 0;
     phyContextExport = 0;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    @note
-    Call this function only when use individual mesh file.
-*/
-void nMaxMesh::PartitionMesh()
-{
-    nArray<nMaxMeshFragment> meshFragmentArray;
-
-    nMeshBuilder tmpMeshBuilder;
-    nSkinPartitioner skinPartitioner;
-
-    int maxJointPaletteSize = nMaxOptions::Instance()->GetMaxJointPaletteSize();
-
-    // do skin partitioning.
-    if (skinPartitioner.PartitionMesh(this->localMeshBuilder, tmpMeshBuilder, maxJointPaletteSize))
-    {
-        //n_maxlog(Midium, "Number of partitions: %d", skinPartitioner.GetNumPartitions());
-
-        for (int i=0; i<this->GetNumGroupMeshes(); i++)
-        {
-            const nMaxGroupMesh& groupMesh = this->GetGroupMesh(i);
-
-            nSkinShapeNode* node = groupMesh.GetNode(); 
-            int groupIndex = groupMesh.GetGroupIndex();
-
-            // create per shape.
-            nMaxMeshFragment meshFragment;
-            meshFragment.node = node;
-
-            if (groupIndex >= 0)
-            {
-                const nArray<int>& groupMapArray = skinPartitioner.GetGroupMappingArray();
-
-                for ( int j=0; j<groupMapArray.Size(); j++ )
-                {
-                    if ( groupMapArray[j] == groupIndex )
-                    {                          
-                        nArray<int> bonePaletteArray = skinPartitioner.GetJointPalette(j);
-
-                        if (bonePaletteArray.Size() > 0)
-                        {
-
-                            // fragment group index : j
-                            // fragment bone palette array : bonePaletteArray;
-                            // create per shape fragment
-                            nMaxMeshFragment::Fragment frg;
-
-                            frg.groupMapIndex    = j;
-                            frg.bonePaletteArray = bonePaletteArray;
-
-                            meshFragment.fragmentArray.Append(frg);
-                        }
-                    }
-                }
-            }
-
-            meshFragmentArray.Append(meshFragment);
-        }
-    }
-
-    this->localMeshBuilder = tmpMeshBuilder;
-
-    // build skin shape node's fragments.
-    BulldMeshFragments(meshFragmentArray);
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Build nskinshapenode's fragments and joint palettes.
-
-    @param meshFragmentArray mesh fragments array.
-*/
-void nMaxMesh::BulldMeshFragments(nArray<nMaxMeshFragment>& meshFragmentArray)
-{
-    // build skin shape node's fragments.
-    for (int i=0; i<meshFragmentArray.Size(); i++)
-    {
-        nMaxMeshFragment& meshFragment = meshFragmentArray[i];
-
-        int numFragments = meshFragment.fragmentArray.Size();
-        if (numFragments > 0)
-        {
-            nSkinShapeNode* node = meshFragment.node;
-
-            node->BeginFragments(numFragments);
-
-            for (int j=0; j<numFragments; j++)
-            {
-                nMaxMeshFragment::Fragment& frag = meshFragment.fragmentArray[j];
-
-                node->SetFragGroupIndex(j, frag.groupMapIndex);
-
-                int numJointPaletteSize = frag.bonePaletteArray.Size();
-                node->BeginJointPalette(j, numJointPaletteSize);
-
-                for (int k=0; k<numJointPaletteSize; k++)
-                {
-                    node->SetJointIndex(j, k, frag.bonePaletteArray[k]);
-                }
-
-                node->EndJointPalette(j);
-            }
-
-            node->EndFragments();
-        }// end of if
-    }//end of for
 }

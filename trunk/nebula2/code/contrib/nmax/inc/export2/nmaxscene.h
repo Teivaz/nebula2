@@ -10,7 +10,8 @@
     @class nMaxScene
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief A class for 3dsmax scene which to be exported.
+
 */
 #include "tools/nanimbuilder.h"
 
@@ -29,7 +30,7 @@ public:
     bool Export();
 
 protected:
-    // @name
+    // @name Helper functions for begin and end stage of export.
     // @{
     bool Begin(INode* root);
     bool End();
@@ -67,8 +68,6 @@ protected:
 
     void CollectTopLevelNodes(INode* inode);
     bool IsExportedNode(INode* inode);
-
-    void PartitionMesh();
 
 protected:
     nRef<nVariableServer> varServer;
