@@ -86,16 +86,20 @@ void nCLODChunkerNode::compileChunksFromFile(const char *sourcefilename)
     nFile *sourcefile = m_ref_fs->NewFileObject();
     char bigsrcpath[N_MAXPATH];
     m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
-    if (sourcefile->Open(bigsrcpath, "rb"))
+    if (!sourcefile->Open(bigsrcpath, "rb"))
     {
-            m_heightfield = new HeightFieldData(m_xspacing, m_yspacing, m_zscale);
-            m_heightfield->readBitmap(bigsrcpath);
-            n_assert(m_heightfield->isValid());
-            m_zscale = m_heightfield->getZscale();
-
-            compileChunksFromHeightField(m_heightfield);
-            sourcefile->Close();
+        n_error("nCLODChunkerNode::compileChunksFromFile(): Could not open file: %s",
+                bigsrcpath);
+        sourcefile->Release();
+        return;
     }
+    m_heightfield = new HeightFieldData(m_xspacing, m_yspacing, m_zscale);
+    m_heightfield->readBitmap(bigsrcpath);
+    n_assert(m_heightfield->isValid());
+    m_zscale = m_heightfield->getZscale();
+
+    compileChunksFromHeightField(m_heightfield);
+    sourcefile->Close();
     sourcefile->Release();
 }
 
@@ -104,104 +108,114 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
     m_heightfield = heightmap;
 
     nFile *destfile = m_ref_fs->NewFileObject();
-    if (destfile->Open(m_outputfilename,"wb"))
+    if (!destfile->Open(m_outputfilename,"wb"))
     {
-        // generate activation levels 
-        //n_printf("updating...\n");
-
-        // Run a view-independent L-K style BTT update on the heightfield, to generate
-        // error and activation_level values for each element.
-        updateActivationLevel(0, m_heightfield->m_bitmapysize - 1, 
-            m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1, 
-            0, 0);  // sw half of the square
-        updateActivationLevel(m_heightfield->m_bitmapxsize - 1, 0, 
-            0, 0, 
-            m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1);    // ne half of the square
-
-        // Propagate the activation_level values of verts to their
-        // parent verts, quadtree LOD style.  Gives same result as
-        // L-K.
-        //n_printf("propagating....");
-        for (unsigned int i = 0; i < m_heightfield->m_logxsize; i++) {
-            propagateActivationLevel(m_heightfield->m_logxsize - 1, i, m_heightfield->m_bitmapxsize >> 1, m_heightfield->m_bitmapysize >> 1);
-            propagateActivationLevel(m_heightfield->m_logxsize - 1, i, m_heightfield->m_bitmapxsize >> 1, m_heightfield->m_bitmapysize >> 1);
-            n_printf("propagating level %d\n", i);
-            //char buffer[50];
-            //sprintf(buffer,"prop%d.bmp", i);
-            //m_heightfield->dumpActivationLevels(buffer, m_targetdepth);
-        }
-
-        if (m_validate)
-        {
-            n_printf("validating\n");
-            validateActivationLevels(m_heightfield->m_bitmapxsize >> 1,
-                                    m_heightfield->m_bitmapysize >> 1,
-                                    m_heightfield->m_logxsize -1);
-        }
-        // Write a .chu header for the output file.
-        SI32SPEW(*destfile, ('C') | ('L' << 8) | ('O' << 16) | ('D' << 24));    // four byte "CLOD" tag
-        if (m_tileindexfilename)
-            SI16SPEW(*destfile, 11);    // splat file version.
-        else
-            SI16SPEW(*destfile, 10);    // "standard" Chunk LOD version.
-        SI16SPEW(*destfile, m_targetdepth); // depth of the chunk quadtree.
-        float terrsize = (1<<m_heightfield->m_logxsize) * m_heightfield->getXscale();
-        destfile->PutFloat(terrsize);
-        destfile->PutFloat(terrsize);
-        destfile->PutFloat(m_heightfield->getZscale()); // meters / unit of vertical measurement.
-        destfile->PutFloat(m_maxerror); // max geometric error at base level mesh.
-
-        // clear out the debug files
-        /*
-        char debugfilename[100];
-        nFile *debugfile = m_ref_fs->NewFileObject();
-        for (unsigned int lix=0; lix < m_targetdepth; lix++)
-        {
-            // write out debug file
-            sprintf(debugfilename, "chunk_%d.svg",lix);
-            if (debugfile->Open(debugfilename,"wb"))
-            {
-                char svgprelude[] = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 20000303 Stylable//EN\" \"http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd\">\n<svg style=\"fill:white\">";
-                debugfile->Write(svgprelude, strlen(svgprelude));
-                debugfile->Close();
-            }
-        }
-        debugfile->Release();  
-        */
-
-        // now generate the triangle meshes
-        if (m_tileindexfilename)
-        {   
-            char bigsrcpath[N_MAXPATH];
-            m_ref_fs->ManglePath(m_tileindexfilename, bigsrcpath, sizeof(bigsrcpath));
-            m_tileindexfield = new TileIndexData();
-            m_tileindexfield->readBitmap(bigsrcpath);
-            m_mesher = new SplatGenerator(m_heightfield, m_tileindexfield, destfile, m_splatthickness);
-        }
-        else
-            m_mesher = new MeshGenerator(m_heightfield, destfile);
-        
-        generateEmptyTOC(*destfile, m_targetdepth);
-        trianglestats t = generateAllMeshData(*destfile, 0,0, m_heightfield->m_logxsize, m_targetdepth);
-        n_printf("total triangles: %d\n", t.totaltriangles);
-
-        /*
-        debugfile = m_ref_fs->NewFileObject();
-        // wrap up debug files
-        for (unsigned int lix=0; lix < m_targetdepth; lix++)
-        {
-            // write out debug file
-            sprintf(debugfilename, "chunk_%d.svg",lix);
-            if (debugfile->Open(debugfilename,"a+"))
-            {
-                debugfile->Seek(0, nFile::END);
-                debugfile->Write("</svg>\n", 7);
-                debugfile->Close();
-            }
-        }
-        debugfile->Release();
-        */
+        n_error("nCLODChunkerNode::compileChunksFromHeightField(): Could not open file %s\n",
+                m_outputfilename);
+        destfile->Release();
+        return;
     }
+    // generate activation levels 
+    //n_printf("updating...\n");
+
+    // Run a view-independent L-K style BTT update on the heightfield, to generate
+    // error and activation_level values for each element.
+    updateActivationLevel(0, m_heightfield->m_bitmapysize - 1, 
+        m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1, 
+        0, 0);  // sw half of the square
+    updateActivationLevel(m_heightfield->m_bitmapxsize - 1, 0, 
+        0, 0, 
+        m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1);    // ne half of the square
+
+    // Propagate the activation_level values of verts to their
+    // parent verts, quadtree LOD style.  Gives same result as
+    // L-K.
+    //n_printf("propagating....");
+    for (unsigned int i = 0; i < m_heightfield->m_logxsize; i++) {
+        propagateActivationLevel(m_heightfield->m_logxsize - 1, i, m_heightfield->m_bitmapxsize >> 1, m_heightfield->m_bitmapysize >> 1);
+        propagateActivationLevel(m_heightfield->m_logxsize - 1, i, m_heightfield->m_bitmapxsize >> 1, m_heightfield->m_bitmapysize >> 1);
+        n_printf("propagating level %d\n", i);
+        //char buffer[50];
+        //sprintf(buffer,"prop%d.bmp", i);
+        //m_heightfield->dumpActivationLevels(buffer, m_targetdepth);
+    }
+
+    if (m_validate)
+    {
+        n_printf("validating\n");
+        validateActivationLevels(m_heightfield->m_bitmapxsize >> 1,
+                                 m_heightfield->m_bitmapysize >> 1,
+                                 m_heightfield->m_logxsize -1);
+    }
+    // Write a .chu header for the output file.
+    SI32SPEW(*destfile, ('C') | ('L' << 8) | ('O' << 16) | ('D' << 24));    // four byte "CLOD" tag
+    if (m_tileindexfilename)
+    {
+        SI16SPEW(*destfile, 11);    // splat file version.
+    }
+    else
+    {
+        SI16SPEW(*destfile, 10);    // "standard" Chunk LOD version.
+    }
+    SI16SPEW(*destfile, m_targetdepth); // depth of the chunk quadtree.
+    float terrsize = (1<<m_heightfield->m_logxsize) * m_heightfield->getXscale();
+    destfile->PutFloat(terrsize);
+    destfile->PutFloat(terrsize);
+    destfile->PutFloat(m_heightfield->getZscale()); // meters / unit of vertical measurement.
+    destfile->PutFloat(m_maxerror); // max geometric error at base level mesh.
+
+    // clear out the debug files
+    /*
+    char debugfilename[100];
+    nFile *debugfile = m_ref_fs->NewFileObject();
+    for (unsigned int lix=0; lix < m_targetdepth; lix++)
+    {
+        // write out debug file
+        sprintf(debugfilename, "chunk_%d.svg",lix);
+        if (debugfile->Open(debugfilename,"wb"))
+        {
+            char svgprelude[] = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 20000303 Stylable//EN\" \"http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd\">\n<svg style=\"fill:white\">";
+            debugfile->Write(svgprelude, strlen(svgprelude));
+            debugfile->Close();
+        }
+    }
+    debugfile->Release();  
+    */
+
+    // now generate the triangle meshes
+    if (m_tileindexfilename)
+    {   
+        char bigsrcpath[N_MAXPATH];
+        m_ref_fs->ManglePath(m_tileindexfilename, bigsrcpath, sizeof(bigsrcpath));
+        m_tileindexfield = new TileIndexData();
+        m_tileindexfield->readBitmap(bigsrcpath);
+        m_mesher = new SplatGenerator(m_heightfield, m_tileindexfield, destfile, m_splatthickness);
+    }
+    else
+    {
+        m_mesher = new MeshGenerator(m_heightfield, destfile);
+    }
+
+    generateEmptyTOC(*destfile, m_targetdepth);
+    trianglestats t = generateAllMeshData(*destfile, 0,0, m_heightfield->m_logxsize, m_targetdepth);
+    n_printf("total triangles: %d\n", t.totaltriangles);
+
+    /*
+    debugfile = m_ref_fs->NewFileObject();
+    // wrap up debug files
+    for (unsigned int lix=0; lix < m_targetdepth; lix++)
+    {
+        // write out debug file
+        sprintf(debugfilename, "chunk_%d.svg",lix);
+        if (debugfile->Open(debugfilename,"a+"))
+        {
+            debugfile->Seek(0, nFile::END);
+            debugfile->Write("</svg>\n", 7);
+            debugfile->Close();
+        }
+    }
+    debugfile->Release();
+    */
     destfile->Close();
     destfile->Release();
 }

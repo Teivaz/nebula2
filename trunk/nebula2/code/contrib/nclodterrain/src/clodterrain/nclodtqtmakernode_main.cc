@@ -134,28 +134,29 @@ void nCLODTQTMakerNode::compileTQTFromFile(const char *sourcefilename)
     n_assert(m_ref_fs.isvalid());
     nFile *destfile = m_ref_fs->NewFileObject();
     char bigsrcpath[N_MAXPATH];
-    char bigdstpath[N_MAXPATH];
     m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
-    m_ref_fs->ManglePath(m_outputfilename, bigdstpath, sizeof(bigdstpath));
-    if (destfile->Open(bigdstpath, "wb"))
+    if (!destfile->Open(m_outputfilename, "wb"))
     {
-        // write out tqt header
-        char header[TQTTILE_HEADER_BYTES] = {'t','q','t',0, TQT_VERSION ,0,0,0 };
-        destfile->Write(header,8);
-        // write out tree depth and tile size
-        destfile->PutInt(m_targetdepth);
-        destfile->PutInt(m_tilesize);
-        m_tocpos = destfile->Tell();
-        // write out the TOC
-        generateEmptyTOC(*destfile, m_targetdepth);
-        tqt_tile_layer *curtiles = new tqt_tile_layer( 1 << (m_targetdepth-1) );
-        if ( (curtiles = generateTQTLeaves(*destfile, bigsrcpath, curtiles)) &&
-             (m_targetdepth > 1) )
-        {
-            curtiles = generateTQTNodes(*destfile, m_targetdepth-2, curtiles);
-        }
-        delete curtiles;
+        n_error("nCLODTQTMakerNode::compileTQTFromFile(): Could not open file %s\n",
+                m_outputfilename);
+        destfile->Release();
     }
+    // write out tqt header
+    char header[TQTTILE_HEADER_BYTES] = {'t','q','t',0, TQT_VERSION ,0,0,0 };
+    destfile->Write(header,8);
+    // write out tree depth and tile size
+    destfile->PutInt(m_targetdepth);
+    destfile->PutInt(m_tilesize);
+    m_tocpos = destfile->Tell();
+    // write out the TOC
+    generateEmptyTOC(*destfile, m_targetdepth);
+    tqt_tile_layer *curtiles = new tqt_tile_layer( 1 << (m_targetdepth-1) );
+    if ((curtiles = generateTQTLeaves(*destfile, bigsrcpath, curtiles)) &&
+         (m_targetdepth > 1) )
+    {
+        curtiles = generateTQTNodes(*destfile, m_targetdepth-2, curtiles);
+    }
+    delete curtiles;
     destfile->Close();
     destfile->Release();
 }
