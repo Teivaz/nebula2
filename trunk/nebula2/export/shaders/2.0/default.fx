@@ -8,12 +8,9 @@
 //------------------------------------------------------------------------------
 #include "../lib/lib.fx"
 
-float4x4 Model;                     // the model -> world matrix
-float4x4 ModelViewProjection;       // the model*view*projection matrix
-float4x4 ModelLightProjection;      // the model*light*projection matrix
-float3   ModelEyePos;               // the eye position in model space
-float3 ModelLightPos;               // the light position in model space
-float4x4 ModelView;
+shared float4x4 ModelViewProjection;       // the model*view*projection matrix
+shared float3   ModelEyePos;               // the eye position in model space
+shared float3   ModelLightPos;             // the light position in model space
 
 float4 LightDiffuse;                // light diffuse color        
 float4 LightSpecular;               // light specular color
