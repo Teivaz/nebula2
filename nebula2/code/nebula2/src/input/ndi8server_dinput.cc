@@ -180,7 +180,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
     }
 
     // create nDI8Device object and link to device list
-    nDI8Device* dev = new nDI8Device;
+    nDI8Device* dev = n_new(nDI8Device);
     dev->SetDevice(diDev);
     dev->SetInstanceName(lpddi->tszInstanceName);
     dev->SetProductName(lpddi->tszProductName);
@@ -302,14 +302,14 @@ nDI8Server::KillDevices()
     nDI8Device* di8Dev;
     while (di8Dev = (nDI8Device*) this->di8DevList.RemHead())
     {
-        delete di8Dev;
+        n_delete( di8Dev );
     }
 
     // kill Nebula input device objects
     nInputDevice* dev;
     while (dev = (nInputDevice*) this->nebDevList.RemHead())
     {
-        delete dev;
+        n_delete( dev );
     }
 }
 
@@ -344,13 +344,13 @@ nDI8Server::ExportDevices()
             case nDI8Device::MOUSE:
                 {
                     // generate a relmouse device object
-                    nInputDevice* relMouse = new nRelMouseDevice(
+                    nInputDevice* relMouse = n_new(nRelMouseDevice(
                         kernelServer,
                         this,
                         this->curRelMouse++,
                         numAxes,
                         numButtons,
-                        0);
+                        0));
                     relMouse->SetSourceDevice(di8Dev);
                     relMouse->SetAxisRange(di8Dev->GetMinRange(), di8Dev->GetMaxRange());
                     relMouse->Export(this->refDevices.get());
@@ -360,13 +360,13 @@ nDI8Server::ExportDevices()
 
             case nDI8Device::JOYSTICK:
                 {
-                    nInputDevice* joystick = new nJoystickDevice(
+                    nInputDevice* joystick = n_new(nJoystickDevice(
                         kernelServer, 
                         this, 
                         this->curJoystick++,
                         numAxes,
                         numButtons,
-                        numPovs);
+                        numPovs));
                     joystick->SetSourceDevice(di8Dev);
                     joystick->SetAxisRange(di8Dev->GetMinRange(), di8Dev->GetMaxRange());
                     joystick->Export(this->refDevices.get());
@@ -376,13 +376,13 @@ nDI8Server::ExportDevices()
 
             case nDI8Device::KEYBOARD:
                 {
-                    nInputDevice* keyboard = new nKeyboardDevice(
+                    nInputDevice* keyboard = n_new(nKeyboardDevice(
                         kernelServer,
                         this,
                         this->curKeyboard++,
                         0,
                         numButtons,
-                        0);
+                        0));
                     keyboard->SetSourceDevice(di8Dev);
                     keyboard->Export(this->refDevices.get());
                     this->nebDevList.AddTail(keyboard);

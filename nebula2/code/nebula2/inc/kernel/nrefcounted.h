@@ -61,7 +61,7 @@ nRefCounted::Release()
     n_assert(this->refCount >= 0);
     if (0 == this->refCount)
     {
-        delete this;
+        n_delete( this );
         return 0;
     }
     else

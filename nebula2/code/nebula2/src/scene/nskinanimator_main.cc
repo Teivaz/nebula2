@@ -41,7 +41,7 @@ nSkinAnimator::~nSkinAnimator()
         nStrNode *next = strHead->GetSucc();
 
         strHead->Remove();
-        delete(strHead);
+        n_delete(strHead);
         strHead = next;
     }
 }
@@ -460,7 +460,7 @@ nSkinAnimator::GetClipAt(int stateIndex, int clipIndex, const char*& weightChann
 void
 nSkinAnimator::AddJointName(unsigned int joint, const char *name)
 {
-    nStrNode *newNameNode = new nStrNode;
+    nStrNode *newNameNode = n_new(nStrNode);
 
     newNameNode->SetName(name);
     newNameNode->SetPtr((void *)joint);
