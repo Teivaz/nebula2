@@ -81,7 +81,7 @@ nEvent::~nEvent()
     #ifdef __WIN32__
         CloseHandle(this->wevent);
     #else
-        sem_destroy(&(this->sem);
+        sem_destroy(&(this->sem));
 #   endif
 #endif
 }
@@ -97,7 +97,7 @@ nEvent::Signal()
     #ifdef __WIN32__
         SetEvent(this->wevent);
     #else
-        sem_post(&(this->sem);
+        sem_post(&(this->sem));
     #endif
 #endif
 }
