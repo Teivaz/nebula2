@@ -10,9 +10,14 @@ beginmodule nluaserver
 endmodule
 #-----------------------------------------------------------------------------
 beginmodule nluatest
-	setdir luaserver
-	setheaders { nluatest }
+	setdir luatest
 	setfiles   { nluatest_main nluatest_cmds }
+	setheaders { nluatest }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nshlua
+    setdir luatest
+    setfiles { nshlua }
 endmodule
 #-----------------------------------------------------------------------------
 beginmodule luacorelib
@@ -47,20 +52,33 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget nlua
     settype lib
-    setmodules    { nluaserver luacorelib luastandardlib }
+    setmodules {
+        nluaserver
+        luacorelib
+        luastandardlib
+    }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget luatest
   	settype lib
-  	setmodules    { nluatest }
+  	setmodules { nluatest }
   	settargetdeps { nlua }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget nshlua
     annotate "Sample application: A Nebula2 console based interface using Lua."
     settype exe
-    setmodules { nsh }
-    settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl nlua luatest }
+    setmodules { nshlua }
+    settargetdeps {
+        nkernel
+        microtcl
+        nnebula
+        ndirect3d9
+        ndinput8
+        nnetwork
+        nlua
+        luatest
+    }
 endtarget
 #-----------------------------------------------------------------------------
 beginworkspace luaserver
@@ -69,11 +87,11 @@ beginworkspace luaserver
     settargets {
     	nshlua
         nkernel
+        microtcl
         nnebula
         ndinput8
         ndirect3d9
-        nremoteshell
-        microtcl
+        nnetwork
         nlua
         luatest
     }
