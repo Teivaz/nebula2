@@ -9,6 +9,21 @@
 
 nNebulaClass(nMemoryAnimation, "nanimation");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nmemoryanimation
+
+    @cppclass
+    nMemoryAnimation
+    
+    @superclass
+    nanimation
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

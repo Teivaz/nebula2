@@ -7,6 +7,21 @@
 
 nNebulaClass(nAnimationServer, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nanimationserver
+
+    @cppclass
+    nAnimationServer
+    
+    @superclass
+    nroot
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
