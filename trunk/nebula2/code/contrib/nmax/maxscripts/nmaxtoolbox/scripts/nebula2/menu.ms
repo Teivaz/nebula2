@@ -133,6 +133,21 @@ tooltip:"Specify Animations States and Clips"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Terrain Editor' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_TerrainEditor
+category:"nmaxtoolbox" 
+buttonText:"Terrain Editor..."
+tooltip:"import/export heightmap for terrain" 
+( 
+    on execute do 
+    (
+        include "nebula2/terraineditor.ms"      
+        createDialog rTerrainEditor width:216 height:180
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Directory Setting' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_SetDirectory
@@ -211,6 +226,9 @@ fn AddMenu =
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Attach" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
+
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_TerrainEditor" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createSeparatorItem())
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_SetDirectory" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())
