@@ -144,3 +144,4 @@ nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimator::
 }
 
 #endif
+
