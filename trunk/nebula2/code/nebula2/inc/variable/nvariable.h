@@ -116,7 +116,7 @@ private:
         const char* stringVal;
         void* objectVal;
         matrix44* matrixVal;
-        nVariable::Handle handleVal;
+        Handle handleVal;
     };
 };
 
