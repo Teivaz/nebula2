@@ -391,6 +391,9 @@ proc gen_exe_dsp {name nodirgroups} {
 	global vstudioPrefix
 
     puts "Generate exe target: $name"
+    # create a local pkg_ file with Nebula module declarations
+    set component_list [gen_component_list $name]
+    gen_package_source $name $component_list
 
     # write .dsp file
     set cid [open $vstudioPrefix/$name.dsp w]
@@ -415,6 +418,9 @@ proc gen_workspace_dsp {name nodirgroups} {
 	global vstudioPrefix
 
     puts "Generate lib target: $name"
+    # create a local pkg_ file with Nebula module declarations
+    set component_list [gen_component_list $name]
+    gen_package_source $name $component_list
 
     # write .dsp file
     set cid [open $vstudioPrefix/$name.dsp w]
