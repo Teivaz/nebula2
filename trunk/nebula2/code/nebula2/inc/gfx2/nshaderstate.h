@@ -26,6 +26,8 @@ enum Type
     Float4,
     Matrix44,
     Texture,
+    NumTypes,  // always keep this after all valid types!
+    InvalidType
 };
 
 //------------------------------------------------------------------------------
@@ -172,6 +174,11 @@ enum CullMode
     CW = 2,
     CCW = 3,
 };
+
+/// convert type enum to type string
+const char* TypeToString(Type t);
+/// convert type string to type enum
+Type StringToType(const char* str);
 
 /// convert parameter enum to string
 const char* ParamToString(Param p);
