@@ -130,6 +130,41 @@ public:
         return *this;
     };
 
+    /// rotate vector by quaternion
+    vector3 rotate(const vector3& v) {
+        quaternion q(v.x * w + v.z * y - v.y * z,
+                     v.y * w + v.x * z - v.z * x,
+                     v.z * w + v.y * x - v.x * y,
+                     v.x * x + v.y * y + v.z * z);
+
+        return vector3(w * q.x + x * q.w + y * q.z - z * q.y,
+                       w * q.y + y * q.w + z * q.x - x * q.z,
+                       w * q.z + z * q.w + x * q.y - y * q.x);
+    };
+
+    /// convert from two directions, must be unit vectors
+    void set_from_axes(const vector3& from, const vector3& to) 
+    {
+        float cosa = from % to;
+        if (cosa < -0.99999f )  // angle close to PI
+        {
+           vector3 vcross( 0, from.x, -from.y );
+           if ((from.z*from.z) > (from.y*from.y))
+                  vcross.set(-from.z, 0, from.x);
+           vcross.norm();
+           x = vcross.x; y = vcross.y; z = vcross.z;
+           w = 0.0f;
+        }
+        else
+        {
+           vector3 bisect(from + to);
+           bisect.norm();
+           vector3 bcross(from*bisect);
+           x = bcross.x; y = bcross.y; z = bcross.z;
+           w = from % bisect;
+        }
+    };
+
     //-- convert from euler angles ----------------------------------
     void set_rotate_axis_angle(const vector3& v, float a) {
         float sin_a = n_sin(a * 0.5f);
