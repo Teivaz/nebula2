@@ -1,5 +1,8 @@
 #include "export/nmaxexport.h"
 #include "../res/resource.h"
+
+#include "tools/napplauncher.h"
+
 //------------------------------------------------------------------------------
 /**
     3ds max to Nebula2 exporter using the IGame lib.
@@ -25,7 +28,7 @@ DWORD WINAPI dummy(LPVOID arg)
 BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
 {
 	nMaxExportTask *exp = (nMaxExportTask*)GetWindowLongPtr(hWnd,GWLP_USERDATA); 
-	
+    nFileServer2 *fileServer = nFileServer2::Instance();
 	switch(message)
     {
 		case WM_INITDIALOG:
@@ -81,7 +84,7 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                 GetDlgItemText(hWnd, IDC_EXT_DIRNAME,         str, 512); exp->SetHomeDir(str);
                 GetDlgItemText(hWnd, IDC_EXT_BINARY_PATH,     str, 512); exp->binaryPath = str;
 
-                exp->exportAnimations = IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM);
+				exp->exportAnimations = (0 == IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM) ? true : false);
 
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     str, 512); exp->animsAssign = str;
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   str, 512); exp->gfxlibAssign = str;
@@ -99,7 +102,138 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                 GetDlgItemText(hWnd, IDC_EXT_PATH_SHADERS,  str, 512); exp->shadersPath = str;
                 GetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, str, 512); exp->texturesPath = str;
 
-				EndDialog(hWnd, 1);
+                if (!fileServer->DirectoryExists(exp->GetHomeDir().Get()))
+                {
+                    n_message("ALERT: home path '%s' doesn't exists!", exp->GetHomeDir().Get());
+                }
+                else
+                {
+                    nString tmp;
+
+                    fileServer->SetAssign("home", exp->GetHomeDir().Get());
+
+                    if (!fileServer->DirectoryExists(exp->binaryPath.Get()))
+                    {
+                        tmp += "\n  binary path: ";
+                        tmp += exp->binaryPath;
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->animsAssign.Get()))
+                    {
+                        tmp += "\n  'anims' assign: ";
+                        tmp += exp->animsAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("anims", exp->animsAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->animsPath.Get()))
+                        {
+                            tmp += "\n  'Animation' path: ";
+                            tmp += exp->animsPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->gfxlibAssign.Get()))
+                    {
+                        tmp += "\n  'gfxlib' assign: ";
+                        tmp += exp->gfxlibAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("gfxlib", exp->gfxlibAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->gfxlibPath.Get()))
+                        {
+                            tmp += "\n  'Gfx' path: ";
+                            tmp += exp->gfxlibPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->guiAssign.Get()))
+                    {
+                        tmp += "\n  'gui' assign: ";
+                        tmp += exp->guiAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("gui", exp->guiAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->guiPath.Get()))
+                        {
+                            tmp += "\n  'Gui' path: ";
+                            tmp += exp->guiPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->lightsAssign.Get()))
+                    {
+                        tmp += "\n  'lights' assign: ";
+                        tmp += exp->lightsAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("lights", exp->lightsAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->lightsPath.Get()))
+                        {
+                            tmp += "\n  'Lights' path: ";
+                            tmp += exp->lightsPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->meshesAssign.Get()))
+                    {
+                        tmp += "\n  'meshes' assign: ";
+                        tmp += exp->meshesAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("meshes", exp->meshesAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->meshesPath.Get()))
+                        {
+                            tmp += "\n  'Meshes' path: ";
+                            tmp += exp->meshesPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->shadersAssign.Get()))
+                    {
+                        tmp += "\n  'shaders' assign: ";
+                        tmp += exp->shadersAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("shaders", exp->shadersAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->shadersPath.Get()))
+                        {
+                            tmp += "\n  'Shaders' path: ";
+                            tmp += exp->shadersPath;
+                        }
+                    }
+
+                    if (!fileServer->DirectoryExists(exp->texturesAssign.Get()))
+                    {
+                        tmp += "\n  'textures' assign: ";
+                        tmp += exp->texturesAssign;
+                    }
+                    else
+                    {
+                        fileServer->SetAssign("textures", exp->texturesAssign.Get());
+                        if (!fileServer->DirectoryExists(exp->texturesPath.Get()))
+                        {
+                            tmp += "\n  'Textures' path: ";
+                            tmp += exp->texturesPath;
+                        }
+                    }
+
+                    if (tmp.Length() > 0)
+                    {
+                        nString alerts("ALERT: some pathes are wrong:");
+                        alerts += tmp;
+                        n_message("%s", alerts.Get());
+                    }
+                    else
+                    {
+                        EndDialog(hWnd, 1);
+                    }
+                }
 				break;
 			case IDCANCEL:
 				EndDialog(hWnd,0);
@@ -107,17 +241,17 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
 			}
 		default:
 			return FALSE;
-	
+    
 	}
 	return TRUE;
-	
+    
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 nMaxExport::nMaxExport()
- :	maxInterface(0),
+:	maxInterface(0),
 	logHandler(0),
     scriptServer(0),
     varServer(0),
@@ -194,6 +328,13 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     this->task->SetCfgFileName(cfn);
     this->task->ReadConfig();
 
+	// setup interfaces
+    this->maxInterface = i;
+	this->expInterface = ei;
+    
+    //init the maxLogHandler 
+    static_cast<nMaxLogHandler*>(nKernelServer::Instance()->GetLogHandler())->SetLogSys(i->Log());
+
    	// Prompt the user with our dialogbox, and get all the options.
 	if (!DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), i->GetMAXHWnd(),
                         Nebula2ExporterOptionsDlgProc, (LPARAM)this->task))
@@ -219,14 +360,9 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     this->task->sceneFileName = fileName;
     this->task->sceneFileName += ".n2";
 
-    this->InitAssigns();
+    //not needed any more
+    //this->InitAssigns();
     
-	this->maxInterface = i;
-	this->expInterface = ei;
-	
-    //init the maxLogHandler 
-    static_cast<nMaxLogHandler*>(nKernelServer::Instance()->GetLogHandler())->SetLogSys(i->Log());
-	
 	this->suppressPrompts = (suppressPrompts == 0) ? false : true;
 	this->exportSelected = (options & SCENE_EXPORT_SELECTED) ? true : false;
 
@@ -242,13 +378,25 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
 
     //init IGame
     this->iGameScene = GetIGameInterface();
+	if (0 == this->iGameScene)
+	{
+		n_message("ERROR: nMaxExport: Could not load IGame!\nMake shure you have the right IGame.dll in you 3dsmax path!\n");
+		return 0;
+	}
+	const float igVersion = GetIGameVersion();
+	if (1.122f > igVersion)
+	{
+		n_message("ERROR: nMaxExport: The loaded IGame.dll has the version '%f' but required is at least v1.122!"
+			    "\nMake shure you have the right IGame.dll in you 3dsmax path!", igVersion);
+        return 0;
+    }
     this->iGameScene->SetPropertyFile(this->propertyFile);
     
     //setup the coord system for export
     IGameConversionManager* igConManager = GetConversionManager();
-    if (igConManager == 0)
+    if (0 == igConManager)
     {
-        n_printf("Can't init the IGameConversionManager!\n");
+        n_message("ERROR: nMaxExport: Can't init the IGameConversionManager!\nMake shure you have the right IGame.dll in you 3dsmax path!\n");
         return 0;
     }
     igConManager->SetCoordSystem(N_MAXEXPORT_IGAMECOORDSYS);    
@@ -280,10 +428,15 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     
     //export the nodes
     const int numTopNodes = this->iGameScene->GetTopLevelNodeCount();
-    for (int n = 0; n < numTopNodes && success; n++)
+    for (int n = 0; success && n < numTopNodes; n++)
     {
         IGameNode* igNode = this->iGameScene->GetTopLevelNode(n);
-        success = this->exportNode(igNode, this->nohBase);
+        success &= this->exportNode(igNode, this->nohBase);
+        if (!success)
+        {
+            n_message("ERROR: nMaxExport: Failed to export '%s'!\nStoping export now!\n", igNode->GetName());
+            // do not return here, because a the exporter must run down to cleanup data.
+        }
     }
 
     if (success)
@@ -296,26 +449,35 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
             this->scriptServer = static_cast<nScriptServer*>(nKernelServer::Instance()->New(N_MAXEXPORT_SCRIPTSERVER, "/sys/servers/script"));
         
         nSceneNode* exportNode = static_cast<nSceneNode*>(nKernelServer::Instance()->Lookup(this->nohBase.Get()));
-        if (exportNode)
+        n_assert(exportNode);
+        
+        nString sceneFilePath(this->task->gfxlibPath);
+        sceneFilePath += this->task->sceneFileName;
+        success &= exportNode->SaveAs(sceneFilePath.Get());
+        if (!success)
         {
-            nString sceneFilePath(this->task->gfxlibPath);
-            sceneFilePath += this->task->sceneFileName;
-            success = exportNode->SaveAs(sceneFilePath.Get());
+            n_message("ERROR: nMaxExport: Failed to save scene to file '%s'!\n", sceneFilePath.Get());
+        }
+        else
+        {
+            nAppLauncher appLauncher(nKernelServer::Instance());
+            nString appPath = this->task->binaryPath.Get();
+            appPath.Append("nviewer.exe");
+            appLauncher.SetExecutable(appPath.Get());
+            appLauncher.SetWorkingDirectory("home:");
+            nString args = "-view ";
+            args.Append(sceneFilePath.Get());
+            appLauncher.SetArguments(args.Get());
+            success &= appLauncher.Launch();
 
-            // write bat file
-            nFile *file = nFileServer2::Instance()->NewFileObject();
-			nString batFile(this->task->binaryPath);
-            batFile += fileName;
-            batFile += ".bat";
-            if (file->Open(batFile.Get(), "w"))
+            if (!success)
             {
-                file->PutS("nviewer.exe -view ");
-                file->PutS(sceneFilePath.Get());
-                file->Close();
+                n_message("ERROR: nMaxExport: Failed to start nviewer '%s'!\n", nFileServer2::Instance()->ManglePath(appPath.Get()));
             }
         }
     }
     
+    // DATA CLEANUP
     this->CleanupData();
         
     //relase IGame

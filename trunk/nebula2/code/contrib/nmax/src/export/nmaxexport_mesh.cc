@@ -439,7 +439,7 @@ nMaxExport::storeDataPools()
 
                     //TODO: more animation states
                     skinAnim->BeginStates(1);
-                        skinAnim->SetState(0, 0, 0.3);
+                        skinAnim->SetState(0, 0, 0.3f);
                         skinAnim->BeginClips(0,1);
                             skinAnim->SetClip(0, 0, "one");
                         skinAnim->EndClips(0);
@@ -574,8 +574,8 @@ nMaxExport::exportMesh(IGameNode* igNode, const nString nodeName)
         {
             if (skinned)
             {
-                IGameNode *igBone, *igParentBone;
-                int i, boneNum;
+                //IGameNode *igBone, *igParentBone;
+                int boneNum;
                 boneNum = this->boneIDs.Size();
 
                 n_printf("Bones num: %d", this->boneIDs.Size());

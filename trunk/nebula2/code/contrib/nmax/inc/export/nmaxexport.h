@@ -12,9 +12,9 @@
 #include <Max.h>
 #include <decomp.h> //the decompose functions for matrix3
 
-#include <IGame/IGame.h>
-#include <IGame/IGameProperty.h>
-#include <IGame/IGameModifier.h>
+#include <IGame.h>
+#include <IGameProperty.h>
+#include <IGameModifier.h>
 
 #include "base/nmaxdll.h"
 #include "base/nmaxloghandler.h"
@@ -44,10 +44,10 @@
 
 #define LONGDESC	"Nebula2 Scene Export"
 #define SHORTDESC	"Nebula2 Export"
-#define AUTHORNAME	"J. Kellner"
+#define AUTHORNAME	"Nebula2 - www.nebuladevice.org"
 #define COPYRIGHT	"Nebula License"
 #define MESSAGE1    "This file is licensed under the terms of the Nebula License"
-#define MESSAGE2	"(c) 2004 J. Kellner"
+#define MESSAGE2	"(c) 2004 www.nebuladevice.org"
 #define NUM_EXT		1
 #define EXTENSION   "n2"
 
@@ -68,7 +68,7 @@ class nMaxExport : public SceneExport
 public:
 	nMaxExport();
 	~nMaxExport();
-	
+    
 	/// from max: do export
 	int	DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
 	/// from max: show the about dialog
@@ -81,7 +81,7 @@ public:
 	BOOL SupportsOptions(int /*ext*/, DWORD /*options*/) { return true; }
 	/// from max: Version number * 100 (i.e. v3.01 = 301) 
 	unsigned int Version()			{ return VERSION; }	
-	
+    
 	/// from max: Long description
 	const TCHAR * LongDesc() { return LONGDESC; }
 	/// from max: Short description
@@ -94,18 +94,18 @@ public:
 	const TCHAR * OtherMessage1() { return MESSAGE1; }
 	/// from max: Other message #2	
 	const TCHAR * OtherMessage2() { return MESSAGE2; }
-	
+    
 private:   
     nMaxExportTask* task;
     
     ///the internal scene node path used as root for the export
     nString nohBase;
-	
+    
     ///true if max request to show no prompts
     bool suppressPrompts;
     ///true if only the selected nodes should be exported
     bool exportSelected;
-	
+    
     /** @brief
     from max: Time is stored internally in 3ds max as an integer number of ticks.
     Each second of an animation is divided into 4800 ticks.
@@ -119,7 +119,7 @@ private:
 	Interface* maxInterface;
     ///pointer to the max export interface
 	ExpInterface* expInterface;
-	
+    
 	///the property file used for IGame
 	TCHAR* propertyFile;
     ///the IGameScene pointer
@@ -129,14 +129,14 @@ private:
     int ticksPerFrame;
     int startFrame;
     int endFrame;
-	
+    
     ///the pointer to the scriptserver
     nScriptServer* scriptServer;
     ///the pointer to the max loghandler
 	nMaxLogHandler* logHandler;
     ///the pointer to the variableserver
     nVariableServer* varServer;
-	
+    
     enum
     {
         MAX_NUM_BONES = 4 ///< don't change! the data is exported through a vector4 so a change won't work.
@@ -200,11 +200,11 @@ private:
     //---main loop---
     ///export a IGameNode, check the type and do the needed nodeTypeExport (mesh/light...) - recurse to subnodes - must return true if ok.
     bool exportNode(IGameNode* igNode, nString node);
-      
+        
     //---node handling---
     /// export a material - setup the nebula material node     
     void exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameMaterial* material, bool skinned);
-   
+    
     ///@todo: export a light node
     bool exportLight(nString nodeName, IGameNode* igNode);
 
@@ -259,7 +259,7 @@ private:
     vector3 ScaleComponent(const AffineParts &parts, const TCHAR* nodeName = 0);
     ///extract the scale component form a scaleAxis quaternion and a Point3 scale value
     vector3 ScaleComponent(const Quat &u, const Point3 &k, const TCHAR* nodeName = 0);
-	
+    
     //---helpers---
     /// removes bad chars from a string
 	char* checkChars(char* string);
