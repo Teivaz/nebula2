@@ -11,7 +11,7 @@
   
 @section Nebula2CompilingNote Notes
 
-If you are familiar with Nebula 1 please read the release notes first, since a lot has changed in the build process.
+If you are familiar with Nebula 1 please read the @ref Nebula2InitialReleaseNotes first, since a lot has changed in the build process.
 
 At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the only @ref nGfxServer2 and @ref nInputServer currently available are @ref nD3D9Server and @ref nDI8Server for Win32.
 
