@@ -107,6 +107,9 @@ PhysDemoApp::Open()
     this->refGuiServer->Open();
     this->InitOverlayGui();
 
+    this->timeHandle = this->refVarServer->GetVariableHandleByName("time");
+    this->windHandle = this->refVarServer->GetVariableHandleByName("wind");
+
     // create a single default light
     nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/scenenodes/default_light");
     lightNode->RenderContextCreated(&this->lightRenderContext);
@@ -175,7 +178,6 @@ PhysDemoApp::Close()
 void
 PhysDemoApp::Run()
 {
-    nVariable::Handle timeHandle = this->refVarServer->GetVariableHandleByName("time");
     nWatched watchViewerPos("viewerPos", nArg::Float4);
 
     // run the render loop
@@ -271,7 +273,7 @@ PhysDemoApp::HandleInput(float frameTime)
     }
 
     // Here starts our physically-related buttons
-
+    
     // Create a box at a random location
     if (inputServer->GetButton("create_box"))
     {
@@ -475,8 +477,9 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
     newObj->renderContext.SetRootNode(scenenode);
     
     // update the render context variables
-    newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
-    newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
+    nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
+    newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
     
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
@@ -525,8 +528,9 @@ PhysDemoApp::CreateBox(float x, float y, float z)
     newObj->renderContext.SetRootNode(scenenode);
     
     // update the render context variables
-    newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
-    newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
+    nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
+    newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
     
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
@@ -580,8 +584,9 @@ PhysDemoApp::CreateSphere(float x, float y, float z)
     newObj->renderContext.SetRootNode(scenenode);
     
     // update the render context variables
-    newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
-    newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
+    nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
+    newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
     
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
@@ -634,8 +639,9 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
     newObj->renderContext.SetRootNode(scenenode);
     
     // update the render context variables
-    newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
-    newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
+    nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
+    newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
     
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
@@ -688,8 +694,9 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     newObj->renderContext.SetRootNode(scenenode);
     
     // update the render context variables
-    newObj->timeHandle = this->refVarServer->GetVariableHandleByName("time");
-    newObj->renderContext.AddVariable(nVariable(newObj->timeHandle, 0.0f));
+    newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
+    nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
+    newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
     
     // tell the scene node that it is being used by (another) render context
     // this gives the scene nodes(s) a chance to create any per-instance data
@@ -863,7 +870,7 @@ void PhysDemoApp::RenderWorld(nTime time, uint frameId)
          curObj = (SimpleObject*) curObj->GetSucc())
     {
         // update render context variables
-        curObj->renderContext.GetVariable(curObj->timeHandle)->SetFloat((float)time);
+        curObj->renderContext.GetVariable(this->timeHandle)->SetFloat((float)time);
         curObj->renderContext.SetFrameId(frameId);
 
         // render the object        
