@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVectorAnimator
+    @ingroup NebulaSceneSystem
 
     Animates a vector attribute of a nAbstrachShaderNode.
 

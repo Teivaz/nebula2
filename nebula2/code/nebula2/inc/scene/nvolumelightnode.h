@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nVolumeLightNode
+    @ingroup NebulaSceneSystem
 
     A nVolumeLightNode defines a bounding box volume, influencing the
     lighting of shape nodes that intersect. Lighting happens inside

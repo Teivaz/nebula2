@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSceneServer
+    @ingroup NebulaSceneSystem
 
     The scene server builds a scene from nSceneNode objects and then
     renders it. The scene is rebuilt every frame, so some sort of
