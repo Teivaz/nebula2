@@ -7,17 +7,15 @@
 
     nAutoRef with dynamically allocated name string.
 */
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nDynAutoRef : public nAutoRef<TYPE> {
 public:
     /// default constructor
     nDynAutoRef();
-    /// constructor
-    nDynAutoRef(nKernelServer *_ks);
+    /// constructor with initial target name
+    nDynAutoRef(const char* tarName);
     /// destructor
     ~nDynAutoRef();
     /// copy operator
@@ -33,48 +31,9 @@ public:
 
 //------------------------------------------------------------------------------
 /**
-     - 22-Jan-01   floh    created
-*/
-template<class TYPE>
-inline
-nDynAutoRef<TYPE>::nDynAutoRef() 
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 22-Jan-01   floh    created
-*/
-template<class TYPE>
-inline
-nDynAutoRef<TYPE>::nDynAutoRef(nKernelServer *ks)
-: nAutoRef<TYPE>(ks)
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-     - 22-Jan-01   floh    created
-*/
-template<class TYPE>
-inline
-nDynAutoRef<TYPE>::~nDynAutoRef() 
-{
-    if (this->targetName) 
-    {
-        n_free((void *)this->targetName);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Set path name to referenced object. The referenced object must not exist
     at the time set() is called. The path will be resolved when the nDynAutoRef
     is first accessed (with get() or the -> operator).
-
-     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
@@ -98,6 +57,39 @@ nDynAutoRef<TYPE>::set(const char *name)
 
 //------------------------------------------------------------------------------
 /**
+*/
+template<class TYPE>
+inline
+nDynAutoRef<TYPE>::nDynAutoRef() 
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nDynAutoRef<TYPE>::nDynAutoRef(const char* tarName)
+{
+    this->set(tarName);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+nDynAutoRef<TYPE>::~nDynAutoRef() 
+{
+    if (this->targetName) 
+    {
+        n_free((void *)this->targetName);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Copy operator.
 */
 template<class TYPE>
@@ -105,7 +97,6 @@ inline
 nDynAutoRef<TYPE>&
 nDynAutoRef<TYPE>::operator=(const nDynAutoRef<TYPE>& rhs)
 {
-    this->kernelServer = rhs.kernelServer;
     this->set(rhs.getname());
     return (*this);
 }
@@ -113,8 +104,6 @@ nDynAutoRef<TYPE>::operator=(const nDynAutoRef<TYPE>& rhs)
 //------------------------------------------------------------------------------
 /**
     Path name assignment operator (same functionality as set).
-  
-     - 22-Jan-01   floh    created
 */
 template<class TYPE>
 inline
