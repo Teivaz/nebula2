@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDI8Device
+    @ingroup NebulaDI8InputSystem
 
     Hold information about a DirectInput8 device. There is one nDI8Device
     object per supported DirectInput device.
@@ -25,12 +26,12 @@ public:
     enum DeviceType
     {
         NONE,
-        KEYBOARD,           // a keyboard
-        MOUSE,              // a mouse
-        JOYSTICK,           // a joystick OR gamepad
+        KEYBOARD,           ///< a keyboard
+        MOUSE,              ///< a mouse
+        JOYSTICK,           ///< a joystick OR gamepad
     };
 
-    /// constrcutor
+    /// constructor
     nDI8Device();
     /// destructor
     ~nDI8Device();

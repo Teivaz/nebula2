@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAxisFilter
+    @ingroup NebulaInputSystem
 
     A simple axis filter object which filters input values over the last
     few frames.

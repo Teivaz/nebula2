@@ -1,20 +1,20 @@
 #ifndef N_INPUTEVENT_H
 #define N_INPUTEVENT_H
 //-------------------------------------------------------------------
-//  CLASS
-//      nInputEvent -- Nebula-Input-Events
-//
-//  OVERVIEW
-//      nInputEvents werden von beliebigen Quellen an den
-//      nInputServer angehaengt.
-//      InputEvents besitzen einen Typ, der die Art des
-//      Events beschreibt (Taste gedrueckt, Maus bewegt,
-//      etc...), einen Device-Typ, der den grundsaetzlichen
-//      Typ des Eingabegeraetes beschreibt, und eine Device-
-//      Nummer, die groesser 0 ist, wenn mehrere Geraete
-//      desselben Typs angeschlossen sind.
-//      Diese Informationen koennen in einen String gemappt
-//      werden.
+/**
+    @class nInputEvent
+    @ingroup NebulaInputSystem
+    @brief Nebula Input Events
+
+    nInputEvents are attached to the nInputServer from arbitrary sources.
+
+    InputEvents have a type that describe the kind of event it represents
+    (Key press, mouse movement, etc), a device type which describes the
+    base type of the input device, and a device number greater than 0
+    when multiple devices of the same type are attached.
+
+    This information can be mapped into a string.
+*/
 //-------------------------------------------------------------------
 #ifndef N_TYPES_H
 #include "kernel/ntypes.h"
@@ -25,38 +25,61 @@
 #endif
 
 //-------------------------------------------------------------------
+/**
+    @name Input Types:
+    @ingroup NebulaInputSystem
+    @{
+*/
 enum nInputType {
-    N_INPUT_NONE,               // void
-    N_INPUT_KEY_DOWN,           // Taste wurde gedrueckt
-    N_INPUT_KEY_UP,             // Taste wurde losgelassen
-    N_INPUT_KEY_CHAR,           // ASCII Code
-    N_INPUT_MOUSE_MOVE,         // absolute Mouse-Position 
-    N_INPUT_AXIS_MOVE,          // eine relative Achse (0.0 .. 1.0) 
-    N_INPUT_BUTTON_DOWN,        // ein Button wurde gedrueckt
-    N_INPUT_BUTTON_UP,          // ein Button wurde losgelassen
-    N_INPUT_BUTTON_DBLCLCK,     // ein Button-Doppelklick
+    N_INPUT_NONE,               ///< void
+    N_INPUT_KEY_DOWN,           ///< Key was pressed
+    N_INPUT_KEY_UP,             ///< Key was released
+    N_INPUT_KEY_CHAR,           ///< ASCII Code
+    N_INPUT_MOUSE_MOVE,         ///< absolute Mouse position 
+    N_INPUT_AXIS_MOVE,          ///< A relative movement along an axis (0.0 .. 1.0) 
+    N_INPUT_BUTTON_DOWN,        ///< A button was pressed
+    N_INPUT_BUTTON_UP,          ///< A button was released
+    N_INPUT_BUTTON_DBLCLCK,     ///< A button was double clicked
 };
+// @}
 
-// Device-Typen
+/**
+    @name Device Types:
+    @ingroup NebulaInputSystem
+    @{
+*/
 #define N_IDEV_NONE         (0)
-#define N_IDEV_KEYBOARD     (1<<16)     // the system keyboard
-#define N_IDEV_MOUSE        (1<<17)     // the system mouse
-#define N_IDEV_JOYSTICK     (1<<18)     // a joystick or gamepad
-#define N_IDEV_JOYMOUSE     (1<<19)     // mouse emulating a recentering joystick
-#define N_IDEV_PADMOUSE     (1<<20)     // mouse emulating a non-centering joystick
-#define N_IDEV_RELMOUSE     (1<<21)     // emits relative mouse movement
+#define N_IDEV_KEYBOARD     (1<<16)     ///< the system keyboard
+#define N_IDEV_MOUSE        (1<<17)     ///< the system mouse
+#define N_IDEV_JOYSTICK     (1<<18)     ///< a joystick or gamepad
+#define N_IDEV_JOYMOUSE     (1<<19)     ///< mouse emulating a recentering joystick
+#define N_IDEV_PADMOUSE     (1<<20)     ///< mouse emulating a non-centering joystick
+#define N_IDEV_RELMOUSE     (1<<21)     ///< emits relative mouse movement
+// @}
 
-// Macros, um die Device-ID "lesbar" zumachen. Der erste
-// Joystick waere N_IDEV_JOYSTICK(0), der zweite N_IDEV_JOYSTICK(1),
-// usw...
+/**
+    @name Device IDs:
+    @ingroup NebulaInputSystem
+    Macros which are close to the DEVICE ID. The first joystick would be N_IDEV_JOYSTICK(0),
+    the second N_IDEV_JOYSTICK(1), etc....
+    @{
+*/
 #define N_INPUT_KEYBOARD(x)     (N_IDEV_KEYBOARD | x)
 #define N_INPUT_MOUSE(x)        (N_IDEV_MOUSE | x)
 #define N_INPUT_JOYSTICK(x)     (N_IDEV_JOYSTICK | x)
 #define N_INPUT_JOYMOUSE(x)     (N_IDEV_JOYMOUSE | x)
 #define N_INPUT_PADMOUSE(x)     (N_IDEV_PADMOUSE | x)
 #define N_INPUT_RELMOUSE(x)     (N_IDEV_RELMOUSE | x)
+// @}
 
-// Keycodes fuer N_INPUT_KEY_DOWN/N_INPUT_KEY_UP
+//-------------------------------------------------------------------
+/**
+    @name Keycodes
+    @ingroup NebulaInputSystem
+
+    Keycodes for N_INPUT_KEY_DOWN/N_INPUT_KEY_UP
+    @{
+*/
 enum nKey {
     N_KEY_NONE,
 
@@ -176,59 +199,60 @@ enum nKey {
     N_KEY_NUMLOCK,
     N_KEY_SCROLL,
 };
+// @}
 
 //-------------------------------------------------------------------
 class nInputEvent : public nNode {
 public:
-    // constructor
+    /// constructor
     nInputEvent();
-    // set input event type
+    /// set input event type
     void SetType(nInputType t);
-    // get input event type
+    /// get input event type
     nInputType GetType();
-    // set device id
+    /// set device id
     void SetDeviceId(int id);
-    // get device id
+    /// get device id
     int GetDeviceId();
-    // set key code
+    /// set key code
     void SetKey(nKey k);
-    // get key code
+    /// get key code
     nKey GetKey();
-    // set character code
+    /// set character code
     void SetChar(int c);
-    // get character code
+    /// get character code
     int GetChar();
-    // set button number
+    /// set button number
     void SetButton(int b);
-    // get button number
+    /// get button number
     int GetButton();
-    // set axis number
+    /// set axis number
     void SetAxis(int a);
-    // get axis number
+    /// get axis number
     int GetAxis();
-    // set pov number
+    /// set pov number
     void SetPov(int p);
-    // get pov number
+    /// get pov number
     int GetPov();
-    // set axis value
+    /// set axis value
     void SetAxisValue(float v);
-    // get axis value
+    /// get axis value
     float GetAxisValue();
-    // set absolute mouse position
+    /// set absolute mouse position
     void SetAbsPos(int x, int y);
-    // get absolute x mouse position
+    /// get absolute x mouse position
     int GetAbsXPos();
-    // get absolute y mouse position
+    /// get absolute y mouse position
     int GetAbsYPos();
-    // set relative mouse position
+    /// set relative mouse position
     void SetRelPos(float x, float y);
-    // get relative x mouse position
+    /// get relative x mouse position
     float GetRelXPos();
-    // get relative y mouse position
+    /// get relative y mouse position
     float GetRelYPos();
-    // set disabled flag
+    /// set disabled flag
     void SetDisabled(bool b);
-    // get disabled flag
+    /// get disabled flag
     bool IsDisabled();
 
 private:

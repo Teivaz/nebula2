@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nPadMouseDevice
+    @ingroup NebulaInputSystem
 
     A Nebula mouse device which emulates a non-centering joystick.
 

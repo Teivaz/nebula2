@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRelMouseDevice
+    @ingroup NebulaInputSystem
 
     Directly emit mouse movement events.
 
