@@ -382,11 +382,12 @@ n_togglesystemgui(void* slf, nCmd* cmd)
     @cmd
     computescreenspacebrushsize
     @input
-    v
+    s (brush name)
     @output
-    v
+    ff (x,y size)
     @info
-    Initialize the gui server.
+    Computes the screen space size of a brush if a 1:1 mapping
+    is assumed between brush texels and screen pixels.
 */
 static void
 n_computescreenspacebrushsize(void* slf, nCmd* cmd)
