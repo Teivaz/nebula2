@@ -24,7 +24,7 @@ public:
     /// destructor
     virtual ~nBinScriptServer();
     /// evaluate a file
-    virtual bool RunScript(const char *filename, const char*& result);
+    virtual bool RunScript(const char *filename, nString& result);
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// begin a new object in a persistent object file

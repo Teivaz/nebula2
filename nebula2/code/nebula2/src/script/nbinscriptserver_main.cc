@@ -740,10 +740,10 @@ nBinScriptServer::ReadBlock(nFile* file)
     Evaluate a NOB0 file.
 */
 bool
-nBinScriptServer::RunScript(const char* filename, const char*& result)
+nBinScriptServer::RunScript(const char* filename, nString& result)
 {
     bool retval = false;
-    result = 0;
+    result.Clear();
 
     // create and open file object
     nFile* file = nFileServer2::Instance()->NewFileObject();
