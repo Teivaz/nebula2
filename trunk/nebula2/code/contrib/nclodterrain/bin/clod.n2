@@ -40,6 +40,7 @@ new nclodshapenode shape0
     .setdetailtexture 14 "nclodtextures:terrainsplat/grass6.bmp"
     .setdetailtexture 15 "nclodtextures:terrainsplat/grass7.bmp"
     .enddetailtextures
+    .setdetailscale 0.073
     new nvectoranimator diff
         sel diff
         .setchannel "time"
