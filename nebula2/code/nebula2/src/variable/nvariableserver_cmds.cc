@@ -28,7 +28,7 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_declarevariable_ss",      'DCLV', n_declarevariable);
-    cl->AddCmd("i_getnumvariables_s",       'GNMV', n_getnumvariables);
+    cl->AddCmd("i_getnumvariables_v",       'GNMV', n_getnumvariables);
     cl->AddCmd("ss_getvariableat_i",        'GVAT', n_getvariableat);
     cl->AddCmd("v_setfloatvariable_sf",     'SFLV', n_setfloatvariable);
     cl->AddCmd("v_setintvariable_si",       'SINV', n_setintvariable);
