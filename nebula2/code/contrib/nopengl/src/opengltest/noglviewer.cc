@@ -13,8 +13,6 @@
        <dd>scene server to use</dd>
      <dt>-scriptserver</dt>
        <dd>script server to use</dd>
-     <dt>-input</dt>
-       <dd>input binding script to run, default is: home:bin/stdinput.tcl</dd>
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
 	 <dt>-stage</dt>
@@ -109,7 +107,6 @@ main(int argc, const char** argv)
     const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/nopengl/bin/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
     const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
-    const char* inputArg  = args.GetStringArg("-input", "home:bin/stdinput.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg           = args.GetBoolArg("-help");
@@ -135,7 +132,6 @@ main(int argc, const char** argv)
                "-scriptserver           script server to use\n"
                "-gfxserver              graphics server to use; default is platform dependent"
                "-featureset             Which shader feature set to use; I'm not sure how this is expressed\n"
-               "-input                  input binding script to run, default is: home:bin/stdinput.tcl\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
                "-stage                  light stage to load, default is: home:bin/stdlight.tcl\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
@@ -214,7 +210,6 @@ main(int argc, const char** argv)
     if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
-    viewerApp.SetInputScript(inputArg);
 
     // open and run viewer
     if (viewerApp.Open())
