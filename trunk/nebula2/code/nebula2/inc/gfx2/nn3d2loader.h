@@ -160,18 +160,27 @@ nN3d2Loader::Open(nFileServer2* fs)
             const char* numTrisString   = strtok(0, N_WHITESPACE);
             const char* firstEdgeString = strtok(0, N_WHITESPACE);
             const char* numEdgeString   = strtok(0, N_WHITESPACE);
-            
+
             n_assert(firstVertString && numVertsString);
             n_assert(firstTriString && numTrisString);
-            n_assert(firstEdgeString && numEdgeString);
-            
+                        
             nMeshGroup meshGroup;
             meshGroup.SetFirstVertex(atoi(firstVertString));
             meshGroup.SetNumVertices(atoi(numVertsString));
             meshGroup.SetFirstIndex(atoi(firstTriString) * 3);
             meshGroup.SetNumIndices(atoi(numTrisString) * 3);
-            meshGroup.SetFirstEdge(atoi(firstEdgeString));
-            meshGroup.SetNumEdges(atoi(numEdgeString));
+            if (firstEdgeString)
+            {
+                meshGroup.SetFirstEdge(atoi(firstEdgeString));
+                meshGroup.SetNumEdges(atoi(numEdgeString));
+            }
+            else
+            {
+                n_message("Warning: %s has no edge counts in group, assuming old file format.\n",
+                    this->filename.Get());
+                meshGroup.SetFirstEdge(0);
+                meshGroup.SetNumEdges(1);
+            }
             this->groupArray.Append(meshGroup);
 
             // if all groups read, set the headerDone flag to true

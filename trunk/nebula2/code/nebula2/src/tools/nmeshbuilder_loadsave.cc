@@ -330,47 +330,58 @@ nMeshBuilder::LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const 
             Vertex vertex;
             if (vertexComponents & nMesh2::Coord)
             {
-                vertex.SetCoord(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetCoord(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
+                vertexPtr += 3;
             }
             if (vertexComponents & nMesh2::Normal)
             {
-                vertex.SetNormal(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetNormal(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
+                vertexPtr += 3;
             }
             if (vertexComponents & nMesh2::Uv0)
             {
-                vertex.SetUv(0, vector2(*vertexPtr++, *vertexPtr++));
+                vertex.SetUv(0, vector2(vertexPtr[0], vertexPtr[1]));
+                vertexPtr += 2;
             }
             if (vertexComponents & nMesh2::Uv1)
             {
-                vertex.SetUv(1, vector2(*vertexPtr++, *vertexPtr++));
+                vertex.SetUv(1, vector2(vertexPtr[0], vertexPtr[1]));
+                vertexPtr += 2;
             }
             if (vertexComponents & nMesh2::Uv2)
             {
-                vertex.SetUv(2, vector2(*vertexPtr++, *vertexPtr++));
+                vertex.SetUv(2, vector2(vertexPtr[0], vertexPtr[1]));
+                vertexPtr += 2;
             }
             if (vertexComponents & nMesh2::Uv3)
             {
-                vertex.SetUv(3, vector2(*vertexPtr++, *vertexPtr++));
+                vertex.SetUv(3, vector2(vertexPtr[0], vertexPtr[1]));
+                vertexPtr += 2;
             }
             if (vertexComponents & nMesh2::Color)
             {
-                vertex.SetColor(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetColor(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
+                vertexPtr += 4;
             }
             if (vertexComponents & nMesh2::Tangent)
             {
-                vertex.SetTangent(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetTangent(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
+                vertexPtr += 3;
             }
             if (vertexComponents & nMesh2::Binormal)
             {
-                vertex.SetBinormal(vector3(*vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetBinormal(vector3(vertexPtr[0], vertexPtr[1], vertexPtr[2]));
+                vertexPtr += 3;
             }
             if (vertexComponents & nMesh2::Weights)
             {
-                vertex.SetWeights(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetWeights(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
+                vertexPtr += 4;
             }
             if (vertexComponents & nMesh2::JIndices)
             {
-                vertex.SetJointIndices(vector4(*vertexPtr++, *vertexPtr++, *vertexPtr++, *vertexPtr++));
+                vertex.SetJointIndices(vector4(vertexPtr[0], vertexPtr[1], vertexPtr[2], vertexPtr[3]));
+                vertexPtr += 4;
             }
             this->AddVertex(vertex);
         }
