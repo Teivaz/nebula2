@@ -47,7 +47,7 @@
     (Assume that you use ntclserver for script server)
 @verbatim
     > sel /usr/scene
-    > <objectname>.save
+    > &lt;objectname&gt;.save
 @endverbatim
 
     @note

@@ -36,7 +36,7 @@ nInstSceneServer::~nInstSceneServer()
     Begin building the scene. Must be called once before attaching 
     nSceneNode hierarchies using nSceneServer::Attach().
 
-    @param  viewer      the viewer position and orientation
+    @param  invView      the viewer position and orientation
 */
 bool
 nInstSceneServer::BeginScene(const matrix44& invView)
