@@ -8,7 +8,6 @@
 #include "mathlib/vector.h"
 #include "mathlib/matrix.h"
 #include "util/nnode.h"
-#include "particle/nparticleemitter.h"
 
 class nParticleEmitter;
 
@@ -29,8 +28,7 @@ public:
 
     /// initializes all values and sets state to Used
     void Initialize(nParticleEmitter* emitter, const vector3& position, 
-        const vector3& velocity, nTime birthTime, nTime lifeTime,
-        float rotation);
+    const vector3& velocity, nTime birthTime, nTime lifeTime, float rotation);
 
     /// update the particle
     virtual void Trigger(nTime curTime, const vector3& absAccel);

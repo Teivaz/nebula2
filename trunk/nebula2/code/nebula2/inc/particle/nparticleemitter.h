@@ -6,6 +6,7 @@
 */
 
 #include "particle/nparticleserver.h"
+#include "particle/nparticle.h"
 #include "gfx2/nmesh2.h"
 #include "gfx2/ndynamicmesh.h"
 #include "scene/nshapenode.h"
@@ -14,7 +15,6 @@
 #include "mathlib/bbox.h"
 #include "mathlib/vector3envelopecurve.h"
 
-class nParticle;
 class nParticleServer;
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,8 @@ class nParticleEmitter
 {
 public:
     // enumeration of the envelope curves (not including the color)
-    enum CurveType {
+    enum CurveType 
+    {
         EmissionFrequency = 0,
         ParticleLifeTime,
         ParticleStartVelocity,
@@ -50,16 +51,32 @@ public:
     void SetStartTime(nTime time);
     /// set the end time
     void SetEmissionDuration(nTime time);
+    /// get the emission duration
+    nTime GetEmissionDuration() const;
     /// set if loop emitter or not
     void SetLoop(bool b);
+    /// is it a loop emitter ?
+    bool GetLoop(void) const;
     /// set the activity distance
     void SetActivityDistance(float f);
+    /// get the distance to the viewer beyond which the emitter stops emitting
+    float GetActivityDistance() const;
     /// set the angle of particle spreading
     void SetSpreadAngle(float f);
+    /// get the maximum spread angle
+    float GetSpreadAngle() const;
     /// set the maximum particle birth delay
     void SetBirthDelay(float f);
+    /// get the maximum birth delay
+    float GetBirthDelay() const;
     /// set the maximum particle start rotation angle
     void SetStartRotation(float f);
+    /// get the maximum particle start rotation angle
+    float GetStartRotation() const;
+    /// set wether to render oldest or youngest particles first
+    void SetRenderOldestFirst(bool b);
+    /// get wether to render oldest or youngest particles first
+    bool GetRenderOldestFirst() const;
 
     /// set one of the envelope curves
     void SetCurve(CurveType curveType, const nEnvelopeCurve& curve);
@@ -73,20 +90,6 @@ public:
 
     /// get the key that uniquely identifies the emitter in the server's pool
     int GetKey() const;
-    /// is the emitter alive ?
-    bool GetAlive() const;
-    /// get the emission duration
-    nTime GetEmissionDuration() const;
-    /// is it a loop emitter ?
-    bool GetLoop(void) const;
-    /// get the distance to the viewer beyond which the emitter stops emitting
-    float GetActivityDistance() const;
-    /// get the maximum spread angle
-    float GetSpreadAngle() const;
-    /// get the maximum birth delay
-    float GetBirthDelay() const;
-    /// get the maximum particle start rotation angle
-    float GetStartRotation() const;
 
     /// get the particle rotation from the particle rotation envelope curve
     float GetParticleRotationVelocity(float) const;
@@ -107,8 +110,15 @@ public:
     /// get the particle velocity factor from the envelope curve
     float GetParticleVelocityFactor(float) const;
 
-    /// must be called after each trigger
-    void KeepAlive();
+    /// set the keep-alive flag
+    void SetAlive(bool b);
+    /// is the emitter alive ?
+    bool IsAlive() const;
+    /// set the fatal exception flag
+    void SetFatalException(bool b);
+    /// get the fatal exception flag
+    bool GetFatalException() const;
+
     /// erase dead particles, create new
     virtual void Trigger(nTime curTime);
     /// called by particle server
@@ -155,6 +165,7 @@ protected:
  
     bool            alive;                  // is alive ?
     bool            active;                 // still emitting ?
+    bool            fatalException;         // a fatal exception occured (emitter will be removed)                 
     int             lastEmissionVertex;     // last vertex that emitted
     int             randomKey;              // random number key
 
@@ -168,6 +179,7 @@ protected:
     float           spreadAngle;            // angle of emitted particle cone   
     float           birthDelay;             // maximum delay until particle starts to live
     float           startRotation;          // maximum start rotation angle of a new particle
+    bool            renderOldestFirst;      // wether to render the oldest particles first or the youngest
 
     int             key;                    // unique key identifying the emitter
     static int      nextKey;
@@ -185,9 +197,40 @@ private:
 /**
 */
 inline
-void nParticleEmitter::KeepAlive()
+void
+nParticleEmitter::SetFatalException(bool b)
 {
-    this->alive = true;
+    this->fatalException = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticleEmitter::GetFatalException() const
+{
+    return this->fatalException;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticleEmitter::SetAlive(bool b)
+{
+    this->alive = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nParticleEmitter::IsAlive() const
+{
+    return this->alive;
 }
 
 //------------------------------------------------------------------------------
@@ -252,17 +295,6 @@ int nParticleEmitter::GetKey() const
 {
     return this->key;
 }
-
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool nParticleEmitter::GetAlive() const
-{
-    return this->alive;
-}
-
 
 //------------------------------------------------------------------------------
 /**
@@ -376,6 +408,25 @@ inline
 void nParticleEmitter::SetStartRotation(float f)
 {
     this->startRotation = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nParticleEmitter::SetRenderOldestFirst(bool b)
+{
+    this->renderOldestFirst = b;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticleEmitter::GetRenderOldestFirst() const
+{
+    return this->renderOldestFirst;
 }
 
 //------------------------------------------------------------------------------

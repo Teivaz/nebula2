@@ -18,6 +18,7 @@ nParticleEmitter::nParticleEmitter():
     alive(true),
     active(true),
     loop(true),
+    fatalException(false),
     activityDistance(100.0f),
     emissionDuration(10.0),
     spreadAngle(0.0f),
@@ -31,9 +32,10 @@ nParticleEmitter::nParticleEmitter():
     curves(CurveTypeCount, 0, nEnvelopeCurve())
 {
     int i;
-    for (i=0; i<4; i++)
+    for (i = 0; i < 4; i++)
+    {
         this->curves[ParticleVelocityFactor].keyFrameValues[i] = 1.0;
-    refEmitterMesh.invalidate();
+    }
 }
 
 
@@ -52,6 +54,10 @@ nParticleEmitter::~nParticleEmitter()
 void
 nParticleEmitter::Trigger(nTime curTime)
 {
+    nParticleServer* particleServer = this->refParticleServer.get();
+    const vector3& globalAccel = particleServer->GetGlobalAccel();
+    this->SetAlive(true);
+
     if (this->startTime < 0.0)  // called for the first time
     {
         this->startTime = curTime;
@@ -59,14 +65,19 @@ nParticleEmitter::Trigger(nTime curTime)
         return;
     }
     nTime diffTime  = curTime - this->lastEmission;
+    if (diffTime < 0.0)
+    {
+        // a time exception, throw the emitter away, so that it will restart 
+        // in the next frame
+        this->SetFatalException(true);
+        return;
+    }
     float relAge = (float)((curTime - this->startTime) / this->emissionDuration);
-
-    nParticleServer*    particleServer = this->refParticleServer.get();
-    nParticle**         bufferElement  = NULL;
-    nParticle*          particle       = NULL;
 
     if (this->particleBuffer.IsValid())
     {
+        nParticle** bufferElement = 0;
+
         // free dead particles
         while (!this->particleBuffer.IsEmpty())
         {
@@ -77,10 +88,11 @@ nParticleEmitter::Trigger(nTime curTime)
             particleServer->TakeBackParticle(*bufferElement);
         }
         
-        // update the bounding box
+        // trigger living particles and update the bounding box
         this->box.begin_extend();
         while(bufferElement)
         {
+            (*bufferElement)->Trigger(curTime, globalAccel);
             this->box.extend((*bufferElement)->GetCurPosition());
             bufferElement = this->particleBuffer.GetNext(bufferElement);
         }       
@@ -109,7 +121,6 @@ nParticleEmitter::Trigger(nTime curTime)
             {
                 float *emitterVertices = this->refEmitterMesh->LockVertices();
                 int vertexWidth = this->refEmitterMesh->GetVertexWidth();
-                int vertexCount = this->refEmitterMesh->GetNumVertices();
                 ushort* srcIndices = this->refEmitterMesh->LockIndices();
 
                 int curEmissionCount = (int) (this->curves[EmissionFrequency].GetValue(relAge) * (float) diffTime);
@@ -126,11 +137,13 @@ nParticleEmitter::Trigger(nTime curTime)
 
                     while ((curEmitted < curEmissionCount) && (!this->particleBuffer.IsFull()))
                     {
-                        particle = particleServer->GiveFreeParticle();
+                        nParticle* particle = particleServer->GiveFreeParticle();
                         if (0 == particle)
+                        {
                             break;
+                        }
 
-                        bufferElement = this->particleBuffer.Add();
+                        nParticle** bufferElement = this->particleBuffer.Add();
                         *bufferElement = particle;
 
                         curVertex = (particleServer->PseudoRandomInt(this->randomKey++) % (1 + lastIndex - firstIndex)) + firstIndex;
@@ -190,9 +203,6 @@ nParticleEmitter::Trigger(nTime curTime)
     {   // not ready to emit
         this->lastEmission = curTime;
     }
-
-    // i'll die if not kept alive
-    this->alive = false;
 }
 
 //------------------------------------------------------------------------------
@@ -217,15 +227,21 @@ void nParticleEmitter::Render()
 
     float* dstVertices;
     int    maxVertices;
-    int    curDstVertex = 0;
-    int    curDstIndex = 0;
 
     vector2 spriteCorners[4] = {vector2(-1.0, -1.0),
                                 vector2(-1.0,  1.0),
                                 vector2(1.0,   1.0),
                                 vector2(1.0,  -1.0)};
 
-    nParticle** curParticle  = this->particleBuffer.GetTail();
+    nParticle** curParticle;
+    if (this->renderOldestFirst)
+    {
+        curParticle = this->particleBuffer.GetTail();
+    }
+    else
+    {
+        curParticle = this->particleBuffer.GetHead();
+    }
     int curIndex  = 0;
     int curVertex = 0;
 
@@ -376,7 +392,14 @@ void nParticleEmitter::Render()
         #ifdef __NEBULA_STATS__
         numDrawnParticles++;
         #endif
+        if (this->renderOldestFirst)
+        {
         curParticle = this->particleBuffer.GetNext(curParticle);
+        }
+        else
+        {
+            curParticle = this->particleBuffer.GetPrev(curParticle);
+        }
     }
 
     // Draw
