@@ -1097,7 +1097,6 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
     // the apparent screen error of each terrain chunk
     nGfxServer2* gfx = this->refGfxServer.get();
 
-
     // collect all the camera and view properties that will be needed
     nCamera2 const &currentcamera = gfx->GetCamera();
     nDisplayMode2 const &currentdisplaymode = gfx->GetDisplayMode();
@@ -1113,7 +1112,7 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
     n_assert(tan_half_aov > 0.0);
     n_assert(disp_h > 0);
     double rooterror = this->terrainError * (1<<(this->quadtreeDepth-1));
-    float mindistance = (float) ((disp_h * this->terrainError * rooterror) / (2.0 * this->screenError * tan_half_aov));
+    float mindistance = (float) ((disp_h /* * this->terrainError */ * rooterror) / (2.0 * this->screenError * tan_half_aov));
     n_assert(mindistance > 0.0);
 
     // walk the quadtree and load/unload chunks as needed
