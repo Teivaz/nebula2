@@ -32,7 +32,10 @@ beginmodule nd3d9server
         nd3d9shaderinclude
     }
     setheaders { nd3d9server }
-    setlibs_win32 { d3d9.lib d3dx9.lib dxguid.lib dxerr9.lib }
+    setlibs_win32 {
+        d3d9.lib d3dx9.lib dxguid.lib dxerr9.lib
+        user32.lib gdi32.lib advapi32.lib
+    }
     setmoduledeps { nd3d9mesh nd3d9texture nd3d9shader }
 endmodule
 #-------------------------------------------------------------------------------
@@ -75,6 +78,7 @@ beginmodule nd3d9font
     setplatform win32
     setfiles { nd3d9font_main }
     setheaders { nd3d9font }
+    setlibs_win32 { gdi32.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nd3d9surface
@@ -89,6 +93,7 @@ beginmodule nd3d9windowhandler
     setplatform win32
     setfiles { nd3d9windowhandler }
     setheaders { nd3d9windowhandler }
+    setlibs_win32 { user32.lib }
 endmodule
 #-------------------------------------------------------------------------------
 
