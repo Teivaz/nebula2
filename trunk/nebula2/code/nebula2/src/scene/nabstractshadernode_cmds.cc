@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nAbstractShaderNode
 //------------------------------------------------------------------------------
 //  nabstractshadernode_cmds.cc
 //  (C) 2003 RadonLabs GmbH
@@ -59,7 +58,7 @@ n_settexture(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     const char* s1 = cmd->In()->GetS();
-    self->SetTextureS(s0, s1);
+    self->SetTexture(nShader2::StringToParameter(s0), s1);
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +76,7 @@ static void
 n_gettexture(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetS(self->GetTextureS(cmd->In()->GetS()));
+    cmd->Out()->SetS(self->GetTexture(nShader2::StringToParameter(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -97,7 +96,7 @@ n_setint(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     int i0 = cmd->In()->GetI();
-    self->SetIntS(s0, i0);
+    self->SetInt(nShader2::StringToParameter(s0), i0);
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +114,7 @@ static void
 n_getint(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetI(self->GetIntS(cmd->In()->GetS()));
+    cmd->Out()->SetI(self->GetInt(nShader2::StringToParameter(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +134,7 @@ n_setfloat(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     float f0 = cmd->In()->GetF();
-    self->SetFloatS(s0, f0);
+    self->SetFloat(nShader2::StringToParameter(s0), f0);
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +152,7 @@ static void
 n_getfloat(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetF(self->GetFloatS(cmd->In()->GetS()));
+    cmd->Out()->SetF(self->GetFloat(nShader2::StringToParameter(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -177,7 +176,7 @@ n_setvector(void* slf, nCmd* cmd)
     v.y = cmd->In()->GetF();
     v.z = cmd->In()->GetF();
     v.w = cmd->In()->GetF();
-    self->SetVectorS(s0, v);
+    self->SetVector(nShader2::StringToParameter(s0), v);
 }
 
 //------------------------------------------------------------------------------
@@ -195,7 +194,7 @@ static void
 n_getvector(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    vector4 v = self->GetVectorS(cmd->In()->GetS());
+    vector4 v = self->GetVector(nShader2::StringToParameter(cmd->In()->GetS()));
     cmd->Out()->SetF(v.x);
     cmd->Out()->SetF(v.y);
     cmd->Out()->SetF(v.z);
@@ -219,44 +218,45 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
         for (i = 0; i < num; i++)
         {
             TexNode& texNode = this->texNodeArray[i];
-            const char* varName = this->refVariableServer->GetVariableName(texNode.varHandle);
-            n_assert(varName);
-
             cmd = ps->GetCmd(this, 'STXT');
-            cmd->In()->SetS(varName);
+            cmd->In()->SetS(nShader2::ParameterToString(texNode.shaderParameter));
             cmd->In()->SetS(texNode.texName.Get());
             ps->PutCmd(cmd);
         }
 
         //--- setint/setfloat/setvector ---
-        num = this->varContext.GetNumVariables();
-        for (i = 0; i < num; i++)
+        for (i = 0; i < nShader2::NumParameters; i++)
         {
-            const nVariable& var = this->varContext.GetVariableAt(i);
-            const char* varName = this->refVariableServer->GetVariableName(var.GetHandle());
-            switch (var.GetType())
+            const nShaderArg& param = this->shaderParams.GetArg((nShader2::Parameter)i);
+            switch (param.GetType())
             {
-                case nVariable::INT:
+                case nShaderArg::Void:
+                    break;
+
+                case nShaderArg::Int:
                     cmd = ps->GetCmd(this, 'SINT');
-                    cmd->In()->SetS(varName);
-                    cmd->In()->SetI(var.GetInt());
+                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                    cmd->In()->SetI(param.GetInt());
+                    ps->PutCmd(cmd);
                     break;
 
-                case nVariable::FLOAT:
+                case nShaderArg::Float:
                     cmd = ps->GetCmd(this, 'SFLT');
-                    cmd->In()->SetS(varName);
-                    cmd->In()->SetF(var.GetFloat());
+                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                    cmd->In()->SetF(param.GetFloat());
+                    ps->PutCmd(cmd);
                     break;
 
-                case nVariable::VECTOR:
+                case nShaderArg::Float4:
                     {
                         cmd = ps->GetCmd(this, 'SVEC');
-                        const float4& f = var.GetVector();
-                        cmd->In()->SetS(varName);
-                        cmd->In()->SetF(f[0]);
-                        cmd->In()->SetF(f[1]);
-                        cmd->In()->SetF(f[2]);
-                        cmd->In()->SetF(f[3]);
+                        const nFloat4& f = param.GetFloat4();
+                        cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                        cmd->In()->SetF(f.x);
+                        cmd->In()->SetF(f.y);
+                        cmd->In()->SetF(f.z);
+                        cmd->In()->SetF(f.w);
+                        ps->PutCmd(cmd);
                     }
                     break;
 
@@ -264,7 +264,6 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                     n_error("nAbstractShaderNode::SaveCmds(): Invalid variable type!\n");
                     break;
             }
-            ps->PutCmd(cmd);
         }
 
         return true;

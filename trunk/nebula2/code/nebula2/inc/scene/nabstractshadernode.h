@@ -14,33 +14,11 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TRANSFORMNODE_H
 #include "scene/ntransformnode.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#ifndef N_VARIABLE_H
-#include "variable/nvariable.h"
-#endif
-
-#ifndef N_VARIABLECONTEXT_H
-#include "variable/nvariablecontext.h"
-#endif
-
-#ifndef N_VARIABLESERVER_H
-#include "variable/nvariableserver.h"
-#endif
-
-#ifndef N_TEXTURE2_H
 #include "gfx2/ntexture2.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nAbstractShaderNode
-#include "kernel/ndefdllclass.h"
+#include "gfx2/nshader2.h"
+#include "gfx2/nshaderparams.h"
 
 //------------------------------------------------------------------------------
 class nAbstractShaderNode : public nTransformNode
@@ -56,42 +34,30 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
-    /// return true if resources for this object are valid
-    virtual bool AreResourcesValid() const;
 
     /// bind a texture resource to a shader variable
-    void SetTexture(nVariable::Handle varHandle, const char* texName);
+    void SetTexture(nShader2::Parameter param, const char* texName);
     /// get texture resource bound to variable
-    const char* GetTexture(nVariable::Handle varHandle) const;
+    const char* GetTexture(nShader2::Parameter param) const;
     /// bind a int value to a a shader variable
-    void SetInt(nVariable::Handle varHandle, int val);
+    void SetInt(nShader2::Parameter param, int val);
     /// get an int value bound to a shader variable
-    int GetInt(nVariable::Handle varHandle) const;
+    int GetInt(nShader2::Parameter param) const;
     /// bind a float value to a shader variable
-    void SetFloat(nVariable::Handle varHandle, float val);
+    void SetFloat(nShader2::Parameter param, float val);
     /// get a float value bound to a shader variable
-    float GetFloat(nVariable::Handle varHandle) const;
+    float GetFloat(nShader2::Parameter param) const;
     /// bind a vector value to a shader variable
-    void SetVector(nVariable::Handle varHandle, const vector4& val);
+    void SetVector(nShader2::Parameter param, const vector4& val);
     /// get a vector value bound to a shader variable
-    vector4 GetVector(nVariable::Handle varHandle) const;
+    vector4 GetVector(nShader2::Parameter param) const;
 
-    /// SetTexture() with variable name (slow)
-    bool SetTextureS(const char* varName, const char* texName);
-    /// GetTexture() with variable name (slow)
-    const char* GetTextureS(const char* varName);
-    /// SetInt() with variable name (slow)
-    bool SetIntS(const char* varName, int val);
-    /// GetInt() with variable name (slow)
-    int GetIntS(const char* varName);
-    /// SetFloat() with variable name (slow)
-    bool SetFloatS(const char* varName, float val);
-    /// GetFloat() with variable name (slow)
-    float GetFloatS(const char* varName);
-    /// SetVector() with variable name (slow)
-    bool SetVectorS(const char* varName, const vector4& val);
-    /// GetVector() with variable name (slow)
-    vector4 GetVectorS(const char* varName);
+    /// get number of textures
+    int GetNumTextures() const;
+    /// get texture resource name at index
+    const char* GetTextureAt(int index) const;
+    /// get texture shader parameter at index
+    nShader2::Parameter GetTextureParamAt(int index) const;
 
     static nKernelServer* kernelServer;
 
@@ -100,6 +66,8 @@ protected:
     bool LoadTexture(int index);
     /// unload a texture resource
     void UnloadTexture(int index);
+    /// abstract method: returns always true
+    virtual bool IsTextureUsed(nShader2::Parameter param);
 
     class TexNode
     {
@@ -107,17 +75,15 @@ protected:
         /// default constructor
         TexNode();
         /// constructor
-        TexNode(nVariable::Handle varHandle, const char* texName);
+        TexNode(nShader2::Parameter shaderParam, const char* texName);
 
-        nVariable::Handle varHandle;
+        nShader2::Parameter shaderParameter;
         nString texName;
         nRef<nTexture2> refTexture;
     };
 
-    nAutoRef<nGfxServer2> refGfxServer;
-    nAutoRef<nVariableServer> refVariableServer;
-    nVariableContext varContext;
     nArray<TexNode> texNodeArray;
+    nShaderParams shaderParams;
 };
 
 //------------------------------------------------------------------------------
@@ -125,7 +91,7 @@ protected:
 */
 inline
 nAbstractShaderNode::TexNode::TexNode() :
-    varHandle(nVariable::INVALID_HANDLE)
+    shaderParameter(nShader2::InvalidParameter)
 {
     // empty
 }
@@ -134,8 +100,8 @@ nAbstractShaderNode::TexNode::TexNode() :
 /**
 */
 inline
-nAbstractShaderNode::TexNode::TexNode(nVariable::Handle varHandle, const char* name) :
-    varHandle(varHandle),
+nAbstractShaderNode::TexNode::TexNode(nShader2::Parameter shaderParam, const char* name) :
+    shaderParameter(shaderParam),
     texName(name)
 {
     // empty
@@ -145,38 +111,16 @@ nAbstractShaderNode::TexNode::TexNode(nVariable::Handle varHandle, const char* n
 /**
 */
 inline
-bool
-nAbstractShaderNode::SetTextureS(const char* varName, const char* texName)
+void
+nAbstractShaderNode::SetInt(nShader2::Parameter param, int val)
 {
-    n_assert(varName);
-    nVariable::Handle varHandle= this->refVariableServer->GetVariableHandleByName(varName);
-    this->SetTexture(varHandle, texName);
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nAbstractShaderNode::GetTextureS(const char* varName)
-{
-    n_assert(varName);
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(varName);
-    return this->GetTexture(varHandle);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nAbstractShaderNode::SetIntS(const char* varName, int val)
-{
-    n_assert(varName);
-    nVariable::Handle varHandle= this->refVariableServer->GetVariableHandleByName(varName);
-    this->SetInt(varHandle, val);
-    return true;
+    // silently ignore invalid parameters
+    if (nShader2::InvalidParameter == param)
+    {
+        n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
+        return;
+    }
+    this->shaderParams.SetInt(param, val);
 }
 
 //------------------------------------------------------------------------------
@@ -184,24 +128,25 @@ nAbstractShaderNode::SetIntS(const char* varName, int val)
 */
 inline
 int
-nAbstractShaderNode::GetIntS(const char* varName)
+nAbstractShaderNode::GetInt(nShader2::Parameter param) const
 {
-    n_assert(varName);
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(varName);
-    return this->GetInt(varHandle);
+    return this->shaderParams.GetInt(param);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-bool
-nAbstractShaderNode::SetFloatS(const char* varName, float val)
+void
+nAbstractShaderNode::SetFloat(nShader2::Parameter param, float val)
 {
-    n_assert(varName);
-    nVariable::Handle varHandle= this->refVariableServer->GetVariableHandleByName(varName);
-    this->SetFloat(varHandle, val);
-    return true;
+    // silently ignore invalid parameters
+    if (nShader2::InvalidParameter == param)
+    {
+        n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
+        return;
+    }
+    this->shaderParams.SetFloat(param, val);
 }
 
 //------------------------------------------------------------------------------
@@ -209,24 +154,29 @@ nAbstractShaderNode::SetFloatS(const char* varName, float val)
 */
 inline
 float
-nAbstractShaderNode::GetFloatS(const char* varName)
+nAbstractShaderNode::GetFloat(nShader2::Parameter param) const
 {
-    n_assert(varName);
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(varName);
-    return this->GetFloat(varHandle);
+    return this->shaderParams.GetFloat(param);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-bool
-nAbstractShaderNode::SetVectorS(const char* varName, const vector4& val)
+void
+nAbstractShaderNode::SetVector(nShader2::Parameter param, const vector4& val)
 {
-    n_assert(varName);
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(varName);
-    this->SetVector(varHandle, val);
-    return true;
+    // silently ignore invalid parameters
+    if (nShader2::InvalidParameter == param)
+    {
+        n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
+        return;
+    }
+    nFloat4 float4Val = 
+    {
+        val.x, val.y, val.z, val.w
+    };
+    this->shaderParams.SetFloat4(param, float4Val);
 }
 
 //------------------------------------------------------------------------------
@@ -234,11 +184,51 @@ nAbstractShaderNode::SetVectorS(const char* varName, const vector4& val)
 */
 inline
 vector4
-nAbstractShaderNode::GetVectorS(const char* varName)
+nAbstractShaderNode::GetVector(nShader2::Parameter param) const
 {
-    n_assert(varName);
-    nVariable::Handle varHandle = this->refVariableServer->GetVariableHandleByName(varName);
-    return this->GetVector(varHandle);
+    const nFloat4& float4Val = this->shaderParams.GetFloat4(param);
+    return vector4(float4Val.x, float4Val.y, float4Val.z, float4Val.w);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAbstractShaderNode::GetNumTextures() const
+{
+    return this->texNodeArray.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nAbstractShaderNode::GetTextureAt(int index) const
+{
+    return this->texNodeArray[index].texName.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nAbstractShaderNode::IsTextureUsed(nShader2::Parameter param)
+{
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShader2::Parameter
+nAbstractShaderNode::GetTextureParamAt(int index) const
+{
+    return this->texNodeArray[index].shaderParameter;
+}
+
 //------------------------------------------------------------------------------
 #endif
