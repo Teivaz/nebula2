@@ -42,19 +42,10 @@ technique t0
     pass p0
     {
         ZWriteEnable = True;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
-        ZEnable          = True;
-        ZFunc            = LessEqual;
-        AlphaBlendEnable = True;
         AlphaTestEnable  = True;
         AlphaRef         = 100;
 
-        CullMode = 2; // default value (CW); must not be 0 for software vp
-
         VertexShader = compile vs_1_1 vsMain();
-        PixelShader  = 0;
-
-        SpecularEnable	= False;
         
         FogEnable = True;
         FogColor = {0.6, 0.8, 1.0, 0.0};

@@ -16,6 +16,9 @@ local function createLight()
         call( 'setvector', 'LightDiffuse', 1.2, 1.2, 1.2, 1.0 )
         call( 'setvector', 'LightAmbient', 0.60, 0.60, 0.60, 1.0 )
         call( 'setvector', 'LightPos', 0.5, -3, 1, 1 )
+        call( 'setvector', 'LightSpecular', 0, 0, 0, 1 )
+        call( 'setvector', 'LightDiffuse1', 0, 0, 0, 1 )
+        call( 'setvector', 'LightSpecular1', 0, 0, 0, 1 )
     sel('..')
 end
 

@@ -19,7 +19,6 @@
 
 class nConServer;
 class nScriptServer;
-//class CCProfilerDisplay;
 class CCGame;
 
 class CCEngine : public nRoot
@@ -54,8 +53,6 @@ private:
 
     nAutoRef<nConServer>        m_ConsoleServer;
     nRef<nScriptServer>         m_ScriptServer;
-
-    //nAutoRef<CCProfilerDisplay> m_Profiler;
 };
 
 #endif

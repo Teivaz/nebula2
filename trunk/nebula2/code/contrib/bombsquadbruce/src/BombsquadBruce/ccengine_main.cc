@@ -13,6 +13,7 @@
 #include "gfx2/nd3d9server.h"
 #include "variable/nvariableserver.h"
 #include "kernel/nfileserver2.h"
+#include "scene/nsceneserver.h"
 
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
@@ -105,6 +106,13 @@ void CCEngine::StartServers()
     StartScriptServer();
     StartGuiServer();
     StartSoundServer();
+    // Open the scene server.  We want to create it in script, so we can be flexible
+    // about which subclass to use, but since nSceneServer itself isn't scriptable,
+    // we must open it here (which is fine, since this will need to be done
+    // whichever subclass is used).
+    nSceneServer* pSceneServer = (nSceneServer*)kernelServer->Lookup( "/sys/servers/scene" );
+    n_assert2( pSceneServer, "No scene server in CCEngine::StartServers!" );
+    pSceneServer->Open();
 }
 
 void CCEngine::StartScriptServer()

@@ -15,10 +15,10 @@ static void n_getlodshapehandle(void* slf, nCmd* cmd);
     ccsceneserver
     
     @superclass
-    nstdsceneserver
+    nmrtsceneserver
 
     @classinfo
-    The standard Crazy Chipmunk scene server.  Works just like nStdSceneServer,
+    The standard Crazy Chipmunk scene server.  Works just like nMRTSceneServer,
     except that:
 
     1. Objects can declare themselves alpha-blended, which causes

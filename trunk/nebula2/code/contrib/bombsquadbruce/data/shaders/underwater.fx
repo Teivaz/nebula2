@@ -67,23 +67,9 @@ technique t0
     pass p0
     {
         ZWriteEnable = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
-        ZEnable          = True;
-        ZFunc            = LessEqual;
-
-        AlphaBlendEnable = True;
-        SrcBlend         = SrcAlpha; // One
-        DestBlend        = InvSrcAlpha;
         AlphaTestEnable  = False;
-
-        CullMode = 2; // default value (CW); must not be 0 for software vp
-
         VertexShader = compile vs_1_1 vsMain();
-        PixelShader  = 0;
-
-        Lighting = False;
         FogEnable = False;
- 
         Sampler[0] = <WaterSampler>;
 
         ColorOp[0]   = SelectArg1;
