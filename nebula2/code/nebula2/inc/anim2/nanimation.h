@@ -28,9 +28,9 @@
 
     Animation fileformats:
 
-    ----------------------------------------------------------------------------
-    ASCII: .nanim2      (not streamable)
-    
+    <b>ASCII: .nanim2      (not streamable)</b>
+
+    @verbatim    
     type nanim2
     numgroups [numGroups]
     numkeys [numKeys]
@@ -49,10 +49,11 @@
             ...             // etc...
         }
     }
+    @endverbatim
 
-    ----------------------------------------------------------------------------
-    BINARY: .nax2   (optionally streamable)
-                
+    <b>BINARY: .nax2   (optionally streamable)</b>
+    
+    @verbatim            
     HEADER {
         int32 magic         // NAX2
         int32 numGroups     // number of groups in file
@@ -79,6 +80,7 @@
     FOR EACH KEY {
         float[4] value
     }
+    @endverbatim
 
     (C) 2003 RadonLabs GmbH
 */
