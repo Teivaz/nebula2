@@ -25,13 +25,22 @@
 #   include <arpa/inet.h>
 #   include <unistd.h>
 #   include <netdb.h>
+#   include <fcntl.h>
+#   include <errno.h>
 #endif
 
 //------------------------------------------------------------------------------
-#ifndef __WIN32__
+#ifdef __WIN32__
+#define N_SOCKET_LAST_ERROR    WSAGetLastError()
+#define N_EWOULDBLOCK          WSAEWOULDBLOCK
+typedef int socklen_t;
+#else
 typedef int SOCKET;
-#define closesocket close
-#define INVALID_SOCKET (-1)
+#define closesocket            close
+#define INVALID_SOCKET         (-1)
+#define SOCKET_ERROR           (-1)
+#define N_SOCKET_LAST_ERROR    errno
+#define N_EWOULDBLOCK          EWOULDBLOCK
 #endif
 
 #define N_SOCKET_MIN_PORTNUM   (12000)
