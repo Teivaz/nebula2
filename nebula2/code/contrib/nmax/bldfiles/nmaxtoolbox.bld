@@ -1,0 +1,77 @@
+#-------------------------------------------------------------------------------
+#   nmaxtoolbox.bld
+#
+#   nmaxtoolbox workspace
+#   
+#   Modules:
+#       - nmaxtoolbox
+#   Targets:
+#       - nmaxtoolbox
+#-------------------------------------------------------------------------------
+beginmodule nmaxtoolbox
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { dummy.cpp }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nmaxtoolbox
+    settype dll
+    changedllextension dlu
+    setexceptions true
+
+    setresource_win32 nmaxtoolbox
+
+    setmodules { 
+        nmaxdlg
+        nmaxutilityobj
+        nmaxexport2
+        nmaxnode
+        nmaxmesh
+        nmaxmaterial
+        nmaxbone
+        nmaxtransform
+        nmaxcamera
+        nmaxlight
+        nmaxcontrollers
+        nmaxnotetrack
+        nmaxdummy
+        nmaxcustattrib
+        nmaxexpose 
+        nmaxscript
+        nmaxlistener
+        nmaxdll 
+        nmaxtoolbox
+    }
+    settargetdeps { 
+        nmaxbase 
+        nkernel 
+        ntoollib
+        microtcl 
+        nnebula 
+    }
+
+    # setup fileserver behavior for plugins
+    addtargetdef nkernel N_MAXPLUGIN 1
+endtarget
+#-------------------------------------------------------------------------------
+beginworkspace nmaxtoolbox
+   settargets {
+      nmaxbase 
+      nmaxtoolbox
+      nkernel 
+      nnebula
+      ndinput8
+      ndirect3d9
+      ndsaudioserver3
+      ndshow
+      ngui
+      ntoollib
+      microtcl
+      npythonserver
+      napplication
+   }
+endworkspace
+#-------------------------------------------------------------------------------
+#   EOF
+#-------------------------------------------------------------------------------
