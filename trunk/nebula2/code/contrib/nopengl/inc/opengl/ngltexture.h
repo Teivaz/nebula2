@@ -39,35 +39,6 @@
     - Jan-2004 Haron      + compressed (DDS) texture support
 */
 #include "gfx2/ntexture2.h"
-#include "opengl/nglserver2.h"
-
-#ifdef __WIN32__
-//GL_ARB_texture_compression functions
-#define glCompressedTexImage3DARB       this->refGfxServer->procCompressedTexImage3DARB
-#define glCompressedTexImage2DARB       this->refGfxServer->procCompressedTexImage2DARB
-#define glCompressedTexImage1DARB       this->refGfxServer->procCompressedTexImage1DARB
-#define glCompressedTexSubImage3DARB    this->refGfxServer->procCompressedTexSubImage3DARB
-#define glCompressedTexSubImage2DARB    this->refGfxServer->procCompressedTexSubImage2DARB
-#define glCompressedTexSubImage1DARB    this->refGfxServer->procCompressedTexSubImage1DARB
-#define glGetCompressedTexImageARB      this->refGfxServer->procGetCompressedTexImageARB
-//WGL_ARB_render_texture functions
-#define wglBindTexImageARB          this->refGfxServer->procBindTexImageARB
-#define wglReleaseTexImageARB       this->refGfxServer->procReleaseTexImageARB
-#define wglSetPbufferAttribARB      this->refGfxServer->procSetPbufferAttribARB
-//WGL_ARB_pbuffer functions
-#define wglCreatePbufferARB         this->refGfxServer->procCreatePbufferARB
-#define wglGetPbufferDCARB          this->refGfxServer->procGetPbufferDCARB
-#define wglReleasePbufferDCARB      this->refGfxServer->procReleasePbufferDCARB
-#define wglDestroyPbufferARB        this->refGfxServer->procDestroyPbufferARB
-#define wglQueryPbufferARB          this->refGfxServer->procQueryPbufferARB
-//WGL_ARB_pixel_format functions
-#define wglGetPixelFormatAttribivARB    this->refGfxServer->procGetPixelFormatAttribivARB
-#define wglGetPixelFormatAttribfvARB    this->refGfxServer->procGetPixelFormatAttribfvARB
-#define wglChoosePixelFormatARB         this->refGfxServer->procChoosePixelFormatARB
-//WGL_ARB_make_current_read functions
-#define wglMakeContextCurrentARB    this->refGfxServer->procMakeContextCurrentARB
-#define wglGetCurrentReadDCARB      this->refGfxServer->procGetCurrentReadDCARB
-#endif
 
 #ifdef __MACOSX__
     #include <OpenGL/gl.h>
@@ -76,21 +47,16 @@
     #include <AGL/agl.h>
 #else
     #include <GL/gl.h>
-    #include <GL/glu.h>
 #endif
 
 #ifdef __LINUX__
     #include <GL/glx.h>
-    //#include <X11/Xatom.h>
-    //#include <X11/Xmu/StdCmap.h>
-    //#include <X11/keysym.h>
-    //#include <X11/extensions/xf86vmode.h>
 #endif
 
-#include "GL/glext.h"
+#include <GL/glext.h>
 
 #ifdef __WIN32__
-    #include "GL/wglext.h"
+    #include <GL/wglext.h>
 #else
     #include "GL/glxext.h"
 #endif
@@ -144,9 +110,6 @@ private:
     //void QueryGLTextureAttributes();
     /// create a P-Buffer
     bool CreatePBuffer(int *pf_attr, int *pb_attr);
-
-    nAutoRef<nGLServer2> refGfxServer;
-    nAutoRef<nFileServer2> refFileServer;
 
     GLuint texID;
     GLenum target;

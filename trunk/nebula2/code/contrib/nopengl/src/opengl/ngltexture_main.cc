@@ -3,6 +3,8 @@
 //  2003 - Haron
 //------------------------------------------------------------------------------
 #include "opengl/ngltexture.h"
+#include "opengl/nglserver2.h"
+#include "opengl/nglextensionserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 #include "il/il.h"
@@ -10,23 +12,10 @@
 
 nNebulaClass(nGLTexture, "ntexture2");
 
-#ifdef __WIN32__
-//GL_ARB_multitexture functions
-#define glActiveTextureARB        this->refGfxServer->procActiveTextureARB
-#define glMultiTexCoord2fARB      this->refGfxServer->procMultiTexCoord2fARB
-#define glClientActiveTextureARB  this->refGfxServer->procClientActiveTextureARB
-//WGL_ARB_render_texture functions
-#define wglBindTexImageARB        this->refGfxServer->procBindTexImageARB
-#define wglReleaseTexImageARB     this->refGfxServer->procReleaseTexImageARB
-#define wglSetPbufferAttribARB    this->refGfxServer->procSetPbufferAttribARB
-#endif
-
 //------------------------------------------------------------------------------
 /**
 */
 nGLTexture::nGLTexture() :
-    refGfxServer("/sys/servers/gfx"),
-    refFileServer("/sys/servers/file2"),
     texID(-1),
     target(0),
     hPBuffer(0),
@@ -64,27 +53,29 @@ nGLTexture::CanLoadAsync() const
 int
 nGLTexture::ApplyCoords(int stage, GLint size, GLsizei stride, GLvoid *pointer)
 {
-    nGLServer2 *gfxServer = this->refGfxServer.get();
+    nGLExtensionServer *extServer = nGLExtensionServer::Instance();
 
     //n_printf("Tex[%d][%s]\n", stage, tex->GetFilename());
-    if (gfxServer->support_GL_ARB_multitexture)
+    if (extServer->support_GL_ARB_multitexture)
         glClientActiveTextureARB(GL_TEXTURE0 + stage);//glActiveTextureARB - ??
 
     //glBindTexture(tex->target,tex->texID);
-    if (gfxServer->support_WGL_ARB_render_texture)
+    if (extServer->support_WGL_ARB_render_texture)
         if (!wglBindTexImageARB(this->hPBuffer, WGL_FRONT_LEFT_ARB))
         {
-            n_printf("nGLTexture::ApplyCoords() warning: Could not bind p-buffer to render texture!");
+            n_printf("nGLTexture::ApplyCoords() warning: Could not bind p-buffer to render texture!\n");
+            n_gltrace("nGLTexture::ApplyCoords().");
             return -1;
         }
 
     glTexCoordPointer(size, GL_FLOAT, stride, pointer);
 
     //multitexturing not supported
-    if (!gfxServer->support_GL_ARB_multitexture) return 0;
+    if (!extServer->support_GL_ARB_multitexture) return 0;
 
     glClientActiveTextureARB(GL_TEXTURE0);
 
+    n_gltrace("nGLTexture::ApplyCoords().");
     return 1;
 }
 
@@ -95,20 +86,23 @@ nGLTexture::ApplyCoords(int stage, GLint size, GLsizei stride, GLvoid *pointer)
 int
 nGLTexture::UnApplyCoords(int stage)
 {
-    nGLServer2 *gfxServer = this->refGfxServer.get();
+    nGLExtensionServer *extServer = nGLExtensionServer::Instance();
 
-    if (gfxServer->support_WGL_ARB_render_texture)
+    if (extServer->support_WGL_ARB_render_texture)
         if (!wglReleaseTexImageARB(this->hPBuffer, WGL_FRONT_LEFT_ARB))
         {
             n_printf("nGLTexture::UnApplyCoords() warning: Could not release p-buffer from render texture!");
             return -1;
         }
 
-    if (gfxServer->support_GL_ARB_multitexture)
+    if (extServer->support_GL_ARB_multitexture)
+    {
         glClientActiveTextureARB(GL_TEXTURE0 + stage);//glActiveTextureARB - ??
+    }
 
     //multitexturing not supported
-    if (!gfxServer->support_GL_ARB_multitexture) return 0;
+    if (!extServer->support_GL_ARB_multitexture) return 0;
+    n_gltrace("nGLTexture::UnApplyCoords().");
     return 1;
 }
 
@@ -120,15 +114,15 @@ nGLTexture::UnloadResource()
 {
     n_assert(this->IsValid());
 
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    n_assert(gfxServer->hDC);
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    n_assert(glServer->hDC);
 
     // check if I am the current render target in the gfx server...
     if (this->IsRenderTarget())
     {
-        if (gfxServer->GetRenderTarget() == this)
+        if (glServer->GetRenderTarget() == this)
         {
-            gfxServer->SetRenderTarget(0);
+            glServer->SetRenderTarget(0);
         }
     }
 
@@ -136,14 +130,16 @@ nGLTexture::UnloadResource()
     int curStage;
     for (curStage = 0; curStage < nGfxServer2::MaxTextureStages; curStage++)
     {
-        if (gfxServer->GetTexture(curStage) == this)
+        if (glServer->GetTexture(curStage) == this)
         {
-            gfxServer->SetTexture(curStage, 0);
+            glServer->SetTexture(curStage, 0);
         }
     }
 
-    texID = 0;
-    target = 0;
+    glDeleteTextures(1, &this->texID);
+    this->texID = 0;
+    this->target = 0;
+
     if (hPBufferRC != NULL)
     {
         wglMakeCurrent(hPBufferDC, hPBufferRC);
@@ -155,7 +151,7 @@ nGLTexture::UnloadResource()
 /*
     if (hPBufferDC != NULL )
     {
-        ReleaseDC(this->refGfxServer->hWnd,hPBufferDC);
+        ReleaseDC(glServer->hWnd,hPBufferDC);
         hPBufferDC = NULL;
     }
 */
@@ -171,7 +167,7 @@ nGLTexture::LoadResource()
     n_assert(!this->IsValid());
 
     bool success = false;
-    nPathString filename = this->GetFilename().Get();
+    nString filename = this->GetFilename().Get();
 
     if (this->IsRenderTarget())
     {
@@ -200,23 +196,23 @@ nGLTexture::LoadResource()
     this->SetValid(success);
 
     // register texture with GLServer
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    n_assert(gfxServer->hDC);
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    n_assert(glServer->hDC);
     int curStage;
 
     success = false;
     for (curStage = 0; curStage < nGfxServer2::MaxTextureStages; curStage++)
     {
-        if (gfxServer->GetTexture(curStage) == 0)
+        if (glServer->GetTexture(curStage) == 0)
         {
-            gfxServer->SetTexture(curStage, this);
+            glServer->SetTexture(curStage, this);
             success = true;
             n_printf("TexStage = %d\n", curStage);
             break;
         }
     }
-    //n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadResource()"));
-
+    
+    n_gltrace("nGLTexture::LoadResource().");
     return success;
 }
 
@@ -229,11 +225,10 @@ nGLTexture::CreateRenderTarget()
 {
     n_assert(this->width > 0);
     n_assert(this->height > 0);
-    n_assert(0 == this->texID);
+    n_assert(-1 == this->texID);
     n_assert(this->IsRenderTarget());
 
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    if (!gfxServer->support_WGL_ARB_render_texture)
+    if (!nGLExtensionServer::Instance()->support_WGL_ARB_render_texture)
         return false;
 
     // Set some p-buffer attributes so that we can use this p-buffer as a
@@ -263,8 +258,9 @@ nGLTexture::CreateRenderTarget()
         0                                   // Zero terminates the list
     };
 
-    HDC hDC = this->refGfxServer->hDC;
-    HGLRC hRC = this->refGfxServer->context;
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    HDC hDC = glServer->hDC;
+    HGLRC hRC = glServer->context;
     n_assert(hDC);
     n_assert(hRC);
     //TODO: check hDC ???
@@ -314,7 +310,8 @@ nGLTexture::CreateRenderTarget()
         return false;
     }
 
-    target = GL_TEXTURE_2D;
+    this->target = GL_TEXTURE_2D;
+    n_gltrace("nGLTexture::CreateRenderTarget().");
     return true;
 }
 
@@ -426,8 +423,8 @@ nGLTexture::CreateEmptyTexture()
     //n_assert(0 == this->texture2D);
     //n_assert(0 == this->textureCube);
 
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    //n_assert(gfxServer->support_WGL_ARB_render_texture);
+    nGLExtensionServer *extServer = nGLExtensionServer::Instance();
+    //n_assert(extServer->support_WGL_ARB_render_texture);
 
     int pfa[30]; // pixel format attributes
     int pba[10]; // pixel buffer attributes
@@ -459,8 +456,9 @@ nGLTexture::CreateEmptyTexture()
     GLenum ttype;
     int blockSize = 0; // for calculating compressed textures size
 
-    HDC hDC = gfxServer->hDC;
-    HGLRC hRC = gfxServer->context;
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    HDC hDC = glServer->hDC;
+    HGLRC hRC = glServer->context;
     n_assert(hDC);
     n_assert(hRC);
     //TODO: check hDC ???
@@ -509,7 +507,7 @@ nGLTexture::CreateEmptyTexture()
             break;
         //case P8:                d3dFormat = DDS_P8; break;
         case DXT1:
-            if (gfxServer->support_GL_EXT_texture_compression_s3tc)
+            if (extServer->support_GL_EXT_texture_compression_s3tc)
             {
                 compressedTex = true;
                 cformat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
@@ -523,7 +521,7 @@ nGLTexture::CreateEmptyTexture()
             break;
         //case DXT2:break;
         case DXT3:
-            if (gfxServer->support_GL_EXT_texture_compression_s3tc)
+            if (extServer->support_GL_EXT_texture_compression_s3tc)
             {
                 compressedTex = true;
                 cformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
@@ -537,7 +535,7 @@ nGLTexture::CreateEmptyTexture()
             break;
         //case DXT4:break;
         case DXT5:
-            if (gfxServer->support_GL_EXT_texture_compression_s3tc)
+            if (extServer->support_GL_EXT_texture_compression_s3tc)
             {
                 compressedTex = true;
                 cformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
@@ -564,7 +562,7 @@ nGLTexture::CreateEmptyTexture()
 
     if (this->GetType() == TEXTURE_2D)
     {
-        target = GL_TEXTURE_2D;
+        this->target = GL_TEXTURE_2D;
         pba[3] = WGL_TEXTURE_2D_ARB;
 
         if (!CreatePBuffer(pfa,pba)) return false;
@@ -613,7 +611,7 @@ nGLTexture::CreateEmptyTexture()
     }
     else  if (this->GetType() == TEXTURE_CUBE)
     {
-        target = GL_TEXTURE_CUBE_MAP;
+        this->target = GL_TEXTURE_CUBE_MAP;
         pba[3] = WGL_TEXTURE_CUBE_MAP_ARB;
 
         if (!CreatePBuffer(pfa,pba)) return false;
@@ -621,9 +619,9 @@ nGLTexture::CreateEmptyTexture()
         // We were successful in creating a p-buffer. We can now make its
         // context current and set it up just like we would a regular context
         // attached to a window.
-        if (!wglMakeCurrent(hPBufferDC,hPBufferRC))
+        if (!wglMakeCurrent(hPBufferDC, hPBufferRC))
         {
-            n_printf("nGLTexture: Could not make the p-buffer's context current for <%s>",this->GetName());
+            n_printf("nGLTexture: Could not make the p-buffer's context current for <%s>", this->GetName());
             return false;
         }
 
@@ -681,6 +679,7 @@ nGLTexture::CreateEmptyTexture()
 
     // query texture attributes
     //this->QueryGLTextureAttributes();
+    n_gltrace("nGLTexture::CreateEmptyTexture().");
     return true;
 }
 
@@ -723,14 +722,14 @@ nGLTexture::LoadFromRawCompoundFile()
 */
 struct DDSPixelFormat
 {
-    ulong Size;                // size of structure
-    ulong Flags;            // pixel format flags
-    ulong FourCC;            // (FOURCC code)
-    ulong RGBBitCount;        // how many bits per pixel
-    ulong RBitMask;            // mask for red bit
-    ulong GBitMask;            // mask for green bits
-    ulong BBitMask;            // mask for blue bits
-    ulong RGBAlphaBitMask;    // mask for alpha channel
+    ulong Size;            // size of structure
+    ulong Flags;           // pixel format flags
+    ulong FourCC;          // (FOURCC code)
+    ulong RGBBitCount;     // how many bits per pixel
+    ulong RBitMask;        // mask for red bit
+    ulong GBitMask;        // mask for green bits
+    ulong BBitMask;        // mask for blue bits
+    ulong RGBAlphaBitMask; // mask for alpha channel
 };
 
 /**
@@ -738,20 +737,20 @@ struct DDSPixelFormat
 */
 struct DDSHeader
 {
-    ulong Size;                    // size of the DDSHeader structure
+    ulong Size;                 // size of the DDSHeader structure
     ulong Flags;                // determines what fields are valid
-    ulong Height;                // height of surface to be created
+    ulong Height;               // height of surface to be created
     ulong Width;                // width of input surface
     ulong PitchOrLinearSize;    // distance to start of next line (return value only) or Formless late-allocated optimized surface size
     ulong Depth;                // the depth if this is a volume texture
-    ulong MipMapCount;            // number of mip-map levels requested
+    ulong MipMapCount;          // number of mip-map levels requested
                                 // dwZBufferBitDepth removed, use ddpfPixelFormat one instead
     ulong Reserved1[11];        // reserved
-    DDSPixelFormat PixelFormat;    // pixel format description of the surface
+    DDSPixelFormat PixelFormat; // pixel format description of the surface
     ulong Caps1;
     ulong Caps2;
     ulong Reserved2[2];
-    ulong TextureStage;            // stage in multitexture cascade
+    ulong TextureStage;         // stage in multitexture cascade
 };
 
 #define MAKEFOURCC(ch0, ch1, ch2, ch3) \
@@ -850,34 +849,33 @@ enum
 };
 
 // Flags members of the DDSHeader
-#define DDS_CAPS            0x00000001L
-#define DDS_HEIGHT            0x00000002L
-#define DDS_WIDTH            0x00000004L
-#define DDS_PITCH            0x00000008L
-#define DDS_PIXELFORMAT    0x00001000L
-#define DDS_MIPMAPCOUNT    0x00020000L
-#define DDS_LINEARSIZE        0x00080000L
-#define DDS_DEPTH            0x00800000L
+#define DDS_CAPS        0x00000001L
+#define DDS_HEIGHT      0x00000002L
+#define DDS_WIDTH       0x00000004L
+#define DDS_PITCH       0x00000008L
+#define DDS_PIXELFORMAT 0x00001000L
+#define DDS_MIPMAPCOUNT 0x00020000L
+#define DDS_LINEARSIZE  0x00080000L
+#define DDS_DEPTH       0x00800000L
 
-#define DDS_ALPHAPIXELS    0x00000001L
-#define DDS_FOURCC        0x00000004L
-#define DDS_RGB            0x00000040L
-#define DDS_RGBA        0x00000041L
+#define DDS_ALPHAPIXELS 0x00000001L
+#define DDS_FOURCC      0x00000004L
+#define DDS_RGB         0x00000040L
 
 // Caps1 members of DDSCaps2
-#define DDS_TEXTURE    0x00001000L
-#define DDS_MIPMAP    0x00400000L
-#define DDS_COMPLEX    0x00000008L
+#define DDS_COMPLEX     0x00000008L
+#define DDS_TEXTURE     0x00001000L
+#define DDS_MIPMAP      0x00400000L
 
 // Caps2 members of DDSCaps2
-#define DDS_CUBEMAP                0x00000200L
-#define DDS_CUBEMAP_POSITIVEX    0x00000400L
-#define DDS_CUBEMAP_NEGATIVEX    0x00000800L
-#define DDS_CUBEMAP_POSITIVEY    0x00001000L
-#define DDS_CUBEMAP_NEGATIVEY    0x00002000L
-#define DDS_CUBEMAP_POSITIVEZ    0x00004000L
-#define DDS_CUBEMAP_NEGATIVEZ    0x00008000L
-#define DDS_VOLUME                0x00200000L
+#define DDS_CUBEMAP           0x00000200L
+#define DDS_CUBEMAP_POSITIVEX 0x00000400L
+#define DDS_CUBEMAP_NEGATIVEX 0x00000800L
+#define DDS_CUBEMAP_POSITIVEY 0x00001000L
+#define DDS_CUBEMAP_NEGATIVEY 0x00002000L
+#define DDS_CUBEMAP_POSITIVEZ 0x00004000L
+#define DDS_CUBEMAP_NEGATIVEZ 0x00008000L
+#define DDS_VOLUME            0x00200000L
 
 const ulong dds_cubemap_face[] = {
     DDS_CUBEMAP_POSITIVEX,
@@ -920,6 +918,45 @@ int clamp_size(int size)
 
 //------------------------------------------------------------------------------
 /**
+*/
+inline
+int bitsCount(uint n)
+{
+    int i, res;
+    res = 0;
+
+    for(i = 0; i < 32; i++)
+    {
+        if (n & (1 << i))
+            res++;
+    }
+
+    return res;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int firstSetBitPos(uint n)
+{
+    int i, res;
+    res = 31; // there is no setted bits
+
+    for(i = 0; i < 32; i++)
+    {
+        if (n & (1 << i))
+        {
+            res = i;
+            break;
+        }
+    }
+
+    return res;
+}
+
+//------------------------------------------------------------------------------
+/**
     Load texture as DDS file from inside of a compound file.
 */
 bool
@@ -933,7 +970,7 @@ nGLTexture::LoadFromDDSCompoundFile()
     if (this->compoundFile) ddsfile = this->compoundFile;
     else
     {
-        ddsfile = this->refFileServer->NewFileObject();
+        ddsfile = nFileServer2::Instance()->NewFileObject();
             // open the file
         if (!ddsfile->Open(this->GetFilename().Get(), "r"))
         {
@@ -943,8 +980,8 @@ nGLTexture::LoadFromDDSCompoundFile()
         }
     }
 
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    //n_assert(gfxServer->support_WGL_ARB_render_texture);
+    nGLExtensionServer *extServer = nGLExtensionServer::Instance();
+    //n_assert(extServer->support_WGL_ARB_render_texture);
 
     DDSHeader ddsh;
     uchar *_buffer;
@@ -962,27 +999,31 @@ nGLTexture::LoadFromDDSCompoundFile()
     pba[0] = WGL_TEXTURE_FORMAT_ARB;    pba[1] = WGL_TEXTURE_RGBA_ARB;
     pba[2] = WGL_TEXTURE_TARGET_ARB;
 
+    pfa[0] = WGL_SUPPORT_OPENGL_ARB;        pfa[1] = GL_TRUE;    // P-buffer will be used with OpenGL
+    pfa[2] = WGL_DRAW_TO_PBUFFER_ARB;       pfa[3] = GL_TRUE;    // Enable render to p-buffer
+    pfa[4] = WGL_BIND_TO_TEXTURE_RGBA_ARB;  pfa[5] = GL_TRUE;    // P-buffer will be used as a texture
+    //pfa[6] = WGL_DOUBLE_BUFFER_ARB;        pfa[7] = GL_FALSE;    // We don't require double buffering
+
+    int pfa_free_pos = 6;
     // Define the pixel format requirements we will need for our
     // p-buffer. A p-buffer is just like a frame buffer, it can have a depth
     // buffer associated with it and it can be double buffered.
-    pfa[0] = WGL_RED_BITS_ARB;
-    pfa[2] = WGL_GREEN_BITS_ARB;
-    pfa[4] = WGL_BLUE_BITS_ARB;
-    pfa[6] = WGL_ALPHA_BITS_ARB;
+    /*
+    pfa[pfa_free_pos] = WGL_RED_BITS_ARB;
+    pfa[pfa_free_pos + 2] = WGL_GREEN_BITS_ARB;
+    pfa[pfa_free_pos + 4] = WGL_BLUE_BITS_ARB;
+    pfa[pfa_free_pos + 6] = WGL_ALPHA_BITS_ARB;
+    */
 
-    pfa[8] = WGL_SUPPORT_OPENGL_ARB;        pfa[9] = GL_TRUE;    // P-buffer will be used with OpenGL
-    pfa[10] = WGL_DRAW_TO_PBUFFER_ARB;        pfa[11] = GL_TRUE;    // Enable render to p-buffer
-    pfa[12] = WGL_BIND_TO_TEXTURE_RGBA_ARB;    pfa[13] = GL_TRUE;    // P-buffer will be used as a texture
-    //pfa[14] = WGL_DOUBLE_BUFFER_ARB;        pfa[15] = GL_FALSE;    // We don't require double buffering
-
-    GLenum format;    // texture format
+    GLenum tformat;    // texture format
     int bytesPerPixel;
     GLint iformat;
     GLenum ttype;
     bool compressedTex, usingAlfa;
 
-    HDC hDC = gfxServer->hDC;
-    HGLRC hRC = gfxServer->context;
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    HDC hDC = glServer->hDC;
+    HGLRC hRC = glServer->context;
     n_assert(hDC);
     n_assert(hRC);
 
@@ -1029,21 +1070,21 @@ nGLTexture::LoadFromDDSCompoundFile()
             case DDS_DXT1:
                 // DXT1's compression ratio is 8:1
                 pba[1] = usingAlfa ? WGL_TEXTURE_RGBA_ARB : WGL_TEXTURE_RGB_ARB;
-                format = usingAlfa ? GL_COMPRESSED_RGBA_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                tformat = usingAlfa ? GL_COMPRESSED_RGBA_S3TC_DXT1_EXT : GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
                 this->format = DXT1;
                 n_printf("DDS texture format: DDS_DXT1\n");
                 break;
             case DDS_DXT3:
                 // DXT3's compression ratio is 4:1
                 pba[1] = WGL_TEXTURE_RGBA_ARB;
-                format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                tformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
                 this->format = DXT3;
                 n_printf("DDS texture format: DDS_DXT3\n");
                 break;
             case DDS_DXT5:
                 // DXT5's compression ratio is 4:1
                 pba[1] = WGL_TEXTURE_RGBA_ARB;
-                format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                tformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
                 this->format = DXT5;
                 n_printf("DDS texture format: DDS_DXT5\n");
                 break;
@@ -1055,86 +1096,107 @@ nGLTexture::LoadFromDDSCompoundFile()
                 return false;
         }
     }
-    else if (ddsh.PixelFormat.Flags == DDS_RGBA && ddsh.PixelFormat.RGBBitCount == 32)
+    else if (ddsh.PixelFormat.Flags & DDS_RGB)
     {
-        pba[1] = WGL_TEXTURE_RGBA_ARB;
-        pfa[1]    = 8;    // At least 8 bits for RED channel
-        pfa[3]    = 8;    // At least 8 bits for GREEN channel
-        pfa[5]    = 8;    // At least 8 bits for BLUE channel
-        pfa[7]    = 8;    // At least 8 bits for ALPHA channel
-        //iformat = usingAlfa ? 4 : 3;
-        iformat = 4;
-        bytesPerPixel = 4;
-        //tformat = usingAlfa ? GL_RGBA  : GL_RGB;
-        format = GL_BGRA_EXT;
-        ttype = GL_UNSIGNED_BYTE;
-        this->format = A8R8G8B8;
-        n_printf("DDS texture format(%d bit): DDS_A8R8G8B8\n", (uint) ddsh.PixelFormat.RGBBitCount);
+        pfa[pfa_free_pos++] = WGL_RED_BITS_ARB;    pfa[pfa_free_pos++] = 8;
+        //pfa[pfa_free_pos++] = WGL_RED_BITS_ARB;    pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.RBitMask);
+        //pfa[pfa_free_pos++] = WGL_RED_SHIFT_ARB;   pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.RBitMask);
+                                                                   
+        pfa[pfa_free_pos++] = WGL_GREEN_BITS_ARB;    pfa[pfa_free_pos++] = 8;
+        //pfa[pfa_free_pos++] = WGL_GREEN_BITS_ARB;  pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.GBitMask);
+        //pfa[pfa_free_pos++] = WGL_GREEN_SHIFT_ARB; pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.GBitMask);
+                                                                   
+        pfa[pfa_free_pos++] = WGL_BLUE_BITS_ARB;    pfa[pfa_free_pos++] = 8;
+        //pfa[pfa_free_pos++] = WGL_BLUE_BITS_ARB;   pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.BBitMask);
+        //pfa[pfa_free_pos++] = WGL_BLUE_SHIFT_ARB;  pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.BBitMask);
+        
+        bytesPerPixel = ddsh.PixelFormat.RGBBitCount >> 3;
+        if (ddsh.PixelFormat.Flags & DDS_ALPHAPIXELS)
+        {
+            pba[1] = WGL_TEXTURE_RGBA_ARB;
+            
+            pfa[pfa_free_pos++] = WGL_ALPHA_BITS_ARB;   pfa[pfa_free_pos++] = 8;
+            //pfa[pfa_free_pos++] = WGL_ALPHA_BITS_ARB;   pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.RGBAlphaBitMask);
+            //pfa[pfa_free_pos++] = WGL_ALPHA_SHIFT_ARB;  pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.RGBAlphaBitMask);
+            
+            iformat = GL_RGBA;
+            tformat = firstSetBitPos(ddsh.PixelFormat.BBitMask) > firstSetBitPos(ddsh.PixelFormat.RBitMask) ? GL_BGRA_EXT : GL_RGBA;
+
+            if (ddsh.PixelFormat.RGBBitCount == 32)
+            {
+                if (bitsCount(ddsh.PixelFormat.RGBAlphaBitMask) == 8)
+                {
+                    this->format = A8R8G8B8;
+                    ttype = GL_UNSIGNED_INT_8_8_8_8;
+                    n_printf("DDS texture format(%d bit): DDS_A8R8G8B8\n", (uint) ddsh.PixelFormat.RGBBitCount);
+                }
+                else
+                {
+                    //this->format = A2R10G10B10;
+                    //ttype = GL_UNSIGNED_INT_10_10_10_2;
+                    //n_printf("DDS texture format(%d bit): DDS_A2R10G10B10\n", (uint) ddsh.PixelFormat.RGBBitCount);
+                    n_printf("nGLTexture::LoadFromDDSCompoundFile: The file \"%s\" has not supported RGBA format R(%d), G(%d), B(%d), A(%d)!\n",
+                        this->GetFilename().Get(),
+                        bitsCount(ddsh.PixelFormat.RBitMask),
+                        bitsCount(ddsh.PixelFormat.GBitMask),
+                        bitsCount(ddsh.PixelFormat.BBitMask),
+                        bitsCount(ddsh.PixelFormat.RGBAlphaBitMask));
+                    if (!this->compoundFile) ddsfile->Close();
+                    return false;
+                }
+            }
+            else if (ddsh.PixelFormat.RGBBitCount == 16)
+            {
+                if (bitsCount(ddsh.PixelFormat.RGBAlphaBitMask) == 1)
+                {
+                    this->format = A1R5G5B5;
+                    ttype = GL_UNSIGNED_SHORT_5_5_5_1;
+                    n_printf("DDS texture format(%d bit): DDS_A1R5G5B5\n", (uint) ddsh.PixelFormat.RGBBitCount);
+                }
+                else
+                {
+                    this->format = A4R4G4B4;
+                    ttype = GL_UNSIGNED_SHORT_4_4_4_4;
+                    n_printf("DDS texture format(%d bit): DDS_A4R4G4B4\n", (uint) ddsh.PixelFormat.RGBBitCount);
+                }
+            }
+            else
+            {
+                n_printf("nGLTexture::LoadFromDDSCompoundFile: The file \"%s\" has not supported bit count (%d bits) for RGBA image!\n",
+                    this->GetFilename().Get(), (uint) ddsh.PixelFormat.RGBBitCount);
+                if (!this->compoundFile) ddsfile->Close();
+                return false;
+            }
+        }
+        else // no alfa
+        {
+            pba[1] = WGL_TEXTURE_RGB_ARB;
+            
+            iformat = GL_RGB;
+            tformat = firstSetBitPos(ddsh.PixelFormat.BBitMask) > firstSetBitPos(ddsh.PixelFormat.RBitMask) ? GL_BGR_EXT : GL_RGB;
+            
+            if (ddsh.PixelFormat.RGBBitCount == 24)
+            {
+                this->format = X8R8G8B8;
+                ttype = GL_UNSIGNED_INT_8_8_8_8;
+                n_printf("DDS texture format(%d bit): DDS_X8R8G8B8\n", (uint) ddsh.PixelFormat.RGBBitCount);
+            }
+            else if (ddsh.PixelFormat.RGBBitCount == 16)
+            {
+                this->format = R5G6B5;
+                ttype = GL_UNSIGNED_SHORT_5_6_5;
+                n_printf("DDS texture format(%d bit): DDS_R5G6B5\n", (uint) ddsh.PixelFormat.RGBBitCount);
+            }
+            else
+            {
+                n_printf("nGLTexture::LoadFromDDSCompoundFile: The file \"%s\" has not supported bit count (%d bits) for RGBA image!\n",
+                    this->GetFilename().Get(), (uint) ddsh.PixelFormat.RGBBitCount);
+                if (!this->compoundFile) ddsfile->Close();
+                return false;
+            }
+        }
     }
-    else if (ddsh.PixelFormat.Flags == DDS_RGB  && ddsh.PixelFormat.RGBBitCount == 32)
-    {
-        pba[1] = WGL_TEXTURE_RGBA_ARB;
-        pfa[1]    = 8;    // At least 8 bits for RED channel
-        pfa[3]    = 8;    // At least 8 bits for GREEN channel
-        pfa[5]    = 8;    // At least 8 bits for BLUE channel
-        pfa[7]    = 8;    // At least 8 bits for ALPHA channel
-        //iformat = usingAlfa ? 4 : 3;
-        iformat = 4;
-        bytesPerPixel = 4;
-        //tformat = usingAlfa ? GL_RGBA  : GL_RGB;
-        format = GL_BGRA_EXT;
-        ttype = GL_UNSIGNED_BYTE;
-        this->format = X8R8G8B8;
-        n_printf("DDS texture format(%d bit): DDS_X8R8G8B8\n", (uint) ddsh.PixelFormat.RGBBitCount);
-    }
-    else if (ddsh.PixelFormat.Flags == DDS_RGB  && ddsh.PixelFormat.RGBBitCount == 24)
-    {
-        pba[1] = WGL_TEXTURE_RGB_ARB;
-        pfa[1]    = 8;    // At least 8 bits for RED channel
-        pfa[3]    = 8;    // At least 8 bits for GREEN channel
-        pfa[5]    = 8;    // At least 8 bits for BLUE channel
-        pfa[7]    = 0;    // At least 0 bits for ALPHA channel
-        //iformat = usingAlfa ? 4 : 3;
-        iformat = 3;
-        bytesPerPixel = 3;
-        //tformat = usingAlfa ? GL_RGBA  : GL_RGB;
-        format = GL_BGR_EXT;
-        ttype = GL_UNSIGNED_BYTE;
-        this->format = X8R8G8B8;
-        n_printf("DDS texture format(%d bit): DDS_X8R8G8B8\n", (uint) ddsh.PixelFormat.RGBBitCount);
-    }
-    else if (ddsh.PixelFormat.Flags == DDS_RGBA  && ddsh.PixelFormat.RGBBitCount == 16)
-    {
-        pba[1] = WGL_TEXTURE_RGB_ARB;
-        pfa[1]    = 5;    // At least 5 bits for RED channel
-        pfa[3]    = 5;    // At least 5 bits for GREEN channel
-        pfa[5]    = 5;    // At least 5 bits for BLUE channel
-        pfa[7]    = 1;    // At least 1 bits for ALPHA channel
-        //iformat = usingAlfa ? 4 : 3;
-        iformat = 4;
-        bytesPerPixel = 2;
-        //tformat = usingAlfa ? GL_RGBA  : GL_RGB;
-        format = GL_RGBA;
-        ttype = GL_UNSIGNED_SHORT_5_5_5_1;
-        this->format = A1R5G5B5;
-        n_printf("DDS texture format(%d bit): DDS_A1R5G5B5\n", (uint) ddsh.PixelFormat.RGBBitCount);
-    }
-    else if (ddsh.PixelFormat.Flags == DDS_RGB  && ddsh.PixelFormat.RGBBitCount == 16)
-    {
-        pba[1] = WGL_TEXTURE_RGB_ARB;
-        pfa[1]    = 5;    // At least 5 bits for RED channel
-        pfa[3]    = 6;    // At least 6 bits for GREEN channel
-        pfa[5]    = 5;    // At least 5 bits for BLUE channel
-        pfa[7]    = 0;    // At least 0 bits for ALPHA channel
-        //iformat = usingAlfa ? 4 : 3;
-        iformat = 3;
-        bytesPerPixel = 2;
-        //tformat = usingAlfa ? GL_RGBA  : GL_RGB;
-        format = GL_RGB;
-        ttype = GL_UNSIGNED_SHORT_5_6_5;
-        this->format = R5G6B5;
-        n_printf("DDS texture format(%d bit): DDS_R5G6B5\n", (uint) ddsh.PixelFormat.RGBBitCount);
-    }
+/*
     else if (ddsh.PixelFormat.RGBBitCount == 8)// check this
     {
         pba[1] = WGL_TEXTURE_RGB_ARB;
@@ -1151,9 +1213,10 @@ nGLTexture::LoadFromDDSCompoundFile()
         this->format = P8;
         n_printf("DDS texture format(%d bit): DDS_P8\n", (uint) ddsh.PixelFormat.RGBBitCount);
     }
+*/
     else
     {
-        n_printf("The file \"%s\" has not supported image format:  %d!\n",
+        n_printf("nGLTexture::LoadFromDDSCompoundFile: The file \"%s\" has not supported image format:  %d!\n",
             this->GetFilename().Get(), (uint) ddsh.PixelFormat.RGBBitCount);
         if (!this->compoundFile) ddsfile->Close();
         return false;
@@ -1208,9 +1271,10 @@ nGLTexture::LoadFromDDSCompoundFile()
     this->SetDepth(clamp_size(ddsh.Depth));
 
 
-    if (this->refGfxServer->support_WGL_ARB_render_texture)
+    if (extServer->support_WGL_ARB_render_texture)
     {
         if (CreatePBuffer(pfa,pba))
+        {
             // We were successful in creating a p-buffer. We can now make its
             // context current and set it up just like we would a regular
             //  context attached to a window.
@@ -1220,18 +1284,19 @@ nGLTexture::LoadFromDDSCompoundFile()
                 if (!this->compoundFile) ddsfile->Release();
                 return false;
             }
+        }
     }
 
     //generating texture
     glGenTextures(1, &this->texID);
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
+    n_gltrace("nGLTexture::LoadFromDDSCompoundFile(): Can't generate texture id.");
     //n_assert(-1 != this->texID);
     glBindTexture(target, this->texID);
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
+    n_gltrace("nGLTexture::LoadFromDDSCompoundFile(): Can't bind texture.");
 
     int i, n;
     uint _width, _height, _depth, _size;
-    int cube_attrib[] = {WGL_CUBE_MAP_FACE_ARB,WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,0};
+    int cube_attrib[] = {WGL_CUBE_MAP_FACE_ARB, WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0};
     GLenum ctarget = this->GetType() == TEXTURE_2D ? GL_TEXTURE_2D : this->GetType() == TEXTURE_CUBE ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D;
     int cfaces = this->GetType() == TEXTURE_CUBE ? 6 : 1;
 
@@ -1244,7 +1309,7 @@ nGLTexture::LoadFromDDSCompoundFile()
         _height = this->GetHeight();
         _depth = this->GetDepth();
 
-        if (this->GetType() == TEXTURE_CUBE && this->refGfxServer->support_WGL_ARB_render_texture)
+        if (this->GetType() == TEXTURE_CUBE && extServer->support_WGL_ARB_render_texture)
             wglSetPbufferAttribARB(hPBuffer,(const int*)cube_attrib);
 
         // load all mipmaps for current surface
@@ -1269,15 +1334,22 @@ nGLTexture::LoadFromDDSCompoundFile()
             // transfer image data to surface
             if (compressedTex)
             {
-                glCompressedTexImage2DARB(ctarget, i, format, _width, _height, 0, _size,
+                glCompressedTexImage2DARB(ctarget, i, tformat, _width, _height, 0, _size,
                     (const GLvoid *)_buffer);
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
+                n_gltrace("nGLTexture::LoadFromDDSCompoundFile(): Can't load compressed texture.");
             }
             else
             {
-                glTexImage2D(ctarget, i, iformat, _width, _height, 0, format, ttype,
-                    (const GLvoid *)_buffer);
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
+                glTexImage2D(ctarget,                // GL_TEXTURE2D or GL_TEXTURE_CUBE_MAP_...
+                             i,                      // mipmap level
+                             iformat,                // GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, ...
+                             _width, _height,        // width and height of the texture
+                             0,                      // border size
+                             tformat,                // GL_RGB, GL_RGBA, GL_BGR, GL_BGRA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RED, ...
+                             ttype,                  // GL_UNSIGNED_BYTE, ... GL_INT, ... GL_UNSIGNED SHORT_5_6_5, ...
+                             (const GLvoid *)_buffer
+                            );
+                n_gltrace("nGLTexture::LoadFromDDSCompoundFile(): Can't load texture.");
             }
 
             // shrink to next power of 2
@@ -1296,16 +1368,14 @@ nGLTexture::LoadFromDDSCompoundFile()
     }
 
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
     glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
 
     // query texture attributes
     //this->QueryGLTextureAttributes();
     if (!this->compoundFile) ddsfile->Close();
 
     n_printf("Texture loaded.\n");
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadFromDDSCompoundFile()"));
+    n_gltrace("nGLTexture::LoadFromDDSCompoundFile(): Some error occured during DDS texture loading.");
     return true;
 }
 
@@ -1316,33 +1386,52 @@ nGLTexture::LoadFromDDSCompoundFile()
 bool
 nGLTexture::CreatePBuffer(int *pfa, int *pba)
 {
-    nGLServer2* gfxServer = this->refGfxServer.get();
-    HDC hDC = gfxServer->hDC;
-    HGLRC hRC = gfxServer->context;
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    HDC hDC = glServer->hDC;
+    HGLRC hRC = glServer->context;
     n_assert(hDC);
     n_assert(hRC);
+
+	int pf_attr[] =
+	{
+		WGL_SUPPORT_OPENGL_ARB, TRUE,       // P-buffer will be used with OpenGL
+		WGL_DRAW_TO_PBUFFER_ARB, TRUE,      // Enable render to p-buffer
+		WGL_BIND_TO_TEXTURE_RGBA_ARB, TRUE, // P-buffer will be used as a texture
+		WGL_RED_BITS_ARB, 8,                // At least 8 bits for RED channel
+		WGL_GREEN_BITS_ARB, 8,              // At least 8 bits for GREEN channel
+		WGL_BLUE_BITS_ARB, 8,               // At least 8 bits for BLUE channel
+		WGL_ALPHA_BITS_ARB, 8,              // At least 8 bits for ALPHA channel
+		WGL_DEPTH_BITS_ARB, 16,             // At least 16 bits for depth buffer
+		WGL_DOUBLE_BUFFER_ARB, FALSE,       // We don't require double buffering
+		0                                   // Zero terminates the list
+	};
 
     //choose pixel format
     unsigned int count = 0;
     int pixelFormat;
-    wglChoosePixelFormatARB(hDC,(const int*)pfa, NULL, 1, &pixelFormat, &count);
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::CreatePBuffer"));
+    wglChoosePixelFormatARB(hDC,(const int*)pf_attr, NULL, 1, &pixelFormat, &count);
+    n_gltrace("nGLTexture::CreatePBuffer(): Some error occured while choosing pixel format.");
 
     if (count == 0)
     {
-        n_printf("nGLTexture: could not find an acceptable pixel format for <%s>",this->GetName());
+        n_printf("nGLTexture::CreatePBuffer: Could not find an acceptable pixel format for <%s>.\n",this->GetFilename());
+        n_gltrace("nGLTexture::CreatePBuffer().");
         return false;
     }
 
     // Create the p-buffer...
-    hPBuffer    = wglCreatePbufferARB(hDC, pixelFormat, this->width, this->height, pba);
+    // !!! Should be  wglCreatePbufferARB(hDC, pixelFormat, this->width, this->height, pba);
+    // but not work. Why?
+    hPBuffer = nGLExtensionServer::Instance()->procCreatePbufferARB(hDC, pixelFormat, this->width, this->height, pba);
     if (!hPBuffer)
     {
         n_printf("nGLTexture: could not create the p-buffer for <%s>",this->GetName());
+        n_gltrace("nGLTexture::CreatePBuffer().");
         return false;
     }
-    hPBufferDC  = wglGetPbufferDCARB(hPBuffer);
-    hPBufferRC    = wglCreateContext(hPBufferDC);
+    //hPBufferDC = wglGetPbufferDCARB(hPBuffer);
+    hPBufferDC = nGLExtensionServer::Instance()->procGetPbufferDCARB(hPBuffer);
+    hPBufferRC = wglCreateContext(hPBufferDC);
 
     int h;
     int w;
@@ -1352,8 +1441,10 @@ nGLTexture::CreatePBuffer(int *pfa, int *pba)
     if (h != this->height || w != this->width)
     {
         n_printf("nGLTexture: The width and height of the created p-buffer don't match the requirements for <%s>",this->GetName());
+        n_gltrace("nGLTexture::CreatePBuffer().");
         return false;
     }
+    n_gltrace("nGLTexture::CreatePBuffer().");
     return true;
 }
 
@@ -1374,8 +1465,11 @@ nGLTexture::LoadILFile()
 
     n_printf("DevIL: start texture loading <%s>.\n", this->GetFilename().Get());
 
-    HDC hDC = this->refGfxServer->hDC;
-    HGLRC hRC = this->refGfxServer->context;
+    nGLExtensionServer *extServer = nGLExtensionServer::Instance();
+
+    nGLServer2* glServer = (nGLServer2*)nGfxServer2::Instance();
+    HDC hDC = glServer->hDC;
+    HGLRC hRC = glServer->context;
     n_assert(hDC);
     n_assert(hRC);
 
@@ -1403,7 +1497,7 @@ nGLTexture::LoadILFile()
         0                                   // Zero terminates the list
     };
 
-    if (this->refGfxServer->support_WGL_ARB_render_texture)
+    if (extServer->support_WGL_ARB_render_texture)
     {
         if (CreatePBuffer(pfa,pba))
             // We were successful in creating a p-buffer. We can now make its
@@ -1419,6 +1513,10 @@ nGLTexture::LoadILFile()
     // mangle pathname
     nString mangledPath;
     mangledPath = nFileServer2::Instance()->ManglePath(this->GetFilename().Get());
+
+    // initialize DevIL
+    ilInit();
+    iluInit();
 
     // create IL image and load
     ilEnable(IL_CONV_PAL);
@@ -1440,7 +1538,9 @@ nGLTexture::LoadILFile()
 
     //generating texture
     glGenTextures(1, &this->texID);
+    n_gltrace("nGLTexture::LoadILFile(): Can't generate texture id.");
     glBindTexture(GL_TEXTURE_2D, this->texID);
+    n_gltrace("nGLTexture::LoadILFile(): Can't bind texture.");
 
     n_assert(this->texID != 0);
 
@@ -1458,6 +1558,7 @@ nGLTexture::LoadILFile()
         GL_RGBA,
         GL_UNSIGNED_BYTE,
         (GLvoid*)ilGetData());
+    n_gltrace("nGLTexture::LoadILFile(): Can't load texture.");
 
     this->SetFormat(A8R8G8B8);
     this->SetType(TEXTURE_2D);
@@ -1468,8 +1569,8 @@ nGLTexture::LoadILFile()
 
     // cleanup
     iluDeleteImage(image);
+    ilShutDown();
 
     n_printf("DevIL: stop texture loading.\n");
-    n_assert(!this->refGfxServer->getGLErrors("nGLTexture::LoadILFile()"));
     return true;
 }

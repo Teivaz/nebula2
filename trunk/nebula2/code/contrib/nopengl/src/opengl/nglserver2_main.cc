@@ -5,15 +5,68 @@
 #include "opengl/nglserver2.h"
 #include "kernel/nenv.h"
 #include "kernel/nfileserver2.h"
-#include "il/il.h"
-#include "il/ilu.h"
 
 #include "opengl/nglmesh.h"
 #include "opengl/ngltexture.h"
+#include "opengl/nglextensionserver.h"
 
 #include "kernel/ntimeserver.h"
 
 nNebulaClass(nGLServer2, "ngfxserver2");
+
+//-----------------------------------------------------------------------------
+/**
+    check for GL errors
+*/
+void
+n_gltrace(const char *msg)
+{
+    //TODO: GL Error handling
+    bool errorPresent = false;
+    GLenum error;
+    uint errNum = 0;
+    nString message(msg);
+    message.Append(" Error:\n");
+    error = glGetError();
+    while (error != GL_NO_ERROR)
+    {
+        errorPresent = true;
+        if (errNum < 20)
+        {
+            message.Append("    FIXME ");
+            switch (error)
+            {
+                case GL_OUT_OF_MEMORY:
+                    message.Append("<GL_OUT_OF_MEM>\n");
+                    break;
+                case GL_INVALID_ENUM:
+                    message.Append("<GL_INVALID_ENUM>\n");
+                    break;
+                case GL_INVALID_VALUE:
+                    message.Append("<GL_INVALID_VALUE>\n");
+                    break;
+                case GL_INVALID_OPERATION:
+                    message.Append("<GL_INVALID_OPERATION>\n");
+                    break;
+                default:
+                    message.Append("<GL_ERROR_TYPE: ");
+                    message.AppendInt(error);
+                    message.Append(">\n");
+            }
+        }
+        else
+        {
+            message.Append("    ...");
+            break;
+        }
+        errNum++;
+        error = glGetError();
+    }
+    if (errorPresent)
+    {
+        n_error(message.Get());
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -61,22 +114,12 @@ nGLServer2::nGLServer2() :
     wm_win(0),ctx_win(0),fs_win(0),
     glx_ctx_win(0),glx_fs_win(0),
 #endif
-    refInputServer("/sys/servers/input"),
-    support_GL_ARB_vertex_buffer_object(false),
-    support_WGL_ARB_render_texture(false),
-    support_WGL_ARB_make_current_read(false),
-    support_GL_ARB_texture_compression(false),
-    support_GL_EXT_texture_compression_s3tc(false),
-    support_GL_ARB_texture_cube_map(false),
-    support_GL_ARB_multitexture(false),
     featureSet(InvalidFeatureSet)
 {
     // open the app window
     this->windowHandler.OpenWindow();
 
-    // initialize DevIL
-    ilInit();
-    iluInit();
+    nKernelServer::Instance()->New("nglextensionserver", "/sys/servers/glextension");
 }
 
 //------------------------------------------------------------------------------
@@ -84,15 +127,13 @@ nGLServer2::nGLServer2() :
 */
 nGLServer2::~nGLServer2()
 {
+    // shut down all
     if (this->displayOpen)
     {
         this->CloseDisplay();
     }
 
     this->windowHandler.CloseWindow();
-    //n_assert(this->textNodeList.IsEmpty());
-
-    ilShutDown();
     //n_assert(this->textNodeList.IsEmpty());
 }
 
@@ -104,6 +145,12 @@ bool
 nGLServer2::OpenDisplay()
 {
     n_assert(!this->displayOpen);
+    if (!this->windowHandler.IsWindowOpen())
+    {
+        // lazy initialization: open the app window
+        this->windowHandler.OpenWindow();
+    }
+
     if (this->DeviceOpen())
     {
         nGfxServer2::OpenDisplay();
@@ -285,7 +332,7 @@ void
 nGLServer2::QueryStatistics()
 {
     // compute frames per second
-    nTime curTime = kernelServer->GetTimeServer()->GetTime();
+    nTime curTime = nTimeServer::Instance()->GetTime();
     nTime diff = curTime - this->timeStamp;
     if (diff <= 0.000001f)
     {
@@ -343,248 +390,3 @@ nGLServer2::QueryStatistics()
 */
 }
 #endif
-
-//-----------------------------------------------------------------------------
-/**
-    hasExtension()
-    check if a extensition supported by GL
-    19-Jun-99   floh    aus "Using OpenGL Extensions"
-    @param    extName    the name of the requested extensition
-    @return    true    if extensition is supported
-    @return false    if extensition is not supported
-*/
-bool nGLServer2::hasExtension(const char *extName)
-{
-    char *p = (char *) glGetString(GL_EXTENSIONS);
-    char *end;
-    int extNameLen;
-    extNameLen = strlen(extName);
-    end = p + strlen(p);
-    while (p < end) {
-        int n = strcspn(p, " ");
-        if ((extNameLen == n) && (strncmp(extName, p, n) == 0)) {
-            return true;
-        }
-        p += (n + 1);
-    }
-    return false;
-}
-
-//
-#define EXTENTION_BEGIN(extname)\
-    n_printf("-> " #extname " ");\
-    if (this->hasExtension(#extname))\
-    {\
-        n_printf(".");\
-        this->support_##extname = true;
-
-
-#define procAddress(token,type,procname,extname) \
-        this->proc##procname = (token) wglGetProcAddress(#type #procname); \
-        if ( this->proc##procname == NULL ) \
-        { \
-            this->support_##extname = false; \
-            n_printf(" failed: " #type #procname "\n"); \
-        } \
-        else \
-            n_printf (".");
-
-#define EXTENTION_END(extname)\
-        if (this->support_##extname)\
-        {\
-            n_printf(" good!\n");\
-        }\
-    }\
-    else n_printf(" not supported!\n");
-
-//-----------------------------------------------------------------------------
-/**
-    init opengl extensitions, obtain proc adresses for windows
-    09-Sep-2003    cubejk    converted from nebula1
-    09-Sep-2003    cubejk    +ARB_vertex_buffer_object
-    10-Dec-2003    Haron    + other extention support
-*/
-void nGLServer2::initExtensions(void)
-{
-    n_printf("Init OpenGL extensitions:\n");
-    #ifdef GL_ARB_vertex_buffer_object
-    EXTENTION_BEGIN(GL_ARB_vertex_buffer_object)
-        #ifdef __WIN32__
-        procAddress(PFNGLBINDBUFFERARBPROC, gl,
-                    BindBufferARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLDELETEBUFFERSARBPROC, gl,
-                    DeleteBuffersARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLGENBUFFERSARBPROC, gl,
-                    GenBuffersARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLISBUFFERARBPROC, gl,
-                    IsBufferARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLBUFFERDATAARBPROC, gl,
-                    BufferDataARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLBUFFERSUBDATAARBPROC, gl,
-                    BufferSubDataARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLGETBUFFERSUBDATAARBPROC, gl,
-                    GetBufferSubDataARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLMAPBUFFERARBPROC, gl,
-                    MapBufferARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLUNMAPBUFFERARBPROC, gl,
-                    UnmapBufferARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLGETBUFFERPARAMETERIVARBPROC, gl,
-                    GetBufferParameterivARB, GL_ARB_vertex_buffer_object);
-        procAddress(PFNGLGETBUFFERPOINTERVARBPROC, gl,
-                    GetBufferPointervARB, GL_ARB_vertex_buffer_object);
-        #endif __WIN32__
-    EXTENTION_END(GL_ARB_vertex_buffer_object)
-    #endif
-
-    #ifdef WGL_ARB_render_texture
-    EXTENTION_BEGIN(WGL_ARB_render_texture)
-        #ifdef __WIN32__
-        procAddress(PFNWGLBINDTEXIMAGEARBPROC, wgl,
-                    BindTexImageARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLRELEASETEXIMAGEARBPROC, wgl,
-                    ReleaseTexImageARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLSETPBUFFERATTRIBARBPROC, wgl,
-                    SetPbufferAttribARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLCREATEPBUFFERARBPROC, wgl,
-                    CreatePbufferARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLGETPBUFFERDCARBPROC, wgl,
-                    GetPbufferDCARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLRELEASEPBUFFERDCARBPROC, wgl,
-                    ReleasePbufferDCARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLDESTROYPBUFFERARBPROC, wgl,
-                    DestroyPbufferARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLQUERYPBUFFERARBPROC, wgl,
-                    QueryPbufferARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLGETPIXELFORMATATTRIBIVARBPROC, wgl,
-                    GetPixelFormatAttribivARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLGETPIXELFORMATATTRIBFVARBPROC, wgl,
-                    GetPixelFormatAttribfvARB, WGL_ARB_render_texture);
-        procAddress(PFNWGLCHOOSEPIXELFORMATARBPROC, wgl,
-                    ChoosePixelFormatARB, WGL_ARB_render_texture);
-        #endif __WIN32__
-    EXTENTION_END(WGL_ARB_render_texture)
-    #endif
-
-    #ifdef WGL_ARB_make_current_read
-    EXTENTION_BEGIN(WGL_ARB_make_current_read)
-        #ifdef __WIN32__
-        procAddress(PFNWGLMAKECONTEXTCURRENTARBPROC, wgl,
-                    MakeContextCurrentARB, WGL_ARB_make_current_read);
-        procAddress(PFNWGLGETCURRENTREADDCARBPROC, wgl,
-                    GetCurrentReadDCARB, WGL_ARB_make_current_read);
-        #endif __WIN32__
-    EXTENTION_END(WGL_ARB_make_current_read)
-    #endif
-
-    #ifdef GL_ARB_texture_compression
-    EXTENTION_BEGIN(GL_ARB_texture_compression)
-        #ifdef __WIN32__
-        procAddress(PFNGLCOMPRESSEDTEXIMAGE3DARBPROC, gl,
-                    CompressedTexImage3DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLCOMPRESSEDTEXIMAGE2DARBPROC, gl,
-                    CompressedTexImage2DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLCOMPRESSEDTEXIMAGE1DARBPROC, gl,
-                    CompressedTexImage1DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC, gl,
-                    CompressedTexSubImage3DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC, gl,
-                    CompressedTexSubImage2DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC, gl,
-                    CompressedTexSubImage1DARB, GL_ARB_texture_compression);
-        procAddress(PFNGLGETCOMPRESSEDTEXIMAGEARBPROC, gl,
-                    GetCompressedTexImageARB, GL_ARB_texture_compression);
-        #endif __WIN32__
-    EXTENTION_END(GL_ARB_texture_compression)
-    #endif
-
-    #ifdef GL_EXT_texture_compression_s3tc
-    EXTENTION_BEGIN(GL_EXT_texture_compression_s3tc)
-    EXTENTION_END(GL_EXT_texture_compression_s3tc)
-    #endif
-
-    #ifdef GL_ARB_texture_cube_map
-    EXTENTION_BEGIN(GL_ARB_texture_cube_map)
-    EXTENTION_END(GL_ARB_texture_cube_map)
-    #endif
-
-    #ifdef GL_ARB_multitexture
-    EXTENTION_BEGIN(GL_ARB_multitexture)
-        #ifdef __WIN32__
-        procAddress(PFNGLCLIENTACTIVETEXTUREARBPROC, gl,
-                    ActiveTextureARB, GL_ARB_multitexture);
-        procAddress(PFNGLMULTITEXCOORD2FARBPROC, gl,
-                    MultiTexCoord2fARB, GL_ARB_multitexture);
-        procAddress(PFNGLACTIVETEXTUREARBPROC, gl,
-                    ClientActiveTextureARB, GL_ARB_multitexture);
-        #endif __WIN32__
-    EXTENTION_END(GL_ARB_multitexture)
-    #endif
-
-    if (!this->support_GL_ARB_vertex_buffer_object || !this->support_WGL_ARB_render_texture)
-    {
-        n_printf("Required extensions were not supported by your hardware.\n");
-        n_printf("Notice: if you have a nVidia grafic card, please update your driver to >=45.23 and retry.\n");
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
-    check for GL errors
-*/
-bool
-nGLServer2::getGLErrors(char *src)
-{
-    //TODO: GL Error handling
-    bool res = false;
-    GLenum error;
-    while ((error = glGetError()) != GL_NO_ERROR)
-    {
-        n_printf("\n--- GL error in (%s): FIXME ", src);
-        res = true;
-        switch (error)
-        {
-            case GL_OUT_OF_MEMORY:
-                n_printf("<GL_OUT_OF_MEM>");
-                //n_assert(false);
-                break;
-            case GL_INVALID_ENUM:
-                n_printf("<GL_INVALID_ENUM>");
-                break;
-            case GL_INVALID_VALUE:
-                n_printf("<GL_INVALID_VALUE>");
-                break;
-            case GL_INVALID_OPERATION:
-                n_printf("<GL_INVALID_OPERATION>");
-                break;
-            default:
-                n_printf("<GL_ERROR_TYPE:%u>",error);
-                //n_assert(false);
-        }
-        n_printf(". ---\n\n");
-    }
-    return res;
-}
-
-//--------------------------------------------------------------------
-/**
-    print available GL extension to log file
-*/
-void
-nGLServer2::printExtensions(const char* ext)
-{
-    if (ext)
-    {
-        char buf[2048];
-        char c;
-        int i = 0;
-        do {
-            c = *ext++;
-            if ((c == ' ') || (c == 0)) {
-                buf[i] = 0;
-                n_printf("%s\n",buf);
-                i = 0;
-            } else buf[i++] = c;
-        } while (c);
-    }
-}
-

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  nglserver2_render.cc
-//  2003-cubejk
+//  2003      cubejk
 //  2003-2004 Haron
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
@@ -38,21 +38,8 @@ nGLServer2::AddLight(const nLight& light)
 void
 nGLServer2::SetCamera(nCamera2 &cam)
 {
-
     nGfxServer2::SetCamera(cam);
-/*
-    n_printf("Camera setup.\n");
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluPerspective(n_deg2rad(cam.GetAngleOfView()),
-                   cam.GetAspectRatio(),
-                   cam.GetNearPlane(),
-                   cam.GetFarPlane());
-    //matrix44 proj;
-    //glGetFloatv(GL_PROJECTION_MATRIX,(float *)&proj);
-    glPopMatrix();
-*/
+
     if (this->hDC)//??? this->context
     {
         // set projection matrices
@@ -73,7 +60,8 @@ nGLServer2::SetViewport(nViewport& vp)
     {
         glViewport((GLint)vp.x, (GLint)vp.y, (GLsizei)vp.width, (GLsizei)vp.height);
         glDepthRange((GLclampd)vp.nearz, (GLclampd)vp.farz);
-        //glScissor((GLint)vp.x, (GLint)vp.y, (GLsizei)vp.width, (GLsizei)vp.height); 
+        //glScissor((GLint)vp.x, (GLint)vp.y, (GLsizei)vp.width, (GLsizei)vp.height);
+        n_gltrace("nGLServer2::SetViewport().");
     }
 }
 
@@ -92,13 +80,23 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
     if (this->refSharedShader.isvalid())
     {
         nCgFXShader* shd = this->refSharedShader.get();
+        bool setMVP = false;
+        bool setEyePos = false;
+        bool setModelEyePos = false;
+        bool setModelLightProjection = false;
+        bool setLightPos = false;
+        bool setModelLightPos = false;
         switch (type)
         {
             case Model:
                 shd->SetMatrix(nShaderState::Model, this->transform[Model]);
-                shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModel]);
+                shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+                setMVP = true;
+                setModelEyePos = true;
+                setModelLightProjection = true;
+                setModelLightPos = true;
                 break;
             
             case View:
@@ -106,11 +104,15 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
                 shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
                 shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
                 shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+                setMVP = true;
+                setModelEyePos = true;
+                setEyePos = true;
                 break;
 
             case Projection:
-                n_printf("SetTransform(Projection)\n");
                 shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
+                setMVP = true;
+                setModelLightProjection = true;
                 break;
 
             case Texture0:
@@ -128,9 +130,38 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case Texture3:
                 shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
                 break;
+
+            case Light:
+                setModelLightProjection = true;
+                setLightPos = true;
+                setModelLightPos = true;
+                break;
         }
-        shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
-        shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
+        if (setMVP)
+        {
+            shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
+        }
+        if (setEyePos)
+        {
+            shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
+        }
+        if (setModelEyePos)
+        {
+            shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
+        }
+        if (setModelLightProjection)
+        {
+            shd->SetMatrix(nShaderState::ModelLightProjection, this->transform[ModelLightProjection]);
+        }
+        if (setModelLightPos)
+        {
+            shd->SetVector3(nShaderState::ModelLightPos, this->transform[InvModelLight].pos_component());
+        }
+        if (setLightPos)
+        {
+            shd->SetVector3(nShaderState::LightPos, this->transform[Light].pos_component());
+        }
+        n_gltrace("nGLServer2::SetTransform().");
     }
 }
 
@@ -168,6 +199,7 @@ nGLServer2::Clear(int bufferTypes, float red, float green, float blue, float alp
         glClearStencil(stencil);
     }
     glClear(flags);
+    n_gltrace("nGLServer2::Clear().");
 }
 
 //------------------------------------------------------------------------------
@@ -194,25 +226,40 @@ nGLServer2::SetTexture(int stage, nTexture2* tex)
 
 //------------------------------------------------------------------------------
 /**
-    Bind vertex buffer to a vertex stream.
+    Bind vertex buffer to vertex stream 0.
+    The mesh must have a index and a vertex buffer!
 
-    @param  stream      stream identifier (0..15)
     @param  mesh        pointer to a nGLMesh object or 0 to clear the
                         current stream and index buffer
 */                  
 void
 nGLServer2::SetMesh(nMesh2* mesh)
 {
-    //if ((this->GetMesh() != mesh) || (SingleMesh != this->meshSource))
+    n_assert(this->hDC);
+
+    if (0 != mesh)
+    {
+        if (0 != this->GetMeshArray())
+        {
+            this->SetMeshArray(0);
+        }
+    }
+    else
+    {
+    }
+/*
+    if ((this->GetMesh() != mesh) || (SingleMesh != this->meshSource))
     {
         //FIXME: maybe there should be some mesh initialization
 
-        nGfxServer2::SetMesh(mesh);
     }
-    //else if (0 == mesh)
+    else if (0 == mesh)
     {
-    //    this->meshSource = NoSource; // for the case that it was MeshArray previously
+        this->meshSource = NoSource; // for the case that it was MeshArray previously
     }
+*/
+
+    nGfxServer2::SetMesh(mesh);
 }
 
 //------------------------------------------------------------------------------
@@ -226,7 +273,27 @@ nGLServer2::SetMesh(nMesh2* mesh)
 void
 nGLServer2::SetMeshArray(nMeshArray* meshArray)
 {
+    n_assert(this->hDC);
+
     // XXX: Needs implementing
+    if (0 != meshArray)
+    {
+        if (0 != this->GetMesh())
+        {
+            this->SetMesh(0);
+        }
+        
+        if (this->GetMeshArray() != meshArray)
+        {
+            //clean old mesh array before set new
+            this->SetMeshArray(0);
+        }
+    }
+    else
+    {
+    }
+
+    nGfxServer2::SetMeshArray(meshArray);
 }
 
 //------------------------------------------------------------------------------
@@ -259,8 +326,6 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
     n_assert(this->hDC && this->inBeginScene);
     n_assert(this->GetMesh());
 
-    //n_assert(!this->getGLErrors("nGLServer2::DrawIndexed - test"));
-    //n_printf("nGLServer2::DrawIndexed()\n");
     nCgFXShader* shader = (nCgFXShader*) this->GetShader();
     n_assert(shader);
 
@@ -268,11 +333,8 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
     GLenum glPrimType;
     int glNumPrimitives = this->GetGLPrimTypeAndNumIndexed(primType, glPrimType);
 
-    //n_printf("NumIndices = %d, vRange1st = %d, iRange1st = %d\n",
-    //    this->indexRangeNum, this->vertexRangeFirst, this->indexRangeFirst);
-
     nGLMesh* mesh;
-    if ( (mesh = (nGLMesh*) this->GetMesh()) != 0)
+    if ((mesh = (nGLMesh*) this->GetMesh()) != 0)
     {
         if (mesh->GetNumIndices() > 0 &&
             mesh->BeginRender(this->vertexRangeFirst, true, this->indexRangeFirst))
@@ -283,7 +345,7 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
             for (curPass = 0; curPass < numPasses; curPass++)
             {
                 shader->BeginPass(curPass);
-                glDrawElements(glPrimType, this->indexRangeNum/*glNumPrimitives*/, GL_UNSIGNED_SHORT, mesh->indexOffset(0));
+                glDrawElements(glPrimType, this->indexRangeNum/*glNumPrimitives*/, GL_UNSIGNED_SHORT, mesh->IndexOffset(0));
                 shader->EndPass();
 
                 #ifdef __NEBULA_STATS__
@@ -293,6 +355,7 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
             shader->End();                
             mesh->EndRender(true);
         }
+        n_gltrace("nGLServer2::DrawIndexed().");
     }
 
     #ifdef __NEBULA_STATS__
@@ -320,11 +383,9 @@ nGLServer2::Draw(PrimitiveType primType)
     int glNumPrimitives = this->GetGLPrimTypeAndNum(primType, glPrimType);
 
     nGLMesh* mesh;
-    if ( (mesh = (nGLMesh*) this->GetMesh()) != 0)
+    if ((mesh = (nGLMesh*) this->GetMesh()) != 0)
     {
-        n_printf("shader: %s, numIndices=%d\n", mesh->GetFilename().Get(), mesh->GetNumIndices());
-        if (mesh->GetNumIndices() > 0 &&
-            mesh->BeginRender(this->vertexRangeFirst))
+        if (mesh->BeginRender(this->vertexRangeFirst))
         {
             // render current geometry, probably in multiple passes
             int numPasses = shader->Begin(false);
@@ -343,6 +404,7 @@ nGLServer2::Draw(PrimitiveType primType)
             shader->End();                
             mesh->EndRender();
         }
+        n_gltrace("nGLServer2::Draw().");
     }
 
     #ifdef __NEBULA_STATS__
@@ -369,26 +431,23 @@ nGLServer2::DrawIndexedNS(PrimitiveType primType)
     int glNumPrimitives = this->GetGLPrimTypeAndNumIndexed(primType, glPrimType);
 
     nGLMesh* mesh;
-    if ( (mesh = (nGLMesh*) this->GetMesh()) != 0)
+    if ((mesh = (nGLMesh*) this->GetMesh()) != 0)
     {
         if (mesh->GetNumIndices() > 0 &&
             mesh->BeginRender(this->vertexRangeFirst, true, this->indexRangeFirst))
-
         {
-            glDrawElements(glPrimType, glNumPrimitives, GL_UNSIGNED_SHORT, mesh->indexOffset(0));
+            glDrawElements(glPrimType, glNumPrimitives, GL_UNSIGNED_SHORT, mesh->IndexOffset(0));
             
-            #ifdef __NEBULA_STATS__
-            this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
-            #endif
-
             mesh->EndRender(true);
-        }
-    }
 
-    #ifdef __NEBULA_STATS__
-    // update statistics
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + glNumPrimitives);
-    #endif
+            #ifdef __NEBULA_STATS__
+            // update statistics
+            this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+            this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + glNumPrimitives);
+            #endif
+        }
+        n_gltrace("nGLServer2::DrawIndexedNS().");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -409,24 +468,20 @@ nGLServer2::DrawNS(PrimitiveType primType)
     int glNumPrimitives = this->GetGLPrimTypeAndNum(primType, glPrimType);
 
     nGLMesh* mesh;
-    if ( (mesh = (nGLMesh*) this->GetMesh()) != 0)
+    if ((mesh = (nGLMesh*) this->GetMesh()) != 0)
     {
-        if (mesh->GetNumIndices() > 0 &&
-            mesh->BeginRender(this->vertexRangeFirst))
-
+        if (mesh->BeginRender(this->vertexRangeFirst))
         {
             glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
             
-            #ifdef __NEBULA_STATS__
-            this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
-            #endif
-
             mesh->EndRender();
-        }
-    }
 
-    #ifdef __NEBULA_STATS__
-    // update statistics
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + glNumPrimitives);
-    #endif
+            #ifdef __NEBULA_STATS__
+            // update statistics
+            this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+            this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + glNumPrimitives);
+            #endif
+        }
+        n_gltrace("nGLServer2::DrawNS().");
+    }
 }

@@ -11,7 +11,6 @@ void
 nGLServer2::BeginLines()
 {
     nGfxServer2::BeginLines();
-    // XXX: Implement
 }
 
 //------------------------------------------------------------------------------
@@ -24,7 +23,12 @@ nGLServer2::DrawLines3d(const vector3* vertexList, int numVertices, const vector
     n_assert(vertexList);
     n_assert(numVertices > 0);
     n_assert(this->inBeginLines);
-    // XXX: Implement
+
+    glVertexPointer(3, GL_FLOAT, sizeof(vector3), vertexList);
+    glColor4f(color.x, color.y, color.z, color.w);
+    glDrawArrays(GL_LINES, 0, numVertices);
+
+    n_gltrace("nGLServer2::DrawLines3d().");
 }
 
 //------------------------------------------------------------------------------
@@ -38,7 +42,12 @@ nGLServer2::DrawLines2d(const vector2* vertexList, int numVertices, const vector
     n_assert(vertexList);
     n_assert(numVertices > 0);
     n_assert(this->inBeginLines);
-    // XXX: Implement
+
+    glVertexPointer(2, GL_FLOAT, sizeof(vector2), vertexList);
+    glColor4f(color.x, color.y, color.z, color.w);
+    glDrawArrays(GL_LINES, 0, numVertices);
+    
+    n_gltrace("nGLServer2::DrawLines2d().");
 }
 
 //------------------------------------------------------------------------------
@@ -49,6 +58,5 @@ void
 nGLServer2::EndLines()
 {
     nGfxServer2::EndLines();
-    // XXX: Implement
 }
 

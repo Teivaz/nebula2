@@ -6,27 +6,27 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-uniform float4x4 View;                   // the view matrix
-uniform float4x4 Projection;             // the projection matrix
-uniform float3 LightPos;             // the light's position in world space
-uniform float4 LightAmbient;         // light's ambient component
-uniform float4 LightDiffuse;         // light's diffuse component
-uniform float4 LightSpecular;        // light's specular component
+uniform float4x4 View : View;                   // the view matrix
+uniform float4x4 Projection : Projection;             // the projection matrix
+uniform float3 LightPos : Position;             // the light's position in world space
+uniform float4 LightAmbient : Ambient;         // light's ambient component
+uniform float4 LightDiffuse : Diffuse;         // light's diffuse component
+uniform float4 LightSpecular : Specular;        // light's specular component
 
 technique t0
 {
     pass p0
     {
-        ViewTransform       = <View>;
-    	ProjectionTransform = <Projection>;    
+        //ViewTransform       = <View>;
+    	//ProjectionTransform = <Projection>;    
         ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;  
-        NormalizeNormals    = True;
-        ZEnable             = True;
+        NormalizeNormals    = true;
+        ZEnable             = true;
         ZFunc               = LessEqual;
-        StencilEnable       = False;
+        StencilEnable       = false;
         DepthBias           = 0.0f;
         PixelShader         = 0;
-        SpecularEnable	    = False;
+        SpecularEnable	    = false;
 
         FogColor            = {0.5, 0.5, 0.5, 1.0};
         FogDensity          = 0.001f;
@@ -34,19 +34,19 @@ technique t0
         FogStart            = 200;
         FogEnd              = 1000;
 
-        Ambient          = <LightAmbient>;
-        LightEnable[0]   = True;	
-        LightAmbient[0]  = <LightAmbient>;
-        LightDiffuse[0]  = <LightDiffuse>;
-        LightSpecular[0] = <LightSpecular>;
-        LightPosition[0] = <LightPos>;
-        LightRange[0]    = 500000.0;
-        LightAttenuation0[0] = 1.0;
-        LightAttenuation1[0] = 0.0;
-        LightAttenuation2[0] = 0.0;
+        //Ambient          = <LightAmbient>;
+        //LightEnable[0]   = true;	
+        //LightAmbient[0]  = <LightAmbient>;
+        //LightDiffuse[0]  = <LightDiffuse>;
+        //LightSpecular[0] = <LightSpecular>;
+        //LightPosition[0] = <LightPos>;
+        //LightRange[0]    = 500000.0;
+        //LightAttenuation0[0] = 1.0;
+        //LightAttenuation1[0] = 0.0;
+        //LightAttenuation2[0] = 0.0;
 
         // LightType must be the last light state that is set!
-        LightType[0] = POINT;
+        //LightType[0] = POINT;
 
         // FillMode         = Wireframe;
     }

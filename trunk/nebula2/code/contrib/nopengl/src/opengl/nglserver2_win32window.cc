@@ -4,13 +4,34 @@
 //  07-Sep-2003 cubejk 
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
+#include "opengl/nglextensionserver.h"
 #include "opengl/ngltexture.h"
 #include "opengl/ncgfxshader.h"
 
 //------------------------------------------------------------------------------
 /**
+*/
+static
+int
+ChooseAcceleratedPixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR *  ppfd)
+{
+    int pixelformat = ChoosePixelFormat(hdc, ppfd);
+
+    if (pixelformat == 0) return pixelformat;
+
+    PIXELFORMATDESCRIPTOR pfd;
+    if (!DescribePixelFormat(hdc, pixelformat, sizeof(pfd), &pfd)) return 0;
+
+    int accel = ((pfd.dwFlags)&PFD_GENERIC_FORMAT) > 0 ? 0 : 1;
+    if ( !accel ) return 0;
+
+    return pixelformat;
+}
+
+//------------------------------------------------------------------------------
+/**
     Initialize the default state of the device. Must be called after
-    creating or resetting the d3d device.
+    creating or resetting the gl device.
 */
 void
 nGLServer2::InitDeviceState()
@@ -21,38 +42,13 @@ nGLServer2::InitDeviceState()
     this->SetCamera(this->GetCamera());
 
     // set initial renderstates
+    glFrontFace(GL_CW);
+    glEnable(GL_DITHER);
+    glDisable(GL_LIGHTING);
     glCullFace(GL_FRONT_AND_BACK);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //GL_FILL
-    glFrontFace(GL_CW);
-/*
-    int x,y,w,h;
-    x = this->displayMode.GetXPos();
-    y = this->displayMode.GetYPos();
-    w = this->displayMode.GetWidth();
-    h = this->displayMode.GetHeight();
-    glViewport(x,y,w,h);
-*/
-    //this->d3d9Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-    //this->d3d9Device->SetRenderState(D3DRS_DITHERENABLE, TRUE);
-    //this->d3d9Device->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-    // update the device caps
-    //this->d3d9Device->GetDeviceCaps(&(this->devCaps));
-}
-
-static int ChooseAcceleratedPixelFormat( HDC hdc, CONST PIXELFORMATDESCRIPTOR *  ppfd )
-{
-    int pixelformat = ChoosePixelFormat(hdc, ppfd);
-
-    if ( pixelformat == 0 ) return pixelformat;
-
-    PIXELFORMATDESCRIPTOR pfd;
-    if (!DescribePixelFormat(hdc, pixelformat, sizeof(pfd), &pfd)) return 0;
-
-    int accel = ((pfd.dwFlags)&PFD_GENERIC_FORMAT) > 0 ? 0 : 1;
-    if ( !accel ) return 0;
-
-    return pixelformat;
+    n_gltrace("nGLServer2::InitDeviceState().");
 }
 
 //-----------------------------------------------------------------------------
@@ -164,53 +160,36 @@ nGLServer2::ContextOpen(void)
     if (!DescribePixelFormat(this->hDC, pixelformat, sizeof(this->pfDesc), &this->pfDesc))
     {
         n_error("nGLServer2: DescribePixelFormat() failed!");
-        return;
     }
-/*
-    int pf;
-    PIXELFORMATDESCRIPTOR pfd;
-    
-    memset(&pfd,0,sizeof(PIXELFORMATDESCRIPTOR));
-    pfd.nSize    = sizeof(PIXELFORMATDESCRIPTOR);
-    pfd.nVersion = 1;
-    pfd.dwFlags  = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32; //GetDeviceCaps(this->hDC,BITSPIXEL)
-    pfd.cDepthBits   = 24;
-    pfd.cStencilBits = 8;
-    pfd.iLayerType = PFD_MAIN_PLANE;
 
-    //try to get a fitting pixelformat
-    pf = ChoosePixelFormat(this->hDC,&pfd);
-    if (pf == 0)
-        n_error("nGLServer2: ChoosePixelFormat() failed!");    
-    
-    //setup this pixelformat on this device
-    if (!SetPixelFormat(this->hDC, pf, &pfd))
-        n_error("nGLServer2: SetPixelFormat() failed!");
-*/
     //create a gl context
-    this->context =    wglCreateContext(this->hDC);
+    this->context = wglCreateContext(this->hDC);
     if (this->context == NULL)
+    {
         n_error("nGLServer2: wglCreateContext() failed!");
+    }
     
     // make it the calling thread's current rendering context
     if (!wglMakeCurrent(this->hDC, this->context))
+    {
         n_error("nGLServer2: wglMakeCurrent() failed!");
+    }
 
-    n_assert(!this->getGLErrors("nGLServer2::ContextOpen"));
+    n_gltrace("nGLServer2::ContextOpen().");
 }
 //-----------------------------------------------------------------------------
 /**
 */
 void
-nGLServer2::ContextClose()    
+nGLServer2::ContextClose()
 {
     n_assert(this->context);
 
     wglMakeCurrent(NULL, NULL);
     wglDeleteContext(this->context);
     this->context = NULL;
+
+    n_gltrace("nGLServer2::ContextClose().");
 }
 
 //------------------------------------------------------------------------------
@@ -281,15 +260,14 @@ nGLServer2::UpdateFeatureSet()
 bool
 nGLServer2::DeviceOpen()
 {
-    //n_assert(this->hWnd);
-    //n_assert(this->hDC);
+    n_assert(!this->hDC);
     //n_assert(this->context);
     //n_assert(this->windowOpen);
     //n_assert(this->windowMinimized);
+    n_assert(this->windowHandler.IsWindowOpen());
+    n_assert(this->windowHandler.IsWindowMinimized());
     n_assert(!this->inBeginScene);
 /*
-    n_assert(0 == this->depthStencilSurface);
-    n_assert(0 == this->backBufferSurface);
     #ifdef __NEBULA_STATS__
     n_assert(0 == this->queryResourceManager);
     #endif
@@ -304,22 +282,21 @@ nGLServer2::DeviceOpen()
     this->ContextOpen();
 
     // create shader device
-    bool res = nCgFXShader::CreateDevice(this);
+    bool res = nCgFXShader::CreateDevice();
+
+    nGLExtensionServer* extServer = nGLExtensionServer::Instance();
 
     //display info
     n_printf("GL - Extensions\n");
-    n_printf("\tVendor:   %s\n", glGetString(GL_VENDOR));
-    n_printf("\tRenderer: %s\n", glGetString(GL_RENDERER));
-    n_printf("\tVersion:  %s\n", glGetString(GL_VERSION));
+    n_printf("    Vendor:   %s\n", glGetString(GL_VENDOR));
+    n_printf("    Renderer: %s\n", glGetString(GL_RENDERER));
+    n_printf("    Version:  %s\n", glGetString(GL_VERSION));
     n_printf("Supported Extensions:\n");
-    this->printExtensions((const char*)glGetString(GL_EXTENSIONS));
+    extServer->PrintExtensions(nString((const char*)glGetString(GL_EXTENSIONS)));
     
     //init extensitions
-    this->initExtensions();
+    extServer->InitExtensions();
 
-
-    //InvalidateRect(this->hWnd, NULL, true);
-    
     // reload any resources if necessary
     this->OnRestoreDevice();
 
@@ -329,7 +306,7 @@ nGLServer2::DeviceOpen()
     // restore window
     this->windowHandler.RestoreWindow();
     
-    this->getGLErrors("nGLServer2::DeviceOpen");
+    n_gltrace("nGLServer2::DeviceOpen().");
     return res;
 }
 
@@ -346,13 +323,13 @@ nGLServer2::DeviceClose()
     n_assert(this->windowHandler.GetHwnd());
 
     // destroy shader device
-    nCgFXShader::ReleaseDevice(this);
+    nCgFXShader::ReleaseDevice();
 
     // close gl context
     this->ContextClose();
 
     // unload all resources
-    this->OnDeviceLost();
+    this->OnDeviceLost(true);
 
     // destroy gl device
     ReleaseDC(this->windowHandler.GetHwnd(), this->hDC);
@@ -360,6 +337,7 @@ nGLServer2::DeviceClose()
     
     // minimze the app window
     this->windowHandler.MinimizeWindow();
+    n_gltrace("nGLServer2::DeviceClose().");
 }
 
 //------------------------------------------------------------------------------
@@ -431,7 +409,11 @@ nGLServer2::UpdateCursor()
 void
 nGLServer2::SetRenderTarget(nTexture2* t)
 {
+    n_assert(!this->inBeginScene);
+    n_assert(this->hDC);
+
     BOOL res;
+    nGfxServer2::SetRenderTarget(t);
     if (t)    
     {
         nGLTexture* glTex = (nGLTexture*) t;
@@ -443,7 +425,7 @@ nGLServer2::SetRenderTarget(nTexture2* t)
         res = wglMakeCurrent(this->hDC, this->context);
         n_assert(res == TRUE);
     }
-    n_assert(!this->getGLErrors("nGLServer2::SetRenderTarget"));
+    n_gltrace("nGLServer2::SetRenderTarget().");
 }
 
 
@@ -481,6 +463,7 @@ nGLServer2::BeginScene()
             if (false == wglMakeCurrent(this->hDC, this->context))
             {
                 n_printf("nGLServer: BeginScene() on gl device failed!\n");
+                n_gltrace("nGLServer2::BeginScene(1).");
                 return false;
             }
         }
@@ -495,6 +478,7 @@ nGLServer2::BeginScene()
         this->statsNumTextureChanges = 0;
         #endif
         
+        n_gltrace("nGLServer2::BeginScene().");
         return true;
     }
     return false;

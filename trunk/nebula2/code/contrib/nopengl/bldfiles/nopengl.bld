@@ -31,7 +31,18 @@ beginmodule nglserver2
         user32.lib gdi32.lib advapi32.lib
         cg.lib CgFXParser.lib cgGL.lib
     }
-    setmoduledeps { nglmesh ngltexture ncgfxshader nglfont }
+    setmoduledeps { nglmesh ngltexture ncgfxshader nglfont nglextensionserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nglextensionserver
+    setdir opengl
+    setfiles { 
+        nglextensionserver_main
+        nglextensionserver_cmds
+    }
+    setheaders { nglextensionserver }
+    setlibs_linux { GL GLU X11 Xmu }
+    setlibs_win32 { opengl32.lib glu32.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nglmesh
@@ -52,6 +63,12 @@ beginmodule ncgfxshader
     setheaders { ncgfxshader }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule ncgfxshaderinclude
+    setdir opengl
+    setfiles { ncgfxshaderinclude }
+    setheaders { ncgfxshaderinclude }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nglfont
     setdir opengl
     setfiles { nglfont_main }
@@ -65,16 +82,23 @@ beginmodule nglwin32windowhandler
     setheaders { nglwin32windowhandler }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule noglviewerapp
+    setdir opengltest
+    setfiles { noglviewerapp }
+    setheaders { noglviewerapp }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule noglviewer
     setdir opengltest
     setfiles { noglviewer }
 endmodule
+
 #-------------------------------------------------------------------------------
 begintarget nopengl
     settype lib
     setmodules {
-        nglserver2 nglmesh ngltexture ncgfxshader nglfont
-        nglwin32windowhandler
+        nglserver2 nglextensionserver nglmesh ngltexture
+        ncgfxshader ncgfxshaderinclude nglfont nglwin32windowhandler
     }
 endtarget
 #-------------------------------------------------------------------------------
@@ -83,7 +107,7 @@ begintarget noglviewer
     settype exe
     setmodules {
         noglviewer
-        nviewerapp
+        noglviewerapp
     }
     settargetdeps {
         nkernel

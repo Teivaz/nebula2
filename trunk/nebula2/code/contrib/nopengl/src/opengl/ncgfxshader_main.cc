@@ -3,6 +3,7 @@
 //  13-Dec-2003 Haron
 //------------------------------------------------------------------------------
 #include "opengl/ncgfxshader.h"
+#include "opengl/ncgfxshaderinclude.h"
 #include "opengl/nglserver2.h"
 #include "opengl/ngltexture.h"
 #include "gfx2/nshaderparams.h"
@@ -22,29 +23,91 @@ CgFXMode nCgFXShader::mode = CgFX_Unknown;
 
 //------------------------------------------------------------------------------
 /**
+    CgFX error handling.
+
+     - 19-Oct-2004   Haron    created
+*/
+void 
+__cdecl
+n_cgfxerror(HRESULT hr, const char *msg)
+{
+    if (FAILED(hr))
+    {
+        nString message(msg);
+        LPCSTR errorString = 0;
+        CgFXGetErrors(&errorString);
+        message.Append("\n    Message: ");
+        if (errorString)
+        {
+            message.Append(errorString);
+        }
+        else
+        {
+            message.Append("There is no CgFX error message.");
+        }
+        message.Append("\n");
+        n_error(message.Get());
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    CgFX warning handling.
+
+     - 19-Oct-2004   Haron    created
+*/
+bool 
+__cdecl
+n_cgfxwarning(HRESULT hr, const char *msg)
+{
+    if (FAILED(hr))
+    {
+        nString message(msg);
+        LPCSTR errorString = 0;
+        CgFXGetErrors(&errorString);
+        message.Append("\n    Message: ");
+        if (errorString)
+        {
+            message.Append(errorString);
+        }
+        else
+        {
+            message.Append("There is no CgFX error message.");
+        }
+        message.Append("\n");
+        n_printf(message.Get());
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     Create CgFX device
 */
 bool
-nCgFXShader::CreateDevice(nGfxServer2 *srv)
+nCgFXShader::CreateDevice()
 {
     if (deviceInit) return true;
 
-    LPCSTR errorString = 0;
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    HRESULT hr;
     LPVOID device;
-    const char* gfxname = srv->GetClass()->GetName();
+    const char* gfxname = gfxServer->GetClass()->GetName();
 
     if (n_stricmp(gfxname,"nglserver2") == 0) mode = CgFX_OpenGL;
     else if (n_stricmp(gfxname,"nd3d8server") == 0) mode = CgFX_Direct3D8;
     else if (n_stricmp(gfxname,"nd3d9server") == 0) mode = CgFX_Direct3D9;
     else
     {
-        n_error("nCgFXShader::CreateDevice(): failed to determain gfx server. gfx name: %sn",gfxname);
+        n_error("nCgFXShader::CreateDevice(): failed to determain gfx server. gfx name: %sn", gfxname);
         return false;
     }
 
     if (mode == CgFX_OpenGL)
     {
-        device = (LPVOID)((nGLServer2*)srv)->context;
+        device = (LPVOID)((nGLServer2*)gfxServer)->context;
     }
     else
     {
@@ -52,23 +115,16 @@ nCgFXShader::CreateDevice(nGfxServer2 *srv)
             cgFX_modes[mode]);
         return false;
     }
-
-    n_assert(!((nGLServer2*)srv)->getGLErrors("nCgFXShader::CreateDevice1"));
+    n_gltrace("nCgFXShader::CreateDevice(1).");
 
     //n_printf("Device %p\n", device);
 
     // Set device
-    if (FAILED(CgFXSetDevice(cgFX_modes[mode], device)))
-    {
-        CgFXGetErrors(&errorString);
-        n_error("nCgFXShader::CreateDevice(): failed to set device\n\tin nCgFXShader::LoadResource()->CgFXSetDevice(%s)\nError: %s\n",
-            cgFX_modes[mode], errorString);
-        return false;
-    }
-    
-    ((nGLServer2*)srv)->getGLErrors("nCgFXShader::CreateDevice2");
+    hr = CgFXSetDevice(cgFX_modes[mode], device);
+    n_cgfxerror(hr, "nCgFXShader::CreateDevice(): failed to set device in CgFXSetDevice.");    
 
     deviceInit = true;
+    n_gltrace("nCgFXShader::CreateDevice(2).");
     return true;
 }
 
@@ -77,18 +133,18 @@ nCgFXShader::CreateDevice(nGfxServer2 *srv)
     Release CgFX device
 */
 bool
-nCgFXShader::ReleaseDevice(nGfxServer2 *srv)
+nCgFXShader::ReleaseDevice()
 {
     if (!deviceInit) return true;
 
     deviceInit = false;
 
-    LPCSTR errorString = 0;
+    HRESULT hr;
     LPVOID device;
 
     if (mode == CgFX_OpenGL)
     {
-        device = (LPVOID)((nGLServer2*)srv)->context;
+        device = (LPVOID)((nGLServer2*)nGfxServer2::Instance())->context;
     }
     else
     {
@@ -98,12 +154,8 @@ nCgFXShader::ReleaseDevice(nGfxServer2 *srv)
     }
 
     // Destroy CgFX context
-    if (FAILED(CgFXFreeDevice(cgFX_modes[mode], device)))
-    {
-        CgFXGetErrors(&errorString);
-        n_error("Error (nCgFXShader::ReleaseDevice): Error in CgFXFreeDevice - %s\n", errorString);
-        return false;
-    }
+    hr = CgFXFreeDevice(cgFX_modes[mode], device);
+    n_cgfxerror(hr, "nCgFXShader::ReleaseDevice(): Error in CgFXFreeDevice.");
 
 /*    // there is no such function in CgFX 1.2
     if (FAILED(CgFXRelease()))
@@ -113,114 +165,7 @@ nCgFXShader::ReleaseDevice(nGfxServer2 *srv)
         return false;
     }
 */
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Recursive #include directives substituting
-*/
-bool
-nCgFXShader::resolveIncludes(nFile *dstfile, nPathString *srcfile, nArray<nString> &includes)
-{
-    //n_printf("<CHECK>%s</CHECK>\n", srcfile->Get());
-
-    nPathString shaderdir(srcfile->ExtractDirName());
-    nFile* f = this->refFileServer->NewFileObject();
-    n_assert(f);
-
-    // open the file
-    if (!f->Open(srcfile->Get(), "r"))
-    {
-        n_error("nCgFXShader::resolveIncludes(): Could not open file %s\n", srcfile->Get());
-        f->Close();
-        return false;
-    }
-
-    char line[N_MAXPATH];
-    nPathString includeFile;
-
-    while (f->GetS(line, sizeof(line))) // scan each line from source file
-    {
-        bool needSave = true;
-/*        
-        char *sampler;
-        while ((sampler = strstr(line, "sampler")) !=NULL)
-            if (isalpha(sampler - 1) == 0 && isalpha(sampler + 7) == 0) // check that sampler is not a part of other word
-            {
-            }
-*/
-        char ifname[400];
-        const char *word;
-        nString sline(line);
-
-        word = sline.GetFirstToken(" \t"); // first not whitespace
-
-        //n_printf("<LINE>%s\n<WORD>%s\n", line, word);
-
-        includeFile.Set(""); // clear content
-
-        if (NULL != word)
-            if (n_stricmp(word, "#include") == 0) // we found 'include' directive
-            {
-                word = sline.GetNextToken(" \t\n");
-
-                n_strncpy2(ifname, &word[1], strlen(word)-2); // cut first and last (") (#include "lib.fx")
-                nPathString fn = nPathString(ifname).ExtractFileName();
-                if (0 == includes.Find(fn)) // check if this file was not included previously
-                {
-                    //n_printf("<FILE>%s\n", fn.Get());
-                    needSave = false;
-                    includeFile.Append(shaderdir);
-                    includeFile.Append(ifname);
-                    includes.Append(fn);
-
-                    if (!resolveIncludes(dstfile, &includeFile, includes))
-                    {
-                        f->Close();
-                        return false;
-                    }
-                    //n_printf("\t<INCLUDE>%s</INCLUDE>\n", includeFile.Get());
-                }
-            }
-            else if (n_stricmp(word, "shared") == 0) // we found 'shared' keyword
-            {
-                //dstfile->PutS("uniform ");
-                dstfile->PutS(sline.GetNextToken("\n")); // just skip it
-                needSave = false;
-            }
-            //else if (n_stricmp(word, "#define") == 0) // we found 'define' directive
-            //{
-            //    dstfile->PutS("const float "); // translate #define to 'const float' variable
-
-            //    word = sline.GetNextToken(" \t");
-            //    dstfile->PutS(word); // variable name
-            //    dstfile->PutS(" = ");
-
-            //    word = sline.GetNextToken(" \t\n"); // variable value
-            //    int sz = strlen(word);
-            //    if (word[sz-1] == (char)0x0D)
-            //    {
-            //        char strtmp[256];
-            //        n_strncpy2(strtmp, word, sz-1);
-            //        dstfile->PutS(strtmp);
-            //    }
-            //    else dstfile->PutS(word);
-            //    dstfile->PutS("; ");
-
-            //    word = sline.GetNextToken("\n"); // read some comments
-            //    if (NULL != word) dstfile->PutS(word);
-            //    dstfile->PutS("\n// ");
-            //}
-
-        if (needSave) // simply copy a string
-        {
-            dstfile->PutS(line);
-            dstfile->PutChar((char)0x0A); // only for CgFX needs
-        }
-    }
-
-    f->Close();
+    n_gltrace("nCgFXShader::ReleaseDevice().");
     return true;
 }
 
@@ -228,8 +173,6 @@ nCgFXShader::resolveIncludes(nFile *dstfile, nPathString *srcfile, nArray<nStrin
 /**
 */
 nCgFXShader::nCgFXShader() :
-    refGfxServer("/sys/servers/gfx"),
-    refFileServer("/sys/servers/file2"),
     effect(0),
     hasBeenValidated(false),
     didNotValidate(false)
@@ -260,13 +203,13 @@ nCgFXShader::UnloadResource()
     n_assert(this->effect);
 
     // if this is the currently set shader, unlink from gfx server
-    if (this->refGfxServer->GetShader() == this)
+    if (nGfxServer2::Instance()->GetShader() == this)
     {
-        this->refGfxServer->SetShader(0);
+        nGfxServer2::Instance()->SetShader(0);
     }
 /*
     // Destroy CgFX context
-    CgFXFreeDevice(cgFX_modes[mode],(void*)this->refGfxServer->context);
+    CgFXFreeDevice(cgFX_modes[mode],(void*)nGfxServer2::Instance()->context);
     CgFXRelease();
 */
     this->effect = 0;
@@ -290,57 +233,22 @@ nCgFXShader::LoadResource()
     n_assert(CgFX_OpenGL == mode);
 
     n_printf("Start shader loading...\n");
-    // mangle pathname
-    nString filename = this->GetFilename();
-    nString mangledPath;
-    mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
 
-    // check if the shader file actually exist, a non-existing shader file is
-    // not a fatal error (result is that no rendering will be done)
-    if (!nFileServer2::Instance()->FileExists(mangledPath.Get()))
-    {
-        n_printf("nCgFXShader::LoadResource() WARNING: shader file '%s' does not exist!\n", mangledPath.Get());
-        return false;
-    }
+    nCgFXShaderInclude si;
 
-    nFile* f = nFileServer2::Instance()->NewFileObject();
-    n_assert(f);
-
-    nPathString _tmpfile;
-    _tmpfile.Append(nPathString((mangledPath.Get())).ExtractDirName().Get());
-    //_tmpfile.Append("__tmp__.fx");
-    _tmpfile.Append("goochy.fx");
-#if 0
-    // why??? it would truncate the file!
-    if (!f->Open(_tmpfile.Get(), "w"))
-    {
-        n_error("nCgFXShader::LoadResource(): Could not open file %s\n", _tmpfile.Get());
-        f->Release();
-        return false;
-    }
-
-//    #warning "recursive including"
-//    resolveIncludes(f, new nPathString(mangledPath.Get()), nArray<nString>());
-
-    f->Close();
-#endif
-#ifdef __WIN32__
-    _tmpfile.ConvertBackslashes();
-#endif
+    si.Begin(this->GetFilename());
 
     // Load new effect
-    LPCSTR errorString = 0;
+    const char* errorString;
+    HRESULT hr;
 
-    if (FAILED(CgFXCreateEffectFromFileA(mangledPath.Get(), 0, &this->effect, &errorString)))
-    {
-        n_error("nCgFXShader::LoadResource(): failed to load fx file '%s' \n\tin nCgFXShader::LoadResource()->CgFXCreateEffectFromFileA\n with:\n<BEGIN ERROR>\n%s\n<END ERROR>\n",
-                mangledPath.Get(),
-                errorString ? errorString : "No CgFX error message (no shader file?)");
-        return false;
-    }
+    hr = CgFXCreateEffectFromFileA(si.GetFileName().Get(), 0, &this->effect, &errorString);
+    nString errStr("nCgFXShader::LoadResource(): Failed to load fx file '");
+    errStr += this->GetFilename() + "'\n    in CgFXCreateEffectFromFileA.";
+    n_cgfxerror(hr, errStr.Get());
     n_assert(this->effect);
 
-    f->Release();
+    si.End();
 
     // success
     this->hasBeenValidated = false;
@@ -350,12 +258,7 @@ nCgFXShader::LoadResource()
     // validate the effect
     this->ValidateEffect();
 
-    if (FAILED(CgFXGetErrors(&errorString)))
-    {
-        n_error("nCgFXShader: error (%s)\n\tin nCgFXShader::LoadResource()\n", errorString);
-        return false;
-    }
-
+    n_gltrace("nCgFXShader::LoadResource().");
     return true;
 }
 
@@ -366,14 +269,14 @@ void
 nCgFXShader::SetBool(nShaderState::Param p, bool val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
-
+    n_printf("SetBool: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetBool(this->parameterHandles[p], val);
-
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetBool().");
+    n_gltrace("nCgFXShader::SetBool().");
 }
 
 //------------------------------------------------------------------------------
@@ -387,8 +290,10 @@ nCgFXShader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetBoolArray().");
+    n_gltrace("nCgFXShader::SetBoolArray().");
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -396,9 +301,14 @@ void
 nCgFXShader::SetInt(nShaderState::Param p, int val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_printf("SetInt: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetInt(this->parameterHandles[p], val);
-      n_assert(SUCCEEDED(hr));
+    #ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_cgfxerror(hr, "nCgFXShader::SetInt().");
+    n_gltrace("nCgFXShader::SetInt().");
 }
 
 //------------------------------------------------------------------------------
@@ -412,7 +322,8 @@ nCgFXShader::SetIntArray(nShaderState::Param p, const int* array, int count)
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetIntArray().");
+    n_gltrace("nCgFXShader::SetIntArray().");
 }
 
 //------------------------------------------------------------------------------
@@ -422,11 +333,14 @@ void
 nCgFXShader::SetFloat(nShaderState::Param p, float val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
-
+    n_printf("SetFloat: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetFloat(this->parameterHandles[p], val);
-    
-    n_assert(SUCCEEDED(hr));
+    #ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_cgfxerror(hr, "nCgFXShader::SetFloat().");
+    n_gltrace("nCgFXShader::SetFloat().");
 }
 
 //------------------------------------------------------------------------------
@@ -440,7 +354,8 @@ nCgFXShader::SetFloatArray(nShaderState::Param p, const float* array, int count)
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetFloatArray().");
+    n_gltrace("nCgFXShader::SetFloatArray().");
 }
 
 //------------------------------------------------------------------------------
@@ -450,12 +365,14 @@ void
 nCgFXShader::SetVector4(nShaderState::Param p, const vector4& val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_printf("SetVector4: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&val));
     HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (float*) &val, 4);
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetVector4().");
+    n_gltrace("nCgFXShader::SetVector4().");
 }
 
 //------------------------------------------------------------------------------
@@ -465,16 +382,16 @@ void
 nCgFXShader::SetVector3(nShaderState::Param p, const vector3& val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_printf("SetVector3: %s\n", nShaderState::ParamToString(p));
     static vector4 v;
     v.set(val.x, val.y, val.z, 1.0f);
-    this->curParams.SetArg(p, nShaderArg(*((nFloat4*)&v)));
-    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (float*) &v, 3);
+    this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&v));
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (const float*) &val, 3);
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    const char * errors = NULL;
-    CgFXGetErrors(&errors);
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetVector3().");
+    n_gltrace("nCgFXShader::SetVector3().");
 }
 
 //------------------------------------------------------------------------------
@@ -484,12 +401,14 @@ void
 nCgFXShader::SetFloat4(nShaderState::Param p, const nFloat4& val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_printf("SetFloat4: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (float*) &val, 4);
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetFloat4().");
+    n_gltrace("nCgFXShader::SetFloat4().");
 }
 
 //------------------------------------------------------------------------------
@@ -503,7 +422,8 @@ nCgFXShader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int cou
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetFloat4Array().");
+    n_gltrace("nCgFXShader::SetFloat4Array().");
 }
 
 //------------------------------------------------------------------------------
@@ -517,7 +437,8 @@ nCgFXShader::SetVector4Array(nShaderState::Param p, const vector4* array, int co
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetVector4Array().");
+    n_gltrace("nCgFXShader::SetVector4Array().");
 }
 
 //------------------------------------------------------------------------------
@@ -527,13 +448,14 @@ void
 nCgFXShader::SetMatrix(nShaderState::Param p, const matrix44& val)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
-    n_printf("p=%d, NumParameters=%d\n", p, nShaderState::NumParameters);
+    n_printf("SetMatrix: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(&val));
     HRESULT hr = this->effect->SetMatrix(this->parameterHandles[p], (const float*) &val, 4, 4);
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetMatrix().");
+    n_gltrace("nCgFXShader::SetMatrix().");
 }
 
 //------------------------------------------------------------------------------
@@ -547,7 +469,8 @@ nCgFXShader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int co
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetMatrixArray().");
+    n_gltrace("nCgFXShader::SetMatrixArray().");
 }
 
 //------------------------------------------------------------------------------
@@ -561,7 +484,8 @@ nCgFXShader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array
     #ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::SetMatrixPointerArray().");
+    n_gltrace("nCgFXShader::SetMatrixPointerArray().");
 }
 
 //------------------------------------------------------------------------------
@@ -572,7 +496,7 @@ nCgFXShader::SetTexture(nShaderState::Param p, nTexture2* tex)
 {
     n_assert(tex);
     n_assert(this->effect && (p < nShaderState::NumParameters));
-
+    n_printf("SetTexture: %s\n", nShaderState::ParamToString(p));
     if ((!this->curParams.IsParameterValid(p)) ||
         (this->curParams.IsParameterValid(p) && (this->curParams.GetArg(p).GetTexture() != tex)))
     {
@@ -581,15 +505,15 @@ nCgFXShader::SetTexture(nShaderState::Param p, nTexture2* tex)
         #ifdef __NEBULA_STATS__
         //this->refGfxServer->statsNumTextureChanges++;
         #endif
-        n_assert(SUCCEEDED(hr));
+        n_cgfxerror(hr, "nCgFXShader::SetTexture().");
+        n_gltrace("nCgFXShader::SetTexture().");
     }
 }
 
 //------------------------------------------------------------------------------
 /**
     Set a whole shader parameter block at once. This is slightly faster
-    (and more convenient) then setting single parameters. This works by batching
-    the parameter changes and then applying them all at once.
+    (and more convenient) then setting single parameters.
 */
 void
 nCgFXShader::SetParams(const nShaderParams& params)
@@ -601,80 +525,70 @@ nCgFXShader::SetParams(const nShaderParams& params)
     HRESULT hr;
     //this->effect->BeginParameterBlock();
     bool changes = false;
-    for (i = 0; i < nShaderState::NumParameters; i++)
+    int numValidParams = params.GetNumValidParams();
+    for (i = 0; i < numValidParams; i++)
     {
-        nShaderState::Param p = (nShaderState::Param) i;
+        nShaderState::Param curParam = params.GetParamByIndex(i);
 
-        // source parameter valid?
-        if (params.IsParameterValid(p))
+        // parameter used in shader?
+        CGFXHANDLE handle = this->parameterHandles[curParam];
+        if (handle != 0)
         {
-            // parameter used in shader?
-            CGFXHANDLE handle = this->parameterHandles[p];
-            if (handle != 0)
+            // avoid redundant state switches
+            const nShaderArg& curArg = params.GetArgByIndex(i);
+            if ((!this->curParams.IsParameterValid(curParam)) ||
+                (!(curArg == this->curParams.GetArg(curParam))))
             {
-                // avoid redundant state switches
-                const nShaderArg& curArg = params.GetArg(p);
-                if (!(curArg == this->curParams.GetArg(p)))
+                this->curParams.SetArg(curParam, curArg);
+                switch (curArg.GetType())
                 {
-                    changes = true;
-                    this->curParams.SetArg(p, curArg);
-                    switch (curArg.GetType())
-                    {
-                        case nShaderState::Void:
-                            hr = S_OK;
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Void:
+                        hr = S_OK;
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderState::Int:
-                            hr = this->effect->SetInt(handle, curArg.GetInt());
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Int:
+                        hr = this->effect->SetInt(handle, curArg.GetInt());
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderState::Float:
-                            hr = this->effect->SetFloat(handle, curArg.GetFloat());
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Float:
+                        hr = this->effect->SetFloat(handle, curArg.GetFloat());
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderState::Float4:
-                            hr = this->effect->SetVector(handle, (float*) &(curArg.GetFloat4()), 4);
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Float4:
+                        hr = this->effect->SetVector(handle, (float*) &(curArg.GetFloat4()), 4);
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderState::Matrix44:
-                            hr = this->effect->SetMatrix(handle, (float*) (curArg.GetMatrix44()), 4, 4); //& - ??
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Matrix44:
+                        hr = this->effect->SetMatrix(handle, (float*) (curArg.GetMatrix44()), 4, 4); //& - ??
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderState::Texture:
-                            hr = this->effect->SetTexture(handle, (DWORD)((nGLTexture*)curArg.GetTexture())->GetTexID());
-                            #ifdef __NEBULA_STATS__
-                            //gfxServer->statsNumTextureChanges++;
-                            #endif
-                            break;
-                    }
-                    n_assert(SUCCEEDED(hr));
+                    case nShaderState::Texture:
+                        hr = this->effect->SetTexture(handle, (DWORD)((nGLTexture*)curArg.GetTexture())->GetTexID());
+                        #ifdef __NEBULA_STATS__
+                        //gfxServer->statsNumTextureChanges++;
+                        #endif
+                        break;
                 }
+                n_cgfxerror(hr, "nCgFXShader::SetParams(): Error while setting parameter.");
             }
         }
     }
-    /*
-    D3DXHANDLE paramblock = this->effect->EndParameterBlock();
-    if (changes)
-    {
-        hr = this->effect->ApplyParameterBlock(paramblock);
-        n_assert(SUCCEEDED(hr));
-    }
-    */
+    n_gltrace("nCgFXShader::SetParams().");
 }
 
 //------------------------------------------------------------------------------
@@ -685,41 +599,43 @@ nCgFXShader::SetParams(const nShaderParams& params)
 void
 nCgFXShader::UpdateParameterHandles()
 {
-    n_assert(deviceInit);
+    n_assert(this->deviceInit);
     n_assert(this->effect);
+    HRESULT hr;
 
     memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
 
-    // CGFXHANDLE curTechnique;
-    // curTechnique = this->effect->GetCurrentTechnique();
-    // n_assert(NULL != curTechnique);
-    //HRESULT hr = this->effect->GetTechniqueByName(curTechnique);
-    //n_assert(SUCCEEDED(hr));
-
     n_printf("Start shader parameters lookup...\n");
-    uint param;
 
     CgFXEFFECT_DESC fxDesc;
-    n_assert(SUCCEEDED(this->effect->GetDesc(&fxDesc)));
+    hr = this->effect->GetDesc(&fxDesc);
+    n_cgfxerror(hr, "nCgFXShader::UpdateParameterHandles(): Error while getting effect descriptor.");
 
-    for (param = 0; param < fxDesc.Parameters; param++)
+    uint curParamIndex;
+    for (curParamIndex = 0; curParamIndex < fxDesc.Parameters; curParamIndex++)
     {
-        CgFXPARAMETER_DESC pdesc;
-        CGFXHANDLE paramh;
-        paramh = this->effect->GetParameter(NULL, param);
-        if (FAILED(this->effect->GetParameterDesc(paramh,&pdesc)))
-            continue;
-        nShaderState::Param p = nShaderState::StringToParam(pdesc.Name);
-        if (p == nShaderState::InvalidParameter)
-            continue;
-        this->parameterHandles[p] = paramh;
-        n_printf("nShaderState::Param <%s:%s>\n", pdesc.Name, paramh);
+        CGFXHANDLE curParamHandle = this->effect->GetParameter(NULL, curParamIndex);
+        n_assert(NULL != curParamHandle);
+
+        // get the associated Nebula2 parameter index
+        CgFXPARAMETER_DESC paramDesc;
+        hr = this->effect->GetParameterDesc(curParamHandle, &paramDesc);
+        n_cgfxerror(hr, "nCgFXShader::UpdateParameterHandles(): Error while getting parameter descriptor.");
+        nShaderState::Param nebParam = nShaderState::StringToParam(paramDesc.Name);
+        if (nebParam != nShaderState::InvalidParameter)
+        {
+            this->parameterHandles[nebParam] = curParamHandle;
+            n_printf("nShaderState::Param <%s>\n", paramDesc.Name);
+        }
     }
     n_printf("End parameters lookup\n");
+
+    n_gltrace("nCgFXShader::UpdateParameterHandles().");
 }
 
 //------------------------------------------------------------------------------
 /**
+    Return true if parameter is used by effect.
 */
 bool
 nCgFXShader::IsParameterUsed(nShaderState::Param p)
@@ -744,49 +660,51 @@ nCgFXShader::ValidateEffect()
     CgFXEFFECT_DESC fxDesc;
     CgFXTECHNIQUE_DESC tDesc;
     int numTechniques;
-    LPCSTR errorString = 0;
 
     n_printf("Start shader validating.\n");
 
     // Next step is to search for valid techniques.
     hr = this->effect->GetDesc(&fxDesc);
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::ValidateEffect(): Error while getting effect descriptor.");
     numTechniques = fxDesc.Techniques;
     n_printf("Num techniques %d\n", numTechniques);
 
     for( int t = 0; t < numTechniques; ++t )
     {
+        HRESULT hr;
+        nString errStr;
         CGFXHANDLE tchq = this->effect->GetTechnique(t);
+
         this->effect->GetTechniqueDesc(tchq,&tDesc);
-        if (FAILED(this->effect->SetTechnique(tchq)))
+        
+        hr = this->effect->SetTechnique(tchq);
+        errStr = "Failed to set technique <";
+        errStr += this->GetFilename() + ">:<" + tDesc.Name + ">";
+        if (n_cgfxwarning(hr, errStr.Get()))
         {
-            n_printf("Failed to set technique <%s>\n", tDesc.Name);
-            //SAFE_RELEASE(pEffect);
-            //DISPCONSOLE_ERROR("Internal error: Failed to set technique " << tDesc.Name);
             return;
         }
-        else if (FAILED(this->effect->ValidateTechnique(tchq)))
+        
+        hr = this->effect->ValidateTechnique(tchq);
+        errStr = "Failed to validate technique <";
+        errStr += this->GetFilename() + ">:<" + tDesc.Name + ">";
+        if (n_cgfxwarning(hr, errStr.Get()))
         {
-            n_printf("Failed to validate technique <%s>\n", tDesc.Name);
-            CgFXGetErrors(&errorString);
-            if (errorString)
-                n_printf("Error: %s\n", errorString);
             continue;
         }
 
-        n_printf("Technique <%s> was successfully validated\n", tDesc.Name);
+        n_printf("Technique <%s>:<%s> was successfully validated\n", this->GetFilename().Get(), tDesc.Name);
         this->hasBeenValidated = true;
         this->didNotValidate = false;
         this->UpdateParameterHandles();
-        CgFXGetErrors(&errorString);
-        if (errorString)
-            n_printf("Error: %s\n", errorString);
+        n_gltrace("nCgFXShader::ValidateEffect(1).");
         return;
     }
     // no valid technique found
     this->hasBeenValidated = true;
     this->didNotValidate = true;
     n_printf("nCgFXShader() warning: shader '%s' did not validate!\n", this->GetFilename().Get());
+    n_gltrace("nCgFXShader::ValidateEffect().");
 }
 
 //------------------------------------------------------------------------------
@@ -816,8 +734,10 @@ nCgFXShader::Begin(bool saveState)
         DWORD flags;
         if (saveState) flags = 0;
         else           flags = CGFX_DONOTSAVESTATE;
+
         HRESULT hr = this->effect->Begin(&numPasses, flags);
-        n_assert(SUCCEEDED(hr));
+        n_cgfxerror(hr, "nCgFXShader::Begin(): Error while executing shader Begin function.");
+        n_gltrace("nCgFXShader::Begin().");
         return numPasses;
     }
 }
@@ -828,10 +748,12 @@ nCgFXShader::Begin(bool saveState)
 void
 nCgFXShader::BeginPass(int pass)
 {
+    n_assert(this->effect);
     HRESULT hr;
     n_assert(this->effect);
     hr = this->effect->Pass(pass);
-    n_assert(SUCCEEDED(hr));
+    n_cgfxerror(hr, "nCgFXShader::BeginPass(): Error while executing shader BeginPass function.");
+    n_gltrace("nCgFXShader::BeginPass().");
 }
 
 //------------------------------------------------------------------------------
@@ -862,6 +784,7 @@ nCgFXShader::End()
     if (!this->didNotValidate)
     {
         hr = this->effect->End();
-        n_assert(SUCCEEDED(hr));
+        n_cgfxerror(hr, "nCgFXShader::End(): Error while executing shader End function.");
+        n_gltrace("nCgFXShader::End().");
     }
 }

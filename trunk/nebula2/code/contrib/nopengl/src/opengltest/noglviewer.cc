@@ -43,7 +43,7 @@
 */
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
-#include "tools/nviewerapp.h"
+#include "opengltest/noglviewerapp.h"
 
 #ifdef __WIN32__
 #include "kernel/nwin32loghandler.h"
@@ -151,7 +151,7 @@ main(int argc, const char** argv)
     // initialize Nebula runtime
     nKernelServer kernelServer;
     #ifdef __WIN32__
-        nWin32LogHandler logHandler("nviewer");
+        nWin32LogHandler logHandler("noglviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
     kernelServer.AddPackage(nnebula);
@@ -199,7 +199,7 @@ main(int argc, const char** argv)
     #endif
 
     // initialize a viewer app object
-    nViewerApp viewerApp;
+    nOGLViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);

@@ -4,12 +4,14 @@
 //
 //  A 2d rectangle shader for GUI rendering.
 //------------------------------------------------------------------------------
-uniform float4x4 Model;
-uniform float4x4 View;
-uniform float4x4 Projection;
+uniform float4x4 Model : Model;
+uniform float4x4 View : View;
+uniform float4x4 Projection : Projection;
 
-texture DiffMap0;
-float4 MatDiffuse;
+texture DiffMap0 : DiffuseMap;
+float4 MatDiffuse : MaterialDiffuse;
+float4 matAmbient : MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
+float4 matSpecular : MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
 
 //------------------------------------------------------------------------------
 //  Texture sampler definitions
@@ -29,37 +31,41 @@ technique t0
 {
     pass p0
     {
-        WorldTransform[0] = <Model>;
-        ViewTransform = <View>;
-    	ProjectionTransform = <Projection>;
+        //WorldTransform[0] = <Model>;
+        //ViewTransform = <View>;
+    	//ProjectionTransform = <Projection>;
 
-        ZWriteEnable     = False;
-        ZEnable          = False;
+        ZWriteEnable     = false;
+        ZEnable          = false;
         // ZFunc            = Always;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = True;
+        ColorWriteEnable = true; //RED|GREEN|BLUE|ALPHA;        
+        AlphaBlendEnable = true;
         SrcBlend         = SrcAlpha;
         DestBlend        = InvSrcAlpha;
-        AlphaTestEnable  = False;
+        //AlphaTestEnable  = false;
 
         CullMode = None;
 
         StencilEnable = false;
-        StencilZFail = KEEP;
-        StencilPass =  KEEP;
+        StencilZFail = Keep;
+        StencilPass =  Keep;
 
-        VertexShader = 0;
-        PixelShader  = 0;
+        //VertexShader = 0;
+        //PixelShader  = 0;
 
-        Sampler2D[0] = <DiffSampler>;
+        Texture[0] = <DiffSampler>;
+        Target[0] = Texture2D;
+        MinFilter[0] = Point;
+        MagFilter[0] = Point;
+        MipFilter[0] = None;
 
-        Lighting = True;
-        LightEnable[0] = False;
-        SpecularEnable = False;
-        MaterialDiffuse = <MatDiffuse>;
-        MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
-        MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
-        Ambient = <MatDiffuse>;
+        Lighting = true;
+        //LightEnable[0] = false;
+        SpecularEnable = false;
+        //MaterialDiffuse = <MatDiffuse>;
+        //MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
+        //MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
+        //Ambient = <MatDiffuse>;
 
         // FVF = XYZ | TEX1;
         

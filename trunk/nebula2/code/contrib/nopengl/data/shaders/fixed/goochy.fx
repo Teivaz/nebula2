@@ -13,11 +13,8 @@ float4 ModelLightPos : Position = {100.0f, 100.0f, 100.0f, 0.0f};
 /////////////////
 
 float4 MatDiffuse : Diffuse = {0.5f, 0.4f, 0.05f, 1.0f};
-
 float4 coolColor : Diffuse = {0.05f, 0.05f, 0.6f, 1.0f};
-
 float4 liteColor : Diffuse = {0.8f, 0.5f, 0.1f, 1.0f};
-
 float4 darkColor : Diffuse = {0.0f, 0.0f, 0.0f, 1.0f};
 
 /************* DATA STRUCTS **************/
@@ -155,6 +152,5 @@ technique NoPixelShaderVersion
         AlphaOp[ 0 ]   = SelectArg1;
     }
 }
-
 
 /***************************** eof ***/

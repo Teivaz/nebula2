@@ -6,23 +6,23 @@
 //  
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-uniform float4x4 Model;
+uniform float4x4 Model : World;
 uniform float4x4 TextureTransform0 = {1.0f, 0.0f, 0.0f, 0.0f,
                                      0.0f, 1.0f, 0.0f, 0.0f, 
                                      0.0f, 0.0f, 1.0f, 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f };
 
-float4 MatAmbient;
-float4 MatDiffuse;
+float4 MatAmbient : MaterialAmbient;
+float4 MatDiffuse : MaterialDiffuse;
 int AlphaRef = 100;
-int CullMode = 2;       // CCW
+int CullMode = CCW;       // CCW
 
 texture DiffMap0;
 
 //------------------------------------------------------------------------------
 //  Texture samplers
 //------------------------------------------------------------------------------
-// #include "../lib/diffsampler.fx"
+#include "../lib/diffsampler.fx"
 
 //------------------------------------------------------------------------------
 technique t0
@@ -34,15 +34,16 @@ technique t0
 
         AlphaRef            = <AlphaRef>;
         CullMode            = <CullMode>;
-        MaterialDiffuse     = <MatDiffuse>;
-        MaterialAmbient     = <MatAmbient>;
+        //MaterialDiffuse     = <MatDiffuse>;
+        //MaterialAmbient     = <MatAmbient>;
 
         // FVF = XYZ | NORMAL | TEX1;
         
         TexCoordIndex[0] = 0;
         TextureTransformFlags[0] = Count2;
    
-        // Sampler[0] = <DiffSampler>;
+        Texture[0] = <DiffSampler>;
+        //Target[0] = Texture2D;
 
         ColorOp[0]   = Modulate;
         ColorArg1[0] = Texture;
