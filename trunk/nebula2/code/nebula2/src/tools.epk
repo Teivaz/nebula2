@@ -33,6 +33,7 @@ begintarget nimagetool
         nkernel
     }
     setlibs_win32 { wsock32.lib DevIL.lib ilu.lib }
+    setlibs_unix  { IL ILU }
 endtarget
 #===============================================================================
 beginmodule nmeshtool
