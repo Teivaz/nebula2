@@ -13,6 +13,8 @@
 #define IDC_EXT_BINARY_PATH             1005
 #define IDC_CHECK1                      1006
 #define IDC_EXT_EXPORT_ANIM             1006
+#define IDC_CHECK3                      1008
+#define IDC_EXT_NORMALIZE_SCALE         1008
 #define IDC_EXT_ASSIGN_GFXLIB           1010
 #define IDC_EXT_ASSIGN_GUI              1011
 #define IDC_EXT_ASSIGN_LIGHTS           1012

@@ -76,6 +76,8 @@ BEGIN
     CONTROL         "Export animations",IDC_EXT_EXPORT_ANIM,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,14,42,70,10
     GROUPBOX        "",IDC_STATIC,7,3,324,36
+    CONTROL         "Normalize Mesh Scale",IDC_EXT_NORMALIZE_SCALE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,90,42,84,10
 END
 
 

@@ -40,6 +40,7 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
             SetDlgItemText(hWnd, IDC_EXT_BINARY_PATH, exp->binaryPath.Get());
 
             CheckDlgButton(hWnd, IDC_EXT_EXPORT_ANIM, exp->exportAnimations);
+            CheckDlgButton(hWnd, IDC_EXT_NORMALIZE_SCALE, exp->normalizeMeshScale);
 
             SetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     exp->animsAssign.Get());
             SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   exp->gfxlibAssign.Get());
@@ -84,7 +85,8 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                 GetDlgItemText(hWnd, IDC_EXT_DIRNAME,         str, 512); exp->SetHomeDir(str);
                 GetDlgItemText(hWnd, IDC_EXT_BINARY_PATH,     str, 512); exp->binaryPath = str;
 
-				exp->exportAnimations = (BST_CHECKED == IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM) ? true : false);
+                exp->exportAnimations = (BST_CHECKED == IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM) ? true : false);
+                exp->normalizeMeshScale = (BST_CHECKED == IsDlgButtonChecked(hWnd, IDC_EXT_NORMALIZE_SCALE) ? true : false);
 
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     str, 512); exp->animsAssign = str;
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   str, 512); exp->gfxlibAssign = str;

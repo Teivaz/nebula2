@@ -33,9 +33,8 @@
 namespace MAXMem {
 #include <MAX_mem.h> 
 }
-#endif
-
 using namespace MAXMem;
+#endif
 
 #include "util/narray.h"
 
