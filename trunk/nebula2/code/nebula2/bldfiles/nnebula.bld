@@ -28,10 +28,12 @@ begintarget nnebula
         nmousecursor nmesharray ninstancestream
         nkeyanimator ntransformcurveanimator nuvanimator
         nprefserver nwin32prefserver nhdrsceneserver nmrtsceneserver
+        nlocaleserver
     }
     settargetdeps {
         nshadow
         tinyxml
+        nxml
     }
 endtarget
 

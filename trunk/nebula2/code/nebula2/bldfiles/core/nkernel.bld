@@ -15,7 +15,6 @@
 #      nkernel
 #      nmath - the math headers
 #      nutil - the utility headers
-#      nlocale - the locale server
 #  Targets:
 #      nkernel
 #===============================================================================
@@ -84,12 +83,6 @@ beginmodule nutil
         nhttpsession
         nquadtree
     }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nlocaleserver
-    setdir locale
-    setfiles { nlocaleserver_main }
-    setheaders nlocaleserver
 endmodule
 #===============================================================================
 #  nkernel modules
@@ -186,7 +179,6 @@ begintarget nkernel
         nipc
         nmath
         nutil
-        nlocaleserver
     }
 endtarget
 #-------------------------------------------------------------------------------
