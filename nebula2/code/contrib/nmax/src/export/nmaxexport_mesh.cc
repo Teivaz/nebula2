@@ -141,7 +141,7 @@ nMaxExport::appendDataToPool(MeshObject &meshObject, nMeshBuilder* meshBuilder, 
         entry.meshObjects.Append(meshObject);
         
         //FIXME: use the dynVertexBuffer naming sheme for the naming of the meshFile.
-        nPathString fileName = this->task->meshFileName;
+        nString fileName = this->task->meshFileName;
 		fileName.AppendInt(sourceVC);
 		fileName.AppendInt(sourceUsage);
         fileName += this->task->meshFileExtension;

@@ -6,7 +6,6 @@
 
     (C) 2004 RadonLabs GmbH
 */
-#include "util/npathstring.h"
 #include <d3dx9.h>
 
 //------------------------------------------------------------------------------
@@ -14,14 +13,14 @@ class nD3D9ShaderInclude : public ID3DXInclude
 {
 public:
     /// constructor
-    nD3D9ShaderInclude(const nPathString& sDir);
+    nD3D9ShaderInclude(const nString& sDir);
     /// open an include file and read its contents
     STDMETHOD(Open)(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
     /// close an include file
     STDMETHOD(Close)(LPCVOID pData);
 
 private:
-    nPathString shaderDir;
+    nString shaderDir;
 };
 //------------------------------------------------------------------------------
 #endif

@@ -58,7 +58,6 @@ beginmodule nutil
         nlist
         nmsgnode
         nnode
-        npathstring
         npriorityarray
         nringbuffer
         nstack

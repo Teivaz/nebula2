@@ -5,7 +5,6 @@
 #include "tools/nanimbuilder.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
-#include "util/npathstring.h"
 #include "anim2/nanimation.h"
 
 //------------------------------------------------------------------------------
@@ -71,7 +70,7 @@ nAnimBuilder::Save(nFileServer2* fileServer, const char* filename)
     n_assert(filename);
     n_assert(fileServer);
 
-    nPathString path(filename);
+    nString path(filename);
     if (path.CheckExtension("nanim2"))
     {
         return this->SaveNanim2(fileServer, filename);
@@ -358,7 +357,7 @@ nAnimBuilder::Load(nFileServer2* fileServer, const char* filename)
     n_assert(filename);
     n_assert(fileServer);
 
-    nPathString path(filename);
+    nString path(filename);
     if (path.CheckExtension("nanim2"))
     {
         return this->LoadNanim2(fileServer, filename);

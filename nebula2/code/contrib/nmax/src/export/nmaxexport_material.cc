@@ -79,7 +79,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                 TCHAR* bitmapFileName = igTexMap->GetBitmapFileName();
                 if (bitmapFileName)
                 {
-                    nPathString texFile(bitmapFileName);
+                    nString texFile(bitmapFileName);
                     texFile = texFile.ExtractFileName().Get();
                     texFile = this->task->texturesPath.Get() + texFile;
                     materialNode->SetTexture(shaderParam, texFile.Get());

@@ -9,7 +9,6 @@
     Aug 2004 Oleg Kreptul (Haron)
 */
 
-#include "util/npathstring.h"
 
 #define N_MAXEXPORT_BINARY_PATH    "home:bin/win32d/"
 
@@ -54,13 +53,13 @@ public:
     bool useWeightedNormals;
     
     ///baseName of the meshfile
-    nPathString meshFileName;
+    nString meshFileName;
 
     ///extension of the mesh file (.n3d2|.nvx2)
     nString meshFileExtension;
 
     ///basename of the scenefile
-    nPathString sceneFileName;
+    nString sceneFileName;
 
     ///the maxium joint palette size (see nSkinPartioner for more)
     int maxJointPaletteSize;
@@ -87,7 +86,7 @@ public:
     nString texturesPath;
 
     ///set config file path
-    void SetCfgFileName(nPathString& cfn);
+    void SetCfgFileName(nString& cfn);
     ///read config file
     bool ReadConfig();
     ///write config file
@@ -98,8 +97,8 @@ public:
     ///set home dir (to set 'home' assign)
     void SetHomeDir(nString hd);
 private:
-    nPathString cfgFileName;
-    nPathString homeDir;
+    nString cfgFileName;
+    nString homeDir;
 };
 
 //------------------------------------------------------------------------------
@@ -107,7 +106,7 @@ private:
 */
 inline
 void
-nMaxExportTask::SetCfgFileName(nPathString& cfn)
+nMaxExportTask::SetCfgFileName(nString& cfn)
 {
     this->cfgFileName = cfn;
 }

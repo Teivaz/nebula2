@@ -389,7 +389,7 @@ nODEViewerApp::HandleInput(float frameTime)
 
     if (inputServer->GetButton("screenshot"))
     {
-        nPathString filename;
+        nString filename;
         const char* sceneFile = this->GetSceneFile();
         if (sceneFile)
         {

@@ -38,7 +38,7 @@ nMemoryAnimation::LoadResource()
     n_assert(!this->IsValid());
 
     bool success = false;
-    nPathString filename = this->GetFilename().Get();
+    nString filename = this->GetFilename().Get();
     if (filename.CheckExtension("nanim2"))
     {
         success = this->LoadNanim2(filename.Get());

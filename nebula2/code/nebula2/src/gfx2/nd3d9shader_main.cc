@@ -109,7 +109,7 @@ nD3D9Shader::LoadResource()
     #endif
 
     // create include file handler
-    nPathString shaderPath(mangledPath.Get());
+    nString shaderPath(mangledPath.Get());
     nD3D9ShaderInclude includeHandler(shaderPath.ExtractDirName());
 
     // get global effect pool from gfx server

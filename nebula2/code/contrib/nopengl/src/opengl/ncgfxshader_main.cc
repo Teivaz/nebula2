@@ -11,7 +11,6 @@
 #include "kernel/nfile.h"
 
 #include "util/nstrlist.h"
-#include "util/npathstring.h"
 
 nNebulaClass(nCgFXShader, "nshader2");
 

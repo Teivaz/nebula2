@@ -33,7 +33,6 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
-#include "util/npathstring.h"
 #include "kernel/nautoref.h"
 #include "util/nthreadvariable.h"
 #include "kernel/nthread.h"

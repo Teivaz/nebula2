@@ -139,7 +139,7 @@ main(int argc, const char** argv)
 
     // read input mesh
     n_printf("-> loading mesh '%s'\n", inFileArg);
-    nPathString filename = inFileArg;
+    nString filename = inFileArg;
     if (oldN3d2Loader && (0 == strcmp(filename.GetExtension(), "n3d2")))
     {
         n_printf("-> using old n3d2 loader code\n");

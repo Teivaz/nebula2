@@ -152,7 +152,7 @@ private:
     nClass* shaderNodeClass;
     nClass* skinAnimatorClass;
     bool binaryFlag;
-    nPathString dataFilePath;
+    nString dataFilePath;
     nFile* dataFile;                // temporary data file
     nString error;
 };

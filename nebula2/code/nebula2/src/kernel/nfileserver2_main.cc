@@ -8,7 +8,6 @@
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
 #include "kernel/ncrc.h"
-#include "util/npathstring.h"
 #ifdef __WIN32__
 #include <direct.h>
 #else
@@ -126,9 +125,7 @@ nFileServer2::GetAssign(const char* assignName)
 void
 nFileServer2::CleanupPathName(nString& str)
 {
-    // FIXME: include PathString functionality in nString and
-    // ditch nPathString completely???
-    nPathString pathString(str.Get());
+    nString pathString(str.Get());
     pathString.ConvertBackslashes();
     pathString.StripTrailingSlash();
     str = pathString.Get();
@@ -297,18 +294,18 @@ nFileServer2::InitHomeAssign()
             n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
         }
 
-        nPathString pathToExe(buf);
+        nString pathToExe(buf);
         pathToExe.ConvertBackslashes();
 
         // check if executable resides in a win32 directory
-        nPathString pathToDir = pathToExe.ExtractLastDirName();
+        nString pathToDir = pathToExe.ExtractLastDirName();
         // converted to lowercase because sometimes the path is in uppercase
         pathToDir.ToLower();
         if (pathToDir == "win32" || pathToDir == "win32d")
         {
             // normal home:bin/win32 directory structure
             // strip bin/win32
-            nPathString homePath = pathToExe.ExtractDirName();
+            nString homePath = pathToExe.ExtractDirName();
             homePath.StripTrailingSlash();
             homePath = homePath.ExtractDirName();
             homePath.StripTrailingSlash();
@@ -319,7 +316,7 @@ nFileServer2::InitHomeAssign()
         {
             // not in normal home:bin/win32 directory structure, 
             // use the exe's directory as home path
-            nPathString homePath = pathToExe.ExtractDirName();
+            nString homePath = pathToExe.ExtractDirName();
             this->SetAssign("home", homePath.Get());
         }
     #elif defined(__LINUX__)
@@ -377,9 +374,9 @@ nFileServer2::InitBinAssign()
         {
             n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
         }
-        nPathString pathToExe = buf;
+        nString pathToExe = buf;
         pathToExe.ConvertBackslashes();
-        nPathString binPath = pathToExe.ExtractDirName();
+        nString binPath = pathToExe.ExtractDirName();
         this->SetAssign("bin", binPath.Get());
 
     #elif defined(__LINUX__)
@@ -436,12 +433,12 @@ nFileServer2::InitUserAssign()
                     rawPath);                                 // pszPath
     n_assert(S_OK == hr);
 
-    nPathString path(rawPath);
+    nString path(rawPath);
     path.ConvertBackslashes();
     path.Append("/");
     this->SetAssign("user", path.Get());
 #elif defined(__LINUX__) || defined(__MACOSX__)
-    nPathString path(getenv("HOME"));
+    nString path(getenv("HOME"));
     path.Append("/");
     this->SetAssign("user", path.Get());
 #else
@@ -498,8 +495,8 @@ nFileServer2::MakePath(const char* dirName)
     n_assert(dir);
 
     // build stack of non-existing dir components
-    nPathString path = this->ManglePath(dirName).Get();
-    nArray<nPathString> pathStack;
+    nString path = this->ManglePath(dirName).Get();
+    nArray<nString> pathStack;
     while ((!path.IsEmpty()) && (!dir->Open(path.Get())))
     {
         pathStack.Append(path);
@@ -521,7 +518,7 @@ nFileServer2::MakePath(const char* dirName)
     int i;
     for (i = pathStack.Size() - 1; i >= 0; --i)
     {
-        const nPathString& curPath = pathStack[i];
+        const nString& curPath = pathStack[i];
         #ifdef __WIN32__
             int err = _mkdir(curPath.Get());
         #else

@@ -114,7 +114,7 @@ nD3D9Texture::LoadResource()
     n_assert(!this->IsValid());
 
     bool success = false;
-    nPathString filename = this->GetFilename().Get();
+    nString filename = this->GetFilename().Get();
 
     if (this->IsRenderTarget())
     {

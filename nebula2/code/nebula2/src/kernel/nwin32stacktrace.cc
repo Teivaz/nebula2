@@ -4,7 +4,6 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/nwin32stacktrace.h"
-#include "util/npathstring.h"
 
 char nWin32StackTrace::CharBuffer[1<<15] = { 0 };
 
@@ -78,8 +77,8 @@ nWin32StackTrace::WalkStack(HANDLE thread, CONTEXT& context)
     // add executable's directory to the search path
     char buf[N_MAXPATH];
     DWORD strLen = GetModuleFileName(0,  buf, sizeof(buf));
-    nPathString path = buf;
-    nPathString dirPath = path.ExtractDirName();
+    nString path = buf;
+    nString dirPath = path.ExtractDirName();
 	SymInitialize(this->process, (PSTR) dirPath.Get(), true);
 
     STACKFRAME64 stackFrame = { 0 };

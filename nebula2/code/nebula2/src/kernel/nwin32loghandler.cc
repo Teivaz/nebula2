@@ -7,7 +7,6 @@
 #include "kernel/nkernelserver.h"
 #include "kernel/nwin32loghandler.h"
 #include "kernel/nfileserver2.h"
-#include "util/npathstring.h"
 #include "kernel/nenv.h"
 #include <windows.h>
 #include <shfolder.h>
@@ -69,7 +68,7 @@ nWin32LogHandler::Open()
         n_assert(S_OK == hr);
 
         // construct path
-        nPathString path(rawPath);
+        nString path(rawPath);
         path.ConvertBackslashes();
         path.Append("/");
         path.Append(this->subDir);

@@ -3,7 +3,6 @@
 #include <maya/MLibrary.h>
 #include <maya/MFileIO.h>
 #include <maya/MGlobal.h>
-#include <util/npathstring.h>
 #include <cassert>
 
 class Options
@@ -19,9 +18,9 @@ public:
     inline bool analyzeP() const { return _bAnalyze; }
 
     inline MString mayaInputFilename() const { return _szMayaInputFilename; }
-    inline const nPathString& animKeysFilename() const { return _szAnimKeysFilename; }
-    inline const nPathString& meshFilename() const { return _szMeshFilename; }
-    inline const nPathString& scriptFilename() const { return _szScriptFilename; }
+    inline const nString& animKeysFilename() const { return _szAnimKeysFilename; }
+    inline const nString& meshFilename() const { return _szMeshFilename; }
+    inline const nString& scriptFilename() const { return _szScriptFilename; }
     inline MString getSizeMult() const { return _szSizeMult; }
     inline uint animStep() const { return _nKeyEveryNFrames; }
     inline int startFrame() const { return _nStartFrame; } // 0 is the beginning, negative values are relative to endFrame
@@ -32,9 +31,9 @@ public:
 
     MString _szMayaInputFilename;
     MString _szSizeMult;
-    nPathString _szScriptFilename; // Main script (.n2) file name
-    nPathString _szMeshFilename; // .n3d2 file name
-    nPathString _szAnimKeysFilename; // .nanim2
+    nString _szScriptFilename; // Main script (.n2) file name
+    nString _szMeshFilename; // .n3d2 file name
+    nString _szAnimKeysFilename; // .nanim2
 
 private:
     // Periodicity of the keys in exported Nebula animation as compared to Maya animation
