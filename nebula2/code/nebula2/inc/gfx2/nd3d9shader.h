@@ -67,8 +67,15 @@ public:
 
     /// begin applying the shader, returns number of passes
     virtual int Begin(bool saveState);
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+    /// begin a render pass
+    virtual void BeginPass(int pass);
+    /// end a render pass
+    virtual void EndPass();
+#else
     /// render a pass
     virtual void Pass(int pass);
+#endif
     /// finish applying the shader
     virtual void End();
 
@@ -94,6 +101,10 @@ private:
     bool didNotValidate;
     D3DXHANDLE parameterHandles[nShaderState::NumParameters];     // map shader states to D3DX handles
     nShaderParams curParams;    // mirrored to avoid redundant parameters setting
+
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+    bool inBeginPass;
+#endif
 };
 
 //------------------------------------------------------------------------------

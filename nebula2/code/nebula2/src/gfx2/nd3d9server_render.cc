@@ -608,8 +608,11 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
     int curPass;
     for (curPass = 0; curPass < numPasses; curPass++)
     {
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+        shader->BeginPass(curPass);
+#else
         shader->Pass(curPass);
-
+#endif
         hr = this->d3d9Device->DrawIndexedPrimitive(
             d3dPrimType, 
             0,
@@ -622,6 +625,9 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
         #ifdef __NEBULA_STATS__
         this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
         #endif
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+        shader->EndPass();
+#endif
     }
     shader->End();
 
@@ -654,13 +660,20 @@ nD3D9Server::Draw(PrimitiveType primType)
     int curPass;
     for (curPass = 0; curPass < numPasses; curPass++)
     {
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+        shader->BeginPass(curPass);
+#else
         shader->Pass(curPass);
+#endif
         hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed!");
 
         #ifdef __NEBULA_STATS__
         this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
         #endif
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+        shader->EndPass();
+#endif
     }
     shader->End();
 
