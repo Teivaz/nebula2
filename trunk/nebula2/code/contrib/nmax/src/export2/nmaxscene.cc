@@ -21,7 +21,7 @@
 #include "export2/nmaxdummy.h"
 #include "export2/nmaxtransform.h"
 
-#include "export2/nmaxcontroller.h"
+#include "export2/nmaxcontrol.h"
 
 #include "kernel/npersistserver.h"
 #include "variable/nvariableserver.h"
