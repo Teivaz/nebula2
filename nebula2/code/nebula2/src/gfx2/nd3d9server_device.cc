@@ -16,6 +16,16 @@ nD3D9Server::InitDeviceState()
 {
     n_assert(this->d3d9Device);
 
+    // update the viewport rectangle
+    D3DVIEWPORT9 dvp;
+    this->d3d9Device->GetViewport(&dvp);
+    this->viewport.x      = (float) dvp.X;
+    this->viewport.y      = (float) dvp.Y;
+    this->viewport.width  = (float) dvp.Width;
+    this->viewport.height = (float) dvp.Height;
+    this->viewport.nearz  = dvp.MinZ;
+    this->viewport.farz   = dvp.MaxZ;
+
     // update the projection matrix
     this->SetCamera(this->GetCamera());
 
@@ -34,9 +44,9 @@ nD3D9Server::InitDeviceState()
     and depth buffer.
 */
 bool
-nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat, 
+nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
                               D3DFORMAT backbufferFormat,
-                              D3DFORMAT depthFormat) 
+                              D3DFORMAT depthFormat)
 {
     n_assert(this->d3d9);
 
@@ -101,7 +111,7 @@ nD3D9Server::GetD3DFormatNumBits(D3DFORMAT fmt)
         case D3DFMT_L8:
         case D3DFMT_R3G3B2:
             return 8;
-    
+
         default:
             return 0;
     }
@@ -188,7 +198,7 @@ nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3
     {
         n_error("nD3D9Server: No valid Direct3D display format found!\n");
     }
-}    
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -261,7 +271,7 @@ nD3D9Server::DeviceOpen()
     #ifdef __NEBULA_STATS__
     n_assert(0 == this->queryResourceManager);
     #endif
-    
+
     HRESULT hr;
 
     // prepare window...
@@ -286,13 +296,13 @@ nD3D9Server::DeviceOpen()
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL | D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
         n_printf("nD3D9Server: using enforced software vertex processing\n");
 
-    #else 
+    #else
         // check if hardware vertex shaders are supported, if not,
         // activate mixed vertex processing
         if (this->devCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
         {
             if (this->GetFeatureSet() >= DX9)
-            {        
+            {
                 this->deviceBehaviourFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
                 n_printf("nD3D9Server: using hardware vertex processing\n");
 
@@ -406,7 +416,7 @@ nD3D9Server::DeviceOpen()
 
     // restore window
     this->windowHandler.RestoreWindow();
-    
+
     this->CreateDisplayModeEnvVars();
 
     return true;
@@ -676,7 +686,7 @@ nD3D9Server::UpdateCursor()
 
 //------------------------------------------------------------------------------
 /**
-    This method should return the number of currently available stencil bits 
+    This method should return the number of currently available stencil bits
     (override in subclass).
 */
 int
@@ -715,10 +725,10 @@ nD3D9Server::GetNumDepthBits() const
 //------------------------------------------------------------------------------
 /**
     Adjust gamma with given gamma, brightness and contrast.
-    The default values are 1.0 for gamma, and roughly 0.5 for brightness 
+    The default values are 1.0 for gamma, and roughly 0.5 for brightness
     and contrast.
-    If you want to change one of these, first call 
-    SetGamma/Brightness/Contrast(), then call AdjustGamma() 
+    If you want to change one of these, first call
+    SetGamma/Brightness/Contrast(), then call AdjustGamma()
     to apply the specified value.
 
     23-Aug-04    kims    created
@@ -728,17 +738,17 @@ void nD3D9Server::AdjustGamma()
     D3DGAMMARAMP	ramp;
 
     int val;
-    
+
     for (int i=0; i<256; i++)
     {
-        val = (int)((this->contrast+0.5f)*pow(i/255.f,1.0f/this->gamma)*65535.f + 
+        val = (int)((this->contrast+0.5f)*pow(i/255.f,1.0f/this->gamma)*65535.f +
                     (this->brightness-0.5f)*32768.f - this->contrast*32768.f + 16384.f);
         ramp.red[i] = ramp.green[i] = ramp.blue[i] = n_iclamp(val, 0, 65535);
     }
 
     nDisplayMode2 dispMode = this->windowHandler.GetDisplayMode();
-    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) && 
-        this->d3d9Device && 
+    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) &&
+        this->d3d9Device &&
         (this->devCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA))
     {
         this->d3d9Device->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
@@ -766,8 +776,8 @@ void nD3D9Server::RestoreGamma()
         ramp.red[i] = ramp.green[i] = ramp.blue[i] = i << 8;
 
     nDisplayMode2 dispMode = this->windowHandler.GetDisplayMode();
-    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) && 
-        this->d3d9Device && 
+    if ((dispMode.GetType() == nDisplayMode2::Fullscreen) &&
+        this->d3d9Device &&
         (this->devCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA))
     {
         this->d3d9Device->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
@@ -778,7 +788,7 @@ void nD3D9Server::RestoreGamma()
 
 //------------------------------------------------------------------------------
 /**
-    When the display is first opened, we create a collection of nEnvs 
+    When the display is first opened, we create a collection of nEnvs
     that describe the possible video modes for all adapters.  We
     only include those whose format corresponds to the "best" display
     format, as returned by FindBufferFormats.  Note that, at the moment,
@@ -818,7 +828,7 @@ void nD3D9Server::CreateDisplayModeEnvVars()
             envVar->SetS( identifier.DeviceName );
             envVar = (nEnv*)kernelServer->New( "nenv", "description" );
             envVar->SetS( identifier.Description );
-            
+
             // adapter mode enumeration
             const uint numModes = this->d3d9->GetAdapterModeCount( adapterIdx, dispFormat );
             for (uint modeIdx = 0; modeIdx < numModes; ++modeIdx)
@@ -861,6 +871,6 @@ void nD3D9Server::CreateDisplayModeEnvVars()
             envVar->SetI( D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion) );
         }
 
-        kernelServer->SetCwd( cwd );    
+        kernelServer->SetCwd( cwd );
     }
 }
