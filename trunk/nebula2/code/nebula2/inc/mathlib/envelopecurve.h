@@ -1,9 +1,14 @@
 #ifndef N_ENVELOPE_CURVE_H
 #define N_ENVELOPE_CURVE_H
 //------------------------------------------------------------------------------
-//  CLASS
-//  envelope curve -- simple modulation function (dt.: Huellkurve)
-//------------------------------------------------------------------------------
+/**
+    @class nEnvelopeCurve
+    @ingroup NebulaMathDataTypes
+
+    An envelope curve class.
+
+    (C) 2004 RadonLabs GmbH
+*/
 #include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------

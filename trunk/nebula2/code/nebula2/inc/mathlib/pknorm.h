@@ -5,7 +5,9 @@
     @class pknorm3
     @ingroup NebulaMathDataTypes
 
-    a normal packed into 16 bits
+    A normal packed into 16 bits
+
+    (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
 

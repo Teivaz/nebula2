@@ -9,6 +9,8 @@
 
      - 08-Dec-00   floh    extended, ATTENTION: argument ordering in
                            constructor has changed!
+
+    (C) 2004 RadonLabs GmbH
 */
 #include <stdlib.h>
 #include <stdio.h>

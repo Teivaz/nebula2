@@ -13,7 +13,6 @@
 #include "mathlib/_vector2.h"
 #include "mathlib/_vector3.h"
 #include "mathlib/_vector4.h"
-
 typedef _vector2 vector2;
 typedef _vector3 vector3;
 typedef _vector4 vector4;
