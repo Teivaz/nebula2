@@ -9,9 +9,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
+#include "mathlib/matrix.h"
 
 #include <string.h>
 
@@ -19,29 +18,35 @@
 class nArg 
 {
 public:
-    enum ArgType 
+    enum Type 
     { 
-        ARGTYPE_VOID,
-        ARGTYPE_INT,
-        ARGTYPE_FLOAT,
-        ARGTYPE_STRING,
-        ARGTYPE_BOOL,
-        ARGTYPE_OBJECT,
-        ARGTYPE_CODE,
-        ARGTYPE_LIST,
+        Void,
+        Int,
+        Float,
+        String,
+        Bool,
+        Object,
+        List,
+        Float4,
+        Matrix44,
     };
 
     /// the default constructor
     nArg();
     /// the copy constructor
-    nArg(const nArg&);
+    nArg(const nArg& rhs);
     /// the destructor
     ~nArg();
+
+    /// delete contents (sets type to Void)
+    void Delete();
+    /// copy content
+    void Copy(const nArg& rhs);
     /// the equals operator
     bool operator==(const nArg& rhs) const;
+    /// assignment operator
+    nArg& operator=(const nArg& rhs);
 
-    /// set with contents of other arg
-    void Set(const nArg&);
     /// set content to an integer
     void SetI(int i);
     /// set content to a bool
@@ -52,30 +57,34 @@ public:
     void SetS(const char* s);
     /// set content to an (object) pointer
     void SetO(void*);
-    /// set content to a chunk of script code
-    void SetC(const char* c);
     /// Set content to an array of nArgs
     void SetL(nArg* _l, int len);
+    /// set to float4
+    void SetF4(const nFloat4& f4);
+    /// set to matrix44
+    void SetM44(const matrix44& m44);
 
     /// get the content data type
-    nArg::ArgType GetType(void) const;
+    Type GetType() const;
     /// get int content
-    int   GetI(void) const;
+    int   GetI() const;
     /// get bool content
-    bool  GetB(void) const;
+    bool  GetB() const;
     /// get float content
-    float GetF(void) const;
+    float GetF() const;
     /// get string content
-    const char* GetS(void) const;
+    const char* GetS() const;
     /// get object pointer content
-    void* GetO(void) const;
-    /// get chunk of script code
-    const char* GetC(void) const;
+    void* GetO() const;
     /// Get an array of nArgs
     int GetL(nArg*&) const;
+    /// get float4 content
+    const nFloat4& GetF4() const;
+    /// get matrix44 content
+    const matrix44& GetM44() const;
 
 private:
-    nArg::ArgType type;
+    Type type;
     union 
     {
         int i;
@@ -84,6 +93,8 @@ private:
         char *s;
         void *o;
         nArg *l;
+        matrix44* m44;
+        nFloat4 f4;
     };
 
     // Number of nArgs in array.
@@ -91,73 +102,97 @@ private:
     int listLen;
 
 };
+
 //-----------------------------------------------------------------------------
 /**
-    The default constructor initialized the arg type to ARGTYPE_VOID.
+    Delete content, sets type to Void.
 */
-inline nArg::nArg()
+inline
+void
+nArg::Delete()
 {
-    this->type = ARGTYPE_VOID;
-    this->s = NULL;
-    this->listLen = 0;
+    if ((this->type == String) && (0 != this->s))
+    {
+        n_free(this->s);
+        this->s = 0;
+    }
+    else if (this->type == Matrix44)
+    {
+        n_assert(this->m44);
+        delete this->m44;
+        this->m44 = 0;
+    }
+    else if (this->type == List)
+    {
+        if (this->l)
+        {
+            n_delete[] this->l;
+            this->l = 0;
+            this->listLen = 0;
+        }
+    }
+    this->type = Void;
 }
 
 //-----------------------------------------------------------------------------
 /**
-    Sets nArg object to content of another nArg object.
+    Copy contents. Only calls delete if necessary to avoid memory allocation
+    overhead.
 
-    @param arg reference to nArg object to be copied
+    @param rhs reference to nArg object to be copied
 */
-inline void nArg::Set(const nArg& arg)
+inline
+void
+nArg::Copy(const nArg& rhs)
 {
-    this->type = arg.type;
+    if (this->type != rhs.type)
+    {
+        this->Delete();
+    }
+    this->type = rhs.type;
     switch(this->type) 
     {
-        case ARGTYPE_INT: 
-            this->i = arg.i; 
+        case Void:
             break;
-        case ARGTYPE_FLOAT:    
-            this->f = arg.f; 
+
+        case Int: 
+            this->i = rhs.i; 
             break;
-        case ARGTYPE_STRING:
-        case ARGTYPE_CODE:
-            if (this->s) 
-            {
-                n_free(this->s);
-                this->s = 0;
-            }
-            if (arg.s) 
+            
+        case Float:    
+            this->f = rhs.f; 
+            break;
+
+        case String:
+        	this->Delete();
+            if (rhs.s)
             {   
-                this->s = n_strdup((char *) arg.s);
+                this->s = n_strdup(rhs.s);
             } 
             else 
             {
                 this->s = 0;
             }
             break;
-        case ARGTYPE_BOOL:     
-            this->b = arg.b; 
+
+        case Bool:     
+            this->b = rhs.b; 
             break;
-        case ARGTYPE_OBJECT:
-            this->o = arg.o;
+
+        case Object:
+            this->o = rhs.o;
             break;
-        case ARGTYPE_VOID:
-            break;
-        case ARGTYPE_LIST:
-            if (this->l)
+
+        case List:
+        	this->Delete();
+            if (rhs.l)
             {
-                n_delete[] this->l;
-                this->l = 0;
-                this->listLen = 0;
-            }
-            if (arg.l)
-            {
-                this->l = n_new nArg[arg.listLen];
-                for (int i = 0; i < arg.listLen; i++)
+                this->l = n_new nArg[rhs.listLen];
+                for (int i = 0; i < rhs.listLen; i++)
                 {
-                    this->l[i].Set(arg.l[i]);
+                    this->l[i].Copy(rhs.l[i]);
                 }
-                this->listLen = arg.listLen;
+                this->listLen = rhs.listLen;
             }
             else
             {
@@ -165,38 +200,71 @@ inline void nArg::Set(const nArg& arg)
                 this->listLen = 0;
             }
             break;
+
+        case Float4:
+            this->f4 = rhs.f4;
+            break;
+
+        case Matrix44:
+            n_assert(rhs.m44);
+            if (this->m44)
+            {
+                *this->m44 = *rhs.m44;
+            }
+            else
+            {
+                this->m44 = new matrix44(*rhs.m44);
+            }
+            break;
     }
 }
 
 //-----------------------------------------------------------------------------
 /**
-    The copy constructor simply calls nArg::Set()
+    The default constructor will initialize the arg type to Void
+*/
+inline 
+nArg::nArg() :
+    type(Void),
+    s(0),
+    listLen(0)
+{
+    // empty
+}
+
+//-----------------------------------------------------------------------------
+/**
+    The copy constructor simply calls nArg::Copy()
 
     @param arg reference to nArg object to be copied
 */
-inline nArg::nArg(const nArg& arg)
+inline 
+nArg::nArg(const nArg& rhs) :
+    type(Void),
+    s(0),
+    listLen(0)
 {
-    nArg::Set(arg);
-}    
+    this->Copy(rhs);
+}
         
 //-----------------------------------------------------------------------------
 /**
 */
 inline nArg::~nArg()
 {
-    if (ARGTYPE_STRING == this->type)
-    {
-        if (this->s) n_free(this->s);
-    }
-    else if (ARGTYPE_LIST == this->type)
-    {
-        if (this->l)
-        {
-            n_delete[] this->l;
-            this->l = 0;
-        }
-    }
-}   
+    this->Delete();
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nArg&
+nArg::operator=(const nArg& rhs)
+{
+    this->Copy(rhs);
+    return *this;
+}
 
 //-----------------------------------------------------------------------------
 /**
@@ -210,12 +278,16 @@ nArg::operator==(const nArg& rhs) const
     {
         switch (this->type)
         {
-            case ARGTYPE_INT: 
+            case Void:
+                return true;
+
+            case Int: 
                 return (this->i == rhs.i); 
-            case ARGTYPE_FLOAT:    
+
+            case Float:    
                 return (this->f == rhs.f); 
-            case ARGTYPE_STRING:
-            case ARGTYPE_CODE:
+
+            case String:
                 if (this->s && rhs.s)
                 {
                     return (0 == strcmp(this->s, rhs.s));
@@ -224,13 +296,13 @@ nArg::operator==(const nArg& rhs) const
                 {
                     return false;
                 }
-            case ARGTYPE_BOOL:     
+
+            case Bool:     
                 return (this->b == rhs.b); 
-            case ARGTYPE_OBJECT:
+            case Object:
                 return (this->o == rhs.o);
-            case ARGTYPE_VOID:
-                return true;
-            case ARGTYPE_LIST:
+
+            case List:
                 if ((this->l && rhs.l) && (this->listLen == rhs.listLen))
                 {
                     for(int i = 0; i < this->listLen; i++)
@@ -240,6 +312,16 @@ nArg::operator==(const nArg& rhs) const
                     }
                     return true;
                 }
+
+            case Float4:
+                return ((this->f4.x == rhs.f4.x) &&
+                        (this->f4.y == rhs.f4.y) &&
+                        (this->f4.z == rhs.f4.z) &&
+                        (this->f4.w == rhs.f4.w));
+
+            case Matrix44:
+                n_error("nArg::operator==(): Cannot compare matrix44 objects!");
+                return false;
         }        
     }
     return false;
@@ -247,97 +329,89 @@ nArg::operator==(const nArg& rhs) const
  
 //-----------------------------------------------------------------------------
 /**
-    Sets the contents to an integer, and sets the arg type to ARGTYPE_INTEGER.
+    Sets the contents to an integer, and sets the arg type to Int.
 
     @param _i the integer
 */
-inline void nArg::SetI(int _i)
+inline 
+void 
+nArg::SetI(int _i)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_INT==this->type));
-    this->type = ARGTYPE_INT;
+    n_assert((Void == this->type) || (Int == this->type));
+    this->type = Int;
     this->i = _i;
 }
 //-----------------------------------------------------------------------------
 /**
-    Sets the contents to a bool value, and set the arg type to ARGTYPE_BOOL.
+    Sets the contents to a bool value, and set the arg type to Bool.
 
     @param _b the bool value
 */
-inline void nArg::SetB(bool _b)
+inline 
+void 
+nArg::SetB(bool _b)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_BOOL==this->type));
-    this->type = ARGTYPE_BOOL;
+    n_assert((Void == this->type) || (Bool == this->type));
+    this->type = Bool;
     this->b = _b;
 }
 
 //-----------------------------------------------------------------------------
 /**
-    Sets the contents to a float value, and sets the arg type to ARGTYPE_FLOAT.
+    Sets the contents to a float value, and sets the arg type to Float.
 
     @param _f the float value
 */
-inline void nArg::SetF(float _f)
+inline 
+void 
+nArg::SetF(float _f)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_FLOAT==this->type));
-    this->type = ARGTYPE_FLOAT;
+    n_assert((Void == this->type) || (Float == this->type));
+    this->type = Float;
     this->f = _f;
 }
 
 //-----------------------------------------------------------------------------
 /**
-    Sets the contents to a string, and sets the arg type to ARGTYPE_STRING.
+    Sets the contents to a string, and sets the arg type to String.
     The string is duplicated internally.
 
     @param _s the string
 */
-inline void nArg::SetS(const char *_s)
+inline 
+void 
+nArg::SetS(const char *_s)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_STRING==this->type));
-    if (this->s) 
-    {
-        n_free(this->s);
-        this->s = NULL;
-    }
-    this->type = ARGTYPE_STRING;
+    n_assert((Void == this->type) || (String == this->type));
+    this->Delete();
+    this->type = String;
     if (_s) {
         this->s = n_strdup(_s);
     } else this->s = NULL;
 }
 
-//-----------------------------------------------------------------------------
-/**
-    Sets the contents to a chunk of code, and sets the arg type to ARGTYPE_CODE.
-    The string is duplicated internally.
-
-    @param _c the script chunk string
-*/
-inline void nArg::SetC(const char* _c)
-{
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_CODE==this->type));
-    this->type = ARGTYPE_VOID;
-    this->SetS(_c);
-    this->type = ARGTYPE_CODE;
-}
 
 //-----------------------------------------------------------------------------
 /**
     Sets the contents to an object pointer, and sets the arg type to
-    ARGTYPE_OBJECT. The pointer is NOT safe (if the object is destroyed,
+    Object. The pointer is NOT safe (if the object is destroyed,
     the pointer points to Nirvana).
 
     @param _o the object pointer
 */
-inline void nArg::SetO(void *_o)
+inline 
+void 
+nArg::SetO(void *_o)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_OBJECT==this->type));
-    this->type = ARGTYPE_OBJECT;
+    n_assert((Void == this->type) || (Object == this->type));
+    this->type = Object;
     this->o = _o;
 }
 
 //-----------------------------------------------------------------------------
 /**
     Sets the contents to an array of other nArgs, and sets the arg type 
-    to ARGTYPE_LIST.
+    to List.
     The array is NOT duplicated.
 
     @param _l pointer to array of nArg
@@ -345,14 +419,9 @@ inline void nArg::SetO(void *_o)
 */
 inline void nArg::SetL(nArg* _l, int len)
 {
-    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_LIST==this->type));
-    if (this->l)
-    {
-        n_delete[] this->l;
-        this->l = 0;
-        this->listLen = 0;
-    }
-    this->type = ARGTYPE_LIST;
+    n_assert((Void == this->type) || (List == this->type));
+    this->Delete();
+    this->type = List;
     if (_l)
     {
         this->l = _l;
@@ -367,20 +436,53 @@ inline void nArg::SetL(nArg* _l, int len)
 
 //-----------------------------------------------------------------------------
 /**
+    Set the content to a float4 value.
+*/
+inline
+void
+nArg::SetF4(const nFloat4& _f4)
+{
+    n_assert((Void == this->type) || (Float4 == this->type));
+    this->type = Float4;
+    this->f4 = _f4;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Set the content to a matrix44 value.
+*/
+inline
+void
+nArg::SetM44(const matrix44& _m44)
+{
+    n_assert((Void == this->type) || (Matrix44 == this->type));
+    if (this->m44)
+    {
+        *this->m44 = _m44;
+    }
+    else
+    {
+        this->m44 = new matrix44(_m44);
+    }
+    this->type = Matrix44;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Returns the argument type of the object, which is one of
-    ARGTYPE_VOID        - unitialized
-    ARGTYPE_INT
-    ARGTYPE_BOOL
-    ARGTYPE_FLOAT
-    ARGTYPE_OBJECT
-    ARGTYPE_CODE
-    ARGTYPE_LIST
+    Void        - unitialized
+    Int
+    Bool
+    Float
+    List
+    Float4
+    Matrix44
 
     @return the arg type
 */
 inline 
-nArg::ArgType 
-nArg::GetType(void) const
+nArg::Type
+nArg::GetType() const
 {
     return this->type;
 }
@@ -394,9 +496,9 @@ nArg::GetType(void) const
 */
 inline 
 int 
-nArg::GetI(void) const
+nArg::GetI() const
 {
-    n_assert(ARGTYPE_INT==this->type);
+    n_assert(Int == this->type);
     return this->i;
 }
 
@@ -409,9 +511,9 @@ nArg::GetI(void) const
 */
 inline 
 bool 
-nArg::GetB(void) const
+nArg::GetB() const
 {
-    n_assert(ARGTYPE_BOOL==this->type);
+    n_assert(Bool == this->type);
     return this->b;
 }
 
@@ -424,9 +526,9 @@ nArg::GetB(void) const
 */
 inline 
 float 
-nArg::GetF(void) const
+nArg::GetF() const
 {
-    n_assert(ARGTYPE_FLOAT==this->type);
+    n_assert(Float == this->type);
     return this->f;
 }
 
@@ -439,24 +541,10 @@ nArg::GetF(void) const
 */
 inline 
 const char*
-nArg::GetS(void) const
+nArg::GetS() const
 {
-    n_assert(ARGTYPE_STRING==this->type);
+    n_assert(String == this->type);
     return this->s;    
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Returns the code chunk content of the object as a const char*.
-
-    @return pointer to script code chunk
-*/
-inline
-const char*
-nArg::GetC(void) const
-{
-    n_assert(ARGTYPE_CODE == this->type);
-    return this->s;
 }
 
 //-----------------------------------------------------------------------------
@@ -468,9 +556,9 @@ nArg::GetC(void) const
 */
 inline 
 void*
-nArg::GetO(void) const
+nArg::GetO() const
 {
-    n_assert(ARGTYPE_OBJECT==this->type);
+    n_assert(Object == this->type);
     return this->o;
 }
 
@@ -487,9 +575,34 @@ inline
 int
 nArg::GetL(nArg*& _l) const
 {
-    n_assert(ARGTYPE_LIST==this->type);
+    n_assert(List == this->type);
     _l = this->l;
     return this->listLen;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Return float4 content.
+*/
+inline
+const nFloat4&
+nArg::GetF4() const
+{
+    n_assert(Float4 == this->type);
+    return this->f4;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Return matrix44 content.
+*/
+inline
+const matrix44&
+nArg::GetM44() const
+{
+    n_assert(Matrix44 == this->type);
+    n_assert(this->m44);
+    return *(this->m44);
 }
 
 //--------------------------------------------------------------------
