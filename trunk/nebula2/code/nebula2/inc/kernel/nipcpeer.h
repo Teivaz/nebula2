@@ -5,11 +5,15 @@
     @class nIpcPeer
     @ingroup Ipc
 
-    A low level interprocess communications port. Ipc peers are
-    connectionless, which means, every nIpcPeer can send to and receive from
-    any other nIpcPeer as long as the target nIpcPeer's address is known.
-    nIpcPeers can send to the broadcast address, which means, any other
-    nIpcPeer in the LAN area on the same port receives the broadcast message.
+    @brief A low level interprocess communications port for unreliable
+    communications (using UDP).
+
+    Ipc peers are connectionless, which means, every nIpcPeer can send to
+    and receive from any other nIpcPeer as long as the target nIpcPeer's
+    address is known.  nIpcPeers can send to the broadcast address,
+    which means, any other nIpcPeer in the LAN area on the same port
+    receives the broadcast message.
+
     nIpcPeers can work in blocking or nonblocking mode. In blocking mode,
     Receive() will block until at least one message has arrived. In
     non-blocking mode, Receive() will return always immediately, a return

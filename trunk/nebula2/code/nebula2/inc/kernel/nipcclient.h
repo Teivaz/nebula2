@@ -4,6 +4,7 @@
 /**
     @class nIpcClient
     @ingroup Ipc
+    @brief The client side of a network connection.
 
     A nIpcClient object can connect to exactly one nIpcServer
     object over a socket and send messages to it, or receive messages

@@ -4,6 +4,7 @@
 /**
     @class nIpcMiniServer
     @ingroup Ipc
+    @brief The per-connection state for the network server.
 
     A nIpcServer creates one nIpcMiniServer for each connecting client.
 
