@@ -7,8 +7,8 @@
 //-----------------------------------------------------------------------------
 /**
     @class nOctSphere
-
-	@brief culling with sphere
+    @ingroup NOctreeContribModule
+    @brief culling with sphere
 */
 class nOctSphere : public nOctVisitor
 {

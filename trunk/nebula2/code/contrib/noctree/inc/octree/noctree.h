@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------
 /**
     @class nOctree
-
+    @ingroup NOctreeConribModule
     @brief Base octree space partitioning class.    
 
     Administers a number nOctElement's, which are defined by
