@@ -126,7 +126,7 @@ nProfiler::Rewind()
     this->accum = 0;
 }
 
-#elif __LINUX__
+#elif defined(__LINUX__) || defined(__MACOSX__)
 #define N_MICROSEC_INT    (1000000)
 #define N_MICROSEC_FLOAT  (1000000.0)
 
