@@ -167,7 +167,8 @@ main(int argc, const char** argv)
     if (tangentArg)
     {
         n_printf("-> generating tangents...\n");
-        mesh.BuildTangents();
+        mesh.BuildTriangleNormals();
+        mesh.BuildVertexTangentBinormals();
     }
 
     // FIXME: group renaming
