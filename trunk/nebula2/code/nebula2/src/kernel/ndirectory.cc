@@ -111,7 +111,6 @@ bool
 nDirectory::IsEmpty()
 {
     n_assert(this->IsOpen());
-
     return this->empty;
 }
 
