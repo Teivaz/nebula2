@@ -38,6 +38,7 @@ beginmodule ngfxserver2
         ndynamicmesh 
         nfontdesc 
         nshaderstate 
+        nshaderparams
         ndynamicshadermesh
     }
 endmodule
