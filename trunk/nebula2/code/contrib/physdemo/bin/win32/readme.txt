@@ -18,6 +18,13 @@ Megan Fox's PhysDemo
 'spacebar' - fires a super-massive bullet from the camera in the direction the camera is looking
 
 
+Debug Controls:
+Pg up/pg down - Adjust the global CFM, which makes objects softer as it goes up.
+Home/end - Adjust the global ERP, which has some effect on the stability of the sim.
+
+Insert/delete - Adjust the FPS Cutoff value.  What this does if, if something in the world would cause the FPS to drop below the cutoff, the application forces updates at the rate of the cutoff value.  This means that FPS never drops below the specified value, but the world appears to move in slow-motion.
+
+
 Any objects falling significantly below the floor plate will be destroyed, so if the system starts lagging (and it will if you make a pile of too many blocks/etc), hit explosion a few times and send the objects hogging your system to their doom.
 
 

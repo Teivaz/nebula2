@@ -19,6 +19,7 @@ PhysDemoApp::PhysDemoApp(nKernelServer* ks) :
     defViewerZoom(0.0f, 0.0f, 9.0f),
     viewerPos(defViewerPos),
     viewerVelocity(500.0f),
+    fpsCutoff(0.066f),
     viewerAngles(defViewerAngles),
     viewerZoom(defViewerZoom),
     screenshotID(0),
@@ -74,20 +75,24 @@ PhysDemoApp::Open()
     // initialize the physics-related classes
     this->refPhysWorld      = (nOpendeWorld*)    kernelServer->New("nopendeworld", "/phys/world");
     this->refPhysWorld->SetGravity(vector3(0.0f, -9.8f, 0.0f));
-    this->refPhysWorld->SetQuickStepNumIterations(20);
+    this->refPhysWorld->SetQuickStepNumIterations(PHYS_QUICKSTEP_ITERS);
+    this->refPhysWorld->SetAutoDisableFlag(true);
+    this->refPhysWorld->SetAutoDisableLinearThreshold(PHYS_LINEAR_VEL_THRESHOLD);
+    this->refPhysWorld->SetAutoDisableAngularThreshold(PHYS_ANGULAR_VEL_THRESHOLD);
+    this->refPhysWorld->SetAutoDisableSteps(PHYS_VEL_THRESHOLD_TIMEOUT);
     this->refPhysColSpace   = (nOpendeHashSpace*)    kernelServer->New("nopendehashspace", "/phys/world/space");
     this->refPhysColSpace->Create();
 
     // Create the contact joint group and array (and set some values for the contact joints, since in this sim, every surface is treated identically)
     this->physColJointGroupId = nOpende::JointGroupCreate(0);
-    this->physContactArray = new dContact[3];
-    this->physContactArray[0].surface.mode = dContactApprox1;
-    this->physContactArray[1].surface.mode = dContactApprox1;
-    this->physContactArray[2].surface.mode = dContactApprox1;
-    this->physContactArray[0].surface.mu = dInfinity / 2.0f;
-    this->physContactArray[1].surface.mu = dInfinity / 2.0f;
-    this->physContactArray[2].surface.mu = dInfinity / 2.0f;
+    this->physContactArray = new dContact[PHYS_MAX_CONTACTS];
 
+    for (int index = 0; index < PHYS_MAX_CONTACTS; index++)
+    {
+        this->physContactArray[index].surface.mode = dContactApprox1;
+        this->physContactArray[index].surface.mu = 0.75;
+    }
+    
     // define the input mapping
     this->refScriptServer->RunScript(this->GetInputScript(), result);
 
@@ -192,14 +197,35 @@ PhysDemoApp::Run()
         }
         float frameTime = (float) (time - prevTime);
 
+        // This code right here prevents the FPS from dropping below a certain level.  If the FPS
+        // does drop below that level, the entire world enters a sort of slow-mo mode until the
+        // conditions causing such extreme drop in perf correct themselves.
+        if (frameTime > this->fpsCutoff)
+        {
+            n_printf("Throttling frame time - cascade conditions detected\n");
+            frameTime = this->fpsCutoff;
+        }
+
         this->currFPS = 1.0f / frameTime;
 
         // Update the GUI's concept of time
         this->refGuiServer->SetTime(time);
         // Also update the GUI FPS element
-        char fpsString[256];
-        sprintf(fpsString, "FPS: %.1f", this->currFPS);
-        this->guiFPSLabel->SetText(fpsString);
+        char guiString[256];
+        sprintf(guiString, "FPS: %.1f", this->currFPS);
+        this->guiFPSLabel->SetText(guiString);
+
+        // Update the GUI's CFM label
+        sprintf(guiString, "CFM: %.5f", this->refPhysWorld->GetCFM());
+        this->guiCFMLabel->SetText(guiString);
+
+        // Update the GUI's ERP label
+        sprintf(guiString, "ERP: %.5f", this->refPhysWorld->GetERP());
+        this->guiERPLabel->SetText(guiString);
+
+        // Update the GUI's FPS LockP label
+        sprintf(guiString, "FPS Lock: %.1f", 1.0f / this->fpsCutoff);
+        this->guiFPSCutoffLabel->SetText(guiString);
 
         // trigger remote server
         kernelServer->GetRemoteServer()->Trigger();
@@ -293,9 +319,9 @@ PhysDemoApp::HandleInput(float frameTime)
         float x = (rand()%1000)/200.0f - 2.5f;
         float z = (rand()%1000)/200.0f - 2.5f;
 
-        this->CreateBox(x, -4.6f, z);
-        this->CreateBox(x, -3.55f, z);
-        this->CreateBox(x, -2.5f, z);
+        this->CreateBox(x, -4.1f, z);
+        this->CreateBox(x, -3.2f, z);
+        this->CreateBox(x, -2.25f, z);
     }
     // Drop a box from the camera
     if (inputServer->GetButton("drop_box"))
@@ -327,18 +353,18 @@ PhysDemoApp::HandleInput(float frameTime)
         {
             for (float index = -10; index < 10.0f; index += 1.8f)
             {
-                this->CreateBox(x, -4.6f, index);
-                this->CreateBox(x, -3.55f, index);
-                this->CreateBox(x, -2.5f, index);
+                this->CreateBox(x, -4, index, true);
+                this->CreateBox(x, -3, index, true);
+                this->CreateBox(x, -2, index, true);
             }
         }
         if (z > -10 && z < 10)
         {
             for (float index = -10; index < 10.0f; index += 1.8f)
             {
-                this->CreateBox(index, -4.6f, z);
-                this->CreateBox(index, -3.55f, z);
-                this->CreateBox(index, -2.5f, z);
+                this->CreateBox(index, -4, z, true);
+                this->CreateBox(index, -3, z, true);
+                this->CreateBox(index, -2, z, true);
             }
         }
     }
@@ -354,8 +380,11 @@ PhysDemoApp::HandleInput(float frameTime)
         {
             for (float index = -10; index < 10.0f; index += 1.0f)
             {
+                // Create these boxes as disabled.  This is how you'd do it in a game, with stacks
+                // this big, and the player is almost never going to be capable of building something
+                // like this on his own.
                 for (float height_index = 0; height_index < height; height_index++)
-                    this->CreateBox(x, height_index - 4, index);
+                    this->CreateBox(x, height_index - 4, index, true);
 
                 n_printf("height: %i\n", height);
 
@@ -388,12 +417,45 @@ PhysDemoApp::HandleInput(float frameTime)
         forceVec.rotate(vector3(1, 0, 0), this->viewerAngles.theta);
         forceVec.rotate(vector3(0, 1, 0), this->viewerAngles.rho);
 
-        obj->refPhysBody->AddForce(forceVec * 10000000.0f);
+        obj->refPhysBody->AddForce(forceVec * 100000.0f);
     }
     // Create a floor-clearing explosion
     if (inputServer->GetButton("kaboom"))
     {
-        this->CreateExplosion((rand()%1000)/200.0f - 2.5f, -4.0f, (rand()%1000)/200.0f - 2.5f, 30000.0);
+        this->CreateExplosion((rand()%1000)/200.0f - 2.5f, -4.0f, (rand()%1000)/200.0f - 2.5f, 30000.0, true);
+    }
+    // Increase the framerate cut-off
+    if (inputServer->GetButton("fps_cutoff_down"))
+    {
+        this->fpsCutoff += 0.0005f;
+    }
+    // Decrease the framerate cut-off
+    if (inputServer->GetButton("fps_cutoff_up"))
+    {
+        if (this->fpsCutoff - 0.0005f >= 0.0f)
+            this->fpsCutoff -= 0.0005f;
+    }
+    // Increase the global CFM
+    if (inputServer->GetButton("cfm_up"))
+    {
+        this->fpsCutoff = this->fpsCutoff + 0.0001f;
+    }
+    // Decrease the global CFM
+    if (inputServer->GetButton("cfm_down"))
+    {
+        if (this->refPhysWorld->GetCFM() - 0.0001f >= 0.0f)
+            this->refPhysWorld->SetCFM(this->refPhysWorld->GetCFM() - 0.0001f);
+    }
+    // Increase the global ERP
+    if (inputServer->GetButton("erp_up"))
+    {
+        this->refPhysWorld->SetERP(this->refPhysWorld->GetERP() + 0.0001f);
+    }
+    // Decrease the global ERP
+    if (inputServer->GetButton("erp_down"))
+    {
+        if (this->refPhysWorld->GetERP() - 0.0001 >= 0.0)
+            this->refPhysWorld->SetERP(this->refPhysWorld->GetERP() - 0.0001f);
     }
 }
 
@@ -548,7 +610,7 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
     Create a box
 */
 SimpleObject *
-PhysDemoApp::CreateBox(float x, float y, float z)
+PhysDemoApp::CreateBox(float x, float y, float z, bool createDisabled)
 {
     // create unique name for this object
     nString name = "box";
@@ -575,6 +637,7 @@ PhysDemoApp::CreateBox(float x, float y, float z)
 
     // set the position
     newObj->Transform.settranslation(vector3(x, y, z));
+    newObj->renderContext.SetTransform(newObj->Transform.getmatrix());
 
     // Now create the physical representation
     // The physics nodes are created as children of the curren object.
@@ -590,6 +653,9 @@ PhysDemoApp::CreateBox(float x, float y, float z)
     physGeom->SetBody(newObj->refPhysBody->id);
     physGeom->SetData((void *)newObj);
     newObj->refPhysGeom = physGeom;
+
+    if (createDisabled)
+        newObj->refPhysBody->Disable();
 
     // Finished defining objects, pop the Cwd
     kernelServer->PopCwd();
@@ -691,7 +757,7 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
-    newObj->refPhysBody->SetSphereMass(100.0f, 1.0f);
+    newObj->refPhysBody->SetSphereMass(10.0f, 1.0f);
 
     nOpendeSphereGeom *physGeom = (nOpendeSphereGeom *)kernelServer->New("nopendespheregeom", "physgeom");
     physGeom->Create("/phys/world/space");
@@ -746,7 +812,7 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     newObj->refPhysBody = (nOpendeBody *)kernelServer->New("nopendebody", "physbody");
     newObj->refPhysBody->Create("/phys/world");
     newObj->refPhysBody->SetPosition(vector3(x, y, z));
-    newObj->refPhysBody->SetSphereMass(10000.0f, 0.5f);
+    newObj->refPhysBody->SetSphereMass(100.0f, 0.5f);
 
     nOpendeSphereGeom *physGeom = (nOpendeSphereGeom *)kernelServer->New("nopendespheregeom", "physgeom");
     physGeom->Create("/phys/world/space");
@@ -781,7 +847,7 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
     Create an explosion
 */
 void
-PhysDemoApp::CreateExplosion(float x, float y, float z, float force)
+PhysDemoApp::CreateExplosion(float x, float y, float z, float force, bool enableObjects)
 {
     nRoot* objects = kernelServer->Lookup("/objects");
     SimpleObject* curObj;
@@ -796,6 +862,9 @@ PhysDemoApp::CreateExplosion(float x, float y, float z, float force)
             explosionVector = explosionVector * force;
     
             curObj->refPhysBody->AddForceAtPos(explosionVector, vector3(x, y, z));
+
+            if (enableObjects)
+                curObj->refPhysBody->Enable();
         }
     }
 }
@@ -807,7 +876,7 @@ PhysDemoApp::CreateExplosion(float x, float y, float z, float force)
 void PhysDemoApp::PhysCollisionCallback(void *data, dGeomID o1, dGeomID o2)
 {
     PhysDemoApp *app = (PhysDemoApp *)data;
-    int numContacts = nOpende::Collide(o1, o2, 2, &app->physContactArray[0].geom, sizeof(dContact));
+    int numContacts = nOpende::Collide(o1, o2, PHYS_MAX_CONTACTS, &app->physContactArray[0].geom, sizeof(dContact));
 
     for (int index = 0; index < numContacts; index++)
     {
@@ -834,6 +903,7 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
         physTime -= PHYSICS_STEPSIZE;
     }
 
+
     // And now step through each object, updating the object's position to match the physical
     // object's position
     nRoot* objects = kernelServer->Lookup("/objects");
@@ -842,19 +912,15 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
          curObj;
          curObj = (SimpleObject*) curObj->GetSucc())
     {
-        if (curObj->refPhysBody.isvalid())
+        if (curObj->refPhysBody.isvalid() && curObj->refPhysBody->IsEnabled())
         {
-            // If the object isn't moving above the specified threshold, disable it
-            if (curObj->refPhysBody->GetLinearVel().lensquared() < PHYS_LINEAR_VEL_THRESHOLD && curObj->refPhysBody->GetAngularVel().lensquared() < PHYS_ANGULAR_VEL_THRESHOLD)
-            {
-                curObj->disableTimeout++;
-
-                if (curObj->disableTimeout > PHYS_VEL_THRESHOLD_TIMEOUT)
-                {
-                    curObj->refPhysBody->Disable();
-                    curObj->disableTimeout = 0;
-                }
-            }
+            // If the object is moving normally, dampen the movement a bit to simulate low-level friction
+            // (the amount of dampening should depend on whether the object is contacting another or not,
+            // and a contact-type-specific dampening amount, but oh well, this generally works)
+            vector3 vel = curObj->refPhysBody->GetLinearVel();
+            curObj->refPhysBody->AddForce(vel * -0.01f);
+            vel = curObj->refPhysBody->GetAngularVel();
+            curObj->refPhysBody->AddTorque(vel * -0.01f);
 
             // If the object has fallen below -10.0f y coord, kill it
             if (curObj->refPhysBody->GetPosition().y < -10.0f)
@@ -871,24 +937,24 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
                 curObj->Transform.settranslation(curObj->refPhysBody->GetPosition());
                 curObj->Transform.setquatrotation(curObj->refPhysBody->GetQuaternion());
                 curObj->renderContext.SetTransform(curObj->Transform.getmatrix());
-
-                // if the floaty text is initialized, update its position
-                if (curObj->refFloatyText.isvalid())
-                {
-                    matrix44 projMat = this->refGfxServer->GetTransform(nGfxServer2::ViewProjection);
-                    vector3 projCoords = projMat.transform_coord(curObj->Transform.gettranslation());
-
-                    // scale the projected coords to be in proper screen space.
-                    projCoords.x = projCoords.x / 2.0f + 0.5f;
-                    projCoords.y = -projCoords.y / 2.0f + 0.5f;
-
-                    // And finally, set up the rect to reflect the projected coordinates.
-                    rectangle screenCoords;
-                    screenCoords.v0.set(projCoords.x - curObj->textWidth / 2.0f, projCoords.y - curObj->textHeight / 2.0f - 0.05f);
-                    screenCoords.v1.set(projCoords.x + curObj->textWidth / 2.0f, projCoords.y + curObj->textHeight / 2.0f - 0.05f);
-                    curObj->refFloatyText->SetRect(screenCoords);
-                }
             }
+        }
+
+        // if the floaty text is initialized, update its position
+        if (curObj->refPhysBody.isvalid() && curObj->refFloatyText.isvalid())
+        {
+            matrix44 projMat = this->refGfxServer->GetTransform(nGfxServer2::ViewProjection);
+            vector3 projCoords = projMat.transform_coord(curObj->Transform.gettranslation());
+
+            // scale the projected coords to be in proper screen space.
+            projCoords.x = projCoords.x / 2.0f + 0.5f;
+            projCoords.y = -projCoords.y / 2.0f + 0.5f;
+
+            // And finally, set up the rect to reflect the projected coordinates.
+            rectangle screenCoords;
+            screenCoords.v0.set(projCoords.x - curObj->textWidth / 2.0f, projCoords.y - curObj->textHeight / 2.0f - 0.05f);
+            screenCoords.v1.set(projCoords.x + curObj->textWidth / 2.0f, projCoords.y + curObj->textHeight / 2.0f - 0.05f);
+            curObj->refFloatyText->SetRect(screenCoords);
         }
     }
 }
@@ -974,6 +1040,40 @@ PhysDemoApp::InitOverlayGui()
     this->guiFPSLabel->SetAlignment(nGuiTextLabel::Left);
     this->guiFPSLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
     this->guiFPSLabel->SetFont("physDefaultFont");
+
+    // Also add a readout for CFM
+    this->guiCFMLabel = (nGuiTextLabel *) kernelServer->New("nguitextlabel", "cfmreadout");
+    n_assert(this->guiCFMLabel);
+    logoRect.v0.set(0.0f, 0.05f);
+    logoRect.v1.set(0.2f, 0.10f);
+    this->guiCFMLabel->SetRect(logoRect);
+    this->guiCFMLabel->SetText("0.0");
+    this->guiCFMLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiCFMLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    this->guiCFMLabel->SetFont("physDefaultFont");
+
+    // Also add a readout for ERP
+    this->guiERPLabel = (nGuiTextLabel *) kernelServer->New("nguitextlabel", "erpreadout");
+    n_assert(this->guiERPLabel);
+    logoRect.v0.set(0.0f, 0.10f);
+    logoRect.v1.set(0.2f, 0.15f);
+    this->guiERPLabel->SetRect(logoRect);
+    this->guiERPLabel->SetText("0.0");
+    this->guiERPLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiERPLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    this->guiERPLabel->SetFont("physDefaultFont");
+
+    // Also add a readout for fps lock
+    this->guiFPSCutoffLabel = (nGuiTextLabel *) kernelServer->New("nguitextlabel", "fpscutoffreadout");
+    n_assert(this->guiFPSCutoffLabel);
+    logoRect.v0.set(0.0f, 0.15f);
+    logoRect.v1.set(0.2f, 0.20f);
+    this->guiFPSCutoffLabel->SetRect(logoRect);
+    this->guiFPSCutoffLabel->SetText("0.0");
+    this->guiFPSCutoffLabel->SetAlignment(nGuiTextLabel::Alignment::Left);
+    this->guiFPSCutoffLabel->SetColor(vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    this->guiFPSCutoffLabel->SetFont("physDefaultFont");
+
 
     kernelServer->PopCwd();
 

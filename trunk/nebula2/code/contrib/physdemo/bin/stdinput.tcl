@@ -30,6 +30,12 @@ sel /sys/servers/input
     .map "keyb0:8.down"            "drop_stack"
     .map "keyb0:0.down"            "kaboom"
     .map "keyb0:space.down"        "fire_bullet"
+    .map "keyb0:prior.pressed"     "cfm_up"
+    .map "keyb0:next.pressed"      "cfm_down"
+    .map "keyb0:home.pressed"      "erp_up"
+    .map "keyb0:end.pressed"       "erp_down"
+    .map "keyb0:insert.pressed"    "fps_cutoff_up"
+    .map "keyb0:delete.pressed"    "fps_cutoff_down"
 
     .map "keyb0:p.down"    "create_stack_line"
     .map "keyb0:w.down"    "create_wall"

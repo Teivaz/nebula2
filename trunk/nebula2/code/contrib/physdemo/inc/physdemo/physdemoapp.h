@@ -36,8 +36,10 @@
 #include "opende/nopendeplanegeom.h"
 
 #define PHYSICS_STEPSIZE 0.01f
-#define PHYS_LINEAR_VEL_THRESHOLD 0.01
-#define PHYS_ANGULAR_VEL_THRESHOLD 0.01
+#define PHYS_MAX_CONTACTS 4
+#define PHYS_QUICKSTEP_ITERS 10
+#define PHYS_LINEAR_VEL_THRESHOLD 0.008f
+#define PHYS_ANGULAR_VEL_THRESHOLD 0.008f
 #define PHYS_VEL_THRESHOLD_TIMEOUT 10
 
 //------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ public:
     /// Creates the base "floor" object
     SimpleObject *CreateFloor(float x, float y, float z);
     /// Creates a box
-    SimpleObject *CreateBox(float x, float y, float z);
+    SimpleObject *CreateBox(float x, float y, float z, bool createDisabled = false);
     /// Creates a sphere
     SimpleObject *CreateSphere(float x, float y, float z);
     /// Creates a big sphere
@@ -91,7 +93,7 @@ public:
     /// Creates a bullet (an INCREDIBLY massive sphere)
     SimpleObject *CreateBullet(float x, float y, float z);
     /// Creates an explosion
-    void CreateExplosion(float x, float y, float z, float force);
+    void CreateExplosion(float x, float y, float z, float force, bool enableObjects = false);
     /// Destroys any phys object
     void DestroyObject(int objID);
 
@@ -147,10 +149,13 @@ private:
     matrix44 viewMatrix;
     int screenshotID;
     float currFPS;
+    float fpsCutoff;
     int fontSize;
 
     /// GUI label used for displaying the FPS (pointer retained so that the text can be updated easily)
     nGuiTextLabel *guiFPSLabel;
+
+    nGuiTextLabel *guiCFMLabel, *guiERPLabel, *guiFPSCutoffLabel;
 
     /// entity management
     nList objectList;
