@@ -8,6 +8,21 @@
 #include "script/nbinscriptserver.h"
 
 nNebulaClass(nBinScriptServer, "nscriptserver");
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nbinscriptserver
+
+    @cppclass
+    nBinScriptServer
+    
+    @superclass
+    nscriptserver
+    
+    @classinfo
+    Docs needed.
+*/
+
 
 //------------------------------------------------------------------------------
 /**
@@ -171,7 +186,7 @@ nBinScriptServer::WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, nScriptServ
             
             this->PutInt(file, '_sel');
             this->PutString(file, relPath);
-	        break;
+          break;
 
         case NOSELCOMMAND:
             break;

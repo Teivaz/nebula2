@@ -9,6 +9,21 @@
 
 nNebulaClass(nParticleServer, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nparticleserver
+    
+    @cppclass
+    nParticleServer
+
+    @superclass
+    nroot
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -7,6 +7,21 @@
 
 nNebulaClass(nDShowServer, "nvideoserver");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    ndshowserver
+
+    @cppclass
+    nDShowServer
+    
+    @superclass
+    nvideoserver
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

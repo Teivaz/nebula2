@@ -7,6 +7,21 @@
 
 nNebulaClass(nResourceServer, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nresourceserver
+    
+    @cppclass
+    nResourceServer
+
+    @superclass
+    nroot
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
