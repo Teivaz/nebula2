@@ -14,5 +14,9 @@ struct nXSIWeight
     int count;
 };
 
+#define VECTOR3_DEG2RAD(v) {(v).x = n_deg2rad((v).x); \
+                            (v).y = n_deg2rad((v).y); \
+                            (v).z = n_deg2rad((v).z);}
+
 //-----------------------------------------------------------------------------
 // Eof

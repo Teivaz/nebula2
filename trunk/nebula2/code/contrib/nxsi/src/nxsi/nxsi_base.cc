@@ -9,18 +9,27 @@
 #include "nxsi/nxsi.h"
 #include <scene/nlightnode.h>
 #include <scene/ntransformnode.h>
-#include <iostream>
-
-using std::cerr;
 
 //-----------------------------------------------------------------------------
 
 void nXSI::HandleSIModel(CSLModel* templ)
 {
     CSLModel* *childList = templ->GetChildrenList();
+    nString animName(templ->Name().GetText());
 
     if (templ != this->xsiScene.Root())
     {
+        if (!(templ->Name() == "MAXSceneRoot"))
+        {
+            // check if node is visible
+            CSLVisibility* visibility = templ->Visibility();
+            if (visibility && (visibility->GetVisibility() == false))
+            {
+                // node is invisible so dont't dump it and it's childrens
+                return;
+            }
+        }
+
         switch (templ->GetPrimitiveType()) {
             case CSLTemplate::SI_NULL_OBJECT:
             case CSLTemplate::SI_MODEL:
@@ -29,6 +38,7 @@ void nXSI::HandleSIModel(CSLModel* templ)
                     vector3 position = (vector3&)templ->Transform()->GetTranslation();
                     vector3 rotation = (vector3&)templ->Transform()->GetEulerRotation();
                     vector3 scale    = (vector3&)templ->Transform()->GetScale();
+                    VECTOR3_DEG2RAD(rotation);
 
                     // add script commands
                     nTransformNode* newNode = (nTransformNode*)this->kernelServer.New("ntransformnode", templ->Name().GetText());
@@ -36,6 +46,12 @@ void nXSI::HandleSIModel(CSLModel* templ)
                     newNode->SetPosition(position);
                     newNode->SetEuler(rotation);
                     newNode->SetScale(scale);
+
+                    // build transform animation
+                    if (this->BuildTransformAnimation(templ->Transform(), animName))
+                    {
+                        newNode->AddAnimator(animName.Get());
+                    }
 
                     // handle child models
                     for (int i = 0; i < templ->GetChildrenCount(); i++) {
@@ -63,7 +79,7 @@ void nXSI::HandleSIModel(CSLModel* templ)
                 this->HandleSICamera((CSLCamera*)templ->Primitive());
                 break;
             default:
-//              this->scriptFile.InsertLine("# unknown model (%s)", templ->Name().GetText());
+                n_printf("WARNING: found unknown model (%s)\n", templ->Name().GetText());
                 return;
         }
     } else {
@@ -97,9 +113,9 @@ void nXSI::HandleSICamera(CSLCamera* templ)
     this->scriptFile.InsertLine(".setinterest %.6f %.6f %.6f", interest.x, interest.y, interest.z);
 
     this->scriptFile.AddSpacing(-1);
-    this->scriptFile.InsertLine("sel ..");*/
-
-//  this->scriptFile.InsertLine("# currently doesn't handle cameras (%s)", templ->Name().GetText());
+    this->scriptFile.InsertLine("sel ..");
+*/
+    n_printf("WARNING: currently doesn't handle cameras (%s)\n", templ->Name().GetText());
 }
 
 void nXSI::HandleSILight(CSLLight* templ)
@@ -112,10 +128,10 @@ void nXSI::HandleSILight(CSLLight* templ)
 
     switch (templ->Type()) {
         case CSLTemplate::SI_INFINITE_LIGHT:
-//          this->scriptFile.InsertLine("# currently doesn't handle infinite lights (%s)", templ->Name().GetText());
+            n_printf("WARNING: currently doesn't handle infinite lights (%s)\n", templ->Name().GetText());
             break;
         case CSLTemplate::SI_DIRECTIONAL_LIGHT:
-//          this->scriptFile.InsertLine("# currently doesn't handle directional lights (%s)", templ->Name().GetText());
+            n_printf("WARNING: currently doesn't handle directional lights (%s)\n", templ->Name().GetText());
             break;
 
         case CSLTemplate::SI_POINT_LIGHT:
@@ -150,7 +166,7 @@ void nXSI::HandleSILight(CSLLight* templ)
             lightNode->SetVector(nShaderState::LightSpecular1, specular);
             lightNode->SetTexture(nShaderState::LightModMap, "textures:system/white.dds");
 */
-//          this->scriptFile.InsertLine("# currently doesn't handle spot lights (%s)", templ->Name().GetText());
+            n_printf("WARNING: currently doesn't handle spot lights (%s)\n", templ->Name().GetText());
             break;
     }
 }

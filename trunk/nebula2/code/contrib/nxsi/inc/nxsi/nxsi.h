@@ -57,13 +57,14 @@ private:
     //@{
     /// mesh handling
     void HandleSIMesh(CSLMesh* templ);
-    void HandleSIMeshSkeleton(CSLMesh* templ, CSIBCString& skinName, nArray<nXSIWeight>& weightList);
+    void HandleSIMeshSkeleton(CSLMesh* templ, nString& skinName, nArray<nXSIWeight>& weightList);
     void HandleSITriangleList(CSLTriangleList* templ, CSLShape* shape, const nArray<nXSIWeight>& weightList, uint groupId);
     //@}
 
     //@{
     /// animation handling
     void BuildJointAnimations(const nArray<CSLModel*>& joint_list, int jointCount);
+    bool BuildTransformAnimation(CSLTransform* transform, nString& animName);
     //@}
 
     //@{

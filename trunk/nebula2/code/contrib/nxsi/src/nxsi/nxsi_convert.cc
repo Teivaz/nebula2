@@ -7,9 +7,6 @@
 // nXSI data convert functions
 //-----------------------------------------------------------------------------
 #include "nxsi/nxsi.h"
-#include <iostream>
-
-using std::cerr;
 
 //-----------------------------------------------------------------------------
 
@@ -45,8 +42,8 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
     }
     if (uvsetCount > NXSI_MAX_UVSETS)
     {
+        n_printf("WARNING: found %i uvsets in polygon list. clamping into %i sets.\n", uvsetCount, NXSI_MAX_UVSETS);
         uvsetCount = NXSI_MAX_UVSETS;
-        cerr << "ERROR: found over " << NXSI_MAX_UVSETS << " uvsets in polygon list. clamping into " << NXSI_MAX_UVSETS << " sets.\n";
     }
     for (i = 0; i < uvsetCount; i++)
     {
@@ -80,14 +77,14 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
         for (i = 0; i < polyCount; i++)
         {
             pointCount = polyPointCount[i];
-            for (j = 2; j < pointCount; j++)
+            for (j = 1; j < pointCount-1; j++)
             {
                 // copy positions
                 *triPositions = polyPositions[0];
                 triPositions++;
-                *triPositions = polyPositions[1];
-                triPositions++;
                 *triPositions = polyPositions[j];
+                triPositions++;
+                *triPositions = polyPositions[j+1];
                 triPositions++;
 
                 // copy normals
@@ -95,9 +92,9 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
                 {
                     *triNormals = polyNormals[0];
                     triNormals++;
-                    *triNormals = polyNormals[1];
-                    triNormals++;
                     *triNormals = polyNormals[j];
+                    triNormals++;
+                    *triNormals = polyNormals[j+1];
                     triNormals++;
                 }
 
@@ -105,9 +102,9 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
                 if (polyColors) {
                     *triColors = polyColors[0];
                     triColors++;
-                    *triColors = polyColors[1];
-                    triColors++;
                     *triColors = polyColors[j];
+                    triColors++;
+                    *triColors = polyColors[j+1];
                     triColors++;
                 }
 
@@ -116,9 +113,9 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
                 {
                     *triUvset[uv] = polyUvset[uv][0];
                     triUvset[uv]++;
-                    *triUvset[uv] = polyUvset[uv][1];
-                    triUvset[uv]++;
                     *triUvset[uv] = polyUvset[uv][j];
+                    triUvset[uv]++;
+                    *triUvset[uv] = polyUvset[uv][j+1];
                     triUvset[uv]++;
                 }
             }
@@ -135,9 +132,129 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
     }
 }
 
-void nXSI::ConvertSITriangleStripList(CSLTriangleStripList* strip_list)
+//-----------------------------------------------------------------------------
+
+void nXSI::ConvertSITriangleStripList(CSLTriangleStripList* stripList)
 {
-    cerr << "ERROR: currently doesn't handle triangle strips.\n";
+    CSLMesh* mesh             = (CSLMesh*)stripList->ParentModel()->Primitive();
+    CSLTriangleStrip** strips = stripList->TriangleStrips();
+    int stripCount            = stripList->GetTriangleStripCount();
+    int uvsetCount            = 0;
+    int triangleCount;
+    int second;
+    int last;
+    int i, j, uv;
+
+    // calculate triangle count
+    triangleCount = 0;
+    for (i = 0; i < stripCount; i++)
+    {
+        triangleCount += strips[i]->GetVertexCount() - 2;
+        uvsetCount = strips[i]->GetUVArrayCount();
+    }
+
+    // create triangle list object
+    CSLTriangleList* triangleList = mesh->AddTriangleList();
+    triangleList->SetName(stripList->GetName());
+    triangleList->SetMaterial(stripList->GetMaterial());
+    triangleList->GetVertexIndices()->Resize(triangleCount);
+
+    if (strips[0]->GetNormalIndicesPtr())
+    {
+        triangleList->CreateNormalIndices()->Resize(triangleCount);
+    }
+    if (strips[0]->GetColorIndicesPtr())
+    {
+        triangleList->CreateColorIndices()->Resize(triangleCount);
+    }
+    if (uvsetCount > NXSI_MAX_UVSETS)
+    {
+        n_printf("WARNING: found %i uvsets in triangle strip list. clamping into %i sets.\n", uvsetCount, NXSI_MAX_UVSETS);
+        uvsetCount = NXSI_MAX_UVSETS;
+    }
+    for (i = 0; i < uvsetCount; i++)
+    {
+        triangleList->AddUVArray()->Resize(triangleCount);
+    }
+
+    // get triangle buffers
+    int* triPositions  = triangleList->GetVertexIndicesPtr();
+    int* triNormals    = triangleList->GetNormalIndicesPtr();
+    int* triColors     = triangleList->GetColorIndicesPtr();
+
+    int* triUvset[NXSI_MAX_UVSETS];
+    for (i = 0; i < uvsetCount; i++)
+    {
+        triUvset[i] = triangleList->GetUVIndicesPtr(i);
+    }
+
+    // copy datas
+    for (j = 0; j < stripCount; j++)
+    { 
+        CSLTriangleStrip* strip = strips[j];
+
+        // get strip buffers
+        int* stripPositions = strip->GetVertexIndicesPtr();
+        int* stripNormals   = strip->GetNormalIndicesPtr();
+        int* stripColors    = strip->GetColorIndicesPtr();
+
+        int* stripUvset[NXSI_MAX_UVSETS];
+        for (i = 0; i < uvsetCount; i++) {
+            stripUvset[i]   = strip->GetUVIndicesPtr(i);
+        }
+
+        // copy datas
+        for (i = 0; i < strip->GetVertexCount()-2; i++)
+        {
+            second = i+1;
+            last = i+2;
+            if (i & 1)
+            {
+                second = i+2;
+                last = i+1;
+            }
+
+            // copy positions
+            *triPositions = stripPositions[i];
+            triPositions++;
+            *triPositions = stripPositions[second];
+            triPositions++;
+            *triPositions = stripPositions[last];
+            triPositions++;
+
+            // copy normals
+            if (stripNormals)
+            {
+                *triNormals = stripNormals[i];
+                triNormals++;
+                *triNormals = stripNormals[second];
+                triNormals++;
+                *triNormals = stripNormals[last];
+                triNormals++;
+            }
+
+            // copy colors
+            if (stripColors) {
+                *triColors = stripColors[i];
+                triColors++;
+                *triColors = stripColors[second];
+                triColors++;
+                *triColors = stripColors[last];
+                triColors++;
+            }
+
+            // copy uvsets
+            for (uv = 0; uv < uvsetCount; uv++)
+            {
+                *triUvset[uv] = stripUvset[uv][i];
+                triUvset[uv]++;
+                *triUvset[uv] = stripUvset[uv][second];
+                triUvset[uv]++;
+                *triUvset[uv] = stripUvset[uv][last];
+                triUvset[uv]++;
+            }
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
