@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief Animator nodes manipulate properties of other scene objects.
     

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSkinShapeNode
-    @ingroup NebulaSceneSystemNodes
+    @ingroup SceneNodes
 
     @brief A smooth skinned shape node.
     

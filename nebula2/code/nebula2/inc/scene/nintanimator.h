@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nIntAnimator
-    @ingroup Scene
+    @ingroup SceneAnimators
 
-    Animates a int attribute of a nAbstrachShaderNode.
+    @brief Animates a int attribute of a nAbstractShaderNode.
 
     (C) 2004 RadonLabs GmbH
 */

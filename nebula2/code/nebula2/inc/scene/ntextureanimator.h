@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTextureAnimator
-    @ingroup NebulaSceneSystemAnimators
+    @ingroup SceneAnimators
 
     @brief nTextureAnimator selects between one of several possible textures.
 

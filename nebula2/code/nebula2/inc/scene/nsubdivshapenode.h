@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSubdivShapeNode
-    @ingroup Scene
+    @ingroup SceneNodes
 
-    Takes an input mesh and renders a tesselated mesh (FIXME: for now
+    @brief Takes an input mesh and renders a tesselated mesh (FIXME: for now
     a pointlist based on subdivision parameters.
 
     (C) 2003 RadonLabs GmbH
