@@ -855,7 +855,14 @@ void nLuaServer::InArgsToStack( lua_State* L, nCmd* cmd )
 bool nLuaServer::StackToOutArgs(lua_State* L, nCmd* cmd)
 {
     cmd->Rewind();
-    for (int i = -cmd->GetNumOutArgs(); i < 0 ; i++)
+    int numArgs = cmd->GetNumOutArgs();
+    if (numArgs < 1)
+        return true;
+    int top = lua_gettop(L);
+    // compute the stack index of the first output value
+    int i = top - numArgs + 1;
+    // loop through and pack it all in
+    for ( ; i <= top; i++)
         if (!nLuaServer::StackToArg(L, cmd->Out(), i))
             return false;
     return true;
