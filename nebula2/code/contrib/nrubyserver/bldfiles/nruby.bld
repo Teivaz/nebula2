@@ -19,7 +19,7 @@ endmodule
 
 beginmodule nrubyviewer
     setdir ruby
-    setfiles { nviewerapp nviewer }
+    setfiles { nrubyviewer }
 endmodule
 
 begintarget nrubyserver
