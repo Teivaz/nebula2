@@ -44,9 +44,11 @@ beginmodule nutil
     setdir util
     setheaders {
         narray
+        narray2
         nbitstream
         nbucket
         neditline
+        nfixedarray
         nhashlist
         nhashnode
         nhashtable
