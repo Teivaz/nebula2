@@ -104,6 +104,23 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
             else
                 ; //FIXME: multi material but no sub-material?
         }
+        else 
+        if (nMaxMaterial::Shell == materialType)
+        {
+            // Shell material type which is used for backed texture.
+            Mtl* subMtl = mtl->GetSubMtl(1);
+
+            if (!subMtl)
+            {
+                n_maxlog(Error, "Error, The sub material of the shell material does not exist.");
+                return;
+            }
+            else
+            {
+                // call recursively until the material to be standard.
+                Export(subMtl, shapeNode, matID);
+            }    
+        }
         else
         if (nMaxMaterial::NebulaCustom == materialType)
         {
@@ -114,7 +131,7 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
         else
         {
             // unknown material type. (nor standard, multi-sub or custom)
-            n_maxlog(Error, "unknown material type");
+            n_maxlog(Error, "Unknown material type.");
         }
     }
 }
@@ -336,14 +353,11 @@ void nMaxMaterial::CreateShaderAnimator(nShapeNode* shapeNode,
 
     if (ctrlAlpha)
     {
-        alphaKeyArray.SetFixedSize(numFrames + 1);
-
         nMaxControl::GetSampledKey(ctrlAlpha, alphaKeyArray, 1, nMaxFloat);
     }
 
     // retrieves color animations.
     nArray<nMaxSampleKey> colorKeyArray;
-    colorKeyArray.SetFixedSize(numFrames + 1);
 
     const int sampleRate = 1;
     nMaxControl::GetSampledKey(ctrlColor, colorKeyArray, sampleRate, nMaxPoint3);
@@ -436,6 +450,14 @@ nMaxMaterial::GetType(Mtl* material)
     {
         // multi material.
         type = MultiSub;
+    }
+    else
+    if (material->ClassID() == Class_ID(BAKE_SHELL_CLASS_ID, 0))
+    {
+        //FIXME: is 'BAKE_SHELL_CLASS_ID' right Class_ID for shell material?
+
+        // shell material which used for backed texture.
+        type = Shell;
     }
     else
     if (material->ClassID() == NEBULAMTL_CLASSID)
