@@ -1,3 +1,8 @@
+//------------------------------------------------------------------------------
+//  njavautils.cc
+//  This file is licensed under the terms of the Nebula License.
+//  (C) 2003 Bruce Mitchener, Jr.
+//------------------------------------------------------------------------------
 #include "java/njavautils.h"
 #include "kernel/nkernelserver.h"
 
