@@ -100,6 +100,12 @@ public:
     vector2 ComputeScreenSpaceBrushSize(const char* brushName);
     /// return true iff the named brush exists in the current skin
     bool BrushExists(const char* brushName);
+    /// push clipping rectangle into stack
+    void PushClipRect(rectangle& cr);
+    /// remove clipping rectangle from the top of stack
+    void PopClipRect();
+    /// get clipping rectangle from the top of stack
+    bool GetClipRect(rectangle& cr) const;
     /// get the size of 1 pixel
     vector2 GetPixelSize() const;
     /// check if mouse is over a GUI element
@@ -200,6 +206,8 @@ private:
 
     vector2 displaySize;
     float texelMappingRatio;
+
+    nArray<rectangle> clipRectStack;
 };
 
 //-----------------------------------------------------------------------------
@@ -381,6 +389,35 @@ nTime
 nGuiServer::GetToolTipFadeInTime() const
 {
     return this->toolTipFadeInTime;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiServer::PopClipRect()
+{
+    n_assert(this->clipRectStack.Size() > 0);
+
+    int topRectIdx;
+    topRectIdx = this->clipRectStack.Size() - 1;
+    this->clipRectStack.Erase(topRectIdx);
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiServer::GetClipRect(rectangle& cr) const
+{
+    if (this->clipRectStack.Size() > 0)
+    {
+        cr = this->clipRectStack.Back();
+        return true;
+    }
+    return false;
 }
 
 //-----------------------------------------------------------------------------
