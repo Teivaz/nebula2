@@ -56,6 +56,50 @@ nD3D9WindowHandler::OnSetCursor()
 /**
     FIXME: this method directly accesses D3D9Server members!
 */
+bool
+nD3D9WindowHandler::OnMouseMove()
+{
+    n_assert(this->d3d9Server);
+    if (this->d3d9Server->d3d9Device && d3d9Server->GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
+    {
+        // in fullscreen mode, update the cursor position myself
+        POINT ptCursor;
+        if (!GetCursorPos( &ptCursor ))
+        {
+            // Find out why we failed
+            LPVOID lpMsgBuf;
+            FormatMessage( 
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                FORMAT_MESSAGE_FROM_SYSTEM | 
+                FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL,
+                GetLastError(),
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPTSTR) &lpMsgBuf,
+                0,
+                NULL 
+                );
+
+            // Display the string.
+            n_printf("Could not get cursor position.\nError was:\n%s\n", lpMsgBuf);
+
+            // Free the buffer.
+            LocalFree(lpMsgBuf);
+        }
+        else
+        {
+            // position the cursor
+            d3d9Server->d3d9Device->SetCursorPosition(ptCursor.x, ptCursor.y, D3DCURSOR_IMMEDIATE_UPDATE);
+            return true;
+        }
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    FIXME: this method directly accesses D3D9Server members!
+*/
 void
 nD3D9WindowHandler::OnPaint()
 {

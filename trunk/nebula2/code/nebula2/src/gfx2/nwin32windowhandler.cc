@@ -398,6 +398,16 @@ nWin32WindowHandler::OnSetCursor()
 /**
     Override this method in a derived class!
 */
+bool
+nWin32WindowHandler::OnMouseMove()
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Override this method in a derived class!
+*/
 void
 nWin32WindowHandler::OnPaint()
 {
@@ -734,14 +744,10 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     ie->SetRelPos(relX, relY);
                     self->refInputServer->LinkEvent(ie);
                 }
-                /* FIXME
-                if ((d3d8->displayMode.GetType() == nDisplayMode2::FULLSCREEN) && d3d8->d3dCursorShown)
+                if (self->OnMouseMove())
                 {
-                    // in fullscreen mode, update the cursor position myself
-                    d3d8->d3d8Dev->SetCursorPosition((UINT)x, (UINT)y, D3DCURSOR_IMMEDIATE_UPDATE);
                     return TRUE;
                 }
-                */
             }
             break;
     }
