@@ -34,12 +34,11 @@ beginmodule nstaticshadowcaster
     setheaders nstaticshadowcaster
 endmodule
 #--------------------------------------------------------------------
-begintarget nshadow
-    annotate "The Nebula2 shadow modules"
-    settype lib
+beginbundle nshadow
+    annotate "The Nebula 2 shadow modules"
     setmodules {
         nshadowcaster nshadowserver nstaticshadowcaster
         nstaticshadowcaster
     }
-endtarget
+endbundle
 
