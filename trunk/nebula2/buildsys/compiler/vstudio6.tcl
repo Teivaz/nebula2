@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-#    makedsw.tcl
+#    vstudio6.tcl
 #
 #  FIXME:  This needs severly cleaned up and finished to use all relevant
 #          bits as an example for other compiler generator authors.
