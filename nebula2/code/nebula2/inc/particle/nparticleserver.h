@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     Particle subsystem server. Holds an array of all particles and all particle
-    emitters in the world. Teka care about updating them, the rendering is a
+    emitters in the world. Take care when updating them, the rendering is a
     function of the emitters.
     
     (C) 2003 RadonLabs GmbH
@@ -75,12 +75,12 @@ protected:
 private:
     #ifdef __NEBULA_STATS__
     friend class nParticleEmitter;
-    nWatched numEmitters;           ///< number of emitters know to the particle server
+    nWatched numEmitters;           ///< number of emitters known to the particle server
     nWatched numActiveEmitters;     ///< number of particle emitters that are active
-    nWatched numParticles;          ///< number of particles manged by the particle server
-    nWatched numDrawedParticles;    ///< number of particles that are drawed
-    nWatched numDrawedPrimitives;   ///< number of primitives consumed by the praticle draws 
-    #endif    
+    nWatched numParticles;          ///< number of particles managed by the particle server
+    nWatched numDrawnParticles;    ///< number of particles that are drawn
+    nWatched numDrawnPrimitives;   ///< number of primitives consumed by the praticle drawing
+    #endif
 };
 
 
