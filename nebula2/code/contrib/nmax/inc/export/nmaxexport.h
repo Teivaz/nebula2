@@ -6,6 +6,7 @@
 
     This file is licensed under the terms of the Nebula License.
     (C) 2004 Johannes Kellner
+    Sep 2004 Oleg Kreptul (Haron)
 */
 
 #include <Max.h>

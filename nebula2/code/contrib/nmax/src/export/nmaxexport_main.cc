@@ -6,6 +6,7 @@
 
     This file is licensed under the terms of the Nebula License.
     (C) 2004 Johannes Kellner
+    Sep 2004 Oleg Kreptul (Haron)
 */
 
 //------------------------------------------------------------------------------
@@ -32,7 +33,10 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
 			SetWindowLongPtr(hWnd,GWLP_USERDATA,lParam); 
 			CenterWindow(hWnd,GetParent(hWnd));
 
-            SetDlgItemText(hWnd, IDC_EXT_DIRNAME, exp->GetHomeDir().Get());
+            SetDlgItemText(hWnd, IDC_EXT_DIRNAME,     exp->GetHomeDir().Get());
+            SetDlgItemText(hWnd, IDC_EXT_BINARY_PATH, exp->binaryPath.Get());
+
+            CheckDlgButton(hWnd, IDC_EXT_EXPORT_ANIM, exp->exportAnimations);
 
             SetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     exp->animsAssign.Get());
             SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   exp->gfxlibAssign.Get());
@@ -74,7 +78,10 @@ BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                 break;
 			case IDOK:
                 char str[512];
-                GetDlgItemText(hWnd, IDC_EXT_DIRNAME, str, 512); exp->SetHomeDir(str);
+                GetDlgItemText(hWnd, IDC_EXT_DIRNAME,         str, 512); exp->SetHomeDir(str);
+                GetDlgItemText(hWnd, IDC_EXT_BINARY_PATH,     str, 512); exp->binaryPath = str;
+
+                exp->exportAnimations = IsDlgButtonChecked(hWnd, IDC_EXT_EXPORT_ANIM);
 
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     str, 512); exp->animsAssign = str;
                 GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   str, 512); exp->gfxlibAssign = str;
@@ -176,8 +183,7 @@ int
 nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
     n_assert(i);	    
-    //FIXME: this should be suplied by the UI
-    //create a fake ExportTaskSetup
+
     if (!this->task)
     {
         this->task = n_new nMaxExportTask;
@@ -187,22 +193,18 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     this->GetCfgFilename(cfn);
     this->task->SetCfgFileName(cfn);
     this->task->ReadConfig();
+
    	// Prompt the user with our dialogbox, and get all the options.
-	if (!DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL),
-        i->GetMAXHWnd(), Nebula2ExporterOptionsDlgProc, (LPARAM)this->task)) {
+	if (!DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), i->GetMAXHWnd(),
+                        Nebula2ExporterOptionsDlgProc, (LPARAM)this->task))
+    {
 		return 1;
 	}
 
-
     this->task->exportHiddenNodes = false;
-    this->task->exportAnimations = true;
     this->task->groupMeshBySourceObject = true;
     this->task->sampleRate = 1; 
     this->task->useWeightedNormals = true;
-
-    //DISABLE the skinned export until the code is finished.
-    this->task->exportStatic = false;
-	//n_error("Test. Filename: %s\n", ExportFileName);
 
     //the selected file name from the export dialog
     nPathString fileName(ExportFileName);
@@ -211,14 +213,11 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
         
     //the meshfile
     this->task->meshFileName = fileName;
-    //this->task->meshFileName = "meshes:" + this->task->meshFileName;
     this->task->meshFileExtension = ".n3d2";
 
 	//the scenefile
     this->task->sceneFileName = fileName;
-    //this->task->sceneFileName = "gfxlib:" + this->task->sceneFileName;
     this->task->sceneFileName += ".n2";
-    //END
 
     this->InitAssigns();
     
@@ -284,7 +283,6 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     for (int n = 0; n < numTopNodes && success; n++)
     {
         IGameNode* igNode = this->iGameScene->GetTopLevelNode(n);
-        //igNode->IsTarget();
         success = this->exportNode(igNode, this->nohBase);
     }
 
@@ -306,8 +304,7 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
 
             // write bat file
             nFile *file = nFileServer2::Instance()->NewFileObject();
-            nString batFile(this->task->GetHomeDir());
-            batFile += "/bin/win32d/";
+			nString batFile(this->task->binaryPath);
             batFile += fileName;
             batFile += ".bat";
             if (file->Open(batFile.Get(), "w"))
@@ -422,22 +419,8 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                 {
                     if (this->task->groupMeshBySourceObject)
                     {
-/*
-                        //create a transformnode as root node for for the material shapennodes the mesh will use
-                        nTransformNode* nNode = static_cast<nTransformNode*>(this->kernelServer->New("ntransformnode", nodeName.Get()));
-                    
-                        this->exportPosition(nNode, nodeName, igNode);
-                        this->exportRotation(nNode, nodeName, igNode);
-                        this->exportScale(nNode, nodeName, igNode);
-                        
-                        //create a matrix to transform from worldspace to object/model space
-                        matrix44* transform = this->buildInverseModelWorldMatrix(igNode);
-*/
                         //export the mesh data                       
-                        this->exportMesh(igNode,/* static_cast<nSceneNode*>(nNode),*/ nodeName/*, transform*/);
-                        
-                        //mem cleanup
-                        //n_delete transform;
+                        this->exportMesh(igNode, nodeName);
                     }
                     else
                     {

@@ -10,6 +10,9 @@
 #define IDC_EXP_FILESEL                 1002
 #define IDC_EXT_ASSIGN_ANIM             1003
 #define IDC_SET_DEFAULT_ASSIGNS         1004
+#define IDC_EXT_BINARY_PATH             1005
+#define IDC_CHECK1                      1006
+#define IDC_EXT_EXPORT_ANIM             1006
 #define IDC_EXT_ASSIGN_GFXLIB           1010
 #define IDC_EXT_ASSIGN_GUI              1011
 #define IDC_EXT_ASSIGN_LIGHTS           1012
@@ -32,7 +35,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1005
+#define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
