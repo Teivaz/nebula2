@@ -101,6 +101,7 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         shd->SetVector3(nShader2::ModelEyePos, this->transform[InvModelView].pos_component());
     }
 }
+
 //------------------------------------------------------------------------------
 /**
     Start rendering the scene.
@@ -337,8 +338,6 @@ nD3D9Server::SetMesh(nMesh2* mesh)
 //------------------------------------------------------------------------------
 /**
     Set the current shader object.
-    FIXME: this method should find out, whether Draw() should have to reapply
-    the shader at all!
 */
 void
 nD3D9Server::SetShader(nShader2* shader)

@@ -86,23 +86,13 @@ nD3D9Shader::LoadResource()
     // initialize shader index
     this->shaderIndex = this->refGfxServer->GetShaderIndex(filename.Get());
 
-    
-/*
-    // check if the shader file actually exist, a non-existing shader file is
-    // not a fatal error (result is that no rendering will be done)
-    if (!this->refFileServer->FileExists(mangledPath))
-    {
-        n_printf("WARNING: shader file '%s' does not exist!\n", mangledPath);
-        return false;
-    }
-*/
     //load fx file...
     nFile* file = this->refFileServer->NewFileObject();
 
     // open the file
     if (!file->Open(mangledPath, "r"))
     {
-        n_error("WARNING: could not load shader file '%s'!", mangledPath);
+        n_error("nD3D9Shader: could not load shader file '%s'!", mangledPath);
         return false;
     }
 
@@ -142,7 +132,6 @@ nD3D9Shader::LoadResource()
             effectPool,         // pPool
             &(this->effect),    // ppEffect
             &errorBuffer);      // ppCompilationErrors
-
     n_free(buffer);
 
     if (FAILED(hr))

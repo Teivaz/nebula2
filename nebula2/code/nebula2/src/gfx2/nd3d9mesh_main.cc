@@ -106,7 +106,6 @@ nD3D9Mesh::LoadResource()
     return success;
 }
 
-
 //------------------------------------------------------------------------------
 /**
     Unload the d3d resources. Make sure that the resource are properly

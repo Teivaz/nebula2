@@ -297,7 +297,7 @@ nD3D9Server::DeviceOpen()
     this->presentParams.MultiSampleType                 = D3DMULTISAMPLE_NONE;
     this->presentParams.MultiSampleQuality              = 0;
     this->presentParams.SwapEffect                      = D3DSWAPEFFECT_DISCARD;
-    this->presentParams.hDeviceWindow                   = this->windowHandler.GetParentHwnd();
+    this->presentParams.hDeviceWindow                   = this->windowHandler.GetHwnd();
     this->presentParams.EnableAutoDepthStencil          = TRUE;
     this->presentParams.AutoDepthStencilFormat          = zbufFormat;
     this->presentParams.FullScreen_RefreshRateInHz      = D3DPRESENT_RATE_DEFAULT;
@@ -399,7 +399,6 @@ nD3D9Server::TestResetDevice()
             D3DFORMAT backFormat;
             D3DFORMAT zbufFormat;
             this->FindBufferFormats(dispFormat, backFormat, zbufFormat);
-
             this->presentParams.BackBufferFormat       = backFormat;
             this->presentParams.AutoDepthStencilFormat = zbufFormat;
         //}
@@ -415,7 +414,6 @@ nD3D9Server::TestResetDevice()
             n_printf("nD3D9Server: Failed to reset d3d device!\n");
             return false;
         }
-
         n_printf("nD3D9Server: Device reset!\n");
 
         // initialize the device
@@ -543,7 +541,6 @@ nD3D9Server::UpdateCursor()
     {
         this->cursorDirty = false;
 	
-        // make sure current mouse cursor texture is loaded
         nTexture2* tex = this->curMouseCursor.GetTexture();
         if (tex)
         {

@@ -25,7 +25,8 @@ nGfxServer2::nGfxServer2() :
     featureSetOverride(InvalidFeatureSet),
     cursorVisibility(System),
     cursorDirty(true),
-    inDialogBoxMode(false)
+    inDialogBoxMode(false),
+    meshSource(NoSource)
 {
     int i;
     for (i = 0; i < NumTransformTypes; i++)
@@ -50,7 +51,7 @@ nGfxServer2::~nGfxServer2()
     @return             a new nMesh2 object
 */
 nMesh2*
-nGfxServer2::NewMesh(const char* rsrcName)
+nGfxServer2::NewMesh(const char* /*rsrcName*/)
 {
     return 0;
 }
@@ -63,7 +64,7 @@ nGfxServer2::NewMesh(const char* rsrcName)
     @return             a new nTexture2 object
 */
 nTexture2*
-nGfxServer2::NewTexture(const char* rsrcName)
+nGfxServer2::NewTexture(const char* /*rsrcName*/)
 {
     return 0;
 }
@@ -76,7 +77,7 @@ nGfxServer2::NewTexture(const char* rsrcName)
     @return             a new nShader2 object
 */
 nShader2*
-nGfxServer2::NewShader(const char* rsrcName)
+nGfxServer2::NewShader(const char* /*rsrcName*/)
 {
     return 0;
 }
@@ -90,7 +91,7 @@ nGfxServer2::NewShader(const char* rsrcName)
     @return             a nFont2 object
 */
 nFont2*
-nGfxServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
+nGfxServer2::NewFont(const char* /*rsrcName*/, const nFontDesc& /*fontDesc*/)
 {
     return 0;
 }
@@ -106,11 +107,11 @@ nGfxServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
     @param  usageFlags  a combination of nTexture2::Usage flags (RenderTargetXXX only)
 */
 nTexture2*
-nGfxServer2::NewRenderTarget(const char* rsrcName,
-                             int width,
-                             int height,
-                             nTexture2::Format format,
-                             int usageFlags)
+nGfxServer2::NewRenderTarget(const char* /*rsrcName*/,
+                             int /*width*/,
+                             int /*height*/,
+                             nTexture2::Format /*format*/,
+                             int /*usageFlags*/)
 {
     return 0;
 }
@@ -121,7 +122,7 @@ nGfxServer2::NewRenderTarget(const char* rsrcName,
     OpenDisplay()/CloseDisplay().
 */
 void
-nGfxServer2::SetDisplayMode(const nDisplayMode2& mode)
+nGfxServer2::SetDisplayMode(const nDisplayMode2& /*mode*/)
 {
     n_error("nGfxServer2: Pure virtual function called!");
 }
@@ -246,7 +247,7 @@ nGfxServer2::PresentScene()
     Clear buffers.
 */
 void
-nGfxServer2::Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil)
+nGfxServer2::Clear(int /*bufferTypes*/, float /*red*/, float /*green*/, float /*blue*/, float /*alpha*/, float /*z*/, int /*stencil*/)
 {
     // empty
 }
@@ -597,8 +598,9 @@ nGfxServer2::GetFeatureSet()
     Save a screenshot.
 */
 bool
-nGfxServer2::SaveScreenshot(const char* filename)
+nGfxServer2::SaveScreenshot(const char* /*filename*/)
 {
+    // implement me in subclass
     return false;
 }
 
@@ -633,7 +635,7 @@ nGfxServer2::EnterDialogBoxMode()
     this->inDialogBoxMode = true;
 }
 
-//------------------------------------------------------------------------------^M
+//------------------------------------------------------------------------------
 /**
     Leave dialog box mode.
 */

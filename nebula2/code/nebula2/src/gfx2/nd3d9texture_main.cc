@@ -934,4 +934,3 @@ nD3D9Texture::GetByteSize()
         return 0;
     }
 }
-

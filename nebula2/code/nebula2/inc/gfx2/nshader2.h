@@ -49,14 +49,12 @@ public:
         ModelEyePos,                    // vector: the eye position in model space
         ModelLightPos,                  // vector[]: the light position in model space
         LightPos,                       // vector[]: the light position in world space
-        //LightDirection,                 // vector[]: the light direction in world space
         MatAmbient,                     // color: material ambient component
         MatDiffuse,                     // color: material diffuse component
         MatSpecular,                    // color: material specular component
         MatSpecularPower,               // float: material specular power
         MatTransparency,                // float: material transparency
         MatFresnel,                     // float: material fresnel term
-        //Frequency,                      // float: material frequency (for waves, etc...)
         Scale,                          // float: material scale (for waves, etc...)
         Noise,			                // float: material noise scale (for wavec, etc...)
         MatTranslucency,                // float: material translucency

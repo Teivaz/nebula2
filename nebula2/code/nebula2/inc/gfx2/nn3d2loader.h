@@ -290,3 +290,4 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
 }
 //------------------------------------------------------------------------------
 #endif
+

@@ -13,7 +13,6 @@
 */
 #include "kernel/nroot.h"
 #include "gfx2/ncamera2.h"
-
 #include "kernel/nautoref.h"
 #include "mathlib/matrix.h"
 #include "gfx2/ntexture2.h"
@@ -27,7 +26,6 @@
 class nMesh2;
 class nShader2;
 class nResourceServer;
-
 class nFontDesc;
 
 class nViewport
@@ -200,10 +198,6 @@ public:
     void SetVertexRange(int firstVertex, int numVertices);
     /// set index range to render from current mesh
     void SetIndexRange(int firstIndex, int numIndices);
-    /// set npatch tesselation level
-    void SetNPatchSegments(float segments);
-    /// get npatch tesselation level
-    float GetNPatchSegments() const;
 
     /// draw the current mesh with indexed primitives
     virtual void DrawIndexed(PrimitiveType primType);
@@ -242,18 +236,10 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char* filename);    
 
-
     /// convert feature set string to enum
     static FeatureSet StringToFeatureSet(const char* str);
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
-
-    enum
-    {
-        MAX_VERTEXSTREAMS = 16,
-        MAX_TEXTURESTAGES = 8,
-        MAX_TRANSFORMSTACKDEPTH = 4,
-    };
 
 protected:
     bool displayOpen;
@@ -275,8 +261,8 @@ protected:
     int vertexRangeNum;
     int indexRangeFirst;
     int indexRangeNum;
-    float nPatchSegments;
     FeatureSet featureSetOverride;
+
     matrix44 transform[NumTransformTypes];
     int transformTopOfStack[NumTransformTypes];
     matrix44 transformStack[NumTransformTypes][MaxTransformStackDepth];
@@ -285,7 +271,6 @@ protected:
     MeshSource meshSource;  // draw single mesh or mesh array?
 public:
     // note: this stuff is public because WinProcs may need to access it
-    nDisplayMode2 displayMode;
     CursorVisibility cursorVisibility;
 };
 
@@ -340,6 +325,7 @@ nGfxServer2::FeatureSetToString(FeatureSet f)
         default:                    return "invalid"; break;
     }
 }
+
 //------------------------------------------------------------------------------
 /**
     Get the current viewport.
@@ -350,6 +336,7 @@ nGfxServer2::GetViewport()
 {
     return this->viewport;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
