@@ -25,7 +25,7 @@
     be called (and also when IsValid() returns false), this is
     normal nResource class behaviour.
 
-    To get a sample from a curve, call the Sample() method.
+    To get a sample from a curve, call the SampleCurves() method.
 
     Animation fileformats:
 
