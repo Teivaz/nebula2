@@ -7,18 +7,9 @@
 
     (non-oriented) bounding box
 */
-//------------------------------------------------------------------------------
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_LINE_H
 #include "mathlib/line.h"
-#endif
 
 //------------------------------------------------------------------------------
 //  bbox3
@@ -74,7 +65,9 @@ public:
     bool contains(const bbox3& box) const;
     /// return true if this box contains the position
     bool contains(const vector3& pos) const;
-    /// check for intersection with view volume
+    /// check for intersection with other bounding box
+    ClipStatus clipstatus(const bbox3& other) const;
+    /// check for intersection with projection volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;  
 
     /**
@@ -306,6 +299,7 @@ bbox3::transform(const matrix44& m)
 {
     // get own extents vector
     vector3 extents = this->extents();
+    vector3 center  = this->center();
 
     // Extent the matrix' (x,y,z) components by our own extent
     // vector. 
@@ -313,7 +307,7 @@ bbox3::transform(const matrix44& m)
         m.M11 * extents.x, m.M12 * extents.x, m.M13 * extents.x, 0.0f,
         m.M21 * extents.y, m.M22 * extents.y, m.M23 * extents.y, 0.0f,
         m.M31 * extents.z, m.M32 * extents.z, m.M33 * extents.z, 0.0f,
-        m.M41,             m.M42,             m.M43,             1.0f);
+        m.M41 + center.x,  m.M42 + center.y,  m.M43 + center.z,  1.0f);
 
     this->set(extentMatrix);
 }
@@ -367,11 +361,33 @@ bbox3::contains(const vector3& v) const
 {
     if ((this->vmin.x < v.x) && (this->vmax.x >= v.x) &&
         (this->vmin.y < v.y) && (this->vmax.y >= v.y) &&
-        (this->vmin.z < v.z) && (this->vmax.z >= v.x))
+        (this->vmin.z < v.z) && (this->vmax.z >= v.z))
     {
         return true;
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return box/box clip status.
+*/
+inline
+bbox3::ClipStatus
+bbox3::clipstatus(const bbox3& other) const
+{
+    if (this->contains(other))
+    {
+        return Inside;
+    }
+    else if (this->intersects(other))
+    {
+        return Clipped;
+    }
+    else 
+    {
+        return Outside;
+    }
 }
 
 //------------------------------------------------------------------------------
