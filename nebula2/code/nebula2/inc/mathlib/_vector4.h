@@ -70,6 +70,8 @@ public:
     void lerp(const _vector4& v0, const _vector4& v1, float lerpVal);
     /// saturate components between 0 and 1
     void saturate();
+    /// dot product
+    float dot(_vector4 v0) const;
 
     float x, y, z, w;
 };
@@ -431,6 +433,16 @@ _vector4::saturate()
     y = n_saturate(y);
     z = n_saturate(z);
     w = n_saturate(w);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Dot product for vector4
+*/
+inline
+float _vector4::dot(_vector4 v0) const
+{
+    return ( x * v0.x + y * v0.y + z * v0.z + w * v0.w );
 }
 
 //------------------------------------------------------------------------------

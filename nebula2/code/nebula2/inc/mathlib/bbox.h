@@ -53,6 +53,8 @@ public:
     vector3 center() const;
     /// get extents of box
     vector3 extents() const;
+    /// get size of box
+    vector3 size() const;
     /// set from matrix44
     void set(const matrix44& m);
     /// set from center point and extents
@@ -77,6 +79,9 @@ public:
     ClipStatus clipstatus(const bbox3& other) const;
     /// check for intersection with projection volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;  
+
+    /// create a matrix which transforms a unit cube to this bounding box
+    matrix44 to_matrix44() const;
 
     int line_test(float v0, float v1, float w0, float w1);
     int intersect(bbox3 box);
@@ -228,6 +233,16 @@ bbox3::extents() const
 /**
 */
 inline
+vector3
+bbox3::size() const
+{
+    return vector3(vmax - vmin);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void
 bbox3::set(const vector3& center, const vector3& extents)
 {
@@ -308,6 +323,7 @@ inline
 void
 bbox3::transform(const matrix44& m)
 {
+    /*  ?? BUG ??
     // get own extents vector
     vector3 extents = this->extents();
     vector3 center  = this->center();
@@ -321,6 +337,36 @@ bbox3::transform(const matrix44& m)
         m.M41 + center.x,  m.M42 + center.y,  m.M43 + center.z,  1.0f);
 
     this->set(extentMatrix);
+    */
+
+    vector3 temp, min, max, corners[8];
+    bool first = true;
+    int i;
+        
+    corners[0]   = this->vmin;
+    corners[1].x = this->vmin.x; corners[1].y = this->vmax.y; corners[1].z = this->vmin.z;
+    corners[2].x = this->vmax.x; corners[2].y = this->vmax.y; corners[2].z = this->vmin.z;
+    corners[3].x = this->vmax.x; corners[3].y = this->vmin.y; corners[3].z = this->vmin.z;            
+    corners[4]   = this->vmax;
+    corners[5].x = this->vmin.x; corners[5].y = this->vmax.y; corners[5].z = this->vmax.z;
+    corners[6].x = this->vmin.x; corners[6].y = this->vmin.y; corners[6].z = this->vmax.z;
+    corners[7].x = this->vmax.x; corners[7].y = this->vmin.y; corners[7].z = this->vmax.z;
+
+    for(i = 0; i < 8; ++i)
+    {
+        // Transform and check extents
+        temp = m * corners[i];
+        if( first || temp.x > max.x )   max.x = temp.x;
+        if( first || temp.y > max.y )   max.y = temp.y;
+        if( first || temp.z > max.z )   max.z = temp.z;
+        if( first || temp.x < min.x )   min.x = temp.x;
+        if( first || temp.y < min.y )   min.y = temp.y;
+        if( first || temp.z < min.z )   min.z = temp.z;
+        first = false;
+}
+
+    this->vmin = min;
+    this->vmax = max;
 }
 
 //------------------------------------------------------------------------------
@@ -440,6 +486,21 @@ bbox3::clipstatus(const matrix44& viewProjection) const
     if (0 == orFlags)       return Inside;
     else if (0 != andFlags) return Outside;
     else                    return Clipped;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a transform matrix which would transform a unit cube to this
+    bounding box.
+*/
+inline
+matrix44
+bbox3::to_matrix44() const
+{
+    matrix44 m;
+    m.scale(this->size());
+    m.translate(this->center());
+    return m;
 }
 
 //------------------------------------------------------------------------------

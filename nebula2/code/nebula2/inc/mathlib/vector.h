@@ -8,19 +8,7 @@
 */
 #include "kernel/ntypes.h"
 
-#ifdef __USE_SSE__
-
-// sse vector classes
-#include "mathlib/_vector2.h"
-#include "mathlib/_vector3_sse.h"
-#include "mathlib/_vector4_sse.h"
-
-typedef _vector2 vector2; 
-typedef _vector3_sse vector3;
-typedef _vector4_sse vector4;
-
-#else
-
+#ifndef __USE_SSE__
 // generic vector classes
 #include "mathlib/_vector2.h"
 #include "mathlib/_vector3.h"
@@ -29,7 +17,14 @@ typedef _vector4_sse vector4;
 typedef _vector2 vector2;
 typedef _vector3 vector3;
 typedef _vector4 vector4;
-
+#else
+// sse vector classes
+#include "mathlib/_vector2.h"
+#include "mathlib/_vector3_sse.h"
+#include "mathlib/_vector4_sse.h"
+typedef _vector2 vector2; 
+typedef _vector3_sse vector3;
+typedef _vector4_sse vector4;
 #endif
 
 //------------------------------------------------------------------------------

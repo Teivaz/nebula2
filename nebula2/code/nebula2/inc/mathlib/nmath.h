@@ -83,7 +83,7 @@ static inline float n_asin(float x)
 */
 static inline float n_sqrt(float x)
 {
-    if (x<0.0f) x=(float)0.0f;
+    if (x < 0.0f) x = (float) 0.0f;
     return (float) sqrt(x);
 }
 
