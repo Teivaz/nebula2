@@ -19,11 +19,11 @@ begintarget physdemo
         nnebula
         ndinput8
         ndirect3d9
-		microtcl
-		ntoollib
-		nopende
-		physdemo_core
-    	}
+        microtcl
+        ntoollib
+        nopende
+        physdemo_core
+    }
 endtarget
 
 beginworkspace PhysdemoProject
@@ -37,8 +37,8 @@ beginworkspace PhysdemoProject
         ndirect3d9
         microtcl
         ntoollib
-		physdemo_core
-		physdemo
-		nopende
-    	}
+        physdemo_core
+        physdemo
+        nopende
+    }
 endworkspace
