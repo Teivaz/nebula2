@@ -4,8 +4,7 @@
 /**
     @class nGuiSlider2
     @ingroup NebulaGuiSystem
-
-    A vertical or horizontal slider widget.
+    @brief A vertical or horizontal slider widget.
     
     (C) 2004 RadonLabs GmbH
 */

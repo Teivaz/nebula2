@@ -4,24 +4,24 @@
 /**
     @class nGuiFormLayout
     @ingroup NebulaGuiSystem
+    @brief Layouts size and position of child widgets based on own position.
 
-    Layouts size and position of child widgets based on own position.
-    Works similar to a MEL formLayout:
+    This works similar to a MEL formLayout.
     
     Relations between child widgets and the form layout are defined
     by connecting their edges either to the form, to other widgets,
     or to a (relative) position:
 
-    Attach To Form:
-    Attaches the edge of a child widget to an edge of the form
+     - Attach To Form:
+       Attaches the edge of a child widget to an edge of the form
 
-    Attach To Widget:
-    Attaches the edge of a child widget to the closest edge of another
-    child widget.
+     - Attach To Widget:
+       Attaches the edge of a child widget to the closest edge of another
+       child widget.
 
-    Attach To Position:
-    Attaches the edge of a child widget to a relative position, expressed
-    in percent of the form layout's size.
+     - Attach To Position:
+       Attaches the edge of a child widget to a relative position, expressed
+       in percent of the form layout's size.
 
     (C) 2004 RadonLabs GmbH
 */

@@ -4,8 +4,7 @@
 /**
     @class nGuiLabel
     @ingroup NebulaGuiSystem
-
-    A widget which is a graphical level.
+    @brief A widget which is a graphical label.
     
     (C) 2003 RadonLabs GmbH
 */

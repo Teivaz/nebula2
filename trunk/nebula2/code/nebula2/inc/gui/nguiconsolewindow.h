@@ -2,10 +2,9 @@
 #define N_GUICONSOLEWINDOW_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiConsoleWindow
+    @class nGuiConsoleWindow
     @ingroup NebulaGuiSystem
-
-    A Nebula command console window.
+    @brief A Nebula command console window.
     
     (C) 2004 RadonLabs GmbH
 */

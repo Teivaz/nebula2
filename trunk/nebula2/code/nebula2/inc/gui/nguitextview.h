@@ -4,10 +4,11 @@
 /**
     @class nGuiTextView
     @ingroup NebulaGuiSystem
-
-    A multiline text viewing widgets, which can display lines of
-    text. This is the basis for more advanced widgets which need
-    to display text in multiple lines.
+    @brief A multiline text viewing widgets, which can display lines of
+    text.
+    
+    This is the basis for more advanced widgets which need to display text
+    in multiple lines.
     
     (C) 2004 RadonLabs GmbH
 */

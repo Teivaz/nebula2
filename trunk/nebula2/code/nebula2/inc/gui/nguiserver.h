@@ -4,8 +4,7 @@
 /**
     @class nGuiServer
     @ingroup NebulaGuiSystem
-    
-    Handle user interfaces.
+    @brief Handle user interfaces.
 
     (C) 2001 RadonLabs GmbH
 */

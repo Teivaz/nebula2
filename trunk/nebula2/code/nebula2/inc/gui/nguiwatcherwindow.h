@@ -4,8 +4,7 @@
 /**
     @class nGuiWatcherWindow
     @ingroup NebulaGuiSystem
-
-    A debug watcher window.
+    @brief A debug watcher window.
     
     (C) 2004 RadonLabs GmbH
 */

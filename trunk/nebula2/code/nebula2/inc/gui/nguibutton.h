@@ -4,8 +4,7 @@
 /**
     @class nGuiButton
     @ingroup NebulaGuiSystem
-
-    A GUI button class.
+    @brief A GUI button class.
 
     (C) 2001 RadonLabs GmbH
 */

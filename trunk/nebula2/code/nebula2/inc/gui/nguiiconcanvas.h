@@ -4,8 +4,7 @@
 /**
     @class nGuiIconCanvas
     @ingroup NebulaGuiSystem
-    
-    A canvas for drag and drop icons.
+    @brief A canvas for drag and drop icons.
     
     (C) 2003 RadonLabs GmbH
 */

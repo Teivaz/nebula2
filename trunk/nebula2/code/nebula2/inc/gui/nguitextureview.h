@@ -4,8 +4,7 @@
 /**
     @class nGuiTextureView
     @ingroup NebulaGuiSystem
-
-    A label widget which directly renders a texture. Used by the texture
+    @brief A label widget which directly renders a texture. Used by the texture
     browser.
     
     (C) 2004 RadonLabs GmbH

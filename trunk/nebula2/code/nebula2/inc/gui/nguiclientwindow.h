@@ -2,10 +2,9 @@
 #define N_GUICLIENTWINDOW_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiClientWindow
+    @class nGuiClientWindow
     @ingroup NebulaGuiSystem
-
-    A window with optional titlebar, close button, size handles and a
+    @brief A window with optional titlebar, close button, size handles and a
     client area.
     
     (C) 2004 RadonLabs GmbH

@@ -2,10 +2,9 @@
 #define N_GUIWINDOW_H
 //------------------------------------------------------------------------------
 /**
-	@class nGuiWindow
+    @class nGuiWindow
     @ingroup NebulaGuiSystem
-
-    A window which may contain widgets.
+    @brief A window which may contain widgets.
 
     (C) 2003 RadonLabs GmbH
 */

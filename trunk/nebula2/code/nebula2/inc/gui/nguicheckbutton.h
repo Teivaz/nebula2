@@ -4,8 +4,7 @@
 /**
     @class nGuiCheckButton
     @ingroup NebulaGuiSystem
-
-    An on/off check button widget.
+    @brief An on/off check button widget.
 
     (C) 2003 RadonLabs GmbH
 */
