@@ -14,17 +14,20 @@
 
 nNebulaClass(nStdSceneServer, "nsceneserver");
 
+// global data for qsort() compare function
+nStdSceneServer* nStdSceneServer::self = 0;
+vector3 nStdSceneServer::viewerPos;
+
 //------------------------------------------------------------------------------
 /**
 */
 nStdSceneServer::nStdSceneServer() :
     numLights(0),
-    numShapes(0),
-    numShapeLights(0)
+    numShapes(0)
 {
     memset(this->lightArray, 0, sizeof(this->lightArray));
     memset(this->shapeArray, 0, sizeof(this->shapeArray));
-    memset(this->shapeLightArray, 0, sizeof(this->shapeLightArray));
+    self = this;
 }
 
 //------------------------------------------------------------------------------
@@ -32,9 +35,35 @@ nStdSceneServer::nStdSceneServer() :
 */
 nStdSceneServer::~nStdSceneServer()
 {
-    //empty
+    this->UnloadResources();
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nStdSceneServer::AreResourcesValid()
+{
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nStdSceneServer::UnloadResources()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nStdSceneServer::LoadResources()
+{
+    return true;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -66,6 +95,65 @@ nStdSceneServer::SplitNodes()
 
 //------------------------------------------------------------------------------
 /**
+    The scene node sorting compare function. The goal is to sort the attached
+    shape nodes for optimal rendering performance.
+
+    FIXME: handling of transparent nodes, compare shaders
+*/
+int
+__cdecl
+nStdSceneServer::Compare(const ushort* i1, const ushort* i2)
+{
+    nStdSceneServer* sceneServer = nStdSceneServer::self;
+    const nSceneServer::Group& g1 = sceneServer->groupArray[*i1];
+    const nSceneServer::Group& g2 = sceneServer->groupArray[*i2];
+    int cmp;
+
+    // render priority
+    cmp = g1.sceneNode->GetRenderPri() - g2.sceneNode->GetRenderPri();
+    if (cmp != 0)
+    {
+        return cmp;
+    }
+
+    // by identical scene node
+    cmp = int(g1.sceneNode) - int(g2.sceneNode);
+    if (cmp != 0)
+    {
+        return cmp;
+    }
+
+    // distance to viewer (closest first)
+    static vector3 dist1;
+    static vector3 dist2;
+    dist1.set(viewerPos.x - g1.modelTransform.M41,
+              viewerPos.y - g1.modelTransform.M42,
+              viewerPos.z - g1.modelTransform.M43);
+    dist2.set(viewerPos.x - g2.modelTransform.M41,
+              viewerPos.y - g2.modelTransform.M42,
+              viewerPos.z - g2.modelTransform.M43);
+    float diff = dist1.lensquared() - dist2.lensquared();
+    if (diff < 0.001f)      return -1;
+    else if (diff > 0.001f) return +1;
+
+    // nodes are identical
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sort the indices in the shape array for optimal rendering.
+*/
+void
+nStdSceneServer::SortNodes()
+{
+    // initialize the static viewer pos vector                                      viewerPos = this->refGfxServer->GetTransform(nGfxServer2::InvView).pos_component();
+
+    // call the sorter hook                                                         qsort(this->shapeArray, this->numShapes, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) Compare);
+}
+
+//------------------------------------------------------------------------------
+/**
     Render the shape objects in the scene, using the shader defined by
     the fourcc code. If no such shader exists, no rendering is done.
 */
@@ -83,6 +171,8 @@ nStdSceneServer::RenderShapes(uint shaderFourCC)
         {
             gfxServer->SetTransform(nGfxServer2::Model, group.modelTransform);
             group.sceneNode->RenderShader(shaderFourCC, this, group.renderContext);
+            nShader2* curShader = gfxServer->GetShader();
+            this->UpdateShader(curShader, group.renderContext);
             group.sceneNode->RenderGeometry(this, group.renderContext);
         }
     }
@@ -110,18 +200,18 @@ nStdSceneServer::RenderLightShapes(uint shaderFourCC)
         {
             // set the modelview matrix for the shape
             gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
-
-            // prepare shader and geometry
-            shapeGroup.sceneNode->RenderShader(shaderFourCC, this, shapeGroup.renderContext);
-
-            // render geometry for each light intersecting this shape...
-            int shapeLightIndex;
-            for (shapeLightIndex = 0; shapeLightIndex < this->numShapeLights; shapeLightIndex++)
+            // prepare shader
+            if (shapeGroup.sceneNode->RenderShader(shaderFourCC, this, shapeGroup.renderContext))
             {
-                Group& lightGroup = this->groupArray[this->shapeLightArray[shapeLightIndex]];
+                nShader2* curShader = gfxServer->GetShader();
+                this->UpdateShader(curShader, shapeGroup.renderContext);
 
-                // update light parameters
-                lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
+                // render the "most important light" into the shader (just the first light)
+                if (this->numLights > 0)
+                {
+                    Group& lightGroup = this->groupArray[this->lightArray[0]];
+                    lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
+                }
 
                 // render!
                 shapeGroup.sceneNode->RenderGeometry(this, shapeGroup.renderContext);
@@ -136,7 +226,7 @@ nStdSceneServer::RenderLightShapes(uint shaderFourCC)
 
      -# clear the screen
      -# render scene into the depth buffer only
-     -# render diffuse lighting 
+     -# render diffuse lighting
      -# render pixel colors and modulate into frame buffer
      -# render specular light and add onto frame buffer
      -# apply various post-special-effects
@@ -146,23 +236,39 @@ nStdSceneServer::RenderScene()
 {
     nGfxServer2* gfxServer = this->refGfxServer.get();
 
-    // split shape and light nodes
+    // make sure all required resources are ok
+    if (!this->AreResourcesValid())
+    {
+        bool success = this->LoadResources();
+        n_assert(success);
+    }
+
+    // split nodes into shapes and lights
     this->SplitNodes();
 
-    // start rendering to the frame buffer
-    if (gfxServer->BeginScene()) 
-    {
-        gfxServer->Clear(nGfxServer2::AllBuffers, 0.4f, 0.4f, 0.4f, 1.0f, 1.0f, 0);
+    // sort shape nodes for optimal rendering
+    this->SortNodes();
 
+    if (gfxServer->BeginScene())
+    {
         // clear, render depth, diffuse, color and specular into the back buffer
+        gfxServer->Clear(nGfxServer2::AllBuffers, 0.3f, 0.3f, 0.3f, 1.0f, 1.0f, 0);
         this->RenderShapes(FOURCC('dept'));
         this->RenderLightShapes(FOURCC('diff'));
         this->RenderShapes(FOURCC('colr'));
         this->RenderLightShapes(FOURCC('spec'));
-
-        // finish the frame
-        gfxServer->DrawTextBuffer();
-        gfxServer->EndScene();
-        gfxServer->PresentScene();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This finalizes rendering and presents the scene to the user.
+*/
+void
+nStdSceneServer::PresentScene()
+{
+    nGfxServer2* gfxServer = this->refGfxServer.get();
+    gfxServer->DrawTextBuffer();
+    gfxServer->EndScene();
+    gfxServer->PresentScene();
 }
