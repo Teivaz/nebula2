@@ -252,6 +252,9 @@ nAnimState::Sample(float time,
             // only process clip if its weight is greater 0
             if (clipWeight > 0.0f)
             {
+                // scale weightAccum so that 1 == (weightAccum + weight)
+                const float scaledWeight = clipWeight / (weightAccum + clipWeight);
+
                 // for each curve in the clip...
                 int numCurves = clip.GetNumCurves();
                 int firstCurveIndex = clip.GetFirstCurveIndex();
@@ -281,10 +284,6 @@ nAnimState::Sample(float time,
                             // FIXME: all those vector4/quaternion transfers are inefficient
                             quatCurrent.set(curSampleKey.x, curSampleKey.y, curSampleKey.z, curSampleKey.w);
                             quatAccum.set(curArrayKey.x, curArrayKey.y, curArrayKey.z, curArrayKey.w);
-
-                            // scale weightAccum so that 1 == (weightAccum + weight)
-                            float scaledWeight = clipWeight / (weightAccum + clipWeight);
-
                             quatSlerp.slerp(quatAccum, quatCurrent, scaledWeight);
                             curArrayKey.set(quatSlerp.x, quatSlerp.y, quatSlerp.z, quatSlerp.w);
                         }
