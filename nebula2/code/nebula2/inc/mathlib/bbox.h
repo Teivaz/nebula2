@@ -77,6 +77,77 @@ public:
     /// check for intersection with view volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;  
 
+    /**
+        @brief Gets closest intersection with AABB.
+        If the line starts inside the box,  start point is returned in ipos.
+        @param line the pick ray
+        @param ipos closest point of intersection if successful, trash otherwise
+        @return true if an intersection occurs
+    */
+	bool intersect(const line3& line, vector3& ipos) const;
+
+    // get point of intersection of 3d line with planes
+    // on const x,y,z
+    bool isect_const_x(const float x, const line3& l, vector3& out) const
+    {
+        if (l.m.x != 0.0f)
+        {
+            float t = (x - l.b.x) / l.m.x;
+            if ((t>=0.0f) && (t<=1.0f))
+            {
+                // point of intersection...
+                out = l.ipol(t);
+                return true;
+            }
+        }
+        return false;
+    }
+    bool isect_const_y(const float y, const line3& l, vector3& out) const
+    {
+        if (l.m.y != 0.0f)
+        {
+            float t = (y - l.b.y) / l.m.y;
+            if ((t>=0.0f) && (t<=1.0f))
+            {
+                // point of intersection...
+                out = l.ipol(t);
+                return true;
+            }
+        }
+        return false;
+    }
+    bool isect_const_z(const float z, const line3& l, vector3& out) const
+    {
+        if (l.m.z != 0.0f)
+        {
+            float t = (z - l.b.z) / l.m.z;
+            if ((t>=0.0f) && (t<=1.0f))
+            {
+                // point of intersection...
+                out = l.ipol(t);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // point in polygon check for sides with constant x,y and z
+    bool pip_const_x(const vector3& p) const
+    {
+        if ((p.y>=vmin.y)&&(p.y<=vmax.y)&&(p.z>=vmin.z)&&(p.z<=vmax.z)) return true;
+        else return false;
+    }
+    bool pip_const_y(const vector3& p) const
+    {
+        if ((p.x>=vmin.x)&&(p.x<=vmax.x)&&(p.z>=vmin.z)&&(p.z<=vmax.z)) return true;
+        else return false;
+    }
+    bool pip_const_z(const vector3& p) const
+    {
+        if ((p.x>=vmin.x)&&(p.x<=vmax.x)&&(p.y>=vmin.y)&&(p.y<=vmax.y)) return true;
+        else return false;
+    }
+
     vector3 vmin;
     vector3 vmax;
 };
@@ -343,6 +414,62 @@ bbox3::clipstatus(const matrix44& viewProjection) const
     else if (0 != andFlags) return Outside;
     else                    return Clipped;
 }
+
+
+/**
+    @brief Gets closest intersection with AABB.
+    If the line starts inside the box,  start point is returned in ipos.
+    @param line the pick ray
+    @param ipos closest point of intersection if successful, trash otherwise
+    @return true if an intersection occurs
+*/
+inline bool bbox3::intersect(const line3& line, vector3& ipos) const
+{
+    // Handle special case for start point inside box
+    if (line.b.x >= vmin.x && line.b.y >= vmin.y && line.b.z >= vmin.z &&
+        line.b.x <= vmax.x && line.b.y <= vmax.y && line.b.z <= vmax.z)
+    {
+        ipos = line.b;
+        return true;
+    }
+
+    // Order planes to check, closest three only
+    int plane[3];
+    if (line.m.x > 0) plane[0] = 0;
+    else              plane[0] = 1;
+    if (line.m.y > 0) plane[1] = 2;
+    else              plane[1] = 3;
+    if (line.m.z > 0) plane[2] = 4;
+    else              plane[2] = 5;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        switch (plane[i])
+        {
+            case 0:
+                if (isect_const_x(vmin.x,line,ipos) && pip_const_x(ipos)) return true;
+                break;
+            case 1:
+                if (isect_const_x(vmax.x,line,ipos) && pip_const_x(ipos)) return true;
+                break;
+            case 2:
+                if (isect_const_y(vmin.y,line,ipos) && pip_const_y(ipos)) return true;
+                break;
+            case 3:
+                if (isect_const_y(vmax.y,line,ipos) && pip_const_y(ipos)) return true;
+                break;
+            case 4:
+                if (isect_const_z(vmin.z,line,ipos) && pip_const_z(ipos)) return true;
+                break;
+            case 5:
+                if (isect_const_z(vmax.z,line,ipos) && pip_const_z(ipos)) return true;
+                break;
+        }
+    }
+
+    return false;
+}
+
 
 //------------------------------------------------------------------------------
 #endif
