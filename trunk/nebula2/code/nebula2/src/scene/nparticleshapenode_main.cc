@@ -50,7 +50,50 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(renderContext);
     this->InvokeTransformAnimators(renderContext);
     this->UpdateMatrix();
-    sceneServer->SetModelTransform(this->matrix * parentMatrix);
+
+    // get emitter from render context
+    nVariableServer* varServer = this->refVariableServer.get();
+    nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
+    int emitterKey = varEmitter.GetInt();
+    nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
+
+    // keep emitter alive
+    if (0 != emitter)
+    {
+        emitter->KeepAlive();
+    }
+    else
+    {
+        // need new emitter
+        emitter = this->refParticleServer.get()->NewParticleEmitter();
+        n_assert(0 != emitter);
+
+        varEmitter.SetInt(emitter->GetKey());
+    }
+
+    // setup emitter
+    emitter->SetMeshGroupIndex(this->groupIndex);
+    emitter->SetEmitterMesh(this->refMesh.get());
+    emitter->SetTransform(this->matrix * parentMatrix);
+    int windVarHandle = this->refVariableServer->GetVariableHandleByName("wind");
+    nVariable* windVar = renderContext->GetVariable(windVarHandle);
+    emitter->SetWind(windVar->GetFloat4());
+
+    // set emitter settings
+    emitter->SetEmissionDuration(this->emissionDuration);
+    emitter->SetLoop(this->loop);
+    emitter->SetActivityDistance(this->activityDistance);
+    emitter->SetSpreadAngle(this->spreadAngle);
+    emitter->SetBirthDelay(this->birthDelay);
+    emitter->SetStartRotation(this->startRotation);
+    int curveType;
+    for (curveType = 0; curveType < nParticleEmitter::CurveTypeCount; curveType++)
+    {
+        emitter->SetCurve((nParticleEmitter::CurveType) curveType, this->curves[curveType]);
+    }
+    emitter->SetRGBCurve(this->rgbCurve);
+
+    sceneServer->SetModelTransform(matrix44());
     return true;
 }
 
@@ -84,47 +127,7 @@ nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderCont
 {
     nShapeNode::Attach(sceneServer, renderContext);
 
-    // get emitter from render context
-    nVariableServer* varServer = this->refVariableServer.get();
-    nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
-    int emitterKey = varEmitter.GetInt();
-    nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
- 
-    // keep emitter alive
-    if (0 != emitter)
-    {
-        emitter->KeepAlive();
-    }
-    else
-    {
-        // need new emitter
-        emitter = this->refParticleServer.get()->NewParticleEmitter();
-        n_assert(0 != emitter);
-
-        varEmitter.SetInt(emitter->GetKey());
-    }
-
-    // setup emitter
-    emitter->SetMeshGroupIndex(this->groupIndex);
-    emitter->SetEmitterMesh(this->refMesh.get());
-    emitter->SetTransform(renderContext->GetTransform());
-    int windVarHandle = this->refVariableServer->GetVariableHandleByName("wind");
-    nVariable* windVar = renderContext->GetVariable(windVarHandle);
-    emitter->SetWind(windVar->GetFloat4());
-
-    // set emitter settings
-    emitter->SetEmissionDuration(this->emissionDuration);
-    emitter->SetLoop(this->loop);
-    emitter->SetActivityDistance(this->activityDistance);
-    emitter->SetSpreadAngle(this->spreadAngle);
-    emitter->SetBirthDelay(this->birthDelay);
-    emitter->SetStartRotation(this->startRotation);
-    int curveType;
-    for (curveType = 0; curveType < nParticleEmitter::CurveTypeCount; curveType++)
-    {
-        emitter->SetCurve((nParticleEmitter::CurveType) curveType, this->curves[curveType]);
-    }
-    emitter->SetRGBCurve(this->rgbCurve);
+    
 }
 
 
