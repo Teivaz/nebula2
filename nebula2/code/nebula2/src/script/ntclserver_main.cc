@@ -68,8 +68,10 @@ nTclServer::~nTclServer()
     Link to a tcl interpreter.
 */
 void
-nTclServer::LinkToInterp(Tcl_Interp* interp, bool /* isStandAlone */)
+nTclServer::LinkToInterp(Tcl_Interp* interp, bool isStandAlone)
 {
+    (void)isStandAlone; // avoid 'unused argument warning'
+
     n_assert(interp);
 
 #ifndef __MICROTCL__
@@ -122,8 +124,10 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /* isStandAlone */)
     Unlink from tcl interpreter if running as extension.
 */
 void 
-nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /* isStandAlone */)
+nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool isStandAlone)
 {
+    (void)isStandAlone; // avoid 'unused argument warning'
+
     n_assert(interp);
 
     Tcl_DeleteCommand(this->interp, "exists");
