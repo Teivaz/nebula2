@@ -15,6 +15,9 @@ global data_loaded
 global loaded_generators
 global usegui
 
+#package require profiler
+#::profiler::init
+
 set chosen_workspaces {}
 set buildgen ""
 set verbose false
@@ -371,6 +374,7 @@ proc run_buildsystem_worker {workspaces buildgen} {
         namespace inscope $buildgen generate $workspaces
     }
 
+    #puts [::profiler::print]
     ::log::log info "\ndone."
 }
 
