@@ -187,6 +187,7 @@ nViewerApp::Run()
     uint frameId = 0;
     while (this->refGfxServer->Trigger() && running)
     {
+        kernelServer->GetTimeServer()->Trigger();
         nTime time = kernelServer->GetTimeServer()->GetTime();
         if (prevTime == 0.0)
         {
