@@ -43,10 +43,9 @@ nMaxBoneManager::nMaxBoneManager()
 //---------------------------------------------------------------------------
 /**
 */
-nMaxBoneManager::~nMaxBoneManager()
+nMaxBoneManager::~nMaxBoneManager()    
 {
     Singleton = 0;
-
 }
 
 //---------------------------------------------------------------------------
@@ -105,23 +104,6 @@ void nMaxBoneManager::GetBoneByModifier(const nArray<INode*>& nodeArray,
         }
     }
 }
-//---------------------------------------------------------------------------
-/**
-*/
-void nMaxBoneManager::GetRootBones(INode* sceneRoot, const nArray<INode*> &boneNodeArray, 
-                             nArray<INode*> &rootBoneArray)
-{
-    for(int i=0; i<boneNodeArray.Size(); i++)
-    {
-        INode* node = boneNodeArray[i];
-
-        if (node->GetParentNode() == sceneRoot)
-        {
-            // it's the first node in bone node hierarchy.
-            rootBoneArray.Append(node);
-        }
-    }
-}
 
 //-----------------------------------------------------------------------------
 /**
@@ -129,7 +111,6 @@ void nMaxBoneManager::GetRootBones(INode* sceneRoot, const nArray<INode*> &boneN
 void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray, 
                                        nArray<INode*> &boneNodeArray)
 {
-
     for (int i=0; i<nodeArray.Size(); i++)
     {
         INode* node = nodeArray[i];
@@ -159,21 +140,48 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
 
 //---------------------------------------------------------------------------
 /**
-    The way collect bone type node is a bit tricky.
-    3dsmax support any type of object to be bone, so it is not enough
-    to check only object type to know the given node is bone or not.
-    We should a object has any physique or skin modifier and if the
-    object has it, retrieve bone from it refer via physique(or skin)
-    interface.
+    The way collecting nodes of bone type is a bit tricky.
 
-    It uses two way to collect bones from the given scene.
-    One is that by node class ID and the other is that by check the modifier
-    of the node. Functions for each of the way are GetBoneByModifier() and
-    GetBoneByClassID().
+    3dsmax support any type of object to be bone, so it is not enough
+    to check an object which type is bone or biped.
+    So, we check an object which has any physique or skin modifier and 
+    retrieve bones from it via physique(or skin) interface.
+
+    It is accomplished by two ways to collect bones from the given scene.
+    First, we check modifier of the geometry node's and collect bones from the
+    modifier. Second, we collect bones by its class ID if the class ID is one of
+    the bone's or biped's one.
+    Functions for each of the ways are GetBoneByModifier() and GetBoneByClassID().
+
+    Next thing to do is find the root bone from collected bones. The closet bone
+    node from scene root is selected for root bone. (Note that the root bone is
+    not always a child of scene root node)
+
+    Example:
+    @verbatim
+    scene root
+        bone A
+            bone B
+            bone C
+                constraint
+                    bone D
+    @endverbatim
+
+    In the above example, if the bone A is not used for the animation, the root
+    bone is bone B.
+
+    And last we build bone array and indices of its elements which will be used 
+    for joint indices of vertices. 
+    At this time, only collected bones are added to the bone array.
+    An artist can add constraint or something other which is not a bone to a bone 
+    hierarchy and it should be filtered out when the bone array is built.
 
 */
-void nMaxBoneManager::Build(INode* node)
+bool nMaxBoneManager::BuildBones(INode* node)
 {
+    INode* root = nMaxInterface::Instance()->GetInterface()->GetRootNode();
+    n_assert(root == node);
+
     INode* sceneRoot = node;
 
     // array for scene nodes.
@@ -181,6 +189,11 @@ void nMaxBoneManager::Build(INode* node)
 
     // retrieves all scene nodes.
     this->GetNodes(node, nodeArray);
+
+    for (int i=0; i<nodeArray.Size(); i++)
+    {
+        n_maxlog(Midium, "    nodes in array: %s", nodeArray[i]->GetName());
+    }
 
     // array for bone nodes.
     nArray<INode*> boneNodeArray;
@@ -196,15 +209,18 @@ void nMaxBoneManager::Build(INode* node)
     if (boneNodeArray.Size() <= 0)
     {
         n_maxlog(Midium, "The scene has no bones.");
-        return;
+        return true;
     }
 
-    nArray<INode*> rootBoneArray;
-    this->GetRootBones(sceneRoot, boneNodeArray, rootBoneArray);
+    // get top most level of the bone in the bone array.
+    // this bone will be used as the root bone.
+    INode* rootBone = GetRootBone(sceneRoot, boneNodeArray);
+    n_assert(rootBone);
 
-    // recursively builds bones.
-    this->BuildBones(-1, rootBoneArray.At(0));
+    // build bone array.
+    this->ReconstructBoneHierarchy(-1, rootBone, boneNodeArray);
 
+    // extract animation state from note track.
     for (int i=0; i<this->boneArray.Size(); i++)
     {
         Bone bone = this->boneArray[i];
@@ -216,13 +232,103 @@ void nMaxBoneManager::Build(INode* node)
         noteTrack.GetAnimState(boneNode);
     }
 
+    // if there are no animation states, we add default one.
+    // (skin animator needs it at least one)
+    if (noteTrack.GetNumStates() <= 0)
+    {
+        //FIXME: fix to get proper first frame.
+        int firstframe   = 0;
+        int duration     = nMaxInterface::Instance()->GetNumFrames();
+        float fadeintime = 0.0f;
+        noteTrack.AddAnimState(firstframe, duration, fadeintime);
+    }
+
     n_maxlog(Midium, "Found %d bones", this->GetNumBones());
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+struct BoneLevel
+{
+    INode *node;
+    int   depth;
+};
+
+//-----------------------------------------------------------------------------
+/**
+*/
+INode* nMaxBoneManager::GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeArray)
+{
+    int i, j, k;
+
+//#ifdef _DEBUG
+//    for (i=0; i<boneNodeArray.Size(); i++)
+//    {
+//        n_maxlog(Midium, "Before Sort: %s", boneNodeArray[i]->GetName());
+//    }
+//#endif
+
+    nArray<BoneLevel> boneLevelArray;
+    
+    INode* bone;
+    int depth;
+
+    // evaluate depth of the bone in the hierarchy.
+    for(i=0; i<boneNodeArray.Size(); i++)
+    {
+        bone = boneNodeArray[i];
+        depth = 0;
+
+        while(bone != sceneRoot)
+        {
+            bone = bone->GetParentNode();
+            depth++;
+        }
+
+        BoneLevel bl;
+        bl.node  = boneNodeArray[i];
+        bl.depth = depth;
+        boneLevelArray.Append(bl);
+    }
+
+    n_assert(boneNodeArray.Size() == boneLevelArray.Size());
+
+    // do selection sort.
+    BoneLevel tmp;
+    for(i=0; i<boneLevelArray.Size()-1; i++)
+    {
+        k = i;
+        for (j=i+1; j<boneLevelArray.Size(); j++)
+        {
+            // find the bone which has lowest depth value.
+            if (boneLevelArray[k].depth > boneLevelArray[j].depth)
+            {
+                k = j;
+            }
+        }
+
+        tmp = boneLevelArray[i];
+        boneLevelArray[i] = boneLevelArray[k];
+        boneLevelArray[k] = tmp;
+    }
+
+//#ifdef _DEBUG
+//    for (i=0; i<boneLevelArray.Size(); i++)
+//    {
+//        n_maxlog(Midium, "After Sort: %s", boneLevelArray[i].node->GetName());
+//    }
+//#endif
+
+    // the first node in boneLevelArray is the root bone node.
+    return boneLevelArray[0].node;
 }
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::BuildBones(int parentID, INode* node)
+void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, INode* node, 
+                                               nArray<INode*> &boneNodeArray)
 {
     Bone bone;
 
@@ -232,11 +338,13 @@ void nMaxBoneManager::BuildBones(int parentID, INode* node)
     bone.name           = nMaxUtil::CorrectName(node->GetName());
     bone.node           = node;
 
-    this->boneArray.Append(bone);
+    // add only known bone.
+    if (boneNodeArray.Find(node))
+        this->boneArray.Append(bone);
 
     for (int i=0; i<node->NumberOfChildren(); i++)
     {
-        BuildBones(bone.id, node->GetChildNode(i));
+        ReconstructBoneHierarchy(bone.id, node->GetChildNode(i), boneNodeArray);
     }
 }
 
@@ -315,7 +423,8 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod, nArray<INode*> &boneNodeArray)
+void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod, 
+                                       nArray<INode*> &boneNodeArray)
 {
     // get the skin interface
     ISkin* skin = (ISkin*)skinMod->GetInterface(I_SKIN);
@@ -538,7 +647,7 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
     nAnimBuilder animBuilder;
 
-    // retrieves smapled keys.
+    // retrieves sampled keys.
     int sampleRate = nMaxOptions::Instance()->GetSampleRate();
     float keyDuration = (float)sampleRate / GetFrameRate();
     int sceneFirstKey = 0;
