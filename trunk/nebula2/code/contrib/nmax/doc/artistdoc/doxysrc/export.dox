@@ -1,0 +1,31 @@
+/**
+    @defgroup NMaxHowtoExport Exporting How to
+
+    @section NMaxHowtoExportOverview Overview
+
+    @section NMaxHowtoExportWhereFiles Where Are My Files?
+
+    The toolkit uses the <b>Current Project Directory</b> to locate their files.
+
+    You can switch to a different project directory using 'Nebula2' menu in the
+    3DS Max.
+
+    - in 3DS Max: select the <i>Nebula2 > Directory Settings...</i> menu item 
+      and enter a new <b>Project Directory</b>.
+
+    For more information on <b>path assigns</b>, see @ref NMaxPathAssigns.
+
+    The @b export directory contains the exported graphics data in Nebula2 format. 
+    The contents of this directory is only important to programmers who want to 
+    load Nebula2 graphics objects into their applications.
+
+    - export
+        - gfxlib exported Nebula2 .n2 files in category subdirectories
+            - examples this is a category called examples
+                - eagle.n2 the Nebula2 version of exported eagle sample
+                - tiger.n2 etc...
+        - meshes exported mesh resource files loaded by the .n2 object files
+        - anims exported animation resource files loaded by the .n2 object files
+        - textures textures 
+
+*/

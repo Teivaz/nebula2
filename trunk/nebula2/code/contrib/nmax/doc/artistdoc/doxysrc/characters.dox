@@ -1,0 +1,23 @@
+/**
+    @defgroup NMaxHowtoCharacters Characters How to
+
+    @section NMaxHowtoCharactersOverview Overview 
+
+    <b>The Nebula2 Toolkit For 3DS Max</b> previews and exports smooth-skinned 3DS Max 
+    characters with any number of bones, any number of skins and materials, and 
+    up to 4 weights per vertex.
+
+    Exported Characters are animated through the Nebula2 animation system which supports 
+    smooth animation transitions, and weighted animation blending. 
+    All transformation types (translation, rotation, scaling) are allowed on bones.
+
+    The following list are supported toolkit features related to the character.
+        - Character Studio @b Biped and @b Physique are avaiable
+        - 3DS Max <b>Skin Modifier</b> is avaiable
+        - any type of the objects can be used for bone
+
+
+    @section NMaxHowtoCharactersStepByStep Step By Step
+
+
+*/

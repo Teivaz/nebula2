@@ -1,0 +1,41 @@
+/**
+    @page NMaxInstallation Installation
+
+    Once the <b>Nebula2 Toolkit for 3DS Max</b> was built, you can get the 3DS Max 
+    plugin, <b>nmaxtoolbox.dlu</b> file.
+
+    The following image shows the 3dsmax installed directory.
+
+    <table border=0 cellspacing=0 cellpadding=0 width=100% >
+    <tr valign=top>
+    <td>
+    @image html install01.png
+    </td>
+    <td> 
+        -# copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
+
+        -# copy the directory <b>scripts</b> and all its files to the <tt>$3dsmax/scripts</tt> 
+           directory.
+          - You can find <tt>scripts</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/scripts</tt>.
+
+        -# copy <b>plugcfg</b> directory and all its files to <tt>$3dsmax/plugcfg</tt> 
+           directory.
+          - You can find <tt>plugcfg</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/plugcfg</tt>.
+    <td>
+    </tr>
+    </table>
+
+    After all files are copied, run 3DS Max.
+
+    @image html install02.png
+
+    Now you can the new menu <b>Nebula2</b>. Select <b>Directory Setting...</b> menu item 
+    in the menu.
+
+    Specifies your nebula2 installation directory to the home assign editbox and other settings 
+    if it is necessary. For more information on <b>path assigns</b>, see @ref NMaxPathAssigns.
+
+    That's all. All tasks for installation was done and ready to go.
+
+*/
+

@@ -1,0 +1,16 @@
+/**
+    @defgroup NMaxHowtoQuickStart Quick Start
+
+    @section NMaxHowtoQuickStartOverview Overview
+
+    This section of the document provides quick step by step walkthrough which allows
+    you to know how to export and preview your model within 3DS Max.
+
+    You should have installed the plugin and necessary max script files to its locations
+    before you go further.
+    See @ref NMaxInstallation for information of the installation of the toolkit.
+
+    @section NMaxHowtoQuickStartStepByStep Step By Step
+
+
+*/
