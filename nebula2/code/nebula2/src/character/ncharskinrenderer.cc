@@ -73,9 +73,9 @@ nCharSkinRenderer::Render(int meshGroupIndex, const nCharJointPalette& jointPale
     }
 
     // transfer the joint palette to the current shader
-    if (this->shader->IsParameterUsed(nShader2::JointPalette))
+    if (this->shader->IsParameterUsed(nShaderState::JointPalette))
     {
-        this->shader->SetMatrixArray(nShader2::JointPalette, jointArray, paletteSize);
+        this->shader->SetMatrixArray(nShaderState::JointPalette, jointArray, paletteSize);
     }
 
     // set current vertex and index range and draw mesh

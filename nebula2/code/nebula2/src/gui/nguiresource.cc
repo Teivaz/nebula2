@@ -19,8 +19,7 @@ nGuiResource::Load()
 
     if (!this->refTexture.isvalid())
     {
-        nGfxServer2* gfxServer = this->refGfxServer.get();
-        this->refTexture = gfxServer->NewTexture(texPath);
+        this->refTexture = nGfxServer2::Instance()->NewTexture(texPath);
     }
     if (!this->refTexture->IsValid())
     {

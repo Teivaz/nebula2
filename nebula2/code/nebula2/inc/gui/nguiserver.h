@@ -12,9 +12,10 @@
 #include "kernel/ndynautoref.h"
 #include "mathlib/vector.h"
 #include "mathlib/rectangle.h"
-#include "gfx2/nmesh2.h"
+#include "gfx2/ndynamicmesh.h"
 #include "gfx2/nshader2.h"
 #include "gui/nguievent.h"
+#include "gui/nguiskin.h"
 
 class nGuiWindow;
 class nGuiWidget;
@@ -22,7 +23,6 @@ class nGfxServer2;
 class nInputServer;
 class nGuiToolTip;
 class nScriptServer;
-class nGuiSkin;
 
 //------------------------------------------------------------------------------
 class nGuiServer : public nRoot
@@ -32,6 +32,8 @@ public:
     nGuiServer();
     /// destructor
     virtual ~nGuiServer();
+    /// get instance pointer
+    static nGuiServer* Instance();
 
     /// create a window of given class name
     nGuiWindow* NewWindow(const char* className, bool visible);
@@ -41,10 +43,6 @@ public:
     void SetRootPath(const char* name);
     /// get gui root directory in Nebula object hierarchy
     const char* GetRootPath() const;
-    /// set optionsl gui resource postfix
-    void SetResourcePostfix(const char* post);
-    /// get optional gui resource postfix
-    const char* GetResourcePostfix() const;
     /// set the current skin
     void SetSkin(nGuiSkin* skin);
     /// get the current skin
@@ -78,7 +76,7 @@ public:
     /// render the current gui
     virtual void Render();
     /// render audio effects
-    virtual void RenderAudio();
+    //virtual void RenderAudio();
     /// add a font definition using a system font
     void AddSystemFont(const char* fontName, const char* typeFace, int height, bool bold, bool italic, bool underline);
     /// add a font definition using a custom font
@@ -90,7 +88,7 @@ public:
     /// directly draw a textured rectangle
     void DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex);
     /// draw a brush of the current skin
-    void DrawBrush(const rectangle& r, const char* brushName);
+    void DrawBrush(const rectangle& r, nGuiBrush& brush);
     /// convert a ref space rectangle to screen space
     rectangle ConvertRefToScreenSpace(const rectangle& src);
     /// convert a screen space rectangle to ref space
@@ -117,6 +115,10 @@ public:
     void SetGlobalColor(const vector4& c);
     /// get the current overall modulation color
     const vector4& GetGlobalColor() const;
+    /// play a gui sound
+    void PlaySound(nGuiSkin::Sound snd);
+    /// draw text, call this instead of nGfxServer2::DrawText()!
+    void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
 
 private:
     /// validate embedded rectangle mesh
@@ -129,8 +131,10 @@ private:
     void HideToolTip();
     /// return true if tooltip window currently visible
     bool IsToolTipShown() const;
+    /// flush brush rendering (before rendering text)
+    void FlushBrushes();
 
-    nAutoRef<nGfxServer2>   refGfxServer;
+    static nGuiServer* Singleton;
     nDynAutoRef<nRoot>      refGui;
     nAutoRef<nInputServer>  refInputServer;
     nAutoRef<nScriptServer> refScriptServer;
@@ -141,14 +145,13 @@ private:
     nRef<nRoot>             refSkins;
     nRef<nGuiSkin>          refCurrentSkin;
 
+    nClass* guiWindowClass;
+
     uint uniqueId;
     bool isOpen;
     vector2 curMousePos;
     vector2 referenceSize;
     nTime curTime;
-    nRef<nMesh2> refMesh;
-    nRef<nShader2> refShader;
-    nString resourcePostfix;
     vector4 globalColor;
 
     nArray< nRef<nGuiWidget> > eventListeners;
@@ -159,7 +162,27 @@ private:
     nRef<nGuiWindow> refUserRootWindow;         // used as backup while system gui visible
     nRef<nGuiSkin>   refUserSkin;               // used as backup while system gui visible
     bool systemGuiActive;
+
+    // dynamic mesh rendering
+    nDynamicMesh dynMesh;
+    nRef<nShader2> refShader;
+    nTexture2* curTexture;
+    vector4 curColor;
+    int curMaxNumVertices;
+    float* curVertexPointer;
+    int curVertexIndex;
 };
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiServer*
+nGuiServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
 
 //-----------------------------------------------------------------------------
 /**
@@ -189,26 +212,6 @@ const vector2&
 nGuiServer::GetMousePos() const
 {
     return this->curMousePos;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiServer::SetResourcePostfix(const char* pre)
-{
-    this->resourcePostfix = pre;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGuiServer::GetResourcePostfix() const
-{
-    return this->resourcePostfix.Get();
 }
 
 //-----------------------------------------------------------------------------

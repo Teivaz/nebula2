@@ -22,118 +22,6 @@ nNebulaClass(nShader2, "nresource");
     Docs needed.
 */
 //------------------------------------------------------------------------------
-
-/// the shader parameter name string table
-const char* nShader2::StringTable[nShader2::NumParameters] = 
-{
-    "Model",
-    "InvModel",
-    "View",
-    "InvView",
-    "Projection",
-    "ModelView",
-    "InvModelView",
-    "ModelViewProjection",
-    "ModelLightProjection",
-    "ModelShadowProjection",
-    "ModelEyePos",
-    "ModelLightPos",
-    "LightPos",
-    "LightDirection",
-    "MatAmbient",
-    "MatDiffuse",
-    "MatSpecular",
-    "MatSpecularPower",
-    "MatTransparency",
-    "MatFresnel",
-    "Scale",
-    "Noise",
-    "MatTranslucency",
-    "AlphaRef",
-    "CullMode",
-    "DirAmbient",
-    "FogDistances",
-    "FogNearBottomColor",
-    "FogNearTopColor",
-    "FogFarBottomColor",
-    "FogFarTopColor",
-    "LightAmbient",
-    "LightDiffuse",
-    "LightSpecular",
-    "DiffMap0",
-    "DiffMap1",
-    "DiffMap2",
-    "DiffMap3",
-    "SpecMap0",
-    "SpecMap1",
-    "SpecMap2",
-    "SpecMap3",
-    "AmbientMap0",
-    "AmbientMap1",
-    "AmbientMap2",
-    "AmbientMap3",
-    "BumpMap0",
-    "BumpMap1",
-    "BumpMap2",
-    "BumpMap3",
-    "CubeMap0",
-    "CubeMap1",
-    "CubeMap2",
-    "CubeMap3",
-    "NoiseMap0",
-    "NoiseMap1",
-    "NoiseMap2",
-    "NoiseMap3",
-    "LightModMap",
-    "ShadowMap",
-    "SpecularMap",
-    "ShadowModMap",
-    "JointPalette",
-    "Time",
-    "Wind",
-    "Swing",
-    "InnerLightIntensity",
-    "OuterLightIntensity",
-    "BoxMinPos",
-    "BoxMaxPos",
-    "BoxCenter",
-    "MinDist",
-    "MaxDist",
-    "SpriteSize",
-    "MinSpriteSize",
-    "MaxSpriteSize",
-    "SpriteSwingAngle",
-    "SpriteSwingTime",
-    "SpriteSwingTranslate",
-    "DisplayResolution",
-    "TexGenS",
-    "TexGenT",
-    "TexGenR",
-    "TexGenQ",
-    "TextureTransform0",
-    "TextureTransform1",
-    "TextureTransform2",
-    "TextureTransform3",
-    "SampleOffsets", 
-    "SampleWeights",
-    "VertexStreams",
-    "VertexWeights1",
-    "VertexWeights2",
-    "AlphaSrcBlend",
-    "AlphaDstBlend",
-    "BumpScale",
-    "FresnelBias",
-    "FresnelPower",
-    "Intensity0",
-    "Intensity1",
-    "Intensity2",
-    "Intensity3",
-    "Amplitude",
-    "Frequency",
-    "Velocity"
-};
-
-//------------------------------------------------------------------------------
 /**
 */
 nShader2::nShader2() :
@@ -155,9 +43,22 @@ nShader2::~nShader2()
 
 //------------------------------------------------------------------------------
 /**
+    Create or update the instance stream declaration for this shader.
+    Stream components will be appended, unless they already exist in the
+    declaration. Returns the number of components appended.
+    Override this method in a subclass.
+*/
+int
+nShader2::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
-nShader2::IsParameterUsed(Parameter /*p*/)
+nShader2::IsParameterUsed(nShaderState::Param /*p*/)
 {
     return false;
 }
@@ -166,7 +67,7 @@ nShader2::IsParameterUsed(Parameter /*p*/)
 /**
 */
 void
-nShader2::SetBool(Parameter /*p*/, bool /*val*/)
+nShader2::SetBool(nShaderState::Param /*p*/, bool /*val*/)
 {
     // empty
 }
@@ -175,7 +76,7 @@ nShader2::SetBool(Parameter /*p*/, bool /*val*/)
 /**
 */
 void
-nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
+nShader2::SetBoolArray(nShaderState::Param /*p*/, const bool* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -184,7 +85,7 @@ nShader2::SetBoolArray(Parameter /*p*/, const bool* /*array*/, int /*count*/)
 /**
 */
 void
-nShader2::SetInt(Parameter /*p*/, int /*val*/)
+nShader2::SetInt(nShaderState::Param /*p*/, int /*val*/)
 {
     // empty
 }
@@ -193,7 +94,7 @@ nShader2::SetInt(Parameter /*p*/, int /*val*/)
 /**
 */
 void
-nShader2::SetIntArray(Parameter /*p*/, const int* /*array*/, int /*count*/)
+nShader2::SetIntArray(nShaderState::Param /*p*/, const int* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -202,7 +103,7 @@ nShader2::SetIntArray(Parameter /*p*/, const int* /*array*/, int /*count*/)
 /**
 */
 void
-nShader2::SetFloat(Parameter /*p*/, float /*val*/)
+nShader2::SetFloat(nShaderState::Param /*p*/, float /*val*/)
 {
     // empty
 }
@@ -211,7 +112,7 @@ nShader2::SetFloat(Parameter /*p*/, float /*val*/)
 /**
 */
 void
-nShader2::SetFloatArray(Parameter /*p*/, const float* /*array*/, int /*count*/)
+nShader2::SetFloatArray(nShaderState::Param /*p*/, const float* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -220,7 +121,7 @@ nShader2::SetFloatArray(Parameter /*p*/, const float* /*array*/, int /*count*/)
 /**
 */
 void
-nShader2::SetVector4(Parameter /*p*/, const vector4& /*val*/)
+nShader2::SetVector4(nShaderState::Param /*p*/, const vector4& /*val*/)
 {
     // empty
 }
@@ -229,7 +130,7 @@ nShader2::SetVector4(Parameter /*p*/, const vector4& /*val*/)
 /**
 */
 void
-nShader2::SetVector3(Parameter /*p*/, const vector3& /*val*/)
+nShader2::SetVector3(nShaderState::Param /*p*/, const vector3& /*val*/)
 {
     // empty
 }
@@ -238,7 +139,7 @@ nShader2::SetVector3(Parameter /*p*/, const vector3& /*val*/)
 /**
 */
 void
-nShader2::SetFloat4(Parameter /*p*/, const nFloat4& /*val*/)
+nShader2::SetFloat4(nShaderState::Param /*p*/, const nFloat4& /*val*/)
 {
     // empty
 }
@@ -247,7 +148,7 @@ nShader2::SetFloat4(Parameter /*p*/, const nFloat4& /*val*/)
 /**
 */
 void
-nShader2::SetFloat4Array(Parameter /*p*/, const nFloat4* /*array*/, int /*count*/)
+nShader2::SetFloat4Array(nShaderState::Param /*p*/, const nFloat4* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -256,7 +157,7 @@ nShader2::SetFloat4Array(Parameter /*p*/, const nFloat4* /*array*/, int /*count*
 /**
 */
 void
-nShader2::SetVector4Array(Parameter /*p*/, const vector4* /*array*/, int /*count*/)
+nShader2::SetVector4Array(nShaderState::Param /*p*/, const vector4* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -265,7 +166,7 @@ nShader2::SetVector4Array(Parameter /*p*/, const vector4* /*array*/, int /*count
 /**
 */
 void
-nShader2::SetMatrix(Parameter /*p*/, const matrix44& /*val*/)
+nShader2::SetMatrix(nShaderState::Param /*p*/, const matrix44& /*val*/)
 {
     // empty
 }
@@ -274,7 +175,7 @@ nShader2::SetMatrix(Parameter /*p*/, const matrix44& /*val*/)
 /**
 */
 void
-nShader2::SetMatrixArray(Parameter /*p*/, const matrix44* /*array*/, int /*count*/)
+nShader2::SetMatrixArray(nShaderState::Param /*p*/, const matrix44* /*array*/, int /*count*/)
 {
     // empty
 }
@@ -283,7 +184,7 @@ nShader2::SetMatrixArray(Parameter /*p*/, const matrix44* /*array*/, int /*count
 /**
 */
 void
-nShader2::SetMatrixPointerArray(Parameter /*p*/, const matrix44** /*array*/, int /*count*/)
+nShader2::SetMatrixPointerArray(nShaderState::Param /*p*/, const matrix44** /*array*/, int /*count*/)
 {
     // empty
 }
@@ -292,7 +193,7 @@ nShader2::SetMatrixPointerArray(Parameter /*p*/, const matrix44** /*array*/, int
 /**
 */
 void
-nShader2::SetTexture(Parameter /*p*/, nTexture2* /*val*/)
+nShader2::SetTexture(nShaderState::Param /*p*/, nTexture2* /*val*/)
 {
     // empty
 }
@@ -310,7 +211,7 @@ nShader2::SetParams(const nShaderParams& /*params*/)
 /**
 */
 int
-nShader2::Begin()
+nShader2::Begin(bool saveState)
 {
     // empty
     return 0;

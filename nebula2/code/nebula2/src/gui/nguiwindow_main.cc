@@ -5,6 +5,7 @@
 #include "gui/nguiwindow.h"
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
+#include "kernel/ntimeserver.h"
 
 nNebulaScriptClass(nGuiWindow, "nguiwidget");
 
@@ -13,7 +14,15 @@ nNebulaScriptClass(nGuiWindow, "nguiwidget");
 */
 nGuiWindow::nGuiWindow() :
     nGuiWidget(),
-    modal(false)
+    modal(false),
+    dismissed(false),
+    closeRequested(false),
+    fadeInTime(0.0),
+    fadeOutTime(0.0),
+    openedTime(0.0),
+    closeRequestTime(0.0),
+    windowColor(1.0f, 1.0f, 1.0f, 1.0f),
+    openFirstFrame(false)
 {
     // windows are by default hidden
     this->shown = false;
@@ -38,16 +47,19 @@ nGuiWindow::SetFocusWindow(nGuiWindow* window)
 {
     n_assert(window);
     n_assert(window->IsA(this->windowClass));
-    n_assert(this == window->GetParent());
-    n_assert(this != window);
-    nGuiWindow* oldFocusWindow = this->GetTopMostWindow();
-    if (oldFocusWindow && oldFocusWindow->HasFocus())
+    if (!window->IsBackground())
     {
-        oldFocusWindow->OnLoseFocus();
+        n_assert(this == window->GetParent());
+        n_assert(this != window);
+        nGuiWindow* oldFocusWindow = this->GetTopMostWindow();
+        if (oldFocusWindow && oldFocusWindow->HasFocus())
+        {
+            oldFocusWindow->OnLoseFocus();
+        }
+        window->Remove();
+        this->AddTail(window);
+        window->OnObtainFocus();
     }
-    window->Remove();
-    this->AddTail(window);
-    window->OnObtainFocus();
 }
 
 //------------------------------------------------------------------------------
@@ -70,6 +82,16 @@ nGuiWindow::GetTopMostWindow()
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nGuiWindow::OnShow()
+{
+    nGuiWidget::OnShow();
+    this->openFirstFrame = true;
+}
+
+//------------------------------------------------------------------------------
+/**
     Called per frame. This just makes sure that the topmost window is
     also the focus window (this may change if the previous focus
     window has disappeared.
@@ -81,6 +103,29 @@ nGuiWindow::OnFrame()
     if (topMostWindow && (!topMostWindow->HasFocus()))
     {
         topMostWindow->OnObtainFocus();
+    }
+    nTime time = nTimeServer::Instance()->GetTime();
+
+    // catch time exceptions
+    if (time < this->openedTime)
+    {
+        this->openedTime = time - this->fadeInTime;
+    }
+    if (this->closeRequested)
+    {
+        if (time < this->closeRequestTime)
+        {
+            // a timer exception! (time has been reset?)
+            this->closeRequestTime = time;
+        }
+        // dismiss window when fade out time is reached
+        // NOTE: the use on nTimeServer is intentional, as the current
+        // frame time stamp is useless (would give fade delays when
+        // resources are loaded)
+        if (time > (this->closeRequestTime + this->fadeOutTime))
+        {
+            this->SetDismissed(true);
+        }
     }
     nGuiWidget::OnFrame();
 }
@@ -270,8 +315,11 @@ nGuiWindow::OnKeyDown(nKey key)
             if (N_KEY_ESCAPE == key)
             {
                 // invoke the escape key handler
-                bool handled = this->refGuiServer->RunCommand(this, this->escapeCommand);
-                handled = true;
+                if (!this->escapeCommand.IsEmpty())
+                {
+                    nGuiServer::Instance()->RunCommand(this, this->escapeCommand);
+                    handled = true;
+                }
             }
         }
     }
@@ -300,35 +348,113 @@ nGuiWindow::OnKeyUp(nKey key)
 
 //------------------------------------------------------------------------------
 /**
+    This computes the window color (takes fade in and fade out effect into
+    account).
+*/
+void
+nGuiWindow::UpdateWindowColor()
+{
+    vector4 activeWindowColor(1.0f, 1.0f, 1.0f, 1.0f);
+    vector4 inactiveWindowColor(1.0f, 1.0f, 1.0f, 1.0f);
+    nGuiSkin* curSkin = nGuiServer::Instance()->GetSkin();
+    if (curSkin)
+    {
+        activeWindowColor = curSkin->GetActiveWindowColor();
+        inactiveWindowColor = curSkin->GetInactiveWindowColor();
+    }
+    
+    // NOTE: the use on nTimeServer is intentional, as the current
+    // frame time stamp is useless (would give fade delays when
+    // resources are loaded)
+    nTime time = nTimeServer::Instance()->GetTime();
+
+    // active or inactive window color?
+    if (this->HasFocus() || (this == nGuiServer::Instance()->GetRootWindowPointer()))
+    {
+        this->windowColor = activeWindowColor;
+    }
+    else
+    {
+        this->windowColor = inactiveWindowColor;
+    }
+
+    // to obscure resource loading delays, the actual fadein snapshot
+    // is only taken after the first rendering (where resources
+    // are demand-loaded)
+    if (this->openFirstFrame && (this->fadeInTime > 0.0f))
+    {
+        // window is always invisible in first frame
+        this->windowColor.w = 0;
+    }
+    else
+    {
+        if (this->closeRequested)
+        {
+            // fadeout?
+            if ((this->fadeOutTime > 0.01f) && (time > this->closeRequestTime))
+            {
+                // fade alpha
+                float lerp = 1.0f - n_saturate((float) ((time - this->closeRequestTime) / this->fadeOutTime));
+                this->windowColor.w *= lerp;
+            }
+        }
+        else
+        {
+            // fade in?
+            if ((this->fadeInTime > 0.01f) && (time < (this->openedTime + this->fadeInTime)))
+            {
+                // fade alpha
+                float lerp = n_saturate((float) ((time - this->openedTime) / this->fadeInTime));
+                this->windowColor.w *= lerp;
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nGuiWindow::Render()
 {
     if (this->IsShown())
     {
-        nGuiServer* guiServer = this->refGuiServer.get();
-        vector4 activeWindowColor(1.0f, 1.0f, 1.0f, 1.0f);
-        vector4 inactiveWindowColor(1.0f, 1.0f, 1.0f, 1.0f);
-        nGuiSkin* curSkin = this->refGuiServer->GetSkin();
-        if (curSkin)
-        {
-            activeWindowColor = curSkin->GetActiveWindowColor();
-            inactiveWindowColor = curSkin->GetInactiveWindowColor();
-        }
-        if (this->HasFocus() || (this == this->refGuiServer->GetRootWindowPointer()))
-        {
-            this->refGuiServer->SetGlobalColor(activeWindowColor);
-        }
-        else
-        {
-            this->refGuiServer->SetGlobalColor(inactiveWindowColor);
-        }
+        this->UpdateWindowColor();
+        nGuiServer::Instance()->SetGlobalColor(this->windowColor);
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
 
-        this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+        // take opened time stamp AFTER first rendering to take resource
+        // loading delays into account
+        if (this->openFirstFrame)
+        {
+            // NOTE: the use on nTimeServer is intentional, as the current
+            // frame time stamp is useless (would give fade delays when
+            // resources are loaded)
+            this->openedTime = nTimeServer::Instance()->GetTime();
+            this->openFirstFrame = false;
+        }
 
         // render contained widgets
         nGuiWidget::Render();
         return true;
     }
     return false;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Set the close requested flag. This will start the fade out.
+*/
+void
+nGuiWindow::SetCloseRequested(bool b)
+{
+    if (!this->closeRequested)
+    {
+        this->closeRequested = true;
+
+        // NOTE: the use on nTimeServer is intentional, as the current
+        // frame time stamp is useless (would give fade delays when
+        // resources are loaded)
+        this->closeRequestTime = nTimeServer::Instance()->GetTime();
+    }
 }

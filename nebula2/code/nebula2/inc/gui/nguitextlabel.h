@@ -11,6 +11,7 @@
 */
 #include "gui/nguilabel.h"
 #include "gfx2/nfont2.h"
+#include "resource/nresourceserver.h"
 
 //------------------------------------------------------------------------------
 class nGuiTextLabel : public nGuiLabel
@@ -42,6 +43,14 @@ public:
     void SetAlignment(Alignment a);
     /// get text alignment
     Alignment GetAlignment() const;
+    /// set vertical centering
+    void SetVCenter(bool b);
+    /// get vertical centering
+    bool GetVCenter() const;
+    /// enable/disable word break
+    void SetWordBreak(bool b);
+    /// get word break
+    bool GetWordBreak() const;
     /// enable/disable clipping (default is on)
     void SetClipping(bool b);
     /// get clipping flag
@@ -50,14 +59,10 @@ public:
     void SetColor(const vector4& c);
     /// get the text color
     const vector4& GetColor() const;
-    /// set the text shadow color
-    void SetShadowColor(const vector4& c);
-    /// get the text shadow color
-    const vector4& GetShadowColor() const;
-    /// set the shadow x/y offset
-    void SetShadowOffset(const vector2& offset);
-    /// get the shadow x/y offset
-    const vector2& GetShadowOffset() const;
+    /// set pressed text offset
+    void SetPressedOffset(const vector2& v);
+    /// get pressed text offset
+    const vector2& GetPressedOffset() const;
     /// set the text as integer
     void SetInt(int i);
     /// get the text as integer
@@ -66,23 +71,86 @@ public:
     void SetBorder(const vector2& b);
     /// get border size in screen space units
     const vector2& GetBorder() const;
+    /// computes the text extent for this widget
+    vector2 GetTextExtent();
 
 protected:
     /// render the label text
     void RenderText(bool pressed);
+    /// (re-)validate the font object
+    void ValidateFont();
 
     nString fontName;
-    nAutoRef<nGfxServer2> refGfxServer;
-    nAutoRef<nResourceServer> refResourceServer;
     nRef<nFont2> refFont;       // the font resource
     nString text;               // the displayed text 
     vector4 color;
-    vector4 shadowColor;
-    vector2 shadowOffset;
+    vector2 pressedOffset;
     Alignment align;
     vector2 border;
     bool clipping;
+    bool wordBreak;
+    bool vCenter;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextLabel::SetVCenter(bool b)
+{
+    this->vCenter = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextLabel::GetVCenter() const
+{
+    return this->vCenter;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextLabel::SetWordBreak(bool b)
+{
+    this->wordBreak = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextLabel::GetWordBreak() const
+{
+    return this->wordBreak;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextLabel::SetPressedOffset(const vector2& v)
+{
+    this->pressedOffset = v;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nGuiTextLabel::GetPressedOffset() const
+{
+    return this->pressedOffset;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -143,46 +211,6 @@ const vector4&
 nGuiTextLabel::GetColor() const
 {
     return this->color;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiTextLabel::SetShadowColor(const vector4& c)
-{
-    this->shadowColor = c;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const vector4&
-nGuiTextLabel::GetShadowColor() const
-{
-    return this->shadowColor;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiTextLabel::SetShadowOffset(const vector2& offset)
-{
-    this->shadowOffset = offset;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const vector2&
-nGuiTextLabel::GetShadowOffset() const
-{
-    return this->shadowOffset;
 }
 
 //------------------------------------------------------------------------------

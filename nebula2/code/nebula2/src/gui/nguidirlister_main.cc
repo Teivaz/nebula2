@@ -5,6 +5,7 @@
 #include "gui/nguidirlister.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"
+#include "util/npathstring.h"
 
 nNebulaScriptClass(nGuiDirLister, "nguitextview");
 

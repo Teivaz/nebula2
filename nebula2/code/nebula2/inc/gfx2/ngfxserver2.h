@@ -21,12 +21,15 @@
 #include "gfx2/nshaderlist.h"
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/nfont2.h"
+#include "gfx2/ninstancestream.h"
+#include "gfx2/nlight.h"
 
 //------------------------------------------------------------------------------
 class nMesh2;
 class nShader2;
 class nResourceServer;
 class nFontDesc;
+class nMeshArray;
 
 class nViewport
 {
@@ -58,6 +61,10 @@ public:
         Texture1,
         Texture2,
         Texture3,
+        Light,                  ///< the current light's matrix in world space
+        ModelLight,
+        InvModelLight,
+        ModelLightProjection,   ///< the current model * light * projection matrix
 
         NumTransformTypes
     };
@@ -82,6 +89,18 @@ public:
         TriangleFan,
     };
 
+    /// shape types
+    enum ShapeType
+    {
+        Box = 0,
+        Cylinder,
+        Sphere,
+        Torus,
+        Teapot,
+
+        NumShapeTypes,
+    };
+
     /// feature sets (from worst to best)
     enum FeatureSet
     {
@@ -101,13 +120,6 @@ public:
         Custom,             // use the custom mouse cursor
     };
 
-    enum MeshSource
-    {
-        NoSource,
-        SingleMesh,         // one single mesh is to be drawn
-        //MeshArray,          // a mesh array is to be drawn
-    };
-
     enum
     {
         MaxVertexStreams = 16,
@@ -119,9 +131,13 @@ public:
     nGfxServer2();
     /// destructor
     virtual ~nGfxServer2();
+    /// get instance pointer
+    static nGfxServer2* Instance();
 
     /// create a shared mesh object
     virtual nMesh2* NewMesh(const char* rsrcName);
+    /// create a new mesh array object
+    virtual nMeshArray* NewMeshArray(const char* rsrcName);
     /// create a shared texture object
     virtual nTexture2* NewTexture(const char* rsrcName);
     /// create a shared shader object
@@ -130,6 +146,8 @@ public:
     virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
+    /// create a new instance stream object
+    virtual nInstanceStream* NewInstanceStream(const char* rsrcName);
 
     /// set display mode
     virtual void SetDisplayMode(const nDisplayMode2& mode);
@@ -153,6 +171,10 @@ public:
     virtual void CloseDisplay();
     /// trigger the window system message pump
     virtual bool Trigger();
+    /// returns the number of available stencil bits
+    virtual int GetNumStencilBits() const;
+    /// returns the number of available z bits
+    virtual int GetNumDepthBits() const;
     /// get prioritized shader index by shader name
     int GetShaderIndex(const char* shaderName);
     
@@ -170,10 +192,20 @@ public:
     /// clear buffers
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
+    /// reset the light array
+    virtual void ClearLights();
+    /// add a light to the light array (reset in BeginScene)
+    virtual int AddLight(const nLight& light);
+    /// access to light array
+    const nArray<nLight>& GetLightArray() const;
     /// set current mesh
     virtual void SetMesh(nMesh2* mesh);
     /// get current mesh
     nMesh2* GetMesh() const;
+    /// set current mesh array (for multiple streams)
+    virtual void SetMeshArray(nMeshArray* meshArray);
+    /// get current mesh array
+    nMeshArray* GetMeshArray() const;
     /// set current texture
     virtual void SetTexture(int stage, nTexture2* tex);
     /// get current texture
@@ -186,6 +218,10 @@ public:
     virtual void SetFont(nFont2* font);
     /// get current font
     nFont2* GetFont() const;
+    /// set current instance stream, a valid instance stream triggers instance rendering
+    void SetInstanceStream(nInstanceStream* stream);
+    /// get current instance stream
+    nInstanceStream* GetInstanceStream() const;
     /// set transform
     virtual void SetTransform(TransformType type, const matrix44& matrix);
     /// get transform
@@ -198,6 +234,22 @@ public:
     void SetVertexRange(int firstVertex, int numVertices);
     /// set index range to render from current mesh
     void SetIndexRange(int firstIndex, int numIndices);
+
+    /// begin rendering lines
+    virtual void BeginLines();
+    /// draw 3d lines, using the current transforms
+    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
+    /// draw 2d lines in screen space
+    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
+    /// finish line rendering
+    virtual void EndLines();
+
+    /// begin shape rendering (for debug visualizations)
+    virtual void BeginShapes();
+    /// draw a shape with the given model matrix
+    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
+    /// end shape rendering
+    virtual void EndShapes();
 
     /// draw the current mesh with indexed primitives
     virtual void DrawIndexed(PrimitiveType primType);
@@ -240,23 +292,27 @@ public:
     static FeatureSet StringToFeatureSet(const char* str);
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
-    /// convert cursor visibility string to enum
-    static CursorVisibility StringToCursorVisibility(const char* str);
+
+private:
+    static nGfxServer2* Singleton;
 
 protected:
     bool displayOpen;
     bool inBeginScene;
+    bool inBeginLines;
+    bool inBeginShapes;
 
     nAutoRef<nResourceServer> refResource;
     nCamera2 camera;
     nViewport viewport;
 
-    nRef<nTexture2> refRenderTarget;
-    nRef<nMesh2>    refMesh;
-
-    nRef<nTexture2> refTextures[MaxTextureStages];
-    nRef<nFont2>    refFont;
-    nRef<nShader2>  refShader;
+    nRef<nTexture2>         refRenderTarget;
+    nRef<nMesh2>            refMesh;
+    nRef<nMeshArray>        refMeshArray;
+    nRef<nTexture2>         refTextures[MaxTextureStages];
+    nRef<nFont2>            refFont;
+    nRef<nShader2>          refShader;
+    nRef<nInstanceStream>   refInstanceStream;
     nMouseCursor curMouseCursor;
     nShaderList shaderList;
     int vertexRangeFirst;
@@ -270,11 +326,34 @@ protected:
     matrix44 transformStack[NumTransformTypes][MaxTransformStackDepth];
     bool cursorDirty;
     bool inDialogBoxMode;
-    MeshSource meshSource;  // draw single mesh or mesh array?
+
+    nArray<nLight> lightArray;
+
 public:
     // note: this stuff is public because WinProcs may need to access it
     CursorVisibility cursorVisibility;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2*
+nGfxServer2::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nLight>&
+nGfxServer2::GetLightArray() const
+{
+    return this->lightArray;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -387,8 +466,31 @@ nGfxServer2::GetMesh() const
     return this->refMesh.isvalid() ? this->refMesh.get() : 0;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Get current instance stream.
 
+    @return     current instance stream, or 0
+*/
+inline
+nInstanceStream*
+nGfxServer2::GetInstanceStream() const
+{
+    return this->refInstanceStream.isvalid() ? this->refInstanceStream.get() : 0;
+}
 
+//------------------------------------------------------------------------------
+/**
+    Get the current mesh array.
+
+    @return             pointer to current nMeshArray object
+*/
+inline
+nMeshArray*
+nGfxServer2::GetMeshArray() const
+{
+    return this->refMeshArray.isvalid() ? this->refMeshArray.get() : 0;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -505,31 +607,4 @@ nGfxServer2::GetShaderIndex(const char* shaderName)
     return index;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nGfxServer2::CursorVisibility
-nGfxServer2::StringToCursorVisibility(const char* str)
-{
-    n_assert(str);
-    if (0 == strcmp(str, "none"))
-    {
-        return nGfxServer2::None;
-    }
-    else if (0 == strcmp(str, "system"))
-    {
-        return nGfxServer2::System;
-    }
-    else if (0 == strcmp(str, "custom"))
-    {
-        return nGfxServer2::Custom;
-    }
-    else
-    { 
-        n_error( "Invalid string '%s' passed to StringToCursorVisibility!", str );
-    }
-    return nGfxServer2::None;
-}
-//------------------------------------------------------------------------------
 #endif

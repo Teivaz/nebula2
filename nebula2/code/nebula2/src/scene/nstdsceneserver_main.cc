@@ -97,7 +97,7 @@ nStdSceneServer::RenderShapes(uint shaderFourCC)
             if (curShader)
             {
                 // for each shader pass...
-                int numPasses = curShader->Begin();
+                int numPasses = curShader->Begin(false);
                 int curPass;
                 for (curPass = 0; curPass < numPasses; curPass++)
                 {
@@ -144,7 +144,7 @@ nStdSceneServer::RenderLightShapes(uint shaderFourCC)
             if (curShader)
             {
                 // for each shader pass...
-                int numPasses = curShader->Begin();
+                int numPasses = curShader->Begin(false);
                 int curPass;
                 for (curPass = 0; curPass < numPasses; curPass++)
                 {

@@ -50,7 +50,6 @@ private:
     /// copy contents
     void Copy(const nMouseCursor& rhs);
 
-    nAutoRef<nGfxServer2> refGfxServer;
     nString filename;
     nRef<nTexture2> refTexture;
     int hotSpotX;

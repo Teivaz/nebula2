@@ -12,7 +12,7 @@
 beginmodule naudioserver3
     setdir audio3
     setfiles { 
-        naudioserver3_main
+        naudioserver3_main naudioserver3_cmds
     }
     setheaders { 
         naudioserver3

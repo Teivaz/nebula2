@@ -9,7 +9,6 @@
 /**
 */
 nMouseCursor::nMouseCursor() :
-    refGfxServer("/sys/servers/gfx"),
     hotSpotX(0),
     hotSpotY(0)
 {
@@ -82,7 +81,7 @@ nMouseCursor::Load()
 {
     n_assert(!this->IsLoaded());
     n_assert(!this->filename.IsEmpty());
-    this->refTexture = this->refGfxServer->NewTexture(this->filename.Get());
+    this->refTexture = nGfxServer2::Instance()->NewTexture(this->filename.Get());
     n_assert(this->refTexture.isvalid());
     if (!this->refTexture->IsValid())
     {

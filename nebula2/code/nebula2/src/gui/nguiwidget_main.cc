@@ -9,23 +9,26 @@
 
 nNebulaScriptClass(nGuiWidget, "nroot");
 
+nClass* nGuiWidget::widgetClass=0;
+nClass* nGuiWidget::windowClass=0;
+
 //-----------------------------------------------------------------------------
 /**
 */
 nGuiWidget::nGuiWidget() :
-    refGuiServer("/sys/servers/gui"),
     rect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
+    lastButtonDownTime(0.0),
     shown(true),
-    triggerSound(false),
     blinking(false),
     enabled(true),
-    dismissed(false),
     stickyMouse(false),
     hasFocus(false),
+    backGround(false),
     minSize(0.0f, 0.0f),
     maxSize(1.0f, 1.0f)
 {
     this->widgetClass = kernelServer->FindClass("nguiwidget");
+    this->windowClass = kernelServer->FindClass("nguiwindow");
 }
 
 //-----------------------------------------------------------------------------
@@ -34,6 +37,38 @@ nGuiWidget::nGuiWidget() :
 nGuiWidget::~nGuiWidget()
 {
     // empty
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Get the owner window if any, if not returns itself
+*/
+nGuiWidget*
+nGuiWidget::GetOwnerWindow()
+{
+    if (this->IsA(windowClass))
+    {
+        // returns itself, if the widget is a window
+        return this;
+    }
+    else
+    {
+        // search for the first parent, which is a window
+        nGuiWidget* parent = (nGuiWidget*) this->GetParent();
+        while(parent && !parent->IsA(windowClass))
+        {
+            parent = (nGuiWidget*) parent->GetParent();
+        }
+
+        if(!parent)
+        {
+            // no parent window found
+            return 0;
+        }
+        
+        // return owner-window of this widget
+        return parent;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -119,8 +154,17 @@ nGuiWidget::OnButtonDown(const vector2& mousePos)
         if (this->Inside(mousePos))
         {
             nGuiEvent event(this, nGuiEvent::ButtonDown);
-            this->refGuiServer->PutEvent(event);
-            this->refGuiServer->RunCommand(this, this->buttonDownCommand);
+            nGuiServer::Instance()->PutEvent(event);
+            nGuiServer::Instance()->RunCommand(this, this->buttonDownCommand);
+
+            // store button down time, and probably shoot a double click event
+            nTime time = nGuiServer::Instance()->GetTime();
+            nTime timeDiff = time - this->lastButtonDownTime;
+            if (timeDiff < 0.2f)
+            {
+                this->OnDoubleClick(mousePos);
+            }
+            this->lastButtonDownTime = time;
         }
     }
     return retval;
@@ -135,7 +179,7 @@ nGuiWidget::OnButtonUp(const vector2& mousePos)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::ButtonUp);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -159,7 +203,7 @@ nGuiWidget::OnRButtonDown(const vector2& mousePos)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::RButtonDown);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -182,7 +226,7 @@ nGuiWidget::OnRButtonUp(const vector2& mousePos)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::RButtonUp);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -198,6 +242,21 @@ nGuiWidget::OnRButtonUp(const vector2& mousePos)
 
 //-----------------------------------------------------------------------------
 /**
+    This method is called by the widget itself when 2 OnButtonDown()
+    events arrive within a double click time.
+*/
+void
+nGuiWidget::OnDoubleClick(const vector2& mousePos)
+{
+    if (this->IsShown())
+    {
+        nGuiEvent event(this, nGuiEvent::DoubleClick);
+        nGuiServer::Instance()->PutEvent(event);
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
 */
 void
 nGuiWidget::OnChar(uchar charCode)
@@ -205,7 +264,7 @@ nGuiWidget::OnChar(uchar charCode)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::Char);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -228,7 +287,7 @@ nGuiWidget::OnKeyDown(nKey key)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::KeyDown);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -251,7 +310,7 @@ nGuiWidget::OnKeyUp(nKey key)
     if (this->IsShown())
     {
         nGuiEvent event(this, nGuiEvent::KeyUp);
-        this->refGuiServer->PutEvent(event);
+        nGuiServer::Instance()->PutEvent(event);
 
         nGuiWidget* cur;
         for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -271,7 +330,7 @@ void
 nGuiWidget::OnEnabled()
 {
     nGuiEvent event(this, nGuiEvent::Enabled);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->PutEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -281,7 +340,7 @@ void
 nGuiWidget::OnDisabled()
 {
     nGuiEvent event(this, nGuiEvent::Disabled);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->PutEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -290,10 +349,10 @@ nGuiWidget::OnDisabled()
 void
 nGuiWidget::OnShow()
 {
-    this->refGuiServer->RunCommand(this, this->showCommand);
+    nGuiServer::Instance()->RunCommand(this, this->showCommand);
 
     nGuiEvent event(this, nGuiEvent::Show);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->PutEvent(event);
 
     nGuiWidget* cur;
     for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -311,10 +370,7 @@ nGuiWidget::OnShow()
 void
 nGuiWidget::OnHide()
 {
-    this->refGuiServer->RunCommand(this, this->hideCommand);
-
-    nGuiEvent event(this, nGuiEvent::Hide);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->RunCommand(this, this->hideCommand);
 
     nGuiWidget* cur;
     for (cur = (nGuiWidget*) this->GetHead(); cur; cur = (nGuiWidget*) cur->GetSucc())
@@ -335,13 +391,13 @@ nGuiWidget::OnFrame()
     if (this->IsShown())
     {
         // activate tooltip if mouse is over widget
-        if (this->Inside(this->refGuiServer->GetMousePos()) && (!this->tooltip.IsEmpty()))
+        if (this->Inside(nGuiServer::Instance()->GetMousePos()) && (!this->tooltip.IsEmpty()) && this->HasFocus())
         {
-            this->refGuiServer->ShowToolTip(this->tooltip.Get(), vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            nGuiServer::Instance()->ShowToolTip(this->tooltip.Get(), vector4(0.0f, 0.0f, 0.0f, 1.0f));
         }
 
         // run the per-frame command
-        this->refGuiServer->RunCommand(this, this->frameCommand);
+        nGuiServer::Instance()->RunCommand(this, this->frameCommand);
 
         // distribute to children
         nGuiWidget* cur;
@@ -359,9 +415,9 @@ nGuiWidget::OnFrame()
 void
 nGuiWidget::OnAction()
 {
-    this->refGuiServer->RunCommand(this, this->command);
+    nGuiServer::Instance()->RunCommand(this, this->command);
     nGuiEvent event(this, nGuiEvent::Action);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->PutEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -418,15 +474,6 @@ nGuiWidget::OnLoseFocus()
     {
         cur->OnLoseFocus();
     }
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-bool
-nGuiWidget::RenderAudio()
-{
-    return false;
 }
 
 //-----------------------------------------------------------------------------

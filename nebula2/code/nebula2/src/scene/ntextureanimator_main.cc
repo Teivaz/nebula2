@@ -13,8 +13,8 @@ nNebulaScriptClass(nTextureAnimator, "nanimator");
 /**
 */
 nTextureAnimator::nTextureAnimator() :
-    refGfxServer( "/sys/servers/gfx" ),
-    shaderParam( nShader2::InvalidParameter )
+    refGfxServer("/sys/servers/gfx"),
+    shaderParam(nShaderState::InvalidParameter)
 {
     // empty
 }
@@ -30,10 +30,10 @@ nTextureAnimator::~nTextureAnimator()
 //------------------------------------------------------------------------------
 /**
 */
-nAnimator::AnimatorType
+nAnimator::Type
 nTextureAnimator::GetAnimatorType() const
 {
-    return SHADER;
+    return Shader;
 }
 
 //------------------------------------------------------------------------------
@@ -47,10 +47,10 @@ void
 nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
-    n_assert(sceneNode->IsA( kernelServer->FindClass( "nabstractshadernode" ) ) );
+    n_assert(sceneNode->IsA( kernelServer->FindClass("nabstractshadernode")));
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
-    n_assert(nShader2::InvalidParameter != this->shaderParam);
+    n_assert(nShaderState::InvalidParameter != this->shaderParam);
 
     nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
 
@@ -58,25 +58,25 @@ nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     nVariable* var = renderContext->GetVariable(this->channelVarHandle);
     n_assert(var);
     int texIndex = var->GetInt();
-    n_assert( texIndex < this->GetNumTextures() );
+    n_assert(texIndex < this->GetNumTextures());
 
-    renderContext->GetShaderOverrides().SetTexture( this->shaderParam, GetTextureAt( texIndex ) );
+    renderContext->GetShaderOverrides().SetArg(this->shaderParam, nShaderArg(GetTextureAt(texIndex)));
 }
 
 void
-nTextureAnimator::AddTexture( const char* path )
+nTextureAnimator::AddTexture(const char* path)
 { 
-    nRef<nTexture2> refTexture( this->refGfxServer->NewTexture( path ) );
-    refTexture->SetFilename( path );
+    nRef<nTexture2> refTexture(this->refGfxServer->NewTexture(path));
+    refTexture->SetFilename(path);
     refTexture->Load();
-    this->textureArray.PushBack( refTexture );
+    this->textureArray.PushBack(refTexture);
 }
 
 void
-nTextureAnimator::SetShaderParam( const char* param )
+nTextureAnimator::SetShaderParam(const char* param)
 {
-    this->shaderParam = nShader2::StringToParameter(param);
-    n_assert(nShader2::InvalidParameter != this->shaderParam);
+    this->shaderParam = nShaderState::StringToParam(param);
+    n_assert(nShaderState::InvalidParameter != this->shaderParam);
 }
 
 int
@@ -86,10 +86,10 @@ nTextureAnimator::GetNumTextures() const
 }
 
 nTexture2*
-nTextureAnimator::GetTextureAt( int n ) const
+nTextureAnimator::GetTextureAt(int n) const
 {
     nTexture2* retVal = 0;
-    if( n < this->GetNumTextures() )
+    if (n < this->GetNumTextures())
     {
         retVal = this->textureArray[n].get();
     }
@@ -99,7 +99,7 @@ nTextureAnimator::GetTextureAt( int n ) const
 const char*
 nTextureAnimator::GetShaderParam() const
 {
-    return nShader2::ParameterToString( this->shaderParam );
+    return nShaderState::ParamToString(this->shaderParam);
 }
 
 

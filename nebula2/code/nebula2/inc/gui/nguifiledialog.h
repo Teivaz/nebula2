@@ -15,11 +15,29 @@
 class nGuiDirLister;
 class nGuiTextEntry;
 class nGuiTextButton;
+class nGuiMessageBox;
 
 //------------------------------------------------------------------------------
 class nGuiFileDialog : public nGuiClientWindow
 {
 public:
+    /// text ids
+    enum TextId
+    {
+        Ok,
+        Cancel,
+        Delete,
+        DeleteMessage,
+        DeleteOk,
+        DeleteCancel,
+        OverwriteMessage,
+        OverwriteOk,
+        OverwriteCancel,
+
+        // keep at end
+        NumTextIds,
+    };
+
     /// constructor
     nGuiFileDialog();
     /// destructor
@@ -32,14 +50,10 @@ public:
     void SetSaveMode(bool b);
     /// get save/load mode
     bool GetSaveMode() const;
-    /// set text for ok button
-    void SetOkText(const char* t);
-    /// get text for ok button
-    const char* GetOkText() const;
-    /// set text for cancel button
-    void SetCancelText(const char* t);
-    /// get text for cancel button
-    const char* GetCancelText() const;
+    /// set text for one of the gui elements
+    void SetText(TextId id, const char* text);
+    /// get the text for one of the gui elements
+    const char* GetText(TextId id) const;
     /// called when widget is becoming visible
     virtual void OnShow();
     /// called when widget is becoming invisible
@@ -52,15 +66,33 @@ public:
     virtual bool OnCancel();
 
 protected:
+    /// set selected filename
+    void SetFilename(const char* s);
+    /// get selected filename (valid during OnOk())
+    const char* GetFilename() const;
+    /// check if file exists and post a message box
+    bool CheckFileExists();
+    /// extracts filename either from selection or from text entry field
+    void ExtractFilename();
+    /// handle the complete Ok action
+    void HandleOk();
+    /// handle the delete action
+    void HandleDelete();
+    /// called when the user confirms deletion
+    bool DeleteFile();
+
     nRef<nGuiDirLister> refDirLister;
     nRef<nGuiTextEntry> refTextEntry;
     nRef<nGuiTextButton> refOkButton;
     nRef<nGuiTextButton> refCancelButton;
+    nRef<nGuiMessageBox> refMessageBox;
+    nRef<nGuiMessageBox> refDeleteMessageBox;
+    nRef<nGuiTextButton> refDeleteButton;
 
     nString dirPath;
     bool saveMode;
-    nString okText;
-    nString cancelText;
+    nString text[NumTextIds];
+    nString filename;
 };
 
 //------------------------------------------------------------------------------
@@ -109,10 +141,10 @@ nGuiFileDialog::GetSaveMode() const
 */
 inline
 void
-nGuiFileDialog::SetOkText(const char* t)
+nGuiFileDialog::SetText(TextId id, const char* t)
 {
-    n_assert(t);
-    this->okText = t;
+    n_assert((id >= 0) && (id < NumTextIds));
+    this->text[id] = t;
 }
 
 //------------------------------------------------------------------------------
@@ -120,9 +152,10 @@ nGuiFileDialog::SetOkText(const char* t)
 */
 inline
 const char*
-nGuiFileDialog::GetOkText() const
+nGuiFileDialog::GetText(TextId id) const
 {
-    return this->okText.Get();
+    n_assert((id >= 0) && (id < NumTextIds));
+    return this->text[id].Get();
 }
 
 //------------------------------------------------------------------------------
@@ -130,19 +163,20 @@ nGuiFileDialog::GetOkText() const
 */
 inline
 void
-nGuiFileDialog::SetCancelText(const char* t)
+nGuiFileDialog::SetFilename(const char* s)
 {
-    this->cancelText = t;
+    this->filename = s;
 }
 
 //------------------------------------------------------------------------------
 /**
+    Get the selected filename. Returns 0 if nothing selected.
 */
 inline
 const char*
-nGuiFileDialog::GetCancelText() const
+nGuiFileDialog::GetFilename() const
 {
-    return this->cancelText.Get();
+    return this->filename.IsEmpty() ? 0 : this->filename.Get();
 }
 
 //------------------------------------------------------------------------------

@@ -82,7 +82,7 @@ nGuiCategoryBrowser::OnShow()
 
     kernelServer->PopCwd();
 
-    this->refGuiServer->RegisterEventListener(this);
+    nGuiServer::Instance()->RegisterEventListener(this);
 
     nGuiFormLayout::OnShow();
 }
@@ -93,8 +93,9 @@ nGuiCategoryBrowser::OnShow()
 void 
 nGuiCategoryBrowser::OnHide()
 {
-    this->refGuiServer->UnregisterEventListener(this);
+    nGuiServer::Instance()->UnregisterEventListener(this);
 
+    this->ClearAttachRules();
     if (this->refCatLister.isvalid())
     {
         this->refCatLister->Release();
@@ -130,7 +131,7 @@ nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
         {
             // file entry has changed
             nGuiEvent event(this, nGuiEvent::SelectionChanged);
-            this->refGuiServer->PutEvent(event);
+            nGuiServer::Instance()->PutEvent(event);
         }
     }
 }

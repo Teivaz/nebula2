@@ -9,6 +9,8 @@
 #include "gui/nguitextbutton.h"
 #include "gui/nguitextentry.h"
 #include "gui/nguiskin.h"
+#include "gui/nguimessagebox.h"
+#include "kernel/nfileserver2.h"
 
 nNebulaClass(nGuiFileDialog, "nguiclientwindow");
 
@@ -32,11 +34,13 @@ nNebulaClass(nGuiFileDialog, "nguiclientwindow");
 */
 nGuiFileDialog::nGuiFileDialog() :
     dirPath("home:"),
-    saveMode(false),
-    okText("Ok"),
-    cancelText("Cancel")
+    saveMode(false)
 {
-    // empty
+    this->SetText(Ok, "Ok");
+    this->SetText(Cancel, "Cancel");
+    this->SetText(OverwriteMessage, "Overwrite existing file?");
+    this->SetText(OverwriteOk, "Ok");
+    this->SetText(OverwriteCancel, "Cancel");
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +57,7 @@ nGuiFileDialog::~nGuiFileDialog()
 void
 nGuiFileDialog::OnShow()
 {
-    nGuiSkin* skin = this->refGuiServer->GetSkin();
+    nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
 
     // call parent class
@@ -76,13 +80,13 @@ nGuiFileDialog::OnShow()
     nGuiFormLayout* layout = this->refFormLayout.get();
     kernelServer->PushCwd(layout);
 
-    vector2 buttonSize = this->refGuiServer->ComputeScreenSpaceBrushSize("button_n");
-    vector2 textSize = this->refGuiServer->ComputeScreenSpaceBrushSize("textentry_n");
+    vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
+    vector2 textSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("textentry_n");
 
     // create Cancel button
     nGuiTextButton* cancelButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "CancelButton");
     n_assert(cancelButton);
-    cancelButton->SetText(this->GetCancelText());
+    cancelButton->SetText(this->GetText(Cancel));
     cancelButton->SetFont("GuiSmall");
     cancelButton->SetAlignment(nGuiTextButton::Center);
     cancelButton->SetDefaultBrush("button_n");
@@ -99,7 +103,7 @@ nGuiFileDialog::OnShow()
     // create Ok button
     nGuiTextButton* okButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "OkButton");
     n_assert(okButton);
-    okButton->SetText(this->GetOkText());
+    okButton->SetText(this->GetText(Ok));
     okButton->SetFont("GuiSmall");
     okButton->SetAlignment(nGuiTextButton::Center);
     okButton->SetDefaultBrush("button_n");
@@ -113,6 +117,26 @@ nGuiFileDialog::OnShow()
     okButton->OnShow();
     this->refOkButton = okButton;
 
+    // add a "delete item" buttom
+    if (this->GetSaveMode())
+    {
+        nGuiTextButton* deleteButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "deletebutton");
+        n_assert(deleteButton);
+        deleteButton->SetText(this->GetText(Delete));
+        deleteButton->SetFont("GuiSmall");
+        deleteButton->SetAlignment(nGuiTextButton::Center);
+        deleteButton->SetDefaultBrush("button_n");
+        deleteButton->SetPressedBrush("button_p");
+        deleteButton->SetHighlightBrush("button_h");
+        deleteButton->SetMinSize(buttonSize);
+        deleteButton->SetMaxSize(buttonSize);
+        deleteButton->SetColor(skin->GetButtonTextColor());
+        layout->AttachPos(deleteButton, nGuiFormLayout::HCenter, 0.5f);
+        layout->AttachForm(deleteButton, nGuiFormLayout::Bottom, 0.005f);
+        deleteButton->OnShow();
+        this->refDeleteButton = deleteButton;
+    }
+
     // optional text entry
     if (this->GetSaveMode())
     {
@@ -125,9 +149,9 @@ nGuiFileDialog::OnShow()
         textEntry->SetHighlightBrush("textentry_h");
         textEntry->SetCursorBrush("textcursor");
         textEntry->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
-        textEntry->SetShadowColor(vector4(0.0f, 0.0f, 0.0f, 0.0f));
         textEntry->SetMinSize(vector2(0.0f, textSize.y));
         textEntry->SetMaxSize(vector2(1.0f, textSize.y));
+        textEntry->SetFileMode(true);
         layout->AttachForm(textEntry, nGuiFormLayout::Left, 0.005f);
         layout->AttachForm(textEntry, nGuiFormLayout::Right, 0.005f);
         layout->AttachWidget(textEntry, nGuiFormLayout::Bottom, okButton, 0.005f);
@@ -141,6 +165,7 @@ nGuiFileDialog::OnShow()
     dirLister->SetDefaultBrush("list_background");
     dirLister->SetHighlightBrush("list_selection");
     dirLister->SetFont("GuiSmall");
+    dirLister->SetDirectory(this->GetDirectory());
     dirLister->SetIgnoreSubDirs(true);
     dirLister->SetIgnoreFiles(false);
     dirLister->SetSelectionEnabled(true);
@@ -159,6 +184,16 @@ nGuiFileDialog::OnShow()
     this->refDirLister = dirLister;
 
     kernelServer->PopCwd();
+
+    // initialize text entry content
+    if (this->GetSaveMode())
+    {
+        const char* curSel = this->refDirLister->GetSelection();
+        if (curSel)
+        {
+            this->refTextEntry->SetText(curSel);
+        }
+    }
 
     // update all layouts
     this->UpdateLayout(this->rect);
@@ -190,6 +225,16 @@ nGuiFileDialog::OnHide()
         this->refCancelButton->Release();
         n_assert(!this->refCancelButton.isvalid());
     }
+    if (this->refDeleteButton.isvalid())
+    {
+        this->refDeleteButton->Release();
+        n_assert(!this->refDeleteButton.isvalid());
+    }
+    if (this->refMessageBox.isvalid())
+    {
+        this->refMessageBox->Release();
+        n_assert(!this->refMessageBox.isvalid());
+    }
 
     // call parent class
     nGuiClientWindow::OnHide();
@@ -201,21 +246,83 @@ nGuiFileDialog::OnHide()
 void 
 nGuiFileDialog::OnEvent(const nGuiEvent& event)
 {
+    // handle deletion warning message box events
+    if (this->refDeleteMessageBox.isvalid())
+    {
+        if (event.GetWidget() == this->refDeleteMessageBox.get())
+        {
+            if(event.GetType() == nGuiEvent::DialogOk)
+            {
+                // delete the item
+                if(this->DeleteFile())
+                {
+                    this->refDirLister->OnShow();
+                    this->refTextEntry->SetText(this->refDirLister->GetSelection());
+                }
+            }
+            else if (event.GetType() == nGuiEvent::DialogCancel)
+            {
+                // do not delete the item
+            }
+        }
+    }
+    // handle overwrite warning message box events
+    if (this->refMessageBox.isvalid())
+    {
+        if (event.GetWidget() == this->refMessageBox.get())
+        {
+            if (event.GetType() == nGuiEvent::DialogOk)
+            {
+                // the user wants to overwrite the file
+                if (this->OnOk())
+                {
+                    this->SetCloseRequested(true);
+                }
+            }
+            else if (event.GetType() == nGuiEvent::DialogCancel)
+            {
+                // the user does not want to overwrite,
+                // just return to the save game dialog
+            }
+        }
+    }
+
+    // if text entry exists, write current selection to text entry widget
+    if (this->refTextEntry.isvalid() &&
+        this->refDirLister.isvalid() &&
+        (event.GetType() == nGuiEvent::SelectionChanged) &&
+        (event.GetWidget() == this->refDirLister.get()) &&
+        (this->refDirLister->GetSelection()))
+    {
+        this->refTextEntry->SetText(this->refDirLister->GetSelection());
+            }
+
+    // handle Ok, Delete and Cancel button
     if (event.GetType() == nGuiEvent::ButtonUp)
     {
         if (event.GetWidget() == this->refOkButton.get())
         {
-            if (this->OnOk())
-            {
-                this->SetDismissed(true);
-            }
+            this->HandleOk();
+
         }
         else if (event.GetWidget() == this->refCancelButton.get())
         {
             if (this->OnCancel())
             {
-                this->SetDismissed(true);
+                this->SetCloseRequested(true);
             }
+        }
+        else if (this->refDeleteButton.isvalid() && event.GetWidget() == this->refDeleteButton.get())
+        {
+            this->HandleDelete();
+        }
+    }
+    else if (event.GetType() == nGuiEvent::DoubleClick)
+    {
+        // in load mode, accept double click on DirLister as Ok
+        if (event.GetWidget() == this->refDirLister)
+        {
+            this->HandleOk();
         }
     }
 
@@ -245,4 +352,139 @@ bool
 nGuiFileDialog::OnCancel()
 {
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Handle the Delete action
+*/
+void
+nGuiFileDialog::HandleDelete()
+{
+    this->ExtractFilename();
+    if (this->GetFilename())
+    {
+        // create a warning
+        nGuiMessageBox* msgBox = (nGuiMessageBox*) nGuiServer::Instance()->NewWindow("nguimessagebox", false);
+        msgBox->SetMessageText(this->GetText(DeleteMessage));
+        msgBox->SetOkText(this->GetText(DeleteOk));
+        msgBox->SetCancelText(this->GetText(DeleteCancel));
+        msgBox->SetType(nGuiMessageBox::OkCancel);
+        msgBox->SetTitleBar(false);
+        msgBox->SetDefaultBrush("bg300x150");
+        this->refDeleteMessageBox = msgBox;
+        msgBox->Show();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Called when the user confirms deletion
+*/
+bool
+nGuiFileDialog::DeleteFile()
+{
+    nPathString path = this->GetDirectory();
+    path.Append("/");
+    path.Append(this->GetFilename());
+
+    if(nFileServer2::Instance()->DeleteFile(path.Get()))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Handle the Ok action, either the Ok button is pressed, or a double click
+    on the dir lister occured.
+*/
+void
+nGuiFileDialog::HandleOk()
+{
+    // extract the filename
+    this->ExtractFilename();
+    if (this->GetFilename())
+    {
+        // something valid has been selected
+        // if we are in save mode and the file exists, issue a overwrite warning
+        if (this->GetSaveMode())
+        {
+            if (!this->CheckFileExists())
+            {
+                // file does not exist...
+                if (this->OnOk())
+                {
+                    this->SetCloseRequested(true);
+                }
+            }
+            // the warning message box has been opened, this will
+            // emit its own events which we need to react on
+        }
+        else
+        {
+            // this is load mode
+            if (this->OnOk())
+            {
+                this->SetCloseRequested(true);
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Extracts the filename either from the text selection or the text entry
+    field.
+*/
+void
+nGuiFileDialog::ExtractFilename()
+{
+    nString fname;
+    if (this->refTextEntry.isvalid())
+    {
+        this->SetFilename(this->refTextEntry->GetText());
+    }
+    else
+    {
+        this->SetFilename(this->refDirLister->GetSelection());
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Checks if the selected file exists and if yes, posts a warning message
+    box. Returns true if the file exists and an overwrite warning message
+    box has been created.
+*/
+bool
+nGuiFileDialog::CheckFileExists()
+{
+    n_assert(this->GetSaveMode());
+
+    nPathString path = this->GetDirectory();
+    path.Append("/");
+    path.Append(this->GetFilename());
+
+    if (kernelServer->GetFileServer()->FileExists(path.Get()))
+    {
+        // file already exists, create an overwrite warning
+        nGuiMessageBox* msgBox = (nGuiMessageBox*) nGuiServer::Instance()->NewWindow("nguimessagebox", false);
+        msgBox->SetMessageText(this->GetText(OverwriteMessage));
+        msgBox->SetOkText(this->GetText(OverwriteOk));
+        msgBox->SetCancelText(this->GetText(OverwriteCancel));
+        msgBox->SetType(nGuiMessageBox::OkCancel);
+        msgBox->SetTitleBar(false);
+        msgBox->SetDefaultBrush("bg300x150");
+        this->refMessageBox = msgBox;
+        msgBox->Show();
+        return true;
+    }
+    else
+    {
+        // file does not exist
+        return false;
+    }
 }

@@ -6,33 +6,38 @@
     @ingroup NebulaGraphicsSystem
     
     Encapsulates an argument for a shader parameter. This is similar 
-    to an nArg, but only handles argument types that are relevant 
-    for a shader.
+    to an nArg, but does only handle argument types which are
+    relevant for a shader.
     
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include "gfx2/nshaderstate.h"
+
+class nTexture2;
 
 //------------------------------------------------------------------------------
 class nShaderArg
 {
 public:
-    /// data types
-    enum Type
-    {
-        Void,
-        Bool,
-        Int,
-        Float,
-        Float4,
-        Matrix44,
-        Texture,
-    };
-
     /// constructor
     nShaderArg();
     /// constructor with fixed type
-    nShaderArg(Type t);
+    nShaderArg(nShaderState::Type t);
+    /// bool constructor
+    nShaderArg(bool val);
+    /// int constructor
+    nShaderArg(int val);
+    /// float constructor
+    nShaderArg(float val);
+    /// nFloat4 constructor
+    nShaderArg(const nFloat4& val);
+    /// vector4 constructor
+    nShaderArg(const vector4& val);
+    /// matrix44 constructor
+    nShaderArg(const matrix44* val);
+    /// texture constructor
+    nShaderArg(nTexture2* val);
     /// destructor
     ~nShaderArg();
     /// equality operator
@@ -40,9 +45,9 @@ public:
     /// assignment operator
     void operator=(const nShaderArg& rhs);
     /// set the data type
-    void SetType(Type t);
+    void SetType(nShaderState::Type t);
     /// get data type
-    Type GetType() const;
+    nShaderState::Type GetType() const;
     /// set bool value
     void SetBool(bool val);
     /// get bool value
@@ -59,6 +64,8 @@ public:
     void SetFloat4(const nFloat4& val);
     /// get float4 value
     const nFloat4& GetFloat4() const;
+    /// get content as vector4 value
+    const vector4& GetVector4() const;
     /// set matrix value
     void SetMatrix44(const matrix44* val);
     /// get matrix value
@@ -68,8 +75,11 @@ public:
     /// get texture
     nTexture2* GetTexture() const;
 
+    /// clear the memory and set type to void
+    void Clear();
+    
 private:
-    Type type;
+    nShaderState::Type type;
     union
     {
         bool b;
@@ -85,18 +95,16 @@ private:
 /**
 */
 inline
-nShaderArg::nShaderArg() :
-    type(Void),
-    tex(0)
+nShaderArg::nShaderArg()
 {
-    // empty
+    this->Clear();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nShaderArg::nShaderArg(Type t) :
+nShaderArg::nShaderArg(nShaderState::Type t) :
     type(t),
     tex(0)
 {
@@ -116,6 +124,17 @@ nShaderArg::~nShaderArg()
 /**
 */
 inline
+void
+nShaderArg::Clear()
+{
+    this->type = nShaderState::Void;
+    memset(&(this->m), 0, sizeof(this->m));  // make shure that the largest data type is used
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 bool
 nShaderArg::operator==(const nShaderArg& rhs) const
 {
@@ -123,25 +142,25 @@ nShaderArg::operator==(const nShaderArg& rhs) const
     {
         switch (this->type)
         {
-            case Void:  
+            case nShaderState::Void:  
                 return true;
             
-            case Bool:
+            case nShaderState::Bool:
                 return (this->b == rhs.b);
 
-            case Int:
+            case nShaderState::Int:
                 return (this->i == rhs.i);
 
-            case Float:
+            case nShaderState::Float:
                 return (this->f == rhs.f);
 
-            case Float4:
+            case nShaderState::Float4:
                 return ((this->f4.x == rhs.f4.x) &&
                         (this->f4.y == rhs.f4.y) &&
                         (this->f4.z == rhs.f4.z) &&
                         (this->f4.w == rhs.f4.w));
 
-            case Matrix44:
+            case nShaderState::Matrix44:
                 {
                     bool equal = true;
                     int i;
@@ -159,7 +178,7 @@ nShaderArg::operator==(const nShaderArg& rhs) const
                     return equal;
                 };
 
-            case Texture:
+            case nShaderState::Texture:
                 return (this->tex == rhs.tex);
 
             default:
@@ -180,30 +199,30 @@ nShaderArg::operator=(const nShaderArg& rhs)
     this->type = rhs.type;
     switch (rhs.type)
     {
-        case Void:
+        case nShaderState::Void:
             break;
 
-        case Bool:
+        case nShaderState::Bool:
             this->b = rhs.b;
             break;
 
-        case Int:
+        case nShaderState::Int:
             this->i = rhs.i;
             break;
 
-        case Float:
+        case nShaderState::Float:
             this->f = rhs.f;
             break;
 
-        case Float4:
+        case nShaderState::Float4:
             this->f4 = rhs.f4;
             break;
 
-        case Matrix44:
+        case nShaderState::Matrix44:
             memcpy(&(this->m), &(rhs.m), sizeof(this->m));
             break;
 
-        case Texture:
+        case nShaderState::Texture:
             this->tex = rhs.tex;
             break;
 
@@ -218,7 +237,7 @@ nShaderArg::operator=(const nShaderArg& rhs)
 */
 inline
 void
-nShaderArg::SetType(Type t)
+nShaderArg::SetType(nShaderState::Type t)
 {
     this->type = t;
 }
@@ -227,7 +246,7 @@ nShaderArg::SetType(Type t)
 /**
 */
 inline
-nShaderArg::Type
+nShaderState::Type
 nShaderArg::GetType() const
 {
     return this->type;
@@ -240,7 +259,7 @@ inline
 void
 nShaderArg::SetBool(bool val)
 {
-    this->type = Bool;
+    this->type = nShaderState::Bool;
     this->b = val;
 }
 
@@ -261,7 +280,7 @@ inline
 void
 nShaderArg::SetInt(int val)
 {
-    this->type = Int;
+    this->type = nShaderState::Int;
     this->i = val;
 }
 
@@ -282,7 +301,7 @@ inline
 void
 nShaderArg::SetFloat(float val)
 {
-    this->type = Float;
+    this->type = nShaderState::Float;
     this->f = val;
 }
 
@@ -303,7 +322,7 @@ inline
 void
 nShaderArg::SetFloat4(const nFloat4& val)
 {
-    this->type = Float4;
+    this->type = nShaderState::Float4;
     this->f4 = val;
 }
 
@@ -321,11 +340,21 @@ nShaderArg::GetFloat4() const
 /**
 */
 inline
+const vector4&
+nShaderArg::GetVector4() const
+{
+    return *(vector4*)&this->f4;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void
 nShaderArg::SetMatrix44(const matrix44* val)
 {
     n_assert(val);
-    this->type = Matrix44;
+    this->type = nShaderState::Matrix44;
     int i;
     for (i = 0; i < 4; i++)
     {
@@ -354,7 +383,7 @@ inline
 void
 nShaderArg::SetTexture(nTexture2* val)
 {
-    this->type = Texture;
+    this->type = nShaderState::Texture;
     this->tex = val;
 }
 
@@ -366,6 +395,83 @@ nTexture2*
 nShaderArg::GetTexture() const
 {
     return this->tex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(bool val) :
+    type(nShaderState::Bool),
+    b(val)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(int val) :
+    type(nShaderState::Int),
+    i(val)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(float val) :
+    type(nShaderState::Float),
+    f(val)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(const nFloat4& val) :
+    type(nShaderState::Float4),
+    f4(val)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(const vector4& val) :
+    type(nShaderState::Float4)
+{
+    this->f4.x = val.x;
+    this->f4.y = val.y;
+    this->f4.z = val.z;
+    this->f4.w = val.w;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(const matrix44* val)
+{
+    this->SetMatrix44(val);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderArg::nShaderArg(nTexture2* val) :
+    type(nShaderState::Texture),
+    tex(val)
+{
+    // empty
 }
 
 //------------------------------------------------------------------------------

@@ -16,8 +16,6 @@ nNebulaScriptClass(nGuiTextView, "nguiwidget");
 /**
 */
 nGuiTextView::nGuiTextView() :
-    refGfxServer("/sys/servers/gfx"),
-    refResourceServer("/sys/servers/resource"),
     fontName("GuiSmall"),
     lineHeight(0.0),
     border(0.005f),
@@ -62,7 +60,7 @@ nGuiTextView::OnShow()
     kernelServer->PopCwd();
 
     // register as event listener because we need to listen for events from our slider
-    this->refGuiServer->RegisterEventListener(this);
+    nGuiServer::Instance()->RegisterEventListener(this);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +69,8 @@ nGuiTextView::OnShow()
 void
 nGuiTextView::OnHide()
 {
-    this->refGuiServer->UnregisterEventListener(this);
+    nGuiServer::Instance()->UnregisterEventListener(this);
+    this->ClearAttachRules();
     if (this->refSlider.isvalid())
     {
         this->refSlider->Release();
@@ -103,7 +102,7 @@ nGuiTextView::ValidateFont()
 {
     if (!this->refFont.isvalid())
     {
-        this->refFont = (nFont2*) this->refResourceServer->FindResource(this->fontName.Get(), nResource::Font);
+        this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
             n_error("nGuiTextView %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
@@ -111,8 +110,8 @@ nGuiTextView::ValidateFont()
         else
         {
             this->refFont->AddRef();
-            this->refGfxServer->SetFont(this->refFont.get());
-            this->lineHeight = this->refGfxServer->GetTextExtent("X").y;
+            nGfxServer2::Instance()->SetFont(this->refFont.get());
+            this->lineHeight = nGfxServer2::Instance()->GetTextExtent("X").y;
         }
     }
 }
@@ -212,7 +211,7 @@ nGuiTextView::OnButtonDown(const vector2& mousePos)
 
                     // throw a SelectionChanged message
                     nGuiEvent event(this, nGuiEvent::SelectionChanged);
-                    this->refGuiServer->PutEvent(event);
+                    nGuiServer::Instance()->PutEvent(event);
                 }
             }
         }
@@ -231,7 +230,7 @@ nGuiTextView::Render()
     if (this->IsShown())
     {
         // render background
-        this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
 
         int beginIndex = this->lineOffset;
         int endIndex = beginIndex + this->GetNumVisibleLines();
@@ -241,7 +240,7 @@ nGuiTextView::Render()
         }
         if ((endIndex - beginIndex) > 0)
         {
-            nGfxServer2* gfxServer = this->refGfxServer.get();
+            nGfxServer2* gfxServer = nGfxServer2::Instance();
             gfxServer->SetFont(this->refFont.get());
 
             // add some border tolerance
@@ -261,9 +260,9 @@ nGuiTextView::Render()
                 // selection?
                 if (this->selectionEnabled && (i == this->selectionIndex))
                 {
-                    this->refGuiServer->DrawBrush(curRect, this->GetHighlightBrush());
+                    nGuiServer::Instance()->DrawBrush(curRect, this->highlightBrush);
                 }
-                gfxServer->DrawText(this->textArray[i].Get(), this->textColor, curTextRect, renderFlags);
+                nGuiServer::Instance()->DrawText(this->textArray[i].Get(), this->textColor, curTextRect, renderFlags);
                 curRect.v0.y = curRect.v1.y;
                 curTextRect.v0.y = curTextRect.v1.y;
                 curRect.v1.y += this->lineHeight;

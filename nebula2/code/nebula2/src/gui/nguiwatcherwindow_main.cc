@@ -60,7 +60,7 @@ nGuiWatcherWindow::OnShow()
     kernelServer->PushCwd(layout);
 
     // compute a vertical size for the text entry widget
-    vector2 textSize = this->refGuiServer->ComputeScreenSpaceBrushSize("textentry_n");
+    vector2 textSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("textentry_n");
     vector2 textMinSize(0.0f, textSize.y);
     vector2 textMaxSize(1.0f, textSize.y);
 
@@ -71,7 +71,6 @@ nGuiWatcherWindow::OnShow()
     textLabel->SetFont("GuiSmall");
     textLabel->SetAlignment(nGuiTextLabel::Right);
     textLabel->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
-    textLabel->SetShadowColor(vector4(0.0f, 0.0f, 0.0f, 0.0f));
     textLabel->SetMinSize(textMinSize);
     textLabel->SetMaxSize(textMaxSize);
     layout->AttachForm(textLabel, nGuiFormLayout::Top, 0.005f);
@@ -90,7 +89,6 @@ nGuiWatcherWindow::OnShow()
     textEntry->SetHighlightBrush("textentry_h");
     textEntry->SetCursorBrush("textcursor");
     textEntry->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
-    textEntry->SetShadowColor(vector4(0.0f, 0.0f, 0.0f, 0.0f));
     textEntry->SetMinSize(textMinSize);
     textEntry->SetMaxSize(textMaxSize);
     layout->AttachForm(textEntry, nGuiFormLayout::Top, 0.005f);

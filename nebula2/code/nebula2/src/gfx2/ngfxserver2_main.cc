@@ -8,8 +8,10 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/nfont2.h"
+#include "gfx2/nmesharray.h"
 
 nNebulaScriptClass(nGfxServer2, "nroot");
+nGfxServer2* nGfxServer2::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -17,6 +19,8 @@ nNebulaScriptClass(nGfxServer2, "nroot");
 nGfxServer2::nGfxServer2() :
     displayOpen(false),
     inBeginScene(false),
+    inBeginLines(false),
+    inBeginShapes(false),
     refResource("/sys/servers/resource"),
     vertexRangeFirst(0),
     vertexRangeNum(0),
@@ -25,9 +29,11 @@ nGfxServer2::nGfxServer2() :
     featureSetOverride(InvalidFeatureSet),
     cursorVisibility(System),
     cursorDirty(true),
-    inDialogBoxMode(false),
-    meshSource(NoSource)
+    inDialogBoxMode(false)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     int i;
     for (i = 0; i < NumTransformTypes; i++)
     {
@@ -40,7 +46,8 @@ nGfxServer2::nGfxServer2() :
 */
 nGfxServer2::~nGfxServer2()
 {
-    //empty
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -52,6 +59,18 @@ nGfxServer2::~nGfxServer2()
 */
 nMesh2*
 nGfxServer2::NewMesh(const char* /*rsrcName*/)
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a new static mesh array object.
+
+    @return             a new nMeshArray object
+*/
+nMeshArray*
+nGfxServer2::NewMeshArray(const char* /*rsrcName*/)
 {
     return 0;
 }
@@ -94,6 +113,19 @@ nFont2*
 nGfxServer2::NewFont(const char* /*rsrcName*/, const nFontDesc& /*fontDesc*/)
 {
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a new shared instance stream object.
+
+    @param  rsrcName    a resource name for resource sharing (0 if no sharing)
+    @return             pointer to a new nInstanceStream object
+*/
+nInstanceStream*
+nGfxServer2::NewInstanceStream(const char* rsrcName)
+{
+    return (nInstanceStream*) this->refResource->NewResource("ninstancestream", rsrcName, nResource::Other);
 }
 
 //------------------------------------------------------------------------------
@@ -184,7 +216,6 @@ nGfxServer2::CloseDisplay()
 {
     n_assert(this->displayOpen);
     this->displayOpen = false;
-    this->shaderList.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -202,6 +233,27 @@ nGfxServer2::Trigger()
 
 //------------------------------------------------------------------------------
 /**
+    Reset the light array. BeginScene() will call this.
+*/
+void
+nGfxServer2::ClearLights()
+{
+    this->lightArray.Reset();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add a light to the light array. Return new number of lights.
+*/
+int
+nGfxServer2::AddLight(const nLight& light)
+{
+    this->lightArray.Append(light);
+    return this->lightArray.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
     Begin rendering to the current render target.
 
     @return     false on error, do not call EndScene() or Present() in this case
@@ -212,6 +264,8 @@ nGfxServer2::BeginScene()
     n_assert(!this->inBeginScene);
     if (this->displayOpen)
     {
+        // reset the ligth array
+        this->ClearLights();
         this->inBeginScene = true;
         return true;
     }
@@ -274,7 +328,7 @@ nGfxServer2::SetRenderTarget(nTexture2* t)
         this->refRenderTarget->Release();
         this->refRenderTarget.invalidate();
     }
-        this->refRenderTarget = t;
+    this->refRenderTarget = t;
 }
 
 //------------------------------------------------------------------------------
@@ -288,8 +342,6 @@ nGfxServer2::SetRenderTarget(nTexture2* t)
 void
 nGfxServer2::SetMesh(nMesh2* mesh)
 {
-    this->meshSource = NoSource;
-
     if (mesh)
     {
         mesh->AddRef();
@@ -300,10 +352,30 @@ nGfxServer2::SetMesh(nMesh2* mesh)
         this->refMesh.invalidate();
     }
     this->refMesh = mesh;
-    this->meshSource = SingleMesh;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Set the current mesh array object for rendering.
+    This will increment its refcount and decrement the refcount 
+    of the previous object.
 
+    @param  meshArray   pointer to a nMeshArray object
+*/
+void
+nGfxServer2::SetMeshArray(nMeshArray* meshArray)
+{
+    if (0 != meshArray)
+    {
+        meshArray->AddRef();
+    }
+    if (this->refMeshArray.isvalid())
+    {
+        this->refMeshArray->Release();
+        this->refMeshArray.invalidate();
+    }
+    this->refMeshArray = meshArray;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -328,7 +400,7 @@ nGfxServer2::SetTexture(int stage, nTexture2* texture)
         this->refTextures[stage]->Release();
         this->refTextures[stage].invalidate();
     }
-        this->refTextures[stage] = texture;
+    this->refTextures[stage] = texture;
 }
 
 //------------------------------------------------------------------------------
@@ -379,6 +451,29 @@ nGfxServer2::SetFont(nFont2* font)
 
 //------------------------------------------------------------------------------
 /**
+    Set the current instance stream object for rendering.
+    This will increment its refcount and decrement the refcount of
+    the previous object.
+
+    @param  stream      pointer to nInstanceStream object
+*/
+void
+nGfxServer2::SetInstanceStream(nInstanceStream* stream)
+{
+    if (stream)
+    {
+        stream->AddRef();
+    }
+    if (this->refInstanceStream.isvalid())
+    {
+        this->refInstanceStream->Release();
+        this->refInstanceStream.invalidate();
+    }
+    this->refInstanceStream = stream;
+}
+
+//------------------------------------------------------------------------------
+/**
     Set the current mouse cursor.
 
     @param  cursor      a valid mouse cursor object
@@ -412,7 +507,10 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 {
     n_assert(type < NumTransformTypes);
     bool updModelView = false;
+    bool updModelLight = false;
     bool updViewProjection = false;
+    bool updModelLightProj = false;
+    bool updModelLightProjection = false;
     switch (type)
     {
         case Model:
@@ -420,6 +518,7 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
             this->transform[InvModel] = matrix;
             this->transform[InvModel].invert_simple();
             updModelView = true;
+            updModelLight = true;
             break;
 
         case View:
@@ -442,6 +541,13 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
             this->transform[type] = matrix;
             break;
 
+        case Light:
+            this->transform[type] = matrix;
+            updModelLight = true;
+            updModelLightProj = true;
+            break;
+
+
         default:
             n_error("nGfxServer2::SetTransform() Trying to set read-only transform type!");
             break;
@@ -450,8 +556,12 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
     if (updModelView)
     {
         this->transform[ModelView]    = this->transform[Model] * this->transform[View];
-        this->transform[InvModelView] = this->transform[ModelView];
-        this->transform[InvModelView].invert_simple();
+        this->transform[InvModelView] = this->transform[InvView] * this->transform[InvModel];
+    }
+    if (updModelLight)
+    {
+        this->transform[ModelLight] = this->transform[Model] * this->transform[Light];
+        this->transform[InvModelLight] = this->transform[Light] * this->transform[InvModel];
     }
     if (updViewProjection)
     {
@@ -461,7 +571,11 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
     // update the modelview/projection matrix
     if (updModelView || updViewProjection)
     {
-    this->transform[ModelViewProjection] = this->transform[ModelView] * this->transform[Projection];
+        this->transform[ModelViewProjection] = this->transform[ModelView] * this->transform[Projection];
+    }
+    if (updModelLight || updModelLightProjection)
+    {
+        this->transform[ModelLightProjection] = this->transform[ModelLight] * this->transform[Projection];
     }
 }
 
@@ -656,3 +770,98 @@ nGfxServer2::InDialogBoxMode() const
     return this->inDialogBoxMode;
 }
 
+//------------------------------------------------------------------------------
+/**
+    This method should return the number of currently available stencil bits 
+    (override in subclass).
+*/
+int
+nGfxServer2::GetNumStencilBits() const
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method should return the number of currently available depth bits
+    (override in subclass).
+*/
+int
+nGfxServer2::GetNumDepthBits() const
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin rendering lines. Override this method in a subclass.
+*/
+void
+nGfxServer2::BeginLines()
+{
+    n_assert(!this->inBeginLines);
+    this->inBeginLines = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Draw a 3d line strip using the current transforms. 
+*/
+void
+nGfxServer2::DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color)
+{
+    // empty    
+}
+
+//------------------------------------------------------------------------------
+/**
+    Draw a 2d lines in screen space.
+*/
+void
+nGfxServer2::DrawLines2d(const vector2* vertexList, int numVertices,const vector4& color)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish rendering lines. Override this method in a subclass.
+*/
+void
+nGfxServer2::EndLines()
+{
+    n_assert(this->inBeginLines);
+    this->inBeginLines = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin rendering shapes.
+*/
+void
+nGfxServer2::BeginShapes()
+{
+    n_assert(!this->inBeginShapes);
+    this->inBeginShapes = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render a shape.
+*/
+void
+nGfxServer2::DrawShape(ShapeType type, const matrix44& model, const vector4& color)
+{
+    n_assert(this->inBeginShapes);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish shape drawing.
+*/
+void
+nGfxServer2::EndShapes()
+{
+    n_assert(this->inBeginShapes);
+    this->inBeginShapes = false;
+}

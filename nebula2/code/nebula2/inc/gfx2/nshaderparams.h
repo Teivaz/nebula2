@@ -13,7 +13,7 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#include "gfx2/nshader2.h"
+#include "gfx2/nshaderstate.h"
 #include "gfx2/nshaderarg.h"
 
 //------------------------------------------------------------------------------
@@ -26,55 +26,54 @@ public:
     ~nShaderParams();
     /// clear array
     void Clear();
+    /// get number of valid parameters in object
+    int GetNumValidParams() const;
     /// return true if parameter is valid
-    bool IsParameterValid(nShader2::Parameter p) const;
+    bool IsParameterValid(nShaderState::Param p) const;
     /// set a single parameter
-    void SetArg(nShader2::Parameter p, const nShaderArg& arg);
+    void SetArg(nShaderState::Param p, const nShaderArg& arg);
     /// get a single parameter
-    const nShaderArg& GetArg(nShader2::Parameter p) const;
-    /// set int parameter
-    void SetInt(nShader2::Parameter p, int val);
-    /// get int parameter
-    int GetInt(nShader2::Parameter p) const;
-    /// set bool parameter
-    void SetBool(nShader2::Parameter p, bool val);
-    /// get bool parameter
-    bool GetBool(nShader2::Parameter p) const;
-    /// set float parameter
-    void SetFloat(nShader2::Parameter p, float val);
-    /// get float parameter
-    float GetFloat(nShader2::Parameter p) const;
-    /// set vector parameter
-    void SetFloat4(nShader2::Parameter p, const nFloat4& val);
-    /// get vector parameter
-    const nFloat4& GetFloat4(nShader2::Parameter p) const;
-    /// set matrix parameter
-    void SetMatrix44(nShader2::Parameter p, const matrix44* val);
-    /// get matrix parameter
-    const matrix44* GetMatrix44(nShader2::Parameter p) const;
-    /// set texture parameter
-    void SetTexture(nShader2::Parameter p, nTexture2* tex);
-    /// get texture parameter
-    nTexture2* GetTexture(nShader2::Parameter p) const;
-    /// convenience method: set vector parameter as vector4 (slower then SetFloat4())
-    void SetVector4(nShader2::Parameter p, const vector4& v);
-    /// convenience method: get vector parameter as vector4 (slower then GetFloat4())
-    vector4 GetVector4(nShader2::Parameter p) const;
-    /// reset all parameters
-    void Reset();
+    const nShaderArg& GetArg(nShaderState::Param p) const;
+    /// get shader parameter using direct index
+    nShaderState::Param GetParamByIndex(int index) const;
+    /// get shader argument using direct index
+    const nShaderArg& GetArgByIndex(int index) const;
 
 private:
-    bool valid[nShader2::NumParameters];
-    nShaderArg args[nShader2::NumParameters];
+    class ParamAndArg
+{
+    public:
+        /// default constructor
+        ParamAndArg();
+        /// constructor
+        ParamAndArg(nShaderState::Param p, const nShaderArg& a);
+
+        nShaderState::Param param;
+        nShaderArg arg;
+    };
+    char paramIndex[nShaderState::NumParameters];   // index into paramArray, -1 for invalid params
+    nArray<ParamAndArg> paramArray;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nShaderParams::nShaderParams()
+nShaderParams::ParamAndArg::ParamAndArg() :
+    param(nShaderState::InvalidParameter)
 {
-    memset(this->valid, 0, sizeof(this->valid));
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderParams::ParamAndArg::ParamAndArg(nShaderState::Param p, const nShaderArg& a) :
+    param(p),
+    arg(a)
+{
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -84,7 +83,22 @@ inline
 void
 nShaderParams::Clear()
 {
-    memset(this->valid, 0, sizeof(this->valid));
+    int i;
+    for (i = 0; i < nShaderState::NumParameters; i++)
+    {
+        this->paramIndex[i] = -1;
+    }
+    this->paramArray.Reset();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShaderParams::nShaderParams() :
+    paramArray(0, 8)
+{
+    this->Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -100,23 +114,10 @@ nShaderParams::~nShaderParams()
 /**
 */
 inline
-bool
-nShaderParams::IsParameterValid(nShader2::Parameter p) const
+int
+nShaderParams::GetNumValidParams() const
 {
-    n_assert(p < nShader2::NumParameters);
-    return this->valid[p];
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetArg(nShader2::Parameter p, const nShaderArg& arg)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p] = arg;
+    return this->paramArray.Size();
 }
 
 //------------------------------------------------------------------------------
@@ -124,44 +125,19 @@ nShaderParams::SetArg(nShader2::Parameter p, const nShaderArg& arg)
 */
 inline
 const nShaderArg&
-nShaderParams::GetArg(nShader2::Parameter p) const
+nShaderParams::GetArgByIndex(int index) const
 {
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p];
+    return this->paramArray[index].arg;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void
-nShaderParams::SetInt(nShader2::Parameter p, int val)
+nShaderState::Param
+nShaderParams::GetParamByIndex(int index) const
 {
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetInt(val);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nShaderParams::GetInt(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetInt();
-}
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetBool(nShader2::Parameter p, bool val)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetBool(val);
+    return this->paramArray[index].param;
 }
 
 //------------------------------------------------------------------------------
@@ -169,10 +145,10 @@ nShaderParams::SetBool(nShader2::Parameter p, bool val)
 */
 inline
 bool
-nShaderParams::GetBool(nShader2::Parameter p) const
+nShaderParams::IsParameterValid(nShaderState::Param p) const
 {
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetBool();
+    n_assert(p < nShaderState::NumParameters);
+    return (-1 != this->paramIndex[p]);
 }
 
 //------------------------------------------------------------------------------
@@ -180,129 +156,32 @@ nShaderParams::GetBool(nShader2::Parameter p) const
 */
 inline
 void
-nShaderParams::SetFloat(nShader2::Parameter p, float val)
+nShaderParams::SetArg(nShaderState::Param p, const nShaderArg& arg)
 {
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetFloat(val);
-}
+    n_assert(p < nShaderState::NumParameters);
+    char index = this->paramIndex[p];
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-float
-nShaderParams::GetFloat(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetFloat();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetFloat4(nShader2::Parameter p, const nFloat4& val)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetFloat4(val);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nFloat4&
-nShaderParams::GetFloat4(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetFloat4();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetMatrix44(nShader2::Parameter p, const matrix44* m)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetMatrix44(m);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const matrix44*
-nShaderParams::GetMatrix44(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetMatrix44();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetTexture(nShader2::Parameter p, nTexture2* tex)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetTexture(tex);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTexture2*
-nShaderParams::GetTexture(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    return this->args[p].GetTexture();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::SetVector4(nShader2::Parameter p, const vector4& val)
-{
-    n_assert(p < nShader2::NumParameters);
-    this->valid[p] = true;
-    this->args[p].SetFloat4(*((nFloat4*)&val));
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-vector4
-nShaderParams::GetVector4(nShader2::Parameter p) const
-{
-    n_assert(p < nShader2::NumParameters);
-    const nFloat4& f4 = this->args[p].GetFloat4();
-    return vector4(f4.x, f4.y, f4.z, f4.w);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nShaderParams::Reset()
-{
-    memset(this->valid, 0, sizeof(this->valid));
-    for(int i=0; i<nShader2::NumParameters; i++)
+    ParamAndArg paramAndArg(p, arg);
+    if (index == -1)
     {
-        this->args[i].SetType(nShaderArg::Void);
+        this->paramArray.Append(paramAndArg);
+        this->paramIndex[p] = this->paramArray.Size() - 1;
     }
+    else
+    {
+        this->paramArray[index] = paramAndArg;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nShaderArg&
+nShaderParams::GetArg(nShaderState::Param p) const
+{
+    n_assert(p < nShaderState::NumParameters);
+    return this->paramArray[this->paramIndex[p]].arg;
 }
 
 //------------------------------------------------------------------------------

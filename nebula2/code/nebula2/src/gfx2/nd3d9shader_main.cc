@@ -74,7 +74,6 @@ nD3D9Shader::UnloadResource()
 
     // reset current shader params
     this->curParams.Clear();
-    this->shaderIndex = -1;
 
     this->SetValid(false);
 }
@@ -176,233 +175,224 @@ nD3D9Shader::LoadResource()
 /**
 */
 void
-nD3D9Shader::SetBool(Parameter p, bool val)
+nD3D9Shader::SetBool(nShaderState::Param p, bool val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    if (this->curParams.GetArg(p).GetBool() != val)
-    {
-        this->curParams.SetBool(p, val);
-        HRESULT hr = this->effect->SetBool(this->parameterHandles[p], val);
-        #ifdef __NEBULA_STATS__
-        this->refGfxServer->statsNumRenderStateChanges++;
-        #endif
-        n_assert(SUCCEEDED(hr));
-    }
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(val));
+    HRESULT hr = this->effect->SetBool(this->parameterHandles[p], val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_dxtrace(hr, "SetInt() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetBoolArray(Parameter p, const bool* array, int count)
+nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetIntArray() on shader failed!");    
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetInt(Parameter p, int val)
+nD3D9Shader::SetInt(nShaderState::Param p, int val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    if (this->curParams.GetArg(p).GetInt() != val)
-    {
-        this->curParams.SetInt(p, val);
-        HRESULT hr = this->effect->SetInt(this->parameterHandles[p], val);
-        #ifdef __NEBULA_STATS__
-        this->refGfxServer->statsNumRenderStateChanges++;
-        #endif
-        n_assert(SUCCEEDED(hr));
-    }
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(val));
+    HRESULT hr = this->effect->SetInt(this->parameterHandles[p], val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_dxtrace(hr, "SetInt() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetIntArray(Parameter p, const int* array, int count)
+nD3D9Shader::SetIntArray(nShaderState::Param p, const int* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetIntArray(this->parameterHandles[p], array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetIntArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetFloat(Parameter p, float val)
+nD3D9Shader::SetFloat(nShaderState::Param p, float val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    if (this->curParams.GetArg(p).GetFloat() != val)
-    {
-        this->curParams.SetFloat(p, val);
-        HRESULT hr = this->effect->SetFloat(this->parameterHandles[p], val);
-        #ifdef __NEBULA_STATS__
-        this->refGfxServer->statsNumRenderStateChanges++;
-        #endif
-        n_assert(SUCCEEDED(hr));
-    }
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(val));
+    HRESULT hr = this->effect->SetFloat(this->parameterHandles[p], val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_dxtrace(hr, "SetFloat() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetFloatArray(Parameter p, const float* array, int count)
+nD3D9Shader::SetFloatArray(nShaderState::Param p, const float* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetFloatArray(this->parameterHandles[p], array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetFloatArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetVector4(Parameter p, const vector4& val)
+nD3D9Shader::SetVector4(nShaderState::Param p, const vector4& val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    this->curParams.SetFloat4(p, *((nFloat4*)&val));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&val));
     HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetVector() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetVector3(Parameter p, const vector3& val)
+nD3D9Shader::SetVector3(nShaderState::Param p, const vector3& val)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     static vector4 v;
     v.set(val.x, val.y, val.z, 1.0f);
-    this->curParams.SetFloat4(p, *((nFloat4*)&v));
+    this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&v));
     HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &v);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetVector() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetFloat4(Parameter p, const nFloat4& val)
+nD3D9Shader::SetFloat4(nShaderState::Param p, const nFloat4& val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    this->curParams.SetFloat4(p, val);
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetVector() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetFloat4Array(Parameter p, const nFloat4* array, int count)
+nD3D9Shader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetVectorArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetVector4Array(Parameter p, const vector4* array, int count)
+nD3D9Shader::SetVector4Array(nShaderState::Param p, const vector4* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetVectorArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetMatrix(Parameter p, const matrix44& val)
+nD3D9Shader::SetMatrix(nShaderState::Param p, const matrix44& val)
 {
-    n_assert(this->effect && (p < NumParameters));
-    this->curParams.SetMatrix44(p, &val);
+    n_assert(this->effect && (p < nShaderState::NumParameters));
+    this->curParams.SetArg(p, nShaderArg(&val));
     HRESULT hr = this->effect->SetMatrix(this->parameterHandles[p], (CONST D3DXMATRIX*) &val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetMatrix() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetMatrixArray(Parameter p, const matrix44* array, int count)
+nD3D9Shader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetMatrixArray(this->parameterHandles[p], (CONST D3DXMATRIX*) array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetMatrixArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetMatrixPointerArray(Parameter p, const matrix44** array, int count)
+nD3D9Shader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array, int count)
 {
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     HRESULT hr = this->effect->SetMatrixPointerArray(this->parameterHandles[p], (CONST D3DXMATRIX**) array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "SetMatrixPointerArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nD3D9Shader::SetTexture(Parameter p, nTexture2* tex)
+nD3D9Shader::SetTexture(nShaderState::Param p, nTexture2* tex)
 {
     n_assert(tex);
-    n_assert(this->effect && (p < NumParameters));
+    n_assert(this->effect && (p < nShaderState::NumParameters));
     if ((!this->curParams.IsParameterValid(p)) ||
-        (this->curParams.GetArg(p).GetTexture() != tex))
+        (this->curParams.IsParameterValid(p) && (this->curParams.GetArg(p).GetTexture() != tex)))
     {
-        this->curParams.SetTexture(p, tex);
+        this->curParams.SetArg(p, nShaderArg(tex));
         HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], ((nD3D9Texture*)tex)->GetBaseTexture());
         #ifdef __NEBULA_STATS__
         this->refGfxServer->statsNumTextureChanges++;
         #endif
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "SetTexture() on shader failed!");
     }
 }
 
@@ -419,69 +409,67 @@ nD3D9Shader::SetParams(const nShaderParams& params)
     #endif
     int i;
     HRESULT hr;
-    for (i = 0; i < NumParameters; i++)
+
+    int numValidParams = params.GetNumValidParams();
+    for (i = 0; i < numValidParams; i++)
     {
-        Parameter p = (Parameter) i;
+        nShaderState::Param curParam = params.GetParamByIndex(i);
 
-        // source parameter valid?
-        if (params.IsParameterValid(p))
+        // parameter used in shader?
+        D3DXHANDLE handle = this->parameterHandles[curParam];
+        if (handle != 0)
         {
-            // parameter used in shader?
-            D3DXHANDLE handle = this->parameterHandles[p];
-            if (handle != 0)
+            // avoid redundant state switches
+            const nShaderArg& curArg = params.GetArgByIndex(i);
+            if ((!this->curParams.IsParameterValid(curParam)) ||
+                (!(curArg == this->curParams.GetArg(curParam))))
             {
-                // avoid redundant state switches
-                const nShaderArg& curArg = params.GetArg(p);
-                if ((!this->curParams.IsParameterValid(p)) ||
-                    (!(curArg == this->curParams.GetArg(p))))
+                this->curParams.SetArg(curParam, curArg);
+                switch (curArg.GetType())
                 {
-                    this->curParams.SetArg(p, curArg);
-                    switch (curArg.GetType())
-                    {
-                        case nShaderArg::Void:
-                            hr = S_OK;
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Void:
+                        hr = S_OK;
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderArg::Int:
-                            hr = this->effect->SetInt(handle, curArg.GetInt());
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Int:
+                        hr = this->effect->SetInt(handle, curArg.GetInt());
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderArg::Float:
-                            hr = this->effect->SetFloat(handle, curArg.GetFloat());
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Float:
+                        hr = this->effect->SetFloat(handle, curArg.GetFloat());
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderArg::Float4:
-                            hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*) &(curArg.GetFloat4()));
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Float4:
+                        hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*) &(curArg.GetFloat4()));
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderArg::Matrix44:
-                            hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*) curArg.GetMatrix44());
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumRenderStateChanges++;
-                            #endif
-                            break;
+                    case nShaderState::Matrix44:
+                        hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*) curArg.GetMatrix44());
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumRenderStateChanges++;
+                        #endif
+                        break;
 
-                        case nShaderArg::Texture:
-                            hr = this->effect->SetTexture(handle, ((nD3D9Texture*)curArg.GetTexture())->GetBaseTexture());
-                            #ifdef __NEBULA_STATS__
-                            gfxServer->statsNumTextureChanges++;
-                            #endif
-                            break;
-                    }
-                    n_assert(SUCCEEDED(hr));
+                    case nShaderState::Texture:
+                        hr = this->effect->SetTexture(handle, ((nD3D9Texture*)curArg.GetTexture())->GetBaseTexture());
+                        #ifdef __NEBULA_STATS__
+                        gfxServer->statsNumTextureChanges++;
+                        #endif
+                        break;
                 }
+                n_dxtrace(hr, "Failed to set shader parameter in nD3D9Shader::SetParams");
             }
         }
     }
@@ -506,7 +494,7 @@ nD3D9Shader::UpdateParameterHandles()
     // for each parameter in the effect...
     D3DXEFFECT_DESC effectDesc = { 0 };
     hr = this->effect->GetDesc(&effectDesc);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetDesc() failed in UpdateParameterHandles()");
     uint curParamIndex;
     for (curParamIndex = 0; curParamIndex < effectDesc.Parameters; curParamIndex++)
     {
@@ -516,9 +504,9 @@ nD3D9Shader::UpdateParameterHandles()
         // get the associated Nebula2 parameter index
         D3DXPARAMETER_DESC paramDesc = { 0 };
         hr = this->effect->GetParameterDesc(curParamHandle, &paramDesc);
-        n_assert(SUCCEEDED(hr));
-        Parameter nebParam = this->StringToParameter(paramDesc.Name);
-        if (nebParam != InvalidParameter)
+        n_dxtrace(hr, "GetParameterDesc() failed in UpdateParameterHandles()");
+        nShaderState::Param nebParam = nShaderState::StringToParam(paramDesc.Name);
+        if (nebParam != nShaderState::InvalidParameter)
         {
             this->parameterHandles[nebParam] = curParamHandle;
         }
@@ -530,9 +518,9 @@ nD3D9Shader::UpdateParameterHandles()
     Return true if parameter is used by effect.
 */
 bool
-nD3D9Shader::IsParameterUsed(Parameter p)
+nD3D9Shader::IsParameterUsed(nShaderState::Param p)
 {
-    n_assert(p < NumParameters);
+    n_assert(p < nShaderState::NumParameters);
     return (0 != this->parameterHandles[p]);
 }
 
@@ -602,7 +590,7 @@ nD3D9Shader::ValidateEffect()
 /**
 */
 int
-nD3D9Shader::Begin()
+nD3D9Shader::Begin(bool saveState)
 {
     n_assert(this->effect);
 
@@ -621,8 +609,12 @@ nD3D9Shader::Begin()
     {
         // start rendering the effect
         UINT numPasses;
-        HRESULT hr = this->effect->Begin(&numPasses, D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESHADERSTATE);
-        n_assert(SUCCEEDED(hr));
+        DWORD flags;
+        if (saveState) flags = 0;
+        else           flags = D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESHADERSTATE;
+
+        HRESULT hr = this->effect->Begin(&numPasses, flags);
+        n_dxtrace(hr, "Begin() failed on effect");
         return numPasses;
     }
 }
@@ -636,7 +628,7 @@ nD3D9Shader::Pass(int pass)
     HRESULT hr;
     n_assert(this->effect);
     hr = this->effect->Pass(pass);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "Pass() failed on effect");
 }
 
 //------------------------------------------------------------------------------
@@ -650,7 +642,7 @@ nD3D9Shader::End()
     if (!this->didNotValidate)
     {
         hr = this->effect->End();
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "End() failed on effect");
     }
 }
 
@@ -676,3 +668,112 @@ nD3D9Shader::GetTechnique() const
     return this->effect->GetCurrentTechnique();
 }
     
+//------------------------------------------------------------------------------
+/**
+    This converts a D3DX parameter handle to a nShaderState::Param.
+*/
+nShaderState::Param
+nD3D9Shader::D3DXParamToShaderStateParam(D3DXHANDLE h)
+{
+    int i;
+    for (i = 0; i < nShaderState::NumParameters; i++)
+    {
+        if (this->parameterHandles[i] == h)
+        {
+            return (nShaderState::Param) i;
+        }
+    }
+    // fallthrough: invalid handle
+    return nShaderState::InvalidParameter;;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create or update the instance stream declaration for this shader.
+    Stream components will be appended, unless they already exist in the
+    declaration. Returns the number of components appended.
+*/
+int
+nD3D9Shader::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
+{
+    n_assert(this->effect);
+
+    int numAppended = 0;
+
+    HRESULT hr;
+    D3DXEFFECT_DESC fxDesc;
+    hr = this->effect->GetDesc(&fxDesc);
+    n_dxtrace(hr, "GetDesc() failed on effect");
+    
+    // for each parameter...
+    uint paramIndex;
+    for (paramIndex = 0; paramIndex < fxDesc.Parameters; paramIndex++)
+    {
+        D3DXHANDLE paramHandle = this->effect->GetParameter(NULL, paramIndex);
+        n_assert(0 != paramHandle);
+
+        D3DXHANDLE annHandle = this->effect->GetAnnotationByName(paramHandle, "Instance");
+        if (annHandle)
+        {
+            BOOL b;
+            hr = this->effect->GetBool(annHandle, &b);
+            n_dxtrace(hr, 0);
+            if (b)
+            {
+                // add parameter to stream declaration (if not already exists)
+                nShaderState::Param param = this->D3DXParamToShaderStateParam(paramHandle);
+                n_assert(nShaderState::InvalidParameter != param);
+
+                // get parameter type
+                D3DXPARAMETER_DESC paramDesc;
+                hr = this->effect->GetParameterDesc(paramHandle, &paramDesc);
+                n_dxtrace(hr, 0);
+                nShaderState::Type type = nShaderState::Void;
+                if (paramDesc.Type == D3DXPT_FLOAT)
+                {
+                    switch (paramDesc.Class)
+                    {
+                        case D3DXPC_SCALAR:         
+                            type = nShaderState::Float; 
+                            break;
+
+                        case D3DXPC_VECTOR:         
+                            type = nShaderState::Float4; 
+                            break;
+
+                        case D3DXPC_MATRIX_ROWS:
+                        case D3DXPC_MATRIX_COLUMNS:
+                            type = nShaderState::Matrix44;
+                            break;
+                    }
+                }
+                if (nShaderState::Void == type)
+                {
+                    n_error("nShader2: Invalid data type for instance parameter '%s' in shader '%s'!",
+                        paramDesc.Name, this->GetFilename());
+                    return 0;
+                }
+                
+                // append instance stream component (if not exists yet)
+                int i;
+                bool paramExists = false;
+                for (i = 0; i < decl.Size(); i++)
+                {
+                    if (decl[i].GetParam() == param)
+                    {
+                        paramExists = true;
+                        break;
+                    }
+                }
+                if (!paramExists)
+                {
+                    nInstanceStream::Component streamComponent(type, param);
+                    decl.Append(streamComponent);
+                    numAppended++;
+                }
+            }
+        }
+    }
+    return numAppended;
+}
+

@@ -18,7 +18,7 @@
 #include "kernel/nref.h"
 #include "input/ninputevent.h"
 #include "kernel/ndynautoref.h"
-#include "gui/nguiresource.h"
+#include "gui/nguibrush.h"
 
 class nGuiServer;
 class nGuiEvent;
@@ -81,10 +81,6 @@ public:
     bool IsEnabled() const;
     /// has focus?
     bool HasFocus() const;
-    /// set dismissed flag
-    void SetDismissed(bool b);
-    /// is dismissed?
-    bool IsDismissed() const;
     /// turn blinking on/off
     void SetBlinking(bool b);
     /// get blinking state
@@ -96,7 +92,7 @@ public:
     /// rendering
     virtual bool Render();
     /// audio rendering
-    virtual bool RenderAudio();
+    //virtual bool RenderAudio();
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// handle button down
@@ -107,6 +103,8 @@ public:
     virtual bool OnRButtonDown(const vector2& mousePos);
     /// handle right button up
     virtual bool OnRButtonUp(const vector2& mousePos);
+    /// handle double click on widget
+    virtual void OnDoubleClick(const vector2& mousePos);
     /// handle character key event
     virtual void OnChar(uchar charCode);
     /// handle a key down event
@@ -157,33 +155,41 @@ public:
     void SetDisabledBrush(const char* name);
     /// get the disabled brush
     const char* GetDisabledBrush() const;
+    /// set clickthrough flag
+    void SetBackground(bool b);
+    /// get clickthrough flag
+    bool IsBackground() const;
 
 protected:
-    nAutoRef<nGuiServer> refGuiServer;
+    /// Get owner-window of widget
+    nGuiWidget* GetOwnerWindow();
+
     nString command;
     nString showCommand;
     nString hideCommand;
     nString frameCommand;
     nString buttonDownCommand;
     nString tooltip;
-    nClass* widgetClass;
+    static nClass* widgetClass;
+    static nClass* windowClass;
+    nTime lastButtonDownTime;
     
     bool triggerSound;
     bool shown;
     bool blinking;
     bool enabled;
-    bool dismissed;
     bool stickyMouse;
     bool hasFocus;
+    bool backGround;
 
     rectangle rect;
     vector2 minSize;
     vector2 maxSize;
 
-    nString defaultBrush;
-    nString pressedBrush;
-    nString highlightBrush;
-    nString disabledBrush;
+    nGuiBrush defaultBrush;
+    nGuiBrush pressedBrush;
+    nGuiBrush highlightBrush;
+    nGuiBrush disabledBrush;
 };
 
 //-----------------------------------------------------------------------------
@@ -406,38 +412,6 @@ nGuiWidget::IsStickyMouse() const
 
 //-----------------------------------------------------------------------------
 /**
-    Set the dismiss flag. The gui server will check for dismissed windows
-    under the current root window and release them.
-*/
-inline
-void
-nGuiWidget::SetDismissed(bool b)
-{
-    this->dismissed = b;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nGuiWidget::IsDismissed() const
-{
-    return this->dismissed;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-inline
-nGuiServer*
-nGuiWidget::GetGuiServer()
-{
-    return this->refGuiServer.get();
-}
-
-//-----------------------------------------------------------------------------
-/**
    Set screen space rectangle.
 */
 inline
@@ -485,7 +459,7 @@ inline
 void
 nGuiWidget::SetDefaultBrush(const char* name)
 {
-    this->defaultBrush = name;
+    this->defaultBrush.SetName(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -495,7 +469,7 @@ inline
 const char*
 nGuiWidget::GetDefaultBrush() const
 {
-    return this->defaultBrush.IsEmpty() ? 0 : this->defaultBrush.Get();
+    return this->defaultBrush.GetName().IsEmpty() ? 0 : this->defaultBrush.GetName().Get();
 }
 
 //-----------------------------------------------------------------------------
@@ -505,7 +479,7 @@ inline
 void
 nGuiWidget::SetPressedBrush(const char* name)
 {
-    this->pressedBrush = name;
+    this->pressedBrush.SetName(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -515,7 +489,7 @@ inline
 const char*
 nGuiWidget::GetPressedBrush() const
 {
-    return this->pressedBrush.IsEmpty() ? 0 : this->pressedBrush.Get();
+    return this->pressedBrush.GetName().IsEmpty() ? 0 : this->pressedBrush.GetName().Get();
 }
 
 //-----------------------------------------------------------------------------
@@ -525,7 +499,7 @@ inline
 void
 nGuiWidget::SetHighlightBrush(const char* name)
 {
-    this->highlightBrush = name;
+    this->highlightBrush.SetName(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -535,7 +509,7 @@ inline
 const char*
 nGuiWidget::GetHighlightBrush() const
 {
-    return this->highlightBrush.IsEmpty() ? 0 : this->highlightBrush.Get();
+    return this->highlightBrush.GetName().IsEmpty() ? 0 : this->highlightBrush.GetName().Get();
 }
 
 //-----------------------------------------------------------------------------
@@ -545,7 +519,7 @@ inline
 void
 nGuiWidget::SetDisabledBrush(const char* name)
 {
-    this->disabledBrush = name;
+    this->disabledBrush.SetName(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -555,7 +529,7 @@ inline
 const char*
 nGuiWidget::GetDisabledBrush() const
 {
-    return this->disabledBrush.IsEmpty() ? 0 : this->disabledBrush.Get();
+    return this->disabledBrush.GetName().IsEmpty() ? 0 : this->disabledBrush.GetName().Get();
 }
 
 //-----------------------------------------------------------------------------
@@ -627,6 +601,27 @@ bool
 nGuiWidget::IsEnabled() const
 {
     return this->enabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+    A background window will always be behind all other windows.
+*/
+inline
+void
+nGuiWidget::SetBackground(bool b)
+{
+    this->backGround = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiWidget::IsBackground() const
+{
+    return this->backGround;
 }
 
 //-----------------------------------------------------------------------------

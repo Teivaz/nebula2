@@ -11,11 +11,9 @@ nNebulaScriptClass(nAnimator, "nscenenode");
 /**
 */
 nAnimator::nAnimator() :
-    refVariableServer("/sys/servers/variable"),
-    loopType(LOOP),
-    channelVarHandle(nVariable::InvalidHandle)
+    loopType(Loop)
 {
-    // empty
+    this->channelVarHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
 }
 
 //------------------------------------------------------------------------------
@@ -31,10 +29,10 @@ nAnimator::~nAnimator()
     Returns the type of the animator object. Subclasses should return
     something meaningful here.
 */
-nAnimator::AnimatorType
+nAnimator::Type
 nAnimator::GetAnimatorType() const
 {
-    return INVALID_TYPE;
+    return InvalidType;
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +57,7 @@ void
 nAnimator::SetChannel(const char* name)
 {
     n_assert(name);
-    this->channelVarHandle = this->refVariableServer->GetVariableHandleByName(name);
+    this->channelVarHandle = nVariableServer::Instance()->GetVariableHandleByName(name);
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +73,7 @@ nAnimator::GetChannel()
     }
     else
     {
-        return this->refVariableServer->GetVariableName(this->channelVarHandle);
+        return nVariableServer::Instance()->GetVariableName(this->channelVarHandle);
     }
 }
 

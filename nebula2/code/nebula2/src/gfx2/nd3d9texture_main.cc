@@ -187,7 +187,7 @@ nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9,
     // get current display mode
     D3DDISPLAYMODE dispMode;
     hr = d3d9Device->GetDisplayMode(0, &dispMode);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetDisplayMode() failed");
 
     // check format
     hr = d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
@@ -258,16 +258,16 @@ nD3D9Texture::CreateRenderTarget()
             D3DPOOL_DEFAULT,            // Pool (must be default)
             &(this->texture2D),
             NULL);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "CreateTexture() failed in nD3D9Texture::CreateRenderTarget()");
         n_assert(this->texture2D);
 
         // get base texture interface pointer
         hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
 
         // get pointer to highest mipmap surface
         hr = this->texture2D->GetSurfaceLevel(0, &(this->renderTargetSurface));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "GetSurfaceLevel() failed");
     }
 
     // create optional render target depthStencil surface
@@ -293,7 +293,7 @@ nD3D9Texture::CreateRenderTarget()
             TRUE,                       // Discard
             &(this->depthStencilSurface),
             NULL);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "CreateDepthStencilSurface() failed");
         n_assert(this->depthStencilSurface);
     }
 
@@ -320,7 +320,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
         // set texture attributes
         D3DSURFACE_DESC desc;
         hr = this->texture2D->GetLevelDesc(0, &desc);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryD3DTextureAttributes() failed");
 
         switch(desc.Format)
         {
@@ -360,7 +360,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
         // set texture attributes
         D3DSURFACE_DESC desc;
         hr = this->textureCube->GetLevelDesc(0, &desc);
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "GetLevelDesc() failed");
 
         switch(desc.Format)
         {
@@ -482,7 +482,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
         }
         this->SetType(TEXTURE_2D);
         hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else if (D3DRTYPE_CUBETEXTURE == imgInfo.ResourceType)
     {
@@ -511,7 +511,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
         }
         this->SetType(TEXTURE_CUBE);
         hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else
     {
@@ -601,7 +601,7 @@ nD3D9Texture::CreateEmptyTexture()
             return false;
         }
         hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9)");
     }
     else if (this->GetType() == TEXTURE_CUBE)
     {
@@ -619,7 +619,7 @@ nD3D9Texture::CreateEmptyTexture()
             return false;
         }
         hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-        n_assert(SUCCEEDED(hr));
+        n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else
     {
@@ -719,7 +719,7 @@ nD3D9Texture::LoadFromDDSCompoundFile()
     }
     this->SetType(TEXTURE_2D);
     hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "QueryInteface(IID_IDirect3DBaseTexture9) failed");
 
     // free temp buffer
     n_free(buffer);
@@ -827,7 +827,7 @@ nD3D9Texture::Unlock(int level)
     n_assert(this->GetType() == TEXTURE_2D);
     n_assert(this->texture2D);
     HRESULT hr = this->texture2D->UnlockRect(level);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "UnlockRect() on 2d texture failed");
     this->UnlockMutex();
 }
 
@@ -842,7 +842,7 @@ nD3D9Texture::UnlockCubeFace(CubeFace face, int level)
     n_assert(this->GetType() == TEXTURE_CUBE);
     n_assert(this->textureCube);
     HRESULT hr = this->textureCube->UnlockRect((D3DCUBEMAP_FACES) face, level);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "UnlockRect() on cube surface failed");
     this->UnlockMutex();
 }
 

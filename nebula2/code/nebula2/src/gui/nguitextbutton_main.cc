@@ -59,7 +59,7 @@ nGuiTextButton::OnButtonDown(const vector2& mousePos)
     {
         this->focus = true;
         this->pressed = true;
-        this->triggerSound = true;
+        nGuiServer::Instance()->PlaySound(nGuiSkin::ButtonClick);
         nGuiWidget::OnButtonDown(mousePos);
         return true;
     }
@@ -93,15 +93,15 @@ nGuiTextButton::Render()
     {
         if (this->pressed)
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetPressedBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->pressedBrush);
         }
         else if (this->focus)
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetHighlightBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
         }
         else
         {
-            this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
         }
 
         // render the text on top

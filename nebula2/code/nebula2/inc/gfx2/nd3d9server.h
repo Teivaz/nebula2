@@ -20,6 +20,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <dxerr9.h>
 
 #if D3D_SDK_VERSION < 31
 #error You must be using the DirectX 9 Summer Update SDK!  You may download it from http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en
@@ -42,6 +43,8 @@ public:
 
     /// create a shared mesh object
     virtual nMesh2* NewMesh(const char* rsrcName);
+    /// create a mesh array object
+    virtual nMeshArray* NewMeshArray(const char* rsrcName);
     /// create a shared texture object
     virtual nTexture2* NewTexture(const char* rsrcName);
     /// create a shared shader object
@@ -57,6 +60,7 @@ public:
     virtual const nDisplayMode2& GetDisplayMode() const;
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
+    /// set the viewport
     virtual void SetViewport(nViewport& vp);
     /// open the display
     virtual bool OpenDisplay();
@@ -66,6 +70,10 @@ public:
     virtual FeatureSet GetFeatureSet();
     /// parent window handle
     virtual HWND GetParentHwnd() const;
+    /// returns the number of available stencil bits
+    virtual int GetNumStencilBits() const;
+    /// returns the number of available z bits
+    virtual int GetNumDepthBits() const;
 
     /// set a new render target texture
     virtual void SetRenderTarget(nTexture2* t);
@@ -79,9 +87,12 @@ public:
     /// clear buffers
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
+    /// add a light to the light array (reset in BeginScene)
+    virtual int AddLight(const nLight& light);
     /// set current mesh
     virtual void SetMesh(nMesh2* mesh);
-
+    /// set current mesh array, clearing the single mesh
+    virtual void SetMeshArray(nMeshArray* meshArray);
     /// set current texture
     virtual void SetTexture(int stage, nTexture2* tex);
     /// set current shader
@@ -96,6 +107,22 @@ public:
     virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(PrimitiveType primType);
+
+    /// begin rendering lines
+    virtual void BeginLines();
+    /// draw 3d lines, using the current transforms
+    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
+    /// draw 2d lines in screen space
+    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
+    /// finish line rendering
+    virtual void EndLines();
+
+    /// begin shape rendering (for debug visualizations)
+    virtual void BeginShapes();
+    /// draw a shape with the given model matrix
+    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
+    /// end shape rendering
+    virtual void EndShapes();
 
     /// trigger the window system message pump
     virtual bool Trigger();
@@ -158,6 +185,12 @@ private:
     void UpdateCursor();
     /// get a pointer to the global d3dx effect pool
     ID3DXEffectPool* GetEffectPool() const;
+    /// instancer version of DrawIndexedNS()
+    void DrawIndexedInstancedNS(PrimitiveType primType);
+    /// instancer version of DrawNS()
+    void DrawInstancedNS(PrimitiveType primType);
+    /// update shared shader parameters
+    void UpdateSharedShaderParams();
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
@@ -184,10 +217,14 @@ private:
     ID3DXSprite* d3dSprite;
     nRef<nFont2> refDefaultFont;
 
+    ID3DXLine* d3dxLine;                        ///< line drawing stuff
+    ID3DXMesh* shapeMeshes[NumShapeTypes];      ///< shape rendering
+    nRef<nD3D9Shader> refShapeShader;           ///< the shader used for rendering shapes
+
     D3DPRESENT_PARAMETERS presentParams;        ///< current presentation parameters
     IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface
     IDirect3DSurface9* depthStencilSurface;     ///< the original depth stencil surface
-    ID3DXEffectPool* d3dxEffectPool;            ///< pool for sharing shader parameters
+    ID3DXEffectPool* effectPool;                ///< global pool for shared effect parameters
     nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
 
     #ifdef __NEBULA_STATS__
@@ -234,15 +271,6 @@ nD3D9Server::TextNode::TextNode(const char* str, const vector4& clr, float x, fl
     // empty
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-HWND
-nD3D9Server::GetParentHwnd() const
-{
-    return this->windowHandler.GetParentHwnd();
-}
 //------------------------------------------------------------------------------
 /**
 */
@@ -328,6 +356,17 @@ nD3D9Server::GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dP
     }
     return d3dNumPrimitives;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+HWND
+nD3D9Server::GetParentHwnd() const
+{
+    return this->windowHandler.GetParentHwnd();
+}
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -335,7 +374,7 @@ inline
 ID3DXEffectPool*
 nD3D9Server::GetEffectPool() const
 {
-    return this->d3dxEffectPool;
+    return this->effectPool;
 }
 //------------------------------------------------------------------------------
 #endif

@@ -27,7 +27,7 @@ public:
     virtual bool SaveCmds(nPersistServer* ps);
 
     /// return the type of this animator object (TRANSFORM)
-    virtual AnimatorType GetAnimatorType() const;
+    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// add a position key

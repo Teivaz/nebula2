@@ -22,14 +22,17 @@ beginmodule nd3d9server
     setplatform win32
     setfiles {
         nd3d9server_main 
-        nd3d9server_window 
         nd3d9server_resource 
         nd3d9server_device
         nd3d9server_render
         nd3d9server_text
+        nd3d9server_lines
+        nd3d9server_shapes
+        nd3d9windowhandler
+        nd3d9shaderinclude
     }
     setheaders { nd3d9server }
-    setlibs_win32 { d3d9.lib d3dx9.lib dxguid.lib }
+    setlibs_win32 { d3d9.lib d3dx9.lib dxguid.lib dxerr9.lib }
     setmoduledeps { nd3d9mesh nd3d9texture nd3d9shader }
 endmodule
 #-------------------------------------------------------------------------------
@@ -38,6 +41,12 @@ beginmodule nd3d9mesh
     setplatform win32
     setfiles { nd3d9mesh_main }
     setheaders { nd3d9mesh }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9mesharray
+    setdir gfx2
+    setfiles { nd3d9mesharray_main }
+    setheaders { nd3d9mesharray }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nd3d9texture
@@ -90,7 +99,7 @@ begintarget ndirect3d9
     settype lib
     setmodules {
         nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font nd3d9surface
-        nd3d9shaderinclude nd3d9windowhandler
+        nd3d9shaderinclude nd3d9windowhandler nd3d9mesharray
     }
 endtarget
 #-------------------------------------------------------------------------------

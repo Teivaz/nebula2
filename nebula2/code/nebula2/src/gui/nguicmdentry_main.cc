@@ -6,6 +6,7 @@
 #include "util/nlinebuffer.h"
 #include "kernel/nloghandler.h"
 #include "util/nstring.h"
+#include "util/npathstring.h"
 
 nNebulaClass(nGuiCmdEntry, "nguitextview");
 

@@ -136,8 +136,8 @@ void nCLODTQTSplatterNode::setTQTParameters(unsigned int splatdepth, unsigned in
 
 void nCLODTQTSplatterNode::setDetailTexture(unsigned int tileindex, const char *tiletexturename)
 {
-    char bigsrcpath[N_MAXPATH];
-    m_ref_fs->ManglePath(tiletexturename, bigsrcpath, sizeof(bigsrcpath));
+    nString bigsrcpath = m_ref_fs->ManglePath(tiletexturename);  
+
     // prepare and load the texture
     n_assert(this->refGfxServer.isvalid());
     nTexture2* tex = this->refGfxServer->NewTexture(tiletexturename);
@@ -159,8 +159,7 @@ void nCLODTQTSplatterNode::compileTQTFromFile(const char *sourcefilename)
 {
     n_assert(m_ref_fs.isvalid());
     nFile *destfile = m_ref_fs->NewFileObject();
-    char bigsrcpath[N_MAXPATH];
-    m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
+    nString bigsrcpath = m_ref_fs->ManglePath(sourcefilename);
     if (!destfile->Open(m_outputfilename, "wb"))
     {
         n_error("nCLODTQTSplatterNode::compileTQTFromFile(): Could not open file %s\n",
@@ -178,7 +177,7 @@ void nCLODTQTSplatterNode::compileTQTFromFile(const char *sourcefilename)
     // write out the TOC
     generateEmptyTOC(*destfile, m_splatdepth);
     tqt_tile_layer *curtiles = new tqt_tile_layer( 1 << (m_splatdepth-2) );
-    if ((curtiles = generateTQTLeaves(*destfile, m_splatdepth-2, bigsrcpath, curtiles)) &&
+    if ((curtiles = generateTQTLeaves(*destfile, m_splatdepth-2, bigsrcpath , curtiles)) &&
          (m_splatdepth > 2) )
     {
         curtiles = generateTQTNodes(*destfile, m_splatdepth-3, curtiles);
@@ -215,12 +214,12 @@ void nCLODTQTSplatterNode::generateEmptyTOC(nFile &destfile, int root_level)
 }
 
 // generate leaf nodes from the source image
-tqt_tile_layer * nCLODTQTSplatterNode::generateTQTLeaves(nFile &destfile, int leafdepth, const char *sourcefilename, tqt_tile_layer *tiles)
+tqt_tile_layer * nCLODTQTSplatterNode::generateTQTLeaves(nFile &destfile, int leafdepth, nString sourcefilename, tqt_tile_layer *tiles)
 {
     // grab the image from the file
     ILuint sourceImage = iluGenImage();
     ilBindImage(sourceImage);
-    if ( !ilLoadImage( (char*)sourcefilename ) )
+    if ( !ilLoadImage( (char*)sourcefilename.Get() ) )
     {
         n_printf("DevIL failed loading image '%s' with '%s'.\n", sourcefilename, iluErrorString(ilGetError()));
         iluDeleteImage(sourceImage);

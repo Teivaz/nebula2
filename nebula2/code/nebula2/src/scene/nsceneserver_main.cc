@@ -220,14 +220,14 @@ nSceneServer::UpdateShader(nShader2* shd, nRenderContext* renderContext)
     // write global parameters the shader
     nGfxServer2* gfxServer = this->refGfxServer.get();
     const matrix44& invModelView  = refGfxServer->GetTransform(nGfxServer2::InvModelView);
-    if (shd->IsParameterUsed(nShader2::Time))
+    if (shd->IsParameterUsed(nShaderState::Time))
     {
         nTime time = this->kernelServer->GetTimeServer()->GetTime();
-        shd->SetFloat(nShader2::Time, float(time));
+        shd->SetFloat(nShaderState::Time, float(time));
     }
 
     // FIXME: this should be a shared shader parameter
-    if (shd->IsParameterUsed(nShader2::DisplayResolution))
+    if (shd->IsParameterUsed(nShaderState::DisplayResolution))
     {
         const nDisplayMode2& mode = gfxServer->GetDisplayMode();
         nFloat4 dispRes;
@@ -235,7 +235,7 @@ nSceneServer::UpdateShader(nShader2* shd, nRenderContext* renderContext)
         dispRes.y = (float) mode.GetHeight();
         dispRes.z = 0.0f;
         dispRes.w = 0.0f;
-        shd->SetFloat4(nShader2::DisplayResolution, dispRes);
+        shd->SetFloat4(nShaderState::DisplayResolution, dispRes);
     }
 
     // set shader overrides

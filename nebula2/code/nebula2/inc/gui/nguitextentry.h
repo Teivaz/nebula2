@@ -11,6 +11,8 @@
 #include "gui/nguitextlabel.h"
 #include "util/neditline.h"
 
+class nInputServer;
+
 //------------------------------------------------------------------------------
 class nGuiTextEntry : public nGuiTextLabel
 {
@@ -29,6 +31,10 @@ public:
     void SetMaxLength(int l);
     /// get max string length
     int GetMaxLength() const;
+    /// enable/disable filename mode
+    void SetFileMode(bool b);
+    /// get filename mode
+    bool GetFileMode() const;
     /// set the cursor brush
     void SetCursorBrush(const char* name);
     /// get the cursor brush
@@ -51,21 +57,40 @@ public:
     void SetEmptyText(const char* text);
     /// get optional "empty" replacement text
     const char* GetEmptyText() const;
-    /// set initial overstrike state (default is off)
-    void SetOverstrike(bool);
 
 protected:
     /// check if text edit line contains empty text and replace with provided empty replacement text
     void CheckEmptyText();
 
+    nAutoRef<nInputServer> refInputServer;
     bool mouseOver;
     bool active;
     bool firstFrameActive;
+    bool fileMode;
     nEditLine* lineEditor;
     nString emptyText;
-    nString cursorBrush;
-    bool overstrikeDefault;
+    nGuiBrush cursorBrush;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextEntry::SetFileMode(bool b)
+{
+    this->fileMode = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextEntry::GetFileMode() const
+{
+    return this->fileMode;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -85,7 +110,7 @@ inline
 void
 nGuiTextEntry::SetCursorBrush(const char* name)
 {
-    this->cursorBrush = name;
+    this->cursorBrush.SetName(name);
 }
 
 //------------------------------------------------------------------------------
@@ -95,7 +120,7 @@ inline
 const char*
 nGuiTextEntry::GetCursorBrush() const
 {
-    return this->cursorBrush.IsEmpty() ? 0 : this->cursorBrush.Get();
+    return this->cursorBrush.GetName().IsEmpty() ? 0 : this->cursorBrush.GetName().Get();
 }
 
 //------------------------------------------------------------------------------

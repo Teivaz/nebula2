@@ -203,7 +203,7 @@ n_settexture(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     const char* s1 = cmd->In()->GetS();
-    self->SetTexture(nShader2::StringToParameter(s0), s1);
+    self->SetTexture(nShaderState::StringToParam(s0), s1);
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ static void
 n_gettexture(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetS(self->GetTexture(nShader2::StringToParameter(cmd->In()->GetS())));
+    cmd->Out()->SetS(self->GetTexture(nShaderState::StringToParam(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ n_setint(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     int i0 = cmd->In()->GetI();
-    self->SetInt(nShader2::StringToParameter(s0), i0);
+    self->SetInt(nShaderState::StringToParam(s0), i0);
 }
 
 //------------------------------------------------------------------------------
@@ -259,7 +259,7 @@ static void
 n_getint(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetI(self->GetInt(nShader2::StringToParameter(cmd->In()->GetS())));
+    cmd->Out()->SetI(self->GetInt(nShaderState::StringToParam(cmd->In()->GetS())));
 }
 //------------------------------------------------------------------------------
 /**
@@ -278,7 +278,7 @@ n_setbool(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     bool b0 = cmd->In()->GetB();
-    self->SetBool(nShader2::StringToParameter(s0), b0);
+    self->SetBool(nShaderState::StringToParam(s0), b0);
 }
 
 //------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ static void
 n_getbool(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetB(self->GetBool(nShader2::StringToParameter(cmd->In()->GetS())));
+    cmd->Out()->SetB(self->GetBool(nShaderState::StringToParam(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -316,7 +316,7 @@ n_setfloat(void* slf, nCmd* cmd)
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
     const char* s0 = cmd->In()->GetS();
     float f0 = cmd->In()->GetF();
-    self->SetFloat(nShader2::StringToParameter(s0), f0);
+    self->SetFloat(nShaderState::StringToParam(s0), f0);
 }
 
 //------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ static void
 n_getfloat(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetF(self->GetFloat(nShader2::StringToParameter(cmd->In()->GetS())));
+    cmd->Out()->SetF(self->GetFloat(nShaderState::StringToParam(cmd->In()->GetS())));
 }
 
 //------------------------------------------------------------------------------
@@ -358,7 +358,7 @@ n_setvector(void* slf, nCmd* cmd)
     v.y = cmd->In()->GetF();
     v.z = cmd->In()->GetF();
     v.w = cmd->In()->GetF();
-    self->SetVector(nShader2::StringToParameter(s0), v);
+    self->SetVector(nShaderState::StringToParam(s0), v);
 }
 
 //------------------------------------------------------------------------------
@@ -376,7 +376,7 @@ static void
 n_getvector(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    vector4 v = self->GetVector(nShader2::StringToParameter(cmd->In()->GetS()));
+    vector4 v = self->GetVector(nShaderState::StringToParam(cmd->In()->GetS()));
     cmd->Out()->SetF(v.x);
     cmd->Out()->SetF(v.y);
     cmd->Out()->SetF(v.z);
@@ -435,45 +435,47 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
         {
             TexNode& texNode = this->texNodeArray[i];
             cmd = ps->GetCmd(this, 'STXT');
-            cmd->In()->SetS(nShader2::ParameterToString(texNode.shaderParameter));
+            cmd->In()->SetS(nShaderState::ParamToString(texNode.shaderParameter));
             cmd->In()->SetS(texNode.texName.Get());
             ps->PutCmd(cmd);
         }
 
-        //--- setint/setbool/setfloat/setvector ---
-        for (i = 0; i < nShader2::NumParameters; i++)
+        //--- setint/setfloat/setvector ---
+        num = this->shaderParams.GetNumValidParams();
+        for (i = 0; i < num; i++)
         {
-            const nShaderArg& param = this->shaderParams.GetArg((nShader2::Parameter)i);
-            switch (param.GetType())
+            nShaderState::Param param = this->shaderParams.GetParamByIndex(i);
+            const nShaderArg& arg = this->shaderParams.GetArgByIndex(i);
+            switch (arg.GetType())
             {
-                case nShaderArg::Void:
+                case nShaderState::Void:
                     break;
 
-                case nShaderArg::Int:
+                case nShaderState::Int:
                     cmd = ps->GetCmd(this, 'SINT');
-                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
-                    cmd->In()->SetI(param.GetInt());
+                    cmd->In()->SetS(nShaderState::ParamToString(param));
+                    cmd->In()->SetI(arg.GetInt());
                     ps->PutCmd(cmd);
                     break;
-               case nShaderArg::Bool:
+               case nShaderState::Bool:
                     cmd = ps->GetCmd(this, 'SBOO');
-                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
-                    cmd->In()->SetB(param.GetBool());
+                    cmd->In()->SetS(nShaderState::ParamToString(param));
+                    cmd->In()->SetB(arg.GetBool());
                     ps->PutCmd(cmd);
                     break;
 
-                case nShaderArg::Float:
+                case nShaderState::Float:
                     cmd = ps->GetCmd(this, 'SFLT');
-                    cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
-                    cmd->In()->SetF(param.GetFloat());
+                    cmd->In()->SetS(nShaderState::ParamToString(param));
+                    cmd->In()->SetF(arg.GetFloat());
                     ps->PutCmd(cmd);
                     break;
 
-                case nShaderArg::Float4:
+                case nShaderState::Float4:
                     {
                         cmd = ps->GetCmd(this, 'SVEC');
-                        const nFloat4& f = param.GetFloat4();
-                        cmd->In()->SetS(nShader2::ParameterToString((nShader2::Parameter)i));
+                        const nFloat4& f = arg.GetFloat4();
+                        cmd->In()->SetS(nShaderState::ParamToString(param));
                         cmd->In()->SetF(f.x);
                         cmd->In()->SetF(f.y);
                         cmd->In()->SetF(f.z);
@@ -482,7 +484,7 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                     }
                     break;
 
-                case nShaderArg::Texture:
+                case nShaderState::Texture:
                     // ignore textures as they are already saved above.
                     break;
 

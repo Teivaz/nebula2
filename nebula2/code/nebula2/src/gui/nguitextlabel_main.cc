@@ -3,7 +3,8 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "gui/nguitextlabel.h"
-#include "resource/nresourceserver.h"
+#include "gfx2/ngfxserver2.h"
+#include "gui/nguiserver.h"
 
 nNebulaScriptClass(nGuiTextLabel, "nguilabel");
 
@@ -11,15 +12,14 @@ nNebulaScriptClass(nGuiTextLabel, "nguilabel");
 /**
 */
 nGuiTextLabel::nGuiTextLabel() :
-    refGfxServer("/sys/servers/gfx"),
-    refResourceServer("/sys/servers/resource"),
     color(1.0f, 1.0f, 1.0f, 1.0f),
-    shadowColor(0.0f, 0.0f, 0.0f, 0.5f),
-    shadowOffset(0.0015f, 0.0015f),
     align(Center),
-    border(0.01f, 0.0f),
+    border(0.005f, 0.0f),
+    pressedOffset(0.0015f, 0.0015f),
     fontName("GuiDefault"),
-    clipping(true)
+    clipping(true),
+    vCenter(true),
+    wordBreak(false)
 {
     // empty
 }
@@ -29,16 +29,12 @@ nGuiTextLabel::nGuiTextLabel() :
 */
 nGuiTextLabel::~nGuiTextLabel()
 {
-    if (this->refFont.isvalid())
-    {
-        this->refFont->Release();
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-inline
 void
 nGuiTextLabel::SetText(const char* text)
 {
@@ -49,11 +45,42 @@ nGuiTextLabel::SetText(const char* text)
 //------------------------------------------------------------------------------
 /**
 */
-inline
 const char*
 nGuiTextLabel::GetText() const
 {
     return this->text.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+vector2
+nGuiTextLabel::GetTextExtent()
+{
+    this->ValidateFont();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    nFont2* oldFont = gfxServer->GetFont();
+    gfxServer->SetFont(this->refFont.get());
+    vector2 extent = gfxServer->GetTextExtent(this->GetText());
+    gfxServer->SetFont(oldFont);
+    return extent;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Make sure the font object is valid.
+*/
+void
+nGuiTextLabel::ValidateFont()
+{
+    if (!this->refFont.isvalid())
+    {
+        this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
+        if (!this->refFont.isvalid())
+        {
+            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -72,23 +99,11 @@ nGuiTextLabel::RenderText(bool pressed)
         return;
     }
 
-    // (re-)validate the font object
-    if (!this->refFont.isvalid())
-    {
-        this->refFont = (nFont2*) this->refResourceServer->FindResource(this->fontName.Get(), nResource::Font);
-        if (!this->refFont.isvalid())
-        {
-            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
-        }
-        else
-        {
-            this->refFont->AddRef();
-        }
-    }
+    this->ValidateFont();
 
     // compute the text position
-    this->refGfxServer->SetFont(this->refFont.get());
-    uint renderFlags = nFont2::VCenter;
+    nGfxServer2::Instance()->SetFont(this->refFont.get());
+    uint renderFlags = 0;
     switch (this->align)
     {
         case Left:  renderFlags |= nFont2::Left; break;
@@ -99,32 +114,30 @@ nGuiTextLabel::RenderText(bool pressed)
     {
         renderFlags |= nFont2::NoClip;
     }
+    if (this->wordBreak)
+    {
+        renderFlags |= nFont2::WordBreak;
+    }
+    if (this->vCenter)
+    {
+        renderFlags |= nFont2::VCenter;
+    }
 
     rectangle screenSpaceRect = this->GetScreenSpaceRect();
     screenSpaceRect.v0 += this->border;
     screenSpaceRect.v1 -= this->border;
-    /*
-    rectangle shadowRect = screenSpaceRect;
-    shadowRect.v0 += this->shadowOffset;
-    shadowRect.v1 += this->shadowOffset;
-    if (!pressed)
-    {
-        // draw the shadow text
-        this->refGfxServer->DrawText(this->GetText(), this->shadowColor, shadowRect, renderFlags);
-    }
-    */
 
     // draw text
     rectangle pressedRect = screenSpaceRect;
-    pressedRect.v0 += this->shadowOffset;
-    pressedRect.v1 += this->shadowOffset;
+    pressedRect.v0 += this->pressedOffset;
+    pressedRect.v1 += this->pressedOffset;
     if (pressed)
     {
-        this->refGfxServer->DrawText(this->GetText(), this->color, pressedRect, renderFlags);
+        nGuiServer::Instance()->DrawText(this->GetText(), this->color, pressedRect, renderFlags);
     }
     else
     {
-        this->refGfxServer->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
+        nGuiServer::Instance()->DrawText(this->GetText(), this->color, screenSpaceRect, renderFlags);
     }
 }
 

@@ -58,7 +58,6 @@ proc OnGuiServerOpen {} {
         .setdefaultbrush "tooltip"
         .setfont "GuiSmall"
         .setcolor 0 0 0 1 
-        .setshadowcolor 0 0 0 0
         .setalignment "left"
         .setborder 0.005 0.005
     sel ..

@@ -1302,7 +1302,7 @@ MStatus nMaya::SaveAnim( nAnimBuilder::Group& animGroup )
     nAnimBuilder animBuilder;
     animBuilder.AddGroup( animGroup );
     animBuilder.Optimize();
-    nKernelServer kernelServer;
+    
     nFileServer2* fileServer = static_cast<nFileServer2*>( kernelServer.New( "nfileserver2", "fileserver" ) );
     if( !animBuilder.Save( fileServer, options.animKeysFilename().Get() ) )
     {

@@ -62,7 +62,7 @@ nGuiSlider2::OnShow()
     kernelServer->PushCwd(this);
 
     // get some brush sizes
-    this->arrowBtnSize = this->refGuiServer->ComputeScreenSpaceBrushSize("arrowup_n");
+    this->arrowBtnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("arrowup_n");
     if (this->horizontal)
     {
         this->SetMinSize(vector2(2.0f * this->arrowBtnSize.x, this->arrowBtnSize.y));
@@ -154,7 +154,7 @@ nGuiSlider2::OnShow()
     
     this->UpdateLayout(this->rect);
 
-    this->refGuiServer->RegisterEventListener(this);
+    nGuiServer::Instance()->RegisterEventListener(this);
 }
 
 //------------------------------------------------------------------------------
@@ -163,8 +163,9 @@ nGuiSlider2::OnShow()
 void
 nGuiSlider2::OnHide()
 {
-    this->refGuiServer->UnregisterEventListener(this);
+    nGuiServer::Instance()->UnregisterEventListener(this);
 
+    this->ClearAttachRules();
     if (this->refNegButton.isvalid())
     {
         this->refNegButton->Release();
@@ -180,9 +181,6 @@ nGuiSlider2::OnHide()
         this->refKnob->Release();
         n_assert(!this->refKnob.isvalid());
     }
-
-    // clear the form layout attachments
-    this->ClearAttachments();
 
     // call parent class
     nGuiFormLayout::OnHide();
@@ -268,7 +266,7 @@ nGuiSlider2::UpdateKnobLayout(const rectangle& newSliderRect)
 
     // send a slider changed
     nGuiEvent event(this, nGuiEvent::SliderChanged);
-    this->refGuiServer->PutEvent(event);
+    nGuiServer::Instance()->PutEvent(event);
 }
 
 //------------------------------------------------------------------------------
@@ -342,7 +340,7 @@ nGuiSlider2::Render()
     if (this->IsShown())
     {
         // render the background brush
-        this->refGuiServer->DrawBrush(this->GetScreenSpaceRect(), this->GetDefaultBrush());
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
         return nGuiFormLayout::Render();
     }
     return false;
@@ -356,7 +354,7 @@ void
 nGuiSlider2::BeginSliderDrag()
 {
     this->dragging          = true;
-    this->startDragMousePos = this->refGuiServer->GetMousePos();
+    this->startDragMousePos = nGuiServer::Instance()->GetMousePos();
     this->dragVisibleStart  = this->visibleStart; 
 }
 

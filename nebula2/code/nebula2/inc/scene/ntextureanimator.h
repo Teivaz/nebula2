@@ -26,14 +26,14 @@ public:
     virtual bool SaveCmds(nPersistServer* ps);
     
     /// return the type of this animator object
-    virtual AnimatorType GetAnimatorType() const;
+    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
 
     /// Add a texture to the array (with index number equal to the number of textures added thus far)
-    void AddTexture( const char* path );
+    void AddTexture(const char* path);
     /// Sets the shader state parameter that will be passed to nAbstractShaderNode::SetTexture
-    void SetShaderParam( const char* param );
+    void SetShaderParam(const char* param);
 
 private:
     /// Returns the number of textures that have been added so far
@@ -45,7 +45,7 @@ private:
 
     nAutoRef<nGfxServer2> refGfxServer;
     nArray<nRef<nTexture2> > textureArray; 
-    nShader2::Parameter shaderParam;
+    nShaderState::Param shaderParam;
 
 };
 

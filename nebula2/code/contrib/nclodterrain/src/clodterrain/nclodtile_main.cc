@@ -52,9 +52,9 @@ void nCLODTile::Configure(unsigned int tilepixelsize, nFile *tqtfile)
 /// dump the loaded texture into the appropriate shader
 bool nCLODTile::ToShader(nShader2 *puthere, unsigned int textureindex)
 {
-    if (puthere->IsParameterUsed(nShader2::DiffMap0))
+    if (puthere->IsParameterUsed(nShaderState::DiffMap0))
     {
-        puthere->SetTexture(nShader2::DiffMap0, chunkTextures[textureindex].get());
+        puthere->SetTexture(nShaderState::DiffMap0, chunkTextures[textureindex].get());
         return true;
     }
     else

@@ -27,6 +27,7 @@ public:
         ButtonUp,
         RButtonDown,
         RButtonUp,
+        DoubleClick,
         Char,
         KeyDown,
         KeyUp,
@@ -136,6 +137,7 @@ nGuiEvent::TypeToString(Type t)
         case ButtonUp:      return "ButtonUp";
         case RButtonDown:   return "RButtonDown";
         case RButtonUp:     return "RButtonUp";
+        case DoubleClick:   return "DoubleClick";
         case Char:          return "Char";
         case KeyDown:       return "KeyDown";
         case KeyUp:         return "KeyUp";

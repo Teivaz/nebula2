@@ -27,6 +27,8 @@ public:
     nInputServer();
     /// destructor
     virtual ~nInputServer();
+    /// get instance pointer
+    static nInputServer* Instance();
     /// per frame trigger 
     virtual void Trigger(double time);
     /// create a new input event object
@@ -53,7 +55,7 @@ public:
     float GetSlider(const char* state);
     /// get an input state as button value
     bool GetButton(const char* state);
-    /// get the current mosue pos
+    /// get the current mouse pos
     const vector2& GetMousePos() const;
     /// start logging input
     void StartLogging();
@@ -83,6 +85,10 @@ public:
     void LoseFocus(void);
 	/// flush entire input mapping
 	void FlushInput();
+    /// set mute mode on/off
+    void SetMute(bool b);
+    /// get mute mode
+    bool GetMute() const;
 
 protected:
     /// convert an input event string into an input event
@@ -120,6 +126,9 @@ protected:
     /// build an input mapping name
     const char* BuildInputMappingName(const char* ieStr, const char* isStr, char* buf, int bufSize);
 
+private:
+    static nInputServer* Singleton;
+
 protected:
     enum 
     {
@@ -137,6 +146,7 @@ protected:
 
     bool log_events;
     bool in_begin_map;
+    bool mute;
 
     nHashList im_list;          // list of nInputMapping's
     nHashList is_list;          // list of nInputState's
@@ -150,6 +160,39 @@ protected:
     bool mouseInvert;
     vector2 mousePos;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nInputServer*
+nInputServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set mute mode on/off. When in mute mode, only raw events will be
+    generated, but no input mapping takes place.
+*/
+inline
+void
+nInputServer::SetMute(bool b)
+{
+    this->mute = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nInputServer::GetMute() const
+{
+    return this->mute;
+}
 
 //------------------------------------------------------------------------------
 /**

@@ -11,6 +11,8 @@
 */
 #include "gui/nguiwidget.h"
 
+class nTexture2;
+
 //------------------------------------------------------------------------------
 class nGuiTextureView : public nGuiWidget
 {

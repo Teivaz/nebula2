@@ -6,6 +6,7 @@
 #include "variable/nvariablecontext.h"
 
 nNebulaScriptClass(nVariableServer, "nroot");
+nVariableServer* nVariableServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -13,7 +14,8 @@ nNebulaScriptClass(nVariableServer, "nroot");
 nVariableServer::nVariableServer() :
     registry(64, 64)
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
 }
 
 //------------------------------------------------------------------------------
@@ -21,7 +23,8 @@ nVariableServer::nVariableServer() :
 */
 nVariableServer::~nVariableServer()
 {
-    // empty
+    n_assert(Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------

@@ -19,13 +19,15 @@ public:
     /// destructor
     ~nNvx2Loader();
     /// open file and read header data
-    bool Open(nFileServer2* fs);
+    virtual bool Open(nFileServer2* fs);
     /// close the file
-    void Close();
+    virtual void Close();
     /// read vertex data
-    bool ReadVertices(void* buffer, int bufferSize);
+    virtual bool ReadVertices(void* buffer, int bufferSize);
     /// read index data
-    bool ReadIndices(void* buffer, int bufferSize);
+    virtual bool ReadIndices(void* buffer, int bufferSize);
+    /// read edge data
+    virtual bool ReadEdges(void* buffer, int bufferSize);
 };
 
 //------------------------------------------------------------------------------
@@ -80,6 +82,7 @@ nNvx2Loader::Open(nFileServer2* fs)
     this->numVertices      = file->GetInt();
     this->vertexWidth      = file->GetInt();
     this->numTriangles     = file->GetInt();
+    this->numEdges         = file->GetInt();
     this->vertexComponents = file->GetInt();
     this->numIndices       = this->numTriangles * 3;
 
@@ -90,12 +93,16 @@ nNvx2Loader::Open(nFileServer2* fs)
         int numVertices   = file->GetInt();
         int firstTriangle = file->GetInt();
         int numTriangles  = file->GetInt();
+        int firstEdge     = file->GetInt();
+        int numEdges      = file->GetInt();
 
         nMeshGroup group;
         group.SetFirstVertex(firstVertex);
         group.SetNumVertices(numVertices);
         group.SetFirstIndex(firstTriangle * 3);
         group.SetNumIndices(numTriangles * 3);
+        group.SetFirstEdge(firstEdge);
+        group.SetNumEdges(numEdges);
         this->groupArray.Append(group);
     }
 
@@ -172,6 +179,29 @@ nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
         n_free(ptr16);
     }
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    A edge has the size of 4 * ushort, so you have to provide a buffer with the
+    size numEdges * 4 * sizeof(ushort).
+    The edge data is: ushort faceIndex1, faceIndex2, vertexIndex1, vertexIndex2;
+    If a face Indicie is invalid (a border edge with only on face connected)
+    the value is (ushort)nMeshBuilder::InvalidIndex ( == -1).
+*/
+inline
+bool
+nNvx2Loader::ReadEdges(void* buffer, int bufferSize)
+{
+    n_assert(buffer);
+    n_assert(this->file);
+    if (this->numEdges > 0)
+    {
+        n_assert((this->numEdges * 4 * sizeof(ushort)) == bufferSize);
+        file->Read(buffer, bufferSize);
+        return true;
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------

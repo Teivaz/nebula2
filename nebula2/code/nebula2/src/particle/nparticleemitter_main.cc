@@ -219,7 +219,7 @@ void nParticleEmitter::Render()
 
     if (!this->dynMesh.IsValid())
     {
-        this->dynMesh.Initialize(gfxServer, nGfxServer2::TriangleList,
+        this->dynMesh.Initialize(nGfxServer2::TriangleList,
             nMesh2::Coord  | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 |
             nMesh2::Color, nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
         n_assert(this->dynMesh.IsValid());

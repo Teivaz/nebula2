@@ -48,17 +48,19 @@ nD3D9Server::nD3D9Server() :
     dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
     #endif
     windowHandler(this),
-  deviceBehaviourFlags(0),
+    deviceBehaviourFlags(0),
     d3dSprite(0),
     d3d9(0),
     d3d9Device(0),
     depthStencilSurface(0),
     backBufferSurface(0),
-    d3dxEffectPool(0),
-    featureSet(InvalidFeatureSet)
+    effectPool(0),
+    featureSet(InvalidFeatureSet),
+    d3dxLine(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
+    memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
 
     // open the app window
     this->windowHandler.OpenWindow();
@@ -243,7 +245,7 @@ nD3D9Server::EnterDialogBoxMode()
     n_assert(this->d3d9Device);
     nGfxServer2::EnterDialogBoxMode();
     HRESULT hr = this->d3d9Device->SetDialogBoxMode(TRUE);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode()");
 }
 
 //-----------------------------------------------------------------------------
@@ -257,7 +259,7 @@ nD3D9Server::LeaveDialogBoxMode()
     n_assert(this->d3d9Device);
     nGfxServer2::LeaveDialogBoxMode();
     HRESULT hr = this->d3d9Device->SetDialogBoxMode(FALSE);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "nD3D9Server::LeaveDialogBoxMode()");
 }
 
 //-----------------------------------------------------------------------------

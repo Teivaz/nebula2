@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaScriptClass(nGuiHoriSliderGroup, "nguiformlayout");
+nNebulaClass(nGuiHoriSliderGroup, "nguiformlayout");
 
 //---  MetaInfo  ---------------------------------------------------------------
 /**
@@ -52,7 +52,7 @@ nGuiHoriSliderGroup::~nGuiHoriSliderGroup()
 void
 nGuiHoriSliderGroup::OnShow()
 {
-    nGuiSkin* skin = this->refGuiServer->GetSkin();
+    nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
 
     nGuiFormLayout::OnShow();
@@ -109,7 +109,7 @@ nGuiHoriSliderGroup::OnShow()
     this->SetMaxSize(sliderMaxSize);
 
     this->UpdateLayout(this->rect);
-    this->refGuiServer->RegisterEventListener(this);
+    nGuiServer::Instance()->RegisterEventListener(this);
 }
 
 //------------------------------------------------------------------------------
@@ -118,8 +118,9 @@ nGuiHoriSliderGroup::OnShow()
 void
 nGuiHoriSliderGroup::OnHide()
 {
-    this->refGuiServer->UnregisterEventListener(this);
+    nGuiServer::Instance()->UnregisterEventListener(this);
 
+    this->ClearAttachRules();
     if (this->refSlider.isvalid())
     {
         this->refSlider->Release();
@@ -136,9 +137,6 @@ nGuiHoriSliderGroup::OnHide()
         n_assert(!this->refRightLabel.isvalid());
     }
 
-    // clear the form layout attachments
-    this->ClearAttachments();
-
     nGuiFormLayout::OnHide();
 }
 
@@ -150,13 +148,13 @@ nGuiHoriSliderGroup::OnFrame()
 {
     if (this->refSlider.isvalid())
     {
-        this->curValue = int(this->refSlider->GetVisibleRangeStart());
+        this->curValue = this->minValue + int(this->refSlider->GetVisibleRangeStart());
 
         // update left and right label formatted strings
         char buf[1024];
-        snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
+        _snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
         this->refLeftLabel->SetText(buf);
-        snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
+        _snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
         this->refRightLabel->SetText(buf);
     }
     nGuiFormLayout::OnFrame();

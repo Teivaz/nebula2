@@ -39,7 +39,7 @@ public:
     /// get the animation group to use
     int GetAnimationGroup();
     /// return the type of this animator object (TRANSFORM)
-    virtual AnimatorType GetAnimatorType() const;
+    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
 
@@ -74,16 +74,6 @@ int
 nTransformCurveAnimator::GetAnimationGroup()
 {
     return this->animationGroup;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nAnimator::AnimatorType
-nTransformCurveAnimator::GetAnimatorType() const
-{
-    return TRANSFORM;
 }
 
 //------------------------------------------------------------------------------

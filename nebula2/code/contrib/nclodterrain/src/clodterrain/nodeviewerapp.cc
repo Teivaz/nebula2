@@ -647,7 +647,6 @@ void nODEViewerApp::InitDynamics()
     this->refSimplebody->RenderContextCreated(&this->bodyContext);
 
     int thingix;
-    char bufferthing[200];
     for (thingix=0; thingix < NUMTHINGS; thingix++)
     {
         nString bodypath = "/usr/dynamics/things/body";
@@ -656,7 +655,7 @@ void nODEViewerApp::InitDynamics()
         this->bodies[thingix] = thisbody;
 
         // initialize and position it somewhere useful
-        thisbody->Create(this->refDyWorld->GetFullName(bufferthing,200));
+        thisbody->Create(this->refDyWorld->GetFullName().Get());
         thisbody->SetSphereMass(1.0,1.0);
 
         vector3 thisposition(41.0f+21.0f*thingix,5.0f+10.0f*sinf((float)thingix), 40.0f+5.0f*thingix);
@@ -666,7 +665,7 @@ void nODEViewerApp::InitDynamics()
         geompath.AppendInt(thingix);
         {
             nOpendeBoxGeom *spheregeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom",geompath.Get());
-            spheregeom->Create(this->refDySpace->GetFullName(bufferthing,200));
+            spheregeom->Create(this->refDySpace->GetFullName().Get());
             //spheregeom->SetRadius(1.5);
             spheregeom->SetBody(bodypath.Get());
             spheregeom->SetLengths(4.2f,4.2f,4.2f);
@@ -678,7 +677,7 @@ void nODEViewerApp::InitDynamics()
 
     // add in a plane for them to fall onto
     nOpendePlaneGeom *planegeom = (nOpendePlaneGeom *)kernelServer->New("nopendeplanegeom","/usr/dynamics/things/plane");
-    planegeom->Create(this->refTerrainSpace->GetFullName(bufferthing,200));
+    planegeom->Create(this->refTerrainSpace->GetFullName().Get());
     planegeom->SetParams(0.f,0.f,1.f,-20.f);
     this->planegeom = planegeom;
 //  this->refDySpace->AddGeom(planegeom->id());

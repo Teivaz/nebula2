@@ -32,7 +32,7 @@ nD3D9Server::OpenTextRenderer()
 
     // create sprite object for batched rendering
     HRESULT hr = D3DXCreateSprite(this->d3d9Device, &this->d3dSprite);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "D3DCreateSprite() failed!");
 }
 
 //------------------------------------------------------------------------------
@@ -151,6 +151,7 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         if (flags & nFont2::VCenter)    d3dFlags |= DT_VCENTER;
         if (flags & nFont2::NoClip)     d3dFlags |= DT_NOCLIP;
         if (flags & nFont2::ExpandTabs) d3dFlags |= DT_EXPANDTABS;
+        if (flags & nFont2::WordBreak)  d3dFlags |= DT_WORDBREAK;
     
         DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();

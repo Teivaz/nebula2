@@ -8,6 +8,8 @@ static void n_setescapecommand(void* slf, nCmd* cmd);
 static void n_getescapecommand(void* slf, nCmd* cmd);
 static void n_setmodal(void* slf, nCmd* cmd);
 static void n_ismodal(void* slf, nCmd* cmd);
+static void n_setdismissed(void* slf, nCmd* cmd);
+static void n_isdismissed(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -31,6 +33,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_getescapecommand_v",  'GESH', n_getescapecommand);
     cl->AddCmd("v_setmodal_b",          'SMOD', n_setmodal);
     cl->AddCmd("b_ismodal_v",           'ISMD', n_ismodal);
+    cl->AddCmd("v_setdismissed_b",      'SDIS', n_setdismissed);
+    cl->AddCmd("b_isdismissed_v",       'ISDS', n_isdismissed);
     cl->EndCmds();
 }
 
@@ -105,4 +109,44 @@ n_ismodal(void* slf, nCmd* cmd)
     nGuiWindow* self = (nGuiWindow*) slf;
     cmd->Out()->SetB(self->IsModal());
 }
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setdismissed
+    @input
+    b
+    @output
+    v
+    @info
+    Set the dismissed flag. Dismissed windows will be removed by the
+    gui server after windows have been triggered. 
+    
+    FIXME: For now, this works only for toplevel windows.
+*/
+static void
+n_setdismissed(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    self->SetDismissed(cmd->In()->GetB());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    isdismissed
+    @input
+    v
+    @output
+    v
+    @info
+    Get the widget's dismissed flag.
+*/
+static void
+n_isdismissed(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    cmd->Out()->SetB(self->IsDismissed());
+}
+
 

@@ -23,48 +23,50 @@ public:
     nD3D9Shader();
     /// destructor
     virtual ~nD3D9Shader();
+    /// create or append an instance stream declaration for this shader
+    virtual int UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl);
     /// set a technique
     virtual bool SetTechnique(const char* t);
     /// get current technique
     virtual const char* GetTechnique() const;
-	/// is parameter used by effect?
-    virtual bool IsParameterUsed(Parameter p);
+    /// is parameter used by effect?
+    virtual bool IsParameterUsed(nShaderState::Param p);
     /// set bool parameter
-    virtual void SetBool(Parameter p, bool val);
+    virtual void SetBool(nShaderState::Param p, bool val);
     /// set int parameter
-    virtual void SetInt(Parameter p, int val);
+    virtual void SetInt(nShaderState::Param p, int val);
     /// set float parameter
-    virtual void SetFloat(Parameter p, float val);
+    virtual void SetFloat(nShaderState::Param p, float val);
     /// set vector4 parameter
-    virtual void SetVector4(Parameter p, const vector4& val);
+    virtual void SetVector4(nShaderState::Param p, const vector4& val);
     /// set vector3 parameter
-    virtual void SetVector3(Parameter p, const vector3& val);
+    virtual void SetVector3(nShaderState::Param p, const vector3& val);
     /// set float4 parameter
-    virtual void SetFloat4(Parameter p, const nFloat4& val);
+    virtual void SetFloat4(nShaderState::Param p, const nFloat4& val);
     /// set matrix parameter
-    virtual void SetMatrix(Parameter p, const matrix44& val);
+    virtual void SetMatrix(nShaderState::Param p, const matrix44& val);
     /// set texture parameter
-    virtual void SetTexture(Parameter p, nTexture2* tex);
+    virtual void SetTexture(nShaderState::Param p, nTexture2* tex);
 
     /// set bool[] parameter
-    virtual void SetBoolArray(Parameter p, const bool* array, int count);
+    virtual void SetBoolArray(nShaderState::Param p, const bool* array, int count);
     /// set int[] parameter
-    virtual void SetIntArray(Parameter p, const int* array, int count);
+    virtual void SetIntArray(nShaderState::Param p, const int* array, int count);
     /// set float[] parameter
-    virtual void SetFloatArray(Parameter p, const float* array, int count);
+    virtual void SetFloatArray(nShaderState::Param p, const float* array, int count);
     /// set vector[] parameter
-    virtual void SetFloat4Array(Parameter p, const nFloat4* array, int count);
+    virtual void SetFloat4Array(nShaderState::Param p, const nFloat4* array, int count);
     /// set vector4[] parameter
-    virtual void SetVector4Array(Parameter p, const vector4* array, int count);
+    virtual void SetVector4Array(nShaderState::Param p, const vector4* array, int count);
     /// set matrix array parameter
-    virtual void SetMatrixArray(Parameter p, const matrix44* array, int count);
+    virtual void SetMatrixArray(nShaderState::Param p, const matrix44* array, int count);
     /// set matrix pointer array parameter
-    virtual void SetMatrixPointerArray(Parameter p, const matrix44** array, int count);
+    virtual void SetMatrixPointerArray(nShaderState::Param p, const matrix44** array, int count);
     /// set a whole shader parameter block at once
     virtual void SetParams(const nShaderParams& params);
 
     /// begin applying the shader, returns number of passes
-    virtual int Begin();
+    virtual int Begin(bool saveState);
     /// render a pass
     virtual void Pass(int pass);
     /// finish applying the shader
@@ -81,6 +83,8 @@ private:
     void ValidateEffect();
     /// update the parameter handle mapper table
     void UpdateParameterHandles();
+    /// convert a D3DX parameter handle to a nShaderState parameter
+    nShaderState::Param D3DXParamToShaderStateParam(D3DXHANDLE h);
 
     friend class nD3D9Server;
 
@@ -88,7 +92,7 @@ private:
     ID3DXEffect* effect;
     bool hasBeenValidated;
     bool didNotValidate;
-    D3DXHANDLE parameterHandles[NumParameters];     // map shader states to D3DX handles
+    D3DXHANDLE parameterHandles[nShaderState::NumParameters];     // map shader states to D3DX handles
     nShaderParams curParams;    // mirrored to avoid redundant parameters setting
 };
 

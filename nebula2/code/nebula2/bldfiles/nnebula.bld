@@ -20,12 +20,12 @@ begintarget nnebula
         nsceneserver nstdsceneserver
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nshapenode nanimator nvectoranimator
-        nlightnode nspotlightnode
-        ntransformanimator nskinanimator nskinshapenode ntextureanimator
+        ntextureanimator nlightnode nspotlightnode
+        ntransformanimator nskinanimator nskinshapenode 
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
         nswingshapenode nwindowhandler nwin32windowhandler
-        nmousecursor nshaderlist
+        nmousecursor nmesharray ninstancestream
         nkeyanimator ntransformcurveanimator nuvanimator
     }
 endtarget

@@ -121,7 +121,7 @@ private:
     void generateEmptyTOC(nFile &destfile, int root_level);
 
     // generate leaf nodes from the source image
-    tqt_tile_layer * generateTQTLeaves(nFile &destfile, int level, const char *sourcefilename, tqt_tile_layer *tiles);
+    tqt_tile_layer * generateTQTLeaves(nFile &destfile, int level, nString sourcefilename, tqt_tile_layer *tiles);
 
     // generate inner node by sampling child nodes
     tqt_tile_layer * generateTQTNodes(nFile &destfile, int level, tqt_tile_layer *oldtiles);

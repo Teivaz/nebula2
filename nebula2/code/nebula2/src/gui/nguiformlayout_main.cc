@@ -145,6 +145,44 @@ nGuiFormLayout::FixMinMaxSize(nGuiWidget* widget, Edge anchor, rectangle& rect)
                 }
             }
             break;
+
+        case HCenter:
+            {
+                float w = rect.width();
+                float midX = rect.midpoint().x;
+                if (w < minSize.x)
+                {
+                    float halfSize = minSize.x * 0.5f;
+                    rect.v0.x = midX - halfSize;
+                    rect.v1.x = midX + halfSize;
+                }
+                else if (w > maxSize.x)
+                {
+                    float halfSize = maxSize.x * 0.5f;
+                    rect.v0.x = midX - halfSize;
+                    rect.v1.x = midX + halfSize;
+                }
+            }
+            break;
+
+        case VCenter:
+            {
+                float h = rect.height();
+                float midY = rect.midpoint().y;
+                if (h < minSize.y)
+                {
+                    float halfSize = minSize.y * 0.5f;
+                    rect.v0.y = midY - halfSize;
+                    rect.v1.y = midY + halfSize;
+                }
+                else if (h > maxSize.y)
+                {
+                    float halfSize = maxSize.y * 0.5f;
+                    rect.v0.y = midY - halfSize;
+                    rect.v1.y = midY + halfSize;
+                }
+            }
+            break;
     }
 }
 
@@ -217,6 +255,26 @@ nGuiFormLayout::UpdateLayout(const rectangle& newRect)
                 case Bottom:
                     widgetRect.v1.y = newRect.height() * rule.offset;
                     this->FixMinMaxSize(rule.widget.get(), Bottom, widgetRect);
+                    break;
+
+                case HCenter:
+                    {
+                        float center = newRect.width() * rule.offset;
+                        float halfSize = widgetRect.width() * 0.5f;
+                        widgetRect.v0.x = center - halfSize;
+                        widgetRect.v1.x = center + halfSize;
+                        this->FixMinMaxSize(rule.widget.get(), HCenter, widgetRect);
+                    }
+                    break;
+
+                case VCenter:
+                    {
+                        float center = newRect.height() * rule.offset;
+                        float halfSize = widgetRect.height() * 0.5f;
+                        widgetRect.v0.y = center - halfSize;
+                        widgetRect.v1.y = center + halfSize;
+                        this->FixMinMaxSize(rule.widget.get(), VCenter, widgetRect);
+                    }
                     break;
             }
             rule.widget->SetRect(widgetRect);

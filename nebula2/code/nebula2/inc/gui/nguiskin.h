@@ -15,13 +15,24 @@
 #include "kernel/nroot.h"
 #include "util/narray.h"
 #include "mathlib/rectangle.h"
+#include "util/nfixedarray.h"
 
 class nGuiResource;
+class nSound3;
 
 //------------------------------------------------------------------------------
 class nGuiSkin : public nRoot
 {
 public:
+    /// sounds
+    enum Sound
+    {
+        ButtonClick,
+
+        NumSounds,
+        InvalidSound
+    };
+
     /// constructor
     nGuiSkin();
     /// destructor
@@ -42,6 +53,10 @@ public:
     void SetInactiveWindowColor(const vector4& c);
     /// get the inactive window color
     const vector4& GetInactiveWindowColor() const;
+    /// set the default text color
+    void SetTextColor(const vector4& c);
+    /// get the default text color
+    const vector4& GetTextColor() const;
     /// set button text color
     void SetButtonTextColor(const vector4& c);
     /// get button text color
@@ -54,6 +69,10 @@ public:
     void SetLabelTextColor(const vector4& c);
     /// get label text color
     const vector4& GetLabelTextColor() const;
+    /// set text entry text color
+    void SetEntryTextColor(const vector4& c);
+    /// get text entry text color
+    const vector4& GetEntryTextColor() const;
     /// set window broder size
     void SetWindowBorder(const rectangle& v);
     /// get window border size
@@ -66,8 +85,21 @@ public:
     void EndBrushes();
     /// lookup gui resource for a brush
     nGuiResource* FindBrush(const char* name);
+    /// set button sound filename
+    void SetSound(Sound snd, const char* name);
+    /// get button sound filename
+    const char* GetSound(Sound snd) const;
+    /// get sound object
+    nSound3* GetSoundObject(Sound snd);
+    /// convert sound string to enum
+    static Sound StringToSound(const char* str);
+    /// convert sound enum to string
+    static const char* SoundToString(Sound snd);
 
 private:
+    /// initialize a brush
+    void ValidateBrush(nGuiResource* res);
+
     nArray<nGuiResource> brushes;
     nString texPrefix;
     nString texPostfix;
@@ -76,8 +108,80 @@ private:
     vector4 titleTextColor;
     vector4 buttonTextColor;
     vector4 labelTextColor;
+    vector4 entryTextColor;
+    vector4 textColor;
     rectangle windowBorder;
+    
+    nFixedArray<nString> soundNames;
+    nFixedArray<nRef<nSound3> > sounds;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiSkin::Sound
+nGuiSkin::StringToSound(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp(str, "ButtonClick")) return ButtonClick;
+    else return InvalidSound;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiSkin::SoundToString(Sound snd)
+{
+    switch (snd)
+    {
+        case ButtonClick: return "ButtonClick";
+        default:          return "InvalidSound";
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetSound(Sound snd, const char* name)
+{
+    n_assert(name);
+    this->soundNames[snd] = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiSkin::GetSound(Sound snd) const
+{
+    return this->soundNames[snd].IsEmpty() ? 0 : this->soundNames[snd].Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetEntryTextColor(const vector4& c)
+{
+    this->entryTextColor = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nGuiSkin::GetEntryTextColor() const
+{
+    return this->entryTextColor;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -137,6 +241,26 @@ const vector4&
 nGuiSkin::GetButtonTextColor() const
 {
     return this->buttonTextColor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSkin::SetTextColor(const vector4& c)
+{
+    this->textColor = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nGuiSkin::GetTextColor() const
+{
+    return this->textColor;
 }
 
 //------------------------------------------------------------------------------

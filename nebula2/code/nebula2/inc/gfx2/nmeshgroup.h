@@ -37,6 +37,14 @@ public:
     void SetNumIndices(int i);
     /// get number of indices
     int GetNumIndices() const;
+    /// set first edge
+    void SetFirstEdge(int i);
+    /// get index of first edge
+    int GetFirstEdge() const;
+    /// set number of edges
+    void SetNumEdges(int i);
+    /// get number of edges
+    int GetNumEdges() const;
     /// set bounding box
     void SetBoundingBox(const bbox3& b);
     /// get bounding box
@@ -47,6 +55,8 @@ private:
     int numVertices;
     int firstIndex;
     int numIndices;
+    int firstEdge;
+    int numEdges;
     bbox3 box;
 };
     
@@ -58,7 +68,9 @@ nMeshGroup::nMeshGroup() :
     firstVertex(0),
     numVertices(0),
     firstIndex(0),
-    numIndices(0)
+    numIndices(0),
+    firstEdge(0),
+    numEdges(0)
 {
     // empty
 }
@@ -150,6 +162,46 @@ int
 nMeshGroup::GetNumIndices() const
 {
     return this->numIndices;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshGroup::SetFirstEdge(int i)
+{
+    this->firstEdge = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshGroup::GetFirstEdge() const
+{
+    return this->firstEdge;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshGroup::SetNumEdges(int i)
+{
+    this->numEdges = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMeshGroup::GetNumEdges() const
+{
+    return this->numEdges;
 }
 
 //------------------------------------------------------------------------------

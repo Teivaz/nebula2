@@ -15,6 +15,8 @@
 #include "gui/nguiformlayout.h"
 #include "gui/nguislider2.h"
 
+class nFont2;
+
 //------------------------------------------------------------------------------
 class nGuiTextView : public nGuiFormLayout
 {
@@ -84,8 +86,6 @@ protected:
     /// update slider visibility status
     void UpdateSliderVisibility();
 
-    nAutoRef<nGfxServer2> refGfxServer;
-    nAutoRef<nResourceServer> refResourceServer;
     nRef<nFont2> refFont;
     nRef<nGuiSlider2> refSlider;
 

@@ -242,7 +242,7 @@ nMaterialNode::GetShader(uint fourcc) const
 /**
 */
 bool
-nMaterialNode::IsTextureUsed(nShader2::Parameter param)
+nMaterialNode::IsTextureUsed(nShaderState::Param param)
 {
 	// check in all shaders if anywhere the texture specified by param is used
     int	i;

@@ -26,6 +26,7 @@ public:
         VCenter    = (1<<5),    // center text vertically
         NoClip     = (1<<6),    // don't clip text (faster)
         ExpandTabs = (1<<7),    // expand tabs, doh
+        WordBreak  = (1<<8),    // break words at end of line
     };
 
     /// constructor
