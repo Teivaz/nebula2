@@ -24,14 +24,11 @@ static void n_seto(void *, nCmd *);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     nenv
 
     @superclass
     nroot
-
-    @include
-    kernel/nenv.h
 
     @classinfo
     The nenv class is similar to an environment variable.

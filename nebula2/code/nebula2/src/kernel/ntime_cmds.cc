@@ -24,14 +24,11 @@ static void n_getframetime(void *, nCmd *);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     ntimeserver
 
     @superclass
     nroot
-
-    @include
-    kernel/ntimeserver.h
 
     @info
     The ntimeserver object lives under the name /sys/servers/time

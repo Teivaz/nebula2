@@ -25,7 +25,7 @@ static void n_getmouseinvert(void*, nCmd*);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     ninputserver
 
     @superclass

@@ -35,14 +35,11 @@ static void n_gettreesize(void*, nCmd*);
 
 //-------------------------------------------------------------------
 /**
-    @class
+    @scriptclass
     nroot
 
     @superclass
     ---
-
-    @include
-    kernel/nroot.h
 
     @classinfo
     nroot is the superclass of all higher level Nebula class
