@@ -11,7 +11,6 @@
 #include "tools/ncmdlineargs.h"
 #include "kernel/ndirectory.h"
 #include "kernel/nfile.h"
-#include "util/npathstring.h"
 
 const char* NewDirPath = 0;
 const char* OldDirPath = 0;
@@ -69,8 +68,8 @@ HandleDiffFile(const nString& filename)
     if (copyFile)
     {
         // copy new file to difference directory
-        nPathString diffFileName = filename.Substitute(NewDirPath, DiffDirPath).Get();
-        nPathString diffFileDir = diffFileName.ExtractDirName();
+        nString diffFileName = filename.Substitute(NewDirPath, DiffDirPath).Get();
+        nString diffFileDir = diffFileName.ExtractDirName();
         fileServer->MakePath(diffFileDir.Get());
         fileServer->CopyFile(filename.Get(), diffFileName.Get());
         Different = true;

@@ -5,7 +5,6 @@
 #include "tools/nmeshbuilder.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
-#include "util/npathstring.h"
 #include "gfx2/nnvx2loader.h"
 #include "gfx2/nn3d2loader.h"
 
@@ -26,7 +25,7 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     n_assert(filename);
     n_assert(fileServer);
 
-    nPathString path(filename);
+    nString path(filename);
     if (path.CheckExtension("n3d"))
     {
         return this->LoadN3d(fileServer, filename);
@@ -79,7 +78,7 @@ nMeshBuilder::Save(nFileServer2* fileServer, const char* filename)
     // make sure all vertices have consistent vertex components
     this->ExtendVertexComponents();
 
-    nPathString path(filename);
+    nString path(filename);
     if (path.CheckExtension("n3d2"))
     {
         return this->SaveN3d2(fileServer, filename);
@@ -639,7 +638,7 @@ nMeshBuilder::SaveN3d(nFileServer2* fileServer, const char* filename)
         nFile* file = fileServer->NewFileObject();
         n_assert(file);
 
-        nPathString path = filename;
+        nString path = filename;
         path.StripExtension();
         char buffer[1024];        
         sprintf(buffer, "%s_%d.n3d", path.Get(), curGroup);

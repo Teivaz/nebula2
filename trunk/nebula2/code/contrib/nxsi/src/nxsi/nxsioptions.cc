@@ -96,7 +96,7 @@ void nXSIOptions::Parse(int argc, char* argv[])
     {
         this->outputFlags |= OUTPUT_MESH | OUTPUT_ANIM | OUTPUT_SCRIPT | OUTPUT_AUTO;
 
-        nPathString filename = this->xsiFilename;
+        nString filename = this->xsiFilename;
         filename.StripExtension();
 
         this->scriptFilename = filename;

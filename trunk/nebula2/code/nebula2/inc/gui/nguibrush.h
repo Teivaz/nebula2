@@ -77,6 +77,7 @@ void
 nGuiBrush::SetName(const nString& n)
 {
     this->name = n;
+    this->refSkin.invalidate(); // force recreation of resource for new name
 }
 
 //------------------------------------------------------------------------------

@@ -80,7 +80,6 @@
 #include "util/narray.h"
 #include "kernel/nfileserver2.h"
 #include "gfx2/nmeshgroup.h"
-#include "util/npathstring.h"
 #include "gfx2/nmesh2.h"
 
 //------------------------------------------------------------------------------
@@ -139,7 +138,7 @@ public:
 
 protected:
     nFileServer2* fileServer;
-    nPathString filename;
+    nString filename;
     nFile* file;
     IndexType indexType;
     int numGroups;

@@ -36,7 +36,6 @@
 #include "il/ilu.h"
 #include "kernel/nkernelserver.h"
 #include "tools/ncmdlineargs.h"
-#include "util/npathstring.h"
 #include "mathlib/vector.h"
 
 const int numImages = 6;
@@ -438,7 +437,7 @@ main(int argc, const char** argv)
     }
     else
     {
-        nPathString path(outFileArg);
+        nString path(outFileArg);
         if (path.CheckExtension("tga"))
         {
             success = SaveImageTGA(images[0], outFileArg);

@@ -296,7 +296,7 @@ nMaxExport::~nMaxExport()
     Get path to config file path placed in plugcfg directory of 3DS Max
 */
 void
-nMaxExport::GetCfgFilename(nPathString& fileName)
+nMaxExport::GetCfgFilename(nString& fileName)
 {
 	fileName += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
 	fileName += "\\Nebula2Export.cfg";
@@ -334,7 +334,7 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
         this->task = n_new(nMaxExportTask);
     }
 
-    nPathString cfn;
+    nString cfn;
     this->GetCfgFilename(cfn);
     this->task->SetCfgFileName(cfn);
     this->task->ReadConfig();
@@ -359,7 +359,7 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     this->task->useWeightedNormals = true;
 
     //the selected file name from the export dialog
-    nPathString fileName(ExportFileName);
+    nString fileName(ExportFileName);
     fileName = fileName.ExtractFileName();
     fileName.StripExtension();
         

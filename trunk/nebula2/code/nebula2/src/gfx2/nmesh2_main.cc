@@ -114,7 +114,7 @@ nMesh2::LoadResource()
 {
     n_assert(!this->IsValid());
 
-    nPathString filename(this->GetFilename().Get());
+    nString filename(this->GetFilename().Get());
     bool success = false;
     if (filename.IsEmpty())
     {

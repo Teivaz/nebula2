@@ -7,7 +7,6 @@
 #ifndef N_XSI_OPTIONS_H
 #define N_XSI_OPTIONS_H
 //-----------------------------------------------------------------------------
-#include <util/npathstring.h>
 #include <cassert>
 //-----------------------------------------------------------------------------
 
@@ -29,18 +28,18 @@ public:
     void Parse(int argc, char* argv[]);
     void Usage() const;
 
-    inline const nPathString& GetXSIFilename() const;
-    inline const nPathString& GetMeshFilename() const;
-    inline const nPathString& GetAnimFilename() const;
-    inline const nPathString& GetScriptFilename() const;
+    inline const nString& GetXSIFilename() const;
+    inline const nString& GetMeshFilename() const;
+    inline const nString& GetAnimFilename() const;
+    inline const nString& GetScriptFilename() const;
     inline const nString& GetScriptServerName() const;
     inline int GetOutputFlags() const;
 
 private:
-    nPathString xsiFilename;        ///< .xsi
-    nPathString meshFilename;       ///< .n3d2 or .nvx2
-    nPathString animFilename;       ///< .nanim2 or .nax2
-    nPathString scriptFilename;     ///< main script (.n2) filename
+    nString xsiFilename;        ///< .xsi
+    nString meshFilename;       ///< .n3d2 or .nvx2
+    nString animFilename;       ///< .nanim2 or .nax2
+    nString scriptFilename;     ///< main script (.n2) filename
 
     nString scriptServerName;       ///< script server name (default: ntclserver)
 
@@ -49,22 +48,22 @@ private:
 
 //-----------------------------------------------------------------------------
 
-inline const nPathString& nXSIOptions::GetXSIFilename() const
+inline const nString& nXSIOptions::GetXSIFilename() const
 {
     return this->xsiFilename;
 }
 
-inline const nPathString& nXSIOptions::GetMeshFilename() const
+inline const nString& nXSIOptions::GetMeshFilename() const
 {
     return this->meshFilename;
 }
 
-inline const nPathString& nXSIOptions::GetAnimFilename() const
+inline const nString& nXSIOptions::GetAnimFilename() const
 {
     return this->animFilename;
 }
 
-inline const nPathString& nXSIOptions::GetScriptFilename() const
+inline const nString& nXSIOptions::GetScriptFilename() const
 {
     return this->scriptFilename;
 }

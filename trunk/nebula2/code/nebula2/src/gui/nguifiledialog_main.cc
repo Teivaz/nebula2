@@ -395,7 +395,7 @@ nGuiFileDialog::HandleDelete()
 bool
 nGuiFileDialog::DeleteFile()
 {
-    nPathString path = this->GetDirectory();
+    nString path = this->GetDirectory();
     path.Append("/");
     path.Append(this->GetFilename());
 
@@ -481,7 +481,7 @@ nGuiFileDialog::CheckFileExists()
 {
     n_assert(this->GetSaveMode());
 
-    nPathString path = this->GetDirectory();
+    nString path = this->GetDirectory();
     path.Append("/");
     path.Append(this->GetFilename());
 

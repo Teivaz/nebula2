@@ -5,7 +5,6 @@
 #include "gui/nguidirlister.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"
-#include "util/npathstring.h"
 
 nNebulaScriptClass(nGuiDirLister, "nguitextview");
 
@@ -68,8 +67,8 @@ nGuiDirLister::UpdateContent()
     {
         if (dir->SetToFirstEntry()) do
         {
-            nPathString entryStr = dir->GetEntryName();
-            nPathString entryName = entryStr.ExtractFileName();
+            nString entryStr = dir->GetEntryName();
+            nString entryName = entryStr.ExtractFileName();
             nDirectory::EntryType entryType = dir->GetEntryType();
             if ((nDirectory::DIRECTORY == entryType) && (this->ignoreSubDirs))
             {

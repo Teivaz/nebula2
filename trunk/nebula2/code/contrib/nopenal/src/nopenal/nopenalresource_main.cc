@@ -51,7 +51,7 @@ nOpenALResource::LoadResource()
     unsigned int buffer = this->refSoundServer->getBuffer();
     unsigned int source = this->refSoundServer->getSource();
 
-    nPathString dstFileName (mangledPath.Get());
+    nString dstFileName (mangledPath.Get());
 
    // load data into buffer
 #ifdef WINDOWS

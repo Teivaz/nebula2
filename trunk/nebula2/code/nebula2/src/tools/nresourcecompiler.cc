@@ -516,7 +516,7 @@ nResourceCompiler::SaveResourceBundle()
     nFile* dstFile = fileServer->NewFileObject();
 
     // open destination file
-    nPathString dstFileName = this->GetPath(BaseFilename);
+    nString dstFileName = this->GetPath(BaseFilename);
     dstFileName.Append(".nrb");
     if (!dstFile->Open(dstFileName.Get(), "wb"))
     {

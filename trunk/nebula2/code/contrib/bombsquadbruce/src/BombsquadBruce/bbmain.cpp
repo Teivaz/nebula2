@@ -8,7 +8,6 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nwin32loghandler.h"
 #include "kernel/ndefaultloghandler.h"
-#include "util/npathstring.h"
 #include "BombsquadBruce/bbgame.h"
 #include "BombsquadBruce/BBEngine.h"
 #include "BombsquadBruce/general.h"
@@ -33,12 +32,12 @@ int main( int argc, char * argv[] )
 #ifdef __WIN32__
     char buffer[N_MAXPATH];
     GetModuleFileName( 0, buffer, sizeof(buffer) );
-    nPathString exePath( buffer );
+    nString exePath( buffer );
     exePath.ConvertBackslashes();
 #else
-    nPathString exePath( argv[0] );
+    nString exePath( argv[0] );
 #endif
-    nPathString gameName = exePath.ExtractFileName();
+    nString gameName = exePath.ExtractFileName();
     gameName.StripExtension();
 
     // Create the kernel and log servers, then let the game take over

@@ -6,7 +6,6 @@
 #include "util/nlinebuffer.h"
 #include "kernel/nloghandler.h"
 #include "util/nstring.h"
-#include "util/npathstring.h"
 
 nNebulaClass(nGuiCmdEntry, "nguitextview");
 
@@ -359,12 +358,12 @@ nGuiCmdEntry::UpdateTabComplete()
 {
     // interpret the word under the cursor as a filename, we're only interested
     // in the last component
-    nPathString wordUnderCursor = this->editLine.GetWordToCursor().Get();
+    nString wordUnderCursor = this->editLine.GetWordToCursor().Get();
     this->childTabComplete.SetSearchString(wordUnderCursor.ExtractFileName());
 
     // interpret the word under the cursor as a filename,
     // we're interested in everything but the last component
-    nPathString path = wordUnderCursor.ExtractToLastSlash();
+    nString path = wordUnderCursor.ExtractToLastSlash();
 
     // feed child objects of local cwd
     this->childTabComplete.ClearCandidates();

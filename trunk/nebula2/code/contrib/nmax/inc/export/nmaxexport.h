@@ -161,12 +161,12 @@ private:
     ///only meshObjects with the same attributes are stored together in one pool
     struct PoolEntry
     {
-        nPathString meshFileName;       ///< sceneName + (int)vertexComponets + (int) vertexUsage
+        nString meshFileName;       ///< sceneName + (int)vertexComponets + (int) vertexUsage
         nMeshBuilder* meshBuilder;      ///< storage of mesh data
         nArray<MeshObject> meshObjects; ///< array of meshObjects that are stored in this pool/in the meshBuilder
 
         bool skinned;                   ///< define wheather mesh skinned or not
-        nPathString animFileName;       ///< animation file name
+        nString animFileName;       ///< animation file name
 		nString animNodePath;           ///< the NOH path
         nAnimBuilder* animBuilder;      ///< storage of animation data
         nArray<int> boneIDs;            ///< bones ID
@@ -183,7 +183,7 @@ private:
     void progressUpdate(int percent, nString msg);
 
     ///get config path
-    void GetCfgFilename(nPathString& fileName);
+    void GetCfgFilename(nString& fileName);
     ///init 'home', 'anims', 'gfxlib', 'meshes', 'shaders', 'textures' assigns
     void InitAssigns();
 

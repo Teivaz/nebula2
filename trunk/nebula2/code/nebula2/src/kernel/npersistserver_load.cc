@@ -7,7 +7,6 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
-#include "util/npathstring.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -169,7 +168,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         return 0;
         
     nObject *obj = 0;
-    nPathString tmpName;
+    nString tmpName;
         
     // if we need to create an nRoot make sure it will have a valid name
     if (nKernelServer::Instance()->FindClass(objClass)->IsA("nroot"))
@@ -181,7 +180,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         //
         if (0 == objName)
         {
-            nPathString path(fileName);
+            nString path(fileName);
             path.ConvertBackslashes();
             tmpName = path.ExtractFileName();
             tmpName.StripExtension();
