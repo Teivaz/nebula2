@@ -347,7 +347,8 @@ proc fixworkspaces { wslist } {
         # wspace(idx,tar#name#,#fields#)
         if {$wslist != ""} {
             if {[lsearch $wslist $wspace($i,name)] == -1} {
-                break
+                puts "-- $wspace($i,name) not in workspace list ($wslist)"
+                continue
             }
         }
         puts "  $wspace($i,name)"
