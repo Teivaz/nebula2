@@ -28,7 +28,7 @@ nMaterialNode::nMaterialNode() :
 */
 nMaterialNode::~nMaterialNode()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------

@@ -24,11 +24,7 @@ nShadowSkinShapeNode::nShadowSkinShapeNode()
 */
 nShadowSkinShapeNode::~nShadowSkinShapeNode()
 {
-    if (this->refShadowCaster.isvalid())
-    {
-        this->refShadowCaster->Release();
-        this->refShadowCaster.invalidate();
-    }
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------

@@ -32,10 +32,12 @@ nSkinAnimator::nSkinAnimator() :
 */
 nSkinAnimator::~nSkinAnimator()
 {
-    // Clear out the joint name list - but remember the node data pointers contain actual
-    // integers, not pointers to anything, so don't delete them as if they were pointers.
-    nStrNode *strHead = this->jointNameList.GetHead();
+    this->UnloadResources();
 
+    // Clear out the joint name list - but remember the node data pointers
+    // contain actual integers, not pointers to anything, so don't delete
+    // them as if they were pointers.
+    nStrNode *strHead = this->jointNameList.GetHead();
     while(strHead)
     {
         nStrNode *next = strHead->GetSucc();

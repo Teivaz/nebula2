@@ -22,11 +22,7 @@ nShadowNode::nShadowNode()
 */
 nShadowNode::~nShadowNode()
 {
-    if (this->refShadowCaster.isvalid())
-    {
-        this->refShadowCaster->Release();
-        this->refShadowCaster.invalidate();
-    }
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ nShapeNode::nShapeNode() :
 */
 nShapeNode::~nShapeNode()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------
