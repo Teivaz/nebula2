@@ -35,9 +35,9 @@ nMap::GetHeight(float x, float z) const
     n_assert( 0 != mapDimension && "nMap::GetHeight: Perhaps the map hasn't been loaded yet?" );
     float temp;
     float x_frac = modff(x / gridInterval, &temp);
-    int x_int = ClampToBounds(temp);
+    int x_int = ClampToBounds(static_cast<int>(temp));
     float z_frac = modff(z / gridInterval, &temp);
-    int z_int = ClampToBounds(temp);
+    int z_int = ClampToBounds(static_cast<int>(temp));
 
     float nw = GetPoint(x_int, z_int).coord.y;
     float se = GetPoint(x_int+1, z_int+1).coord.y;
@@ -74,9 +74,9 @@ nMap::GetNormal(float x, float z, vector3& normal) const
 {
     float temp;
     float x_frac = modff(x / gridInterval, &temp);
-    int x_int = ClampToBounds(temp);
+    int x_int = ClampToBounds(static_cast<int>(temp));
     float z_frac = modff(z / gridInterval, &temp);
-    int z_int = ClampToBounds(temp);
+    int z_int = ClampToBounds(static_cast<int>(temp));
 
     // Northeast triangle
     if (x_frac > z_frac)
