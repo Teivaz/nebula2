@@ -113,7 +113,7 @@ nMeshBuilder::SaveNvx2(nFileServer2* fileServer, const char* filename)
             int minVertexIndex, maxVertexIndex;
             this->GetGroupVertexRange(curGroup.GetId(), minVertexIndex, maxVertexIndex);
             file->PutInt(minVertexIndex);
-            file->PutInt(maxVertexIndex);
+            file->PutInt((maxVertexIndex - minVertexIndex) + 1);
             file->PutInt(firstTriangle);
             file->PutInt(numTriangles);
         }
