@@ -1,6 +1,6 @@
 /**
     @defgroup NMaxExposeContrib 3DSMax Function Publishing
-    @ingroup NebulaContribExporterModules
+    @ingroup NebulaContribAssetToolchainModules
     @ingroup NebulaContribLanguageModules
     @brief nMaxExpose package exposes Nebula script commands to maxscript.
 

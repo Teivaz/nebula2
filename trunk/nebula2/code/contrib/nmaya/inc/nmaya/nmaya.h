@@ -28,6 +28,10 @@ class MFnDagNode;
 class nAnimBuilder;
 class MFnTransform;
 
+/**
+    @class nMaya
+    @ingroup NMayaContribModule
+*/
 class nMaya
 {
 public:

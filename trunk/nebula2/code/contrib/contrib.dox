@@ -4,7 +4,7 @@
 */
 
 /**
-    @defgroup NebulaContribExporterModules Exporters
+    @defgroup NebulaContribAssetToolchainModules Asset Toolchain (Import / Export)
     @ingroup NebulaContribModules
 */
 
