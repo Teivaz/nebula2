@@ -63,7 +63,7 @@ nD3D9Server::CloseTextRenderer()
 void
 nD3D9Server::Text(const char* text, const vector4& color, float x, float y)
 {
-    TextNode* newTextNode = new TextNode(text, color, x, y);
+    TextNode* newTextNode = n_new(TextNode(text, color, x, y));
     this->textNodeList.AddTail(newTextNode);
 }
 
