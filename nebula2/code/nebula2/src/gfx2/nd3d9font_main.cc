@@ -97,7 +97,7 @@ nD3D9Font::UnloadResource()
     n_assert(this->d3dFont);
     nD3D9Server* gfxServer = this->refD3D9Server.get();
 
-    // if this i the currently set font, unlink from gfx server
+    // if this is the currently set font, unlink from gfx server
     if (gfxServer->GetFont() == this)
     {
         gfxServer->SetFont(0);
