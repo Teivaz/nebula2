@@ -858,7 +858,7 @@ nString::Substitute(const char* matchStr, const char* substStr) const
 
     // walk original string for occurances of str
     const char* occur;
-    while (occur = strstr(ptr, matchStr))
+    while ((occur = strstr(ptr, matchStr)))
     {
         // append string fragment until match
         dest.AppendRange(ptr, occur - ptr);
@@ -912,7 +912,7 @@ nString::UTF8toANSI()
     uchar* src = (uchar*) this->Get();
     uchar* dst = src;
     uchar c;
-    while (c = *src++)
+    while ((c = *src++))
     {
         if (c >= 0x80)
         {
