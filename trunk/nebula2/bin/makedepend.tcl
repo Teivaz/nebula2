@@ -20,8 +20,10 @@ global dep_cache
 #
 #   11-Mar-00   floh    created
 #   27-Mar-03   cubejk  ignore xbox includes
+#   29-Mar-03   cubejk  fixed 'string map', better xbox ingore,
+#               add includeStack for better error messages
 #--------------------------------------------------------------------
-proc get_depends {filename includePath initial_list} {
+proc get_depends {filename includePath initial_list {includeStack ""}} {
     global dep_cache
 
     set l $initial_list
@@ -37,44 +39,35 @@ proc get_depends {filename includePath initial_list} {
     } else {
         # no cache hit, process files normally...
         if {[catch { set cid [open $filename r] } result]} {
-            puts stderr "While processing $filename:\n"
-            puts stderr "    $result\n"
+            puts stderr "Error: $result"
+            puts stderr "While processing [lindex $includeStack [expr [llength $includeStack] - 1]]"
+            for {set x [expr [llength $includeStack] - 2]} {$x >= 0} {set x [expr $x - 1]} {
+                puts stderr "Included from    [lindex $includeStack $x]"
+            }
             return $initial_list
         }
-        set inside_xbox 0
-        set inside_dep_ignore 0
+        
         while {![eof $cid]} {
             set line [gets $cid]
             # remove any characters that may confuse list manipulation routines...
-            set line [string map {\{ " " \} " " \" "_"} $line]
+            set line [string map { \{ " "  \} " " "\"" "_" } $line]
 
-            #ignore '#ifdef __XBxX__'
-            if { ([lindex $line 0] == "#ifdef" && [lindex $line 1] == "__XBxX__") 
-                  || ($inside_xbox == 1) } {
-                set inside_xbox 1
-                if { ([lindex $line 0] == "\#endif") } {
-                    set inside_xbox 0
-                }
-            } elseif { ([lindex $line 0] == "\#define" && [lindex $line 1] == "dep_ignore")
-                       || ($inside_dep_ignore == 1) } {
-                set inside_dep_ignore 1
-                if { ([lindex $line 0] == "\#undef") && [lindex $line 1] == "dep_ignore" } {
-                    set inside_dep_ignore 0
-                }
-            } else {
                 # check for valid "#include" statement
                 if {[lindex $line 0] == "\#include"} {
-                    if {[string match "xbox/*.h" $line]} {
+                if {[string match "*_xbox/*.h_*" $line]} {
                         # Skip over ..
                     } elseif {[string match "*_*/*.h_*" $line]} { 
                         # check if file is already in depend list
                         set fname [string trim [lindex $line 1] "_"]
                         if {[lsearch $l $fname] == -1} {
                             # nope, add it to depend list and recurse down
-                            #puts "Found: $fname in $filename:$i."
-                            append l $fname " "
-                            set l [get_depends "$includePath/$fname" "$includePath" $l]
+                        
+                        # add the current file name to the includeStack to know who includes who
+                        if { [string match "*$filename*" $includeStack] == 0} {
+                            append includeStack $filename " "
                         }
+                        append l $fname " "
+                        set l [get_depends "$includePath$fname" "$includePath" $l $includeStack]
                     }
                 }
             }
