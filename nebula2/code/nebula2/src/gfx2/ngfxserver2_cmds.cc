@@ -31,7 +31,7 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_setdisplaymode_ssiiiib",  'SDMD', n_setdisplaymode);
-    cl->AddCmd("siiiib_getdisplaymode_v",   'GDMD', n_getdisplaymode);
+    cl->AddCmd("ssiiiib_getdisplaymode_v",   'GDMD', n_getdisplaymode);
     cl->AddCmd("b_opendisplay_v",           'ODSP', n_opendisplay);
     cl->AddCmd("v_closedisplay_v",          'CDSP', n_closedisplay);
     cl->AddCmd("s_getfeatureset_v",         'GFTS', n_getfeatureset);
