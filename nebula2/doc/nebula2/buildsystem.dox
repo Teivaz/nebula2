@@ -256,6 +256,12 @@ endworkspace
       </tr>
 
       <tr>
+        <td>setresource_win32</td> <td>filename</td> <td>myresources.rc</td>
+        <td>Sets the resource file to embed in this target. The filename should
+        be relative to the root Nebula 2 directory.</td>
+      </tr>
+
+      <tr>
         <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td>
         <td>Sets the list of modules to be included in this target.</td>
       </tr>
@@ -322,7 +328,7 @@ endworkspace
       </tr>
 
       <tr>
-        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td>
+        <td>settype</td> <td>c/cpp</td> <td>cpp</td>
         <td>Specifies whether the files in the module should be compiled as
         C or C++.</td>
       </tr>
