@@ -140,9 +140,9 @@ static void n_collect(void *o, nCmd *cmd)
     nOctree *self = (nOctree *) o;
     nRef<nOctVisitor> rCuller = (nOctVisitor*)cmd->In()->GetO();
     const short maxNumObjs = self->GetRoot()->all_num_elms;
-    nOctElement** objectsToRender = n_new nOctElement*[ maxNumObjs ]; // this could no doubt be made more efficient
+    nOctElement** objectsToRender = n_new_array( nOctElement*, maxNumObjs ); // this could no doubt be made more efficient
     cmd->Out()->SetI( self->Collect( *rCuller.get(), objectsToRender, maxNumObjs ) );
-    n_delete[] objectsToRender;
+    n_delete_array(objectsToRender);
 }
 
 //-------------------------------------------------------------------
