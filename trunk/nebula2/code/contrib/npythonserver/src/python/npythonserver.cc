@@ -221,7 +221,7 @@ nPythonServer::~nPythonServer()
     Begin writing a persistent object.
 */
 nFile* 
-nPythonServer::BeginWrite(const char* filename, nRoot* obj)
+nPythonServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
     n_assert(obj);
