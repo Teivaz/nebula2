@@ -2,9 +2,10 @@
 #define N_SIGNALBINDING_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalbinding.h
     @class nSignalBinding
     @ingroup NebulaSignals
+    @brief Internal: nSignalBinding represents the callback to the signal
+    receiver.
 
     An nSignalBinding is internal to the signal system.  A binding represents a
     callback that should be executed when a signal is emitted/triggered.
@@ -24,10 +25,6 @@
 //------------------------------------------------------------------------------
 class nSignalBindingSet;
 
-//------------------------------------------------------------------------------
-/**
-    nSignalBinding class represents the callback to the signal receiver.
-*/
 class nSignalBinding : public nNode
 {
 public:
@@ -36,28 +33,36 @@ public:
     /// destructor
     virtual ~nSignalBinding();
 
+    /** @name Iteration
+        Methods for iterating over a signal binding set. */
+    //@{
     /// get next signal binding in the binding set
     nSignalBinding * GetSucc () const;
     /// get previous signal binding in the binding set
     nSignalBinding * GetPred () const;
+    //@}
 
+    /** @name Invocation
+        Methods for invoking a signal binding. */
+    //@{
     /// Invoke the signal binding (cmd keeps the signal parameters values)
     virtual bool Invoke(nCmd * cmd) = 0;
     /// Invoke the signal with variable list arguments
     virtual bool Invoke(va_list args) = 0;
+    //@}
 
-    /// @return prototype string
+    /// Return prototype string
     virtual const char * GetProtoDef() const = 0;
 
-    /// @return true if binding bounds to the object provided
+    /// Return true if binding bounds to the object provided
     virtual bool IsBoundWithObject(const nObject * objectPtr) const;
-    /// @return true if binding bounds to a command with the cmdproto provided
+    /// Return true if binding bounds to a command with the cmdproto provided
     virtual bool IsBoundWithCmdProto(const nCmdProto * cmdProto) const;
-    /// @return true if binding bounds to a command with the name provided
+    /// Return true if binding bounds to a command with the name provided
     virtual bool IsBoundWithCmdName(const char * name) const;
-    /// @return true if binding bounds to a command with the fourcc provided
+    /// Return true if binding bounds to a command with the fourcc provided
     virtual bool IsBoundWithCmdFourCC(nFourCC fourcc) const;
-    /// @return true if the binding is valid
+    /// Return true if the binding is valid
     virtual bool IsValid() const;
 
     /// Get priority of the binding

@@ -16,7 +16,7 @@
 nSignalRegistry *
 nSignalEmitter::GetSignalRegistry() const
 {
-    /*  Ugly hack, this is more efficient than convert GetSignalRegistry to
+    /*  Ugly hack, this is more efficient than converting GetSignalRegistry to
         a virtual function. In the case more than one class can be derived from
         nSignalEmitter, or we want to override GetSignalRegistry then convert to
         virtual */
@@ -70,7 +70,7 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdP
 
 //------------------------------------------------------------------------------
 /**
-   Bind signal to a nCmdProto by fourcc (able to rebind on invocation)
+   Bind signal to a nCmdProto by nFourCC (able to rebind on invocation)
 */
 bool
 nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourCC, int priority, bool rebind)
@@ -100,7 +100,7 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, const char * cmd
 //------------------------------------------------------------------------------
 /**
    Bind signal identified by name to a nCmdProto by command name (No rebinding done).
-   Aimed to used from scripting.
+   Aimed to be used from scripting.
 */
 bool
 nSignalEmitter::BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority)
@@ -285,7 +285,7 @@ nSignalEmitter::UnbindAllSignals()
 
 //------------------------------------------------------------------------------
 /**
-    Post signal for execution at time attime with provided object pointer and va_list
+    Post signal for execution at time <tt>t</tt> with the provided object pointer and va_list
 */
 bool
 nSignalEmitter::PostSignal(nTime t, nSignal * signal, va_list args)

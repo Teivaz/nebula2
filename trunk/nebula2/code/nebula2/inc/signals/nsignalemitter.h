@@ -2,13 +2,13 @@
 #define N_SIGNALEMITTER_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalemitter.h
     @class nSignalEmitter
     @ingroup NebulaSignals
 
-    This is the main class for the public consumption and how the programmer
-    will interact with signals.  It will be a mix-in class, and perhaps
-    added to nRoot as a parent.
+    @brief This is the main class for the public consumption and how the
+    programmer will interact with signals.
+    
+    It is a mix-in class, and has been added as a parent class to nObject.
 
     In terms of data, it simply tracks the list of signal bindings that have
     been added to that object (using nSignalBindingSet).
@@ -48,6 +48,9 @@ public:
     /// get signal registry data
     nSignalRegistry * GetSignalRegistry() const;
 
+    /** @name Binding
+        Methods for binding a signal. */
+    //@{
     /// bind an already created signal
     bool BindSignal(nFourCC signal4cc, nSignalBinding * binding);
     /// bind signal to a nCmdProto by its pointer
@@ -70,7 +73,11 @@ public:
         TBinding * binding = n_new(TBinding)(receiver, memf, priority);
         return this->BindSignal(signal.GetId(), binding);
     }
+    //@}
 
+    /** @name Unbinding
+        Methods for unbinding a signal or object. */
+    //@{
     /// remove the provided signal binding
     bool UnbindSignal(nFourCC signal4cc, nSignalBinding * binding);
     /// remove all bindings matching the given signal, object, cmdproto
@@ -89,7 +96,11 @@ public:
     bool UnbindTargetObject(const nObject * object);
     /// remove all signal bindings
     void UnbindAllSignals();
+    //@}
 
+    /** @name Emission
+        Methods for emitting a signal. */
+    //@{
     /// emit signal with provided object pointer and va_list
     bool EmitSignal(nSignal * signal, va_list args);
     /// emit signal with provided signal object pointer and var arg list
@@ -98,7 +109,11 @@ public:
     bool EmitSignal(nFourCC signalId, ...);
     /// emit signal with provided signal name and var arg list
     bool EmitSignal(const char * signalName, ...);
+    //@}
 
+    /** @name Posting
+        Methods for posting a signal. */
+    //@{
     /// post signal for execution at time attime with provided object pointer and va_list
     bool PostSignal(nTime t, nSignal * signal, va_list args);
     /// post signal for execution at time attime with provided signal object pointer and var arg list
@@ -107,6 +122,7 @@ public:
     bool PostSignal(nTime t, nFourCC signalId, ...);
     /// post signal for execution at time attime with provided signal name and var arg list
     bool PostSignal(nTime t, const char * signalName, ...);
+    //@}
 
 protected:
     friend class nSignal;

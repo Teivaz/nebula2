@@ -36,7 +36,7 @@ nSignalBindingCmdProto::GetCmdProto() const
 
 //------------------------------------------------------------------------------
 /**
-    More apropiate for calls from scripting or even for asynchronous calls.
+    More appropiate for calls from scripting or even for asynchronous calls.
 */
 bool
 nSignalBindingCmdProto::Invoke(nCmd * cmdArg)

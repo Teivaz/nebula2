@@ -2,10 +2,8 @@
 #define N_SIGNALNATIVE_H
 //------------------------------------------------------------------------------
 /**
-    @file nSignalNative.h
+    @class nSignalNative
     @ingroup NebulaSignals
-
-    nSignalNative
 
     (C) 2004 Tragnarion Studios
 */

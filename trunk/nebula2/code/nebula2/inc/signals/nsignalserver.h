@@ -2,15 +2,16 @@
 #define N_SIGNALSERVER_H
 //------------------------------------------------------------------------------
 /**
-    @file nsignalemitter.h
-    @class nSignalEmitter
+    @class nSignalServer
     @ingroup NebulaSignals
+    @brief The nSignalServer provides a means for asynchronously emitting a
+    signal at some time in the future.
 
-    The nSignalServer currently serves a single purpose only:
+    The nSignalServer::Trigger() method should be called from your
+    application's main event loop.
 
-   * Provides a Trigger method to be called from the main event
-     loop to handle asynchronous signal emission.  See nSignalEmitter's
-     PostSignal and PostSignalWithAccumulator methods.
+    See the nSignalEmitter::PostSignal() and
+    nSignalEmitter::PostSignalWithAccumulator() methods.
 
     (C) 2004 Tragnarion Studios
 */
