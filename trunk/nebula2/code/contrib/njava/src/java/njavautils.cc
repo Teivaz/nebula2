@@ -106,30 +106,29 @@ getJavaObjectFromArg(JNIEnv * env, nArg * value)
 
     switch (value->GetType())
     {
-        case nArg::ARGTYPE_INT:
+        case nArg::Int:
             convertHelper("L/java/lang/Integer;", "I", SetIntField, value->GetI())
             break;
-        case nArg::ARGTYPE_FLOAT:
+        case nArg::Float:
             convertHelper("L/java/lang/Float;", "F", SetFloatField, value->GetF())
             break;
-        case nArg::ARGTYPE_STRING:
+        case nArg::String:
             convertHelper("L/java/lang/String;", "L/java/langString;", SetObjectField, (jstring)env->NewStringUTF(value->GetS()))
             break;
-        case nArg::ARGTYPE_CODE:
-            n_error("We don't support ARGTYPE_CODE");
-            break;
-        case nArg::ARGTYPE_BOOL:
+        case nArg::Bool:
             convertHelper("L/java/lang/Boolean;", "Z", SetBooleanField, value->GetB())
             break;
-        case nArg::ARGTYPE_OBJECT:
+        case nArg::Object:
             result = wrapNebulaObject(env, (nRoot*)value->GetO());
             break;
-        case nArg::ARGTYPE_VOID:
+        case nArg::Void:
             // No op .. shouldn't get here
             break;
-        case nArg::ARGTYPE_LIST:
+        case nArg::List:
             result = wrapNebulaArgList(env, value);
             break;
+        default:
+            n_error("Unhandled type: %d\n", value->GetType());
     }
 
     return result;
