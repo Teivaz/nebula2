@@ -16,7 +16,9 @@
 
 nKernelServer *nKernelServer::ks = 0;
 
+#if 0
 nNebulaUsePackage(nkernel);
+#endif
 
 //------------------------------------------------------------------------------
 /**
@@ -272,8 +274,10 @@ nKernelServer::nKernelServer() :
     #endif
     this->SetLogHandler(this->defaultLogHandler);
 
+#if 0
     // initialize the kernel package classes
     this->AddPackage(nkernel);
+#endif
 
     // create hard ref server
     this->hardRefServer = n_new(nHardRefServer);
