@@ -10,7 +10,9 @@
     @class nMaxNode
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief Base class of Nebula max object class which correspondes to each of
+           the 3DS Max object.
+
 */
 class nSceneNode;
 
@@ -24,6 +26,7 @@ public:
 
 protected:
     virtual nSceneNode* CreateNebulaObject(const char* classname, const char* objectname);
+
 };
 //-----------------------------------------------------------------------------
 #endif
