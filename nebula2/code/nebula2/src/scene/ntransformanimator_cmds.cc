@@ -277,6 +277,7 @@ nTransformAnimator::SaveCmds(nPersistServer* ps)
             ps->PutCmd(cmd);
         }
 
+
         //--- addscalekey ---
         numKeys = this->GetNumScaleKeys();
         for (curKey = 0; curKey < numKeys; curKey++)
