@@ -166,15 +166,18 @@ proc set_outputpath {path} {
     }
 
     set dir [findrelpath $home $cur_outputpath]    
-    check_makedir $dir/win32
-    check_makedir $dir/win32d
-    check_makedir $dir/win32p
-    check_makedir $dir/linux    
-    check_makedir $dir/linuxd
-    check_makedir $dir/linuxp
-    check_makedir $dir/macosx
-    check_makedir $dir/macosxd    
-    check_makedir $dir/macosxp          
+    if {[get_platform] == "win32"} {
+        check_makedir $dir/win32
+        check_makedir $dir/win32d
+    }
+    if {[get_platform] == "linux"} {
+        check_makedir $dir/linux    
+        check_makedir $dir/linuxd
+    }
+    if {[get_platform] == "macosx"} {
+        check_makedir $dir/macosx
+        check_makedir $dir/macosxd    
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -212,16 +215,19 @@ proc set_interpath {path} {
     #}
     set cur_interpath $path
 
-    set dir [findrelpath $home $cur_interpath]
-    check_makedir $dir/win32
-    check_makedir $dir/win32d
-    check_makedir $dir/win32p
-    check_makedir $dir/linux    
-    check_makedir $dir/linuxd
-    check_makedir $dir/linuxp
-    check_makedir $dir/macosx
-    check_makedir $dir/macosxd    
-    check_makedir $dir/macosxp          
+    set dir [findrelpath $home $cur_interpath]   
+    if {[get_platform] == "win32"} {
+        check_makedir $dir/win32
+        check_makedir $dir/win32d
+    }
+    if {[get_platform] == "linux"} {
+        check_makedir $dir/linux    
+        check_makedir $dir/linuxd
+    }
+    if {[get_platform] == "macosx"} {
+        check_makedir $dir/macosx
+        check_makedir $dir/macosxd    
+    }          
 }
 
 #----------------------------------------------------------------------------
