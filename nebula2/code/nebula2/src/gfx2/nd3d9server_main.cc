@@ -9,6 +9,34 @@
 nNebulaClass(nD3D9Server, "ngfxserver2");
 
 //------------------------------------------------------------------------------
+// Nonmember helper function(s)
+//------------------------------------------------------------------------------
+/**
+    Returns the graphics format corresponding to the filename's extension.
+
+    If the extension is not recognized, the return value defaults to bitmap.
+    - 6-Dec-04  rafael added 
+*/
+D3DXIMAGE_FILEFORMAT
+GetFormatFromExtension(const nString& filename)
+{
+    D3DXIMAGE_FILEFORMAT format = D3DXIFF_BMP;
+    if (filename.CheckExtension("jpg"))
+    {
+        format = D3DXIFF_JPG;
+    }
+    else if (filename.CheckExtension("tga"))
+    {
+        format = D3DXIFF_TGA;
+    }
+    else if (filename.CheckExtension("png"))
+    {
+        format = D3DXIFF_PNG;
+    }
+    return format;
+}
+
+//------------------------------------------------------------------------------
 /**
     - 13-Nov-04   rafael removed OpenWindow call
 */
@@ -221,9 +249,12 @@ nD3D9Server::SaveScreenshot(const char* fileName)
 
     // mangle filename
     nString mangledPath = nFileServer2::Instance()->ManglePath(fileName);
+    
+    // determine desired gfx format by file extension
+    D3DXIMAGE_FILEFORMAT format = GetFormatFromExtension(mangledPath);
 
     // save the front buffer surface to given filename.
-    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), D3DXIFF_BMP, surf, 0, &rc);
+    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), format, surf, 0, &rc);
     if (FAILED(hr))
     {
         n_printf("nD3D9Server::Screenshot(): Failed to save file '%s'!\n", fileName);
