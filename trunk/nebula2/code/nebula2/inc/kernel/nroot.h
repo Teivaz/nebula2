@@ -73,7 +73,7 @@ public:
     /// get full path name of object
     nString GetFullName() const;
     /// get relative path name to other object
-    nString GetRelPath(nRoot *other);
+    nString GetRelPath(const nRoot *other) const;
     /// find child object by name using const char*
     nRoot *Find(const char *str);
     /// find child object by name using nAtom

@@ -131,7 +131,7 @@ nRoot::GetFullName() const
      - 24-May-04    floh    rewritten to nString
 */
 nString
-nRoot::GetRelPath(nRoot *other)
+nRoot::GetRelPath(const nRoot *other) const
 {
     n_assert(other);
 
@@ -151,11 +151,11 @@ nRoot::GetRelPath(nRoot *other)
     else 
     {
         // normal case
-        nArray<nRoot*> thisHierarchy;
-        nArray<nRoot*> otherHierarchy;
+        nArray<const nRoot*> thisHierarchy;
+        nArray<const nRoot*> otherHierarchy;
 
         // for both objects, create lists of all parents up to root 
-        nRoot *o = this;
+        const nRoot *o = this;
         do 
         {
             thisHierarchy.Insert(0, o);
@@ -174,8 +174,8 @@ nRoot::GetRelPath(nRoot *other)
         {
             if ((thisHierarchy.Size() > 0) && (otherHierarchy.Size() > 0))
             {
-                nRoot* o0 = thisHierarchy[0];
-                nRoot* o1 = otherHierarchy[0];
+                const nRoot* o0 = thisHierarchy[0];
+                const nRoot* o1 = otherHierarchy[0];
                 if (o0 == o1)
                 {
                     thisHierarchy.Erase(0);
