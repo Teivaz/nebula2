@@ -54,11 +54,13 @@ class N_PUBLIC nCmdProto : public nHashNode
 {
 public:
     /// constructor
-    nCmdProto(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *));
+    nCmdProto(const char *proto_def, uint id);
     /// copy constructor
     nCmdProto(const nCmdProto& rhs);
     /// destructor
-    ~nCmdProto();
+    virtual ~nCmdProto();
+    /// execute a command on the provided object
+    virtual bool Dispatch(void *, nCmd *) = 0;
     /// get fourcc code
     uint GetId() const;
     /// get number of input args
@@ -73,8 +75,6 @@ public:
     nCmd* NewCmd();
     /// release nCmd object
     void RelCmd(nCmd* cmd);
-    /// pointer to C style command handler
-    void (*cmdProc)(void *, nCmd *);
 
 private:
     /// check if the provided data type character is a valid argument

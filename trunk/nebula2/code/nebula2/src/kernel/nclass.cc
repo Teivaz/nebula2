@@ -10,6 +10,7 @@
 #include "util/nkeyarray.h"
 #include "kernel/nclass.h"
 #include "kernel/nroot.h"
+#include "kernel/ncmdprotonative.h"
 
 //--------------------------------------------------------------------
 /**
@@ -29,6 +30,7 @@ nClass::nClass(const char *name,
     superClass(0),
     cmdList(0),
     cmdTable(0),
+    script_cmd_list(0),
     refCount(0),
     instanceSize(0),
     n_init_ptr(initFunc),
@@ -71,6 +73,14 @@ nClass::~nClass(void)
     if (this->cmdTable)
     {
         n_delete this->cmdTable;
+    }
+    
+    if (this->script_cmd_list)
+    {
+        nCmdProto* cmdProto;
+        while ((cmdProto = (nCmdProto *) this->script_cmd_list->RemHead()))
+            n_delete cmdProto;
+        n_delete this->script_cmd_list;
     }
 }
 
@@ -122,7 +132,7 @@ nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
     n_assert(id);
     n_assert(cmd_proc);
     n_assert(this->cmdList);
-    nCmdProto *cp = n_new nCmdProto(proto_def, id, cmd_proc);
+    nCmdProtoNative *cp = n_new nCmdProtoNative(proto_def, id, cmd_proc);
     n_assert(cp);
     this->cmdList->AddTail(cp);
 }
@@ -151,10 +161,10 @@ nClass::EndCmds(void)
     {
         if (cl->cmdList)
         {
-            nCmdProto *cp;
-            for (cp = (nCmdProto *) cl->cmdList->GetHead();
-                 cp;
-                 cp = (nCmdProto *) cp->GetSucc())
+            nHashNode *node;
+            for (node = cl->cmdList->GetHead();
+                 node;
+                 node = node->GetSucc())
             {
                 num_cmds++;
             }
@@ -196,6 +206,34 @@ nClass::EndCmds(void)
     }
 }
 
+/**
+  @param numCmds The number of script cmds that will be defined.
+*/
+void nClass::BeginScriptCmds(int numCmds)
+{
+    n_assert(!this->script_cmd_list);
+    this->script_cmd_list = n_new nHashList(numCmds);
+}
+
+/**
+  Can only be called between Begin/EndScriptCmds().
+  @param cmdProto A cmd proto created by a script server.
+  @note Script server cmd protos can't be looked up by their 4cc.
+*/
+void nClass::AddScriptCmd(nCmdProto* cmdProto)
+{
+    n_assert(this->script_cmd_list);
+    n_assert(cmdProto);
+    this->script_cmd_list->AddTail(cmdProto);
+}
+
+/**
+*/
+void nClass::EndScriptCmds()
+{
+    // empty
+}
+
 //--------------------------------------------------------------------
 /**
     @param  name    name of command to be found
@@ -209,15 +247,58 @@ nClass::FindCmdByName(const char *name)
     n_assert(name);
 
     nCmdProto *cp = 0;
+    // try the native cmd list first
     if (this->cmdList)
     {
         cp = (nCmdProto *) this->cmdList->Find(name);
     }
 
+    // if that fails try the script cmd list
+    if (this->script_cmd_list && !cp)
+        cp = (nCmdProto *) this->script_cmd_list->Find(name);
+
     // if not found or no command list, recursively hand up to parent class
     if ((!cp) && (this->superClass)) 
     {
         cp = this->superClass->FindCmdByName(name);
+    }
+    return cp;
+}
+
+/**
+  @param name The name of the command to be found
+*/
+nCmdProtoNative *nClass::FindNativeCmdByName(const char *name)
+{
+    n_assert(name);
+    nCmdProtoNative *cp = 0;
+    
+    if (this->cmdList)
+    {
+        cp = (nCmdProtoNative *) this->cmdList->Find(name);
+    }
+    // if not found, recursively hand up to parent class
+    if ((!cp) && (this->superClass)) 
+    {
+        cp = this->superClass->FindNativeCmdByName(name);
+    }
+    
+    return cp;
+}
+
+/**
+  @param name The name of the command to be found
+*/
+nCmdProto *nClass::FindScriptCmdByName(const char *name)
+{
+    n_assert(name);
+    nCmdProto *cp = 0;
+    if (this->script_cmd_list)
+        cp = (nCmdProto *) this->script_cmd_list->Find(name);
+    // if not found, recursively hand up to parent class
+    if ((!cp) && (this->superClass)) 
+    {
+        cp = this->superClass->FindScriptCmdByName(name);
     }
     return cp;
 }

@@ -281,10 +281,10 @@ nRoot::GetRelPath(nRoot *other, char *buf, int sizeof_buf)
 bool 
 nRoot::Dispatch(nCmd *cmd)
 {
-    void (*cmdProc)(void *, nCmd *) = cmd->GetProto()->cmdProc;
-    n_assert(cmdProc);
+    n_assert(cmd->GetProto());
     cmd->Rewind();
-    cmdProc((void *)this, cmd);
+    cmd->GetProto()->Dispatch((void*)this, cmd);
+    cmd->Rewind();
     return true;
 }
 
@@ -296,6 +296,12 @@ nRoot::Dispatch(nCmd *cmd)
      - 05-Feb-01   floh    + simplified: no longer checks
                              for duplicate names, this is illegal
                              anyway
+     - 19-Nov-03   vadim   cloning of cmd protos is no longer
+                           feasable since their exact type can't be
+                           known without C++ RTTI. so instead hashlist
+                           is populated with plain hashnodes that
+                           have the same name as the cmd proto and hold
+                           a pointer to the real cmd proto.
 */
 void 
 nRoot::GetCmdProtos(nHashList *cmd_list)
@@ -315,10 +321,9 @@ nRoot::GetCmdProtos(nHashList *cmd_list)
                  cmd_proto; 
                  cmd_proto=(nCmdProto *) cmd_proto->GetSucc()) 
             {
-                nCmdProto *cmdproto_dup;
-                cmdproto_dup = n_new nCmdProto(*cmd_proto);
-                n_assert(cmdproto_dup);
-                cmd_list->AddTail(cmdproto_dup);
+                nHashNode* node = new nHashNode(cmd_proto->GetName());
+                node->SetPtr((void*)cmd_proto);
+                cmd_list->AddTail(node);
             }
         }
     } while ((cl = cl->GetSuperClass()));

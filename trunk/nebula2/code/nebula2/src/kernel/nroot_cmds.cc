@@ -185,24 +185,24 @@ static void n_getcmds(void *o, nCmd *cmd)
     nRoot *self = (nRoot *) o;
     {
         nHashList *cmd_list = n_new nHashList;
-        nCmdProto *act_cmdproto;                
+        nHashNode* node;
         int num_cmds = 0;
         
         self->GetCmdProtos(cmd_list);
         // count commands
-        for (act_cmdproto = (nCmdProto *) cmd_list->GetHead();
-             act_cmdproto;
-             act_cmdproto = (nCmdProto *) act_cmdproto->GetSucc())
+        for (node = cmd_list->GetHead();
+             node;
+             node = node->GetSucc())
         {
             num_cmds++;
         }
         
         nArg* args = new nArg[num_cmds];
         int i = 0;
-        while ((act_cmdproto = (nCmdProto *) cmd_list->RemHead()))
+        while ((node = cmd_list->RemHead()))
         {
-            args[i++].SetS(act_cmdproto->GetProtoDef());
-            n_delete act_cmdproto;
+            args[i++].SetS(((nCmdProto*) node->GetPtr())->GetProtoDef());
+            n_delete node;
         }
         cmd->Out()->SetL(args, num_cmds);
         n_delete cmd_list;

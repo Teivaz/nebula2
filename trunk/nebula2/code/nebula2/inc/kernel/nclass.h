@@ -27,6 +27,7 @@
 #include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
+class nCmdProtoNative;
 class nRoot;
 class nKernelServer;
 class nHashList;
@@ -45,9 +46,19 @@ public:
     void AddCmd(const char *proto_def, uint id, void (*)(void *, nCmd *));
     /// finish defining commands
     void EndCmds();
-    /// find command by name
+    /// start defining script-side commands
+    void BeginScriptCmds(int numCmds);
+    /// add a script-side command for this class
+    void AddScriptCmd(nCmdProto*);
+    /// finish defining script-side commands
+    void EndScriptCmds();
+    /// find command by name (searches both native & script-side)
     nCmdProto* FindCmdByName(const char *name);
-    /// find command by fourcc code
+    /// find a native command by name
+    nCmdProtoNative *FindNativeCmdByName(const char *name);
+    /// find a script-side command by name
+    nCmdProto *FindScriptCmdByName(const char *name);
+    /// find a native command by fourcc code
     nCmdProto* FindCmdById(uint id);
     /// get pointer to command list
     nHashList* GetCmdList() const;
@@ -73,6 +84,8 @@ private:
     nClass* superClass;
     nHashList* cmdList;
     nKeyArray<nCmdProto*>* cmdTable;
+    /// The hashed script commandlist of this class
+    nHashList* script_cmd_list;
     int refCount;
     int instanceSize;
 
