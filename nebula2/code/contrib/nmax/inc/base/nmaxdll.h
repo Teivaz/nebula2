@@ -25,13 +25,17 @@
 #include <iparamb2.h>
 #include <iparamm2.h>
 
-// max5: use vc6, vc7 and vc7.1 (no need to max_mem)
+// max5: use vc6, vc7 and vc7.1 (no need to use MAX_mem.h on)
 // max6: use vc7 (default is ok) and vc7.1 (should download max_mem on discreet site)
 
 //include max memory wrapper only on max6 (it will spit error out on max5)
 #if MAX_RELEASE >= 6000
+namespace MAXMem {
 #include <MAX_mem.h> 
+}
 #endif
+
+using namespace MAXMem;
 
 #include "util/narray.h"
 
@@ -191,7 +195,7 @@ public:
 private:
     void* makeNewClass()
     { 
-        return static_cast<void*>(n_new TYPE);
+        return static_cast<void*>(new TYPE);
     }
 };
 
