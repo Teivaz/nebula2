@@ -29,5 +29,6 @@ beginworkspace Nebula2
         ndshow
         nvideo
         ngui
+        nnpktool
     }
 endworkspace

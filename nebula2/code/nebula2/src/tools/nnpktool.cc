@@ -239,7 +239,7 @@ generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& toc
     // for each directory entry...
     if (!dir->IsEmpty()) do
     {
-        nDirectory::nEntryType entryType = dir->GetEntryType();
+        nDirectory::EntryType entryType = dir->GetEntryType();
         const char* fullEntryName = dir->GetEntryName();
         char buf[N_MAXPATH];
         fullEntryName = convertToLower(fullEntryName, buf, sizeof(buf));
@@ -262,7 +262,7 @@ generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& toc
                 file->Close();
                 fileOk = true;
             }
-            delete file;
+            file->Release();
 
             if (fileOk)
             {
@@ -445,7 +445,7 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
             char* buffer = n_new char[entryFileLength];
             int bytesRead = srcFile->Read(buffer, entryFileLength);
             srcFile->Close();
-            delete srcFile;
+            srcFile->Release();
             if (bytesRead != entryFileLength)
             {
                 n_delete buffer;
@@ -517,14 +517,14 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     if (!dir->Open(dirName))
     {
         n_printf("Could not open directory '%s' for reading!\n", dirName);
-        delete file;
+        file->Release();
         delete dir;
         return false;
     }
     if (!file->Open(outName, "w"))
     {
         n_printf("Could not open file '%s' for writing!\n", outName);
-        delete file;
+        file->Release();
         delete dir;
         return false;
     }
@@ -574,7 +574,7 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     // close everything and finish
     file->Close();
     dir->Close();
-    delete file;
+    file->Release();
     delete dir;
     return retval;
 }
@@ -707,7 +707,7 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
         bool doLoop = dir->SetToFirstEntry(); 
         while (doLoop)
         {
-            nDirectory::nEntryType t = dir->GetEntryType();
+            nDirectory::EntryType t = dir->GetEntryType();
             if (nDirectory::DIRECTORY == t)
             {
                 bool empty = KillEmptyDirectories(fs, dir->GetEntryName());
@@ -753,7 +753,7 @@ RemoveDir(nFileServer2* fs, const char* dirName)
         bool doLoop = dir->SetToFirstEntry(); 
         while (doLoop)
         {
-            nDirectory::nEntryType t = dir->GetEntryType();
+            nDirectory::EntryType t = dir->GetEntryType();
             if (nDirectory::DIRECTORY == t)
             {
                 RemoveDir(fs, dir->GetEntryName());
@@ -1102,7 +1102,7 @@ unPackFile(nFileServer2* fs,
                 n_printf("Cannot open %s\n", absName);
             }
         
-            delete file;
+            file->Release();
         }
     }
 
