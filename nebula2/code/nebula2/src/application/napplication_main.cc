@@ -109,7 +109,7 @@ nApplication::Open()
     // run startup script (assigns must be setup before opening the display!)
     nString scriptResult;
     this->refScriptServer->RunScript(this->startupScript.Get(), scriptResult);
-    this->refScriptServer->Run("OnStartup", scriptResult);
+    this->refScriptServer->RunFunction("OnStartup", scriptResult);
 
     // initialize locale server
     if (!this->localeTable.IsEmpty())
@@ -125,7 +125,7 @@ nApplication::Open()
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->gfxCamera);
-    this->refScriptServer->Run("OnGraphicsStartup", scriptResult);
+    this->refScriptServer->RunFunction("OnGraphicsStartup", scriptResult);
     this->refGfxServer->OpenDisplay();
     this->refVideoServer->Open();
 
@@ -133,7 +133,7 @@ nApplication::Open()
     // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer = this->CreateInputServer();
-    this->refScriptServer->Run("OnMapInput", scriptResult);
+    this->refScriptServer->RunFunction("OnMapInput", scriptResult);
 
     // initialize audio
     if (!this->refAudioServer->Open())
