@@ -94,6 +94,8 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     spinSampleRate->SetResetValue(2);
     spinSampleRate->SetValue(sampleRate, FALSE);
 
+    CheckDlgButton(hwnd, IDC_ADDJOINTNAME, 0);
+
     // mesh type radio button
     CheckDlgButton(hwnd, IDC_N3D2, BST_CHECKED);
     CheckDlgButton(hwnd, IDC_NVX2, BST_UNCHECKED);
@@ -171,6 +173,15 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
 
             int sampleRate = spinSampleRate->GetIVal();
             nMaxOptions::Instance()->SetSampleRate(sampleRate);
+        }
+        break;
+
+    case IDC_ADDJOINTNAME:
+        {
+            if (IsChecked(hwnd, IDC_ADDJOINTNAME))
+                nMaxOptions::Instance()->SetAddJointName(true);
+            else
+                nMaxOptions::Instance()->SetAddJointName(false);
         }
         break;
 
