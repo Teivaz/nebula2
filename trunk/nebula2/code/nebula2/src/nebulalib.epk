@@ -12,7 +12,7 @@ beginmodule dummy
 endmodule 
 #-------------------------------------------------------------------------------
 begintarget nebulalib
-    settype lib
+    settype workspace
     setmods dummy
     setdepends {
         nkernel
