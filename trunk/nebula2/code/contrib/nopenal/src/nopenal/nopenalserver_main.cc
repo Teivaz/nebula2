@@ -107,6 +107,14 @@ nOpenALServer::Close()
 
     n_assert(this->isOpen);
 
+    for( ; nextBuffer > 0; --nextBuffer )
+    {
+        alDeleteBuffers(1, &buffer[nextBuffer-1]);
+    }
+    for( ; nextSource > 0; --nextSource )
+    {
+        alDeleteSources(1, &source[nextSource-1]);
+    }
     alutExit();
 
     // release sound resources
