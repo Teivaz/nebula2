@@ -113,7 +113,7 @@ endif
 # Defines include directory for Python
 #---------------------------------------------------------------------
 ifeq ($(N_PLATFORM),__LINUX__)
-  N_PYTHON_INCLUDES = /usr/include/python2.2/
+  N_PYTHON_INCLUDES = /usr/include/python2.4/
 endif
 
 ifeq ($(N_PLATFORM),__MACOSX__)
@@ -125,7 +125,7 @@ endif
 # Defines lib directory for Python
 #---------------------------------------------------------------------
 ifeq ($(N_PLATFORM),__LINUX__)
-  N_PYTHON_LIBS = /usr/lib/python2.2/config/
+  N_PYTHON_LIBS = /usr/lib/python2.4/config/
 endif
 
 #---------------------------------------------------------------------
@@ -291,10 +291,10 @@ ifeq ($(N_PROFILE),true)
 endif
 
 # C flags
-CFLAGS += $(BASECFLAGS) $(N_WARNFLAGS_C)
+CFLAGS += $(BASECFLAGS) $(N_WARNFLAGS_C) $(INCDIR)
 
 # C++ flags
-CXXFLAGS += $(BASECFLAGS) $(N_WARNFLAGS)
+CXXFLAGS += $(BASECFLAGS) $(N_WARNFLAGS) $(INCDIR)
 
 #---------------------------------------------------------------------
 # Generic compiler targets
