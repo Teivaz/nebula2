@@ -14,8 +14,8 @@
 set release_binPrefix "..\\..\\..\\bin\\win32"
 set debug_binPrefix "..\\..\\..\\bin\\win32d"
 
-set release_cpp_flags "/nologo /G6 /GB /MD /W3 /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /c /GX"
-set debug_cpp_flags "/nologo /MDd /W3 /ZI /Od /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"_DEBUG\" /D \"NT_PLUGIN\" /c /GX"
+set release_cpp_flags "/nologo /G6 /GB /MD /W3 /Ot /Og /Oi /Oy /Ob2 /Gy /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"NDEBUG\" /D \"NT_PLUGIN\" /GF /c /GX /FD"
+set debug_cpp_flags "/nologo /MDd /W3 /ZI /Od /I \"..\\inc\" /D \"N_STATIC\" /D \"__WIN32__\" /D \"WIN32\" /D \"_DEBUG\" /D \"NT_PLUGIN\" /c /GX /FD"
 set release_dswlibpath "/libpath:..\\lib\\win32_vc_i386 /libpath:Release"
 set debug_dswlibpath "/libpath:..\\lib\\win32_vc_i386 /libpath:Debug"
 
