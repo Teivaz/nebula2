@@ -2,25 +2,18 @@ a.code { color: #4444EE; font-weight: normal; text-decoration: none; }
 a.coderef { color: #4444EE; font-weight: normal; }
 a:link { color: #0066CC; text-decoration: none; }
 a:visited { color: #436976; text-decoration: none; }
+a:hover { color: #B52010; color: #B52010; text-decoration: underline; text-decoration: underline; }
 a.code{ color: #436976; font-weight: normal; text-decoration: none; }
 a.coderef{ color: #436976; font-weight: normal; }
 a.qindex{ font-weight: normal; white-space: nowrap; }
-a.qindex:hover, a.qindexref:hover { background-color: #DDDDFF; text-decoration: none; }
-a.qindexhl, a.qindexrefhl { background-color: #6666CC; color: #FFFFFF; font-weight: bold; text-decoration: none; }
-a.qindexhl:hover, a.qindexrefhl:hover { background-color: #6666CC; text-decoration: none; }
+a.qindexhl, a.qindexrefhl { color: #FFFFFF; font-weight: bold; text-decoration: none; }
 a.qindexref{ }
-a:hover { color: #B52010; color: #B52010; text-decoration: underline; text-decoration: underline; }
-a.el, a.qindex, a.qindexref, a.el { font-weight: bold; text-decoration: none; }
-/* this is repeated to fix a difference in browser rendering, perhaps should be set for each class of <a> */
-body { background: #FFFFFF; color: #000000; margin-left: 20px; margin-right: 20px; }
+a.el { font-weight: bold; text-decoration: none; }
 body { background: #FFFFFF; color: #000000; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 70%; margin: 0; }
-caption, a.elref, a.elref, caption { font-weight: bold; }
+caption, a.elref { font-weight: bold; }
 div.ah { background-color: #000000; color: #FFFFFF; font-weight: bold; margin-bottom: 3px; margin-top: 3px; }
-div.ah{ background: #000000; color: #FFFFFF; font-weight: bold; margin-bottom: 3px; margin-top: 3px; }
 div.footer{ background: #B0C2D7; border: 1px solid #436976; color: #000000; font-style: normal; margin-top: 5em; padding-bottom: 3px; text-align: center; }
-div.fragment { background-color: #F5F5F5; border: 1px solid #CCCCCC; margin: 4px; padding-left: 4px; width: 98%; }
 div.fragment{ background: #FFFFCC; border: 1px solid #CCCCCC; margin-left: 2em; margin-right: 2em; }
-div.groupheader { font-weight: bold; margin-bottom: 6px; margin-left: 16px; margin-top: 12px; }
 div.groupheader{ border-bottom: 1px solid #557E8C; font-weight: bold; margin-bottom: 6px; margin-left: 16px; margin-top: 12px; }
 div.grouptext{ font-style: italic; margin-left: 16px; }
 div.header{ background: #B0C2D7; border: 1px solid #436976; color: #000000; font-style: normal; margin-bottom: 1em; padding-bottom: 3px; padding-left: 10px; text-align: left; text-transform: lowercase; }
