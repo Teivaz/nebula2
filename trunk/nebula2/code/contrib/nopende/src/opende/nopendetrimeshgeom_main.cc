@@ -38,7 +38,7 @@ nOpendeTriMeshGeom::~nOpendeTriMeshGeom()
         if ( 0 == this->triMesh->GetRef() )
         {
             this->triMesh->Remove();
-            n_delete this->triMesh;
+            n_delete( this->triMesh );
         }
     }
 }
@@ -59,7 +59,7 @@ void nOpendeTriMeshGeom::SetMesh( const char* triMeshId )
         if ( 0 == this->triMesh->GetRef() )
         {
             this->triMesh->Remove();
-            n_delete this->triMesh;
+            n_delete( this->triMesh );
         }
     }
     
