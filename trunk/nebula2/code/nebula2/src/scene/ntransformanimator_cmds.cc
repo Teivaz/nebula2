@@ -36,7 +36,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_getnumeulerkeys_v",  'GNEK', n_getnumeulerkeys);
     cl->AddCmd("i_getnumscalekeys_v",  'GNSK', n_getnumscalekeys);
     cl->AddCmd("ffff_getposkeyat_i",   'GPKA', n_getposkeyat);
-    cl->AddCmd("ffff_geteulerkeyat_i", 'GEKA', n_getscalekeyat);
+    cl->AddCmd("ffff_geteulerkeyat_i", 'GEKA', n_geteulerkeyat);
     cl->AddCmd("ffff_getscalekeyat_i", 'GSKA', n_getscalekeyat);
     cl->EndCmds();
 }
