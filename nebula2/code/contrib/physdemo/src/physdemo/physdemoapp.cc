@@ -143,20 +143,8 @@ PhysDemoApp::Close()
     // Then kill the GUI
     this->refGuiServer->Close();
 
-    // Then, release the list of objects
-    nNode *node = objectList.GetHead();
-
-    while(node)
-    {
-        node->Remove();
-
-        SimpleObject *obj = (SimpleObject *)node->GetPtr();
-        obj->Release();
-
-        delete(node);
-
-        node = objectList.GetHead();
-    }
+    // clear the objects
+    kernelServer->Lookup("/objects")->Release();
 
     // Destroy the collision joint group
     nOpende::JointGroupDestroy(this->physColJointGroupId);
@@ -754,60 +742,20 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
 void
 PhysDemoApp::CreateExplosion(float x, float y, float z, float force)
 {
-    // Grab the head node to the object list.
-    nNode *node = this->objectList.GetHead();
-
-    // Loop through the entire object list, applying the explosion to all created objects (in
-    // a real engine, you would do an octree sphere check and only apply the effect to those
-    // objects within the 
-    while(node)
+    nRoot* objects = kernelServer->Lookup("/objects");
+    SimpleObject* curObj;
+    for (curObj = (SimpleObject*) objects->GetHead();
+         curObj;
+         curObj = (SimpleObject*) curObj->GetSucc())
     {
-        SimpleObject *obj = (SimpleObject *)node->GetPtr();
-        
-        if (obj->refPhysBody.isvalid())
+        if (curObj->refPhysBody.isvalid())
         {
-            vector3 explosionVector = obj->refPhysBody->GetPosition() - vector3(x, y, z);
+            vector3 explosionVector = curObj->refPhysBody->GetPosition() - vector3(x, y, z);
             explosionVector.norm();
             explosionVector = explosionVector * force;
-
-            obj->refPhysBody->AddForceAtPos(explosionVector, vector3(x, y, z));
+    
+            curObj->refPhysBody->AddForceAtPos(explosionVector, vector3(x, y, z));
         }
-
-        node = node->GetSucc();
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Destroy a shape
-*/
-void
-PhysDemoApp::DestroyObject(int objID)
-{
-    // Grab the head node to the object list.
-    nNode *node = this->objectList.GetHead();
-
-    // Loop through the entire list, checking for the object (I know, I know, this isn't horribly
-    // efficient - so don't do this in a final game)
-    while(node)
-    {
-        SimpleObject *obj = (SimpleObject *)node->GetPtr();
-
-        // If the object IDs line up, we have our object!
-        if (obj->uID == objID)
-        {
-            // ... so ditch the object
-            obj->Release();
-            node->Remove();
-            delete(node);
-
-            // and release the UID for future use
-            refUIDServer->ReleaseID(objID);
-
-            return;
-        }
-
-        node = node->GetSucc();
     }
 }
 
