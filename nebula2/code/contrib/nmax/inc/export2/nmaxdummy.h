@@ -13,6 +13,7 @@
     @brief
 */
 #include "export2/nmaxnode.h"
+#include "tinyxml/tinyxml.h"
 
 class nSceneNode;
 
@@ -26,14 +27,12 @@ public:
     nSceneNode* Export(INode* inode);
 
 protected:
-    bool GetCustAttrib(INode* inode);
+    nSceneNode* CreateNodeFromCustAttrib(INode* inode);
+
+    nSceneNode* ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName);
+    nSceneNode* ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName);
 
 protected:
-    bool isLOD;
-
-    float threshold;
-    float minDistance;
-    float maxDistance;
 
 };
 //-----------------------------------------------------------------------------
