@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 /**
     @file nsignal.cc
+    @author Mateu Batle Sastre <mateu.batle@tragnarion.com>
 
     (c) 2004 Tragnarion Studios
 */
@@ -40,6 +41,7 @@ nSignal::Dispatch(void * emitter, nCmd * cmd)
             {
                 nSignalBinding * tmp = binding->GetSucc();
                 n_delete(binding);
+                binding = tmp;
             }
         }
     }
