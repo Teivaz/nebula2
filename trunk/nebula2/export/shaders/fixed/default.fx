@@ -88,8 +88,7 @@ technique t0
 
         FogEnable = true;
         FogColor = {0.2, 0.2, 0.3, 1.0};
-        FogVertexMode = None;
-        FogTableMode = Exp2;
+        FogVertexMode = Exp2;
         FogDensity = 5.0e-4;
 
         FVF = XYZ | NORMAL | TEX1;
