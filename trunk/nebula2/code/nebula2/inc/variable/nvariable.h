@@ -27,6 +27,7 @@ public:
         String,
         Object,
         Matrix,
+        HandleVal
     };
 
     typedef uint Handle;
@@ -49,6 +50,8 @@ public:
     nVariable(Handle h, void* ptr);
     /// matrix constructor
     nVariable(Handle h, const matrix44& val);
+    /// handle constructor
+    nVariable(Handle h, Handle val);
     /// constructor
     nVariable(Type t, Handle h);
     /// copy contstructor
@@ -91,7 +94,11 @@ public:
     void SetMatrix(const matrix44& val);
     /// get matrix content
     const matrix44& GetMatrix() const;
-
+    /// set handle content
+    void SetHandleVal(Handle h);
+    /// get handle content
+    Handle GetHandleVal() const;
+    /// set int content
 
 private:
     /// delete content
@@ -109,6 +116,7 @@ private:
         const char* stringVal;
         void* objectVal;
         matrix44* matrixVal;
+        nVariable::Handle handleVal;
     };
 };
 
@@ -200,6 +208,10 @@ nVariable::Copy(const nVariable& from)
                 *(this->matrixVal) = *(from.matrixVal);
             }
             break;
+
+        case HandleVal:
+            this->handleVal = from.handleVal;
+            break;  
 
         default:
             n_assert(false);
@@ -445,6 +457,28 @@ nVariable::GetMatrix() const
 /**
 */
 inline
+void
+nVariable::SetHandleVal(Handle val)
+{
+    n_assert(HandleVal == this->type);
+    this->handleVal = val;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariable::Handle
+nVariable::GetHandleVal() const
+{
+    n_assert(HandleVal == this->type);
+    return this->handleVal;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 nVariable::nVariable(Handle h, int val) :
     handle(h),
     type(Int),
@@ -510,6 +544,17 @@ nVariable::nVariable(Handle h, const matrix44& val) :
     matrixVal(0)
 {
     this->SetMatrix(val);
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nVariable::nVariable(Handle h, Handle val) :
+    handle(h),
+    type(HandleVal),
+    handleVal(val)
+{
+    // empty
 }
 
 //------------------------------------------------------------------------------
