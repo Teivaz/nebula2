@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformAnimator
+    @ingroup NebulaSceneSystem
 
     Animate position, orientation and scaling of a nTransformNode from
     directly defined key arrays.

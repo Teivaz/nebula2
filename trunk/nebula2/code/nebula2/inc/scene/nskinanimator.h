@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSkinAnimator
+    @ingroup NebulaSceneSystem
 
     Provide an animated joint skeleton for a nSkinShapeNode. On
     Animate() invocation, the nSkinAnimator will update its joint

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimator
+    @ingroup NebulaSceneSystem
 
     Animator nodes manipulate properties of other scene objects. They are
     not attached to the scene, instead they are called back by scene objects
