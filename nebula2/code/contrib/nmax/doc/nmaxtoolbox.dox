@@ -3,9 +3,11 @@
     @ingroup NebulaContribAssetToolchainModules
     @brief nMaxToolBox is a toolkit for 3DS Max for Nebula2.
 
-    @section NMAXToolBoxInstallation Installation
+    @section NMAXToolBoxIntroduction Introduction
 
-    nMaxToolBox was targeted at 3DS Max 6 or higher versions (mainly
+    @section NMAXToolBoxInstallation Building the Plugin
+
+    nMaxToolBox was targeted at 3DS Max 6 or its higher versions (mainly
     developed on 3DS Max 7).
 
     When you develop a 3DS Max plug-ins, it is important to choose a
@@ -22,4 +24,5 @@
     be smoothly solved even with <tt>&lt;MAX_Mem.h&gt;</tt> which has been
     provided by Discreet as a solution to that problem, at the moment. So it
     is highly recommended to use VC 7.0 if you use 3DS Max 6.0.
+
 */
