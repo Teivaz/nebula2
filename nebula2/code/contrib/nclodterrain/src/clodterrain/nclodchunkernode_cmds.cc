@@ -141,7 +141,7 @@ static void n_setchunkparameters(void *o, nCmd *cmd)
 
 /**
     @cmd
-    compilechunkfile
+    compilechunksfromfile
 
     @input
     s
