@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "script/ntclserver.h"
 #include "signals/nsignalserver.h"
+#include "kernel/ntimeserver.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -981,6 +982,10 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     // extract time and convert time
     n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
     nTime t = atof(cmd);
+    if (cmd[0] == '+')
+    {
+        t += nTimeServer::Instance()->GetFrameTime();
+    }
 
     // extract object name and cmd name
     n_strncpy2(cmd, Tcl_GetString(objv[2]), sizeof(cmd));
@@ -1052,7 +1057,7 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 
         // let object handle the command
         nSignalServer * signalServer = nSignalServer::Instance();
-        if (0 != signalServer)
+        if (0 == signalServer)
         {
             tcl_objcmderror(interp,tcl,"Signal server not available, object '%s', command/signal '%s'",o,cmd_name);
             cmd_proto->RelCmd(cmd);
