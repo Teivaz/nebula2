@@ -19,6 +19,11 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
+#ifdef __WIN32__
+#include <malloc.h>
+#else
+#include <alloca.h>
+#endif
 
 #include "kernel/ntypes.h"
 #include "util/narray.h"
@@ -148,6 +153,8 @@ protected:
     void Delete();
     /// get pointer to last directory separator
     char* GetLastSlash() const;
+    /// calculate required length for the result of a printf-style format
+    size_t GetFormattedStringLength(const char* format, va_list argList) const;
 
     enum
     {
@@ -1290,11 +1297,19 @@ void __cdecl
 nString::Format(const char* fmtString, ...)
 {
     va_list argList;
+    // First calculate the required length
     va_start(argList, fmtString);
-    char buf[1024];
-    _vsnprintf(buf, sizeof(buf), fmtString, argList);
-    this->Set(buf);
+    size_t requiredLength = this->GetFormattedStringLength(fmtString, argList);
+    requiredLength++; // Account for NULL termination
     va_end(argList);
+
+    char buf[1024];
+
+    // Now do the formatting
+    va_start(argList, fmtString);
+    _vsnprintf(buf, requiredLength, fmtString, argList);
+    va_end(argList);
+    this->Set(buf);
 }
 
 //-----------------------------------------------------------------------------

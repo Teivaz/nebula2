@@ -82,6 +82,7 @@ beginmodule nutil
         nhttpformdatawrapper
         nhttpsession
         nquadtree
+        nstring
     }
 endmodule
 #===============================================================================
