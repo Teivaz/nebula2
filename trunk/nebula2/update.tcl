@@ -12,6 +12,20 @@ global platform
 global vstudioPrefix
 global debug
 
+set workspaces ""
+set buildgen ""
+# deal with args
+set i 0
+while {$i < $argc} {
+    if {[lindex $argv $i] == "-build"} {
+        set i [expr $i + 1]
+        set buildgen [lindex $argv $i]
+    } else {
+        lappend workspaces [lindex $argv $i]
+    }
+    set i [expr $i + 1]
+}
+
 set vstudioPrefix "code/nebula2/vstudio"
 
 # Set this to true if you want extra debug info to get printed
@@ -59,7 +73,7 @@ if { $debug } {
 fixmods
 fixbundles
 fixtargets
-fixworkspaces
+fixworkspaces $workspaces
 if { $debug } {
     dump_data generatebld
     dump_api_data generateapibld
@@ -71,7 +85,7 @@ puts "\n**** Validating bld files"
 if { $debug } {
     dump_api_data validatebld   
 }
-add_pkgs
+add_pkgs $workspaces
 
 puts "\n->Done loading bld files."
 #----------------------------------------------------------------------------
@@ -81,8 +95,14 @@ puts ""
 puts ":: GENERATING buildfiles..."
 puts "==========================="
 
-foreach gen $gen_list {
-    namespace inscope $gen generate
+if {$buildgen == ""} {
+    puts "Running all generators..."
+    foreach gen $gen_list {
+        namespace inscope $gen generate $workspaces
+    }
+} else {
+    puts "Running $buildgen generator"
+    namespace inscope $buildgen generate $workspaces
 }
 
 # VC7

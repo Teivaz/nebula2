@@ -333,7 +333,7 @@ proc fixtargets { } {
 #----------------------------------------------------------------------------
 #    fixworkspaces
 #----------------------------------------------------------------------------
-proc fixworkspaces { } {
+proc fixworkspaces { wslist } {
     global wspace
     global num_wspaces
     global tar
@@ -341,10 +341,15 @@ proc fixworkspaces { } {
     global mod
     global home
 
-    puts "\n**** Fixing workspaces"
+    puts "\n**** Fixing workspaces"    
     for {set i 0} {$i < $num_wspaces} {incr i} {
         #format
         # wspace(idx,tar#name#,#fields#)
+        if {$wslist != ""} {
+            if {[lsearch $wslist $wspace($i,name)] == -1} {
+                break
+            }
+        }
         puts "  $wspace($i,name)"
         foreach tarname $wspace($i,targets) {
             set idx [findtargetbyname $tarname]

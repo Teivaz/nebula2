@@ -371,7 +371,7 @@ proc gen_sln { name } {
 #   gen_solution 
 #   Generates the .sln and .vcproj file for all workspaces
 #-------------------------------------------------------------------------------
-proc generate {} {
+proc generate { wslist } {
     global targetuuids
     
     puts "Looking for uuidgen...."
@@ -386,7 +386,7 @@ proc generate {} {
     set outputpath  ./bin
     set interpath   $vstudiopath/inter
     
-    foreach workspace [get_workspaces]  {    
+    foreach workspace [get_workspaces $wslist]  {    
         # let the buildsys know which workspace we are currently working
         # with and what the default directories for that workspace should
         # be - default directories may be overridden - this particular
