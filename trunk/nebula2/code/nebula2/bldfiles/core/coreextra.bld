@@ -125,8 +125,8 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule xml
     setdir xml
-    setfiles { xmltable nxmlspreadsheet }
-    setheaders { xmltable xmltablecell nxmlspreadsheet nxmltable nxmltablecell }
+    setfiles { nxmlspreadsheet }
+    setheaders { nxmlspreadsheet nxmltable nxmltablecell }
 endmodule    
 #-------------------------------------------------------------------------------
 begintarget xml
