@@ -9,17 +9,9 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_DEBUG_H
 #include "kernel/ndebug.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nList 

@@ -14,9 +14,7 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nArray
@@ -39,8 +37,6 @@ public:
     /// [] operator
     TYPE& operator[](int index) const;
 
-    /// clear contents and preallocate with new attributes
-    void Reallocate(int initialSize, int grow);
     /// clear contents and set a fixed size
     void SetFixedSize(int size);
     /// push element to back of array
@@ -77,6 +73,10 @@ public:
     iterator End() const;
     /// find identical element in array
     iterator Find(const TYPE& elm) const;
+    /// find array range with element
+    void Fill(int first, int num, const TYPE& elm);
+    /// clear contents and preallocate with new attributes
+    void Reallocate(int initialSize, int grow);
 
 private:
     /// check if index is in valid range, and grow array if necessary
@@ -143,7 +143,7 @@ template<class TYPE>
 nArray<TYPE>::nArray(int initialSize, int grow, TYPE initialValue) :
     growSize(grow),
     allocSize(initialSize),
-    numElements(0)
+    numElements(initialSize)
 {
     n_assert(initialSize >= 0);
     if (initialSize > 0)
@@ -230,10 +230,7 @@ nArray<TYPE>::nArray(const nArray<TYPE>& rhs) :
 template<class TYPE>
 nArray<TYPE>::~nArray()
 {
-    if (this->elements)
-    {
-        delete[] this->elements;
-    }
+    this->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -471,6 +468,7 @@ template<class TYPE>
 TYPE&
 nArray<TYPE>::Set(int index, const TYPE& elm)
 {
+    n_assert(index < this->numElements);
     this->CheckIndex(index);
     this->elements[index] = elm;
     return this->elements[index];
@@ -685,6 +683,30 @@ nArray<TYPE>::Find(const TYPE& elm) const
         }
     }
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Fills an array range with the given element value. Will grow the
+    array if necessary
+
+    @param  first   index of first element to start fill
+    @param  num     num elements to fill
+    @param  elm     fill value
+*/
+template<class TYPE>
+void
+nArray<TYPE>::Fill(int first, int num, const TYPE& elm)
+{
+    if ((first + num) > this->numElements)
+    {
+        this->GrowTo(first + num);
+    }
+    int i;
+    for (i = first; i < (first + num); i++)
+    {
+        this->elements[i] = elm;
+    }
 }
 
 //------------------------------------------------------------------------------

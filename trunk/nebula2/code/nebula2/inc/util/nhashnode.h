@@ -8,17 +8,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_STRNODE_H
 #include "util/nstrnode.h"
-#endif
-
-#ifndef N_HASHTABLE_H
 #include "util/nhashtable.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nHashNode : public nNode 

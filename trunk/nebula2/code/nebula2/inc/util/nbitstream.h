@@ -8,22 +8,12 @@
     author: mark
     (C) 2000 Radon Labs GmbH
 */
-//------------------------------------------------------------------------------
 #include <memory.h>
-
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
 
-#undef N_DEFINES
-#define N_DEFINES nBitStream
-#include "kernel/ndefdllclass.h"
 //------------------------------------------------------------------------------
-class N_PUBLIC nBitStream : public nNode
+class nBitStream : public nNode
 {
 public:
     /// standard constructor, requires separate SetSize()
