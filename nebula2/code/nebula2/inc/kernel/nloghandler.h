@@ -30,6 +30,12 @@ public:
     nLogHandler();
     /// destructor
     virtual ~nLogHandler();
+    /// open the log handler (called by nKernelServer when necessary)
+    virtual bool Open();
+    /// close the log handler (called by nKernelServer when necessary)
+    virtual void Close();
+    /// return open status
+    bool IsOpen() const;
     /// print a message to the log dump
     virtual void Print(const char* msg, va_list argList);
     /// show an important message (may block the program until the user acks)
@@ -38,7 +44,20 @@ public:
     virtual void Error(const char* msg, va_list argList);
     /// get pointer to (optional) internal line buffer
     virtual nLineBuffer* GetLineBuffer();
+
+private:
+    bool isOpen;
 };
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nLogHandler::IsOpen() const
+{
+    return this->isOpen;
+}
+
 //------------------------------------------------------------------------------
 #endif
 

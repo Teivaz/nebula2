@@ -16,7 +16,11 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ndefaultloghandler.h"
+#include "kernel/nfile.h"
 #include "util/nstring.h"
+#ifdef __WIN32__
+#include "kernel/nshell32wrapper.h"
+#endif
 
 //------------------------------------------------------------------------------
 class nWin32LogHandler : public nDefaultLogHandler
@@ -26,6 +30,10 @@ public:
     nWin32LogHandler(const char* appName);
     /// destructor
     virtual ~nWin32LogHandler();
+    /// open the log handler (called by nKernelServer when necessary)
+    virtual bool Open();
+    /// close the log handler (called by nKernelServer when necessary)
+    virtual void Close();
     /// print a message to the log dump
     virtual void Print(const char* msg, va_list argList);
     /// show an important message (may block the program until the user acks)
@@ -44,7 +52,11 @@ private:
     void PutMessageBox(MsgType msgType, const char* msg, va_list argList);
 
     nString appName;
-    FILE* logFile;
+    nFile* logFile;
+
+    #ifdef __WIN32__
+    nShell32Wrapper shell32Wrapper;
+    #endif
 };
 
 //------------------------------------------------------------------------------
