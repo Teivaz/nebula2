@@ -75,7 +75,8 @@ begintarget ntoollib
     settype lib
     setmodules {
         nmeshbuilder nanimbuilder nresourcecompiler
-        napplauncher nviewerapp
+        napplauncher nviewerapp nnvx2loader
+        nn3d2loader
     }
 endtarget
 #-------------------------------------------------------------------------------

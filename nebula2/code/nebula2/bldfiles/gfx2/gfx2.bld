@@ -90,4 +90,16 @@ beginmodule nwin32windowhandler
     setlibs_win32 { user32.lib }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nnvx2loader
+    setdir gfx2
+    setfiles   { }
+    setheaders { nnvx2loader }
+endmodule  
+#-------------------------------------------------------------------------------
+beginmodule nn3d2loader
+    setdir gfx2
+    setfiles   { }
+    setheaders { nn3d2loader }
+endmodule 
+#-------------------------------------------------------------------------------
 
