@@ -25,6 +25,8 @@ public:
     virtual ~nTclServer();
     /// evaluate a string
     virtual bool Run(const char *, const char*&);
+    /// invoke a script function by name, with no parameters
+    virtual bool RunFunction(const char *, const char *&);
     /// evaluate a file
     virtual bool RunScript(const char *, const char*&);
 

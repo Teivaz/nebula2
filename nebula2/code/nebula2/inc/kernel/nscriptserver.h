@@ -44,6 +44,8 @@ public:
     virtual ~nScriptServer();
     /// evaluate a script command
     virtual bool Run(const char *, const char*&); 
+    /// invoke a script function by name, with no parameters
+    virtual bool RunFunction(const char *, const char *&);
     /// evaluate a script file
     virtual bool RunScript(const char *, const char*&);
     /// write header of a persistent object file

@@ -42,6 +42,21 @@ nScriptServer::Run(const char* /* cmdStr */, const char*& /* result */)
 
 //------------------------------------------------------------------------------
 /**
+    Run a script function with the specified name without any args
+
+    @param functionName     the function to invoke
+    @param result           [out] will be filled with pointer to result
+    @return                 false if an error occured during execution
+*/
+bool
+nScriptServer::RunFunction(const char* /*functionName*/, const char*& /*result*/)
+{
+    // overwrite in subclass
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     Run a script file.
 
     @param  filename    the script filename (ABSOLUTE PATH!)
