@@ -67,18 +67,23 @@ Open the Nebula2.dsw or Nebula2.sln in the directory that corresponds to your ve
 @subsection Nebula2CompilingOSWin32Troubleshooting Troubleshooting
 
   - The IDE doesn't recognize .cc files as c++ source in VS7.1: 
+
 Open Studio, go to Tools...Options...Projects...VC++ Build...C/C++ File Extensions and add .cc. 
 
   - LINK : fatal error LNK1104: cannot open file 'libci.lib' 
+
 Insert /NODEFAULTLIB:libci.lib every time AdditionalOptions=\"/MACHINE:IX86 occurs in makesln.tcl.  I don't know if there's a reason why this isn't included in the file already -- is there a better way to avoid this error? 
 
   - updsrc.tcl isn't producing .sln files under VS7.x 
+
 Make sure that uuidgen.exe is in your path. 
 
   - The nmake fails 
+
 You may need to set up the Visual Studio environment variables. You can do this by running the VCVARS32.BAT batch file, which usually exists in a directory like C:\Program Files\Microsoft Visual Studio\VC98\Bin\. If you get errors while running that batch file about being out of environment space, please see <A HREF="http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q230205&">this</A>.
 
   - error C2660: 'D3DXCreateFont' : function does not take 12 parameters 
+
 Get the DirectX 9 SDK "Summer Update", as described above.
 
 
