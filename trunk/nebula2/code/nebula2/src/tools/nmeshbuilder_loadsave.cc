@@ -725,7 +725,7 @@ nMeshBuilder::LoadN3d2(nFileServer2* fileServer, const char* filename)
             else if (0 == strcmp(keyWord, "vertexcomps"))
             {
                 char* str;
-                while (str = strtok(0, N_WHITESPACE))
+                while ((str = strtok(0, N_WHITESPACE)))
                 {
                     if (0 == strcmp(str, "coord"))
                     {
@@ -1374,7 +1374,7 @@ nMeshBuilder::LoadOldN3d2(nFileServer2* fileServer, const char* filename)
             else if (0 == strcmp(keyWord, "vertexcomps"))
             {
                 char* str;
-                while (str = strtok(0, N_WHITESPACE))
+                while ((str = strtok(0, N_WHITESPACE)))
                 {
                     if (0 == strcmp(str, "coord"))
                     {
