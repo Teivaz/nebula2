@@ -313,7 +313,7 @@ proc gen_makefile { } {
     puts $cid "\ttest -d \$(N_OBJECTDIR) || mkdir \$(N_OBJECTDIR)"
     puts $cid "\ttest -d \$(N_TARGETDIR) || mkdir \$(N_TARGETDIR)"
 
-    puts $cid "clean: \n\trm -f \$(N_OBJECTDIR)*\$(OBJ)\n\trm \$(N_TARGETDIR)*\$(LIB_POST)"
+    puts $cid "clean: \n\t-rm -f \$(N_OBJECTDIR)*\$(OBJ)\n\t-rm \$(N_TARGETDIR)*\$(LIB_POST)"
     
     #generate all targets and modules for each build type (release,debug,profile)
     for {set bt 0} {$bt < $num_buildtypes} { incr bt } {
