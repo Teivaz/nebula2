@@ -336,8 +336,9 @@ nSceneNode* nMaxMesh::CreateNebulaNode(INode* inode)
                     nAttachmentNode* attachNode = (nAttachmentNode*)CreateNebulaObject("nattachmentnode", inode->GetName());
 
                     //specify attachment node.
-                    attachNode->SetSkinAnimator("../skinanimator");
-                    attachNode->SetJointByIndex(boneID);
+                    //FIXME: WIP
+                    //attachNode->SetSkinAnimator("../skinanimator");
+                    //attachNode->SetJointByIndex(boneID);
                 }
 
                 if (this->meshType == Shadow)
