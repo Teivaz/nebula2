@@ -331,10 +331,17 @@ nWin32WindowHandler::MinimizeWindow()
     The Trigger() method is called once per frame by nGfxServer2::Trigger().
     It should return false if the application should shutdown (for instance
     after an Alt-F4 has been received).
+
+    - 24-Nov-04 kims added IsSkipMsgLoop() to skip message loop.
 */
 bool
 nWin32WindowHandler::Trigger()
 {
+    // just skip message loop such a case of the window is embedded
+    // to other system like intergating Nebula with wxWindow.
+    if (IsSkipMsgLoop())
+        return true;
+
     // handle all pending WM's
     MSG msg;
 

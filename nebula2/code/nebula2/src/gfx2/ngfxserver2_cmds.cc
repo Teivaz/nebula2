@@ -21,6 +21,7 @@ static void n_setcontrast(void* slf, nCmd* cmd);
 static void n_getcontrast(void* slf, nCmd* cmd);
 static void n_adjustgamma(void* slf, nCmd* cmd);
 static void n_restoregamma(void* slf, nCmd* cmd);
+static void n_setskipmsgloop(void* slf, nCmd* cmd);
 
 
 //------------------------------------------------------------------------------
@@ -61,6 +62,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getcontrast_v",           'GETC', n_getcontrast);
     cl->AddCmd("v_adjustgamma_v",           'ADJG', n_adjustgamma);
     cl->AddCmd("v_restoregamma_v",          'RESG', n_restoregamma);
+    cl->AddCmd("v_setskipmsgloop_b",        'SSML', n_setskipmsgloop);
     cl->EndCmds();
 }
 
@@ -258,7 +260,7 @@ n_setmousecursor(void *slf, nCmd *cmd)
     @output
     s(icon resource name)
     @info
-    Sets the window's icon.  
+    Sets the window's icon.
     This must happen outside opendisplay/closedisplay.
 */
 static void
@@ -273,7 +275,7 @@ n_seticon(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setgamma    
+    setgamma
     @input
     f
     @output
@@ -283,7 +285,7 @@ n_seticon(void* slf, nCmd* cmd)
 
     23-Aug-04    kims    created
 */
-static 
+static
 void n_setgamma(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -292,7 +294,7 @@ void n_setgamma(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    getgamma    
+    getgamma
     @input
     v
     @output
@@ -303,7 +305,7 @@ void n_setgamma(void* slf, nCmd* cmd)
 
     8-Sep-04    rafael    created
 */
-static 
+static
 void n_getgamma(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -312,7 +314,7 @@ void n_getgamma(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setbrightness    
+    setbrightness
     @input
     f
     @output
@@ -331,7 +333,7 @@ void n_setbrightness(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    getbrightness    
+    getbrightness
     @input
     v
     @output
@@ -342,7 +344,7 @@ void n_setbrightness(void* slf, nCmd* cmd)
 
     8-Sep-04    rafael    created
 */
-static 
+static
 void n_getbrightness(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -361,7 +363,7 @@ void n_getbrightness(void* slf, nCmd* cmd)
 
     23-Aug-04    kims    created
 */
-static void 
+static void
 n_setcontrast(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -370,7 +372,7 @@ n_setcontrast(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    getcontrast    
+    getcontrast
     @input
     v
     @output
@@ -381,7 +383,7 @@ n_setcontrast(void* slf, nCmd* cmd)
 
     8-Sep-04    rafael    created
 */
-static 
+static
 void n_getcontrast(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -400,7 +402,7 @@ void n_getcontrast(void* slf, nCmd* cmd)
     so that they are actually visible on the screen.
     23-Aug-04    kims    created
 */
-static void 
+static void
 n_adjustgamma(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
@@ -420,9 +422,31 @@ n_adjustgamma(void* slf, nCmd* cmd)
 
     23-Aug-04    kims    created
 */
-static void 
+static void
 n_restoregamma(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     self->RestoreGamma();
 }
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setskipmsgloop
+    @input
+    b(SkipMsgLoop)
+    @output
+    v
+    @info
+    Set whether or not the window handler should skip its message loop. This
+    is required when embedding Nebula into an application that provides its
+    own event loop, such as using wxWidgets.
+*/
+static void
+n_setskipmsgloop(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    bool skipMsgLoop = cmd->In()->GetB();
+    self->SetSkipMsgLoop(skipMsgLoop);
+}
+

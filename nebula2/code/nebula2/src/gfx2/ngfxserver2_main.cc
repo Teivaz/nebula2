@@ -843,7 +843,7 @@ nGfxServer2::EndShapes()
 
 //------------------------------------------------------------------------------
 /**
-    23-Aug-04    kims    created
+    - 23-Aug-04    kims    created
 */
 void
 nGfxServer2::AdjustGamma()
@@ -853,7 +853,7 @@ nGfxServer2::AdjustGamma()
 
 //------------------------------------------------------------------------------
 /**
-    23-Aug-04    kims    created
+    - 23-Aug-04    kims    created
 */
 void
 nGfxServer2::RestoreGamma()
@@ -950,4 +950,14 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             }
         }
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    - 24-Nov-04    kims    created
+*/
+void
+nGfxServer2::SetSkipMsgLoop(bool skip)
+{
+    // empty.
 }

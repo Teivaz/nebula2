@@ -449,3 +449,13 @@ nD3D9Server::DetectWindowsVersion()
         break;
    }
 }
+
+//------------------------------------------------------------------------------
+/**
+    - 24-Nov-04  kims added 
+*/
+void
+nD3D9Server::SetSkipMsgLoop(bool skip)
+{
+    this->windowHandler.SetSkipMsgLoop(skip);
+}
