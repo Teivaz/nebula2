@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/ntimeserver.h"
 
-#ifdef __LINUX__
+#if defined(__LINUX__) || defined(__MACOSX__)
 #define tv2micro(x) (x.tv_sec * N_MICROSEC_INT + x.tv_usec);
 #endif
 
@@ -26,7 +26,7 @@ nTimeServer::nTimeServer() :
 {
 #ifdef __WIN32__
     QueryPerformanceCounter((LARGE_INTEGER *) &(this->time_diff));
-#elif __LINUX__
+#elif defined(__LINUX__) || defined(__MACOSX__)
     struct timeval tv;
     gettimeofday(&tv,NULL);
     this->time_diff = tv2micro(tv);
@@ -55,7 +55,7 @@ nTimeServer::ResetTime()
 
 #ifdef __WIN32__
     QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_diff));
-#elif __LINUX__
+#elif defined(__LINUX__) || defined(__MACOSX__)
     struct timeval tv;
     gettimeofday(&tv,NULL);
     this->time_diff = tv2micro(tv);
@@ -81,7 +81,7 @@ nTimeServer::SetTime(double t)
     QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_diff));
     this->time_stop = this->time_diff;
     this->time_diff -= td;
-#elif __LINUX__
+#elif defined(__LINUX__) || defined(__MACOSX__)
     // t nach Microsecs umrechnen
     long long td = (long long int) (t * N_MICROSEC_FLOAT);
     struct timeval tv;
@@ -110,7 +110,7 @@ nTimeServer::StopTime()
 
 #ifdef __WIN32__
         QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_stop));
-#elif __LINUX__
+#elif defined(__LINUX__) || defined(__MACOSX__)
         struct timeval tv;
         gettimeofday(&tv,NULL);
         this->time_stop = tv2micro(tv);
@@ -139,7 +139,7 @@ nTimeServer::StartTime()
         QueryPerformanceCounter((LARGE_INTEGER *)&time);
         td = time - this->time_stop;
         this->time_diff += td;
-#   elif __LINUX__
+#   elif defined(__LINUX__) || (__MACOSX__)
         long long int time;
         long long int td;
         struct timeval tv;
@@ -171,7 +171,7 @@ nTimeServer::GetTime()
         return d_time;
         return 0.0;
     }    
-#   elif __LINUX__
+#   elif defined(__LINUX__) || defined(__MACOSX__)
         long long int time;
         long long int td;
         double d_time;

@@ -9,6 +9,10 @@
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
 
+#if defined(__MACOSX__)
+#include <Carbon/carbon.h>
+#endif
+
 nNebulaScriptClass(nFileServer2, "nroot");
 
 //------------------------------------------------------------------------------
@@ -271,7 +275,7 @@ nFileServer2::InitHomeAssign(void)
             p++;
         }
         strcat(buf,"/");
-    #elif __LINUX__
+    #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
         // otherwise the current working directory will be used
         char *s = getenv("NEBULADIR");
@@ -285,6 +289,12 @@ nFileServer2::InitHomeAssign(void)
         }
         // if last char is not a /, append one
         if (buf[strlen(buf)] != '/') strcat(buf,"/");
+    #elif defined(__MACOSX__)
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
+        FSRef bundleFSRef;
+        CFURLGetFSRef(bundleURL, &bundleFSRef);
+        FSRefMakePath(&bundleFSRef, (unsigned char*)buf, N_MAXPATH);
     #else
     #error nFileServer::initHomeAssign() not implemented!
     #endif
@@ -311,8 +321,10 @@ nFileServer2::InitBinAssign(void)
 
     #ifdef __WIN32__
         strcat(buf,"bin/win32/");
-    #elif __LINUX__
+    #elif defined(__LINUX__)
         strcat(buf,"bin/linux/");
+    #elif defined(__MACOSX__)
+        strcat(buf, "bin/macosx/");
     #else
     #error nFileServer::initBinAssign() not implemented!
     #endif
