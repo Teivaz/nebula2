@@ -177,7 +177,7 @@ proc gen_exe_unix {target cid} {
     puts $cid "$target$bt_post: $e_pre$target$e_post"
     puts $cid ""
     puts $cid "$e_pre$target$e_post: [make_list $depend_list $l_pre $l_post] [make_list $obj_list $o_pre $o_post]"
-    puts $cid "\t\$(CXX) \$(CFLAGS$bt_post) \$(INCDIR) \$(LIBDIR)\
+    puts $cid "\t\$(CXX) \$(CXXFLAGS$bt_post) \$(INCDIR) \$(LIBDIR)\
                 \$(SYM_OPT)$bt_def \
                 \$(OUT_OPT) $e_pre$target$e_post\
                 [make_list $obj_list $o_pre $o_post] \
@@ -231,8 +231,10 @@ proc gen_obj_unix {module cid} {
     #select the right compiler
     if { $mod($m,type) == "clib" } {
         set compiler "\$(CC)"
-    } else {
+	set flags "\$(CFLAGS)"
+     } else {
         set compiler "\$(CXX)"
+	set flags "\$(CXXFLAGS)"
     }
     
     #write the single sources entrys thats not already done
@@ -244,7 +246,7 @@ proc gen_obj_unix {module cid} {
         puts "-> dependencies for $filename"
         set dep_list [get_depends $filename $inc_dir_real ""]
         puts $cid "$o_pre$fsrc$o_post: $filename [make_pre_list $dep_list $inc_dir]"
-        puts $cid "\t$compiler \$(CFLAGS$bt_post) \$(INCDIR) \
+        puts $cid "\t$compiler $flags$bt_post  \$(INCDIR) \
                     \$(SYM_OPT)$bt_def\
                     \$(SYM_OPT)N_INIT=$init \$(SYM_OPT)N_FINI=$fini \$(SYM_OPT)N_NEW=$new\
                     \$(SYM_OPT)N_VERSION=$version \$(SYM_OPT)N_INITCMDS=$initcmds\
@@ -311,7 +313,7 @@ proc gen_makefile { } {
     puts $cid "\ttest -d \$(N_OBJECTDIR) || mkdir \$(N_OBJECTDIR)"
     puts $cid "\ttest -d \$(N_TARGETDIR) || mkdir \$(N_TARGETDIR)"
 
-    puts $cid "clean: \n\trm \$(N_OBJECTDIR)*\$(OBJ)\n\trm \$(N_TARGETDIR)*\$(LIB_POST)"
+    puts $cid "clean: \n\trm -f \$(N_OBJECTDIR)*\$(OBJ)\n\trm \$(N_TARGETDIR)*\$(LIB_POST)"
     
     #generate all targets and modules for each build type (release,debug,profile)
     for {set bt 0} {$bt < $num_buildtypes} { incr bt } {
