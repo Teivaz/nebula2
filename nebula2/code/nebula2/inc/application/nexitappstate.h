@@ -5,7 +5,7 @@
     @class nExitAppState
     @ingroup Application
 
-    This app state will simply ask the application to quit.
+    @brief This app state will simply ask the application to quit.
     
     (C) 2004 RadonLabs GmbH
 */

@@ -5,10 +5,11 @@
     @class nAppState
     @ingroup Application
 
-    An application state. Application states completely control
-    application behaviour and rendering when they are active. State behaviour
-    is implemented by deriving subclasses from nAppState. Add state objects
-    to nApplication before calling nApplication::Open().
+    @brief An application state. Application states completely control
+    application behaviour and rendering when they are active.
+
+    State behaviour is implemented by deriving subclasses from nAppState.
+    Add state objects to nApplication before calling nApplication::Open().
     
     (C) 2004 RadonLabs GmbH
 */

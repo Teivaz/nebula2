@@ -5,8 +5,8 @@
     @class nAppCamera
     @ingroup Application
 
-    A simple application camera object. Derive subclasses if you need more 
-    advanced camera behaviour.
+    @brief A simple application camera object. Derive subclasses if you
+    need more advanced camera behaviour.
     
     (C) 2004 RadonLabs GmbH
 */

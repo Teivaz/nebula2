@@ -5,8 +5,8 @@
     @class nApplication
     @ingroup Application
 
-    A simple application wrapper class. Derive a subclass for a specialized
-    application.
+    @brief A simple application wrapper class. Derive a subclass for a
+    specialized application.
 
     (C) 2004 RadonLabs GmbH
 */
