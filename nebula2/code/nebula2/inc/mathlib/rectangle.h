@@ -26,6 +26,8 @@ public:
     float width() const;
     /// return height
     float height() const;
+    /// return (width * height)
+    float area() const;
     /// return size
     vector2 size() const;
 
@@ -109,10 +111,48 @@ rectangle::height() const
 /**
 */
 inline
+float
+rectangle::area() const
+{
+    return this->width() * this->height();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 vector2
 rectangle::size() const
 {
     return this->v1 - this->v0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+static 
+inline 
+rectangle operator *(const rectangle& r0, const rectangle& r1) 
+{
+    float v0x, v0y, v1x, v1y;
+
+    if (r0.v0.x >= r1.v1.x || r0.v1.x <= r1.v0.x ||
+        r0.v0.y >= r1.v1.y || r0.v1.y <= r1.v0.y ||
+        r0.area() == 0.0f || r1.area() == 0.0f)
+    {
+        // zero-size rectangle
+        v0x = v1x = r0.v0.x;
+        v0y = v1y = r0.v0.y;
+    }
+    else
+    {
+        v0x = max(r0.v0.x, r1.v0.x);
+        v0y = max(r0.v0.y, r1.v0.y);
+        v1x = min(r0.v1.x, r1.v1.x);
+        v1y = min(r0.v1.y, r1.v1.y);
+    }
+
+    return rectangle(vector2(v0x, v0y), vector2(v1x, v1y));
 }
 
 //------------------------------------------------------------------------------
