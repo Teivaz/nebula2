@@ -139,7 +139,7 @@ nD3D9Server::PresentScene()
     Bind a texture to a texture stage. 
 
     @param  stage       the texture stage (0..7)
-    @param  tex         pointer to a nD3D8Texture2 object or 0 to clear the
+    @param  tex         pointer to a nD3D9Texture2 object or 0 to clear the
                         texture stage
 */
 void
@@ -170,7 +170,7 @@ nD3D9Server::SetTexture(int stage, nTexture2* tex)
     Bind vertex buffer to a vertex stream.
 
     @param  stream      stream identifier (0..15)
-    @param  mesh        pointer to a nD3D8Mesh2 object or 0 to clear the
+    @param  mesh        pointer to a nD3D9Mesh2 object or 0 to clear the
                         current stream and index buffer
 */                  
 void
