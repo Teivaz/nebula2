@@ -78,7 +78,7 @@ nShapeNode::LoadMesh()
         // append mesh usage to mesh resource name
         nString resourceName = this->meshName.Get();
         resourceName += "_";
-        resourceName += this->GetMeshUsage();
+        resourceName.AppendInt(this->GetMeshUsage());
 
         // get a new or shared mesh
         nMesh2* mesh = this->refGfxServer->NewMesh(resourceName.Get());

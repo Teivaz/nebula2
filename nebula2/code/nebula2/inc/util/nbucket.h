@@ -24,6 +24,8 @@ public:
     nArray<TYPE>& operator[](uint bucketIndex);
     /// clear all arrays
     void Clear();
+    /// reset all contained arrays
+    void Reset();
     /// get number of bucket arrays
     int Size() const;
 
@@ -88,13 +90,12 @@ template<class TYPE, uint NUMBUCKETS>
 nArray<TYPE>&
 nBucket<TYPE, NUMBUCKETS>::operator[](uint bucketIndex)
 {
-    n_assert(bucketIndex < NUMBUCKETS);
     return this->arrays[bucketIndex];
 }
 
 //------------------------------------------------------------------------------
 /**
-    Clear all contained arrays.
+    Clear all contained arrays (does apply element destructor).
 */
 template<class TYPE, uint NUMBUCKETS>
 void
@@ -104,6 +105,21 @@ nBucket<TYPE, NUMBUCKETS>::Clear()
     for (i = 0; i < NUMBUCKETS; i++)
     {
         this->arrays[i].Clear();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Reset all contained arrays (does not apply element destructor).
+*/
+template<class TYPE, uint NUMBUCKETS>
+void
+nBucket<TYPE, NUMBUCKETS>::Reset()
+{
+    uint i;
+    for (i = 0; i < NUMBUCKETS; i++)
+    {
+        this->arrays[i].Reset();
     }
 }
 

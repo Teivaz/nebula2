@@ -361,11 +361,11 @@ nGuiTexBrowserWindow::UpdateInfoField()
         int height = tex->GetHeight();
         int numMipLevels = tex->GetNumMipLevels();
         str = "Dimension:\t";
-        str.Append(width);
+        str.AppendInt(width);
         str.Append(" x ");
-        str.Append(height);
+        str.AppendInt(height);
         str.Append(", ");
-        str.Append(numMipLevels);
+        str.AppendInt(numMipLevels);
         str.Append(" mip levels");
         infoField->AppendLine(str.Get());
 

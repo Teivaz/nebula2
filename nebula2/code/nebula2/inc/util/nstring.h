@@ -27,9 +27,7 @@ public:
     /// constructor
     nString();
     /// constructor 1
-    nString(const char*str);
-    /// constructor with int value
-    nString(int val);
+    nString(const char* str);
     /// copy constructor
     nString(const nString& rhs);
     /// destructor
@@ -47,25 +45,39 @@ public:
     /// Is `a' inequal to `b'?
     friend bool operator != (const nString& a, const nString& b);
     /// Subscript operator (read only).
-    const char operator [] (int i) const;
+    const char operator[](int i) const;
     /// Subscript operator (writeable).
-    char& operator [] (int i);
+    char& operator[](int i);
     /// set as char ptr, with explicit length
     void Set(const char* ptr, int length);
     /// set as char ptr
     void Set(const char* str);
-    /// set int value
-    void Set(int val);
+    /// set as int value
+    void SetInt(int val);
+    /// set as float value
+    void SetFloat(float val);
     /// get string as char ptr
     const char* Get() const;
+    /// return content as integer
+    int AsInt() const;
+    /// return content as float
+    float AsFloat() const;
     /// return length of string
     int Length() const;
+    /// clear the string
+    void Clear();
     /// return true if string object is empty
     bool IsEmpty() const;
-    /// append string pointer
+    /// append character pointer
     void Append(const char* str);
     /// append string
     void Append(const nString& str);
+    /// append a range of characters
+    void AppendRange(const char* str, ushort numChars);
+    /// append int value
+    void AppendInt(int val);
+    /// append float value
+    void AppendFloat(float val);
     /// convert string to lower case
     void ToLower();
     /// get first token (this will destroy the string)
@@ -78,6 +90,24 @@ public:
     nString ExtractRange(int from, int to) const;
     /// terminate string at first occurence of character in set
     void Strip(const char* charSet);
+    /// Index of first appearance of `v' starting from index `startIndex'.
+    int IndexOf(const nString& v, int startIndex) const;
+    /// return index of character in string
+    int FindChar(unsigned char c, int startIndex) const;
+    /// terminate string at given index
+    void TerminateAtIndex(int index);
+    /// strip slash at end of path, if exists
+    void StripTrailingSlash();
+    /// delete characters from charset at left side of string
+    nString TrimLeft(const char* charSet) const;
+    /// delete characters from charset at right side of string
+    nString TrimRight(const char* charSet) const;
+    /// trim characters from charset at both sides of string
+    nString Trim(const char* charSet) const;
+    /// substitute every occurance of a string with another string
+    nString Substitute(const char* str, const char* substStr) const;
+    /// convert string inplace from UTF-8 to 8-bit ANSI
+    void UTF8toANSI();
 
 protected:
     /// copy contents
@@ -99,7 +129,8 @@ protected:
 */
 inline
 nString::nString() :
-    string(0)
+    string(0),
+    strLen(0)
 {
     this->localString[0] = 0;
 }
@@ -178,10 +209,22 @@ nString::Set(const char* str)
 */
 inline
 void
-nString::Set(int val)
+nString::SetInt(int val)
 {
     char buf[128];
-    sprintf(buf, "%d", val);
+    snprintf(buf, sizeof(buf), "%d", val);
+    this->Set(buf);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::SetFloat(float val)
+{
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%.6f", val);
     this->Set(buf);
 }
 
@@ -205,9 +248,10 @@ nString::Copy(const nString& src)
 */
 inline
 nString::nString(const char* str) :
-    string(0)
+    string(0),
+    strLen(0)
 {
-    n_assert(str);
+    this->localString[0] = 0;
     this->Set(str);
 }
 
@@ -216,19 +260,11 @@ nString::nString(const char* str) :
 */
 inline
 nString::nString(const nString& rhs) :
-    string(0)
+    string(0),
+    strLen(0)
 {
+    this->localString[0] = 0;
     this->Copy(rhs);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(int val) :
-    string(0)
-{
-    this->Set(val);
 }
 
 //------------------------------------------------------------------------------
@@ -283,37 +319,55 @@ nString::operator=(const char* rhs)
 */
 inline
 void
-nString::Append(const char* str)
+nString::AppendRange(const char* str, ushort numChars)
 {
-    ushort rlen = strlen(str);
-    ushort tlen = this->strLen + rlen;
-    if (this->string)
+    n_assert(str);
+    if (numChars > 0)
     {
-        char* ptr = (char*) n_malloc(tlen + 1);
-        strcpy(ptr, this->string);
-        strcat(ptr, str);
-        n_free((void*) this->string);
-        this->string = ptr;
-        this->strLen = tlen;
-    }
-    else if (this->localString[0])
-    {
-        if (tlen >= LOCALSTRINGSIZE)
+        ushort rlen = numChars;
+        ushort tlen = this->strLen + rlen;
+        if (this->string)
         {
             char* ptr = (char*) n_malloc(tlen + 1);
-            strcpy(ptr, this->localString);
-            strcat(ptr, str);
-            this->localString[0] = 0;
+            strcpy(ptr, this->string);
+            strncat(ptr, str, numChars);
+            n_free((void*) this->string);
             this->string = ptr;
+            this->strLen = tlen;
+        }
+        else if (this->localString[0])
+        {
+            if (tlen >= LOCALSTRINGSIZE)
+            {
+                char* ptr = (char*) n_malloc(tlen + 1);
+                strcpy(ptr, this->localString);
+                strncat(ptr, str, numChars);
+                this->localString[0] = 0;
+                this->string = ptr;
+            }
+            else
+            {
+                strncat(this->localString, str, numChars);
+            }
+            this->strLen = tlen;
         }
         else
         {
-            strcat(this->localString, str);
+            this->Set(str, numChars);
         }
-        this->strLen = tlen;
     }
-    else
-        this->Set(str);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::Append(const char* str)
+{
+    n_assert(str);
+    ushort rlen = strlen(str);
+    this->AppendRange(str, rlen);
 }
 
 //------------------------------------------------------------------------------
@@ -324,6 +378,30 @@ void
 nString::Append(const nString& str)
 {
     this->Append(str.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::AppendInt(int val)
+{
+    nString str;
+    str.SetInt(val);
+    this->Append(str);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::AppendFloat(float val)
+{
+    nString str;
+    str.SetFloat(val);
+    this->Append(str);
 }
 
 //------------------------------------------------------------------------------
@@ -373,15 +451,17 @@ operator != (const nString& a, const nString& b)
 */
 inline
 const char
-nString::operator [] (int i) const
+nString::operator[](int i) const
 {
-    n_assert(0 <= i && i <= strLen - 1);
-   if (string != 0)
+    n_assert((0 <= i) && (i <= (strLen - 1)));
+    if (this->string != 0)
     {
-        return string[i];
+        return this->string[i];
     }
-
-    return localString[i];
+    else
+    {
+        return this->localString[i];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -389,15 +469,17 @@ nString::operator [] (int i) const
 */
 inline
 char&
-nString::operator [] (int i)
+nString::operator[](int i)
 {
-    n_assert(0 <= i && i <= strLen - 1);
-    if (string != 0)
+    n_assert((0 <= i) && (i <= (strLen - 1)));
+    if (this->string != 0)
     {
-        return string[i];
+        return this->string[i];
     }
-
-    return localString[i];
+    else
+    {
+        return this->localString[i];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -408,6 +490,16 @@ int
 nString::Length() const
 {
     return this->strLen;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::Clear()
+{
+    this->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -565,6 +657,305 @@ nString::Strip(const char* charSet)
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    @result Index or -1 if not found.
+*/
+inline
+int
+nString::IndexOf(const nString& v, int startIndex) const
+{
+    n_assert(0 <= startIndex && startIndex <= Length() - 1);
+    n_assert(!v.IsEmpty());
+
+    for (int i = startIndex; i < Length(); i++)
+    {
+        if (Length() - i < v.Length())
+        {
+            break;
+        }
+
+        if (strncmp(&(Get()[i]), v.Get(), v.Length()) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return index of character in string, or -1 if not found.
+*/
+inline
+int
+nString::FindChar(unsigned char c, int startIndex) const
+{
+    if (this->Length() > 0)
+    {
+        n_assert(startIndex < this->Length());
+        const char* ptr = strchr(this->Get() + startIndex, c);
+        if (ptr)
+        {
+            return ptr - this->Get();
+        }
+    }
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Terminates the string at the given index.
+*/
+inline
+void
+nString::TerminateAtIndex(int index)
+{
+    n_assert(index < this->Length());
+    char* ptr = (char*) this->Get();
+    ptr[index] = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Strips last slash, if the path name ends on a slash.
+*/
+inline
+void
+nString::StripTrailingSlash()
+{
+    if (this->strLen > 0)
+    {
+        int pos = strLen - 1;
+        char* str = (char*) this->Get();
+        if ((str[pos] == '/') || (str[pos] == '\\'))
+        {
+            str[pos] = 0;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns a new string which is this string, stripped on the left side 
+    by all characters in the char set.
+*/
+inline
+nString
+nString::TrimLeft(const char* charSet) const
+{
+    n_assert(charSet);
+    if (this->IsEmpty())
+    {
+        return *this;
+    }
+
+    int charSetLen = strlen(charSet);
+    int thisIndex = 0;
+    bool stopped = false;
+    while (!stopped && (thisIndex < this->strLen))
+    {
+        int charSetIndex;
+        bool match = false;
+        for (charSetIndex = 0; charSetIndex < charSetLen; charSetIndex++)
+        {
+            if ((*this)[thisIndex] == charSet[charSetIndex])
+            {
+                // a match
+                match = true;
+                break;
+            }
+        }
+        if (!match)
+        {
+            // stop if no match
+            stopped = true;
+        }
+        else
+        {
+            // a match, advance to next character
+            ++thisIndex;
+        }
+    }
+    nString trimmedString(&(this->Get()[thisIndex]));
+    return trimmedString;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns a new string, which is this string, stripped on the right side 
+    by all characters in the char set.
+*/
+inline
+nString
+nString::TrimRight(const char* charSet) const
+{
+    n_assert(charSet);
+    if (this->IsEmpty())
+    {
+        return *this;
+    }
+
+    int charSetLen = strlen(charSet);
+    int thisIndex = this->strLen - 1;
+    bool stopped = false;
+    while (!stopped && (thisIndex < this->strLen))
+    {
+        int charSetIndex;
+        bool match = false;
+        for (charSetIndex = 0; charSetIndex < charSetLen; charSetIndex++)
+        {
+            if ((*this)[thisIndex] == charSet[charSetIndex])
+            {
+                // a match
+                match = true;
+                break;
+            }
+        }
+        if (!match)
+        {
+            // stop if no match
+            stopped = true;
+        }
+        else
+        {
+            // a match, advance to next character
+            --thisIndex;
+        }
+    }
+    nString trimmedString;
+    trimmedString.Set(this->Get(), thisIndex + 1);
+    return trimmedString;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Trim both sides of a string.
+*/
+inline
+nString
+nString::Trim(const char* charSet) const
+{
+    return this->TrimLeft(charSet).TrimRight(charSet);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Substitute every occurance of origStr with substStr.
+*/
+inline
+nString
+nString::Substitute(const char* matchStr, const char* substStr) const
+{
+    n_assert(matchStr && substStr);
+
+    const char* ptr = this->Get();
+    int matchStrLen = strlen(matchStr);
+    nString dest;
+
+    // walk original string for occurances of str
+    const char* occur;
+    while (occur = strstr(ptr, matchStr))
+    {
+        // append string fragment until match
+        dest.AppendRange(ptr, occur - ptr);
+
+        // append replacement string
+        dest.Append(substStr);
+
+        // adjust source pointer
+        ptr = occur + matchStrLen;
+    }
+    dest.Append(ptr);
+    return dest;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as integer.
+*/
+inline
+int
+nString::AsInt() const
+{
+    const char* ptr = this->Get();
+    return atoi(ptr);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as float.
+*/
+inline
+float
+nString::AsFloat() const
+{
+    const char* ptr = this->Get();
+    return float(atof(ptr));
+}
+
+//------------------------------------------------------------------------------
+/**
+    This converts an UTF-8 string to 8-bit-ANSI. Note that only characters
+    in the range 0 .. 255 are converted, all other characters will be converted
+    to a question mark.
+
+    For conversion rules see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+*/
+inline
+void
+nString::UTF8toANSI()
+{
+    uchar* src = (uchar*) this->Get();
+    uchar* dst = src;
+    uchar c;
+    while (c = *src++)
+    {
+        if (c >= 0x80)
+        {
+            if ((c & 0xE0) == 0xC0)
+            {
+                // a 2 byte sequence with 11 bits of information
+                ushort wide = ((c & 0x1F) << 6) | (*src++ & 0x3F);
+                if (wide > 0xff)
+                {
+                    c = '?';
+                }
+                else
+                {
+                    c = (uchar) wide;
+                }
+            }
+            else if ((c & 0xF0) == 0xE0)
+            {
+                // a 3 byte sequence with 16 bits of information
+                c = '?';
+                src += 2;
+            }
+            else if ((c & 0xF8) == 0xF0)
+            {
+                // a 4 byte sequence with 21 bits of information
+                c = '?';
+                src += 3;
+            }
+            else if ((c & 0xFC) == 0xF8)
+            {
+                // a 5 byte sequence with 26 bits of information
+                c = '?';
+                src += 4;
+            }
+            else if ((c & 0xFE) == 0xFC)
+            {
+                // a 6 byte sequence with 31 bits of information
+                c = '?';
+                src += 5;
+            }
+        }
+        *dst++ = c;
+    }
+    *dst = 0;
+}
 //------------------------------------------------------------------------------
 #endif
 
