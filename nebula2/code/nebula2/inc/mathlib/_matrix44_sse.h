@@ -83,7 +83,7 @@ public:
     /// quick multiplication, assumes that M14==M24==M34==0 and M44==1
     void mult_simple(const _matrix44_sse& m1);
     /// transform vector3, projecting back into w=1
-    _vector3 transform_coord(const _vector3 v) const;
+    _vector3_sse transform_coord(const _vector3_sse v) const;
     /// return x component
     _vector3_sse x_component() const;
     /// return y component
