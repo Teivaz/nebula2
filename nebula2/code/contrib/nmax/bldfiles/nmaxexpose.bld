@@ -3,12 +3,15 @@
 # 
 #   Build file for nmaxexpose package.
 #
-#   Modules: nmaxexpose
-#   Targets: nmaxexpose
+#   Modules: 
+#       - nmaxexpose
+#       - nmaxscript
+#   Targets:
 #   
 #   (C) 2004 Kim, Hyoun Woo
 #-------------------------------------------------------------------------------
 beginmodule nmaxexpose
+    annotate "nebula2 3dsmax script function expose system."
     settype cpp
     setplatform win32
     setdir expose
@@ -18,21 +21,24 @@ beginmodule nmaxexpose
     setlibs_win32 { maxutil.lib core.lib maxscrpt.lib }
 endmodule
 #-------------------------------------------------------------------------------
-begintarget nmaxexpose
-    settype dll
-    changedllextension dlu
-    setmodules { 
-        nmaxexpose 
-        nmaxlistener
-        nmaxdll 
+beginmodule nmaxscript
+    annotate "module for converting nebula2 object to 3dsmax custom attributes."
+    settype cpp
+    setplatform win32
+    setdir expose
+    setfiles {
+        nmaxscript_builder 
+        nmaxscript_callables 
+        nmaxscript_objattr 
+        nmaxscript_params
     }
-    settargetdeps { 
-        nmaxbase 
-        nkernel 
-        microtcl 
-        nnebula 
+    setheaders {
+        nmaxscriptbuilder
+        nmaxscriptobjattr
+        nmaxscriptparams
     }
-endtarget
+    setlibs_win32 { maxutil.lib core.lib maxscrpt.lib }
+endmodule
 #-------------------------------------------------------------------------------
 # EOF
 #-------------------------------------------------------------------------------
