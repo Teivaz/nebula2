@@ -100,7 +100,7 @@ void nCleanupPathName(char* path)
 /**
 Return path to current working dir.
 
-@param buf		buffer to store absolute path in
+@param buf      buffer to store absolute path in
 @param buflen   length of buffer 
 
 @return     path to current working dir
@@ -123,8 +123,8 @@ const char* nGetCwd(char* buf, int buflen)
 /**
 makes an absolute path out of a relative one
 
-@param path		the relative path (may already be absolute)
-@param buf		buffer to store absolute path in
+@param path     the relative path (may already be absolute)
+@param buf      buffer to store absolute path in
 @param buflen   length of buffer 
 */
 void nMakeAbsolute(const char* path, char* buf, int buflen)

@@ -271,7 +271,6 @@ nGfxServer2::SetRenderTarget(nTexture2* t)
 
     @param  stream      vertex stream index 
     @param  mesh        pointer to a nMesh2 object
-    @param  groupIndex  group index of vertex/index group to render in mesh
 */
 void
 nGfxServer2::SetMesh(int stream, nMesh2* mesh)

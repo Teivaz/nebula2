@@ -8,7 +8,7 @@
 #include "gfx2/nd3d9texture.h"
 #include "gfx2/nd3d9surface.h"
 
-nNebulaClass(nD3D9Surface, "nsurface")
+nNebulaClass(nD3D9Surface, "nsurface");
 
 D3DFORMAT getD3DFormat(nTexture2::Format format);
 

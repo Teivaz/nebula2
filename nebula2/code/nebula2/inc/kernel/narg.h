@@ -232,7 +232,7 @@ nArg::nArg() :
 /**
     The copy constructor simply calls nArg::Copy()
 
-    @param arg reference to nArg object to be copied
+    @param rhs reference to nArg object to be copied
 */
 inline 
 nArg::nArg(const nArg& rhs) :

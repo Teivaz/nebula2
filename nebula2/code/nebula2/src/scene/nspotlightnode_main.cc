@@ -88,7 +88,7 @@ nSpotLightNode::SetOrthogonal(float w, float h, float nearp, float farp)
 
     @param  sceneServer         pointer to the scene server object rendering this node
     @param  renderContext       pointer to the render context for this node
-    @param  lightView           this node's model matrix
+    @param  lightTransform      this node's model matrix
 */
 bool
 nSpotLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)

@@ -593,8 +593,8 @@ nMeshBuilder::CountVerticesInBBox(const bbox3& box) const
 
     @param  clipPlane       [in] a clip plane
     @param  groupId         [in] defines triangle group to split
-    @param  posGroupIndex       [in] group id to use for the positive group
-    @param  negGroupIndex       [in] group id to use for the negative group
+    @param  posGroupId      [in] group id to use for the positive group
+    @param  negGroupId      [in] group id to use for the negative group
     @param  numPosTriangles     [out] resulting num of triangles in positive group
     @param  numNegTriangles     [out] resulting num of triangles in negative group
 */
