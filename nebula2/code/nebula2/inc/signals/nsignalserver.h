@@ -42,7 +42,7 @@ public:
     void Trigger(nTime t);
 
     /// Post a signals and commands for later execution by the signal server
-    bool PostCmd(nTime t, nObject * emitter, nCmd * cmd);
+    bool PostCmd(nTime relT, nObject * emitter, nCmd * cmd);
 
 protected:
 

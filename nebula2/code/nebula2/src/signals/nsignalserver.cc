@@ -8,6 +8,7 @@
 #include "kernel/ncmd.h"
 #include "signals/nsignalserver.h"
 #include "signals/nsignalemitter.h"
+#include "kernel/ntimeserver.h"
 
 //------------------------------------------------------------------------------
 nSignalServer* nSignalServer::Singleton = 0;
@@ -40,11 +41,14 @@ nSignalServer::Trigger(nTime t)
 
 //------------------------------------------------------------------------------
 bool
-nSignalServer::PostCmd(nTime t, nObject * object, nCmd * cmd)
+nSignalServer::PostCmd(nTime relT, nObject * object, nCmd * cmd)
 {
     nPostedSignal * postedSignal = static_cast<nSignalServer::nPostedSignal *> (this->freeSignals.GetHead());
     if (postedSignal)
     {
+        // convert relative time in absolute time
+        nTime t = relT + nTimeServer::Instance()->GetFrameTime();
+
         // look for the insertion point (sorted by time t)
         nSignalServer::nPostedSignal * insertPoint = static_cast<nSignalServer::nPostedSignal *> (this->postedSignals.GetHead());
         while (insertPoint && insertPoint->t < t)

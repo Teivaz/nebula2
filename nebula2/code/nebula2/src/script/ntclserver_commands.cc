@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "script/ntclserver.h"
 #include "signals/nsignalserver.h"
-#include "kernel/ntimeserver.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -963,8 +962,13 @@ tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 //------------------------------------------------------------------------------
 /**
     Post signal and commands (post command). Examples:
-    post time object.signal arg1 arg2 arg3  (for object currently selected)
-    post time object.signal arg1 arg2 arg3
+    post time .signal arg1 arg2 arg3  (for object currently selected)
+    post time object.signal arg1 arg2 arg3 (for any object)
+
+    - time is always relative time in seconds from the present time
+        - time 0 will be the next invocation of the signal server
+        - time 1.5 will be one and a half seconds from now (aprox.)
+    - signal can be either be a signal name or command name
 */
 int 
 tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -981,11 +985,7 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 
     // extract time and convert time
     n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
-    nTime t = atof(cmd);
-    if (cmd[0] == '+')
-    {
-        t += nTimeServer::Instance()->GetFrameTime();
-    }
+    nTime relT = atof(cmd);
 
     // extract object name and cmd name
     n_strncpy2(cmd, Tcl_GetString(objv[2]), sizeof(cmd));
@@ -1038,12 +1038,12 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     // invoke command
     nClass *cl = o->GetClass();
     nCmdProto *cmd_proto = (nCmdProto *) cl->FindSignalByName(cmd_name);
-    if (!cmd_proto)
+    if (0 == cmd_proto)
     {
         cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
     }
     if (cmd_proto) 
-    {     
+    {
         nCmd *cmd = cmd_proto->NewCmd();
         n_assert(cmd);
 
@@ -1064,12 +1064,13 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
             return TCL_ERROR;            
         }
 
-        if (signalServer->PostCmd(t, o, cmd))
+        if (signalServer->PostCmd(relT, o, cmd))
         {
             retval = TCL_OK;
         }
         else
         {
+            cmd_proto->RelCmd(cmd);
             tcl_objcmderror(interp,tcl,"Post error, object '%s', command/signal '%s'",o,cmd_name);
         }
     } 

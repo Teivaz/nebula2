@@ -285,17 +285,18 @@ nSignalEmitter::UnbindAllSignals()
 
 //------------------------------------------------------------------------------
 /**
-    Post signal for execution at time <tt>t</tt> with the provided object pointer and va_list
+    Post signal for execution at relative time <tt>relT</tt> with the provided 
+    object pointer and va_list
 */
 bool
-nSignalEmitter::PostSignal(nTime t, nSignal * signal, va_list args)
+nSignalEmitter::PostSignal(nTime relT, nSignal * signal, va_list args)
 {
     n_assert(signal);
 
     nCmd * cmd = signal->NewCmd();
     n_assert(cmd);
     cmd->CopyInArgsFrom(args);
-    bool ret = nSignalServer::Instance()->PostCmd(t, static_cast<nObject *>(this), cmd);
+    bool ret = nSignalServer::Instance()->PostCmd(relT, static_cast<nObject *>(this), cmd);
     return ret;
 }
 
