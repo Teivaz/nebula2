@@ -425,20 +425,19 @@ nMesh2::CreateEmpty()
     "ReadOnly|NeedsVertexShader|"
     (includes a trailing '|')
 */
-
-nString nMesh2::ConvertUsageFlagsToString( int usageFlags )
+nString
+nMesh2::ConvertUsageFlagsToString( int usageFlags )
 {
     nString usageString;
-    if( usageFlags )
+    if (usageFlags)
     {
-        if( usageFlags & nMesh2::WriteOnce ) usageString += "WriteOnce|";
-        else if( usageFlags & nMesh2::ReadOnly ) usageString += "ReadOnly|";
-        else if( usageFlags & nMesh2::WriteOnly ) usageString += "WriteOnly|";
-        else if( usageFlags & nMesh2::NPatch ) usageString += "NPatch|";
-        else if( usageFlags & nMesh2::RTPatch ) usageString += "RTPatch|";
-        else if( usageFlags & nMesh2::PointSprite ) usageString += "PointSprite|";
-        else if( usageFlags & nMesh2::NeedsVertexShader ) usageString += "NeedsVertexShader|";
-        else n_error( "Invalid usage flags %d in n_getmeshusage (nShapeNode)!", usageFlags );
+        if (usageFlags & nMesh2::WriteOnce) usageString += "WriteOnce|";
+        if (usageFlags & nMesh2::ReadOnly) usageString += "ReadOnly|";
+        if (usageFlags & nMesh2::WriteOnly) usageString += "WriteOnly|";
+        if (usageFlags & nMesh2::NPatch) usageString += "NPatch|";
+        if (usageFlags & nMesh2::RTPatch) usageString += "RTPatch|";
+        if (usageFlags & nMesh2::PointSprite) usageString += "PointSprite|";
+        if (usageFlags & nMesh2::NeedsVertexShader) usageString += "NeedsVertexShader|";
     }
     return usageString;
 }
@@ -449,25 +448,51 @@ nString nMesh2::ConvertUsageFlagsToString( int usageFlags )
     into the corresponding integer representation.
     Trailing '|'s are ignored, as is case.
 */
-int nMesh2::ConvertUsageStringToFlags( const char* usageFlagsString )
+int
+nMesh2::ConvertUsageStringToFlags(const char* usageFlagsString)
 {
     int usage = 0;
     nString workingString = usageFlagsString;
-    if( !workingString.IsEmpty() )
+    if (!workingString.IsEmpty())
     {
         workingString.ToLower();
         const char* flagString = workingString.GetFirstToken( "|" );
         while (flagString)
         {   
-            if( !strcmp( flagString, "writeonce" ) ) usage |= nMesh2::WriteOnce;
-            else if( !strcmp( flagString, "readonly" ) ) usage |= nMesh2::ReadOnly;
-            else if( !strcmp( flagString, "writeonly" ) ) usage |= nMesh2::WriteOnly;
-            else if( !strcmp( flagString, "npatch" ) ) usage |= nMesh2::NPatch;
-            else if( !strcmp( flagString, "rtpatch" ) ) usage |= nMesh2::RTPatch;
-            else if( !strcmp( flagString, "pointsprite" ) ) usage |= nMesh2::PointSprite;
-            else if( !strcmp( flagString, "needsvertexshader" ) ) usage |= nMesh2::NeedsVertexShader;
-            else n_error( "Invalid flag string '%s' in n_setmeshusage (nShapeNode)!", flagString );
-            flagString = workingString.GetNextToken( "|" );
+            if (!strcmp(flagString, "writeonce"))
+            {
+                usage |= nMesh2::WriteOnce;
+            }
+            else if (!strcmp(flagString, "readonly"))
+            {
+                usage |= nMesh2::ReadOnly;
+            }
+            else if (!strcmp(flagString, "writeonly"))
+            {
+                usage |= nMesh2::WriteOnly;
+            }
+            else if (!strcmp(flagString, "npatch"))
+            {
+                usage |= nMesh2::NPatch;
+            }
+            else if (!strcmp(flagString, "rtpatch"))
+            {
+                usage |= nMesh2::RTPatch;
+            }
+            else if (!strcmp(flagString, "pointsprite"))
+            {
+                usage |= nMesh2::PointSprite;
+            }
+            else if (!strcmp(flagString, "needsvertexshader"))
+            {
+                usage |= nMesh2::NeedsVertexShader;
+            }
+            else
+            {
+                n_error("nMesh2::ConvertUsageStringToFlags: "
+                        "Invalid flag string '%s' in ", flagString);
+            }
+            flagString = workingString.GetNextToken("|");
         }
     }
     return usage;
