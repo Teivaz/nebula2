@@ -48,7 +48,7 @@ nCamera2::nCamera2() :
     angleOfView(60.0f),
     aspectRatio(4.0f / 3.0f),
     nearPlane(0.1f),
-    farPlane(100.0f)
+    farPlane(500.0f)
 {
     // empty
 }
