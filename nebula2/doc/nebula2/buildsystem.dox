@@ -19,12 +19,12 @@
       - module : A group of header and source files which can contain the source for an nRoot 
                  derived class and/or arbitrary code.
       - target : An executable (.exe), static library (.lib) or dynamic library (.dll)
-      
+      .
     One thing to remember about modules is that there can only be one nRoot derived class per
     module. Therefore, you cannot have more than one source file (.cc) that contains the 
     nNebulaScriptClass or nNebulaClass macro in any one module.
 
-    @see see @ref NebulaWritingClass for more details about nNebulaClass/nNebulaScriptClass and 
+    @see @ref NebulaWritingClass for more details about nNebulaClass/nNebulaScriptClass and 
          nRoot derived classes.
 
     The build system uses $home/update.tcl in combination with $home/buildsys/*.tcl to 
@@ -32,6 +32,7 @@
     - $home/code/nebula2/bldfiles and its subdirectories
     - $home/code/*/bldfiles
     - $home/code/contrib/*/bldfiles
+    .
     and generates workspaces/solutions/projects/makefiles in $home/build/[compiler]. 
     
     Normally, to create your own project, all you need is to create a bunch of .bld files
@@ -115,8 +116,9 @@ endworkspace
 
       <tr>
         <td>beginworkspace</td><td>name</td><td>no default</td>
-        <td>Workspaces are containers for targets, a target can be listed in any number of workspaces 
-        (or none at all). The name of your workspace must be unique among all the workspaces that the
+        <td>Begins a workspace definition with the specified name. Workspaces are containers 
+        for targets, a target can be listed in any number of workspaces (or none at all). 
+        The name of your workspace must be unique among all the workspaces that the
         build system finds.</td>
       </tr>
       
@@ -160,7 +162,8 @@ endworkspace
       </tr>
       
       <tr>
-        <td>endworkspace</td><td></td><td></td><td></td>
+        <td>endworkspace</td><td></td><td></td>
+        <td>Ends the workspace definition.</td>
       </tr>
     </table>
 
@@ -172,7 +175,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>begintarget</td> <td>name</td> <td>no default</td><td></td>
+        <td>begintarget</td> <td>name</td> <td>no default</td>
+        <td>Begins a target definition with the specified name.</td>
       </tr>
 
       <tr>
@@ -217,7 +221,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>endtarget</td><td></td><td></td><td></td>
+        <td>endtarget</td><td></td><td></td>
+        <td>Ends the target definition.</td>
       </tr>
 
     </table>
@@ -230,7 +235,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>beginmodule</td> <td>name</td> <td>no default</td> <td></td>
+        <td>beginmodule</td> <td>name</td> <td>no default</td> 
+        <td>Begins a module definition with the specified name.</td>
       </tr>
 
       <tr>
@@ -322,7 +328,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>endmodule</td><td></td><td></td><td></td>
+        <td>endmodule</td><td></td><td></td>
+        <td>Ends the module definition.</td>
       </tr>
 
     </table>
@@ -335,7 +342,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>beginbundle</td> <td>$name</td> <td>no default</td> <td></td>
+        <td>beginbundle</td> <td>$name</td> <td>no default</td> 
+        <td>Begins a bundle definition with the specified name.</td>
       </tr>
 
       <tr>
@@ -355,7 +363,8 @@ endworkspace
       </tr>
 
       <tr>
-        <td>endbundle</td><td></td><td></td><td></td>
+        <td>endbundle</td><td>-</td><td>-</td>
+        <td>Ends the bundle definition.</td>
       </tr>
 
     </table>
