@@ -164,7 +164,7 @@ public:
 #define N_OCT_MAXRADIUS (199999.0f)
 
 class nGfxServer2;
-class N_PUBLIC nOctree : public nRoot {
+class nOctree : public nRoot {
 protected:
     enum {
         N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool 
@@ -201,8 +201,6 @@ public:
 
     nOctree();
     virtual ~nOctree();
-
-    void InitClipPlanes(const nCamera2* camera);
 
     virtual void SetSubdivNum(int);
     virtual int GetSubdivNum(void);
@@ -244,7 +242,7 @@ protected:
     void recurse_collect_by_bbox(nOctNode *);
 
     // CollectByFrustum methods
-    void transform_clip_planes_for_frustum(nGfxServer2* gfx_server);
+    void init_clip_planes_for_frustum(nGfxServer2* gfx_server);
     void recurse_collect_within_clip_planes(nOctNode* on, unsigned int clip_mask);
     bool box_clip_against_clip_planes(vector3& p0, vector3& p1, vector4* planes,
                                       unsigned int& out_clip_mask,
