@@ -4,8 +4,6 @@
 //------------------------------------------------------------------------------
 #include "gfx2/nd3d9server.h"
 #include "kernel/nenv.h"
-#include "il/il.h"
-#include "il/ilu.h"
 #include "kernel/nfileserver2.h"
 
 nNebulaClass(nD3D9Server, "ngfxserver2");
@@ -69,10 +67,6 @@ nD3D9Server::nD3D9Server() :
         env->SetI((int)this->hWnd);
     }
 
-    // initialize DevIL
-    ilInit();
-    iluInit();
-
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     this->D3dOpen();
 }
@@ -88,7 +82,6 @@ nD3D9Server::~nD3D9Server()
         this->CloseDisplay();
     }
     this->D3dClose();
-    ilShutDown();
     this->WindowClose();
     n_assert(this->textNodeList.IsEmpty());
 }
