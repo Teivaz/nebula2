@@ -36,15 +36,20 @@ vector3 nSceneServer::viewerPos;
 /**
 */
 nSceneServer::nSceneServer() :
-    refGfxServer("/sys/servers/gfx"),
+    isOpen(false),
     inBeginScene(false),
     groupArray(512, 1024),
     lightArray(64, 128),
+    shadowArray(512, 1024),
     stackDepth(0),
     shapeBucket(0, 1024),
     bgColor(0.5f, 0.5f, 0.5f, 1.0f)
 {
-    memset(this->groupStack, 0, sizeof(this->groupStack));
+    n_assert(0 == Singleton);
+    Singleton = this;
+
+    this->groupStack.SetSize(MaxHierarchyDepth);
+    this->groupStack.Clear(0);
     self = this;
 }
 
@@ -54,6 +59,39 @@ nSceneServer::nSceneServer() :
 nSceneServer::~nSceneServer()
 {
     n_assert(!this->inBeginScene);
+    n_assert(Singleton);
+    Singleton = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Open the scene server. This initializes the embedded render path
+    object.
+*/
+bool
+nSceneServer::Open()
+{
+    n_assert(!this->isOpen);
+    
+    // read the renderpath definition file
+    this->renderPath.SetFilename("shaders:renderpath.xml");
+    bool renderPathOpened = this->renderPath.Open();
+    n_assert(renderPathOpened);
+
+    this->isOpen = true;
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Close the scene server.
+*/
+void
+nSceneServer::Close()
+{
+    n_assert(this->isOpen);
+    this->renderPath.Close();
+    this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------
@@ -79,19 +117,24 @@ nSceneServer::IsShaderUsed(uint /*fourcc*/) const
     Begin building the scene. Must be called once before attaching 
     nSceneNode hierarchies using nSceneServer::Attach().
 
-    @param  invView      the viewer position and orientation
+    @param  viewer      the viewer position and orientation
 */
 bool
 nSceneServer::BeginScene(const matrix44& invView)
 {
+    n_assert(this->isOpen);
     n_assert(!this->inBeginScene);
 
+    this->stackDepth = 0;
+    this->groupStack.Clear(0);
+    this->shapeBucket.Clear();
     this->groupArray.Reset();
     this->lightArray.Reset();
-    this->stackDepth = 0;
+    this->shadowArray.Reset();
+
     matrix44 view = invView;
     view.invert_simple();
-    this->refGfxServer->SetTransform(nGfxServer2::View, view);
+    nGfxServer2::Instance()->SetTransform(nGfxServer2::View, view);
     this->inBeginScene = true;
 
     return true;
@@ -144,18 +187,18 @@ nSceneServer::BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext)
     bool isTopLevel;
     if (0 == this->stackDepth)
     {
-        group.parent = 0;
+        group.parentIndex = -1;
         isTopLevel = true;
     }
     else
     {
-        group.parent = this->groupStack[this->stackDepth - 1];
+        group.parentIndex = this->groupStack[this->stackDepth - 1];
         isTopLevel = false;
     }
     this->groupArray.Append(group);
 
     // push pointer to group onto hierarchy stack
-    this->groupStack[this->stackDepth] = &(this->groupArray.Back());
+    this->groupStack[this->stackDepth] = this->groupArray.Size() - 1;
     ++this->stackDepth;
 
     // immediately call the scene node's RenderTransform method
@@ -166,7 +209,7 @@ nSceneServer::BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext)
     }
     else
     {
-        sceneNode->RenderTransform(this, renderContext, group.parent->modelTransform);
+        sceneNode->RenderTransform(this, renderContext, this->groupArray[group.parentIndex].modelTransform);
     }
 }
 
@@ -208,50 +251,13 @@ nSceneServer::PresentScene()
 
 //------------------------------------------------------------------------------
 /**
-    This sets standard parameters, like the various matrices in the
-    provided shader object. Provided to subclasses as a convenience method.
-*/
-void
-nSceneServer::UpdateShader(nShader2* shd, nRenderContext* renderContext)
-{
-    n_assert(shd);
-    n_assert(renderContext);
-
-    // write global parameters the shader
-    nGfxServer2* gfxServer = this->refGfxServer.get();
-    const matrix44& invModelView  = refGfxServer->GetTransform(nGfxServer2::InvModelView);
-    if (shd->IsParameterUsed(nShaderState::Time))
-    {
-        nTime time = this->kernelServer->GetTimeServer()->GetTime();
-        shd->SetFloat(nShaderState::Time, float(time));
-    }
-
-    // FIXME: this should be a shared shader parameter
-    if (shd->IsParameterUsed(nShaderState::DisplayResolution))
-    {
-        const nDisplayMode2& mode = gfxServer->GetDisplayMode();
-        nFloat4 dispRes;
-        dispRes.x = (float) mode.GetWidth();
-        dispRes.y = (float) mode.GetHeight();
-        dispRes.z = 0.0f;
-        dispRes.w = 0.0f;
-        shd->SetFloat4(nShaderState::DisplayResolution, dispRes);
-    }
-
-    // set shader overrides
-    shd->SetParams(renderContext->GetShaderOverrides());
-}
-
-//------------------------------------------------------------------------------
-/** 
     Split the collected scene nodes into light and shape nodes. Fills
     the lightArray[] and shapeArray[] members. This method is available
     as a convenience method for subclasses.
 */  
 void
 nSceneServer::SplitNodes(uint shaderFourCC)
-{   
-    this->shapeBucket.Clear();
+{
     ushort i;
     ushort num = this->groupArray.Size();
     for (i = 0; i < num; i++)
@@ -265,13 +271,24 @@ nSceneServer::SplitNodes(uint shaderFourCC)
             nShader2* shader = shapeNode->GetShaderObject(shaderFourCC);
             if (shader)
             {
-                uint shaderBucket = shader->GetShaderIndex();
-                this->shapeBucket[shaderBucket].Append(i);
+                int shaderIndex = shader->GetShaderIndex();
+                if (shaderIndex > -1)
+                {
+                    this->shapeBucket[shaderIndex].Append(i);
+                }
+                else
+                {
+                    n_printf("Trying to render shader '%s' through scene server,\nwhich is not defined in renderpath xml file!", shader->GetFilename());
+                }
             }
         }
         if (group.sceneNode->HasLight())
         {
             this->lightArray.Append(i);
+        }
+        if (group.sceneNode->HasShadow())
+        {
+            this->shadowArray.Append(i);
         }
     }
 }
@@ -353,7 +370,7 @@ void
 nSceneServer::SortNodes()
 {
     // initialize the static viewer pos vector
-    viewerPos = this->refGfxServer->GetTransform(nGfxServer2::InvView).pos_component();
+    viewerPos = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView).pos_component();
 
     // for each bucket: call the sorter hook
     int i;
@@ -392,3 +409,20 @@ nSceneServer::GetBucketShader(int bucketIndex, uint fourcc)
     return shader;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nSceneServer::SetModelTransform(const matrix44& m)
+{
+    this->groupArray.Back().modelTransform = m;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+const matrix44&
+nSceneServer::GetModelTransform() const
+{
+    return this->groupArray.Back().modelTransform;
+}

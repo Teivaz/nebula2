@@ -244,7 +244,7 @@ static void
 n_setstartrotation(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetStartRotation(cmd->In()->GetF());
+    self->SetStartRotation(n_deg2rad(cmd->In()->GetF()));
 }
 
 //------------------------------------------------------------------------------
@@ -352,7 +352,7 @@ n_setparticlerotationvelocity(void* slf, nCmd* cmd)
     float values[8];
     for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();   
     self->SetCurve(nParticleEmitter::ParticleRotationVelocity, nEnvelopeCurve(
-        values[0], values[1], values[2], values[3],
+        n_deg2rad(values[0]), n_deg2rad(values[1]), n_deg2rad(values[2]), n_deg2rad(values[3]),
         values[4], values[5], values[6], values[7],
         cmd->In()->GetI()));
 }
@@ -652,7 +652,7 @@ static void
 n_getstartrotation(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetF(self->GetStartRotation());
+    cmd->Out()->SetF(n_rad2deg(self->GetStartRotation()));
 }
 
 //------------------------------------------------------------------------------
@@ -742,7 +742,16 @@ static void
 n_getparticlerotationvelocity(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    SetCurveCmdOutput(cmd, self->GetCurve(nParticleEmitter::ParticleRotationVelocity));
+    const nEnvelopeCurve& curve = self->GetCurve(nParticleEmitter::ParticleRotationVelocity);
+    cmd->Out()->SetF(n_rad2deg(curve.keyFrameValues[0]));
+    cmd->Out()->SetF(n_rad2deg(curve.keyFrameValues[1]));
+    cmd->Out()->SetF(n_rad2deg(curve.keyFrameValues[2]));
+    cmd->Out()->SetF(n_rad2deg(curve.keyFrameValues[3]));
+    cmd->Out()->SetF(curve.keyFramePos1);
+    cmd->Out()->SetF(curve.keyFramePos2);
+    cmd->Out()->SetF(curve.frequency);
+    cmd->Out()->SetF(curve.amplitude);
+    cmd->Out()->SetI(curve.modulationFunc);
 }
 
 //------------------------------------------------------------------------------
@@ -925,7 +934,16 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setparticlerotationvelocity ---
         cmd = ps->GetCmd(this, 'SPRV');
-        SetCurveCmdInput(cmd, curves[nParticleEmitter::ParticleRotationVelocity]);
+        const nEnvelopeCurve& curve0 = curves[nParticleEmitter::ParticleRotationVelocity];
+        cmd->In()->SetF(n_rad2deg(curve0.keyFrameValues[0]));
+        cmd->In()->SetF(n_rad2deg(curve0.keyFrameValues[1]));
+        cmd->In()->SetF(n_rad2deg(curve0.keyFrameValues[2]));
+        cmd->In()->SetF(n_rad2deg(curve0.keyFrameValues[3]));
+        cmd->In()->SetF(curve0.keyFramePos1);
+        cmd->In()->SetF(curve0.keyFramePos2);
+        cmd->In()->SetF(curve0.frequency);
+        cmd->In()->SetF(curve0.amplitude);
+        cmd->In()->SetI(curve0.modulationFunc);
         ps->PutCmd(cmd);
 
         //--- setparticlescale ---
@@ -1004,7 +1022,7 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setstartrotation ---
         cmd = ps->GetCmd(this, 'SSTR');
-        cmd->In()->SetF(this->GetStartRotation());
+        cmd->In()->SetF(n_rad2deg(this->GetStartRotation()));
         ps->PutCmd(cmd);
 
         //--- setrenderoldestfirst ---

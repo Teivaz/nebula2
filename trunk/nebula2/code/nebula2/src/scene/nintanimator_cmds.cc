@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-//  nvectoranimator_cmds.cc
-//  (C) 2003 RadonLabs GmbH
+//  nintanimator_cmds.cc
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "scene/nvectoranimator.h"
+#include "scene/nintanimator.h"
 #include "kernel/npersistserver.h"
 
 static void n_setvectorname(void* slf, nCmd* cmd);
@@ -14,16 +14,16 @@ static void n_getkeyat(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nvectoranimator    
+    nintanimator    
 
     @cppclass
-    nVectorAnimator
+    nIntAnimator
 
     @superclass
-    nkeyanimator
+    nanimator
 
     @classinfo
-    Animate a vector attribute of a nabstractshadernode.
+    Animate a int vector attribute of a nabstractshadernode.
 */
 void
 n_initcmds(nClass* cl)
@@ -31,9 +31,9 @@ n_initcmds(nClass* cl)
     cl->BeginCmds();
     cl->AddCmd("v_setvectorname_s", 'SVCN', n_setvectorname);
     cl->AddCmd("s_getvectorname_v", 'GVCN', n_getvectorname);
-    cl->AddCmd("v_addkey_fffff",    'ADDK', n_addkey);
+    cl->AddCmd("v_addkey_fi",    'ADDK', n_addkey);
     cl->AddCmd("i_getnumkeys_v",    'GNKS', n_getnumkeys);
-    cl->AddCmd("fffff_getkeyat_i",  'GKAT', n_getkeyat);
+    cl->AddCmd("fi_getkeyat_i",  'GKAT', n_getkeyat);
     cl->EndCmds();
 }
 
@@ -46,12 +46,12 @@ n_initcmds(nClass* cl)
     @output
     v
     @info
-    Set name of vector variable to animate in target object.
+    Set name of int vector variable to animate in target object.
 */
 void
 n_setvectorname(void* slf, nCmd* cmd)
 {
-    nVectorAnimator* self = (nVectorAnimator*) slf;
+    nIntAnimator* self = (nIntAnimator*) slf;
     self->SetVectorName(cmd->In()->GetS());
 }
 
@@ -64,12 +64,12 @@ n_setvectorname(void* slf, nCmd* cmd)
     @output
     s(VectorName)
     @info
-    Get name of vector variable to animate in target object.
+    Get name of int vector variable to animate in target object.
 */
 void
 n_getvectorname(void* slf, nCmd* cmd)
 {
-    nVectorAnimator* self = (nVectorAnimator*) slf;
+    nIntAnimator* self = (nIntAnimator*) slf;
     cmd->Out()->SetS(self->GetVectorName());
 }
 
@@ -78,24 +78,22 @@ n_getvectorname(void* slf, nCmd* cmd)
     @cmd
     addkey
     @input
-    f(Time), f(X), f(Y), f(Z), f(W)
+    f(Time), i(Value)
     @output
     v
     @info
-    Add a vector key to the animation key array.
+    Add a int vector key to the animation key array.
 */
 void
 n_addkey(void* slf, nCmd* cmd)
 {
-    nVectorAnimator* self = (nVectorAnimator*) slf;
+    nIntAnimator* self = (nIntAnimator*) slf;
     float f0;
-    vector4 v0;
-    f0   = cmd->In()->GetF();
-    v0.x = cmd->In()->GetF();
-    v0.y = cmd->In()->GetF();
-    v0.z = cmd->In()->GetF();
-    v0.w = cmd->In()->GetF();
-    self->AddKey(f0, v0);
+    int i0;
+    f0 = cmd->In()->GetF();
+    i0 = cmd->In()->GetI();
+
+    self->AddKey(f0, i0);
 }
 
 //------------------------------------------------------------------------------
@@ -112,7 +110,7 @@ n_addkey(void* slf, nCmd* cmd)
 void
 n_getnumkeys(void* slf, nCmd* cmd)
 {
-    nVectorAnimator* self = (nVectorAnimator*) slf;
+    nIntAnimator* self = (nIntAnimator*) slf;
     cmd->Out()->SetI(self->GetNumKeys());
 }
 
@@ -123,29 +121,26 @@ n_getnumkeys(void* slf, nCmd* cmd)
     @input
     i(KeyIndex)
     @output
-    f(Time), f(X), f(Y), f(Z), f(W)
+    f(Time), i(Value)
     @info
     Returns key at given index.
 */
 void
 n_getkeyat(void* slf, nCmd* cmd)
 {
-    nVectorAnimator* self = (nVectorAnimator*) slf;
+    nIntAnimator* self = (nIntAnimator*) slf;
     float f0;
-    vector4 v0;
-    self->GetKeyAt(cmd->In()->GetI(), f0, v0);
+    int i0;
+    self->GetKeyAt(cmd->In()->GetI(), f0, i0);
     cmd->Out()->SetF(f0);
-    cmd->Out()->SetF(v0.x);
-    cmd->Out()->SetF(v0.y);
-    cmd->Out()->SetF(v0.z);
-    cmd->Out()->SetF(v0.w);
+    cmd->Out()->SetI(i0);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 bool
-nVectorAnimator::SaveCmds(nPersistServer* ps)
+nIntAnimator::SaveCmds(nPersistServer* ps)
 {
     if (nAnimator::SaveCmds(ps))
     {
@@ -165,14 +160,11 @@ nVectorAnimator::SaveCmds(nPersistServer* ps)
         for (i = 0; i < numKeys; i++)
         {
             float time;
-            vector4 val;
+            int val;
             cmd = ps->GetCmd(this, 'ADDK');
             this->GetKeyAt(i, time, val);
             cmd->In()->SetF(time);
-            cmd->In()->SetF(val.x);
-            cmd->In()->SetF(val.y);
-            cmd->In()->SetF(val.z);
-            cmd->In()->SetF(val.w);
+            cmd->In()->SetI(val);
             ps->PutCmd(cmd);
         }
 

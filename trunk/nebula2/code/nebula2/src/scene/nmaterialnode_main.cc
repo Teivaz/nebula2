@@ -10,6 +10,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
 #include "kernel/ndebug.h"
+#include "scene/nanimator.h"
 
 nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 
@@ -62,10 +63,10 @@ nMaterialNode::LoadShaders()
         ShaderEntry& shaderEntry = this->shaderArray[i];
         if ((!shaderEntry.IsShaderValid()) && 
             (shaderEntry.GetName()) &&
-            (this->refSceneServer->IsShaderUsed(shaderEntry.GetFourCC())))
+            (nSceneServer::Instance()->IsShaderUsed(shaderEntry.GetFourCC())))
         {
             // create a new empty shader object
-            nShader2* shd = this->refGfxServer->NewShader(shaderEntry.GetName());
+            nShader2* shd = nGfxServer2::Instance()->NewShader(shaderEntry.GetName());
             n_assert(shd);
             if (!shd->IsValid())
             {
@@ -147,16 +148,13 @@ nMaterialNode::HasShader(uint fourcc) const
 
 //------------------------------------------------------------------------------
 /**
-    Update shader and set as current shader in the gfx server.
-
-    - 15-Jan-04     floh    AreResourcesValid()/LoadResources() moved to scene server
+    Setup shader attributes before rendering instances of this scene node.
 */
 bool
-nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nMaterialNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
 {
     n_assert(sceneServer);
-    n_assert(renderContext);
-    nGfxServer2* gfxServer = this->refGfxServer.get();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // find shader matching fourcc code, do nothing if shader not exists
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
@@ -175,29 +173,61 @@ nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderConte
     }
     nShader2* shader = shaderEntry->GetShader();
 
+/*
+    // set texture transforms
+    n_assert(nGfxServer2::MaxTextureStages >= 4);
+    static matrix44 m;
+    this->textureTransform[0].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture0, m);
+    this->textureTransform[1].getmatrix44(m);
+    gfxServer->SetTransform(nGfxServer2::Texture1, m);
+
+    // transfer shader parameters en block
+    // FIXME: this should be split into instance-variables
+    // and instance-set-variables
+    shader->SetParams(this->shaderParams);
+*/
+    nGfxServer2::Instance()->SetShader(shader);
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Perform per-instance rendering of shader. This should just apply
+    shader parameters which may change from instance to instance.
+*/
+bool
+nMaterialNode::RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+{
+    nShader2* shader = nGfxServer2::Instance()->GetShader();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    // FIXME FIXME FIXME
+    // THIS IS A LARGE PERFORMANCE BOTTLENECK!
+    // NEED TO SPLIT SHADER PARAMETERS INTO STATIC "INSTANCE SET" PARAMETERS
+    // AND LIGHTWEIGHT "PER-INSTANCE" PARAMETERS WHICH CAN BE ANIMATED!!!
+    n_assert(sceneServer);
+    n_assert(renderContext);
+
     // invoke shader manipulators
-    this->InvokeShaderAnimators(renderContext);
+    this->InvokeAnimators(nAnimator::Shader, renderContext);
 
     // set texture transforms
     n_assert(nGfxServer2::MaxTextureStages >= 4);
     static matrix44 m;
     this->textureTransform[0].getmatrix44(m);
     gfxServer->SetTransform(nGfxServer2::Texture0, m);
-
     this->textureTransform[1].getmatrix44(m);
     gfxServer->SetTransform(nGfxServer2::Texture1, m);
 
-    this->textureTransform[2].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture2, m);
-
-    this->textureTransform[3].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture3, m);
-
     // transfer shader parameters en block
+    // FIXME: this MUST be split into instance-variables
+    // and instance-set-variables
     shader->SetParams(this->shaderParams);
 
-    // make shader current
-    this->refGfxServer->SetShader(shader);
+    // set shader override parameters from render context (set directly by application)
+    shader->SetParams(renderContext->GetShaderOverrides());
+
     return true;
 }
 
@@ -263,4 +293,25 @@ nMaterialNode::IsTextureUsed(nShaderState::Param param)
 	}
     // fallthrough: texture not used by any shader
 	return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This updates the provided instance stream object by appending instance
+    variables of all our shaders to the stream declaration.
+*/
+void
+nMaterialNode::UpdateInstStreamDecl(nInstanceStream::Declaration& decl)
+{
+    // load shaders if not happened yet
+    if (!this->AreResourcesValid())
+    {
+        this->LoadResources();
+    }
+    int i;
+    int num = this->shaderArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        this->shaderArray[i].refShader->UpdateInstanceStreamDecl(decl);
+    }
 }

@@ -45,6 +45,15 @@ nSkinShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
 
 //------------------------------------------------------------------------------
 /**
+*/
+bool
+nSkinShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+{
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
     This overrides the standard nShapeNode geometry rendering. Instead
     of setting the mesh directly in the gfx server, the embedded
     nCharSkinRenderer is asked to do the rendering for us.
@@ -57,8 +66,16 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     n_assert(sceneServer);
     n_assert(renderContext);
 
+    // call my skin animator (updates the char skeleton pointer)
+    kernelServer->PushCwd(this);
+    if (this->refSkinAnimator.isvalid())
+    {
+        this->refSkinAnimator->Animate(this, renderContext);
+    }
+    kernelServer->PopCwd();
+
     // render the skin in several passes (one per skin fragment)
-    this->charSkinRenderer.Begin(this->refGfxServer.get(), this->refMesh.get(), this->extCharSkeleton);
+    this->charSkinRenderer.Begin(nGfxServer2::Instance(), this->refMesh.get(), this->extCharSkeleton);
     int numFragments = this->GetNumFragments();
     int fragIndex;
     for (fragIndex = 0; fragIndex < numFragments; fragIndex++)

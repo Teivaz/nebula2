@@ -16,6 +16,7 @@ static void n_setstatechannel(void* slf, nCmd* cmd);
 static void n_getstatechannel(void* slf, nCmd* cmd);
 static void n_beginstates(void* slf, nCmd* cmd);
 static void n_setstate(void* slf, nCmd* cmd);
+static void n_setstatename(void* slf, nCmd* cmd);
 static void n_endstates(void* slf, nCmd* cmd);
 static void n_getnumstates(void* slf, nCmd* cmd);
 static void n_getstateat(void* slf, nCmd* cmd);
@@ -55,6 +56,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_getstatechannel_v",       'GSCN', n_getstatechannel);
     cl->AddCmd("v_beginstates_i",           'BGST', n_beginstates);
     cl->AddCmd("v_setstate_iif",            'SSTT', n_setstate);
+    cl->AddCmd("v_setstatename_is",         'SSNM', n_setstatename);
     cl->AddCmd("v_endstates_v",             'ENDS', n_endstates);
     cl->AddCmd("i_getnumstates_v",          'GNST', n_getnumstates);
     cl->AddCmd("if_getstateat_i",           'GSTA', n_getstateat);
@@ -316,6 +318,26 @@ n_setstate(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    setstatename
+    @input
+    i(StateIndex), s(StateName)
+    @output
+    v
+    @info
+    Sets an optional state name.
+*/
+static void
+n_setstatename(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int i = cmd->In()->GetI();
+    nString s = cmd->In()->GetS();
+    self->SetStateName(i, s);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     endstates
     @input
     v
@@ -365,11 +387,9 @@ static void
 n_getstateat(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int animGroupIndex;
-    float fadeInTime;
-    self->GetStateAt(cmd->In()->GetI(), animGroupIndex, fadeInTime);
-    cmd->Out()->SetI(animGroupIndex);
-    cmd->Out()->SetF(fadeInTime);
+    const nAnimState& state = self->GetStateAt(cmd->In()->GetI());
+    cmd->Out()->SetI(state.GetAnimGroupIndex());
+    cmd->Out()->SetF(state.GetFadeInTime());
 }
 
 //------------------------------------------------------------------------------
@@ -579,15 +599,23 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             int stateIndex;
             for (stateIndex = 0; stateIndex < numStates; stateIndex++)
             {
-                int animGroupIndex;
-                float fadeInTime;
-                this->GetStateAt(stateIndex, animGroupIndex, fadeInTime);
+                const nAnimState& state = this->GetStateAt(stateIndex);
 
+                //--- setstate ---
                 cmd = ps->GetCmd(this, 'SSTT');
                 cmd->In()->SetI(stateIndex);
-                cmd->In()->SetI(animGroupIndex);
-                cmd->In()->SetF(fadeInTime);
+                cmd->In()->SetI(state.GetAnimGroupIndex());
+                cmd->In()->SetF(state.GetFadeInTime());
                 ps->PutCmd(cmd);
+
+                //--- setstatename ---
+                if (!state.GetName().IsEmpty())
+                {
+                    cmd = ps->GetCmd(this, 'SSNM');
+                    cmd->In()->SetI(stateIndex);
+                    cmd->In()->SetS(state.GetName().Get());
+                    ps->PutCmd(cmd);
+                }
 
                 int numClips = this->GetNumClips(stateIndex);
                 if (numClips > 0)

@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "scene/nskinanimator.h"
 #include "scene/nskinshapenode.h"
+#include "scene/nshadowskinshapenode.h"
 #include "anim2/nanimation.h"
 #include "anim2/nanimationserver.h"
 #include "anim2/nanimstatearray.h"
@@ -128,12 +129,13 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
         this->LoadResources();
     }
 
-    nCharacter2* curCharacter = new nCharacter2(this->character);
+    nCharacter2* curCharacter = n_new(nCharacter2(this->character));
     n_assert(curCharacter);
 
     // put frame persistent data in render context
+    nVariable::Handle charHandle = nVariableServer::Instance()->GetVariableHandleByName("charPointer");
     this->frameIdVarIndex = renderContext->AddLocalVar(nVariable(0, (int) this->frameId));
-    this->characterVarIndex = renderContext->AddLocalVar(nVariable(0, curCharacter));
+    this->characterVarIndex = renderContext->AddLocalVar(nVariable(charHandle, curCharacter));
 }
 
 //------------------------------------------------------------------------------
@@ -146,9 +148,6 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(sceneNode);
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
-
-    // FIXME: assume that the sceneNode is a nSkinShapeNode
-    nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
 
     nVariable var;
     var = renderContext->GetLocalVar(this->characterVarIndex);
@@ -198,7 +197,21 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     }
 
     // update the source node with the new char skeleton state
-    skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
+    if (sceneNode->IsA(nKernelServer::Instance()->FindClass("nskinshapenode")))
+    {
+        nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
+        skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
+
+    }
+    else if (sceneNode->IsA(nKernelServer::Instance()->FindClass("nshadowskinshapenode")))
+    {
+        nShadowSkinShapeNode* skinShapeNode = (nShadowSkinShapeNode*) sceneNode;
+        skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
+    }
+    else
+    {
+        n_error("nSkinAnimator::Animate: can't cast sceneNode!\n");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -212,7 +225,7 @@ nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
     nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
     n_assert(curCharacter);
 
-    delete curCharacter;
+    n_delete(curCharacter);
 }
 
 //------------------------------------------------------------------------------
@@ -346,6 +359,15 @@ nSkinAnimator::SetState(int stateIndex, int animGroupIndex, float fadeInTime)
 /**
 */
 void
+nSkinAnimator::SetStateName(int stateIndex, const nString& name)
+{
+    this->animStateArray.GetStateAt(stateIndex).SetName(name);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 nSkinAnimator::EndStates()
 {
     this->animStateArray.End();
@@ -363,12 +385,10 @@ nSkinAnimator::GetNumStates() const
 //------------------------------------------------------------------------------
 /**
 */
-void
-nSkinAnimator::GetStateAt(int stateIndex, int& animGroupIndex, float& fadeInTime)
+const nAnimState&
+nSkinAnimator::GetStateAt(int stateIndex)
 {
-    const nAnimState& animState = this->animStateArray.GetStateAt(stateIndex);
-    animGroupIndex = animState.GetAnimGroupIndex();
-    fadeInTime     = animState.GetFadeInTime();
+    return this->animStateArray.GetStateAt(stateIndex);
 }
 
 //------------------------------------------------------------------------------
