@@ -16,6 +16,7 @@ begintarget nnebula
         nnpkfileserver nvariableserver 
         ninputserver nresourceloader nresourceserver nresource nresourcebundle
         nmesh2 ntexture2 nsurface nfont2 nshader2 ngfxserver2
+        naudioserver3 nsound3 nlistener3 nsoundresource
         nsceneserver nstdsceneserver
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nshapenode nanimator nvectoranimator

@@ -20,6 +20,7 @@ beginworkspace Nebula2
         microtcl
         ndinput8
         ndirect3d9
+        ndsaudioserver3
         ntoollib
         nmeshtool
         nremoteshell
