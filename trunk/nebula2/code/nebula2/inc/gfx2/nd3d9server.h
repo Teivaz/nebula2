@@ -196,6 +196,8 @@ private:
     void DrawInstancedNS(PrimitiveType primType);
     /// update shared shader parameters
     void UpdateSharedShaderParams();
+    /// add nEnvs describing display modes (for all adapters) to the NOH
+    void CreateDisplayModeEnvVars();
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
