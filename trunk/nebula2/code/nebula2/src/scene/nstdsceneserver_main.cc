@@ -23,7 +23,8 @@ vector3 nStdSceneServer::viewerPos;
 */
 nStdSceneServer::nStdSceneServer() :
     numLights(0),
-    numShapes(0)
+    numShapes(0),
+    inGfxScene(false)
 {
     memset(this->lightArray, 0, sizeof(this->lightArray));
     memset(this->shapeArray, 0, sizeof(this->shapeArray));
@@ -230,6 +231,11 @@ nStdSceneServer::RenderScene()
         // clear, render depth, diffuse, color and specular into the back buffer
         gfxServer->Clear(nGfxServer2::AllBuffers, 0.3f, 0.3f, 0.3f, 1.0f, 1.0f, 0);
         this->RenderLightShapes(FOURCC('colr'), this->shapeArray, this->numShapes );
+        this->inGfxScene = true;
+    }
+    else
+    {
+        this->inGfxScene = false;
     }
 }
 
@@ -240,8 +246,11 @@ nStdSceneServer::RenderScene()
 void
 nStdSceneServer::PresentScene()
 {
-    nGfxServer2* gfxServer = this->refGfxServer.get();
-    gfxServer->DrawTextBuffer();
-    gfxServer->EndScene();
-    gfxServer->PresentScene();
+    if (this->inGfxScene)
+    {
+        nGfxServer2* gfxServer = this->refGfxServer.get();
+        gfxServer->DrawTextBuffer();
+        gfxServer->EndScene();
+        gfxServer->PresentScene();
+    }
 }

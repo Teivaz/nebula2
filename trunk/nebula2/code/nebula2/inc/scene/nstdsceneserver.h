@@ -66,6 +66,8 @@ private:
 
     // Used for sorting.
     static nStdSceneServer* self;
+    
+    bool inGfxScene;
 };
 //------------------------------------------------------------------------------
 #endif
