@@ -62,8 +62,7 @@ void nSpatialSphereVisitor::Visit(nSpatialSector *visitee, int recursedepth)
 	        this->LeaveLocalSpace();
     	}
 	
-    // go to the next child node
-	childnode = childnode->GetSucc();
+        childnode = childnode->GetSucc();
     }
 }
 
