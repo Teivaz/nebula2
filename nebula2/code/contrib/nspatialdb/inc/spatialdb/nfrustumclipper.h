@@ -139,12 +139,12 @@ nFrustumClipper::nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform
     float nfscale = maxz/minz;
     m_frustumcorners[0] = projectback * (vector3(minx,miny,-minz) * 1.0f);
     m_frustumcorners[1] = projectback * (vector3(minx,miny,-minz) * nfscale);
-    m_frustumcorners[2] = projectback * (vector3(minx,maxy,-minz) * nfscale);
-    m_frustumcorners[3] = projectback * (vector3(minx,maxy,-minz) * 1.0f);
+    m_frustumcorners[2] = projectback * (vector3(minx,maxy,-minz) * 1.0f);
+    m_frustumcorners[3] = projectback * (vector3(minx,maxy,-minz) * nfscale);
     m_frustumcorners[4] = projectback * (vector3(maxx,miny,-minz) * 1.0f);
     m_frustumcorners[5] = projectback * (vector3(maxx,miny,-minz) * nfscale);
-    m_frustumcorners[6] = projectback * (vector3(maxx,maxy,-minz) * nfscale);
-    m_frustumcorners[7] = projectback * (vector3(maxx,maxy,-minz) * 1.0f);
+    m_frustumcorners[6] = projectback * (vector3(maxx,maxy,-minz) * 1.0f);
+    m_frustumcorners[7] = projectback * (vector3(maxx,maxy,-minz) * nfscale);
 }
 
 inline
@@ -232,8 +232,17 @@ nFrustumClipper::result_info nFrustumClipper::TestPoint(const vector3 &pointtest
 inline
 void nFrustumClipper::VisualizeFrustum(nGfxServer2 *gfx2, const vector4 &color)
 {
+    // build two line strips of 8 points each; each line strip draws two faces of the frustum
+    vector3 renderpoints[16] ={
+        m_frustumcorners[0], m_frustumcorners[1], m_frustumcorners[5], m_frustumcorners[4],
+        m_frustumcorners[0], m_frustumcorners[2], m_frustumcorners[6], m_frustumcorners[4],
+        m_frustumcorners[3], m_frustumcorners[1], m_frustumcorners[5], m_frustumcorners[7],
+        m_frustumcorners[3], m_frustumcorners[2], m_frustumcorners[6], m_frustumcorners[7],
+    };
+
     gfx2->BeginLines();
-    gfx2->DrawLines3d(m_frustumcorners, 8, color);
+    gfx2->DrawLines3d(renderpoints, 8, color);
+    gfx2->DrawLines3d(renderpoints+8, 8, color);
     gfx2->EndLines();
 }
 
