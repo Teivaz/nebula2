@@ -13,7 +13,7 @@
     the Nebula kernel will be sent back to the client.
 
     Please check out the nremoteshell tool, a command line tool
-    which can talk to a nRemoteServer.
+    which can talk to an nRemoteServer.
 
     (C) 2002 RadonLabs GmbH
 */

@@ -49,7 +49,8 @@ nRemoteServer::Open(const char* portName)
 #endif
 
     // create an ipc server object
-    this->ipcServer = n_new nIpcServer(portName);
+    nIpcAddress ipcAddress("any", portName);
+    this->ipcServer = n_new nIpcServer(ipcAddress);
     n_assert(this->ipcServer);
 
     this->isOpen = true;
@@ -67,7 +68,7 @@ nRemoteServer::Close()
 
     // release all client context objects
     nClientContext* curContext;
-    while ((curContext = (nClientContext*) this->clientContexts.RemHead()))
+    while (curContext = (nClientContext*) this->clientContexts.RemHead())
     {
         n_delete curContext;
     }
@@ -97,7 +98,8 @@ nRemoteServer::Broadcast(const char* str)
     if (this->isOpen)
     {
         n_assert(this->ipcServer);
-        this->ipcServer->BroadcastMsg((void*) str, strlen(str) + 1);
+        nIpcBuffer msg(str, strlen(str) + 1);
+        this->ipcServer->SendAll(msg);
     }
 }
 
@@ -192,46 +194,46 @@ nRemoteServer::Trigger()
         if (this->ipcServer->Poll())
         {
             // for each pending message...
-            nMsgNode* msg;
-            int msgClientId;
-            while ((msg = this->ipcServer->GetMsg(msgClientId)))
+            int fromClientId;
+            nIpcBuffer recvMsg(4096);
+            while (this->ipcServer->GetMsg(recvMsg, fromClientId))
             {
                 // make sure the message is a valid string
-                const char* msgPtr = (const char*) msg->GetMsgPtr();
-                int msgSize  = msg->GetMsgSize();
-                n_assert(msgPtr);
-                if ((msgSize > 0) && (msgPtr[msgSize - 1] == 0))
+                const char* curString = recvMsg.GetFirstString();
+                if (curString)
                 {
-                    // set the client's cwd
-                    kernelServer->PushCwd(this->GetClientCwd(msgClientId));
-
-                    // this seems to be a valid message, send the message
-                    // to the scriptserver for validation
-                    const char* result = 0;
-                    bool success = scriptServer->Run(msgPtr, result);
-
-                    // release the msg node
-                    this->ipcServer->ReplyMsg(msg);
-
-                    // send the result string back to the client
-                    const char* answerMsg = "";
-                    if (result && (result[0] != 0))
+                    do
                     {
-                        answerMsg = result;
+                        // set the client's cwd
+                        kernelServer->PushCwd(this->GetClientCwd(fromClientId));
+    
+                        // this seems to be a valid message, send the message
+                        // to the scriptserver for validation
+                        const char* result = 0;
+                        bool success = scriptServer->Run(curString, result);
+    
+                        // send the result string back to the client
+                        nIpcBuffer resultMsg(4096);
+                        resultMsg.SetString("");
+                        if (result && (result[0] != 0))
+                        {
+                            resultMsg.SetString(result);
+                        }
+                        this->ipcServer->Send(fromClientId, resultMsg);
+    
+                        // store new cwd in client context
+                        this->SetClientCwd(fromClientId, kernelServer->GetCwd());
+    
+                        // restore the original cwd
+                        kernelServer->PopCwd();
                     }
-                    this->ipcServer->AnswerMsg((void*)answerMsg, strlen(answerMsg) + 1, msgClientId);
-
-                    // store new cwd in client context
-                    this->SetClientCwd(msgClientId, kernelServer->GetCwd());
-
-                    // restore the original cwd
-                    kernelServer->PopCwd();
+                    while (curString = recvMsg.GetNextString());
                 }
                 else
                 {
                     n_printf("nRemoteServer: BROKEN MESSAGE RECEIVED!\n");
-                    const char* msg = "### comm error!";
-                    this->ipcServer->AnswerMsg((void*) msg, strlen(msg) + 1, msgClientId);
+                    nIpcBuffer errorMsg("### comm error!");
+                    this->ipcServer->Send(fromClientId, errorMsg);
                 }
             }
         }
