@@ -24,8 +24,11 @@ static void n_getmeshusage(void* slf, nCmd* cmd);
     @scriptclass
     nmapnode
     
+    @cppclass
+    nMapNode
+
     @superclass
-    nvisnode
+    nmaterialnode
 
     @classinfo
     The nmap provides an alternative implementation of a terrain.
@@ -261,7 +264,7 @@ n_getmeshusage(void* slf, nCmd* cmd)
 bool
 nMapNode::SaveCmds(nPersistServer* ps)
 {
-	if (nSceneNode::SaveCmds(ps))
+  if (nSceneNode::SaveCmds(ps))
     {
         nCmd* cmd = NULL;
 
