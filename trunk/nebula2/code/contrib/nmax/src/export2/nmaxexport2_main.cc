@@ -82,17 +82,19 @@ bool LaunchViewer(const char* sceneFile)
 //-----------------------------------------------------------------------------
 /**
     Delete any exist singleton class instances.
+
+    - 20-Feb-05 kim Removed release of nMaxOption instance. The option can be
+                    globally available not just only for export.
 */
 static
 void ReleaseSingletons()
 {
-    nMaxOptions*   options = nMaxOptions::Instance();   
     nMaxInterface* intf    = nMaxInterface::Instance();
     nMaxLogDlg*    logDlg  = nMaxLogDlg::Instance();
 
-    n_delete(options);
     n_delete(intf);
 
+    // idle until user click 'ok' button of log dialog.
     logDlg->Wait();
     n_delete(logDlg);
 }
