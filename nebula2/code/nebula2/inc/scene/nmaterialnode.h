@@ -53,6 +53,8 @@ public:
     int GetNumShaders() const;
     /// get shader at index
     void GetShaderAt(int index, uint& fourcc, const char*& name) const;
+    /// get pointer to shader object
+    nShader2* GetShaderObject(uint fourcc);
 
     /// get fourcc code from string
     static uint StringToFourCC(const char* str);
@@ -162,6 +164,25 @@ nMaterialNode::FourCCToString(uint fourcc, char* buf, int bufSize)
     buf[3] = (fourcc>>24) & 0xff;
     buf[4] = 0;
     return buf;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nShader2*
+nMaterialNode::GetShaderObject(uint fourcc)
+{
+    if (!this->AreResourcesValid())
+    {
+        this->LoadResources();
+    }
+    ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
+    if (shaderEntry)
+    {
+        return shaderEntry->GetShader();
+    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------

@@ -67,6 +67,7 @@ nShapeNode::LoadMesh()
         nString resourceName = this->meshName.Get();
         resourceName += "_";
         resourceName += this->GetMeshUsage();
+
         // get a new or shared mesh
         nMesh2* mesh = this->refGfxServer->NewMesh(resourceName.Get());
         n_assert(mesh);        
@@ -133,6 +134,8 @@ nShapeNode::HasGeometry() const
 /**
     Update geometry, set as current mesh in the gfx server and
     call nGfxServer2::DrawIndexed().
+
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
 nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
@@ -142,12 +145,6 @@ nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCont
     nGfxServer2* gfx = this->refGfxServer.get();
 
     // TODO call geometry manipulators!
-
-    // see if resources need to be reloaded
-    if (!this->AreResourcesValid())
-    {
-        this->LoadResources();
-    }
     n_assert(this->refMesh->IsValid());
 
     // render the mesh in normal mode (always at stream 0)

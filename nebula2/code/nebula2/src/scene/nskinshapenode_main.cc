@@ -44,18 +44,14 @@ nSkinShapeNode::GetMeshUsage() const
     This overrides the standard nShapeNode geometry rendering. Instead
     of setting the mesh directly in the gfx server, the embedded
     nCharSkinRenderer is asked to do the rendering for us.
+
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
 nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-
-    // see if resources need to be reloaded
-    if (!this->AreResourcesValid())
-    {
-        this->LoadResources();
-    }
 
     // call my skin animator (updates the char skeleton pointer)
     kernelServer->PushCwd(this);

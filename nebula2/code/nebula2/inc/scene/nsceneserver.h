@@ -15,6 +15,7 @@
 #include "mathlib/matrix.h"
 #include "kernel/nautoref.h"
 #include "gfx2/nshaderparams.h"
+#include "util/nbucket.h"
 
 class nRenderContext;
 class nSceneNode;
@@ -30,10 +31,14 @@ public:
     /// destructor
     virtual ~nSceneServer();
 
+    /// set background color
+    void SetBgColor(const vector4& c);
+    /// get background color
+    const vector4& GetBgColor() const;
     /// returns true if scene graph uses a specific shader type (override in subclasses!)
     virtual bool IsShaderUsed(uint fourcc) const;
     /// begin the scene
-    virtual void BeginScene(const matrix44& viewer);
+    virtual bool BeginScene(const matrix44& viewer);
     /// attach the toplevel object of a scene node hierarchy to the scene
     virtual void Attach(nRenderContext* renderContext);
     /// finish the scene
@@ -54,6 +59,16 @@ public:
 protected:
     /// transfer standard parameters to shader (matrices, etc...)
     virtual void UpdateShader(nShader2* shd, nRenderContext* renderContext);
+    /// split scene nodes into light and shape nodes
+    void SplitNodes(uint shaderFourCC);
+    /// make sure scene node resources are valid
+    void ValidateNodeResources();
+    /// sort shape nodes for optimal rendering
+    void SortNodes();
+    /// static qsort() compare function
+    static int __cdecl Compare(const ushort* i1, const ushort* i2);
+    /// get shader object from shape bucket (may return 0)
+    nShader2* GetBucketShader(int bucketIndex, uint fourcc);
 
     class Group
     {
@@ -66,17 +81,41 @@ protected:
 
     enum
     {
-        MaxGroups = 2024,
         MaxHierarchyDepth = 64,
     };
+
+    static nSceneServer* self;
+    static vector3 viewerPos;
 
     nAutoRef<nGfxServer2> refGfxServer;
     bool inBeginScene;
     uint stackDepth;
     Group* groupStack[MaxHierarchyDepth];
-    uint numGroups;
-    Group groupArray[MaxGroups];
+    nArray<Group> groupArray;
+    nArray<ushort> lightArray;
+    nBucket<ushort,32> shapeBucket;   ///< contains indices of shape nodes, bucketsorted by shader
+    vector4 bgColor;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneServer::SetBgColor(const vector4& c)
+{
+    this->bgColor = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nSceneServer::GetBgColor() const
+{
+    return this->bgColor;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -85,8 +124,7 @@ inline
 void
 nSceneServer::SetModelTransform(const matrix44& m)
 {
-    n_assert((this->numGroups > 0) && (this->numGroups < MaxGroups));
-    this->groupArray[this->numGroups - 1].modelTransform = m;
+    this->groupArray.Back().modelTransform = m;
 }
 
 //------------------------------------------------------------------------------
@@ -96,8 +134,7 @@ inline
 const matrix44&
 nSceneServer::GetModelTransform() const
 {
-    n_assert((this->numGroups > 0) && (this->numGroups < MaxGroups));
-    return this->groupArray[this->numGroups - 1].modelTransform;
+    return this->groupArray.Back().modelTransform;
 }
 
 //------------------------------------------------------------------------------

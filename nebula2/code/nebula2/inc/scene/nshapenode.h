@@ -58,10 +58,6 @@ protected:
     bool LoadMesh();
     /// unload mesh resource
     void UnloadMesh();
-    /// extract the mesh filename from the resource name
-    const char* ExtractFileName(const char* resourceName, char* buf, int bufSize);
-    /// extract the group name from the resource name
-    const char* ExtractGroupName(const char* resourceName);
 
     nRef<nMesh2> refMesh;
     nString meshName;

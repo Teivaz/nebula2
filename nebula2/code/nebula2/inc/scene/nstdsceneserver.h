@@ -25,30 +25,13 @@ public:
     nStdSceneServer();
     /// destructor
     virtual ~nStdSceneServer();
+    /// begin the scene
+    virtual bool BeginScene(const matrix44& viewer);
     /// render the scene
     virtual void RenderScene();
     /// present the scene
     virtual void PresentScene();
 
-protected:
-    /// split scene nodes into light and shape nodes
-    virtual void SplitNodes();
-    /// sort shape nodes for optimal rendering
-    virtual void SortNodes();
-    /// render light/shape interaction for all lit shapes
-    virtual void RenderLightShapes(uint shaderFourCC, ushort* shapeArray, int numShapes );
-
-    int numLights;
-    int numShapes;
-
-    ushort lightArray[nSceneServer::MaxGroups];    // indices of light nodes in scene
-    ushort shapeArray[nSceneServer::MaxGroups];    // indices of shape nodes in scene
-
-    /// static qsort() compare function
-    static int __cdecl Compare(const ushort* i1, const ushort* i2);
-
-    // Used for sorting.
-    static vector3 viewerPos;
 private:
     /// initialize required resources
     bool LoadResources();
@@ -56,18 +39,11 @@ private:
     void UnloadResources();
     /// check if resources are valid
     bool AreResourcesValid();
-
-    enum
-    {
-        MaxLightsPerShape = 2
-    };
-
-    // Used for sorting.
-    static nStdSceneServer* self;
-    
-    bool inGfxScene;
+    /// render shape objects in scene
+    void RenderShapes(uint shaderFourCC);
+    /// render light/shape interaction for all lit shapes
+    void RenderLightShapes(uint shaderFourCC);
 };
 //------------------------------------------------------------------------------
 #endif
-
 
