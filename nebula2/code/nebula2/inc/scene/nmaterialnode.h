@@ -98,8 +98,8 @@ private:
     void UnloadShaders();
     /// find a shader entry by its fourcc code
     ShaderEntry* FindShaderEntry(uint fourcc) const;
-	/// checks if shader uses texture passed in param
-	virtual bool IsTextureUsed(nShader2::Parameter param);
+    /// checks if shader uses texture passed in param
+    virtual bool IsTextureUsed(nShader2::Parameter param);
 
     nArray<ShaderEntry> shaderArray;
 };
