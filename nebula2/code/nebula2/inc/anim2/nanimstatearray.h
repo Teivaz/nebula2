@@ -10,13 +10,8 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMSTATE_H
 #include "anim2/nanimstate.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nAnimStateArray 

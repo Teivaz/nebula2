@@ -16,21 +16,10 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_ANIMCLIP_H
 #include "anim2/nanimclip.h"
-#endif
-
-#ifndef N_VARIABLECONTEXT_H
 #include "variable/nvariablecontext.h"
-#endif
-
-#ifndef N_QUATERNION_H
 #include "mathlib/quaternion.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nAnimState
