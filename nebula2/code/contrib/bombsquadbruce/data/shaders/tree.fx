@@ -14,10 +14,10 @@ texture DiffMap0;
 float MatTranslucency; // the SQUARE ROOT of this is the distance at which objects become completely transparent
 float4 Wind;
 float Time;
+float4 MatDiffuse;
 shared float4 LightAmbient;   
 shared float4 LightDiffuse;    
 shared float3 LightPos; 
-float4 MatDiffuse;
 
 float WindIntensityFactor = 0.0007;
 float SwaySpeedFactor = 0.5;
@@ -60,23 +60,12 @@ technique t0
     pass p0
     {
         ZWriteEnable = True; // this makes the alpha prettier -- does it cause other problems?
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;       
-        ZEnable          = True;
-        ZFunc            = LessEqual;
 
-        AlphaBlendEnable = True;
-        SrcBlend         = SrcAlpha;
-        DestBlend        = InvSrcAlpha;
         AlphaTestEnable  = True;
-        AlphaFunc        = Greaterequal;
         AlphaRef         = 50;
 
-        CullMode = 2; // default value (CW); must not be 0 for software vp
-
         VertexShader = compile vs_1_1 vsMain();
-        PixelShader  = 0;
 
-        SpecularEnable	= False;
         FogEnable = True;
         FogColor = {0.6, 0.8, 1.0, 0.0};
 

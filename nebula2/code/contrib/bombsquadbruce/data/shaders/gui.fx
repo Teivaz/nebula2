@@ -29,32 +29,14 @@ technique t0
 {
     pass p0
     {
-        WorldTransform[0] = <Model>;
-        ViewTransform = <View>;
-    	ProjectionTransform = <Projection>;
-
-        ZWriteEnable     = False;
         ZEnable          = False;
-        //ZFunc            = Always;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = True;
-        SrcBlend         = SrcAlpha;
-        DestBlend        = InvSrcAlpha;
-        AlphaTestEnable  = False;
 
         CullMode = None;
 
-        VertexShader = 0;
-        PixelShader  = 0;
-
         Sampler[0] = <DiffSampler>;
 
-        Lighting = True;
         LightEnable[0] = False;
         SpecularEnable = False;
-        FogEnable = False;
-        MaterialDiffuse = <MatDiffuse>;
-        MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
         MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
         Ambient = <MatDiffuse>;
 

@@ -18,6 +18,7 @@ function initServers()
 	new('ccsceneserver', '/sys/servers/scene')
 	new("nconserver", "/sys/servers/console")
 	new("cccullingmgr", "/sys/servers/culling" )
+	new("nshadowserver", "/sys/servers/shadow" )
     initGfxServer()
     new('ndi8server', '/sys/servers/input')
 end

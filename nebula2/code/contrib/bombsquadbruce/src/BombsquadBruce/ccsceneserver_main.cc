@@ -12,7 +12,7 @@
 #include "scene/nshapenode.h"
 #include "BombsquadBruce/general.h"
 
-nNebulaScriptClass(CCSceneServer, "nstdsceneserver");
+nNebulaScriptClass(CCSceneServer, "nmrtsceneserver");
 
 // global data for qsort() compare function
 CCSceneServer* CCSceneServer::ccself = 0;
@@ -46,7 +46,6 @@ nVariable::Handle CCSceneServer::GetLODVarHandle(int i) const
 void
 CCSceneServer::UpdateShader(nShader2* shd, nRenderContext* renderContext)
 {
-    nStdSceneServer::UpdateShader( shd, renderContext );
     if (shd->IsParameterUsed(nShaderState::Wind))
     {
         nVariable::Handle windHandle = nVariableServer::Instance()->FindVariableHandleByFourCC( FOURCC( 'wind' ) );
@@ -305,7 +304,7 @@ void CCSceneServer::SubInBillboard( Group& shapeGroup, int LODShapeIndex )
     billboardMatrix.billboard( pos, CCUtil::UP_VECTOR ); 
     billboardMatrix.set_translation( pos );
     shapeGroup.renderContext->SetTransform( billboardMatrix );
-    n_assert( !shapeGroup.parent ); // must think about how to handle non-top-level nodes -- can we just steal the code from nSceneServer::BeginGroup, or will that mess up billboarding?
+    n_assert( shapeGroup.parentIndex == -1 ); // must think about how to handle non-top-level nodes -- can we just steal the code from nSceneServer::BeginGroup, or will that mess up billboarding?
     shapeGroup.modelTransform = shapeGroup.renderContext->GetTransform(); // this handles only the simplest case, e.g. no fancy stuff in RenderTransform.
     SubInLowPolyModel( shapeGroup, LODShapeIndex );
 }

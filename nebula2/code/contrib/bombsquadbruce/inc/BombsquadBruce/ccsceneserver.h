@@ -8,7 +8,7 @@
 
     @brief Default Crazy Chipmunk scene server.
     
-    Differs from nStdSceneServer in that it:
+    Differs from nMRTSceneServer in that it:
      -# Renders alpha blended objects 
         (those that set the variable at GetAlphaVarHandle() in their
         nRenderContext) back to front, after all other objects.
@@ -16,11 +16,11 @@
 
     (C) 2004 Rafael Van Daele-Hunt
 */
-#include "scene/nstdsceneserver.h"
+#include "scene/nmrtsceneserver.h"
 #include "variable/nvariable.h"
 
 //------------------------------------------------------------------------------
-class CCSceneServer : public nStdSceneServer
+class CCSceneServer : public nMRTSceneServer
 {
 public:
     /// constructor

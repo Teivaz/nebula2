@@ -22,9 +22,12 @@ shared float4x4 ModelLightProjection;   // the model * light * projection matrix
 shared float3   LightPos;               // the light position in world space
 shared float4   LightAmbient;           // light's ambient component
 shared float4   LightDiffuse;           // light's diffuse component
-shared float4   LightSpecular;          // light's specular component
+shared float4   LightSpecular = { 0.0f, 0.0f, 0.0f, 0.0f }; // light's specular component
+shared float4   LightDiffuse1 = { 0.0f, 0.0f, 0.0f, 0.0f };
+shared float4   LightSpecular1 = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 shared float3   ModelEyePos;            // the eye pos in model space
+shared float3   EyePos;                 // the eye pos in world space
 shared float3   ModelLightPos;          // the current light pos in model space
 shared float4x4 TextureTransform0;      // texture transform for uv set 0
 shared float4x4 TextureTransform1;      // texture transform for uv set 1
