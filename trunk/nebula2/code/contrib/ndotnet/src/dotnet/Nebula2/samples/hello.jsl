@@ -1,7 +1,7 @@
 package Hello;
 
 import System.*;
-import Nebula2.*;
+import Nebula2NET.*;
 
 public class Hello
 {

@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
     class  nArg;
-    namespace Nebula2
+    namespace Nebula2NET
     {
     public __gc __abstract class NebulaObject : public System::Object
         {

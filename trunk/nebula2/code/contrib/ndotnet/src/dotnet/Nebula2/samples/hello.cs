@@ -1,5 +1,5 @@
 using System;
-using Nebula2;
+using Nebula2NET;
 
 namespace Hello
 {
