@@ -277,7 +277,7 @@ nAnimState::Sample(float time,
                         if (firstIter)
                         {
                             // first time init of accumulators
-                            curArrayKey = curSampleKey * clipWeight;
+                            curArrayKey = curSampleKey;
                         }
                         else
                         {
