@@ -60,6 +60,8 @@ public:
     nRoot* NewNoFail(const char* className, const char* objectName);
     /// create a Nebula object from a persistent object file
     nRoot* Load(const char* path);
+    /// create a Nebula object from a persistent object file with given name
+    nRoot* LoadAs(const char* path, const char* objName);
     /// lookup a Nebula object in the hierarchy
     nRoot* Lookup(const char* path);
 
