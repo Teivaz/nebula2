@@ -201,6 +201,12 @@ beginmodule nintanimator
     setheaders { nintanimator }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nfloatanimator
+    setdir scene
+    setfiles { nfloatanimator_main nfloatanimator_cmds }
+    setheaders { nfloatanimator }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nlodnode
     setdir scene
     setfiles { nlodnode_main nlodnode_cmds }
