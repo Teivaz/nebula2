@@ -8,8 +8,7 @@
 
     A log handler class for Win32 apps:
     
-    - maintains a log file in the application directory where ALL
-      output is recorded
+    - maintains a log file where ALL output is recorded
     - creates a message box for nKernelServer::Message() 
       and nKernelServer::Error()
     - Places log files in <tt>C:\\Documents and Settings\\&lt;your username&gt;\
