@@ -13,7 +13,7 @@
 #include "kernel/ntypes.h"
 #endif
 
-#ifdef __NEBULA_MEM_MANAGER__
+#if defined(__NEBULA_MEM_MANAGER__) || defined(DOXYGEN)
 
 #ifndef N_MUTEX_H
 #include "kernel/nmutex.h"
