@@ -81,12 +81,6 @@ beginmodule nglwin32windowhandler
     setheaders { nglwin32windowhandler }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule noglviewerapp
-    setdir opengltest
-    setfiles { noglviewerapp }
-    setheaders { noglviewerapp }
-endmodule
-#-------------------------------------------------------------------------------
 beginmodule noglviewer
     setdir opengltest
     setfiles { noglviewer }
@@ -106,7 +100,7 @@ begintarget noglviewer
     settype exe
     setmodules {
         noglviewer
-        noglviewerapp
+        nviewerapp
     }
     settargetdeps {
         nkernel
