@@ -34,7 +34,7 @@
 const char* nLuaServer::_lua_tostring( lua_State* L, int bottom )
 {
     nString* buf = nLuaServer::Instance->output;
-    buf->Set("\0");
+    buf->Set("");
     while (bottom < lua_gettop(L))
     {
         switch (lua_type(L,-1))
