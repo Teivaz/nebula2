@@ -53,6 +53,8 @@ public:
     float GetSlider(const char* state);
     /// get an input state as button value
     bool GetButton(const char* state);
+    /// get the current mosue pos
+    const vector2& GetMousePos() const;
     /// start logging input
     void StartLogging();
     /// stop logging input
@@ -82,7 +84,7 @@ public:
 	/// flush entire input mapping
 	void FlushInput();
 
-private:
+protected:
     /// convert an input event string into an input event
     bool MapStrToEvent(const char* str, nInputEvent* event);
     /// return pointer to first matching event
@@ -146,7 +148,18 @@ protected:
     double double_click_time;
     float mouseFactor;
     bool mouseInvert;
+    vector2 mousePos;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nInputServer::GetMousePos() const
+{
+    return this->mousePos;
+}
 
 //------------------------------------------------------------------------------
 /**
