@@ -27,6 +27,7 @@ nMaxOptions::nMaxOptions() :
     groupMeshes(true),
     meshFileExtension(".n3d2"),
     animFileExtension(".nanim2"),
+    geomScale(0.01f),
     maxJointPaletteSize(24),
     weightTrashHold(0.0001f),
     sampleRate (2),
