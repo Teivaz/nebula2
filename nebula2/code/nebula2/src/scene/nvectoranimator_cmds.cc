@@ -20,7 +20,7 @@ static void n_getkeyat(void* slf, nCmd* cmd);
     nVectorAnimator
 
     @superclass
-    nkeyanimator
+    nanimator
 
     @classinfo
     Animate a vector attribute of a nabstractshadernode.
