@@ -21,17 +21,17 @@ sel /sys/servers/input
     .map "relmouse0:+zbtn.down"    "zoomIn"
     .map "relmouse0:-zbtn.down"    "zoomOut"
     .map "keyb0:f12.down"          "screenshot"
-	.map "keyb0:1.down"            "create_box"
-	.map "keyb0:2.down"            "create_sphere"
-	.map "keyb0:3.down"            "create_big_sphere"
-	.map "keyb0:4.down"            "create_stack"
-	.map "keyb0:6.down"            "drop_box"
-	.map "keyb0:7.down"            "drop_sphere"
-	.map "keyb0:8.down"            "drop_stack"
-	.map "keyb0:0.down"            "kaboom"
-	.map "keyb0:space.down"        "fire_bullet"
+    .map "keyb0:1.down"            "create_box"
+    .map "keyb0:2.down"            "create_sphere"
+    .map "keyb0:3.down"            "create_big_sphere"
+    .map "keyb0:4.down"            "create_stack"
+    .map "keyb0:6.down"            "drop_box"
+    .map "keyb0:7.down"            "drop_sphere"
+    .map "keyb0:8.down"            "drop_stack"
+    .map "keyb0:0.down"            "kaboom"
+    .map "keyb0:space.down"        "fire_bullet"
 
-	.map "keyb0:p.down"    "create_stack_line"
+    .map "keyb0:p.down"    "create_stack_line"
     .endmap
 sel ..
 

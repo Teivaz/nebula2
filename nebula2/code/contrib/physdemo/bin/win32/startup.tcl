@@ -31,9 +31,9 @@ sel /sys/servers/file2
         puts "Shader directory: data/shaders/2.0"
     }
     .setassign "anims"    "data/anims/"
-	.setassign "shapes"   "data/shapedefs/"
+    .setassign "shapes"   "data/shapedefs/"
     .setassign "lights"   "data/lightdefs/"
-	.setassign "gui"      "$proj/export/gui/"
+    .setassign "gui"      "$proj/export/gui/"
 
 #-------------------------------------------------------------------------------
 #   restore original directory

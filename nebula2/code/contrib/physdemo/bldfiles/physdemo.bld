@@ -21,7 +21,7 @@ begintarget physdemo
         microtcl
         ntoollib
         nopende
-		ngui
+        ngui
         physdemo_core
     }
 endtarget
@@ -36,7 +36,7 @@ beginworkspace PhysdemoProject
         ndirect3d9
         microtcl
         ntoollib
-		ngui
+        ngui
         physdemo_core
         nopende
     }
