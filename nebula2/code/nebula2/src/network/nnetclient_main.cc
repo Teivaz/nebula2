@@ -169,7 +169,7 @@ nNetClient::Trigger()
                     }
                 }
             }
-            while (curMsg = msgBuffer.GetNextString());
+            while ((curMsg = msgBuffer.GetNextString()));
         }
     }
 }
