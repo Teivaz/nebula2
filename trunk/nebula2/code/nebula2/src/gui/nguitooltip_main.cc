@@ -8,6 +8,21 @@
 
 nNebulaClass(nGuiToolTip, "nguitextlabel");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguitooltip
+
+    @cppclass
+    nGuiToolTip
+    
+    @superclass
+    nguitextlabel
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

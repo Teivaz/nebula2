@@ -7,6 +7,21 @@
 
 nNebulaClass(nGuiConsoleWindow, "nguiclientwindow");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguiconsolewindow
+
+    @cppclass
+    nGuiConsoleWindow
+    
+    @superclass
+    nguiclientwindow
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

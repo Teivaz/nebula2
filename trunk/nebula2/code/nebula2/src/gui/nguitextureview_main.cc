@@ -7,6 +7,21 @@
 
 nNebulaClass(nGuiTextureView, "nguiwidget");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguitextureview
+
+    @cppclass
+    nGuiTextureView
+    
+    @superclass
+    nguiwidget
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

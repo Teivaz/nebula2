@@ -9,6 +9,21 @@
 
 nNebulaClass(nGuiCategoryBrowser, "nguiformlayout");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguicategorybrowser
+
+    @cppclass
+    nGuiCategoryBrowser
+    
+    @superclass
+    nguiformlayout
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -12,6 +12,21 @@
 
 nNebulaClass(nGuiFileDialog, "nguiclientwindow");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    nguifiledialog
+
+    @cppclass
+    nGuiFileDialog
+    
+    @superclass
+    nguiclientwindow
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */
