@@ -5,7 +5,7 @@
     @class nSkinShadowCaster
     @ingroup Shadow
 
-    A shadow caster for skinned geometry.
+    @brief A shadow caster for skinned geometry.
 
     (C) 2004 RadonLabs GmbH
 */
