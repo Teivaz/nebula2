@@ -13,7 +13,8 @@
 */
 nFile::nFile(nFileServer2* server) : 
     fs(server),
-    lineNumber(0)
+    lineNumber(0),
+    isOpen(false)
 {
 #ifdef __WIN32__
     this->handle = 0;
@@ -36,19 +37,6 @@ nFile::~nFile()
     }
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nFile::IsOpen()
-{
-#ifdef __WIN32__
-    return (0 != this->handle);
-#else
-    return (0 != this->fp);
-#endif
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -121,7 +109,7 @@ nFile::Open(const char* fileName, const char* accessMode)
         return false;
     }
 #endif
-
+    this->isOpen = true;
     return true;
 }
 
@@ -151,6 +139,7 @@ nFile::Close()
         this->fp = 0;
     }
 #endif
+    this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------
@@ -284,6 +273,60 @@ nFile::Seek(int byteOffset, nSeekType origin)
 #endif
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+bool 
+nFile::Eof()
+{
+    n_assert(this->IsOpen());
+
+#ifdef __WIN32__
+    DWORD fpos = SetFilePointer(this->handle,0,NULL,FILE_CURRENT);
+    DWORD size = GetFileSize(this->handle,NULL);
+
+    return (fpos == size)? true:false;
+#else
+    return (!feof(this->fp))? false:true;
+#endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns size of file in bytes.
+
+    @return     byte-size of file
+*/
+int
+nFile::GetSize() const
+{
+    n_assert(this->IsOpen());
+
+#ifdef __WIN32__
+    return GetFileSize(this->handle, NULL);
+#else
+#error "nFile::GetSize(): NOT IMPLEMENTED!"
+#endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns time of last write access. The file must be opened in "read" mode
+    before this function can be called!
+*/
+nFileTime
+nFile::GetLastWriteTime() const
+{
+    n_assert(this->IsOpen());
+
+#ifdef __WIN32__
+    nFileTime fileTime;
+    GetFileTime(this->handle, NULL, NULL, &(fileTime.time));
+    return fileTime;
+#else
+#error "nFile::GetLastWriteTime(): NOT IMPLEMENTED!"
+#endif
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -381,3 +424,38 @@ nFile::GetS(char* buffer, int numChars)
     return retval;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Append the contents of another file to this file. This and the 'other' file
+    must both be open! Returns number of bytes copied.
+    Warning: current implementation reads the complete source file
+    into a ram buffer.
+
+    @return     number of bytes appended
+*/
+int
+nFile::AppendFile(nFile* other)
+{
+    n_assert(other);
+
+    int numBytes = other->GetSize();
+    if (numBytes == 0)
+    {
+        // nothing to do
+        return 0;
+    }
+
+    // allocate temp buffer and read bytes
+    void* buffer = n_malloc(numBytes);
+    n_assert(buffer);
+    int numBytesRead = other->Read(buffer, numBytes);
+    n_assert(numBytesRead == numBytes);
+
+    // write to this file
+    int numBytesWritten = this->Write(buffer, numBytes);
+    n_assert(numBytesWritten == numBytes);
+
+    // cleanup
+    n_free(buffer);
+    return numBytes;
+}
