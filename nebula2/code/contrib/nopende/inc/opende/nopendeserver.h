@@ -23,6 +23,7 @@
 
 #include "opende/nopendesurface.h"
 #include "kernel/nroot.h"
+#include "util/nhashlist.h"
 
 class nOpendeTriMesh;
 //------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 //  (c) 2004    Vadim Macagon
 //----------------------------------------------------------------------------
 #include "opende/nopendeworld.h"
+#include "kernel/nkernelserver.h"
 
 nNebulaScriptClass(nOpendeWorld, "nroot");
 

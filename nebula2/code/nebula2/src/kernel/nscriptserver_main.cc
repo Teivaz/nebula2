@@ -3,6 +3,7 @@
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/nscriptserver.h"
+#include "kernel/nkernelserver.h"
 
 nNebulaClass(nScriptServer, "nroot");
 

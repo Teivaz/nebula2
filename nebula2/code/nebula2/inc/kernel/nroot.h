@@ -36,9 +36,9 @@
 #include "util/nlist.h"
 #include "util/nnode.h"
 #include "kernel/ncmd.h"
-#include "kernel/nref.h"
 #include "kernel/nmutex.h"
 #include "util/nstring.h"
+#include "kernel/nclass.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
