@@ -387,20 +387,22 @@ nMRTSceneServer::RenderScene()
 //    nTexture2* emissiveBuffer = this->RenderEmissivePass();
 
     // start rendering to the frame buffer
-    gfxServer->BeginScene();
-    gfxServer->Clear(nGfxServer2::ALL, 0.4f, 0.4f, 0.4f, 1.0f, 1.0f, 0);
+    if (gfxServer->BeginScene()) 
+    {
+        gfxServer->Clear(nGfxServer2::ALL, 0.4f, 0.4f, 0.4f, 1.0f, 1.0f, 0);
 
-    // clear, render depth, diffuse, color and specular into the back buffer
-    this->RenderShapes(FOURCC('dept'));
-    this->RenderLightShapes(FOURCC('diff'));
-    this->RenderShapes(FOURCC('colr'));
-    this->RenderLightShapes(FOURCC('spec'));
+        // clear, render depth, diffuse, color and specular into the back buffer
+        this->RenderShapes(FOURCC('dept'));
+        this->RenderLightShapes(FOURCC('diff'));
+        this->RenderShapes(FOURCC('colr'));
+        this->RenderLightShapes(FOURCC('spec'));
 
-    // merge the offscreen buffers into the frame buffer
-//    this->MergeOffscreenBuffers(emissiveBuffer);
+        // merge the offscreen buffers into the frame buffer
+    //    this->MergeOffscreenBuffers(emissiveBuffer);
 
-    // finish the frame
-    gfxServer->DrawTextBuffer();
-    gfxServer->EndScene();
-    gfxServer->PresentScene();
+        // finish the frame
+        gfxServer->DrawTextBuffer();
+        gfxServer->EndScene();
+        gfxServer->PresentScene();
+    }
 }
