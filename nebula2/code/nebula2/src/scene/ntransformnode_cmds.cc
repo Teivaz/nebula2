@@ -28,7 +28,7 @@ static void n_getscale(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nscenenode
+    ntransformnode
     
     @superclass
     nscenenode
