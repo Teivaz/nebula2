@@ -7,16 +7,18 @@
     <dl>
      <dt>-help</dt>
        <dd>show this help</dd>
+     <dt>-host</dt>
+       <dd>defines host name or tcp/ip address</dd>
      <dt>-port</dt>
-       <dd>defines target port in the form address:portname (see below)</dd>
+       <dd>defines port name or number</dd>
     </dl>
 
     Examples:
 
     @verbatim
-    nremoteshell -port localhost:nviewer
-    nremoteshell -port 192.168.0.1:test
-    nremoteshell -port zeus:nviewer
+    nremoteshell -host localhost -port nviewer
+    nremoteshell -host 192.168.0.1 -port test
+    nremoteshell -host zeus -port nviewer
     @endverbatim
 
     (C) 2003 RadonLabs GmbH
@@ -29,30 +31,14 @@
 
 //------------------------------------------------------------------------------
 /**
-    Extracts a string from a nMsgNode.
 */
-const char*
-getMsg(nMsgNode* msgNode)
-{
-    const char* str = "";
-    if (msgNode)
-    {
-        const char* msgString = (const char*) msgNode->GetMsgPtr();
-        int msgSize = msgNode->GetMsgSize();
-        if (msgString && (msgSize > 0) && (msgString[msgSize - 1] == 0))
-        {
-            str = msgString;
-        }
-    }
-    return str;
-}
-
 int
 main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
 
     bool helpArg = args.GetBoolArg("-help");
+    const char* hostArg = args.GetStringArg("-host", "localhost");
     const char* portArg = args.GetStringArg("-port", 0);
 
     if (helpArg)
@@ -62,12 +48,13 @@ main(int argc, const char** argv)
                "Command line args:\n"
                "------------------\n"
                "-help       show this help\n"
-               "-port       defines target port in the form address:portname (see below)\n\n"
+               "-host       a host name\n"
+               "-port       a port name\n\n"
                "Examples:\n"
                "---------\n"
-               "nremoteshell -port localhost:nviewer\n"
-               "nremoteshell -port 192.168.0.1:test\n"
-               "nremoteshell -port zeus:nviewer\n");
+               "nremoteshell -host localhost -port nviewer\n"
+               "nremoteshell -host 192.168.0.1 -port test\n"
+               "nremoteshell -host zeus -port nviewer\n");
         return 5;
     }
     if (!portArg)
@@ -79,10 +66,12 @@ main(int argc, const char** argv)
     // create an ipc client and try to connect
     printf("*** Nebula2 remote shell *** \n");
     printf("(C) 2003 RadonLabs GmbH\n");
-    printf("Trying %s...\n", portArg);
+    printf("Trying host %s port %s...\n", hostArg, portArg);
     
+    nIpcAddress ipcAddress(hostArg, portArg);
     nIpcClient ipcClient;
-    if (ipcClient.Connect(portArg))
+    ipcClient.SetBlocking(true);
+    if (ipcClient.Connect(ipcAddress))
     {
         printf("...connected\n");
     }
@@ -94,37 +83,61 @@ main(int argc, const char** argv)
 
     bool running = true;
     bool lineOk = true;
+    nIpcBuffer msg(4096);
     while (running && lineOk)
     {
         char line[2048];
-        line[0] = '\0';
 
         // generate prompt
-        const char* pselCmd = "psel";
-        int pselLen = strlen(pselCmd) + 1;
-        nMsgNode* prompt = ipcClient.SendMsg((void*) pselCmd, pselLen);
-        printf("%s>", getMsg(prompt));
-        fflush(stdout);
-        ipcClient.FreeReplyMsgNode(prompt);
-
-        // get command
-        lineOk = (gets(line) > 0);
-
-        if (strcmp("exit", line) == 0)
+        msg.SetString("psel");
+        if (ipcClient.Send(msg))
         {
-            running = false;
-        }
-        else
-        {
-            int msgLen = strlen(line) + 1;
-            nMsgNode* reply = ipcClient.SendMsg(line, msgLen);
-            const char* msg = getMsg(reply);
-            if (*msg != 0)
+            // wait for answer from server
+            if (!ipcClient.Receive(msg))
             {
-                puts(msg);
+                printf("Error receiving prompt string!\n");
+                running = false;
             }
-            ipcClient.FreeReplyMsgNode(reply);
+            else
+            {
+                // display prompt string
+                printf("%s>", msg.GetString());
+                fflush(stdout);
+
+                // get command from user
+                lineOk = (gets(line) > 0);
+        
+                if (strcmp("exit", line) == 0)
+                {
+                    running = false;
+                }
+                else
+                {
+                    // send user command and wait for answer from server
+                    msg.SetString(line);
+                    if (ipcClient.Send(msg))
+                    {
+                        if (!ipcClient.Receive(msg))
+                        {
+                            printf("Error receiving reply!\n");
+                            running = false;
+                        }
+                        else
+                        {
+                            // display answer from server
+                            if (msg.GetString()[0] != 0)
+                            {
+                                puts(msg.GetString());
+                            }
+                        }
+                    }
+                }
+            }
         }
+    }
+    if (ipcClient.IsConnected())
+    {
+        ipcClient.Disconnect();
     }
     return 0;
 }
