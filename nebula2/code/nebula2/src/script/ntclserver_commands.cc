@@ -89,7 +89,7 @@ tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     {
         Tcl_SetResult(interp, "Syntax is 'delete name'", TCL_STATIC);
     }
-    else 
+    else
     {
         nRoot *o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
         if (o) 
@@ -117,7 +117,7 @@ tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     {
         Tcl_SetResult(interp, "Syntax is 'name = sel name'", TCL_STATIC);
     }
-    else 
+    else
     {
         char *objName = Tcl_GetString(objv[1]);
         nRoot* obj = nTclServer::kernelServer->Lookup(objName);
@@ -148,7 +148,7 @@ tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /
     {
         Tcl_SetResult(interp, "Syntax is 'name = psel'", TCL_STATIC);
     }
-    else 
+    else
     {
         nRoot *obj = nTclServer::kernelServer->GetCwd();
         n_assert(obj);
@@ -196,7 +196,7 @@ int
 tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     int retval = TCL_ERROR;
-    if (objc != 2) 
+    if (objc != 2)
     {
         Tcl_SetResult(interp, "Syntax is 'name = get filename'", TCL_STATIC);
     }
@@ -370,16 +370,16 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
                 {
                     s = ":null:";
                 }
-                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                Tcl_ListObjAppendElement(interp,res,so);
+                Tcl_Obj *so = Tcl_NewStringObj((char *)s, strlen(s));
+                Tcl_ListObjAppendElement(interp, res, so);
             }
             break;
 
             case nArg::Bool:
             {
                 const char *s = arg->GetB() ? "true" : "false";
-                Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                Tcl_ListObjAppendElement(interp,res,so);
+                Tcl_Obj *so = Tcl_NewStringObj((char *)s, strlen(s));
+                Tcl_ListObjAppendElement(interp, res, so);
             }
             break;
 
@@ -553,7 +553,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                             str = "null";
                         }
                         Tcl_Obj *so = Tcl_NewStringObj(str.Get(), str.Length());
-                        Tcl_ListObjAppendElement(interp,res,so);
+                        Tcl_ListObjAppendElement(interp, res, so);
                     }
                     break;
 
@@ -680,11 +680,11 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         }
 
         // let object handle the command
-        if (o->Dispatch(cmd)) 
+        if (o->Dispatch(cmd))
         {
             retval = TCL_OK;
             _putOutArgs(interp,cmd);
-        } 
+        }
         else 
         {
             tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', command '%s'",o,cmd_name);

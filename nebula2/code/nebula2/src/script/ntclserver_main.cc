@@ -8,21 +8,6 @@
 
 nNebulaClass(nTclServer, "nscriptserver");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    ntclserver
-
-    @cppclass
-    nTclServer
-    
-    @superclass
-    nscriptserver
-    
-    @classinfo
-    Docs needed.
-*/
-
 // new tcl commands and tcl command replacements
 extern Tcl_ObjCmdProc tclcmd_New;
 extern Tcl_ObjCmdProc tclcmd_Delete;
@@ -143,7 +128,7 @@ nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
     Tcl_DeleteCommand(this->interp, "exists");
     Tcl_DeleteCommand(this->interp, "dir");
     Tcl_DeleteCommand(this->interp, "unknown");
-  Tcl_DeleteCommand(this->interp, "server");
+    Tcl_DeleteCommand(this->interp, "server");
     Tcl_DeleteCommand(this->interp, "get");
     Tcl_DeleteCommand(this->interp, "psel");
     Tcl_DeleteCommand(this->interp, "sel");
@@ -282,16 +267,16 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
     {
         case SELCOMMAND:
             {
-            // get relative path from owner to o and write select statement
-            this->Indent(++this->indentLevel, indentBuf);
+                // get relative path from owner to o and write select statement
+                this->Indent(++this->indentLevel, indentBuf);
                 nString relPath = owner->GetRelPath(o);
-            
-            file->PutS(indentBuf);
-            file->PutS("sel ");
+
+                file->PutS(indentBuf);
+                file->PutS("sel ");
                 file->PutS(relPath.Get());
-            file->PutS("\n");
+                file->PutS("\n");
             }
-          break;
+            break;
 
         case NOSELCOMMAND:
             break;
