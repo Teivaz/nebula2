@@ -12,7 +12,8 @@ nNebulaScriptClass(nShapeNode, "nmaterialnode");
 /**
 */
 nShapeNode::nShapeNode() :
-    groupIndex(0)
+    groupIndex(0),
+    meshUsage(nMesh2::WriteOnce)
 {
     // empty
 }
@@ -28,15 +29,26 @@ nShapeNode::~nShapeNode()
 //------------------------------------------------------------------------------
 /**
     This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
+    this shape node class. Subclasses should call SetMeshUsage in their
+    constructors to ensure that this method reflects their requirements.
 
     @return     a combination on nMesh2::Usage flags
 */
 int
 nShapeNode::GetMeshUsage() const
 {
-    return nMesh2::WriteOnce;
+    return meshUsage;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Specifies the mesh usage flag combination required by
+    this shape node class.
+*/
+void
+nShapeNode::SetMeshUsage(int usage)
+{
+    meshUsage = usage;
 }
 
 //------------------------------------------------------------------------------
@@ -66,6 +78,7 @@ nShapeNode::LoadMesh()
         // append mesh usage to mesh resource name
         nString resourceName = this->meshName.Get();
         resourceName += "_"; resourceName += this->GetMeshUsage();
+        n_printf( "nMeshNode: resourceName = '%s'\n", resourceName.Get() );
         // get a new or shared mesh
         nMesh2* mesh = this->refGfxServer->NewMesh(resourceName.Get());
         n_assert(mesh);        
