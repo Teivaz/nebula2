@@ -21,7 +21,8 @@ const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
 */
 nMaxOptionParamMapDlg::nMaxOptionParamMapDlg() :
     spinMaxJointPalette(0),
-    spinWeightTrashold(0)
+    spinWeightTrashold(0),
+    spinSampleRate(0)
 {
 
 }
@@ -82,6 +83,16 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     spinWeightTrashold->SetValue(weightTrashold, FALSE);
 
     //SendMessage(editWeigihtTrashold, ES_RIGHT, 0, 0L);
+
+    // sample rate
+    int sampleRate = nMaxOptions::Instance()->GetSampleRate();
+    spinSampleRate = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_SAMPLERATE));
+    spinSampleRate->SetScale(1);
+    spinSampleRate->SetLimits(1, 64);
+    HWND editSampleRate = GetDlgItem(hwnd, IDC_EDIT_SAMPLERATE);
+    spinSampleRate->LinkToEdit(editSampleRate, EDITTYPE_INT);
+    spinSampleRate->SetResetValue(2);
+    spinSampleRate->SetValue(sampleRate, FALSE);
 
     // mesh type radio button
     CheckDlgButton(hwnd, IDC_N3D2, BST_CHECKED);
@@ -157,6 +168,9 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
 
             float weightTrashold = spinWeightTrashold->GetFVal();
             nMaxOptions::Instance()->SetWeightTrashold(weightTrashold);
+
+            int sampleRate = spinSampleRate->GetIVal();
+            nMaxOptions::Instance()->SetSampleRate(sampleRate);
         }
         break;
 
