@@ -205,14 +205,14 @@ proc emit_vcproj_files {name cid} {
     }
 
     #if the module definition file is set and target is dll then add it
-        set moddeffile [get_moddeffile $name]
-        if { $moddeffile != "" && [get_tartype $name] == "dll" } {
-            global cur_workspacepath
-            set moddeffile [findrelpath $cur_workspacepath $moddeffile]
-            regsub -all "/" $moddeffile "\\" filename
-            puts $cid "\t\t<Filter Name=\"Module Definition\" Filter=\"def\" >"
-            puts $cid "\t\t\t<File RelativePath=\"$filename\" />"
-            puts $cid "\t\t</Filter>"
+    set moddeffile [get_moddeffile $name]
+    if { $moddeffile != "" && [get_tartype $name] == "dll" } {
+        global cur_workspacepath
+        set moddeffile [findrelpath $cur_workspacepath $moddeffile]
+        regsub -all "/" $moddeffile "\\" filename
+        puts $cid "\t\t<Filter Name=\"Module Definition\" Filter=\"def\" >"
+        puts $cid "\t\t\t<File RelativePath=\"$filename\" />"
+        puts $cid "\t\t</Filter>"
     }
     
     # Resource files
