@@ -1,10 +1,14 @@
 #define N_KERNEL
-//-------------------------------------------------------------------
-//  nmemory.cc
-//  Speicher-Manager fuer Nebula, zeit-optimiert Allokation sehr
-//  kleiner Speicherbloecke.
-//  (C) 1999 A.Weissflog
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    @class nMemManager
+    @ingroup NebulaKernelMemory
+    
+    Nebula memory management class. Optimizes memory allocations and tracks
+    memory leaks and corruptions.
+
+    (C) 1999 RadonLabs GmbH
+*/
 #ifndef N_TYPES_H
 #include "kernel/ntypes.h"
 #endif
@@ -31,11 +35,6 @@
 #undef n_calloc
 #undef n_free
 
-//------------------------------------------------------------------------------
-//
-//  NEBULA MEMORY MANAGER
-//
-//------------------------------------------------------------------------------
 struct nChunkHeader 
 {
     nNode nd;           // muss im ersten Element bleiben!
@@ -66,8 +65,8 @@ class nMemManager
 public:
     enum 
     {
-        N_MINBLOCK = 4,     // minimale Blockgroesse ist 2^4 
-        N_MAXBLOCK = 10,    // maximale Blockgroesse ist 2^10
+        N_MINBLOCK = 4,     ///< minimal block size is 2^4
+        N_MAXBLOCK = 10,    ///< maximum block size is 2^10
         N_NUMBLOCKSIZES = (1+(N_MAXBLOCK - N_MINBLOCK)),
         N_PREFIX_MAGIC_COOKIE  = 0xDEADBEEF,
         N_POSTFIX_MAGIC_COOKIE = 0xFEEBDAED,
@@ -79,11 +78,17 @@ public:
     int b_size[N_NUMBLOCKSIZES];
     int b_num[N_NUMBLOCKSIZES];
 
+    /// constructor
     nMemManager();
+    /// destructor
     ~nMemManager();
+    /// Get new chunk of memory
     nBlockHeader *NewChunk(int, int);
+    /// Release a chunk of memory
     void FreeChunk(nChunkHeader *);
+    /// Allocate memory
     void *Malloc(int, const char *, int);
+    /// Free memory
     void Free(void *);
 };
 
@@ -93,10 +98,10 @@ int n_memallocated = 0;
 int n_memused      = 0;
 int n_memnumalloc  = 0;
 
-//-------------------------------------------------------------------
-//  nMemManager()
-//  27-Feb-99   floh    created
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Creates the memory chunks.
+*/
 nMemManager::nMemManager()
 {
     int i;
@@ -109,20 +114,15 @@ nMemManager::nMemManager()
     }
 }
 
-//-------------------------------------------------------------------
-//  ~nMemManager()
-//  27-Feb-99   floh    created
-//  28-May-99   floh    schreibt die MemLeaks jetzt in einen
-//                      Logfile raus, weil stdout offensichtlich
-//                      manchmal schon "zu" sein kann.
-//  31-May-99   floh    schreibt MemLog nur noch, wenn auch tatsaechlich
-//                      ein Memleak auftritt.
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Frees all memory chunks. Detects memory leaks.
+    
+    @todo memlog is disabled, since it clutters the working directory
+*/
 nMemManager::~nMemManager()
 {
-    // Chunkliste leermachen, und auf nicht freigegebene Bloecke
-    // testen...
-//    FILE *fp = NULL;
+//  FILE *fp = NULL;
     
     nChunkHeader *ch;
     while ((ch = (nChunkHeader *) this->chunks.GetHead())) {
@@ -165,14 +165,13 @@ nMemManager::~nMemManager()
 */
 }
 
-//-------------------------------------------------------------------
-//  NewChunk()
-//  Allokiert einen neuen Chunk und gibt Pointer auf ersten Block
-//  im Chunk zurueck.
-//  27-Feb-99   floh    created
-//  13-May-99   floh    updated n_memallocated
-//  27-May-99   floh    + klinkt sich jetzt in eine Chunkliste ein
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Allocate a new chunk and return pointer to first block in chunk.
+    
+    @param bsize block size
+    @param bnum number of blocks in chunk
+*/
 nBlockHeader *nMemManager::NewChunk(int bsize, int bnum)
 {
     int block_size = bsize + sizeof(nBlockHeader) + sizeof(nBlockPostfix);
@@ -181,14 +180,14 @@ nBlockHeader *nMemManager::NewChunk(int bsize, int bnum)
     if (c) {
         n_memallocated += chunk_size;
 
-        // ChunkHeader initialisieren
+        // initialise chunk header
         nChunkHeader *ch = (nChunkHeader *) c;
-        ch->nd.nNode::nNode();      // Konstruktor von nNode manuell ausfuehren
+        ch->nd.nNode::nNode();      // manually construct node.
         ch->bnum  = bnum;
         ch->bsize = block_size;
         this->chunks.AddTail((nNode *)ch);
 
-        // Blocks im Chunk initialisieren
+        // intialise the blocks
         char *f = c + sizeof(nChunkHeader); // first Block
         char *p = c + chunk_size;           // last Block + 1
         char *next = NULL;
@@ -207,11 +206,12 @@ nBlockHeader *nMemManager::NewChunk(int bsize, int bnum)
     return NULL;
 }
 
-//-------------------------------------------------------------------
-//  FreeChunk()
-//  Gibt einen allokierten Chunk wieder frei.
-//  27-May-99   floh    created
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Releases the given chunk back to the memory pool.
+    
+    @param ch pointer to chunk to release
+*/
 void nMemManager::FreeChunk(nChunkHeader *ch)
 {
     n_memallocated -= sizeof(nChunkHeader) + (ch->bsize*ch->bnum); 
@@ -220,29 +220,31 @@ void nMemManager::FreeChunk(nChunkHeader *ch)
     free((void *)ch);
 }
 
-//-------------------------------------------------------------------
-//  Malloc()
-//  27-Feb-99   floh    created
-//  13-May-99   floh    + updated n_memallocated, n_memused
-//  27-May-99   floh    + Source-Name und Source-Zeile
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Custom Malloc. Uses given source file and line to report memory leaks.
+    
+    @param size amount of memory to allocate
+    @param src_name name of source file
+    @param src_line line number within source file
+*/
 void *nMemManager::Malloc(int size, const char *src_name, int src_line)
 {
     mutex.Lock();
     char *p = NULL;
 
-    // ermittle Offset auf die letzten N Buchstaben von src_name
+    // ensure source name fits
     int len = strlen(src_name)+1;
     int off = len - nBlockHeader::N_SRCNAME_LEN;
     if (off < 0) off = 0;
     
     if (size > (1<<N_MAXBLOCK)) {
-        // Speicherblock zu gross, also bekommt er seinen eigenen Chunk
+        // memory wanted is bigger than max block size, so create a new individual chunk.
         p = (char *) this->NewChunk(size,1);
         if (p) {
             nBlockHeader *bh  = (nBlockHeader *) p;
             nBlockPostfix *bp = (nBlockPostfix *) (p + size + sizeof(nBlockHeader));
-            bh->next = (nBlockHeader *) -1L;    // damit n_free() Bescheid weiss
+            bh->next = (nBlockHeader *) -1L;    // flag for n_free()/Free()
             bh->size = size;
             strcpy(bh->src_name,&(src_name[off]));
             bh->src_line = src_line;
@@ -253,7 +255,7 @@ void *nMemManager::Malloc(int size, const char *src_name, int src_line)
             n_memnumalloc++;
         }
     } else {
-        // finde passende Blockgroesse
+        // find suitable block size
         int i;
         for (i=0; i<(int)(N_NUMBLOCKSIZES-1); i++) {
             int mask = ~(b_size[i]-1);
@@ -267,7 +269,7 @@ void *nMemManager::Malloc(int size, const char *src_name, int src_line)
             nBlockPostfix *bp = (nBlockPostfix *) (p + size + sizeof(nBlockHeader));
             blocks[i] = bh->next;
             if (NULL == blocks[i]) {
-                // aktueller Chunk aufgebraucht, neuen allokieren
+                // need a new chunk
                 blocks[i] = this->NewChunk(b_size[i],b_num[i]);
                 if (NULL == blocks[i]) n_error("Out Of Mem!\n");
             }
@@ -286,11 +288,12 @@ void *nMemManager::Malloc(int size, const char *src_name, int src_line)
     return p;
 }
 
-//-------------------------------------------------------------------
-//  Free()
-//  27-Feb-99   floh    created
-//  13-May-99   floh    updated n_memallocated, n_memused
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    Frees a previously allocated block of memory.
+    
+    @param p pointer to allocated memory.
+*/
 void nMemManager::Free(void *p)
 {
     mutex.Lock();
@@ -299,7 +302,7 @@ void nMemManager::Free(void *p)
     nBlockHeader  *bh = (nBlockHeader *) (pc - sizeof(nBlockHeader));
     nBlockPostfix *bp;
 
-    // ist der Block unbeschaedigt?
+    // is the block corrupt?
     if (bh->magic != (int)N_PREFIX_MAGIC_COOKIE) 
     {
         n_error("Free(): START OF MEM BLOCK CORRUPTED: src=%s, line=%d\n", bh->src_name, bh->src_line);
@@ -309,21 +312,19 @@ void nMemManager::Free(void *p)
         n_error("Free(): END OF MEM BLOCK CORRUPTED: src=%s, line=%d\n", bh->src_name, bh->src_line);
     }
 
-    // Mem-Status-Variableb
+    // update memory stats
     n_memused -= bh->size;
     n_memnumalloc--;
 
-    // Src-Info zuruecksetzen
     strcpy(bh->src_name,"<freed>");
     bh->src_line = 0;
 
     if (((int)bh->next) == -1L) {
-        // Block wurde als einzelner Chunk allokiert
+        // block was allocated as indivual chunk
         nChunkHeader *ch = (nChunkHeader *) (((char *)bh) - sizeof(nChunkHeader));
         bh->size = 0;
         this->FreeChunk(ch);
     } else {
-        // Block wurde abgehandelt
         int i = (int) bh->next;
         nBlockHeader *next = blocks[i];
         blocks[i] = bh;
@@ -333,30 +334,34 @@ void nMemManager::Free(void *p)
     mutex.Unlock();
 }
 
-//-------------------------------------------------------------------
-//  n_malloc()
-//  27-Feb-99   floh    created
-//  27-May-99   floh    zusaetzliche Debugging-Parameter
-//  04-Jun-99   floh    GCC-Warnings...
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    @ingroup NebulaKernelMemory
+    
+    Uses the memory manager.
+*/
 void *nn_malloc(size_t size, const char *file, int line)
 {
     return mem.Malloc(size,file,line);
 }
 
-//-------------------------------------------------------------------
-//  n_free()
-//  27-Feb-99   floh    created
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    @ingroup NebulaKernelMemory
+    
+    Uses the memory manager.
+*/
 void n_free(void *p)
 {
     mem.Free(p);
 }
 
-//-------------------------------------------------------------------
-//  n_calloc()
-//  27-Feb-99   floh    created
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+    @ingroup NebulaKernelMemory
+    
+    Uses the memory manager.
+*/
 void *nn_calloc(size_t num, size_t size, const char *file, int line)
 {
     size_t all_size = num*size;
@@ -374,6 +379,13 @@ void *nn_calloc(size_t num, size_t size, const char *file, int line)
 #include <windows.h>
 #endif
 
+//------------------------------------------------------------------------------
+/**
+    Uses Windows memory management.
+    
+    @todo should these be updated to use heap allocations?
+    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/memory/base/heap_functions.asp
+*/
 void *nn_malloc(size_t size, const char *file, int line)
 {
     HGLOBAL ptr = GlobalAlloc(0, size);
@@ -381,11 +393,19 @@ void *nn_malloc(size_t size, const char *file, int line)
     return ptr;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Uses Windows memory management.
+*/
 void n_free(void *p)
 {
     GlobalFree((HGLOBAL) p);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Uses Windows memory management.
+*/
 void *nn_calloc(size_t num, size_t size, const char *, int)
 {
     HGLOBAL ptr = GlobalAlloc(GMEM_ZEROINIT, size*num);
@@ -396,16 +416,29 @@ void *nn_calloc(size_t num, size_t size, const char *, int)
 //-------------------------------------------------------------------
 #else
 //-------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+/**
+    Uses standard memory management.
+*/
 void *nn_malloc(size_t size, const char *, int)
 {
     return malloc(size);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Uses standard memory management.
+*/
 void n_free(void *p)
 {
     free(p);
 }
 
+//------------------------------------------------------------------------------
+/**
+    Uses standard memory management.
+*/
 void *nn_calloc(size_t num, size_t size, const char *, int)
 {
     return calloc(num,size);
