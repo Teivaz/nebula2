@@ -738,6 +738,7 @@ nString::Strip(const char* charSet)
     if (ptr)
     {
         *ptr = 0;
+        this->strLen = strlen( str );
     }
 }
 
