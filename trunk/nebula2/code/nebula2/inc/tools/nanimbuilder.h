@@ -141,6 +141,8 @@ public:
         int GetKeyStride() const;
         /// check if the curves are valid
         bool Validate() const;
+        /// compress all compressible curves
+        int Optimize();
         /// convert loop type to string
         static const char* LoopType2String(LoopType t);
         /// convert string to loop type
@@ -180,7 +182,7 @@ public:
     /// clear all
     void Clear();
     /// add an animation group
-    void AddGroup(Group& group);
+    void AddGroup(const Group& group);
     /// get number of groups
     int GetNumGroups() const;
     /// get group at index
@@ -633,6 +635,29 @@ nAnimBuilder::Group::Validate() const
 
 //------------------------------------------------------------------------------
 /**
+    Optimize curves. At the moment this will just collapse curves where
+    all keys are identical. Returns number of collapsed curves.
+*/
+inline
+int
+nAnimBuilder::Group::Optimize()
+{
+    int numOptimizedCurves = 0;
+    int numCurves = this->GetNumCurves();
+    int curveIndex;
+    for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
+    {
+        Curve& curve = this->GetCurveAt(curveIndex);
+        if (curve.Optimize())
+        {
+            ++numOptimizedCurves;
+        }
+    }
+    return numOptimizedCurves;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 const char*
@@ -664,7 +689,7 @@ nAnimBuilder::Group::String2LoopType(const char* str)
 */
 inline
 void
-nAnimBuilder::AddGroup(Group& group)
+nAnimBuilder::AddGroup(const Group& group)
 {
     this->groupArray.Append(group);
 }
