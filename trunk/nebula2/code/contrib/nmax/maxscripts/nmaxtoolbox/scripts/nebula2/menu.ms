@@ -97,6 +97,24 @@ tooltip:"Specify LOD Options"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Attachment Node' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_Attach
+category:"nmaxtoolbox" 
+buttonText:"Attachment Node"
+tooltip:"Specify Attachment Node Options" 
+( 	
+    include "nebula2/attach_fn.ms"
+    on execute do
+    (
+        nAddAttachCustomAttributes()
+
+        -- Sets Modify command mode activate.
+        max modify mode
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Animation' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Animation
@@ -104,7 +122,7 @@ category:"nmaxtoolbox"
 buttonText:"Animation Editor..."
 tooltip:"Specify Animations States and Clips" 
 ( 	
-    --include "nebula2/animation.ms"
+    include "nebula2/animation.ms"
 
     on execute do 
     (
@@ -114,23 +132,6 @@ tooltip:"Specify Animations States and Clips"
     )
 )
 
----------------------------------------------------------------------------------
--- macro script for 'LOD' menu item
----------------------------------------------------------------------------------
-/*
-macroScript NebulaToolBox_Tools
-category:"nmaxtoolbox" 
-buttonText:"LOD Options"
-tooltip:"Level Of Details" 
-( 	
-    include "nebula2/lod_fn.ms"
-
-    on execute do 
-    (
-        AddLODCustomAttributes()
-    )
-)
-*/
 ---------------------------------------------------------------------------------
 -- macro script for 'Directory Setting' menu item.
 ---------------------------------------------------------------------------------
@@ -208,6 +209,7 @@ fn AddMenu =
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MeshOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Attach" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_SetDirectory" "nmaxtoolbox")
