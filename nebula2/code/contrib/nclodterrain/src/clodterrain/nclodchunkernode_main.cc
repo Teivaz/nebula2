@@ -152,6 +152,7 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
         destfile->PutFloat(m_maxerror); // max geometric error at base level mesh.
 
         // clear out the debug files
+        /*
         char debugfilename[100];
         nFile *debugfile = m_ref_fs->NewFileObject();
         for (unsigned int lix=0; lix < m_targetdepth; lix++)
@@ -165,7 +166,8 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
                 debugfile->Close();
             }
         }
-        debugfile->Release();
+        debugfile->Release();  
+        */
 
         // now generate the triangle meshes
         if (m_tileindexfilename)
@@ -183,6 +185,7 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
         trianglestats t = generateAllMeshData(*destfile, 0,0, m_heightfield->m_logxsize, m_targetdepth);
         n_printf("total triangles: %d\n", t.totaltriangles);
 
+        /*
         debugfile = m_ref_fs->NewFileObject();
         // wrap up debug files
         for (unsigned int lix=0; lix < m_targetdepth; lix++)
@@ -197,7 +200,7 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
             }
         }
         debugfile->Release();
-
+        */
     }
     destfile->Close();
     destfile->Release();
@@ -455,7 +458,7 @@ trianglestats nCLODChunkerNode::generateAllMeshData(nFile &destfile, int x0, int
     n_assert(t.realtriangles < 65000);
 
     // write out debug file
-    char debugfilename[100];
+/*    char debugfilename[100];
     sprintf(debugfilename, "chunk_%d.svg",m_targetdepth - level);
     nFile *debugfile = m_ref_fs->NewFileObject();
     if (debugfile->Open(debugfilename,"a+"))
@@ -465,7 +468,7 @@ trianglestats nCLODChunkerNode::generateAllMeshData(nFile &destfile, int x0, int
         debugfile->Close();
         debugfile->Release();
     }
-    
+  */  
     // add in the triangle stats to our current ones
     overallstats += t;
 
