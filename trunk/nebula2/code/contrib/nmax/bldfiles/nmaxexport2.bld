@@ -163,6 +163,9 @@ beginmodule nmaxanimator
         nmaxtransformanimator_scale
         nmaxikanimator
         nmaxtransformcurveanimator
+        nmaxskinanimator
+        nmaxvectoranimator
+        nmaxintanimator
     }
     setheaders {
         nmaxanimator
@@ -170,6 +173,9 @@ beginmodule nmaxanimator
         nmaxtransformanimator
         nmaxikanimator
         nmaxtransformcurveanimator
+        nmaxskinanimator
+        nmaxvectoranimator
+        nmaxintanimator
     }
 endmodule
 #-------------------------------------------------------------------------------
