@@ -149,7 +149,7 @@ nLocaleServer::GetLocaleText(const char* id) const
     if (this->idHashMap->Exists(id))
     {
         const ushort key = (*this->idHashMap)[id];
-        n_assert(key >= 0 && key < this->textArray.Size());
+        n_assert(key < this->textArray.Size());
         return this->textArray[key].Get();
     }
     else
