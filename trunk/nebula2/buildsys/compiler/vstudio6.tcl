@@ -247,8 +247,16 @@ proc emit_dsp_settings {name cid use_debug} {
     } elseif {[get_tartype $name] == "dll"} {
         puts $cid "LINK32=link.exe"
         puts $cid "# ADD BASE LINK32 $win32_libs /nologo /dll /machine:I386 $lib_path"
-        puts $cid "# ADD LINK32 $win32_libs /nologo /dll /machine:I386 $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
-    } else {
+
+        # change dll extension if the extension is not '.dll' (dle or mll whatever it is)
+        set dllextension [get_dllextension $name]
+        if { $dllextension != "dll"} {
+        set out "\"$odir/$name.$dllextension\""
+        }
+ 
+        puts $cid "# ADD LINK32 $win32_libs /nologo /dll /machine:I386 /out:$out $lib_path /libpath:[findrelpath $cur_workspacepath $neb_libpath_win32]"
+
+   } else {
         set linkdbg ""
         if {$use_debug == 1} {
             set linkdbg "/debug "
