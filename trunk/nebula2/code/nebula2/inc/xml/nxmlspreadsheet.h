@@ -5,7 +5,7 @@
     @class nXmlSpreadSheet
     @ingroup Xml
 
-    A XML spreadsheet can load an XML-exported Excel spreadsheet file.
+    @brief A XML spreadsheet can load an XML-exported Excel spreadsheet file.
 
     A database contains 1 or several XmlTable objects, which contain 
     XmlTableCell objects.
