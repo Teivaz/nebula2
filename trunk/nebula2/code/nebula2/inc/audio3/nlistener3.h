@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nListener3
+    @ingroup NebulaAudioSystem
 
     Define listener properties for audio subsystem 3.
     

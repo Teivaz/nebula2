@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDSoundResource
+    @ingroup NebulaDSAudioSystem
 
     An implementation of the nSoundResource class on top of DirectSound.
     

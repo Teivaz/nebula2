@@ -13,7 +13,7 @@ class nOpenALObj;
 //-----------------------------------------------------------------------------
 /**
     @class nOpenALServer
-    @ingroup nOpenALGroup
+    @ingroup NOpenALContribModule
 
     @brief
     @note 

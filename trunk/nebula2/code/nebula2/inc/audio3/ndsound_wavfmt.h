@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDSound_WavFmt
+    @ingroup NebulaDSAudioSystem
 
     Wav Format Control
 

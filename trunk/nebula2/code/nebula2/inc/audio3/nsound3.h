@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSound3
+    @ingroup NebulaAudioSystem
 
     Hold parameters for a sound instance. Usually a "game object" holds
     one or more nSound3 objects for all the sounds it has to play.

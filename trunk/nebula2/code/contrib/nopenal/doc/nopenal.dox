@@ -1,8 +1,11 @@
 /**
-    @defgroup NOppenALContribModule nOpenAL Contributed Module
+    @defgroup NOpenALContribModule nOpenAL Contributed Module
     @ingroup NebulaContribModules
+    @ingroup NebulaAudioSystem
 
-    @brief nOpenAL is a port of <a href://www.openal.org target=blank>OpenAL</a>
+    @brief nOpenAL is a wrapper around
+    <a href://www.openal.org target=blank>OpenAL</a> that implements the
+    i@ref NebulaAudioSystem interface.
 
     <h2>Introduction</h2>
     ...
