@@ -21,6 +21,7 @@ static void n_setsystemskin(void* slf, nCmd* cmd);
 static void n_getsystemskin(void* slf, nCmd* cmd);
 static void n_togglesystemgui(void* slf, nCmd* cmd);
 static void n_computescreenspacebrushsize(void* slf, nCmd* cmd);
+static void n_runcommand(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -57,6 +58,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("o_getsystemskin_v",                'GSSK', n_getsystemskin);
     cl->AddCmd("v_togglesystemgui_v",              'TGSG', n_togglesystemgui);
     cl->AddCmd("ff_computescreenspacebrushsize_s", 'CSBS', n_computescreenspacebrushsize);
+    cl->AddCmd("b_runcommand_os",                  'RUNC', n_runcommand);
     cl->EndCmds();
 }
 
@@ -397,4 +399,27 @@ n_computescreenspacebrushsize(void* slf, nCmd* cmd)
         self->ComputeScreenSpaceBrushSize( cmd->In()->GetS() );
     cmd->Out()->SetF( brushSize.x );
     cmd->Out()->SetF( brushSize.y );
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    runcommand
+    @input
+    os (widget object, command string)
+    @output
+    b 
+    @info
+    Run given script to nGuiWidget.
+
+    27-Aug-04   kims   created.
+*/
+static void 
+n_runcommand(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;
+    nGuiWidget* widget = (nGuiWidget*) cmd->In()->GetO();
+    nString command = cmd->In()->GetS();
+    bool ret = self->RunCommand(widget, command);
+    cmd->Out()->SetB(ret);
 }
