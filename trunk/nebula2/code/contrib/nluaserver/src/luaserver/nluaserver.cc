@@ -224,7 +224,7 @@ const char* nLuaServer::GenerateStackTrace()
 //  BeginWrite()
 //------------------------------------------------------------------------------
 nFile* 
-nLuaServer::BeginWrite(const char* filename, nRoot* obj)
+nLuaServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
     n_assert(obj);
@@ -246,7 +246,8 @@ nLuaServer::BeginWrite(const char* filename, nRoot* obj)
     }
     else
     {
-        n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
+        n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", 
+                 filename);
         file->Release();
         return 0;
     }
