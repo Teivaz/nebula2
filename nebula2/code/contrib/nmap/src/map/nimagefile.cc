@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nGfxServer
 //-------------------------------------------------------------------
 //  nimagefile.cc
 //  (C) 1999 A.Weissflog

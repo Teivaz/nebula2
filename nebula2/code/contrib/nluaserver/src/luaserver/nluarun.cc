@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nLuaServer
 //--------------------------------------------------------------------
 //  nluarun.cc -- Command processing
 //

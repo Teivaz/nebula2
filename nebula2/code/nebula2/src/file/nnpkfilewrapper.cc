@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nNpkFileWrapper
 //------------------------------------------------------------------------------
 //  nnpkfilewrapper.cc
 //  (C) 2002 RadonLabs GmbH

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nConServer
 //-------------------------------------------------------------------
 //  misc/ncsrv_dispatch.cc
 //  This file was machine generated.

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nStdSceneServer
 //------------------------------------------------------------------------------
 //  nstdsceneserver_main.cc
 //  (C) 2003 RadonLabs GmbH

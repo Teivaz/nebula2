@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nNpkFileServer
 //------------------------------------------------------------------------------
 //  nnpkfileserver_cmds.cc
 //  (C) 2001 RadonLabs GmbH

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nConServer
 //-------------------------------------------------------------------
 //  ncsrv_main.cc
 //  (C) 1999 A.Weissflog

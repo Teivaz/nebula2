@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nMapNode
 //-------------------------------------------------------------------
 //  noctree_main.cc
 //  (C) 1999 A.Weissflog

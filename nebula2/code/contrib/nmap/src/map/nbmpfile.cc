@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nGfxServer
 //-------------------------------------------------------------------
 //  nbmpfile.cc
 //  (C) 1999 A.Weissflog
