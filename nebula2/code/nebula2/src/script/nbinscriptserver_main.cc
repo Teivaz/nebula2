@@ -445,7 +445,7 @@ nBinScriptServer::GetString(nFile* file, nString& val)
     }
 
     // read string
-    char* buf = n_new_array( char, strLen + 1 );
+    char* buf = n_new_array(char, strLen + 1);
     bytesRead = file->Read(buf, strLen);
     buf[bytesRead] = 0;
     if (bytesRead == strLen)
@@ -457,7 +457,7 @@ nBinScriptServer::GetString(nFile* file, nString& val)
     {
         val.Set(0);
     }
-    n_delete_array( buf );
+    n_delete_array(buf);
     return (bytesRead == strLen);
 }
 

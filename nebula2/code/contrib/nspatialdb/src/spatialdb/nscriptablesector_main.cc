@@ -36,7 +36,7 @@ nSpatialElement *nScriptableSector::AddVisibleObject(const char *objname, const 
     if (newobject->rendernode.isvalid())
     {
         newobject->rc.SetRootNode(newobject->rendernode.get());
-        newobject->rendernode->RenderContextCreated( &(newobject->rc) );
+        newobject->rendernode->RenderContextCreated(&(newobject->rc));
     }
 
     element->SetPtr(newobject);
@@ -64,7 +64,7 @@ nSpatialOccluderElement *nScriptableSector::AddOccludingObject(const char *objna
     element->SetPtr(newobject);
 
     this->AddElement(element);
-    vector3 boxcenter( (min+max)*0.5 ), boxextents( (max-min)*0.5 );
+    vector3 boxcenter((min+max)*0.5), boxextents((max-min)*0.5);
     bbox3 thisbbox(boxcenter, boxextents);
 
     UpdateElement(element, boxcenter, thisbbox);

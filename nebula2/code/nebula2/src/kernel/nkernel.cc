@@ -252,7 +252,7 @@ n_dllopen(const char* name)
             n_printf("Could not load dll '%s'\nError was:\n%s\n", name, lpMsgBuf);
 
             // Free the buffer.
-            LocalFree( lpMsgBuf );
+            LocalFree(lpMsgBuf);
         }
         return (void*) dll;
     }
