@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nOctBBox
-    @ingroup NOctreeConribModule
+    @ingroup NOctreeContribModule
     @brief culling with given bounding box
 */
 class nOctBBox : public nOctVisitor

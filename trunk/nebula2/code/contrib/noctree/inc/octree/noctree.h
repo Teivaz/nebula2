@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------
 /**
     @class nOctree
-    @ingroup NOctreeConribModule
+    @ingroup NOctreeContribModule
     @brief Base octree space partitioning class.    
 
     Administers a number nOctElement's, which are defined by
@@ -29,8 +29,8 @@
                                         const vector3& p, 
                                         const bbox3& box)
     - 14-May-04   child  Cleaned up all nOctVisitors. Put an end to all this
-                         nOctree overloading and added a general nOctree *m_Octree
-                         to the nOctVisitor-Baseclass. Added Set/Get functions
+                         nOctree overloading and added a general nOctree *octree
+                         to the nOctVisitor base class. Added Set/Get functions
                          for it, too.
                          nOctree::collect(nOctElement *oe) has been moved to
                          nOctVisitor (Visitor State).

@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nOctVisitor
-    @ingroup NOctreeConribModule
+    @ingroup NOctreeContribModule
     @brief super class of octree visitor
 
     All nOctVisitor derived class should declare DoCulling() member function.
