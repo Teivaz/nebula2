@@ -370,7 +370,6 @@ nD3D9Server::DeviceClose()
     n_assert(this->effectPool);
     n_assert(this->d3dxLine);
     n_assert(this->windowHandler.IsWindowOpen());
-    n_assert(!this->windowHandler.IsWindowMinimized());
     n_assert(this->windowHandler.GetHwnd());
 
     // unload all resources
