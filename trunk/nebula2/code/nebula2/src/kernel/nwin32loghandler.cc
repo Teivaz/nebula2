@@ -26,6 +26,7 @@ nWin32LogHandler::nWin32LogHandler(const char* app) :
     nPathString appFileName(buf);
     appFileName.ConvertBackslashes();
     nPathString logFileName = appFileName.ExtractDirName();
+    logFileName.Append("/");
     logFileName.Append(appName.Get());
     logFileName.Append(".log");
 
@@ -84,6 +85,8 @@ nWin32LogHandler::Error(const char* msg, va_list argList)
     vfprintf(this->logFile, msg, argList);
     this->PutLineBuffer(msg, argList);
     this->PutMessageBox(MsgTypeError, msg, argList);
+    //this is a error - kill self
+    nWin32LogHandler::~nWin32LogHandler();
 }
 
 //------------------------------------------------------------------------------
