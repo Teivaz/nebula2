@@ -373,13 +373,15 @@ bool nMaxScene::Postprocess()
     {
         // if the global mesh is skinned mesh, 
         // create skin animator and partition the mesh.
-        nMeshBuilder::Vertex& v = this->globalMeshBuilder.GetVertexAt(0);
-        if (v.HasComponent(nMeshBuilder::Vertex::WEIGHTS) && 
-            v.HasComponent(nMeshBuilder::Vertex::JINDICES))
+        if (this->globalMeshBuilder.GetNumVertices())
         {
-            nMaxSkinPartitioner skinPartitioner;
-            skinPartitioner.Partitioning(this->meshArray, this->globalMeshBuilder);
-            //this->PartitionMesh();
+            nMeshBuilder::Vertex& v = this->globalMeshBuilder.GetVertexAt(0);
+            if (v.HasComponent(nMeshBuilder::Vertex::WEIGHTS) && 
+                v.HasComponent(nMeshBuilder::Vertex::JINDICES))
+            {
+                nMaxSkinPartitioner skinPartitioner;
+                skinPartitioner.Partitioning(this->meshArray, this->globalMeshBuilder);
+            }
         }
     }
 
@@ -387,25 +389,28 @@ bool nMaxScene::Postprocess()
 
     if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
-        nString filename;
-        filename += nMaxOptions::Instance()->GetMeshesAssign();
-        filename += nMaxOptions::Instance()->GetSaveFileName();
-        filename += nMaxOptions::Instance()->GetMeshFileType();
+        if (this->globalMeshBuilder.GetNumVertices())
+        {
+            nString filename;
+            filename += nMaxOptions::Instance()->GetMeshesAssign();
+            filename += nMaxOptions::Instance()->GetSaveFileName();
+            filename += nMaxOptions::Instance()->GetMeshFileType();
 
-        // remove redundant vertices.
-        this->globalMeshBuilder.Cleanup(0);
+            // remove redundant vertices.
+            this->globalMeshBuilder.Cleanup(0);
 
-        // build mesh tangents and normals (also vertex normal if it does not exist)
-        nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
-        
-        // check the mesh for geometry error.
-        nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
+            // build mesh tangents and normals (also vertex normal if it does not exist)
+            nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
+            
+            // check the mesh for geometry error.
+            nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
 
-        // specifies bounding box.
-        rootBBox = globalMeshBuilder.GetBBox();
+            // specifies bounding box.
+            rootBBox = globalMeshBuilder.GetBBox();
 
-        // save mesh data.
-        this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
+            // save mesh data.
+            this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
+        }
     }
     else
     {
