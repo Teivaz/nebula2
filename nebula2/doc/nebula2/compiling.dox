@@ -85,9 +85,21 @@ Insert <code>/NODEFAULTLIB:libci.lib</code> every time <code>AdditionalOptions=\
 
 Make sure that uuidgen.exe is in your path. 
 
+ - Even with <tt>uuidgen.exe</tt> on the path, .sln files are still not being generated.
+
+Try running <tt>update.tcl</tt> from the command line instead:
+
+@verbatim
+    tclsh84 update.tcl
+@endverbatim
+
   - <code>update.tcl</code> doesn't complete successfully (fails to pop up its grey window)
 
-<code>update.tcl</code> has probably choked on a bad build file.  I believe you can get slightly better debugging information for this case by running it from the command line, with <code>tclsh84 update.tcl</code>.
+<code>update.tcl</code> has probably choked on a bad build file.  I believe you can get slightly better debugging information for this case by running it from the command line, with:
+
+@verbatim
+    tclsh84 update.tcl
+@endverbatim
 
   - The nmake fails 
 
@@ -118,8 +130,10 @@ Get the DirectX 9 SDK "Summer Update", as described above.
 From the command line, go to <code>nebula2/</code> and type
 
 @verbatim
-  tclsh update.tcl
+  tclsh8.4 update.tcl
 @endverbatim
+
+<b>Note:</b> The executable name on OS X is <tt>tclsh8.4</tt> and not <tt>tclsh84</tt> as it is on Windows.
 
 This will build the XCode projects which will be located in the @c nebula2/build/xcode directory.  Any time files are added or removed from Nebula 2 this step must be repeated.
 
