@@ -36,6 +36,8 @@ public:
     nXmlTableCell& Cell(int row, const char* colName) const;
     /// get column index by name (return -1 if invalid column name)
     int FindColIndex(const char* colName) const;
+    /// return true if column title exists
+    bool HasColumn(const char* colName) const;
 
 private:
     nString name;
@@ -146,6 +148,17 @@ nXmlTable::FindColIndex(const char* colName) const
         }
     }
     return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true if a column with given title exists.
+*/
+inline
+bool
+nXmlTable::HasColumn(const char* colName) const
+{
+    return (this->FindColIndex(colName) != -1);
 }
 
 //------------------------------------------------------------------------------
