@@ -14,8 +14,8 @@ begintarget nnebula
     setmodules {
         nbinscriptserver ntclserver 
         nnpkfileserver nvariableserver 
-        ninputserver nresourceserver nresource nntxfile nmesh2 
-        ntexture2 nshader2 ngfxserver2
+        ninputserver nresourceloader nresourceserver nresource nntxfile
+        nmesh2 ntexture2 nshader2 ngfxserver2
         nsceneserver nstdsceneserver 
         nscenenode ntransformnode nabstractshadernode 
         nmaterialnode nvolumelightnode nshapenode nanimator nvectoranimator
