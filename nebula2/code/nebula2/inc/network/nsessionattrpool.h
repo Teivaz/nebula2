@@ -123,3 +123,4 @@ nSessionAttrPool::GetAttrAt(int index, const char*& name, const char*& val)
 
 //------------------------------------------------------------------------------
 #endif    
+
