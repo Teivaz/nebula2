@@ -24,16 +24,16 @@ static const char szSize[] = "--size=";
 static const char szAnalyze[] = "--analyze";
 
 Options::Options() :
-	_szMayaInputFilename( "" ),
-	_szScriptFilename( "" ),
-	_szMeshFilename( "" ),
-	_szAnimKeysFilename( "" ),
-	_bVerbose( false ),
-	_nKeyEveryNFrames( 1 ),
-	_nStartFrame( 0 ),		// 0 means beginning of anim
-	_nEndFrame( 0 ),		// 0 means end of anim
+    _szMayaInputFilename( "" ),
+    _szScriptFilename( "" ),
+    _szMeshFilename( "" ),
+    _szAnimKeysFilename( "" ),
+    _bVerbose( false ),
+    _nKeyEveryNFrames( 1 ),
+    _nStartFrame( 0 ),      // 0 means beginning of anim
+    _nEndFrame( 0 ),        // 0 means end of anim
     _szSizeMult(""),
-	_bAnalyze( false )
+    _bAnalyze( false )
 {
 }
 
@@ -41,20 +41,20 @@ Options::Options() :
 bool
 Options::matchSwitchP( const char* szSwitch, const char* szProgSwitch ) const
 {
-	char* _;
-	return matchSwitchP( szSwitch, szProgSwitch, _ );
+    char* _;
+    return matchSwitchP( szSwitch, szProgSwitch, _ );
 }
 
 bool
 Options::matchSwitchP( const char* szSwitch, const char* szProgSwitch, const char* & szArg ) const
 {
-	bool bMatch = strncmp( szSwitch, szProgSwitch, strlen( szProgSwitch ) ) == 0;
-	if ( bMatch )
-	{
-		szArg = szSwitch + strlen( szProgSwitch );
-	}
+    bool bMatch = strncmp( szSwitch, szProgSwitch, strlen( szProgSwitch ) ) == 0;
+    if ( bMatch )
+    {
+        szArg = szSwitch + strlen( szProgSwitch );
+    }
 
-	return bMatch;
+    return bMatch;
 }
 
 
@@ -83,7 +83,7 @@ Options::usage() const
               << "nmaya c:\\\\maya\\\\scenes\\\\bob.mb --mesh=c:\\nebula2\\data\\bob.n3d2\n"
               << "Note that you must double the backslashes for the maya file\n";
 
-	exit( 1 );
+    exit( 1 );
 }
 
 void
@@ -122,7 +122,7 @@ Options::parse( int argc, char* argv[] )
                 this->usage();
             } else if ( matchSwitchP( szSwitch, szAnalyze ) ) {
                 _bAnalyze = true;
-			} else if ( matchSwitchP( szSwitch, szSize, szArg ) ) {
+            } else if ( matchSwitchP( szSwitch, szSize, szArg ) ) {
                 _szSizeMult = szArg;
             }
         }

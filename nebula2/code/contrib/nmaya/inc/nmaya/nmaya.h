@@ -38,14 +38,14 @@ public:
 
 private:
 
-	int m_iVertProcessed; // our own vertex-ids
-	int m_iGroupProcessed; // our own group-ids
-	int m_iMaterialsProcessed; // our own material-ids
+    int m_iVertProcessed; // our own vertex-ids
+    int m_iGroupProcessed; // our own group-ids
+    int m_iMaterialsProcessed; // our own material-ids
 
-	MStringArray m_szGroupName;
+    MStringArray m_szGroupName;
     
-	Options options;
-	nMeshBuilder m_MeshBuilder;
+    Options options;
+    nMeshBuilder m_MeshBuilder;
 
     nKernelServer kernelServer;
     nRef<nPersistServer> persistServer;
@@ -53,11 +53,11 @@ private:
     nRef<nScriptServer> scriptServer;
 
     // Analyze the scene, for datachecks
-	MStatus Analyze();
+    MStatus Analyze();
     // Used for Weightmap extraction
-	MStatus GetClusterMembership( MObject &obCluster, MSelectionList &obMembers);
+    MStatus GetClusterMembership( MObject &obCluster, MSelectionList &obMembers);
   
-	MStatus openMayaFile();
+    MStatus openMayaFile();
     MStatus parse();   
     
     MStatus InitVerticesAndFaces( const MDagPath& vDagPath);
@@ -65,7 +65,7 @@ private:
     MStatus ExtractVerticesAndTriangles( MItMeshPolygon& vPolyIterator , MFnMesh& fnMesh);
 
     // Extracts static geometry. Static geometry is a model without joints.
-	MStatus ExportSimpleMesh();
+    MStatus ExportSimpleMesh();
     // Extracts rigged geometry. Has joints.
     MStatus ExportRiggedMesh();
     
@@ -73,11 +73,11 @@ private:
     MStatus WriteMeshFile();
     // rewritten to use the scriptserver
     void WriteCreationScript();
-	
+    
 // Older functions which need to be reviewed and improved for the new design using a scriptserver
     MStatus WriteAnimKeys();
     MStatus WriteCurves( nAnimBuilder::Group& OUT_animGroup, int& INOUT_numUncompressedCurves, const MAnimControl& vAnimCtrl, const MFnTransform& vJointFuncSet, int startFrame, int endFrame );
-	MStatus SetWeights( nMeshBuilder::Vertex& vertex, const MDagPath& vDagPath, const MObject& vGeoObject, const MFnSkinCluster& vSkinClustFuncSet );
+    MStatus SetWeights( nMeshBuilder::Vertex& vertex, const MDagPath& vDagPath, const MObject& vGeoObject, const MFnSkinCluster& vSkinClustFuncSet );
     MStatus WriteRiggedAnimKeys();
     bool isVisible( MFnDagNode&, MStatus& ) ;
     nAnimBuilder::Group CreateAnimGroup( int numFrames, nAnimBuilder::Group::LoopType loopType );
@@ -85,16 +85,16 @@ private:
     int CalcEndFrame( int maxFrame, int totalLen );
     nAnimBuilder::Group::LoopType CalcPlaybackMode( const MAnimControl& vAnimCtrl );
 
-	void WriteSkinAnimator_TCL( std::ofstream& fpScript );
-	MStatus WriteJointTree_TCL( std::ofstream& fpScript );
-	MStatus WriteJoint_TCL(int ourIdx, std::ostream&);
-	void WriteSkinShapeNode_TCL( std::ofstream& fpScript );
+    void WriteSkinAnimator_TCL( std::ofstream& fpScript );
+    MStatus WriteJointTree_TCL( std::ofstream& fpScript );
+    MStatus WriteJoint_TCL(int ourIdx, std::ostream&);
+    void WriteSkinShapeNode_TCL( std::ofstream& fpScript );
     void WriteSkinAnimator( std::ofstream& fpScript );
     void WriteSkinShapeNode( std::ofstream& fpScript );
     MStatus WriteJointTree( std::ofstream& fpScript );
     MStatus SaveAnim( nAnimBuilder::Group& animGroup );
 
-	vector4 GetRotVector( const MFnTransform& fnTransform );
+    vector4 GetRotVector( const MFnTransform& fnTransform );
     vector4 GetPosVector( const MFnTransform& fnTransform );
     vector4 GetScaleVector( const MFnTransform& fnTransform );
 

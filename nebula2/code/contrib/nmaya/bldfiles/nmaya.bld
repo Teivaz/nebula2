@@ -21,7 +21,7 @@ begintarget nmaya
     settargetdeps {
         nkernel
         nnebula
-	microtcl
+        microtcl
         ntoollib
     }
 endtarget

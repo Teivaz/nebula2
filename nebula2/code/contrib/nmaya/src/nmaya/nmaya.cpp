@@ -116,9 +116,9 @@ main(int argc, char *argv[])
 
 nMaya::nMaya(int argc, char *argv[]) :
     m_Skinned( false ),
-	m_iVertProcessed(-1),
-	m_iGroupProcessed(-1),
-	m_iMaterialsProcessed(-1)
+    m_iVertProcessed(-1),
+    m_iGroupProcessed(-1),
+    m_iMaterialsProcessed(-1)
 {
     // TODO: have parse not do the whole command line, but stop (and restart) at the input
     options.parse( argc, argv );
@@ -142,89 +142,89 @@ MStatus nMaya::Export()
     vResult = openMayaFile(); CHECK_MSTATUS( vResult );
     vResult = parse();  CHECK_MSTATUS( vResult );
     
-	if ( !options.analyzeP() ) {
-		if( m_Skinned )
-		{
-			if ( options.exportAnimP() ) 
-			{
-				vResult = WriteAnimKeys();  CHECK_MSTATUS( vResult );
-			}
-	    
-			if ( options.exportMeshP() ) 
-			{ 
-				vResult = ExportRiggedMesh(); CHECK_MSTATUS( vResult ); 
-			}
+    if ( !options.analyzeP() ) {
+        if( m_Skinned )
+        {
+            if ( options.exportAnimP() ) 
+            {
+                vResult = WriteAnimKeys();  CHECK_MSTATUS( vResult );
+            }
+        
+            if ( options.exportMeshP() ) 
+            { 
+                vResult = ExportRiggedMesh(); CHECK_MSTATUS( vResult ); 
+            }
 
-			if ( options.exportScriptP() ) 
-			{
-				WriteCreationScript();
-			}
-		}
-		else
-		{
-			if ( options.exportMeshP() ) 
-			{ 
-				vResult = ExportSimpleMesh(); CHECK_MSTATUS( vResult ); 
-			}
-		}
-	} else { 
-		Analyze(); // we analyze the scene
-	}
+            if ( options.exportScriptP() ) 
+            {
+                WriteCreationScript();
+            }
+        }
+        else
+        {
+            if ( options.exportMeshP() ) 
+            { 
+                vResult = ExportSimpleMesh(); CHECK_MSTATUS( vResult ); 
+            }
+        }
+    } else { 
+        Analyze(); // we analyze the scene
+    }
     return vResult;
 }
 
 MStatus nMaya::Analyze() {
-	
-	MStatus vResult;
+    
+    MStatus vResult;
 
-	// create iterator
-	MItDag dagIterator( MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
+    // create iterator
+    MItDag dagIterator( MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
 
-	// Look for meshes
-	cerr << "Meshes:" << endl;
-	for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
-	{
-		MDagPath dagPath;
-		
-		vResult = dagIterator.getPath(dagPath);
+    // Look for meshes
+    cerr << "Meshes:" << endl;
+    for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
+    {
+        MDagPath dagPath;
+        
+        vResult = dagIterator.getPath(dagPath);
 
-		MFnDagNode dagNode( dagPath, &vResult );
+        MFnDagNode dagNode( dagPath, &vResult );
 
-		
-		if (dagPath.hasFn(MFn::kMesh))
-		{
-			// we want the real thing !
-			if ( dagNode.isIntermediateObject()) continue;
-			if ( dagPath.hasFn( MFn::kTransform )) continue;
-			cerr << dagNode.fullPathName().asChar()<< endl;
-			
-			// access the mesh
-			MFnMesh fnMesh( dagPath, &vResult );
-			CHECK_MSTATUS_AND_RETURN_IT(vResult);
-			MString setName;
-			fnMesh.getCurrentUVSetName(setName);
-			cerr << "UvSets: " << fnMesh.numUVSets() << " -> " << setName.asChar() << endl;
-		}
-	}
+        
+        if (dagPath.hasFn(MFn::kMesh))
+        {
+            // we want the real thing !
+            if ( dagNode.isIntermediateObject()) continue;
+            if ( dagPath.hasFn( MFn::kTransform )) continue;
+            cerr << dagNode.fullPathName().asChar()<< endl;
+            
+            // access the mesh
+            MFnMesh fnMesh( dagPath, &vResult );
+            CHECK_MSTATUS_AND_RETURN_IT(vResult);
+            MString setName;
+            fnMesh.getCurrentUVSetName(setName);
+            cerr << "UvSets: " << fnMesh.numUVSets() << " -> " << setName.asChar() << endl;
+        }
+    }
 
-	// Look for Joints
-	cerr << endl << "Joints:" << endl;
-	for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
-	{
-		MDagPath dagPath;
-		
-		vResult = dagIterator.getPath(dagPath);
+    // Look for Joints
+    cerr << endl << "Joints:" << endl;
+    for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
+    {
+        MDagPath dagPath;
+        
+        vResult = dagIterator.getPath(dagPath);
 
-		MFnDagNode dagNode( dagPath, &vResult );
+        MFnDagNode dagNode( dagPath, &vResult );
 
-		
-		if (dagPath.hasFn(MFn::kJoint))
-		{
-			cerr << '[' << dagPath.fullPathName().asChar() << ']' << endl;
-		}
-	}
-	
-	return vResult;
+        
+        if (dagPath.hasFn(MFn::kJoint))
+        {
+            cerr << '[' << dagPath.fullPathName().asChar() << ']' << endl;
+        }
+    }
+    
+    return vResult;
 };
 
 nMaya::~nMaya()
@@ -237,7 +237,7 @@ nMaya::~nMaya()
 */
 MStatus nMaya::parse()
 {
-	// Remove / Improve this check
+    // Remove / Improve this check
 
     MStatus vResult = MS::kSuccess;
     MItDag dagIter( MItDag::kDepthFirst, MFn::kJoint, &vResult );
@@ -245,9 +245,9 @@ MStatus nMaya::parse()
     {
         cerr << "This model has no joints." << endl;
     }
-	else
+    else
     {
-		
+        
         for ( ; !dagIter.isDone(); dagIter.next() )
         {
             MDagPath dagPath;
@@ -259,7 +259,7 @@ MStatus nMaya::parse()
 
         m_Skinned = true;
     }
-	
+    
 
     return vResult;
 }
@@ -272,15 +272,15 @@ MStatus nMaya::WriteMeshFile()
     MStatus vResult = MS::kSuccess;
 
 
-	cerr << "Last vertex processed :		" << m_iVertProcessed << endl;
-	cerr << "Last group processed :		" << m_iGroupProcessed << endl;
-	cerr << "Number of created vertices :	" << m_MeshBuilder.GetNumVertices() << endl;
-	cerr << "Number of created triangles :	" << m_MeshBuilder.GetNumTriangles() << endl;
+    cerr << "Last vertex processed :        " << m_iVertProcessed << endl;
+    cerr << "Last group processed :     " << m_iGroupProcessed << endl;
+    cerr << "Number of created vertices :   " << m_MeshBuilder.GetNumVertices() << endl;
+    cerr << "Number of created triangles :  " << m_MeshBuilder.GetNumTriangles() << endl;
 
-	// Clean up and Rebuild Normals and Tangents
-	m_MeshBuilder.Cleanup(0);
-	m_MeshBuilder.BuildTriangleNormals();
-	m_MeshBuilder.BuildVertexTangents();
+    // Clean up and Rebuild Normals and Tangents
+    m_MeshBuilder.Cleanup(0);
+    m_MeshBuilder.BuildTriangleNormals();
+    m_MeshBuilder.BuildVertexTangents();
     
     if( !m_MeshBuilder.Save( (nFileServer2*)fileServer.get(), options.meshFilename().Get() ) )
     {
@@ -338,14 +338,14 @@ MStatus nMaya::ExportRiggedMesh( )
 
     MItDependencyNodes vDepIterator(MFn::kSkinClusterFilter, &vResult);  CHECK_MSTATUS_AND_RETURN_IT( vResult );
 
-	
+    
     // Now traverse all those skin clusters
     for (; !vDepIterator.isDone(); vDepIterator.next())
     {
         MObject vCurObject = vDepIterator.item(&vResult);  STATUS(vResult, "ExportRiggedMesh: MItDependencyNodes::item failed");
         MFnSkinCluster vSkinClustFuncSet(vCurObject, &vResult);  STATUS(vResult, "ExportRiggedMesh: MFnSkinCluster constructor failed");
         
-		// Get the output geometries connected to us (those are, in fact, meshes)
+        // Get the output geometries connected to us (those are, in fact, meshes)
         unsigned int nNumConnect = vSkinClustFuncSet.numOutputConnections(&vResult);  STATUS(vResult, "ExportRiggedMesh: MFnSkinCluster::numOutputConnections failed");
         // Loop through all the meshes - begin
         for (unsigned int numMeshes = 0; numMeshes < nNumConnect; ++numMeshes )
@@ -353,176 +353,176 @@ MStatus nMaya::ExportRiggedMesh( )
             unsigned int nPlugIdx = vSkinClustFuncSet.indexForOutputConnection(numMeshes, &vResult);   STATUS(vResult, "ExportRiggedMesh: MFnSkinCluster::indexForOutputConnection failed");
             MDagPath vDagPath;
             
-			vResult = vSkinClustFuncSet.getPathAtIndex(nPlugIdx, vDagPath);  STATUS(vResult, "ExportRiggedMesh: MFnSkinCluster::getPathAtIndex failed");
+            vResult = vSkinClustFuncSet.getPathAtIndex(nPlugIdx, vDagPath);  STATUS(vResult, "ExportRiggedMesh: MFnSkinCluster::getPathAtIndex failed");
             
-			vResult = InitVerticesAndFaces( vDagPath);  STATUS(vResult, "ExportRiggedMesh: InitFaces failed");
+            vResult = InitVerticesAndFaces( vDagPath);  STATUS(vResult, "ExportRiggedMesh: InitFaces failed");
 
-			MItGeometry vGeoIterator(vDagPath, &vResult);
-			CHECK_MSTATUS_AND_RETURN_IT(vResult);
-			int numVerts = 0;
-			for (; !vGeoIterator.isDone(); vGeoIterator.next())
-			{
-				nMeshBuilder::Vertex& vertex = m_MeshBuilder.GetVertexAt(numVerts);
-				
-				MObject vGeoObject = vGeoIterator.component(&vResult); // This is actually the vertex (hopefully)
-				STATUS(vResult, "SaveVertexAttributes: MItGeometry::component failed ");
-				
-				if( MFn::kMeshVertComponent != vGeoObject.apiType() )
-				{
-					continue;
-				}
+            MItGeometry vGeoIterator(vDagPath, &vResult);
+            CHECK_MSTATUS_AND_RETURN_IT(vResult);
+            int numVerts = 0;
+            for (; !vGeoIterator.isDone(); vGeoIterator.next())
+            {
+                nMeshBuilder::Vertex& vertex = m_MeshBuilder.GetVertexAt(numVerts);
+                
+                MObject vGeoObject = vGeoIterator.component(&vResult); // This is actually the vertex (hopefully)
+                STATUS(vResult, "SaveVertexAttributes: MItGeometry::component failed ");
+                
+                if( MFn::kMeshVertComponent != vGeoObject.apiType() )
+                {
+                    continue;
+                }
 
-				vResult = SetWeights( vertex, vDagPath, vGeoObject, vSkinClustFuncSet );
-				STATUS( vResult, "SetWeights failed" );
-				n_assert( vGeoIterator.index( &vResult ) == numVerts ); // in InitFaces we rely on the indices of the vertex list in m_MeshBuilder corresponding to Maya's
-				n_assert( !MFAIL( vResult ) );
-				++numVerts;
-			}
+                vResult = SetWeights( vertex, vDagPath, vGeoObject, vSkinClustFuncSet );
+                STATUS( vResult, "SetWeights failed" );
+                n_assert( vGeoIterator.index( &vResult ) == numVerts ); // in InitFaces we rely on the indices of the vertex list in m_MeshBuilder corresponding to Maya's
+                n_assert( !MFAIL( vResult ) );
+                ++numVerts;
+            }
 /**/
         }
     } 
 /*
-	MTime timeFirstFrame = MAnimControl::minTime();
-	
-	// reset time
-	// Move Maya to first frame
-	MGlobal::viewFrame(timeFirstFrame);
+    MTime timeFirstFrame = MAnimControl::minTime();
+    
+    // reset time
+    // Move Maya to first frame
+    MGlobal::viewFrame(timeFirstFrame);
 
-	int iJointCount = 0;
+    int iJointCount = 0;
 
-	MItDag dagIterator( MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
+    MItDag dagIterator( MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
 
-	for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
-	{
-		MDagPath dagPath;
-		
-		dagIterator.getPath(dagPath);
+    for ( dagIterator.reset(); !dagIterator.isDone(); dagIterator.next() )
+    {
+        MDagPath dagPath;
+        
+        dagIterator.getPath(dagPath);
 
-		MFnDagNode dagNode( dagPath, &vResult );
+        MFnDagNode dagNode( dagPath, &vResult );
 
-		if (dagPath.hasFn(MFn::kJoint))
-		{
-			MObject obJoint = dagNode.object();
+        if (dagPath.hasFn(MFn::kJoint))
+        {
+            MObject obJoint = dagNode.object();
 
-			MItDependencyGraph mGraph(obJoint, MFn::kGeometryFilt ,  MItDependencyGraph::kDownstream, MItDependencyGraph::kDepthFirst, MItDependencyGraph::kNodeLevel);
-			
-			for (;  !mGraph.isDone(); mGraph.next())
-			{
-				//cout << "Entering Loop for Weightmaps..."<< endl;
+            MItDependencyGraph mGraph(obJoint, MFn::kGeometryFilt ,  MItDependencyGraph::kDownstream, MItDependencyGraph::kDepthFirst, MItDependencyGraph::kNodeLevel);
+            
+            for (;  !mGraph.isDone(); mGraph.next())
+            {
+                //cout << "Entering Loop for Weightmaps..."<< endl;
 
-				MObject mObject;
+                MObject mObject;
 
-				if ( mGraph.thisNodeHasUnknownType() == MS::kSuccess ) 
-				{
-					// strange, but hey this works !
-					//cout << "mGraph.thisNodeHasUnknownType() !"<< endl;
-				}
-				
-				mObject = mGraph.thisNode();// we get a null pointer here - fixed !
-				// changed this !!
-				MFnSkinCluster  mGFilt(mObject);
-				
-				MSelectionList obMembers;
-				GetClusterMembership(mObject, obMembers);
+                if ( mGraph.thisNodeHasUnknownType() == MS::kSuccess ) 
+                {
+                    // strange, but hey this works !
+                    //cout << "mGraph.thisNodeHasUnknownType() !"<< endl;
+                }
+                
+                mObject = mGraph.thisNode();// we get a null pointer here - fixed !
+                // changed this !!
+                MFnSkinCluster  mGFilt(mObject);
+                
+                MSelectionList obMembers;
+                GetClusterMembership(mObject, obMembers);
 
-				unsigned nGeometryInCluster;
-				nGeometryInCluster = mGFilt.numOutputConnections();
-				//cout << "GeomInCluster :"<< nGeometryInCluster << endl;
+                unsigned nGeometryInCluster;
+                nGeometryInCluster = mGFilt.numOutputConnections();
+                //cout << "GeomInCluster :"<< nGeometryInCluster << endl;
 
-				for (size_t ii = 0; ii < nGeometryInCluster; ii++)
-				{
-					//cout << "Entering 2nd Loop for Weightmaps..."<< endl;
-					MDagPath skinPath;
-					unsigned int index;
+                for (size_t ii = 0; ii < nGeometryInCluster; ii++)
+                {
+                    //cout << "Entering 2nd Loop for Weightmaps..."<< endl;
+                    MDagPath skinPath;
+                    unsigned int index;
 
-					index = mGFilt.indexForOutputConnection(ii , &vResult);
-					if (vResult != MS::kSuccess)
-						continue;
+                    index = mGFilt.indexForOutputConnection(ii , &vResult);
+                    if (vResult != MS::kSuccess)
+                        continue;
 
-					vResult = mGFilt.getPathAtIndex(index, skinPath);
-					STATUS(vResult, "Error retrieving with getPathAtIndex()");
+                    vResult = mGFilt.getPathAtIndex(index, skinPath);
+                    STATUS(vResult, "Error retrieving with getPathAtIndex()");
 
-					MItGeometry gIter(skinPath);
-					
-					for (; !gIter.isDone(); gIter.next())
-					{
-						//cout << "Entering 3rd Loop for Weightmaps..."<< endl;
+                    MItGeometry gIter(skinPath);
+                    
+                    for (; !gIter.isDone(); gIter.next())
+                    {
+                        //cout << "Entering 3rd Loop for Weightmaps..."<< endl;
 
-						MObject comp = gIter.component(&vResult);
-						if (vResult != MS::kSuccess)
-							continue;
+                        MObject comp = gIter.component(&vResult);
+                        if (vResult != MS::kSuccess)
+                            continue;
 
-						// get weights
+                        // get weights
 
-						MDagPath joint_path;
-						dagNode.getPath ( joint_path );
+                        MDagPath joint_path;
+                        dagNode.getPath ( joint_path );
 
-						unsigned inf_index = mGFilt.indexForInfluenceObject (joint_path, &vResult);
+                        unsigned inf_index = mGFilt.indexForInfluenceObject (joint_path, &vResult);
 
-						if (vResult != MS::kSuccess)
-						{
-							cerr << "Error getting index for Influence Object" << endl;
-							continue;
-						}
+                        if (vResult != MS::kSuccess)
+                        {
+                            cerr << "Error getting index for Influence Object" << endl;
+                            continue;
+                        }
 
-						MFloatArray	wts;
-						
-						vResult = mGFilt.getWeights(skinPath, comp, inf_index, wts); // the index must be the joint-index !!!
-						
-						
-						if (vResult != MS::kSuccess)
-						{
-							cerr << "Error getting weights from component\n";
-							continue;
-						}
+                        MFloatArray wts;
+                        
+                        vResult = mGFilt.getWeights(skinPath, comp, inf_index, wts); // the index must be the joint-index !!!
+                        
+                        
+                        if (vResult != MS::kSuccess)
+                        {
+                            cerr << "Error getting weights from component\n";
+                            continue;
+                        }
 
-						//cout << "Influence Index : " << inf_index << endl;
-						//cout << "Length : " << wts.length() << endl;
-						//cout << skinPath.fullPathName() << endl;
+                        //cout << "Influence Index : " << inf_index << endl;
+                        //cout << "Length : " << wts.length() << endl;
+                        //cout << skinPath.fullPathName() << endl;
 
-						
-				
+                        
+                
 
-						if (!obMembers.hasItem(skinPath,comp))
-						{
-							// weight reported for this component is not in this Cluster
-							continue;
+                        if (!obMembers.hasItem(skinPath,comp))
+                        {
+                            // weight reported for this component is not in this Cluster
+                            continue;
 
-						}
-						
-						if ( wts[0] == 0.0f ) {
-							//cout << "Value skipped" << endl;
-							continue;
-						}
+                        }
+                        
+                        if ( wts[0] == 0.0f ) {
+                            //cout << "Value skipped" << endl;
+                            continue;
+                        }
 
-						// check for vertices with the same position and add them !
+                        // check for vertices with the same position and add them !
 
-						for ( int si = 0; si < m_iVertProcessed; si++)
-						{
-							MPoint p = gIter.position(MSpace::kWorld);
+                        for ( int si = 0; si < m_iVertProcessed; si++)
+                        {
+                            MPoint p = gIter.position(MSpace::kWorld);
 
-							nMeshBuilder::Vertex& curVert = m_MeshBuilder.GetVertexAt(si);
+                            nMeshBuilder::Vertex& curVert = m_MeshBuilder.GetVertexAt(si);
 
-							if ( (curVert.coord.x == p.x) && (curVert.coord.y == p.y) && (curVert.coord.z == p.z) )
-							{
-								curVert.SetWeights(vector4(wts[0],wts[1],wts[2],wts[3]));
-								curVert.SetJointIndices(vector4(inf_index,-1,-1,-1));
-								//szTemp.Format("    { %d; %f; }\n", skaPool[si].Id, wts[0]);
-								//szWeightsList += szTemp;
-								//iWeightSetCount++;
-							}
-						}
-						
+                            if ( (curVert.coord.x == p.x) && (curVert.coord.y == p.y) && (curVert.coord.z == p.z) )
+                            {
+                                curVert.SetWeights(vector4(wts[0],wts[1],wts[2],wts[3]));
+                                curVert.SetJointIndices(vector4(inf_index,-1,-1,-1));
+                                //szTemp.Format("    { %d; %f; }\n", skaPool[si].Id, wts[0]);
+                                //szWeightsList += szTemp;
+                                //iWeightSetCount++;
+                            }
+                        }
+                        
 
-						
-						//cout << "Weightmapcount :" << iWeightSetCount << endl;
-					}
-				}
+                        
+                        //cout << "Weightmapcount :" << iWeightSetCount << endl;
+                    }
+                }
 
-			}
+            }
 
-		}
-	}
+        }
+    }
     */
 
     // Re-enable IK Solving
@@ -535,25 +535,25 @@ MStatus nMaya::ExportRiggedMesh( )
 
 MStatus nMaya::GetClusterMembership( MObject &obCluster, MSelectionList &obMembers)
 {
-	MStatus status = MS::kSuccess;
-	obMembers.clear();
+    MStatus status = MS::kSuccess;
+    obMembers.clear();
 
-	MItDependencyGraph itGraph( obCluster, MFn::kSet);
+    MItDependencyGraph itGraph( obCluster, MFn::kSet);
 
-	if (itGraph.isDone())
-	{
-		cerr << "No Set Found for GetClusterMembership!\n";
-		return MS::kFailure;
-	}
+    if (itGraph.isDone())
+    {
+        cerr << "No Set Found for GetClusterMembership!\n";
+        return MS::kFailure;
+    }
 
-	MFnSet fnSet(itGraph.thisNode(), &status);
+    MFnSet fnSet(itGraph.thisNode(), &status);
 
-	if (status == MS::kSuccess)
-	{
-		status = fnSet.getMembers(obMembers, true);
-	}
+    if (status == MS::kSuccess)
+    {
+        status = fnSet.getMembers(obMembers, true);
+    }
 
-	return status;
+    return status;
 }
 
 
@@ -561,16 +561,16 @@ MStatus nMaya::InitVerticesAndFaces( const MDagPath& vDagPath )
 {
     MStatus vResult  = MS::kSuccess;
 
-	// access the mesh
-	MFnMesh fnMesh( vDagPath, &vResult );
-	CHECK_MSTATUS_AND_RETURN_IT(vResult);
+    // access the mesh
+    MFnMesh fnMesh( vDagPath, &vResult );
+    CHECK_MSTATUS_AND_RETURN_IT(vResult);
 
-	// we have new group
-	m_iGroupProcessed++;
-	m_iMaterialsProcessed++;
-	
-	// save the name
-	MFnDagNode dagNode( vDagPath, &vResult );
+    // we have new group
+    m_iGroupProcessed++;
+    m_iMaterialsProcessed++;
+    
+    // save the name
+    MFnDagNode dagNode( vDagPath, &vResult );
 
     if ( options.exportScriptP() )
     {
@@ -607,7 +607,7 @@ MStatus nMaya::InitVerticesAndFaces( const MDagPath& vDagPath )
                 connections[i].connectedTo(connectedPlugs, true, false);
 
                 for(unsigned j = 0; j < connectedPlugs.length(); j++)
-			    {
+                {
                     //if(MFnDependencyNode(connectedPlugs[j].node()).typeName() == "lambert")
                     MObject plugNode( connectedPlugs[j].node() );
                     if ( plugNode.hasFn( MFn::kLambert ) ||
@@ -617,15 +617,15 @@ MStatus nMaya::InitVerticesAndFaces( const MDagPath& vDagPath )
                          plugNode.hasFn( MFn::kBlinn ) ||
                          plugNode.hasFn( MFn::kLayeredShader ) ||
                          plugNode.hasFn( MFn::kRampShader ))
-				    {
+                    {
                         shaderNode = connectedPlugs[j].node();
                         MFnDependencyNode temp1(shaderNode);
                         //cerr << "Collecting Shaderinformation of '" << temp1.name().asChar() << "'" << endl;
-					    break;
+                        break;
                     }
                 }
                 if(!shaderNode.isNull())
-			    {
+                {
                     break;
                 }
             }
@@ -654,59 +654,59 @@ MStatus nMaya::InitVerticesAndFaces( const MDagPath& vDagPath )
         newShape->SetMesh( (nString("levels:" + options.meshFilename().ExtractFileName())).Get() ); // change the fixed path
     }
     
-	// Loop thru the polygons and write them to the nMeshBuilder
+    // Loop thru the polygons and write them to the nMeshBuilder
     MItMeshPolygon vPolyIterator(vDagPath, MObject::kNullObj, &vResult);
     
-	CHECK_MSTATUS_AND_RETURN_IT(vResult);
+    CHECK_MSTATUS_AND_RETURN_IT(vResult);
 
-	vResult = ExtractVerticesAndTriangles( vPolyIterator , fnMesh);
-	CHECK_MSTATUS_AND_RETURN_IT( vResult );
+    vResult = ExtractVerticesAndTriangles( vPolyIterator , fnMesh);
+    CHECK_MSTATUS_AND_RETURN_IT( vResult );
 
     return vResult;
 }
 
 MStatus nMaya::ExtractVerticesAndTriangles( MItMeshPolygon& vPolyIterator , MFnMesh& fnMesh) {
 
-	/* 
-	OK what's so different in this code here ? Well, we implent our own vertex indices instead
-	of passing a copy of the Maya indices to Nebula. This way we can extract anything in our way
-	and dont rely on Maya to give us the right indices for extraction. This pretty much
-	fixed the last uvmap bug.
-	*/
-	
-	MStatus vResult;
+    /* 
+    OK what's so different in this code here ? Well, we implent our own vertex indices instead
+    of passing a copy of the Maya indices to Nebula. This way we can extract anything in our way
+    and dont rely on Maya to give us the right indices for extraction. This pretty much
+    fixed the last uvmap bug.
+    */
+    
+    MStatus vResult;
 
-	for (; !vPolyIterator.isDone(); vPolyIterator.next()) { // Loop through all triangles
+    for (; !vPolyIterator.isDone(); vPolyIterator.next()) { // Loop through all triangles
 
-		MPointArray tri_PointList;
-		MIntArray vertexList;
+        MPointArray tri_PointList;
+        MIntArray vertexList;
 
-		// fill both arrays
-		vResult = vPolyIterator.getTriangles(tri_PointList,vertexList, MSpace::kWorld);
-		CHECK_MSTATUS_AND_RETURN_IT(vResult);
+        // fill both arrays
+        vResult = vPolyIterator.getTriangles(tri_PointList,vertexList, MSpace::kWorld);
+        CHECK_MSTATUS_AND_RETURN_IT(vResult);
 
-		// create the needed vertices and their very own indices
-		nMeshBuilder::Vertex vertex;
-		for( int i = 0; i < 3; i++ ) {
-			m_MeshBuilder.AddVertex( vertex );
-			m_iVertProcessed++;
-		}
+        // create the needed vertices and their very own indices
+        nMeshBuilder::Vertex vertex;
+        for( int i = 0; i < 3; i++ ) {
+            m_MeshBuilder.AddVertex( vertex );
+            m_iVertProcessed++;
+        }
 
-		// create the new triangle and add it to the meshbuilder
-		nMeshBuilder::Triangle tri;
-		tri.SetVertexIndices(m_iVertProcessed-2, m_iVertProcessed-1, m_iVertProcessed);
-		tri.SetNormal(vector3(0,1,0)); // we need to init this, otherwise lighting issues appear !
-		tri.SetTangent(vector3(0,1,0)); // we need to init this, otherwise lighting issues appear ! 
-		tri.SetGroupId(m_iGroupProcessed);
-		tri.SetMaterialId(m_iMaterialsProcessed);
-		m_MeshBuilder.AddTriangle( tri );
+        // create the new triangle and add it to the meshbuilder
+        nMeshBuilder::Triangle tri;
+        tri.SetVertexIndices(m_iVertProcessed-2, m_iVertProcessed-1, m_iVertProcessed);
+        tri.SetNormal(vector3(0,1,0)); // we need to init this, otherwise lighting issues appear !
+        tri.SetTangent(vector3(0,1,0)); // we need to init this, otherwise lighting issues appear ! 
+        tri.SetGroupId(m_iGroupProcessed);
+        tri.SetMaterialId(m_iMaterialsProcessed);
+        m_MeshBuilder.AddTriangle( tri );
 
-		// fill in the normals | TODO : Find out what happens with the normals, we shouldn't need to rebuild them when the file is saved !
-		MFloatVectorArray normalArray;
-		fnMesh.getFaceVertexNormals( vPolyIterator.index(), normalArray, MSpace::kWorld );
+        // fill in the normals | TODO : Find out what happens with the normals, we shouldn't need to rebuild them when the file is saved !
+        MFloatVectorArray normalArray;
+        fnMesh.getFaceVertexNormals( vPolyIterator.index(), normalArray, MSpace::kWorld );
 
-		// uvmap extraction
-		float u = 0, v = 0;
+        // uvmap extraction
+        float u = 0, v = 0;
 
         // apply some size multiplier
         float fSize = 1.0f;
@@ -716,36 +716,36 @@ MStatus nMaya::ExtractVerticesAndTriangles( MItMeshPolygon& vPolyIterator , MFnM
         // vertex colors
         MColor curColor;
 
-		/* TODO: Ok this is some very ugly code right now, put this into a loop */
-		nMeshBuilder::Vertex& vert1 = m_MeshBuilder.GetVertexAt( m_iVertProcessed-2 );
-		vert1.SetCoord( vector3( (float)tri_PointList[0].x, (float)tri_PointList[0].y, (float)tri_PointList[0].z ) );
-		vert1.SetNormal( vector3( (float)normalArray[0].x, (float)normalArray[0].y, (float)normalArray[0].z ) );
+        /* TODO: Ok this is some very ugly code right now, put this into a loop */
+        nMeshBuilder::Vertex& vert1 = m_MeshBuilder.GetVertexAt( m_iVertProcessed-2 );
+        vert1.SetCoord( vector3( (float)tri_PointList[0].x, (float)tri_PointList[0].y, (float)tri_PointList[0].z ) );
+        vert1.SetNormal( vector3( (float)normalArray[0].x, (float)normalArray[0].y, (float)normalArray[0].z ) );
         vPolyIterator.getColor(curColor, 0);
         vert1.SetColor( vector4(curColor.r, curColor.g, curColor.b, curColor.a));
-		fnMesh.getPolygonUV( vPolyIterator.index(), 0, u, v );
+        fnMesh.getPolygonUV( vPolyIterator.index(), 0, u, v );
         vert1.SetUv( 0, vector2( u, -v) ); // flip v !!! Strange and dodgy !!!
         vert1.coord *= fSize;
 
-		nMeshBuilder::Vertex& vert2 = m_MeshBuilder.GetVertexAt( m_iVertProcessed-1 );
-		vert2.SetCoord( vector3( (float)tri_PointList[1].x, (float)tri_PointList[1].y, (float)tri_PointList[1].z ) );
-		vert2.SetNormal( vector3( (float)normalArray[1].x, (float)normalArray[1].y, (float)normalArray[1].z ) );
+        nMeshBuilder::Vertex& vert2 = m_MeshBuilder.GetVertexAt( m_iVertProcessed-1 );
+        vert2.SetCoord( vector3( (float)tri_PointList[1].x, (float)tri_PointList[1].y, (float)tri_PointList[1].z ) );
+        vert2.SetNormal( vector3( (float)normalArray[1].x, (float)normalArray[1].y, (float)normalArray[1].z ) );
         vPolyIterator.getColor(curColor, 1);
         vert2.SetColor( vector4(curColor.r, curColor.g, curColor.b, curColor.a));
-		fnMesh.getPolygonUV( vPolyIterator.index(), 1, u, v );
+        fnMesh.getPolygonUV( vPolyIterator.index(), 1, u, v );
         vert2.SetUv( 0, vector2( u, -v) ); // flip v !!! Strange and dodgy !!!
         vert2.coord *= fSize;
 
-		nMeshBuilder::Vertex& vert3 = m_MeshBuilder.GetVertexAt( m_iVertProcessed );
-		vert3.SetCoord( vector3( (float)tri_PointList[2].x, (float)tri_PointList[2].y, (float)tri_PointList[2].z ) );
-		vert3.SetNormal( vector3( (float)normalArray[2].x, (float)normalArray[2].y, (float)normalArray[2].z ) );
+        nMeshBuilder::Vertex& vert3 = m_MeshBuilder.GetVertexAt( m_iVertProcessed );
+        vert3.SetCoord( vector3( (float)tri_PointList[2].x, (float)tri_PointList[2].y, (float)tri_PointList[2].z ) );
+        vert3.SetNormal( vector3( (float)normalArray[2].x, (float)normalArray[2].y, (float)normalArray[2].z ) );
         vPolyIterator.getColor(curColor, 2);
         vert3.SetColor( vector4(curColor.r, curColor.g, curColor.b, curColor.a));
-		fnMesh.getPolygonUV( vPolyIterator.index(), 2, u, v );
-        vert3.SetUv( 0, vector2( u, -v) ); // flip v !!! Strange and dodgy !!!	
+        fnMesh.getPolygonUV( vPolyIterator.index(), 2, u, v );
+        vert3.SetUv( 0, vector2( u, -v) ); // flip v !!! Strange and dodgy !!!  
         vert3.coord *= fSize;
-	}
-	
-	return vResult;	
+    }
+    
+    return vResult; 
 };
 
 MStatus nMaya::ExportSimpleMesh( )
@@ -753,68 +753,68 @@ MStatus nMaya::ExportSimpleMesh( )
     MStatus vResult = MS::kSuccess;
 
     //create an iterator for only the mesh components of the DAG
-	MItDag itDag(MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
+    MItDag itDag(MItDag::kBreadthFirst, MFn::kInvalid, &vResult);
     CHECK_MSTATUS_AND_RETURN_IT(vResult);
 
-	for(itDag.reset();!itDag.isDone();itDag.next()) 
+    for(itDag.reset();!itDag.isDone();itDag.next()) 
     {
-		//get the current DAG path
-		MDagPath dagPath;
-		vResult = itDag.getPath(dagPath);
-		STATUS(vResult, "getPath" );
+        //get the current DAG path
+        MDagPath dagPath;
+        vResult = itDag.getPath(dagPath);
+        STATUS(vResult, "getPath" );
 
-		MFnDagNode dagNode( dagPath, &vResult );
-		STATUS(vResult, "DagNode Creation" );
+        MFnDagNode dagNode( dagPath, &vResult );
+        STATUS(vResult, "DagNode Creation" );
 
-		if (dagPath.hasFn(MFn::kMesh))
-		{
-			// we want the real thing !
-			if ( dagNode.isIntermediateObject()) continue;
-			// we only want meshdata linked to transforms
+        if (dagPath.hasFn(MFn::kMesh))
+        {
+            // we want the real thing !
+            if ( dagNode.isIntermediateObject()) continue;
+            // we only want meshdata linked to transforms
             // this takes instanced shapenodes in maya into account and converts
             // them into independent shapenodes in Nebula
             if ( !dagPath.hasFn( MFn::kTransform ) ) continue;
 
-			MFnDagNode visTester(dagPath);
+            MFnDagNode visTester(dagPath);
 
-			//if this node is visible, then process the poly mesh it represents
-			if(isVisible(visTester, vResult))
-			{
-				STATUS( vResult, "isVisible" );
-			
-				vResult = InitVerticesAndFaces(  dagPath );
-				CHECK_MSTATUS_AND_RETURN_IT( vResult );
-			}
-		}
-	}
+            //if this node is visible, then process the poly mesh it represents
+            if(isVisible(visTester, vResult))
+            {
+                STATUS( vResult, "isVisible" );
+            
+                vResult = InitVerticesAndFaces(  dagPath );
+                CHECK_MSTATUS_AND_RETURN_IT( vResult );
+            }
+        }
+    }
     return WriteMeshFile();
 }
 
 bool nMaya::isVisible(MFnDagNode& fnDag, MStatus& status) 
-//Summary:	determines if the given DAG node is currently visible
-//Args   :	fnDag - the DAG node to check
-//Returns:	true if the node is visible;		
-//			false otherwise
+//Summary:  determines if the given DAG node is currently visible
+//Args   :  fnDag - the DAG node to check
+//Returns:  true if the node is visible;        
+//          false otherwise
 {
-	if(fnDag.isIntermediateObject())
-		return false;
+    if(fnDag.isIntermediateObject())
+        return false;
 
-	MPlug visPlug = fnDag.findPlug("visibility", &status);
+    MPlug visPlug = fnDag.findPlug("visibility", &status);
     if( MFAIL( status ) )
     {
-		MGlobal::displayError("MPlug::findPlug");
-		return false;
-	} 
+        MGlobal::displayError("MPlug::findPlug");
+        return false;
+    } 
     else 
     {
-		bool visible;
-		status = visPlug.getValue(visible);
-		if( MFAIL( status ) )
+        bool visible;
+        status = visPlug.getValue(visible);
+        if( MFAIL( status ) )
         {
-			MGlobal::displayError("MPlug::getValue");
-		}
-		return visible;
-	}
+            MGlobal::displayError("MPlug::getValue");
+        }
+        return visible;
+    }
 }
 
 void nMaya::WriteCreationScript()
@@ -835,7 +835,7 @@ void nMaya::WriteSkinAnimator_TCL(  std::ofstream& fpScript ) {
              << "sel skinanimator\n"
              << "    .setchannel \"time\"\n"
              << "    .setlooptype \"" << strLoopType.Get() << "\"\n"
-			 << "	   # Override !!!" << endl
+             << "      # Override !!!" << endl
              << "    .setanim \"objects:enterpath.nanim2\"\n"; //<< options.animKeysFilename().asChar() << "' )\n"; // TODO parameterize
     WriteJointTree_TCL( fpScript );
     fpScript << "    .setstatechannel \"charState\"\n" // TODO parameterize
@@ -854,49 +854,49 @@ void nMaya::WriteSkinShapeNode_TCL( std::ofstream& fpScript )
     nSkinPartitioner skinPartitioner;
     skinPartitioner.PartitionMesh( m_MeshBuilder, newMeshBuilder, 72 ); // 72 is a magic number built into Nebula, but not one I can access from here
     
-	int numParts = skinPartitioner.GetNumPartitions();
-	cerr << "Skinpartitions :" << skinPartitioner.GetNumPartitions() << endl;
+    int numParts = skinPartitioner.GetNumPartitions();
+    cerr << "Skinpartitions :" << skinPartitioner.GetNumPartitions() << endl;
 
 
-	for ( int j = 0; j < numParts; j++ ) {
+    for ( int j = 0; j < numParts; j++ ) {
 
-		fpScript << "new nskinshapenode " << m_szGroupName[j].asChar() << "\n"// TODO parameterize
-				 << "sel " << m_szGroupName[j].asChar() << "\n"// TODO parameterize
-				 << "	   # Override !!!" << endl
-				 << "    .settexture \"DiffMap0\" \"textures:system/white.dds\"\n" // TODO parameterize
-				 << "    .settexture \"BumpMap0\" \"textures:system/nobump.tga\"\n"
-				 << "    .setvector \"MatAmbient\" 0.300000 0.300000 0.300000 1.000000 \n"
-				 << "    .setvector \"MatDiffuse\" 1.000000 1.000000 1.000000 1.000000 \n"
-				 << "    .setvector \"MatSpecular\" 0.200000 0.200000 0.200000 1.000000 \n"
-				 << "    .setfloat \"MatSpecularPower\" 32.000000\n"
-				 << "    .setshader \"colr\" \"shaders:default.fx\"\n"
-				 << "	   # Override !!!" << endl
-				 << "    .setmesh \"meshes:examples/nano.n3d2\"\n" //<< options.meshFilename().asChar() <<  "' )\n"// TODO parameterize
+        fpScript << "new nskinshapenode " << m_szGroupName[j].asChar() << "\n"// TODO parameterize
+                 << "sel " << m_szGroupName[j].asChar() << "\n"// TODO parameterize
+                 << "      # Override !!!" << endl
+                 << "    .settexture \"DiffMap0\" \"textures:system/white.dds\"\n" // TODO parameterize
+                 << "    .settexture \"BumpMap0\" \"textures:system/nobump.tga\"\n"
+                 << "    .setvector \"MatAmbient\" 0.300000 0.300000 0.300000 1.000000 \n"
+                 << "    .setvector \"MatDiffuse\" 1.000000 1.000000 1.000000 1.000000 \n"
+                 << "    .setvector \"MatSpecular\" 0.200000 0.200000 0.200000 1.000000 \n"
+                 << "    .setfloat \"MatSpecularPower\" 32.000000\n"
+                 << "    .setshader \"colr\" \"shaders:default.fx\"\n"
+                 << "      # Override !!!" << endl
+                 << "    .setmesh \"meshes:examples/nano.n3d2\"\n" //<< options.meshFilename().asChar() <<  "' )\n"// TODO parameterize
      
-				 << "    .setgroupindex "<< j <<"\n"
+                 << "    .setgroupindex "<< j <<"\n"
              
-				 //<< "    .setmeshusage 65 \n"
-				 << "    .beginfragments 1 \n"
-				 << "        .setfraggroupindex 0 0 \n" 
-				 << "        .beginjointpalette 0 " << m_vJointPaths.length() << endl;
-		for( unsigned int i = 0; i < m_vJointPaths.length(); )
-		{
-			fpScript << "            .setjointindices 0 " << i;
-			for( int j = 0; j < 8; ++j, ++i )
-			{
-				if( i < m_vJointPaths.length() )
-					fpScript << " " << i ;
-				else
-					fpScript << " 0";
-			}
-			fpScript << "\n";
-		}
-		fpScript   << "        .endjointpalette 0\n"
-				   << "    .endfragments\n"
-				   << "	   # Override !!!" << endl
-				   << "    .setskinanimator \"../skinanimator\"\n"
-				   << "sel .." << endl;
-	}
+                 //<< "    .setmeshusage 65 \n"
+                 << "    .beginfragments 1 \n"
+                 << "        .setfraggroupindex 0 0 \n" 
+                 << "        .beginjointpalette 0 " << m_vJointPaths.length() << endl;
+        for( unsigned int i = 0; i < m_vJointPaths.length(); )
+        {
+            fpScript << "            .setjointindices 0 " << i;
+            for( int j = 0; j < 8; ++j, ++i )
+            {
+                if( i < m_vJointPaths.length() )
+                    fpScript << " " << i ;
+                else
+                    fpScript << " 0";
+            }
+            fpScript << "\n";
+        }
+        fpScript   << "        .endjointpalette 0\n"
+                   << "    .endfragments\n"
+                   << "    # Override !!!" << endl
+                   << "    .setskinanimator \"../skinanimator\"\n"
+                   << "sel .." << endl;
+    }
 }
 
 MStatus nMaya::WriteJointTree_TCL( std::ofstream& fpScript )
