@@ -30,6 +30,8 @@ public:
     nConServer();
     /// destructor
     virtual ~nConServer();
+    /// return instance pointer
+    static nConServer* Instance();
     /// per-frame trigger method
     void Trigger();
     /// render the console
@@ -88,8 +90,9 @@ private:
     bool KeyIsInKillSet(int key);
 
 private:
+    static nConServer* Singleton;
+
     nAutoRef<nInputServer>  refInputServer;
-    nAutoRef<nGfxServer2>   refGfxServer;
     nAutoRef<nScriptServer> refScriptServer;
     nClass *envClass;
 
@@ -106,6 +109,17 @@ private:
     nString watchPattern;
     char inputBuffer[N_MAXPATH];
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nConServer*
+nConServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
 
 //------------------------------------------------------------------------------
 #endif

@@ -37,7 +37,7 @@ static void n_unwatch(void *, nCmd *);
     key input will be interpreted as command line input ans the 
     resulting commands will be passed to the scrip server. 
 */
-void n_initcmds(nClass *cl)
+void n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_open_v",      'OCON', n_open);
@@ -61,7 +61,7 @@ void n_initcmds(nClass *cl)
 */
 static void n_open(void* o, nCmd* /*cmd*/)
 {
-    nConServer *self = (nConServer *) o;
+    nConServer* self = (nConServer*) o;
     self->Open();
 }
 
@@ -78,7 +78,7 @@ static void n_open(void* o, nCmd* /*cmd*/)
 */
 static void n_close(void* o, nCmd* /*cmd*/)
 {
-    nConServer *self = (nConServer *) o;
+    nConServer* self = (nConServer*) o;
     self->Close();
 }
 
@@ -95,7 +95,7 @@ static void n_close(void* o, nCmd* /*cmd*/)
 */
 static void n_toggle(void* o, nCmd* /*cmd*/)
 {
-    nConServer *self = (nConServer *) o;
+    nConServer* self = (nConServer*) o;
     self->Toggle();
 }
 
@@ -113,7 +113,7 @@ static void n_toggle(void* o, nCmd* /*cmd*/)
     to decide which variables will be shown after the 
     console itself has been closed. 
 */
-static void n_watch(void *o, nCmd *cmd)
+static void n_watch(void* o, nCmd* cmd)
 {
     nConServer *self = (nConServer *) o;
     self->Watch(cmd->In()->GetS());
