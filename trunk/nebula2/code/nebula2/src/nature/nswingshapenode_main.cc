@@ -26,7 +26,7 @@ nSwingShapeNode::nSwingShapeNode() :
 */
 nSwingShapeNode::~nSwingShapeNode()
 {
-    // empty
+    this->UnloadResources();
 }
 
 //------------------------------------------------------------------------------
