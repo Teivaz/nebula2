@@ -335,12 +335,15 @@ nshlua -scriptserver nluaserver
     Once it starts up press F11 to bring up the console, now do the following:
 @verbatim
 > dofile(mangle('home:code/contrib/nluaserver/data/luatest/start.lua'))
+> start()
 > sel('/test')
 > call('testscriptcmds')
 (output should indicate all 4 tests passed)
 > call('makezombies')
 > PruneNebThunks()
 (output should indicate 2 zombies were found)
+> stop()
+> exit()
 @endverbatim
     
     It's a bit of a pain to type in the long path for the dofile() so if you plan on
