@@ -10,18 +10,9 @@
     (C) 2002 RadonLabs GmbH
 */
 #include <string.h>
-
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nStrNode: public nNode 
