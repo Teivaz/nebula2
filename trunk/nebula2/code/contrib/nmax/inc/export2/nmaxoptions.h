@@ -49,6 +49,8 @@ public:
     // @{
     void SetSampleRate(int val);
     int GetSampleRate() const;
+    void SetAddJointName(bool flag);
+    bool HasJointName() const;
     // @}
 
     // @name assign and path access functions.
@@ -115,6 +117,8 @@ protected:
     int maxJointPaletteSize;
     /// weight trashold.
     int weightTrashHold;
+    /// flag for adding joint name.
+    bool addJointName;
     /// @}
 
     /// @nanme assign and path variables.
@@ -299,4 +303,17 @@ float nMaxOptions::GetWeightTrashold() const
 {
     return this->weightTrashHold;
 }
+//-----------------------------------------------------------------------------
+inline
+void nMaxOptions::SetAddJointName(bool flag)
+{
+    this->addJointName = flag;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxOptions::HasJointName() const
+{
+    return this->addJointName;
+}
+//-----------------------------------------------------------------------------
 #endif
