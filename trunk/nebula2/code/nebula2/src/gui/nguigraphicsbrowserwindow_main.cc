@@ -152,6 +152,11 @@ nGuiGraphicsBrowserWindow::LoadObject(const nString& objPath)
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
 
+    // Set the new window title
+    nString title = objPath;
+    title.Append(" - Nebula2 Viewer");
+    nGfxServer2::Instance()->SetWindowTitle(title.Get());
+
     // reset time
     nTimeServer::Instance()->ResetTime();
 }
