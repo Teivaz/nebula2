@@ -9,9 +9,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_FILE_H
 #include "kernel/nfile.h"
-#endif
+
 
 //------------------------------------------------------------------------------
 class nNpkFileServer;
@@ -36,8 +35,6 @@ public:
     virtual int Tell();
     /// sets new position in file
     virtual bool Seek(int byteOffset, nSeekType origin);
-    /// determines wether the file is opened
-    virtual bool IsOpen();
 
 private:
     nNpkFileServer* npkFileServer;  // pointer to nNpkFileServer interface 

@@ -31,22 +31,6 @@ nNpkFile::~nNpkFile()
 
 //------------------------------------------------------------------------------
 /**
-*/
-bool
-nNpkFile::IsOpen()
-{
-    if (this->isNpkFile)
-    {
-        return (this->tocEntry != 0);
-    }
-    else
-    {
-        return nFile::IsOpen();
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Open the file, first try to open the file in the real filesystem. If this
     fails, try to open the file in a virtual filesystem contained in a npk file.
     If this fails too, return false.
@@ -81,6 +65,7 @@ nNpkFile::Open(const char* filename, const char* accessMode)
         this->isNpkFile     = true;
         this->isAsciiAccess = !(strchr(accessMode, 'b'));
         this->filePos       = 0;
+        this->isOpen        = true;
         return true;
     }
     return false;
@@ -105,6 +90,7 @@ nNpkFile::Close()
     this->isAsciiAccess = 0;
     this->tocEntry = 0;
     this->filePos = 0;
+    this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------
