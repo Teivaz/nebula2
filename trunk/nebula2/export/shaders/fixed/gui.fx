@@ -52,6 +52,7 @@ technique t0
         Lighting = True;
         LightEnable[0] = False;
         SpecularEnable = False;
+        FogEnable      = False;
         MaterialDiffuse = <MatDiffuse>;
         MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
         MaterialSpecular = { 0.0, 0.0, 0.0, 0.0 };
