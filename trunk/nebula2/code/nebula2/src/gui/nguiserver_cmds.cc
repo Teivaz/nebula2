@@ -23,6 +23,7 @@ static void n_getdragbox(void* slf, nCmd* cmd);
 static void n_computescreenspacebrushsize(void* slf, nCmd* cmd);
 static void n_runcommand(void* slf, nCmd* cmd);
 static void n_putevent(void* slf, nCmd* cmd);
+static void n_setdisplaysize(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -61,6 +62,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ff_computescreenspacebrushsize_s", 'CSBS', n_computescreenspacebrushsize);
     cl->AddCmd("b_runcommand_os",                  'RUNC', n_runcommand);
     cl->AddCmd("v_putevent_os",                    'PUTE', n_putevent);
+    cl->AddCmd("v_setdisplaysize_ii",              'SDSZ', n_setdisplaysize);
     cl->EndCmds();
 }
 
@@ -441,4 +443,24 @@ n_getdragbox(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     cmd->Out()->SetO(self->GetDragBox());
+}
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setdisplaysize
+    @input
+    i (x size), i (y size)
+    @output
+    v 
+    @info
+    Set the gui server's display size to the given dimensions.
+
+    29-Sep-04   Rafael   created.
+*/
+static void n_setdisplaysize(void* slf, nCmd* cmd)
+{
+    nGuiServer* self = (nGuiServer*) slf;
+    int xDim = cmd->In()->GetI();
+    int yDim = cmd->In()->GetI();    
+    self->SetDisplaySize(vector2((float)xDim, (float)yDim));
 }
