@@ -1,0 +1,51 @@
+#--------------------------------------------------------------------
+#   ngame.epk
+#   =========
+#   C4I game package configuration file.
+#
+#   16-Apr-04   ling	created
+#--------------------------------------------------------------------
+#workspace nebula
+
+#--------------------------------------------------------------------
+beginmodule nmap
+    setdir map
+    setfiles {
+        nmap_main
+        nmap_map
+        nmap_query
+        nmap_cmds
+    }
+    setheaders { nmap }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nmapnode
+    setdir map
+    setfiles {
+        nmapnode_main
+        nmapnode_map
+        nmapnode_render
+        nmapnode_cmds
+        mapblock
+        mapquadtree_main
+        mapquadtree_collect
+    }
+    setheaders { nmapnode mapblock mapquadtree }
+endmodule
+
+#--------------------------------------------------------------------
+begintarget nmap
+    settype lib
+    setplatform win32
+    setmods {
+        nmap
+        nmapnode
+    }
+    setlibs_win32 {
+        nkernel.lib
+        nnebula.lib
+        ncollide.lib
+    }
+    setlibs_unix  { nkernel nnebula }
+endtarget
+
