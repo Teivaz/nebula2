@@ -160,32 +160,36 @@ void nCLODTQTSplatterNode::compileTQTFromFile(const char *sourcefilename)
     n_assert(m_ref_fs.isvalid());
     nFile *destfile = m_ref_fs->NewFileObject();
     char bigsrcpath[N_MAXPATH];
-    char bigdstpath[N_MAXPATH];
     m_ref_fs->ManglePath(sourcefilename, bigsrcpath, sizeof(bigsrcpath));
-    m_ref_fs->ManglePath(m_outputfilename, bigdstpath, sizeof(bigdstpath));
-    if (destfile->Open(bigdstpath, "wb"))
+    if (!destfile->Open(m_outputfilename, "wb"))
     {
-        // write out tqt header
-        char header[TQTTILE_HEADER_BYTES] = {'t','q','t',0, TQT_VERSION ,0,0,0 };
-        destfile->Write(header,8);
-        // write out tree depth and tile size
-        destfile->PutInt(m_splatdepth);
-        destfile->PutInt(m_chunktexsize);
-        m_tocpos = destfile->Tell();
-        // write out the TOC
-        generateEmptyTOC(*destfile, m_splatdepth);
-        tqt_tile_layer *curtiles = new tqt_tile_layer( 1 << (m_splatdepth-2) );
-        if ( (curtiles = generateTQTLeaves(*destfile, m_splatdepth-2, bigsrcpath, curtiles)) &&
-             (m_splatdepth > 2) )
-        {
-            curtiles = generateTQTNodes(*destfile, m_splatdepth-3, curtiles);
-        }
-        delete curtiles;
-        
-        // generate splat blendmaps
-        TileIndexData tilemap;
-        if (tilemap.readBitmap(bigsrcpath))
-            generateTQTBlendTextures(*destfile, m_splatdepth-1, &tilemap);
+        n_error("nCLODTQTSplatterNode::compileTQTFromFile(): Could not open file %s\n",
+                m_outputfilename);
+        destfile->Release();
+        return;
+    }
+    // write out tqt header
+    char header[TQTTILE_HEADER_BYTES] = {'t','q','t',0, TQT_VERSION ,0,0,0 };
+    destfile->Write(header,8);
+    // write out tree depth and tile size
+    destfile->PutInt(m_splatdepth);
+    destfile->PutInt(m_chunktexsize);
+    m_tocpos = destfile->Tell();
+    // write out the TOC
+    generateEmptyTOC(*destfile, m_splatdepth);
+    tqt_tile_layer *curtiles = new tqt_tile_layer( 1 << (m_splatdepth-2) );
+    if ((curtiles = generateTQTLeaves(*destfile, m_splatdepth-2, bigsrcpath, curtiles)) &&
+         (m_splatdepth > 2) )
+    {
+        curtiles = generateTQTNodes(*destfile, m_splatdepth-3, curtiles);
+    }
+    delete curtiles;
+
+    // generate splat blendmaps
+    TileIndexData tilemap;
+    if (tilemap.readBitmap(bigsrcpath))
+    {
+        generateTQTBlendTextures(*destfile, m_splatdepth-1, &tilemap);
     }
     destfile->Close();
     destfile->Release();

@@ -826,8 +826,12 @@ nCLODShapeNode::LoadTerrain()
 //        chunkNamebase += "_terr"; 
 
         // open the terrain file
-        this->terrainFile->Open(chunkNamebase.Get(), "rb");
-        n_assert(this->terrainFile->IsOpen());
+        if (!this->terrainFile->Open(chunkNamebase.Get(), "rb"))
+        {
+            n_error("nCLODShapeNode::LoadTerrain(): Could not open file %s\n",
+                    chunkNamebase.Get());
+            return false;
+        }
 
         // read in header data
         const int headersize = 4;
@@ -956,8 +960,12 @@ nCLODShapeNode::LoadTqt()
         nString tqtNamebase = this->tqtName.Get();
 
         // open the terrain file
-        this->tqtFile->Open(tqtNamebase.Get(), "rb");
-        n_assert(this->tqtFile->IsOpen());
+        if (!this->tqtFile->Open(tqtNamebase.Get(), "rb"))
+        {
+            n_error("nCLODShapeNode::LoadTqt(): Could not open file %s\n",
+                    tqtNamebase.Get());
+            return false;
+        }
 
         // read in header and verify
         // read in header data
