@@ -77,8 +77,10 @@ nFrustumClipper::nFrustumClipper(nCamera2 &camera, const matrix44 &viewtransform
 {
     // initialize clip planes from the projection and transform info
     // stolen from nOctFrustum code, 
-    matrix44 proj = camera.GetProjection();
-    matrix44 m = viewtransform * proj;
+    matrix44 proj(camera.GetProjection());
+    matrix44 m(viewtransform);
+    m.invert();
+    m *= proj;
 
     // front
     m_planes[0].a = m.M13;
