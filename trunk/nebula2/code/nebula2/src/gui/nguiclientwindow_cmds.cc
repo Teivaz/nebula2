@@ -18,11 +18,11 @@ static void n_gettitle(void* slf, nCmd* cmd);
     @scriptclass
     nguiclientwindow
 
-    @superclass
-    nguiwindow
-
     @cppclass
     nGuiClientWindow
+
+    @superclass
+    nguiwindow
 
     @classinfo
     A window with optional close button, title bar, resize button and
