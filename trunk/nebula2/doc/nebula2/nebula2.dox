@@ -9,6 +9,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
 
   - @ref Nebula2GettingStarted
   - @ref Nebula2Overview
+  - @ref RadonLabsDifferences
 */
 
 /**
@@ -29,6 +30,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
   - @ref NebulaParticleSystem
   - @ref Gui
   - @ref NebulaAudioSystem
+  - @ref NebulaSignals
 
   See also @ref NebulaContribModules.
 
