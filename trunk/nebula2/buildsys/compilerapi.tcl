@@ -35,6 +35,8 @@
 #    get_tardefs            $tarname
 #    get_rtti               $tarname
 #    get_exceptions         $tarname
+#    get_moddeffile         $tarname
+#    get_dllextensition     $tarname
 #    get_win32libs_release  $tarname
 #    get_win32libs_debug    $tarname
 #    get_linuxlibs          $tarname
@@ -363,7 +365,31 @@ proc get_exceptions {tarname} {
 }
 
 #----------------------------------------------------------------------------
-#  get_win32libs_release
+# get_moddeffile
+# Returns the file and path to the module definition file
+# Returns "" if not set
+#----------------------------------------------------------------------------
+proc get_moddeffile {tarname}  {
+    global wspace
+    global cur_workspace
+
+    return $wspace($cur_workspace,$tarname,moddeffile)
+}
+
+#----------------------------------------------------------------------------
+#  get_dllextension
+#
+#  Returns the extension for the dll, which can be changed for plugin development.
+#----------------------------------------------------------------------------
+proc get_dllextension {tarname} {
+    global wspace
+    global cur_workspace
+
+    return $wspace($cur_workspace,$tarname,dllextension)
+}
+
+#----------------------------------------------------------------------------
+#  get_win32libs_relase
 #
 #  Returns a full list of libnames to link in a win32 release build.  These
 #  names are already dressed with the extension .lib
@@ -374,6 +400,7 @@ proc get_win32libs_release {tarname} {
     
     return $wspace($cur_workspace,$tarname,libs_win32_release)
 }
+
 
 #----------------------------------------------------------------------------
 #  get_win32libs_debug
