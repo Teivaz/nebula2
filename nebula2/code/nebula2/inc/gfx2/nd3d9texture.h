@@ -33,6 +33,10 @@ public:
 
     static nKernelServer* kernelServer;
 
+    // begin added for ngameswf
+    virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
+    virtual void GenerateMipMaps();
+    // end added for ngameswf
 protected:
     /// load texture resource (create rendertarget if render target resource)
     virtual bool LoadResource();
@@ -42,6 +46,7 @@ protected:
 private:
     friend class nD3D9Server;
     friend class nD3D9Shader;
+    friend class nD3D9Surface;
 
     /// get d3d9 base texture interface
     IDirect3DBaseTexture9* GetBaseTexture();

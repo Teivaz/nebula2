@@ -14,6 +14,8 @@
 #include "resource/nresource.h"
 #include "kernel/nfile.h"
 
+class nSurface;
+
 //------------------------------------------------------------------------------
 class nTexture2 : public nResource
 {
@@ -48,6 +50,7 @@ public:
         R32F,                       // 32 bit float, red only
         G32R32F,                    // 64 bit float, 32 bit red, 32 bit green
         A32B32G32R32F,              // 128 bit float, 32 bit rgba each
+        A8,
     };
 
     // the sides of a cube map
@@ -133,6 +136,11 @@ public:
     virtual void UnlockCubeFace(CubeFace face, int level);
 
     static nKernelServer* kernelServer;
+
+    // begin added for ngameswf
+    virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
+    virtual void GenerateMipMaps();
+    // end added for ngameswf
 
 protected:
     /// set number of mipmaps

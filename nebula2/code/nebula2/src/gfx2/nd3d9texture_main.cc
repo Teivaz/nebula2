@@ -2,6 +2,9 @@
 //  nd3d9texture_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include <d3d9.h>
+#include "gfx2/nsurface.h"
+#include "gfx2/nd3d9surface.h"
 #include "gfx2/nd3d9texture.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
@@ -530,6 +533,7 @@ nD3D9Texture::CreateEmptyTexture()
         case R32F:              d3dFormat = D3DFMT_R32F; break;
         case G32R32F:           d3dFormat = D3DFMT_G32R32F; break;
         case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
+        case A8:                d3dFormat = D3DFMT_A8; break;
         default:            
             // can't happen
             n_assert(false);
@@ -794,4 +798,45 @@ nD3D9Texture::UnlockCubeFace(CubeFace face, int level)
     HRESULT hr = this->textureCube->UnlockRect((D3DCUBEMAP_FACES) face, level);
     n_assert(SUCCEEDED(hr));
     this->UnlockMutex();
+}
+
+//------------------------------------------------------------------------------
+/**
+    - Feb-04 Kim, H.W. added to support ngameswf.
+
+    @param objName  name of nSurafce which to be created.
+    @param level    mipmap level
+    @param surface
+*/
+void nD3D9Texture::GetSurfaceLevel(const char* objName, int level, nSurface** surface)
+{
+    n_assert(this->texture2D);
+
+    HRESULT hr;
+
+    *surface = (nSurface*)this->kernelServer->New ("nd3d9surface", objName);
+    n_assert(*surface != NULL);
+
+    hr = this->texture2D->GetSurfaceLevel(0, &((nD3D9Surface*)*surface)->baseSurface);
+    n_assert(SUCCEEDED(hr));
+}
+
+//------------------------------------------------------------------------------
+/**
+    Generante mipmap.
+
+    - Feb-04 Kim, H.W. added to support ngameswf.
+*/
+void nD3D9Texture::GenerateMipMaps()
+{
+    n_assert(this->texture2D);
+
+    HRESULT hr;
+
+    hr = D3DXFilterTexture(this->texture2D,    // pTexture
+                           NULL,               // pPalette
+                           D3DX_DEFAULT,       // SrcLevel(0)
+                           D3DX_FILTER_LINEAR);// MipFilter
+
+    n_assert (SUCCEEDED(hr));
 }
