@@ -25,13 +25,29 @@ GetFormatFromExtension(const nString& filename)
     {
         format = D3DXIFF_JPG;
     }
-    else if (filename.CheckExtension("tga"))
-    {
-        format = D3DXIFF_TGA;
-    }
     else if (filename.CheckExtension("png"))
     {
         format = D3DXIFF_PNG;
+    }
+    else if (filename.CheckExtension("dib"))
+    {
+        format = D3DXIFF_DIB;
+    }
+    else if (filename.CheckExtension("hdr"))
+    {
+        format = D3DXIFF_HDR;
+    }
+    else if (filename.CheckExtension("pfm"))
+    {
+        format = D3DXIFF_PFM;
+    }
+    else if (filename.CheckExtension("tga"))
+    {
+        n_error("nD3D9Server::Screenshot(): D3DXSaveSurfaceToFile 9.0c doesn't support TGA.");
+    }
+    else if (!filename.CheckExtension("bmp"))
+    {
+        n_printf("nD3D9Server::Screenshot(): Unknown extension -- saving as bitmap.\n");
     }
     return format;
 }
