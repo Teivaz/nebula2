@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nMemoryAnimation
 //------------------------------------------------------------------------------
 //  nmemoryanimation_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -34,38 +33,39 @@ nMemoryAnimation::~nMemoryAnimation()
 /**
 */
 bool
-nMemoryAnimation::Load()
+nMemoryAnimation::LoadResource()
 {
-    n_assert(!this->valid);
+    n_assert(!this->IsValid());
 
-    if (nAnimation::Load())
+    bool success = false;
+    nPathString filename = this->GetFilename().Get();
+    if (filename.CheckExtension("nanim2"))
     {
-        if (this->filename.CheckExtension("nanim2"))
-        {
-            return this->LoadNanim2(this->filename.Get());
-        }
-        else if (this->filename.CheckExtension("nax2"))
-        {
-            return this->LoadNax2(this->filename.Get());
-        }
-        else
-        {
-            n_error("Could not load anim file %s\n", this->filename.Get());
-        }
+        success = this->LoadNanim2(filename.Get());
     }
-    return false;
+    else if (filename.CheckExtension("nax2"))
+    {
+        success = this->LoadNax2(filename.Get());
+    }
+    if (success)
+    {
+        this->SetValid(true);
+    }
+    return success;
 }
+
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nMemoryAnimation::Unload()
+nMemoryAnimation::UnloadResource()
 {
-    if (this->valid)
+    if (this->IsValid())
     {
-        nAnimation::Unload();
+        nAnimation::UnloadResource();
         this->keyArray.Clear();
+        this->SetValid(false);
     }
 }
 
@@ -76,15 +76,16 @@ nMemoryAnimation::Unload()
 bool
 nMemoryAnimation::LoadNanim2(const char* filename)
 {
-    n_assert(!this->valid);
+    n_assert(!this->IsValid());
 
     nFile* file = this->refFileServer->NewFileObject();
     n_assert(file);
 
     // open the file
-    if (!file->Open(this->filename.Get(), "r"))
+    if (!file->Open(filename, "r"))
     {
-        n_printf("nMemoryAnimation::LoadNanim2(): Could not open file %s\n", this->filename.Get());
+        n_error("nMemoryAnimation::LoadNanim2(): Could not open file %s\n", filename);
+        file->Release();
         return false;
     }
 
@@ -111,7 +112,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
             n_assert(typeString);
             if (0 != strcmp(typeString, "nanim2"))
             {
-                n_error("nMemoryAnimation::LoadNanim2(): Invalid type %s, must be 'nanim2'\n", this->filename.Get(), typeString);
+                n_error("nMemoryAnimation::LoadNanim2(): Invalid type %s, must be 'nanim2'\n", filename, typeString);
                 file->Close();
                 file->Release();
                 return false;
@@ -184,7 +185,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
         }
         else
         {
-            n_error("nMemoryAnimation::LoadNanim2(): Unknown keyword %s in nanim2 file %s\n", keyWord, this->filename.Get());
+            n_error("nMemoryAnimation::LoadNanim2(): Unknown keyword %s in nanim2 file %s\n", keyWord, filename);
             file->Close();
             file->Release();
             return false;
@@ -204,8 +205,85 @@ nMemoryAnimation::LoadNanim2(const char* filename)
 bool
 nMemoryAnimation::LoadNax2(const char* filename)
 {
-    // FIXME!
-    return false;
+    n_assert(!this->IsValid());
+
+    nFile* file = this->refFileServer->NewFileObject();
+    n_assert(file);
+
+    // open the file
+    if (!file->Open(filename, "rb"))
+    {
+        n_error("nMemoryAnimation::LoadNax2(): Could not open file %s!", filename);
+        file->Release();
+        return false;
+    }
+
+    // read header
+    int magic = file->GetInt();
+    if (magic != 'NAX2')
+    {
+        n_error("nMemoryAnimation::LoadNax2(): File %s is not a NAX2 file!", filename);
+        file->Close();
+        file->Release();
+        return false;
+    }
+    int numGroups = file->GetInt();
+    int numKeys = file->GetInt();
+
+    this->SetNumGroups(numGroups);
+    this->keyArray.SetFixedSize(numKeys);
+
+    // read groups
+    int groupIndex = 0;
+    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+    {
+        int numCurves = file->GetInt();
+        int startKey  = file->GetInt();
+        int numKeys   = file->GetInt();
+        int keyStride = file->GetInt();
+        float keyTime = file->GetFloat();
+        int loopType  = file->GetInt();
+
+        Group& group = this->GetGroupAt(groupIndex);
+        group.SetNumCurves(numCurves);
+        group.SetStartKey(startKey);
+        group.SetNumKeys(numKeys);
+        group.SetKeyStride(keyStride);
+        group.SetKeyTime(keyTime);
+        group.SetLoopType((Group::LoopType) loopType);
+    }
+
+    // read curves
+    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
+    {
+        Group& group = this->GetGroupAt(groupIndex);
+        int numCurves = group.GetNumCurves();
+        int curveIndex;
+        for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
+        {
+            static vector4 collapsedKey;
+            short ipolType = file->GetShort();
+            int firstKeyIndex = file->GetInt();
+            collapsedKey.x = file->GetFloat();
+            collapsedKey.y = file->GetFloat();
+            collapsedKey.z = file->GetFloat();
+            collapsedKey.w = file->GetFloat();
+
+            Curve& curve = group.GetCurveAt(curveIndex);
+            curve.SetIpolType((Curve::IpolType) ipolType);
+            curve.SetConstValue(collapsedKey);
+            curve.SetFirstKeyIndex(firstKeyIndex);
+        }
+    }
+
+    // read keys
+    int keyArraySize = numKeys * sizeof(vector4);
+    file->Read(&(this->keyArray[0]), keyArraySize);
+    
+    // cleanup
+    file->Close();
+    file->Release();
+    return true;
 }
 
 //------------------------------------------------------------------------------
