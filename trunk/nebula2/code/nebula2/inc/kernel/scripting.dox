@@ -12,7 +12,7 @@
     that provide scripting support for other languages:
 
        - @ref NLuaServerContribModule
-       - nPython
+       - @ref PythonScriptServices
        - nJava
        - nDotNet
 
