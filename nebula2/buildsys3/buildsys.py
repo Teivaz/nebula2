@@ -346,6 +346,9 @@ class BuildSys:
         # we can only do this once all targets have been processed
         for target in self.targets.values():
             target.CollectLibsFromDepends()
+        # process workspaces
+        for workspace in self.workspaces.values():
+            workspace.CollectPreprocessorDefs()
         return True
         
     #--------------------------------------------------------------------------

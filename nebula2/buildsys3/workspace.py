@@ -51,11 +51,12 @@ class Workspace:
                     preprocDefs[globalDef[0]] = ''
                 elif len(globalDef) == 2:
                     preprocDefs[globalDef[0]] = globalDef[1]
-            for targetDef in self.targetDefs[targetName]:
-                if len(targetDef) == 1:
-                    preprocDefs[targetDef[0]] = ''
-                elif len(targetDef) == 2:
-                    preprocDefs[targetDef[0]] = targetDef[1]
+            if targetName in self.targetDefs:
+                for targetDef in self.targetDefs[targetName]:
+                    if len(targetDef) == 1:
+                        preprocDefs[targetDef[0]] = ''
+                    elif len(targetDef) == 2:
+                        preprocDefs[targetDef[0]] = targetDef[1]
             self.targetDefsAll[targetName] = preprocDefs
     
     #--------------------------------------------------------------------------
@@ -75,7 +76,7 @@ class Workspace:
     #--------------------------------------------------------------------------
     def GetTargetDefsStringForTarget(self, targetName):
         defStr = ''
-        for defName, defValue in self.targetDefsAll:
+        for defName, defValue in self.targetDefsAll[targetName].items():
             if '' == defValue:
                 defStr += defName + ';'
             else:
