@@ -382,7 +382,9 @@ nArray<TYPE>::Grow()
 
 //------------------------------------------------------------------------------
 /**
-    30-Jan-03   floh    serious bugfixes!
+     - 30-Jan-03   floh    serious bugfixes!
+     - 07-Dec-04   jo      bugfix: neededSize >= this->allocSize becomes
+                                   neededSize > allocSize
 */
 template<class TYPE>
 void
@@ -402,7 +404,7 @@ nArray<TYPE>::Move(int fromIndex, int toIndex)
 
     // check if array needs to grow
     int neededSize = toIndex + num;
-    while (neededSize >= this->allocSize)
+    while (neededSize > this->allocSize)
     {
         this->Grow();
     }
