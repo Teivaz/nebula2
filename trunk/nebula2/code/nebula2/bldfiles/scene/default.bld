@@ -9,7 +9,8 @@
 #      ntransformnode
 #      nabstractshadernode
 #      nmaterialnode
-#      nvolumelightnode
+#      nlightnode
+#      nspotlightnode
 #      nshapenode
 #      nanimator
 #      nvectoranimator
@@ -58,10 +59,16 @@ beginmodule nmaterialnode
     setheaders { nmaterialnode }
 endmodule
 #-------------------------------------------------------------------------------
-beginmodule nvolumelightnode
+beginmodule nlightnode
     setdir scene
-    setfiles { nvolumelightnode_main }
-    setheaders { nvolumelightnode }
+    setfiles { nlightnode_main }
+    setheaders { nlightnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nspotlightnode
+    setdir scene
+    setfiles { nspotlightnode_main nspotlightnode_cmds }
+    setheaders { nspotlightnode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nshapenode
