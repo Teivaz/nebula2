@@ -27,7 +27,7 @@ static void n_getquatkeyat(void* slf, nCmd* cmd);
     nTransformAnimator
 
     @superclass
-    nkeyanimator
+    nanimator
 
     @classinfo
     Animate attributes of a transform node.

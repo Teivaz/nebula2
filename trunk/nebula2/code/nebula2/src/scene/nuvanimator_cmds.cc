@@ -24,7 +24,7 @@ static void n_getscalekeyat(void* slf, nCmd* cmd);
     nUvAnimator
 
     @superclass
-    nkeyanimator
+    nanimator
 
     @classinfo
     Animate UV coordinates of a shape node.
