@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nEvent
+    @ingroup NebulaThreadingSupport
 
-    Event wrapper for multithreading synchrinization.
+    @brief Event wrapper for multithreading synchronization.
 
     THERE MAY BE DIFFERENCES IN BEHAVIOUR IF AN EVENT IS SIGNALLED
     WITHOUT ANY THREADS WAITING FOR IT. THE EVENT MAY OR MAY NOT

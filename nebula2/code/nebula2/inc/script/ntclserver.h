@@ -3,6 +3,7 @@
 //--------------------------------------------------------------------
 /**
     @class nTclServer
+    @ingroup NebulaScriptServices
 
     Implements an nScriptServer that understands Tcl, extended
     by a few Nebula specific Tcl commands and the ability

@@ -3,7 +3,8 @@
 //------------------------------------------------------------------------------
 /**
   @class nCmdProtoNative
-  @ingroup ScriptServices
+  @ingroup NebulaScriptServices
+  @ingroup NebulaObjectSystem
   @brief A factory for nCmd objects that correspond to natively implemented
          script commands.
 

@@ -9,7 +9,9 @@
 */
 
 //------------------------------------------------------------------------------
-/*
+/**
+    @ingroup NebulaObjectSystem
+
     nNebulaClass() creates a simple Nebula class without script interface.
     It takes the C name of the class, and a string defining the superclass 
     name:
@@ -34,7 +36,9 @@
     void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
-/*
+/**
+    @ingroup NebulaObjectSystem
+
     nNebulaClassStaticInit(), declare Nebula class and call static
     data initialization function
 
@@ -59,7 +63,9 @@
     void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
-/*
+/**
+    @ingroup NebulaObjectSystem
+
     nNebulaScriptClass() creates a Nebula class with script interface (you'll
     have to provide a function void n_initcmds(nClass*)).
     It takes the C name of the class, and a string defining the superclass 
@@ -88,7 +94,9 @@
     void* n_create() { return n_new CLASS(); };
 
 //------------------------------------------------------------------------------
-/*
+/**
+    @ingroup NebulaObjectSystem
+
     nNebulaScriptClassStaticInit(), declare Nebula class with script interface
     and call static data initialization function.
 
@@ -116,7 +124,9 @@
 
 
 //------------------------------------------------------------------------------
-/*
+/**
+    @ingroup NebulaObjectSystem
+
     nNebulaRootClass(): Special macro for the Nebula root class
 */
 

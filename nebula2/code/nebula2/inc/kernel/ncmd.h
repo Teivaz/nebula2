@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class nCmd
+    @ingroup NebulaObjectSystem
+    @ingroup NebulaScriptServices
 
     Encapsulates a function call into a C++ object. 
     

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nBinScriptServer
+    @ingroup NebulaScriptServices
 
     Save/load objects as binary files.
 

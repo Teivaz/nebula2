@@ -1,0 +1,20 @@
+/**
+    @defgroup NebulaScriptServices Scripting Support
+    @ingroup NebulaKernel
+
+    @brief Nebula's scripting system integrates with its
+    @ref NebulaObjectSystem to provide scripting support
+    in multiple languages.
+
+    Out of the box, Nebula supports TCL and a binary
+    script server (which is for persistence rather than
+    scripting directly).  However, there are contributed modules
+    that provide scripting support for other languages:
+
+       - @ref NLuaServerContribModule
+       - nPython
+       - nJava
+       - nDotNet
+
+    ...
+*/

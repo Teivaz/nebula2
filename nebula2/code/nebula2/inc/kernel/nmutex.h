@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nMutex
+    @ingroup NebulaThreadingSupport
 
-    Implements a simple mutex object for thread synchronization.
+    @brief Implements a simple mutex object for thread synchronization.
     Win32: win32 mutex handles (CreateMutex())
     Linux: posix thread mutexes
 
