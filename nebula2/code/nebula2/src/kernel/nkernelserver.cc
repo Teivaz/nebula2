@@ -661,7 +661,29 @@ nKernelServer::Load(const char* path)
 {
     n_assert(path);
     this->Lock();
-    nRoot* obj = this->persistServer->LoadObject(path);
+    nRoot* obj = this->persistServer->LoadObject(path, 0);
+    this->Unlock();
+    return obj;
+}
+
+//------------------------------------------------------------------------------
+/*
+    Create a Nebula object from a persistent object file with a given name.
+
+    @param  path    path of persistent object file in host filesystem
+    @param  name    object name
+    @return         pointer to created object, or 0
+
+    -08-Oct-98   floh    created
+    -04-Oct-98   floh    char * -> const char *
+    -11-Nov-98   floh    implementiert
+*/
+nRoot*
+nKernelServer::LoadAs(const char* path, const char* name)
+{
+    n_assert(path && name);
+    this->Lock();
+    nRoot* obj = this->persistServer->LoadObject(path, name);
     this->Unlock();
     return obj;
 }

@@ -96,7 +96,7 @@ public:
     /// return cloned object
     nRoot *GetClone(void);
     /// load a object from persistency stream
-    nRoot *LoadObject(const char *name);
+    nRoot *LoadObject(const char *fileName, const char* objName);
 
     static nKernelServer* kernelServer;
 

@@ -135,45 +135,30 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName)
 //------------------------------------------------------------------------------
 /**
     Frontend to load an object from a persistent object file.
-
-     - 10-Nov-98   floh    created
-     - 01-Dec-98   floh    im Test, ob das Objekt schon existiert,
-                           wird jetzt einfach der RefCount erhoeht
-     - 13-Jan-99   floh    + oops, unter Linux kann auch Directory per
-                           fopen() geoeffnet werden, damit wollte ich
-                           aber herausfinden, ob es sich um einen 
-                           .n FILE oder ein .n DIR handelt, deshalb
-                           jetzt Erkennung per nDir.
-     - 08-Feb-99   floh    Im Folded Modus wird jetzt zuerst das
-                           cwd auf die Diretory-Komponente des
-                           Filenamens eingestellt.
-     - 17-Feb-99   floh    Ooops, boeser Bug beim Laden von Einzelfiles...
-                           zwar wurde auf das aktuelle Directory gewechselt,
-                           dann aber trotzdem der komplette Pfadname
-                           an den Lader uebergeben...
-     - 29-Mar-99   floh    + kommt jetzt mit Assigns zurecht
-     - 26-Apr-01   floh    + Bugfix: _loadUnfoldedObject() didn't use
-                             mangled path
-     - 30-Jul-02   floh    + many simplifications
-     - 29-Jan-03   floh    + simplified by using nPathString
 */
 nRoot*
-nPersistServer::LoadObject(const char* fname)
+nPersistServer::LoadObject(const char* fileName, const char* objName)
 {
-    n_assert(fname);
+    n_assert(fileName);
     
     // isolate object name from path, object path can have 2 forms:
     //
     //  (1) xxx/blub.n/_main.n      -> a folded object
     //  (2) xxx/blub.n              -> an unfolded object
     //
-    nPathString path(fname);
-    path.ConvertBackslashes();
-    nPathString objName = path.ExtractFileName();
-    objName.StripExtension();
+    nPathString tmpName;
+    if (0 == objName)
+    {
+        nPathString path(fileName);
+        path.ConvertBackslashes();
+        tmpName = path.ExtractFileName();
+        tmpName.StripExtension();
+        objName = tmpName.Get();
+    }
+    n_assert(objName);
 
     // drop out if trying to load existing object
-    nRoot *obj = kernelServer->Lookup(objName.Get());
+    nRoot *obj = kernelServer->Lookup(objName);
     if (obj)
     {
         char buf[N_MAXPATH];
@@ -183,16 +168,16 @@ nPersistServer::LoadObject(const char* fname)
     else 
     {   
         // try to load object as folded object, if that fails try unfolded
-        obj = this->LoadFoldedObject(fname, objName.Get());
+        obj = this->LoadFoldedObject(fileName, objName);
         if (!obj)
         {
             char unfoldedName[N_MAXPATH];
-            sprintf(unfoldedName, "%s/_main.n2", fname);
-            obj = this->LoadFoldedObject(unfoldedName, objName.Get());
+            sprintf(unfoldedName, "%s/_main.n2", fileName);
+            obj = this->LoadFoldedObject(unfoldedName, objName);
             if (!obj)
             {
                 // couldn't load object!
-                n_message("nPersistServer: Could not load object '%s'!\n", fname);
+                n_message("nPersistServer: Could not load object '%s'!\n", fileName);
                 return 0;
             }
         }
