@@ -149,7 +149,7 @@ nN3d2Loader::Open(nFileServer2* fs)
             // vertex width
             const char* vertexWidthString = strtok(0, N_WHITESPACE);
             n_assert(vertexWidthString);
-            this->vertexWidth = atoi(vertexWidthString);
+            this->fileVertexWidth = atoi(vertexWidthString);
         }
         else if (0 == strcmp(keyWord, "g"))
         {
