@@ -186,8 +186,8 @@ static void
 n_getmeshusage(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
-    const char* flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage()).Get();
-    cmd->Out()->SetS(flagString);
+    const nString & flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage());
+    cmd->Out()->SetS(flagString.Get());
 }
 
 //------------------------------------------------------------------------------
