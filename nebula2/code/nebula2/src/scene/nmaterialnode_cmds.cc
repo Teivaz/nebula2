@@ -31,10 +31,10 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setshader_ss",    'SSHD', n_setshader);
-    cl->AddCmd("s_getshader_s",     'GSHD', n_getshader);
-    cl->AddCmd("i_getnumshaders_v", 'GNSD', n_getnumshaders);
-    cl->AddCmd("ss_getshaderat_i",  'GSAT', n_getshaderat);
+    cl->AddCmd("v_setshader_ss",        'SSHD', n_setshader);
+    cl->AddCmd("s_getshader_s",         'GSHD', n_getshader);
+    cl->AddCmd("i_getnumshaders_v",     'GNSD', n_getnumshaders);
+    cl->AddCmd("ss_getshaderat_i",      'GSAT', n_getshaderat);
     cl->EndCmds();
 }
 

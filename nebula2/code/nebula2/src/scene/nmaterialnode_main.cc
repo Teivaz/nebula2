@@ -156,7 +156,7 @@ nMaterialNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
     n_assert(sceneServer);
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
-    // find shader matching fourcc code, do nothing if shader not exists
+    // find shader matching fourcc code, do nothing if shader doesn't exist
     ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
     if (0 == shaderEntry)
     {

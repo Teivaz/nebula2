@@ -80,15 +80,15 @@ public:
 protected:
     nAutoRef<nParticleServer> refParticleServer;
 
-    int emitterVarIndex;    ///< index of the emitter in the rendercontext
-    nTime           emissionDuration;       ///< how long shall be emitted ?
-    bool            loop;                   ///< loop emitter ?
+    int emitterVarIndex;       ///< index of the emitter in the rendercontext
+    nTime emissionDuration;    ///< how long shall be emitted ?
+    bool loop;                 ///< loop emitter ?
 
-    float           activityDistance;       ///< distance between viewer and emitter on witch emitter is active
-    float           spreadAngle;            ///< angle of emitted particle cone
-    float           birthDelay;             ///< maximum delay until particle starts to live
-    float           startRotation;          ///< maximum angle of rotation at birth
-    bool  renderOldestFirst;        ///< whether to render the oldest particles first or the youngest
+    float activityDistance;    ///< distance between viewer and emitter on witch emitter is active
+    float spreadAngle;         ///< angle of emitted particle cone
+    float birthDelay;          ///< maximum delay until particle starts to live
+    float startRotation;       ///< maximum angle of rotation at birth
+    bool  renderOldestFirst;   ///< whether to render the oldest particles first or the youngest
 
     nEnvelopeCurve curves[nParticleEmitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;

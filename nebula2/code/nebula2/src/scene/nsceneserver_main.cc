@@ -222,7 +222,7 @@ nSceneServer::RenderScene()
 {
     // empty
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Finalize rendering and present the current frame. No additional rendering
@@ -239,7 +239,7 @@ nSceneServer::PresentScene()
     Split the collected scene nodes into light and shape nodes. Fills
     the lightArray[] and shapeArray[] members. This method is available
     as a convenience method for subclasses.
-*/  
+*/
 void
 nSceneServer::SplitNodes(uint shaderFourCC)
 {
@@ -315,7 +315,6 @@ nSceneServer::Compare(const ushort* i1, const ushort* i2)
     const nSceneServer::Group& g2 = sceneServer->groupArray[*i2];
     int cmp;
 
-
     // by render pri
     cmp = g1.sceneNode->GetRenderPri() - g2.sceneNode->GetRenderPri();
     if (cmp != 0)
@@ -366,7 +365,7 @@ nSceneServer::SortNodes()
         int numIndices = this->shapeBucket[i].Size();
         if (numIndices > 0)
         {
-            DoSort( indexPtr, numIndices );
+            DoSort(indexPtr, numIndices);
         }
     }
 }

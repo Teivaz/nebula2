@@ -191,6 +191,7 @@ nAbstractShaderNode::GetUvScale(uint layer) const
     n_assert(layer < nGfxServer2::MaxTextureStages);
     return this->textureTransform[layer].getscale();
 }
+
 //------------------------------------------------------------------------------
 /**
 */

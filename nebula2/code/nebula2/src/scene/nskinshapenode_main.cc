@@ -14,7 +14,7 @@ nCharSkinRenderer nSkinShapeNode::charSkinRenderer;
 nSkinShapeNode::nSkinShapeNode() :
     extCharSkeleton(0)
 {
-    SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader );
+    this->SetMeshUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------

@@ -83,5 +83,4 @@ nTransformNode::RenderTransform(nSceneServer* sceneServer,
         sceneServer->SetModelTransform(this->tform.getmatrix() * parentMatrix);
     }
     return true;
-
 }

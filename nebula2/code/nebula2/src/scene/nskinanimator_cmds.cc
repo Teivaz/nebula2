@@ -595,7 +595,6 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             cmd->In()->SetI(numStates);
             ps->PutCmd(cmd);
 
-            //--- setstate ---
             int stateIndex;
             for (stateIndex = 0; stateIndex < numStates; stateIndex++)
             {
