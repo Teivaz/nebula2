@@ -25,12 +25,41 @@ class nOpendePickServer : public nRoot
 {
     public:
         enum RayPickFlag { 
-            FirstContact = (1<<0), 
-            ClosestHit   = (1<<1),
-            BackfaceCull = (1<<2),
+            FirstContact = (1<<0), /**< Only applies to ray vs. trimesh
+                                        collision queries. 
+                                        Presence of this flag indicates
+                                        that OPCODE will stop a collision
+                                        query as soon as the first contact is
+                                        found. Lack of this flag means OPCODE
+                                        will work in All Contacts mode and
+                                        the collision query continues until 
+                                        all triangles (in a trimesh) that 
+                                        intersect with the ray have been found.
+                                   */
+            ClosestHit   = (1<<1), /**< Only applies to ray vs. trimesh
+                                        collision queries, in All Contacts mode.
+                                        OPCODE will sort TriMesh faces by 
+                                        distance on-the-fly and only the closest 
+                                        face (to the ray origin) will be reported.
+                                   */
+            BackfaceCull = (1<<2), /**< Only applies to ray vs. trimesh
+                                        collision queries. If this flag is 
+                                        present the ray will only hit front faces,
+                                        back faces of the TriMesh will be ignored.
+                                    */
             
-            PickAll      = (1<<3),
-            PickClosest  = (1<<4)
+            PickAll      = (1<<3), /**< Used to indicate that all 
+                                        intersections of the ray with geoms 
+                                        (up to the max that can be stored in 
+                                        the provided contacts array) should be 
+                                        found and returned 
+                                        (in no particular order!). 
+                                   */
+            PickClosest  = (1<<4) /**< Used to indicate that only the contact 
+                                       information for the intersection that is 
+                                       closest to the ray origin should be 
+                                       returned.
+                                  */
         };
     
         /// constructor

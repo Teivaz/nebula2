@@ -115,12 +115,18 @@ void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
 
 //----------------------------------------------------------------------------
 /**
-    @brief
-    @param space
-    @param data
-    @param callback
-    @param line
-    @param flags
+    @brief Do user controlled ray picking.
+    @param space Space containing geoms that should be tested against the pick
+                 ray.
+    @param data User defined data.
+    @param callback User defined callback that will be called for every
+                    pair of (pick ray, geom).
+    @param line The pick ray.
+    @param flags Can be any combination (OR'ed together) of the FirstContact,
+                 BackfaceCull or ClosestHit members of the RayPickFlag enum.
+    
+    You should use this method only when RayPickSimple() can't achieve what 
+    you want.
 */
 void nOpendePickServer::RayPick( dSpaceID space, void* data, 
                                  dNearCallback* callback,
@@ -141,13 +147,27 @@ void nOpendePickServer::RayPick( dSpaceID space, void* data,
 
 //----------------------------------------------------------------------------
 /**
-    @brief
-    @param space
-    @param line
-    @param maxContacts
-    @param contacts
-    @param skip
-    @param flags
+    @brief Do ray picking.
+    @param space Space containing geoms that should be tested against the pick
+                 ray.
+    @param line The pick ray.
+    @param maxContacts Maximum number of elements that can fit in the contacts
+                       array.
+    @param contacts Array of dContactGeoms.
+    @param skip Typically should be sizeof(dContactGeom), see documentation
+                for dCollide for further info (section 10.5.2 in the OpenDE 
+                manual).
+    @param flags A valid combination (OR'ed together) of the the members of
+                 the RayPickFlag enum. A valid combination must consist of:
+                 - Any combination of FirstContact, BackfaceCull or ClosestHit.
+                 - Exactly one of PickAll, or PickClosest.
+                 .
+                 Valid examples include:<br>
+                 -# (nOpendePickServer::FirstContact | nOpendePickServer::PickClosest)
+                 -# (nOpendePickServer::FirstContact | nOpendePickServer::ClosestHit |
+                    nOpendePickServer::PickClosest)
+                 -# (nOpendePickServer::PickAll)
+                 .
     @return Number of contacts found.
 */
 int nOpendePickServer::RayPickSimple( dSpaceID space, const line3& line,
