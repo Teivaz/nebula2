@@ -1299,15 +1299,29 @@ nString::Format(const char* fmtString, ...)
     va_list argList;
     // First calculate the required length
     va_start(argList, fmtString);
-    size_t requiredLength = this->GetFormattedStringLength(fmtString, argList);
+    size_t requiredLength;
+#if defined(__WIN32__) && defined(_MSC_VER)
+    #if _MSC_VER < 1300
+        // VC6
+        requiredLength = this->GetFormattedStringLength(fmtString, argList);
+    #else
+        // VC7 and later
+        requiredLength = _vscprintf(fmtString, argList);
+    #endif
+#else
+    // This is the C99 behavior and works on glibc 2.1 and later on Linux
+    // as well as the libc on OS X.
+    requiredLength = vsnprintf(sizerBuf, 1, fmtString, argList);
+#endif
     requiredLength++; // Account for NULL termination
     va_end(argList);
 
-    char buf[1024];
+    // Now we can allocate a buffer of the right length
+    char* buf = (char*)alloca(requiredLength);
 
     // Now do the formatting
     va_start(argList, fmtString);
-    _vsnprintf(buf, requiredLength, fmtString, argList);
+    vsnprintf(buf, requiredLength, fmtString, argList);
     va_end(argList);
     this->Set(buf);
 }
