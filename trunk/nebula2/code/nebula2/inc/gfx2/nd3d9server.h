@@ -30,7 +30,7 @@
 //  Debugging definitions (for shader debugging etc...)
 //------------------------------------------------------------------------------
 #define N_D3D9_DEBUG (0)
-#define N_D3D9_DEVICETYPE D3DDEVTYPE_HAL
+#define N_D3D9_DEVICETYPE D3DDEVTYPE_REF
 
 //------------------------------------------------------------------------------
 class nD3D9Server : public nGfxServer2

@@ -88,8 +88,15 @@ public:
 
     /// begin applying the shader, returns number of passes
     virtual int Begin(bool saveState);
+#if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
+    /// render a begin a pass
+    virtual void BeginPass(int pass);
+    /// render a end a pass
+    virtual void EndPass();
+#else
     /// render a pass
     virtual void Pass(int pass);
+#endif
     /// finish applying the shader
     virtual void End();
  
