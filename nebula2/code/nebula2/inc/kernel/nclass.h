@@ -60,9 +60,9 @@ public:
     /// increment ref count of class object
     int AddRef();
     /// decrement ref count of class object
-    int RemRef();
+    int Release();
     /// get current refcount of class object
-    int GetRef() const;
+    int GetRefCount() const;
     /// set instance size
     void SetInstanceSize(int size);
     /// get instance size
@@ -135,7 +135,7 @@ inline
 void
 nClass::RemSubClass(nClass *cl)
 {
-    this->RemRef();
+    this->Release();
     cl->superClass = NULL;
 }
 
@@ -154,7 +154,7 @@ nClass::AddRef()
 */
 inline
 int
-nClass::RemRef()
+nClass::Release()
 {
     n_assert(this->refCount > 0);
     return --this->refCount;
@@ -165,7 +165,7 @@ nClass::RemRef()
 */
 inline
 int
-nClass::GetRef() const
+nClass::GetRefCount() const
 {
     return this->refCount;
 }
