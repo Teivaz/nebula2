@@ -655,7 +655,7 @@ int luacmd_BeginCmds(lua_State* L)
     // returns nothing.
     if ((2 != lua_gettop(L)) || !(lua_isstring(L, -2) && lua_isnumber(L, -1)))
     {
-        n_message("Usage is begincmds('classname')");
+        n_message("Usage is begincmds('classname', iNumCmds)");
         lua_settop(L, 0);
         return 0;
     }

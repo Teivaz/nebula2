@@ -7,6 +7,8 @@
 static void n_testscriptcmds(void* slf, nCmd* cmd);
 static void n_makezombies(void* slf, nCmd* cmd);
 static void n_eatanobject(void* slf, nCmd* cmd);
+static void n_testnativecmds(void* slf, nCmd* cmd);
+static void n_addnativecmdtoroot(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -29,6 +31,8 @@ n_initcmds(nClass* clazz)
     clazz->AddCmd("v_testscriptcmds_v", 'TSC_', n_testscriptcmds);
     clazz->AddCmd("v_makezombies_v", 'MZOM', n_makezombies);
     clazz->AddCmd("v_eatanobject_o", 'EATO', n_eatanobject);
+    clazz->AddCmd("v_testnativecmds_v", 'TNC_', n_testnativecmds);
+    clazz->AddCmd("v_addnativecmdtoroot_v", 'ANCR', n_addnativecmdtoroot);
     clazz->EndCmds();
 }
 
@@ -82,7 +86,7 @@ n_makezombies(void* slf, nCmd* cmd)
     eatanobject
 
     @input
-    v
+    o
 
     @output
     v
@@ -96,6 +100,50 @@ n_eatanobject(void* slf, nCmd* cmd)
 {
     nLuaTest* self = (nLuaTest*)slf;
     self->EatAnObject((nRoot*)cmd->In()->GetO());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    testnativecmds
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Test calling of commands added at run-time from C++.
+*/
+static
+void
+n_testnativecmds(void* slf, nCmd* cmd)
+{
+    nLuaTest* self = (nLuaTest*)slf;
+    self->TestNativeCmds();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    addnativecmdtoroot
+
+    @input
+    v
+
+    @output
+    v
+
+    @info
+    Adds a natively implemented cmd to nRoot.
+*/
+static
+void
+n_addnativecmdtoroot(void* slf, nCmd* cmd)
+{
+    nLuaTest* self = (nLuaTest*)slf;
+    self->AddNativeCmdToRoot();
 }
 
 //------------------------------------------------------------------------------

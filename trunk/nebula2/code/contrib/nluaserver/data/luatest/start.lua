@@ -27,13 +27,8 @@ function start()
     -- create servers
 
     new('nresourceserver',     '/sys/servers/resource')
+    
     gGfxServer = newthunk(gfxClass,   '/sys/servers/gfx')
-    new(inputClass,            '/sys/servers/input')
-    new('nconserver',          '/sys/servers/console')
-    new('nstdsceneserver',     '/sys/servers/scene')
-    new('nvariableserver',     '/sys/servers/variable')
-    new('nanimationserver',    '/sys/servers/anim')
-
     -- setup assigns
     local featureSet = gGfxServer:getfeatureset()
     if ((featureSet == "dx9") or (featureSet == "dx9flt")) then
@@ -43,10 +38,18 @@ function start()
         gFileServer:setassign('shaders', 'home:export/shaders/fixed/')
         puts('Shader directory: ../export/shaders/fixed')
     end
+    gGfxServer:setdisplaymode('nLuaTest', 'windowed', 10, 10, 640, 480, false)
+    gGfxServer:opendisplay()
+    
+    new(inputClass,            '/sys/servers/input')
+    new('nconserver',          '/sys/servers/console')
+    new('nstdsceneserver',     '/sys/servers/scene')
+    new('nvariableserver',     '/sys/servers/variable')
+    new('nanimationserver',    '/sys/servers/anim')
 
     -- open display
 
-    gGfxServer:setdisplaymode('nLuaTest', 'windowed', 10, 10, 640, 480, false)
+    --gGfxServer:setdisplaymode('nLuaTest', 'windowed', 10, 10, 640, 480, false)
     --gGfxServer:setviewvolume(-0.1, 0.1, -0.075, 0.075, 0.1, 5000.0)
     --gGfxServer:setclearcolor(0.5, 0.5, 0.5, 1.0)
 
@@ -153,7 +156,7 @@ function start()
 
     -- setup test
     new('nluatest', '/test')
-    nebula.sys.servers.gfx:opendisplay()
+    --nebula.sys.servers.gfx:opendisplay()
 end
 
 function stop()
