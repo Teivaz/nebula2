@@ -2,6 +2,7 @@
 //  nfilenode_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "kernel/nfilenode.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"

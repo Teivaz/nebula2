@@ -2,6 +2,7 @@
 //  nhttpsession.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "util/nhttpsession.h"
 #include "util/nhttpresponsecracker.h"
 #include "kernel/nenv.h"

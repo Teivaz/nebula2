@@ -2,6 +2,7 @@
 //  nappstate_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "application/nappstate.h"
 
 nNebulaClass(nAppState, "nroot");

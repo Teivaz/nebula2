@@ -2,6 +2,7 @@
 //  nremoteserver_main.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "kernel/nremoteserver.h"
 #include "kernel/nscriptserver.h"
 

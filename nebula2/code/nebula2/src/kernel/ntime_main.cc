@@ -3,6 +3,7 @@
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/ntimeserver.h"
+#include "kernel/nkernelserver.h"
 
 #if defined(__LINUX__) || defined(__MACOSX__)
 #define N_MICROSEC_INT    (1000000)

@@ -2,6 +2,7 @@
 //  nlocaleserver_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "locale/nlocaleserver.h"
 #include "xml/nxmlspreadsheet.h"
 

@@ -2,6 +2,7 @@
 //  nnetclient_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "network/nnetclient.h"
 #include "kernel/nipcbuffer.h"
 

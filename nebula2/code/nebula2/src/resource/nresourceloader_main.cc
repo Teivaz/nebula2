@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 //  (C) 2003 Megan Fox
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "resource/nresourceloader.h"
 
 nNebulaClass(nResourceLoader, "nroot");
