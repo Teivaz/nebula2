@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRemoteServer
+    @ingroup Ipc
 
     The remote server opens a socket and listens for connecting
     clients. For each client, a remote session will be created,

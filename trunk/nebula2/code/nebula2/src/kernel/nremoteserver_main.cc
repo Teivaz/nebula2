@@ -50,7 +50,7 @@ nRemoteServer::Open(const char* portName)
 
     // create an ipc server object
     nIpcAddress ipcAddress("any", portName);
-    this->ipcServer = n_new nIpcServer(ipcAddress);
+    this->ipcServer = n_new(nIpcServer(ipcAddress));
     n_assert(this->ipcServer);
 
     this->isOpen = true;
@@ -70,11 +70,11 @@ nRemoteServer::Close()
     nClientContext* curContext;
     while ((curContext = (nClientContext*) this->clientContexts.RemHead()))
     {
-        n_delete curContext;
+        n_delete(curContext);
     }
 
     // kill ipc server object
-    n_delete this->ipcServer;
+    n_delete(this->ipcServer);
 
     this->ipcServer = 0;
     this->isOpen = false;
@@ -127,7 +127,7 @@ nRemoteServer::GetClientContext(int clientId)
 
     // fallthrough: create a new client context
     n_printf("nRemoteServer: creating new client context!\n");
-    nClientContext* newContext = n_new nClientContext(clientId, this);
+    nClientContext* newContext = n_new(nClientContext(clientId, this));
     n_assert(newContext);
     newContext->SetCwd(kernelServer->GetCwd());
     

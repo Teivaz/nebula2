@@ -124,18 +124,18 @@ nFourCC n_strtofourcc(const char*);
 const char* n_fourcctostr(nFourCC);
 
 //------------------------------------------------------------------------------
-//  Nebula mem manager wrappers.
+//  Nebula memory management and debugging stuff.
 //------------------------------------------------------------------------------
-#ifdef __STANDALONE__
-#define n_malloc(s) malloc(s)
-#define n_calloc(s,n) calloc(s,n)
-#define n_realloc(o,s) realloc(o,s)
-#define n_free(p) free(p)
-#else
-#define n_malloc(s) nn_malloc(s,__FILE__,__LINE__)
-#define n_calloc(s,n) nn_calloc(s,n,__FILE__,__LINE__)
-#define n_realloc(o,s) nn_realloc(o,s,__FILE__,__LINE__)
-#endif
+extern bool nMemoryLoggingEnabled;
+struct nMemoryStats
+{
+    int highWaterSize;      // max allocated size so far
+    int totalCount;         // total number of allocations
+    int totalSize;          // current allocated size
+};
+
+void n_dbgmeminit();                // initialize memory debugging system
+nMemoryStats n_dbgmemgetstats();    // defined in ndbgalloc.cc
 
 #ifdef new
 #undef new
@@ -145,54 +145,45 @@ const char* n_fourcctostr(nFourCC);
 #undef delete
 #endif
 
-#ifdef __NEBULA_MEM_MANAGER__
-static inline void * operator new(size_t size)
-{
-    void *p = nn_malloc(size, __FILE__, __LINE__);
-    return p;
-}
-static inline void *operator new[](size_t size)
-{
-    void *p = nn_malloc(size, __FILE__, __LINE__);
-    return p;
-}
+// implemented in ndbgalloc.cc
+void* operator new(size_t size);
+void* operator new(size_t size, const char* file, int line);
+void* operator new[](size_t size);
+void* operator new[](size_t size, const char* file, int line);
+void operator delete(void* p);
+void operator delete[](void* p);
+void* n_malloc_dbg(size_t size, const char* file, int line);
+void* n_calloc_dbg(size_t num, size_t size, const char* file, int line);
+void* n_realloc_dbg(void* memblock, size_t size, const char* file, int line);
+void n_free_dbg(void* memblock, const char* file, int line);
 
-static inline void * operator new(size_t size, const char* file, int line)
-{
-    void *p = nn_malloc(size, file, line);
-    return p;
-}
-static inline void *operator new[](size_t size, const char* file, int line)
-{
-    void *p = nn_malloc(size, file, line);
-    return p;
-}
-
-static inline void operator delete(void *p)
-{
-    n_free(p);
-}
-
-static inline void operator delete(void *p, const char* file, int line)
-{
-    n_free(p);
-}
-
-static inline void operator delete[](void *p)
-{
-    n_free(p);
-}
-static inline void operator delete[](void *p, const char* file, int line)
-{
-    n_free(p);
-}
-
-#define n_new new(__FILE__, __LINE__)
-#define n_delete delete
-
+#ifdef _DEBUG
+#define n_new(type) new(__FILE__,__LINE__) type
+#define n_new_array(type,size) new(__FILE__,__LINE__) type[size]
+#define n_delete(ptr) delete ptr
+#define n_delete_array(ptr) delete[] ptr
+#define n_malloc(size) n_malloc_dbg(size, __FILE__, __LINE__);
+#define n_calloc(num, size) n_calloc_dbg(num, size, __FILE__, __LINE__);
+#define n_realloc(memblock, size) n_realloc_dbg(memblock, size, __FILE__, __LINE__);
+#define n_free(memblock) n_free_dbg(memblock, __FILE__, __LINE__);
 #else
-#define n_new new
-#define n_delete delete
+#define n_new(type) new type
+#define n_new_array(type,size) new type[size]
+#define n_delete(ptr) delete ptr
+#define n_delete_array(ptr) delete[] ptr
+#define n_malloc(size) malloc(size)
+#define n_calloc(num, size) calloc(num, size)
+#define n_realloc(memblock, size) realloc(memblock, size)
+#define n_free(memblock) free(memblock)
 #endif
+
+// define an nAttribute C++ class extension, declares
+// a function member, setter and getter method for the attribute
+// #define __ref_attr(TYPE,NAME) private: TYPE NAME; public: void Set##NAME(const TYPE& t) {this->NAME = t; }; const TYPE& Get##NAME() const { return this->NAME; };
+// #define __attr(TYPE,NAME)     private: TYPE NAME; public: void Set##NAME(TYPE t) {this->NAME = t}; TYPE Get##NAME() const { return this->NAME; };
+
+#define nSetter(METHOD, TYPE, MEMBER) inline void METHOD(TYPE t) { this->MEMBER = t; }
+#define nGetter(TYPE, METHOD, MEMBER) inline TYPE METHOD() const { return this->MEMBER; }
+
 //--------------------------------------------------------------------
 #endif

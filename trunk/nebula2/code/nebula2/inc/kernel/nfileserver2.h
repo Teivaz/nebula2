@@ -5,8 +5,7 @@
     @class nFileServer2
     @ingroup NebulaFileManagement
 
-    New fileserver.
-
+    @brief Central server object of Nebula2's file system subsystem.
     Provides functions for creating file and directory objects and assigns.
 
     Please note that Nebula no longer knows the concept of a current working
@@ -50,6 +49,8 @@ public:
     bool CopyFile(const char* from, const char* to);
     /// delete a file
     bool DeleteFile(const char* filename);
+    /// delete an empty directory
+    bool DeleteDirectory(const char* dirName);
     /// compute the Crc checksum for a file
     bool Checksum(const char* filename, uint& crc);
 

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIpcMiniServer
+    @ingroup Ipc
 
     A nIpcServer creates one nIpcMiniServer for each connecting client.
 

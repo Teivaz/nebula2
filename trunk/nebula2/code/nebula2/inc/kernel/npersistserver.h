@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nPersistServer
+    @ingroup Kernel
 
     Interface to the file system for serializing objects.
 
@@ -78,9 +79,9 @@ public:
     /// get the save level
     int GetSaveLevel(void);
     /// set the script server class which should be used for saving
-    bool SetSaverClass(const char* saverClass);
+    bool SetSaverClass(const nString& saverClass);
     /// get the script server class which is currently used for saving
-    const char* GetSaverClass();
+    nString GetSaverClass();
     /// begin a persistent object
     bool BeginObject(nRoot *, const char *);
     /// begin a persistent object with constructor command

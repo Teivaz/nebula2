@@ -2,6 +2,9 @@
 #define N_SHELL32WRAPPER_H
 //------------------------------------------------------------------------------
 /**
+    @class nShell32Wrapper
+    @ingroup Kernel
+
     Wrap some Win32 shell32 functionality to fix some backward
     compatibility issues between Win95, Win98, Win2000 and XP.
 

@@ -5,7 +5,7 @@
     @class nHardRef
     @ingroup NebulaSmartPointers
 
-    implements reference to moveable target object.
+    @brief Implements reference to moveable target object.
 
     Use the nHardRef object to reference other objects if you
     need deferred pointer resolve, but require the reference
@@ -244,6 +244,11 @@ nHardRef<TYPE>::resolve()
     Get the name of the target object. Return either embedded
     name (if valid), or if a valid pointer has been resolved,
     dynamically build the name from the target object.
+
+    @param buf      externally provided buffer, size should be N_MAXPATH
+    @param bufSize  sizeof(buf)
+    @return         return pointer to buf, or NULL if target object has died(???)
+                    
 
     history:
     - 23-Jan-2001   floh    created

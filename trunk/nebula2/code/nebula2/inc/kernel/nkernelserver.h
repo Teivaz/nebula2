@@ -4,7 +4,10 @@
 /**
     @class nKernelServer
 
-    The Nebula kernel server class.
+    @brief The central Nebula kernel server class.
+
+    Every Nebula2 application needs exactly one kernel server object which
+    persists throughout the lifetime of the application.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -14,6 +17,7 @@
 #include "util/nstack.h"
 #include "util/nhashlist.h"
 #include "kernel/nmutex.h"
+#include "kernel/natomtable.h"
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
@@ -133,13 +137,13 @@ private:
     nLogHandler* defaultLogHandler; // the default log handler
     nLogHandler* curLogHandler;     // the current log handler
 
-#ifdef __NEBULA_MEM_MANAGER__
-    nEnv* varMemAlloc;              // mem statistics
-    nEnv* varMemUsed;
-    nEnv* varMemNumAlloc;
-#endif
+    nEnv* varMemHighWaterSize;              // mem statistics
+    nEnv* varMemTotalSize;
+    nEnv* varMemTotalCount;
 
     nMutex mutex;                   // the kernel lock mutex
+
+    // nAtomTable atomTable;           // the global atom table
 };
 
 //------------------------------------------------------------------------------
@@ -231,17 +235,6 @@ nTimeServer*
 nKernelServer::GetTimeServer() const
 {
     return this->timeServer;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const
-nHashList*
-nKernelServer::GetClassList() const
-{
-    return &(this->classList);
 }
 
 //--------------------------------------------------------------------

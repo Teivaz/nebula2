@@ -57,7 +57,7 @@ nCmdProto::nCmdProto(const char *proto_def, uint id)
 
 
     // create template cmd object
-    this->cmdTemplate = n_new nCmd(this);
+    this->cmdTemplate = n_new(nCmd(this));
 
     // initialize template object in args
     int i;
@@ -102,7 +102,7 @@ nCmdProto::nCmdProto(const nCmdProto& rhs) :
     this->fourcc      = rhs.fourcc;
     this->numInArgs   = rhs.numInArgs;
     this->numOutArgs  = rhs.numOutArgs;
-    this->cmdTemplate = n_new nCmd(*(rhs.cmdTemplate));
+    this->cmdTemplate = n_new(nCmd(*(rhs.cmdTemplate)));
     this->cmdLocked   = false;
     this->protoDef    = rhs.protoDef;
 }
@@ -113,7 +113,7 @@ nCmdProto::nCmdProto(const nCmdProto& rhs) :
 */
 nCmdProto::~nCmdProto()
 {
-    n_delete this->cmdTemplate;
+    n_delete(this->cmdTemplate);
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ nCmdProto::NewCmd()
     if (this->cmdLocked)
     {
         // template object is locked, create a new object
-        return n_new nCmd(*(this->cmdTemplate));
+        return n_new(nCmd(*(this->cmdTemplate)));
     }
     else
     {
@@ -152,7 +152,7 @@ nCmdProto::RelCmd(nCmd* cmd)
     if (cmd != this->cmdTemplate)
     {
         // not the template object, release with n_delete
-        n_delete cmd;
+        n_delete(cmd);
     }
     else
     {

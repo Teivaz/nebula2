@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIpcPeer
+    @ingroup Ipc
 
     A low level interprocess communications port. Ipc peers are
     connectionless, which means, every nIpcPeer can send to and receive from

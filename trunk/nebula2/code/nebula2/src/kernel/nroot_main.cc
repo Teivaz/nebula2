@@ -75,13 +75,14 @@ nRoot::Initialize()
 bool 
 nRoot::Release()
 {
+    n_assert(refCount > 0);
     bool retval = false;
     this->refCount--;
     if (this->refCount == 0) 
     {
         // do not delete as long as mutex is set
         this->LockMutex();
-        n_delete this;
+        n_delete(this);
         retval = true;
     }
     return retval;
@@ -260,7 +261,7 @@ nRoot::GetCmdProtos(nHashList *cmd_list)
                  cmd_proto; 
                  cmd_proto=(nCmdProto *) cmd_proto->GetSucc()) 
             {
-                nHashNode* node = new nHashNode(cmd_proto->GetName());
+                nHashNode* node = n_new(nHashNode(cmd_proto->GetName()));
                 node->SetPtr((void*)cmd_proto);
                 cmd_list->AddTail(node);
             }

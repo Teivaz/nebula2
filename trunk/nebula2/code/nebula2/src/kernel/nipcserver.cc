@@ -28,7 +28,7 @@ ListenerThreadFunc(nThread *thread)
         // this loop waits for a new client to connect, for each
         // new client, an nIpcMiniServer object is created 
         n_printf("nIpcServer: listening on port %d...\n", ipcServer->selfAddr.GetPortNum());
-        nIpcMiniServer* ipcMiniServer = new nIpcMiniServer(ipcServer);
+		nIpcMiniServer* ipcMiniServer = n_new(nIpcMiniServer(ipcServer));
         if (ipcMiniServer->Listen()) 
         {
             // Some sort of connection has been established. This
@@ -102,7 +102,7 @@ nIpcServer::nIpcServer(nIpcAddress& addr) :
     n_assert(SOCKET_ERROR != res);
 
     // start the listener thread
-    this->listenerThread = new nThread(ListenerThreadFunc,
+    this->listenerThread = n_new(nThread(ListenerThreadFunc,
                                        nThread::Normal,
                                        0,
                                        ListenerWakeupFunc,
@@ -119,7 +119,7 @@ nIpcServer::~nIpcServer()
     // delete the thread before the mini servers, because inside
     // the thread there is a living nIpcMiniServer object waiting
     // for connections
-    delete this->listenerThread;
+    n_delete(this->listenerThread);
     this->listenerThread = 0;
 
     // kill existing mini servers
@@ -127,7 +127,7 @@ nIpcServer::~nIpcServer()
     this->miniServerList.Lock();
     while ((ipcMiniServer = (nIpcMiniServer*) this->miniServerList.RemHead()))
     {
-        delete ipcMiniServer;
+        n_delete(ipcMiniServer);
     }
     this->miniServerList.Unlock();
     
@@ -144,7 +144,7 @@ nIpcServer::~nIpcServer()
     this->msgList.Lock();
     while ((msgNode = (nMsgNode*) this->msgList.RemHead()))
     {
-        delete msgNode;
+        n_delete(msgNode);
     }
     this->msgList.Unlock();
 }
@@ -169,7 +169,7 @@ nIpcServer::Poll()
         {
             // this ipc mini server has a closed connection, delete it
             cur->Remove();
-            delete cur;
+            n_delete(cur);
             cur = 0;
         }
     }

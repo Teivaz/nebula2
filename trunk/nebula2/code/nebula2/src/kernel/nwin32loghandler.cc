@@ -115,8 +115,7 @@ nWin32LogHandler::Close()
 void
 nWin32LogHandler::Print(const char* msg, va_list argList)
 {
-    n_assert(this->logFile);
-    if (this->logFile->IsOpen())
+    if (this->logFile && this->logFile->IsOpen())
     {
         char buf[1024];
         _vsnprintf(buf, sizeof(buf) - 1, msg, argList);
@@ -131,8 +130,7 @@ nWin32LogHandler::Print(const char* msg, va_list argList)
 void
 nWin32LogHandler::Message(const char* msg, va_list argList)
 {
-    n_assert(this->logFile);
-    if (this->logFile->IsOpen())
+    if (this->logFile && this->logFile->IsOpen())
     {
         char buf[1024];
         _vsnprintf(buf, sizeof(buf) - 1, msg, argList);
@@ -148,8 +146,7 @@ nWin32LogHandler::Message(const char* msg, va_list argList)
 void
 nWin32LogHandler::Error(const char* msg, va_list argList)
 {
-    n_assert(this->logFile);
-    if (this->logFile->IsOpen())
+    if (this->logFile && this->logFile->IsOpen())
     {
         char buf[1024];
         _vsnprintf(buf, sizeof(buf) - 1, msg, argList);

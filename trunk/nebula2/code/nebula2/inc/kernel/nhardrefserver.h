@@ -5,9 +5,7 @@
     @class nHardRefServer
     @ingroup NebulaSmartPointers
 
-    immediately validates nHardRefs.
-
-    Validate nHardRef objects as soon as target object is created.
+    @brief Validates nHardRef objects as soon as target object is created.
 
     (C) 2002 RadonLabs GmbH
 */

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIpcAddress
+    @ingroup Ipc
 
     Encapsulates a target address for the nIpc* class family. A target
     address is a string made of 2 parts, host name and port id. A host name

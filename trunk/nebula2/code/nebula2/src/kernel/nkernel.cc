@@ -53,7 +53,7 @@ n_error(const char* msg, ...)
     va_list argList;
     va_start(argList, msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks)
+        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
         {
             nKernelServer::ks->GetLogHandler()->Error(msg, argList);
         }
@@ -81,9 +81,13 @@ n_message(const char* msg, ...)
     va_list argList;
     va_start(argList, msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks)
+        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
         {
             nKernelServer::ks->GetLogHandler()->Message(msg, argList);
+        }
+        else
+        {
+            vprintf(msg, argList);
         }
     #else
         vprintf(msg, argList);
@@ -104,9 +108,13 @@ n_printf(const char *msg, ...)
     va_list argList;
     va_start(argList,msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks)
+        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
         {
             nKernelServer::ks->GetLogHandler()->Print(msg, argList);
+        }
+        else
+        {
+            vprintf(msg, argList);
         }
     #else
         vprintf(msg, argList);

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRefCounted
+    @ingroup Kernel
 
     A simplest possible refcounted super class, if you need refcounting but
     don't want the nRoot overhead.

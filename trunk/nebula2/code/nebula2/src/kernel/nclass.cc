@@ -60,14 +60,14 @@ nClass::~nClass(void)
         nCmdProto* cmdProto;
         while ((cmdProto = (nCmdProto*) this->cmdList->RemHead()))
         {
-            n_delete cmdProto;
+            n_delete(cmdProto);
         }
-        n_delete this->cmdList;
+        n_delete(this->cmdList);
     }
 
     if (this->cmdTable)
     {
-        n_delete this->cmdTable;
+        n_delete(this->cmdTable);
     }
 
     if (this->script_cmd_list)
@@ -75,9 +75,9 @@ nClass::~nClass(void)
         nCmdProto* cmdProto;
         while ((cmdProto = (nCmdProto *) this->script_cmd_list->RemHead()))
         {
-            n_delete cmdProto;
+            n_delete(cmdProto);
         }
-        n_delete this->script_cmd_list;
+        n_delete(this->script_cmd_list);
     }
 }
 
@@ -113,7 +113,7 @@ nClass::BeginCmds(void)
         numCmds += 16;
     } while ((cl = cl->GetSuperClass()));
 
-    this->cmdList = n_new nHashList(numCmds);
+    this->cmdList = n_new(nHashList(numCmds));
 }
 
 //--------------------------------------------------------------------
@@ -129,7 +129,7 @@ nClass::AddCmd(const char *proto_def, uint id, void (*cmd_proc)(void *, nCmd *))
     n_assert(id);
     n_assert(cmd_proc);
     n_assert(this->cmdList);
-    nCmdProtoNative *cp = n_new nCmdProtoNative(proto_def, id, cmd_proc);
+    nCmdProtoNative *cp = n_new(nCmdProtoNative(proto_def, id, cmd_proc));
     n_assert(cp);
     this->cmdList->AddTail(cp);
 }
@@ -169,7 +169,7 @@ nClass::EndCmds(void)
     } while ((cl = cl->GetSuperClass()));
 
     // create and fill command table
-    this->cmdTable = n_new nKeyArray<nCmdProto *>(num_cmds);
+    this->cmdTable = n_new(nKeyArray<nCmdProto *>(num_cmds));
     cl = this;
     do
     {
@@ -194,7 +194,7 @@ nClass::EndCmds(void)
             nCmdProto *cp0 = (nCmdProto *) this->cmdTable->GetElementAt(i);
             nCmdProto *cp1 = (nCmdProto *) this->cmdTable->GetElementAt(i+1);
             n_error("Command id collision in class '%s'\n"
-                     "cmd '%s' and cmd '%s' both have id '0x%x'\n",
+                     "cmd '%s' and cmd '%s' both have id '0x%lx'\n",
                      this->GetName(),
                      cp0->GetName(),
                      cp1->GetName(),
@@ -210,7 +210,7 @@ nClass::EndCmds(void)
 void nClass::BeginScriptCmds(int numCmds)
 {
     n_assert(!this->script_cmd_list);
-    this->script_cmd_list = n_new nHashList(numCmds);
+    this->script_cmd_list = n_new(nHashList(numCmds));
 }
 
 //--------------------------------------------------------------------

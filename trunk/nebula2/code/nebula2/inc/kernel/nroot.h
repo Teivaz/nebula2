@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRoot
+    @ingroup Kernel
 
     nRoot defines the basic functionality and interface for
     the Nebula class hierarchy:
@@ -36,9 +37,9 @@
 #include "util/nlist.h"
 #include "util/nnode.h"
 #include "kernel/ncmd.h"
+#include "kernel/nref.h"
 #include "kernel/nmutex.h"
 #include "util/nstring.h"
-#include "kernel/nclass.h"
 
 //------------------------------------------------------------------------------
 class nCmd;
@@ -110,6 +111,8 @@ public:
     nString GetRelPath(nRoot *other);
     /// find child object by name using const char*
     nRoot *Find(const char *str);
+    /// find child object by name using nAtom
+    // nRoot* Find(const nAtom& atom);
     /// add child object at start of child list
     void AddHead(nRoot *n);
     /// add child object at end of child list
@@ -158,12 +161,13 @@ protected:
     /// set pointer to my class object
     void SetClass(nClass *);
 
+    // nAtom nameAtom;
     nString name;
     nList refList;
     nClass* instanceClass;
     nRoot* parent;
     nList childList;
-    ushort refCount;
+    int refCount;
     ushort saveModeFlags;
     nMutex mutex;
 };
@@ -338,6 +342,43 @@ nRoot::Find(const char *str)
     // fallthrough: not found
     return 0;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Find with nAtom. This can be faster then Find(const char*) if the
+    string already exists as an atom.
+*/
+/*
+inline
+nRoot*
+nRoot::Find(const nAtom& atom)
+{
+    // handle special cases '.' and '..'
+    const char* str = atom.AsChar();
+    if (str[0] == '.') 
+    {
+        if (str[1] == 0) 
+        {
+            return this;
+        }
+        else if ((str[1]=='.') && (str[2]==0)) 
+        {
+            return this->parent;
+        }
+    }
+    // find child with atom compare
+    nRoot* child;
+    for (child = this->GetHead(); child; child = child->GetSucc())
+    {
+        if (atom == child->nameAtom)
+        {
+            return child;
+        }
+    }
+    // fallthrough: not found
+    return 0;
+}
+*/
 
 //------------------------------------------------------------------------------
 /**

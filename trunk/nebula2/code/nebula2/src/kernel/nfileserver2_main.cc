@@ -120,10 +120,11 @@ nFileServer2::GetAssign(const char* assignName)
 
 //------------------------------------------------------------------------------
 /**
-    Cleanup the path name inplace (replace any backslashes with slashes),
-    removes a trailing slash if exists.
+    Returns a cleaned up path name (replaces backslashes with slashes, 
+    and removes trailing slash if exists.
 */
-void nFileServer2::CleanupPathName(nString& str)
+void
+nFileServer2::CleanupPathName(nString& str)
 {
     // FIXME: include PathString functionality in nString and
     // ditch nPathString completely???
@@ -234,7 +235,7 @@ nFileServer2::ManglePath(const char* pathName)
 nDirectory* 
 nFileServer2::NewDirectoryObject()
 {
-    return new nDirectory;
+	return n_new(nDirectory);
 }
 
 //------------------------------------------------------------------------------
@@ -249,7 +250,7 @@ nFileServer2::NewDirectoryObject()
 nFile*
 nFileServer2::NewFileObject()
 {
-    return new nFile;
+	return n_new(nFile);
 }
 
 //------------------------------------------------------------------------------
@@ -265,7 +266,6 @@ nFileServer2::InitHomeAssign()
 #ifdef __XBxX__
     this->SetAssign("home", "d:/");
 #else    
-    char buf[N_MAXPATH];
     #if __WIN32__
         // Win32: Check for the NEBULADIR environment variable first,
         // then try to find the nkernel.dll module handle's filename
@@ -290,6 +290,7 @@ nFileServer2::InitHomeAssign()
         */
 
         // use the executable's directory to locate the home directory
+        char buf[N_MAXPATH];
         DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
         if (res == 0) 
         {
@@ -324,6 +325,7 @@ nFileServer2::InitHomeAssign()
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
         // otherwise the current working directory will be used
+        char buf[N_MAXPATH];
         char *s = getenv("NEBULADIR");
         if (s) 
         {
@@ -340,8 +342,8 @@ nFileServer2::InitHomeAssign()
         }
         // finally, set the assign
         this->SetAssign("home", buf);
-
     #elif defined(__MACOSX__)
+        char buf[N_MAXPATH];
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
         FSRef bundleFSRef;
@@ -354,11 +356,9 @@ nFileServer2::InitHomeAssign()
         }
         // finally, set the assign
         this->SetAssign("home", buf);
-
     #else
     #error nFileServer::initHomeAssign() not implemented!
     #endif
-    
 #endif
 }
 
@@ -373,7 +373,7 @@ nFileServer2::InitBinAssign()
 #else
     #ifdef __WIN32__
         // use the executable's directory to locate the bin directory
-    char buf[N_MAXPATH];
+        char buf[N_MAXPATH];
         DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
         if (res == 0) 
         {
@@ -428,7 +428,7 @@ void
 nFileServer2::InitUserAssign()
 {
 #ifdef __XBxX__
-    this->SetAssign("user", "d:/");
+    this->SetAssign("home", "d:/");
 #elif defined(__WIN32__)
     char rawPath[MAX_PATH];
     HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
@@ -480,10 +480,10 @@ nFileServer2::DirectoryExists(const char* pathName)
     if (dir->Open(pathName))
     {
         dir->Close();
-        delete dir;
+        n_delete(dir);
         return true;
     }
-    delete dir;
+    n_delete(dir);
     return false;
 }
 
@@ -511,7 +511,7 @@ nFileServer2::MakePath(const char* dirName)
     {
         dir->Close();
     }
-    delete dir;
+    n_delete(dir);
 
     // error?
     if (path.IsEmpty())
@@ -615,6 +615,25 @@ nFileServer2::DeleteFile(const char* filename)
         return (0 == unlink(mangledPath.Get())) ? true : false;
     #else
     #error "nFileServer2::DeleteFile() not implemented yet!"
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Delete an empty directory.
+*/
+bool
+nFileServer2::DeleteDirectory(const char* dirName)
+{
+    n_assert(dirName);
+    nString mangledPath = this->ManglePath(dirName);
+
+    #ifdef __WIN32__
+    return ::RemoveDirectory(mangledPath.Get()) ? true : false;
+    #elif defined(__LINUX__)
+    #error "nFileServer2::DeleteDirectory() not implemented yet!"
+    #else
+    #error "nFileServer2::DeleteDirectory() not implemented yet!"
     #endif
 }
 
