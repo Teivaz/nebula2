@@ -85,22 +85,6 @@ Modifier* nMaxUtil::FindModifier(Object *obj, Class_ID classID)
     if (!obj)
         return NULL;
 
-/*
-    if (obj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-    {
-        IDerivedObject *pDerived = (IDerivedObject*)obj;
-
-        for (int i=0; i<pDerived->NumModifiers(); i++)
-        {
-            Modifier* modifier = pDerived->GetModifier(i);
-
-            // found the modifier.
-            Class_ID cId = modifier->ClassID();
-            if (cId == classID)
-               return modifier;
-        }
-    }
-*/
     Modifier *mod;
 
     while (obj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
@@ -115,7 +99,6 @@ Modifier* nMaxUtil::FindModifier(Object *obj, Class_ID classID)
             // Get current modifier.
             mod = derivObj->GetModifier(modStack);
             // See this modifier is skin.
-            //if (mod->ClassID() == SKIN_CLASSID)
             Class_ID cId = mod->ClassID();
             if (cId == classID)
             {
@@ -209,30 +192,27 @@ Modifier* nMaxUtil::FindPhysique(INode* inode)
     if (!obj)
         return NULL;
 
-    //Modifier* modifier = 0;
-    //modifier = FindModifier(obj, Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B));
-
-    // Is derived object ?
+    // Is derived object
     if (obj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
     {
-        // Yes -> Cast.
+        // casting object to derived object.
         IDerivedObject* deriveObj = static_cast<IDerivedObject*>(obj);
 
-        // Iterate over all entries of the modifier stack.
+        // Iterate the modifier stack.
         int modStack = 0;
         while (modStack < deriveObj->NumModifiers())
         {
-            // Get current modifier.
+            // get current modifier.
             Modifier* modifier = deriveObj->GetModifier(modStack);
 
-            // Is this Physique ?
+            // check the given modifier Is physique type.
             if (modifier->ClassID() == Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B))
             {
-                // Yes -> Exit.
+                // found the modifier.
                 return modifier;
             }
 
-            // Next modifier stack entry.
+            // move to the next modifier stack.
             modStack++;
         }
     }
@@ -245,17 +225,6 @@ Modifier* nMaxUtil::FindPhysique(INode* inode)
 */
 Modifier* nMaxUtil::FindSkin(INode* inode)
 {
-    //Object *obj = inode->GetObjectRef();
-
-    //Modifier* modifier = FindModifier(obj, SKIN_CLASSID);
-
-    //ISkin* skinModifier = 0;
-    //
-    //if (modifier)
-    //    skinModifier = (ISkin*)modifier->GetInterface(I_SKIN);
-
-    //return skinModifier;
-
     // Get object from node. Abort if no object.
     Object* obj = inode->GetObjectRef();
     if (!obj) 
@@ -294,6 +263,7 @@ Modifier* nMaxUtil::FindSkin(INode* inode)
 
 //-----------------------------------------------------------------------------
 /**
+    Retrieves the number of materials of the given node.
 */
 int nMaxUtil::GetNumMaterials(INode* inode)
 {
@@ -314,6 +284,7 @@ int nMaxUtil::GetNumMaterials(INode* inode)
 
 //------------------------------------------------------------------------------
 /**
+    Correct the given node's name to make it can be used in Nebula.
 */
 nString
 nMaxUtil::CorrectName(nString &string)
@@ -378,6 +349,7 @@ nMaxUtil::CorrectName(char* string)
 
 //------------------------------------------------------------------------------
 /**
+    Put the vertices infomation to the log dialog.
 */
 void nMaxUtil::PutVertexInfo(nMeshBuilder& meshBuilder)
 {
