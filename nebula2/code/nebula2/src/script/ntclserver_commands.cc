@@ -38,6 +38,7 @@ static int tclPipeCommand(Tcl_Interp *interp, const char *cmd, int objc, Tcl_Obj
         Tcl_IncrRefCount(newObjv[i]);
     }
     newObjv[0] = Tcl_NewStringObj(cmd, strlen(cmd));
+    Tcl_IncrRefCount(newObjv[0]);
     res = Tcl_EvalObjv(interp, objc, newObjv, TCL_EVAL_DIRECT);
 
     // decrement refcount of newly created command, this will effectively release it
