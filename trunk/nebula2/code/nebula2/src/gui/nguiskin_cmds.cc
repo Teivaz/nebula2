@@ -79,6 +79,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getentrytextcolor_v",      'GETC', n_getentrytextcolor);
     cl->AddCmd("v_settextcolor_ffff",           'STXC', n_settextcolor);
     cl->AddCmd("ffff_gettextcolor_v",           'GTXC', n_gettextcolor);
+    cl->AddCmd("v_setmenutextcolor_ffff",       'SMTC', n_setmenutextcolor);
+    cl->AddCmd("ffff_getmenutextcolor_v",       'GMTC', n_getmenutextcolor);
     cl->AddCmd("v_setwindowborder_ffff",        'SWBS', n_setwindowborder);
     cl->AddCmd("ffff_getwindowborder_v",        'GWBS', n_getwindowborder);
     cl->AddCmd("v_beginbrushes_v",              'BGBR', n_beginbrushes);
@@ -646,6 +648,24 @@ n_endbrushes(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    setmastervolume
+    @input
+    f(Volume)
+    @output
+    v
+    @info
+    Define the master volume.
+*/
+static void
+n_setsoundvolume(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    self->SetMasterVolume(cmd->In()->GetF());
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     setsoundvolume
     @input
     s(Sound), f(Volume)
@@ -719,6 +739,7 @@ n_getsound(void* slf, nCmd* cmd)
     nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
     cmd->Out()->SetS(self->GetSound(snd));
 }
+
 //-----------------------------------------------------------------------------
 /**
     @cmd
