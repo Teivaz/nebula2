@@ -4,7 +4,6 @@
 //  (C)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #define _WIN32_DCOM
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include <shlobj.h>

@@ -3,7 +3,6 @@
 //
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include "export2/nmax.h"
