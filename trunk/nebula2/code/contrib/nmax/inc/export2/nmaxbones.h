@@ -27,9 +27,13 @@
     joint indexes when it is needed.
 
 */
+#include "export2/nmaxnotetrack.h"
+
 #include "mathlib/vector.h"
 #include "util/narray.h"
 #include "util/nstring.h"
+
+//class nMaxNoteTrack;
 
 //---------------------------------------------------------------------------
 class nMaxBoneManager
@@ -58,8 +62,6 @@ public:
 
     void BuildBoneList(INode* node);
 
-    //bool ExistInBones(INode* inode);
-
     int GetNumBones() const;
 
     static bool IsBone(INode *inode);
@@ -74,25 +76,32 @@ public:
 
     const Bone& GetBone(int index);
 
+    nArray<nMaxBoneManager::Bone>& GetBoneArray();
+
+    nMaxNoteTrack& GetNoteTrack();
+
 protected:
     void GetNodes(INode* node, nArray<INode*>& nodeArray);
     
     void GetBoneByModifier(const nArray<INode*>& nodeArray, nArray<INode*> &boneNodeArray);
     void GetBoneByClassID(const nArray<INode*>& nodeArray, nArray<INode*> &boneNodeArray);
-    void GetRootBones(INode* sceneRoot, const nArray<INode*> &boneNodeArray, nArray<INode*> &rootBoneArray);
+    void GetRootBones(INode* sceneRoot, const nArray<INode*> &boneNodeArray, 
+                       nArray<INode*> &rootBoneArray);
 
     void BuildBones(int parentID, INode* node);
     void BuildBoneArray(const nArray<INode*> &rootBoneArray);
 
-    void ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os, nArray<INode*> &boneNodeArray);
+    void ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os, 
+                              nArray<INode*> &boneNodeArray);
     void ExtractSkinBones(INode* node, Modifier* skinMod,nArray<INode*> &boneNodeArray);
     bool IsGeomObject(INode *node);
 
 protected:
     nArray<Bone>      boneArray;
-    //nArray<INode*>    bones;
 
     typedef nArray<nMaxBoneManager::Bone> BONE_ARRAY;
+
+    nMaxNoteTrack noteTrack;
 
 private:
     nMaxBoneManager();
@@ -113,18 +122,6 @@ nMaxBoneManager::Instance()
     return Singleton;
 }
 //---------------------------------------------------------------------------
-/**
-    Check the given node is exist in nodes array.
-*/
-/*
-inline
-bool 
-nMaxBoneManager::ExistInBones(INode* inode)
-{
-    return (this->bones.Find(inode) != 0);
-}
-*/
-//---------------------------------------------------------------------------
 inline
 int 
 nMaxBoneManager::GetNumBones() const
@@ -138,6 +135,20 @@ nMaxBoneManager::GetBone(int index)
 {
     n_assert(index >= 0);
     return this->boneArray[index];
+}
+//---------------------------------------------------------------------------
+inline
+nArray<nMaxBoneManager::Bone>& 
+nMaxBoneManager::GetBoneArray()
+{
+    return this->boneArray;
+}
+//---------------------------------------------------------------------------
+inline
+nMaxNoteTrack& 
+nMaxBoneManager::GetNoteTrack()
+{
+    return this->noteTrack;
 }
 //---------------------------------------------------------------------------
 #endif
