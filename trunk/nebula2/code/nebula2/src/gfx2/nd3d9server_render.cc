@@ -25,6 +25,28 @@ nD3D9Server::SetCamera(nCamera2& cam)
 
 //------------------------------------------------------------------------------
 /**
+    Update the device viewport.
+*/
+void
+nD3D9Server::SetViewport(nViewport& vp)
+{
+    nGfxServer2::SetViewport(vp);
+
+    if (this->d3d9Device)
+    {
+        static D3DVIEWPORT9 dvp;
+        dvp.X = vp.x;
+        dvp.Y = vp.y;
+        dvp.Width = vp.width;
+        dvp.Height = vp.height;
+        dvp.MinZ = vp.nearz;
+        dvp.MaxZ = vp.farz;
+        this->d3d9Device->SetViewport(&dvp);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Start rendering the scene.
 */
 bool

@@ -28,6 +28,17 @@ class nResourceServer;
 class nFont2;
 class nFontDesc;
 
+class nViewport
+{
+public:
+    float x;
+    float y;
+    float width;
+    float height;
+    float nearz;
+    float farz;
+};
+
 class nGfxServer2 : public nRoot
 {
 public:
@@ -97,6 +108,10 @@ public:
     virtual void SetCamera(nCamera2& cam);
     /// get the current camera description
     nCamera2& GetCamera();
+    /// set the viewport
+    virtual void SetViewport(nViewport& vp);
+    /// get the viewport
+    virtual nViewport& GetViewport();
     /// open the display
     virtual bool OpenDisplay();
     /// close the display
@@ -198,6 +213,7 @@ protected:
 
     nAutoRef<nResourceServer> refResource;
     nCamera2 camera;
+    nViewport viewport;
 
     nRef<nTexture2> refRenderTarget;
     nRef<nMesh2>    refMeshes[MAX_VERTEXSTREAMS];
@@ -242,6 +258,17 @@ nCamera2&
 nGfxServer2::GetCamera()
 {
     return this->camera;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the current viewport.
+*/
+inline
+nViewport&
+nGfxServer2::GetViewport()
+{
+    return this->viewport;
 }
 
 //------------------------------------------------------------------------------

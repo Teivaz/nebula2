@@ -140,6 +140,16 @@ nGfxServer2::SetCamera(nCamera2& camera)
 
 //------------------------------------------------------------------------------
 /**
+    Set the current viewport. Subclasses should adjust the device accordingly.
+*/
+void
+nGfxServer2::SetViewport(nViewport& vp)
+{
+    this->viewport = vp;
+}
+
+//------------------------------------------------------------------------------
+/**
     Open the display.
 
     @return     true if display successfully opened
