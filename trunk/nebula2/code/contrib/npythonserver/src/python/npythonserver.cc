@@ -19,15 +19,16 @@
 // Initialize static members to NULL
 nPythonServer *nPythonServer::Instance = NULL;
 
+// Package registration hook
+extern void nPythonRegisterPackages(nKernelServer *);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 PyObject *CreatedObjectsList_;
 PyObject *CreatedObjectsList_weak_refs_;
 PyObject *CreatedObjectsList_weakref_callback_;
-
 
 // Python "Nebula type" and error object
 extern N_EXPORT PyTypeObject Nebula_Type;
@@ -83,7 +84,7 @@ static PyMethodDef NebulaMethods[] = {
     {"setTrigger",    pythoncmd_SetTrigger, METH_VARARGS},   // Trigger callback
 
     {"__CreatedObjectsList_weakref_callback__",  CreatedObjectsList_weakref_callback, METH_VARARGS}, 
-    {NULL,NULL,0,NULL}    /* Sentinel */
+    {NULL, NULL, 0, NULL}    /* Sentinel */
 };
 
 //--------------------------------------------------------------------
@@ -114,7 +115,7 @@ __declspec(dllexport) void initpynebula()
     PyModule_AddObject(m, "__created_objects__", gd);
 
     CreatedObjectsList_weak_refs_ = PyDict_New();
-    PyModule_AddObject(m, "__created_objects_weak_refs__", CreatedObjectsList_weak_refs_ );
+    PyModule_AddObject(m, "__created_objects_weak_refs__", CreatedObjectsList_weak_refs_);
     
 
     // If Python is calling this function as part of an import
@@ -122,11 +123,16 @@ __declspec(dllexport) void initpynebula()
     {
         nPythonServer::kernelServer = n_new(nKernelServer());
         n_assert(nPythonServer::kernelServer);
+        // Call the package registration function.
+        // A default implementation of this is provided in pynebula.cc
+        // but you may provide your own implementation that handles your
+        // application's needs.
+        nPythonRegisterPackages(nPythonServer::kernelServer);
 
         nPythonServer *ps = (nPythonServer *) nPythonServer::kernelServer->Lookup("/sys/servers/script");
         if (!ps) 
         {
-            ps = (nPythonServer *) nPythonServer::kernelServer->New("npythonserver","/sys/servers/script");
+            ps = (nPythonServer *) nPythonServer::kernelServer->New("npythonserver", "/sys/servers/script");
             n_assert(ps);
             nPythonServer::Instance = ps;
         }
@@ -274,12 +280,7 @@ nPythonServer::EndWrite(nFile* file)
 */
 static void _indent(long i, char *buf)
 {
-    //long j;
-
     buf[0] = '\0';  // Cancel out the indent buffer
-
-    //buf[0] = 0;
-    //for (j=0; j<i; j++) strcat(buf,"  ");
 }
 
 //--------------------------------------------------------------------
@@ -331,11 +332,11 @@ bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
 
     // write generic 'new' statement
     const char *o_class = o->GetClass()->GetName();
-    _indent(this->indent_level,this->indent_buf);
+    _indent(this->indent_level, this->indent_buf);
 
     // NOTE: Generated in the form of a function call
     char buf[N_MAXPATH];
-    sprintf(buf, "\n%s__NDobj = new('%s','%s')\nsel(__NDobj)\n", this->indent_buf, o_class, o_name);
+    sprintf(buf, "\n%s__NDobj = new('%s', '%s')\nsel(__NDobj)\n", this->indent_buf, o_class, o_name);
     file->PutS(buf);
     
     return true;
@@ -400,49 +401,46 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 {
     n_assert(file);
     n_assert(cmd);
+
     const char *name = cmd->GetProto()->GetName();
     n_assert(name);
-    nArg *arg;
     char buf[N_MAXPATH];
-    sprintf(buf,"%s__NDobj.%s(",this->indent_buf,name);
+    sprintf(buf, "%s__NDobj.%s(", this->indent_buf, name);
     file->PutS(buf);
     
     cmd->Rewind();
-    int num_args = cmd->GetNumInArgs();
-
-    const char* strPtr;
-    ushort strLen;
-    ushort bufLen;
-
-    int i;
-    for (i=0; i<num_args; i++)
+    int numArgs = cmd->GetNumInArgs();
+    for (int i = 0; i < numArgs; i++)
     {
-        arg=cmd->In();
-
-        switch(arg->GetType())
+        nArg *arg = cmd->In();
+        switch (arg->GetType())
         {
             case nArg::Int:
-                sprintf(buf,"%d",arg->GetI());
+            {
+                sprintf(buf, "%d", arg->GetI());
                 break;
-
+            }
             case nArg::Float:
-                sprintf(buf,"%.6f",arg->GetF());
+            {
+                sprintf(buf, "%.6f", arg->GetF());
                 break;
-
+            }
             case nArg::String:
-                strPtr = arg->GetS();
+            {
+                ushort strLen = 0;
+                const char *strPtr = arg->GetS();
                 if (strPtr != NULL)
+                {
                     strLen = strlen(strPtr);
-                else
-                    strLen = 0;
+                }
 
-                bufLen = sizeof(buf)-1;
+                ushort bufLen = sizeof(buf) - 1;
             
                 file->PutS("r'");
-                if (strLen > bufLen-1) 
+                if (strLen > bufLen - 1) 
                 {
                     buf[bufLen] = 0; // Null terminator
-                    for (int j=0; j<strLen-2; j+=bufLen)
+                    for (int j = 0; j < strLen - 2; j += bufLen)
                     {
                         memcpy((void*)&buf[0], strPtr, bufLen);
                         file->PutS(buf);
@@ -452,32 +450,34 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
                 }
                 sprintf(buf, "%s'", strPtr);
                 break;
-
+            }
             case nArg::Bool:
-                sprintf(buf,"%s",(arg->GetB() ? "1" : "0"));
+            {
+                sprintf(buf, "%s", (arg->GetB() ? "1" : "0"));
                 break;
-
+            }
             case nArg::Object:
+            {
+                nRoot *o = (nRoot *) arg->GetO();
+                if (o)
                 {
-                    nRoot *o = (nRoot *) arg->GetO();
-                    if (o)
-                    {
-                        char buf[N_MAXPATH];
-                        sprintf(buf, "'%s'", o->GetFullName().Get());
-                    }
-                    else
-                    {
-                        sprintf(buf, " null");
-                    }
+                    char buf[N_MAXPATH];
+                    sprintf(buf, "'%s'", o->GetFullName().Get());
+                }
+                else
+                {
+                    sprintf(buf, " null");
                 }
                 break;
-
+            }
             default:
-                sprintf(buf," ???");
+            {
+                sprintf(buf, " ???");
                 break;
+            }
         }
         file->PutS(buf);
-        if (i < (num_args-1))
+        if (i < (numArgs - 1))
         {
             file->PutS(", ");
         }

@@ -27,6 +27,19 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(npythonserver);
 
+/**
+    Package registration hook
+*/
+void
+nPythonRegisterPackages(nKernelServer * kernelServer)
+{
+    kernelServer->AddPackage(nnebula);
+    kernelServer->AddPackage(nnetwork);
+    kernelServer->AddPackage(ndirect3d9);
+    kernelServer->AddPackage(ndinput8);
+    kernelServer->AddPackage(npythonserver);
+}
+
 //------------------------------------------------------------------------------
 /**
     Main function.
@@ -55,11 +68,7 @@ main(int argc, const char** argv)
 
     // create minimal Nebula runtime
     nKernelServer kernelServer;
-    kernelServer.AddPackage(nnebula);
-    kernelServer.AddPackage(nnetwork);
-    kernelServer.AddPackage(ndirect3d9);
-    kernelServer.AddPackage(ndinput8);
-    kernelServer.AddPackage(npythonserver);
+    nPythonRegisterPackages(&kernelServer);
 
     nScriptServer* scriptServer = (nScriptServer*) kernelServer.New("npythonserver", "/sys/servers/script");
     if (0 == scriptServer)
