@@ -10,8 +10,12 @@
 global home
 global platform
 global vstudioPrefix
+global debug
 
 set vstudioPrefix "code/nebula2/vstudio"
+
+# Set this to true if you want extra debug info to get printed
+set debug false
 
 # Setup the home directory we are working from
 set home [file dir [info script]]/
@@ -81,10 +85,10 @@ foreach gen $gen_list {
 #----------------------------------------------------------------------------
 #puts "Looking for uuidgen...."
 #if { [catch { exec uuidgen }] } {
-#	puts "uuidgen.exe not found skipping Visual Studio Solutions."
+#   puts "uuidgen.exe not found skipping Visual Studio Solutions."
 #} else {
-#	puts "uuidgen.exe found"
-#	gen_solution
+#   puts "uuidgen.exe found"
+#   gen_solution
 #}
 
 
