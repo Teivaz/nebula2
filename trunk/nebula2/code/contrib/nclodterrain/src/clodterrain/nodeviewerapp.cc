@@ -178,12 +178,6 @@ void nODEViewerApp::Close()
         this->geoms[thingix]->Release();
     }
 
-    if (this->testmesh)
-    {
-        this->refDyServer->DeleteTriMesh("testmesh");
-        this->testmesh = NULL;
-    }
-
     this->planegeom->Release();
 
     this->refDySpace->Release();
@@ -561,9 +555,6 @@ void nODEViewerApp::InitDynamics()
     this->refTerrainSpace->Create();
     this->refDyServer = (nOpendeServer *)kernelServer->New("nopendeserver","/usr/dynamics/server");
 
-    // add in a trimesh thing at array position 0
-    this->testmesh = this->refDyServer->NewTriMesh("testmesh", "meshes:examples/box1.n3d2");
-
     // load visnodes to mark ode bodies
     this->refSimplebody = (nTransformNode *)kernelServer->New("ntransformnode", "/usr/dynamics/odemarker");
     kernelServer->PushCwd(this->refSimplebody.get());
@@ -595,19 +586,12 @@ void nODEViewerApp::InitDynamics()
         thisbody->Create(this->refDyWorld->GetFullName(bufferthing,200));
         thisbody->SetSphereMass(1.0,1.0);
 
-        vector3 thisposition(1.0f+11.0f*thingix,5.0f+10.0f*sinf((float)thingix), 40.0f+5.0f*thingix);
+        vector3 thisposition(41.0f+21.0f*thingix,5.0f+10.0f*sinf((float)thingix), 40.0f+5.0f*thingix);
         thisbody->SetPosition(thisposition);
 
         nString geompath = "/usr/dynamics/things/geom";
         geompath += nString(thingix);
-/*      if (thingix == 0)
         {
-            nOpendeTriMeshGeom *trimeshgeom = (nOpendeTriMeshGeom *)kernelServer->New("nopendetrimeshgeom",geompath.Get());
-            trimeshgeom->Create(this->refDySpace->GetFullName(bufferthing,200));
-            trimeshgeom->SetMesh("testmesh");
-            trimeshgeom->SetBody(bodypath.Get());
-            this->geoms[thingix] = trimeshgeom;
-        } else*/{
             nOpendeBoxGeom *spheregeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom",geompath.Get());
             spheregeom->Create(this->refDySpace->GetFullName(bufferthing,200));
             //spheregeom->SetRadius(1.5);
@@ -633,7 +617,7 @@ void nODEViewerApp::ResetTestObjects()
     // reset all the thing positions
     for (int thingix=0; thingix < NUMTHINGS; thingix++)
     {
-        vector3 thisposition(38.0f+1.0f*thingix,25.0f+10.0f*thingix, 55.0f+40.0f*thingix);
+        vector3 thisposition(41.0f+21.0f*thingix,35.0f+40.0f*thingix, 55.0f+20.0f*thingix);
         vector3 zerovelocity(0,0,0);
         quaternion q(0,0,0,1);
         this->bodies[thingix]->SetPosition(thisposition);
