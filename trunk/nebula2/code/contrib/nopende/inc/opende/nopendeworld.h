@@ -41,6 +41,10 @@ class nOpendeWorld : public nRoot
         void ImpulseToForce( float, const vector3&, vector3& );
         
         void StepFast1( float, int );
+        
+        void QuickStep( float );
+        void SetQuickStepNumIterations( int );
+        int  GetQuickStepNumIterations();
     
         /// the actual ODE object (do NOT destroy!)
         dWorldID id;

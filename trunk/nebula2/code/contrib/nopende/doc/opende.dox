@@ -18,7 +18,7 @@
     <br>
     After you obtain nOpenDE you need to checkout 
     <a href="http://opende.sourceforge.net">OpenDE</a> from CVS, 
-    just downloading the 0.39 release will <b>NOT</b> work. Now you have two
+    just downloading the 0.5 release may not work. Now you have two
     options, you can build OpenDE, or you can just use the prebuilt win32
     binaries supplied with nOpenDE.<br>
     <br>

@@ -106,6 +106,33 @@ void nOpendeWorld::StepFast1( float stepsize, int maxiterations )
     n_assert( this->id && "nOpendeWorld::id not valid!" );
     nOpende::WorldStepFast1( this->id, stepsize, maxiterations );
 }
+
+//----------------------------------------------------------------------------
+/**
++*/      
+void nOpendeWorld::QuickStep( float stepsize )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldQuickStep( this->id, stepsize );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+void nOpendeWorld::SetQuickStepNumIterations( int num )
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    nOpende::WorldSetQuickStepNumIterations( this->id, num );
+}
+
+//----------------------------------------------------------------------------
+/**
+*/      
+int nOpendeWorld::GetQuickStepNumIterations()
+{
+    n_assert( this->id && "nOpendeWorld::id not valid!" );
+    return nOpende::WorldGetQuickStepNumIterations( this->id );
+}
         
 //----------------------------------------------------------------------------
 // EOF
