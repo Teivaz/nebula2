@@ -12,6 +12,7 @@ import webbrowser
 from workspacespanel import WorkspacesPanel
 from workspacespanel import WorkspaceListLoadedEvent
 from classbuilderpanel import ClassBuilderPanel
+from cmdeditorpanel import CmdEditorPanel
 from buildlog import BuildLogPanel
 
 ABOUT_BOX_TEXT = """\
@@ -89,8 +90,10 @@ class MainFrame(wx.Frame):
         self.workspacesTab = WorkspacesPanel(self.tabGroup, self.buildSys,
                                              generatorName, workspaceNames)
         self.classBuilderTab = ClassBuilderPanel(self.tabGroup, self.buildSys)
+        self.cmdEditorTab = CmdEditorPanel(self.tabGroup, self.buildSys)
         self.tabGroup.AddPage(self.workspacesTab, 'Workspace Generation')
         self.tabGroup.AddPage(self.classBuilderTab, 'Class Builder')
+        self.tabGroup.AddPage(self.cmdEditorTab, 'Cmd Editor')
 
         # Log window
         self.buildLogPanel = BuildLogPanel(self.mainPanel, self.buildSys)
@@ -198,3 +201,4 @@ def DisplayGUI(buildSys, generatorName, workspaceNames):
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------
+
