@@ -486,6 +486,17 @@ nTclServer::Run(const char *cmdStr, const char*& result)
 
 //------------------------------------------------------------------------------
 /**
+    Invoke a TCL procedure
+*/
+bool
+nTclServer::RunFunction(const char *functionName, const char *& result)
+{
+    return this->Run(functionName, result);
+}
+
+
+//------------------------------------------------------------------------------
+/**
     Evaluate a Tcl script.
 */
 bool 
