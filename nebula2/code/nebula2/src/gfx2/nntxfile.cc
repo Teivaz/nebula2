@@ -582,7 +582,7 @@ nNtxFile::CloseWrite()
     n_assert(this->fileObject);
 
     this->fileObject->Close();
-    delete this->fileObject;
+    this->fileObject->Release();
     this->fileObject = 0;
     this->openWrite = false;
 }
@@ -657,7 +657,7 @@ nNtxFile::CloseRead()
     n_assert(this->fileObject);
 
     this->fileObject->Close();
-    delete this->fileObject;
+    this->fileObject->Release();
     this->fileObject = 0;
     this->openRead = false;
 }

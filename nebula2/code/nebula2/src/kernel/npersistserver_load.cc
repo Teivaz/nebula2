@@ -25,7 +25,8 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
     {
         num_bytes = file->Read(header_buf, sizeof(header_buf));
         file->Close();
-        delete file;
+        file->Release();
+        file = 0;
         
         if (num_bytes > 0) {
 
@@ -78,10 +79,11 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
     }
     else
     {
-        delete file;
+        file->Release();
+        file = 0;
     }
     
-    // $..$ Block nicht gefunden, oder File nicht lesbar
+    // $..$ Block not found, or File unreadable
     return 0;
 }
 
@@ -189,7 +191,7 @@ nPersistServer::LoadObject(const char* fname)
             obj = this->LoadFoldedObject(unfoldedName, objName.Get());
             if (!obj)
             {
-                // could'nt load object!
+                // couldn't load object!
                 n_message("nPersistServer: Could not load object '%s'!\n", fname);
                 return 0;
             }

@@ -47,7 +47,7 @@ HRESULT nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPC
         if (!file->Open(this->shaderDir.Get(), "r"))
         {
             n_printf("nD3D9Shader: could not open include file '%s'!\n", pName);
-            delete file;
+            file->Release();
             return E_FAIL;
         }
     }
@@ -61,7 +61,7 @@ HRESULT nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPC
     void* buffer = n_malloc(fileSize);
     if (!buffer)
     {
-        delete file;
+        file->Release();
         return E_FAIL;
     }
     file->Read(buffer, fileSize);
@@ -70,7 +70,7 @@ HRESULT nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPC
     *pBytes = fileSize;
 
     file->Close();
-    delete file;
+    file->Release();
 
     return S_OK;
 }
@@ -161,7 +161,7 @@ nD3D9Shader::Load()
     if (!file->Open(this->filename.Get(), "r"))
     {
         n_printf("nD3D9Shader: could not open file '%s'!\n", this->filename.Get());
-        delete file;
+        file->Release();
         return false;
     }
 
@@ -175,7 +175,7 @@ nD3D9Shader::Load()
     n_assert(buffer);
     file->Read(buffer, fileSize); 
     file->Close();   
-    delete file;
+    file->Release();
     
     ID3DXBuffer* errorBuffer = 0;
     #if N_D3D9_DEBUG

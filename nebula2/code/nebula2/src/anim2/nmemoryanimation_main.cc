@@ -113,7 +113,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
             {
                 n_error("nMemoryAnimation::LoadNanim2(): Invalid type %s, must be 'nanim2'\n", this->filename.Get(), typeString);
                 file->Close();
-                delete file;
+                file->Release();
                 return false;
             }
         }
@@ -186,14 +186,14 @@ nMemoryAnimation::LoadNanim2(const char* filename)
         {
             n_error("nMemoryAnimation::LoadNanim2(): Unknown keyword %s in nanim2 file %s\n", keyWord, this->filename.Get());
             file->Close();
-            delete file;
+            file->Release();
             return false;
         }
     }
 
     // cleanup
     file->Close();
-    delete file;
+    file->Release();
     return true;
 }
 

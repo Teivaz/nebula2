@@ -54,8 +54,8 @@ nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFil
     if (!this->binaryFile->Open(this->absPath.Get(), "rb"))
     {
         n_printf("nNpkFileWrapper: could not open file '%s' in read binary mode!\n", this->absPath.Get());
-        delete this->binaryFile;
-        delete this->asciiFile;
+        this->binaryFile->Release();
+        this->asciiFile->Release();
         this->binaryFile = 0;
         this->asciiFile  = 0;
         return false;
@@ -65,8 +65,8 @@ nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFil
     {
         n_printf("nNpkFileWrapper: could not open file '%s' in ascii binary mode!\n", this->absPath.Get());
         this->binaryFile->Close();
-        delete this->binaryFile;
-        delete this->asciiFile;
+        this->binaryFile->Release();
+        this->asciiFile->Release();
         this->binaryFile = 0;
         this->asciiFile  = 0;
         return false;
@@ -147,15 +147,13 @@ nNpkFileWrapper::GetTocObject()
 bool
 nNpkFileWrapper::ReadHeader(nFile* file)
 {
-    int magic, blockLen, dataBlockStart, bytesRead;
-        
-    bytesRead = file->GetInt(magic);
+    int magic = file->GetInt();
     if (magic != 'NPK0')
     {
         return false;
     }
-    bytesRead = file->GetInt(blockLen);
-    bytesRead = file->GetInt(dataBlockStart);
+    int blockLen = file->GetInt();
+    int dataBlockStart = file->GetInt();
 
     this->dataOffset = dataBlockStart + 8;
     return true;
@@ -168,28 +166,20 @@ nNpkFileWrapper::ReadHeader(nFile* file)
 bool
 nNpkFileWrapper::ReadTocEntries(nFile* file)
 {
-    int bytesRead;
     char nameBuf[N_MAXPATH];
 
     bool insideToc = true;
     while (insideToc)
     {
         // read next fourcc code and block len
-        int fourcc, blockLen;
-        bytesRead = file->GetInt(fourcc);
-        if (sizeof(int) != bytesRead) return false;
-        bytesRead = file->GetInt(blockLen);
-        if (sizeof(int) != bytesRead) return false;
+        int fourcc = file->GetInt();
+        int blockLen = file->GetInt();
 
         if ('DIR_' == fourcc)
         {
             // a directory entry
-            short dirNameLen;
-            
-            bytesRead = file->GetShort(dirNameLen);
-            if (sizeof(short) != bytesRead) return false;
-            bytesRead = file->Read(nameBuf, dirNameLen);
-            if (dirNameLen != bytesRead) return false;
+            short dirNameLen = file->GetShort();
+            file->Read(nameBuf, dirNameLen);
             nameBuf[dirNameLen] = 0;
 
             nNpkTocEntry* newEntry = this->toc.BeginDirEntry(nameBuf);
@@ -206,17 +196,10 @@ nNpkFileWrapper::ReadTocEntries(nFile* file)
         else if ('FILE' == fourcc)
         {
             // a file
-            int fileOffset, fileLength;
-            short fileNameLen;
-            
-            bytesRead = file->GetInt(fileOffset);
-            if (sizeof(int) != bytesRead) return false;
-            bytesRead = file->GetInt(fileLength);
-            if (sizeof(int) != bytesRead) return false;
-            bytesRead = file->GetShort(fileNameLen);
-            if (sizeof(short) != bytesRead) return false;
-            bytesRead = file->Read(nameBuf, fileNameLen);
-            if (fileNameLen != bytesRead) return false;
+            int fileOffset = file->GetInt();
+            int fileLength = file->GetInt();
+            short fileNameLen = file->GetShort();
+            file->Read(nameBuf, fileNameLen);
             nameBuf[fileNameLen] = 0;
 
             // add raw data offset to fileOffset

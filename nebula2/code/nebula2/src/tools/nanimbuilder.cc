@@ -159,7 +159,7 @@ nAnimBuilder::SaveNanim2(nFileServer2* fileServer, const char* filename)
         // cleanup 
         file->Close();
     }
-    delete file;
+    file->Release();
     return true;
 }
 

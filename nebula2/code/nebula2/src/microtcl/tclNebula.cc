@@ -56,7 +56,7 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
         // read file into buffer
         int bytesRead = file->Read(buffer, bufSize);
         file->Close();
-        delete file;
+        file->Release();
 
         n_assert(bytesRead < (bufSize - 1));
         buffer[bytesRead] = 0;
