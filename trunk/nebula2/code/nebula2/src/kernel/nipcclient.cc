@@ -109,7 +109,7 @@ nIpcClient::GetBlocking() const
     Establish a connection to the ipc server identified by the nIpcAddress
     object.
 */
-bool 
+bool
 nIpcClient::Connect(nIpcAddress& addr)
 {
     if (!this->isConnected)
@@ -156,13 +156,13 @@ nIpcClient::Connect(nIpcAddress& addr)
         this->isConnected = true;
     }
     return true;
-}                                                                  
-        
+}
+
 //------------------------------------------------------------------------------
 /**
     Disconnect from the server.
 */
-void 
+void
 nIpcClient::Disconnect()
 {
     if (this->isConnected)

@@ -197,10 +197,6 @@ nWin32StackTrace::ShowLocals(STACKFRAME64& frame)
 			this->Print("no symbols available");
 		}
 	}
-	else
-	{
-		fprintf(this->file, "\t(no context information)\n");
-	}
 }
 
 //------------------------------------------------------------------------------

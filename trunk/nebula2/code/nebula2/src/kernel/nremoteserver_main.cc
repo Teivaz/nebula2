@@ -206,12 +206,12 @@ nRemoteServer::Trigger()
                     {
                         // set the client's cwd
                         kernelServer->PushCwd(this->GetClientCwd(fromClientId));
-    
+
                         // this seems to be a valid message, send the message
                         // to the scriptserver for validation
                         const char* result = 0;
                         scriptServer->Run(curString, result);
- 
+
                         // send the result string back to the client
                         nIpcBuffer resultMsg(4096);
                         resultMsg.SetString("");
@@ -220,10 +220,10 @@ nRemoteServer::Trigger()
                             resultMsg.SetString(result);
                         }
                         this->ipcServer->Send(fromClientId, resultMsg);
-    
+
                         // store new cwd in client context
                         this->SetClientCwd(fromClientId, kernelServer->GetCwd());
-    
+
                         // restore the original cwd
                         kernelServer->PopCwd();
                     }

@@ -7,7 +7,6 @@
     object persistence and multiple scripting languages with relative 
     ease.
 
-
     @section NebulaObjectSystemNamedObjectHierarchy Named Object Hierarchy
 
     An instance of a class that is derived from nRoot is called a 
@@ -22,7 +21,6 @@
     navigated with the built-in command console (see @ref 
     NebulaConsoleServer). Within C++ named objects are accessible 
     through references (see @ref NebulaSmartPointers). 
-
 
     @section NebulaObjectSystemCreation Creation
 

@@ -188,7 +188,7 @@ nFileServer2::CleanupPathName(nString& str)
     Please note that Nebula does not know the concept of a current working
     directory, thus, all paths MUST be absolute (please note that Nebula
     assigns can be used to create position independent absolute paths).
-      
+
     @param pathName        the path to expand
     @return             resulting string
 
@@ -340,7 +340,6 @@ nFileServer2::InitHomeAssign()
         {
             strcat(buf,"/");
         }
-        // finally, set the assign
         this->SetAssign("home", buf);
     #elif defined(__MACOSX__)
         char buf[N_MAXPATH];
@@ -354,7 +353,6 @@ nFileServer2::InitHomeAssign()
         {
             strcat(buf,"/");
         }
-        // finally, set the assign
         this->SetAssign("home", buf);
     #else
     #error nFileServer::initHomeAssign() not implemented!
@@ -387,9 +385,9 @@ nFileServer2::InitBinAssign()
     #elif defined(__LINUX__)
 
         char buf[N_MAXPATH];
-    const char *home_dir = this->GetAssign("home");
-    n_assert(home_dir);
-    n_strncpy2(buf,home_dir,sizeof(buf));
+        const char *home_dir = this->GetAssign("home");
+        n_assert(home_dir);
+        n_strncpy2(buf,home_dir,sizeof(buf));
         strcat(buf,"bin/linux/");
         this->SetAssign("bin",buf);
 
@@ -432,10 +430,10 @@ nFileServer2::InitUserAssign()
 #elif defined(__WIN32__)
     char rawPath[MAX_PATH];
     HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
-                    CSIDL_PERSONAL | CSIDL_FLAG_CREATE,         // nFolder
-                    NULL,                                       // hToken
-                    0,                                          // dwFlags
-                    rawPath);                                  // pszPath
+                    CSIDL_PERSONAL | CSIDL_FLAG_CREATE,       // nFolder
+                    NULL,                                     // hToken
+                    0,                                        // dwFlags
+                    rawPath);                                 // pszPath
     n_assert(S_OK == hr);
 
     nPathString path(rawPath);
