@@ -52,11 +52,11 @@ public:
     /// get pointer to my class object
     nClass *GetClass() const;
     /// return true if part of class hierarchy
-    bool IsA(nClass *) const;
+    bool IsA(const nClass *) const;
     /// return true if part of class herarchy
     bool IsA(const char *) const;
     /// return true instance of class
-    bool IsInstanceOf(nClass *) const; 
+    bool IsInstanceOf(const nClass *) const; 
 
     /// invoke nCmd on object
     bool Dispatch(nCmd *);
@@ -102,7 +102,7 @@ nObject::GetClass() const
 */
 inline
 bool 
-nObject::IsA(nClass *cl) const
+nObject::IsA(const nClass *cl) const
 {
     nClass *actClass = this->instanceClass;
     do 
@@ -120,7 +120,7 @@ nObject::IsA(nClass *cl) const
 */
 inline
 bool 
-nObject::IsInstanceOf(nClass *cl) const
+nObject::IsInstanceOf(const nClass *cl) const
 {
     return (cl == this->instanceClass);
 }
