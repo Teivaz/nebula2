@@ -9,6 +9,7 @@
 static void n_addanimator(void* slf, nCmd* cmd);
 static void n_getnumanimators(void* slf, nCmd* cmd);
 static void n_getanimatorat(void* slf, nCmd* cmd);
+static void n_loadresources(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -29,6 +30,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_addanimator_s",       'ADDA', n_addanimator);
     cl->AddCmd("i_getnumanimators_v",   'GNMA', n_getnumanimators);
     cl->AddCmd("s_getanimatorat_i",     'GAAT', n_getanimatorat);
+    cl->AddCmd("b_loadresources_v",     'LORE', n_loadresources);
     cl->EndCmds();
 }
 
@@ -85,6 +87,24 @@ n_getanimatorat(void* slf, nCmd* cmd)
 {
     nSceneNode* self = (nSceneNode*) slf;
     cmd->Out()->SetS(self->GetAnimatorAt(cmd->In()->GetI()));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    loadresources
+    @input
+    v
+    @output
+    b(status)
+    @info
+    Loads resources and returns status
+*/
+static void
+n_loadresources(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    cmd->Out()->SetB(self->LoadResources());
 }
 
 //------------------------------------------------------------------------------
