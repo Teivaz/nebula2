@@ -1,4 +1,5 @@
 #include "export/nmaxexport.h"
+#include "../res/resource.h"
 //------------------------------------------------------------------------------
 /**
     3ds max to Nebula2 exporter using the IGame lib.
@@ -18,25 +19,107 @@ DWORD WINAPI dummy(LPVOID arg)
 
 //------------------------------------------------------------------------------
 /**
+    Dialog box creator
+*/
+BOOL N_THREADPROC Nebula2ExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
+{
+	nMaxExportTask *exp = (nMaxExportTask*)GetWindowLongPtr(hWnd,GWLP_USERDATA); 
+	
+	switch(message)
+    {
+		case WM_INITDIALOG:
+			exp = (nMaxExportTask *)lParam;
+			SetWindowLongPtr(hWnd,GWLP_USERDATA,lParam); 
+			CenterWindow(hWnd,GetParent(hWnd));
+
+            SetDlgItemText(hWnd, IDC_EXT_DIRNAME, exp->GetHomeDir().Get());
+
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     exp->animsAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   exp->gfxlibAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GUI,      exp->guiAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_LIGHTS,   exp->lightsAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_MESHES,   exp->meshesAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_SHADERS,  exp->shadersAssign.Get());
+            SetDlgItemText(hWnd, IDC_EXT_ASSIGN_TEXTURES, exp->texturesAssign.Get());
+
+            SetDlgItemText(hWnd, IDC_EXT_PATH_ANIM,     exp->animsPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_GFXLIB,   exp->gfxlibPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_GUI,      exp->guiPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_LIGHTS,   exp->lightsPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_MESHES,   exp->meshesPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_SHADERS,  exp->shadersPath.Get());
+            SetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, exp->texturesPath.Get());
+
+			return TRUE;
+		case WM_COMMAND:
+			switch (LOWORD(wParam))
+            {
+            case IDC_SET_DEFAULT_ASSIGNS:
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     N_MAXEXPORT_ANIMS_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   N_MAXEXPORT_GFXLIB_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_GUI,      N_MAXEXPORT_GUI_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_LIGHTS,   N_MAXEXPORT_LIGHTS_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_MESHES,   N_MAXEXPORT_MESHES_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_SHADERS,  N_MAXEXPORT_SHADERS_ASSIGN);
+                SetDlgItemText(hWnd, IDC_EXT_ASSIGN_TEXTURES, N_MAXEXPORT_TEXTURES_ASSIGN);
+                break;
+            case IDC_SET_DEFAULT_PATHS:
+                SetDlgItemText(hWnd, IDC_EXT_PATH_ANIM,     N_MAXEXPORT_ANIMS_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_GFXLIB,   N_MAXEXPORT_GFXLIB_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_GUI,      N_MAXEXPORT_GUI_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_LIGHTS,   N_MAXEXPORT_LIGHTS_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_MESHES,   N_MAXEXPORT_MESHES_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_SHADERS,  N_MAXEXPORT_SHADERS_PATH);
+                SetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, N_MAXEXPORT_TEXTURES_PATH);
+                break;
+			case IDOK:
+                char str[512];
+                GetDlgItemText(hWnd, IDC_EXT_DIRNAME, str, 512); exp->SetHomeDir(str);
+
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_ANIM,     str, 512); exp->animsAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GFXLIB,   str, 512); exp->gfxlibAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_GUI,      str, 512); exp->guiAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_LIGHTS,   str, 512); exp->lightsAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_MESHES,   str, 512); exp->meshesAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_SHADERS,  str, 512); exp->shadersAssign = str;
+                GetDlgItemText(hWnd, IDC_EXT_ASSIGN_TEXTURES, str, 512); exp->texturesAssign = str;
+
+                GetDlgItemText(hWnd, IDC_EXT_PATH_ANIM,     str, 512); exp->animsPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_GFXLIB,   str, 512); exp->gfxlibPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_GUI,      str, 512); exp->guiPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_LIGHTS,   str, 512); exp->lightsPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_MESHES,   str, 512); exp->meshesPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_SHADERS,  str, 512); exp->shadersPath = str;
+                GetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, str, 512); exp->texturesPath = str;
+
+				EndDialog(hWnd, 1);
+				break;
+			case IDCANCEL:
+				EndDialog(hWnd,0);
+				break;
+			}
+		default:
+			return FALSE;
+	
+	}
+	return TRUE;
+	
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 nMaxExport::nMaxExport()
  :	maxInterface(0),
 	logHandler(0),
     scriptServer(0),
-	kernelServer(0),
     varServer(0),
     task(0),
 	suppressPrompts(false),
     nohBase("/export")
 {
-    //access the DLL-global kernelServer
-    n_assert(nKernelServer::ks);
-    this->kernelServer = nKernelServer::ks;
-	
-    this->fileServer = this->kernelServer->GetFileServer();
-
 	//the IGame property file
-	this->propertyFile = N_MAXEXPORT_IGAMEPROPERYIFILE; 
+	this->propertyFile = N_MAXEXPORT_IGAMEPROPERYIFILE;
 }
 
 //------------------------------------------------------------------------------
@@ -58,59 +141,100 @@ nMaxExport::~nMaxExport()
 
 //------------------------------------------------------------------------------
 /**
+    Get path to config file path placed in plugcfg directory of 3DS Max
+*/
+void
+nMaxExport::GetCfgFilename(nPathString& fileName)
+{
+	fileName += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+	fileName += "\\Nebula2Export.cfg";
+}
+
+//------------------------------------------------------------------------------
+/**
+    Init base assigns
+*/
+void
+nMaxExport::InitAssigns()
+{
+    nFileServer2 *fileServer = nFileServer2::Instance();
+
+    fileServer->SetAssign("home",     this->task->GetHomeDir().Get());
+    fileServer->SetAssign("anims",    this->task->animsAssign.Get());
+    fileServer->SetAssign("gfxlib",   this->task->gfxlibAssign.Get());
+    fileServer->SetAssign("gui",      this->task->guiAssign.Get());
+    fileServer->SetAssign("lights",   this->task->lightsAssign.Get());
+    fileServer->SetAssign("meshes",   this->task->meshesAssign.Get());
+    fileServer->SetAssign("shaders",  this->task->shadersAssign.Get());
+    fileServer->SetAssign("textures", this->task->texturesAssign.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 int
 nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
-	    
+    n_assert(i);	    
     //FIXME: this should be suplied by the UI
     //create a fake ExportTaskSetup
-        if (! this->task)
-        {
-            this->task = n_new nMaxExportTask;
-        }
+    if (!this->task)
+    {
+        this->task = n_new nMaxExportTask;
+    }
 
-        this->task->exportHiddenNodes = false;
-        this->task->exportAnimations = true;
-        this->task->groupMeshBySourceObject = true;
-        this->task->sampleRate = 1; 
-        this->task->useWeightedNormals = true;
+    nPathString cfn;
+    this->GetCfgFilename(cfn);
+    this->task->SetCfgFileName(cfn);
+    this->task->ReadConfig();
+   	// Prompt the user with our dialogbox, and get all the options.
+	if (!DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL),
+        i->GetMAXHWnd(), Nebula2ExporterOptionsDlgProc, (LPARAM)this->task)) {
+		return 1;
+	}
 
-        //DISABLE the skinned export until the code is finished.
-        this->task->exportStatic = true;
 
-        //the selected file name from the export dialog
-        nPathString fileName(ExportFileName);
-        fileName = fileName.ExtractFileName();
-        fileName.StripExtension();
-            
-        //the meshfile
-        this->task->meshFileName = fileName;
-        this->task->meshFileName = "meshes:" + this->task->meshFileName;
-        this->task->meshFileExtension = ".n3d2";
+    this->task->exportHiddenNodes = false;
+    this->task->exportAnimations = true;
+    this->task->groupMeshBySourceObject = true;
+    this->task->sampleRate = 1; 
+    this->task->useWeightedNormals = true;
 
-        //the scenefile
-        this->task->sceneFileName = fileName;
-        this->task->sceneFileName = "gfxlib:" + this->task->sceneFileName;
+    //DISABLE the skinned export until the code is finished.
+    this->task->exportStatic = false;
+	//n_error("Test. Filename: %s\n", ExportFileName);
+
+    //the selected file name from the export dialog
+    nPathString fileName(ExportFileName);
+    fileName = fileName.ExtractFileName();
+    fileName.StripExtension();
+        
+    //the meshfile
+    this->task->meshFileName = fileName;
+    //this->task->meshFileName = "meshes:" + this->task->meshFileName;
+    this->task->meshFileExtension = ".n3d2";
+
+	//the scenefile
+    this->task->sceneFileName = fileName;
+    //this->task->sceneFileName = "gfxlib:" + this->task->sceneFileName;
+    this->task->sceneFileName += ".n2";
     //END
+
+    this->InitAssigns();
     
-    n_assert(i);
 	this->maxInterface = i;
 	this->expInterface = ei;
 	
     //init the maxLogHandler 
-    static_cast<nMaxLogHandler*>(this->kernelServer->GetLogHandler())->SetLogSys(i->Log());
+    static_cast<nMaxLogHandler*>(nKernelServer::Instance()->GetLogHandler())->SetLogSys(i->Log());
 	
 	this->suppressPrompts = (suppressPrompts == 0) ? false : true;
 	this->exportSelected = (options & SCENE_EXPORT_SELECTED) ? true : false;
 
-    this->fileServer->SetAssign("meshes",   N_MAXEXPORT_ASSIGN_MESHES);
-    this->fileServer->SetAssign("gfxlib",   N_MAXEXPORT_ASSIGN_GFXLIB);
-
     //create a var server, because the setting of a animators channel requires a varserver for the handle lookup
     if (! this->varServer )
     {
-        this->varServer = static_cast<nVariableServer*>(this->kernelServer->New("nvariableserver", "/sys/servers/variable"));
+        this->varServer = static_cast<nVariableServer*>(nKernelServer::Instance()->New("nvariableserver", "/sys/servers/variable"));
         this->varServer->DeclareVariable(N_MAXEXPORT_TIMECHANNELNAME, this->varServer->StringToFourCC(N_MAXEXPORT_TIMECHANNELNAME));
     }
 
@@ -131,16 +255,22 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     igConManager->SetCoordSystem(N_MAXEXPORT_IGAMECOORDSYS);    
 
     //create a scene node for this path, so the exported scene file is a scenenode
-    if (! this->kernelServer->Lookup(this->nohBase.Get()))
+    if (!nKernelServer::Instance()->Lookup(this->nohBase.Get()))
     {
-        this->kernelServer->New("nscenenode", this->nohBase.Get());
+        nKernelServer::Instance()->New("nscenenode", this->nohBase.Get());
     }
     
     bool success = true;  
     
     //do the hierarchie walk
-    this->iGameScene->InitialiseIGame(this->exportSelected); //init IGame for this task
+    this->iGameScene->InitialiseIGame(/*this->exportSelected*/); //init IGame for this task
     
+    this->iGameScene->SetStaticFrame(0);
+    
+    this->ticksPerFrame = this->iGameScene->GetSceneTicks();
+    this->startFrame = this->iGameScene->GetSceneStartTime() / this->ticksPerFrame;
+    this->endFrame = this->iGameScene->GetSceneEndTime() / this->ticksPerFrame;
+
     //initiate progress bar
     this->progressNumTotal = this->iGameScene->GetTotalNodeCount();
     this->progressOnePercent = 100.0f / this->progressNumTotal;
@@ -154,22 +284,38 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
     for (int n = 0; n < numTopNodes && success; n++)
     {
         IGameNode* igNode = this->iGameScene->GetTopLevelNode(n);
+        //igNode->IsTarget();
         success = this->exportNode(igNode, this->nohBase);
     }
 
     if (success)
     {
         //store the mesh data
-        this->storeMeshPools();
+        this->storeDataPools();
         
         //store the scene description
         if (!this->scriptServer)
-            this->scriptServer = static_cast<nScriptServer*>(this->kernelServer->New(N_MAXEXPORT_SCRIPTSERVER, "/sys/servers/script"));
+            this->scriptServer = static_cast<nScriptServer*>(nKernelServer::Instance()->New(N_MAXEXPORT_SCRIPTSERVER, "/sys/servers/script"));
         
-        nSceneNode* exportNode = static_cast<nSceneNode*>(this->kernelServer->Lookup(this->nohBase.Get()));
+        nSceneNode* exportNode = static_cast<nSceneNode*>(nKernelServer::Instance()->Lookup(this->nohBase.Get()));
         if (exportNode)
         {
-            success = exportNode->SaveAs(this->task->sceneFileName.Get());
+            nString sceneFilePath(this->task->gfxlibPath);
+            sceneFilePath += this->task->sceneFileName;
+            success = exportNode->SaveAs(sceneFilePath.Get());
+
+            // write bat file
+            nFile *file = nFileServer2::Instance()->NewFileObject();
+            nString batFile(this->task->GetHomeDir());
+            batFile += "/bin/win32d/";
+            batFile += fileName;
+            batFile += ".bat";
+            if (file->Open(batFile.Get(), "w"))
+            {
+                file->PutS("nviewer.exe -view ");
+                file->PutS(sceneFilePath.Get());
+                file->Close();
+            }
         }
     }
     
@@ -181,6 +327,8 @@ nMaxExport::DoExport(const TCHAR *ExportFileName, ExpInterface *ei, Interface *i
 
     //stop the progress bar
     this->maxInterface->ProgressEnd();
+
+    this->task->WriteConfig();
 
 	return success ? 1 : 0;
 }
@@ -200,11 +348,16 @@ nMaxExport::CleanupData()
             n_delete this->meshPool[i].meshBuilder;
             this->meshPool[i].meshBuilder = 0;
         }
+        if (this->meshPool[i].animBuilder)
+        {
+            n_delete this->meshPool[i].animBuilder;
+            this->meshPool[i].animBuilder = 0;
+        }
     }
     this->meshPool.Clear();
 
     //clean scene
-    nSceneNode* exportNode = static_cast<nSceneNode*>(this->kernelServer->Lookup(this->nohBase.Get()));
+    nSceneNode* exportNode = static_cast<nSceneNode*>(nKernelServer::Instance()->Lookup(this->nohBase.Get()));
     if (exportNode)
     {
         exportNode->Release();
@@ -246,12 +399,15 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
 
     if (!igNode->IsNodeHidden() || this->task->exportHiddenNodes)
     {
+        int nodeID = igNode->GetNodeID();
+        IGameNode *nodeParent = igNode->GetNodeParent();
+
+        nodeName += this->checkChars(igNode->GetName());
         //is this a group owner node? (this is a dummy node in max, add a transform node,
         //so we can handle the group complete later)
         if (igNode->IsGroupOwner())
         {
-            nodeName += this->checkChars(igNode->GetName());
-            nTransformNode* nNode = static_cast<nTransformNode*>(this->kernelServer->New("ntransformnode", nodeName.Get()));
+            nTransformNode* nNode = static_cast<nTransformNode*>(nKernelServer::Instance()->New("ntransformnode", nodeName.Get()));
 
             this->exportPosition(nNode, nodeName, igNode);
             this->exportRotation(nNode, nodeName, igNode);
@@ -266,8 +422,8 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                 {
                     if (this->task->groupMeshBySourceObject)
                     {
+/*
                         //create a transformnode as root node for for the material shapennodes the mesh will use
-                        nodeName += this->checkChars(igNode->GetName());
                         nTransformNode* nNode = static_cast<nTransformNode*>(this->kernelServer->New("ntransformnode", nodeName.Get()));
                     
                         this->exportPosition(nNode, nodeName, igNode);
@@ -276,12 +432,12 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                         
                         //create a matrix to transform from worldspace to object/model space
                         matrix44* transform = this->buildInverseModelWorldMatrix(igNode);
-                        
+*/
                         //export the mesh data                       
-                        this->exportMesh(igNode, static_cast<nSceneNode*>(nNode), nodeName, transform);
+                        this->exportMesh(igNode,/* static_cast<nSceneNode*>(nNode),*/ nodeName/*, transform*/);
                         
                         //mem cleanup
-                        n_delete transform;
+                        //n_delete transform;
                     }
                     else
                     {
@@ -290,6 +446,7 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                     }
                 }
                 break;
+/*
                 case IGameObject::IGAME_LIGHT:
                 {
                     this->exportLight(nodeName, igNode);
@@ -297,22 +454,19 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                 break;
                 case IGameObject::IGAME_CAMERA:
                 {
-                    nodeName += "FIXME_CAMERA";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_CAMERA_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());
                 }
                 break;
                 case IGameObject::IGAME_BONE:
                 {
-                    nodeName += "FIXME_IKCHAIN";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_IKCHAIN_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());
                 }
                 break;
                 case IGameObject::IGAME_IKCHAIN:
                 {
-                    nodeName += "FIXME_IKCHAIN";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_IKCHAIN_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());
                     //TODO:
                     //create a skeleton with all acociated bones
@@ -321,31 +475,28 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
                 break;
                 case IGameObject::IGAME_SPLINE:
                 {
-                    nodeName += "FIXME_SPLINE";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_SPLINE_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());
                 }
                 break;
                 case IGameObject::IGAME_HELPER:
                 {
-                    nodeName += "FIXME_HELPER";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_HELPER_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());                    
                 }
                 break;
                 case IGameObject::IGAME_UNKNOWN:
                 {
-                    nodeName += "FIXME_UNKNOWN";
-                    nodeName += this->checkChars(igNode->GetName());
+                    nodeName += "FIXME_UNKNOWN_";
                     this->kernelServer->New("ntransformnode", nodeName.Get());
                 }
                 break;
+*/
                 default:
                 {
-                    nodeName += "FIXME_NOT_ENUM_";
-                    nodeName += igObject->GetIGameType();
-                    nodeName += this->checkChars(igNode->GetName());
-                    this->kernelServer->New("ntransformnode", nodeName.Get());
+                    nodeName += "_FIXME_NOT_SUPPORTED_";
+					nodeName.AppendInt(igObject->GetIGameType());
+                    n_printf("nMaxExporter: %s!", nodeName.Get());
                 }
                 break;
             }
@@ -356,9 +507,12 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
     this->progressCount++;
     nString msg;
     msg = "node ";
-    msg += this->progressCount;
+	msg.AppendInt(this->progressCount);
     msg += "/";
-    msg += this->progressNumTotal;
+	msg.AppendInt(this->progressNumTotal);
+	msg += " <";
+	msg += igNode->GetName();
+	msg += ">";
 
     //update the progressbar
     const int percent = (int) ((float) this->progressCount * this->progressOnePercent);
@@ -378,6 +532,9 @@ nMaxExport::exportNode(IGameNode* igNode, nString node)
             this->maxInterface->SetCancel(false);
         }
     }
+
+    // free memory
+    igNode->ReleaseIGameObject();
 
     //recurse to sub nodes
     for (i = 0; success && i < childNodes.Size(); i++)

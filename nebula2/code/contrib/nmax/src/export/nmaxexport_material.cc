@@ -23,7 +23,7 @@
     @todo transfer the texture to nebula, maybe convert them on runtime.
 */
 void
-nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameMaterial* igMaterial)
+nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameMaterial* igMaterial, bool skinned)
 {
     bool hasDiffuseMap = false;
     bool hasBumpMap = false;
@@ -35,30 +35,30 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
         
         if (igTexMap->IsEntitySupported())
         {
-            nShader2::Parameter shaderParam = nShader2::InvalidParameter;
+            nShaderState::Param shaderParam = nShaderState::InvalidParameter;
         
             //FIXME: only the map channel 0 will be used!
             switch (igTexMap->GetStdMapSlot())
             {
                 case ID_AM: //Ambient
                 {
-                    shaderParam = nShader2::AmbientMap0;
+                    shaderParam = nShaderState::AmbientMap0;
                 }
                 break;
                 case ID_DI: //Diffuse
                 {
-                    shaderParam = nShader2::DiffMap0;
+                    shaderParam = nShaderState::DiffMap0;
                     hasDiffuseMap = true;
                 }
                 break;
                 case ID_SP: //Specular
                 {
-                    shaderParam = nShader2::SpecMap0;
+                    shaderParam = nShaderState::SpecMap0;
                 }
                 break;
                 case ID_BU: //Bump
                 {
-                    shaderParam = nShader2::BumpMap0;
+                    shaderParam = nShaderState::BumpMap0;
                     hasBumpMap = true;
                 }
                 break;
@@ -73,15 +73,19 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                 break;
             }
 
-            if (shaderParam != nShader2::InvalidParameter) //does we have found the slot type?
+            if (shaderParam != nShaderState::InvalidParameter) //does we have found the slot type?
             {
                 TCHAR* bitmapFileName = igTexMap->GetBitmapFileName();
                 if (bitmapFileName)
                 {
                     nPathString texFile(bitmapFileName);
                     texFile = texFile.ExtractFileName().Get();
-                    texFile = "textures:" + texFile;
+                    texFile = this->task->texturesPath.Get() + texFile;
                     materialNode->SetTexture(shaderParam, texFile.Get());
+
+                    nFileServer2 *fileServer = nFileServer2::Instance();
+                    nString pathTo(fileServer->ManglePath(texFile.Get()));
+                    fileServer->CopyFile(bitmapFileName, pathTo.Get());
                 }
                 else
                 {
@@ -112,7 +116,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                 if (igMaterial->GetAmbientData()->GetPropertyValue(ambientColor))
                 {
                     vector4 vector(ambientColor.x, ambientColor.y, ambientColor.z, opacity);
-                    materialNode->SetVector(nShader2::MatAmbient, vector);
+                    materialNode->SetVector(nShaderState::MatAmbient, vector);
                 }
             }
             
@@ -123,7 +127,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                 if (igMaterial->GetDiffuseData()->GetPropertyValue(diffuseColor))
                 {
                     vector4 vector(diffuseColor.x, diffuseColor.y, diffuseColor.z, opacity);
-                    materialNode->SetVector(nShader2::MatDiffuse, vector);
+                    materialNode->SetVector(nShaderState::MatDiffuse, vector);
                 }
             }
 
@@ -134,7 +138,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                 if(igMaterial->GetSpecularData()->GetPropertyValue(specularColor))
                 {
                     vector4 vector(specularColor.x, specularColor.y, specularColor.z, opacity);
-                    materialNode->SetVector(nShader2::MatSpecular, vector);
+                    materialNode->SetVector(nShaderState::MatSpecular, vector);
                     
                     //specular power
                     //FIXME: find a calculation that includes the specular power
@@ -154,7 +158,7 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
                         if (igMaterial->GetGlossinessData()->GetPropertyValue(glossiness))
                         {
                             //the value from max is 0..1 so we must scale this up to the nebula range
-                            materialNode->SetFloat(nShader2::MatSpecularPower, 255.0f * glossiness);
+                            materialNode->SetFloat(nShaderState::MatSpecularPower, 255.0f * glossiness);
                         }
                     }
                 }
@@ -165,14 +169,24 @@ nMaxExport::exportMaterial(nMaterialNode* materialNode, nString nodeName, IGameM
     //fillup missing map with system defaults
     if (!hasDiffuseMap)
     {
-        materialNode->SetTexture(nShader2::DiffMap0, "textures:system/white.dds");
+        materialNode->SetTexture(nShaderState::DiffMap0, "textures:system/white.dds");
     }
 
     if (!hasBumpMap)
     {
-        materialNode->SetTexture(nShader2::BumpMap0, "textures:system/nobump.tga");
+        materialNode->SetTexture(nShaderState::BumpMap0, "textures:system/nobump.tga");
     }
     
+    nString shdFile(this->task->shadersPath);
     //set the default shader
-    materialNode->SetShader(materialNode->StringToFourCC("colr"), "shaders:default.fx");
+    if (skinned)
+    {
+        shdFile += "default_skinned.fx";
+        materialNode->SetShader(materialNode->StringToFourCC("colr"), shdFile.Get());
+    }
+    else
+    {
+        shdFile += "default.fx";
+        materialNode->SetShader(materialNode->StringToFourCC("colr"), shdFile.Get());
+    }
 }

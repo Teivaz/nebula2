@@ -17,7 +17,6 @@ nMaxExport::exportLight(nString nodeName, IGameNode* igNode)
     n_assert(igNode);
 
     nTransformNode* nNode = 0;
-    nodeName += this->checkChars(igNode->GetName());
                     
     //get the IGameLight
     IGameObject* igObject = igNode->GetIGameObject();
