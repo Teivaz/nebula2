@@ -26,8 +26,10 @@ begintarget nmaxtoolbox
         nmaxdlg
         nmaxutilityobj
         nmaxexport2
+        nmaxscene
         nmaxnode
         nmaxmesh
+        nmaxskinpartitioner
         nmaxmaterial
         nmaxbone
         nmaxtransform
