@@ -587,7 +587,7 @@ nArray<TYPE>::EraseQuick(int index)
 */
 template<class TYPE>
 typename nArray<TYPE>::iterator
-nArray<TYPE>::Erase(nArray<TYPE>::iterator iter)
+nArray<TYPE>::Erase(typename nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
     this->Erase(iter - this->elements);
@@ -601,7 +601,7 @@ nArray<TYPE>::Erase(nArray<TYPE>::iterator iter)
 */
 template<class TYPE>
 typename nArray<TYPE>::iterator
-nArray<TYPE>::EraseQuick(nArray<TYPE>::iterator iter)
+nArray<TYPE>::EraseQuick(typename nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
     this->EraseQuick(iter - this->elements);
