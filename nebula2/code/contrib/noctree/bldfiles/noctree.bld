@@ -5,8 +5,9 @@
 #-----------------------------------------------------------------------------
 beginmodule octree
     setdir octree
-    setfiles      { noctree_main noctree_collect noctree_cmds }
-    setheaders    { noctree }
+    setfiles      { noctree_main noctree_collect noctree_cmds  
+                    noctfrustum noctsphere noctbbox }
+    setheaders    { noctree noctvisitor noctfrustum noctsphere noctbbox }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget noctree
