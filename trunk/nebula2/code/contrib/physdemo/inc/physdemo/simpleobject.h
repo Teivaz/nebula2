@@ -47,6 +47,7 @@ public:
     // Initialize this with the proper nGuiTextLabel pointer if the object is to have floaty text
     nRef<nGuiTextLabel> refFloatyText;
     float textWidth, textHeight;
+    int disableTimeout;
 };
 //------------------------------------------------------------------------------
 #endif

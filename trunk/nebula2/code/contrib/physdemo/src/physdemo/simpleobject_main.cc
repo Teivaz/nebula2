@@ -8,7 +8,7 @@ nNebulaScriptClass(SimpleObject, "nroot");
 //------------------------------------------------------------------------------
 /**
 */
-SimpleObject::SimpleObject()
+SimpleObject::SimpleObject(): disableTimeout(0)
 {
 }
 
