@@ -31,8 +31,8 @@ nGfxServer2::nGfxServer2() :
     cursorDirty(true),
     inDialogBoxMode(false),
     gamma(1.0f),
-    brightness(65280.0/65535.0-0.5),
-    contrast(65280.0/65535.0-0.5)
+    brightness(65280.f/65535.f-0.5f),
+    contrast(65280.f/65535.f-0.5f)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -207,6 +207,10 @@ nGfxServer2::OpenDisplay()
 {
     n_assert(!this->displayOpen);
     this->displayOpen = true;
+
+    // Adjust new display to user-defined gamma (if any)
+    this->AdjustGamma();
+
     return true;
 }
 
@@ -734,6 +738,7 @@ void
 nGfxServer2::SetCursorVisibility(CursorVisibility v)
 {
     this->cursorVisibility = v;
+    this->cursorDirty = true;
 }
 
 //------------------------------------------------------------------------------
