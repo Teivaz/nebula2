@@ -317,7 +317,7 @@ nD3D9Server::DeviceOpen()
     n_assert(this->d3d9Device);
 
     // create effect pool
-    hr = D3DXCreateEffectPool(&this->effectPool);
+    hr = D3DXCreateEffectPool(&this->d3dxEffectPool);
     if (FAILED(hr))
     {
         n_error("nD3D9Server: Could not create effect pool!\n");
@@ -350,7 +350,7 @@ nD3D9Server::DeviceClose()
 {
     n_assert(this->d3d9);
     n_assert(this->d3d9Device);
-    n_assert(this->effectPool);
+    n_assert(this->d3dxEffectPool);
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(!this->windowHandler.IsWindowMinimized());
     n_assert(this->windowHandler.GetHwnd());
@@ -359,8 +359,8 @@ nD3D9Server::DeviceClose()
     this->OnDeviceLost();
 
     // destroy the effect pool
-    this->effectPool->Release();
-    this->effectPool = 0;
+    this->d3dxEffectPool->Release();
+    this->d3dxEffectPool = 0;
 
     // destroy d3d device
     this->d3d9Device->Release();
@@ -447,8 +447,8 @@ nD3D9Server::GetFeatureSet()
     }
     else
     {
-    return this->featureSet;
-
+        return this->featureSet;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -543,16 +543,16 @@ nD3D9Server::UpdateCursor()
     {
         this->cursorDirty = false;
 	
-    // make sure current mouse cursor texture is loaded
-    nTexture2* tex = this->curMouseCursor.GetTexture();
-    if (tex)
-    {
-        if (!tex->IsValid())
+        // make sure current mouse cursor texture is loaded
+        nTexture2* tex = this->curMouseCursor.GetTexture();
+        if (tex)
         {
-            bool mouseCursorLoaded = tex->Load();
-            n_assert(mouseCursorLoaded);
-            this->cursorDirty = true;
-        }
+            if (!tex->IsValid())
+            {
+                bool mouseCursorLoaded = tex->Load();
+                n_assert(mouseCursorLoaded);
+                this->cursorDirty = true;
+            }
 
             HRESULT hr;
             IDirect3DTexture9* d3d9Tex = ((nD3D9Texture*)tex)->GetTexture2D();
