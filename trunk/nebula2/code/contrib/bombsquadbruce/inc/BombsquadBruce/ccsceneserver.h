@@ -3,14 +3,16 @@
 //------------------------------------------------------------------------------
 /**
     @class CCStdSceneServer
+    @ingroup BombsquadBruceContribModule
     @ingroup NebulaSceneSystemServers
 
-    Default Crazy Chipmunk scene server.  Differs from 
-    nStdSceneServer in that it:
-    1. Renders alpha blended objects 
-    (those that set the variable at GetAlphaVarHandle() in their nRenderContext)
-    back to front, after all other objects.
-    2. Handles LOD.
+    @brief Default Crazy Chipmunk scene server.
+    
+    Differs from nStdSceneServer in that it:
+     -# Renders alpha blended objects 
+        (those that set the variable at GetAlphaVarHandle() in their
+        nRenderContext) back to front, after all other objects.
+     -# Handles LOD.
 
     (C) 2004 Rafael Van Daele-Hunt
 */

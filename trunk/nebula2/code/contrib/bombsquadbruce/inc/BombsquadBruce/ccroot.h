@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCRoot
-
+    @ingroup BombsquadBruceContribModule
     @brief Root class for every visible 3D object (except terrain)
 
     CCRoot is the common ground between CCWorld and CCRenderer.

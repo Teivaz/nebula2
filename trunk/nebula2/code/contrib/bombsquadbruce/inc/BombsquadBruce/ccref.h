@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCRef
-
+    @ingroup BombsquadBruceContribModule
     @brief Just a pointer that isn't allowed to be NULL
 
     If it is NULL, and gets dereferenced, it sends a readable error instead of randomly crashing.

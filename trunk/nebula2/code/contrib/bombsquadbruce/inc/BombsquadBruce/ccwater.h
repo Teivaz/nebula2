@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCWater
-
+    @ingroup BombsquadBruceContribModule
     @brief The water for Bombsquad Bruce
 
     (C)	2004 Rafael Van Daele-Hunt

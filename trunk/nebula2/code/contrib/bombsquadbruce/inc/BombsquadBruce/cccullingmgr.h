@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCCullingMgr
-
+    @ingroup BombsquadBruceContribModule
     @brief Determines which game objects are visible from a given perspective.
 
     (C)	2004 Rafael Van Daele-Hunt

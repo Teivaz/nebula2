@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCCollision
-
+    @ingroup BombsquadBruceContribModule
     @brief Brutally simple collision detection (static cylinders)
 
     (C)	2004 Rafael Van Daele-Hunt

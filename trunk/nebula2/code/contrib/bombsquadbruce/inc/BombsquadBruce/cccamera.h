@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCCamera
-
+    @ingroup BombsquadBruceContribModule
     @brief "Abstract" parent of all camera classes.
 
     CCCamera translates user input (as provided through

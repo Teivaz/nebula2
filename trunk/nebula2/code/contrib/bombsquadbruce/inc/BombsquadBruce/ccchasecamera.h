@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class CCChaseCamera
-
+    @ingroup BombsquadBruceContribModule
     @brief Follows a specified target CCRoot around.
 
     CCChaseCamera maintains its position at a (script-settable) offset
