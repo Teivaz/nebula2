@@ -110,40 +110,57 @@ endworkspace
 
     <table>
       <tr>
-      <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
+        <td>Command</td><td>Parameter</td><td>default</td><td>Description</td>
       </tr>
 
       <tr>
-      <td>beginworkspace</td><td>name</td><td></td>no default<td>
-      Workspaces are containers for targets, a target can be listed in any number of workspaces 
-      (or none at all). The name of your workspace must be unique among all the workspaces that the
-      build system finds.</td>
+        <td>beginworkspace</td><td>name</td><td>no default</td>
+        <td>Workspaces are containers for targets, a target can be listed in any number of workspaces 
+        (or none at all). The name of your workspace must be unique among all the workspaces that the
+        build system finds.</td>
       </tr>
+      
       <tr>
-      <td>annotate</td><td>annotation</td><td>""</td><td>An optional description of the workspace, 
-      enclose it in double quotation marks if it's more than one word, e.g. "my description".</td>
+        <td>annotate</td><td>annotation</td><td>""</td>
+        <td>An optional description of the workspace, enclose it in double quotation marks if 
+        it's more than one word, e.g. "my description".</td>
       </tr>
+      
       <tr>
-      <td>setdir</td> <td>dir</td> <td>no default</td> 
-      <td>Sets the directory that a workspace should be created in.</td>
+        <td>setdir</td> <td>dir</td> <td>no default</td> 
+        <td>Sets the directory that a workspace should be created in.</td>
       </tr>
+      
       <tr>
-      <td>setbinarydir</td> <td>dir</td> <td>""</td> <td>Sets the root directory to be used for binary output - dll and exe </td>
+        <td>setbinarydir</td> <td>dir</td> <td>""</td> 
+        <td>Sets the root directory to be used for binary output - dll and exe</td>
       </tr>
+      
       <tr>
-      <td>setlibdir</td> <td>dir</td> <td>""</td> <td>Sets the root directory to be used for intermediate compilation and possibly lib output. FIXME: For convention it should be decided by the powers that be # whether lib binarydir should mandatorily go in the inter dir, output dir, or leave it to the compiler generators discretion.</td>
+        <td>setlibdir</td> <td>dir</td> <td>""</td> 
+        <td>Sets the root directory to be used for intermediate compilation and possibly lib output. 
+        FIXME: For convention it should be decided by the powers that be # whether lib binarydir 
+        should mandatorily go in the inter dir, output dir, or leave it to the compiler generators 
+        discretion.</td>
       </tr>
+      
       <tr>
-      <td>settargets</td> <td>{ targetname ... }</td> <td>""</td> <td>Sets a list of targets</td>
+        <td>settargets</td> <td>{ targetname ... }</td> <td>""</td> 
+        <td>Sets the list of targets that will be put in this workspace</td>
       </tr>
+      
       <tr>
-      <td>addglobaldef</td> <td>define_name value</td> <td>""</td> <td>Sets a global define</td>
+        <td>addglobaldef</td> <td>define_name value</td> <td>""</td> 
+        <td>Sets a global define</td>
       </tr>
+      
       <tr>
-      <td>addtargetdef</td> <td>targetname define_name value</td> <td>""</td> <td>Sets a define for a target</td>
+        <td>addtargetdef</td> <td>targetname define_name value</td> <td>""</td> 
+        <td>Sets a define for a target</td>
       </tr>
+      
       <tr>
-      <td>endworkspace</td>
+        <td>endworkspace</td><td></td><td></td><td></td>
       </tr>
     </table>
 
@@ -155,39 +172,52 @@ endworkspace
       </tr>
 
       <tr>
-        <td>begintarget</td> <td>name</td> <td>no default</td>
+        <td>begintarget</td> <td>name</td> <td>no default</td><td></td>
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> <td>Set the type for the target.</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td> 
+        <td>An optional description of the target, enclose it in double quotation marks if 
+        it's more than one word, e.g. "my description".</td>
       </tr>
 
       <tr>
-        <td>setrtti</td> <td>true/false</td> <td>false</td> <td>a boolean that determines whether Run Time Type Identification is allowed.</td>
+        <td>setrtti</td> <td>true/false</td> <td>false</td> 
+        <td>Turns Run Time Type Identification on/off for this target (the regular C++ RTTI that is).</td>
       </tr>
 
       <tr>
-        <td>setexceptions</td> <td>true/false</td> <td>false</td> <td>a boolean that determines whether C++ exception handling is supported</td>
+        <td>setexceptions</td> <td>true/false</td> <td>false</td> 
+        <td>Turns C++ exception handling on/off for this target.</td>
       </tr>
 
       <tr>
-        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td> <td>Sets a list of modules</td>
+        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td> 
+        <td>Sets the list of modules to be included in this target.</td>
       </tr>
 
       <tr>
-        <td>setbundles</td> <td>{ bundlename ... }</td> <td>""</td> <td>Adds bundles to the target. Modules set to the bundle are treated the same as modules added to the target through the setmodules() call. Targets added to the bundle are treated the same as targets added through the settargetdeps() call.</td>
+        <td>setbundles</td> <td>{ bundlename ... }</td> <td>""</td> 
+        <td>Adds bundles to the target. Modules listed in the bundle are treated the same as modules 
+        added to the target through setmodules. Targets listed in the bundle are treated the same as 
+        targets added through settargetdeps.</td>
       </tr>
 
       <tr>
-        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td> <td>Specifies the targets that are required to be built before the current target</td>
+        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td> 
+        <td>Specifies the targets that must be built before this target.</td>
       </tr>
 
       <tr>
-        <td>changedllextension</td> <td>extension</td> <td>dll</td> <td>So you can change the set the extension of a dll to somthing else than dll. If not set the default will remain 'dll'. This function is only evaluated for dll targettypes. This is needed to create dll's with special extensions, as required for plugins for Max or Maya. This is not yet supported in the VC6 generator.</td>
+        <td>changedllextension</td> <td>extension</td> <td>dll</td> 
+        <td>Set the extension of generated dynamic link libraries to something other than 'dll'. 
+        If not set the default will remain 'dll'. This option is only evaluated for dll targets. 
+        One example where this is useful is for building plugins for Max and Maya, both of which
+        require dlls to have special extensions.</td>
       </tr>
 
       <tr>
-        <td>endtarget</td>
+        <td>endtarget</td><td></td><td></td><td></td>
       </tr>
 
     </table>
@@ -204,63 +234,95 @@ endworkspace
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> <td>A description, use "" for more than one word</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td> 
+        <td>An optional description of the target, enclose it in double quotation marks if 
+        it's more than one word, e.g. "my description".</td>
       </tr>
 
       <tr>
-        <td>setdir</td> <td>$dir</td> <td>""</td> <td>Sets the directory where the module's files can be found, inc/$dir and src/$dir are used.</td>
+        <td>setdir</td> <td>$dir</td> <td>""</td> 
+        <td>Sets the directory where the module's files can be found. The directory in setdir 
+        is given relative to $home/code/*/src or inc (or $home/code/contrib/*/src or inc for 
+        contrib modules)</td>
       </tr>
 
       <tr>
-        <td>setplatform</td> <td>all, win32, linux, macosx</td> <td>all</td> <td>A list of valid platforms that this module will compile on.</td>
+        <td>setplatform</td> <td>all, win32, linux, macosx</td> <td>all</td> 
+        <td>A list of valid platforms that this module will compile on.</td>
       </tr>
 
       <tr>
-        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td> <td> defines if this are c or the c++ sources, so the right compiler/compilersetting is selected</td>
+        <td>setmodtype</td> <td>c/cpp</td> <td>cpp</td> 
+        <td>Specifies whether the files in the module should be compiled as C or C++.</td>
       </tr>
 
       <tr>
-        <td>setfiles</td> <td>{ filename ... }</td> <td>""</td> <td>The list of source files that make up this module. Filenames are specified without path or extension, '.cc' is added automatic.</td>
+        <td>setfiles</td> <td>{ filename1 filename2 ... }</td> <td>""</td> 
+        <td>The list of source files that make up this module. Filenames should be specified 
+        without path or extension, '.cc' is added automatically.</td>
       </tr>
 
       <tr>
-        <td>setheaders</td> <td>{ headername ... }  </td> <td>""</td> <td>The list of header files that make up this module directly. Filenames are specified without path or extension, '.h' is added automatic.</td>
+        <td>setheaders</td> <td>{ headername1 headername2 ... }</td> <td>""</td> 
+        <td>The list of header files that make up this module. Filenames should be specified 
+        without path and/or extension, '.h' is added automatically.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32</td> <td>{ libname.lib ... }</td>  <td>""</td> <td>A list of libs that this module requires to be linked against in both release and debug builds. Filenames should be specified without path or extension.</td>
+        <td>setlibs_win32</td> <td>{ libname.lib ... }</td> <td>""</td> 
+        <td>A list of libs that this module requires to be linked against in both RELEASE and 
+        DEBUG builds on WIN32 platforms. Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32_release</td> <td>{ libname.lib ... }</td> <td>""</td> <td>As setlibs_win32 - but for libs that only apply to a release build</td>
+        <td>setlibs_win32_release</td> <td>{ libname.lib ... }</td> <td>""</td> 
+        <td>A list of libs that this module requires to be linked against in RELEASE builds 
+        on WIN32 platforms. Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_win32_debug</td> <td>{ libname.lib ... }</td> <td>""</td> <td>As setlibs_win32_release - but for debug builds</td>
+        <td>setlibs_win32_debug</td> <td>{ libname.lib ... }</td> <td>""</td> 
+        <td>A list of libs that this module requires to be linked against in DEBUG builds 
+        on WIN32 platforms. Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td> <td>List of modules that this module depends on for proper functioning. This list should include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated by the build system.  </td>
+        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td> 
+        <td>A list of libs that this module requires to be linked against on Linux platforms.
+        Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td> <td>Libs that are linked against on Mac OSX. Filenames are specified without path or extension  </td>
+        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td> 
+        <td>A list of libs that this module requires to be linked against on Mac OSX.
+        Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setmoduledeps</td> <td>{ modulename ... }</td> <td>""</td> <td>List of modules that this module depends on for proper functioning. This list should include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated by the build system.</td>
+        <td>setmoduledeps</td> <td>{ modulename ... }</td> <td>""</td> 
+        <td>A list of modules that this module depends on for proper functioning. This list should 
+        include both nRoot and non-nRoot modules. Inherited nRoot class dependencies will be generated 
+        by the build system.</td>
       </tr>
 
       <tr>
-        <td>setnopkg</td> <td>true/false</td> <td>fale</td> <td>Set this value to true if this module is nRoot-derived and it is desired that it not appear in pkg_XXX.cc files.</td>
+        <td>setnopkg</td> <td>true/false</td> <td>false</td> 
+        <td>Set this option to true if this module is nRoot-derived but you don't want it to appear in 
+        pkg_XXX.cc files. I think it's used for building the kernel, but you shouldn't need to worry
+        about it.</td>
       </tr>
 
       <tr>
-        <td>setmoddeffile</td> <td>filename</td> <td>""</td> <td>So you can setup Module Defintion File, whats a other way to define dllexports. This is needed for the max plugins, because max want's some dllexports that must be published this way. The file must be in src/$moduledir. It's not valid to have more than one module with a module def file set in a target. (Only the first found will be used, but it's possible to have more than one for a target.)</td>
+        <td>setmoddeffile</td> <td>filename</td> <td>""</td> 
+        <td>Sets the Module Definition File to be used for dll targets, this is another way to define 
+        dllexports. This is needed for the MAX plugins, because MAX wants some dllexports that must be 
+        published this way. The file must be in src/$moduledir. It's not valid to have more than one 
+        module with a module def file set in a target. (Only the first found will be used, but it's 
+        possible to have more than one for a target.)</td>
       </tr>
 
       <tr>
-        <td>endmodule</td>
+        <td>endmodule</td><td></td><td></td><td></td>
       </tr>
 
     </table>
@@ -273,23 +335,27 @@ endworkspace
       </tr>
 
       <tr>
-        <td>beginbundle</td> <td>$name</td> <td>no default</td>
+        <td>beginbundle</td> <td>$name</td> <td>no default</td> <td></td>
       </tr>
 
       <tr>
-        <td>annotate</td> <td>annotation</td> <td>""</td> <td>A description, use "" for more than one word</td>
+        <td>annotate</td> <td>annotation</td> <td>""</td> 
+        <td>An optional description of the target, enclose it in double quotation marks if 
+        it's more than one word, e.g. "my description".</td>
       </tr>
 
       <tr>
-        <td>setmodules</td> <td>{ modulename ... } </td> <td>""</td> <td>Sets a list of modules</td>
+        <td>setmodules</td> <td>{ modulename ... } </td> <td>""</td> 
+        <td>A list of modules to be included in this bundle.</td>
       </tr>
 
       <tr>
-        <td>settargets</td> <td>{ targetname ... } </td> <td>""</td> <td>Sets a list of targets</td>
+        <td>settargets</td> <td>{ targetname ... } </td> <td>""</td> 
+        <td>A list of targets to be included in this bundle.</td>
       </tr>
 
       <tr>
-        <td>endbundle</td>
+        <td>endbundle</td><td></td><td></td><td></td>
       </tr>
 
     </table>
