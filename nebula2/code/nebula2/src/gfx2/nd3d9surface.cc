@@ -56,44 +56,29 @@ D3DFORMAT getD3DFormat(nTexture2::Format format)
 {
     D3DFORMAT d3dFormat = D3DFMT_UNKNOWN;
 
-    switch(format)
+    switch (format)
     {
-    case nTexture2::Format::X8R8G8B8:
-        d3dFormat = D3DFMT_X8R8G8B8;
-      break;
-    case nTexture2::Format::A8R8G8B8:
-        d3dFormat = D3DFMT_A8R8G8B8;
-      break;
-    case nTexture2::Format::R5G6B5:
-        d3dFormat = D3DFMT_R5G6B5;
-        break;
-    case nTexture2::Format::A1R5G5B5:
-        d3dFormat = D3DFMT_A1R5G5B5;
-        break;
-    case nTexture2::Format::A4R4G4B4:
-        d3dFormat = D3DFMT_A4R4G4B4;
-        break;
-    case nTexture2::Format::P8:
-        d3dFormat = D3DFMT_P8;
-        break;
-    case nTexture2::Format::DXT1:
-        d3dFormat = D3DFMT_DXT1;
-        break;
-    case nTexture2::Format::DXT2:
-        d3dFormat = D3DFMT_DXT2;
-        break;
-    case nTexture2::Format::DXT3:
-        d3dFormat = D3DFMT_DXT3;
-        break;
-    case nTexture2::Format::DXT4:
-        d3dFormat = D3DFMT_DXT4;
-        break;
-    case nTexture2::Format::DXT5:
-        d3dFormat = D3DFMT_DXT5;
-        break;
-    case nTexture2::Format::A8:
-        d3dFormat = D3DFMT_A8;
-        break;
+        case nTexture2::X8R8G8B8:      d3dFormat = D3DFMT_X8R8G8B8; break;
+        case nTexture2::A8R8G8B8:      d3dFormat = D3DFMT_A8R8G8B8; break;
+        case nTexture2::R5G6B5:        d3dFormat = D3DFMT_R5G6B5; break;
+        case nTexture2::A1R5G5B5:      d3dFormat = D3DFMT_A1R5G5B5; break;
+        case nTexture2::A4R4G4B4:      d3dFormat = D3DFMT_A4R4G4B4; break;
+        case nTexture2::P8:            d3dFormat = D3DFMT_P8; break;
+        case nTexture2::DXT1:          d3dFormat = D3DFMT_DXT1; break;
+        case nTexture2::DXT2:          d3dFormat = D3DFMT_DXT2; break;
+        case nTexture2::DXT3:          d3dFormat = D3DFMT_DXT3; break;
+        case nTexture2::DXT4:          d3dFormat = D3DFMT_DXT4; break;
+        case nTexture2::DXT5:          d3dFormat = D3DFMT_DXT5; break;
+        case nTexture2::R16F:          d3dFormat = D3DFMT_R16F; break;
+        case nTexture2::G16R16F:       d3dFormat = D3DFMT_G16R16F; break;
+        case nTexture2::A16B16G16R16F: d3dFormat = D3DFMT_A16B16G16R16F; break;
+        case nTexture2::R32F:          d3dFormat = D3DFMT_R32F; break;
+        case nTexture2::G32R32F:       d3dFormat = D3DFMT_G32R32F; break;
+        case nTexture2::A32B32G32R32F: d3dFormat = D3DFMT_A32B32G32R32F; break;
+        case nTexture2::A8:            d3dFormat = D3DFMT_A8; break;
+        default:
+            // can't happen
+            n_assert(false);
     }
 
     n_assert(d3dFormat != D3DFMT_UNKNOWN);

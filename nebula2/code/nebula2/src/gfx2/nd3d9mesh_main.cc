@@ -91,11 +91,11 @@ nD3D9Mesh::LoadResource()
         this->CreateVertexDeclaration();
         switch (this->refillBuffersMode)
         {
-            case RefillBuffersMode::DisabledOnce:
-                this->refillBuffersMode = RefillBuffersMode::Enabled;
+            case DisabledOnce:
+                this->refillBuffersMode = Enabled;
                 break;
-            case RefillBuffersMode::Enabled:
-                this->refillBuffersMode = RefillBuffersMode::NeededNow;
+            case Enabled:
+                this->refillBuffersMode = NeededNow;
                 break;
             default:
                 break;
