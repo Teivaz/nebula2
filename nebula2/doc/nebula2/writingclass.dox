@@ -1,14 +1,17 @@
 /**
-    @page NebulaWritingClass Writing A New Class
+    @page NebulaWritingClass Writing A New nRoot Derived Class
 
-    This page discribes how to write a new Nebula class, especially nRoot derived.
-    So this shows how you make a class to be scriptable and support object persistence.
-    Also it is helpful to understand undergoing mechanism of Nebula object system.
+    This page describes how to create nRoot derived classes, that is classes 
+    that have nRoot somewhere in their ancestry. Instances of a nRoot derived 
+    class are placed in the Named Object Hierarchy (NOH) [@b FIXME: Need to link 
+    to page describing NOH], so each instance is a node in a tree structure with 
+    a path name like @c /sys/servers/gfx. nRoot derived classes can also have 
+    script commands that can be called from script and used for object 
+    persistence.
 
-    First, we create a header file, 'nmyclass.h' and write a class which derive 
-    nRoot.
-    And declare a member functions. We will lately bind this member 
-    function with script interface to make it avaiable to be accessed via script.
+    First, we create a header file, @c nmyclass.h and write a class which 
+    derives from nRoot. We will later bind some of the methods to the script 
+    interface so that they can be called from script.
 
     @code
     class nMyClass : public nRoot
@@ -17,40 +20,31 @@
         nMyClass();
         virtual ~nMyClass();
 
-        int DoJob (char* str);
+        int DoJob(char* str);
 
-        void SetFoo (bool b);
-        bool GetFoo () const;
+        void SetFoo(bool b);
+        bool GetFoo() const;
     };
     @endcode
 
-    Next, we create a implementation file 'nmyclass_main.cc' and define 
-    nNebulaScriptClass macro for supporting scripting interface for this class.
+    Next, we create a implementation file @c nmyclass_main.cc.
     
-    @note
-    The file extension of the implementation file should be used with '.cc'
-    The Nebula build system only identify '.cc' file extension for the 
-    implementation file.
-
     @code
     #include "mypackage/nmyclass.h"
   
-    nNebulaScriptClass (nMyClass, "nroot");
+    nNebulaScriptClass(nMyClass, "nroot");
     @endcode
 
-    There are two kind of macro for nRoot derived class.
+    nNebulaScriptClass is a macro that sets up the class to be used for 
+    scripting and in the NOH. There are a few different versions of this macro 
+    (see ndefclass.h), the most commonly used are:
     
-      - <b>nNebulaScriptClass</b>
-      - <b>nNebulaClass</b>
+        @li nNebulaClass Use for classes that don't have any script commands.
+        @li nNebulaScriptClass Use for classes that will have script commands.
 
-    If the class derive nRoot class, one of the macro of above should be defined 
-    in implementation file. Saying other, you should define nNebulaScriptClass 
-    or nNebulaClass macro in the implemenation file. You should do not define 
-    none of the both. If the class needs scripting interface, so the class is
-    scriptable use <b>nNebulaScriptClass</b> macro and the class is not
-    scriptable, use <b>nNebulaClass</b> macro.
-
-    We also define contstructor and destructor for nMyClass.
+    Every nRoot derived class must use one of these macros.
+    
+    We also define a constructor and destructor for @c nMyClass.
 
     @code
     // constructor.
@@ -64,21 +58,18 @@
     }
     @endcode
 
-    Please note that nRoot derived classes MUST ONLY HAVE THE DEFAULT
-    CONSTRUCTOR.
+    @warning Because nRoot derived classes are created by the nKernelServer, 
+    they can only have the default destructor.
 
-    Next, we make script and persistence interface. Make 'nmyclass_cmds.cc'
-    implementation file for that.
+    Next we make the script and persistence interface. The script commands are 
+    put in their own file which should have be named @c <classname>_cmds.cc, in 
+    this case we call the file @c nmyclass_cmds.cc.
 
-    The fist thing we do is define a function 'n_initcmds()' which should be 
-    called back from n_init() to register the script command for nMyClass with 
-    the kernel.
-    This function do bind c++ member function of a class with given script 
-    command.
-
-    The function which we want to make it to be scriptable is nMyClass::DoJob,
-    so 1) declare callback function for this script command then, 2) register
-    script command with it's name. 
+    The first thing we do is declare static functions for each script command. 
+    Then we define a function @c n_initcmds(). This function is used to bind the 
+    static functions to each script command.
+    
+    The function which we want to make scriptable is @c nMyClass::DoJob().
 
     @code
     // callback function declaration.
@@ -99,27 +90,33 @@
     ...
     @endcode
 
-    You can use anything for the name of script command but it is prefer to 
-    use function name for the script command. So we use 'i_dojob_s" for
-    it's name. The second arguemnt of AddCmds(), 'DOJB' is internal identifier 
-    for this script command. Use whatever for this identifier, but be careful
-    do not use same identifier for your script commands and this identifier
-    should be consist of four capital characters.
-
-    A script command name is consist of three parts which are out-arguments, 
-    command name and in-arguments. So 'dojob' script command has 'i' for it's
-    out-argument and 's' for it's in-argument. This reprensent the type of
-    agrument and avaiable argument type like this:
-     
+    The AddCmds() function takes 3 arguments, the first is a string describing 
+    the command name and the number of in-arguments and out-arguments. In the 
+    case of @c dojob, it takes a single string in-argument and returns a single 
+    integer out-argument. The basic structure of the command name is:
+    
+    @verbatim
+    <out-argument-list>_<command-name>_<in-argument-list>
+    @endverbatim    
+    
+    The codes for the argument types are:
+    
       - v : void type
       - i : integer type
       - f : float type
       - s : string type
       - b : bool type
+      - o : object type
     
-    A callback function for script command should be defined for static function.
+    You can use anything for the @c command-name but the method name is 
+    prefered. The second arguement to AddCmds() @c 'DOJB' is internal identifier 
+    for this script command. You can use any four characters but you must ensure that
+    the identifier is unique for this class [FIXME: and all ancestor classes?].
 
-    See the callback function for 'dojob' script command.
+    The last argument to AddCmds() is the static function that will handle this script
+    comand.
+
+    Now we define the script command's function.
 
     @code
     static void n_dojob(void* slf, nCmd* cmd)
@@ -144,9 +141,6 @@
     nCmd::Out() for out-argument.
 
     Next, we make nMyClass to support object persistence.
-
-    Nebula support object persistence for the class which derive nRoot and 
-    if it is scriptable.
 
     To make the class to support object persistency, we override SaveCmds().
     
