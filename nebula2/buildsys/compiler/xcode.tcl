@@ -448,7 +448,7 @@ proc generate { wslist } {
     
     if { $platform == "macosx" }  {
 
-        puts "Generate xcode files"
+        ::log::log debug "Generate xcode files"
 
         set xcodepath   ./build/xcode
         set outpath     ./bin
@@ -463,7 +463,8 @@ proc generate { wslist } {
 
 #-------------------------------------------------------------------------------
 #   description
-#   Output a description of this generator.                                     #-------------------------------------------------------------------------------
+#   Output a description of this generator.                                     
+#-------------------------------------------------------------------------------
 proc description { } {
     puts "Support for Apple's XCode IDE."
 }

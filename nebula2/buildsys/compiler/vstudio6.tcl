@@ -295,7 +295,7 @@ proc gen_lib_dsp {name} {
     global home
     global cur_workspacepath
     
-    puts "Generate lib target: $name"
+    ::log::log debug "Generate lib target: $name"
 
     # write .dsp file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.dsp] w]
@@ -316,7 +316,7 @@ proc gen_dll_dsp {name} {
     global home
     global cur_workspacepath
    
-    puts "Generate dll target: $name"
+    ::log::log debug "Generate dll target: $name"
 
     # write .dsp file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.dsp] w]
@@ -337,7 +337,7 @@ proc gen_exe_dsp {name} {
     global home
     global cur_workspacepath
 
-    puts "Generate exe target: $name"
+    ::log::log debug "Generate exe target: $name"
     
     # write .dsp file
     set cid [open [cleanpath $home/$cur_workspacepath/$name.dsp] w]
@@ -423,7 +423,7 @@ proc generate { wslist } {
     set interpath   $vstudiopath/inter
     
     foreach workspace [get_workspaces $wslist]  {    
-        puts "Generating vstudio workspace file $workspace.dsw..."
+        ::log::log info "Generating vstudio workspace file $workspace.dsw..."
 
         # let the buildsys know which workspace we are currently working
         # with and what the default directories for that workspace should
@@ -445,7 +445,7 @@ proc generate { wslist } {
             } elseif {$t == "dll" } {
                 gen_dll_dsp $target
             } else {
-                puts "ERROR: Unknown target type $t for target $target"
+                ::log::log error "ERROR: Unknown target type $t for target $target"
                 exit
             }
         }
