@@ -97,6 +97,11 @@ public:
     /// unloads the resource
     virtual void Unload();
 
+    /// get an estimated byte size of the resource data (for memory statistics)
+    virtual int GetByteSize();
+
+
+
 protected:
     friend class nResourceServer;
 

@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 //  nresource_main.cc
 //  (C) 2001 RadonLabs GmbH
@@ -177,5 +178,17 @@ nResource::UnloadResource()
 {
     // empty
 }
+
+//------------------------------------------------------------------------------
+/**
+    Return an estimated byte size of the resource data. This is only
+    used for statistics.
+*/
+int
+nResource::GetByteSize()
+{
+    return 0;
+}
+
 
 
