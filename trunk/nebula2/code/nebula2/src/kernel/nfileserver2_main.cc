@@ -266,7 +266,6 @@ nFileServer2::InitHomeAssign(void)
 
             // "x\y\bin\win32\xxx.exe" -> "x\y\"
             int i;
-            char c;
             char *p;
             for (i=0; i<3; i++) 
             {
@@ -274,15 +273,20 @@ nFileServer2::InitHomeAssign(void)
                 n_assert(p);
                 p[0] = 0;
             }
-    
+        }
+
+        if (strlen(buf) > 0)
+        {
             // convert all backslashes to slashes
+            char c, *p;
             p = buf;
             while ((c = *p)) 
             {
                 if (c == '\\') *p = '/';
                 p++;
             }
-            strcat(buf,"/");
+            // if last char is not a /, append one
+            if (buf[strlen(buf)] != '/') strcat(buf,"/");
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
