@@ -140,7 +140,7 @@ private:
 
     enum 
     {                          
-        DYNAMIC_VERTEXBUFFER_SIZE = (1<<18),    // number of floats in buffer
+        DYNAMIC_VERTEXBUFFER_SIZE = (1<<16),    // number of floats in buffer
         DYNAMIC_INDEXBUFFER_SIZE  = (1<<16),    // number of indices in buffer
     };
 
