@@ -21,7 +21,6 @@
 //------------------------------------------------------------------------------
 #include "kernel/ntypes.h"
 #include "kernel/ncmd.h"
-#include "kernel/ncmdprototraits.h"
 #include "util/nkeyarray.h"
 #include "signals/nsignal.h"
 #include "signals/nsignalregistry.h"
@@ -64,6 +63,7 @@ public:
     /// bind a signal identified by name with a command identified by name
     bool BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority);
     /// Binding for native signal and receiver & member function
+#ifdef N_ADV_SIGNALS_ENABLED
     template <class TClass, class TSignalNative>
     bool BindSignal(
         TSignalNative & signal,
@@ -75,6 +75,7 @@ public:
         TBinding * binding = n_new(TBinding)(receiver, memf, priority);
         return this->BindSignal(signal.GetId(), binding);
     }
+#endif
     //@}
 
     /** @name Unbinding
