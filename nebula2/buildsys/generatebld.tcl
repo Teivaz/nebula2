@@ -254,6 +254,25 @@ proc fixtargets { } {
         addtolist tar($i,mergedmods) $tar($i,modules)
         set tar($i,mergedmods) [lsort -unique $tar($i,mergedmods)]
         
+        #check if one of the modules has set a moduledefinition file
+        foreach module $tar($i,mergedmods) {
+            global mod
+            #we only search until we found the first, because more than one
+            #is not supported
+            set m [findmodbyname $module]
+            if { $mod($m,moddeffile) != "" } {
+                #found a filename
+                set filename "./code/$mod($m,trunkdir)/src/$mod($m,dir)/$mod($m,moddeffile).def"
+                if { [file exists $filename] } {
+                    #found the file
+                    set tar($i,moddeffile) $filename
+                    break
+                } else {
+                    puts "Warning: Module Definition File set but file not found $filename."
+                }
+            }
+        }
+
         #fetch up a complete lib list for this target
         foreach bit $tar($i,mergedmods) {
             set ext [findmodbyname $bit]
@@ -301,6 +320,8 @@ proc fixworkspaces { } {
             set wspace($i,$tarname,type)        $tar($idx,type)
             set wspace($i,$tarname,rtti)        $tar($idx,rtti)  
             set wspace($i,$tarname,exceptions)  $tar($idx,exceptions) 
+            set wspace($i,$tarname,dllextension) $tar($idx,dllextension)
+            set wspace($i,$tarname,moddeffile)   $tar($idx,moddeffile)
             set wspace($i,$tarname,modules)        $tar($idx,mergedmods)
 
             set wspace($i,$tarname,libs_win32_release) $tar($idx,libs_win32_release)

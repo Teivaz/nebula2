@@ -25,6 +25,18 @@ set num_bundles 0
 
 #used to resolve naming collisions to make life nicer for .bld authors
 global current_block
+global noactive_block
+global wspace_block
+global target_block
+global module_block
+global bundle_block
+#defines for the numbers for the blocks
+set noactive_block 0
+set wspace_block 1
+set target_block 2
+set module_block 3
+set bundle_block 4
+
 global current_file
 
 set current_block 0
@@ -46,6 +58,7 @@ set current_file  ""
 #    begintarget           $name
 #    annotate              $annotation
 #    settype               lib|exe|dll
+#    changedllextension    $ext
 #    setrtti               true|false
 #    setexceptions         true|false
 #    setmodules            { $modulename $modulename ... }
@@ -64,6 +77,7 @@ set current_file  ""
 #    setdir                $dir
 #    setplatform           all, win32, linux, macosx
 #    setmodtype            c|cpp
+#    setmoddeffile         $filename
 #    setfiles              { $filename $filename ... }
 #    setheaders            { $headername $headername ... }
 #    setlibs_win32         { $libname.lib $libname.lib ... }
@@ -140,8 +154,6 @@ proc recursepakdir { sdir } {
     }
 }
 
-
-
 #============================================================================
 #  Shared Procs - Name collision garbage
 #============================================================================
@@ -152,9 +164,10 @@ proc recursepakdir { sdir } {
 #----------------------------------------------------------------------------
 proc check_noblock { } {
     global current_block
+    global noactive_block
     global current_file
     
-    if {$current_block != 0} {
+    if {$current_block != $noactive_block} {
         puts "ERROR: previous begin/end block not closed in file: $current_file"
         exit
     }
@@ -167,19 +180,23 @@ proc check_noblock { } {
 #----------------------------------------------------------------------------
 proc setdir {dir} {
     global current_block
+    global wspace_block
+    global module_block
+
+    if {$current_block == $wspace_block} {
     global wspace
-    global mod
     global num_wspaces
-    global num_mods
-    
-    if {$current_block == 1} {
         set wspace($num_wspaces,dir) [cleanpath $dir]
         return
-    }
-    
+    } elseif {$current_block == $module_block} {
+        global mod
+        global num_mods
     # This is not cleaned as this is a naming convention
     # not a direct path
     set mod($num_mods,dir) $dir
+    } else {
+        puts "FAILED to setdir for the currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -188,36 +205,42 @@ proc setdir {dir} {
 #----------------------------------------------------------------------------
 proc settargets {target_list} {
     global current_block
+    global wspace_block
+    global bundle_block
+
+    if {$current_block == $wspace_block} {
     global wspace
-    global bundle
     global num_wspaces
-    global num_bundles
-    
-    if {$current_block == 1} {
         set wspace($num_wspaces,targets) $target_list
         return
-    }
-    
+    } elseif {$current_block == $bundle_block} {
+        global bundle
+        global num_bundles
     set bundle($num_bundles,targets) $target_list
+    } else {
+        puts "FAILED to settargets for the currentblocktype $current_block"
+    }
 }
-
 #----------------------------------------------------------------------------
 #  settype $type
 #  For a module this is (c|cpp) and for a target it is (dll|exe|lib)
 #----------------------------------------------------------------------------
 proc settype {type} {
     global current_block
-    global mod
+    global target_block
+    global module_block
+
+    if {$current_block == $target_block} {
     global tar
     global num_tars
-    global num_mods
-    
-    if {$current_block == 2} {
         set tar($num_tars,type) $type
-        return
-    }
-    
+    } elseif {$current_block == $module_block} {
+        global mod
+        global num_mods
     set mod($num_mods,type) $type
+    } else {
+        puts "FAILED to settype for the currentblocktype $current_block."
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -226,13 +249,16 @@ proc settype {type} {
 #  false is the default (see begintarget)
 #----------------------------------------------------------------------------
 proc setrtti {allowrtti} {
+    if {$allowrtti == true} {
     global current_block
+        global target_block
+
+        if {$current_block == $target_block} {
     global tar
     global num_tars
-    
-    if {$current_block == 2} {
-        if { $allowrtti == true } {
           set tar($num_tars,rtti) true
+        } else {
+            puts "FAILED to setrtti for currentblocktype $current_block"
         }
     }    
 }
@@ -243,17 +269,19 @@ proc setrtti {allowrtti} {
 #  false is the default (see begintarget)
 #----------------------------------------------------------------------------
 proc setexceptions {allowexceptions} {
+    if {$allowexceptions == true } {
     global current_block
+        global target_block
+
+        if {$current_block == $target_block} {
     global tar
     global num_tars
-    
-    if {$current_block == 2} {
-        if { $allowexceptions == true } {
           set tar($num_tars,exceptions) true
+        } else {
+            puts "FAILED to setexections for currentblocktype $current_block"
         }
     }    
 }
-
 
 #----------------------------------------------------------------------------
 #  setmodules $module_list
@@ -261,17 +289,20 @@ proc setexceptions {allowexceptions} {
 #----------------------------------------------------------------------------
 proc setmodules {module_list} {
     global current_block
+    global target_block
+    global bundle_block
+
+    if {$current_block == $target_block} {
     global tar
-    global bundle
     global num_tars
-    global num_bundles
-    
-    if {$current_block == 2} {
         set tar($num_tars,modules) $module_list
-        return
-    }
-    
+    } elseif { $current_block == $bundle_block } {
+        global bundle
+        global num_bundles
     set bundle($num_bundles,modules) $module_list
+    } else {
+        puts "FAILED to setmodules for currentblocktype $current_blocktype"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -281,26 +312,31 @@ proc setmodules {module_list} {
 #----------------------------------------------------------------------------
 proc annotate {annotation} {
     global current_block
+    global wspace_block
+    global target_block
+    global bundle_block
+    global module_block
+
+    if {$current_block == $wspace_block} {
     global wspace
-    global tar
-    global bundle
-    global mod
     global num_wspaces
-    global num_tars
-    global num_bundles
-    global num_mods
-    
-    if {$current_block == 1} {
         set wspace($num_tars,annotate) $annotation
-    } elseif {$current_block == 2} {
+    } elseif {$current_block == $target_block} {
+        global tar
+        global num_tars
         set tar($num_tars,annotate) $annotation
-    } elseif {$current_block == 3} {
+    } elseif {$current_block == $bundle_block} {
+        global bundle
+        global num_bundles
         set bundle($num_bundles,annotate) $annotation
-    } else {    
+    } elseif {$current_block == $module_block} {
+        global mod
+        global num_mods
         set mod($num_mods,annotate) $annotation
+    } else {
+        puts "FAILED set annotate for currentblocktype $current_block"
     }
 }
-
 
 #============================================================================
 #  Block types and data entry
@@ -313,10 +349,11 @@ proc beginworkspace {name} {
     global wspace
     global num_wspaces
     global current_block
+    global wspace_block
     global current_file
     
     check_noblock
-    set current_block 1
+    set current_block $wspace_block
     
     #bld file data
     set wspace($num_wspaces,name)       $name
@@ -337,10 +374,16 @@ proc beginworkspace {name} {
 #  Sets the root directory to be used for binary output - dll and exe
 #----------------------------------------------------------------------------
 proc setbinarydir {dir} {
+    global current_block
+    global wspace_block
+
+    if {$current_block == $wspace_block } {
     global wspace
     global num_wspaces
-    
     set wspace($num_wspaces,binarydir) [cleanpath $dir]
+    } else {
+        puts "FAILED to setbinarydir for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -352,22 +395,37 @@ proc setbinarydir {dir} {
 #          output dir, or leave it to the compiler generators discretion.
 #----------------------------------------------------------------------------
 proc setlibdir {dir} {
+    global current_block
+    global wspace_block
+
+    if {$current_block == $wspace_block} {
     global wspace
     global num_wspaces
-    
     set wspace($num_wspaces,libdir) [cleanpath $dir]
+    } else {
+        puts "FAILED to setlibdir for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
 #  addglobaldef $defname $value
 #  Adds a optional preprocessor define name/value pair to be used by all
 #  targets in this workspace
+#  FIXME how to deal with a redefine of a already used defname
 #----------------------------------------------------------------------------
 proc addglobaldef {defname value} {
+    global current_block
+    global wspace_block
+
+    if {$current_block == $wspace_block} {
     global wspace
     global num_wspaces
     
+
     lappend wspace($num_wspaces,globaldefs) $defname $value
+    } else {
+        puts "FAILED to addglobaldef for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -376,23 +434,35 @@ proc addglobaldef {defname value} {
 #  given by target name
 #----------------------------------------------------------------------------
 proc addtargetdef {targetname defname value} {
+    global current_block
+    global wspace_block
+    if {$current_block == $wspace_block} {
     global wspace
     global num_wspaces
     
     lappend wspace($num_wspaces,targetdefs) [list $targetname $defname $value]
+    } else {
+        puts "FAILED to addtargetdef for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
 #  endworkspace
 #----------------------------------------------------------------------------
 proc endworkspace { } {
-    global num_wspaces
     global current_block
+    global wspace_block
     
-    set current_block 0
+    if {$current_block == $wspace_block} {
+        global num_wspaces
     incr num_wspaces
+        global noactive_block
+        set current_block $noactive_block
+    } else {
+        puts "ERROR you have tryed to close a workspace but this is not the currentblocktype $current_block. EXIT NO."
+        exit -1
+    }
 }
-
 
 #----------------------------------------------------------------------------
 #  begintarget $name
@@ -401,15 +471,17 @@ proc begintarget {name} {
     global tar
     global num_tars
     global current_block
+    global target_block
     global current_file
     
     check_noblock
-    set current_block 2
+    set current_block $target_block
     
     #bld file data
     set tar($num_tars,name)        $name
     set tar($num_tars,annotate)    ""
     set tar($num_tars,type)        lib
+    set tar($num_tars,dllextension) "dll"
     set tar($num_tars,rtti)        false
     set tar($num_tars,exceptions)  false
     set tar($num_tars,modules)     ""
@@ -425,6 +497,7 @@ proc begintarget {name} {
     set tar($num_tars,libs_linux)         ""
     set tar($num_tars,libs_macosx)        ""   
     set tar($num_tars,platform)           ""
+    set tar($num_tars,moddeffile)         ""
 }
 
 #----------------------------------------------------------------------------
@@ -435,10 +508,16 @@ proc begintarget {name} {
 #  the settargetdeps() call.
 #----------------------------------------------------------------------------
 proc setbundles {bundle_list} {
+    global current_block
+    global target_block
+
+    if {$current_block == $target_block} {
     global tar
     global num_tars
-    
     addtolist tar($num_tars,bundles)  $bundle_list
+    } else {
+        puts "FAILED to setbundles for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -447,21 +526,54 @@ proc setbundles {bundle_list} {
 #  target
 #----------------------------------------------------------------------------
 proc settargetdeps {target_list} {
+    global current_block
+    global target_block
+
+    if {$current_block == $target_block} {
     global tar
     global num_tars
     
     addtolist tar($num_tars,targetdeps)  $target_list
+    } else {
+        puts "FAILED to settargetdeps for currentblocktype $current_block"
+    }
+}
+
+#----------------------------------------------------------------------------
+# changedllextension $ext
+# Set the extensition of the target. Only usefull for the dll targets.
+# Planed to be change the extensition to 'mll' or 'dle' for plugin dll creation.
+#----------------------------------------------------------------------------
+proc changedllextension { ext } {
+    global current_block
+    global target_block
+
+    if {$current_block == $target_block} {
+        global tar
+        global num_tars
+
+        set tar($num_tars,dllextension) $ext
+    } else {
+        puts "FAILED to changedllextension for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
 #  endtarget
 #----------------------------------------------------------------------------
 proc endtarget { } {
-    global num_tars
     global current_block
+    global target_block
     
-    set current_block 0
+    if {$current_block == $target_block} {
+        global num_tars
     incr num_tars
+        global noactive_block
+        set current_block $noactive_block
+    } else {
+        puts "ERROR you have tryed to close a target but this is not the currentblocktype $current_block. EXIT NO."
+        exit -1
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -471,10 +583,11 @@ proc beginbundle {name} {
     global bundle
     global num_bundles
     global current_block
+    global bundle_block
     global current_file
     
     check_noblock
-    set current_block 4
+    set current_block $bundle_block
     
     #bld file data
     set bundle($num_bundles,name)     $name
@@ -491,11 +604,18 @@ proc beginbundle {name} {
 #  endbundle
 #----------------------------------------------------------------------------
 proc endbundle { } {
-    global num_bundles
     global current_block
+    global bundle_block
     
-    set current_block 0
+    if {$current_block == $bundle_block} {
+        global num_bundles
     incr num_bundles
+        global noactive_block
+        set current_block $noactive_block
+    } else {
+        puts "ERROR you have tryed to close a bundle but this is not the currentblocktype $current_block. EXIT NO."
+        exit -1
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -505,10 +625,11 @@ proc beginmodule {name} {
     global mod
     global num_mods
     global current_block
+    global module_block
     global current_file
     
     check_noblock
-    set current_block 3
+    set current_block $module_block
     
     #bld file data
     set mod($num_mods,name)              $name
@@ -518,6 +639,7 @@ proc beginmodule {name} {
     set mod($num_mods,type)              "cpp"
     set mod($num_mods,files)             ""
     set mod($num_mods,headers)           ""
+    set mod($num_mods,moddeffile)        ""
     set mod($num_mods,libs_win32)         ""
     set mod($num_mods,libs_win32_release) ""
     set mod($num_mods,libs_win32_debug)   ""
@@ -537,15 +659,40 @@ proc beginmodule {name} {
 }
 
 #----------------------------------------------------------------------------
+# setmoddeffile $filename
+# set the moduledefinitionfilename, I think only usefull if you write max
+# plugin and need to set this additional dllexport description.
+#----------------------------------------------------------------------------
+proc setmoddeffile { filename } {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
+        global mod
+        global num_mods
+
+        set mod($num_mods,moddeffile) $filename
+    } else {
+        puts "FAILED to setmoddeffile for currentblocktype $current_block"
+    }
+}
+
+#----------------------------------------------------------------------------
 #  setplatform $platform_list
 #  A list of valid platforms that this module will compile on.  Valid values
 #  are (for now) win32|linux|macosx or 'all'
 #----------------------------------------------------------------------------
 proc setplatform {platform_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
-    
     set mod($num_mods,platform)  $platform_list
+    } else {
+        puts "FAILED to setplatform for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -554,10 +701,17 @@ proc setplatform {platform_list} {
 #  specified without path or extension
 #----------------------------------------------------------------------------
 proc setfiles {file_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,files)  $file_list
+    } else {
+        puts "FAILED to setfiles for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -566,10 +720,17 @@ proc setfiles {file_list} {
 #  specified without path or extension
 #----------------------------------------------------------------------------
 proc setheaders {header_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,headers)  $header_list
+    } else {
+        puts "FAILED to setheaders for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -579,10 +740,17 @@ proc setheaders {header_list} {
 #  or extension
 #----------------------------------------------------------------------------
 proc setlibs_win32 {lib_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,libs_win32)  $lib_list
+    } else {
+        puts "FAILED to setlibs_win32 for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -590,10 +758,18 @@ proc setlibs_win32 {lib_list} {
 #  As setlibs_win32 - but for libs that only apply to a release build
 #----------------------------------------------------------------------------
 proc setlibs_win32_release {lib_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,libs_win32_release)  $lib_list
+    } else {
+        puts "FAILED to setlibs_win32_release for currentblocktype $current_block"
+    }
+
 }
 
 #----------------------------------------------------------------------------
@@ -601,10 +777,17 @@ proc setlibs_win32_release {lib_list} {
 #  As setlibs_win32_release - but for debug builds
 #----------------------------------------------------------------------------
 proc setlibs_win32_debug {lib_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,libs_win32_debug)  $lib_list
+    } else {
+        puts "FAILED to setlibs_win32_debug for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -613,10 +796,18 @@ proc setlibs_win32_debug {lib_list} {
 #  without path or extension
 #----------------------------------------------------------------------------
 proc setlibs_linux {lib_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,libs_linux)  $lib_list
+    } else {
+        puts "FAILED to setlibs_linux for currentblocktype $current_block"
+    }
+
 }
 
 #----------------------------------------------------------------------------
@@ -625,10 +816,17 @@ proc setlibs_linux {lib_list} {
 #  path or extension
 #----------------------------------------------------------------------------
 proc setlibs_macosx {lib_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,libs_macosx)  $lib_list
+    } else {
+        puts "FAILED to setlibs_maxos for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -638,10 +836,17 @@ proc setlibs_macosx {lib_list} {
 #  class dependencies will be generated by the build system.
 #----------------------------------------------------------------------------
 proc setmoduledeps {mod_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
 
     addtolist mod($num_mods,moduledeps)  $mod_list
+    } else {
+        puts "FAILED to setmoduledeps for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -650,19 +855,34 @@ proc setmoduledeps {mod_list} {
 #  that it not appear in pkg_XXX.cc files.
 #----------------------------------------------------------------------------
 proc setnopkg {bool} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
     global mod
     global num_mods
     
     set mod($num_mods,forcenopkg)  $bool
+    } else {
+        puts "FAILED to setnopkg for currentblocktype $current_block"
+    }
 }
 
 #----------------------------------------------------------------------------
 #  endmodule
 #----------------------------------------------------------------------------
 proc endmodule { } {
-    global num_mods
     global current_block
+    global module_block
     
-    set current_block 0
+    if {$current_block == $module_block} {
+        global num_mods
     incr num_mods
+
+        global noactive_block
+        set current_block $noactive_block
+    } else {
+        puts "ERROR you have tryed to close a module but this is not the currentblocktype $current_block. EXIT NO."
+        exit -1
+    }
 }
