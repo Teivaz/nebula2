@@ -31,6 +31,8 @@ public:
     nGuiWidget();
     /// destructor
     virtual ~nGuiWidget();
+    /// save object to persistent stream
+    virtual bool SaveCmds(nPersistServer* ps);
     /// set command to execute when the widget action happens
     void SetCommand(const char* cmd);
     /// get command to be executed.
