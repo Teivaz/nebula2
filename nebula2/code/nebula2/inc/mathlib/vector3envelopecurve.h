@@ -1,9 +1,14 @@
 #ifndef N_VECTOR3_ENVELOPE_CURVE_H
 #define N_VECTOR3_ENVELOPE_CURVE_H
 //------------------------------------------------------------------------------
-//  CLASS
-//  vector3 envelope curve -- simple modulation function for float3's
-//------------------------------------------------------------------------------
+/**
+    @class nVector3EnvelopeCurve
+    @ingroup NebulaMathDataTypes
+
+    A 3-dimensional envelope curve.
+
+    (C) 2004 RadonLabs GmbH
+*/
 #include "mathlib/nmath.h"
 #include "mathlib/vector.h"
 
@@ -56,7 +61,7 @@ nVector3EnvelopeCurve::nVector3EnvelopeCurve() :
 /**
 */
 inline
-nVector3EnvelopeCurve::nVector3EnvelopeCurve(const vector3& keyFrameValue0, 
+nVector3EnvelopeCurve::nVector3EnvelopeCurve(const vector3& keyFrameValue0,
         const vector3& keyFrameValue1, const vector3& keyFrameValue2,
         const vector3& keyFrameValue3, const float keyFramePos1,
         const float keyFramePos2) :
@@ -73,7 +78,7 @@ nVector3EnvelopeCurve::nVector3EnvelopeCurve(const vector3& keyFrameValue0,
 /**
 */
 inline
-void 
+void
 nVector3EnvelopeCurve::SetParameters(const vector3& keyFrameValue0, const vector3& keyFrameValue1,
     const vector3& keyFrameValue2, const vector3& keyFrameValue3,
     const float keyFramePos1, const float keyFramePos2)
@@ -89,7 +94,7 @@ nVector3EnvelopeCurve::SetParameters(const vector3& keyFrameValue0, const vector
 /**
 */
 inline
-void 
+void
 nVector3EnvelopeCurve::SetParameters(const nVector3EnvelopeCurve& src)
 {
     this->keyFrameValues[0] = src.keyFrameValues[0];
@@ -115,13 +120,13 @@ nVector3EnvelopeCurve::GetValue(float pos) const
     if (pos < this->keyFramePos1)
     {
         linearValue = this->keyFrameValues[1];
-        linearValue.lerp(this->keyFrameValues[0], 
+        linearValue.lerp(this->keyFrameValues[0],
             (pos / this->keyFramePos1));
     }
     else if (pos < this->keyFramePos2)
     {
         linearValue = this->keyFrameValues[2];
-        linearValue.lerp(this->keyFrameValues[1], 
+        linearValue.lerp(this->keyFrameValues[1],
             (pos-this->keyFramePos1) / (this->keyFramePos2-this->keyFramePos1));
     }
     else

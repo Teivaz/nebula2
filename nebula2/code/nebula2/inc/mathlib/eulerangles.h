@@ -1,16 +1,19 @@
 #ifndef N_EULERANGLES_H
 #define N_EULERANGLES_H
 //------------------------------------------------------------------------------
+/**
+    @class nEulerAngles
+    @ingroup NebulaMathDataTypes
+
+    A class representing a rotation using 3 euler angles.
+
+    (C) 2004 RadonLabs GmbH
+*/
 #include <stdlib.h>
 #include <math.h>
 #include "mathlib/matrix.h"
 #include "mathlib/euler.h"
 
-//-------------------------------------------------------------------
-/**
-    @class nEulerAngles
-    @ingroup NebulaMathDataTypes
-*/
 //-------------------------------------------------------------------
 class nEulerAngles {
 public:

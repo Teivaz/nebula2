@@ -7,7 +7,7 @@
 
     A plane in 3d space.
 
-    (C) 2003 RadonLabs GmbH
+    (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
 #include "mathlib/line.h"

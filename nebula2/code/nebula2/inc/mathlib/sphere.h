@@ -5,7 +5,9 @@
     @class sphere
     @ingroup NebulaMathDataTypes
 
-    a sphere in 3d space
+    A 3-dimensional sphere.
+
+    (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
 #include "mathlib/bbox.h"

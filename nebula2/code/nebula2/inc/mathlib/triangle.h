@@ -5,7 +5,9 @@
     @class triangle
     @ingroup NebulaMathDataTypes
 
-    defines a triangle in 3d space
+    A 3D triangle.
+
+    (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
 #include "mathlib/line.h"
