@@ -49,9 +49,7 @@ protected:
     // @{
     bool ExportNodes(INode* inode);
 
-    void ExportLightObject(INode* inode);
     nSceneNode* ExportGeomObject(INode* inode);
-
     nSceneNode* ExportMorph();
     nSceneNode* ExportParticle();
 
