@@ -1,3 +1,4 @@
+#line 1 "lightmapsampler.fx"
 //------------------------------------------------------------------------------
 //  lightmapsampler.h
 //  Declare the standard light map sampler for all shaders.

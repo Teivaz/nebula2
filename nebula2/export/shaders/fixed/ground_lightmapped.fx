@@ -1,3 +1,4 @@
+#line 1 "ground_lightmapped.fx"
 //------------------------------------------------------------------------------
 //  fixed/ground_lightmapped.fx
 //
