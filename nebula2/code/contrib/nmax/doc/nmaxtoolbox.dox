@@ -1,0 +1,23 @@
+/**
+    @defgroup NebulaMaxExport2Contrib 3DSMax Toolkit for Nebula2
+    @ingroup NebulaContribModules
+    @brief nMaxToolBox is a toolkit for 3DS Max for Nebula2.
+
+    @section NMAXToolBoxInstallation Installation
+
+    nMaxToolBox was targeted to 3DS Max 6 or its higher version.(mainly developed on 3DS Max 7)
+
+    When you develop a 3DS Max plug-ins, it is important to choose a proper compiler.
+
+        - Microsoft Visual C++ 6 (VC 6) : It is not recommended.
+        - Microsoft Visual C++ .NET 2002 (VC 7.0) : Recommended for 3DS Max 6.
+        - Microsoft Visual C++ .NET 2003 (VC 7.1) : Recommended for 3DS Max 7.    
+    
+    @note
+    There are link errors when nmaxtoolbox is built with 3ds max6 and vc7.1 on release mode. 
+    The error caused by memory incompatibility between Microsoft compilers but it cannot
+    be smoothly solved even with <MAX_Mem.h> which provided by Discreet as a solution to
+    that problem at the moment. So it is highly recommended to use VC 7.0 if you use 3DS
+    Max 6.0
+
+*/
