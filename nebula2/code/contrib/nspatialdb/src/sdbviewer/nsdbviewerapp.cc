@@ -118,7 +118,7 @@ nSDBViewerApp::Open()
     // run startup script
     if (this->GetStartupScript())
     {
-        const char* result;
+        nString result;
         this->refScriptServer->RunScript(this->GetStartupScript(), result);
     }
 
@@ -133,7 +133,7 @@ nSDBViewerApp::Open()
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     if (NULL != this->GetInputScript())
     {
-        const char* result;
+        nString result;
         this->refScriptServer->RunScript(this->GetInputScript(), result);
     }
 
@@ -155,7 +155,7 @@ nSDBViewerApp::Open()
     if (this->GetSceneFile())
     {
         // load the stage (normally stdlight.lua)
-        const char* result;
+        nString result;
         this->refScriptServer->RunScript(this->GetStageScript(), result);
 
         // load the object to look at
