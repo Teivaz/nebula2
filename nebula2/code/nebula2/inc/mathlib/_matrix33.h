@@ -333,11 +333,9 @@ _matrix33::lookat(const _vector3& from, const _vector3& to, const _vector3& up)
 {
     _vector3 z(from - to);
     z.norm();
-    _vector3 y(up);
-    _vector3 x(y * z);   // x = y cross z
-    y = z * x;          // y = z cross x
+    _vector3 x(up * z);   // x = y cross z
     x.norm();
-    y.norm();
+    _vector3 y = z * x;   // y = z cross x
 
     M11=x.x;  M12=x.y;  M13=x.z;
     M21=y.x;  M22=y.y;  M23=y.z;
@@ -354,11 +352,9 @@ _matrix33::billboard(const _vector3& from, const _vector3& to, const _vector3& u
     _vector3 z(from - to);
     z.norm();
     _vector3 y(up);
+    y.norm();
     _vector3 x(y * z);
     z = x * y;
-    x.norm();
-    y.norm();
-    z.norm();
 
     M11=x.x;  M12=x.y;  M13=x.z;
     M21=y.x;  M22=y.y;  M23=y.z;
