@@ -2,7 +2,7 @@
 #define N_OPENALLISTENER_H
 //------------------------------------------------------------------------------
 /**
-    @class nOpenALListener3
+    @class nOpenALListener
     @ingroup NOpenALContribModule
 
     Define listener properties for audio subsystem 3.

@@ -40,9 +40,8 @@ class nSound3;
 /**
     @class nOpenALServer
     @ingroup NOpenALContribModule
-
     @brief
-    @note 
+    A sound server based on OpenAL.
 */
 class nOpenALServer : public nAudioServer3
 {
