@@ -123,7 +123,8 @@ void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
                     pair of (pick ray, geom).
     @param line The pick ray.
     @param flags Can be any combination (OR'ed together) of the FirstContact,
-                 BackfaceCull or ClosestHit members of the RayPickFlag enum.
+                 BackfaceCull or ClosestHit members of the RayPickFlag enum,
+                 though ClosestHit only works if FirstContact is not specified.
     
     You should use this method only when RayPickSimple() can't achieve what 
     you want.
@@ -159,13 +160,13 @@ void nOpendePickServer::RayPick( dSpaceID space, void* data,
                 manual).
     @param flags A valid combination (OR'ed together) of the the members of
                  the RayPickFlag enum. A valid combination must consist of:
-                 - Any combination of FirstContact, BackfaceCull or ClosestHit.
+                 - Any combination of FirstContact, BackfaceCull or ClosestHit,
+                   though ClosestHit only works if FirstContact is not specified.
                  - Exactly one of PickAll, or PickClosest.
                  .
                  Valid examples include:<br>
                  -# (nOpendePickServer::FirstContact | nOpendePickServer::PickClosest)
-                 -# (nOpendePickServer::FirstContact | nOpendePickServer::ClosestHit |
-                    nOpendePickServer::PickClosest)
+                 -# (nOpendePickServer::ClosestHit | nOpendePickServer::PickClosest)
                  -# (nOpendePickServer::PickAll)
                  .
     @return Number of contacts found.
