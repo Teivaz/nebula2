@@ -120,6 +120,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
     color.x = lightState.color.r;
     color.y = lightState.color.g;
     color.z = lightState.color.b;
+    color.w = 1.0f;
 
     light->SetVector(nShaderState::LightDiffuse, color);
     light->SetVector(nShaderState::LightSpecular, color);
@@ -131,6 +132,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
     color.x = ambient.r;
     color.y = ambient.g;
     color.z = ambient.b;
+    color.w = 1.0f;
     
     light->SetVector(nShaderState::LightAmbient, color);
 
@@ -194,7 +196,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
         }
         else
         {
-            n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+            n_maxlog(Warning, "Warning: No animations in the ambient light %s", animator->GetName());
             return false;
         }
     }
