@@ -1,6 +1,8 @@
 /**
 @defgroup PythonScriptServices nPythonServer Contribute Module
 @ingroup NebulaContribModules
+@brief 
+nPythonServer provides Python based scripting services for Nebula.
 
 Python Integration Documentation
 Created 2001, by Jason L. Asbahr, jason@asbahr.com
