@@ -9,21 +9,6 @@
 
 nNebulaClass(nMemoryAnimation, "nanimation");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nmemoryanimation
-
-    @cppclass
-    nMemoryAnimation
-    
-    @superclass
-    nanimation
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -215,6 +200,8 @@ nMemoryAnimation::LoadNanim2(const char* filename)
 //------------------------------------------------------------------------------
 /**
     Loads animation data from a binary nax2 file.
+
+    - 30-Jun-04 floh    fixed assertion bug when number of keys in a curve is 0
 */
 bool
 nMemoryAnimation::LoadNax2(const char* filename)
@@ -291,8 +278,11 @@ nMemoryAnimation::LoadNax2(const char* filename)
     }
 
     // read keys
-    int keyArraySize = numKeys * sizeof(vector4);
-    file->Read(&(this->keyArray[0]), keyArraySize);
+    if (numKeys > 0)
+    {
+        int keyArraySize = numKeys * sizeof(vector4);
+        file->Read(&(this->keyArray[0]), keyArraySize);
+    }
     
     // cleanup
     file->Close();

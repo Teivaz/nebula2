@@ -6,21 +6,6 @@
 
 nNebulaClass(nAnimation, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nanimation
-
-    @cppclass
-    nAnimation
-    
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -59,3 +44,15 @@ nAnimation::SampleCurves(float /*time*/, int /*groupIndex*/, int /*firstCurveInd
 {
     // empty
 }
+
+//------------------------------------------------------------------------------
+/**
+    Returns the playback duration in seconds of an animation group.
+*/
+nTime
+nAnimation::GetDuration(int groupIndex) const
+{
+    return this->groupArray[groupIndex].GetDuration();
+}
+
+
