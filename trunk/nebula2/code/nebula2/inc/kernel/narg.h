@@ -26,6 +26,7 @@ public:
         ARGTYPE_BOOL,
         ARGTYPE_OBJECT,
         ARGTYPE_CODE,
+        ARGTYPE_LIST,
     };
 
     /// the default constructor
@@ -51,6 +52,8 @@ public:
     void SetO(void*);
     /// set content to a chunk of script code
     void SetC(const char* c);
+    /// Set content to an array of nArgs
+    void SetL(nArg* _l, int len);
 
     /// get the content data type
     nArg::ArgType GetType(void) const;
@@ -66,6 +69,8 @@ public:
     void* GetO(void) const;
     /// get chunk of script code
     const char* GetC(void) const;
+    /// Get an array of nArgs
+    int GetL(nArg*&) const;
 
 private:
     nArg::ArgType type;
@@ -76,7 +81,12 @@ private:
         float f;
         char *s;
         void *o;
+        nArg *l;
     };
+
+    // Number of nArgs in array.
+    // Only used for 'list' type
+    int listLen;
 
 };
 //-----------------------------------------------------------------------------
@@ -87,6 +97,7 @@ inline nArg::nArg()
 {
     this->type = ARGTYPE_VOID;
     this->s = NULL;
+    this->listLen = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -130,6 +141,28 @@ inline void nArg::Set(const nArg& arg)
             break;
         case ARGTYPE_VOID:
             break;
+        case ARGTYPE_LIST:
+            if (this->l)
+            {
+                n_delete[] this->l;
+                this->l = 0;
+                this->listLen = 0;
+            }
+            if (arg.l)
+            {
+                this->l = n_new nArg[arg.listLen];
+                for (int i = 0; i < arg.listLen; i++)
+                {
+                    this->l[i].Set(arg.l[i]);
+                }
+                this->listLen = arg.listLen;
+            }
+            else
+            {
+                this->l = 0;
+                this->listLen = 0;
+            }
+            break;
     }
 }
 
@@ -149,8 +182,17 @@ inline nArg::nArg(const nArg& arg)
 */
 inline nArg::~nArg()
 {
-    if (ARGTYPE_STRING == this->type) {
+    if (ARGTYPE_STRING == this->type)
+    {
         if (this->s) n_free(this->s);
+    }
+    else if (ARGTYPE_LIST == this->type)
+    {
+        if (this->l)
+        {
+            n_delete[] this->l;
+            this->l = 0;
+        }
     }
 }   
 
@@ -186,6 +228,16 @@ nArg::operator==(const nArg& rhs) const
                 return (this->o == rhs.o);
             case ARGTYPE_VOID:
                 return true;
+            case ARGTYPE_LIST:
+                if ((this->l && rhs.l) && (this->listLen == rhs.listLen))
+                {
+                    for(int i = 0; i < this->listLen; i++)
+                    {
+                        if (!(this->l[i] == rhs.l[i]))
+                            return false;
+                    }
+                    return true;
+                }
         }        
     }
     return false;
@@ -282,6 +334,37 @@ inline void nArg::SetO(void *_o)
 
 //-----------------------------------------------------------------------------
 /**
+    Sets the contents to an array of other nArgs, and sets the arg type 
+    to ARGTYPE_LIST.
+    The array is NOT duplicated.
+
+    @param l pointer to array of nArg
+    @param len length of array
+*/
+inline void nArg::SetL(nArg* _l, int len)
+{
+    n_assert((ARGTYPE_VOID==this->type)||(ARGTYPE_LIST==this->type));
+    if (this->l)
+    {
+        n_delete[] this->l;
+        this->l = 0;
+        this->listLen = 0;
+    }
+    this->type = ARGTYPE_LIST;
+    if (_l)
+    {
+        this->l = _l;
+        this->listLen = len;
+    } 
+    else
+    {
+        this->l = 0;
+        this->listLen = 0;
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
     Returns the argument type of the object, which is one of
     ARGTYPE_VOID        - unitialized
     ARGTYPE_INT
@@ -289,6 +372,7 @@ inline void nArg::SetO(void *_o)
     ARGTYPE_FLOAT
     ARGTYPE_OBJECT
     ARGTYPE_CODE
+    ARGTYPE_LIST
 
     @return the arg type
 */
@@ -387,5 +471,24 @@ nArg::GetO(void) const
     n_assert(ARGTYPE_OBJECT==this->type);
     return this->o;
 }
+
+//-----------------------------------------------------------------------------
+/**
+    Returns the nArg array content of the object. Throws assertion if
+    not set to a list.
+
+    @param _l Pointer to nArg array. Will be set by this function
+
+    @return the length of the array
+*/
+inline 
+int
+nArg::GetL(nArg*& _l) const
+{
+    n_assert(ARGTYPE_LIST==this->type);
+    _l = this->l;
+    return this->listLen;
+}
+
 //--------------------------------------------------------------------
 #endif

@@ -23,6 +23,7 @@ static void n_gethead(void *, nCmd *);
 static void n_gettail(void *, nCmd *);
 static void n_getsucc(void *, nCmd *);
 static void n_getpred(void *, nCmd *);
+static void n_getchildren( void *, nCmd *);
 static void n_setname(void *, nCmd *);
 static void n_getname(void *, nCmd *);
 static void n_getfullname(void *, nCmd *);
@@ -55,7 +56,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("s_getclass_v",          'GCLS', n_getclass);
     cl->AddCmd("b_isa_s",               'ISA_', n_isa);
     cl->AddCmd("b_isinstanceof_s",      'ISIO', n_isinstanceof);
-    cl->AddCmd("s_getcmds_v",           'GMCD', n_getcmds);
+    cl->AddCmd("l_getcmds_v",           'GMCD', n_getcmds);
     cl->AddCmd("b_save_v",              'SAVE', n_save);
     cl->AddCmd("b_saveas_s",            'SVAS', n_saveas);
     cl->AddCmd("o_clone_s",             'CLON', n_clone);
@@ -64,6 +65,7 @@ void n_initcmds(nClass *cl)
     cl->AddCmd("o_gettail_v",           'GTAL', n_gettail);
     cl->AddCmd("o_getsucc_v",           'GSUC', n_getsucc);
     cl->AddCmd("o_getpred_v",           'GPRD', n_getpred);
+    cl->AddCmd("l_getchildren_v",       'GCHD', n_getchildren);
     cl->AddCmd("v_setname_s",           'SNAM', n_setname);
     cl->AddCmd("s_getname_v",           'GNAM', n_getname);
     cl->AddCmd("s_getfullname_v",       'GFNM', n_getfullname);
@@ -160,31 +162,30 @@ static void n_isinstanceof(void *o, nCmd *cmd)
 static void n_getcmds(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
-    // der return-string can't be too long,
-    // therefore first count HOW long...
-    nHashList *cmd_list = n_new nHashList;
-    nCmdProto *act_cmdproto;                
-    int str_len = 0;
-    self->GetCmdProtos(cmd_list);
-    for (act_cmdproto = (nCmdProto *) cmd_list->GetHead();
-         act_cmdproto;
-         act_cmdproto = (nCmdProto *) act_cmdproto->GetSucc())
     {
-        str_len += strlen(act_cmdproto->GetProtoDef()) + 1;
+        nHashList *cmd_list = n_new nHashList;
+        nCmdProto *act_cmdproto;                
+        int num_cmds = 0;
+        
+        self->GetCmdProtos(cmd_list);
+        // count commands
+        for (act_cmdproto = (nCmdProto *) cmd_list->GetHead();
+             act_cmdproto;
+             act_cmdproto = (nCmdProto *) act_cmdproto->GetSucc())
+        {
+            num_cmds++;
+        }
+        
+        nArg* args = new nArg[num_cmds];
+        int i = 0;
+        while ((act_cmdproto = (nCmdProto *) cmd_list->RemHead()))
+        {
+            args[i++].SetS(act_cmdproto->GetProtoDef());
+            n_delete act_cmdproto;
+        }
+        cmd->Out()->SetL(args, num_cmds);
+        n_delete cmd_list;
     }
-    str_len++;  // 0-Terminator
-    char *cmdstr = n_new char[str_len];
-    n_assert(cmdstr);
-    cmdstr[0] = 0;
-    // build CmdStr
-    while ((act_cmdproto = (nCmdProto *) cmd_list->RemHead())) {
-        strcat(cmdstr,act_cmdproto->GetProtoDef());
-        strcat(cmdstr," ");                  
-        n_delete act_cmdproto;
-    }
-    cmd->Out()->SetS(cmdstr);
-    n_delete cmdstr;
-    n_delete cmd_list;
 }
 
 //-------------------------------------------------------------------
@@ -326,6 +327,41 @@ static void n_getpred(void *o, nCmd *cmd)
     cmd->Out()->SetO(self->GetPred());
 }
 
+//-------------------------------------------------------------------
+//  CMD
+//  getchildren
+//  INPUT
+//  v
+//  OUTPUT
+//  l (ListArg)
+//  INFO
+//  Return a list of all children.
+//-------------------------------------------------------------------
+static void n_getchildren(void *o, nCmd *cmd)
+{
+    nRoot *self = (nRoot *) o;
+    {
+        int num_children = 0;
+
+        nRoot *child;
+        for (child = (nRoot *) self->GetHead();
+             child;
+             child = (nRoot *) child->GetSucc())
+        {
+             num_children++;
+        }
+        nArg* children = new nArg[num_children];
+        n_assert(children);
+        int i = 0;
+        for (child = (nRoot *) self->GetHead();
+             child;
+             child = (nRoot *) child->GetSucc())
+        {
+            children[i++].SetO(child);
+        }
+        cmd->Out()->SetL(children, num_children);
+    }
+}
 //-------------------------------------------------------------------
 //  CMD
 //  setname
