@@ -5,10 +5,10 @@
     @class nSkinAnimator
     @ingroup NebulaSceneSystemAnimators
 
-    Provide an animated joint skeleton for an nSkinShapeNode. On
+    Provide an animated joint skeleton for a nSkinShapeNode. On
     Animate() invocation, the nSkinAnimator will update its joint
     skeleton and invoke SetCharSkeleton() on the calling 
-    scene node (which must be an nSkinShapeNode) with a pointer
+    scene node (which must be a nSkinShapeNode) with a pointer
     to an uptodate nCharSkeleton object.
 
     See also @ref N2ScriptInterface_nskinanimator

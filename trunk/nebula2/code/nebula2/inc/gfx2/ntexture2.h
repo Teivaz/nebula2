@@ -11,16 +11,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_RESOURCE_H
 #include "resource/nresource.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nTexture2
-#include "kernel/ndefdllclass.h"
+#include "kernel/nfile.h"
 
 //------------------------------------------------------------------------------
-class N_PUBLIC nTexture2 : public nResource
+class nTexture2 : public nResource
 {
 public:
     /// texture type
@@ -47,16 +42,63 @@ public:
         DXT3,
         DXT4,
         DXT5,
+        R16F,                       // 16 bit float, red only
+        G16R16F,                    // 32 bit float, 16 bit red, 16 bit green
+        A16B16G16R16F,              // 64 bit float, 16 bit rgba each
+        R32F,                       // 32 bit float, red only
+        G32R32F,                    // 64 bit float, 32 bit red, 32 bit green
+        A32B32G32R32F,              // 128 bit float, 32 bit rgba each
+    };
+
+    // the sides of a cube map
+    enum CubeFace
+    {
+        PosX = 0,
+        NegX,
+        PosY,
+        NegY,
+        PosZ,
+        NegZ,
+    };
+
+    // usage flags
+    enum Usage
+    {
+        CreateEmpty = (1<<0),               // don't load from disk, instead create empty texture
+        CreateFromRawCompoundFile = (1<<1), // create from a compound file as raw ARGB pixel chunk
+        CreateFromDDSCompoundFile = (1<<2), // create from dds file inside a compound file
+        RenderTargetColor = (1<<3),         // is render target, has color buffer
+        RenderTargetDepth = (1<<4),         // is render target, has depth buffer
+        RenderTargetStencil = (1<<5),       // is render target, has stencil buffer
+        Dynamic = (1<<6),                   // is a dynamic texture (for write access with CPU)
+    };
+
+    // lock types
+    enum LockType
+    {
+        ReadOnly,       // cpu will only read from texture
+        WriteOnly,      // cpu will only write to texture (an overwrite everything!)
+    };
+
+    // lock information
+    struct LockInfo
+    {
+        void* surfPointer;
+        int   surfPitch;
     };
 
     /// constructor
     nTexture2();
     /// destructor
     virtual ~nTexture2();
-    /// initialize as render target
-    void SetRenderTarget(bool hasColor, bool hasDepth, bool hasStencil);
-    /// is a render target?
+    /// set combination of usage flags
+    void SetUsage(int useFlags);
+    /// get usage flags combination
+    int GetUsage() const;
+    /// check usage flags if this is a render target
     bool IsRenderTarget() const;
+    /// set compound file read data
+    void SetCompoundFileData(nFile* file, int filePos, int byteSize);
     /// set texture type (render target only!)
     void SetType(Type t);
     /// get texture type
@@ -79,6 +121,16 @@ public:
     int GetDepth() const;
     /// get number of mipmaps
     int GetNumMipLevels() const;
+    /// get bytes per pixel (computed from pixel format)
+    int GetBytesPerPixel() const;
+    /// lock a 2D texture, returns pointer and pitch
+    virtual bool Lock(LockType lockType, int level, LockInfo& lockInfo);
+    /// unlock 2D texture
+    virtual void Unlock(int level);
+    /// lock a cube face
+    virtual bool LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo);
+    /// unlock a cube face
+    virtual void UnlockCubeFace(CubeFace face, int level);
 
     static nKernelServer* kernelServer;
 
@@ -86,20 +138,16 @@ protected:
     /// set number of mipmaps
     void SetNumMipLevels(int num);
 
-    enum
-    {
-        RENDERTARGET_HASCOLOR = (1<<0),
-        RENDERTARGET_HASDEPTH = (1<<1),
-        RENDERTARGET_HASSTENCIL = (1<<2),
-    };
-
     Type type;
     Format format;
+    ushort usage;
     ushort width;
     ushort height;
     ushort depth;
     ushort numMipMaps;
-    ushort renderTargetFlags;
+    nFile* compoundFile;
+    int compoundFilePos;
+    int compoundFileDataSize;
 };
 
 //------------------------------------------------------------------------------
@@ -107,21 +155,39 @@ protected:
 */
 inline
 void
-nTexture2::SetRenderTarget(bool hasColor, bool hasDepth, bool hasStencil)
+nTexture2::SetCompoundFileData(nFile* file, int filePos, int byteSize)
 {
-    this->renderTargetFlags = 0;
-    if (hasColor)
+    n_assert(file);
+    n_assert(byteSize > 0);
+    if (this->compoundFile)
     {
-        this->renderTargetFlags |= RENDERTARGET_HASCOLOR;
+        this->compoundFile->Release();
+        this->compoundFile = 0;
     }
-    if (hasDepth)
-    {
-        this->renderTargetFlags |= RENDERTARGET_HASDEPTH;
-    }
-    if (hasStencil)
-    {
-        this->renderTargetFlags |= RENDERTARGET_HASSTENCIL;
-    }
+    this->compoundFile = file;
+    this->compoundFile->AddRef();
+    this->compoundFilePos = filePos;
+    this->compoundFileDataSize = byteSize;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nTexture2::SetUsage(int useFlags)
+{
+    this->usage = useFlags;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nTexture2::GetUsage() const
+{
+    return this->usage;
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +197,7 @@ inline
 bool
 nTexture2::IsRenderTarget() const
 {
-    return (this->renderTargetFlags != 0);
+    return (0 != (this->usage & (RenderTargetColor | RenderTargetDepth | RenderTargetStencil)));
 }
 
 //------------------------------------------------------------------------------
@@ -252,6 +318,61 @@ int
 nTexture2::GetNumMipLevels() const
 {
     return this->numMipMaps;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the bytes per pixel for the current pixel format. May be
+    incorrect for compressed textures!
+*/
+inline
+int
+nTexture2::GetBytesPerPixel() const
+{
+    switch (this->format)
+    {
+        case X8R8G8B8:  
+        case A8R8G8B8:
+            return 4;
+
+        case R5G6B5:
+        case A1R5G5B5:
+        case A4R4G4B4:
+            return 2;
+
+        case P8:
+            return 1;
+
+        case DXT1:
+        case DXT2:
+        case DXT3:
+        case DXT4:
+        case DXT5:
+            n_error("nTexture2::GetBytesPerPixel(): compressed pixel format!");
+            return 1;
+
+        case R16F:
+            return 2;
+
+        case G16R16F:
+            return 4;
+
+        case A16B16G16R16F:
+            return 8;
+
+        case R32F:
+            return 4;
+
+        case G32R32F:
+            return 8;
+
+        case A32B32G32R32F:
+            return 16;
+        
+        default:
+            n_error("nTexture2::GetBytesPerPixel(): invalid pixel format!");
+            return 1;
+    }
 }
 
 //------------------------------------------------------------------------------

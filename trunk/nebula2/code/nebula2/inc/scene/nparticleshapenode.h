@@ -87,7 +87,7 @@ protected:
  
     bool            loop;                   // loop emitter ?
 
-    float           activityDistance;       // distance between viewer and emitter on which emitter is active
+    float           activityDistance;       // distance between viewer and emitter on witch emitter is active
     float           spreadAngle;            // angle of emitted particle cone
     float           birthDelay;             // maximum delay until particle starts to live
     float           startRotation;          // maximum angle of rotation at birth

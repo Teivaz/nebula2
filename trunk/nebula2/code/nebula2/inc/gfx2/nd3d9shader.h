@@ -9,19 +9,9 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_SHADER2_H
 #include "gfx2/nshader2.h"
-#endif
-
-#ifndef N_VARIABLECONTEXT_H
-#include "variable/nvariablecontext.h"
-#endif
-
+#include "gfx2/nshaderparams.h"
 #include <d3dx9.h>
-
-#undef N_DEFINES
-#define N_DEFINES nD3D9Shader
-#include "kernel/ndefdllclass.h"
 
 class nD3D9Server;
 
@@ -33,32 +23,39 @@ public:
     nD3D9Shader();
     /// destructor
     virtual ~nD3D9Shader();
-    /// load the shader resource file
-    virtual bool Load();
-    /// unload shader resources
-    virtual void Unload();
-    /// set uniform int variable
-    virtual void SetInt(nVariable::Handle h, int val);
+    
+	/// is parameter used by effect?
+    virtual bool IsParameterUsed(Parameter p);
+    /// set int parameter
+    virtual void SetInt(Parameter p, int val);
+    /// set float parameter
+    virtual void SetFloat(Parameter p, float val);
+    /// set vector4 parameter
+    virtual void SetVector4(Parameter p, const vector4& val);
+    /// set vector3 parameter
+    virtual void SetVector3(Parameter p, const vector3& val);
+    /// set float4 parameter
+    virtual void SetFloat4(Parameter p, const nFloat4& val);
+    /// set matrix parameter
+    virtual void SetMatrix(Parameter p, const matrix44& val);
+    /// set texture parameter
+    virtual void SetTexture(Parameter p, nTexture2* tex);
+
     /// set int[] parameter
-    virtual void SetIntArray(nVariable::Handle h, const int* array, int count);
-    /// set uniform float variable
-    virtual void SetFloat(nVariable::Handle h, float val);
+    virtual void SetIntArray(Parameter p, const int* array, int count);
     /// set float[] parameter
-    virtual void SetFloatArray(nVariable::Handle h, const float* array, int count);
-    /// set a uniform vector variable
-    virtual void SetVector(nVariable::Handle h, const float4& val);
+    virtual void SetFloatArray(Parameter p, const float* array, int count);
     /// set vector[] parameter
-    virtual void SetVectorArray(nVariable::Handle h, const float4* array, int count);
-    /// set uniform matrix variable
-    virtual void SetMatrix(nVariable::Handle h, const matrix44& val);
+    virtual void SetFloat4Array(Parameter p, const nFloat4* array, int count);
+    /// set vector4[] parameter
+    virtual void SetVector4Array(Parameter p, const vector4* array, int count);
     /// set matrix array parameter
-    virtual void SetMatrixArray(nVariable::Handle h, const matrix44* array, int count);
+    virtual void SetMatrixArray(Parameter p, const matrix44* array, int count);
     /// set matrix pointer array parameter
-    virtual void SetMatrixPointerArray(nVariable::Handle h, const matrix44** array, int count);
-    /// set texture variable
-    virtual void SetTexture(nVariable::Handle h, nTexture2* tex);
-    /// return true if variable is used
-    virtual bool IsParameterUsed(nVariable::Handle h);
+    virtual void SetMatrixPointerArray(Parameter p, const matrix44** array, int count);
+    /// set a whole shader parameter block at once
+    virtual void SetParams(const nShaderParams& params);
+
     /// begin applying the shader, returns number of passes
     virtual int Begin();
     /// render a pass
@@ -68,17 +65,26 @@ public:
 
     static nKernelServer* kernelServer;
 
+protected:
+    /// load the shader resource file
+    virtual bool LoadResource();
+    /// unload shader resources
+    virtual void UnloadResource();
+
 private:
     /// find the first valid technique and make current
     void ValidateEffect();
+    /// update the parameter handle mapper table
+    void UpdateParameterHandles();
 
     friend class nD3D9Server;
 
     nAutoRef<nD3D9Server> refGfxServer;
-    nVariableContext varContext;
     ID3DXEffect* effect;
     bool hasBeenValidated;
     bool didNotValidate;
+    D3DXHANDLE parameterHandles[NumParameters];     // map shader states to D3DX handles
+    nShaderParams curParams;    // mirrored to avoid redundant parameters setting
 };
 
 //------------------------------------------------------------------------------

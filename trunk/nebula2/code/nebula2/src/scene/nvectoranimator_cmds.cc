@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nVectorAnimator
 //------------------------------------------------------------------------------
 //  nvectoranimator_cmds.cc
 //  (C) 2003 RadonLabs GmbH

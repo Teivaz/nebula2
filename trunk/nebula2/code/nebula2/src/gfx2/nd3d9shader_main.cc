@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Shader
 //------------------------------------------------------------------------------
 //  nd3d9shader_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -6,9 +5,9 @@
 #include "gfx2/nd3d9shader.h"
 #include "gfx2/nd3d9server.h"
 #include "gfx2/nd3d9texture.h"
+#include "gfx2/nshaderparams.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
-#include "variable/nvariableserver.h"
 
 nNebulaClass(nD3D9Shader, "nshader2");
 
@@ -21,7 +20,7 @@ public:
     nD3D9ShaderInclude(nKernelServer* kernel, nPathString& sDir)
     {
         kernelServer = kernel;
-        shaderDir = sDir;
+        shaderDir = sDir + "/";
     }
     STDMETHOD(Open)(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
     STDMETHOD(Close)(LPCVOID pData);
@@ -43,19 +42,16 @@ HRESULT nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPC
     if (!file->Open(pName, "r"))
     {
         // try in shader dir
-        this->shaderDir += pName;
-        if (!file->Open(this->shaderDir.Get(), "r"))
+        nPathString filePath = (this->shaderDir + pName);
+        if (!file->Open(filePath.Get(), "r"))
         {
-            n_printf("nD3D9Shader: could not open include file '%s'!\n", pName);
+            n_printf("nD3D9Shader: could not open include file '%s' nor '%s'!\n", pName, filePath.Get());
             file->Release();
             return E_FAIL;
         }
     }
 
-    // get size of file
-    file->Seek(0,nFile::END);
-    int fileSize = file->Tell();
-    file->Seek(0,nFile::START);
+    int fileSize = file->GetSize();
 
     // allocate data for file and read it
     void* buffer = n_malloc(fileSize);
@@ -91,7 +87,7 @@ nD3D9Shader::nD3D9Shader() :
     hasBeenValidated(false),
     didNotValidate(false)
 {
-    // empty
+    memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
 }
 
 //------------------------------------------------------------------------------
@@ -109,34 +105,28 @@ nD3D9Shader::~nD3D9Shader()
 /**
 */
 void
-nD3D9Shader::Unload()
+nD3D9Shader::UnloadResource()
 {
-    if (this->valid)
+    n_assert(this->IsValid());
+    n_assert(this->effect);
+
+    nD3D9Server* gfxServer = this->refGfxServer.get();
+    n_assert(gfxServer->d3d9Device);
+
+    // if this is the currently set shader, unlink from gfx server
+    if (gfxServer->GetShader() == this)
     {
-        n_assert(this->effect);
-
-        nD3D9Server* gfxServer = this->refGfxServer.get();
-        n_assert(gfxServer->d3d9Device);
-
-        // if this is the currently set shader, unlink from gfx server
-        if (gfxServer->GetShader() == this)
-        {
-            gfxServer->SetShader(0);
-        }
-
-        // release d3dx resources
-        this->effect->Release();
-        this->effect = 0;
-
-        // clear the embedded variable context
-        this->varContext.Clear();
-
-        this->valid = false;
+        gfxServer->SetShader(0);
     }
-    else
-    {
-        n_assert(0 == this->effect);
-    }
+
+    // release d3dx resources
+    this->effect->Release();
+    this->effect = 0;
+
+    // clear current parameter settings
+    this->curParams.Reset();
+
+    this->SetValid(false);
 }
 
 //------------------------------------------------------------------------------
@@ -144,31 +134,42 @@ nD3D9Shader::Unload()
     Load D3DX effects file.
 */
 bool
-nD3D9Shader::Load()
+nD3D9Shader::LoadResource()
 {
-    n_assert(this->GetFilename());
-    n_assert(!this->valid);
+    n_assert(!this->IsValid());
     n_assert(0 == this->effect);
 
     HRESULT hr;
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
 
-    nFile* file = this->refFileServer->NewFileObject();
-    n_assert(file);
+	// mangle path name
+    nString filename = this->GetFilename();
+    char mangledPath[N_MAXPATH];
+    this->refFileServer->ManglePath(filename.Get(), mangledPath, sizeof(mangledPath));
 
-    // open the file
-    if (!file->Open(this->filename.Get(), "r"))
+	// check if the shader file actually exist, a non-existing shader file is 
+    // not a fatal error (result is that no rendering will be done)
+    if (!this->refFileServer->FileExists(mangledPath))
     {
-        n_printf("nD3D9Shader: could not open file '%s'!\n", this->filename.Get());
+        n_printf("WARNING: shader file '%s' does not exist!\n", mangledPath);
+        return false;
+    }    
+
+	//load fx file...	
+	nFile* file = this->refFileServer->NewFileObject();
+    n_assert(file);
+	
+	// open the file
+    if (!file->Open(mangledPath, "r"))
+    {
+        n_printf("WARNING: could not open shader file '%s'!\n", mangledPath);
         file->Release();
         return false;
     }
 
     // get size of file
-    file->Seek(0,nFile::END);
-    int fileSize = file->Tell();
-    file->Seek(0,nFile::START);
+    int fileSize = file->GetSize();
 
     // allocate data for file and read it
     void* buffer = n_malloc(fileSize);
@@ -180,32 +181,41 @@ nD3D9Shader::Load()
     ID3DXBuffer* errorBuffer = 0;
     #if N_D3D9_DEBUG
         DWORD compileFlags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION;
+		hr = D3DXCreateEffectFromFile(
+			d3d9Dev,
+			mangledPath,
+			NULL,
+			NULL,
+			compileFlags,
+			NULL,
+			&(this->effect),
+			&errorBuffer);
     #else
         DWORD compileFlags = 0;
-    #endif
+		// create include file handler
+		nPathString ShaderPath(mangledPath);
+		nD3D9ShaderInclude includeHandler(kernelServer, ShaderPath.ExtractDirName());
+		// create effect
+		hr = D3DXCreateEffect(
+			d3d9Dev,            // pDevice
+			buffer,             // pFileData
+			fileSize,           // DataSize
+			NULL,               // pDefines
+			&includeHandler,    // pInclude
+			compileFlags,       // Flags
+			NULL,               // pPool
+			&(this->effect),    // ppEffect
+			&errorBuffer);      // ppCompilationErrors
+	#endif
 
-    // create include file handler
-    nD3D9ShaderInclude includeHandler(kernelServer, this->filename.ExtractDirName());
-
-    // create effect
-    hr = D3DXCreateEffect(
-        d3d9Dev,            // pDevice
-        buffer,             // pFileData
-        fileSize,           // DataSize
-        NULL,               // pDefines
-        &includeHandler,    // pInclude
-        compileFlags,       // Flags
-        NULL,               // pPool
-        &(this->effect),    // ppEffect
-        &errorBuffer);      // ppCompilationErrors
 
     n_free(buffer);
 
     if (FAILED(hr))
     {
         n_error("nD3D9Shader: failed to load fx file '%s' with:\n\n%s\n", 
-                this->GetFilename(),
-                errorBuffer ? errorBuffer->GetBufferPointer() : "No D3DX error message (no shader file?)");
+                mangledPath,
+                errorBuffer ? errorBuffer->GetBufferPointer() : "No D3DX error message.");
         if (errorBuffer)
         {
             errorBuffer->Release();
@@ -217,39 +227,11 @@ nD3D9Shader::Load()
     // success
     this->hasBeenValidated = false;
     this->didNotValidate = false;
-    this->valid = true;
+    this->SetValid(true);
 
-    // for each shader parameter add a variable containing the
-    // parameter handle to the internal variable context
-    n_assert(this->varContext.GetNumVariables() == 0);
+    // validate the effect
+    this->ValidateEffect();
 
-    nVariableServer* varServer = this->refVariableServer.get();
-    D3DXEFFECT_DESC fxDesc;
-    hr = this->effect->GetDesc(&fxDesc);
-    n_assert(SUCCEEDED(hr));
-    uint i;
-    for (i = 0; i < fxDesc.Parameters; i++)
-    {
-        D3DXHANDLE paramHandle = this->effect->GetParameter(NULL, i);
-        D3DXPARAMETER_DESC paramDesc;
-        hr = this->effect->GetParameterDesc(paramHandle, &paramDesc);
-        n_assert(SUCCEEDED(hr));
-
-        // get a variable handle for the parameter and add a variable
-        // to the internal variable context
-        if ((D3DXPT_BOOL == paramDesc.Type) ||
-            (D3DXPT_INT  == paramDesc.Type) ||
-            (D3DXPT_FLOAT == paramDesc.Type) ||
-            (D3DXPT_TEXTURE == paramDesc.Type) ||
-            (D3DXPT_TEXTURE2D == paramDesc.Type) ||
-            (D3DXPT_TEXTURE3D == paramDesc.Type) ||
-            (D3DXPT_TEXTURECUBE == paramDesc.Type))
-        {
-            nVariable::Handle varHandle = varServer->GetVariableHandleByName(paramDesc.Name);
-            nVariable newVar(varHandle, int(paramHandle));
-            this->varContext.AddVariable(newVar);
-        }
-    }
     return true;
 }
 
@@ -257,12 +239,31 @@ nD3D9Shader::Load()
 /**
 */
 void
-nD3D9Shader::SetInt(nVariable::Handle h, int val)
+nD3D9Shader::SetInt(Parameter p, int val)
 {   
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetInt((D3DXHANDLE)var->GetInt(), val);
+    n_assert(this->effect && (p < NumParameters));
+    if (this->curParams.GetArg(p).GetInt() != val)
+    {
+        this->curParams.SetInt(p, val);
+        HRESULT hr = this->effect->SetInt(this->parameterHandles[p], val);
+        #ifdef __NEBULA_STATS__
+        this->refGfxServer->statsNumRenderStateChanges++;
+        #endif
+    	n_assert(SUCCEEDED(hr));
+	}
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9Shader::SetIntArray(Parameter p, const int* array, int count)
+{
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetIntArray(this->parameterHandles[p], array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -270,12 +271,31 @@ nD3D9Shader::SetInt(nVariable::Handle h, int val)
 /**
 */
 void
-nD3D9Shader::SetIntArray(nVariable::Handle h, const int* array, int count)
+nD3D9Shader::SetFloat(Parameter p, float val)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetIntArray((D3DXHANDLE)var->GetInt(), array, count);
+    n_assert(this->effect && (p < NumParameters));
+    if (this->curParams.GetArg(p).GetFloat() != val)
+    {
+        this->curParams.SetFloat(p, val);
+        HRESULT hr = this->effect->SetFloat(this->parameterHandles[p], val);
+        #ifdef __NEBULA_STATS__
+        this->refGfxServer->statsNumRenderStateChanges++;
+        #endif
+    	n_assert(SUCCEEDED(hr));
+	}
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void 
+nD3D9Shader::SetFloatArray(Parameter p, const float* array, int count)
+{
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetFloatArray(this->parameterHandles[p], array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -283,12 +303,46 @@ nD3D9Shader::SetIntArray(nVariable::Handle h, const int* array, int count)
 /**
 */
 void
-nD3D9Shader::SetFloat(nVariable::Handle h, float val)
+nD3D9Shader::SetVector4(Parameter p, const vector4& val)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetFloat((D3DXHANDLE)var->GetInt(), val);
+    n_assert(this->effect && (p < NumParameters));
+    this->curParams.SetFloat4(p, *((nFloat4*)&val));
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_assert(SUCCEEDED(hr));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9Shader::SetVector3(Parameter p, const vector3& val)
+{
+    n_assert(this->effect && (p < NumParameters));
+    static vector4 v;
+    v.set(val.x, val.y, val.z, 1.0f);
+    this->curParams.SetFloat4(p, *((nFloat4*)&v));
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &v);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
+    n_assert(SUCCEEDED(hr));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9Shader::SetFloat4(Parameter p, const nFloat4& val)
+{
+    n_assert(this->effect && (p < NumParameters));
+    this->curParams.SetFloat4(p, val);
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -296,25 +350,13 @@ nD3D9Shader::SetFloat(nVariable::Handle h, float val)
 /**
 */
 void 
-nD3D9Shader::SetFloatArray(nVariable::Handle h, const float* array, int count)
+nD3D9Shader::SetFloat4Array(Parameter p, const nFloat4* array, int count)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetFloatArray((D3DXHANDLE)var->GetInt(), array, count);
-    n_assert(SUCCEEDED(hr));
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nD3D9Shader::SetVector(nVariable::Handle h, const float4& val)
-{
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetVector((D3DXHANDLE)var->GetInt(), (CONST D3DXVECTOR4*) &val);
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -322,12 +364,13 @@ nD3D9Shader::SetVector(nVariable::Handle h, const float4& val)
 /**
 */
 void 
-nD3D9Shader::SetVectorArray(nVariable::Handle h, const float4* array, int count)
+nD3D9Shader::SetVector4Array(Parameter p, const vector4* array, int count)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetVectorArray((D3DXHANDLE)var->GetInt(), (CONST D3DXVECTOR4*) array, count);
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -335,12 +378,14 @@ nD3D9Shader::SetVectorArray(nVariable::Handle h, const float4* array, int count)
 /**
 */
 void
-nD3D9Shader::SetMatrix(nVariable::Handle h, const matrix44& val)
+nD3D9Shader::SetMatrix(Parameter p, const matrix44& val)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetMatrix((D3DXHANDLE)var->GetInt(), (CONST D3DXMATRIX*) &val);
+    n_assert(this->effect && (p < NumParameters));
+    this->curParams.SetMatrix44(p, &val);
+    HRESULT hr = this->effect->SetMatrix(this->parameterHandles[p], (CONST D3DXMATRIX*) &val);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -348,12 +393,13 @@ nD3D9Shader::SetMatrix(nVariable::Handle h, const matrix44& val)
 /**
 */
 void 
-nD3D9Shader::SetMatrixArray(nVariable::Handle h, const matrix44* array, int count)
+nD3D9Shader::SetMatrixArray(Parameter p, const matrix44* array, int count)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetMatrixArray((D3DXHANDLE)var->GetInt(), (CONST D3DXMATRIX*) array, count);
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetMatrixArray(this->parameterHandles[p], (CONST D3DXMATRIX*) array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -361,12 +407,13 @@ nD3D9Shader::SetMatrixArray(nVariable::Handle h, const matrix44* array, int coun
 /**
 */
 void 
-nD3D9Shader::SetMatrixPointerArray(nVariable::Handle h, const matrix44** array, int count)
+nD3D9Shader::SetMatrixPointerArray(Parameter p, const matrix44** array, int count)
 {
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetMatrixPointerArray((D3DXHANDLE)var->GetInt(), (CONST D3DXMATRIX**) array, count);
+    n_assert(this->effect && (p < NumParameters));
+    HRESULT hr = this->effect->SetMatrixPointerArray(this->parameterHandles[p], (CONST D3DXMATRIX**) array, count);
+    #ifdef __NEBULA_STATS__
+    this->refGfxServer->statsNumRenderStateChanges++;
+    #endif
     n_assert(SUCCEEDED(hr));
 }
 
@@ -374,25 +421,136 @@ nD3D9Shader::SetMatrixPointerArray(nVariable::Handle h, const matrix44** array, 
 /**
 */
 void
-nD3D9Shader::SetTexture(nVariable::Handle h, nTexture2* tex)
+nD3D9Shader::SetTexture(Parameter p, nTexture2* tex)
 {
     n_assert(tex);
-    n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    n_assert(var);
-    HRESULT hr = this->effect->SetTexture((D3DXHANDLE)var->GetInt(), ((nD3D9Texture*)tex)->GetTexture());
-    n_assert(SUCCEEDED(hr));
+    n_assert(this->effect && (p < NumParameters));
+    if (this->curParams.GetArg(p).GetTexture() != tex)
+    {
+        this->curParams.SetTexture(p, tex);
+        HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], ((nD3D9Texture*)tex)->GetBaseTexture());
+        #ifdef __NEBULA_STATS__
+        this->refGfxServer->statsNumTextureChanges++;
+        #endif
+    	n_assert(SUCCEEDED(hr));
+	}
 }
 
 //------------------------------------------------------------------------------
 /**
+    Set a whole shader parameter block at once. This is slightly faster
+    (and more convenient) then setting single parameters.
 */
-bool
-nD3D9Shader::IsParameterUsed(nVariable::Handle h)
+void
+nD3D9Shader::SetParams(const nShaderParams& params)
+{
+    #ifdef __NEBULA_STATS__
+    nD3D9Server* gfxServer = this->refGfxServer.get();
+    #endif
+    int i;
+    HRESULT hr;
+    for (i = 0; i < NumParameters; i++)
+    {
+        Parameter p = (Parameter) i;
+
+        // source parameter valid?
+        if (params.IsParameterValid(p))
+        {
+            // parameter used in shader?
+            D3DXHANDLE handle = this->parameterHandles[p];
+            if (handle != 0)
+            {
+                // avoid redundant state switches
+                const nShaderArg& curArg = params.GetArg(p);
+                if (!(curArg == this->curParams.GetArg(p)))
+                {
+                    this->curParams.SetArg(p, curArg);
+                    switch (curArg.GetType())
+                    {
+                        case nShaderArg::Void:
+                            hr = S_OK;
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumRenderStateChanges++;
+                            #endif
+                            break;
+
+                        case nShaderArg::Int:
+                            hr = this->effect->SetInt(handle, curArg.GetInt());
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumRenderStateChanges++;
+                            #endif
+                            break;
+
+                        case nShaderArg::Float:
+                            hr = this->effect->SetFloat(handle, curArg.GetFloat());
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumRenderStateChanges++;
+                            #endif
+                            break;
+
+                        case nShaderArg::Float4:
+                            hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*) &(curArg.GetFloat4()));
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumRenderStateChanges++;
+                            #endif
+                            break;
+
+                        case nShaderArg::Matrix44:
+                            hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*) curArg.GetMatrix44());
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumRenderStateChanges++;
+                            #endif
+                            break;
+
+                        case nShaderArg::Texture:
+                            hr = this->effect->SetTexture(handle, ((nD3D9Texture*)curArg.GetTexture())->GetBaseTexture());
+                            #ifdef __NEBULA_STATS__
+                            gfxServer->statsNumTextureChanges++;
+                            #endif
+                            break;
+                    }
+                    n_assert(SUCCEEDED(hr));
+                }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Update the parameter handles table which maps nShader2 parameters to
+    D3DXEffect parameter handles. Will only check the current valid technique.
+*/
+void
+nD3D9Shader::UpdateParameterHandles()
 {
     n_assert(this->effect);
-    nVariable* var = this->varContext.GetVariable(h);
-    return (var != 0);
+
+    memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
+
+    D3DXHANDLE curTechnique = this->effect->GetCurrentTechnique();
+    int param;
+    for (param = 0; param < NumParameters; param++)
+    {
+        const char* paramName = this->ParameterToString((Parameter)param);
+        n_assert(paramName);
+        if (this->effect->IsParameterUsed(paramName, curTechnique))
+        {
+            this->parameterHandles[param] = this->effect->GetParameterByName(0, paramName);
+            n_assert(0 != this->parameterHandles[param]);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if parameter is used by effect.
+*/
+bool
+nD3D9Shader::IsParameterUsed(Parameter p)
+{
+    n_assert(p < NumParameters);
+    return (0 != this->parameterHandles[p]);
 }
 
 //------------------------------------------------------------------------------
@@ -405,24 +563,56 @@ nD3D9Shader::ValidateEffect()
 {
     n_assert(!this->hasBeenValidated);
     n_assert(this->effect);
+	n_assert(this->refGfxServer->d3d9Device);
 
     // set on first technique that validates correctly
-    D3DXHANDLE technique = NULL;
-    HRESULT hr = this->effect->FindNextValidTechnique(NULL, &technique);
-    if (SUCCEEDED(hr) && (technique != NULL)) 
+    D3DXHANDLE	technique	= this->effect->GetTechnique(0);
+	n_assert(NULL != technique);
+
+	HRESULT	hr = this->effect->ValidateTechnique(technique);	
+	if (SUCCEEDED(hr)) 
     {
-        // valid technique found
+        // technique could be validated
         this->effect->SetTechnique(technique);
         this->hasBeenValidated = true;
         this->didNotValidate = false;
+        this->UpdateParameterHandles();
     }
-    else
+	else
     {
-        // no valid technique found
-        this->hasBeenValidated = true;
-        this->didNotValidate = true;
-        n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
-    }
+		// remember old state
+		BOOL oldSoftwareVertexProcessing = this->refGfxServer->d3d9Device->GetSoftwareVertexProcessing( );
+
+		// if not DX9, give it another chance with software vertex processing
+		if ((nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet()) && (!oldSoftwareVertexProcessing))
+		{
+			this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing( TRUE );
+			hr = this->effect->ValidateTechnique(technique);
+			this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing(oldSoftwareVertexProcessing);
+
+			this->hasBeenValidated = true;
+			if (SUCCEEDED(hr))
+			{
+				n_printf("nD3D9Shader() info: shader '%s' needs software vertex processing\n",  this->GetFilename());
+				// technique could be validated
+				this->effect->SetTechnique(technique);
+				this->didNotValidate = false;
+		        this->UpdateParameterHandles();
+			}
+			else
+			{
+				this->didNotValidate = true;
+				n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
+			}
+	    }
+	    else
+	    {
+	        // no valid technique found
+	        this->hasBeenValidated = true;
+	        this->didNotValidate = true;
+	        n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
+	    }
+	}
 }
 
 //------------------------------------------------------------------------------

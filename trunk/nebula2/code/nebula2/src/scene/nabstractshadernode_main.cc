@@ -49,22 +49,22 @@ nAbstractShaderNode::LoadTexture(int index)
     if ((!texNode.refTexture.isvalid()) && (!texNode.texName.IsEmpty()))
     {
         // load only if the texture is used in the shader
-        if (this->IsTextureUsed(texNode.shaderParameter))
-        {
-            nTexture2* tex = this->refGfxServer->NewTexture(texNode.texName.Get());
-            n_assert(tex);
-            if (!tex->IsValid())
-            {
-                tex->SetFilename(texNode.texName.Get());
-                if (!tex->Load())
-                {
-                        n_printf("nAbstractShaderNode: Error loading texture '%s'\n", texNode.texName.Get());
-                    return false;
-                }
-            }
-            texNode.refTexture = tex;
+		if (this->IsTextureUsed(texNode.shaderParameter))
+		{
+	        nTexture2* tex = this->refGfxServer->NewTexture(texNode.texName.Get());
+	        n_assert(tex);
+	        if (!tex->IsValid())
+	        {
+	            tex->SetFilename(texNode.texName.Get());
+	            if (!tex->Load())
+	            {
+						n_printf("nAbstractShaderNode: Error loading texture '%s'\n", texNode.texName.Get());
+	                return false;
+	            }
+	        }
+	        texNode.refTexture = tex;
             this->shaderParams.SetTexture(texNode.shaderParameter, tex);
-        }
+		}
     }
     return true;
 }

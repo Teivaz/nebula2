@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Mesh
 //------------------------------------------------------------------------------
 //  nd3d9mesh_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -6,6 +5,8 @@
 #include "gfx2/nd3d9mesh.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "gfx2/nn3d2loader.h"
+#include "gfx2/nnvx2loader.h"
 
 nNebulaClass(nD3D9Mesh, "nmesh2");
 
@@ -38,17 +39,32 @@ nD3D9Mesh::~nD3D9Mesh()
 
 //------------------------------------------------------------------------------
 /**
-    Load mesh data from resource file and create a D3D vertex buffer and
-    index buffer.
+    nD3D9Mesh support asynchronous resource loading.
 */
 bool
-nD3D9Mesh::Load()
+nD3D9Mesh::CanLoadAsync() const
 {
-    n_assert(!this->valid);
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is either called directly from the nResource::Load() method
+    (in synchronous mode), or from the loader thread (in asynchronous mode).
+    The method must try to validate its resources, set the valid and pending
+    flags, and return a success code.
+    This method may be called from a thread.
+*/
+bool
+nD3D9Mesh::LoadResource()
+{
+    n_assert(!this->IsValid());
     n_assert(0 == this->vertexBuffer);
     n_assert(0 == this->indexBuffer);
 
-    if (this->filename.IsEmpty())
+    nPathString filename(this->GetFilename().Get());
+    bool success = false;
+    if (filename.IsEmpty())
     {
         // no filename, just create empty vertex and index buffers        
         int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
@@ -58,96 +74,86 @@ nD3D9Mesh::Load()
         this->CreateVertexBuffer();
         this->CreateIndexBuffer();
         this->CreateVertexDeclaration();
-        this->valid = true;
+        success = true;
     }
-    // This is placed AFTER IsEmpty(), because the IsEmpty() check is our hack-ish way of getting
-    // the mesh to create the vertex and index buffers for us for nResourceLoader.
-    else if (refResourceLoader.isvalid())
-    {
-        // if the resource loader reference is valid, let it take a stab at the file
-        this->valid = refResourceLoader->Load(this->filename.Get(), this);
-    }
-    else if (this->filename.CheckExtension("nvx2"))
+	else if (refResourceLoader.isvalid())
+	{
+		// if the resource loader reference is valid, let it take a stab at the file
+		success = refResourceLoader->Load(filename.Get(), this);
+	}
+    else if (filename.CheckExtension("nvx2"))
     {
         // load from nvx2 file
-        this->valid = this->LoadNvx2File();
+        success = this->LoadNvx2File();
     }
-    else if (this->filename.CheckExtension("n3d2"))
+    else if (filename.CheckExtension("n3d2"))
     {
         // load from n3d2 file
-        this->valid = this->LoadN3d2File();
+        success = this->LoadN3d2File();
     }
-    else
-    {
-        n_printf("nD3D9Mesh: file extension not recognized (must be .nvx2 or .n3d2)\n");
-        this->valid = false;
-    }
-
-    // fail hard if loading failed
-    if (!this->valid)
-    {
-        n_error("Could not open mesh '%s'!\n", this->filename.Get());
-    }
-
-    return this->valid;
+    this->SetValid(success);
+    return success;
 }
+
 
 //------------------------------------------------------------------------------
 /**
     Unload the d3d resources. Make sure that the resource are properly
-    disconnected from the graphics server.
+    disconnected from the graphics server. This method is called from
+    nResource::Unload() which serves as a wrapper for synchronous and
+    asynchronous mode. This method will NEVER be called from a thread
+    though.
 */
 void
-nD3D9Mesh::Unload()
+nD3D9Mesh::UnloadResource()
 {
-    if (this->valid)
+    n_assert(this->IsValid());
+
+    nMesh2::UnloadResource();
+
+    nD3D9Server* gfxServer = this->refGfxServer.get();
+    n_assert(gfxServer->d3d9Device);
+
+    // check if I'm the current mesh in the gfx server, if yes, unlink
+    int curStream;
+    for (curStream = 0; curStream < nGfxServer2::MAX_VERTEXSTREAMS; curStream++)
     {
-        nMesh2::Unload();
-
-        nD3D9Server* gfxServer = this->refGfxServer.get();
-        n_assert(gfxServer->d3d9Device);
-
-        // check if I'm the current mesh in the gfx server, if yes, unlink
-        int curStream;
-        for (curStream = 0; curStream < nGfxServer2::MAX_VERTEXSTREAMS; curStream++)
+        if (gfxServer->GetMesh(curStream) == this)
         {
-            if (gfxServer->GetMesh(curStream) == this)
-            {
-                gfxServer->SetMesh(curStream, 0);
-            }
+            gfxServer->SetMesh(curStream, 0);
         }
-
-        // release the d3d resource
-        if (this->vertexBuffer)
-        {
-            this->vertexBuffer->Release();
-            this->vertexBuffer = 0;
-        }
-        if (this->indexBuffer)
-        {
-            this->indexBuffer->Release();
-            this->indexBuffer = 0;
-        }
-        if (this->vertexDeclaration)
-        {
-            this->vertexDeclaration->Release();
-            this->vertexDeclaration = 0;
-        }
-
-        // release private buffers (if this is a ReadOnly mesh)
-        if (this->privVertexBuffer)
-        {
-            n_free(this->privVertexBuffer);
-            this->privVertexBuffer = 0;
-        }
-        if (this->privIndexBuffer)
-        {
-            n_free(this->privIndexBuffer);
-            this->privIndexBuffer = 0;
-        }
-
-        this->valid = false;
     }
+
+    // release the d3d resource
+    if (this->vertexBuffer)
+    {
+        this->vertexBuffer->Release();
+        this->vertexBuffer = 0;
+    }
+    if (this->indexBuffer)
+    {
+        this->indexBuffer->Release();
+        this->indexBuffer = 0;
+    }
+    if (this->vertexDeclaration)
+    {
+        this->vertexDeclaration->Release();
+        this->vertexDeclaration = 0;
+    }
+
+    // release private buffers (if this is a ReadOnly mesh)
+    if (this->privVertexBuffer)
+    {
+        n_free(this->privVertexBuffer);
+        this->privVertexBuffer = 0;
+    }
+    if (this->privIndexBuffer)
+    {
+        n_free(this->privIndexBuffer);
+        this->privIndexBuffer = 0;
+    }
+
+    this->SetValid(false);
 }
 
 //------------------------------------------------------------------------------
@@ -164,7 +170,7 @@ nD3D9Mesh::CreateVertexBuffer()
     n_assert(0 == this->vertexBuffer);
     n_assert(this->vertexBufferByteSize > 0);
 
-    if (ReadOnly == this->usage)
+    if (ReadOnly & this->usage)
     {
         // this is a read-only mesh which will never be rendered
         // and only read-accessed by the CPU, allocate private
@@ -181,14 +187,19 @@ nD3D9Mesh::CreateVertexBuffer()
 
         DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool      = D3DPOOL_MANAGED;
-        this->d3dVBLockFlags = D3DLOCK_NOSYSLOCK;
-        if (WriteOnly == this->usage)
+        this->d3dVBLockFlags = 0;
+        if (WriteOnly & this->usage)
         {
             d3dUsage = (D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY);
             d3dPool  = D3DPOOL_DEFAULT;
-            this->d3dVBLockFlags = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+            this->d3dVBLockFlags = D3DLOCK_DISCARD;
         }
-        if (this->refGfxServer->GetSoftwareVertexProcessing())
+        if (PointSprite & this->usage)
+        {
+            d3dUsage |= D3DUSAGE_POINTS;
+        }
+		if (this->refGfxServer->GetSoftwareVertexProcessing() || 
+			((NeedsVertexShader & this->usage) && (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
         {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
         }
@@ -220,7 +231,7 @@ nD3D9Mesh::CreateIndexBuffer()
     n_assert(0 == this->privIndexBuffer);
     n_assert(this->indexBufferByteSize > 0);
 
-    if (ReadOnly == this->usage)
+    if (ReadOnly & this->usage)
     {
         this->privIndexBuffer = n_malloc(this->indexBufferByteSize);
         n_assert(this->privIndexBuffer);
@@ -232,13 +243,22 @@ nD3D9Mesh::CreateIndexBuffer()
 
         DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool      = D3DPOOL_MANAGED;
-        this->d3dIBLockFlags = D3DLOCK_NOSYSLOCK;
-        if (WriteOnly == this->usage)
+        this->d3dIBLockFlags = 0;
+        if (WriteOnly & this->usage)
         {
             d3dUsage = (D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY);
             d3dPool  = D3DPOOL_DEFAULT;
-            this->d3dIBLockFlags = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+            this->d3dIBLockFlags = D3DLOCK_DISCARD;
         }
+        if (PointSprite & this->usage)
+        {
+            d3dUsage |= D3DUSAGE_POINTS;
+        }
+		if (this->refGfxServer->GetSoftwareVertexProcessing() ||
+			((this->usage & NeedsVertexShader) && (nGfxServer2::DX9 != this->refGfxServer->GetFeatureSet())))
+		{	
+			d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
+		}
 
         hr = this->refGfxServer->d3d9Device->CreateIndexBuffer(
                 this->indexBufferByteSize,
@@ -382,19 +402,23 @@ nD3D9Mesh::CreateVertexDeclaration()
 float*
 nD3D9Mesh::LockVertices()
 {
+    this->LockMutex();
     n_assert(this->vertexBuffer || this->privVertexBuffer);
+    float* retval = 0;
     if (this->vertexBuffer)
     {
         VOID* ptr;
         HRESULT hr = this->vertexBuffer->Lock(0, 0, &ptr, this->d3dVBLockFlags);
         n_assert(SUCCEEDED(hr));
         n_assert(ptr);
-        return (float*) ptr;
+        retval = (float*) ptr;
     }
     else
     {
-        return (float*) this->privVertexBuffer;
+        retval = (float*) this->privVertexBuffer;
     }
+    this->UnlockMutex();
+    return retval;
 }
 
 //------------------------------------------------------------------------------
@@ -404,6 +428,7 @@ nD3D9Mesh::LockVertices()
 void
 nD3D9Mesh::UnlockVertices()
 {
+    this->LockMutex();
     n_assert(this->vertexBuffer || this->privVertexBuffer);
     if (this->vertexBuffer)
     {
@@ -411,6 +436,7 @@ nD3D9Mesh::UnlockVertices()
         hr = this->vertexBuffer->Unlock();
         n_assert(SUCCEEDED(hr));
     }
+    this->UnlockMutex();
 }
 
 //------------------------------------------------------------------------------
@@ -421,18 +447,22 @@ ushort*
 nD3D9Mesh::LockIndices()
 {
     n_assert(this->indexBuffer || this->privIndexBuffer);
+    this->LockMutex();
+    ushort* retval = 0;
     if (this->indexBuffer)
     {
         VOID* ptr;
         HRESULT hr = this->indexBuffer->Lock(0, 0, &ptr, this->d3dIBLockFlags);
         n_assert(SUCCEEDED(hr));
         n_assert(ptr);
-        return (ushort*) ptr;
+        retval = (ushort*) ptr;
     }
     else
     {
-        return (ushort*) this->privIndexBuffer;
+        retval = (ushort*) this->privIndexBuffer;
     }
+    this->UnlockMutex();
+    return retval;
 }
 
 //------------------------------------------------------------------------------
@@ -442,12 +472,14 @@ nD3D9Mesh::LockIndices()
 void
 nD3D9Mesh::UnlockIndices()
 {
+    this->LockMutex();
     n_assert(this->indexBuffer || this->privIndexBuffer);
     if (this->indexBuffer)
     {
         HRESULT hr = this->indexBuffer->Unlock();
         n_assert(SUCCEEDED(hr));
     }
+    this->UnlockMutex();
 }
 
 //------------------------------------------------------------------------------
@@ -468,7 +500,7 @@ nD3D9Mesh::UpdateGroupBoundingBoxes()
     {
         groupBox.begin_extend();
 
-        const nMeshGroup& group = this->GetGroup(groupIndex);
+        nMeshGroup& group = this->GetGroup(groupIndex);
         ushort* indexPointer = indexBufferData + group.GetFirstIndex();
         int i;
         for (i = 0; i < group.GetNumIndices(); i++)
@@ -476,6 +508,7 @@ nD3D9Mesh::UpdateGroupBoundingBoxes()
             float* vertexPointer = vertexBufferData + (indexPointer[i] * this->vertexWidth);
             groupBox.extend(vertexPointer[0], vertexPointer[1], vertexPointer[2]);
         }
+        group.SetBoundingBox(groupBox);
     }
     this->UnlockIndices();
     this->UnlockVertices();
@@ -488,92 +521,62 @@ nD3D9Mesh::UpdateGroupBoundingBoxes()
 bool
 nD3D9Mesh::LoadNvx2File()
 {
-    n_assert(!this->valid);
+    n_assert(!this->IsValid());
+    bool res;
+    nString filename = this->GetFilename();
 
-    nFile* file = this->refFileServer->NewFileObject();
-    n_assert(file);
-
-    // open the file
-    if (!file->Open(this->filename.Get(), "rb"))
+    // configure a mesh loader and load header
+    nNvx2Loader meshLoader;
+    meshLoader.SetFilename(filename.Get());
+    meshLoader.SetIndexType(nMeshLoader::Index16);
+    if (!meshLoader.Open(kernelServer->GetFileServer()))
     {
-        n_printf("nD3D9Mesh: could not open file '%s'!\n", this->filename.Get());
-        file->Release();
+        n_error("nD3D9Mesh: could not open file '%s'!\n", filename.Get());
         return false;
     }
 
-    // read header
-    int magic;
-    int numGrps, numVerts, numTris, vertexComponents;
-    int vertWidth;
-
-    magic = file->GetInt();
-    if (magic != 'NVX2')
-    {
-        n_printf("nD3D9Mesh: '%s' is not a NVX2 file!\n", this->filename.Get());
-        file->Close();
-        file->Release();
-        return false;
-    }
-    numGrps = file->GetInt();
-    numVerts = file->GetInt();
-    vertWidth = file->GetInt();
-    numTris = file->GetInt();
-    vertexComponents = file->GetInt();
-
-    // set nMesh2 attributes
-    this->SetNumGroups(numGrps);
-    this->SetNumVertices(numVerts);
-    this->SetNumIndices(numTris * 3);
-    this->SetVertexComponents(vertexComponents);
-    this->SetPrimitiveType(TRIANGLELIST);
-
-    // get data chunk sizes
-    int verticesByteSize = numVerts * vertWidth * sizeof(float);
-    int indicesByteSize  = numTris * 3 * sizeof(ushort);
-    this->SetVertexBufferByteSize(verticesByteSize);
-    this->SetIndexBufferByteSize(indicesByteSize);
-
-    // read the group information...
+    // transfer header data
+    this->SetNumGroups(meshLoader.GetNumGroups());
+    this->SetNumVertices(meshLoader.GetNumVertices());
+    this->SetVertexComponents(meshLoader.GetVertexComponents());
+    this->SetNumIndices(meshLoader.GetNumIndices());
     int groupIndex;
-    for (groupIndex = 0; groupIndex < numGrps; groupIndex++)
+    int numGroups = meshLoader.GetNumGroups();
+    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
     {
-        int firstVertex, numVertices, firstTriangle, numTriangles;
-        firstVertex = file->GetInt();
-        numVertices = file->GetInt();
-        firstTriangle = file->GetInt();
-        numTriangles = file->GetInt();
-
         nMeshGroup& group = this->GetGroup(groupIndex);
-        group.SetFirstVertex(firstVertex);
-        group.SetNumVertices(numVertices);
-        group.SetFirstIndex(firstTriangle * 3);
-        group.SetNumIndices(numTriangles * 3);
+        group = meshLoader.GetGroupAt(groupIndex);
     }
+    n_assert(this->GetVertexWidth() == meshLoader.GetVertexWidth());
 
-    // create the d3d vertex and index buffers
+    // allocate vertex and index buffers
+    int vbSize = meshLoader.GetNumVertices() * meshLoader.GetVertexWidth() * sizeof(float);
+    int ibSize = meshLoader.GetNumIndices() * sizeof(ushort);
+    this->SetVertexBufferByteSize(vbSize);
+    this->SetIndexBufferByteSize(ibSize);
     this->CreateVertexBuffer();
     this->CreateIndexBuffer();
 
-    // read vertex data and update the group's bounding boxes
-    float* vertexBufferData = this->LockVertices();
-    n_assert(vertexBufferData);
-    file->Read(vertexBufferData, verticesByteSize);
+    // load vertex buffer
+    float* vertexBufferPtr = this->LockVertices();
+    res = meshLoader.ReadVertices(vertexBufferPtr, vbSize);
+    n_assert(res);
     this->UnlockVertices();
 
-    // fill the index data
-    ushort* indexBufferData = this->LockIndices();
-    file->Read(indexBufferData, indicesByteSize);
+    // load indices
+    ushort* indexBufferPtr = this->LockIndices();
+    res = meshLoader.ReadIndices(indexBufferPtr, ibSize);
+    n_assert(res);
     this->UnlockIndices();
 
-    // update group bounding boxes
+    // close the meshloader
+    meshLoader.Close();
+
+    // update the group bounding box data
     this->UpdateGroupBoundingBoxes();
 
     // create the vertex declaration from the vertex component mask
     this->CreateVertexDeclaration();
-
-    // cleanup
-    file->Close();
-    file->Release();
 
     return true;
 }
@@ -585,178 +588,62 @@ nD3D9Mesh::LoadNvx2File()
 bool 
 nD3D9Mesh::LoadN3d2File()
 {
-    n_assert(!this->valid);
+    n_assert(!this->IsValid());
+    bool res;
+    nString filename = this->GetFilename();
 
-    nFile* file = this->refFileServer->NewFileObject();
-    n_assert(file);
-
-    // open the file
-    if (!file->Open(this->filename.Get(), "r"))
+    // configure a mesh loader and load header
+    nN3d2Loader meshLoader;
+    meshLoader.SetFilename(filename.Get());
+    meshLoader.SetIndexType(nMeshLoader::Index16);
+    if (!meshLoader.Open(kernelServer->GetFileServer()))
     {
-        n_printf("nD3D9Mesh: could not open file '%s'!\n", this->filename.Get());
-        file->Release();
+        n_error("nD3D9Mesh: could not open file '%s'!\n", filename.Get());
         return false;
     }
 
-    // read file line by line
-    char line[1024];
-    int curGroup = 0;
-    int curVertex = 0;
-    int curTriangle = 0;
-    float* vertexBufferPtr = 0;
-    ushort* indexBufferPtr = 0;
-    while (file->GetS(line, sizeof(line)))
+    // transfer header data
+    this->SetNumGroups(meshLoader.GetNumGroups());
+    this->SetNumVertices(meshLoader.GetNumVertices());
+    this->SetVertexComponents(meshLoader.GetVertexComponents());
+    this->SetNumIndices(meshLoader.GetNumIndices());
+    int groupIndex;
+    int numGroups = meshLoader.GetNumGroups();
+    for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
     {
-        // get keyword
-        char* keyWord = strtok(line, N_WHITESPACE);
-        if (0 == keyWord)
-        {
-            continue;
-        }
-        else if (0 == strcmp(keyWord, "type"))
-        {
-            // type must be 'n3d2'
-            const char* typeString = strtok(0, N_WHITESPACE);
-            n_assert(typeString);
-            if (0 != strcmp(typeString, "n3d2"))
-            {
-                n_printf("nD3D9Mesh::Load(%s): Invalid type '%s', must be 'n3d2'\n", filename.Get(), typeString);
-                file->Close();
-                file->Release();
-                return false;
-            }
-        }
-        else if (0 == strcmp(keyWord, "numgroups"))
-        {
-            // number of groups
-            const char* numGroupsString = strtok(0, N_WHITESPACE);
-            n_assert(numGroupsString);
-            this->SetNumGroups(atoi(numGroupsString));
-        }
-        else if (0 == strcmp(keyWord, "numvertices"))
-        {
-            // number of vertices
-            const char* numVerticesString = strtok(0, N_WHITESPACE);
-            n_assert(numVerticesString);
-            this->SetNumVertices(atoi(numVerticesString));
-        }
-        else if (0 == strcmp(keyWord, "vertexcomps"))
-        {
-            char* str;
-            int vertexComps = 0;
-            while (str = strtok(0, N_WHITESPACE))
-            {
-                    if (0 == strcmp(str, "coord"))          vertexComps |= Coord;
-                    else if (0 == strcmp(str, "normal"))    vertexComps |= Normal;
-                    else if (0 == strcmp(str, "tangent"))   vertexComps |= Tangent;
-                    else if (0 == strcmp(str, "binormal"))  vertexComps |= Binormal;
-                    else if (0 == strcmp(str, "color"))     vertexComps |= Color;
-                    else if (0 == strcmp(str, "uv0"))       vertexComps |= Uv0;
-                    else if (0 == strcmp(str, "uv1"))       vertexComps |= Uv1;
-                    else if (0 == strcmp(str, "uv2"))       vertexComps |= Uv2;
-                    else if (0 == strcmp(str, "uv3"))       vertexComps |= Uv3;
-                    else if (0 == strcmp(str, "weights"))   vertexComps |= Weights;
-                    else if (0 == strcmp(str, "jindices"))  vertexComps |= JIndices;
-            }
-            this->SetVertexComponents(vertexComps);
-
-            // we can now allocate the vertex buffer
-            int vbSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-            this->SetVertexBufferByteSize(vbSize);
-            this->CreateVertexBuffer();
-            
-            vertexBufferPtr = this->LockVertices();
-            n_assert(vertexBufferPtr);
-        }
-        else if (0 == strcmp(keyWord, "numtris"))
-        {
-            // number of triangles
-            const char* numTrisString = strtok(0, N_WHITESPACE);
-            n_assert(numTrisString);
-            this->SetNumIndices(atoi(numTrisString) * 3);
-
-            // we can now allocate the index buffer
-            int ibSize = this->GetNumIndices() * sizeof(ushort);
-            this->SetIndexBufferByteSize(ibSize);
-            this->CreateIndexBuffer();
-            
-            indexBufferPtr = this->LockIndices();
-            n_assert(indexBufferPtr);
-
-        }
-        else if (0 == strcmp(keyWord, "g"))
-        {
-            // a group definition
-            const char* firstVertString = strtok(0, N_WHITESPACE);
-            const char* numVertsString  = strtok(0, N_WHITESPACE);
-            const char* firstTriString  = strtok(0, N_WHITESPACE);
-            const char* numTrisString   = strtok(0, N_WHITESPACE);
-            
-            n_assert(firstVertString && numVertsString);
-            n_assert(firstTriString && numTrisString);
-            
-            nMeshGroup& meshGroup = this->GetGroup(curGroup++);
-            meshGroup.SetFirstVertex(atoi(firstVertString));
-            meshGroup.SetNumVertices(atoi(numVertsString));
-            meshGroup.SetFirstIndex(atoi(firstTriString) * 3);
-            meshGroup.SetNumIndices(atoi(numTrisString) * 3);
-        }
-        else if (0 == strcmp(keyWord, "v"))
-        {
-            // a vertex definition
-            int curIndex;
-            n_assert(vertexBufferPtr);
-            float* vPtr = vertexBufferPtr + (curVertex * this->vertexWidth);
-            for (curIndex = 0; curIndex < this->vertexWidth; curIndex++)
-            {
-                const char* curFloatString = strtok(0, N_WHITESPACE);
-                n_assert(curFloatString);
-                float curFloat = (float) atof(curFloatString);
-                vPtr[curIndex] = curFloat;
-            }
-            curVertex++;
-        }
-        else if (0 == strcmp(keyWord, "t"))
-        {
-            // a triangle definition
-            const char* i0String = strtok(0, N_WHITESPACE);
-            const char* i1String = strtok(0, N_WHITESPACE);
-            const char* i2String = strtok(0, N_WHITESPACE);
-            n_assert(i0String && i1String && i2String);
-            int i0 = atoi(i0String);
-            int i1 = atoi(i1String);
-            int i2 = atoi(i2String);
-
-            n_assert(indexBufferPtr);
-            ushort* iPtr = indexBufferPtr + (curTriangle * 3);
-                
-            iPtr[0] = (ushort) i0;
-            iPtr[1] = (ushort) i1;
-            iPtr[2] = (ushort) i2;
-
-            curTriangle++;
-        }
+        nMeshGroup& group = this->GetGroup(groupIndex);
+        group = meshLoader.GetGroupAt(groupIndex);
     }
+    n_assert(this->GetVertexWidth() == meshLoader.GetVertexWidth());
 
-    // unlock buffers
-    if (vertexBufferPtr)
-    {
-        this->UnlockVertices();
-    }
-    if (indexBufferPtr)
-    {
-        this->UnlockIndices();
-    }
+    // allocate vertex and index buffers
+    int vbSize = meshLoader.GetNumVertices() * meshLoader.GetVertexWidth() * sizeof(float);
+    int ibSize = meshLoader.GetNumIndices() * sizeof(ushort);
+    this->SetVertexBufferByteSize(vbSize);
+    this->SetIndexBufferByteSize(ibSize);
+    this->CreateVertexBuffer();
+    this->CreateIndexBuffer();
+
+    // load vertex buffer
+    float* vertexBufferPtr = this->LockVertices();
+    res = meshLoader.ReadVertices(vertexBufferPtr, vbSize);
+    n_assert(res);
+    this->UnlockVertices();
+
+    // load indices
+    ushort* indexBufferPtr = this->LockIndices();
+    res = meshLoader.ReadIndices(indexBufferPtr, ibSize);
+    n_assert(res);
+    this->UnlockIndices();
+
+    // close the meshloader
+    meshLoader.Close();
 
     // update the group bounding box data
     this->UpdateGroupBoundingBoxes();
 
     // create the vertex declaration from the vertex component mask
     this->CreateVertexDeclaration();
-
-    // cleanup
-    file->Close();
-    file->Release();
 
     return true;
 }

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nGfxServer2
 //------------------------------------------------------------------------------
 //  ngfxserver2_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -8,6 +7,7 @@
 #include "gfx2/ntexture2.h"
 #include "gfx2/nmesh2.h"
 #include "gfx2/nshader2.h"
+#include "gfx2/nfont2.h"
 
 nNebulaScriptClass(nGfxServer2, "nroot");
 
@@ -15,11 +15,6 @@ nNebulaScriptClass(nGfxServer2, "nroot");
 /**
 */
 nGfxServer2::nGfxServer2() :
-#if defined(N_DO_STATS)
-    FrameRate(kernelServer, "gfx_fps"),
-    totalFrames(0),
-    timeStamp(0),
-#endif
     displayOpen(false),
     inBeginScene(false),
     refResource("/sys/servers/resource"),
@@ -27,17 +22,15 @@ nGfxServer2::nGfxServer2() :
     vertexRangeNum(0),
     indexRangeFirst(0),
     indexRangeNum(0),
-    windowTitle("nGfxServer2 window")
+
+    cursorVisibility(System),
+    cursorDirty(true)
 {
     int i;
-    for (i = 0; i < NUM_TRANSFORMTYPES; i++)
+    for (i = 0; i < NumTransformTypes; i++)
     {
         this->transformTopOfStack[i] = 0;
     }
-
-#if defined(N_DO_STATS)
-    FrameRate = 0;
-#endif    
 }
 
 //------------------------------------------------------------------------------
@@ -89,24 +82,34 @@ nGfxServer2::NewShader(const char* rsrcName)
 
 //------------------------------------------------------------------------------
 /**
+    Create a new shared font object.
+
+    @param  rsrcName    a resource name for resource sharing
+    @param  fontDesc    a valid font description object
+    @return             a nFont2 object
+*/
+nFont2*
+nGfxServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
     Create a new render target object.
 
     @param  rsrcName    a resource name for resource sharing
     @param  width       width of render target
     @param  height      height of render target
     @param  format      pixel format of render target
-    @param  hasColor    true if render target has a color buffer
-    @param  hasDepth    true if render target has a depth buffer
-    @param  hasStencil  true if render target has a stencil buffer
+    @param  usageFlags  a combination of nTexture2::Usage flags (RenderTargetXXX only)
 */
 nTexture2*
 nGfxServer2::NewRenderTarget(const char* rsrcName,
                              int width,
                              int height,
                              nTexture2::Format format,
-                             bool hasColor,
-                             bool hasDepth,
-                             bool hasStencil)
+                             int usageFlags)
 {
     return 0;
 }
@@ -124,24 +127,13 @@ nGfxServer2::SetDisplayMode(const nDisplayMode2& mode)
 
 //------------------------------------------------------------------------------
 /**
-    Set the current window title.
-*/
-void
-nGfxServer2::SetWindowTitle(const char* title)
-{
-    n_assert(title);
-    this->windowTitle = title;
-}
-
-//------------------------------------------------------------------------------
-/**
     Set the current camera. Subclasses should adjust their projection matrix
     accordingly when this method is called.
 
     @param  camera      a camera object with valid parameters
 */
 void
-nGfxServer2::SetCamera(const nCamera2& camera)
+nGfxServer2::SetCamera(nCamera2& camera)
 {
     this->camera = camera;
 }
@@ -181,20 +173,6 @@ nGfxServer2::CloseDisplay()
 bool
 nGfxServer2::Trigger()
 {
-#if defined(N_DO_STATS)
-    if (++this->totalFrames == 10)
-    {
-        double curTime = kernelServer->GetTimeServer()->GetTime();
-        double frameTime = curTime - this->timeStamp;
-        if (frameTime > 0.0)
-        {
-            this->FrameRate = (int)(10.0 / frameTime);
-        }
-        this->totalFrames = 0;
-        this->timeStamp = curTime;
-    }
-#endif
-
     return true;
 }
 
@@ -353,33 +331,96 @@ nGfxServer2::SetShader(nShader2* shd)
 
 //------------------------------------------------------------------------------
 /**
+    Set the current font object for rendering.
+    This will increment its refcount and decrement the refcount 
+    of the previous object.
+
+    @param  font        pointer to a nFont2 object
+*/
+void
+nGfxServer2::SetFont(nFont2* font)
+{
+    if (this->refFont.isvalid())
+    {
+        this->refFont->Release();
+        this->refFont.invalidate();
+    }
+    if (font)
+    {
+        this->refFont = font;
+        font->AddRef();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set the current mouse cursor.
+
+    @param  cursor      a valid mouse cursor object
+*/
+void
+nGfxServer2::SetMouseCursor(const nMouseCursor& cursor)
+{
+    this->curMouseCursor = cursor;
+    this->cursorDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the current mouse cursor.
+*/
+const nMouseCursor&
+nGfxServer2::GetMouseCursor() const
+{
+    return this->curMouseCursor;
+}
+
+//------------------------------------------------------------------------------
+/**
     Set transformation matrix.
 
     @param  type        transform type
     @param  matrix      the 4x4 matrix
 */
 void
-nGfxServer2::SetTransform(nTransformType type, const matrix44& matrix)
+nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 {
-    n_assert(type < NUM_TRANSFORMTYPES);
-    this->transform[type] = matrix;
+    n_assert(type < NumTransformTypes);
+    bool updModelView = false;
     switch (type)
     {
-        case MODELVIEW:
-            this->transform[INVMODELVIEW] = matrix;
-            this->transform[INVMODELVIEW].invert_simple();
-            this->transform[MODEL] = this->transform[MODELVIEW] * this->transform[INVVIEW];
+        case Model:
+            this->transform[Model] = matrix;
+            this->transform[InvModel] = matrix;
+            this->transform[InvModel].invert_simple();
+            updModelView = true;
             break;
 
-        case VIEW:
-            this->transform[INVVIEW] = matrix;
-            this->transform[INVVIEW].invert_simple();
-            this->transform[MODEL] = this->transform[MODELVIEW] * this->transform[INVVIEW];
+        case View:
+            this->transform[View] = matrix;
+            this->transform[InvView] = matrix;
+            this->transform[InvView].invert_simple();
+            updModelView = true;
+            break;
+
+        case Projection:
+            this->transform[Projection] = matrix;
+            break;
+
+        default:
+            n_error("nGfxServer2::SetTransform() Trying to set read-only transform type!");
             break;
     }
 
+    if (updModelView)
+    {
+        this->transform[ModelView]    = this->transform[Model] * this->transform[View];
+        this->transform[InvModelView] = this->transform[ModelView];
+        this->transform[InvModelView].invert_simple();
+    }
+
     // update the modelview/projection matrix
-    this->transform[MODELVIEWPROJECTION] = this->transform[MODELVIEW] * this->transform[PROJECTION];
+    this->transform[ModelViewProjection] = this->transform[ModelView] * this->transform[Projection];
 }
 
 //------------------------------------------------------------------------------
@@ -390,9 +431,9 @@ nGfxServer2::SetTransform(nTransformType type, const matrix44& matrix)
     @param  matrix      the 4x4 matrix
 */
 void
-nGfxServer2::PushTransform(nTransformType type, const matrix44& matrix)
+nGfxServer2::PushTransform(TransformType type, const matrix44& matrix)
 {
-    n_assert(type < NUM_TRANSFORMTYPES);
+    n_assert(type < NumTransformTypes);
     n_assert(this->transformTopOfStack[type] < MAX_TRANSFORMSTACKDEPTH);
     this->transformStack[type][this->transformTopOfStack[type]++] = this->transform[type];
     this->SetTransform(type, matrix);
@@ -403,67 +444,70 @@ nGfxServer2::PushTransform(nTransformType type, const matrix44& matrix)
     Pop transformation from stack and make it the current transform.
 */
 const matrix44&
-nGfxServer2::PopTransform(nTransformType type)
+nGfxServer2::PopTransform(TransformType type)
 {
-    n_assert(type < NUM_TRANSFORMTYPES);
+    n_assert(type < NumTransformTypes);
     this->SetTransform(type, this->transformStack[type][--this->transformTopOfStack[type]]);
     return this->transform[type];
 }
 
 //------------------------------------------------------------------------------
 /**
-    Draw current mesh, texture and shader.
+    Draw current mesh with indexed primitives.
 */
 void
-nGfxServer2::Draw()
+nGfxServer2::DrawIndexed(nPrimitiveType primType)
 {
     // empty
 }
 
 //------------------------------------------------------------------------------
 /**
-    Claim ownership of dynamic mesh. Note that there is only one dynamic
-    mesh for the whole system. Clients which need to render dynamic geometry
-    should use the nDynamicMesh utility class which encapsulates and
-    simplifies rendering through the global dynamic mesh. Ownership of the
-    global dynamic mesh is mutually exclusive.
-
-    This method should be overwritten by derived classes.
-
-    @return     a pointer to the global dynamic mesh
-*/
-nMesh2*
-nGfxServer2::LockDynamicMesh()
-{
-    return 0;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Give up ownership of the dynamic mesh.
-    This method should be overwritten by derived classes.
-
-    @param  mesh    pointer to the global dynamic mesh as aquired by LockDynamicMesh()
+    Draw current mesh with non-indexed primitives.
 */
 void
-nGfxServer2::UnlockDynamicMesh(nMesh2* mesh)
+nGfxServer2::Draw(nPrimitiveType primType)
 {
     // empty
 }
 
 //------------------------------------------------------------------------------
 /**
-    Add text to the text buffer.
+    Render indexed primitives without applying shader state. You have
+    to call nShader2::Begin(), nShader2::Pass() and nShader2::End() 
+    yourself as needed.
 */
 void
-nGfxServer2::Text(const char* /*text*/, float /*x*/, float /*y*/)
+nGfxServer2::DrawIndexedNS(nPrimitiveType primType)
 {
     // empty
 }
 
 //------------------------------------------------------------------------------
 /**
-    Render the text in the text buffer.
+    Render non-indexed primitives without applying shader state. You have
+    to call nShader2::Begin(), nShader2::Pass() and nShader2::End() 
+    yourself as needed.
+*/
+void
+nGfxServer2::DrawNS(nPrimitiveType primType)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add text to the text buffer (OBSOLETE)
+*/
+void
+nGfxServer2::Text(const char* /*text*/, const vector4& /*color*/, float /*x*/, float /*y*/)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render the text in the text buffer (OBSOLETE)
 */
 void
 nGfxServer2::DrawTextBuffer()
@@ -473,12 +517,66 @@ nGfxServer2::DrawTextBuffer()
 
 //------------------------------------------------------------------------------
 /**
-    create screen shot
+    Draw text.
+
+    @param  text    the text to draw
+    @param  color   the text color
+    @param  xPos    screen space x position
+    @param  yPos    screen space y position
+*/
+void
+nGfxServer2::DrawText(const char* text, const vector4& color, float xPos, float yPos)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the text extents of the given text using the current font in
+    screen space coordinates.
+*/
+vector2
+nGfxServer2::GetTextExtent(const char* text)
+{
+    return vector2(0.0f, 0.0f);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the supported feature set.
+*/
+nGfxServer2::FeatureSet
+nGfxServer2::GetFeatureSet()
+{
+    return InvalidFeatureSet;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Save a screenshot.
 */
 bool
-nGfxServer2::SaveScreenshot (const char* fileName)
+nGfxServer2::SaveScreenshot(const char* filename)
 {
     return false;
 }
 
 //------------------------------------------------------------------------------
+/**
+    Set cursor visibility.
+*/
+void
+nGfxServer2::SetCursorVisibility(CursorVisibility v)
+{
+    this->cursorVisibility = v;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the mouse cursor visibility status.
+*/
+nGfxServer2::CursorVisibility
+nGfxServer2::GetCursorVisibility() const
+{
+    return this->cursorVisibility;
+}

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nMaterialNode
 //------------------------------------------------------------------------------
 //  nmaterialnode_cmds.cc
 //  (C) 2002 RadonLabs GmbH

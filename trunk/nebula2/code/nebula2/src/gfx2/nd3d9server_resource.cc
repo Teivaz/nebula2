@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Server
 //------------------------------------------------------------------------------
 //  nd3d9server_resource.cc
 //  (C) 2003 RadonLabs GmbH
@@ -6,6 +5,7 @@
 #include "gfx2/nd3d9server.h"
 #include "resource/nresourceserver.h"
 #include "gfx2/nmesh2.h"
+#include "gfx2/nfont2.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -13,12 +13,12 @@
     is increment.
 
     @param  rsrcName    a resource name (used for resource sharing)
-    @return             pointer to a nD3D8Mesh2 object
+    @return             pointer to a nD3D9Mesh2 object
 */
 nMesh2*
 nD3D9Server::NewMesh(const char* rsrcName)
 {
-    return (nMesh2*) this->refResource->NewResource("nd3d9mesh", rsrcName, nResource::MESH);
+    return (nMesh2*) this->refResource->NewResource("nd3d9mesh", rsrcName, nResource::Mesh);
 }
 
 //------------------------------------------------------------------------------
@@ -27,12 +27,12 @@ nD3D9Server::NewMesh(const char* rsrcName)
     refcount is incremented.
 
     @param  rsrcName    a resource name (used for resource sharing)
-    @return             pointer to a nD3D8Texture2 object
+    @return             pointer to a nD3D9Texture2 object
 */
 nTexture2*
 nD3D9Server::NewTexture(const char* rsrcName)
 {
-    return (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::TEXTURE);
+    return (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
 }
 
 //------------------------------------------------------------------------------
@@ -41,12 +41,29 @@ nD3D9Server::NewTexture(const char* rsrcName)
     refcount is incremented.
 
     @param  rsrcName    a resource name (used for resource sharing)
-    @return             pointer to a nD3D8Shader2 object
+    @return             pointer to a nD3D9Shader2 object
 */
 nShader2*
 nD3D9Server::NewShader(const char* rsrcName)
 {
-    return (nShader2*) this->refResource->NewResource("nd3d9shader", rsrcName, nResource::SHADER);
+    return (nShader2*) this->refResource->NewResource("nd3d9shader", rsrcName, nResource::Shader);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a new shared font object. If the object already exists, its
+    refcount is incremented.
+
+    @param  rsrcName    a resource name (used for resource sharing)
+    @return             pointer to a nD3D9Shader2 object
+*/
+nFont2*
+nD3D9Server::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
+{
+    nFont2* font = (nFont2*) this->refResource->NewResource("nd3d9font", rsrcName, nResource::Font);
+    n_assert(font);
+    font->SetFontDesc(fontDesc);
+    return font;
 }
 
 //------------------------------------------------------------------------------
@@ -57,24 +74,21 @@ nD3D9Server::NewShader(const char* rsrcName)
     @param  width       width of render target
     @param  height      height of render target
     @param  format      pixel format of render target
-    @param  hasColor    true if render target has a color buffer
-    @param  hasDepth    true if render target has a depth buffer
-    @param  hasStencil  true if render target has a stencil buffer
+    @param  usageFlags  a combination of nTexture2::Usage flags
 */
 nTexture2*
 nD3D9Server::NewRenderTarget(const char* rsrcName,
                              int width,
                              int height,
                              nTexture2::Format format,
-                             bool hasColor,
-                             bool hasDepth,
-                             bool hasStencil)
+                             int usageFlags)
 {
-    nTexture2* renderTarget = (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::TEXTURE);
+    nTexture2* renderTarget = (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
     n_assert(renderTarget);
     if (!renderTarget->IsValid())
     {
-        renderTarget->SetRenderTarget(hasColor, hasDepth, hasStencil);
+        n_assert(0 != (usageFlags & (nTexture2::RenderTargetColor | nTexture2::RenderTargetDepth | nTexture2::RenderTargetStencil)));
+        renderTarget->SetUsage(usageFlags);
         renderTarget->SetWidth(width);
         renderTarget->SetHeight(height);
         renderTarget->SetDepth(1);
@@ -96,25 +110,34 @@ nD3D9Server::NewRenderTarget(const char* rsrcName,
     be called when the d3d device has been lost.
 */
 void
-nD3D9Server::UnloadResources()
+nD3D9Server::OnDeviceLost()
 {
-    // release the backbuffer and stencil surface
-    this->backBufferSurface->Release();
-    this->depthStencilSurface->Release();
-
     // close the text renderer
     this->CloseTextRenderer();
 
     // release other resources
-    this->refResource->UnloadResources(nResource::MESH);
-    this->refResource->UnloadResources(nResource::TEXTURE);
-    this->refResource->UnloadResources(nResource::SHADER);
-    
-    if (this->refDynMesh.isvalid())
+    this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+
+    // release refs on original backbuffer and depth/stencil surfaces
+    if (this->backBufferSurface)
     {
-        // release the dynamic mesh object
-        this->refDynMesh->Release();
+        this->backBufferSurface->Release();
+        this->backBufferSurface = 0;
     }
+    if (this->depthStencilSurface)
+    {
+        this->depthStencilSurface->Release();
+        this->depthStencilSurface = 0;
+    }
+    
+    #ifdef __NEBULA_STATS__
+    // release the d3d query object
+    if (this->queryResourceManager)
+    {
+        this->queryResourceManager->Release();
+        this->queryResourceManager = 0;
+    }
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -123,16 +146,12 @@ nD3D9Server::UnloadResources()
     be called when the d3d device has been restored.
 */
 void
-nD3D9Server::ReloadResources()
+nD3D9Server::OnRestoreDevice()
 {
-    this->refResource->ReloadResources(nResource::MESH);
-    this->refResource->ReloadResources(nResource::TEXTURE);
-    this->refResource->ReloadResources(nResource::SHADER);
+    HRESULT hr;
 
     // get a pointer to the back buffer and depth/stencil surface
-    HRESULT hr = this->d3d9Device->GetBackBuffer(0, 0, 
-        D3DBACKBUFFER_TYPE_MONO, 
-        &(this->backBufferSurface));
+    hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
     n_assert(SUCCEEDED(hr));
     n_assert(this->backBufferSurface);
 
@@ -140,41 +159,18 @@ nD3D9Server::ReloadResources()
     n_assert(SUCCEEDED(hr));
     n_assert(this->depthStencilSurface);
 
+    #ifdef __NEBULA_STATS__
+    // create a query object for resource manager queries
+    // this will fail if not running the debug runtime, so this is not critical
+    hr = this->d3d9Device->CreateQuery(D3DQUERYTYPE_RESOURCEMANAGER, &(this->queryResourceManager));
+    #endif
+    
+    // (re-)-load resources
+    this->refResource->ReloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+
     // open the text renderer
     this->OpenTextRenderer();
-    
-    // create the global dynamic mesh object
-    n_assert(!this->refDynMesh.isvalid());
-    this->refDynMesh = this->NewMesh(0);
-    this->refDynMesh->SetUsage(nMesh2::WriteOnly);
-    this->refDynMesh->SetNumVertices(DYNAMIC_VERTEXBUFFER_SIZE);
-    this->refDynMesh->SetNumIndices(DYNAMIC_INDEXBUFFER_SIZE);
-    this->refDynMesh->SetVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Tangent | nMesh2::Uv0);
-    this->refDynMesh->SetPrimitiveType(TRIANGLELIST);
-    this->refDynMesh->Load();
-}
 
-//------------------------------------------------------------------------------
-/**
-    Claim ownership of the global dynamic mesh.
-*/
-nMesh2*
-nD3D9Server::LockDynamicMesh()
-{
-    n_assert(!this->dynMeshLocked);
-    this->dynMeshLocked = true;
-    return this->refDynMesh.get();
+    // flag the mouse cursor to be reset
+    this->cursorDirty = true;
 }
-
-//------------------------------------------------------------------------------
-/**
-    Give up ownership of the global dynamic mesh.
-*/
-void
-nD3D9Server::UnlockDynamicMesh(nMesh2* mesh)
-{
-    n_assert(this->dynMeshLocked);
-    n_assert(mesh == this->refDynMesh.get());
-    this->dynMeshLocked = false;
-}
-

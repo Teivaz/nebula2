@@ -1,0 +1,178 @@
+#ifndef N_NVX2LOADER_H
+#define N_NVX2LOADER_H
+//------------------------------------------------------------------------------
+/**
+    @class nNvx2Loader
+
+    Load a NVX2 mesh file into user provided vertex and index buffers.
+    
+    (C) 2003 RadonLabs GmbH
+*/
+#include "gfx2/nmeshloader.h"
+
+//------------------------------------------------------------------------------
+class nNvx2Loader : public nMeshLoader
+{
+public:
+    /// constructor
+    nNvx2Loader();
+    /// destructor
+    ~nNvx2Loader();
+    /// open file and read header data
+    bool Open(nFileServer2* fs);
+    /// close the file
+    void Close();
+    /// read vertex data
+    bool ReadVertices(void* buffer, int bufferSize);
+    /// read index data
+    bool ReadIndices(void* buffer, int bufferSize);
+};
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nNvx2Loader::nNvx2Loader()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nNvx2Loader::~nNvx2Loader()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nNvx2Loader::Open(nFileServer2* fs)
+{
+    n_assert(!this->file);
+    n_assert(fs);
+
+    this->fileServer = fs;
+    this->file = this->fileServer->NewFileObject();
+    n_assert(this->file);
+
+    // open the file
+    if (!this->file->Open(this->filename.Get(), "rb"))
+    {
+        n_printf("nNvx2Loader: could not open file '%s'!\n", this->filename.Get());
+        this->Close();
+        return false;
+    }
+
+    // read file header, including groups
+    int magic = file->GetInt();
+    if (magic != 'NVX2')
+    {
+        n_printf("nNvx2Loader: '%s' is not a NVX2 file!\n", this->filename.Get());
+        this->Close();
+        return false;
+    }
+    this->numGroups        = file->GetInt();
+    this->numVertices      = file->GetInt();
+    this->vertexWidth      = file->GetInt();
+    this->numTriangles     = file->GetInt();
+    this->vertexComponents = file->GetInt();
+    this->numIndices       = this->numTriangles * 3;
+
+    int groupIndex;
+    for (groupIndex = 0; groupIndex < this->numGroups; groupIndex++)
+    {
+        int firstVertex   = file->GetInt();
+        int numVertices   = file->GetInt();
+        int firstTriangle = file->GetInt();
+        int numTriangles  = file->GetInt();
+
+        nMeshGroup group;
+        group.SetFirstVertex(firstVertex);
+        group.SetNumVertices(numVertices);
+        group.SetFirstIndex(firstTriangle * 3);
+        group.SetNumIndices(numTriangles * 3);
+        this->groupArray.Append(group);
+    }
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nNvx2Loader::Close()
+{
+    if (this->file)
+    {
+        if (this->file->IsOpen())
+        {
+            this->file->Close();
+        }
+        this->file->Release();
+        this->file = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
+{
+    n_assert(buffer);
+    n_assert(this->file);
+    n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
+    file->Read(buffer, bufferSize);
+    return true;    
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
+{
+    n_assert(buffer);
+    n_assert(this->file);
+    if (Index16 == this->indexType)
+    {
+        // 16 bit indices: read index array directly
+        n_assert((this->numIndices * sizeof(ushort)) == bufferSize);
+        file->Read(buffer, bufferSize);
+    }
+    else
+    {
+        // 32 bit indices, read into 16 bit buffer, and expand
+        n_assert((this->numIndices * sizeof(uint)) == bufferSize);
+
+        // read 16 bit indices into tmp buffer
+        int size16 = this->numIndices * sizeof(ushort);
+        ushort* ptr16 = (ushort*) n_malloc(size16);
+        n_assert(ptr16);
+        file->Read(ptr16, size16);
+
+        // expand to 32 bit indices
+        uint* ptr32 = (uint*) buffer;
+        int i;
+        for (i = 0; i < this->numIndices; i++)
+        {
+            ptr32[i] = (uint) ptr16[i];
+        }
+
+        // release tmp buffer
+        n_free(ptr16);
+    }
+    return true;
+}
+
+//------------------------------------------------------------------------------
+#endif

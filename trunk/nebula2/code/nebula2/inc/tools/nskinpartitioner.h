@@ -10,13 +10,8 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_MESHBUILDER_H
 #include "tools/nmeshbuilder.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nSkinPartitioner
@@ -142,7 +137,7 @@ nSkinPartitioner::Partition::AddUniqueJointIndex(nArray<int>& intArray, int inde
         }
     }
     // fallthrough: new index
-    intArray.PushBack(index);
+    intArray.Append(index);
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +193,7 @@ nSkinPartitioner::Partition::GetJointIndexDifferenceSet(const nArray<int>& triJo
     {
         if (!this->jointMask[triJoints[i]])
         {
-            diffSet.PushBack(triJoints[i]);
+            diffSet.Append(triJoints[i]);
         }
     }
 }
@@ -225,11 +220,11 @@ nSkinPartitioner::Partition::CheckAddTriangle(int triangleIndex)
     // add the triangle to the partition and update the joint palette
     if ((this->jointPalette.Size() + diffSet.Size()) <= this->maxJointPaletteSize)
     {
-        this->triangleArray.PushBack(triangleIndex);
+        this->triangleArray.Append(triangleIndex);
         int i;
         for (i = 0; i < diffSet.Size(); i++)
         {
-            this->jointPalette.PushBack(diffSet[i]);
+            this->jointPalette.Append(diffSet[i]);
             this->jointMask[diffSet[i]] = true;
         }
         return true;

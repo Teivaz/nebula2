@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nTransformNode
 //------------------------------------------------------------------------------
 //  ntransformnode_cmds.cc
 //  (C) 2002 RadonLabs GmbH
@@ -5,10 +6,10 @@
 #include "scene/ntransformnode.h"
 #include "kernel/npersistserver.h"
 
+static void n_setviewspace(void* slf, nCmd* cmd);
+static void n_getviewspace(void* slf, nCmd* cmd);
 static void n_setactive(void* slf, nCmd* cmd);
 static void n_getactive(void* slf, nCmd* cmd);
-static void n_setlockviewer(void* slf, nCmd* cmd);
-static void n_getlockviewer(void* slf, nCmd* cmd);
 static void n_setposition(void* slf, nCmd* cmd);
 static void n_getposition(void* slf, nCmd* cmd);
 static void n_setposx(void* slf, nCmd* cmd);
@@ -40,10 +41,10 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
+    cl->AddCmd("v_setviewspace_b",      'SVWS', n_setviewspace);
+    cl->AddCmd("b_getviewspace_v",      'GVWS', n_getviewspace);
     cl->AddCmd("v_setactive_b",         'SACT', n_setactive);
     cl->AddCmd("b_getactive_v",         'GACT', n_getactive);
-    cl->AddCmd("v_setlockviewer_b",     'SLKV', n_setlockviewer);
-    cl->AddCmd("b_getlockviewer_v",     'GLKV', n_getlockviewer);
     cl->AddCmd("v_setposition_fff",     'SPOS', n_setposition);
     cl->AddCmd("v_setposx_f",           'SPOX', n_setposx);
     cl->AddCmd("v_setposy_f",           'SPOY', n_setposy);
@@ -59,6 +60,43 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setscale_fff",        'SSCL', n_setscale);
     cl->AddCmd("fff_getscale_v",        'GSCL', n_getscale);
     cl->EndCmds();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setviewspace
+    @input
+    b(ViewSpace)
+    @output
+    v
+    @info
+    Set to true if this node lives in view space, default is false 
+    (hierarchy space).
+*/
+static void
+n_setviewspace(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    self->SetViewSpace(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getviewspace
+    @input
+    v
+    @output
+    b(ViewSpace)
+    @info
+    Return view space flag.
+*/
+static void
+n_getviewspace(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    cmd->Out()->SetB(self->GetViewSpace());
 }
 
 //------------------------------------------------------------------------------
@@ -84,9 +122,9 @@ n_setactive(void* slf, nCmd* cmd)
     @cmd
     getactive
     @input
-    v
-    @output
     b(Active)
+    @output
+    v
     @info
     Return active flag.
 */
@@ -95,41 +133,6 @@ n_getactive(void* slf, nCmd* cmd)
 {
     nTransformNode* self = (nTransformNode*) slf;
     cmd->Out()->SetB(self->GetActive());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setlockviewer
-    @input
-    b(LockViewer)
-    @output
-    v
-    @info
-    Set to true if this node's position is locked to the viewer.
-*/
-static void
-n_setlockviewer(void* slf, nCmd* cmd)
-{
-    nTransformNode* self = (nTransformNode*) slf;
-    self->SetLockViewer(cmd->In()->GetB());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getlockviewer
-    @input
-    @output
-    b(LockViewer)
-    @info
-    Return lock viewer flag.
-*/
-static void
-n_getlockviewer(void* slf, nCmd* cmd)
-{
-    nTransformNode* self = (nTransformNode*) slf;
-    cmd->Out()->SetB(self->GetLockViewer());
 }
 
 //------------------------------------------------------------------------------
@@ -437,21 +440,15 @@ nTransformNode::SaveCmds(nPersistServer* ps)
     {
         nCmd* cmd;
 
+        //--- setviewspace ---
+        cmd = ps->GetCmd(this, 'SVWS');
+        cmd->In()->SetB(this->GetViewSpace());
+        ps->PutCmd(cmd);
+
         //--- setactive ---
-        if (!this->GetActive())
-        {
         cmd = ps->GetCmd(this, 'SACT');
         cmd->In()->SetB(this->GetActive());
         ps->PutCmd(cmd);
-        }
-
-        //--- setlockviewer ---
-        if (this->GetLockViewer())
-        {
-            cmd = ps->GetCmd(this, 'SLKV');
-            cmd->In()->SetB(this->GetLockViewer());
-            ps->PutCmd(cmd);
-        }
 
         //--- setposition ---
         cmd = ps->GetCmd(this, 'SPOS');
@@ -461,7 +458,7 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         ps->PutCmd(cmd);
 
         //--- seteuler/setquat ---
-        if (this->CheckFlags(UseQuat))
+        if (this->CheckFlags(USEQUAT))
         {
             cmd = ps->GetCmd(this, 'SQUT');
             cmd->In()->SetF(this->quat.x);

@@ -11,25 +11,13 @@
     Supported file formats are nanim2 and nax2 (ascii and binary
     animation file formats).
 
-    @todo Write the nax2 save code.
-
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_ARRAY_H
 #include "util/narray.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
+#include "kernel/nfile.h"
 
 class nFileServer2;
 
@@ -92,8 +80,12 @@ public:
         int GetFirstKeyIndex() const;
         /// optimize the curve
         bool Optimize();
+        /// set collapsed flag
+        void SetCollapsed(bool b);
         /// check whether the curve has been collapsed by Optimize()
         bool IsCollapsed() const;
+        /// set the collapsed key
+        void SetCollapsedKey(const vector4& key);
         /// get the collapsed key
         const vector4& GetCollapsedKey() const;
         /// convert ipol type to string
@@ -105,6 +97,7 @@ public:
         IpolType ipolType;
         bool isCollapsed;
         int firstKeyIndex;
+        vector4 collapsedKey;
     };
 
     /// an animation curve group
@@ -167,12 +160,22 @@ public:
     /// destructor
     ~nAnimBuilder();
 
-    /// save anim file (filename extension decides in what format)
+    /// updates the first key index and key stride members (call before saving the file)
+    void FixKeyOffsets();
+    /// save anim file (filename extension decides format)
     bool Save(nFileServer2* fileServer, const char* filename);
     /// save nanim2 file
     bool SaveNanim2(nFileServer2* fileServer, const char* filename);
+    /// save binary data to existing file
+    bool SaveNax2(nFile* file);
     /// save nax2 file
-//    bool SaveNax2(nFileServer2* fileServer, const char* filename);
+    bool SaveNax2(nFileServer2* fileServer, const char* filename);
+    /// load anim file (filename extension decides format)
+    bool Load(nFileServer2* fileServer, const char* filename);
+    /// load nanim2 file
+    bool LoadNanim2(nFileServer2* fileServer, const char* filename);
+    /// load nax2 file
+    bool LoadNax2(nFileServer2* fileServer, const char* filename);
     
     /// clear all
     void Clear();
@@ -187,8 +190,6 @@ public:
     int Optimize();
 
 private:
-    /// updates the first key index and key stride members
-    void FixKeyOffsets();
     /// return total number of keys
     int GetNumKeys();
 
@@ -269,7 +270,7 @@ nAnimBuilder::Key::Get() const
 */
 inline
 nAnimBuilder::Curve::Curve() :
-    keyArray(2048, 2048),
+    keyArray(128, 2048),
     ipolType(NONE),
     isCollapsed(false),
     firstKeyIndex(-1)
@@ -388,9 +389,20 @@ nAnimBuilder::Curve::Optimize()
     if (dist.len() < 0.001f)
     {
         this->isCollapsed = true;
+        this->collapsedKey = this->keyArray[0].Get();
         this->ipolType = NONE;
     }
     return this->isCollapsed;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimBuilder::Curve::SetCollapsed(bool b)
+{
+    this->isCollapsed = b;
 }
 
 //------------------------------------------------------------------------------
@@ -407,10 +419,20 @@ nAnimBuilder::Curve::IsCollapsed() const
 /**
 */
 inline
+void
+nAnimBuilder::Curve::SetCollapsedKey(const vector4& key)
+{
+    this->collapsedKey = key;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 const vector4&
 nAnimBuilder::Curve::GetCollapsedKey() const
 {
-    return this->keyArray[0].Get();
+    return this->collapsedKey;
 }
 
 //------------------------------------------------------------------------------
@@ -466,7 +488,7 @@ inline
 void
 nAnimBuilder::Group::AddCurve(const Curve& curve)
 {
-    this->curveArray.PushBack(curve);
+    this->curveArray.Append(curve);
 }
 
 //------------------------------------------------------------------------------
@@ -644,7 +666,7 @@ inline
 void
 nAnimBuilder::AddGroup(Group& group)
 {
-    this->groupArray.PushBack(group);
+    this->groupArray.Append(group);
 }
 
 //------------------------------------------------------------------------------

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Server
 //------------------------------------------------------------------------------
 //  nd3d9server_window.cc
 //  (C) 2003 RadonLabs GmbH
@@ -8,17 +7,6 @@
 
 LONG WINAPI nD3D9Server_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-//------------------------------------------------------------------------------
-/**
-    Sets a new window title.
-*/
-void
-nD3D9Server::SetWindowTitle(const char* title)
-{
-    n_assert(this->windowOpen);
-    nGfxServer2::SetWindowTitle(title);
-    SetWindowText(this->hWnd, title);
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -42,8 +30,8 @@ nD3D9Server::WindowOpen()
         // we are a child, so set dimension from parent
         RECT r;
         GetClientRect(this->parentHWnd, &r);
-        this->displayMode.SetWidth((ushort)(r.right - r.left));
-        this->displayMode.SetHeight((ushort)(r.bottom - r.top));
+        this->displayMode.SetWidth(r.right - r.left);
+        this->displayMode.SetHeight(r.bottom - r.top);
     } 
     else
     {
@@ -80,20 +68,18 @@ nD3D9Server::WindowOpen()
     RegisterClassEx(&wc);
 
     // open the window
-    // fix for create window 
-    // if first time is window created set to not visible,
-    // after all initialisation it's set to orginal style
-    this->hWnd = CreateWindow("nD3D9Server window class",       // lpClassName
-                                this->GetWindowTitle(),           // lpWindowName
-                                this->parentHWnd != NULL ? this->childStyle : WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX ,  // dwStyle
-                                0,                                // x
-                                0,                                // y
-                                this->displayMode.GetWidth(),     // nWidth
-                                this->displayMode.GetHeight(),    // nHeight
-                                this->parentHWnd,                 // hWndParent
-                                NULL,                             // hMenu
-                                this->hInst,                      // hInstance
-                                NULL);                            // lpParam
+	DWORD windowStyle = (( (this->GetParentHWnd() != 0) ? this->childStyle : this->windowedStyle) | WS_MINIMIZE);
+    this->hWnd = CreateWindow("nD3D9Server window class",       	// lpClassName
+                              this->displayMode.GetWindowTitle(),   // lpWindowName
+                              windowStyle,							// dwStyle
+                              0,                                	// x
+                              0,                                	// y
+                              0,									// nWidth
+                              0,									// nHeight
+                              this->parentHWnd,                 	// hWndParent
+                              NULL,                             	// hMenu
+                              this->hInst,                      	// hInstance
+                              NULL);                            	// lpParam
     n_assert(this->hWnd);
 
     // initialize the user data field with this object's this pointer,
@@ -102,7 +88,6 @@ nD3D9Server::WindowOpen()
     SetWindowLong(this->hWnd, 0, (LONG)this);
     
     // minimize the window
-    ShowWindow(this->hWnd, SW_SHOWMINIMIZED);
     this->windowOpen       = true;
     this->windowMinimized  = true;
     return true;
@@ -155,12 +140,12 @@ nD3D9Server::AdjustWindowForChange()
     n_assert(this->windowOpen);
     n_assert(this->windowMinimized);
 
-    if (this->displayMode.GetType() == nDisplayMode2::FULLSCREEN)
+    if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
     {
         // adjust for fullscreen mode
         SetWindowLong(this->hWnd, GWL_STYLE, this->fullscreenStyle);
     }
-    else if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
+    else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
     {
         // adjust for child mode
         SetWindowLong(this->hWnd, GWL_STYLE, this->childStyle);
@@ -185,53 +170,91 @@ nD3D9Server::RestoreWindow()
 {
     n_assert(this->hWnd);
     n_assert(this->windowOpen);
-    n_assert(this->windowMinimized);
+    // n_assert(this->windowMinimized);
+
+    // set window title
+    SetWindowText(this->hWnd, this->displayMode.GetWindowTitle());
 
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
     
-    int w, h;
-    if (this->displayMode.GetType() == nDisplayMode2::WINDOWED)
-    {
-        // Need to adjust adjust w & h so that the *client* area
-        // is equal to renderWidth/Height.
-        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
-        AdjustWindowRect(&r, this->windowedStyle, 0);
-        w = r.right - r.left;
-        h = r.bottom - r.top;
+    int x, y, w, h;
+    if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
+    { 
+		x = 0;
+        y = 0;
+		w = this->displayMode.GetWidth();
+		h = this->displayMode.GetHeight();
     }
-    else if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED)
-    {
+	else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow && this->parentHWnd)
+	{
+        RECT parentRect;
         // We are child window, so get dimesion from parent
-        RECT r;
-        GetClientRect(this->parentHWnd, &r);
-        AdjustWindowRect(&r, this->childStyle, 0);
+		GetClientRect(this->parentHWnd, &parentRect);
+		
+		//calculate the desired window size
+		RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
+		AdjustWindowRect(&r, this->childStyle, 0);
+
+		x = this->displayMode.GetXPos();
+		y = this->displayMode.GetYPos();
+		if ( x + (r.right - r.left) > (parentRect.right - parentRect.left) )
+			w = (parentRect.right - parentRect.left) - x; //scale to max size inside the parrent window
+		else 
+			w = (r.right - r.left);
+		
+		if ( y + (r.bottom - r.top) > (parentRect.bottom - parentRect.top) )
+			h = parentRect.bottom - parentRect.top - y; //scale to max size inside the parrent window
+		else
+			h = r.bottom - r.top;
+		//update the displaymode
+		this->displayMode.SetWidth(w);
+		this->displayMode.SetHeight(h);
+	}
+	else
+	{
+		// Need to adjust adjust w & h so that the *client* area
+		// is equal to renderWidth/Height.
+		RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
+		AdjustWindowRect(&r, this->windowedStyle, 0);
+		x = this->displayMode.GetXPos();
+        y = this->displayMode.GetYPos();
         w = r.right - r.left;
         h = r.bottom - r.top;
-        this->displayMode.SetWidth(w);
-        this->displayMode.SetHeight(h);
     }
-    else 
+
+    if (this->displayMode.GetType() == nDisplayMode2::AlwaysOnTop)
     {
-        // if child mode is FullScreen
-        w = this->displayMode.GetWidth();
-        h = this->displayMode.GetHeight();
-    }
-
-    SetWindowPos(this->hWnd,            // the window handle
-                 HWND_NOTOPMOST,        // placement order
-                 0,                     // x position
-                 0,                     // y position
-                 w,                     // adjusted width
-                 h,                     // adjusted height
-                 SWP_SHOWWINDOW);
-
-    if (this->displayMode.GetType() == nDisplayMode2::CHILDWINDOWED) 
+	    SetWindowPos(this->hWnd,            // the window handle
+                    HWND_TOPMOST,           // placement order
+                    x,                      // x position
+                    y,                      // y position
+	                w,                      // adjusted width
+	                h,                      // adjusted height
+	                SWP_SHOWWINDOW);
+	}
+	else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
+	{
+		SetWindowPos(this->hWnd,    		// the window handle
+		            this->parentHWnd,       // placement order
+		            x,                      // x position
+		            y,                      // y position
+				    w,						// adjusted width
+		            h,						// adjusted height
+		            SWP_SHOWWINDOW);
+		//FIXME: For some reason, SetWindowPos doesn't work when in child mode
+        MoveWindow(this->hWnd, x, y, w, h, 0);
+	}
+    else
     {
-        // For some reason, SetWindowPos doesn't work when in child mode
-        MoveWindow(this->hWnd, 0, 0, w, h, 0);
+	    SetWindowPos(this->hWnd,            // the window handle
+                    HWND_NOTOPMOST,         // placement order
+                    x,                      // x position
+                    y,                      // y position
+				    w,						// adjusted width
+                    h,						// adjusted height
+                    SWP_SHOWWINDOW);
     }
-
     this->windowMinimized = false;
 }
 
@@ -250,11 +273,10 @@ nD3D9Server::MinimizeWindow()
     n_assert(!this->windowMinimized);
 
     // minimize window for all mode except child
-    if (this->displayMode.GetType() != nDisplayMode2::CHILDWINDOWED) 
+    if (this->displayMode.GetType() != nDisplayMode2::ChildWindow) 
     {
         ShowWindow(this->hWnd, SW_MINIMIZE);
     }
-
     this->windowMinimized = true;
 }
 
@@ -276,7 +298,7 @@ nD3D9Server_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_SYSCOMMAND:
             // prevent moving/sizing and power loss in fullscreen mode
-            if (d3d9 && (d3d9->displayMode.GetType() == nDisplayMode2::FULLSCREEN))
+            if (d3d9 && (d3d9->displayMode.GetType() == nDisplayMode2::Fullscreen))
             {
                 switch (wParam)
                 {
@@ -302,45 +324,50 @@ nD3D9Server_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 if ((SIZE_MAXHIDE==wParam) || (SIZE_MINIMIZED==wParam))
                 {
                     d3d9->windowMinimized = true;
+                    if (d3d9->refInputServer.isvalid())
+                    {
+                        d3d9->refInputServer->LoseFocus();
+                    }
                 }
                 else
                 {
                     d3d9->windowMinimized = false;
+                    if (d3d9->refInputServer.isvalid())
+                    {
+                        d3d9->refInputServer->LoseFocus();
+                    }
                 }
+                ReleaseCapture();
             }
             break;
 
-/*
-FIXME!
         case WM_SETCURSOR:
-            // show/hide the system and/or custom d3d cursor
-            if (d3d8)
+            if (d3d9)
             {
-                FIXME!
+                switch (d3d9->cursorVisibility)
+                {
+					case nGfxServer2::None:
+                        SetCursor(NULL);
+                        d3d9->d3d9Device->ShowCursor(FALSE);
+                        return TRUE;
 
-                if (d3d8->d3dCursorShown)
-                {
-                    SetCursor(NULL);
-                    d3d8->d3d8Dev->ShowCursor(TRUE);
-                    return TRUE;
-                }
-                else if (d3d8->systemCursorShown)
-                {
-                    d3d8->d3d8Dev->ShowCursor(FALSE);
-                }
-                else
-                {
-                    SetCursor(NULL);
-                    return TRUE;
-                }
+                    case nGfxServer2::System:
+                        d3d9->d3d9Device->ShowCursor(FALSE);
+                        break;
+
+                    case nGfxServer2::Custom:
+                        SetCursor(NULL);
+                        d3d9->d3d9Device->ShowCursor(TRUE);
+                        return TRUE;
+				}
             }
             break;
-*/
+
 
         case WM_PAINT:
             // flip the buffers out of order, to fill window
             // with something useful, but only in windowed mode
-            if (d3d9 && (d3d9->displayMode.GetType() != nDisplayMode2::FULLSCREEN) && d3d9->d3d9Device) 
+            if (d3d9 && (d3d9->displayMode.GetType() != nDisplayMode2::Fullscreen) && d3d9->d3d9Device) 
             {
                 d3d9->d3d9Device->Present(0, 0, 0, 0);
             }
@@ -351,6 +378,7 @@ FIXME!
             if (d3d9 && d3d9->refInputServer.isvalid())
             {
                 d3d9->refInputServer->ObtainFocus();
+                ReleaseCapture();
             }
             break;
 
@@ -359,6 +387,7 @@ FIXME!
             if (d3d9 && d3d9->refInputServer.isvalid())
             {
                 d3d9->refInputServer->LoseFocus();
+                ReleaseCapture();
             }
             break;
 
@@ -380,17 +409,17 @@ FIXME!
                     case nD3D9Server::ACCEL_TOGGLEFULLSCREEN:
                     {
                         // toggle fullscreen/windowed
-                        nDisplayMode2 mode = d3d9->displayMode;
-                        if (mode.GetType() == nDisplayMode2::FULLSCREEN)
+                        nDisplayMode2 newMode = d3d9->displayMode;
+                        if (newMode.GetType() == nDisplayMode2::Fullscreen)
                         {
-                            mode.Set(nDisplayMode2::WINDOWED, mode.GetWidth(), mode.GetHeight(), mode.GetVerticalSync());
+                            newMode.SetType(nDisplayMode2::Windowed);
                         }
                         else
                         {
-                            mode.Set(nDisplayMode2::FULLSCREEN, mode.GetWidth(), mode.GetHeight(), mode.GetVerticalSync());
+                            newMode.SetType(nDisplayMode2::Fullscreen);
                         }
                         d3d9->CloseDisplay();
-                        d3d9->SetDisplayMode(mode);
+                        d3d9->SetDisplayMode(newMode);
                         d3d9->OpenDisplay();
                     }
                     break;

@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nD3D9Server
 //------------------------------------------------------------------------------
 //  nd3d9server_main.cc
 //  (C) 2003 RadonLabs GmbH
@@ -13,23 +12,14 @@
     Update the d3d projection matrix from the new camera settings.
 */
 void
-nD3D9Server::SetCamera(const nCamera2& cam)
+nD3D9Server::SetCamera(nCamera2& cam)
 {
     nGfxServer2::SetCamera(cam);
 
     if (this->d3d9Device)
     {
-        matrix44 projRH;
-
-        D3DXMatrixPerspectiveFovRH(
-            (D3DXMATRIX*) &projRH,
-            n_deg2rad(cam.GetAngleOfView()),
-            cam.GetAspectRatio(),
-            cam.GetNearPlane(),
-            cam.GetFarPlane());
-
         // set projection matrices
-        this->SetTransform(PROJECTION, projRH);
+        this->SetTransform(Projection, cam.GetProjection());
     }
 }
 
@@ -40,6 +30,8 @@ nD3D9Server::SetCamera(const nCamera2& cam)
 bool
 nD3D9Server::BeginScene()
 {
+    n_assert(this->displayOpen);
+
     HRESULT hr;
     if (nGfxServer2::BeginScene())
     {
@@ -53,6 +45,9 @@ nD3D9Server::BeginScene()
             return false;
         }
 
+        // update mouse cursor image if necessary
+        this->UpdateCursor();
+
         // tell d3d that a new frame is about to start
         hr = this->d3d9Device->BeginScene();
         if (FAILED(hr))
@@ -62,6 +57,15 @@ nD3D9Server::BeginScene()
         }
 
         this->inBeginScene = true;
+
+        #ifdef __NEBULA_STATS__
+        // reset statistic variables
+        this->dbgQueryNumPrimitives->SetI(0);
+        this->dbgQueryNumDrawCalls->SetI(0);
+        this->statsNumRenderStateChanges = 0;
+        this->statsNumTextureChanges = 0;
+        #endif
+        
         return true;
     }
     return false;
@@ -84,18 +88,20 @@ void
 nD3D9Server::Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil)
 {
     DWORD flags = 0;
-    if (bufferTypes & COLOR)
+    if (bufferTypes & ColorBuffer)
     {
         flags |= D3DCLEAR_TARGET;
     }
-    if (bufferTypes & DEPTH)
+    if (bufferTypes & DepthBuffer)
     {
         flags |= D3DCLEAR_ZBUFFER;
     }
-    if (bufferTypes & STENCIL)
+    /* FIXME!
+    if (bufferTypes & StencilBuffer)
     {
         flags |= D3DCLEAR_STENCIL;
     }
+    */
 
     DWORD d3dColor = D3DCOLOR_COLORVALUE(red, green, blue, alpha);
 
@@ -116,6 +122,11 @@ nD3D9Server::EndScene()
     HRESULT hr = this->d3d9Device->EndScene();
     n_assert(SUCCEEDED(hr));
 
+    #ifdef __NEBULA_STATS__
+    // query statistics
+    this->QueryStatistics();
+    #endif
+    
     nGfxServer2::EndScene();
 }
 
@@ -152,15 +163,17 @@ nD3D9Server::SetTexture(int stage, nTexture2* tex)
         HRESULT hr;
         n_assert(this->d3d9Device);
         
-        IDirect3DBaseTexture9* d3dTex = 0;
-        if (tex)
+        if (0 == tex)
         {
-            d3dTex = ((nD3D9Texture*)tex)->GetTexture();
-            n_assert(d3dTex);
+            // clear the texture stage
+            hr = this->d3d9Device->SetTexture(stage, 0);
+            n_assert(SUCCEEDED(hr));
         }
-        hr = this->d3d9Device->SetTexture(stage, d3dTex);
-        n_assert(SUCCEEDED(hr));
-
+        else
+        {
+            hr = this->d3d9Device->SetTexture(stage, ((nD3D9Texture*)tex)->GetBaseTexture());
+            n_assert(SUCCEEDED(hr));
+        }
         nGfxServer2::SetTexture(stage, tex);
     }
 }
@@ -197,15 +210,6 @@ nD3D9Server::SetMesh(int stream, nMesh2* mesh)
             n_assert(d3dVDecl);
 
             stride = mesh->GetVertexWidth() << 2;
-            switch (mesh->GetPrimitiveType())
-            {
-                case POINTLIST:     this->d3dPrimType = D3DPT_POINTLIST; break;
-                case LINELIST:      this->d3dPrimType = D3DPT_LINELIST; break;
-                case LINESTRIP:     this->d3dPrimType = D3DPT_LINESTRIP; break;
-                case TRIANGLELIST:  this->d3dPrimType = D3DPT_TRIANGLELIST; break;
-                case TRIANGLESTRIP: this->d3dPrimType = D3DPT_TRIANGLESTRIP; break;
-                case TRIANGLEFAN:   this->d3dPrimType = D3DPT_TRIANGLEFAN; break;
-            }
         }
 
         // set the vertex stream source
@@ -222,6 +226,18 @@ nD3D9Server::SetMesh(int stream, nMesh2* mesh)
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_assert(SUCCEEDED(hr));
         }
+
+		if (mesh)
+		{
+			if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (DX9 != this->featureSet))
+			{
+				this->d3d9Device->SetSoftwareVertexProcessing( TRUE );
+			}
+			else
+			{
+				this->d3d9Device->SetSoftwareVertexProcessing( FALSE );
+			}
+		}
 
         nGfxServer2::SetMesh(stream, mesh);
     }
@@ -286,8 +302,8 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
 
 //------------------------------------------------------------------------------
 /**
-    Draw the currently set mesh, texture and shader to the current 
-    render target.
+    Draw the currently set mesh with indexed primitives, texture and shader to 
+    the current render target.
 
     FIXME: the multipass renderer should check if state actually needs to
     be applied again. This is not necessary if the effect only has 1 pass,
@@ -295,7 +311,7 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
     invocation of Draw().
 */
 void
-nD3D9Server::Draw()
+nD3D9Server::DrawIndexed(nPrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
     n_assert(this->GetMesh(0));
@@ -304,34 +320,9 @@ nD3D9Server::Draw()
     nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
     n_assert(shader);
 
-    // get number of primitives
-    int d3dNumPrimitives;
-    switch (this->d3dPrimType)
-    {
-        case D3DPT_POINTLIST:
-            d3dNumPrimitives = this->indexRangeNum;
-            break;
-
-        case D3DPT_LINELIST:
-            d3dNumPrimitives = this->indexRangeNum / 2;
-            break;
-
-        case D3DPT_LINESTRIP:
-            d3dNumPrimitives = this->indexRangeNum - 1;
-            break;
-
-        case D3DPT_TRIANGLELIST:
-            d3dNumPrimitives = this->indexRangeNum / 3;
-            break;
-
-        case D3DPT_TRIANGLESTRIP:
-            d3dNumPrimitives = this->indexRangeNum - 2;
-            break;
-
-        case D3DPT_TRIANGLEFAN:
-            d3dNumPrimitives = this->indexRangeNum - 2;
-            break;
-    }
+    // get primitive type and number of primitives
+    D3DPRIMITIVETYPE d3dPrimType;
+    int d3dNumPrimitives = this->GetD3DPrimTypeAndNumIndexed(primType, d3dPrimType);
 
     // render current geometry, probably in multiple passes
     int numPasses = shader->Begin();
@@ -340,16 +331,123 @@ nD3D9Server::Draw()
     {
         shader->Pass(curPass);
 
-        hr = this->d3d9Device->DrawIndexedPrimitive(
-            this->d3dPrimType, 
+		hr = this->d3d9Device->DrawIndexedPrimitive(
+            d3dPrimType, 
             0,
             this->vertexRangeFirst,
             this->vertexRangeNum,
             this->indexRangeFirst,
             d3dNumPrimitives);
         n_assert(SUCCEEDED(hr));
+
+        #ifdef __NEBULA_STATS__
+        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+        #endif
     }
     shader->End();
+
+    #ifdef __NEBULA_STATS__
+    // update num primitives rendered
+    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    #endif
 }
 
+//------------------------------------------------------------------------------
+/**
+    Draw the currently set mesh with non-indexed primitives.
+*/
+void
+nD3D9Server::Draw(nPrimitiveType primType)
+{
+    n_assert(this->d3d9Device && this->inBeginScene);
+    n_assert(this->GetMesh(0));
+    HRESULT hr;
+
+    nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
+    n_assert(shader);
+
+    // get primitive type and number of primitives
+    D3DPRIMITIVETYPE d3dPrimType;
+    int d3dNumPrimitives = this->GetD3DPrimTypeAndNum(primType, d3dPrimType);
+
+    // render current geometry, probably in multiple passes
+    int numPasses = shader->Begin();
+    int curPass;
+    for (curPass = 0; curPass < numPasses; curPass++)
+    {
+        shader->Pass(curPass);
+        hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
+        n_assert(SUCCEEDED(hr));
+
+        #ifdef __NEBULA_STATS__
+        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+        #endif
+    }
+    shader->End();
+
+    #ifdef __NEBULA_STATS__
+    // update num primitives rendered
+    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Renders the currently set mesh without applying any shader state.
+    You must call nShader2::Begin(), nShader2::Pass() and nShader2::End()
+    yourself as needed.
+*/
+void
+nD3D9Server::DrawIndexedNS(nPrimitiveType primType)
+{
+    n_assert(this->d3d9Device && this->inBeginScene);
+    n_assert(this->GetMesh(0));
+    HRESULT hr;
+
+    // get primitive type and number of primitives
+    D3DPRIMITIVETYPE d3dPrimType;
+    int d3dNumPrimitives = this->GetD3DPrimTypeAndNumIndexed(primType, d3dPrimType);
+
+    hr = this->d3d9Device->DrawIndexedPrimitive(
+        d3dPrimType, 
+        0,
+        this->vertexRangeFirst,
+        this->vertexRangeNum,
+        this->indexRangeFirst,
+        d3dNumPrimitives);
+    n_assert(SUCCEEDED(hr));
+
+    #ifdef __NEBULA_STATS__
+    // update statistics
+    this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Renders the currently set mesh without applying any shader state.
+    You must call nShader2::Begin(), nShader2::Pass() and nShader2::End()
+    yourself as needed.
+*/
+void
+nD3D9Server::DrawNS(nPrimitiveType primType)
+{
+    n_assert(this->d3d9Device && this->inBeginScene);
+    n_assert(this->GetMesh(0));
+    HRESULT hr;
+
+    // get primitive type and number of primitives
+    D3DPRIMITIVETYPE d3dPrimType;
+    int d3dNumPrimitives = this->GetD3DPrimTypeAndNum(primType, d3dPrimType);
+
+    hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
+    n_assert(SUCCEEDED(hr));
+
+    #ifdef __NEBULA_STATS__
+    // update statistics
+    this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    #endif
+}
 

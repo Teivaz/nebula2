@@ -9,17 +9,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_TEXTURE2_H
 #include "gfx2/ntexture2.h"
-#endif
-
-#ifndef N_D3D9SERVER_H
 #include "gfx2/nd3d9server.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nTexture2
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nD3D9Texture : public nTexture2
@@ -29,34 +20,52 @@ public:
     nD3D9Texture();
     /// destructor
     virtual ~nD3D9Texture();
-    /// load texture resource (create rendertarget if render target resource)
-    virtual bool Load();
-    /// unload texture resource
-    virtual void Unload();
+    /// supports async resource loading
+    virtual bool CanLoadAsync() const;
+    /// lock a 2D texture, returns pointer and pitch
+    virtual bool Lock(LockType lockType, int level, LockInfo& lockInfo);
+    /// unlock 2d texture
+    virtual void Unlock(int level);
+    /// lock a cube face
+    virtual bool LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo);
+    /// unlock a cube face
+    virtual void UnlockCubeFace(CubeFace face, int level);
 
     static nKernelServer* kernelServer;
+
+protected:
+    /// load texture resource (create rendertarget if render target resource)
+    virtual bool LoadResource();
+    /// unload texture resource
+    virtual void UnloadResource();
 
 private:
     friend class nD3D9Server;
     friend class nD3D9Shader;
 
-    /// get d3d9 texture
-    IDirect3DBaseTexture9* GetTexture() const;
+    /// get d3d9 base texture interface
+    IDirect3DBaseTexture9* GetBaseTexture();
     /// get render target surface (returns 0 if no render target)
-    IDirect3DSurface9* GetRenderTarget() const;
+    IDirect3DSurface9* GetRenderTarget();
     /// get optional rendertarget depth stencil surface
-    IDirect3DSurface9* GetDepthStencil() const;
+    IDirect3DSurface9* GetDepthStencil();
+    /// get d3d9 texture interface
+    IDirect3DTexture9* GetTexture2D();
     /// verify pixelformat of rendertarget
     bool CheckRenderTargetFormat(IDirect3D9* d3d9, IDirect3DDevice9* d3d9Device, DWORD usage, D3DFORMAT pixelFormat);
 
     /// create a render target texture
     bool CreateRenderTarget();
-    /// load a ntx texture
-    bool LoadNtxFile();
+    /// create an empty 2d or cube texture
+    bool CreateEmptyTexture();
     /// load texture through D3DX
     bool LoadD3DXFile();
     /// load a texture through DevIL
     bool LoadILFile();
+    /// load from a raw compound file
+    bool LoadFromRawCompoundFile();
+    /// load from dds compound file
+    bool LoadFromDDSCompoundFile();
     /// get attributes from d3d texture and update my own attributes from them
     void QueryD3DTextureAttributes();
 
@@ -65,7 +74,6 @@ private:
     IDirect3DBaseTexture9* baseTexture;
     IDirect3DTexture9* texture2D;
     IDirect3DCubeTexture9* textureCube;
-    IDirect3DTexture9* depthStencil;
     IDirect3DSurface9* renderTargetSurface;
     IDirect3DSurface9* depthStencilSurface;
 };
@@ -75,8 +83,9 @@ private:
 */
 inline
 IDirect3DBaseTexture9*
-nD3D9Texture::GetTexture() const
+nD3D9Texture::GetBaseTexture()
 {
+    n_assert(this->IsValid());
     return this->baseTexture;
 }
 
@@ -84,9 +93,21 @@ nD3D9Texture::GetTexture() const
 /**
 */
 inline
-IDirect3DSurface9*
-nD3D9Texture::GetRenderTarget() const
+IDirect3DTexture9*
+nD3D9Texture::GetTexture2D()
 {
+    n_assert(this->IsValid());
+    return this->texture2D;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+IDirect3DSurface9*
+nD3D9Texture::GetRenderTarget()
+{
+    n_assert(this->IsValid());
     return this->renderTargetSurface;
 }
 
@@ -95,8 +116,9 @@ nD3D9Texture::GetRenderTarget() const
 */
 inline
 IDirect3DSurface9*
-nD3D9Texture::GetDepthStencil() const
+nD3D9Texture::GetDepthStencil()
 {
+    n_assert(this->IsValid());
     return this->depthStencilSurface;
 }
 

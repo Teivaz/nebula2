@@ -11,13 +11,10 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_VARIABLECONTEXT_H
 #include "variable/nvariablecontext.h"
-#endif
+#include "gfx2/nshaderparams.h"
 
-#ifndef N_MATRIX_H
-#include "mathlib/matrix.h"
-#endif
+class nSceneNode;
 
 //------------------------------------------------------------------------------
 class nRenderContext : public nVariableContext
@@ -35,10 +32,34 @@ public:
     void SetTransform(const matrix44& m);
     /// get the current transformation
     const matrix44& GetTransform() const;
+    /// set the render context's root scene node
+    void SetRootNode(nSceneNode* node);
+    /// get the render context's root scene node
+    nSceneNode* GetRootNode() const;
+    /// reset the link array
+    void ClearLinks();
+    /// add a link to another render context
+    void AddLink(nRenderContext* link);
+    /// get the number of links
+    int GetNumLinks() const;
+    /// get linked render context at index
+    nRenderContext* GetLinkAt(int index) const;
+    /// access to shader parameter overrides
+    nShaderParams& GetShaderOverrides();
 
-private:
+    /// appends a new var to localVarArray, returns the index
+    int AddLocalVar(const nVariable& value);
+    /// returns local variable at given index
+    nVariable& GetLocalVar(int index);
+
+protected:
     uint frameId;
     matrix44 transform;
+    nRef<nSceneNode> rootNode;
+    float priority;
+    nArray<nRenderContext*> linkArray;
+    nShaderParams shaderOverrides;
+    nArray<nVariable> localVarArray;
 };
 
 //------------------------------------------------------------------------------
@@ -46,7 +67,9 @@ private:
 */
 inline
 nRenderContext::nRenderContext() :
-    frameId(0xffffffff)
+    frameId(0xffffffff),
+    priority(1.0f),
+    linkArray(64, 64)
 {
     // empty
 }
@@ -101,5 +124,95 @@ nRenderContext::GetTransform() const
 }
 
 //------------------------------------------------------------------------------
-#endif
+/**
+*/
+inline
+void
+nRenderContext::SetRootNode(nSceneNode* node)
+{
+    n_assert(node);
+    this->rootNode = node;
+}
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nSceneNode*
+nRenderContext::GetRootNode() const
+{
+    return this->rootNode.get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::ClearLinks()
+{
+    this->linkArray.Clear();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::AddLink(nRenderContext* link)
+{
+    n_assert(link);
+    this->linkArray.Append(link);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nRenderContext::GetNumLinks() const
+{
+    return this->linkArray.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRenderContext*
+nRenderContext::GetLinkAt(int index) const
+{
+    return this->linkArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**    
+*/
+inline
+nShaderParams&
+nRenderContext::GetShaderOverrides()
+{
+    return this->shaderOverrides;
+}
+
+//------------------------------------------------------------------------------
+/**    
+*/
+inline
+int nRenderContext::AddLocalVar(const nVariable& value)
+{
+    this->localVarArray.Append(value);
+    return this->localVarArray.Size()-1;
+}
+
+//------------------------------------------------------------------------------
+/**    
+*/
+inline
+nVariable& nRenderContext::GetLocalVar(int index)
+{
+    return this->localVarArray.At(index);
+}
+
+//------------------------------------------------------------------------------
+#endif

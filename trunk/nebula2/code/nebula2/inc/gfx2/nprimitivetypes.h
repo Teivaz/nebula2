@@ -12,12 +12,12 @@
 
 enum nPrimitiveType
 {
-    POINTLIST,
-    LINELIST,
-    LINESTRIP,
-    TRIANGLELIST,
-    TRIANGLESTRIP,
-    TRIANGLEFAN,
+    PointList,
+    LineList,
+    LineStrip,
+    TriangleList,
+    TriangleStrip,
+    TriangleFan,
 };
 
 //------------------------------------------------------------------------------

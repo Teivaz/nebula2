@@ -1,4 +1,3 @@
-#define N_IMPLEMENTS nTexture2
 //------------------------------------------------------------------------------
 //  ntexture2_main.cc
 //  (C) 2002 RadonLabs GmbH
@@ -18,7 +17,9 @@ nTexture2::nTexture2() :
     height(0),
     depth(0),
     numMipMaps(0),
-    renderTargetFlags(0)
+    usage(0),
+    compoundFile(0),
+    compoundFilePos(0)
 {
     // empty
 }
@@ -32,4 +33,52 @@ nTexture2::~nTexture2()
     {
         this->Unload();
     }
+    if (this->compoundFile)
+    {
+        this->compoundFile->Release();
+        this->compoundFile = 0;
+	}
 }
+
+//------------------------------------------------------------------------------
+/**
+    Locks a mipmap level of the texture, returns a pointer to the surface
+    data and the surface pitch in the provided lockInfo structure.
+*/
+bool
+nTexture2::Lock(LockType lockType, int level, LockInfo& lockInfo)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nTexture2::Unlock(int level)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Locks a single surface of a cube texture.
+*/
+bool 
+nTexture2::LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo)
+{
+    return false;
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    Unlocks a single surface of a cube texture.
+*/
+void
+nTexture2::UnlockCubeFace(CubeFace face, int level)
+{
+    // empty
+}
+
+

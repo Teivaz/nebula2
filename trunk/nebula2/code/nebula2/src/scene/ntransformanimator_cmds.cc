@@ -1,3 +1,4 @@
+#define N_IMPLEMENTS nTransformAnimator
 //------------------------------------------------------------------------------
 //  ntransformanimator_cmds.cc
 //  (C) 2003 RadonLabs GmbH

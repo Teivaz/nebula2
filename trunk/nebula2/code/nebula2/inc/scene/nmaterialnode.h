@@ -18,21 +18,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ABSTRACTSHADERNODE_H
 #include "scene/nabstractshadernode.h"
-#endif
-
-#ifndef N_REF_H
 #include "kernel/nref.h"
-#endif
-
-#ifndef N_AUTOREF_H
 #include "kernel/nautoref.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nMaterialNode
-#include "kernel/ndefdllclass.h"
 
 class nShader2;
 class nGfxServer2;
@@ -51,13 +39,11 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
-    /// return true if resources for this object are valid
-    virtual bool AreResourcesValid() const;
 
     /// indicate to scene graph that we provide a surface shader
     virtual bool HasShader(uint fourcc) const;
     /// render shader
-    virtual void RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShader(uint fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
 
     /// set shader resource name
     void SetShader(uint fourcc, const char* name);
@@ -91,45 +77,31 @@ private:
         void SetName(const char* shaderName);
         /// get shader name
         const char* GetName() const;
+        /// set shader
+        void SetShader(nShader2* shd);
         /// get shader pointer
         nShader2* GetShader() const;
         /// is shader ref valid?
         bool IsShaderValid() const;
         /// invalidate entry
         void Invalidate();
-        /// set shader
-        void SetShader(nShader2* shd);
-        /// set the shader variable mask
-        void SetVariableMask(uint mask);
-        /// get the shader variable mask
-        uint GetVariableMask() const;
-        /// is the variable mask valid?
-        bool IsVariableMaskValid() const;
-        /// set the variable mask valid flag
-        void SetVariableMaskValid(bool b);
 
-        uint variableMask;     // a set bit for each shader variable valid for this shader
+
         uint fourcc;
         nString name;
         nRef<nShader2> refShader;
-        bool variableMaskValid;
     };
 
-    /// compute the shader variable mask (a set bit for each variable this this shader uses)
-    void UpdateShaderVariableMasks();
     /// load the shader resource 
     bool LoadShaders();
     /// unload the shader resource
     void UnloadShaders();
     /// find a shader entry by its fourcc code
     ShaderEntry* FindShaderEntry(uint fourcc) const;
+	/// checks if shader uses texture passed in param
+	virtual bool IsTextureUsed(nShader2::Parameter param);
 
     nArray<ShaderEntry> shaderArray;
-    nVariable::Handle modelViewVarHandle;
-    nVariable::Handle modelViewProjectionVarHandle;
-    nVariable::Handle modelEyePosVarHandle;
-    nVariable::Handle modelVarHandle;
-    bool useMasksValid;
 };
 
 //------------------------------------------------------------------------------
@@ -199,9 +171,7 @@ nMaterialNode::FourCCToString(uint fourcc, char* buf, int bufSize)
 */
 inline
 nMaterialNode::ShaderEntry::ShaderEntry() :
-    variableMask(0),
-    fourcc(0),
-    variableMaskValid(false)
+    fourcc(0)
 {
     // empty
 }
@@ -211,32 +181,10 @@ nMaterialNode::ShaderEntry::ShaderEntry() :
 */
 inline
 nMaterialNode::ShaderEntry::ShaderEntry(uint shaderFourCC, const char* shaderName) :
-    variableMask(0),
     fourcc(shaderFourCC),
-    name(shaderName),
-    variableMaskValid(false)
+    name(shaderName)
 {
     // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMaterialNode::ShaderEntry::SetVariableMask(uint mask)
-{
-    this->variableMask = mask;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-uint
-nMaterialNode::ShaderEntry::GetVariableMask() const
-{
-    return this->variableMask;
 }
 
 //------------------------------------------------------------------------------
@@ -308,7 +256,6 @@ void
 nMaterialNode::ShaderEntry::Invalidate()
 {
     this->refShader.invalidate();
-    this->variableMaskValid = false;
 }
 
 //------------------------------------------------------------------------------
@@ -319,26 +266,6 @@ void
 nMaterialNode::ShaderEntry::SetShader(nShader2* shd)
 {
     this->refShader = shd;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nMaterialNode::ShaderEntry::IsVariableMaskValid() const
-{
-    return this->variableMaskValid;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMaterialNode::ShaderEntry::SetVariableMaskValid(bool b)
-{
-    this->variableMaskValid = b;
 }
 
 //------------------------------------------------------------------------------

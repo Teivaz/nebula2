@@ -9,13 +9,9 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_GFXSERVER2_H
 #include "gfx2/ngfxserver2.h"
-#endif
-
-#ifndef N_INPUTSERVER_H
 #include "input/ninputserver.h"
-#endif
+#include "misc/nwatched.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -23,12 +19,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
-#include <d3dx9tex.h>
 #include "gfx2/d3dfont9.h"
-
-#undef N_DEFINES
-#define N_DEFINES nD3D9Server
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 //  Debugging definitions (for shader debugging etc...)
@@ -51,21 +42,19 @@ public:
     virtual nTexture2* NewTexture(const char* rsrcName);
     /// create a shared shader object
     virtual nShader2* NewShader(const char* rsrcName);
+    /// create a font object
+    virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
-    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, bool hasColor, bool hasDepth, bool hasStencil);
-    /// claim access rights to dynamic mesh
-    virtual nMesh2* LockDynamicMesh();
-    /// give up access to dynamic mesh
-    virtual void UnlockDynamicMesh(nMesh2* dynMesh);
+    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
 
-    /// set the current window title
-    virtual void SetWindowTitle(const char* title);
     /// set the current camera description
-    virtual void SetCamera(const nCamera2& cam);
+    virtual void SetCamera(nCamera2& cam);
     /// open the display
     virtual bool OpenDisplay();
     /// close the display
     virtual void CloseDisplay();
+    /// get the best supported feature set
+    virtual FeatureSet GetFeatureSet();
     /// parent window handle
     virtual int GetParentHWnd();
 
@@ -87,15 +76,26 @@ public:
     virtual void SetTexture(int stage, nTexture2* tex);
     /// set current shader
     virtual void SetShader(nShader2* shader);
-    /// draw the current mesh, texture and shader
-    virtual void Draw();
+    /// draw the current mesh with indexed primitives
+    virtual void DrawIndexed(nPrimitiveType primType);
+    /// draw the current mesh witn non-indexed primitives
+    virtual void Draw(nPrimitiveType primType);
+    /// render indexed primitives without applying shader state (NS == No Shader)
+    virtual void DrawIndexedNS(nPrimitiveType primType);
+    /// render non-indexed primitives without applying shader state (NS == No Shader)
+    virtual void DrawNS(nPrimitiveType primType);
 
     /// trigger the window system message pump
     virtual bool Trigger();
     /// draw 2d text (will be buffered until end of frame)
-    virtual void Text(const char* text, float x, float y);
+    virtual void Text(const char* text, const vector4& color, float x, float y);
     /// draw the text buffer
     virtual void DrawTextBuffer();
+
+    /// draw text (immediately)
+    virtual void DrawText(const char* text, const vector4& color, float xPos, float yPos);
+    /// get text extents
+    virtual vector2 GetTextExtent(const char* text);
 
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
@@ -132,23 +132,29 @@ private:
     /// release the d3d device
     void DeviceClose();
     /// unload resource data (call when device lost)
-    void UnloadResources();
+    void OnDeviceLost();
     /// reload resource data (call when device restored)
-    void ReloadResources();
+    void OnRestoreDevice();
     /// initialize device default state
     void InitDeviceState();
     /// return true if device is in software vertex processing mode
     bool GetSoftwareVertexProcessing() const;
+    /// update the feature set member
+    void UpdateFeatureSet();
+    #ifdef __NEBULA_STATS__
+    /// query the d3d resource manager and fill the watched variables
+    void QueryStatistics();
+    #endif
+    /// get d3d primitive type and num primitives for indexed drawing
+    int GetD3DPrimTypeAndNumIndexed(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
+    /// get d3d primitive type and num primitives
+    int GetD3DPrimTypeAndNum(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const;
+    /// update the mouse cursor image and visibility
+    void UpdateCursor();
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
     friend class nD3D9Shader;
-
-    enum 
-    {                          
-        DYNAMIC_VERTEXBUFFER_SIZE = (1<<16),    ///< number of vertices in buffer
-        DYNAMIC_INDEXBUFFER_SIZE  = (1<<16),    ///< number of indices in buffer
-    };
 
     HINSTANCE hInst;
     HWND      hWnd;                 ///< handle of this window
@@ -160,14 +166,17 @@ private:
     DWORD fullscreenStyle;          ///< WS_* flags for fullscreen mode
     DWORD deviceBehaviourFlags;     ///< the behaviour flags at device creation time
     D3DCAPS9 devCaps;               ///< device caps
+    D3DDISPLAYMODE d3dDisplayMode;  ///< the current d3d display mode
     bool windowOpen;                ///< window has been opened
+    FeatureSet featureSet;
 
     class TextNode : public nNode
     {
     public:
         /// constructor
-        TextNode(const char* str, float x, float y);
+        TextNode(const char* str, const vector4& clr, float x, float y);
         nString string;
+        vector4 color;
         float xpos;
         float ypos;
     };
@@ -175,12 +184,35 @@ private:
     CD3DFont9* d3dFont;
 
     D3DPRESENT_PARAMETERS presentParams;        ///< current presentation parameters
-    D3DPRIMITIVETYPE d3dPrimType;
     IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface
     IDirect3DSurface9* depthStencilSurface;     ///< the original depth stencil surface
-    nRef<nMesh2> refDynMesh;                    ///< the global dynamic mesh
-    bool dynMeshLocked;                         ///< is the dynamic mesh currently owned by some client?
+    ID3DXEffectPool* d3dxEffectPool;            ///< pool for sharing shader parameters
 
+    #ifdef __NEBULA_STATS__
+    IDirect3DQuery9*   queryResourceManager;    ///< for quering the d3d resource manager
+    nTime timeStamp;                            ///< time stamp for FPS computation
+    // query watcher variables
+    nWatched dbgQueryTextureTrashing;
+    nWatched dbgQueryTextureApproxBytesDownloaded;
+    nWatched dbgQueryTextureNumEvicts;
+    nWatched dbgQueryTextureNumVidCreates;
+    nWatched dbgQueryTextureLastPri;
+    nWatched dbgQueryTextureNumUsed;
+    nWatched dbgQueryTextureNumUsedInVidMem;
+    nWatched dbgQueryTextureWorkingSet;
+    nWatched dbgQueryTextureWorkingSetBytes;
+    nWatched dbgQueryTextureTotalManaged;
+    nWatched dbgQueryTextureTotalBytes;
+    nWatched dbgQueryNumPrimitives;
+    nWatched dbgQueryFPS;
+    nWatched dbgQueryNumDrawCalls;
+    nWatched dbgQueryNumRenderStateChanges;
+    nWatched dbgQueryNumTextureChanges;
+
+    int statsNumTextureChanges;
+    int statsNumRenderStateChanges;
+    #endif
+    
 public:
     enum
     {
@@ -203,17 +235,109 @@ public:
 /**
 */
 inline
-nD3D9Server::TextNode::TextNode(const char* str, float x, float y) :
+nD3D9Server::TextNode::TextNode(const char* str, const vector4& clr, float x, float y) :
     string(str),
+    color(clr),
     xpos(x),
     ypos(y)
 {
     // empty
 }
 
-inline int nD3D9Server::GetParentHWnd()
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nD3D9Server::GetParentHWnd()
 {
     return (int)this->parentHWnd;
 }
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nD3D9Server::GetD3DPrimTypeAndNumIndexed(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
+{
+    int d3dNumPrimitives = 0;
+    switch (primType)
+    {
+        case PointList:     
+            d3dPrimType = D3DPT_POINTLIST;
+            d3dNumPrimitives = this->indexRangeNum;
+            break;
+
+        case LineList:      
+            d3dPrimType = D3DPT_LINELIST; 
+            d3dNumPrimitives = this->indexRangeNum / 2;            
+            break;
+
+        case LineStrip:     
+            d3dPrimType = D3DPT_LINESTRIP; 
+            d3dNumPrimitives = this->indexRangeNum - 1;            
+            break;
+
+        case TriangleList:  
+            d3dPrimType = D3DPT_TRIANGLELIST; 
+            d3dNumPrimitives = this->indexRangeNum / 3;            
+            break;
+
+        case TriangleStrip: 
+            d3dPrimType = D3DPT_TRIANGLESTRIP; 
+            d3dNumPrimitives = this->indexRangeNum - 2;
+            break;
+
+        case TriangleFan:   
+            d3dPrimType = D3DPT_TRIANGLEFAN; 
+            d3dNumPrimitives = this->indexRangeNum - 2;
+            break;
+    }
+    return d3dNumPrimitives;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nD3D9Server::GetD3DPrimTypeAndNum(nPrimitiveType primType, D3DPRIMITIVETYPE& d3dPrimType) const
+{
+    int d3dNumPrimitives = 0;
+    switch (primType)
+    {
+        case PointList:     
+            d3dPrimType = D3DPT_POINTLIST;
+            d3dNumPrimitives = this->vertexRangeNum;
+            break;
+
+        case LineList:      
+            d3dPrimType = D3DPT_LINELIST; 
+            d3dNumPrimitives = this->vertexRangeNum / 2;            
+            break;
+
+        case LineStrip:     
+            d3dPrimType = D3DPT_LINESTRIP; 
+            d3dNumPrimitives = this->vertexRangeNum - 1;            
+            break;
+
+        case TriangleList:  
+            d3dPrimType = D3DPT_TRIANGLELIST; 
+            d3dNumPrimitives = this->vertexRangeNum / 3;            
+            break;
+
+        case TriangleStrip: 
+            d3dPrimType = D3DPT_TRIANGLESTRIP; 
+            d3dNumPrimitives = this->vertexRangeNum - 2;
+            break;
+
+        case TriangleFan:   
+            d3dPrimType = D3DPT_TRIANGLEFAN; 
+            d3dNumPrimitives = this->vertexRangeNum - 2;
+            break;
+    }
+    return d3dNumPrimitives;
+}
+
 //------------------------------------------------------------------------------
 #endif
