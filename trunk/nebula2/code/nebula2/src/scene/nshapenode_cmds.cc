@@ -166,7 +166,7 @@ static void
 n_setmeshusage(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
-    const int flags = nMesh2::ConvertUsageStringToFlags( cmd->In()->GetS() );
+    const int flags = nMesh2::ConvertUsageStringToFlags(cmd->In()->GetS());
     self->SetMeshUsage(flags);
 }
 
@@ -186,7 +186,7 @@ static void
 n_getmeshusage(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
-    const char* flagString = nMesh2::ConvertUsageFlagsToString( self->GetMeshUsage() ).Get();
+    const char* flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage()).Get();
     cmd->Out()->SetS(flagString);
 }
 
@@ -222,7 +222,8 @@ nShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setmeshusage ---
         cmd = ps->GetCmd(this, 'SMSU');
-        cmd->In()->SetI(this->GetMeshUsage());
+        const char* flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage()).Get();
+        cmd->In()->SetS(flagString);
         ps->PutCmd(cmd);
 
         return true;
