@@ -52,6 +52,7 @@ public:
 
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
+    virtual void SetViewport(nViewport& vp);
     /// open the display
     virtual bool OpenDisplay();
     /// close the display
