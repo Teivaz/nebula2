@@ -1,7 +1,6 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
-.setviewspace false
 .setactive true
 .setposition 0.000000 0.000000 0.000000
 .seteuler 0.000000 90.000000 0.000000
@@ -32,7 +31,6 @@ new nskinanimator skinanimator
 sel ..
 new nskinshapenode shape0
 	sel shape0
-	.setviewspace false
 	.setactive true
 	.setposition 0.000000 0.000000 0.000000
 	.seteuler 0.000000 0.000000 0.000000
