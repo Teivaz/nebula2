@@ -121,8 +121,8 @@ void nCLODSplat::Unload()
 bool nCLODSplat::LoadResource()
 {
     // hmmm, already loaded.  happens in the async case where a job
-    // if removed from the queue and then immediately re-added to the queue
-    // before it is unloaded.
+    // is removed from the queue and then immediately re-added to the queue
+    // before it is unloaded (or before it is fully loaded)
     if (this->IsValid())
         return true;
 
@@ -248,7 +248,7 @@ bool nCLODSplat::LoadResource()
     //
     // create the collision mesh
     //
-
+#if 1
     // count the # of non-degenerate triangles
     int realfacecount = 0;
     for (iix=0; iix < indexcount-2; iix++)
@@ -305,7 +305,6 @@ bool nCLODSplat::LoadResource()
 
     delete [] vertexdatabuffer;
     delete [] indexdatabuffer;
-
     n_printf("loaded clod chunk %s at offset %d.  %d vertices, %d indices, %d collision triangles\n", 
         this->GetName(),
         this->dataOffset,
@@ -313,7 +312,9 @@ bool nCLODSplat::LoadResource()
         indexcount,
         realfacecount
         );
+#endif
 
+//    n_printf("loaded clod chunk %s\n", this->GetName());
     this->SetValid(true);
     return true;
 }
@@ -326,21 +327,23 @@ void nCLODSplat::UnloadResource()
 {
     n_assert(meshData.isvalid());
     n_assert(this->IsValid());
-    n_assert(this->collisionmesh);
+//    n_assert(this->collisionmesh);
 
     // destroy the collision stuff
-    nOpende::GeomTriMeshDataDestroy(this->collisionmesh);
-    delete [] this->collidevertices;
-    delete [] this->collideindices;
-    this->collisionmesh = NULL;
-    this->collidevertices = NULL;
-    this->collideindices = NULL;
+    if (this->collisionmesh)
+    {
+        nOpende::GeomTriMeshDataDestroy(this->collisionmesh);
+        delete [] this->collidevertices;
+        delete [] this->collideindices;
+        this->collisionmesh = NULL;
+        this->collidevertices = NULL;
+        this->collideindices = NULL;
+    }
 
     // unload the mesh!
     meshData->Unload();
 
 //  n_printf("unloading clod chunk %s\n", this->GetName());
-
 
     this->SetValid(false);
 }
