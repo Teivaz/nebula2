@@ -134,7 +134,11 @@ bool nMaxScene::Preprocess(INode* root)
     n_maxlog(Midium, "Start to build bone list.");
 
     this->boneManager = nMaxBoneManager::Instance();
-    this->boneManager->Build(root);
+    if (!this->boneManager->BuildBones(root))
+    {
+        n_maxlog(Error, "Failed to build bone list.");
+        return false;
+    }
 
     this->globalMeshBuilder.Clear();
 
