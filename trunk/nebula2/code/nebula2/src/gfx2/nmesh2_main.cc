@@ -163,3 +163,4 @@ int nMesh2::ConvertUsageStringToFlags( const char* usageFlagsString )
     }
     return usage;
 }
+
