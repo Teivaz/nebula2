@@ -8,16 +8,15 @@ beginmodule nspatialsector
     setfiles {
         nspatialsector_main nspatialsector_cmds 
         nspatialelements nvisibilityvisitor
-        nvisiblefrustumvisitor nvisiblefrustumgenarray
-        nvisiblespherevisitor nvisiblespheregenarray
-        noccludingfrustumvisitor noccludingfrustumgenarray
+        nvisiblefrustumvisitor nvisiblespherevisitor 
+        noccludingfrustumvisitor noccludingspherevisitor
     }
     setheaders {
         nspatialsector nspatialelements nvisibilityvisitor
-        nvisiblefrustumvisitor nvisiblefrustumgenarray
-        nvisiblespherevisitor nvisiblespheregenarray
-        noccludingfrustumvisitor noccludingfrustumgenarray
-        nspatialvisitor nbboxoccluder nfrustumclipper
+        nvisiblefrustumvisitor nvisiblespherevisitor 
+        noccludingfrustumvisitor nspatialvisitor 
+	nbboxoccluder nfrustumclipper ngenarrayvisitors
+        nsphereclipper noccludingspherevisitor
     }
 endmodule
 #-----------------------------------------------------------------------------
