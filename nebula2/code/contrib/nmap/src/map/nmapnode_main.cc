@@ -8,6 +8,7 @@
 #include "scene/nsceneserver.h"
 #include "map/nmapnode.h"
 #include "map/nmap.h"
+#include "map/mapquadtree.h"
 
 nNebulaScriptClass(nMapNode, "nmaterialnode");
 
