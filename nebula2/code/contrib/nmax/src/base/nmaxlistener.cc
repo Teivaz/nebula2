@@ -10,13 +10,14 @@
 //
 // There's conflicts between some of nebula functions and maxscript defines.
 // (n_error, n_message and n_free and so on)
-// So, if both of 'ntypes.h' and 'maxscrpt.h' files are included on same file
+// So, if both of 'ntypes.h' and 'maxscrpt.h' files are included on the same file
 // there will be errors.
 // To prevent those errors, 'maxscrpt.h' should be included separately.
 //
 #include "MAXScrpt\MAXScrpt.h"
 #include "MAXScrpt\MAXObj.h"
 #include "MAXScrpt\Listener.h"
+#include "MAXScrpt\scripted.h" 
 
 //-----------------------------------------------------------------------------
 /**
@@ -36,6 +37,20 @@ void n_listener (char* msg, ...)
     the_listener->edit_stream->printf (message);
 }
 
+//-----------------------------------------------------------------------------
+/**
+    Create instances of maxscript editor windows.
+
+    @note
+        The second parameter of 'open_script()' function was specified to
+        NULL to open the script with a new editor.
+
+    @param filename maxscript file which be opened with a new maxscript editor.
+*/
+void n_openeditor(const char* filename)
+{   
+    open_script((TCHAR*)filename);
+}
 //-----------------------------------------------------------------------------
 // EOF
 //-----------------------------------------------------------------------------
