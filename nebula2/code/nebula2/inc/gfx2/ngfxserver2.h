@@ -240,6 +240,8 @@ public:
     static FeatureSet StringToFeatureSet(const char* str);
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
+    /// convert cursor visibility string to enum
+    static CursorVisibility StringToCursorVisibility(const char* str);
 
 protected:
     bool displayOpen;
@@ -503,5 +505,30 @@ nGfxServer2::GetShaderIndex(const char* shaderName)
     return index;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::CursorVisibility
+nGfxServer2::StringToCursorVisibility(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp(str, "none"))
+    {
+        return nGfxServer2::None;
+    }
+    else if (0 == strcmp(str, "system"))
+    {
+        return nGfxServer2::System;
+    }
+    else if (0 == strcmp(str, "custom"))
+    {
+        return nGfxServer2::Custom;
+    }
+    else
+    { 
+        n_error( "Invalid string '%s' passed to StringToCursorVisibility!", str );
+    }
+}
 //------------------------------------------------------------------------------
 #endif
