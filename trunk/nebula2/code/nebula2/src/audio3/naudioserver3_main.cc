@@ -6,6 +6,21 @@
 
 nNebulaClass(nAudioServer3, "nroot");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    naudioserver3
+
+    @cppclass
+    nAudioServer3
+    
+    @superclass
+    nroot
+    
+    @classinfo
+    Docs needed.
+*/
+
 //------------------------------------------------------------------------------
 /**
 */

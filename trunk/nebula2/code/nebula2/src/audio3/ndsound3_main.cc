@@ -8,6 +8,22 @@
 
 nNebulaClass(nDSound3, "nsound3");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    ndsound3
+
+    @cppclass
+    nDSound3
+    
+    @superclass
+    nsound3
+    
+    @classinfo
+    Docs needed.
+*/
+
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -9,6 +9,22 @@
 
 nNebulaClass(nDSoundResource, "nsoundresource");
 
+//---  MetaInfo  ---------------------------------------------------------------
+/**
+    @scriptclass
+    ndsoundresource
+
+    @cppclass
+    nDSoundResource
+    
+    @superclass
+    nsoundresource
+    
+    @classinfo
+    Docs needed.
+*/
+
+
 //------------------------------------------------------------------------------
 /**
 */
