@@ -13,13 +13,15 @@
 
     Usually a scenegraph is used to represent objects in a 3D world and 
     this scenegraph can be thought as a data structure like a tree.
-    So each of node in tree can be thought as object in a 3D world.
-    Each node of a scene need to some processing before it is sent to
-    rendering API like transformation, lighting, texturing and specifying
-    shader and primitives.
+    So each of node in tree can be thought as a object in a 3D world.
 
-    This node is represented by nSceneNode derived class in Nebula2 and
-    nSceneNode has it's memeber functions for those processing like this:
+    What a node is related to what you see in the scene and a node is
+    represented by nSceneNode derived classes in Nebula2.
+
+    Each node of a scene needs some processing like transformation, lighting, 
+    texturing and specifying shaders and primitives before it is sent to
+    rendering API. nSceneNode has it's memeber functions for
+    those processing like this:
 
       - nSceneNode::RenderTransform <br>
         Transform is done for translation and rotation of the scene node.
@@ -27,13 +29,12 @@
         Adjusting and specifying shader before the node is sent to renderer
         if it is necessary.
       - nSceneNode::RenderGeometry <br>
-        Pass primitives to renderer API.
+        Pass primitives to rendering API.
       - nSceneNode::RenderLight <br>
         Specify light for the node
 
-    So, if you make your own scene node which is derived nSceneNode class and 
-    want to do some processing before sending it to renderer API, override
-    each of above member function as it's necessary.
+    So, if you want to make your own scene node, derive it from nSceneNode 
+    class then override above member functions as it's necessary.
 
 
     @section NebulaSceneNodesMultipleMaterials Handling Multiple Materials
