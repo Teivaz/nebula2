@@ -16,9 +16,11 @@
 */
 #include "scene/ntransformnode.h"
 #include "kernel/nautoref.h"
+#include "gfx2/ngfxserver2.h"
 #include "gfx2/ntexture2.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/nshaderparams.h"
+#include "mathlib/transform33.h"
 
 //------------------------------------------------------------------------------
 class nAbstractShaderNode : public nTransformNode
@@ -34,6 +36,19 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
+
+    /// set uv position for texture layer
+    void SetUvPos(uint layer, const vector2& p);
+    /// get uv position for texture layer
+    const vector2& GetUvPos(uint layer) const;
+    /// set uv euler rotation for texture layer
+    void SetUvEuler(uint layer, const vector2& p);
+    /// get uv euler rotation for texture layer
+    const vector2& GetUvEuler(uint layer) const;
+    /// set uv scale for texture layer
+    void SetUvScale(uint layer, const vector2& p);
+    /// get uv scale for texture layer
+    const vector2& GetUvScale(uint layer) const;
 
     /// bind a texture resource to a shader variable
     void SetTexture(nShader2::Parameter param, const char* texName);
@@ -85,6 +100,7 @@ protected:
     };
 
     nArray<TexNode> texNodeArray;
+    transform33 textureTransform[nGfxServer2::MaxTextureStages];
     nShaderParams shaderParams;
 };
 
@@ -109,6 +125,71 @@ nAbstractShaderNode::TexNode::TexNode(nShader2::Parameter shaderParam, const cha
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAbstractShaderNode::SetUvPos(uint layer, const vector2& p)
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    this->textureTransform[layer].settranslation(p);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nAbstractShaderNode::GetUvPos(uint layer) const
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    return this->textureTransform[layer].gettranslation();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAbstractShaderNode::SetUvEuler(uint layer, const vector2& e)
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    this->textureTransform[layer].seteulerrotation(e);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nAbstractShaderNode::GetUvEuler(uint layer) const
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    return this->textureTransform[layer].geteulerrotation();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAbstractShaderNode::SetUvScale(uint layer, const vector2& s)
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    this->textureTransform[layer].setscale(s);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector2&
+nAbstractShaderNode::GetUvScale(uint layer) const
+{
+    n_assert(layer < nGfxServer2::MaxTextureStages);
+    return this->textureTransform[layer].getscale();
+}
 //------------------------------------------------------------------------------
 /**
 */
