@@ -91,7 +91,6 @@ nConServer::nConServer() :
     refInputServer(kernelServer, "/sys/servers/input"),
     refGfxServer(kernelServer, "/sys/servers/gfx"),
     refScriptServer(kernelServer, "/sys/servers/script"),
-    envClass(0),
     consoleOpen(false),
     watchersOpen(false),
     historyIndex(0),
@@ -100,6 +99,7 @@ nConServer::nConServer() :
     ctrlDown(false),
     scrollOffset(0)
 {
+    envClass = kernelServer->FindClass("nenv");
     memset(this->inputBuffer, 0, sizeof(this->inputBuffer));
 }
 
