@@ -13,7 +13,6 @@ nNebulaScriptClass(nTransformNode, "nscenenode");
 */
 nTransformNode::nTransformNode() :
     refGfxServer("/sys/servers/gfx"),
-    scale(1.0f, 1.0f, 1.0f),
     transformFlags(Active)
 {
     // empty
@@ -67,18 +66,21 @@ nTransformNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(renderContext);
 
     this->InvokeTransformAnimators(renderContext);
-    this->UpdateMatrix();
-
-    matrix44 m = this->matrix;
     if (this->GetLockViewer())
     {
         // if lock viewer active, copy viewer position
         const matrix44& viewMatrix = this->refGfxServer->GetTransform(nGfxServer2::InvView);
+        matrix44 m = this->tform.getmatrix();
         m.M41 = viewMatrix.M41;
         m.M42 = viewMatrix.M42;
         m.M43 = viewMatrix.M43;
+        sceneServer->SetModelTransform(m * parentMatrix);
     }
-    sceneServer->SetModelTransform(m * parentMatrix);
+    else
+    {
+        // default case
+        sceneServer->SetModelTransform(this->tform.getmatrix() * parentMatrix);
+    }
     return true;
 
 }

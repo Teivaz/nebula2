@@ -18,6 +18,7 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "scene/nscenenode.h"
+#include "mathlib/transform44.h"
 
 //------------------------------------------------------------------------------
 class nTransformNode : public nSceneNode
@@ -60,6 +61,8 @@ public:
     void SetScale(const vector3& s);
     /// get scale in parent space
     const vector3& GetScale() const;
+    /// get transform matrix
+    const matrix44& GetTransform();
 
 protected:
     /// set a flags
@@ -68,24 +71,16 @@ protected:
     void UnsetFlags(ushort mask);
     /// check a flag mask
     bool CheckFlags(ushort mask) const;
-    /// update matrix if dirty
-    void UpdateMatrix();
 
     enum
     {
-        Dirty = (1<<0),         // the matrix is dirty
-        UseQuat = (1<<1),       // compute orientation from quaternion, otherwise from euler
-        Active = (1<<2),        // active/inactive
-        LockViewer = (1<<3),    // locked to viewer position
+        Active = (1<<0),        // active/inactive
+        LockViewer = (1<<1),    // locked to viewer position
     };
 
 protected:
     nAutoRef<nGfxServer2> refGfxServer;
-    vector3 pos;
-    vector3 euler;
-    vector3 scale;
-    quaternion quat;
-    matrix44 matrix;
+    transform44 tform;
     ushort transformFlags;
 };
 
@@ -168,8 +163,7 @@ inline
 void
 nTransformNode::SetPosition(const vector3& p)
 {
-    this->pos = p;
-    this->SetFlags(Dirty);
+    this->tform.settranslation(p);
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +173,7 @@ inline
 const vector3&
 nTransformNode::GetPosition() const
 {
-    return this->pos;
+    return this->tform.gettranslation();
 }
 
 //------------------------------------------------------------------------------
@@ -189,9 +183,7 @@ inline
 void
 nTransformNode::SetEuler(const vector3& e)
 {
-    this->euler = e;
-    this->SetFlags(Dirty);
-    this->UnsetFlags(UseQuat);
+    this->tform.seteulerrotation(e);
 }
 
 //------------------------------------------------------------------------------
@@ -201,7 +193,7 @@ inline
 const vector3&
 nTransformNode::GetEuler() const
 {
-    return this->euler;
+    return this->tform.geteulerrotation();
 }
 
 //------------------------------------------------------------------------------
@@ -211,8 +203,7 @@ inline
 void
 nTransformNode::SetQuat(const quaternion& q)
 {
-    this->quat = q;
-    this->SetFlags(Dirty | UseQuat);
+    this->tform.setquatrotation(q);
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +213,7 @@ inline
 const quaternion&
 nTransformNode::GetQuat() const
 {
-    return this->quat;
+    return this->tform.getquatrotation();
 }
 
 //------------------------------------------------------------------------------
@@ -232,8 +223,7 @@ inline
 void
 nTransformNode::SetScale(const vector3& s)
 {
-    this->scale = s;
-    this->SetFlags(Dirty);
+    this->tform.setscale(s);
 }
 
 //------------------------------------------------------------------------------
@@ -243,38 +233,17 @@ inline
 const vector3&
 nTransformNode::GetScale() const
 {
-    return this->scale;
+    return this->tform.getscale();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void
-nTransformNode::UpdateMatrix()
+const matrix44&
+nTransformNode::GetTransform()
 {
-    if (this->CheckFlags(Dirty))
-    {
-        if (this->CheckFlags(UseQuat))
-        {
-            // use quaternion
-            this->matrix.ident();
-            this->matrix.scale(this->scale);
-            this->matrix.mult_simple(matrix44(this->quat));
-            this->matrix.translate(this->pos);
-        }
-        else
-        {
-            // use euler
-            this->matrix.ident();
-            this->matrix.scale(this->scale);
-            this->matrix.rotate_x(this->euler.x);
-            this->matrix.rotate_y(this->euler.y);
-            this->matrix.rotate_z(this->euler.z);
-            this->matrix.translate(this->pos);
-        }
-        this->UnsetFlags(Dirty);
-    }
+    return this->tform.getmatrix();
 }
 
 //------------------------------------------------------------------------------
