@@ -18,7 +18,7 @@
 
 set release_preprocessor_defs "WIN32;NDEBUG;NT_PLUGIN"
 set debug_preprocessor_defs "WIN32;_DEBUG;NT_PLUGIN"
-set neb_libpath_win32 "./lib/win32_vc_i386"
+set neb_libpath_win32 "./code/nebula2/lib/win32_vc_i386"
 
 #-----------------------------------------------------------------------------------------
 #  emit_vcproj_header $name $cid
