@@ -19,6 +19,7 @@
 
     Use like this:
 
+    @code
     nNebulaUsePackage(blub);
 
     void bla()
@@ -26,18 +27,21 @@
         nKernelServer kernelServer;
         kernelServer.AddPackage(blub);
     }
+    @endcode
 */
 #define nNebulaUsePackage(PACKAGE) extern void PACKAGE()
 
 //------------------------------------------------------------------------------
-/*
+/**
     @ingroup NebulaObjectSystem
     
     nNebulaClass() creates a simple Nebula class without script interface.
     It takes the C name of the class, and a string defining the superclass
     name:
 
+    @code
     nNebulaClass(nTestClass, "nparentclass");
+    @endcode
 */
 #define nNebulaClass(CLASS, SUPERCLASSNAME) \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
@@ -57,7 +61,9 @@
     nNebulaClassStaticInit(), declare Nebula class and call static
     data initialization function
 
+    @code
     nNebulaClassStaticInit(nTestClass, "nparentclass", staticInitFunction);
+    @endcode
 */
 #define nNebulaClassStaticInit(CLASS, SUPERCLASSNAME, INITSTATICDATAFUNC) \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
@@ -80,7 +86,9 @@
     It takes the C name of the class, and a string defining the superclass
     name:
 
+    @code
     nNebulaScriptClass(nTestClass, "nparentclass");
+    @endcode
 */
 
 #define nNebulaScriptClass(CLASS, SUPERCLASSNAME) \
@@ -103,7 +111,9 @@
     nNebulaScriptClassStaticInit(), declare Nebula class with script interface
     and call static data initialization function.
 
+    @code
     nNebulaScriptClassStaticInit(nTestClass, "nparentclass", staticInitFunction);
+    @endcode
 */
 #define nNebulaScriptClassStaticInit(CLASS, SUPERCLASSNAME, INITSTATICDATAFUNC) \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
@@ -123,7 +133,9 @@
 /**
     @ingroup NebulaObjectSystem
 
+    @code
     nNebulaRootClass(): Special macro for the Nebula root class
+    @endcode
 */
 
 #define nNebulaRootClass(CLASS) \
