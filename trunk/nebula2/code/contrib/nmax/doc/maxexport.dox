@@ -4,35 +4,47 @@
     @brief nMaxExport is a basic exporter for 3DSMax to Nebula2.
 
     @section NMaxExportIntroduction Introduction
+
     TODO
     
     @section NMaxExportCompiling Compiling
-    Before building the package, 3dsmax, 3dsmax SDK and IGame should be installed
-    on your system. <br>
-      -# Run update.tcl to generate workspace.
+
+    Before building the package, 3dsmax, the 3dsmax SDK and IGame should
+    be installed on your system.
+
+      -# Run @c update.tcl to generate workspace.
       -# Ensure that you have a recent version (at least v1.122) of
-      <A HREF="http://sparks.discreet.com/downloads/downloadshome.cfm?f=2&wf_id=147">IGame</A>
-      and that this is included <B>before</B> the 3dsmax SDK
+         <a href="http://sparks.discreet.com/downloads/downloadshome.cfm?f=2&wf_id=147">IGame</a>
+         and that this is included @b before the 3dsmax SDK
+      -# Make sure that the IGame DLL is on your executable path and that
+         only the correct version will be found.
       -# Ensure that the path of 3dsmax SDK is on your project path.
       -# Build the package and copy it to <tt>$3dsmax\\plugins</tt> directory.
       -# Run 3dsmax.
       
     @section NMaxExportUsage Usage
+
       @subsection NMaxExportMeshExport Mesh Export
+
       HOWTO: (thanks to Megan Fox)
       -# create your mesh
       -# give it a UVW mapping
       -# give it a diffuse texture
-      -# convert it editable mesh (this was required for an older exporter, not sure if it's still the case)
+      -# convert it editable mesh (this was required for an older exporter,
+         not sure if it's still the case)
       
       @subsection NMaxExportAnimationExport Animation Export
+
       TODO
     
-    @section NMaxExportIssues Know Issues
+    @section NMaxExportIssues Known Issues
+
       -# Missing documentation
-      -# Missing (usefull) error messages
+      -# Missing (useful) error messages
+      -# Missing example files
+
       TODO
 
-    (C) 2004 Oleg Kreptul, Johannes Kellner <br>
+    (C) 2004 Oleg Kreptul, Johannes Kellner
 */
 //-----------------------------------------------------------------------------
