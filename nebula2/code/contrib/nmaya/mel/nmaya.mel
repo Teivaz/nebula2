@@ -1,0 +1,234 @@
+
+// some global strings
+global string $HomeDirectory;
+global string $strFileMaya;
+global string $strFileMesh;
+global string $strFileScript;
+global string $strFinal;
+
+
+//------------------------------------------------------------------------------
+global proc startnMayaUI()
+//------------------------------------------------------------------------------
+{
+    window -title "nMaya UI" ExampleWindow7;
+        columnLayout ColumnLayout;
+
+        frameLayout -labelVisible false -marginWidth 5 -marginHeight 5 frame1;
+            columnLayout col2;
+            
+            text -label "Name of EnvVar(Neb2-Root)";
+            rowLayout -numberOfColumns 2 -columnWidth2 230 20 row0;
+                textField -text "RL_HOME" -editable true -width 220 EnvPath;
+                //button -label "File" ExporterButton;
+                setParent ..;
+            
+            text -label "MayaFile(*.mb/*.ma)(optional)";
+            rowLayout -numberOfColumns 2 -columnWidth2 230 20 row1;
+                textField -text "" -editable true -width 220 mayaFile;
+                button -label "File" MayaButton;
+                setParent ..;
+
+            text -label "MeshFile(*.nvx2/*.n3d2)(optional)";    
+            rowLayout -numberOfColumns 2 -columnWidth2 230 20 row2;
+                textField -text "" -editable true -width 220 meshFile;
+                button -label "File" MeshButton;
+                setParent ..;
+
+            text -label "ScriptFile[TCL](*.n2)(optional)";    
+            rowLayout -numberOfColumns 2 -columnWidth2 230 20 row3;
+                textField -text "" -editable true -width 220 scriptFile;
+                button -label "File" ScriptButton;
+                setParent ..;
+            
+            rowLayout -numberOfColumns 3 -columnWidth3 40 100 130 row4;
+                text -label "Size";
+                textField -text "1.0" -editable true -width 80 size;
+                checkBox -label "Debugmode" debugMode;
+                setParent ..;
+            
+            button -label "Execute" -width 255 ExeButton;
+                
+                           
+
+        setParent ExampleWindow7|ColumnLayout;
+            textField -text "Ready" -editable true -width 270 StatusLine;
+
+        //  Set initial state.
+        //
+        
+
+        //  Add functionality.
+        //
+        
+        //button -edit -command ("nMayashowStatus (`fileDialog -directoryMask \"*.exe\"`, \"ExampleWindow7|ColumnLayout|frame1|col2|row0|mayaFile\", 1 )" ) ExporterButton;
+        button -edit -command ("nMayashowStatus (`fileDialog -directoryMask \"*.mb;*.ma\"`, \"ExampleWindow7|ColumnLayout|frame1|col2|row1|mayaFile\", 1 )" ) MayaButton;
+        button -edit -command ("nMayashowStatus (`fileDialog -directoryMask \"*.n3d2;*.nvx2\"`, \"ExampleWindow7|ColumnLayout|frame1|col2|row2|meshFile\", 2 )" ) MeshButton;
+        button -edit -command ("nMayashowStatus (`fileDialog -directoryMask \"*.n2\"`, \"ExampleWindow7|ColumnLayout|frame1|col2|row3|scriptFile\", 3 )" ) ScriptButton;
+        button -edit -command ("executenMayaApp()") ExeButton;
+        checkBox -edit -value on debugMode;
+
+
+    showWindow ExampleWindow7;
+
+}
+
+//  Procedure to update the status line.
+//------------------------------------------------------------------------------
+global proc nMayashowStatus (string $newStatus, string $path, int $type) 
+//------------------------------------------------------------------------------
+{
+    global string $strFileMaya;
+    global string $strFileMesh;
+    global string $strFileScript;
+    
+    if ( $type == 1 ){
+        $strFileMaya = $newStatus;
+    } else if ( $type == 2 ){
+        $strFileMesh = $newStatus;
+    } else if ( $type == 3 ){
+        $strFileScript = $newStatus;
+    } else if ( $type == 3 ){
+        $strFileExporter = $newStatus;
+    }
+    
+    textField -edit -text $newStatus $path;
+}
+
+// refresh the textfields
+//------------------------------------------------------------------------------
+global proc nMayacontentRefresh()
+//------------------------------------------------------------------------------
+{
+    global string $HomeDirectory;
+    global string $strFileMaya;
+    global string $strFileMesh;
+    global string $strFileScript;
+    global string $strFileEntities;
+    
+    string $envVar = `textField -query -text ExampleWindow7|ColumnLayout|frame1|col2|row0|EnvPath`;
+    $HomeDirectory  = `getenv $envVar`;
+    $strFileMaya    = `textField -query -text ExampleWindow7|ColumnLayout|frame1|col2|row1|mayaFile`;
+    $strFileMesh    = `textField -query -text ExampleWindow7|ColumnLayout|frame1|col2|row2|meshFile`;
+    $strFileScript  = `textField -query -text ExampleWindow7|ColumnLayout|frame1|col2|row3|scriptFile`;
+}
+
+//------------------------------------------------------------------------------
+global proc savenMayaTempAndExport()
+//------------------------------------------------------------------------------
+{
+    global string $HomeDirectory;
+    string $path = $HomeDirectory + "/export/temp.mb";
+    file -ea -type "mayaAscii" $path;
+}
+
+//  Prepare the commandline params and fire the app.
+//------------------------------------------------------------------------------
+global proc executenMayaApp () 
+//------------------------------------------------------------------------------
+{
+    int $bDirty = 0; // all fine
+    global string $HomeDirectory;
+    global string $strFileMaya;
+    global string $strFileMesh;
+    global string $strFileScript;
+    global string $strFinal;
+    
+    string $strExporter;
+    string $strSize;
+    
+    nMayacontentRefresh();
+      
+    // prepare the maya path -> "/" -> "\\"
+    if ( $strFileMaya != "" ) 
+    {
+        $strFileMaya = substituteAllString($strFileMaya, "/", "\\\\");
+    } else 
+    {
+        $bDirty = 1;
+        savenMayaTempAndExport();
+	    $strFileMaya = $HomeDirectory+"/export/temp.ma";
+	    $strFileMaya = substituteAllString($strFileMaya, "/", "\\\\");
+    }
+
+    if ( $strFileMesh != "" )
+    {
+        $strFileMesh = " --mesh=" + $strFileMesh; 
+    }
+
+    if ( $strFileScript != "" )
+    {
+        $strFileScript = " --script=" + $strFileScript; 
+    }
+    
+    $strSize = "--size=" + `textField -query -text ExampleWindow7|ColumnLayout|frame1|col2|row4|size`;
+    
+    // debug or release
+    if ( `checkBox -query -value ExampleWindow7|ColumnLayout|frame1|col2|row4|debugMode` == 1 ) {
+        // debug
+        $strExporter = "/bin/win32d/nmaya.exe ";
+    } else {
+        // relese
+        $strExporter = "/bin/win32/nmaya.exe ";
+    }
+    
+    
+    if ( $bDirty == 0 ) {
+
+	    $strFinal = $HomeDirectory + $strExporter + $strFileMaya + $strFileMesh + $strFileScript + " " + $strSize;
+	    textField -edit -text $strFinal ExampleWindow7|ColumnLayout|StatusLine;
+    	system("start " + $strFinal);
+
+    } else {
+
+	    $strFinal = $HomeDirectory + $strExporter + " " + $strFileMaya + " " + $strFileMesh + " " + $strFileScript+ " " + $strSize;
+        textField -edit -text $strFinal ExampleWindow7|ColumnLayout|StatusLine;
+        system("start " + $strFinal);
+	
+	    $strFileMaya = "";
+    }
+}
+
+
+//------------------------------------------------------------------------------
+proc installnMayaMenu()
+//------------------------------------------------------------------------------
+{
+    //get name of maya window
+    global string $gMainWindow;
+
+    if (!`menu -exists nMaya1`)
+    {
+        menu 
+        -label "nMaya" 
+        -tearOff true 
+        -parent $gMainWindow
+        -allowOptionBoxes true
+        nMaya1;
+
+        menuItem 
+        -label "nMaya Model Exporter" 
+        -annotation "Start the nMaya Plugin"
+        -command "startnMayaUI";
+        
+        menuItem 
+        -label "nMaya UnInstall" 
+        -annotation "Uninstall the nMaya Plugin"
+        -command "uninstallnMayaMenu";
+    }
+    
+
+}
+
+//------------------------------------------------------------------------------
+global proc uninstallnMayaMenu()
+//------------------------------------------------------------------------------
+{
+    // child: delete our menu
+    if (`menu -exists nMaya1`)
+    {
+        deleteUI nMaya1;
+    } 
+}
+
+installnMayaMenu();
