@@ -908,7 +908,7 @@ pythoncmd_Puts(PyObject * /*self*/, PyObject *args)
     PyObject *result = NULL;
     char     *outputString;
 
-    if (PyArg_ParseTuple(args, "s:exists", &outputString))
+    if (PyArg_ParseTuple(args, "s:puts", &outputString))
     {
         nPythonServer::kernelServer->Print(outputString);
         Py_INCREF(Py_None);
