@@ -21,6 +21,8 @@ static void n_isstarted(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nnetserver
+    @cppclass
+    nNetServer
     @superclass
     nroot
     @classinfo

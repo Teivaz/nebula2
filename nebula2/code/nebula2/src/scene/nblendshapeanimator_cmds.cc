@@ -14,6 +14,8 @@ static void n_getanimationgroup(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nblendshapeanimator
+    @cppclass
+    nBlendShapeAnimator
     @superclass
     nanimator
     @classinfo

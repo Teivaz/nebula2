@@ -15,6 +15,9 @@ static void n_getmaxdistance(void* slf, nCmd* cmd);
     @scriptclass
     nsubdivshapenode
 
+    @cppclass
+    nSubdivShapeNode
+
     @superclass
     nshapenode
 

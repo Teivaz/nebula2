@@ -19,6 +19,8 @@ static void n_getclientstatus(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nnetclient
+    @cppclass
+    nNetClient
     @superclass
     nroot
     @classinfo

@@ -15,6 +15,8 @@ static void n_getserverattrat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nsessionservercontext
+    @cppclass
+    nSessionServerContext
     @superclass
     nroot
     @classinfo

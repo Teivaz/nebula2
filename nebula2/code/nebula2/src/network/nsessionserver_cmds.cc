@@ -26,6 +26,8 @@ static void n_start(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nsessionserver
+    @cppclass
+    nSessionServer
     @superclass
     nroot
     @classinfo

@@ -28,6 +28,8 @@ static void n_isjoindenied(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nsessionclient
+    @cppclass
+    nSessionClient
     @superclass
     nroot
     @classinfo
