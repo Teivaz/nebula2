@@ -1,0 +1,15 @@
+#-------------------------------------------------------------------------------
+#   Tutorial Workspace
+#-------------------------------------------------------------------------------
+
+beginworkspace tutorials
+    annotate "Contains all the basic tutorial examples"
+    settargets {
+        basic01
+        basic02
+        nkernel
+        nnebula
+        ndirect3d9
+        microtcl
+    }
+endworkspace
