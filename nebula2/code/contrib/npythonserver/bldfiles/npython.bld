@@ -10,14 +10,15 @@ beginmodule npythonserver
 endmodule
 #-----------------------------------------------------------------------------
 begintarget npython
-    settype lib
+    settype dll
     setmodules { npythonserver }
+    settargetdeps { nkernel nnebula microtcl }
 endtarget
 #-----------------------------------------------------------------------------
 begintarget nshpython
     annotate "Sample application: A Nebula2 console based interface using Python."
     settype exe
-    setmodules { nsh }
+    setmodules { nsh npythonserver }
     settargetdeps { nkernel nnebula ndirect3d9 ndinput8 microtcl npython }
 endtarget
 #-----------------------------------------------------------------------------
