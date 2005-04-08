@@ -674,6 +674,9 @@ nD3D9Server::UpdateCursor()
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
             n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): SetCursorProperties() failed!");
 
+            // not longer needed
+            surfPtr->Release();
+
             switch (this->cursorVisibility)
             {
                 case nGfxServer2::None:
