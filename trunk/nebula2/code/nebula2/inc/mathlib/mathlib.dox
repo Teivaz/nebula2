@@ -1,4 +1,15 @@
 /**
     @defgroup NebulaMathDataTypes Math Data Types
     @ingroup NebulaDataTypes
+
+    This section of the documentation covers the Nebula math libarary classes and 
+    functions.
+
+    @section NebulaMathDataTypesMatrix Matrix
+
+    The matrices in Nebula are <tt><i>Row Major</i></tt> which is identical 
+    to D3D. 
+    This means that a matrix position of <tt>[1][2]</tt> means we are refering to 
+    the number in <tt>[Row 1][Column 2]</tt>.
+    
 */
