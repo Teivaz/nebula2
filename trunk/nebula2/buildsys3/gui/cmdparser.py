@@ -300,8 +300,7 @@ class CommonCmd:
                 self.cmdBody == c.cmdBody and\
                 self.outFormat == c.outFormat and\
                 self.inFormat == c.inFormat and\
-                self.fourCC == c.fourCC and\
-                self.status != c.status):
+                self.fourCC == c.fourCC): # and self.status == c.status
             return 1
         return 0
 
@@ -344,7 +343,7 @@ class Cmd(CommonCmd):
         if not isinstance(c, Cmd): return 1
         if CommonCmd.__cmp__(self, c): return 1
         if not (self.type == c.type and\
-                self.subType != c.subType and\
+                self.subType == c.subType and\
                 self.propertyName == c.propertyName):
             return 1
         return 0
