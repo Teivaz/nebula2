@@ -5,15 +5,9 @@
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
 
-import wx
-import  wx.lib.rcsizer  as rcs
-#import wx.lib.mixins.listctrl as listmix
-import string, thread, logging, sys, os.path
-import wx.lib.newevent
-#import webbrowser
-
-import  wx.gizmos   as  gizmos
-#import  images
+import wx, string, os.path
+import wx.lib.rcsizer as rcs
+import wx.gizmos as gizmos
 
 from cmdparser import *
 from cmddatapanels import *
