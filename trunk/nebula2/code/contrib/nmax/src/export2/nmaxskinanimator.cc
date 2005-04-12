@@ -86,6 +86,21 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
 
         localTM = bone.localTransform;
 
+        // transform scale.
+        float scale = nMaxOptions::Instance()->GetGeomScaleValue();
+        if (scale != 0.0f)
+        {
+            Point3 scaleVal(scale, scale, scale);
+
+            Matrix3 scaleTM;
+            scaleTM.IdentityMatrix();
+            scaleTM.Scale(scaleVal);
+
+            localTM = localTM * scaleTM;
+        }
+
+        localTM.NoScale();
+
         decomp_affine(localTM, &ap);
 
         vector3 poseTranlator (-ap.t.x, ap.t.z, ap.t.y);

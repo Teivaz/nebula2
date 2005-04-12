@@ -419,19 +419,19 @@ bool nMaxScene::Postprocess()
 
             //FIXME: commented out until applying scaling to bones.
             // do geometry scaling.
-            //float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
-            //if (geomScale != 0.0f)
-            //{
-            //    vector3 scale;
-            //    matrix44 m;
+            float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+            if (geomScale != 0.0f)
+            {
+                vector3 scale;
+                matrix44 m;
 
-            //    scale.set(geomScale, geomScale, geomScale);
-            //    if (scale.len() != 1.0f)
-            //    {
-            //        m.scale(scale);
-            //        this->globalMeshBuilder.Transform(m);
-            //    }
-            //}
+                scale.set(geomScale, geomScale, geomScale);
+                if (scale.len() != 1.0f)
+                {
+                    m.scale(scale);
+                    this->globalMeshBuilder.Transform(m);
+                }
+            }
 
             // specifies bounding box.
             rootBBox = globalMeshBuilder.GetBBox();
