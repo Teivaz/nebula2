@@ -744,6 +744,9 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     // get local transform of the given node.
     Matrix3 tm = nMaxTransform::GetLocalTM(inode, animStart);
 
+    // scale transformation value. it only effects transflation.
+    float scl = nMaxOptions::Instance()->GetGeomScaleValue();
+
     tm.ValidateFlags();
     DWORD flag = tm.GetIdentFlags();
 
@@ -760,7 +763,7 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     // note: 'POS_IDENT' means position elements are identity.
     if (!(flag & POS_IDENT))
     {
-        vector3 trans (-ap.t.x, ap.t.z, ap.t.y);
+        vector3 trans (-ap.t.x*scl, ap.t.z*scl, ap.t.y*scl);
         tn->SetPosition(trans);
 
         bXForm = true;
