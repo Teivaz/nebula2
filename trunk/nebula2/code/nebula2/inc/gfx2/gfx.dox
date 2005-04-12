@@ -11,8 +11,8 @@
     @section NebulaGraphicsSystemCoordinates Coordinate System
     
     The default coordinate system of Nebula is <b>right-handed</b> coordinate 
-    system but Nebula can use a right-handed coordinate system or 
-    a left-handed coordinate system. The defalt culling mode of Nebula is clockwise.
+    system but Nebula can use a left-handed coordinate system either. 
+    The defalt culling mode of Nebula is clockwise.
 
     @note The default coordinate system of Direct3D is left-handed and OpenGL
     uses a right-handed coordinate system.
