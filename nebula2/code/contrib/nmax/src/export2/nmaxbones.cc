@@ -722,13 +722,30 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
                     nMaxSampleKey& skey = tmpSampleArray[key_idx];
 
-                    keyTrans.Set(vector4(-skey.pos.x, skey.pos.z, skey.pos.y, 0.0f));
+                    // transform scale
+                    float scale = nMaxOptions::Instance()->GetGeomScaleValue();
+                    if (scale != 0.0f)
+                    {
+                        Point3 scaleVal(scale, scale, scale);
+
+                        Matrix3 scaleTM;
+                        scaleTM.IdentityMatrix();
+                        scaleTM.Scale(scaleVal);
+
+                        skey.tm = skey.tm * scaleTM;
+                    }
+                    skey.tm.NoScale();
+
+                    AffineParts ap;
+                    decomp_affine(skey.tm, &ap );
+
+                    keyTrans.Set(vector4(-ap.t.x, ap.t.z, ap.t.y, 0.0f));
                     animCurveTrans.SetKey(clipKey, keyTrans);
 
-                    keyRot.Set(vector4(-skey.rot.x, skey.rot.z, skey.rot.y, -skey.rot.w));
+                    keyRot.Set(vector4(-ap.q.x, ap.q.z, ap.q.y, -ap.q.w));
                     animCurveRot.SetKey(clipKey, keyRot);
 
-                    keyScale.Set(vector4(skey.scale.x, skey.scale.z, skey.scale.y, 0.0f));
+                    keyScale.Set(vector4(ap.k.x, ap.k.z, ap.k.y, 0.0f));
                     animCurveScale.SetKey(clipKey, keyScale);
                 }
 
