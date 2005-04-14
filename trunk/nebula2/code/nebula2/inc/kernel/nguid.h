@@ -22,6 +22,8 @@
 #include <Rpcdce.h>
 #elif defined(__LINUX__)
 #include <uuid/uuid.h>
+#elif defined(__MACOSX__)
+#include <CoreFoundation/CFUUID.h>
 #else
 #error "nGuid not implemented!"
 #endif
@@ -55,7 +57,7 @@ private:
 inline
 nGuid::nGuid()
 {
-    #if defined(__WIN32__) || defined(__LINUX__)
+    #if defined(__WIN32__) || defined(__LINUX__) || defined(__MACOSX__)
     this->guidString = "00000000-0000-0000-0000-000000000000";
     #endif
 }
@@ -132,6 +134,17 @@ nGuid::Generate()
         char guidstr[37];
         uuid_unparse(guid, guidstr);
         this->guidString = guidstr;
+    #elif defined(__MACOSX__)
+        CFUUIDRef guid = CFUUIDCreate(NULL);
+        CFStringRef guidstr = CFUUIDCreateString(NULL, guid);
+        CFRelease(guid);
+
+        char guidcstr[37];
+        CFStringGetCString(guidstr, guidcstr,
+                           sizeof(guidcstr), kCFStringEncodingASCII);
+        CFRelease(guidstr);
+
+        this->guidString = guidcstr;
     #endif
 }
 
