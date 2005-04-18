@@ -44,6 +44,7 @@ class BldScanner(Scanner):
                     'setlibs_win32_debug'   : 'm_setlibs_win32_debug',
                     'setlibs_linux'         : 'm_setlibs_linux',
                     'setlibs_macosx'        : 'm_setlibs_macosx',
+                    'setframeworks_macosx'  : 'm_setframeworks_macosx',
                     'setmoduledeps'         : 'm_setmoduledeps',
                     'setnopkg'              : 'm_setnopkg',
                     'setmoddeffile'         : 'm_setmoddeffile'}
@@ -317,6 +318,12 @@ class BldScanner(Scanner):
         if not self.InBlock():
             self.begin('module') # switch back to parent state
     
+    def AddModuleMacOSXFramework(self, text):
+        self.CheckModuleNameDefined()
+        self.modules[len(self.modules) - 1].frameworksMacOSX.append(text)
+        if not self.InBlock():
+            self.begin('module') # switch back to parent state
+    
     def AddModuleDependency(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].moduleDeps.append(text)
@@ -561,6 +568,12 @@ class BldScanner(Scanner):
                             (Str('{'), StartBlock),
                             (Str('}'), EndBlock),
                             (filename, AddModuleMacOSXLib),
+                            (AnyChar, IGNORE)
+                        ]),
+                        State('m_setframeorks_macosx', [
+                            (Str('{'), StartBlock),
+                            (Str('}'), EndBlock),
+                            (filename, AddModuleMacOSXFramework),
                             (AnyChar, IGNORE)
                         ]),
                         State('m_setmoduledeps', [
