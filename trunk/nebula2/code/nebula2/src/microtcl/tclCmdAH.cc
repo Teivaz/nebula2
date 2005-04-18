@@ -1333,6 +1333,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
  *---------------------------------------------------------------------------
  */
 
+#if 0
 static int
 SplitPath(interp, objPtr, argcPtr, argvPtr)
     Tcl_Interp *interp;		/* Interp for error return.  May be NULL. */
@@ -1364,6 +1365,7 @@ SplitPath(interp, objPtr, argcPtr, argvPtr)
     }
     return TCL_OK;
 }
+#endif
 
 /*
  *---------------------------------------------------------------------------
@@ -1382,7 +1384,8 @@ SplitPath(interp, objPtr, argcPtr, argvPtr)
  *
  *---------------------------------------------------------------------------
  */
-  
+
+#if 0
 static int
 CheckAccess(interp, objPtr, mode)
     Tcl_Interp *interp;		/* Interp for status return.  Must not be
@@ -1407,7 +1410,8 @@ CheckAccess(interp, objPtr, mode)
 
     return TCL_OK;
 }
-
+#endif
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -1428,6 +1432,7 @@ CheckAccess(interp, objPtr, mode)
  *---------------------------------------------------------------------------
  */
 
+#if 0
 static int
 GetStatBuf(interp, objPtr, statProc, statPtr)
     Tcl_Interp *interp;		/* Interp for error return.  May be NULL. */
@@ -1460,6 +1465,7 @@ GetStatBuf(interp, objPtr, statProc, statPtr)
     }
     return TCL_OK;
 }
+#endif
 
 /*
  *----------------------------------------------------------------------
