@@ -21,7 +21,6 @@ beginmodule nremoteshell
     setdir   tools
     setfiles { nremoteshell }
     setmoduledeps  { nipc }
-    setlibs_macosx { Carbon }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nsh
@@ -29,7 +28,6 @@ beginmodule nsh
     settype  cpp
     setdir   tools
     setfiles { nsh }
-    setlibs_macosx { Carbon }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nviewer
@@ -37,7 +35,6 @@ beginmodule nviewer
     settype  cpp
     setdir   tools
     setfiles { nviewer }
-    setlibs_macosx { Carbon }
 endmodule
 
 

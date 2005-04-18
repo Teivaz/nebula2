@@ -21,7 +21,6 @@ beginmodule nmeshtool
         nmeshtool
     }
     setmoduledeps  { nmeshbuilder }
-    setlibs_macosx { Carbon }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmeshbuilder
