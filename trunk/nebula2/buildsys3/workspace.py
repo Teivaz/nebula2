@@ -32,6 +32,12 @@ class Workspace:
     #--------------------------------------------------------------------------
     def Validate(self):
         dataValid = True
+        # check if workspace contains targets
+        if not len(self.targets):
+            self.buildSys.logger.error('Workspace contains no targets' \
+                                       ' in workspace %s from %s',
+                                       self.name, self.bldFile)
+            dataValid = False
         # check workspace targets are defined
         for targetName in self.targets:
             if targetName not in self.buildSys.targets:
