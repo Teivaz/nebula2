@@ -213,7 +213,7 @@ proc emit_PBXFileReference { cid name path refType } {
 #   emit_PBXNativeTarget $cid $target
 #-------------------------------------------------------------------------------
 
-proc emit_PBXNativeTarget { cid target } {
+proc emit_PBXNativeTarget { cid target ws_includes ws_libdirs } {
     global platform
     variable targetids
     set fileIDs [list]
@@ -249,7 +249,6 @@ proc emit_PBXNativeTarget { cid target } {
     foreach module [get_tarmods $target] {
         if { [test_modplatform $module $platform ] } {
             set modType [get_modtype $module]
-            set includePath [get_modpath $module inc]
             foreach file [get_modsources_dressed $module] {
                 set name [join [list [lindex [split $file /] end] .cc] ""]
                 set path [join [list $file .cc] ""]
@@ -264,7 +263,7 @@ proc emit_PBXNativeTarget { cid target } {
                 append settings(COMPILER_FLAGS) "-DN_INIT=n_init_$module "
                 append settings(COMPILER_FLAGS) "-DN_NEW=n_new_$module "
                 append settings(COMPILER_FLAGS) "-DN_INITCMDS=n_initcmds_$module "
-                append settings(COMPILER_FLAGS) "-I$includePath "
+                append settings(COMPILER_FLAGS) "$ws_includes "
                 if { $targetType == "lib" } {
                     append settings(COMPILER_FLAGS) "-DN_STATIC "
                 }
@@ -386,8 +385,20 @@ proc emit_PBXProject { cid workspace } {
     lappend buildStyleIDs [emit_PBXBuildStyle $cid "Development"]
     lappend buildStyleIDs [emit_PBXBuildStyle $cid "Deployment"]
 
+    set inc_list [join [get_incsearchdirs]]
+    set lib_list [join [get_libsearchdirs]]
+
+    set ws_includes ""
+    foreach include $inc_list {
+        append ws_includes "-I$include "
+    }
+    set ws_libdirs ""
+    foreach libdir $lib_list {
+        append ws_libdirs "-L$libdir "
+    }
+
     foreach target [get_targets] {
-        set temp [emit_PBXNativeTarget $cid $target]
+        set temp [emit_PBXNativeTarget $cid $target $ws_includes $ws_libdirs]
         lappend targetIDs [lindex $temp 0]
         lappend groupIDs [lindex $temp 1]
     }
@@ -425,14 +436,13 @@ proc emit_PBXProject { cid workspace } {
 #   gen_xcode $workspace
 #-------------------------------------------------------------------------------
 
-proc gen_xcode { workspace } {
+proc gen_xcode { workspace xcodepath } {
     global platform
     global home
-    global cur_workspacepath
 
     ::log::log info "Generating XCode file for project: $workspace"
-    check_makedir $home/$cur_workspacepath/$workspace.xcode
-    set cid [open [cleanpath $home/$cur_workspacepath/$workspace.xcode/project.pbxproj] w]
+    check_makedir $home/$xcodepath/$workspace.xcode
+    set cid [open [cleanpath $home/$xcodepath/$workspace.xcode/project.pbxproj] w]
 
     puts $cid "// !$*UTF8*$!"
     puts $cid "{"
@@ -463,13 +473,14 @@ proc generate { wslist } {
 
         ::log::log debug "Generate xcode files"
 
+        set basepath    ./
         set xcodepath   ./build/xcode
         set outpath     ./bin
         set interpath   $xcodepath/inter
 
         foreach workspace [get_workspaces $wslist]  {
-            use_workspace $workspace $xcodepath $outpath $interpath
-            gen_xcode $workspace
+            use_workspace $workspace $basepath $outpath $interpath
+            gen_xcode $workspace $xcodepath
         }
     }
 }
