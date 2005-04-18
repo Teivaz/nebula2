@@ -336,6 +336,7 @@ proc fixtargets { } {
             addtolist tar($i,libs_win32_release)  $mod($ext,libs_win32_release)
             addtolist tar($i,libs_linux)  $mod($ext,libs_linux)
             addtolist tar($i,libs_macosx) $mod($ext,libs_macosx)
+            addtolist tar($i,frameworks_macosx) $mod($ext,frameworks_macosx)
 
         }
         set tar($i,libs_win32) [lsort -unique $tar($i,libs_win32)]
@@ -343,6 +344,7 @@ proc fixtargets { } {
         set tar($i,libs_win32_release) [lsort -unique $tar($i,libs_win32_release)]
         set tar($i,libs_linux) [lsort -unique $tar($i,libs_linux)]
         set tar($i,libs_macosx) [lsort -unique $tar($i,libs_macosx)]
+        set tar($i,frameworks_macosx) [lsort -unique $tar($i,frameworks_macosx)]
     }
 
     check_makedir $home/build/pkg
@@ -406,6 +408,7 @@ proc fixworkspaces { wslist } {
 
             set wspace($i,$tarname,libs_linux)  $tar($idx,libs_linux)
             set wspace($i,$tarname,libs_macosx) $tar($idx,libs_macosx)
+            set wspace($i,$tarname,frameworks_macosx) $tar($idx,frameworks_macosx)
             set wspace($i,$tarname,targetdeps)  $tar($idx,targetdeps)
             set wspace($i,$tarname,platform)    $tar($idx,platform)
             set wspace($i,$tarname,defs)        ""
@@ -433,11 +436,13 @@ proc fixworkspaces { wslist } {
 
                     addtolist wspace($i,$tarname,libs_linux) $tar($depidx,libs_linux)
                     addtolist wspace($i,$tarname,libs_macosx) $tar($depidx,libs_macosx)
+                    addtolist wspace($i,$tarname,frameworks_macosx) $tar($depidx,frameworks_macosx)
                 }
                 set wspace($i,$tarname,libs_win32_release) [lsort -unique $wspace($i,$tarname,libs_win32_release)]
                 set wspace($i,$tarname,libs_win32_debug) [lsort -unique $wspace($i,$tarname,libs_win32_debug)]
                 set wspace($i,$tarname,libs_linux) [lsort -unique $wspace($i,$tarname,libs_linux)]
                 set wspace($i,$tarname,libs_macosx) [lsort -unique $wspace($i,$tarname,libs_macosx)]
+                set wspace($i,$tarname,frameworks_macosx) [lsort -unique $wspace($i,$tarname,frameworks_macosx)]
             }
         }
 

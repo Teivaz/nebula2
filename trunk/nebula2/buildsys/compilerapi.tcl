@@ -43,6 +43,7 @@
 #    get_win32libs_debug    $tarname
 #    get_linuxlibs          $tarname
 #    get_osxlibs            $tarname
+#    get_osxframeworks      $tarname
 #
 #    test_modplatform       $tarname $platform
 #    get_modplatform        $tarname
@@ -470,7 +471,7 @@ proc get_linuxlibs {tarname} {
 #----------------------------------------------------------------------------
 #  get_osxlibs
 #
-#  Returns a full list of lib names to link in a linux build.  These are
+#  Returns a full list of lib names to link in a Mac OS X build.  These are
 #  not dressed for .a .o etc. and the extension will have to be provided
 #  by the compiler generator
 #----------------------------------------------------------------------------
@@ -479,6 +480,19 @@ proc get_osxlibs {tarname} {
     global cur_workspace
 
     return $wspace($cur_workspace,$tarname,libs_macosx)
+}
+
+
+#----------------------------------------------------------------------------
+#  get_osxframeworks
+#
+#  Returns a full list of framework names to use in Mac OS X build.
+#----------------------------------------------------------------------------
+proc get_osxframeworks {tarname} {
+    global wspace
+    global cur_workspace
+
+    return $wspace($cur_workspace,$tarname,frameworks_macosx)
 }
 
 #----------------------------------------------------------------------------
@@ -836,6 +850,7 @@ proc write_pkgfiles { } {
         set mod($num_mods,libs_win32_debug)     ""
         set mod($num_mods,libs_linux)           ""
         set mod($num_mods,libs_macosx)          ""
+        set mod($num_mods,frameworks_macosx)    ""
         set mod($num_mods,moduledeps)           ""
         set mod($num_mods,forcenopkg)           true
         set mod($num_mods,trunkdir)             ""

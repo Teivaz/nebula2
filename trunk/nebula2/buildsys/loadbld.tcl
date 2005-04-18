@@ -89,6 +89,7 @@ set current_file  ""
 #    setlibs_win32_debug   { $libname.lib $libname.lib ... }
 #    setlibs_linux         { $libname $libname ... }
 #    setlibs_macosx        { $libname $libname ... }
+#    setframeworks_macosx  { $frameworkname $frameworkname ... }
 #    setmoduledeps         { $modulename $modulename ... }
 #    setnopkg              true | false
 #    endmodule
@@ -550,6 +551,7 @@ proc begintarget {name} {
     set tar($num_tars,libs_win32_debug)   ""
     set tar($num_tars,libs_linux)         ""
     set tar($num_tars,libs_macosx)        ""
+    set tar($num_tars,frameworks_macosx)  ""
     set tar($num_tars,platform)           "all"
     set tar($num_tars,moddeffile)         ""
 }
@@ -705,6 +707,7 @@ proc beginmodule {name} {
     set mod($num_mods,libs_win32_debug)   ""
     set mod($num_mods,libs_linux)         ""
     set mod($num_mods,libs_macosx)        ""
+    set mod($num_mods,frameworks_macosx)  ""
     set mod($num_mods,moduledeps)        ""
     set mod($num_mods,forcenopkg)        false
 
@@ -890,6 +893,25 @@ proc setlibs_macosx {lib_list} {
         ::log::log warning "FAILED to setlibs_maxos for current blocktype '[getnameofblocktype $current_block]'."
     }
 }
+
+#----------------------------------------------------------------------------
+#  setframeworks_macosx $framework_list
+#  Frameworks that are used on Mac OSX.
+#----------------------------------------------------------------------------
+proc setframeworks_macosx {framework_list} {
+    global current_block
+    global module_block
+
+    if {$current_block == $module_block} {
+        global mod
+        global num_mods
+
+        addtolist mod($num_mods,frameworks_macosx)  $framework_list
+    } else {
+        ::log::log warning "FAILED to setframeworks_maxos for current blocktype '[getnameofblocktype $current_block]'."
+    }
+}
+
 
 #----------------------------------------------------------------------------
 #  setmoduledeps $mod_list
