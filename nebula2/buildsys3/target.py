@@ -32,6 +32,7 @@ class Target:
         self.libsWin32Release = [] # libs to link against only in release
         self.libsLinux = []
         self.libsMacOSX = []
+        self.frameworksMacOSX = []
         self.libsWin32DebugAll = [] # libsWin32Debug + libsWin32
         self.libsWin32ReleaseAll = [] # libsWin32Release + libsWin32
         # platforms this target can be built on
@@ -165,6 +166,9 @@ class Target:
             for libName in curModule.libsMacOSX:
                 if libName not in self.libsMacOSX:
                     self.libsMacOSX.append(libName)
+            for frameworkName in curModule.frameworksMacOSX:
+                if frameworkName not in self.frameworksMacOSX:
+                    self.frameworksMacOSX.append(frameworkName)
         # win32 libs need some more shuffling
         self.libsWin32DebugAll.extend(self.libsWin32Debug)
         self.libsWin32ReleaseAll.extend(self.libsWin32Release)

@@ -24,6 +24,7 @@ class Module:
         self.libsWin32Release = []
         self.libsLinux = []
         self.libsMacOSX = []
+        self.frameworksMacOSX = []
         self.moduleDeps = []
         #self.nopkg = False
         self.putInPkg = True
