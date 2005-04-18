@@ -224,15 +224,27 @@ proc emit_PBXNativeTarget { cid target } {
         set targetids($target) [nextuuid]
     }
 
+    set ldflags ""
+    foreach framework [get_osxframeworks $target] {
+        append ldflags " -framework $framework"
+    }
+    foreach lib [get_osxlibs $target] {
+        append ldflags " -l$lib"
+    }
+
     set tardeps [get_tardeps $target]
+    set targetType [get_tartype $target]
     foreach tardep $tardeps {
         if {[lsearch [array names targetids] $tardep] < 0} {
             set targetids($tardep) [nextuuid]
         }
         lappend dependencies [emit_PBXTargetDependency $cid $targetids($tardep)]
-    }
 
-    set targetType [get_tartype $target]
+        set depType [get_tartype $tardep]
+        if { $targetType == "exe" && $depType != "exe" } {
+            append ldflags " -l$tardep"
+        }
+    }
 
     foreach module [get_tarmods $target] {
         if { [test_modplatform $module $platform ] } {
@@ -310,6 +322,7 @@ proc emit_PBXNativeTarget { cid target } {
     puts $cid "\t\t\t);"
     puts $cid "\t\t\tbuildSettings = {"
     puts $cid "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;"
+    puts $cid "\t\t\t\tOTHER_LDFLAGS = \"$ldflags\";"
     puts $cid "\t\t\t};"
     puts $cid "\t\t\tbuildRules = ("
 

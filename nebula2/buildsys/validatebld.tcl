@@ -157,6 +157,11 @@ proc dump_data { filename } {
             puts $cid "      $lib"
         }
 
+        puts $cid "  Merged frameworks libs:"
+        foreach framework $tar($i,frameworks_macosx) {
+            puts $cid "      $framework"
+        }
+
         puts $cid ""
         puts $cid "--------------------------------------------------------"
         puts $cid ""
@@ -246,6 +251,11 @@ proc dump_data { filename } {
         puts $cid "  macosx libs:"
         foreach lib $mod($i,libs_macosx) {
             puts $cid "      $lib"
+        }
+
+        puts $cid "  macosx frameworks:"
+        foreach framework $mod($i,frameworks_macosx) {
+            puts $cid "      $framework"
         }
 
         puts $cid "  Module dependencies:"
