@@ -274,7 +274,7 @@ proc sort_mods_old { orig_list } {
 #
 #  Will return the relative path from the relfrom to the relto
 #  dirs.  Both inputs will be cleaned through cleanpath first and
-#  the clenapath caveat that both input dirs be relative to home
+#  the cleanpath caveat that both input dirs be relative to home
 #  applies. $relto may contain a filename as it's last path part.
 #
 #  The return is not passed through clean path and is a dead
@@ -291,6 +291,9 @@ proc findrelpath { relfrom relto } {
 #  that know they have clean paths can save the work.
 #--------------------------------------------------------------------
 proc findrelpath_clean { relfrom relto } {
+    if {$relfrom == $relto} {
+         return ./
+    }
     set lfrom [split $relfrom /]
     set lto [split $relto /]
 
