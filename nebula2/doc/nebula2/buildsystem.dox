@@ -369,14 +369,21 @@ endworkspace
       </tr>
 
       <tr>
-        <td>setlibs_linux</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>setlibs_linux</td> <td>{ libname.a ... }</td> <td>""</td>
         <td>A list of libs that this module requires to be linked against
         on Linux platforms.  Filenames should be specified without a path.</td>
       </tr>
 
       <tr>
-        <td>setlibs_macosx</td> <td>{ libname.lib ... }</td> <td>""</td>
+        <td>setlibs_macosx</td> <td>{ libname.a ... }</td> <td>""</td>
         <td>A list of libs that this module requires to be linked against
+        on Mac OSX.  Filenames should be specified without a path.</td>
+      </tr>
+
+      <tr>
+        <td>setframeworks_macosx</td> <td>{ FrameworkName ... }</td>
+        <td>""</td>
+        <td>A list of Frameworks that this module requires to be linked against
         on Mac OSX.  Filenames should be specified without a path.</td>
       </tr>
 
