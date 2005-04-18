@@ -153,6 +153,7 @@ beginmodule nfileserver2
         nfile ndirectory
     }
     setheaders { nfileserver2 nfile ndirectory }
+    setframeworks_macosx { Carbon }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nfilenode
