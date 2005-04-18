@@ -167,7 +167,7 @@ Get the DirectX 9 SDK "Summer Update", as described above.
 From the command line, go to <code>nebula2/</code> and type
 
 @verbatim
-  tclsh8.4 update.tcl
+  tclsh8.4 update.tcl -build xcode
 @endverbatim
 
 <b>Note:</b> The executable name on OS X is <tt>tclsh8.4</tt> and not <tt>tclsh84</tt> as it is on Windows.
