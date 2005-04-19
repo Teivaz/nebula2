@@ -570,7 +570,7 @@ class BldScanner(Scanner):
                             (filename, AddModuleMacOSXLib),
                             (AnyChar, IGNORE)
                         ]),
-                        State('m_setframeorks_macosx', [
+                        State('m_setframeworks_macosx', [
                             (Str('{'), StartBlock),
                             (Str('}'), EndBlock),
                             (filename, AddModuleMacOSXFramework),
