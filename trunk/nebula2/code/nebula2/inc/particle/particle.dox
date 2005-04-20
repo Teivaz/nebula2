@@ -1,11 +1,33 @@
 /**
     @defgroup NebulaParticleSystem Particle System
 
+    This section of the documentation covers Nebula particle system.
+
+    Nebula particle system is consist of particle server, particle emitter and
+    particle shape node.
+
+      - nParticleServer - A class for particle server which is responsible for 
+                          creating and managing of particle emitters.
+      - nParticleEmitter -  A class for particle emitter which generates particles.
+      - nParticleShapeNode - A class for particle scene node which is used for rendering
+                             a created particle emitter.
+
+    You might want to create a nParticleShapeNode to render particles in a scene. 
+    When a rendering context of a nParticleShapeNode is created(done by calling 
+    nParticleShapeNode::RenderContextCreated() function), a new particle emitter is create
+    from nParticleServer and the node saves emitter key to its render context for its later 
+    access. Whenever the node is rendered, it renders emitted particles by calling its emitter's 
+    trigger function(nParticleEmitter::Trigger()) and rendering fuction
+    (nParticleEmitter::Render()).
+
+    Besides above classes, there is nParticle class which represents each particle itself.
+
     The particle system in Nebula2 is quite different to the one in Nebula1. 
     It makes heavy use of a new class nEnvelopeCurve to control the particle 
-    attributes. 
+    attributes. See the next sections for what envelope curvers and attibute are.
 
-    <h2>Envelope Curves</h2>
+
+    @section NebulaParticleSystemEnvelopCurvers Envelope Curves
 
     Most of the particle attributes are set using envelope curves, these take 
     a position in the range [0.0, 1.0] and return a value based on the shape 
@@ -25,7 +47,8 @@
 
     It seems complicated at first but if you play with it soon makes sense. 
 
-    <h2>Attribute</h2>
+
+    @section NebulaParticleSystemAttribute Attribute
 
     The attributes are split into two groups according to how their envelopes 
     are keyed. 
