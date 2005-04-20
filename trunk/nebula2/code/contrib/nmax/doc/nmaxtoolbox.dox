@@ -1,14 +1,24 @@
 /**
     @defgroup NebulaMaxExport2Contrib 3DSMax Toolkit
     @ingroup NebulaContribAssetToolchainModules
-    @brief nMaxToolBox is a toolkit for 3DS Max for Nebula2.
+    
+    This section of the documentation provides technical information on the  
+    <b>Nebula 3DS Max Toolkit</b>(aka. nmaxtoolbox) which used to create contents  
+    and tools with 3DS Max. If you want to see the features of the toolkit and 
+    supported 3DS Max features or usages of the toolkit, see the toolkit manual
+    which provides for the artists. The toolkit manual can be found on 
+    <tt>$nebula2/code/contrib/nmax/doc/artistdoc</tt>
+
 
     @section NMAXToolBoxIntroduction Introduction
 
+    The <b>Nebula 3DS Max Toolkit</b> is a 3DS Max plugin dll. 
+
+
     @section NMAXToolBoxInstallation Building the Plugin
 
-    nMaxToolBox was targeted at 3DS Max 6 or its higher versions (mainly
-    developed on 3DS Max 7).
+    nMaxToolBox was targeted at 3DS Max 6 or its higher versions. 
+    (though the toolkit has been mainly developed on 3DS Max 7).
 
     When you develop a 3DS Max plug-ins, it is important to choose a
     proper compiler:
@@ -24,5 +34,41 @@
     be smoothly solved even with <tt>&lt;MAX_Mem.h&gt;</tt> which has been
     provided by Discreet as a solution to that problem, at the moment. So it
     is highly recommended to use VC 7.0 if you use 3DS Max 6.0.
+
+    The following list shows the steps of building the plugin:
+
+      -# Run @c update.tcl(or @c update.py) to generate workspace.
+      -# Add the path of the 3DS Max SDK headers and libraries to your VC
+         Project Directories.
+      -# Build the plugin package and copy it to <tt>$3dsmax\\plugins</tt> directory.
+        - Generated plugin file, @b nmaxtoolbox.dlu can be found in 
+          <tt>$nebula2/bin/win32</tt> or <tt>$nebula2/bin/win32d</tt> directory 
+          depending on your compile mode.
+      -# Run 3DS Max.
+        - copied plugin will automatically be loaded when you start up 3DS Max.
+
+
+    @section NMaxToolBoxComponents Components of the Toolkit
+
+    The toolkit has followings for its components:
+
+        - <b>Exporter</b> - 3DS Max exporter plugin for Nebula.
+        - <b>Nebula Script Function Expose System</b> - plugin written based on 3DS Max 
+          Function Publishing System which enables to call Nebula script commands via MaxScript.
+        - <b>Max Script Generator</b> - plugin which generates max script based on the given
+          Nebula object.
+
+
+    @section NMAXToolBoxAdditionalNotes Additional Notes 
+
+    The <b>Nebula2 3DS Max Toolkit</b> was written on the native 3DS Max SDK not 
+    IGame library which provided by Discreet for easy writing of exporter. 
+    (previous Nebula2 3dsmax exporter was written based on the IGame libararay)
+    The reason that the toolkit does not uses IGame libarary is that the library has some bugs
+    and it is not regularly updated and it is nothing more than the wrapper of the exsiting SDK.
+    So, for the reasons of those, the <b>Nebula2 3DS Max Toolkit</b> was written based on the 
+    native 3DS Max SDK which provided when the 3DS Max is installed.
+    
+    (C)2005 Kim, Hyoun Woo
 
 */
