@@ -23,7 +23,7 @@ begintarget nmaxtoolbox
     changedllextension dlu
     setexceptions true
 
-    setresource_win32 nmaxtoolbox
+    setresource_win32 code\contrib\nmax\res\nmaxtoolbox.rc 
 
     setmodules { 
         nmaxdlg
