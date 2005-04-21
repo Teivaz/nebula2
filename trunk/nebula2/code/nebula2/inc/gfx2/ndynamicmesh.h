@@ -8,6 +8,52 @@
     Helper class for rendering dynamic geometry, simplifies writing
     to the global dynamic mesh offered by the gfx server.
 
+    @section nDynamicMeshUsage Usage
+
+    The first thing you should do to use a @ref nDynamicMesh is that initialization  
+    of the dynamic mesh object. This can be done by calling nDynamicMesh::Initialize().
+    @code
+    dynMesh.Initialize(nGfxServer2::TriangleList, 
+                       nMesh2::Coord |
+                       nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 |
+                       nMesh2::Color, 
+                       nMesh2::WriteOnly | nMesh2::NeedVertexShader, 
+                       false // shared mesh flag. false means a new mesh is created for this. 
+                      );
+    @endcode
+
+    Before filling the mesh, nDynamicMesh::Begin() or nDynamicMesh::BeginIndexed() 
+    should be called to lock the vertex (and index buffer if you use indexed
+    dynamic mesh, the case nDynamicMesh::BeginIndexed() is used).
+    @code
+    float* dstVertices = 0; // Retrived vertex buffer pointer.
+    int maxVertices    = 0; // Max number of vertices which retrived from created(or shared) mesh
+
+    dynMesh.Begin(dstVertices, maxVertices);
+    @endcode
+
+    Now, you can fill vertices via retrieved vertex buffer pointer.
+    @code
+    dstVertices[curIndex++] = curPosition.x;
+    dstVertices[curIndex++] = curPosition.y;
+    dstVertices[curIndex++] = curPosition.z;
+    ...
+    @endcode
+
+    During you fill vertices, you should check that the mesh is full. 
+    If it is, you should throw away aleady filled vertices by calling 
+    nDynamicMesh::Swap()(or nDynamicMesh::SwapIndexed() for indexed vertices)
+    @code
+    dynMesh.Swap(curVertex, dstVertices);
+    @endcode
+
+    After you fill all vertices, call nDynamicMesh::End() to render the mesh.
+    @code
+    dynMesh.End(curVertex);
+    @endcode
+
+    See nParticleEmitter::Render() for complete source code of this section.
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gfx2/ngfxserver2.h"
