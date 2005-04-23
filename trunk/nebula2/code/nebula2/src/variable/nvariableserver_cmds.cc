@@ -7,6 +7,10 @@
 static void n_declarevariable(void* slf, nCmd* cmd);
 static void n_getnumvariables(void* slf, nCmd* cmd);
 static void n_getvariableat(void* slf, nCmd* cmd);
+static void n_getfloatvariable(void* slf, nCmd* cmd);
+static void n_getintvariable(void* slf, nCmd* cmd);
+static void n_getvectorvariable(void* slf, nCmd* cmd);
+static void n_getstringvariable(void* slf, nCmd* cmd);
 static void n_setfloatvariable(void* slf, nCmd* cmd);
 static void n_setintvariable(void* slf, nCmd* cmd);
 static void n_setvectorvariable(void* slf, nCmd* cmd);
@@ -34,6 +38,10 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_declarevariable_ss",      'DCLV', n_declarevariable);
     cl->AddCmd("i_getnumvariables_v",       'GNMV', n_getnumvariables);
     cl->AddCmd("ss_getvariableat_i",        'GVAT', n_getvariableat);
+    cl->AddCmd("f_getfloatvariable_s",      'GFLV', n_getfloatvariable);
+    cl->AddCmd("i_getintvariable_s",        'GINV', n_getintvariable);
+    cl->AddCmd("ffff_getvectorvariable_s",  'GVCV', n_getvectorvariable);
+    cl->AddCmd("s_getstringvariable_s",     'GSTV', n_getstringvariable);
     cl->AddCmd("v_setfloatvariable_sf",     'SFLV', n_setfloatvariable);
     cl->AddCmd("v_setintvariable_si",       'SINV', n_setintvariable);
     cl->AddCmd("v_setvectorvariable_sffff", 'SVCV', n_setvectorvariable);
@@ -48,10 +56,12 @@ n_initcmds(nClass* cl)
     @input
     s(VariableName), s(VariableFourCC)
     @output
-    i
+    i(VariableHandle)
     @info
     Add a new variable declaration. Declaring variables is not required but
-    the only way to get variables with both a valid name and a valid fourcc code.
+    the only way to get variables with both a valid name and a valid fourcc
+    code.
+
     Returns the variable's handle.
 */
 static void
@@ -60,7 +70,9 @@ n_declarevariable(void* slf, nCmd* cmd)
     nVariableServer* self = (nVariableServer*) slf;
     const char* s0 = cmd->In()->GetS();
     const char* s1 = cmd->In()->GetS();
-    cmd->Out()->SetI( self->DeclareVariable(s0, nVariableServer::StringToFourCC(s1)) );
+    nVariable::Handle handle;
+    handle = self->DeclareVariable(s0, nVariableServer::StringToFourCC(s1));
+    cmd->Out()->SetI((int)handle);
 }
 
 //------------------------------------------------------------------------------
@@ -102,6 +114,82 @@ n_getvariableat(void* slf, nCmd* cmd)
     self->GetVariableAt(cmd->In()->GetI(), varName, varFourCC);
     cmd->Out()->SetS(varName);
     cmd->Out()->SetS(nVariableServer::FourCCToString(varFourCC, buf, sizeof(buf)));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getfloatvariable
+    @input
+    s(VarName)
+    @output
+    f(Value)
+    @info
+    Get float value from a global variable.
+*/
+static void
+n_getfloatvariable(void* slf, nCmd* cmd)
+{
+    nVariableServer* self = (nVariableServer*) slf;
+    nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
+    cmd->Out()->SetF(self->GetFloatVariable(var));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getintvariable
+    @input
+    s(VarName)
+    @output
+    i(Value)
+    @info
+    Get integer value from a global variable.
+*/
+static void
+n_getintvariable(void* slf, nCmd* cmd)
+{
+    nVariableServer* self = (nVariableServer*) slf;
+    nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
+    cmd->Out()->SetI(self->GetIntVariable(var));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getvectorvariable
+    @input
+    s(VarName)
+    @output
+    ffff(Value)
+    @info
+    Get vector4 value from a global variable.
+*/
+static void
+n_getvectorvariable(void* slf, nCmd* cmd)
+{
+    nVariableServer* self = (nVariableServer*) slf;
+    nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
+    cmd->Out()->SetV4(self->GetVectorVariable(var));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getstringvariable
+    @input
+    s(VarName)
+    @output
+    s(Value)
+    @info
+    Get string value from a global variable.
+*/
+static void
+n_getstringvariable(void* slf, nCmd* cmd)
+{
+    nVariableServer* self = (nVariableServer*) slf;
+    nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
+    cmd->Out()->SetS(self->GetStringVariable(var));
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +246,7 @@ n_setvectorvariable(void* slf, nCmd* cmd)
 {
     nVariableServer* self = (nVariableServer*) slf;
     nVariable::Handle var = self->GetVariableHandleByName(cmd->In()->GetS());
-    nFloat4 vec;
+    vector4 vec;
     vec.x = cmd->In()->GetF();
     vec.y = cmd->In()->GetF();
     vec.z = cmd->In()->GetF();
