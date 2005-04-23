@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #   bin/startup.tcl
 #
-#   This is the central Nebula runtime startup script which is 
+#   This is the central Nebula runtime startup script which is
 #   used by various tools, like the Maya plugin or the viewer.
 #
 #   The script mainly sets up assigns and Nebula variables.
@@ -17,13 +17,13 @@ set oldCwd [psel]
 sel /sys/servers/file2
     set proj [.manglepath "proj:"]
     set home [.manglepath "home:"]
-    
+
     # stuff in data
     .setassign "scripts"  "$proj/data/scripts"
 
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
-        if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {   
+        if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {
             .setassign "shaders" "$home/data/shaders/2.0/"
             puts "Shader directory: $home/data/shaders/2.0"
         } else {
@@ -39,7 +39,7 @@ sel /sys/servers/file2
     if {[exists /sys/servers/shadow]} {
         /sys/servers/shadow.setusezfail true
     }
-    
+
     # stuff in export
     .setassign "physics"  "$proj/export/physics/"
     .setassign "meshes"   "$proj/export/meshes/"
@@ -101,7 +101,7 @@ proc OnGuiServerOpen {} {
         .setalignment "left"
         .setborder 0.005 0.005
     sel ..
-    
+
     # define the system skin
     set skin [/sys/servers/gui.newskin system]
     sel $skin
@@ -128,23 +128,23 @@ proc OnGuiServerOpen {} {
     .addbrush tooltip  skin   8 154  4  4 1.0 1.0 0.878 0.8
     .addbrush pink     skin   8 154  4  4 1.0 0.0 1.0 1.0
     .addbrush dragbox  skin   8 154  4  4 1.0 0.8 0.8 0.5
-    
+
     # text entry field
     .addbrush textentry_n skin 446 124 8 8 0.7 0.7 0.7 1.0
     .addbrush textentry_p skin 446 124 8 8 0.8 0.8 0.8 1.0
     .addbrush textentry_h skin 446 124 8 8 0.9 0.9 0.9 1.0
     .addbrush textcursor  skin 446 124 8 8 0.4 0.4 0.4 1.0
-    
+
     # the window close button
     .addbrush close_n skin 388 40 16 16 1.0 1.0 1.0 1.0
     .addbrush close_h skin 404 40 16 16 1.0 1.0 1.0 1.0
     .addbrush close_p skin 420 40 16 16 1.0 1.0 1.0 1.0
-    
+
     # the window size button
     .addbrush size_n skin 372 40 16 16 1.0 1.0 1.0 1.0
     .addbrush size_h skin 372 40 16 16 1.0 1.0 1.0 1.0
     .addbrush size_p skin 372 40 16 16 1.0 1.0 1.0 1.0
-    
+
     # arrows
     .addbrush arrowleft_n  skin  68 40 16 16 1.0 1.0 1.0 1.0
     .addbrush arrowleft_h  skin  84 40 16 16 1.0 1.0 1.0 1.0
@@ -167,16 +167,16 @@ proc OnGuiServerOpen {} {
     .addbrush sliderknobvert_n skin 324  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobvert_h skin 340  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobvert_p skin 356  40 16 16 1.0 1.0 1.0 1.0
-            
+
     # standard buttons
     .addbrush button_n skin 192 152 96 20 1.0 1.0 1.0 1.0
     .addbrush button_h skin 288 152 96 20 1.0 1.0 1.0 1.0
     .addbrush button_p skin 384 152 96 20 1.0 1.0 1.0 1.0
-    
+
     .addbrush menu_n skin 192 172 96 16 1.0 1.0 1.0 1.0
     .addbrush menu_h skin 288 172 96 16 1.0 1.0 1.0 1.0
     .addbrush menu_p skin 384 172 96 16 1.0 1.0 1.0 1.0
-        
+
     .addbrush button_64x16_n skin   0 0 64 16 1.0 1.0 1.0 1.0
     .addbrush button_64x16_h skin  64 0 64 16 1.0 1.0 1.0 1.0
     .addbrush button_64x16_p skin 128 0 64 16 1.0 1.0 1.0 1.0
@@ -208,7 +208,7 @@ proc OnGuiServerOpen {} {
     # list views
     .addbrush list_background skin 446  72 8 8 1.0 1.0 1.0 1.0
     .addbrush list_selection  skin  64 172 64 16 1.0 1.0 1.0 1.0
- 
+
     # icons
     .addbrush console_n skin     0  56 48 48 1.0 1.0 1.0 1.0
     .addbrush console_p skin     0  56 48 48 0.5 0.5 0.5 1.0
@@ -230,6 +230,10 @@ proc OnGuiServerOpen {} {
     .addbrush syswindow_p skin  192  56 48 48 0.5 0.5 0.5 1.0
     .addbrush syswindow_h skin  192 104 48 48 1.0 1.0 1.0 1.0
 
+    .addbrush contrwindow_n skin  336  56 48 48 1.0 1.0 1.0 1.0
+    .addbrush contrwindow_p skin  336  56 48 48 0.5 0.5 0.5 1.0
+    .addbrush contrwindow_h skin  336 104 48 48 1.0 1.0 1.0 1.0
+
     .addbrush hidegui_n skin    240  56 48 48 1.0 1.0 1.0 1.0
     .addbrush hidegui_p skin    240  56 48 48 0.5 0.5 0.5 1.0
     .addbrush hidegui_h skin    240 104 48 48 1.0 1.0 1.0 1.0
@@ -238,14 +242,21 @@ proc OnGuiServerOpen {} {
     .addbrush quit_p skin       288  56 48 48 0.5 0.5 0.5 1.0
     .addbrush quit_h skin       288 104 48 48 1.0 1.0 1.0 1.0
 
+    .addbrush disp_n skin       384  56 48 48 1.0 1.0 1.0 1.0
+    .addbrush disp_p skin       384  56 48 48 0.5 0.5 0.5 1.0
+    .addbrush disp_h skin       384 104 48 48 1.0 1.0 1.0 1.0
+
     # the left and right logos
     .addbrush n2logo n2logo 0 0 64 64 1.0 1.0 1.0 0.5
+
+    # the color hexagon for the colorpicker
+    .addbrush colorhex colorhexagon  0 0 170 141 1.0 1.0 1.0 1.0
 
     .endbrushes
 
     /sys/servers/gui.setsystemskin $skin
     /sys/servers/gui.setskin $skin
-    
+
     # create the Nebula dock window
     /sys/servers/gui.newwindow nguidockwindow true
 
