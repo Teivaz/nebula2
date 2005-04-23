@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiresource.h"
 
-nNebulaClass(nGuiColorPicker, "nguiclientwindow");
+nNebulaClass(nGuiColorPicker, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**
