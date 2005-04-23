@@ -20,5 +20,7 @@ The following files should be located under '$3dsmax/scripts/nebula2/'
   .terrain.ms          - 'Terrain Editor' menu item
   .terraineditor.ms    - 'Terrain Editor' menu item
   .n2logo256.bmp       - nebula2 logo bitmap file in about dialog.
+  .character.ms        - 'Animation Ediotr' menu item
+  .moflow.ms           - libarary functions for motion flow
 
 
