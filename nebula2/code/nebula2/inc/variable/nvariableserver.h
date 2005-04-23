@@ -56,14 +56,48 @@ public:
 
     /// get the global variable context
     const nVariableContext& GetGlobalVariableContext() const;
-    /// set the float value of a global variable
+    /// set a global variable
+    void SetGlobalVariable(const nVariable& var);
+    /// get a global variable by handle
+    const nVariable* GetGlobalVariable(nVariable::Handle varHandle) const;
+    /// get global variable by name
+    const nVariable* GetGlobalVariable(const char* varName) const;
+    /// return true if global variable exists by handle
+    bool GlobalVariableExists(nVariable::Handle varHandle) const;
+    /// return true if global variable exists by name
+    bool GlobalVariableExists(const char* varName) const;
+    /// get the float value of a global variable by handle
+    float GetFloatVariable(nVariable::Handle varHandle) const;
+    /// get float value of global variable by name
+    float GetFloatVariable(const char* varName) const;
+    /// get the vector4 value of a global variable by handle
+    const vector4& GetVectorVariable(nVariable::Handle varHandle) const;
+    /// get vector4 value of a global variable by name
+    const vector4& GetVectorVariable(const char* varName) const;
+    /// get the integer value of a global variable by handle
+    int GetIntVariable(nVariable::Handle varHandle) const;
+    /// get the integer value of a global by name
+    int GetIntVariable(const char* varName) const;
+    /// get the string value of a gloabl variable by handle
+    const char* GetStringVariable(nVariable::Handle varHandle) const;
+    /// get the string value of a global variable by name
+    const char* GetStringVariable(const char* varName) const;
+    /// set the float value of a global variable by handle
     void SetFloatVariable(nVariable::Handle varHandle, float v);
-    /// set the vector4 value of a global variable
-    void SetVectorVariable(nVariable::Handle varHandle, const nFloat4& v);
-    /// set the integer value of a global variable
+    /// set the float value of a global variable by name
+    void SetFloatVariable(const char* varName, float v);
+    /// set the vector4 value of a global variable by handle
+    void SetVectorVariable(nVariable::Handle varHandle, const vector4& v);
+    /// set the vector4 value of a global variable by name
+    void SetVectorVariable(const char* varName, const vector4& v);
+    /// set the integer value of a global variable by handle
     void SetIntVariable(nVariable::Handle varHandle, int i);
-    /// set the string value of a global variable
+    /// set the integer value of a global variable by handle
+    void SetIntVariable(const char* varName, int i);
+    /// set the string value of a global variable by handle
     void SetStringVariable(nVariable::Handle varHandle, const char* s);
+    /// set the string value of a global variable by name
+    void SetStringVariable(const char* varName, const char* s);
 
     /// convert a string to a fourcc code
     static nFourCC StringToFourCC(const char* str);
@@ -237,6 +271,147 @@ nVariableServer::FourCCToString(nFourCC fourcc, char* buf, int bufSize)
     buf[3] = (fourcc>>24) & 0xff;
     buf[4] = 0;
     return buf;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get reference to global variable context.
+*/
+inline
+const nVariableContext&
+nVariableServer::GetGlobalVariableContext() const
+{
+    return this->globalVariableContext;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nVariableServer::GlobalVariableExists(nVariable::Handle varHandle) const
+{
+    return (0 != this->globalVariableContext.GetVariable(varHandle));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nVariableServer::GlobalVariableExists(const char* varName) const
+{
+    return this->GlobalVariableExists(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+void
+nVariableServer::SetGlobalVariable(const nVariable& var)
+{
+    this->globalVariableContext.SetVariable(var);
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+const nVariable*
+nVariableServer::GetGlobalVariable(nVariable::Handle varHandle) const
+{
+    return this->globalVariableContext.GetVariable(varHandle);
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+const nVariable*
+nVariableServer::GetGlobalVariable(const char* varName) const
+{
+    return this->GetGlobalVariable(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+float
+nVariableServer::GetFloatVariable(const char* varName) const
+{
+    return this->GetFloatVariable(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+const vector4&
+nVariableServer::GetVectorVariable(const char* varName) const
+{
+    return this->GetVectorVariable(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+int
+nVariableServer::GetIntVariable(const char* varName) const
+{
+    return this->GetIntVariable(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+const char*
+nVariableServer::GetStringVariable(const char* varName) const
+{
+    return this->GetStringVariable(this->FindVariableHandleByName(varName));
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+void
+nVariableServer::SetFloatVariable(const char* varName, float v)
+{
+    this->SetFloatVariable(this->GetVariableHandleByName(varName), v);
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+void
+nVariableServer::SetVectorVariable(const char* varName, const vector4& v)
+{
+    this->SetVectorVariable(this->GetVariableHandleByName(varName), v);
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+void
+nVariableServer::SetIntVariable(const char* varName, int i)
+{
+    this->SetIntVariable(this->GetVariableHandleByName(varName), i);
+}
+
+//------------------------------------------------------------------------------
+/*
+*/
+inline
+void
+nVariableServer::SetStringVariable(const char* varName, const char* s)
+{
+    this->SetStringVariable(this->GetVariableHandleByName(varName), s);
 }
 
 //------------------------------------------------------------------------------

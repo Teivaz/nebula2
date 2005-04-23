@@ -228,6 +228,92 @@ nVariableServer::GetVariableFourCC(nVariable::Handle h)
     return this->registry[h].GetFourCC();
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    Get float value of a global variable from the global variable
+    context.
+*/
+float
+nVariableServer::GetFloatVariable(nVariable::Handle varHandle) const
+{
+    nVariable* var = this->globalVariableContext.GetVariable(varHandle);
+    if (var)
+    {
+        return var->GetFloat();
+    }
+    else
+    {
+        const char* variableName = this->Instance()->GetVariableName(varHandle);
+        n_error("Variable  %s does not exist in global variable context!", variableName);
+        return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get vector4 value of a global variable from the global variable
+    context.
+*/
+const vector4&
+nVariableServer::GetVectorVariable(nVariable::Handle varHandle) const
+{
+    nVariable* var = this->globalVariableContext.GetVariable(varHandle);
+    if (var)
+    {
+        return var->GetVector4();
+    }
+    else
+    {
+        const char* variableName = this->Instance()->GetVariableName(varHandle);
+        n_error("Variable '%s' does not exist in global variable context!", variableName);
+        static vector4 zero;
+        return zero;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get integer value of a global variable from the global variable
+    context.
+*/
+int
+nVariableServer::GetIntVariable(nVariable::Handle varHandle) const
+{
+    nVariable* var = this->globalVariableContext.GetVariable(varHandle);
+    if (var)
+    {
+        return var->GetInt();
+    }
+    else
+    {
+        const char* variableName = this->Instance()->GetVariableName(varHandle);
+        n_error("Variable '%s' does not exist in global variable context!", variableName);
+        return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get vector4 value of a global variable from the global variable
+    context.
+*/
+const char*
+nVariableServer::GetStringVariable(nVariable::Handle varHandle) const
+{
+    nVariable* var = this->globalVariableContext.GetVariable(varHandle);
+    if (var)
+    {
+        return var->GetString();
+    }
+    else
+    {
+        const char* variableName = this->Instance()->GetVariableName(varHandle);
+        n_error("Variable '%s' does not exist in global variable context!", variableName);
+        return 0;
+    }
+}
+
 //------------------------------------------------------------------------------
 /**
     Sets float value of a global variable in the global variable
@@ -274,12 +360,12 @@ nVariableServer::SetIntVariable(nVariable::Handle varHandle, int i)
     context.
 */
 void
-nVariableServer::SetVectorVariable(nVariable::Handle varHandle, const nFloat4& v)
+nVariableServer::SetVectorVariable(nVariable::Handle varHandle, const vector4& v)
 {
     nVariable* var = this->globalVariableContext.GetVariable(varHandle);
     if (var)
     {
-        var->SetFloat4(v);
+        var->SetVector4(v);
     }
     else
     {
@@ -308,12 +394,3 @@ nVariableServer::SetStringVariable(nVariable::Handle varHandle, const char* s)
     }
 }
 
-//------------------------------------------------------------------------------
-/**
-    Get reference to global variable context.
-*/
-const nVariableContext&
-nVariableServer::GetGlobalVariableContext() const
-{
-    return this->globalVariableContext;
-}
