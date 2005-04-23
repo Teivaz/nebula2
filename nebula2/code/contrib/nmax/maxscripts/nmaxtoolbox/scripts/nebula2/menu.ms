@@ -122,12 +122,11 @@ category:"nmaxtoolbox"
 buttonText:"Animation Editor..."
 tooltip:"Specify Animations States and Clips" 
 ( 	
+    include "nebula2/character.ms"
+
     on execute do 
     (
-        --  include "nebula2/animation.ms"
-        --r_dialogue = newrolloutfloater "Animation Utility" 400 700
-        --addRollout nMaxAnimStateTreeViewRollout r_dialogue rolledUp:false
-        messageBox "Not available yet." title:"Nebula2 Animation Editor"
+        createDialog rAnimStateEditor width:439 height:312
     )
 )
 
