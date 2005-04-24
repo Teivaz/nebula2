@@ -37,6 +37,7 @@ protected:
     nRef<nGuiButton> refConsoleButton;
     nRef<nGuiButton> refTexBrowserButton;
     nRef<nGuiButton> refGfxBrowserButton;
+    nRef<nGuiButton> refSceneControlButton;
     nRef<nGuiButton> refWatcherButton;
     nRef<nGuiButton> refSysInfoButton;
     nRef<nGuiButton> refAdjustButton;

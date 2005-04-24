@@ -4,14 +4,25 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiadjustdisplaywindow.h"
 #include "gui/nguihorislidergroup.h"
+#include "gui/nguicolorslidergroup.h"
 #include "scene/nmrtsceneserver.h"
+#include "variable/nvariableserver.h"
 
 nNebulaClass(nGuiAdjustDisplayWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
 */
-nGuiAdjustDisplayWindow::nGuiAdjustDisplayWindow()
+nGuiAdjustDisplayWindow::nGuiAdjustDisplayWindow() :
+    saturationHandle(nVariable::InvalidHandle),
+    balanceHandle(nVariable::InvalidHandle),
+    hdrBloomIntensityHandle(nVariable::InvalidHandle),
+    hdrBrightPassThresholdHandle(nVariable::InvalidHandle),
+    hdrBrightPassOffsetHandle(nVariable::InvalidHandle),
+    resetSaturation(0.0f),
+    resetBloomIntensity(0.0f),
+    resetBrightPassThreshold(0.0f),
+    resetBrightPassOffset(0.0f)
 {
     // empty
 }
@@ -29,10 +40,27 @@ nGuiAdjustDisplayWindow::~nGuiAdjustDisplayWindow()
 /**
 */
 void
+nGuiAdjustDisplayWindow::InitVariables()
+{
+    nVariableServer* varServer = nVariableServer::Instance();
+    this->saturationHandle             = varServer->GetVariableHandleByName("Saturation");
+    this->balanceHandle                = varServer->GetVariableHandleByName("Balance");
+    this->hdrBloomIntensityHandle      = varServer->GetVariableHandleByName("HdrBloomScale");
+    this->hdrBrightPassThresholdHandle = varServer->GetVariableHandleByName("HdrBrightPassThreshold");
+    this->hdrBrightPassOffsetHandle    = varServer->GetVariableHandleByName("HdrBrightPassOffset");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 nGuiAdjustDisplayWindow::OnShow()
 {
     // call parent class
     nGuiClientWindow::OnShow();
+
+    // initialize variables
+    this->InitVariables();
 
     this->SetTitle("Display Adjustments");
     vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
@@ -44,116 +72,91 @@ nGuiAdjustDisplayWindow::OnShow()
     // sliders...
     const float leftWidth = 0.3f;
     const float rightWidth = 0.1f;
-    const int maxVal = 768;
-    const int knobSize = 50;
     const float border = 0.005f;
 
+    // saturation
     nGuiHoriSliderGroup* slider;
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "Saturate");
     slider->SetLeftText("Saturate");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(5.0f);
+    slider->SetValue(0.0f);
+    slider->SetKnobSize(0.5f);
+    slider->SetIncrement(0.01f);
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
     layout->AttachForm(slider, nGuiFormLayout::Top, border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refSaturate = slider;
+    this->refSaturateSlider = slider;
 
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "BalanceRed");
-    slider->SetLeftText("Balance (red)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
+    // color balance
+    nGuiColorSliderGroup* colorSlider;
+    colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "Balance");
+    colorSlider->SetLabelText("Balance");
+    colorSlider->SetTextLabelWidth(leftWidth);
+    colorSlider->SetMaxIntensity(5.0f);
+    layout->AttachWidget(colorSlider, nGuiFormLayout::Top, this->refSaturateSlider, 2 * border);
+    layout->AttachForm(colorSlider, nGuiFormLayout::Left, border);
+    layout->AttachForm(colorSlider, nGuiFormLayout::Right, border);
+    colorSlider->OnShow();
+    this->refBalanceSlider = colorSlider;
+
+    // hdr bloom intensity
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBloomIntensity");
+    slider->SetLeftText("Bloom Intensity");
+    slider->SetRightText("%.1f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(10.0f);
+    slider->SetKnobSize(1.0f);
+    slider->SetIncrement(0.1f);
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refSaturate, 2 * border);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceSlider, 2 * border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refBalanceRed = slider;
+    this->refHdrBloomIntensitySlider = slider;
 
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "BalanceGreen");
-    slider->SetLeftText("Balance (green)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
+    // hdr bright pass threshold slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBrightPassThresholdSlider");
+    slider->SetLeftText("Brightpass Threshold");
+    slider->SetRightText("%.1f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(5.0f);
+    slider->SetKnobSize(1.0f);
+    slider->SetIncrement(0.1f);
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceRed, border);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBloomIntensitySlider, 2 * border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refBalanceGreen = slider;
+    this->refHdrBrightPassThresholdSlider = slider;
 
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "BalanceBlue");
-    slider->SetLeftText("Balance (blue)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
+    // hdr bright pass threshold slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBrightPassOffsetSlider");
+    slider->SetLeftText("Brightpass Offset");
+    slider->SetRightText("%.1f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(5.0f);
+    slider->SetKnobSize(1.0f);
+    slider->SetIncrement(0.1f);
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceGreen, border);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBrightPassThresholdSlider, 2 * border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refBalanceBlue = slider;
+    this->refHdrBrightPassOffsetSlider = slider;
 
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LuminanceRed");
-    slider->SetLeftText("Luminance (red)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
-    slider->SetLeftWidth(leftWidth);
-    slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceBlue, 2 * border);
-    layout->AttachForm(slider, nGuiFormLayout::Left, border);
-    layout->AttachForm(slider, nGuiFormLayout::Right, border);
-    slider->OnShow();
-    this->refLuminanceRed = slider;
-
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LuminanceBlue");
-    slider->SetLeftText("Luminance (blue)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
-    slider->SetLeftWidth(leftWidth);
-    slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refLuminanceRed, border);
-    layout->AttachForm(slider, nGuiFormLayout::Left, border);
-    layout->AttachForm(slider, nGuiFormLayout::Right, border);
-    slider->OnShow();
-    this->refLuminanceGreen = slider;
-
-    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LuminanceGreen");
-    slider->SetLeftText("Luminance (green)");
-    slider->SetRightText("%d");
-    slider->SetMinValue(0);
-    slider->SetMaxValue(maxVal);
-    slider->SetValue(0);
-    slider->SetKnobSize(knobSize);
-    slider->SetLeftWidth(leftWidth);
-    slider->SetRightWidth(rightWidth);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refLuminanceGreen, border);
-    layout->AttachForm(slider, nGuiFormLayout::Left, border);
-    layout->AttachForm(slider, nGuiFormLayout::Right, border);
-    slider->OnShow();
-    this->refLuminanceBlue = slider;
-
+    // reset button
     nGuiTextButton* btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "ResetButton");
     btn->SetText("Reset");
     btn->SetDefaultBrush("button_n");
@@ -161,13 +164,13 @@ nGuiAdjustDisplayWindow::OnShow()
     btn->SetHighlightBrush("button_h");
     btn->SetMinSize(buttonSize);
     btn->SetMaxSize(buttonSize);
-    layout->AttachWidget(btn, nGuiFormLayout::Top, this->refLuminanceBlue, 2 * border);
+    layout->AttachWidget(btn, nGuiFormLayout::Top, this->refHdrBrightPassOffsetSlider, 2 * border);
     layout->AttachForm(btn, nGuiFormLayout::Left, border);
     btn->OnShow();
     this->refResetButton = btn;
 
     kernelServer->PopCwd();
-    this->UpdateSlidersFromSceneServer();
+    this->UpdateSlidersFromValues();
 
     // set new window rect
     rectangle rect(vector2(0.0f, 0.0f), vector2(0.6f, 0.4f));
@@ -183,13 +186,11 @@ nGuiAdjustDisplayWindow::OnShow()
 void
 nGuiAdjustDisplayWindow::OnHide()
 {
-    this->refSaturate->Release();
-    this->refBalanceRed->Release();
-    this->refBalanceGreen->Release();
-    this->refBalanceBlue->Release();
-    this->refLuminanceRed->Release();
-    this->refLuminanceGreen->Release();
-    this->refLuminanceBlue->Release();
+    this->refSaturateSlider->Release();
+    this->refBalanceSlider->Release();
+    this->refHdrBloomIntensitySlider->Release();
+    this->refHdrBrightPassOffsetSlider->Release();
+    this->refHdrBrightPassThresholdSlider->Release();
     this->refResetButton->Release();
 
     nGuiClientWindow::OnHide();
@@ -201,25 +202,20 @@ nGuiAdjustDisplayWindow::OnHide()
 void
 nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
 {
-    if (this->refSaturate.isvalid() &&
-        this->refBalanceRed.isvalid() &&
-        this->refBalanceGreen.isvalid() &&
-        this->refBalanceBlue.isvalid() &&
-        this->refLuminanceRed.isvalid() &&
-        this->refBalanceGreen.isvalid() &&
-        this->refBalanceBlue.isvalid() &&
-        this->refResetButton.isvalid())
+    if (this->refSaturateSlider.isvalid() &&
+        this->refBalanceSlider.isvalid() &&
+        this->refHdrBloomIntensitySlider.isvalid() &&
+        this->refHdrBrightPassThresholdSlider.isvalid() &&
+        this->refHdrBrightPassOffsetSlider.isvalid())
     {
         if ((event.GetType() == nGuiEvent::SliderChanged) &&
-            (event.GetWidget() == this->refSaturate) ||
-            (event.GetWidget() == this->refBalanceRed) ||
-            (event.GetWidget() == this->refBalanceGreen) ||
-            (event.GetWidget() == this->refBalanceBlue) ||
-            (event.GetWidget() == this->refLuminanceRed) ||
-            (event.GetWidget() == this->refLuminanceGreen) ||
-            (event.GetWidget() == this->refLuminanceBlue))
+            (event.GetWidget() == this->refSaturateSlider) ||
+            (event.GetWidget() == this->refBalanceSlider) ||
+            (event.GetWidget() == this->refHdrBloomIntensitySlider) ||
+            (event.GetWidget() == this->refHdrBrightPassThresholdSlider) ||
+            (event.GetWidget() == this->refHdrBrightPassOffsetSlider))
         {
-            this->UpdateSceneServerFromSliders();
+            this->UpdateValuesFromSliders();
         }
         else if ((event.GetType() == nGuiEvent::ButtonUp) &&
                 (event.GetWidget() == this->refResetButton))
@@ -235,24 +231,45 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
     Update slider values from scene server.
 */
 void
-nGuiAdjustDisplayWindow::UpdateSlidersFromSceneServer()
+nGuiAdjustDisplayWindow::UpdateSlidersFromValues()
 {
-    if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
+    nVariableServer* varServer = nVariableServer::Instance();
+    float saturation = 1.0f;
+    if (varServer->GlobalVariableExists(this->saturationHandle))
     {
-        nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
-
-        float sat = sceneServer->GetSaturation();
-        const vector4& balance = sceneServer->GetBalance();
-        const vector4& lum = sceneServer->GetLuminance();
-
-        this->refSaturate->SetValue(int(sat * 255.0f));
-        this->refBalanceRed->SetValue(int(balance.x * 255.0f));
-        this->refBalanceGreen->SetValue(int(balance.y * 255.0f));
-        this->refBalanceBlue->SetValue(int(balance.z * 255.0f));
-        this->refLuminanceRed->SetValue(int(lum.x * 255.0f));
-        this->refLuminanceGreen->SetValue(int(lum.y * 255.0f));
-        this->refLuminanceBlue->SetValue(int(lum.z * 255.0f));
+        saturation = varServer->GetFloatVariable(this->saturationHandle);
+        this->resetSaturation = saturation;
     }
+    vector4 balance(1.0f, 1.0f, 1.0f, 1.0f);
+    if (varServer->GlobalVariableExists(this->balanceHandle))
+    {
+        balance = varServer->GetVectorVariable(this->balanceHandle);
+        this->resetBalance = balance;
+    }
+    float bloomIntensity = 1.0f;
+    if (varServer->GlobalVariableExists(this->hdrBloomIntensityHandle))
+    {
+        bloomIntensity = varServer->GetFloatVariable(this->hdrBloomIntensityHandle);
+        this->resetBloomIntensity = bloomIntensity;
+    }
+    float brightPassThreshold = 1.0f;
+    if (varServer->GlobalVariableExists(this->hdrBrightPassThresholdHandle))
+    {
+        brightPassThreshold = varServer->GetFloatVariable(this->hdrBrightPassThresholdHandle);
+        this->resetBrightPassThreshold = brightPassThreshold;
+    }
+    float brightPassOffset = 1.0f;
+    if (varServer->GlobalVariableExists(this->hdrBrightPassOffsetHandle))
+    {
+        brightPassOffset = varServer->GetFloatVariable(this->hdrBrightPassOffsetHandle);
+        this->resetBrightPassOffset = brightPassOffset;
+    }
+
+    this->refSaturateSlider->SetValue(saturation);
+    this->refBalanceSlider->SetColor(balance);
+    this->refHdrBloomIntensitySlider->SetValue(bloomIntensity);
+    this->refHdrBrightPassThresholdSlider->SetValue(brightPassThreshold);
+    this->refHdrBrightPassOffsetSlider->SetValue(brightPassOffset);
 }
 
 //------------------------------------------------------------------------------
@@ -260,28 +277,14 @@ nGuiAdjustDisplayWindow::UpdateSlidersFromSceneServer()
     Update scene server from slider values.
 */
 void
-nGuiAdjustDisplayWindow::UpdateSceneServerFromSliders()
+nGuiAdjustDisplayWindow::UpdateValuesFromSliders()
 {
-    if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
-    {
-        nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
-        
-        float sat = this->refSaturate->GetValue() / 255.0f;
-        vector4 balance;
-        vector4 lum;
-        balance.x = this->refBalanceRed->GetValue() / 255.0f;
-        balance.y = this->refBalanceGreen->GetValue() / 255.0f;
-        balance.z = this->refBalanceBlue->GetValue() / 255.0f;
-        balance.w = 1.0f;
-        lum.x = this->refLuminanceRed->GetValue() / 255.0f;
-        lum.y = this->refLuminanceGreen->GetValue() / 255.0f;
-        lum.z = this->refLuminanceBlue->GetValue() / 255.0f;
-        lum.w = 1.0f;
-
-        sceneServer->SetSaturation(sat);
-        sceneServer->SetBalance(balance);
-        sceneServer->SetLuminance(lum);
-    }
+    nVariableServer* varServer = nVariableServer::Instance();
+    varServer->SetFloatVariable(this->saturationHandle, this->refSaturateSlider->GetValue());
+    varServer->SetVectorVariable(this->balanceHandle, this->refBalanceSlider->GetColor());
+    varServer->SetFloatVariable(this->hdrBloomIntensityHandle, this->refHdrBloomIntensitySlider->GetValue());
+    varServer->SetFloatVariable(this->hdrBrightPassThresholdHandle, this->refHdrBrightPassThresholdSlider->GetValue());
+    varServer->SetFloatVariable(this->hdrBrightPassOffsetHandle, this->refHdrBrightPassOffsetSlider->GetValue());
 }
 
 //------------------------------------------------------------------------------
@@ -291,12 +294,11 @@ nGuiAdjustDisplayWindow::UpdateSceneServerFromSliders()
 void
 nGuiAdjustDisplayWindow::ResetValues()
 {
-    if (nSceneServer::Instance()->IsA(kernelServer->FindClass("nmrtsceneserver")))
-    {
-        nMRTSceneServer* sceneServer = (nMRTSceneServer*) nSceneServer::Instance();
-        sceneServer->SetSaturation(1.0f);
-        sceneServer->SetBalance(vector4(1.0f, 1.0f, 1.0f, 1.0f));
-        sceneServer->SetLuminance(vector4(0.299f, 0.587f, 0.114f, 0.0f));
-        this->UpdateSlidersFromSceneServer();
-    }
+    nVariableServer* varServer = nVariableServer::Instance();
+    varServer->SetFloatVariable(this->saturationHandle, this->resetSaturation);
+    varServer->SetVectorVariable(this->balanceHandle, this->resetBalance);
+    varServer->SetFloatVariable(this->hdrBloomIntensityHandle, this->resetBloomIntensity);
+    varServer->SetFloatVariable(this->hdrBrightPassThresholdHandle, this->resetBrightPassThreshold);
+    varServer->SetFloatVariable(this->hdrBrightPassOffsetHandle, this->resetBrightPassOffset);
+    this->UpdateSlidersFromValues();
 }

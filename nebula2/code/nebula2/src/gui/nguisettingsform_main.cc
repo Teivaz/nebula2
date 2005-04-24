@@ -165,10 +165,10 @@ nGuiSettingsForm::OnShow()
         slider->SetRightText("%d");
         slider->SetLeftWidth(0.0f);
         slider->SetRightWidth(0.1f);
-        slider->SetMinValue(sliderOption.minVal);
-        slider->SetMaxValue(sliderOption.maxVal);
+        slider->SetMinValue(float(sliderOption.minVal));
+        slider->SetMaxValue(float(sliderOption.maxVal));
         slider->SetValue(0);
-        slider->SetKnobSize((sliderOption.maxVal - sliderOption.minVal) / 10);
+        slider->SetKnobSize((sliderOption.maxVal - sliderOption.minVal) / 10.0f);
         slider->SetLabelFont(skin->GetLabelFont());
         this->AttachWidget(slider, nGuiFormLayout::VCenter, sliderOption.refLabel, 0.0f);
         this->AttachPos(slider, nGuiFormLayout::Left, dividerPos);
@@ -320,12 +320,12 @@ nGuiSettingsForm::UpdateUiFromSettings()
             if (prefServer->KeyExists(sliderOption.name))
             {
                 int sliderValue = prefServer->ReadInt(sliderOption.name);
-                sliderOption.refSlider->SetValue(sliderValue);
+                sliderOption.refSlider->SetValue(float(sliderValue));
             }
             else
             {
                 // no prefs item exists yet, set to default value
-                sliderOption.refSlider->SetValue(sliderOption.defaultVal);
+                sliderOption.refSlider->SetValue(float(sliderOption.defaultVal));
             }
         }
         prefServer->Close();
@@ -358,7 +358,7 @@ nGuiSettingsForm::UpdateSettingsFromUi()
         for (i = 0; i < num; i++)
         {
             const SliderOption& sliderOption = this->sliderOptions[i];
-            prefServer->WriteInt(sliderOption.name, sliderOption.refSlider->GetValue());
+            prefServer->WriteInt(sliderOption.name, int(sliderOption.refSlider->GetValue()));
         }
         prefServer->Close();
     }

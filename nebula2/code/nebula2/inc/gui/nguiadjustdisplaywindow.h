@@ -13,6 +13,7 @@
 #include "gui/nguiclientwindow.h"
 
 class nGuiHoriSliderGroup;
+class nGuiColorSliderGroup;
 class nGuiTextButton;
 
 //------------------------------------------------------------------------------
@@ -31,22 +32,33 @@ public:
     virtual void OnEvent(const nGuiEvent& event);
 
 private:
-    /// update slider from scene server
-    void UpdateSlidersFromSceneServer();
-    /// update scene server from sliders
-    void UpdateSceneServerFromSliders();
+    /// initialize variables
+    void InitVariables();
+    /// update slider from values
+    void UpdateSlidersFromValues();
+    /// update values from sliders
+    void UpdateValuesFromSliders();
     /// reset to defaults
     void ResetValues();
 
-    nRef<nGuiHoriSliderGroup> refSaturate;
-    nRef<nGuiHoriSliderGroup> refBalanceRed;
-    nRef<nGuiHoriSliderGroup> refBalanceGreen;
-    nRef<nGuiHoriSliderGroup> refBalanceBlue;
-    nRef<nGuiHoriSliderGroup> refLuminanceRed;
-    nRef<nGuiHoriSliderGroup> refLuminanceGreen;
-    nRef<nGuiHoriSliderGroup> refLuminanceBlue;
-    nRef<nGuiTextButton> refResetButton;
+    nRef<nGuiHoriSliderGroup>  refSaturateSlider;
+    nRef<nGuiColorSliderGroup> refBalanceSlider;
+    nRef<nGuiHoriSliderGroup>  refHdrBloomIntensitySlider;
+    nRef<nGuiHoriSliderGroup>  refHdrBrightPassThresholdSlider;
+    nRef<nGuiHoriSliderGroup>  refHdrBrightPassOffsetSlider;
+    nRef<nGuiTextButton>       refResetButton;
+
+    nVariable::Handle saturationHandle;
+    nVariable::Handle balanceHandle;
+    nVariable::Handle hdrBloomIntensityHandle;
+    nVariable::Handle hdrBrightPassThresholdHandle;
+    nVariable::Handle hdrBrightPassOffsetHandle;
+
+    float resetSaturation;
+    vector4 resetBalance;
+    float resetBloomIntensity;
+    float resetBrightPassThreshold;
+    float resetBrightPassOffset;
 };
 //------------------------------------------------------------------------------
 #endif
-

@@ -79,7 +79,7 @@ nGuiDockWindow::OnShow()
     btn->OnShow();
     this->refTexBrowserButton = btn;
 
-    // texture browser button
+    // gfx browser button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "GfxBrowserButton");
     n_assert(btn);
     btn->SetDefaultBrush("gfxbrowser_n");
@@ -94,6 +94,21 @@ nGuiDockWindow::OnShow()
     btn->OnShow();
     this->refGfxBrowserButton = btn;
 
+    // scene control button
+    btn = (nGuiButton*) kernelServer->New("nguibutton", "SceneControlButton");
+    n_assert(btn);
+    btn->SetDefaultBrush("contrwindow_n");
+    btn->SetPressedBrush("contrwindow_p");
+    btn->SetHighlightBrush("contrwindow_h");
+    btn->SetMinSize(btnSize);
+    btn->SetMaxSize(btnSize);
+    btn->SetTooltip("Scene Control");
+    layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
+    layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refGfxBrowserButton, 0.0f);
+    btn->OnShow();
+    this->refSceneControlButton = btn;
+
     // watcher window button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "WatcherButton");
     n_assert(btn);
@@ -105,7 +120,7 @@ nGuiDockWindow::OnShow()
     btn->SetTooltip("Debug Watchers");
     layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
     layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
-    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refGfxBrowserButton, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refSceneControlButton, 0.0f);
     btn->OnShow();
     this->refWatcherButton = btn;
 
@@ -127,9 +142,9 @@ nGuiDockWindow::OnShow()
     // adjust display button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "AdjustDisplayButton");
     n_assert(btn);
-    btn->SetDefaultBrush("syswindow_n");
-    btn->SetPressedBrush("syswindow_p");
-    btn->SetHighlightBrush("syswindow_h");
+    btn->SetDefaultBrush("disp_n");
+    btn->SetPressedBrush("disp_p");
+    btn->SetHighlightBrush("disp_h");
     btn->SetMinSize(btnSize);
     btn->SetMaxSize(btnSize);
     btn->SetTooltip("Adjust Display");
@@ -174,7 +189,7 @@ nGuiDockWindow::OnShow()
 
     // set window position and size
     rectangle rect;
-    const float width  = 8 * btnSize.x;
+    const float width  = 9 * btnSize.x;
     const float height = btnSize.y;
     rect.v0.set(0.5f - (width * 0.5f), 1.0f - height);
     rect.v1.set(0.5f + (width * 0.5f), 1.0f);
@@ -190,6 +205,7 @@ nGuiDockWindow::OnHide()
     this->refConsoleButton->Release();
     this->refTexBrowserButton->Release();
     this->refGfxBrowserButton->Release();
+  //  this->refSceneControlButton->Release();
     this->refWatcherButton->Release();
     this->refSysInfoButton->Release();
     this->refAdjustButton->Release();
@@ -222,6 +238,11 @@ nGuiDockWindow::OnEvent(const nGuiEvent& event)
         {
             // open a graphics browser window
             nGuiServer::Instance()->NewWindow("nguigraphicsbrowserwindow", true);
+        }
+        else if (event.GetWidget() == this->refSceneControlButton)
+        {
+            // open a graphics browser window - nur mal als Test.
+            nGuiServer::Instance()->NewWindow("nguiscenecontrolwindow", true);
         }
         else if (event.GetWidget() == this->refWatcherButton)
         {
