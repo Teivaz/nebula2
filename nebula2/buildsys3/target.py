@@ -189,6 +189,11 @@ class Target:
             for libName in target.libsWin32ReleaseAll:
                 if libName not in self.libsWin32ReleaseAll:
                     self.libsWin32ReleaseAll.append(libName)
+
+    #--------------------------------------------------------------------------
+    # Sort modules
+    def Finalize(self):
+        self.modules.sort()
     
     #--------------------------------------------------------------------------
     # Generate a pkg file for this target.

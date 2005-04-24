@@ -41,6 +41,12 @@ class Module:
         self.modDefFile = self.buildSys.CleanRelPath(self.modDefFile)
     
     #--------------------------------------------------------------------------
+    # Sort files and headers
+    def Finalize(self):
+        self.files.sort()
+        self.headers.sort()
+
+    #--------------------------------------------------------------------------
     # Resolve the filenames in the module definition to real paths, relative
     # to the Nebula home directory.
     def ResolvePaths(self):

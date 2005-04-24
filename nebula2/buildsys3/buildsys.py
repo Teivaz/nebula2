@@ -329,7 +329,7 @@ class BuildSys:
     def processInput(self):
         dataValid = True
         # process modules
-        for module in self.modules.values():
+        for module in self.modules.itervalues():
             module.ResolvePaths()
             if module.putInPkg:
                 if not module.FindAncestor():
@@ -338,16 +338,21 @@ class BuildSys:
         if not dataValid:
             return False
         # process targets
-        for target in self.targets.values():
+        for target in self.targets.itervalues():
             target.MergeBundles()
             target.AssesPlatformSupport()
             target.FindModuleDefFile()
             target.CollectLibsFromMods()
         # we can only do this once all targets have been processed
-        for target in self.targets.values():
+        for target in self.targets.itervalues():
             target.CollectLibsFromDepends()
+        # finalize modules and targets
+        for module in self.modules.itervalues():
+            module.Finalize()
+        for target in self.targets.itervalues():
+            target.Finalize()
         # process workspaces
-        for workspace in self.workspaces.values():
+        for workspace in self.workspaces.itervalues():
             workspace.CollectPreprocessorDefs()
         return True
         
