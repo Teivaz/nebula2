@@ -232,7 +232,7 @@ class vstudio7:
                     targetDep = self.buildSys.targets[targetDepName]
                     if targetDep.SupportsPlatform('win32'):
                         slnFile.write('\t\t{%s}.%i = {%s}\n' \
-                            % (targetDep.uuid, depCount, targetDep.uuid))
+                            % (target.uuid, depCount, targetDep.uuid))
                         depCount += 1
             slnFile.write('\tEndGlobalSection\n')
             # configurations
