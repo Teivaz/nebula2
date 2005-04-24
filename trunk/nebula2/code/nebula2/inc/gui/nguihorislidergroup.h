@@ -19,6 +19,13 @@
 class nGuiHoriSliderGroup : public nGuiFormLayout
 {
 public:
+    /// set the printf display format (default is Int)
+    enum DisplayFormat
+    {
+        Int,
+        Float,
+    };
+
     /// constructor
     nGuiHoriSliderGroup();
     /// destructor
@@ -44,21 +51,33 @@ public:
     /// get relative width of right text label
     float GetRightWidth() const;
     /// set the slider's minimum value
-    void SetMinValue(int v);
+    void SetMinValue(float v);
     /// get the slider's minimum value
-    int GetMinValue() const;
+    float GetMinValue() const;
     /// set the slider's maximum value
-    void SetMaxValue(int v);
+    void SetMaxValue(float v);
     /// get the slider's maximum value
-    int GetMaxValue() const;
+    float GetMaxValue() const;
     /// set the slider's current value
-    void SetValue(int v);
+    void SetValue(float v);
     /// get the slider's current value
-    int GetValue() const;
+    float GetValue() const;
     /// set the knob size
-    void SetKnobSize(int s);
+    void SetKnobSize(float s);
     /// get the knob size
-    int GetKnobSize() const;
+    float GetKnobSize() const;
+    /// set increment value
+    void SetIncrement(float i);
+    /// get increment value
+    float GetIncrement() const;
+    /// set snap-to-increment flag
+    void SetSnapToIncrement(bool b);
+    /// get snap-to-increment flag
+    bool GetSnapToIncrement() const;
+    /// set display format (default is Int)
+    void SetDisplayFormat(DisplayFormat f);
+    /// get display format
+    DisplayFormat GetDisplayFormat() const;
     /// called when widget is becoming visible
     virtual void OnShow();
     /// called when widget is becoming invisible
@@ -72,16 +91,79 @@ protected:
     nString labelFont;
     nString leftText;
     nString rightText;
+    DisplayFormat displayFormat;
     float leftWidth;
     float rightWidth;
-    int minValue;
-    int maxValue;
-    int curValue;
-    int knobSize;
+    float minValue;
+    float maxValue;
+    float curValue;
+    float knobSize;
+    float increment;
+    bool snapToIncrement;
     nRef<nGuiTextLabel> refLeftLabel;
     nRef<nGuiTextLabel> refRightLabel;
     nRef<nGuiSlider2>   refSlider;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiHoriSliderGroup::SetSnapToIncrement(bool b)
+{
+    this->snapToIncrement = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiHoriSliderGroup::GetSnapToIncrement() const
+{
+    return this->snapToIncrement;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiHoriSliderGroup::SetIncrement(float i)
+{
+    this->increment = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nGuiHoriSliderGroup::GetIncrement() const
+{
+    return this->increment;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiHoriSliderGroup::SetDisplayFormat(DisplayFormat f)
+{
+    this->displayFormat = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiHoriSliderGroup::DisplayFormat
+nGuiHoriSliderGroup::GetDisplayFormat() const
+{
+    return this->displayFormat;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -189,7 +271,7 @@ nGuiHoriSliderGroup::GetRightText() const
 */
 inline
 void
-nGuiHoriSliderGroup::SetMinValue(int v)
+nGuiHoriSliderGroup::SetMinValue(float v)
 {
     this->minValue = v;
 }
@@ -198,7 +280,7 @@ nGuiHoriSliderGroup::SetMinValue(int v)
 /**
 */
 inline
-int
+float
 nGuiHoriSliderGroup::GetMinValue() const
 {
     return this->minValue;
@@ -209,7 +291,7 @@ nGuiHoriSliderGroup::GetMinValue() const
 */
 inline
 void
-nGuiHoriSliderGroup::SetMaxValue(int v)
+nGuiHoriSliderGroup::SetMaxValue(float v)
 {
     this->maxValue = v;
 }
@@ -218,7 +300,7 @@ nGuiHoriSliderGroup::SetMaxValue(int v)
 /**
 */
 inline
-int
+float
 nGuiHoriSliderGroup::GetMaxValue() const
 {
     return this->maxValue;
@@ -229,13 +311,13 @@ nGuiHoriSliderGroup::GetMaxValue() const
 */
 inline
 void
-nGuiHoriSliderGroup::SetValue(int v)
+nGuiHoriSliderGroup::SetValue(float v)
 {
     this->curValue = v;
     if (this->refSlider.isvalid())
     {
-        this->refSlider->SetVisibleRangeStart(float(this->curValue - this->minValue));
-        this->refSlider->SetVisibleRangeSize(float(this->knobSize));
+        this->refSlider->SetVisibleRangeStart(this->curValue - this->minValue);
+        this->refSlider->SetVisibleRangeSize(this->knobSize);
     }
 }
 
@@ -243,7 +325,7 @@ nGuiHoriSliderGroup::SetValue(int v)
 /**
 */
 inline
-int
+float
 nGuiHoriSliderGroup::GetValue() const
 {
     return this->curValue;
@@ -254,7 +336,7 @@ nGuiHoriSliderGroup::GetValue() const
 */
 inline
 void
-nGuiHoriSliderGroup::SetKnobSize(int s)
+nGuiHoriSliderGroup::SetKnobSize(float s)
 {
     this->knobSize = s;
 }
@@ -263,7 +345,7 @@ nGuiHoriSliderGroup::SetKnobSize(int s)
 /**
 */
 inline
-int
+float
 nGuiHoriSliderGroup::GetKnobSize() const
 {
     return this->knobSize;
@@ -271,3 +353,4 @@ nGuiHoriSliderGroup::GetKnobSize() const
 
 //------------------------------------------------------------------------------
 #endif
+    

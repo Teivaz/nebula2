@@ -16,11 +16,15 @@ nGuiSlider2::nGuiSlider2() :
     overallSize(10.0f),
     visibleStart(0.0f),
     visibleSize(1.0f),
+    increment(1.0f),
     rangeDirty(true),
     knobNegEdgeLayoutIndex(0),
     knobPosEdgeLayoutIndex(0),
+    negAreaEdgeLayoutIndex(0),
+    posAreaEdgeLayoutIndex(0),
     dragging(false),
     horizontal(false),
+    snapToIncrement(false),
     dragVisibleStart(0.0)
 {
     // empty
@@ -85,7 +89,7 @@ nGuiSlider2::OnShow()
     negBtn->OnShow();
     this->refNegButton = negBtn;
 
-    // create down arrow button
+    // create positive arrow button
     nGuiButton* posBtn = (nGuiButton*) kernelServer->New("nguibutton", "PosButton");
     n_assert(posBtn);
     posBtn->SetMinSize(this->arrowBtnSize);
@@ -164,53 +168,56 @@ nGuiSlider2::OnShow()
     }
     knob->OnShow();
     this->refKnob = knob;
-    
-    // these buttons are used to detect mouse presses in the gutter/track
-	// they are usually invisible
-    nGuiButton* negTrack = (nGuiButton*) kernelServer->New("nguibutton", "NegTrack");
-    n_assert(negTrack);
-    if (this->horizontal)
-    {
-        negTrack->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
-        negTrack->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
-        this->AttachForm(negTrack, Top, 0.0f);
-        this->AttachWidget(negTrack, Left, negBtn, 0);
-        this->AttachWidget(negTrack, Right, knob, 0);
-    }
-    else
-    {
-        negTrack->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
-        negTrack->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
-        this->AttachForm(negTrack, Left, 0.0f);
-        this->AttachWidget(negTrack, Top, negBtn, 0);
-        this->AttachWidget(negTrack, Bottom, knob, 0);
-    }
-    this->refNegTrack = negTrack;
-    
-    nGuiButton* posTrack = (nGuiButton*) kernelServer->New("nguibutton", "PosTrack");
-    n_assert(posTrack);
-    if (this->horizontal)
-    {
-        posTrack->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
-        posTrack->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
-        this->AttachForm(posTrack, Top, 0.0f);
-        this->AttachWidget(posTrack, Left, knob, 0);
-        this->AttachWidget(posTrack, Right, posBtn, 0);
-    }
-    else
-    {
-        posTrack->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
-        posTrack->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
-        this->AttachForm(posTrack, Left, 0.0f);
-        this->AttachWidget(posTrack, Top, knob, 0);
-        this->AttachWidget(posTrack, Bottom, posBtn, 0);
-    }
-    this->refPosTrack = posTrack;
 
-    kernelServer->PopCwd();     // pop this
-    
+    // create negative background area button
+    nGuiButton* negArea = (nGuiButton*) kernelServer->New("nguibutton", "NegArea");
+    n_assert(negArea);
+    if (this->horizontal)
+    {
+        negArea->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
+        negArea->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
+        this->AttachWidget(negArea, Left, this->refNegButton, 0.0f);
+        this->negAreaEdgeLayoutIndex = this->AttachPos(negArea, Right, 0.0f);
+        this->AttachForm(negArea, Top, 0.0f);
+        this->AttachForm(negArea, Bottom, 0.0f);
+    }
+    else
+    {
+        negArea->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
+        negArea->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
+        this->AttachWidget(negArea, Top, this->refNegButton, 0.0f);
+        this->negAreaEdgeLayoutIndex = this->AttachPos(negArea, Bottom, 0.0f);
+        this->AttachForm(negArea, Left, 0.0f);
+        this->AttachForm(negArea, Right, 0.0f);
+    }
+    negArea->OnShow();
+    this->refNegArea = negArea;
+
+    // create positive background area button
+    nGuiButton* posArea = (nGuiButton*) kernelServer->New("nguibutton", "PosArea");
+    n_assert(posArea);
+    if (this->horizontal)
+    {
+        posArea->SetMinSize(vector2(0.0f, this->arrowBtnSize.y));
+        posArea->SetMaxSize(vector2(1.0f, this->arrowBtnSize.y));
+        this->posAreaEdgeLayoutIndex = this->AttachPos(posArea, Left, 0.0f);
+        this->AttachWidget(posArea, Right, this->refPosButton, 0.0f);
+        this->AttachForm(posArea, Top, 0.0f);
+        this->AttachForm(posArea, Bottom, 0.0f);
+    }
+    else
+    {
+        posArea->SetMinSize(vector2(this->arrowBtnSize.x, 0.0f));
+        posArea->SetMaxSize(vector2(this->arrowBtnSize.x, 1.0f));
+        this->posAreaEdgeLayoutIndex = this->AttachPos(posArea, Top, 0.0f);
+        this->AttachWidget(posArea, Bottom, this->refPosButton, 0.0f);
+        this->AttachForm(posArea, Left, 0.0f);
+        this->AttachForm(posArea, Right, 0.0f);
+    }
+    posArea->OnShow();
+    this->refPosArea = posArea;
+    kernelServer->PopCwd();
     this->UpdateLayout(this->rect);
-
     nGuiServer::Instance()->RegisterEventListener(this);
 }
 
@@ -242,6 +249,16 @@ nGuiSlider2::OnHide()
     {
         this->refKnob->Release();
         n_assert(!this->refKnob.isvalid());
+    }
+    if (this->refNegArea.isvalid())
+    {
+        this->refNegArea->Release();
+        n_assert(!this->refNegArea.isvalid());
+    }
+    if (this->refPosArea.isvalid())
+    {
+        this->refPosArea->Release();
+        n_assert(!this->refPosArea.isvalid());
     }
 
     // call parent class
@@ -325,6 +342,8 @@ nGuiSlider2::UpdateKnobLayout(const rectangle& newSliderRect)
     float relPosOffset = relArrowBtnSize + (relSliderSize * relKnobEnd);
     this->attachRules[this->knobNegEdgeLayoutIndex].offset = relNegOffset;
     this->attachRules[this->knobPosEdgeLayoutIndex].offset = relPosOffset;
+    this->attachRules[this->negAreaEdgeLayoutIndex].offset = relNegOffset;
+    this->attachRules[this->posAreaEdgeLayoutIndex].offset = relPosOffset;
 
     // send a slider changed
     nGuiEvent event(this, nGuiEvent::SliderChanged);
@@ -354,39 +373,39 @@ nGuiSlider2::OnEvent(const nGuiEvent& event)
 {
     nGuiFormLayout::OnEvent(event);
 
-    if (event.GetWidget() == this->refKnob.get())
+    if (event.GetWidget() == this->refKnob)
     {
         if (event.GetType() == nGuiEvent::ButtonDown)
         {
             this->BeginSliderDrag();
         }
     }
-    else if (event.GetWidget() == this->refPosButton.get())
+    else if (event.GetWidget() == this->refNegArea)
     {
-        if (event.GetType() == nGuiEvent::ButtonUp)
+        if (event.GetType() == nGuiEvent::ButtonDown)
         {
-            this->MoveSliderPos(false);
+            this->MoveSliderNeg(this->visibleSize);
         }
     }
-    else if (event.GetWidget() == this->refNegButton.get())
+    else if (event.GetWidget() == this->refPosArea)
     {
-        if (event.GetType() == nGuiEvent::ButtonUp)
+        if (event.GetType() == nGuiEvent::ButtonDown)
         {
-            this->MoveSliderNeg(false);
+            this->MoveSliderPos(this->visibleSize);
         }
     }
-    else if (event.GetWidget() == this->refNegTrack.get())
+    else if (event.GetWidget() == this->refPosButton)
     {
         if (event.GetType() == nGuiEvent::ButtonUp)
         {
-            this->MoveSliderNeg(true);
+            this->MoveSliderPos(this->increment);
         }
     }
-    else if (event.GetWidget() == this->refPosTrack.get())
+    else if (event.GetWidget() == this->refNegButton)
     {
         if (event.GetType() == nGuiEvent::ButtonUp)
         {
-            this->MoveSliderPos(true);
+            this->MoveSliderNeg(this->increment);
         }
     }
 
@@ -431,7 +450,7 @@ nGuiSlider2::BeginSliderDrag()
 {
     this->dragging          = true;
     this->startDragMousePos = nGuiServer::Instance()->GetMousePos();
-    this->dragVisibleStart  = this->visibleStart; 
+    this->dragVisibleStart  = this->visibleStart;
 }
 
 //------------------------------------------------------------------------------
@@ -484,11 +503,14 @@ nGuiSlider2::HandleDrag(const vector2& mousePos)
     if (screenSpaceSize > 0.0f)
     {
         float relDragDist = dragDist / screenSpaceSize;
-        
+
         // update range variables
         float newVisibleStart = this->dragVisibleStart + (relDragDist * this->overallSize);
         this->visibleStart = n_clamp(newVisibleStart, 0.0f, this->overallSize - this->visibleSize);
-
+        if (this->snapToIncrement)
+        {
+            this->SnapToIncrement();
+        }
         this->UpdateKnobLayout(this->rect);
         this->UpdateLayout(this->rect);
     }
@@ -496,21 +518,17 @@ nGuiSlider2::HandleDrag(const vector2& mousePos)
 
 //------------------------------------------------------------------------------
 /**
-    The slider is moved either one line or one page depending on the value
-    of pageJump.
+    Move slider one position into the positive direction.
 */
 void
-nGuiSlider2::MoveSliderPos(bool pageJump)
+nGuiSlider2::MoveSliderPos(float value)
 {
-    if (pageJump)
+    n_assert(value >= 0.0f);
+    this->visibleStart += value;
+    if (this->snapToIncrement)
     {
-        this->visibleStart += this->visibleSize;
+        this->SnapToIncrement();
     }
-    else
-    {
-        this->visibleStart++;
-    }
-    
     if ((this->visibleStart + this->visibleSize) >= this->overallSize)
     {
         this->visibleStart = this->overallSize - this->visibleSize;
@@ -521,21 +539,17 @@ nGuiSlider2::MoveSliderPos(bool pageJump)
 
 //------------------------------------------------------------------------------
 /**
-    The slider is moved either one line or one page depending on the value
-    of pageJump.
+    Move slider one position into the negative direction.
 */
 void
-nGuiSlider2::MoveSliderNeg(bool pageJump)
+nGuiSlider2::MoveSliderNeg(float value)
 {
-    if (pageJump)
+    n_assert(value >= 0.0f);
+    this->visibleStart -= value;
+    if (this->snapToIncrement)
     {
-        this->visibleStart -= this->visibleSize;
+        this->SnapToIncrement();
     }
-    else
-    {
-        this->visibleStart--;
-    }
-    
     if (this->visibleStart < 0)
     {
         this->visibleStart = 0;
@@ -543,3 +557,19 @@ nGuiSlider2::MoveSliderNeg(bool pageJump)
     this->UpdateKnobLayout(this->rect);
     this->UpdateLayout(this->rect);
 }
+
+//------------------------------------------------------------------------------
+/**
+    If snap-to-increment is enabled, snap the visibleStart value to be
+    a multiple of the increment member.
+*/
+void
+nGuiSlider2::SnapToIncrement()
+{
+    n_assert(this->snapToIncrement);
+    n_assert(this->increment > 0.0f);
+    float remainder = fmodf(this->visibleStart + this->increment * 0.5f, this->increment);
+    this->visibleStart -= remainder;
+}
+
+

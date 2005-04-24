@@ -306,6 +306,54 @@ beginmodule nguitextwindow
     setheaders nguitextwindow
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguiscenecontrolwindow
+    setdir gui
+    setfiles {
+        nguiscenecontrolwindow_main
+    }
+    setheaders nguiscenecontrolwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicoloradjust
+    setdir gui
+    setfiles {
+        nguicoloradjust_main
+    }
+    setheaders nguicoloradjust
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicoloradjustwindow
+    setdir gui
+    setfiles {
+        nguicoloradjustwindow_main
+    }
+    setheaders nguicoloradjustwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorlabel
+    setdir gui
+    setfiles {
+        nguicolorlabel_main
+    }
+    setheaders nguicolorlabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorpicker
+    setdir gui
+    setfiles {
+        nguicolorpicker_main
+    }
+    setheaders nguicolorpicker
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorslidergroup
+    setdir gui
+    setfiles {
+        nguicolorslidergroup_main
+    }
+    setheaders nguicolorslidergroup
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
@@ -320,6 +368,8 @@ begintarget ngui
         nguitabbedlayout nguimessagebox nguiserver nguicanvas nguidiagramcanvas
         nguiadjustdisplaywindow nguicontextmenu nguidragbox
         nguigraphicsbrowserwindow nguisettingsform nguitexttable nguitextwindow
+        nguiscenecontrolwindow nguicoloradjust nguicoloradjustwindow
+        nguicolorlabel nguicolorpicker nguicolorslidergroup
     }
 endtarget
 

@@ -36,14 +36,14 @@ n_initcmds(nClass* cl)
     cl->BeginCmds();
     cl->AddCmd("v_setlefttext_s",    'SLFT', n_setlefttext);
     cl->AddCmd("v_setrighttext_s",   'SRGT', n_setrighttext);
-    cl->AddCmd("v_setminvalue_i",    'SMIN', n_setminvalue);
-    cl->AddCmd("v_setmaxvalue_i",    'SMAX', n_setmaxvalue);
-    cl->AddCmd("v_setvalue_i",       'SVAL', n_setvalue);
-    cl->AddCmd("i_getvalue_v",       'GVAL', n_getvalue);
+    cl->AddCmd("v_setminvalue_f",    'SMIN', n_setminvalue);
+    cl->AddCmd("v_setmaxvalue_f",    'SMAX', n_setmaxvalue);
+    cl->AddCmd("v_setvalue_f",       'SVAL', n_setvalue);
+    cl->AddCmd("f_getvalue_v",       'GVAL', n_getvalue);
     cl->AddCmd("v_setleftwidth_f",   'SLWD', n_setleftwidth);
     cl->AddCmd("v_setrightwidth_f",  'SFWD', n_setrightwidth);
     cl->AddCmd("v_setlabelfont_s",   'SFON', n_setlabelfont);
-    cl->AddCmd("v_setknobsize_i",    'SKSZ', n_setknobsize);
+    cl->AddCmd("v_setknobsize_f",    'SKSZ', n_setknobsize);
     cl->EndCmds();
 }
 
@@ -86,7 +86,7 @@ n_setrighttext(void* slf, nCmd* cmd)
     @cmd
     setminvalue
     @input
-    i
+    f
     @output
     v
     @info
@@ -96,14 +96,14 @@ static void
 n_setminvalue(void* slf, nCmd* cmd)
 {
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
-    self->SetMinValue(cmd->In()->GetI());
+    self->SetMinValue(cmd->In()->GetF());
 }
 //-----------------------------------------------------------------------------
 /**
     @cmd
     setmaxvalue
     @input
-    i
+    f
     @output
     v
     @info
@@ -113,14 +113,14 @@ static void
 n_setmaxvalue(void* slf, nCmd* cmd)
 {
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
-    self->SetMaxValue(cmd->In()->GetI());
+    self->SetMaxValue(cmd->In()->GetF());
 }
 //-----------------------------------------------------------------------------
 /**
     @cmd
     setvalue
     @input
-    i
+    f
     @output
     v
     @info
@@ -130,7 +130,7 @@ static void
 n_setvalue(void* slf, nCmd* cmd)
 {
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
-    self->SetValue(cmd->In()->GetI());
+    self->SetValue(cmd->In()->GetF());
 }
 //-----------------------------------------------------------------------------
 /**
@@ -139,7 +139,7 @@ n_setvalue(void* slf, nCmd* cmd)
     @input
     v
     @output
-    i
+    f
     @info
     Gets the slider's current value.
 */
@@ -147,7 +147,7 @@ static void
 n_getvalue(void* slf, nCmd* cmd)
 {
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
-    cmd->Out()->SetI(self->GetValue());
+    cmd->Out()->SetF(self->GetValue());
 }
 //-----------------------------------------------------------------------------
 /**
@@ -205,7 +205,7 @@ n_setlabelfont(void* slf, nCmd* cmd)
     @cmd
     setknobsize
     @input
-    i
+    f
     @output
     v
     @info
@@ -215,5 +215,5 @@ static void
 n_setknobsize(void* slf, nCmd* cmd)
 {
     nGuiHoriSliderGroup* self = (nGuiHoriSliderGroup*) slf;
-    self->SetKnobSize(cmd->In()->GetI());
+    self->SetKnobSize(cmd->In()->GetF());
 }

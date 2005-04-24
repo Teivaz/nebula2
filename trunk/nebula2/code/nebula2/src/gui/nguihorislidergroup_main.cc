@@ -13,12 +13,15 @@ nNebulaScriptClass(nGuiHoriSliderGroup, "nguiformlayout");
 */
 nGuiHoriSliderGroup::nGuiHoriSliderGroup() :
     labelFont("GuiSmall"),
-    minValue(0),
-    maxValue(10),
-    curValue(0),
-    knobSize(1),
+    displayFormat(Int),
+    minValue(0.0f),
+    maxValue(10.0f),
+    curValue(0.0f),
+    knobSize(1.0f),
+    increment(1.0f),
     leftWidth(0.2f),
-    rightWidth(0.1f)
+    rightWidth(0.1f),
+    snapToIncrement(false)
 {
     // empty
 }
@@ -46,10 +49,12 @@ nGuiHoriSliderGroup::OnShow()
     // create slider widget
     nGuiSlider2* slider = (nGuiSlider2*) kernelServer->New("nguislider2", "Slider");
     n_assert(slider);
-    slider->SetRangeSize(float((this->maxValue - this->minValue) + this->knobSize));
-    slider->SetVisibleRangeStart(float(this->curValue - this->minValue));
-    slider->SetVisibleRangeSize(float(this->knobSize));
+    slider->SetRangeSize((this->maxValue - this->minValue) + this->knobSize);
+    slider->SetVisibleRangeStart(this->curValue - this->minValue);
+    slider->SetVisibleRangeSize(this->knobSize);
+    slider->SetIncrement(this->increment);
     slider->SetHorizontal(true);
+    slider->SetSnapToIncrement(false);
     this->AttachForm(slider, Top, 0.0f);
     this->AttachPos(slider, Left, this->leftWidth);
     this->AttachPos(slider, Right, 1.0f - this->rightWidth);
@@ -133,14 +138,24 @@ nGuiHoriSliderGroup::OnFrame()
 {
     if (this->refSlider.isvalid())
     {
-        this->curValue = this->minValue + int(this->refSlider->GetVisibleRangeStart());
+        this->curValue = this->minValue + this->refSlider->GetVisibleRangeStart();
 
         // update left and right label formatted strings
         char buf[1024];
-        snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
-        this->refLeftLabel->SetText(buf);
-        snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
-        this->refRightLabel->SetText(buf);
+        if (Int == this->displayFormat)
+        {
+            snprintf(buf, sizeof(buf), this->leftText.Get(), int(this->curValue));
+            this->refLeftLabel->SetText(buf);
+            snprintf(buf, sizeof(buf), this->rightText.Get(), int(this->curValue));
+            this->refRightLabel->SetText(buf);
+        }
+        else
+        {
+            snprintf(buf, sizeof(buf), this->leftText.Get(), this->curValue);
+            this->refLeftLabel->SetText(buf);
+            snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
+            this->refRightLabel->SetText(buf);
+        }            
     }
     nGuiFormLayout::OnFrame();
 }

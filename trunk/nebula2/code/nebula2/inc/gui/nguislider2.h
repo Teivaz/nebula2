@@ -4,21 +4,23 @@
 /**
     @class nGuiSlider2
     @ingroup Gui
-    @brief A vertical or horizontal slider widget.
+
+    A vertical or horizontal slider widget.
 
     A slider requires that normal, pressed, and highlighted brushes be
     defined for each of its two arrow buttons (for a horizontal slider,
     arrowleft_n, arrowleft_p, arrowleft_h, and arrowright_n/p/h; for a
     vertical slider, arrowup/down_n/p/h) and for its thumb aka drag
-    button (sliderknobhori_n/p/h or sliderknobvert_n/p/h); all are 
+    button (sliderknobhori_n/p/h or sliderknobvert_n/p/h); all are
     expected to be the same size.
 
     Two optional background brushes are also supported (these lie under
     the button brushes):
-    sliderbg fills the entire background of the slider, including the
-    area behind the arrow buttons.
-    slidertrack lies between the arrows.
-    
+
+     - sliderbg fills the entire background of the slider, including the
+       area behind the arrow buttons.
+     - slidertrack lies between the arrows.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
@@ -46,10 +48,18 @@ public:
     void SetVisibleRangeSize(float i);
     /// get the size of the visible range
     float GetVisibleRangeSize() const;
+    /// set increment/decrement value
+    void SetIncrement(float v);
+    /// get incremental value
+    float GetIncrement() const;
     /// horizontal flag (default is vertical)
     void SetHorizontal(bool b);
     /// get horizontal flag
     bool GetHorizontal() const;
+    /// set snap-to-increment flag
+    void SetSnapToIncrement(bool b);
+    /// get snap-to-increment flag
+    bool GetSnapToIncrement() const;
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
     /// called when widget is becoming visible
@@ -77,31 +87,77 @@ private:
     /// handle knob dragging
     void HandleDrag(const vector2& mousePos);
     /// move slider one position into positive direction
-    void MoveSliderPos(bool pageJump);
+    void MoveSliderPos(float value);
     /// move slider one position into negative direction
-    void MoveSliderNeg(bool pageJump);
+    void MoveSliderNeg(float value);
+    /// handle "snap-to-increment"
+    void SnapToIncrement();
 
     float overallSize;
     float visibleStart;
     float visibleSize;
+    float increment;
     bool rangeDirty;
 
-    nRef<nGuiButton>     refNegButton;
-    nRef<nGuiButton>     refPosButton;
-    nRef<nGuiButton>     refKnob;
-    nRef<nGuiLabel>      refBgLabel;
-    nRef<nGuiButton>     refNegTrack;
-    nRef<nGuiButton>     refPosTrack;
+    nRef<nGuiButton> refNegButton;
+    nRef<nGuiButton> refPosButton;
+    nRef<nGuiButton> refNegArea;
+    nRef<nGuiButton> refPosArea;
+    nRef<nGuiButton> refKnob;
+    nRef<nGuiLabel>  refBgLabel;
 
     vector2 arrowBtnSize;
     int knobNegEdgeLayoutIndex;
     int knobPosEdgeLayoutIndex;
+    int negAreaEdgeLayoutIndex;
+    int posAreaEdgeLayoutIndex;
 
     bool dragging;
     bool horizontal;
+    bool snapToIncrement;
     vector2 startDragMousePos;
     float dragVisibleStart;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSlider2::SetSnapToIncrement(bool b)
+{
+    this->snapToIncrement = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiSlider2::GetSnapToIncrement() const
+{
+    return this->snapToIncrement;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiSlider2::SetIncrement(float v)
+{
+    this->increment = v;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nGuiSlider2::GetIncrement() const
+{
+    return this->increment;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -197,4 +253,3 @@ nGuiSlider2::GetVisibleRangeSize() const
 
 //------------------------------------------------------------------------------
 #endif
-
