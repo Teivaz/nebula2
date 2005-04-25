@@ -417,6 +417,10 @@ def OnGuiServerOpen():
     skin.addbrush('syswindow_p', 'skin',  192,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('syswindow_h', 'skin',  192, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
 
+    skin.addbrush('contrwindow_n', 'skin', 336,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
+    skin.addbrush('contrwindow_p', 'skin', 336,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
+    skin.addbrush('contrwindow_h', 'skin', 336, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
+
     skin.addbrush('hidegui_n', 'skin',    240,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('hidegui_p', 'skin',    240,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('hidegui_h', 'skin',    240, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
@@ -425,8 +429,15 @@ def OnGuiServerOpen():
     skin.addbrush('quit_p', 'skin',       288,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('quit_h', 'skin',       288, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
 
+    skin.addbrush('disp_n', 'skin',       384,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
+    skin.addbrush('disp_p', 'skin',       384,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
+    skin.addbrush('disp_h', 'skin',       384, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
+
     # the left and right logos
     skin.addbrush('n2logo', 'n2logo', 0, 0, 64, 64, 1.0, 1.0, 1.0, 0.5)
+
+    # the color hexagon for the colorpicker
+    skin.addbrush('colorhex', 'colorhexagon', 0, 0, 170, 141, 1.0, 1.0, 1.0, 1.0)
 
     skin.endbrushes()
 
