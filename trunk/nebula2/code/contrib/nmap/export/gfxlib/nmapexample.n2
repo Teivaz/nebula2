@@ -26,4 +26,8 @@ new nmapnode map
     .setvector "MatSpecular" 0.800000 0.800000 0.800000 1.000000
     .setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
     .setshader "colr" "shaders:default.fx"
+
+    new nmapresourceloader /data/map/resourceloader
+    .setresourceloader /data/map/resourceloader
+
 sel ..
