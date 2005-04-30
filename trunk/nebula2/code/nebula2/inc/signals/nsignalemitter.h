@@ -71,7 +71,7 @@ public:
         typename TSignalNative::Traits::template TCmdDispatcher<TClass>::TMemberFunction memf,
         int priority)
     {
-        typedef typename TSignalNative::TBindingNative<TClass>::Type TBinding;
+        typedef typename TSignalNative::template TBindingNative<TClass>::Type TBinding;
         TBinding * binding = n_new(TBinding)(receiver, memf, priority);
         return this->BindSignal(signal.GetId(), binding);
     }
