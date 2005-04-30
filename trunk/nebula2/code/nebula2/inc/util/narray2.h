@@ -92,6 +92,7 @@ void
 nArray2<TYPE>::Copy(const nArray2<TYPE>& src)
 {
     this->Alloc(src.width, src.height);
+    uint num = this->width * this->height;
     uint i;
     for (i = 0; i < num; i++)
     {
