@@ -65,7 +65,7 @@ private:
 /**
 */
 template<class TYPE>
-nRingBuffer<TYPE>::nRingBuffer<TYPE>(int capacity)
+nRingBuffer<TYPE>::nRingBuffer(int capacity)
 {
     //_num++; // there is always 1 empty element in buffer
     this->start = n_new_array(TYPE, capacity+1);
@@ -79,7 +79,7 @@ nRingBuffer<TYPE>::nRingBuffer<TYPE>(int capacity)
     NOTE: you must call Initialize() when using the default constructor!
 */
 template<class TYPE>
-nRingBuffer<TYPE>::nRingBuffer<TYPE>() :
+nRingBuffer<TYPE>::nRingBuffer() :
     start(0),
     end(0),
     tail(0),
@@ -92,7 +92,7 @@ nRingBuffer<TYPE>::nRingBuffer<TYPE>() :
 /**
 */
 template<class TYPE>
-nRingBuffer<TYPE>::~nRingBuffer<TYPE>()
+nRingBuffer<TYPE>::~nRingBuffer()
 {
     this->Delete();
 }
