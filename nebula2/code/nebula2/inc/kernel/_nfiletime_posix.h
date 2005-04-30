@@ -16,6 +16,8 @@
 #error "_nFileTimePosix: trying to compile POSIX class on hostile platform"
 #endif
 
+#include <time.h>
+
 //------------------------------------------------------------------------------
 class _nFileTimePosix
 {
