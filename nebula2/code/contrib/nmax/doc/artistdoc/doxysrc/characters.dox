@@ -7,8 +7,8 @@
     characters with any number of bones, any number of skins and materials, and 
     up to 4 weights per vertex.
 
-    Exported Characters are animated through the Nebula2 animation system which supports 
-    smooth animation transitions, and weighted animation blending. 
+    Any exported characters are animated through the Nebula2 animation system which  
+    supports smooth animation transitions, and weighted animation blending. 
     All transformation types (translation, rotation, scaling) are allowed on bones.
 
     The following list are supported toolkit features related to the character.
@@ -19,5 +19,64 @@
 
     @section NMaxHowtoCharactersStepByStep Step By Step
 
+    <i>...need doc about other steps to create and export skinned character</i>
+
+    @subsection NMaxHowtoCharactersMotionFlow Using Motion Flow Editor
+
+    Nebula2 animation system supports transitions between each of animations 
+    and it is done by animation state and clip.
+    You can think animation state and clip like followings:
+      - <tt>Animation State</tt> - A collection of clips. A transition from one  
+                   animation to another animation is done by a change of state
+      - <tt>Animation Clip</tt> - An animation with a specific blend value.
+
+    One of the easy way to make animation states is using <b>Motion Flow Editor</b> 
+    which 3DSMax and Character Studio supports.
+
+    Select any one of the biped object through <i>'Select Objects'</i> dialog. 
+    (shortcut is <i>'h'</i> key)
+    Select <i>'Motion Flow Modes'</i> in <i>'Motion Panel'</i> which brings up 
+    <i>'Motion Flow'</i> rollout. Select <i>'Show Graph'</i> button to show up 
+    <i>'Motion Flow Graph'</i> dialog. 
+
+    @image html motionpanel01.png
+    
+    You can link all the seperated animations you've created with the motion flow editor.  
+    The Nebula 3DSMax toolkit will refer it and create needed animation states and clips 
+    which are needed when the toolkit exports the character.
+     
+    @image html moflow01.png
+
+    @note
+    See the <tt>3DSMax User Reference</tt> for more details about the 
+    Motion Flow Editor and its usage.
+
+    You can create animations states through Nebula 3DSMax toolkit animation 
+    states dialog.
+    Select <i>Nebula2 > Character Editor...</i> menu item, this shows up 
+    <i>'Nebula2 Animation State'</i> dialog.
+
+    @image html chareditor01.png
+
+    Now, you can see the created animation states which corresponds to each clip of 
+    the motion flow editor in <i>'Nebula2 Animation State'</i> dialog.
+
+    The Nebula 3DSMax Toolkit only referes <tt>'Note Track'</tt> when it exports 
+    skinned animation objects.
+    This means that you need to create note track to export animation states.
+    The Nebula2 animation state dialog automatically generates note track for it.
+    Click <i>'Create Note Track'</i> button which creates note track based on 
+    the created animation states. You can see the created note track in 
+    <tt>Dope sheet Track View</tt>.
+    Select <i>'Graph Editors > Track View - Dope Sheet...'</i>
+
+    The Nebula2 animation state dialog creates note track on the root biped object.
+    Select the root biped object and collapse to see its note track.
+
+    @image html dopetrackview01.png
+
+    @note
+    You dont must use the motion flow editor to create animation states.
+    You can manually create it by creating <tt>Note Tracks</tt>.
 
 */

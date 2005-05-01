@@ -25,11 +25,15 @@
         - @b Color - export vertex color
         - @b Uv - export texture uvs
         - @b Tangent - export tangent
+
     - <b>Scale Geometry By</b> - scaling geometry with the given value
+
     - @b Skin
         - Max Joint Palette - specifies maxinum joint palette size
         - Weight Trash hold - specifies vertex weight trash hold
+
     - <b>Save As</b> - determines exported file format for .n3d2 for ascii file or .nvx2 for binary file
+
     </td>
     </tr>
     </table>
@@ -43,8 +47,11 @@
     </td>
     <td>
     - <b>Save As</b> - determines exported file format for .nanim2 for ascii file or .nax2 for binary file
+
     - <b>Sample Rate</b> - specifies sampling rate
+
     - <b>Add Joint Names</b> - export joint's names
+
     </tr>
     </table>
 
@@ -58,7 +65,11 @@
     </td>
     <td>
     - <b>Export Hidden Nodes</b> - export hidden nodes
-    - <b>Select Script Server</b> - select persistent server which used for exporting. Tcl, Python and Lua servers are defaultly avaiable. If you want to use Ruby server, add the nRuby server target to the nmaxtoolbox build file (nmaxtoolbox.bld) and then rebuild the toolkit plugin. 
+
+    - <b>Select Script Server</b> - select persistent server which used for exporting. Tcl, Python and 
+      Lua servers are defaultly avaiable. If you want to use Ruby server, add the nRuby server target 
+      to the nmaxtoolbox build file (nmaxtoolbox.bld) and then rebuild the toolkit plugin. 
+
     </tr>
     </table>
 

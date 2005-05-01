@@ -1,6 +1,15 @@
 /**
     @defgroup NMaxHowtoUsingMaterialEditor Using Material Editor
 
+    - @ref NMaxHowtoMEditorOverview
+    - @ref NMaxHowtoMEditorMaterialEditor
+    - @ref NMaxHowtoMEditorSupportedMaterialTypes
+      - @ref NMaxHowtoMEditorMultiSubMaterials
+      - @ref NMaxHowtoMEditorShellMaterials
+      - @ref NMaxHowtoMEditorCubemap
+    - @ref NMaxHowtoMEditorOverviewExistingShaders
+    - @ref NMaxHowtoMEditorShaderXMLFile
+
     @section NMaxHowtoMEditorOverview Overview
 
     Nebula2 uses standard D3D FX files as its shader file format. FX files define 
@@ -27,6 +36,28 @@
     
     Select any one of the shaders in dropdown listbox and then its parameters will come 
     out.
+
+
+    @section NMaxHowtoMEditorSupportedMaterialTypes Supported Material and Map Types
+
+    The Nebula 3DSMax Tookit material editor supports several types of the 3DSMax material
+    other than standard material type of the 3DSMax.    
+
+    @subsection NMaxHowtoMEditorMultiSubMaterials Multi-Sub Materials
+    
+    Nebula is available to use only one single material for its <tt>nshapenode</tt>.
+    If your model has multiple material, you should use multi-sub material for its material.
+    If the model has multi-sub material, the toolkit create a <tt>ntransformnode</tt> 
+    for the parent node and put each sub material becomes its child node and create a 
+    <tt>nshapenode</tt> for each sub materials.
+
+    @image html multisub01.png
+
+    @subsection NMaxHowtoMEditorShellMaterials Shell Materials
+    ...
+
+    @subsection NMaxHowtoMEditorCubemap CubeMap
+    ...
     
 
     @section NMaxHowtoMEditorOverviewExistingShaders Overview of Exsting Shaders
