@@ -3,6 +3,17 @@
 
     @section NMaxHowtoExportOverview Overview
 
+    This section of the manual provides information on the features of exporter.
+
+
+    @section NMaxHowtoExportHowto How do I export my model?
+
+        - Defaultly, <b>Hidden</b> nodes are not exported.
+            - A hidden node can be exported with checking the option of the global
+              options in 3DS Max Utility panel. 
+              See @ref NMaxExportOptionsEtc for more details.
+
+
     @section NMaxHowtoExportWhereFiles Where Are My Files?
 
     The toolkit uses the <b>Current Project Directory</b> to locate their files.
@@ -29,3 +40,4 @@
         - textures textures 
 
 */
+
