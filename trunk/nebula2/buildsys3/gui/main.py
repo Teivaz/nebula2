@@ -48,7 +48,7 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, 'Nebula 2 Build System', 
                           style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | 
                                   wx.CAPTION | wx.CLOSE_BOX |
-                                  wx.CLIP_CHILDREN | wx.STATIC_BORDER)
+                                  wx.CLIP_CHILDREN | wx.RESIZE_BORDER)
         # load & set the Nebula icon
         try:
             self.SetIcon(wx.Icon(os.path.join('bin', 'win32', 'nebula.ico'),
@@ -106,8 +106,8 @@ class MainFrame(wx.Frame):
         # top level sizer
         sizerA = wx.BoxSizer(wx.VERTICAL)
         sizerA.Add(self.staticLine, 0, wx.EXPAND)
-        sizerA.Add(self.tabGroup, 0, wx.EXPAND)
-        sizerA.Add(self.buildLogPanel, 1, wx.EXPAND|wx.ALL, 4)
+        sizerA.Add(self.tabGroup, 1, wx.EXPAND)
+        sizerA.Add(self.buildLogPanel, 0, wx.EXPAND|wx.ALL, 4)
         sizerA.Add(self.closeBtn, 0, wx.CENTER|wx.ALL, 5)
         # get the sizers to sort out the frame's size
         sizerA.Fit(self.mainPanel)
