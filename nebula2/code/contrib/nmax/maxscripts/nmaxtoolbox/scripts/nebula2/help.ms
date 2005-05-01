@@ -9,7 +9,12 @@
 ---------------------------------------------------------------------------------
 fn nShowHelp = 
 (
-    -- e.g. ShellLaunch "$nebula2\\doc\\tools\\nmaxtoolkit.chm" "" 
-    messageBox "Not available yet." title:"Nebula2 Help"
+    -- get 'scrips' directory in 3dsmax installed directory
+    -- e.g. 'c:/3dsmax7/scripts'
+    scriptDir = GetDir #scripts
+    chmFilename = scriptDir + "\\nebula2\\nmaxtoolbox.chm"
+
+    -- show up 'nmaxtoolbox.chm' nebula help file.
+    ShellLaunch chmFilename ""
 )
 
