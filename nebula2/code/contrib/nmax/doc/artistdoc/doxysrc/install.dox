@@ -12,15 +12,23 @@
     @image html install01.png
     </td>
     <td> 
-        -# copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
+        - 1) copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
 
-        -# copy the directory <b>scripts</b> and all its files to the <tt>$3dsmax/scripts</tt> 
+        - 2) copy the directory <b>scripts</b> and all files under the directory to the <tt>$3dsmax/scripts</tt> 
            directory.
           - You can find <tt>scripts</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/scripts</tt>.
 
-        -# copy <b>plugcfg</b> directory and all its files to <tt>$3dsmax/plugcfg</tt> 
+        - 3) copy <b>plugcfg</b> directory and all files under the directory to <tt>$3dsmax/plugcfg</tt> 
            directory.
           - You can find <tt>plugcfg</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/plugcfg</tt>.
+
+        - 4) Build nmaxtoolbox.chm for the artist's document. See <tt>nmax/doc/artistdoc/doxycfg</tt> directory.
+             You can build the doc with typing <tt>'>doxygen toolkitdocs'</tt> in commandline.
+             This will generate bunch of html files under <tt>nmax/doc/artistdoc/doxydoc/toolkit/html</tt>.
+             Compiled it using 'HTML Help Workshop'. It will generate <tt>nmaxtoolbox.chm</tt> and then copy it
+             to <tt>$3dsmax/scripts</tt> directory to be avaiable it within 3DSMax.
+             
+
     <td>
     </tr>
     </table>
