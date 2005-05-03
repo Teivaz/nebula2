@@ -20,8 +20,10 @@
         - access and calls <b>all Nebula2 objects</b> through <b>nMaxExpose 3DS Max  
           function publishing</b> system. You can build your own tools within 3DS Max or 
           extend existing toolkit with this.
+          See @ref NMaxHowtoExpose section for more details.
         - <b>automatically generates custom attributes and UI code</b> of max scripts 
           for the given <b>Nebula2 object</b>. 
+          See @ref NMaxScriptGen section for more details.
           
 
     @section NMaxFeaturesSupported3DSMaxFeatures Supported 3DS Max Features
