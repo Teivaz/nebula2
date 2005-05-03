@@ -25,7 +25,7 @@
     (This means that the entity class will be derived from <tt>nroot</tt> class)
     The toolkit provides automatic scripting generation fuculty on any Nebula 
     objects. So you may can directly construct your entity editor within 3DSMax 
-    even not to write any a line of code.
+    only with small of writing max script code.
     It also helpful in the middle of the time of the project.  
     The entity system will be frequaently changed and a new entities will be 
     added either. Even some of those may be removed.  
@@ -52,6 +52,23 @@
 @verbatim
     code = GetScriptFromNebulaObject "usr/myentity"
 @endverbatim
+
+
+    @section NMaxScriptGenInArgs Supported In-Argument Types 
+
+      - float
+      - string
+      - bool
+      - vector2
+      - vector3
+      - vector4
+      - rgb
+      - rgba
+      - various
+
+
+    @section NMaxScriptGenFiltering Filtering Script Commands
+    ...
 
 */
 
