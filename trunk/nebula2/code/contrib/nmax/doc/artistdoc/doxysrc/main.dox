@@ -11,7 +11,7 @@
     <b>3DS Max</b> for the Open Source real-time 3D engine <b>The Nebula Device 2</b>. 
     Also it provides toolset for programmers who want to construct their art tools within 3DS Max.
 
-    This manual gives you information on how to construct contents using <b>Nebula2 Toolkit
+    This manual gives you the information on how to construct contents using <b>Nebula2 Toolkit
     for 3DS Max</b> with <b>3DS Max</b>.
 
 
@@ -26,7 +26,7 @@
 
     @section NMaxIntroInstall Installation
 
-    For information on installation of the <b>Nebula Toolkit for 3DS Max</b>, see
+    For the information on installation of the <b>Nebula Toolkit for 3DS Max</b>, see
     @ref NMaxInstallation.
 
 
@@ -34,7 +34,7 @@
 
     The toolkit provides various features to allow artists to produce great contents
     and save their work time.
-    For information on the toolkit features and supported 3DS Max features, see @ref NMaxFeatures.
+    For the information on the toolkit features and supported 3DS Max features, see @ref NMaxFeatures.
 
     This manual provides information and guide to use the toolkit.
     For information on how to use the toolkit, see @ref NMaxHowto.
@@ -42,13 +42,13 @@
 
     @section NMaxIntroSamples Samples
 
-    To help and illustrate features of the toolkit, samples are provided. 
-    For information on the samples, see @ref NMaxSamples.
+    To help and illustrate features of the toolkit, samples are provied. 
+    For the information on the samples, see @ref NMaxSamples.
 
 
     @section NMaxIntroFAQ FAQ
 
-    For information on the frequently asked questions, see @ref NMaxFAQ.
+    For the information on the frequently askings and questions, see @ref NMaxFAQ.
 
 
     @section NMaxIntroNotes Additional Notes
