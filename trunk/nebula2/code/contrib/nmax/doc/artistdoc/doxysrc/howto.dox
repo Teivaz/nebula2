@@ -1,7 +1,10 @@
 /**
     @page NMaxHowto Howto
 
-    Please refer to the following pages for documentation on the plugin:
+    Please refer to the following pages for the documentation of the toolkit 
+    plugin.
+    Each section of the document shows you the usage of the toolkit and details
+    to the work you need for making game assets of Nebula.
 
     - @ref NMaxHowtoQuickStart
     - @ref NMaxHowtoStaticScene 
