@@ -1,7 +1,7 @@
 /**
     @page NMaxFAQ FAQ
 
-    This section of the document provides FAQ(Frequently Askings and Questions) 
+    This section of the document provides FAQ(Frequently Asked Questions) 
     on the toolkit.
 
     @section NMaxFAQGeneral General
@@ -9,12 +9,12 @@
     <dl>
       <dt>Q: Can I use 3DS Max5.1 with the toolkit?</dt>
         <dd>
-        A: @b No. Currently 3DS Max 6 and its higher versions are only avaiable.
+        A: @b No. Currently 3DS Max 6 and its higher versions are only available.
         But use 3DS Max 7 if it can be possible. 
-        3DS Max 7 has new featrues produces normap and height maps and other features
+        3DS Max 7 has new features produces normal and height maps and other features
         makes it more easy to produce game specific contents.
         This toolkit mainly developed on 3DS Max 7.
-        See the @ref NMaxIntroSystems for requested requierments. 
+        See the @ref NMaxIntroSystems for requested requirements. 
         </dd>
     </dl>
 
@@ -32,7 +32,7 @@
         3DS Max. 
         But you can easily edit and adjust parameters with supported Nebula custom
         material editor and preview the changes. 
-        Also this approch makes the plugin more easy to write and maintain.
+        Also this approach makes the plugin more easy to write and maintain.
         
         See @ref NMaxHowtoUsingMaterialEditor section for more information on
         Nebula custom material editor and supported features.

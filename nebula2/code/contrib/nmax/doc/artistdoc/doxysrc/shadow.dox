@@ -19,15 +19,15 @@
       - Simplify the duplicated model if it is necessary.
         - clean and close duplicates:  
           - do not combine or merge the single parts, because if you do so it will be 
-            immpossible to copy the skin weights later
+            impossible to copy the skin weights later
         - reduce the vertices from the duplicates must exist: 
-          - silhouetts information (corners, borders, for example long nose, ears, or 
-            better everything which gives an objectssilhouett its character) earse.
-          - surface details (for exmaple vertices which exist for texture propose...) 
-          - everything which has no special influence to the silhouett of the object attention
+          - silhouette information (corners, borders, for example long nose, ears, or 
+            better everything which gives an object's silhouette its character).
+          - surface details (for example vertices which exist for texture propose...) 
+          - everything which has no special influence to the silhouette of the object attention
           - shadowmodel and original model must have the same size, elsewhere artefacts will 
             be created whether
-          - UV's, texture mapping, material, nebual shader etc.
+          - UV's, texture mapping, material, nebula shader etc.
       - Select the shadow model and click <i>Nebula2/Mesh Options</i> menu item. 
         - This will bring the mesh option rollout on the modify panel.
       - Select <i>shadow</i> for the mesh type on the mesh options rollout.
@@ -35,7 +35,7 @@
     @subsection NMaxHowtoShadowsStep2 Step 2: Bind a Shadow Model
     ...
 
-    @subsectoin NMaxHowtoShadowsStep2 Step 3: Finish
+    @subsection NMaxHowtoShadowsStep2 Step 3: Finish
     ...
 
 */

@@ -12,8 +12,8 @@
     All transformation types (translation, rotation, scaling) are allowed on bones.
 
     The following list are supported toolkit features related to the character.
-        - Character Studio @b Biped and @b Physique are avaiable
-        - 3DS Max <b>Skin Modifier</b> is avaiable
+        - Character Studio @b Biped and @b Physique are available
+        - 3DS Max <b>Skin Modifier</b> is available
         - any type of the objects can be used for bone
 
 
@@ -41,7 +41,7 @@
 
     @image html motionpanel01.png
     
-    You can link all the seperated animations you've created with the motion flow editor.  
+    You can link all the separated animations you've created with the motion flow editor.  
     The Nebula 3DSMax toolkit will refer it and create needed animation states and clips 
     which are needed when the toolkit exports the character.
      
@@ -61,8 +61,8 @@
     Now, you can see the created animation states which corresponds to each clip of 
     the motion flow editor in <i>'Nebula2 Animation State'</i> dialog.
 
-    The Nebula 3DSMax Toolkit only referes <tt>'Note Track'</tt> when it exports 
-    skinned animation objects.
+    The Nebula 3DSMax Toolkit only refers to the <tt>'Note Track'</tt> when
+    it exports skinned animation objects.
     This means that you need to create note track to export animation states.
     The Nebula2 animation state dialog automatically generates note track for it.
     Click <i>'Create Note Track'</i> button which creates note track based on 
@@ -76,7 +76,7 @@
     @image html dopetrackview01.png
 
     @note
-    You dont must use the motion flow editor to create animation states.
+    You don't need to use the motion flow editor to create animation states.
     You can manually create it by creating <tt>Note Tracks</tt>.
 
 */

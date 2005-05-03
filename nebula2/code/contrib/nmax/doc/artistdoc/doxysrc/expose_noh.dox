@@ -1,9 +1,9 @@
 /**
-    @defgroup NMaxHowtoExposeNOH Nebula2 Named Obbject Hierarchy Viewer
+    @defgroup NMaxHowtoExposeNOH Nebula2 Named Object Hierarchy Viewer
 
     @section NMaxHowtoExposeNOHOverview Overview
 
-    This tutorial demonstrates how to create a <b>Nabula2 Named Object Hierarchy</b>
+    This tutorial demonstrates how to create a <b>Nebula2 Named Object Hierarchy</b>
     with MaxScript and TreeView ActiveX control. 
     It is a simple demonstration of the Nebula2 3DS Max Expose plugin but you will 
     get to know that it is powerful and can extend it in a various ways for your
@@ -29,9 +29,9 @@ rollout NOHTreeViewer "Nebula Object Viewer" width:355 height:540
     function addChild parentTreeNodeIndex parentNodeName objectName = 
     (
         cmd = parentNodeName + ".getchildren"
-        childs = nebula2.callv cmd
+        children = nebula2.callv cmd
 	
-        for i in childs do
+        for i in children do
         (
             cmd = i + ".getname"
             objName = nebula2.callv cmd
@@ -85,18 +85,18 @@ TreeView.
 
 @verbatim
         cmd = parentNodeName + ".getchildren"
-        childs = nebula2.callv cmd
+        children = nebula2.callv cmd
 @endverbatim
-First, the fuction collect all child objects of the given Nebula objects by calling
+First, the function collects all child objects of the given Nebula objects by calling
 <i>'getchildren'</i> Nebula2 script command.
 
 @verbatim
-        for i in childs do
+        for i in children do
         (
             cmd = i + ".getname"
             objName = nebula2.callv cmd
 @endverbatim
-For each collected children, we get the each of the child object's name.
+For each collected child, we get the each of the child object's name.
 
 @verbatim
             o = tv.nodes.add parentTreeNodeIndex 4 "" objName[1]
@@ -147,7 +147,7 @@ Finally, we create a new Dialog using the rollout definition.
 
     If you want to know more about <b>MaxScript</b> and supported <b>TreeView ActiveX</b> 
     control, find the followings in a <b>MaxScript Reference</b>.
-    (<i>only avaiable on 3DS Max7</i>)
+    (<i>only available on 3DS Max7</i>)
 
         - <i>ActiveX Controls in MAXScript Rollouts</i> 
         - <i>TreeView ActiveX Control</i> 
