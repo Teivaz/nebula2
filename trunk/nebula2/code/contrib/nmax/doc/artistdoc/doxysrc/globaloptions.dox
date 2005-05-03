@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoGlobalOptions Specifying Global options
+    @defgroup NMaxHowtoGlobalOptions Setting Global Options
 
     Select utility panel of 3DS Max then click '<b>More...</b>' button.
     <b>Nebula2</b> will be shown on <b>Utilities</b> dialog as following images.
