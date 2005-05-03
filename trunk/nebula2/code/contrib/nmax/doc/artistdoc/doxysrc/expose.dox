@@ -27,9 +27,10 @@
 
     @section NMaxHowtoExposeExamples Examples
 
-    - @ref NMaxHowtoExposeNOH example demonstrates how to create a <b>Named Object 
+    - @ref NMaxHowtoExposeNOH - An example demonstrates how to create a <b>Named Object 
       Hierarchy</b>(aka NOH) viewer showing the nebula object hierarchy with a MaxScript 
       and a TreeView ActiveX Control. 
 
-    
+    - @ref NMaxExposeODE - An example demonstrates how to use Nebula Expose system with 
+      nOpenDE, Nebula Open Dynamics Engine.
 */

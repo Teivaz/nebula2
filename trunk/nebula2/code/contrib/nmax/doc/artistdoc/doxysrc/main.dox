@@ -34,7 +34,11 @@
 
     The toolkit provides various features to allow artists to produce great contents
     and save their work time.
-    For the information on the toolkit features and supported 3DS Max features, see @ref NMaxFeatures.
+    Even the toolkit provides not only faculties to export models and animations but also 
+    useful features to use 3DSMax for game entity editor or whatever you want to extend.
+    
+    For the information on the toolkit features and supported 3DS Max features, 
+    see @ref NMaxFeatures.
 
     This manual provides information and guide to use the toolkit.
     For the information on how to use the toolkit, see @ref NMaxHowto.
@@ -67,8 +71,8 @@
         - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
 
     Thanks to:
-        - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts on the 
-          3DS Max exports. That gave many helps on this toolkit.
+        - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  
+          on the IGame libarary based 3DS Max exports. That gave many helps on this toolkit.
 
 
     (C)2005 Kim, Hyoun Woo

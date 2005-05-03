@@ -15,8 +15,10 @@
     - @ref NMaxHowtoHierarchyNode 
     - @ref NMaxHowtoShadows 
     - @ref NMaxHowtoAnimations
+    - @ref NMaxLOD
     - @ref NMaxHowtoExport
     - @ref NMaxHowtoExpose
+    - @ref NMaxScriptGen
     - @ref NMaxTerrainTools
 
 */
