@@ -1,0 +1,72 @@
+/**
+    @defgroup NMaxExposeODE Using Nebula 3DSMax Expose System with nOpenDE
+
+    @section NMaxExposeODEOverview Overview
+
+    This section of the documentation shows the use of Nebula 3DSMax Expose System
+    with any existing Nebula packages such like nOpenDE, Nebula Open Dynamics Engine.
+
+    @section NMaxExposeODEMaxScript Max Script
+
+    The following max script code shows that how to create a body of opende for chassis 
+    of a car using with Nebula 3DSMax Expose System:
+@verbatim
+fn nCreateBody worldName object =
+(
+    name = "/dynamics/" + object.name
+    nebula2.new "nopendebody" name
+    nebula2.sel name
+    if nebula2.lookup worldName == "" do
+    (
+        print "The 'world' path does not exist."	
+        return
+    )
+		
+    nebula2.call ".create" worldName
+    nebula2.call ".setposition" "" #(-object.pos[1], object.pos[3], object.pos[2])
+    nebula2.call ".setmassparams" #(object.mass, 
+                                    0, 0, 0,
+                                    object.tensor00, object.tensor11, object.tensor22, 
+                                    object.tensor01, object.tensor02, object.tensor12) 
+)
+@endverbatim
+    
+    The following max script code shows that how to create 'hinge2joint' for a wheel of car:
+@verbatim
+fn nCreateHinge2Joint worldName object =
+(
+    name = "/dynamics/" + object.name    
+    nebula2.new "nopendehinge2joint" name
+    nebula2.sel name
+    if nebula2.lookup worldName == "" do
+    (
+        print "The 'world' path does not exist."	
+        return
+    )
+	
+    nebula2.call ".create" worldName
+    nebula2.call ".attachto" #(object.chassis, object.wheel)
+    nebula2.call ".setaxis1" #(0, 1, 0)
+    nebula2.call ".setaxis2" #(1, 0, 0)
+    nebula2.call ".setanchor" #(-object.pos[1], object.pos[3], object.pos[2])
+    nebula2.call ".setparam" #(0, 0)
+    nebula2.call ".setparam" #(1, 0)
+    nebula2.call ".setparam" #(9, wheelSuspensionERP)
+    nebula2.call ".setparam" #(10, wheelSuspensionCFM)
+)
+@endverbatim
+
+    You might to create some UI to assign all these attributes in a easy way.   
+    It can be easily written with <i>Visual Max Script</i> and <i>Custom Attributes</i> 
+    of 3DSMax.
+
+    @section NMaxExposeODESeeAlso See Also
+
+    See Nebula2 3DS Max Expose Commands Reference for supported commands.
+
+    If you want to know more about ODE and nOpenDE, refer the followings:
+
+      - official ODE site - http://www.ode.org 
+      - see the nOpenDE module section of the Nebula2 document. 
+
+*/
