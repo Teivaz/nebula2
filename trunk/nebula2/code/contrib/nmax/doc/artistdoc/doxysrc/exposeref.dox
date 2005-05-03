@@ -52,7 +52,7 @@
           command.
           A command which doesn't have any argument(void type) must be 
           provided empty array.<br>
-          An arguments should be provied by maxscript array type.<br>
+          An arguments should be provided by maxscript array type.<br>
           <br>
           @note 
             There's no way to execute <I>call</I> command with no argument even 
@@ -63,7 +63,7 @@
           example:
 @verbatim
     call ".saveas" "foo.n2"
-    call "/usr/entity.savease" "foo.n2"
+    call "/usr/entity.saveas" "foo.n2"
     call ".getcmds" #()
 @endverbatim
           <br>

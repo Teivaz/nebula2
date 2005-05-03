@@ -7,8 +7,8 @@
     Welcome to the <b>Nebula2 Toolkit for 3DS Max</b>.
 
     The <b>Nebula2 Toolkit for 3DS Max</b> (aka nmaxtoolbox) provides a complete working  
-    environment for modellers and animators who need to create graphical content in  
-    <b>3DS Max</b> for the OpenSource realtime 3D engine <b>The Nebula Device 2</b>. 
+    environment for modelers and animators who need to create graphical content in  
+    <b>3DS Max</b> for the Open Source real-time 3D engine <b>The Nebula Device 2</b>. 
     Also it provides toolset for programmers who want to construct their art tools within 3DS Max.
 
     This manual gives you information on how to construct contents using <b>Nebula2 Toolkit
@@ -42,18 +42,18 @@
 
     @section NMaxIntroSamples Samples
 
-    To help and illustrate features of the toolkit, samples are provied. 
+    To help and illustrate features of the toolkit, samples are provided. 
     For information on the samples, see @ref NMaxSamples.
 
 
     @section NMaxIntroFAQ FAQ
 
-    For information on the frequently askings and questions, see @ref NMaxFAQ.
+    For information on the frequently asked questions, see @ref NMaxFAQ.
 
 
     @section NMaxIntroNotes Additional Notes
     
-    This manual mainly provides useful information for aritists who create art contents
+    This manual mainly provides useful information for artists who create art contents
     for <b>The Nebula Devices 2</b>. If you need technical document for the toolkit, see
     the <b>3DSMax Toolkit</b> pages of <b>Asset Toolchain</b> section in <b>Nebula2</b> 
     document.

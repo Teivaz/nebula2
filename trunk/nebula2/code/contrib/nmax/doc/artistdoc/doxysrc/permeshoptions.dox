@@ -9,24 +9,24 @@
 
     @image html meshoption01.png "Mesh Option menu item on Nebula2 menu"
 
-    If you want to remove 'mesh options' from the model which aleady has
+    If you want to remove 'mesh options' from the model which already has
     'mesh options', select the model then click <i>'Mesh Options'</i>
     menu item once again. It will remove the mesh options from the selected
     model.
     
-    The applied mech options can be found on the modify panel.
+    The applied mesh options can be found on the modify panel.
 
-    @image html meshoption02.png "Mesh Optio rollout on the modify panel"
+    @image html meshoption02.png "Mesh Option rollout on the modify panel"
 
       - <b>Mesh Types</b>
         - Normal - normal mesh type which is default option
         - Swing - indicate that the mesh is <tt>swing shapenode</tt>.
         - Shadow - indicate that the mesh is <tt>shadow</tt> model.
-        - Collision - indicate that the mesh will be used for <tt>collison</tt> mesh. 
+        - Collision - indicate that the mesh will be used for <tt>collision</tt> mesh. 
       - <b>Vertex Options</b>
-        - Normal - the exported mesh will contains vertex normal.
-        - Color - the exported mesh will contains vertex color.
-        - Uvs - the exported mesh will constains uvs for its texturing.
+        - Normal - the exported mesh will contain vertex normal.
+        - Color - the exported mesh will contain vertex color.
+        - Uvs - the exported mesh will contain uvs for its texturing.
         - Tangent - generate tangent per vertex for per pixel lighting
 
 */

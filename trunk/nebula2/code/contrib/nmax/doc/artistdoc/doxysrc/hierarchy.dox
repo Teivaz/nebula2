@@ -9,17 +9,17 @@
     
     @section NMaxHowtoHierarchyNodeUsage Usage
 
-    Let's look how the toolkit plugin will export groupped or linked objects 
+    Let's look how the toolkit plugin will export grouped or linked objects 
     of a scene.
 
-    @subsection NMaxHowtoHierarchyNodeGroup Groupping Objects
+    @subsection NMaxHowtoHierarchyNodeGroup Grouping Objects
 
     You might want to group several objects to make them a single group.
 
     The following image shows a group of two objects, <i>'box01'</i> and 
     <i>'box02'</i> in a schematic view:
 
-    @image html hierarchy01.png "Groupped objects in a schematic view"
+    @image html hierarchy01.png "Grouped objects in a schematic view"
 
     The toolkit plugin will create <tt>ntransformnode</tt> for group object
     and generate the hierarchy like the following when it exports:
@@ -31,13 +31,13 @@
      +- nshapenode box02
 @endverbatim
 
-     Groupped objects will be located under the group object as same level 
+     Grouped objects will be located under the group object as same level 
      if there are no links between objects.
 
     @note
-    The ohter case which the toolkit plugin places <tt>ntransformnode</tt>
+    The other case which the toolkit plugin places <tt>ntransformnode</tt>
     on the top of the several <tt>nshapenode</tt> is that the object has 
-    <i>Mulit-sub</i> material. See @ref NMaxHowtoMEditorMultiSubMaterials 
+    <i>Multi-sub</i> material. See @ref NMaxHowtoMEditorMultiSubMaterials 
     for the details.
 
     @subsection NMaxHowtoHierarchyNodeLink Linking Objects
@@ -56,7 +56,7 @@
 @verbatim
     nshapenode box01
      |
-     +- nshpaenode sphere01
+     +- nshapenode sphere01
 @endverbatim
 
 */

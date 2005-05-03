@@ -12,11 +12,11 @@
     rendering the scene in Nebula2.
     (See @ref NMaxHowtoMEditorMultiSubMaterials section for multiple materials)
 
-    A mesh which exported from a scene is reprented by a <tt>nshapenode</tt>.
-    A <tt>nshapenode</tt> contains all of the per-verex information of the geometry 
+    A mesh which exported from a scene is represented by a <tt>nshapenode</tt>.
+    A <tt>nshapenode</tt> contains all of the per-vertex information of the geometry 
     including vertex positions, normals, vertex colors and uv coordinates.
-    Nomaly a single mesh in a scene corresponds to a <tt>nshapenode</tt>.
-    The toolkit plugin also can export heirachy scene node in a scene.
+    Normally a single mesh in a scene corresponds to a <tt>nshapenode</tt>.
+    The toolkit plugin also can export hierarchy scene node in a scene.
     See the section @ref NMaxHowtoHierarchyNode for exporting hierarchy node in a
     scene.
     Any <i>XForm</i> which assigned to a mesh node also will be exported.

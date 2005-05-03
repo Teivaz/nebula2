@@ -30,7 +30,7 @@
 
     @image html meditor03.png "Nebula2 custom material rollout"
     
-    This will bring <b>Nebula2 custom material editor</b> to you. Defaultly, there is
+    This will bring <b>Nebula2 custom material editor</b> to you. By default, there is
     'None' for <b>Nebula2 Shader Types</b> rollout panel and nothings for <b>Parameters</b> 
     rollout.
     
@@ -65,13 +65,13 @@
 @verbatim
     ntransformnode <object_name>
      |
-     +- nshapdenode <object_name_0>
+     +- nshapenode <object_name_0>
      |
-     +- nshapdenode <object_name_1>
+     +- nshapenode <object_name_1>
      |
      +- ...
      |
-     +- nshapdenode <object_name_10>
+     +- nshapenode <object_name_10>
 @endverbatim
 
     @subsection NMaxHowtoMEditorShellMaterials Shell Materials
@@ -81,7 +81,7 @@
     ...
     
 
-    @section NMaxHowtoMEditorOverviewExistingShaders Overview of Exsting Shaders
+    @section NMaxHowtoMEditorOverviewExistingShaders Overview of Existing Shaders
 
     The toolkit comes from the current CVS. You are encouraged to add your own shaders, 
     or even implement a completely new shader library.
