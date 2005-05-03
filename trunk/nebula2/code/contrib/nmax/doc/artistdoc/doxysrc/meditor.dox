@@ -19,16 +19,16 @@
 
     @section NMaxHowtoMEditorMaterialEditor The Nebula2 Custom Material Editor 
 
-    @image html meditor01.png
+    @image html meditor01.png "Setup material"
 
     Click @b Standard 3DS Max shader button. It will show up <b>Material/Map Browser</b>
     dialog.
 
-    @image html meditor02.png
+    @image html meditor02.png "Select Nebula2 custom material in the Material Browser"
 
     Select @b Nebula2 material and click 'Ok' button.
 
-    @image html meditor03.png
+    @image html meditor03.png "Nebula2 custom material rollout"
     
     This will bring <b>Nebula2 custom material editor</b> to you. Defaultly, there is
     'None' for <b>Nebula2 Shader Types</b> rollout panel and nothings for <b>Parameters</b> 
@@ -51,7 +51,28 @@
     for the parent node and put each sub material becomes its child node and create a 
     <tt>nshapenode</tt> for each sub materials.
 
-    @image html multisub01.png
+    @image html multisub01.png "Multi/Sub material on the Material Editor"
+
+    The toolkit plugin will create <tt>ntransformnode</tt> for the multi-sub material 
+    and then place each <tt>nshapenode</tt> under the created <tt>ntransformnode</tt>. 
+    The toolkit plugin will use object's name for its creating a <tt>ntransformnode</tt> 
+    and automatically add index number at the end of the per its child <tt>nshapenode</tt>. 
+    The added index number will be automatically counted and increased by the toolkit plugin. 
+    The number of child <tt>nshapenodes</tt> are same as the number of the sub material.
+
+    The above multi-sub material on the image which contains ten sub materials for its 
+    material will be result the following when it exported: 
+@verbatim
+    ntransformnode <object_name>
+     |
+     +- nshapdenode <object_name_0>
+     |
+     +- nshapdenode <object_name_1>
+     |
+     +- ...
+     |
+     +- nshapdenode <object_name_10>
+@endverbatim
 
     @subsection NMaxHowtoMEditorShellMaterials Shell Materials
     ...
