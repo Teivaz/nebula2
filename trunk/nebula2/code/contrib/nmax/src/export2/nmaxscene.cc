@@ -127,6 +127,11 @@ bool nMaxScene::Begin(INode *rootNode)
 bool nMaxScene::Preprocess(INode* root)
 {
     this->CollectTopLevelNodes(root);
+    if (this->topLevelNodes.Size() <= 0)
+    {
+        n_maxlog(Warning, "The scene has no nodes to export.");
+        return false;
+    }
 
     //this->InitializeNodes(root);
 
