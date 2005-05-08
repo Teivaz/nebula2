@@ -35,7 +35,7 @@ nMaxOptions::nMaxOptions() :
     runViewer(true),
     saveScriptServer("ntclserver"),
     useIndivisualMesh(false),
-    verboseLevel(2/*high*/),
+    verboseLevel(4/*High*/),
     overwriteExistTexture(true)
 {
     n_assert(Singleton == 0);
