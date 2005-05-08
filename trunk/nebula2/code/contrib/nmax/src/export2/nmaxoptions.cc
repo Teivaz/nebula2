@@ -53,7 +53,7 @@ nMaxOptions::~nMaxOptions()
 //-----------------------------------------------------------------------------
 /**
     Read .ini file in '$3dsmax/plugcfg' directory and specifies assigns and 
-    pathes to file server.
+    paths to file server.
 
     @return true if the function call is success.
 */
@@ -218,7 +218,7 @@ bool nMaxOptions::Initialize()
 
         if (tmp.Length() > 0)
         {
-            nString alerts("ALERT: assignment of pathes are wrong:");
+            nString alerts("ALERT: assignment of paths are wrong:");
             alerts += tmp;
             n_maxlog(Error, "%s", alerts.Get());
             return false;

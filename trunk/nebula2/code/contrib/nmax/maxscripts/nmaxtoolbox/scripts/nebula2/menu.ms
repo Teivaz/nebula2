@@ -151,7 +151,7 @@ tooltip:"import/export heightmap for terrain"
 macroScript NebulaToolBox_SetDirectory
 category:"nmaxtoolbox" 
 buttonText:"Directory Setting..."
-tooltip:"specifies assignes and pathes" 
+tooltip:"specifies assignes and paths" 
 ( 
     on execute do 
     (
