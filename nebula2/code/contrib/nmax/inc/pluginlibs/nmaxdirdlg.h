@@ -26,7 +26,7 @@ protected:
     bool OnOK();
     void OnSelHomeDir();
     void OnSetDefaultAssigns();
-    void OnSetDefaultPathes();
+    void OnSetDefaultPaths();
 
 //    void CreateDefaultIniFile(const char* filename);
     

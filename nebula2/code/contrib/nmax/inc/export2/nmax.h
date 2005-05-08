@@ -103,7 +103,7 @@ enum
 #define SECONDSPERTICK (1.0f / 4800.0f)
 
 //-----------------------------------------------------------------------------
-// default value of assigns and pathes
+// default value of assigns and paths
 #define N_MAXEXPORT_INIFILE    "nmaxtoolbox.ini"
 
 #define N_MAXEXPORT_BINARY_PATH    "home:bin/win32d/"

@@ -111,7 +111,7 @@ void nMaxDirDlg::OnInitDialog()
     SetDlgItemText(hWnd, IDC_EXT_ASSIGN_SHADERS,  shadersAssign.Get());  // shaders
     SetDlgItemText(hWnd, IDC_EXT_ASSIGN_TEXTURES, texturesAssign.Get()); // textures
 
-    // pathes
+    // paths
     SetDlgItemText(hWnd, IDC_EXT_PATH_ANIM,     animsPath.Get());
     SetDlgItemText(hWnd, IDC_EXT_PATH_GFXLIB,   gfxlibPath.Get());
     SetDlgItemText(hWnd, IDC_EXT_PATH_GUI,      guiPath.Get());
@@ -151,7 +151,7 @@ BOOL nMaxDirDlg::OnCommand(int wParamLow, int wParamHigh, long lParam)
 
     // 'Set Default' button in 'Paths'
     case IDC_SET_DEFAULT_PATHS:
-        OnSetDefaultPathes();
+        OnSetDefaultPaths();
         break;
 
     default:
@@ -209,7 +209,7 @@ bool nMaxDirDlg::OnOK()
     GetDlgItemText(hWnd, IDC_EXT_PATH_SHADERS,  str, BUFSIZE); shadersPath = str;
     GetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, str, BUFSIZE); texturesPath = str;
 
-    // check the specified assigns and pathes are valid.
+    // check the specified assigns and paths are valid.
     if (!nFileServer2::Instance()->DirectoryExists(homeDir.Get()))
     {
         // specified home directory does not exist.
@@ -324,7 +324,7 @@ void nMaxDirDlg::OnSetDefaultAssigns()
 /**
     Specifies 'path' settings to default values.
 */
-void nMaxDirDlg::OnSetDefaultPathes()
+void nMaxDirDlg::OnSetDefaultPaths()
 {
     SetDlgItemText(hWnd, IDC_EXT_PATH_ANIM,     N_MAXEXPORT_ANIMS_PATH);
     SetDlgItemText(hWnd, IDC_EXT_PATH_GFXLIB,   N_MAXEXPORT_GFXLIB_PATH);
