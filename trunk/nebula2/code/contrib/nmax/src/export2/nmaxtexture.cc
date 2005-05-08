@@ -57,7 +57,7 @@ void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
         // copy textures.
         if (CopyTexture(mapFileName.Get()))
         {
-            n_maxlog(Midium, "'%s' is copied.", mapFileName.Get());
+            n_maxlog(Medium, "'%s' is copied.", mapFileName.Get());
         }
 
         ExportUVTransform(uvGen, shapeNode);
@@ -113,7 +113,7 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         // copy textures.
         if (CopyTexture(mapFileName.Get()))
         {
-            n_maxlog(Midium, "'%s' is copied.", mapFileName.Get());
+            n_maxlog(Medium, "'%s' is copied.", mapFileName.Get());
         }
 
         // get uv transform if it exist.

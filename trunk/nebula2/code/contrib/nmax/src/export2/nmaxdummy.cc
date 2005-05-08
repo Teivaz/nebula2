@@ -42,7 +42,7 @@ nSceneNode* nMaxDummy::Export(INode* inode)
 
     if (createdNode)
     {
-        n_maxlog(Midium, "%s node has custom attributes.", inode->GetName());
+        n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
     }
     else
     {
@@ -74,7 +74,7 @@ nSceneNode*  nMaxDummy::CreateNodeFromCustAttrib(INode* inode)
     Object* obj = nMaxUtil::GetBaseObject(inode, 0);
     if (!obj)
     {
-        n_maxlog(Midium, "The node %s has no object.", inode->GetName());
+        n_maxlog(Medium, "The node %s has no object.", inode->GetName());
         return NULL;
     }
 
@@ -82,7 +82,7 @@ nSceneNode*  nMaxDummy::CreateNodeFromCustAttrib(INode* inode)
     nMaxCustAttrib custAttrib;
     if (!custAttrib.Convert(obj, xmlDoc))
     {
-        n_maxlog(Midium, "The node %s has no custom attribute.", inode->GetName());
+        n_maxlog(Medium, "The node %s has no custom attribute.", inode->GetName());
         return NULL;
     }
 
@@ -204,7 +204,7 @@ nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle
                 }
                 else
                 {
-                    n_maxlog(Midium, "The attachment node %s has no parent node. It is deleted.", inode->GetName());
+                    n_maxlog(Medium, "The attachment node %s has no parent node. It is deleted.", inode->GetName());
 
                     nKernelServer::Instance()->PopCwd();
                     attachNode->Release();

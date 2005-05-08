@@ -64,7 +64,7 @@ nMaxNode::CreateNebulaObject(const char* classname, const char* objectname)
         nRoot* cwd = kernelServer->Lookup(sceneNode->GetFullName().Get());
         kernelServer->PushCwd(cwd);
 
-        n_maxlog(Midium, "Created '%s' Nebula object.", sceneNode->GetFullName().Get());
+        n_maxlog(Medium, "Created '%s' Nebula object.", sceneNode->GetFullName().Get());
     }
     else
     {

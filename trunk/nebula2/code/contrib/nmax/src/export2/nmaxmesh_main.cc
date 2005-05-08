@@ -185,7 +185,7 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
     Object* obj = nMaxUtil::GetBaseObject(inode, 0);
     if (!obj)
     {
-        n_maxlog(Midium, "The node %s has no object.", inode->GetName());
+        n_maxlog(Medium, "The node %s has no object.", inode->GetName());
         return false;
     }
 
@@ -365,7 +365,7 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
     // get custom attributes of the node if it exist.
     if (GetCustAttrib(inode))
     {
-        n_maxlog(Midium, "%s node has custom attributes.", inode->GetName());
+        n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
     }
 
     // check for that this mesh is skinned(or physique). 
@@ -636,7 +636,7 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
 
 
 #ifdef _DEBUG
-    n_maxlog(Midium, "Number of vertices of %s node are %d", inode->GetName(), 
+    n_maxlog(Medium, "Number of vertices of %s node are %d", inode->GetName(), 
                                                              meshBuilder->GetNumVertices());
 #endif
     //return true;
