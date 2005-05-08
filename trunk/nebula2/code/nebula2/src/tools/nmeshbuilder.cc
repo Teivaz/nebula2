@@ -1346,7 +1346,7 @@ nMeshBuilder::CheckForGeometryError()
                 const float thresh = 0.00001f;
                 if ((dv0 < thresh) || (dv1 < thresh) || (dv2 < thresh))
                 {
-                    snprintf(msg, sizeof(msg), "Triangle with index %d has identical v texcoords on layer %d (may cause per-pixel lighting artefacts)!\n", i, j);
+                    snprintf(msg, sizeof(msg), "Triangle with index %d has identical v texcoords on layer %d (may cause per-pixel lighting artifacts)!\n", i, j);
                     errors.Append(msg);
                 }
             }
