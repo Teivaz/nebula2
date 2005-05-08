@@ -192,7 +192,7 @@ bool nMaxBoneManager::BuildBones(INode* node)
 
     for (int i=0; i<nodeArray.Size(); i++)
     {
-        n_maxlog(Midium, "    nodes in array: %s", nodeArray[i]->GetName());
+        n_maxlog(Medium, "    nodes in array: %s", nodeArray[i]->GetName());
     }
 
     // array for bone nodes.
@@ -201,14 +201,14 @@ bool nMaxBoneManager::BuildBones(INode* node)
     // retrieves only bones from scene nodes.
     this->GetBoneByModifier(nodeArray, boneNodeArray);
 
-    n_maxlog(Midium, "Actually used number of bones : %d", boneNodeArray.Size());
+    n_maxlog(Medium, "Actually used number of bones : %d", boneNodeArray.Size());
 
     this->GetBoneByClassID(nodeArray, boneNodeArray);
 
     // if there is no bones in the scene, just return.
     if (boneNodeArray.Size() <= 0)
     {
-        n_maxlog(Midium, "The scene has no bones.");
+        n_maxlog(Medium, "The scene has no bones.");
         return true;
     }
 
@@ -243,7 +243,7 @@ bool nMaxBoneManager::BuildBones(INode* node)
         noteTrack.AddAnimState(firstframe, duration, fadeintime);
     }
 
-    n_maxlog(Midium, "Found %d bones", this->GetNumBones());
+    n_maxlog(Medium, "Found %d bones", this->GetNumBones());
 
     return true;
 }
@@ -265,7 +265,7 @@ INode* nMaxBoneManager::GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeAr
 //#ifdef _DEBUG
 //    for (i=0; i<boneNodeArray.Size(); i++)
 //    {
-//        n_maxlog(Midium, "Before Sort: %s", boneNodeArray[i]->GetName());
+//        n_maxlog(Medium, "Before Sort: %s", boneNodeArray[i]->GetName());
 //    }
 //#endif
 
@@ -316,7 +316,7 @@ INode* nMaxBoneManager::GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeAr
 //#ifdef _DEBUG
 //    for (i=0; i<boneLevelArray.Size(); i++)
 //    {
-//        n_maxlog(Midium, "After Sort: %s", boneLevelArray[i].node->GetName());
+//        n_maxlog(Medium, "After Sort: %s", boneLevelArray[i].node->GetName());
 //    }
 //#endif
 
@@ -758,9 +758,9 @@ bool nMaxBoneManager::Export(const char* animFileName)
         animBuilder.AddGroup(animGroup);
     }
 
-    n_maxlog(Midium, "Optimizing animation curves...");
+    n_maxlog(Medium, "Optimizing animation curves...");
     int numOptimizedCurves = animBuilder.Optimize();
-    n_maxlog(Midium, "Number of optimized curves : %d", numOptimizedCurves);
+    n_maxlog(Medium, "Number of optimized curves : %d", numOptimizedCurves);
 
     animBuilder.FixKeyOffsets();
 

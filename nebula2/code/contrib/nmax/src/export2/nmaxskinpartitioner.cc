@@ -51,7 +51,7 @@ void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray,
     // do skin partitioning.
     if (skinPartitioner.PartitionMesh(srcMeshBuilder, tmpMeshBuilder, maxJointPaletteSize))
     {
-        n_maxlog(Midium, "The number of partitions: %d", skinPartitioner.GetNumPartitions());
+        n_maxlog(Medium, "The number of partitions: %d", skinPartitioner.GetNumPartitions());
 
         for (int i=0; i<srcMeshArray.Size(); i++)
         {

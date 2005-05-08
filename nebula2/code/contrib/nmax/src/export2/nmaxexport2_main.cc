@@ -159,11 +159,11 @@ int ExportScene(const TCHAR* name, Interface* inf)
 
         if (LaunchViewer(sceneFile.Get()))
         {
-            n_maxlog(Midium, "Launched preview application.");
+            n_maxlog(Medium, "Launched preview application.");
         }
         else
         {
-            n_maxlog(Midium, "Failed to launch preview application.");
+            n_maxlog(Medium, "Failed to launch preview application.");
         }
     }
 

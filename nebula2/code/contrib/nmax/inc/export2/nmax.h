@@ -130,7 +130,7 @@ enum Verbose {
     Error   = -1,
     Warning = 0,
     Low     = 1,
-    Midium  = 2,
+    Medium  = 2,
     High    = 3,
 };
 

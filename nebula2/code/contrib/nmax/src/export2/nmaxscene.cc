@@ -136,7 +136,7 @@ bool nMaxScene::Preprocess(INode* root)
     //this->InitializeNodes(root);
 
     // Build bone list.
-    n_maxlog(Midium, "Start to build bone list.");
+    n_maxlog(Medium, "Start to build bone list.");
 
     this->boneManager = nMaxBoneManager::Instance();
     if (!this->boneManager->BuildBones(root))
@@ -255,7 +255,7 @@ bool nMaxScene::OpenNebula()
     {
         ks->PushCwd(exportRoot);
 
-        n_maxlog(Midium, "Created '%s' scene base object.", exportRoot->GetFullName().Get());
+        n_maxlog(Medium, "Created '%s' scene base object.", exportRoot->GetFullName().Get());
     }
     else
     {
