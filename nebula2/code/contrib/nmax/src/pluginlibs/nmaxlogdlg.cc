@@ -15,6 +15,15 @@
 
 nMaxLogDlg* nMaxLogDlg::Singleton = 0;
 
+static const char * sColorTables[MaxVerbosity + 1] = {
+    "{\\colortbl;\\red255\\green0\\blue0;}",
+    "{\\colortbl;\\red255\\green126\\blue0;}",
+    "{\\colortbl;\\red0\\green0\\blue0;}",
+    "{\\colortbl;\\red0\\green0\\blue0;}",
+    "{\\colortbl;\\red0\\green0\\blue0;}",
+    NULL
+};
+
 //-----------------------------------------------------------------------------
 /**
 */
@@ -98,18 +107,19 @@ void nMaxLogDlg::LogMessage(int logLevel, const char* msg, ...)
     if (logLevel > verboseLevel)
         return;
 
-    nString newLog;
-
+    char buffer[2 * 1024];
     va_list argList;
     va_start(argList, msg);
-
-    char buffer[2 * 1024];
     vsnprintf(buffer, sizeof(buffer), msg, argList);
+    va_end(argList);
 
-    newLog += buffer;
-    newLog += "\r\n";
+    nString rtfStr = "{\\rtf ";
+    rtfStr += sColorTables[logLevel];
+    rtfStr += "{\\par\\pard \\cf1";
+    rtfStr += buffer;
+    rtfStr += "}}\n";
 
-    LogMessage(newLog);
+    this->LogMessage(rtfStr);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,6 +133,7 @@ void nMaxLogDlg::LogMessage(const nString &str)
 
     SendMessage(hWndEdit, EM_SETSEL, -1, -1);
     SendMessage(hWndEdit, EM_REPLACESEL, 0/*no undo*/, (LPARAM)str.Get()/*new text to replace*/);
+    SendMessage(hWndEdit, EM_SCROLL, SB_PAGEDOWN, 0/*unused*/);
 }
 
 //-----------------------------------------------------------------------------
