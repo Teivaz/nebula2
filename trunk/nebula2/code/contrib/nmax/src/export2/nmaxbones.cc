@@ -722,18 +722,6 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
                     nMaxSampleKey& skey = tmpSampleArray[key_idx];
 
-                    // transform scale
-                    float scale = nMaxOptions::Instance()->GetGeomScaleValue();
-                    if (scale != 0.0f)
-                    {
-                        Point3 scaleVal(scale, scale, scale);
-
-                        Matrix3 scaleTM;
-                        scaleTM.IdentityMatrix();
-                        scaleTM.Scale(scaleVal);
-
-                        skey.tm = skey.tm * scaleTM;
-                    }
                     skey.tm.NoScale();
 
                     AffineParts ap;
