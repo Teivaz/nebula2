@@ -10,9 +10,9 @@
 /**
     called when the plugin dll is loaded.
 */
-void nMaxPluginInitialize()
+bool nMaxPluginInitialize()
 {
-    // insert tasks which needed when the plugin startup.
+    return true;
 }
 
 //------------------------------------------------------------------------------
