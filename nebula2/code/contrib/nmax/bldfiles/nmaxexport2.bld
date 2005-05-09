@@ -32,9 +32,7 @@ beginmodule nmaxexport2
         nmaxexport2_script
         nmaxinterface
         nmaxutil
-        nmaxoptions
         nmaxscriptcall
-        nmaxdlgscript
     }
     setheaders {
         nmaxexport2
@@ -53,8 +51,10 @@ beginmodule nmaxoptions
     setdir export2
     setfiles { 
         nmaxoptions
+        nmaxoptionscriptext
     }
     setheaders {
+        nmaxoptionscriptext
         nmaxoptions
     }
 endmodule
