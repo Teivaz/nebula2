@@ -3,6 +3,7 @@
 //
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
+#include "base/nmaxlistener.h"
 #include "export2/nmax.h"
 #include "export2/nmaxoptions.h"
 #include "pluginlibs/ninifile.h"
@@ -70,7 +71,7 @@ bool nMaxOptions::Initialize()
     if (!fileServer->FileExists(iniFilename.Get()))
     {
         // .ini file does not exist in '/plugcfg' directory.
-        n_maxlog(Error, "%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
+        n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
         return false;
     }
 
@@ -96,7 +97,7 @@ bool nMaxOptions::Initialize()
 
     if (!fileServer->DirectoryExists(this->homeDir.Get()))
     {
-        n_maxlog(Error, "Home path '%s' does not exist.", this->homeDir.Get());
+        n_listener("Home path '%s' does not exist.", this->homeDir.Get());
         return false;
     }
     else
@@ -220,7 +221,7 @@ bool nMaxOptions::Initialize()
         {
             nString alerts("ALERT: assignment of paths are wrong:");
             alerts += tmp;
-            n_maxlog(Error, "%s", alerts.Get());
+            n_listener("%s", alerts.Get());
             return false;
         }
     }
