@@ -37,7 +37,8 @@ int	nMaxExport2::DoExport(const TCHAR *name,
     BOOL suppressPrompts, 
     DWORD options)
 {
-    return ExportScene(name, inf);
+    // it exports root node in the scene.
+    return ExportScene(name, inf, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -47,11 +48,7 @@ int	nMaxExport2::DoExport(const TCHAR *name,
 static
 bool LaunchViewer(const char* sceneFile)
 {
-    //nString appPath;
     nString appArgs;
-
-    //appPath = nMaxOptions::Instance()->GetViewerDir();
-    //appPath += "nmaxpreviewer.exe";
 
     appArgs += "-projdir ";
     appArgs += nMaxOptions::Instance()->GetHomePath();
@@ -72,7 +69,6 @@ bool LaunchViewer(const char* sceneFile)
     cwd += "\\bin\\win32";
 #endif
 
-    //appLauncher.SetWorkingDirectory("home:");
     appLauncher.SetWorkingDirectory(cwd.Get());
     appLauncher.SetArguments(appArgs.Get());
 
@@ -101,9 +97,15 @@ void ReleaseSingletons()
 
 //-----------------------------------------------------------------------------
 /**
+    Export the given scene or node.
 
+    @param name filename to save a exported scene(or node).
+    @param inf  pointer to Interface class instance.
+    @param node INode which to export. If Null is given, it exports scene root node.
+
+    @return Return 0, if it failed to export.
 */
-int ExportScene(const TCHAR* name, Interface* inf)
+int ExportScene(const TCHAR* name, Interface* inf, INode* inode)
 {
     n_assert(inf);
 
@@ -126,7 +128,7 @@ int ExportScene(const TCHAR* name, Interface* inf)
         return 0;
     }
 
-    // read options from .ini file.
+    //// read options from .ini file.
     nMaxOptions* expOptions = nMaxOptions::Instance();
     if (!expOptions->Initialize())
     {
@@ -141,8 +143,7 @@ int ExportScene(const TCHAR* name, Interface* inf)
 
     // export scene.
     nMaxScene scene;
-    //scene.SetSaveFileName(name);
-    if (!scene.Export())
+    if (!scene.Export(inode))
     {
         n_maxlog(Error, "Failed to export scene.");
 
