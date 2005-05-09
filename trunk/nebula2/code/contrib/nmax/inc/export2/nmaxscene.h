@@ -26,7 +26,7 @@ public:
     nMaxScene();
     virtual ~nMaxScene();
 
-    bool Export();
+    bool Export(INode* inode);
 
 protected:
     // @name Helper functions for begin and end stage of export.
