@@ -1,0 +1,44 @@
+/**
+    @defgroup NMaxScriptExtension Max Script Extension
+
+    @section NMaxScriptExtensionOverview Overview
+
+    The <b>Nebula2 3DSMax Toolkit</b> provides several max script extension
+    commands which are useful to customize your own export work flow.
+
+    @section NMaxScriptExtensionCommand Max Script Commands
+
+      - <b>nExportScene</b> <i>"filename"</i> <br>
+        Export a scene with the given filename.<br>
+        <br>
+        example:
+@verbatim
+    nexportscene "cube01.n2"
+@endverbatim
+        <br>
+      - <b>nExportNode</b> <i>"filename"</i> <i>objectname</i> <br>
+        Export the given node object with the filename. <br>
+        <br>
+        example:
+@verbatim
+    nexportnode "sphere01.n2" $sphere01
+@endverbatim
+        <br>
+      - <b>nShowDirSettingDlg</b> <br>
+        Show directory setting dialog up. <br>
+        <br>
+        example:
+@verbatim
+    nshowdirsettingdlg()
+@endverbatim
+        <br>
+      - <b>nGetProjDir</b> <br>
+        Retrieves project directory path. <br>
+        <br>
+        example:
+@verbatim
+    ngetprojdir()
+@endverbatim 
+        <br>
+    
+*/
