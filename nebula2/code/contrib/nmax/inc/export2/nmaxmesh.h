@@ -58,17 +58,18 @@ public:
     nMaxMesh();
     virtual ~nMaxMesh();
 
-    nSceneNode* Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool useIndivisualMesh);
+    nSceneNode* Export(INode* inode);
 
     int GetNumGroupMeshes() const;
     const nMaxSkinMeshData& GetGroupMesh(const int index);
 
-    const nMeshBuilder& GetLocalMeshBuilder();
+    Type GetType() const;
+
+    const nMeshBuilder& GetMeshBuilder();
+    void SetBaseGroupIndex(int baseGroupIndex);
 
     static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
     static void CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename);
-
-    Type GetType() const;
 
 protected:
     Mesh* LockMesh(INode* node);
@@ -101,7 +102,7 @@ protected:
     void GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &weights);
     //@}
 
-    void SetMeshFile(nSceneNode* shapeNode, nString &nodeName, bool useIndivisualMesh);
+    void SetMeshFile(nSceneNode* shapeNode, nString &nodeName);
 
 protected:
     int GetGroupIndex (nMeshBuilder *meshBuilder);
@@ -142,7 +143,7 @@ protected:
     bool GetCustAttrib(INode* inode);
     nSceneNode* CreateShapeNode(INode* inode, nString &name);
 
-    void SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int numMaterials);
+    void SetSkinAnimator(nSceneNode* createdNode, int numMaterials);
 
 protected:
 
@@ -176,6 +177,9 @@ protected:
 
     /// pivot matrix.
     Matrix3 pivMat;
+
+    /// storage for all created shape or shadow nodes.
+    nArray<nSceneNode*> sceneNodeArray;
 
 };
 //-----------------------------------------------------------------------------
@@ -215,16 +219,15 @@ nMaxMesh::GetGroupIndex (nMeshBuilder *meshBuilder)
 }
 //-----------------------------------------------------------------------------
 inline
-const nMeshBuilder& 
-nMaxMesh::GetLocalMeshBuilder()
-{
-    return this->localMeshBuilder;
-}
-//-----------------------------------------------------------------------------
-inline
 nMaxMesh::Type nMaxMesh::GetType() const
 {
     return this->meshType;
+}
+//-----------------------------------------------------------------------------
+inline
+const nMeshBuilder& nMaxMesh::GetMeshBuilder()
+{
+    return this->localMeshBuilder;
 }
 //-----------------------------------------------------------------------------
 #endif
