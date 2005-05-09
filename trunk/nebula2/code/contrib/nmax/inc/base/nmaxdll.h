@@ -242,7 +242,7 @@ __declspec( dllexport ) ULONG CanAutoDefer();
     @note
         This is called when a dll is loaded
 */
-extern void nMaxPluginInitialize();
+extern bool nMaxPluginInitialize();
 
 //-----------------------------------------------------------------------------
 /**
