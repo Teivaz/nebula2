@@ -164,8 +164,6 @@ void nMaxMesh::EndSkin()
         modifier->ReleaseInterface(I_PHYINTERFACE, phyExport);
     }
 
-    isPhysique = false;
-    isSkinned = false;
     beginSkin = false;  
     modifier = 0;
     phyExport = 0;

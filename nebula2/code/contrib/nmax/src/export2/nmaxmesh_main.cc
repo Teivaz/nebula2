@@ -41,7 +41,8 @@ nMaxMesh::nMaxMesh() :
     beginSkin(false),
     isSkinned(false),
     isPhysique(false),
-    meshType (Shape)
+    meshType (Shape)/*,
+    shapeNode(0)*/
 {
     vertexFlag = VertexNormal | VertexColor | VertexUvs;
 }
@@ -356,7 +357,7 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
 
     @return return created nebula object. 
 */
-nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool useIndivisualMesh)
+nSceneNode* nMaxMesh::Export(INode* inode)
 {
     this->maxNode = inode;
 
@@ -391,22 +392,18 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             nodename += "_shadow";
 
         createdNode = this->CreateShapeNode(inode, nodename);
+        this->sceneNodeArray.Append(createdNode);
 
-        nMeshBuilder* meshBuilder = (useIndivisualMesh ? &this->localMeshBuilder : globalMeshBuilder);
-
-        int baseGroupIndex = GetMesh(inode, meshBuilder, -1, 1);
+        int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, -1, 1);
 
         // save group index for skin partitioning and mesh fragments.
         if (createdNode)
         {
-            SetShapeGroup((nShapeNode*)createdNode, baseGroupIndex, numMaterials);
+            SetSkinAnimator((nShapeNode*)createdNode, numMaterials);
 
             // specifies local bounding box.
             bbox3 localBox;
-            if (useIndivisualMesh)
-                localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
-            else
-                localBox = globalMeshBuilder->GetGroupBBox(baseGroupIndex);
+            localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
 
             ((nShapeNode*)createdNode)->SetLocalBox(localBox);
         }
@@ -416,7 +413,7 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             GetMaterial(inode, (nShapeNode*)createdNode, 0);
 
         // save mesh file and specifies it to the shape node.
-        SetMeshFile((nShapeNode*)createdNode, nodename, useIndivisualMesh);
+        SetMeshFile((nShapeNode*)createdNode, nodename);
     }
     else
     {
@@ -458,23 +455,19 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
             nodename.AppendInt(matIdx);
 
             createdNode = this->CreateShapeNode(inode, nodename);
+            this->sceneNodeArray.Append(createdNode);
 
             // build mesh.
-            nMeshBuilder* meshBuilder = (useIndivisualMesh ? &this->localMeshBuilder : globalMeshBuilder);
-
-            int baseGroupIndex = GetMesh(inode, meshBuilder, matIdx, numMaterials);
+            int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, matIdx, numMaterials);
 
             // save group index for skin partitioning and mesh fragments.
             if (createdNode)
             {
-                SetShapeGroup((nShapeNode*)createdNode, baseGroupIndex, numMaterials);
+                SetSkinAnimator((nShapeNode*)createdNode, numMaterials);
 
                 // specifies local bounding box.
                 bbox3 localBox;
-                if (useIndivisualMesh)
-                    localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
-                else
-                    localBox = globalMeshBuilder->GetGroupBBox(baseGroupIndex);
+                localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
 
                 ((nShapeNode*)createdNode)->SetLocalBox(localBox);
 
@@ -486,7 +479,7 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
                 GetMaterial(inode, (nShapeNode*)createdNode, matIdx);
 
             // save mesh file and specifies it to the shape node.
-            SetMeshFile((nShapeNode*)createdNode, nodename, useIndivisualMesh);
+            SetMeshFile((nShapeNode*)createdNode, nodename);
             
             // set cwd to the parent to put the shape in the same hierarchy.
             // (cause all these shapes belong to same mesh)
@@ -499,15 +492,6 @@ nSceneNode* nMaxMesh::Export(INode* inode, nMeshBuilder* globalMeshBuilder, bool
         //nKernelServer::Instance()->PopCwd();
 
         createdNode = transformNode;
-    }
-
-    if (useIndivisualMesh)
-    {
-        nArray<nMaxMesh*> meshArray;
-        meshArray.Append(this);
-
-        nMaxSkinPartitioner skinPartitioner;
-        skinPartitioner.Partitioning(meshArray, this->localMeshBuilder);
     }
 
     if (this->IsSkinned() || this->IsPhysique())
@@ -621,7 +605,6 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
         else
             triangle.SetUsageFlags(nMesh2::WriteOnce);
 
-        //triangle.SetGroupId(baseGroupIndex+matIdx+1);
         triangle.SetGroupId(baseGroupIndex);
 
         if (matIdx >= 0)
@@ -1132,7 +1115,7 @@ nArray<int> nMaxMesh::GetUsedMapChannels(Mesh* mesh)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxMesh::SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int numMaterials)
+void nMaxMesh::SetSkinAnimator(nSceneNode* createdNode, int numMaterials)
 {
     if (this->IsSkinned() || this->IsPhysique())
     {
@@ -1144,12 +1127,6 @@ void nMaxMesh::SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int nu
                 skinShapeNode->SetSkinAnimator("../../skinanimator");
             else
                 skinShapeNode->SetSkinAnimator("../skinanimator");
-
-            // we don't need this for shadow skin shape node cause it dees not need to be paritioned.
-            nMaxSkinMeshData groupMesh;
-            groupMesh.node = skinShapeNode;
-            groupMesh.groupIndex = baseGroupIndex;
-            this->skinmeshArray.Append(groupMesh);
         }
         else
         if (this->meshType == Shadow)
@@ -1162,16 +1139,58 @@ void nMaxMesh::SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int nu
                 shadowSkinShapeNode->SetSkinAnimator("../skinanimator");
         }
     }
-    else
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Specifies base group index of the all created shape or shadow nodes.
+
+    @note
+    Only the first base group index is passed for in-argument. 
+    Last group indexes are calculated based on this in-argument.
+
+    @param baseGroupIndex The first group index of this local mesh builder.
+
+*/
+void nMaxMesh::SetBaseGroupIndex(int baseGroupIndex)
+{
+    if (this->IsSkinned() || this->IsPhysique())
     {
         if (this->meshType == Shape)
         {
-            nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
-            shapeNode->SetGroupIndex(baseGroupIndex);
+            // we don't need this for shadow skin shape node 
+            // cause nShadowNode dees not need to be partitioned.
+            int numShapeNode = this->sceneNodeArray.Size();
+            for (int i=0; i<numShapeNode; i++)
+            {
+                nSceneNode* createdNode = this->sceneNodeArray[i];
+
+                nSkinShapeNode *skinShapeNode = static_cast<nSkinShapeNode*>(createdNode);
+                nMaxSkinMeshData groupMesh;
+                groupMesh.node = skinShapeNode;
+                groupMesh.groupIndex = baseGroupIndex + i;
+                this->skinmeshArray.Append(groupMesh);
+            }
+        }
+    }
+    else
+    {
+        // nShapeNode and nShodowShapeNode exist in different location in class hierarchy.
+        if (this->meshType == Shape)
+        {
+            int numShapeNode = this->sceneNodeArray.Size();
+            for (int i=0; i<numShapeNode; i++)
+            {
+                nSceneNode* createdNode = this->sceneNodeArray[i];
+                nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
+                shapeNode->SetGroupIndex(baseGroupIndex + i);
+            }
         }
         else
         if (this->meshType == Shadow)
         {
+            n_assert(this->sceneNodeArray.Size() == 1);
+            nSceneNode* createdNode = this->sceneNodeArray[0];
             nShadowNode *shadowNode = static_cast<nShadowNode*>(createdNode);
             shadowNode->SetGroupIndex(baseGroupIndex);
         }
@@ -1188,83 +1207,33 @@ void nMaxMesh::SetShapeGroup(nSceneNode* createdNode, int baseGroupIndex, int nu
                      The face that nshadownode and nshapenode is not derived 
                      from the same parent, ugly type casting was needed. Better idea?
 */
-void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName, bool useIndivisualMesh)
+void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)
 {
-    if (useIndivisualMesh)
+    if (createdNode)
     {
-        nString filename;
-        filename += nMaxOptions::Instance()->GetMeshesPath();
-        filename += nMaxUtil::CorrectName(nodeName);
-        filename += nMaxOptions::Instance()->GetMeshFileType();
+        // specify shape node's name.
+        nString meshname;
+        meshname += nMaxOptions::Instance()->GetMeshesAssign();
+        meshname += nMaxOptions::Instance()->GetSaveFileName();
+        meshname += nMaxOptions::Instance()->GetMeshFileType();
 
-        // remove redundant vertices.
-        this->localMeshBuilder.Cleanup(0);
-
-        // build mesh tangents and normals (also vertex normal if it does not exist)
-        BuildMeshTangentNormals(this->localMeshBuilder);
-
-        CheckGeometryErrors(this->localMeshBuilder, filename.Get());
-
-        this->localMeshBuilder.Optimize(); //TODO!
-        this->localMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
-
-        if (createdNode)
+        if (this->meshType == Shadow)
         {
-            // specify shape node's name.
-            nString meshname;
-            meshname += nMaxOptions::Instance()->GetMeshesAssign();
-            meshname += nMaxUtil::CorrectName(nodeName);
-            meshname += nMaxOptions::Instance()->GetMeshFileType();
-
-            //shapeNode->SetMesh(meshname.Get());
-            if (this->meshType == Shadow)
+            if (this->IsSkinned() || this->IsPhysique())
             {
-                if (this->IsSkinned() || this->IsPhysique())
-                {
-                    nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
-                    shadowSkinNode->SetMesh(meshname.Get());
-                }
-                else
-                {
-                    nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
-                    shadowNode->SetMesh(meshname.Get());
-                }
+                nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
+                shadowSkinNode->SetMesh(meshname.Get());
             }
             else
             {
-                nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
-                shapeNode->SetMesh(meshname.Get());
+                nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
+                shadowNode->SetMesh(meshname.Get());
             }
         }
-    }
-    else
-    {
-        if (createdNode)
+        else
         {
-            // specify shape node's name.
-            nString meshname;
-            meshname += nMaxOptions::Instance()->GetMeshesAssign();
-            meshname += nMaxOptions::Instance()->GetSaveFileName();
-            meshname += nMaxOptions::Instance()->GetMeshFileType();
-
-            if (this->meshType == Shadow)
-            {
-                if (this->IsSkinned() || this->IsPhysique())
-                {
-                    nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
-                    shadowSkinNode->SetMesh(meshname.Get());
-                }
-                else
-                {
-                    nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
-                    shadowNode->SetMesh(meshname.Get());
-                }
-            }
-            else
-            {
-                nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
-                shapeNode->SetMesh(meshname.Get());
-            }
+            nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
+            shapeNode->SetMesh(meshname.Get());
         }
     }
 }

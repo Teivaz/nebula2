@@ -56,8 +56,12 @@ nMaxScene::~nMaxScene()
 //-----------------------------------------------------------------------------
 /**
     Export given 3dsmax scene.
+
+    @param inode node to export. If it is Null, the plugin exports whole scene.
+
+    @return Return false if it fails to export the given node.
 */
-bool nMaxScene::Export()
+bool nMaxScene::Export(INode* inode)
 {
     n_maxlog(Low, "Start exporting.");
 
@@ -79,8 +83,11 @@ bool nMaxScene::Export()
         return false;
     }
 
+    // if the given node is NULL, it passes scene root node.
+    INode* node = (inode ? inode : rootNode);
+
     // recursively exports nodes in the scene.
-    if (!this->ExportNodes(rootNode))
+    if (!this->ExportNodes(node))
     {
         return false;
     }
@@ -333,29 +340,24 @@ bool nMaxScene::Postprocess()
 {
     //this->UnInitializeNodes(this->sceneRoot);
 
-    //// append meshes to one master mesh
-    //if (nMaxOptions::Instance()->GroupMeshes())
-    //{
-    //    int numMeshes = this->meshArray.Size();
-    //    if ( numMeshes > 0)
-    //    {
-    //        nMeshBuilder masterMesh;
-    //        nMaxMesh* mesh;
+    // append meshes to one master mesh
+    int nummeshes = this->meshArray.Size();
+    if ( nummeshes > 0)
+    {
+        nMaxMesh* mesh;
 
-    //        for (int i=0; i<numMeshes; i++)
-    //        {
-    //            mesh = this->meshArray[i];
+        for (int i=0; i<nummeshes; i++)
+        {
+            mesh = this->meshArray[i];
 
-    //            // get individual mesh then append it to master mesh.
-    //        }
+            //TODO: check the mesh has same vertex component.
+            //...
 
-    //        // save mater mesh.
-    //    }
-    //    else
-    //    {
-    //        // no meshes to merge
-    //    }
-    //}
+            // append retrieved meshes to a global mesh.
+            int baseGroupIndex = this->globalMeshBuilder.Append(mesh->GetMeshBuilder());
+            mesh->SetBaseGroupIndex(baseGroupIndex);
+        }
+    }
 
     // we assume any one of the meshes are shadow type, consider it to a shadow mesh.
     // FIXME: it would be good to use more intuitive way.
@@ -445,18 +447,6 @@ bool nMaxScene::Postprocess()
             this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
         }
     }
-/*  FIXME: it should be done on mesh exporting side.
-    else
-    {
-        for (int i=0; i<this->meshArray.Size(); i++)
-        {
-            const nMeshBuilder& localMeshBuilder = meshArray[i]->GetLocalMeshBuilder();
-            bbox3 localBox = localMeshBuilder.GetBBox();
-
-            rootBBox.extend(localBox);
-        }
-    }
-*/
 
 // begin animation save
     nString animFilename;
@@ -526,7 +516,7 @@ bool nMaxScene::ExportNodes(INode* inode)
 #endif
 
     //TODO: check any errors exist in stack. 
-    //      if there, return false then exit export.
+    //      if there, return false to exit export.
 
     nSceneNode* createdNode = 0;
 
@@ -561,7 +551,6 @@ bool nMaxScene::ExportNodes(INode* inode)
             break;
 
         case LIGHT_CLASS_ID:
-            //ExportLightObject(inode);
             {
                 nMaxLight light;
                 createdNode = light.Export(inode, obj);
@@ -611,7 +600,7 @@ bool nMaxScene::ExportNodes(INode* inode)
         this->ExportXForm(inode, createdNode, animStart);
     }
 
-    // export nodes recursively.
+    // recursively export the nodes.
     for (int i=0; i<inode->NumberOfChildren(); i++)
     {
         INode* child = inode->GetChildNode(i);
@@ -654,11 +643,8 @@ nSceneNode* nMaxScene::ExportGeomObject(INode* inode)
 
     {
         // we consider this INode is mesh object
-        //ExportMesh();
         nMaxMesh* mesh = n_new(nMaxMesh);
-
-        bool useIndivisualMesh = nMaxOptions::Instance()->UseIndivisualMesh();
-        createdNode = mesh->Export(inode, &this->globalMeshBuilder, useIndivisualMesh);
+        createdNode = mesh->Export(inode);
 
         // add the mesh to array for later merging.
         this->meshArray.Append(mesh);
