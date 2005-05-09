@@ -8,6 +8,7 @@
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxutil.h"
+#include "export2/nmaxoptions.h"
 
 #include "kernel/ntypes.h"
 
@@ -29,6 +30,8 @@ nMaxControl::~nMaxControl()
 /**
     Samples the node TM controllers and specifies retrieved keys to the given 
     sampleKeyArray.
+
+    - 21-Feb-05 kims Fixed transform scale.
 */
 void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyArray, 
                                     int sampleRate, nMaxControlType type)
@@ -54,6 +57,19 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
         nMaxSampleKey sampleKey;
 
         sampleKey.tm = nMaxTransform::GetLocalTM(inode, t);
+
+        // transform scale
+        float scale = nMaxOptions::Instance()->GetGeomScaleValue();
+        if (scale != 0.0f)
+        {
+            Point3 scaleVal(scale, scale, scale);
+
+            Matrix3 scaleTM;
+            scaleTM.IdentityMatrix();
+            scaleTM.Scale(scaleVal);
+
+            sampleKey.tm = sampleKey.tm * scaleTM;
+        }
 
         AffineParts ap;
 
