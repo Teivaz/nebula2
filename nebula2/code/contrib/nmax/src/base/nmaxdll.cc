@@ -158,7 +158,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
                 nKernelServer::ks->AddPackage(nnebula);
                 //nKernelServer::ks->AddPackage(nopende);
 
-                nMaxPluginInitialize();
+                if (!nMaxPluginInitialize())
+                    return FALSE;
             }
 		}
         break;
