@@ -113,17 +113,17 @@ main(int argc, const char** argv)
             {
                 // display prompt string
                 printf("%s>", msg.GetString());
-        		fflush(stdout);
+                fflush(stdout);
 
                 // get command from user
-		        lineOk = (gets(line) > 0);
+                lineOk = (gets(line) > 0);
 		
-		        if (strcmp("exit", line) == 0)
-		        {
-		            running = false;
-		        }
-		        else
-		        {
+                if (strcmp("exit", line) == 0)
+                {
+                    running = false;
+                }
+                else
+                {
                     // send user command and wait for answer from server
                     msg.SetString(line);
                     if (ipcClient.Send(msg))
@@ -137,14 +137,14 @@ main(int argc, const char** argv)
                         {
                             // display answer from server
                             if (msg.GetString()[0] != 0)
-		            		{
+                            {
                                 puts(msg.GetString());
                             }
                         }
                     }
-		        }
+                }
             }
-		}
+        }
     }
     if (ipcClient.IsConnected())
     {
