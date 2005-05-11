@@ -51,9 +51,9 @@ class nMaxExpose : public ReferenceTarget//, public INebulaInterface
 public:
     nMaxExpose(){ }
 
-    void DeleteThis(){ delete this; }
+    void DeleteThis() { delete this; }
 
-	int IsKeyable(){ return 0;}
+    int IsKeyable() { return 0; }
 
     FPInterfaceDesc* GetDesc();
 
