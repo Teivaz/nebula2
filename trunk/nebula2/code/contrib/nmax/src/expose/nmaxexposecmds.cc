@@ -40,7 +40,7 @@ public:
     };
 
 private:
-	DECLARE_DESCRIPTOR(nNebulaInterface)
+    DECLARE_DESCRIPTOR(nNebulaInterface)
 
     //-- function map --
     BEGIN_FUNCTION_MAP 
