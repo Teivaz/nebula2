@@ -5,30 +5,10 @@
     @class nResource
     @ingroup NebulaResourceSystem
 
-    Super class for all resource classes. Resources are mostly loaded
-    from a file, can be shared, and unloaded to free runtime space.
-    They are managed by a central resource server.
+    A superclass of all resource related subclasses such as nMesh, nFont2, 
+    nTexture2 and so on.
 
-    The nResource class provides an interface for asynchronous loading
-    (loading resources in a background thread). Not all subclasses must
-    support asynchronous resource loading though.
-
-    Default behaviour is synchronous loading (Load() returns when the
-    resource has been loaded). Asynchronous loading is enabled by
-    calling SetAsyncEnabled(true). When async loading is enabled,
-    Load() returns immediately with a return value of true but IsValid()
-    will return false until the resource has actually been loaded at some
-    point in the future.
-
-    To check whether a resource loading request has been issued at
-    some point in the past which has not been fullfilled yet, call
-    the IsPending() method. IsPending() returns true after an async
-    call to Load() and before IsValid() returns true to indicate the
-    the resource is available. In all other cases, IsPending() returns
-    false.
-
-    Unloading resources always happend immediately, both in sync and
-    async mode.
+    See @ref NebulaResourceSystem for more details.
 
     (C) 2002 RadonLabs GmbH
 */
