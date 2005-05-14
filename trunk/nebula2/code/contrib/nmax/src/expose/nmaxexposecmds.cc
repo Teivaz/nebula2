@@ -107,12 +107,12 @@ static nNebulaInterface nebulaInterfaceFP (
     nNebulaInterface::fn_nprint, _T("nprint"), 0, TYPE_VOID, 0, 1,
         _T("message"), 0, TYPE_STRING,
 
-    // 'set'
+    // 'call'
     nNebulaInterface::fn_call, _T("Call"), 0, TYPE_FPVALUE_TAB, 0, 2,
         _T("command"), 0, TYPE_STRING,
         _T("inargs"), 0, TYPE_FPVALUE_TAB,
 
-    // 'setv'
+    // 'callv'
     nNebulaInterface::fn_callv, _T("CallV"), 0, TYPE_FPVALUE_TAB, 0, 1,
         _T("command"), 0, TYPE_STRING,
 
