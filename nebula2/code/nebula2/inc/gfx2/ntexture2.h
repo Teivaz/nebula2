@@ -9,6 +9,34 @@
     are normal named, shared resources which are usually loaded from disk.
     Textures can also be declared as render targets.
 
+    The following code snip shows the creation of 16bit empty texture and
+    filling it with white pixel:
+    @code
+    tex = (nTexture2 *)refGfx2->NewTexture("mytexture");
+    if (!tex->IsValid())
+    {
+        const int width, height;
+        width = height = 128;
+        // create a 16bit 2D empty texture.
+        tex->SetUsage(nTexture2::CreateEmpty);
+        tex->SetType(nTexture2::TEXTURE_2D);
+        tex->SetWidth(width);
+        tex->SetHeight(height);
+        tex->SetFormat(nTexture2::A1R5G5B5);
+        tex->Load();
+
+        // fill the created texture with white pixel.
+        struct nTexture2::LockInfo surf;
+        if (tex->Lock(nTexture2::WriteOnly, 0, surf))
+        {
+            unsigned short *surface = (unsigned short *)surf.surfPointer;
+            for (unsigned int pixelByte=0; pixelByte < width*height; pixelByte++)
+                surface[pixelByte] = 0xffff;
+            tex->Unlock(0);
+        }
+    }
+    @endcode
+
     (C) 2002 RadonLabs GmbH
 */
 #include "resource/nresource.h"
