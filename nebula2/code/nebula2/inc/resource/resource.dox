@@ -1,6 +1,85 @@
 /**
     @defgroup NebulaResourceSystem Resource System
 
+    This section of the documentation covers Nebula resource system and 
+    extending of it.
+
+      - @ref NebulaResourceSystemOverview
+      - @ref NebulaResourceSystemCustomResource
+      - @ref NebulaResourceSystemLoadingBehavior
+      - @ref NebulaResourceSystemCreateResource
+
+    @section NebulaResourceSystemOverview Overview
+
+    The Nebula resource system stores resource data(meshes, textures, shaders,
+    animation data, sound data etc.) and provides centeral place to manage it.   
+    Though the resource system, Nebula provides powerful and smart way of 
+    a loading and creation of a resource.
+
+    All resource classes are derived from nResource class and nResourceServer
+    manages those resources as it does loading, finding and some other tasks for 
+    resources.
+
+    See nResource page to see all supported resource types and each page of the
+    subclass of nResource class to see more details. 
+
+
+    @section NebulaResourceSystemCustomResource Defining user custom type resource class
+
+    You can create your own resource type by subclassing nResource class.
+    After deriving your own class from nResource class then you should override 
+    nResource::LoadResource() function which actually load resource.
+
+    Also your subclass should override nResource::CanLoadAsync() function to 
+    determine its loading behavior whether it loads its data asynchronously or not.
+    See the next @ref NebulaResourceSystemLoadingBehavior section for more its 
+    details.
+
+    @code
+// Derive your class from nResource class
+class nMyResource : public nResource
+{
+public:
+    ...
+    virtual bool CanLoadAsync() const;  
+    ...
+protected:
+    ...
+    // Overide LoadResource() function which actually load  
+    // your custom resource data.
+    virtual bool LoadResource(); 
+    ...
+};
+    @endcode
+
+
+    @section NebulaResourceSystemLoadingBehavior Loading Behavior
+
+    Super class for all resource classes. Resources are mostly loaded
+    from a file, can be shared, and unloaded to free runtime space.
+    They are managed by a central resource server.
+
+    The nResource class provides an interface for asynchronous loading
+    (loading resources in a background thread). Not all subclasses must
+    support asynchronous resource loading though.
+
+    Default behaviour is synchronous loading (nResource::Load() returns when the
+    resource has been loaded). Asynchronous loading is enabled by
+    calling SetAsyncEnabled(true). When async loading is enabled,
+    nResource::Load() returns immediately with a return value of true but 
+    nResource::IsValid() will return false until the resource has actually
+    been loaded at some point in the future.
+
+    To check whether a resource loading request has been issued at
+    some point in the past which has not been fullfilled yet, call
+    the nResource::IsPending() method. IsPending() returns true after an async
+    call to Load() and before IsValid() returns true to indicate the
+    the resource is available. In all other cases, nResource::IsPending() returns
+    false.
+
+    Unloading resources always happend immediately, both in sync and
+    async mode.
+
 
     @section NebulaResourceSystemCreateResource Creation of Platform Specific Resources
     
