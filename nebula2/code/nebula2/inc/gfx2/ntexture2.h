@@ -15,7 +15,7 @@
     tex = (nTexture2 *)refGfx2->NewTexture("mytexture");
     if (!tex->IsValid())
     {
-        const int width, height;
+        int width, height;
         width = height = 128;
         // create a 16bit 2D empty texture.
         tex->SetUsage(nTexture2::CreateEmpty);
@@ -35,6 +35,15 @@
             tex->Unlock(0);
         }
     }
+    @endcode
+
+    You also can read pixel of the texture like the following:
+    @code
+    struct nTexture2::LockInfo surf;
+    tex->Lock(nTexture2::ReadOnly, 0, surf)
+    ushort *surface = (ushort*)surf.surfPointer;
+    ushort color = surface[x + y*surf.surfPitch];
+    tex->Unlock(0);  
     @endcode
 
     (C) 2002 RadonLabs GmbH
