@@ -4,6 +4,9 @@
 #
 #  Modules:
 #      nvariableserver
+#      nnpkfileserver
+#      nsharedmemory
+#      nramfileserver
 #      nresourceloader
 #      nresourcebundle
 #      nresourceserver
@@ -40,6 +43,29 @@ beginmodule nnpkfileserver
         nnpktocentry
         nnpkfile
         nnpkdirectory
+    }
+endmodule
+#------------------------------------------------------------------------------
+beginmodule nsharedmemory
+    setdir file
+    setfiles { 
+        nsharedmemory
+    }
+    setheaders { 
+        nsharedmemory
+    }
+endmodule
+#------------------------------------------------------------------------------
+beginmodule nramfileserver
+    setdir file
+    setfiles { 
+        nramfileserver_main 
+        nramfileserver_cmds 
+        nramfile
+    }
+    setheaders { 
+        nramfileserver
+        nramfile
     }
 endmodule
 #-------------------------------------------------------------------------------
