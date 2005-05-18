@@ -37,10 +37,18 @@ nFileServer2::nFileServer2() :
     n_assert(0 == Singleton);
     Singleton = this;
 
-    this->assignDir = kernelServer->New("nroot", "/sys/share/assigns");
-    this->InitHomeAssign();
-    this->InitBinAssign();
-    this->InitUserAssign();
+    // Initialize assign repository if not already exists. The latter may happen
+    // if nKernelServer::ReplaceFileServer() was used to set another
+    // standard file server.
+    nRoot* assignRoot = kernelServer->Lookup("/sys/share/assigns");
+    if (0 == assignRoot)
+    {
+        this->InitAssigns();
+    }
+    else
+    {
+        this->assignDir = assignRoot;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -51,10 +59,6 @@ nFileServer2::nFileServer2() :
 */
 nFileServer2::~nFileServer2()
 {
-    if (this->assignDir.isvalid())
-    {
-        this->assignDir->Release();
-    }
     n_assert(0 != Singleton);
     Singleton = 0;
 }
@@ -100,9 +104,8 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
     @param assignName      the name of the assign
     @return                the path to which the assign links, or NULL if 
                            assign is undefined
-
     history:
-     - 30-Jan-2002   peter    created
+    - 30-Jan-2002   peter    created
 */
 const char*
 nFileServer2::GetAssign(const char* assignName)
@@ -117,6 +120,15 @@ nFileServer2::GetAssign(const char* assignName)
         n_printf("Assign '%s' not defined!\n", assignName);
         return NULL;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Remove all existing assigns and setup base assigns.
+*/
+void
+nFileServer2::ResetAssigns()
+{
 }
 
 //------------------------------------------------------------------------------
@@ -187,12 +199,12 @@ nFileServer2::CleanupPathName(nString& str)
     Please note that Nebula does not know the concept of a current working
     directory, thus, all paths MUST be absolute (please note that Nebula
     assigns can be used to create position independent absolute paths).
-
-    @param pathName        the path to expand
-    @return             resulting string
+	  
+    @param pathName   the path to expand
+    @retur            resulting string
 
     history:
-     - 30-Jan-2002   peter    created
+    - 30-Jan-2002   peter    created
 */
 nString
 nFileServer2::ManglePath(const char* pathName)
@@ -226,15 +238,17 @@ nFileServer2::ManglePath(const char* pathName)
 /**
     creates a new nDirectory object
 
-    @return          the nDirectory object
+    @return    the nDirectory object
 
     history:
-     - 30-Jan-2002   peter    created
+    - 30-Jan-2002   peter    created
 */
 nDirectory* 
-nFileServer2::NewDirectoryObject()
+nFileServer2::NewDirectoryObject() const
 {
-    return n_new(nDirectory);
+    nDirectory* result = n_new(nDirectory);
+    n_assert(result != 0);
+    return result;
 }
 
 //------------------------------------------------------------------------------
@@ -244,12 +258,28 @@ nFileServer2::NewDirectoryObject()
     @return          the nFile object
 
     history:
-     - 30-Jan-2002   peter    created
+    - 30-Jan-2002   peter    created
 */
 nFile*
-nFileServer2::NewFileObject()
+nFileServer2::NewFileObject() const
 {
-    return n_new(nFile);
+    nFile* result = n_new(nFile);
+    n_assert(result != 0);
+    return result;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nFileServer2::InitAssigns()
+{
+    n_assert(!this->assignDir.isvalid());
+    this->assignDir = kernelServer->New("nroot", "/sys/share/assigns");
+    this->InitHomeAssign();
+    this->InitBinAssign();
+    this->InitUserAssign();
+    this->InitTempAssign();
 }
 
 //------------------------------------------------------------------------------
@@ -425,7 +455,7 @@ void
 nFileServer2::InitUserAssign()
 {
 #ifdef __XBxX__
-    this->SetAssign("home", "d:/");
+    this->SetAssign("user", "d:/");
 #elif defined(__WIN32__)
     char rawPath[MAX_PATH];
     HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
@@ -447,32 +477,53 @@ nFileServer2::InitUserAssign()
 #error "IMPLEMENT ME!"
 #endif
 }
-
 //------------------------------------------------------------------------------
 /**
+    Initialize the standard temp: assign.
 */
-bool
-nFileServer2::FileExists(const char* pathName)
+void
+nFileServer2::InitTempAssign()
 {
-    n_assert(pathName);
-    nFile* file = this->NewFileObject();
-    if (file->Open(pathName, "r"))
-    {
-        file->Close();
-        file->Release();
-        return true;
-    }
-    file->Release();
-    return false;
+#ifdef __XBxXX__
+    this->SetAssign("temp", "d:/");
+#elif __WIN32__
+    char rawPath[MAX_PATH];
+    DWORD numChars = GetTempPath(sizeof(rawPath), rawPath);
+    n_assert(numChars > 0);
+
+    nString path(rawPath);
+    path.ConvertBackslashes();
+    path.Append("/");
+    this->SetAssign("temp", path.Get());
+#else
+#error "IMPLEMENT ME!"
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 bool
-nFileServer2::DirectoryExists(const char* pathName)
+nFileServer2::FileExists(const char* pathName) const
 {
-    n_assert(pathName);
+    n_assert(pathName != 0);
+    bool result = false;
+    nFile* file = this->NewFileObject();
+    if (file->Exists(pathName))
+    {
+        result = true;
+    }
+    file->Release();
+    return result;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nFileServer2::DirectoryExists(const char* pathName) const
+{
+    n_assert(pathName != 0);
     nDirectory* dir = this->NewDirectoryObject();
     if (dir->Open(pathName))
     {
@@ -697,3 +748,37 @@ nFileServer2::Checksum(const char* filename, uint& crc)
     return success;
 }
     
+//------------------------------------------------------------------------------
+/**
+    Set the read-only status of a file.
+*/
+void
+nFileServer2::SetFileReadOnly(const char* filename, bool readOnly)
+{
+    n_assert(filename);
+    nString mangledPath = this->ManglePath(filename);
+    DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
+    if (readOnly)
+    {
+        fileAttrs |= FILE_ATTRIBUTE_READONLY;
+    }
+    else
+    {
+        fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
+    }
+    SetFileAttributes(mangledPath.Get(), fileAttrs);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the read-only status of a file. If the file does not exist,
+    the routine returns false.
+*/
+bool
+nFileServer2::IsFileReadOnly(const char* filename)
+{
+    n_assert(filename);
+    nString mangledPath = this->ManglePath(filename);
+    DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
+    return (fileAttrs & FILE_ATTRIBUTE_READONLY);
+}
