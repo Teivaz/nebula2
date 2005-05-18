@@ -22,7 +22,7 @@ public:
 
     /// Create in read+write access mode.
     void Create();
-    /// Resize to accommodate `n' items. Do not loose any previously entered items.
+    /// Resize to accommodate `n' items. Do not lose any previously entered items.
     void Resize(int n);
     /// Open existing memory block in read only access mode.
     void Open();
@@ -36,7 +36,7 @@ public:
     /// Number of bytes written so far.
     int Count() const;
 
-    /// Resize temporary buffer to accomodate `n' bytes.
+    /// Resize temporary buffer to accommodate `n' bytes.
     void ResizeReadBuffer(int n);
     /// Number of bytes available in buffer.
     int ReadBufferCapacity() const;

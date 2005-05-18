@@ -76,7 +76,7 @@ nSharedMemory::Resize(int n)
 
     this->writeBuffer.Resize(n);
     this->capacity = this->writeBuffer.Capacity();
-    }
+}
 
 //------------------------------------------------------------------------------
 /**
