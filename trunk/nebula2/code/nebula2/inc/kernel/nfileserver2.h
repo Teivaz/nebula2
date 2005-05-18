@@ -41,27 +41,33 @@ public:
     bool SetAssign(const char* assignName, const char* pathName);
     /// gets a path alias
     const char* GetAssign(const char* assignName);
+    /// Reset assign repository to default values.
+    void ResetAssigns();
     /// expand path alias to real path
     nString ManglePath(const char* pathName);
     /// make path components
-    bool MakePath(const char* path);
+    virtual bool MakePath(const char* path);
     /// copy a file
-    bool CopyFile(const char* from, const char* to);
+    virtual bool CopyFile(const char* from, const char* to);
     /// delete a file
-    bool DeleteFile(const char* filename);
+    virtual bool DeleteFile(const char* filename);
     /// delete an empty directory
-    bool DeleteDirectory(const char* dirName);
+    virtual bool DeleteDirectory(const char* dirName);
     /// compute the Crc checksum for a file
-    bool Checksum(const char* filename, uint& crc);
+    virtual bool Checksum(const char* filename, uint& crc);
+    /// set read only status of a file
+    virtual void SetFileReadOnly(const char* filename, bool readOnly);
+    /// get read only status of a file
+    virtual bool IsFileReadOnly(const char* filename);
 
     /// creates a new nDirectory object
-    virtual nDirectory* NewDirectoryObject();
+    virtual nDirectory* NewDirectoryObject() const;
     /// creates a new nFile object
-    virtual nFile* NewFileObject();
+    virtual nFile* NewFileObject() const;
     /// check if file exists
-    virtual bool FileExists(const char* pathName);
+    virtual bool FileExists(const char* pathName) const;
     /// check if directory exists
-    virtual bool DirectoryExists(const char* pathName);
+    virtual bool DirectoryExists(const char* pathName) const;
     /// creates a file node (only useful for scripting languages)
     virtual nFileNode* CreateFileNode(const char* name);
 
@@ -85,12 +91,16 @@ protected:
     void CleanupPathName(nString& str);
     
 private:
+    /// Initialize assign repository.
+    void InitAssigns();
     /// initialize standard home: assign
     void InitHomeAssign();
     /// initialize the standard bin: assign
     void InitBinAssign();
     /// initialize the standard user: assign
     void InitUserAssign();
+    /// initialize the standard temp: assign
+    void InitTempAssign();
 
     static nFileServer2* Singleton;
 
