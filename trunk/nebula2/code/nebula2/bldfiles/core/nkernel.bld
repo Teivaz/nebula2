@@ -119,12 +119,14 @@ beginmodule nutil
         nhttpsession
         nhashmap
         nquadtree
+        nbuffer
     }
     setfiles {
         nhttpformdatawrapper
         nhttpsession
         nquadtree
         nstring
+        nbuffer
     }
 endmodule
 #===============================================================================
