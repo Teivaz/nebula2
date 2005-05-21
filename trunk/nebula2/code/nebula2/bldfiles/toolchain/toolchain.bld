@@ -61,7 +61,13 @@ endmodule
 beginmodule nviewerapp
     setdir tools
     setfiles { nviewerapp }
-    setheaders { nviewerapp }
+    setheaders { nviewerapp nmayacamcontrol }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmayacamcontrol
+    setdir tools
+    setfiles { nmayacamcontrol }
+    setheaders { nmayacamcontrol }
 endmodule
 #-------------------------------------------------------------------------------
 
@@ -73,7 +79,7 @@ begintarget ntoollib
     settype lib
     setmodules {
         nmeshbuilder nanimbuilder nresourcecompiler
-        napplauncher nviewerapp nnvx2loader
+        napplauncher nviewerapp nmayacamcontrol nnvx2loader
         nn3d2loader
     }
 endtarget
