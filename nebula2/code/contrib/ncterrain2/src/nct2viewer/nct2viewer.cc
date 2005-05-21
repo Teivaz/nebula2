@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 /**
-	@page NebulaToolsnct2viewer nct2viewer
+    @page NebulaToolsnct2viewer nct2viewer
 
     nct2viewer
 
@@ -110,15 +110,15 @@ main(int argc, const char** argv)
     const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool helpArg           = args.GetBoolArg("-help");
+    bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
     int heightArg         = args.GetIntArg("-h", 480);
     const char* projDir   = args.GetStringArg("-projdir", 0);
 
-    const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
-    const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    const char* gfxServerClass = args.GetStringArg("-gfxserver", 0);
+    const char* featureSetArg  = args.GetStringArg("-featureset", 0);
 
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
