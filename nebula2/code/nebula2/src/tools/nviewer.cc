@@ -23,22 +23,24 @@
        <dd>script server to use</dd>
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
-	 <dt>-stage</dt>
-		<dd>the light stage to load, default is: home:bin/stdlight.tcl </dd>
+     <dt>-stage</dt>
+       <dd>the light stage to load, default is: home:bin/stdlight.tcl </dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
-	 <dt>-alwaysontop</dt>
-		<dd>if present the window will be allways on top</dd>
+     <dt>-alwaysontop</dt>
+       <dd>if present the window will be allways on top</dd>
      <dt>-w</dt>
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
-	 <dt>-x</dt>
-		<dd>the x position of the window (default: 0)</dd>
-	 <dt>-y</dt>
-		<dd>the y position of the window (default: 0)</dd>
-	 <dt>-projdir</dt>
-	    <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-x</dt>
+       <dd>the x position of the window (default: 0)</dd>
+     <dt>-y</dt>
+       <dd>the y position of the window (default: 0)</dd>
+     <dt>-projdir</dt>
+       <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-useram</dt>
+       <dd>if present, then nviewer will use ram file</dd>
     </dl>
 
     nviewer also defines some default input handling:
