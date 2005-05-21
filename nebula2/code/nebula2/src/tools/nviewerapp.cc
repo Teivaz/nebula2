@@ -23,15 +23,8 @@ nViewerApp::nViewerApp() :
     sceneServerClass("nstdsceneserver"),
     isOpen(false),
     isOverlayEnabled(true),
-    controlMode(Maya),
-    featureSetOverride(nGfxServer2::InvalidFeatureSet),
-    defViewerPos(0.0f, 1.0f, 0.0f),
-    defViewerAngles(0.0f, 0.0f),
-    defViewerZoom(0.0f, 0.0f, 9.0f),
-    viewerPos(defViewerPos),
-    viewerVelocity(500.0f),
-    viewerAngles(defViewerAngles),
-    viewerZoom(defViewerZoom)
+    useRam(false),
+    featureSetOverride(nGfxServer2::InvalidFeatureSet)
 {
     this->kernelServer = nKernelServer::Instance();
 }
@@ -182,6 +175,12 @@ nViewerApp::Open()
             }
         }
 
+        // Switch to ramfileserver if demanded.
+        if (UseRam())
+        {
+            nKernelServer::Instance()->ReplaceFileServer("nramfileserver");
+        }
+        
         // load the object to look at
         this->refRootNode->RenderContextDestroyed(&(this->renderContext));
         kernelServer->PushCwd(this->refRootNode.get());
@@ -191,7 +190,8 @@ nViewerApp::Open()
     }
 
     // initialize view matrix
-    this->HandleInputMaya(0.0);
+    camControl.Initialize();
+    viewMatrix = camControl.GetViewMatrix();
 
     this->isOpen = true;
     return true;
@@ -204,12 +204,11 @@ void
 nViewerApp::Close()
 {
     n_assert(this->IsOpen());
-
-    this->refSceneServer->Close();
+    
     this->refGuiServer->Close();
     this->refVideoServer->Close();
+    this->refSceneServer->Close();
     this->refGfxServer->CloseDisplay();
-
     this->refPrefServer->Release();
     this->refHttpServer->Release();
     this->refShadowServer->Release();
@@ -237,9 +236,11 @@ nViewerApp::Run()
 {
     nVariable::Handle timeHandle = this->refVarServer->GetVariableHandleByName("time");
     nWatched watchViewerPos("viewerPos", nArg::Float4);
+    nWatched watchCamPos("camPos", nArg::Float4);
 
     // run the render loop
     bool running = true;
+    float frameTime;
     nTime prevTime = 0.0;
     uint frameId = 0;
     while (this->refGfxServer->Trigger() && running)
@@ -249,7 +250,7 @@ nViewerApp::Run()
         {
             prevTime = time;
         }
-        float frameTime = (float) (time - prevTime);
+        frameTime = (float) (time - prevTime);
         this->refGuiServer->SetTime(time);
 
         // trigger remote server
@@ -265,7 +266,24 @@ nViewerApp::Run()
         this->refInputServer->Trigger(time);
         if (!this->refGuiServer->IsMouseOverGui())
         {
-            this->HandleInput(frameTime);
+            // give inputs to camControl
+            this->camControl.SetResetButton(this->refInputServer->GetButton("reset"));
+            this->camControl.SetLookButton(this->refInputServer->GetButton("look"));
+            this->camControl.SetPanButton(this->refInputServer->GetButton("pan"));
+            this->camControl.SetZoomButton(this->refInputServer->GetButton("zoom"));
+            this->camControl.SetSliderLeft(this->refInputServer->GetSlider("left"));
+            this->camControl.SetSliderRight(this->refInputServer->GetSlider("right"));
+            this->camControl.SetSliderUp(this->refInputServer->GetSlider("up"));
+            this->camControl.SetsliderDown(this->refInputServer->GetSlider("down"));
+            
+            // Toggle console
+            if (true == this->refInputServer->GetButton("console"))
+            {
+                this->refConServer->Toggle();
+            }
+            // update view and get the actual viewMatrix
+            this->camControl.Update();
+            this->viewMatrix = this->camControl.GetViewMatrix();
         }
 
         // trigger gui server
@@ -302,7 +320,8 @@ nViewerApp::Run()
         prevTime = time;
 
         // update watchers
-        watchViewerPos->SetV4(vector4(this->viewMatrix.M41, this->viewMatrix.M42, this->viewMatrix.M43, n_rad2deg(this->viewerAngles.rho)));
+        watchViewerPos->SetV4(camControl.GetViewMatrix().pos_component());
+        watchCamPos->SetV4(camControl.GetCenterOfInterest());
 
         // flush input events
         this->refInputServer->FlushEvents();
@@ -344,50 +363,6 @@ nViewerApp::TransferGlobalVariables()
 }
 
 //------------------------------------------------------------------------------
-/**
-    Handle general input
-*/
-void
-nViewerApp::HandleInput(float frameTime)
-{
-    nInputServer* inputServer = this->refInputServer.get();
-    
-    if (Maya == this->controlMode)
-    {
-        this->HandleInputMaya(frameTime);
-    }
-    else
-    {
-        this->HandleInputFly(frameTime);
-    }
-
-    if (inputServer->GetButton("screenshot"))
-    {
-        nString filename;
-        const char* sceneFile = this->GetSceneFile();
-        if (sceneFile)
-        {
-            filename = sceneFile;
-            filename.StripExtension();
-        }
-        else
-        {
-            filename = "screenshot";
-        }
-        
-        int screenshotID = 0;
-        char buf[N_MAXPATH];
-        do
-        {
-            snprintf(buf, sizeof(buf), "%s%03d.bmp", filename.Get(), screenshotID++);
-        } 
-        while (nFileServer2::Instance()->FileExists(buf));
-            
-        this->refGfxServer->SaveScreenshot(buf);
-    }
-}
-
-//------------------------------------------------------------------------------
 /*
     Define the input mapping.
 */
@@ -401,174 +376,6 @@ nViewerApp::DefineInputMapping()
     {
         n_error("Executing OnMapInput failed: %s",
                 scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Handle input for the Maya control model.
-*/
-void
-nViewerApp::HandleInputMaya(float frameTime)
-{
-    nInputServer* inputServer = this->refInputServer.get();
-
-    if (frameTime <= 0.0001f)
-    {
-        frameTime = 0.0001f;
-    }
-
-    const float lookVelocity = 0.25f;
-    const float panVelocity  = 0.75f;
-    const float zoomVelocity = 1.00f;
-
-    bool reset   = inputServer->GetButton("reset");
-    bool console = inputServer->GetButton("console");
-
-    float panHori  = 0.0f;
-    float panVert  = 0.0f;
-    float zoomHori = 0.0f;
-    float zoomVert = 0.0f;
-    float lookHori = 0.0f;
-    float lookVert = 0.0f;
-
-    if (inputServer->GetButton("look"))
-    {
-        lookHori = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        lookVert = inputServer->GetSlider("down") - inputServer->GetSlider("up");
-    }
-    if (inputServer->GetButton("pan"))
-    {
-        panHori = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        panVert = inputServer->GetSlider("down") - inputServer->GetSlider("up");
-    }
-    if (inputServer->GetButton("zoom"))
-    {
-        zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
-    }
-
-    // do mousewheel zoom
-    if (inputServer->GetButton("zoomIn"))
-    {
-        zoomVert += 1.0f; 
-    }
-    else if (inputServer->GetButton("zoomOut"))
-    {
-        zoomVert -= 1.0f; 
-    }
-
-    // toggle console
-    if (console)
-    {
-        this->refConServer->Toggle();
-    }
-
-    // handle viewer reset
-    if (reset)
-    {
-        this->viewerPos = this->defViewerPos;
-        this->viewerZoom = this->defViewerZoom;
-        this->viewerAngles = this->defViewerAngles;
-    }
-
-    // handle viewer move
-    vector3 horiMoveVector(this->viewMatrix.x_component() * panHori * panVelocity);
-    vector3 vertMoveVector(this->viewMatrix.y_component() * panVert * panVelocity);
-    this->viewerPos += horiMoveVector + vertMoveVector;
-
-    // reset matrix
-    this->viewMatrix.ident();
-
-    // handle viewer zoom
-    vector3 horiZoomMoveVector(-this->viewMatrix.z_component() * (-zoomHori) * zoomVelocity);
-    vector3 vertZoomMoveVector(-this->viewMatrix.z_component() * zoomVert * zoomVelocity);
-    this->viewerZoom += horiZoomMoveVector + vertZoomMoveVector ;
-
-    // handle viewer rotation
-    this->viewerAngles.theta -= lookVert * lookVelocity;
-    this->viewerAngles.rho   += lookHori * lookVelocity;
-
-    // apply changes
-    this->viewMatrix.translate(this->viewerZoom);
-    this->viewMatrix.rotate_x(this->viewerAngles.theta);
-    this->viewMatrix.rotate_y(this->viewerAngles.rho);
-    this->viewMatrix.translate(this->viewerPos);
-
-    // switch controls?
-    if (inputServer->GetButton("flycontrols"))
-    {
-        this->SetControlMode(Fly);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Handle input for the Fly control model.
-*/
-void
-nViewerApp::HandleInputFly(float frameTime)
-{
-    nInputServer* inputServer = this->refInputServer.get();
-    if (frameTime <= 0.0001f)
-    {
-        frameTime = 0.0001f;
-    }
-
-    // set speed
-    if (inputServer->GetButton("speed0")) this->viewerVelocity = 100.0f;
-    if (inputServer->GetButton("speed1")) this->viewerVelocity = 500.0f;
-    if (inputServer->GetButton("speed2")) this->viewerVelocity = 5000.0f;
-
-    bool reset   = inputServer->GetButton("reset");
-    bool console = inputServer->GetButton("console");
-
-    // toggle console
-    if (console)
-    {
-        this->refConServer->Toggle();
-    }
-
-    // handle viewer reset
-    if (reset)
-    {
-        this->viewerPos = this->defViewerPos;
-        this->viewerZoom = this->defViewerZoom;
-        this->viewerAngles = this->defViewerAngles;
-    }
-
-    // handle viewer move
-    if (inputServer->GetButton("zoom"))
-    {
-        this->viewerPos -= this->viewMatrix.z_component() * this->viewerVelocity * frameTime;
-    }
-    else if (inputServer->GetButton("pan"))
-    {
-        this->viewerPos -= this->viewMatrix.z_component() * -this->viewerVelocity * frameTime;
-    }
-
-    // handle viewer rotate
-    float lookHori = 0.0f;
-    float lookVert = 0.0f;
-    if (inputServer->GetButton("zoom") || inputServer->GetButton("look") || inputServer->GetButton("pan"))
-    {
-        lookHori = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        lookVert = inputServer->GetSlider("down") - inputServer->GetSlider("up");
-    }
-    const float lookVelocity = 0.25f;
-    this->viewerAngles.theta -= lookVert * lookVelocity;
-    this->viewerAngles.rho   += lookHori * lookVelocity;
-
-    // apply changes
-    this->viewMatrix.ident();
-    this->viewMatrix.rotate_x(this->viewerAngles.theta);
-    this->viewMatrix.rotate_y(this->viewerAngles.rho);
-    this->viewMatrix.translate(this->viewerPos);
-
-    // switch controls?
-    if (inputServer->GetButton("mayacontrols"))
-    {
-        this->SetControlMode(Maya);
     }
 }
 

@@ -118,7 +118,8 @@ main(int argc, const char** argv)
     const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool helpArg           = args.GetBoolArg("-help");
+    bool useRam           = args.GetBoolArg("-useram");    
+    bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
@@ -127,7 +128,22 @@ main(int argc, const char** argv)
 
     const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
     const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
+    vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
+    vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
 
+    // Don't allow window width smaller than 40 and height smaller than 30.
+    if (widthArg < 40)
+    {
+        n_printf("Invalid window width. Using width of 40.\n");
+        widthArg = 40;
+    }
+    if (heightArg < 30)
+    {
+        n_assert("Invalid window height. Using height of 30.\n");
+        heightArg = 30;
+    }
+    
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
     {
@@ -149,7 +165,8 @@ main(int argc, const char** argv)
                "-h                      height of window to open (default: 480)\n"
                "-x                      the x position of the window (default: 0)\n"
                "-y                      y position of the window (default: 0)\n"
-               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n");
+               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n"
+               "-useram                 if present, then nviewer will use ram file\n");
         return 5;
     }
 
@@ -207,6 +224,7 @@ main(int argc, const char** argv)
     // initialize a viewer app object
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
+    viewerApp.SetUseRam(useRam);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);
     if (projDir)          viewerApp.SetProjDir(projDir);
@@ -225,6 +243,10 @@ main(int argc, const char** argv)
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
 
+    //set viewer propherties 
+    viewerApp.GetCamControl().SetDefaultCenterOfInterrest(eyeCoi);
+    viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
+    viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);
     // open and run viewer
     if (viewerApp.Open())
     {
@@ -233,4 +255,3 @@ main(int argc, const char** argv)
     }
     return 0;
 }
-
