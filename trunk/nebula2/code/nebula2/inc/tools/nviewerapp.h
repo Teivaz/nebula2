@@ -30,17 +30,12 @@
 #include "shadow/nshadowserver.h"
 #include "network/nhttpserver.h"
 #include "misc/nprefserver.h"
+#include "tools/nmayacamcontrol.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
 {
 public:
-    /// control mode
-    enum ControlMode
-    {
-        Maya,
-        Fly,
-    };
 
     /// constructor
     nViewerApp();
@@ -58,10 +53,6 @@ public:
     void SetCamera(const nCamera2& camera);
     /// get camera parameters
     const nCamera2& GetCamera() const;
-    /// set control mode
-    void SetControlMode(ControlMode c);
-    /// get control mode
-    ControlMode GetControlMode() const;
     /// set the gfx server class to use
     void SetGfxServerClass(const char* cl);
     /// get the gfx server class
@@ -93,6 +84,14 @@ public:
     const char* GetStageScript() const;
     /// enable/disable the logo overlay
     void SetOverlayEnabled(bool b);
+    /// Make application load file from ram instead of disk, if `v' is true.
+    void SetUseRam(bool v);
+    /// Load file from ram instead of disk?
+    bool UseRam() const;
+    
+    // get the Camera-Control instance
+    nMayaCamControl& GetCamControl();
+
     /// get overlay enabled status
     bool GetOverlayEnabled() const;
     /// open the viewer
@@ -109,14 +108,8 @@ public:
     bool IsOpen() const;
 
 protected:
-    /// handle general input
-    void HandleInput(float frameTime);
     /// define the input mapping
     void DefineInputMapping();
-    /// handle input in Maya control mode
-    void HandleInputMaya(float frameTime);
-    /// handle input in Fly control mode
-    void HandleInputFly(float frameTime);
     /// transfer global variables from variable server to render context
     void TransferGlobalVariables();
     /// initialize the overlay GUI
@@ -141,6 +134,7 @@ protected:
     nRef<nPrefServer> refPrefServer;
 
     nRef<nTransformNode> refRootNode;
+    nMayaCamControl camControl;
 
     nString sceneFilename;
     nString projDir;
@@ -151,20 +145,10 @@ protected:
     nString gfxServerClass;
     bool isOpen;
     bool isOverlayEnabled;
+    bool useRam;
     nDisplayMode2 displayMode;
     nCamera2 camera;
-    ControlMode controlMode;
     nGfxServer2::FeatureSet featureSetOverride;
-
-    polar2 defViewerAngles;
-    vector3 defViewerPos;
-    vector3 defViewerZoom;
-
-    float viewerVelocity;
-    polar2 viewerAngles;
-    vector3 viewerPos;
-    vector3 viewerZoom;
-
     nRenderContext renderContext;
     matrix44 viewMatrix;
 };
@@ -239,25 +223,6 @@ nViewerApp::GetCamera() const
     return this->camera;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nViewerApp::SetControlMode(ControlMode mode)
-{
-    this->controlMode = mode;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nViewerApp::ControlMode
-nViewerApp::GetControlMode() const
-{
-    return this->controlMode;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -419,7 +384,35 @@ nViewerApp::GetOverlayEnabled() const
 {
     return this->isOverlayEnabled;
 }
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetUseRam(bool v)
+{
+    this->useRam = v;
+}
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nViewerApp::UseRam() const
+{
+    return this->useRam;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nMayaCamControl&
+nViewerApp::GetCamControl()
+{
+    return this->camControl;
+}
 //------------------------------------------------------------------------------
 #endif
 
