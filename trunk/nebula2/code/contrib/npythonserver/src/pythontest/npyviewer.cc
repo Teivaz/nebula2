@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 /**
-	@page NebulaToolsnpyviewer npyviewer
+    @page NebulaToolsnpyviewer npyviewer
 
     npyviewer
 
@@ -134,7 +134,7 @@ main(int argc, const char** argv)
     const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/npythonserver/bin/stdlight.py");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool helpArg           = args.GetBoolArg("-help");
+    bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
