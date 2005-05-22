@@ -3,6 +3,8 @@
 #
 #   Modules:
 #       nmaxdlg
+#       nmaxutilityobj
+#       nmaxvieweroptions
 #   Targets:
 #
 #   (c)2004 Kim, Hyoun Woo
@@ -34,6 +36,17 @@ beginmodule nmaxutilityobj
     setheaders {
         nmaxutilityobj
         nmaxoptionparammapdlg
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxvieweroptions
+    settype cpp
+    setdir pluginlibs
+    setfiles {
+        nmaxvieweroptions
+    }
+    setheaders {
+        nmaxvieweroptions 
     }
 endmodule
 #-------------------------------------------------------------------------------
