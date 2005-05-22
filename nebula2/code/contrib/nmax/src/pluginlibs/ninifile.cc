@@ -124,6 +124,16 @@ BOOL nIniFile::WriteStruct(const nString& strEntryName, LPVOID lpStruct, UINT uS
 
 //------------------------------------------------------------------------------
 /**
+    Retrieves a string from the specified section in an initialization file.
+
+    @param strEntryName   string specifying the name of the key whose associated 
+                          string is to be retrieved. 
+    @param strValue       Retrieved value of the speicifed key in the section.
+    @param strDefValue    if strEntryName string cannot be found in the initialization file, 
+                          copies the default string to the internal buffer.
+    @param strSectionName section name which containing the key(strEntryName).
+
+    @return true, if there is any copied value to buf, otherwise false.
 */
 BOOL nIniFile::ReadString(const nString& strEntryName, nString& strValue,
                           const nString& strDefValue, const nString& strSectionName)
@@ -136,7 +146,7 @@ BOOL nIniFile::ReadString(const nString& strEntryName, nString& strValue,
     LPCSTR sectionname = this->sectionName.Get();
     LPCSTR filename = this->iniFilename.Get();
 
-#define MAX_INI_BUFFER 103
+    #define MAX_INI_BUFFER 1024
     char buf[MAX_INI_BUFFER];
     BOOL result = GetPrivateProfileString(sectionname, strEntryName.Get(), strDefValue.Get(),
                                           buf, MAX_INI_BUFFER, filename);
