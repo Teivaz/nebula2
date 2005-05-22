@@ -11,7 +11,10 @@
 #include "export2/nmaxoptions.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
+#include "pluginlibs/nmaxvieweroptions.h"
+
 #include "tools/napplauncher.h"
+#include "tools/nwinmaincmdlineargs.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -38,7 +41,7 @@ int	nMaxExport2::DoExport(const TCHAR *name,
     DWORD options)
 {
     // it exports root node in the scene.
-    return ExportScene(name, inf, 0);
+    return ExportScene(name, inf, 0, 0/*no use preview*/);
 }
 
 //-----------------------------------------------------------------------------
@@ -48,18 +51,38 @@ int	nMaxExport2::DoExport(const TCHAR *name,
 static
 bool LaunchViewer(const char* sceneFile)
 {
-    nString appArgs;
+    // read viewer options.
+    nMaxViewerOptions viewerOptions;
 
-    appArgs += "-projdir ";
-    appArgs += nMaxOptions::Instance()->GetHomePath();
-    appArgs += " ";
-    appArgs += "-view ";
-    appArgs += nMaxOptions::Instance()->GetGfxLibAssign();
-    appArgs += sceneFile;
+    if (nMaxOptions::Instance()->UseDefaultViewer())
+        viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Default);
+    else
+        viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Custom);
+
+    viewerOptions.SetSceneFileName(sceneFile);
+
+    if (!viewerOptions.Read())
+    {
+        n_message("Failed to read viewer option.");
+        return false;
+    }
+
+    nString appArgs = viewerOptions.GetArguments();
+    
+    //nString appArgs;
+
+    //appArgs += "-projdir ";
+    //appArgs += nMaxOptions::Instance()->GetHomePath();
+    //appArgs += " ";
+    //appArgs += "-view ";
+    //appArgs += >
+    //appArgs += sceneFile;
+    //appArgs += " ";
 
     nAppLauncher appLauncher(nKernelServer::Instance());
 
-    appLauncher.SetExecutable("nviewer.exe");
+    //appLauncher.SetExecutable("nviewer.exe");
+    appLauncher.SetExecutable(viewerOptions.GetExecutable());
 
     nString cwd; 
     cwd += nMaxOptions::Instance()->GetHomePath(); 
@@ -79,8 +102,8 @@ bool LaunchViewer(const char* sceneFile)
 /**
     Delete any exist singleton class instances.
 
-    - 20-Feb-05 kim Removed release of nMaxOption instance. The option can be
-                    globally available not just only for export.
+    - 20-Feb-05 kims Removed release of nMaxOption instance. The option can be
+                     globally available not just only for export.
 */
 static
 void ReleaseSingletons()
@@ -105,7 +128,7 @@ void ReleaseSingletons()
 
     @return Return 0, if it failed to export.
 */
-int ExportScene(const TCHAR* name, Interface* inf, INode* inode)
+int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode)
 {
     n_assert(inf);
 
@@ -140,6 +163,12 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode)
         return 0;
     }
     expOptions->SetSaveFileName(nString(name));
+
+    // specifies preview mode.
+    if (-1 == previewMode )
+        expOptions->SetPreviewMode(true);
+    else
+        expOptions->SetPreviewMode(false);
 
     // export scene.
     nMaxScene scene;
