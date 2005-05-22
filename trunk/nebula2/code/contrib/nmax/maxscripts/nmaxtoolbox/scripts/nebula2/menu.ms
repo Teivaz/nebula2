@@ -7,6 +7,22 @@
 ---------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Preview' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_Preview
+category:"nmaxtoolbox" 
+buttonText:"Preview"
+tooltip:"Preview" 
+( 	   
+    on execute do
+    (
+        include "nebula2/preview.ms"
+        
+        nPreview()
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Export' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Export
@@ -212,8 +228,9 @@ fn AddMenu =
         local nebula2Menu = menuMan.createMenu "Nebula2"
 	
         local ItemsTemp = #()
-        ItemsTemp[1] = menuMan.createActionItem "NebulaToolBox_Export" "nmaxtoolbox"
-        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_BatchExport" "nmaxtoolbox")		
+        ItemsTemp[1] = menuMan.createActionItem "NebulaToolBox_Preview" "nmaxtoolbox"
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Export" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_BatchExport" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
 		
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MaterialEditor" "nmaxtoolbox")
