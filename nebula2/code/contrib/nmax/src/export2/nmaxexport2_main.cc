@@ -69,19 +69,8 @@ bool LaunchViewer(const char* sceneFile)
 
     nString appArgs = viewerOptions.GetArguments();
     
-    //nString appArgs;
-
-    //appArgs += "-projdir ";
-    //appArgs += nMaxOptions::Instance()->GetHomePath();
-    //appArgs += " ";
-    //appArgs += "-view ";
-    //appArgs += >
-    //appArgs += sceneFile;
-    //appArgs += " ";
-
     nAppLauncher appLauncher(nKernelServer::Instance());
 
-    //appLauncher.SetExecutable("nviewer.exe");
     appLauncher.SetExecutable(viewerOptions.GetExecutable());
 
     nString cwd; 
