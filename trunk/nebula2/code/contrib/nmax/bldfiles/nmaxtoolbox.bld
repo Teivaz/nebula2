@@ -28,6 +28,7 @@ begintarget nmaxtoolbox
     setmodules { 
         nmaxdlg
         nmaxutilityobj
+        nmaxvieweroptions
         nmaxexport2
         nmaxoptions
         nmaxscene
