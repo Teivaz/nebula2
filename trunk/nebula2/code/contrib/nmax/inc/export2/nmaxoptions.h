@@ -19,6 +19,7 @@
 class nMaxOptions
 {
 public:
+    /// the destructor.
     virtual ~nMaxOptions();
 
     static nMaxOptions* Instance();
@@ -94,6 +95,12 @@ public:
     void SetWeightTrashold(float val);
     float GetWeightTrashold() const;
 
+    void SetPreviewMode(bool on);
+    bool UsePreviewMode() const;
+
+    bool UseDefaultViewer() const;
+    void SetUseDefaultViewer(bool use);
+
 protected:
     /// @name export option variables.
     /// @{
@@ -149,14 +156,17 @@ protected:
 
     /// the script server class which should be used for saving.
     nString saveScriptServer; 
-
+    /// 
     bool useIndivisualMesh;
-
+    /// launch specified viewer.
     bool runViewer;
-
-    /// -1: errors only, 0:warning, 1:low, 2:midium, 3:high
+    /// preview mode. It ueses ram file to view exported model.
+    bool previewMode;
+    /// default viewer.
+    bool useDefaultViewer;
+    /// verbose level of log message. 0: errors only, 1:warning, 2:low, 3:midium, 4:high
     int verboseLevel; 
-
+    /// If it is present, overwrite any existing texture.
     bool overwriteExistTexture;
 
 private:
@@ -330,6 +340,30 @@ inline
 float nMaxOptions::GetGeomScaleValue() const
 {
     return this->geomScale;
+}
+//-----------------------------------------------------------------------------
+inline
+void nMaxOptions::SetPreviewMode(bool on)
+{
+    this->previewMode = on;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxOptions::UsePreviewMode() const
+{
+    return this->previewMode;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxOptions::UseDefaultViewer() const
+{
+    return this->useDefaultViewer;
+}
+//-----------------------------------------------------------------------------
+inline
+void nMaxOptions::SetUseDefaultViewer(bool use)
+{
+    this->useDefaultViewer = use;
 }
 //-----------------------------------------------------------------------------
 #endif
