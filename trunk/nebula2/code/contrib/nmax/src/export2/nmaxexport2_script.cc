@@ -23,7 +23,7 @@
 */
 Value* nExportNode_cf(Value** arg_list, int count)
 {
-    check_arg_count(nExportScene, 2, count);
+    check_arg_count(nExportScene, 3, count);
 
     // filename which to used for saving a scene.
     char* filename = arg_list[0]->to_string();
@@ -41,9 +41,11 @@ Value* nExportNode_cf(Value** arg_list, int count)
         return &undefined;
     }
 
+    int previewmode = arg_list[2]->to_int();
+
     Interface* intf = GetCOREInterface();
 
-    if (!ExportScene(filename, intf, node))
+    if (!ExportScene(filename, intf, node, previewmode))
     {
         n_listener("Failed to export scene.\n");
         return &undefined;
@@ -61,13 +63,14 @@ def_visible_primitive(nExportNode, "nExportNode");
 */
 Value* nExportScene_cf(Value** arg_list, int count)
 {
-    check_arg_count(nExportScene, 1, count);
+    check_arg_count(nExportScene, 2, count);
 
     char* filename = arg_list[0]->to_string();
+    int previewmode = arg_list[1]->to_int();
 
     Interface* intf = GetCOREInterface();
 
-    if (!ExportScene(filename, intf, 0))
+    if (!ExportScene(filename, intf, 0, previewmode))
     {
         n_listener("Failed to export scene.\n");
         return &undefined;

@@ -37,7 +37,9 @@ nMaxOptions::nMaxOptions() :
     saveScriptServer("ntclserver"),
     useIndivisualMesh(false),
     verboseLevel(4/*High*/),
-    overwriteExistTexture(true)
+    overwriteExistTexture(true),
+    previewMode(false),
+    useDefaultViewer(true)
 {
     n_assert(Singleton == 0);
     Singleton = this;

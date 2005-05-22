@@ -270,6 +270,12 @@ bool nMaxScene::OpenNebula()
         return false;
     }
 
+    // if preview mode was set, switch to ram file server.
+    if (nMaxOptions::Instance()->UsePreviewMode())
+        ks->ReplaceFileServer("nramfileserver");
+    else
+        ks->ReplaceFileServer("nfileserver2");
+
     return true;
 }
 
