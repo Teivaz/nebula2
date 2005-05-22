@@ -137,6 +137,6 @@ enum Verbose {
 
 //-----------------------------------------------------------------------------
 // function declaration for exposing it to max script.
-int ExportScene(const TCHAR* name, Interface* inf, INode* inode);
+int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode);
 
 #endif
