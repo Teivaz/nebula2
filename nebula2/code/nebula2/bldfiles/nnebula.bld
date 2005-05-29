@@ -28,9 +28,10 @@ begintarget nnebula
         nmousecursor nmesharray ninstancestream
         ntransformcurveanimator nuvanimator
         nprefserver nwin32prefserver 
-        nhdrsceneserver nstdsceneserver nmrtsceneserver
+        nmrtsceneserver
         nlocaleserver tinyxml xml
         nblendshapenode nblendshapeanimator
+        nmeshdeformer nskinmeshdeformer nblendshapedeformer
     }
     setbundles {
         nshadow
