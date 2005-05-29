@@ -45,7 +45,7 @@ nGuiColorLabel::OnShow()
         bool loaded = tex->Load();
         if (!loaded)
         {
-            n_error("nGuiColorLabel: failed to load texture '%s'!\n", texName);
+            n_error("nGuiColorLabel: failed to load texture '%s'!\n", texName.Get());
         }
     }
     this->refTexture = tex;
