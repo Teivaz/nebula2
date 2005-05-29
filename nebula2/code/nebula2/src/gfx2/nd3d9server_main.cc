@@ -78,7 +78,7 @@ nD3D9Server::nD3D9Server() :
     dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
     #endif
     windowHandler(this),
-    deviceBehaviourFlags(0),
+	deviceBehaviourFlags(0),
     d3dSprite(0),
     d3d9(0),
     d3d9Device(0),
@@ -87,7 +87,12 @@ nD3D9Server::nD3D9Server() :
     effectPool(0),
     featureSet(InvalidFeatureSet),
     d3dxLine(0),
-    winVersion(UnknownWin)
+    winVersion(UnknownWin),
+    statsFrameCount(0),
+    statsNumTextureChanges(0),
+    statsNumRenderStateChanges(0),
+    statsNumDrawCalls(0),
+    statsNumPrimitives(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
@@ -297,7 +302,7 @@ nD3D9Server::EnterDialogBoxMode()
     if (Win32_Windows == this->GetWindowsVersion()) // windows 95 and family
     {
         // invoke the reanimation procedure...
-        this->OnDeviceLost(false);
+        this->OnDeviceCleanup(false);
 
         // if we are in windowed mode, the cause for the reset may be a display
         // mode change of the desktop, in this case we need to find new
@@ -318,7 +323,7 @@ nD3D9Server::EnterDialogBoxMode()
         this->InitDeviceState();
 
         // reload the resource
-        this->OnRestoreDevice();
+        this->OnDeviceInit(false);
     }
 }
 
@@ -398,112 +403,30 @@ nD3D9Server::DetectWindowsVersion()
     switch (osvi.dwPlatformId)
     {
         case VER_PLATFORM_WIN32_NT:
-        {
             this->winVersion = Win32_NT;
-            /*
-            // Test for the product.
-
-            if ( osvi.dwMajorVersion <= 4 )
-                printf("Microsoft Windows NT ");
-
-            if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 )
-                printf ("Microsoft Windows 2000 ");
-
-            if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
-                printf ("Microsoft Windows XP ");
-
-            // Test for product type.
-
-            if( bOsVersionInfoEx )
-            {
-                if ( osvi.wProductType == VER_NT_WORKSTATION )
-                {
-                    if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
-                        printf ( "Personal " );
-                    else
-                        printf ( "Professional " );
-                }
-                else if ( osvi.wProductType == VER_NT_SERVER )
-                {
-                    if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                        printf ( "DataCenter Server " );
-                    else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                        printf ( "Advanced Server " );
-                    else
-                        printf ( "Server " );
-                }
-            }
-            else
-            {
-                HKEY hKey;
-                char szProductType[80];
-                DWORD dwBufLen;
-
-                RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-                    "SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
-                    0, KEY_QUERY_VALUE, &hKey );
-                RegQueryValueEx( hKey, "ProductType", NULL, NULL,
-                    (LPBYTE) szProductType, &dwBufLen);
-                RegCloseKey( hKey );
-                if ( lstrcmpi( "WINNT", szProductType) == 0 )
-                    printf( "Professional " );
-                if ( lstrcmpi( "LANMANNT", szProductType) == 0 )
-                    printf( "Server " );
-                if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
-                    printf( "Advanced Server " );
-            }
-
-            // Display version, service pack (if any), and build number.
-
-            if ( osvi.dwMajorVersion <= 4 )
-            {
-                printf ("version %d.%d %s (Build %d)\n",
-                    osvi.dwMajorVersion,
-                    osvi.dwMinorVersion,
-                    osvi.szCSDVersion,
-                    osvi.dwBuildNumber & 0xFFFF);
-            }
-            else
-            { 
-                printf ("%s (Build %d)\n",
-                    osvi.szCSDVersion,
-                    osvi.dwBuildNumber & 0xFFFF);
-            }
-            */
-        }
-        break;
+            break;
         case VER_PLATFORM_WIN32_WINDOWS:
-        {
             this->winVersion = Win32_Windows;
-            /*
-            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
-            {
-                printf ("Microsoft Windows 95 ");
-                if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
-                    printf("OSR2 " );
-            } 
-
-            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
-            {
-                printf ("Microsoft Windows 98 ");
-                if ( osvi.szCSDVersion[1] == 'A' )
-                    printf("SE " );
-            } 
-
-            if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
-            {
-                printf ("Microsoft Windows Me ");
-            } 
-            */
-        }
-        break;
+            break;
         case VER_PLATFORM_WIN32s:
-        {
             this->winVersion = UnknownWin;
-            //printf ("Microsoft Win32s ");
-        }
-        break;
+            break;
    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Return true when vertex shaders are running in emulation.
+*/
+bool
+nD3D9Server::AreVertexShadersEmulated()
+{
+    n_assert(this->d3d9Device);
+#if N_D3D9_FORCEMIXEDVERTEXPROCESSING
+    return true;
+#else
+    return 0 == (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING);
+#endif
 }
 
 //------------------------------------------------------------------------------

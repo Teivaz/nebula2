@@ -31,6 +31,10 @@ protected:
     virtual bool LoadResource();
     /// unload resource
     virtual void UnloadResource();
+    /// called when contained resource may become lost 
+    virtual void OnLost();
+    /// called when contained resource may be restored
+    virtual void OnRestored();
 
 private:
     nAutoRef<nD3D9Server> refD3D9Server;

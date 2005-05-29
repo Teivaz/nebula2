@@ -150,8 +150,8 @@ protected:
     int numEdges;
     int vertexComponents;
     int fileVertexComponents;
-    nArray<nMeshGroup> groupArray;
     int validVertexComponents;
+    nArray<nMeshGroup> groupArray;
 };
 
 //------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ nMeshLoader::Open(nFileServer2* /*fileServer*/)
     
     // create the real vertex components
     this->vertexComponents = (this->validVertexComponents & this->fileVertexComponents);
-    this->vertexWidth = nMesh2::GetVertexWidthFormMask(this->vertexComponents);
+    this->vertexWidth = nMesh2::GetVertexWidthFromMask(this->vertexComponents);
     
     return true;
 }

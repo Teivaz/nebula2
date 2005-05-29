@@ -13,7 +13,7 @@ nSubdivShapeNode::nSubdivShapeNode() :
     segmentSize(1.0f),
     maxDistance(10.0f)
 {
-    // empty
+    this->SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------
@@ -22,20 +22,6 @@ nSubdivShapeNode::nSubdivShapeNode() :
 nSubdivShapeNode::~nSubdivShapeNode()
 {
     // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
-
-    @return     a combination on nMesh2::Usage flags
-*/
-int
-nSubdivShapeNode::GetMeshUsage() const
-{
-    return nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +78,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 
         // only render if mesh resource is available (may not be 
         // available yet if async resource loading enabled)
-        if (!this->refMesh->IsValid())
+        if (!this->refMesh->IsLoaded())
         {
             return false;
         }

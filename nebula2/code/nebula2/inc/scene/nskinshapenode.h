@@ -92,7 +92,7 @@ private:
     nDynAutoRef<nSkinAnimator> refSkinAnimator;
     const nCharSkeleton* extCharSkeleton;
     nArray<Fragment> fragmentArray;
-    static nCharSkinRenderer charSkinRenderer;
+    nCharSkinRenderer charSkinRenderer;
 };
 
 //------------------------------------------------------------------------------

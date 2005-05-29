@@ -22,8 +22,8 @@
 #include <d3dx9.h>
 #include <dxerr9.h>
 
-#if D3D_SDK_VERSION < 31
-#error You must be using the DirectX 9 Summer Update SDK!  You may download it from http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en
+#if D3D_SDK_VERSION < 32
+#error You must be using the DirectX 9 October 2004 Update SDK!  You may download it from http://www.microsoft.com/downloads/details.aspx?FamilyID=b7bc31fa-2df1-44fd-95a4-c2555446aed4&DisplayLang=en
 #endif
 
 //------------------------------------------------------------------------------
@@ -31,6 +31,9 @@
 //------------------------------------------------------------------------------
 #define N_D3D9_DEBUG (0)
 #define N_D3D9_DEVICETYPE D3DDEVTYPE_HAL
+#define N_D3D9_ADAPTER D3DADAPTER_DEFAULT
+#define N_D3D9_FORCEMIXEDVERTEXPROCESSING (0)
+#define N_D3D9_FORCESOFTWAREVERTEXPROCESSING (0)
 
 //------------------------------------------------------------------------------
 class nD3D9Server : public nGfxServer2
@@ -70,6 +73,8 @@ public:
     virtual void CloseDisplay();
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
+    /// return true if vertex shader run in software emulation
+    virtual bool AreVertexShadersEmulated();
     /// parent window handle
     virtual HWND GetParentHwnd() const;
     /// returns the number of available stencil bits
@@ -182,14 +187,12 @@ private:
     bool DeviceOpen();
     /// release the d3d device
     void DeviceClose();
-    /// unload resource data (call when device lost)
-    void OnDeviceLost(bool unloadManaged);
-    /// reload resource data (call when device restored)
-    void OnRestoreDevice();
+    /// called before device destruction, or when device lost
+    void OnDeviceCleanup(bool shutdown);
+    /// called after device created or restored
+    void OnDeviceInit(bool startup);
     /// initialize device default state
     void InitDeviceState();
-    /// return true if device is in software vertex processing mode
-    bool GetSoftwareVertexProcessing() const;
     /// update the feature set member
     void UpdateFeatureSet();
     #ifdef __NEBULA_STATS__
@@ -212,6 +215,10 @@ private:
     void UpdateSharedShaderParams();
     /// return number of bits for a D3DFORMAT
     int GetD3DFormatNumBits(D3DFORMAT fmt);
+    /// enable/disable software vertex processing
+    void SetSoftwareVertexProcessing(bool b);
+    /// get current software vertex processing state
+    bool GetSoftwareVertexProcessing();
 
     void DetectWindowsVersion();
     WinVersion winVersion;
@@ -274,10 +281,13 @@ private:
     nWatched dbgQueryNumRenderStateChanges;
     nWatched dbgQueryNumTextureChanges;
 
+    int statsFrameCount;
     int statsNumTextureChanges;
     int statsNumRenderStateChanges;
+    int statsNumDrawCalls;
+    int statsNumPrimitives;
     #endif
-    
+
 public:
     // NOTE: this stuff is public because WinProcs may need to access it
     IDirect3DDevice9* d3d9Device;               ///< pointer to device object

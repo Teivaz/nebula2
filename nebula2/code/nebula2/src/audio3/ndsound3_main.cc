@@ -42,7 +42,7 @@ nDSound3::nDSound3() :
 */
 nDSound3::~nDSound3()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -57,7 +57,7 @@ nDSound3::~nDSound3()
 bool
 nDSound3::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(!this->refSoundResource.isvalid());
 
     // create a sound resource object
@@ -65,7 +65,7 @@ nDSound3::LoadResource()
     n_assert(rsrc);
 
     // if sound resource not opened yet, do it
-    if (!rsrc->IsValid())
+    if (!rsrc->IsLoaded())
     {
         rsrc->SetFilename(this->GetFilename());
         rsrc->SetNumTracks(this->GetNumTracks());
@@ -82,7 +82,7 @@ nDSound3::LoadResource()
     }
 
     this->refSoundResource = rsrc;
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -93,11 +93,11 @@ nDSound3::LoadResource()
 void
 nDSound3::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     n_assert(this->refSoundResource.isvalid());
     this->refSoundResource->Release();
     this->refSoundResource.invalidate();
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------

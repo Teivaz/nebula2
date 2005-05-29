@@ -13,7 +13,6 @@ nNebulaClass(nD3D9MeshArray, "nmesharray");
 /**
 */
 nD3D9MeshArray::nD3D9MeshArray() :
-    vertexDeclarationDirty(true),
     vertexDeclaration(0)
 {
     // empty
@@ -24,16 +23,39 @@ nD3D9MeshArray::nD3D9MeshArray() :
 */
 nD3D9MeshArray::~nD3D9MeshArray()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
+}
 
-    if (0 != this->vertexDeclaration)
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nD3D9MeshArray::LoadResource()
+{
+    n_assert(0 == this->vertexDeclaration);
+    if (nMeshArray::LoadResource())
+    {
+        this->CreateVertexDeclaration();
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nD3D9MeshArray::UnloadResource()
+{
+    if (this->vertexDeclaration)
     {
         this->vertexDeclaration->Release();
         this->vertexDeclaration = 0;
     }
+    nMeshArray::UnloadResource();
 }
 
 //------------------------------------------------------------------------------
@@ -44,9 +66,11 @@ nD3D9MeshArray::~nD3D9MeshArray()
 void
 nD3D9MeshArray::CreateVertexDeclaration()
 {
+    n_assert(0 == this->vertexDeclaration);
+
     nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
     n_assert(gfxServer && gfxServer->d3d9Device);
-
+    
     const int maxElements = 11; //the maximum number of vertex compontents
     D3DVERTEXELEMENT9 decl[maxElements * nGfxServer2::MaxVertexStreams];
 
@@ -66,7 +90,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
         {
             int curOffset  = 0;
             int vertexComponentMask = ((nD3D9Mesh*) mesh)->GetVertexComponents();
-            int index;
+            int index;            
             for (index = 0; index < maxElements; index++)
             {
                 int mask = (1<<index);
@@ -86,34 +110,34 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             decl[curElement].UsageIndex = postionUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-
+                                      
                         case nMesh2::Normal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_NORMAL;
                             decl[curElement].UsageIndex = normalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-
+                                                           
                         case nMesh2::Tangent:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
                             decl[curElement].UsageIndex = tangentUsageIndex++;
                             curOffset += 3 * sizeof(float);
-                            break;
-
+                            break;                           
+                                                         
                         case nMesh2::Binormal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
                             decl[curElement].UsageIndex = binormalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-
+                                                           
                         case nMesh2::Color:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_COLOR;
                             decl[curElement].UsageIndex = colorUsageIndex++;
                             curOffset += 4 * sizeof(float);
-                            break;
+                            break;  
 
                         case nMesh2::Uv0:
                             if (meshIndex == 0)
@@ -128,7 +152,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                                 ignoreElement = true;
                             }
                             break;
-
+                                      
                         case nMesh2::Uv1:
                             if (meshIndex == 0)
                             {
@@ -169,8 +193,8 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             {
                                 ignoreElement = true;
                             }
-                            break;
-
+                            break;  
+                        
                         case nMesh2::Weights:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_BLENDWEIGHT;
@@ -206,14 +230,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
     decl[curElement].Usage  = 0;
     decl[curElement].UsageIndex = 0;
 
-    if (0 != this->vertexDeclaration)
-    {
-        this->vertexDeclaration->Release();
-        this->vertexDeclaration = 0;
-    }
-
     HRESULT hr = gfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration));
     n_dxtrace(hr, "CreateVertexDeclaration() failed in nD3D9MeshArray");
     n_assert(this->vertexDeclaration);
-    this->vertexDeclarationDirty = false;
 }

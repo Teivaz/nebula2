@@ -14,13 +14,9 @@
     
     (C) 2004 RadonLabs GmbH
 */
-#include "resource/nresource.h"
 #include "gfx2/nmesharray.h"
 #include "gfx2/nd3d9mesh.h"
 
-class nGfxServer2;
-class nVariableServer;
-class nD3D9Server;
 struct IDirect3DVertexBuffer9;
 struct IDirect3DIndexBuffer9;
 struct IDirect3DVertexDeclaration9;
@@ -33,12 +29,6 @@ public:
     nD3D9MeshArray();
     /// destructor
     virtual ~nD3D9MeshArray();
-
-    /// set absolute path to resource file for index
-    virtual void SetFilenameAt(int index, const nString& path);
-    /// set the mesh object at index
-    virtual void SetMeshAt(int index, nMesh2* mesh);
-
     /// get d3d vertex buffer for a mesh
     IDirect3DVertexBuffer9* GetVertexBuffer(int meshIndex) const;
     /// get d3d index buffer of first mesh
@@ -54,7 +44,6 @@ protected:
     /// create the vertex declaration
     void CreateVertexDeclaration();
 
-    bool vertexDeclarationDirty;
     IDirect3DVertexDeclaration9* vertexDeclaration;
 };
 
@@ -103,61 +92,9 @@ inline
 IDirect3DVertexDeclaration9*
 nD3D9MeshArray::GetVertexDeclaration()
 {
-    if (this->vertexDeclarationDirty)
-    {
-        this->CreateVertexDeclaration();
-    }
+    n_assert(this->vertexDeclaration);
     return this->vertexDeclaration;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nD3D9MeshArray::LoadResource()
-{
-    bool success = nMeshArray::LoadResource();
-    
-    if (success && this->vertexDeclarationDirty)
-    {
-        this->CreateVertexDeclaration();
-    }
-    
-    return success;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nD3D9MeshArray::UnloadResource()
-{
-    this->vertexDeclarationDirty = true;
-    nMeshArray::UnloadResource();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nD3D9MeshArray::SetFilenameAt(int index, const nString &path)
-{
-    this->vertexDeclarationDirty = true;
-    nMeshArray::SetFilenameAt(index, path);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nD3D9MeshArray::SetMeshAt(int index, nMesh2* mesh)
-{
-    this->vertexDeclarationDirty = true;
-    nMeshArray::SetMeshAt(index, mesh);
-}
 //------------------------------------------------------------------------------
 #endif

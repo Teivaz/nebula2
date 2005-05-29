@@ -44,7 +44,7 @@ public:
         
 	/// start a new scene - return true is shadow is enabled
     bool BeginScene();
-    /// end the current scene and draw the shadow plane
+    /// end the current scene
     void EndScene();
 	/// start shadow casting for light
 	bool BeginLight(nLight::Type type, const vector3& lightPos);
@@ -90,20 +90,17 @@ public:
     /// redner current setup mesh in wireframe for edge debug
     void DrawDebugEdges(const vector4& matDiffuse);
 
-protected:
+private:
     /// are the resources valid?
     bool AreResourcesValid();
     /// load resources for this object
     virtual bool LoadResources();
     /// unload resources for this object
     virtual void UnloadResources();
-
-private:
+    /// per-frame initialization if shader states
+    void InitShaderState();
     static nShadowServer* Singleton;
-    
-    nRef<nShader2> refPlaneShader;
-    nRef<nMesh2> refPlaneMesh;
-    
+       
     // dynamic mesh buffers
     nDynamicShaderMesh dynMesh[NumDrawTypes];
     vector3* coordPtr[NumDrawTypes];

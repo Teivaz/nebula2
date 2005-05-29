@@ -30,7 +30,7 @@ nTexture2::nTexture2() :
 */
 nTexture2::~nTexture2()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }

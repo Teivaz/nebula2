@@ -67,7 +67,7 @@ void
 nMeshArray::SetFilenameAt(int index, const nString& path)
 {
     this->filenames[index] = path;
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------

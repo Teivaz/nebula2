@@ -225,18 +225,18 @@ nResourceServer::UnloadResources(int rsrcTypeMask)
 
 //------------------------------------------------------------------------------
 /**
-    Reload all resources matching the given resource type mask. Returns false
+    Load all resources matching the given resource type mask. Returns false
     if any of the resources didn't load correctly.
 
     IMPLEMENTATION NOTE: since the Bundle resource type is defined
     before all other resource types, it is guaranteed that bundled
     resources are loaded before all others. 
 
-    @param  rsrcTypeMask  a resource type mask
-    @return               true if all resources loaded correctly
+    @param  rsrcType    a resource type
+    @return             true if all resources loaded correctly
 */
 bool
-nResourceServer::ReloadResources(int rsrcTypeMask)
+nResourceServer::LoadResources(int rsrcTypeMask)
 {
     // also reload bundles?
     if (0 != (rsrcTypeMask & (nResource::Mesh | nResource::Animation | nResource::Texture)))
@@ -259,7 +259,7 @@ nResourceServer::ReloadResources(int rsrcTypeMask)
                 // NOTE: if the resource is bundled, it could've been loaded already
                 // (if this is the actual resource object which has been created by the
                 // bundle, thus we check if the resource has already been loaded)
-                if (!rsrc->IsValid())
+                if (!rsrc->IsLoaded())
                 {
                     retval &= rsrc->Load();
                 }
@@ -267,6 +267,60 @@ nResourceServer::ReloadResources(int rsrcTypeMask)
         }
     }
     return retval;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Calls nResource::OnLost() on all resources defined in the resource
+    type mask.
+
+    @param  rsrcTypeMask    a mask of nResource::Type values
+*/
+void
+nResourceServer::OnLost(int rsrcTypeMask)
+{
+    int i;
+    for (i = 1; i < nResource::InvalidResourceType; i <<= 1)
+    {
+        if (0 != (rsrcTypeMask & i))
+        {
+            nRoot* rsrcPool = this->GetResourcePool((nResource::Type) i);
+            n_assert(rsrcPool);
+            nResource* rsrc;
+            for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+            {
+                rsrc->OnLost();
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Calls nResource::OnRestored() on all resources defined in the resource
+    type mask.
+
+    @param  rsrcType    a resource type
+*/
+void
+nResourceServer::OnRestored(int rsrcTypeMask)
+{
+    int i;
+    bool retval = true;
+    for (i = 1; i < nResource::InvalidResourceType; i <<= 1)
+    {
+        if (0 != (rsrcTypeMask & i))
+        {
+            nRoot* rsrcPool = this->GetResourcePool((nResource::Type) i);
+            n_assert(rsrcPool);
+
+            nResource* rsrc;
+            for (rsrc = (nResource*) rsrcPool->GetHead(); rsrc; rsrc = (nResource*) rsrc->GetSucc())
+            {
+                rsrc->OnRestored();
+            }
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -321,8 +375,7 @@ nResourceServer::LoaderThreadFunc(nThread* thread)
                 res->LockMutex();
                 self->jobList.Unlock();
 
-                bool success = res->LoadResource();
-                res->SetValid(success);
+                res->LoadResource();
                 res->UnlockMutex();
 
                 // proceed to next job
@@ -377,7 +430,7 @@ nResourceServer::AddLoaderJob(nResource* res)
 {
     n_assert(res);
     n_assert(!res->IsPending());
-    n_assert(!res->IsValid());
+    n_assert(!res->IsLoaded());
     this->jobList.Lock();
     this->jobList.AddTail(&(res->jobNode));
     this->jobList.Unlock();

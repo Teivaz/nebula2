@@ -18,7 +18,7 @@ nSwingShapeNode::nSwingShapeNode() :
     swingAngle(45.0f),
     swingTime(5.0f)
 {
-    SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader );
+    this->SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------
@@ -26,8 +26,9 @@ nSwingShapeNode::nSwingShapeNode() :
 */
 nSwingShapeNode::~nSwingShapeNode()
 {
-    this->UnloadResources();
+    // empty
 }
+
 
 //------------------------------------------------------------------------------
 /**

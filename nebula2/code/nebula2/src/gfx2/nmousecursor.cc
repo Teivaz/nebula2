@@ -83,7 +83,7 @@ nMouseCursor::Load()
     n_assert(!this->filename.IsEmpty());
     this->refTexture = nGfxServer2::Instance()->NewTexture(this->filename.Get());
     n_assert(this->refTexture.isvalid());
-    if (!this->refTexture->IsValid())
+    if (this->refTexture->IsUnloaded())
     {
         this->refTexture->SetFilename(this->filename.Get());
         bool success = this->refTexture->Load();

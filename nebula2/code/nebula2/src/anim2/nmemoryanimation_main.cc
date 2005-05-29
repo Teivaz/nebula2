@@ -35,7 +35,7 @@ nMemoryAnimation::~nMemoryAnimation()
 bool
 nMemoryAnimation::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded());
 
     bool success = false;
     nString filename = this->GetFilename().Get();
@@ -49,7 +49,7 @@ nMemoryAnimation::LoadResource()
     }
     if (success)
     {
-        this->SetValid(true);
+        this->SetState(Valid);
     }
     return success;
 }
@@ -60,11 +60,11 @@ nMemoryAnimation::LoadResource()
 void
 nMemoryAnimation::UnloadResource()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         nAnimation::UnloadResource();
         this->keyArray.Clear();
-        this->SetValid(false);
+        this->SetState(Unloaded);
     }
 }
 
@@ -75,7 +75,7 @@ nMemoryAnimation::UnloadResource()
 bool
 nMemoryAnimation::LoadNanim2(const char* filename)
 {
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded())
 
     nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);
@@ -206,7 +206,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
 bool
 nMemoryAnimation::LoadNax2(const char* filename)
 {
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded());
 
     nFile* file = nFileServer2::Instance()->NewFileObject();
     n_assert(file);

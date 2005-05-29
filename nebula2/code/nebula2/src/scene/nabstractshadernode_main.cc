@@ -20,7 +20,7 @@ nAbstractShaderNode::nAbstractShaderNode()
 */
 nAbstractShaderNode::~nAbstractShaderNode()
 {
-    this->UnloadResources();
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -53,12 +53,12 @@ nAbstractShaderNode::LoadTexture(int index)
         {
             nTexture2* tex = nGfxServer2::Instance()->NewTexture(texNode.texName.Get());
             n_assert(tex);
-            if (!tex->IsValid())
+            if (!tex->IsLoaded())
             {
                 tex->SetFilename(texNode.texName.Get());
                 if (!tex->Load())
                 {
-                        n_printf("nAbstractShaderNode: Error loading texture '%s'\n", texNode.texName.Get());
+                    n_printf("nAbstractShaderNode: Error loading texture '%s'\n", texNode.texName.Get());
                     return false;
                 }
             }

@@ -855,6 +855,19 @@ nGfxServer2::EndShapes()
 
 //------------------------------------------------------------------------------
 /**
+    Returns true when vertex shaders run in emulation. This is needed by
+    mesh handling classes when running in the Fixed Function pipeline code
+    path. The method must be overwritten in subclasses.
+*/
+bool
+nGfxServer2::AreVertexShadersEmulated()
+{
+    n_error("nGfxServer2::AreVertexShadersEmulated() called!");
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     - 23-Aug-04    kims    created
 */
 void
@@ -962,6 +975,31 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             }
         }
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Utility function which computes a ray in world space between the eye
+    and the current mouse position on the near plane.
+*/
+line3
+nGfxServer2::ComputeWorldMouseRay(const vector2& mousePos, float length)
+{
+    // get the current Nebula camera description and view matrix
+    nCamera2& nebCamera = this->GetCamera();
+    const matrix44& viewMatrix = this->GetTransform(nGfxServer2::InvView);
+
+    // Compute mouse position in world coordinates.
+    vector3 screenCoord3D((mousePos.x - 0.5f) * 2.0f, (mousePos.y - 0.5f) * 2.0f, 1.0f);
+    vector3 viewCoord = nebCamera.GetInvProjection() * screenCoord3D;
+    vector3 localMousePos = viewCoord * nebCamera.GetNearPlane() * 1.1f;
+    localMousePos.y = -localMousePos.y;
+    vector3 worldMousePos = viewMatrix * localMousePos;
+    vector3 worldMouseDir = worldMousePos - viewMatrix.pos_component();
+    worldMouseDir.norm();
+    worldMouseDir *= length;
+
+    return line3(worldMousePos, worldMousePos + worldMouseDir);
 }
 
 //------------------------------------------------------------------------------

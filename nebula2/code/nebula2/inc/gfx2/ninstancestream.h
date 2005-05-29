@@ -196,7 +196,7 @@ inline
 void
 nInstanceStream::SetDeclaration(const Declaration& decl)
 {
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded());
     this->streamDecl = decl;
 }
 

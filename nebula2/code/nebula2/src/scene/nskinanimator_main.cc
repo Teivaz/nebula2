@@ -32,7 +32,6 @@ nSkinAnimator::nSkinAnimator() :
 */
 nSkinAnimator::~nSkinAnimator()
 {
-    this->UnloadResources();
 
     // Clear out the joint name list - but remember the node data pointers
     // contain actual integers, not pointers to anything, so don't delete
@@ -74,7 +73,7 @@ nSkinAnimator::LoadAnim()
         const char* fileName = this->animName.Get();
         nAnimation* anim = this->refAnimServer->NewMemoryAnimation(fileName);
         n_assert(anim);
-        if (!anim->IsValid())
+        if (!anim->IsLoaded())
         {
             anim->SetFilename(fileName);
             if (!anim->Load())

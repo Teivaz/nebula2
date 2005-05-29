@@ -23,7 +23,7 @@ nD3D9Font::nD3D9Font() :
 */
 nD3D9Font::~nD3D9Font()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -35,7 +35,7 @@ nD3D9Font::~nD3D9Font()
 bool
 nD3D9Font::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(Unloaded == this->GetState());
     n_assert(0 == this->d3dFont);
 
     // check if the font resource must be created...
@@ -86,7 +86,7 @@ nD3D9Font::LoadResource()
 
     n_dxtrace(hr, "D3DXCreateFont() failed!");
     n_assert(this->d3dFont);
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -96,7 +96,7 @@ nD3D9Font::LoadResource()
 void
 nD3D9Font::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(Unloaded != this->GetState());
     n_assert(this->d3dFont);
     nD3D9Server* gfxServer = this->refD3D9Server.get();
 
@@ -117,6 +117,43 @@ nD3D9Font::UnloadResource()
         BOOL res = RemoveFontResource(mangledPath.Get());
         n_assert(0 != res);
     }
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device is going into lost state.
+*/
+void
+nD3D9Font::OnLost()
+{
+    if (this->d3dFont)
+    {
+        n_assert(Lost != this->GetState());
+        this->d3dFont->OnLostDevice();
+        this->SetState(Lost);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device is available again.
+*/
+void
+nD3D9Font::OnRestored()
+{
+    if (this->d3dFont)
+    {
+        n_assert(Lost == this->GetState());
+        this->d3dFont->OnResetDevice();
+        this->SetState(Valid);
+    }
+}
+
+
+
+
+
+            
+
 

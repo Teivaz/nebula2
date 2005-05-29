@@ -43,6 +43,15 @@ public:
         InvalidResourceType = (1<<30),
     };
 
+    /// resource states
+    enum State
+    {
+        Unloaded,       // currently not loaded
+        Valid,          // currently valid
+        Lost,           // currently not available
+        Empty,          // available, but contains no data
+    };
+
     /// constructor
     nResource();
     /// destructor
@@ -65,8 +74,6 @@ public:
     void SetResourceLoader(const char* resourceLoader);
     /// gets the NOH path to the nResourceLoader
     const char* GetResourceLoader();
-    /// is resource valid?
-    bool IsValid();
     /// is a resource loading request pending?
     bool IsPending();
     /// issue a load request
@@ -75,18 +82,34 @@ public:
     virtual bool Load(nFile* file, int offset, int length);
     /// unloads the resource
     virtual void Unload();
+    /// set the valid flag
+    void SetState(State s);
+    /// get current state, this can be Lost, Restored, Valid
+    State GetState();
+    /// convenience method, returns true when GetState() == Valid
+    bool IsValid();
+    /// convenience method, returns true when GetState() == Unloaded
+    bool IsUnloaded();
+    /// convenience method, returns GetState() != Unloaded
+    bool IsLoaded();
+    /// convenience method, returns true when GetState() == Lost
+    bool IsLost();
+    /// convenience method, returns true when GetState() == Empty
+    bool IsEmpty();
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
 
 protected:
     friend class nResourceServer;
 
-    /// set the valid flag
-    void SetValid(bool b);
     /// override in subclasse to perform actual resource loading
     virtual bool LoadResource();
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();
+    /// called when contained resource may become lost 
+    virtual void OnLost();
+    /// called when contained resource may be restored
+    virtual void OnRestored();
 
     nDynAutoRef<nResourceLoader> refResourceLoader;
 
@@ -96,7 +119,7 @@ private:
     Type type;
     bool asyncEnabled;
     nNode jobNode;      // for linkage into resource server's loader job list
-    nThreadVariable<bool> isValid;
+    nThreadVariable<State> state;
 };
 
 //------------------------------------------------------------------------------
@@ -187,28 +210,78 @@ nResource::GetAsyncEnabled() const
 
 //------------------------------------------------------------------------------
 /**
-    Set the valid flag.
+    Set the current state, this can be Unloaded, Lost, Restored, Valid.
 
-    @param  b   new valid flag
+    @param  s   new state
 */
 inline
 void
-nResource::SetValid(bool b)
+nResource::SetState(State s)
 {
-    this->isValid = b;
+    this->state = s;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Return whether the resource is valid (loaded) or not (unloaded).
+    Return the current state.
 
-    @return     valid flag
+    @return     current state
+*/
+inline
+nResource::State
+nResource::GetState()
+{
+    return this->state.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 bool
 nResource::IsValid()
 {
-    return this->isValid.Get();
+    return this->GetState() == Valid;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nResource::IsUnloaded()
+{
+    return this->GetState() == Unloaded;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nResource::IsLoaded()
+{
+    return this->GetState() != Unloaded;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nResource::IsEmpty()
+{
+    return this->GetState() == Empty;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nResource::IsLost()
+{
+    return this->GetState() == Lost;
 }
 
 //------------------------------------------------------------------------------

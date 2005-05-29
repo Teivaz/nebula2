@@ -38,7 +38,7 @@ nResourceBundle::~nResourceBundle()
 bool
 nResourceBundle::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     bool success = false;
     nString filename = this->GetFilename();
 
@@ -88,7 +88,7 @@ nResourceBundle::LoadResource()
         dataFile->Release();
     }
     hdrFile->Release();
-    this->SetValid(true);
+    this->SetState(Valid);
     return success;
 }
 
@@ -99,7 +99,7 @@ nResourceBundle::LoadResource()
 void
 nResourceBundle::UnloadResource()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         int i;
         int num = this->bundleResources.Size();
@@ -111,7 +111,7 @@ nResourceBundle::UnloadResource()
                 this->bundleResources[i].invalidate();
             }
         }
-        this->SetValid(false);
+        this->SetState(Unloaded);
     }
 }
 
@@ -167,7 +167,7 @@ nResourceBundle::LoadMesh(const char* resId,
     // create a new mesh object
     nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resId);
     n_assert(mesh);
-    if (!mesh->IsValid())
+    if (!mesh->IsLoaded())
     {
         mesh->SetUsage(flags);
         if (!mesh->Load(dataFile, dataOffset, dataSize))
@@ -199,7 +199,7 @@ nResourceBundle::LoadAnimation(const char* resId,
     // create a new animation object
     nAnimation* anim = this->refAnimServer->NewMemoryAnimation(resId);
     n_assert(anim);
-    if (!anim->IsValid())
+    if (!anim->IsLoaded())
     {
         if (!anim->Load(dataFile, dataOffset, dataSize))
         {
@@ -230,7 +230,7 @@ nResourceBundle::LoadTexture(const char* resId,
     // create a new animation object
     nTexture2* tex = nGfxServer2::Instance()->NewTexture(resId);
     n_assert(tex);
-    if (!tex->IsValid())
+    if (!tex->IsLoaded())
     {
         if (!tex->Load(dataFile, dataOffset, dataSize))
         {

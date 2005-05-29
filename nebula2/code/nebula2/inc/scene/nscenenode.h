@@ -35,6 +35,8 @@ public:
     nSceneNode();
     /// destructor
     virtual ~nSceneNode();
+    /// release object
+    virtual bool Release();
     /// save object to persistent stream
     virtual bool SaveCmds(nPersistServer* ps);
     /// load resources for this object
@@ -104,20 +106,10 @@ protected:
 
     bbox3 localBox;
     nArray< nDynAutoRef<nAnimator> > animatorArray;
-    bool resourcesValid;
     int renderPri;
+    bool resourcesValid;
+    // nRef<nInstanceStream> refInstanceStream;
 };
-
-//------------------------------------------------------------------------------
-/**
-    Return true if the node's resources are valid.
-*/
-inline
-bool
-nSceneNode::AreResourcesValid() const
-{
-    return this->resourcesValid;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -166,6 +158,17 @@ int
 nSceneNode::GetRenderPri() const
 {
     return this->renderPri;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if the node's resources are valid.
+*/
+inline
+bool
+nSceneNode::AreResourcesValid() const
+{
+    return this->resourcesValid;
 }
 
 //------------------------------------------------------------------------------

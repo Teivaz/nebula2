@@ -44,15 +44,16 @@ public:
 
     /// indicate to scene server that we offer geometry for rendering
     virtual bool HasGeometry() const;
-    /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
     /// override shader parameter rendering
     virtual bool ApplyShader(uint fourcc, nSceneServer* sceneServer);
     /// perform pre-instancing rending of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-
+    /// get the mesh usage flags required by this shape node
+    int GetMeshUsage() const;
+    /// override the default mesh usage for this shape node
+    void SetMeshUsage(int);
     /// set the mesh resource name for the specified index
     void SetMeshAt(int index, const char* name);
     /// get the mesh resource name for the specified index
@@ -77,6 +78,7 @@ protected:
     int groupIndex;
     Shape shapeArray[MaxShapes];
     nRef<nMeshArray> refMeshArray;
+    int meshUsage;
 };
 
 //------------------------------------------------------------------------------
@@ -208,21 +210,6 @@ bool
 nBlendShapeNode::HasGeometry() const
 {
     return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
-
-    @return     a combination on nMesh2::Usage flags
-*/
-inline
-int
-nBlendShapeNode::GetMeshUsage() const
-{
-    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;;
 }
 //------------------------------------------------------------------------------
 #endif

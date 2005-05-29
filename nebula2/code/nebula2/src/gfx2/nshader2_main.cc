@@ -21,7 +21,7 @@ nShader2::nShader2() :
 */
 nShader2::~nShader2()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }

@@ -21,7 +21,7 @@ nSkinShadowCaster::nSkinShadowCaster() :
     weightsAndJIndices(0), 
     numWeightsAndJIndices(0)
 {
-    this->SetMeshUsage(this->GetMeshUsage() | nMesh2::NeedsVertexShader);
+    //empty
 }
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ nSkinShadowCaster::nSkinShadowCaster() :
 */
 nSkinShadowCaster::~nSkinShadowCaster()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->UnloadResource();
     }
@@ -196,8 +196,8 @@ nSkinShadowCaster::LoadWeightsAndJIndices(nMesh2* sourceMesh)
     
     // vertex strides
     const int stride = sourceMesh->GetVertexWidth();
-    const int weightDst = sourceMesh->GetVertexComponentDistance(nMesh2::Weights);
-    const int jindicesDst = sourceMesh->GetVertexComponentDistance(nMesh2::JIndices);
+    const int weightDst = sourceMesh->GetVertexComponentOffset(nMesh2::Weights);
+    const int jindicesDst = sourceMesh->GetVertexComponentOffset(nMesh2::JIndices);
 
     // source data
     float* sourcePtr = sourceMesh->LockVertices();
@@ -222,6 +222,9 @@ nSkinShadowCaster::LoadWeightsAndJIndices(nMesh2* sourceMesh)
 
 //------------------------------------------------------------------------------
 /**
+    This initializes the static source mesh which is read by the CPU.
+
+    - 25-Sep-04     floh    cleaned up, removed the RefillBuffersMode stuff
 */
 void
 nSkinShadowCaster::LoadVertices(nMesh2* sourceMesh)
@@ -244,7 +247,7 @@ nSkinShadowCaster::LoadVertices(nMesh2* sourceMesh)
     this->refCoordMesh = destMesh;
     
     int numVertices = sourceMesh->GetNumVertices();
-    if (! destMesh->IsValid() ) // is the mesh already loaded?
+    if (!destMesh->IsLoaded()) // is the mesh already loaded?
     {        
         destMesh->SetUsage(nMesh2::ReadOnly);
         destMesh->SetVertexComponents(nMesh2::Coord);
@@ -252,22 +255,14 @@ nSkinShadowCaster::LoadVertices(nMesh2* sourceMesh)
         
         destMesh->SetNumIndices(0);
         destMesh->SetNumEdges(0);
-        destMesh->SetAsyncEnabled(false);
-        destMesh->SetRefillBuffersMode(nMesh2::Enabled);
         
         bool success = destMesh->Load();
         n_assert(success);
-    }
 
-    // load source data
-    if (nMesh2::NeededNow == destMesh->GetRefillBuffersMode())
-    {
-        // source ptr
+        // initialize the mesh data 
         float* sourcePtr = sourceMesh->LockVertices();
         n_assert(sourcePtr);
         ushort stride = sourceMesh->GetVertexWidth();
-        
-        // dest ptr
         float* destPtr = destMesh->LockVertices();
         n_assert(destPtr);
         
@@ -278,8 +273,10 @@ nSkinShadowCaster::LoadVertices(nMesh2* sourceMesh)
             *destPtr++ = *(sourcePtr + (i * stride + 1));
             *destPtr++ = *(sourcePtr + (i * stride + 2));
         }
-        sourceMesh->UnlockVertices();
         destMesh->UnlockVertices();
+        sourceMesh->UnlockVertices();
+
+        destMesh->SetState(Valid);
     }
 }
 

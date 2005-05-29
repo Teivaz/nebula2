@@ -29,7 +29,7 @@ nD3D9Texture::nD3D9Texture() :
 */
 nD3D9Texture::~nD3D9Texture()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -51,10 +51,12 @@ nD3D9Texture::CanLoadAsync() const
 void
 nD3D9Texture::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
 
     nD3D9Server* gfxServer = this->refGfxServer.get();
     n_assert(gfxServer->d3d9Device);
+
+    //n_printf("nD3D9Texture::UnloadResource(): %s\n", this->GetName());
 
     // check if I am the current render target in the gfx server...
     if (this->IsRenderTarget())
@@ -102,7 +104,7 @@ nD3D9Texture::UnloadResource()
         this->textureCube = 0;
     }
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +113,9 @@ nD3D9Texture::UnloadResource()
 bool
 nD3D9Texture::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
+
+    //n_printf("nD3D9Texture::LoadResource(): %s\n", this->GetName());
 
     bool success = false;
     nString filename = this->GetFilename().Get();
@@ -133,6 +137,11 @@ nD3D9Texture::LoadResource()
     {
         // create an empty texture
         success = this->CreateEmptyTexture();
+        if (success)
+        {
+            this->SetState(Empty);
+        }
+        return true;
     }
     else if (filename.CheckExtension("dds"))
     {
@@ -144,8 +153,51 @@ nD3D9Texture::LoadResource()
         // load file through D3DX and generate mip maps
         success = this->LoadD3DXFile(true);
     }
-    this->SetValid(success);
+    if (success)
+    {
+        this->SetState(Valid);
+    }
     return success;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device is lost. We only need to
+    react if our texture is not in D3D's managed pool.
+    In this case, we need to unload ourselves...
+*/
+void
+nD3D9Texture::OnLost()
+{
+    if (this->IsRenderTarget() || (this->usage & Dynamic))
+    {
+        this->UnloadResource();
+        this->SetState(Lost);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device has been restored. If our
+    texture is in the D3D's default pool, we need to restore ourselves
+    as well.
+*/
+void
+nD3D9Texture::OnRestored()
+{
+    if (this->IsRenderTarget() || (this->usage & Dynamic))
+    {
+        this->SetState(Unloaded);
+        this->LoadResource();
+        if (this->usage & CreateEmpty)
+        {
+            this->SetState(Empty);
+        }
+        else
+        {
+            this->SetState(Valid);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -174,7 +226,7 @@ nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9,
     n_dxtrace(hr, "GetDisplayMode() failed");
 
     // check format
-    hr = d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
+    hr = d3d9->CheckDeviceFormat(N_D3D9_ADAPTER,
                                  D3DDEVTYPE_HAL,
                                  dispMode.Format,
                                  usage,
@@ -831,6 +883,96 @@ nD3D9Texture::UnlockCubeFace(CubeFace face, int level)
 
 //------------------------------------------------------------------------------
 /**
+    Compute the byte size of the texture data.
+*/
+int
+nD3D9Texture::GetByteSize()
+{
+    if (this->IsLoaded())
+    {
+        // compute number of pixels
+        int numPixels = this->GetWidth() * this->GetHeight();
+
+        // 3d or cube texture?
+        switch (this->GetType())
+        {
+        case TEXTURE_3D:   numPixels *= this->GetDepth(); break;
+        case TEXTURE_CUBE: numPixels *= 6; break;
+        default: break;
+        }
+
+        // mipmaps ?
+        if (this->GetNumMipLevels() > 1)
+        {
+            switch (this->GetType())
+            {
+            case TEXTURE_2D:
+            case TEXTURE_CUBE:
+                numPixels += numPixels / 3;
+                break;
+
+            default:
+                /// 3d texture
+                numPixels += numPixels / 7;
+                break;
+            }
+        }
+
+        // size per pixel
+        int size = 0;
+        switch (this->GetFormat())
+        {
+        case DXT1:
+            // 4 bits per pixel
+            size = numPixels / 2;
+            break;
+
+        case DXT2:
+        case DXT3:
+        case DXT4:
+        case DXT5:
+        case P8:
+            // 8 bits per pixel
+            size = numPixels;
+            break;
+
+        case R5G6B5:
+        case A1R5G5B5:
+        case A4R4G4B4:
+        case R16F:
+            // 16 bits per pixel
+            size = numPixels * 2;
+            break;
+
+        case X8R8G8B8:
+        case A8R8G8B8:
+        case R32F:
+        case G16R16F:
+            // 32 bits per pixel
+            size = numPixels * 4;
+            break;
+
+        case A16B16G16R16F:
+        case G32R32F:
+            // 64 bits per pixel
+            size = numPixels * 8;
+            break;
+
+        case A32B32G32R32F:
+            // 128 bits per pixel
+            size = numPixels * 16;
+            break;
+        }
+        return size;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 
     @param objName  name of nSurafce which to be created.
     @param level    mipmap level
@@ -871,92 +1013,3 @@ void nD3D9Texture::GenerateMipMaps()
     n_assert (SUCCEEDED(hr));
 }
                 
-//------------------------------------------------------------------------------
-/**             
-    Compute the byte size of the texture data.
-*/          
-int         
-nD3D9Texture::GetByteSize()
-{               
-    if (this->IsValid())
-    {
-        // compute number of pixels
-        int numPixels = this->GetWidth() * this->GetHeight();
-
-        // 3d or cube texture?
-        switch (this->GetType())
-        {
-            case TEXTURE_3D:   numPixels *= this->GetDepth(); break;
-            case TEXTURE_CUBE: numPixels *= 6; break;
-            default: break;
-        }
-
-        // mipmaps ?
-        if (this->GetNumMipLevels() > 1)
-        {
-            switch (this->GetType())
-            {
-                case TEXTURE_2D:
-                case TEXTURE_CUBE:
-                    numPixels += numPixels / 3;
-                    break;
-
-                default:
-                    /// 3d texture
-                    numPixels += numPixels / 7;
-                    break;
-            }
-        }
-
-        // size per pixel
-        int size = 0;
-        switch (this->GetFormat())
-        {
-            case DXT1:
-                // 4 bits per pixel
-                size = numPixels / 2;
-                break;
-
-            case DXT2:
-            case DXT3:
-            case DXT4:
-            case DXT5:
-            case P8:
-                // 8 bits per pixel
-                size = numPixels;
-                break;
-
-            case R5G6B5:
-            case A1R5G5B5:
-            case A4R4G4B4:
-            case R16F:
-                // 16 bits per pixel
-                size = numPixels * 2;
-                break;
-
-            case X8R8G8B8:
-            case A8R8G8B8:
-            case R32F:
-            case G16R16F:
-                // 32 bits per pixel
-                size = numPixels * 4;
-                break;
-
-            case A16B16G16R16F:
-            case G32R32F:
-                // 64 bits per pixel
-                size = numPixels * 8;
-                break;
-
-            case A32B32G32R32F:
-                // 128 bits per pixel
-                size = numPixels * 16;
-                break;
-        }
-        return size;
-    }
-    else
-    {
-        return 0;
-    }
-}

@@ -184,11 +184,20 @@ nD3D9Server::UpdateSharedShaderParams()
         nTime time = this->kernelServer->GetTimeServer()->GetTime();
         shd->SetFloat(nShaderState::Time, float(time));
 
-        // display resolution
-        const nDisplayMode2& mode = this->GetDisplayMode();
+        // display resolution (or better, render target resolution
         nFloat4 dispRes;
-        dispRes.x = (float) mode.GetWidth();
-        dispRes.y = (float) mode.GetHeight();
+        nTexture2* renderTarget = this->GetRenderTarget();
+        if (renderTarget)
+        {
+            dispRes.x = (float) renderTarget->GetWidth();
+            dispRes.y = (float) renderTarget->GetHeight();
+        }
+        else
+        {
+            const nDisplayMode2& mode = this->GetDisplayMode();
+            dispRes.x = (float) mode.GetWidth();
+            dispRes.y = (float) mode.GetHeight();
+        }
         dispRes.z = 0.0f;
         dispRes.w = 0.0f;
         shd->SetFloat4(nShaderState::DisplayResolution, dispRes);
@@ -232,15 +241,6 @@ nD3D9Server::BeginScene()
         this->UpdateSharedShaderParams();
 
         this->inBeginScene = true;
-
-        #ifdef __NEBULA_STATS__
-        // reset statistic variables
-        this->dbgQueryNumPrimitives->SetI(0);
-        this->dbgQueryNumDrawCalls->SetI(0);
-        this->statsNumRenderStateChanges = 0;
-        this->statsNumTextureChanges = 0;
-        #endif
-
         return true;
     }
     return false;
@@ -249,6 +249,8 @@ nD3D9Server::BeginScene()
 //------------------------------------------------------------------------------
 /**
     Clear buffers.
+
+    - 01-Jun-04     floh    only clear stencil when current display mode has stencil
 
     @param  bufferTypes     a combination of nBufferType flags
                             (COLOR | DEPTH | STENCIL)
@@ -296,12 +298,6 @@ nD3D9Server::EndScene()
     n_assert(this->d3d9Device);
     HRESULT hr = this->d3d9Device->EndScene();
     n_dxtrace(hr, "EndScene() on D3D device failed!");
-
-    #ifdef __NEBULA_STATS__
-    // query statistics
-    this->QueryStatistics();
-    #endif
-
     nGfxServer2::EndScene();
 }
 
@@ -314,6 +310,13 @@ nD3D9Server::PresentScene()
 {
     n_assert(!this->inBeginScene);
     n_assert(this->d3d9Device);
+    this->statsFrameCount++;
+
+    #ifdef __NEBULA_STATS__
+    // query statistics
+    this->QueryStatistics();
+    #endif
+
     HRESULT hr = this->d3d9Device->Present(0, 0, 0, 0);
     if (FAILED(hr))
     {
@@ -360,6 +363,9 @@ nD3D9Server::SetTexture(int stage, nTexture2* tex)
     Bind vertex buffer to vertex stream 0.
     The mesh must have a index and a vertex buffer!
 
+    - 26-Sep-04     floh    moved the software vertex processing stuff to
+                            SetShader()
+
     @param  mesh        pointer to a nD3D9Mesh2 object or 0 to clear the
                         current stream and index buffer
 */                  
@@ -378,7 +384,7 @@ nD3D9Server::SetMesh(nMesh2* mesh)
     
         if (this->GetMesh() != mesh)
         {
-            //clean old mesh before set new
+            // clean old mesh before setting new mesh
             this->SetMesh(0);
             
             IDirect3DVertexBuffer9*      d3dVBuf = 0;
@@ -409,15 +415,6 @@ nD3D9Server::SetMesh(nMesh2* mesh)
             // indices are provided by the mesh associated with stream 0!
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
-
-		    if ((nMesh2::NeedsVertexShader & mesh->GetUsage()) && (this->GetFeatureSet() < DX9))
-			{
-				this->d3d9Device->SetSoftwareVertexProcessing(TRUE);
-			}
-			else
-			{
-				this->d3d9Device->SetSoftwareVertexProcessing(FALSE);
-			}
         }
     }
     else
@@ -447,6 +444,9 @@ nD3D9Server::SetMesh(nMesh2* mesh)
     Set a mesh array for multiple vertex streams. Must be a nD3D9MeshArray
     The mesh in the array at stream 0 must provide a index buffer!
 
+    - 26-Sep-04     floh    moved the software vertex processing stuff to
+                            SetShader()
+
     @param  meshArray   pointer to a nD3D9MeshArray object or 0 to clear the
                         current stream and index buffer
 */
@@ -465,10 +465,8 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
         
         if (this->GetMeshArray() != meshArray)
         {
-            //clean old mesh array before set new
+            // clear old mesh array before settings new one
             this->SetMeshArray(0);
-
-            bool needSoftwareProcessing = false;
 
             // set the vertex stream source
             IDirect3DVertexBuffer9* d3dVBuf = 0;
@@ -490,11 +488,6 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
                         hr = this->d3d9Device->SetStreamSource(i, d3dVBuf, 0, stride);
                         n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
                     }
-
-                    if (0 != (mesh->GetUsage() & nMesh2::NeedsVertexShader))
-                    {
-                        needSoftwareProcessing = true;
-                    }
                 }
             }
             
@@ -509,15 +502,6 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             n_assert2(d3dIBuf, "The mesh at stream 0 must provide a valid IndexBuffer!\n");
             hr = this->d3d9Device->SetIndices(d3dIBuf);
             n_dxtrace(hr, "SetIndices() on D3D device failed!");
-            
-            if (this->GetFeatureSet() < DX9 && needSoftwareProcessing)
-            {                
-                this->d3d9Device->SetSoftwareVertexProcessing(true);
-            }
-            else
-            {
-                this->d3d9Device->SetSoftwareVertexProcessing(false);
-            }
         }
     }
     else
@@ -569,6 +553,8 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
 {
     n_assert(!this->inBeginScene);
     n_assert(this->d3d9Device);
+
+    nGfxServer2::SetRenderTarget(t);
 
     HRESULT hr;
     if (t)
@@ -638,14 +624,14 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
         shader->EndPass();
 
         #ifdef __NEBULA_STATS__
-        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+        this->statsNumDrawCalls++;
         #endif
     }
     shader->End();
 
     #ifdef __NEBULA_STATS__
     // update num primitives rendered
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    this->statsNumPrimitives += d3dNumPrimitives;
     #endif
 }
 
@@ -678,14 +664,14 @@ nD3D9Server::Draw(PrimitiveType primType)
         shader->EndPass();
 
         #ifdef __NEBULA_STATS__
-        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
+        this->statsNumDrawCalls++;
         #endif
     }
     shader->End();
 
     #ifdef __NEBULA_STATS__
     // update num primitives rendered
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+    this->statsNumPrimitives += d3dNumPrimitives;
     #endif
 }
 
@@ -728,8 +714,8 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
 
         #ifdef __NEBULA_STATS__
         // update statistics
-        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
-        this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+        this->statsNumDrawCalls++;
+        this->statsNumPrimitives += d3dNumPrimitives;
         #endif
     }
 }
@@ -760,14 +746,13 @@ nD3D9Server::DrawNS(PrimitiveType primType)
         int d3dNumPrimitives = this->GetD3DPrimTypeAndNum(primType, d3dPrimType);
 
         this->refShader->CommitChanges();
-
         hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed!");
 
         #ifdef __NEBULA_STATS__
         // update statistics
-        this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
-        this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives);
+        this->statsNumDrawCalls++;
+        this->statsNumPrimitives += d3dNumPrimitives;
         #endif
     }
 }
@@ -834,8 +819,8 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
 
     #ifdef __NEBULA_STATS__
     // update statistics
-    this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + numInstances);
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives * numInstances);
+    this->statsNumDrawCalls++;
+    this->statsNumPrimitives += d3dNumPrimitives * numInstances;
     #endif
 }
 
@@ -901,8 +886,8 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
 
     #ifdef __NEBULA_STATS__
     // update statistics
-    this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + numInstances);
-    this->dbgQueryNumPrimitives->SetI(this->dbgQueryNumPrimitives->GetI() + d3dNumPrimitives * numInstances);
+    this->statsNumDrawCalls++;
+    this->statsNumPrimitives += d3dNumPrimitives * numInstances;
     #endif
 }
 

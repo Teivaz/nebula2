@@ -27,8 +27,7 @@ nMesh2::nMesh2() :
     vertexBufferByteSize(0),
     indexBufferByteSize(0),
     edgeBufferByteSize(0),
-    privEdgeBuffer(0),
-    refillBuffersMode(Disabled)
+    privEdgeBuffer(0)
 {
     // empty
 }
@@ -38,7 +37,7 @@ nMesh2::nMesh2() :
 */
 nMesh2::~nMesh2()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }
@@ -51,7 +50,7 @@ nMesh2::~nMesh2()
 void
 nMesh2::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(Unloaded != this->GetState());
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     n_assert(gfxServer);
 
@@ -99,6 +98,7 @@ nMesh2::UnloadResource()
         n_free(this->privEdgeBuffer);
         this->privEdgeBuffer = 0;
     }
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------
@@ -112,19 +112,47 @@ nMesh2::UnloadResource()
 bool
 nMesh2::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(Unloaded == this->GetState());
 
     nString filename(this->GetFilename().Get());
     bool success = false;
     if (filename.IsEmpty())
     {
         // no filename, just create empty vertex and/or index buffers        
-        success = this->CreateEmpty();
+        if (this->GetNumVertices() > 0)
+        {
+            int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
+            this->SetVertexBufferByteSize(verticesByteSize);
+            this->CreateVertexBuffer();
+        }
+
+        if (this->GetNumIndices() > 0)
+        {
+            int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
+            this->SetIndexBufferByteSize(indicesByteSize);
+            this->CreateIndexBuffer();
+        }
+        if (this->GetNumEdges() > 0)
+        {
+            int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
+            this->SetEdgeBufferByteSize(edgesByteSize);
+            this->CreateEdgeBuffer();
+        }        
+
+        //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName());
+
+        this->SetState(Empty);
+        return true;
     }
     else if (this->refResourceLoader.isvalid())
     {
         // if the resource loader reference is valid, let it take a stab at the file
         success = this->refResourceLoader->Load(filename.Get(), this);
+        if (success)
+        {
+            this->SetState(Valid);
+            return true;
+        }
     }
     else
     {
@@ -146,22 +174,31 @@ nMesh2::LoadResource()
 
         if (0 != meshLoader)
         {
-            // set DX7 vertex component mask for meshes that arn't used with vertex shader
-            if (0 == (this->usage & this->NeedsVertexShader))
+            // NOTE: This is a compatibility fix for older DX7 graphics cards which don't
+            // like unknown data (like tangents, etc) between vertices when rendering
+            // with HW T&L.
+            if (0 == (this->usage & NeedsVertexShader))
             {
-                if (nGfxServer2::Instance()->GetFeatureSet() < nGfxServer2::DX9)
+                // FIXME: this should be replaced by a new nGfxServer2 method which indicates
+                // whether vertex shaders run in emulation, or not!!!
+                if (nGfxServer2::Instance()->AreVertexShadersEmulated())
                 {
-                    // set valid DX7 vertex components before loading
-                    meshLoader->SetValidVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Uv3 | nMesh2::Color);  
+                    // set valid DX7 vertex components before loading, all others will be removed from the loaded data
+                    meshLoader->SetValidVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Uv3 | nMesh2::Color | nMesh2::JIndices | nMesh2::Weights);
                 }
             }
             
             success = this->LoadFile(meshLoader);
             n_delete(meshLoader);
         }
+        if (success)
+        {
+            //n_printf("nMesh2::LoadResource(): loaded mesh %s!\n", filename.Get());
+            this->SetState(Valid);
+            return true;
+        }
     }
-    this->SetValid(success);
-    return success;
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -250,7 +287,7 @@ bool
 nMesh2::LoadFile(nMeshLoader* meshLoader)
 {
     n_assert(meshLoader);
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded());
     
     bool res;
     nString filename = this->GetFilename();
@@ -368,51 +405,6 @@ nMesh2::GetByteSize()
     {
         return 0;
     }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called to create uninitialized buffers, etc., for a mesh 
-    that is not to be loaded from a file.  Can also be called by custom 
-    resource loaders, to do the basic preinitialization.
-*/
-bool
-nMesh2::CreateEmpty()
-{
-    if (this->GetNumVertices() > 0)
-    {
-        int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-        this->SetVertexBufferByteSize(verticesByteSize);
-        this->CreateVertexBuffer();
-    }
-
-    if (this->GetNumIndices() > 0)
-    {
-        int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
-        this->SetIndexBufferByteSize(indicesByteSize);
-        this->CreateIndexBuffer();
-    }
-
-    // load edges ?
-    if (this->GetNumEdges() > 0)
-    {
-        int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
-        this->SetEdgeBufferByteSize(edgesByteSize);
-        this->CreateEdgeBuffer();
-    }
-    
-    switch (this->refillBuffersMode)
-    {
-        case DisabledOnce:
-            this->refillBuffersMode = Enabled;
-            break;
-        case Enabled:
-            this->refillBuffersMode = NeededNow;
-            break;
-        default:
-            break;
-    }
-    return true;
 }
 
 //------------------------------------------------------------------------------

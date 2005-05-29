@@ -29,8 +29,6 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
     /// set the desired segment size
     void SetSegmentSize(float s);
     /// get segment size

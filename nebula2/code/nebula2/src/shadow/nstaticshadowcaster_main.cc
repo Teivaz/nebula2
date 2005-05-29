@@ -21,7 +21,7 @@ nStaticShadowCaster::nStaticShadowCaster() :
 */
 nStaticShadowCaster::~nStaticShadowCaster()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->UnloadResource();
     }
@@ -65,6 +65,7 @@ nStaticShadowCaster::UnloadResource()
 
 //------------------------------------------------------------------------------
 /**
+    - 25-Sep-04     floh    cleaned up, removed the RefillBuffersMode stuff
 */
 void
 nStaticShadowCaster::LoadVertices(nMesh2* sourceMesh)
@@ -87,7 +88,7 @@ nStaticShadowCaster::LoadVertices(nMesh2* sourceMesh)
     this->refCoordMesh = destMesh;
     
     int numVertices = sourceMesh->GetNumVertices();
-    if (! destMesh->IsValid() ) // is the mesh already loaded?
+    if (!destMesh->IsLoaded())
     {
         destMesh->SetUsage(nMesh2::ReadOnly);
         destMesh->SetVertexComponents(nMesh2::Coord);
@@ -95,21 +96,14 @@ nStaticShadowCaster::LoadVertices(nMesh2* sourceMesh)
         
         destMesh->SetNumIndices(0);
         destMesh->SetNumEdges(0);
-        destMesh->SetAsyncEnabled(false);
-        destMesh->SetRefillBuffersMode(nMesh2::Enabled);
         
         bool success = destMesh->Load();
         n_assert(success);
-    }
 
-    if (nMesh2::NeededNow == destMesh->GetRefillBuffersMode())
-    {
-        // source ptr
+        // initialize the mesh data 
         float* sourcePtr = sourceMesh->LockVertices();
         n_assert(sourcePtr);
         ushort stride = sourceMesh->GetVertexWidth();
-        
-        // dest ptr
         vector3* destPtr = (vector3*) destMesh->LockVertices();
         n_assert(destPtr);
         
@@ -118,10 +112,10 @@ nStaticShadowCaster::LoadVertices(nMesh2* sourceMesh)
         {
             *(destPtr++) = *((vector3*) (sourcePtr + (i * stride)));
         }
-        sourceMesh->UnlockVertices();
         destMesh->UnlockVertices();
+        sourceMesh->UnlockVertices();
 
-        destMesh->SetRefillBuffersMode(nMesh2::Enabled);
+        destMesh->SetState(Valid);
     }
 }
 

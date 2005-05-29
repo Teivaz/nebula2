@@ -72,10 +72,7 @@ nShadowServer::AreResourcesValid()
         valid &= this->refStencilShader[i].isvalid() && this->refStencilShader[i]->IsValid();
         valid &= this->dynMesh[i].IsValid();
     }
-
-    valid &= this->refDebugShader.isvalid() && this->refDebugShader->IsValid();
-    valid &= this->refPlaneMesh.isvalid() && this->refPlaneMesh->IsValid() && (this->refPlaneMesh->GetRefillBuffersMode() != nMesh2::NeededNow);
-    
+    valid &= this->refDebugShader.isvalid() && this->refDebugShader->IsValid();    
     return valid;
 }
 
@@ -108,40 +105,11 @@ nShadowServer::LoadResources()
         }
 
         // init
-        if (! this->refStencilShader[type]->IsValid())
+        if (!this->refStencilShader[type]->IsLoaded())
         {
             nShader2* shader = this->refStencilShader[type];
-            shader->Load();
-
-            if (shader->IsParameterUsed(nShaderState::StencilFrontZFailOp)
-                && shader->IsParameterUsed(nShaderState::StencilFrontPassOp)
-                && shader->IsParameterUsed(nShaderState::StencilBackZFailOp)
-                && shader->IsParameterUsed(nShaderState::StencilBackPassOp))
-            {
-                switch (type)
-                {
-                    case zPass:
-                    {
-                        // setup stencil operation
-                        shader->SetInt(nShaderState::StencilFrontZFailOp, nShaderState::KEEP);
-                        shader->SetInt(nShaderState::StencilFrontPassOp,  nShaderState::INCR);
-                        shader->SetInt(nShaderState::StencilBackZFailOp,  nShaderState::KEEP);
-                        shader->SetInt(nShaderState::StencilBackPassOp,   nShaderState::DECR);
-                    }
-                    break;
-                    case zFail:
-                    {
-                        // setup stencil operation
-                        shader->SetInt(nShaderState::StencilFrontZFailOp, nShaderState::DECR);
-                        shader->SetInt(nShaderState::StencilFrontPassOp,  nShaderState::KEEP);
-                        shader->SetInt(nShaderState::StencilBackZFailOp,  nShaderState::INCR);
-                        shader->SetInt(nShaderState::StencilBackPassOp,   nShaderState::KEEP);
-                    }
-                    break;
-                    default:
-                        n_assert(false); // should not happen.
-                }
-            }
+            bool shaderLoaded = shader->Load();
+            n_assert(shaderLoaded);
         }
 
         // setup dyn mesh
@@ -157,73 +125,57 @@ nShadowServer::LoadResources()
     if (!this->refDebugShader.isvalid())
     {
         nShader2* shader = gfxServer->NewShader("shaders:shadow_debug.fx");
-        shader->SetFilename("shaders:shadow_debug.fx");
         this->refDebugShader = shader;
     }
-
-    // init
-    if (! this->refDebugShader->IsValid())
+    if (!this->refDebugShader->IsLoaded())
     {
-        this->refDebugShader->Load();
+        this->refDebugShader->SetFilename("shaders:shadow_debug.fx");
+        bool debugShaderLoaded = this->refDebugShader->Load();
+        n_assert(debugShaderLoaded);
     }
-
-    // load stencil shadow plane shader
-    if (!this->refPlaneShader.isvalid())
-    {
-        nShader2* shader = gfxServer->NewShader("shaders:stencil_plane.fx");
-        shader->SetFilename("shaders:stencil_plane.fx");
-        this->refPlaneShader = shader;
-    }
-
-    // init
-    if (!this->refPlaneShader->IsValid())
-    {
-        this->refPlaneShader->Load();
-    }
-
-    // create plane mesh
-    if (!this->refPlaneMesh.isvalid())
-    {
-        nMesh2* plane = gfxServer->NewMesh("shadow_plane");
-        plane->SetUsage(nMesh2::WriteOnce);
-        plane->SetVertexComponents(nMesh2::Coord);
-        plane->SetNumVertices(4);
-        plane->SetNumIndices(6);
-
-        plane->SetRefillBuffersMode(nMesh2::Enabled);
-        this->refPlaneMesh = plane;
-    }
-
-    // init plane mesh
-    if (! this->refPlaneMesh->IsValid() || nMesh2::NeededNow == this->refPlaneMesh->GetRefillBuffersMode() )
-    {
-        bool success = this->refPlaneMesh->Load();
-        n_assert(success);
-        
-        // vertices
-        float* vPtr = this->refPlaneMesh->LockVertices();
-        n_assert(vPtr);
-
-        *vPtr++ = -1.0f; *vPtr++ = 1.0f; *vPtr++ = 0.0f; 
-        *vPtr++ = -1.0f; *vPtr++ = -1.0f; *vPtr++ = 0.0f; 
-        *vPtr++ = 1.0f;  *vPtr++ =  1.0f; *vPtr++ = 0.0f; 
-        *vPtr++ = 1.0f;  *vPtr++ = -1.0f; *vPtr++ = 0.0f; 
-        this->refPlaneMesh->UnlockVertices();
-
-        // indices
-        ushort* iPtr = this->refPlaneMesh->LockIndices();
-        n_assert(iPtr);
-        *iPtr++ = 0; *iPtr++ = 1; *iPtr++ = 2;
-        *iPtr++ = 1; *iPtr++ = 3; *iPtr++ = 2;
-        this->refPlaneMesh->UnlockIndices();
-
-        this->refPlaneMesh->SetRefillBuffersMode(nMesh2::Enabled);
-    }
-
     return true;
 }
         
-        
+//------------------------------------------------------------------------------
+/**
+    Per-Frame initialization of shader state. This used to happen
+    inside LoadResources() but didn't have an effect on AreResourcesValid().
+*/
+void
+nShadowServer::InitShaderState()
+{
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    int type;
+    for (type = 0; type < NumDrawTypes; type++)
+    {
+        nShader2* shader = this->refStencilShader[type];
+        switch (type)
+        {
+            case zPass:
+            {
+                // setup stencil operation
+                shader->SetInt(nShaderState::StencilFrontZFailOp, nShaderState::KEEP);
+                shader->SetInt(nShaderState::StencilFrontPassOp,  nShaderState::INCR);
+                shader->SetInt(nShaderState::StencilBackZFailOp,  nShaderState::KEEP);
+                shader->SetInt(nShaderState::StencilBackPassOp,   nShaderState::DECR);
+            }
+            break;
+            case zFail:
+            {
+                // setup stencil operation
+                shader->SetInt(nShaderState::StencilFrontZFailOp, nShaderState::DECR);
+                shader->SetInt(nShaderState::StencilFrontPassOp,  nShaderState::KEEP);
+                shader->SetInt(nShaderState::StencilBackZFailOp,  nShaderState::INCR);
+                shader->SetInt(nShaderState::StencilBackPassOp,   nShaderState::KEEP);
+            }
+            break;
+            default:
+                n_assert(false); // should not happen.
+        }
+    }
+}
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -232,18 +184,6 @@ nShadowServer::UnloadResources()
 {
     n_assert(!this->inBeginScene);
 
-    if (this->refPlaneShader.isvalid())
-    {
-        this->refPlaneShader->Release();
-        this->refPlaneShader.invalidate();
-    }
-
-    if (this->refPlaneMesh.isvalid())
-    {
-        this->refPlaneMesh->Release();
-        this->refPlaneMesh.invalidate();
-    }
-    
     int type;
     for (type = 0; type < NumDrawTypes; type++)
     {
@@ -268,9 +208,10 @@ nShadowServer::BeginScene()
 {
     if (this->showShadow && (nGfxServer2::Instance()->GetNumStencilBits() > 0) )
     {
-        if (nGfxServer2::Intel_82865G == nGfxServer2::Instance()->GetDeviceIdentifier())
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+        if ((nGfxServer2::Intel_82865G == gfxServer->GetDeviceIdentifier()) ||
+            (gfxServer->GetNumStencilBits() == 0))
         {
-            n_printf("nShadowServer::BeginScene(): Intel 82865G Graphics detected! Because of bugs shadow will be disabled!");
             this->showShadow = false;
             return false;
         }
@@ -282,13 +223,7 @@ nShadowServer::BeginScene()
             this->UnloadResources();
             this->LoadResources();
         }
-
-        // FIXME: test if the shader has not validated
-        if (! this->refStencilShader[0]->IsParameterUsed(nShaderState::StencilFrontZFailOp))
-        {
-            return false;
-        }
-        
+        this->InitShaderState();
         this->inBeginScene = true;
         return true;
     }
@@ -453,25 +388,5 @@ nShadowServer::EndScene()
 {
     n_assert(this->inBeginScene);
     n_assert(!this->inBeginLight);
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    
-    // rendner shadow plane    
-    gfxServer->PushTransform(nGfxServer2::Model, matrix44());
-    gfxServer->PushTransform(nGfxServer2::View, matrix44());
-    gfxServer->PushTransform(nGfxServer2::Projection, matrix44());
-    
-    this->refPlaneShader->SetVector4(nShaderState::MatDiffuse, shadowColor);
-    gfxServer->SetShader(this->refPlaneShader);
-
-    gfxServer->SetMesh(this->refPlaneMesh);
-    gfxServer->SetIndexRange(0, 6);
-    gfxServer->SetVertexRange(0, 4);
-    
-    gfxServer->DrawIndexed(nGfxServer2::TriangleList);
-
-    gfxServer->PopTransform(nGfxServer2::Projection);
-    gfxServer->PopTransform(nGfxServer2::View);
-    gfxServer->PopTransform(nGfxServer2::Model);
-
     this->inBeginScene = false;
 }

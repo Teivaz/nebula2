@@ -14,7 +14,7 @@ nNebulaScriptClass(nBlendShapeNode, "nmaterialnode");
 nBlendShapeNode::nBlendShapeNode() :
     numShapes(0)
 {
-    //empty    
+    this->SetMeshUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------
@@ -22,10 +22,7 @@ nBlendShapeNode::nBlendShapeNode() :
 */
 nBlendShapeNode::~nBlendShapeNode()
 {
-    if (this->refMeshArray.isvalid())
-    {
-        this->UnloadResources();
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -185,4 +182,29 @@ nBlendShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rende
     this->InvokeAnimators(nAnimator::BlendShape, renderContext);
     nGfxServer2::Instance()->DrawIndexedNS(nGfxServer2::TriangleList);
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+This method must return the mesh usage flag combination required by
+this shape node class. Subclasses should override this method
+based on their requirements.
+
+@return     a combination on nMesh2::Usage flags
+*/
+int
+nBlendShapeNode::GetMeshUsage() const
+{
+    return meshUsage;
+}
+
+//------------------------------------------------------------------------------
+/**
+Specifies the mesh usage flag combination required by
+this shape node class.
+*/
+void
+nBlendShapeNode::SetMeshUsage(int usage)
+{
+    meshUsage = usage;
 }

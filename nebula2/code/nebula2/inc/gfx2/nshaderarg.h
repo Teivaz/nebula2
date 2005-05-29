@@ -13,6 +13,8 @@
 */
 #include "kernel/ntypes.h"
 #include "gfx2/nshaderstate.h"
+#include "mathlib/vector.h"
+#include "mathlib/matrix.h"
 
 class nTexture2;
 
@@ -64,6 +66,8 @@ public:
     void SetFloat4(const nFloat4& val);
     /// get float4 value
     const nFloat4& GetFloat4() const;
+    /// set content as vector4 value
+    void SetVector4(const vector4& val);
     /// get content as vector4 value
     const vector4& GetVector4() const;
     /// set matrix value
@@ -334,6 +338,17 @@ const nFloat4&
 nShaderArg::GetFloat4() const
 {
     return this->f4;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nShaderArg::SetVector4(const vector4& val)
+{
+    this->type = nShaderState::Float4;
+    this->f4 = *(nFloat4*)&val;
 }
 
 //------------------------------------------------------------------------------

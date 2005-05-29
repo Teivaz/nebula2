@@ -13,10 +13,9 @@
 */
 
 #include "kernel/ntypes.h"
-#include "gfx2/ndynamicmesh.h"
 #include "character/ncharskeleton.h"
 #include "character/ncharjointpalette.h"
-#include "variable/nvariable.h"
+#include "gfx2/nmesh2.h"
 
 //-----------------------------------------------------------------------------
 class nCharSkinRenderer
@@ -24,20 +23,44 @@ class nCharSkinRenderer
 public:
     /// constructor
     nCharSkinRenderer();
+    /// destructor
+    ~nCharSkinRenderer();
+    /// initialize the char skin renderer
+    bool Initialize(bool cpuSkinning, nMesh2* srcMesh);
+    /// return true if renderer is in the initialized state
+    bool IsInitialized() const;
     /// begin rendering the skin
-    void Begin(nGfxServer2* gfxServer, nMesh2* mesh, const nCharSkeleton* skeleton);
+    void Begin(const nCharSkeleton* skel);
     /// render a single skin fragment
-    void Render(int meshGroupIndex, const nCharJointPalette& jointPalette);
+    void Render(int meshGroupIndex, nCharJointPalette& jointPalette);
     /// finish rendering
     void End();
 
 private:
-    nGfxServer2* gfxServer;
-    nMesh2* mesh;
-    nShader2* shader;
-    const nCharSkeleton* charSkeleton;
+    /// internal setup routine
+    void Setup();
+    /// render with CPU skinning
+    void RenderCpuSkinning(int meshGroupIndex, nCharJointPalette& jointPalette);
+    /// render with vertex skinning
+    void RenderShaderSkinning(int meshGroupIndex, nCharJointPalette& jointPalette);
+
+    bool initialized;
+    bool useCpuSkinning;
     bool inBegin;
+    nRef<nMesh2> refDstMesh;        // optional destination mesh when using cpu skinning
+    nRef<nMesh2> refSrcMesh;        // the source mesh
+    const nCharSkeleton* charSkeleton;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nCharSkinRenderer::IsInitialized() const
+{
+    return this->initialized;
+}
 
 //------------------------------------------------------------------------------
 #endif
