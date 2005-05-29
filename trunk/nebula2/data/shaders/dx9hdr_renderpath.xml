@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RenderPath name="dx9" shaderpath="home:data/shaders/2.0">
+    
+    <!-- define render targets -->
+    <RenderTarget name="Scene"       format="A16B16G16R16F"  relSize="1.0" />
+    <RenderTarget name="SceneScaled" format="A16B16G16R16F"  relSize="0.25" />
+    <RenderTarget name="BrightPass"  format="X8R8G8B8"       relSize="0.25" />
+    <RenderTarget name="BloomSource" format="X8R8G8B8"       relSize="0.125" />
+    <RenderTarget name="Bloom0"      format="X8R8G8B8"       relSize="0.125" />
+    <RenderTarget name="Bloom1"      format="X8R8G8B8"       relSize="0.125" />
+    <RenderTarget name="Bloom2"      format="X8R8G8B8"       relSize="0.125" />
+    <RenderTarget name="AlphaScene"  format="X8R8G8B8"       relSize="1.0" />
+    
+    <!-- declare variables -->
+    <Float4 name="Luminance"   value="0.299 0.587 0.114 0.0" />
+    <Float4 name="Balance"     value="1.0 1.0 1.0 1.0" />
+    <Float  name="Saturation"  value="1.0" />
+    <Float4 name="ShadowColor" value="0.0 0.0 0.0 0.5" />
+    <Float  name="HdrBrightPassThreshold" value="0.7" />
+    <Float  name="HdrBrightPassOffset"    value="1.0" />
+    <Float  name="HdrBloomScale"          value="1.0" />
+    
+    <!-- render the scene into the Scene floating point buffer -->
+    <Pass name="SceneOpaque" shader="shaders:passes.fx" technique="tPassColor" renderTarget="Scene" clearColor="0.5 0.5 0.5 1.0" clearDepth="1.0" clearStencil="0">
+        <Phase name="environment" shader="shaders:phases.fx" technique="tPhaseEnvironment" fourcc="colr" sort="FrontToBack" lights="Off">
+            <Sequence shader="shaders:sky.fx" />
+            <Sequence shader="shaders:cubeskybox.fx" />
+            <Sequence shader="shaders:terrain.fx" />
+        </Phase>
+        <Phase name="opaque" shader="shaders:phases.fx" technique="tPhaseOpaque" fourcc="colr" sort="FrontToBack" lights="On">
+            <Sequence shader="shaders:default.fx" />
+            <Sequence shader="shaders:default_environment.fx" />
+            <Sequence shader="shaders:default_lightmapped.fx" />
+            <Sequence shader="shaders:default_skinned.fx" />
+            <Sequence shader="shaders:default_layered.fx" />
+            <Sequence shader="shaders:default_blended.fx" />
+            <Sequence shader="shaders:leaf.fx" />
+            <Sequence shader="shaders:tree.fx" />
+        </Phase>
+    </Pass>
+    
+    <!-- downscale scene 4x4 into SceneScaled floating point buffer -->
+    <Pass name="DownscaleScene" shader="shaders:hdr.fx" technique="tDownscale4x4" renderTarget="SceneScaled" drawQuad="Yes">
+        <Texture name="DiffMap0" value="Scene" />
+    </Pass>
+    
+    <!-- invoke the bright pass filter -->
+    <Pass name="BrightPassFilter" shader="shaders:hdr.fx" technique="tBrightPassFilter" renderTarget="BrightPass" drawQuad="Yes">
+        <Texture name="DiffMap0" value="SceneScaled" />
+        <Float name="Intensity1" variable="HdrBrightPassThreshold" />
+        <Float name="Intensity2" variable="HdrBrightPassOffset" />
+    </Pass>
+    
+    <!-- create bloom effect -->
+    <Pass name="BrightPassToBloomSource" shader="shaders:hdr.fx" technique="tGaussBlur5x5" renderTarget="BloomSource" drawQuad="Yes">
+        <Texture name="DiffMap0" value="BrightPass" />    
+    </Pass>
+    <Pass name="Bloom1" shader="shaders:hdr.fx" technique="tGaussBlur5x5" renderTarget="Bloom0" drawQuad="Yes">
+        <Texture name="DiffMap0" value="BloomSource" />
+    </Pass>
+    <Pass name="Bloom2" shader="shaders:hdr.fx" technique="tBloomHori" renderTarget="Bloom1" drawQuad="Yes">
+        <Texture name="DiffMap0" value="Bloom0" />
+    </Pass>
+    <Pass name="Bloom3" shader="shaders:hdr.fx" technique="tBloomVert" renderTarget="Bloom2" drawQuad="Yes">
+        <Texture name="DiffMap0" value="Bloom1" />
+    </Pass>
+    
+    <!-- copy from float to int alpha scene render target -->
+    <Pass name="FinalScene" shader="shaders:hdr.fx" technique="tCopy" renderTarget="AlphaScene" drawQuad="Yes">
+        <Texture name="DiffMap0" value="Scene" />
+    </Pass>
+    
+    
+    <!-- render alpha stuff -->
+    <Pass name="AlphaScene" shader="shaders:passes.fx" technique="tPassColor" renderTarget="AlphaScene">
+        <Phase name="alphazwrite" shader="shaders:phases.fx" technique="tPhaseAlphaZWrite" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:ocean.fx" />
+        </Phase>
+        <Phase name="pointsprites" shader="shaders:phases.fx" technique="tPhasePointSprites" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:grass.fx" />
+            <Sequence shader="shaders:grass_lightmapped.fx" />
+        </Phase>
+        <Phase name="alpha" shader="shaders:phases.fx" technique="tPhaseAlpha" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:default_alpha.fx" />
+            <Sequence shader="shaders:default_alpha2.fx" />
+            <Sequence shader="shaders:particle.fx" />
+            <Sequence shader="shaders:terraingrass.fx" />
+            <Sequence shader="shaders:default_environment_alpha.fx" />
+        </Phase>
+    </Pass>
+
+    <!-- draw stencil shadows -->
+    <Pass name="shadow" drawShadowVolumes="Yes" renderTarget="AlphaScene" />
+    <Pass name="shadowPlane" shader="shaders:stencil_plane.fx" renderTarget="AlphaScene" drawQuad="Yes" shadowEnabledCondition="Yes">
+        <Float4 name="MatDiffuse" variable="ShadowColor" />
+    </Pass>
+
+    <!-- compose the final frame -->
+    <Pass name="compose" shader="shaders:hdr.fx" technique="tCompose" drawQuad="Yes">
+        <Texture name="DiffMap0" value="AlphaScene" />
+        <Texture name="DiffMap2" value="Bloom2" />
+        <Float4 name="MatDiffuse" variable="Balance" />
+        <Float4 name="MatAmbient" variable="Luminance" />
+        <Float name="Intensity0" variable="Saturation" />
+        <Float name="Intensity1" variable="HdrBloomScale" />
+    </Pass>
+
+    <!-- post-draw stuff -->
+    <Pass name="gui" drawGui="Yes"/>
+        
+    <!-- fini -->
+</RenderPath>
