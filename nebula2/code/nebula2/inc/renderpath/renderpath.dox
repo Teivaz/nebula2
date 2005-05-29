@@ -1,0 +1,10 @@
+/**
+    @defgroup NebulaRenderPathSystem RenderPath System
+    @ingroup NebulaGraphicsSystem
+
+      - <b>Pass</b> - represents a pass in a render target. 
+                 Each of defined render target has its own render pass.
+      - <b>Phase</b> - specifies common render state for sequence shaders.
+      - <b>Sequence</b> - defines the shader states for mesh rendering.
+
+*/
