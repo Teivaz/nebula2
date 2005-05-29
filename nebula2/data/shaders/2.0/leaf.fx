@@ -1,4 +1,3 @@
-#line 1 "leaf.fx"
 //------------------------------------------------------------------------------
 //  2.0/leaf.fx
 //
@@ -137,6 +136,7 @@ float4 psMain(const VsOutput psIn) : COLOR
 {
     // compute lit color
     float4 baseColor = psLightingLeaf(DiffSampler, psIn.uv0, psIn.diffuse, psIn.ambient);
+    clip(baseColor.a - (AlphaRef / 255.0));    
 
     // return psAthmoFog(psIn.L_in, psIn.F_ex, baseColor);
     return baseColor;
@@ -150,7 +150,6 @@ technique t0
     pass p0
     {
         CullMode = None;
-        AlphaRef = <AlphaRef>;
         VertexShader = compile vs_2_0 vsMain();
         PixelShader  = compile ps_2_0 psMain();
     }
