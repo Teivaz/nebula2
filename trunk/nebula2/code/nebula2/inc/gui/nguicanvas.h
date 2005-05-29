@@ -1,6 +1,5 @@
 #ifndef N_GUICANVAS_H
 #define N_GUICANVAS_H
-
 //------------------------------------------------------------------------------
 /**
     @class nGuiCanvas
