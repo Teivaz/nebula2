@@ -208,8 +208,7 @@ class doxygen:
         # setup the paths
         self.autodocDir = os.path.join(buildSys.homeDir, 'doc', 'autodoc')
         self.classPagesDir = os.path.join(self.autodocDir, 'classes')
-        self.doxycfgDir = os.path.join(self.buildSys.homeDir, 'code', 
-                                       'nebula2', 'doxycfg')
+        self.doxycfgDir = os.path.join(self.buildSys.homeDir, 'code', 'doxycfg')
         self.srcDirs = []
         
     #--------------------------------------------------------------------------
@@ -356,7 +355,7 @@ class doxygen:
         oldPath = os.getcwd()
         os.chdir(self.doxycfgDir)
 
-        # read in the base config at code/nebula2/doxycfg/base_nebula2.cfg
+        # read in the base config at code/doxycfg/base_nebula2.cfg
         autoCfg = ''
         try:
             baseCfgFile = file('base_nebula2.cfg', 'r')
