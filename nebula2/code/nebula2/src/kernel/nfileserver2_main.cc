@@ -83,11 +83,11 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
     nString pathString = pathName;
     pathString.StripTrailingSlash();
     pathString.Append("/");
-        
+
     // ex. das Assign schon?
     kernelServer->PushCwd(this->assignDir.get());
     nEnv *env = (nEnv *) this->assignDir->Find(assignName);
-    if (!env) 
+    if (!env)
     {
         env = (nEnv *) kernelServer->New("nenv", assignName);
         n_assert(env);
@@ -102,7 +102,7 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
     queries existing assign under /sys/share/assigns
 
     @param assignName      the name of the assign
-    @return                the path to which the assign links, or NULL if 
+    @return                the path to which the assign links, or NULL if
                            assign is undefined
     history:
     - 30-Jan-2002   peter    created
@@ -111,11 +111,11 @@ const char*
 nFileServer2::GetAssign(const char* assignName)
 {
     nEnv *env = (nEnv *) this->assignDir->Find(assignName);
-    if (env) 
+    if (env)
     {
         return env->GetS();
     }
-    else 
+    else
     {
         n_printf("Assign '%s' not defined!\n", assignName);
         return NULL;
@@ -133,7 +133,7 @@ nFileServer2::ResetAssigns()
 
 //------------------------------------------------------------------------------
 /**
-    Returns a cleaned up path name (replaces backslashes with slashes, 
+    Returns a cleaned up path name (replaces backslashes with slashes,
     and removes trailing slash if exists.
 */
 void
@@ -199,7 +199,7 @@ nFileServer2::CleanupPathName(nString& str)
     Please note that Nebula does not know the concept of a current working
     directory, thus, all paths MUST be absolute (please note that Nebula
     assigns can be used to create position independent absolute paths).
-	  
+
     @param pathName   the path to expand
     @retur            resulting string
 
@@ -215,7 +215,7 @@ nFileServer2::ManglePath(const char* pathName)
     int colonIndex;
     while ((colonIndex = pathString.FindChar(':', 0)) > 0)
     {
-        // special case: ignore one-caracter "assigns" becayse they are 
+        // special case: ignore one-caracter "assigns" becayse they are
         // really DOS drive letters
         if (colonIndex > 1)
         {
@@ -243,7 +243,7 @@ nFileServer2::ManglePath(const char* pathName)
     history:
     - 30-Jan-2002   peter    created
 */
-nDirectory* 
+nDirectory*
 nFileServer2::NewDirectoryObject() const
 {
     nDirectory* result = n_new(nDirectory);
@@ -254,7 +254,7 @@ nFileServer2::NewDirectoryObject() const
 //------------------------------------------------------------------------------
 /**
     creates a new nFile object
-  
+
     @return          the nFile object
 
     history:
@@ -289,12 +289,12 @@ nFileServer2::InitAssigns()
     - 14-May-04  floh   Win32: if parent directory not "win32", use the executable's
                         directory as home:
 */
-void 
+void
 nFileServer2::InitHomeAssign()
 {
 #ifdef __XBxX__
     this->SetAssign("home", "d:/");
-#else    
+#else
     #if __WIN32__
         // Win32: Check for the NEBULADIR environment variable first,
         // then try to find the nkernel.dll module handle's filename
@@ -321,7 +321,7 @@ nFileServer2::InitHomeAssign()
         // use the executable's directory to locate the home directory
         char buf[N_MAXPATH];
         DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
-        if (res == 0) 
+        if (res == 0)
         {
             n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
         }
@@ -346,7 +346,7 @@ nFileServer2::InitHomeAssign()
         }
         else
         {
-            // not in normal home:bin/win32 directory structure, 
+            // not in normal home:bin/win32 directory structure,
             // use the exe's directory as home path
             nString homePath = pathToExe.ExtractDirName();
             this->SetAssign("home", homePath.Get());
@@ -356,11 +356,11 @@ nFileServer2::InitHomeAssign()
         // otherwise the current working directory will be used
         char buf[N_MAXPATH];
         char *s = getenv("NEBULADIR");
-        if (s) 
+        if (s)
         {
             n_strncpy2(buf,s,sizeof(buf));
-        } 
-        else 
+        }
+        else
         {
             n_error("Env variable NEBULADIR not set! Aborting.");
         }
@@ -392,7 +392,7 @@ nFileServer2::InitHomeAssign()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nFileServer2::InitBinAssign()
 {
 #ifdef __XBxX__
@@ -402,7 +402,7 @@ nFileServer2::InitBinAssign()
         // use the executable's directory to locate the bin directory
         char buf[N_MAXPATH];
         DWORD res = GetModuleFileName(NULL, buf, sizeof(buf));
-        if (res == 0) 
+        if (res == 0)
         {
             n_error("nFileServer2::InitHomeAssign(): GetModuleFileName() failed!\n");
         }
@@ -495,6 +495,15 @@ nFileServer2::InitTempAssign()
     path.ConvertBackslashes();
     path.Append("/");
     this->SetAssign("temp", path.Get());
+#elif defined(__LINUX__) || defined(__MACOSX__)
+    const char * tmpDir = getenv("TMPDIR");
+    if (NULL == tmpDir)
+    {
+        tmpDir = "/tmp";
+    }
+    nString path(tmpDir);
+    path.Append("/");
+    this->SetAssign("user", path.Get());
 #else
 #error "IMPLEMENT ME!"
 #endif
@@ -543,7 +552,7 @@ bool
 nFileServer2::MakePath(const char* dirName)
 {
     n_assert(dirName);
-    
+
     nDirectory* dir = this->NewDirectoryObject();
     n_assert(dir);
 
@@ -731,14 +740,14 @@ nFileServer2::Checksum(const char* filename, uint& crc)
         int numBytes = file->GetSize();
         uchar* buf = (uchar*) n_malloc(numBytes);
         n_assert(buf);
-        
+
         int numRead = file->Read(buf, numBytes);
         n_assert(numRead == numBytes);
 
         // compute CRC
         nCRC crcSummer;
         crc = crcSummer.Checksum(buf, numBytes);
-        
+
         // free and close everything
         n_free(buf);
         file->Close();
@@ -747,7 +756,7 @@ nFileServer2::Checksum(const char* filename, uint& crc)
     file->Release();
     return success;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Set the read-only status of a file.
@@ -757,6 +766,7 @@ nFileServer2::SetFileReadOnly(const char* filename, bool readOnly)
 {
     n_assert(filename);
     nString mangledPath = this->ManglePath(filename);
+#ifdef __WIN32__
     DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
     if (readOnly)
     {
@@ -767,6 +777,27 @@ nFileServer2::SetFileReadOnly(const char* filename, bool readOnly)
         fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
     }
     SetFileAttributes(mangledPath.Get(), fileAttrs);
+#elif defined(__LINUX__) || defined(__MACOSX__)
+    struct stat s;
+    if (stat(mangledPath.Get(), &s) != -1)
+    {
+        mode_t mode = s.st_mode;
+        if (readOnly)
+        {
+            // Remove all write flags...
+            mode &= ~S_IWUSR;
+            mode &= ~S_IWGRP;
+            mode &= ~S_IWOTH;
+        }
+        else
+        {
+            mode |= S_IWUSR;
+        }
+        chmod(mangledPath.Get(), mode);
+    }
+#else
+#error "nFileServer2::SetFileReadOnly() not implemented yet!"
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -779,6 +810,25 @@ nFileServer2::IsFileReadOnly(const char* filename)
 {
     n_assert(filename);
     nString mangledPath = this->ManglePath(filename);
+#ifdef __WIN32__
     DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
     return (fileAttrs & FILE_ATTRIBUTE_READONLY);
+#elif defined(__LINUX__) || defined(__MACOSX__)
+    struct stat s;
+    if (stat(mangledPath.Get(), &s) == -1)
+    {
+        return false;
+    }
+    if (s.st_uid == geteuid() && (s.st_mode & S_IRWXU))
+    {
+        return true;
+    }
+    else if (s.st_gid == getegid() && (s.st_mode & S_IRWXG))
+    {
+        return true;
+    }
+    return false;
+#else
+#error "nFileServer2::IsFileReadOnly() not implemented yet!"
+#endif
 }
