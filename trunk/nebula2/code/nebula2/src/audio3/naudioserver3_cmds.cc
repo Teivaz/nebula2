@@ -44,7 +44,7 @@ n_initcmds(nClass* cl)
     Stop all playing sounds.
 */
 static void
-n_reset(void* slf, nCmd* cmd)
+n_reset(void* slf, nCmd* /*cmd*/)
 {
     nAudioServer3* self = (nAudioServer3*) slf;
     self->Reset();
