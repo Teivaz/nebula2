@@ -95,7 +95,7 @@ nGuiSceneControlWindow::OnShow()
     nGuiHoriSliderGroup* slider;
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LightHori");
     slider->SetLeftText("Light Hori");
-    slider->SetRightText("%d°");
+    slider->SetRightText("%d");
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(maxAngle);
     slider->SetValue(n_rad2deg(this->lightAngles.y));
@@ -111,7 +111,7 @@ nGuiSceneControlWindow::OnShow()
     
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LightVert");
     slider->SetLeftText("Light Vert");
-    slider->SetRightText("%d°");
+    slider->SetRightText("%d");
     slider->SetMinValue(minHeight);
     slider->SetMaxValue(maxHeight);
     slider->SetValue(n_rad2deg(this->lightAngles.x));
