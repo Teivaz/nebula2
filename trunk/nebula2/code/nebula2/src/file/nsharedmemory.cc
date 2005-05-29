@@ -29,7 +29,7 @@ nSharedMemory::nSharedMemory() :
     isOpen(false),
     writable(false)
 {
-    SetupReadBuffer(InitialReadBufferCapacity);
+    this->SetupReadBuffer(InitialReadBufferCapacity);
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ nSharedMemory::~nSharedMemory()
 
     if (this->mapHandle != 0)
     {
-        DestroyMapping();
+        this->DestroyMapping();
     }
     delete [] this->readBuffer;
 }
@@ -56,7 +56,7 @@ nSharedMemory::Create()
 
     if (this->mapHandle != 0)
     {
-        DestroyMapping();
+        this->DestroyMapping();
     }
     this->writeBuffer.Reset();
     this->isOpen = true;
@@ -88,8 +88,8 @@ nSharedMemory::Open()
 
     // Open existing file mapping.
     this->mapHandle = OpenFileMapping(FILE_MAP_ALL_ACCESS,  // Read+write access.
-                                        FALSE,                // Don't inherit handle.
-                                        GetName());
+                                      FALSE,                // Don't inherit handle.
+                                      this->GetName());
 
     if (this->mapHandle == NULL)
     {
@@ -137,7 +137,7 @@ nSharedMemory::Close()
                                              PAGE_READWRITE,     // Read+write access.
                                              0,                  // ??
                                              this->Count(),      // Size in bytes.
-                                             GetName());         // Mapping's name.
+                                             this->GetName());   // Mapping's name.
 
         if (this->mapHandle == NULL)
         {
@@ -216,7 +216,7 @@ nSharedMemory::ResizeReadBuffer(int n)
     n_assert(n > 0);
     delete [] this->readBuffer;
     this->readBuffer = 0;
-    SetupReadBuffer(n);
+    this->SetupReadBuffer(n);
 }
 
 //------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ void
 nSharedMemory::Read(int start, int end)
 {
     n_assert(this->Readable(start, end));
-    n_assert(ReadBufferCapacity() >= end - start + 1);
+    n_assert(this->ReadBufferCapacity() >= end - start + 1);
 
     if (this->writable)
     {
