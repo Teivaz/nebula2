@@ -323,12 +323,12 @@ class doxygen:
         
         for moduleName in self.moduleNames:
             module = self.buildSys.modules[moduleName]
-            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'inc', 
+            inDir = os.path.join(os.pardir, module.codeDir, 'inc', 
                                  module.dir)
             if inDir not in incDirs:
                 if os.path.isdir(inDir):
                     incDirs.append(inDir)
-            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'src',
+            inDir = os.path.join(os.pardir, module.codeDir, 'src',
                                  module.dir)
             if inDir not in srcDirs:
                 if os.path.isdir(inDir):
@@ -336,7 +336,7 @@ class doxygen:
                     self.srcDirs.append(os.path.join(self.buildSys.homeDir,
                                                      'code', module.codeDir,
                                                      'src', module.dir))
-            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'doc')
+            inDir = os.path.join(os.pardir, module.codeDir, 'doc')
             if inDir not in docDirs:
                 if os.path.isdir(inDir):
                     docDirs.append(inDir)
@@ -369,9 +369,9 @@ class doxygen:
         autoCfg += 'INPUT            = '
         indent =   '                   '
         # the special directories
-        autoCfg += os.path.join(os.pardir, os.pardir, os.pardir, 
+        autoCfg += os.path.join(os.pardir, os.pardir, 
                                 'doc', 'nebula2') + ' \\\n'
-        autoCfg += indent + os.path.join(os.pardir, os.pardir, os.pardir, 
+        autoCfg += indent + os.path.join(os.pardir, os.pardir, 
                                          'doc', 'autodoc') + ' \\\n'
         # the rest
         numDirs = len(self.doxygenInputDirs)
