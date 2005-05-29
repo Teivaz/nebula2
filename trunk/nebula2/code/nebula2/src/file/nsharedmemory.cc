@@ -5,6 +5,11 @@
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
 #include "file/nsharedmemory.h"
+#if defined(__LINUX__) || defined(__MACOSX__)
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
 
 nNebulaClass(nSharedMemory, "nroot");
 
@@ -86,6 +91,7 @@ nSharedMemory::Open()
 {
     n_assert(!this->IsOpen());
 
+#ifdef __WIN32__
     // Open existing file mapping.
     this->mapHandle = OpenFileMapping(FILE_MAP_ALL_ACCESS,  // Read+write access.
                                       FALSE,                // Don't inherit handle.
@@ -110,6 +116,10 @@ nSharedMemory::Open()
         n_printf("Failed to map view of file (Error: %d).\n", GetLastError());
         return;
     }
+#elif defined(__LINUX__) || defined(__MACOSX__)
+#else
+#error "nSharedMemory::Open() is not implemented yet!"
+#endif
 
     this->mapBody = (char*)this->mapHeader;
     this->mapBody += HeaderSize;
@@ -131,6 +141,7 @@ nSharedMemory::Close()
     {
         n_assert(this->mapHandle == 0);
 
+#ifdef __WIN32__
         // Create mapping.
         this->mapHandle = CreateFileMapping((HANDLE)0xffffffff,  // Page file.
                                              NULL,               // Handle cannot be inherited.
@@ -160,6 +171,10 @@ nSharedMemory::Close()
             n_assert(false);
             return;
         }
+#elif defined(__LINUX__) || defined(__MACOSX__)
+#else
+#error "nSharedMemory::Close() is not implemented yet!"
+#endif
 
         this->mapBody = (char*)this->mapHeader;
         this->mapBody += HeaderSize;
@@ -318,6 +333,7 @@ nSharedMemory::SetupReadBuffer(int n)
 void
 nSharedMemory::DestroyMapping()
 {
+#ifdef __WIN32__
     // Unmap view of file.
     if (!UnmapViewOfFile(this->mapHeader))
     {
@@ -331,6 +347,27 @@ nSharedMemory::DestroyMapping()
         n_printf("Failed to close map handle. (Error: %d)\n", GetLastError());
         return;
     }
+#elif defined(__LINUX__) || defined(__MACOSX__)
+    if (-1 == munmap(this->mapHeader, this->capacity))
+    {
+        n_printf("Failed to unmap view of file (Error: %d).\n", errno);
+        return;
+    }
+    if (-1 == close(this->mapHandle))
+    {
+        n_printf("Failed to close mapped file. (Error: %d).\n", errno);
+        return;
+    }
+    if (-1 == remove(this->mapFileName.Get()))
+    {
+        n_printf("Failed to delete mapped file. (Error: %d).\n", errno);
+        return;
+    }
+    if (-1 == remove(this->mapFileName.Get()))
+    this->mapFileName.Clear();
+#else
+#error "nSharedMemory::DestroyMapping() not implemented yet!"
+#endif
 
     this->capacity = 0;
     this->count = 0;
