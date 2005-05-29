@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RenderPath name="dx9" shaderpath="home:data/shaders/2.0">
+    
+    <!-- define render targets -->
+    <RenderTarget name="offscreen" format="X8R8G8B8" relSize="1.0" />
+    
+    <!-- declare variables -->
+    <Float4 name="Luminance" value="0.299 0.587 0.114 1.0" />
+    <Float4 name="Balance" value="1.0 1.0 1.0 1.0" />
+    <Float  name="Saturation" value="1.0" />
+    <Float4 name="ShadowColor" value="0.0 0.0 0.0 0.5" />
+    
+    <!-- render into offscreen buffer -->
+    <Pass name="color" shader="shaders:passes.fx" technique="tPassColor" renderTarget="offscreen" clearColor="0.5 0.5 0.5 1.0" clearDepth="1.0" clearStencil="0">
+        <Phase name="environment" shader="shaders:phases.fx" technique="tPhaseEnvironment" fourcc="colr" sort="FrontToBack" lights="Off">
+            <Sequence shader="shaders:sky.fx" />
+            <Sequence shader="shaders:cubeskybox.fx" />
+            <Sequence shader="shaders:terrain.fx" />
+        </Phase>
+        <Phase name="opaque" shader="shaders:phases.fx" technique="tPhaseOpaque" fourcc="colr" sort="FrontToBack" lights="On">
+            <Sequence shader="shaders:default.fx" />
+            <Sequence shader="shaders:default_environment.fx" />
+            <Sequence shader="shaders:default_lightmapped.fx" />
+            <Sequence shader="shaders:default_skinned.fx" />
+            <Sequence shader="shaders:default_layered.fx" />
+            <Sequence shader="shaders:default_blended.fx" />
+            <Sequence shader="shaders:leaf.fx" />
+            <Sequence shader="shaders:tree.fx" />
+        </Phase>
+        <Phase name="alphazwrite" shader="shaders:phases.fx" technique="tPhaseAlphaZWrite" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:ocean.fx" />
+        </Phase>
+        <Phase name="pointsprites" shader="shaders:phases.fx" technique="tPhasePointSprites" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:grass.fx" />
+            <Sequence shader="shaders:grass_lightmapped.fx" />
+        </Phase>
+        <Phase name="alpha" shader="shaders:phases.fx" technique="tPhaseAlpha" fourcc="colr" sort="BackToFront" lights="On">
+            <Sequence shader="shaders:default_alpha.fx" />
+            <Sequence shader="shaders:default_alpha2.fx" />
+            <Sequence shader="shaders:particle.fx" />
+            <Sequence shader="shaders:terraingrass.fx" />
+            <Sequence shader="shaders:default_environment_alpha.fx" />
+        </Phase>
+    </Pass>
+
+    <!-- draw stencil shadows -->
+    <Pass name="shadow" drawShadowVolumes="Yes" renderTarget="offscreen" />
+    <Pass name="shadowPlane" shader="shaders:stencil_plane.fx" renderTarget="offscreen" drawQuad="Yes" shadowEnabledCondition="Yes">
+        <Float4 name="MatDiffuse" variable="ShadowColor" />
+    </Pass>
+
+    <!-- compose the final frame -->
+    <Pass name="compose" shader="shaders:compose.fx" drawQuad="Yes">
+        <Texture name="DiffMap0" value="offscreen" />
+        <Float4 name="MatDiffuse" variable="Balance" />
+        <Float4 name="MatAmbient" variable="Luminance" />
+        <Float name="Intensity0" variable="Saturation" />
+    </Pass>
+
+    <!-- post-draw stuff -->
+    <Pass name="gui" drawGui="Yes"/>
+
+    <!-- fini -->
+</RenderPath>
