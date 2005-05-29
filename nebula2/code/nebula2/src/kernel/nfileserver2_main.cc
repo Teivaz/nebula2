@@ -194,14 +194,14 @@ nFileServer2::CleanupPathName(nString& str)
 //------------------------------------------------------------------------------
 /**
     Expands assign in path to full absolute path, replaces any backslashes
-    by slashes, and returns any trainling slash, and makes the path absolute.
+    by slashes, removes any trailing slash, and makes the path absolute.
 
     Please note that Nebula does not know the concept of a current working
     directory, thus, all paths MUST be absolute (please note that Nebula
     assigns can be used to create position independent absolute paths).
 
     @param pathName   the path to expand
-    @retur            resulting string
+    @return           resulting string
 
     history:
     - 30-Jan-2002   peter    created
@@ -215,7 +215,7 @@ nFileServer2::ManglePath(const char* pathName)
     int colonIndex;
     while ((colonIndex = pathString.FindChar(':', 0)) > 0)
     {
-        // special case: ignore one-caracter "assigns" becayse they are
+        // special case: ignore one character "assigns" because they are
         // really DOS drive letters
         if (colonIndex > 1)
         {
