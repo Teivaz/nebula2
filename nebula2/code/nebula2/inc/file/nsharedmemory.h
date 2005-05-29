@@ -10,6 +10,9 @@
 */
 #include "kernel/nroot.h"
 #include "util/nbuffer.h"
+#if defined(__LINUX__) || defined(__MACOSX__)
+#include "util/nstring.h"
+#endif
 
 //------------------------------------------------------------------------------
 class nSharedMemory : public nRoot
@@ -81,7 +84,12 @@ private:
     int readBufferCapacity;
     int capacity;
     int count;
+#ifdef __WIN32__
     HANDLE mapHandle;
+#elif defined(__LINUX__) || defined(__MACOSX__)
+    int mapHandle;
+    nString mapFileName;
+#endif
     void* mapHeader;
     char* mapBody;
     bool isOpen;
