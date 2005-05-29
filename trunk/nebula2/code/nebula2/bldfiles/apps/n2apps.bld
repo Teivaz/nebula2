@@ -61,6 +61,7 @@ begintarget nsh
         microtcl
         ntoollib
         nnetwork
+        ngui
     }
 endtarget
 #-------------------------------------------------------------------------------
