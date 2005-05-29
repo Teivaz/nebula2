@@ -200,13 +200,16 @@ class doxygen:
     def __init__(self, buildSys):
         self.buildSys = buildSys
         self.description = 'Nebula 2 Documentation Generator'
-        self.classes = {}
+        self.classes = {} # classes to document
+        self.moduleNames = [] # modules to document
         # regular expressions to extract class/cmd info
         self.rClass = re.compile(r"@scriptclass\s*(?P<classname>\S*)(?:(?:\s*)|(?:\s*@cppclass\s*(?P<cppname>\S*?))\s*)@superclass\s*(?P<superclass>\S*)\s*@classinfo\s*(?P<info>.*?)\s*\*/", re.S)
         self.rCmd = re.compile(r"@cmd\s*(?P<cmd>\S*)\s*@input\s*(?P<input>.*?)\s*@output\s*(?P<output>.*?)\s*@info\s*(?P<info>.*?)\s*\*/", re.S)
         # setup the paths
         self.autodocDir = os.path.join(buildSys.homeDir, 'doc', 'autodoc')
         self.classPagesDir = os.path.join(self.autodocDir, 'classes')
+        self.doxycfgDir = os.path.join(self.buildSys.homeDir, 'code', 
+                                       'nebula2', 'doxycfg')
         self.srcDirs = []
         
     #--------------------------------------------------------------------------
@@ -218,30 +221,34 @@ class doxygen:
                                            "generate documentation.")
                 return
 
+            self.collectModulesToDocument(workspaceNames)
+            self.collectDoxygenInputDirs()
+            #self.findSrcDirs()
+
             keepGoing = True
-            self.findSrcDirs()
             progressVal = 0
-            self.buildSys.CreateProgressDialog('Extracing Docs From Source', 
+            self.buildSys.CreateProgressDialog('Extracing Script Docs From Source', 
                                                ' ' * 130, 
                                                len(self.srcDirs))
             for srcDir in self.srcDirs:
                 self.parseFiles(srcDir)
                 progressVal += 1
                 self.buildSys.UpdateProgressDialog(progressVal,
-                    'Processing ' + srcDir)
+                                                   'Processing ' + srcDir)
                 if self.buildSys.ProgressDialogCancelled():
                     keepGoing = False
                     break
             self.buildSys.DestroyProgressDialog()
             
             if keepGoing:
+                self.writeDoxygenConfig(workspaceNames)
                 self.getRootClass().findSubclasses(self.classes)
                 self.writeDoxygenScriptInterfaceMainPage(self.getRootClass())
-                if not os.path.exists(self.classPagesDir):
-                    os.makedirs(self.classPagesDir)
+                self.prepareClassPagesDir()
                 self.writeDoxygenScriptInterfacePages(self.getRootClass())
                 self.runDoxygen()
                 if self.htmlHelpWorkshopInstalled():
+                    self.buildSys.logger.info('HTML Help Workshop detected.')
                     self.createCHM()
         except:
             self.buildSys.logger.exception('Exception in doxygen.Generate()')
@@ -254,6 +261,21 @@ class doxygen:
     #--------------------------------------------------------------------------
     # Private Stuff
     #--------------------------------------------------------------------------
+
+    #--------------------------------------------------------------------------
+    # Create or clean up the directory where script interface documentation
+    # will be generated
+    def prepareClassPagesDir(self):
+        if os.path.exists(self.classPagesDir):
+            # remove any existing .dox files
+            fileList = os.listdir(self.classPagesDir)
+            for fileName in fileList:
+                if fnmatch.fnmatch(fileName, '*.dox'):
+                    filePath = os.path.join(self.classPagesDir, fileName)
+                    if os.path.isfile(filePath):
+                        os.remove(filePath)
+        else:
+            os.makedirs(self.classPagesDir)
 
     #--------------------------------------------------------------------------
     # Checks if doxygen.exe is available, if it is the return value is True
@@ -269,10 +291,106 @@ class doxygen:
     #--------------------------------------------------------------------------
     def runDoxygen(self):
         oldPath = os.getcwd()
-        cfgPath = os.path.join(self.buildSys.homeDir, 'code', 'nebula2', 
-                               'doxycfg')
-        os.chdir(cfgPath)
-        os.system('doxygen nebula2.cfg')
+        os.chdir(self.doxycfgDir)
+        os.system('doxygen auto_nebula2.cfg')
+        os.chdir(oldPath)
+        
+    #--------------------------------------------------------------------------
+    # collect all the modules from the selected workspaces
+    def collectModulesToDocument(self, workspaceNames):
+        self.moduleNames = []
+        for workspaceName in workspaceNames:
+            workspace = self.buildSys.workspaces[workspaceName]
+            for targetName in workspace.targets:
+                target = self.buildSys.targets[targetName]
+                for moduleName in target.modules:
+                    if ('pkg_' != moduleName[:4]) and ('dummy' != moduleName):
+                        if moduleName not in self.moduleNames:
+                            self.moduleNames.append(moduleName)
+        
+    #--------------------------------------------------------------------------
+    # Find all directories that need to be fed as input to doxygen
+    def collectDoxygenInputDirs(self):
+        # we want directory paths to be relative to the directory with the
+        # doxygen config files, so change to it now to make things easier
+        oldPath = os.getcwd()
+        os.chdir(self.doxycfgDir)
+        
+        self.doxygenInputDirs = []
+        self.scriptDocDirs = []
+        incDirs = []
+        srcDirs = []
+        docDirs = []
+        
+        for moduleName in self.moduleNames:
+            module = self.buildSys.modules[moduleName]
+            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'inc', 
+                                 module.dir)
+            if inDir not in incDirs:
+                if os.path.isdir(inDir):
+                    incDirs.append(inDir)
+            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'src',
+                                 module.dir)
+            if inDir not in srcDirs:
+                if os.path.isdir(inDir):
+                    srcDirs.append(inDir)
+                    self.srcDirs.append(os.path.join(self.buildSys.homeDir,
+                                                     'code', module.codeDir,
+                                                     'src', module.dir))
+            inDir = os.path.join(os.pardir, os.pardir, module.codeDir, 'doc')
+            if inDir not in docDirs:
+                if os.path.isdir(inDir):
+                    docDirs.append(inDir)
+        
+        self.doxygenInputDirs = incDirs
+        self.doxygenInputDirs.extend(srcDirs)
+        self.doxygenInputDirs.extend(docDirs)
+        #print 'src dirs ' + str(self.srcDirs)
+        
+        os.chdir(oldPath)
+        
+    #--------------------------------------------------------------------------
+    def writeDoxygenConfig(self, workspaceNames):
+        # we want directory paths to be relative to the directory with the
+        # doxygen config files, so change to it now to make things easier
+        oldPath = os.getcwd()
+        os.chdir(self.doxycfgDir)
+
+        # read in the base config at code/nebula2/doxycfg/base_nebula2.cfg
+        autoCfg = ''
+        try:
+            baseCfgFile = file('base_nebula2.cfg', 'r')
+        except IOError:
+            self.buildSys.logger.error("Couldn't open base_nebula2.cfg for reading.")
+        else:
+            autoCfg = baseCfgFile.read()
+            baseCfgFile.close()
+
+        # append the input dirs to the config
+        autoCfg += 'INPUT            = '
+        indent =   '                   '
+        # the special directories
+        autoCfg += os.path.join(os.pardir, os.pardir, os.pardir, 
+                                'doc', 'nebula2') + ' \\\n'
+        autoCfg += indent + os.path.join(os.pardir, os.pardir, os.pardir, 
+                                         'doc', 'autodoc') + ' \\\n'
+        # the rest
+        numDirs = len(self.doxygenInputDirs)
+        for i in range(numDirs):
+            if i == (numDirs - 1):
+                autoCfg += indent + self.doxygenInputDirs[i] + ' \n'
+            else:
+                autoCfg += indent + self.doxygenInputDirs[i] + ' \\\n'
+        
+        # write the config out to code/nebula2/doxycfg/auto_nebula2.cfg
+        try:
+            autoCfgFile = file('auto_nebula2.cfg', 'w')
+        except IOError:
+            self.buildSys.logger.error("Couldn't open auto_nebula2.cfg for writing.")
+        else:
+            autoCfgFile.write(autoCfg)
+            autoCfgFile.close()
+
         os.chdir(oldPath)
         
     #--------------------------------------------------------------------------
