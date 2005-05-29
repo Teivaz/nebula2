@@ -82,7 +82,7 @@ private:
     int capacity;
     int count;
     HANDLE mapHandle;
-    VOID* mapHeader;
+    void* mapHeader;
     char* mapBody;
     bool isOpen;
     bool writable;
