@@ -249,8 +249,7 @@ nGuiSceneControlWindow::OnHide()
         this->refAnimStates->Release();
     }
 
-    int countChn = 0;
-    for (countChn; countChn < this->refWeightChnListSlider.Size(); countChn++)
+    for (int countChn = 0; countChn < this->refWeightChnListSlider.Size(); countChn++)
     {
         if (this->refWeightChnListSlider.At(countChn))
         {
@@ -307,8 +306,7 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
         if (this->refSkinAnimator.isvalid())
         {
             // Update animation channels from sliders
-            int countChnSlider = 0;
-            for (countChnSlider; countChnSlider< this->refWeightChnListSlider.Size(); countChnSlider++)
+            for (int countChnSlider = 0; countChnSlider< this->refWeightChnListSlider.Size(); countChnSlider++)
             {
                 nGuiHoriSliderGroup* slider  = this->refWeightChnListSlider.At(countChnSlider);
                 if (slider != NULL)
@@ -353,9 +351,8 @@ nGuiSceneControlWindow::OnFrame()
     if (this->refSkinAnimator.isvalid())
     {
         this->refAnimStates->BeginAppend();         
-        int countAnimStates = 0;
         this->numAnimStates = this->refSkinAnimator->GetNumStates();
-        for(countAnimStates; countAnimStates < this->numAnimStates; countAnimStates++)
+        for(int countAnimStates = 0; countAnimStates < this->numAnimStates; countAnimStates++)
         {
             const nAnimState* state = &this->refSkinAnimator->GetStateAt(countAnimStates);
             this->refAnimStates->AppendLine(state->GetName().Get());
@@ -435,9 +432,9 @@ nGuiSceneControlWindow::FindFirstInstance(nRoot* node, nClass* classType)
 void
 nGuiSceneControlWindow::UpdateChnSlider()
 {       
-    int chnCount = 0;
+    int chnCount;
     // Release old sliders before creating new one from the scratch
-    for (chnCount; chnCount < this->refWeightChnListSlider.Size(); chnCount++)
+    for (chnCount = 0; chnCount < this->refWeightChnListSlider.Size(); chnCount++)
     {
         this->refWeightChnListSlider.At(chnCount)->OnHide();
     }
@@ -460,18 +457,16 @@ nGuiSceneControlWindow::UpdateChnSlider()
     nAnimState animState;               
     animState = this->refSkinAnimator->GetStateAt(this->refAnimStates->GetSelectionIndex());
     int numAnimClips = animState.GetNumClips();
-    int animClipCount  = 0;
     // Get all weight channels of current AnimState
-    for ( animClipCount; animClipCount<numAnimClips; animClipCount++)
+    for (int animClipCount = 0; animClipCount<numAnimClips; animClipCount++)
     {
         nAnimClip& animClip = animState.GetClipAt(animClipCount);
         this->chnHandles.Append(animClip.GetWeightChannelHandle());
     }        
 
     // create all sliders
-    chnCount = 0;
     nGuiHoriSliderGroup* prevSlider;
-    for (chnCount; chnCount < this->chnHandles.Size(); chnCount++)
+    for (chnCount = 0; chnCount < this->chnHandles.Size(); chnCount++)
     {
         nString chnName (nVariableServer::Instance()->GetVariableName(this->chnHandles.At(chnCount)));
         nGuiHoriSliderGroup* slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", chnName.Get());
