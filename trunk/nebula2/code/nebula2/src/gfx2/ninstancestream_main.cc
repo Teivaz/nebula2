@@ -25,7 +25,7 @@ nInstanceStream::nInstanceStream() :
 */
 nInstanceStream::~nInstanceStream()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }
@@ -37,7 +37,7 @@ nInstanceStream::~nInstanceStream()
 bool
 nInstanceStream::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(this->IsUnloaded());
     n_assert(this->streamDecl.Size() > 0);
     n_assert(!this->IsLocked());
     n_assert(0 == this->readPtr);
@@ -60,7 +60,7 @@ nInstanceStream::LoadResource()
         }
     }
 
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -70,7 +70,7 @@ nInstanceStream::LoadResource()
 void
 nInstanceStream::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(!this->IsUnloaded());
     n_assert(!this->IsLocked());
     n_assert(0 == this->readPtr);
 
@@ -84,7 +84,7 @@ nInstanceStream::UnloadResource()
     this->streamArray.Clear();
     this->streamStride = 0;
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------

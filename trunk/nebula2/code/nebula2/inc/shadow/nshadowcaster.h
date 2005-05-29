@@ -56,10 +56,6 @@ protected:
 
     /// perform data load from source mesh
     virtual void LoadShadowData(nMesh2* sourceMesh);
-    /// set usage flags for the source mesh (for use by children)
-    virtual void SetMeshUsage(int usage);
-    /// get source mesh usage flags
-    virtual int GetMeshUsage() const;
     
     /// load face data from source mesh
     void LoadFaces(nMesh2* sourceMesh);
@@ -87,7 +83,6 @@ protected:
     int numFaces;
     nMesh2::Edge* edges;
     int numEdges;
-    int meshUsage;
 
     /// indicies of the current silhouette
     nArray<ushort> silhouetteIndices;

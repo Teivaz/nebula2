@@ -6,7 +6,6 @@
 #include "scene/nskinanimator.h"
 
 nNebulaScriptClass(nSkinShapeNode, "nshapenode");
-nCharSkinRenderer nSkinShapeNode::charSkinRenderer;
 
 //------------------------------------------------------------------------------
 /**
@@ -49,6 +48,12 @@ nSkinShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
 bool
 nSkinShapeNode::ApplyGeometry(nSceneServer* sceneServer)
 {
+    if (!this->charSkinRenderer.IsInitialized())
+    {
+        // never use cpu skinning
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+        this->charSkinRenderer.Initialize(false, this->refMesh);
+    }
     return true;
 }
 
@@ -75,7 +80,7 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     kernelServer->PopCwd();
 
     // render the skin in several passes (one per skin fragment)
-    this->charSkinRenderer.Begin(nGfxServer2::Instance(), this->refMesh.get(), this->extCharSkeleton);
+    this->charSkinRenderer.Begin(this->extCharSkeleton);
     int numFragments = this->GetNumFragments();
     int fragIndex;
     for (fragIndex = 0; fragIndex < numFragments; fragIndex++)
@@ -100,6 +105,16 @@ nSkinShapeNode::SetSkinAnimator(const char* path)
 
 //------------------------------------------------------------------------------
 /**
+Get the pointer to the currently-set character skeleton
+*/
+const nCharSkeleton*
+nSkinShapeNode::GetCharSkeleton()
+{
+    return this->extCharSkeleton;
+}
+
+//------------------------------------------------------------------------------
+/**
     Get relative path to the skin animator object
 */
 const char*
@@ -119,16 +134,6 @@ nSkinShapeNode::SetCharSkeleton(const nCharSkeleton* charSkeleton)
 {
     n_assert(charSkeleton);
     this->extCharSkeleton = charSkeleton;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the pointer to the currently-set character skeleton
-*/
-const nCharSkeleton*
-nSkinShapeNode::GetCharSkeleton()
-{
-    return this->extCharSkeleton;
 }
 
 //------------------------------------------------------------------------------

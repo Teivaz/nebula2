@@ -5,6 +5,8 @@
 #include "gfx2/nd3d9server.h"
 #include "gfx2/nd3d9texture.h"
 #include "kernel/ntimeserver.h"
+#include "gfx2/nd3d9shader.h"
+#include "resource/nresourceserver.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -38,7 +40,7 @@ nD3D9Server::InitDeviceState()
     this->d3d9Device->GetDeviceCaps(&(this->devCaps));
     // extract device identifier
     D3DADAPTER_IDENTIFIER9 identifier;
-    HRESULT hr = this->d3d9->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &identifier);
+    HRESULT hr = this->d3d9->GetAdapterIdentifier(N_D3D9_ADAPTER, 0, &identifier);
     n_dxtrace(hr, "nD3D9Server::InitDeviceState(): GetAdapterIdentifier() failed!");
 
     if (0x8086 == identifier.VendorId && 0x2572 == identifier.DeviceId)
@@ -55,16 +57,16 @@ nD3D9Server::InitDeviceState()
     and depth buffer.
 */
 bool
-nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
+nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat, 
                               D3DFORMAT backbufferFormat,
-                              D3DFORMAT depthFormat)
+                              D3DFORMAT depthFormat) 
 {
     n_assert(this->d3d9);
 
     HRESULT hr;
 
     // verify that the depth format exists
-    hr = this->d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
+    hr = this->d3d9->CheckDeviceFormat(N_D3D9_ADAPTER,
                                        N_D3D9_DEVICETYPE,
                                        adapterFormat,
                                        D3DUSAGE_DEPTHSTENCIL,
@@ -76,7 +78,7 @@ nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
     }
 
     // check if compatible with display mode
-    hr = this->d3d9->CheckDepthStencilMatch(D3DADAPTER_DEFAULT,
+    hr = this->d3d9->CheckDepthStencilMatch(N_D3D9_ADAPTER,
                                             N_D3D9_DEVICETYPE,
                                             adapterFormat,
                                             backbufferFormat,
@@ -122,7 +124,7 @@ nD3D9Server::GetD3DFormatNumBits(D3DFORMAT fmt)
         case D3DFMT_L8:
         case D3DFMT_R3G3B2:
             return 8;
-
+    
         default:
             return 0;
     }
@@ -178,7 +180,7 @@ nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3
         // find windowed mode buffer format, the display and backbuffer formats
         // are defined by the current desktop color depth
         D3DDISPLAYMODE desktopMode;
-        hr = this->d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &desktopMode);
+        hr = this->d3d9->GetAdapterDisplayMode(N_D3D9_ADAPTER, &desktopMode);
         n_dxtrace(hr, "GetAdapterDisplayMode() failed.");
 
         dispFormat = desktopMode.Format;
@@ -209,7 +211,7 @@ nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3
     {
         n_error("nD3D9Server: No valid Direct3D display format found!\n");
     }
-}
+}    
 
 //------------------------------------------------------------------------------
 /**
@@ -219,17 +221,17 @@ void
 nD3D9Server::UpdateFeatureSet()
 {
     // get d3d device caps
-    HRESULT hr = this->d3d9->GetDeviceCaps(D3DADAPTER_DEFAULT, N_D3D9_DEVICETYPE, &(this->devCaps));
+    HRESULT hr = this->d3d9->GetDeviceCaps(N_D3D9_ADAPTER, N_D3D9_DEVICETYPE, &(this->devCaps));
     n_dxtrace(hr, "GetDeviceCaps() in nD3D9Server::UpdateFeatureSet() failed!");
     if (this->devCaps.VertexShaderVersion >= D3DVS_VERSION(2, 0))
     {
         // check if floating point textures are available as render target
-        HRESULT hr = this->d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
-                                                   N_D3D9_DEVICETYPE,
-                                                   D3DFMT_X8R8G8B8,
-                                                   D3DUSAGE_RENDERTARGET,
-                                                   D3DRTYPE_TEXTURE,
-                                                   D3DFMT_R32F);
+        HRESULT hr = this->d3d9->CheckDeviceFormat(N_D3D9_ADAPTER,
+                                                N_D3D9_DEVICETYPE,
+                                                D3DFMT_X8R8G8B8,
+                                                D3DUSAGE_RENDERTARGET,
+                                                D3DRTYPE_TEXTURE,
+                                                D3DFMT_A16B16G16R16F);
         if (SUCCEEDED(hr))
         {
             this->featureSet = DX9FLT;
@@ -242,12 +244,12 @@ nD3D9Server::UpdateFeatureSet()
     else if (this->devCaps.VertexShaderVersion >= D3DVS_VERSION(1, 1))
     {
         // check if depth buffers are supported as textures
-        HRESULT hr = this->d3d9->CheckDeviceFormat(D3DADAPTER_DEFAULT,
-                                                   N_D3D9_DEVICETYPE,
-                                                   D3DFMT_X8R8G8B8,
-                                                   0,
-                                                   D3DRTYPE_TEXTURE,
-                                                   D3DFMT_D24S8);
+        HRESULT hr = this->d3d9->CheckDeviceFormat(N_D3D9_ADAPTER,
+                                                N_D3D9_DEVICETYPE,
+                                                D3DFMT_X8R8G8B8,
+                                                0,
+                                                D3DRTYPE_TEXTURE,
+                                                D3DFMT_D24S8);
         if (SUCCEEDED(hr))
         {
             this->featureSet = DX8SB;
@@ -283,8 +285,10 @@ nD3D9Server::DeviceOpen()
     n_assert(0 == this->queryResourceManager);
     #endif
 
+    n_printf("nD3D9Server::DeviceOpen()\n");
+    
     HRESULT hr;
-
+    
     // prepare window...
     this->windowHandler.AdjustWindowForChange();
 
@@ -307,34 +311,39 @@ nD3D9Server::DeviceOpen()
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL | D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
         n_printf("nD3D9Server: using enforced software vertex processing\n");
 
-    #else
+    #else 
         // check if hardware vertex shaders are supported, if not,
         // activate mixed vertex processing
-        if (this->devCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
-        {
-            if (this->GetFeatureSet() >= DX9)
+        #if N_D3D9_FORCEMIXEDVERTEXPROCESSING
+            this->deviceBehaviourFlags |= D3DCREATE_MIXED_VERTEXPROCESSING;
+            n_printf("nD3D9Server: using FORCED mixed vertex processing\n");
+        #elif N_D3D9_FORCESOFTWAREVERTEXPROCESSING
+            this->deviceBehaviourFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+            n_printf("nD3D9Server: using FORCED software vertex processing\n");
+        #else
+            if (this->devCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
             {
-                this->deviceBehaviourFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
-                n_printf("nD3D9Server: using hardware vertex processing\n");
-
-                // NOTE: do not use a pure device so that the D3D runtime
-                // will filter redundant renderstate changes for us
-                if (this->devCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
+                if (this->GetFeatureSet() >= DX9)
+                {        
+                    this->deviceBehaviourFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+                    n_printf("nD3D9Server: using hardware vertex processing\n");
+                    if (this->devCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
+                    {
+                        this->deviceBehaviourFlags |= D3DCREATE_PUREDEVICE;
+                    }
+                }
+                else
                 {
-                    this->deviceBehaviourFlags |= D3DCREATE_PUREDEVICE;
+                    this->deviceBehaviourFlags |= D3DCREATE_MIXED_VERTEXPROCESSING;
+                    n_printf("nD3D9Server: using mixed vertex processing\n");
                 }
             }
             else
             {
-                this->deviceBehaviourFlags |= D3DCREATE_MIXED_VERTEXPROCESSING;
-                n_printf("nD3D9Server: using mixed vertex processing\n");
+                this->deviceBehaviourFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+                n_printf("nD3D9Server: using software vertex processing\n");
             }
-        }
-        else
-        {
-            this->deviceBehaviourFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-            n_printf("nD3D9Server: using software vertex processing\n");
-        }
+        #endif
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
     #endif
 
@@ -377,7 +386,7 @@ nD3D9Server::DeviceOpen()
     this->presentParams.FullScreen_RefreshRateInHz      = D3DPRESENT_RATE_DEFAULT;
 
     // create d3d device
-    hr = this->d3d9->CreateDevice(D3DADAPTER_DEFAULT,
+    hr = this->d3d9->CreateDevice(N_D3D9_ADAPTER,
                                   N_D3D9_DEVICETYPE,
                                   this->windowHandler.GetHwnd(),
                                   this->deviceBehaviourFlags,
@@ -420,15 +429,13 @@ nD3D9Server::DeviceOpen()
     n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateTeapot() failed!");
 
     // reload any resources if necessary
-    this->OnRestoreDevice();
+    this->OnDeviceInit(true);
 
     // initialize d3d device state
     this->InitDeviceState();
 
     // restore window
     this->windowHandler.RestoreWindow();
-
-    this->CreateDisplayModeEnvVars();
 
     return true;
 }
@@ -447,8 +454,10 @@ nD3D9Server::DeviceClose()
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(this->windowHandler.GetHwnd());
 
+    n_printf("nD3D9Server::DeviceClose()\n");
+
     // unload all resources
-    this->OnDeviceLost(true);
+    this->OnDeviceCleanup(true);
 
     // destroy primitive shapes
     int i;
@@ -495,7 +504,7 @@ nD3D9Server::TestResetDevice()
     else if (D3DERR_DEVICENOTRESET == hr)
     {
         // device is ready to be reset, invoke the reanimation procedure...
-        this->OnDeviceLost(false);
+        this->OnDeviceCleanup(false);
 
         // if we are in windowed mode, the cause for the reset may be a display
         // mode change of the desktop, in this case we need to find new
@@ -523,11 +532,11 @@ nD3D9Server::TestResetDevice()
         }
         n_printf("nD3D9Server: Device reset!\n");
 
+        // reload the resource
+        this->OnDeviceInit(false);
+
         // initialize the device
         this->InitDeviceState();
-
-        // reload the resource
-        this->OnRestoreDevice();
 
         return true;
     }
@@ -556,18 +565,6 @@ nD3D9Server::GetFeatureSet()
     }
 }
 
-//------------------------------------------------------------------------------
-/**
-    Returns true if device is a software vertex processing device.
-    This is a private method called by nD3D9Mesh to decide whether
-    vertex buffer must be created in software vertex processing mode.
-*/
-bool
-nD3D9Server::GetSoftwareVertexProcessing() const
-{
-    return 0 != (this->deviceBehaviourFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING);
-}
-
 #ifdef __NEBULA_STATS__
 //------------------------------------------------------------------------------
 /**
@@ -589,6 +586,13 @@ nD3D9Server::QueryStatistics()
 
     this->dbgQueryNumRenderStateChanges->SetI(this->statsNumRenderStateChanges);
     this->dbgQueryNumTextureChanges->SetI(this->statsNumTextureChanges);
+    this->dbgQueryNumDrawCalls->SetI(this->statsNumDrawCalls);
+    this->dbgQueryNumPrimitives->SetI(this->statsNumPrimitives);
+
+    this->statsNumRenderStateChanges = 0;
+    this->statsNumTextureChanges = 0;
+    this->statsNumDrawCalls = 0;
+    this->statsNumPrimitives = 0;
 
     // no resource manager query if not running the debug runtime
     if (0 == this->queryResourceManager)
@@ -647,18 +651,16 @@ nD3D9Server::UpdateCursor()
     if (this->cursorDirty)
     {
         this->cursorDirty = false;
-	
-        if (this->curMouseCursor.GetFilename())
+
+        nTexture2* tex = this->curMouseCursor.GetTexture();
+        if (tex)
         {
-            if (!this->curMouseCursor.IsLoaded())
+            if (!tex->IsLoaded())
             {
-                bool mouseCursorLoaded = this->curMouseCursor.Load();
+                bool mouseCursorLoaded = tex->Load();
                 n_assert(mouseCursorLoaded);
                 this->cursorDirty = true;
             }
-
-            nTexture2* tex = this->curMouseCursor.GetTexture();
-            n_assert(tex && tex->IsValid());
 
             HRESULT hr;
             IDirect3DTexture9* d3d9Tex = ((nD3D9Texture*)tex)->GetTexture2D();
@@ -673,9 +675,6 @@ nD3D9Server::UpdateCursor()
             int hotspotY = this->curMouseCursor.GetHotspotY();
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
             n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): SetCursorProperties() failed!");
-
-            // not longer needed
-            surfPtr->Release();
 
             switch (this->cursorVisibility)
             {
@@ -700,7 +699,7 @@ nD3D9Server::UpdateCursor()
 
 //------------------------------------------------------------------------------
 /**
-    This method should return the number of currently available stencil bits
+    This method should return the number of currently available stencil bits 
     (override in subclass).
 */
 int
@@ -733,6 +732,193 @@ nD3D9Server::GetNumDepthBits() const
 
         default:
             return 16;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Called either when the d3d device is lost, or when the display is closed.
+    This should perform the required cleanup work on all affected resources.
+*/
+void
+nD3D9Server::OnDeviceCleanup(bool shutdown)
+{
+    // close the text renderer
+    this->CloseTextRenderer();
+
+    // handle resources
+    if (shutdown)
+    {
+        // the display is about to be closed, do a real unload
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+    }
+    else
+    {
+        // the device has been lost, tell the resources about it
+        this->refResource->OnLost(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    }
+
+    // release shape shader
+    if (this->refShapeShader.isvalid())
+    {
+        this->refShapeShader->Release();
+        this->refShapeShader.invalidate();
+    }
+
+    // release the shared state shader
+    if (this->refSharedShader.isvalid())
+    {
+        this->refSharedShader->Release();
+        this->refSharedShader.invalidate();
+    }
+
+    // release refs on original backbuffer and depth/stencil surfaces
+    if (this->backBufferSurface)
+    {
+        this->backBufferSurface->Release();
+        this->backBufferSurface = 0;
+    }
+    if (this->depthStencilSurface)
+    {
+        this->depthStencilSurface->Release();
+        this->depthStencilSurface = 0;
+    }
+
+    // inform line renderer
+    HRESULT hr = this->d3dxLine->OnLostDevice();
+    n_dxtrace(hr, "OnLostDevice() on d3dxLine failed");
+
+    #ifdef __NEBULA_STATS__
+    // release the d3d query object
+    if (this->queryResourceManager)
+    {
+        this->queryResourceManager->Release();
+        this->queryResourceManager = 0;
+    }
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called either after the software device has been
+    created, or after the device has been restored.
+*/
+void
+nD3D9Server::OnDeviceInit(bool startup)
+{
+    n_assert(!this->refSharedShader.isvalid());
+    n_assert(0 == this->depthStencilSurface);
+
+    HRESULT hr;
+
+    // get a pointer to the back buffer and depth/stencil surface
+    hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
+    n_dxtrace(hr, "GetBackBuffer() on device failed.");
+    n_assert(this->backBufferSurface);
+
+    hr = this->d3d9Device->GetDepthStencilSurface(&this->depthStencilSurface);
+    n_dxtrace(hr, "GetDepthStencilSurface() on device failed.");
+    n_assert(this->depthStencilSurface);
+
+    #ifdef __NEBULA_STATS__
+    // create a query object for resource manager queries
+    // this will fail if not running the debug runtime, so this is not critical
+    hr = this->d3d9Device->CreateQuery(D3DQUERYTYPE_RESOURCEMANAGER, &(this->queryResourceManager));
+    #endif
+
+    // restore or load resources
+    if (startup)
+    {
+        // this is a real startup
+        this->refResource->LoadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    }
+    else
+    {
+        // the device has been restored...
+        this->refResource->OnRestored(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    }
+
+    // open the text renderer
+    this->OpenTextRenderer();
+
+    // inform line renderer
+    hr = this->d3dxLine->OnResetDevice();
+    n_dxtrace(hr, "OnResetDevice() on d3dxLine failed");
+
+    // update mouse cursor
+    this->cursorDirty = true;
+    this->UpdateCursor();
+
+    // create the shape shader
+    this->refShapeShader = (nD3D9Shader*) this->NewShader("shape");
+    if (!this->refShapeShader->IsLoaded())
+    {
+        this->refShapeShader->SetFilename("shaders:shape.fx");
+        if (!this->refShapeShader->Load())
+        {
+            this->refShapeShader->Release();
+            this->refShapeShader.invalidate();
+        }
+    }
+
+    // create the shared effect parameter reference shader
+    this->refSharedShader = (nD3D9Shader*) this->NewShader("shared");
+    if (!this->refSharedShader->IsLoaded())
+    {
+        this->refSharedShader->SetFilename("shaders:shared.fx");
+        if (!this->refSharedShader->Load())
+        {
+            this->refSharedShader->Release();
+            this->refSharedShader.invalidate();
+        }
+    }
+
+    // refresh projection matrix (necessary AFTER sharedShader has been created
+    // so that the shared transform matrices can be set after a DeviceReset)
+    this->SetCamera(this->GetCamera());
+}
+
+//------------------------------------------------------------------------------
+/**
+    Enable/disable software vertex processing. This is only a valid call
+    when the device has been created with mixed vertex processing.
+*/
+void
+nD3D9Server::SetSoftwareVertexProcessing(bool b)
+{
+    n_assert(this->d3d9Device);
+    if (this->deviceBehaviourFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
+    {
+        HRESULT hr = this->d3d9Device->SetSoftwareVertexProcessing((BOOL)b);
+        n_assert(SUCCEEDED(hr));
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the current software processing state of the device.
+*/
+bool
+nD3D9Server::GetSoftwareVertexProcessing()
+{
+    n_assert(this->d3d9Device);
+    if (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
+    {
+        return false;
+    }
+    else if (this->deviceBehaviourFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING)
+    {
+        return true;
+    }
+    else if (this->deviceBehaviourFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
+    {
+        BOOL b = this->d3d9Device->GetSoftwareVertexProcessing();
+        return (b != FALSE) ? true : false;
+    }
+    else
+    {
+        n_error("nD3D9Server::GetSoftwareProcessing(): can't happen!");
+        return false;
     }
 }
 

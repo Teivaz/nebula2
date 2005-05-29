@@ -13,7 +13,7 @@
     filling it with white pixel:
     @code
     tex = (nTexture2 *)refGfx2->NewTexture("mytexture");
-    if (!tex->IsValid())
+    if (!tex->IsUnloaded())
     {
         int width, height;
         width = height = 128;
@@ -171,7 +171,10 @@ public:
     virtual bool LockCubeFace(LockType lockType, CubeFace face, int level, LockInfo& lockInfo);
     /// unlock a cube face
     virtual void UnlockCubeFace(CubeFace face, int level);
-
+    /// convert string to pixel format
+    static Format StringToFormat(const char* str);
+    /// convert pixel format to string
+    static const char* FormatToString(Format fmt);
     // begin added for ngameswf
     virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
     virtual void GenerateMipMaps();
@@ -418,6 +421,70 @@ nTexture2::GetBytesPerPixel() const
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nTexture2::FormatToString(Format fmt)
+{
+    switch (fmt)
+    {
+        case NOFORMAT:      return "NOFORMAT";
+        case X8R8G8B8:      return "X8R8G8B8";
+        case A8R8G8B8:      return "A8R8G8B8";
+        case R5G6B5:        return "R5G6B5";
+        case A1R5G5B5:      return "A1R5G5B5";
+        case A4R4G4B4:      return "A4R4G4B4";
+        case P8:            return "P8";
+        case DXT1:          return "DXT1";
+        case DXT2:          return "DXT2";
+        case DXT3:          return "DXT3";
+        case DXT4:          return "DXT4";
+        case DXT5:          return "DXT5";
+        case R16F:          return "R16F";
+        case G16R16F:       return "G16R16F";
+        case A16B16G16R16F: return "A16B16G16R16F";
+        case R32F:          return "R32F";
+        case G32R32F:       return "G32R32F";
+        case A32B32G32R32F: return "A32B32G32R32F";
+        case A8:            return "A8";
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nTexture2::Format
+nTexture2::StringToFormat(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp("NOFORMAT", str))           return NOFORMAT;
+    else if (0 == strcmp("X8R8G8B8", str))      return X8R8G8B8;
+    else if (0 == strcmp("A8R8G8B8", str))      return A8R8G8B8;
+    else if (0 == strcmp("R5G6B5", str))        return R5G6B5;
+    else if (0 == strcmp("A1R5G5B5", str))      return A1R5G5B5;
+    else if (0 == strcmp("A4R4G4B4", str))      return A4R4G4B4;
+    else if (0 == strcmp("P8", str))            return P8;
+    else if (0 == strcmp("DXT1", str))          return DXT1;
+    else if (0 == strcmp("DXT2", str))          return DXT2;
+    else if (0 == strcmp("DXT3", str))          return DXT3;
+    else if (0 == strcmp("DXT4", str))          return DXT4;
+    else if (0 == strcmp("DXT5", str))          return DXT5;
+    else if (0 == strcmp("R16F", str))          return R16F;
+    else if (0 == strcmp("G16R16F", str))       return G16R16F;
+    else if (0 == strcmp("A16B16G16R16F", str)) return A16B16G16R16F;
+    else if (0 == strcmp("R32F", str))          return R32F;
+    else if (0 == strcmp("G32R32F", str))       return G32R32F;
+    else if (0 == strcmp("A32B32G32R32F", str)) return A32B32G32R32F;
+    else if (0 == strcmp("A8", str))            return A8;
+    else
+    {
+        n_error("nTexture2::StringToFormat(): invalid string '%s'", str);
+        return NOFORMAT;
+    }
+}
 //------------------------------------------------------------------------------
 #endif    
 

@@ -22,7 +22,11 @@ nShadowNode::nShadowNode()
 */
 nShadowNode::~nShadowNode()
 {
-    this->UnloadResources();
+    if (this->refShadowCaster.isvalid())
+    {
+        this->refShadowCaster->Release();
+        this->refShadowCaster.invalidate();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -49,12 +53,13 @@ nShadowNode::LoadShadowCaster()
     nStaticShadowCaster* shadowCaster = (nStaticShadowCaster*) nShadowServer::Instance()->NewShadowCaster(nShadowServer::Static, this->GetMesh());
     n_assert(shadowCaster);
 
-    if (!shadowCaster->IsValid())
+    if (!shadowCaster->IsLoaded())
     {
         shadowCaster->SetFilename(this->GetMesh());
-        n_assert(shadowCaster->Load());
+        bool shadowCasterLoaded = shadowCaster->Load();
+        n_assert(shadowCasterLoaded);
     }
-    
+   
     this->refShadowCaster = shadowCaster;
     return true;
 }
@@ -127,10 +132,10 @@ bool
 nShadowNode::RenderShadow(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix)
 {   
     // HACK:
-    // check distance for small objects < smaller 4 meters diagonal)
+    // check distance for small objects < smaller 3 meters diagonal)
     // should be replaced by some proper LODing!
     bool cull = false;
-    if (this->GetLocalBox().diagonal_size() < 4.0f)
+    if (this->GetLocalBox().diagonal_size() < 3.0f)
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
         const vector3& viewerPos = gfxServer->GetTransform(nGfxServer2::InvView).pos_component();

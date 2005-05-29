@@ -1,15 +1,13 @@
 //------------------------------------------------------------------------------
-//  nfont2_main.cc
-//  (C) 2003 RadonLabs GmbH
+//  nmeshdeformer.cc
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "gfx2/nfont2.h"
-
-nNebulaClass(nFont2, "nresource");
+#include "deformers/nmeshdeformer.h"
 
 //------------------------------------------------------------------------------
 /**
 */
-nFont2::nFont2()
+nMeshDeformer::nMeshDeformer()
 {
     // empty
 }
@@ -17,29 +15,21 @@ nFont2::nFont2()
 //------------------------------------------------------------------------------
 /**
 */
-nFont2::~nFont2()
+nMeshDeformer::~nMeshDeformer()
 {
-    if (!this->IsUnloaded())
-    {
-        this->Unload();
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
+    Perform the actual mesh deformation. Override this method in a subclass.
 */
 void
-nFont2::SetFontDesc(const nFontDesc& desc)
+nMeshDeformer::Compute()
 {
-    this->fontDesc = desc;
+    // empty
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-const nFontDesc&
-nFont2::GetFontDesc() const
-{
-    return this->fontDesc;
-}
 
+
+    

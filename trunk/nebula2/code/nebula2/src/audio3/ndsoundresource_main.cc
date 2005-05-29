@@ -40,7 +40,7 @@ nDSoundResource::nDSoundResource() :
 */
 nDSoundResource::~nDSoundResource()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -54,7 +54,7 @@ nDSoundResource::~nDSoundResource()
 bool
 nDSoundResource::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(0 != this->dsSound);
 
     nFileServer2* fileServer = kernelServer->GetFileServer();
@@ -89,7 +89,7 @@ nDSoundResource::LoadResource()
         }
         n_assert(this->dsSound);
     }
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -100,7 +100,7 @@ nDSoundResource::LoadResource()
 void
 nDSoundResource::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     //if (this->dsSound)
     //{
     //    delete this->dsSound;
@@ -111,5 +111,5 @@ nDSoundResource::UnloadResource()
     //    delete this->dsStreamingSound;
     //    this->dsStreamingSound = 0;
     //}
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }

@@ -24,7 +24,11 @@ nShadowSkinShapeNode::nShadowSkinShapeNode()
 */
 nShadowSkinShapeNode::~nShadowSkinShapeNode()
 {
-    this->UnloadResources();
+    if (this->refShadowCaster.isvalid())
+    {
+        this->refShadowCaster->Release();
+        this->refShadowCaster.invalidate();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -51,10 +55,11 @@ nShadowSkinShapeNode::LoadShadowCaster()
     nSkinShadowCaster* shadowCaster = (nSkinShadowCaster*) nShadowServer::Instance()->NewShadowCaster(nShadowServer::Skin, this->GetMesh());
     n_assert(shadowCaster);
 
-    if (!shadowCaster->IsValid())
+    if (!shadowCaster->IsLoaded())
     {
         shadowCaster->SetFilename(this->GetMesh());
-        n_assert(shadowCaster->Load());
+        bool shadowCasterLoaded = shadowCaster->Load();
+        n_assert(shadowCasterLoaded);
     }
     
     this->refShadowCaster = shadowCaster;

@@ -38,7 +38,10 @@ protected:
     virtual bool LoadResource();
     /// unload mesh resource
     virtual void UnloadResource();
-
+    /// called when contained resource may become lost 
+    virtual void OnLost();
+    /// called when contained resource may be restored
+    virtual void OnRestored();
     /// create the d3d vertex buffer
     virtual void CreateVertexBuffer();
     /// create the d3d index buffer
@@ -73,7 +76,7 @@ inline
 IDirect3DVertexBuffer9* 
 nD3D9Mesh::GetVertexBuffer()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->vertexBuffer;
 }
 
@@ -84,7 +87,7 @@ inline
 IDirect3DIndexBuffer9* 
 nD3D9Mesh::GetIndexBuffer()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->indexBuffer;
 }
 
@@ -95,7 +98,7 @@ inline
 IDirect3DVertexDeclaration9*
 nD3D9Mesh::GetVertexDeclaration()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->vertexDeclaration;
 }
 

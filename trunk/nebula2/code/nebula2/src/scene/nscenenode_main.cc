@@ -25,7 +25,23 @@ nSceneNode::nSceneNode() :
 */
 nSceneNode::~nSceneNode()
 {
-    this->UnloadResources();
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This calls UnloadResources() if the object is going to die (this can't
+    be put into the destructor, because virtual methods don't work when
+    called from the destructor).
+*/
+bool
+nSceneNode::Release()
+{
+    if (1 == this->refCount)
+    {
+        this->UnloadResources();
+    }
+    return nRoot::Release();
 }
 
 //------------------------------------------------------------------------------

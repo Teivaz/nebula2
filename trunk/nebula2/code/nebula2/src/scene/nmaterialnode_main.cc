@@ -28,7 +28,7 @@ nMaterialNode::nMaterialNode() :
 */
 nMaterialNode::~nMaterialNode()
 {
-    this->UnloadResources();
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ nMaterialNode::LoadShaders()
             // create a new empty shader object
             nShader2* shd = nGfxServer2::Instance()->NewShader(shaderEntry.GetName());
             n_assert(shd);
-            if (!shd->IsValid())
+            if (!shd->IsLoaded())
             {
                 // load shader resource file
                 shd->SetFilename(shaderEntry.GetName());

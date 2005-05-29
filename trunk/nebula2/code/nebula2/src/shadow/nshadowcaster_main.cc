@@ -19,7 +19,6 @@ nShadowCaster::nShadowCaster() :
     lightPosition(0.0f, 0.0f, 0.0f),
     faces(0),
     edges(0),
-    meshUsage(nMesh2::ReadOnly),
     silhouetteIndices(0, 64),
     lastGroupIndex(-1),
     dirty(true)
@@ -32,7 +31,7 @@ nShadowCaster::nShadowCaster() :
 */
 nShadowCaster::~nShadowCaster()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->UnloadResource();
     }
@@ -53,7 +52,7 @@ nShadowCaster::ApplyShadow()
 void
 nShadowCaster::UnloadResource()
 {
-    this->SetValid(false);
+    this->SetState(Unloaded);
     
     if (0 != this->faces)
     {
@@ -81,7 +80,7 @@ bool
 nShadowCaster::LoadResource()
 {
     bool success = false;
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(!this->GetFilename().IsEmpty());
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
@@ -92,23 +91,17 @@ nShadowCaster::LoadResource()
 
     // prepare geometry data load from file
     nMesh2* sourceMesh = gfxServer->NewMesh(meshName.Get());
-    if (!sourceMesh->IsValid())
-    {
-        sourceMesh->SetUsage(this->GetMeshUsage());
-        sourceMesh->SetFilename(this->GetFilename());
-        sourceMesh->SetAsyncEnabled(false); //needs to be loaded directly
-    }
-
-    // load data    
-    if (sourceMesh->Load())
-    {
-        this->LoadShadowData(sourceMesh);
-        success = true;
-    }
-    
+    n_assert(!sourceMesh->IsLoaded());
+    sourceMesh->SetUsage(nMesh2::ReadOnly);
+    sourceMesh->SetFilename(this->GetFilename());
+    sourceMesh->SetAsyncEnabled(false); //needs to be loaded directly
+    bool sourceMeshLoaded = sourceMesh->Load();
+    n_assert(sourceMeshLoaded);
+    this->LoadShadowData(sourceMesh);
     sourceMesh->Release();
-    this->SetValid(success);
-    return success;
+
+    this->SetState(Valid);
+    return true;
 }
 
 
@@ -122,24 +115,6 @@ nShadowCaster::LoadShadowData(nMesh2* sourceMesh)
     this->LoadEdges(sourceMesh);
     this->LoadFaces(sourceMesh);
     this->LoadGroups(sourceMesh);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nShadowCaster::SetMeshUsage(int usage)
-{
-    this->meshUsage = usage;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-int
-nShadowCaster::GetMeshUsage() const
-{
-    return this->meshUsage;
 }
 
 //------------------------------------------------------------------------------

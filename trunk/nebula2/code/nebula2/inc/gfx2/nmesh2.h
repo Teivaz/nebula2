@@ -101,7 +101,8 @@ public:
         Weights  = (1<<9),
         JIndices = (1<<10),
 
-        AllComponents = ((1<<11) - 1),
+        NumVertexComponents = 11,
+        AllComponents = ((1<<NumVertexComponents) - 1),
     };
 
     enum Usage
@@ -120,14 +121,6 @@ public:
 
 		// needs vertex shader?
 		NeedsVertexShader = (1<<6),
-    };
-
-    enum RefillBuffersMode
-    {
-        Disabled,       // buffers dont need to be refilled
-        DisabledOnce,   // refilling will be enabled after next empty mesh creation
-        Enabled,        // refilling will be needed after next empty mesh creation
-        NeededNow,      // refilling is needed now
     };
 
     enum
@@ -182,12 +175,14 @@ public:
     void SetVertexComponents(int compMask);
     /// get vertex components
     int GetVertexComponents() const;
+    /// return true if the mesh has all of the given vertex components (OR'ed together)
+    bool HasAllVertexComponents(int compMask) const;
     /// get the stride distance between the begin of a element and the requested component
-    int GetVertexComponentDistance(VertexComponent component) const;
+    int GetVertexComponentOffset(VertexComponent component) const;
     /// get vertex width (number of floats in one vertex)
     int GetVertexWidth() const;
-    /// get the vertex width for component mask
-    static int GetVertexWidthFormMask(int compMask);
+    /// get the vertex width for a given component mask
+    static int GetVertexWidthFromMask(int compMask);
     /// set number of groups
     void SetNumGroups(int num);
     /// get number of groups
@@ -200,16 +195,8 @@ public:
     int GetIndexBufferByteSize() const;
     /// returns the byte size of the embedded edge buffer
     int GetEdgeBufferByteSize() const;
-    /// get the buffer refill mode
-    RefillBuffersMode GetRefillBuffersMode() const;
-    /// set the buffer refill mode
-    void SetRefillBuffersMode(RefillBuffersMode mode);
-
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
-
-    /// Create uninitialzed buffers
-    bool CreateEmpty();
 
 protected:
     /// load mesh resource
@@ -248,10 +235,19 @@ protected:
     int vertexBufferByteSize;
     int indexBufferByteSize;
     int edgeBufferByteSize;
-    RefillBuffersMode refillBuffersMode;
 
     Edge* privEdgeBuffer;   //valid if numEdges > 0
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nMesh2::HasAllVertexComponents(int compMask) const
+{
+    return (compMask == (this->vertexComponentMask & compMask));
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -357,7 +353,7 @@ void
 nMesh2::SetVertexComponents(int compMask)
 {
     this->vertexComponentMask = compMask & AllComponents;
-    this->vertexWidth = nMesh2::GetVertexWidthFormMask(compMask);
+    this->vertexWidth = nMesh2::GetVertexWidthFromMask(compMask);
 }
 
 //------------------------------------------------------------------------------
@@ -365,7 +361,7 @@ nMesh2::SetVertexComponents(int compMask)
 */
 inline
 int
-nMesh2::GetVertexWidthFormMask(int compMask)
+nMesh2::GetVertexWidthFromMask(int compMask)
 {
     n_assert(0 != compMask);
     int width = 0;
@@ -389,7 +385,7 @@ nMesh2::GetVertexWidthFormMask(int compMask)
 */
 inline
 int
-nMesh2::GetVertexComponentDistance(VertexComponent component) const
+nMesh2::GetVertexComponentOffset(VertexComponent component) const
 {
     int ret = 0; 
     if (Coord == component) return ret;
@@ -528,20 +524,10 @@ nMesh2::GetIndexBufferByteSize() const
 /**
 */        
 inline
-nMesh2::RefillBuffersMode
-nMesh2::GetRefillBuffersMode() const
+int
+nMesh2::GetEdgeBufferByteSize() const
 {
-    return this->refillBuffersMode;
-}
-        
-//------------------------------------------------------------------------------
-/**
-*/    
-inline
-void    
-nMesh2::SetRefillBuffersMode(RefillBuffersMode mode)
-{
-    this->refillBuffersMode = mode;
+    return this->edgeBufferByteSize;
 }
 
 //------------------------------------------------------------------------------

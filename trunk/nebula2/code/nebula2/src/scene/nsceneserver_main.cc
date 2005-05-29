@@ -8,9 +8,9 @@
 #include "scene/nmaterialnode.h"
 #include "gfx2/ngfxserver2.h"
 #include "gfx2/nshader2.h"
-#include "kernel/ntimeserver.h"
+#include "kernel/nfileserver2.h"
 
-nNebulaClass(nSceneServer, "nroot");
+nNebulaScriptClass(nSceneServer, "nroot");
 nSceneServer* nSceneServer::Singleton = 0;
 
 // global data for qsort() compare function
@@ -27,8 +27,7 @@ nSceneServer::nSceneServer() :
     lightArray(64, 128),
     shadowArray(512, 1024),
     stackDepth(0),
-    shapeBucket(0, 1024),
-    bgColor(0.5f, 0.5f, 0.5f, 1.0f)
+    shapeBucket(0, 1024)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -36,9 +35,6 @@ nSceneServer::nSceneServer() :
     this->groupStack.SetSize(MaxHierarchyDepth);
     this->groupStack.Clear(0);
     self = this;
-
-    // Set this to a reasonable default value
-    this->renderPath.SetFilename("shaders:renderpath.xml");
 }
 
 //------------------------------------------------------------------------------
@@ -53,40 +49,53 @@ nSceneServer::~nSceneServer()
 
 //------------------------------------------------------------------------------
 /**
-*/
-void
-nSceneServer::SetRenderPathFilename(const nString& name)
-{
-    this->renderPath.SetFilename(name);
-}
+    Open the scene server. This will parse the render path, initialize
+    the shaders assign from the render path, and finally invoke
+    nGfxServer2::OpenDisplay().
 
-//------------------------------------------------------------------------------
-/**
-    Open the scene server. This initializes the embedded render path
-    object.
 */
 bool
 nSceneServer::Open()
 {
     n_assert(!this->isOpen);
     
-    // read the renderpath definition file
-    bool renderPathOpened = this->renderPath.Open();
-    n_assert(renderPathOpened);
+    // parse renderpath XML file
+    if (this->renderPath.OpenXml())
+    {
+        // initialize the shaders assign from the render path
+        nFileServer2* fileServer = nFileServer2::Instance();
+        fileServer->SetAssign("shaders", this->renderPath.GetShaderPath().Get());
 
-    this->isOpen = true;
-    return true;
+        // open the display
+        bool displayOpened = nGfxServer2::Instance()->OpenDisplay();
+        n_assert(displayOpened);
+
+        // initialize the render path object
+        bool renderPathOpened = this->renderPath.Open();
+        n_assert(renderPathOpened);
+
+        // unload the XML doc
+        this->renderPath.CloseXml();
+
+        this->isOpen = true;
+    }
+    else
+    {
+        n_error("nSceneServer could not open render path file '%s'!", this->renderPath.GetFilename().Get());
+    }
+    return this->isOpen;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Close the scene server.
+    Close the scene server. This will also nGfxServer2::CloseDisplay().
 */
 void
 nSceneServer::Close()
 {
     n_assert(this->isOpen);
     this->renderPath.Close();
+    nGfxServer2::Instance()->CloseDisplay();
     this->isOpen = false;
 }
 

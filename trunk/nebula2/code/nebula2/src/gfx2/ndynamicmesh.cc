@@ -35,7 +35,18 @@ nDynamicMesh::~nDynamicMesh()
 bool
 nDynamicMesh::IsValid() const
 {
-    return this->refMesh.isvalid() && this->refMesh->IsValid();
+    if (this->refMesh.isvalid())
+    {
+        if (!this->refMesh->IsLoaded())
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +114,7 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
     }
 
     // initialize the mesh
-    if (!mesh->IsValid())
+    if (!mesh->IsLoaded())
     {
         mesh->SetUsage(usageFlags | nMesh2::WriteOnly);
         mesh->SetVertexComponents(vertexComponents);
@@ -201,12 +212,9 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
 
     mesh->UnlockVertices();
     mesh->UnlockIndices();
-    if (0 != numVertices && 0 != numIndices)
-    {
-        gfxServer->SetVertexRange(0, numVertices);
-        gfxServer->SetIndexRange(0, numIndices);
-        gfxServer->DrawIndexedNS(this->primitiveType);
-    }
+    gfxServer->SetVertexRange(0, numVertices);
+    gfxServer->SetIndexRange(0, numIndices);
+    gfxServer->DrawIndexedNS(this->primitiveType );
     gfxServer->SetMesh(0);
 }
 

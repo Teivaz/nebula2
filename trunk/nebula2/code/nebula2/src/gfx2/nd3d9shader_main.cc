@@ -29,7 +29,7 @@ nD3D9Shader::nD3D9Shader() :
 */
 nD3D9Shader::~nD3D9Shader()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -41,7 +41,7 @@ nD3D9Shader::~nD3D9Shader()
 void
 nD3D9Shader::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     n_assert(this->effect);
 
     nD3D9Server* gfxServer = this->refGfxServer.get();
@@ -60,7 +60,7 @@ nD3D9Shader::UnloadResource()
     // reset current shader params
     this->curParams.Clear();
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ nD3D9Shader::UnloadResource()
 bool
 nD3D9Shader::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(0 == this->effect);
 
     HRESULT hr;
@@ -145,7 +145,7 @@ nD3D9Shader::LoadResource()
     // success
     this->hasBeenValidated = false;
     this->didNotValidate = false;
-    this->SetValid(true);
+    this->SetState(Valid);
 
     // validate the effect
     this->ValidateEffect();
@@ -165,8 +165,7 @@ nD3D9Shader::SetBool(nShaderState::Param p, bool val)
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_dxtrace(hr, "SetInt() on shader failed!");
-
+    n_dxtrace(hr, "SetBool() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
@@ -176,11 +175,13 @@ void
 nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
 {
     n_assert(this->effect && (p < nShaderState::NumParameters));
-    HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*)array, count);
+
+    // FIXME Floh: is the C++ bool datatype really identical to the Win32 BOOL datatype?
+    HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*) array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
-    n_dxtrace(hr, "SetIntArray() on shader failed!");    
+    n_dxtrace(hr, "SetBoolArray() on shader failed!");
 }
 
 //------------------------------------------------------------------------------
@@ -402,57 +403,49 @@ nD3D9Shader::SetParams(const nShaderParams& params)
         D3DXHANDLE handle = this->parameterHandles[curParam];
         if (handle != 0)
         {
-            // avoid redundant state switches
             const nShaderArg& curArg = params.GetArgByIndex(i);
+
+            // early out if parameter is void
+            if (curArg.GetType() == nShaderState::Void)
+            {
+                continue;
+            }
+
+            // avoid redundant state switches
             if ((!this->curParams.IsParameterValid(curParam)) ||
                 (!(curArg == this->curParams.GetArg(curParam))))
             {
                 this->curParams.SetArg(curParam, curArg);
                 switch (curArg.GetType())
                 {
-                    case nShaderState::Void:
-                        hr = S_OK;
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumRenderStateChanges++;
-                        #endif
+                    case nShaderState::Bool:
+                        hr = this->effect->SetBool(handle, curArg.GetBool());
                         break;
 
                     case nShaderState::Int:
                         hr = this->effect->SetInt(handle, curArg.GetInt());
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumRenderStateChanges++;
-                        #endif
                         break;
 
                     case nShaderState::Float:
                         hr = this->effect->SetFloat(handle, curArg.GetFloat());
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumRenderStateChanges++;
-                        #endif
                         break;
 
                     case nShaderState::Float4:
                         hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*) &(curArg.GetFloat4()));
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumRenderStateChanges++;
-                        #endif
                         break;
 
                     case nShaderState::Matrix44:
                         hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*) curArg.GetMatrix44());
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumRenderStateChanges++;
-                        #endif
                         break;
 
                     case nShaderState::Texture:
                         hr = this->effect->SetTexture(handle, ((nD3D9Texture*)curArg.GetTexture())->GetBaseTexture());
-                        #ifdef __NEBULA_STATS__
-                        gfxServer->statsNumTextureChanges++;
-                        #endif
                         break;
                 }
                 n_dxtrace(hr, "Failed to set shader parameter in nD3D9Shader::SetParams");
+                #ifdef __NEBULA_STATS__
+                gfxServer->statsNumRenderStateChanges++;
+                #endif
             }
         }
     }
@@ -797,3 +790,32 @@ nD3D9Shader::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
     return numAppended;
 }
 
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device is lost.
+*/
+void
+nD3D9Shader::OnLost()
+{
+    n_assert(Lost != this->GetState());
+    n_assert(this->effect);
+    this->effect->OnLostDevice();
+    this->SetState(Lost);
+
+    // flush my current parameters (important! otherwise, seemingly redundant
+    // state will not be set after OnRestore())!
+    this->curParams.Clear();
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device has been restored.
+*/
+void
+nD3D9Shader::OnRestored()
+{
+    n_assert(Lost == this->GetState());
+    n_assert(this->effect);
+    this->effect->OnResetDevice();
+    this->SetState(Valid);
+}

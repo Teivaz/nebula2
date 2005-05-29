@@ -18,7 +18,7 @@
 #include "kernel/nautoref.h"
 #include "gfx2/nshaderparams.h"
 #include "util/nbucket.h"
-#include "scene/nrenderpath.h"
+#include "renderpath/nrenderpath2.h"
 
 class nRenderContext;
 class nSceneNode;
@@ -36,18 +36,16 @@ public:
     /// return pointer to instance
     static nSceneServer* Instance();
 
-    /// set the file name for the renderpath.xml file.
-    void SetRenderPathFilename(const nString& name);
-    /// open the scene server
-    bool Open();
+    /// set filename of render path definition XML file
+    void SetRenderPathFilename(const nString& renderPathFilename);
+    /// get the render path filename
+    const nString& GetRenderPathFilename() const;
+    /// open the scene server, call after nGfxServer2::OpenDisplay()
+    virtual bool Open();
     /// close the scene server;
-    void Close();
+    virtual void Close();
     /// return true if scene server open
     bool IsOpen() const;
-    /// set background color
-    void SetBgColor(const vector4& c);
-    /// get background color
-    const vector4& GetBgColor() const;
     /// returns true if scene graph uses a specific shader type (override in subclasses!)
     virtual bool IsShaderUsed(nFourCC fourcc) const;
     /// begin the scene
@@ -68,6 +66,8 @@ public:
     virtual void BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// finish current group node
     virtual void EndGroup();
+    /// access to embedded render path object
+    nRenderPath2& GetRenderPath();
 
 private:
     static nSceneServer* Singleton;
@@ -105,14 +105,14 @@ protected:
 
     bool isOpen;
     bool inBeginScene;
+    nString renderPathFilename;
     uint stackDepth;
-    nRenderPath renderPath;
+    nRenderPath2 renderPath;
     nFixedArray<int> groupStack;
     nArray<Group> groupArray;
     nArray<ushort> lightArray;
     nArray<ushort> shadowArray;
     nBucket<ushort,32> shapeBucket;                     // contains indices of shape nodes, bucketsorted by shader
-    vector4 bgColor;
 };
 
 //------------------------------------------------------------------------------
@@ -130,10 +130,10 @@ nSceneServer::Instance()
 /**
 */
 inline
-bool
-nSceneServer::IsOpen() const
+nRenderPath2&
+nSceneServer::GetRenderPath()
 {
-    return this->isOpen;
+    return this->renderPath;
 }
 
 //------------------------------------------------------------------------------
@@ -141,19 +141,29 @@ nSceneServer::IsOpen() const
 */
 inline
 void
-nSceneServer::SetBgColor(const vector4& c)
+nSceneServer::SetRenderPathFilename(const nString& n)
 {
-    this->bgColor = c;
+    this->renderPath.SetFilename(n);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const vector4&
-nSceneServer::GetBgColor() const
+const nString&
+nSceneServer::GetRenderPathFilename() const
 {
-    return this->bgColor;
+    return this->renderPath.GetFilename();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::IsOpen() const
+{
+    return this->isOpen;
 }
 
 //------------------------------------------------------------------------------

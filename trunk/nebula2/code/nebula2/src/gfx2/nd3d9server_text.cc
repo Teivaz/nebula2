@@ -130,10 +130,10 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
     n_assert(text);
     if (this->refFont.isvalid())
     {
-        if (!this->refFont->IsValid())
+        if (!this->refFont->IsLoaded())
         {
             this->refFont->Load();
-        }        
+        }
         float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
         float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
         RECT r;
@@ -143,6 +143,7 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         r.bottom = (LONG) (rect.v1.y * dispHeight);     
 
         DWORD d3dFlags = 0;
+        nString wordBreakString;
         if (flags & nFont2::Bottom)     d3dFlags |= DT_BOTTOM;
         if (flags & nFont2::Top)        d3dFlags |= DT_TOP;
         if (flags & nFont2::Center)     d3dFlags |= DT_CENTER;
@@ -151,17 +152,18 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         if (flags & nFont2::VCenter)    d3dFlags |= DT_VCENTER;
         if (flags & nFont2::NoClip)     d3dFlags |= DT_NOCLIP;
         if (flags & nFont2::ExpandTabs) d3dFlags |= DT_EXPANDTABS;
-        if (flags & nFont2::WordBreak)  d3dFlags |= DT_WORDBREAK;
-    
+        if (flags & nFont2::WordBreak)
+        {
+            //d3dFlags |= DT_WORDBREAK;
+            this->BreakLines(text, rect, wordBreakString);
+            text = wordBreakString.Get();
+        }
+
         DWORD d3dColor = D3DCOLOR_COLORVALUE(color.x, color.y, color.z, color.w);
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
         n_assert(d3dFont);
         this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
-        d3dFont->DrawText(this->d3dSprite,
-            text,
-            -1, &r,
-            d3dFlags,
-            d3dColor);
+        d3dFont->DrawText(this->d3dSprite, text, -1, &r, d3dFlags, d3dColor);
         this->d3dSprite->End();
     }
 }
@@ -182,17 +184,37 @@ nD3D9Server::GetTextExtent(const char* text)
     float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
     float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
 
+    // Note: A temporary buffer (extended by `.') is being used to
+    // determine the extents of `text' to work around the problem that
+    // `DrawTextA' seems to ignore trailing spaces in `text' if exist.
+    // However this hack slows things down...
     if (this->refFont.isvalid())
     {
-        if (!this->refFont->IsValid())
+        if (!this->refFont->IsLoaded())
         {
             this->refFont->Load();
-        }        
+        }
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refFont.get())->GetD3DFont();
+
+        // Make a copy of `text' and extend it by `.'.
+        int textLength = strlen(text);
+        char* tmp = n_new_array(char, textLength + 2);
+        strcpy(tmp, text);
+        tmp[textLength] = '.';
+        tmp[textLength + 1] = '\0';
+
+        // Determine extents of `.'.
+        RECT dotRect = { 0 };
+        int h = d3dFont->DrawTextA(NULL, ".", -1, &dotRect, DT_LEFT | DT_NOCLIP | DT_CALCRECT, 0);
+        int dotWidth = dotRect.right - dotRect.left;
+
         RECT rect = { 0 };
-        int h = d3dFont->DrawTextA(NULL, text, -1, &rect, DT_LEFT | DT_NOCLIP | DT_CALCRECT, 0);
-        width = rect.right - rect.left;
+        h = d3dFont->DrawTextA(NULL, tmp, -1, &rect, DT_LEFT | DT_NOCLIP | DT_CALCRECT, 0);
+    
+        width = rect.right - rect.left - dotWidth;
         height = rect.bottom - rect.top;
+
+        n_delete_array(tmp);
     }
     return vector2((float(width) / dispWidth), (float(height) / dispHeight));
 }

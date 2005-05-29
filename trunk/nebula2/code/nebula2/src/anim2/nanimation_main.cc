@@ -20,7 +20,7 @@ nAnimation::nAnimation() :
 */
 nAnimation::~nAnimation()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }

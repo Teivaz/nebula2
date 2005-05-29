@@ -32,7 +32,11 @@ public:
     /// unload all resources matching resource type (OR'ed nResource::Type's)
     virtual void UnloadResources(int resTypeMask);
     /// reload all resources matching type
-    virtual bool ReloadResources(int resTypeMask);
+    virtual bool LoadResources(int resTypeMask);
+    /// call OnLost() on all resources defined in the mask
+    virtual void OnLost(int resTypeMask);
+    /// call OnRestored() on all resources defined in the mask
+    virtual void OnRestored(int resTypeMask);
     /// return the resource pool directory for a given resource type
     nRoot* GetResourcePool(nResource::Type rsrcType);
     /// generate a valid resource id from a resource path

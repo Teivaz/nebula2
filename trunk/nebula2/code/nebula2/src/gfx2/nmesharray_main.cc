@@ -22,20 +22,9 @@ nMeshArray::nMeshArray()
 */
 nMeshArray::~nMeshArray()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
-    }
-
-    // unloads sub meshes
-    int i;
-    for (i = 0; i < nGfxServer2::MaxVertexStreams; i++)
-    {
-        if (this->refMeshes[i].isvalid())
-        {
-            this->refMeshes[i]->Release();
-            this->refMeshes[i].invalidate();
-        }
     }
 }
 
@@ -68,7 +57,7 @@ nMeshArray::LoadResource()
             success &= this->refMeshes[i]->Load();
         }
     }
-    this->SetValid(success);
+    this->SetState(Valid);
     return success;
 }
 
@@ -82,7 +71,18 @@ nMeshArray::UnloadResource()
     {
         nGfxServer2::Instance()->SetMeshArray(0);
     }
-    this->SetValid(false);
+
+    // unloads sub meshes
+    int i;
+    for (i = 0; i < nGfxServer2::MaxVertexStreams; i++)
+    {
+        if (this->refMeshes[i].isvalid())
+        {
+            this->refMeshes[i]->Release();
+            this->refMeshes[i].invalidate();
+        }
+    }
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------

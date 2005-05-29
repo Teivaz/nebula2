@@ -23,14 +23,14 @@ nShapeNode::nShapeNode() :
 */
 nShapeNode::~nShapeNode()
 {
-    this->UnloadResources();
+    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
     This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should call SetMeshUsage in their
-    constructors to ensure that this method reflects their requirements.
+    this shape node class. Subclasses should override this method
+    based on their requirements.
 
     @return     a combination on nMesh2::Usage flags
 */
@@ -39,7 +39,7 @@ nShapeNode::GetMeshUsage() const
 {
     return meshUsage;
 }
- 
+
 //------------------------------------------------------------------------------
 /**
     Specifies the mesh usage flag combination required by
@@ -76,21 +76,20 @@ nShapeNode::LoadMesh()
     if ((!this->refMesh.isvalid()) && (!this->meshName.IsEmpty()))
     {
         // append mesh usage to mesh resource name
-        nString resourceName = this->meshName.Get();
-        resourceName.Append("_"); 
-        resourceName.AppendInt(this->GetMeshUsage());
-
+        nString resourceName;
+        resourceName.Format("%s_%d", this->meshName.Get(), this->GetMeshUsage());
+        
         // get a new or shared mesh
         nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
         n_assert(mesh);
-        if (!mesh->IsValid())
+        if (!mesh->IsLoaded())
         {
             mesh->SetFilename(this->meshName.Get());
             mesh->SetUsage(this->GetMeshUsage());
 
-            if (refMeshResourceLoader.isvalid())
+            if (this->refMeshResourceLoader.isvalid())
             {
-                mesh->SetResourceLoader(refMeshResourceLoader.getname());
+                mesh->SetResourceLoader(this->refMeshResourceLoader.getname());
             }
 
             if (!mesh->Load())

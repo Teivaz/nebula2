@@ -19,8 +19,8 @@ nViewerApp::nViewerApp() :
 #else
     gfxServerClass("nglserver2"),
 #endif
-    startupScript("home:bin/startup.tcl"),
-    sceneServerClass("nstdsceneserver"),
+    startupScript("home:data/scripts/startup.tcl"),
+    sceneServerClass("nmrtsceneserver"),
     isOpen(false),
     isOverlayEnabled(true),
     useRam(false),
@@ -126,10 +126,19 @@ nViewerApp::Open()
                     result.IsEmpty() ? result.Get() : "Unknown error");
         }
     }
-    
+
+    nString scriptResult;
+    this->refScriptServer->Run("OnStartup", scriptResult);
+    this->refScriptServer->Run("OnGraphicsStartup", scriptResult);
+
     // initialize graphics
     this->refGfxServer->SetCamera(this->camera);
-    this->refGfxServer->OpenDisplay();
+    // open the scene server
+    if (!this->refSceneServer->Open())
+    {
+        n_error("nViewerApp::Open(): Failed to open nSceneServer!");
+        return false;
+    }
     this->refVideoServer->Open();
 
     // define the input mapping
@@ -141,12 +150,7 @@ nViewerApp::Open()
     // create the /usr/scene object
     kernelServer->New("ntransformnode", "/usr/scene");
 
-    // open the scene server
-    if (!this->refSceneServer->Open())
-    {
-        n_error("nViewerApp::Open(): Failed to open nSceneServer!");
-        return false;
-    }
+
 
     // initialize gui
     this->refGuiServer->SetRootPath("/gui");
@@ -208,7 +212,7 @@ nViewerApp::Close()
     this->refGuiServer->Close();
     this->refVideoServer->Close();
     this->refSceneServer->Close();
-    this->refGfxServer->CloseDisplay();
+
     this->refPrefServer->Release();
     this->refHttpServer->Release();
     this->refShadowServer->Release();

@@ -41,6 +41,12 @@
        <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
      <dt>-useram</dt>
        <dd>if present, then nviewer will use ram file</dd>
+     <dt>-eyeposx</dt>
+       <dd>position vector of camera matrix</dd>
+     <dt>-eyecoix</dt>
+       <dd>right vector of camera matrix</dd>
+     <dt>-eyeupx</dt>
+       <dd>up vector of camera matrix</dd>
     </dl>
 
     nviewer also defines some default input handling:
@@ -115,7 +121,7 @@ main(int argc, const char** argv)
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
+    const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
     const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
@@ -168,7 +174,10 @@ main(int argc, const char** argv)
                "-x                      the x position of the window (default: 0)\n"
                "-y                      y position of the window (default: 0)\n"
                "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n"
-               "-useram                 if present, then nviewer will use ram file\n");
+               "-useram                 if present, then nviewer will use ram file\n"
+               "-eyeposx                position vector of camera matrix\n"
+               "-eyecoix                right vector of camera matrix\n"
+               "-eyeupx                 up vector of camera matrix\n");
         return 5;
     }
 

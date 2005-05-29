@@ -42,6 +42,10 @@ protected:
     virtual bool LoadResource();
     /// unload texture resource
     virtual void UnloadResource();
+    /// called when contained resource may become lost 
+    virtual void OnLost();
+    /// called when contained resource may be restored
+    virtual void OnRestored();
 
 private:
     friend class nD3D9Server;
@@ -88,7 +92,7 @@ inline
 IDirect3DBaseTexture9*
 nD3D9Texture::GetBaseTexture()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->baseTexture;
 }
 
@@ -99,7 +103,7 @@ inline
 IDirect3DTexture9*
 nD3D9Texture::GetTexture2D()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->texture2D;
 }
 
@@ -110,7 +114,7 @@ inline
 IDirect3DSurface9*
 nD3D9Texture::GetRenderTarget()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->renderTargetSurface;
 }
 
@@ -121,7 +125,7 @@ inline
 IDirect3DSurface9*
 nD3D9Texture::GetDepthStencil()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
     return this->depthStencilSurface;
 }
 

@@ -16,7 +16,7 @@ nResource::nResource() :
     refResourceServer("/sys/servers/resource"),
     type(InvalidResourceType),
     asyncEnabled(false),
-    isValid(false),
+    state(Unloaded),
     jobNode(this)
 {
     // empty
@@ -27,8 +27,8 @@ nResource::nResource() :
 */
 nResource::~nResource()
 {
-    n_assert(!this->IsValid());
-    
+    n_assert(this->GetState() == Unloaded);
+
     // if we are pending for an async load, we must remove ourselves 
     // from the loader job list.
     if (this->refResourceServer.isvalid())
@@ -89,8 +89,9 @@ nResource::CanLoadAsync() const
 bool
 nResource::Load()
 {
-    // if we are already valid, do nothing
-    if (this->IsValid())
+    // if we are already loaded, do nothing (we still may be
+    // in in-operational state, either Lost, or Restored)
+    if (Unloaded != this->GetState())
     {
         return true;
     }
@@ -148,7 +149,7 @@ nResource::Unload()
     {
         this->refResourceServer->RemLoaderJob(this);
     }
-    if (this->IsValid())
+    if (Unloaded != this->GetState())
     {
         this->UnloadResource();
     }
@@ -174,6 +175,36 @@ nResource::LoadResource()
 */
 void
 nResource::UnloadResource()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called if any un-managed contained resources may become
+    lost (for instance because the the D3D device goes into lost state).
+    Subclasses which are affected by lost device state should unload
+    their resources and set the resource object's state to Lost. Otherwise
+    they should do nothing (these are usually only classes which placed
+    their resources in D3D's default resource pool.
+*/
+void
+nResource::OnLost()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when un-managed contained resources should be
+    restored (for instance because the D3D device is available again).
+    Subclasses which were affected by OnLost(), should restore their
+    resource objects, and set the resource's state to Restored, if some
+    external client needs to fill data into the object, or to Valid,
+    if the object could completely be restored.
+*/
+void
+nResource::OnRestored()
 {
     // empty
 }

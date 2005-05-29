@@ -71,6 +71,7 @@ public:
     /// buffer types
     enum BufferType
     {
+        NoBuffer      = 0,
         ColorBuffer   = (1<<0),
         DepthBuffer   = (1<<1),
         StencilBuffer = (1<<2),
@@ -174,6 +175,8 @@ public:
     void SetFeatureSetOverride(FeatureSet f);
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
+    /// return true if vertex shader run in software emulation
+    virtual bool AreVertexShadersEmulated();
     /// get the current camera description
     nCamera2& GetCamera();
     /// set the viewport
@@ -276,6 +279,8 @@ public:
     virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
     /// get text extents
     virtual vector2 GetTextExtent(const char* text);
+    /// insert newline chars to break the text manual in lines - must be public because the ticker needs to break lines.
+    void BreakLines(const nString& text, const rectangle& rect, nString& outString);
 
     /// add text to the text buffer (OLD STYLE)
     virtual void Text(const char* text, const vector4& color, float xPos, float yPos);
@@ -308,6 +313,8 @@ public:
 
     /// get the device identifier
     DeviceIdentifier GetDeviceIdentifier() const;
+    /// compute a mouse ray in world space
+    line3 ComputeWorldMouseRay(const vector2& mousePos, float length);    
     /// set gamma value.
     void SetGamma(float g);
     /// set brightness value.
@@ -332,9 +339,6 @@ private:
     static nGfxServer2* Singleton;
 
 protected:
-    /// insert newline chars to break the text manual in lines
-    void BreakLines(const nString& text, const rectangle& rect, nString& outString);
-
     bool displayOpen;
     bool inBeginScene;
     bool inBeginLines;

@@ -143,7 +143,6 @@ nApplication::Open()
     }
 
     // open the scene server
-    this->refSceneServer->SetBgColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
     if (!this->refSceneServer->Open())
     {
         this->Close();

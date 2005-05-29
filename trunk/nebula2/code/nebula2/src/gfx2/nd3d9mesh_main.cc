@@ -26,7 +26,7 @@ nD3D9Mesh::nD3D9Mesh() :
 */
 nD3D9Mesh::~nD3D9Mesh()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -53,7 +53,7 @@ nD3D9Mesh::CanLoadAsync() const
 bool
 nD3D9Mesh::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(0 == this->vertexBuffer);
     n_assert(0 == this->indexBuffer);
 
@@ -78,7 +78,7 @@ nD3D9Mesh::LoadResource()
 void
 nD3D9Mesh::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
 
     nMesh2::UnloadResource();
 
@@ -111,7 +111,41 @@ nD3D9Mesh::UnloadResource()
         this->privIndexBuffer = 0;
     }
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device is lost. We only need to
+    react if our vertex and index buffers are not in D3D's managed pool.
+    In this case, we need to unload ourselves...
+*/
+void
+nD3D9Mesh::OnLost()
+{
+    if (WriteOnly & this->usage)
+    {
+        this->UnloadResource();
+        this->SetState(Lost);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the d3d device has been restored. If our
+    buffers are in the D3D's default pool, we need to restore ourselves
+    as well, and we need to set our state to empty, because the buffers contain
+    no data.
+*/
+void
+nD3D9Mesh::OnRestored()
+{
+    if (WriteOnly & this->usage)
+    {
+        this->SetState(Unloaded);
+        this->LoadResource();
+        this->SetState(Empty);
+    }
 }
 
 //------------------------------------------------------------------------------
