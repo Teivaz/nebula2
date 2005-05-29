@@ -228,7 +228,7 @@ nSessionServer::Trigger()
                     }
                 }
             } 
-            while (curMsg = recvMsg.GetNextString());
+            while ((curMsg = recvMsg.GetNextString()));
         }
     }
 
@@ -336,7 +336,6 @@ nSessionServer::Start()
     for (clientIndex = 0; clientIndex < numClients; clientIndex++)
     {
         nSessionClientContext* clientContext = this->GetClientAt(clientIndex);
-        int ipcClientId = clientContext->GetIpcClientId();
         this->ipcServer->Send(clientContext->GetIpcClientId(), startMsg);
     }
 
