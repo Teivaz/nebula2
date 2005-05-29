@@ -193,10 +193,15 @@ beginmodule nlodnode
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nrenderpath
-    setmodtype cpplib    
     setdir renderpath
-    setfiles { nrenderpath2 nrppass nrpphase nrpsequence nrprendertarget nrpxmlparser }
-    setheaders { nrenderpath2 nrppass nrpphase nrprendertarget nrpsequence nrpxmlparser }
+    setfiles {
+        nrenderpath2 nrppass nrpphase nrpsequence
+        nrprendertarget nrpxmlparser
+    }
+    setheaders {
+        nrenderpath2 nrppass nrpphase nrprendertarget
+        nrpsequence nrpxmlparser
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nrendercontext
