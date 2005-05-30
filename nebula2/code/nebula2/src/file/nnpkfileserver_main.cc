@@ -8,6 +8,7 @@
 #include "file/nnpktocentry.h"
 #include "file/nnpkfile.h"
 #include "file/nnpkdirectory.h"
+#include "tools/nnpkbuilder.h"
 
 nNebulaScriptClass(nNpkFileServer, "nfileserver2");
 
@@ -36,18 +37,22 @@ nNpkFileServer::~nNpkFileServer()
 /**
 */
 nFile*
-nNpkFileServer::NewFileObject()
+nNpkFileServer::NewFileObject() const
 {
-    return n_new(nNpkFile);
+    nNpkFile* result = n_new(nNpkFile);
+    n_assert(result != 0);
+    return result;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 nDirectory*
-nNpkFileServer::NewDirectoryObject()
+nNpkFileServer::NewDirectoryObject() const
 {
-    return n_new(nNpkDirectory);
+    nNpkDirectory* result = n_new(nNpkDirectory);
+    n_assert(result != 0);
+    return result;
 }
 
 //------------------------------------------------------------------------------
