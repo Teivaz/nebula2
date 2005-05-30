@@ -67,9 +67,9 @@ public:
     virtual ~nNpkFileServer();
 
     /// create new nNpkFile object
-    virtual nFile* NewFileObject();
+    virtual nFile* NewFileObject() const;
     /// create new nNpkDirectory object
-    virtual nDirectory* NewDirectoryObject();
+    virtual nDirectory* NewDirectoryObject() const;
     /// parse one npk file
     virtual bool ParseNpkFile(const nString& path);
     /// parse the given directory for npk files
