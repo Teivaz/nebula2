@@ -69,6 +69,28 @@ nNpkFile::Open(const char* filename, const char* accessMode)
 
 //------------------------------------------------------------------------------
 /**
+*/
+bool
+nNpkFile::Exists(const char* filename) const
+{
+    if (nFile::Exists(filename))
+    {
+        return true;
+    }
+
+    // not a conventional file, check if the npk file exists
+    nString absPath = nFileServer2::Instance()->ManglePath(filename);
+
+    nNpkTocEntry* tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath.Get());
+    if (tocEntry && (nNpkTocEntry::FILE == tocEntry->GetType()))
+    {
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     Close the file. If it is a npk file, this is basically a no-op.
 */
 void
@@ -163,7 +185,7 @@ nNpkFile::Write(const void* buffer, int numBytes)
     Return current file position.
 */
 int
-nNpkFile::Tell()
+nNpkFile::Tell() const
 {
     n_assert(this->IsOpen());
 
@@ -260,7 +282,7 @@ nNpkFile::GetSize() const
     Returns true if file pointer is at end of file.
 */
 bool
-nNpkFile::Eof()
+nNpkFile::Eof() const
 {
     n_assert(this->IsOpen());
     if (!this->isNpkFile)
