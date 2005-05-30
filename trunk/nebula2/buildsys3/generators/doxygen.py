@@ -373,6 +373,8 @@ class doxygen:
                                 'doc', 'nebula2') + ' \\\n'
         autoCfg += indent + os.path.join(os.pardir, os.pardir, 
                                          'doc', 'autodoc') + ' \\\n'
+        autoCfg += indent + os.path.join(os.pardir, os.pardir, 'data', 
+                                         'shaders', 'lib') + ' \\\n'
         # the rest
         numDirs = len(self.doxygenInputDirs)
         for i in range(numDirs):
