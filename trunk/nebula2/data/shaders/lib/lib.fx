@@ -7,7 +7,7 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 /**
-    @defgroup NebulaShaderLib Nebula Shader Libarary
+    @defgroup NebulaShaderLib Nebula Shader Library
     @ingroup NebulaGraphicsSystem
 
     Nebula2 shader library functions.
