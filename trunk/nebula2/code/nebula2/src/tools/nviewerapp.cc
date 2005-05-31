@@ -285,6 +285,33 @@ nViewerApp::Run()
             {
                 this->refConServer->Toggle();
             }
+
+            // screenshot
+            if (this->refInputServer->GetButton("screenshot"))
+            {
+                nString filename;
+                const char* sceneFile = this->GetSceneFile();
+                if (sceneFile)
+                {
+                    filename = sceneFile;
+                    filename.StripExtension();
+                }
+                else
+                {
+                    filename = "screenshot";
+                }
+
+                int screenshotID = 0;
+                char buf[N_MAXPATH];
+                do
+                {
+                    snprintf(buf, sizeof(buf), "%s%03d.bmp", filename.Get(), screenshotID++);
+                } 
+                while (nFileServer2::Instance()->FileExists(buf));
+
+                this->refGfxServer->SaveScreenshot(buf);
+            }
+
             // update view and get the actual viewMatrix
             this->camControl.Update();
             this->viewMatrix = this->camControl.GetViewMatrix();
@@ -315,8 +342,6 @@ nViewerApp::Run()
                 this->refSceneServer->EndScene();
                 this->refSceneServer->RenderScene();             // renders the 3d scene
                 this->OnFrameRendered();
-                this->refGuiServer->Render();
-                this->refConServer->Render();                    // do additional rendering before presenting the frame
                 this->refSceneServer->PresentScene();            // present the frame
             }
         }
