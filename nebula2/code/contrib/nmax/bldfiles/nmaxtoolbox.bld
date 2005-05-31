@@ -56,6 +56,7 @@ begintarget nmaxtoolbox
         ntoollib
         microtcl 
         nnebula 
+        ngui
     }
 endtarget
 #-------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ beginworkspace nmaxtoolbox
       microtcl
       npythonserver
       nlua
+      ngui
    }
 endworkspace
 #-------------------------------------------------------------------------------
