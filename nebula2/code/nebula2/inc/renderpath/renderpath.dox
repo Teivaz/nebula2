@@ -1,5 +1,5 @@
 /**
-    @defgroup NebulaRenderPathSystem RenderPath System
+    @defgroup NebulaRenderPathSystem Render Path System
     @ingroup NebulaGraphicsSystem
 
       - @ref NebulaRenderPathOverview
