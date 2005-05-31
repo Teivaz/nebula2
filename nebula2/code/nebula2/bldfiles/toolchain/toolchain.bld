@@ -6,9 +6,14 @@
 #      nmeshtool
 #      nmeshbuilder
 #      nanimbuilder
+#      nresourcecompiler
+#      napplauncher
+#      nviewerapp
+#      nmayacamcontrol
 #  Targets:
 #      ntoollib
 #      nmeshtool
+#      nnpktool
 #===============================================================================
 
 #===============================================================================
@@ -61,7 +66,7 @@ endmodule
 beginmodule nviewerapp
     setdir tools
     setfiles { nviewerapp }
-    setheaders { nviewerapp nmayacamcontrol }
+    setheaders { nviewerapp }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmayacamcontrol
