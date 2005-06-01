@@ -38,7 +38,7 @@ nLightNode::HasLight() const
     influenced by this light.
 */
 bool
-nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)
+nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* /*renderContext*/, const matrix44& lightTransform)
 {
     n_assert(sceneServer);
 

@@ -146,7 +146,7 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
     rendering!
 */
 bool
-nParticleShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+nParticleShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 {
     return true;
 }

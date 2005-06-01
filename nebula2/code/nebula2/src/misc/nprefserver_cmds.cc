@@ -167,7 +167,7 @@ n_open(void* slf, nCmd* cmd)
     Closes the preferences server.
 */
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nPrefServer* self = (nPrefServer*) slf;
     self->Close();

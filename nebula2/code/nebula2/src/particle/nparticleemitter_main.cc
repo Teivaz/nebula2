@@ -243,7 +243,6 @@ void nParticleEmitter::Render(nTime curTime)
         return;
     }
 
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
     #ifdef __NEBULA_STATS__
     int numDrawnParticles  = particleServer->numDrawnParticles->GetI();
     int numDrawnPrimitives = particleServer->numDrawnPrimitives->GetI();

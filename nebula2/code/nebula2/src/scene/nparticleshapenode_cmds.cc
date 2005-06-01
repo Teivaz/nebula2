@@ -1007,7 +1007,7 @@ n_getparticlevelocityfactor(void* slf, nCmd* cmd)
     the reset to have any visible effect.
 */
 static void
-n_reset(void* slf, nCmd* cmd)
+n_reset(void* slf, nCmd* /*cmd*/)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     self->Reset();

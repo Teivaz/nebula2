@@ -197,7 +197,7 @@ nMaterialNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
     shader parameters which may change from instance to instance.
 */
 bool
-nMaterialNode::RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nMaterialNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     nShader2* shader = nGfxServer2::Instance()->GetShader();
     nGfxServer2* gfxServer = nGfxServer2::Instance();
