@@ -430,7 +430,6 @@ bool nMaxScene::Postprocess()
             // check the mesh for geometry error.
             nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
 
-            //FIXME: commented out until applying scaling to bones.
             // do geometry scaling.
             float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
             if (geomScale != 0.0f)
