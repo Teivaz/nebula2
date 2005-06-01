@@ -155,7 +155,7 @@ nBlendShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
     actually rendered.
 */
 bool
-nBlendShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+nBlendShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
@@ -176,7 +176,7 @@ nBlendShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
-nBlendShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
+nBlendShapeNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* renderContext)
 {
     // invoke blend shape animators
     this->InvokeAnimators(nAnimator::BlendShape, renderContext);

@@ -58,7 +58,7 @@ nMRTSceneServer::RenderShadow()
         if (numLights > 0)
         {
             // begin shadow scene
-            if (this->refShadowServer->BeginScene()) // is shadow enabled?
+            if (shadowServer->BeginScene()) // is shadow enabled?
             {
                 //sort shadow nodes by shadow caster geometry
                 // TODO
@@ -76,7 +76,7 @@ nMRTSceneServer::RenderShadow()
                     vector3 lightPosition(gfxServer->GetTransform(nGfxServer2::Light).pos_component());
                     
                     // begin light
-                    this->refShadowServer->BeginLight(lightNode->GetType(), lightPosition);
+                    shadowServer->BeginLight(lightNode->GetType(), lightPosition);
                 
                     // for shapes in shadow array
                     int numShapes = this->shadowArray.Size();
@@ -91,10 +91,10 @@ nMRTSceneServer::RenderShadow()
                         shadowNode->RenderShadow(this, shapeGroup.renderContext, shapeGroup.modelTransform);
                         this->dbgNumInstances->SetI(this->dbgNumInstances->GetI() + 1);
                     }
-                    this->refShadowServer->EndLight();
+                    shadowServer->EndLight();
                 }            
                 // end scene (render shadow plane)
-                this->refShadowServer->EndScene();
+                shadowServer->EndScene();
             }
         }
         gfxServer->EndScene();
@@ -108,7 +108,6 @@ nMRTSceneServer::RenderShadow()
 bool
 nMRTSceneServer::BeginScene(const matrix44& invView)
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nSceneServer::BeginScene(invView);
     this->dbgNumInstanceGroups->SetI(0);
     this->dbgNumInstances->SetI(0);

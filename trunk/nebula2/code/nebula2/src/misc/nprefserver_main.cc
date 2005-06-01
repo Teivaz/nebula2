@@ -196,7 +196,7 @@ nPrefServer::ReadVector3(const nString& key)
 /**
 */
 bool
-nPrefServer::WriteGeneric(const nString& key, const nString& value)
+nPrefServer::WriteGeneric(const nString& /*key*/, const nString& /*value*/)
 {
     // NOTE: overwrite this method in a subclass!
     return false;
@@ -206,7 +206,7 @@ nPrefServer::WriteGeneric(const nString& key, const nString& value)
 /**
 */
 nString
-nPrefServer::ReadGeneric(const nString& key)
+nPrefServer::ReadGeneric(const nString& /*key*/)
 {
     // NOTE: overwrite this method in a subclass!
     nString emptyString;
@@ -217,7 +217,7 @@ nPrefServer::ReadGeneric(const nString& key)
 /**
 */
 bool
-nPrefServer::KeyExists(const nString& key)
+nPrefServer::KeyExists(const nString& /*key*/)
 {
     // NOTE: overwrite this method in a subclass!
     return false;

@@ -183,7 +183,7 @@ nGfxServer2::GetDisplayMode() const
     @param title        the new window title
 */
 void
-nGfxServer2::SetWindowTitle(const char* title)
+nGfxServer2::SetWindowTitle(const char* /*title*/)
 {
     n_error("nGfxServer2: Pure virtual function called!");
 }
@@ -795,7 +795,7 @@ nGfxServer2::BeginLines()
     @endcode
 */
 void
-nGfxServer2::DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color)
+nGfxServer2::DrawLines3d(const vector3* /*vertexList*/, int /*numVertices*/, const vector4& /*color*/)
 {
     // empty    
 }
@@ -805,7 +805,7 @@ nGfxServer2::DrawLines3d(const vector3* vertexList, int numVertices, const vecto
     Draw a 2d lines in screen space.
 */
 void
-nGfxServer2::DrawLines2d(const vector2* vertexList, int numVertices,const vector4& color)
+nGfxServer2::DrawLines2d(const vector2* /*vertexList*/, int /*numVertices*/, const vector4& /*color*/)
 {
     // empty
 }
@@ -837,7 +837,7 @@ nGfxServer2::BeginShapes()
     Render a shape.
 */
 void
-nGfxServer2::DrawShape(ShapeType type, const matrix44& model, const vector4& color)
+nGfxServer2::DrawShape(ShapeType /*type*/, const matrix44& /*model*/, const vector4& /*color*/)
 {
     n_assert(this->inBeginShapes);
 }
@@ -1007,7 +1007,7 @@ nGfxServer2::ComputeWorldMouseRay(const vector2& mousePos, float length)
     - 24-Nov-04    kims    created
 */
 void
-nGfxServer2::SetSkipMsgLoop(bool skip)
+nGfxServer2::SetSkipMsgLoop(bool /*skip*/)
 {
     // empty.
 }

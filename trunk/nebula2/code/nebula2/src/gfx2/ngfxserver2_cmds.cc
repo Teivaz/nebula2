@@ -403,7 +403,7 @@ void n_getcontrast(void* slf, nCmd* cmd)
     23-Aug-04    kims    created
 */
 static void
-n_adjustgamma(void* slf, nCmd* cmd)
+n_adjustgamma(void* slf, nCmd* /*cmd*/)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     self->AdjustGamma();
@@ -423,7 +423,7 @@ n_adjustgamma(void* slf, nCmd* cmd)
     23-Aug-04    kims    created
 */
 static void
-n_restoregamma(void* slf, nCmd* cmd)
+n_restoregamma(void* slf, nCmd* /*cmd*/)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     self->RestoreGamma();
