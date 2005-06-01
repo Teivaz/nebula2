@@ -2,8 +2,8 @@
 //  nguicoloradjustwindow_main.cc
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "gui/nGuiColorAdjustWindow.h"
-#include "gui/nGuiColorAdjust.h"
+#include "gui/nguicoloradjustwindow.h"
+#include "gui/nguicoloradjust.h"
 
 nNebulaClass(nGuiColorAdjustWindow, "nguiclientwindow");
 
