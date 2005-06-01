@@ -67,7 +67,7 @@ static void
 n_isenabled(void* slf, nCmd* cmd)
 {
     nParticleServer* self = (nParticleServer*) slf;
-    cmd->Out()->SetB(cmd->In()->GetB());
+    cmd->Out()->SetB(self->IsEnabled());
 }
 
 //------------------------------------------------------------------------------
