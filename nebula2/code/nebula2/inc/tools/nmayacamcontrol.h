@@ -357,3 +357,4 @@ nMayaCamControl::SetCenterOfInterest(vector3 &coi)
 }
 
 #endif 
+
