@@ -160,7 +160,7 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     }
     this->arguments += " ";
 
-    iniFile.ReadString("-sceneserver", sceneServer, "nstdsceneserver");
+    iniFile.ReadString("-sceneserver", sceneServer, "nmrtsceneserver");
     this->arguments += "-sceneserver ";
     this->arguments += sceneServer;
     this->arguments += " ";
