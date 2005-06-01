@@ -30,6 +30,9 @@ nMaxUVAnimator::~nMaxUVAnimator()
 
 //-----------------------------------------------------------------------------
 /**
+    Export UV animation.
+
+    - 31-May-05    kims    Fixed UV tiling bug to have 1.0 for its default value (not 0.0f)
 */
 nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
 {
@@ -141,7 +144,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         }
 
         // add UV Scales
-        key = vector2();
+        key = vector2(1.0f, 1.0f);
         time = 0.0f;
         u = 0;
         v = 0;
@@ -190,38 +193,31 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         v = 0;
         while((u < uAngleKeys.Size()) || (v < vAngleKeys.Size()))
         {
-            if((u < uAngleKeys.Size()) && (v < vAngleKeys.Size()))
-            {
-                float uTime = uAngleKeys[u].time;
-                float vTime = vAngleKeys[v].time;
+            float uTime = 10000000000.0f;
+            float vTime = 10000000000.0f;
 
-                if(uTime <= vTime)
-                {
-                    key.x = uAngleKeys[u].fval;
-                    ++u;
-                }
-
-                if(vTime <= uTime)
-                {
-                    key.y = vAngleKeys[v].fval;
-                    ++v;
-                }
-
-                time = n_min(uTime, vTime);
-            }
-            else 
             if(u < uAngleKeys.Size())
             {
+                uTime = uAngleKeys[u].time;
+            }
+            if(v < vAngleKeys.Size())
+            {
+                vTime = vAngleKeys[v].time;
+            }
+
+            if((uTime <= vTime))
+            {
                 key.x = uAngleKeys[u].fval;
-                time = uAngleKeys[u].time;
                 ++u;
             }
-            else // (v < vAngleKeys.Size())
+
+            if((vTime <= uTime))
             {
                 key.y = vAngleKeys[v].fval;
-                time = vAngleKeys[v].time;
                 ++v;
             }
+
+            time = n_min(uTime, vTime);
             createdAnimator->AddEulerKey(mapChannel, time, key);
         }
 
