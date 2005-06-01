@@ -20,7 +20,7 @@ public:
     /// constructor
     nAppCamera();
     /// destructor
-    ~nAppCamera();
+    virtual ~nAppCamera();
     /// access to the application camera's transform object
     transform44& Transform();
     /// return current view matrix
