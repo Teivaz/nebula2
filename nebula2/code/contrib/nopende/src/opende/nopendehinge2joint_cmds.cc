@@ -35,7 +35,7 @@ n_initcmds(nClass* clazz)
     clazz->AddCmd( "fff_GetAnchor2_v",      'GAN2', n_GetAnchor2 );
     clazz->AddCmd( "v_SetAxis1_fff",        'SAX1', n_SetAxis1 );
     clazz->AddCmd( "fff_GetAxis1_v",        'GAX1', n_GetAxis1 );
-    clazz->AddCmd( "v_SetAxis2_fff",        'SAX2', n_GetAxis2 );
+    clazz->AddCmd( "v_SetAxis2_fff",        'SAX2', n_SetAxis2 );
     clazz->AddCmd( "fff_GetAxis2_v",        'GAX2', n_GetAxis2 );
     clazz->AddCmd( "f_GetAngle1_v",         'GA1_', n_GetAngle1 );
     clazz->AddCmd( "f_GetAngle1Rate_v",     'GA1R', n_GetAngle1Rate );
