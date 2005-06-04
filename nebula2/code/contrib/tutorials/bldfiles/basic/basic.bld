@@ -43,6 +43,7 @@ begintarget basic02
         nnebula
         ndirect3d9
         microtcl
+        ngui
     }
 endtarget
 #-------------------------------------------------------------------------------
