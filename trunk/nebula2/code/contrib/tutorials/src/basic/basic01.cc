@@ -16,7 +16,7 @@ main(int /*argc*/, const char** /*argv*/)
 {
     nKernelServer* kernelServer = n_new (nKernelServer());
 
-    n_printf("Goodbye Cruel World");
+    n_printf("Goodbye Cruel World\n");
 
     n_delete (kernelServer);
     return 0;
