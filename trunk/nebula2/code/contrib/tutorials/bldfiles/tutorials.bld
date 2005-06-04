@@ -16,5 +16,6 @@ beginworkspace tutorials
         npythonserver
         nlua
         nnetwork
+        ngui
     }
 endworkspace
