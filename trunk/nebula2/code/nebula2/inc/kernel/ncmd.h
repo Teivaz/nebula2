@@ -165,11 +165,7 @@ void
 nCmd::CopyInArgsFrom(va_list marker)
 {
     va_list markerCopy;
-#ifdef __LINUX__
     va_copy(markerCopy, marker);
-#else
-    markerCopy = marker;
-#endif
     for(int i = 0;i < this->GetNumInArgs();i++)
     {
         nArg * arg = this->In();
