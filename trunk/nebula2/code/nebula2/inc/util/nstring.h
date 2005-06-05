@@ -145,6 +145,8 @@ public:
     /// format string printf-style
     void __cdecl Format(const char* fmtString, ...)
             __attribute__((format(printf,2,3)));
+    /// format string printf-style, taking a va_list
+    void FormatWithArgs(const char* fmtString, va_list args);
 
 protected:
     /// copy contents
@@ -1298,8 +1300,22 @@ void __cdecl
 nString::Format(const char* fmtString, ...)
 {
     va_list argList;
-    // First calculate the required length
     va_start(argList, fmtString);
+    this->FormatWithArgs(fmtString, argList);
+    va_end(argList);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::FormatWithArgs(const char* fmtString, va_list args)
+{
+    va_list argList;
+
+    // First calculate the required length
+    va_copy(argList, args);
     size_t requiredLength;
 #if defined(__WIN32__) && defined(_MSC_VER)
     #if _MSC_VER < 1300
@@ -1322,9 +1338,7 @@ nString::Format(const char* fmtString, ...)
     char* buf = (char*)alloca(requiredLength);
 
     // Now do the formatting
-    va_start(argList, fmtString);
-    vsnprintf(buf, requiredLength, fmtString, argList);
-    va_end(argList);
+    vsnprintf(buf, requiredLength, fmtString, args);
     this->Set(buf);
 }
 
