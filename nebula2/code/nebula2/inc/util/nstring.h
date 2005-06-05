@@ -163,8 +163,15 @@ protected:
         LOCALSTRINGSIZE = 14,
     };
     char* string;
-    char localString[LOCALSTRINGSIZE];
-    ushort strLen;
+    union
+    {
+        struct
+        {
+            char localString[LOCALSTRINGSIZE];
+            ushort localStrLen;
+        };
+        uint strLen;
+    };
 };
 
 //------------------------------------------------------------------------------
@@ -173,9 +180,9 @@ protected:
 inline
 nString::nString() :
     string(0),
-    strLen(0)
+    strLen(0),
+    localStrLen(0)
 {
-    this->localString[0] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -191,6 +198,7 @@ nString::Delete()
         this->string = 0;
     }
     this->localString[0] = 0;
+    this->localStrLen = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -212,19 +220,19 @@ nString::Set(const char* str, int length)
     this->Delete();
     if (str)
     {
-        this->strLen = length;
         char* ptr = this->localString;
-        if (strLen >= LOCALSTRINGSIZE)
+        if (length >= LOCALSTRINGSIZE)
         {
-            ptr = (char*) n_malloc(strLen + 1);
+            ptr = (char*) n_malloc(length + 1);
             this->string = ptr;
+            this->strLen = length;
         }
         else
         {
             ptr = this->localString;
+            this->localStrLen = (ushort)length;
         }
-        int i;
-        for (i = 0; i < strLen; i++)
+        for (int i = 0; i < length; i++)
         {
             *ptr++ = *str++;
         }
@@ -292,9 +300,9 @@ nString::Copy(const nString& src)
 inline
 nString::nString(const char* str) :
     string(0),
-    strLen(0)
+    strLen(0),
+    localStrLen(0)
 {
-    this->localString[0] = 0;
     this->Set(str);
 }
 
@@ -304,9 +312,9 @@ nString::nString(const char* str) :
 inline
 nString::nString(const nString& rhs) :
     string(0),
-    strLen(0)
+    strLen(0),
+    localStrLen(0)
 {
-    this->localString[0] = 0;
     this->Copy(rhs);
 }
 
@@ -316,7 +324,8 @@ nString::nString(const nString& rhs) :
 inline
 nString::nString(int intVal) :
     string(0),
-    strLen(0)
+    strLen(0),
+    localStrLen(0)
 {
     this->SetInt(intVal);
 }
@@ -327,7 +336,8 @@ nString::nString(int intVal) :
 inline
 nString::nString(float floatVal) :
     string(0),
-    strLen(0)
+    strLen(0),
+    localStrLen(0)
 {
     this->SetFloat(floatVal);
 }
@@ -389,8 +399,8 @@ nString::AppendRange(const char* str, uint numChars)
     n_assert(str);
     if (numChars > 0)
     {
-        ushort rlen = numChars;
-        ushort tlen = this->strLen + rlen;
+        uint rlen = numChars;
+        uint tlen = this->Length() + rlen;
         if (this->string)
         {
             char* ptr = (char*) n_malloc(tlen + 1);
@@ -409,12 +419,13 @@ nString::AppendRange(const char* str, uint numChars)
                 strncat(ptr, str, numChars);
                 this->localString[0] = 0;
                 this->string = ptr;
+                this->strLen = tlen;
             }
             else
             {
                 strncat(this->localString, str, numChars);
+                this->localStrLen = (ushort)tlen;
             }
-            this->strLen = tlen;
         }
         else
         {
@@ -431,7 +442,7 @@ void
 nString::Append(const char* str)
 {
     n_assert(str);
-    ushort rlen = strlen(str);
+    uint rlen = strlen(str);
     this->AppendRange(str, rlen);
 }
 
@@ -519,7 +530,7 @@ inline
 const char
 nString::operator[](int i) const
 {
-    n_assert((0 <= i) && (i <= strLen));
+    n_assert((0 <= i) && (i <= this->Length()));
     if (this->string != 0)
     {
         return this->string[i];
@@ -538,7 +549,7 @@ inline
 char&
 nString::operator[](int i)
 {
-    n_assert((0 <= i) && (i <= strLen));
+    n_assert((0 <= i) && (i <= this->Length()));
     if (this->string != 0)
     {
         return this->string[i];
@@ -556,7 +567,14 @@ inline
 int
 nString::Length() const
 {
-    return this->strLen;
+    if (this->string != 0)
+    {
+        return this->strLen;
+    }
+    else
+    {
+        return this->localStrLen;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -717,8 +735,8 @@ inline
 nString
 nString::ExtractRange(int from, int numChars) const
 {
-    n_assert(from <= this->strLen);
-    n_assert((from + numChars) <= this->strLen);
+    n_assert(from <= this->Length());
+    n_assert((from + numChars) <= this->Length());
     const char* str = this->Get();
     nString newString;
     newString.Set(&(str[from]), numChars);
@@ -740,7 +758,14 @@ nString::Strip(const char* charSet)
     if (ptr)
     {
         *ptr = 0;
-        this->strLen = strlen( str );
+        if (this->string != 0)
+        {
+            this->strLen = strlen(str);
+        }
+        else
+        {
+            this->localStrLen = strlen(str);
+        }
     }
 }
 
@@ -812,9 +837,9 @@ inline
 void
 nString::StripTrailingSlash()
 {
-    if (this->strLen > 0)
+    if (this->Length() > 0)
     {
-        int pos = strLen - 1;
+        int pos = Length() - 1;
         char* str = (char*) this->Get();
         if ((str[pos] == '/') || (str[pos] == '\\'))
         {
@@ -841,7 +866,7 @@ nString::TrimLeft(const char* charSet) const
     int charSetLen = strlen(charSet);
     int thisIndex = 0;
     bool stopped = false;
-    while (!stopped && (thisIndex < this->strLen))
+    while (!stopped && (thisIndex < this->Length()))
     {
         int charSetIndex;
         bool match = false;
@@ -885,9 +910,9 @@ nString::TrimRight(const char* charSet) const
     }
 
     int charSetLen = strlen(charSet);
-    int thisIndex = this->strLen - 1;
+    int thisIndex = this->Length() - 1;
     bool stopped = false;
-    while (!stopped && (thisIndex < this->strLen))
+    while (!stopped && (thisIndex < this->Length()))
     {
         int charSetIndex;
         bool match = false;
@@ -1086,7 +1111,7 @@ nString::ConvertBackslashes()
 {
     char* ptr = (char*) this->Get();
     int i;
-    for (i = 0; i <= this->strLen; i++)
+    for (i = 0; i <= this->Length(); i++)
     {
         if (ptr[i] == '\\')
         {
