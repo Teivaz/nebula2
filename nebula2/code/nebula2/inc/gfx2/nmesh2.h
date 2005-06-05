@@ -197,6 +197,8 @@ public:
     int GetEdgeBufferByteSize() const;
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
+    /// Create uninitialzed buffers
+    bool CreateEmpty();
 
 protected:
     /// load mesh resource
