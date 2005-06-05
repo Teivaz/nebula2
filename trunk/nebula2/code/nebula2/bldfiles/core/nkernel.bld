@@ -76,7 +76,7 @@ endmodule
 beginmodule lokiheaders
     setdir "loki"
     setheaders {
-        TypeManip.h Typelist.h static_check.h
+        TypeManip Typelist static_check
     }
 endmodule
 #===============================================================================
