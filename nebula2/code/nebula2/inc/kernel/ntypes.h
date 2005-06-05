@@ -85,6 +85,10 @@ typedef double nTime;
 #define vsnprintf _vsnprintf
 #endif
 
+#ifdef _MSC_VER
+#define va_copy(d, s) d = s
+#endif
+
 // maps unsigned 8 bits/channel to D3DCOLOR
 #define N_ARGB(a,r,g,b) ((uint)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 #define N_RGBA(r,g,b,a) N_ARGB(a,r,g,b)
