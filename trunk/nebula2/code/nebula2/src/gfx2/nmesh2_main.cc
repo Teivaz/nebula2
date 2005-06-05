@@ -119,30 +119,7 @@ nMesh2::LoadResource()
     if (filename.IsEmpty())
     {
         // no filename, just create empty vertex and/or index buffers        
-        if (this->GetNumVertices() > 0)
-        {
-            int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
-            this->SetVertexBufferByteSize(verticesByteSize);
-            this->CreateVertexBuffer();
-        }
-
-        if (this->GetNumIndices() > 0)
-        {
-            int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
-            this->SetIndexBufferByteSize(indicesByteSize);
-            this->CreateIndexBuffer();
-        }
-        if (this->GetNumEdges() > 0)
-        {
-            int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
-            this->SetEdgeBufferByteSize(edgesByteSize);
-            this->CreateEdgeBuffer();
-        }        
-
-        //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName());
-
-        this->SetState(Empty);
-        return true;
+        return this->CreateEmpty();
     }
     else if (this->refResourceLoader.isvalid())
     {
@@ -486,3 +463,41 @@ nMesh2::ConvertUsageStringToFlags(const char* usageFlagsString)
     return usage;
 }
 
+//------------------------------------------------------------------------------
+/**
+    This method is called to create uninitialized buffers, etc., for a mesh 
+    that is not to be loaded from a file. It can also be called by custom 
+    resource loaders, to do the basic preinitialization.
+
+    - 06-Jun-05    kims    readded. nmap calls this method.
+*/
+bool
+nMesh2::CreateEmpty()
+{
+    if (this->GetNumVertices() > 0)
+    {
+        int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
+        this->SetVertexBufferByteSize(verticesByteSize);
+        this->CreateVertexBuffer();
+    }
+
+    if (this->GetNumIndices() > 0)
+    {
+        int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
+        this->SetIndexBufferByteSize(indicesByteSize);
+        this->CreateIndexBuffer();
+    }
+
+    // load edges ?
+    if (this->GetNumEdges() > 0)
+    {
+        int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
+        this->SetEdgeBufferByteSize(edgesByteSize);
+        this->CreateEdgeBuffer();
+    }
+
+    //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName()); 
+
+    this->SetState(Empty);
+    return true;
+}
