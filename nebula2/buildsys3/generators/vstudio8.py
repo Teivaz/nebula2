@@ -175,6 +175,10 @@ class vstudio8:
         self.libDirStr = ''
         
     #--------------------------------------------------------------------------
+    def HasSettings(self):
+        return False
+        
+    #--------------------------------------------------------------------------
     def Generate(self, workspaceNames):
         defaultLocation = os.path.join('build', 'vstudio8')
         

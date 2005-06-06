@@ -9,6 +9,7 @@
 import wx
 import wx.lib.newevent
 import string, thread
+from doxygengeneratorsettings import DoxygenGeneratorSettingsDialog
 
 STR_WORKSPACE_LIST_LOADING = """\
 Please wait...
@@ -35,6 +36,9 @@ Built %(numOfWorkspacesBuilt)i workspace(s) out of %(totalNumOfWorkspaces)i.
 (DestroyProgressDialogEvent, EVT_DESTROY_PROGRESS_DLG) = wx.lib.newevent.NewEvent()
 
 (DisplaySummaryDialogEvent, EVT_DISPLAY_SUMMARY_DLG) = wx.lib.newevent.NewEvent()
+
+# specify a settings dialogs for generators that need them
+GENERATOR_SETTINGS_DLG = { 'doxygen' : DoxygenGeneratorSettingsDialog }
 
 #--------------------------------------------------------------------------
 class WorkspacesPanel(wx.Panel):
@@ -76,6 +80,10 @@ class WorkspacesPanel(wx.Panel):
                                               generatorDescBoxVal, 
                                               (0, 0), (300, 40),
                                               wx.ST_NO_AUTORESIZE)
+        self.generatorSettingsBtn = wx.Button(self, -1, 'Settings')
+        self.Bind(wx.EVT_BUTTON, self.OnGeneratorSettingsBtn, 
+                  self.generatorSettingsBtn)
+        self.generatorSettingsBtn.Disable()
         
         # Workspace controls
         self.workspacesStaticBox = wx.StaticBox(self, -1, 
@@ -127,10 +135,13 @@ class WorkspacesPanel(wx.Panel):
         self.Bind(EVT_WORKSPACE_LIST_LOADED, self.OnWorkspaceListLoaded)
         
         # Layout the controls...
-        # generators area sizer
-        sizerB = wx.StaticBoxSizer(self.generatorStaticBox, wx.HORIZONTAL)
-        sizerB.Add(self.generatorComboBox, 0, wx.ALL, 4)
-        sizerB.Add(self.generatorDescBox, 1, wx.EXPAND|wx.ALL, 4)
+        # generators area sizers
+        sizerG = wx.BoxSizer(wx.HORIZONTAL)
+        sizerG.Add(self.generatorComboBox, 0, wx.RIGHT, 4)
+        sizerG.Add(self.generatorDescBox, 1, wx.EXPAND|wx.LEFT, 4)
+        sizerB = wx.StaticBoxSizer(self.generatorStaticBox, wx.VERTICAL)
+        sizerB.Add(sizerG, 0, wx.TOP|wx.LEFT|wx.RIGHT, 4)
+        sizerB.Add(self.generatorSettingsBtn, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM, 4)
         # workspaces area sizers
         sizerE = wx.BoxSizer(wx.HORIZONTAL)
         sizerE.Add(self.selectAllWorkspacesBtn, 0, wx.ALIGN_CENTER|wx.ALL, 4)
@@ -155,8 +166,23 @@ class WorkspacesPanel(wx.Panel):
     #--------------------------------------------------------------------------
     # Called when a generator is selected from the generator combo-box.
     def OnSelectGenerator(self, evt):
-        self.generatorDescBox.SetLabel(
-            self.generatorDesc[self.generatorComboBox.GetValue()])
+        generatorName = self.generatorComboBox.GetValue()
+        self.generatorDescBox.SetLabel(self.generatorDesc[generatorName])
+        generator = self.buildSys.generatorFactory.GetGenerator(generatorName)
+        if generator.HasSettings():
+            self.generatorSettingsBtn.Enable(True)
+        else:
+            self.generatorSettingsBtn.Disable()
+
+    #--------------------------------------------------------------------------
+    # Called when the generator Settings button is pressed.
+    def OnGeneratorSettingsBtn(self, evt):
+        generatorName = self.generatorComboBox.GetValue()
+        generator = self.buildSys.generatorFactory.GetGenerator(generatorName)
+        dlg = GENERATOR_SETTINGS_DLG[generatorName](self, generator)
+        dlg.CenterOnParent()
+        dlg.ShowModal()
+        dlg.Destroy()
 
     #--------------------------------------------------------------------------
     # Called when a workspace is selected in the workspace check-list-box.

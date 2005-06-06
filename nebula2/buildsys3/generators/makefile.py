@@ -29,6 +29,10 @@ class makefile:
         self.workspacePath = ''
     
     #--------------------------------------------------------------------------
+    def HasSettings(self):
+        return False
+    
+    #--------------------------------------------------------------------------
     # Gets basenames of all module sources     
     def getModuleSources(self, module):
         retSources = ""
