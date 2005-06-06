@@ -433,6 +433,9 @@ class doxygen:
                                          'doc', 'autodoc') + ' \\\n'
         autoCfg += indent + os.path.join(os.pardir, os.pardir, 'data', 
                                          'shaders', 'lib') + ' \\\n'
+        # ok so this isn't a directory
+        autoCfg += indent + os.path.join(os.pardir, 'contrib', 
+                                         'contrib.dox') + ' \\\n'
         # the rest
         numDirs = len(self.doxygenInputDirs)
         for i in range(numDirs):
