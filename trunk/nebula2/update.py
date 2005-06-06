@@ -61,8 +61,18 @@ workspaces
 """
 
 #--------------------------------------------------------------------------
+# Return the filename of the build config that should be used by the build
+# system. build.cfg.py should not be modified by the end user, any
+# user customization should go into user.build.cfg.py
+def GetStandardBuildCfgFileName():
+    if os.path.isfile(os.path.join(updateDir, 'user.build.cfg.py')):
+        return 'user.build.cfg.py'
+    else:
+        return 'build.cfg.py'
+
+#--------------------------------------------------------------------------
 def PrintWorkspaceList():
-    buildSys = BuildSys(updateDir, 'build.cfg.py')
+    buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
     if buildSys.Prepare():
         numWorkspaces = len(buildSys.workspaces)
         if numWorkspaces > 0:
@@ -83,7 +93,7 @@ def PrintWorkspaceList():
 
 #--------------------------------------------------------------------------
 def PrintGeneratorList():
-    buildSys = BuildSys(updateDir, 'build.cfg.py')
+    buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
     generators = buildSys.GetGenerators()
     if len(generators) > 0:
         print '************************\n' \
@@ -97,7 +107,7 @@ def PrintGeneratorList():
 
 #--------------------------------------------------------------------------
 def Build(generatorName, workspaces):
-    buildSys = BuildSys(updateDir, 'build.cfg.py')
+    buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
     if buildSys.HasGenerator(generatorName):
         if buildSys.Prepare():
             buildSys.logger.info('Validation Successful!')
@@ -127,7 +137,7 @@ def LaunchGUI(generatorName, workspaceNames):
         print 'Error: Failed to import buildsys3.gui'
         print str(err)
     else:
-        buildSys = BuildSys(updateDir, 'build.cfg.py')
+        buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
         DisplayGUI(buildSys, generatorName, workspaceNames)
 
 #--------------------------------------------------------------------------

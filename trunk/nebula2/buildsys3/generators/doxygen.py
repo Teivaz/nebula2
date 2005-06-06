@@ -209,17 +209,51 @@ class doxygen:
         self.autodocDir = os.path.join(buildSys.homeDir, 'doc', 'autodoc')
         self.classPagesDir = os.path.join(self.autodocDir, 'classes')
         self.doxycfgDir = os.path.join(self.buildSys.homeDir, 'code', 'doxycfg')
+        self.doxygenPath = ''
+        self.htmlHelpCompilerPath = ''
         self.srcDirs = []
+        self.defaultSettings = { 'doxygenDir'          : '',
+                                 'autoRunDoxygen'      : True,
+                                 'htmlHelpWorkshopDir' : '',
+                                 'autoGenerateCHM'     : False }
+        
+    #--------------------------------------------------------------------------
+    def HasSettings(self):
+        return True
+        
+    #--------------------------------------------------------------------------
+    def GetSettings(self):
+        settings = self.buildSys.GetBuildConfigSetting('doxygen')
+        if None == settings:
+            settings = self.defaultSettings
+        return settings.copy()
+        
+    #--------------------------------------------------------------------------
+    def SetSettings(self, settings):
+        self.buildSys.SetBuildConfigSetting('doxygen', settings)
+        
+    #--------------------------------------------------------------------------
+    def SaveSettings(self):
+        self.buildSys.SaveBuildConfig()
+        
+    #--------------------------------------------------------------------------
+    def GetSetting(self, settingName):
+        settings = self.GetSettings()
+        return settings.get(settingName, self.defaultSettings[settingName])
+        
+    #--------------------------------------------------------------------------
+    def SetSetting(self, settingName, settingValue):
+        settings = self.GetSettings()
+        settings[settingName] = settingValue
+        self.SetSettings(settings)
         
     #--------------------------------------------------------------------------
     def Generate(self, workspaceNames):
-        self.classes = {}        
+        self.classes = {}
         try:
-            if not self.doxygenInstalled():
-                self.buildSys.logger.error("doxygen not found, can't " \
-                                           "generate documentation.")
-                return
-
+            doRunDoxygen = self.GetSetting('autoRunDoxygen')
+            doGenerateCHM = self.GetSetting('autoGenerateCHM')
+            
             self.collectModulesToDocument(workspaceNames)
             self.collectDoxygenInputDirs()
             #self.findSrcDirs()
@@ -245,10 +279,23 @@ class doxygen:
                 self.writeDoxygenScriptInterfaceMainPage(self.getRootClass())
                 self.prepareClassPagesDir()
                 self.writeDoxygenScriptInterfacePages(self.getRootClass())
-                self.runDoxygen()
-                if self.htmlHelpWorkshopInstalled():
-                    self.buildSys.logger.info('HTML Help Workshop detected.')
-                    self.createCHM()
+                
+                if doRunDoxygen:
+                    if self.resolveDoxygenPath():
+                        self.runDoxygen()
+                    else:
+                        self.buildSys.logger.error("Doxygen not found, can't " \
+                                                   "generate documentation.")
+                        keepGoing = False
+                
+            if keepGoing:
+                if doGenerateCHM:
+                    if self.resolveHtmlHelpCompilerPath():
+                        self.buildSys.logger.info('HTML Help Workshop detected.')
+                        self.createCHM()
+                    else:
+                        self.buildSys.logger.error("HTML Help Compiler not found," \
+                                                   " can't generate CHM.")
         except:
             self.buildSys.logger.exception('Exception in doxygen.Generate()')
         
@@ -277,21 +324,32 @@ class doxygen:
             os.makedirs(self.classPagesDir)
 
     #--------------------------------------------------------------------------
-    # Checks if doxygen.exe is available, if it is the return value is True
-    # otherwise it's False.
-    def doxygenInstalled(self):
-        cmdPipe = os.popen('doxygen --help', 'r')
+    # Check if doxygen is available, if it is the return True
+    # otherwise return False.
+    def resolveDoxygenPath(self):
+        self.doxygenPath = ''
+        doxygenPath = os.path.join(self.GetSetting('doxygenDir'), 'doxygen')
+        cmdPipe = os.popen('"%s" --help' % doxygenPath, 'r')
         helpStr = cmdPipe.readline()
         cmdPipe.close()
-        if helpStr != '':
+        if '' != helpStr:
+            self.doxygenPath = doxygenPath
             return True
+        else:
+            # user supplied path is invalid, see if the OS can find doxygen
+            cmdPipe = os.popen('doxygen --help', 'r')
+            helpStr = cmdPipe.readline()
+            cmdPipe.close()
+            if '' != helpStr:
+                self.doxygenPath = 'doxygen'
+                return True
         return False
 
     #--------------------------------------------------------------------------
     def runDoxygen(self):
         oldPath = os.getcwd()
         os.chdir(self.doxycfgDir)
-        os.system('doxygen auto_nebula2.cfg')
+        os.system('%s auto_nebula2.cfg' % self.doxygenPath)
         os.chdir(oldPath)
         
     #--------------------------------------------------------------------------
@@ -393,14 +451,27 @@ class doxygen:
             autoCfgFile.close()
 
         os.chdir(oldPath)
-        
+                
     #--------------------------------------------------------------------------
-    def htmlHelpWorkshopInstalled(self):
-        cmdPipe = os.popen('hhc', 'r')
+    # Check if the Microsoft HTML Help Compiler (hhc) is available, if it is 
+    # return True, otherwise return False.
+    def resolveHtmlHelpCompilerPath(self):
+        self.htmlHelpCompilerPath = ''
+        hhcPath = os.path.join(self.GetSetting('htmlHelpWorkshopDir'), 'hhc')
+        cmdPipe = os.popen('"%s"' % hhcPath, 'r')
         helpStr = cmdPipe.readline()
         cmdPipe.close()
-        if helpStr != '':
+        if '' != helpStr:
+            self.htmlHelpCompilerPath = hhcPath
             return True
+        else:
+            # user supplied path is invalid, see if the OS can find hhc
+            cmdPipe = os.popen('hhc', 'r')
+            helpStr = cmdPipe.readline()
+            cmdPipe.close()
+            if '' != helpStr:
+                self.htmlHelpCompilerPath = 'hhc'
+                return True
         return False
         
     #--------------------------------------------------------------------------
@@ -409,7 +480,7 @@ class doxygen:
         hhpPath = os.path.join(self.buildSys.homeDir, 'doc', 'doxydoc', 
                                'nebula2', 'html')
         os.chdir(hhpPath)
-        os.system('hhc index.hhp')
+        os.system('"%s" index.hhp' % self.htmlHelpCompilerPath)
         os.chdir(oldPath)
 
     #--------------------------------------------------------------------------

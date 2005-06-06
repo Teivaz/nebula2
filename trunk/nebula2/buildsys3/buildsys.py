@@ -55,6 +55,18 @@ class BuildSys:
         self.displaySummaryDlgFunc = None
 
     #--------------------------------------------------------------------------
+    def GetBuildConfigSetting(self, settingName):
+        return self.buildConfig.cfg.get(settingName, None)
+    
+    #--------------------------------------------------------------------------
+    def SetBuildConfigSetting(self, settingName, settingValue):
+        self.buildConfig.cfg[settingName] = settingValue
+        
+    #--------------------------------------------------------------------------
+    def SaveBuildConfig(self):
+        self.buildConfig.Write(os.path.join(self.homeDir, 'user.build.cfg.py'))
+
+    #--------------------------------------------------------------------------
     def CreateDefaultLogger(self):
         self.logger = logging.getLogger('N2-BuildSystem')
         self.logHandler = logging.StreamHandler(sys.stdout)
