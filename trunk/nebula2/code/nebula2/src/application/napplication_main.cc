@@ -63,7 +63,7 @@ nApplication::~nApplication()
                            calls it internally and moved nSceneServer::Open() before
                            nInputServer is created because input server needs to have
                            the display aleady set up.
-                           This changes came from Dec.2005 merge of RL.
+                           This changes came from Dec.2004 merge of RL.
 */
 bool
 nApplication::Open()
@@ -179,7 +179,7 @@ nApplication::Open()
 
     - 07-Jun-05    kims    Removed calling of CloseDisplay() func of gfx server.
                            The display is closed when scene server is closed.
-                           This change came from Dec.2005 merge of RL.
+                           This change came from Dec.2004 merge of RL.
 */
 void
 nApplication::Close()
