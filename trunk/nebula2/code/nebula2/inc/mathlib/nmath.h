@@ -5,6 +5,9 @@
     General math functions and macros.
 
     (C) 2003 RadonLabs GmbH
+
+    - 07-Jun-05    kims    Added 'n_atan2', 'n_exp', 'n_floor', 'n_ceil' and
+                           'n_pow' macros.
 */
 #include <math.h>
 
@@ -29,10 +32,15 @@
 #define n_sgn(a)        (((a)<0.0f) ? (-1) : (1))
 #define n_deg2rad(d)    (((d)*PI)/180.0f)
 #define n_rad2deg(r)    (((r)*180.0f)/PI)
-#define n_sin(x) (float(sin(x)))
-#define n_cos(x) (float(cos(x)))
-#define n_tan(x) (float(tan(x)))
-#define n_atan(x) (float(atan(x)))
+#define n_sin(x)        (float(sin(x)))
+#define n_cos(x)        (float(cos(x)))
+#define n_tan(x)        (float(tan(x)))
+#define n_atan(x)       (float(atan(x)))
+#define n_atan2(x,y)    (float(atan2(x,y)))
+#define n_exp(x)        (float(exp(x)))
+#define n_floor(x)      (float(floor(x)))
+#define n_ceil(x)       (float(ceil(x)))
+#define n_pow(x,y)      (float(pow(x,y)))
 
 //------------------------------------------------------------------------------
 /**
