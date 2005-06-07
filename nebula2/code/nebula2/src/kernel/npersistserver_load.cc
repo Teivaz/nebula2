@@ -23,6 +23,8 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
     if (file->Open(fname, "r"))
     {
         num_bytes = file->Read(header_buf, sizeof(header_buf));
+        // fixed #bug 277: made a buffer to be terminated by null.
+        header_buf[min(num_bytes,sizeof(header_buf)-1)] = 0;
         file->Close();
         file->Release();
         file = 0;
