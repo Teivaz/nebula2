@@ -58,6 +58,12 @@ nApplication::~nApplication()
     Open the application. This will initialize the Nebula2 runtime, load
     the startup script, and invoke the script functions OnStartup,
     OnGraphicsStartup, OnGuiStartup and OnMapInput.
+
+    - 07-Jun-05    kims    Removed nGfxServer2::OpenDisplay() since nSceneServer::Open()
+                           calls it internally and moved nSceneServer::Open() before
+                           nInputServer is created because input server needs to have
+                           the display aleady set up.
+                           This changes came from Dec.2005 merge of RL.
 */
 bool
 nApplication::Open()
@@ -126,7 +132,15 @@ nApplication::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->gfxCamera);
     this->refScriptServer->RunFunction("OnGraphicsStartup", scriptResult);
-    this->refGfxServer->OpenDisplay();
+
+    // open the scene server.
+    // this also opens the display, which must be done before the input server is created
+    if (!this->refSceneServer->Open())
+    {
+        this->Close();
+        return false;
+    }
+
     this->refVideoServer->Open();
 
     // create the input server
@@ -137,13 +151,6 @@ nApplication::Open()
 
     // initialize audio
     if (!this->refAudioServer->Open())
-    {
-        this->Close();
-        return false;
-    }
-
-    // open the scene server
-    if (!this->refSceneServer->Open())
     {
         this->Close();
         return false;
@@ -169,6 +176,10 @@ nApplication::Open()
 //------------------------------------------------------------------------------
 /**
     Close the application.
+
+    - 07-Jun-05    kims    Removed calling of CloseDisplay() func of gfx server.
+                           The display is closed when scene server is closed.
+                           This change came from Dec.2005 merge of RL.
 */
 void
 nApplication::Close()
@@ -200,10 +211,6 @@ nApplication::Close()
     if (this->refVideoServer.isvalid())
     {
         this->refVideoServer->Close();
-    }
-    if (this->refGfxServer.isvalid())
-    {
-        this->refGfxServer->CloseDisplay();
     }
     if (this->refLocaleServer.isvalid())
     {
