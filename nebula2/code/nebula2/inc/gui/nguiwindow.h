@@ -72,11 +72,16 @@ public:
     nTime GetFadeOutTime() const;
     /// Get Window Color
     const vector4& GetWindowColor();
+    /// set 'close' event script handler
+    void SetCloseCommand(const char* cmd);
+    /// get 'close' event script handler
+    const char* GetCloseCommand() const;
 
 protected:
     /// compute current window color
     void UpdateWindowColor();
 
+    nString closeCommand;
     nString escapeCommand;
     nClass* windowClass;
     
@@ -214,6 +219,32 @@ nGuiWindow::GetFadeOutTime() const
     return this->fadeOutTime;
 }
 
+//------------------------------------------------------------------------------
+/**
+
+- 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
+                       to provide fading and prevent crashes when a custom 
+                       nguibutton tries to close parent window.
+*/
+inline
+void
+nGuiWindow::SetCloseCommand(const char* cmd)
+{
+    this->closeCommand = cmd;
+}
+
+//------------------------------------------------------------------------------
+/**
+    - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
+                           to provide fading and prevent crashes when a custom 
+                           nguibutton tries to close parent window.
++*/
+inline
+const char*
+nGuiWindow::GetCloseCommand() const
+{
+    return this->closeCommand.Get();
+}
 //------------------------------------------------------------------------------
 #endif
 

@@ -95,6 +95,9 @@ nGuiWindow::OnShow()
     Called per frame. This just makes sure that the topmost window is
     also the focus window (this may change if the previous focus
     window has disappeared.
+
+    - 07-Jun-05    kims    Added close event handler to provides fading and prevents
+                           crashes when a custom nguibutton tries to close parent window.
 */
 void
 nGuiWindow::OnFrame()
@@ -125,6 +128,12 @@ nGuiWindow::OnFrame()
         if (time > (this->closeRequestTime + this->fadeOutTime))
         {
             this->SetDismissed(true);
+
+            // execute 'close' event handler
+            if (!this->closeCommand.IsEmpty())
+            {
+                nGuiServer::Instance()->RunCommand(this, this->closeCommand);
+            }
         }
     }
     nGuiWidget::OnFrame();
