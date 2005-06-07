@@ -12,6 +12,9 @@ static void n_setdismissed(void* slf, nCmd* cmd);
 static void n_isdismissed(void* slf, nCmd* cmd);
 static void n_setfadeintime(void* slf, nCmd* cmd);
 static void n_setfadeouttime(void* slf, nCmd* cmd);
+static void n_close(void* slf, nCmd* cmd);
+static void n_setclosecommand(void* slf, nCmd* cmd);
+static void n_getclosecommand(void* slf, nCmd* cmd);
 
 //-----------------------------------------------------------------------------
 /**
@@ -26,6 +29,10 @@ static void n_setfadeouttime(void* slf, nCmd* cmd);
 
     @classinfo
     A button widget.
+
+    - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
+                           to provide fading and prevent crashes when a custom 
+                           nguibutton tries to close parent window.
 */
 void
 n_initcmds(nClass* cl)
@@ -39,6 +46,9 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_isdismissed_v",       'ISDS', n_isdismissed);
     cl->AddCmd("v_setfadeintime_f",     'SFIT', n_setfadeintime);
     cl->AddCmd("v_setfadeouttime_f",    'SFOT', n_setfadeouttime);
+    cl->AddCmd("v_close_v",             'CLOS', n_close);
+    cl->AddCmd("v_setclosecommand_s",   'STCC', n_setclosecommand);
+    cl->AddCmd("s_getclosecommand_v",   'GTCC', n_getclosecommand);
     cl->EndCmds();
 }
 
@@ -189,5 +199,56 @@ n_setfadeouttime(void* slf, nCmd* cmd)
     self->SetFadeOutTime(cmd->In()->GetF());
 }
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    close
+    @input
+    v
+    @output
+    v
+    @info
+    Send close request to the window
++*/
+static void
+n_close(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    self->SetCloseRequested(true);
+}
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    setclosecommand
+    @input
+    s(CloseCommand)
+    @output
+    v
+    @info
+    Set script command to be executed when window is closed.
++*/
+static void
+n_setclosecommand(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    self->SetCloseCommand(cmd->In()->GetS());
+}
 
+//-----------------------------------------------------------------------------
+/**
+    @cmd
+    getclosecommand
+    @input
+    v
+    @output
+    s(CloseCommand)
+    @info
+    Get script command to be executed when window is closed.
++*/
+static void
+n_getclosecommand(void* slf, nCmd* cmd)
+{
+    nGuiWindow* self = (nGuiWindow*) slf;
+    cmd->Out()->SetS(self->GetCloseCommand());
+}
