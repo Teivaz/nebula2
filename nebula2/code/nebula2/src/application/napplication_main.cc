@@ -435,8 +435,6 @@ nApplication::DoFrame()
             sceneServer->RenderScene();
             sceneServer->EndScene();
             this->OnRender2D();
-            nGuiServer::Instance()->Render();
-            nConServer::Instance()->Render();
             sceneServer->PresentScene();
         }
     }
