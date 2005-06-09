@@ -92,6 +92,8 @@ public:
     void SetLocaleTable(const nString& s);
     /// get the locale table filename
     const nString& GetLocaleTable() const;
+    /// get app camera
+    nAppCamera* GetAppCamera() const;
 
 protected:
     /// create a new state object
@@ -138,6 +140,10 @@ protected:
     virtual void OnRender3D();
     /// called when 2d rendering should be performed
     virtual void OnRender2D();
+    /// called before nSceneServer::RenderScene()
+    virtual void OnFrameBefore();
+    /// called after nSceneServer::RenderScene()
+    virtual void OnFrameRendered();
 
 private:
     static nApplication* Singleton;
@@ -371,5 +377,17 @@ nApplication::GetLocaleTable() const
     return this->localeTable;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Retrives application camera.
+
+    - 08-Jun-05    kims    Added.
+*/
+inline
+nAppCamera* 
+nApplication::GetAppCamera() const
+{
+    return this->appCamera;
+}
 //------------------------------------------------------------------------------
 #endif
