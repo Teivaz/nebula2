@@ -427,6 +427,7 @@ nApplication::DoFrame()
     audioServer->UpdateListener(this->audioListener);
     if (!gfxServer->InDialogBoxMode())
     {
+        this->OnFrameBefore();
         const matrix44& viewMatrix = this->appCamera->GetViewMatrix();
         if (sceneServer->BeginScene(viewMatrix))
         {
@@ -434,6 +435,7 @@ nApplication::DoFrame()
             this->OnRender3D();
             sceneServer->RenderScene();
             sceneServer->EndScene();
+            this->OnFrameRendered();
             this->OnRender2D();
             sceneServer->PresentScene();
         }
@@ -610,3 +612,24 @@ nApplication::CreateLocaleServer()
 {
     return (nLocaleServer*) kernelServer->New("nlocaleserver", "/sys/servers/locale");
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nApplication::OnFrameBefore()
+{
+    n_assert(this->curState.isvalid());
+    this->curState->OnFrameBefore();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nApplication::OnFrameRendered()
+{
+    n_assert(this->curState.isvalid());
+    this->curState->OnFrameRendered();
+}
+
