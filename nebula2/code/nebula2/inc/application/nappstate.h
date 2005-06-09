@@ -37,6 +37,10 @@ public:
     virtual void OnRender3D();
     /// called on state to perform 2d rendering
     virtual void OnRender2D();
+    /// called before nSceneServer::RenderScene()
+    virtual void OnFrameBefore();
+    /// called after nSceneServer::RenderScene()
+    virtual void OnFrameRendered();
 
 protected:
     nRef<nApplication> app;
