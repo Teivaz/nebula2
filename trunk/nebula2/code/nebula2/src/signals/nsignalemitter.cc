@@ -64,8 +64,16 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdP
     n_assert(cmdProto);
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdProto, priority));
-    n_assert(binding);
-    return this->BindSignal(signal4cc, binding);
+    bool result = false;
+    if( binding )
+    {
+        result = this->BindSignal(signal4cc, binding);
+        if( !result )
+        {
+            n_delete( binding );
+        }
+    }
+    return result;
 }
 
 //------------------------------------------------------------------------------
@@ -78,8 +86,16 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourC
     n_assert(object);
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdFourCC, priority, rebind));
-    n_assert(binding);
-    return this->BindSignal(signal4cc, binding);
+    bool result = false;
+    if( binding )
+    {
+        result = this->BindSignal(signal4cc, binding);
+        if( !result )
+        {
+            n_delete( binding );
+        }
+    }
+    return result;
 }
 
 //------------------------------------------------------------------------------
@@ -93,8 +109,16 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, const char * cmd
     n_assert(cmdName);
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdName, priority, rebind));
-    n_assert(binding);
-    return this->BindSignal(signal4cc, binding);
+    bool result = false;
+    if( binding )
+    {
+        result = this->BindSignal(signal4cc, binding);
+        if( !result )
+        {
+            n_delete( binding );
+        }
+    }
+    return result;
 }
 
 //------------------------------------------------------------------------------
@@ -325,7 +349,7 @@ nSignalEmitter::GetSignals(nHashList *signal_list) const
                 signal_list->AddTail(node);
             }
         }
-    } while ((cl = cl->GetSuperClass()));
+    } while ( 0 != (cl = cl->GetSuperClass()));
 }
 
 //------------------------------------------------------------------------------

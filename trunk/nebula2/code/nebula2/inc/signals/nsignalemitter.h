@@ -286,7 +286,8 @@ nSignalEmitter::FindSignalBindingSet(nFourCC signal4cc)
 {
     if (!this->bindingSets)
     {
-        this->bindingSets = n_new(nKeyArray<nSignalBindingSet *>)(this->GetSignalRegistry()->GetNumSignals());
+        // the bindingSet need a growable nKeyArray to bind signals from scripting
+        this->bindingSets = n_new(nKeyArray<nSignalBindingSet *>)(this->GetSignalRegistry()->GetNumSignals(),5);
         n_assert(this->bindingSets);
     }
 
