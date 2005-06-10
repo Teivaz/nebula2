@@ -33,7 +33,7 @@
     a position in the range [0.0, 1.0] and return a value based on the shape 
     of the curve. The curve is defined by 8 float arguments: 
 
-      - <b>Key Frame 0</b> - 3: These are the values of the key frames 
+      - <b>Key Frame 0 - 3</b>: These are the values of the key frames 
       - <b>Key Frame Position 1 - 2</b>: These control the position of the second and 
         third key frames. The first and last key frames are at 0.0 and 1.0. 
       - <b>Frequency</b>: The curve can be altered by an optional cosine/sine wave. 
