@@ -148,6 +148,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(void * obj, nCmd * cmd)
             {
                 nSignalBinding * tmp = binding->GetSucc();
                 n_delete(binding);
+                binding = tmp;
             }
         }
     }

@@ -17,7 +17,7 @@ nSignalRegistry::~nSignalRegistry()
     if (this->signalList)
     {
         nSignal * signal;
-        while ((signal = static_cast<nSignal *> (this->signalList->RemHead())))
+        while ( 0 != (signal = static_cast<nSignal *> (this->signalList->RemHead())))
         {
             // Native signals are statically allocated while
             // signals defined from scripting are dynamically allocated
@@ -93,7 +93,15 @@ nSignalRegistry::AddSignal(const char * proto_def, nFourCC id)
     // even if no begin signals was issued
     if (!this->signalList)
     {
+        if( numSignals > 0 )
+        {
         this->signalList = n_new(nHashList(numSignals));
+    }
+        else
+        {
+            // create the hash list with minimun space
+            this->signalList = n_new(nHashList(5));
+        }
     }
 
     // type signature is checked on creation of nSignal (assert on error)
@@ -152,14 +160,14 @@ nSignalRegistry::FindSignalByName(const char * name)
             }
             node = node->GetSucc();
         }
+    }
 
-        /// this only works when this is nClass (which mixes-in nSignalRegistry)
-        nClass * theClass = static_cast<nClass *> (this);
-        nClass * superClass = theClass->GetSuperClass();
-        if (superClass)
-        {
-            return superClass->FindSignalByName(name);
-        }
+    /// this only works when this is nClass (which mixes-in nSignalRegistry)
+    nClass * theClass = static_cast<nClass *> (this);
+    nClass * superClass = theClass->GetSuperClass();
+    if (superClass)
+    {
+        return superClass->FindSignalByName(name);
     }
 
     return NULL;
@@ -185,14 +193,14 @@ nSignalRegistry::FindSignalById(nFourCC id)
             }
             node = node->GetSucc();
         }
+    }
 
-        /// this only works when this is nClass (which mixes-in nSignalRegistry)
-        nClass * theClass = static_cast<nClass *> (this);
-        nClass * superClass = theClass->GetSuperClass();
-        if (superClass)
-        {
-            return superClass->FindSignalById(id);
-        }
+    /// this only works when this is nClass (which mixes-in nSignalRegistry)
+    nClass * theClass = static_cast<nClass *> (this);
+    nClass * superClass = theClass->GetSuperClass();
+    if (superClass)
+    {
+        return superClass->FindSignalById(id);
     }
 
     return NULL;
