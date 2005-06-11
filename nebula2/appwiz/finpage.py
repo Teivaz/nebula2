@@ -24,7 +24,7 @@ class FinPage(wiz.WizardPageSimple):
 
         font = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD)
 
-        msgLabel01 = wx.StaticText(self, -1, 'Congraturation!\n')
+        msgLabel01 = wx.StaticText(self, -1, 'Congratulations!\n')
         msgLabel01.SetFont(font)
 
         font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
