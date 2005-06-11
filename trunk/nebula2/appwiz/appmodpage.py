@@ -33,7 +33,7 @@ class AppModPage(wiz.WizardPageSimple):
         self.classNameLabel = wx.StaticText(self, -1, 'Application Class Name')
         self.classTextBox = wx.TextCtrl(self, -1, '', (0, 0), (200, 21))
 
-        self.appObjNameLabel = wx.StaticText(self, -1, 'App State Object Name')
+        self.appObjNameLabel = wx.StaticText(self, -1, 'Application Object Name')
         self.appObjNameTextBox = wx.TextCtrl(self, -1, '', (0, 0), (200, 21))
 
         self.appBriefDocLabel = wx.StaticText(self, -1, 'Application Brief Description')
