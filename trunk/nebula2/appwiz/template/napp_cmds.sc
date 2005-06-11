@@ -9,6 +9,9 @@
 /**
     @scriptclass
     %(classNameL)s
+
+    @cppclass
+    %(className)s
     
     @superclass
     napplication
