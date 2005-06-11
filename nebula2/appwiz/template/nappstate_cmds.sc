@@ -9,6 +9,9 @@
 /**
     @scriptclass
     %(appStateNameL)s
+
+    @cppclass
+    %(appStateName)s
     
     @superclass
     nappstate
