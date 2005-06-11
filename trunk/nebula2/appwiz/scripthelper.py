@@ -4,7 +4,7 @@
 #  (C)2005 Kim, Hyoun woo
 #----------------------------------------------------------------------
 
-STR_PYTHON_REGISTER_PAKCAGES = '''
+STR_PYTHON_REGISTER_PACKAGES = '''
 //----------------------------------------------------------------------------
 /**     
     Package registration hook.
@@ -63,7 +63,10 @@ class ScriptHelper:
         self.addPackageDef = ''
 
         if 'npythonserver' == scriptServerName:
-            self.pythonRegPackage = STR_PYTHON_REGISTER_PAKCAGES % {'classNameL' : className.lower()}
+            substitutions = {}
+            substitutions['classNameL'] = className.lower()
+            substitutions['targetName'] = targetName
+            self.pythonRegPackage = STR_PYTHON_REGISTER_PACKAGES % substitutions
             self.addPackageDef = 'nPythonRegisterPackages (&kernelServer);'
         else:
             self.pythonRegPackage = '' 
