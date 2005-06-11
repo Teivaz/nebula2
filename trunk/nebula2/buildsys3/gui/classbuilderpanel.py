@@ -111,6 +111,9 @@ STR_CMDS_S1 = '''\
 /**
     @scriptclass
     %(classNameL)s
+
+    @cppclass
+    %(className)s
     
     @superclass
     %(superClassNameL)s
