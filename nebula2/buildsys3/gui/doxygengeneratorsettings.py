@@ -37,14 +37,12 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         self.generator = generator
         generatorSettings = generator.GetSettings()
                         
-        autoRunStaticBox = wx.StaticBox(self, -1, 'Automatically',
-                                        style = wx.SIMPLE_BORDER)
+        autoRunStaticBox = wx.StaticBox(self, -1, 'Automatically')
         self.autoRunDoxygenCheckBox = wx.CheckBox(self, -1, 'Run Doxygen')
         self.autoRunDoxygenCheckBox.SetValue(generatorSettings['autoRunDoxygen'])
         self.autoGenerateChmCheckBox = wx.CheckBox(self, -1, 'Generate CHM')
         self.autoGenerateChmCheckBox.SetValue(generatorSettings['autoGenerateCHM'])
-        locationsStaticBox = wx.StaticBox(self, -1, 'Program Directories',
-                                          style = wx.SIMPLE_BORDER)
+        locationsStaticBox = wx.StaticBox(self, -1, 'Program Directories')
         doxygenDirLabel = wx.StaticText(self, -1, 'Doxygen')
         self.doxygenDirTextBox = wx.TextCtrl(self, -1, 
                                              generatorSettings['doxygenDir'], 
@@ -96,8 +94,8 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         sizerE.Add(sizerA, 0, wx.EXPAND|wx.ALL, 4)
         sizerE.Add(sizerC, 0, wx.EXPAND|wx.ALL, 4)
         sizerE.Add(sizerD, 0, wx.ALIGN_CENTER|wx.ALL, 4)
+        sizerE.Fit(self)
         self.SetSizer(sizerE)
-        self.SetAutoLayout(True)
         self.Fit()
         
     #--------------------------------------------------------------------------
