@@ -114,7 +114,7 @@ class MainFrame(wx.Frame):
         self.mainPanel.SetSizer(sizerA)
         self.Fit()
         # if we wanted to set the size of the frame manually, we'd do this:
-        #self.mainPanel.SetSizer(self.sizerA)
+        #self.mainPanel.SetSizer(sizerA)
         #self.mainPanel.Layout()
         #self.Fit()
         
