@@ -447,6 +447,7 @@ _matrix44::transform_coord(const _vector3& v) const
 
 //------------------------------------------------------------------------------
 /**
+    @return the first row of the matrix. (M11, M12 and M13)
 */
 inline
 _vector3&
@@ -457,6 +458,7 @@ _matrix44::x_component() const
 
 //------------------------------------------------------------------------------
 /**
+    @return the second row of the matrix. (M21, M22 and M23)
 */
 inline
 _vector3&
@@ -467,6 +469,7 @@ _matrix44::y_component() const
 
 //------------------------------------------------------------------------------
 /**
+    @return the third row of the matrix. (M31, M32 and M33)
 */
 inline
 _vector3&
@@ -477,6 +480,7 @@ _matrix44::z_component() const
 
 //------------------------------------------------------------------------------
 /**
+    @return the 4th row of the matrix. (M41, M42 and M43)
 */
 inline
 _vector3& 
