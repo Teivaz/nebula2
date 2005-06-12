@@ -9,6 +9,7 @@
 #include "tools/nmeshbuilder.h"
 #include "export2/nmaxscene.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxcamera.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "pluginlibs/nmaxvieweroptions.h"
@@ -67,8 +68,59 @@ bool LaunchViewer(const char* sceneFile)
         return false;
     }
 
-    nString appArgs = viewerOptions.GetArguments();
-    
+    // viewer arguments.
+    nString appArgs;
+    appArgs += viewerOptions.GetArguments();
+    appArgs += " ";
+
+// begin camera
+    // extract camera info from the current viewport.
+    nMaxCamera camera;
+    //FIXME: 
+    camera.ExtractFromViewport();
+
+    vector3 eyepos = camera.GetEyePos();
+    vector3 eyedir = camera.GetEyeDir();
+    vector3 eyeup  = camera.GetEyeUp();
+
+    nString strEyePosX, strEyePosY, strEyePosZ;
+    strEyePosX.SetFloat(eyepos.x);
+    strEyePosY.SetFloat(eyepos.y);
+    strEyePosZ.SetFloat(eyepos.z);
+
+    appArgs += "-eyeposx"; appArgs += " ";
+    appArgs += strEyePosX; appArgs += " ";
+    appArgs += "-eyeposy"; appArgs += " ";
+    appArgs += strEyePosY; appArgs += " ";
+    appArgs += "-eyeposz"; appArgs += " ";
+    appArgs += strEyePosZ; appArgs += " ";
+
+    nString strEyeDirX, strEyeDirY, strEyeDirZ;
+    strEyeDirX.SetFloat(eyedir.x);
+    strEyeDirY.SetFloat(eyedir.y);
+    strEyeDirZ.SetFloat(eyedir.z);
+
+    appArgs += "-eyecoix"; appArgs += " ";
+    appArgs += strEyeDirX; appArgs += " ";
+    appArgs += "-eyecoiy"; appArgs += " ";
+    appArgs += strEyeDirY; appArgs += " ";
+    appArgs += "-eyecoiz"; appArgs += " ";
+    appArgs += strEyeDirZ; appArgs += " ";
+
+    nString strEyeUpX, strEyeUpY, strEyeUpZ;
+    strEyeUpX.SetFloat(eyeup.x);
+    strEyeUpY.SetFloat(eyeup.y);
+    strEyeUpZ.SetFloat(eyeup.z);
+
+    appArgs += "-eyeupx"; appArgs += " ";
+    appArgs += strEyeUpX; appArgs += " ";
+    appArgs += "-eyeupy"; appArgs += " ";
+    appArgs += strEyeUpY; appArgs += " ";
+    appArgs += "-eyeupz"; appArgs += " ";
+    appArgs += strEyeUpZ; appArgs += " ";
+//end camera*/
+
+    // launch the viewer application.
     nAppLauncher appLauncher(nKernelServer::Instance());
 
     appLauncher.SetExecutable(viewerOptions.GetExecutable());
@@ -104,7 +156,8 @@ void ReleaseSingletons()
 
     // idle until user click 'ok' button of log dialog.
     logDlg->Wait();
-    n_delete(logDlg);
+    //FIXME: 
+    //n_delete(logDlg);
 }
 
 //-----------------------------------------------------------------------------
@@ -121,10 +174,11 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 {
     n_assert(inf);
 
-    //init the maxLogHandler to redirect error message of nebula to 3dsmax.
+    // init the maxLogHandler to redirect error message of nebula to 3dsmax.
     nLogHandler* logHandler = nKernelServer::Instance()->GetLogHandler();
     static_cast<nMaxLogHandler*>(logHandler)->SetLogSys(inf->Log());
 
+    // create log dialog.
     nMaxLogDlg* logDlg = nMaxLogDlg::Instance();
     logDlg->Create();
 
@@ -140,7 +194,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
         return 0;
     }
 
-    //// read options from .ini file.
+    // read options from .ini file.
     nMaxOptions* expOptions = nMaxOptions::Instance();
     if (!expOptions->Initialize())
     {
@@ -178,11 +232,11 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 
         if (LaunchViewer(sceneFile.Get()))
         {
-            n_maxlog(Medium, "Launched preview application.");
+            n_maxlog(Medium, "Launched viewer application.");
         }
         else
         {
-            n_maxlog(Medium, "Failed to launch preview application.");
+            n_maxlog(Medium, "Failed to launch viewer application.");
         }
     }
 
