@@ -17,7 +17,15 @@ At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the 
 
 @section Nebula2CompilingRequirements General Requirements
 
-  - Nebula uses scripts to help build the compile files. In order to run those scripts you need Tcl8.4, which may be downloaded from <A HREF="http://www.tcl.tk">Tcl Developer Xchange</A>, <A HREF="http://tcl.sourceforge.net">Sourceforge</A>, or <A HREF="http://www.activestate.com">ActiveState</A>
+Nebula has a script based build system that generates projects, solutions, workspaces or makefiles that you can open in your IDE or feed to your compiler.
+
+  - If you are using Microsoft Visual C++ (7.0 or later) you will need to install the following in order to run the build system:
+    - <a href="http://www.python.org">Python (2.4 recommended)</a>
+    - <a href="http://www.wxpython.org">WxPython (2.6 recommended)</a>
+  - If you are using some other IDE/compiler check below that it is supported, if it is you will need Tcl8.4 to run the build system. You can download Tcl8.4 from:
+    - <A HREF="http://www.tcl.tk">Tcl Developer Xchange</A> or
+    - <A HREF="http://tcl.sourceforge.net">Sourceforge</A> or 
+    - <A HREF="http://www.activestate.com">ActiveState</A>
 
 @section Nebula2CompilingOSWin32 Windows
 
@@ -25,45 +33,23 @@ At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the 
 
   - Win2k or WinXP (other Win32 platforms may work but have not been tested)
   - Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>. Nebula2 does not work with versions earlier than the <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">2003 "Summer Update" version</A>. We do not support the 2004 Summer SDK due to bugs in that SDK, but the October 2004 version is fine.
-  - Visual C++ 6, 7.0 - 8.0 (.NET), or Visual C++ Toolkit 2003.
+  - Visual 7.0 - 8.0 (.NET), or Visual C++ Toolkit 2003. Visual C++ 6 is no longer supported.
 
-If you are using Visual C++ 6, or Visual C++ Toolkit 2003, then you will need an updated <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/default.htm">Core SDK</a> from Microsoft. Without this, Nebula will fail to compile due a missing @c shfolder.h, or because of the lack of headers/libs (in the toolkit).
+If you are using Visual C++ Toolkit 2003, then you will need an updated <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/default.htm">Core SDK</a> from Microsoft. Without this, Nebula will fail to compile due a missing @c shfolder.h, or because of the lack of headers/libs (in the toolkit).
   
 @subsection Nebula2CompilingOSWin32Preparation Preparation
 
   - Add @c nebula2/bin/win32 to your path
-  - Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and
-    include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
 
-@subsubsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7.0 - 8.0
+@subsubsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7.0 and later
 
-If you are using VC7 make sure the @c uuidgen.exe (usually found at Microsoft Visual Studio .NET 2003\\Common7\\Tools) is in your path.  The easiest way is to run the "Visual Studio .NET Command Prompt" (in the VStudio start menu) as your command shell, as this will set up all required paths.
-
-@subsubsection  Nebula2CompilingOSWin32PreparationVS6 Visual C++ 6
-
-Visual C++ 6 is unaware of the @c .cc file extension and a few registry edits are required per <A HREF="http://support.microsoft.com/default.aspx?scid=kb;en-us;181506">MSKB Article 181506</A>.  For more detailed instructions refer to the Knowledge Base article.
-
-The following registry edits need to be made: <b>WARNING: Be sure you know what you are doing before editing the registry</b>.
-
-From <b>HKEY_CLASSES_ROOT</b> create a new key named <code>'.cc'</code> (no quotes) and change the key's Default field value to 'cppfile' (no quotes).
-
-Starting from: <b>HKEY_CURRENT_USER\\Software\\Microsoft\\DevStudio\\6.0\\</b>
-
-Add <code>';*.cc'</code> (no quotes) to the Input_Spec field of the following:
-
-  - Win32(ALPHA)\\Tools\\C/C++ Compiler for Alpha
-  - Win32(PowerPC)\\Tools\\C/C++ Compiler for PowerPC
-  - Win32(x86)\\Tools\\C/C++ Compiler for 80x86
-
-Add <code>';cc'</code> (no quotes) to the FileExtensions field of the following:
-
-  - Text Editor/Tabs/Language Settings/C/C++
-
-Make sure that you've installed the updated Core SDK as described above.
+Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
 
 @subsubsection  Nebula2CompilingOSWin32PreparationVCTK Visual C++ 2003 Toolkit
 
-@note These instructions also apply if you are building using make and a regular copy of Visual C++.
+These instructions also apply if you are building using make and a regular copy of Visual C++.
+
+@note Instead of using GNU Make or Cygwin you might want to experiment with <a href="http://www.gotdotnet.com/team/cplusplus/">vcbuild</a>, we haven't tried it though so it may not work.
 
 In order to compile with the toolkit, you will need these additional requirements:
 
@@ -71,11 +57,33 @@ In order to compile with the toolkit, you will need these additional requirement
 
 If using a regular command prompt, make sure that <tt>make.exe</tt> is located on your path.
 
+@subsection Nebula2CompilingOSWin32BuildFiles Create The Build Files
+
+Anytime files are added or removed from Nebula 2 this step must be repeated.
+
+@subsubsection Nebula2CompilingOSWin32BuildFilesVS7 Visual C++ 7.0 and later
+
+Navigate to <code>nebula2/</code> and double click on <code>update.py</code>, if you correctly installed Python and wxPython you should see the Nebula 2 Build System application displayed. You can use this application to create the project and solution files for Visual Studio, in the directory <code>nebula2/build/vstudio##</code>. Read the manual that's available through Help->Manual on the Main Menu to figure out what you need to do before proceeding to the next step.
+
+@subsubsection Nebula2CompilingOSWin32BuildFilesOther Visual C++ 2003 Toolkit or Other
+
+@note If you're experimenting with vcbuild - generate build files for Visual C++ 7.1 as described above instead of using update.tcl as described below.
+
+Navigate to <code>nebula2/</code> and double click <code>update.tcl</code>. Makefiles for the Visual C++ 2003 Toolkit are located in the directory <code>nebula2/build/makefile</code>. You can tell that <code>update.tcl</code> has completed successfully when it pops up a featureless grey window.
+
+@subsection Nebula2CompilingOSWin32Compiling Compiling
+
+@subsubsection Nebula2CompilingOSWin32CompilingVS7 Visual C++ 7.0 and later
+
+Open the Nebula2.sln (or whatever solution you want to build) in the directory that corresponds to your version of Visual Studio. Then select Build->Build Solution from the Main Menu. The binaries will be located in <code>nebula2/bin/win32</code>, or <code>nebula2/bin/win32d</code> for debug versions.
+
+@subsubsection Nebula2CompilingOSWin32CompilingOther Visual C++ 2003 Toolkit or Other
+
 To create the correct build environment:
-    - Launch a Visual C++ 2003 Toolkit Prompt.
-    - Add path/to/your/directx/sdk/Lib to the "LIB" environment variable, and path/to/your/directx/sdk/Bin to the "INCLUDE" variable.
-    - Navigate to the directory in which the Microsoft Platform SDK is installed, and execute the "SetEnv" batch file.
-    - Navigate to your nebula2 "build/makefile" directory.
+  - Launch a Visual C++ 2003 Toolkit Prompt.
+  - Add path/to/your/directx/sdk/Lib to the "LIB" environment variable, and path/to/your/directx/sdk/Bin to the "INCLUDE" variable.
+  - Navigate to the directory in which the Microsoft Platform SDK is installed, and execute the "SetEnv" batch file.
+  - Navigate to your nebula2 "build/makefile" directory.
     
 @note If you wish to compile in cygwin, you will need to create a custom script to set the PATH, INCLUDE, and LIB environment variables for the compiler to work.
 
@@ -95,15 +103,7 @@ If you wish to compile a debug build, set the "N_DEBUG" parameter to "true", e.g
 
 Executable files will then be located in <code>nebula2/bin/win32d</code>. 
 
-@subsection Nebula2CompilingOSWin32BuildFiles Create The Build Files
 
-Navigate to <code>nebula2/</code> and double click <code>update.tcl</code>.  This will use the <code>.bld</code> files to create the workspace and solution files for Visual Studio, in the directory <code>nebula2/build/vstudio##</code>. Makefile's for the Visual C++ Toolkit are located in the directory <code>nebula2/build/makefile</code>  Anytime files are added or removed from Nebula 2 this step must be repeated.  You can tell that <code>update.tcl</code> has completed successfully when it pops up a featureless grey window.
-
-@subsection Nebula2CompilingOSWin32Compiling Compiling
-
-Open the Nebula2.dsw or Nebula2.sln in the directory that corresponds to your version of Visual Studio.  Set 'buildall' to the active project and select Build->Rebuild All from the menu.  The binaries will be located in <code>nebula2/bin/win32</code>, or <code>nebula2/bin/win32d</code> for debug versions.
-
-  
 @subsection Nebula2CompilingOSWin32Troubleshooting Troubleshooting
 
   - The IDE doesn't recognize .cc files as c++ source in VS7.1: 
