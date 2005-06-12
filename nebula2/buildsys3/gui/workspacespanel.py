@@ -54,8 +54,7 @@ class WorkspacesPanel(wx.Panel):
         self.cancelProgressDlg = False
         
         # Generator controls
-        self.generatorStaticBox = wx.StaticBox(self, -1, 'Generator',
-                                               style = wx.SIMPLE_BORDER)
+        self.generatorStaticBox = wx.StaticBox(self, -1, 'Generator')
         generators = buildSys.GetGenerators()
         self.generatorDesc = {}
         for generatorName, generator in generators.items():
@@ -86,9 +85,7 @@ class WorkspacesPanel(wx.Panel):
         self.generatorSettingsBtn.Disable()
         
         # Workspace controls
-        self.workspacesStaticBox = wx.StaticBox(self, -1, 
-                                                'Workspaces',
-                                                style = wx.SIMPLE_BORDER)
+        self.workspacesStaticBox = wx.StaticBox(self, -1, 'Workspaces')
         self.workspaceListBox = wx.CheckListBox(self, -1,
                                                 (0, 0), (150, 200), 
                                                 [],

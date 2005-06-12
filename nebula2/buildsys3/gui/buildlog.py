@@ -245,8 +245,7 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
 class BuildLogPanel(wx.Panel):
     def __init__(self, parentWindow, buildSys):
         wx.Panel.__init__(self, parentWindow)
-        self.logStaticBox = wx.StaticBox(self, -1, 'Log',
-                                         style = wx.SIMPLE_BORDER)
+        self.logStaticBox = wx.StaticBox(self, -1, 'Log')
         self.buildLogCtrl = BuildLogListCtrl(self, -1)
         self.buildLogCtrl.AttachToLogger(buildSys.logHandler)
         self.infoCheckBox = wx.CheckBox(self, -1, 'Show Info')
