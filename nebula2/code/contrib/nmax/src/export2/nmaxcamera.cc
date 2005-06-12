@@ -5,13 +5,18 @@
 //---------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxinterface.h"
+#include "export2/nmaxoptions.h"
 #include "export2/nmaxcamera.h"
 #include "kernel/ntypes.h"
+#include "mathlib/matrix.h"
 
 //---------------------------------------------------------------------------
 /**
 */
-nMaxCamera::nMaxCamera()
+nMaxCamera::nMaxCamera() :
+    eyepos(0.0f, 0.0f, 9.0f),
+    eyedir(0.0f, 0.0f, 0.0f),
+    eyeup (0.0f, 1.0f, 0.0f)
 {
 }
 
@@ -24,6 +29,10 @@ nMaxCamera::~nMaxCamera()
 
 //---------------------------------------------------------------------------
 /**
+    Export max camera object in the scene.
+
+    @param inode
+    @param obj
 */
 void nMaxCamera::Export(INode* inode, Object* obj)
 {
@@ -76,7 +85,7 @@ void nMaxCamera::Export(INode* inode, Object* obj)
         float farPlane  = 6000.0f;
     }
 
-    // check the camera is used for current viewport.
+    // check the camera is used for the current viewport.
     ViewExp* viewport = intf->GetActiveViewport();
     if (viewport)
     {
@@ -84,8 +93,66 @@ void nMaxCamera::Export(INode* inode, Object* obj)
 
         if (inode == viewCam)
         {
-            // this camera is viewport camera
+            ;// this camera is viewport camera
         }
+
         intf->ReleaseViewport(viewport);
+    }
+    else
+    {
+        ;
+    }
+}
+
+//---------------------------------------------------------------------------
+/**
+    Extract camera matrix and other info from the activated viewport.
+*/
+void nMaxCamera::ExtractFromViewport()
+{
+    Interface* intf = nMaxInterface::Instance()->GetInterface();
+    ViewExp* viewport = intf->GetActiveViewport();
+    if (viewport)
+    {
+        Matrix3 modelView, invModelView;
+
+        // get affine transform of model view.
+        viewport->GetAffineTM(modelView);
+
+        // get inverse matrix of the modelview matrix.
+        invModelView = Inverse(modelView);
+
+        // extract each component of the inv-modelview matrix.
+        Point3 up    = invModelView.GetRow(0); //up
+        Point3 right = invModelView.GetRow(1); //right
+        Point3 look  = invModelView.GetRow(2); //dir
+        Point3 pos   = invModelView.GetRow(3);
+
+        //float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+        //if (geomScale != 0.0f)
+        //{
+        //    eyepos *= geomScale;
+        //}
+
+        float fov  = viewport->GetFOV();
+        BOOL  perp = viewport->IsPerspView();
+
+        intf->ReleaseViewport(viewport);
+
+        if (perp)
+        {
+            ;// the current viewport is perspective.
+        }
+        else
+        {
+            ;// the current viewport is orthogonal.
+        }
+
+        //TODO: eyepos, eyedir, eyeup vector should be specified.
+        //...
+    }
+    else
+    {
+        ;
     }
 }
