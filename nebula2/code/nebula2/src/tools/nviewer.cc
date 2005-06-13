@@ -44,7 +44,7 @@
      <dt>-eyeposx</dt>
        <dd>position vector of camera matrix</dd>
      <dt>-eyecoix</dt>
-       <dd>right vector of camera matrix</dd>
+       <dd>look vector of camera matrix</dd>
      <dt>-eyeupx</dt>
        <dd>up vector of camera matrix</dd>
     </dl>
@@ -176,7 +176,7 @@ main(int argc, const char** argv)
                "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n"
                "-useram                 if present, then nviewer will use ram file\n"
                "-eyeposx                position vector of camera matrix\n"
-               "-eyecoix                right vector of camera matrix\n"
+               "-eyecoix                look vector of camera matrix\n"
                "-eyeupx                 up vector of camera matrix\n");
         return 5;
     }
