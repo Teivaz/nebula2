@@ -167,5 +167,12 @@ begintarget nopende
     }
 endtarget
 #-----------------------------------------------------------------------------
+beginworkspace nopende
+    annotate "A workspace that is useful for documentation generation but little else."
+    settargets {
+        nopende
+    }
+endworkspace
+#-----------------------------------------------------------------------------
 # EOF
 #-----------------------------------------------------------------------------
