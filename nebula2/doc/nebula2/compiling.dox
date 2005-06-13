@@ -221,18 +221,19 @@ Binary files will be located in <code>nebula2/bin/linuxd</code>. Additionally yo
 
 @section Nebula2CompilingTesting Testing Nebula2
 
-From the command line in <code>/export/gfxlib/examples</code> type:
+You can launch <tt>nviewer</tt>, found in the platform specific <tt>bin</tt>
+directory.  On Windows, it will be in either <tt>bin/win32</tt> or
+<tt>bin/win32d</tt> (if you've built a debug version).
 
-@verbatim
-    nviewer -view torus.n2
-@endverbatim
+Once nviewer is running, you can hit the <tt>escape</tt> key and then
+hit the <tt>Gfx</tt> button in the dock at the bottom of the screen
+to select some examples files to load.
 
-This should display a bumpy shiny donut (hit '1' to switch to 1024x768 fullscreen, hit '2' to return to windowed mode).
-
-The @c schwirl.n2 sample is a quick'n'dirty vertex skinning demo.
-
-The DX9 HLSL shader files are in @c /export/shaders/dx9
-
-Note that the samples will not look very impressive unless you have a graphics card that can do vertex and pixel shaders 1.1 (GeForce3 and up, but not GeForce4MX, ATI Radeon 8500 and up). On lesser hardware the specular lighting will not work.
+The DX9 HLSL shader files are in <tt>data/shaders/2.0</tt> and
+<tt>data/shaders/fixed</tt>.  Note that the samples will not look very
+impressive unless you have a graphics card that can do vertex and pixel
+shaders well. On lesser hardware the specular lighting and other features
+will not work.  Note that we do not provide shaders for all shader hardware,
+so some shader hardware (GeForce 3 and 4) are not supported well.
 */
 
