@@ -196,7 +196,7 @@ The binaries will be located in <code>nebula2/bin/macosx/</code>.
 From a terminal, go to <code>nebula2/</code> and type
 
 @verbatim
-  tclsh update.tcl
+  tclsh update.tcl -build makefile
 @endverbatim
 
 This will use the <code>.bld</code> files to create the Makefile's for compiling on linux, which are located in the directory <code>nebula2/build/makefile</code>. Anytime files are added or removed from Nebula 2 this step must be repeated.
