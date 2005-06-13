@@ -349,7 +349,7 @@ class doxygen:
     def runDoxygen(self):
         oldPath = os.getcwd()
         os.chdir(self.doxycfgDir)
-        os.system('%s auto_nebula2.cfg' % self.doxygenPath)
+        os.system('"%s" auto_nebula2.cfg' % self.doxygenPath)
         os.chdir(oldPath)
         
     #--------------------------------------------------------------------------
