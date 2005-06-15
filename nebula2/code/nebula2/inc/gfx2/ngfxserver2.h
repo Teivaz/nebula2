@@ -104,20 +104,20 @@ public:
     /// feature sets (from worst to best)
     enum FeatureSet
     {
-        InvalidFeatureSet = 0,      // Open() hasn't been called yet
-        DX7,                        // a typical dx7 card with fixed function pipeline
-        DX8,                        // a typical dx8 card with at least vs/ps 1.1
-        DX8SB,                      // a typical dx8 card with support for shadow buffers
-        DX9,                        // a dx9 card with at least vs/ps 2.0
-        DX9FLT,                     // a dx9 card with floating point textures/render targets
+        InvalidFeatureSet = 0,      ///< Open() hasn't been called yet
+        DX7,                        ///< a typical dx7 card with fixed function pipeline
+        DX8,                        ///< a typical dx8 card with at least vs/ps 1.1
+        DX8SB,                      ///< a typical dx8 card with support for shadow buffers
+        DX9,                        ///< a dx9 card with at least vs/ps 2.0
+        DX9FLT,                     ///< a dx9 card with floating point textures/render targets
     };
 
     /// the visible mouse cursor type
     enum CursorVisibility
     {
-        None,               // no mouse cursor visible
-        System,             // use Window's system mouse cursor
-        Custom,             // use the custom mouse cursor
+        None,               ///< no mouse cursor visible
+        System,             ///< use Window's system mouse cursor
+        Custom,             ///< use the custom mouse cursor
     };
 
     enum
@@ -127,10 +127,11 @@ public:
         MaxTransformStackDepth = 4,
     };
 
-    enum DeviceIdentifier // list of devices that are known to cause bugs
+    /// list of devices that are known to cause bugs
+    enum DeviceIdentifier 
     {
         GenericDevice = 0,
-        Intel_82865G  = 1,   // shadow bugs
+        Intel_82865G  = 1,   ///< shadow bugs
     };
 
     /// constructor
@@ -379,7 +380,7 @@ protected:
     DeviceIdentifier deviceIdentifier;
 
 public:
-    // note: this stuff is public because WinProcs may need to access it
+    /// note: this stuff is public because WinProcs may need to access it
     CursorVisibility cursorVisibility;
 };
 
@@ -446,6 +447,7 @@ nGfxServer2::GetLightArray() const
 
 //------------------------------------------------------------------------------
 /**
+    Convert the given string to its corresponded feature set.
 */
 inline
 nGfxServer2::FeatureSet
@@ -480,6 +482,7 @@ nGfxServer2::StringToFeatureSet(const char* str)
 
 //------------------------------------------------------------------------------
 /**
+    Convert the feature set to its corresponded string.
 */
 inline
 const char*
@@ -572,7 +575,7 @@ nGfxServer2::GetInstanceStream() const
 /**
     Get the current mesh array.
 
-    @return             pointer to current nMeshArray object
+    @return     pointer to current nMeshArray object
 */
 inline
 nMeshArray*
@@ -600,7 +603,7 @@ nGfxServer2::GetTexture(int stage) const
 /**
     Get the current shader.
 
-    @return             pointer to nShader2 object
+    @return    pointer to nShader2 object
 */
 inline
 nShader2*
@@ -613,7 +616,7 @@ nGfxServer2::GetShader() const
 /**
     Get the current font object.
 
-    @return             pointer to nFont2 object
+    @return    pointer to nFont2 object
 */
 inline
 nFont2*
@@ -626,8 +629,8 @@ nGfxServer2::GetFont() const
 /**
     Set transformation matrix.
 
-    @param  type        transform type
-    @return             the 4x4 matrix
+    @param  type    transform type
+    @return         the 4x4 matrix
 */
 inline
 const matrix44&
