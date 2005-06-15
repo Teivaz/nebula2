@@ -73,10 +73,6 @@ Section "-Runtime" Section_RuntimeFiles
     SetOutPath "$INSTDIR"
     
     ; bin directory
-    SetOutPath "$INSTDIR\bin"
-    File "${SRCDIR}\bin\*.tcl"
-    File "${SRCDIR}\bin\*.txt"
-    
     SetOutPath "$INSTDIR\bin\win32"
     File "${SRCDIR}\bin\win32\*.ico"
     File "${SRCDIR}\bin\win32\nviewer.exe"
@@ -85,19 +81,21 @@ Section "-Runtime" Section_RuntimeFiles
     File "${SRCDIR}\bin\win32\nnpktool.exe"
     File "${SRCDIR}\bin\win32\NewProjectWizard.exe"
 
+    ; scripts directory
+    SetOutPath "$INSTDIR\data\scripts"
+    File "${SRCDIR}\data\scripts\*.tcl"
+
     ; export directory    
     SetOutPath "$INSTDIR\data\shaders"
     File "${SRCDIR}\data\shaders\*.xml"
 
     SetOutPath "$INSTDIR\data\shaders\2.0"
     File "${SRCDIR}\data\shaders\2.0\*.fx"
-    File "${SRCDIR}\data\shaders\2.0\*.xml"
 
     SetOutPath "$INSTDIR\data\shaders\fixed"
     File "${SRCDIR}\data\shaders\fixed\*.fx"
-    File "${SRCDIR}\data\shaders\fixed\*.xml"
-    SetOutPath "$INSTDIR\data\shaders\lib"
 
+    SetOutPath "$INSTDIR\data\shaders\lib"
     File "${SRCDIR}\data\shaders\lib\*.fx"
 
     SetOutPath "$INSTDIR\export\textures\system"
@@ -224,9 +222,11 @@ Section "Source Code" Section_SourceCode
 
     !define INC "${SRCDIR}\code\nebula2\inc"
     !define SRC "${SRCDIR}\code\nebula2\src"
+    !define BLD "${SRCDIR}\code\nebula2\bldfiles"
     !define DSTINC "$INSTDIR\code\nebula2\inc"
     !define DSTSRC "$INSTDIR\code\nebula2\src"
-    
+    !define DSTBLD "$INSTDIR\code\nebula2\bldfiles"
+
     ; inc directory
     SetOutPath "${DSTINC}"
     File "${INC}\*.h"
@@ -238,6 +238,8 @@ Section "Source Code" Section_SourceCode
     File "${INC}\audio3\*.h"
     SetOutPath "${DSTINC}\character"
     File "${INC}\character\*.h"
+    SetOutPath "${DSTINC}\deformers"
+    File "${INC}\deformers\*.h"
     SetOutPath "${DSTINC}\file"
     File "${INC}\file\*.h"
     SetOutPath "${DSTINC}\gfx2"
@@ -252,18 +254,30 @@ Section "Source Code" Section_SourceCode
     File "${INC}\kernel\*.h"
     SetOutPath "${DSTINC}\locale"
     File "${INC}\locale\*.h"
+    SetOutPath "${DSTINC}\loki"
+    File "${INC}\loki\*.h"
+    SetOutPath "${DSTINC}\loki\Borland"
+    File "${INC}\loki\Borland\*.h"
+    SetOutPath "${DSTINC}\loki\MSVC\1200"
+    File "${INC}\loki\MSVC\1200\*.h"
+    SetOutPath "${DSTINC}\loki\MSVC\1300"
+    File "${INC}\loki\MSVC\1300\*.h"
+    SetOutPath "${DSTINC}\loki\Reference"
+    File "${INC}\loki\Reference\*.h"
     SetOutPath "${DSTINC}\mathlib"
     File "${INC}\mathlib\*.h"
+    SetOutPath "${DSTINC}\microtcl"
+    File "${SRC}\microtcl\*.h"
     SetOutPath "${DSTINC}\misc"
     File "${INC}\misc\*.h"
     SetOutPath "${DSTINC}\nature"
     File "${INC}\nature\*.h"
-    SetOutPath "${DSTINC}\ncterrain2"
-    File "${INC}\ncterrain2\*.h"
     SetOutPath "${DSTINC}\network"
     File "${INC}\network\*.h"
     SetOutPath "${DSTINC}\particle"
     File "${INC}\particle\*.h"
+    SetOutPath "${DSTINC}\renderpath"
+    File "${INC}\renderpath\*.h"
     SetOutPath "${DSTINC}\resource"
     File "${INC}\resource\*.h"
     SetOutPath "${DSTINC}\scene"
@@ -272,6 +286,8 @@ Section "Source Code" Section_SourceCode
     File "${INC}\script\*.h"
     SetOutPath "${DSTINC}\shadow"
     File "${INC}\shadow\*.h"
+    SetOutPath "${DSTINC}\signals"
+    File "${INC}\signals\*.h"
     SetOutPath "${DSTINC}\tinyxml"
     File "${INC}\tinyxml\*.h"
     File "${INC}\tinyxml\*.txt"
@@ -285,28 +301,42 @@ Section "Source Code" Section_SourceCode
     File "${INC}\video\*.h"
     SetOutPath "${DSTINC}\xml"
     File "${INC}\xml\*.h"
+
+    ; bld files
+    SetOutPath "${DSTBLD}"
+    File "${BLD}\*.bld"
+    SetOutPath "${DSTBLD}\app"
+    File "${BLD}\app\*.bld"
+    SetOutPath "${DSTBLD}\audio3"
+    File "${BLD}\audio3\*.bld"
+    SetOutPath "${DSTBLD}\core"
+    File "${BLD}\core\*.bld"
+    SetOutPath "${DSTBLD}\deformers"
+    File "${BLD}\deformers\*.bld"
+    SetOutPath "${DSTBLD}\gfx2"
+    File "${BLD}\gfx2\*.bld"
+    SetOutPath "${DSTBLD}\gui"
+    File "${BLD}\gui\*.bld"
+    SetOutPath "${DSTBLD}\input"
+    File "${BLD}\input\*.bld"
+    SetOutPath "${DSTBLD}\nature"
+    File "${BLD}\nature\*.bld"
+    SetOutPath "${DSTBLD}\network"
+    File "${BLD}\network\*.bld"
+    SetOutPath "${DSTBLD}\scene"
+    File "${BLD}\scene\*.bld"
+    SetOutPath "${DSTBLD}\script"
+    File "${BLD}\script\*.bld"
+    SetOutPath "${DSTBLD}\shadow"
+    File "${BLD}\shadow\*.bld"
+    SetOutPath "${DSTBLD}\toolchain"
+    File "${BLD}\toolchain\*.bld"
+    SetOutPath "${DSTBLD}\video"
+    File "${BLD}\video\*.bld"
+
     ; src directory
     SetOutPath "${DSTSRC}"
     File "${SRC}\dummy.cc"
-    File "${SRC}\microtcl.epk"
-    File "${SRC}\napplication.epk"
-    File "${SRC}\ncterrain2.epk"
-    File "${SRC}\ndinput8.epk"
-    File "${SRC}\ndirect3d9.epk"
-    File "${SRC}\ndshow.epk"
-    File "${SRC}\ndsound.epk"
-    File "${SRC}\nebulalib.epk"
-    File "${SRC}\ngui.epk"
-    File "${SRC}\nkernel.epk"
-    File "${SRC}\nlocale.epk"
-    File "${SRC}\nnebula.epk"
-    File "${SRC}\nnetwork.epk"
-    File "${SRC}\ntoollib.epk"
-    File "${SRC}\tools.epk"
-    File "${SRC}\util.epk"
-    File "${SRC}\xml.epk"
-    File "${SRC}\update.tcl"
-    
     SetOutPath "${DSTSRC}\anim2"
     File "${SRC}\anim2\*.cc"
     SetOutPath "${DSTSRC}\application"
@@ -315,6 +345,8 @@ Section "Source Code" Section_SourceCode
     File "${SRC}\audio3\*.cc"
     SetOutPath "${DSTSRC}\character"
     File "${SRC}\character\*.cc"
+    SetOutPath "${DSTSRC}\deformers"
+    File "${SRC}\deformers\*.cc"
     SetOutPath "${DSTSRC}\file"
     File "${SRC}\file\*.cc"
     SetOutPath "${DSTSRC}\gfx2"
@@ -329,18 +361,12 @@ Section "Source Code" Section_SourceCode
     File "${SRC}\locale\*.cc"
     SetOutPath "${DSTSRC}\microtcl"
     File "${SRC}\microtcl\*.cc"
-    File "${SRC}\microtcl\*.h"
     SetOutPath "${DSTSRC}\misc"
     File "${SRC}\misc\*.cc"
     SetOutPath "${DSTSRC}\nature"
     File "${SRC}\nature\*.cc"
-    SetOutPath "${DSTSRC}\ncterrain2"
-    File "${SRC}\ncterrain2\*.cc"
     SetOutPath "${DSTSRC}\network"
     File "${SRC}\network\*.cc"
-    SetOutPath "${DSTSRC}\packages"
-    File "${SRC}\packages\*.txt"
-    File "${SRC}\packages\*.cc"
     SetOutPath "${DSTSRC}\particle"
     File "${SRC}\particle\*.cc"    
     SetOutPath "${DSTSRC}\resource"
@@ -351,6 +377,8 @@ Section "Source Code" Section_SourceCode
     File "${SRC}\script\*.cc"
     SetOutPath "${DSTSRC}\shadow"
     File "${SRC}\shadow\*.cc"
+    SetOutPath "${DSTSRC}\signals"
+    File "${SRC}\signals\*.cc"
     SetOutPath "${DSTSRC}\tinyxml"
     File "${SRC}\tinyxml\*.cc"
     File "${SRC}\tinyxml\*.txt"
@@ -365,12 +393,6 @@ Section "Source Code" Section_SourceCode
     SetOutPath "${DSTSRC}\xml"
     File "${SRC}\xml\*.cc"
 
-    SetOutPath "$INSTDIR\code\nebula2"
-    File "${SRCDIR}\code\nebula2\readme.txt"
-
-    SetOutPath "$INSTDIR\code\nebula2\vstudio"
-    File "${SRCDIR}\code\nebula2\vstudio\readme.txt"
-    
     SetOutPath "$INSTDIR\code\nebula2\res"
     File "${SRCDIR}\code\nebula2\res\*.ico"
     File "${SRCDIR}\code\nebula2\res\*.rc"
@@ -389,11 +411,6 @@ Section "Installer Files" Section_InstallerFiles
     File "${SRCDIR}\work\installer\Nebula2SDK\*.bmp"
     File "${SRCDIR}\work\installer\Nebula2SDK\*.ico"
     File "${SRCDIR}\work\installer\Nebula2SDK\*.nsi"
-
-    SetOutPath "$INSTDIR\work\installer\NewProjectWizard"
-    File "${SRCDIR}\work\installer\NewProjectWizard\*.bmp"
-    File "${SRCDIR}\work\installer\NewProjectWizard\*.ico"
-    File "${SRCDIR}\work\installer\NewProjectWizard\*.nsi"
 
 SectionEnd 
 
@@ -426,13 +443,6 @@ IfSilent endOfStartMenuSection
         CreateShortCut "${STARTMENU}\Documentation\Nebula on SourceForge.lnk" "http://www.sourceforge.net/projects/nebuladevice"
         CreateShortCut "${STARTMENU}\Documentation\Nebula Community Website.lnk" "http://www.nebuladevice.org"    
 
-    IfFileExists "$INSTDIR\code\nebula2\vstudio\tools.sln" "" endOfVStudio
-        CreateDirectory "${STARTMENU}\VStudio Solutions"
-        CreateShortCut "${STARTMENU}\VStudio Solutions\Nebula Static Link Lib.lnk" "$INSTDIR\code\nebula2\vstudio\nebulalib.sln" 
-        CreateShortCut "${STARTMENU}\VStudio Solutions\Nebula Tools.lnk" "$INSTDIR\code\nebula2\vstudio\tools.sln" 
-
-endOfVStudio:
-
     IfFileExists "$INSTDIR\export\gfxlib\examples\bouncingball.n2" "" endOfSamples
         CreateDirectory "${STARTMENU}\Example Objects"
         CreateShortCut "${STARTMENU}\Example Objects\Hierarchical Animation.lnk" "$INSTDIR\bin\win32\nviewer.exe" '-view "$INSTDIR\export\gfxlib\examples\bouncingball.n2" -projdir "$INSTDIR"'
@@ -459,7 +469,6 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_SourceCode} "This component includes the Nebula2 source code."
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_ExampleFiles} "This component includes sample 3d objects and textures."
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_InstallerFiles} "This component includes the NSIS installer source files for the SDK installer and the New Project Wizard."
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section_VStudioFiles} "This component includes pre-generated VStudio.NET project files."
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_Doxygen} "This component includes the documentation source files for Doxygen, these are necessary if you want to build the Nebula2 API docs yourself."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
     
