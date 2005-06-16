@@ -4,15 +4,17 @@
 
     npyviewer
 
-    Self-contained viewer application for Nebula using Python.
+    Selfcontained viewer application for Nebula using Python.
 
     The Nebula2 viewer displays Nebula2 3D objects in realtime. It can be
-    invoked from the command line (npyviewer.exe).
+    invoked from the command line (nviewer.exe) or from the start menu.
 
     The viewer offers an overlay 2D user interface which is activated by
-    pressing the Escape key.  The GUI offers builtin command consoles, a
-    texture browser window, a graphics object browser window, and 2 windows
-    with runtime and debug information.
+    pressing the Escape key.
+
+    The GUI offers builtin command consoles, a texture browser window,
+    a graphics object browser window, and 2 windows with runtime and
+    debug information.
 
     <dl>
      <dt>-startup</dt>
@@ -23,25 +25,33 @@
        <dd>script server to use</dd>
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
-	 <dt>-stage</dt>
-		<dd>the light stage to load, default is: home:code/contrib/npythonserver/bin/stdlight.py </dd>
+     <dt>-stage</dt>
+       <dd>the light stage to load, default is: home:code/contrib/npythonserver/bin/stdlight.py </dd>
      <dt>-fullscreen</dt>
-       <dd>if present, then npyviewer will go fullscreen</dd>
-	 <dt>-alwaysontop</dt>
-		<dd>if present the window will be allways on top</dd>
+       <dd>if present, then nviewer will go fullscreen</dd>
+     <dt>-alwaysontop</dt>
+       <dd>if present the window will be allways on top</dd>
      <dt>-w</dt>
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
-	 <dt>-x</dt>
-		<dd>the x position of the window (default: 0)</dd>
-	 <dt>-y</dt>
-		<dd>the y position of the window (default: 0)</dd>
-	 <dt>-projdir</dt>
-	    <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-x</dt>
+       <dd>the x position of the window (default: 0)</dd>
+     <dt>-y</dt>
+       <dd>the y position of the window (default: 0)</dd>
+     <dt>-projdir</dt>
+       <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-useram</dt>
+       <dd>if present, then nviewer will use ram file</dd>
+     <dt>-eyeposx</dt>
+       <dd>position vector of camera matrix</dd>
+     <dt>-eyecoix</dt>
+       <dd>look vector of camera matrix</dd>
+     <dt>-eyeupx</dt>
+       <dd>up vector of camera matrix</dd>
     </dl>
 
-    npyviewer also defines some default input handling:
+    nviewer also defines some default input handling:
 
     @todo Document default inputhandling
 
@@ -69,7 +79,7 @@ nNebulaUsePackage(npythonserver);
 //------------------------------------------------------------------------------
 /*
     Win32 specific method which checks the registry for the Nebula2
-    Toolkit's project path. If the reg keys are not found, the 
+    Toolkit's project path. If the reg keys are not found, the
     routine just returns 0.
 */
 #ifdef __WIN32__
@@ -96,13 +106,12 @@ ReadProjRegistryKey()
 }
 #endif
 
-    
-/**     
+/**
     Package registration hook
-*/  
+*/
 void
 nPythonRegisterPackages(nKernelServer * kernelServer)
-{       
+{
     kernelServer->AddPackage(nnebula);
     kernelServer->AddPackage(ndinput8);
     kernelServer->AddPackage(ndirect3d9);
@@ -110,7 +119,7 @@ nPythonRegisterPackages(nKernelServer * kernelServer)
     kernelServer->AddPackage(ngui);
     kernelServer->AddPackage(nnetwork);
     kernelServer->AddPackage(npythonserver);
-}       
+}
 
 //------------------------------------------------------------------------------
 /*
@@ -127,6 +136,7 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
+
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "npythonserver");
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
     const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/npythonserver/bin/startup.py");
@@ -134,6 +144,7 @@ main(int argc, const char** argv)
     const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/npythonserver/bin/stdlight.py");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
+    bool useRam           = args.GetBoolArg("-useram");
     bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
@@ -143,12 +154,27 @@ main(int argc, const char** argv)
 
     const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
     const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
+    vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
+    vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
+
+    // Don't allow window width smaller than 40 and height smaller than 30.
+    if (widthArg < 40)
+    {
+        n_printf("Invalid window width. Using width of 40.\n");
+        widthArg = 40;
+    }
+    if (heightArg < 30)
+    {
+        n_assert("Invalid window height. Using height of 30.\n");
+        heightArg = 30;
+    }
 
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
     {
         printf("(C) 2003 RadonLabs GmbH\n"
-               "npyviewer - Nebula2 Object Viewer\n"
+               "nviewer - Nebula2 Object Viewer\n"
                "Command line args:\n"
                "------------------\n"
                "-help                   show this help\n"
@@ -159,20 +185,24 @@ main(int argc, const char** argv)
                "-featureset             Which shader feature set to use; One of: dx7, dx8, dx8sb, dx9, dx9flt\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
                "-stage                  light stage to load, default is: home:code/contrib/npythonserver/bin/stdlight.py\n"
-               "-fullscreen             if present, then npyviewer will go fullscreen\n"
+               "-fullscreen             if present, then nviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"
                "-h                      height of window to open (default: 480)\n"
                "-x                      the x position of the window (default: 0)\n"
                "-y                      y position of the window (default: 0)\n"
-               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n");
+               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n"
+               "-useram                 if present, then nviewer will use ram file\n"
+               "-eyeposx                position vector of camera matrix\n"
+               "-eyecoix                look vector of camera matrix\n"
+               "-eyeupx                 up vector of camera matrix\n");
         return 5;
     }
 
     // initialize Nebula runtime
     nKernelServer kernelServer;
     #ifdef __WIN32__
-        nWin32LogHandler logHandler("npyviewer");
+        nWin32LogHandler logHandler("nviewer");
         kernelServer.SetLogHandler(&logHandler);
     #endif
     nPythonRegisterPackages(&kernelServer);
@@ -201,8 +231,8 @@ main(int argc, const char** argv)
         displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false);
     }
 
-    // under Win32 check if we should read the project directory from the
-    // registry (registry keys used by the Nebula2 toolkit)
+    // under Win32 check if we should read the project directory from the registry
+    // (registry keys used by the Nebula2 toolkit)
     #ifdef __WIN32__
         if (0 == projDir)
         {
@@ -217,6 +247,7 @@ main(int argc, const char** argv)
     // initialize a viewer app object
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
+    viewerApp.SetUseRam(useRam);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);
     if (projDir)          viewerApp.SetProjDir(projDir);
@@ -229,12 +260,16 @@ main(int argc, const char** argv)
         }
         viewerApp.SetFeatureSetOverride(featureSet);
     }
-    
+
     viewerApp.SetScriptServerClass(scriptserverArg);
     if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
 
+    //set viewer propherties
+    viewerApp.GetCamControl().SetDefaultCenterOfInterrest(eyeCoi);
+    viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
+    viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);
     // open and run viewer
     if (viewerApp.Open())
     {
@@ -243,4 +278,3 @@ main(int argc, const char** argv)
     }
     return 0;
 }
-

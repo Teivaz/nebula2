@@ -9,37 +9,76 @@
 #-------------------------------------------------------------------------------
 #   set up resource assigns
 #-------------------------------------------------------------------------------
-fileServer = lookup('/sys/servers/file2')
-proj = fileServer.manglepath("proj:")
-home = fileServer.manglepath("home:")
-    
-# stuff in data
-fileServer.setassign("scripts", proj + "/data/scripts")
 
-if exists('/sys/servers/gfx'):
-    featureSet = lookup('/sys/servers/gfx').getfeatureset()
-    if (featureSet == "dx9") or (featureSet == "dx9flt"):
-        fileServer.setassign("shaders", home + "/data/shaders/2.0/")
-        print "Shader directory: %s/data/shaders/2.0" % home
+
+#-------------------------------------------------------------------------------
+#   OnStartup
+#
+#   This procedure is called right after application startup. Use it 
+#   to initialize Nebula assigns.
+#-------------------------------------------------------------------------------
+def OnStartup():
+    fileServer = lookup('/sys/servers/file2')
+    proj = fileServer.manglepath("proj:")
+    home = fileServer.manglepath("home:")
+
+    # setup assigns
+    fileServer.setassign("data",     home + "/data/")
+    fileServer.setassign("export",   proj + "/export/")
+    fileServer.setassign("scripts",  "data:scripts")
+    fileServer.setassign("physics",  "export:physics/")
+    fileServer.setassign("meshes",   "export:meshes/")
+    fileServer.setassign("textures", "export:textures/")
+    fileServer.setassign("anims",    "export:anims/")
+    fileServer.setassign("gfxlib",   "export:gfxlib/")
+    fileServer.setassign("lights",   "export:lightlib/")
+    fileServer.setassign("levels",   "export:levels/")
+    fileServer.setassign("sound",    "export:audio/")
+
+#-------------------------------------------------------------------------------
+#   OnShutdown
+#   
+#   This procedure is called when the application shuts down.
+#-------------------------------------------------------------------------------
+def OnShutdown():
+    pass
+
+#-------------------------------------------------------------------------------
+#   OnGraphicsStartup
+#
+#   This method is called right after graphics is initialized.
+#-------------------------------------------------------------------------------
+def OnGraphicsStartup():
+    if not exists('/sys/servers/scene'):
+        print "The scene server hasn't been created yet?"
+        return
+    sceneServer = lookup('/sys/servers/scene')
+    if exists('/sys/servers/gfx'):
+        featureSet = lookup('/sys/servers/gfx').getfeatureset()
+        if featureSet == "dx9":
+            # DX9 hardware without floating point render targets
+            sceneServer.setrenderpathfilename("data:shaders/dx9_renderpath.xml")
+        elif featureSet == "dx9flt":
+            # DX9 hardware with floating point render targets,
+            # use HDR render path
+            sceneServer.setrenderpathfilename("data:shaders/dx9hdr_renderpath.xml")
+        else:
+            # non-DX9 hardware, use fixed function render path
+            sceneServer.setrenderpathfilename("data:shaders/dx7_renderpath.xml")
     else:
-        fileServer.setassign("shaders", home + "/data/shaders/fixed/")
-        print "Shader directory: %s/data/shaders/fixed" % home
-else:
-    fileServer.setassign("shaders", home + "/data/shaders/2.0/")
-    print "Shader directory: %s/data/shaders/2.0" % home
+        sceneServer.setrenderpathfilename("data:shaders/dx9_renderpath.xml")
 
-# enable zFail shadow rendering
-if exists('/sys/servers/shadow'):
-    lookup('/sys/servers/shadow').setusezfail(True)
+    # enable zFail shadow rendering
+    if exists('/sys/servers/shadow'):
+        lookup('/sys/servers/shadow').setusezfail(True)
 
-# stuff in export
-fileServer.setassign("physics",  proj + "/export/physics/")
-fileServer.setassign("meshes",   proj + "/export/meshes/")
-fileServer.setassign("textures", proj + "/export/textures/")
-fileServer.setassign("anims",    proj + "/export/anims/")
-fileServer.setassign("gfxlib",   proj + "/export/gfxlib/")
-fileServer.setassign("lights",   proj + "/export/lightlib/")
-fileServer.setassign("levels",   proj + "/export/levels/")
+#-------------------------------------------------------------------------------
+#   OnGraphicsShutdown
+#
+#   This method is not yet called.
+#-------------------------------------------------------------------------------
+def OnGraphicsShutdown():
+    pass
 
 #-------------------------------------------------------------------------------
 #   OnMapInput is called back by npyviewer when the input mapping should be
@@ -160,7 +199,7 @@ def OnGuiServerOpen():
     skin.addbrush('menu_n','skin',192,172,96,16,1.0,1.0,1.0,1.0)
     skin.addbrush('menu_h','skin',288,172,96,16,1.0,1.0,1.0,1.0)
     skin.addbrush('menu_p','skin',384,172,96,16,1.0,1.0,1.0,1.0)
-        
+
     skin.addbrush('button_64x16_n', 'skin',  0,  0, 64, 16, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('button_64x16_h', 'skin', 64,  0, 64, 16, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('button_64x16_p', 'skin', 128, 0, 64, 16, 1.0, 1.0, 1.0, 1.0)
@@ -192,7 +231,7 @@ def OnGuiServerOpen():
     # list views
     skin.addbrush('list_background', 'skin', 446,  72,  8,  8, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('list_selection' , 'skin',  64, 172, 64, 16, 1.0, 1.0, 1.0, 1.0)
- 
+
     # icons
     skin.addbrush('console_n', 'skin',     0,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('console_p', 'skin',     0,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
@@ -214,6 +253,10 @@ def OnGuiServerOpen():
     skin.addbrush('syswindow_p', 'skin',  192,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('syswindow_h', 'skin',  192, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
 
+    skin.addbrush('contrwindow_n', 'skin',  336,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
+    skin.addbrush('contrwindow_p', 'skin',  336,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
+    skin.addbrush('contrwindow_h', 'skin',  336, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
+
     skin.addbrush('hidegui_n', 'skin',    240,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('hidegui_p', 'skin',    240,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('hidegui_h', 'skin',    240, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
@@ -222,14 +265,21 @@ def OnGuiServerOpen():
     skin.addbrush('quit_p', 'skin',       288,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('quit_h', 'skin',       288, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
 
+    skin.addbrush('disp_n', 'skin',       384,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
+    skin.addbrush('disp_p', 'skin',       384,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
+    skin.addbrush('disp_h', 'skin',       384, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
+
     # the left and right logos
     skin.addbrush('n2logo', 'n2logo', 0, 0, 64, 64, 1.0, 1.0, 1.0, 0.5)
+
+    # the color hexagon for the colorpicker
+    skin.addbrush('colorhex', 'colorhexagon', 0, 0, 170, 141, 1.0, 1.0, 1.0, 1.0)
 
     skin.endbrushes()
 
     guiServer.setsystemskin(skin)
     guiServer.setskin(skin)
-    
+
     # create the Nebula dock window
     guiServer.newwindow('nguidockwindow', True)
 
