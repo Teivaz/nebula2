@@ -3,6 +3,7 @@
 */
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
+#include "python/npythonserver.h"
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(nnetwork);
@@ -20,3 +21,13 @@ nPythonRegisterPackages(nKernelServer * kernelServer)
     kernelServer->AddPackage(npythonserver);
 }
 
+extern "C" {
+#ifdef __WIN32__
+__declspec(dllexport)
+#endif
+void
+initpynebula()
+{
+    nPythonInitialize(nPythonModuleName());
+}
+}

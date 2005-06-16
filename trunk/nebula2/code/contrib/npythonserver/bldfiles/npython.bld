@@ -33,10 +33,18 @@ beginmodule npyviewer
     setfiles { npyviewer }
 endmodule
 #-----------------------------------------------------------------------------
+beginmodule npythonhooks
+    setdir pythontest
+    setfiles { npythonhooks }
+endmodule
+#-----------------------------------------------------------------------------
 begintarget pynebula
     annotate "Sample DLL for importing into Python"
     settype dll    
-    setmodules { pynebula }
+    setmodules {
+        pynebula
+        npythonhooks
+    }
     settargetdeps {
         nkernel
         nnebula
@@ -51,7 +59,10 @@ endtarget
 begintarget npyviewer
     annotate "Sample application:  Allows simple viewing of .n2 files and uses Python."
     settype exe
-    setmodules { npyviewer }
+    setmodules {
+        npyviewer
+        npythonhooks
+    }
     settargetdeps {
         nkernel
         nnebula
@@ -69,7 +80,10 @@ endtarget
 begintarget nshpython
     annotate "Sample application: A Nebula2 console based interface using Python."
     settype exe
-    setmodules { nshpython }
+    setmodules {
+        nshpython
+        npythonhooks
+    }
     settargetdeps {
         nkernel
         nnebula
