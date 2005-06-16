@@ -86,7 +86,7 @@ nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
 /**
     - Feb-04 Kim, H.W. added to support ngameswf.
 */
-void nTexture2::GetSurfaceLevel(const char* /*objName*/, int /*level*/, nSurface** /*surface*/)
+void nTexture2::GetSurfaceLevel(const char* /*objName*/, uint /*level*/, nSurface** /*surface*/)
 {
     // reimplemented in derived class's member function.
 }
