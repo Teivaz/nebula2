@@ -74,7 +74,7 @@ proc OnGraphicsStartup {} {
             /sys/servers/scene.setrenderpathfilename "data:shaders/dx7_renderpath.xml"
         }
     } else {
-        .setassign "shaders" "data:shaders/2.0/"
+        /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"            
     }
 
     # enable zFail shadow rendering
@@ -88,7 +88,7 @@ proc OnGraphicsStartup {} {
 #-------------------------------------------------------------------------------
 #   OnGraphicsShutdown
 #
-#   This method is called right after graphics is initialized.
+#   This method is not yet called.
 #-------------------------------------------------------------------------------
 proc OnGraphicsShutdown {} {
     # empty
