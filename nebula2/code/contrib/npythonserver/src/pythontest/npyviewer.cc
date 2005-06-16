@@ -18,7 +18,7 @@
 
     <dl>
      <dt>-startup</dt>
-       <dd>startup script to run, default is: home:code/contrib/npythonserver/bin/startup.py</dd>
+       <dd>startup script to run, default is: home:data/scripts/startup.py</dd>
      <dt>-sceneserver</dt>
        <dd>scene server to use</dd>
      <dt>-scriptserver</dt>
@@ -139,7 +139,7 @@ main(int argc, const char** argv)
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "npythonserver");
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/npythonserver/bin/startup.py");
+    const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.py");
     const char* viewArg   = args.GetStringArg("-view", 0);
     const char* stageArg  = args.GetStringArg("-stage", "home:code/contrib/npythonserver/bin/stdlight.py");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
@@ -178,7 +178,7 @@ main(int argc, const char** argv)
                "Command line args:\n"
                "------------------\n"
                "-help                   show this help\n"
-               "-startup                startup script to run, default is: home:code/contrib/npythonserver/bin/startup.py\n"
+               "-startup                startup script to run, default is: home:data/scripts/startup.py\n"
                "-sceneserver            scene server to use, default is nmrtsceneserver\n"
                "-scriptserver           script server to use\n"
                "-gfxserver              graphics server to use; default is platform dependent\n"
