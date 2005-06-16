@@ -123,7 +123,7 @@ nViewerApp::Open()
         if (false == r)
         {
             n_error("Executing startup script failed: %s",
-                    result.IsEmpty() ? result.Get() : "Unknown error");
+                    !result.IsEmpty() ? result.Get() : "Unknown error");
         }
     }
 
@@ -175,7 +175,7 @@ nViewerApp::Open()
             if (false == r)
             {
                 n_error("Executing light stage script failed: %s",
-                        result.IsEmpty() ? result.Get() : "Unknown error");
+                        !result.IsEmpty() ? result.Get() : "Unknown error");
             }
         }
 
@@ -404,7 +404,7 @@ nViewerApp::DefineInputMapping()
     if (false == r)
     {
         n_error("Executing OnMapInput failed: %s",
-                scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
+                !scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
     }
 }
 
