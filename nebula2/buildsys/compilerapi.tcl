@@ -706,7 +706,7 @@ proc get_libsearchdirs { } {
 #  write_resfiles
 #
 #  writes out res_XXX.rc files for each executable target that point to
-#  the target's icon in /bin/win32.
+#  the target's icon in /code/nebula2/res.
 #
 #  TODO: Find a better way of handling app icons. - includes linux and macosx
 #----------------------------------------------------------------------------
@@ -716,7 +716,7 @@ proc write_resfiles { } {
     global num_tars
 
     set pdir [cleanpath ./build/pkg]
-    set relpath [findrelpath $pdir ./bin/win32]
+    set relpath [findrelpath $pdir ./code/nebula2/res]
     set dir  [cleanpath $home/$pdir]
 
     for {set i 0} {$i < $num_tars} {incr i} {
@@ -728,7 +728,7 @@ proc write_resfiles { } {
         #     continue
         # }
         set cid [open $dir/res_$target.rc w]
-        puts $cid "nebula_icon ICON \"$relpath/[get_icon $target]\""
+        puts $cid "NebulaIcon ICON \"$relpath/[get_icon $target]\""
         close $cid
     }
 }
