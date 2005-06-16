@@ -33,10 +33,13 @@ public:
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
 
-    // begin added for ngameswf
-    virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
+    /// retrieves a pointer to the surface.
+    virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
+    /// filters mipmap levels of a texture.
     virtual void GenerateMipMaps();
-    // end added for ngameswf
+    /// convert nTexture2 format to D3D9FORMAT.
+    static D3DFORMAT FormatToD3DFormat(nTexture2::Format format);
+
 protected:
     /// load texture resource (create rendertarget if render target resource)
     virtual bool LoadResource();
@@ -83,6 +86,7 @@ private:
     IDirect3DCubeTexture9* textureCube;
     IDirect3DSurface9* renderTargetSurface;
     IDirect3DSurface9* depthStencilSurface;
+
 };
 
 //------------------------------------------------------------------------------
