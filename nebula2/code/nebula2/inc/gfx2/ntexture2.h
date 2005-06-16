@@ -176,7 +176,7 @@ public:
     /// convert pixel format to string
     static const char* FormatToString(Format fmt);
     // begin added for ngameswf
-    virtual void GetSurfaceLevel(const char* objName, int level, nSurface** surface);
+    virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
     virtual void GenerateMipMaps();
     // end added for ngameswf
 
