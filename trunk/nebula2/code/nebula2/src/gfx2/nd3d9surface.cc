@@ -1,6 +1,7 @@
 //-----------------------------------------------------------------------------
-// nd3d9surface.cc
-// (c) 2003, 2004 George McBay, Kim, Hyoun Woo
+//  nd3d9surface.cc
+//
+//  (c) 2003, 2004 George McBay, Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 
 #include <d3d9.h>
@@ -10,35 +11,16 @@
 
 nNebulaClass(nD3D9Surface, "nsurface");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nd3d9surface
-
-    @cppclass
-    nD3D9Surface
-    
-    @superclass
-    nsurface
-    
-    @classinfo
-    Docs needed.
-*/
-
-
-D3DFORMAT getD3DFormat(nTexture2::Format format);
-
 //-----------------------------------------------------------------------------
 /**
-    Constructor.
 */
-nD3D9Surface::nD3D9Surface() : baseSurface(NULL)
+nD3D9Surface::nD3D9Surface() : 
+    baseSurface(NULL)
 {
 }
 
 //-----------------------------------------------------------------------------
 /**
-    Destructor.
 */
 nD3D9Surface::~nD3D9Surface()
 {
@@ -50,59 +32,16 @@ nD3D9Surface::~nD3D9Surface()
 
 //-----------------------------------------------------------------------------
 /**
-    Convert nTexture2::Fromat to D3DFORMAT
-*/
-D3DFORMAT getD3DFormat(nTexture2::Format format)
-{
-    D3DFORMAT d3dFormat = D3DFMT_UNKNOWN;
+    Load surface data from memory.
 
-    switch(format)
-    {
-    case nTexture2::X8R8G8B8:
-        d3dFormat = D3DFMT_X8R8G8B8;
-      break;
-    case nTexture2::A8R8G8B8:
-        d3dFormat = D3DFMT_A8R8G8B8;
-      break;
-    case nTexture2::R5G6B5:
-        d3dFormat = D3DFMT_R5G6B5;
-        break;
-    case nTexture2::A1R5G5B5:
-        d3dFormat = D3DFMT_A1R5G5B5;
-        break;
-    case nTexture2::A4R4G4B4:
-        d3dFormat = D3DFMT_A4R4G4B4;
-        break;
-    case nTexture2::P8:
-        d3dFormat = D3DFMT_P8;
-        break;
-    case nTexture2::DXT1:
-        d3dFormat = D3DFMT_DXT1;
-        break;
-    case nTexture2::DXT2:
-        d3dFormat = D3DFMT_DXT2;
-        break;
-    case nTexture2::DXT3:
-        d3dFormat = D3DFMT_DXT3;
-        break;
-    case nTexture2::DXT4:
-        d3dFormat = D3DFMT_DXT4;
-        break;
-    case nTexture2::DXT5:
-        d3dFormat = D3DFMT_DXT5;
-        break;
-    case nTexture2::A8:
-        d3dFormat = D3DFMT_A8;
-        break;
-    }
+    @note
+    entire surface is specified for the destination surface.
 
-    n_assert(d3dFormat != D3DFMT_UNKNOWN);
-
-    return d3dFormat;
-}
-//-----------------------------------------------------------------------------
-/**
-  Load surface data from memory.
+    @param data    pointer to the upper left corner of the source image in memory.
+    @param format  the pixel format of the source image.
+    @param width   width of the source image.
+    @param height  height of the source image.
+    @param pitch   pitch of source image, in bytes.
 */
 void nD3D9Surface::LoadFromMemory(void* data, nTexture2::Format format,
                                   int width, int height, int pitch)
@@ -117,7 +56,7 @@ void nD3D9Surface::LoadFromMemory(void* data, nTexture2::Format format,
     srcRect.right  = width;
     srcRect.bottom = height;
 
-    D3DFORMAT d3dFormat = getD3DFormat(format);
+    D3DFORMAT d3dFormat = nD3D9Texture::FormatToD3DFormat(format);
 
     hr = D3DXLoadSurfaceFromMemory (this->baseSurface, NULL, 
                                     NULL, data, d3dFormat, pitch, 
@@ -166,5 +105,3 @@ void nD3D9Surface::Unlock()
 
     n_assert(SUCCEEDED(hr));
 }
-
-
