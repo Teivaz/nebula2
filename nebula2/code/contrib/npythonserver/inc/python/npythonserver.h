@@ -26,6 +26,20 @@
 #include "kernel/nautoref.h"
 #include "util/nstring.h"
 
+// Package registration hook
+void nPythonRegisterPackages(nKernelServer *);
+// Module name hook
+const char * nPythonModuleName();
+// Environment initialization hook
+void nPythonInitializeEnvironment();
+
+/**
+    Initialization hook that takes the module name.  This must be
+    called by the embedder/extender in their module initialization
+    function.
+*/
+void nPythonInitialize(const char *);
+
 //--------------------------------------------------------------------
 class nFileServer2;
 class nPythonServer : public nScriptServer 

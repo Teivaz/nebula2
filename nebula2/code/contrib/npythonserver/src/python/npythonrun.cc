@@ -179,9 +179,7 @@ nPythonServer::RunScript(const char *filename, nString& result)
     result.Clear();
 
     // Initialize Python commands in __main__
-    // Note, this could be done via the Python C API, but it would
-    //       require many more lines.  :-)
-    PyRun_SimpleString("from pynebula import *");
+    nPythonInitializeEnvironment();
 
     // Open file
     nFileServer2* file2 = nFileServer2::Instance();

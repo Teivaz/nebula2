@@ -18,9 +18,6 @@
 // Initialize static members to NULL
 nPythonServer *nPythonServer::Instance = NULL;
 
-// Package registration hook
-extern void nPythonRegisterPackages(nKernelServer *);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -86,6 +83,9 @@ static PyMethodDef NebulaMethods[] = {
     {"__CreatedObjectsList_weakref_callback__",  CreatedObjectsList_weakref_callback, METH_VARARGS}, 
     {NULL, NULL, 0, NULL}    /* Sentinel */
 };
+#ifdef __cplusplus
+}
+#endif
 
 //--------------------------------------------------------------------
 /**
@@ -93,11 +93,8 @@ static PyMethodDef NebulaMethods[] = {
    Called implicitly to extend an external interpreter or
    called explicitly when embedding the interpreter.
 */
-#ifdef __WIN32__
-__declspec(dllexport)
-#endif
 void
-initpynebula()
+nPythonInitialize(const char* moduleName)
 {
     PyObject *m, *d, *gd;
 
@@ -105,11 +102,13 @@ initpynebula()
      * is required for portability to Windows without requiring C++. */
     Nebula_Type.ob_type = &PyType_Type;
 
-    m = Py_InitModule("pynebula",  NebulaMethods);
+    m = Py_InitModule((char*)moduleName,  NebulaMethods);
 
     /* Add some symbolic constants to the module */
     d = PyModule_GetDict(m);
-    Npy_ErrorObject = PyErr_NewException("pynebula.error", NULL, NULL);
+    nString exceptionName;
+    exceptionName.Format("%s.error", moduleName);
+    Npy_ErrorObject = PyErr_NewException((char*)exceptionName.Get(), NULL, NULL);
     PyDict_SetItemString(d, "PyNebula_Error", Npy_ErrorObject);
 
     CreatedObjectsList_weakref_callback_ = PyDict_GetItemString(d, "__CreatedObjectsList_weakref_callback__");
@@ -148,12 +147,6 @@ initpynebula()
     }
 }
 
-
-#ifdef __cplusplus
-}
-#endif
-
-
 nNebulaClass(nPythonServer, "nscriptserver");
 
 //--------------------------------------------------------------------
@@ -179,29 +172,31 @@ nPythonServer::nPythonServer()
         Py_Initialize();
 
         // Explicitly initialize Nebula extensions
-        initpynebula();
+        nPythonInitialize(nPythonModuleName());
     }
 
     // Store a handy reference to the nebula module
-    this->nmodule = PyImport_ImportModule("pynebula");
+    this->nmodule = PyImport_ImportModule((char*)nPythonModuleName());
 
     // And store a handy reference to the main module
     this->main_module = PyImport_ImportModule("__main__");
 
     // Install a mechanism to redirect stdout
-    PyRun_SimpleString("import sys\n"
-                       "import pynebula\n"
-                       "sys.oldstdout = sys.stdout\n"
-                       "sys.oldstderr = sys.stderr\n"
-                       "class nwriter:\n"
-                       "  def write(self, text):\n"
-                       "    pynebula.nprint(text)\n"
-                       "  def __del__(self):\n"
-                       "    sys.stdout = sys.oldstdout\n"
-                       "    sys.stderr = sys.oldstderr\n"
-                       "sys.stdout = nwriter()\n"
-                       "sys.stderr = nwriter()\n"
-                      );
+    nString script;
+    script.Format("import sys\n"
+                  "import %s\n"
+                  "sys.oldstdout = sys.stdout\n"
+                  "sys.oldstderr = sys.stderr\n"
+                  "class nwriter:\n"
+                  "  def write(self, text):\n"
+                  "    %s.nprint(text)\n"
+                  "  def __del__(self):\n"
+                  "    sys.stdout = sys.oldstdout\n"
+                  "    sys.stderr = sys.oldstderr\n"
+                  "sys.stdout = nwriter()\n"
+                  "sys.stderr = nwriter()\n",
+                  nPythonModuleName(), nPythonModuleName());
+    PyRun_SimpleString(script.Get());
 }
 
 //--------------------------------------------------------------------
