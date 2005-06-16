@@ -128,8 +128,8 @@ nViewerApp::Open()
     }
 
     nString scriptResult;
-    this->refScriptServer->Run("OnStartup", scriptResult);
-    this->refScriptServer->Run("OnGraphicsStartup", scriptResult);
+    this->refScriptServer->RunFunction("OnStartup", scriptResult);
+    this->refScriptServer->RunFunction("OnGraphicsStartup", scriptResult);
 
     // initialize graphics
     this->refGfxServer->SetCamera(this->camera);
