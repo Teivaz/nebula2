@@ -594,31 +594,8 @@ nD3D9Texture::CreateEmptyTexture()
         d3dUsage = D3DUSAGE_DYNAMIC;
         d3dPool  = D3DPOOL_DEFAULT;
     }
-    D3DFORMAT d3dFormat;
-    switch (this->format)
-    {
-        case X8R8G8B8:          d3dFormat = D3DFMT_X8R8G8B8; break;
-        case A8R8G8B8:          d3dFormat = D3DFMT_A8R8G8B8; break;
-        case R5G6B5:            d3dFormat = D3DFMT_R5G6B5; break;
-        case A1R5G5B5:          d3dFormat = D3DFMT_A1R5G5B5; break;
-        case A4R4G4B4:          d3dFormat = D3DFMT_A4R4G4B4; break;
-        case P8:                d3dFormat = D3DFMT_P8; break;
-        case DXT1:              d3dFormat = D3DFMT_DXT1; break;
-        case DXT2:              d3dFormat = D3DFMT_DXT2; break;
-        case DXT3:              d3dFormat = D3DFMT_DXT3; break;
-        case DXT4:              d3dFormat = D3DFMT_DXT4; break;
-        case DXT5:              d3dFormat = D3DFMT_DXT5; break;
-        case R16F:              d3dFormat = D3DFMT_R16F; break;
-        case G16R16F:           d3dFormat = D3DFMT_G16R16F; break;
-        case A16B16G16R16F:     d3dFormat = D3DFMT_A16B16G16R16F; break;
-        case R32F:              d3dFormat = D3DFMT_R32F; break;
-        case G32R32F:           d3dFormat = D3DFMT_G32R32F; break;
-        case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
-        case A8:                d3dFormat = D3DFMT_A8; break;
-        default:            
-            // can't happen
-            n_assert(false);
-    }
+
+    D3DFORMAT d3dFormat = nD3D9Texture::FormatToD3DFormat(this->format);
 
     if (this->GetType() == TEXTURE_2D)
     {
@@ -980,7 +957,7 @@ nD3D9Texture::GetByteSize()
 
     - Feb-04 Kim, H.W. added to support ngameswf.
 */
-void nD3D9Texture::GetSurfaceLevel(const char* objName, int level, nSurface** surface)
+void nD3D9Texture::GetSurfaceLevel(const char* objName, uint level, nSurface** surface)
 {
     n_assert(this->texture2D);
 
@@ -989,7 +966,7 @@ void nD3D9Texture::GetSurfaceLevel(const char* objName, int level, nSurface** su
     *surface = (nSurface*)this->kernelServer->New ("nd3d9surface", objName);
     n_assert(*surface != NULL);
 
-    hr = this->texture2D->GetSurfaceLevel(0, &((nD3D9Surface*)*surface)->baseSurface);
+    hr = this->texture2D->GetSurfaceLevel(level, &((nD3D9Surface*)*surface)->baseSurface);
     n_assert(SUCCEEDED(hr));
 }
 
@@ -1013,3 +990,39 @@ void nD3D9Texture::GenerateMipMaps()
     n_assert (SUCCEEDED(hr));
 }
                 
+//------------------------------------------------------------------------------
+/**
+    Convert nTexture2::Fromat to D3DFORMAT.
+
+    -16-Jun-05    kims    Added to remove duplicated code from nD3D9Texture module
+                          and nD3D9Surface module.
+*/
+D3DFORMAT nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
+{
+    D3DFORMAT d3dFormat;
+    switch (format)
+    {
+        case X8R8G8B8:          d3dFormat = D3DFMT_X8R8G8B8;      break;
+        case A8R8G8B8:          d3dFormat = D3DFMT_A8R8G8B8;      break;
+        case R5G6B5:            d3dFormat = D3DFMT_R5G6B5;        break;
+        case A1R5G5B5:          d3dFormat = D3DFMT_A1R5G5B5;      break;
+        case A4R4G4B4:          d3dFormat = D3DFMT_A4R4G4B4;      break;
+        case P8:                d3dFormat = D3DFMT_P8;            break;
+        case DXT1:              d3dFormat = D3DFMT_DXT1;          break;
+        case DXT2:              d3dFormat = D3DFMT_DXT2;          break;
+        case DXT3:              d3dFormat = D3DFMT_DXT3;          break;
+        case DXT4:              d3dFormat = D3DFMT_DXT4;          break;
+        case DXT5:              d3dFormat = D3DFMT_DXT5;          break;
+        case R16F:              d3dFormat = D3DFMT_R16F;          break;
+        case G16R16F:           d3dFormat = D3DFMT_G16R16F;       break;
+        case A16B16G16R16F:     d3dFormat = D3DFMT_A16B16G16R16F; break;
+        case R32F:              d3dFormat = D3DFMT_R32F;          break;
+        case G32R32F:           d3dFormat = D3DFMT_G32R32F;       break;
+        case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
+        case A8:                d3dFormat = D3DFMT_A8;            break;
+        default:            
+            // can't happen
+            n_assert(false);
+    }
+    return d3dFormat;
+}
