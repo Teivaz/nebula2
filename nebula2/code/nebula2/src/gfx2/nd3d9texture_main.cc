@@ -909,6 +909,7 @@ nD3D9Texture::GetByteSize()
         case DXT4:
         case DXT5:
         case P8:
+        case A8:
             // 8 bits per pixel
             size = numPixels;
             break;
