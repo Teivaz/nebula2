@@ -18,21 +18,21 @@
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
      <dt>-stage</dt>
-        <dd>the light stage to load, default is: home:bin/stdlight.tcl </dd>
+       <dd>the light stage to load, default is: home:export/gfxlib/stdlight.n2</dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
      <dt>-alwaysontop</dt>
-        <dd>if present the window will be allways on top</dd>
+       <dd>if present the window will be allways on top</dd>
      <dt>-w</dt>
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
      <dt>-x</dt>
-        <dd>the x position of the window (default: 0)</dd>
+       <dd>the x position of the window (default: 0)</dd>
      <dt>-y</dt>
-        <dd>the y position of the window (default: 0)</dd>
+       <dd>the y position of the window (default: 0)</dd>
      <dt>-projdir</dt>
-        <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+       <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
     </dl>
 
     (C) 2004 Bang, Chang Kyu
@@ -67,7 +67,7 @@ main(int argc, const char** argv)
     const char* sceneserverArg = args.GetStringArg("-sceneserver", "nstdsceneserver");
     const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
+    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     const char* inputArg  = args.GetStringArg("-input", "home:bin/stdinput.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
@@ -91,7 +91,7 @@ main(int argc, const char** argv)
                "-scriptserver           script server to use\n"
                "-input                  input binding script to run, default is: home:bin/stdinput.tcl\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
-               "-stage                  light stage to load, default is: home:bin/stdlight.tcl\n"
+               "-stage                  light stage to load, default is: home:export/gfxlib/stdlight.n2\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"
