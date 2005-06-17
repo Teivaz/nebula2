@@ -232,11 +232,8 @@ nString::Set(const char* str, int length)
             ptr = this->localString;
             this->localStrLen = (ushort)length;
         }
-        for (int i = 0; i < length; i++)
-        {
-            *ptr++ = *str++;
-        }
-        *ptr = 0;
+        memcpy(ptr, str, length);
+        ptr[length] = 0;
     }
 }
 
