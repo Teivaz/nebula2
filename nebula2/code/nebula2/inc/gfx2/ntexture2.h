@@ -370,6 +370,8 @@ nTexture2::GetNumMipLevels() const
 /**
     Returns the bytes per pixel for the current pixel format. May be
     incorrect for compressed textures!
+
+    - 17-Jun-05    kims    Added 'A8' to return its bytes per pixel.
 */
 inline
 int
@@ -387,6 +389,7 @@ nTexture2::GetBytesPerPixel() const
             return 2;
 
         case P8:
+        case A8:
             return 1;
 
         case DXT1:
