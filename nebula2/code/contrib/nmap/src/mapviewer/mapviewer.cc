@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 /**
-	@page NebulaToolsMapviewer mapviewer
+    @page NebulaToolsMapviewer mapviewer
 
     mapviewer
 
@@ -15,22 +15,22 @@
        <dd>script server to use</dd>
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
-	 <dt>-stage</dt>
-		<dd>the light stage to load, default is: home:bin/stdlight.tcl </dd>
+     <dt>-stage</dt>
+       <dd>the light stage to load, default is: home:export/gfxlib/stdlight.n2</dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
-	 <dt>-alwaysontop</dt>
-		<dd>if present the window will be allways on top</dd>
+     <dt>-alwaysontop</dt>
+       <dd>if present the window will be allways on top</dd>
      <dt>-w</dt>
        <dd>width of window to open (default: 640)</dd>
      <dt>-h</dt>
        <dd>height of window to open (default: 480)</dd>
-	 <dt>-x</dt>
-		<dd>the x position of the window (default: 0)</dd>
-	 <dt>-y</dt>
-		<dd>the y position of the window (default: 0)</dd>
-	 <dt>-projdir</dt>
-	    <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-x</dt>
+       <dd>the x position of the window (default: 0)</dd>
+     <dt>-y</dt>
+       <dd>the y position of the window (default: 0)</dd>
+     <dt>-projdir</dt>
+       <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
     </dl>
 
     nviewer also defines some default input handling:
@@ -107,7 +107,7 @@ main(int argc, const char** argv)
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
     const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
+    const char* stageArg  = args.GetStringArg("-stage", "export/gfxlib/stdlight.n2");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg           = args.GetBoolArg("-help");
@@ -134,7 +134,7 @@ main(int argc, const char** argv)
                "-gfxserver              graphics server to use; default is platform dependent"
                "-featureset             Which shader feature set to use; I'm not sure how this is expressed\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
-               "-stage                  light stage to load, default is: home:bin/stdlight.tcl\n"
+               "-stage                  light stage to load, default is: home:export/gfxlib/stdlight.n2\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"

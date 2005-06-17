@@ -165,7 +165,7 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     this->arguments += sceneServer;
     this->arguments += " ";
 
-    iniFile.ReadString("-stage", stage, "home:bin/stdlight.tcl");
+    iniFile.ReadString("-stage", stage, "home:export/gfxlib/stdlight.n2");
     this->arguments += "-stage ";
     this->arguments += stage;
     this->arguments += " ";
