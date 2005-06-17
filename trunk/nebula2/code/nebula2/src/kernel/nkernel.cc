@@ -421,15 +421,8 @@ n_strtofourcc(const char* str)
 {
     n_assert(str);
     n_assert(strlen(str) == 4);
-    n_assert(str);
-    char chr[4] = { 0 };
-    int i = 0;
-    while (str[i] && (i < 4))
-    {
-        chr[i] = str[i];
-        i++;
-    }
-    return MAKE_FOURCC(chr[0], chr[1], chr[2], chr[3]);
+    // Since str is guaranteed to be 4 in length...
+    return MAKE_FOURCC(str[0], str[1], str[2], str[3]);
 }
 
 //------------------------------------------------------------------------------
