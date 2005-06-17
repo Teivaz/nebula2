@@ -167,16 +167,11 @@ nViewerApp::Open()
     {
         if (NULL != this->GetStageScript())
         {
-            nString result;
-            bool r;
-
-            // run the light stage script
-            r = this->refScriptServer->RunScript(this->GetStageScript(), result);
-            if (false == r)
-            {
-                n_error("Executing light stage script failed: %s",
-                        !result.IsEmpty() ? result.Get() : "Unknown error");
-            }
+            // load new object
+            kernelServer->PushCwd(this->refRootNode.get());
+            // source the light stage...
+            kernelServer->Load(this->GetStageScript());
+            kernelServer->PopCwd();
         }
 
         // Switch to ramfileserver if demanded.

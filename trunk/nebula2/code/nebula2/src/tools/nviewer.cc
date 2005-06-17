@@ -24,7 +24,7 @@
      <dt>-view</dt>
        <dd>data to load and view with the default lighting setup</dd>
      <dt>-stage</dt>
-       <dd>the light stage to load, default is: home:bin/stdlight.tcl </dd>
+       <dd>the light stage to load, default is: home:export/gfxlib/stdlight.n2</dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
      <dt>-alwaysontop</dt>
@@ -123,7 +123,7 @@ main(int argc, const char** argv)
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
     const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:bin/stdlight.tcl");
+    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool useRam           = args.GetBoolArg("-useram");    
@@ -166,7 +166,7 @@ main(int argc, const char** argv)
                "-gfxserver              graphics server to use; default is platform dependent\n"
                "-featureset             Which shader feature set to use; One of: dx7, dx8, dx8sb, dx9, dx9flt\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
-               "-stage                  light stage to load, default is: home:bin/stdlight.tcl\n"
+               "-stage                  light stage to load, default is: home:export/gfxlib/stdlight.n2\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"
