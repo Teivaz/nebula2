@@ -14,7 +14,7 @@
 
     See @ref nMayaCamControl class which is used for <tt>nviewer</tt> 
     application to provide a camera system similiar to what the Maya package 
-    do and @ref nAppCamera class if you use @ref nApplication class for 
-    your code base.
+    does and @ref nAppCamera class if you use @ref nApplication class for 
+    your application.
 
 */
