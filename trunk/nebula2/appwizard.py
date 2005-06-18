@@ -6,6 +6,7 @@
 #
 #  (C)2005 Kim, Hyoun Woo
 #----------------------------------------------------------------------
+import zlib
 import  wx
 from  appwiz.appframe import *
 

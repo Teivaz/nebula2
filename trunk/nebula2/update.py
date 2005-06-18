@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 import sys
+import zlib
 
 if not hasattr(sys, 'hexversion') or sys.hexversion < 0x020300f0:
     sys.exit('Python 2.3 or later is required to run the build system.')
