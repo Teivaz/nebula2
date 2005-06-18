@@ -5,6 +5,7 @@
 #
 #   (C) 2003 RadonLabs GmbH
 #-------------------------------------------------------------------------------
+import pynebula as nebula
 
 #-------------------------------------------------------------------------------
 #   OnStartup
@@ -13,7 +14,7 @@
 #   to initialize Nebula assigns.
 #-------------------------------------------------------------------------------
 def OnStartup():
-    fileServer = lookup('/sys/servers/file2')
+    fileServer = nebula.lookup('/sys/servers/file2')
     proj = fileServer.manglepath("proj:")
     home = fileServer.manglepath("home:")
 
@@ -44,12 +45,12 @@ def OnShutdown():
 #   This method is called right after graphics is initialized.
 #-------------------------------------------------------------------------------
 def OnGraphicsStartup():
-    if not exists('/sys/servers/scene'):
+    if not nebula.exists('/sys/servers/scene'):
         print "The scene server hasn't been created yet?"
         return
-    sceneServer = lookup('/sys/servers/scene')
-    if exists('/sys/servers/gfx'):
-        featureSet = lookup('/sys/servers/gfx').getfeatureset()
+    sceneServer = nebula.lookup('/sys/servers/scene')
+    if nebula.exists('/sys/servers/gfx'):
+        featureSet = nebula.lookup('/sys/servers/gfx').getfeatureset()
         if featureSet == "dx9":
             # DX9 hardware without floating point render targets
             sceneServer.setrenderpathfilename("data:shaders/dx9_renderpath.xml")
@@ -64,8 +65,8 @@ def OnGraphicsStartup():
         sceneServer.setrenderpathfilename("data:shaders/dx9_renderpath.xml")
 
     # enable zFail shadow rendering
-    if exists('/sys/servers/shadow'):
-        lookup('/sys/servers/shadow').setusezfail(True)
+    if nebula.exists('/sys/servers/shadow'):
+        nebula.lookup('/sys/servers/shadow').setusezfail(True)
 
 #-------------------------------------------------------------------------------
 #   OnGraphicsShutdown
@@ -80,7 +81,7 @@ def OnGraphicsShutdown():
 #   defined.
 #-------------------------------------------------------------------------------
 def OnMapInput():
-    inputServer = lookup('/sys/servers/input')
+    inputServer = nebula.lookup('/sys/servers/input')
     inputServer.beginmap()
     inputServer.map("keyb0:space.down",       "reset")
     inputServer.map("keyb0:esc.down",
@@ -109,12 +110,12 @@ def OnMapInput():
 #-------------------------------------------------------------------------------
 def OnGuiServerOpen():
     # initialize the default tooltip
-    guiServer = lookup('/sys/servers/gui')
+    guiServer = nebula.lookup('/sys/servers/gui')
     guiRoot = guiServer.getrootpath()
-    oldCwd = psel()
-    sel(guiRoot)
+    oldCwd = nebula.psel()
+    nebula.sel(guiRoot)
 
-    toolTip = new("nguitooltip", "Tooltip")
+    toolTip = nebula.new("nguitooltip", "Tooltip")
     toolTip.setdefaultbrush("tooltip")
     toolTip.setfont("GuiSmall")
     toolTip.setcolor(0, 0, 0, 1)
@@ -138,7 +139,7 @@ def OnGuiServerOpen():
     skin.setmenutextcolor(0.0, 0.0, 0.0, 1.0)
 
     # define brushes
-    skin.beginbrushes
+    skin.beginbrushes()
 
     # window title bar, window background, tooltip background
     skin.addbrush('titlebar','skin',66,152,10,20,1.0,1.0,1.0,1.0)
@@ -278,7 +279,7 @@ def OnGuiServerOpen():
     # create the Nebula dock window
     guiServer.newwindow('nguidockwindow', True)
 
-    sel(oldCwd)
+    nebula.sel(oldCwd)
 
 #-------------------------------------------------------------------------------
 #   This procedure is called when the gui server is closed.
