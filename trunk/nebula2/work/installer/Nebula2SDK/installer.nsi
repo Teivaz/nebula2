@@ -17,12 +17,13 @@
     !define PRODUCT "Nebula2 SDK"
     !define SRCDIR "..\..\.."
     !define STARTMENU "$SMPROGRAMS\${PRODUCT}"
+    !define /date TODAY "%Y_%m_%d"
 
 ;-------------------------------------------------------------------------------
 ;   General
 
     Name "${PRODUCT}"
-    OutFile "${SRCDIR}\Nebula2SDK_${__DATE__}.exe"
+    OutFile "${SRCDIR}\Nebula2SDK_${TODAY}.exe"
     XPStyle on
     CrcCheck off
     
@@ -79,7 +80,19 @@ Section "-Runtime" Section_RuntimeFiles
     File "${SRCDIR}\bin\win32\nsh.exe"
     File "${SRCDIR}\bin\win32\nremoteshell.exe"
     File "${SRCDIR}\bin\win32\nnpktool.exe"
-    File "${SRCDIR}\bin\win32\NewProjectWizard.exe"
+    File "${SRCDIR}\bin\win32\nmeshtool.exe"
+    File "${SRCDIR}\bin\win32\npyviewer.exe"
+    File "${SRCDIR}\bin\win32\nshpython.exe"
+    File "${SRCDIR}\bin\win32\pynebula.dll"
+    File "${SRCDIR}\bin\win32\nshlua.exe"
+    File "${SRCDIR}\bin\win32\nvsdebugger.dll"
+
+    ; py2exe'd utilities
+    SetOutPath "$INSTDIR"
+    File "${SRCDIR}\work\installer\Py2exe\dist\*.dll"
+    File "${SRCDIR}\work\installer\Py2exe\dist\*.exe"
+    File "${SRCDIR}\work\installer\Py2exe\dist\*.pyd"
+    File "${SRCDIR}\work\installer\Py2exe\dist\library.zip"
 
     ; scripts directory
     SetOutPath "$INSTDIR\data\scripts"
@@ -147,31 +160,21 @@ SectionEnd
 Section "Documentation" Section_Documentation
 
     SetOutPath "$INSTDIR\doc"
-    File /nonfatal "${SRCDIR}\doc\nebula2api\html\nebula2api.chm"
-    File /nonfatal "${SRCDIR}\doc\sdk\html\nebula2sdk.chm"
+    File /nonfatal "${SRCDIR}\doc\doxydoc\nebula2\html\nebula2.chm"
 
     SetOutPath "$INSTDIR\code\doxygen"
-    File "${SRCDIR}\code\doxygen\*.html"
-    File "${SRCDIR}\code\doxygen\*.cfg"
-    File "${SRCDIR}\code\doxygen\*.css"
-    File "${SRCDIR}\code\doxygen\*.txt"
+    File "${SRCDIR}\code\doxycfg\*.html"
+    File "${SRCDIR}\code\doxycfg\*.cfg"
+    File "${SRCDIR}\code\doxycfg\*.css"
 
 SectionEnd
 
 Section "Doxygen Sources" Section_Doxygen
 
-    SetOutPath "$INSTDIR\doc\nebula2api"
-    File "${SRCDIR}\doc\nebula2api\*.dox"
-    SetOutPath "$INSTDIR\doc\sdk"
-    File "${SRCDIR}\doc\sdk\*.dox"
-
-SectionEnd
-
-Section "VStudio.NET Project Files" Section_VStudioFiles
-
-    SetOutPath "$INSTDIR\code\nebula2\vstudio"
-    File "${SRCDIR}\code\nebula2\vstudio\*.vcproj"
-    File "${SRCDIR}\code\nebula2\vstudio\*.sln"
+    SetOutPath "$INSTDIR\doc\nebula2"
+    File "${SRCDIR}\doc\nebula2\*.dox"
+    File "${SRCDIR}\doc\nebula2\*.jpg"
+    File "${SRCDIR}\doc\nebula2\readme.txt"
 
 SectionEnd
 
@@ -213,8 +216,6 @@ Section "Examples" Section_ExampleFiles
     File "${SRCDIR}\work\gfxlib\readme.txt"
     SetOutPath "$INSTDIR\work\textures"
     File "${SRCDIR}\work\textures\readme.txt"
-        
-
 
 SectionEnd
 
@@ -246,8 +247,6 @@ Section "Source Code" Section_SourceCode
     File "${INC}\gfx2\*.h"    
     SetOutPath "${DSTINC}\gui"
     File "${INC}\gui\*.h"
-    SetOutPath "${DSTINC}\il"
-    File "${INC}\il\*.h"
     SetOutPath "${DSTINC}\input"
     File "${INC}\input\*.h"
     SetOutPath "${DSTINC}\kernel"
@@ -267,7 +266,7 @@ Section "Source Code" Section_SourceCode
     SetOutPath "${DSTINC}\mathlib"
     File "${INC}\mathlib\*.h"
     SetOutPath "${DSTINC}\microtcl"
-    File "${SRC}\microtcl\*.h"
+    File "${INC}\microtcl\*.h"
     SetOutPath "${DSTINC}\misc"
     File "${INC}\misc\*.h"
     SetOutPath "${DSTINC}\nature"
@@ -305,8 +304,8 @@ Section "Source Code" Section_SourceCode
     ; bld files
     SetOutPath "${DSTBLD}"
     File "${BLD}\*.bld"
-    SetOutPath "${DSTBLD}\app"
-    File "${BLD}\app\*.bld"
+    SetOutPath "${DSTBLD}\apps"
+    File "${BLD}\apps\*.bld"
     SetOutPath "${DSTBLD}\audio3"
     File "${BLD}\audio3\*.bld"
     SetOutPath "${DSTBLD}\core"
@@ -397,6 +396,82 @@ Section "Source Code" Section_SourceCode
     File "${SRCDIR}\code\nebula2\res\*.ico"
     File "${SRCDIR}\code\nebula2\res\*.rc"
 
+    ; Contrib items:
+    !define CONTRIB "${SRCDIR}\code\contrib"
+    !define DSTCONTRIB "$INSTDIR\code\contrib"
+
+    ; Python:
+    SetOutPath "${DSTCONTRIB}\npythonserver\bldfiles"
+    File "${CONTRIB}\npythonserver\bldfiles\*.bld"
+    SetOutPath "${DSTCONTRIB}\npythonserver\doc"
+    File "${CONTRIB}\npythonserver\doc\*.dox"
+    SetOutPath "${DSTCONTRIB}\npythonserver\inc\python"
+    File "${CONTRIB}\npythonserver\inc\python\*.h"
+    SetOutPath "${DSTCONTRIB}\npythonserver\scripts"
+    File "${CONTRIB}\npythonserver\scripts\*.py"
+    SetOutPath "${DSTCONTRIB}\npythonserver\src\python"
+    File "${CONTRIB}\npythonserver\src\python\*.cc"
+    SetOutPath "${DSTCONTRIB}\npythonserver\src\pythontest"
+    File "${CONTRIB}\npythonserver\src\pythontest\*.cc"
+
+    ; Lua:
+    SetOutPath "${DSTCONTRIB}\nluaserver\bin"
+    File "${CONTRIB}\nluaserver\bin\*.lua"
+    SetOutPath "${DSTCONTRIB}\nluaserver\bldfiles"
+    File "${CONTRIB}\nluaserver\bldfiles\*.bld"
+    SetOutPath "${DSTCONTRIB}\nluaserver\data\luatest"
+    File "${CONTRIB}\nluaserver\data\luatest\*.lua"
+    SetOutPath "${DSTCONTRIB}\nluaserver\doc"
+    File "${CONTRIB}\nluaserver\doc\*.dox"
+    SetOutPath "${DSTCONTRIB}\nluaserver\inc\lua"
+    File "${CONTRIB}\nluaserver\inc\lua\*.h"
+    File "${CONTRIB}\nluaserver\inc\lua\COPYRIGHT"
+    File "${CONTRIB}\nluaserver\inc\lua\UPDATE"
+    SetOutPath "${DSTCONTRIB}\nluaserver\inc\luaserver"
+    File "${CONTRIB}\nluaserver\inc\luaserver\*.h"
+    SetOutPath "${DSTCONTRIB}\nluaserver\inc\luatest"
+    File "${CONTRIB}\nluaserver\inc\luatest\*.h"
+    SetOutPath "${DSTCONTRIB}\nluaserver\src\lua"
+    File "${CONTRIB}\nluaserver\src\lua\*.cc"
+    SetOutPath "${DSTCONTRIB}\nluaserver\src\luaserver"
+    File "${CONTRIB}\nluaserver\src\luaserver\*.cc"
+    SetOutPath "${DSTCONTRIB}\nluaserver\src\luatest"
+    File "${CONTRIB}\nluaserver\src\luatest\*.cc"
+
+    ; Visual Studio debugger extension:
+    SetOutPath "${DSTCONTRIB}\vsaddin\bldfiles"
+    File "${CONTRIB}\vsaddin\bldfiles\*.bld"
+    SetOutPath "${DSTCONTRIB}\vsaddin\doc"
+    File "${CONTRIB}\vsaddin\doc\*.dox"
+    SetOutPath "${DSTCONTRIB}\vsaddin\inc\vsaddin"
+    File "${CONTRIB}\vsaddin\inc\vsaddin\*.h"
+    SetOutPath "${DSTCONTRIB}\vsaddin\src\vsaddin"
+    File "${CONTRIB}\vsaddin\src\vsaddin\*.cc"
+    File "${CONTRIB}\vsaddin\src\vsaddin\*.def"
+
+    ; Tutorials:
+    SetOutPath "${DSTCONTRIB}\tutorials\bldfiles"
+    File "${CONTRIB}\tutorials\bldfiles\*.bld"
+    SetOutPath "${DSTCONTRIB}\tutorials\bldfiles\basic"
+    File "${CONTRIB}\tutorials\bldfiles\basic\*.bld"
+    SetOutPath "${DSTCONTRIB}\tutorials\bldfiles\napplication"
+    File "${CONTRIB}\tutorials\bldfiles\napplication\*.bld"
+    SetOutPath "${DSTCONTRIB}\tutorials\bldfiles\signals"
+    File "${CONTRIB}\tutorials\bldfiles\signals\*.bld"
+    SetOutPath "${DSTCONTRIB}\tutorials\doc"
+    File "${CONTRIB}\tutorials\doc\*.dox"
+    File "${CONTRIB}\tutorials\doc\*.jpg"
+    SetOutPath "${DSTCONTRIB}\tutorials\inc\napplication_tutorial"
+    File "${CONTRIB}\tutorials\inc\napplication_tutorial\*.h"
+    SetOutPath "${DSTCONTRIB}\tutorials\inc\signals_tutorial"
+    File "${CONTRIB}\tutorials\inc\signals_tutorial\*.h"
+    SetOutPath "${DSTCONTRIB}\tutorials\src\basic"
+    File "${CONTRIB}\tutorials\src\basic\*.cc"
+    SetOutPath "${DSTCONTRIB}\tutorials\src\napplication_tutorial"
+    File "${CONTRIB}\tutorials\src\napplication_tutorial\*.cc"
+    SetOutPath "${DSTCONTRIB}\tutorials\src\signals_tutorial"
+    File "${CONTRIB}\tutorials\src\signals_tutorial\*.cc"
+
     SetOutPath "$INSTDIR\doc"
     File "${SRCDIR}\doc\nebula2\license.txt"
 
@@ -432,16 +507,14 @@ IfSilent endOfStartMenuSection
     CreateDirectory "${STARTMENU}\Tools"
         CreateShortCut "${STARTMENU}\Tools\Nebula2 Viewer.lnk" "$INSTDIR\bin\win32\nviewer.exe" "" "$INSTDIR\bin\win32\nviewer.exe" 0
         CreateShortCut "${STARTMENU}\Tools\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nsh.exe" "" "$INSTDIR\bin\win32\nsh.exe" 0
-        CreateShortCut "${STARTMENU}\Tools\New Project Wizard.lnk" "$INSTDIR\bin\win32\NewProjectWizard.exe" "" "$INSTDIR\bin\win32\NewProjectWizard.exe" 0
     
     CreateDirectory "${STARTMENU}\Documentation"
-        IfFileExists "$INSTDIR\doc\nebula2sdk.chm" "" +2
-            CreateShortCut "${STARTMENU}\Documentation\Nebula2 SDK Readme.lnk" "$INSTDIR\doc\nebula2sdk.chm"
-        IfFileExists "$INSTDIR\doc\nebula2api.chm" "" +2
-            CreateShortCut "${STARTMENU}\Documentation\Nebula2 API Documentation.lnk" "$INSTDIR\doc\nebula2api.chm"
-        CreateShortCut "${STARTMENU}\Documentation\Radon Labs GmbH Website.lnk" "http://www.radonlabs.de"
+        IfFileExists "$INSTDIR\doc\nebula2.chm" "" +2
+            CreateShortCut "${STARTMENU}\Documentation\Nebula2 SDK Documentation.lnk" "$INSTDIR\doc\nebula2.chm"
+        CreateShortCut "${STARTMENU}\Documentation\Nebula Community Website.lnk" "http://www.nebuladevice.org/"
+        CreateShortCut "${STARTMENU}\Documentation\Radon Labs GmbH Website.lnk" "http://www.radonlabs.de/"
         CreateShortCut "${STARTMENU}\Documentation\Nebula on SourceForge.lnk" "http://www.sourceforge.net/projects/nebuladevice"
-        CreateShortCut "${STARTMENU}\Documentation\Nebula Community Website.lnk" "http://www.nebuladevice.org"    
+        CreateShortCut "${STARTMENU}\Documentation\Report A Bug.lnk" "http://nebuladevice.cubik.org/bugs/"
 
     IfFileExists "$INSTDIR\export\gfxlib\examples\bouncingball.n2" "" endOfSamples
         CreateDirectory "${STARTMENU}\Example Objects"
