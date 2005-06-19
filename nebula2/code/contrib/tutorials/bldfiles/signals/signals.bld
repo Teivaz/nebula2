@@ -71,6 +71,7 @@ begintarget signals02
         receiver
         receiverscript
         signals02        
+        npythonhooks
     }
     settargetdeps {
         nkernel
@@ -79,5 +80,6 @@ begintarget signals02
         nlua
         nnebula
         nnetwork
+        ngui
     }
 endtarget    
