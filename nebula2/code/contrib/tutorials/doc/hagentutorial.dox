@@ -425,7 +425,7 @@ which will be run when nTutorialApp::Open() is called.
 
 @code
     theApp->SetProjectDirectory("path_to_your_project");
-    theApp->SetStartupScript("scripts:startup.tcl");
+    theApp->SetStartupScript("home:data/scripts/startup.tcl");
 @endcode
 
 That first line above defines the alias "proj:" to be the path to our project,
