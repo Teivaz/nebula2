@@ -174,8 +174,6 @@ nPythonServer::Run(const char *cmdStr, int mode, nString& result)
 bool
 nPythonServer::RunScript(const char *filename, nString& result)
 {
-    char *exec_str;
-    int success = 0;
     result.Clear();
 
     // Initialize Python commands in __main__
@@ -199,11 +197,9 @@ nPythonServer::RunScript(const char *filename, nString& result)
         // build of Python.  Instead of requiring everyone who has
         // a debug build of Nebula to build Python from source, we're using
         // this work around here.
-        exec_str = (char*)malloc(strlen(fname.Get()) + 13);
-        sprintf(exec_str, "execfile('%s')", fname.Get());
-        success = PyRun_SimpleString(exec_str);
-        free(exec_str);
-
+        nString execString;
+        execString.Format("execfile('%s')", fname.Get());
+        int success = PyRun_SimpleString(execString.Get());
         if (success == -1) 
         {
             // interpreter exits due to an exception
