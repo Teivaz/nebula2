@@ -377,6 +377,8 @@ Section "Source Code" Section_SourceCode
     File "${SRC}\network\*.cc"
     SetOutPath "${DSTSRC}\particle"
     File "${SRC}\particle\*.cc"    
+    SetOutPath "${DSTSRC}\renderpath"
+    File "${SRC}\renderpath\*.cc"
     SetOutPath "${DSTSRC}\resource"
     File "${SRC}\resource\*.cc"
     SetOutPath "${DSTSRC}\scene"
