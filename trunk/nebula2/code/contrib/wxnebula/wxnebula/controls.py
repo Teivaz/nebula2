@@ -144,6 +144,7 @@ class MainWindowFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "Nebula WX Viewer",
                             wx.DefaultPosition, wx.Size(1024, 768))
+        self.myApplication = None
         self.tree = NOHTree(self, -1, nebula.sel('/'))
         self.tree.SetSelectionChangedCallback(self.OnNOHSelectionChanged)
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
@@ -168,8 +169,10 @@ class MainWindowFrame(wx.Frame):
         # Select the root node by default
         self.tree.SelectItem(self.tree.root)
 
+    def SetApplication(self, application):
+        self.myApplication = application
+
     def OnNOHSelectionChanged(self, object):
-        return
         self.propertyPanel.DeleteAllPages()
         for className in object.getclasses():
             classPanel = wx.Panel(self.propertyPanel, -1, name=className)
@@ -180,6 +183,6 @@ class MainWindowFrame(wx.Frame):
                     classPanel.paramEditCtrls.append(ParamEditCtrl(classPanel, object, p[0], p[1]))
 
     def OnCloseWindow(self, event):
-        app.keepGoing = False
+        self.myApplication.keepGoing = False
         self.Destroy()
 

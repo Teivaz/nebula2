@@ -14,13 +14,13 @@ from wxnebula.app import NebulaWXApp
 CoreOnStartup = OnStartup
 def OnStartup():
     CoreOnStartup()
+    # Create our application object.
     app = NebulaWXApp(0)
-
-    evtloop = wx.EventLoop()
-    wx.EventLoop.SetActive(evtloop)
-
+    # Configure the gfx server.
     gfxServer = nebula.lookup('/sys/servers/gfx')
     gfxServer.setskipmsgloop(True)
     gfxServer.setdisplaymode('test', 'childwindow', 0, 0, 640, 480, True)
+    # And trigger our application once/frame so that it can respond to
+    # events and stuff.
     nebula.setTrigger(app.Trigger)
 
