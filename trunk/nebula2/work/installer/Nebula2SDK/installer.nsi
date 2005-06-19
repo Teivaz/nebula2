@@ -94,6 +94,10 @@ Section "-Runtime" Section_RuntimeFiles
     File "${SRCDIR}\work\installer\Py2exe\dist\*.pyd"
     File "${SRCDIR}\work\installer\Py2exe\dist\library.zip"
 
+    ; standard lighting environment
+    SetOutPath "$INSTDIR\export\gfxlib"
+    File "${SRCDIR}\export\gfxlib\stdlight.n2"
+
     ; scripts directory
     SetOutPath "$INSTDIR\data\scripts"
     File "${SRCDIR}\data\scripts\*.tcl"
