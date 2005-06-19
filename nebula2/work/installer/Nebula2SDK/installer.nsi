@@ -93,6 +93,11 @@ Section "-Runtime" Section_RuntimeFiles
     File "${SRCDIR}\work\installer\Py2exe\dist\*.exe"
     File "${SRCDIR}\work\installer\Py2exe\dist\*.pyd"
     File "${SRCDIR}\work\installer\Py2exe\dist\library.zip"
+    File "${SRCDIR}\build.cfg.py"
+    SetOutPath "$INSTDIR\appwiz\template"
+    File "${SRCDIR}\appwiz\template\*.sbld"
+    File "${SRCDIR}\appwiz\template\*.sc"
+    File "${SRCDIR}\appwiz\template\*.sh"
 
     ; standard lighting environment
     SetOutPath "$INSTDIR\export\gfxlib"
@@ -511,10 +516,17 @@ IfSilent endOfStartMenuSection
     CreateDirectory "${STARTMENU}\Tools"
         CreateShortCut "${STARTMENU}\Tools\Nebula2 Viewer.lnk" "$INSTDIR\bin\win32\nviewer.exe" "" "$INSTDIR\bin\win32\nviewer.exe" 0
         CreateShortCut "${STARTMENU}\Tools\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nsh.exe" "" "$INSTDIR\bin\win32\nsh.exe" 0
+        CreateDirectory "${STARTMENU}\Tools\Python"
+            CreateShortCut "${STARTMENU}\Tools\Python\Nebula2 Viewer.lnk" "$INSTDIR\bin\win32\npyviewer.exe" "" "$INSTDIR\bin\win32\npyviewer.exe" 0
+            CreateShortCut "${STARTMENU}\Tools\Python\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nshpython.exe" "" "$INSTDIR\bin\win32\nshpython.exe" 0
+        CreateDirectory "${STARTMENU}\Tools\Lua"
+            CreateShortCut "${STARTMENU}\Tools\Lua\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nshlua.exe" "" "$INSTDIR\bin\win32\nshlua.exe" 0
+        CreateShortCut "${STARTMENU}\Tools\Nebula2 Build System.lnk" "$INSTDIR\update.exe" "" "$INSTDIR\update.exe" 0
+        CreateShortCut "${STARTMENU}\Tools\New Application Wizard.lnk" "$INSTDIR\appwizard.exe" "" "$INSTDIR\appwizard.exe" 0
     
     CreateDirectory "${STARTMENU}\Documentation"
         IfFileExists "$INSTDIR\doc\nebula2.chm" "" +2
-            CreateShortCut "${STARTMENU}\Documentation\Nebula2 SDK Documentation.lnk" "$INSTDIR\doc\nebula2.chm"
+            CreateShortCut "${STARTMENU}\Documentation\Nebula 2 SDK Documentation.lnk" "$INSTDIR\doc\nebula2.chm"
         CreateShortCut "${STARTMENU}\Documentation\Nebula Community Website.lnk" "http://www.nebuladevice.org/"
         CreateShortCut "${STARTMENU}\Documentation\Radon Labs GmbH Website.lnk" "http://www.radonlabs.de/"
         CreateShortCut "${STARTMENU}\Documentation\Nebula on SourceForge.lnk" "http://www.sourceforge.net/projects/nebuladevice"
