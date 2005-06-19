@@ -29,7 +29,7 @@ nTutorialAppState::~nTutorialAppState()
 void nTutorialAppState::OnStateEnter(const nString& prevState)
 {
     this->world = n_new(nGfxObject);
-    this->world->SetResourceName("gfxlib:examples/stdlight.n2");
+    this->world->SetResourceName("gfxlib:stdlight.n2");
     this->world->Load();
     this->testObject = n_new(nGfxObject);
     this->testObject->SetResourceName("gfxlib:examples/torus.n2");
