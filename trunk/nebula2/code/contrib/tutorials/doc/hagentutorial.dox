@@ -425,7 +425,7 @@ which will be run when nTutorialApp::Open() is called.
 
 @code
     theApp->SetProjectDirectory("path_to_your_project");
-    theApp->SetStartupScript("proj:scripts/startup.tcl");
+    theApp->SetStartupScript("scripts:startup.tcl");
 @endcode
 
 That first line above defines the alias "proj:" to be the path to our project,
@@ -447,12 +447,9 @@ the application class' main loop, which is always the same:
     theApp->Release();
 @endcode
 
-Unfortunately, we still aren't quite ready to open our window. First, we must
-create the startup.tcl script (it should go into 
-nebula2/code/napplication_tutorial/scripts).
+There is a default startup.tcl at nebula2/data/scripts.
 
-
-@section Nebula2HagenTutorialStartupTCL Our first TCL script - startup.tcl
+@section Nebula2HagenTutorialStartupTCL startup.tcl
 
 nApplication::Open() tries to call the following script functions one after
 the other:
@@ -466,16 +463,6 @@ The Nebula 2 GUI Server also calls these two script functions:
 @verbatim
 OnGuiServerOpen
 OnGuiServerClose
-@endverbatim
-
-For now, just add three empty TCL stubs:
-
-@verbatim
-proc OnStartup {} {}
-proc OnGraphicsStartup {} {}
-proc OnMapInput {} {}
-proc OnGuiServerOpen {} {}
-proc OnGuiServerClose {} {}
 @endverbatim
 
 We can do whatever we like in the script, but the graphics server needs at 
@@ -497,26 +484,39 @@ Under nebula2/data, we see a shaders folder with subdirectories <b>fixed</b>
 (for older graphics cards) and <b>2.0</b> (for newer ones), both full of .fx 
 shader files.
 
-So, create a <b>data</b> folder in the myProjectName directory. Then, for test 
-purposes, copy the shaders, gfxlib, meshes, texture, and anims folders into it.
-
-Then, tell OnStartup (in startup.tcl) about it:
-
 @verbatim
+#-------------------------------------------------------------------------------
+#   OnStartup
+#
+#   This procedure is called right after application startup. Use it 
+#   to initialize Nebula assigns.
+#-------------------------------------------------------------------------------
 proc OnStartup {} {
+
+    puts "startup.tcl: OnStartup called"
+
+    set oldCwd [psel]
     sel /sys/servers/file2
-        .setassign "meshes"   "proj:data/meshes/"
-        .setassign "textures" "proj:data/textures/"
-        .setassign "anims"    "proj:data/anims/"
-        .setassign "gfxlib"   "proj:data/gfxlib/"
-        .setassign "shaders"  "proj:data/shaders/2.0/" 
+
+    # setup assigns
+    set proj [.manglepath "proj:"]
+    set home [.manglepath "home:"]
+    
+    .setassign "data"     "$home/data/"
+    .setassign "export"   "$proj/export/"  
+
+    .setassign "scripts"  "data:scripts"
+    .setassign "physics"  "export:physics/"
+    .setassign "meshes"   "export:meshes/"
+    .setassign "textures" "export:textures/"
+    .setassign "anims"    "export:anims/"
+    .setassign "gfxlib"   "export:gfxlib/"
+    .setassign "lights"   "export:lightlib/"
+    .setassign "levels"   "export:levels/"
+    .setassign "sound"    "export:audio/"
+    
+    sel $oldCwd
 }
-@endverbatim
-
-If you have an old card change the last command to
-
-@verbatim
-        .setassign "shaders" "proj:data/shaders/fixed/" 
 @endverbatim
 
 <b>sel</b> navigates the Nebula Object Hierarchy the way that <b>cd</b> 
@@ -536,7 +536,38 @@ above, therefore, allow us to use "meshes:", "textures:", etc. in the same way a
 Nebula's nDirect3d9 server has to know where to find its shaders in order to work,
 as noted earlier. We don't want it to fiddle with physical paths, though, so it 
 just always tries to use the "shaders:" directory.  Therefore, we need to ensure 
-that "shaders:" actually points somewhere, as we just did in OnStartup.
+that "shaders:" actually points somewhere, as we will do in OnGraphicsStartup.
+
+@verbatim
+#-------------------------------------------------------------------------------
+#   OnGraphicsStartup
+#
+#   This method is called right after graphics is initialized.
+#-------------------------------------------------------------------------------
+proc OnGraphicsStartup {} {
+
+    set oldCwd [psel]
+    sel /sys/servers/file2
+
+    if {[exists /sys/servers/gfx]} {
+        set featureSet [/sys/servers/gfx.getfeatureset]
+        if {$featureSet == "dx9"} {
+            # DX9 hardware without floating point render targets 
+            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"            
+        } elseif {$featureSet == "dx9flt"} {
+            # DX9 hardware with floating point render targets, use HDR render path
+            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9hdr_renderpath.xml"
+        } else {
+            # non-DX9 hardware, use fixed function render path
+            /sys/servers/scene.setrenderpathfilename "data:shaders/dx7_renderpath.xml"
+        }
+    } else {
+        /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"            
+    }
+
+    sel $oldCwd
+}
+@endverbatim
 
 
 @section Nebula2HagenTutorialStates States
