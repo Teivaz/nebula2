@@ -34,7 +34,7 @@ void main()
     // For this tutorial we want our project directory to be the nebula2 directory so 
     // we don't set one here since the default project directory is the nebula2 directory.
     //theApp->SetProjectDirectory("path_to_your_project");
-    theApp->SetStartupScript("home:code/contrib/tutorials/scripts/napplication_tutorial/startup.tcl");
+    theApp->SetStartupScript("home:data/scripts/startup.tcl");
     
     if (theApp->Open())
     {
