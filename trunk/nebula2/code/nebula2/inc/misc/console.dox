@@ -4,15 +4,28 @@
 
     @section misc_con_gen Introduction
 
+    The console is one of the most powerful features of Nebula.
+    It's like working in a conventional console ('bash' for instance),
+    but instead of inspecting and manipulating files one will inspect
+    and manipulate living C++ objects directly by invoking script
+    commands on them. Objects can be created, deleted, copied around,
+    made persistent, or restored from persistency. Since the console
+    is also a complete Tcl shell, one can run Tcl scripts at any time,
+    or create Tk frontends which in turn can be used to query and
+    manipulate the state of Nebula objects through a GUI.
+
     The console server implements an interactive console, which allows 
     script commands to be executed on objects in the named object hierarchy and 
     provides an output for messages. Functions are also given for creating and 
     deleting objects, and navigating the named object hierarchy.
 
-    The console server implements an interactive console, which allows script 
-    commands to be executed on objects in the named object hierarchy and 
-    provides an output for messages. Functions are also given for creating and 
-    deleting objects, and navigating the named object hierarchy.
+    The console server is built around the gfx, input and script
+    server and implements an ingame console. It reads keyboard
+    data from the input server, sends command lines to the script
+    server for evaluation and renders text through the gfx server.
+    It's basically a command line shell layered over a realtime 3d view.
+
+    The next sections show you that how to use the console server.
 
 	- @ref misc_con_init
 	- @ref misc_con_usage
