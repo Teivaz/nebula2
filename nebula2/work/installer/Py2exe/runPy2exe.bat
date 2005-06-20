@@ -1,3 +1,4 @@
+@echo off
 REM -- Run py2exe
 python.exe setup.py py2exe
 
@@ -13,7 +14,7 @@ cd..
 rd library /s /q 
 
 REM -- pack the executables 
-upx.exe --best --force *.dll *.pyd
+REM upx.exe --best --force *.dll *.pyd
 
 REM -- remove the w9x file as anybody who runs w9x is silly
 del w9xpopen.exe
