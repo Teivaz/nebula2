@@ -12,7 +12,7 @@
 
 ;-------------------------------------------------------------------------------
 ;   Defines
-    
+
     !define COMPANY "RadonLabs"
     !define PRODUCT "Nebula2 SDK"
     !define SRCDIR "..\..\.."
@@ -22,17 +22,18 @@
 ;-------------------------------------------------------------------------------
 ;   General
 
+    SetCompressor lzma
     Name "${PRODUCT}"
     OutFile "${SRCDIR}\Nebula2SDK_${TODAY}.exe"
     XPStyle on
     CrcCheck off
-    
+
     ; default installation directory
     InstallDir "$PROGRAMFILES\${PRODUCT}"
 
     ; Get installation folder from registry if available
     InstallDirRegKey HKLM "Software\${COMPANY}\${PRODUCT}" "installdir"
-       
+
 ;-------------------------------------------------------------------------------
 ;   Interface Settings
 
@@ -54,25 +55,25 @@
     !insertmacro MUI_PAGE_DIRECTORY
     !insertmacro MUI_PAGE_INSTFILES
     !insertmacro MUI_PAGE_FINISH
-  
+
     !insertmacro MUI_UNPAGE_WELCOME
     !insertmacro MUI_UNPAGE_CONFIRM
     !insertmacro MUI_UNPAGE_INSTFILES
     !insertmacro MUI_UNPAGE_FINISH
-    
+
 ;--------------------------------
 ;   Languages
- 
+
     !insertmacro MUI_LANGUAGE "English"
-    
+
 ;-------------------------------------------------------------------------------
-;   Installer Sections     
+;   Installer Sections
 
 Section "-Runtime" Section_RuntimeFiles
 
     ; root directory
     SetOutPath "$INSTDIR"
-    
+
     ; bin directory
     SetOutPath "$INSTDIR\bin\win32"
     File "${SRCDIR}\bin\win32\*.ico"
@@ -107,7 +108,7 @@ Section "-Runtime" Section_RuntimeFiles
     SetOutPath "$INSTDIR\data\scripts"
     File "${SRCDIR}\data\scripts\*.tcl"
 
-    ; export directory    
+    ; export directory
     SetOutPath "$INSTDIR\data\shaders"
     File "${SRCDIR}\data\shaders\*.xml"
 
@@ -121,9 +122,9 @@ Section "-Runtime" Section_RuntimeFiles
     File "${SRCDIR}\data\shaders\lib\*.fx"
 
     SetOutPath "$INSTDIR\export\textures\system"
-    File "${SRCDIR}\export\textures\system\*.dds" 
-        
-; only change start menu/registry stuff if no silent install (silent installs are extract-only) 
+    File "${SRCDIR}\export\textures\system\*.dds"
+
+; only change start menu/registry stuff if no silent install (silent installs are extract-only)
 ;   create the start-menu items
 IfSilent endOfRuntimeSection
 
@@ -150,13 +151,13 @@ IfSilent endOfRuntimeSection
     WriteRegStr HKCR "Nebula2.BinAnim\DefaultIcon" "" "$INSTDIR\bin\win32\nebula.ico"
 
     WriteRegStr HKCR "Nebula2.AsciiAnim" "" "Nebula2 Ascii Animation File"
-    WriteRegStr HKCR "Nebula2.AsciiAnim\DefaultIcon" "" "$INSTDIR\bin\win32\nebula.ico"    
+    WriteRegStr HKCR "Nebula2.AsciiAnim\DefaultIcon" "" "$INSTDIR\bin\win32\nebula.ico"
 
 ;   write registry keys, do not overwrite previous project setting
     Push $0
     WriteRegStr HKLM "SOFTWARE\${COMPANY}\${PRODUCT}" "installdir" "$INSTDIR"
 
-;   write uninstall information to the registry    
+;   write uninstall information to the registry
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "DisplayName" "${PRODUCT} (remove only)"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "UninstallString" "$INSTDIR\Uninstall.exe"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "DisplayIcon" "$INSTDIR\bin\win32\nebula.ico,0"
@@ -192,15 +193,15 @@ Section "Examples" Section_ExampleFiles
     ; anims
     SetOutPath "$INSTDIR\export\anims\examples"
     File /nonfatal "${SRCDIR}\export\anims\examples\*.nax2"
-    
+
     ; gfxlib
     SetOutPath "$INSTDIR\export\gfxlib\examples"
     File /nonfatal "${SRCDIR}\export\gfxlib\examples\*.n2"
-    
+
     ; meshes
     SetOutPath "$INSTDIR\export\meshes\examples"
     File /nonfatal "${SRCDIR}\export\meshes\examples\*.nvx2"
-    
+
     ; textures
     !define TEXDST "$INSTDIR\export\textures"
     !define TEXSRC "${SRCDIR}\export\textures"
@@ -210,7 +211,7 @@ Section "Examples" Section_ExampleFiles
     SetOutPath "${TEXDST}\charaktere"
     File /nonfatal "${TEXSRC}\charaktere\*.dds"
     SetOutPath "${TEXDST}\environment"
-    File /nonfatal "${TEXSRC}\environment\*.dds"    
+    File /nonfatal "${TEXSRC}\environment\*.dds"
     SetOutPath "${TEXDST}\examples"
     File /nonfatal "${TEXSRC}\examples\*.dds"
     SetOutPath "${TEXDST}\lightmaps"
@@ -242,26 +243,36 @@ Section "Source Code" Section_SourceCode
     File "${INC}\*.h"
     SetOutPath "${DSTINC}\anim2"
     File "${INC}\anim2\*.h"
+    File "${INC}\anim2\*.dox"
     SetOutPath "${DSTINC}\application"
-    File "${INC}\application\*.h"    
+    File "${INC}\application\*.h"
+    File "${INC}\application\*.dox"
     SetOutPath "${DSTINC}\audio3"
     File "${INC}\audio3\*.h"
+    File "${INC}\audio3\*.dox"
     SetOutPath "${DSTINC}\character"
     File "${INC}\character\*.h"
+    File "${INC}\character\*.dox"
     SetOutPath "${DSTINC}\deformers"
     File "${INC}\deformers\*.h"
     SetOutPath "${DSTINC}\file"
     File "${INC}\file\*.h"
+    File "${INC}\file\*.dox"
     SetOutPath "${DSTINC}\gfx2"
-    File "${INC}\gfx2\*.h"    
+    File "${INC}\gfx2\*.h"
+    File "${INC}\gfx2\*.dox"
     SetOutPath "${DSTINC}\gui"
     File "${INC}\gui\*.h"
+    File "${INC}\gui\*.dox"
     SetOutPath "${DSTINC}\input"
     File "${INC}\input\*.h"
+    File "${INC}\input\*.dox"
     SetOutPath "${DSTINC}\kernel"
     File "${INC}\kernel\*.h"
+    File "${INC}\kernel\*.dox"
     SetOutPath "${DSTINC}\locale"
     File "${INC}\locale\*.h"
+    File "${INC}\locale\*.dox"
     SetOutPath "${DSTINC}\loki"
     File "${INC}\loki\*.h"
     SetOutPath "${DSTINC}\loki\Borland"
@@ -274,41 +285,55 @@ Section "Source Code" Section_SourceCode
     File "${INC}\loki\Reference\*.h"
     SetOutPath "${DSTINC}\mathlib"
     File "${INC}\mathlib\*.h"
+    File "${INC}\mathlib\*.dox"
     SetOutPath "${DSTINC}\microtcl"
     File "${INC}\microtcl\*.h"
     SetOutPath "${DSTINC}\misc"
     File "${INC}\misc\*.h"
+    File "${INC}\misc\*.dox"
     SetOutPath "${DSTINC}\nature"
     File "${INC}\nature\*.h"
     SetOutPath "${DSTINC}\network"
     File "${INC}\network\*.h"
+    File "${INC}\network\*.dox"
     SetOutPath "${DSTINC}\particle"
     File "${INC}\particle\*.h"
+    File "${INC}\particle\*.dox"
     SetOutPath "${DSTINC}\renderpath"
     File "${INC}\renderpath\*.h"
+    File "${INC}\renderpath\*.dox"
     SetOutPath "${DSTINC}\resource"
     File "${INC}\resource\*.h"
+    File "${INC}\resource\*.dox"
     SetOutPath "${DSTINC}\scene"
     File "${INC}\scene\*.h"
+    File "${INC}\scene\*.dox"
     SetOutPath "${DSTINC}\script"
     File "${INC}\script\*.h"
+    File "${INC}\script\*.dox"
     SetOutPath "${DSTINC}\shadow"
     File "${INC}\shadow\*.h"
+    File "${INC}\shadow\*.dox"
     SetOutPath "${DSTINC}\signals"
     File "${INC}\signals\*.h"
+    File "${INC}\signals\*.dox"
     SetOutPath "${DSTINC}\tinyxml"
     File "${INC}\tinyxml\*.h"
     File "${INC}\tinyxml\*.txt"
     SetOutPath "${DSTINC}\tools"
     File "${INC}\tools\*.h"
+    File "${INC}\tools\*.dox"
     SetOutPath "${DSTINC}\util"
     File "${INC}\util\*.h"
+    File "${INC}\util\*.dox"
     SetOutPath "${DSTINC}\variable"
     File "${INC}\variable\*.h"
+    File "${INC}\variable\*.dox"
     SetOutPath "${DSTINC}\video"
     File "${INC}\video\*.h"
     SetOutPath "${DSTINC}\xml"
     File "${INC}\xml\*.h"
+    File "${INC}\xml\*.dox"
 
     ; bld files
     SetOutPath "${DSTBLD}"
@@ -376,7 +401,7 @@ Section "Source Code" Section_SourceCode
     SetOutPath "${DSTSRC}\network"
     File "${SRC}\network\*.cc"
     SetOutPath "${DSTSRC}\particle"
-    File "${SRC}\particle\*.cc"    
+    File "${SRC}\particle\*.cc"
     SetOutPath "${DSTSRC}\renderpath"
     File "${SRC}\renderpath\*.cc"
     SetOutPath "${DSTSRC}\resource"
@@ -395,7 +420,7 @@ Section "Source Code" Section_SourceCode
     SetOutPath "${DSTSRC}\tools"
     File "${SRC}\tools\*.cc"
     SetOutPath "${DSTSRC}\util"
-    File "${SRC}\util\*.cc"    
+    File "${SRC}\util\*.cc"
     SetOutPath "${DSTSRC}\variable"
     File "${SRC}\variable\*.cc"
     SetOutPath "${DSTSRC}\video"
@@ -410,6 +435,51 @@ Section "Source Code" Section_SourceCode
     ; Contrib items:
     !define CONTRIB "${SRCDIR}\code\contrib"
     !define DSTCONTRIB "$INSTDIR\code\contrib"
+
+    ; nmaxtoolbox
+    SetOutPath "${DSTCONTRIB}\nmax\bldfiles"
+    File "${CONTRIB}\nmax\bldfiles\*.bld"
+    SetOutPath "${DSTCONTRIB}\nmax\doc\artistdoc\doxycfg"
+    File "${CONTRIB}\nmax\doc\artistdoc\doxycfg\*.cfg"
+    File "${CONTRIB}\nmax\doc\artistdoc\doxycfg\*.css"
+    File "${CONTRIB}\nmax\doc\artistdoc\doxycfg\*.html"
+    SetOutPath "${DSTCONTRIB}\nmax\doc\artistdoc\doxysrc"
+    File "${CONTRIB}\nmax\doc\artistdoc\doxysrc\*.dox"
+    SetOutPath "${DSTCONTRIB}\nmax\doc\artistdoc\doxysrc\images"
+    File "${CONTRIB}\nmax\doc\artistdoc\doxysrc\images\*.png"
+    SetOutPath "${DSTCONTRIB}\nmax\doc"
+    File "${CONTRIB}\nmax\doc\*.dox"
+    SetOutPath "${DSTCONTRIB}\nmax\inc\base"
+    File "${CONTRIB}\nmax\inc\base\*.h"
+    SetOutPath "${DSTCONTRIB}\nmax\inc\export2"
+    File "${CONTRIB}\nmax\inc\export2\*.h"
+    SetOutPath "${DSTCONTRIB}\nmax\inc\expose"
+    File "${CONTRIB}\nmax\inc\\expose\*.h"
+    SetOutPath "${DSTCONTRIB}\nmax\inc\pluginlibs"
+    File "${CONTRIB}\nmax\inc\\pluginlibs\*.h"
+    SetOutPath "${DSTCONTRIB}\nmax\maxscripts\nmaxtoolbox"
+    File "${CONTRIB}\nmax\maxscripts\nmaxtoolbox\readme.txt"
+    SetOutPath "${DSTCONTRIB}\nmax\maxscripts\nmaxtoolbox\plugcfg"
+    File "${CONTRIB}\nmax\maxscripts\nmaxtoolbox\plugcfg\*.ini"
+    SetOutPath "${DSTCONTRIB}\nmax\maxscripts\nmaxtoolbox\scripts\nebula2"
+    File "${CONTRIB}\nmax\maxscripts\nmaxtoolbox\scripts\nebula2\*.ms"
+    SetOutPath "${DSTCONTRIB}\nmax\maxscripts\nmaxtoolbox\scripts\startup"
+    File "${CONTRIB}\nmax\maxscripts\nmaxtoolbox\scripts\startup\*.ms"
+    SetOutPath "${DSTCONTRIB}\nmax\maxscripts"
+    File "${CONTRIB}\nmax\maxscripts\*.ms"
+    SetOutPath "${DSTCONTRIB}\nmax\res"
+    File "${CONTRIB}\nmax\res\*.h"
+    File "${CONTRIB}\nmax\res\*.rc"
+    SetOutPath "${DSTCONTRIB}\nmax\base"
+    File "${CONTRIB}\nmax\base\*.cc"
+    File "${CONTRIB}\nmax\base\*.def"
+    SetOutPath "${DSTCONTRIB}\nmax\export2"
+    File "${CONTRIB}\nmax\export2\*.cc"
+    SetOutPath "${DSTCONTRIB}\nmax\expose"
+    File "${CONTRIB}\nmax\expose\*.cc"
+    File "${CONTRIB}\nmax\expose\dummy.cpp"
+    SetOutPath "${DSTCONTRIB}\nmax\pluginlibs"
+    File "${CONTRIB}\nmax\pluginlibs\*.cc"
 
     ; Python:
     SetOutPath "${DSTCONTRIB}\npythonserver\bldfiles"
@@ -488,7 +558,7 @@ Section "Source Code" Section_SourceCode
 
     SetOutPath "$INSTDIR\code\nebula2\lib\win32_vc_i386"
     File "${SRCDIR}\code\nebula2\lib\win32_vc_i386\*.lib"
-    
+
 SectionEnd
 
 Section "Installer Files" Section_InstallerFiles
@@ -498,7 +568,7 @@ Section "Installer Files" Section_InstallerFiles
     File "${SRCDIR}\work\installer\Nebula2SDK\*.ico"
     File "${SRCDIR}\work\installer\Nebula2SDK\*.nsi"
 
-SectionEnd 
+SectionEnd
 
 Section "-StartMenuEntries" Section_StartMenuEntries
 
@@ -523,16 +593,28 @@ IfSilent endOfStartMenuSection
             CreateShortCut "${STARTMENU}\Tools\Python\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nshpython.exe" "" "$INSTDIR\bin\win32\nshpython.exe" 0
         CreateDirectory "${STARTMENU}\Tools\Lua"
             CreateShortCut "${STARTMENU}\Tools\Lua\Nebula2 Shell.lnk" "$INSTDIR\bin\win32\nshlua.exe" "" "$INSTDIR\bin\win32\nshlua.exe" 0
+        ; Set the OUTDIR to be $INSTDIR so that these get the right working
+        ; directory
+        SetOutPath "$INSTDIR"
         CreateShortCut "${STARTMENU}\Tools\Nebula2 Build System.lnk" "$INSTDIR\update.exe" "" "$INSTDIR\update.exe" 0
         CreateShortCut "${STARTMENU}\Tools\New Application Wizard.lnk" "$INSTDIR\appwizard.exe" "" "$INSTDIR\appwizard.exe" 0
-    
-    CreateDirectory "${STARTMENU}\Documentation"
-        IfFileExists "$INSTDIR\doc\nebula2.chm" "" +2
-            CreateShortCut "${STARTMENU}\Documentation\Nebula 2 SDK Documentation.lnk" "$INSTDIR\doc\nebula2.chm"
-        CreateShortCut "${STARTMENU}\Documentation\Nebula Community Website.lnk" "http://www.nebuladevice.org/"
-        CreateShortCut "${STARTMENU}\Documentation\Radon Labs GmbH Website.lnk" "http://www.radonlabs.de/"
-        CreateShortCut "${STARTMENU}\Documentation\Nebula on SourceForge.lnk" "http://www.sourceforge.net/projects/nebuladevice"
-        CreateShortCut "${STARTMENU}\Documentation\Report A Bug.lnk" "http://nebuladevice.cubik.org/bugs/"
+        ; And now restore it...
+        SetOutPath "$INSTDIR\bin\win32"
+
+    IfFileExists "$INSTDIR\doc\nebula2.chm" "" endOfDocumentation
+        CreateDirectory "${STARTMENU}\Documentation"
+            CreateShortCut "${STARTMENU}\Documentation\Nebula 2 SDK Documentation.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm"
+            CreateShortCut "${STARTMENU}\Documentation\Compiling Nebula 2.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/Nebula2Compiling.html"
+            CreateShortCut "${STARTMENU}\Documentation\Installing the Visual Studio Debugger aid.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/group__VisualStudioAddin.html"
+            CreateShortCut "${STARTMENU}\Documentation\Building the nMax Toolbox.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/group__NebulaMaxExport2Contrib.shtml"
+endOfDocumentation:
+
+    CreateDirectory "${STARTMENU}\Web Sites"
+        CreateShortCut "${STARTMENU}\Web Sites\Nebula Community Website.lnk" "http://www.nebuladevice.org/"
+        CreateShortCut "${STARTMENU}\Web Sites\Radon Labs GmbH Website.lnk" "http://www.radonlabs.de/"
+        CreateShortCut "${STARTMENU}\Web Sites\Nebula on SourceForge.lnk" "http://www.sourceforge.net/projects/nebuladevice"
+        CreateShortCut "${STARTMENU}\Web Sites\Report A Bug.lnk" "http://nebuladevice.cubik.org/bugs/"
+        CreateShortCut "${STARTMENU}\Web Sites\Mailing Lists.lnk" "http://sourceforge.net/mail/?group_id=7192"
 
     IfFileExists "$INSTDIR\export\gfxlib\examples\bouncingball.n2" "" endOfSamples
         CreateDirectory "${STARTMENU}\Example Objects"
@@ -562,9 +644,9 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_InstallerFiles} "This component includes the NSIS installer source files for the SDK installer and the New Project Wizard."
     !insertmacro MUI_DESCRIPTION_TEXT ${Section_Doxygen} "This component includes the documentation source files for Doxygen, these are necessary if you want to build the Nebula2 API docs yourself."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
-    
+
 ;-------------------------------------------------------------------------------
-;   Uninstaller Section  
+;   Uninstaller Section
 Section "Uninstall"
 
 ;   Delete registry keys
@@ -576,10 +658,9 @@ Section "Uninstall"
 
 ;   Delete Start Menu Shortcuts
     RmDir  /r "$SMPROGRAMS\${PRODUCT}"
-  
+
 ;   Delete Uninstaller And Unistall Registry Entries
     DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${COMPANY}\${PRODUCT}"
-    DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}"  
-  
-SectionEnd
+    DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}"
 
+SectionEnd
