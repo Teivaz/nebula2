@@ -7,7 +7,6 @@
 #-----------------------------------------------------------------------------
 beginworkspace nopenal
     setbinarydir ./bin/
-    setlibdir ./code/contrib/nopenal/lib/win32_vc_i386
     settargets {
         nkernel
         nnebula
