@@ -605,7 +605,7 @@ IfSilent endOfStartMenuSection
             CreateShortCut "${STARTMENU}\Documentation\Nebula 2 SDK Documentation.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm"
             CreateShortCut "${STARTMENU}\Documentation\Compiling Nebula 2.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/Nebula2Compiling.html"
             CreateShortCut "${STARTMENU}\Documentation\Installing the Visual Studio Debugger aid.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/group__VisualStudioAddin.html"
-            CreateShortCut "${STARTMENU}\Documentation\Building the nMax Toolbox.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/group__NebulaMaxExport2Contrib.shtml"
+            CreateShortCut "${STARTMENU}\Documentation\Building the nMax Toolbox.lnk" "hh.exe" "$INSTDIR\doc\nebula2.chm::/group__NebulaMaxExport2Contrib.html"
 endOfDocumentation:
 
     CreateDirectory "${STARTMENU}\Web Sites"
