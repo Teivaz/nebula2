@@ -50,7 +50,6 @@ endtarget
 #-----------------------------------------------------------------------------
 beginworkspace nspatialdb
     setbinarydir ./bin/
-    setlibdir ./code/contrib/lib/
     annotate "The workspace for the spatial database sample application."
     settargets {
         nspatialdbapp

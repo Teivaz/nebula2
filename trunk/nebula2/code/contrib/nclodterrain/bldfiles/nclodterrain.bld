@@ -68,7 +68,6 @@ endtarget
 #-----------------------------------------------------------------------------
 beginworkspace nchunklod
     setbinarydir ./bin/
-    setlibdir ./code/contrib/lib/
     settargets {
         nclododeviewer
         nkernel

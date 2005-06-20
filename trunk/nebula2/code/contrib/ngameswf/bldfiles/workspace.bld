@@ -7,7 +7,6 @@
 #-----------------------------------------------------------------------------
 beginworkspace ngameswf
     setbinarydir ./bin/
-    setlibdir ./code/contrib/ngameswf/lib/win32_vc_i386
     settargets {
         nkernel
         nnebula

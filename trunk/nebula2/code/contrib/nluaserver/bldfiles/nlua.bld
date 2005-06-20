@@ -84,7 +84,6 @@ endtarget
 #-----------------------------------------------------------------------------
 beginworkspace luaserver
     setbinarydir ./bin/
-    setlibdir ./code/contrib/lib/
     settargets {
     	nshlua
         nkernel

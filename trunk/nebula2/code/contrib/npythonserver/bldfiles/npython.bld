@@ -98,7 +98,6 @@ endtarget
 #-----------------------------------------------------------------------------
 beginworkspace pythonserver
     setbinarydir ./bin/
-    setlibdir ./code/contrib/lib/ 
     settargets {
         nshpython
         nkernel
