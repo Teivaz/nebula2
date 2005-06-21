@@ -97,7 +97,7 @@ STR_CLASS_INFO_SCRIPT_CLASS = '''\
 STR_CLASS_INFO_SUPER_CLASS_LINK = '''\
 
 @subsection N2ScriptInterfaceSuperClass_%(className)s Super Class:
-   - @ref N2ScriptInterface_%(superClassName)s "%(superClassName)s"
+    - @ref N2ScriptInterface_%(superClassName)s "%(superClassName)s"
 '''
 
 STR_CLASS_INFO_SUBCLASSES_HEADER = '''\
@@ -106,13 +106,13 @@ STR_CLASS_INFO_SUBCLASSES_HEADER = '''\
 '''
 
 STR_CLASS_INFO_SUBCLASS_LINK = '''\
-    - @ref N2ScriptInterface_%s "%s"
+    - @subpage N2ScriptInterface_%s "%s"
 '''
 
 STR_CLASS_INFO_CPP_CLASS_LINK = '''\
 
 @subsection N2ScriptInterface_%(className)sCPPClass C++ Class:
-   - @ref %(cppClassName)s
+    - @ref %(cppClassName)s
 '''
     
 STR_CLASS_INFO_CMDS_HEADER = '''\
