@@ -8,6 +8,7 @@ It currently supports DirectX 9, with support for OpenGL in the works.
 It runs on Windows, with ports being done to Linux and Mac OS X.
 
   - @ref Nebula2GettingStarted
+  - @ref Nebula2FAQ
   - @ref Nebula2Overview
   - @ref RadonLabsDifferences
 */
