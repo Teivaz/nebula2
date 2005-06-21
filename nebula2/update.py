@@ -15,7 +15,10 @@ if not hasattr(sys, 'hexversion') or sys.hexversion < 0x020300f0:
 from buildsys3.bldscanner import *
 from buildsys3.buildsys import *
 import os, dircache, string, time
-import hotshot, hotshot.stats
+try:
+    import hotshot, hotshot.stats
+except:
+    hotshot = None
 
 updateDir = os.getcwd()
 
@@ -121,6 +124,8 @@ def Build(generatorName, workspaces):
 # add -profile to the command line.
 # e.g. python update.py -profile -build vstudio71 Nebula2
 def Profile(generatorName, workspaces):
+    if hotshot is None:
+        return
     prof = hotshot.Profile('build.prof')
     prof.runcall(Build, generatorName, workspaces)
     prof.close()
