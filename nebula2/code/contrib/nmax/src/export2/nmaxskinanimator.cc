@@ -49,7 +49,7 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
         animator->SetLoopType(nSkinAnimator::Loop);
 
         animator->SetAnim(animFilename);
-        animator->SetStateChannel("charState");
+        animator->SetStateChannel("chnCharState");
 
         // build animation states.
         nMaxNoteTrack& noteTrack = boneManager->GetNoteTrack();
@@ -136,6 +136,7 @@ void nMaxSkinAnimator::BuildAnimStates(nSkinAnimator* animator, nMaxNoteTrack& n
         const nMaxAnimState& state = noteTrack.GetState(j);
 
         animator->SetState(j, j, state.fadeInTime);
+        animator->SetStateName(j, state.name);
 
         int numClips = state.clipArray.Size();
         animator->BeginClips(j, numClips);
