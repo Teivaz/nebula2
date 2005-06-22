@@ -1,6 +1,15 @@
 /**
     @defgroup NMaxHowtoGlobalOptions Setting Global Options
 
+    <b>The Nebula2 3DS Max Toolkit</b> provides its own utility panel of 
+    3DS Max which is used for setting various options needed for export task.
+    The description for each of the options are shown on the following.
+
+    @note
+    All global options in the utility panel are saved to the 
+    <tt>'nmaxtoolbox.ini'</tt> in the '$3dsmax/plugcfg' directory when 3DS Max
+    exit with the exception of the vertex options.
+
     Select utility panel of 3DS Max then click '<b>More...</b>' button.
     <b>Nebula2</b> will be shown on <b>Utilities</b> dialog as following images.
 
