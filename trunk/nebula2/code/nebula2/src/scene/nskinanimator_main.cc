@@ -358,6 +358,9 @@ nSkinAnimator::SetState(int stateIndex, int animGroupIndex, float fadeInTime)
 
 //------------------------------------------------------------------------------
 /**
+    @note Be sure that you should create a new animation state first by calling 
+          nSkinAnimator::SetState() before you calling this function.
+          
 */
 void
 nSkinAnimator::SetStateName(int stateIndex, const nString& name)
