@@ -9,6 +9,7 @@
 #include "util/nstring.h"
 #include "export2/nmaxoptions.h"
 
+// items of the script server combobox.
 const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
     "Tcl",
     "Python",
@@ -110,6 +111,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
 
     // sample rate
     int sampleRate = nMaxOptions::Instance()->GetSampleRate();
+
     spinSampleRate = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_SAMPLERATE));
     spinSampleRate->SetScale(1);
     spinSampleRate->SetLimits(1, 64);
@@ -118,30 +120,55 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     spinSampleRate->SetResetValue(2);
     spinSampleRate->SetValue(sampleRate, TRUE);
 
-    CheckDlgButton(hwnd, IDC_ADDJOINTNAME, 0);
+    bool hasJointName = nMaxOptions::Instance()->HasJointName();
+    int exportJointName = hasJointName ? 1 : 0;
+    CheckDlgButton(hwnd, IDC_ADDJOINTNAME, exportJointName);
 
     // mesh type radio button
-    CheckDlgButton(hwnd, IDC_N3D2, BST_CHECKED);
-    CheckDlgButton(hwnd, IDC_NVX2, BST_UNCHECKED);
+    const nString& meshFileType = nMaxOptions::Instance()->GetMeshFileType();
+    if (".n3d2" == meshFileType)
+    {
+        CheckDlgButton(hwnd, IDC_N3D2, BST_CHECKED);
+        CheckDlgButton(hwnd, IDC_NVX2, BST_UNCHECKED);
+    }
+    else // .nvx2
+    {
+        CheckDlgButton(hwnd, IDC_N3D2, BST_UNCHECKED);
+        CheckDlgButton(hwnd, IDC_NVX2, BST_CHECKED);
+    }
 
     // animation type radio button
-    CheckDlgButton(hwnd, IDC_NANIM2, BST_CHECKED);
-    CheckDlgButton(hwnd, IDC_NAX2, BST_UNCHECKED);
+    const nString& animFileType = nMaxOptions::Instance()->GetAnimFileType();
+    if (".nanim2" == animFileType)
+    {
+        CheckDlgButton(hwnd, IDC_NANIM2, BST_CHECKED);
+        CheckDlgButton(hwnd, IDC_NAX2, BST_UNCHECKED);
+    }
+    else // .nax2
+    {
+        CheckDlgButton(hwnd, IDC_NANIM2, BST_UNCHECKED);
+        CheckDlgButton(hwnd, IDC_NAX2, BST_CHECKED);
+    }
+    
+    bool tmpExportHiddenNode = nMaxOptions::Instance()->ExportHiddenNodes();
+    int exportHiddenNode = tmpExportHiddenNode ? 1 : 0;
+    CheckDlgButton(hwnd, IDC_HIDDEN_OBJ, exportHiddenNode);
 
-    CheckDlgButton(hwnd, IDC_HIDDEN_OBJ, 0);
-
-    // script server
+    // script server combobox setting.
     HWND hwndSelScript = GetDlgItem(hwnd, IDC_SELECT_SCRIPT_SERVER);
 
+    // reset content.
     SendMessage(hwndSelScript, CB_RESETCONTENT, 0L, 0L);
+    // fill items.
     for (int i=0; i<NumScriptServers; i++)
     {
         SendMessage(hwndSelScript, CB_ADDSTRING, 0L, (LPARAM)script_server[i]);
     }
 
-    int curSel = Tcl;
+    // set the default item.
+    const nString& name = nMaxOptions::Instance()->GetSaveScriptServer();
+    int curSel = GetItemIndexFromScript(name.Get());
     SendMessage(hwndSelScript, CB_SETCURSEL, (WPARAM)curSel, 0);
-
 }
 
 //------------------------------------------------------------------------------
@@ -355,7 +382,7 @@ void nMaxOptionParamMapDlg::OnAnimFileType(HWND hwnd)
 */
 void nMaxOptionParamMapDlg::OnHiddenObject(HWND hwnd)
 {
-    if (IsChecked(hwnd, IDC_NANIM2))
+    if (IsChecked(hwnd, IDC_HIDDEN_OBJ))
     {
         nMaxOptions::Instance()->SetExportHiddenNodes(true);
     }
@@ -414,4 +441,33 @@ nMaxOptionParamMapDlg::GetScriptServer(const char* item)
         return "nrubyserver";
     else
         return ""; // empty string.
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieves script server combobox item index with the given script server name.
+
+    @param name script server name.
+
+    @return zero based combobox item index. -1 if there is no match which is an error.
+*/
+int
+nMaxOptionParamMapDlg::GetItemIndexFromScript(const char* name)
+{
+    nString serverName = name;
+    serverName.ToLower();
+
+    if (serverName == "ntclserver")
+        return 0; //'Tcl"
+    else
+    if (serverName == "npythonserver")
+        return 1; // "Python"
+    else
+    if (serverName == "nluaserver")
+        return 2; // "Lua"
+    else
+    if (serverName == "nrubyserver")
+        return 3;
+    else
+        return -1; // empty string.
 }
