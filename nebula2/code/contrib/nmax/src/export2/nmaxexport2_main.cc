@@ -224,7 +224,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
         return 0;
     }
 
-    // run nmaxpreviewer.
+    // run viewer app.
     if (expOptions->RunViewer())
     {
         nString saveFile = name;
