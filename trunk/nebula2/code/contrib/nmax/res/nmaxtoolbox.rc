@@ -170,10 +170,9 @@ CAPTION "Nebula2 Exporter Log"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Ok",IDOK,265,207,50,14
-    CONTROL         "",IDC_LOG_EDIT,"RichEdit20A",
-                    ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL |
-                    ES_READONLY | WS_VSCROLL | WS_HSCROLL,
-                    7,7,308,194,
+    CONTROL         "",IDC_LOG_EDIT,"RichEdit20A",ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | 
+                    WS_VSCROLL | WS_HSCROLL,7,7,308,194
 END
 
 
