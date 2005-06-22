@@ -12,6 +12,12 @@
 */
 bool nMaxPluginInitialize()
 {
+    // load settings at the startup time cause utility panel is independent
+    // to the exporting task. (same reason for saving the utility options too)
+    nMaxOptions* options = nMaxOptions::Instance();
+    if (!options->LoadUtilityOptions())
+        return false;
+
     return true;
 }
 
@@ -25,6 +31,9 @@ void nMaxPluginUninitialize()
     nMaxOptions* options = nMaxOptions::Instance();
     if (options)
     {
+        // save utility panel options.
+        options->SaveUtilityOptions();
+
         n_delete(options);
     }
 }
