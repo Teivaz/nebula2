@@ -80,7 +80,7 @@
     You can manually create it by creating <tt>Note Tracks</tt>.
 
 
-    @subsection NMaxHowtoCharactersChaningAnimInViewer Chaning Animations in the Viewer
+    @subsection NMaxHowtoCharactersChangingAnimInViewer Changing Animations in the Viewer
 
     The <tt>nviewer</tt> allows you to change the exported aniamtions.
     Type <tt>'esc'</tt> to show the task bar then click <tt>'Scn'</tt> icon. 
