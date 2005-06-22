@@ -3,16 +3,27 @@
     @ingroup NebulaContribAssetToolchainModules
     
     This section of the documentation provides technical information on the  
-    <b>Nebula 3DS Max Toolkit</b>(aka. nmaxtoolbox) which used to create contents  
-    and tools with 3DS Max. If you want to see the features of the toolkit and 
-    supported 3DS Max features or usages of the toolkit, see the toolkit manual
-    which provides for the artists. The toolkit manual can be found on 
-    <tt>$nebula2/code/contrib/nmax/doc/artistdoc</tt>
+    <b>Nebula 3DS Max Toolkit</b>(aka. <tt>nmaxtoolbox</tt>) which used to create   
+    contents and tools with 3DS Max.  
 
 
-    @section NMAXToolBoxIntroduction Introduction
+    @section NMAXToolBoxOverview Overview
 
     The <b>Nebula 3DS Max Toolkit</b> is a 3DS Max plugin dll. 
+    If you're not familiar with the programming of the 3DS Max plugin, it is highly
+    recommended to read the 3DS Max SDK help file provided when the 3DS Max SDK is
+    installed.
+
+    @note
+    If you want to see the features of the toolkit and supported 3DS Max features 
+    or usages of the toolkit, see the toolkit manual which provides for the artists.
+    The toolkit manual can be found on <tt>$nebula2/code/contrib/nmax/doc/artistdoc</tt>
+
+    A common way to start to write a 3DS Max plugin is to use SDK appwizard shipped and
+    provided by 3DS Max SDK. But the Nebula provides its own libarary and classes 
+    which are more easy to use than the appwizard of the SDK.
+    You should use this feature to write a 3DS Max plugin for Nebula.
+    See @ref registeredClassDesc for more details and its usages.
 
 
     @section NMAXToolBoxInstallation Building the Plugin
@@ -50,7 +61,7 @@
 
     @section NMaxToolBoxComponents Components of the Toolkit
 
-    The toolkit has followings for its components:
+    The toolkit consists of the followings for its components:
 
         - <b>Exporter</b> - 3DS Max exporter plugin for Nebula.
         - <b>Nebula Script Function Expose System</b> - plugin written based on 3DS Max 
