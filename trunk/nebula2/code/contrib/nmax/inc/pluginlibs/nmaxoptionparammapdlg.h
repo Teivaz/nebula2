@@ -53,6 +53,7 @@ private:
 
     void OnSelectedScriptServer(HWND hwnd);
     const char* GetScriptServer(const char* item);
+    int GetItemIndexFromScript(const char* name);
 
 private:
     /// spinner control for setting of geometry scaling.
