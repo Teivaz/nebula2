@@ -50,5 +50,17 @@
        </dd>
     </dl>
 
+    <dl>
+      <dt>Q: The exported model is shown on with all black in the previewer even though  
+             the shape of the mesh and its animation seems to work fine. 
+             What's the wrong with it?
+      <dd>
+        A: One of the possible case of this is that no light was set to the scene at all
+        for the previewer. Check the light is specified correctly.
+        There should be <tt>'/usr/scene/stdlight'</tt> if you use the <tt>nviewer</tt>
+        for its preview.
+      </dd>
+    </dl>
+
 */
 
