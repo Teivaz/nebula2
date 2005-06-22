@@ -25,6 +25,8 @@ public:
     static nMaxOptions* Instance();
 
     bool Initialize();
+    bool LoadUtilityOptions();
+    void SaveUtilityOptions();
 
     void SetSaveFileName(const nString&);
     nString GetSaveFileName() const;
@@ -125,7 +127,7 @@ protected:
     /// maximum number of joint palette.
     int maxJointPaletteSize;
     /// weight trashold.
-    int weightTrashHold;
+    float weightTrashHold;
     /// flag for adding joint name.
     bool addJointName;
     /// geometry scaling value.
