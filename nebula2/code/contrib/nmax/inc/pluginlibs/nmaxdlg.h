@@ -22,6 +22,7 @@ public:
     virtual int DoModal();
 
     void SetHWnd(HWND hwnd);
+    HWND GetHWnd() const;
 
 protected:
     nMaxDlg() {};
@@ -48,6 +49,12 @@ inline
 void nMaxDlg::SetHWnd(HWND hwnd)
 {
     this->hWnd = hwnd;
+}
+//-----------------------------------------------------------------------------
+inline
+HWND nMaxDlg::GetHWnd() const
+{
+    return this->hWnd;
 }
 //-----------------------------------------------------------------------------
 #endif
