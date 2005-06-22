@@ -232,6 +232,87 @@ bool nMaxOptions::Initialize()
 }
 
 //-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxOptions::LoadUtilityOptions()
+{
+    nString iniFilename;
+    iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+    iniFilename += "\\";
+    iniFilename += N_MAXEXPORT_INIFILE;
+
+    nFileServer2* fileServer = nFileServer2::Instance();
+
+    // check the .ini file exist in 3dsmax plugin directory.
+    if (!fileServer->FileExists(iniFilename.Get()))
+    {
+        // .ini file does not exist in '/plugcfg' directory.
+        n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
+        return false;
+    }
+
+    nIniFile iniFile(iniFilename);
+
+    //
+    // read various settings for utility panel options.
+    //
+    int tmpAddJointName, tmpExportHiddenNode;
+
+    iniFile.ReadFloat ("GeometryScale",   this->geomScale,           0.01f,     "UtilityOptions");
+    iniFile.ReadInt   ("MaxJointPalette", this->maxJointPaletteSize, 24,        "UtilityOptions");
+    iniFile.ReadFloat ("WeightTrashHold", this->weightTrashHold,     0.0001f,   "UtilityOptions");
+    iniFile.ReadString("SaveMeshAs",      this->meshFileExtension,   ".n3d2",   "UtilityOptions");
+    iniFile.ReadString("SaveAnimAs",      this->animFileExtension,   ".nanim2", "UtilityOptions");
+    iniFile.ReadInt   ("SampleRate",      this->sampleRate,          2,         "UtilityOptions");
+
+    iniFile.ReadInt("AddJointName", tmpAddJointName, 0, "UtilityOptions");
+    this->addJointName = tmpAddJointName ? true : false;
+
+    iniFile.ReadInt("ExportHiddenNode", tmpExportHiddenNode, 0, "UtilityOptions");
+    this->exportHiddenNodes = tmpExportHiddenNode ? true : false;
+
+    iniFile.ReadString("ScriptServer", this->saveScriptServer, "ntclserver", "UtilityOptions");
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Save the settings to nmaxtoolbox.ini file. Called when the plugin is detached.
+    
+    @note 
+    The settings of 'GeneralSettings' section in the nmaxtoolbox.ini are saved
+    when the 'ok' buttion of the directory setting dialog is clicked.
+        
+*/
+void nMaxOptions::SaveUtilityOptions()
+{
+    // write the values to .ini file.
+    nString iniFilename;
+    iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+    iniFilename += "\\";
+    iniFilename += N_MAXEXPORT_INIFILE;
+
+    nIniFile iniFile (iniFilename);
+
+    iniFile.WriteFloat ("GeometryScale",   this->geomScale,           "UtilityOptions");
+    iniFile.WriteInt   ("MaxJointPalette", this->maxJointPaletteSize, "UtilityOptions");
+    iniFile.WriteFloat ("WeightTrashHold", this->weightTrashHold,     "UtilityOptions");
+    iniFile.WriteString("SaveMeshAs",      this->meshFileExtension,   "UtilityOptions");
+    iniFile.WriteString("SaveAnimAs",      this->animFileExtension,   "UtilityOptions");
+    iniFile.WriteInt   ("SampleRate",      this->sampleRate,          "UtilityOptions");
+
+    int tmpAddJointName  = this->addJointName ? 1 : 0;
+    iniFile.WriteInt   ("AddJointName", tmpAddJointName, "UtilityOptions");
+    
+    int tmpExportHiddenNode = this->exportHiddenNodes ? 1 : 0;
+    iniFile.WriteInt   ("ExportHiddenNode", tmpExportHiddenNode, "UtilityOptions");
+    
+    iniFile.WriteString("ScriptServer", this->saveScriptServer, "UtilityOptions");
+
+}
+
+//-----------------------------------------------------------------------------
 void nMaxOptions::SetExportNormals(bool status)
 {
     this->exportNormal = status;
