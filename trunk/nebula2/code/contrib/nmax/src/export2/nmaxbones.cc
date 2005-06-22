@@ -754,7 +754,7 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
     if (animBuilder.Save(nKernelServer::Instance()->GetFileServer(), animFileName))
     {
-        n_maxlog(Low, "'%s' animation file saved.", animFileName);
+        n_maxlog(Low, "'%s' animation file was saved.", animFileName);
     }
     else
     {
