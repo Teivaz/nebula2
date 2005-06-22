@@ -453,24 +453,19 @@ bool nMaxScene::Postprocess()
         }
     }
 
-// begin animation save
-    nString animFilename;
-    animFilename += nMaxOptions::Instance()->GetSaveFileName();
-    animFilename += nMaxOptions::Instance()->GetAnimFileType();
-    animFilename = nMaxOptions::Instance()->GetAnimPath() + animFilename;
-
-    //FIXME: we should add error handling code.
-    if (!nMaxBoneManager::Instance()->Export(animFilename.Get()))
-        return false;
-// end animation save
-
-    //FIXME: should check skinned mesh with different way
-    //       to work with more than two skinned mesh in a scene.
-    // if the exported scene has skinned mesh.
+    //FIXME: should check skinned mesh with different way to work with 
+    //       more than two skinned mesh in a scene.
     if (nMaxBoneManager::Instance()->GetNumBones() > 0)
     {
-        //nString animatorName;
-        //animatorName += "/skinanimator";
+        // export .anim2 and skin animator, if the exported scene has skinned mesh.
+        nString animFilename;
+        animFilename += nMaxOptions::Instance()->GetSaveFileName();
+        animFilename += nMaxOptions::Instance()->GetAnimFileType();
+        animFilename = nMaxOptions::Instance()->GetAnimPath() + animFilename;
+
+        //FIXME: we should add error handling code.
+        if (!nMaxBoneManager::Instance()->Export(animFilename.Get()))
+            return false;
 
         nSkinAnimator* createdAnimator = NULL;
 
