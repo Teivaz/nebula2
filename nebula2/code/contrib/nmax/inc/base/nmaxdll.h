@@ -10,21 +10,56 @@
     @class registeredClassDesc
     @ingroup NebulaMaxExport2Contrib
 
-    This is wrapper to generate all needed functions an exports to create
+    This is a wrapper to generate all needed functions an exports to create
     a 3ds max plugin.
     This includes linkedClassDesc for the automatic count and publish of all
     classes you like to publish to max.
     And the macro DefineLinkedClassDesc for the easy create of ClassDesc's for
     the export.
 
-    A a instace of the nKernelServer will be created on DLL attach, and deleted 
+    Code sample to register ClassDesc and define the all settings for the 3DS
+    Max plugin:
+    @code
+
+// export plugin of the 3DS Max.
+class nMaxExport2 : public SceneExport
+{
+public:
+    ...
+};
+
+// This is all thing for your plugin. Doesn't it easy to use than appwizard huh? :)
+static tRegisteredClassDesc<nMaxExport2> maxExportInterfaceClassDesc2(
+    "nMaxExport2",         // class name
+    N_MAX_EXPORT_CLASS_ID, // class ID
+    SCENE_EXPORT_CLASS_ID, // super class ID
+    1);//,                 // 1: public, 0: non-public
+    //_T(""),              // category
+    //"nebula2");          // scripter-visible name
+
+    @endcode
+
+    @note
+    See 'nmax/inc/export2/nmaxexport2.h' file for an whole example.
+
+    An instace of the nKernelServer will be created on DLL attach, and deleted 
     on DLL detach.
     Also a nMaxLoghandler is created and setted as the default loghandler for 
     the ks instance, but this LogHandler needes a pointer to the MaxInterface 
     as soon as possible.
 
-    This file is licensed under the terms of the Nebula License.
+    Another things you should know to use Nebula 3DS Max plugin toolkit is that
+    you should define both of nMaxPluginInitialize() and nMaxPluginUninitialize()
+    functions in your module.
+    The functions provide a way for initialization and uninitialiazation of your
+    plugin.
+    If you do not define both of the functions, there will be the link error caused
+    by the absent of that. 
+
+    This file is licensed under the terms of the Nebula License. <br>
     (C) 2004 Johannes Kellner
+
+    - 23-Jun-05 last updated by Kim, H.W.
 */
 
 #include <Max.h>
@@ -236,23 +271,28 @@ __declspec( dllexport ) ULONG CanAutoDefer();
 //-----------------------------------------------------------------------------
 /**
     Do initializations when plugin startup. 
-
-    One should define one's own nMaxPluginInitialize() function.
+    One should define one's own nMaxPluginInitialize() function. 
+    Add any initializations code which needed at the plugin startup time.
+    (usually when the 3DS Max starup)
 
     @note
         This is called when a dll is loaded
+
+    - May-05    kims     Added
 */
 extern bool nMaxPluginInitialize();
 
 //-----------------------------------------------------------------------------
 /**
     Do Uninitializations when 3ds max is closed.
-
     One should define one's own nMaxPlugUninInitialize() function.
+    Add any uninitializations code which needed at the plugin exit time.
+    (usually when the 3DS Max exit)
 
     @note
         This is called when a dll is unloaded.
 
+    - May-05    kims     Added
 */
 extern void nMaxPluginUninitialize();
 
