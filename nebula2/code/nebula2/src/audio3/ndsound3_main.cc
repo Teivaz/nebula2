@@ -376,7 +376,8 @@ LPDIRECTSOUNDBUFFER nDSound3::GetFreeBuffer()
     if( m_apDSBuffer == NULL )
         return false; 
 
-    for( DWORD i=0; i<m_dwNumBuffers; i++ )
+    DWORD i;
+    for( i=0; i<m_dwNumBuffers; i++ )
     {
         if( m_apDSBuffer[i] )
         {  
