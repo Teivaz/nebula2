@@ -68,7 +68,7 @@ Back to @ref Nebula2FAQ.
 We provide a Max exporter for 3DS Max 6 and 7 in CVS.  Information
 about it can be found at:
 
-    - NebulaMaxExport2Contrib
+    - @ref NebulaMaxExport2Contrib
 
 The start of usage documentation can be found on our website:
 
