@@ -47,8 +47,13 @@ nGfxObject::Load()
         resourceRoot = kernelServer->New("nroot", "/res");
     }
 
+    // get name of object
+    // Note: objects with the same name but in different directories
+    // will be considered the same.
+    nString tmpName = this->resourceName.ExtractFileName();
+    tmpName.StripExtension();
     // if the resource is already loaded, just increment its refcount and return
-    nTransformNode* resNode = (nTransformNode*) resourceRoot->Find(this->resourceName.Get());
+    nTransformNode* resNode = (nTransformNode*) resourceRoot->Find(tmpName.Get());
     if (resNode)
     {
         // the resource is already loaded
