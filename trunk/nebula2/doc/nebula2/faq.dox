@@ -1,8 +1,57 @@
 /**
 @page Nebula2FAQ Frequently Asked Questions
 
+    - @subpage Nebula2FAQ_Building
     - @subpage Nebula2FAQ_Content
     - @subpage Nebula2FAQ_HowDoI
+*/
+/**
+@page Nebula2FAQ_Building Building Nebula2
+
+    - @ref Nebula2FAQ_BuildingRequirements
+    - @ref Nebula2FAQ_BuildingProjects
+
+@section Nebula2FAQ_BuildingRequirements Requirements for building Nebula2
+
+While you can build the non-rendering, non-audio, non-input portions on
+Linux and OS X, the information here assumes that you're trying to build
+on Windows.
+
+For full details, see the docs on @ref Nebula2Compiling.
+
+    - Windows XP (Microsoft no longer supports pre-XP systems for development
+      with the current SDKs)
+    - DirectX 9.0c
+    - The DirectX SDK (a recent version is required, post-summer 2004)
+    - DirectShow (This isn't in the most recent DirectX SDK any longer, so
+      you either need to download the February DirectX SDK Extras for it,
+      or the April 2005 Platform SDK.)
+    - Visual Studio .NET (VC7) or later.  We support the beta versions
+      of Visual Studio .NET 2005 (VC8).
+    - Python 2.4 or later and WxPython 2.6 or later to run the build system.
+      If you are using a binary SDK, this isn't required.
+
+@section Nebula2FAQ_BuildingProjects Where are the project files?
+
+If you've checked Nebula2 out of CVS or installed the binary SDK, you
+won't have project files yet to build.
+
+You'll need to run our build system utilities to generate these files.
+
+With the binary SDK, just run the "Nebula2 Build System" shortcut in the
+"Tools" submenu in the "Nebula2 SDK" folder in the start menu.
+
+With a CVS version, you'll want to run update.py from the root directory.
+
+Once you're running the build system utility, select your compiler, the
+workspaces that you'd like to build, and hit "Run".
+
+Afterwards, the project files for your compiler will be in an appropriately
+named subdirectory of the <tt>build</tt> directory in the root directory
+of your Nebula2 installation.
+
+For more information about the build system, see @ref NebulaBuildSystem.
+
 */
 /**
 @page Nebula2FAQ_Content Art and Content Creation
