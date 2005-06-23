@@ -61,7 +61,7 @@ private:
     /// spinner control for setting of maximum joint palette.
     ISpinnerControl* spinMaxJointPalette;
     /// spinner control for setting of weight trash hold.
-    ISpinnerControl* spinWeightTrashold;
+    ISpinnerControl* spinWeightThreshold;
     /// spinner control for setting global animation sample rate.
     ISpinnerControl* spinSampleRate;
 
