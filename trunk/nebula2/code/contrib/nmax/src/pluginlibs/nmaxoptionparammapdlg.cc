@@ -23,7 +23,7 @@ const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
 nMaxOptionParamMapDlg::nMaxOptionParamMapDlg() :
     spinGeomScale(0),
     spinMaxJointPalette(0),
-    spinWeightTrashold(0),
+    spinWeightThreshold(0),
     spinSampleRate(0)
 {
 
@@ -40,8 +40,8 @@ nMaxOptionParamMapDlg::~nMaxOptionParamMapDlg()
     if (spinMaxJointPalette)
         ReleaseISpinner(spinMaxJointPalette);
 
-    if (spinWeightTrashold)
-        ReleaseISpinner(spinWeightTrashold);
+    if (spinWeightThreshold)
+        ReleaseISpinner(spinWeightThreshold);
 
     if (spinSampleRate)
         ReleaseISpinner(spinSampleRate);
@@ -97,15 +97,15 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     //SendMessage(editJointPalette, ES_RIGHT, 0, 0L);
 
     // weight trash hold.
-    float weightTrashold = nMaxOptions::Instance()->GetWeightTrashold();
+    float weightThreshold = nMaxOptions::Instance()->GetWeightThreshold();
     
-    spinWeightTrashold = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_WEIGHTRASHOLD));
-    spinWeightTrashold->SetScale(0.00001f);
-    spinWeightTrashold->SetLimits(0.00001f, 1.0f);
-    HWND editWeigihtTrashold = GetDlgItem(hwnd, IDC_EDIT_WEIGHTRASHOLD);
-    spinWeightTrashold->LinkToEdit(editWeigihtTrashold, EDITTYPE_FLOAT);
-    spinWeightTrashold->SetResetValue(0.0001f);
-    spinWeightTrashold->SetValue(weightTrashold, TRUE);
+    spinWeightThreshold = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_WEIGHTHRESHOLD));
+    spinWeightThreshold->SetScale(0.00001f);
+    spinWeightThreshold->SetLimits(0.00001f, 1.0f);
+    HWND editWeigihtThreshold = GetDlgItem(hwnd, IDC_EDIT_WEIGHTHRESHOLD);
+    spinWeightThreshold->LinkToEdit(editWeigihtThreshold, EDITTYPE_FLOAT);
+    spinWeightThreshold->SetResetValue(0.0001f);
+    spinWeightThreshold->SetValue(weightThreshold, TRUE);
 
     //SendMessage(editWeigihtTrashold, ES_RIGHT, 0, 0L);
 
@@ -213,10 +213,10 @@ BOOL nMaxOptionParamMapDlg::DlgProc(TimeValue t, IParamMap *map, HWND hWnd,
                 nMaxOptions::Instance()->SetMaxJointPaletteSize(jointPalette);
             }
 
-            if (spinWeightTrashold && id == IDC_SPIN_WEIGHTRASHOLD)
+            if (spinWeightThreshold && id == IDC_SPIN_WEIGHTHRESHOLD)
             {
-                float weightTrashold = spinWeightTrashold->GetFVal();
-                nMaxOptions::Instance()->SetWeightTrashold(weightTrashold);
+                float weightTreshold = spinWeightThreshold->GetFVal();
+                nMaxOptions::Instance()->SetWeightThreshold(weightTreshold);
             }
 
             if (spinSampleRate && id == IDC_SPIN_SAMPLERATE)

@@ -39,24 +39,12 @@ public:
     void SetExportColors(bool status);
     void SetExportUvs(bool status);
     void SetExportTangents(bool status);
-    void SetExportHiddenNodes(bool status);
-    void SetGeomScaleValue(float val);
-
+    
     bool ExportNormals();
     bool ExportColors();
     bool ExportUvs();
     bool ExportTangents();
-    bool ExportHiddenNodes();
-    float GetGeomScaleValue() const;
     /// @}
-
-    // @name Animation options
-    // @{
-    void SetSampleRate(int val);
-    int GetSampleRate() const;
-    void SetAddJointName(bool flag);
-    bool HasJointName() const;
-    // @}
 
     // @name assign and path access functions.
     // @{
@@ -74,28 +62,42 @@ public:
     const nString& GetTexturePath() const;
     /// @}
 
+    /// @name Global utility panel options
+    /// @{
+    void SetGeomScaleValue(float val);
+    float GetGeomScaleValue() const;
+
+    void SetSampleRate(int val);
+    int GetSampleRate() const;
+    void SetAddJointName(bool flag);
+    bool HasJointName() const;
+
     void SetMeshFileType(const char* type);
     const nString& GetMeshFileType() const;
     void SetAnimFileType(const char* type);
     const nString& GetAnimFileType() const;
 
-    bool RunViewer();
+    void SetExportHiddenNodes(bool status);
+    bool ExportHiddenNodes();
 
-    const char* GetViewerDir() const;
+    void SetMaxJointPaletteSize(int size);
+    int GetMaxJointPaletteSize();
+    void SetWeightThreshold(float val);
+    float GetWeightThreshold() const;
 
     void SetSaveScriptServer(const char* serverName);
     const nString& GetSaveScriptServer();
+    /// @}
+
+    bool RunViewer();
+
+    const char* GetViewerDir() const;
 
     bool UseIndivisualMesh() const;
 
     int GetVerboseLevel();
 
     bool OverwriteExistTexture() const;
-
-    void SetMaxJointPaletteSize(int size);
-    int GetMaxJointPaletteSize();
-    void SetWeightTrashold(float val);
-    float GetWeightTrashold() const;
 
     void SetPreviewMode(bool on);
     bool UsePreviewMode() const;
@@ -126,8 +128,8 @@ protected:
     int sampleRate;
     /// maximum number of joint palette.
     int maxJointPaletteSize;
-    /// weight trashold.
-    float weightTrashHold;
+    /// weight threshold.
+    float weightThreshold;
     /// flag for adding joint name.
     bool addJointName;
     /// geometry scaling value.
@@ -309,15 +311,15 @@ int nMaxOptions::GetMaxJointPaletteSize()
 }
 //-----------------------------------------------------------------------------
 inline
-void nMaxOptions::SetWeightTrashold(float val)
+void nMaxOptions::SetWeightThreshold(float val)
 {
-    this->weightTrashHold = val;
+    this->weightThreshold = val;
 }
 //-----------------------------------------------------------------------------
 inline
-float nMaxOptions::GetWeightTrashold() const
+float nMaxOptions::GetWeightThreshold() const
 {
-    return this->weightTrashHold;
+    return this->weightThreshold;
 }
 //-----------------------------------------------------------------------------
 inline

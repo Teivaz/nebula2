@@ -1011,8 +1011,8 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 //#endif
 
     // calculate bone influences for most important four bones.
-    float weightTrashHold = nMaxOptions::Instance()->GetWeightTrashold();
-    vertexInfluence.AdjustBonesInfluence(weightTrashHold);
+    float weightThreshold = nMaxOptions::Instance()->GetWeightThreshold();
+    vertexInfluence.AdjustBonesInfluence(weightThreshold);
 
     // specify weight and joint indices.
     jointIndices = vertexInfluence.GetIndicesVector();
