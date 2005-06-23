@@ -30,7 +30,7 @@ nMaxOptions::nMaxOptions() :
     animFileExtension(".nanim2"),
     geomScale(0.01f),
     maxJointPaletteSize(24),
-    weightTrashHold(0.0001f),
+    weightThreshold(0.0001f),
     sampleRate (2),
     addJointName(false),
     runViewer(true),
@@ -260,7 +260,7 @@ bool nMaxOptions::LoadUtilityOptions()
 
     iniFile.ReadFloat ("GeometryScale",   this->geomScale,           0.01f,     "UtilityOptions");
     iniFile.ReadInt   ("MaxJointPalette", this->maxJointPaletteSize, 24,        "UtilityOptions");
-    iniFile.ReadFloat ("WeightTrashHold", this->weightTrashHold,     0.0001f,   "UtilityOptions");
+    iniFile.ReadFloat ("WeightThreshold", this->weightThreshold,     0.0001f,   "UtilityOptions");
     iniFile.ReadString("SaveMeshAs",      this->meshFileExtension,   ".n3d2",   "UtilityOptions");
     iniFile.ReadString("SaveAnimAs",      this->animFileExtension,   ".nanim2", "UtilityOptions");
     iniFile.ReadInt   ("SampleRate",      this->sampleRate,          2,         "UtilityOptions");
@@ -297,7 +297,7 @@ void nMaxOptions::SaveUtilityOptions()
 
     iniFile.WriteFloat ("GeometryScale",   this->geomScale,           "UtilityOptions");
     iniFile.WriteInt   ("MaxJointPalette", this->maxJointPaletteSize, "UtilityOptions");
-    iniFile.WriteFloat ("WeightTrashHold", this->weightTrashHold,     "UtilityOptions");
+    iniFile.WriteFloat ("WeightThreshold", this->weightThreshold,     "UtilityOptions");
     iniFile.WriteString("SaveMeshAs",      this->meshFileExtension,   "UtilityOptions");
     iniFile.WriteString("SaveAnimAs",      this->animFileExtension,   "UtilityOptions");
     iniFile.WriteInt   ("SampleRate",      this->sampleRate,          "UtilityOptions");

@@ -44,8 +44,8 @@
 #define IDC_SET_DEFAULT_PATHS           1024
 #define IDC_EDIT_MAXJOINTPALETTE        1040
 #define IDC_SPIN_MAXJOINTPALETTE        1041
-#define IDC_EDIT_WEIGHTRASHOLD          1042
-#define IDC_SPIN_WEIGHTRASHOLD          1043
+#define IDC_EDIT_WEIGHTHRESHOLD         1042
+#define IDC_SPIN_WEIGHTHRESHOLD         1043
 #define IDC_EDIT_SAMPLERATE             1044
 #define IDC_SPIN_SAMPLERATE             1045
 #define IDC_ADDJOINTNAME                1046

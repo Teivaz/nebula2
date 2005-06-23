@@ -63,9 +63,9 @@ BEGIN
                     69,10
     CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,133,
                     7,10
-    CONTROL         "",IDC_EDIT_WEIGHTRASHOLD,"CustEdit",WS_TABSTOP,12,160,
+    CONTROL         "",IDC_EDIT_WEIGHTHRESHOLD,"CustEdit",WS_TABSTOP,12,160,
                     69,10
-    CONTROL         "",IDC_SPIN_WEIGHTRASHOLD,"SpinnerControl",0x0,84,160,7,
+    CONTROL         "",IDC_SPIN_WEIGHTHRESHOLD,"SpinnerControl",0x0,84,160,7,
                     10
     LTEXT           "Sample Rate:",IDC_STATIC,8,258,82,11
     CONTROL         "",IDC_EDIT_SAMPLERATE,"CustEdit",WS_TABSTOP,8,269,69,10
