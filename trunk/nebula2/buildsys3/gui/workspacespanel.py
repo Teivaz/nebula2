@@ -64,7 +64,7 @@ class WorkspacesPanel(wx.Panel):
         generatorComboBoxVal = ''
         generatorDescBoxVal = 'Please select a generator.'
         if self.defaultGeneratorName in self.generatorDesc:
-            generatorComboBoxVal = generatorName
+            generatorComboBoxVal = self.defaultGeneratorName
             generatorDescBoxVal = self.generatorDesc[self.defaultGeneratorName]
         generatorNames = self.generatorDesc.keys()
         generatorNames.sort()
