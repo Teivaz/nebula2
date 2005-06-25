@@ -12,7 +12,9 @@
 //-------------------------------------------------------------------
 class line2 {
 public:
+    /// point of origin
     vector2 b;
+    /// direction
     vector2 m;
 
     line2() {};
@@ -57,7 +59,9 @@ public:
 //-------------------------------------------------------------------
 class line3 {
 public:
+    /// point of origin
     vector3 b;
+    /// direction
     vector3 m;
 
     line3() {};
