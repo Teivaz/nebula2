@@ -83,27 +83,27 @@ nAppState::OnRender2D()
 /**
     Callback method which is called in the render loop before
     nSceneServer::BeginScene() is called. Overwrite this method
-    in a subclass if needed.
+    in a subclass as your necessary.
 
     - 08-Jun-05    kims    Added
 */
 void
 nAppState::OnFrameBefore()
 {
-    n_printf("nAppState::OnFrameBefore() called on state %s\n", this->GetName());
+    // empty
 }
     
 //------------------------------------------------------------------------------
 /**
     Callback method which is called in the render loop after
     nSceneServer::RenderScene() is called. Overwrite this method
-    in a subclass if needed.
+    in a subclass as your necessary.
 
     - 08-Jun-05    kims    Added
 */
 void
 nAppState::OnFrameRendered()
 {
-    n_printf("nAppState::OnFrameRendered() called on state %s\n", this->GetName());
+    // empty
 }
 
