@@ -75,10 +75,10 @@ public:
     bool InBegin() const;
     /// get current sequence shader index and increment by one
     int GetSequenceShaderAndIncrement();
-
-private:
     /// validate render path resources
     void Validate();
+
+private:    
     /// draw a fullscreen quad
     void DrawQuad();
 
