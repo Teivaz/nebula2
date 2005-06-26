@@ -183,6 +183,7 @@ class vstudio8:
         defaultLocation = os.path.join('build', 'vstudio8')
         
         progressVal = 0
+        solutionAbsDirs = []
         self.buildSys.CreateProgressDialog('Generating Solutions', '', 
                                            len(workspaceNames))
         
@@ -212,6 +213,10 @@ class vstudio8:
                     self.GenerateProject(self.buildSys.targets[targetName],
                                          workspace)
                                         
+                absPath = absPath.lower()
+                if absPath not in solutionAbsDirs:
+                    solutionAbsDirs.append(absPath)
+                                        
                 progressVal += 1
         except:
             self.buildSys.logger.exception('Exception in vstudio8.Generate()')
@@ -221,6 +226,9 @@ class vstudio8:
         summaryDetails = { 'numOfWorkspacesBuilt' : progressVal,
                            'totalNumOfWorkspaces' : len(workspaceNames) }
         self.buildSys.DisplaySummaryDialog(summaryDetails)
+        
+        for absPath in solutionAbsDirs:
+            os.startfile(absPath)
         
     #--------------------------------------------------------------------------
     # .sln files aren't in XML, they require the use of tabs instead of spaces.

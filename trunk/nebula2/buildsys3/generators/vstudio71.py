@@ -182,6 +182,7 @@ class vstudio71:
         defaultLocation = os.path.join('build', 'vstudio71')
         
         progressVal = 0
+        solutionAbsDirs = []
         self.buildSys.CreateProgressDialog('Generating Solutions', '', 
                                            len(workspaceNames))
         try:
@@ -209,6 +210,10 @@ class vstudio71:
                 for targetName in workspace.targets:
                     self.GenerateProject(self.buildSys.targets[targetName],
                                          workspace)
+                
+                absPath = absPath.lower()
+                if absPath not in solutionAbsDirs:
+                    solutionAbsDirs.append(absPath)
                                     
                 progressVal += 1
         except:
@@ -219,6 +224,9 @@ class vstudio71:
         summaryDetails = { 'numOfWorkspacesBuilt' : progressVal,
                            'totalNumOfWorkspaces' : len(workspaceNames) }
         self.buildSys.DisplaySummaryDialog(summaryDetails)
+        
+        for absPath in solutionAbsDirs:
+            os.startfile(absPath)
         
     #--------------------------------------------------------------------------
     # .sln files aren't in XML, they require the use of tabs instead of spaces.
