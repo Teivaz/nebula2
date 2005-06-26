@@ -283,7 +283,7 @@ nSceneServer::SplitNodes(nFourCC shaderFourCC)
                 }
                 else
                 {
-                    n_printf("Trying to render shader '%s' through scene server,\nwhich is not defined in renderpath xml file!", shader->GetFilename().Get());
+                    n_printf("Trying to render shader '%s' through scene server,\nwhich is not defined in renderpath xml file!\n", shader->GetFilename().Get());
                 }
             }
         }

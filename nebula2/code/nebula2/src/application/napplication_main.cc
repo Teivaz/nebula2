@@ -260,6 +260,8 @@ nApplication::Run()
             this->DoStateTransition();
         }
 
+        nSceneServer::Instance()->GetRenderPath().Validate();
+
         // perform current frame
         this->DoFrame();
 
