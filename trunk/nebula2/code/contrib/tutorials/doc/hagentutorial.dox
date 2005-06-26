@@ -8,7 +8,7 @@
 - @ref Nebula2HagenTutorialPreparation
 - @ref Nebula2HagenTutorialSampleSource
 - @ref Nebula2HagenTutorialCreateNewProject
-  - @ref Nebula2HagenTutorialCreateNewProjectUpdateTCL
+  - @ref Nebula2HagenTutorialCreateNewProjectUpdatePy
   - @ref Nebula2HagenTutorialCreateNewProjectBldFile
 - @ref Nebula2HagenTutorialSubclassingApplication
 - @ref Nebula2HagenTutorialTheMainFunction
@@ -64,12 +64,12 @@ created by hand in the source and header files, at least with a standard
 Visual Studio configuration.
 
 
-@subsection Nebula2HagenTutorialCreateNewProjectUpdateTCL update.tcl
+@subsection Nebula2HagenTutorialCreateNewProjectUpdatePy update.py
 
-To create a new project in Nebula, we use the update.tcl script. This script 
+To create a new project in Nebula, we use the update.py script. This script 
 will search the Nebula2 directory tree for "build files" (.bld), process them,
 and output Visual Studio solution (aka workspace) and project files to the 
-nebula2/build directory. Note that update.tcl is cross-platform: the same .bld
+nebula2/build directory. Note that update.py is cross-platform: the same .bld
 file can be used to create projects for various Visual Studio versions, as well
 as Linux and MacOS X.
 
@@ -135,16 +135,17 @@ beginmodule ntutorialapp
 endmodule
 @endverbatim
 
-You can see that we omit the .cc and .h extensions, because update.tcl fills
+You can see that we omit the .cc and .h extensions, because update.py fills
 them in automatically if you don't supply them. It is recommended you follow 
 this naming convention (using .cc) for any new code you write. However, if you 
 want to create a module from some third party code that uses .c and .cpp 
 file extensions you can do so by specifying the extension as part of the 
 filename in the bld file.
 
-The next step is to tell update.tcl what we want our compiled 
+The next step is to tell update.py what we want our compiled 
 "finished product" to be, and how it should be linked. We do this by adding
 the following to our bld file:
+
 @verbatim
 begintarget tutorialapp_exe
     settype exe 
@@ -202,35 +203,10 @@ endworkspace
 The first target listed in the workspace definition will be the default
 target in the resulting Visual Studio solution.
 
-At last! Our build file is complete. Now, save it, and run update.tcl 
-(in the nebula2 root directory). If you're using Visual Studio you need
-to ensure that uuidgen.exe can be found by update.tcl, one way to ensure
-this is to run update.tcl within the Visual Studio Command Prompt, 
-like so:
-
-For Visual Studio 2002 (aka 7.0)
-@verbatim
-tclsh84 update.tcl -build vstudio7
-@endverbatim
-The solution and project files will be generated in nebula2/build/vstudio7.
-
-For Visual Studio 2003 (aka 7.1)
-@verbatim
-tclsh84 update.tcl -build vstudio71
-@endverbatim
-The solution and project files will be generated in nebula2/build/vstudio71.
-
-For Visual Studio 2005 (aka 8.0)
-@verbatim
-tclsh84 update.tcl -build vstudio8
-@endverbatim
-The solution and project files will be generated in nebula2/build/vstudio8.
-
-Alternatively you can launch the GUI and pick what to to build that way.
-@verbatim
-tclsh84 update.tcl -gui
-@endverbatim
-
+At last! Our build file is complete. Now, save it, and run update.py
+(or update.exe if you are using a binary SDK) (in the nebula2 root
+directory).  Select your compiler and the workspace that you've
+created, and hit the <tt>Run</tt> button.
 
 Additional information about the build system can be found at 
 @ref NebulaBuildSystem.
@@ -241,7 +217,6 @@ Additional information about the build system can be found at
 So, we have a Visual Studio solution file. Now we need to write our 
 application class. As already mentioned, we must do this by hand, not with 
 a Visual Studio wizard.
-
 
 In ntutorialapp.h, we write:
 
@@ -367,7 +342,7 @@ doesn't yet output anything. Let's fix that:
     n_printf("Go back to sleep, bruce.\n")
 @endcode
 
-Now call update.tcl (as above) one more time, to create the tutorialapp_exe 
+Now call update.py (as above) one more time, to create the tutorialapp_exe 
 package. In Visual Studio, you should see the file pkg_tutorialapp_exe.cc 
 in the VC Solution Explorer. This transforms our code into a package.
 
@@ -620,7 +595,7 @@ endtarget
    inc/napplication_tutorial/ntutorialappstate.h.
 -# Create the usual class declaration in these files, don't forget the 
    nNebulaClass(nTutorialAppState, "nappstate") macro in the .cc file.
--# Rerun update.tcl and reload the Visual Studio solution.
+-# Rerun update.py and reload the Visual Studio solution.
 .
 
 Take a look at nAppState now. We inherit three methods, each of which is
