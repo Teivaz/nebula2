@@ -41,7 +41,7 @@ enum nInputType {
     N_INPUT_BUTTON_UP,          ///< A button was released
     N_INPUT_BUTTON_DBLCLCK,     ///< A button was double clicked
 };
-// @}
+/// @}
 
 /**
     @name Device Types:
@@ -55,7 +55,7 @@ enum nInputType {
 #define N_IDEV_JOYMOUSE     (1<<19)     ///< mouse emulating a recentering joystick
 #define N_IDEV_PADMOUSE     (1<<20)     ///< mouse emulating a non-centering joystick
 #define N_IDEV_RELMOUSE     (1<<21)     ///< emits relative mouse movement
-// @}
+/// @}
 
 /**
     @name Device IDs:
@@ -70,7 +70,7 @@ enum nInputType {
 #define N_INPUT_JOYMOUSE(x)     (N_IDEV_JOYMOUSE | x)
 #define N_INPUT_PADMOUSE(x)     (N_IDEV_PADMOUSE | x)
 #define N_INPUT_RELMOUSE(x)     (N_IDEV_RELMOUSE | x)
-// @}
+/// @}
 
 //-------------------------------------------------------------------
 /**
@@ -199,7 +199,7 @@ enum nKey {
     N_KEY_NUMLOCK,
     N_KEY_SCROLL,
 };
-// @}
+/// @}
 
 //-------------------------------------------------------------------
 class nInputEvent : public nNode {
@@ -261,11 +261,11 @@ private:
     int deviceId;
     union
     {
-        nKey  key;                          // Type == N_INPUT_KEY_*
-        int   chr;                          // Type == N_INPUT_CHAR
-        int   btn;                          // Type == N_MOUSE_DOWN/UP/DBLCLICK,N_BTN_DOWN/UP
-        int   axis;                         // Type == N_AXIS_MOVE
-        int   pov;                          // Type == N_POV_MOVE
+        nKey  key;                          ///< Type == N_INPUT_KEY_*
+        int   chr;                          ///< Type == N_INPUT_CHAR
+        int   btn;                          ///< Type == N_MOUSE_DOWN/UP/DBLCLICK,N_BTN_DOWN/UP
+        int   axis;                         ///< Type == N_AXIS_MOVE
+        int   pov;                          ///< Type == N_POV_MOVE
     };
     float axisVal;
     int absPosX;
