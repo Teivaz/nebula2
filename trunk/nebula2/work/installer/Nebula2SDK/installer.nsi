@@ -214,6 +214,7 @@ Section "Examples" Section_ExampleFiles
     File /nonfatal "${TEXSRC}\environment\*.dds"
     SetOutPath "${TEXDST}\examples"
     File /nonfatal "${TEXSRC}\examples\*.dds"
+    File /nonfatal "${TEXSRC}\examples\brick.bmp"
     SetOutPath "${TEXDST}\lightmaps"
     File /nonfatal "${TEXSRC}\lightmaps\*.dds"
     SetOutPath "${TEXDST}\materials"
