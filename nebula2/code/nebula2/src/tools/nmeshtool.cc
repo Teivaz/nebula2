@@ -89,7 +89,7 @@ main(int argc, const char** argv)
                  "Command line args:\n"
                  "------------------\n"
                  "-help                 show this help\n"
-                 "-in [filename]        input mesh file (.n3d, .n3d2, .nvx or .nvx2 extension)\n"
+                 "-in [filename]        input mesh file (.obj, .n3d, .n3d2, .nvx or .nvx2 extension)\n"
                  "-out [filename]       output mesh file (.n3d2 or .nvx2 extension)\n"
                  "-oldn3d2              use the the old n3d2 loader code\n"
                  "-append [filename]    optional mesh file to append to input mesh\n"
