@@ -89,7 +89,7 @@ reasonable point, and try to use spaces instead of tabs. See any
 '''
 
 STR_CLASS_INFO_SCRIPT_CLASS = '''\
-@page N2ScriptInterface_%(className)s %(className)s Script Interface
+@page N2ScriptInterface_%(className)s %(cppClassName)s Script Interface
 
 @section N2ScriptInterfaceClass_%(className)s %(className)s:
 '''
@@ -558,8 +558,12 @@ class doxygen:
     #--------------------------------------------------------------------------
     # Generate a class tree in doxygen format.
     def generateDoxygenClassTree(self, clazz, indent = 0):
-        out = '%s - @ref N2ScriptInterface_%s "%s"\n' % (' ' * indent, 
-                                                         clazz.name, clazz.name)
+        if indent == 0:
+            out = '%s - @subpage N2ScriptInterface_%s "%s"\n' % (' ' * indent, 
+                                                                 clazz.name, clazz.name)
+        else:
+            out = '%s - @ref N2ScriptInterface_%s "%s"\n' % (' ' * indent, 
+                                                             clazz.name, clazz.name)
         if clazz.subclasses:
             for sc in clazz.subclasses:
                 out += self.generateDoxygenClassTree(sc, indent + 4)
