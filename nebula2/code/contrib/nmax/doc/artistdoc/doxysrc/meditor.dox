@@ -19,6 +19,7 @@
 
     @section NMaxHowtoMEditorMaterialEditor The Nebula2 Custom Material Editor 
 
+
     @image html meditor01.png "Setup material"
 
     Click @b Standard 3DS Max shader button. It will show up <b>Material/Map Browser</b>
@@ -27,6 +28,12 @@
     @image html meditor02.png "Select Nebula2 custom material in the Material Browser"
 
     Select @b Nebula2 material and click 'Ok' button.
+
+    <b>IMPORTANT:</b> The Nebula 3DS Max Toolkit also supports <b>Standard</b> material 
+    type in <tt>Material/Map Browser</tt> which is native material type of 3DS Max.
+    But the <b>Standard</b> material is remained for the purpose of backward compatiable or
+    testing only. It is highly recommended to use Nebula custom material which is provided 
+    by the Nebula 3DSMax Toolkit.
 
     @image html meditor03.png "Nebula2 custom material rollout"
     
@@ -41,7 +48,9 @@
     @section NMaxHowtoMEditorSupportedMaterialTypes Supported Material and Map Types
 
     The Nebula 3DSMax Tookit material editor supports several types of the 3DSMax material
-    other than standard material type of the 3DSMax.    
+    other than standard material type of the 3DSMax. 
+
+ 
 
     @subsection NMaxHowtoMEditorMultiSubMaterials Multi-Sub Materials
     
@@ -111,8 +120,8 @@
     @section NMaxHowtoMEditorShaderXMLFile Shaders and the shader.xml file
 
     Shader files reside under <b>"home:data/shaders</b>. Each supported render path has its 
-    own subdirectory where the actual FX files are located (2.0 for DX9 shaders, @b fixed for 
-    fixed function DX7 shaders). Common shader files are located in the @b lib subdirectory.
+    own subdirectory where the actual FX files are located (<b>2.0</b> for DX9 shaders, @b fixed  
+    for fixed function DX7 shaders). Common shader files are located in the @b lib subdirectory.
     
     The <b>shaders.xml</b> file describes the shader properties for the 3DS Max toolkit plugin, 
     for instance which shader attributes exist, which shader attributes should be shown 
