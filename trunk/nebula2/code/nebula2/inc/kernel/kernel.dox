@@ -23,6 +23,8 @@
     Therefore, there should be something which loads modules and that is the kernerl.
     Whereas the kernel of an operating system loads modules when it needs, the Nebula  
     kernel loads all its necessary modules at the startup of the application.
+    See the following section @ref KernelCreation to know the way to add packages to 
+    the kernel server.
 
     Second, the Nebula kernel respond to a creation of Nebula objects.
     As an operating system creates a process to do something for user tasks,
