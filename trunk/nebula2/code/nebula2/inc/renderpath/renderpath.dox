@@ -3,12 +3,63 @@
     @ingroup NebulaGraphicsSystem
 
       - @ref NebulaRenderPathOverview
+      - @ref NebulaRenderPathCreating
       - @ref NebulaRenderPathElements
+
 
     @section NebulaRenderPathOverview Overview
 
-    Nebula render path system provides flexible and intuitive way to define
-    rendering passes for a renderer of Nebula.
+    Nebula render path system provides a flexible and intuitive way to define
+    rendering passes to render a scene.
+
+    The render tagets and passes are all configurable in a renderpath file.
+    The renderpath is completely setup by an Xml file and can be easily changed, 
+    you could also create your own or use some of the other examples that 
+    come with Nebula2. Have a look at the renderpath files in 
+    <tt>nebula2/data/shaders/</tt>.
+
+    The followings are default renderpath files which live in 
+    <tt>nebula2/data/shaders/</tt>:
+
+      - dx9hdr - dx9hdr_renderpath.xml
+      - dx9 - dx9_renderpath.xml
+      - dx7 - dx7_renderpath.xml
+
+    The <b>dx9hdr</b> is default renderpath and it is used if the system can use 
+    shader 2.0.
+    It does HDR(High Dynamic Range) lighing for its scene lighting model.
+
+    To give you an idea of what is going on, here are the steps that 
+    are taken to render each frame:
+  
+       - Render the scene into a floating point texture
+       - Copy that scene texture into another smaller floating point texture
+         and do a brightpass filter
+       - Copy the filtered scene texture through 4 other textures to do the
+         blur effect
+       - Copy the scene texture into another texture for alpha textures
+       - Render alpha objects into the alpha texture
+       - Compose the scene, the blurred scene and the alpha scene into the
+         frame buffer while handling saturation, luminance, balance and bloom
+         scale.
+  
+    As you can see that's a lot of render to texture operations, some to
+    floating point textures and a fair bit of pixel shader operations
+    going on - and that's without even talking about what the object's
+    shaders are doing. So the framerate can be lower than you've expected but 
+    ~35fps is probably not bad for an ATI 9600.
+
+    The <b>dx9</b> renderpath that doesn't use floating point textures but 
+    still manages a fake HDR style glow effect.
+
+    The dx7 featureset would switch to the <b>dx7</b> renderpath that just  
+    renders the object straight to the frame buffer.
+
+    As mentioned above, you can create your own renderpath besides those
+    three renderpaths if it is necessary.
+
+
+    @section NebulaRenderPathCreating Creating RenderTarget and RenderPass
 
     The render targets and rendering passes are defined in a xml file which should
     be set by calling nSceneServer::SetRenderPathFilename() function when an 
