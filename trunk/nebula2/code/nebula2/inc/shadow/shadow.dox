@@ -35,6 +35,7 @@
          which nSkinAnimator controls the mesh.
        - The mesh must also include the "weights" and "jindices" vertex
          components.
+       - <b>IMPORTANT</b> : The shadow mesh should not be partitioned. 
        - Instead of the bounding box hack, there is a hard-coded maximum distance
          (to the camera) beyond which the shadow won't render.  You can set this 
          in nShadowSkinShapeNode.cc
