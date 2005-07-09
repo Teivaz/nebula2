@@ -80,8 +80,8 @@ nMaterialNode::LoadShaders()
             }
             if (shd)
             {
-            	shaderEntry.SetShader(shd);
-			}
+                shaderEntry.SetShader(shd);
+            }
         }
     }
     return true;
@@ -96,7 +96,7 @@ nMaterialNode::LoadResources()
 {
     if (this->LoadShaders())
     {
-		if (nAbstractShaderNode::LoadResources())
+        if (nAbstractShaderNode::LoadResources())
         {
             return true;
         }
@@ -274,25 +274,25 @@ nMaterialNode::GetShader(nFourCC fourcc) const
 bool
 nMaterialNode::IsTextureUsed(nShaderState::Param param)
 {
-	// check in all shaders if anywhere the texture specified by param is used
-    int	i;
+    // check in all shaders if anywhere the texture specified by param is used
+    int    i;
     int numShaders = this->shaderArray.Size();
     for (i = 0; i < numShaders; i++)
     {
-		const ShaderEntry& shaderEntry = this->shaderArray[i];
+        const ShaderEntry& shaderEntry = this->shaderArray[i];
 
-		// first be sure that the shader entry could be loaded
-		if (shaderEntry.IsShaderValid())
-		{		
-			nShader2* shader = shaderEntry.GetShader();
-			if (shader->IsParameterUsed(param))
+        // first be sure that the shader entry could be loaded
+        if (shaderEntry.IsShaderValid())
+        {        
+            nShader2* shader = shaderEntry.GetShader();
+            if (shader->IsParameterUsed(param))
             {
                 return true;
             }
-		}
-	}
+        }
+    }
     // fallthrough: texture not used by any shader
-	return false;
+    return false;
 }
 
 //------------------------------------------------------------------------------
