@@ -6,6 +6,7 @@
 #define N_OPENALRESOURCE_H
 
 #include "audio3/nsoundresource.h"
+#include <vorbis/vorbisfile.h>
 
 class nOpenALServer;
 class nOpenALObj;
@@ -35,6 +36,9 @@ protected:
 private:
     nAutoRef<nOpenALServer> refSoundServer;
     unsigned    m_handle;
+
+    void load_ogg_file(const nString&, const unsigned int&);
+    void read_ogg_block(const unsigned int&, OggVorbis_File&);
 };
 
 #endif /*N_OPENALRESOURCE*/
