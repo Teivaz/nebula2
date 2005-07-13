@@ -6,15 +6,13 @@
 #   by Bang, Chang Kyu.
 #-----------------------------------------------------------------------------
 beginworkspace nopenal
-    setbinarydir ./bin/
     settargets {
+        nopenal
         nkernel
         nnebula
         ndirect3d9
         ndinput8
         microtcl
-        nopenal
-        nopenaldemo
         ndshow
         ngui
     }
