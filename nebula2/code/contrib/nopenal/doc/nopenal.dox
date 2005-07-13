@@ -3,17 +3,26 @@
     @ingroup NebulaContribSoundModules
     @ingroup NebulaAudioSystem
 
-    @brief nOpenAL is a wrapper around
+    @section NOpenALContribModuleIntroduction Introduction
+    nOpenAL is a wrapper around
     <a href="http://www.openal.org/">OpenAL</a> that implements the
     @ref NebulaAudioSystem interface.
 
-    <h2>Introduction</h2>
-    ...
 
-    <h2>Installation</h2>
+    @section NOpenALContribModuleInstallation Installation
+
     This module should be checked out to <tt>nebula2/code/contrib/nopenal</tt>,
     and run <tt>nebula2/update.tcl</tt>.
 
+
+    @section NOpenALContribModuleUsage Usage
+    ...
+
+
+    @section NOpenALContribModuleAdditionalNotes Additional Notes  
+
+      - 13-July-05    Kim, Hyoun Woo    updated to make it compatible and run with
+                                        CVS. Thanks Nikolai Baklanov for this correcting. 
 
     (c) 2004 Bang, Chang Kyu
 */
@@ -22,9 +31,11 @@
     @defgroup NOpenALDemoContribModule nOpenAL Demo
     @ingroup NOpenALContribModule
     @ingroup NebulaContribSampleModules
+
     @brief A small example of how to use nOpenAL for positional audio and music.
 
-    <h2>Running the demo</h2>
+    @section NOpenALDemoContribModuleRunDemo Running the Demo
+
     The demo plays an ogg vorbis file; to make sure you are able to play
     ogg vorbis, make sure the dll's in the nOpenAL dll directory are in your
     path.  You can either add code/contrib/nopenal/dll to your path, or copy
@@ -32,5 +43,10 @@
     the same place as the nopenaldemo, which is typically bin/win32 or
     bin/win32d in the nebula2 distribution.
 
+
+    @section NOpenALDemoContribModuleAdditionalNotes Additional Notes  
+
+      - 13-July-05    Kim, Hyoun Woo    rewrote the demo app based on naplication pacakge 
+                                        with appwiz. 
 
 */
