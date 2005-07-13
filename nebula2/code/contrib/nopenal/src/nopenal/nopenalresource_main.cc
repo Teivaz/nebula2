@@ -4,10 +4,58 @@
 //------------------------------------------------------------------------------
 #include "nopenal/nopenalserver.h"
 #include "kernel/nfileserver2.h"
+
+#include "kernel/nfile.h"
+
 #include "nopenal/nopenalresource.h"
-#include <sys/stat.h>
+#include "util/narray.h"
+
+//#include <sys/stat.h>
 
 nNebulaClass(nOpenALResource, "nsoundresource");
+
+
+//-----------------------------------------------------------
+//    ov_callback specific functions
+//-----------------------------------------------------------
+
+size_t ReadOgg(void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+    nFile* fp = reinterpret_cast<nFile*>(datasource);
+    return fp->Read((char *)ptr, size * nmemb);
+}
+
+int SeekOgg(void *datasource, ogg_int64_t offset, int whence)
+{
+    nFile* fp = reinterpret_cast<nFile*>(datasource);
+    nFile::nSeekType dir;
+    switch (whence) 
+	{
+    case SEEK_SET:
+        dir = nFile::nSeekType::START;
+        break;
+	case SEEK_CUR:
+        dir = nFile::nSeekType::CURRENT;
+        break;
+	case SEEK_END:
+        dir = nFile::nSeekType::END;
+        break;
+	default: return -1;
+	}
+    int ret = fp->Seek(offset, dir) ? 0 : -1;
+	return ret;
+}
+
+long TellOgg(void *datasource)
+{
+	nFile* fp = reinterpret_cast<nFile*>(datasource);
+	return fp->Tell();
+}
+
+int CloseOgg(void *datasource)
+{
+	return 0;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -65,7 +113,7 @@ nOpenALResource::LoadResource()
         ALboolean loop;
 
         // Load xxx.wav
-        alutLoadWAVFile((ALbyte *)dstFileName.Get(),&format,&data,&size,&freq,&loop);
+        alutLoadWAVFile((ALbyte*)dstFileName.Get(),&format,&data,&size,&freq,&loop);
         if ((error = alGetError()) != AL_NO_ERROR)
         {
             n_message("alutLoadWAVFile %s : %s\n", dstFileName.Get(), alGetString(error));
@@ -96,44 +144,7 @@ nOpenALResource::LoadResource()
     }
     else if( dstFileName.GetExtension() == nString("ogg") )
     {
-        if (alIsExtensionPresent((ALubyte *)"AL_EXT_vorbis") == AL_FALSE)
-        {
-            n_message( "Error: vorbis not supported\n" );
-            return false;
-        }
-
-        void *ovData;   
-        unsigned int ovSize;
-
-        FILE *fh;
-        fh = fopen(dstFileName.Get(), "rb");
-        if (fh != NULL)
-        {
-            struct stat sbuf;
-            if (stat(dstFileName.Get(), &sbuf) != -1)
-            {
-                ovSize = sbuf.st_size;
-                ovData = malloc(ovSize);
-
-                if (ovData != NULL)
-                {
-                    fread(ovData, 1, ovSize, fh);
-
-                    alBufferData(buffer, AL_FORMAT_VORBIS_EXT, ovData, ovSize, 22050);
-                    if ((error = alGetError()) != AL_NO_ERROR)
-                    {
-                        free(ovData);
-                        fclose(fh);
-                        n_message("alBufferData buffer 0 : %s\n", alGetString(error));
-                        //// Delete Buffers
-                        //alDeleteBuffers(NUM_BUFFERS, g_Buffers);
-                        return false;
-                    }
-                    free(ovData);
-                }
-            }
-            fclose(fh);
-        }
+        this->load_ogg_file(dstFileName, buffer);
     }
     else
     {
@@ -149,14 +160,17 @@ nOpenALResource::LoadResource()
     // set static source properties
     alSourcei(source, AL_BUFFER, buffer);
     alSourcei(source, AL_LOOPING, this->GetLooping());
-    alSourcef(source, AL_REFERENCE_DISTANCE, 10);
+    alSourcef(source, AL_REFERENCE_DISTANCE, 1);
+    alSourcef(source, AL_GAIN, 1.0f);
+    alSourcef(source, AL_PITCH, 1.0f);
 
     m_handle = this->refSoundServer->getNextBuffer();
 
     this->refSoundServer->incNextBuffer();
     this->refSoundServer->incNextSource();
 
-    this->SetValid(true);
+    //this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -168,5 +182,92 @@ void
 nOpenALResource::UnloadResource()
 {
     n_assert(this->IsValid());
-    this->SetValid(false);
+    //this->SetValid(false);
+    this->SetState(Unloaded);
 }
+
+void
+nOpenALResource::load_ogg_file(const nString& filename, const unsigned int& buffer)
+{
+    // Open Ogg file
+	nFile* fp = nFileServer2::Instance()->NewFileObject();
+    if (!fp->Open(filename.Get(), "rb"))
+    {
+        n_error("nOpenALResource unable to load: %s\n", filename.Get());
+    }
+    
+    // OggVorbis specific structures
+	ov_callbacks  cb;
+	cb.close_func = CloseOgg;
+	cb.read_func  = ReadOgg;
+	cb.seek_func  = SeekOgg;
+	cb.tell_func  = TellOgg;
+
+    OggVorbis_File vf;
+    nOpenALServer::Instance()->check_ov_error("ov_open_callbacks() said", ov_open_callbacks(fp, &vf, 0, -1, cb));
+    
+    read_ogg_block(buffer, vf);
+
+    nOpenALServer::Instance()->check_ov_error("ov_clear() said", ov_clear(&vf));
+}
+
+void
+nOpenALResource::read_ogg_block(const unsigned int& buffer, OggVorbis_File& vf)
+{
+    int blockSize = ov_pcm_total(&vf, -1);
+    nOpenALServer::Instance()->check_ov_error("ov_pcm_total() said", blockSize);
+    blockSize *= 2;
+    
+    // vars
+	int	  current_section = 0;
+	long  TotalRet        = 0;
+    long  ret             = 0;
+	char* buf             = new char[blockSize];
+    const char* pbuf      = buf;
+
+	// Read loop
+	while (TotalRet < blockSize) 
+	{
+		ret = ov_read(&vf, buf + TotalRet, blockSize - TotalRet, 0, 2, 1, &current_section);
+        
+		// if end of file or read limit exceeded
+		if (ret == 0) break;
+		else if (ret < 0) 		// Error in bitstream
+		{
+			//
+		}
+		else
+		{
+			TotalRet += ret;
+		}
+	}
+
+	vorbis_info* pInfo = ov_info(&vf, -1);
+    n_assert(pInfo);
+
+    ALenum format;
+    if (pInfo->channels == 1)
+    {
+        format = AL_FORMAT_MONO16;
+    }
+    else
+    {
+        format = AL_FORMAT_STEREO16;
+    }
+
+    ALsizei freq = pInfo->rate;
+    alBufferData(buffer, format, (void*)pbuf, blockSize, freq);
+    nOpenALServer::Instance()->check_al_error();
+    
+    delete [] buf;
+}
+
+
+
+
+
+
+
+
+
+
