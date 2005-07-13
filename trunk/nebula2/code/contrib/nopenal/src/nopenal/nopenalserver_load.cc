@@ -32,18 +32,20 @@ nOpenALServer::createBufSrc()
     // create buffer
     alGetError(); /* clear */
     alGenBuffers(1, &buffer[nextBuffer]);
-    if(alGetError() != AL_NO_ERROR)
-    {
-        return false;
-    }
+    check_al_error();
+    //if(alGetError() != AL_NO_ERROR)
+    //{
+    //    return false;
+    //}
 
     // create source
     alGetError(); /* clear */
     alGenSources(1, &source[nextSource]);
-    if(alGetError() != AL_NO_ERROR)
-    {
-        return false;
-    }
+    check_al_error();
+    //if(alGetError() != AL_NO_ERROR)
+    //{
+    //    return false;
+    //}
 
     return true;
 }

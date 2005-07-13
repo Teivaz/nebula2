@@ -24,6 +24,7 @@ nOpenALObj::~nOpenALObj()
 {
     if (this->IsValid())
     {
+        this->Stop();
         this->Unload();
     }
 }
@@ -60,7 +61,8 @@ nOpenALObj::LoadResource()
 
     this->m_handle = rsrc->getHANDLE();
     this->refSoundResource = rsrc;
-    this->SetValid(true);
+    //this->SetValid(true);
+    this->SetState(Valid);
 
     return true;
 }
@@ -76,7 +78,8 @@ nOpenALObj::UnloadResource()
     n_assert(this->refSoundResource.isvalid());
     this->refSoundResource->Release();
     this->refSoundResource.invalidate();
-    this->SetValid(false);
+    //this->SetValid(false);
+    this->SetState(Unloaded);
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +90,7 @@ nOpenALObj::Start()
 {
     n_assert(this->IsValid());
     unsigned int source = this->refSoundServer->getSource(m_handle);
-    alSourcePlay(source); 
+    alSourcePlay(source);
 }
 
 //------------------------------------------------------------------------------
