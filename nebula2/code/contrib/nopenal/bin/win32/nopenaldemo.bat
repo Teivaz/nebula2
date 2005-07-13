@@ -1,1 +1,0 @@
-..\\..\\..\\..\\..\\bin\\win32\\nopenaldemo.exe -startup ../startup.tcl
