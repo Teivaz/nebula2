@@ -8,8 +8,9 @@
 //----------------------------------------------------------------------------
 /**
     @class nAppOpenALState
-    @ingroup NebulaContribOpenAL
-    @brief nopenal demo application
+    @ingroup NOpenALDemoContribModule
+
+    @brief An application state of the nopeal demo.
 
 */
 //----------------------------------------------------------------------------
