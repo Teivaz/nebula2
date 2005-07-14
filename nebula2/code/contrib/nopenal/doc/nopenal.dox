@@ -3,7 +3,18 @@
     @ingroup NebulaContribSoundModules
     @ingroup NebulaAudioSystem
 
+    This section of the documentation covers Nebula OpenAL contributed audio system.
+    Refer <a href="http://www.openal.org/">OpenAL</a> site to know more about 
+    the OpenAL SDK.
+
+      - @ref NOpenALContribModuleIntroduction
+      - @ref NOpenALContribModuleInstallation
+      - @ref NOpenALContribModuleUsage
+      - @ref NOpenALContribModuleChangeLog
+    
+
     @section NOpenALContribModuleIntroduction Introduction
+
     nOpenAL is a wrapper around
     <a href="http://www.openal.org/">OpenAL</a> that implements the
     @ref NebulaAudioSystem interface.
@@ -16,12 +27,61 @@
 
 
     @section NOpenALContribModuleUsage Usage
+
+    See @ref NebulaAudioSystemUsage section to know overall usage of the Nebula
+    audio server.
+ 
+    @subsection NOpenALContribModuleUsageCreating Audio Server Initialization
+
+    The first thing to do to use <tt>nopenal</tt> audio server is to create the
+    audio server.
+
+    @code
+    nOpenALServer* audioServer = (nOpenALServer*)kernelserver->New("nopenalserver", 
+                                                                   "/sys/servers/audio");
+    @endcode
+
+    Call nOpenALServer::Open() to initialize the created audio server like the 
+    following code:
+    @code
+    audioServer->Open();
+    @endcode
+
+    @subsection NOpenALContribModuleUsageLoad Sound Playing
+
+    To play a sound, the first thing you to do is to create a OpenAL sound object.
+    The OpenAL sound object can be created by calling nOpenALServer::NewSound() 
+    function. Then you should load actual sound file into the created sound object. 
+    See the following code:
+    @code
+    nOpenALObj* soundObject = (nOpenALObj*)nOpenALServer::Instance()->NewSound(); 
+
+    soundObject->SetName(rsrcname);
+    soundObject->SetFilename(filename);
+    soundObject->Load();
+    @endcode
+
+    To play the loaded sound, just call nOpenALServer::StartSound() function with
+    the created sound object:
+    @code
+    nOpenALServer::Instance()->StartSound(soundObject);
+    @endcode
+
+    @subsection NOpenALContribModuleUsageUpdateValues Update Sound Values 
     ...
 
+    @subsection NOpenALContribModuleUsageShutdown Shutdown
 
-    @section NOpenALContribModuleAdditionalNotes Additional Notes  
+    When the application is closing, the audio server should be shutdown 
+    by calling its nOpenALServer::Close() member function:
+    @code
+    audioServer->Close();
+    @endcode
 
-      - 13-July-05    Kim, Hyoun Woo    updated to make it compatible and run with
+
+    @section NOpenALContribModuleChangeLog Change Log  
+
+      -13-July-05 <i>Kim, Hyoun Woo</i> updated to make it compatible and run with
                                         CVS. Thanks Nikolai Baklanov for this correcting. 
 
     (c) 2004 Bang, Chang Kyu
@@ -44,9 +104,9 @@
     bin/win32d in the nebula2 distribution.
 
 
-    @section NOpenALDemoContribModuleAdditionalNotes Additional Notes  
+    @section NOpenALDemoContribModuleChangeLog Change Log  
 
-      - 13-July-05    Kim, Hyoun Woo    rewrote the demo app based on naplication pacakge 
+      -13-July-05 <i>Kim, Hyoun Woo</i> rewrote the demo app based on naplication pacakge 
                                         with appwiz. 
 
 */
