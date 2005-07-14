@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nAppOpenALDemo
-    @ingroup NebulaContribOpenAL
+    @ingroup NOpenALDemoContribModule
     
     @brief nopenal demo application
     
