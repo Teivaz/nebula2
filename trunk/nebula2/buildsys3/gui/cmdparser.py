@@ -14,6 +14,8 @@ PARAM_COMMENT_INDENT = 30
 TABSIZE = 4
 TABSPACES = " " * TABSIZE
 
+TYPES_LIST = ['i', 's', 'b', 'f', 'ff', 'fff', 'ffff', 'o', 'l']
+#TYPES_LIST = ['int', 'string', 'bool', 'float', 'vector2', 'vector3', 'vector4', 'object', 'list', 'quat']
 TYPE_CHARS = 'vifsbol'
 PARAMDESC_REGEX          = re.compile(r'^([' + TYPE_CHARS + r']+)\s*\(\s*(\w[\w\d]*)\s*(;\s*\w[\w\d]*\s*=\s*[^;]+\s*)*\)\s*(?:--\s*(.+)\s*)?$')
 ATTRVAL_REGEX            = re.compile(r'^\s*(\w[\w\d]*)\s*=\s*(.+?\s*(,.+?)?)\s*$')
@@ -134,18 +136,24 @@ class CmdParam:
             self.setFrom(t)
         else:
             if isinstance(t, StringType) and re.match(r'^[' + TYPE_CHARS + r']+$', t): self.type = t
-            if isinstance(n, StringType): self.name = n
-            if isinstance(a, DictType):
-                for k, v in map(None, a.keys(), a.values()):
-                    if isinstance(v, StringType): self.attribute[k] = v
-                    elif isinstance(v, ListType):
-                        v_ = []
-                        for e in v:
-                            if isinstance(v, StringType): v_.append(e)
-                            else: v_.append("<unknown>")
-                        self.attribute[k] = v_
-                    else: self.attribute[k] = "<unknown>"
-            if isinstance(c, StringType): self.comment = c
+            
+            # type cleanning
+            self.type = self.type.replace('v', '')
+            if self.type == '':
+                self.type = 'v'
+            else:
+                if isinstance(n, StringType): self.name = n
+                if isinstance(a, DictType):
+                    for k, v in map(None, a.keys(), a.values()):
+                        if isinstance(v, StringType): self.attribute[k] = v
+                        elif isinstance(v, ListType):
+                            v_ = []
+                            for e in v:
+                                if isinstance(v, StringType): v_.append(e)
+                                else: v_.append("<unknown>")
+                            self.attribute[k] = v_
+                        else: self.attribute[k] = "<unknown>"
+                if isinstance(c, StringType): self.comment = c
   
     def __repr__(self):
         res = self.type
@@ -194,9 +202,22 @@ class CmdProperty:
             if isinstance(n, StringType): self.name = n
             else: self.name = "<unknown>"
             if isinstance(p, ListType):
+                has_void = False
+                has_not_void = False
                 for e in p:
-                    if isinstance(e, CmdParam): self.params.append(e)
-                    else: self.params.append(CmdParam())
+                    if isinstance(e, CmdParam):
+                        if e.type == 'v':
+                            if not has_void and not has_not_void:
+                                self.params.append(e)
+                                has_void = True
+                        else:
+                            self.params.append(e)
+                            has_not_void = True
+                if has_void and has_not_void: #delete first void's
+                    for (k, p) in self.params.iteritems():
+                        if p.type == 'v': del(self.params[k])
+                        else: break
+            else: self.params.append(CmdParam())
         if isinstance(i, StringType): self.info = i
   
     def __repr__(self):
@@ -225,7 +246,7 @@ class CmdProperty:
             return 1
         return 0
 
-class CommonCmd:
+class BaseCmd:
     CMD_DECLARED = 1 << 0
     CMD_ADDED    = 1 << 1
     CMD_DEFINED  = 1 << 2
@@ -239,7 +260,7 @@ class CommonCmd:
         self.info = ""
         self.cmdBody = ""
         self.status = 0
-        if isinstance(fn, CommonCmd):
+        if isinstance(fn, BaseCmd):
             self.funcName = fn.funcName[:]
             self.cmdName = fn.cmdName[:]
             self.outFormat = fn.outFormat[:]
@@ -261,7 +282,7 @@ class CommonCmd:
             if isinstance(cb, StringType): self.cmdBody = cb
   
     def setStatus(self, st):
-        if st == CommonCmd.CMD_DECLARED or st == CommonCmd.CMD_ADDED or st == CommonCmd.CMD_DEFINED:
+        if st == BaseCmd.CMD_DECLARED or st == BaseCmd.CMD_ADDED or st == BaseCmd.CMD_DEFINED:
             self.status |= st
   
     def _specific_str(self): return ""
@@ -282,7 +303,7 @@ class CommonCmd:
         return res
 
     def setFrom(self, c):
-        if isinstance(c, CommonCmd):
+        if isinstance(c, BaseCmd):
             self.funcName = c.funcName[:]
             self.cmdName = c.cmdName[:]
             self.outFormat = c.outFormat[:]
@@ -293,7 +314,7 @@ class CommonCmd:
             self.status = c.status
   
     def __cmp__(self, c):
-        if not issubclass(c.__class__, CommonCmd): return 1
+        if not issubclass(c.__class__, BaseCmd): return 1
         if not (self.funcName == c.funcName and\
                 self.cmdName == c.cmdName and\
                 self.info == c.info and\
@@ -304,7 +325,7 @@ class CommonCmd:
             return 1
         return 0
 
-class Cmd(CommonCmd):
+class Cmd(BaseCmd):
     T_GETTER, T_SETTER = 0, 1
     M_NONE, M_COUNT, M_BEGIN, M_ADD, M_END = 0, 1, 2, 3, 4
   
@@ -316,7 +337,7 @@ class Cmd(CommonCmd):
         if isinstance(common_cmd, Cmd):
             self.setFrom(common_cmd)
         else:
-            CommonCmd.__init__(self, common_cmd)
+            BaseCmd.__init__(self, common_cmd)
             if t == Cmd.T_SETTER: self.type = Cmd.T_SETTER
             if (t == Cmd.T_GETTER and st == Cmd.M_COUNT) or\
                (t == Cmd.T_SETTER and (st == Cmd.M_BEGIN or st == Cmd.M_ADD or st == Cmd.M_END)):
@@ -332,8 +353,8 @@ class Cmd(CommonCmd):
         return res
 
     def setFrom(self, c):
-        if isinstance(c, CommonCmd):
-            CommonCmd.setFrom(self, c)
+        if isinstance(c, BaseCmd):
+            BaseCmd.setFrom(self, c)
             if isinstance(c, Cmd):
                 self.type = c.type
                 self.subType = c.subType
@@ -341,30 +362,65 @@ class Cmd(CommonCmd):
   
     def __cmp__(self, c):
         if not isinstance(c, Cmd): return 1
-        if CommonCmd.__cmp__(self, c): return 1
+        if BaseCmd.__cmp__(self, c): return 1
         if not (self.type == c.type and\
                 self.subType == c.subType and\
                 self.propertyName == c.propertyName):
             return 1
         return 0
 
-class BaseCmd(CommonCmd):
+class CommonCmd(BaseCmd):
     def __init__(self, common_cmd, op = [], ip = []):
         self.outParams = []
         self.inParams = []
         # default base initialization
-        if isinstance(common_cmd, BaseCmd):
+        if isinstance(common_cmd, CommonCmd):
             self.setFrom(common_cmd)
         else:
-            CommonCmd.__init__(self, common_cmd)
+            BaseCmd.__init__(self, common_cmd)
+            #if isinstance(op, ListType):
+            #    for e in op:
+            #        if isinstance(e, CmdParam): self.outParams.append(e)
+            #        else: self.outParams.append(CmdParam())
             if isinstance(op, ListType):
+                has_void = False
+                has_not_void = False
                 for e in op:
-                    if isinstance(e, CmdParam): self.outParams.append(e)
-                    else: self.outParams.append(CmdParam())
+                    if isinstance(e, CmdParam):
+                        if e.type == 'v':
+                            if not has_void and not has_not_void:
+                                self.outParams.append(e)
+                                has_void = True
+                        else:
+                            self.outParams.append(e)
+                            has_not_void = True
+                if has_void and has_not_void: #delete first void's
+                    for (k, op) in self.outParams.iteritems():
+                        if op.type == 'v': del(self.outParams[k])
+                        else: break
+            else: self.outParams.append(CmdParam())
+
+            #if isinstance(ip, ListType):
+            #    for e in ip:
+            #        if isinstance(e, CmdParam): self.inParams.append(e)
+            #        else: self.inParams.append(CmdParam())
             if isinstance(ip, ListType):
+                has_void = False
+                has_not_void = False
                 for e in ip:
-                    if isinstance(e, CmdParam): self.inParams.append(e)
-                    else: self.inParams.append(CmdParam())
+                    if isinstance(e, CmdParam):
+                        if e.type == 'v':
+                            if not has_void and not has_not_void:
+                                self.inParams.append(e)
+                                has_void = True
+                        else:
+                            self.inParams.append(e)
+                            has_not_void = True
+                if has_void and has_not_void: #delete first void's
+                    for (k, ip) in self.inParams.iteritems():
+                        if ip.type == 'v': del(self.inParams[k])
+                        else: break
+            else: self.inParams.append(CmdParam())
 
     def _specific_str(self):
         res = TABSPACES + "@output\n"
@@ -378,8 +434,8 @@ class BaseCmd(CommonCmd):
         return res
 
     def setFrom(self, c):
-        if isinstance(c, CommonCmd):
-            CommonCmd.setFrom(self, c)
+        if isinstance(c, BaseCmd):
+            BaseCmd.setFrom(self, c)
             if isinstance(c, BaseCmd):
                 self.outParams = []
                 self.inParams = []
@@ -388,7 +444,7 @@ class BaseCmd(CommonCmd):
 
     def __cmp__(self, c):
         if not isinstance(c, BaseCmd): return 1
-        if CommonCmd.__cmp__(self, c): return 1
+        if BaseCmd.__cmp__(self, c): return 1
         if not (self.outParams == c.outParams and\
                 self.inParams == c.inParams):
             return 1
@@ -452,8 +508,8 @@ class CmdFileConfig:
                     else: self.properties.append(CmdProperty())
             if isinstance(c, ListType):
                 for e in c:
-                    if issubclass(e.__class__, CommonCmd): self.cmds.append(e)
-                    else: self.cmds.append(CommonCmd(None))
+                    if issubclass(e.__class__, BaseCmd): self.cmds.append(e)
+                    else: self.cmds.append(BaseCmd(None))
             if isinstance(scf, SaveCmdsFunction): self.saveCmdsFunc = scf
   
     def findProperty(self, name):
@@ -540,8 +596,8 @@ class CmdFileConfig:
                 if isinstance(e, CmdProperty): self.properties.append(e)
                 else: self.properties.append(CmdProperty())
             for e in c.cmds:
-                if isinstance(e, CommonCmd): self.cmds.append(e)
-                else: self.cmds.append(CommonCmd(None))
+                if isinstance(e, BaseCmd): self.cmds.append(e)
+                else: self.cmds.append(BaseCmd(None))
             if self.saveCmdsFunc: self.saveCmdsFunc = SaveCmdsFunction(c.saveCmdsFunc)
             else: self.saveCmdsFunc = None
 
@@ -695,15 +751,15 @@ class CmdFileProcessor:
         if baseInfo:
             self.config.header.generalInfo = baseInfo
             baseInfo = None              
-        cmd = CommonCmd(g.group(1))
-        cmd.setStatus(CommonCmd.CMD_DECLARED)
+        cmd = BaseCmd(g.group(1))
+        cmd.setStatus(BaseCmd.CMD_DECLARED)
         self.config.cmds.append(cmd)
         return baseInfo
 
     def _parseAddCmdFunction(self, g):
         cmd = self.config.findCmd(g.group(5))
         if not cmd:
-            cmd = CommonCmd.new(g.group(5))
+            cmd = BaseCmd.new(g.group(5))
             self.config.cmds.append(cmd)
         cmd.cmdName = g.group(2)
         cmd.outFormat = g.group(1)
@@ -713,7 +769,7 @@ class CmdFileProcessor:
         if len(cmd.inFormat) > 1 and 'v' in cmd.inFormat:
             print "Error: wrong input format for the command " + cmd.cmdName + "."
         cmd.fourCC = g.group(4)
-        cmd.setStatus(CommonCmd.CMD_ADDED)
+        cmd.setStatus(BaseCmd.CMD_ADDED)
 
     def _parseCmdDoc(self, g, ccFile, commentBlock):
         if commentBlock:
@@ -761,9 +817,9 @@ class CmdFileProcessor:
         cmd = self.config.findCmd(cmdName)
 
         if not cmd:
-            cmd = CommonCmd(cmdName, cmdName, "v", "v", "----")
+            cmd = BaseCmd(cmdName, cmdName, "v", "v", "----")
             self.config.cmds.append(cmd)
-        cmd.setStatus(CommonCmd.CMD_DEFINED)
+        cmd.setStatus(BaseCmd.CMD_DEFINED)
         cmd_idx = self.config.cmds.index(cmd)
           
         if not commentBlock:
@@ -830,7 +886,7 @@ class CmdFileProcessor:
                 if type == Cmd.T_SETTER: p_type = cmd.inFormat
                 prop.params.append(CmdParam(p_type, "name"))
         else: # this is simple command, not getter/setter
-            cmd = BaseCmd(cmd)
+            cmd = CommonCmd(cmd)
             if atBlocks.has_key("output"):
                 lines = atBlocks["output"].strip().splitlines()
                 if len(lines) > 0:
