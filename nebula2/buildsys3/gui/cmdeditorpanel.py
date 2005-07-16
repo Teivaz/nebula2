@@ -14,30 +14,67 @@ from cmddatapanels import *
 
 #----------------------------------------------------------------------
 class CmdEditorPanel(wx.Panel):
-    
-    def __init__(self, parentWindow, buildSys):
-        wx.Panel.__init__(self, parentWindow)
+    def __init__(self, parent, buildSys):
         self.buildSys = buildSys
-        codeDir = buildSys.GetAbsPathFromRel('code')
+        self.codeDir = buildSys.GetAbsPathFromRel('code')
 
-        self.tree = gizmos.TreeListCtrl(self, -1, style =
-                                        #wx.TR_DEFAULT_STYLE
-                                        wx.TR_TWIST_BUTTONS
-                                        #| wx.TR_ROW_LINES
-                                        #| wx.TR_NO_LINES 
-                                        #| wx.TR_AQUA_BUTTONS
-                                        | wx.TR_HIDE_ROOT
-                                        | wx.TR_FULL_ROW_HIGHLIGHT
-                                        | wx.TR_NO_BUTTONS
+##        self.tree = gizmos.TreeListCtrl(self, -1, style =
+##                                        #wx.TR_DEFAULT_STYLE
+##                                        wx.TR_TWIST_BUTTONS
+##                                        #| wx.TR_ROW_LINES
+##                                        #| wx.TR_NO_LINES 
+##                                        #| wx.TR_AQUA_BUTTONS
+##                                        | wx.TR_HIDE_ROOT
+##                                        | wx.TR_FULL_ROW_HIGHLIGHT
+##                                        | wx.TR_NO_BUTTONS
+##
+##                                        # By default the style will be adjusted on
+##                                        # Mac to use twisty buttons and no lines.  If
+##                                        # you would rather control this yourself then
+##                                        # add this style.
+##                                        #| wx.TR_DONT_ADJUST_MAC
+##                                   )
 
-                                        # By default the style will be adjusted on
-                                        # Mac to use twisty buttons and no lines.  If
-                                        # you would rather control this yourself then
-                                        # add this style.
-                                        #| wx.TR_DONT_ADJUST_MAC
-                                   )
-        self.tree.SetMinSize((320,300))
+        self.xrcRootItem = None
+        xrcLoadPanel(self, parent, 'CmdEditorPanel')
+    
+        # extracting controls
+        treePanel       = xrcCTRLUnpack(self, "TreePanel")
+        self.fileName   = xrcCTRLUnpack(self, "FileName")
+        self.previewBtn = xrcCTRLUnpack(self, "Preview", {EVT_BUTTON:self.OnPreview})
+        self.convertBtn = xrcCTRLUnpack(self, "Convert", {EVT_BUTTON:self.OnConvert})
+        self.applyBtn   = xrcCTRLUnpack(self, "Apply", {EVT_BUTTON:self.OnApply})
+        self.workPanel  = xrcCTRLUnpack(self, "WorkPanel")
+        self.statusLine = xrcCTRLUnpack(self, "StatusLine")
 
+        self.tree = gizmos.TreeListCtrl(treePanel, -1,
+                    style = wx.TR_TWIST_BUTTONS|wx.TR_HIDE_ROOT|wx.TR_FULL_ROW_HIGHLIGHT|wx.TR_NO_BUTTONS)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.tree, 1, wx.EXPAND|wx.ALL)
+        sizer.Fit(treePanel)
+        treePanel.SetSizer(sizer)
+
+        # configuring controls
+        self.InitTree()
+        self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        self.tree.GetMainWindow().Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged)
+        self.tree.GetMainWindow().Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded)
+        #self.tree.GetMainWindow().Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
+
+        self.workSubPanel = None
+
+        # popup stuff
+        self.popupParseID = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.OnPopupParse, id=self.popupParseID)
+
+        # cmd parser & configs
+        self.parser = CmdFileProcessor(self.codeDir)
+        self.cmd_configs = []
+        self.active_cmdfile = None
+        
+        self.parsing_dlg = None
+
+    def InitTree(self):
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
         fldridx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
@@ -64,11 +101,12 @@ class CmdEditorPanel(wx.Panel):
         self.tree.SetItemImage(main_modules, fldridx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(main_modules, fldropenidx, which = wx.TreeItemIcon_Expanded)
 
-        main_modules_list = os.listdir(codeDir)
+        main_modules_list = os.listdir(self.codeDir)
         main_modules_list = [d for d in main_modules_list\
                              if d.upper() != "CVS" and\
                                 d.lower() != "contrib" and\
-                                os.path.isdir(os.path.join(codeDir, d))]
+                                d.lower() != "doxycfg" and\
+                                os.path.isdir(os.path.join(self.codeDir, d))]
         main_modules_list.sort()
 
         self.tree.SetItemText(main_modules, repr(len(main_modules_list)) + " modules", 1)
@@ -78,7 +116,7 @@ class CmdEditorPanel(wx.Panel):
         self.tree.SetItemImage(contrib_modules, fldridx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(contrib_modules, fldropenidx, which = wx.TreeItemIcon_Expanded)
 
-        contrib_path = os.path.join(codeDir, 'contrib')
+        contrib_path = os.path.join(self.codeDir, 'contrib')
         contrib_modules_list = os.listdir(contrib_path)
         contrib_modules_list = [d for d in contrib_modules_list\
                                 if d.upper() != "CVS" and\
@@ -88,13 +126,14 @@ class CmdEditorPanel(wx.Panel):
         self.tree.SetItemText(contrib_modules, repr(len(contrib_modules_list)) + " modules", 1)
 
         # fill the tree
-        block = [[codeDir, main_modules, main_modules_list],
+        block = [[self.codeDir, main_modules, main_modules_list],
                  [contrib_path, contrib_modules, contrib_modules_list]]
         for bl in block:
             for mod_name in bl[2]:
-                mod = self.tree.AppendItem(bl[1], mod_name)
                 packages_path = os.path.join(bl[0], mod_name, 'src')
                 if not os.path.exists(packages_path): continue
+                mod = self.tree.AppendItem(bl[1], mod_name)
+                self.tree.SetItemHasChildren(mod, True)
 
                 packages_list = os.listdir(packages_path)
                 
@@ -107,10 +146,11 @@ class CmdEditorPanel(wx.Panel):
                 self.tree.SetItemImage(mod, fldridx, which = wx.TreeItemIcon_Normal)
                 self.tree.SetItemImage(mod, fldropenidx, which = wx.TreeItemIcon_Expanded)
 
-                self.tree.Expand(mod)
+                #self.tree.Expand(mod)
                 
                 for pkg_name in packages_list:
                     pkg = self.tree.AppendItem(mod, pkg_name)
+                    self.tree.SetItemHasChildren(pkg, True)
                     files_path = os.path.join(packages_path, pkg_name + os.sep)
                     files_list = os.listdir(files_path)
     
@@ -124,70 +164,36 @@ class CmdEditorPanel(wx.Panel):
                     
                     for file_name in files_list:
                         file = self.tree.AppendItem(pkg, file_name)
+                        self.tree.SetItemHasChildren(file, True)
                         self.tree.SetItemImage(file, fileidx, which = wx.TreeItemIcon_Normal)
                         #self.tree.SetItemImage(file, smileidx, which = wx.TreeItemIcon_Selected)
 
         self.tree.Expand(self.root)
         self.tree.Expand(main_modules)
         self.tree.Expand(contrib_modules)
-        
-        # buttons panel
-        buttonsPanel = wx.Panel(self, size = (-1, 50))
-        self.fileName = wx.StaticText(buttonsPanel, -1, '')
-        preView = wx.Button(buttonsPanel, -1, "Preview")
-        self.Bind(wx.EVT_BUTTON, self.OnCmdFilePreView, preView)
-        
-        sizerD = wx.BoxSizer(wx.VERTICAL)
-        sizerD.Add(self.fileName, 0, wx.ALL, 4)
-        sizerD.Add(preView, 0, wx.ALL, 4)
-        sizerD.Fit(buttonsPanel)
-        buttonsPanel.SetSizer(sizerD)
 
-        # panel for parameters
-        self.workPanel = wx.Panel(self, style = wx.SUNKEN_BORDER, size=(350,200))
-        self.workPanel.SetMinSize((350, 350))
-        
-        # panel for status info
-        statusPanel = wx.Panel(self, style = wx.SUNKEN_BORDER)
-        statusPanel.SetMaxSize((-1, 5))
+    def OnPreview(self, evt):
+        txt = None
+        title = None
+        if not self.subelement:
+            txt = repr(self.GetConfig())
+            title = 'Cmd file preview'
+        elif self.subelement[0] == 0:
+            cmd = self.GetConfig().findCmd(self.subelement[1])
+            if cmd:
+                txt = repr(cmd)
+                title = 'Cmd preview'
+        if txt:
+            dlg = wx.lib.dialogs.ScrolledMessageDialog(self, txt, title)
+            dlg.ShowModal()
 
-        self.statusLine = wx.StaticText(statusPanel, -1, "")
+    def OnConvert(self, evt):
+        if self.subelement:
+            if self.subelement[0] == 0:
+                cfg = self.GetConfig()
 
-        # layout
-        sizerA = wx.BoxSizer(wx.VERTICAL)
-        sizerA.Add(buttonsPanel, 0, wx.EXPAND, 4)
-        sizerA.Add(self.workPanel, 1, wx.EXPAND, 4)
-
-        sizerB = wx.BoxSizer(wx.HORIZONTAL)
-        sizerB.Add(self.tree, 0, wx.EXPAND, 4)
-        sizerB.Add(sizerA, 1, wx.EXPAND, 4)
-
-        sizerC = wx.BoxSizer(wx.VERTICAL)
-        sizerC.Add(sizerB, 1, wx.EXPAND, 4)
-        sizerC.Add(statusPanel, 0, wx.EXPAND, 4)
-
-        sizerC.Fit(self)
-        self.SetSizer(sizerC)
-
-        # popup stuff
-        self.popupParseID = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.OnPopupParse, id=self.popupParseID)
-
-        self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-        self.tree.GetMainWindow().Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged)
-        #self.tree.GetMainWindow().Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
-        
-        # cmd parser & configs
-        self.parser = CmdFileProcessor(codeDir)
-        self.cmd_configs = []
-        self.active_cmdfile = None
-        
-        self.parsing_dlg = None
-
-    def OnCmdFilePreView(self, evt):
-        dlg = wx.lib.dialogs.ScrolledMessageDialog(self, repr(self.GetConfig()),
-                                                   'Cmd file preview')
-        dlg.ShowModal()
+    def OnApply(self, evt):
+        None
 
     def GetConfig(self, item = None):
         if not item:
@@ -198,23 +204,63 @@ class CmdEditorPanel(wx.Panel):
             return self.cmd_configs[n]
         return None
 
+    def SetConfig(self, cfg, item = None):
+        if not item:
+            item = self.active_cmdfile
+        if not item: return
+        n = self.tree.GetItemPyData(item)
+        if n and 0 <= n < len(self.cmd_configs):
+            self.cmd_configs[n] = cfg
+        else:
+            n = len(self.cmd_configs)
+            self.cmd_configs.append(cfg)
+        self.tree.SetItemPyData(item, n)
+
     def ShowGeneralInfoPanel(self):
         cfg = self.GetConfig()
-        self.ClearWorkPanel()
         if cfg:
-            GeneralInfoPanel(self.workPanel, cfg)
+            if not isinstance(self.workSubPanel, GeneralInfoPanel):
+                self.ClearWorkPanel()
+                self.workSubPanel = GeneralInfoPanel(self.workPanel)
+
+                sizer = self.workPanel.GetSizer() #wx.BoxSizer(wx.VERTICAL)
+                sizer.Add(self.workSubPanel, 0, wx.EXPAND|wx.ALL)
+                w = self.workPanel.GetSize().width
+                self.workSubPanel.SetSizeWH(w - 2, -1)
+
+                self.convertBtn.Enable(False)
+                self.applyBtn.Enable(False)
+
+            self.workSubPanel.SetData(cfg)
         else:
+            self.ClearWorkPanel()
             wx.StaticText(self.workPanel, -1,
                           'Right click on file name to parse it.')
 
-    def ShowCommandPanel(self, cmd_name):
+    def ShowCommonCmdPanel(self):
         cfg = self.GetConfig()
-        self.ClearWorkPanel()
-        if cfg:
-            CommandPanel(self.workPanel, cfg, cmd_name)
+        if cfg and self.subelement and self.subelement[0] == 0:
+            if not isinstance(self.workSubPanel, CommonCmdPanel):
+                self.ClearWorkPanel()
+                self.workSubPanel = CommonCmdPanel(self.workPanel)
+
+                sizer = self.workPanel.GetSizer() #wx.BoxSizer(wx.VERTICAL)
+                sizer.Add(self.workSubPanel, 0, wx.EXPAND|wx.ALL)
+                w = self.workPanel.GetSize().width
+                self.workSubPanel.SetSizeWH(w - 2, -1)
+
+                self.convertBtn.Enable(True)
+                self.applyBtn.Enable(False)
+
+            self.workSubPanel.SetData(cfg, self.subelement[1])
+        else:
+            self.ClearWorkPanel()
+            wx.StaticText(self.workPanel, -1,
+                          'ERROR: there is no cfg data.')
 
     def ClearWorkPanel(self):
         self.workPanel.DestroyChildren()
+        self.workSubPanel = None
 
     def OnSelChanged(self, evt):
         item = evt.GetItem()
@@ -229,23 +275,81 @@ class CmdEditorPanel(wx.Panel):
         del tree_path[0] # delete root node
         del items[0]
 
-        if len(tree_path) > 3:
+        l = len(tree_path)
+        
+        if l > 3:
             self.active_cmdfile = items[3]
             self.fileName.SetLabel(tree_path[3])
+        else:
+            self.fileName.SetLabel('')
+            self.ClearWorkPanel()
 
-        if len(tree_path) == 4: # cmd file choosen
+        self.subelement = None
+        if l == 4: # cmd file choosen
             s = 'path: nebula2/code/'
             if tree_path[0] == '<contrib>': s += 'contrib/'
             s += tree_path[1] + '/src/' + tree_path[2] + '/' + tree_path[3]
             self.statusLine.SetLabel(s)
             self.ShowGeneralInfoPanel()
-        elif len(tree_path) == 5: # one of cmds or properties choosen
+        elif l == 5: # one of cmds or properties choosen
             self.statusLine.SetLabel('Command or property choosen: ' + tree_path[-1])
             modif, cmd_name = tree_path[-1].split()
-            if modif[0] == 'c': self.ShowCommandPanel(cmd_name)
-        elif len(tree_path) == 6: # one of setters/getters
+            if modif[0] == 'c':
+                self.subelement = [0, cmd_name]
+                self.ShowCommonCmdPanel()
+        elif l == 6: # one of setters/getters
             self.statusLine.SetLabel('Setter or getter choosen: ' + tree_path[-1])
             self.ClearWorkPanel()
+
+    def OnItemExpanded(self, event):
+        item = event.GetItem()
+
+        tree_path = []
+        i = item
+        while i:
+            tree_path.insert(0, self.tree.GetItemText(i, 0))
+            i = self.tree.GetItemParent(i)
+
+        del tree_path[0] # delete root node
+
+        if len(tree_path) == 3:
+            if self.tree.GetItemPyData(item) == None:
+                cnum = self.tree.GetChildrenCount(item, False)
+                if cnum > 0:
+                    #print "Parsing begin(" + str(cnum) + ")..."
+                    progressVal = 0
+                    self.buildSys.CreateProgressDialog('Parsing cmds', ' ' * 130, cnum)
+                    child, cookie = self.tree.GetFirstChild(item)
+                    while child:
+                        #print " - " + self.tree.GetItemText(child, 0)
+                        self.active_cmdfile = child
+                        fname = self.tree.GetItemText(child, 0)
+                
+                        is_contrib = False
+                        if tree_path[0] == "<contrib>": is_contrib = True
+                
+                        #self.statusLine.SetLabel('Parsing ' + tree_path[3] + '...')
+                        #print str(tree_path) + fname
+                        self.tree.DeleteChildren(self.active_cmdfile)
+                        config = self.parser.process(is_contrib, tree_path[1], tree_path[2], fname)
+                        if self.parser.processed:
+                            #n = len(self.cmd_configs)
+                            #self.cmd_configs.append(config)
+                            self.SetConfig(config)
+                            #self.tree.SetItemPyData(self.active_cmdfile, n)
+                            self.OnCmdFileParsed(False)
+                            #self.ShowGeneralInfoPanel()
+                        progressVal += 1
+                        self.buildSys.UpdateProgressDialog(progressVal, 'Processing ' + fname)
+                        if self.buildSys.ProgressDialogCancelled():
+                            break
+                        child, cookie = self.tree.GetNextChild(item, cookie)
+                    self.buildSys.DestroyProgressDialog()
+                    self.ShowGeneralInfoPanel()
+                    #print "Parsing end..."
+                self.active_cmdfile = None
+                self.tree.SelectItem(item)
+                self.tree.SetItemPyData(item, True)
 
     def OnRightUp(self, evt):
         pos = evt.GetPosition()
@@ -263,10 +367,10 @@ class CmdEditorPanel(wx.Panel):
         menu = wx.Menu()
         n = 0
 
-        if len(items) == 4 and not self.GetConfig(items[3]):
+        if len(items) == 4: # and not self.GetConfig(items[3]):
             self.active_cmdfile = items[3]
             n += 1
-            menu.Append(self.popupParseID, "Parse")
+            menu.Append(self.popupParseID, "Reparse")
 
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.
@@ -292,11 +396,13 @@ class CmdEditorPanel(wx.Panel):
         if tree_path[0] == "<contrib>": is_contrib = True
 
         self.statusLine.SetLabel('Parsing ' + tree_path[3] + '...')
+        self.tree.DeleteChildren(self.active_cmdfile)
         config = self.parser.process(is_contrib, tree_path[1], tree_path[2], tree_path[3])
         if self.parser.processed:
             n = len(self.cmd_configs)
-            self.cmd_configs.append(config)
-            self.tree.SetItemPyData(self.active_cmdfile, n)
+            #self.cmd_configs.append(config)
+            self.SetConfig(config) #, self.active_cmdfile)
+            #self.tree.SetItemPyData(self.active_cmdfile, n)
             self.OnCmdFileParsed()
             self.ShowGeneralInfoPanel()
         self.statusLine.SetLabel('Parsed.')
@@ -304,7 +410,7 @@ class CmdEditorPanel(wx.Panel):
     def OnSize(self, evt):
         self.tree.SetSize(self.GetSize())
 
-    def OnCmdFileParsed(self):
+    def OnCmdFileParsed(self, expand = True):
         # general info
 ##        gi = self.tree.AppendItem(self.active_cmdfile, "<general info>")
 
@@ -336,9 +442,10 @@ class CmdEditorPanel(wx.Panel):
 ##        if config.saveCmdsFunc:
 ##            self.tree.AppendItem(self.active_cmdfile, "[SaveCmds]")
         
-        self.tree.Expand(self.active_cmdfile)
-##        self.tree.SelectItem(gi, True)
-        self.tree.SelectItem(self.active_cmdfile, True)
+        if expand:
+            self.tree.Expand(self.active_cmdfile)
+##            self.tree.SelectItem(gi, True)
+            self.tree.SelectItem(self.active_cmdfile, True)
 
 #--------------------------------------------------------------------------
 # EOF
