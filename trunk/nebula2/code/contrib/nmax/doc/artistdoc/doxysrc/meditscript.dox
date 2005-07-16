@@ -1,0 +1,209 @@
+/**
+    @defgroup NMaxWorkingNebulaMaterialWithMaxScript Working Nebula Matrial with MaxScript
+
+      - @ref NMaxWorkingNebulaMaterialWithMaxScriptOverview
+      - @ref NMaxWorkingNebulaMaterialWithMaxScriptMaxScript
+      - @ref NMaxWorkingNebulaMaterialWithMaxScriptExamples
+
+
+    @section NMaxWorkingNebulaMaterialWithMaxScriptOverview Overview
+
+    In the most cases, it is enough to assign material in the material editor with 
+    the way which described in the section @ref NMaxHowtoUsingMaterialEditor.
+    But sometimes you might need to do that with max script. 
+
+    For an example, you have a mesh which aleady has 50 different materials for 
+    its material. And you want to change all those materials to the other 
+    one material but keep its texture maps unchanged.
+    You can do that by changing all each of the mateirals manually. But it is tedious 
+    job. It will be better to do that with max script which let it to be done 
+    automatically. The rest of the sections following this will describe that.
+    
+    Nebula2 custom material is a 'scripted plug-ins', exactly saying, 'Level5 Scripted-
+    plug-ins'. It means that you can access Nebula2 material and specify new values with 
+    the same way as like you do with max script for other standard material types of 3DS Max.
+    If you are not familiar with the 'scripted plug-ins' of MaxScript, refer 
+    'MaxScript Reference' provided with 3DS Max.
+
+
+    @section NMaxWorkingNebulaMaterialWithMaxScriptMaxScript MaxScript
+
+    This section of the document covers max script of the Nebula2 custom material. 
+
+    Nebula material is one of the materials which contained in slot of the 3DS Max 
+    material editor. It will helpful to know the way to access a currently selected 
+    (or activated) slot in the material editor to understand the rest of the sections.
+    3DS Max provides max script functions to access and specify the material editor and 
+    the following code shows that:
+    @verbatim
+    currentSlot = meditMaterials[activeMeditSlot]
+    @endverbatim
+    <i>meditMaterials</i> contains virtual array of the materials and root level maps 
+    corresponding to the slots in the material editor. 
+    The array can be indexed by number to specify slot number or name or string to 
+    select by material and root level map name. 
+    The global varialbe <i>activeMeditSlot</i> contains the index of the currently 
+    active Material Editor slot.
+
+
+    @subsection NMaxWorkingNebulaMaterialWithMaxScriptConstructor Constructor 
+
+    You can create a new Nebula2 material as like you can create materials like
+    standard, blend, shell and composite etc.
+
+      - @b Nebula2Material 
+        <br> <br>
+        Constructor of Nebula2 custom material
+        <br> <br>
+        The following example shows that how to assign the newly created Nebula2 
+        custom material to the third slot of the 3DS Max material editor:
+        @verbatim
+    meditMaterials[3] = Nebula2Material()
+        @endverbatim
+
+
+    @subsection NMaxWorkingNebulaMaterialWithMaxScriptPropertes Properties
+
+    The properties of a Nebula2 material vary based on the shader type. 
+    The following properties are applicable to all shader types:
+
+      - @b customAttributes 
+        <br> <br>
+        Array which contains scripted custom attribtes of Nebula2 shader.
+        Each of the custom attibute is dynamically created when the startup of 
+        3DS Max and added to the Nebula2 custom material editor when the user 
+        select one of the item of the combobox control.
+        <br> <br>
+        The following code shows the custom attribute array items:
+        @verbatim
+    currentSlot.customAttributes
+        @endverbatim
+        The result of the above wll be the something like the following:
+        @verbatim
+    #(undefined, <AttributeDef:Standard>, <AttributeDef:Standard_Skinned>, ...
+        @endverbatim
+
+      - @b effectFileNames 
+        <br> <br>
+        Array which contains .fx effect file name corespondes to the each of the
+        cusotm attibutes.
+        <br> <br>
+        @verbatim
+    currentSlot.effectFileNames
+        @endverbatim
+        The result of the above wll be the something like the following:
+        @verbatim
+    #("'None'", "'shaders:default.fx'", "'shaders:default_skinned.fx'", ...
+        @endverbatim
+
+      - @b paramCurShader 
+        <br> <br>
+        Array index which indicates currently selected shader.
+        <br> <br>
+        The following code shows the interger of the array index which indicates
+        currently selected shader:
+        @verbatim
+    currentSlot.paramCurShader
+        @endverbatim
+        The result of the above wll be the something like the following:
+        @verbatim
+    1
+        @endverbatim
+
+      - @b paramEffectFile 
+        Effect file name which of currently selected shader.
+        <br> <br>
+        Effect file name which of currently selected shader.
+        <br> <br>
+        The following code shows .fx effect file name of currently selected
+        shader:
+        @verbatim
+    currentSlot.paramEffectFile
+        @endverbatim
+        The result of the above wll be the something like the following:
+        @verbatim
+    "Standard"
+        @endverbatim
+
+    The following properties are the parameters of each of the custom attribute for 
+    Nebula2 shader type. The parameters can be various depends on its shader type.
+
+      - @b Shader : <i>string</i> Type. Effect file name. e.g) 'default.fx'
+      - @b LockViewer : <i>boolean</i> Type. 
+      - @b MatAmbient : <i>frgba</i> Type. Ambient color of the material.
+      - @b MatDiffuse : <i>frgba</i> Type. Diffuse color of the material. 
+      - @b MatSpecular : <i>frgba</i> Type. Specular color of the material.
+      - @b MatSpecularPower : <i>float</i> Type. Specular power of the material.
+      - @b AlphaRef : <i>integer</i> Type.
+      - @b AlphaSrcBlend : <i>integer</i> Type.
+      - @b AlphaDstBlend : <i>integer</i> Type.
+      - @b CullMode : <i>integer</i> Type. Culling mode.
+      - @b DiffMap0 : <i>texturemap</i> Type. The index of the map can be one of the [0, 3]
+      - @b BumpMap0 : <i>texturemap</i> Type. The index of the map can be one of the [0, 3]
+      - @b NoiseMap0 :<i>texturemap</i> Type. The index of the map can be one of the [0, 3]
+      - @b AmbientMap0 : <i>texturemap</i> Type. The index of the map can be one of the [0, 3]
+      - @b CubMap0 : <i>texturemap</i> Type. The index of the map can be one of the [0, 3]
+      - @b SwingAngle : <i>float</i> Type.
+      - @b SwingTime : <i>float</i> Type.
+      - @b SpriteSwingAngle : <i>float</i> Type.
+      - @b SpriteSwingTime : <i>float</i> Type.
+      - @b InnerLightIntensity : <i>float</i> Type.
+      - @b OuterLightIntensity : <i>float</i> Type.
+      - @b MatTranslucency : <i>float</i> Type.
+
+    See 'MaxScript Reference' provided with 3DS Max for more details about each type of 
+    the parameters.
+
+    You can access each of the parameter with the same way like other parameters of 
+    custom attribute.
+    The following code shows the wat to access the 'Shader' parameter of the material 
+    in the currently activated slot:
+    @verbatim
+    currentSlot.Shader
+    @endverbatim
+
+    The result of the above wll be the something like the following:
+    @verbatim
+    "shaders:default.fx"
+    @endverbatim
+
+    You can also access all other paramters of the material with the same way.
+
+    See <tt>'$3dsmax/scripts/n2materialplugin.ms'</tt> max script file to see all the  
+    custom attributes and the material script plug-in produced by the nmaxtoolbox plugin.
+
+    @section NMaxWorkingNebulaMaterialWithMaxScriptExamples Examples
+
+    The following max script function describes that how to change a shader of the currently 
+    selected slot of the material:
+    @verbatim
+fn nChangeMaterial currentSlot shaderID = 
+(
+    custAttributes.add currentSlot currentSlot.customAttributes[shaderID]
+
+    currentSlot.Shader.selection = shaderID 
+    currentSlot.paramCurShader = shaderID 
+    currentSlot.effectFileName.caption = "Effect Fils: " + effectFileNames[shaderID] 
+    currentSlot.paramEffectFile = currentSlot.effectFileNames[shaderID]
+)
+    @endverbatim
+    The frist in-argument <i>currentSlot</i> represents material of the currently  
+    selected slot and the second in-argument <i>shaderID</i> represents the shader index 
+    of the custom attributes array which will be applied.
+
+    Note that when you change the shader of the Nebula material, <b>.selection</b>, 
+    <b>.paramCurShader</b> and <b>.paramEffectFile</b> should be assigned with proper 
+    values.
+
+
+    The following code creates Nebula2 material and set it to the first slot then 
+    changes the shader type with second type in the custom attribute array:
+    @verbatim
+meditMaterials[1] = Nebula2Material()
+nChangeMaterial meditMaterials[1] 2
+    @endverbatim   
+    The second shader type of the Nebula2 material is 'Standard'. (It can be changed 
+    if you customize all the shaders for your own necessary) So the shader 
+    in the first slot will have 'Stadard' for its shader.
+
+*/

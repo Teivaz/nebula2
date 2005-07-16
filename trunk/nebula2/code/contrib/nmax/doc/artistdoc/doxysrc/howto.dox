@@ -10,6 +10,7 @@
     - @ref NMaxHowtoStaticScene 
     - @ref NMaxHowtoGlobalOptions 
     - @ref NMaxHowtoUsingMaterialEditor
+    - @ref NMaxWorkingNebulaMaterialWithMaxScript
     - @ref NMaxPerMeshOptions
     - @ref NMaxHowtoCharacters 
     - @ref NMaxHowtoHierarchyNode 
