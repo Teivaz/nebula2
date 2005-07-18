@@ -11,7 +11,8 @@
     @class nMaxExport2
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief A class for Nebula2 3DS Max export plugin. 
+
 */
 #include <Max.h>
 #include <decomp.h> //the decompose functions for matrix3
@@ -21,16 +22,16 @@
 
 #define N_MAX_EXPORT_CLASS_ID	Class_ID(0x7d137500, 0x313d2329)
 
-#define LONGDESC	"Nebula2 Scene Exporter"
-#define SHORTDESC	"Nebula2 Exporter"
-#define AUTHORNAME	"Kim, Hyoun Woo"
-#define COPYRIGHT	"Nebula License"
+#define LONGDESC    "Nebula2 Scene Exporter"
+#define SHORTDESC   "Nebula2 Exporter"
+#define AUTHORNAME  "Kim, Hyoun Woo"
+#define COPYRIGHT   "Nebula License"
 #define MESSAGE1    "This file is licensed under the terms of the Nebula License"
-#define MESSAGE2	"(c) 2004 www.nebuladevice.org"
-#define NUM_EXT		1
+#define MESSAGE2    "(c) 2004 www.nebuladevice.org"
+#define NUM_EXT	    1
 #define EXTENSION   "n2"
 
-#define VERSION		100				 // Version number * 100
+#define VERSION	    100	  // Version number * 100
 
 //------------------------------------------------------------------------------
 class nMaxExport2 : public SceneExport
@@ -41,7 +42,7 @@ public:
 
     /// @name Overridden functions from 3dsmax
     /// @{
-	int	DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
+    int	DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
     void ShowAbout(HWND hWnd) { return; }
     const TCHAR * Ext(int n);
     int	ExtCount() { return NUM_EXT; }
@@ -79,14 +80,15 @@ static tRegisteredClassDesc<nMaxExport2> maxExportInterfaceClassDesc2(
     return the file extension that is used in the export filetype dropdown
 */
 inline 
-const TCHAR* nMaxExport2::Ext(int n)
+const TCHAR* 
+nMaxExport2::Ext(int n)
 { 
-	switch (n)
-	{
-		case 0:
-			return EXTENSION;
-		break;
-	}
-	return "";
+    switch (n)
+    {
+    case 0:
+        return EXTENSION;
+        break;
+    }
+    return "";
 }
 #endif
