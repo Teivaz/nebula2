@@ -535,12 +535,10 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
     int baseVertexIndex = meshBuilder->GetNumVertices();
     int baseTriangleIndex = meshBuilder->GetNumTriangles();
 
-//begin calc group index
     int baseGroupIndex;
     nArray<nMeshBuilder::Group> groupMap;
     meshBuilder->BuildGroupMap(groupMap);
     baseGroupIndex = groupMap.Size();
-//end calc group index    
 
     int iVertCount = 0;
 
@@ -580,23 +578,18 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
             v1 = 0; v2 = 1; v3 = 2;
         }
 
-        // get the actual index of vertex in a vertex array of a Mesh.
-        int vIdx1 = face.v[v1];
-        int vIdx2 = face.v[v2];
-        int vIdx3 = face.v[v3];
-
         nMeshBuilder::Vertex vertex1, vertex2, vertex3;
 
-        vertex1 = GetVertex(mesh, face, i, v1, vIdx1);
-        vertex2 = GetVertex(mesh, face, i, v2, vIdx2);
-        vertex3 = GetVertex(mesh, face, i, v3, vIdx3);
+        vertex1 = GetVertex(mesh, face, i, v1);
+        vertex2 = GetVertex(mesh, face, i, v2);
+        vertex3 = GetVertex(mesh, face, i, v3);
 
         meshBuilder->AddVertex(vertex1);
         meshBuilder->AddVertex(vertex2);
         meshBuilder->AddVertex(vertex3);
 
         nMeshBuilder::Triangle triangle;
-        triangle.SetVertexIndices(baseVertexIndex + iVertCount,       //FIXME: use v1, v2, v3?
+        triangle.SetVertexIndices(baseVertexIndex + iVertCount,
                                   baseVertexIndex + iVertCount + 1,
                                   baseVertexIndex + iVertCount + 2 );
 
@@ -633,12 +626,12 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
 
     @return mesh builder's vertex.
 */
-nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo, 
-                                         int vtxIdx, int index)
+nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo, int vIdx)
 {
     nMeshBuilder::Vertex vertex;
 
-    vector3 pos = GetVertexPosition(mesh, index);
+    // face.v[vIdx] : get the actual index of the vertex of the Mesh vertex array.
+    vector3 pos = GetVertexPosition(mesh, face.v[vIdx]);
     vertex.SetCoord(pos);
 
     nMaxOptions* option = nMaxOptions::Instance();
@@ -646,14 +639,14 @@ nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo,
     // vertex normal.
     if (option->ExportNormals())
     {
-        vector3 norm = GetVertexNormal(mesh, face, faceNo, vtxIdx);
+        vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
         vertex.SetNormal(norm);
     }
 
     // vertex color.
     if (option->ExportColors())
     {
-        vector4 col = GetVertexColor(mesh, faceNo, vtxIdx);
+        vector4 col = GetVertexColor(mesh, faceNo, vIdx);
         vertex.SetColor(col);
     }
 
@@ -666,7 +659,7 @@ nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo,
         {
             if (mesh->mapSupport(m))
             {
-                vector2 uvs = GetVertexUv(mesh, faceNo, vtxIdx, m);
+                vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
                 vertex.SetUv(layer++, uvs);
             }
         }
@@ -676,7 +669,7 @@ nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo,
     {
         vector4 joints, weights;
 
-        this->GetVertexWeight(index, joints, weights);
+        this->GetVertexWeight(face.v[vIdx], joints, weights);
 
         vertex.SetJointIndices(joints);
         vertex.SetWeights(weights);
@@ -725,7 +718,7 @@ Point3 nMaxMesh::GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv)
     Point3 vertexNormal;
 
     // Is normal specified
-    // SPCIFIED is not currently used, but may be used in future versions.
+    // SPECIFIED_NORMAL is not currently used, but may be used in future versions.
     if (rv->rFlags & SPECIFIED_NORMAL)
     {
         vertexNormal = rv->rn.getNormal();
@@ -760,7 +753,7 @@ Point3 nMaxMesh::GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv)
             vertexNormal = mesh->getFaceNormal(faceNo);
         }
 
-        return vertexNormal;
+    return vertexNormal;
 }
 
 //-----------------------------------------------------------------------------

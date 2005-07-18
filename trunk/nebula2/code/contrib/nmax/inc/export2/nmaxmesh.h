@@ -92,7 +92,7 @@ protected:
 
     ///@name mesh extraction functions.
     //@{
-    nMeshBuilder::Vertex GetVertex(Mesh* mesh, Face& face, int faceNo, int vtxIdx, int index);
+    nMeshBuilder::Vertex GetVertex(Mesh* mesh, Face& face, int faceNo, int vIdx);
 
     vector3 GetVertexPosition(Mesh* mesh, int index);
     vector3 GetVertexNormal(Mesh* mesh, Face& face, int faceNo, int vtxIdx);
