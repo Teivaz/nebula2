@@ -14,9 +14,6 @@ int controlsInit = FALSE;
 ///the array where a 'unique' instances of the classDesc are registered 
 nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 
-nNebulaUsePackage(nnebula);
-//nNebulaUsePackage(nopende);
-
 //------------------------------------------------------------------------------
 /**
     To make plugin Classes like a ExporterClass to Max it's required:
@@ -155,8 +152,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 
                 //setup the new log handler
                 nKernelServer::ks->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
-                nKernelServer::ks->AddPackage(nnebula);
-                //nKernelServer::ks->AddPackage(nopende);
 
                 if (!nMaxPluginInitialize())
                     return FALSE;
