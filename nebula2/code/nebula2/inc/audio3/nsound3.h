@@ -5,11 +5,12 @@
     @class nSound3
     @ingroup NebulaAudioSystem
 
-    @brief Hold parameters for a sound instance. Usually a "game object" holds
-    one or more nSound3 objects for all the sounds it has to play.
-    Although nSound3 is derived from nResource, nSound3 objects should
-    never be shared (this is enforced by the factory method
-    nAudioServer3::NewSound()).
+    @brief Hold parameters for a sound instance.
+
+    Usually a "game object" holds one or more nSound3 objects for all the
+    sounds it has to play.  Although nSound3 is derived from nResource,
+    nSound3 objects should never be shared (this is enforced by the factory
+    method nAudioServer3::NewSound()).
 
     When opened, a nSound3 object will create a shared static or streaming
     sound resource, based on the settings of nSound3.
@@ -17,6 +18,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "resource/nresource.h"
+#include "audio3/naudioserver3.h"
 
 //------------------------------------------------------------------------------
 class nSound3 : public nResource
@@ -88,6 +90,14 @@ public:
     float GetConeOutsideVolume() const;
     /// copy audio attributes from another sound object
     void CopySoundAttrsFrom(const nSound3* other);
+    /// set category of sound
+    void SetCategory(nAudioServer3::Category category);
+    /// get category of sound
+    nAudioServer3::Category GetCategory() const;
+    /// set playing time in seconds
+    void SetPlayingTime(float s);
+    /// get playing time in seconds
+    float GetPlayingTime() const;
 
 protected:
     int numTracks;
@@ -103,9 +113,10 @@ protected:
     int insideConeAngle;
     int outsideConeAngle;
     float coneOutsideVolume;
-
+    nAudioServer3::Category category;
     bool volumeDirty;
     bool props3DDirty;
+    float playingTime;
 };
 
 //------------------------------------------------------------------------------
@@ -129,6 +140,8 @@ nSound3::CopySoundAttrsFrom(const nSound3* other)
     this->SetInsideConeAngle(other->GetInsideConeAngle());
     this->SetOutsideConeAngle(other->GetOutsideConeAngle());
     this->SetConeOutsideVolume(other->GetConeOutsideVolume());
+    this->SetCategory(other->GetCategory());
+    this->SetPlayingTime(other->GetPlayingTime());
 }
 
 //------------------------------------------------------------------------------
@@ -397,6 +410,47 @@ float
 nSound3::GetConeOutsideVolume() const
 {
     return this->coneOutsideVolume;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSound3::SetCategory(nAudioServer3::Category c)
+{
+    n_assert(c >= 0 && c < nAudioServer3::NumCategorys);
+    this->category = c;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAudioServer3::Category
+nSound3::GetCategory() const
+{
+    return this->category;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSound3::SetPlayingTime(float s)
+{
+    this->playingTime = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nSound3::GetPlayingTime() const
+{
+    return this->playingTime;
 }
 
 //------------------------------------------------------------------------------

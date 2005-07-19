@@ -5,32 +5,16 @@
 #include "audio3/ndsoundresource.h"
 #include "audio3/ndsoundserver3.h"
 #include "kernel/nfileserver2.h"
-#include "audio3/ndsound3.h"
 
 nNebulaClass(nDSoundResource, "nsoundresource");
-
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    ndsoundresource
-
-    @cppclass
-    nDSoundResource
-    
-    @superclass
-    nsoundresource
-    
-    @classinfo
-    Docs needed.
-*/
-
 
 //------------------------------------------------------------------------------
 /**
 */
 nDSoundResource::nDSoundResource() :
     refSoundServer("/sys/servers/audio"),
-    dsSound(0)
+    dsSound(0),
+    dsStreamingSound(0)
 {
     // empty
 }
@@ -55,12 +39,14 @@ bool
 nDSoundResource::LoadResource()
 {
     n_assert(!this->IsLoaded());
-    n_assert(0 != this->dsSound);
+    n_assert(0 == this->dsSound);
+    n_assert(0 == this->dsStreamingSound);
 
-    nFileServer2* fileServer = kernelServer->GetFileServer();
+    CSoundManager* soundManager = this->refSoundServer->GetSoundManager();
+    HRESULT hr;
 
     // get mangled path name
-    nString mangledPath = fileServer->ManglePath(this->GetFilename().Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(this->GetFilename().Get());
     
     DWORD creationFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_LOCDEFER;
     if (!this->ambient)
@@ -70,24 +56,27 @@ nDSoundResource::LoadResource()
     if (!this->streaming)
     {
         // create a static sound object
-        if (refSoundServer->Create(&(this->dsSound), (LPTSTR)mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, this->numTracks) == false)
+        hr = soundManager->Create(&(this->dsSound), (LPTSTR) mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, this->numTracks);
+        if (FAILED(hr))
         {
-            n_printf("nDSoundServer::LoadResource(): Creating static sound '%s' failed!\n", mangledPath.Get());
+            n_error("nDSoundServer::LoadResource(): Creating static sound '%s' failed!", mangledPath.Get());
             return false;
         }
         n_assert(this->dsSound);
     }
     else
     {
-        // create a streaming sound object (with a 64 KByte streaming buffer)
-        int numNotifications = 2;
-        int blockSize = (1<<18) / numNotifications;
-        if (refSoundServer->CreateStreaming(&(this->dsSound), (LPTSTR)mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, numNotifications, blockSize) == false)
+        // create a streaming sound object (with a 128 KByte streaming buffer)
+        int numNotifications = 4;
+        int blockSize = (1<<17) / numNotifications;
+        hr = soundManager->CreateStreaming(&(this->dsStreamingSound), (LPTSTR) mangledPath.Get(), creationFlags,
+            DS3DALG_DEFAULT, numNotifications, blockSize);
+        if (FAILED(hr))
         {
-            n_printf("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!\n", mangledPath.Get());
+            n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", mangledPath);
             return false;
         }
-        n_assert(this->dsSound);
+        n_assert(this->dsStreamingSound);
     }
     this->SetState(Valid);
     return true;
@@ -101,15 +90,15 @@ void
 nDSoundResource::UnloadResource()
 {
     n_assert(this->IsLoaded());
-    //if (this->dsSound)
-    //{
-    //    delete this->dsSound;
-    //    this->dsSound = 0;
-    //}
-    //if (this->dsStreamingSound)
-    //{
-    //    delete this->dsStreamingSound;
-    //    this->dsStreamingSound = 0;
-    //}
+    if (this->dsSound)
+    {
+        n_delete(this->dsSound);
+        this->dsSound = 0;
+    }
+    if (this->dsStreamingSound)
+    {
+        n_delete(this->dsStreamingSound);
+        this->dsStreamingSound = 0;
+    }
     this->SetState(Unloaded);
 }

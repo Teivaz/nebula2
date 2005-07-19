@@ -26,9 +26,9 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_reset_v",           'RSET', n_reset);
-    cl->AddCmd("v_setmastervolume_f", 'SMSV', n_setmastervolume);
-    cl->AddCmd("f_getmastervolume_v", 'GMSV', n_getmastervolume);
+    cl->AddCmd("v_reset_v",            'RSET', n_reset);
+    cl->AddCmd("v_setmastervolume_sf", 'SMSV', n_setmastervolume);
+    cl->AddCmd("f_getmastervolume_s" , 'GMSV', n_getmastervolume);
     cl->EndCmds();
 }
 
@@ -44,7 +44,7 @@ n_initcmds(nClass* cl)
     Stop all playing sounds.
 */
 static void
-n_reset(void* slf, nCmd* /*cmd*/)
+n_reset(void* slf, nCmd* cmd)
 {
     nAudioServer3* self = (nAudioServer3*) slf;
     self->Reset();
@@ -55,7 +55,7 @@ n_reset(void* slf, nCmd* /*cmd*/)
     @cmd
     setmastervolume
     @input
-    f(MasterVolume)
+    s(Category)f(MasterVolume)
     @output
     v
     @info
@@ -65,7 +65,7 @@ static void
 n_setmastervolume(void* slf, nCmd* cmd)
 {
     nAudioServer3* self = (nAudioServer3*) slf;
-    self->SetMasterVolume(cmd->In()->GetF());
+    self->SetMasterVolume(nAudioServer3::StringToCategory(cmd->In()->GetS()), cmd->In()->GetF());
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ n_setmastervolume(void* slf, nCmd* cmd)
     @cmd
     getmastervolume
     @input
-    v
+    s(Category)
     @output
     f(MasterVolume)
     @info
@@ -83,9 +83,5 @@ static void
 n_getmastervolume(void* slf, nCmd* cmd)
 {
     nAudioServer3* self = (nAudioServer3*) slf;
-    cmd->Out()->SetF(self->GetMasterVolume());
+    cmd->Out()->SetF(self->GetMasterVolume(nAudioServer3::StringToCategory(cmd->In()->GetS())));
 }
-
-
-
-

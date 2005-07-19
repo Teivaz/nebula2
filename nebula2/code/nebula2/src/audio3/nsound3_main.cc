@@ -6,23 +6,9 @@
 
 nNebulaClass(nSound3, "nresource");
 
-//---  MetaInfo  ---------------------------------------------------------------
-/**
-    @scriptclass
-    nsound3
-
-    @cppclass
-    nSound3
-    
-    @superclass
-    nresource
-    
-    @classinfo
-    Docs needed.
-*/
-
 //------------------------------------------------------------------------------
 /**
+    - 17-May-04     floh    bugfix: missing cone member initializations
 */
 nSound3::nSound3() :
     numTracks(5),
@@ -36,8 +22,10 @@ nSound3::nSound3() :
     insideConeAngle(0),
     outsideConeAngle(360),
     coneOutsideVolume(1.0f),
+    category(nAudioServer3::Effect),
     volumeDirty(true),
-    props3DDirty(true)
+    props3DDirty(true),
+    playingTime(0.0f)
 {
     // empty
 }
@@ -47,7 +35,7 @@ nSound3::nSound3() :
 */
 nSound3::~nSound3()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }

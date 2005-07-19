@@ -10,6 +10,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#include "util/nfixedarray.h"
 
 //------------------------------------------------------------------------------
 class nSound3;
@@ -29,6 +30,8 @@ public:
     virtual bool Open();
     /// close the audio device
     virtual void Close();
+    /// return true if currently open
+    bool IsOpen() const;
     /// reset all sounds
     virtual void Reset();
     /// begin an audio frame
@@ -43,10 +46,24 @@ public:
     virtual void StopSound(nSound3* s);
     /// end the audio frame
     virtual void EndScene();
+    /// update sounds (can be called outside of BeginScene()/EndScene() to immediately commit changes
+    virtual void UpdateAllSounds();
+    /// sound categorys
+    enum Category
+    {
+        Effect = 0,
+        Music,
+        NumCategorys,
+        InvalidCategory,
+    };
+    /// convert category to string
+    static nString CategoryToString(Category category);
+    /// convert string to category
+    static Category StringToCategory(const nString& string);
     /// set the master volume (0.0 .. 1.0)
-    void SetMasterVolume(float v);
+    void SetMasterVolume(Category category, float v);
     /// get the master volume
-    float GetMasterVolume() const;
+    float GetMasterVolume(Category category) const;
     /// create a non-shared sound object
     virtual nSound3* NewSound();
     /// create a shared sound resource object
@@ -58,9 +75,9 @@ private:
 protected:
     bool isOpen;
     bool inBeginScene;
-    float masterVolume;
-    bool masterVolumeDirty;
-    nTime masterVolumeChangedTime;
+    nFixedArray<float> masterVolume;
+    nFixedArray<bool>  masterVolumeDirty;
+    nFixedArray<nTime> masterVolumeChangedTime;
     nTime curTime;
 };
 
@@ -79,12 +96,23 @@ nAudioServer3::Instance()
 /**
 */
 inline
-void
-nAudioServer3::SetMasterVolume(float v)
+bool
+nAudioServer3::IsOpen() const
 {
-    this->masterVolume = v;
-    this->masterVolumeDirty = true;
-    this->masterVolumeChangedTime = this->curTime;
+    return this->isOpen;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAudioServer3::SetMasterVolume(Category category, float v)
+{
+    n_assert(category >= 0 && category < NumCategorys);
+    this->masterVolume[category] = v;
+    this->masterVolumeDirty[category] = true;
+    this->masterVolumeChangedTime[category] = this->curTime;
 }
 
 //------------------------------------------------------------------------------
@@ -92,9 +120,10 @@ nAudioServer3::SetMasterVolume(float v)
 */
 inline
 float
-nAudioServer3::GetMasterVolume() const
+nAudioServer3::GetMasterVolume(Category category) const
 {
-    return this->masterVolume;
+    n_assert(category >= 0 && category < NumCategorys);
+    return this->masterVolume[category];
 }
 
 //------------------------------------------------------------------------------

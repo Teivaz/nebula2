@@ -10,13 +10,9 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "audio3/nsoundresource.h"
-
-#include <mmsystem.h>
-#include <mmreg.h>
-#include <dsound.h>
+#include "audio3/dsutil.h"
 
 class nDSoundServer3;
-class nDSound3;
 
 //------------------------------------------------------------------------------
 class nDSoundResource : public nSoundResource
@@ -26,6 +22,10 @@ public:
     nDSoundResource();
     /// destructor
     virtual ~nDSoundResource();
+    /// get pointer to the embedded CSound object
+    CSound* GetCSoundPtr();
+    /// get the notification event handle
+    HANDLE GetNotifyEvent();
 
 protected:
     /// load the resource (sets the valid flag)
@@ -35,17 +35,26 @@ protected:
 
 private:
     nAutoRef<nDSoundServer3> refSoundServer;
-
-    // direct sound object
-public:
-    // accessor
-    void        setSound3( nDSound3 *_dsSound ) { dsSound = _dsSound; }
-    nDSound3 *  getSound3( void ) { return dsSound; }
-
-private:
-    // member
-    nDSound3 *dsSound;
+    CSound* dsSound;
+    CStreamingSound* dsStreamingSound;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+CSound*
+nDSoundResource::GetCSoundPtr()
+{
+    if (this->streaming)
+    {
+        return this->dsStreamingSound;
+    }
+    else
+    {
+        return this->dsSound;
+    }
+}
 
 //------------------------------------------------------------------------------
 #endif

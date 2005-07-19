@@ -15,13 +15,17 @@ nAudioServer3* nAudioServer3::Singleton = 0;
 nAudioServer3::nAudioServer3() :
     isOpen(false),
     inBeginScene(false),
-    masterVolume(1.0f),
-    masterVolumeDirty(true),
-    curTime(0.0),
-    masterVolumeChangedTime(0.0)
+    curTime(0.0)
 {
     n_assert(0 == Singleton);
     Singleton = this;
+
+    this->masterVolume.SetSize(NumCategorys);
+    this->masterVolume.Clear(1.0f);
+    this->masterVolumeDirty.SetSize(NumCategorys);
+    this->masterVolumeDirty.Clear(true);
+    this->masterVolumeChangedTime.SetSize(NumCategorys);
+    this->masterVolumeChangedTime.Clear(this->curTime);
 }
 
 //------------------------------------------------------------------------------
@@ -29,10 +33,6 @@ nAudioServer3::nAudioServer3() :
 */
 nAudioServer3::~nAudioServer3()
 {
-    if (this->isOpen)
-    {
-        this->Close();
-    }
     n_assert(Singleton);
     Singleton = 0;
 }
@@ -155,4 +155,56 @@ nSound3*
 nAudioServer3::NewSound()
 {
     return 0;
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+nString 
+nAudioServer3::CategoryToString(Category cat)
+{
+    switch(cat)
+    {
+        case Effect: return "effect";
+        case Music:  return "music";
+        default:
+            n_error("nAudioServer3: Invalid Category: %i!", cat);
+            return "";
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+nAudioServer3::Category 
+nAudioServer3::StringToCategory(const nString& s)
+{
+    if ("effect" == s)          return Effect;
+    else if ("music" == s)      return Music;
+    else
+    {
+        n_error("nAudioServer3: Invalid category string '%s'.\n", s.Get());
+        return InvalidCategory;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Calls Update() on all playing sounds. This can be used to immediately
+    commit changed without having to wait until EndScene().
+*/
+void
+nAudioServer3::UpdateAllSounds()
+{
+    nRoot* rsrcPool = nResourceServer::Instance()->GetResourcePool(nResource::SoundInstance);
+    nRoot* cur;
+    for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
+    {
+        nSound3* snd = (nSound3*) cur;
+        if (snd->IsPlaying())
+        {
+            snd->Update();
+        }
+    }    
 }

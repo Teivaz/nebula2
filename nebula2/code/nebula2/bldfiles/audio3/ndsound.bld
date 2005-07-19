@@ -6,7 +6,7 @@
 #      ndsound3
 #      ndsoundresource
 #      ndsoundserver3
-#      ndsound_wavfmt
+#      dsutil
 #  Targets:
 #      ndsaudioserver3
 #===============================================================================
@@ -26,16 +26,17 @@ beginmodule ndsound3
 endmodule
 
 #===============================================================================
-#  ndsound_wavfmt modules
+#  dsutil modules
 #===============================================================================
-beginmodule ndsound_wavfmt
+beginmodule dsutil
     setdir audio3
     setplatform win32
     setfiles { 
-        ndsound_wavfmt
+        dsutil
     }
     setheaders { 
-        ndsound_wavfmt
+        dsutil
+        dxutil
     }
 endmodule
 
@@ -74,6 +75,6 @@ endmodule
 begintarget ndsaudioserver3
     settype lib
     setmodules {
-        ndsound3 ndsoundresource ndsoundserver3 ndsound_wavfmt
+        ndsound3 ndsoundresource ndsoundserver3 dsutil
     }
 endtarget
