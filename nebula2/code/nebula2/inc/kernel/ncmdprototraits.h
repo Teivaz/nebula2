@@ -141,34 +141,40 @@
 
 //------------------------------------------------------------------------------
 #define NCMDPROTO_GETSIGNATURE(TYPE)    \
-    nGetSignatureStr< n_remove_reference<n_remove_const<TYPE>::Type>::Type >()
+    nGetSignatureStr< typename n_remove_modifiers_and_reference<TYPE>::Type >()
 
 #define NCMDPROTO_INARG_TYPE(NUMBER)     Traits::TPI ## NUMBER
 #define NCMDPROTO_INARG(NUMBER)          inarg ## NUMBER
 #define NCMDPROTO_INARG_PROTO(NUMBER)    NCMDPROTO_INARG(NUMBER)
 #define NCMDPROTO_INARG_GETCMD(NUMBER)                                              \
-    n_remove_reference<n_remove_const<NCMDPROTO_INARG_TYPE(NUMBER)>::Type>::Type    \
+    typename n_remove_modifiers_and_reference<NCMDPROTO_INARG_TYPE(NUMBER)>::Type   \
         NCMDPROTO_INARG(NUMBER);                                                    \
-    n_space_for_pointers< n_remove_const<NCMDPROTO_INARG_TYPE(NUMBER)>::Type >      \
-        argspace ## NUMBER(NCMDPROTO_INARG(NUMBER));                                \
-    nGetCmdArg<n_remove_reference<n_remove_const<NCMDPROTO_INARG_TYPE(NUMBER)>::Type>::Type>\
-        ( cmd, (NCMDPROTO_INARG(NUMBER)) );
+    typename n_space_for_pointers<                                                  \
+        typename n_remove_modifiers_and_reference<NCMDPROTO_INARG_TYPE(NUMBER)>::Type \
+        > argspace ## NUMBER(NCMDPROTO_INARG(NUMBER));                              \
+    nGetCmdArg<                                                                     \
+        typename n_remove_modifiers_and_reference<NCMDPROTO_INARG_TYPE(NUMBER)>::Type \
+    >( cmd, (NCMDPROTO_INARG(NUMBER)) );
 
 #define NCMDPROTO_OUTARG_TYPE(NUMBER)    Traits::TPO ## NUMBER
 #define NCMDPROTO_OUTARG(NUMBER)         outarg ## NUMBER
 #define NCMDPROTO_OUTARG_PRE(NUMBER)                                                        \
-    n_remove_reference<n_remove_const<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type>::Type           \
+    typename n_remove_modifiers_and_reference<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type          \
         NCMDPROTO_OUTARG(NUMBER);                                                           \
-    n_space_for_pointers< n_remove_const<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type >             \
-        outargspace ## NUMBER(NCMDPROTO_OUTARG(NUMBER));
+    memset(&NCMDPROTO_OUTARG(NUMBER), 0, sizeof(NCMDPROTO_OUTARG(NUMBER)));                 \
+    typename n_space_for_pointers<                                                          \
+        typename n_remove_const<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type                        \
+        > outargspace ## NUMBER(NCMDPROTO_OUTARG(NUMBER));
 
 #define NCMDPROTO_OUTARG_POST(NUMBER)                                                       \
     nSetCmdArg<                                                                             \
-        n_remove_reference<n_remove_const<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type>::Type       \
+        typename n_remove_modifiers_and_reference<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type      \
     >( cmd, outarg ## NUMBER );
 
 #define NCMDPROTO_RETCMDARG()                                                               \
-    nSetCmdArg<n_remove_reference<n_remove_const<TR>::Type>::Type>( cmd, ret );
+    nSetCmdArg<                                                                             \
+        typename n_remove_modifiers_and_reference<TR>::Type                                 \
+    >( cmd, ret );
 
 #define NCMDPROTO_ALLARG_TYPE(NUMBER)   typename Traits::TPA ## NUMBER
 #define NCMDPROTO_ALLARG(NUMBER)        arg ## NUMBER
@@ -180,7 +186,7 @@
     The following construction does the trick.
 */
 #define NCMDPROTO_VALIST_ARG(NUMBER)                                                        \
-    typedef n_remove_reference<n_remove_const< NCMDPROTO_ALLARG_TYPE(NUMBER)>::Type>::Type  \
+    typedef typename n_remove_modifiers_and_reference<NCMDPROTO_ALLARG_TYPE(NUMBER)>::Type  \
         Type ## NUMBER;                                                                     \
     typedef Loki::Select<                                                                   \
         Loki::IsSameType<Type ## NUMBER, float>::value,                                     \
@@ -215,7 +221,7 @@
     {                                                                   \
         NCMDPROTO_REPEAT(NumIn, NCMDPROTO_INARG_GETCMD);                \
         NCMDPROTO_REPEAT(NumOut, NCMDPROTO_OUTARG_PRE);                 \
-        n_remove_const<TR>::Type ret = (n_remove_const<TR>::Type)       \
+        typename n_remove_const<TR>::Type ret = (n_remove_const<TR>::Type) \
         (pthis->*memf)(                                                 \
             NCMDPROTO_REPEAT_COMMA(NumIn, NCMDPROTO_INARG)              \
             NCMDPROTO_REPEAT_PRECOMMA_JOIN(NumIn,NumOut,NCMDPROTO_OUTARG)\
@@ -246,7 +252,7 @@
     static TR DispatchValistRet<NumArg>(TClass * pthis, TMemberFunction memf, va_list marker)\
     {                                                                   \
         NCMDPROTO_REPEAT(NumArg, NCMDPROTO_VALIST_ARG);                 \
-        n_remove_const<TR>::Type ret = (n_remove_const<TR>::Type)       \
+        typename n_remove_const<TR>::Type ret = (n_remove_const<TR>::Type) \
         (pthis->*memf)(                                                 \
             NCMDPROTO_REPEAT_COMMA(NumArg, NCMDPROTO_ALLARG)            \
         );                                                              \
@@ -375,7 +381,7 @@ public:
         const char * ptrname = cmdname;
         while (*ptrname)
         {
-            *ptr++ = tolower(*ptrname++);
+            *ptr++ = static_cast<char>( tolower(*ptrname++) );
         }
         *ptr = 0;
 
@@ -425,78 +431,91 @@ public:
     struct TMemberFunctionHelper<TClass, 0>
     {
         typedef TR (TClass::*Type)();
+        typedef TR (TClass::*TypeConst)() const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 1>
     {
         typedef TR (TClass::*Type)(TPA1);
+        typedef TR (TClass::*TypeConst)(TPA1) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 2>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 3>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 4>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 5>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 6>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 7>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 8>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 9>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 10>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 11>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10, TPA11);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10, TPA11) const;
     };
 
     template <class TClass>
     struct TMemberFunctionHelper<TClass, 12>
     {
         typedef TR (TClass::*Type)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10, TPA11, TPA12);
+        typedef TR (TClass::*TypeConst)(TPA1, TPA2, TPA3, TPA4, TPA5, TPA6, TPA7, TPA8, TPA9, TPA10, TPA11, TPA12) const;
     };
 
     // Dispatcher for nCmd commands
@@ -505,6 +524,7 @@ public:
     {
     public:
         typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::Type TMemberFunction;
+        typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::TypeConst TMemberFunctionConst;
 
         static bool Dispatch(TClass * obj, TMemberFunction memf, nCmd * cmd)
         {
@@ -524,6 +544,7 @@ public:
     {
     public:
         typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::Type TMemberFunction;
+        typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::TypeConst TMemberFunctionConst;
 
         template <bool RetVoid>
         static TR Dispatch(TClass * obj, TMemberFunction memf, va_list args);
