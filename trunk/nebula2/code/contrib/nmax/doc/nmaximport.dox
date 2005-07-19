@@ -1,0 +1,12 @@
+/**
+    @defgroup NebulaMaxImportContrib 3DSMax Importer
+    @ingroup NebulaContribAssetToolchainModules
+
+    @section NMaxImportOverview Overview
+
+
+    @section NMaxImportInstallation Building the Plugin
+
+    See @ref NMAXToolBoxInstallation section.
+
+*/
