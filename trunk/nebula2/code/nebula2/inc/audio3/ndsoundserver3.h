@@ -10,16 +10,11 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "audio3/naudioserver3.h"
+#include "audio3/dsutil.h"
 #include "kernel/nautoref.h"
-
-#include <mmsystem.h>
-#include <mmreg.h>
-#include <dsound.h>
 
 class nResourceServer;
 class nEnv;
-class nDSound3;
-class nDSound_WavFmt;
 
 //------------------------------------------------------------------------------
 class nDSoundServer3 : public nAudioServer3
@@ -34,7 +29,7 @@ public:
     /// close the audio device
     virtual void Close();
     /// begin an audio frame
-    virtual bool BeginScene(nTime time);
+    virtual bool BeginScene(nTime t);
     /// update listener attributes
     virtual void UpdateListener(const nListener3& l);
     /// start a sound
@@ -49,29 +44,16 @@ public:
     virtual nSound3* NewSound();
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
+    /// return a pointer to the CSoundManager object
+    CSoundManager* GetSoundManager();
 
 protected:
-    nAutoRef<nResourceServer> refResourceServer;
+    CSoundManager* soundManager;
     nAutoRef<nEnv> refHwnd;
     IDirectSound3DListener8* dsListener;
     DS3DLISTENER dsListenerProps;
     nTime lastStreamUpdateCheck;
-
-    // soundManager ports
-public:
-    /// set primary buffer to a specified format
-    bool SetPrimaryBufferFormat( DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate );
-    /// returns the 3D listener interface associated with primary buffer.
-    bool Get3DListenerInterface( LPDIRECTSOUND3DLISTENER* ppDSListener );
-    /// create
-    bool Create( nDSound3** ppSound, LPTSTR strWaveFileName, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    /// create from memory
-    bool CreateFromMemory( nDSound3** ppSound, BYTE* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    /// create for streaming
-    bool CreateStreaming( nDSound3** ppSound, LPTSTR strWaveFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize );
-
-protected:
-    LPDIRECTSOUND8  m_pDS;
+    bool noSoundDevice;
 };
 
 //------------------------------------------------------------------------------
