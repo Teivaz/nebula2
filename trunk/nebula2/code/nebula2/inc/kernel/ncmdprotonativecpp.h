@@ -17,8 +17,8 @@
 #include "kernel/ncmdproto.h"
 #include "kernel/ncmdprototraits.h"
 
-#include "kernel/nroot.h"
-#include "kernel/nkernelserver.h"
+//#include "kernel/nroot.h"
+//#include "kernel/nkernelserver.h"
 #include "kernel/npersistserver.h"
 #include "kernel/ncmdargtypes.h"
 
@@ -41,7 +41,7 @@ n_initcmds(nClass* cl)                                      \
     @param MemberName       name of the C++ member function
 */
 #define NCMDPROTONATIVECPP_ADDCMD(MemberName)                     \
-    ScriptClass_::AddCmd_ ## MemberName(cl);
+    ScriptClass_::AddCmd_ ## MemberName<ScriptClass_>(cl);
 
 /**
     @def NCMDPROTONATIVECPP_INITCMDS_END()
@@ -162,11 +162,12 @@ n_initcmds(nClass* cl)                                      \
     Auxiliar helper macro used internally in declarations.
 */
 #define NCMDPROTONATIVECPP_DECLARE_ADDCMD(FourCC,NAME,TR,MemberName,TLIN,TLOUT)    \
+template <class TClassCast>                                             \
 inline static void AddCmd_ ## NAME (nClass * cl)                        \
 {                                                                       \
     char ncmd_signature[N_MAXPATH];                                     \
     unsigned int fourcc = FourCC;                                       \
-    typedef nCmdProtoNativeCPP< ScriptClass_, TR, TLIN, TLOUT >         \
+    typedef nCmdProtoNativeCPP< ScriptClass_, TR, TLIN, TLOUT, TClassCast > \
         TCmdProtoNativeCPP;                                             \
     TCmdProtoNativeCPP::Traits::CalcPrototype(                          \
         ncmd_signature, #NAME);                                         \
@@ -183,7 +184,7 @@ inline static void AddCmd_ ## NAME (nClass * cl)                        \
 
 #pragma warning ( disable : 4127 4100 )
 
-template < class TClass, class TR, class TListIn, class TListOut >
+template < class TClass, class TR, class TListIn, class TListOut, class TClassCast >
 class nCmdProtoNativeCPP : public nCmdProto
 {
 public:
@@ -200,6 +201,14 @@ public:
         /// empty
     }
 
+    /// constructor with const method
+    nCmdProtoNativeCPP( const char * signature, int fourcc, typename TDispatcher::TMemberFunctionConst memf ) :
+        nCmdProto(signature, fourcc),
+        memf_(reinterpret_cast<typename TDispatcher::TMemberFunction> (memf))
+    {
+        /// empty
+    }
+
     /// destructor
     virtual ~nCmdProtoNativeCPP()
     {
@@ -209,7 +218,7 @@ public:
     /// dispatch command
     virtual bool Dispatch(void * slf, nCmd * cmd)
     {
-        TClass * obj = reinterpret_cast<TClass *> (slf);
+        TClass * obj = reinterpret_cast<TClassCast *> (slf);
         return TDispatcher::Dispatch(obj, memf_, cmd);
     }
 
