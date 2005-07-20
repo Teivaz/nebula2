@@ -1,0 +1,29 @@
+/**
+    @defgroup NMaxHowtoImport Importing How to
+
+    You can import Nebula mesh file into 3DS Max with the Nebula importer plugin.
+    The importer support not only <tt>.n3d2</tt>, <tt>.nvx2</tt> Nebula2 mesh file  
+    but also <tt>.n3d</tt>, <tt>.nvx</tt> and <tt>.obj</tt> for Nebula1.
+
+    @note
+    The importer is not a part of the toolkit plugin, nmaxtoolbox. Be sure that you 
+    aleady have the importer plugin in the 3DS Max plugins directory.
+    
+    The importing can be done with the same way 3DS Max normally does.
+    Click <i>File > Import</i> menu then select the file to import.
+
+    The following image shows the imported Tiger model of the <tt>'tiger_s_0.nvx2'</tt>  
+    Nebula2 binary mesh file which is in the <tt>$nebula2/export/meshes/examples</tt> 
+    directory.
+
+    @image html tiger_import.png "The imported Tiger model"
+
+    The importer does not import all the vertex component of the the mesh.
+    The followings are imported vertex components and all other components are ignored.
+      - position
+      - uv0
+
+    You might want to apply the texture to the imported model. 
+    To apply the texture to the model, use material editor and Nebula custom material.
+    See @ref NMaxHowtoUsingMaterialEditor to know about Nebula custom material.
+*/
