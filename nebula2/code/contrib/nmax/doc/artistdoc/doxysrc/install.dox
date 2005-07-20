@@ -13,6 +13,7 @@
     </td>
     <td> 
         - 1) copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
+             copy <b>nmaximport.dli</b> to the same directory, if you need Nebula 3DS max importer.
 
         - 2) copy the directory <b>scripts</b> and all files under the directory to the <tt>$3dsmax/scripts</tt> 
            directory.

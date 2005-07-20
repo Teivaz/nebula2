@@ -24,6 +24,10 @@
         - <b>automatically generates custom attributes and UI code</b> of max scripts 
           for the given <b>Nebula2 object</b>. 
           See @ref NMaxScriptGen section for more details.
+        - <b>importer.</b> It is provided by seperated plugin to import Nebula mesh 
+          file into 3DS Max. 
+          (<tt>.n3d2</tt>, <tt>.nvx2</tt>, <tt>.n3d</tt>, <tt>.nvx</tt> and <tt>.obj</tt> 
+          are supported)
           
 
     @section NMaxFeaturesSupported3DSMaxFeatures Supported 3DS Max Features
