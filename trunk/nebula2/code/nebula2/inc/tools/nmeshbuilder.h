@@ -245,7 +245,9 @@ public:
     /// destructor
     ~nMeshBuilder();
     
-    //--- loading / saving ---
+    /// @name loading / saving
+    /// @{
+
     /// load any of the above (use file extension for format decision)
     bool Load(nFileServer2* fileServer, const char* filename);
     /// save any of the above (use file extension for format decision)
@@ -255,6 +257,8 @@ public:
     bool LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const char* filename);
     /// load from (old-style) n3d file
     bool LoadN3d(nFileServer2* fileServer, const char* filename);
+    /// load from (old-style) nvx file
+    bool LoadNvx(nFileServer2* fileServer, const char* filename);
     /// load from wavefront object file
     bool LoadObj(nFileServer2* fileServer, const char* filename);
     /// load OLD n3d2 file (saved before Dec-2003)
@@ -268,8 +272,11 @@ public:
     bool SaveN3d2(nFileServer2* fileServer, const char* filename);
     /// save as legacy n3d files (one file per group)
     bool SaveN3d(nFileServer2* fileServer, const char* filename);
+    /// @}
 
-    //--- mesh building ---
+    /// @name mesh building
+    /// @{
+
     /// check if vertex component exists
     bool HasVertexComponent(Vertex::Component c) const;
     /// add a vertex
@@ -304,8 +311,10 @@ public:
     void UpdateTriangleIds(const nArray<Group>& groupMap);
     /// copy triangle with its vertices, do not generate redundant vertices
     void CopyTriangle(const nMeshBuilder& srcMesh, int triIndex, nArray<int>& indexMap);
+    /// @}
 
-    //--- mesh operations ---
+    /// @name mesh operations
+    /// @{
 
     /// clear buffers
     void Clear();
@@ -349,6 +358,7 @@ public:
     void FlipUvs();
     /// checks the mesh for geometry errors
     nArray<nString> CheckForGeometryError();
+    /// @}
 
 private:
     struct TempEdge // used as temp data for the generation
