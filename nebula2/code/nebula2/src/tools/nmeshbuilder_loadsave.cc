@@ -30,7 +30,13 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     {
         return this->LoadN3d(fileServer, filename);
     }
-    else if (path.CheckExtension("obj"))
+    else
+    if (path.CheckExtension("nvx"))
+    {
+        return this->LoadNvx(fileServer, filename);
+    }
+    else 
+    if (path.CheckExtension("obj"))
     {
         return this->LoadObj(fileServer, filename);
     }
@@ -915,6 +921,193 @@ nMeshBuilder::LoadN3d(nFileServer2* fileServer, const char* filename)
 
     file->Release();
     return false;
+}
+
+//-- vertex components ----------------------------------------------
+enum nVertexType {
+    N_VT_VOID  = 0,         // undefined
+    N_VT_COORD = (1<<0),    // has xyz
+    N_VT_NORM  = (1<<1),    // has normals
+    N_VT_RGBA  = (1<<2),    // has color
+
+    N_VT_UV0   = (1<<3),    // has texcoord set 0
+    N_VT_UV1   = (1<<4),    // has texcoord set 1
+    N_VT_UV2   = (1<<5),    // has texcoord set 2
+    N_VT_UV3   = (1<<6),    // has texcoord set 3
+
+    N_VT_JW    = (1<<7),    // has up to 4 joint weights per vertex
+};
+
+//------------------------------------------------------------------------------
+/**
+    Load .nvx file.
+
+    -21-Jul-05    kims    created
+*/
+bool
+nMeshBuilder::LoadNvx(nFileServer2* fileServer, const char* filename)
+{
+    nFile* file = fileServer->NewFileObject();
+    n_assert(file);
+
+    if (!file->Open(filename, "rb"))
+    {
+        n_printf("nMeshBuilder: Failed to load '%s'\n", filename);
+    }
+
+    int magicNumber;
+    file->Read(&magicNumber, sizeof(int));
+    if (magicNumber != 'NVX1')
+    {
+        n_printf("nMeshBulider: '%s' is not a NVX1 file!\n", filename);
+        file->Close();
+        file->Release();
+        return false;
+    }
+ 
+    int numVertices, numIndices, numEdges, vType, dataStart, dataSize;
+    nVertexType vertexType;
+
+    file->Read(&numVertices, sizeof(int));
+    file->Read(&numIndices,  sizeof(int));
+    file->Read(&numEdges,    sizeof(int));
+    file->Read(&vType,       sizeof(int));
+    file->Read(&dataStart,   sizeof(int));
+    file->Read(&dataSize,    sizeof(int));
+
+    vertexType = (nVertexType)vType;
+
+    void* buffer = n_malloc(dataSize);
+    file->Seek(dataStart, nFile::START);
+    int num = file->Read(buffer, dataSize);
+    file->Close();
+    file->Release();
+    file = 0;
+
+    char* ptr = (char*) buffer;
+    vector3 vec3;
+    vector2 vec2;
+    int i;
+
+#define read_elm(type) *(type*)ptr; ptr += sizeof(type);
+
+    for (i=0; i<numVertices; i++)
+    {
+        Vertex vertex;
+
+        // read vertex position
+        if (vertexType & N_VT_COORD)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            float z = read_elm(float);
+            vec3.set(x, y, z);
+            vertex.SetCoord(vec3);
+        }
+
+        // read vertex normal
+        if (vertexType & N_VT_NORM)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            float z = read_elm(float);
+            vec3.set(x, y, z);
+            vertex.SetNormal(vec3);
+        }
+
+        // read vertex color
+        if (vertexType & N_VT_RGBA)
+        {
+            unsigned int color = read_elm(unsigned int);
+            float b = ((color & 0xff) >> 24) / 255.0f;
+            float g = ((color & 0xff) >> 16) / 255.0f;
+            float r = ((color & 0xff) >> 8) / 255.0f;
+            float a = ((color & 0xff)) / 255.0f;
+
+            //TODO: need to check rgba?
+
+            vertex.SetColor(vector4(b, g, r, a));
+        }
+
+        // read texture coordinates
+        if (vertexType & N_VT_UV0)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            vec2.set(x, y);
+            vertex.SetUv(0, vec2);
+        }
+        if (vertexType & N_VT_UV1)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            vec2.set(x, y);
+            vertex.SetUv(1, vec2);
+        }
+        if (vertexType & N_VT_UV2)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            vec2.set(x, y);
+            vertex.SetUv(2, vec2);
+        }
+        if (vertexType & N_VT_UV3)
+        {
+            float x = read_elm(float);
+            float y = read_elm(float);
+            vec2.set(x, y);
+            vertex.SetUv(3, vec2);
+        }
+
+        // read joint indices and vertex weights for skinning
+        if (vertexType & N_VT_JW)
+        {
+            short ji0 = read_elm(short);
+            short ji1 = read_elm(short);
+            short ji2 = read_elm(short);
+            short ji3 = read_elm(short);
+
+            vertex.SetJointIndices(vector4(ji0, ji1, ji2, ji3));
+
+            float w0  = read_elm(float);
+            float w1  = read_elm(float);
+            float w2  = read_elm(float);
+            float w3  = read_elm(float);
+
+            vertex.SetWeights(vector4(w0, w1, w2, w3));
+        }
+
+        this->AddVertex(vertex);
+    }
+
+    // skip edges
+    for (i=0; i<numEdges; i++)
+    {
+        ushort we0 = read_elm(ushort);
+        ushort we1 = read_elm(ushort);
+        ushort we2 = read_elm(ushort);
+        ushort we3 = read_elm(ushort);
+    }
+
+    // read triangle indices
+    if (numIndices > 0)
+    {
+        int numTriangles = numIndices / 3;                
+ 
+        for (i=0; i<numTriangles; i++)
+        {
+            ushort i0 = read_elm(ushort);
+            ushort i1 = read_elm(ushort);
+            ushort i2 = read_elm(ushort);
+
+            Triangle triangle;
+            triangle.SetVertexIndices(i0, i1, i2);
+
+            this->AddTriangle(triangle);
+        }
+    }
+
+    return true;
 }
 
 //------------------------------------------------------------------------------
