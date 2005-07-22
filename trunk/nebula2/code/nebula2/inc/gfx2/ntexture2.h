@@ -46,6 +46,25 @@
     tex->Unlock(0);  
     @endcode
 
+    The following code shows that another way of copying the image data of the memory 
+    to the created texture:
+    @code
+    // create an empty texture like above code.
+    ...
+
+    // get the surface of the texture
+    nSurface *surface; 
+
+    // get the surface of level 0.
+    tex->GetSurfaceLevel("/tmp/surface", 0, &surface);
+
+    // copy the imageData which is the source image to the texture
+    surface->LoadFromMemory(imageData, dstFormat, width, height, imagePitch);
+    ...
+    @endcode
+
+    See @ref nSurface class for more details about the surface and its usage.
+
     (C) 2002 RadonLabs GmbH
 */
 #include "resource/nresource.h"
@@ -175,10 +194,12 @@ public:
     static Format StringToFormat(const char* str);
     /// convert pixel format to string
     static const char* FormatToString(Format fmt);
-    // begin added for ngameswf
+
+    /// @name Surface supporting functions
+    /// @{
     virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
     virtual void GenerateMipMaps();
-    // end added for ngameswf
+    /// @}
 
 protected:
     /// set number of mipmaps
