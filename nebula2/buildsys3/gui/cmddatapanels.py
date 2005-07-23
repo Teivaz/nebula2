@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # cmddatapanels.py
 # Panels for editing cmd file elements
-# (c) 2005 Oleg Kreptul (Haron)
+# (c) 2005 Oleg Kreptul (Haron) okreptul@yahoo.com
 # Contents are licensed under the Nebula license.
 #------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ import wx.lib.dialogs
 import types
 
 from cmdparser import *
-from cmdguiutils import *
+from xrcguiutils import *
 
 #------------------------------------------------------------------------------
 class GeneralInfoPanel(wx.Panel):
@@ -37,6 +37,7 @@ class GeneralInfoPanel(wx.Panel):
         hdr = cfg.header
         cli = cfg.classInfo
         scf = cfg.saveCmdsFunc
+        self.changed = False
 
         # configuring controls
         self.hdr_info.SetValue(hdr.generalInfo)
@@ -77,6 +78,7 @@ class CommonCmdPanel(wx.Panel):
         self.cmd = cfg.findCmd(cmd_name)
         if not self.cmd: return
         self.cfg = cfg
+        self.changed = False
 
         # configuring controls
         self.cmdDecl.SetLabel(self.cmd.outFormat + '_' + self.cmd.cmdName + '_' + self.cmd.inFormat)
@@ -139,6 +141,7 @@ class CmdPanel(wx.Panel):
         self.cmd = cfg.findCmd(cmd_name)
         if not self.cmd: return
         self.cfg = cfg
+        self.changed = False
 
         # configuring controls
         self.cmdDecl.SetLabel(self.cmd.outFormat + '_' + self.cmd.cmdName + '_' + self.cmd.inFormat)

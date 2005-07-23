@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------
 # cmdeditorpanel.py
 # Cmd file editor panel for Nebula 2 buildsys
-# (c) 2005 Oleg Kreptul (Haron)
+# (c) 2005 Oleg Kreptul (Haron) okreptul@yahoo.com
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
 
@@ -11,6 +11,11 @@ import wx.gizmos as gizmos
 
 from cmdparser import *
 from cmddatapanels import *
+
+sel_type_commoncmd = 0
+sel_type_cmd = 1
+sel_type_property = 2
+sel_type_signal = 3
 
 #----------------------------------------------------------------------
 class CmdEditorPanel(wx.Panel):
@@ -189,7 +194,18 @@ class CmdEditorPanel(wx.Panel):
 
     def OnConvert(self, evt):
         if self.subelement:
-            if self.subelement[0] == 0:
+            if self.subelement[0] == sel_type_commoncmd:
+                if self.workSubPanel.changed:
+                    dlg = wx.MessageDialog(self, 'Command was changed. Save changes?',
+                                           'Save changes', wx.OK | wx.CANCEL | wx.ICON_QUESTION)
+                    val = dlg.ShowModal()
+                
+                    if val == wx.ID_OK:
+                        self.log.WriteText("You pressed OK\n")
+                    else:
+                        self.log.WriteText("You pressed Cancel\n")
+
+                    dlg.Destroy()
                 cfg = self.GetConfig()
 
     def OnApply(self, evt):
@@ -239,7 +255,7 @@ class CmdEditorPanel(wx.Panel):
 
     def ShowCommonCmdPanel(self):
         cfg = self.GetConfig()
-        if cfg and self.subelement and self.subelement[0] == 0:
+        if cfg and self.subelement and self.subelement[0] == sel_type_commoncmd:
             if not isinstance(self.workSubPanel, CommonCmdPanel):
                 self.ClearWorkPanel()
                 self.workSubPanel = CommonCmdPanel(self.workPanel)
@@ -295,7 +311,7 @@ class CmdEditorPanel(wx.Panel):
             self.statusLine.SetLabel('Command or property choosen: ' + tree_path[-1])
             modif, cmd_name = tree_path[-1].split()
             if modif[0] == 'c':
-                self.subelement = [0, cmd_name]
+                self.subelement = [sel_type_commoncmd, cmd_name]
                 self.ShowCommonCmdPanel()
         elif l == 6: # one of setters/getters
             self.statusLine.SetLabel('Setter or getter choosen: ' + tree_path[-1])

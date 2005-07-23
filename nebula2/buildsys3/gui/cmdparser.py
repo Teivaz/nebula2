@@ -516,11 +516,24 @@ class CmdFileConfig:
         for p in self.properties:
             if p.name == name: return p
         return None
-  
+
+    def getCmdIdx(self, name):
+        n = len(self.cmds)
+        for i in range(n):
+            if self.cmds[i].funcName == name:
+                return i
+        return None
+
     def findCmd(self, name):
         for c in self.cmds:
             if c.funcName == name: return c
         return None
+  
+    def setCmdAt(self, idx, cmd):
+        if idx < len(self.cmds):
+            self.cmds[idx] = cmd
+        else:
+            self.cmds.append(cmd)
   
     def clear(self):
         self.header.clear()
