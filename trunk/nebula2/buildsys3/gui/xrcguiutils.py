@@ -6,6 +6,11 @@ import types
 dlg_res = None
 xrcResFileName = "buildsys3/gui/xrc/format_dlg.xrc"
 
+def xrcSetFile(file):
+    global xrcResFileName, dlg_res
+    xrcResFileName = file
+    dlg_res = None
+
 def xrcCTRLUnpack(self, name, evt_pack=None):
     if name and name != "":
         id = XRCID(name)
@@ -60,4 +65,11 @@ def xrcLoadDialog(self, parent, name):
     self.xrcRootItem = wxPreDialog()
     if not dlg_res: dlg_res = wxXmlResource(xrcResFileName)
     dlg_res.LoadOnDialog(self.xrcRootItem, parent, name)
+    self.PostCreate(self.xrcRootItem)
+
+def xrcLoadFrame(self, parent, name):
+    global dlg_res
+    self.xrcRootItem = wxPreFrame()
+    if not dlg_res: dlg_res = wxXmlResource(xrcResFileName)
+    dlg_res.LoadOnFrame(self.xrcRootItem, parent, name)
     self.PostCreate(self.xrcRootItem)
