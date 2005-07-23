@@ -1,3 +1,4 @@
 build
 gui.log
 user.build.cfg.py
+*.pyc
