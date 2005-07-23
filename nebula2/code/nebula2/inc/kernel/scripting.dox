@@ -6,16 +6,25 @@
     @ref NebulaObjectSystem to provide scripting support
     in multiple languages.
 
-    Scripting in Nebula2 means invoking script commands directly on C++
+    The script server connects the internal language-independent scripting
+    mechanism to a specific scripting language. It translates commands
+    emitted from objects into script statements, and back into commands that
+    are understood by an object's Dispatch() method.
+    So scripting in Nebula2 means invoking script commands directly on C++
     objects. It can be possible if a class is derived from nRoot.
     Saying other, every nRoot derived class is scriptable.
+
+    The script server also implements an ipc port to allow external 
+    applications (running in another process or another machine) 
+    to talk to local objects. See @ref Ipc sectoin for the details.
 
     @see @ref NebulaWritingClass page for more details about scriptable class.
 
     Out of the box, Nebula supports TCL and a binary
     script server (which is for persistence rather than
-    scripting directly).  However, there are contributed modules
-    that provide scripting support for other languages:
+    scripting directly). See @ref TclScriptServices section for more details. 
+    However, there are contributed modules that provide scripting support 
+    for other languages:
 
        - @ref NLuaServerContribModule
        - @ref PythonScriptServices
