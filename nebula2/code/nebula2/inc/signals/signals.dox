@@ -38,6 +38,110 @@
     @section NebulaSignalsProposal Nebula Signals Proposal
 
     Include an adapted version of the proposal written by Bruce Mitchener here.
+    
+    @code
+    
+    From: Mateu Batle
+    To: Bruce Mitchener
+    Cc: nebuladevice-discuss@lists.sourceforge.net
+    Subject: Re: [Nebula-Discuss] Event / Signal system, draft 3
+    Date: Mon, 08 Nov 2004 20:31:43 +0100
+    
+    Hi !
+    
+    My 2 cents
+    
+    nSignal
+    -------
+    
+    I assume nSignal type signature will use the same system than nCmdProto. 
+    In fact, nSignal and nCmdProto are similar in some things like fourcc, 
+    input and output arguments and type signature.
+          
+    nSignalBinding
+    --------------      
+          
+    The issue about what to store (fourcc / nCmdProto) in nSignalBinding. I 
+    would choose nCmdProto, since it will be much faster. And we could have 
+    several ways to handle the issue with redefining nCmdProtos at runtime:
+    
+    a) Have a list of nSignalBinding objects either in nCmdProto or nClass. 
+    If a given nCmdProto is removed or redefined, then remove from list or 
+    change the nCmdProto ptr respectively. Maybe this is not needed, since 
+    next there is already some link between nSignalBinding and target 
+    objects, see next option.
+    
+    b) Misuse the existing reference to the target object in nSignalBinding 
+    somehow. One idea is to add some virtual member to nRef, which is 
+    implemented to suit our purposes in this case. Let's call it check(). 
+    The check function will have the following parameters:
+    
+    * int action. This is just an identifier which specifies what action 
+    happened in the target object that could need some intervention in the 
+    nRef handler. We could use NREF_ACTION_NCMDPROTO_CHANGED. This is 
+    important since we must check for this in the check handler, since an 
+    object could referenced by other things different than a nSignalBinding.
+    
+    * nReferenced *. Pointer to the object requiring the check.
+    
+    For this to work, nSignalBinding must inherit from nRef, instead of 
+    having it as a member variable. The check member function would be 
+    override, to do the proper thing. In this case, it would look for the 
+    class of the object, and resolve the fourcc to nCmdProto.
+    
+    The overhead added is that every nRef will have a virtual table ptr, 
+    because of the addition of the virtual member function.
+    
+    This mechanism could be used in the future for other uses. Although I 
+    agree it is not very clear and a bit quick & dirty solution. It is so 
+    unclear, that I would not bet it works :-)
+    
+    c) Leave the responsability to the programmer. I think the redefinition 
+    of nCmdProto is very uncommon, at least I have never seen any code using 
+    it. For a very uncommon case, I don't think we should add so much 
+    overhead. The same code that is doing the redefinition of commands, will 
+    have to issue the fix of signal bindings through some interface provided 
+    in the signal server for example.
+    
+    nSignalEmitter
+    --------------
+    
+    About BindSignal, if report error or not in the case of binding multiple 
+    times the same signal and nCmdProto. It does not come to my mind any 
+    real useful example having multiple invocations of the same binding. 
+    Anyway, if anybody thinks this is useful, we could have a parameter to 
+    indicate if perform the check for this or not. Or maybe a different 
+    function allowing repetitions.
+    
+    nSignalServer
+    --------------
+    
+    I think we need to specify the time when the event will be emitted in 
+    the PostSignal. The current spec just says the event happens the next 
+    time the signal server is triggered. The signal server must be 
+    configured to run every X seconds (predicted frame time for example), 
+    then when the signal server is triggered it runs all the events 
+    hapenning between currentTime and currentTime + X.
+    
+    Additionally, signal server must have functionality to clean the 
+    asynchronous queues for all signals, signals of a given type, signals to 
+    a specific object, ...
+    
+    
+    I look forward for your changes to the event / signal system proposal in 
+    relation to the nRoot refactoring, although I like the current state 
+    pretty much. I can help with implementation once the discussion about 
+    the proposal is finished.
+    
+    cheers !
+      Mateu
+    
+    _______________________________________________
+    Nebuladevice-discuss mailing list
+    Nebuladevice-discuss@lists.sourceforge.net
+    https://lists.sourceforge.net/lists/listinfo/nebuladevice-discuss
+    
+    @endcode    
 
     @section NebulaSignalsUsage Usage of the Nebula Signals system
 
