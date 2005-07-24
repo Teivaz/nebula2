@@ -26,16 +26,16 @@
     See the following section @ref KernelCreation to know the way to add packages to 
     the kernel server.
 
-    Second, the Nebula kernel respond to a creation of Nebula objects.
+    Second, the Nebula kernel responds to a creation of the Nebula objects.
     As an operating system creates a process to do something for user tasks,
     Nebula does that with 'Nebula Object' for its specific tasks. 
     For an example, rendering a static mesh can be done with @ref nShapeNode.
     The @ref nShapeNode is the Nebula object and @ref nKernelServer creates it.
     As the @ref nShapeNode, all Nebula objects (aka. @ref nRoot derived classes)  
     are created by calling nKerenelServer::New().
-    See @ref NebulaObjectSystem for more details about Nebula object.
+    See @ref NebulaObjectSystem for more details about the Nebula object.
 
-    Also on the other hands, there are many other tasks what the Nebula kernel modules do 
+    On the other hands, there are also many other tasks what the Nebula kernel modules do 
     like memory management, file system, IPC handling, threading support and so on.
     See the corresponding documents of modules and classes for more details.
 
@@ -130,12 +130,12 @@
         /body.n3d2 - mesh data file 
 @endverbatim
 
-    And you can load all resources in the directory with given directory name;
+    And you can load all resources in the directory with the given directory name;
 
     @code
     ...
     kernelServer->PushCwd(this->refRootNode.get());
-    kernelServer->Load("mycharacter.n2"); // just pass directory name.
+    kernelServer->Load("mycharacter.n2"); // just pass the directory name.
     kernelServer->PopCwd();
     ...
     @endcode
