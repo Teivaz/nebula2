@@ -2,7 +2,16 @@
     @defgroup NebulaScriptServices Scripting Support
     @ingroup Kernel
 
-    @brief Nebula's scripting system integrates with its
+    This section of the documentation covers Nebula script system and 
+    it's subsystems.
+
+      - @ref NebulaScriptServicesOverview
+      - @ref NebulaScriptServicesRunScript
+
+
+    @section NebulaScriptServicesOverview Overview
+
+    Nebula's scripting system integrates with its
     @ref NebulaObjectSystem to provide scripting support
     in multiple languages.
 
@@ -37,4 +46,37 @@
     on Tcl and reduced it's command to 36 commands and it's size to 160KB from 
     660KB. It is good for minimal envrionments like game consoles.
     
+
+    @section NebulaScriptServicesRunScript Running Script
+
+    Nebula provides a way to run script file or specific script function within 
+    its console or c++.
+
+    @subsection NebulaScriptServicesRunScriptConsole Within Console 
+
+    You can run script file with <tt>'get'</tt> command within Nebula console:
+    @verbatim
+    >get d:\data\scripts\foo.n2
+    @endverbatim
+
+    @subsection NebulaScriptServicesRunScriptCplusplus Within C++ 
+
+    You can run a script file with @ref nScriptServer::RunScript() function: 
+    @code
+    scriptServer->RunScript("data/scripts/foo.n2", result);
+    @endcode
+
+    You can also run a specific script function of a script file by calling 
+    @ref nScriptServer::RunFunction() function:
+    @code
+    scriptServer->RunFunction("OnStartUp", result);
+    @endcode
+
+    Note that "OnStartUp" script function does not have any in-arguments. 
+    @ref nScriptServer::RunFunction() cannot run a script function which has 
+    any in-arguments.
+
+    Any results happened from the execution will be passed to the second 
+    in-arguments.
+
 */
