@@ -32,7 +32,8 @@
 
     <h2>Folded and unfolded objects</h2>
 
-    *** NOTE *** UNFOLDED OBJECTS ARE NO LONGER SUPPORTED FOR
+    @note
+    UNFOLDED OBJECTS ARE NO LONGER SUPPORTED FOR
     WRITING, AND READING IS ONLY SUPPORTED FOR "FLAT" FILE
     HIERARCHIES (i.e. a "nKernelServer::Load("bla.n") is allowed
     if bla.n is a directory, and contains a _main file).
@@ -43,6 +44,17 @@
     object, a directory will be create in the host filesystem,
     so that a saved object hierarchy will result in a
     corresponding directory hierarchy.
+
+    <h2>Code</h2>
+
+    The following code demonstrates how to specify <tt>nluaserver</tt> for
+    persist server:
+    @code
+    nPersistServer* persisitServer;
+
+    persisitServer = nKernelServer::Instance()->GetPersistServer();
+    persisitServer->SetSaverClass("nluaserver");
+    @endcode
 
     (C) 2002 A.Weissflog
 */
@@ -62,7 +74,7 @@ public:
     /// Savemodes
     enum nSaveMode 
     {
-        SAVEMODE_FOLD,  
+        SAVEMODE_FOLD,  /// default mode
         SAVEMODE_CLONE,  
     };
 
