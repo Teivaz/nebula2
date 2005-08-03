@@ -8,7 +8,7 @@
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
 
-import sys, os, fnmatch, re, time, string, glob
+import sys, os, fnmatch, re, time, string, glob, subprocess
 
 #--------------------------------------------------------------------------
 
@@ -349,7 +349,24 @@ class doxygen:
     def runDoxygen(self):
         oldPath = os.getcwd()
         os.chdir(self.doxycfgDir)
-        os.system('"%s" auto_nebula2.cfg' % self.doxygenPath)
+        #os.system('"%s" auto_nebula2.cfg' % self.doxygenPath)
+        # create & display a separate window for doxygen output
+        self.buildSys.DisplayExternalOutputDialog('Doxygen Output')
+        try:
+            proc = subprocess.Popen('"%s" auto_nebula2.cfg' % self.doxygenPath,
+                                    shell = True, 
+                                    stdin = None, 
+                                    stdout = subprocess.PIPE, 
+                                    stderr = subprocess.STDOUT)
+        except:
+            raise
+        else:
+            outLine = proc.stdout.readline()
+            while outLine != '':
+                self.buildSys.AppendToExternalOutputDialog(outLine)
+                outLine = proc.stdout.readline()
+            proc.stdout.close()
+        #childIn, childOut = os.popen4('"%s" auto_nebula2.cfg' % self.doxygenPath)
         os.chdir(oldPath)
         
     #--------------------------------------------------------------------------

@@ -35,6 +35,9 @@ Built %(numOfWorkspacesBuilt)i workspace(s) out of %(totalNumOfWorkspaces)i.
 (UpdateProgressDialogEvent,  EVT_UPDATE_PROGRESS_DLG) = wx.lib.newevent.NewEvent()
 (DestroyProgressDialogEvent, EVT_DESTROY_PROGRESS_DLG) = wx.lib.newevent.NewEvent()
 
+(DisplayExternalOutputDialogEvent,  EVT_DISPLAY_EXTERNAL_OUTPUT_DLG) = wx.lib.newevent.NewEvent()
+(AppendToExternalOutputDialogEvent, EVT_APPEND_TO_EXTERNAL_OUTPUT_DLG) = wx.lib.newevent.NewEvent()
+
 (DisplaySummaryDialogEvent, EVT_DISPLAY_SUMMARY_DLG) = wx.lib.newevent.NewEvent()
 
 # specify a settings dialogs for generators that need them
@@ -52,6 +55,7 @@ class WorkspacesPanel(wx.Panel):
         
         self.progressDialog = None
         self.cancelProgressDlg = False
+        self.externalOutputDialog = None
         
         # Generator controls
         self.generatorStaticBox = wx.StaticBox(self, -1, 'Generator')
@@ -124,6 +128,10 @@ class WorkspacesPanel(wx.Panel):
         self.Bind(EVT_CREATE_PROGRESS_DLG, self.OnCreateProgressDialog)
         self.Bind(EVT_UPDATE_PROGRESS_DLG, self.OnUpdateProgressDialog)
         self.Bind(EVT_DESTROY_PROGRESS_DLG, self.OnDestroyProgressDialog)
+        
+        # Bind External Output Dialog Events
+        self.Bind(EVT_DISPLAY_EXTERNAL_OUTPUT_DLG, self.OnDisplayExternalOutputDialog)
+        self.Bind(EVT_APPEND_TO_EXTERNAL_OUTPUT_DLG, self.OnAppendToExternalOutputDialog)
         
         # Bind Summary Dialog Event
         self.Bind(EVT_DISPLAY_SUMMARY_DLG, self.OnDisplaySummaryDialog)
@@ -222,6 +230,8 @@ class WorkspacesPanel(wx.Panel):
                                            self.ProgressDialogCancelled,
                                            self.DestroyProgressDialog)
         self.buildSys.ShowProgressDialog(True)
+        self.buildSys.AttachExternalOutputDialog(self.DisplayExternalOutputDialog,
+                                                 self.AppendToExternalOutputDialog)
         self.buildSys.AttachSummaryDialog(self.DisplaySummaryDialog)
         self.buildSys.Run(generatorName, workspaceNames)
             
@@ -361,6 +371,40 @@ class WorkspacesPanel(wx.Panel):
             self.progressDialog.Destroy()
             self.progressDialog = None
 
+    #--------------------------------------------------------------------------
+    # Display a dialog that will be used to display output from an external
+    # application.
+    # This can be safely called from any thread.
+    def DisplayExternalOutputDialog(self, title):
+        evt = DisplayExternalOutputDialogEvent(dlgTitle = title)
+        wx.PostEvent(self, evt)
+        
+    #--------------------------------------------------------------------------
+    # This will always be called in the GUI thread's context.
+    def OnDisplayExternalOutputDialog(self, evt):
+        assert None == self.externalOutputDialog
+        self.externalOutputDialog = ExternalOutputDialog(self, -1, 
+                                                         evt.dlgTitle)
+        self.externalOutputDialog.CenterOnParent()
+        self.externalOutputDialog.ShowModal()
+        self.externalOutputDialog.Destroy()
+        self.externalOutputDialog = None
+        
+    #--------------------------------------------------------------------------
+    # Append text to the dialog that is used to display output from an external
+    # application.
+    # This can be safely called from any thread.
+    def AppendToExternalOutputDialog(self, text):
+        evt = AppendToExternalOutputDialogEvent(dlgTextToAppend = text)
+        wx.PostEvent(self, evt)
+        
+    #--------------------------------------------------------------------------
+    # This will always be called in the GUI thread's context.
+    def OnAppendToExternalOutputDialog(self, evt):
+        if self.externalOutputDialog != None:
+            self.externalOutputDialog.AppendText(evt.dlgTextToAppend)
+
+
 #--------------------------------------------------------------------------
 class BuildSummaryDialog(wx.Dialog):
     def __init__(self, parentWindow, id, title, details,
@@ -378,6 +422,27 @@ class BuildSummaryDialog(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         self.Fit()
+
+#--------------------------------------------------------------------------
+class ExternalOutputDialog(wx.Dialog):
+    def __init__(self, parentWindow, id, title, pos = wx.DefaultPosition,
+                 size = wx.DefaultSize, 
+                 style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER):
+        wx.Dialog.__init__(self, parentWindow, id, title, pos, size, style)
+        outputTextBoxStyle = wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_BESTWRAP
+        self.outputTextBox = wx.TextCtrl(self, -1, '', wx.DefaultPosition,
+                                         (500, 300), outputTextBoxStyle)
+        okBtn = wx.Button(self, wx.ID_OK, 'OK')
+        okBtn.SetDefault()
+        # layout
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.outputTextBox, 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(okBtn, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Fit()
+        
+    def AppendText(self, text):
+        self.outputTextBox.AppendText(text)
 
 #--------------------------------------------------------------------------
 # EOF
