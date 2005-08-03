@@ -17,6 +17,24 @@
     int val = obj->BaseClass::SomeFunction(params);
     @endcode
 
+    The following lua script shows the way to add vertices and indices to the 
+    Nebula mesh builder:
+    @code
+    // add vertices
+    for k, v in mesh.tverts do
+        vidx = meshBuilder:beginaddvertex();
+        meshBuilder:addcoord(vidx, v.x, v.y, v.z);
+        meshBuilder:addnormal(vidx, v.nx, v.ny, v.nz);
+        meshBuilder:adduv(vidx, 0, v.u, v.v);
+        meshBuilder:endaddvertex();
+    end
+
+    // add triangle indices.
+    for k, v in mesh.faces do
+        meshBuilder:addtriangle(0, v.v1, v.v2, v.v3);
+    end
+    @endcode
+
     (C)2005 James Mastro / Kim, Hyoun Woo
 
 */
