@@ -49,7 +49,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_addcoord_ifff",         'ACOD', n_addcoord);
     cl->AddCmd("v_addnormal_ifff",        'ANRM', n_addnormal);
     cl->AddCmd("v_addcolor_iffff",        'ACLR', n_addcolor);
-    cl->AddCmd("v_adduv_iff",             'AUVS', n_adduv);
+    cl->AddCmd("v_adduv_iiff",            'AUVS', n_adduv);
     cl->AddCmd("v_addtangent_ifff",       'ATNG', n_addtangent);
     cl->AddCmd("v_addbinormal_ifff",      'ABNM', n_addbinormal);
     cl->AddCmd("v_addjointindices_iffff", 'AJID', n_addjointindices);
