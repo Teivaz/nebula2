@@ -117,6 +117,25 @@ class BuildSys:
                 self.destroyProgressDlgFunc()
     
     #--------------------------------------------------------------------------
+    # Setup callbacks that will be called when the build system needs to 
+    # display a dialog with output from an external application.
+    def AttachExternalOutputDialog(self, displayFunc, appendFunc):
+        self.displayExternalOutputDlgFunc = displayFunc
+        self.appendToExternalOutputDlgFunc = appendFunc
+    
+    #--------------------------------------------------------------------------
+    # Display the dialog that will display output from an external application.
+    def DisplayExternalOutputDialog(self, title):
+        if self.displayExternalOutputDlgFunc != None:
+            self.displayExternalOutputDlgFunc(title)
+    
+    #--------------------------------------------------------------------------
+    # Append text to the external output dialog.
+    def AppendToExternalOutputDialog(self, text):
+        if self.appendToExternalOutputDlgFunc != None:
+            self.appendToExternalOutputDlgFunc(text)
+    
+    #--------------------------------------------------------------------------
     def AttachSummaryDialog(self, displayFunc):
         self.displaySummaryDlgFunc = displayFunc
     
