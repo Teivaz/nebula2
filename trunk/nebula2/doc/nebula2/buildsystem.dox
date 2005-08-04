@@ -59,13 +59,14 @@
     @see @ref NebulaWritingClass for more details about
     @c nNebulaClass / @c nNebulaScriptClass and nRoot derived classes.
 
-    The build system uses $home/update.tcl in combination with
-    <tt>$home/buildsys/*.tcl</tt> to process any <tt>.bld</tt> files
+    The build system processes any <tt>.bld</tt> files
     it finds in any of the following places:
 
-    - <tt>$home/code/nebula2/bldfiles</tt> and its subdirectories
-    - <tt>$home/code/*/bldfiles</tt>
-    - <tt>$home/code/contrib/*/bldfiles</tt>
+@verbatim
+    $home/code/nebula2/bldfiles</tt> and its subdirectories
+    $home/code/XXX/bldfiles
+    $home/code/contrib/XXX/bldfiles
+@endverbatim
 
     and generates workspaces/solutions/projects/makefiles in
     <tt>$home/build/[compiler]</tt>.
@@ -91,8 +92,8 @@ beginmodule nmyclass2
 endmodule
 @endverbatim
 
-    The directory in @c setdir is given relative to <tt>$home/code/*/src</tt>
-    or @c inc (or <tt>$home/code/contrib/*/src</tt> or @c inc for contrib
+    The directory in @c setdir is given relative to <tt>$home/code/XXX/src</tt>
+    or @c inc (or <tt>$home/code/contrib/XXX/src</tt> or @c inc for contrib
     modules). The files listed in @c setfiles are your source files
     (<tt>.cc</tt>) and your headers (<tt>.h</tt>) are listed in @c setheaders.
 
@@ -134,15 +135,6 @@ endworkspace
     solution/workspace, which means anything you'd like to be able to do
     source-level debugging on. The first target in the list will become
     the default active project for the solution/workspace.
-
-    @note
-    The old build system used <tt>$home/code/nebula2/src/update.tcl</tt> in
-    combination with <tt>$home/bin/*.tcl</tt> to process <tt>.epk</tt> files
-    located in <tt>$home/code/nebula2/src</tt>, and outputs to
-    <tt>$home/code/nebula2/vstudio</tt>, so if you want to use the new
-    system, you don't need any of these (and in fact they're no longer in CVS).
-    <tt>$home/code/nebula2/src/dummy.cc</tt> is still used in the current
-    build system, though.
 
     @section NebulaBuildSystemCommands Commands
 
@@ -317,8 +309,8 @@ endworkspace
       <tr>
         <td>setdir</td> <td>$dir</td> <td>""</td>
         <td>Sets the directory where the module's files can be found. The
-        directory in @c setdir is given relative to <tt>$home/code/*/src</tt>
-        or @c inc (or <tt>$home/code/contrib/*/src</tt> or @c inc for
+        directory in @c setdir is given relative to <tt>$home/code/XXX/src</tt>
+        or @c inc (or <tt>$home/code/contrib/XXX/src</tt> or @c inc for
         contrib modules)</td>
       </tr>
 
