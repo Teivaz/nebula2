@@ -22,7 +22,7 @@
        tasks (such as transformation, meshes, particles, animations, textures
        and shaders etc.)
 
-    @image html n2structure.jpg "Nebula2 Sturucture"
+    @image html n2structure.jpg "Nebula2 Structure"
     
     @section NebulaStructureKernel Kernel
 
