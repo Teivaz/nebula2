@@ -111,7 +111,10 @@ Full information on how to obtain Nebula 2 can be found on our
 <a href="http://nebuladevice.cubik.org/downloads/">website</a>. We highly
 recommend using CVS directly as that is the easiest way to remain up to
 date with the evolving Nebula 2 codebase, as well as submit your own changes
-back to us.
+back to us.  If you are on Windows, we recommend that you use <a href="http://www.tortoisecvs.org/">TortoiseCVS</a>.
+
+  - @subpage Nebula2ObtainingTortoiseCVS
+  - @subpage Nebula2ObtainingWinCVS
 
 @section Nebula2GSCompiling Compiling Nebula 2
 
