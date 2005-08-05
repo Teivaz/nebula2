@@ -63,7 +63,7 @@
     it finds in any of the following places:
 
 @verbatim
-    $home/code/nebula2/bldfiles</tt> and its subdirectories
+    $home/code/nebula2/bldfiles and its subdirectories
     $home/code/XXX/bldfiles
     $home/code/contrib/XXX/bldfiles
 @endverbatim
@@ -455,13 +455,13 @@ endworkspace
 
     @section NebulaBuildSystemFAQ FAQ
 
-    @subsection Error01 When I run update.tcl, I get the error, <tt>'ERROR: target 'my_target' not defined!'</tt>
+    @subsection Error01 When I run update.tcl, I get the error, 'ERROR: target 'my_target' not defined!'
 
     This error means that there is no corresponding target in the bld files.
     Check the appropriate bld file, and make sure the target and target name
     are setup correctly.
 
-    @subsection Error02 When I run update.tcl, I get the error, <tt>'can't read "modulename_to_sortedindex&lt;my_module&gt;": no such element in array'</tt>
+    @subsection Error02 When I run update.tcl, I get the error, 'can't read "modulename_to_sortedindex&lt;my_module&gt;": no such element in array'
 
     This error means that there's no module named @e my_module.
 
