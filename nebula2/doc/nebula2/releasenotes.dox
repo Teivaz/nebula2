@@ -54,8 +54,9 @@ The biggest problem is that 2 separate CVS tree's (our local tree and the
 offical OpenSource tree) cannot be synced automatically (at least I didn't
 find a way how to do it with CVS). If this problem can be solved I'd be more then
 happy to do daily tree syncs. I'll try to work out a solution with BruceM
-and Leaf. Switching to Bitkeeper may be the solution but we'll have to look
-into it more.
+and Leaf. Switching to Bitkeeper(http://www.bitkeeper.com/) may be the solution 
+but we'll have to look into it more.
+
 
 @section Nebula2RNLinuxAndOpenGL A word about Linux and OpenGL
 
