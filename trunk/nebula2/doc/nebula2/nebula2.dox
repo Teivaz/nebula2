@@ -87,7 +87,7 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
     "script server" also allows objects to be saved out in a compact,
     efficient binary representation that can be loaded quickly.
 
-  - @ref Gui: Nebula 2 provides a full blown system for providing
+  - <b>Gui</b>: Nebula 2 provides a full blown system for providing
     themeable user interfaces within the game.
     
 @section Nebula2IntroHistorical Historical Documents
