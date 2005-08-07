@@ -54,6 +54,9 @@ class ScriptHelper:
         if 'ntclserver' == scriptServerName:
             packageScriptServerName = ''
             self.scriptServerPackage = ''
+        elif 'nluaserver' == scriptServerName:
+            self.bldScriptServerName = 'nlua'
+            self.scriptServerPackage = 'nNebulaUsePackage(""nlua"");' 
         else:
             self.bldScriptServerName = scriptServerName
             packageScriptServerName = scriptServerName
