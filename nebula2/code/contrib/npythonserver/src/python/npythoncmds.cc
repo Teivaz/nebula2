@@ -159,7 +159,7 @@ pythoncmd_New(PyObject * /*self*/, PyObject *args)
         else
         {
             PyErr_Format(PyExc_Exception,
-                         "NEW: Unable to create a NebulaObject or type %s",
+                         "NEW: Unable to create a NebulaObject of type %s",
                          className);
             return NULL;
         }
