@@ -480,4 +480,32 @@ endworkspace
     nNebulaScriptClass("class", "superclass");
     @endcode
 
+    @subsection Error03 When I built my application with VC, I got link errors. 
+
+    The following illustrates the errors:
+    @verbatim
+    LNK2005: "bool __cdecl n_init_Module_App(class nClass  *,class nKernelServer *)"
+    (?n_init_Module_App@@YA_NPAVnClass@@PAVnKernelServer@@@Z) already defined in myapp.obj
+    LNK2005: "void * __cdecl n_new_Module_App(void)"
+    (?n_new_Module_App@@YAPAXXZ) already defined in myapp.obj
+    @endverbatim
+
+    Each @ref nRoot derived class should be defined by its own module in the build file which 
+    has .bld for its file extension. For an example, if you have two classes, one of its name 
+    is MyApp and the other is MyAppState and both of them derive @ref nRoot class. In this case 
+    you should define two seperate modules for both of the classes in the bld file.
+
+    @verbatim
+    beginmodule myapp
+    ...
+    endmodule
+
+    beginmodule myappstate
+    ...
+    endmodule
+    @endverbatim
+
+    If you define one module and specify all its implementation files and header files to the 
+    module, you'll meet the above link errors.
+
 */
