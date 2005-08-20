@@ -480,7 +480,7 @@ endworkspace
     nNebulaScriptClass("class", "superclass");
     @endcode
 
-    @subsection Error03 When I built my application with VC, I got link errors. 
+    @subsection Error03 When I tried to build my application with VC, I got LNK2005 link errors. 
 
     The following illustrates the errors:
     @verbatim
@@ -490,10 +490,10 @@ endworkspace
     (?n_new_Module_App@@YAPAXXZ) already defined in myapp.obj
     @endverbatim
 
-    Each @ref nRoot derived class should be defined by its own module in the build file which 
-    has .bld for its file extension. For an example, if you have two classes, one of its name 
-    is MyApp and the other is MyAppState and both of them derive @ref nRoot class. In this case 
-    you should define two seperate modules for both of the classes in the bld file.
+    Each @ref nRoot derived class should be defined in a separate module in the build file (.bld). 
+    For example, lets say you have two classes, one named MyApp and the other MyAppState and both 
+    of them are derived from @ref nRoot. Then, you should define two separate modules for the 
+    classes in the build file.
 
     @verbatim
     beginmodule myapp
@@ -504,8 +504,5 @@ endworkspace
     ...
     endmodule
     @endverbatim
-
-    If you define one module and specify all its implementation files and header files to the 
-    module, you'll meet the above link errors.
 
 */
