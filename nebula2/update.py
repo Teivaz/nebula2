@@ -143,7 +143,7 @@ def LaunchGUI(generatorName, workspaceNames):
         print 'Error: Failed to import buildsys3.gui'
         print str(err)
     else:
-        buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
+        buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName(), True)
         DisplayGUI(buildSys, generatorName, workspaceNames)
 
 #--------------------------------------------------------------------------

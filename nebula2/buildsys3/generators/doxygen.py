@@ -9,6 +9,7 @@
 #--------------------------------------------------------------------------
 
 import sys, os, fnmatch, re, time, string, glob, subprocess
+from buildsys3.externaltask import ExternalTask
 
 #--------------------------------------------------------------------------
 
@@ -282,7 +283,7 @@ class doxygen:
                 
                 if doRunDoxygen:
                     if self.resolveDoxygenPath():
-                        self.runDoxygen()
+                        keepGoing = self.runDoxygen()
                     else:
                         self.buildSys.logger.error("Doxygen not found, can't " \
                                                    "generate documentation.")
@@ -346,30 +347,15 @@ class doxygen:
         return False
 
     #--------------------------------------------------------------------------
+    # Runs Doxygen and return True when it finishes running, or False if it
+    # doesn't finish running for some reason.
     def runDoxygen(self):
-        oldPath = os.getcwd()
-        os.chdir(self.doxycfgDir)
-        #os.system('"%s" auto_nebula2.cfg' % self.doxygenPath)
-        # create & display a separate window for doxygen output
-        self.buildSys.DisplayExternalOutputDialog('Doxygen Output')
-        try:
-            proc = subprocess.Popen('"%s" auto_nebula2.cfg' % self.doxygenPath,
-                                    shell = True, 
-                                    stdin = None, 
-                                    stdout = subprocess.PIPE, 
-                                    stderr = subprocess.STDOUT)
-        except:
-            raise
-        else:
-            outLine = proc.stdout.readline()
-            while outLine != '':
-                self.buildSys.AppendToExternalOutputDialog(outLine)
-                outLine = proc.stdout.readline()
-            proc.stdout.close()
-        #childIn, childOut = os.popen4('"%s" auto_nebula2.cfg' % self.doxygenPath)
-        os.chdir(oldPath)
+        task = ExternalTask('Doxygen', 
+                            '"%s" auto_nebula2.cfg' % self.doxygenPath, 
+                            self.doxycfgDir, self.buildSys.GetMainFrame())
+        return task.Run()
         
-    #--------------------------------------------------------------------------
+    #-------------------------------------------------------------------------
     # collect all the modules from the selected workspaces
     def collectModulesToDocument(self, workspaceNames):
         self.moduleNames = []
@@ -496,12 +482,12 @@ class doxygen:
         
     #--------------------------------------------------------------------------
     def createCHM(self):
-        oldPath = os.getcwd()
         hhpPath = os.path.join(self.buildSys.homeDir, 'doc', 'doxydoc', 
                                'nebula2', 'html')
-        os.chdir(hhpPath)
-        os.system('"%s" index.hhp' % self.htmlHelpCompilerPath)
-        os.chdir(oldPath)
+        task = ExternalTask('HTML Help Compiler', 
+                            '"%s" index.hhp' % self.htmlHelpCompilerPath, 
+                            hhpPath, self.buildSys.GetMainFrame())
+        return task.Run()
 
     #--------------------------------------------------------------------------
     def getRootClass(self):
