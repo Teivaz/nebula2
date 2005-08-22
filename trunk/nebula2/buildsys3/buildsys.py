@@ -28,7 +28,7 @@ class BuildSys:
                          'macosx': '__MACOSX__'}
     
     #--------------------------------------------------------------------------
-    def __init__(self, homeDir, fileName):
+    def __init__(self, homeDir, fileName, enableGUI = False):
         self.logHandler = None
         self.logger = None
         self.CreateDefaultLogger()
@@ -36,6 +36,8 @@ class BuildSys:
         self.generators = []
         self.cfgFileName = fileName
         self.buildConfig = BuildConfig()
+        self.useGUI = enableGUI
+        self.mainFrame = None # this will be set later if running in GUI mode
         #self.errors = []
         self.homeDir = homeDir
         # these will be filled in Prepare()
@@ -53,6 +55,21 @@ class BuildSys:
         self.destroyProgressDlgFunc = None
         # this will be set in AttachSummaryDialog
         self.displaySummaryDlgFunc = None
+
+    #--------------------------------------------------------------------------
+    # Return True if the build system is running in GUI mode and thus wxPython
+    # can be used, or False if it's running in command line mode where 
+    # wxPython can't be used.
+    def GUIEnabled(self):
+        return self.useGUI
+
+    #--------------------------------------------------------------------------
+    def SetMainFrame(self, mainFrame):
+        self.mainFrame = mainFrame
+        
+    #--------------------------------------------------------------------------
+    def GetMainFrame(self):
+        return self.mainFrame
 
     #--------------------------------------------------------------------------
     def GetBuildConfigSetting(self, settingName):
@@ -115,25 +132,6 @@ class BuildSys:
         if self.showProgressDialog:
             if self.destroyProgressDlgFunc != None:
                 self.destroyProgressDlgFunc()
-    
-    #--------------------------------------------------------------------------
-    # Setup callbacks that will be called when the build system needs to 
-    # display a dialog with output from an external application.
-    def AttachExternalOutputDialog(self, displayFunc, appendFunc):
-        self.displayExternalOutputDlgFunc = displayFunc
-        self.appendToExternalOutputDlgFunc = appendFunc
-    
-    #--------------------------------------------------------------------------
-    # Display the dialog that will display output from an external application.
-    def DisplayExternalOutputDialog(self, title):
-        if self.displayExternalOutputDlgFunc != None:
-            self.displayExternalOutputDlgFunc(title)
-    
-    #--------------------------------------------------------------------------
-    # Append text to the external output dialog.
-    def AppendToExternalOutputDialog(self, text):
-        if self.appendToExternalOutputDlgFunc != None:
-            self.appendToExternalOutputDlgFunc(text)
     
     #--------------------------------------------------------------------------
     def AttachSummaryDialog(self, displayFunc):

@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 import wx
+import wx.lib.newevent
 import string, thread, logging, sys, os.path, time
 import webbrowser
 from workspacespanel import WorkspacesPanel
@@ -14,6 +15,9 @@ from workspacespanel import WorkspaceListLoadedEvent
 from classbuilderpanel import ClassBuilderPanel
 from cmdeditorpanel import CmdEditorPanel
 from buildlog import BuildLogPanel
+from externaltaskdialog import ExternalTaskDialogProxy
+
+(CreateExternalTaskDialogProxyEvent, EVT_CREATE_EXTERN_TASK_DLG_PROXY) = wx.lib.newevent.NewEvent()
 
 ABOUT_BOX_TEXT = """\
     Nebula 2 Build System GUI    
@@ -102,6 +106,10 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnCloseBtn, self.closeBtn)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         
+        # More Events
+        self.Bind(EVT_CREATE_EXTERN_TASK_DLG_PROXY, 
+                  self.OnCreateExternalTaskDialogProxy)
+        
         # Layout the controls...
         # top level sizer
         sizerA = wx.BoxSizer(wx.VERTICAL)
@@ -170,6 +178,34 @@ class MainFrame(wx.Frame):
         success = self.buildSys.Prepare()
         evt = WorkspaceListLoadedEvent(listLoaded = success)
         wx.PostEvent(self.workspacesTab, evt)
+        
+    #--------------------------------------------------------------------------
+    # Create an external task dialog proxy, the callback function will be 
+    # called with the new instance of the dialog proxy.
+    # This can be called from any thread.
+    def CreateExternalTaskDialogProxy(self, dlgTitle, OnCreateDlg, 
+                                      OnOkBtn, OnCancelBtn):
+        if OnCreateDlg != None:
+            evt = CreateExternalTaskDialogProxyEvent(dlgTitle = dlgTitle,
+                                                     OnCreateDlg = OnCreateDlg,
+                                                     OnOkBtn = OnOkBtn,
+                                                     OnCancelBtn = OnCancelBtn)
+            wx.PostEvent(self, evt)
+            
+    #--------------------------------------------------------------------------
+    # Never call directly! 
+    # This will be called indirectly within the GUI thread's context 
+    # by self.CreateExternalTaskDialogProxy().
+    def OnCreateExternalTaskDialogProxy(self, evt):
+        proxy = ExternalTaskDialogProxy(self, evt.dlgTitle, 
+                                        evt.OnOkBtn, evt.OnCancelBtn)
+        evt.OnCreateDlg(proxy)
+        
+    #--------------------------------------------------------------------------
+    # Destroy a dialog proxy previously created by 
+    # self.CreateExternalTaskDialogProxy().
+    def DestroyExternalTaskDialogProxy(self, proxy):
+        proxy.Destroy()
 
 #--------------------------------------------------------------------------
 class MainApp(wx.App):
@@ -187,6 +223,7 @@ class MainApp(wx.App):
     def OnInit(self):
         mainFrame = MainFrame(self.buildSys, self.curGeneratorName, 
                               self.curWorkspaceNames)
+        self.buildSys.SetMainFrame(mainFrame)
         self.SetTopWindow(mainFrame)
         mainFrame.CenterOnScreen()
         mainFrame.Show(True)
