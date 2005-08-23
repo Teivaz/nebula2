@@ -758,6 +758,9 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //------------------------------------------------------------------------------
 /**
     Translate a win32 keycode into a Nebula keycode.
+
+    -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping
+                          Thanks Magon Fox and Chris Tencati for the pointing out this.
 */
 nKey 
 nWin32WindowHandler::TranslateKey(int vkey)
@@ -874,6 +877,17 @@ nWin32WindowHandler::TranslateKey(int vkey)
         case VK_F24:        nk=N_KEY_F24; break;
         case VK_NUMLOCK:    nk=N_KEY_NUMLOCK; break;
         case VK_SCROLL:     nk=N_KEY_SCROLL; break;
+        case VK_OEM_1:      nk=N_KEY_SEMICOLON; break;
+        case VK_OEM_2:      nk=N_KEY_SLASH; break;
+        case VK_OEM_3:      nk=N_KEY_TILDE; break;
+        case VK_OEM_4:      nk=N_KEY_LEFTBRACKET; break;
+        case VK_OEM_5:      nk=N_KEY_BACKSLASH; break;
+        case VK_OEM_6:      nk=N_KEY_RIGHTBRACKET; break;
+        case VK_OEM_7:      nk=N_KEY_QUOTE; break;
+        case VK_OEM_COMMA:  nk=N_KEY_COMMA; break;
+        case VK_OEM_MINUS:  nk=N_KEY_UNDERBAR; break;
+        case VK_OEM_PERIOD: nk=N_KEY_PERIOD; break;
+        case VK_OEM_PLUS:   nk=N_KEY_EQUALITY; break;
         default:            nk=N_KEY_NONE; break;
     }
     return nk;
