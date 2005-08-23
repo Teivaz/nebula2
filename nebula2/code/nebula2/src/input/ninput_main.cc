@@ -21,6 +21,10 @@ struct nStrToKey {
     nKey key;
 };
 
+/*
+    -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
+                          Thanks Magon Fox and Chris Tencati for the pointing out this.
+*/
 nStrToKey key_remaptable[] = {
     { "bs",         N_KEY_BACK, },
     { "tab",        N_KEY_TAB, },
@@ -128,7 +132,18 @@ nStrToKey key_remaptable[] = {
     { "f24",        N_KEY_F24, },
     { "numlock",    N_KEY_NUMLOCK, },
     { "scroll",     N_KEY_SCROLL, },
-    { NULL,         N_KEY_NONE },
+    { "semicolon",  N_KEY_SEMICOLON, },
+    { "slash",      N_KEY_SLASH, },
+    { "tilde",      N_KEY_TILDE, },
+    { "leftbracket",N_KEY_LEFTBRACKET, },
+    { "backslash",  N_KEY_BACKSLASH, },
+    { "rightbracket", N_KEY_RIGHTBRACKET, },
+    { "quote",        N_KEY_QUOTE, },
+    { "comma",        N_KEY_COMMA, },
+    { "underbar",     N_KEY_UNDERBAR, },
+    { "period",       N_KEY_PERIOD,},
+    { "equality",     N_KEY_EQUALITY,},
+    { NULL,           N_KEY_NONE },
 };
 #endif
 

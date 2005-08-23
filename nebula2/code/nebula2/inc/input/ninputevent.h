@@ -77,6 +77,9 @@ enum nInputType {
     @name Keycodes
     @ingroup NebulaInputSystem
 
+    -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
+                          Thanks Magon Fox and Chris Tencati for the pointing out this.
+
     Keycodes for N_INPUT_KEY_DOWN/N_INPUT_KEY_UP
     @{
 */
@@ -198,6 +201,18 @@ enum nKey {
 
     N_KEY_NUMLOCK,
     N_KEY_SCROLL,
+
+    N_KEY_SEMICOLON,
+    N_KEY_SLASH,
+    N_KEY_TILDE,
+    N_KEY_LEFTBRACKET,
+    N_KEY_BACKSLASH,
+    N_KEY_RIGHTBRACKET,
+    N_KEY_QUOTE,
+    N_KEY_COMMA,
+    N_KEY_UNDERBAR,
+    N_KEY_PERIOD,
+    N_KEY_EQUALITY,
 };
 /// @}
 
