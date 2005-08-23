@@ -383,6 +383,13 @@ class BuildSys:
         # process workspaces
         for workspace in self.workspaces.itervalues():
             workspace.CollectPreprocessorDefs()
+            # Doing this after workspace.CollectPreprocessorDefs() means that
+            # any defines for transitive targets that haven't been explicitely
+            # added to the workspace will be ignored. I think that's a good
+            # thing, because transitive dependencies are supposed to be taken 
+            # care of by the build system, if you have to add defines to them
+            # then you might as well list them in the workspace explicitely.
+            workspace.CollectTransitiveTargetDependencies()
         return True
         
     #--------------------------------------------------------------------------
