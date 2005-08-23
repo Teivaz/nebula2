@@ -8,7 +8,7 @@
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
 
-import sys, os, fnmatch, re, time, string, glob, subprocess
+import sys, os, fnmatch, re, time, string, glob, subprocess, platform
 from buildsys3.externaltask import ExternalTask
 
 #--------------------------------------------------------------------------
@@ -353,7 +353,18 @@ class doxygen:
         task = ExternalTask('Doxygen', 
                             '"%s" auto_nebula2.cfg' % self.doxygenPath, 
                             self.doxycfgDir, self.buildSys.GetMainFrame())
-        return task.Run()
+        if task.Run():
+            if platform.system() == 'Windows':
+                # if we're not going to generate a CHM then display the 
+                # index page for the documentation doxygen just generated
+                if not self.GetSetting('autoGenerateCHM'):
+                    docPath = self.buildSys.GetAbsPathFromRel(
+                              os.path.join('doc', 'doxydoc', 'nebula2', 'html', 
+                                           'index.html'))
+                    os.startfile(docPath)
+            return True
+        
+        return False
         
     #-------------------------------------------------------------------------
     # collect all the modules from the selected workspaces
@@ -487,7 +498,16 @@ class doxygen:
         task = ExternalTask('HTML Help Compiler', 
                             '"%s" index.hhp' % self.htmlHelpCompilerPath, 
                             hhpPath, self.buildSys.GetMainFrame())
-        return task.Run()
+        if task.Run():
+            if platform.system() == 'Windows':
+                # display the CHM the HTML Help Compiler just generated
+                docPath = self.buildSys.GetAbsPathFromRel(
+                          os.path.join('doc', 'doxydoc', 'nebula2', 'html', 
+                                       'nebula2.chm'))
+                os.startfile(docPath)
+            return True
+            
+        return False
 
     #--------------------------------------------------------------------------
     def getRootClass(self):
