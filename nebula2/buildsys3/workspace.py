@@ -48,9 +48,13 @@ class Workspace:
         return dataValid
         
     #--------------------------------------------------------------------------
+    # Collect all global (defined for every target in the workspace) and per
+    # target defines and store them in an easily retrievable form.
     def CollectPreprocessorDefs(self):
+        numTargetsPresent = 0
         for targetName in self.targets:
-            target = self.buildSys.targets[targetName]
+            # will contain all the preprocessor defines for a particular target, 
+            # where (key: value) -> (define name: value given to the define)
             preprocDefs = {}
             for globalDef in self.globalDefs:
                 if len(globalDef) == 1:
@@ -58,12 +62,22 @@ class Workspace:
                 elif len(globalDef) == 2:
                     preprocDefs[globalDef[0]] = globalDef[1]
             if targetName in self.targetDefs:
+                numTargetsPresent += 1
                 for targetDef in self.targetDefs[targetName]:
                     if len(targetDef) == 1:
                         preprocDefs[targetDef[0]] = ''
                     elif len(targetDef) == 2:
                         preprocDefs[targetDef[0]] = targetDef[1]
             self.targetDefsAll[targetName] = preprocDefs
+            
+        # figure out if there are any orphaned per target defines
+        # i.e. per target defines for targets that aren't in the workspace
+        numTargetsMissing = len(self.targetDefs) - numTargetsPresent
+        if numTargetsMissing > 0:
+            self.buildSys.logger.warning('Found per target defines for ' \
+                                         'targets that have not been ' \
+                                         'explicitely added to the workspace ' \
+                                         '%s in %s', self.name, self.bldFile)
     
     #--------------------------------------------------------------------------
     def GetWorkspacePath(self, defaultPath):
@@ -82,11 +96,12 @@ class Workspace:
     #--------------------------------------------------------------------------
     def GetTargetDefsStringForTarget(self, targetName):
         defStr = ''
-        for defName, defValue in self.targetDefsAll[targetName].items():
-            if '' == defValue:
-                defStr += defName + ';'
-            else:
-                defStr += defName + '=' + defValue + ';'
+        if targetName in self.targetDefsAll:
+            for defName, defValue in self.targetDefsAll[targetName].items():
+                if '' == defValue:
+                    defStr += defName + ';'
+                else:
+                    defStr += defName + '=' + defValue + ';'
         return defStr
         
     #--------------------------------------------------------------------------
@@ -137,6 +152,22 @@ class Workspace:
             searchStr += libPath + ';'
 
         return searchStr
+        
+    #--------------------------------------------------------------------------
+    # When a target depends on other targets those targets have to be included
+    # in the workspace in order for things to build properly. In the past you
+    # had to figure out which target dependencies to add to the workspace on 
+    # your own, that was rather tedious so now this method does it for you.
+    def CollectTransitiveTargetDependencies(self):
+        transitiveDeps = []
+        for targetName in self.targets:
+            target = self.buildSys.targets[targetName]
+            for targetDepName in target.depends:
+                if targetDepName not in transitiveDeps:
+                    if targetDepName not in self.targets:
+                        transitiveDeps.append(targetDepName)
+        self.targets.extend(transitiveDeps)
+        #print 'Transitive Dependecies for %s: %s' % (self.name, str(transitiveDeps))
     
 #--------------------------------------------------------------------------
 # EOF
