@@ -759,7 +759,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /**
     Translate a win32 keycode into a Nebula keycode.
 
-    -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping
+    -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
                           Thanks Magon Fox and Chris Tencati for the pointing out this.
 */
 nKey 
