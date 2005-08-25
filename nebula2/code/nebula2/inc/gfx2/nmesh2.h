@@ -11,14 +11,42 @@
     Meshes are generally static and loaded from mesh resource files.
     
     nMesh2 is normally a superclass for Gfx API specific derived classes, like
-    Direct3D or OpenGL.
+    Direct3D(see @ref nD3D9Mesh) or OpenGL.
 
-    Mesh Fileformats:
+    <h2>Mesh Group</h2>
+
+    A mesh can be consist of several groups. If a mesh has more than one group, 
+    you need a shapenode for each mesh group you want to render. 
+    The reason for this is that if you've split a mesh into groups then 
+    you must have some reason for doing that such as rendering them with different
+    materials/shaders/textures or transforming them differently and doing that 
+    requires seperate shapenodes.
+
+    If you have one mesh file <tt>mymesh.n3d2</tt> and the mesh file has two groups 
+    due to it has different textures for each group then you need two shapenode to 
+    render it. The following script illustarates it:
+    @verbatim
+    new nshapenode shape0
+        sel shape0
+        ...
+        .setmesh "meshes:mymesh.n3d2"
+        .setgroupindex 0
+        .settexture "DiffMap0" "textures:tex01.dds"
+    sel ..
+    new nshapenode shape1
+        sel shape1
+        ...
+        .setmesh "meshes:mymesh.n3d2"
+        .setgroupindex 1
+        .settexture "DiffMap0" "textures:tex02.dds"
+    sel ..
+    @endverbatim
+
+    <h2>Mesh File Format</h2>
+
+    ASCII Mesh Fileformats(.n3d2):
 
     @verbatim
-    --------------------------------------------------------
-    ASCII: n3d2
-
     type n3d2
     numgroups [numGroups]
     numvertices [numVertices] 
@@ -38,9 +66,11 @@
     e 0 1 0 1
     e 1 2 1 2
     ....
-    --------------------------------------------------------
-    BINARY: nvx2
-    
+    @endverbatim
+
+    Binary Mesh Fileformat(.nvx2): 
+
+    @verbatim   
     uint magic = 'NVX2'
     int numGroups;
     int numVertices;
