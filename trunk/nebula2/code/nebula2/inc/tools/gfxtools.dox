@@ -5,4 +5,8 @@
 
 Nebula provides some useful classes for building Nebula graphics data files.
 
+One of the good thing to use these tools is that it provides a unified way 
+to generate mesh and animation data even if whatever you use for an asset tool. 
+(eg. 3DS Max, Maya etc.)
+
 */
