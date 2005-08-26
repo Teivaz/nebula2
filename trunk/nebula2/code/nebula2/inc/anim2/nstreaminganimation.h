@@ -22,13 +22,7 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#ifndef N_ANIMATION_H
 #include "animation/nanimation.h"
-#endif
-
-#undef N_DEFINES
-#define N_DEFINES nStreamingAnimation
-#include "kernel/ndefdllclass.h"
 
 //------------------------------------------------------------------------------
 class nStreamingAnimation : public nAnimation
