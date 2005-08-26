@@ -9,11 +9,11 @@
 
     New Elements are added to the end of the array until the array is full.
     In a full array, new elements replace the current lowest priority element
-    (if the priority of the new element is greater of course). 
-    
+    (if the priority of the new element is greater of course).
+
     NOTE: The current implementation uses linear search and thus is slow
     for large arrays.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -32,12 +32,16 @@ public:
     nPriorityArray<TYPE>& operator=(const nPriorityArray<TYPE>& rhs);
     /// [] operator
     TYPE& operator[](int index) const;
+    /// clear the array
+    void Clear();
     /// add element to array
     void Add(const TYPE& elm, float pri);
     /// get number of elements in array
     int Size() const;
     /// return n'th array element
     TYPE& At(int index);
+    /// return true if empty
+    bool IsEmpty() const;
 
 private:
     /// update the min pri element index
@@ -46,6 +50,8 @@ private:
     void Copy(const nPriorityArray<TYPE>& src);
     /// delete content
     void Delete();
+    /// destroy an element (call destructor without freeing memory)
+    void Destroy(TYPE* elm);
 
     /// an element class
     struct Element
@@ -85,8 +91,7 @@ nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src) :
 {
     n_assert(0 == this->elements);
     this->elements = n_new_array(Element, this->maxElements);
-    int i;
-    for (i = 0; i < this->numElements; i++)
+    for (int i = 0; i < this->numElements; i++)
     {
         this->elements[i] = src.elements[i];
     }
@@ -136,12 +141,39 @@ nPriorityArray<TYPE>::~nPriorityArray()
 */
 template<class TYPE>
 void
+nPriorityArray<TYPE>::Destroy(TYPE* elm)
+{
+    elm->~TYPE();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
+nPriorityArray<TYPE>::Clear()
+{
+    n_assert(this->elements);
+
+    // call element destructors
+    for (int i = 0; i < this->numElements; i++)
+    {
+        this->Destroy(&(this->elements[i].element));
+    }
+    this->numElements = 0;
+    this->minPriElementIndex = 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
 nPriorityArray<TYPE>::UpdateMinPriElementIndex()
 {
-    int i;
     this->minPriElementIndex = 0;
     float minPri = this->elements[0].priority;
-    for (i = 1; i < this->numElements; i++)
+    for (int i = 1; i < this->numElements; i++)
     {
         if (this->elements[i].priority < minPri)
         {
@@ -215,7 +247,7 @@ nPriorityArray<TYPE>::operator[](int index) const
 /**
 */
 template<class TYPE>
-nPriorityArray<TYPE>& 
+nPriorityArray<TYPE>&
 nPriorityArray<TYPE>::operator=(const nPriorityArray<TYPE>& rhs)
 {
     this->Delete();
@@ -224,7 +256,15 @@ nPriorityArray<TYPE>::operator=(const nPriorityArray<TYPE>& rhs)
 }
 
 //------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+bool
+nPriorityArray<TYPE>::IsEmpty() const
+{
+    return (0 == this->numElements);
+}
+
+//------------------------------------------------------------------------------
 #endif
 
-   
-    

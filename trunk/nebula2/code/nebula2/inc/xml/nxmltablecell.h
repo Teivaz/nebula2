@@ -10,7 +10,7 @@
     The primary representation is as string, but bool, int and float values
     can be returned (converted values are cached for efficiency). Conversion
     happens during Set().
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -24,6 +24,8 @@ public:
     nXmlTableCell();
     /// destructor
     ~nXmlTableCell();
+    /// return true if the content of the cell is valid
+    bool IsValid() const;
     /// set value
     void Set(const char* s);
     /// get value
@@ -73,6 +75,16 @@ inline
 nXmlTableCell::~nXmlTableCell()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsValid() const
+{
+    return (this->valueAsString != nString("<invalid>"));
 }
 
 //------------------------------------------------------------------------------

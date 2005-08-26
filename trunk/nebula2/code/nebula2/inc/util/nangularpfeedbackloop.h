@@ -37,8 +37,6 @@ public:
 private:
     /// compute shortest angular distance between 2 angles
     float AngularDistance(float from, float to) const;
-    /// normalize an angular value into the range rad(-180), rad(+180)
-    float Normalize(float a) const;
 
     nTime time;         // the time at which the simulation is
     float stepSize;
@@ -136,21 +134,6 @@ nAngularPFeedbackLoop::GetState() const
 
 //------------------------------------------------------------------------------
 /**
-    Normalize an angular value into the range rad(0) to rad(360).
-*/
-inline 
-float
-nAngularPFeedbackLoop::Normalize(float a) const
-{
-    if ((a < 0.0f) || (a > n_deg2rad(360.0f)))
-    {
-        a = fmodf(a, n_deg2rad(360.0f));
-    }
-    return a;
-}
-
-//------------------------------------------------------------------------------
-/**
     Compute the shortest angular distance between 2 angles. The angular distance
     will be between rad(-180) and rad(180). Positive distance are in
     counter-clockwise order, negative distances in clockwise order.
@@ -159,14 +142,14 @@ inline
 float
 nAngularPFeedbackLoop::AngularDistance(float from, float to) const
 {
-    float nFrom = this->Normalize(from);
-    float nTo   = this->Normalize(to);
+    float nFrom = n_normangle(from);
+    float nTo   = n_normangle(to);
     float dist = nTo - nFrom;
     if (dist < n_deg2rad(-180.0f))
     {
         dist += n_deg2rad(360.0f);
     }
-    else if (dist > n_deg2rad(180.0f))
+    else if (dist >= n_deg2rad(180.0f))
     {
         dist -= n_deg2rad(360.0f);
     }
@@ -196,7 +179,7 @@ nAngularPFeedbackLoop::Update(nTime curTime)
     {
         // get angular distance error
         float error = this->AngularDistance(this->state, this->goal);
-        this->state = this->Normalize(this->state + (error * this->gain * this->stepSize));
+        this->state = n_normangle(this->state + (error * this->gain * this->stepSize));
         this->time += this->stepSize;
     }
 }

@@ -27,6 +27,7 @@
 
 #include "kernel/ntypes.h"
 #include "util/narray.h"
+#include "mathlib/vector.h"
 
 //------------------------------------------------------------------------------
 class nString
@@ -42,6 +43,12 @@ public:
     nString(int intVal);
     /// set to float val
     nString(float floatVal);
+    /// set to bool value
+    nString(bool boolVal);
+    /// set to vector3 value
+    nString(const vector3& v);
+    /// set to vector4 value
+    nString(const vector4& v);
     /// destructor
     ~nString();
     /// = operator
@@ -68,12 +75,24 @@ public:
     void SetInt(int val);
     /// set as float value
     void SetFloat(float val);
+    /// set as bool value
+    void SetBool(bool val);
+    /// set as vector3 value
+    void SetVector3(const vector3& v);
+    /// set as vector4 value
+    void SetVector4(const vector4& v);
     /// get string as char ptr
     const char* Get() const;
-    /// return content as integer
+    /// return contents as integer
     int AsInt() const;
-    /// return content as float
+    /// return contents as float
     float AsFloat() const;
+    /// return contents as bool
+    bool AsBool() const;
+    /// return contents as vector3
+    vector3 AsVector3() const;
+    /// return contents as vector4
+    vector4 AsVector4() const;
     /// return length of string
     int Length() const;
     /// clear the string
@@ -120,6 +139,8 @@ public:
     nString Trim(const char* charSet) const;
     /// substitute every occurance of a string with another string
     nString Substitute(const char* str, const char* substStr) const;
+    /// substiture every occurance of a character with another character
+    void SubstituteCharacter(char c, char subst);
     /// convert string inplace from UTF-8 to 8-bit ANSI
     void UTF8toANSI();
     /// convert ANSI to UTF-8 in place
@@ -147,6 +168,8 @@ public:
             __attribute__((format(printf,2,3)));
     /// format string printf-style, taking a va_list
     void FormatWithArgs(const char* fmtString, va_list args);
+    /// replace illegal filename characters
+    void ReplaceIllegalFilenameChars(char replacement);
 
 protected:
     /// copy contents
@@ -157,6 +180,9 @@ protected:
     char* GetLastSlash() const;
     /// calculate required length for the result of a printf-style format
     size_t GetFormattedStringLength(const char* format, va_list argList) const;
+
+    static const nString ConstantTrue;
+    static const nString ConstantFalse;
 
     enum
     {
@@ -259,9 +285,7 @@ inline
 void
 nString::SetInt(int val)
 {
-    char buf[128];
-    snprintf(buf, sizeof(buf), "%d", val);
-    this->Set(buf);
+    this->Format("%d", val);
 }
 
 //------------------------------------------------------------------------------
@@ -271,9 +295,44 @@ inline
 void
 nString::SetFloat(float val)
 {
-    char buf[128];
-    snprintf(buf, sizeof(buf), "%.6f", val);
-    this->Set(buf);
+    this->Format("%.6f", val);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::SetBool(bool val)
+{
+    if (val)
+    {
+        *this = ConstantTrue;
+    }
+    else
+    {
+        *this = ConstantFalse;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::SetVector3(const vector3& v)
+{
+    this->Format("%.6f,%.6f,%.6f", v.x, v.y, v.z);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::SetVector4(const vector4& v)
+{
+    this->Format("%.6f,%.6f,%.6f,%.6f", v.x, v.y, v.z, v.w);
 }
 
 //------------------------------------------------------------------------------
@@ -337,6 +396,39 @@ nString::nString(float floatVal) :
     localStrLen(0)
 {
     this->SetFloat(floatVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString::nString(bool boolVal) :
+    string(0),
+    strLen(0)
+{
+    this->SetBool(boolVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString::nString(const vector3& v) :
+    string(0),
+    strLen(0)
+{
+    this->SetVector3(v);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString::nString(const vector4& v) :
+    string(0),
+    strLen(0)
+{
+    this->SetVector4(v);
 }
 
 //------------------------------------------------------------------------------
@@ -1006,6 +1098,53 @@ nString::AsFloat() const
 
 //------------------------------------------------------------------------------
 /**
+*/
+inline
+bool
+nString::AsBool() const
+{
+    if (*this == ConstantTrue)
+    {
+        return true;
+    }
+    if (*this == ConstantFalse)
+    {
+        return false;
+    }
+    n_assert(false);  // String does not contain a bool!
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector3
+nString::AsVector3() const
+{
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 3);
+    vector3 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat());
+    return v;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nString::AsVector4() const
+{
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 4);
+    vector4 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat(), tokens[3].AsFloat());
+    return v;
+}
+
+//------------------------------------------------------------------------------
+/**
     This converts an UTF-8 string to 8-bit-ANSI. Note that only characters
     in the range 0 .. 255 are converted, all other characters will be converted
     to a question mark.
@@ -1100,21 +1239,32 @@ nString::ANSItoUTF8()
 
 //------------------------------------------------------------------------------
 /**
+    Replace character with another.
+*/
+inline
+void
+nString::SubstituteCharacter(char c, char subst)
+{
+    char* ptr = (char*) this->Get();
+    int i;
+    for (i = 0; i <= this->Length(); i++)
+    {
+        if (ptr[i] == c)
+        {
+            ptr[i] = subst;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Converts backslashes to slashes.
 */
 inline
 void
 nString::ConvertBackslashes()
 {
-    char* ptr = (char*) this->Get();
-    int i;
-    for (i = 0; i <= this->Length(); i++)
-    {
-        if (ptr[i] == '\\')
-        {
-            ptr[i] = '/';
-        }
-    }
+    this->SubstituteCharacter('\\', '/');
 }
 
 //------------------------------------------------------------------------------
@@ -1170,6 +1320,14 @@ nString::StripExtension()
     if (ext)
     {
         ext[-1] = 0;
+    }
+    if (this->string != 0)
+    {
+        this->strLen = strlen(this->Get());
+    }
+    else
+    {
+        this->localStrLen = strlen(this->Get());
     }
 }
 
@@ -1362,6 +1520,33 @@ nString::FormatWithArgs(const char* fmtString, va_list args)
     // Now do the formatting
     vsnprintf(buf, requiredLength, fmtString, args);
     this->Set(buf);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::ReplaceIllegalFilenameChars(char replacement)
+{
+    char* ptr = (char*) this->Get();
+    char c;
+    while (0 != (c = *ptr))
+    {
+        if ((c == '\\') ||
+            (c == '/') ||
+            (c == ':') ||
+            (c == '*') ||
+            (c == '?') ||
+            (c == '\"') ||
+            (c == '<') ||
+            (c == '>') ||
+            (c == '|'))
+        {
+            *ptr = replacement;
+        }
+        ptr++;
+    }
 }
 
 //-----------------------------------------------------------------------------

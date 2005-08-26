@@ -42,11 +42,13 @@ nSharedMemory::nSharedMemory() :
 */
 nSharedMemory::~nSharedMemory()
 {
-    n_assert(!IsOpen());
-
     if (this->mapHandle != 0)
     {
         this->DestroyMapping();
+    }
+    if (this->IsOpen())
+    {
+        this->Close();
     }
     delete [] this->readBuffer;
 }
@@ -57,11 +59,13 @@ nSharedMemory::~nSharedMemory()
 void
 nSharedMemory::Create()
 {
-    n_assert(!this->IsOpen());
-
     if (this->mapHandle != 0)
     {
         this->DestroyMapping();
+    }
+    if (this->IsOpen())
+    {
+        this->Close();
     }
     this->writeBuffer.Reset();
     this->isOpen = true;
@@ -141,48 +145,51 @@ nSharedMemory::Close()
     {
         n_assert(this->mapHandle == 0);
 
+        if (this->Count() > 0)
+        {
 #ifdef __WIN32__
-        // Create mapping.
-        this->mapHandle = CreateFileMapping((HANDLE)0xffffffff,  // Page file.
-                                             NULL,               // Handle cannot be inherited.
-                                             PAGE_READWRITE,     // Read+write access.
-                                             0,                  // ??
-                                             this->Count(),      // Size in bytes.
-                                             this->GetName());   // Mapping's name.
+            // Create mapping.
+            this->mapHandle = CreateFileMapping((HANDLE)0xffffffff,  // Page file.
+                                                NULL,               // Handle cannot be inherited.
+                                                PAGE_READWRITE,     // Read+write access.
+                                                0,                  // ??
+                                                this->Count(),      // Size in bytes.
+                                                this->GetName());   // Mapping's name.
 
-        if (this->mapHandle == NULL)
-        {
-            n_printf("Failed to create file mapping (Error: %d).\n", GetLastError());
-            n_assert(false);
-            return;
-        }
+            if (this->mapHandle == NULL)
+            {
+                n_printf("Failed to create file mapping (Error: %d).\n", GetLastError());
+                n_assert(false);
+                return;
+            }
 
-        // Create view of file in current process's address space.
-        this->mapHeader = MapViewOfFile(this->mapHandle,       // Map handle.
-                                        FILE_MAP_ALL_ACCESS,   // Read+write access.
-                                        0,                     // ?
-                                        0,                     // ?
-                                        0);                    // Map entire file.
+            // Create view of file in current process's address space.
+            this->mapHeader = MapViewOfFile(this->mapHandle,       // Map handle.
+                                            FILE_MAP_ALL_ACCESS,   // Read+write access.
+                                            0,                     // ?
+                                            0,                     // ?
+                                            0);                    // Map entire file.
 
-        if (this->mapHeader == NULL)
-        {
-            CloseHandle(this->mapHandle);
-            n_printf("Failed to map view of file (Error: %d).\n", GetLastError());
-            n_assert(false);
-            return;
-        }
+            if (this->mapHeader == NULL)
+            {
+                CloseHandle(this->mapHandle);
+                n_printf("Failed to map view of file (Error: %d).\n", GetLastError());
+                n_assert(false);
+                return;
+            }
 #elif defined(__LINUX__) || defined(__MACOSX__)
 #else
 #error "nSharedMemory::Close() is not implemented yet!"
 #endif
 
-        this->mapBody = (char*)this->mapHeader;
-        this->mapBody += HeaderSize;
+            this->mapBody = (char*)this->mapHeader;
+            this->mapBody += HeaderSize;
 
-        this->LockMemory();
-        this->WriteHeader();
-        this->WriteBody();
-        this->UnlockMemory();
+            this->LockMemory();
+            this->WriteHeader();
+            this->WriteBody();
+            this->UnlockMemory();
+        }
     }
     else
     {

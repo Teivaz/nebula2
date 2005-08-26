@@ -19,9 +19,8 @@
 //------------------------------------------------------------------------------
 class nQuadTree
 {
-    class Node;
-
 public:
+    class Node;
     class Element;
 
     /// constructor
@@ -44,6 +43,12 @@ public:
     void Update(Element* elm, const bbox3& box);
     /// remove an element from the quad tree
     void Remove(Element* elm);
+    /// compute number of nodes in a level, including its children
+    int GetNumNodes(uchar level) const;
+    /// compute linear chunk index from level, col and row
+    int GetNodeIndex(uchar level, ushort col, ushort row) const;
+    /// get pointer to node by index
+    const Node& GetNodeByIndex(int i) const;
 
     /// an element in the tree, derive subclass for customized Render() method
     class Element : public nNode
@@ -64,12 +69,6 @@ public:
 
         Node* node;
     };
-
-private:
-    /// compute number of nodes in a level, including its children
-    int GetNumNodes(uchar level) const;
-    /// compute linear chunk index from level, col and row
-    int GetNodeIndex(uchar level, ushort col, ushort row) const;
 
     /// node in quad tree
     class Node
@@ -113,6 +112,7 @@ private:
         nList elmList;
     };
 
+private:
     friend class Node;
 
     uchar treeDepth;
@@ -146,6 +146,16 @@ nQuadTree::Node::~Node()
     // unlink elements
     nNode* elm;
     while ((elm = this->elmList.RemHead()));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nQuadTree::Node&
+nQuadTree::GetNodeByIndex(int index) const
+{
+    return this->nodeArray[index];
 }
 
 //------------------------------------------------------------------------------

@@ -12,6 +12,7 @@
 #include <memory.h>
 #include "kernel/ntypes.h"
 #include "util/nnode.h"
+#include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------
 class nBitStream : public nNode
@@ -113,7 +114,7 @@ nBitStream::nBitStream()
     streamSize  = 0;
     currentByte = 0;
     currentBit  = 0;
-    writable   = false;
+    writable    = false;
     readable    = false;
     stream      = 0;
 }

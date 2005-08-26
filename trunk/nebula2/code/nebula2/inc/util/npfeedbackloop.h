@@ -72,6 +72,7 @@ nPFeedbackLoop<TYPE>::Reset(nTime t, float s, float g, const TYPE& curState)
     this->stepSize = s;
     this->gain = g;
     this->state = curState;
+    this->goal = curState;
 }
 
 //------------------------------------------------------------------------------
