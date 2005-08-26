@@ -174,6 +174,8 @@ public:
         static LoopType StringToLoopType(const char* str);
         /// convert a time stamp into 2 global key indices and an inbetween value
         void TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float& inbetween) const;
+        /// return true if time is between startTime and stopTime (handles looped and clamped case correctly)
+        bool IsInbetween(float time, float startTime, float stopTime) const;
         /// get animation duration
         nTime GetDuration() const;
 
@@ -491,7 +493,41 @@ nAnimation::Group::StringToLoopType(const char* str)
 
 //------------------------------------------------------------------------------
 /**
-     - 18-Oct-04    floh        fixed case where returned indices could be <0
+    Return true if absolute time is between relative start and stop time.
+    This will handle the case where the curve is looped and time is out
+    of bounds correctly.
+
+    Convert an absolute time into a normalized time. If the group is looped,
+    this will return a time within start and end.
+*/
+inline
+bool
+nAnimation::Group::IsInbetween(float time, float startTime, float stopTime) const
+{
+    if (Clamp == this->loopType)
+    {
+        return ((time >= startTime) && (time <= stopTime));
+    }
+    else
+    {
+        float dur = float(this->GetDuration());
+        float normStartTime = fmodf(startTime, dur);
+        float normStopTime  = fmodf(stopTime, dur);
+        if (normStartTime < normStopTime)
+        {
+            return ((time >= normStartTime) && (time <= normStopTime));
+        }
+        else
+        {
+            // wrap around
+            return ((time >= normStartTime) || (time <= normStopTime));
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    - 18-Oct-04   floh      fixed case where returned indices could be <0
 */
 inline
 void
@@ -513,10 +549,16 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
     else
     {
         // 'repeat' loop type
-        if (keyIndex0 < 0) keyIndex0 += this->numKeys;
-        if (keyIndex1 < 0) keyIndex1 += this->numKeys;
         keyIndex0 %= this->numKeys;
         keyIndex1 %= this->numKeys;
+        if (keyIndex0 < 0)
+        {
+            keyIndex0 += this->numKeys;
+        }
+        if (keyIndex1 < 0)
+        {
+            keyIndex1 += this->numKeys;
+        }
     }
     n_assert((keyIndex0 >= 0) && (keyIndex0 < this->numKeys));
     n_assert((keyIndex1 >= 0) && (keyIndex1 < this->numKeys));
