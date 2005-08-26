@@ -74,7 +74,7 @@ nWin32PrefServer::Close()
 {
     n_assert(this->isOpen);
     n_assert(0 != this->rootKey);
-    
+
     LONG error = RegCloseKey(this->rootKey);
     n_assert(ERROR_SUCCESS == error);
     this->rootKey = 0;
@@ -92,11 +92,30 @@ nWin32PrefServer::KeyExists(const nString& key)
     n_assert(!key.IsEmpty());
 
     HKEY hKey = 0;
-    LONG error = RegOpenKeyEx(this->rootKey,    // hKey
-                              key.Get(),        // lpSubKey
-                              0,                // ulOptions (reserved)
-                              KEY_READ,         // samDesired
+    nString keyName = "SOFTWARE\\";
+    keyName.Append(this->GetCompanyName());
+    keyName.Append("\\");
+    keyName.Append(this->GetApplicationName());
+
+    LONG error = RegOpenKeyEx(HKEY_CURRENT_USER,    // hKey
+                              keyName.Get(),        // lpSubKey
+                              0,                    // ulOptions (reserved)
+                              KEY_READ,             // samDesired
                               &hKey);
+
+    if (ERROR_SUCCESS != error)
+    {
+        // key does not exist
+        return false;
+    }
+
+    error = RegQueryValueEx(hKey,             // hKey
+                            key.Get(),        // lpSubKey
+                            0,                // ulOptions (reserved)
+                            0,
+                            0,
+                            0);
+
     if (ERROR_SUCCESS == error)
     {
         // key exists
@@ -159,5 +178,3 @@ nWin32PrefServer::ReadGeneric(const nString& key)
     return returnValue;
 }
 
-
-                                 

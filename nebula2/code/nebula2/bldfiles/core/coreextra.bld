@@ -101,6 +101,12 @@ beginmodule nresource
     setheaders { nresource }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule ncaptureserver
+    setdir misc
+    setfiles { ncaptureserver_main ncaptureserver_cmds }
+    setheaders { ncaptureserver }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nconserver
     setdir misc
     setfiles { ncsrv_main ncsrv_cmds }
