@@ -29,6 +29,8 @@ distribution.
 #include <sstream>
 #endif
 
+#include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
@@ -711,6 +713,10 @@ bool TiXmlDocument::SaveFile() const
 	return false;
 }
 
+//------------------------------------------------------------------------------
+/**
+    14-May-05   floh    rewritten to Nebula2 Fileroutines
+*/
 bool TiXmlDocument::LoadFile( const char* filename )
 {
 	// Delete the existing data:
@@ -727,20 +733,17 @@ bool TiXmlDocument::LoadFile( const char* filename )
 	// Fixed with the StringToBuffer class.
 	value = filename;
 
-	FILE* file = fopen( value.c_str (), "r" );
-
-	if ( file )
-	{
+    nFile* file = nFileServer2::Instance()->NewFileObject();
+    if (file->Open(value.c_str(), "r"))
+    {
 		// Get the file size, so we can pre-allocate the string. HUGE speed impact.
-		long length = 0;
-		fseek( file, 0, SEEK_END );
-		length = ftell( file );
-		fseek( file, 0, SEEK_SET );
+		long length = file->GetSize();
 
 		// Strange case, but good to handle up front.
 		if ( length == 0 )
 		{
-			fclose( file );
+			file->Close();
+            file->Release();
 			return false;
 		}
 
@@ -752,11 +755,13 @@ bool TiXmlDocument::LoadFile( const char* filename )
 		const int BUF_SIZE = 2048;
 		char buf[BUF_SIZE];
 
-		while( fgets( buf, BUF_SIZE, file ) )
-		{
+        while (file->GetS(buf, BUF_SIZE))
+        {
 			data += buf;
 		}
-		fclose( file );
+		file->Close();
+        file->Release();
+        file = 0;
 
 		Parse( data.c_str(), 0 );
 
@@ -769,6 +774,9 @@ bool TiXmlDocument::LoadFile( const char* filename )
 	return false;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
 bool TiXmlDocument::SaveFile( const char * filename ) const
 {
 	// The old c stuff lives on...
