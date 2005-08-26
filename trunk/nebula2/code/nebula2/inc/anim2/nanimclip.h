@@ -12,6 +12,7 @@
 */
 #include "anim2/nanimation.h"
 #include "variable/nvariable.h"
+#include "anim2/nanimeventtrack.h"
 
 //------------------------------------------------------------------------------
 class nAnimClip
@@ -31,12 +32,21 @@ public:
     void SetWeight(float w);
     /// get current weight value
     float GetWeight() const;
+    /// set number of animation event tracks
+    void SetNumAnimEventTracks(int num);
+    /// get number of animation event tracks
+    int GetNumAnimEventTracks() const;
+    /// read/write access to animation event track
+    nAnimEventTrack& GetAnimEventTrackAt(int index);
+    /// access to anim event tracks array
+    nFixedArray<nAnimEventTrack>& AnimEventTracks();
 
 private:
     int numCurves;
     int firstCurveIndex;
     float weight;
     nVariable::Handle weightChannelHandle;
+    nFixedArray<nAnimEventTrack> animEventTracks;
 };
 
 //------------------------------------------------------------------------------
@@ -115,6 +125,46 @@ float
 nAnimClip::GetWeight() const
 {
     return this->weight;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimClip::SetNumAnimEventTracks(int num)
+{
+    this->animEventTracks.SetSize(num);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAnimClip::GetNumAnimEventTracks() const
+{
+    return this->animEventTracks.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimEventTrack&
+nAnimClip::GetAnimEventTrackAt(int index)
+{
+    return this->animEventTracks[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nFixedArray<nAnimEventTrack>&
+nAnimClip::AnimEventTracks()
+{
+    return this->animEventTracks;
 }
 
 //------------------------------------------------------------------------------
