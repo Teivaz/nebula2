@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nDSoundServer3
-    @ingroup NebulaDSAudioSystem
+    @ingroup Audio3
 
-    @brief nAudioServer3 implemention using DirectSound.
+    nAudioServer3 implemention using DirectSound.
 
     (C) 2003 RadonLabs GmbH
 */

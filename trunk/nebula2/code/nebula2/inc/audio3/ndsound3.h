@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nDSound3
-    @ingroup NebulaDSAudioSystem
+    @ingroup Audio3
 
-    @brief DirectSound based implementation of nSound3. Works together with
+    DirectSound based implementation of nSound3. Works together with
     nDSoundServer3 and nDSoundResource.
     
     (C) 2003 RadonLabs GmbH

@@ -45,9 +45,6 @@ nDSoundResource::LoadResource()
     CSoundManager* soundManager = this->refSoundServer->GetSoundManager();
     HRESULT hr;
 
-    // get mangled path name
-    nString mangledPath = nFileServer2::Instance()->ManglePath(this->GetFilename().Get());
-    
     DWORD creationFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_LOCDEFER;
     if (!this->ambient)
     {
@@ -56,10 +53,10 @@ nDSoundResource::LoadResource()
     if (!this->streaming)
     {
         // create a static sound object
-        hr = soundManager->Create(&(this->dsSound), (LPTSTR) mangledPath.Get(), creationFlags, DS3DALG_DEFAULT, this->numTracks);
+        hr = soundManager->Create(&(this->dsSound), (LPTSTR) this->GetFilename().Get(), creationFlags, DS3DALG_DEFAULT, this->numTracks);
         if (FAILED(hr))
         {
-            n_error("nDSoundServer::LoadResource(): Creating static sound '%s' failed!", mangledPath.Get());
+            n_error("nDSoundServer::LoadResource(): Creating static sound '%s' failed!", this->GetFilename().Get());
             return false;
         }
         n_assert(this->dsSound);
@@ -69,11 +66,24 @@ nDSoundResource::LoadResource()
         // create a streaming sound object (with a 128 KByte streaming buffer)
         int numNotifications = 4;
         int blockSize = (1<<17) / numNotifications;
-        hr = soundManager->CreateStreaming(&(this->dsStreamingSound), (LPTSTR) mangledPath.Get(), creationFlags,
-            DS3DALG_DEFAULT, numNotifications, blockSize);
+
+        /*
+        if((this->GetFilename().CheckExtension("ogg"))||
+           (this->GetFilename().CheckExtension("OGG")))
+        {
+            hr = soundManager->CreateStreamingOgg(&(this->dsStreamingSound), (LPTSTR) mangledPath.Get(), creationFlags,
+                DS3DALG_DEFAULT, numNotifications, blockSize);
+        }
+        else
+        {
+            */
+            hr = soundManager->CreateStreaming(&(this->dsStreamingSound), (LPTSTR) this->GetFilename().Get(), creationFlags,
+                DS3DALG_DEFAULT, numNotifications, blockSize);
+//        }
+            
         if (FAILED(hr))
         {
-            n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", mangledPath);
+            n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", this->GetFilename().Get());
             return false;
         }
         n_assert(this->dsStreamingSound);

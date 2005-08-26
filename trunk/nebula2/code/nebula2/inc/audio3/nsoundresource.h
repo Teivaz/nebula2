@@ -3,15 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class nSoundResource
-    @ingroup NebulaAudioSystem
+    @ingroup Audio3
 
-    @brief A sound resource is a container for sound data which can be played
-    back by the nAudioServer3 subsystem.
-
-    The sound may be static or streaming, oneshot or looping. A sound
-    resource should be able play itself several times simultaneously,
-    the intended number of parallel "tracks" can be set by the user
-    before opening the resource.
+    A sound resource is a container for sound data which can be played back
+    by the nAudioServer3 subsystem. The sound may be static or streaming,
+    oneshot or looping. A sound resource should be able play itself
+    several times simultaneously, the intended number of parallel
+    "tracks" can be set by the user before opening the resource.
 
     Sound resources are generally shared and are referenced by 
     nSound3 objects (there should be one nSound3 object per "sound instance",

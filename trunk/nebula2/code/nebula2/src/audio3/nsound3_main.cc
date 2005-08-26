@@ -24,8 +24,7 @@ nSound3::nSound3() :
     coneOutsideVolume(1.0f),
     category(nAudioServer3::Effect),
     volumeDirty(true),
-    props3DDirty(true),
-    playingTime(0.0f)
+    props3DDirty(true)
 {
     // empty
 }

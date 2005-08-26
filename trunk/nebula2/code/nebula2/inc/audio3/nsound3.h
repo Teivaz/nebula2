@@ -3,14 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class nSound3
-    @ingroup NebulaAudioSystem
+    @ingroup Audio3
 
-    @brief Hold parameters for a sound instance.
-
-    Usually a "game object" holds one or more nSound3 objects for all the
-    sounds it has to play.  Although nSound3 is derived from nResource,
-    nSound3 objects should never be shared (this is enforced by the factory
-    method nAudioServer3::NewSound()).
+    Hold parameters for a sound instance. Usually a "game object" holds
+    one or more nSound3 objects for all the sounds it has to play.
+    Although nSound3 is derived from nResource, nSound3 objects should
+    never be shared (this is enforced by the factory method
+    nAudioServer3::NewSound()).
 
     When opened, a nSound3 object will create a shared static or streaming
     sound resource, based on the settings of nSound3.
@@ -94,10 +93,6 @@ public:
     void SetCategory(nAudioServer3::Category category);
     /// get category of sound
     nAudioServer3::Category GetCategory() const;
-    /// set playing time in seconds
-    void SetPlayingTime(float s);
-    /// get playing time in seconds
-    float GetPlayingTime() const;
 
 protected:
     int numTracks;
@@ -116,7 +111,6 @@ protected:
     nAudioServer3::Category category;
     bool volumeDirty;
     bool props3DDirty;
-    float playingTime;
 };
 
 //------------------------------------------------------------------------------
@@ -141,7 +135,6 @@ nSound3::CopySoundAttrsFrom(const nSound3* other)
     this->SetOutsideConeAngle(other->GetOutsideConeAngle());
     this->SetConeOutsideVolume(other->GetConeOutsideVolume());
     this->SetCategory(other->GetCategory());
-    this->SetPlayingTime(other->GetPlayingTime());
 }
 
 //------------------------------------------------------------------------------
@@ -431,26 +424,6 @@ nAudioServer3::Category
 nSound3::GetCategory() const
 {
     return this->category;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nSound3::SetPlayingTime(float s)
-{
-    this->playingTime = s;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-float
-nSound3::GetPlayingTime() const
-{
-    return this->playingTime;
 }
 
 //------------------------------------------------------------------------------

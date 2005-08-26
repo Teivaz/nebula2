@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nAudioServer3
-    @ingroup NebulaAudioSystem
+    @ingroup Audio3
 
-    @brief Audio subsystem 3 server.
+    Audio subsystem 3 server.
     
     (C) 2003 RadonLabs GmbH
 */
@@ -53,6 +53,8 @@ public:
     {
         Effect = 0,
         Music,
+        Speech,
+        Ambient,
         NumCategorys,
         InvalidCategory,
     };
@@ -69,6 +71,13 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
+	/// mute all cateory volumes 
+	void Mute();
+	/// restore all muted cateory volumes
+	void Unmute();
+	/// is currently muted?
+	bool IsMuted() const;
+
 private:
     static nAudioServer3* Singleton;
 
@@ -78,6 +87,8 @@ protected:
     nFixedArray<float> masterVolume;
     nFixedArray<bool>  masterVolumeDirty;
     nFixedArray<nTime> masterVolumeChangedTime;
+	nFixedArray<float> masterVolumeMuted;
+	bool isMuted;
     nTime curTime;
 };
 
