@@ -4,10 +4,14 @@
 A full changelog can be found online at
 http://nebuladevice.sourceforge.net/changelog2.html.gz
 
+   - @ref Nebula2ChangesAug2005
    - @ref Nebula2ChangesMay2005
    - @ref Nebula2ChangesMay2004
    - @ref Nebula2ChangesSept022003
 
+@section Nebula2ChangesAug2005 Aug 2005 Release
+   - The merges with Aug.2005. of Radon Labs including:
+      - Added animation event handler which enables user to handle animation event. 
 
 @section Nebula2ChangesMay2005 May 2005 Release
    - The merges with Dec.2004. of Radon Labs including:
