@@ -5,7 +5,7 @@
     @class nResource
     @ingroup NebulaResourceSystem
 
-    A superclass of all resource related subclasses such as nMesh, nFont2, 
+    A superclass of all resource related subclasses such as nMesh, nFont2,
     nTexture2 and so on.
 
     See @ref NebulaResourceSystem for more details.
@@ -78,7 +78,7 @@ public:
     bool IsPending();
     /// issue a load request
     virtual bool Load();
-    /// issue a load request from an open file
+    /// issue a load request from an open file, FIXME: this kinda sucks, Floh.
     virtual bool Load(nFile* file, int offset, int length);
     /// unloads the resource
     virtual void Unload();
@@ -98,6 +98,8 @@ public:
     bool IsEmpty();
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
+    /// get the unique id of this resource
+    uint GetUniqueId() const;
 
 protected:
     friend class nResourceServer;
@@ -106,7 +108,7 @@ protected:
     virtual bool LoadResource();
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();
-    /// called when contained resource may become lost 
+    /// called when contained resource may become lost
     virtual void OnLost();
     /// called when contained resource may be restored
     virtual void OnRestored();
@@ -114,12 +116,15 @@ protected:
     nDynAutoRef<nResourceLoader> refResourceLoader;
 
 private:
+    static uint uniqueIdCounter;
+
     nAutoRef<nResourceServer> refResourceServer;
     nString filename;
     Type type;
     bool asyncEnabled;
     nNode jobNode;      // for linkage into resource server's loader job list
     nThreadVariable<State> state;
+    uint uniqueId;
 };
 
 //------------------------------------------------------------------------------
@@ -295,6 +300,19 @@ bool
 nResource::IsPending()
 {
     return this->jobNode.IsLinked();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the unique id of this resource object. You should use the unique
+    id to check whether 2 resources are identical instead of comparing their
+    pointers.
+*/
+inline
+uint
+nResource::GetUniqueId() const
+{
+    return this->uniqueId;
 }
 
 //------------------------------------------------------------------------------

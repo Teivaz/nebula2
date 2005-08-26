@@ -9,6 +9,8 @@
 
 nNebulaClass(nResource, "nroot");
 
+uint nResource::uniqueIdCounter = 0;
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -19,7 +21,7 @@ nResource::nResource() :
     state(Unloaded),
     jobNode(this)
 {
-    // empty
+    this->uniqueId = ++uniqueIdCounter;
 }
 
 //------------------------------------------------------------------------------
