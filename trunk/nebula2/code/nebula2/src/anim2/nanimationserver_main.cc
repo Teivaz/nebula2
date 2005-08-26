@@ -7,13 +7,16 @@
 
 nNebulaClass(nAnimationServer, "nroot");
 
+nAnimationServer* nAnimationServer::Singleton = 0;
+
 //------------------------------------------------------------------------------
 /**
 */
 nAnimationServer::nAnimationServer() :
     refResourceServer("/sys/servers/resource")
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
 }
 
 //------------------------------------------------------------------------------
@@ -26,6 +29,8 @@ nAnimationServer::~nAnimationServer()
     {
         this->refResourceServer->UnloadResources(nResource::Animation);
     }
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
