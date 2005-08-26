@@ -8,7 +8,7 @@
     wrapped into a nRoot.
 
     See also @ref N2ScriptInterface_nenv
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -16,7 +16,7 @@
 #include "kernel/nroot.h"
 
 //------------------------------------------------------------------------------
-class nEnv : public nRoot 
+class nEnv : public nRoot
 {
 public:
     /// object persistency
@@ -32,11 +32,13 @@ public:
     /// Sets the value of this object to the passed string
     void SetS(const char *s);
     /// Sets the value of this objet to the passed object
-    void SetO(nRoot *o); 
+    void SetO(nRoot *o);
     /// set float4 value
     void SetF4(const nFloat4& f4);
-    /// set a vector4 (must be initialized with F4)
+    /// set a vector4
     void SetV4(const vector4& v);
+    /// set a vector3
+    void SetV3(const vector3& v);
     /// Returns the integer value
     int GetI(void);
     /// Returns the boolean value
@@ -49,6 +51,10 @@ public:
     nRoot *GetO(void);
     /// get float4 value
     const nFloat4& GetF4();
+    /// get vector4 value
+    const vector4& GetV4();
+    /// get vector3 value
+    const vector3& GetV3();
 
 private:
     nArg arg;
@@ -58,7 +64,7 @@ private:
 /**
 */
 inline
-nArg::Type 
+nArg::Type
 nEnv::GetType(void)
 {
     return this->arg.GetType();
@@ -68,7 +74,7 @@ nEnv::GetType(void)
 /**
 */
 inline
-void 
+void
 nEnv::SetI(int i)
 {
     this->arg.SetI(i);
@@ -78,7 +84,7 @@ nEnv::SetI(int i)
 /**
 */
 inline
-void 
+void
 nEnv::SetB(bool b)
 {
     this->arg.SetB(b);
@@ -88,7 +94,7 @@ nEnv::SetB(bool b)
 /**
 */
 inline
-void 
+void
 nEnv::SetF(float f)
 {
     this->arg.SetF(f);
@@ -98,7 +104,7 @@ nEnv::SetF(float f)
 /**
 */
 inline
-void 
+void
 nEnv::SetS(const char *s)
 {
     this->arg.SetS(s);
@@ -108,7 +114,7 @@ nEnv::SetS(const char *s)
 /**
 */
 inline
-void 
+void
 nEnv::SetO(nRoot *o)
 {
     this->arg.SetO(o);
@@ -131,15 +137,24 @@ inline
 void
 nEnv::SetV4(const vector4& v4)
 {
-    nFloat4 f4 = { v4.x, v4.y, v4.z, v4.w };
-    this->arg.SetF4(f4);
+    this->arg.SetV4(v4);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-int 
+void
+nEnv::SetV3(const vector3& v3)
+{
+    this->arg.SetV3(v3);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
 nEnv::GetI()
 {
     return this->arg.GetI();
@@ -149,7 +164,7 @@ nEnv::GetI()
 /**
 */
 inline
-bool 
+bool
 nEnv::GetB()
 {
     return this->arg.GetB();
@@ -159,7 +174,7 @@ nEnv::GetB()
 /**
 */
 inline
-float 
+float
 nEnv::GetF()
 {
     return this->arg.GetF();
@@ -196,4 +211,24 @@ nEnv::GetF4()
 }
 
 //------------------------------------------------------------------------------
-#endif      
+/**
+*/
+inline
+const vector4&
+nEnv::GetV4()
+{
+    return this->arg.GetV4();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nEnv::GetV3()
+{
+    return this->arg.GetV3();
+}
+
+//------------------------------------------------------------------------------
+#endif
