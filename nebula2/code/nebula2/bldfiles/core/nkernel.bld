@@ -86,6 +86,9 @@ endmodule
 beginmodule nutil
     setdir util
     setheaders {
+        nanimkey
+        nanimkeyarray
+        nanimlooptype
         narray
         narray2
         nbitstream
@@ -93,6 +96,8 @@ beginmodule nutil
         neditline
         nfixedarray
         nhashlist
+        nhashmap
+        nhashmap2
         nhashnode
         nhashtable
         nipolkeyarray
@@ -101,6 +106,8 @@ beginmodule nutil
         nlist
         nmsgnode
         nnode
+        nobjectlist
+        nobjectnode
         npriorityarray
         nringbuffer
         nstack

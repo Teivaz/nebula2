@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     @brief A fixed size, bounds checked array.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -33,6 +33,8 @@ public:
     void operator=(const nFixedArray<TYPE>& rhs);
     /// [] operator
     TYPE& operator[](int index) const;
+    /// find index (linear search, slow)
+    int Find(const TYPE& e) const;
 
 private:
     /// delete content
@@ -94,14 +96,13 @@ template<class TYPE>
 void
 nFixedArray<TYPE>::Copy(const nFixedArray<TYPE>& rhs)
 {
-    if (rhs.size != this->size)
+    if (this != &rhs)
     {
         this->Allocate(rhs.size);
-    }
-    int i;
-    for (i = 0; i < this->size; i++)
-    {
-        this->elements[i] = rhs.elements[i];
+        for (int i = 0; i < this->size; i++)
+        {
+            this->elements[i] = rhs.elements[i];
+        }
     }
 }
 
@@ -133,7 +134,7 @@ nFixedArray<TYPE>::nFixedArray(const nFixedArray<TYPE>& rhs) :
 template<class TYPE>
 nFixedArray<TYPE>::~nFixedArray()
 {
-    if (0 != this->elements)
+    if (this->elements)
     {
         n_delete_array(this->elements);
         this->elements = 0;
@@ -169,7 +170,10 @@ template<class TYPE>
 void
 nFixedArray<TYPE>::SetSize(int s)
 {
-    this->Allocate(s);
+    if (this->size != s)
+    {
+        this->Allocate(s);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -189,14 +193,34 @@ template<class TYPE>
 void
 nFixedArray<TYPE>::Clear(TYPE elm)
 {
-    n_assert(this->elements);
-    int i;
-    for (i = 0; i < this->size; i++)
+    if (this->elements)
     {
-        this->elements[i] = elm;
+        for (int i = 0; i < this->size; i++)
+        {
+            this->elements[i] = elm;
+        }
     }
 }
 
 //------------------------------------------------------------------------------
+/**
+    Find index of identical element. Returns -1 if no identical element
+    has been found.
+*/
+template<class TYPE>
+int
+nFixedArray<TYPE>::Find(const TYPE& e) const
+{
+    for (int i = 0; i < this->size; i++)
+    {
+        if (e == this->elements[i])
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+//------------------------------------------------------------------------------
 #endif
-    
+

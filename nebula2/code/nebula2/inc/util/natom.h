@@ -43,7 +43,7 @@ public:
     /// cast to nString
     const nString& operator*() const;
 
-private:
+protected:
     enum
     {
         InvalidKey = 0xffff,

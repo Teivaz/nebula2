@@ -4,6 +4,10 @@
 #include "util/nstring.h"
 #include "mathlib/nmath.h"
 
+// Initialize constants.
+const nString nString::ConstantTrue = "true";
+const nString nString::ConstantFalse = "false";
+
 //------------------------------------------------------------------------------
 /**
 */

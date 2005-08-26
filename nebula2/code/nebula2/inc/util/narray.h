@@ -321,8 +321,11 @@ template<class TYPE>
 nArray<TYPE>&
 nArray<TYPE>::operator=(const nArray<TYPE>& rhs)
 {
-    this->Delete();
-    this->Copy(rhs);
+    if (this != &rhs)
+    {
+        this->Delete();
+        this->Copy(rhs);
+    }
     return *this;
 }
 
@@ -551,6 +554,10 @@ nArray<TYPE>::CheckIndex(int index)
 
 //------------------------------------------------------------------------------
 /**
+    - 12-05-2004    brucem  Close bug #203 by removing an assert that
+                            prevented this from auto-growing. Assumed
+                            intent was for auto-growth given the use
+                            of CheckIndex.
 */
 template<class TYPE>
 TYPE&

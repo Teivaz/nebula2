@@ -10,6 +10,7 @@
                            'n_pow' macros.
 */
 #include <math.h>
+#include <stdlib.h>
 
 #ifdef _MSC_VER
 #define isnan _isnan
@@ -23,7 +24,7 @@
 #define N_PI PI
 
 #ifndef TINY
-#define TINY (0.0000001)
+#define TINY (0.0000001f)
 #endif
 
 #define n_max(a,b)      (((a) > (b)) ? (a) : (b))
@@ -47,7 +48,7 @@
     log2() function.
 */
 const float LN_2 = 0.693147180559945f;
-static inline float n_log2(float f)
+inline float n_log2(float f)
 {
     return logf(f) / LN_2;
 }
@@ -56,7 +57,7 @@ static inline float n_log2(float f)
 /**
     Integer clamping.
 */
-static inline int n_iclamp(int val, int minVal, int maxVal)
+inline int n_iclamp(int val, int minVal, int maxVal)
 {
     if (val < minVal)      return minVal;
     else if (val > maxVal) return maxVal;
@@ -67,7 +68,7 @@ static inline int n_iclamp(int val, int minVal, int maxVal)
 /**
     acos with value clamping.
 */
-static inline float n_acos(float x)
+inline float n_acos(float x)
 {
     if(x >  1.0f) x =  1.0f;
     if(x < -1.0f) x = -1.0f;
@@ -78,7 +79,7 @@ static inline float n_acos(float x)
 /**
     asin with value clamping.
 */
-static inline float n_asin(float x)
+inline float n_asin(float x)
 {
     if(x >  1.0f) x =  1.0f;
     if(x < -1.0f) x = -1.0f;
@@ -89,7 +90,7 @@ static inline float n_asin(float x)
 /**
     Safe sqrt.
 */
-static inline float n_sqrt(float x)
+inline float n_sqrt(float x)
 {
     if (x < 0.0f) x = (float) 0.0f;
     return (float) sqrt(x);
@@ -99,7 +100,7 @@ static inline float n_sqrt(float x)
 /**
     A fuzzy floating point equality check
 */
-static inline bool n_fequal(float f0, float f1, float tol) {
+inline bool n_fequal(float f0, float f1, float tol) {
     float f = f0-f1;
     if ((f>(-tol)) && (f<tol)) return true;
     else                       return false;
@@ -109,7 +110,7 @@ static inline bool n_fequal(float f0, float f1, float tol) {
 /**
     A fuzzy floating point less-then check.
 */
-static inline bool n_fless(float f0, float f1, float tol) {
+inline bool n_fless(float f0, float f1, float tol) {
     if ((f0-f1)<tol) return true;
     else             return false;
 }
@@ -118,7 +119,7 @@ static inline bool n_fless(float f0, float f1, float tol) {
 /**
     A fuzzy floating point greater-then check.
 */
-static inline bool n_fgreater(float f0, float f1, float tol) {
+inline bool n_fgreater(float f0, float f1, float tol) {
     if ((f0-f1)>tol) return true;
     else             return false;
 }
@@ -129,7 +130,7 @@ static inline bool n_fgreater(float f0, float f1, float tol) {
     see http://www.stereopsis.com/FPU.html for a discussion.
     NOTE: this works only on x86 endian machines.
 */
-static inline long n_ftol(float val)
+inline long n_ftol(float val)
 {
     double v = double(val) + (68719476736.0*1.5);
     return ((long*)&v)[0] >> 16;
@@ -139,7 +140,7 @@ static inline long n_ftol(float val)
 /**
     Smooth a new value towards an old value using a change value.
 */
-static inline float n_smooth(float newVal, float curVal, float maxChange)
+inline float n_smooth(float newVal, float curVal, float maxChange)
 {
     float diff = newVal - curVal;
     if (fabs(diff) > maxChange)
@@ -172,7 +173,7 @@ static inline float n_smooth(float newVal, float curVal, float maxChange)
 /**
     Clamp a value against lower und upper boundary.
 */
-static inline float n_clamp(float val, float lower, float upper)
+inline float n_clamp(float val, float lower, float upper)
 {
     if (val < lower)      return lower;
     else if (val > upper) return upper;
@@ -183,7 +184,7 @@ static inline float n_clamp(float val, float lower, float upper)
 /**
     Saturate a value (clamps between 0.0f and 1.0f)
 */
-static inline float n_saturate(float val)
+inline float n_saturate(float val)
 {
     if (val < 0.0f)      return 0.0f;
     else if (val > 1.0f) return 1.0f;
@@ -194,7 +195,7 @@ static inline float n_saturate(float val)
 /**
     Return a pseudo random number between 0 and 1.
 */
-static inline float n_rand()
+inline float n_rand()
 {
     return float(rand()) / float(RAND_MAX);
 }
@@ -203,7 +204,7 @@ static inline float n_rand()
 /**
     Chop float to int.
 */
-static inline int n_fchop(float f)
+inline int n_fchop(float f)
 {
     // FIXME!
     return int(f);
@@ -213,7 +214,7 @@ static inline int n_fchop(float f)
 /**
     Round float to integer.
 */
-static inline int n_frnd(float f)
+inline int n_frnd(float f)
 {
     return n_fchop(f + 0.5f);
 }
@@ -222,7 +223,7 @@ static inline int n_frnd(float f)
 /**
     Linearly interpolate between 2 values: ret = x + l * (y - x)
 */
-static inline float n_lerp(float x, float y, float l)
+inline float n_lerp(float x, float y, float l)
 {
     return x + l * (y - x);
 }
@@ -233,7 +234,7 @@ static inline float n_lerp(float x, float y, float l)
     can be specialized for any type.
 */
 template<class TYPE>
-static inline
+inline
 void
 lerp(TYPE & result, const TYPE & val0, const TYPE & val1, float lerpVal)
 {
@@ -244,7 +245,7 @@ lerp(TYPE & result, const TYPE & val0, const TYPE & val1, float lerpVal)
 /**
 */
 template<>
-static inline
+inline
 void
 lerp<int>(int & result, const int & val0, const int & val1, float lerpVal)
 {
@@ -255,11 +256,28 @@ lerp<int>(int & result, const int & val0, const int & val1, float lerpVal)
 /**
 */
 template<>
-static inline
+inline
 void
 lerp<float>(float & result, const float & val0, const float & val1, float lerpVal)
 {
     result = val0 + ((val1 - val0) * lerpVal);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Nornalize an angular value into the range rad(0) to rad(360).
+*/
+inline float n_normangle(float a)
+{
+    while(a < 0.0f)
+    {
+        a += n_deg2rad(360.0f);
+    }
+    if (a >= n_deg2rad(360.0f))
+    {
+        a = fmodf(a, n_deg2rad(360.0f));
+    }
+    return a;
 }
 
 //------------------------------------------------------------------------------
