@@ -99,6 +99,8 @@ public:
     void Clear();
     /// return true if string object is empty
     bool IsEmpty() const;
+    /// return true if string object is not empty
+    bool IsValid() const;
     /// append character pointer
     void Append(const char* str);
     /// append string
@@ -692,6 +694,16 @@ nString::IsEmpty() const
         return false;
     }
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nString::IsValid() const
+{
+    return !this->IsEmpty();
 }
 
 //------------------------------------------------------------------------------
