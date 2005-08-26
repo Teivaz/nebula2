@@ -19,6 +19,8 @@ class nAnimStateArray
 public:
     /// constructor
     nAnimStateArray();
+    /// destructor
+    ~nAnimStateArray();
     /// begin adding anim states
     void Begin(int num);
     /// set a new anim state
@@ -44,6 +46,15 @@ private:
 inline
 nAnimStateArray::nAnimStateArray() :
     stateArray(0, 0)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimStateArray::~nAnimStateArray()
 {
     // empty
 }
