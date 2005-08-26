@@ -24,13 +24,29 @@ public:
     nAnimationServer();
     /// destructor
     virtual ~nAnimationServer();
+    /// return instance pointer
+    static nAnimationServer* Instance();
     /// create an in-memory animation object (always shared)
     virtual nAnimation* NewMemoryAnimation(const char* rsrcName);
     /// create a new streaming animation object (never shared)
     virtual nAnimation* NewStreamingAnimation();
 
 private:
+    static nAnimationServer* Singleton;
+
     nAutoRef<nResourceServer> refResourceServer;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimationServer*
+nAnimationServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
+
 //------------------------------------------------------------------------------
 #endif
