@@ -12,9 +12,14 @@
 #include <mmsystem.h>
 #include <mmreg.h>
 #include <dsound.h>
+#include <msacm.h>
 
-
-
+#include <vorbis/codec.h>
+#include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
+#include "kernel/nautoref.h"
+#include "audio3/nwavfile.h"
+#include "audio3/noggfile.h"
 
 //-----------------------------------------------------------------------------
 // Classes used by this header
@@ -22,23 +27,16 @@
 class CSoundManager;
 class CSound;
 class CStreamingSound;
-class CWaveFile;
-
-
-
 
 //-----------------------------------------------------------------------------
 // Typing macros 
 //-----------------------------------------------------------------------------
-#define WAVEFILE_READ   1
-#define WAVEFILE_WRITE  2
+//#define WAVEFILE_READ   1
+//#define WAVEFILE_WRITE  2
 
 #define DSUtil_StopSound(s)         { if(s) s->Stop(); }
 #define DSUtil_PlaySound(s)         { if(s) s->Play( 0, 0 ); }
 #define DSUtil_PlaySoundLooping(s)  { if(s) s->Play( 0, DSBPLAY_LOOPING ); }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: class CSoundManager
@@ -61,10 +59,8 @@ public:
     HRESULT Create( CSound** ppSound, LPTSTR strWaveFileName, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
     HRESULT CreateFromMemory( CSound** ppSound, BYTE* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
     HRESULT CreateStreaming( CStreamingSound** ppStreamingSound, LPTSTR strWaveFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize );
+    HRESULT CreateStreamingOgg( CStreamingSound** ppStreamingSound, LPTSTR strOggFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize );
 };
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: class CSound
@@ -73,16 +69,16 @@ public:
 class CSound
 {
 protected:
+    nAudioFile*          m_pWaveFile;
     LPDIRECTSOUNDBUFFER* m_apDSBuffer;
     DWORD                m_dwDSBufferSize;
-    CWaveFile*           m_pWaveFile;
     DWORD                m_dwNumBuffers;
     DWORD                m_dwCreationFlags;
 
     HRESULT RestoreBuffer( LPDIRECTSOUNDBUFFER pDSB, BOOL* pbWasRestored );
 
 public:
-    CSound( LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize, DWORD dwNumBuffers, CWaveFile* pWaveFile, DWORD dwCreationFlags );
+    CSound( LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize, DWORD dwNumBuffers, nAudioFile* pWaveFile, DWORD dwCreationFlags );
     virtual ~CSound();
 
     virtual HRESULT Get3DBufferInterface( DWORD dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer );
@@ -113,6 +109,7 @@ public:
 class CStreamingSound : public CSound
 {
 protected:
+  
     DWORD m_dwLastPlayPos;
     DWORD m_dwPlayProgress;
     DWORD m_dwNotifySize;
@@ -122,7 +119,7 @@ protected:
     DWORD stopCount;
 
 public:
-    CStreamingSound( LPDIRECTSOUNDBUFFER pDSBuffer, DWORD dwDSBufferSize, CWaveFile* pWaveFile, DWORD dwNotifySize, DWORD dwCreationFlags );
+    CStreamingSound( LPDIRECTSOUNDBUFFER pDSBuffer, DWORD dwDSBufferSize, nAudioFile* pWaveFile, DWORD dwNotifySize, DWORD dwCreationFlags );
     virtual ~CStreamingSound();
 
     virtual HRESULT HandleWaveStreamNotification( BOOL bLoopedPlay );
@@ -133,51 +130,5 @@ public:
     bool CheckStreamUpdate();
     bool Inside(DWORD pos, DWORD start, DWORD end);
 };
-
-
-
-
-//-----------------------------------------------------------------------------
-// Name: class CWaveFile
-// Desc: Encapsulates reading or writing sound data to or from a wave file
-//-----------------------------------------------------------------------------
-class CWaveFile
-{
-public:
-    WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure
-    HMMIO         m_hmmio;       // MM I/O handle for the WAVE
-    MMCKINFO      m_ck;          // Multimedia RIFF chunk
-    MMCKINFO      m_ckRiff;      // Use in opening a WAVE file
-    DWORD         m_dwSize;      // The size of the wave file
-    MMIOINFO      m_mmioinfoOut;
-    DWORD         m_dwFlags;
-    BOOL          m_bIsReadingFromMemory;
-    BYTE*         m_pbData;
-    BYTE*         m_pbDataCur;
-    ULONG         m_ulDataSize;
-    CHAR*         m_pResourceBuffer;
-
-protected:
-    HRESULT ReadMMIO();
-    HRESULT WriteMMIO( WAVEFORMATEX *pwfxDest );
-
-public:
-    CWaveFile();
-    ~CWaveFile();
-
-    HRESULT Open( LPTSTR strFileName, WAVEFORMATEX* pwfx, DWORD dwFlags );
-    HRESULT OpenFromMemory( BYTE* pbData, ULONG ulDataSize, WAVEFORMATEX* pwfx, DWORD dwFlags );
-    HRESULT Close();
-
-    HRESULT Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead );
-    HRESULT Write( UINT nSizeToWrite, BYTE* pbData, UINT* pnSizeWrote );
-
-    DWORD   GetSize();
-    HRESULT ResetFile();
-    WAVEFORMATEX* GetFormat() { return m_pwfx; };
-};
-
-
-
 
 #endif // DSUTIL_H

@@ -2,7 +2,10 @@
 #define N_DSHOWSERVER_H
 //------------------------------------------------------------------------------
 /**
-    A Nebula2 video server running on top of DirectShow.
+    @class nDShowServer
+    @ingroup Video
+
+    @brief A Nebula2 video server running on top of DirectShow.
 
     (C) 2004 RadonLabs GmbH
 */

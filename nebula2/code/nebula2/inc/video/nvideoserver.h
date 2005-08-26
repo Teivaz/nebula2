@@ -2,7 +2,10 @@
 #define N_VIDEOSERVER_H
 //------------------------------------------------------------------------------
 /**
-    Server object to playback video streams.
+    @class nVideoServer
+    @ingroup Video
+
+    @brief Server object to playback video streams.
 
     (C) 2004 RadonLabs GmbH
 */
