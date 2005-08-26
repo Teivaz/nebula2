@@ -23,7 +23,7 @@ nMemoryAnimation::nMemoryAnimation() :
 */
 nMemoryAnimation::~nMemoryAnimation()
 {
-    if (this->IsValid())
+    if (!this->IsUnloaded())
     {
         this->Unload();
     }
@@ -317,6 +317,7 @@ nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, 
     int keyIndex[2];
     float inbetween;
     group.TimeToIndex(time, keyIndex[0], keyIndex[1], inbetween);
+    n_assert((inbetween >= 0.0f) && (inbetween < 1.0f));
 
     int i;
     static quaternion q0;

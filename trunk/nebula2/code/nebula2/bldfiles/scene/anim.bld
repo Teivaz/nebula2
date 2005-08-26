@@ -14,8 +14,8 @@
 #===============================================================================
 beginmodule nanimationserver
     setdir anim2
-    setfiles { nanimationserver_main }
-    setheaders { nanimationserver nanimclip nanimstate nanimstatearray }
+    setfiles { nanimationserver_main nanimeventhandler nanimstate }
+    setheaders { nanimationserver nanimclip nanimstate nanimstatearray nanimevent nanimeventtrack nanimeventhandler }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nanimation
