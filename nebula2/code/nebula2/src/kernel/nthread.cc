@@ -58,11 +58,11 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
     switch (pri)
     {
         case Low:
-           SetThreadPriority(this->thread, THREAD_PRIORITY_BELOW_NORMAL);
+            SetThreadPriority(this->thread, THREAD_PRIORITY_BELOW_NORMAL);
             break;
 
         case Normal:
-           SetThreadPriority(this->thread, THREAD_PRIORITY_NORMAL);
+            SetThreadPriority(this->thread, THREAD_PRIORITY_NORMAL);
             break;
 
         case High:

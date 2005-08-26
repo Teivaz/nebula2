@@ -70,6 +70,8 @@ public:
     void SetF4(const nFloat4& f4);
     /// set to float4, as vector4
     void SetV4(const vector4& v4);
+    /// set to float4, as vector3
+    void SetV3(const vector3& v3);
     /// set to matrix44
     void SetM44(const matrix44& m44);
 
@@ -89,8 +91,10 @@ public:
     int GetL(nArg*&) const;
     /// get float4 content
     const nFloat4& GetF4() const;
-    /// get float4 content as vector4
+    /// get content as vector4
     const vector4& GetV4() const;
+    /// get content as vector3
+    const vector3& GetV3() const;
     /// get matrix44 content
     const matrix44& GetM44() const;
 
@@ -550,6 +554,22 @@ nArg::SetV4(const vector4& v)
 
 //-----------------------------------------------------------------------------
 /**
+    Set the content to a vector3 value.
+*/
+inline
+void
+nArg::SetV3(const vector3& v)
+{
+    n_assert((Void == this->type) || (Float4 == this->type));
+    this->type = Float4;
+    this->f4.x = v.x;
+    this->f4.y = v.y;
+    this->f4.z = v.z;
+    this->f4.w = 0.0f;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Set the content to a matrix44 value.
 */
 inline
@@ -703,6 +723,18 @@ nArg::GetV4() const
 {
     n_assert(Float4 == this->type);
     return *(vector4*)&this->f4;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Return float4 content as vector3
+*/
+inline
+const vector3&
+nArg::GetV3() const
+{
+    n_assert(Float4 == this->type);
+    return *(vector3*)&this->f4;
 }
 
 //-----------------------------------------------------------------------------
