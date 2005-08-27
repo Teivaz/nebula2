@@ -2,6 +2,9 @@
 #define N_TRANSFORM33_H
 //------------------------------------------------------------------------------
 /**
+    @class transform33
+    @ingroup NebulaMathDataTypes
+
     A 3x3 matrix which is described by 2D translation, rotation and scale.
     
     (C) 2004 RadonLabs GmbH
