@@ -79,7 +79,7 @@ n_getchannel(void* slf, nCmd* cmd)
     @cmd
     setlooptype
     @input
-    s(LoopType = "loop", "oneshot")
+    s(LoopType = "loop", "clamp")
     @output
     v
     @info
@@ -90,7 +90,7 @@ void
 n_setlooptype(void* slf, nCmd* cmd)
 {
     nAnimator* self = (nAnimator*) slf;
-    self->SetLoopType(nAnimator::StringToLoopType(cmd->In()->GetS()));
+    self->SetLoopType(nAnimLoopType::FromString(cmd->In()->GetS()));
 }
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ n_setlooptype(void* slf, nCmd* cmd)
     @input
     v
     @output
-    s(LoopType = "loop", "oneshot")
+    s(LoopType = "loop", "clamp")
     @info
     Get the loop type for this animation.
 */
@@ -109,7 +109,7 @@ void
 n_getlooptype(void* slf, nCmd* cmd)
 {
     nAnimator* self = (nAnimator*) slf;
-    cmd->Out()->SetS(nAnimator::LoopTypeToString(self->GetLoopType()));
+    cmd->Out()->SetS(nAnimLoopType::ToString(self->GetLoopType()).Get());
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ nAnimator::SaveCmds(nPersistServer* ps)
 
         //--- setlooptype ---
         cmd = ps->GetCmd(this, 'SLPT');
-        cmd->In()->SetS(LoopTypeToString(this->GetLoopType()));
+        cmd->In()->SetS(nAnimLoopType::ToString(this->GetLoopType()).Get());
         ps->PutCmd(cmd);
 
         return true;

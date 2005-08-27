@@ -11,9 +11,10 @@ nNebulaScriptClass(nAnimator, "nscenenode");
 /**
 */
 nAnimator::nAnimator() :
-    loopType(Loop)
+    loopType(nAnimLoopType::Loop)
 {
     this->channelVarHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
+    this->channelOffsetVarHandle = nVariableServer::Instance()->GetVariableHandleByName("timeOffset");
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +59,7 @@ nAnimator::SetChannel(const char* name)
 {
     n_assert(name);
     this->channelVarHandle = nVariableServer::Instance()->GetVariableHandleByName(name);
+    this->channelOffsetVarHandle = nVariableServer::Instance()->GetVariableHandleByName((nString(name) + "Offset").Get());
 }
 
 //------------------------------------------------------------------------------
@@ -75,25 +77,5 @@ nAnimator::GetChannel()
     {
         return nVariableServer::Instance()->GetVariableName(this->channelVarHandle);
     }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set the loop type for this animation.
-*/
-void
-nAnimator::SetLoopType(LoopType t)
-{
-    this->loopType = t;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the loop type for this animation.
-*/
-nAnimator::LoopType
-nAnimator::GetLoopType() const
-{
-    return this->loopType;
 }
 
