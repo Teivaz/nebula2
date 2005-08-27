@@ -6,13 +6,12 @@
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nVectorAnimator, "nanimator");
+nNebulaScriptClass(nVectorAnimator, "nshaderanimator");
 
 //------------------------------------------------------------------------------
 /**
 */
 nVectorAnimator::nVectorAnimator() :
-    vectorParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -28,35 +27,6 @@ nVectorAnimator::~nVectorAnimator()
 
 //------------------------------------------------------------------------------
 /**
-    Set the name of the vector variable which should be animated by
-    this object.
-*/
-void
-nVectorAnimator::SetVectorName(const char* name)
-{
-    n_assert(name);
-    this->vectorParameter = nShaderState::StringToParam(name);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the name of the vector variable which is animated by this object.
-*/
-const char*
-nVectorAnimator::GetVectorName()
-{
-    if (nShaderState::InvalidParameter == this->vectorParameter)
-    {
-        return 0;
-    }
-    else
-    {
-        return nShaderState::ParamToString(this->vectorParameter);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Add a key to the animation key array.
 
     @param time time in seconds.
@@ -65,7 +35,8 @@ nVectorAnimator::GetVectorName()
 void
 nVectorAnimator::AddKey(float time, const vector4& key)
 {
-    this->keyArray.AddKey(time, key);
+    nAnimKey<vector4> newKey(time, key);
+    this->keyArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +46,7 @@ nVectorAnimator::AddKey(float time, const vector4& key)
 int
 nVectorAnimator::GetNumKeys() const
 {
-    return this->keyArray.GetNumKeys();
+    return this->keyArray.Size();
 }
 
 //------------------------------------------------------------------------------
@@ -85,17 +56,9 @@ nVectorAnimator::GetNumKeys() const
 void
 nVectorAnimator::GetKeyAt(int index, float& time, vector4& key) const
 {
-    this->keyArray.GetKeyAt(index, time, key);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns the animator type. nVectorAnimator is a SHADER animator.
-*/
-nAnimator::Type
-nVectorAnimator::GetAnimatorType() const
-{
-    return Shader;
+    const nAnimKey<vector4>& animKey = this->keyArray[index];
+    time = animKey.GetTime();
+    key  = animKey.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -117,11 +80,25 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     float curTime = var->GetFloat();
 
     // get sampled key
-    vector4 key;
-    if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
+    static nAnimKey<vector4> key;
+    if (this->keyArray.Sample(curTime, this->loopType, key))
     {
-        // manipulate the target object
-        targetNode->SetVector(this->vectorParameter, key);
+        targetNode->SetVector(this->param, key.GetValue());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -6,13 +6,12 @@
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nFloatAnimator, "nanimator");
+nNebulaScriptClass(nFloatAnimator, "nshaderanimator");
 
 //------------------------------------------------------------------------------
 /**
 */
 nFloatAnimator::nFloatAnimator() :
-    floatParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -28,41 +27,13 @@ nFloatAnimator::~nFloatAnimator()
 
 //------------------------------------------------------------------------------
 /**
-    Set the name of the float variable which should be animated by
-    this object.
-*/
-void
-nFloatAnimator::SetFloatName(const char* name)
-{
-    n_assert(name);
-    this->floatParameter = nShaderState::StringToParam(name);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the name of the float variable which is animated by this object.
-*/
-const char*
-nFloatAnimator::GetFloatName()
-{
-    if (nShaderState::InvalidParameter == this->floatParameter)
-    {
-        return 0;
-    }
-    else
-    {
-        return nShaderState::ParamToString(this->floatParameter);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Add a key to the animation key array.
 */
 void
 nFloatAnimator::AddKey(float time, const float& key)
 {
-    this->keyArray.AddKey(time, key);
+    nAnimKey<float> newKey(time, key);
+    this->keyArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -72,7 +43,7 @@ nFloatAnimator::AddKey(float time, const float& key)
 int
 nFloatAnimator::GetNumKeys() const
 {
-    return this->keyArray.GetNumKeys();
+    return this->keyArray.Size();
 }
 
 //------------------------------------------------------------------------------
@@ -82,17 +53,9 @@ nFloatAnimator::GetNumKeys() const
 void
 nFloatAnimator::GetKeyAt(int index, float& time, float& key) const
 {
-    this->keyArray.GetKeyAt(index, time, key);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns the animator type. nFloatAnimator is a SHADER animator.
-*/
-nAnimator::Type
-nFloatAnimator::GetAnimatorType() const
-{
-    return Shader;
+    const nAnimKey<float>& animKey = this->keyArray[index];
+    time = animKey.GetTime();
+    key  = animKey.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -114,10 +77,26 @@ nFloatAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     float curTime = var->GetFloat();
 
     // get sampled key
-    float key;
-    if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
+    static nAnimKey<float> key;
+    if (this->keyArray.Sample(curTime, this->loopType, key))
     {
-        targetNode->SetFloat(this->floatParameter, key);
+        targetNode->SetFloat(this->param, key.GetValue());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

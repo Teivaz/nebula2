@@ -6,13 +6,12 @@
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nIntAnimator, "nanimator");
+nNebulaScriptClass(nIntAnimator, "nshaderanimator");
 
 //------------------------------------------------------------------------------
 /**
 */
 nIntAnimator::nIntAnimator() :
-    intParameter(nShaderState::InvalidParameter),
     keyArray(0, 4)
 {
     // empty
@@ -28,41 +27,13 @@ nIntAnimator::~nIntAnimator()
 
 //------------------------------------------------------------------------------
 /**
-    Set the name of the int variable which should be animated by
-    this object.
-*/
-void
-nIntAnimator::SetIntName(const char* name)
-{
-    n_assert(name);
-    this->intParameter = nShaderState::StringToParam(name);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the name of the int variable which is animated by this object.
-*/
-const char*
-nIntAnimator::GetIntName()
-{
-    if (nShaderState::InvalidParameter == this->intParameter)
-    {
-        return 0;
-    }
-    else
-    {
-        return nShaderState::ParamToString(this->intParameter);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     Add a key to the animation key array.
 */
 void
 nIntAnimator::AddKey(float time, const int& key)
 {
-    this->keyArray.AddKey(time, key);
+    nAnimKey<int> newKey(time, key);
+    this->keyArray.Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -72,7 +43,7 @@ nIntAnimator::AddKey(float time, const int& key)
 int
 nIntAnimator::GetNumKeys() const
 {
-    return this->keyArray.GetNumKeys();
+    return this->keyArray.Size();
 }
 
 //------------------------------------------------------------------------------
@@ -82,17 +53,9 @@ nIntAnimator::GetNumKeys() const
 void
 nIntAnimator::GetKeyAt(int index, float& time, int& key) const
 {
-    this->keyArray.GetKeyAt(index, time, key);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns the animator type. nIntAnimator is a SHADER animator.
-*/
-nAnimator::Type
-nIntAnimator::GetAnimatorType() const
-{
-    return Shader;
+    const nAnimKey<int>& animKey = this->keyArray[index];
+    time = animKey.GetTime();
+    key  = animKey.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -114,10 +77,9 @@ nIntAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     float curTime = var->GetFloat();
 
     // get sampled key
-    int key;
-    if (this->keyArray.SampleKey(curTime, key, this->GetLoopType()))
+    static nAnimKey<int> key;
+    if (this->keyArray.Sample(curTime, this->loopType, key))
     {
-        targetNode->SetInt(this->intParameter, key);
+        targetNode->SetInt(this->param, key.GetValue());
     }
 }
-
