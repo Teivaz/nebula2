@@ -475,7 +475,7 @@ nAnimBuilder::LoadNanim2(nFileServer2* fileServer, const char* filename)
                 Curve curve;
                 curve.SetIpolType(Curve::String2IpolType(ipolTypeString));
                 curve.SetFirstKeyIndex(atoi(firstKeyIndexString));
-                if (curve.GetIpolType() == Curve::NONE)
+                if (curve.GetFirstKeyIndex() == -1)
                 {
                     curve.SetCollapsed(true);
                 }
@@ -612,7 +612,7 @@ nAnimBuilder::LoadNax2(nFileServer2* fileServer, const char* filename)
 
                 curve.SetIpolType((Curve::IpolType) ipolType);
                 curve.SetFirstKeyIndex(firstKeyIndex);
-                if (Curve::NONE == ipolType)
+                if (-1 == firstKeyIndex)
                 {
                     curve.SetCollapsed(true);
                 }

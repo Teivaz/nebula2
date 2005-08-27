@@ -56,7 +56,7 @@ public:
         /// interpolation types
         enum IpolType
         {
-            NONE,           // curve is constant (collapsed)
+            NONE,           // not interpolated (invalid)
             STEP,           // step through keys
             LINEAR,         // linear interpolation
             QUAT,           // quaternion interpolation
@@ -377,9 +377,9 @@ nAnimBuilder::Curve::GetFirstKeyIndex() const
 /**
     This checks whether all keys in the curve are identical.
     If yes, the Collapsed flag will be set, and the collapsed
-    key is set to the first key in the curve. If the curve is
-    collapsed, its interpolation type will be set to "none" inside 
-    the method
+    key is set to the first key in the curve.
+
+    - 18-Oct-2004   floh    optimized curves have ipolType no longer set to NONE!
 */
 inline
 bool
@@ -403,7 +403,6 @@ nAnimBuilder::Curve::Optimize()
     {
         this->isCollapsed = true;
         this->collapsedKey = this->keyArray[0].Get();
-        this->ipolType = NONE;
     }
     return this->isCollapsed;
 }
