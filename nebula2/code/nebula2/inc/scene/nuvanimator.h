@@ -12,8 +12,8 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
+#include "util/nanimkeyarray.h"
 #include "gfx2/ngfxserver2.h"
-#include "util/nipolkeyarray.h"
 
 //------------------------------------------------------------------------------
 class nUvAnimator : public nAnimator
@@ -50,9 +50,9 @@ public:
     void GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const;
     
 private:
-    nIpolKeyArray<vector2> posArray[nGfxServer2::MaxTextureStages];
-    nIpolKeyArray<vector2> eulerArray[nGfxServer2::MaxTextureStages];
-    nIpolKeyArray<vector2> scaleArray[nGfxServer2::MaxTextureStages];
+    nAnimKeyArray<nAnimKey<vector2> > posArray[nGfxServer2::MaxTextureStages];
+    nAnimKeyArray<nAnimKey<vector2> > eulerArray[nGfxServer2::MaxTextureStages];
+    nAnimKeyArray<nAnimKey<vector2> > scaleArray[nGfxServer2::MaxTextureStages];
 };
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,8 @@ void
 nUvAnimator::AddPosKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->posArray[texLayer].AddKey(time, key);
+    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    this->posArray[texLayer].Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +75,8 @@ void
 nUvAnimator::AddEulerKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->eulerArray[texLayer].AddKey(time, key);
+    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    this->eulerArray[texLayer].Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +87,8 @@ void
 nUvAnimator::AddScaleKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->scaleArray[texLayer].AddKey(time, key);
+    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    this->scaleArray[texLayer].Append(newKey);
 }
 
 //------------------------------------------------------------------------------
@@ -96,7 +99,7 @@ int
 nUvAnimator::GetNumPosKeys(uint texLayer) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    return this->posArray[texLayer].GetNumKeys();
+    return this->posArray[texLayer].Size();
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +110,7 @@ int
 nUvAnimator::GetNumEulerKeys(uint texLayer) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    return this->eulerArray[texLayer].GetNumKeys();
+    return this->eulerArray[texLayer].Size();
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +121,7 @@ int
 nUvAnimator::GetNumScaleKeys(uint texLayer) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    return this->scaleArray[texLayer].GetNumKeys();
+    return this->scaleArray[texLayer].Size();
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +129,7 @@ nUvAnimator::GetNumScaleKeys(uint texLayer) const
     Obtain a position key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  keyIndex    [in]    index of key to get
+    @param  index       [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -135,7 +138,9 @@ void
 nUvAnimator::GetPosKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->posArray[texLayer].GetKeyAt(keyIndex, time, key);
+    const nAnimKey<vector2>& k = this->posArray[texLayer][keyIndex];
+    time = k.GetTime();
+    key = k.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +148,7 @@ nUvAnimator::GetPosKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key
     Obtain a euler key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  keyIndex    [in]    index of key to get
+    @param  index       [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -152,7 +157,9 @@ void
 nUvAnimator::GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->eulerArray[texLayer].GetKeyAt(keyIndex, time, key);
+    const nAnimKey<vector2>& k = this->eulerArray[texLayer][keyIndex];
+    time = k.GetTime();
+    key = k.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +167,7 @@ nUvAnimator::GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector2& k
     Obtain a scale key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  keyIndex    [in]    index of key to get
+    @param  index       [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -169,8 +176,13 @@ void
 nUvAnimator::GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    this->scaleArray[texLayer].GetKeyAt(keyIndex, time, key);
+    const nAnimKey<vector2>& k = this->scaleArray[texLayer][keyIndex];
+    time = k.GetTime();
+    key = k.GetValue();
 }
 //------------------------------------------------------------------------------
 #endif
+
+
+
 
