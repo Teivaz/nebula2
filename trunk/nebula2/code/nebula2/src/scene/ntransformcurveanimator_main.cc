@@ -23,7 +23,7 @@ nTransformCurveAnimator::nTransformCurveAnimator() :
 */
 nTransformCurveAnimator::~nTransformCurveAnimator()
 {
-    this->UnloadResources();
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ nTransformCurveAnimator::LoadAnimation()
     {
         nAnimation* animation = this->refAnimationServer->NewMemoryAnimation(this->animationName.Get());
         n_assert(animation);
-        if (!animation->IsValid())
+        if (!animation->IsLoaded())
         {
             animation->SetFilename(this->animationName.Get());
             if (!animation->Load())
@@ -131,7 +131,7 @@ nTransformCurveAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
     {
         this->LoadResources();
     }
-    n_assert(this->refAnimation->IsValid());
+    n_assert(this->refAnimation->IsLoaded());
 
     // FIXME: dirty cast, make sure that it is a nTransformNode
     nTransformNode* targetNode = (nTransformNode*) sceneNode;
