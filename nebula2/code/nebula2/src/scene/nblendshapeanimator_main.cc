@@ -23,7 +23,7 @@ nBlendShapeAnimator::nBlendShapeAnimator() :
 */
 nBlendShapeAnimator::~nBlendShapeAnimator()
 {
-    this->UnloadResources();
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ nBlendShapeAnimator::LoadAnimation()
     {
         nAnimation* animation = this->refAnimationServer->NewMemoryAnimation(this->animationName.Get());
         n_assert(animation);
-        if (!animation->IsValid())
+        if (!animation->IsLoaded())
         {
             animation->SetFilename(this->animationName.Get());
             if (!animation->Load())
@@ -70,7 +70,6 @@ nBlendShapeAnimator::LoadAnimation()
                 return false;
             }
         }
-        this->numCurves = animation->GetGroupAt(0).GetNumCurves();
         this->refAnimation = animation;
     }
     return true;
@@ -122,7 +121,7 @@ nBlendShapeAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContex
     {
         this->LoadResources();
     }
-    n_assert(this->refAnimation->IsValid());
+    n_assert(this->refAnimation->IsLoaded());
 
     // FIXME: dirty cast, make sure that it is a nBlendShapeNode
     nBlendShapeNode* targetNode = (nBlendShapeNode*) sceneNode;
@@ -134,8 +133,10 @@ nBlendShapeAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContex
 
     // sample curves and manipulate target object
     vector4 keyArray[nBlendShapeNode::MaxShapes];
-    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, this->numCurves, keyArray); 
-    for (int curveIndex = 0; curveIndex < this->numCurves; curveIndex++)
+    int numCurves = this->refAnimation->GetGroupAt(0).GetNumCurves();
+    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, numCurves, keyArray); 
+    int curveIndex;
+    for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
     {
         targetNode->SetWeightAt(curveIndex, keyArray[curveIndex].x);
     }
