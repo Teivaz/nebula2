@@ -11,12 +11,11 @@
     
     (C) 2003 RadonLabs GmbH
 */
-#include "scene/nanimator.h"
-#include "gfx2/nshader2.h"
-#include "util/nipolkeyarray.h"
+#include "scene/nshaderanimator.h"
+#include "util/nanimkeyarray.h"
 
 //------------------------------------------------------------------------------
-class nVectorAnimator : public nAnimator
+class nVectorAnimator : public nShaderAnimator
 {
 public:
     /// constructor
@@ -26,14 +25,8 @@ public:
     /// save object to persistent stream
     virtual bool SaveCmds(nPersistServer* ps);
 
-    /// return the type of this animator object (SHADER)
-    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
-    /// set the name of the vector parameter to manipulate
-    void SetVectorName(const char* name);
-    /// get the name of the vector parameter to manipulate
-    const char* GetVectorName();
     /// add a key 
     void AddKey(float time, const vector4& key);
     /// get number of keys
@@ -42,8 +35,7 @@ public:
     void GetKeyAt(int index, float& time, vector4& key) const;
 
 private:
-    nShaderState::Param vectorParameter;
-    nIpolKeyArray<vector4> keyArray;
+    nAnimKeyArray<nAnimKey<vector4> > keyArray;
 };
 
 //------------------------------------------------------------------------------

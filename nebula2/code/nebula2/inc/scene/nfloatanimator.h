@@ -9,29 +9,21 @@
 
     (C) 2004 RadonLabs GmbH
 */
-#include "scene/nanimator.h"
-#include "gfx2/nshader2.h"
-#include "util/nipolkeyarray.h"
+#include "scene/nshaderanimator.h"
+#include "util/nanimkeyarray.h"
 
 //------------------------------------------------------------------------------
-class nFloatAnimator : public nAnimator
+class nFloatAnimator : public nShaderAnimator
 {
 public:
     /// constructor
     nFloatAnimator();
     /// destructor
     virtual ~nFloatAnimator();
-    /// save object to persistent stream
+    /// save object to persistency stream
     virtual bool SaveCmds(nPersistServer* ps);
-
-    /// return the type of this animator object (SHADER)
-    virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
-    /// set the name of the float parameter to manipulate
-    void SetFloatName(const char* name);
-    /// get the name of the float parameter to manipulate
-    const char* GetFloatName();
     /// add a key 
     void AddKey(float time, const float& key);
     /// get number of keys
@@ -40,9 +32,7 @@ public:
     void GetKeyAt(int index, float& time, float& key) const;
 
 private:
-    nShaderState::Param floatParameter;
-    nIpolKeyArray<float> keyArray;
+    nAnimKeyArray<nAnimKey<float> > keyArray;
 };
-
 //------------------------------------------------------------------------------
 #endif
