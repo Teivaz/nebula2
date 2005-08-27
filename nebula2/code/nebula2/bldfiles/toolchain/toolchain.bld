@@ -8,6 +8,7 @@
 #      nanimbuilder
 #      nresourcecompiler
 #      napplauncher
+#      nnodelist
 #      nviewerapp
 #      nmayacamcontrol
 #  Targets:
@@ -63,6 +64,12 @@ beginmodule napplauncher
     setheaders { napplauncher }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nnodelist
+    setdir tools
+    setfiles { nnodelist }
+    setheaders { nnodelist }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nviewerapp
     setdir tools
     setfiles { nviewerapp }
@@ -85,7 +92,7 @@ begintarget ntoollib
     setmodules {
         nmeshbuilder nanimbuilder nresourcecompiler
         napplauncher nviewerapp nmayacamcontrol nnvx2loader
-        nn3d2loader
+        nn3d2loader nnodelist
     }
 endtarget
 #-------------------------------------------------------------------------------
