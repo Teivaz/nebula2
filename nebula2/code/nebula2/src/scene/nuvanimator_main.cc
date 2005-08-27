@@ -55,23 +55,22 @@ nUvAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(var);
     float curTime = var->GetFloat();
 
-    const nAnimator::LoopType loopType = this->GetLoopType();
     int texLayer;
     for (texLayer = 0; texLayer < nGfxServer2::MaxTextureStages; texLayer++)
     {
         // sample key arrays and manipulate target object
-        vector2 key;
-        if (this->posArray[texLayer].SampleKey(curTime, key, loopType))
+        static nAnimKey<vector2> key;
+        if (this->posArray->Sample(curTime, this->loopType, key))
         {
-            targetNode->SetUvPos(texLayer, key);
+            targetNode->SetUvPos(texLayer, key.GetValue());
         }
-        if (this->eulerArray[texLayer].SampleKey(curTime, key, loopType))
+        if (this->eulerArray->Sample(curTime, this->loopType, key))
         {
-            targetNode->SetUvEuler(texLayer, key);
+            targetNode->SetUvEuler(texLayer, key.GetValue());
         }
-        if (this->scaleArray[texLayer].SampleKey(curTime, key, loopType))
+        if  (this->scaleArray->Sample(curTime, this->loopType, key))
         {
-            targetNode->SetUvScale(texLayer, key);
+            targetNode->SetUvScale(texLayer, key.GetValue());
         }
     }
 }
