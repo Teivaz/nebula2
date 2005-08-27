@@ -5,7 +5,7 @@
     @class nMayaCamControl
     @ingroup Tools
 
-    The class handles the control inputs similar to Maya.
+    Implements a Maya camera control model.
     
     (C) 2004 RadonLabs GmbH
 */
@@ -22,20 +22,18 @@ class nMayaCamControl
 public:
     /// constructor
     nMayaCamControl();
-    /// destructor
-    ~nMayaCamControl();
 
     /// initialize the object
     void Initialize();
-    /// update the compute, computes view matrix
+    /// update view matrix
     void Update(); 
     /// reset of View
     void Reset();
 
-    /// set default center of interrest - call initialize() for update
-    void SetDefaultCenterOfInterrest(const vector3& defCenterOfInterrest);
-    /// get default center of interrest    
-    const vector3& GetDefaultCenterOfInterrest() const;
+    /// set default center of interest - call initialize() for update
+    void SetDefaultCenterOfInterest(const vector3& defCenterOfInterest);
+    /// get default center of interest    
+    const vector3& GetDefaultCenterOfInterest() const;
     /// set default eyepos - call initialize() for update 
     void SetDefaultEyePos(const vector3& defEyePos);
     /// get default eyepos
@@ -75,11 +73,9 @@ public:
     /// Get slider up
     float GetSliderUp() const;
     /// Set slider down
-    void SetsliderDown(float slider);
+    void SetSliderDown(float slider);
     /// Get slider down
     float GetSliderDown() const;
-    /// Set Center of Interest
-    void SetCenterOfInterest(vector3 &coi);
     /// Get Center of Interest
     const vector3& GetCenterOfInterest() const;
 
@@ -105,15 +101,14 @@ protected:
     float sliderDown;
 };
 
-
 //------------------------------------------------------------------------------
 /**   
 */
 inline
 void
-nMayaCamControl::SetDefaultCenterOfInterrest(const vector3& defCenterOfInterrest)
+nMayaCamControl::SetDefaultCenterOfInterest(const vector3& defCenterOfInterest)
 {
-    this->defCenterOfInterest = defCenterOfInterrest;
+    this->defCenterOfInterest = defCenterOfInterest;
 }
 
 //------------------------------------------------------------------------------
@@ -121,7 +116,7 @@ nMayaCamControl::SetDefaultCenterOfInterrest(const vector3& defCenterOfInterrest
 */
 inline
 const vector3&
-nMayaCamControl::GetDefaultCenterOfInterrest() const
+nMayaCamControl::GetDefaultCenterOfInterest() const
 {
     return this->defCenterOfInterest;
 }
@@ -321,7 +316,7 @@ nMayaCamControl::SetSliderUp(float slider)
 */
 inline
 void 
-nMayaCamControl::SetsliderDown(float slider)
+nMayaCamControl::SetSliderDown(float slider)
 {
     this->sliderDown = slider;
 }
@@ -347,14 +342,5 @@ nMayaCamControl::GetCenterOfInterest() const
 }
 
 //------------------------------------------------------------------------------
-/**   
-*/
-inline
-void
-nMayaCamControl::SetCenterOfInterest(vector3 &coi)
-{
-    this->centerOfInterest = coi;
-}
-
 #endif 
 
