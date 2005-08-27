@@ -113,6 +113,10 @@ public:
     void mult(const _vector4& src, _vector4& dst) const;
     /// multiply source vector into target vector, eliminates tmp vector
     void mult(const _vector3& src, _vector3& dst) const;
+    /// multiply and divide by w
+    vector3 mult_divw(const _vector3& v) const;
+    /// fast multiply-add with weighting
+    void weighted_madd(const _vector3& src, _vector3& dst, float weight) const;
 
     float m[4][4];
 };
@@ -795,6 +799,20 @@ _matrix44::mult(const _vector3& src, _vector3& dst) const
 
 //------------------------------------------------------------------------------
 /**
+    Perform a multiply-add with weighting (this is quite specialized for
+    CPU-skinning)
+*/
+inline
+void
+_matrix44::weighted_madd(const _vector3& src, _vector3& dst, float weight) const
+{
+    dst.x += (M11*src.x + M21*src.y + M31*src.z + M41) * weight;
+    dst.y += (M12*src.x + M22*src.y + M32*src.z + M42) * weight;
+    dst.z += (M13*src.x + M23*src.y + M33*src.z + M43) * weight;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 static 
 inline 
@@ -849,6 +867,18 @@ _vector4 operator * (const _matrix44& m, const _vector4& v)
         m.M13*v.x + m.M23*v.y + m.M33*v.z + m.M43*v.w,
         m.M14*v.x + m.M24*v.y + m.M34*v.z + m.M44*v.w);
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector3
+_matrix44::mult_divw(const _vector3& v) const
+{
+    _vector4 v4(v.x, v.y, v.z, 1.0f);
+    v4 = *this * v4;
+    return vector3(v4.x / v4.w, v4.y / v4.w, v4.z / v4.w);
+}
 
 //------------------------------------------------------------------------------
 #endif
