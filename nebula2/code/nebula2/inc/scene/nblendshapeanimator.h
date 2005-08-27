@@ -47,7 +47,6 @@ private:
 
     int animationGroup;
     nString animationName;
-    int numCurves;
 
     nRef<nAnimation> refAnimation;
     nAutoRef<nAnimationServer> refAnimationServer;
