@@ -145,11 +145,11 @@ plane::normal() const
     Get intersecting t of line with one-sided plane. Returns false
     if the line is parallel to the plane.
 
-    If the given line intersects to the plane, plugging the value <i>t</i>
-    into the line equation produces point of intersection.
+    If the given line intersects with the plane, plugging the value <i>t</i>
+    into the line equation produces the point of intersection.
 
-    The following code snip shows the way to get the intersection point between
-    line and plane:
+    The following code snippet shows the way to get the intersection point 
+    between a line and a plane:
     @code
     if (p.intersect(l, t))
     {
