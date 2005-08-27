@@ -2,6 +2,9 @@
 #define N_TRANSFORM44_H
 //------------------------------------------------------------------------------
 /**
+    @class transform44
+    @ingroup NebulaMathDataTypes
+
     A 4x4 matrix which is described by translation, rotation and scale.
     
     (C) 2004 RadonLabs GmbH
@@ -27,29 +30,52 @@ public:
     void setquatrotation(const quaternion& q);
     /// get quaternion rotation
     const quaternion& getquatrotation() const;
-    /// return true if euler rotation is used (otherwise quaternion rotation is used)
-    bool iseulerrotation() const;
-    /// return true if the transformation matrix is dirty
-    bool isdirty() const;
     /// set scale
     void setscale(const vector3& v);
     /// get scale
     const vector3& getscale() const;
+    /// set optional rotate pivot
+    void setrotatepivot(const vector3& p, bool balance);
+    /// get optional rotate pivot
+    const vector3& getrotatepivot() const;
+    /// set optional scale pivot
+    void setscalepivot(const vector3& p);
+    /// get optional scale pivot
+    const vector3& getscalepivot() const;
+    /// lock/unlock the current matrix
+    void setlocked(bool b);
+    /// get locked state
+    bool islocked() const;
     /// set matrix 4x4
     void setmatrix(const matrix44& m);
     /// get resulting 4x4 matrix
     const matrix44& getmatrix();
+    /// return true if euler rotation is used (otherwise quaternion rotation is used)
+    bool iseulerrotation() const;
+    /// return true if the transformation matrix is dirty
+    bool isdirty() const;
+    /// return true if rotate pivot has been set
+    bool hasrotatepivot() const;
+    /// return true if scale pivot has been set
+    bool hasscalepivot() const;
 
 private:
     enum
     {
-        Dirty = (1<<0),
-        UseEuler = (1<<1),
+        Dirty          = (1<<0),
+        UseEuler       = (1<<1),
+        HasRotatePivot = (1<<2),
+        HasRotatePivotTranslation = (1<<3),
+        HasScalePivot  = (1<<4),
+        Locked         = (1<<5),
     };
     vector3 translation;
     vector3 euler;
     quaternion quat;
     vector3 scale;
+    vector3 rotatePivot;
+    vector3 rotatePivotTranslation;
+    vector3 scalePivot;
     matrix44 matrix;
     uchar flags;
 };
@@ -63,6 +89,27 @@ transform44::transform44() :
     flags(0)
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+transform44::setlocked(bool b)
+{
+    if (b) this->flags |= Locked;
+    else   this->flags &= ~Locked;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+transform44::islocked() const
+{
+    return 0 != (this->flags & Locked);
 }
 
 //------------------------------------------------------------------------------
@@ -152,32 +199,130 @@ transform44::getscale() const
 
 //------------------------------------------------------------------------------
 /**
+     Same as Maya MFnTransfrom:
+     If balance if true, then the overall transformation matrix will not change
+     and a compensating transformation will be added to the rotate translate
+     pivot to compensate for the pivot modification.
+*/
+inline
+void
+transform44::setrotatepivot(const vector3& p, bool balance)
+{
+    if (balance)
+    {
+        this->rotatePivotTranslation = p * -1.f;
+        this->flags |= Dirty | HasRotatePivotTranslation;
+    }
+    this->rotatePivot = p;
+    this->flags |= Dirty | HasRotatePivot;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+transform44::getrotatepivot() const
+{
+    return this->rotatePivot;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+transform44::setscalepivot(const vector3& p)
+{
+    this->scalePivot = p;
+    this->flags |= Dirty | HasScalePivot;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+transform44::getscalepivot() const
+{
+    return this->scalePivot;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 const matrix44&
 transform44::getmatrix()
 {
-    if (this->flags & Dirty)
+    if (this->flags & Locked)
     {
-        if (this->flags & UseEuler)
-        {
-            this->matrix.ident();
-            this->matrix.scale(this->scale);
-            this->matrix.rotate_x(this->euler.x);
-            this->matrix.rotate_y(this->euler.y);
-            this->matrix.rotate_z(this->euler.z);
-            this->matrix.translate(this->translation);
-        }
-        else
-        {
-            this->matrix.ident();
-            this->matrix.scale(this->scale);
-            this->matrix.mult_simple(matrix44(this->quat));
-            this->matrix.translate(this->translation);
-        }
-        this->flags &= ~Dirty;
+        return this->matrix;
     }
-    return this->matrix;
+    else
+    {
+        if (this->flags & Dirty)
+        {
+            if (this->flags & UseEuler)
+            {
+                this->matrix.ident();
+                if (this->flags & HasScalePivot)
+                {
+                    this->matrix.translate(-this->scalePivot);
+                }
+                this->matrix.scale(this->scale);
+                if (this->flags & HasScalePivot)
+                {
+                    this->matrix.translate(this->scalePivot);
+                }
+                if (this->flags & HasRotatePivot)
+                {
+                    this->matrix.translate(-this->rotatePivot);
+                }
+                this->matrix.rotate_x(this->euler.x);
+                this->matrix.rotate_y(this->euler.y);
+                this->matrix.rotate_z(this->euler.z);
+                if (this->flags & HasRotatePivot)
+                {
+                    this->matrix.translate(this->rotatePivot);
+                }
+                if (this->flags & HasRotatePivotTranslation)
+                {
+                    this->matrix.translate(this->rotatePivotTranslation);
+                }
+                this->matrix.translate(this->translation);
+            }
+            else
+            {
+                this->matrix.ident();
+                if (this->flags & HasScalePivot)
+                {
+                    this->matrix.translate(-this->scalePivot);
+                }
+                this->matrix.scale(this->scale);
+                if (this->flags & HasScalePivot)
+                {
+                    this->matrix.translate(this->scalePivot);
+                }
+                if (this->flags & HasRotatePivot)
+                {
+                    this->matrix.translate(-this->rotatePivot);
+                }
+                this->matrix.mult_simple(matrix44(this->quat));
+                if (this->flags & HasRotatePivot)
+                {
+                    this->matrix.translate(this->rotatePivot);
+                }
+                if (this->flags & HasRotatePivotTranslation)
+                {
+                    this->matrix.translate(this->rotatePivotTranslation);
+                }
+                this->matrix.translate(this->translation);
+            }
+            this->flags &= ~Dirty;
+        }
+        return this->matrix;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -204,8 +349,28 @@ transform44::isdirty() const
 /**
 */
 inline
+bool
+transform44::hasrotatepivot() const
+{
+    return (0 != (this->flags & HasRotatePivot));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+transform44::hasscalepivot() const
+{
+    return (0 != (this->flags & HasScalePivot));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void
-transform44::setmatrix(const matrix44 &m)
+transform44::setmatrix(const matrix44& m)
 {
     this->matrix = m;
     this->flags &= ~Dirty;
