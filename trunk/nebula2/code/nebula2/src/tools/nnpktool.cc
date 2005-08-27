@@ -75,8 +75,8 @@ public:
 
 //------------------------------------------------------------------------------
 /**
-Cleanup the path name in place (replace any backslashes with slashes),
-and removes a trailing slash if exists.
+    Cleanup the path name in place (replace any backslashes with slashes),
+    and removes a trailing slash if exists.
 */
 void nCleanupPathName(char* path)
 {
@@ -104,12 +104,12 @@ void nCleanupPathName(char* path)
 
 //------------------------------------------------------------------------------
 /**
-Return path to current working dir.
+    Return path to current working dir.
 
-@param buf      buffer to store absolute path in
-@param buflen   length of buffer 
+    @param buf      buffer to store absolute path in
+    @param buflen   length of buffer 
 
-@return     path to current working dir
+    @return     path to current working dir
 */
 const char* nGetCwd(char* buf, int buflen)
 {
@@ -127,11 +127,11 @@ const char* nGetCwd(char* buf, int buflen)
 
 //------------------------------------------------------------------------------
 /**
-makes an absolute path out of a relative one
+    makes an absolute path out of a relative one
 
-@param path     the relative path (may already be absolute)
-@param buf      buffer to store absolute path in
-@param buflen   length of buffer 
+    @param path     the relative path (may already be absolute)
+    @param buf      buffer to store absolute path in
+    @param buflen   length of buffer 
 */
 void nMakeAbsolute(const char* path, char* buf, int buflen)
 {
@@ -151,10 +151,10 @@ void nMakeAbsolute(const char* path, char* buf, int buflen)
 
 //------------------------------------------------------------------------------
 /**
-Change current working dir.
+    Change current working dir.
 
-@param  newDir      path to new working dir, may contain assigns
-@return             true or false
+    @param  newDir      path to new working dir, may contain assigns
+    @return             true or false
 */
 bool nChangeDir(const char* newDir)
 {
@@ -237,75 +237,93 @@ convertToLower(const char* path, char* buf, int bufSize)
     @param  curFileOffset   [in/out] file offset tracker
 */
 bool
-generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& tocObject, int& curFileOffset)
+generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& tocObject, int& curFileOffset, bool includeCVS)
 {
-    // add the directory itself to the tocObject
-    tocObject.BeginDirEntry(dirName);
-
-    // for each directory entry...
-    if (!dir->IsEmpty()) do
+    const nString cvs("CVS");
+    nString cmpDirName(dirName);
+    cmpDirName.ToUpper();
+    if (includeCVS || cvs != cmpDirName)
     {
-        nDirectory::EntryType entryType = dir->GetEntryType();
-        const char* fullEntryName = dir->GetEntryName();
-        char buf[N_MAXPATH];
-        fullEntryName = convertToLower(fullEntryName, buf, sizeof(buf));
+        // add the directory itself to the tocObject
+        tocObject.BeginDirEntry(dirName);
 
-        // strip the parent path from the entry
-        const char* entryName = stripParentPath(fullEntryName);
-
-        // add entry to toc
-        if (nDirectory::FILE == entryType)
+        // for each directory entry...
+        if (!dir->IsEmpty()) do
         {
-            // get length of file
-            nFile* file = fs->NewFileObject();
-            n_assert(file);
-            int fileLength = 0;
-            bool fileOk = false;
-            if (file->Open(fullEntryName, "rb"))
-            {
-                file->Seek(0, nFile::END);
-                fileLength = file->Tell();
-                file->Close();
-                fileOk = true;
-            }
-            file->Release();
+            nDirectory::EntryType entryType = dir->GetEntryType();
+            const char* fullEntryName = dir->GetEntryName();
+            char buf[N_MAXPATH];
+            fullEntryName = convertToLower(fullEntryName, buf, sizeof(buf));
 
-            if (fileOk)
-            {
-//                n_printf("-> adding file '%s' at %d len %d\n", entryName, curFileOffset, fileLength);
-                tocObject.AddFileEntry(entryName, curFileOffset, fileLength);
-                curFileOffset += fileLength;
-            }
-            else
-            {
-                n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName);
-            }
-        }
-        else if (nDirectory::DIRECTORY == entryType)
-        {
-//            n_printf("-> recursing into dir '%s'\n", entryName);
+            // strip the parent path from the entry
+            const char* entryName = stripParentPath(fullEntryName);
 
-            // start a new subdirectory entry
-            nDirectory* subDir = fs->NewDirectoryObject();
-            n_assert(subDir);
-            bool subDirOk = false;
-            if (subDir->Open(fullEntryName))
+            // add entry to toc
+            if (nDirectory::FILE == entryType)
             {
-                generateToc(fs, subDir, entryName, tocObject, curFileOffset);
-                subDir->Close();
-                subDirOk = true;
-            }
-            n_delete(subDir);
+                // get length of file
+                nFile* file = fs->NewFileObject();
+                n_assert(file);
+                int fileLength = 0;
+                bool fileOk = false;
+                if (file->Open(fullEntryName, "rb"))
+                {
+                    file->Seek(0, nFile::END);
+                    fileLength = file->Tell();
+                    file->Close();
+                    fileOk = true;
+                }
+                file->Release();
 
-            if (!subDirOk)
+                if (fileOk)
+                {
+                    //n_printf("-> adding file '%s' at %d len %d\n", entryName, curFileOffset, fileLength);
+                    tocObject.AddFileEntry(entryName, curFileOffset, fileLength);
+                    curFileOffset += fileLength;
+                }
+                else
+                {
+                    n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName);
+                }
+            }
+            else if (nDirectory::DIRECTORY == entryType)
             {
-                n_printf("*** ERROR: Could not open directory '%s', skipping...\n", entryName);
-            }
-        }
-    } while (dir->SetToNextEntry());
+                //n_printf("-> recursing into dir '%s'\n", entryName);
+                nString cmpEntryName(entryName);
+                cmpEntryName.ToUpper();
+                if (includeCVS || cvs != cmpEntryName)
+                {
+                    // start a new subdirectory entry
+                    nDirectory* subDir = fs->NewDirectoryObject();
+                    n_assert(subDir);
+                    bool subDirOk = false;
+                    if (subDir->Open(fullEntryName))
+                    {
+                        generateToc(fs, subDir, entryName, tocObject, curFileOffset, includeCVS);
+                        subDir->Close();
+                        subDirOk = true;
+                    }
+                    n_delete(subDir);
 
-    // finish the directory
-    tocObject.EndDirEntry();
+                    if (!subDirOk)
+                    {
+                        n_printf("*** ERROR: Could not open directory '%s', skipping...\n", entryName);
+                    }
+                }
+                else
+                {
+                    n_printf("*** Skip entry '%s' because it's cvs!\n", fullEntryName);
+                }
+            }
+        } while (dir->SetToNextEntry());
+
+        // finish the directory
+        tocObject.EndDirEntry();
+    }
+    else
+    {
+        n_printf("*** Skip entry '%s' because it's cvs!\n", dirName);
+    }
     return true;
 }
 
@@ -514,7 +532,7 @@ writeData(nFileServer2* fs, nFile* file, nNpkToc& tocObject)
     The global pack function.
 */
 bool
-packIt(nFileServer2* fs, const char* dirName, const char* outName)
+packIt(nFileServer2* fs, const char* dirName, const char* outName, bool includeCVS)
 {
     // create directory and file objects
     nDirectory* dir = fs->NewDirectoryObject();
@@ -546,7 +564,7 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName)
     bool retval = true;
     n_printf("-> building table of contents...\n");
     int fileOffset = 0;
-    if (generateToc(fs, dir, stripParentPath(dirName), tocObject, fileOffset))
+    if (generateToc(fs, dir, stripParentPath(dirName), tocObject, fileOffset, includeCVS))
     {
         n_printf("-> done\n");
 
@@ -630,7 +648,7 @@ printTocEntry(nNpkTocEntry* entry, int& recursionDepth)
 //------------------------------------------------------------------------------
 /**
     Build "internal path" (path inside pack file), without "data.n",
-    because thuis is the name of the file and has nothing to do with
+    because this is the name of the file and has nothing to do with
     the content.
 */
 void
@@ -1241,7 +1259,8 @@ void
 makeDiff(nFileServer2* fs, 
          const char* oldName,
          const char* newName,
-         const char* outName)
+         const char* outName,
+         bool includeCVS)
 {
     nList diffList;
     GenerateDifferenceList(fs, oldName, newName, diffList);
@@ -1258,7 +1277,7 @@ makeDiff(nFileServer2* fs,
     {
         outName = "diff.npk";
     }
-    packIt(fs, "temp.n", outName);
+    packIt(fs, "temp.n", outName, includeCVS);
 
     // delete old temp-dir
     RemoveDir(fs, "temp.n");
@@ -1275,7 +1294,7 @@ int
 main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
-    bool help, showDiff, diff;
+    bool help, showDiff, diff, includeCVS;
     const char* packName;
     const char* listName;
     const char* outName;
@@ -1293,6 +1312,7 @@ main(int argc, const char** argv)
     oldName    = args.GetStringArg("-old", 0);
     newName    = args.GetStringArg("-new", 0);
     unPackName = args.GetStringArg("-unpack", 0);
+    includeCVS = args.GetBoolArg("-includeCVS");
 
     // show help
     if (help)
@@ -1307,7 +1327,8 @@ main(int argc, const char** argv)
                "-listdiff   list difference of two npk files\n"
                "-old        the 'older' npk file to compare\n"
                "-new        the 'newer' npk file to compare\n"
-               "-unpack     unpack given npk file\n");
+               "-unpack     unpack given npk file\n"
+               "-includeCVS include CVS directories (ignored by default)\n");
         return 0;
     }
 
@@ -1319,7 +1340,7 @@ main(int argc, const char** argv)
     if (packName)
     {
         // call pack function
-        if (!packIt(fs, packName, outName))
+        if (!packIt(fs, packName, outName, includeCVS))
         {
             n_printf("ERROR IN FILE GENERATION, DELETING NPK FILE\n");
             char absOutName[N_MAXPATH];
@@ -1335,7 +1356,7 @@ main(int argc, const char** argv)
             n_assert((0 != oldName) && (0 != newName));
             
             // compare two files and build a new file with the difference
-            makeDiff(fs, oldName, newName, outName);
+            makeDiff(fs, oldName, newName, outName, includeCVS);
         }
         else
         {
@@ -1347,7 +1368,7 @@ main(int argc, const char** argv)
             }
             else
             {
-                // list differnce of two npk files
+                // list difference of two npk files
                 if (showDiff)
                 {
                     n_assert((0 != oldName) && (0 != newName));
