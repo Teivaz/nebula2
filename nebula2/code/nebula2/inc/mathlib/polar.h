@@ -36,8 +36,6 @@ public:
     polar2& operator=(const polar2& rhs);
     /// convert to normalized cartesian coords 
     vector3 get_cartesian() const;
-    /// get theta and rho in a 2d vec
-    vector2 get() const;
     /// set to polar object
     void set(const polar2& p);
     /// set to theta and rho
@@ -45,7 +43,7 @@ public:
     /// set to cartesian 
     void set(const vector3&);
     /// fuzzy equality check 
-    bool isequal(const polar2& rhs, float tol);
+    bool isequal(const polar2& rhs, float tol) const;
 
     float theta;
     float rho;
@@ -139,10 +137,13 @@ inline
 void
 polar2::set(const vector3& vec)
 {
-    double dTheta = acos(vec.y);
+    vector3 v3(vec);
+    v3.norm();
+
+    double dTheta = acos(v3.y);
 
     // build a normalized 2d vector of the xz component
-    vector2 v2(vec.x, vec.z);
+    vector2 v2(v3.x, v3.z);
     v2.norm();
 
     // adjust dRho based on the quadrant we are in
@@ -197,13 +198,12 @@ polar2::get_cartesian() const
 */
 inline
 bool
-polar2::isequal(const polar2& rhs, float tol)
+polar2::isequal(const polar2& rhs, float tol) const
 {
     float dt = n_abs(rhs.theta - this->theta);
     float dr = n_abs(rhs.rho - this->rho);
-    if (dt > tol)      return false;
-    else if (dr > tol) return false;
-    return true;
+
+    return (dt <= tol) && (dr <= tol);
 }
 
 //------------------------------------------------------------------------------
