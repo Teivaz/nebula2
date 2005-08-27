@@ -211,10 +211,10 @@ transform44::setrotatepivot(const vector3& p, bool balance)
     if (balance)
     {
         this->rotatePivotTranslation = p * -1.f;
-        this->flags |= Dirty | HasRotatePivotTranslation;
+        this->flags |= (Dirty | HasRotatePivotTranslation);
     }
     this->rotatePivot = p;
-    this->flags |= Dirty | HasRotatePivot;
+    this->flags |= (Dirty | HasRotatePivot);
 }
 
 //------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ void
 transform44::setscalepivot(const vector3& p)
 {
     this->scalePivot = p;
-    this->flags |= Dirty | HasScalePivot;
+    this->flags |= (Dirty | HasScalePivot);
 }
 
 //------------------------------------------------------------------------------
