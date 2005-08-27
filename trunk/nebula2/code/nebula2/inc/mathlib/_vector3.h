@@ -50,7 +50,7 @@ public:
     void rotate(const _vector3& axis, float angle);
     /// inplace linear interpolation
     void lerp(const _vector3& v0, float lerpVal);
-    /// linear interpolation between v0 and v1
+    /// set this vector to the linear interpolation between v0 and v1
     void lerp(const _vector3& v0, const _vector3& v1, float lerpVal);
     /// returns a vector orthogonal to self, not normalized
     _vector3 findortho() const;
@@ -60,6 +60,8 @@ public:
     float dot(const _vector3& v0) const;
     /// distance between 2 vector3's
     static float distance(const _vector3& v0, const _vector3& v1);
+    /// returns the angle between 2 vectors
+    static float angle(const _vector3& v0, const _vector3& v1);
 
     float x, y, z;
 };
@@ -378,15 +380,16 @@ _vector3::findortho() const
     if (0.0 != x)
     {
         return _vector3((-y - z) / x, 1.0, 1.0);
-    } else
-    if (0.0 != y)
+    } 
+    else if (0.0 != y)
     {
         return _vector3(1.0, (-x - z) / y, 1.0);
-    } else
-    if (0.0 != z)
+    } 
+    else if (0.0 != z)
     {
         return _vector3(1.0, 1.0, (-x - y) / z);
-    } else
+    } 
+    else 
     {
         return _vector3(0.0, 0.0, 0.0);
     }
@@ -400,7 +403,7 @@ inline
 float
 _vector3::dot(const _vector3& v0) const
 {
-    return ( x * v0.x + y * v0.y + z * v0.z );
+    return x * v0.x + y * v0.y + z * v0.z;
 }
 
 //------------------------------------------------------------------------------
@@ -446,6 +449,21 @@ _vector3::distance(const _vector3& v0, const _vector3& v1)
 {
     _vector3 v(v1 - v0);
     return (float) n_sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+_vector3::angle(const _vector3& v0, const _vector3& v1)
+{
+    _vector3 v0n = v0;
+    _vector3 v1n = v1;
+    v0n.norm();
+    v1n.norm();
+    float a = n_acos(v0n % v1n);
+    return a;
 }
 
 //------------------------------------------------------------------------------
