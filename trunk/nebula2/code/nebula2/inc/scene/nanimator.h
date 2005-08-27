@@ -17,6 +17,7 @@
 #include "scene/nscenenode.h"
 #include "kernel/nautoref.h"
 #include "variable/nvariable.h"
+#include "util/nanimlooptype.h"
 
 class nVariableServer;
 
@@ -30,12 +31,6 @@ public:
         Transform,      // a transform animator
         Shader,         // a shader animator
         BlendShape,     // a blend shape animator
-    };
-
-    enum LoopType
-    {
-        Loop,           // looping
-        OneShot,        // one shot (clamping)
     };
 
     /// constructor
@@ -54,47 +49,36 @@ public:
     /// get the variable which drives this animator object
     const char* GetChannel();
     /// set the loop type
-    void SetLoopType(LoopType t);
+    void SetLoopType(nAnimLoopType::Type t);
     /// get the loop type
-    LoopType GetLoopType() const;
-    /// convert loop type to string
-    static const char* LoopTypeToString(LoopType t);
-    /// convert string to loop type
-    static LoopType StringToLoopType(const char* str);
+    nAnimLoopType::Type GetLoopType() const;
 
 protected:
-    LoopType loopType;
+    nAnimLoopType::Type loopType;
     nVariable::Handle channelVarHandle;
+    nVariable::Handle channelOffsetVarHandle;
 };
 
 //------------------------------------------------------------------------------
 /**
+    Set the loop type for this animation.
 */
 inline
-const char*
-nAnimator::LoopTypeToString(LoopType t)
+void
+nAnimator::SetLoopType(nAnimLoopType::Type t)
 {
-    switch (t)
-    {
-        case Loop:  
-            return "loop"; 
-
-        case OneShot:
-        default:
-            return "oneshot";
-    }
+    this->loopType = t;
 }
 
 //------------------------------------------------------------------------------
 /**
+    Get the loop type for this animation.
 */
 inline
-nAnimator::LoopType
-nAnimator::StringToLoopType(const char* str)
+nAnimLoopType::Type
+nAnimator::GetLoopType() const
 {
-    n_assert(str);
-    if (0 == strcmp(str, "loop")) return Loop;
-    else                          return OneShot;
+    return this->loopType;
 }
 
 //------------------------------------------------------------------------------
