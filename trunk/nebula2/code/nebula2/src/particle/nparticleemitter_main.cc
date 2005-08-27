@@ -121,7 +121,7 @@ nParticleEmitter::Trigger(nTime curTime)
         }
     }
 
-    if (this->AreResourcesValid() && this->alive)
+    if (this->alive && this->IsActive() && this->AreResourcesValid())
     {
         // do the emission
         if (!this->particleBuffer.IsValid())
@@ -135,7 +135,7 @@ nParticleEmitter::Trigger(nTime curTime)
         const matrix44& viewer = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
         vector3 emitterViewer = viewer.pos_component() - this->matrix.pos_component();
         float distance = emitterViewer.len();
-        if (this->IsActive() && distance < this->activityDistance)
+        if (distance < this->activityDistance)
         {
             #ifdef __NEBULA_STATS__
             particleServer->numActiveEmitters->SetI(particleServer->numActiveEmitters->GetI() + 1);
@@ -218,7 +218,11 @@ nParticleEmitter::Trigger(nTime curTime)
             }
             else
             {
-                if (this->loop) this->startTime = curTime;
+                if (this->loop)
+                {
+                    this->startTime = curTime;
+                    this->lastEmission = curTime;
+                }
             }
         }
         else
