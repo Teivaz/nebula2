@@ -52,7 +52,7 @@ nSkinShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     {
         // never use cpu skinning
         nGfxServer2* gfxServer = nGfxServer2::Instance();
-        this->charSkinRenderer.Initialize(false, this->refMesh);
+        this->charSkinRenderer.Initialize(this->refMesh);
     }
     return true;
 }
