@@ -95,15 +95,7 @@ public:
     void get_clipplanes(const matrix44& viewProjection, nArray<plane>& outPlanes) const;
 
     int line_test(float v0, float v1, float w0, float w1);
-    int intersect(bbox3 box);
-
-    /**
-        @brief Gets closest intersection with AABB.
-        If the line starts inside the box,  start point is returned in ipos.
-        @param line the pick ray
-        @param ipos closest point of intersection if successful, trash otherwise
-        @return true if an intersection occurs
-    */
+    int intersect(const bbox3& box);
     bool intersect(const line3& line, vector3& ipos) const;
 
     // get point of intersection of 3d line with planes
@@ -635,9 +627,6 @@ inline bool bbox3::intersect(const line3& line, vector3& ipos) const
 
 //------------------------------------------------------------------------------
 /**
-    check if box intersects, contains or is contained in other box
-    by doing 3 projection tests for each dimension, if all 3 test
-    return true, then the 2 boxes intersect
 */
 inline
 int bbox3::line_test(float v0, float v1, float w0, float w1)
@@ -650,8 +639,14 @@ int bbox3::line_test(float v0, float v1, float w0, float w1)
     else return CLIPS;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Check if box intersects, contains or is contained in other box
+    by doing 3 projection tests for each dimension, if all 3 test
+    return true, then the 2 boxes intersect.
+*/
 inline
-int bbox3::intersect(bbox3 box)
+int bbox3::intersect(const bbox3& box)
 {
     int and_code = 0xffff;
     int or_code  = 0;
@@ -673,6 +668,7 @@ int bbox3::intersect(bbox3 box)
     }
 }
 
+//------------------------------------------------------------------------------
 /**
 */
 inline
