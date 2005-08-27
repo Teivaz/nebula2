@@ -17,6 +17,7 @@
 #      nblendshapenode
 #      nattachmentnode
 #      nanimator
+#      nshaderanimator
 #      nvectoranimator
 #      ntransformanimator
 #      ntextureanimator
@@ -118,6 +119,12 @@ beginmodule nanimator
     setdir scene
     setfiles { nanimator_main nanimator_cmds }
     setheaders { nanimator }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nshaderanimator
+    setdir scene
+    setfiles { nshaderanimator_main nshaderanimator_cmds }
+    setheaders { nshaderanimator }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nvectoranimator
