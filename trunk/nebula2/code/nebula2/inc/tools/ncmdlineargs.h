@@ -24,17 +24,17 @@ public:
     /// initialize (use if default constructor was used
     void Initialize(int argc, const char** argv);
     /// get a float arg
-    float GetFloatArg(const char* option, float defaultValue);
+    float GetFloatArg(const char* option, float defaultValue) const;
     /// get an integer arg
-    int GetIntArg(const char* option, int defaultValue);
+    int GetIntArg(const char* option, int defaultValue) const;
     /// get a bool arg
-    bool GetBoolArg(const char* option);
+    bool GetBoolArg(const char* option) const;
     /// get a string arg
-    const char* GetStringArg(const char* option, const char* defaultValue);
+    const char* GetStringArg(const char* option, const char* defaultValue) const;
 
 private:
     /// find an argument index
-    int FindArg(const char* option);
+    int FindArg(const char* option) const;
 
     int argCount;
     const char** argVector;
@@ -80,7 +80,7 @@ nCmdLineArgs::Initialize(int argc, const char** argv)
 */
 inline
 int
-nCmdLineArgs::FindArg(const char* option)
+nCmdLineArgs::FindArg(const char* option) const
 {
     int i;
     for (i = 0; i < this->argCount; i++)
@@ -99,7 +99,7 @@ nCmdLineArgs::FindArg(const char* option)
 */
 inline
 float
-nCmdLineArgs::GetFloatArg(const char* option, float defaultValue)
+nCmdLineArgs::GetFloatArg(const char* option, float defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)
@@ -122,7 +122,7 @@ nCmdLineArgs::GetFloatArg(const char* option, float defaultValue)
 */
 inline
 int
-nCmdLineArgs::GetIntArg(const char* option, int defaultValue)
+nCmdLineArgs::GetIntArg(const char* option, int defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)
@@ -145,7 +145,7 @@ nCmdLineArgs::GetIntArg(const char* option, int defaultValue)
 */
 inline
 bool
-nCmdLineArgs::GetBoolArg(const char* option)
+nCmdLineArgs::GetBoolArg(const char* option) const
 {
     if (this->FindArg(option) > 0)
     {
@@ -162,7 +162,7 @@ nCmdLineArgs::GetBoolArg(const char* option)
 */
 inline
 const char* 
-nCmdLineArgs::GetStringArg(const char* option, const char* defaultValue)
+nCmdLineArgs::GetStringArg(const char* option, const char* defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)
