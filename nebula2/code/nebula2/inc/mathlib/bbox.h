@@ -5,11 +5,15 @@
     @class bbox3
     @ingroup NebulaMathDataTypes
 
-    (non-oriented) bounding box
+    A non-oriented bounding box class.
+
+    (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
 #include "mathlib/matrix.h"
 #include "mathlib/line.h"
+#include "mathlib/plane.h"
+#include "util/narray.h"
 
 //------------------------------------------------------------------------------
 //  bbox3
@@ -65,6 +69,8 @@ public:
     void begin_extend();
     /// extend the box
     void extend(const vector3& v);
+    /// this resets the bounding box size to zero if no extend() method was called after begin_extend()
+    void end_extend();
     /// extend the box
     void extend(float x, float y, float z);
     /// extend the box
@@ -81,9 +87,12 @@ public:
     ClipStatus clipstatus(const bbox3& other) const;
     /// check for intersection with projection volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;  
-
     /// create a matrix which transforms a unit cube to this bounding box
     matrix44 to_matrix44() const;
+    /// return one of the 8 corner points
+    vector3 corner_point(int index) const;
+    /// return side planes in clip space
+    void get_clipplanes(const matrix44& viewProjection, nArray<plane>& outPlanes) const;
 
     int line_test(float v0, float v1, float w0, float w1);
     int intersect(bbox3 box);
@@ -95,7 +104,7 @@ public:
         @param ipos closest point of intersection if successful, trash otherwise
         @return true if an intersection occurs
     */
-	bool intersect(const line3& line, vector3& ipos) const;
+    bool intersect(const line3& line, vector3& ipos) const;
 
     // get point of intersection of 3d line with planes
     // on const x,y,z
@@ -265,6 +274,23 @@ bbox3::begin_extend()
 
 //------------------------------------------------------------------------------
 /**
+    This just checks whether the extend() method has actually been called after
+    begin_extend() and just sets vmin and vmax to the null vector if it hasn't.
+*/
+inline
+void
+bbox3::end_extend()
+{
+    if (vmin.isequal(vector3(+1000000.0f,+1000000.0f,+1000000.0f), TINY) &&
+        vmax.isequal(vector3(-1000000.0f,-1000000.0f,-1000000.0f), TINY))
+    {
+        vmin.set(0.0f, 0.0f, 0.0f);
+        vmax.set(0.0f, 0.0f, 0.0f);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 void
@@ -306,6 +332,56 @@ bbox3::extend(const bbox3& box)
     if (box.vmax.x > vmax.x) vmax.x = box.vmax.x;
     if (box.vmax.y > vmax.y) vmax.y = box.vmax.y;
     if (box.vmax.z > vmax.z) vmax.z = box.vmax.z;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns one of the 8 corners of the bounding box.
+*/
+inline
+vector3
+bbox3::corner_point(int index) const
+{
+    n_assert((index >= 0) && (index < 8));
+    switch (index)
+    {
+        case 0:     return this->vmin;
+        case 1:     return vector3(this->vmin.x, this->vmax.y, this->vmin.z);
+        case 2:     return vector3(this->vmax.x, this->vmax.y, this->vmin.z);
+        case 3:     return vector3(this->vmax.x, this->vmin.y, this->vmin.z);
+        case 4:     return this->vmax;
+        case 5:     return vector3(this->vmin.x, this->vmax.y, this->vmax.z);
+        case 6:     return vector3(this->vmin.x, this->vmin.y, this->vmax.z);
+        default:    return vector3(this->vmax.x, this->vmin.y, this->vmax.z);
+    }    
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the bounding box's side planes in clip space.
+*/
+inline
+void
+bbox3::get_clipplanes(const matrix44& viewProj, nArray<plane>& outPlanes) const
+{
+    matrix44 inv = viewProj;
+    inv.invert();
+    inv.transpose();
+
+    vector4 planes[6];
+
+    planes[0].set(-1, 0, 0, +this->vmax.x);
+    planes[1].set(+1, 0, 0, -this->vmin.x);
+    planes[2].set(0, -1, 0, +this->vmax.y);
+    planes[3].set(0, +1, 0, -this->vmin.y);
+    planes[4].set(0, 0, -1, +this->vmax.z);
+    planes[5].set(0, 0, +1, -this->vmin.z);
+
+    for (int i = 0; i < 6; ++i)
+    {
+        vector4 v = inv * planes[i];
+        outPlanes.Append(plane(v.x, v.y, v.z, v.w));
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -358,14 +434,14 @@ bbox3::transform(const matrix44& m)
     {
         // Transform and check extents
         temp = m * corners[i];
-        if( first || temp.x > max.x )   max.x = temp.x;
-        if( first || temp.y > max.y )   max.y = temp.y;
-        if( first || temp.z > max.z )   max.z = temp.z;
-        if( first || temp.x < min.x )   min.x = temp.x;
-        if( first || temp.y < min.y )   min.y = temp.y;
-        if( first || temp.z < min.z )   min.z = temp.z;
+        if (first || temp.x > max.x)   max.x = temp.x;
+        if (first || temp.y > max.y)   max.y = temp.y;
+        if (first || temp.z > max.z)   max.z = temp.z;
+        if (first || temp.x < min.x)   min.x = temp.x;
+        if (first || temp.y < min.y)   min.y = temp.y;
+        if (first || temp.z < min.z)   min.z = temp.z;
         first = false;
-}
+    }
 
     this->vmin = min;
     this->vmax = max;
@@ -380,12 +456,9 @@ inline
 bool
 bbox3::intersects(const bbox3& box) const
 {
-    if ((this->vmax.x < box.vmin.x) ||
-        (this->vmin.x > box.vmax.x) ||
-        (this->vmax.y < box.vmin.y) ||
-        (this->vmin.y > box.vmax.y) ||
-        (this->vmax.z < box.vmin.z) ||
-        (this->vmin.z > box.vmax.z))
+    if ((this->vmax.x < box.vmin.x) || (this->vmin.x > box.vmax.x) ||
+        (this->vmax.y < box.vmin.y) || (this->vmin.y > box.vmax.y) ||
+        (this->vmax.z < box.vmin.z) || (this->vmin.z > box.vmax.z))
     {
         return false;
     }
