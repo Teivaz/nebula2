@@ -44,20 +44,20 @@ public:
     virtual void RenderContextDestroyed(nRenderContext* renderContext);
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
-    /// begin configuring the character skeleton
+    /// begin adding joints
     void BeginJoints(int numJoints);
     /// add a joint to the skeleton
-    void SetJoint(int index, int parentJointIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale);
-    /// finish configuring the joint skeleton
+    void SetJoint(int index, int parentJointIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale, const nString& name);
+    /// finish adding joitns
     void EndJoints();
     /// get number of joints in skeleton
     int GetNumJoints();
     /// get joint attributes
-    void GetJoint(int index, int& parentJointIndex, vector3& poseTranslate, quaternion& poseRotate, vector3& poseScale);
+    void GetJoint(int index, int& parentJointIndex, vector3& poseTranslate, quaternion& poseRotate, vector3& poseScale, nString& name);
     /// set name of an anim resource
-    void SetAnim(const char* filename);
+    void SetAnim(const nString& filename);
     /// get name of an anim resource
-    const char* GetAnim() const;
+    const nString& GetAnim() const;
 
     /// set channel name which delivers the current anim state index
     void SetStateChannel(const char* name);
@@ -88,6 +88,22 @@ public:
     /// get animation attributes
     void GetClipAt(int stateIndex, int animIndex, const char*& weightChannelName);
 
+    /// begin adding anim event tracks to a clip
+    void BeginAnimEventTracks(int stateIndex, int clipIndex, int numTracks);
+    /// begin an event track to the current clip
+    void BeginAnimEventTrack(int stateIndex, int clipIndex, int trackIndex, const nString& name, int numEvents);
+    /// set an anim event in a track
+    void SetAnimEvent(int stateIndex, int clipIndex, int trackIndex, int eventIndex, float time, const vector3& translate, const quaternion& rotate, const vector3& scale);
+    /// end the current event track
+    void EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex);
+    /// end adding animation event tracks to current clip
+    void EndAnimEventTracks(int stateIndex, int clipIndex);
+        
+    /// enable/disable animation
+    void SetAnimEnabled(bool b);
+    /// get animation enabled state
+    bool IsAnimEnabled() const;
+    
     /// add a joint name
     void AddJointName(unsigned int joint, const char *name);
     /// get a joint index by name
@@ -109,10 +125,116 @@ private:
     nString animName;
     nStrList jointNameList;
     int characterVarIndex;
-    int frameIdVarIndex;
     nVariable::Handle animStateVarHandle;
+    nVariable::Handle animRestartVarHandle;
     uint frameId;
+    nClass* skinShapeNodeClass;
+    nClass* shadowSkinShapeNodeClass;
+    bool animEnabled;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSkinAnimator::SetAnimEnabled(bool b)
+{
+    this->animEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSkinAnimator::IsAnimEnabled() const
+{
+    return this->animEnabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin configuring the joint skeleton.
+*/
+inline
+void
+nSkinAnimator::BeginJoints(int numJoints)
+{
+    this->character.GetSkeleton().BeginJoints(numJoints);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add a joint to the joint skeleton.
+*/
+inline
+void
+nSkinAnimator::SetJoint(int jointIndex, int parentJointIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale, const nString& name )
+{
+    this->character.GetSkeleton().SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, name);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish adding joints to the joint skeleton.
+*/
+inline
+void
+nSkinAnimator::EndJoints()
+{
+    this->character.GetSkeleton().EndJoints();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get number of joints in joint skeleton.
+*/
+inline
+int
+nSkinAnimator::GetNumJoints()
+{
+    return this->character.GetSkeleton().GetNumJoints();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get joint attributes.
+*/
+inline
+void
+nSkinAnimator::GetJoint(int index, int& parentJointIndex, vector3& poseTranslate, quaternion& poseRotate, vector3& poseScale, nString& name)
+{
+    nCharJoint& joint = this->character.GetSkeleton().GetJointAt(index);
+    parentJointIndex = joint.GetParentJointIndex();
+    poseTranslate = joint.GetPoseTranslate();
+    poseRotate    = joint.GetPoseRotate();
+    poseScale     = joint.GetPoseScale();
+    name          = joint.GetName();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set name of anim resource file.
+*/
+inline
+void
+nSkinAnimator::SetAnim(const nString& name)
+{
+    this->UnloadAnim();
+    this->animName = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get name of anim resource file.
+*/
+inline
+const nString&
+nSkinAnimator::GetAnim() const
+{
+    return this->animName;
+}
 
 //------------------------------------------------------------------------------
 #endif
