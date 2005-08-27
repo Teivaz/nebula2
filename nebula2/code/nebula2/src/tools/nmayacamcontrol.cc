@@ -11,17 +11,18 @@
 nMayaCamControl::nMayaCamControl():
     defCenterOfInterest(0.0f, 0.0f, 0.0f),
     defEyePos(9.0f, 9.0f, 9.0f),
-    defUpVec(0.0f, 1.0f, 0.0f)
+    defUpVec(0.0f, 1.0f, 0.0f),
+    viewerDistance(0.0f),
+    lookButton(false),
+    panButton(false),
+    zoomButton(false),
+    resetButton(false),
+    sliderLeft(0.0f),
+    sliderRight(0.0f),
+    sliderUp(0.0f),
+    sliderDown(0.0f)
 {
     this->Initialize();
-}
-
-//------------------------------------------------------------------------------
-/**
-    The Destructor
-*/
-nMayaCamControl::~nMayaCamControl()
-{
 }
 
 //------------------------------------------------------------------------------
@@ -32,7 +33,7 @@ void
 nMayaCamControl::Initialize()
 {
     this->centerOfInterest = this->defCenterOfInterest;
-    // calculate distance between camera and center of interrest 
+    // calculate distance between camera and center of interest 
     this->viewerDistance = vector3::distance(this->defCenterOfInterest, this->defEyePos);    
     // initialize theta and rho
     vector3 viewerDirection = this->defEyePos - this->defCenterOfInterest;
@@ -52,7 +53,6 @@ nMayaCamControl::Reset()
     this->resetButton = false;
     this->Initialize();
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -135,5 +135,4 @@ nMayaCamControl::Update()
     this->viewMatrix.rotate_x(this->viewerAngles.theta);
     this->viewMatrix.rotate_y(this->viewerAngles.rho);
     this->viewMatrix.translate(this->centerOfInterest);
-
 }
