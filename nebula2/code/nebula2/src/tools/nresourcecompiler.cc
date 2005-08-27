@@ -290,7 +290,7 @@ nResourceCompiler::ExtractResourceAttrs(nRoot* curNode)
     if (curNode->IsA(this->skinAnimatorClass))
     {
         nSkinAnimator* skinAnimator = (nSkinAnimator*) curNode;
-        ResEntry entry(nResource::Animation, skinAnimator->GetAnim());
+        ResEntry entry(nResource::Animation, skinAnimator->GetAnim().Get());
         if (!this->anims.Find(entry))
         {
             this->anims.Append(entry);
