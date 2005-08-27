@@ -1,12 +1,10 @@
 //------------------------------------------------------------------------------
 //  nfloatanimator_cmds.cc
-//  (C) 2004 RadonLabs GmbH
+//  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "scene/nfloatanimator.h"
 #include "kernel/npersistserver.h"
 
-static void n_setfloatname(void* slf, nCmd* cmd);
-static void n_getfloatname(void* slf, nCmd* cmd);
 static void n_addkey(void* slf, nCmd* cmd);
 static void n_getnumkeys(void* slf, nCmd* cmd);
 static void n_getkeyat(void* slf, nCmd* cmd);
@@ -15,13 +13,10 @@ static void n_getkeyat(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nfloatanimator    
-
     @cppclass
     nFloatAnimator
-
     @superclass
-    nanimator
-
+    nshaderanimator
     @classinfo
     Animate a float attribute of a nabstractshadernode.
 */
@@ -29,48 +24,10 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setfloatname_s",  'SVCN', n_setfloatname);
-    cl->AddCmd("s_getfloatname_v",  'GVCN', n_getfloatname);
-    cl->AddCmd("v_addkey_ff",       'ADDK', n_addkey);
-    cl->AddCmd("i_getnumkeys_v",    'GNKS', n_getnumkeys);
-    cl->AddCmd("ff_getkeyat_i",     'GKAT', n_getkeyat);
+    cl->AddCmd("v_addkey_ff",    'ADDK', n_addkey);
+    cl->AddCmd("i_getnumkeys_v", 'GNKS', n_getnumkeys);
+    cl->AddCmd("ff_getkeyat_i",  'GKAT', n_getkeyat);
     cl->EndCmds();
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setfloatname
-    @input
-    s(FloatName)
-    @output
-    v
-    @info
-    Set name of float variable to animate in target object.
-*/
-void
-n_setfloatname(void* slf, nCmd* cmd)
-{
-    nFloatAnimator* self = (nFloatAnimator*) slf;
-    self->SetFloatName(cmd->In()->GetS());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getfloatname
-    @input
-    v
-    @output
-    s(FloatName)
-    @info
-    Get name of float variable to animate in target object.
-*/
-void
-n_getfloatname(void* slf, nCmd* cmd)
-{
-    nFloatAnimator* self = (nFloatAnimator*) slf;
-    cmd->Out()->SetS(self->GetFloatName());
 }
 
 //------------------------------------------------------------------------------
@@ -88,11 +45,10 @@ void
 n_addkey(void* slf, nCmd* cmd)
 {
     nFloatAnimator* self = (nFloatAnimator*) slf;
-
-    float time = cmd->In()->GetF();
-    float value = cmd->In()->GetF();
-
-    self->AddKey(time, value);
+    float f0, f1;
+    f0 = cmd->In()->GetF();
+    f1 = cmd->In()->GetF();
+    self->AddKey(f0, f1);
 }
 
 //------------------------------------------------------------------------------
@@ -128,11 +84,10 @@ void
 n_getkeyat(void* slf, nCmd* cmd)
 {
     nFloatAnimator* self = (nFloatAnimator*) slf;
-    float time;
-    float value;
-    self->GetKeyAt(cmd->In()->GetI(), time, value);
-    cmd->Out()->SetF(time);
-    cmd->Out()->SetF(value);
+    float f0, f1;
+    self->GetKeyAt(cmd->In()->GetI(), f0, f1);
+    cmd->Out()->SetF(f0);
+    cmd->Out()->SetF(f1);
 }
 
 //------------------------------------------------------------------------------
@@ -141,17 +96,9 @@ n_getkeyat(void* slf, nCmd* cmd)
 bool
 nFloatAnimator::SaveCmds(nPersistServer* ps)
 {
-    if (nAnimator::SaveCmds(ps))
+    if (nShaderAnimator::SaveCmds(ps))
     {
         nCmd* cmd;
-
-        //--- setfloatname ---
-        if (this->GetFloatName())
-        {
-            cmd = ps->GetCmd(this, 'SVCN');
-            cmd->In()->SetS(this->GetFloatName());
-            ps->PutCmd(cmd);
-        }
 
         //--- addkey ---
         int i;
@@ -171,3 +118,4 @@ nFloatAnimator::SaveCmds(nPersistServer* ps)
     }
     return false;
 }
+

@@ -5,8 +5,6 @@
 #include "scene/nintanimator.h"
 #include "kernel/npersistserver.h"
 
-static void n_setintname(void* slf, nCmd* cmd);
-static void n_getintname(void* slf, nCmd* cmd);
 static void n_addkey(void* slf, nCmd* cmd);
 static void n_getnumkeys(void* slf, nCmd* cmd);
 static void n_getkeyat(void* slf, nCmd* cmd);
@@ -20,57 +18,19 @@ static void n_getkeyat(void* slf, nCmd* cmd);
     nIntAnimator
 
     @superclass
-    nanimator
+    nshaderanimator
 
     @classinfo
-    Animate an int attribute of a nabstractshadernode.
+    Animate a int vector attribute of a nabstractshadernode.
 */
 void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setintname_s",    'SVCN', n_setintname);
-    cl->AddCmd("s_getintname_v",    'GVCN', n_getintname);
-    cl->AddCmd("v_addkey_fi",       'ADDK', n_addkey);
+    cl->AddCmd("v_addkey_fi",    'ADDK', n_addkey);
     cl->AddCmd("i_getnumkeys_v",    'GNKS', n_getnumkeys);
-    cl->AddCmd("fi_getkeyat_i",     'GKAT', n_getkeyat);
+    cl->AddCmd("fi_getkeyat_i",  'GKAT', n_getkeyat);
     cl->EndCmds();
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setintname
-    @input
-    s(IntName)
-    @output
-    v
-    @info
-    Set name of int variable to animate in target object.
-*/
-void
-n_setintname(void* slf, nCmd* cmd)
-{
-    nIntAnimator* self = (nIntAnimator*) slf;
-    self->SetIntName(cmd->In()->GetS());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getintname
-    @input
-    v
-    @output
-    s(IntName)
-    @info
-    Get name of int variable to animate in target object.
-*/
-void
-n_getintname(void* slf, nCmd* cmd)
-{
-    nIntAnimator* self = (nIntAnimator*) slf;
-    cmd->Out()->SetS(self->GetIntName());
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +42,7 @@ n_getintname(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Add a int key to the animation key array.
+    Add a int vector key to the animation key array.
 */
 void
 n_addkey(void* slf, nCmd* cmd)
@@ -92,7 +52,6 @@ n_addkey(void* slf, nCmd* cmd)
     int i0;
     f0 = cmd->In()->GetF();
     i0 = cmd->In()->GetI();
-
     self->AddKey(f0, i0);
 }
 
@@ -142,17 +101,9 @@ n_getkeyat(void* slf, nCmd* cmd)
 bool
 nIntAnimator::SaveCmds(nPersistServer* ps)
 {
-    if (nAnimator::SaveCmds(ps))
+    if (nShaderAnimator::SaveCmds(ps))
     {
         nCmd* cmd;
-
-        //--- setintname ---
-        if (this->GetIntName())
-        {
-            cmd = ps->GetCmd(this, 'SVCN');
-            cmd->In()->SetS(this->GetIntName());
-            ps->PutCmd(cmd);
-        }
 
         //--- addkey ---
         int i;
