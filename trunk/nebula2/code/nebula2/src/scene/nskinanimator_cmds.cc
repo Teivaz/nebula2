@@ -26,6 +26,13 @@ static void n_setclip(void* slf, nCmd* cmd);
 static void n_endclips(void* slf, nCmd* cmd);
 static void n_getnumclips(void* slf, nCmd* cmd);
 static void n_getclipat(void* slf, nCmd* cmd);
+static void n_beginanimeventtracks(void* slf, nCmd* cmd);
+static void n_beginanimeventtrack(void* slf, nCmd* cmd);
+static void n_setanimevent(void* slf, nCmd* cmd);
+static void n_endanimeventtrack(void* slf, nCmd* cmd);
+static void n_endanimeventtracks(void* slf, nCmd* cmd);
+static void n_setanimenabled(void* slf, nCmd* cmd);
+static void n_isanimenabled(void* slf, nCmd* cmd);	
 static void n_addjointname(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
@@ -67,6 +74,13 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endclips_i",              'EDCL', n_endclips);
     cl->AddCmd("i_getnumclips_i",           'GNCL', n_getnumclips);
     cl->AddCmd("s_getclipat_ii",            'GCLA', n_getclipat);
+    cl->AddCmd("v_beginanimeventtracks_iii",        'BATS', n_beginanimeventtracks);
+    cl->AddCmd("v_beginanimeventtrack_iiisi",       'BATK', n_beginanimeventtrack);
+    cl->AddCmd("v_setanimeevent_iiiifffffffffff",   'SAET', n_setanimevent);
+    cl->AddCmd("v_endanimeventtrack_iii",           'EATK', n_endanimeventtrack);
+    cl->AddCmd("v_endanimeventtracks_ii",           'EATS', n_endanimeventtracks);
+    cl->AddCmd("v_setanimenabled_b",                'SANE', n_setanimenabled);
+    cl->AddCmd("b_isanimenabled_v",                 'IAEN', n_isanimenabled);    
     cl->AddCmd("v_addjointname_is",         'ADJN', n_addjointname);
     cl->EndCmds();
 }
@@ -104,7 +118,7 @@ static void
 n_getanim(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    cmd->Out()->SetS(self->GetAnim());
+    cmd->Out()->SetS(self->GetAnim().Get());
 }
 
 //------------------------------------------------------------------------------
@@ -134,7 +148,8 @@ n_beginjoints(void* slf, nCmd* cmd)
     i(parentJointIndex),
     fff(poseTranslate)
     ffff(poseRotate)
-    fff(poseScale)
+    fff(poseScale
+    s(name)
     @output
     v
     @info
@@ -162,7 +177,10 @@ n_setjoint(void* slf, nCmd* cmd)
     poseScale.y = cmd->In()->GetF();
     poseScale.z = cmd->In()->GetF();
 
-    self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale);
+    //nString name(cmd->In()->GetS());
+
+    //self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, name);
+    self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, "");
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +229,8 @@ n_getnumjoints(void* slf, nCmd* cmd)
     i(ParentJointIndex)
     fff(poseTranslate)
     ffff(poseRotate)
-    fff(poseScale)
+    fff(poseScale
+    n(name)
     @info
     Get joint attributes at given joint index.
 */
@@ -222,8 +241,9 @@ n_getjoint(void* slf, nCmd* cmd)
     int parentJoint;
     vector3 poseTranslate, poseScale;
     quaternion poseRotate;
+    nString name;
 
-    self->GetJoint(cmd->In()->GetI(), parentJoint, poseTranslate, poseRotate, poseScale);
+    self->GetJoint(cmd->In()->GetI(), parentJoint, poseTranslate, poseRotate, poseScale, name);
     cmd->Out()->SetI(parentJoint);
 
     cmd->Out()->SetF(poseTranslate.x);
@@ -238,6 +258,8 @@ n_getjoint(void* slf, nCmd* cmd)
     cmd->Out()->SetF(poseScale.x);
     cmd->Out()->SetF(poseScale.y);
     cmd->Out()->SetF(poseScale.z);
+    
+    cmd->Out()->SetS(name.Get());
 }
 
 //------------------------------------------------------------------------------
@@ -518,6 +540,162 @@ n_getclipat(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    beginanimeventtracks
+    @input
+    i(StateIndex),i(ClipIndex),i(numTracks)
+    @output
+    v
+    @info
+    Begin adding animation event tracks.
+*/
+static void
+n_beginanimeventtracks(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int stateIndex = cmd->In()->GetI();
+    int clipIndex  = cmd->In()->GetI();
+    int numTracks  = cmd->In()->GetI();
+    self->BeginAnimEventTracks(stateIndex, clipIndex, numTracks);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    beginanimeventtrack
+    @input
+    i(StateIndex),i(ClipIndex),i(TrackIndex),s(Name),i(numEvents)
+    @output
+    v
+    @info
+    Begin and animation event tracks.
+*/
+static void
+n_beginanimeventtrack(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int stateIndex = cmd->In()->GetI();
+    int clipIndex  = cmd->In()->GetI();
+    int trackIndex = cmd->In()->GetI();
+    const char* name = cmd->In()->GetS();
+    int numEvents = cmd->In()->GetI();
+    self->BeginAnimEventTrack(stateIndex, clipIndex, trackIndex, name, numEvents);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setanimevent
+    @input
+    i(StateIndex),i(ClipIndex),i(TrackIndex),i(EventIndex),f(Time),fff(Translate),ffff(Rotate),fff(Scale)
+    @output
+    v
+    @info
+    Set an animation event.
+*/
+static void
+n_setanimevent(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int stateIndex = cmd->In()->GetI();
+    int clipIndex  = cmd->In()->GetI();
+    int trackIndex = cmd->In()->GetI();
+    int eventIndex = cmd->In()->GetI();
+    float time     = cmd->In()->GetF();
+    vector3 t, s;
+    quaternion q;
+    t.x = cmd->In()->GetF();
+    t.y = cmd->In()->GetF();
+    t.z = cmd->In()->GetF();
+    q.x = cmd->In()->GetF();
+    q.y = cmd->In()->GetF();
+    q.z = cmd->In()->GetF();
+    q.w = cmd->In()->GetF();
+    s.x = cmd->In()->GetF();
+    s.y = cmd->In()->GetF();
+    s.z = cmd->In()->GetF();
+    self->SetAnimEvent(stateIndex, clipIndex, trackIndex, eventIndex, time, t, q, s);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    endanimeventtrack
+    @input
+    i(StateIndex),i(ClipIndex),i(TrackIndex)
+    @output
+    v
+    @info
+    Finish defining an animation event track.
+*/
+static void
+n_endanimeventtrack(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int stateIndex = cmd->In()->GetI();
+    int clipIndex  = cmd->In()->GetI();
+    int trackIndex = cmd->In()->GetI();
+    self->EndAnimEventTrack(stateIndex, clipIndex, trackIndex);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    endanimeventtracks
+    @input
+    i(StateIndex),i(ClipIndex)
+    @output
+    v
+    @info
+    Finish defining an animation event track.
+*/
+static void
+n_endanimeventtracks(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    int stateIndex = cmd->In()->GetI();
+    int clipIndex  = cmd->In()->GetI();
+    self->EndAnimEventTracks(stateIndex, clipIndex);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setanimenabled
+    @input
+    b(AnimEnabled)
+    @output
+    v
+    @info
+    Enable/disable animation evaluation.
+*/
+static void
+n_setanimenabled(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    self->SetAnimEnabled(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    isanimenabled
+    @input
+    v
+    @output
+    b(AnimEnabled)
+    @info
+    Get animation enabled state.
+*/
+static void
+n_isanimenabled(void* slf, nCmd* cmd)
+{
+    nSkinAnimator* self = (nSkinAnimator*) slf;
+    cmd->Out()->SetB(self->IsAnimEnabled());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     addjointname
     @input
     i(JointIndex), s(JointName)
@@ -548,7 +726,7 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
 
         //--- setanim ---
         cmd = ps->GetCmd(this, 'SANM');
-        cmd->In()->SetS(this->GetAnim());
+        cmd->In()->SetS(this->GetAnim().Get());
         ps->PutCmd(cmd);
 
         //--- beginjoints ---
@@ -564,8 +742,9 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             int parentJoint;
             vector3 poseTranslate, poseScale;
             quaternion poseRotate;
+            nString name;
 
-            this->GetJoint(jointIndex, parentJoint, poseTranslate, poseRotate, poseScale);
+            this->GetJoint(jointIndex, parentJoint, poseTranslate, poseRotate, poseScale, name);
             cmd = ps->GetCmd(this, 'SJNT');
             cmd->In()->SetI(jointIndex);
             cmd->In()->SetI(parentJoint);
@@ -582,6 +761,8 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             cmd->In()->SetF(poseScale.x);
             cmd->In()->SetF(poseScale.y);
             cmd->In()->SetF(poseScale.z);
+            
+            cmd->In()->SetS(name.Get());
 
             ps->PutCmd(cmd);
         }
@@ -670,6 +851,84 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             //--- endstates
             cmd = ps->GetCmd(this, 'ENDS');
             ps->PutCmd(cmd);
+
+            // anim event tracks
+            for (stateIndex = 0; stateIndex < numStates; stateIndex++)
+            {
+                const nAnimState& animState = this->animStateArray.GetStateAt(stateIndex);
+                int numClips = this->GetNumClips(stateIndex);
+                int clipIndex;
+                for (clipIndex = 0; clipIndex < numClips; clipIndex++)
+                {
+                    nAnimClip& animClip = animState.GetClipAt(clipIndex);
+                    int numAnimEventTracks = animClip.GetNumAnimEventTracks();
+                    if (numAnimEventTracks > 0)
+                    {
+                        //--- beginanimeventtracks ---
+                        cmd = ps->GetCmd(this, 'BATS');
+                        cmd->In()->SetI(stateIndex);
+                        cmd->In()->SetI(clipIndex);
+                        cmd->In()->SetI(numAnimEventTracks);
+                        ps->PutCmd(cmd);
+
+                        int animEventTrackIndex;
+                        for (animEventTrackIndex = 0; animEventTrackIndex < numAnimEventTracks; animEventTrackIndex++)
+                        {
+                            nAnimEventTrack& animEventTrack = animClip.GetAnimEventTrackAt(animEventTrackIndex);
+                            int numEvents = animEventTrack.GetNumEvents();
+
+                            //--- beginanimeventtrack ---
+                            cmd = ps->GetCmd(this, 'BATK');
+                            cmd->In()->SetI(stateIndex);
+                            cmd->In()->SetI(clipIndex);
+                            cmd->In()->SetI(animEventTrackIndex);
+                            cmd->In()->SetS(animEventTrack.GetName().Get());
+                            cmd->In()->SetI(numEvents);
+                            ps->PutCmd(cmd);
+
+                            int eventIndex;
+                            for (eventIndex = 0; eventIndex < numEvents; eventIndex++)
+                            {
+                                //--- setanimevent ---
+                                const nAnimEvent& animEvent = animEventTrack.GetEvent(eventIndex);
+                                const vector3& t = animEvent.GetTranslation();
+                                const quaternion& q = animEvent.GetQuaternion();
+                                const vector3& s = animEvent.GetScale();
+                                cmd = ps->GetCmd(this, 'SAET');
+                                cmd->In()->SetI(stateIndex);
+                                cmd->In()->SetI(clipIndex);
+                                cmd->In()->SetI(animEventTrackIndex);
+                                cmd->In()->SetI(eventIndex);
+                                cmd->In()->SetF(animEvent.GetTime());
+                                cmd->In()->SetF(t.x);
+                                cmd->In()->SetF(t.y);
+                                cmd->In()->SetF(t.z);
+                                cmd->In()->SetF(q.x);
+                                cmd->In()->SetF(q.y);
+                                cmd->In()->SetF(q.z);
+                                cmd->In()->SetF(q.w);
+                                cmd->In()->SetF(s.x);
+                                cmd->In()->SetF(s.y);
+                                cmd->In()->SetF(s.z);
+                                ps->PutCmd(cmd);
+                            }
+
+                            //--- endanimeventtrack ---
+                            cmd = ps->GetCmd(this, 'EATK');
+                            cmd->In()->SetI(stateIndex);
+                            cmd->In()->SetI(clipIndex);
+                            cmd->In()->SetI(animEventTrackIndex);
+                            ps->PutCmd(cmd);
+                        }
+
+                        //--- endanimeventtracks ---
+                        cmd = ps->GetCmd(this, 'EATS');
+                        cmd->In()->SetI(stateIndex);
+                        cmd->In()->SetI(clipIndex);
+                        ps->PutCmd(cmd);
+                    }
+                }
+            }
         }
         return true;
     }
