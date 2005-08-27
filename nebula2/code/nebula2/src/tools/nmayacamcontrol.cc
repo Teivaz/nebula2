@@ -27,7 +27,7 @@ nMayaCamControl::nMayaCamControl():
 
 //------------------------------------------------------------------------------
 /**
-	Calculates several values in order to initialize the view
+    Calculates several values in order to initialize the view
 */
 void
 nMayaCamControl::Initialize()
@@ -110,10 +110,10 @@ nMayaCamControl::Update()
 
     // pushes the center of view in front of the camera to avoid a negative distance
     if (0.0f > this->viewerDistance)
-	{
-		this->centerOfInterest = this->viewMatrix.pos_component();
+    {
+        this->centerOfInterest = this->viewMatrix.pos_component();
         this->viewerDistance = 0.0f;
-	}
+    }
 
     // handle viewer move
     vector3 horiMoveVector(this->viewMatrix.x_component() * panHori * panVelocity);
