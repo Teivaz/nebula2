@@ -26,7 +26,7 @@ public:
     /// destructor
     ~nCharSkinRenderer();
     /// initialize the char skin renderer
-    bool Initialize(bool cpuSkinning, nMesh2* srcMesh);
+    bool Initialize(nMesh2* srcMesh);
     /// return true if renderer is in the initialized state
     bool IsInitialized() const;
     /// begin rendering the skin
@@ -37,17 +37,11 @@ public:
     void End();
 
 private:
-    /// internal setup routine
-    void Setup();
-    /// render with CPU skinning
-    void RenderCpuSkinning(int meshGroupIndex, nCharJointPalette& jointPalette);
     /// render with vertex skinning
     void RenderShaderSkinning(int meshGroupIndex, nCharJointPalette& jointPalette);
 
     bool initialized;
-    bool useCpuSkinning;
     bool inBegin;
-    nRef<nMesh2> refDstMesh;        // optional destination mesh when using cpu skinning
     nRef<nMesh2> refSrcMesh;        // the source mesh
     const nCharSkeleton* charSkeleton;
 };
