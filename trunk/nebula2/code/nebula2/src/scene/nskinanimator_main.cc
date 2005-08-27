@@ -20,11 +20,14 @@ nNebulaScriptClass(nSkinAnimator, "nanimator");
 nSkinAnimator::nSkinAnimator() :
     refAnimServer("/sys/servers/anim"),
     characterVarIndex(0),
-    frameIdVarIndex(0),
     animStateVarHandle(nVariable::InvalidHandle),
-    frameId(0xffffffff)
+    animEnabled(true)
 {
-    // empty
+    this->skinShapeNodeClass = kernelServer->FindClass("nskinshapenode");
+    this->shadowSkinShapeNodeClass = kernelServer->FindClass("nshadowskinshapenode");
+    n_assert(this->skinShapeNodeClass);
+    n_assert(this->shadowSkinShapeNodeClass);
+    this->animRestartVarHandle = nVariableServer::Instance()->GetVariableHandleByName("chnRestartAnim");
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +138,6 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
 
     // put frame persistent data in render context
     nVariable::Handle charHandle = nVariableServer::Instance()->GetVariableHandleByName("charPointer");
-    this->frameIdVarIndex = renderContext->AddLocalVar(nVariable(0, (int) this->frameId));
     this->characterVarIndex = renderContext->AddLocalVar(nVariable(charHandle, curCharacter));
 }
 
@@ -148,21 +150,20 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);    
 
-    nVariable var;
-    var = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
+    const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
+    nCharacter2* curCharacter = (nCharacter2*) charVar.GetObj();
     n_assert(curCharacter);
 
-    var = renderContext->GetLocalVar(this->frameIdVarIndex);
-    this->frameId = var.GetInt();
+    // update the animation enabled flag
+    //curCharacter->SetAnimEnabled(this->animEnabled);
 
     // check if I am already uptodate for this frame
     uint curFrameId = renderContext->GetFrameId();
-    if (this->frameId != curFrameId)
+    if (curCharacter->GetLastEvaluationFrameId() != curFrameId)
     {
-        this->frameId = curFrameId;
+        curCharacter->SetLastEvaluationFrameId(curFrameId);
 
         // get the sample time from the render context
         nVariable* var = renderContext->GetVariable(this->channelVarHandle);
@@ -172,6 +173,10 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         }
         float curTime = var->GetFloat();
 
+        // get the time offset from the render context
+        var = renderContext->GetVariable(this->channelOffsetVarHandle);
+        float curOffset = 0 != var ? var->GetFloat() : 0.0f;
+
         // get the current anim state from the anim state channel
         // (assume 0 as default state index)
         var = renderContext->GetVariable(this->animStateVarHandle);
@@ -180,12 +185,18 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         {
             animState = var->GetInt();
         }
-        if (animState != curCharacter->GetActiveState())
+        int restartAnim = 0;
+        var = renderContext->GetVariable(this->animRestartVarHandle);
+        if (var)
+        {
+            restartAnim = var->GetInt();
+        }
+        if ((animState != curCharacter->GetActiveState()) || (0 != restartAnim))
         {
             // activate new state
-            if (curCharacter->ValidStateIndex(animState))
+            if (curCharacter->IsValidStateIndex(animState))
             {
-                curCharacter->SetActiveState(animState, curTime);
+                curCharacter->SetActiveState(animState, curTime, curOffset);
             }
             else
             {
@@ -198,20 +209,20 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     }
 
     // update the source node with the new char skeleton state
-    if (sceneNode->IsA(nKernelServer::Instance()->FindClass("nskinshapenode")))
+    if (sceneNode->IsA(this->skinShapeNodeClass))
     {
         nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
         skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
 
     }
-    else if (sceneNode->IsA(nKernelServer::Instance()->FindClass("nshadowskinshapenode")))
+    else if (sceneNode->IsA(this->shadowSkinShapeNodeClass))
     {
-        nShadowSkinShapeNode* skinShapeNode = (nShadowSkinShapeNode*) sceneNode;
-        skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
+        nShadowSkinShapeNode* shadowSkinShapeNode = (nShadowSkinShapeNode*) sceneNode;
+        shadowSkinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
     }
     else
     {
-        n_error("nSkinAnimator::Animate: can't cast sceneNode!\n");
+        n_error("nSkinAnimator::Animate(): invalid scene node class\n");
     }
 }
 
@@ -225,85 +236,7 @@ nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
     var = renderContext->GetLocalVar(this->characterVarIndex);
     nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
     n_assert(curCharacter);
-
-    n_delete(curCharacter);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Begin configuring the joint skeleton.
-*/
-void
-nSkinAnimator::BeginJoints(int numJoints)
-{
-    this->character.GetSkeleton().Clear();
-    this->character.GetSkeleton().BeginJoints(numJoints);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Add a joint to the joint skeleton.
-*/
-void
-nSkinAnimator::SetJoint(int jointIndex, int parentJointIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale)
-{
-    this->character.GetSkeleton().SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Finish adding joints to the joint skeleton.
-*/
-void
-nSkinAnimator::EndJoints()
-{
-    this->character.GetSkeleton().EndJoints();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get number of joints in joint skeleton.
-*/
-int
-nSkinAnimator::GetNumJoints()
-{
-    return this->character.GetSkeleton().GetNumJoints();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get joint attributes.
-*/
-void
-nSkinAnimator::GetJoint(int index, int& parentJointIndex, vector3& poseTranslate, quaternion& poseRotate, vector3& poseScale)
-{
-    nCharJoint& joint = this->character.GetSkeleton().GetJointAt(index);
-    parentJointIndex = joint.GetParentJointIndex();
-    poseTranslate = joint.GetPoseTranslate();
-    poseRotate    = joint.GetPoseRotate();
-    poseScale     = joint.GetPoseScale();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set name of anim resource file.
-*/
-void
-nSkinAnimator::SetAnim(const char* name)
-{
-    n_assert(name);
-    this->UnloadAnim();
-    this->animName = name;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get name of anim resource file.
-*/
-const char*
-nSkinAnimator::GetAnim() const
-{
-    return this->animName.IsEmpty() ? 0 : this->animName.Get();
+    curCharacter->Release();
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +245,6 @@ nSkinAnimator::GetAnim() const
 void
 nSkinAnimator::SetStateChannel(const char* name)
 {
-    n_assert(name);
     this->animStateVarHandle = nVariableServer::Instance()->GetVariableHandleByName(name);
 }
 
@@ -452,6 +384,64 @@ nSkinAnimator::GetClipAt(int stateIndex, int clipIndex, const char*& weightChann
 {
     nVariable::Handle varHandle = this->animStateArray.GetStateAt(stateIndex).GetClipAt(clipIndex).GetWeightChannelHandle();
     weightChannelName = nVariableServer::Instance()->GetVariableName(varHandle);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin adding animation event tracks to a clip.
+*/
+void
+nSkinAnimator::BeginAnimEventTracks(int stateIndex, int clipIndex, int numTracks)
+{
+    this->animStateArray.GetStateAt(stateIndex).GetClipAt(clipIndex).SetNumAnimEventTracks(numTracks);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin adding events to an animation event track.
+*/
+void
+nSkinAnimator::BeginAnimEventTrack(int stateIndex, int clipIndex, int trackIndex, const nString& name, int numEvents)
+{
+    nAnimEventTrack& t = this->animStateArray.GetStateAt(stateIndex).GetClipAt(clipIndex).GetAnimEventTrackAt(trackIndex);
+    t.SetName(name);
+    t.SetNumEvents(numEvents);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set an animation event in a track
+*/
+void
+nSkinAnimator::SetAnimEvent(int stateIndex, int clipIndex, int trackIndex, int eventIndex, float time, const vector3& translate, const quaternion& rotate, const vector3& scale)
+{
+    nAnimEventTrack& t = this->animStateArray.GetStateAt(stateIndex).GetClipAt(clipIndex).GetAnimEventTrackAt(trackIndex);
+    nAnimEvent e;
+    e.SetTime(time);
+    e.SetTranslation(translate);
+    e.SetQuaternion(rotate);
+    e.SetScale(scale);
+    t.SetEvent(eventIndex, e);
+}
+
+//------------------------------------------------------------------------------
+/**
+    End adding animation events.
+*/
+void
+nSkinAnimator::EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    End adding animation event tracks.
+*/
+void
+nSkinAnimator::EndAnimEventTracks(int stateIndex, int clipIndex)
+{
+    // empty
 }
 
 //------------------------------------------------------------------------------
