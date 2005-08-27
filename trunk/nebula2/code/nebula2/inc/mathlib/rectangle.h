@@ -2,6 +2,9 @@
 #define N_RECTANGLE_H
 //------------------------------------------------------------------------------
 /**
+    @class rectangle
+    @ingroup NebulaMathDataTypes
+
     A 2d rectangle class.
     
     (C) 2003 RadonLabs GmbH
