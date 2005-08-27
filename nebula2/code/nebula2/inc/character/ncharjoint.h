@@ -11,21 +11,11 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_VECTOR_H
 #include "mathlib/vector.h"
-#endif
-
-#ifndef N_MATRIX_H
 #include "mathlib/matrix.h"
-#endif
-
-#ifndef N_QUATERNION_H
 #include "mathlib/quaternion.h"
-#endif
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nCharJoint
@@ -63,14 +53,32 @@ public:
     void SetScale(const vector3& s);
     /// get scale
     const vector3& GetScale() const;
+    /// set name
+    void SetName(const nString& name);
+    /// get name
+    const nString& GetName() const; 
     /// evaluate joint
     void Evaluate();
+    /// directly set the local matrix
+    void SetLocalMatrix(const matrix44& m);
+    /// get current evaluated matrix in local space, valid after Evaluate()!
+    const matrix44& GetLocalMatrix() const;
+    /// get the bind pose matrix in model space
+    const matrix44& GetPoseMatrix() const;
+    /// get the inverse pose matrix in model space
+    const matrix44& GetInvPoseMatrix() const;
+    /// set model space matrix directly, this will disable multiplication by parent joint
+    void SetMatrix(const matrix44& m);
+    /// get current evaluated matrix in model space, valid after Evaluate()!
+    const matrix44& GetMatrix() const;
     /// get the skinning matrix with translation
     const matrix44& GetSkinMatrix44() const;
     /// get the skinning matrix without translation (for normals)
     const matrix33& GetSkinMatrix33() const;
-    /// get the standard transformation matrix
-    const matrix44& GetMatrix44() const;
+    /// clear the uptodate flag
+    void ClearUptodateFlag();
+    /// return true if the joint has been evaluated 
+    bool IsUptodate() const;
 
 private:
     vector3 poseTranslate;
@@ -84,12 +92,17 @@ private:
     matrix44 poseMatrix;
     matrix44 invPoseMatrix;
 
-    matrix44 matrix;
+    matrix44 matrix;            // the current evaluated matrix in model space
+    matrix44 localMatrix;       // the current evaluated matrix in local (parent) space
     matrix44 skinMatrix44;
     matrix33 skinMatrix33;
     int parentJointIndex;
     nCharJoint* parentJoint;
     bool matrixDirty;
+    bool lockMatrix;
+    bool isUptodate;
+    
+    nString name;
 };
 
 //------------------------------------------------------------------------------
@@ -101,7 +114,9 @@ nCharJoint::nCharJoint() :
     parentJointIndex(-1),
     poseScale(1.0f, 1.0f, 1.0f),
     scale(1.0f, 1.0f, 1.0f),
-    matrixDirty(false)
+    matrixDirty(false),
+    lockMatrix(false),
+    isUptodate(false)
 {
     // empty
 }
@@ -173,6 +188,7 @@ nCharJoint::SetPose(const vector3& t, const quaternion& q, const vector3& s)
     this->poseMatrix.translate(this->poseTranslate);
 
     // set the initial matrix so that it undoes the pose matrix
+    this->localMatrix = poseMatrix;
     this->matrix = poseMatrix;
 
     // globale pose matrix and compute global inverse pose matrix
@@ -279,6 +295,30 @@ nCharJoint::GetScale() const
 
 //------------------------------------------------------------------------------
 /**
+    Clear the uptodate flag. This flag is used in Evaluate() to check
+    whether a parent joint has already been evaluated.
+*/
+inline
+void
+nCharJoint::ClearUptodateFlag() 
+{
+    this->isUptodate = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true when this joint is uptodate (set when Evaluate()) has been
+    called after ClearUptodateFlag().
+*/
+inline
+bool
+nCharJoint::IsUptodate() const
+{
+    return this->isUptodate;
+}
+
+//------------------------------------------------------------------------------
+/**
     This computes the skinning matrix from the pose matrix, the translation,
     the rotation and the scale of the joint. The parent joint must already be
     uptodate!
@@ -287,27 +327,44 @@ inline
 void
 nCharJoint::Evaluate()
 {
-    if (this->matrixDirty)
+    if (!this->isUptodate)
     {
-        this->matrix.ident();
-        this->matrix.scale(this->scale);
-        this->matrix.mult_simple(matrix44(this->rotate));
-        this->matrix.translate(this->translate);
-        this->matrixDirty = false;
-    }
+        // any changes in position/rotation/etc ?
+        if (this->matrixDirty)
+        {
+            this->localMatrix.ident();
 
-    if (this->parentJoint)
-    {
-        this->matrix.mult_simple(this->parentJoint->matrix);
+            // FIXME: HMM --> Scale doesn't work too well... (with ragdolls)
+            this->localMatrix.scale(this->scale);
+            this->localMatrix.mult_simple(matrix44(this->rotate));
+            this->localMatrix.translate(this->translate);
+            this->matrixDirty = false;
+        }
+
+        if (!this->lockMatrix)
+        {
+            this->matrix = this->localMatrix;
+            if (this->parentJoint)
+            {
+                if (!this->parentJoint->IsUptodate())
+                {
+                    this->parentJoint->Evaluate();
+                }
+                this->matrix.mult_simple(this->parentJoint->matrix);
+            }
+        }
+        this->skinMatrix44 = this->invPoseMatrix * this->matrix;
+        this->skinMatrix33.set(this->skinMatrix44.M11, this->skinMatrix44.M12, this->skinMatrix44.M13,
+                            this->skinMatrix44.M21, this->skinMatrix44.M22, this->skinMatrix44.M23,
+                            this->skinMatrix44.M31, this->skinMatrix44.M32, this->skinMatrix44.M33);
+        this->isUptodate = true;
     }
-    this->skinMatrix44 = this->invPoseMatrix * this->matrix;
-    this->skinMatrix33.set(this->skinMatrix44.M11, this->skinMatrix44.M12, this->skinMatrix44.M13,
-                           this->skinMatrix44.M21, this->skinMatrix44.M22, this->skinMatrix44.M23,
-                           this->skinMatrix44.M31, this->skinMatrix44.M32, this->skinMatrix44.M33);
 }
 
 //------------------------------------------------------------------------------
 /**
+    Return the 4x4 skinning matrix. This is the current evaluated matrix
+    multiplied by the inverse bind pose matrix.
 */
 inline
 const matrix44&
@@ -318,6 +375,7 @@ nCharJoint::GetSkinMatrix44() const
 
 //------------------------------------------------------------------------------
 /**
+    Return the upper-left 3x3 part of the skinning matrix.
 */
 inline
 const matrix33&
@@ -330,10 +388,93 @@ nCharJoint::GetSkinMatrix33() const
 /**
 */
 inline
+void
+nCharJoint::SetName(const nString& name)
+{
+    this->name = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nCharJoint::GetName() const
+{
+    return this->name;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the bind pose matrix. This matrix is already flattened into 
+    model space.
+*/
+inline
 const matrix44&
-nCharJoint::GetMatrix44() const
+nCharJoint::GetPoseMatrix() const
+{
+    return this->poseMatrix;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the inverse bind pose matrix.
+*/
+inline
+const matrix44&
+nCharJoint::GetInvPoseMatrix() const
+{
+    return this->invPoseMatrix;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set the model space matrix directly. This sets a flag for Evaluate()
+    which tells it not to multiply by the parent joint's matrix.
+*/
+inline
+void
+nCharJoint::SetMatrix(const matrix44& m)
+{
+    this->matrix = m;
+    this->lockMatrix = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the current evaluated matrix in model space. This matrix is only
+    valid after Evaluate() has been called.
+*/
+inline
+const matrix44&
+nCharJoint::GetMatrix() const
 {
     return this->matrix;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Directly set the local matrix. This will clear the dirty flag, which
+    means the joint's translate/rotate/scale components are disabled.
+*/
+inline
+void
+nCharJoint::SetLocalMatrix(const matrix44& m)
+{
+    this->localMatrix = m;
+    this->matrixDirty = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the current evaluated matrix in local space. This matrix is only
+    valid after Evaluate() has been called.
+*/
+inline
+const matrix44&
+nCharJoint::GetLocalMatrix() const
+{
+    return this->localMatrix;
 }
 
 //------------------------------------------------------------------------------

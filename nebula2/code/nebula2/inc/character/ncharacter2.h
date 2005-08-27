@@ -11,9 +11,11 @@
 */
 #include "anim2/nanimstatearray.h"
 #include "character/ncharskeleton.h"
+#include "kernel/nrefcounted.h"
+#include "anim2/nanimeventhandler.h"
 
 //------------------------------------------------------------------------------
-class nCharacter2
+class nCharacter2 : public nRefCounted
 {
 public:
     /// constructor
@@ -21,7 +23,7 @@ public:
     /// copy constructor
     nCharacter2(const nCharacter2& src);
     /// destructor
-    ~nCharacter2();
+    virtual ~nCharacter2();
     /// get the embedded character skeleton
     nCharSkeleton& GetSkeleton();
     /// set pointer to an anim state array (not owned)
@@ -32,20 +34,34 @@ public:
     void SetAnimation(nAnimation* anim);
     /// get pointer to animation source
     const nAnimation* GetAnimation() const;
+    /// set optional anim event handler (incrs refcount of handler)
+    void SetAnimEventHandler(nAnimEventHandler* handler);
+    /// get optional anim event handler
+    nAnimEventHandler* GetAnimEventHandler() const;
     /// set the currently active state
-    void SetActiveState(int stateIndex, nTime time);
+    void SetActiveState(int stateIndex, nTime time, nTime offset);
     /// get the current state index
     int GetActiveState() const;
-    /// Is `i' a valid state index?
-    bool ValidStateIndex(int i) const;
+    /// is `i' a valid state index?
+    bool IsValidStateIndex(int i) const;
     /// evaluate the joint skeleton
     void EvaluateSkeleton(float time, nVariableContext* varContext);
+    /// emit animation events between 2 times
+    void EmitAnimEvents(float startTime, float stopTime);
     /// find a state index by state name
     int FindStateIndexByName(const nString& n);
     /// return animation duration of an animation state
     nTime GetStateDuration(int stateIndex) const;
     /// return fadein time of an animation state
     nTime GetStateFadeInTime(int stateIndex) const;
+    /// enable/disable animation
+    void SetAnimEnabled(bool b);
+    /// get manual joint animation
+    bool IsAnimEnabled() const;
+    /// set the frame id when the character was last evaluated
+    void SetLastEvaluationFrameId(uint id);
+    /// get the frame id when the character was last evaluated
+    uint GetLastEvaluationFrameId() const;
 
 private:
     enum
@@ -67,22 +83,31 @@ private:
         void SetStateStarted(float t);
         /// get state started time
         float GetStateStarted() const;
+        /// set state time offset
+        void SetStateOffset(float t);
+        /// get state time offset
+        float GetStateOffset() const;
         /// is valid?
         bool IsValid() const;
             
         int stateIndex;
         float stateStarted;
+        float stateOffset;
     };
 
     nCharSkeleton charSkeleton;
     nAnimStateArray* animStateArray;
-    nAnimation* animation;
+    nRef<nAnimation> animation;
+    nAnimEventHandler* animEventHandler;
     StateInfo prevStateInfo;
     StateInfo curStateInfo;
 
     static vector4 scratchKeyArray[MaxCurves];
     static vector4 keyArray[MaxCurves];
     static vector4 transitionKeyArray[MaxCurves];
+    
+    bool animEnabled;
+    uint lastEvaluationFrameId;
 };
 
 //------------------------------------------------------------------------------
@@ -91,7 +116,8 @@ private:
 inline
 nCharacter2::StateInfo::StateInfo() :
     stateIndex(-1),
-    stateStarted(0.0f)
+    stateStarted(0.0f),
+    stateOffset(0.0f)
 {
     // empty
 }
@@ -134,6 +160,26 @@ float
 nCharacter2::StateInfo::GetStateStarted() const
 {
     return this->stateStarted;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCharacter2::StateInfo::SetStateOffset(float t)
+{
+    this->stateOffset= t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nCharacter2::StateInfo::GetStateOffset() const
+{
+    return this->stateOffset;
 }
 
 //------------------------------------------------------------------------------
@@ -212,9 +258,78 @@ nCharacter2::GetActiveState() const
 */
 inline
 bool
-nCharacter2::ValidStateIndex(int i) const
+nCharacter2::IsValidStateIndex(int i) const
 {
     return ((0 <= i) && (i < animStateArray->GetNumStates()));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCharacter2::SetAnimEnabled(bool b)
+{
+    this->animEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nCharacter2::IsAnimEnabled() const
+{
+    return this->animEnabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCharacter2::SetLastEvaluationFrameId(uint id)
+{
+    this->lastEvaluationFrameId = id;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+uint
+nCharacter2::GetLastEvaluationFrameId() const
+{
+    return this->lastEvaluationFrameId;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCharacter2::SetAnimEventHandler(nAnimEventHandler* handler)
+{
+    if (this->animEventHandler)
+    {
+        this->animEventHandler->Release();
+        this->animEventHandler = 0;
+    }
+    if (handler)
+    {
+        this->animEventHandler = handler;
+        this->animEventHandler->AddRef();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimEventHandler*
+nCharacter2::GetAnimEventHandler() const
+{
+    return this->animEventHandler;
 }
 
 //------------------------------------------------------------------------------
