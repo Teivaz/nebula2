@@ -273,7 +273,7 @@ nViewerApp::Run()
             this->camControl.SetSliderLeft(this->refInputServer->GetSlider("left"));
             this->camControl.SetSliderRight(this->refInputServer->GetSlider("right"));
             this->camControl.SetSliderUp(this->refInputServer->GetSlider("up"));
-            this->camControl.SetsliderDown(this->refInputServer->GetSlider("down"));
+            this->camControl.SetSliderDown(this->refInputServer->GetSlider("down"));
             
             // Toggle console
             if (true == this->refInputServer->GetButton("console"))
