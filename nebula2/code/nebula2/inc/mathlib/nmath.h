@@ -26,6 +26,7 @@
 #ifndef TINY
 #define TINY (0.0000001f)
 #endif
+#define N_TINY TINY
 
 #define n_max(a,b)      (((a) > (b)) ? (a) : (b))
 #define n_min(a,b)      (((a) < (b)) ? (a) : (b))
@@ -216,7 +217,7 @@ inline int n_fchop(float f)
 */
 inline int n_frnd(float f)
 {
-    return n_fchop(f + 0.5f);
+    return n_fchop(floorf(f + 0.5f));
 }
 
 //------------------------------------------------------------------------------
@@ -265,7 +266,7 @@ lerp<float>(float & result, const float & val0, const float & val1, float lerpVa
 
 //------------------------------------------------------------------------------
 /**
-    Nornalize an angular value into the range rad(0) to rad(360).
+    Normalize an angular value into the range rad(0) to rad(360).
 */
 inline float n_normangle(float a)
 {
