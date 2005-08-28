@@ -660,7 +660,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
         }
     }
 
-	// finally, remove the redundant vertices
+    // finally, remove the redundant vertices
     numVertices = this->vertexArray.Size();
     nArray<Vertex> newArray(numVertices, numVertices);
     for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -759,8 +759,6 @@ int
 nMeshBuilder::Append(const nMeshBuilder& source)
 {
     int baseVertexIndex = this->GetNumVertices();
-    // FIXME?
-    // int baseTriangleIndex = this->GetNumTriangles();
     nArray<Group> groupMap;
     this->BuildGroupMap(groupMap);
     int baseGroupIndex = groupMap.Size();
@@ -1011,6 +1009,7 @@ nMeshBuilder::GetGroupBBox(int groupId) const
             }
         }
     }
+    box.end_extend();
     return box;
 }
 
@@ -1023,13 +1022,13 @@ nMeshBuilder::GetBBox() const
 {
     bbox3 box;
     box.begin_extend();
-
     int numVertices = this->GetNumVertices();
     int vertexIndex;
     for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
     {
         box.extend(this->GetVertexAt(vertexIndex).GetCoord());
     }
+    box.end_extend();
     return box;
 }
 
@@ -1384,3 +1383,34 @@ nMeshBuilder::CheckForGeometryError()
     return errors;
 }
 
+//------------------------------------------------------------------------------
+/**
+    This creates 3 unique vertices for each triangle in the mesh, generating
+    redundant vertices. This is the opposite operation to Cleanup(). This will
+    throw away any generated edges!
+*/
+void
+nMeshBuilder::Inflate()
+{
+    // for each triangle...
+    nArray<Vertex> newVertexArray(this->GetNumTriangles() * 3, 0);
+    int numTriangles = this->GetNumTriangles();
+    int triangleIndex;
+    for (triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
+    {
+        // build new vertex array and fix triangle vertex indices
+        Triangle& tri = this->GetTriangleAt(triangleIndex);
+        int i;
+        for (i = 0; i < 3; i++)
+        {
+            newVertexArray.Append(this->GetVertexAt(tri.vertexIndex[i]));
+            tri.vertexIndex[i] = triangleIndex * 3 + i;
+        }
+    }
+
+    // replace vertex array
+    this->vertexArray = newVertexArray;
+
+    // dump edge array
+    this->edgeArray.Clear();
+}

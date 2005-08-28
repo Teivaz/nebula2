@@ -30,13 +30,11 @@ nMeshBuilder::Load(nFileServer2* fileServer, const char* filename)
     {
         return this->LoadN3d(fileServer, filename);
     }
-    else
-    if (path.CheckExtension("nvx"))
+    else if (path.CheckExtension("nvx"))
     {
         return this->LoadNvx(fileServer, filename);
     }
-    else 
-    if (path.CheckExtension("obj"))
+    else if (path.CheckExtension("obj"))
     {
         return this->LoadObj(fileServer, filename);
     }
