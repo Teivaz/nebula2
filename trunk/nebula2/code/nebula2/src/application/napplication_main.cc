@@ -120,7 +120,7 @@ nApplication::Open()
     // initialize locale server
     if (!this->localeTable.IsEmpty())
     {
-        this->refLocaleServer->SetLocaleTableFilename(this->localeTable.Get());
+        this->refLocaleServer->AddLocaleTable(this->localeTable.Get());
         this->refLocaleServer->Open();
     }
 

@@ -8,6 +8,7 @@
 #include "kernel/nfile.h"
 #include "kernel/ndirectory.h"
 #include "kernel/ncrc.h"
+#include "util/nstring.h"
 #ifdef __WIN32__
 #include <direct.h>
 #else
@@ -74,11 +75,8 @@ nFileServer2::~nFileServer2()
      - 30-Jan-2002   peter    created
 */
 bool
-nFileServer2::SetAssign(const char* assignName, const char* pathName)
+nFileServer2::SetAssign(const nString& assignName, const nString& pathName)
 {
-    n_assert(assignName);
-    n_assert(pathName);
-
     // make sure trailing slash exists
     nString pathString = pathName;
     pathString.StripTrailingSlash();
@@ -86,10 +84,10 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
 
     // ex. das Assign schon?
     kernelServer->PushCwd(this->assignDir.get());
-    nEnv *env = (nEnv *) this->assignDir->Find(assignName);
+    nEnv *env = (nEnv *) this->assignDir->Find(assignName.Get());
     if (!env)
     {
-        env = (nEnv *) kernelServer->New("nenv", assignName);
+        env = (nEnv *) kernelServer->New("nenv", assignName.Get());
         n_assert(env);
     }
     env->SetS(pathString.Get());
@@ -108,9 +106,9 @@ nFileServer2::SetAssign(const char* assignName, const char* pathName)
     - 30-Jan-2002   peter    created
 */
 const char*
-nFileServer2::GetAssign(const char* assignName)
+nFileServer2::GetAssign(const nString& assignName)
 {
-    nEnv *env = (nEnv *) this->assignDir->Find(assignName);
+    nEnv *env = (nEnv *) this->assignDir->Find(assignName.Get());
     if (env)
     {
         return env->GetS();
@@ -207,7 +205,7 @@ nFileServer2::CleanupPathName(nString& str)
     - 30-Jan-2002   peter    created
 */
 nString
-nFileServer2::ManglePath(const char* pathName)
+nFileServer2::ManglePath(const nString& pathName)
 {
     nString pathString = pathName;
 
@@ -458,7 +456,7 @@ nFileServer2::InitUserAssign()
     this->SetAssign("user", "d:/");
 #elif defined(__WIN32__)
     char rawPath[MAX_PATH];
-    HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,      // hwndOwner
+    HRESULT hr = nWin32Wrapper::Instance()->SHGetFolderPath(0,      // hwndOwner
                     CSIDL_PERSONAL | CSIDL_FLAG_CREATE,       // nFolder
                     NULL,                                     // hToken
                     0,                                        // dwFlags
@@ -513,12 +511,12 @@ nFileServer2::InitTempAssign()
 /**
 */
 bool
-nFileServer2::FileExists(const char* pathName) const
+nFileServer2::FileExists(const nString& pathName) const
 {
     n_assert(pathName != 0);
     bool result = false;
     nFile* file = this->NewFileObject();
-    if (file->Exists(pathName))
+    if (file->Exists(pathName.Get()))
     {
         result = true;
     }
@@ -530,11 +528,11 @@ nFileServer2::FileExists(const char* pathName) const
 /**
 */
 bool
-nFileServer2::DirectoryExists(const char* pathName) const
+nFileServer2::DirectoryExists(const nString& pathName) const
 {
     n_assert(pathName != 0);
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(pathName))
+    if (dir->Open(pathName.Get()))
     {
         dir->Close();
         n_delete(dir);
@@ -549,10 +547,8 @@ nFileServer2::DirectoryExists(const char* pathName) const
     Make any missing directories in path.
 */
 bool
-nFileServer2::MakePath(const char* dirName)
+nFileServer2::MakePath(const nString& dirName)
 {
-    n_assert(dirName);
-
     nDirectory* dir = this->NewDirectoryObject();
     n_assert(dir);
 
@@ -603,10 +599,8 @@ nFileServer2::MakePath(const char* dirName)
                             target file before copying.
 */
 bool
-nFileServer2::CopyFile(const char* from, const char* to)
+nFileServer2::CopyFile(const nString& from, const nString& to)
 {
-    n_assert(from && to);
-
     #ifdef __WIN32__
         // Win32 specific method is more efficient
         nString mangledFromPath = this->ManglePath(from);
@@ -661,9 +655,8 @@ nFileServer2::CopyFile(const char* from, const char* to)
     Delete a file.
 */
 bool
-nFileServer2::DeleteFile(const char* filename)
+nFileServer2::DeleteFile(const nString& filename)
 {
-    n_assert(filename);
     nString mangledPath = this->ManglePath(filename);
 
     #ifdef __WIN32__
@@ -680,9 +673,8 @@ nFileServer2::DeleteFile(const char* filename)
     Delete an empty directory.
 */
 bool
-nFileServer2::DeleteDirectory(const char* dirName)
+nFileServer2::DeleteDirectory(const nString& dirName)
 {
-    n_assert(dirName);
     nString mangledPath = this->ManglePath(dirName);
 
     #ifdef __WIN32__
@@ -702,10 +694,8 @@ nFileServer2::DeleteDirectory(const char* dirName)
     the host filesystem (like MicroTcl).
 */
 nFileNode*
-nFileServer2::CreateFileNode(const char* name)
+nFileServer2::CreateFileNode(const nString& name)
 {
-    n_assert(name);
-
     nString path = "/sys/share/files/";
     path += name;
     if (kernelServer->Lookup(path.Get()))
@@ -727,14 +717,13 @@ nFileServer2::CreateFileNode(const char* name)
     @return             true if all ok, false if file could not be opened
 */
 bool
-nFileServer2::Checksum(const char* filename, uint& crc)
+nFileServer2::Checksum(const nString& filename, uint& crc)
 {
-    n_assert(filename);
     crc = 0;
     bool success = false;
     nFile* file = this->NewFileObject();
     n_assert(file);
-    if (file->Open(filename, "rb"))
+    if (file->Open(filename.Get(), "rb"))
     {
         // read file into RAM buffer
         int numBytes = file->GetSize();
@@ -762,9 +751,8 @@ nFileServer2::Checksum(const char* filename, uint& crc)
     Set the read-only status of a file.
 */
 void
-nFileServer2::SetFileReadOnly(const char* filename, bool readOnly)
+nFileServer2::SetFileReadOnly(const nString& filename, bool readOnly)
 {
-    n_assert(filename);
     nString mangledPath = this->ManglePath(filename);
 #ifdef __WIN32__
     DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
@@ -806,9 +794,8 @@ nFileServer2::SetFileReadOnly(const char* filename, bool readOnly)
     the routine returns false.
 */
 bool
-nFileServer2::IsFileReadOnly(const char* filename)
+nFileServer2::IsFileReadOnly(const nString& filename)
 {
-    n_assert(filename);
     nString mangledPath = this->ManglePath(filename);
 #ifdef __WIN32__
     DWORD fileAttrs = GetFileAttributes(mangledPath.Get());
@@ -831,4 +818,54 @@ nFileServer2::IsFileReadOnly(const char* filename)
 #else
 #error "nFileServer2::IsFileReadOnly() not implemented yet!"
 #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    List all files in a directory, ignores subdirecories.
+*/
+nArray<nString>
+nFileServer2::ListFiles(const nString& dirName)
+{
+    nArray<nString> fileList;
+    nDirectory* dir = this->NewDirectoryObject();
+    if (dir->Open(dirName.Get()))
+    {
+        if (dir->SetToFirstEntry()) do
+        {
+            if (dir->GetEntryType() == nDirectory::FILE)
+            {
+                fileList.Append(dir->GetEntryName());
+            }
+        }
+        while (dir->SetToNextEntry());
+        dir->Close();
+    }
+    n_delete(dir);
+    return fileList;
+}
+
+//------------------------------------------------------------------------------
+/**
+    List all subdirectories in a directory, ignores files.
+*/
+nArray<nString>
+nFileServer2::ListDirectories(const nString& dirName)
+{
+    nArray<nString> dirList;
+    nDirectory* dir = this->NewDirectoryObject();
+    if (dir->Open(dirName.Get()))
+    {
+        if (dir->SetToFirstEntry()) do
+        {
+            if (dir->GetEntryType() == nDirectory::DIRECTORY)
+            {
+                dirList.Append(dir->GetEntryName());
+            }
+        }
+        while (dir->SetToNextEntry());
+        dir->Close();
+    }
+    n_delete(dir);
+    return dirList;
 }

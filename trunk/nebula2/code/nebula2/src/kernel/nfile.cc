@@ -47,6 +47,8 @@ nFile::~nFile()
 /**
     Check if file exists physically on disk by opening it in read-only mode.
     Close file if it was opened.
+
+     - 05-Jan-05   floh    Bugfix: missing GENERIC_READ access mode didn't work in Win98
 */
 bool
 nFile::Exists(const char* fileName) const
@@ -57,7 +59,7 @@ nFile::Exists(const char* fileName) const
 
 #ifdef __WIN32__
     HANDLE fh = CreateFile(fullName.Get(),       // filename
-                           READ_CONTROL,         // access mode
+                           GENERIC_READ,         // access mode
                            FILE_SHARE_READ,      // share mode
                            0,                    // security flags
                            OPEN_EXISTING,        // what to do if file doesn't exist
@@ -68,12 +70,20 @@ nFile::Exists(const char* fileName) const
         CloseHandle(fh);
         return true;
     }
+    else
+    {
+        return false;
+    }
 #else
     FILE* fp = fopen(fullName.Get(), "r");
     if (fp != 0)
     {
         fclose(fp);
         return true;
+    }
+    else
+    {
+        return false;
     }
 #endif
     return false;

@@ -32,6 +32,8 @@ public:
     nRemoteServer();
     /// destructor
     virtual ~nRemoteServer();
+    /// return pointer to server instance
+    static nRemoteServer* Instance();
     /// open a named communication port
     bool Open(const char* portName);
     /// close the communication port
@@ -70,12 +72,24 @@ private:
     /// set cwd in client context
     void SetClientCwd(int clientId, nRoot* cwd);
 
+    static nRemoteServer* Singleton;
 
     nAutoRef<nScriptServer> refScriptServer;
     bool isOpen;
     nIpcServer* ipcServer;
     nList clientContexts;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRemoteServer*
+nRemoteServer::Instance()
+{
+    n_assert(Singleton);
+    return Singleton;
+}
 
 //------------------------------------------------------------------------------
 /**

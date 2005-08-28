@@ -19,7 +19,7 @@
 #include "kernel/nref.h"
 #include "util/nstring.h"
 #ifdef __WIN32__
-#include "kernel/nshell32wrapper.h"
+#include "kernel/nwin32wrapper.h"
 #endif
 
 //------------------------------------------------------------------------------
@@ -38,38 +38,42 @@ public:
     static nFileServer2* Instance();
 
     /// sets a path alias
-    bool SetAssign(const char* assignName, const char* pathName);
+    bool SetAssign(const nString& assignName, const nString& pathName);
     /// gets a path alias
-    const char* GetAssign(const char* assignName);
+    const char* GetAssign(const nString& assignName);
     /// Reset assign repository to default values.
     void ResetAssigns();
     /// expand path alias to real path
-    nString ManglePath(const char* pathName);
+    nString ManglePath(const nString& pathName);
     /// make path components
-    virtual bool MakePath(const char* path);
+    virtual bool MakePath(const nString& path);
     /// copy a file
-    virtual bool CopyFile(const char* from, const char* to);
+    virtual bool CopyFile(const nString& from, const nString& to);
     /// delete a file
-    virtual bool DeleteFile(const char* filename);
+    virtual bool DeleteFile(const nString& filename);
     /// delete an empty directory
-    virtual bool DeleteDirectory(const char* dirName);
+    virtual bool DeleteDirectory(const nString& dirName);
     /// compute the Crc checksum for a file
-    virtual bool Checksum(const char* filename, uint& crc);
+    virtual bool Checksum(const nString& filename, uint& crc);
     /// set read only status of a file
-    virtual void SetFileReadOnly(const char* filename, bool readOnly);
+    virtual void SetFileReadOnly(const nString& filename, bool readOnly);
     /// get read only status of a file
-    virtual bool IsFileReadOnly(const char* filename);
+    virtual bool IsFileReadOnly(const nString& filename);
+    /// list all files in a directory (ignores directories)
+    virtual nArray<nString> ListFiles(const nString& dirName);
+    /// list all subdirs in a directory (ignores files)
+    virtual nArray<nString> ListDirectories(const nString& dirName);
+    /// check if file exists
+    virtual bool FileExists(const nString& pathName) const;
+    /// check if directory exists
+    virtual bool DirectoryExists(const nString& pathName) const;
 
     /// creates a new nDirectory object
     virtual nDirectory* NewDirectoryObject() const;
     /// creates a new nFile object
     virtual nFile* NewFileObject() const;
-    /// check if file exists
-    virtual bool FileExists(const char* pathName) const;
-    /// check if directory exists
-    virtual bool DirectoryExists(const char* pathName) const;
     /// creates a file node (only useful for scripting languages)
-    virtual nFileNode* CreateFileNode(const char* name);
+    virtual nFileNode* CreateFileNode(const nString& name);
 
     /// reset statistics
     void ResetStatistics();
@@ -109,10 +113,6 @@ private:
     int bytesRead;
     int bytesWritten;
     int numSeeks;
-
-    #ifdef __WIN32__
-    nShell32Wrapper shell32Wrapper;
-    #endif
 };
 
 //------------------------------------------------------------------------------

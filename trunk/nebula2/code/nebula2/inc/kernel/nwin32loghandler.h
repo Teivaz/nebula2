@@ -25,9 +25,6 @@
 #include "kernel/ndefaultloghandler.h"
 #include "kernel/nfile.h"
 #include "util/nstring.h"
-#ifdef __WIN32__
-#include "kernel/nshell32wrapper.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nWin32LogHandler : public nDefaultLogHandler
@@ -63,10 +60,6 @@ private:
     nString appName;
     nString subDir;
     nFile* logFile;
-
-    #ifdef __WIN32__
-    nShell32Wrapper shell32Wrapper;
-    #endif
 };
 
 //------------------------------------------------------------------------------

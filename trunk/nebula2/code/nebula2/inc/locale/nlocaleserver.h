@@ -22,10 +22,8 @@ public:
     virtual ~nLocaleServer();
     /// get instance pointer
     static nLocaleServer* Instance();
-    /// set locale table filename
-    void SetLocaleTableFilename(const char* filename);
-    /// get locale table filename
-    const char* GetLocaleTableFilename() const;
+    /// add locale table filename
+    void AddLocaleTable(const char* filename);
     /// open the server, load filename and parse entrys
     bool Open();
     /// close server, cleanup all
@@ -33,7 +31,7 @@ public:
     /// is server open?
     bool IsOpen() const;
     /// get localized text for id
-    const char* GetLocaleText(const char* id) const;
+    const char* GetLocaleText(const char* id);
 
 private:
     static nLocaleServer* Singleton;
@@ -41,9 +39,9 @@ private:
     nString& ParseText(nString& text);
 
     bool isOpen;
-    nString filename;
-    nHashMap* idHashMap; // map of all know ID's from the table
-    nFixedArray<nString> textArray; // array of texts from the table, key from idHashMap is index
+    nHashMap idHashMap; // map of all know ID's from the table
+    nArray<nString> textArray; // array of texts from the table, key from idHashMap is index
+    nArray<nString> loadedTables; // array of already loaded tables
 };
 
 //------------------------------------------------------------------------------
@@ -71,27 +69,6 @@ nLocaleServer::Instance()
 {
     n_assert(Singleton);
     return Singleton;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nLocaleServer::SetLocaleTableFilename(const char* filename)
-{
-    n_assert(!this->IsOpen());
-    this->filename = filename;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nLocaleServer::GetLocaleTableFilename() const
-{
-    return this->filename.Get();
 }
 
 //------------------------------------------------------------------------------
