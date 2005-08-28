@@ -95,6 +95,7 @@ public:
         A1R5G5B5,
         A4R4G4B4,
         P8,
+        G16R16,
         DXT1,
         DXT2,
         DXT3,
@@ -423,7 +424,8 @@ nTexture2::GetBytesPerPixel() const
 
         case R16F:
             return 2;
-
+ 
+        case G16R16:
         case G16R16F:
             return 4;
 
@@ -461,6 +463,7 @@ nTexture2::FormatToString(Format fmt)
         case A1R5G5B5:      return "A1R5G5B5";
         case A4R4G4B4:      return "A4R4G4B4";
         case P8:            return "P8";
+        case G16R16:        return "G16R16";
         case DXT1:          return "DXT1";
         case DXT2:          return "DXT2";
         case DXT3:          return "DXT3";
@@ -474,6 +477,7 @@ nTexture2::FormatToString(Format fmt)
         case A32B32G32R32F: return "A32B32G32R32F";
         case A8:            return "A8";
     }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -491,6 +495,7 @@ nTexture2::StringToFormat(const char* str)
     else if (0 == strcmp("A1R5G5B5", str))      return A1R5G5B5;
     else if (0 == strcmp("A4R4G4B4", str))      return A4R4G4B4;
     else if (0 == strcmp("P8", str))            return P8;
+    else if (0 == strcmp("G16R16", str))        return G16R16;
     else if (0 == strcmp("DXT1", str))          return DXT1;
     else if (0 == strcmp("DXT2", str))          return DXT2;
     else if (0 == strcmp("DXT3", str))          return DXT3;
@@ -509,6 +514,7 @@ nTexture2::StringToFormat(const char* str)
         return NOFORMAT;
     }
 }
+
 //------------------------------------------------------------------------------
 #endif    
 
