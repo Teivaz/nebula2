@@ -23,6 +23,12 @@ static void n_setquat(void* slf, nCmd* cmd);
 static void n_getquat(void* slf, nCmd* cmd);
 static void n_setscale(void* slf, nCmd* cmd);
 static void n_getscale(void* slf, nCmd* cmd);
+static void n_setrotatepivot(void* slf, nCmd* cmd);
+static void n_getrotatepivot(void* slf, nCmd* cmd);
+static void n_setscalepivot(void* slf, nCmd* cmd);
+static void n_getscalepivot(void* slf, nCmd* cmd);
+static void n_hasrotatepivot(void* slf, nCmd* cmd);
+static void n_hasscalepivot(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -61,6 +67,12 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getquat_v",        'GQUT', n_getquat);
     cl->AddCmd("v_setscale_fff",        'SSCL', n_setscale);
     cl->AddCmd("fff_getscale_v",        'GSCL', n_getscale);
+    cl->AddCmd("v_setscalepivot_fff",   'SSCP', n_setscalepivot);
+    cl->AddCmd("fff_getscalepivot_v",   'GSCP', n_getscalepivot);
+    cl->AddCmd("v_setrotatepivot_fff",  'SRTP', n_setrotatepivot);
+    cl->AddCmd("fff_getrotatepivot_v",  'GRTP', n_getrotatepivot);
+    cl->AddCmd("b_hasscalepivot_v",     'HSCP', n_hasscalepivot);
+    cl->AddCmd("b_hasrotatepivot_v",    'HRTP', n_hasrotatepivot);
     cl->EndCmds();
 }
 
@@ -432,6 +444,128 @@ n_getscale(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    setscalepivot
+    @input
+    f(X), f(Y), f(Z)
+    @output
+    v
+    @info
+    Set the optional pivot point for scaling.
+*/
+static void
+n_setscalepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    vector3 v;
+    v.x = cmd->In()->GetF();
+    v.y = cmd->In()->GetF();
+    v.z = cmd->In()->GetF();
+    self->SetScalePivot(v);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getscalepivot
+    @input
+    v
+    @output
+    f(X), f(Y), f(Z)
+    @info
+    Get the optional pivot point for rotations.
+*/
+static void
+n_getscalepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    const vector3& v = self->GetScalePivot();
+    cmd->Out()->SetF(v.x);
+    cmd->Out()->SetF(v.y);
+    cmd->Out()->SetF(v.z);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setrotatepivot
+    @input
+    f(X), f(Y), f(Z)
+    @output
+    v
+    @info
+    Set the optional pivot point for rotations.
+*/
+static void
+n_setrotatepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    vector3 v;
+    v.x = cmd->In()->GetF();
+    v.y = cmd->In()->GetF();
+    v.z = cmd->In()->GetF();
+    self->SetRotatePivot(v);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getrotatepivot
+    @input
+    v
+    @output
+    f(X), f(Y), f(Z)
+    @info
+    Get the optional pivot point for rotations.
+*/
+static void
+n_getrotatepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    const vector3& v = self->GetRotatePivot();
+    cmd->Out()->SetF(v.x);
+    cmd->Out()->SetF(v.y);
+    cmd->Out()->SetF(v.z);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    hasscalepivot
+    @input
+    v
+    @output
+    b(HasScalePivotFlag)
+    @info
+    Returns true if a scale pivot point has been set.
+*/
+static void
+n_hasscalepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    cmd->Out()->SetB(self->HasScalePivot());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    hasrotatepivot
+    @input
+    v
+    @output
+    b(HasRotatePivotFlag)
+    @info
+    Returns true if a rotate pivot point has been set.
+*/
+static void
+n_hasrotatepivot(void* slf, nCmd* cmd)
+{
+    nTransformNode* self = (nTransformNode*) slf;
+    cmd->Out()->SetB(self->HasRotatePivot());
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nTransformNode::SaveCmds(nPersistServer* ps)
@@ -506,6 +640,34 @@ nTransformNode::SaveCmds(nPersistServer* ps)
             cmd->In()->SetF(scale.y);
             cmd->In()->SetF(scale.z);
             ps->PutCmd(cmd);
+        }
+
+        //--- setrotatepivot ---
+        if (this->HasRotatePivot())
+        {
+            const vector3& rotatePivot = this->GetRotatePivot();
+            if (!rotatePivot.isequal(nullVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SRTP');
+                cmd->In()->SetF(rotatePivot.x);
+                cmd->In()->SetF(rotatePivot.y);
+                cmd->In()->SetF(rotatePivot.z);
+                ps->PutCmd(cmd);
+            }
+        }
+
+        //--- setscalepivot ---
+        if (this->HasScalePivot())
+        {
+            const vector3& scalePivot = this->GetScalePivot();
+            if (!scalePivot.isequal(nullVec, 0.0f))
+            {
+                cmd = ps->GetCmd(this, 'SSCP');
+                cmd->In()->SetF(scalePivot.x);
+                cmd->In()->SetF(scalePivot.y);
+                cmd->In()->SetF(scalePivot.z);
+                ps->PutCmd(cmd);
+            }
         }
 
         return true;

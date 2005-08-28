@@ -43,6 +43,10 @@ public:
     void SetLockViewer(bool b);
     /// locked to viewer position?
     bool GetLockViewer() const;
+    /// lock to current matrix (never recompute)
+    void SetLocked(bool b);
+    /// currently locked?
+    bool GetLocked() const;
     /// set active flag
     void SetActive(bool b);
     /// get active flag
@@ -63,8 +67,22 @@ public:
     void SetScale(const vector3& s);
     /// get scale in parent space
     const vector3& GetScale() const;
-    /// get transform matrix
+    /// set the optional rotate pivot
+    void SetRotatePivot(const vector3& p);
+    /// get the optional rotate pivot
+    const vector3& GetRotatePivot() const;
+    /// set the optional scale pivot
+    void SetScalePivot(const vector3& p);
+    /// get the optional scale pivot
+    const vector3& GetScalePivot() const;
+    /// set transform matrix (overrides position, euler, quaternion and scale)
+    void SetTransform(const matrix44& m);
+    /// get current transform matrix
     const matrix44& GetTransform();
+    /// return true if scale pivot has been set
+    bool HasScalePivot() const;
+    /// return true if rotate pivot has been set
+    bool HasRotatePivot() const;
 
 protected:
     /// set a flags
@@ -134,6 +152,26 @@ bool
 nTransformNode::GetLockViewer() const
 {
     return this->CheckFlags(LockViewer);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nTransformNode::SetLocked(bool b)
+{
+    this->tform.setlocked(b);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nTransformNode::GetLocked() const
+{
+    return this->tform.islocked();
 }
 
 //------------------------------------------------------------------------------
@@ -241,10 +279,87 @@ nTransformNode::GetScale() const
 /**
 */
 inline
+void
+nTransformNode::SetRotatePivot(const vector3& p)
+{
+    this->tform.setrotatepivot(p, false); // default, do not balance this pivot transformation
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nTransformNode::GetRotatePivot() const
+{
+    return this->tform.getrotatepivot();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nTransformNode::SetScalePivot(const vector3& p)
+{
+    this->tform.setscalepivot(p);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nTransformNode::GetScalePivot() const
+{
+    return this->tform.getscalepivot();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Directly set the transformation matrix. Note that this will also set
+    the locked flag to prevent evaluation of the resulting matrix from
+    position, rotation and scale.
+*/
+inline
+void
+nTransformNode::SetTransform(const matrix44& m)
+{
+    this->tform.setmatrix(m);
+    this->SetLocked(true);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return the current transformation. This is either computed from
+    position, rotation and scale, or the matrix set with SetTransform()
+    is returned.
+*/
+inline
 const matrix44&
 nTransformNode::GetTransform()
 {
     return this->tform.getmatrix();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nTransformNode::HasScalePivot() const
+{
+    return this->tform.hasscalepivot();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nTransformNode::HasRotatePivot() const
+{
+    return this->tform.hasrotatepivot();
 }
 
 //------------------------------------------------------------------------------
