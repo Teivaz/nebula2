@@ -24,6 +24,7 @@ nViewerApp::nViewerApp() :
     isOpen(false),
     isOverlayEnabled(true),
     useRam(false),
+    lightStageEnabled(true),
     featureSetOverride(nGfxServer2::InvalidFeatureSet)
 {
     this->kernelServer = nKernelServer::Instance();
@@ -42,30 +43,6 @@ nViewerApp::~nViewerApp()
 
 //------------------------------------------------------------------------------
 /**
-    This re-initializes the root node (/usr/scene) and initializes the 
-    render context.
-*/
-void
-nViewerApp::ValidateRootNode()
-{
-    if (!this->refRootNode.isvalid())
-    {
-        this->refRootNode = (nTransformNode*) kernelServer->Lookup("/usr/scene");
-        n_assert(this->refRootNode.isvalid());
-        static const nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
-        nVariable::Handle timeHandle = this->refVarServer->GetVariableHandleByName("time");
-        nVariable::Handle oneHandle  = this->refVarServer->GetVariableHandleByName("one");
-        nVariable::Handle windHandle = this->refVarServer->GetVariableHandleByName("wind");
-        this->renderContext.AddVariable(nVariable(timeHandle, 0.5f));
-        this->renderContext.AddVariable(nVariable(oneHandle, 1.0f));
-        this->renderContext.AddVariable(nVariable(windHandle, wind));
-        this->renderContext.SetRootNode(this->refRootNode.get());
-        this->refRootNode->RenderContextCreated(&this->renderContext);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 bool
 nViewerApp::Open()
@@ -73,11 +50,11 @@ nViewerApp::Open()
     n_assert(!this->isOpen);
 
     // initialize Nebula servers
-    this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass(), "/sys/servers/script");
-    this->refGfxServer      = (nGfxServer2*)      kernelServer->New(this->GetGfxServerClass(), "/sys/servers/gfx");
+    this->refScriptServer   = (nScriptServer*)    kernelServer->New(this->GetScriptServerClass().Get(), "/sys/servers/script");
+    this->refGfxServer      = (nGfxServer2*)      kernelServer->New(this->GetGfxServerClass().Get(), "/sys/servers/gfx");
     this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass(), "/sys/servers/scene");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New(this->GetSceneServerClass().Get(), "/sys/servers/scene");
     this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
@@ -86,10 +63,14 @@ nViewerApp::Open()
     this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
     this->refHttpServer     = (nHttpServer*)      kernelServer->New("nhttpserver", "/sys/servers/http");
     this->refPrefServer     = (nPrefServer*)      kernelServer->New("nwin32prefserver", "/sys/servers/pref");
+    this->refCaptureServer  = (nCaptureServer*)   kernelServer->New("ncaptureserver", "/sys/servers/capture");
 
     // initialize the preferences server
     this->refPrefServer->SetCompanyName("Radon Labs GmbH");
     this->refPrefServer->SetApplicationName("Nebula2 Viewer 1.0");
+
+    // initialize the capture server
+    this->refCaptureServer->SetBaseDirectory("user:Radon Labs GmbH/nviewer/capture");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -98,9 +79,9 @@ nViewerApp::Open()
     }
 
     // initialize the proj: assign
-    if (this->GetProjDir())
+    if (!this->GetProjDir().IsEmpty())
     {
-        kernelServer->GetFileServer()->SetAssign("proj", this->GetProjDir());
+        kernelServer->GetFileServer()->SetAssign("proj", this->GetProjDir().Get());
     }
     else
     {
@@ -115,11 +96,11 @@ nViewerApp::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
 
     // run startup script (assigns must be setup before opening the display!)
-    if (this->GetStartupScript())
+    if (!this->GetStartupScript().IsEmpty())
     {
         nString result;
         bool r;
-        r = this->refScriptServer->RunScript(this->GetStartupScript(), result);
+        r = this->refScriptServer->RunScript(this->GetStartupScript().Get(), result);
         if (false == r)
         {
             n_error("Executing startup script failed: %s",
@@ -133,6 +114,13 @@ nViewerApp::Open()
 
     // initialize graphics
     this->refGfxServer->SetCamera(this->camera);
+    if (!this->renderPath.IsEmpty())
+    {
+        this->refSceneServer->SetRenderPathFilename(this->renderPath);
+    }
+    //this->refSceneServer->SetOcclusionQuery(false);
+    //this->refSceneServer->SetObeyLightLinks(false);
+
     // open the scene server
     if (!this->refSceneServer->Open())
     {
@@ -147,10 +135,10 @@ nViewerApp::Open()
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->DefineInputMapping();
 
-    // create the /usr/scene object
-    kernelServer->New("ntransformnode", "/usr/scene");
-
-
+    // Setup /usr/scene and add default entry + light
+    this->nodeList.SetStageScript(this->GetStageScript());
+    this->nodeList.SetLightStageEnabled(this->lightStageEnabled);
+    this->nodeList.Open();
 
     // initialize gui
     this->refGuiServer->SetRootPath("/gui");
@@ -161,31 +149,15 @@ nViewerApp::Open()
         this->InitOverlayGui();
     }
 
-    // set the stage and load the object
-    this->ValidateRootNode();
-    if (this->GetSceneFile())
+    // load the object
+    if (!this->GetSceneFile().IsEmpty())
     {
-        if (NULL != this->GetStageScript())
-        {
-            // load new object
-            kernelServer->PushCwd(this->refRootNode.get());
-            // source the light stage...
-            kernelServer->Load(this->GetStageScript());
-            kernelServer->PopCwd();
-        }
-
         // Switch to ramfileserver if demanded.
-        if (UseRam())
+        if (this->UseRam())
         {
             nKernelServer::Instance()->ReplaceFileServer("nramfileserver");
         }
-        
-        // load the object to look at
-        this->refRootNode->RenderContextDestroyed(&(this->renderContext));
-        kernelServer->PushCwd(this->refRootNode.get());
-        kernelServer->Load(this->GetSceneFile());
-        kernelServer->PopCwd();
-        this->refRootNode->RenderContextCreated(&(this->renderContext));
+        this->nodeList.LoadObject(this->GetSceneFile());
     }
 
     // initialize view matrix
@@ -204,14 +176,15 @@ nViewerApp::Close()
 {
     n_assert(this->IsOpen());
     
+    this->nodeList.Close();
     this->refGuiServer->Close();
     this->refVideoServer->Close();
     this->refSceneServer->Close();
 
+    this->refCaptureServer->Release();
     this->refPrefServer->Release();
     this->refHttpServer->Release();
     this->refShadowServer->Release();
-    this->refRootNode->Release();
     this->refGuiServer->Release();
     this->refVideoServer->Release();
     this->refParticleServer->Release();
@@ -244,7 +217,8 @@ nViewerApp::Run()
     uint frameId = 0;
     while (this->refGfxServer->Trigger() && running)
     {
-        nTime time = kernelServer->GetTimeServer()->GetTime();
+        nTimeServer::Instance()->Trigger();
+        nTime time = nTimeServer::Instance()->GetTime();
         if (prevTime == 0.0)
         {
             prevTime = time;
@@ -262,21 +236,23 @@ nViewerApp::Run()
         this->refParticleServer->Trigger();
 
         // handle input
-        this->refInputServer->Trigger(time);
+        nInputServer* inputServer = nInputServer::Instance();
+        inputServer->Trigger(time);
+
         if (!this->refGuiServer->IsMouseOverGui())
         {
             // give inputs to camControl
-            this->camControl.SetResetButton(this->refInputServer->GetButton("reset"));
-            this->camControl.SetLookButton(this->refInputServer->GetButton("look"));
-            this->camControl.SetPanButton(this->refInputServer->GetButton("pan"));
-            this->camControl.SetZoomButton(this->refInputServer->GetButton("zoom"));
-            this->camControl.SetSliderLeft(this->refInputServer->GetSlider("left"));
-            this->camControl.SetSliderRight(this->refInputServer->GetSlider("right"));
-            this->camControl.SetSliderUp(this->refInputServer->GetSlider("up"));
-            this->camControl.SetSliderDown(this->refInputServer->GetSlider("down"));
+            this->camControl.SetResetButton(inputServer->GetButton("reset"));
+            this->camControl.SetLookButton(inputServer->GetButton("look"));
+            this->camControl.SetPanButton(inputServer->GetButton("pan"));
+            this->camControl.SetZoomButton(inputServer->GetButton("zoom"));
+            this->camControl.SetSliderLeft(inputServer->GetSlider("left"));
+            this->camControl.SetSliderRight(inputServer->GetSlider("right"));
+            this->camControl.SetSliderUp(inputServer->GetSlider("up"));
+            this->camControl.SetSliderDown(inputServer->GetSlider("down"));
             
             // Toggle console
-            if (true == this->refInputServer->GetButton("console"))
+            if (inputServer->GetButton("console"))
             {
                 this->refConServer->Toggle();
             }
@@ -285,7 +261,7 @@ nViewerApp::Run()
             if (this->refInputServer->GetButton("screenshot"))
             {
                 nString filename;
-                const char* sceneFile = this->GetSceneFile();
+                const char* sceneFile = this->GetSceneFile().Get();
                 if (sceneFile)
                 {
                     filename = sceneFile;
@@ -315,17 +291,11 @@ nViewerApp::Run()
         // trigger gui server
         this->refGuiServer->Trigger();
 
-        // initialize the render context if necessary, this
-        // is necessary if someone has re-created /usr/scene
-        this->ValidateRootNode();
-
         // trigger video server
         this->refVideoServer->Trigger();
 
         // update render context variables
-        this->renderContext.GetVariable(timeHandle)->SetFloat((float)time);
-        this->TransferGlobalVariables();
-        this->renderContext.SetFrameId(frameId++);
+        this->nodeList.Trigger((float)time, frameId++);
 
         // render
         if (!this->refGfxServer->InDialogBoxMode())
@@ -333,10 +303,14 @@ nViewerApp::Run()
             this->OnFrameBefore();
             if (this->refSceneServer->BeginScene(this->viewMatrix))
             {
-                this->refSceneServer->Attach(&this->renderContext);
+                for (uint index = 0; index < this->nodeList.GetCount(); index++)
+                {
+                    this->refSceneServer->Attach(this->nodeList.GetRenderContextAt(index));
+                }
                 this->refSceneServer->EndScene();
                 this->refSceneServer->RenderScene();             // renders the 3d scene
                 this->OnFrameRendered();
+                this->refCaptureServer->Trigger();
                 this->refSceneServer->PresentScene();            // present the frame
             }
         }
@@ -356,33 +330,6 @@ nViewerApp::Run()
         // sleep for a very little while because we
         // are multitasking friendly
         n_sleep(0.0);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Transfer global variables from the variable server to the
-    render context.
-*/
-void
-nViewerApp::TransferGlobalVariables()
-{
-    const nVariableContext& globalContext = this->refVarServer->GetGlobalVariableContext();
-    int numGlobalVars = globalContext.GetNumVariables();
-    int globalVarIndex;
-    for (globalVarIndex = 0; globalVarIndex < numGlobalVars; globalVarIndex++)
-    {
-        const nVariable& globalVar = globalContext.GetVariableAt(globalVarIndex);
-        nVariable* var = this->renderContext.GetVariable(globalVar.GetHandle());
-        if (var)
-        {
-            *var = globalVar;
-        }
-        else
-        {
-            nVariable newVar(globalVar);
-            this->renderContext.AddVariable(newVar);
-        }
     }
 }
 
@@ -432,6 +379,7 @@ nViewerApp::InitOverlayGui()
     rightLabel->SetDefaultBrush("n2logo");
     rightLabel->SetPressedBrush("n2logo");
     rightLabel->SetHighlightBrush("n2logo");
+    rightLabel->OnShow();
 
     // create a help text label
     nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "HelpLabel");
@@ -444,6 +392,7 @@ nViewerApp::InitOverlayGui()
     vector2 textExtent = textLabel->GetTextExtent();
     rectangle textRect(vector2(0.0f, 0.0f), textExtent);
     textLabel->SetRect(textRect);
+    textLabel->OnShow();
 
     kernelServer->PopCwd();
 

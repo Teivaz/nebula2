@@ -31,6 +31,8 @@
 #include "network/nhttpserver.h"
 #include "misc/nprefserver.h"
 #include "tools/nmayacamcontrol.h"
+#include "tools/nnodelist.h"
+#include "misc/ncaptureserver.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -54,36 +56,42 @@ public:
     /// get camera parameters
     const nCamera2& GetCamera() const;
     /// set the gfx server class to use
-    void SetGfxServerClass(const char* cl);
+    void SetGfxServerClass(const nString& cl);
     /// get the gfx server class
-    const char* GetGfxServerClass() const;
+    const nString& GetGfxServerClass() const;
     /// set scene server class to use
     /// set scene file name
-    void SetSceneFile(const char* name);
+    void SetSceneFile(const nString& name);
     /// get scene file name
-    const char* GetSceneFile() const;
+    const nString& GetSceneFile() const;
     /// set optional project dir
-    void SetProjDir(const char* name);
+    void SetProjDir(const nString& name);
     /// get project dir
-    const char* GetProjDir() const;
+    const nString& GetProjDir() const;
     /// set the scene server (required)
-    void SetSceneServerClass(const char* name);
+    void SetSceneServerClass(const nString& cl);
     /// get the scene type
-    const char* GetSceneServerClass() const;
+    const nString& GetSceneServerClass() const;
     /// set the script type (ntclserver/nluaserver/etc - required)
-    void SetScriptServerClass(const char* name);
+    void SetScriptServerClass(const nString& cl);
     /// get the script type
-    const char* GetScriptServerClass() const;
+    const nString& GetScriptServerClass() const;
     /// set the startup script (required)
-    void SetStartupScript(const char* name);
+    void SetStartupScript(const nString& name);
     /// get the startup script
-    const char* GetStartupScript() const;
+    const nString& GetStartupScript() const;
+    /// set optional render path (else autoselect)
+    void SetRenderPath(const nString& p);
+    /// get optional render path
+    const nString& GetRenderPath() const;
     /// set the light stage script (required - if a scene file is specified)
-    void SetStageScript(const char* name);
+    void SetStageScript(const nString& name);
     /// get the light stage script
-    const char* GetStageScript() const;
+    const nString& GetStageScript() const;
     /// enable/disable the logo overlay
     void SetOverlayEnabled(bool b);
+    /// enable/disable the standard light stage
+    void SetLightStageEnabled(bool b);
     /// Make application load file from ram instead of disk, if `v' is true.
     void SetUseRam(bool v);
     /// Load file from ram instead of disk?
@@ -110,12 +118,8 @@ public:
 protected:
     /// define the input mapping
     void DefineInputMapping();
-    /// transfer global variables from variable server to render context
-    void TransferGlobalVariables();
     /// initialize the overlay GUI
     void InitOverlayGui();
-    /// validate the root node (and render context), if necessary
-    void ValidateRootNode();
 
     nKernelServer* kernelServer;
     nRef<nScriptServer> refScriptServer;
@@ -132,8 +136,8 @@ protected:
     nRef<nShadowServer> refShadowServer;
     nRef<nHttpServer> refHttpServer;
     nRef<nPrefServer> refPrefServer;
+    nRef<nCaptureServer> refCaptureServer;
 
-    nRef<nTransformNode> refRootNode;
     nMayaCamControl camControl;
 
     nString sceneFilename;
@@ -143,14 +147,17 @@ protected:
     nString startupScript;
     nString stageScript;
     nString gfxServerClass;
+    nString renderPath;
     bool isOpen;
     bool isOverlayEnabled;
     bool useRam;
+    bool lightStageEnabled;
     nDisplayMode2 displayMode;
     nCamera2 camera;
     nGfxServer2::FeatureSet featureSetOverride;
     nRenderContext renderContext;
     matrix44 viewMatrix;
+    nNodeList nodeList;
 };
 
 //------------------------------------------------------------------------------
@@ -229,7 +236,7 @@ nViewerApp::GetCamera() const
 */
 inline
 void
-nViewerApp::SetSceneFile(const char* filename)
+nViewerApp::SetSceneFile(const nString& filename)
 {
     this->sceneFilename = filename;
 }
@@ -238,10 +245,10 @@ nViewerApp::SetSceneFile(const char* filename)
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetSceneFile() const
 {
-    return this->sceneFilename.IsEmpty() ? 0 : this->sceneFilename.Get();
+    return this->sceneFilename;
 }
 
 //------------------------------------------------------------------------------
@@ -249,7 +256,7 @@ nViewerApp::GetSceneFile() const
 */
 inline
 void
-nViewerApp::SetProjDir(const char* name)
+nViewerApp::SetProjDir(const nString& name)
 {
     this->projDir = name;
 }
@@ -258,10 +265,10 @@ nViewerApp::SetProjDir(const char* name)
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetProjDir() const
 {
-    return this->projDir.IsEmpty() ? 0 : this->projDir.Get();
+    return this->projDir;
 }
 
 //------------------------------------------------------------------------------
@@ -269,19 +276,19 @@ nViewerApp::GetProjDir() const
 */
 inline
 void
-nViewerApp::SetSceneServerClass(const char* type)
+nViewerApp::SetSceneServerClass(const nString& cl)
 {
-    this->sceneServerClass = type;
+    this->sceneServerClass = cl;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetSceneServerClass() const
 {
-    return this->sceneServerClass.IsEmpty() ? 0 : this->sceneServerClass.Get();
+    return this->sceneServerClass;
 }
 
 //------------------------------------------------------------------------------
@@ -289,19 +296,19 @@ nViewerApp::GetSceneServerClass() const
 */
 inline
 void
-nViewerApp::SetScriptServerClass(const char* type)
+nViewerApp::SetScriptServerClass(const nString& cl)
 {
-    this->scriptServerClass = type;
+    this->scriptServerClass = cl;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetScriptServerClass() const
 {
-    return this->scriptServerClass.IsEmpty() ? 0 : this->scriptServerClass.Get();
+    return this->scriptServerClass;
 }
 
 //------------------------------------------------------------------------------
@@ -309,7 +316,7 @@ nViewerApp::GetScriptServerClass() const
 */
 inline
 void
-nViewerApp::SetStartupScript(const char* script)
+nViewerApp::SetStartupScript(const nString& script)
 {
     this->startupScript = script;
 }
@@ -318,10 +325,10 @@ nViewerApp::SetStartupScript(const char* script)
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetStartupScript() const
 {
-    return this->startupScript.IsEmpty() ? 0 : this->startupScript.Get();
+    return this->startupScript;
 }
 
 //------------------------------------------------------------------------------
@@ -329,7 +336,7 @@ nViewerApp::GetStartupScript() const
 */
 inline
 void
-nViewerApp::SetStageScript(const char* script)
+nViewerApp::SetStageScript(const nString& script)
 {
     this->stageScript = script;
 }
@@ -338,10 +345,10 @@ nViewerApp::SetStageScript(const char* script)
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetStageScript() const
 {
-    return this->stageScript.IsEmpty() ? 0 : this->stageScript.Get();
+    return this->stageScript;
 }
 
 //------------------------------------------------------------------------------
@@ -349,9 +356,8 @@ nViewerApp::GetStageScript() const
 */
 inline
 void
-nViewerApp::SetGfxServerClass(const char* cl)
+nViewerApp::SetGfxServerClass(const nString& cl)
 {
-    n_assert(cl);
     this->gfxServerClass = cl;
 }
 
@@ -359,10 +365,10 @@ nViewerApp::SetGfxServerClass(const char* cl)
 /**
 */
 inline
-const char*
+const nString&
 nViewerApp::GetGfxServerClass() const
 {
-    return this->gfxServerClass.Get();
+    return this->gfxServerClass;
 }
 
 //------------------------------------------------------------------------------
@@ -384,6 +390,7 @@ nViewerApp::GetOverlayEnabled() const
 {
     return this->isOverlayEnabled;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -413,6 +420,37 @@ nViewerApp::GetCamControl()
 {
     return this->camControl;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetLightStageEnabled(bool b)
+{
+    this->lightStageEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nViewerApp::SetRenderPath(const nString& p)
+{
+    this->renderPath = p;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nViewerApp::GetRenderPath() const
+{
+    return this->renderPath;
+}
+
 //------------------------------------------------------------------------------
 #endif
 
