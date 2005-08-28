@@ -13,11 +13,12 @@ nNebulaClass(nGuiToolTip, "nguitextlabel");
 //------------------------------------------------------------------------------
 /**
 */
-nGuiToolTip::nGuiToolTip() :
+nGuiToolTip::nGuiToolTip():
     openFirstFrame(false),
     fadeinRequested(false),
     fadeinRequestTime(0.0),
-    windowColor(1.0f, 1.0f, 1.0f, 1.0f)
+    windowColor(1.0f, 1.0f, 1.0f, 1.0f),
+    textSizeIsDirty(true)
 {
     // empty
 }
@@ -29,7 +30,6 @@ nGuiToolTip::~nGuiToolTip()
 {
     // empty
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -47,8 +47,6 @@ nGuiToolTip::OnShow()
     nGuiTextLabel::OnShow();
 }
 
-
-
 //------------------------------------------------------------------------------
 /**
     Update the tooltips position when the mouse moves.
@@ -60,7 +58,6 @@ nGuiToolTip::OnMouseMoved(const vector2& mousePos)
     return nGuiTextLabel::OnMouseMoved(mousePos);
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -68,9 +65,20 @@ void
 nGuiToolTip::SetText(const char* text)
 {    
     nGuiTextLabel::SetText(text);
+    this->textSizeIsDirty = true;
     this->UpdateRect();
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiToolTip::SetFont(const char* fontName)
+{
+    nGuiTextLabel::SetFont(fontName);
+    this->textSizeIsDirty = true;
+    this->UpdateRect();
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -107,7 +115,7 @@ nGuiToolTip::Render()
     return false;
 }
 
-
+//------------------------------------------------------------------------------
 /**
     This computes the color (takes fade in and fade out effect into account).
 */
@@ -146,7 +154,6 @@ nGuiToolTip::UpdateColor()
     }
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -165,11 +172,19 @@ nGuiToolTip::UpdateRect()
             n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
         }
     }
+    
+    if (this->textSizeIsDirty)
+    {
+        if (this->refFont.isvalid())
+        {
+            // get text size
+            nGfxServer2::Instance()->SetFont(this->refFont.get());
+            this->textSize = nGfxServer2::Instance()->GetTextExtent(this->GetText()) + this->border * 2.0f;
+            this->textSize.x += 0.0025f; // some extra space
 
-    // get text size
-    nGfxServer2::Instance()->SetFont(this->refFont.get());
-    vector2 size = nGfxServer2::Instance()->GetTextExtent(this->GetText()) + this->border * 2.0f;
-    size.x += 0.0025f; // some extra space
+            this->textSizeIsDirty = false;
+        }
+    }
 
     // compute tooltip offset to mouse hot spot
     // we assume a 32x32 mouse pointer
@@ -177,7 +192,7 @@ nGuiToolTip::UpdateRect()
     vector2 offset(0.0f, 32.0f / mode.GetHeight());
 
     // update screen space rectangle
-    rectangle r(mousePos + offset, mousePos + size + offset);
+    rectangle r(mousePos + offset, mousePos + this->textSize + offset);
     nGuiServer::Instance()->MoveRectToVisibleArea(r);
     
     this->SetRect(r);

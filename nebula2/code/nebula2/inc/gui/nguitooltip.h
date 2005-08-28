@@ -29,6 +29,8 @@ public:
     virtual bool Render();
     /// set the text as string
     virtual void SetText(const char* text);
+    /// set the font to use (see nGuiServer::AddFont())
+    virtual void SetFont(const char* fontName);
 
 private:
     /// compute current rect
@@ -40,6 +42,8 @@ private:
     bool fadeinRequested;
     nTime fadeinRequestTime;
     vector4 windowColor;
+    vector2 textSize;
+    bool textSizeIsDirty;
 };
 
 //------------------------------------------------------------------------------

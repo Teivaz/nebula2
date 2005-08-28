@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguitextbutton.h"
 #include "gui/nguiserver.h"
+#include "gui/nguiwindow.h"
 
 nNebulaScriptClass(nGuiTextButton, "nguitextlabel");
 
@@ -32,11 +33,11 @@ nGuiTextButton::~nGuiTextButton()
 bool
 nGuiTextButton::OnButtonDown(const vector2& mousePos)
 {
-    if (this->Inside(mousePos))
+    if (this->Inside(mousePos) && this->GetOwnerWindow()->HasFocus())
     {
         this->focus = true;
         this->pressed = true;
-        nGuiServer::Instance()->PlaySound(nGuiSkin::ButtonClick);
+        nGuiServer::Instance()->PlaySound("ButtonClick");
         nGuiWidget::OnButtonDown(mousePos);
         return true;
     }
@@ -67,20 +68,39 @@ nGuiTextButton::OnButtonUp(const vector2& mousePos)
 void
 nGuiTextButton::OnFrame()
 {
-    const vector2 mousePos = nGuiServer::Instance()->GetMousePos();
-    if (this->Inside(mousePos))
+    nGuiServer* guiServer = nGuiServer::Instance();
+    
+    // check if there exist a top most modal window
+    nGuiWindow* topMostWindow = guiServer->GetRootWindowPointer()->GetTopMostWindow();
+    bool modalTopMostWindow = false;
+    if (topMostWindow && topMostWindow->IsModal())
     {
-        this->focus = true;
+        modalTopMostWindow = true;
+    }
+
+    if (modalTopMostWindow && this->GetOwnerWindow() != topMostWindow)
+    {
+        // if we are not part of the top most window, and this one is modal
+        this->focus = false;
+        this->pressed = false;
     }
     else
     {
-        if (!this->IsStickyMouse())
+        const vector2 mousePos = guiServer->GetMousePos();
+        if (this->Inside(mousePos))
         {
-            this->focus = false;
-            this->pressed = false;
+            this->focus = true;
+        }
+        else
+        {
+            if (!this->IsStickyMouse())
+            {
+                this->focus = false;
+                this->pressed = false;
+            }
         }
     }
-    nGuiWidget::OnFrame();
+    return nGuiWidget::OnFrame();
 }
 
 //-----------------------------------------------------------------------------
@@ -91,7 +111,11 @@ nGuiTextButton::Render()
 {
     if (this->IsShown())
     {
-        if (this->pressed)
+        if (!this->enabled)
+        {
+            nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->disabledBrush);
+        }
+        else if (this->pressed)
         {
             nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->pressedBrush);
         }

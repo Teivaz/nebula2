@@ -55,6 +55,8 @@ public:
     const rectangle& GetDragBox2D() const;
     /// return true if world space position is inside current drag box
     bool IsWorldCoordInDragBox(const vector3& pos) const;
+    /// manually cancel the current dragging operation
+    void CancelDragging();
 
 private:
     /// update 2d and 3d drag box data

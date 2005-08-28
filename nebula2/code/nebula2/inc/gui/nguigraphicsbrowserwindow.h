@@ -33,10 +33,13 @@ public:
 protected:
     /// load new gfx object under /usr/scene
     void LoadObject(const nString& objPath);
+    /// append new gfx object under /usr/scene
+    void AddObject(const nString& objPath);
 
     nAutoRef<nScriptServer> refScriptServer;
     nRef<nGuiCategoryBrowser> refCatBrowser;
     nRef<nGuiTextButton> refLoadButton;
+    nRef<nGuiTextButton> refAddButton;
     nRef<nGuiTextButton> refTimeButton;
     nAutoRef<nRoot> refUsrScene;
 };

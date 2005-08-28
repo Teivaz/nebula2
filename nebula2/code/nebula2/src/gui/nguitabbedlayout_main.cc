@@ -133,6 +133,8 @@ nGuiTabbedLayout::OnShow()
 
     // register as event listener on GUI server
     nGuiServer::Instance()->RegisterEventListener(this);
+
+    this->UpdateLayout(this->rect);
 }
 
 //------------------------------------------------------------------------------
@@ -192,4 +194,7 @@ nGuiTabbedLayout::UpdateActivePanel()
     // activate active tab
     this->tabs[this->activeTab].refTabButton->SetState(true);
     this->tabs[this->activeTab].refChildLayout->Show();
+
+    // update tabbed layout
+    this->UpdateLayout(this->GetRect());
 }

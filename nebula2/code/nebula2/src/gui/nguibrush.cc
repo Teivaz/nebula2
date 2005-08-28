@@ -9,21 +9,23 @@
 
 //------------------------------------------------------------------------------
 /**
+    Initialize the gui resource attached to the brush.
 */
-nGuiResource*
-nGuiBrush::GetGuiResource()
+bool
+nGuiBrush::Load()
 {
-    if (!this->refSkin.isvalid())
+    if (!this->name.IsEmpty())
     {
-        nGuiServer* guiServer = nGuiServer::Instance();
+        n_assert(!this->IsLoaded());
+        n_assert(!this->refSkin.isvalid());
+        n_assert(0 == this->guiResource);
 
-        // validate gui resource
-        // FIXME: increment ref count of gui resource texture
+        nGuiServer* guiServer = nGuiServer::Instance();
         this->refSkin = guiServer->GetSkin();
         this->guiResource = this->refSkin->FindBrush(this->name.Get());
         if (0 == this->guiResource)
         {
-            // hmm, try alternate skin
+            // try alternate skin...
             guiServer->ToggleSystemGui();
             this->refSkin = guiServer->GetSkin();
             this->guiResource = this->refSkin->FindBrush(this->name.Get());
@@ -31,10 +33,39 @@ nGuiBrush::GetGuiResource()
             if (0 == this->guiResource)
             {
                 n_error("nGuiBrush: could not resolve brush '%s'!", this->name.Get());
-                return 0;
+                return false;
             }
         }
+        n_assert(0 != this->guiResource);
+        return true;
     }
-    n_assert(0 != this->guiResource);
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    De-initialize the gui resource attached to the brush.
+*/
+void
+nGuiBrush::Unload()
+{
+    if (this->guiResource)
+    {
+        this->guiResource = 0;
+    }
+    this->refSkin.invalidate();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+nGuiResource*
+nGuiBrush::GetGuiResource()
+{
+    if (!this->IsLoaded())
+    {
+        this->Load();
+    }
+    this->guiResource->SetTouched(true);
     return this->guiResource;
 }

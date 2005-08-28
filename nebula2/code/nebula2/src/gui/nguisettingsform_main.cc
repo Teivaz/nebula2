@@ -167,7 +167,7 @@ nGuiSettingsForm::OnShow()
         slider->SetRightWidth(0.1f);
         slider->SetMinValue(float(sliderOption.minVal));
         slider->SetMaxValue(float(sliderOption.maxVal));
-        slider->SetValue(0);
+        slider->SetValue(0.0f);
         slider->SetKnobSize((sliderOption.maxVal - sliderOption.minVal) / 10.0f);
         slider->SetLabelFont(skin->GetLabelFont());
         this->AttachWidget(slider, nGuiFormLayout::VCenter, sliderOption.refLabel, 0.0f);

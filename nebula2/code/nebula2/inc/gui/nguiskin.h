@@ -24,19 +24,12 @@ class nSound3;
 class nGuiSkin : public nRoot
 {
 public:
-    /// sounds
-    enum Sound
-    {
-        ButtonClick,
-
-        NumSounds,
-        InvalidSound
-    };
-
     /// constructor
     nGuiSkin();
     /// destructor
     virtual ~nGuiSkin();
+    /// unload all gui resources which have not been rendered last frame
+    void UnloadUntouchedGuiResources();
     /// set texture prefix
     void SetTexturePrefix(const char* prefix);
     /// get texture prefix
@@ -97,24 +90,22 @@ public:
     void BeginBrushes();
     /// add a skin brush
     void AddBrush(const char* name, const char* tex, const vector2& uvPos, const vector2& uvSize, const vector4& color);
+    /// Add dynamic brush with name `name'.
+    void AddDynamicBrush(const char* name, int width, int height);
     /// end adding brushes
     void EndBrushes();
     /// lookup gui resource for a brush
     nGuiResource* FindBrush(const char* name);
+    /// add a sound object
+    void AddSoundObject(const char* name, const char* filename);
     /// get sound object
-    nSound3* GetSoundObject(Sound snd);
-    /// set button sound filename
-    void SetSound(Sound snd, const char* name);
-    /// get button sound filename
-    const char* GetSound(Sound snd) const;
+    nSound3* GetSoundObject(const char* name);
+    /// get sound filename associated with the name
+    const char* GetSound(const char* name) const;
     /// set volume for sounds objects
-    void SetSoundVolume(Sound snd, float volume);
+    void SetSoundVolume(const char* name, float volume);
     /// get volume for sound object
-    float GetSoundVolume(Sound snd);
-    /// convert sound string to enum
-    static Sound StringToSound(const char* str);
-    /// convert sound enum to string
-    static const char* SoundToString(Sound snd);
+    float GetSoundVolume(const char* name);
 
 private:
     /// initialize a brush
@@ -137,57 +128,10 @@ private:
     nString buttonFont;
     nString labelFont;
 
-    nFixedArray<nString> soundNames;
-    nFixedArray<nRef<nSound3> > sounds;
-    float soundVolume;
+    nArray<nString> soundNames;
+    nArray<nRef<nSound3> > sounds;
 };
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nGuiSkin::Sound
-nGuiSkin::StringToSound(const char* str)
-{
-    n_assert(str);
-    if (0 == strcmp(str, "ButtonClick")) return ButtonClick;
-    else return InvalidSound;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGuiSkin::SoundToString(Sound snd)
-{
-    switch (snd)
-    {
-        case ButtonClick: return "ButtonClick";
-        default:          return "InvalidSound";
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nGuiSkin::SetSound(Sound snd, const char* name)
-{
-    n_assert(name);
-    this->soundNames[snd] = name;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const char*
-nGuiSkin::GetSound(Sound snd) const
-{
-    return this->soundNames[snd].IsEmpty() ? 0 : this->soundNames[snd].Get();
-}
 
 //------------------------------------------------------------------------------
 /**

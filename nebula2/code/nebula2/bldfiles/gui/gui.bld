@@ -354,6 +354,47 @@ beginmodule nguicolorslidergroup
     setheaders nguicolorslidergroup
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguibar
+    setdir gui
+    setfiles {
+        nguibar_main
+    }
+    setheaders nguibar
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguifadeouttextlabel
+    setdir gui
+    setfiles {
+        nguifadeouttextlabel_main
+    }
+    setheaders nguifadeouttextlabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguislide
+    setdir gui
+    setfiles {
+        nguislide_main
+    }
+    setheaders nguislide
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguislideshow
+    setdir gui
+    setfiles {
+        nguislideshow_main
+        nguislideshow_cmds
+    }
+    setheaders nguislideshow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiskyeditor
+    setdir gui
+    setfiles {
+        nguiskyeditor_main
+    }
+    setheaders nguiskyeditor
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
@@ -370,6 +411,7 @@ begintarget ngui
         nguigraphicsbrowserwindow nguisettingsform nguitexttable nguitextwindow
         nguiscenecontrolwindow nguicoloradjust nguicoloradjustwindow
         nguicolorlabel nguicolorpicker nguicolorslidergroup
+        nguibar nguifadeouttextlabel nguislide nguislideshow
     }
 endtarget
 

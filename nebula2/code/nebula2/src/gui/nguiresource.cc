@@ -12,23 +12,35 @@ bool
 nGuiResource::Load()
 {
     n_assert(!this->IsValid());
-    n_assert(!this->texName.IsEmpty());
-    char texPath[N_MAXPATH];
-
-    n_strncpy2(texPath, this->texName.Get(), sizeof(texPath));
-    if (!this->refTexture.isvalid())
+    if (this->IsDynamic())
     {
-        this->refTexture = nGfxServer2::Instance()->NewTexture(texPath);
+        // dynamic brush, create as render target
+        this->refTexture = nGfxServer2::Instance()->NewRenderTarget(
+            0,                                          // Need a unique name.
+            int(this->absUvRect.v1.x),                  // Width.
+            int(this->absUvRect.v1.y),                  // Height.
+            nTexture2::X8R8G8B8,                        // Format.
+            nTexture2::Empty | nTexture2::Dynamic | nTexture2::RenderTargetColor);
     }
-    if (!this->refTexture->IsValid())
+    else
     {
-        this->refTexture->SetFilename(texPath);
-        if (!this->refTexture->Load())
+        // static brush, load texture from disk
+        n_assert(!this->texName.IsEmpty());
+        if (!this->refTexture.isvalid())
         {
-            n_error("nGuiResource: could not load texture %s!", this->texName.Get());
-            return false;
+            this->refTexture = nGfxServer2::Instance()->NewTexture(this->texName.Get());
+        }
+        if (!this->refTexture->IsValid())
+        {
+            this->refTexture->SetFilename(this->texName.Get());
+            if (!this->refTexture->Load())
+            {
+                n_error("nGuiResource: could not load texture %s!", this->texName.Get());
+                return false;
+            }
         }
     }
+
     return true;
 }
 

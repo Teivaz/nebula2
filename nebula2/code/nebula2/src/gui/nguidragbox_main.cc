@@ -106,7 +106,20 @@ nGuiDragBox::OnRButtonDown(const vector2& mousePos)
     }
     return nGuiWidget::OnRButtonDown(mousePos);
 }
-    
+
+//------------------------------------------------------------------------------
+/**
+    Manually cancel the drag box.
+*/
+void
+nGuiDragBox::CancelDragging()
+{
+    if (this->IsEnabled() && this->dragging)
+    {
+        this->dragging = false;
+    }
+}
+
 //------------------------------------------------------------------------------
 /**
     Called when mouse is moved. If a valid drag operation is in progress,

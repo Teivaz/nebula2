@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguicheckbutton.h"
 #include "gui/nguiserver.h"
+#include "gui/nguiwindow.h"
 
 nNebulaScriptClass(nGuiCheckButton, "nguitextlabel");
 
@@ -35,13 +36,30 @@ nGuiCheckButton::OnMouseMoved(const vector2& mousePos)
 {
     if(!this->IsPartOfGroup())
     {
-        if (this->Inside(mousePos))
+        nGuiServer* guiServer = nGuiServer::Instance();
+        // check if there exist a top most modal window
+        nGuiWindow* topMostWindow = guiServer->GetRootWindowPointer()->GetTopMostWindow();
+        bool modalTopMostWindow = false;
+        if (topMostWindow && topMostWindow->IsModal())
         {
-            this->mouseOver = true;
+            modalTopMostWindow = true;
+        }
+
+        if (modalTopMostWindow && this->GetOwnerWindow() != topMostWindow)
+        {
+            // if we are not part of the top most window, and this one is modal
+            this->mouseOver = false;
         }
         else
         {
-            this->mouseOver = false;
+            if (this->Inside(mousePos))
+            {
+                this->mouseOver = true;
+            }
+            else
+            {
+                this->mouseOver = false;
+            }
         }
     }
     return nGuiWidget::OnMouseMoved(mousePos);
@@ -53,13 +71,14 @@ nGuiCheckButton::OnMouseMoved(const vector2& mousePos)
     script callback command.
 */
 bool
-nGuiCheckButton::OnButtonDown(const vector2& /*mousePos*/)
+nGuiCheckButton::OnButtonDown(const vector2& mousePos)
 {
     if (this->mouseOver)
     {
         this->pressed = !this->pressed;
         this->OnAction();
-        nGuiServer::Instance()->PlaySound(nGuiSkin::ButtonClick);
+        nGuiServer::Instance()->PlaySound("ButtonClick");
+        nGuiTextLabel::OnButtonDown(mousePos);
         return true;
     }
     return false;
@@ -128,7 +147,7 @@ nGuiCheckButton::Render()
         }
         else if (this->blinking)
         {
-            double time = nGuiServer::Instance()->GetTime();
+            nTime time = nGuiServer::Instance()->GetTime();
             if (fmod((float)time, 1.0f) > 0.5f)
             {
                 brush = &this->highlightBrush;

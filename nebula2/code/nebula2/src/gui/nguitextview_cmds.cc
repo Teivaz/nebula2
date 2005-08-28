@@ -88,7 +88,7 @@ static void
 n_getfont(void* slf, nCmd* cmd)
 {
     nGuiTextView* self = (nGuiTextView*) slf;
-    cmd->Out()->SetS(self->GetFont());
+    cmd->Out()->SetS(self->GetFont().Get());
 }
 
 //-----------------------------------------------------------------------------

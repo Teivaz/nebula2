@@ -52,6 +52,14 @@ public:
     int GetTextureWidth();
     /// get texture height
     int GetTextureHeight();
+    /// Make texture dynamic/static.
+    void SetDynamic(bool v);
+    /// Is dynamic (aka. Does `GetTexture' return a render target?).
+    bool IsDynamic() const;
+    /// set the touched flag
+    void SetTouched(bool b);
+    /// get the touched flag
+    bool IsTouched() const;
 
 private:
     nString resName;
@@ -60,6 +68,8 @@ private:
     rectangle relUvRect;
     vector4 color;
     nRef<nTexture2> refTexture;
+    bool dynamic;
+    bool touched;
 };
 
 //------------------------------------------------------------------------------
@@ -67,7 +77,9 @@ private:
 */
 inline
 nGuiResource::nGuiResource() :
-    color(1.0f, 1.0f, 1.0f, 1.0f)
+    color(1.0f, 1.0f, 1.0f, 1.0f),
+    dynamic(false),
+    touched(false)
 {
     // empty
 }
@@ -219,6 +231,46 @@ nGuiResource::GetTextureHeight()
         this->Load();
     }
     return this->refTexture->GetHeight();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiResource::SetDynamic(bool v)
+{
+    this->dynamic = v;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiResource::IsDynamic() const
+{
+    return this->dynamic;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiResource::SetTouched(bool b)
+{
+    this->touched = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiResource::IsTouched() const
+{
+    return this->touched;
 }
 
 //------------------------------------------------------------------------------

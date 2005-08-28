@@ -28,7 +28,10 @@ static void n_setwindowborder(void* slf, nCmd* cmd);
 static void n_getwindowborder(void* slf, nCmd* cmd);
 static void n_beginbrushes(void* slf, nCmd* cmd);
 static void n_addbrush(void* slf, nCmd* cmd);
+static void n_adddynamicbrush(void* slf, nCmd* cmd);
 static void n_endbrushes(void* slf, nCmd* cmd);
+static void n_setbuttonsound(void* slf, nCmd* cmd);
+static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
 static void n_setsoundvolume(void* slf, nCmd* cmd);
@@ -82,6 +85,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffff_getwindowborder_v",        'GWBS', n_getwindowborder);
     cl->AddCmd("v_beginbrushes_v",              'BGBR', n_beginbrushes);
     cl->AddCmd("v_addbrush_ssffffffff",         'ADBR', n_addbrush);
+    cl->AddCmd("v_adddynamicbrush_sii",         'ADDB', n_adddynamicbrush);
     cl->AddCmd("v_endbrushes_v",                'EDBR', n_endbrushes);
     cl->AddCmd("v_setsound_ss",                 'SBTS', n_setsound);
     cl->AddCmd("s_getsound_s",                  'GBTS', n_getsound);
@@ -626,6 +630,27 @@ n_addbrush(void* slf, nCmd* cmd)
 //-----------------------------------------------------------------------------
 /**
     @cmd
+    adddynamicbrush
+    @input
+    s(BrushName)
+    @output
+    v
+    @info
+    Defines a dynamic brush by its name and render target size.
+*/
+static void
+n_adddynamicbrush(void* slf, nCmd* cmd)
+{
+    nGuiSkin* self = (nGuiSkin*) slf;
+    const char* name = cmd->In()->GetS();
+    int width = cmd->In()->GetI();
+    int height = cmd->In()->GetI();
+    self->AddDynamicBrush(name, width, height);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    @cmd
     endbrushes
     @input
     v
@@ -656,8 +681,7 @@ static void
 n_setsoundvolume(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
-    self->SetSoundVolume(snd, cmd->In()->GetF());
+    self->SetSoundVolume(cmd->In()->GetS(), cmd->In()->GetF());
 }
 
 //-----------------------------------------------------------------------------
@@ -675,8 +699,7 @@ static void
 n_getsoundvolume(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
-    cmd->Out()->SetF(self->GetSoundVolume(snd));
+    cmd->Out()->SetF(self->GetSoundVolume(cmd->In()->GetS()));
 }
 
 //-----------------------------------------------------------------------------
@@ -694,9 +717,9 @@ static void
 n_setsound(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
+    const char* name = cmd->In()->GetS();
     const char* filename = cmd->In()->GetS();
-    self->SetSound(snd, filename);
+    self->AddSoundObject(name, filename);
 }
 
 //-----------------------------------------------------------------------------
@@ -714,8 +737,7 @@ static void
 n_getsound(void* slf, nCmd* cmd)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
-    nGuiSkin::Sound snd = nGuiSkin::StringToSound(cmd->In()->GetS());
-    cmd->Out()->SetS(self->GetSound(snd));
+    cmd->Out()->SetS(self->GetSound(cmd->In()->GetS()));
 }
 
 //-----------------------------------------------------------------------------

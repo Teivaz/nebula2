@@ -35,6 +35,13 @@ public:
     nGuiResource* GetGuiResource();
 
 private:
+    /// load resource
+    bool Load();
+    /// unload resource
+    void Unload();
+    /// return true if loaded
+    bool IsLoaded() const;
+
     nString name;
     nRef<nGuiSkin> refSkin;
     nGuiResource* guiResource;
@@ -55,7 +62,8 @@ nGuiBrush::nGuiBrush() :
 */
 inline
 nGuiBrush::nGuiBrush(const char* n) :
-    name(n)
+    name(n),
+    guiResource(0)
 {
     // empty
 }
@@ -66,7 +74,10 @@ nGuiBrush::nGuiBrush(const char* n) :
 inline
 nGuiBrush::~nGuiBrush()
 {
-    // FIXME: decrement refcount of gui resource texture
+    if (this->IsLoaded())
+    {
+        this->Unload();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -77,6 +88,10 @@ void
 nGuiBrush::SetName(const nString& n)
 {
     this->name = n;
+    if (this->IsLoaded())
+    {
+        this->Unload();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -87,6 +102,16 @@ const nString&
 nGuiBrush::GetName() const
 {
     return this->name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiBrush::IsLoaded() const
+{
+    return (0 != this->guiResource);
 }
 
 //------------------------------------------------------------------------------

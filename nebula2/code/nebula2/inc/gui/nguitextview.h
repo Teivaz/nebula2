@@ -26,9 +26,9 @@ public:
     /// destructor
     virtual ~nGuiTextView();
     /// set the font to use (see nGuiServer::AddFont())
-    void SetFont(const char* fontName);
+    void SetFont(const nString& fontName);
     /// get the font definition
-    const char* GetFont() const;
+    const nString& GetFont() const;
     /// set text color
     void SetTextColor(const vector4& c);
     /// get text color
@@ -40,13 +40,19 @@ public:
     /// begin appending text
     virtual void BeginAppend();
     /// append a line of text (copies the text)
-    virtual void AppendLine(const char* t);
+    virtual void AppendLine(const nString& t);
     /// append a colored line of text (copies the text)
-    virtual void AppendColoredLine(const char* t, const vector4& color);
+    virtual void AppendColoredLine(const nString& t, const vector4& color);
+    /// append a empty line
+    virtual void AppendEmptyLine();
+    /// append a text (copies the text), breaks into lines
+    virtual void AppendText(const nString& t);
+    /// append a text (copies the text), breaks into lines
+    virtual void AppendColoredText(const nString& t, const vector4& color);
     /// finish appending text
     void EndAppend();
     /// get line at index
-    const char* GetLineAt(int i) const;
+    const nString& GetLineAt(int i) const;
     /// set the line offset (the index of the first visible line)
     void SetLineOffset(int i);
     /// get the line offset 
@@ -55,6 +61,10 @@ public:
     void SetSelectionEnabled(bool b);
     /// get selection handling flag
     bool GetSelectionEnabled() const;
+    /// set selection index
+    void SetLookUpEnabled(bool b);
+    /// get selection handling flag
+    bool GetLookUpEnabled() const;
     /// set selection index
     void SetSelectionIndex(int i);
     /// get the selection index
@@ -77,10 +87,17 @@ public:
     virtual void OnEvent(const nGuiEvent& event);
     /// handle button down
     virtual bool OnButtonDown(const vector2& mousePos);
+    /// handle key down
+    virtual bool OnKeyDown(nKey key);
+
     /// rendering
     virtual bool Render();
     /// set the font in the gfxserver
     void ActivateFont();
+    /// set if the textfield size will always take the slider into account
+    void SetCalculateTextAlwaysWithSlider(bool enable);
+    /// get if the textfield size will always take the slider into account
+    bool GetCalculateTextAlwaysWithSlider() const;
 
 protected:
     /// validate the font resource
@@ -104,8 +121,10 @@ protected:
     nArray<nString> textArray;
     nArray<vector4> colorArray;
     bool selectionEnabled;
+    bool lookupEnabled;
     int lineOffset;
     int selectionIndex;
+    bool calculateTextAlwaysWithSlider;
 };
 
 //------------------------------------------------------------------------------
@@ -146,6 +165,26 @@ bool
 nGuiTextView::GetSelectionEnabled() const
 {
     return this->selectionEnabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextView::SetLookUpEnabled(bool b)
+{
+    this->lookupEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextView::GetLookUpEnabled() const
+{
+    return this->lookupEnabled;
 }
 
 //------------------------------------------------------------------------------
@@ -218,11 +257,9 @@ nGuiTextView::BeginAppend()
 */
 inline
 void
-nGuiTextView::AppendLine(const char* t)
+nGuiTextView::AppendLine(const nString& t)
 {
-    n_assert(t);
-    this->textArray.Append(t);
-    this->colorArray.Append(this->textColor);
+    this->AppendColoredLine(t, this->textColor);
 }
 
 //------------------------------------------------------------------------------
@@ -230,13 +267,31 @@ nGuiTextView::AppendLine(const char* t)
 */
 inline
 void
-nGuiTextView::AppendColoredLine(const char* t, const vector4& color)
+nGuiTextView::AppendEmptyLine()
 {
-    n_assert(t);
+    this->AppendLine("");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextView::AppendColoredLine(const nString& t, const vector4& color)
+{
     this->textArray.Append(t);
     this->colorArray.Append(color);
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextView::AppendText(const nString& t)
+{
+    this->AppendColoredText(t, this->textColor);
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -288,7 +343,7 @@ nGuiTextView::GetTextColor() const
 */
 inline
 void
-nGuiTextView::SetFont(const char* f)
+nGuiTextView::SetFont(const nString& f)
 {
     this->fontName = f;
 }
@@ -297,20 +352,20 @@ nGuiTextView::SetFont(const char* f)
 /**
 */
 inline
-const char*
+const nString&
 nGuiTextView::GetFont() const
 {
-    return this->fontName.Get();
+    return this->fontName;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const char*
+const nString&
 nGuiTextView::GetLineAt(int i) const
 {
-    return this->textArray[i].Get();
+    return this->textArray[i];
 }
 
 //------------------------------------------------------------------------------
@@ -331,6 +386,26 @@ nGuiTextView::GetSelection() const
     {
         return 0;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiTextView::SetCalculateTextAlwaysWithSlider(bool enable)
+{
+    this->calculateTextAlwaysWithSlider = enable;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiTextView::GetCalculateTextAlwaysWithSlider() const
+{
+    return this->calculateTextAlwaysWithSlider;
 }
 
 //------------------------------------------------------------------------------

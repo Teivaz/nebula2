@@ -50,6 +50,12 @@ nGuiServer::nGuiServer() :
     Singleton = this;
     this->guiWindowClass = kernelServer->FindClass("nguiwindow");
     n_assert(this->guiWindowClass);
+
+    #if __NEBULA_STATS__
+    this->profGUIDrawBrush.Initialize("profGUI_DrawBush");
+    this->profGUIDrawText.Initialize("profGUI_DrawText");
+    this->profGUIDrawTexture.Initialize("profGUI_DrawTexture");
+    #endif
 }
 
 //-----------------------------------------------------------------------------
@@ -335,7 +341,7 @@ nGuiServer::GetRootWindowPointer() const
 */
 void
 nGuiServer::Trigger()
-{      
+{
     n_assert(this->guiWindowClass);
 
     if (this->refCurrentRootWindow.isvalid())
@@ -354,6 +360,10 @@ nGuiServer::Trigger()
                 nGuiWindow* curWindow = (nGuiWindow*) curWidget;
                 if (curWindow->IsDismissed())
                 {
+                    if (curWindow->IsShown())
+                    {
+                        curWindow->Hide();
+                    }
                     curWindow->Release();
                 }
             }
@@ -474,6 +484,9 @@ nGuiServer::Trigger()
 void
 nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StartAccum();
+#endif
     rectangle cr, r;
     if (this->GetClipRect(cr))
     {
@@ -489,12 +502,16 @@ nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& re
     static vector4 modColor;
     modColor.set(color.x, color.y, color.z, color.w * this->globalColor.w);
     nGfxServer2::Instance()->DrawText(text, modColor, r, flags);
+
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StopAccum();
+#endif
 }
 
 //-----------------------------------------------------------------------------
 /**
     Initialize the rectangle mesh. This method should be called per
-    frame because the mesh may become invalid (for instance when 
+    frame because the mesh may become invalid (for instance when
     switching display modes).
 */
 void
@@ -526,7 +543,7 @@ nGuiServer::ValidateShader()
     {
         shader = this->refShader.get();
     }
-    if (!shader->IsValid())
+    if (!shader->IsLoaded())
     {
         bool guiShaderLoaded = shader->Load();
         n_assert(guiShaderLoaded);
@@ -554,6 +571,10 @@ nGuiServer::FlushBrushes()
 void
 nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex)
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawTexture.StartAccum();
+#endif
+
     n_assert(tex);
 
     // clipping
@@ -677,6 +698,10 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
     *ptr++ = r.v0.x;  *ptr++ = r.v1.y; *ptr++ = 0.0f;  // coord
     *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
     *ptr++ = uv.v0.x; *ptr++ = uv.v1.y;
+
+#if __NEBULA_STATS__
+    this->profGUIDrawTexture.StopAccum();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -686,6 +711,11 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
 void
 nGuiServer::Render()
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawBrush.ResetAccum();
+    this->profGUIDrawTexture.ResetAccum();
+    this->profGUIDrawText.ResetAccum();
+#endif
     // set the current time for all following render calls
     if (this->refCurrentRootWindow.isvalid())
     {
@@ -721,7 +751,7 @@ nGuiServer::Render()
             {
                 if (this->refToolTip->IsShown() && !this->toolTipSet)
                 {
-                    this->refToolTip->Hide();      
+                    this->refToolTip->Hide();
                 }
                 this->refToolTip->Render();
                 this->toolTipSet = false;
@@ -741,6 +771,12 @@ nGuiServer::Render()
         shader->End();
         gfxServer->PopTransform(nGfxServer2::Model);
         gfxServer->PopTransform(nGfxServer2::View);
+
+        // unload all gui resources which have not been rendered
+        if (this->refCurrentSkin.isvalid())
+        {
+            this->refCurrentSkin->UnloadUntouchedGuiResources();
+        }
     }
 }
 
@@ -775,7 +811,7 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
     fontDesc.SetItalic(italic);
     fontDesc.SetUnderline(underline);
     fontDesc.SetAntiAliased(true);
-    
+
     // change the font's desc if it already exists
     // otherwise, create the font
     nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
@@ -796,7 +832,7 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
     Declare a UI font using a custom font file.
 
     @param  fontName    a font name which identifies this font in the UI system
-    @param  fontFile    font filename 
+    @param  fontFile    font filename
     @param  typeFace    the typeface name (i.e. "Arial")
     @param  height      height in pixels
     @param  bold        bold flag
@@ -824,7 +860,7 @@ nGuiServer::AddCustomFont(const char* fontName, const char* fontFile, const char
     fontDesc.SetItalic(italic);
     fontDesc.SetUnderline(underline);
     fontDesc.SetAntiAliased(true);
-    
+
     // change the font's desc if it already exists
     // otherwise, create the font
     nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
@@ -903,23 +939,31 @@ nGuiServer::GetViewSpaceMatrix(const rectangle& r)
 void
 nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawBrush.StartAccum();
+#endif
     // a null brush pointer is valid, in this case, nothing is rendered
     if (brush.GetName().IsEmpty())
     {
+        #if __NEBULA_STATS__
+        this->profGUIDrawBrush.StopAccum();
+        #endif
         return;
     }
     // get gui resource from brush
     nGuiResource* guiResource = brush.GetGuiResource();
     n_assert(guiResource);
 
-    // make sure gui resource is loaded
+    // validate gui resource
     if (!guiResource->IsValid())
     {
-        bool success = guiResource->Load();
-        n_assert(success);
+        guiResource->Load();
     }
-    
+
     this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
+#if __NEBULA_STATS__
+this->profGUIDrawBrush.StopAccum();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -944,7 +988,7 @@ nGuiServer::IsMouseOverGui() const
              widget;
              widget = (nGuiWidget*) widget->GetSucc())
         {
-            if (widget->IsShown() && 
+            if (widget->IsShown() &&
                 (!widget->IsBackground()) &&
                 (widget->Inside(this->curMousePos)))
             {
@@ -972,7 +1016,7 @@ nGuiServer::ShowToolTip(const char* text, const vector4& textColor)
     {
         // initialize the optional tooltip
         this->refToolTip = (nGuiToolTip*) this->refGui->Find("Tooltip");
-        if(this->refToolTip.isvalid()) 
+        if(this->refToolTip.isvalid())
         {
             this->refToolTip->Hide();
         }
@@ -983,7 +1027,7 @@ nGuiServer::ShowToolTip(const char* text, const vector4& textColor)
         if(strcmp(this->refToolTip->GetText(), text) != 0)
         {
             this->refToolTip->SetColor(textColor);
-            this->refToolTip->SetText(text);      
+            this->refToolTip->SetText(text);
         }
         if(!this->refToolTip->IsShown())
         {
@@ -1047,7 +1091,7 @@ nGuiServer::RunCommand(nGuiWidget* who, const nString& cmd)
 
 //-----------------------------------------------------------------------------
 /**
-    Register an event listener. Event listener widgets are notified 
+    Register an event listener. Event listener widgets are notified
     through the OnEvent() method when the PutEvent() method is invoked.
 */
 void
@@ -1104,10 +1148,27 @@ nGuiServer::PutEvent(const nGuiEvent& event)
 void
 nGuiServer::ToggleSystemGui()
 {
+    // cursor visibility
+    static nGfxServer2::CursorVisibility userSkinCursorVisibility;
+    static bool userSkinCursorVisibilityKown = false;
+
+    static const nGfxServer2::CursorVisibility SystemSkinVisbility = nGfxServer2::System;
+
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    n_assert(gfxServer);
+
     if (this->systemGuiActive)
     {
         nGuiWindow* userRootWindow = this->refUserRootWindow.isvalid() ? this->refUserRootWindow.get() : 0;
         nGuiSkin* userSkin = this->refUserSkin.isvalid() ? this->refUserSkin.get() : 0;
+
+        // restore userSkin cursor visibility
+        if (userSkinCursorVisibilityKown)
+        {
+            userSkinCursorVisibilityKown = false; // make shure we forget, to never set unintialized
+            gfxServer->SetCursorVisibility(userSkinCursorVisibility);
+        }
+
         this->SetSkin(userSkin);
         this->SetRootWindowPointer(userRootWindow);
         this->systemGuiActive = false;
@@ -1116,6 +1177,12 @@ nGuiServer::ToggleSystemGui()
     {
         this->refUserSkin = this->GetSkin();
         this->refUserRootWindow = this->GetRootWindowPointer();
+
+        // store mouse pointer state, and activate mouse for system gui
+        userSkinCursorVisibility = gfxServer->GetCursorVisibility();
+        userSkinCursorVisibilityKown = true;
+        gfxServer->SetCursorVisibility(SystemSkinVisbility);
+
         this->SetSkin(this->GetSystemSkin());
         this->SetRootWindowPointer(this->refSystemRootWindow.get());
         this->systemGuiActive = true;
@@ -1132,7 +1199,6 @@ vector2
 nGuiServer::ComputeScreenSpaceBrushSize(const char* brushName)
 {
     nGuiBrush tmpBrush(brushName);
-
     vector2 size;
     nGuiResource* guiResource = tmpBrush.GetGuiResource();
     n_assert(guiResource);
@@ -1165,12 +1231,12 @@ nGuiServer::BrushExists(const char* brushName)
     Play a GUI sound.
 */
 void
-nGuiServer::PlaySound(nGuiSkin::Sound snd)
+nGuiServer::PlaySound(const char* name)
 {
     nGuiSkin* curSkin = this->GetSkin();
     if (curSkin)
     {
-        nSound3* soundObject = curSkin->GetSoundObject(snd);
+        nSound3* soundObject = curSkin->GetSoundObject(name);
         if (soundObject)
         {
             nAudioServer3::Instance()->StartSound(soundObject);
@@ -1200,7 +1266,7 @@ nGuiServer::DiscardWindows(const char* className)
                 child->Release();
             }
         }
-        while ((child = nextChild));
+        while (child = nextChild);
     }
 }
 
@@ -1237,7 +1303,7 @@ nGuiServer::FindWindowByClass(const char* className, nGuiWindow* curWindow)
             {
                 return (nGuiWindow*) child;
             }
-        } while ((child = nextChild));
+        } while (child = nextChild);
     }
     return 0;
 }

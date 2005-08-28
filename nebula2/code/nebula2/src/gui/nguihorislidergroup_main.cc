@@ -21,7 +21,9 @@ nGuiHoriSliderGroup::nGuiHoriSliderGroup() :
     increment(1.0f),
     leftWidth(0.2f),
     rightWidth(0.1f),
-    snapToIncrement(false)
+    snapToIncrement(false),
+    leftTextAlignment(nGuiTextLabel::Right),
+    rightTextAlignment(nGuiTextLabel::Left)
 {
     // empty
 }
@@ -68,7 +70,7 @@ nGuiHoriSliderGroup::OnShow()
     n_assert(leftLabel);
     leftLabel->SetText(this->leftText.Get());
     leftLabel->SetFont(this->GetLabelFont());
-    leftLabel->SetAlignment(nGuiTextLabel::Right);
+    leftLabel->SetAlignment(leftTextAlignment);
     leftLabel->SetColor(skin->GetLabelTextColor());
     leftLabel->SetMinSize(vector2(0.0f, sliderMinSize.y));
     leftLabel->SetMaxSize(vector2(1.0f, sliderMaxSize.y));
@@ -83,7 +85,7 @@ nGuiHoriSliderGroup::OnShow()
     n_assert(rightLabel);
     rightLabel->SetText(this->rightText.Get());
     rightLabel->SetFont(this->GetLabelFont());
-    rightLabel->SetAlignment(nGuiTextLabel::Left);
+    rightLabel->SetAlignment(rightTextAlignment);
     rightLabel->SetColor(skin->GetLabelTextColor());
     rightLabel->SetMinSize(vector2(0.0f, sliderMinSize.y));
     rightLabel->SetMaxSize(vector2(1.0f, sliderMaxSize.y));
@@ -95,8 +97,8 @@ nGuiHoriSliderGroup::OnShow()
 
     kernelServer->PopCwd();
 
-    this->SetMinSize(sliderMinSize);
-    this->SetMaxSize(sliderMaxSize);
+    this->SetMinSize(vector2(this->GetMinSize().x,sliderMinSize.y));
+    this->SetMaxSize(vector2(this->GetMaxSize().x,sliderMaxSize.y));
 
     this->UpdateLayout(this->rect);
     nGuiServer::Instance()->RegisterEventListener(this);

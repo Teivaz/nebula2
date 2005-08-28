@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiscenecontrolwindow.h"
 #include "gui/nguihorislidergroup.h"
-#include "scene/nmrtsceneserver.h"
 #include "scene/ntransformnode.h"
 #include "scene/nlightnode.h"
 #include "gui/nguitextlabel.h"
@@ -25,13 +24,13 @@ nGuiSceneControlWindow::nGuiSceneControlWindow():
     diffuseColor(1.0f,1.0f,1.0f,1.0f),
     specularColor(1.0f,1.0f,1.0f,1.0f),
     ambientColor(1.0f,1.0f,1.0f,1.0f),
-    lightPath("/usr/scene/stdlight/l"),
-    lightTransformPath("/usr/scene/stdlight"),
+    lightPath("/usr/scene/default/stdlight/l"),
+    lightTransformPath("/usr/scene/default/stdlight"),
     numAnimStates(0),
     sliderChanged(false),
     skinAnimatorLoaded(false),
-    refLightTransform("/usr/scene/stdlight"),
-    refLight("/usr/scene/stdlight/l")
+    refLightTransform("/usr/scene/default/stdlight"),
+    refLight("/usr/scene/default/stdlight/l")
 {
     // empty
 }
@@ -159,6 +158,20 @@ nGuiSceneControlWindow::OnShow()
     colorSlider->OnShow();
     this->refAmbientSlider = colorSlider;
 
+    // Create SkyEditor
+/*
+    nGuiSkyEditor* skyEditor = (nGuiSkyEditor*) kernelServer->New("nguiskyeditor","SkyEditor");
+    layout->AttachWidget(skyEditor, nGuiFormLayout::Top, this->refAmbientSlider, 2*border);
+    layout->AttachForm(skyEditor, nGuiFormLayout::Left, border);
+    layout->AttachForm(skyEditor, nGuiFormLayout::Right, border);
+    skyEditor->OnShow();
+    this->refSkyEditor = skyEditor;
+    if (this->refSkyEditor->SkyLoad())
+    {
+        windowRect = rectangle(vector2(0.0f, 0.0f), vector2(0.4f, 0.8f));
+    }
+*/
+
     // Create Animation Controls, if nSkinAnimator was found
     if (this->refSkinAnimator.isvalid())
     {
@@ -212,6 +225,7 @@ nGuiSceneControlWindow::OnShow()
         this->UpdateChnSlider();   
         windowRect.set(vector2(0.0f, 0.0f), vector2(0.4f, 0.5f));
     }
+
     kernelServer->PopCwd();
 
     // set new window rect   
@@ -249,13 +263,20 @@ nGuiSceneControlWindow::OnHide()
         this->refAnimStates->Release();
     }
 
-    for (int countChn = 0; countChn < this->refWeightChnListSlider.Size(); countChn++)
+    int countChn = 0;
+    for (countChn; countChn < this->refWeightChnListSlider.Size(); countChn++)
     {
         if (this->refWeightChnListSlider.At(countChn))
         {
             this->refWeightChnListSlider.At(countChn)->Release();
         }
     }
+/*
+    if (this->refSkyEditor.isvalid())
+    {
+        this->refSkyEditor->Release();
+    }
+*/
     
     nGuiClientWindow::OnHide();
 }
@@ -306,7 +327,8 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
         if (this->refSkinAnimator.isvalid())
         {
             // Update animation channels from sliders
-            for (int countChnSlider = 0; countChnSlider< this->refWeightChnListSlider.Size(); countChnSlider++)
+            int countChnSlider = 0;
+            for (countChnSlider; countChnSlider< this->refWeightChnListSlider.Size(); countChnSlider++)
             {
                 nGuiHoriSliderGroup* slider  = this->refWeightChnListSlider.At(countChnSlider);
                 if (slider != NULL)
@@ -336,6 +358,13 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             this->UpdateChnSlider();
         }
     }
+
+/*
+    if (this->refSkyEditor.isvalid())
+    {
+        this->refSkyEditor->OnEvent(event);
+    }
+*/
     
     nGuiClientWindow::OnEvent(event);
 }
@@ -351,8 +380,9 @@ nGuiSceneControlWindow::OnFrame()
     if (this->refSkinAnimator.isvalid())
     {
         this->refAnimStates->BeginAppend();         
+        int countAnimStates = 0;
         this->numAnimStates = this->refSkinAnimator->GetNumStates();
-        for(int countAnimStates = 0; countAnimStates < this->numAnimStates; countAnimStates++)
+        for(countAnimStates; countAnimStates < this->numAnimStates; countAnimStates++)
         {
             const nAnimState* state = &this->refSkinAnimator->GetStateAt(countAnimStates);
             this->refAnimStates->AppendLine(state->GetName().Get());
@@ -432,9 +462,9 @@ nGuiSceneControlWindow::FindFirstInstance(nRoot* node, nClass* classType)
 void
 nGuiSceneControlWindow::UpdateChnSlider()
 {       
-    int chnCount;
+    int chnCount = 0;
     // Release old sliders before creating new one from the scratch
-    for (chnCount = 0; chnCount < this->refWeightChnListSlider.Size(); chnCount++)
+    for (chnCount; chnCount < this->refWeightChnListSlider.Size(); chnCount++)
     {
         this->refWeightChnListSlider.At(chnCount)->OnHide();
     }
@@ -457,16 +487,18 @@ nGuiSceneControlWindow::UpdateChnSlider()
     nAnimState animState;               
     animState = this->refSkinAnimator->GetStateAt(this->refAnimStates->GetSelectionIndex());
     int numAnimClips = animState.GetNumClips();
+    int animClipCount  = 0;
     // Get all weight channels of current AnimState
-    for (int animClipCount = 0; animClipCount<numAnimClips; animClipCount++)
+    for ( animClipCount; animClipCount<numAnimClips; animClipCount++)
     {
         nAnimClip& animClip = animState.GetClipAt(animClipCount);
         this->chnHandles.Append(animClip.GetWeightChannelHandle());
     }        
 
     // create all sliders
+    chnCount = 0;
     nGuiHoriSliderGroup* prevSlider;
-    for (chnCount = 0; chnCount < this->chnHandles.Size(); chnCount++)
+    for (chnCount; chnCount < this->chnHandles.Size(); chnCount++)
     {
         nString chnName (nVariableServer::Instance()->GetVariableName(this->chnHandles.At(chnCount)));
         nGuiHoriSliderGroup* slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", chnName.Get());

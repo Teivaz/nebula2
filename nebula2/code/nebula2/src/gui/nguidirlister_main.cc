@@ -102,5 +102,6 @@ nGuiDirLister::UpdateContent()
     }
     n_delete(dir);
     this->EndAppend();
+    this->SetLineOffset(0);
     this->dirty = false;
 }
