@@ -144,8 +144,7 @@ public:
             MATERIALID       = (1<<2),
             NORMAL           = (1<<3),
             TANGENT          = (1<<4),
-            BINORMAL         = (1<<5),
-            EDGEINDICIES     = (1<<6),
+            BINORMAL         = (1<<5)
         };
 
         /// constructor
@@ -157,10 +156,6 @@ public:
         void SetVertexIndices(int i0, int i1, int i2);
         /// get vertex indices
         void GetVertexIndices(int& i0, int& i1, int& i2) const;
-        /// set edge indices
-        void SetEdgeIndices(int e0, int e1, int e2);
-        /// get vertex indices
-        void GetEdgeIndices(int& e0, int& e1, int& e2) const;
         /// set group id
         void SetGroupId(int i);
         /// get group id
@@ -189,7 +184,6 @@ public:
         const vector3& GetBinormal() const;
 
         int vertexIndex[3];
-        int edgeIndex[3];
         int usageFlags;
         int groupId;
         int materialId;
@@ -328,6 +322,8 @@ public:
     void Transform(const matrix44& m);
     /// remove redundant vertices
     void Cleanup(nArray< nArray<int> >* collapseMap);
+    /// make triangle-vertices unique, creating redundant vertices, opposite of Cleanup()
+    void Inflate();
     /// build edge information (only works on clean meshes, and it not alowed to change the mesh later)
     void CreateEdges();
     /// optimize for t&l hardware vertex cache
@@ -351,7 +347,7 @@ public:
     /// create face tangents (requires a valid uv-mapping at layer 0)
     void BuildTriangleTangents();
     /// generate averaged vertex tangents
-    void BuildVertexTangents();
+    void BuildVertexTangents(bool allowVertexSplits);
     /// generate averaged vertex normals
     void BuildVertexNormals();
     /// flip v texture coordinates
@@ -368,12 +364,6 @@ private:
         ushort GroupID;
     };
 
-    struct UngroupedEdge // used as temp data for the generation
-    {
-        ushort vIndex[2];
-        ushort fIndex[2];
-    };
-
     /// static userdata pointer for qsort hook
     static nMeshBuilder* nMeshBuilder::qsortData;
     /// a qsort() hook for generating a sorted index array
@@ -386,6 +376,10 @@ private:
     static int __cdecl GroupedEdgeSorter(const void* elm0, const void* elm1);
     /// do an inflated component copy using a source mesh and a collapseMap
     void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask);
+    /// generate averaged vertex tangents using vertex splitting
+    void BuildVertexTangentsWithSplits();
+    /// generate averaged vertex tangents without vertex splitting
+    void BuildVertexTangentsWithoutSplits();
 
 public:
     nArray<Vertex>   vertexArray;
@@ -858,7 +852,6 @@ nMeshBuilder::Triangle::Triangle() :
     for (i = 0; i < 3; i++)
     {
         this->vertexIndex[i] = 0;
-        this->edgeIndex[i] = nMesh2::InvalidIndex;
     }
 }
 
@@ -893,31 +886,6 @@ nMeshBuilder::Triangle::GetVertexIndices(int& i0, int& i1, int& i2) const
     i0 = this->vertexIndex[0];
     i1 = this->vertexIndex[1];
     i2 = this->vertexIndex[2];
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMeshBuilder::Triangle::SetEdgeIndices(int e0, int e1, int e2)
-{
-    this->edgeIndex[0] = e0;
-    this->edgeIndex[1] = e1;
-    this->edgeIndex[2] = e2;
-    this->compMask |= EDGEINDICIES;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMeshBuilder::Triangle::GetEdgeIndices(int& e0, int& e1, int& e2) const
-{
-    e0 = this->edgeIndex[0];
-    e1 = this->edgeIndex[1];
-    e2 = this->edgeIndex[2];
 }
 
 //------------------------------------------------------------------------------
