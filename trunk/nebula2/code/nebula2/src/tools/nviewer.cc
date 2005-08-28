@@ -127,6 +127,7 @@ main(int argc, const char** argv)
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool useRam           = args.GetBoolArg("-useram");    
+    bool noLightStage     = args.GetBoolArg("-nolightstage");
     bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
@@ -136,6 +137,7 @@ main(int argc, const char** argv)
 
     const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
     const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    const char* renderPath       = args.GetStringArg("-renderpath", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
     vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
@@ -236,9 +238,11 @@ main(int argc, const char** argv)
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
     viewerApp.SetUseRam(useRam);
+    viewerApp.SetLightStageEnabled(!noLightStage);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);
     if (projDir)          viewerApp.SetProjDir(projDir);
+    if (renderPath)       viewerApp.SetRenderPath(renderPath);    
     if (featureSetArg)
     {
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
@@ -258,6 +262,7 @@ main(int argc, const char** argv)
     viewerApp.GetCamControl().SetDefaultCenterOfInterest(eyeCoi);
     viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
     viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);
+
     // open and run viewer
     if (viewerApp.Open())
     {
@@ -266,3 +271,4 @@ main(int argc, const char** argv)
     }
     return 0;
 }
+
