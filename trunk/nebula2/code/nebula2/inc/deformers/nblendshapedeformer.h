@@ -8,6 +8,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "deformers/nmeshdeformer.h"
+#include "gfx2/nmesharray.h"
 
 //------------------------------------------------------------------------------
 class nBlendShapeDeformer : public nMeshDeformer

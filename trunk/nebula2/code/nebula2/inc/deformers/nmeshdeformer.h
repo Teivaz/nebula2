@@ -29,7 +29,7 @@ public:
     void SetOutputMesh(nMesh2* mesh);
     /// get single output mesh
     nMesh2* GetOutputMesh() const;
-    /// set start index
+    /// set source start index
     void SetStartVertex(int i);
     /// get start index
     int GetStartVertex() const;
