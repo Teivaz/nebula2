@@ -215,14 +215,19 @@ beginmodule nkernel
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
         ndynautoref nhardref nevent nmutex nthread nthreadsafelist
         nloghandler ndefaultloghandler nwin32loghandler
-        nrefcounted nguid nshell32wrapper ncrc nreferenced
+        nrefcounted nguid ncrc nreferenced
         ndefclass ncmdprotonativecpp ncmdprototraits
     }
     setlibs_linux {
         uuid
     }
 endmodule
-
+#-------------------------------------------------------------------------------
+beginmodule nwin32wrapper
+    setdir kernel
+    setfiles   { nwin32wrapper }
+    setheaders { nwin32wrapper }
+endmodule
 #===============================================================================
 #  nkernel targets
 #===============================================================================
@@ -245,6 +250,7 @@ begintarget nkernel
         nutil
         nsignal
         nsignalserver
+        nwin32wrapper
         lokiheaders
     }
 endtarget

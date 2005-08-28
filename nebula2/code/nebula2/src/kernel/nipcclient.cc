@@ -114,7 +114,6 @@ nIpcClient::Connect(nIpcAddress& addr)
 {
     if (!this->isConnected)
     {
-        n_assert(!this->isConnected);
         this->serverAddr = addr;
 
         // create socket (in blocking mode)

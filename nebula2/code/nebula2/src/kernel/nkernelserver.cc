@@ -387,7 +387,6 @@ nKernelServer::~nKernelServer(void)
     this->hardRefServer = 0;
 
     // delete default log handler
-    this->SetLogHandler(0);
     n_delete(this->defaultLogHandler);
     this->defaultLogHandler = 0;
 

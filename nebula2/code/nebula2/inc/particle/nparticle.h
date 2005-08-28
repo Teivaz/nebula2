@@ -33,7 +33,6 @@ public:
     void Initialize(const vector3& position, const vector3& velocity, float birthTime, float lifeTime, float rotation);
     /// update the particle
     void Trigger(nParticleEmitter* emitter, float curTime, float frameTime, const vector3& absAccel);
-
     /// get the current particle position
     const vector3& GetPosition() const;
     /// get the current particle velocity

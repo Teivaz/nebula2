@@ -19,6 +19,10 @@
 #include "kernel/nmutex.h"
 #include "kernel/natomtable.h"
 
+#ifdef __WIN32__
+#include "kernel/nwin32wrapper.h"
+#endif
+
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
 #endif
@@ -146,6 +150,10 @@ private:
     nEnv* varMemTotalCount;
 
     nMutex mutex;                   // the kernel lock mutex
+
+    #ifdef __WIN32__
+    nWin32Wrapper win32Wrapper;
+    #endif
 
     // nAtomTable atomTable;           // the global atom table
 };

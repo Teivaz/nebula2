@@ -7,6 +7,7 @@
 #include "kernel/nscriptserver.h"
 
 nNebulaClass(nRemoteServer, "nroot");
+nRemoteServer* nRemoteServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -16,7 +17,8 @@ nRemoteServer::nRemoteServer() :
     isOpen(false),
     ipcServer(0)
 {
-    // empty
+    n_assert(0 == Singleton);
+    Singleton = this;
 }
 
 //------------------------------------------------------------------------------
@@ -29,6 +31,9 @@ nRemoteServer::~nRemoteServer()
         this->Close();
     }
     n_assert(0 == this->ipcServer);
+
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------

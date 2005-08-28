@@ -13,8 +13,7 @@ nLocaleServer* nLocaleServer::Singleton = 0;
 /**
 */
 nLocaleServer::nLocaleServer() :
-    isOpen(false),
-    idHashMap(0)
+    isOpen(false)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -40,68 +39,6 @@ bool
 nLocaleServer::Open()
 {
     n_assert(!this->IsOpen());
-    n_assert(!this->filename.IsEmpty());
-    n_assert(0 == this->idHashMap);
-    n_assert(0 == this->textArray.Size());
-
-    // load table
-    nXmlSpreadSheet sheet;
-    sheet.SetFilename(this->filename);
-    if (!sheet.Open())
-    {
-        n_error("nLocaleServer::Open(): Can't open file '%s'!\n", this->filename.Get());
-        return false;
-    }
-    
-    if (0 == sheet.NumTables())
-    {
-        n_error("nLocaleServer::Open(): File '%s' don't contain tables.\n", this->filename.Get());
-        return false;
-    }
-
-    if (sheet.NumTables() > 1)
-    {
-        n_message("nLocaleServer::Open(): Warning: File '%s' contain more than one table, reading only the first one.\n", this->filename.Get());
-    }
-    
-    nXmlTable& table = sheet.TableAt(0);
-    
-    int numRows = table.NumRows();
-    if (numRows <= 0)
-    {
-        n_error("nLocaleServer::Open(): File '%s' table 1 don't contain data!\n", this->filename.Get());
-        return false;
-    }
-    
-    // init array and hashmap
-    this->idHashMap = n_new(nHashMap(numRows, 8));
-    this->textArray.SetSize(numRows);
-    
-    // parse table entrys
-    int row;
-    for(row = 0; row < numRows; row++)
-    {
-        nString ID = table.Cell(row, "ID").AsString();
-        
-
-        if (this->idHashMap->Exists(ID.Get()))
-        {
-            n_error("nLocaleServer::Open(): ID '%s' is not unique!\n", ID.Get());
-            return false;
-        }
-        else
-        {
-            // fill hashmap
-            const ushort key = (*this->idHashMap)[ID.Get()];
-            
-            // set string in text array
-            nString text = table.Cell(row, "Text").AsString();
-            this->textArray[key] = this->ParseText(text);
-        }
-    }
-
-    // cleanup
-    sheet.Close();
 
     this->isOpen = true;
     return true;
@@ -126,15 +63,6 @@ void
 nLocaleServer::Close()
 {
     n_assert(this->IsOpen());
-    n_assert(0 != this->idHashMap);
-    n_assert(this->textArray.Size() > 0);
-    
-    // cleanup
-    n_delete(this->idHashMap);
-    this->idHashMap = 0;
-    
-    this->textArray.SetSize(0);
-    
     this->isOpen = false;
 }
 
@@ -142,22 +70,104 @@ nLocaleServer::Close()
 /**
 */
 const char*
-nLocaleServer::GetLocaleText(const char* id) const
+nLocaleServer::GetLocaleText(const char* id)
 {
     static nString msg;
     n_assert(this->IsOpen());
     
-    if (this->idHashMap->Exists(id))
+    if (this->idHashMap.Exists(id))
     {
-        const ushort key = (*this->idHashMap)[id];
-        n_assert(key < this->textArray.Size());
+        const ushort key = this->idHashMap[id];
+        n_assert(key >= 0 && key < this->textArray.Size());
         return this->textArray[key].Get();
     }
     else
     {
-        //n_error("nLocaleServer::GetLocaleText: ID '%s' not found in table '%s'!\n", id, this->filename.Get());
+        // print warning to log
+        n_printf("WARNING: nLocaleServer: Not found ID '%s'!\n", id);
+        // create locale string
         msg = "Localize: ";
         msg.Append(id);
         return msg.Get();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nLocaleServer::AddLocaleTable(const char* filename)
+{
+    n_assert(this->IsOpen());
+    n_assert(filename);
+
+    // check if the table was already loaded
+    int i;
+    for (i = 0; i < this->loadedTables.Size(); i++)
+    {
+        if (this->loadedTables[i] == filename)
+        {
+            // skip add
+            n_printf("nLocaleServer::AddLocaleTable(): file '%s' already added skip it now.\n", filename);
+            return;
+        }
+    }
+
+    // load table
+    nXmlSpreadSheet sheet;
+    sheet.SetFilename(filename);
+    if (!sheet.Open())
+    {
+        n_error("nLocaleServer::Open(): Can't open file '%s'!\n", filename);
+    }
+
+    if (0 == sheet.NumTables())
+    {
+        n_error("nLocaleServer::Open(): File '%s' don't contain tables.\n", filename);
+    }
+
+    if (sheet.NumTables() > 1)
+    {
+        n_message("nLocaleServer::Open(): Warning: File '%s' contain more than one table, reading only the first one.\n", filename);
+    }
+
+    nXmlTable& table = sheet.TableAt(0);
+
+    int numRows = table.NumRows();
+    if (numRows <= 0)
+    {
+        n_error("nLocaleServer::Open(): File '%s' table 1 don't contain data!\n", filename);
+    }
+
+    // parse table entrys
+    int row;
+    for(row = 1; row < numRows; row++)
+    {
+        nString ID = table.Cell(row, "ID").AsString();
+        
+        if (this->idHashMap.Exists(ID.Get()))
+        {
+            n_error("nLocaleServer::Open(): ID '%s' is not unique!\n", ID.Get());
+        }
+        else
+        {
+            // fill hashmap
+            const ushort key = this->idHashMap[ID.Get()];
+
+            // set string in text array
+            nString text = table.Cell(row, "Text").AsString();
+            if (key >= this->textArray.Size())
+            {
+                // preallocate
+                this->textArray.Reserve(key - this->textArray.Size() + 1);
+            }
+            this->textArray[key] = this->ParseText(text);
+        }
+    }
+
+    // cleanup
+    sheet.Close();
+
+    // remeber loaded table
+    this->loadedTables.Append(filename);
 }

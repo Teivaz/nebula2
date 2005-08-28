@@ -60,7 +60,7 @@ nWin32LogHandler::Open()
     {
         // obtain log directory
         char rawPath[MAX_PATH];
-        HRESULT hr = this->shell32Wrapper.SHGetFolderPath(0,       // hwndOwner
+        HRESULT hr = nWin32Wrapper::Instance()->SHGetFolderPath(0, // hwndOwner
                         CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE,   // nFolder
                         NULL,                                      // hToken
                         0,                                         // dwFlags
