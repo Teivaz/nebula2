@@ -66,7 +66,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_buildtrianglenormals_v",  'BDTN', n_buildtrianglenormals);
     cl->AddCmd("v_buildtriangletangents_v", 'BDTT', n_buildtriangletangents);
     cl->AddCmd("v_buildvertexnormals_v",    'BDVN', n_buildvertexnormals);
-    cl->AddCmd("v_buildvertextangents_v",   'BDVT', n_buildvertextangents);
+    cl->AddCmd("v_buildvertextangents_b",   'BDVT', n_buildvertextangents);
     
     cl->AddCmd("v_cleanup_v",  'CLUP', n_cleanup);
     cl->AddCmd("v_optimize_v",  'OPTI', n_optimize);
@@ -258,7 +258,7 @@ n_addtriangle(void* slf, nCmd* cmd)
     
     t.SetGroupId(group);
     t.SetVertexIndices(vert0, vert1, vert2);
- 	
+    
     self->AddTriangle(t);
 }
 
@@ -339,7 +339,7 @@ static void
 n_buildvertextangents(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
-    self->BuildVertexTangents();
+    self->BuildVertexTangents(cmd->In()->GetB());
 }
 
 //------------------------------------------------------------------------------
