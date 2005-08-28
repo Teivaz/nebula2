@@ -12,7 +12,7 @@
 #-------------------------------------------------------------------------------
 #   OnStartup
 #
-#   This procedure is called right after application startup. Use it 
+#   This procedure is called right after application startup. Use it
 #   to initialize Nebula assigns.
 #-------------------------------------------------------------------------------
 proc OnStartup {} {
@@ -25,9 +25,9 @@ proc OnStartup {} {
     # setup assigns
     set proj [.manglepath "proj:"]
     set home [.manglepath "home:"]
-    
+
     .setassign "data"     "$home/data/"
-    .setassign "export"   "$proj/export/"  
+    .setassign "export"   "$proj/export/"
 
     .setassign "scripts"  "data:scripts"
     .setassign "physics"  "export:physics/"
@@ -38,13 +38,13 @@ proc OnStartup {} {
     .setassign "lights"   "export:lightlib/"
     .setassign "levels"   "export:levels/"
     .setassign "sound"    "export:audio/"
-    
+
     sel $oldCwd
 }
 
 #-------------------------------------------------------------------------------
 #   OnShutdown
-#   
+#
 #   This procedure is called when the application shuts down.
 #-------------------------------------------------------------------------------
 proc OnShutdown {} {
@@ -64,8 +64,8 @@ proc OnGraphicsStartup {} {
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
         if {$featureSet == "dx9"} {
-            # DX9 hardware without floating point render targets 
-            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"            
+            # DX9 hardware without floating point render targets
+            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"
         } elseif {$featureSet == "dx9flt"} {
             # DX9 hardware with floating point render targets, use HDR render path
             /sys/servers/scene.setrenderpathfilename "data:shaders/dx9hdr_renderpath.xml"
@@ -74,7 +74,7 @@ proc OnGraphicsStartup {} {
             /sys/servers/scene.setrenderpathfilename "data:shaders/dx7_renderpath.xml"
         }
     } else {
-        /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"            
+        /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"
     }
 
     # enable zFail shadow rendering
@@ -204,7 +204,8 @@ proc OnGuiServerOpen {} {
     .addbrush arrowdown_p  skin  52 40 16 16 1.0 1.0 1.0 1.0
 
     # sliders
-    .addbrush sliderbg         skin 228  40 16 16 0.5 0.5 0.5 1.0
+    .addbrush sliderhori_bg    skin 228  40 16 16 0.5 0.5 0.5 1.0
+    .addbrush slidervert_bg    skin 228  40 16 16 0.5 0.5 0.5 1.0
     .addbrush sliderknobhori_n skin 276  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobhori_h skin 292  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobhori_p skin 308  40 16 16 1.0 1.0 1.0 1.0

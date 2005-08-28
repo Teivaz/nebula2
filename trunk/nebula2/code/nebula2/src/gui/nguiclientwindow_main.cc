@@ -18,7 +18,8 @@ nGuiClientWindow::nGuiClientWindow() :
     flags(Movable | Resizable | CloseButton | TitleBar),
     dragging(false),
     resizing(false),
-    titleHeight(0.0f)
+    titleHeight(0.0f),
+    hasBorder(false)
 {
     this->shown = false;
     this->SetRect(rectangle(vector2(0.1f, 0.1f), vector2(0.6f, 0.6f)));
@@ -80,7 +81,7 @@ nGuiClientWindow::UpdateLayout(const rectangle& newRect)
     }
 
     // update client area
-    const rectangle& border = skin->GetWindowBorder();
+    const rectangle& border = this->GetBorder();
     clientRect.v0.x = border.v0.x;
     clientRect.v0.y = titleRect.height() + border.v0.y;
     clientRect.v1.x = newRect.width() - border.v1.x;
@@ -135,6 +136,7 @@ nGuiClientWindow::OnShow()
         {
             btn->SetStickyMouse(true);
         }
+        btn->OnShow();
         this->refTitleBar = btn;
     }
 
@@ -146,6 +148,7 @@ nGuiClientWindow::OnShow()
         btn->SetDefaultBrush("close_n");
         btn->SetPressedBrush("close_p");
         btn->SetHighlightBrush("close_h");
+        btn->OnShow();
         this->refCloseButton = btn;
     }
 
@@ -158,6 +161,7 @@ nGuiClientWindow::OnShow()
         btn->SetPressedBrush("size_p");
         btn->SetHighlightBrush("size_h");
         btn->SetStickyMouse(true);
+        btn->OnShow();
         this->refSizeButton = btn;
     }
 

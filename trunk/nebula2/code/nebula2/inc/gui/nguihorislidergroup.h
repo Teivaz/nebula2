@@ -86,6 +86,10 @@ public:
     virtual void OnFrame();
     /// notify widget of an event
     virtual void OnEvent(const nGuiEvent& event);
+    /// set alignment of text in left label
+    virtual void SetLeftTextAlignment(nGuiTextLabel::Alignment a);
+    /// set alignment of text in right label
+    virtual void SetRightTextAlignment(nGuiTextLabel::Alignment a);
 
 protected:
     nString labelFont;
@@ -100,6 +104,8 @@ protected:
     float knobSize;
     float increment;
     bool snapToIncrement;
+    nGuiTextLabel::Alignment leftTextAlignment;
+    nGuiTextLabel::Alignment rightTextAlignment;
     nRef<nGuiTextLabel> refLeftLabel;
     nRef<nGuiTextLabel> refRightLabel;
     nRef<nGuiSlider2>   refSlider;
@@ -349,6 +355,26 @@ float
 nGuiHoriSliderGroup::GetKnobSize() const
 {
     return this->knobSize;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nGuiHoriSliderGroup::SetLeftTextAlignment(nGuiTextLabel::Alignment a)
+{
+    this->leftTextAlignment = a;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline 
+void 
+nGuiHoriSliderGroup::SetRightTextAlignment(nGuiTextLabel::Alignment a)
+{
+    this->rightTextAlignment = a;
 }
 
 //------------------------------------------------------------------------------

@@ -105,8 +105,12 @@ nGuiDiagramCanvas::OnShow()
     // create Y-Axis value-labels
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yminlabel");
     n_assert(label);
-    line="";
-    line.AppendInt( this->GetMinYAxisValue() );
+    line = this->GetMinYAxisText();
+    if (line.IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMinYAxisValue() );
+    }
 
     if (this->HasYAxisLabels())
     {    
@@ -132,7 +136,11 @@ nGuiDiagramCanvas::OnShow()
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yhalflabel");
     n_assert(label);
     line="";
-    line.AppendInt( this->GetMaxYAxisValue() / 2);
+    if (this->GetMinYAxisText().IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMaxYAxisValue() / 2);
+    }
 
     if (this->HasYAxisLabels() && !(line == this->refTextLabel[Ymin]->GetText()))
     {    
@@ -158,8 +166,12 @@ nGuiDiagramCanvas::OnShow()
 
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "ymaxlabel");
     n_assert(label);
-    line="";
-    line.AppendInt( this->GetMaxYAxisValue() );
+    line = this->GetMaxYAxisText();
+    if (line.IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMaxYAxisValue() );
+    }
     
     if (this->HasYAxisLabels())
     {    
@@ -184,8 +196,12 @@ nGuiDiagramCanvas::OnShow()
     // create X-Axis value-labels
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xminlabel");
     n_assert(label);
-    line="";
-    line.AppendInt( this->GetMinXAxisValue() );
+    line = this->GetMinXAxisText();
+    if (line.IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMinXAxisValue() );
+    }
     
     if (this->HasXAxisLabels())
     {    
@@ -210,7 +226,11 @@ nGuiDiagramCanvas::OnShow()
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xhalflabel");
     n_assert(label);
     line="";
-    line.AppendInt( this->GetMinXAxisValue() + ( (this->GetMaxXAxisValue() - this->GetMinXAxisValue()) / 2));
+    if (this->GetMinXAxisText().IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMinXAxisValue() + ( (this->GetMaxXAxisValue() - this->GetMinXAxisValue()) / 2));
+    }
     
     if (this->HasXAxisLabels() && !(line == this->refTextLabel[Xmin]->GetText()))
     {    
@@ -236,8 +256,12 @@ nGuiDiagramCanvas::OnShow()
 
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xmaxlabel");
     n_assert(label);
-    line="";
-    line.AppendInt( this->GetMaxXAxisValue() );
+    line = this->GetMaxXAxisText();
+    if (line.IsEmpty())
+    {
+        // fallback to value
+        line.AppendInt( this->GetMaxXAxisValue() );
+    }
     
     if (this->HasXAxisLabels())
     {    
@@ -314,11 +338,13 @@ nGuiDiagramCanvas::OnShow()
     const vector2& v1 = rect.v1;
 
     // Markers on the Y-Axis
-    for (i = 1; i < numYMarkers; i++ )
+    float yStride = (1.0f - this->curveOffset[Bottom] - this->curveOffset[Top]) / (numYMarkers + 1);
+    for (i = 0; i < numYMarkers; i++ )
     {
+        float yPos = yStride * (i + 1);
         line2 marker = line2(
-                        /* start */ vector2(0.0f ,  (1.0f / numYMarkers) * i),
-                          /* end */ vector2(2*this->curveOffset[Left] , (1.0f / numYMarkers) * i));
+                        /* start */ vector2(0.0f,  yPos),
+                          /* end */ vector2(2 * this->curveOffset[Left], yPos));
 
         canvas->BeginCurve(this->axisTextColor);
         canvas->AppendLineToCurve(marker);
@@ -326,11 +352,13 @@ nGuiDiagramCanvas::OnShow()
     }
 
     // Markers on the X-Axis
-    for (i = 1; i < numXMarkers; i++ )
+    float xStride = (1.0f - this->curveOffset[Left] - this->curveOffset[Right]) / (numXMarkers + 1);
+    for (i = 0; i < numXMarkers; i++ )
     {
+        float xPos = xStride * (i + 1);
         line2 marker = line2(
-                        /* start */ vector2((1.0f / numXMarkers) * i, 1.0f),
-                          /* end */ vector2((1.0f / numXMarkers) * i, 1.0f - ( 2 * this->curveOffset[Bottom])));
+                        /* start */ vector2(xPos, 1.0f),
+                          /* end */ vector2(xPos, 1.0f - ( 2 * this->curveOffset[Bottom])));
 
         canvas->BeginCurve(this->axisTextColor);
         canvas->AppendLineToCurve(marker);

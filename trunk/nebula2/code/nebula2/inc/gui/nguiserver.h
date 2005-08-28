@@ -16,6 +16,9 @@
 #include "gfx2/nshader2.h"
 #include "gui/nguievent.h"
 #include "gui/nguiskin.h"
+#if __NEBULA_STATS__
+#include "kernel/nprofiler.h"
+#endif
 
 class nGuiWindow;
 class nGuiWidget;
@@ -82,8 +85,6 @@ public:
     nTime GetTime() const;
     /// Per frame actions.
     virtual void Trigger();
-    /// render the current gui
-    virtual void Render();
     /// add a font definition using a system font
     void AddSystemFont(const char* fontName, const char* typeFace, int height, bool bold, bool italic, bool underline);
     /// add a font definition using a custom font
@@ -127,7 +128,7 @@ public:
     /// get the current overall modulation color
     const vector4& GetGlobalColor() const;
     /// play a gui sound
-    void PlaySound(nGuiSkin::Sound snd);
+    void PlaySound(const char* name);
     /// draw text, call this instead of nGfxServer2::DrawText()!
     void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
     /// move the rectangle so that it is fully visible
@@ -146,7 +147,14 @@ public:
     nTime GetToolTipFadeInTime() const;
     /// display tooltip window
     void ShowToolTip(const char* text, const vector4& textColor);
+    /// is gui system window enabled ?
+    bool IsSystemGuiEnabled() const;
+
 private:
+    friend class nRpPass;
+
+    /// render the current gui
+    virtual void Render();
     /// validate embedded rectangle mesh
     void ValidateMesh();
     /// validate embedded shader
@@ -208,6 +216,12 @@ private:
     float texelMappingRatio;
 
     nArray<rectangle> clipRectStack;
+
+#if __NEBULA_STATS__
+    nProfiler profGUIDrawBrush;
+    nProfiler profGUIDrawTexture;
+    nProfiler profGUIDrawText;
+#endif
 };
 
 //-----------------------------------------------------------------------------

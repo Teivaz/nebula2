@@ -70,8 +70,10 @@ public:
     void SetFadeOutTime(nTime t);
     /// get fadeout time
     nTime GetFadeOutTime() const;
-    /// Get Window Color
-    const vector4& GetWindowColor();
+    /// get window color
+    const vector4& GetWindowColor() const;
+    /// set window color
+    void SetWindowColor(const vector4&);
     /// set 'close' event script handler
     void SetCloseCommand(const char* cmd);
     /// get 'close' event script handler
@@ -79,7 +81,7 @@ public:
 
 protected:
     /// compute current window color
-    void UpdateWindowColor();
+    virtual void UpdateWindowColor();
 
     nString closeCommand;
     nString escapeCommand;
@@ -102,9 +104,19 @@ protected:
 */
 inline
 const vector4&
-nGuiWindow::GetWindowColor()
+nGuiWindow::GetWindowColor() const
 {
     return this->windowColor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWindow::SetWindowColor(const vector4& c)
+{
+    this->windowColor = c;
 }
 
 //------------------------------------------------------------------------------

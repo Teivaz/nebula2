@@ -6,7 +6,6 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
-#include "gui/nguicheckbutton.h"
 
 nNebulaClass(nGuiCheckButtonGroup2, "nguiformlayout");
 
@@ -15,7 +14,8 @@ nNebulaClass(nGuiCheckButtonGroup2, "nguiformlayout");
 */
 nGuiCheckButtonGroup2::nGuiCheckButtonGroup2() :
     buttonSpacing(0.005f),
-    selIndex(0)
+    selIndex(0),
+    font("GuiSmall")
 {
     // empty
 }
@@ -35,6 +35,8 @@ void
 nGuiCheckButtonGroup2::OnShow()
 {
     n_assert(this->options.Size() > 0);
+    
+    if(this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
 
     nGuiFormLayout::OnShow();
     nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
@@ -102,7 +104,7 @@ nGuiCheckButtonGroup2::OnShow()
         btn->SetMinSize(btnSize);
         btn->SetMaxSize(btnSize);
         btn->SetText(this->options[i].Get());
-        btn->SetFont("GuiSmall");
+        btn->SetFont(this->font.Get());
         btn->SetAlignment(nGuiTextLabel::Center);
         btn->SetColor(skin->GetButtonTextColor());
         if (prevBtn)

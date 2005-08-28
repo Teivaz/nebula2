@@ -3,7 +3,6 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "gui/nguicategorybrowser.h"
-#include "gui/nguidirlister.h"
 #include "gui/nguitextbutton.h"
 #include "gui/nguiserver.h"
 
@@ -13,7 +12,8 @@ nNebulaClass(nGuiCategoryBrowser, "nguiformlayout");
 /**
 */
 nGuiCategoryBrowser::nGuiCategoryBrowser() :
-    dirPath("home:export/gfxlib")
+    dirPath("home:export/gfxlib"),
+    lookUpEnabled(0)
 {
     // empty
 }
@@ -24,6 +24,24 @@ nGuiCategoryBrowser::nGuiCategoryBrowser() :
 nGuiCategoryBrowser::~nGuiCategoryBrowser()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Updates the file lister from the currently selected entry in the
+    dir lister.
+*/
+void
+nGuiCategoryBrowser::UpdateFileLister()
+{
+    const char* selDir = this->refCatLister->GetSelection();
+    if (selDir)
+    {
+        nString dirName = this->refCatLister->GetDirectory();
+        dirName.Append("/");
+        dirName.Append(selDir);
+        this->refFileLister->SetDirectory(dirName.Get());
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -44,10 +62,12 @@ nGuiCategoryBrowser::OnShow()
     catLister->SetIgnoreSubDirs(false);
     catLister->SetIgnoreFiles(true);
     catLister->SetSelectionEnabled(true);
+    catLister->SetLookUpEnabled(this->lookUpEnabled);
     this->AttachForm(catLister, Top, 0.0f);
     this->AttachForm(catLister, Left, 0.0f);
     this->AttachPos(catLister, Right, 0.295f);
     this->AttachForm(catLister, Bottom, 0.0f);
+    catLister->OnShow();
     this->refCatLister = catLister;
 
     // create the file lister widget
@@ -59,16 +79,18 @@ nGuiCategoryBrowser::OnShow()
     fileLister->SetIgnoreSubDirs(true);
     fileLister->SetIgnoreFiles(false);
     fileLister->SetSelectionEnabled(true);
+    fileLister->SetLookUpEnabled(this->lookUpEnabled);
     this->AttachForm(fileLister, Top, 0.0f);
     this->AttachForm(fileLister, Right, 0.0f);
     this->AttachPos(fileLister, Left, 0.305f);
     this->AttachForm(fileLister, Bottom, 0.0f);
+    fileLister->OnShow();
     this->refFileLister = fileLister;
 
     kernelServer->PopCwd();
 
+    this->UpdateFileLister();
     nGuiServer::Instance()->RegisterEventListener(this);
-
     nGuiFormLayout::OnShow();
 }
 
@@ -105,12 +127,7 @@ nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
         if (event.GetWidget() == this->refCatLister.get())
         {
             // category has changed, update file lister
-            const char* selDir = this->refCatLister->GetSelection();
-            n_assert(selDir);
-            nString dirName = this->refCatLister->GetDirectory();
-            dirName.Append("/");
-            dirName.Append(selDir);
-            this->refFileLister->SetDirectory(dirName.Get());
+            this->UpdateFileLister();
         }
         if (event.GetWidget() == this->refFileLister.get())
         {

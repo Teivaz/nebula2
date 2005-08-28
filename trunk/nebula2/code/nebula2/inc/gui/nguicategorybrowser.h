@@ -9,8 +9,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
-
-class nGuiDirLister;
+#include "gui/nguidirlister.h"
 
 //------------------------------------------------------------------------------
 class nGuiCategoryBrowser : public nGuiFormLayout
@@ -32,11 +31,18 @@ public:
     virtual void OnEvent(const nGuiEvent& event);
     /// get the currently selected path, or empty string if no valid selection
     nString GetSelectedPath() const;
+    /// enable/disable quick lookup by keypressing
+    void SetLookUpEnabled(bool b);
+    /// is lookup enabled ?
+    bool GetLookUpEnabled();
 
 protected:
+    /// update the file lister from the current category selection
+    void UpdateFileLister();
     nString dirPath;
     nRef<nGuiDirLister>  refCatLister;
     nRef<nGuiDirLister>  refFileLister;
+    bool lookUpEnabled ;
 };
 
 //------------------------------------------------------------------------------
@@ -60,5 +66,23 @@ nGuiCategoryBrowser::GetDirectory() const
     return this->dirPath.Get();
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiCategoryBrowser::SetLookUpEnabled(bool b)
+{
+    this->lookUpEnabled  = b;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiCategoryBrowser::GetLookUpEnabled()
+{
+    return this->lookUpEnabled ;
+}
 //------------------------------------------------------------------------------
 #endif

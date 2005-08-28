@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguigraphicsbrowserwindow.h"
 #include "kernel/ntimeserver.h"
+#include "tools/nnodelist.h"
 
 nNebulaClass(nGuiGraphicsBrowserWindow, "nguiclientwindow");
 
@@ -61,6 +62,22 @@ nGuiGraphicsBrowserWindow::OnShow()
     layout->AttachForm(loadButton, nGuiFormLayout::Bottom, 0.005f);
     this->refLoadButton = loadButton;
 
+    // create addScene button
+    nGuiTextButton* addButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "addButton");
+    n_assert(addButton);
+    addButton->SetText("Append");
+    addButton->SetFont("GuiSmall");
+    addButton->SetAlignment(nGuiTextButton::Center);
+    addButton->SetDefaultBrush("button_n");
+    addButton->SetPressedBrush("button_p");
+    addButton->SetHighlightBrush("button_h");
+    addButton->SetMinSize(buttonSize);
+    addButton->SetMaxSize(buttonSize);
+    addButton->SetColor(skin->GetButtonTextColor());
+    layout->AttachWidget(addButton, nGuiFormLayout::Right, loadButton, 0.005f);
+    layout->AttachForm(addButton, nGuiFormLayout::Bottom, 0.005f);
+    this->refAddButton = addButton;
+
     // create reset time button
     nGuiTextButton* timeButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "TimeButton");
     n_assert(timeButton);
@@ -73,7 +90,7 @@ nGuiGraphicsBrowserWindow::OnShow()
     timeButton->SetMinSize(buttonSize);
     timeButton->SetMaxSize(buttonSize);
     timeButton->SetColor(skin->GetButtonTextColor());
-    layout->AttachWidget(timeButton, nGuiFormLayout::Right, loadButton, 0.005f);
+    layout->AttachWidget(timeButton, nGuiFormLayout::Right, addButton, 0.005f);
     layout->AttachForm(timeButton, nGuiFormLayout::Bottom, 0.005f);
     this->refTimeButton = timeButton;
 
@@ -81,10 +98,12 @@ nGuiGraphicsBrowserWindow::OnShow()
     nGuiCategoryBrowser* catBrowser = (nGuiCategoryBrowser*) kernelServer->New("nguicategorybrowser", "CatBrowser");
     n_assert(catBrowser);
     catBrowser->SetDirectory("proj:export/gfxlib");
+    catBrowser->SetLookUpEnabled(true);
     layout->AttachForm(catBrowser, nGuiFormLayout::Top, 0.005f);
     layout->AttachForm(catBrowser, nGuiFormLayout::Left, 0.005f);
     layout->AttachForm(catBrowser, nGuiFormLayout::Right, 0.005f);
     layout->AttachWidget(catBrowser, nGuiFormLayout::Bottom, loadButton, 0.005f);
+    layout->AttachWidget(catBrowser, nGuiFormLayout::Bottom, addButton, 0.005f);
     this->refCatBrowser = catBrowser;
 
     // need to invoke on show manually on layout
@@ -123,6 +142,15 @@ nGuiGraphicsBrowserWindow::OnEvent(const nGuiEvent& event)
             this->LoadObject(objPath);
         }
     }
+    else if ((event.GetType() == nGuiEvent::ButtonUp) && (event.GetWidget() == this->refAddButton))
+    {
+        // append button pressed?
+        nString objPath = this->refCatBrowser->GetSelectedPath();
+        if (!objPath.IsEmpty())
+        {
+            this->AddObject(objPath);
+        }
+    }
     else if ((event.GetType() == nGuiEvent::ButtonUp) && (event.GetWidget() == this->refTimeButton))
     {
         // reset time
@@ -130,7 +158,7 @@ nGuiGraphicsBrowserWindow::OnEvent(const nGuiEvent& event)
     }
     else if ((event.GetType() == nGuiEvent::SelectionDblClicked) && (event.GetWidget() == this->refCatBrowser))
     {
-        // load object on doubleclick on selection text
+        // load object on doubleclick on selectiontext
         nString objPath = this->refCatBrowser->GetSelectedPath();
         if (!objPath.IsEmpty())
         {
@@ -149,22 +177,30 @@ void
 nGuiGraphicsBrowserWindow::LoadObject(const nString& objPath)
 {
     n_assert(!objPath.IsEmpty());
+    
+    nNodeList* nodeList = nNodeList::Instance();
+    n_assert( nodeList != 0 );
+    
+    nodeList->Clear();
+    nodeList->AddDefaultEntry();
+    nodeList->LoadObject(objPath);
+    
+    // reset time
+    nTimeServer::Instance()->ResetTime();
+}
 
-    // clear usr/scene
-    this->refUsrScene->Release();
-    kernelServer->New("ntransformnode", "/usr/scene");
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiGraphicsBrowserWindow::AddObject(const nString& objPath)
+{
+    n_assert(!objPath.IsEmpty());
 
-    // load new object
-    kernelServer->PushCwd(this->refUsrScene);
-    // source the light stage...
-    kernelServer->Load("home:export/gfxlib/stdlight.n2");
-    kernelServer->Load(objPath.Get());
-    kernelServer->PopCwd();
-
-    // Set the new window title
-    nString title = objPath;
-    title.Append(" - Nebula2 Viewer");
-    nGfxServer2::Instance()->SetWindowTitle(title.Get());
+    n_assert( nNodeList::Instance() != 0 );
+    
+    // Load Object in /usr/scene
+    nNodeList::Instance()->LoadObject(objPath);
 
     // reset time
     nTimeServer::Instance()->ResetTime();

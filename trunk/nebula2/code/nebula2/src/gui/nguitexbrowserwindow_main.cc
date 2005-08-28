@@ -326,13 +326,14 @@ nGuiTexBrowserWindow::UpdateInfoField()
             case nTexture2::A1R5G5B5:      str.Append("A1R5G5B5 (16-bit, 1 bit alpha)"); break;
             case nTexture2::A4R4G4B4:      str.Append("A4R4G4B4 (16-bit, 4 bit alpha)"); break;
             case nTexture2::P8:            str.Append("P8 palettized)"); break;
+            case nTexture2::G16R16:        str.Append("G16R16 (two 16-bit integer channels)"); break;
             case nTexture2::DXT1:          str.Append("DXT1 (compressed w/o alpha)"); break;
             case nTexture2::DXT2:          str.Append("DXT2 (not supported)"); break;
             case nTexture2::DXT3:          str.Append("DXT3 (compressed with explicit alpha)"); break;
             case nTexture2::DXT4:          str.Append("DXT4 (not supported)"); break;
             case nTexture2::DXT5:          str.Append("DXT5 (compressed with interpolated alpha)"); break;
             case nTexture2::R16F:          str.Append("R16F (one 16-bit float channel)"); break;
-            case nTexture2::G16R16F:       str.Append("G16R16F (two 32-bit float channels)"); break;
+            case nTexture2::G16R16F:       str.Append("G16R16F (two 16-bit float channels)"); break;
             case nTexture2::A16B16G16R16F: str.Append("A16B16G16R16F (four 16-bit float channels)"); break;
             case nTexture2::R32F:          str.Append("R32F (one 32-bit float channel)"); break;
             case nTexture2::G32R32F:       str.Append("G32R32F (two 32-bit float channels)"); break;

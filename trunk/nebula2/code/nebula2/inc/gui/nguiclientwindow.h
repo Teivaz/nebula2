@@ -55,6 +55,10 @@ public:
     const char* GetTitle() const;
     /// close all sibling windows of the same class
     void CloseSiblings();
+    /// set border (overrides the default border setup of the skin)
+    void SetBorder(const rectangle& border);
+    /// get border
+    const rectangle& GetBorder() const;
 
 protected:
     /// update the child widget layout, when position or size changes
@@ -90,6 +94,8 @@ protected:
     vector2 startMousePos;
     rectangle startRect;
     float titleHeight;
+    bool hasBorder;
+    rectangle border;
 };
 
 //------------------------------------------------------------------------------
@@ -198,6 +204,34 @@ const char*
 nGuiClientWindow::GetTitle() const
 {
     return this->title.IsEmpty() ? 0 : this->title.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiClientWindow::SetBorder(const rectangle& b)
+{
+    this->hasBorder = true;
+    this->border = b;
+}
+    
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const rectangle&
+nGuiClientWindow::GetBorder() const
+{
+    if (this->hasBorder)
+    {
+        return this->border;
+    }
+    // fallback to the skin border
+    nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
+    n_assert(skin);
+    return skin->GetWindowBorder();
 }
 
 //------------------------------------------------------------------------------

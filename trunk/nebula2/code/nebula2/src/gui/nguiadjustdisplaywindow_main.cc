@@ -5,7 +5,6 @@
 #include "gui/nguiadjustdisplaywindow.h"
 #include "gui/nguihorislidergroup.h"
 #include "gui/nguicolorslidergroup.h"
-#include "scene/nmrtsceneserver.h"
 #include "variable/nvariableserver.h"
 
 nNebulaClass(nGuiAdjustDisplayWindow, "nguiclientwindow");
@@ -19,6 +18,12 @@ nGuiAdjustDisplayWindow::nGuiAdjustDisplayWindow() :
     hdrBloomIntensityHandle(nVariable::InvalidHandle),
     hdrBrightPassThresholdHandle(nVariable::InvalidHandle),
     hdrBrightPassOffsetHandle(nVariable::InvalidHandle),
+    fogDistancesHandle(nVariable::InvalidHandle),
+    fogColorHandle(nVariable::InvalidHandle),
+    focusHandle(nVariable::InvalidHandle),
+    noiseIntensityHandle(nVariable::InvalidHandle),
+    noiseScaleHandle(nVariable::InvalidHandle),
+    noiseFrequencyHandle(nVariable::InvalidHandle),
     resetSaturation(0.0f),
     resetBloomIntensity(0.0f),
     resetBrightPassThreshold(0.0f),
@@ -48,6 +53,12 @@ nGuiAdjustDisplayWindow::InitVariables()
     this->hdrBloomIntensityHandle      = varServer->GetVariableHandleByName("HdrBloomScale");
     this->hdrBrightPassThresholdHandle = varServer->GetVariableHandleByName("HdrBrightPassThreshold");
     this->hdrBrightPassOffsetHandle    = varServer->GetVariableHandleByName("HdrBrightPassOffset");
+    this->fogDistancesHandle           = varServer->GetVariableHandleByName("FogDistances");
+    this->fogColorHandle               = varServer->GetVariableHandleByName("FogColor");
+    this->focusHandle                  = varServer->GetVariableHandleByName("CameraFocus");
+    this->noiseIntensityHandle         = varServer->GetVariableHandleByName("NoiseIntensity");
+    this->noiseScaleHandle             = varServer->GetVariableHandleByName("NoiseScale");
+    this->noiseFrequencyHandle         = varServer->GetVariableHandleByName("NoiseFrequency");
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +110,7 @@ nGuiAdjustDisplayWindow::OnShow()
     colorSlider->SetLabelText("Balance");
     colorSlider->SetTextLabelWidth(leftWidth);
     colorSlider->SetMaxIntensity(5.0f);
-    layout->AttachWidget(colorSlider, nGuiFormLayout::Top, this->refSaturateSlider, 2 * border);
+    layout->AttachWidget(colorSlider, nGuiFormLayout::Top, this->refSaturateSlider, border);
     layout->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     layout->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     colorSlider->OnShow();
@@ -107,7 +118,7 @@ nGuiAdjustDisplayWindow::OnShow()
 
     // hdr bloom intensity
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBloomIntensity");
-    slider->SetLeftText("Bloom Intensity");
+    slider->SetLeftText("HDR Intensity");
     slider->SetRightText("%.1f");
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(10.0f);
@@ -116,7 +127,7 @@ nGuiAdjustDisplayWindow::OnShow()
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
     slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceSlider, 2 * border);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refBalanceSlider, border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
@@ -124,7 +135,7 @@ nGuiAdjustDisplayWindow::OnShow()
 
     // hdr bright pass threshold slider
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBrightPassThresholdSlider");
-    slider->SetLeftText("Brightpass Threshold");
+    slider->SetLeftText("HDR Threshold");
     slider->SetRightText("%.1f");
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(5.0f);
@@ -133,7 +144,7 @@ nGuiAdjustDisplayWindow::OnShow()
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
     slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBloomIntensitySlider, 2 * border);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBloomIntensitySlider, border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
@@ -141,7 +152,7 @@ nGuiAdjustDisplayWindow::OnShow()
 
     // hdr bright pass threshold slider
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "HdrBrightPassOffsetSlider");
-    slider->SetLeftText("Brightpass Offset");
+    slider->SetLeftText("HDR Offset");
     slider->SetRightText("%.1f");
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(5.0f);
@@ -150,11 +161,141 @@ nGuiAdjustDisplayWindow::OnShow()
     slider->SetLeftWidth(leftWidth);
     slider->SetRightWidth(rightWidth);
     slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
-    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBrightPassThresholdSlider, 2 * border);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refHdrBrightPassThresholdSlider, border);
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
     this->refHdrBrightPassOffsetSlider = slider;
+
+    // fog color slider
+    colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "FogColor");
+    colorSlider->SetLabelText("Fog Color");
+    colorSlider->SetTextLabelWidth(leftWidth);
+    colorSlider->SetMaxIntensity(1.0f);
+    layout->AttachWidget(colorSlider, nGuiFormLayout::Top, this->refHdrBrightPassOffsetSlider, border);
+    layout->AttachForm(colorSlider, nGuiFormLayout::Left, border);
+    layout->AttachForm(colorSlider, nGuiFormLayout::Right, border);
+    colorSlider->OnShow();
+    this->refFogColorSlider = colorSlider;
+
+    // fog near plane slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "FogNearSlider");
+    slider->SetLeftText("Fog Near");
+    slider->SetRightText("%.1f");
+    slider->SetMinValue(0.1f);
+    slider->SetMaxValue(1000.0f);
+    slider->SetKnobSize(100.0f);
+    slider->SetIncrement(0.1f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refFogColorSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refFogNearSlider = slider;
+
+    // fog far plane slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "FogFarSlider");
+    slider->SetLeftText("Fog Far");
+    slider->SetRightText("%.1f");
+    slider->SetMinValue(0.1f);
+    slider->SetMaxValue(1000.0f);
+    slider->SetKnobSize(100.0f);
+    slider->SetIncrement(0.1f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refFogNearSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refFogFarSlider = slider;
+
+    // camera focus distance slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "FocusDistSlider");
+    slider->SetLeftText("Focus Dist");
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(100.0f);
+    slider->SetKnobSize(10.0f);
+    slider->SetIncrement(0.01f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refFogFarSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refFocusDistSlider = slider;
+
+    // camera focus length slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "FocusLengthSlider");
+    slider->SetLeftText("Focus Length");
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(0.01f);
+    slider->SetMaxValue(1000.0f);
+    slider->SetKnobSize(100.0f);
+    slider->SetIncrement(1.0f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refFocusDistSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refFocusLengthSlider = slider;
+
+    // noise intensity slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "NoiseIntensitySlider");
+    slider->SetLeftText("Noise Intensity");
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(1.0f);
+    slider->SetKnobSize(0.1f);
+    slider->SetIncrement(0.01f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refFocusLengthSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refNoiseIntensitySlider = slider;
+
+    // noise scale slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "NoiseScaleSlider");
+    slider->SetLeftText("Noise Scale");
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(1.0f);
+    slider->SetMaxValue(100.0f);
+    slider->SetKnobSize(10.0f);
+    slider->SetIncrement(0.01f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refNoiseIntensitySlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refNoiseScaleSlider = slider;
+
+    // noise frequency slider
+    slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "NoiseFreqSlider");
+    slider->SetLeftText("Noise Freq");
+    slider->SetRightText("%.2f");
+    slider->SetMinValue(0.0f);
+    slider->SetMaxValue(100.0f);
+    slider->SetKnobSize(10.0f);
+    slider->SetIncrement(0.01f);
+    slider->SetLeftWidth(leftWidth);
+    slider->SetRightWidth(rightWidth);
+    slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
+    layout->AttachWidget(slider, nGuiFormLayout::Top, this->refNoiseScaleSlider, border);
+    layout->AttachForm(slider, nGuiFormLayout::Left, border);
+    layout->AttachForm(slider, nGuiFormLayout::Right, border);
+    slider->OnShow();
+    this->refNoiseFrequencySlider = slider;
 
     // reset button
     nGuiTextButton* btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "ResetButton");
@@ -164,7 +305,7 @@ nGuiAdjustDisplayWindow::OnShow()
     btn->SetHighlightBrush("button_h");
     btn->SetMinSize(buttonSize);
     btn->SetMaxSize(buttonSize);
-    layout->AttachWidget(btn, nGuiFormLayout::Top, this->refHdrBrightPassOffsetSlider, 2 * border);
+    layout->AttachWidget(btn, nGuiFormLayout::Top, this->refNoiseFrequencySlider, border);
     layout->AttachForm(btn, nGuiFormLayout::Left, border);
     btn->OnShow();
     this->refResetButton = btn;
@@ -173,7 +314,8 @@ nGuiAdjustDisplayWindow::OnShow()
     this->UpdateSlidersFromValues();
 
     // set new window rect
-    rectangle rect(vector2(0.0f, 0.0f), vector2(0.6f, 0.4f));
+    float vSize = 13 * (border + this->refSaturateSlider->GetMinSize().y) + 2 * buttonSize.y + 4 * border;
+    rectangle rect(vector2(0.0f, 0.0f), vector2(0.5f, vSize));
     this->SetRect(rect);
 
     // update all layouts
@@ -191,6 +333,14 @@ nGuiAdjustDisplayWindow::OnHide()
     this->refHdrBloomIntensitySlider->Release();
     this->refHdrBrightPassOffsetSlider->Release();
     this->refHdrBrightPassThresholdSlider->Release();
+    this->refFogColorSlider->Release();
+    this->refFogNearSlider->Release();
+    this->refFogFarSlider->Release();
+    this->refFocusDistSlider->Release();
+    this->refFocusLengthSlider->Release();
+    this->refNoiseIntensitySlider->Release();
+    this->refNoiseScaleSlider->Release();
+    this->refNoiseFrequencySlider->Release();
     this->refResetButton->Release();
 
     nGuiClientWindow::OnHide();
@@ -206,14 +356,30 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
         this->refBalanceSlider.isvalid() &&
         this->refHdrBloomIntensitySlider.isvalid() &&
         this->refHdrBrightPassThresholdSlider.isvalid() &&
-        this->refHdrBrightPassOffsetSlider.isvalid())
+        this->refHdrBrightPassOffsetSlider.isvalid() &&
+        this->refFogColorSlider.isvalid() &&
+        this->refFogNearSlider.isvalid() &&
+        this->refFogFarSlider.isvalid() &&
+        this->refFocusDistSlider.isvalid() &&
+        this->refFocusLengthSlider.isvalid() &&
+        this->refNoiseIntensitySlider.isvalid() &&
+        this->refNoiseScaleSlider.isvalid() &&
+        this->refNoiseFrequencySlider.isvalid())
     {
         if ((event.GetType() == nGuiEvent::SliderChanged) &&
             (event.GetWidget() == this->refSaturateSlider) ||
             (event.GetWidget() == this->refBalanceSlider) ||
             (event.GetWidget() == this->refHdrBloomIntensitySlider) ||
             (event.GetWidget() == this->refHdrBrightPassThresholdSlider) ||
-            (event.GetWidget() == this->refHdrBrightPassOffsetSlider))
+            (event.GetWidget() == this->refHdrBrightPassOffsetSlider) ||
+            (event.GetWidget() == this->refFogColorSlider) ||
+            (event.GetWidget() == this->refFogNearSlider) ||
+            (event.GetWidget() == this->refFogFarSlider) ||
+            (event.GetWidget() == this->refFocusDistSlider) ||
+            (event.GetWidget() == this->refFocusLengthSlider) ||
+            (event.GetWidget() == this->refNoiseIntensitySlider) ||
+            (event.GetWidget() == this->refNoiseScaleSlider) ||
+            (event.GetWidget() == this->refNoiseFrequencySlider))
         {
             this->UpdateValuesFromSliders();
         }
@@ -264,12 +430,56 @@ nGuiAdjustDisplayWindow::UpdateSlidersFromValues()
         brightPassOffset = varServer->GetFloatVariable(this->hdrBrightPassOffsetHandle);
         this->resetBrightPassOffset = brightPassOffset;
     }
+    vector4 fogColor;
+    if (varServer->GlobalVariableExists(this->fogColorHandle))
+    {
+        fogColor = varServer->GetVectorVariable(this->fogColorHandle);
+        this->resetFogColor = fogColor;
+    }
+    vector4 fogDistances;
+    if (varServer->GlobalVariableExists(this->fogDistancesHandle))
+    {
+        fogDistances = varServer->GetVectorVariable(this->fogDistancesHandle);
+        this->resetFogDistances = fogDistances;
+    }
+    vector4 cameraFocus;
+    if (varServer->GlobalVariableExists(this->focusHandle))
+    {
+        cameraFocus = varServer->GetVectorVariable(this->focusHandle);
+        this->resetFocus = cameraFocus;
+    }
+    float noiseIntensity = 0.0f;
+    if (varServer->GlobalVariableExists(this->noiseIntensityHandle))
+    {
+        noiseIntensity = varServer->GetFloatVariable(this->noiseIntensityHandle);
+        this->resetNoiseIntensity = noiseIntensity;
+    }
+    float noiseScale = 100.0f;
+    if (varServer->GlobalVariableExists(this->noiseScaleHandle))
+    {
+        noiseScale = varServer->GetFloatVariable(this->noiseScaleHandle);
+        this->resetNoiseScale = noiseScale;
+    }
+    float noiseFrequency = 100.0f;
+    if (varServer->GlobalVariableExists(this->noiseFrequencyHandle))
+    {
+        noiseFrequency = varServer->GetFloatVariable(this->noiseFrequencyHandle);
+        this->resetNoiseFrequency = noiseFrequency;
+    }
 
     this->refSaturateSlider->SetValue(saturation);
     this->refBalanceSlider->SetColor(balance);
     this->refHdrBloomIntensitySlider->SetValue(bloomIntensity);
     this->refHdrBrightPassThresholdSlider->SetValue(brightPassThreshold);
     this->refHdrBrightPassOffsetSlider->SetValue(brightPassOffset);
+    this->refFogColorSlider->SetColor(fogColor);
+    this->refFogNearSlider->SetValue(fogDistances.x);
+    this->refFogFarSlider->SetValue(fogDistances.y);
+    this->refFocusDistSlider->SetValue(cameraFocus.x);
+    this->refFocusLengthSlider->SetValue(cameraFocus.y);
+    this->refNoiseIntensitySlider->SetValue(noiseIntensity);
+    this->refNoiseScaleSlider->SetValue(noiseScale);
+    this->refNoiseFrequencySlider->SetValue(noiseFrequency);
 }
 
 //------------------------------------------------------------------------------
@@ -285,6 +495,12 @@ nGuiAdjustDisplayWindow::UpdateValuesFromSliders()
     varServer->SetFloatVariable(this->hdrBloomIntensityHandle, this->refHdrBloomIntensitySlider->GetValue());
     varServer->SetFloatVariable(this->hdrBrightPassThresholdHandle, this->refHdrBrightPassThresholdSlider->GetValue());
     varServer->SetFloatVariable(this->hdrBrightPassOffsetHandle, this->refHdrBrightPassOffsetSlider->GetValue());
+    varServer->SetVectorVariable(this->fogColorHandle, this->refFogColorSlider->GetColor());
+    varServer->SetVectorVariable(this->fogDistancesHandle, vector4(this->refFogNearSlider->GetValue(), this->refFogFarSlider->GetValue(), 0.0f, 0.0f));
+    varServer->SetVectorVariable(this->focusHandle, vector4(this->refFocusDistSlider->GetValue(), this->refFocusLengthSlider->GetValue(), 0.0f, 0.0f));
+    varServer->SetFloatVariable(this->noiseIntensityHandle, this->refNoiseIntensitySlider->GetValue());
+    varServer->SetFloatVariable(this->noiseScaleHandle, this->refNoiseScaleSlider->GetValue());
+    varServer->SetFloatVariable(this->noiseFrequencyHandle, this->refNoiseFrequencySlider->GetValue());
 }
 
 //------------------------------------------------------------------------------
@@ -300,5 +516,11 @@ nGuiAdjustDisplayWindow::ResetValues()
     varServer->SetFloatVariable(this->hdrBloomIntensityHandle, this->resetBloomIntensity);
     varServer->SetFloatVariable(this->hdrBrightPassThresholdHandle, this->resetBrightPassThreshold);
     varServer->SetFloatVariable(this->hdrBrightPassOffsetHandle, this->resetBrightPassOffset);
+    varServer->SetVectorVariable(this->fogColorHandle, this->resetFogColor);
+    varServer->SetVectorVariable(this->fogDistancesHandle, this->resetFogDistances);
+    varServer->SetVectorVariable(this->focusHandle, this->resetFocus);
+    varServer->SetFloatVariable(this->noiseIntensityHandle, this->resetNoiseIntensity);
+    varServer->SetFloatVariable(this->noiseScaleHandle, this->resetNoiseScale);
+    varServer->SetFloatVariable(this->noiseFrequencyHandle, this->resetNoiseFrequency);
     this->UpdateSlidersFromValues();
 }

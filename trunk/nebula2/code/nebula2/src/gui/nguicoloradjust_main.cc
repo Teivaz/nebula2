@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "gui/nguicoloradjust.h"
 #include "gui/nguihorislidergroup.h"
-#include "scene/nmrtsceneserver.h"
 #include "gui/nguitextureview.h"
 #include "gui/nguicolorlabel.h"
 #include "gui/nguicolorpicker.h"

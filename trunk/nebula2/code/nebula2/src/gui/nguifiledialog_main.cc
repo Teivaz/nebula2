@@ -28,6 +28,8 @@ nGuiFileDialog::nGuiFileDialog() :
     this->SetText(OverwriteMessage, "Overwrite existing file?");
     this->SetText(OverwriteOk, "Ok");
     this->SetText(OverwriteCancel, "Cancel");
+    this->entryTextColor.set(0.0f, 0.0f, 0.0f, 1.0f);
+    this->dirlisterTextColor.set(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 //------------------------------------------------------------------------------
@@ -135,10 +137,14 @@ nGuiFileDialog::OnShow()
         textEntry->SetPressedBrush("textentry_p");
         textEntry->SetHighlightBrush("textentry_h");
         textEntry->SetCursorBrush("textcursor");
-        textEntry->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
+        textEntry->SetColor( this->entryTextColor );
         textEntry->SetMinSize(vector2(0.0f, textSize.y));
         textEntry->SetMaxSize(vector2(1.0f, textSize.y));
         textEntry->SetFileMode(true);
+        if (!this->initialFilename.IsEmpty())
+        {
+            textEntry->SetText(this->initialFilename.Get());
+        }
         layout->AttachForm(textEntry, nGuiFormLayout::Left, 0.005f);
         layout->AttachForm(textEntry, nGuiFormLayout::Right, 0.005f);
         layout->AttachWidget(textEntry, nGuiFormLayout::Bottom, okButton, 0.005f);
@@ -156,6 +162,7 @@ nGuiFileDialog::OnShow()
     dirLister->SetIgnoreSubDirs(true);
     dirLister->SetIgnoreFiles(false);
     dirLister->SetSelectionEnabled(true);
+    dirLister->SetTextColor(this->dirlisterTextColor);
     dirLister->SetPattern(this->GetPattern());
     dirLister->SetStripExtension(this->GetStripExtension());
     layout->AttachForm(dirLister, nGuiFormLayout::Top, 0.005f);
@@ -311,7 +318,6 @@ nGuiFileDialog::OnEvent(const nGuiEvent& event)
         if (event.GetWidget() == this->refOkButton.get())
         {
             this->HandleOk();
-
         }
         else if (event.GetWidget() == this->refCancelButton.get())
         {
@@ -494,7 +500,6 @@ nGuiFileDialog::CheckFileExists()
         msgBox->SetCancelText(this->GetText(OverwriteCancel));
         msgBox->SetType(nGuiMessageBox::OkCancel);
         msgBox->SetTitleBar(false);
-        msgBox->SetDefaultBrush("bg300x150");
         msgBox->SetModal(true);
         this->refMessageBox = msgBox;
         msgBox->Show();

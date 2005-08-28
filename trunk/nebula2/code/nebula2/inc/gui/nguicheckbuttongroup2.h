@@ -57,6 +57,8 @@ public:
     virtual void OnEvent(const nGuiEvent& event);
     /// handle mouse move
     virtual bool OnMouseMoved(const vector2& mousePos);
+    /// set font of check buttons
+    virtual void SetFont(const char* str);
 
 protected:
 
@@ -71,6 +73,7 @@ protected:
 private:
 
     float buttonSpacing;
+    nString font;
     nArray<nString> defaultBrushes;
     nArray<nString> pressedBrushes;
     nArray<nString> highlightBrushes;
@@ -215,6 +218,16 @@ int
 nGuiCheckButtonGroup2::GetSelection() const
 {
     return this->selIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiCheckButtonGroup2::SetFont(const char* str)
+{
+    this->font = str;
 }
 
 //------------------------------------------------------------------------------

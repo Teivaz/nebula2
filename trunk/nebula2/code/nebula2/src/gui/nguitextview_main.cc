@@ -23,8 +23,10 @@ nGuiTextView::nGuiTextView() :
     textColor(0.0f, 0.0f, 0.0f, 1.0f),
     textArray(32, 32),
     selectionEnabled(false),
+    lookupEnabled(false),
     lineOffset(0),
-    selectionIndex(0)
+    selectionIndex(0),
+    calculateTextAlwaysWithSlider(false)
 {
     // empty
 }
@@ -55,7 +57,7 @@ nGuiTextView::OnShow()
     this->AttachForm(slider, Right, 0.0f);
     this->AttachForm(slider, Bottom, 0.0f);
     this->UpdateSliderValues();
-    slider->OnShow();
+    slider->Show();
     this->UpdateSliderVisibility();
 
     kernelServer->PopCwd();
@@ -140,14 +142,14 @@ nGuiTextView::UpdateSliderVisibility()
     int numLines = this->textArray.Size();
     if (numVisibleLines >= numLines)
     {
-        if (this->refSlider->IsShown())
+        if (this->refSlider.isvalid()  && this->refSlider->IsShown())
         {
             this->refSlider->Hide();
         }
     }
     else
     {
-        if (!this->refSlider->IsShown())
+        if (this->refSlider.isvalid()  && !this->refSlider->IsShown())
         {
             this->refSlider->Show();
         }
@@ -157,12 +159,14 @@ nGuiTextView::UpdateSliderVisibility()
 //------------------------------------------------------------------------------
 /**
     Check if full range of text is visible, and show/hide slider.
+
+    23-Nov-04   floh    removed the HasFocus(), this doesn't make sense here...
 */
 void
 nGuiTextView::OnFrame()
 {
     // check for mousewheel movement
-    if (this->Inside(nGuiServer::Instance()->GetMousePos()) && this->HasFocus())
+    if (this->Inside(nGuiServer::Instance()->GetMousePos()))
     {
         if (nInputServer::Instance()->GetButton("ScrollUp"))
         {
@@ -188,6 +192,11 @@ nGuiTextView::OnEvent(const nGuiEvent& event)
         (event.GetType() == nGuiEvent::SliderChanged))
     {
         this->lineOffset = n_frnd(this->refSlider->GetVisibleRangeStart());
+        // make sure this is never smaller than 0
+        if (this->lineOffset < 0)
+        {
+            this->lineOffset = 0;
+        }
     }
 
     // check for doubble click into the text
@@ -195,15 +204,121 @@ nGuiTextView::OnEvent(const nGuiEvent& event)
     {
         if (!this->refSlider->IsShown() || !this->refSlider->Inside(nGuiServer::Instance()->GetMousePos()))
         {
-            // only react on double clicks that do not mean the slider.
-            // throw a SelectionDblClicked message
-            nGuiEvent event(this, nGuiEvent::SelectionDblClicked);
-            nGuiServer::Instance()->PutEvent(event);
+            int relLineIndex = int((nGuiServer::Instance()->GetMousePos().y - this->GetScreenSpaceRect().v0.y) / this->lineHeight);
+            int absLineIndex = this->lineOffset + relLineIndex;
+            
+            if (this->selectionIndex == absLineIndex)
+            {
+                // only react on double clicks that do not mean the slider.
+                // throw a SelectionDblClicked message
+                nGuiEvent event(this, nGuiEvent::SelectionDblClicked);
+                nGuiServer::Instance()->PutEvent(event);
+            }
         }
     }
     nGuiFormLayout::OnEvent(event);
 }
 
+//------------------------------------------------------------------------------
+/**
+    If selection is enabled, the selection index will be updated with the
+    entry under the mouse, and a SelectionChanged event will be thrown.
+*/
+bool
+nGuiTextView::OnKeyDown(nKey key)
+{
+    vector2 mousePos = nGuiServer::Instance()->GetMousePos();
+
+    if (this->IsShown() && this->Inside(mousePos))
+    {
+        if (this->GetSelectionEnabled())
+        {
+            // if slider is visible we ignore any clicks in the slider area
+            
+            if (this->refSlider->IsShown())
+            {
+                if (this->refSlider->Inside(mousePos))
+                {
+                    // click happened over slider, ignore Keys
+                    return true;
+                }
+            }
+            
+            // Scroll Up and Down
+            
+            if (key == N_KEY_UP)
+            {
+                if ( this->selectionIndex < 1 )
+                {
+                    return true;
+                }
+                
+                ScrollDown(1);
+                this->selectionIndex--;
+                // throw a SelectionChanged message
+                nGuiEvent event(this, nGuiEvent::SelectionChanged);
+                nGuiServer::Instance()->PutEvent(event);
+                return true;
+            }
+            if (key == N_KEY_DOWN)
+            {
+                if ( this->selectionIndex >= this->GetNumLines()-1 )
+                {
+                    return true;
+                }
+
+                ScrollUp(1);
+                this->selectionIndex++;
+                // throw a SelectionChanged message
+                nGuiEvent event(this, nGuiEvent::SelectionChanged);
+                nGuiServer::Instance()->PutEvent(event);
+                return true;
+            }
+            
+            // LookUp starts here
+            
+            if ( ! this->GetLookUpEnabled() ) return true;
+            if (key > N_KEY_Z) return true;
+            if (key < N_KEY_1) return true;
+                
+            int index=0;
+            
+            if (key >= N_KEY_A) 
+            {
+                for ( index=0; index<this->GetNumLines() ;index++)
+                {
+                    if(textArray[index].Length() > 0)
+                    {
+                        if(textArray[index][0] >= ('a'+key-N_KEY_A) ) break;
+                    }
+                }
+            }
+            
+            int absLineIndex = index;
+            if (absLineIndex < this->GetNumLines())
+            {
+                int delta = absLineIndex - this->selectionIndex ;
+            
+                if (delta > 0)
+                {
+                    ScrollUp(delta);
+                }
+                else if (delta < 0)
+                {
+                    ScrollDown(-delta);
+                }
+            
+                this->selectionIndex = absLineIndex;
+
+                // throw a SelectionChanged message
+                nGuiEvent event(this, nGuiEvent::SelectionChanged);
+                nGuiServer::Instance()->PutEvent(event);
+            }
+        }
+        return true;//nGuiFormLayout::OnButtonDown(mousePos);
+    }
+    return false;
+}
 //------------------------------------------------------------------------------
 /**
     If selection is enabled, the selection index will be updated with the
@@ -345,4 +460,77 @@ nGuiTextView::ActivateFont()
 {
     n_assert(this->refFont.isvalid()); 
     nGfxServer2::Instance()->SetFont(this->refFont.get());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiTextView::AppendColoredText(const nString& text, const vector4& color)
+{
+    if (text.IsEmpty())
+    {
+        // just add a empty line
+        this->AppendEmptyLine();
+        return;
+    }
+    
+    // get clipping rect
+    rectangle rect = this->GetRect();
+    float border = this->GetBorder();
+    rect.v0.x += border;
+    rect.v0.y += border;
+    rect.v1.y -= border;
+
+    if (this->refSlider.isvalid() && this->refSlider->IsShown() || this->calculateTextAlwaysWithSlider)
+    {
+        // add slider and border
+        if (this->refSlider.isvalid())
+        {
+            // show slider if needed
+            bool hideSlider = false;
+            if (!this->refSlider->IsShown())
+            {
+                hideSlider = true;
+                this->refSlider->Show();
+            }
+            this->OnRectChange(this->GetRect());
+
+            const rectangle& sliderRect = this->refSlider->GetRect();
+            
+            rect.v1.x = sliderRect.v0.x - border;
+            if (rect.v1.x < rect.v0.x)
+            {
+                rect.v1.x = rect.v0.x;
+            }
+
+            // hide slider if shown by us
+            if (hideSlider)
+            {
+                this->refSlider->Hide();
+            }
+            this->OnRectChange(this->GetRect());
+        }
+    }
+    else
+    {
+        rect.v1.x -= border;
+    }
+
+    // break lines
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    this->ActivateFont();
+    nString newText;
+    gfxServer->BreakLines(text, rect, newText);
+    
+    // extract lines
+    nArray<nString> lines;
+    newText.Tokenize("\n", lines);
+    
+    // append lines
+    int i;
+    for (i = 0; i < lines.Size(); i++)
+    {
+        this->AppendColoredLine(lines[i], color);
+    }
 }

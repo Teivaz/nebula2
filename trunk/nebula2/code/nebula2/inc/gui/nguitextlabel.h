@@ -36,7 +36,7 @@ public:
     /// get the text as string
     virtual const char* GetText() const;
     /// set the font to use (see nGuiServer::AddFont())
-    void SetFont(const char* fontName);
+    virtual void SetFont(const char* fontName);
     /// get the font definition
     const char* GetFont() const;
     /// set text alignment
@@ -56,7 +56,7 @@ public:
     /// get clipping flag
     bool GetClipping() const;
     /// set the text color
-    void SetColor(const vector4& c);
+    virtual void SetColor(const vector4& c);
     /// get the text color
     const vector4& GetColor() const;
     /// set pressed text offset
@@ -80,7 +80,7 @@ public:
 
 protected:
     /// render the label text
-    void RenderText(bool pressed);
+    virtual void RenderText(bool pressed);
     /// (re-)validate the font object
     void ValidateFont();
 

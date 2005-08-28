@@ -104,7 +104,12 @@ nGuiWidget::Render()
 bool
 nGuiWidget::Inside(const vector2& p)
 {
-    if (this->IsShown())
+    // FIXME: make sure this has no unwanted side effects
+    if (this->IsBackground())
+    {
+        return false;
+    }
+    else if (this->IsShown())
     {
         rectangle screenSpaceRect = this->GetScreenSpaceRect();
         screenSpaceRect.v0 += this->clickRectBorder;

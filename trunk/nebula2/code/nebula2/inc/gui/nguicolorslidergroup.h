@@ -104,9 +104,9 @@ inline
 vector4
 nGuiColorSliderGroup::ComputeNormalizedColor(const vector4& color)
 {
-    float intensity = n_max(ComputeColorIntensity(color), 1.0f);
+    float intensity = ComputeColorIntensity(color);
     vector4 c = color * (1.0f / intensity);
-    c.w = 1.0f;
+    c.w = color.w;
     return c;
 }
 
@@ -118,7 +118,7 @@ vector4
 nGuiColorSliderGroup::ComputeColor(const vector4& normalizedColor, float colorIntensity)
 {
     vector4 c = normalizedColor * colorIntensity;
-    c.w = 1.0f;
+    c.w = normalizedColor.w;
     return c;
 }
 
@@ -266,4 +266,4 @@ nGuiColorSliderGroup::GetColor() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

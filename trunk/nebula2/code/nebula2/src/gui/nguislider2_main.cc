@@ -44,13 +44,15 @@ nGuiSlider2::~nGuiSlider2()
 void
 nGuiSlider2::OnShow()
 {
-    nGuiFormLayout::OnShow();
-
-    if (nGuiServer::Instance()->BrushExists("sliderbg"))
+    if (this->horizontal)
     {
-        this->SetDefaultBrush("sliderbg");
+        this->SetDefaultBrush("sliderhori_bg");
     }
-
+    else
+    {
+        this->SetDefaultBrush("slidervert_bg");
+    }
+    nGuiFormLayout::OnShow();
     kernelServer->PushCwd(this);
 
     // get some brush sizes
@@ -287,7 +289,6 @@ nGuiSlider2::OnFrame()
     // need to change knob layout?
     if (this->IsShown() && this->rangeDirty)
     {
-        n_assert(this->overallSize > 0);
         this->rangeDirty = false;
         this->UpdateKnobLayout(this->rect);
         this->UpdateLayout(this->rect);

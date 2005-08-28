@@ -76,6 +76,10 @@ public:
     virtual bool OnOk();
     /// called when cancel button pressed
     virtual bool OnCancel();
+    /// set the initial filename
+    void SetInitialFilename(const char* f);
+    /// get the initial filename
+    const char* GetInitialFilename() const;
 
 protected:
     /// set selected filename
@@ -94,6 +98,10 @@ protected:
     bool DeleteFile();
     /// Set initial selection enabled/disabled
     void SetInitialSelectionEnabled(bool b);
+    /// Sets the textcolor of the dirlister
+    void SetDirlisterColor(vector4& color);
+    /// Sets the textcolor of the textentry
+    void SetEntryColor(vector4& color);
 
     nRef<nGuiDirLister> refDirLister;
     nRef<nGuiTextEntry> refTextEntry;
@@ -103,8 +111,11 @@ protected:
     nRef<nGuiMessageBox> refDeleteMessageBox;
     nRef<nGuiTextButton> refDeleteButton;
 
+    vector4 dirlisterTextColor;
+    vector4 entryTextColor;
     nString dirPath;
     nString extension;
+    nString initialFilename;
     bool saveMode;
     nString text[NumTextIds];
     nString filename;
@@ -112,6 +123,26 @@ protected:
     bool stripExtension;
     nString pattern;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetEntryColor(vector4& color)
+{
+    this->entryTextColor = color;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetDirlisterColor(vector4& color)
+{
+    this->dirlisterTextColor = color;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -268,6 +299,26 @@ bool
 nGuiFileDialog::GetStripExtension() const
 {
     return this->stripExtension;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiFileDialog::SetInitialFilename(const char* f)
+{
+    this->initialFilename = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nGuiFileDialog::GetInitialFilename() const
+{
+    return this->initialFilename.Get();
 }
 
 //------------------------------------------------------------------------------

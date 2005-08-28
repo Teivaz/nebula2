@@ -69,6 +69,24 @@ public:
     /// Set number of Y-axis markers
     void SetNumYMarkers(int num);
 
+    /// Set min. y-axis text
+    void SetMinYAxisText(const nString& text);
+    /// Get min y-axis text
+    const nString& GetMinYAxisText() const;
+    /// Set max. y-axis text
+    void SetMaxYAxisText(const nString& text);
+    /// Get max y-axis text
+    const nString& GetMaxYAxisText() const;
+
+    /// Set min. x-axis text
+    void SetMinXAxisText(const nString& text);
+    /// Get min x-axis text
+    const nString& GetMinXAxisText() const;
+    /// Set max. x-axis text
+    void SetMaxXAxisText(const nString& text);
+    /// Get max x-axis text
+    const nString& GetMaxXAxisText() const;
+
     /// Optional Diagram header
     void SetDiagramHeader(const char* header);
     /// Set if the diagram has a header
@@ -124,6 +142,10 @@ private:
     int maxXValue;
     int minYValue;
     int maxYValue;
+    nString minYText;
+    nString maxYText;
+    nString minXText;
+    nString maxXText;
     int numXMarkers;
     int numYMarkers;
 
@@ -365,6 +387,85 @@ bool
 nGuiDiagramCanvas::HasHeader() const
 {
     return this->hasHeader;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMinYAxisText(const nString& text)
+{
+    this->minYText = text;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMaxYAxisText(const nString& text)
+{
+    this->maxYText = text;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nGuiDiagramCanvas::GetMaxYAxisText() const
+{
+    return this->maxYText;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nGuiDiagramCanvas::GetMinYAxisText() const
+{
+    return this->minYText;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMinXAxisText(const nString& text)
+{
+    this->minXText = text;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiDiagramCanvas::SetMaxXAxisText(const nString& text)
+{
+    this->maxXText = text;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nGuiDiagramCanvas::GetMaxXAxisText() const
+{
+    return this->maxXText;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nGuiDiagramCanvas::GetMinXAxisText() const
+{
+    return this->minXText;
 }
 
 #endif
