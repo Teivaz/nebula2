@@ -95,7 +95,7 @@ nNodeList::Clear()
     // create the /usr/scene object
     if (!this->refUsrScene.isvalid())
     {
-        this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("nscenenode", "/usr/scene");
+        this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("ntransformnode", "/usr/scene");
     }
     
     n_assert(this->refUsrScene.isvalid());
@@ -110,12 +110,21 @@ nNodeList::AddDefaultEntry()
     this->AddEntry("default");
             
     // source the light stage...
-    // load the stage, normally this is "proj:stdlight.tcl", if not exists
-    // then try "home:stdlight.tcl"
     if (this->lightStageEnabled)
     {
         nString result;
-        this->refScriptServer->RunScript("home:bin/stdlight.tcl", result);
+        if (!this->GetStageScript().IsEmpty())
+        {
+            nRoot* node = nKernelServer::Instance()->Lookup("/usr/scene/default");
+            if (node)
+            {
+                nKernelServer::Instance()->PushCwd(node);
+                nKernelServer::Instance()->Load(this->GetStageScript().Get());
+                nKernelServer::Instance()->PopCwd();
+            }
+        }
+        else
+            n_printf("WARNING: No light stage set.");
     }
 }
 //------------------------------------------------------------------------------
@@ -170,21 +179,20 @@ nNodeList::LoadObject(const nString& objPath)
 }
 //------------------------------------------------------------------------------
 /**
-    Updates global varibles for all rendercontexts
+    Updates global variables for all render contexts
 */
 void 
 nNodeList::Trigger(double time, uint frameId)
 {   
-    n_assert ( this->refUsrScene.isvalid() )
+    n_assert(this->refUsrScene.isvalid());
     
     // Update all Variables
-    uint index;
-    for( index=0 ; index < numElements ; index++ )
-        TransferGlobalVars(renderContexts[index],time,frameId);
+    for (uint index = 0; index < numElements; index++)
+        TransferGlobalVars(renderContexts[index], time, frameId);
 }
 //------------------------------------------------------------------------------
 /**
-    Transfers globals vars for a spefific rendering context
+    Transfers globals vars for a specific rendering context
 */
 void 
 nNodeList::TransferGlobalVars(nRenderContext &context,double time,uint frameId)

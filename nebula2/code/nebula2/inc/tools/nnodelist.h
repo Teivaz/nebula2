@@ -27,11 +27,15 @@ public:
     ~nNodeList(){};
     /// Returns the singleton of the instance
     static nNodeList* Instance();
+    /// set the light stage script
+    void SetStageScript(const nString& name);
+    /// get the light stage script
+    const nString& GetStageScript() const;
     /// enable/disable the standard light stage
     void SetLightStageEnabled(bool b);
     /// Initialize Class
     void Open ();
-    /// Free Ressources
+    /// Free Resources
     void Close ();
     /// Clear List
     void Clear();
@@ -75,6 +79,7 @@ private:
     bool isOpen;
     nVariable::Handle timeHandle;    
     bool lightStageEnabled;
+    nString stageScript;
 };
 
 //-----------------------------------------------------------------------------
@@ -101,7 +106,7 @@ nNodeList::Instance()
 
 //------------------------------------------------------------------------------
 /**
-    returns the Rendercontext of Object [index] inside the list
+    returns the render context of Object [index] inside the list
 */
 inline
 nRenderContext*
@@ -142,6 +147,26 @@ void
 nNodeList::SetLightStageEnabled(bool b)
 {
     this->lightStageEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nNodeList::SetStageScript(const nString& script)
+{
+    this->stageScript = script;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nNodeList::GetStageScript() const
+{
+    return this->stageScript;
 }
 
 //------------------------------------------------------------------------------
