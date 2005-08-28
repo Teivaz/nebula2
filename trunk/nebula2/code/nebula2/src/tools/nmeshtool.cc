@@ -16,6 +16,8 @@
        clean the mesh before anything else
      @par -tangent
        generate tangents
+     @par -tangentsplit
+       generate tangents using an alternative technique that may split vertices
      @par -edge
        generate edges
      @par -append
@@ -66,7 +68,8 @@ main(int argc, const char** argv)
     bool oldN3d2Loader         = args.GetBoolArg("-oldn3d2");
     const char* appendFileArg  = args.GetStringArg("-append", 0);
     bool cleanArg              = args.GetBoolArg("-clean");
-    bool tangentArg            = args.GetBoolArg("-tangent");
+    bool tangentNoSplitArg     = args.GetBoolArg("-tangent");
+    bool tangentSplitArg       = args.GetBoolArg("-tangentsplit");
     bool edgeArg               = args.GetBoolArg("-edge");
     const char* groupArg       = args.GetStringArg("-group", 0);
     const char* groupRenameArg = args.GetStringArg("-grename", 0);
@@ -94,7 +97,10 @@ main(int argc, const char** argv)
                  "-oldn3d2              use the the old n3d2 loader code\n"
                  "-append [filename]    optional mesh file to append to input mesh\n"
                  "-clean                clean up mesh (removes redundant vertices)\n"
-                 "-tangent              generate vertex tangents for per pixel lighting\n"
+                 "-tangent              generate vertex tangents for per pixel lighting using\n"
+                 "                      a technique that will not split vertices\n"
+                 "-tangentsplit         generate vertex tangents for per pixel lighting using\n"
+                 "                      a technique that may split vertices\n"
                  "-edge                 generate edge data\n"
                  "-group [groupname]    select a group inside the mesh\n"
                  "-grename [newname]    rename the selected group\n"
@@ -205,11 +211,11 @@ main(int argc, const char** argv)
     }
 
     // generate tangents?
-    if (tangentArg)
+    if (tangentNoSplitArg || tangentSplitArg)
     {
         n_printf("-> generating tangents...\n");
         mesh.BuildTriangleNormals();
-        mesh.BuildVertexTangents();
+        mesh.BuildVertexTangents(tangentSplitArg);
     }
 
     // generate edges?
