@@ -8,8 +8,8 @@ new ntransformnode model
 	new nshapenode static_0_0
 		sel static_0_0
 		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.000000 0.500000
-		.settexture "DiffMap0" "textures:buildings/burg_turm.dds"
-		.settexture "BumpMap0" "textures:buildings/burg_turm_bump.dds"
+		.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+		.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
 		.setvector "MatDiffuse" 0.541276 0.496000 1.000000 1.000000
 		.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
 		.setfloat "MatEmissiveIntensity" 1.000000
@@ -25,8 +25,8 @@ new ntransformnode model
 	new nshapenode static_0_1
 		sel static_0_1
 		.setlocalbox -0.514970 0.000000 0.514027 1.018163 0.000000 1.014027
-		.settexture "DiffMap0" "textures:buildings/burg_turm.dds"
-		.settexture "BumpMap0" "textures:buildings/burg_turm_bump.dds"
+		.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+		.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
 		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
 		.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
 		.setfloat "MatEmissiveIntensity" 1.000000
@@ -42,8 +42,8 @@ new ntransformnode model
 	new nshapenode static_0_2
 		sel static_0_2
 		.setlocalbox 0.000000 0.418872 2.522644 0.500000 0.418872 0.822656
-		.settexture "DiffMap0" "textures:buildings/burg_turm.dds"
-		.settexture "BumpMap0" "textures:buildings/burg_turm_bump.dds"
+		.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+		.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
 		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
 		.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
 		.setfloat "MatEmissiveIntensity" 1.000000
