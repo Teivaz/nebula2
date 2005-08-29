@@ -91,7 +91,7 @@ end
 ---------------------------------------------------------------------------------
 --
 ---------------------------------------------------------------------------------
-function OnMapInput()
+function OnViewerMapInput()
     inputServer = nebula.sys.servers.input;
     inputServer:beginmap();
     inputServer:map("keyb0:space.down",       "reset");

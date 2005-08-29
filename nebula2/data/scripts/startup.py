@@ -80,7 +80,7 @@ def OnGraphicsShutdown():
 #   OnMapInput is called back by npyviewer when the input mapping should be
 #   defined.
 #-------------------------------------------------------------------------------
-def OnMapInput():
+def OnViewerMapInput():
     inputServer = nebula.lookup('/sys/servers/input')
     inputServer.beginmap()
     inputServer.map("keyb0:space.down",       "reset")
