@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShaderParams
-    @ingroup Gfx2
+    @ingroup NebulaGraphicsSystem
 
     A container for shader parameters. A shader parameter block
     can be applied to a shader with one call (instead of issuing dozens
@@ -186,8 +186,18 @@ inline
 const nShaderArg&
 nShaderParams::GetArg(nShaderState::Param p) const
 {
+    static nShaderArg invalidArg;
     n_assert(p >= 0 && p < nShaderState::NumParameters);
-    return this->paramArray[this->paramIndex[p]].arg;
+    char index = this->paramIndex[p];
+    if (index != -1)
+    {
+        return this->paramArray[index].arg;
+    }
+    else
+    {
+        n_assert2(index != -1, "Shader parameter wasn't set!");
+        return invalidArg;
+    }
 }
 
 //------------------------------------------------------------------------------
