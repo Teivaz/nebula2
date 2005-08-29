@@ -136,6 +136,8 @@ nViewerApp::Open()
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->DefineInputMapping();
 
+    this->refAudioServer->Open();
+
     // Setup /usr/scene and add default entry + light
     this->nodeList.SetStageScript(this->GetStageScript());
     this->nodeList.SetLightStageEnabled(this->lightStageEnabled);
@@ -351,7 +353,7 @@ nViewerApp::DefineInputMapping()
 {
     nString scriptResult;
     bool r;
-    r = this->refScriptServer->RunFunction("OnMapInput", scriptResult);
+    r = this->refScriptServer->RunFunction("OnViewerMapInput", scriptResult);
     if (false == r)
     {
         n_error("Executing OnMapInput failed: %s",
