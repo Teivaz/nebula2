@@ -55,7 +55,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setanim_s",                       'SANM', n_setanim);
     cl->AddCmd("s_getanim_v",                       'GANM', n_getanim);
     cl->AddCmd("v_beginjoints_i",                   'BJNT', n_beginjoints);
-    cl->AddCmd("v_setjoint_iiffffffffff",           'SJNT', n_setjoint);
+    cl->AddCmd("v_setjoint_iiffffffffffs",          'SJNT', n_setjoint);
     cl->AddCmd("v_endjoints_v",                     'EJNT', n_endjoints);
     cl->AddCmd("i_getnumjoints_v",                  'GNJT', n_getnumjoints);
     cl->AddCmd("iffffffffff_getjoint_i",            'GJNT', n_getjoint);
@@ -159,6 +159,7 @@ n_setjoint(void* slf, nCmd* cmd)
     nSkinAnimator* self = (nSkinAnimator*) slf;
     vector3 poseTranslate, poseScale;
     quaternion poseRotate;
+
     int jointIndex = cmd->In()->GetI();
     int parentJointIndex = cmd->In()->GetI();
     
@@ -175,10 +176,9 @@ n_setjoint(void* slf, nCmd* cmd)
     poseScale.y = cmd->In()->GetF();
     poseScale.z = cmd->In()->GetF();
 
-    //nString name(cmd->In()->GetS());
+    nString name(cmd->In()->GetS());
 
-    //self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, name);
-    self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, "");
+    self->SetJoint(jointIndex, parentJointIndex, poseTranslate, poseRotate, poseScale, name);
 }
 
 //------------------------------------------------------------------------------
