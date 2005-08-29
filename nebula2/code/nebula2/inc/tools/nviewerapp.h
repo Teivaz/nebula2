@@ -27,11 +27,12 @@
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
-#include "shadow/nshadowserver.h"
+#include "shadow2/nshadowserver2.h"
 #include "network/nhttpserver.h"
 #include "misc/nprefserver.h"
 #include "tools/nmayacamcontrol.h"
 #include "tools/nnodelist.h"
+#include "audio3/naudioserver3.h"
 #include "misc/ncaptureserver.h"
 
 //------------------------------------------------------------------------------
@@ -133,9 +134,10 @@ protected:
     nRef<nParticleServer> refParticleServer;
     nRef<nVideoServer> refVideoServer;
     nRef<nGuiServer> refGuiServer;
-    nRef<nShadowServer> refShadowServer;
+    nRef<nShadowServer2> refShadowServer;
     nRef<nHttpServer> refHttpServer;
     nRef<nPrefServer> refPrefServer;
+    nRef<nAudioServer3> refAudioServer;
     nRef<nCaptureServer> refCaptureServer;
 
     nMayaCamControl camControl;

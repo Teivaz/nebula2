@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Shader
-    @ingroup NebulaD3D9GraphicsSystem
+    @ingroup Gfx2
 
     A nShader2 subclass using the D3D9FX framework.
 
@@ -25,6 +25,8 @@ public:
     virtual ~nD3D9Shader();
     /// create or append an instance stream declaration for this shader
     virtual int UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl);
+    /// return true if technique exists in shader
+    virtual bool HasTechnique(const char* t) const;
     /// set a technique
     virtual bool SetTechnique(const char* t);
     /// get current technique
@@ -76,7 +78,7 @@ public:
     /// finish applying the shader
     virtual void End();
 
-protected:
+private:
     /// load the shader resource file
     virtual bool LoadResource();
     /// unload shader resources
@@ -91,6 +93,8 @@ protected:
     void UpdateParameterHandles();
     /// convert a D3DX parameter handle to a nShaderState parameter
     nShaderState::Param D3DXParamToShaderStateParam(D3DXHANDLE h);
+    /// switch to hardware/software processing as needed by this shader
+    void SetVertexProcessingMode();
 
     friend class nD3D9Server;
 
@@ -98,10 +102,11 @@ protected:
     ID3DXEffect* effect;
     bool hasBeenValidated;
     bool didNotValidate;
-    D3DXHANDLE parameterHandles[nShaderState::NumParameters];     // map shader states to D3DX handles
-    nShaderParams curParams;    // mirrored to avoid redundant parameters setting
+    bool inBeginPass;
+    bool curTechniqueNeedsSoftwareVertexProcessing;
+    D3DXHANDLE parameterHandles[nShaderState::NumParameters];   // map shader states to D3DX handles
+    nShaderParams curParams;                                    // mirrored to avoid redundant parameters setting
 };
-
 
 //------------------------------------------------------------------------------
 #endif

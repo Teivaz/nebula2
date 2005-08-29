@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nUvAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
     @brief Animates the UV transform parameters on an nAbstractShaderNode.
-    
+
     See also @ref N2ScriptInterface_nuvanimator
 
     (C) 2004 RadonLabs GmbH

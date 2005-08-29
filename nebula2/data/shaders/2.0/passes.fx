@@ -1,4 +1,3 @@
-#line 1 "passes.fx"
 //------------------------------------------------------------------------------
 //  passes.fx
 //
@@ -6,24 +5,93 @@
 //
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-shared float4x4 View;                   // the view matrix
-shared float4x4 Projection;             // the projection matrix
-shared const float4 FogColor = {0.65, 0.65, 0.65, 0.0f};
-shared const float4 FogParams = { 80.0f, 0.001f, 0.002f, 0.0f};     // FogLayerGround, FogHoriDensity, FogVertDensity
+shared float4x4 View;           // the view matrix
+shared float4x4 Projection;     // the projection matrix
+
+technique tPassDepth
+{
+    pass p0
+    {
+        ViewTransform       = <View>;
+        ProjectionTransform = <Projection>;
+        ColorWriteEnable    = 0;
+        NormalizeNormals    = True;
+        ZEnable             = True;
+        ZWriteEnable        = True;
+        StencilEnable       = False;
+        DepthBias           = 0.0f;
+        FogEnable           = False;
+        AlphaBlendEnable    = False;
+        AlphaFunc           = GreaterEqual;
+        ScissorTestEnable   = False;
+    }
+}
 
 technique tPassColor
 {
     pass p0
     {
         ViewTransform       = <View>;
-    	ProjectionTransform = <Projection>;    
-        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;  
+        ProjectionTransform = <Projection>;
+        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
         NormalizeNormals    = True;
         ZEnable             = True;
-        ZFunc               = LessEqual;
+        ZWriteEnable        = False;
         StencilEnable       = False;
         DepthBias           = 0.0f;
         FogEnable           = False;
+        AlphaBlendEnable    = True;
+        AlphaTestEnable     = True;
+        AlphaFunc           = GreaterEqual;        
+        SrcBlend            = One;
+        DestBlend           = One;
+        ScissorTestEnable   = True;
+        //FillMode         = Wireframe;
+    }
+}
+
+technique tPassEnvironment
+{
+    pass p0
+    {
+        ViewTransform       = <View>;
+        ProjectionTransform = <Projection>;
+        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
+        NormalizeNormals    = True;
+        ZEnable             = True;
+        ZWriteEnable        = True;
+        StencilEnable       = False;
+        DepthBias           = 0.0f;
+        FogEnable           = False;
+        AlphaBlendEnable    = True;
+        AlphaTestEnable     = True;
+        AlphaFunc           = GreaterEqual;                
+        SrcBlend            = One;
+        DestBlend           = One;
+        ScissorTestEnable   = True;
+        //FillMode         = Wireframe;
+    }
+}
+
+technique tPassGui3D
+{
+    pass p0
+    {
+        ViewTransform       = <View>;
+        ProjectionTransform = <Projection>;
+        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
+        NormalizeNormals    = True;
+        ZEnable             = True;
+        ZWriteEnable        = True;
+        StencilEnable       = False;
+        DepthBias           = 0.0f;
+        FogEnable           = False;
+        AlphaBlendEnable    = True;
+        AlphaTestEnable     = False;
+        AlphaFunc           = GreaterEqual;                
+        SrcBlend            = SrcAlpha;
+        DestBlend           = InvSrcAlpha;
+        ScissorTestEnable   = False;
         //FillMode         = Wireframe;
     }
 }

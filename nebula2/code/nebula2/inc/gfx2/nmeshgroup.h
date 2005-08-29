@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMeshGroup
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     A nMeshGroup object defines a group of vertices and indices inside
     a mesh.

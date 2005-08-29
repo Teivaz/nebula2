@@ -12,9 +12,11 @@ nNebulaScriptClass(nBlendShapeNode, "nmaterialnode");
 /**
 */
 nBlendShapeNode::nBlendShapeNode() :
-    numShapes(0)
+    numShapes(0),
+    groupIndex(0),
+    shapeArray(MaxShapes)
 {
-    this->SetMeshUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
+    //empty
 }
 
 //------------------------------------------------------------------------------
@@ -23,6 +25,30 @@ nBlendShapeNode::nBlendShapeNode() :
 nBlendShapeNode::~nBlendShapeNode()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Indicate to scene server that we provide geometry
+*/
+bool
+nBlendShapeNode::HasGeometry() const
+{
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nBlendShapeNode::GetMeshUsage() const
+{
+    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
@@ -38,7 +64,7 @@ nBlendShapeNode::LoadResources()
         this->refMeshArray = nGfxServer2::Instance()->NewMeshArray(0);
     }
 
-    //update resouce filenames in mesharray
+    // update resouce filenames in mesharray
     int i;
     for (i = 0; i < this->GetNumShapes(); i++)
     {
@@ -47,7 +73,7 @@ nBlendShapeNode::LoadResources()
     }
     this->resourcesValid &= this->refMeshArray->Load();
             
-    //update shape bounding boxes
+    // update shape bounding boxes
     if (true == this->resourcesValid)
     {
         for(i = 0; i < this->GetNumShapes(); i++)
@@ -55,11 +81,27 @@ nBlendShapeNode::LoadResources()
             nMesh2* mesh = this->refMeshArray->GetMeshAt(i);
             if (0 != mesh)
             {
-                this->shapeArray[i].localBox = mesh->GetGroup(this->groupIndex).GetBoundingBox();
+                this->shapeArray[i].localBox = mesh->Group(this->groupIndex).GetBoundingBox();
             }
         }
     }
     return this->resourcesValid;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Unload the resources.
+*/
+void
+nBlendShapeNode::UnloadResources()
+{
+    nMaterialNode::UnloadResources();
+    if (this->refMeshArray.isvalid())
+    {
+        this->refMeshArray->Unload();
+        this->refMeshArray->Release();
+        this->refMeshArray.invalidate();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -81,12 +123,12 @@ nBlendShapeNode::SetMeshAt(int index, const char* name)
         
         if (0 != name)
         {
-            //increase shapes count
+            // increase shapes count
             this->numShapes = n_max(index+1, this->numShapes);
         }
         else
         {
-            //decrease shapes count if this was the last element
+            // decrease shapes count if this was the last element
             if (index + 1 == this->numShapes)
             {
                 this->numShapes--;
@@ -99,52 +141,32 @@ nBlendShapeNode::SetMeshAt(int index, const char* name)
 /**
     Gives the weights to the shader
 */
-bool
-nBlendShapeNode::ApplyShader(uint fourcc, nSceneServer* sceneServer)
+void
+nBlendShapeNode::UpdateShaderState()
 {
-    if (nMaterialNode::ApplyShader(fourcc, sceneServer))
+    // set shader parameter
+    nShader2* shader = nGfxServer2::Instance()->GetShader();
+    n_assert(shader);
+
+    int numShapes = this->GetNumShapes();
+    shader->SetInt(nShaderState::VertexStreams, numShapes);
+    if (numShapes > 0)
     {
-        // set shader parameter
-        nShader2* shader = nGfxServer2::Instance()->GetShader();
-        n_assert(shader);
-
-        int numShapes = this->GetNumShapes();
-
-        if (shader->IsParameterUsed(nShaderState::VertexStreams))
-        {
-            shader->SetInt(nShaderState::VertexStreams, numShapes);
-        }
-
-        if (numShapes > 0)
-        {
-            if (shader->IsParameterUsed(nShaderState::VertexWeights1))
-            {
-                nFloat4 weights = {0.0f, 0.0f, 0.0f, 0.0f};
-                if (numShapes > 0) weights.x = this->GetWeightAt(0);
-                if (numShapes > 1) weights.y = this->GetWeightAt(1);
-                if (numShapes > 2) weights.z = this->GetWeightAt(2);
-                if (numShapes > 3) weights.w = this->GetWeightAt(3);
-                shader->SetFloat4(nShaderState::VertexWeights1, weights);
-            }
-        }
-        if (numShapes > 4)
-        {
-            if (shader->IsParameterUsed(nShaderState::VertexWeights2))
-            {
-                nFloat4 weights = {0.0f, 0.0f, 0.0f, 0.0f};
-                if (numShapes > 4) weights.x = this->GetWeightAt(4);
-                if (numShapes > 5) weights.y = this->GetWeightAt(5);
-                if (numShapes > 6) weights.z = this->GetWeightAt(6);
-                if (numShapes > 7) weights.w = this->GetWeightAt(7);
-
-                shader->SetFloat4(nShaderState::VertexWeights2, weights);
-            }
-        }
-        return true;
+        nFloat4 weights = {0.0f, 0.0f, 0.0f, 0.0f};
+        if (numShapes > 0) weights.x = this->GetWeightAt(0);
+        if (numShapes > 1) weights.y = this->GetWeightAt(1);
+        if (numShapes > 2) weights.z = this->GetWeightAt(2);
+        if (numShapes > 3) weights.w = this->GetWeightAt(3);
+        shader->SetFloat4(nShaderState::VertexWeights1, weights);
     }
-    else
+    if (numShapes > 4)
     {
-        return false;
+        nFloat4 weights = {0.0f, 0.0f, 0.0f, 0.0f};
+        if (numShapes > 4) weights.x = this->GetWeightAt(4);
+        if (numShapes > 5) weights.y = this->GetWeightAt(5);
+        if (numShapes > 6) weights.z = this->GetWeightAt(6);
+        if (numShapes > 7) weights.w = this->GetWeightAt(7);
+        shader->SetFloat4(nShaderState::VertexWeights2, weights);
     }
 }
 
@@ -161,7 +183,7 @@ nBlendShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 
     // set mesh, vertex and index range
     gfxServer->SetMeshArray(this->refMeshArray.get());
-    const nMeshGroup& curGroup = this->refMeshArray->GetMeshAt(0)->GetGroup(this->groupIndex);
+    const nMeshGroup& curGroup = this->refMeshArray->GetMeshAt(0)->Group(this->groupIndex);
     gfxServer->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfxServer->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
     return true;
@@ -173,38 +195,19 @@ nBlendShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
     Update geometry, set as current mesh in the gfx server and
     call nGfxServer2::DrawIndexed().
 
-    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
+    - 15-Jan-04 floh    AreResourcesValid()/LoadResource() moved to scene server
+    - 01-Feb-05 floh    use nBlendShapeDeformer on CPU    
 */
 bool
 nBlendShapeNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* renderContext)
 {
-    // invoke blend shape animators
+    // invoke blend shape animators (manipulating the weights)
     this->InvokeAnimators(nAnimator::BlendShape, renderContext);
+
+    // update shader state
+    this->UpdateShaderState();
+
+    // draw the geometry
     nGfxServer2::Instance()->DrawIndexedNS(nGfxServer2::TriangleList);
     return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-This method must return the mesh usage flag combination required by
-this shape node class. Subclasses should override this method
-based on their requirements.
-
-@return     a combination on nMesh2::Usage flags
-*/
-int
-nBlendShapeNode::GetMeshUsage() const
-{
-    return meshUsage;
-}
-
-//------------------------------------------------------------------------------
-/**
-Specifies the mesh usage flag combination required by
-this shape node class.
-*/
-void
-nBlendShapeNode::SetMeshUsage(int usage)
-{
-    meshUsage = usage;
 }

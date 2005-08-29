@@ -2,6 +2,9 @@
 #define N_D3D9WINDOWHANDLER_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9WindowHandler
+    @ingroup Gfx2
+
     A window handler for the d3d9 graphics server class.
     This just implements some Direct3D specific callbacks which are called
     from the nWin32WindowHandler's WinProc.

@@ -18,7 +18,7 @@ nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 /**
 */
 nMaterialNode::nMaterialNode() :
-    shaderArray(4, 4)
+    shaderIndex(-1)
 {
     // empty
 }
@@ -36,16 +36,12 @@ nMaterialNode::~nMaterialNode()
     Unload all shaders.
 */
 void
-nMaterialNode::UnloadShaders()
+nMaterialNode::UnloadShader()
 {
-    int i;
-    for (i = 0; i < this->shaderArray.Size(); i++)
+    if (this->refShader.isvalid())
     {
-        if (this->shaderArray[i].IsShaderValid())
-        {
-            this->shaderArray[i].GetShader()->Release();
-            this->shaderArray[i].Invalidate();
-        }
+        this->refShader->Release();
+        this->refShader.invalidate();
     }
 }
 
@@ -54,35 +50,20 @@ nMaterialNode::UnloadShaders()
     Load shader resources.
 */
 bool
-nMaterialNode::LoadShaders()
+nMaterialNode::LoadShader()
 {
-    // load shaders
-    int i;
-    for (i = 0; i < this->shaderArray.Size(); i++)
+    n_assert(!this->shaderName.IsEmpty());
+
+    if (!this->refShader.isvalid())
     {
-        ShaderEntry& shaderEntry = this->shaderArray[i];
-        if ((!shaderEntry.IsShaderValid()) && 
-            (shaderEntry.GetName()) &&
-            (nSceneServer::Instance()->IsShaderUsed(shaderEntry.GetFourCC())))
-        {
-            // create a new empty shader object
-            nShader2* shd = nGfxServer2::Instance()->NewShader(shaderEntry.GetName());
-            n_assert(shd);
-            if (!shd->IsLoaded())
-            {
-                // load shader resource file
-                shd->SetFilename(shaderEntry.GetName());
-                if (!shd->Load())
-                {
-                    shd->Release();
-                    shd = 0;
-                }
-            }
-            if (shd)
-            {
-                shaderEntry.SetShader(shd);
-            }
-        }
+        const nRenderPath2* renderPath = nSceneServer::Instance()->GetRenderPath();
+        n_assert(renderPath);
+        int shaderIndex = renderPath->FindShaderIndex(this->shaderName);
+        n_assert(-1 != shaderIndex);
+        const nRpShader& rpShader = renderPath->GetShader(shaderIndex);
+        this->shaderIndex = rpShader.GetBucketIndex();
+        this->refShader = rpShader.GetShader();
+        this->refShader->AddRef();
     }
     return true;
 }
@@ -94,7 +75,7 @@ nMaterialNode::LoadShaders()
 bool
 nMaterialNode::LoadResources()
 {
-    if (this->LoadShaders())
+    if (this->LoadShader())
     {
         if (nAbstractShaderNode::LoadResources())
         {
@@ -112,28 +93,7 @@ void
 nMaterialNode::UnloadResources()
 {
     nAbstractShaderNode::UnloadResources();
-    this->UnloadShaders();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Find shader object associated with fourcc code.
-*/
-nMaterialNode::ShaderEntry*
-nMaterialNode::FindShaderEntry(nFourCC fourcc) const
-{
-    int i;
-    int numShaders = this->shaderArray.Size();
-    for (i = 0; i < numShaders; i++)
-    {
-        ShaderEntry& shaderEntry = this->shaderArray[i];
-        if (shaderEntry.GetFourCC() == fourcc)
-        {
-            return &shaderEntry;
-        }
-    }
-    // fallthrough: no loaded shader matches this fourcc code
-    return 0;
+    this->UnloadShader();
 }
 
 //------------------------------------------------------------------------------
@@ -141,9 +101,9 @@ nMaterialNode::FindShaderEntry(nFourCC fourcc) const
     Indicate to scene server that we provide a shader.
 */
 bool
-nMaterialNode::HasShader(nFourCC fourcc) const
+nMaterialNode::HasShader() const
 {
-    return (this->FindShaderEntry(fourcc) != 0);
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -151,43 +111,28 @@ nMaterialNode::HasShader(nFourCC fourcc) const
     Setup shader attributes before rendering instances of this scene node.
 */
 bool
-nMaterialNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
+nMaterialNode::ApplyShader(nSceneServer* sceneServer)
 {
     n_assert(sceneServer);
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
 
-    // find shader matching fourcc code, do nothing if shader doesn't exist
-    ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
-    if (0 == shaderEntry)
+    if (this->refShader.isvalid())
     {
-        #ifdef _DEBUG
-            n_printf("WARNING:" __FILE__ "Shader '%i' not found!", fourcc);
-        #endif
-        return false;
+    /*
+        // set texture transforms
+        n_assert(nGfxServer2::MaxTextureStages >= 4);
+        static matrix44 m;
+        this->textureTransform[0].getmatrix44(m);
+        gfxServer->SetTransform(nGfxServer2::Texture0, m);
+        this->textureTransform[1].getmatrix44(m);
+        gfxServer->SetTransform(nGfxServer2::Texture1, m);
+
+        // transfer shader parameters en block
+        // FIXME: this should be split into instance-variables
+        // and instance-set-variables
+        shader->SetParams(this->shaderParams);
+    */
+        nGfxServer2::Instance()->SetShader(this->refShader);
     }
-
-    // do nothing if shader could not be loaded
-    if (!shaderEntry->IsShaderValid())
-    {
-        return false;
-    }
-    nShader2* shader = shaderEntry->GetShader();
-
-/*
-    // set texture transforms
-    n_assert(nGfxServer2::MaxTextureStages >= 4);
-    static matrix44 m;
-    this->textureTransform[0].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture0, m);
-    this->textureTransform[1].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture1, m);
-
-    // transfer shader parameters en block
-    // FIXME: this should be split into instance-variables
-    // and instance-set-variables
-    shader->SetParams(this->shaderParams);
-*/
-    nGfxServer2::Instance()->SetShader(shader);
     return true;
 }
 
@@ -197,9 +142,9 @@ nMaterialNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
     shader parameters which may change from instance to instance.
 */
 bool
-nMaterialNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* sceneServer, nRenderContext* renderContext)
+nMaterialNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
-    nShader2* shader = nGfxServer2::Instance()->GetShader();
+    nShader2* shader = this->refShader;
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // FIXME FIXME FIXME
@@ -213,12 +158,14 @@ nMaterialNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* sceneServer, nRend
     this->InvokeAnimators(nAnimator::Shader, renderContext);
 
     // set texture transforms
+/*
     n_assert(nGfxServer2::MaxTextureStages >= 4);
     static matrix44 m;
     this->textureTransform[0].getmatrix44(m);
     gfxServer->SetTransform(nGfxServer2::Texture0, m);
     this->textureTransform[1].getmatrix44(m);
     gfxServer->SetTransform(nGfxServer2::Texture1, m);
+*/
 
     // transfer shader parameters en block
     // FIXME: this MUST be split into instance-variables
@@ -235,37 +182,19 @@ nMaterialNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* sceneServer, nRend
 /**
 */
 void
-nMaterialNode::SetShader(nFourCC fourcc, const char* name)
+nMaterialNode::SetShader(const char* name)
 {
     n_assert(name);
-    ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
-    if (shaderEntry)
-    {
-        shaderEntry->Invalidate();
-        shaderEntry->SetName(name);
-    }
-    else
-    {
-        ShaderEntry newShaderEntry(fourcc, name);
-        this->shaderArray.Append(newShaderEntry);
-    }
+    this->shaderName = name;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 const char*
-nMaterialNode::GetShader(nFourCC fourcc) const
+nMaterialNode::GetShader() const
 {
-    ShaderEntry* shaderEntry = this->FindShaderEntry(fourcc);
-    if (shaderEntry)
-    {
-        return shaderEntry->GetName();
-    }
-    else
-    {
-        return 0;
-    }
+    return this->shaderName.Get();
 }
 
 //------------------------------------------------------------------------------
@@ -274,24 +203,13 @@ nMaterialNode::GetShader(nFourCC fourcc) const
 bool
 nMaterialNode::IsTextureUsed(nShaderState::Param param)
 {
-    // check in all shaders if anywhere the texture specified by param is used
-    int    i;
-    int numShaders = this->shaderArray.Size();
-    for (i = 0; i < numShaders; i++)
-    {
-        const ShaderEntry& shaderEntry = this->shaderArray[i];
-
-        // first be sure that the shader entry could be loaded
-        if (shaderEntry.IsShaderValid())
-        {        
-            nShader2* shader = shaderEntry.GetShader();
-            if (shader->IsParameterUsed(param))
-            {
-                return true;
-            }
+    if (this->refShader.isvalid())
+    {        
+        if (this->refShader->IsParameterUsed(param))
+        {
+            return true;
         }
     }
-    // fallthrough: texture not used by any shader
     return false;
 }
 
@@ -308,10 +226,5 @@ nMaterialNode::UpdateInstStreamDecl(nInstanceStream::Declaration& decl)
     {
         this->LoadResources();
     }
-    int i;
-    int num = this->shaderArray.Size();
-    for (i = 0; i < num; i++)
-    {
-        this->shaderArray[i].refShader->UpdateInstanceStreamDecl(decl);
-    }
+    this->refShader->UpdateInstanceStreamDecl(decl);
 }

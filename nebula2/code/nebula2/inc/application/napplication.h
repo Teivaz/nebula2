@@ -28,7 +28,7 @@ class nAnimationServer;
 class nParticleServer;
 class nVideoServer;
 class nGuiServer;
-class nShadowServer;
+class nShadowServer2;
 class nAudioServer3;
 class nPrefServer;
 class nLocaleServer;
@@ -121,7 +121,7 @@ protected:
     /// create gui server, override in subclass as needed
     virtual nGuiServer* CreateGuiServer();
     /// create shadow server, override in subclass as needed
-    virtual nShadowServer* CreateShadowServer();
+    virtual nShadowServer2* CreateShadowServer();
     /// create audio server, override in subclass as needed
     virtual nAudioServer3* CreateAudioServer();
     /// create preferences server, override in subclass as needed
@@ -162,7 +162,7 @@ private:
     nRef<nParticleServer>   refParticleServer;
     nRef<nVideoServer>      refVideoServer;
     nRef<nGuiServer>        refGuiServer;
-    nRef<nShadowServer>     refShadowServer;
+    nRef<nShadowServer2>    refShadowServer;
     nRef<nAudioServer3>     refAudioServer;
     nRef<nPrefServer>       refPrefServer;
     nRef<nLocaleServer>     refLocaleServer;

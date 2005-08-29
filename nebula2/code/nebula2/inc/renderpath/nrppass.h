@@ -3,43 +3,62 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpPass
-    @ingroup NebulaRenderPathSystem
+    @ingroup Scene
 
     Represents a pass in a render target.
     
     (C) 2004 RadonLabs GmbH
 */
 #include "renderpath/nrpphase.h"
+#include "renderpath/nrpshader.h"
 #include "variable/nvariablecontext.h"
 #include "variable/nvariableserver.h"
 #include "gfx2/nmesh2.h"
+#include "kernel/nprofiler.h"
+
+class nRenderPath2;
+class nRpSection;
 
 //------------------------------------------------------------------------------
 class nRpPass
 {
 public:
+    /// shadow drawing techniques
+    enum ShadowTechnique
+    {
+        NoShadows,      // don't draw shadows
+        Simple,         // draw simple DX7 style shadows
+        MultiLight,     // draw multilight shadows
+    };
+
     /// constructor
     nRpPass();
     /// destructor
     ~nRpPass();
     /// assignment operator
     void operator=(const nRpPass& rhs);
+    /// set the renderpath
+    void SetRenderPath(nRenderPath2* rp);
+    /// get the renderpath
+    nRenderPath2* GetRenderPath() const;
     /// set pass name
     void SetName(const nString& n);
     /// get pass name
     const nString& GetName() const;
-    /// set the pass shader's path
-    void SetShaderPath(const nString& n);
-    /// get the pass shader's path
-    const nString& GetShaderPath() const;
-    /// set optional technique in shader
+    /// set the pass shader alias
+    void SetShaderAlias(const nString& n);
+    /// get the pass shader alias
+    const nString& GetShaderAlias() const;
+    /// get the shader object assigned to this pass (can be 0)
+    nShader2* GetShader() const;
+    /// set optional technique
     void SetTechnique(const nString& n);
-    /// get optional shader technique
-    const nString& GetTechnique() const;
-    /// set the render target's name (none for default render target)
-    void SetRenderTargetName(const nString& n);
+    /// get optional technique
+    const nString& GetTechnique() const;    
+    /// set the render target's name (0 for default render target)
+    void SetRenderTargetName(int index, const nString& n);
     /// get the render target's name
-    const nString& GetRenderTargetName() const;
+    const nString& GetRenderTargetName(const int index) const;
     /// set clear flags (nGfxServer2::BufferType)
     void SetClearFlags(int f);
     /// get clear flags
@@ -60,10 +79,14 @@ public:
     void SetDrawFullscreenQuad(bool b);
     /// get the draw fullscreen quad flag
     bool GetDrawFullscreenQuad() const;
-    /// set the "draw shadow volumes" flag
-    void SetDrawShadowVolumes(bool b);
-    /// get the "draw shadow volumes" flag
-    bool GetDrawShadowVolumes() const;
+    /// set the "draw shadow volumes" technique
+    void SetDrawShadows(ShadowTechnique t);
+    /// get the "draw shadow volumes" technique
+    ShadowTechnique GetDrawShadows() const;
+    /// set the occlusion query technique
+    void SetOcclusionQuery(bool b);
+    /// get the occlusion query technique
+    bool GetOcclusionQuery() const;
     /// set the "shadow enabled condition" flag
     void SetShadowEnabledCondition(bool b);
     /// get the "shadow enabled condition" flag
@@ -88,9 +111,20 @@ public:
     nRpPhase& GetPhase(int i) const;
     /// finish rendering the pass
     void End();
+    /// convert shadow technique string to enum
+    static ShadowTechnique StringToShadowTechnique(const nString& s);
+    /// draw a fullscreen quad 
+    void DrawFullScreenQuad();
+
+#if __NEBULA_STATS__
+    /// set the section
+    void SetSection(nRpSection* s);
+    /// get the section
+    nRpSection* GetSection() const;
+#endif
 
 private:
-    friend class nRenderPath2;
+    friend class nRpSection;
 
     /// validate the pass object
     void Validate();
@@ -98,8 +132,6 @@ private:
     void UpdateVariableShaderParams();
     /// update quad mesh coordinates
     void UpdateMeshCoords();
-    /// draw a fullscreen quad 
-    void DrawFullscreenQuad();
 
     struct ShaderParam
     {
@@ -108,18 +140,19 @@ private:
         nString value;
     };
 
+    nRenderPath2* renderPath;
     nArray<ShaderParam> constShaderParams;
     nArray<ShaderParam> varShaderParams;
 
     bool inBegin;
     nString name;
+    nString shaderAlias;
     nString technique;
-    nString shaderPath;
     nFourCC shaderFourCC;
-    nString renderTargetName;
+    nFixedArray<nString> renderTargetNames;
 
+    int rpShaderIndex;
     nShaderParams shaderParams;
-    nRef<nShader2> refShader;
     nRef<nMesh2> refQuadMesh;
 
     nArray<nRpPhase> phases;
@@ -129,11 +162,17 @@ private:
     vector4 clearColor;
     float clearDepth;
     int clearStencil;
+    ShadowTechnique shadowTechnique;
 
     bool drawFullscreenQuad;        // true if pass should render a fullscreen quad
-    bool drawShadowVolumes;         // true if this pass should render shadow volumes
     bool drawGui;                   // true if this pass should render the gui
     bool shadowEnabledCondition;
+    bool occlusionQuery;            // special flag for occlusion query 
+
+    #if __NEBULA_STATS__
+    nProfiler prof;
+    nRpSection* section;
+    #endif
 };
 
 //------------------------------------------------------------------------------
@@ -143,16 +182,16 @@ inline
 void
 nRpPass::operator=(const nRpPass& rhs)
 {
+    this->renderPath                = rhs.renderPath;
     this->constShaderParams         = rhs.constShaderParams;
     this->varShaderParams           = rhs.varShaderParams;
     this->inBegin                   = rhs.inBegin;
     this->name                      = rhs.name;
+    this->shaderAlias               = rhs.shaderAlias;
     this->technique                 = rhs.technique;
-    this->shaderPath                = rhs.shaderPath;
-    this->shaderFourCC              = rhs.shaderFourCC;
-    this->renderTargetName          = rhs.renderTargetName;
+    this->renderTargetNames         = rhs.renderTargetNames;
     this->shaderParams              = rhs.shaderParams;
-    this->refShader                 = rhs.refShader;
+    this->rpShaderIndex             = rhs.rpShaderIndex;
     this->refQuadMesh               = rhs.refQuadMesh;
     this->phases                    = rhs.phases;
     this->varContext                = rhs.varContext;
@@ -160,18 +199,79 @@ nRpPass::operator=(const nRpPass& rhs)
     this->clearColor                = rhs.clearColor;
     this->clearDepth                = rhs.clearDepth;
     this->clearStencil              = rhs.clearStencil;
+    this->shadowTechnique           = rhs.shadowTechnique;
+    this->occlusionQuery            = rhs.occlusionQuery;
     this->drawFullscreenQuad        = rhs.drawFullscreenQuad;
-    this->drawShadowVolumes         = rhs.drawShadowVolumes;
     this->drawGui                   = rhs.drawGui;
     this->shadowEnabledCondition    = rhs.shadowEnabledCondition;
-    if (this->refShader.isvalid())
-    {
-        this->refShader->AddRef();
-    }
     if (this->refQuadMesh.isvalid())
     {
         this->refQuadMesh->AddRef();
     }
+    #if __NEBULA_STATS__
+    this->section                   = rhs.section;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetOcclusionQuery(bool b)
+{
+    this->occlusionQuery = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nRpPass::GetOcclusionQuery() const
+{
+    return this->occlusionQuery;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetRenderPath(nRenderPath2* rp)
+{
+    n_assert(rp);
+    this->renderPath = rp;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRenderPath2*
+nRpPass::GetRenderPath() const
+{
+    return this->renderPath;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetShaderAlias(const nString& s)
+{
+    this->shaderAlias = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nRpPass::GetShaderAlias() const
+{
+    return this->shaderAlias;
 }
 
 //------------------------------------------------------------------------------
@@ -212,26 +312,6 @@ bool
 nRpPass::GetDrawFullscreenQuad() const
 {
     return this->drawFullscreenQuad;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nRpPass::SetDrawShadowVolumes(bool b)
-{
-    this->drawShadowVolumes = b;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nRpPass::GetDrawShadowVolumes() const
-{
-    return this->drawShadowVolumes;
 }
 
 //------------------------------------------------------------------------------
@@ -359,9 +439,9 @@ nRpPass::GetName() const
 */
 inline
 void
-nRpPass::SetShaderPath(const nString& p)
+nRpPass::SetRenderTargetName(int index, const nString& n)
 {
-    this->shaderPath = p;
+    this->renderTargetNames[index] = n;
 }
 
 //------------------------------------------------------------------------------
@@ -369,29 +449,9 @@ nRpPass::SetShaderPath(const nString& p)
 */
 inline
 const nString&
-nRpPass::GetShaderPath() const
+nRpPass::GetRenderTargetName(const int index) const
 {
-    return this->shaderPath;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nRpPass::SetRenderTargetName(const nString& n)
-{
-    this->renderTargetName = n;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-nRpPass::GetRenderTargetName() const
-{
-    return this->renderTargetName;
+    return this->renderTargetNames[index];        
 }
 
 //------------------------------------------------------------------------------
@@ -480,6 +540,66 @@ nRpPass::GetShadowEnabledCondition() const
 {
     return this->shadowEnabledCondition;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetDrawShadows(ShadowTechnique t)
+{
+    this->shadowTechnique = t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpPass::ShadowTechnique
+nRpPass::GetDrawShadows() const
+{
+    return this->shadowTechnique;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpPass::ShadowTechnique
+nRpPass::StringToShadowTechnique(const nString& s)
+{
+    if ("NoShadows" == s) return NoShadows;
+    else if ("Simple" == s) return Simple;
+    else if ("MultiLight" == s) return MultiLight;
+    else
+    {
+        n_error("nRpPass::StringToShadowTechnique: Invalid string '%s'!", s.Get());
+        return NoShadows;
+    }
+}
+
+#if __NEBULA_STATS__
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetSection(nRpSection* s)
+{
+    n_assert(s);
+    this->section = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpSection*
+nRpPass::GetSection() const
+{
+    return this->section;
+}
+#endif
 
 //------------------------------------------------------------------------------
 #endif

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  nfloatanimator_main.cc
-//  (C) 2004 RadonLabs GmbH
+//  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "scene/nfloatanimator.h"
 #include "scene/nabstractshadernode.h"
@@ -30,7 +30,7 @@ nFloatAnimator::~nFloatAnimator()
     Add a key to the animation key array.
 */
 void
-nFloatAnimator::AddKey(float time, const float& key)
+nFloatAnimator::AddKey(float time, float key)
 {
     nAnimKey<float> newKey(time, key);
     this->keyArray.Append(newKey);

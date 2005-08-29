@@ -58,7 +58,7 @@ nD3D9Mesh::LoadResource()
     n_assert(0 == this->indexBuffer);
 
     bool success = nMesh2::LoadResource();
-    
+
     if (success)
     {
         // create the vertex declaration from the vertex component mask
@@ -123,7 +123,7 @@ nD3D9Mesh::UnloadResource()
 void
 nD3D9Mesh::OnLost()
 {
-    if (WriteOnly & this->usage)
+    if (WriteOnly & this->vertexUsage)
     {
         this->UnloadResource();
         this->SetState(Lost);
@@ -140,7 +140,7 @@ nD3D9Mesh::OnLost()
 void
 nD3D9Mesh::OnRestored()
 {
-    if (WriteOnly & this->usage)
+    if (WriteOnly & this->vertexUsage)
     {
         this->SetState(Unloaded);
         this->LoadResource();
@@ -151,6 +151,9 @@ nD3D9Mesh::OnRestored()
 //------------------------------------------------------------------------------
 /**
     Create a static d3d vertex buffer and validate the vertexBuffer member.
+
+    - 27-Sep-04     floh    DX7 compatibility fix: software processing meshes
+                            now created in system mem, and without the WRITEONLY flag
 */
 void
 nD3D9Mesh::CreateVertexBuffer()
@@ -160,7 +163,7 @@ nD3D9Mesh::CreateVertexBuffer()
     n_assert(0 == this->vertexBuffer);
     n_assert(this->vertexBufferByteSize > 0);
 
-    if (ReadOnly & this->usage)
+    if (ReadOnly & this->vertexUsage)
     {
         // this is a read-only mesh which will never be rendered
         // and only read-accessed by the CPU, allocate private
@@ -172,7 +175,7 @@ nD3D9Mesh::CreateVertexBuffer()
     {
         nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
         n_assert(gfxServer->d3d9Device);
-        
+
         // this is either a WriteOnce or a WriteOnly vertex buffer,
         // in both cases we create a D3D vertex buffer object
         HRESULT hr;
@@ -180,27 +183,36 @@ nD3D9Mesh::CreateVertexBuffer()
         DWORD d3dUsage = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool = D3DPOOL_MANAGED;
         this->d3dVBLockFlags = 0;
-        if (WriteOnly & this->usage)
+        if (WriteOnly & this->vertexUsage)
         {
             d3dUsage = (D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY);
             d3dPool  = D3DPOOL_DEFAULT;
             this->d3dVBLockFlags = D3DLOCK_DISCARD;
         }
-        if (RTPatch & this->usage)
+        if (ReadWrite & this->vertexUsage)
+        {
+            d3dUsage = D3DUSAGE_DYNAMIC;
+            d3dPool  = D3DPOOL_SYSTEMMEM;
+        }
+        if (RTPatch & this->vertexUsage)
         {
             d3dUsage |= D3DUSAGE_RTPATCHES;
         }
-        if (PointSprite & this->usage)
+        if (PointSprite & this->vertexUsage)
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-        if (gfxServer->GetSoftwareVertexProcessing() || 
-            ((NeedsVertexShader & this->usage) && 
-            (gfxServer->GetFeatureSet() < nGfxServer2::DX9)))
+
+        // create buffer with software processing flag
+        // if the NeedsVertexShader hint is enabled, and the d3d device
+        // has been created with software or mixed vertex processing
+        if (gfxServer->AreVertexShadersEmulated() && (NeedsVertexShader & this->vertexUsage))
         {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
+            d3dUsage &= ~D3DUSAGE_WRITEONLY;
+            d3dPool = D3DPOOL_SYSTEMMEM;
         }
-        
+
         // create the vertex buffer
         hr = gfxServer->d3d9Device->CreateVertexBuffer(
                 this->vertexBufferByteSize,
@@ -217,6 +229,9 @@ nD3D9Mesh::CreateVertexBuffer()
 //------------------------------------------------------------------------------
 /**
     Create a static d3d index buffer and validate the index buffer member.
+
+    - 27-Sep-04     floh    DX7 compatibility fix: software processing meshes
+                            now created in system mem, and without the WRITEONLY flag
 */
 void
 nD3D9Mesh::CreateIndexBuffer()
@@ -226,7 +241,7 @@ nD3D9Mesh::CreateIndexBuffer()
     n_assert(0 == this->privIndexBuffer);
     n_assert(this->indexBufferByteSize > 0);
 
-    if (ReadOnly & this->usage)
+    if (ReadOnly & this->indexUsage)
     {
         this->privIndexBuffer = n_malloc(this->indexBufferByteSize);
         n_assert(this->privIndexBuffer);
@@ -240,25 +255,33 @@ nD3D9Mesh::CreateIndexBuffer()
         DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool      = D3DPOOL_MANAGED;
         this->d3dIBLockFlags = 0;
-        if (WriteOnly & this->usage)
+        if (WriteOnly & this->indexUsage)
         {
             d3dUsage = (D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY);
             d3dPool  = D3DPOOL_DEFAULT;
             this->d3dIBLockFlags = D3DLOCK_DISCARD;
         }
-        if (RTPatch & this->usage)
+        if (ReadWrite & this->indexUsage)
+        {
+            d3dUsage = D3DUSAGE_DYNAMIC;
+            d3dPool  = D3DPOOL_SYSTEMMEM;
+        }
+        if (RTPatch & this->indexUsage)
         {
             d3dUsage |= D3DUSAGE_RTPATCHES;
         }
-        if (PointSprite & this->usage)
+        if (PointSprite & this->indexUsage)
         {
             d3dUsage |= D3DUSAGE_POINTS;
         }
-        if (gfxServer->GetSoftwareVertexProcessing() || 
-            ((NeedsVertexShader & this->usage) && 
-            (gfxServer->GetFeatureSet() < nGfxServer2::DX9)))
-        { 
+        // create buffer with software processing flag
+        // if the NeedsVertexShader hint is enabled, and the d3d device
+        // has been created with software or mixed vertex processing
+        if (gfxServer->AreVertexShadersEmulated() && (NeedsVertexShader & this->vertexUsage))
+        {
             d3dUsage |= D3DUSAGE_SOFTWAREPROCESSING;
+            d3dUsage &= ~D3DUSAGE_WRITEONLY;
+            d3dPool = D3DPOOL_SYSTEMMEM;
         }
 
         hr = gfxServer->d3d9Device->CreateIndexBuffer(
@@ -284,7 +307,7 @@ nD3D9Mesh::CreateVertexDeclaration()
     nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
     n_assert(gfxServer->d3d9Device);
 
-    const int maxElements = 11;
+    const int maxElements = NumVertexComponents;
     D3DVERTEXELEMENT9 decl[maxElements];
     int curElement = 0;
     int curOffset  = 0;
@@ -304,6 +327,13 @@ nD3D9Mesh::CreateVertexDeclaration()
                     decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
                     decl[curElement].UsageIndex = 0;
                     curOffset += 3 * sizeof(float);
+                    break;
+
+                case Coord4:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
+                    decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 4 * sizeof(float);
                     break;
 
                 case Normal:

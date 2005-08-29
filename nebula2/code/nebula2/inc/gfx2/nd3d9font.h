@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Font
-    @ingroup NebulaD3D9GraphicsSystem
+    @ingroup Gfx2
 
     A D3D9 specific subclass of nFont2.
     

@@ -20,7 +20,7 @@ nViewerApp::nViewerApp() :
     gfxServerClass("nglserver2"),
 #endif
     startupScript("home:data/scripts/startup.tcl"),
-    sceneServerClass("nmrtsceneserver"),
+    sceneServerClass("nsceneserver"),
     isOpen(false),
     isOverlayEnabled(true),
     useRam(false),
@@ -60,10 +60,11 @@ nViewerApp::Open()
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/video");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
-    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
     this->refHttpServer     = (nHttpServer*)      kernelServer->New("nhttpserver", "/sys/servers/http");
     this->refPrefServer     = (nPrefServer*)      kernelServer->New("nwin32prefserver", "/sys/servers/pref");
+    this->refAudioServer    = (nAudioServer3*)    kernelServer->New("ndsoundserver3",  "/sys/servers/audio");
     this->refCaptureServer  = (nCaptureServer*)   kernelServer->New("ncaptureserver", "/sys/servers/capture");
+    this->refShadowServer   = (nShadowServer2*)   kernelServer->New("nshadowserver2", "/sys/servers/shadow2");
 
     // initialize the preferences server
     this->refPrefServer->SetCompanyName("Radon Labs GmbH");
@@ -118,8 +119,8 @@ nViewerApp::Open()
     {
         this->refSceneServer->SetRenderPathFilename(this->renderPath);
     }
-    //this->refSceneServer->SetOcclusionQuery(false);
-    //this->refSceneServer->SetObeyLightLinks(false);
+    this->refSceneServer->SetOcclusionQuery(false);
+    this->refSceneServer->SetObeyLightLinks(false);
 
     // open the scene server
     if (!this->refSceneServer->Open())
@@ -182,6 +183,7 @@ nViewerApp::Close()
     this->refSceneServer->Close();
 
     this->refCaptureServer->Release();
+    this->refAudioServer->Release();
     this->refPrefServer->Release();
     this->refHttpServer->Release();
     this->refShadowServer->Release();
@@ -223,6 +225,10 @@ nViewerApp::Run()
         {
             prevTime = time;
         }
+
+        // Trigger Audioserver
+        this->refAudioServer->BeginScene(time);
+
         frameTime = (float) (time - prevTime);
         this->refGuiServer->SetTime(time);
 
@@ -327,8 +333,11 @@ nViewerApp::Run()
         // trigger kernel server at end of frame
         kernelServer->Trigger();
 
-        // sleep for a very little while because we
-        // are multitasking friendly
+        // Trigger Audioserver / important for streaming sounds        
+        this->refAudioServer->UpdateAllSounds();        
+        this->refAudioServer->EndScene();
+
+        // give up time slice
         n_sleep(0.0);
     }
 }

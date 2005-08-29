@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @namespace nShaderState
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Shader state parameters and data types.
     
@@ -46,36 +46,33 @@ enum Param
     ModelView,                      // matrix: the model*view matrix
     InvModelView,                   // matrix: the inverse of the model view matrix
     ModelViewProjection,            // matrix: the model*view*projection matrix
-    ModelLightProjection,           // matrix: the model*light*projection matrix
     ModelShadowProjection,          // matrix: the model*shadow*projection matrix (shadow == shadow source)
     EyePos,                         // vector: the eye position in world space
     ModelEyePos,                    // vector: the eye position in model space
-    ModelLightPos,                  // vector[]: the light position in model space
+    ModelLightPos,                  // vector: the light position in model space
     LightPos,                       // vector3:  the light position in world space (must be vec3 for the FF pipeline)
-    LightPos4,                      // vector4:  the light position in world space (must be vec4 for shadow extrude)
+    LightType,                      // int: light type (0: point, 1: directional, 2: spot)
+    LightRange,                     // float: light range
+    LightAmbient,                   // color: light ambient component
+    LightDiffuse,                   // color: light diffuse component
+    LightDiffuse1,                  // vector4: light diffuse component in reverse direction (not used standardly)
+    LightSpecular,                  // color: light specular component
     MatAmbient,                     // color: material ambient component
     MatDiffuse,                     // color: material diffuse component
+    MatEmissive,                    // color: material emissive component
+    MatEmissiveIntensity,           // color: material emissive intensity component
     MatSpecular,                    // color: material specular component
     MatSpecularPower,               // float: material specular power
     MatTransparency,                // float: material transparency
     MatFresnel,                     // float: material fresnel term
     Scale,                          // float: material scale (for waves, etc...)
-    Noise,			                // float: material noise scale (for wavec, etc...)
+    Noise,                          // float: material noise scale (for waves, etc...)
     MatTranslucency,                // float: material translucency
     AlphaRef,                       // int: alpha ref (0 - 255)
     CullMode,                       // int: cull mode (1 = No culling, 2 = CW, 3 = CCW)
     DirAmbient,                     // color array[6]: directional ambient colors
-    FogDistances,                   // vector: x=near, y=far, z=bottom, w=top
-    FogNearBottomColor,             // color: rgb, a=lerp
-    FogNearTopColor,                // color: rgb, a=lerp
-    FogFarBottomColor,              // color: rgb, a=lerp
-    FogFarTopColor,                 // color: rgb, a=lerp
-    LightAmbient,                   // color[]: light ambient component
-    LightDiffuse,                   // color[]: light diffuse component
-    LightSpecular,                  // color[]: light specular component
-    LightAmbient1,                  // color[]: additional light ambient component
-    LightDiffuse1,                  // color[]: additional light diffuse component
-    LightSpecular1,                 // color[]: additional light specular component
+    FogDistances,                   // vector: x=near, y=far
+    FogColor,                       // color: the fog color
     DiffMap0,                       // texture: diffuse map layer 0
     DiffMap1,                       // texture: diffuse map layer 1
     DiffMap2,                       // texture: diffuse map layer 2
@@ -135,6 +132,7 @@ enum Param
     VertexStreams,                  // int: number of parallel vertex streams
     VertexWeights1,                 // float4: weights of streams 1-4
     VertexWeights2,                 // float4: weights of streams 5-8
+    AlphaBlendEnable,               // bool: enable/disable alpha blending
     AlphaSrcBlend,                  // int: Alpha Source Blend Factor
     AlphaDstBlend,                  // int: Alpha Dest Blend Factor
     BumpScale,                      // float
@@ -151,6 +149,15 @@ enum Param
     StencilFrontPassOp,             // int: front faces stencil pass operation
     StencilBackZFailOp,             // int: front faces stencil depth fail operation
     StencilBackPassOp,              // int: front faces stencil depth fail operation
+    ZWriteEnable,                   // bool: z-write on/off
+    ZEnable,                        // bool: z test on/off
+    ShadowIndex,                    // color: each channel is for one shadowIndex
+    CameraFocus,                    // float4
+    Color0,                         // color: general color
+    Color1,                         // color: general color
+    Color2,                         // color: general color
+    Color3,                         // color: general color
+    HalfPixelSize,                  // half size of a pixel of the current display resolution
     
     NumParameters,                  // keep this always at the end!
     InvalidParameter,

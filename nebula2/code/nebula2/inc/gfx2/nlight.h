@@ -2,11 +2,15 @@
 #define N_LIGHT_H
 //------------------------------------------------------------------------------
 /**
+    @class nLight
+    @ingroup Gfx2
+
     Describes a light source.
     
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include "mathlib/matrix.h"
 
 //------------------------------------------------------------------------------
 class nLight
@@ -15,9 +19,9 @@ public:
     /// light types
     enum Type
     {
-        Point,
-        Directional,
-        Spot,
+        Point       = 0,
+        Directional = 1,
+        Spot        = 2,
 
         NumTypes,
         InvalidType,
@@ -35,6 +39,10 @@ public:
     void SetType(Type t);
     /// get light type
     Type GetType() const;
+    /// set light range
+    void SetRange(float r);
+    /// get light range
+    float GetRange() const;
     /// set light's diffuse color
     void SetDiffuse(const vector4& c);
     /// get light's diffuse color
@@ -47,23 +55,28 @@ public:
     void SetAmbient(const vector4& c);
     /// get light's ambient color
     const vector4& GetAmbient() const;
-    /// set secondary diffuse color
-    void SetSecondaryDiffuse(const vector4& c);
-    /// get secondary diffuse color
-    const vector4& GetSecondaryDiffuse() const;
-    /// set secondary specular color
-    void SetSecondarySpecular(const vector4& c);
-    /// get secondary specular color
-    const vector4& GetSecondarySpecular() const;
+    /// set cast shadows
+    void SetCastShadows(const bool& b);
+    /// set cast shadows
+    const bool& GetCastShadows() const;
+    /// set light mask for shadow rendering
+    void SetShadowLightMask(const vector4& m);
+    /// get light mask for shadow rendering
+    const vector4& GetShadowLightMask() const;
+    /// convert type string to enum
+    static Type StringToType(const char* str);
+    /// convert type enum to string
+    static const char* TypeToString(Type t);
 
 private:
     matrix44 transform;
     Type type;
+    float range;
     vector4 diffuse;
     vector4 specular;
     vector4 ambient;
-    vector4 secDiffuse;
-    vector4 secSpecular;
+    vector4 shadowLightMask;
+    bool castShadows;
 };
 
 //------------------------------------------------------------------------------
@@ -72,11 +85,11 @@ private:
 inline
 nLight::nLight() :
     type(Point),
+    range(1.0f),
     diffuse(1.0f, 1.0f, 1.0f, 1.0f),
     specular(1.0f, 1.0f, 1.0f, 1.0f),
-    ambient(0.0f, 0.0f, 0.0f, 0.0f),
-    secDiffuse(0.0f, 0.0f, 0.0f, 0.0f),
-    secSpecular(0.0f, 0.0f, 0.0f, 0.0f)
+    ambient(0.0f, 0.0f, 0.0f, 0.0f),    
+    castShadows(false)
 {
     // empty
 }
@@ -88,6 +101,26 @@ inline
 nLight::~nLight()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nLight::SetRange(float r)
+{
+    this->range = r;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nLight::GetRange() const
+{
+    return this->range;
 }
 
 //------------------------------------------------------------------------------
@@ -194,10 +227,30 @@ nLight::GetAmbient() const
 /**
 */
 inline
-void
-nLight::SetSecondaryDiffuse(const vector4& c)
+void 
+nLight::SetCastShadows(const bool& b)
 {
-    this->secDiffuse = c;
+    this->castShadows = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const bool& 
+nLight::GetCastShadows() const
+{
+    return this->castShadows;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nLight::SetShadowLightMask(const vector4& m)
+{
+    this->shadowLightMask = m;
 }
 
 //------------------------------------------------------------------------------
@@ -205,29 +258,44 @@ nLight::SetSecondaryDiffuse(const vector4& c)
 */
 inline
 const vector4&
-nLight::GetSecondaryDiffuse() const
+nLight::GetShadowLightMask() const
 {
-    return this->secDiffuse;
+    return this->shadowLightMask;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nLight::TypeToString(Type t)
+{
+    switch (t)
+    {
+        case Point:         return "Point";
+        case Directional:   return "Directional";
+        case Spot:          return "Spot";
+        default:
+            n_error("nLight::TypeToString(): invalid light type value '%d'!", t);
+            return 0;
+    }
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void
-nLight::SetSecondarySpecular(const vector4& c)
+nLight::Type
+nLight::StringToType(const char* str)
 {
-    this->secSpecular = c;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const vector4&
-nLight::GetSecondarySpecular() const
-{
-    return this->secSpecular;
+    n_assert(str);
+    if (0 == strcmp(str, "Point")) return Point;
+    else if (0 == strcmp(str, "Directional")) return Directional;
+    else if (0 == strcmp(str, "Spot")) return Spot;
+    else
+    {
+        n_error("nLight::StringToType(): invalid light type string '%s'!", str);
+        return InvalidType;
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -1,17 +1,12 @@
-#line 1 "gui.fx"
 //------------------------------------------------------------------------------
 //  gui.fx
 //
 //  A 2d rectangle shader for GUI rendering.
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
-
 shared float4x4 ModelViewProjection;   // the modelview*projection matrix
 texture DiffMap0;
 float4 MatDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-//------------------------------------------------------------------------------
-//  declare shader input/output parameters
 //------------------------------------------------------------------------------
 struct vsInput
 {
@@ -31,8 +26,6 @@ struct psOutput
 };
 
 //------------------------------------------------------------------------------
-//  Texture sampler definitions
-//------------------------------------------------------------------------------
 sampler ColorMap = sampler_state
 {
     Texture = <DiffMap0>;
@@ -44,8 +37,6 @@ sampler ColorMap = sampler_state
 };
 
 //------------------------------------------------------------------------------
-//  the vertex shader function
-//------------------------------------------------------------------------------
 vsOutput vsMain(const vsInput vsIn)
 {
     vsOutput vsOut;
@@ -55,8 +46,6 @@ vsOutput vsMain(const vsInput vsIn)
 }
 
 //------------------------------------------------------------------------------
-//  the pixel shader function
-//------------------------------------------------------------------------------
 psOutput psMain(const vsOutput psIn)
 {
     psOutput psOut;
@@ -65,15 +54,12 @@ psOutput psMain(const vsOutput psIn)
 }
 
 //------------------------------------------------------------------------------
-//  Technique: VertexShader 1.1, PixelShader 1.1, 1 Texture Layer
-//------------------------------------------------------------------------------
-technique t0
+technique tColor
 {
     pass p0
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        // ZFunc            = Always;
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
         AlphaBlendEnable = True;
         SrcBlend         = SrcAlpha;

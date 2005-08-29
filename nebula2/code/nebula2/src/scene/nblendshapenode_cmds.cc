@@ -14,8 +14,6 @@ static void n_setlocalboxat(void* slf, nCmd* cmd);
 static void n_getlocalboxat(void* slf, nCmd* cmd);
 static void n_setweightat(void* slf, nCmd* cmd);
 static void n_getweightat(void* slf, nCmd* cmd);
-static void n_setmeshusage(void* slf, nCmd* cmd);
-static void n_getmeshusage(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -45,8 +43,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffffff_getlocalboxat_i",    'GLBA', n_getlocalboxat);
     cl->AddCmd("v_setweightat_if",          'SWEA', n_setweightat);
     cl->AddCmd("f_getweightat_i",           'GWEA', n_getweightat);
-    cl->AddCmd("v_setmeshusage_s",          'SMSU', n_setmeshusage);
-    cl->AddCmd("s_getmeshusage_v",          'GMSU', n_getmeshusage);
+
     cl->EndCmds();
 }
 
@@ -239,45 +236,6 @@ n_getweightat(void* slf, nCmd* cmd)
     nBlendShapeNode* self = (nBlendShapeNode*) slf;
     int shapeIndex = cmd->In()->GetI();
     cmd->Out()->SetF(self->GetWeightAt(shapeIndex));
-}
-
-//------------------------------------------------------------------------------
-/**
-@cmd
-setmeshusage
-@input
-s(usage flag string)
-@output
-v
-@info
-Set the usage flags for the mesh.
-*/
-static void
-n_setmeshusage(void* slf, nCmd* cmd)
-{
-    nBlendShapeNode* self = (nBlendShapeNode*) slf;
-    const int flags = nMesh2::ConvertUsageStringToFlags(cmd->In()->GetS());
-    self->SetMeshUsage(flags);
-}
-
-
-//------------------------------------------------------------------------------
-/**
-@cmd
-getmeshusage
-@input
-v
-@output
-s(usage flag string)
-@info
-Gets the usage flags for the mesh.
-*/
-static void
-n_getmeshusage(void* slf, nCmd* cmd)
-{
-    nBlendShapeNode* self = (nBlendShapeNode*) slf;
-    const nString & flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage());
-    cmd->Out()->SetS(flagString.Get());
 }
 
 //------------------------------------------------------------------------------

@@ -60,6 +60,7 @@ nD3D9Server::nD3D9Server() :
     #ifdef __NEBULA_STATS__
     timeStamp(0.0),
     queryResourceManager(0),
+/*
     dbgQueryTextureTrashing("gfxTexTrashing", nArg::Bool),
     dbgQueryTextureApproxBytesDownloaded("gfxTexApproxBytesDownloaded", nArg::Int),
     dbgQueryTextureNumEvicts("gfxTexNumEvicts", nArg::Int),
@@ -71,6 +72,7 @@ nD3D9Server::nD3D9Server() :
     dbgQueryTextureWorkingSetBytes("gfxTexWorkingSetBytes", nArg::Int),
     dbgQueryTextureTotalManaged("gfxTexTotalManaged", nArg::Int),
     dbgQueryTextureTotalBytes("gfxTexTotalBytes", nArg::Int),
+*/
     dbgQueryNumPrimitives("gfxNumPrimitives", nArg::Int),
     dbgQueryFPS("gfxFPS", nArg::Float),
     dbgQueryNumDrawCalls("gfxNumDrawCalls", nArg::Int),
@@ -84,22 +86,24 @@ nD3D9Server::nD3D9Server() :
     d3d9Device(0),
     depthStencilSurface(0),
     backBufferSurface(0),
+    captureSurface(0),
     effectPool(0),
     featureSet(InvalidFeatureSet),
-    d3dxLine(0),
-    winVersion(UnknownWin),
+#if __NEBULA_STATS__
     statsFrameCount(0),
     statsNumTextureChanges(0),
     statsNumRenderStateChanges(0),
     statsNumDrawCalls(0),
-    statsNumPrimitives(0)
+    statsNumPrimitives(0),
+#endif
+    d3dxLine(0)
 {
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
 
-    // detect windows version
-    this->DetectWindowsVersion();
+    // open the app window
+    this->windowHandler.OpenWindow();
 
     // we used to open the window here, but we now do it lazily in OpenDisplay()
     // to give the calling app the chance to set (e.g.) the window's name and 
@@ -107,6 +111,9 @@ nD3D9Server::nD3D9Server() :
 
     // initialize Direct3D
     this->D3dOpen();
+
+    // initialize the device identifier
+    this->InitDeviceIdentifier();
 }
   
 //------------------------------------------------------------------------------
@@ -184,11 +191,15 @@ nD3D9Server::OpenDisplay()
         nGfxServer2::OpenDisplay();
 
         // clear display
-        if (this->BeginScene())
+        if (this->BeginFrame())
         {
-            this->Clear(AllBuffers, 0.0f, 0.0f, 0.0f, 1.0f, 1.0, 0);
-            this->EndScene();
-            this->PresentScene();
+            if (this->BeginScene())
+            {
+                this->Clear(AllBuffers, 0.0f, 0.0f, 0.0f, 1.0f, 1.0, 0);
+                this->EndScene();
+                this->PresentScene();
+            }
+            this->EndFrame();
         }
         return true;
     }
@@ -222,66 +233,31 @@ nD3D9Server::Trigger()
 
 //-----------------------------------------------------------------------------
 /**
-    Create screen shot and save it to given filename. (.bmp file)
+    Create screen shot and save it to given filename. (.jpg file)
 
-    @param fileName filename for screen shot.
+    @param  fileName    filename for screen shot.
+
+    - 25-Apr-05 floh    rewritten for performance
 */
 bool
 nD3D9Server::SaveScreenshot(const char* fileName)
 {
     n_assert(fileName);
+    n_assert(this->d3d9Device);
     HRESULT hr;
 
-    // get adapter number and device window
-    D3DDEVICE_CREATION_PARAMETERS dcp;
-    this->d3d9Device->GetCreationParameters(&dcp);
-
-    // get width and height for the front buffer surface
-    D3DDISPLAYMODE dispMode;
-    hr = this->d3d9->GetAdapterDisplayMode(dcp.AdapterOrdinal, &dispMode);
-    if (FAILED(hr))
-    {
-        n_printf("nD3D9Server::Screenshot(): Failed to get 'adapter display mode'!\n");
-        return false;
-    }
-
-    // create the front buffer surface to save for screenshot. 
-    IDirect3DSurface9* surf;
-    hr = this->d3d9Device->CreateOffscreenPlainSurface(dispMode.Width, dispMode.Height, 
-                                                       D3DFMT_A8R8G8B8,
-                                                       D3DPOOL_SCRATCH,
-                                                       &surf,
-                                                       NULL);
-    if (FAILED(hr))
-    {
-        n_printf("nD3D9Server::Screenshot(): Failed to 'create offscreen plain surface'!\n");
-        return false;
-    }
-
-    // get a copy of the front buffer surface.
-    this->d3d9Device->GetFrontBufferData(0, surf);
-
-    // get the rectangle into which rendering is drawn
-    // it's the client rectangle of the focus window in screen coordinates
-    RECT rc;
-    GetClientRect(dcp.hFocusWindow, &rc);
-    ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.left));
-    ClientToScreen(dcp.hFocusWindow, LPPOINT(&rc.right));
-
-    // mangle filename
+    // get mangled path name
     nString mangledPath = nFileServer2::Instance()->ManglePath(fileName);
-    
-    // determine desired gfx format by file extension
-    D3DXIMAGE_FILEFORMAT format = GetFormatFromExtension(mangledPath);
 
-    // save the front buffer surface to given filename.
-    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), format, surf, 0, &rc);
-    if (FAILED(hr))
-    {
-        n_printf("nD3D9Server::Screenshot(): Failed to save file '%s'!\n", fileName);
-        return false;
-    }
+    // copy back buffer to offscreen surface
+    hr = this->d3d9Device->GetRenderTargetData(this->backBufferSurface, this->captureSurface);
+    n_assert(SUCCEEDED(hr));
 
+    // save image
+    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), D3DXIFF_JPG, this->captureSurface, NULL, NULL);
+    n_assert(SUCCEEDED(hr));
+
+    // all ok
     return true;
 }
 
@@ -296,10 +272,11 @@ nD3D9Server::EnterDialogBoxMode()
     n_assert(this->d3d9Device);
     nGfxServer2::EnterDialogBoxMode();
     HRESULT hr = this->d3d9Device->SetDialogBoxMode(TRUE);
-    n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode()");
+	n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode(): Failed to enter dialog box mode!");
 
     // reset the device to fix a know issue for win98/ME where this dialogbox is sometimes hidden
-    if (Win32_Windows == this->GetWindowsVersion()) // windows 95 and family
+    nWin32Wrapper::WindowsVersion winVersion = nWin32Wrapper::Instance()->GetWindowsVersion();
+    if (nWin32Wrapper::Win32_Windows == winVersion) // windows 95 and family
     {
         // invoke the reanimation procedure...
         this->OnDeviceCleanup(false);
@@ -315,10 +292,8 @@ nD3D9Server::EnterDialogBoxMode()
         this->presentParams.AutoDepthStencilFormat = zbufFormat;
 
         hr = this->d3d9Device->Reset(&this->presentParams);
-        if (D3DERR_INVALIDCALL == hr ||FAILED(hr))
-        {
-            n_error("nD3D9Server: Failed to reset d3d device!\n");
-        }
+        n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode(): Failed to reset d3d device!");
+
         // initialize the device
         this->InitDeviceState();
 
@@ -373,49 +348,6 @@ nD3D9Server::SetWindowTitle(const char* title)
 
 //-----------------------------------------------------------------------------
 /**
-    Detect the current Windows version,
-    only makes a differnence betweem WinNT family, Win95 familiy and the rest.
-*/
-void
-nD3D9Server::DetectWindowsVersion()
-{
-    // copy and paste from the windows platform SDK GetVersionEx example
-    
-    OSVERSIONINFOEX osvi;
-    BOOL bOsVersionInfoEx;
-
-    // Try calling GetVersionEx using the OSVERSIONINFOEX structure.
-    // If that fails, try using the OSVERSIONINFO structure.
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-
-    if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
-    {
-        // If OSVERSIONINFOEX doesn't work, try OSVERSIONINFO.
-        osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-        if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
-        {
-            this->winVersion = UnknownWin;
-            return;
-        }
-    }
-
-    switch (osvi.dwPlatformId)
-    {
-        case VER_PLATFORM_WIN32_NT:
-            this->winVersion = Win32_NT;
-            break;
-        case VER_PLATFORM_WIN32_WINDOWS:
-            this->winVersion = Win32_Windows;
-            break;
-        case VER_PLATFORM_WIN32s:
-            this->winVersion = UnknownWin;
-            break;
-   }
-}
-
-//-----------------------------------------------------------------------------
-/**
     Return true when vertex shaders are running in emulation.
 */
 bool
@@ -425,7 +357,14 @@ nD3D9Server::AreVertexShadersEmulated()
 #if N_D3D9_FORCEMIXEDVERTEXPROCESSING
     return true;
 #else
-    return 0 == (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING);
+    if (DX7 == this->GetFeatureSet())
+    {
+        return true;
+    }
+    else
+    {
+        return 0 == (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING);
+    }
 #endif
 }
 

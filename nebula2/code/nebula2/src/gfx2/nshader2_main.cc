@@ -10,8 +10,7 @@ nNebulaClass(nShader2, "nresource");
 //------------------------------------------------------------------------------
 /**
 */
-nShader2::nShader2() :
-    shaderIndex(-1)
+nShader2::nShader2()
 {
     // empty
 }
@@ -243,6 +242,15 @@ nShader2::End()
 /**
 */
 bool
+nShader2::HasTechnique(const char* /*t*/) const
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
 nShader2::SetTechnique(const char* /*t*/)
 {
     return false;
@@ -256,5 +264,3 @@ nShader2::GetTechnique() const
 {
     return 0;
 }
-
-

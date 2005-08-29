@@ -37,7 +37,7 @@ static void n_hasscalepivot(void* slf, nCmd* cmd);
 
     @cppclass
     nTransformNode
-    
+
     @superclass
     nscenenode
 

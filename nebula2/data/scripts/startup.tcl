@@ -29,6 +29,7 @@ proc OnStartup {} {
     .setassign "data"     "$home/data/"
     .setassign "export"   "$proj/export/"
 
+    .setassign "shaders"  "data:shaders"
     .setassign "scripts"  "data:scripts"
     .setassign "physics"  "export:physics/"
     .setassign "meshes"   "export:meshes/"
@@ -63,25 +64,15 @@ proc OnGraphicsStartup {} {
 
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
-        if {$featureSet == "dx9"} {
-            # DX9 hardware without floating point render targets
-            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"
-        } elseif {$featureSet == "dx9flt"} {
-            # DX9 hardware with floating point render targets, use HDR render path
-            /sys/servers/scene.setrenderpathfilename "data:shaders/dx9hdr_renderpath.xml"
+        if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {
+            # use HDR renderer for dx9 graphics cards (the current
+            # HDR renderer doesn't use float render targets anymore)
+            /sys/servers/scene.setrenderpathfilename "shaders:dx9hdr_renderpath.xml"
         } else {
             # non-DX9 hardware, use fixed function render path
-            /sys/servers/scene.setrenderpathfilename "data:shaders/dx7_renderpath.xml"
+            /sys/servers/scene.setrenderpathfilename "shaders:dx7_renderpath.xml"
         }
-    } else {
-        /sys/servers/scene.setrenderpathfilename "data:shaders/dx9_renderpath.xml"
     }
-
-    # enable zFail shadow rendering
-    if {[exists /sys/servers/shadow]} {
-        /sys/servers/shadow.setusezfail true
-    }
-
     sel $oldCwd
 }
 
@@ -95,17 +86,25 @@ proc OnGraphicsShutdown {} {
 }
 
 #-------------------------------------------------------------------------------
-#   OnMapInput is called back by nviewer when the input mapping should be
-#   defined.
+#   OnViewerMapInput
+#
+#   This procedure is called by nviewer when input should be mapped.
 #-------------------------------------------------------------------------------
-proc OnMapInput {} {
+proc OnViewerMapInput {} {
     set cwd [psel]
     sel /sys/servers/input
     .beginmap
+    
     .map "keyb0:space.down" "reset"
     .map "keyb0:esc.down" "script:/sys/servers/gui.togglesystemgui"
+    .map "keyb0:f1.down" "mayacontrols"
+    .map "keyb0:f2.down" "flycontrols"
+    .map "keyb0:f4.down"  "script:ToggleSceneVisualization"    
+    .map "keyb0:f5.down" "script:/sys/servers/capture.toggle"
     .map "keyb0:f11.down" "console"
     .map "keyb0:t.down" "script:/sys/servers/time.resettime"
+    .map "keyb0:1.down" "script:/sys/servers/time.stoptime"
+    .map "keyb0:2.down" "script:/sys/servers/time.starttime"
     .map "relmouse0:btn0.pressed" "look"
     .map "relmouse0:btn1.pressed" "zoom"
     .map "relmouse0:btn2.pressed" "pan"
@@ -117,21 +116,91 @@ proc OnMapInput {} {
     .map "relmouse0:+y" "down"
     .map "relmouse0:-z" "zoomIn"
     .map "relmouse0:+z" "zoomOut"
-    .map "keyb0:f1.down" "mayacontrols"
-    .map "keyb0:f2.down" "flycontrols"
-    .map "keyb0:f3.down" "speed0"
-    .map "keyb0:f4.down" "speed1"
-    .map "keyb0:f5.down" "speed2"
-    .map "keyb0:f6.down" "screenshot"
     .endmap
     sel $cwd
 }
 
 #-------------------------------------------------------------------------------
-#   This procedure is called when the gui server is opened.
+#   OnMapInput
+#
+#   This procedure is called when input should be mapped.
+#-------------------------------------------------------------------------------
+proc OnMapInput {} {
+    set oldCwd [psel]
+    sel /sys/servers/input
+    
+    .beginmap
+    .map "keyb0:f1.down"                "script:/sys/servers/gui.togglesystemgui"
+    .map "keyb0:f2.down"                "togglePhysicsVisualization"
+    .map "keyb0:f3.down"                "toggleGraphicsVisualization"
+    .map "keyb0:f4.down"                "script:ToggleSceneVisualization"    
+    .map "keyb0:f5.down"                "script:/sys/servers/capture.toggle"
+    .map "keyb0:f9.down"                "toggleFOVVisualization"
+    .map "keyb0:f12.down"               "script:DoScreenCapture "
+    .map "keyb0:esc.down"               "escape"
+    
+    .map "relmouse0:btn2.down"          "vwrOn"
+    .map "relmouse0:btn2.up"            "vwrOff"
+    .map "relmouse0:-x"                 "vwrLeft"
+    .map "relmouse0:+x"                 "vwrRight"
+    .map "relmouse0:-y"                 "vwrUp"
+    .map "relmouse0:+y"                 "vwrDown"
+    .map "keyb0:space.down"             "vwrReset"
+    
+    .map "relmouse0:btn0.down"          "lmbDown"
+    .map "relmouse0:btn0.up"            "lmbUp"
+    .map "relmouse0:btn0.pressed"       "lmbPressed"
+    .map "relmouse0:btn1.down"          "rmbDown"
+    .map "relmouse0:btn1.up"            "rmbUp"
+    .map "relmouse0:btn1.pressed"       "rmbPressed"
+    .map "relmouse0:btn2.down"          "mmbDown"
+    .map "relmouse0:btn2.up"            "mmbUp"
+    .map "relmouse0:btn2.pressed"       "mmbPressed"
+    
+    .map "keyb0:ctrl.pressed"           "ctrlPressed"
+    .map "keyb0:shift.pressed"          "shiftPressed"
+    .map "keyb0:home.pressed"           "zoomIn"
+    .map "keyb0:end.pressed"            "zoomOut"
+    .map "keyb0:w.pressed"              "moveForward"
+    .map "keyb0:a.pressed"              "moveLeft"
+    .map "keyb0:s.pressed"              "moveBackward"
+    .map "keyb0:d.pressed"              "moveRight"
+    .map "keyb0:w.up"                   "moveStop"
+    .map "keyb0:a.up"                   "moveStop"
+    .map "keyb0:s.up"                   "moveStop"
+    .map "keyb0:d.up"                   "moveStop"
+    .map "keyb0:up.pressed"             "moveForward"
+    .map "keyb0:left.pressed"           "moveLeft"
+    .map "keyb0:right.pressed"          "moveRight"
+    .map "keyb0:down.pressed"           "moveBackward"
+    .map "keyb0:up.up"                  "moveStop"
+    .map "keyb0:left.up"                "moveStop"
+    .map "keyb0:down.up"                "moveStop"
+    .map "keyb0:right.up"               "moveStop"
+    .map "keyb0:space.down"             "moveJump"
+    .map "keyb0:e.down"                 "use"
+    .map "keyb0:r.down"                 "reload"
+    .map "keyb0:shift.down"             "inventoryOn"    
+    .map "keyb0:shift.up"             	"inventoryOff"    
+    .map "relmouse0:+zbtn.down"         "ScrollDown"
+    .map "relmouse0:-zbtn.down"         "ScrollUp"
+    .map "keyb0:tab.up"                 "cycleFocus"    
+    
+#    .map "keyb0:1.down"                 "script:DebugRecordPosition"
+#    .map  keyb0:f1.down                 "script:/sys/servers/console.watch *"
+#    .map  keyb0:f1.up                   "script:/sys/servers/console.unwatch"
+    
+    .endmap
+    
+    sel $oldCwd
+}
+
+#-------------------------------------------------------------------------------
+#   OnGuiServerOpen
+#
+#   This function is called when the Nebula2 GUI server is opened.
 #-------------------------------------------------------------------------------
 proc OnGuiServerOpen {} {
-
     set cwd [psel]
 
     # initialize the default tooltip
@@ -309,8 +378,22 @@ proc OnGuiServerOpen {} {
 }
 
 #-------------------------------------------------------------------------------
+#   OnGuiServerClose
+#
 #   This procedure is called when the gui server is closed.
 #-------------------------------------------------------------------------------
 proc OnGuiServerClose {} {
 
+}
+
+#-------------------------------------------------------------------------------
+#   ToggleSceneVisualization
+#-------------------------------------------------------------------------------
+proc ToggleSceneVisualization {} {
+
+    if {[/sys/servers/scene.getrenderdebug] == "true"} {
+        /sys/servers/scene.setrenderdebug "false"
+    } else {
+        /sys/servers/scene.setrenderdebug "true"
+    }
 }

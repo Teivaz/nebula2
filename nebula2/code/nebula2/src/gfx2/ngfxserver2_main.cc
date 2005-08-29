@@ -18,6 +18,7 @@ nGfxServer2* nGfxServer2::Singleton = 0;
 */
 nGfxServer2::nGfxServer2() :
     displayOpen(false),
+    inBeginFrame(false),
     inBeginScene(false),
     inBeginLines(false),
     inBeginShapes(false),
@@ -33,9 +34,10 @@ nGfxServer2::nGfxServer2() :
     fontScale(1.0f),
     fontMinHeight(12),
     deviceIdentifier(GenericDevice),
-    gamma(1.0f),
-    brightness(65280.f/65535.f-0.5f),
-    contrast(65280.f/65535.f-0.5f)
+    refRenderTargets(MaxRenderTargets),
+    lightingType(Off),
+    scissorRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
+    hints(0)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -45,6 +47,12 @@ nGfxServer2::nGfxServer2() :
     {
         this->transformTopOfStack[i] = 0;
     }
+
+    #if __NEBULA_STATS__
+    this->profGUIBreakLines.Initialize("profGUI_BreakLines");
+    this->profGUIGetTextExtent.Initialize("profGUI_GetTextExtent");
+    this->profGUIDrawText.Initialize("profGUI_DrawText");
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -132,6 +140,18 @@ nInstanceStream*
 nGfxServer2::NewInstanceStream(const char* rsrcName)
 {
     return (nInstanceStream*) this->refResource->NewResource("ninstancestream", rsrcName, nResource::Other);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a new occlusion query object.
+
+    @return     pointer to a new nOcclusionQuery object
+*/
+nOcclusionQuery*
+nGfxServer2::NewOcclusionQuery()
+{
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -270,6 +290,33 @@ nGfxServer2::ClearLights()
 
 //------------------------------------------------------------------------------
 /**
+    Reset the light array. This will happen automatically in BeginScene().
+*/
+void
+nGfxServer2::ClearPointLights()
+{
+    int index;
+    for(index = 0; index < this->lightArray.Size(); index++)
+    {
+        if(nLight::Point == this->lightArray[index].GetType())
+        {
+            this->ClearLight(index);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGfxServer2::ClearLight(int index)
+{
+    n_assert(index >= 0);
+    this->lightArray.Erase(index);
+}
+
+//------------------------------------------------------------------------------
+/**
     Add a light to the light array. Return new number of lights.
 */
 int
@@ -281,13 +328,49 @@ nGfxServer2::AddLight(const nLight& light)
 
 //------------------------------------------------------------------------------
 /**
-    Begin rendering to the current render target.
+    Begin rendering the current frame. This is guaranteed to be called
+    exactly once per frame.
+*/
+bool
+nGfxServer2::BeginFrame()
+{
+    n_assert(!this->inBeginFrame);
+    n_assert(!this->inBeginScene);
+    this->inBeginFrame = true;
+
+    #if __NEBULA_STATS__
+    this->profGUIBreakLines.ResetAccum();
+    this->profGUIDrawText.ResetAccum();
+    this->profGUIGetTextExtent.ResetAccum();
+    #endif
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish rendering the current frame. This is guaranteed to be called
+    exactly once per frame after PresentScene() has happened.
+*/
+void
+nGfxServer2::EndFrame()
+{
+    n_assert(this->inBeginFrame);
+    n_assert(!this->inBeginScene);
+    this->inBeginFrame = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin rendering to the current render target. This may get called
+    several times per frame.
 
     @return     false on error, do not call EndScene() or Present() in this case
 */
 bool
 nGfxServer2::BeginScene()
 {
+    n_assert(this->inBeginFrame);
     n_assert(!this->inBeginScene);
     if (this->displayOpen)
     {
@@ -308,6 +391,7 @@ nGfxServer2::BeginScene()
 void
 nGfxServer2::EndScene()
 {
+    n_assert(this->inBeginFrame);
     n_assert(this->inBeginScene);
     this->inBeginScene = false;
 }
@@ -335,39 +419,42 @@ nGfxServer2::Clear(int /*bufferTypes*/, float /*red*/, float /*green*/, float /*
 
 //------------------------------------------------------------------------------
 /**
-    Set the current render target. This method must be called outside
-    BeginScene()/EndScene(). The method will increment the refcount
-    of the render target object and decrement the refcount of the
+    Set the current render target at a given index (for simultaneous render targets). 
+    This method must be called outside BeginScene()/EndScene(). The method will 
+    increment the refcount of the render target object and decrement the refcount of the
     previous render target.
 
-    @param  t   the new render target, or 0 to render to the frame buffer
+    @param  index   render target index
+    @param  t       the new render target, or 0 to render to the frame buffer
 */
 void
-nGfxServer2::SetRenderTarget(nTexture2* t)
+nGfxServer2::SetRenderTarget(int index, nTexture2* t)
 {
     n_assert(!this->inBeginScene);
     if (t)
     {
         t->AddRef();
     }
-    if (this->refRenderTarget.isvalid())
+    if (this->refRenderTargets[index].isvalid())
     {
-        this->refRenderTarget->Release();
-        this->refRenderTarget.invalidate();
+        this->refRenderTargets[index]->Release();
+        this->refRenderTargets[index].invalidate();
     }
-    this->refRenderTarget = t;
+    this->refRenderTargets[index] = t;
 }
 
 //------------------------------------------------------------------------------
 /**
     Set the current mesh object for rendering.
 
-    @param  mesh        pointer to a nMesh2 object
+    @param  vbMesh  mesh which delivers the vertex buffer
+    @param  ibMesh  mesh which delivers the index buffer
 */
 void
-nGfxServer2::SetMesh(nMesh2* mesh)
+nGfxServer2::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
 {
-    this->refMesh = mesh;
+    this->refVbMesh = vbMesh;
+    this->refIbMesh = ibMesh;
 }
 
 //------------------------------------------------------------------------------
@@ -380,20 +467,6 @@ void
 nGfxServer2::SetMeshArray(nMeshArray* meshArray)
 {
     this->refMeshArray = meshArray;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set the current texture object for rendering.
-
-    @param  stage       texture stage index
-    @param  texture     pointer to a nTexture2 object
-*/
-void
-nGfxServer2::SetTexture(int stage, nTexture2* texture)
-{
-    n_assert((stage >= 0) && (stage < MaxTextureStages));
-    this->refTextures[stage] = texture;
 }
 
 //------------------------------------------------------------------------------
@@ -469,8 +542,6 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
     bool updModelView = false;
     bool updModelLight = false;
     bool updViewProjection = false;
-    bool updModelLightProj = false;
-    bool updModelLightProjection = false;
     switch (type)
     {
         case Model:
@@ -491,9 +562,11 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 
         case Projection:
             this->transform[Projection] = matrix;
-            updViewProjection = true;
-            updModelLightProj = true;
+            updViewProjection = true;            
             break;
+
+        case ShadowProjection:
+            this->transform[ShadowProjection] = matrix;
 
         case Texture0:
         case Texture1:
@@ -505,7 +578,6 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
         case Light:
             this->transform[type] = matrix;
             updModelLight = true;
-            updModelLightProj = true;
             break;
 
         default:
@@ -532,10 +604,6 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
     if (updModelView || updViewProjection)
     {
         this->transform[ModelViewProjection] = this->transform[ModelView] * this->transform[Projection];
-    }
-    if (updModelLight || updModelLightProjection)
-    {
-        this->transform[ModelLightProjection] = this->transform[ModelLight] * this->transform[Projection];
     }
 }
 
@@ -844,6 +912,36 @@ nGfxServer2::DrawShape(ShapeType /*type*/, const matrix44& /*model*/, const vect
 
 //------------------------------------------------------------------------------
 /**
+    Render a shape without shader management.
+*/
+void
+nGfxServer2::DrawShapeNS(ShapeType type, const matrix44& model)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Draw prmitives with the given model matrix with given color.
+*/
+void 
+nGfxServer2::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Draw indexed prmitives with the given model matrix with given color.
+*/
+void
+nGfxServer2::DrawShapeIndexedPrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int numVertices, int vertexWidth, void* indices, IndexType indexType, const matrix44& model, const vector4& color)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
     Finish shape drawing.
 */
 void
@@ -899,6 +997,10 @@ nGfxServer2::RestoreGamma()
 void
 nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& outString)
 {
+#if __NEBULA_STATS__
+    this->profGUIBreakLines.StartAccum();
+#endif
+
     n_assert(!inText.IsEmpty());
     n_assert(this->refFont->IsValid());
     
@@ -975,6 +1077,9 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             }
         }
     }
+#if __NEBULA_STATS__
+    this->profGUIBreakLines.StopAccum();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1011,3 +1116,30 @@ nGfxServer2::SetSkipMsgLoop(bool /*skip*/)
 {
     // empty.
 }
+
+//------------------------------------------------------------------------------
+/**
+    Set the current scissor rectangle in virtual screen space coordinate
+    (top-left is (0.0f, 0.0f), bottom-right is (1.0f, 1.0f)). This
+    method doesn't enable or disable the scissor rectangle, this must be
+    done externally in the shader. The default scissor rectangle
+    is ((0.0f, 0.0f), (1.0f, 1.0f)).
+*/
+void
+nGfxServer2::SetScissorRect(const rectangle& r)
+{
+    this->scissorRect = r;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set user defined clip planes in clip space. Clip space is where
+    outgoing vertex shader vertices live in. Up to 6 clip planes
+    can be defined. Provide an empty array to clear all clip planes.
+*/
+void
+nGfxServer2::SetClipPlanes(const nArray<plane>& planes)
+{
+    this->clipPlanes = planes;
+}
+

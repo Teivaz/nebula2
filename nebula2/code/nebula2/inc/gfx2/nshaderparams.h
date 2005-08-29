@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShaderParams
+    @ingroup Gfx2
 
     A container for shader parameters. A shader parameter block
     can be applied to a shader with one call (instead of issuing dozens
@@ -15,6 +16,7 @@
 */
 #include "gfx2/nshaderstate.h"
 #include "gfx2/nshaderarg.h"
+#include "util/narray.h"
 
 //------------------------------------------------------------------------------
 class nShaderParams
@@ -34,6 +36,8 @@ public:
     void SetArg(nShaderState::Param p, const nShaderArg& arg);
     /// get a single parameter
     const nShaderArg& GetArg(nShaderState::Param p) const;
+    /// clear a single parameter
+    void ClearParam(nShaderState::Param p);
     /// get shader parameter using direct index
     nShaderState::Param GetParamByIndex(int index) const;
     /// get shader argument using direct index
@@ -127,6 +131,7 @@ inline
 const nShaderArg&
 nShaderParams::GetArgByIndex(int index) const
 {
+    n_assert(index >= 0 && index < this->paramArray.Size());
     return this->paramArray[index].arg;
 }
 
@@ -137,6 +142,7 @@ inline
 nShaderState::Param
 nShaderParams::GetParamByIndex(int index) const
 {
+    n_assert(index >= 0 && index < this->paramArray.Size());
     return this->paramArray[index].param;
 }
 
@@ -147,7 +153,7 @@ inline
 bool
 nShaderParams::IsParameterValid(nShaderState::Param p) const
 {
-    n_assert(p < nShaderState::NumParameters);
+    n_assert(p >= 0 && p < nShaderState::NumParameters);
     return (-1 != this->paramIndex[p]);
 }
 
@@ -158,7 +164,7 @@ inline
 void
 nShaderParams::SetArg(nShaderState::Param p, const nShaderArg& arg)
 {
-    n_assert(p < nShaderState::NumParameters);
+    n_assert(p >= 0 && p < nShaderState::NumParameters);
     char index = this->paramIndex[p];
 
     ParamAndArg paramAndArg(p, arg);
@@ -180,8 +186,36 @@ inline
 const nShaderArg&
 nShaderParams::GetArg(nShaderState::Param p) const
 {
-    n_assert(p < nShaderState::NumParameters);
+    n_assert(p >= 0 && p < nShaderState::NumParameters);
     return this->paramArray[this->paramIndex[p]].arg;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nShaderParams::ClearParam(nShaderState::Param p)
+{
+    n_assert(p >= 0 && p < nShaderState::NumParameters);
+    char index = this->paramIndex[p];
+    
+    if (-1 != index)
+    {
+        // remove arg
+        this->paramArray.Erase(index);
+        this->paramIndex[p] = -1;
+
+        // fix remaining indices
+        int i;
+        for (i = 0; i < nShaderState::NumParameters; i++)
+        {
+            if (this->paramIndex[i] >= index)
+            {
+                --this->paramIndex[i];
+            }
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

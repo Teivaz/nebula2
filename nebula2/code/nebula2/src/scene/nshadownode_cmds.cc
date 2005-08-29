@@ -68,7 +68,7 @@ static void
 n_getmesh(void* slf, nCmd* cmd)
 {
     nShadowNode* self = (nShadowNode*) slf;
-    cmd->Out()->SetS(self->GetMesh());
+    cmd->Out()->SetS(self->GetMesh().Get());
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ nShadowNode::SaveCmds(nPersistServer* ps)
 
         //setshadowmesh
         cmd = ps->GetCmd(this, 'SSHM');
-        cmd->In()->SetS(this->GetMesh());
+        cmd->In()->SetS(this->GetMesh().Get());
         ps->PutCmd(cmd);
 
         //setshadowmeshgroup

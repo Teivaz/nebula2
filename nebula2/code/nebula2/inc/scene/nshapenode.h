@@ -41,9 +41,10 @@ public:
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// get the mesh usage flags required by this shape node
-    int GetMeshUsage() const;
-    /// override the default mesh usage for this shape node
-    void SetMeshUsage(int);
+    virtual int GetMeshUsage() const;
+    /// set the mesh usage flags required by this shape node
+    void SetMeshUsage(int usage);
+
     /// set the mesh resource name
     void SetMesh(const char* name);
     /// get the mesh resource name
@@ -63,11 +64,11 @@ protected:
     /// unload mesh resource
     void UnloadMesh();
 
+    int meshUsage;
     nRef<nMesh2> refMesh;
     nString meshName;
     int groupIndex;
     nDynAutoRef<nResourceLoader> refMeshResourceLoader;
-    int meshUsage;
 };
 
 //------------------------------------------------------------------------------
@@ -88,6 +89,31 @@ int
 nShapeNode::GetGroupIndex() const
 {
     return this->groupIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+inline
+int
+nShapeNode::GetMeshUsage() const
+{
+    return this->meshUsage;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nShapeNode::SetMeshUsage(int usage)
+{
+    this->meshUsage = usage;
 }
 
 //------------------------------------------------------------------------------

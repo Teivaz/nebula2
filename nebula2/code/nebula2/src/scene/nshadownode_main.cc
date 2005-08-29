@@ -1,20 +1,21 @@
 //------------------------------------------------------------------------------
 //  nshadownode_main.cc
-//  (C) 2004 RadonLabs GmbH
+//  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "scene/nshadownode.h"
+#include "shadow2/nshadowserver2.h"
 
 nNebulaScriptClass(nShadowNode, "ntransformnode");
 
-const float nShadowNode::maxSmallObjectDistance = 50.0f;
+const float nShadowNode::maxSmallObjectDistance = 30.0f;
 
 //------------------------------------------------------------------------------
 /**
 */
-nShadowNode::nShadowNode()
-:   groupIndex(0)
+nShadowNode::nShadowNode() :
+    groupIndex(0)
 {
-    //empty
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -22,87 +23,7 @@ nShadowNode::nShadowNode()
 */
 nShadowNode::~nShadowNode()
 {
-    if (this->refShadowCaster.isvalid())
-    {
-        this->refShadowCaster->Release();
-        this->refShadowCaster.invalidate();
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Unload mesh resource if valid.
-*/
-void
-nShadowNode::UnloadShadowCaster()
-{
-    if (this->refShadowCaster.isvalid())
-    {
-        this->refShadowCaster->Release();
-        this->refShadowCaster.invalidate();
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Setup the ShadowCaster
-*/
-bool
-nShadowNode::LoadShadowCaster()
-{
-    nStaticShadowCaster* shadowCaster = (nStaticShadowCaster*) nShadowServer::Instance()->NewShadowCaster(nShadowServer::Static, this->GetMesh());
-    n_assert(shadowCaster);
-
-    if (!shadowCaster->IsLoaded())
-    {
-        shadowCaster->SetFilename(this->GetMesh());
-        bool shadowCasterLoaded = shadowCaster->Load();
-        n_assert(shadowCasterLoaded);
-    }
-   
-    this->refShadowCaster = shadowCaster;
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set the resource name. The mesh resource name consists of the
-    filename of the mesh.
-*/
-void
-nShadowNode::SetMesh(const char* name)
-{
-    n_assert(name);
-    this->UnloadShadowCaster();
-    this->meshName = name;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Load the resources needed by this object.
-*/
-bool
-nShadowNode::LoadResources()
-{
-    if (nTransformNode::LoadResources())
-    {
-        if (this->LoadShadowCaster())
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Unload the resources if refcount has reached zero.
-*/
-void
-nShadowNode::UnloadResources()
-{
-    nTransformNode::UnloadResources();
-    this->UnloadShadowCaster();
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -117,12 +38,39 @@ nShadowNode::HasShadow() const
 
 //------------------------------------------------------------------------------
 /**
-
+    Initializes the embedded shadow caster.
 */
 bool
-nShadowNode::ApplyShadow(nSceneServer* /*sceneServer*/)
+nShadowNode::LoadResources()
 {
-    return this->refShadowCaster->ApplyShadow();
+    if (nTransformNode::LoadResources())
+    {
+        nShadowServer2* shadowServer = nShadowServer2::Instance();
+        nStaticShadowCaster2* shadowCaster = (nStaticShadowCaster2*) shadowServer->NewShadowCaster(nShadowCaster2::Static, 0);
+        n_assert(!shadowCaster->IsLoaded());
+        shadowCaster->SetMeshGroupIndex(this->groupIndex);
+        shadowCaster->SetFilename(this->meshName);
+        bool shadowCasterLoaded = shadowCaster->Load();
+        n_assert(shadowCasterLoaded);
+        this->refShadowCaster = shadowCaster;
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Releases the embedded shadow caster.
+*/
+void
+nShadowNode::UnloadResources()
+{
+    if (this->refShadowCaster.isvalid())
+    {
+        this->refShadowCaster->Release();
+        this->refShadowCaster.invalidate();
+    }
+    nTransformNode::UnloadResources();
 }
 
 //------------------------------------------------------------------------------
@@ -146,10 +94,11 @@ nShadowNode::RenderShadow(nSceneServer* sceneServer, nRenderContext* renderConte
             cull = true;
         }
     }
+
     // render the shadow volume
     if (!cull)
     {
-        this->refShadowCaster->RenderShadow(modelMatrix, this->GetGroupIndex());
+        nShadowServer2::Instance()->RenderShadowCaster(this->refShadowCaster, modelMatrix);
     }
     return true;
 }

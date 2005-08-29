@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShaderArg
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
     
     Encapsulates an argument for a shader parameter. This is similar 
     to an nArg, but does only handle argument types which are
@@ -78,7 +78,6 @@ public:
     void SetTexture(nTexture2* val);
     /// get texture
     nTexture2* GetTexture() const;
-
     /// clear the memory and set type to void
     void Clear();
     
@@ -89,10 +88,10 @@ private:
         bool b;
         int i;
         float f;
-        nTexture2* tex;
         nFloat4 f4;
         float m[4][4];
     };
+    nRef<nTexture2> tex;
 };
 
 //------------------------------------------------------------------------------
@@ -110,7 +109,7 @@ nShaderArg::nShaderArg()
 inline
 nShaderArg::nShaderArg(nShaderState::Type t) :
     type(t),
-    tex(0)
+    i(0)
 {
     // empty
 }
@@ -183,7 +182,7 @@ nShaderArg::operator==(const nShaderArg& rhs) const
                 };
 
             case nShaderState::Texture:
-                return (this->tex == rhs.tex);
+                return (this->tex.get_unsafe() == rhs.tex.get_unsafe());
 
             default:
                 n_error("nShaderArg::operator==(): Invalid nShaderArg type!");
@@ -227,7 +226,7 @@ nShaderArg::operator=(const nShaderArg& rhs)
             break;
 
         case nShaderState::Texture:
-            this->tex = rhs.tex;
+            this->tex = rhs.tex.get_unsafe();
             break;
 
         default:
@@ -409,7 +408,7 @@ inline
 nTexture2*
 nShaderArg::GetTexture() const
 {
-    return this->tex;
+    return this->tex.get_unsafe();
 }
 
 //------------------------------------------------------------------------------
@@ -483,10 +482,16 @@ nShaderArg::nShaderArg(const matrix44* val)
 */
 inline
 nShaderArg::nShaderArg(nTexture2* val) :
-    type(nShaderState::Texture),
-    tex(val)
+    type(nShaderState::Texture)
 {
-    // empty
+    if (val)
+    {
+        this->tex = val;
+    }
+    else
+    {
+        this->tex.invalidate();
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSkinShapeNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief A smooth skinned shape node.
     
@@ -33,20 +33,18 @@ public:
     virtual ~nSkinShapeNode();
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
-    /// called by nSceneServer when object is attached to scene
-    virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// perform pre-instance geometry setup
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render per-instance geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// set the skin animator
     void SetSkinAnimator(const char* path);
     /// get the skin animator
     const char* GetSkinAnimator() const;
     /// set pointer to an uptodate character skeleton object (called exclusively by nSkinAnimator)
     void SetCharSkeleton(const nCharSkeleton* charSkeleton);
-    /// get pointer to an uptodate character skeleton object (called exclusively by nAttachmentNode)
-    const nCharSkeleton* GetCharSkeleton();
     /// begin defining mesh fragments
     void BeginFragments(int num);
     /// set mesh group index of a skin fragment
@@ -69,6 +67,8 @@ public:
     int GetJointPaletteSize(int fragIndex) const;
     /// get a joint index from a fragment's joint palette
     int GetJointIndex(int fragIndex, int paletteIndex) const;
+    /// Get the character skeleton
+    const nCharSkeleton* GetCharSkeleton();
 
 private:
     /// a private skin fragment class

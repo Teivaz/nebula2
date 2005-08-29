@@ -67,6 +67,12 @@ beginmodule nmousecursor
     setheaders { nmousecursor }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nocclusionquery
+    setdir gfx2
+    setfiles { nocclusionquery }
+    setheaders { nocclusionquery }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nshader2
     setdir gfx2
     setfiles { nshader2_main }

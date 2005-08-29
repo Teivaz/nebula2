@@ -154,7 +154,7 @@ nParticleEmitter::Trigger(nTime curTime)
                     int curIndex = 0;
                     int curVertex = 0;
 
-                    const nMeshGroup& meshGroup = this->refEmitterMesh->GetGroup(this->meshGroupIndex);
+                    const nMeshGroup& meshGroup = this->refEmitterMesh->Group(this->meshGroupIndex);
                     int firstIndex  = meshGroup.GetFirstIndex();
                     int lastIndex = firstIndex + meshGroup.GetNumIndices() - 1;
 

@@ -2,6 +2,9 @@
 #define N_WINDOWHANDLER_H
 //------------------------------------------------------------------------------
 /**
+    @class nWindowHandler
+    @ingroup Gfx2
+
     A window handler class which cares about platform specifics of window
     handler code and feeds keyboard and mouse input events into the
     input server. An instance of a window handler subclass is used by

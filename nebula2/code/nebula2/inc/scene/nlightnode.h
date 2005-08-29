@@ -3,9 +3,12 @@
 //------------------------------------------------------------------------------
 /**
     @class nLightNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
-    @brief Base class of scene node which provide lighting information.
+    Scene node which provides lighting information. 
+    NOTE: nLightNode is derived from nAbstractShaderNode, and holds most
+    light parameters inside shader params. This is in order to enable
+    simple animation of light parameters using existing animators.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -20,14 +23,24 @@ public:
     nLightNode();
     /// destructor
     virtual ~nLightNode();
+    /// object persistency
+    virtual bool SaveCmds(nPersistServer *ps);
     /// return true if node provides lighting information
     virtual bool HasLight() const;
-    /// render the light
-    virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
-    /// set light type (FIXME: for now always point!)
+    /// set per-light states
+    virtual const nLight& ApplyLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform, const vector4& shadowLightMask);
+    /// set per-instance light states
+    virtual const nLight& RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
+    /// set light type
     void SetType(nLight::Type t);
     /// get light type
     nLight::Type GetType() const;
+    /// set cast shadows
+    void SetCastShadows(bool b);
+    /// set cast shadows
+    bool GetCastShadows() const;
+    /// get embedded light object
+    const nLight& GetLight() const;
 
 private:
     nLight light;
@@ -51,6 +64,36 @@ nLight::Type
 nLightNode::GetType() const
 {
     return this->light.GetType();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nLightNode::SetCastShadows(bool b)
+{
+    this->light.SetCastShadows(b);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nLightNode::GetCastShadows() const
+{
+    return this->light.GetCastShadows();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nLight&
+nLightNode::GetLight() const
+{
+    return this->light;
 }
 
 //------------------------------------------------------------------------------

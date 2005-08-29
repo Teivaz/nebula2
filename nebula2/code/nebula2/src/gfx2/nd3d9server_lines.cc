@@ -47,8 +47,20 @@ nD3D9Server::DrawLines2d(const vector2* vertexList, int numVertices, const vecto
     n_assert(this->inBeginLines);
     n_assert(this->d3dxLine);
     D3DCOLOR d3dColor = N_COLORVALUE(color.x, color.y, color.z, color.w);
-    HRESULT hr = this->d3dxLine->Draw((CONST D3DXVECTOR2*) vertexList, numVertices, d3dColor);
+
+    // convert to d3d screen space
+    vector2 rtSize = this->GetCurrentRenderTargetSize();
+    D3DXVECTOR2* d3dxVectors = n_new_array(D3DXVECTOR2, numVertices);
+    int i;
+    for (i = 0; i < numVertices; i++)
+    {
+        d3dxVectors[i].x = vertexList[i].x * rtSize.x;
+        d3dxVectors[i].y = vertexList[i].y * rtSize.y;
+    }
+
+    HRESULT hr = this->d3dxLine->Draw(d3dxVectors, numVertices, d3dColor);
     n_dxtrace(hr, "ID3DXLine::Draw() failed!");
+    n_delete(d3dxVectors);
 }
 
 //------------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSwingShapeNode
+    @ingroup Nature
 
     Extends nShapeNode and provides the rotation matrix needed for
     the swing and leaves shaders.
@@ -26,10 +27,12 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
-    virtual bool RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// set the max swing angle
     void SetSwingAngle(float f);
     /// get the swing angle

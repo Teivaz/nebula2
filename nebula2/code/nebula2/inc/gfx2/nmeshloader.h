@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMeshLoader
+    @ingroup Gfx2
 
     Base class for specific mesh loaders. Mesh loaders load mesh data
     from a specific file format into user-provided memory blocks
@@ -105,9 +106,9 @@ public:
     void SetIndexType(IndexType t);
     /// get index type
     IndexType GetIndexType() const;
-    /// set the valid vertexcompnents
+    /// set the valid vertex components
     void SetValidVertexComponents(int components);
-    /// get the valid vertexcomponents
+    /// get the valid vertex components
     int GetValidVertexComponents();
     /// open the file and read header data
     virtual bool Open(nFileServer2* fileServer);

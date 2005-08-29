@@ -30,7 +30,7 @@ nIntAnimator::~nIntAnimator()
     Add a key to the animation key array.
 */
 void
-nIntAnimator::AddKey(float time, const int& key)
+nIntAnimator::AddKey(float time, int key)
 {
     nAnimKey<int> newKey(time, key);
     this->keyArray.Append(newKey);

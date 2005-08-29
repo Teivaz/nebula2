@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Mesh
-    @ingroup NebulaD3D9GraphicsSystem
+    @ingroup Gfx2
 
     nMesh2 subclass for Direct3D9.
 

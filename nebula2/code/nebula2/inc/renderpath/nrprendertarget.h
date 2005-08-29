@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpRenderTarget
-    @ingroup NebulaRenderPathSystem
+    @ingroup Scene
 
     Represents a render target in a render path.
     
@@ -41,7 +41,7 @@ public:
     void SetHeight(int h);
     /// get optional absolute height
     int GetHeight() const;
-    /// validate the render target (call if IsValid() returns false)
+    /// validate the render target
     void Validate();
     /// get pointer to render target texture
     nTexture2* GetTexture() const;

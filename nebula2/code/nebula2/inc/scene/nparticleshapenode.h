@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nParticleShapeNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief A shape node representing a particle system.
 
@@ -33,6 +33,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
 
@@ -91,6 +93,8 @@ public:
     void SetEffectActive(bool b);
     /// whether the effect is currently running (note: one-shot effects may be over but still active!)
     bool IsEffectActive() const;
+	/// get the emitter
+    nParticleEmitter* GetEmitter(nRenderContext* renderContext);
 
 protected:
     nAutoRef<nParticleServer> refParticleServer;

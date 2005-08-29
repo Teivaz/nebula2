@@ -28,7 +28,6 @@ nParticleShapeNode::nParticleShapeNode() :
     doReset(false),
     active(true)
 {
-    this->SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
     int i;
     for (i=0; i<4; i++)
     {
@@ -115,6 +114,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetRGBCurve(this->rgbCurve);
 
     sceneServer->SetModelTransform(matrix44());
+
     return true;
 }
 
@@ -137,6 +137,21 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
 
     // put emitter key in render context
     this->emitterVarIndex = renderContext->AddLocalVar(nVariable(0, emitter->GetKey()));
+}
+
+//------------------------------------------------------------------------------
+/**
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination of nMesh2::Usage flags
+*/
+int
+nParticleShapeNode::GetMeshUsage() const
+{
+    return nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
@@ -175,3 +190,17 @@ nParticleShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* re
 
     return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Returns the current emitter
+*/
+nParticleEmitter*
+nParticleShapeNode::GetEmitter(nRenderContext* renderContext)
+{
+    // get emitter from render context
+    nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
+    int emitterKey = varEmitter.GetInt();
+    return this->refParticleServer->GetParticleEmitter(emitterKey);
+}
+

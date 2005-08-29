@@ -18,7 +18,7 @@ nSwingShapeNode::nSwingShapeNode() :
     swingAngle(45.0f),
     swingTime(5.0f)
 {
-    this->SetMeshUsage( nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -29,6 +29,19 @@ nSwingShapeNode::~nSwingShapeNode()
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nSwingShapeNode::GetMeshUsage() const
+{
+    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -88,9 +101,9 @@ nSwingShapeNode::ComputeAngle(const vector3& pos, nTime time) const
     Set pre-instancing attribute of shader.
 */
 bool
-nSwingShapeNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
+nSwingShapeNode::ApplyShader(nSceneServer* sceneServer)
 {
-    if (nMaterialNode::ApplyShader(fourcc, sceneServer))
+    if (nMaterialNode::ApplyShader(sceneServer))
     {
         nShader2* shader = nGfxServer2::Instance()->GetShader();
         n_assert(shader);
@@ -118,9 +131,9 @@ nSwingShapeNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
     Set per-instance-attribute of shader.
 */
 bool
-nSwingShapeNode::RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext)
+nSwingShapeNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
-    if (nMaterialNode::RenderShader(fourcc, sceneServer, renderContext))
+    if (nMaterialNode::RenderShader(sceneServer, renderContext))
     {
         // get current wind dir and wind strength
         nVariable* timeVar = renderContext->GetVariable(this->timeVarHandle);

@@ -15,7 +15,8 @@ nNebulaScriptClass(nSceneNode, "nroot");
 nSceneNode::nSceneNode() :
     animatorArray(1, 4),
     resourcesValid(false),
-    renderPri(0)
+    renderPri(0),
+    hints(0)
 {
     // empty
 }
@@ -158,7 +159,7 @@ nSceneNode::RenderContextCreated(nRenderContext* renderContext)
     The method will be invoked recursively on all child and depend nodes
     of the scene node object.
 
-    @param  renderContext   pointer to a nRenderContext object    
+    @param  renderContext   pointer to a nRenderContext object
 
     - 20-Jul-04     floh    oops, recursive routine was calling ClearLocalVars!
 */
@@ -249,7 +250,7 @@ nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
     which are constant for a complete instance set. 
 */
 bool
-nSceneNode::ApplyShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/)
+nSceneNode::ApplyShader(nSceneServer* /*sceneServer*/)
 {
     return false;
 }
@@ -262,9 +263,21 @@ nSceneNode::ApplyShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/)
     to instance.
 */
 bool
-nSceneNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
+nSceneNode::RenderShader(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Perform per-light of the light source. This method will
+    be called for each light.
+*/
+const nLight&
+nSceneNode::ApplyLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*lightTransform*/, const vector4& /*shadowLightIndex*/)
+{
+    static nLight staticLight;
+    return staticLight;
 }
 
 //------------------------------------------------------------------------------
@@ -272,10 +285,11 @@ nSceneNode::RenderShader(nFourCC /*fourcc*/, nSceneServer* /*sceneServer*/, nRen
     Perform per-instance-rendering of the light source. This method will
     be called once for each scene node which is influenced by this light.
 */
-bool
+const nLight&
 nSceneNode::RenderLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*lightTransform*/)
 {
-    return false;
+    static nLight staticLight;
+    return staticLight;
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +312,7 @@ nSceneNode::ApplyShadow(nSceneServer* /*sceneServer*/)
     node.
 */
 bool
-nSceneNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
+nSceneNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& /*modelMatrix*/)
 {
     return false;
 }
@@ -327,12 +341,10 @@ nSceneNode::HasGeometry() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides a shader under the given fourcc code.
-
-    @param  fourcc  a fourcc code identifying the shader
+    Return true if this node provides a shader.
 */
 bool
-nSceneNode::HasShader(nFourCC /*fourcc*/) const
+nSceneNode::HasShader() const
 {
     return false;
 }
@@ -355,6 +367,17 @@ nSceneNode::HasLight() const
 */
 bool
 nSceneNode::HasShadow() const
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if this node is a camera. Should be 
+    overriden by subclasses.
+*/
+bool
+nSceneNode::HasCamera() const
 {
     return false;
 }
@@ -488,4 +511,14 @@ nSceneNode::UpdateInstStreamDecl(nInstanceStream::Declaration& decl)
     {
         curChild->UpdateInstStreamDecl(decl);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nSceneNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix)
+{
+    // empty
+    return false;
 }

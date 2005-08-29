@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nGfxServer2
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     New generation gfx server, completely vertex and pixel shader based.
 
@@ -22,6 +22,12 @@
 #include "gfx2/nfont2.h"
 #include "gfx2/ninstancestream.h"
 #include "gfx2/nlight.h"
+#include "util/nfixedarray.h"
+#include "mathlib/rectangle.h"
+#include "mathlib/plane.h"
+#if __NEBULA_STATS__
+#include "kernel/nprofiler.h"
+#endif
 
 //------------------------------------------------------------------------------
 class nMesh2;
@@ -29,7 +35,7 @@ class nShader2;
 class nResourceServer;
 class nFontDesc;
 class nMeshArray;
-
+class nOcclusionQuery;
 class nViewport
 {
 public:
@@ -63,9 +69,17 @@ public:
         Light,                  ///< the current light's matrix in world space
         ModelLight,
         InvModelLight,
-        ModelLightProjection,   ///< the current model * light * projection matrix
+        ShadowProjection,
 
         NumTransformTypes
+    };
+
+    /// lighting types
+    enum LightingType
+    {
+        Off = 0,                ///< no lighting
+        FFP,                    ///< fixed function per-vertex lighting
+        Shader,                 ///< shader controlled lighting
     };
 
     /// buffer types
@@ -89,6 +103,13 @@ public:
         TriangleFan,
     };
 
+    /// index types
+    enum IndexType
+    {
+        Index16,
+        Index32,
+    };
+
     /// shape types
     enum ShapeType
     {
@@ -104,12 +125,14 @@ public:
     /// feature sets (from worst to best)
     enum FeatureSet
     {
-        InvalidFeatureSet = 0,      ///< Open() hasn't been called yet
-        DX7,                        ///< a typical dx7 card with fixed function pipeline
+        DX7 = 0,                    ///< a typical dx7 card with fixed function pipeline
         DX8,                        ///< a typical dx8 card with at least vs/ps 1.1
         DX8SB,                      ///< a typical dx8 card with support for shadow buffers
         DX9,                        ///< a dx9 card with at least vs/ps 2.0
         DX9FLT,                     ///< a dx9 card with floating point textures/render targets
+
+        NumFeatureSets,             ///< Number of feature sets
+        InvalidFeatureSet,          ///< Open() hasn't been called yet
     };
 
     /// the visible mouse cursor type
@@ -125,13 +148,22 @@ public:
         MaxVertexStreams = 16,
         MaxTextureStages = 4,
         MaxTransformStackDepth = 4,
+        MaxRenderTargets = 4,
+        MaxLights = 8,
     };
 
     /// list of devices that are known to cause bugs
-    enum DeviceIdentifier 
+    enum DeviceIdentifier       // list of devices that are know to cause bugs
     {
-        GenericDevice = 0,
-        Intel_82865G  = 1,   ///< shadow bugs
+        GenericDevice,
+        Intel_82865G,           // shadow bugs
+        SiS_630,                // crap
+        SiS_741,                // crap
+    };
+
+    enum Hint
+    {
+        MvpOnly = (1<<0),       // only update the ModelViewProjection matrix in shaders
     };
 
     /// constructor
@@ -155,6 +187,8 @@ public:
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format format, int usageFlags);
     /// create a new instance stream object
     virtual nInstanceStream* NewInstanceStream(const char* rsrcName);
+    /// create a new occlusion query object
+    virtual nOcclusionQuery* NewOcclusionQuery();
 
     /// set display mode
     virtual void SetDisplayMode(const nDisplayMode2& mode);
@@ -194,39 +228,61 @@ public:
     virtual int GetNumStencilBits() const;
     /// returns the number of available z bits
     virtual int GetNumDepthBits() const;
+    /// set scissor rect
+    virtual void SetScissorRect(const rectangle& r);
+    /// get scissor rect
+    const rectangle& GetScissorRect() const;
+    /// set or clear user defined clip planes in clip space
+    virtual void SetClipPlanes(const nArray<plane>& planes);
+    /// get user defined clip planes
+    const nArray<plane>& GetClipPlanes() const;
+    /// set or delete a render hint
+    void SetHint(Hint hint, bool enable);
+    /// get a render hint
+    bool GetHint(Hint hint) const;
 
     /// set a new render target texture
-    virtual void SetRenderTarget(nTexture2* t);
+    virtual void SetRenderTarget(int index, nTexture2* t);
     /// get the current render target
-    nTexture2* GetRenderTarget() const;
+    nTexture2* GetRenderTarget(int index) const;
     
+    /// start rendering the current frame
+    virtual bool BeginFrame();
     /// start rendering to current render target
     virtual bool BeginScene();
     /// finish rendering to current render target
     virtual void EndScene();
     /// present the contents of the back buffer
     virtual void PresentScene();
+    /// end rendering the current frame
+    virtual void EndFrame();
+    /// Between BeginScene/EndScene?
+    bool InBeginScene() const;
     /// clear buffers
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
+    /// set lighting type
+    void SetLightingType(LightingType t);
+    /// get lighting type
+    LightingType GetLightingType() const;
     /// reset the light array
     virtual void ClearLights();
-    /// add a light to the light array (reset in BeginScene)
+    /// remove all point lights
+    virtual void ClearPointLights();
+    /// remove a light
+    virtual void ClearLight(int index);
+    /// set a light
     virtual int AddLight(const nLight& light);
     /// access to light array
     const nArray<nLight>& GetLightArray() const;
-    /// set current mesh
-    virtual void SetMesh(nMesh2* mesh);
+    /// set current vertex and index buffer mesh
+    virtual void SetMesh(nMesh2* vbMesh, nMesh2* ibMesh);
     /// get current mesh
     nMesh2* GetMesh() const;
     /// set current mesh array (for multiple streams)
     virtual void SetMeshArray(nMeshArray* meshArray);
     /// get current mesh array
     nMeshArray* GetMeshArray() const;
-    /// set current texture
-    virtual void SetTexture(int stage, nTexture2* tex);
-    /// get current texture
-    nTexture2* GetTexture(int stage) const;
     /// set current shader
     virtual void SetShader(nShader2* shader);
     /// get current shader
@@ -251,22 +307,6 @@ public:
     void SetVertexRange(int firstVertex, int numVertices);
     /// set index range to render from current mesh
     void SetIndexRange(int firstIndex, int numIndices);
-
-    /// begin rendering lines
-    virtual void BeginLines();
-    /// draw 3d lines, using the current transforms
-    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
-    /// draw 2d lines in screen space
-    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
-    /// finish line rendering
-    virtual void EndLines();
-
-    /// begin shape rendering (for debug visualizations)
-    virtual void BeginShapes();
-    /// draw a shape with the given model matrix
-    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
-    /// end shape rendering
-    virtual void EndShapes();
 
     /// draw the current mesh with indexed primitives
     virtual void DrawIndexed(PrimitiveType primType);
@@ -312,10 +352,14 @@ public:
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
 
+    /// get a vector4 of a int shadowLightIndex to set as shaderparameter
+    static const vector4 GetShadowLightIndexVector(int shadowLightIndex, float value);
+
     /// get the device identifier
     DeviceIdentifier GetDeviceIdentifier() const;
     /// compute a mouse ray in world space
     line3 ComputeWorldMouseRay(const vector2& mousePos, float length);    
+
     /// set gamma value.
     void SetGamma(float g);
     /// set brightness value.
@@ -336,11 +380,34 @@ public:
     /// skip message loop in trigger
     virtual void SetSkipMsgLoop(bool skip);
 
+    /// begin shape rendering (for debug visualizations)
+    virtual void BeginShapes();
+    /// draw a shape with the given model matrix with given color
+    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
+	/// draw a shape without shader management
+    virtual void DrawShapeNS(ShapeType type, const matrix44& model);
+    /// draw direct primitives
+    virtual void DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color);
+    /// draw direct indexed primitives (slow, use for debug visual visualization only!)
+    virtual void DrawShapeIndexedPrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int numVertices, int vertexWidth, void* indices, IndexType indexType, const matrix44& model, const vector4& color);
+    /// end shape rendering
+    virtual void EndShapes();
+
+    /// begin rendering lines
+    virtual void BeginLines();
+    /// draw 3d lines, using the current transforms
+    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
+    /// draw 2d lines in screen space
+    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
+    /// finish line rendering
+    virtual void EndLines();
+
 private:
     static nGfxServer2* Singleton;
 
 protected:
     bool displayOpen;
+    bool inBeginFrame;
     bool inBeginScene;
     bool inBeginLines;
     bool inBeginShapes;
@@ -349,13 +416,13 @@ protected:
     nCamera2 camera;
     nViewport viewport;
 
-    nRef<nTexture2>         refRenderTarget;
-    nRef<nMesh2>            refMesh;
-    nRef<nMeshArray>        refMeshArray;
-    nRef<nTexture2>         refTextures[MaxTextureStages];
-    nRef<nFont2>            refFont;
-    nRef<nShader2>          refShader;
-    nRef<nInstanceStream>   refInstanceStream;
+    nFixedArray<nRef<nTexture2> >   refRenderTargets;
+    nRef<nMesh2>                    refVbMesh;
+    nRef<nMesh2>                    refIbMesh;
+    nRef<nMeshArray>                refMeshArray;
+    nRef<nFont2>                    refFont;
+    nRef<nShader2>                  refShader;
+    nRef<nInstanceStream>           refInstanceStream;
     nMouseCursor curMouseCursor;
     int vertexRangeFirst;
     int vertexRangeNum;
@@ -378,7 +445,17 @@ protected:
     int fontMinHeight;
 
     DeviceIdentifier deviceIdentifier;
+    LightingType lightingType;
+    rectangle scissorRect;
 
+    uint hints;         // currently set hints
+    nArray<plane> clipPlanes;
+
+#if __NEBULA_STATS__
+    nProfiler profGUIBreakLines;
+    nProfiler profGUIGetTextExtent;
+    nProfiler profGUIDrawText;
+#endif
 public:
     /// note: this stuff is public because WinProcs may need to access it
     CursorVisibility cursorVisibility;
@@ -393,6 +470,27 @@ nGfxServer2::Instance()
 {
     n_assert(Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGfxServer2::SetHint(Hint hint, bool enable)
+{
+    if (enable) this->hints |= hint;
+    else        this->hints &= ~hint;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGfxServer2::GetHint(Hint hint) const
+{
+    return (this->hints & hint) != 0;
 }
 
 //------------------------------------------------------------------------------
@@ -536,26 +634,15 @@ nGfxServer2::GetCamera()
 /**
     Get the current render target.
 
-    @return     the current render target, or 0 if frame buffer if render target
+    @param  index   render target index
+    @return         the current render target at given index, 
+                    or 0 if no custom render target.
 */
 inline
 nTexture2*
-nGfxServer2::GetRenderTarget() const
+nGfxServer2::GetRenderTarget(int index) const
 {
-    return this->refRenderTarget.isvalid() ? this->refRenderTarget.get() : 0;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the current mesh.
-
-    @return             pointer to current nMesh2 object
-*/
-inline
-nMesh2*
-nGfxServer2::GetMesh() const
-{
-    return this->refMesh.isvalid() ? this->refMesh.get() : 0;
+    return this->refRenderTargets[index].get_unsafe();
 }
 
 //------------------------------------------------------------------------------
@@ -575,7 +662,7 @@ nGfxServer2::GetInstanceStream() const
 /**
     Get the current mesh array.
 
-    @return     pointer to current nMeshArray object
+    @return             pointer to current nMeshArray object
 */
 inline
 nMeshArray*
@@ -586,24 +673,9 @@ nGfxServer2::GetMeshArray() const
 
 //------------------------------------------------------------------------------
 /**
-    Get the current texture.
-
-    @param  stage       texture stage index
-    @return             pointer to nTexture2 object
-*/
-inline
-nTexture2*
-nGfxServer2::GetTexture(int stage) const
-{
-    n_assert((stage >= 0) && (stage < MaxTextureStages));
-    return this->refTextures[stage].isvalid() ? this->refTextures[stage].get() : 0;
-}
-
-//------------------------------------------------------------------------------
-/**
     Get the current shader.
 
-    @return    pointer to nShader2 object
+    @return             pointer to nShader2 object
 */
 inline
 nShader2*
@@ -616,7 +688,7 @@ nGfxServer2::GetShader() const
 /**
     Get the current font object.
 
-    @return    pointer to nFont2 object
+    @return             pointer to nFont2 object
 */
 inline
 nFont2*
@@ -629,8 +701,8 @@ nGfxServer2::GetFont() const
 /**
     Set transformation matrix.
 
-    @param  type    transform type
-    @return         the 4x4 matrix
+    @param  type        transform type
+    @return             the 4x4 matrix
 */
 inline
 const matrix44&
@@ -759,6 +831,75 @@ nGfxServer2::DeviceIdentifier
 nGfxServer2::GetDeviceIdentifier() const
 {
     return this->deviceIdentifier;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGfxServer2::SetLightingType(LightingType t)
+{
+    this->lightingType = t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGfxServer2::LightingType
+nGfxServer2::GetLightingType() const
+{
+    return this->lightingType;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGfxServer2::InBeginScene() const
+{
+    return this->inBeginScene;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const rectangle&
+nGfxServer2::GetScissorRect() const
+{
+    return this->scissorRect;
+}
+
+//------------------------------------------------------------------------------
+/**
+    get a vector4 of a int shadowLightIndex to set as shaderparameter
+*/
+inline
+const vector4 
+nGfxServer2::GetShadowLightIndexVector(int shadowLightIndex, float value)
+{
+    // FIXME: lightIndex should be a bit field (shader must support this?),
+    // so there can be 32 shadow casting lights at once,
+    // or 8 shadow casting lights in a one channel map (e.g. only alpha write)
+    vector4 indexColor;
+    indexColor.x = (shadowLightIndex == 0) ? value : 0.0f;
+    indexColor.y = (shadowLightIndex == 1) ? value : 0.0f;
+    indexColor.z = (shadowLightIndex == 2) ? value : 0.0f;
+    indexColor.w = (shadowLightIndex == 3) ? value : 0.0f;
+    return indexColor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<plane>&
+nGfxServer2::GetClipPlanes() const
+{
+    return this->clipPlanes;
 }
 
 //------------------------------------------------------------------------------

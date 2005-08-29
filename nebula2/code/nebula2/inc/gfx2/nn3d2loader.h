@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nN3d2Loader
+    @ingroup Gfx2
 
     Load a N3D2 mesh file into user provided vertex and index buffers.
     
@@ -51,7 +52,9 @@ nN3d2Loader::~nN3d2Loader()
 }
 
 //------------------------------------------------------------------------------
-/**
+/** 
+    - 28-Sep-04     floh    bugfix: vertexComponents was overwritten with 0, 
+                            instead of fileVertexComponents
 */
 inline
 bool
@@ -120,20 +123,20 @@ nN3d2Loader::Open(nFileServer2* fs)
         {
             // vertex components
             char* str;
-            this->vertexComponents = 0;
-            while ((str = strtok(0, N_WHITESPACE)))
+            this->fileVertexComponents = 0;
+            while (str = strtok(0, N_WHITESPACE))
             {
-                    if (0 == strcmp(str, "coord"))          this->fileVertexComponents |= nMesh2::Coord;
-                    else if (0 == strcmp(str, "normal"))    this->fileVertexComponents |= nMesh2::Normal;
-                    else if (0 == strcmp(str, "uv0"))       this->fileVertexComponents |= nMesh2::Uv0;
-                    else if (0 == strcmp(str, "uv1"))       this->fileVertexComponents |= nMesh2::Uv1;
-                    else if (0 == strcmp(str, "uv2"))       this->fileVertexComponents |= nMesh2::Uv2;
-                    else if (0 == strcmp(str, "uv3"))       this->fileVertexComponents |= nMesh2::Uv3;
-                    else if (0 == strcmp(str, "color"))     this->fileVertexComponents |= nMesh2::Color;
-                    else if (0 == strcmp(str, "tangent"))   this->fileVertexComponents |= nMesh2::Tangent;
-                    else if (0 == strcmp(str, "binormal"))  this->fileVertexComponents |= nMesh2::Binormal;
-                    else if (0 == strcmp(str, "weights"))   this->fileVertexComponents |= nMesh2::Weights;
-                    else if (0 == strcmp(str, "jindices"))  this->fileVertexComponents |= nMesh2::JIndices;
+                if (0 == strcmp(str, "coord"))          this->fileVertexComponents |= nMesh2::Coord;
+                else if (0 == strcmp(str, "normal"))    this->fileVertexComponents |= nMesh2::Normal;
+                else if (0 == strcmp(str, "uv0"))       this->fileVertexComponents |= nMesh2::Uv0;
+                else if (0 == strcmp(str, "uv1"))       this->fileVertexComponents |= nMesh2::Uv1;
+                else if (0 == strcmp(str, "uv2"))       this->fileVertexComponents |= nMesh2::Uv2;
+                else if (0 == strcmp(str, "uv3"))       this->fileVertexComponents |= nMesh2::Uv3;
+                else if (0 == strcmp(str, "color"))     this->fileVertexComponents |= nMesh2::Color;
+                else if (0 == strcmp(str, "tangent"))   this->fileVertexComponents |= nMesh2::Tangent;
+                else if (0 == strcmp(str, "binormal"))  this->fileVertexComponents |= nMesh2::Binormal;
+                else if (0 == strcmp(str, "weights"))   this->fileVertexComponents |= nMesh2::Weights;
+                else if (0 == strcmp(str, "jindices"))  this->fileVertexComponents |= nMesh2::JIndices;
             }
         }
         else if (0 == strcmp(keyWord, "numtris"))
@@ -163,24 +166,15 @@ nN3d2Loader::Open(nFileServer2* fs)
 
             n_assert(firstVertString && numVertsString);
             n_assert(firstTriString && numTrisString);
-                        
+            n_assert(firstEdgeString && numEdgeString);
+
             nMeshGroup meshGroup;
             meshGroup.SetFirstVertex(atoi(firstVertString));
             meshGroup.SetNumVertices(atoi(numVertsString));
             meshGroup.SetFirstIndex(atoi(firstTriString) * 3);
             meshGroup.SetNumIndices(atoi(numTrisString) * 3);
-            if (firstEdgeString)
-            {
-                meshGroup.SetFirstEdge(atoi(firstEdgeString));
-                meshGroup.SetNumEdges(atoi(numEdgeString));
-            }
-            else
-            {
-                n_message("Warning: %s has no edge counts in group, assuming old file format.\n",
-                    this->filename.Get());
-                meshGroup.SetFirstEdge(0);
-                meshGroup.SetNumEdges(1);
-            }
+            meshGroup.SetFirstEdge(atoi(firstEdgeString));
+            meshGroup.SetNumEdges(atoi(numEdgeString));
             this->groupArray.Append(meshGroup);
 
             // if all groups read, set the headerDone flag to true
@@ -214,6 +208,7 @@ nN3d2Loader::Close()
 
 //------------------------------------------------------------------------------
 /**
+    - 28-Sep-04     floh    fixed bug in sparse vertex reading
 */
 inline
 bool
@@ -265,46 +260,26 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
             n_assert(0 == strcmp(keyWord, "v"));
 
             float* vPtr = ((float*)buffer) + (vertexIndex * this->vertexWidth);
-            int mask;
-            for (mask = 1; mask <= this->vertexComponents; mask <<= 1)
-            {                
-                int num = 0;
-                switch (mask)
+
+            int bitIndex;
+            for (bitIndex = 0; bitIndex < nMesh2::NumVertexComponents; bitIndex++)
+            {
+                int mask = (1<<bitIndex);
+
+                // skip completely if current vertex component is not in file
+                if (0 == (this->fileVertexComponents & mask))
                 {
-                // float 2
-                case nMesh2::Uv0:
-                case nMesh2::Uv1:
-                case nMesh2::Uv2:
-                case nMesh2::Uv3:
-                    num = 2;
-                    break;
+                    continue;
+                }                
 
-                // float 3
-                case nMesh2::Coord:
-                case nMesh2::Normal:
-                case nMesh2::Tangent:
-                case nMesh2::Binormal:
-                    num = 3;
-                    break;
-
-                // float 4
-                case nMesh2::Color:
-                case nMesh2::Weights:
-                case nMesh2::JIndices:
-                    num = 4;
-                    break;
-
-                default:
-                    n_error("Unknown vertex component in vertex component mask");
-                    break;
-                }
-
-                n_assert(num > 0);
+                // get width of current vertex component
+                int width = nMesh2::GetVertexWidthFromMask(mask);
+                n_assert(width > 0);
                 if (this->vertexComponents & mask)
                 {
-                    // read
+                    // read the vertex component
                     int f;
-                    for (f = 0; f < num; f++)
+                    for (f = 0; f < width; f++)
                     {
                         const char* curFloatStr = strtok(0, N_WHITESPACE);
                         n_assert(curFloatStr);
@@ -315,9 +290,9 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
                 }
                 else
                 {
-                    // skip
+                    // skip the vertex component
                     int f;
-                    for (f = 0; f < num; f++)
+                    for (f = 0; f < width; f++)
                     {
                         const char* curFloatStr = strtok(0, N_WHITESPACE);
                         n_assert(curFloatStr);

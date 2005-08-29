@@ -45,6 +45,6 @@ begintarget bombsquadBruce
         nmap
         nspatialdb
         ngui
-        ndsaudioserver3
+        ndsound
     }
 endtarget

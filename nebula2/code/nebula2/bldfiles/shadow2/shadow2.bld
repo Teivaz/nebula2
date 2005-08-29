@@ -1,0 +1,44 @@
+#-------------------------------------------------------------------------------
+#   shadow2.bld
+#-------------------------------------------------------------------------------
+
+beginmodule nshadowcaster2
+    setdir shadow2
+    setfiles {
+        nshadowcaster2_main 
+    }
+    setheaders nshadowcaster2
+endmodule
+#--------------------------------------------------------------------
+beginmodule nshadowserver2
+    setdir shadow2
+    setfiles {
+        nshadowserver2_main nshadowserver2_cmds
+    }
+    setheaders nshadowserver2
+endmodule
+#--------------------------------------------------------------------
+beginmodule nskinnedshadowcaster2
+    setdir shadow2
+    setfiles {
+        nskinnedshadowcaster2_main
+    }
+    setheaders nskinnedshadowcaster
+endmodule
+#--------------------------------------------------------------------
+beginmodule nstaticshadowcaster2
+    setdir shadow2
+    setfiles {
+        nstaticshadowcaster2_main
+    }
+    setheaders nstaticshadowcaster2
+endmodule
+#--------------------------------------------------------------------
+beginbundle nshadow2
+    annotate "The Nebula 2 shadow2 modules"
+    setmodules {
+        nshadowcaster2 nshadowserver2 nstaticshadowcaster2
+        nskinnedshadowcaster2
+    }
+endbundle
+

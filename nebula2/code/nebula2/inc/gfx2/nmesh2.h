@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nMesh2
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Internally holds opaque vertex and index data to feed a vertex shader.
     Vertices in a mesh are simply an array of floats.
@@ -130,27 +130,29 @@ public:
         Binormal = (1<<8),
         Weights  = (1<<9),
         JIndices = (1<<10),
+        Coord4   = (1<<11),
 
-        NumVertexComponents = 11,
+        NumVertexComponents = 12,
         AllComponents = ((1<<NumVertexComponents) - 1),
     };
 
     enum Usage
     {
         // read/write behaviour (mutually exclusive)
-        WriteOnce = (1<<0),     // (default) CPU only fills the vertex buffer once, and never touches it again
-        ReadOnly  = (1<<1),     // CPU reads from the vertex buffer, which can never be rendered
-        WriteOnly = (1<<2),     // CPU writes frequently to vertex buffer, but never read data back
+        WriteOnce = (1<<0),     ///< (default) CPU only fills the vertex buffer once, and never touches it again
+        ReadOnly  = (1<<1),     ///< CPU reads from the vertex buffer, which can never be rendered
+        WriteOnly = (1<<2),     ///< CPU writes frequently to vertex buffer, but never read data back
+        ReadWrite = (1<<3),     ///< CPU writes and reads the vertex buffer, which is also rendered
 
         // patch types (mutually exclusive)
-        NPatch  = (1<<3),
-        RTPatch = (1<<4),
+        NPatch  = (1<<4),
+        RTPatch = (1<<5),
         
         // use as point sprite buffer?
-        PointSprite = (1<<5),
+        PointSprite = (1<<6),
 
-		// needs vertex shader?
-		NeedsVertexShader = (1<<6),
+        // needs vertex shader?
+        NeedsVertexShader = (1<<7),
     };
 
     enum
@@ -160,8 +162,8 @@ public:
 
     struct Edge
     {
-        ushort fIndex[2];  // face inicies - the 2nd face index could be = InvalidIndex when the edge is a geometry border 
-        ushort vIndex[2];  // vertex indicies
+        ushort fIndex[2];  // face indicies - the 2nd face index could be = InvalidIndex when the edge is a geometry border 
+        ushort vIndex[2];  // vertex indices
     };
 
     /// constructor
@@ -181,10 +183,18 @@ public:
     /// unlock edge buffer
     virtual void UnlockEdges();
 
-    /// set the mesh use type
+    /// set the mesh use type (both vertex and index buffer)
     void SetUsage(int useFlags);
-    /// get the mesh use type
+    /// get the mesh use type (always returns vertex buffer usage flags
     int GetUsage() const;
+    /// set usage type for vertex buffer
+    void SetVertexUsage(int useFlags);
+    /// get usage type for vertex buffer
+    int GetVertexUsage() const;
+    /// set usage type for index buffer
+    void SetIndexUsage(int useFlags);
+    /// get usage type for index buffer
+    int GetIndexUsage() const;
     /// helper function for setting Usage from script
     static nString ConvertUsageFlagsToString(int flags);
     /// helper function for getting Usage from script
@@ -217,8 +227,8 @@ public:
     void SetNumGroups(int num);
     /// get number of groups
     int GetNumGroups() const;
-    /// get group by index
-    nMeshGroup& GetGroup(int index) const;
+    /// access group by index
+    nMeshGroup& Group(int index) const;
     /// returns the byte size of the embedded vertex buffer
     int GetVertexBufferByteSize() const;
     /// returns the byte size of the embedded index buffer
@@ -235,28 +245,25 @@ protected:
     virtual bool LoadResource();
     /// unload mesh resource
     virtual void UnloadResource();
-
     /// overload in subclass: create the vertex buffer
     virtual void CreateVertexBuffer();
     /// overload in subclass: create the index buffer
     virtual void CreateIndexBuffer();
     /// create the edge buffer
     virtual void CreateEdgeBuffer();
-
     /// set the byte size of the vertex buffer
     void SetVertexBufferByteSize(int s);
     /// set the byte size of the index buffer
     void SetIndexBufferByteSize(int s);
     /// set the byte size of the edge buffer
     void SetEdgeBufferByteSize(int s);
-
     /// update the group bounding boxes (slow!)
-    void UpdateGroupBoundingBoxes();
-
+    void UpdateGroupBoundingBoxes(float* vertexBufferData, ushort* indexBufferData);
     /// load file with the provided meshloader
     bool LoadFile(nMeshLoader* meshLoader);
 
-    int usage;
+    int vertexUsage;
+    int indexUsage;
     int vertexComponentMask;
     int vertexWidth;                // depends on vertexComponentMask
     int numVertices;
@@ -268,7 +275,7 @@ protected:
     int indexBufferByteSize;
     int edgeBufferByteSize;
 
-    Edge* privEdgeBuffer;   //valid if numEdges > 0
+    Edge* privEdgeBuffer;   // valid if numEdges > 0
 };
 
 //------------------------------------------------------------------------------
@@ -288,7 +295,8 @@ inline
 void
 nMesh2::SetUsage(int useFlags)
 {
-    this->usage = useFlags;
+    this->vertexUsage = useFlags;
+    this->indexUsage  = useFlags;
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +306,47 @@ inline
 int
 nMesh2::GetUsage() const
 {
-    return this->usage;
+    return this->vertexUsage;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMesh2::SetVertexUsage(int useFlags)
+{
+    this->vertexUsage = useFlags;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMesh2::GetVertexUsage() const
+{
+    return this->vertexUsage;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMesh2::SetIndexUsage(int useFlags)
+{
+    this->indexUsage = useFlags;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nMesh2::GetIndexUsage() const
+{
+    return this->indexUsage;
 }
 
 //------------------------------------------------------------------------------
@@ -308,7 +356,6 @@ inline
 void
 nMesh2::SetNumVertices(int num)
 {
-    n_assert(num >= 0);
     this->numVertices = num;
 }
 
@@ -329,7 +376,6 @@ inline
 void
 nMesh2::SetNumEdges(int num)
 {
-    n_assert(num >= 0);
     this->numEdges = num;
 }
 
@@ -371,7 +417,7 @@ nMesh2::GetNumGroups() const
 */
 inline
 nMeshGroup&
-nMesh2::GetGroup(int i) const
+nMesh2::Group(int i) const
 {
     n_assert((i >= 0) && (i < this->numGroups));
     return this->groups[i];
@@ -395,7 +441,6 @@ inline
 int
 nMesh2::GetVertexWidthFromMask(int compMask)
 {
-    n_assert(0 != compMask);
     int width = 0;
     if (compMask & Coord)    width += 3;
     if (compMask & Normal)   width += 3;
@@ -408,6 +453,7 @@ nMesh2::GetVertexWidthFromMask(int compMask)
     if (compMask & Binormal) width += 3;
     if (compMask & Weights)  width += 4;
     if (compMask & JIndices) width += 4;
+    if (compMask & Coord4)   width += 4;
 
     return width;
 }
@@ -420,39 +466,40 @@ int
 nMesh2::GetVertexComponentOffset(VertexComponent component) const
 {
     int ret = 0; 
-    if (Coord == component) return ret;
-    if (this->vertexComponentMask & Coord)    ret += 3;
+    if ((Coord == component) || (Coord4 == component)) return ret;
+    if (this->vertexComponentMask & Coord) ret += 3;
+    else if (this->vertexComponentMask & Coord4) ret += 4;
 
     if (Normal == component) return ret;
-    if (this->vertexComponentMask & Normal)   ret += 3;
+    if (this->vertexComponentMask & Normal) ret += 3;
 
     if (Uv0 == component) return ret;
-    if (this->vertexComponentMask & Uv0)      ret += 2;
+    if (this->vertexComponentMask & Uv0) ret += 2;
 
     if (Uv1 == component) return ret;
-    if (this->vertexComponentMask & Uv1)      ret += 2;
+    if (this->vertexComponentMask & Uv1) ret += 2;
 
     if (Uv2 == component) return ret;
-    if (this->vertexComponentMask & Uv2)      ret += 2;
+    if (this->vertexComponentMask & Uv2) ret += 2;
 
     if (Uv3 == component) return ret;
-    if (this->vertexComponentMask & Uv3)      ret += 2;
+    if (this->vertexComponentMask & Uv3) ret += 2;
 
     if (Color == component) return ret;
-    if (this->vertexComponentMask & Color)    ret += 4;
+    if (this->vertexComponentMask & Color) ret += 4;
 
     if (Tangent == component) return ret;
-    if (this->vertexComponentMask & Tangent)  ret += 3;
+    if (this->vertexComponentMask & Tangent) ret += 3;
 
     if (Binormal == component) return ret;
     if (this->vertexComponentMask & Binormal) ret += 3;
 
     if (Weights == component) return ret;    
-    if (this->vertexComponentMask & Weights)  ret += 4;
+    if (this->vertexComponentMask & Weights) ret += 4;
 
     if (JIndices == component) return ret;
     if (this->vertexComponentMask & JIndices) ret += 4;
-    
+
     // add more components here
     n_error("Requested component('%i') was not found!\n", (int) component);
     return -1;
@@ -485,7 +532,6 @@ inline
 void
 nMesh2::SetNumIndices(int num)
 {
-    n_assert(num >= 0);
     this->numIndices = num;
 }
 
@@ -554,7 +600,7 @@ nMesh2::GetIndexBufferByteSize() const
 
 //------------------------------------------------------------------------------
 /**
-*/        
+*/
 inline
 int
 nMesh2::GetEdgeBufferByteSize() const

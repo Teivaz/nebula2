@@ -1,4 +1,3 @@
-#line 1 "phases.fx"
 //------------------------------------------------------------------------------
 //  phases.fx
 //
@@ -6,24 +5,61 @@
 //
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+
+technique tPhaseDepth
+{
+    pass p0
+    {
+        ColorWriteEnable = RED;
+        AlphaTestEnable  = False;
+        ZFunc            = LessEqual;
+    }
+}
+
+technique tPhaseATestDepth
+{
+    pass p0
+    {
+        ColorWriteEnable = RED;
+        AlphaTestEnable  = False;
+        ZFunc            = LessEqual;
+    }
+}
+
+technique tPhaseTerrain
+{
+    pass p0
+    {
+        AlphaTestEnable = False;        
+        ZFunc           = LessEqual;
+    }
+}
+
 technique tPhaseOpaque
 {
     pass p0
     {
-        ZWriteEnable     = true;
-        AlphaBlendEnable = false;
-        AlphaTestEnable  = false;
-        AlphaFunc = GreaterEqual;
+        AlphaTestEnable = False;  
+        ZFunc           = LessEqual;              
     }
-}        
+}
 
-technique tPhaseEnvironment
+technique tPhaseOpaqueATest
 {
     pass p0
     {
-        ZWriteEnable     = true;
-        AlphaBlendEnable = false;
-        AlphaTestEnable  = false;
+        AlphaTestEnable = True;        
+        ZFunc           = Equal;        
+    }
+}
+
+technique tPhaseNoLight
+{
+    pass p0
+    {
+        AlphaBlendEnable = False;
+        AlphaTestEnable  = False;
+        ZFunc            = LessEqual;
     }
 }
 
@@ -31,19 +67,9 @@ technique tPhaseAlpha
 {
     pass p0
     {
-        ZWriteEnable     = false;
-        AlphaBlendEnable = true;
-        AlphaTestEnable  = false;
-    }
-}
-
-technique tPhaseAlphaZWrite
-{
-    pass p0
-    {
-        ZWriteEnable     = true;
-        AlphaBlendEnable = true;
-        AlphaTestEnable  = false;
+        AlphaBlendEnable = True;
+        AlphaTestEnable  = False;
+        ZFunc            = LessEqual;
     }
 }
 
@@ -51,12 +77,19 @@ technique tPhasePointSprites
 {
     pass p0
     {
-        ZWriteEnable     = false;
-        AlphaBlendEnable = true;
-        AlphaTestEnable  = false;
-        AlphaFunc = GreaterEqual;
+        AlphaBlendEnable  = True;
         PointSpriteEnable = True;
         PointScaleEnable  = False;        
+        AlphaTestEnable   = False;
+        ZFunc             = LessEqual;        
     }
 }
-        
+
+technique tPhaseGui3D
+{
+    pass p0
+    {
+        ZFunc = LessEqual;
+    }
+}
+

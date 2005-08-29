@@ -28,31 +28,6 @@ nShapeNode::~nShapeNode()
 
 //------------------------------------------------------------------------------
 /**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
-
-    @return     a combination on nMesh2::Usage flags
-*/
-int
-nShapeNode::GetMeshUsage() const
-{
-    return meshUsage;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Specifies the mesh usage flag combination required by
-    this shape node class.
-*/
-void
-nShapeNode::SetMeshUsage(int usage)
-{
-    meshUsage = usage;
-}
-
-//------------------------------------------------------------------------------
-/**
     Unload mesh resource if valid.
 */
 void
@@ -100,7 +75,7 @@ nShapeNode::LoadMesh()
             }
         }
         this->refMesh = mesh;
-        this->SetLocalBox(this->refMesh->GetGroup(this->groupIndex).GetBoundingBox());
+        this->SetLocalBox(this->refMesh->Group(this->groupIndex).GetBoundingBox());
     }
     return true;
 }
@@ -154,8 +129,8 @@ nShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     n_assert(this->refMesh->IsValid());
 
     // set mesh, vertex and index range
-    gfxServer->SetMesh(this->refMesh.get());
-    const nMeshGroup& curGroup = this->refMesh->GetGroup(this->groupIndex);
+    gfxServer->SetMesh(this->refMesh, this->refMesh);
+    const nMeshGroup& curGroup = this->refMesh->Group(this->groupIndex);
     gfxServer->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfxServer->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
     return true;

@@ -44,6 +44,13 @@ beginmodule nd3d9mesh
     setheaders { nd3d9mesh }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nd3d9occlusionquery
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9occlusionquery }
+    setheaders { nd3d9occlusionquery }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nd3d9mesharray
     setdir gfx2
     setplatform win32
@@ -104,6 +111,7 @@ begintarget ndirect3d9
     setmodules {
         nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font nd3d9surface
         nd3d9shaderinclude nd3d9windowhandler nd3d9mesharray
+        nd3d9occlusionquery
     }
 endtarget
 #-------------------------------------------------------------------------------

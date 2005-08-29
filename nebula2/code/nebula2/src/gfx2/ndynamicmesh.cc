@@ -96,6 +96,7 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
             if (usageFlags & nMesh2::NPatch)            resName[charIndex++] = 'h';
             if (usageFlags & nMesh2::RTPatch)           resName[charIndex++] = 'i';
             if (usageFlags & nMesh2::PointSprite)       resName[charIndex++] = 'j';
+            if (this->indexedRendering)                 resName[charIndex++] = 'l';
             resName[charIndex] = 0;
             // create shared mesh object
             mesh = nGfxServer2::Instance()->NewMesh(resName);
@@ -153,7 +154,7 @@ nDynamicMesh::BeginIndexed(float*& vertexPointer,
     n_assert(this->indexedRendering);
     nMesh2* mesh = this->refMesh.get();
 
-    nGfxServer2::Instance()->SetMesh(mesh);
+    nGfxServer2::Instance()->SetMesh(mesh, mesh);
 
     vertexPointer  = mesh->LockVertices();
     indexPointer   = mesh->LockIndices();
@@ -215,7 +216,7 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
     gfxServer->SetVertexRange(0, numVertices);
     gfxServer->SetIndexRange(0, numIndices);
     gfxServer->DrawIndexedNS(this->primitiveType );
-    gfxServer->SetMesh(0);
+    gfxServer->SetMesh(0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -231,7 +232,7 @@ nDynamicMesh::Begin(float*& vertexPointer, int& maxNumVertices)
     n_assert(!this->indexedRendering);
 
     nMesh2* mesh = this->refMesh.get();
-    nGfxServer2::Instance()->SetMesh(mesh);
+    nGfxServer2::Instance()->SetMesh(mesh, mesh);
 
     vertexPointer  = mesh->LockVertices();
     maxNumVertices = mesh->GetNumVertices();
@@ -276,6 +277,6 @@ nDynamicMesh::End(int numVertices)
         gfxServer->SetVertexRange(0, numVertices);
         gfxServer->DrawNS(this->primitiveType);
     }
-    gfxServer->SetMesh(0);
+    gfxServer->SetMesh(0, 0);
 }
 

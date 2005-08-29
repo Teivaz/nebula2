@@ -11,8 +11,8 @@ static void n_setgroupindex(void* slf, nCmd* cmd);
 static void n_getgroupindex(void* slf, nCmd* cmd);
 static void n_setmeshresourceloader(void* slf, nCmd* cmd);
 static void n_getmeshresourceloader(void* slf, nCmd* cmd);
-static void n_setmeshusage(void* slf, nCmd* cmd);
-static void n_getmeshusage(void* slf, nCmd* cmd);
+static void n_setvertexshaderneed(void* slf, nCmd* cmd);
+static void n_getvertexshaderneed(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -38,8 +38,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_getgroupindex_v",         'GGRI', n_getgroupindex);
     cl->AddCmd("v_setmeshresourceloader_s", 'SMRL', n_setmeshresourceloader);
     cl->AddCmd("s_getmeshresourceloader_v", 'GMRL', n_getmeshresourceloader);
-    cl->AddCmd("v_setmeshusage_s",          'SMSU', n_setmeshusage);
-    cl->AddCmd("s_getmeshusage_v",          'GMSU', n_getmeshusage);
+    cl->AddCmd("v_setvertexshaderneed_b",   'SVSN', n_setvertexshaderneed);
+    cl->AddCmd("b_getvertexshaderneed_v",   'GVSN', n_getvertexshaderneed);
     cl->EndCmds();
 }
 
@@ -77,6 +77,43 @@ n_getmesh(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
     cmd->Out()->SetS(self->GetMesh());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setvertexshaderneed
+    @input
+    b(needsVertexShader)
+    @output
+    v
+    @info
+    Set the need of a vertex shader for the shape node.
+*/
+static void
+n_setvertexshaderneed(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    int i = cmd->In()->GetB() ? nMesh2::NeedsVertexShader : 0;
+    self->SetMeshUsage(self->GetMeshUsage() | i);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getmesh
+    @input
+    v
+    @output
+    b(needsVertexShader)
+    @info
+    Get the need of a vertex shader for the shape node.
+*/
+static void
+n_getvertexshaderneed(void* slf, nCmd* cmd)
+{
+    nShapeNode* self = (nShapeNode*) slf;
+    cmd->Out()->SetB((self->GetMeshUsage() & nMesh2::NeedsVertexShader) > 0);
 }
 
 //------------------------------------------------------------------------------
@@ -153,45 +190,6 @@ n_getmeshresourceloader(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    @cmd
-    setmeshusage
-    @input
-    s(usage flag string)
-    @output
-    v
-    @info
-    Set the usage flags for the mesh.
-*/
-static void
-n_setmeshusage(void* slf, nCmd* cmd)
-{
-    nShapeNode* self = (nShapeNode*) slf;
-    const int flags = nMesh2::ConvertUsageStringToFlags(cmd->In()->GetS());
-    self->SetMeshUsage(flags);
-}
-
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getmeshusage
-    @input
-    v
-    @output
-    s(usage flag string)
-    @info
-    Gets the usage flags for the mesh.
-*/
-static void
-n_getmeshusage(void* slf, nCmd* cmd)
-{
-    nShapeNode* self = (nShapeNode*) slf;
-    const nString & flagString = nMesh2::ConvertUsageFlagsToString(self->GetMeshUsage());
-    cmd->Out()->SetS(flagString.Get());
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 bool
 nShapeNode::SaveCmds(nPersistServer* ps)
@@ -220,10 +218,10 @@ nShapeNode::SaveCmds(nPersistServer* ps)
             ps->PutCmd(cmd);
         }
 
-        //--- setmeshusage ---
-        cmd = ps->GetCmd(this, 'SMSU');
-        nString flagString = nMesh2::ConvertUsageFlagsToString(this->GetMeshUsage());
-        cmd->In()->SetS(flagString.Get());
+        //--- setvertexshaderneed ---
+        bool vsNeeded = (this->GetMeshUsage() & nMesh2::NeedsVertexShader) > 0;
+        cmd = ps->GetCmd(this, 'SVSN');
+        cmd->In()->SetB(vsNeeded);
         ps->PutCmd(cmd);
 
         return true;

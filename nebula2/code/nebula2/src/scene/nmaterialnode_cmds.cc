@@ -7,8 +7,6 @@
 
 static void n_setshader(void* slf, nCmd* cmd);
 static void n_getshader(void* slf, nCmd* cmd);
-static void n_getnumshaders(void* slf, nCmd* cmd);
-static void n_getshaderat(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -17,7 +15,7 @@ static void n_getshaderat(void* slf, nCmd* cmd);
 
     @cppclass
     nMaterialNode
-    
+
     @superclass
     nabstractshadernode
 
@@ -31,10 +29,8 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setshader_ss",        'SSHD', n_setshader);
-    cl->AddCmd("s_getshader_s",         'GSHD', n_getshader);
-    cl->AddCmd("i_getnumshaders_v",     'GNSD', n_getnumshaders);
-    cl->AddCmd("ss_getshaderat_i",      'GSAT', n_getshaderat);
+    cl->AddCmd("v_setshader_s", 'SSHD', n_setshader);
+    cl->AddCmd("s_getshader_s", 'GSHD', n_getshader);
     cl->EndCmds();
 }
 
@@ -43,19 +39,17 @@ n_initcmds(nClass* cl)
     @cmd
     setshader
     @input
-    s(FourCC), s(ShaderResource)
+    s(ShaderResource)
     @output
     v
     @info
-    Set the name of the shader resource associated with a fourcc code.
+    Set the name of the shader resource.
 */
 static void
 n_setshader(void* slf, nCmd* cmd)
 {
     nMaterialNode* self = (nMaterialNode*) slf;
-    const char* s0 = cmd->In()->GetS();
-    const char* s1 = cmd->In()->GetS();
-    self->SetShader(nMaterialNode::StringToFourCC(s0), s1);
+    self->SetShader(cmd->In()->GetS());
 }
 
 //------------------------------------------------------------------------------
@@ -63,58 +57,17 @@ n_setshader(void* slf, nCmd* cmd)
     @cmd
     getshader
     @input
-    s(FourCC)
+    v
     @output
     s(ShaderResource)
     @info
-    Get the name of the shader resource associated with a fourcc code.
+    Get the name of the shader resource.
 */
 static void
 n_getshader(void* slf, nCmd* cmd)
 {
     nMaterialNode* self = (nMaterialNode*) slf;
-    cmd->Out()->SetS(self->GetShader(nMaterialNode::StringToFourCC(cmd->In()->GetS())));
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getnumshaders
-    @input
-    v
-    @output
-    i(NumShaders)
-    @info
-    Get number of shaders in the object.
-*/
-static void
-n_getnumshaders(void* slf, nCmd* cmd)
-{
-    nMaterialNode* self = (nMaterialNode*) slf;
-    cmd->Out()->SetI(self->GetNumShaders());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getshaderat
-    @input
-    i(Index)
-    @output
-    s(FourCC), s(ResourceName)
-    @info
-    Get fourcc code and resource name of shader at given index.
-*/
-static void
-n_getshaderat(void* slf, nCmd* cmd)
-{
-    nMaterialNode* self = (nMaterialNode*) slf;
-    nFourCC i0;
-    const char* s0;
-    char buf[5];
-    self->GetShaderAt(cmd->In()->GetI(), i0, s0);
-    cmd->Out()->SetS(nMaterialNode::FourCCToString(i0, buf, sizeof(buf)));
-    cmd->Out()->SetS(s0);
+    cmd->Out()->SetS(self->GetShader());
 }
 
 //------------------------------------------------------------------------------
@@ -128,19 +81,10 @@ nMaterialNode::SaveCmds(nPersistServer* ps)
         nCmd* cmd;
 
         //--- setshader ---
-        int i;
-        int numShaders = this->GetNumShaders();
-        for (i = 0; i < numShaders; i++)
+        if (!this->shaderName.IsEmpty())
         {
-            nFourCC fourcc;
-            const char* name;
-            char buf[5];
-
-            this->GetShaderAt(i, fourcc, name);
             cmd = ps->GetCmd(this, 'SSHD');
-            cmd->In()->SetS(FourCCToString(fourcc, buf, sizeof(buf)));
-            cmd->In()->SetS(name);
-
+            cmd->In()->SetS(this->shaderName.Get());
             ps->PutCmd(cmd);
         }
         return true;

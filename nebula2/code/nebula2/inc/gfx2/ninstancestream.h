@@ -2,6 +2,9 @@
 #define N_INSTANCESTREAM_H
 //------------------------------------------------------------------------------
 /**
+    @class nInstanceStream
+    @ingroup Gfx2
+
     Instance streams provide the fastest way to render multiple instances
     of the current mesh.
 

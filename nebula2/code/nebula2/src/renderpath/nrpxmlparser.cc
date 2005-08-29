@@ -42,12 +42,11 @@ nRpXmlParser::OpenXml()
     this->xmlDocument = n_new(TiXmlDocument);
     if (this->xmlDocument->LoadFile(mangledPath.Get()))
     {
-        // initialize the shader path 
         TiXmlHandle docHandle(this->xmlDocument);
         TiXmlElement* elmRenderPath = docHandle.FirstChildElement("RenderPath").Element();
         n_assert(elmRenderPath);
         this->renderPath->SetName(elmRenderPath->Attribute("name"));
-        this->renderPath->SetShaderPath(elmRenderPath->Attribute("shaderpath"));
+        this->renderPath->SetShaderPath(elmRenderPath->Attribute("shaderPath"));
         return true;
     }
     else
@@ -86,7 +85,11 @@ nRpXmlParser::ParseXml()
     TiXmlElement* child;
     for (child = elmRenderPath->FirstChildElement(); child; child = child->NextSiblingElement())
     {
-        if (child->Value() == nString("RenderTarget"))
+        if (child->Value() == nString("Shader"))
+        {
+            this->ParseShader(child, renderPath);
+        }
+        else if (child->Value() == nString("RenderTarget"))
         {
             this->ParseRenderTarget(child, renderPath);
         }
@@ -106,12 +109,26 @@ nRpXmlParser::ParseXml()
         {
             this->ParseGlobalVariable(nVariable::Object, child, renderPath);
         }
-        else if (child->Value() == nString("Pass"))
+        else if (child->Value() == nString("Section"))
         {
-            this->ParsePass(child, renderPath);
+            this->ParseSection(child, renderPath);
         }
     }
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Parse Shader xml element.
+*/
+void
+nRpXmlParser::ParseShader(TiXmlElement* elm, nRenderPath2* renderPath)
+{
+    n_assert(elm && renderPath);
+    nRpShader newShader;
+    newShader.SetName(elm->Attribute("name"));
+    newShader.SetFilename(elm->Attribute("file"));
+    renderPath->AddShader(newShader);
 }
 
 //------------------------------------------------------------------------------
@@ -206,18 +223,52 @@ nRpXmlParser::ParseGlobalVariable(nVariable::Type dataType, TiXmlElement* elm, n
 
 //------------------------------------------------------------------------------
 /**
-    Parse a Pass element inside a RenderPath element.
+    Parse a Section element inside a RenderPath element.
 */
 void
-nRpXmlParser::ParsePass(TiXmlElement* elm, nRenderPath2* renderPath)
+nRpXmlParser::ParseSection(TiXmlElement* elm, nRenderPath2* renderPath)
 {
     n_assert(elm && renderPath);
 
     // parse attributes
+    nRpSection newSection;
+    newSection.SetName(elm->Attribute("name"));
+
+    // parse children
+    TiXmlElement* child;
+    for (child = elm->FirstChildElement(); child; child = child->NextSiblingElement())
+    {
+        if (child->Value() == nString("Pass"))
+        {
+            this->ParsePass(child, &newSection);
+        }
+    }
+    renderPath->AddSection(newSection);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Parse a Pass element inside a Section element.
+*/
+void
+nRpXmlParser::ParsePass(TiXmlElement* elm, nRpSection* section)
+{
+    n_assert(elm && section);
+
+    // parse attributes
     nRpPass newPass;
     newPass.SetName(elm->Attribute("name"));
-    newPass.SetShaderPath(elm->Attribute("shader"));
-    newPass.SetRenderTargetName(elm->Attribute("renderTarget"));
+    newPass.SetShaderAlias(elm->Attribute("shader"));
+    nString renderTargetName("renderTarget");
+    int i = 0;     
+    while (this->HasAttr(elm, renderTargetName.Get()))
+    { 
+        newPass.SetRenderTargetName(i, elm->Attribute(renderTargetName.Get()));
+        i++;
+        renderTargetName.Set("renderTarget");
+        renderTargetName.Append(i);        
+    }
+    
     int clearFlags = 0;
     if (this->HasAttr(elm, "clearColor"))
     {
@@ -239,9 +290,13 @@ nRpXmlParser::ParsePass(TiXmlElement* elm, nRenderPath2* renderPath)
     {
         newPass.SetDrawFullscreenQuad(this->GetBoolAttr(elm, "drawQuad", false));
     }
-    if (this->HasAttr(elm, "drawShadowVolumes"))
+    if (this->HasAttr(elm, "drawShadows"))
     {
-        newPass.SetDrawShadowVolumes(this->GetBoolAttr(elm, "drawShadowVolumes", false));
+        newPass.SetDrawShadows(nRpPass::StringToShadowTechnique(elm->Attribute("drawShadows")));
+    }
+    if (this->HasAttr(elm, "occlusionQuery"))
+    {
+        newPass.SetOcclusionQuery(this->GetBoolAttr(elm, "occlusionQuery", false));
     }
     if (this->HasAttr(elm, "drawGui"))
     {
@@ -281,7 +336,7 @@ nRpXmlParser::ParsePass(TiXmlElement* elm, nRenderPath2* renderPath)
             this->ParsePhase(child, &newPass);
         }
     }
-    renderPath->AddPass(newPass);
+    section->AddPass(newPass);
 }
 
 //------------------------------------------------------------------------------
@@ -348,6 +403,68 @@ nRpXmlParser::ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpPa
 
 //------------------------------------------------------------------------------
 /**
+    Parse a shader state element inside a Pass XML element.
+*/
+void
+nRpXmlParser::ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpSequence* seq)
+{
+    n_assert(elm && seq);
+
+    nShaderState::Param p = nShaderState::StringToParam(elm->Attribute("name"));
+    nShaderArg arg(type);
+    if (this->HasAttr(elm, "value"))
+    {
+        // this is a constant shader parameter
+        switch (type)
+        {
+            case nShaderState::Int:
+                arg.SetInt(this->GetIntAttr(elm, "value", 0));
+                break;
+
+            case nShaderState::Float:
+                arg.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
+                break;
+
+            case nShaderState::Float4:
+                {
+                    nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+                    arg.SetFloat4(this->GetFloat4Attr(elm, "value", f4));
+                }
+                break;
+
+            case nShaderState::Texture:
+                {
+                    // initialize a texture object
+                    const char* filename = elm->Attribute("value");
+                    n_assert(filename);
+                    nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
+                    if (!tex->IsLoaded())
+                    {
+                        tex->SetFilename(filename);
+                        if (!tex->Load())
+                        {
+                            n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
+                        }
+                    }
+                    arg.SetTexture(tex);
+                }
+                break;
+
+            default:
+                n_error("nRpXmlParser::ParseShaderState(): invalid datatype '%s'!", elm->Attribute("name"));
+                break;
+        }
+        seq->AddConstantShaderParam(p, arg);
+    }
+    else if (this->HasAttr(elm, "variable"))
+    {
+        const char* varName = elm->Attribute("variable");
+        seq->AddVariableShaderParam(varName, p, arg);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Parse a Phase XML element.
 */
 void
@@ -359,10 +476,9 @@ nRpXmlParser::ParsePhase(TiXmlElement* elm, nRpPass* pass)
 
     // read attributes
     newPhase.SetName(elm->Attribute("name"));
-    newPhase.SetShaderPath(elm->Attribute("shader"));
-    newPhase.SetFourCC(n_strtofourcc(elm->Attribute("fourcc")));
+    newPhase.SetShaderAlias(elm->Attribute("shader"));
     newPhase.SetSortingOrder(nRpPhase::StringToSortingOrder(elm->Attribute("sort")));
-    newPhase.SetLightsEnabled(this->GetBoolAttr(elm, "lights", false));
+    newPhase.SetLightMode(nRpPhase::StringToLightMode(elm->Attribute("lightMode")));
     if (this->HasAttr(elm, "technique"))
     {
         newPhase.SetTechnique(elm->Attribute("technique"));
@@ -386,7 +502,44 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
 {
     n_assert(elm && phase);
     nRpSequence newSequence;
-    newSequence.SetShaderPath(elm->Attribute("shader"));
+    newSequence.SetShaderAlias(elm->Attribute("shader"));
+    if (this->HasAttr(elm, "technique"))
+    {
+        newSequence.SetTechnique(elm->Attribute("technique"));
+    }
+    newSequence.SetShaderUpdatesEnabled(this->GetBoolAttr(elm, "shaderUpdates", true));
+    newSequence.SetFirstLightAlphaEnabled(this->GetBoolAttr(elm, "firstLightAlpha", false));
+    newSequence.SetMvpOnlyHint(this->GetBoolAttr(elm, "mvpOnly", false));
+
+    // parse children
+    TiXmlElement* child;
+    for (child = elm->FirstChildElement(); child; child = child->NextSiblingElement())
+    {
+        if (child->Value() == nString("Float"))
+        {
+            this->ParseShaderState(nShaderState::Float, child, &newSequence);
+        }
+        else if (child->Value() == nString("Float4"))
+        {
+            this->ParseShaderState(nShaderState::Float4, child, &newSequence);
+        }
+        else if (child->Value() == nString("Int"))
+        {
+            this->ParseShaderState(nShaderState::Int, child, &newSequence);
+        }
+        else if (child->Value() == nString("Texture"))
+        {
+            this->ParseShaderState(nShaderState::Texture, child, &newSequence);
+        }
+    }
     phase->AddSequence(newSequence);
 }
 
+
+
+
+    
+
+
+
+    

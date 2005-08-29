@@ -2,10 +2,14 @@
 #define N_D3D9SHADERINCLUDE_H
 //------------------------------------------------------------------------------
 /**
+    @class nD3D9ShaderInclude
+    @ingroup Gfx2
+
     Override default include handling in D3DX FX files.
 
     (C) 2004 RadonLabs GmbH
 */
+#include "util/nstring.h"
 #include <d3dx9.h>
 
 //------------------------------------------------------------------------------
