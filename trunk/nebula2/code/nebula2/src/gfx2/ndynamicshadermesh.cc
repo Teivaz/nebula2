@@ -89,7 +89,7 @@ nDynamicShaderMesh::Swap(int numVertices, float*& vertexPointer)
     nShader2* shader = this->refShader;
 
     mesh->UnlockVertices();
-    gfxServer->SetMesh(mesh);
+    gfxServer->SetMesh(mesh, mesh);
     gfxServer->SetVertexRange(0, numVertices);
     gfxServer->SetShader(shader);
     int numPass = shader->Begin(true);
@@ -122,7 +122,7 @@ nDynamicShaderMesh::End(int numVertices)
     mesh->UnlockVertices();
     if (numVertices > 0)
     {
-        gfxServer->SetMesh(mesh);
+        gfxServer->SetMesh(mesh, mesh);
         gfxServer->SetVertexRange(0, numVertices);
         gfxServer->SetShader(shader);
 

@@ -2,6 +2,9 @@
 #define N_MOUSECURSOR_H
 //------------------------------------------------------------------------------
 /**
+    @class nMouseCursor
+    @ingroup Gfx2
+
     Holds mouse cursor attributes.
     
     (C) 2003 RadonLabs GmbH

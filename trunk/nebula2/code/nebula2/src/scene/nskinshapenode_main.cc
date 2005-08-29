@@ -13,7 +13,7 @@ nNebulaScriptClass(nSkinShapeNode, "nshapenode");
 nSkinShapeNode::nSkinShapeNode() :
     extCharSkeleton(0)
 {
-    this->SetMeshUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -26,20 +26,16 @@ nSkinShapeNode::~nSkinShapeNode()
 
 //------------------------------------------------------------------------------
 /**
-    Attach to the scene server.
-*/
-void
-nSkinShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
-{
-    // call my skin animator (updates the char skeleton pointer)
-    kernelServer->PushCwd(this);
-    if (this->refSkinAnimator.isvalid())
-    {
-        this->refSkinAnimator->Animate(this, renderContext);
-    }
-    kernelServer->PopCwd();
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
 
-    nShapeNode::Attach(sceneServer, renderContext);
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nSkinShapeNode::GetMeshUsage() const
+{
+    return nMesh2::WriteOnce | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------

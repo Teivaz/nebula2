@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpXmlParser
-    @ingroup NebulaRenderPathSystem
+    @ingroup Scene
 
     Configure a nRenderPath2 object from an XML file.
     
@@ -18,8 +18,10 @@
 #include "util/narray.h"
 
 class nRenderPath2;
+class nRpSection;
 class nRpPass;
 class nRpPhase;
+class nRpSequence;
 
 //------------------------------------------------------------------------------
 class nRpXmlParser
@@ -55,16 +57,22 @@ private:
     nFloat4 GetFloat4Attr(TiXmlElement* elm, const char* name, const nFloat4& defaultValue);
     /// get a bool attribute from an xml element
     bool GetBoolAttr(TiXmlElement* elm, const char* name, bool defaultValue);
+    /// parse a shader XML element
+    void ParseShader(TiXmlElement* elm, nRenderPath2* renderPath);
     /// parse RenderTarget XML element
     void ParseRenderTarget(TiXmlElement* elm, nRenderPath2* renderPath);
     /// create a variable from an XML element
     nVariable ParseVariable(nVariable::Type dataType, TiXmlElement* elm);
     /// parse a global variable under RenderPath
     void ParseGlobalVariable(nVariable::Type dataType, TiXmlElement* elm, nRenderPath2* renderPath);
+    /// parse a Secion XML element
+    void ParseSection(TiXmlElement* elm, nRenderPath2* renderPath);
     /// parse a Pass XML element
-    void ParsePass(TiXmlElement* elm, nRenderPath2* renderPath);
+    void ParsePass(TiXmlElement* elm, nRpSection* section);
     /// parse a shader state inside a pass
     void ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpPass* pass);
+    /// parse a shader state inside a pass
+    void ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpSequence* seq);
     /// parse a phase
     void ParsePhase(TiXmlElement* elm, nRpPass* pass);
     /// parse a sequence

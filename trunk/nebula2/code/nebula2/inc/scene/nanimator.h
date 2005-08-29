@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
     @brief Animator nodes manipulate properties of other scene objects.
     
@@ -38,8 +38,7 @@ public:
     /// destructor
     virtual ~nAnimator();
     /// save object to persistent stream
-    virtual bool SaveCmds(nPersistServer* ps);
-    
+    virtual bool SaveCmds(nPersistServer* ps);    
     /// return the type of this animator object
     virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object

@@ -73,10 +73,16 @@ public:
     void SetFarPlane(float v);
     /// set far clip plane
     float GetFarPlane() const;
+    /// set shadow offset, used by shadow projection matrix to move clip planes
+    void SetShadowOffset(float v);
+    /// get shadow offset, used by shadow projection matrix to move clip planes
+    float GetShadowOffset() const;
     /// get a projection matrix representing the camera
     const matrix44& GetProjection();
     /// get the inverse of the projection
     const matrix44& GetInvProjection();
+    /// get the shadow projection matrix
+    const matrix44& GetShadowProjection();
     /// get a bounding box enclosing the camera
     const bbox3& GetBox();
     // get the view volume
@@ -99,6 +105,8 @@ private:
     bool boxDirty;
     matrix44 proj;
     matrix44 invProj;
+    matrix44 shadowProj;
+    float shadowOffset;
     bbox3 box;
 };
 
@@ -115,7 +123,8 @@ nCamera2::nCamera2() :
     nearPlane(0.1f),
     farPlane(5000.0f),
     projDirty(true),
-    boxDirty(true)
+    boxDirty(true),
+    shadowOffset(0.00007f)
 {
     // empty
 }
@@ -133,7 +142,8 @@ nCamera2::nCamera2(float aov, float aspect, float nearp, float farp) :
     nearPlane(nearp),
     farPlane(farp),
     projDirty(true),
-    boxDirty(true)
+    boxDirty(true),
+    shadowOffset(0.00007f)
 {
     // empty
 }
@@ -326,6 +336,27 @@ nCamera2::GetFarPlane() const
 
 //------------------------------------------------------------------------------
 /**
+*/
+inline
+void 
+nCamera2::SetShadowOffset(float v)
+{
+    this->shadowOffset = v;
+    this->projDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float 
+nCamera2::GetShadowOffset() const
+{
+    return this->shadowOffset;
+}
+
+//------------------------------------------------------------------------------
+/**
     @brief Get the view volume.
 
     @param  minx    the left x coord where view volume cuts near plane
@@ -361,10 +392,12 @@ nCamera2::UpdateProjInvProj()
     if (Perspective == this->type)
     {
         this->proj.perspFovRh(this->angleOfView, this->aspectRatio, this->nearPlane, this->farPlane);
+        this->shadowProj.perspFovRh(this->angleOfView, this->aspectRatio, this->nearPlane - this->shadowOffset, this->farPlane - this->shadowOffset);
     }
     else
     {
         this->proj.orthoRh(this->width, this->height, this->nearPlane, this->farPlane);
+        this->shadowProj.orthoRh(this->width, this->height, this->nearPlane - this->shadowOffset, this->farPlane - this->shadowOffset);
     }
     this->invProj = proj;
     this->invProj.invert();
@@ -401,6 +434,21 @@ nCamera2::GetInvProjection()
         this->UpdateProjInvProj();
     }
     return this->invProj;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the shadow projection matrix.
+*/
+inline
+const matrix44&
+nCamera2::GetShadowProjection()
+{
+    if (this->projDirty)
+    {
+        this->UpdateProjInvProj();
+    }
+    return this->shadowProj;
 }
 
 //------------------------------------------------------------------------------

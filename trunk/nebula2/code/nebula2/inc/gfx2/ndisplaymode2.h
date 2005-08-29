@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDisplayMode2
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Contains display mode parameters.
 
@@ -35,9 +35,9 @@ public:
     /// constructor
     nDisplayMode2();
     /// constructor
-    nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync);
+    nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync, bool dialogBoxMode, const char* iconResName);
     /// set display mode
-    void Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync);
+    void Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync, bool dialogBoxMode, const char* iconResName);
     /// set x position
     void SetXPos(int x);
     /// get x position
@@ -118,7 +118,7 @@ nDisplayMode2::nDisplayMode2() :
 /**
 */
 inline
-nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync) :
+nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync, bool dialogBoxMode, const char* iconResName) :
     windowTitle(winTitle),
     type(t),
     xpos(x),
@@ -127,9 +127,11 @@ nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, u
     height(h),
     bitsPerPixel(Bpp32),
     verticalSync(vSync),
-    dialogBoxMode(false)
+    dialogBoxMode(dialogBoxMode),
+    iconName(iconResName)
 {
-    // empty
+    n_assert(w > 0);
+    n_assert(h > 0);
 }
 
 //------------------------------------------------------------------------------
@@ -137,8 +139,11 @@ nDisplayMode2::nDisplayMode2(const char* winTitle, Type t, ushort x, ushort y, u
 */
 inline
 void
-nDisplayMode2::Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync)
+nDisplayMode2::Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, ushort h, bool vSync, bool dialogBoxMode, const char* iconResName)
 {
+    n_assert(w > 0);
+    n_assert(h > 0);
+
     this->windowTitle = winTitle;
     this->type   = t;
     this->xpos   = x;
@@ -146,6 +151,8 @@ nDisplayMode2::Set(const char* winTitle, Type t, ushort x, ushort y, ushort w, u
     this->width  = w;
     this->height = h;
     this->verticalSync = vSync;
+    this->dialogBoxMode = dialogBoxMode;
+    this->iconName = iconResName;
 }
 
 //------------------------------------------------------------------------------
@@ -195,6 +202,7 @@ inline
 void
 nDisplayMode2::SetWidth(int w)
 {
+    n_assert(w > 0);
     this->width = w;
 }
 
@@ -205,6 +213,7 @@ inline
 int
 nDisplayMode2::GetWidth() const
 {
+    n_assert(this->width > 0);
     return this->width;
 }
 
@@ -215,6 +224,7 @@ inline
 void
 nDisplayMode2::SetHeight(int h)
 {
+    n_assert(h > 0);
     this->height = h;
 }
 
@@ -225,6 +235,7 @@ inline
 int
 nDisplayMode2::GetHeight() const
 {
+    n_assert(this->height > 0);
     return this->height;
 }
 
@@ -325,7 +336,7 @@ nDisplayMode2::StringToType(const char* str)
         return ChildWindow;
     }
     else
-    { 
+    {
         return Fullscreen;
     }
 }

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
     @brief Animate position, orientation and scaling of a nTransformNode from
     directly defined key arrays.

@@ -4,8 +4,6 @@
 #
 #  Modules:
 #      nsceneserver
-#      ninstsceneserver
-#      nmrtsceneserver
 #      nscenenode
 #      ntransformnode
 #      nabstractshadernode
@@ -29,6 +27,10 @@
 #      nblendshapeanimator
 #      nintanimator
 #      nlodnode
+#      nabstractcameranode
+#      ncameranode
+#      nclippingcameranode
+#      nreflectioncameranode
 #      nrenderpath
 #      nrendercontext
 #===============================================================================
@@ -41,18 +43,6 @@ beginmodule nsceneserver
     setdir scene
     setfiles { nsceneserver_main nsceneserver_cmds }
     setheaders { nsceneserver }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule ninstsceneserver
-    setdir scene
-    setfiles { ninstsceneserver_main }
-    setheaders { ninstsceneserver }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nmrtsceneserver
-    setdir scene
-    setfiles { nmrtsceneserver_main }
-    setheaders { nmrtsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nscenenode
@@ -81,7 +71,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nlightnode
     setdir scene
-    setfiles { nlightnode_main }
+    setfiles { nlightnode_main nlightnode_cmds }
     setheaders { nlightnode }
 endmodule
 #-------------------------------------------------------------------------------
@@ -199,15 +189,39 @@ beginmodule nlodnode
     setheaders { nlodnode }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nabstractcameranode
+    setdir scene
+    setfiles { nabstractcameranode_main nabstractcameranode_cmds }
+    setheaders { nabstractcameranode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncameranode
+    setdir scene
+    setfiles { ncameranode_main }
+    setheaders { ncameranode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nclippingcameranode
+    setdir scene
+    setfiles { nclippingcameranode_main }
+    setheaders { nclippingcameranode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nreflectioncameranode
+    setdir scene
+    setfiles { nreflectioncameranode_main }
+    setheaders { nreflectioncameranode }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nrenderpath
     setdir renderpath
     setfiles {
-        nrenderpath2 nrppass nrpphase nrpsequence
-        nrprendertarget nrpxmlparser
+        nrenderpath2 nrppass nrpphase nrprendertarget nrpsection
+        nrpsequence nrpshader nrpxmlparser
     }
     setheaders {
-        nrenderpath2 nrppass nrpphase nrprendertarget
-        nrpsequence nrpxmlparser
+        nrenderpath2 nrppass nrpphase nrprendertarget nrpsection
+        nrpsequence nrpshader nrpxmlparser
     }
 endmodule
 #-------------------------------------------------------------------------------

@@ -6,18 +6,14 @@
 #include "renderpath/nrprendertarget.h"
 #include "renderpath/nrpxmlparser.h"
 
-nRenderPath2* nRenderPath2::Singleton = 0;
-
 //------------------------------------------------------------------------------
 /**
 */
 nRenderPath2::nRenderPath2() :
     isOpen(false),
-    inBegin(false),
     sequenceShaderIndex(0)
 {
-    n_assert(0 == Singleton);
-    Singleton = this;
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -25,8 +21,7 @@ nRenderPath2::nRenderPath2() :
 */
 nRenderPath2::~nRenderPath2()
 {
-    n_assert(Singleton);
-    Singleton = 0;
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -44,8 +39,8 @@ nRenderPath2::OpenXml()
     {
         return false;
     }
-    n_assert(!this->shaderPath.IsEmpty());
     n_assert(!this->name.IsEmpty());
+    n_assert(!this->shaderPath.IsEmpty());
     return true;
 }
 
@@ -70,13 +65,12 @@ bool
 nRenderPath2::Open()
 {
     n_assert(!this->isOpen);
-    n_assert(!this->inBegin);
-
     this->sequenceShaderIndex = 0;
     if (!xmlParser.ParseXml())
     {
         return false;
     }
+    this->Validate();
     this->isOpen = true;
     return true;
 }
@@ -89,61 +83,34 @@ void
 nRenderPath2::Close()
 {
     n_assert(this->isOpen);
-    n_assert(!this->inBegin);
     this->name.Clear();
-    this->passes.Clear();
+    this->sections.Clear();
     this->renderTargets.Clear();
     this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Begin rendering the render path. This will validate all embedded objects.
-    Returns the number of scene passes in the render path.
-    After begin, each pass should be "rendered" recursively.
-*/
-int
-nRenderPath2::Begin()
-{
-    n_assert(!this->inBegin);
-    this->Validate();
-    this->inBegin = true;
-    return this->passes.Size();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Finish rendering the render path.
-*/
-void
-nRenderPath2::End()
-{
-    n_assert(this->inBegin);
-    this->inBegin = false;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Validate the render path. This will simply invoke Validate() on all
-    render targets and pass objects.
+    Validate the render path.
 */
 void
 nRenderPath2::Validate()
 {
-    int passIndex;
-    int numPasses = this->passes.Size();
-    for (passIndex = 0; passIndex < numPasses; passIndex++)
+    int sectionIndex;
+    int numSections = this->sections.Size();
+    for (sectionIndex = 0; sectionIndex < numSections; sectionIndex++)
     {
-        this->passes[passIndex].Validate();
+        this->sections[sectionIndex].SetRenderPath(this);
+        this->sections[sectionIndex].Validate();
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Find a render target by name.
+    Find a render target index by name. Return -1 if not found.
 */
-nRpRenderTarget*
-nRenderPath2::FindRenderTarget(const nString& n) const
+int
+nRenderPath2::FindRenderTargetIndex(const nString& n) const
 {
     int i;
     int num = this->renderTargets.Size();
@@ -151,11 +118,11 @@ nRenderPath2::FindRenderTarget(const nString& n) const
     {
         if (this->renderTargets[i].GetName() == n)
         {
-            return &(this->renderTargets[i]);
+            return i;
         }
     }
     // fallthrough: not found
-    return 0;
+    return -1;
 }
 
 //------------------------------------------------------------------------------
@@ -167,3 +134,55 @@ nRenderPath2::AddRenderTarget(nRpRenderTarget& rt)
     rt.Validate();
     this->renderTargets.Append(rt);
 }
+
+//------------------------------------------------------------------------------
+/**
+    Find a shader definition index by its name. Return -1 if not found.
+*/
+int
+nRenderPath2::FindShaderIndex(const nString& n) const
+{
+    int i;
+    int num = this->shaders.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->shaders[i].GetName() == n)
+        {
+            return i;
+        }
+    }
+    // fallthrough: not found
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nRenderPath2::AddShader(nRpShader& s)
+{
+    s.Validate();
+    this->shaders.Append(s);
+    this->shaders.Back().SetBucketIndex(this->shaders.Size() - 1);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Find a section index by name, return -1 if not found.
+*/
+int
+nRenderPath2::FindSectionIndex(const nString& n) const
+{
+    int i;
+    int num = this->sections.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->sections[i].GetName() == n)
+        {
+            return i;
+        }
+    }
+    // fallthrough: not found
+    return -1;
+}
+

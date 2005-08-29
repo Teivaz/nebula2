@@ -3,6 +3,7 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "renderpath/nrpphase.h"
+#include "renderpath/nrenderpath2.h"
 #include "gfx2/ngfxserver2.h"
 
 //------------------------------------------------------------------------------
@@ -10,8 +11,14 @@
 */
 nRpPhase::nRpPhase() :
     inBegin(false),
+    rpShaderIndex(-1),
     sortingOrder(FrontToBack),
-    lightsEnabled(true)
+    lightMode(Off),
+    renderPath(0)
+#if __NEBULA_STATS__
+    ,section(0),
+    pass(0)
+#endif
 {
     // empty
 }
@@ -21,11 +28,7 @@ nRpPhase::nRpPhase() :
 */
 nRpPhase::~nRpPhase()
 {
-    if (this->refShader.isvalid())
-    {
-        this->refShader->Release();
-        this->refShader.invalidate();
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -35,10 +38,20 @@ int
 nRpPhase::Begin()
 {
     n_assert(!this->inBegin);
+    n_assert(-1 != this->rpShaderIndex);
+    n_assert(this->renderPath);
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    #if __NEBULA_STATS__
+    this->prof.Start();
+    #endif
+
+    // reset the scissor rect to full screen
+    static const rectangle fullScreenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+    gfxServer->SetScissorRect(fullScreenRect);
 
     // note: save/restore state for phase shaders!
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    nShader2* shd = this->refShader;
+    nShader2* shd = this->renderPath->GetShader(this->rpShaderIndex).GetShader();
     if (!this->technique.IsEmpty())
     {
         shd->SetTechnique(this->technique.Get());
@@ -59,12 +72,17 @@ void
 nRpPhase::End()
 {
     n_assert(this->inBegin);
+    n_assert(-1 != this->rpShaderIndex);
 
-    nShader2* shd = this->refShader;
+    nShader2* shd = this->renderPath->GetShader(this->rpShaderIndex).GetShader();
     shd->EndPass();
     shd->End();
 
     this->inBegin = false;
+
+    #if __NEBULA_STATS__
+    this->prof.Stop();
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -73,35 +91,43 @@ nRpPhase::End()
 void
 nRpPhase::Validate()
 {
+    n_assert(this->renderPath);
+
+    // setup profiler
+    #if __NEBULA_STATS__
+    n_assert(this->section);
+    n_assert(this->pass);
+
+    if (!this->prof.IsValid())
+    {
+        nString n;
+        n.Format("profRpPhase_%s_%s_%s", this->section->GetName().Get(), this->pass->GetName().Get(), this->name.Get());
+        this->prof.Initialize(n.Get());
+    }
+    #endif
+
     // invoke validate on sequences
     int i;
     int num = this->sequences.Size();
     for (i = 0; i < num; i++)
     {
+        this->sequences[i].SetRenderPath(this->renderPath);
+    #if __NEBULA_STATS__
+        this->sequences[i].SetSection(this->section);
+        this->sequences[i].SetPass(this->pass);
+        this->sequences[i].SetPhase(this);
+    #endif
         this->sequences[i].Validate();
     }
 
-    // validate shader
-    nShader2* shd = 0;
-    if (!this->refShader.isvalid())
+    // find shader
+    if (-1 == this->rpShaderIndex)
     {
-        n_assert(!this->shaderPath.IsEmpty());
-        shd = nGfxServer2::Instance()->NewShader(this->shaderPath.Get());
-        this->refShader = shd;
-    }
-    else
-    {
-        shd = this->refShader;
-    }
-
-    n_assert(shd);
-    if (!shd->IsLoaded())
-    {
-        shd->SetFilename(this->shaderPath);
-        if (!shd->Load())
+        n_assert(!this->shaderAlias.IsEmpty());
+        this->rpShaderIndex = this->renderPath->FindShaderIndex(this->shaderAlias);
+        if (-1 == this->rpShaderIndex)
         {
-            shd->Release();
-            n_error("nRpPass: could not load shader '%s'!", this->shaderPath.Get());
+            n_error("nRpPhase::Validate(): couldn't find shader alias '%s' in render path xml file!", this->shaderAlias.Get());
         }
     }
 }

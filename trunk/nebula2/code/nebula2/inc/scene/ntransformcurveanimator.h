@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformCurveAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
-    @brief A Transform Curve Animator defines a animation resource.
+    @brief A transform curve animator controls a scene node's animation from
+    an animation curve of the Animation Subsystem.
 
     See also @ref N2ScriptInterface_ntransformcurveanimator
  

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSceneNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief The nSceneNode is the base class of all objects which can be attached
     to a scene managed by the nSceneServer class. A scene node object
@@ -20,6 +20,7 @@
 #include "kernel/ndynautoref.h"
 #include "gfx2/nshaderparams.h"
 #include "gfx2/ninstancestream.h"
+#include "gfx2/nlight.h"
 
 class nSceneServer;
 class nRenderContext;
@@ -31,6 +32,13 @@ class nVariableServer;
 class nSceneNode : public nRoot
 {
 public:
+    /// scene node hints
+    enum
+    {
+        HierarchyNode = (1<<0),     // this was exported as hierarchy nodes from Maya
+        LodNode = (1<<1),           // this was exported as LOD node from Maya
+        LevelSegment = (1<<2)       // this was exported as level segment from Maya
+    };
     /// constructor
     nSceneNode();
     /// destructor
@@ -47,6 +55,14 @@ public:
     bool AreResourcesValid() const;
     /// recursively preload resources
     void PreloadResources();
+    /// set one or more hint flags
+    void AddHints(ushort h);
+    /// clear one or more hint flags
+    void ClearHints(ushort h);
+    /// get all hints
+    ushort GetHints() const;
+    /// return true if hint is set
+    bool HasHints(ushort h) const;
     /// called by app when new render context has been created for this object
     virtual void RenderContextCreated(nRenderContext* renderContext);
     /// called by app when render context is going to be released
@@ -58,11 +74,13 @@ public:
     /// return true if node provides geometry
     virtual bool HasGeometry() const;
     /// return true if node provides shader
-    virtual bool HasShader(nFourCC fourcc) const;
+    virtual bool HasShader() const;
     /// return true if node provides lighting information
     virtual bool HasLight() const;
     /// return true if node provides shadow
     virtual bool HasShadow() const;
+    /// return true if node is camera
+    virtual bool HasCamera() const;
     /// render transformation
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
     /// perform pre-instancing rendering of geometry
@@ -70,15 +88,19 @@ public:
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
-    virtual bool RenderShader(nFourCC fourcc, nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// write light volume parameters into the provided shader params object
-     virtual bool RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
+    virtual bool RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// set per-light states
+    virtual const nLight& ApplyLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform, const vector4& shadowLightMask);
+    /// set per-shape-instance light states
+    virtual const nLight& RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform);
     /// perform pre-instancing rendering of shadow
     virtual bool ApplyShadow(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shadow
-    virtual bool RenderShadow(nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool RenderShadow(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
+    /// render the scene from the provided camera 
+    virtual bool RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix);
     /// set the local bounding box
     void SetLocalBox(const bbox3& b);
     /// get the node's bounding box
@@ -108,6 +130,7 @@ protected:
     nArray< nDynAutoRef<nAnimator> > animatorArray;
     int renderPri;
     bool resourcesValid;
+    ushort hints;
     // nRef<nInstanceStream> refInstanceStream;
 };
 
@@ -171,5 +194,48 @@ nSceneNode::AreResourcesValid() const
     return this->resourcesValid;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Set one or more hint flags. Will be or'ed into the current hints.
+*/
+inline
+void
+nSceneNode::AddHints(ushort h)
+{
+    this->hints |= h;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Clear one or more hint flags.
+*/
+inline
+void
+nSceneNode::ClearHints(ushort h)
+{
+    this->hints &= ~h;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return all hint flags.
+*/
+inline
+ushort
+nSceneNode::GetHints() const
+{
+    return this->hints;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if one or more hints are set.
+*/
+inline
+bool
+nSceneNode::HasHints(ushort h) const
+{
+    return h == (this->hints & h);
+}
 //------------------------------------------------------------------------------
 #endif

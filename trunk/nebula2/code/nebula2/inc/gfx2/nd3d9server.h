@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Server
-    @ingroup NebulaD3D9GraphicsSystem
+    @ingroup Gfx2
 
     D3D9 based gfx server.
 
@@ -18,6 +18,10 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#ifdef _DEBUG
+#define D3D_DEBUG_INFO
+#endif
+
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dxerr9.h>
@@ -29,9 +33,18 @@
 //------------------------------------------------------------------------------
 //  Debugging definitions (for shader debugging etc...)
 //------------------------------------------------------------------------------
+#define N_D3D9_USENVPERFHUD (0)
+
 #define N_D3D9_DEBUG (0)
+
+#if N_D3D9_USENVPERFHUD
+#define N_D3D9_DEVICETYPE D3DDEVTYPE_REF
+#define N_D3D9_ADAPTER (D3DADAPTER_DEFAULT + 1)
+#else
 #define N_D3D9_DEVICETYPE D3DDEVTYPE_HAL
 #define N_D3D9_ADAPTER D3DADAPTER_DEFAULT
+#endif
+
 #define N_D3D9_FORCEMIXEDVERTEXPROCESSING (0)
 #define N_D3D9_FORCESOFTWAREVERTEXPROCESSING (0)
 
@@ -56,6 +69,8 @@ public:
     virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
+    /// create a new occlusion query object
+    virtual nOcclusionQuery* NewOcclusionQuery();
 
     /// set display mode
     virtual void SetDisplayMode(const nDisplayMode2& mode);
@@ -81,27 +96,37 @@ public:
     virtual int GetNumStencilBits() const;
     /// returns the number of available z bits
     virtual int GetNumDepthBits() const;
+    /// set scissor rect
+    virtual void SetScissorRect(const rectangle& r);
+    /// set or clear user defined clip planes in clip space
+    virtual void SetClipPlanes(const nArray<plane>& planes);
 
     /// set a new render target texture
-    virtual void SetRenderTarget(nTexture2* t);
+    virtual void SetRenderTarget(int index, nTexture2* t);
     
+    /// start rendering the current frame
+    virtual bool BeginFrame();
     /// start rendering to current render target
     virtual bool BeginScene();
     /// finish rendering to current render target
     virtual void EndScene();
     /// present the contents of the back buffer
     virtual void PresentScene();
+    /// end rendering the current frame
+    virtual void EndFrame();
     /// clear buffers
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
+    /// reset the light array
+    virtual void ClearLights();
+    /// remove a light
+    virtual void ClearLight(int index);
     /// add a light to the light array (reset in BeginScene)
     virtual int AddLight(const nLight& light);
     /// set current mesh
-    virtual void SetMesh(nMesh2* mesh);
+    virtual void SetMesh(nMesh2* vbMesh, nMesh2* ibMesh);
     /// set current mesh array, clearing the single mesh
     virtual void SetMeshArray(nMeshArray* meshArray);
-    /// set current texture
-    virtual void SetTexture(int stage, nTexture2* tex);
     /// set current shader
     virtual void SetShader(nShader2* shader);
     /// set transform
@@ -114,22 +139,6 @@ public:
     virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(PrimitiveType primType);
-
-    /// begin rendering lines
-    virtual void BeginLines();
-    /// draw 3d lines, using the current transforms
-    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
-    /// draw 2d lines in screen space
-    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
-    /// finish line rendering
-    virtual void EndLines();
-
-    /// begin shape rendering (for debug visualizations)
-    virtual void BeginShapes();
-    /// draw a shape with the given model matrix
-    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
-    /// end shape rendering
-    virtual void EndShapes();
 
     /// trigger the window system message pump
     virtual bool Trigger();
@@ -151,16 +160,32 @@ public:
     /// save a screen shot
     virtual bool SaveScreenshot(const char*);
 
-    enum WinVersion
-    {
-        Win32_NT = 0,  //NT4, 2000, XP...
-        Win32_Windows, //95, 98, ME...
-        UnknownWin,
-    };
+    /// begin rendering lines
+    virtual void BeginLines();
+    /// draw 3d lines, using the current transforms
+    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
+    /// draw 2d lines in screen space
+    virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
+    /// finish line rendering
+    virtual void EndLines();
 
-    /// get the detected windows version
-    WinVersion GetWindowsVersion() const;
+    /// begin shape rendering (for debug visualizations)
+    virtual void BeginShapes();
+    /// draw a shape with the given model matrix with given color
+    virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
+    /// draw a shape without shader management
+    virtual void DrawShapeNS(ShapeType type, const matrix44& model);
+    /// draw direct primitives
+    virtual void DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color);
+    /// draw direct indexed primitives (slow, use for debug visual visualization only!)
+    virtual void DrawShapeIndexedPrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int numVertices, int vertexWidth, void* indices, IndexType indexType, const matrix44& model, const vector4& color);
+    /// end shape rendering
+    virtual void EndShapes();
 
+    /// Access Direct3D Device directly. Might be Null!
+    IDirect3DDevice9* GetD3DDevice() const;
+    /// Access Direct3D object directly. Might be Null!
+    IDirect3D9* GetD3D() const;
     /// adjust gamma.
     virtual void AdjustGamma();
     /// restore gamma.
@@ -211,17 +236,22 @@ private:
     void DrawIndexedInstancedNS(PrimitiveType primType);
     /// instancer version of DrawNS()
     void DrawInstancedNS(PrimitiveType primType);
-    /// update shared shader parameters
-    void UpdateSharedShaderParams();
+    /// update shared shader parameters per frame
+    void UpdatePerFrameSharedShaderParams();
+    /// update shared shader parameters per scene
+    void UpdatePerSceneSharedShaderParams();
     /// return number of bits for a D3DFORMAT
     int GetD3DFormatNumBits(D3DFORMAT fmt);
     /// enable/disable software vertex processing
     void SetSoftwareVertexProcessing(bool b);
     /// get current software vertex processing state
     bool GetSoftwareVertexProcessing();
-
-    void DetectWindowsVersion();
-    WinVersion winVersion;
+    /// initialize device identifier field
+    void InitDeviceIdentifier();
+    /// update the scissor rectangle in Direct3D
+    void UpdateScissorRect();
+    /// returns the current render target size in pixels
+    vector2 GetCurrentRenderTargetSize() const;
     /// add nEnvs describing display modes (for all adapters) to the NOH
     void CreateDisplayModeEnvVars();
 
@@ -257,6 +287,7 @@ private:
     D3DPRESENT_PARAMETERS presentParams;        ///< current presentation parameters
     IDirect3DSurface9* backBufferSurface;       ///< the original back buffer surface
     IDirect3DSurface9* depthStencilSurface;     ///< the original depth stencil surface
+    IDirect3DSurface9* captureSurface;          ///< an offscreen surface for fast screenshot capture
     ID3DXEffectPool* effectPool;                ///< global pool for shared effect parameters
     nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
 
@@ -264,6 +295,7 @@ private:
     IDirect3DQuery9*   queryResourceManager;    ///< for quering the d3d resource manager
     nTime timeStamp;                            ///< time stamp for FPS computation
     // query watcher variables
+/*
     nWatched dbgQueryTextureTrashing;
     nWatched dbgQueryTextureApproxBytesDownloaded;
     nWatched dbgQueryTextureNumEvicts;
@@ -275,6 +307,7 @@ private:
     nWatched dbgQueryTextureWorkingSetBytes;
     nWatched dbgQueryTextureTotalManaged;
     nWatched dbgQueryTextureTotalBytes;
+*/
     nWatched dbgQueryNumPrimitives;
     nWatched dbgQueryFPS;
     nWatched dbgQueryNumDrawCalls;
@@ -417,10 +450,20 @@ nD3D9Server::GetEffectPool() const
 /**
 */
 inline
-nD3D9Server::WinVersion
-nD3D9Server::GetWindowsVersion() const
+IDirect3DDevice9*
+nD3D9Server::GetD3DDevice() const
 {
-    return this->winVersion;
+    return this->d3d9Device;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+IDirect3D9*
+nD3D9Server::GetD3D() const
+{
+    return this->d3d9;
 }
 
 //------------------------------------------------------------------------------

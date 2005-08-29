@@ -32,8 +32,7 @@ static void n_setanimevent(void* slf, nCmd* cmd);
 static void n_endanimeventtrack(void* slf, nCmd* cmd);
 static void n_endanimeventtracks(void* slf, nCmd* cmd);
 static void n_setanimenabled(void* slf, nCmd* cmd);
-static void n_isanimenabled(void* slf, nCmd* cmd);	
-static void n_addjointname(void* slf, nCmd* cmd);
+static void n_isanimenabled(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -53,35 +52,34 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setanim_s",               'SANM', n_setanim);
-    cl->AddCmd("s_getanim_v",               'GANM', n_getanim);
-    cl->AddCmd("v_beginjoints_i",           'BJNT', n_beginjoints);
-    cl->AddCmd("v_setjoint_iiffffffffff",   'SJNT', n_setjoint);
-    cl->AddCmd("v_endjoints_v",             'EJNT', n_endjoints);
-    cl->AddCmd("i_getnumjoints_v",          'GNJT', n_getnumjoints);
-    cl->AddCmd("iffffffffff_getjoint_i",    'GJNT', n_getjoint);
-    cl->AddCmd("v_setstatechannel_s",       'SSCN', n_setstatechannel);
-    cl->AddCmd("s_getstatechannel_v",       'GSCN', n_getstatechannel);
-    cl->AddCmd("v_beginstates_i",           'BGST', n_beginstates);
-    cl->AddCmd("v_setstate_iif",            'SSTT', n_setstate);
-    cl->AddCmd("v_setstatename_is",         'SSNM', n_setstatename);
-    cl->AddCmd("v_endstates_v",             'ENDS', n_endstates);
-    cl->AddCmd("i_getnumstates_v",          'GNST', n_getnumstates);
-    cl->AddCmd("if_getstateat_i",           'GSTA', n_getstateat);
-    cl->AddCmd("s_getstatenameat_i",        'GSNA', n_getstatenameat);
-    cl->AddCmd("v_beginclips_ii",           'BGCL', n_beginclips);
-    cl->AddCmd("v_setclip_iis",             'STCL', n_setclip);
-    cl->AddCmd("v_endclips_i",              'EDCL', n_endclips);
-    cl->AddCmd("i_getnumclips_i",           'GNCL', n_getnumclips);
-    cl->AddCmd("s_getclipat_ii",            'GCLA', n_getclipat);
+    cl->AddCmd("v_setanim_s",                       'SANM', n_setanim);
+    cl->AddCmd("s_getanim_v",                       'GANM', n_getanim);
+    cl->AddCmd("v_beginjoints_i",                   'BJNT', n_beginjoints);
+    cl->AddCmd("v_setjoint_iiffffffffff",           'SJNT', n_setjoint);
+    cl->AddCmd("v_endjoints_v",                     'EJNT', n_endjoints);
+    cl->AddCmd("i_getnumjoints_v",                  'GNJT', n_getnumjoints);
+    cl->AddCmd("iffffffffff_getjoint_i",            'GJNT', n_getjoint);
+    cl->AddCmd("v_setstatechannel_s",               'SSCN', n_setstatechannel);
+    cl->AddCmd("s_getstatechannel_v",               'GSCN', n_getstatechannel);
+    cl->AddCmd("v_beginstates_i",                   'BGST', n_beginstates);
+    cl->AddCmd("v_setstate_iif",                    'SSTT', n_setstate);
+    cl->AddCmd("v_setstatename_is",                 'SSNM', n_setstatename);
+    cl->AddCmd("v_endstates_v",                     'ENDS', n_endstates);
+    cl->AddCmd("i_getnumstates_v",                  'GNST', n_getnumstates);
+    cl->AddCmd("if_getstateat_i",                   'GSTA', n_getstateat);
+    cl->AddCmd("s_getstatenameat_i",                'GSNA', n_getstatenameat);
+    cl->AddCmd("v_beginclips_ii",                   'BGCL', n_beginclips);
+    cl->AddCmd("v_setclip_iis",                     'STCL', n_setclip);
+    cl->AddCmd("v_endclips_i",                      'EDCL', n_endclips);
+    cl->AddCmd("i_getnumclips_i",                   'GNCL', n_getnumclips);
+    cl->AddCmd("s_getclipat_ii",                    'GCLA', n_getclipat);
     cl->AddCmd("v_beginanimeventtracks_iii",        'BATS', n_beginanimeventtracks);
     cl->AddCmd("v_beginanimeventtrack_iiisi",       'BATK', n_beginanimeventtrack);
     cl->AddCmd("v_setanimeevent_iiiifffffffffff",   'SAET', n_setanimevent);
     cl->AddCmd("v_endanimeventtrack_iii",           'EATK', n_endanimeventtrack);
     cl->AddCmd("v_endanimeventtracks_ii",           'EATS', n_endanimeventtracks);
     cl->AddCmd("v_setanimenabled_b",                'SANE', n_setanimenabled);
-    cl->AddCmd("b_isanimenabled_v",                 'IAEN', n_isanimenabled);    
-    cl->AddCmd("v_addjointname_is",         'ADJN', n_addjointname);
+    cl->AddCmd("b_isanimenabled_v",                 'IAEN', n_isanimenabled);
     cl->EndCmds();
 }
 
@@ -695,27 +693,6 @@ n_isanimenabled(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    @cmd
-    addjointname
-    @input
-    i(JointIndex), s(JointName)
-    @output
-    v
-    @info
-    Add a joint name to the skin animator
-*/
-static void
-n_addjointname(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    int jointIndex = cmd->In()->GetI();
-    const char *nameStr = cmd->In()->GetS();
-    
-    self->AddJointName(jointIndex, nameStr);
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 bool
 nSkinAnimator::SaveCmds(nPersistServer* ps)
@@ -770,19 +747,6 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
         //--- endjoints ---
         cmd = ps->GetCmd(this, 'EJNT');
         ps->PutCmd(cmd);
-
-        // Add all the joint names
-        nStrNode *strNode = this->jointNameList.GetHead();
-        while (strNode)
-        {
-            //--- addjointname ---
-            cmd = ps->GetCmd(this, 'ADJN');
-            cmd->In()->SetI((unsigned int)strNode->GetPtr());
-            cmd->In()->SetS(strNode->GetName());
-            ps->PutCmd(cmd);
-            
-            strNode = strNode->GetSucc();
-        }
 
         //--- setstatechannel ---
         cmd = ps->GetCmd(this, 'SSCN');

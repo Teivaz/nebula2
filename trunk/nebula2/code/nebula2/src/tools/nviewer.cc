@@ -73,6 +73,7 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
+nNebulaUsePackage(ndsound);
 
 //------------------------------------------------------------------------------
 /*
@@ -196,6 +197,7 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nnetwork);
+    kernelServer.AddPackage(ndsound);
 
     // initialize a display mode object
     nString title;
@@ -210,15 +212,15 @@ main(int argc, const char** argv)
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
 
     // under Win32 check if we should read the project directory from the registry

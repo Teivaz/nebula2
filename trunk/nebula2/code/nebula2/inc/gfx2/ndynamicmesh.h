@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nDynamicMesh
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Helper class for rendering dynamic geometry, simplifies writing
     to the global dynamic mesh offered by the gfx server.

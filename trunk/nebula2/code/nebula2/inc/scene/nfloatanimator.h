@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nFloatAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
     @brief Animates a float attribute of a nAbstractShaderNode.
 
-    (C) 2004 RadonLabs GmbH
+    (C) 2005 Radon Labs GmbH
 */
 #include "scene/nshaderanimator.h"
 #include "util/nanimkeyarray.h"
@@ -25,7 +25,7 @@ public:
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// add a key 
-    void AddKey(float time, const float& key);
+    void AddKey(float time, float key);
     /// get number of keys
     int GetNumKeys() const;
     /// get key at

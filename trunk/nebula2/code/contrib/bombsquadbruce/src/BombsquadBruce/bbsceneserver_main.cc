@@ -12,7 +12,7 @@
 #include "scene/nshapenode.h"
 #include "BombsquadBruce/general.h"
 
-nNebulaScriptClass(BBSceneServer, "nmrtsceneserver");
+nNebulaScriptClass(BBSceneServer, "nsceneserver");
 
 // global data for qsort() compare function
 BBSceneServer* BBSceneServer::bbself = 0;

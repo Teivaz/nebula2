@@ -53,7 +53,7 @@ nCharSkinRenderer::Begin(const nCharSkeleton* skel)
 
     this->charSkeleton = skel;
     this->inBegin = true;
-    nGfxServer2::Instance()->SetMesh(this->refSrcMesh);
+    nGfxServer2::Instance()->SetMesh(this->refSrcMesh, this->refSrcMesh);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ nCharSkinRenderer::RenderShaderSkinning(int meshGroupIndex, nCharJointPalette& j
     }
 
     // set current vertex and index range and draw mesh
-    const nMeshGroup& meshGroup = this->refSrcMesh->GetGroup(meshGroupIndex);
+    const nMeshGroup& meshGroup = this->refSrcMesh->Group(meshGroupIndex);
     gfxServer->SetVertexRange(meshGroup.GetFirstVertex(), meshGroup.GetNumVertices());
     gfxServer->SetIndexRange(meshGroup.GetFirstIndex(), meshGroup.GetNumIndices());
     gfxServer->DrawIndexedNS(nGfxServer2::TriangleList);

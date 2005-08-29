@@ -16,7 +16,8 @@ nNebulaClass(nMesh2, "nresource");
 /**
 */
 nMesh2::nMesh2() :
-    usage(WriteOnce),
+    vertexUsage(WriteOnce),
+    indexUsage(WriteOnce),
     vertexComponentMask(0),
     vertexWidth(0),
     numVertices(0),
@@ -54,31 +55,10 @@ nMesh2::UnloadResource()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     n_assert(gfxServer);
 
-    // check if I'm the current mesh in the gfx server, if yes, unlink
-    if (gfxServer->GetMesh() == this)
-    {
-        gfxServer->SetMesh(0);
-    }
-    else
-    {
-        nMeshArray* meshArray = gfxServer->GetMeshArray();
-        if (0 != meshArray)
-        {
-            int i;
-            for(i = 0; i < nGfxServer2::MaxVertexStreams; i++)
-            {
-                nMesh2* mesh = meshArray->GetMeshAt(i);
-                if (0 != mesh)
-                {
-                    if (this == mesh)
-                    {
-                        gfxServer->SetMeshArray(0);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    // make sure we're not set in the gfx server
+    // this is kind of rude...
+    gfxServer->SetMesh(0, 0);
+    gfxServer->SetMeshArray(0);
 
     if (this->groups)
     {
@@ -154,7 +134,7 @@ nMesh2::LoadResource()
             // NOTE: This is a compatibility fix for older DX7 graphics cards which don't
             // like unknown data (like tangents, etc) between vertices when rendering
             // with HW T&L.
-            if (0 == (this->usage & NeedsVertexShader))
+            if (0 == (this->vertexUsage & NeedsVertexShader))
             {
                 // FIXME: this should be replaced by a new nGfxServer2 method which indicates
                 // whether vertex shaders run in emulation, or not!!!
@@ -164,7 +144,6 @@ nMesh2::LoadResource()
                     meshLoader->SetValidVertexComponents(nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Uv3 | nMesh2::Color | nMesh2::JIndices | nMesh2::Weights);
                 }
             }
-            
             success = this->LoadFile(meshLoader);
             n_delete(meshLoader);
         }
@@ -289,7 +268,7 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     int numGroups = meshLoader->GetNumGroups();
     for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
     {
-        nMeshGroup& group = this->GetGroup(groupIndex);
+        nMeshGroup& group = this->Group(groupIndex);
         group = meshLoader->GetGroupAt(groupIndex);
     }
     n_assert(this->GetVertexWidth() == meshLoader->GetVertexWidth());
@@ -302,17 +281,16 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     this->CreateVertexBuffer();
     this->CreateIndexBuffer();
 
-    // load vertex buffer
+    // load vertex buffer and index buffer
     float* vertexBufferPtr = this->LockVertices();
+    ushort* indexBufferPtr = this->LockIndices();
     res = meshLoader->ReadVertices(vertexBufferPtr, vbSize);
     n_assert(res);
-    this->UnlockVertices();
-
-    // load indices
-    ushort* indexBufferPtr = this->LockIndices();
     res = meshLoader->ReadIndices(indexBufferPtr, ibSize);
     n_assert(res);
+    this->UpdateGroupBoundingBoxes(vertexBufferPtr, indexBufferPtr);
     this->UnlockIndices();
+    this->UnlockVertices();
 
     // if the file contains edges load them
     if (this->numEdges > 0)
@@ -329,31 +307,25 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     // close the meshloader
     meshLoader->Close();
 
-    // update the group bounding box data
-    this->UpdateGroupBoundingBoxes();
-
     return true;
 }
 
 //------------------------------------------------------------------------------
 /**
     Update the group bounding boxes. This is a slow operation (since the
-    vertex buffer must be locked and read). It should only be called
-    once after loading.
+    vertex buffer must read). It should only be called once after loading.
+    NOTE that the vertex and index buffer must be locked while calling
+    this method!
 */
 void
-nMesh2::UpdateGroupBoundingBoxes()
+nMesh2::UpdateGroupBoundingBoxes(float* vertexBufferData, ushort* indexBufferData)
 {
     bbox3 groupBox;
     int groupIndex;
-
-    float* vertexBufferData = this->LockVertices();
-    ushort* indexBufferData = this->LockIndices();
     for (groupIndex = 0; groupIndex < this->numGroups; groupIndex++)
     {
         groupBox.begin_extend();
-
-        nMeshGroup& group = this->GetGroup(groupIndex);
+        nMeshGroup& group = this->Group(groupIndex);
         ushort* indexPointer = indexBufferData + group.GetFirstIndex();
         int i;
         for (i = 0; i < group.GetNumIndices(); i++)
@@ -363,8 +335,6 @@ nMesh2::UpdateGroupBoundingBoxes()
         }
         group.SetBoundingBox(groupBox);
     }
-    this->UnlockIndices();
-    this->UnlockVertices();
 }
 
 //------------------------------------------------------------------------------

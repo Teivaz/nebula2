@@ -18,8 +18,10 @@ nNebulaClass(nD3D9Shader, "nshader2");
 nD3D9Shader::nD3D9Shader() :
     refGfxServer("/sys/servers/gfx"),
     effect(0),
+    inBeginPass(false),
     hasBeenValidated(false),
-    didNotValidate(false)
+    didNotValidate(false),
+    curTechniqueNeedsSoftwareVertexProcessing(false)
 {
     memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
 }
@@ -116,12 +118,37 @@ nD3D9Shader::LoadResource()
     ID3DXEffectPool* effectPool = this->refGfxServer->GetEffectPool();
     n_assert(effectPool);
 
+    // get the highest supported shader profiles
+    LPCSTR vsProfile = D3DXGetVertexShaderProfile(d3d9Dev);
+    LPCSTR psProfile = D3DXGetPixelShaderProfile(d3d9Dev);
+
+    if (0 == vsProfile)
+    {
+        n_printf("Invalid Vertex Shader profile! Fallback to vs_2_0!\n");
+        vsProfile = "vs_2_0";
+    }
+
+    if (0 == psProfile)
+    {
+        n_printf("Invalid Pixel Shader profile! Fallback to ps_2_0!\n");
+        psProfile = "ps_2_0";
+    }
+
+    n_printf("Shader profiles: %s %s\n", vsProfile, psProfile);
+
+    // create macro definitions for shader compiler
+    D3DXMACRO defines[] = {
+        { "VS_PROFILE", vsProfile },
+        { "PS_PROFILE", psProfile },
+        { 0, 0 },
+    };
+
     // create effect
     hr = D3DXCreateEffect(
             d3d9Dev,            // pDevice
             buffer,             // pFileData
             fileSize,           // DataSize
-            NULL,               // pDefines
+        defines,            // pDefines
             &includeHandler,    // pInclude
             compileFlags,       // Flags
             effectPool,         // pPool
@@ -366,17 +393,37 @@ nD3D9Shader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array
 void
 nD3D9Shader::SetTexture(nShaderState::Param p, nTexture2* tex)
 {
-    n_assert(tex);
     n_assert(this->effect && (p < nShaderState::NumParameters));
-    if ((!this->curParams.IsParameterValid(p)) ||
-        (this->curParams.IsParameterValid(p) && (this->curParams.GetArg(p).GetTexture() != tex)))
+    if (0 == tex)
     {
-        this->curParams.SetArg(p, nShaderArg(tex));
-        HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], ((nD3D9Texture*)tex)->GetBaseTexture());
+        HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], 0);
+        this->curParams.SetArg(p, nShaderArg((nTexture2*)0));
         #ifdef __NEBULA_STATS__
         this->refGfxServer->statsNumTextureChanges++;
         #endif
-        n_dxtrace(hr, "SetTexture() on shader failed!");
+        n_dxtrace(hr, "SetTexture(0) on shader failed!");
+    }
+    else
+    {
+        uint curTexUniqueId = 0;
+        if (this->curParams.IsParameterValid(p))
+        {
+            nTexture2* curTex = this->curParams.GetArg(p).GetTexture();
+            if (curTex)
+            {
+                curTexUniqueId = curTex->GetUniqueId();
+            }
+        }
+
+        if ((!this->curParams.IsParameterValid(p)) || (curTexUniqueId != tex->GetUniqueId()))
+        {
+            this->curParams.SetArg(p, nShaderArg(tex));
+            HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], ((nD3D9Texture*)tex)->GetBaseTexture());
+            #ifdef __NEBULA_STATS__
+            this->refGfxServer->statsNumTextureChanges++;
+            #endif
+            n_dxtrace(hr, "SetTexture() on shader failed!");
+        }
     }
 }
 
@@ -511,58 +558,93 @@ nD3D9Shader::ValidateEffect()
     n_assert(!this->hasBeenValidated);
     n_assert(this->effect);
     n_assert(this->refGfxServer->d3d9Device);
+    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+    IDirect3DDevice9* d3d9Device = gfxServer->d3d9Device;
+    n_assert(d3d9Device);
+    HRESULT hr;
+
+    // get current vertex processing state
+    bool origSoftwareVertexProcessing = gfxServer->GetSoftwareVertexProcessing();
+
+    // set to hardware vertex processing (this could fail if it's a pure software processing device)
+    gfxServer->SetSoftwareVertexProcessing(false);
 
     // set on first technique that validates correctly
     D3DXHANDLE technique = NULL;
-    HRESULT	hr = this->effect->FindNextValidTechnique(0, &technique);
+    hr = this->effect->FindNextValidTechnique(0, &technique);
 
-    if (S_OK == hr) 
+    // NOTE: DON'T change this to SUCCEEDED(), since FindNextValidTechnique() may
+    // return S_FALSE, which the SUCCEEDED() macro interprets as a success code!
+    if (D3D_OK == hr)
     {
         // technique could be validated
-        this->effect->SetTechnique(technique);
+        D3DXTECHNIQUE_DESC desc;
+        this->effect->GetTechniqueDesc(this->effect->GetTechnique(0), &desc);
+        this->SetTechnique(desc.Name);
         this->hasBeenValidated = true;
         this->didNotValidate = false;
         this->UpdateParameterHandles();
     }
     else
     {
-        // remember old state
-        BOOL oldSoftwareVertexProcessing = this->refGfxServer->d3d9Device->GetSoftwareVertexProcessing( );
+		// shader did not validate with hardware vertex processing, try with software vertex processing
+        gfxServer->SetSoftwareVertexProcessing(true);
+        hr = this->effect->FindNextValidTechnique(0, &technique);
+        this->hasBeenValidated = true;
 
-        // if not DX9, give it another chance with software vertex processing
-        if ((this->refGfxServer->GetFeatureSet() < nGfxServer2::DX9) && (!oldSoftwareVertexProcessing))
+        // NOTE: DON'T change this to SUCCEEDED(), since FindNextValidTechnique() may
+        // return S_FALSE, which the SUCCEEDED() macro interprets as a success code!
+        if (D3D_OK == hr)
         {
-            this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing( TRUE );
-            hr = this->effect->FindNextValidTechnique(0, &technique);
-            this->refGfxServer->d3d9Device->SetSoftwareVertexProcessing(oldSoftwareVertexProcessing);
-
-            this->hasBeenValidated = true;
-            if (S_OK == hr)
-            {
-                n_printf("nD3D9Shader() info: shader '%s' needs software vertex processing\n",  this->GetFilename());
-                // technique could be validated
-                this->effect->SetTechnique(technique);
-                this->didNotValidate = false;
-                this->UpdateParameterHandles();
-            }
-            else
-            {
-                this->didNotValidate = true;
-                n_printf("nD3D9Shader() warning: shader '%s' did not validate for software vertex processing!\n", this->GetFilename());
-            }
+            // success with software vertex processing
+            n_printf("nD3D9Shader() info: shader '%s' needs software vertex processing\n",  this->GetFilename());
+            D3DXTECHNIQUE_DESC desc;
+            this->effect->GetTechniqueDesc(this->effect->GetTechnique(0), &desc);
+            this->SetTechnique(desc.Name);
+            this->didNotValidate = false;
+            this->UpdateParameterHandles();
         }
         else
         {
-            // no valid technique found
-            this->hasBeenValidated = true;
-            this->didNotValidate = true;
-            n_printf("nD3D9Shader() warning: shader '%s' did not validate for hardware vertex processing!\n", this->GetFilename());
+            // NOTE: looks like this has been fixed in the April 2005 SDK...
+
+            // shader didn't validate at all, this may happen although the shader is valid
+            // on older nVidia cards if the effect has a vertex shader, thus we simply force 
+            // the first technique in the file as crurent
+			n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
+
+            // NOTE: this works around the dangling "BeginPass()" in D3DX when a shader did
+            // not validate (reproducible on older nVidia cards)
+            this->effect->EndPass();
+            D3DXTECHNIQUE_DESC desc;
+            this->effect->GetTechniqueDesc(this->effect->GetTechnique(0), &desc);
+            this->SetTechnique(desc.Name);
+            this->didNotValidate = false;
+            this->UpdateParameterHandles();
         }
     }
+
+    // restore original software processing mode
+    gfxServer->SetSoftwareVertexProcessing(origSoftwareVertexProcessing);
 }
 
 //------------------------------------------------------------------------------
 /**
+    This switches between hardware and software processing mode, as needed
+    by this shader.
+*/
+void
+nD3D9Shader::SetVertexProcessingMode()
+{
+    nD3D9Server* d3d9Server = (nD3D9Server*) nGfxServer2::Instance();
+    d3d9Server->SetSoftwareVertexProcessing(this->curTechniqueNeedsSoftwareVertexProcessing);
+}
+
+//------------------------------------------------------------------------------
+/**
+    05-Jun-04   floh    saveState parameter
+    26-Sep-04   floh    I misread the save state docs for DX9.0c, state saving
+                        flags now correct again
 */
 int
 nD3D9Shader::Begin(bool saveState)
@@ -585,9 +667,17 @@ nD3D9Shader::Begin(bool saveState)
         // start rendering the effect
         UINT numPasses;
         DWORD flags;
-        if (saveState) flags = 0;
-        else           flags = D3DXFX_DONOTSAVESTATE;
-
+        if (saveState) 
+        {
+            // save all state
+            flags = 0;
+        }
+        else
+        {
+            // save no state
+            flags = D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESAMPLERSTATE | D3DXFX_DONOTSAVESHADERSTATE;
+        }
+        this->SetVertexProcessingMode();
         HRESULT hr = this->effect->Begin(&numPasses, flags);
         n_dxtrace(hr, "nD3D9Shader: Begin() failed on effect");
         return numPasses;
@@ -603,6 +693,7 @@ nD3D9Shader::BeginPass(int pass)
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
 
+    this->SetVertexProcessingMode();
 #if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     HRESULT hr = this->effect->BeginPass(pass);
     n_dxtrace(hr, "nD3D9Shader:BeginPass() failed on effect");
@@ -622,6 +713,7 @@ nD3D9Shader::CommitChanges()
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
 
+    this->SetVertexProcessingMode();
     HRESULT hr = this->effect->CommitChanges();
     n_dxtrace(hr, "nD3D9Shader: CommitChanges() failed on effect");
 #endif
@@ -637,6 +729,7 @@ nD3D9Shader::EndPass()
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
     
+    this->SetVertexProcessingMode();
     HRESULT hr = this->effect->EndPass();
     n_dxtrace(hr, "nD3D9Shader: EndPass() failed on effect");
 #endif
@@ -654,9 +747,22 @@ nD3D9Shader::End()
 
     if (!this->didNotValidate)
     {
+        this->SetVertexProcessingMode();
         hr = this->effect->End();
         n_dxtrace(hr, "End() failed on effect");
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nD3D9Shader::HasTechnique(const char* t) const
+{
+    n_assert(t);
+    n_assert(this->effect);
+    D3DXHANDLE h = this->effect->GetTechniqueByName(t);
+    return (0 != h);
 }
 
 //------------------------------------------------------------------------------
@@ -667,8 +773,41 @@ nD3D9Shader::SetTechnique(const char* t)
 {
     n_assert(t);
     n_assert(this->effect);
-    HRESULT hr = this->effect->SetTechnique(t);
-    return SUCCEEDED(hr);
+    
+    // get handle to technique
+    D3DXHANDLE hTechnique = this->effect->GetTechniqueByName(t);
+    if (0 == hTechnique)
+    {
+        n_error("nD3D9Shader::SetTechnique(%s): technique not found in shader file %s!\n", t, this->GetFilename());
+        return false;
+    }
+
+    // check if technique needs software vertex processing (this is the
+    // case if the 3d device is a mixed vertex processing device, and 
+    // the current technique includes a vertex shader
+    this->curTechniqueNeedsSoftwareVertexProcessing = false;
+    if (nGfxServer2::Instance()->AreVertexShadersEmulated())
+    {
+        D3DXHANDLE hPass = this->effect->GetPass(hTechnique, 0);
+        n_assert(0 != hPass);
+        D3DXPASS_DESC passDesc = { 0 };
+        HRESULT hr = this->effect->GetPassDesc(hPass, &passDesc);
+        n_assert(SUCCEEDED(hr));
+        if (passDesc.pVertexShaderFunction)
+        {
+            this->curTechniqueNeedsSoftwareVertexProcessing = true;
+        }
+    }
+
+    // finally, set the technique
+    HRESULT hr = this->effect->SetTechnique(hTechnique);
+    if (FAILED(hr))
+    {
+        n_printf("nD3D9Shader::SetTechnique(%s) on shader %s failed!\n", t, this->GetFilename());
+        return false;
+    }
+
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -680,7 +819,7 @@ nD3D9Shader::GetTechnique() const
     n_assert(this->effect);
     return this->effect->GetCurrentTechnique();
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     This converts a D3DX parameter handle to a nShaderState::Param.

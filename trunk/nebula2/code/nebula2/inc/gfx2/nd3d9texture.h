@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9Texture
-    @ingroup NebulaD3D9GraphicsSystem
+    @ingroup Gfx2
 
     Direct3D9 subclass for nTexture2.
 
@@ -54,6 +54,7 @@ private:
     friend class nD3D9Server;
     friend class nD3D9Shader;
     friend class nD3D9Surface;
+    friend class nAllocatorPresenter;
 
     /// get d3d9 base texture interface
     IDirect3DBaseTexture9* GetBaseTexture();

@@ -75,12 +75,16 @@ nD3D9Server::Text(const char* text, const vector4& color, float x, float y)
 void
 nD3D9Server::DrawTextBuffer()
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StartAccum();
+#endif
+
     if (!this->textNodeList.IsEmpty())
     {
         n_assert(this->d3d9Device);
 
         // flush the mesh at stream 0 because we cannot preserve its state
-        this->SetMesh(0);
+        this->SetMesh(0, 0);
 
         ID3DXFont* d3dFont = ((nD3D9Font*)this->refDefaultFont.get())->GetD3DFont();
         this->d3dSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
@@ -113,6 +117,10 @@ nD3D9Server::DrawTextBuffer()
         }
         this->d3dSprite->End();
     }
+
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StopAccum();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -127,6 +135,10 @@ nD3D9Server::DrawTextBuffer()
 void
 nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
 {
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StartAccum();
+#endif
+
     n_assert(text);
     if (this->refFont.isvalid())
     {
@@ -166,6 +178,10 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
         d3dFont->DrawText(this->d3dSprite, text, -1, &r, d3dFlags, d3dColor);
         this->d3dSprite->End();
     }
+
+#if __NEBULA_STATS__
+    this->profGUIDrawText.StopAccum();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -178,6 +194,9 @@ nD3D9Server::DrawText(const char* text, const vector4& color, const rectangle& r
 vector2
 nD3D9Server::GetTextExtent(const char* text)
 {
+#if __NEBULA_STATS__
+    this->profGUIGetTextExtent.StartAccum();
+#endif
     n_assert(text);
     int width = 0;
     int height = 0;
@@ -216,5 +235,8 @@ nD3D9Server::GetTextExtent(const char* text)
 
         n_delete_array(tmp);
     }
+#if __NEBULA_STATS__
+    this->profGUIGetTextExtent.StopAccum();
+#endif
     return vector2((float(width) / dispWidth), (float(height) / dispHeight));
 }

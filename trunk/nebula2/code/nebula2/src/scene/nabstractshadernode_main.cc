@@ -174,3 +174,23 @@ nAbstractShaderNode::IsTextureUsed(nShaderState::Param /*param*/)
     return true;
 }
 
+//------------------------------------------------------------------------------
+/**
+   Returns true, if param is valid
+*/
+bool
+nAbstractShaderNode::HasParam(nShaderState::Param param)
+{
+    return this->shaderParams.IsParameterValid(param);
+}
+
+//------------------------------------------------------------------------------
+/**
+   get nShaderParams from node
+*/
+nShaderParams&
+nAbstractShaderNode::GetShaderParams()
+{
+    return this->shaderParams;
+}
+

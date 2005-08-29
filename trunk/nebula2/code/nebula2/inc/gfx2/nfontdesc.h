@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nFontDesc
+    @ingroup Gfx2
 
     A font description object used to create a nFont object.
     

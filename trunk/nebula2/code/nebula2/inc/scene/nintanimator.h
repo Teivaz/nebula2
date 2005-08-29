@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nIntAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
 
     @brief Animates a int attribute of a nAbstractShaderNode.
 
@@ -25,7 +25,7 @@ public:
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
     /// add a key 
-    void AddKey(float time, const int& key);
+    void AddKey(float time, int key);
     /// get number of keys
     int GetNumKeys() const;
     /// get key at
@@ -34,6 +34,5 @@ public:
 private:
     nAnimKeyArray<nAnimKey<int> > keyArray;
 };
-
 //------------------------------------------------------------------------------
 #endif

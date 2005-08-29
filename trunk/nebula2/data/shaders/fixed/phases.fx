@@ -1,4 +1,3 @@
-#line 1 "phases.fx"
 //------------------------------------------------------------------------------
 //  phases.fx
 //
@@ -15,7 +14,7 @@ technique tPhaseAlpha
         AlphaTestEnable  = False;
         Lighting         = True;
         VertexShader     = 0;
-        FogEnable        = False;
+        FogEnable        = True;
     }
 }
 
@@ -27,10 +26,50 @@ technique tPhaseMultiPass
         VertexShader     = 0;
         FogEnable        = True;
         Lighting         = True;
+        
+        // set zero texture transforms, so the layered shader won't change the default alpha
+        TexCoordIndex[0] = 0;
+        TexCoordIndex[1] = 0;
+        
+        TextureTransformFlags[0] = 0;
+        TextureTransformFlags[1] = 0;
+        
+        TextureTransform[0] = 0;
+        TextureTransform[1] = 0;
     }
 }
 
 technique tPhaseOpaque
+{
+    pass p0
+    {
+        ZWriteEnable     = True;
+        AlphaBlendEnable = False;
+        AlphaTestEnable  = False;
+        AlphaFunc        = GreaterEqual;
+        VertexShader     = 0;
+        FogEnable        = True;
+        LightEnable[0]   = True;            
+        Lighting         = True;
+    }
+}
+
+technique tPhaseOpaqueNoFog
+{
+    pass p0
+    {
+        ZWriteEnable     = True;
+        AlphaBlendEnable = False;
+        AlphaTestEnable  = False;
+        AlphaFunc        = GreaterEqual;
+        VertexShader     = 0;
+        FogEnable        = False;      
+        LightEnable[0]   = True;
+        Lighting         = True;
+    }
+}
+
+technique tPhaseOpaqueATest
 {
     pass p0
     {
@@ -51,7 +90,7 @@ technique tPhaseOpaqueNoLightNoFog
     {
         ZWriteEnable     = True;
         AlphaBlendEnable = False;
-        AlphaTestEnable  = True;
+        AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
         VertexShader     = 0;
         FogEnable        = False;      
@@ -68,8 +107,7 @@ technique tPhaseVsAlpha
         AlphaBlendEnable = True;
         AlphaTestEnable  = False;
         Lighting         = False;
-        FogEnable        = False;
-        TextureTransformFlags[0] = 0;
+        FogEnable        = True;
     }
 }
 
@@ -78,11 +116,38 @@ technique tPhaseVsOpaque
     pass p0
     {
         ZWriteEnable     = True;
-        AlphaBlendEnable = False;
+        SrcBlend         = One;
+        DestBlend        = One;
+        AlphaTestEnable  = False;
+        AlphaFunc        = GreaterEqual;
+        Lighting         = False;
+        FogEnable        = True;
+    }
+}
+
+technique tPhaseVsOpaqueATest
+{
+    pass p0
+    {
+        ZWriteEnable     = True;
+        SrcBlend         = One;
+        DestBlend        = One;        
         AlphaTestEnable  = True;
         AlphaFunc        = GreaterEqual;
         Lighting         = False;
+        FogEnable        = True;
+    }
+}
+
+technique tPhaseGui3D
+{
+    pass p0
+    {
+        ZWriteEnable     = False;
+        AlphaBlendEnable = True;
+        AlphaTestEnable  = False;
+        Lighting         = False;
+        VertexShader     = 0;
         FogEnable        = False;
-        TextureTransformFlags[0] = 0;
     }
 }

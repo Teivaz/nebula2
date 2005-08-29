@@ -8,7 +8,7 @@
 #      ndsoundserver3
 #      dsutil
 #  Targets:
-#      ndsaudioserver3
+#      ndsound
 #===============================================================================
 
 #===============================================================================
@@ -79,9 +79,9 @@ beginmodule nwavfile
     setheaders { nwavfile }
 endmodule
 #===============================================================================
-#  ndsoundserver3 Targets
+#  ndsound Targets
 #===============================================================================
-begintarget ndsaudioserver3
+begintarget ndsound
     settype lib
     setmodules {
         ndsound3 ndsoundresource ndsoundserver3 dsutil

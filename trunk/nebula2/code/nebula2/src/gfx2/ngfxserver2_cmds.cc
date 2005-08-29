@@ -10,6 +10,8 @@ static void n_opendisplay(void* slf, nCmd* cmd);
 static void n_closedisplay(void* slf, nCmd* cmd);
 static void n_getfeatureset(void* slf, nCmd* cmd);
 static void n_savescreenshot(void* slf, nCmd* cmd);
+static void n_setscissorrect(void* slf, nCmd* cmd);
+static void n_getscissorrect(void* slf, nCmd* cmd);
 static void n_setcursorvisibility(void* slf, nCmd* cmd);
 static void n_setmousecursor(void* slf, nCmd* cmd);
 static void n_seticon(void* slf, nCmd* cmd);
@@ -45,12 +47,14 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setdisplaymode_ssiiiib",  'SDMD', n_setdisplaymode);
-    cl->AddCmd("ssiiiib_getdisplaymode_v",  'GDMD', n_getdisplaymode);
-    cl->AddCmd("b_opendisplay_v",           'ODSP', n_opendisplay);
-    cl->AddCmd("v_closedisplay_v",          'CDSP', n_closedisplay);
-    cl->AddCmd("s_getfeatureset_v",         'GFTS', n_getfeatureset);
-    cl->AddCmd("v_savescreenshot_s",        'SSCS', n_savescreenshot);
+    cl->AddCmd("v_setdisplaymode_ssiiiib",   'SDMD', n_setdisplaymode);
+    cl->AddCmd("ssiiiib_getdisplaymode_v",   'GDMD', n_getdisplaymode);
+    cl->AddCmd("b_opendisplay_v",            'ODSP', n_opendisplay);
+    cl->AddCmd("v_closedisplay_v",           'CDSP', n_closedisplay);
+    cl->AddCmd("s_getfeatureset_v",          'GFTS', n_getfeatureset);
+    cl->AddCmd("v_savescreenshot_s",         'SSCS', n_savescreenshot);
+    cl->AddCmd("v_setscissorrect_ffff",      'SSCR', n_setscissorrect);
+    cl->AddCmd("ffff_getscissorrect_v",      'GSCR', n_getscissorrect);
     cl->AddCmd("v_setcursorvisibility_s",   'SCVS', n_setcursorvisibility);
     cl->AddCmd("v_setmousecursor_sii",      'SMCS', n_setmousecursor);
     cl->AddCmd("v_seticon_s",               'SICO', n_seticon);
@@ -89,7 +93,7 @@ n_setdisplaymode(void* slf, nCmd* cmd)
     int h = cmd->In()->GetI();
     bool vsync = cmd->In()->GetB();
 
-    self->SetDisplayMode(nDisplayMode2(title, type, x, y, w, h, vsync));
+    self->SetDisplayMode(nDisplayMode2(title, type, x, y, w, h, vsync, true, "Icon")); // true - dialog box mode
 }
 
 //------------------------------------------------------------------------------
@@ -176,13 +180,10 @@ n_getfeatureset(void* slf, nCmd* cmd)
 /**
     @cmd
     savescreenshot
-
     @input
     s(Filename)
-
     @output
     v
-
     @info
     Save a screenshot to the provided filename.
     A 24 bpp BMP file will be created.
@@ -270,6 +271,53 @@ n_seticon(void* slf, nCmd* cmd)
     nDisplayMode2 mode = self->GetDisplayMode();
     mode.SetIcon(cmd->In()->GetS());
     self->SetDisplayMode(mode);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setscissorrect
+    @input
+    f(x0), f(y0), f(x1), f(y1)
+    @output
+    v
+    @info
+    Define the scissor rectangle (topleft is (0.0f, 0.0f), bottomright
+    is (1.0f, 1.0f)). Note that scissoring must be enabled externally
+    in a shader!
+*/
+static void
+n_setscissorrect(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    vector2 v0, v1;
+    v0.x = cmd->In()->GetF();
+    v0.y = cmd->In()->GetF();
+    v1.x = cmd->In()->GetF();
+    v1.y = cmd->In()->GetF();
+    self->SetScissorRect(rectangle(v0, v1));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getscissorrect
+    @input
+    v
+    @output
+    f(x0), f(y0), f(x1), f(y1)
+    @info
+    Returns the current scissor rect.
+*/
+static void
+n_getscissorrect(void* slf, nCmd* cmd)
+{
+    nGfxServer2* self = (nGfxServer2*) slf;
+    const rectangle& r = self->GetScissorRect();
+    cmd->Out()->SetF(r.v0.x);
+    cmd->Out()->SetF(r.v0.y);
+    cmd->Out()->SetF(r.v1.x);
+    cmd->Out()->SetF(r.v1.y);
 }
 
 //------------------------------------------------------------------------------

@@ -14,6 +14,10 @@ static void n_setlocalbox(void* slf, nCmd* cmd);
 static void n_getlocalbox(void* slf, nCmd* cmd);
 static void n_setrenderpri(void* slf, nCmd* cmd);
 static void n_getrenderpri(void* slf, nCmd* cmd);
+static void n_addhints(void* slf, nCmd* cmd);
+static void n_clearhints(void* slf, nCmd* cmd);
+static void n_gethints(void* slf, nCmd* cmd);
+static void n_hashints(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -22,7 +26,7 @@ static void n_getrenderpri(void* slf, nCmd* cmd);
 
     @cppclass
     nSceneNode
-    
+
     @superclass
     nroot
 
@@ -43,6 +47,10 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffffff_getlocalbox_v",  'GLCB', n_getlocalbox);
     cl->AddCmd("v_setrenderpri_i",      'SRPR', n_setrenderpri);
     cl->AddCmd("i_getrenderpri_v",      'GRPR', n_getrenderpri);
+    cl->AddCmd("v_addhints_i",          'ADDH', n_addhints);
+    cl->AddCmd("v_clearhints_i",        'CLRH', n_clearhints);
+    cl->AddCmd("i_gethints_v",          'GETH', n_gethints);
+    cl->AddCmd("b_hashints_i",          'HASH', n_hashints);
     cl->EndCmds();
 }
 
@@ -216,6 +224,7 @@ n_setrenderpri(void* slf, nCmd* cmd)
     @cmd
     getrenderpri
     @input
+    v
     @output
     i(RenderPri)
     @info
@@ -226,6 +235,78 @@ n_getrenderpri(void* slf, nCmd* cmd)
 {
     nSceneNode* self = (nSceneNode*) slf;
     cmd->Out()->SetI(self->GetRenderPri());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    addhints
+    @input
+    i(HintMask)
+    @output
+    v
+    @info
+    Add one or more hint flags.
+*/
+static void
+n_addhints(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    self->AddHints(cmd->In()->GetI());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    clearhints
+    @input
+    i(HintMask)
+    @output
+    v
+    @info
+    Clear one or more hint flags.
+*/
+static void
+n_clearhints(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    self->ClearHints(cmd->In()->GetI());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    gethints
+    @input
+    v
+    @output
+    i(HintMask)
+    @info
+    Get all currently set hint flags.
+*/
+static void
+n_gethints(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    cmd->Out()->SetI(self->GetHints());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    hashints
+    @input
+    i(HintMask)
+    @output
+    b(Success)
+    @info
+    Return true if all hint flags in the mask are set.
+*/
+static void
+n_hashints(void* slf, nCmd* cmd)
+{
+    nSceneNode* self = (nSceneNode*) slf;
+    cmd->Out()->SetB(self->HasHints(cmd->In()->GetI()));
 }
 
 //------------------------------------------------------------------------------
@@ -261,6 +342,14 @@ nSceneNode::SaveCmds(nPersistServer* ps)
             cmd->In()->SetF(ext.x);
             cmd->In()->SetF(ext.y);
             cmd->In()->SetF(ext.z);
+            ps->PutCmd(cmd);
+        }
+
+        //--- addhints ---
+        if (0 != this->GetHints())
+        {
+            cmd = ps->GetCmd(this, 'ADDH');
+            cmd->In()->SetI(this->GetHints());
             ps->PutCmd(cmd);
         }
 

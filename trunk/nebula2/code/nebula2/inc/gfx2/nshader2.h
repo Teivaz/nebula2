@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShader2
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     A shader object loads itself from a shader resource file, and contains
     everything to render a mesh and texture. It may be completely
@@ -39,10 +39,8 @@ public:
     /// destructor
     virtual ~nShader2();
 
-    /// set shader priority index
-    void SetShaderIndex(int index);
-    /// get shader priority index (-1 if not initialized)
-    int GetShaderIndex() const;
+    /// return true if technique exists in shader
+    virtual bool HasTechnique(const char* t) const;
     /// set a technique
     virtual bool SetTechnique(const char* t);
     /// get current technique
@@ -96,36 +94,7 @@ public:
     virtual void EndPass();
     /// finish applying the shader
     virtual void End();
- 
-protected:
-    int shaderIndex;
 };
-
-//------------------------------------------------------------------------------
-/**
-    Sets the global shader priority index. This is provided as a service
-    to the outside world. nShader2 does not use this value, and initializes
-    it with -1.
-*/
-inline
-void
-nShader2::SetShaderIndex(int i)
-{
-    this->shaderIndex = i;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns the global shader priority index. This is provided as a service
-    to the outside world. nShader2 does not use this value, and initializes
-    it with -1.
-*/
-inline
-int
-nShader2::GetShaderIndex() const
-{
-    return this->shaderIndex;
-}
 
 //------------------------------------------------------------------------------
 #endif

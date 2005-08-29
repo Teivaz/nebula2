@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nSubdivShapeNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief Takes an input mesh and renders a tesselated mesh (FIXME: for now
     a pointlist based on subdivision parameters.
@@ -24,11 +24,13 @@ public:
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
     /// perform pre-instancing rending of shader
-    virtual bool ApplyShader(nFourCC fourcc, nSceneServer* sceneServer);
+    virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform pre-instancing rending of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// get the mesh usage flags required by this shape node
+    virtual int GetMeshUsage() const;
     /// set the desired segment size
     void SetSegmentSize(float s);
     /// get segment size

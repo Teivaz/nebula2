@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nD3D9MeshArray
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Holds an array of up to nGfxServer2::MaxVertexStreams meshes.
     Can be posted to the nD3D9GfxServer to assign all streams to the graphics

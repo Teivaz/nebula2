@@ -3,6 +3,9 @@
 #ifdef __WIN32__
 //------------------------------------------------------------------------------
 /**
+    @class nWin32WindowHandler
+    @ingroup Gfx2
+
     A window handler for Win32 platforms. Contains the window handling
     code both for the Direct3D and OpenGL graphics servers (if running
     under Windows).

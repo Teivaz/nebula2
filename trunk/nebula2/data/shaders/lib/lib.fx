@@ -1,4 +1,3 @@
-#line 1 "lib.fx"
 //------------------------------------------------------------------------------
 //  lib.fx
 //
@@ -6,31 +5,27 @@
 //
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-/**
-    @defgroup NebulaShaderLib Nebula Shader Library
-    @ingroup NebulaGraphicsSystem
-
-    Nebula2 shader library functions.
-
-    @{
-*/
 
 //------------------------------------------------------------------------------
 /**
-    Transform position into modelview-projection space without deformations.
-    
-    @param    pos    a position in model space
-    @param    mvp    the modelViewProjection matrix
-    @return          transformed position
+	transformStatic()
+	
+	Transform position into modelview-projection space without deformations.
+	
+	@param	pos		a position in model space
+	@param	mvp		the modelViewProjection matrix
+	@return         transformed position
 */
 float4
 transformStatic(const float3 pos, const float4x4 mvp)
 {
-    return mul(float4(pos, 1.0), mvp);
+	return mul(float4(pos, 1.0), mvp);
 }
 
 //------------------------------------------------------------------------------
 /**
+    skinnedPosition()
+    
     Compute a skinned position.
     
     @param  inPos           input vertex position
@@ -54,6 +49,8 @@ skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, 
 
 //------------------------------------------------------------------------------
 /**
+    skinnedNormal()
+    
     Compute a skinned normal vector (without renormalization).
     
     @param  inNormal        input normal vector
@@ -76,9 +73,11 @@ skinnedNormal(const float3 inNormal, const float4 weights, const float4 indices,
 
 //------------------------------------------------------------------------------
 /**
-    Compute an unnormalized tangent space vector from a vertex position, reference 
-    position, normal and tangent (all in model space). This will compute
-    an unnormalized light vector, and a binormal behind the scene.
+	tangentSpaceVector()
+	
+	Compute an unnormalized tangent space vector from a vertex position, reference 
+	position, normal and tangent (all in model space). This will compute
+	an unnormalized light vector, and a binormal behind the scene.
 */
 float3
 tangentSpaceVector(const float3 pos, const float3 refPos, const float3 normal, const float3 tangent)
@@ -89,17 +88,19 @@ tangentSpaceVector(const float3 pos, const float3 refPos, const float3 normal, c
     // compute the binormal
     float3 binormal = cross(normal, tangent);
 
-    // transform with transpose of tangent matrix!
-    float3 outVec = mul(float3x3(tangent, binormal, normal), vec);
-    return outVec;
+	// transform with transpose of tangent matrix!
+	float3 outVec = mul(float3x3(tangent, binormal, normal), vec);
+	return outVec;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Compute the unnormalized tangent space half vector from a vertex position, light 
-    position, eye position, normal and tangent (all in model space). This
-    will compute a normalized lightVec, a normalized eyeVec, an unnormalized
-    half vector and a binormal behind the scenes.
+	tangentSpaceHalfVector()
+	
+	Compute the unnormalized tangent space half vector from a vertex position, light 
+	position, eye position, normal and tangent (all in model space). This
+	will compute a normalized lightVec, a normalized eyeVec, an unnormalized
+	half vector and a binormal behind the scenes.
 */
 float3
 tangentSpaceHalfVector(const float3 pos, 
@@ -116,41 +117,16 @@ tangentSpaceHalfVector(const float3 pos,
     // compute the binormal
     float3 binormal = cross(normal, tangent);
 
-    // transform with transpose of tangent matrix!
-    float3 outVec = mul(float3x3(tangent, binormal, normal), halfVec);
+	// transform with transpose of tangent matrix!
+	float3 outVec = mul(float3x3(tangent, binormal, normal), halfVec);
     return outVec;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Compute tangent space light and half vectors.
-*/
-void
-tangentSpaceLightHalfVector(in const float3 pos,
-                            in const float3 lightPos,
-                            in const float3 eyePos,
-                            in const float3 normal,
-                            in const float3 tangent,
-                            out float3 lightVec,
-                            out float3 halfVec)
-{
-    // compute the light vector, eye vector and half vector in model space
-    float3 lVec = normalize(lightPos - pos);
-    float3 eVec = normalize(eyePos - pos);
-    float3 hVec = normalize(lVec + eVec);
-                                
-    // compute the binormal and tangent matrix
-    float3 binormal = cross(normal, tangent);
-    float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
-
-    // transform with transpose of tangent matrix!
-    lightVec = mul(tangentMatrix, lVec);
-    halfVec  = mul(tangentMatrix, hVec);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Compute tangent space eye and half vectors.
+	tangentSpaceEyeHalfVector()
+	
+	Compute tangent space eye and half vectors.
 */
 void
 tangentSpaceEyeHalfVector(in const float3 pos,
@@ -170,14 +146,16 @@ tangentSpaceEyeHalfVector(in const float3 pos,
     float3 binormal = cross(normal, tangent);
     float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
 
-    // transform with transpose of tangent matrix!
+	// transform with transpose of tangent matrix!
     eyeVec = mul(tangentMatrix, eVec);
     halfVec = mul(tangentMatrix, hVec);
 }
 
 //------------------------------------------------------------------------------
 /**
-    Compute tangent space light and half vectors.
+	tangentSpaceLightHalfEyeVector()
+	
+	Compute tangent space light and half vectors.
 */
 void
 tangentSpaceLightHalfEyeVector(in const float3 pos,
@@ -198,7 +176,7 @@ tangentSpaceLightHalfEyeVector(in const float3 pos,
     float3 binormal = cross(normal, tangent);
     float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
 
-    // transform with transpose of tangent matrix!
+	// transform with transpose of tangent matrix!
     lightVec = mul(tangentMatrix, lVec);
     halfVec  = mul(tangentMatrix, hVec);
     eyeVec   = mul(tangentMatrix, eVec);
@@ -206,6 +184,8 @@ tangentSpaceLightHalfEyeVector(in const float3 pos,
 
 //------------------------------------------------------------------------------
 /**
+    reflectionVector()
+    
     Returns the eye vector reflected around the surface normal in world space.
 */
 float3
@@ -222,6 +202,8 @@ reflectionVector(const float3 pos,
 
 //------------------------------------------------------------------------------
 /**
+    fog()
+    
     Compute a distance/layer fog.
     
     @param  pos                     the current vertex position in model space
@@ -261,6 +243,8 @@ fog(const float3 pos,
 
 //------------------------------------------------------------------------------
 /**
+    shadow()
+    
     Compute the shadow modulation color.
     
     @param  shadowPos           position in shadow space
@@ -276,7 +260,7 @@ shadow(const float4 shadowPos, float distOffset, sampler shadowMapSampler)
     float3 projShadowPos = shadowPos.xyz / shadowPos.w;
     
     // jitter shadow map position using noise texture lookup
-    // projShadowPos.xy += tex2D(noiseSampler, projShadowPos.xy * 1234.5f).xy * 0.0005f;
+//    projShadowPos.xy += tex2D(noiseSampler, projShadowPos.xy * 1234.5f).xy * 0.0005f;
     
     // sample shadow depth from shadow map
     float4 shadowDepth = tex2D(shadowMapSampler, projShadowPos.xy) + distOffset;
@@ -311,68 +295,63 @@ shadow(const float4 shadowPos, float distOffset, sampler shadowMapSampler)
 }
 
 //------------------------------------------------------------------------------
-/**
-    Vertex shader support function for simpler per-pixel lighting.
-
-    @param  pos                 [in] vertex position
-    @param  normal              [in] vertex normal
-    @param  tangent             [in] vertex tangent
-    @param  primLightVec        [out] primary light vector in tangent space
-    @param  primHalfVec         [out] primary half vector in tangent space
-*/
+//  vsLighting
+//
+//  Vertex shader support function for simpler per-pixel lighting.
+//
+//  @param  pos                 [in] vertex position
+//  @param  normal              [in] vertex normal
+//  @param  tangent             [in] vertex tangent
+//  @param  primLightVec        [out] xyz: primary light vector in tangent space, w: distance to light
+//  @param  primHalfVec         [out] primary half vector in tangent space
+//------------------------------------------------------------------------------
 void
 vsLighting(in const float4 pos,
            in const float3 normal,
            in const float3 tangent,
-           in const float3 modelPrimLightPos,
-           in const float3 modelEyePos,
-           out float3 primLightVec,
-           out float3 primHalfVec)
+           in const float3 lightPos,
+           in const float3 eyePos,
+           out float3 lightVec,
+           out float3 halfVec)
 {           
-    // compute light and half vector
-    tangentSpaceLightHalfVector(pos, modelPrimLightPos, modelEyePos, normalize(normal), normalize(tangent), primLightVec, primHalfVec);
+    // compute the light vector, eye vector and half vector in model space
+    float3 lVec = lightPos - pos;
+    float3 eVec = eyePos - pos;
+    float3 hVec = normalize(normalize(lVec) + normalize(eVec));
+                                
+    // compute the binormal and tangent matrix
+    float3 binormal = cross(normal, tangent);
+    float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
+
+	// transform with transpose of tangent matrix!
+    lightVec.xyz = mul(tangentMatrix, lVec);
+    halfVec      = mul(tangentMatrix, hVec);
 }
 
 //------------------------------------------------------------------------------
-/**
-    Pixel shader functionality for simple per-pixel lighting.
-
-    @param  diffSampler         the diffuse texture sampler
-    @param  bumpSampler         the bump map sampler
-    @param  uv                  uv coordinates for diffuse and bump sampler
-    @param  primLightVec        the primary light vector
-    @param  primHalfVec         the primary light half vector
-    @param  primDiffuse         the primary diffuse color
-    @param  primSpecular        the primary specular color
-    @param  primAmbient         the primary ambient color
-    @param  matSpecularPower    the material specular power
-*/
+//  psLighting
+//
+//  Pixel shader functionality for simple per-pixel lighting.
+//
+//  @param  mapColor                the diffuse color
+//  @param  tangentSurfaceNormal
+//  @param  primLightVec            the primary light vector
+//  @param  primHalfVec             the primary light half vector
+//------------------------------------------------------------------------------
 float4
-psLighting(in sampler diffSampler,
-           in sampler bumpSampler,
-           in const float2 uv,
+psLighting(in float4 mapColor,
+           in float3 tangentSurfaceNormal,
            in const float3 primLightVec,
-           in const float3 primHalfVec,
-           in const float4 primDiffuse,
-           in const float4 primSpecular,
-           in const float4 primAmbient,
-           in const float  matSpecularPower)
+           in const float3 primHalfVec)
 {
-    // sample diffuse and bump texture
-    float4 mapColor = tex2D(diffSampler, uv);
-    float4 bumpColor = tex2D(bumpSampler, uv);
-
-    // compute surface normal in tangent space
-    float3 tangentSurfaceNormal = (2.0f * bumpColor.rgb) - 1.0f;
-    
     // compute light intensities
     float primDiffIntensity = saturate(dot(tangentSurfaceNormal, normalize(primLightVec)));
-    float primSpecIntensity = pow(saturate(dot(tangentSurfaceNormal, normalize(primHalfVec))), matSpecularPower);
+    float primSpecIntensity = pow(saturate(dot(tangentSurfaceNormal, normalize(primHalfVec))), MatSpecularPower);
     
     // compute light colors
-    float4 diffColor = primDiffIntensity * mapColor * primDiffuse;
-    float4 specColor = primSpecIntensity * primSpecular * primDiffIntensity;
-    float4 envColor  = mapColor * primAmbient;
+    float4 diffColor = primDiffIntensity * mapColor * LightDiffuse[0] * MatDiffuse;
+    float4 specColor = primSpecIntensity * LightSpecular[0] * MatSpecular * primDiffIntensity;
+    float4 envColor  = mapColor * LightAmbient[0] * MatAmbient;
     float4 color;
     color.rgba = (diffColor + specColor) + envColor;
     color.a = mapColor.a;
@@ -380,88 +359,39 @@ psLighting(in sampler diffSampler,
 }
 
 //------------------------------------------------------------------------------
-/**
-    Pixel shader functionality for 2-sided per-pixel lighting.
-
-    @param  diffSampler         the diffuse texture sampler
-    @param  bumpSampler         the bump map sampler
-    @param  uv                  uv coordinates for diffuse and bump sampler
-    @param  primLightVec        the primary light vector
-    @param  primHalfVec         the primary light half vector
-    @param  primDiffuse         the primary diffuse color
-    @param  primSpecular        the primary specular color
-    @param  primAmbient         the primary ambient color
-    @param  secDiffuse          the secondary diffuse color
-    @param  matSpecularPower    the material specular power
-*/
-float4
-psLighting2(in const float4 mapColor,
-            in const float3 tangentSurfaceNormal,
-            in const float3 primLightVec,
-            in const float3 primHalfVec,
-            in const float4 primDiffuse,
-            in const float4 primSpecular,
-            in const float4 primAmbient,
-            in const float4 secDiffuse,
-            in const float  matSpecularPower,
-            in const float  specModulate)
-{
-    // compute light intensities
-    float dotNL = dot(tangentSurfaceNormal, normalize(primLightVec));
-    float dotNH = dot(tangentSurfaceNormal, normalize(primHalfVec));
-    float primDiffIntensity = saturate(dotNL);
-    float secDiffIntensity  = saturate(-dotNL);
-    float primSpecIntensity = pow(saturate(dotNH), matSpecularPower);
-    
-    // compute light colors
-    float4 diffColor = (primDiffIntensity * primDiffuse + secDiffIntensity * secDiffuse) * mapColor;
-    float4 specColor = primSpecIntensity * primSpecular * primDiffIntensity * specModulate;
-    float4 envColor  = mapColor * primAmbient;
-    float4 color;
-    color.rgba = (diffColor + specColor) + envColor;
-    color.a = mapColor.a;
-    return color;
-}
-
+//  psLightingAlpha
+//
+//  Pixel shader functionality for simple per-pixel lighting. The specular
+//  highlight will also increase the alpha channels value (nice for glass
+//  and other transparent surfaces).
+//
+//  @param  diffSampler         the diffuse texture sampler
+//  @param  bumpSampler         the bump map sampler
+//  @param  uv                  uv coordinates for diffuse and bump sampler
+//  @param  primLightVec        the primary light vector
+//  @param  primHalfVec         the primary light half vector
+//  @param  primDiffuse         the primary diffuse color
+//  @param  primSpecular        the primary specular color
+//  @param  primAmbient         the primary ambient color
+//  @param  matSpecularPower    the material specular power
 //------------------------------------------------------------------------------
-/**
-    Pixel shader functionality for simple per-pixel lighting. The specular
-    highlight will also increase the alpha channels value (nice for glass
-    and other transparent surfaces).
-
-    @param  diffSampler         the diffuse texture sampler
-    @param  bumpSampler         the bump map sampler
-    @param  uv                  uv coordinates for diffuse and bump sampler
-    @param  primLightVec        the primary light vector
-    @param  primHalfVec         the primary light half vector
-    @param  primDiffuse         the primary diffuse color
-    @param  primSpecular        the primary specular color
-    @param  primAmbient         the primary ambient color
-    @param  matSpecularPower    the material specular power
-*/
 float4
 psLightingAlpha(in const float4 mapColor,
                 in const float3 tangentSurfaceNormal,
                 in const float3 primLightVec,
                 in const float3 primHalfVec,
-                in const float4 primDiffuse,
-                in const float4 primSpecular,
-                in const float4 primAmbient,
-                in const float4 secDiffuse,
-                in const float  matSpecularPower,
                 in const float  specModulate)
 {
     // compute light intensities
     float dotNL = dot(tangentSurfaceNormal, normalize(primLightVec));
     float dotNH = dot(tangentSurfaceNormal, normalize(primHalfVec));
     float primDiffIntensity = saturate(dotNL);
-    float secDiffIntensity  = saturate(-dotNL);
-    float primSpecIntensity = pow(saturate(dotNH), matSpecularPower);
+    float primSpecIntensity = pow(saturate(dotNH), MatSpecularPower);
     
     // compute light colors
-    float4 diffColor = (primDiffIntensity * primDiffuse + secDiffIntensity * secDiffuse) * mapColor;
-    float4 specColor = primSpecIntensity * primSpecular * primDiffIntensity * specModulate;
-    float4 envColor  = mapColor * primAmbient;
+    float4 diffColor = (primDiffIntensity * LightDiffuse[0] * MatDiffuse) * mapColor;
+    float4 specColor = primSpecIntensity * LightSpecular[0] * MatSpecular * primDiffIntensity * specModulate;
+    float4 envColor  = mapColor * LightAmbient[0] * MatAmbient;
     float4 color;
     color.rgba = (diffColor + specColor) + envColor;
     color.a = mapColor.a + primSpecIntensity;
@@ -470,13 +400,14 @@ psLightingAlpha(in const float4 mapColor,
 
 
 //------------------------------------------------------------------------------
-/**
-    Pixel shader functionality for simple lighting specialized for leafs.
-
-    @param  diffSampler         the diffuse texture sampler
-    @param  primLightVec        the primary light vector
-    @param  primDiffuse         the primary diffuse color
-*/
+//  psLightingLeaf
+//
+//  Pixel shader functionality for simple lighting specialized for leafs.
+//
+//  @param  diffSampler         the diffuse texture sampler
+//  @param  primLightVec        the primary light vector
+//  @param  primDiffuse         the primary diffuse color
+//------------------------------------------------------------------------------
 float4
 psLightingLeaf(in sampler diffSampler,
                in const float2 uv,
@@ -497,6 +428,8 @@ psLightingLeaf(in sampler diffSampler,
 
 //------------------------------------------------------------------------------
 /**
+    vsExpFog()
+    
     Compute exponential fog in vertex shader. Returns fog color in rgb and
     fog density in a.
     
@@ -519,6 +452,4 @@ vsExpFog(in const float3 modelVertexPos,
     return heightModulate * (1.0 - fogDensity);
 }
 
-/**
-    @}
-*/ 
+    

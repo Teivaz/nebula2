@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nNvx2Loader
+    @ingroup Gfx2
 
     Load a NVX2 mesh file into user provided vertex and index buffers.
     
@@ -153,62 +154,34 @@ nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
             float* vBuf = readBuffer;
             int numRead = file->Read(vBuf, readSize);
             n_assert(numRead == readSize);
-            int mask;
-            for (mask = 1; mask <= this->vertexComponents; mask <<= 1)
-            {                
-                int num = 0;
-                switch (mask)
+
+            int bitIndex;
+            for (bitIndex = 0; bitIndex < nMesh2::NumVertexComponents; bitIndex++)
+            {
+                int mask = (1<<bitIndex);
+
+                // skip completely if current vertex component is not in file
+                if (0 == (this->fileVertexComponents & mask))
                 {
-                // float 2
-                case nMesh2::Uv0:
-                case nMesh2::Uv1:
-                case nMesh2::Uv2:
-                case nMesh2::Uv3:
-                    num = 2;
-                    break;
-
-                // float 3
-                case nMesh2::Coord:
-                case nMesh2::Normal:
-                case nMesh2::Tangent:
-                case nMesh2::Binormal:
-                    num = 3;
-                    break;
-
-                // float 4
-                case nMesh2::Color:
-                case nMesh2::Weights:
-                case nMesh2::JIndices:
-                    num = 4;
-                    break;
-
-                default:
-                    n_error("Unknown vertex component in vertex component mask");
-                    break;
+                    continue;
                 }
-
-                n_assert(num > 0);
+                
+                // get width of current vertex component
+                int width = nMesh2::GetVertexWidthFromMask(mask);
+                n_assert(width > 0);
                 if (this->vertexComponents & mask)
                 {
-                    // read
-                    *(destBuf++) = *(vBuf++);
-                    if (num >= 2)
+                    // read the vertex component
+                    int f;
+                    for (f = 0; f < width; f++)
                     {
-                        *(destBuf++) = *(vBuf++);
-                    }
-                    if (num >= 3)
-                    {
-                        *(destBuf++) = *(vBuf++);
-                    }
-                    if (num >= 4)
-                    {
-                        *(destBuf++) = *(vBuf++);
+                        *destBuf++ = *vBuf++;
                     }
                 }
                 else
                 {
-                    // skip
-                    vBuf += num;
+                    // skip the vertex component
+                    vBuf += width;
                 }
             }
         }

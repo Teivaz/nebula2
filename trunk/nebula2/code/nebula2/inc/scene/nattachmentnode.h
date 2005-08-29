@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAttachmentNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief The purpose of nAttachmentNode is to provide an external point of access
     to a skeleton's joint transformation information.  The user specifies either a

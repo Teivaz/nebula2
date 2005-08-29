@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nBlendShapeAnimator
-    @ingroup SceneAnimators
+    @ingroup Scene
  
     (C) 2004 RadonLabs GmbH
 */

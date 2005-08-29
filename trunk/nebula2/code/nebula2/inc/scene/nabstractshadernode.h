@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAbstractShaderNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief This is the base class for all shader related scene node classes
     (for instance material and light nodes).
@@ -70,7 +70,11 @@ public:
     /// bind a vector value to a shader variable
     void SetVector(nShaderState::Param param, const vector4& val);
     /// get a vector value bound to a shader variable
-    vector4 GetVector(nShaderState::Param param) const;
+    const vector4& GetVector(nShaderState::Param param) const;
+    /// get shaderparams
+    nShaderParams& GetShaderParams();
+    /// returns true, if node possesses the param
+    bool HasParam(nShaderState::Param param);
 
     /// get number of textures
     int GetNumTextures() const;
@@ -287,22 +291,17 @@ nAbstractShaderNode::SetVector(nShaderState::Param param, const vector4& val)
         n_printf("WARNING: invalid shader parameter in object '%s'\n", this->GetName());
         return;
     }
-    nFloat4 float4Val = 
-    {
-        val.x, val.y, val.z, val.w
-    };
-    this->shaderParams.SetArg(param, nShaderArg(float4Val));
+    this->shaderParams.SetArg(param, nShaderArg(val));
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-vector4
+const vector4&
 nAbstractShaderNode::GetVector(nShaderState::Param param) const
 {
-    const nFloat4& float4Val = this->shaderParams.GetArg(param).GetFloat4();
-    return vector4(float4Val.x, float4Val.y, float4Val.z, float4Val.w);
+    return this->shaderParams.GetArg(param).GetVector4();
 }
 
 //------------------------------------------------------------------------------
@@ -342,7 +341,7 @@ inline
 int
 nAbstractShaderNode::GetNumParams() const
 {
-    return shaderParams.GetNumValidParams();
+    return this->shaderParams.GetNumValidParams();
 }
 
 //------------------------------------------------------------------------------
@@ -352,7 +351,7 @@ inline
 const char*
 nAbstractShaderNode::GetParamNameByIndex(int index) const
 {
-  return nShaderState::ParamToString(shaderParams.GetParamByIndex(index));
+  return nShaderState::ParamToString(this->shaderParams.GetParamByIndex(index));
 }
 //------------------------------------------------------------------------------
 /**
@@ -361,7 +360,7 @@ inline
 const char*
 nAbstractShaderNode::GetParamTypeByIndex(int index) const
 {
-  return nShaderState::TypeToString(shaderParams.GetArgByIndex(index).GetType());
+  return nShaderState::TypeToString(this->shaderParams.GetArgByIndex(index).GetType());
 }
 
 

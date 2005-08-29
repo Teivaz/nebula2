@@ -1,4 +1,3 @@
-#line 1 "ocean.fx"
 //------------------------------------------------------------------------------
 //  ps2.0/ocean.fx
 //
@@ -6,15 +5,25 @@
 //
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "../lib/lib.fx"
 
 shared float4x4 Model;
 shared float4x4 ModelViewProjection;
 shared float4x4 ModelView;
 shared float4x4 InvView;
 shared float    Time;
-shared float4 LightDiffuse;         // light diffuse color        
 
+float3   ModelLightPos;
+float3   LightPos;
+int      LightIndex;
+int      LightType;
+float    LightRange;
+float4   LightDiffuse;
+float4   LightSpecular;
+float4   LightAmbient;
+float    FallOffStart;
+float4   ShadowIndex;
+
+bool AlphaBlendEnable;
 float BumpScale;
 float4 TexGenS;                 // texture scale
 float FresnelBias;
@@ -23,6 +32,7 @@ float Intensity0;               // hdr multiplier
 float4 MatDiffuse;              // deep water color
 float4 MatSpecular;             // shallow water color
 float4 MatAmbient;              // reflection color
+float MatSpecularPower;
 float Intensity1;               // reflection amount
 float Intensity2;               // water color amount
 float Amplitude;                // wave amplitude
@@ -33,13 +43,15 @@ int CullMode = 2; // CW
 texture BumpMap0;
 texture CubeMap0;
 
+#include "shaders:../lib/lib.fx"
+
 //------------------------------------------------------------------------------
 struct VsInput
 {
     float4 position : POSITION;
-    float3 normal   : NORMAL;  
+    float3 normal   : NORMAL;
     float2 uv0      : TEXCOORD0;
-    float3 tangent  : TANGENT; 
+    float3 tangent  : TANGENT;
 };
 
 struct VsOutput
@@ -64,22 +76,22 @@ struct Wave
 };
 
 #define NumWaves 2
-Wave wave[NumWaves] = 
+Wave wave[NumWaves] =
 {
 	{ 1.0, 1.0, 0.5, float2(-1, 0) },
-	{ 2.0, 0.5, 1.3, float2(-0.7, 0.7) }	
+	{ 2.0, 0.5, 1.3, float2(-0.7, 0.7) }
 };
 
 //------------------------------------------------------------------------------
 sampler NormalMapSampler = sampler_state
 {
     Texture = <BumpMap0>;
-	MagFilter = Linear;	
+	MagFilter = Linear;
 	MinFilter = Linear;
 	MipFilter = Linear;
     AddressU = Wrap;
-    AddressV = Wrap;	
-    MipMapLodBias = -0.75;    
+    AddressV = Wrap;
+    MipMapLodBias = -0.75;
 };
 
 sampler EnvMapSampler = sampler_state
@@ -92,8 +104,6 @@ sampler EnvMapSampler = sampler_state
     AddressV = Clamp;
 };
 
-//------------------------------------------------------------------------------
-//  helper functions
 //------------------------------------------------------------------------------
 float evaluateWave(Wave w, float2 pos, float t)
 {
@@ -116,17 +126,15 @@ float evaluateWaveDerivSharp(Wave w, float2 pos, float t, float k)
 }
 
 //------------------------------------------------------------------------------
-//  vertex shader
-//------------------------------------------------------------------------------
 VsOutput vsMain(const VsInput vsIn)
 {
     VsOutput vsOut;
-    
+
     wave[0].freq = Frequency;
     wave[0].amp  = Amplitude;
     wave[1].freq = Frequency * 2.0;
     wave[1].amp  = Amplitude * 0.5;
-    
+
     float4 pos = vsIn.position;
 
     // sum wave
@@ -140,44 +148,42 @@ VsOutput vsMain(const VsInput vsIn)
 	    ddx += deriv * wave[i].dir.x;
 	    ddy += deriv * wave[i].dir.y;
 	}
-	
+
     // compute tangent basis
     float3 B = float3(1, ddx, 0);
     float3 T = float3(0, ddy, 1);
     float3 N = float3(-ddx, 1, -ddy);
-	
-	// compute output vertex position	
+
+	// compute output vertex position
 	vsOut.position = mul(pos, ModelViewProjection);
-	
+
 	// pass texture coordinates for fetching the normal map
 	vsOut.uv0.xy = vsIn.uv0 * TexGenS.xy;
 	float modTime = fmod(Time, 100.0f);
 	vsOut.bumpCoord0.xy = vsIn.uv0 * TexGenS.xy + modTime * Velocity.xy;
 	vsOut.bumpCoord1.xy = vsIn.uv0 * TexGenS.xy + modTime * Velocity.xy * 4.0f;
 	vsOut.bumpCoord2.xy = vsIn.uv0 * TexGenS.xy + modTime * Velocity.xy * 8.0f;
-	
+
     // compute the 3x3 tranform from tangent space to object space
     // first rows are the tangent and binormal scaled by the bump scale
     float3x3 objToTangentSpace;
     objToTangentSpace[0] = BumpScale * normalize(T);
     objToTangentSpace[1] = BumpScale * normalize(B);
     objToTangentSpace[2] = normalize(N);
-	
+
     vsOut.row0.xyz = mul(objToTangentSpace, Model[0].xyz);
     vsOut.row1.xyz = mul(objToTangentSpace, Model[1].xyz);
     vsOut.row2.xyz = mul(objToTangentSpace, Model[2].xyz);
-    
+
     // compute the eye vector (going from shaded point to eye) in cube space
     float4 worldPos = mul(pos, Model);
     vsOut.eyeVector = InvView[3] - worldPos; // view inv. transpose contains eye position in world space in last row
-    
+
     return vsOut;
 }
 
 //------------------------------------------------------------------------------
-//  pixel shader
-//------------------------------------------------------------------------------
-float4 psMain(VsOutput psIn) : COLOR
+float4 psMain(VsOutput psIn, uniform bool hdr) : COLOR
 {
     // sum normal maps
     half4 t0 = tex2D(NormalMapSampler, psIn.bumpCoord0.xy) * 2.0 - 1.0;
@@ -208,13 +214,28 @@ float4 psMain(VsOutput psIn) : COLOR
     float4 color = waterColor * Intensity2 + reflection * MatAmbient * Intensity1 * LightDiffuse * 0.5 * fresnel;
 
     color.a = fresnel * 0.5 + 0.5;
-    return color;
+    if (hdr)
+    {
+        return color * float4(0.25, 0.25, 0.25, 1.0);
+    }
+    else
+    {
+        return color;
+    }
 }
 
 //------------------------------------------------------------------------------
-//  The technique.
-//------------------------------------------------------------------------------
-technique t0
+technique tDepth
+{
+    pass p0
+    {
+        CullMode = None;
+        VertexShader = compile vs_2_0 vsMain();
+        PixelShader  = compile ps_2_0 psMain(false);
+    }
+}
+
+technique tColor
 {
     pass p0
     {
@@ -222,9 +243,20 @@ technique t0
         SrcBlend  = SrcAlpha;
         DestBlend = InvSrcAlpha;
         VertexShader = compile vs_2_0 vsMain();
-        PixelShader  = compile ps_2_0 psMain();
+        PixelShader  = compile ps_2_0 psMain(false);
     }
 }
 
+technique tColorHDR
+{
+    pass p0
+    {
+        CullMode = None;
+        SrcBlend  = SrcAlpha;
+        DestBlend = InvSrcAlpha;
+        VertexShader = compile vs_2_0 vsMain();
+        PixelShader  = compile ps_2_0 psMain(true);
+    }
+}
 
 

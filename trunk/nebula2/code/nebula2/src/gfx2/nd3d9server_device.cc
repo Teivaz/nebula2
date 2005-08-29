@@ -10,6 +10,49 @@
 
 //------------------------------------------------------------------------------
 /**
+    Initialize the device identifier fields. This should be called from
+    the constructor after Direct3D has been opened.
+*/
+void
+nD3D9Server::InitDeviceIdentifier()
+{
+    n_assert(this->d3d9);
+
+    // extract device identifier
+    D3DADAPTER_IDENTIFIER9 identifier;
+    HRESULT hr = this->d3d9->GetAdapterIdentifier(N_D3D9_ADAPTER, 0, &identifier);
+    n_dxtrace(hr, "nD3D9Server::InitDeviceState(): GetAdapterIdentifier() failed!");
+
+    if (0x8086 == identifier.VendorId)
+    {
+        // Intel
+        if (0x2572 == identifier.DeviceId)
+        {
+            // Intel(R) 82865G Graphics Controller
+            this->deviceIdentifier = Intel_82865G;
+            n_printf("Intel(R) 82865G Graphics Controller detected.\n");
+        }
+    }
+    else if (0x1039 == identifier.VendorId)
+    {
+        // SiS
+        if (0x6330 == identifier.DeviceId)
+        {
+            // SiS 741
+            this->deviceIdentifier = SiS_741;
+            n_printf("SiS 741 detected.\n");
+        }
+        else if (0x6300 == identifier.DeviceId)
+        {
+            // SiS 630
+            this->deviceIdentifier = SiS_630;
+            n_printf("SiS 630 detected.\n");
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Initialize the default state of the device. Must be called after
     creating or resetting the d3d device.
 */
@@ -38,17 +81,6 @@ nD3D9Server::InitDeviceState()
 
     // update the device caps
     this->d3d9Device->GetDeviceCaps(&(this->devCaps));
-    // extract device identifier
-    D3DADAPTER_IDENTIFIER9 identifier;
-    HRESULT hr = this->d3d9->GetAdapterIdentifier(N_D3D9_ADAPTER, 0, &identifier);
-    n_dxtrace(hr, "nD3D9Server::InitDeviceState(): GetAdapterIdentifier() failed!");
-
-    if (0x8086 == identifier.VendorId && 0x2572 == identifier.DeviceId)
-    {
-        // Chip type: Intel(R) 82865G Graphics Controller
-        this->deviceIdentifier = Intel_82865G;
-        n_printf("Intel(R) 82865G Graphics Controller detected.\n");
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -281,6 +313,7 @@ nD3D9Server::DeviceOpen()
     n_assert(0 == this->d3dxLine);
     n_assert(0 == this->depthStencilSurface);
     n_assert(0 == this->backBufferSurface);
+    n_assert(0 == this->captureSurface);
     #ifdef __NEBULA_STATS__
     n_assert(0 == this->queryResourceManager);
     #endif
@@ -302,7 +335,8 @@ nD3D9Server::DeviceOpen()
     #ifdef __NEBULA_NO_THREADS__
     this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
     #else
-    this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_MULTITHREADED;
+    //this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_MULTITHREADED;
+    this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
     #endif
 
     #if N_D3D9_DEBUG
@@ -421,7 +455,7 @@ nD3D9Server::DeviceOpen()
     n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateBox() failed!");
     hr = D3DXCreateCylinder(this->d3d9Device, 1.0f, 1.0f, 1.0f, 18, 1, &this->shapeMeshes[Cylinder], NULL);
     n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateCylinder() failed!");
-    hr = D3DXCreateSphere(this->d3d9Device, 1.0f, 18, 6, &this->shapeMeshes[Sphere], NULL);
+    hr = D3DXCreateSphere(this->d3d9Device, 1.0f, 12, 6, &this->shapeMeshes[Sphere], NULL);
     n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateSphere() failed!");
     hr = D3DXCreateTorus(this->d3d9Device, 1.0f, 0.5f, 18, 12, &this->shapeMeshes[Torus], NULL);
     n_dxtrace(hr, "nD3D9Server::DeviceOpen(): D3DXCreateTorus() failed!");
@@ -543,7 +577,6 @@ nD3D9Server::TestResetDevice()
     else
     {
         // device cannot be restored at this time
-        // n_sleep(0.1);
         return false;
     }
 }
@@ -595,6 +628,7 @@ nD3D9Server::QueryStatistics()
     this->statsNumPrimitives = 0;
 
     // no resource manager query if not running the debug runtime
+/*
     if (0 == this->queryResourceManager)
     {
         return;
@@ -637,6 +671,7 @@ nD3D9Server::QueryStatistics()
             this->dbgQueryTextureTotalBytes->SetI(stats.TotalBytes);
         }
     }
+*/
 }
 #endif
 
@@ -644,6 +679,8 @@ nD3D9Server::QueryStatistics()
 /**
     Updates the mouse cursor image and visibility. Should be called
     once per frame.
+
+    11-Jul-05   floh    fixed cursor visibility bug
 */
 void
 nD3D9Server::UpdateCursor()
@@ -675,23 +712,23 @@ nD3D9Server::UpdateCursor()
             int hotspotY = this->curMouseCursor.GetHotspotY();
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
             n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): SetCursorProperties() failed!");
+        }
 
-            switch (this->cursorVisibility)
-            {
-                case nGfxServer2::None:
-                    SetCursor(NULL);
-                    this->d3d9Device->ShowCursor(FALSE);
-                    break;
+        switch (this->cursorVisibility)
+        {
+            case nGfxServer2::None:
+                SetCursor(NULL);
+                this->d3d9Device->ShowCursor(FALSE);
+                break;
 
-                case nGfxServer2::System:
-                    this->d3d9Device->ShowCursor(FALSE);
-                    break;
+            case nGfxServer2::System:
+                this->d3d9Device->ShowCursor(FALSE);
+                break;
 
-                case nGfxServer2::Custom:
-                    SetCursor(NULL);
-                    this->d3d9Device->ShowCursor(TRUE);
-                    break;
-            }
+            case nGfxServer2::Custom:
+                SetCursor(NULL);
+                this->d3d9Device->ShowCursor(TRUE);
+                break;
         }
     }
     // NOTE: cursor visibility is handled inside WinProc!
@@ -773,6 +810,11 @@ nD3D9Server::OnDeviceCleanup(bool shutdown)
     }
 
     // release refs on original backbuffer and depth/stencil surfaces
+    if (this->captureSurface)
+    {
+        this->captureSurface->Release();
+        this->captureSurface = 0;
+    }
     if (this->backBufferSurface)
     {
         this->backBufferSurface->Release();
@@ -808,6 +850,8 @@ nD3D9Server::OnDeviceInit(bool startup)
 {
     n_assert(!this->refSharedShader.isvalid());
     n_assert(0 == this->depthStencilSurface);
+    n_assert(0 == this->backBufferSurface);
+    n_assert(0 == this->captureSurface);
 
     HRESULT hr;
 
@@ -819,6 +863,15 @@ nD3D9Server::OnDeviceInit(bool startup)
     hr = this->d3d9Device->GetDepthStencilSurface(&this->depthStencilSurface);
     n_dxtrace(hr, "GetDepthStencilSurface() on device failed.");
     n_assert(this->depthStencilSurface);
+
+    // create an offscreen surface for capturing data
+    hr = this->d3d9Device->CreateOffscreenPlainSurface(this->presentParams.BackBufferWidth, 
+                                                       this->presentParams.BackBufferHeight,
+                                                       this->presentParams.BackBufferFormat, 
+                                                       D3DPOOL_SYSTEMMEM, 
+                                                       &(this->captureSurface), NULL);
+    n_dxtrace(hr, "CreateOffscreenPlainSurface() failed.");
+    n_assert(this->captureSurface);
 
     #ifdef __NEBULA_STATS__
     // create a query object for resource manager queries
@@ -919,6 +972,96 @@ nD3D9Server::GetSoftwareVertexProcessing()
     {
         n_error("nD3D9Server::GetSoftwareProcessing(): can't happen!");
         return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the current actual render target size.
+*/
+vector2
+nD3D9Server::GetCurrentRenderTargetSize() const
+{
+    vector2 size;
+    nTexture2* renderTarget = this->GetRenderTarget(0);
+    if (renderTarget)
+    {
+        size.x = (float) renderTarget->GetWidth();
+        size.y = (float) renderTarget->GetHeight();
+    }
+    else
+    {
+        const nDisplayMode2& mode = this->GetDisplayMode();
+        size.x = (float) mode.GetWidth();
+        size.y = (float) mode.GetHeight();
+    }
+    return size;
+}   
+
+//------------------------------------------------------------------------------
+/**
+    Set the scissor rectangle. Note that this method doesn't enable/disable
+    scissoring, this must be done externally in the shader.
+*/
+void
+nD3D9Server::SetScissorRect(const rectangle& r)
+{   
+    n_assert(this->d3d9Device);
+    nGfxServer2::SetScissorRect(r);
+    this->UpdateScissorRect();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Updates the current scissor rectangle. This must be called from
+    SetScissorRect() and SetRenderTarget() (since SetRenderTarget() resets
+    the current scissor rectangle).
+*/
+void
+nD3D9Server::UpdateScissorRect()
+{
+    // convert to D3D screen coordinates
+    vector2 rtSize = this->GetCurrentRenderTargetSize();
+    RECT rect;
+    rect.left   = int(this->scissorRect.v0.x * rtSize.x);
+    rect.right  = int(this->scissorRect.v1.x * rtSize.x);
+    rect.top    = int(this->scissorRect.v0.y * rtSize.y);
+    rect.bottom = int(this->scissorRect.v1.y * rtSize.y);
+    HRESULT hr = this->d3d9Device->SetScissorRect(&rect);
+    n_assert(SUCCEEDED(hr));
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set user defined clip planes in clip space. Clip space is where
+    outgoing vertex shader vertices live in. Up to 6 clip planes
+    can be defined. Provide an empty array to clear all clip planes.
+
+    NOTE: this method does not work in the DX7 render path (check the D3D docs why)    
+*/
+void
+nD3D9Server::SetClipPlanes(const nArray<plane>& planes)
+{
+    n_assert(this->d3d9Device);
+    nGfxServer2::SetClipPlanes(planes);
+    if (this->GetFeatureSet() > DX7)
+    {
+        HRESULT hr;
+        DWORD clipPlaneMask = 0;     
+        uint num = planes.Size();
+        if (num > this->devCaps.MaxUserClipPlanes)
+        {
+            num = this->devCaps.MaxUserClipPlanes;
+        }
+        uint i;
+        for (i = 0; i < num; i++)
+        {
+            hr = this->d3d9Device->SetClipPlane(i, &(planes[i].a));
+            n_dxtrace(hr, "SetClipPlane() failed!");
+            clipPlaneMask |= (1 << i);
+        }
+        hr = this->d3d9Device->SetRenderState(D3DRS_CLIPPLANEENABLE, clipPlaneMask);
+        n_dxtrace(hr, "Enable clip planes failed!");
     }
 }
 

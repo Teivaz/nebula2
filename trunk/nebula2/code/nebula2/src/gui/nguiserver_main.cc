@@ -256,7 +256,7 @@ nGuiServer::Close()
         n_assert(!this->refSystemRootWindow.isvalid());
     }
 
-    nGfxServer2::Instance()->SetMesh(0);
+    nGfxServer2::Instance()->SetMesh(0, 0);
     nGfxServer2::Instance()->SetShader(0);
     nGfxServer2::Instance()->SetFont(0);
     if (this->refShader.isvalid())

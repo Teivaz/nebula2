@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRenderContext
-    @ingroup SceneRenderContext
+    @ingroup Scene
 
     @brief A nRenderContext object holds frame persistent data for nSceneNode
     hierarchies and serves as the central communication point between
@@ -14,6 +14,7 @@
 #include "kernel/nref.h"
 #include "variable/nvariablecontext.h"
 #include "gfx2/nshaderparams.h"
+#include "mathlib/bbox.h"
 
 class nSceneNode;
 
@@ -21,6 +22,15 @@ class nSceneNode;
 class nRenderContext : public nVariableContext
 {
 public:
+    /// flags
+    enum Flag
+    {
+        ShapeVisible = (1<<0),
+        ShadowVisible = (1<<1),
+        Occluded = (1<<2),
+        CastShadows = (1<<3),
+        DoOcclusionQuery = (1<<4),
+    };
     /// constructor
     nRenderContext();
     /// destructor
@@ -37,6 +47,10 @@ public:
     void SetRootNode(nSceneNode* node);
     /// get the render context's root scene node
     nSceneNode* GetRootNode() const;
+    /// set global bounding box
+    void SetGlobalBox(const bbox3& b);
+    /// get global bounding box
+    const bbox3& GetGlobalBox() const;
     /// return true if valid (if root node is set)
     bool IsValid() const;
     /// reset the link array
@@ -57,15 +71,39 @@ public:
     void ClearLocalVars();
     /// find local variable by variable handle
     nVariable* FindLocalVar(nVariable::Handle handle);
+    /// set per-context shadow intensity value
+    void SetShadowIntensity(float i);
+    /// get per-context shadow intensity value
+    float GetShadowIntensity() const;
+    /// set flags
+    void SetFlag(Flag f, bool b);
+    /// get visibility hint
+    bool GetFlag(Flag f) const;
 
-protected:
+private:
+    friend class nSceneServer;
+
+    /// set scene server group index, this is read/written by the scene server
+    void SetSceneGroupIndex(int i);
+    /// get scene server group index, this is read/written by the scene server
+    int GetSceneGroupIndex() const;
+    /// set scene server light info index
+    void SetSceneLightIndex(int i);
+    /// get scene server light info index
+    int GetSceneLightIndex() const;
+
     uint frameId;
+    uint flags;
+    int sceneGroupIndex;
+    int sceneLightIndex;
     matrix44 transform;
+    bbox3 globalBox;
     nRef<nSceneNode> rootNode;
     float priority;
+    float shadowIntensity;
     nArray<nRenderContext*> linkArray;
-    nShaderParams shaderOverrides;
     nArray<nVariable> localVarArray;
+    nShaderParams shaderOverrides;
 };
 
 //------------------------------------------------------------------------------
@@ -74,10 +112,14 @@ protected:
 inline
 nRenderContext::nRenderContext() :
     frameId(0xffffffff),
+    flags(ShapeVisible | ShadowVisible | CastShadows | DoOcclusionQuery),
+    sceneGroupIndex(-1),
+    sceneLightIndex(-1),
     priority(1.0f),
-    linkArray(64, 64)
+    shadowIntensity(1.0f)
 {
-    // empty
+    this->globalBox.set(vector3(0.0f, 0.0f, 0.0f), vector3(1000.0f, 1000.0f, 1000.0f));
+    this->linkArray.SetFlags(nArray<nRenderContext*>::DoubleGrowSize);
 }
 
 //------------------------------------------------------------------------------
@@ -260,6 +302,107 @@ bool
 nRenderContext::IsValid() const
 {
     return this->rootNode.isvalid();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::SetSceneGroupIndex(int i)
+{
+    this->sceneGroupIndex = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nRenderContext::GetSceneGroupIndex() const
+{
+    return this->sceneGroupIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::SetSceneLightIndex(int i)
+{
+    this->sceneLightIndex = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nRenderContext::GetSceneLightIndex() const
+{
+    return this->sceneLightIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::SetShadowIntensity(float i)
+{
+    this->shadowIntensity = i;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nRenderContext::GetShadowIntensity() const
+{
+    return this->shadowIntensity;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::SetFlag(Flag f, bool b)
+{
+    if (b) this->flags |= f;
+    else   this->flags &= ~f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nRenderContext::GetFlag(Flag f) const
+{
+    return 0 != (this->flags & f);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderContext::SetGlobalBox(const bbox3& b)
+{
+    this->globalBox = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const bbox3&
+nRenderContext::GetGlobalBox() const
+{
+    return this->globalBox;
 }
 
 //------------------------------------------------------------------------------

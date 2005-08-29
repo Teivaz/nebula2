@@ -13,7 +13,7 @@ nSubdivShapeNode::nSubdivShapeNode() :
     segmentSize(1.0f),
     maxDistance(10.0f)
 {
-    this->SetMeshUsage(nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader);
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -22,6 +22,20 @@ nSubdivShapeNode::nSubdivShapeNode() :
 nSubdivShapeNode::~nSubdivShapeNode()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method must return the mesh usage flag combination required by
+    this shape node class. Subclasses should override this method
+    based on their requirements.
+
+    @return     a combination on nMesh2::Usage flags
+*/
+int
+nSubdivShapeNode::GetMeshUsage() const
+{
+    return nMesh2::ReadOnly | nMesh2::PointSprite | nMesh2::NeedsVertexShader;
 }
 
 //------------------------------------------------------------------------------
@@ -38,9 +52,9 @@ nSubdivShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     Apply shader variables.
 */
 bool
-nSubdivShapeNode::ApplyShader(nFourCC fourcc, nSceneServer* sceneServer)
+nSubdivShapeNode::ApplyShader(nSceneServer* sceneServer)
 {
-    if (nShapeNode::ApplyShader(fourcc, sceneServer))
+    if (nShapeNode::ApplyShader(sceneServer))
     {
         nShader2* shd = nGfxServer2::Instance()->GetShader();
         if (shd->IsParameterUsed(nShaderState::MinDist))
@@ -71,7 +85,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
     n_assert(renderContext);
 	nGfxServer2* gfx = nGfxServer2::Instance();
 
-	// only be done on DirectX 9 cards
+	// only done on DirectX 9 cards
 	if(gfx->GetFeatureSet() >= nGfxServer2::DX9)
 	{
 		// TODO call geometry manipulators!
@@ -119,7 +133,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 
 		// NOTE: r is a lookup element into a random number table
 		// for position permutation
-		const nMeshGroup& meshGroup = mesh->GetGroup(this->groupIndex);
+		const nMeshGroup& meshGroup = mesh->Group(this->groupIndex);
 		int curSrcIndex  = meshGroup.GetFirstIndex();
 		int curDstVertex = 0;
 		int lastSrcIndex = meshGroup.GetFirstIndex() + meshGroup.GetNumIndices();

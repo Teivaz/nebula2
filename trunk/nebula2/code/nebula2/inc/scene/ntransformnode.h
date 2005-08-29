@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nTransformNode
-    @ingroup SceneNodes
+    @ingroup Scene
 
     @brief A transform node groups its child nodes and defines position,
     orientation and scale of a scene node. Transformation hierarchies

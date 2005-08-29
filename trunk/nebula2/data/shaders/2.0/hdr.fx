@@ -1,4 +1,3 @@
-#line 1 "hdr.fx"
 //------------------------------------------------------------------------------
 //  hdr.fx
 //
@@ -7,11 +6,22 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 
-static const int   MaxSamples = 16;
+/*
+    NOTE: VS_PROFILE and PS_PROFILE macros are usually provided by the
+    application and contain the highest supported shader models.
+
+#define VS_PROFILE vs_2_0
+#define PS_PROFILE ps_2_0
+*/
+#include "shaders:../lib/randtable.fx"
+
+static const int MaxSamples = 16;
 
 texture DiffMap0;
 texture DiffMap1;
 texture DiffMap2;
+texture DiffMap3;
+texture SpecMap0;
 float3 SampleOffsetsWeights[MaxSamples];
 shared float4 DisplayResolution;
 float Intensity0;
@@ -19,6 +29,13 @@ float Intensity1;
 float Intensity2;
 float4 MatDiffuse;
 float4 MatAmbient;
+float4 FogDistances;
+float4 FogColor;
+float4 CameraFocus;
+float Noise;
+float Scale;
+float Frequency;
+shared float Time;
 
 //------------------------------------------------------------------------------
 //  Declarations.
@@ -42,7 +59,7 @@ sampler SourceSampler = sampler_state
     AddressV = Clamp;
     MinFilter = Point;
     MagFilter = Point;
-    MipFilter = Point;
+    MipFilter = None;
 };
 
 sampler BloomSampler = sampler_state
@@ -52,7 +69,7 @@ sampler BloomSampler = sampler_state
     AddressV = Clamp;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = None;
 };
 
 sampler Lum1x1Sampler = sampler_state
@@ -62,7 +79,7 @@ sampler Lum1x1Sampler = sampler_state
     AddressV = Clamp;
     MinFilter = Point;
     MagFilter = Point;
-    MipFilter = Point;
+    MipFilter = None;
 };
 
 sampler BloomSampler2 = sampler_state
@@ -72,12 +89,84 @@ sampler BloomSampler2 = sampler_state
     AddressV = Clamp;
     MinFilter = Linear;
     MagFilter = Linear;
-    MipFilter = Point;
+    MipFilter = None;
+};
+
+sampler DepthSampler = sampler_state
+{
+    Texture = <DiffMap3>;
+    AddressU = Clamp;
+    AddressV = Clamp;
+    MinFilter = Point;
+    MagFilter = Point;
+    MipFilter = None;
+};
+
+sampler BlurSampler = sampler_state
+{
+    Texture = <DiffMap1>;
+    AddressU = Clamp;
+    AddressV = Clamp;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = None;
+};    
+
+sampler NoiseSampler = sampler_state
+{
+    Texture = <SpecMap0>;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    MinFilter = Point;
+    MagFilter = Point;
+    MipFilter = None;
 };
 
 //------------------------------------------------------------------------------
 //  Helper Functions.
 //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+/**
+    RGBE8 decoding for HDR rendering through conventional RGBA8 render targets.
+    This is taken from the DX sample "HDRFormats"
+*/
+float3 DecodeRGBE8(in float4 rgbe)
+{
+    float3 decoded;
+    float exponent = (rgbe.a * 255.0) - 128.0;
+    decoded = rgbe.rgb * exp2(exponent);
+    return decoded;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Scale up pseudo-HDR-value encoded by EncodeHDR() in shaders.fx.
+*/   
+float4 DecodeHDR(in float4 rgba)
+{
+    return rgba * float4(2.0f, 2.0f, 2.0f, 1.0f);
+}   
+
+/*
+float4 DecodeHDR(in float4 rgba)
+{
+    const float colorSpace = 0.8;
+    const float maxHDR = 8;
+    const float hdrSpace = 1 - colorSpace;
+    //const float hdrPow = log(maxHDR)/log(hdrSpace);
+    const float hdrPow = 10;
+    //const float hdrRt = 1/hdrPow;
+    const float hdrRt = 0.1;
+        
+    float3 col = clamp(rgba.rgb,0,colorSpace) * (1/colorSpace);
+    float3 hdr = pow(clamp(rgba.rgb - colorSpace, 0, hdrSpace)+1,hdrPow)-1;
+    float4 result;
+    result.rgb = col + hdr;
+    result.a = rgba.a;
+    return result;
+}
+*/
 
 //------------------------------------------------------------------------------
 /**
@@ -115,6 +204,24 @@ UpdateSamplesDownscale4x4(in int texWidth, in int texHeight, out float3 sampleOf
         }
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    UpdateSamplesFilter2x2
+    
+    Create a filter kernel for a 2x2 linear filter.
+*/
+void
+UpdateSamplesFilter2x2(in int texWidth, in int texHeight)
+{
+    float tu = 1.0f / texWidth;
+    float tv = 1.0f / texHeight;
+    
+    SampleOffsetsWeights[0] = float3(-tu, -tv, 0.0f);
+    SampleOffsetsWeights[1] = float3(+tu, -tv, 0.0f);
+    SampleOffsetsWeights[2] = float3(+tu, +tv, 0.0f);
+    SampleOffsetsWeights[3] = float3(-tu, +tv, 0.0f);
+}    
 
 //------------------------------------------------------------------------------
 /**
@@ -258,60 +365,9 @@ float4 psDownscale4x4(const vsOutput psIn) : COLOR
     int i;
     for (i = 0; i < 16; i++)
     {
-        sample += tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
+        sample += tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy) * 1.1f;
     }
-    return sample / 16;
-}
-
-//------------------------------------------------------------------------------
-//  Sample luminance of source image returning log() of the averages.
-//------------------------------------------------------------------------------
-float4 psSampleLumInitial(const vsOutput psIn) : COLOR
-{
-    UpdateSamplesLuminance(DisplayResolution.x, DisplayResolution.y, SampleOffsetsWeights);
-    
-    const float3 lumVector = float3(0.2125f, 0.7154f, 0.0721f);
-    float logLumSum = 0.0f;
-    int i;
-    for (i = 0; i < 9; i++)
-    {
-        float3 sample = tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
-        logLumSum += log(dot(sample, lumVector) + 0.0001f);
-    }
-    logLumSum /= 9;
-    return float4(logLumSum, logLumSum, logLumSum, 1.0f);
-}
-
-//------------------------------------------------------------------------------
-//  Iterative step for luminance measurement.
-//------------------------------------------------------------------------------
-float4 psSampleLumIterative(const vsOutput psIn) : COLOR
-{
-    UpdateSamplesDownscale4x4(DisplayResolution.x, DisplayResolution.y, SampleOffsetsWeights);
-
-    float sample = 0.0f;
-    int i;
-    for (i = 0; i < 16; i++)
-    {
-        sample += tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
-    }
-    sample /= 16;
-    return float4(sample, sample, sample, 1.0f);
-}
-
-//------------------------------------------------------------------------------
-//  Final step for luminance measurement.
-//------------------------------------------------------------------------------
-float4 psSampleLumFinal(const vsOutput psIn) : COLOR
-{
-    float sample = 0.0f;
-    int i;
-    for (i = 0; i < 16; i++)
-    {
-        sample += tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
-    }
-    sample = exp(sample / 16);
-    return float4(sample, sample, sample, 1.0f);    
+    return (sample / 16);
 }
 
 //------------------------------------------------------------------------------
@@ -320,7 +376,7 @@ float4 psSampleLumFinal(const vsOutput psIn) : COLOR
 //------------------------------------------------------------------------------
 float4 psBrightPassFilter(const vsOutput psIn) : COLOR
 {
-    float4 sample = tex2D(SourceSampler, psIn.uv0);
+    float4 sample = DecodeHDR(tex2D(SourceSampler, psIn.uv0));
     float brightPassThreshold = Intensity1;
     float brightPassOffset    = Intensity2;
     
@@ -342,7 +398,7 @@ float4 psBrightPassFilter(const vsOutput psIn) : COLOR
 float4 psGaussBlur5x5(const vsOutput psIn) : COLOR
 {
     // preshader
-    UpdateSamplesGaussBlur5x5(DisplayResolution.x, DisplayResolution.y, 1.0f, SampleOffsetsWeights);
+    UpdateSamplesGaussBlur5x5(DisplayResolution.x, DisplayResolution.y, 1.5f, SampleOffsetsWeights);
     
     // shader
     float4 sample = 0.0f;
@@ -352,24 +408,6 @@ float4 psGaussBlur5x5(const vsOutput psIn) : COLOR
         sample += SampleOffsetsWeights[i].z * tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
     }
     return sample;
-}
-
-//------------------------------------------------------------------------------
-//  Brightpass pixel shader.
-//------------------------------------------------------------------------------
-float4 psBrightPass(const vsOutput psIn) : COLOR
-{
-/*
-    UpdateSamplesGaussBlur5x5(DisplayResolution.x, DisplayResolution.y, 1.0f, SampleOffsetsWeights);
-    int i;
-    float4 color = { 0.0f, 0.0f, 0.0f, 1.0f };
-    for (i = 0; i < MaxSamples; i++)
-    {
-        color += SampleOffsetsWeights[i].z * tex2D(SourceSampler, psIn.uv0 + SampleOffsetsWeights[i].xy);
-    }
-    return color;
-*/
-    return 0.25 * tex2D(SourceSampler, psIn.uv0);
 }
 
 //------------------------------------------------------------------------------
@@ -429,17 +467,84 @@ float4 psFinalScene(const vsOutput psIn) : COLOR
 }
 
 //------------------------------------------------------------------------------
+//  Compute fogging given a depth value and input color.
+//------------------------------------------------------------------------------
+float4 psFog(float depth, float4 color)
+{
+    float start = FogDistances.x;
+    float end   = FogDistances.y;
+    float l = saturate((end - depth) / (end - start));
+    return lerp(FogColor, color, l);
+}
+
+//------------------------------------------------------------------------------
+//  Get depth blurred sample at position.
+//------------------------------------------------------------------------------
+float4 psDepthBlur(sampler focusTexture, sampler blurTexture, float2 uv)
+{
+    // get sampled depth around current pixel
+    float d = tex2D(DepthSampler, uv).r;
+    float focusDist = CameraFocus.x;
+    float focusLength = CameraFocus.y;
+    float focus = saturate(abs(d - focusDist) / focusLength);
+    return lerp(tex2D(focusTexture, uv), tex2D(blurTexture, uv), focus);
+}   
+
+//------------------------------------------------------------------------------
+//  Add film grain to color.
+//------------------------------------------------------------------------------
+float4 psFilmGrain(float4 color, float2 uv)
+{
+    float4 noiseColor = tex2D(NoiseSampler, (uv + RandArray[fmod(Time * Frequency, 16)].xy) * Scale);
+    return lerp(color, noiseColor, Noise);
+}
+
+//------------------------------------------------------------------------------
 //  Pixel shader for final scene composition.
 //------------------------------------------------------------------------------
 float4 psHdrCompose(const vsOutput psIn) : COLOR
 {
-    float4 sample = tex2D(SourceSampler, psIn.uv0);
+    // get depth-blurred sample
+    float4 sample = DecodeHDR(psDepthBlur(SourceSampler, BlurSampler, psIn.uv0));
+
+    // add fog
+    sample = psFog(tex2D(DepthSampler, psIn.uv0).r, sample);
     float4 bloom  = tex2D(BloomSampler2, psIn.uv0);
     float saturation = Intensity0;
     float bloomScale = Intensity1;
     float4 lumiVec = MatAmbient;
     float4 balance = MatDiffuse;
     sample += bloomScale * bloom;
+    float luminance = dot(sample.xyz, lumiVec.xyz);
+    float4 color = balance * lerp(float4(luminance, luminance, luminance, luminance), sample, saturation);
+    
+    // add noise
+    color = psFilmGrain(color, psIn.uv0);    
+    return color;
+}
+
+//------------------------------------------------------------------------------
+//  Pixel shader for final scene composition.
+//------------------------------------------------------------------------------
+float4 psBlurAndFog(const vsOutput psIn, uniform bool hdr) : COLOR
+{
+    // get depth-blurred sample
+    float4 sample;
+    if (hdr)
+    {
+        sample = DecodeHDR(psDepthBlur(SourceSampler, BlurSampler, psIn.uv0));
+    }
+    else
+    {
+        sample = psDepthBlur(SourceSampler, BlurSampler, psIn.uv0);
+    }
+
+    // add fog
+    sample = psFog(tex2D(DepthSampler, psIn.uv0).r, sample);
+
+    float saturation = Intensity0;
+    float4 lumiVec = MatAmbient;
+    float4 balance = MatDiffuse;
     float luminance = dot(sample.xyz, lumiVec.xyz);
     float4 color = balance * lerp(float4(luminance, luminance, luminance, luminance), sample, saturation);
     return color;
@@ -450,7 +555,7 @@ float4 psHdrCompose(const vsOutput psIn) : COLOR
 //------------------------------------------------------------------------------
 float4 psCopy(const vsOutput psIn) : COLOR
 {
-    return tex2D(SourceSampler, psIn.uv0);
+    return DecodeHDR(tex2D(SourceSampler, psIn.uv0));
 }
 
 //------------------------------------------------------------------------------
@@ -475,65 +580,8 @@ technique tDownscale4x4
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psDownscale4x4();
-    }
-}
-
-//------------------------------------------------------------------------------
-//  Technique for initial luminance measurement pass.
-//------------------------------------------------------------------------------
-technique tSampleLumInitial
-{
-    pass p0
-    {
-        ZWriteEnable     = False;
-        ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = False;
-        AlphaTestEnable  = False;
-        CullMode         = None;
-        StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psSampleLumInitial();
-    }
-}
-
-//------------------------------------------------------------------------------
-//  Technique for initial luminance measurement pass.
-//------------------------------------------------------------------------------
-technique tSampleLumIterative
-{
-    pass p0
-    {
-        ZWriteEnable     = False;
-        ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = False;
-        AlphaTestEnable  = False;
-        CullMode         = None;
-        StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psSampleLumIterative();
-    }
-}
-
-//------------------------------------------------------------------------------
-//  Technique for final luminance measurement pass.
-//------------------------------------------------------------------------------
-technique tSampleLumFinale
-{
-    pass p0
-    {
-        ZWriteEnable     = False;
-        ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = False;
-        AlphaTestEnable  = False;
-        CullMode         = None;
-        StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psSampleLumFinal();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psDownscale4x4();
     }
 }
 
@@ -551,8 +599,8 @@ technique tBrightPassFilter
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBrightPassFilter();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psBrightPassFilter();
     }
 }
 
@@ -570,29 +618,10 @@ technique tGaussBlur5x5
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psGaussBlur5x5();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psGaussBlur5x5();
     }
 }
-
-//------------------------------------------------------------------------------
-//  Technique to perform the brightpass.
-//------------------------------------------------------------------------------
-technique tBrightPass
-{
-    pass p0
-    {
-        ZWriteEnable     = False;
-        ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
-        AlphaBlendEnable = False;
-        AlphaTestEnable  = False;
-        CullMode         = None;
-        StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBrightPass();
-    }
-}        
 
 //------------------------------------------------------------------------------
 //  Technique to perform the horizontal bloom effect.
@@ -608,8 +637,8 @@ technique tBloomHori
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBloomHori();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psBloomHori();
     }
 }        
 
@@ -627,8 +656,8 @@ technique tBloomVert
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBloomVert();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psBloomVert();
     }
 }        
 
@@ -647,8 +676,8 @@ technique tFinalScene
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psFinalScene();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psFinalScene();
     }
 }
 
@@ -666,8 +695,8 @@ technique tHoriBlur
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBloomHori();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psBloomHori();
     }
 }
 
@@ -685,8 +714,8 @@ technique tVertBlur
         AlphaTestEnable  = False;
         CullMode         = None;
         StencilEnable    = False;
-        VertexShader     = compile vs_2_0 vsQuad();
-        PixelShader      = compile ps_2_0 psBloomVert();
+        VertexShader     = compile VS_PROFILE vsQuad();
+        PixelShader      = compile PS_PROFILE psBloomVert();
     }
 }
 
@@ -705,8 +734,8 @@ technique tCombine
         CullMode         = None;
         StencilEnable    = False;
 
-        VertexShader = compile vs_2_0 vsQuad();
-        PixelShader = compile ps_2_0 psCombine();
+        VertexShader = compile VS_PROFILE vsQuad();
+        PixelShader = compile PS_PROFILE psCombine();
     }
 }
 
@@ -725,8 +754,8 @@ technique tCopy
         CullMode         = None;
         StencilEnable    = False;
 
-        VertexShader = compile vs_2_0 vsQuad();
-        PixelShader = compile ps_2_0 psCopy();
+        VertexShader = compile VS_PROFILE vsQuad();
+        PixelShader = compile PS_PROFILE psCopy();
     }
 }
 
@@ -745,9 +774,45 @@ technique tCompose
         CullMode         = None;
         StencilEnable    = False;
 
-        VertexShader = compile vs_2_0 vsQuad();
-        PixelShader = compile ps_2_0 psHdrCompose();
+        VertexShader = compile VS_PROFILE vsQuad();
+        PixelShader = compile PS_PROFILE psHdrCompose();
     }
 }
 
 
+//------------------------------------------------------------------------------
+//  Technique to for final scene composition.
+//------------------------------------------------------------------------------
+technique tBlurAndFog
+{
+    pass p0
+    {
+        ZWriteEnable     = False;
+        ZEnable          = False;
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        AlphaBlendEnable = False;
+        AlphaTestEnable  = False;
+        CullMode         = None;
+        StencilEnable    = False;
+
+        VertexShader = compile VS_PROFILE vsQuad();
+        PixelShader = compile PS_PROFILE psBlurAndFog(false);
+    }
+}
+
+technique tBlurAndFogHDR
+{
+    pass p0
+    {
+        ZWriteEnable     = False;
+        ZEnable          = False;
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        AlphaBlendEnable = False;
+        AlphaTestEnable  = False;
+        CullMode         = None;
+        StencilEnable    = False;
+
+        VertexShader = compile VS_PROFILE vsQuad();
+        PixelShader = compile PS_PROFILE psBlurAndFog(true);
+    }
+}

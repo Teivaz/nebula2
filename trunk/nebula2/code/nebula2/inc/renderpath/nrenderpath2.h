@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRenderPath2
-    @ingroup NebulaRenderPathSystem
+    @ingroup Scene
 
     A render path is an abstract description of HOW a scene should be rendered.
     This includes things like what shaders to apply and in which order, what render 
@@ -12,8 +12,9 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
-#include "renderpath/nrppass.h"
+#include "renderpath/nrpsection.h"
 #include "renderpath/nrprendertarget.h"
+#include "renderpath/nrpshader.h"
 #include "renderpath/nrpxmlparser.h"
 #include "variable/nvariable.h"
 
@@ -25,8 +26,6 @@ public:
     nRenderPath2();
     /// destructor
     ~nRenderPath2();
-    /// get instance pointer
-    static nRenderPath2* Instance();
     /// set xml filename
     void SetFilename(const nString& n);
     /// get xml filename
@@ -41,91 +40,64 @@ public:
     void Close();
     /// return true if currently open
     bool IsOpen() const;
-    /// set the shader path
-    void SetShaderPath(const nString& p);
-    /// get the shader path, valid after OpenXmlDoc()
-    const nString& GetShaderPath() const;
     /// set the render path object's name
     void SetName(const nString& n);
     /// get the render path object's name
     const nString& GetName() const;
+    /// set the shader root path
+    void SetShaderPath(const nString& p);
+    /// get the shader root path
+    const nString& GetShaderPath() const;
     /// add a render target
     void AddRenderTarget(nRpRenderTarget& rt);
+    /// find render target by name, returns -1 if not found
+    int FindRenderTargetIndex(const nString& n) const;
     /// get array of render targets
     const nArray<nRpRenderTarget>& GetRenderTargets() const;
-    /// find render target by name
-    nRpRenderTarget* FindRenderTarget(const nString& n) const;
-    /// add a render pass
-    void AddPass(nRpPass& rp);
-    /// get array of passes
-    const nArray<nRpPass>& GetPasses() const;
+    /// get render target at index
+    nRpRenderTarget& GetRenderTarget(int i) const;
+    /// add a shader definition
+    void AddShader(nRpShader& rt);
+    /// find a shader definition by its name, returns -1 if not found
+    int FindShaderIndex(const nString& n) const;
+    /// returns shader definitions array
+    const nArray<nRpShader>& GetShaders() const;
+    /// returns shader definition at index
+    nRpShader& GetShader(int i)  const;
+    /// add a section
+    void AddSection(nRpSection& s);
+    /// find a section index by name
+    int FindSectionIndex(const nString& n) const;
+    /// get array of sections
+    const nArray<nRpSection>& GetSections() const;
+    /// get section by index
+    nRpSection& GetSection(int i) const;
     /// add a global variable
     void AddVariable(const nVariable& var);
     /// get global variable handles
     const nArray<nVariable::Handle>& GetVariableHandles() const;
     /// update variable value
     void UpdateVariable(const nVariable& var);
-    /// begin rendering the render path
-    int Begin();
-    /// get pass at index
-    nRpPass& GetPass(int i) const;
-    /// finish rendering the render path
-    void End();
-    /// return true if inside Begin()/End()
-    bool InBegin() const;
     /// get current sequence shader index and increment by one
     int GetSequenceShaderAndIncrement();
+
+private:
     /// validate render path resources
     void Validate();
-
-private:    
     /// draw a fullscreen quad
     void DrawQuad();
 
-    static nRenderPath2* Singleton;
-
     bool isOpen;
-    bool inBegin;
     nString xmlFilename;
-    nString shaderPath;
     nString name;
+    nString shaderPath;
     nRpXmlParser xmlParser;
-    nArray<nRpPass> passes;
+    nArray<nRpSection> sections;
     nArray<nRpRenderTarget> renderTargets;
+    nArray<nRpShader> shaders;
     nArray<nVariable::Handle> variableHandles;
     int sequenceShaderIndex;
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nRenderPath2*
-nRenderPath2::Instance()
-{
-    n_assert(Singleton);
-    return Singleton;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nRenderPath2::SetShaderPath(const nString& p)
-{
-    this->shaderPath = p;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-nRenderPath2::GetShaderPath() const
-{
-    return this->shaderPath;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -155,16 +127,6 @@ bool
 nRenderPath2::IsOpen() const
 {
     return this->isOpen;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nRenderPath2::InBegin() const
-{
-    return this->inBegin;
 }
 
 //------------------------------------------------------------------------------
@@ -222,29 +184,29 @@ nRenderPath2::GetRenderTargets() const
 */
 inline
 void
-nRenderPath2::AddPass(nRpPass& p)
+nRenderPath2::AddSection(nRpSection& s)
 {
-    this->passes.Append(p);
+    this->sections.Append(s);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const nArray<nRpPass>&
-nRenderPath2::GetPasses() const
+const nArray<nRpSection>&
+nRenderPath2::GetSections() const
 {
-    return this->passes;
+    return this->sections;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nRpPass&
-nRenderPath2::GetPass(int i) const
+nRpSection&
+nRenderPath2::GetSection(int i) const
 {
-    return this->passes[i];
+    return this->sections[i];
 }
 
 //------------------------------------------------------------------------------
@@ -266,6 +228,57 @@ const nArray<nVariable::Handle>&
 nRenderPath2::GetVariableHandles() const
 {
     return this->variableHandles;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRenderPath2::SetShaderPath(const nString& p)
+{
+    this->shaderPath = p;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nRenderPath2::GetShaderPath() const
+{
+    return this->shaderPath;
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nRpShader>&
+nRenderPath2::GetShaders() const
+{
+    return this->shaders;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpShader&
+nRenderPath2::GetShader(int i) const
+{
+    return this->shaders[i];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpRenderTarget&
+nRenderPath2::GetRenderTarget(int i) const
+{
+    return this->renderTargets[i];
 }
 
 //------------------------------------------------------------------------------

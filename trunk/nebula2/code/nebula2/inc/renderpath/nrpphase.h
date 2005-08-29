@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpPhase
-    @ingroup NebulaRenderPathSystem
+    @ingroup Scene
 
     A phase object inside a render path pass encapsulates sequence shaders
     and sets common render state for sequence shaders.
@@ -12,7 +12,12 @@
 */
 #include "util/nstring.h"
 #include "renderpath/nrpsequence.h"
+#include "renderpath/nrpshader.h"
+#include "kernel/nprofiler.h"
 
+class nRenderPath2;
+class nRpSection;
+class nRpPass;
 //------------------------------------------------------------------------------
 class nRpPhase
 {
@@ -25,36 +30,42 @@ public:
         BackToFront,
     };
 
+    // lighting modes
+    enum LightMode
+    {
+        Off,
+        FFP,
+        Shader,
+    };
+
     /// constructor
     nRpPhase();
     /// destructor
     ~nRpPhase();
-    /// assignment operator
-    void operator=(const nRpPhase& rhs);
+    /// set the renderpath
+    void SetRenderPath(nRenderPath2* rp);
+    /// get the renderpath
+    nRenderPath2* GetRenderPath() const;
     /// set phase name
     void SetName(const nString& n);
     /// get phase name
     const nString& GetName() const;
-    /// set phase shader's path
-    void SetShaderPath(const nString& p);
-    /// get phase shader's path
-    const nString& GetShaderPath() const;
-    /// set optional technique in shader
+    /// set phase shader alias
+    void SetShaderAlias(const nString& p);
+    /// get phase shader alias
+    const nString& GetShaderAlias() const;
+    /// set optional technique
     void SetTechnique(const nString& n);
     /// get optional shader technique
     const nString& GetTechnique() const;
-    /// set shader fourcc code
-    void SetFourCC(nFourCC fcc);
-    /// get shader fourcc code
-    nFourCC GetFourCC() const;
     /// set sorting order
     void SetSortingOrder(SortingOrder o);
     /// get sorting order
     SortingOrder GetSortingOrder() const;
-    /// enable/disable lighting
-    void SetLightsEnabled(bool b);
-    /// get light enabled flag
-    bool GetLightsEnabled() const;
+    /// set lighting mode
+    void SetLightMode(LightMode m);
+    /// get lighting mode
+    LightMode GetLightMode() const;
     /// add a sequence object
     void AddSequence(const nRpSequence& seq);
     /// get array of sequences
@@ -67,6 +78,19 @@ public:
     void End();
     /// convert string to sorting order
     static SortingOrder StringToSortingOrder(const char* str);
+    /// convert string to lighting mode
+    static LightMode StringToLightMode(const char* str);
+
+#if __NEBULA_STATS__
+    /// set the section
+    void SetSection(nRpSection* rp);
+    /// get the section
+    nRpSection* GetSection() const;
+    /// set the pass
+    void SetPass(nRpPass* p);
+    /// get the pass
+    nRpPass* GetPass() const;
+#endif
 
 private:
     friend class nRpPass;
@@ -74,38 +98,22 @@ private:
     /// validate the pass object
     void Validate();
 
+    nRenderPath2* renderPath;
     bool inBegin;
     nString name;
-    nString shaderPath;
+    nString shaderAlias;
     nString technique;
-    nFourCC shaderFourCC;
+    int rpShaderIndex;
     SortingOrder sortingOrder;
-    bool lightsEnabled;
+    LightMode lightMode;
     nArray<nRpSequence> sequences;
-    nRef<nShader2> refShader;
-};
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nRpPhase::operator=(const nRpPhase& rhs)
-{
-    this->inBegin       = rhs.inBegin;
-    this->name          = rhs.name;
-    this->shaderPath    = rhs.shaderPath;
-    this->technique     = rhs.technique;
-    this->shaderFourCC  = rhs.shaderFourCC;
-    this->sortingOrder  = rhs.sortingOrder;
-    this->lightsEnabled = rhs.lightsEnabled;
-    this->sequences     = rhs.sequences;
-    this->refShader     = rhs.refShader;
-    if (this->refShader.isvalid())
-    {
-        this->refShader->AddRef();
-    }
-}
+#if __NEBULA_STATS__
+    nProfiler prof;
+    nRpSection* section;
+    nRpPass* pass;
+#endif
+};
 
 //------------------------------------------------------------------------------
 /**
@@ -152,19 +160,9 @@ nRpPhase::GetName() const
 */
 inline
 void
-nRpPhase::SetShaderPath(const nString& p)
+nRpPhase::SetShaderAlias(const nString& p)
 {
-    this->shaderPath = p;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-nRpPhase::GetShaderPath() const
-{
-    return this->shaderPath;
+    this->shaderAlias = p;
 }
 
 //------------------------------------------------------------------------------
@@ -172,19 +170,30 @@ nRpPhase::GetShaderPath() const
 */
 inline
 void
-nRpPhase::SetFourCC(nFourCC fcc)
+nRpPhase::SetRenderPath(nRenderPath2* rp)
 {
-    this->shaderFourCC = fcc;
+    n_assert(rp);
+    this->renderPath = rp;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nFourCC
-nRpPhase::GetFourCC() const
+nRenderPath2*
+nRpPhase::GetRenderPath() const
 {
-    return this->shaderFourCC;
+    return this->renderPath;
+}
+    
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nRpPhase::GetShaderAlias() const
+{
+    return this->shaderAlias;
 }
 
 //------------------------------------------------------------------------------
@@ -212,19 +221,19 @@ nRpPhase::GetSortingOrder() const
 */
 inline
 void
-nRpPhase::SetLightsEnabled(bool b)
+nRpPhase::SetLightMode(LightMode m)
 {
-    this->lightsEnabled = b;
+    this->lightMode = m;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-bool
-nRpPhase::GetLightsEnabled() const
+nRpPhase::LightMode
+nRpPhase::GetLightMode() const
 {
-    return this->lightsEnabled;
+    return this->lightMode;
 }
 
 //------------------------------------------------------------------------------
@@ -274,6 +283,69 @@ nRpPhase::StringToSortingOrder(const char* str)
         return None;
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpPhase::LightMode
+nRpPhase::StringToLightMode(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp("Off", str)) return Off;
+    else if (0 == strcmp("FFP", str)) return FFP;
+    else if (0 == strcmp("Shader", str)) return Shader;
+    else
+    {
+        n_error("nRpPhase::StringToLightMode(): invalid string '%s'!", str);
+        return Off;
+    }
+}
+
+#if __NEBULA_STATS__
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPhase::SetSection(nRpSection* s)
+{
+    n_assert(s);
+    this->section = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpSection*
+nRpPhase::GetSection() const
+{
+    return this->section;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPhase::SetPass(nRpPass* p)
+{
+    n_assert(p);
+    this->pass = p;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nRpPass*
+nRpPhase::GetPass() const
+{
+    return this->pass;
+}
+#endif
+
 
 //------------------------------------------------------------------------------
 #endif    

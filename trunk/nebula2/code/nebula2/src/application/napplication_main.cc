@@ -16,7 +16,6 @@
 #include "particle/nparticleserver.h"
 #include "video/nvideoserver.h"
 #include "gui/nguiserver.h"
-#include "shadow/nshadowserver.h"
 #include "kernel/nremoteserver.h"
 #include "audio3/naudioserver3.h"
 #include "misc/nprefserver.h"
@@ -24,6 +23,7 @@
 #include "application/nappstate.h"
 #include "gui/nguiwindow.h"
 #include "locale/nlocaleserver.h"
+#include "shadow2/nshadowserver2.h"
 
 nNebulaScriptClass(nApplication, "nroot");
 
@@ -259,8 +259,6 @@ nApplication::Run()
         {
             this->DoStateTransition();
         }
-
-        nSceneServer::Instance()->GetRenderPath().Validate();
 
         // perform current frame
         this->DoFrame();
@@ -573,10 +571,10 @@ nApplication::CreateGuiServer()
 //------------------------------------------------------------------------------
 /**
 */
-nShadowServer*
+nShadowServer2*
 nApplication::CreateShadowServer()
 {
-    return (nShadowServer*) kernelServer->New("nshadowserver", "/sys/servers/shadow");
+    return (nShadowServer2*) kernelServer->New("nshadowserver2", "/sys/servers/shadow");
 }
 
 //------------------------------------------------------------------------------

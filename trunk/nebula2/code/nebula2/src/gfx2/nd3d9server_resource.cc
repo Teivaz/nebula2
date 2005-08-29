@@ -8,6 +8,7 @@
 #include "gfx2/nfont2.h"
 #include "gfx2/nd3d9mesharray.h"
 #include "gfx2/nd3d9shader.h"
+#include "gfx2/nd3d9occlusionquery.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -118,3 +119,14 @@ nD3D9Server::NewRenderTarget(const char* rsrcName,
     return renderTarget;
 }
 
+//------------------------------------------------------------------------------
+/**
+    Create a new occlusion query object.
+
+    @return     pointer to a new occlusion query object
+*/
+nOcclusionQuery*
+nD3D9Server::NewOcclusionQuery()
+{
+    return n_new(nD3D9OcclusionQuery);
+}

@@ -8,22 +8,28 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 #include "misc/nconserver.h"
-#include "shadow/nshadowserver.h"
+#include "shadow2/nshadowserver2.h"
 
 //------------------------------------------------------------------------------
 /**
 */
 nRpPass::nRpPass() :
+    renderPath(0),
     inBegin(false),
+    rpShaderIndex(-1),
     clearFlags(0),
     clearColor(0.0f, 0.0f, 0.0f, 1.0f),
     clearDepth(1.0f),
     clearStencil(0),
-    shaderFourCC(0),
+    shadowTechnique(NoShadows),
+    occlusionQuery(false),
     drawFullscreenQuad(false),
-    drawShadowVolumes(false),
     drawGui(false),
-    shadowEnabledCondition(false)
+    shadowEnabledCondition(false),
+    renderTargetNames(nGfxServer2::MaxRenderTargets)
+#if __NEBULA_STATS__
+    ,section(0)
+#endif
 {
     // empty
 }
@@ -33,11 +39,6 @@ nRpPass::nRpPass() :
 */
 nRpPass::~nRpPass()
 {
-    if (this->refShader.isvalid())
-    {
-        this->refShader->Release();
-        this->refShader.invalidate();
-    }
     if (this->refQuadMesh.isvalid())
     {
         this->refQuadMesh->Release();
@@ -53,46 +54,47 @@ nRpPass::~nRpPass()
 void
 nRpPass::Validate()
 {
+    n_assert(this->renderPath);
+
+    // setup profiler
+    #if __NEBULA_STATS__
+    n_assert(this->section);
+
+    if (!this->prof.IsValid() && !this->GetDrawShadows() && !this->GetOcclusionQuery())
+    {
+        nString n;
+        n.Format("profRpPass_%s_%s", this->section->GetName().Get(), this->name.Get());
+        this->prof.Initialize(n.Get());
+    }
+    #endif
+
     // invoke validate on phases
     int i;
     int num = this->phases.Size();
     for (i = 0; i < num; i++)
     {
+        this->phases[i].SetRenderPath(this->renderPath);     
+    #if __NEBULA_STATS__
+        this->phases[i].SetSection(this->section);     
+        this->phases[i].SetPass(this);     
+    #endif
         this->phases[i].Validate();
     }
 
-    // validate shader
-    if (!this->shaderPath.IsEmpty())
+    // find shader
+    if ((-1 == this->rpShaderIndex) && (!this->shaderAlias.IsEmpty()))
     {
-        nShader2* shd = 0;
-        if (!this->refShader.isvalid())
+        this->rpShaderIndex = this->renderPath->FindShaderIndex(this->shaderAlias);
+        if (-1 == this->rpShaderIndex)
         {
-            n_assert(!this->shaderPath.IsEmpty());
-            shd = nGfxServer2::Instance()->NewShader(this->shaderPath.Get());
-            this->refShader = shd;
-        }
-        else
-        {
-            shd = this->refShader;
-        }
-
-        n_assert(shd);
-        if (!shd->IsLoaded())
-        {
-            shd->SetFilename(this->shaderPath);
-            if (!shd->Load())
-            {
-                shd->Release();
-                n_error("nRpPass: could not load shader '%s'!", this->shaderPath.Get());
-            }
+            n_error("nRpPass::Validate(): couldn't find shader alias '%s' in render path xml file!", this->shaderAlias.Get());
         }
     }
 
     // validate quad mesh
-    nMesh2* mesh = 0;
     if (!this->refQuadMesh.isvalid())
     {
-        mesh = nGfxServer2::Instance()->NewMesh("_rpmesh");
+        nMesh2* mesh = nGfxServer2::Instance()->NewMesh("_rpmesh");
         if (!mesh->IsLoaded())
         {
             mesh->SetUsage(nMesh2::WriteOnly);
@@ -102,10 +104,6 @@ nRpPass::Validate()
             mesh->Load();
         }
         this->refQuadMesh = mesh;
-    }
-    else
-    {
-        mesh = this->refQuadMesh;
     }
 }
 
@@ -120,7 +118,7 @@ void
 nRpPass::UpdateMeshCoords()
 {
     // compute half pixel size for current render target
-    nTexture2* renderTarget = nGfxServer2::Instance()->GetRenderTarget();
+    nTexture2* renderTarget = nGfxServer2::Instance()->GetRenderTarget(0);
     int w, h;
     if (renderTarget)
     {
@@ -171,31 +169,44 @@ int
 nRpPass::Begin()
 {
     n_assert(!this->inBegin);
+    n_assert(this->renderPath);
+
+    #if __NEBULA_STATS__
+    if(!this->GetDrawShadows() && !this->GetOcclusionQuery())
+    {
+        this->prof.Start();
+    }
+    #endif
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // only render this pass if shadowing is enabled?
-    if (this->shadowEnabledCondition && 
-        ((gfxServer->GetNumStencilBits() == 0) || (!nShadowServer::Instance()->GetShowShadows())))
+    if (this->shadowEnabledCondition && ((gfxServer->GetNumStencilBits() == 0) || (!nShadowServer2::Instance()->GetEnableShadows())))
     {
         return 0;
     }
 
-    // set render target
-    if (this->renderTargetName.IsEmpty())
+    // set render targets
+    int i;
+    for (i = 0; i < this->renderTargetNames.Size(); i++)
     {
-        // set default render target
-        gfxServer->SetRenderTarget(0);
-    }
-    else
-    {
-        // set custom render target
-        nRpRenderTarget* rpRenderTarget = nRenderPath2::Instance()->FindRenderTarget(this->renderTargetName);
-        if (0 == rpRenderTarget)
+        // special case default render target
+        if (this->renderTargetNames[i].IsEmpty())
         {
-            n_error("nRpPass: invalid render target name: %s!", this->renderTargetName.Get());
+            if (0 == i)
+            {
+                gfxServer->SetRenderTarget(i, 0);
+            }
         }
-        gfxServer->SetRenderTarget(rpRenderTarget->GetTexture());
+        else
+        {
+            int renderTargetIndex = this->renderPath->FindRenderTargetIndex(this->renderTargetNames[i]);
+            if (-1 == renderTargetIndex)
+            {
+                n_error("nRpPass: invalid render target name: %s!", this->renderTargetNames[i].Get());
+            }
+            gfxServer->SetRenderTarget(i, this->renderPath->GetRenderTarget(renderTargetIndex).GetTexture());
+        }
     }
 
     // invoke begin scene
@@ -217,10 +228,10 @@ nRpPass::Begin()
     }
 
     // apply shader (note: save/restore all shader state for pass shaders!)
-    if (this->refShader.isvalid())
+    nShader2* shd = this->GetShader();
+    if (shd)
     {
         this->UpdateVariableShaderParams();
-        nShader2* shd = this->refShader;
         if (!this->technique.IsEmpty())
         {
             shd->SetTechnique(this->technique.Get());
@@ -242,22 +253,7 @@ nRpPass::Begin()
     // draw the fullscreen quad?
     if (this->drawFullscreenQuad)
     {
-        // update the mesh coordinates
-        this->UpdateMeshCoords();
-
-        // draw the quad
-        const matrix44 ident;
-        gfxServer->PushTransform(nGfxServer2::Model, ident);
-        gfxServer->PushTransform(nGfxServer2::View, ident);
-        gfxServer->PushTransform(nGfxServer2::Projection, ident);
-        gfxServer->SetMesh(this->refQuadMesh);
-        gfxServer->SetVertexRange(0, 4);
-        gfxServer->SetIndexRange(0, 6);
-        gfxServer->DrawIndexedNS(nGfxServer2::TriangleList);
-        gfxServer->SetMesh(0);  // FIXME FLOH: hmm, why is this necessary??? otherwise mesh data will be broken...
-        gfxServer->PopTransform(nGfxServer2::Projection);
-        gfxServer->PopTransform(nGfxServer2::View);
-        gfxServer->PopTransform(nGfxServer2::Model);
+        this->DrawFullScreenQuad();
     }
 
     this->inBegin = true;
@@ -271,21 +267,64 @@ nRpPass::Begin()
 void
 nRpPass::End()
 {
+    n_assert(this->renderPath);
+
     if (!this->inBegin)
     {
         return;
     }
 
-    if (this->refShader.isvalid())
+    if (-1 != this->rpShaderIndex)
     {
-        nShader2* shd = this->refShader;
+        nShader2* shd = this->renderPath->GetShader(this->rpShaderIndex).GetShader();
         shd->EndPass();
         shd->End();
     }
 
     nGfxServer2::Instance()->EndScene();
 
+    if (!this->renderTargetNames[0].IsEmpty())
+    {
+        for (int i=0; i < this->renderTargetNames.Size(); i++)
+        {
+            // Disable used rendertargets
+            nGfxServer2::Instance()->SetRenderTarget(i, 0);
+        }
+    }
     this->inBegin = false;
+
+    #if __NEBULA_STATS__
+    if(!this->GetDrawShadows() && !this->GetOcclusionQuery())
+    {
+        this->prof.Stop();
+    }
+    #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Renders a fullscreen quad.
+*/
+void
+nRpPass::DrawFullScreenQuad()
+{
+    // update the mesh coordinates
+    this->UpdateMeshCoords();
+
+    // draw the quad
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    const matrix44 ident;
+    gfxServer->PushTransform(nGfxServer2::Model, ident);
+    gfxServer->PushTransform(nGfxServer2::View, ident);
+    gfxServer->PushTransform(nGfxServer2::Projection, ident);
+    gfxServer->SetMesh(this->refQuadMesh, this->refQuadMesh);
+    gfxServer->SetVertexRange(0, 4);
+    gfxServer->SetIndexRange(0, 6);
+    gfxServer->DrawIndexedNS(nGfxServer2::TriangleList);
+    gfxServer->SetMesh(0, 0);  // FIXME FLOH: find out why this is necessary! if not done mesh data will be broken...
+    gfxServer->PopTransform(nGfxServer2::Projection);
+    gfxServer->PopTransform(nGfxServer2::View);
+    gfxServer->PopTransform(nGfxServer2::Model);
 }
 
 //------------------------------------------------------------------------------
@@ -345,3 +384,22 @@ nRpPass::UpdateVariableShaderParams()
         this->shaderParams.SetArg(shaderParam, shaderArg);
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+nShader2*
+nRpPass::GetShader() const
+{
+    if (-1 != this->rpShaderIndex)
+    {
+        const nRpShader& rpShader = this->renderPath->GetShader(this->rpShaderIndex);
+        nShader2* shd = rpShader.GetShader();
+        return shd;
+    }
+    else
+    {
+        return 0;
+    }
+}
+

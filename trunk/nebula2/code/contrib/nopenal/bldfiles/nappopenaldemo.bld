@@ -56,7 +56,7 @@ begintarget nopenaldemo
         ndinput8
         ndirect3d9
         ndshow
-        ndsaudioserver3
+        ndsound
         ngui
         nnetwork
         napplication
@@ -73,7 +73,7 @@ beginworkspace nopenaldemo
         ndinput8
         ndirect3d9
         ndshow
-        ndsaudioserver3
+        ndsound
         ngui
         nnetwork
         napplication

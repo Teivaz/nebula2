@@ -11,29 +11,6 @@
 
 //------------------------------------------------------------------------------
 /**
-    Add a light to the light array. This will update the shared light
-    effect state.
-*/
-int
-nD3D9Server::AddLight(const nLight& light)
-{
-    // FIXME: only handle the first light for now!
-    int numLights = nGfxServer2::AddLight(light);
-    if (1 == numLights)
-    {
-        this->SetTransform(nGfxServer2::Light, light.GetTransform());
-
-        nD3D9Shader* shd = this->refSharedShader.get();
-        shd->SetVector4(nShaderState::LightDiffuse, light.GetDiffuse());
-        shd->SetVector4(nShaderState::LightSpecular, light.GetSpecular());
-        shd->SetVector4(nShaderState::LightAmbient, light.GetAmbient());
-        shd->SetVector4(nShaderState::LightDiffuse1, light.GetSecondaryDiffuse());
-    }
-    return numLights;
-}
-
-//------------------------------------------------------------------------------
-/**
     Update the d3d projection matrix from the new camera settings.
 */
 void
@@ -56,7 +33,6 @@ void
 nD3D9Server::SetViewport(nViewport& vp)
 {
     nGfxServer2::SetViewport(vp);
-
     if (this->d3d9Device)
     {
         static D3DVIEWPORT9 dvp;
@@ -68,6 +44,180 @@ nD3D9Server::SetViewport(nViewport& vp)
         dvp.MaxZ = vp.farz;
         this->d3d9Device->SetViewport(&dvp);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Reset lighting.
+*/
+void
+nD3D9Server::ClearLights()
+{
+    n_assert(this->d3d9Device);
+
+    nGfxServer2::ClearLights();
+    if (FFP == this->lightingType)
+    {
+        uint i;
+        uint maxLights = this->devCaps.MaxActiveLights;
+        if (maxLights > 8)
+        {
+            maxLights = 8;
+        }
+        for (i = 0; i < maxLights; i++)
+        {
+            HRESULT hr = this->d3d9Device->LightEnable(i, FALSE);
+            n_assert(SUCCEEDED(hr));
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Reset lighting.
+*/
+void
+nD3D9Server::ClearLight(int index)
+{
+    nGfxServer2::ClearLight(index);
+
+    uint maxLights = this->devCaps.MaxActiveLights;
+    if(index < (int) maxLights)
+    {
+        HRESULT hr = this->d3d9Device->LightEnable(index, FALSE);
+        n_assert(SUCCEEDED(hr));
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add a light to the light array. This will update the shared light
+    effect state.
+*/
+int
+nD3D9Server::AddLight(const nLight& light)
+{
+    n_assert(light.GetRange() > 0.0f);
+    int numLights = nGfxServer2::AddLight(light);
+
+    if (Off == this->lightingType)
+    {
+        // no lighting, but set light transform
+        this->SetTransform(nGfxServer2::Light, light.GetTransform());
+    }
+    else if (FFP == this->lightingType)
+    {
+        n_assert(this->d3d9Device);
+        HRESULT hr;
+       
+        // set ambient render state if this is the first light
+        if (1 == numLights)
+        {
+            DWORD amb = D3DCOLOR_COLORVALUE(light.GetAmbient().x, light.GetAmbient().y, light.GetAmbient().z, light.GetAmbient().w);
+            this->d3d9Device->SetRenderState(D3DRS_AMBIENT, amb);
+        }
+
+        // set light in fixed function pipeline
+        D3DLIGHT9 d3dLight9;
+        memset(&d3dLight9, 0, sizeof(d3dLight9));
+        switch (light.GetType())
+        {
+            case nLight::Point:
+                d3dLight9.Type = D3DLIGHT_POINT;
+                break;
+
+            case nLight::Directional:
+                d3dLight9.Type = D3DLIGHT_DIRECTIONAL;
+                break;
+
+            case nLight::Spot:
+                d3dLight9.Type = D3DLIGHT_SPOT;
+                break;
+        }
+        d3dLight9.Diffuse.r    = light.GetDiffuse().x;
+        d3dLight9.Diffuse.g    = light.GetDiffuse().y;
+        d3dLight9.Diffuse.b    = light.GetDiffuse().z;
+        d3dLight9.Diffuse.a    = light.GetDiffuse().w;
+        d3dLight9.Specular.r   = light.GetSpecular().x;
+        d3dLight9.Specular.g   = light.GetSpecular().y;
+        d3dLight9.Specular.b   = light.GetSpecular().z;
+        d3dLight9.Specular.a   = light.GetSpecular().w;
+        d3dLight9.Ambient.r    = light.GetAmbient().x;
+        d3dLight9.Ambient.g    = light.GetAmbient().y;
+        d3dLight9.Ambient.b    = light.GetAmbient().z;
+        d3dLight9.Ambient.a    = light.GetAmbient().w;
+        d3dLight9.Position.x   = light.GetTransform().pos_component().x;
+        d3dLight9.Position.y   = light.GetTransform().pos_component().y;
+        d3dLight9.Position.z   = light.GetTransform().pos_component().z;
+
+        const vector3& lightDir = -light.GetTransform().z_component();
+        d3dLight9.Direction.x  = lightDir.x;
+        d3dLight9.Direction.y  = lightDir.y;
+        d3dLight9.Direction.z  = lightDir.z;
+        d3dLight9.Range        = light.GetRange();
+        d3dLight9.Falloff      = 1.0f;
+
+        // set the attenuation values so that at the maximum range,
+        // the light intensity is at 20%
+        d3dLight9.Attenuation0 = 0.0f;
+        d3dLight9.Attenuation1 = 5.0f / light.GetRange();
+        d3dLight9.Attenuation2 = 0.0f;
+        d3dLight9.Theta        = 0.0f;
+        d3dLight9.Phi          = N_PI;
+        hr = this->d3d9Device->SetLight(numLights - 1, &d3dLight9);
+        n_assert(SUCCEEDED(hr));
+        hr = this->d3d9Device->LightEnable(numLights - 1, TRUE);
+        n_assert(SUCCEEDED(hr));
+    }
+    else if (Shader == this->lightingType)
+    {
+        // set light in shader pipeline
+        this->SetTransform(nGfxServer2::Light, light.GetTransform());
+        nShader2* shd = this->refSharedShader;
+
+        if (light.GetType() == nLight::Directional)
+        {
+            // for directional lights, the light pos shader attributes
+            // actually hold the light direction
+            if (shd->IsParameterUsed(nShaderState::LightPos))
+            {
+                shd->SetVector3(nShaderState::LightPos, this->transform[Light].z_component());
+            }
+        }
+        else
+        {
+            // point light position
+            if (shd->IsParameterUsed(nShaderState::LightPos))
+            {
+                shd->SetVector3(nShaderState::LightPos, this->transform[Light].pos_component());
+            }
+        }
+        if (shd->IsParameterUsed(nShaderState::LightType))
+        {
+            shd->SetInt(nShaderState::LightType, light.GetType());
+        }
+        if (shd->IsParameterUsed(nShaderState::LightRange))
+        {
+            shd->SetFloat(nShaderState::LightRange, light.GetRange());
+        }
+        if (shd->IsParameterUsed(nShaderState::LightDiffuse))
+        {
+            shd->SetVector4(nShaderState::LightDiffuse, light.GetDiffuse());
+        }
+        if (shd->IsParameterUsed(nShaderState::LightSpecular))
+        {
+            shd->SetVector4(nShaderState::LightSpecular, light.GetSpecular());
+        }
+        if (shd->IsParameterUsed(nShaderState::LightAmbient))
+        {
+            shd->SetVector4(nShaderState::LightAmbient, light.GetAmbient());
+        }
+        if (shd->IsParameterUsed(nShaderState::ShadowIndex))
+        {
+            shd->SetVector4(nShaderState::ShadowIndex, light.GetShadowLightMask());        
+        }
+    }
+    return numLights;
 }
 
 //------------------------------------------------------------------------------
@@ -85,96 +235,100 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
     if (this->refSharedShader.isvalid())
     {
         nD3D9Shader* shd = this->refSharedShader.get();
+        bool mvpOnly = this->GetHint(MvpOnly);
         bool setMVP = false;
         bool setEyePos = false;
         bool setModelEyePos = false;
-        bool setModelLightProjection = false;
-        bool setLightPos = false;
-        bool setModelLightPos = false;
         switch (type)
         {
             case Model:
-                shd->SetMatrix(nShaderState::Model, this->transform[Model]);
-                shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
-                shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
-                shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-                setMVP = true;
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::Model, this->transform[Model]);
+                    shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
+                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                    shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+                }
                 setModelEyePos = true;
-                setModelLightProjection = true;
-                setModelLightPos = true;
+                setMVP = true;
                 break;
             
             case View:
-                shd->SetMatrix(nShaderState::View, this->transform[View]);
-                shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
-                shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
-                shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-                setMVP = true;
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::View, this->transform[View]);
+                    shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
+                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                    shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+                    setEyePos = true;
+                }
                 setModelEyePos = true;
-                setEyePos = true;
+                setMVP = true;
                 break;
 
             case Projection:
-                shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
+                }
                 setMVP = true;
-                setModelLightProjection = true;
                 break;
 
             case Texture0:
-                shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
+                }
                 break;
 
             case Texture1:
-                shd->SetMatrix(nShaderState::TextureTransform1, this->transform[Texture1]);
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::TextureTransform1, this->transform[Texture1]);
+                }
                 break;
 
             case Texture2:
-                shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
+                }
                 break;
 
             case Texture3:
-                shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
+                if (!mvpOnly)
+                {
+                    shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
+                }
                 break;
 
             case Light:
-                setModelLightProjection = true;
-                setLightPos = true;
-                setModelLightPos = true;
                 break;
         }
         if (setMVP)
         {
             shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
         }
-        if (setEyePos)
+        if (!mvpOnly && setEyePos)
         {
             shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
         }
+
+        // model eye pos always needed in lighting formula
         if (setModelEyePos)
         {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
-        }
-        if (setModelLightProjection)
-        {
-            shd->SetMatrix(nShaderState::ModelLightProjection, this->transform[ModelLightProjection]);
-        }
-        if (setModelLightPos)
-        {
-            shd->SetVector3(nShaderState::ModelLightPos, this->transform[InvModelLight].pos_component());
-        }
-        if (setLightPos)
-        {
-            shd->SetVector3(nShaderState::LightPos, this->transform[Light].pos_component());
         }
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Updates shared shader parameters. Called once at frame start.
+    Updates shared shader parameters for the current frame. 
+    This method is called once per frame from within BeginFrame().
 */
 void
-nD3D9Server::UpdateSharedShaderParams()
+nD3D9Server::UpdatePerFrameSharedShaderParams()
 {
     if (this->refSharedShader.isvalid())
     {
@@ -183,30 +337,81 @@ nD3D9Server::UpdateSharedShaderParams()
         // update global time
         nTime time = this->kernelServer->GetTimeServer()->GetTime();
         shd->SetFloat(nShaderState::Time, float(time));
-
-        // display resolution (or better, render target resolution
-        nFloat4 dispRes;
-        nTexture2* renderTarget = this->GetRenderTarget();
-        if (renderTarget)
-        {
-            dispRes.x = (float) renderTarget->GetWidth();
-            dispRes.y = (float) renderTarget->GetHeight();
-        }
-        else
-        {
-            const nDisplayMode2& mode = this->GetDisplayMode();
-            dispRes.x = (float) mode.GetWidth();
-            dispRes.y = (float) mode.GetHeight();
-        }
-        dispRes.z = 0.0f;
-        dispRes.w = 0.0f;
-        shd->SetFloat4(nShaderState::DisplayResolution, dispRes);
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Start rendering the scene.
+    Updates shared shader parameters for the current scene.
+    This method is called once per frame from within BeginScene().
+*/    
+void
+nD3D9Server::UpdatePerSceneSharedShaderParams()
+{
+    if (this->refSharedShader.isvalid())
+    {
+        nShader2* shd = this->refSharedShader;
+
+        // display resolution (or better, main render target resolution)
+        vector2 rtSize = this->GetCurrentRenderTargetSize();
+        vector4 dispRes(rtSize.x, rtSize.y, 0.0f, 0.0f);
+        shd->SetVector4(nShaderState::DisplayResolution, dispRes);
+        vector4 halfPixelSize;
+        halfPixelSize.x = (1.0f / rtSize.x) * 0.5f;
+        halfPixelSize.y = (1.0f / rtSize.y) * 0.5f;
+        shd->SetVector4(nShaderState::HalfPixelSize, halfPixelSize);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin rendering the current frame. This is guaranteed to be called
+    exactly once per frame.
+*/
+bool
+nD3D9Server::BeginFrame()
+{
+    if (nGfxServer2::BeginFrame())
+    {
+        // check if d3d device is in a valid state
+        if (!this->TestResetDevice())
+        {
+            // device could not be restored at this time
+            this->inBeginFrame = false;
+            return false;
+        }
+
+        // update mouse cursor image if necessary
+        this->UpdateCursor();
+
+        // update shared shader parameters
+        this->UpdatePerFrameSharedShaderParams();
+
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish rendering the current frame. This is guaranteed to be called
+    exactly once per frame after PresentScene() has happened.
+*/
+void
+nD3D9Server::EndFrame()
+{
+    #ifdef __NEBULA_STATS__
+    // query statistics
+    this->QueryStatistics();
+    #endif
+
+    nGfxServer2::EndFrame();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Start rendering the scene. This can be called several times per frame
+    (each render target requires its own BeginScene()/EndScene().
 */
 bool
 nD3D9Server::BeginScene()
@@ -219,15 +424,8 @@ nD3D9Server::BeginScene()
         n_assert(this->d3d9Device);
         this->inBeginScene = false;
 
-        // check if d3d device is in a valid state
-        if (!this->TestResetDevice())
-        {
-            // device could not be restored at this time
-            return false;
-        }
-
-        // update mouse cursor image if necessary
-        this->UpdateCursor();
+        // update scene shader parameters
+        this->UpdatePerSceneSharedShaderParams();
 
         // tell d3d that a new frame is about to start
         hr = this->d3d9Device->BeginScene();
@@ -237,13 +435,24 @@ nD3D9Server::BeginScene()
             return false;
         }
 
-        // update shared shader parameters
-        this->UpdateSharedShaderParams();
-
         this->inBeginScene = true;
         return true;
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish rendering the scene and present the backbuffer.
+*/
+void
+nD3D9Server::EndScene()
+{
+    n_assert(this->inBeginScene);
+    n_assert(this->d3d9Device);
+    HRESULT hr = this->d3d9Device->EndScene();
+    n_dxtrace(hr, "EndScene() on D3D device failed!");
+    nGfxServer2::EndScene();
 }
 
 //------------------------------------------------------------------------------
@@ -289,20 +498,6 @@ nD3D9Server::Clear(int bufferTypes, float red, float green, float blue, float al
 
 //------------------------------------------------------------------------------
 /**
-    Finish rendering the scene and present the backbuffer.
-*/
-void
-nD3D9Server::EndScene()
-{
-    n_assert(this->inBeginScene);
-    n_assert(this->d3d9Device);
-    HRESULT hr = this->d3d9Device->EndScene();
-    n_dxtrace(hr, "EndScene() on D3D device failed!");
-    nGfxServer2::EndScene();
-}
-
-//------------------------------------------------------------------------------
-/**
     Present the scene.
 */
 void
@@ -310,12 +505,10 @@ nD3D9Server::PresentScene()
 {
     n_assert(!this->inBeginScene);
     n_assert(this->d3d9Device);
-    this->statsFrameCount++;
 
-    #ifdef __NEBULA_STATS__
-    // query statistics
-    this->QueryStatistics();
-    #endif
+#if __NEBULA_STATS__
+    this->statsFrameCount++;
+#endif
 
     HRESULT hr = this->d3d9Device->Present(0, 0, 0, 0);
     if (FAILED(hr))
@@ -327,82 +520,44 @@ nD3D9Server::PresentScene()
 
 //------------------------------------------------------------------------------
 /**
-    Bind a texture to a texture stage. 
-
-    @param  stage       the texture stage (0..7)
-    @param  tex         pointer to a nD3D9Texture2 object or 0 to clear the
-                        texture stage
-*/
-void
-nD3D9Server::SetTexture(int stage, nTexture2* tex)
-{
-    n_assert((stage >= 0) && (stage < MaxTextureStages));
-
-    if (this->GetTexture(stage) != tex)
-    {
-        HRESULT hr;
-        n_assert(this->d3d9Device);
-
-        if (0 == tex)
-        {
-            // clear the texture stage
-            hr = this->d3d9Device->SetTexture(stage, 0);
-            n_dxtrace(hr, "SetTexture(0) on D3D device failed!");
-        }
-        else
-        {
-            hr = this->d3d9Device->SetTexture(stage, ((nD3D9Texture*)tex)->GetBaseTexture());
-            n_dxtrace(hr, "SetTexture() on D3D device failed!");
-        }
-        nGfxServer2::SetTexture(stage, tex);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Bind vertex buffer to vertex stream 0.
-    The mesh must have a index and a vertex buffer!
+    Bind vertex buffer and index buffer to vertex stream 0.
 
     - 26-Sep-04     floh    moved the software vertex processing stuff to
                             SetShader()
 
-    @param  mesh        pointer to a nD3D9Mesh2 object or 0 to clear the
-                        current stream and index buffer
+    @param  vbMesh  mesh which delivers the vertex buffer
+    @param  ibMesh  mesh which delivers the index buffer
 */                  
 void
-nD3D9Server::SetMesh(nMesh2* mesh)
+nD3D9Server::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
 {
     HRESULT hr;
     n_assert(this->d3d9Device);
 
-    if (0 != mesh)
+    // clear any set mesh array
+    if (0 != this->GetMeshArray())
     {
-        if (0 != this->GetMeshArray())
+        this->SetMeshArray(0);
+    }
+
+    if (0 != vbMesh)
+    {    
+        if ((this->refVbMesh.get_unsafe() != vbMesh) || (this->refIbMesh.get_unsafe() != ibMesh))
         {
-            this->SetMeshArray(0);
-        }
-    
-        if (this->GetMesh() != mesh)
-        {
-            // clean old mesh before setting new mesh
-            this->SetMesh(0);
-            
-            IDirect3DVertexBuffer9*      d3dVBuf = 0;
-            IDirect3DIndexBuffer9*       d3dIBuf = 0;
+            IDirect3DVertexBuffer9* d3dVBuf = 0;
+            IDirect3DIndexBuffer9* d3dIBuf = 0;
             IDirect3DVertexDeclaration9* d3dVDecl = 0;
             UINT stride = 0;
-            d3dVBuf  = ((nD3D9Mesh*)mesh)->GetVertexBuffer();
-            d3dVDecl = ((nD3D9Mesh*)mesh)->GetVertexDeclaration();
-            n_assert2(d3dVBuf, "The mesh must have a vertex buffer!\n");
+            d3dVBuf  = ((nD3D9Mesh*)vbMesh)->GetVertexBuffer();
+            d3dVDecl = ((nD3D9Mesh*)vbMesh)->GetVertexDeclaration();
+            n_assert(d3dVBuf);
             n_assert(d3dVDecl);
-            
-            if (mesh->GetNumIndices() > 0)
+            if (ibMesh->GetNumIndices() > 0)
             {
-                d3dIBuf  = ((nD3D9Mesh*)mesh)->GetIndexBuffer();
-                n_assert2(d3dIBuf, "The mesh must have a index buffer!\n");
+                d3dIBuf  = ((nD3D9Mesh*)ibMesh)->GetIndexBuffer();
+                n_assert(d3dIBuf);
             }
-
-            stride = mesh->GetVertexWidth() << 2;
+            stride = vbMesh->GetVertexWidth() << 2;
             
             // set the vertex stream source
             hr = this->d3d9Device->SetStreamSource(0, d3dVBuf, 0, stride);
@@ -419,24 +574,20 @@ nD3D9Server::SetMesh(nMesh2* mesh)
     }
     else
     {
-        //clear vertex streams
-        int i;
-        for(i = 0; i < MaxVertexStreams; i++)
-        {
-            hr = this->d3d9Device->SetStreamSource(i, 0, 0, 0);
-            n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
-        }
-        
         // clear the vertex declaration
         // FIXME FLOH: Uncommented because this generates a D3D warning
         // hr = this->d3d9Device->SetVertexDeclaration(0);
         // n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
 
-        // clear the indexbuffer
+        // clear vertex stream
+        hr = this->d3d9Device->SetStreamSource(0, 0, 0, 0);
+        n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
+        
+        // clear the indexbuffer            
         hr = this->d3d9Device->SetIndices(0);
         n_dxtrace(hr, "SetIndices() on D3D device failed!");
     }
-    nGfxServer2::SetMesh(mesh);
+    nGfxServer2::SetMesh(vbMesh, ibMesh);
 }
 
 //------------------------------------------------------------------------------
@@ -449,7 +600,7 @@ nD3D9Server::SetMesh(nMesh2* mesh)
 
     @param  meshArray   pointer to a nD3D9MeshArray object or 0 to clear the
                         current stream and index buffer
-*/
+*/                  
 void
 nD3D9Server::SetMeshArray(nMeshArray* meshArray)
 {
@@ -458,9 +609,9 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
     
     if (0 != meshArray)
     {
-        if (0 != this->GetMesh())
+        if (0 != this->refVbMesh.get_unsafe())
         {
-            this->SetMesh(0);
+            this->SetMesh(0, 0);
         }
         
         if (this->GetMeshArray() != meshArray)
@@ -506,7 +657,7 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
     }
     else
     {
-        //clear vertex streams
+        // clear vertex streams
         int i;
         for(i = 0; i < MaxVertexStreams; i++)
         {
@@ -514,15 +665,15 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
             n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
         }
         
-        //clear the vertex declaration
-        hr = this->d3d9Device->SetVertexDeclaration(0);
-        n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
+        // clear the vertex declaration
+        // FIXME FLOH: Uncommented because this generates a D3D warning
+        //hr = this->d3d9Device->SetVertexDeclaration(0);
+        //n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
 
-        //clear the indexbuffer            
+        // clear the indexbuffer            
         hr = this->d3d9Device->SetIndices(0);
         n_dxtrace(hr, "SetIndices() on D3D device failed!");
     }
-
     nGfxServer2::SetMeshArray(meshArray);
 }
 
@@ -532,7 +683,7 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
 */
 void
 nD3D9Server::SetShader(nShader2* shader)
-{
+{	
     if (this->GetShader() != shader)
     {
         nGfxServer2::SetShader(shader);
@@ -541,20 +692,28 @@ nD3D9Server::SetShader(nShader2* shader)
 
 //------------------------------------------------------------------------------
 /**
-    Set a new render target. This method must be called outside 
-    BeginScene()/EndScene() with a pointer to a nTexture2 object
-    which must have been created as render target. A 0 pointer
-    restores the original back buffer as render target.
+    Set the current render target at a given index (for simultaneous render targets). 
+    This method must be called outside BeginScene()/EndScene(). The method will 
+    increment the refcount of the render target object and decrement the refcount of the
+    previous render target. Setting a render target of 0 at index 0 will restore
+    the original back buffer as render target.
 
-    @param  t   pointer to nTexture2 object or 0
+    @param  index   render target index
+    @param  t       pointer to nTexture2 object or 0
 */
 void
-nD3D9Server::SetRenderTarget(nTexture2* t)
+nD3D9Server::SetRenderTarget(int index, nTexture2* t)
 {
     n_assert(!this->inBeginScene);
     n_assert(this->d3d9Device);
+    n_assert((index >= 0) && (index < MaxRenderTargets));
 
-    nGfxServer2::SetRenderTarget(t);
+    nGfxServer2::SetRenderTarget(index, t);
+
+    if ((DWORD)index >= this->devCaps.NumSimultaneousRTs)
+    {
+        return;
+    }
 
     HRESULT hr;
     if (t)
@@ -564,7 +723,7 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
         IDirect3DSurface9* depthStencil = d3d9Tex->GetDepthStencil();
         if (renderTarget)
         {
-            hr = this->d3d9Device->SetRenderTarget(0, renderTarget);
+            hr = this->d3d9Device->SetRenderTarget(index, renderTarget);
             n_dxtrace(hr, "SetRenderTarget() on D3D device failed!");
         }
         if (depthStencil)
@@ -575,12 +734,22 @@ nD3D9Server::SetRenderTarget(nTexture2* t)
     }
     else
     {
-        // null pointer: restore back buffer and original depth stencil surface as render target
-        hr = this->d3d9Device->SetRenderTarget(0, this->backBufferSurface);
-        n_dxtrace(hr, "SetRenderTarget() on D3D device failed!");
-        hr = this->d3d9Device->SetDepthStencilSurface(this->depthStencilSurface);
-        n_dxtrace(hr, "SetDepthStencilSurface() on D3D device failed!");
+        if (0 == index)
+        {
+            // restore original color and depth/stencil for main render target
+            hr = this->d3d9Device->SetRenderTarget(0, this->backBufferSurface);
+            n_dxtrace(hr, "SetRenderTarget() on D3D device failed! (index == 0)");
+            hr = this->d3d9Device->SetDepthStencilSurface(this->depthStencilSurface);
+            n_dxtrace(hr, "SetDepthStencilSurface() on D3D device failed!");
+        }
+        else
+        {
+            // delete render target pointer for multiple render targets
+            hr = this->d3d9Device->SetRenderTarget(index, 0);
+            n_dxtrace(hr, "SetRenderTarget() on D3D device failed! (index != 0)");
+        }
     }
+    this->UpdateScissorRect();
 }
 
 //------------------------------------------------------------------------------
@@ -597,7 +766,6 @@ void
 nD3D9Server::DrawIndexed(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
     HRESULT hr;
 
     nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
@@ -643,7 +811,6 @@ void
 nD3D9Server::Draw(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
     HRESULT hr;
 
     nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
@@ -662,7 +829,7 @@ nD3D9Server::Draw(PrimitiveType primType)
         hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed!");
         shader->EndPass();
-
+            
         #ifdef __NEBULA_STATS__
         this->statsNumDrawCalls++;
         #endif
@@ -685,7 +852,6 @@ void
 nD3D9Server::DrawIndexedNS(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
     
     if (this->refInstanceStream.isvalid())
     {
@@ -710,6 +876,7 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
             this->vertexRangeNum,
             this->indexRangeFirst,
             d3dNumPrimitives);
+
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
 
         #ifdef __NEBULA_STATS__
@@ -737,8 +904,6 @@ nD3D9Server::DrawNS(PrimitiveType primType)
     else
     {
         n_assert(this->d3d9Device && this->inBeginScene);
-        n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
-
         HRESULT hr;
 
         // get primitive type and number of primitives
@@ -765,7 +930,6 @@ void
 nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
     n_assert(this->refInstanceStream.isvalid());
 
     HRESULT hr;
@@ -832,7 +996,6 @@ void
 nD3D9Server::DrawInstancedNS(PrimitiveType primType)
 {
     n_assert(this->d3d9Device && this->inBeginScene);
-    n_assert((0 != this->GetMesh()) || (0 != this->GetMeshArray()));
     n_assert(this->refInstanceStream.isvalid());
 
     HRESULT hr;

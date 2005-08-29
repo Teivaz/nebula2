@@ -77,6 +77,7 @@ begintarget nviewer
         ndirect3d9
         ntoollib
         ndshow
+        ndsound
         ngui
         nnetwork
     }

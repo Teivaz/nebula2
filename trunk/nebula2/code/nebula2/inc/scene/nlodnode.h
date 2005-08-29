@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nLodNode
-    @ingroup SceneNodes
+    @ingroup Scene
     
     @brief A lod node switches its child nodes on and off according to its
     current camera distance to accomplish different representations with
@@ -43,6 +43,7 @@ protected:
     nArray<float> thresholds;
     float maxDistance;
     float minDistance;
+    nClass* transformNodeClass;
 };
 
 

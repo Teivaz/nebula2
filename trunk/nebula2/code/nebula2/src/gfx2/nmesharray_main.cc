@@ -10,11 +10,10 @@ nNebulaClass(nMeshArray, "nresource");
 //------------------------------------------------------------------------------
 /**
 */
-nMeshArray::nMeshArray()
+nMeshArray::nMeshArray() :
+    elements(nGfxServer2::MaxVertexStreams)
 {
-    this->usages.SetFixedSize(nGfxServer2::MaxVertexStreams);
-    this->refMeshes.SetFixedSize(nGfxServer2::MaxVertexStreams);
-    this->filenames.SetFixedSize(nGfxServer2::MaxVertexStreams);
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -36,25 +35,28 @@ nMeshArray::LoadResource()
 {
     int i;
     bool success = true;
-    for (i = 0; success && i < nGfxServer2::MaxVertexStreams; i++)
+    for (i = 0; success && (i < nGfxServer2::MaxVertexStreams); i++)
     {
-        if ( (!this->filenames[i].IsEmpty()) )// load meshes if filename is provided
+        Element& curElm = this->elements[i];
+        if ((!curElm.filename.IsEmpty()))
         {
-            if ((this->refMeshes[i].isvalid()) && (this->refMeshes[i]->GetFilename() != this->filenames[i] || this->refMeshes[i]->GetUsage() != this->usages[i]))
+            if (curElm.refMesh.isvalid() && 
+                ((curElm.refMesh->GetFilename() != curElm.filename) || 
+                 (curElm.refMesh->GetUsage() != curElm.usage)))
             {
-                //discharge mesh previous set mesh - filename or usage is not equal
-                this->refMeshes[i]->Release();
-                this->refMeshes[i].invalidate();
+                //discharge previous set mesh - filename or usage is not equal
+                curElm.refMesh->Release();
+                curElm.refMesh.invalidate();
             }
             
-            if (!this->refMeshes[i].isvalid())
+            if (!curElm.refMesh.isvalid())
             {
-                this->refMeshes[i] = nGfxServer2::Instance()->NewMesh(this->filenames[i].Get());    
+                curElm.refMesh = nGfxServer2::Instance()->NewMesh(curElm.filename.Get());    
             }
             
-            this->refMeshes[i]->SetFilename(this->filenames[i]);
-            this->refMeshes[i]->SetUsage(this->usages[i]);
-            success &= this->refMeshes[i]->Load();
+            curElm.refMesh->SetFilename(curElm.filename);
+            curElm.refMesh->SetUsage(curElm.usage);
+            success &= curElm.refMesh->Load();
         }
     }
     this->SetState(Valid);
@@ -76,28 +78,12 @@ nMeshArray::UnloadResource()
     int i;
     for (i = 0; i < nGfxServer2::MaxVertexStreams; i++)
     {
-        if (this->refMeshes[i].isvalid())
+        Element& curElm = this->elements[i];
+        if (curElm.refMesh.isvalid())
         {
-            this->refMeshes[i]->Release();
-            this->refMeshes[i].invalidate();
+            curElm.refMesh->Release();
+            curElm.refMesh.invalidate();
         }
     }
     this->SetState(Unloaded);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nMeshArray::SetMeshAt(int index, nMesh2* mesh)
-{
-    n_assert(mesh);
-    if (this->refMeshes[index].isvalid())
-    {
-        this->refMeshes[index]->Release();
-        this->refMeshes[index].invalidate();
-    }
-
-    mesh->AddRef();
-    this->refMeshes[index] = mesh;
 }
