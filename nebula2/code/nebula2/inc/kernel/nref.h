@@ -106,7 +106,7 @@ nRef<TYPE>::nRef(TYPE* o) :
 template<class TYPE>
 inline
 nRef<TYPE>::nRef(const nRef<TYPE>& rhs) :
-    targetObject(rhs.get())
+    targetObject(rhs.get_unsafe())
 {
     if (targetObject) 
     {
