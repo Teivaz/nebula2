@@ -23,12 +23,10 @@ static void n_getsaverclass(void*, nCmd*);
     nroot
 
     @classinfo
-    The nPersistServer object can be found under /sys/servers/file 
+    The nPersistServer object can be found under /sys/servers/persist 
     and offers some commands to influence the way how objects 
     are saved. All load/save operations of objects run finally through 
-    the fileserver. That's all you need to know about it... 
-    In addition the fileserver provides an interface to define and 
-    resolve assigns. 
+    the persis server. That's all you need to know about it... 
 */
 void n_initcmds(nClass *cl)
 {
