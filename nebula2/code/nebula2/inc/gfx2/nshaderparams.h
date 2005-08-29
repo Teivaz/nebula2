@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nShaderParams
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     A container for shader parameters. A shader parameter block
     can be applied to a shader with one call (instead of issuing dozens
