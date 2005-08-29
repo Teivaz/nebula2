@@ -112,7 +112,6 @@ nNodeList::AddDefaultEntry()
     // source the light stage...
     if (this->lightStageEnabled)
     {
-        nString result;
         if (!this->GetStageScript().IsEmpty())
         {
             nRoot* node = nKernelServer::Instance()->Lookup("/usr/scene/default");
