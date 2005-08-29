@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @namespace nShaderState
-    @ingroup NebulaGraphicsSystem
+    @ingroup Gfx2
 
     Shader state parameters and data types.
     
