@@ -107,15 +107,16 @@ nAttachmentNode::SetJointByName(const char *jointName)
     n_assert(skinAnimator);
     kernelServer->PopCwd();
 
-    unsigned int newIndex = skinAnimator->GetJointByName(jointName);
-
-    if (newIndex != 65535)
+    int newIndex = skinAnimator->GetJointByName(jointName);
+    if (newIndex != -1)
     {
         this->jointIndex = newIndex;
         this->isJointSet = true;
     }
     else
+    {
         n_printf("Error: Unable to find joint of name '%s' on parent nSkinAnimator\n", jointName);
+    }
 }
 
 //------------------------------------------------------------------------------

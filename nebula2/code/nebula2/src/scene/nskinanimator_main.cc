@@ -35,18 +35,7 @@ nSkinAnimator::nSkinAnimator() :
 */
 nSkinAnimator::~nSkinAnimator()
 {
-    // Clear out the joint name list - but remember the node data pointers
-    // contain actual integers, not pointers to anything, so don't delete
-    // them as if they were pointers.
-    nStrNode *strHead = this->jointNameList.GetHead();
-    while(strHead)
-    {
-        nStrNode *next = strHead->GetSucc();
-
-        strHead->Remove();
-        n_delete(strHead);
-        strHead = next;
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -441,40 +430,6 @@ void
 nSkinAnimator::EndAnimEventTracks(int stateIndex, int clipIndex)
 {
     // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    Add a joint name
-
-    @param joint  the joint index to name
-    @param name   the name to assign to the specified joint
-*/
-void
-nSkinAnimator::AddJointName(unsigned int joint, const char *name)
-{
-    nStrNode *newNameNode = n_new(nStrNode);
-
-    newNameNode->SetName(name);
-    newNameNode->SetPtr((void *)joint);
-
-    this->jointNameList.AddHead(newNameNode);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get a joint index by name.
-
-    @param name  the name of the joint index to retrieve.  Returns 65535 if joint not found.
-*/
-unsigned int
-nSkinAnimator::GetJointByName(const char *name)
-{
-    nStrNode *node = this->jointNameList.Find(name);
-
-    if (node)
-        return (unsigned int)node->GetPtr();
-    else return 65535;
 }
 
 //------------------------------------------------------------------------------

@@ -98,16 +98,14 @@ public:
     void EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex);
     /// end adding animation event tracks to current clip
     void EndAnimEventTracks(int stateIndex, int clipIndex);
-        
+
     /// enable/disable animation
     void SetAnimEnabled(bool b);
     /// get animation enabled state
     bool IsAnimEnabled() const;
-    
-    /// add a joint name
-    void AddJointName(unsigned int joint, const char *name);
+
     /// get a joint index by name
-    unsigned int GetJointByName(const char *name);
+    int GetJointByName(const nString& jointName);
 
     /// get the index of the nCharacter2 pointer used when accessing the render context in Animate()
     int GetCharacterVarIndex();
@@ -123,7 +121,6 @@ private:
     nAutoRef<nAnimationServer> refAnimServer;
     nRef<nAnimation> refAnim;
     nString animName;
-    nStrList jointNameList;
     int characterVarIndex;
     nVariable::Handle animStateVarHandle;
     nVariable::Handle animRestartVarHandle;
@@ -234,6 +231,19 @@ const nString&
 nSkinAnimator::GetAnim() const
 {
     return this->animName;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get a joint index by name.
+
+    @param name  the name of the joint index to retrieve.  Returns -1 if joint not found.
+*/
+inline
+int
+nSkinAnimator::GetJointByName(const nString& jointName)
+{
+    return this->character.GetSkeleton().GetJointIndexByName(jointName);
 }
 
 //------------------------------------------------------------------------------
