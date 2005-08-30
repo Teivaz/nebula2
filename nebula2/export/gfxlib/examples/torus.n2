@@ -25,7 +25,7 @@ new nshapenode shape0
     .setfloat "MatSpecularPower" 32.000000
     .settexture "DiffMap0" "textures:examples/brick.bmp"
     .settexture "BumpMap0" "textures:examples/bump.tga"
-    .setshader "colr" "shaders:default.fx"
+    .setshader "static"
     .setmesh "meshes:examples/torus.n3d2"
     .setgroupindex 0
     new nvectoranimator diff
