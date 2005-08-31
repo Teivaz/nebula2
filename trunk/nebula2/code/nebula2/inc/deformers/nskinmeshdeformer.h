@@ -2,7 +2,10 @@
 #define N_SKINMESHDEFORMER_H
 //------------------------------------------------------------------------------
 /**
-    A mesh deformer which implements smooth vertex skinning on the CPU.
+    @class nSkinMeshDeformer
+    @ingroup Deformers
+    @brief A mesh deformer which implements smooth vertex skinning on the CPU.
+
     Normally this is done in the vertex shader, but there are cases where
     it's useful to have it on the CPU. To use it, just set an input mesh
     (needs joint indices and vertex weights components), set output mesh

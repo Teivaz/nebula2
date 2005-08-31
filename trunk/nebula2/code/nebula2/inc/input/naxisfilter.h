@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nAxisFilter
-    @ingroup NebulaInputSystem
+    @ingroup Input
 
-    A simple axis filter object which filters input values over the last
+    @brief A simple axis filter object which filters input values over the last
     few frames.
 
     (C) 2002 RadonLabs GmbH

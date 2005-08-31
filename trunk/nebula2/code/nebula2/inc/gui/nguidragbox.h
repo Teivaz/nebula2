@@ -5,14 +5,15 @@
     @class nGuiDragBox
     @ingroup Gui
 
-    Implements a drag box as 2d screen space rectangle. While the dragbox 
-    widget is enabled, left-clicking and moving the mouse will open the drag 
-    box. The following events will be generated:
+    @brief Implements a drag box as 2d screen space rectangle.
 
-    DragBoxStarted      - a drag box operation has started
-    DragBoxFinished     - a drag box operation has been successfully finished
-    DragBoxCancelled    - drag box operation has been cancelled
-    DragBoxUpdated      - the drag box has been updated
+    While the dragbox widget is enabled, left-clicking and moving the mouse
+    will open the drag box. The following events will be generated:
+
+     - @c DragBoxStarted   - a drag box operation has started
+     - @c DragBoxFinished  - a drag box operation has been successfully finished
+     - @c DragBoxCancelled - drag box operation has been cancelled
+     - @c DragBoxUpdated   - the drag box has been updated
 
     If the drag box is smaller then the size threshold, no drag box will
     be rendered.

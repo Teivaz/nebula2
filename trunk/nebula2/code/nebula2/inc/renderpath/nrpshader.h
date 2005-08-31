@@ -2,8 +2,10 @@
 #define N_RPSHADER_H
 //------------------------------------------------------------------------------
 /**
-    A render path shader definition.
-    
+    @class nRpShader
+    @ingroup RenderPath
+    @brief A render path shader definition.
+
     (C) 2004 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"

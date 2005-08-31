@@ -4,8 +4,7 @@
 /**
     @class nObjectNode
     @ingroup Util
-
-    A node in a nObjectList.
+    @brief A node in a nObjectList.
 
     (C) 2005 RadonLabs GmbH
 */

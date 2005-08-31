@@ -5,7 +5,7 @@
     @class nWin32PrefServer
     @ingroup Misc
 
-    The Win32 version of nPrefServer. Uses the Windows registry to store
+    @brief The Win32 version of nPrefServer. Uses the Windows registry to store
     persistent information under:
     
     HKCU/Software/[company]/[appname]/prefs

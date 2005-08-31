@@ -1,6 +1,6 @@
 /**
-    @defgroup NebulaCharacterAnimationSystem Character Animation Subsystem
-    @ingroup NebulaAnimationSystem
+    @defgroup Character Character Animation Subsystem
+    @ingroup Anim2
     @brief A high-performance skinned mesh renderer with multiple
     animation clips per state and blending between different states.
 

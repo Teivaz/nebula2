@@ -5,7 +5,7 @@
     @class nGuiSlider2
     @ingroup Gui
 
-    A vertical or horizontal slider widget.
+    @brief A vertical or horizontal slider widget.
 
     A slider requires that normal, pressed, and highlighted brushes be
     defined for each of its two arrow buttons (for a horizontal slider,

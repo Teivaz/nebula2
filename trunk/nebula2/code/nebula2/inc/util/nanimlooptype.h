@@ -4,8 +4,7 @@
 /**
     @class nAnimLoopType
     @ingroup Util
-
-    Define animation loop types.
+    @brief Define animation loop types.
 
     (C) 2005 Radon Labs GmbH
 */

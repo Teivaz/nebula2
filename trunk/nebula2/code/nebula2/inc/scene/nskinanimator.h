@@ -237,7 +237,7 @@ nSkinAnimator::GetAnim() const
 /**
     Get a joint index by name.
 
-    @param name  the name of the joint index to retrieve.  Returns -1 if joint not found.
+    @param jointName  the name of the joint index to retrieve.  Returns -1 if joint not found.
 */
 inline
 int

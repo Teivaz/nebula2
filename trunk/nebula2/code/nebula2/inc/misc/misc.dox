@@ -1,5 +1,5 @@
 /**
-    @defgroup NebulaMiscModule Nebula Miscellaneous
+    @defgroup Misc Miscellaneous Subsystems
 
 This section of the documentation covers some miscellanous systems that aren't large enough to stand on their own and don't directly belong within any other module.
 

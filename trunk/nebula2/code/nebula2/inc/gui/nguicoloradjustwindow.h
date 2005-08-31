@@ -5,9 +5,8 @@
     @class nGuiColorAdjustWindow
     @ingroup Gui
 
-    To select a rgb-color.
-    
-    
+    @brief To select a rgb-color.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

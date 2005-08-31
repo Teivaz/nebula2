@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCharacter2
-    @ingroup NebulaCharacterAnimationSystem
+    @ingroup Character
 
     @brief Holds all the data necessary to animate an character in one place.
 

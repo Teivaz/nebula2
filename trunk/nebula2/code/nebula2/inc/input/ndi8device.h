@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nDI8Device
-    @ingroup NebulaDI8InputSystem
+    @ingroup Input
 
-    Hold information about a DirectInput8 device. There is one nDI8Device
+    @brief Hold information about a DirectInput8 device. There is one nDI8Device
     object per supported DirectInput device.
 
     (C) 2002 RadonLabs GmbH

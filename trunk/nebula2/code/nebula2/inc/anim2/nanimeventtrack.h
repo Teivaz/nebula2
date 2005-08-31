@@ -2,7 +2,9 @@
 #define N_ANIMEVENTTRACK_H
 //------------------------------------------------------------------------------
 /**
-    An anim event track contains timed events which are associated
+    @class nAnimEventTrack
+    @ingroup Anim2
+    @brief An anim event track contains timed events which are associated
     with a matrix. These events are triggered when the playback cursor
     of an anim clip goes over an anim event. Anim event tracks are
     usually added to anim clips.

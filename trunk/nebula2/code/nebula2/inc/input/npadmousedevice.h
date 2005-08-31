@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nPadMouseDevice
-    @ingroup NebulaInputSystem
+    @ingroup Input
 
-    A Nebula mouse device which emulates a non-centering joystick.
+    @brief A Nebula mouse device which emulates a non-centering joystick.
 
     (C) 2002 RadonLabs GmbH
 */

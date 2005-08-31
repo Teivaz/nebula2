@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nRelMouseDevice
-    @ingroup NebulaInputSystem
+    @ingroup Input
 
-    Directly emit mouse movement events.
+    @brief Directly emit mouse movement events.
 
     (C) 2002 RadonLabs GmbH
 */

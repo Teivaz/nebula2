@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimationServer
-    @ingroup NebulaAnimationSystem
+    @ingroup Anim2
 
     @brief The animation server offers central services of the animation
     subsystem (at the moment it is merely a factory for nAnimation objects).

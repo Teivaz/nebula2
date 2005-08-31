@@ -43,11 +43,11 @@ public:
     /// destructor
     virtual ~nScriptServer();
     /// evaluate a script command
-    virtual bool Run(const char *, nString&); 
+    virtual bool Run(const char * cmdStr, nString& result); 
     /// invoke a script function by name, with no parameters
-    virtual bool RunFunction(const char *, nString&);
+    virtual bool RunFunction(const char* functionName, nString& result);
     /// evaluate a script file
-    virtual bool RunScript(const char *, nString&);
+    virtual bool RunScript(const char * filename, nString& result);
     /// set an unnamed object that will receive cmds instead of the cwd
     static void SetCurrentTargetObject(nObject *obj);
     /// get the currently set unnamed object

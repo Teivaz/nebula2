@@ -5,8 +5,8 @@
     @class nGuiColorLabel
     @ingroup Gui
 
-    A label widget which screens one color.
-    
+    @brief A label widget which screens one color.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"

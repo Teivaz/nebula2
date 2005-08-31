@@ -6,7 +6,7 @@
     @class nGuiSlide
     @ingroup Gui
 
-    A slide class for use with the nGuiSlideShow widget
+    @brief A slide class for use with the nGuiSlideShow widget
 
     (C) 2005 RadonLabs GmbH
 */

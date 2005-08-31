@@ -5,7 +5,7 @@
     @class nCaptureServer
     @ingroup Misc
 
-    Provide continuous frame capture to file at a fixed frame rate.
+    @brief Provide continuous frame capture to file at a fixed frame rate.
 
     (C) 2005 Radon Labs GmbH
 */

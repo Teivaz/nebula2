@@ -32,9 +32,9 @@ will appear:
  -# Into the local folder to checkout to enter the desired location to
     download Nebula to. For instance I entered E: into this box as E: is 
     my projects drive. Nebula will be downloaded to
-    <tt>E:\&lt;module name&gt;</tt>.
+    <tt>E:\\&lt;module name&gt;</tt>.
     So when I downloaded the sources with WinCVS, it was downloaded to
-    <tt>E:\nebula2</tt>
+    <tt>E:\\nebula2</tt>
  -# Into the CVSROOT box enter:
     <tt>:pserver:anonymous@cvs.sourceforge.net:/cvsroot/nebuladevice</tt>
 

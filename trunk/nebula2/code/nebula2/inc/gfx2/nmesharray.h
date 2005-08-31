@@ -61,8 +61,8 @@ protected:
 /**
     Set the mesh filename for the specified stream.
 
-    @param  index index of stream the mesh shall be used for
-    @param  filename    the absolute path to the resource file
+    @param  index   index of stream the mesh shall be used for
+    @param  path    the absolute path to the resource file
 */
 inline
 void
@@ -76,7 +76,7 @@ nMeshArray::SetFilenameAt(int index, const nString& path)
 /**
     Get the mesh for the specified stream.
 
-    @param  streamIndex index of stream the mesh shall be used for
+    @param  index       index of stream the mesh shall be used for
     @return             current mesh on that stream
 */
 inline

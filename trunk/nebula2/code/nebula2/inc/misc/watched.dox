@@ -1,6 +1,6 @@
 /**
     @defgroup NebulaWatchedVariables Watched Variables
-    @ingroup NebulaMiscModule
+    @ingroup Misc
 
     @brief Watched variables are an easy way to view data
     from the inner workings of the engine.

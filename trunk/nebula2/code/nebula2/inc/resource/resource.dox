@@ -1,5 +1,5 @@
 /**
-    @defgroup NebulaResourceSystem Resource System
+    @defgroup Resource Resource System
 
     This section of the documentation covers Nebula resource system and 
     extending of it.

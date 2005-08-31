@@ -4,8 +4,8 @@
 /**
     @class nLightNode
     @ingroup Scene
+    @brief Scene node which provides lighting information. 
 
-    Scene node which provides lighting information. 
     NOTE: nLightNode is derived from nAbstractShaderNode, and holds most
     light parameters inside shader params. This is in order to enable
     simple animation of light parameters using existing animators.

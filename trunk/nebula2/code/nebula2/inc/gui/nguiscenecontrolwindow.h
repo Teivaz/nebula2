@@ -5,7 +5,7 @@
     @class nGuiSceneControlWindow
     @ingroup Gui
 
-    Scene Controls for adjusting stdlight, postion & color...    
+    @brief Scene Controls for adjusting stdlight, postion & color...
     
     (C) 2004 RadonLabs GmbH
 */

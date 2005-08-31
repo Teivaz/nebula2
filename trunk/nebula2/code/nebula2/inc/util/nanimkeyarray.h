@@ -4,8 +4,7 @@
 /**
     @class nAnimKeyArray
     @ingroup Util
-
-    A specialized nArray for working with sparsely set animation keys
+    @brief A specialized nArray for working with sparsely set animation keys
     (no fixed frame rate). Note: TYPE must be a version of nAnimKey!
     
     (C) 2005 Radon Labs GmbH

@@ -3,10 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpRenderTarget
-    @ingroup Scene
+    @ingroup RenderPath
+    @brief Represents a render target in a render path.
 
-    Represents a render target in a render path.
-    
     (C) 2004 RadonLabs GmbH
 */
 #include "gfx2/ntexture2.h"

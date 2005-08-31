@@ -3,12 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class nResource
-    @ingroup NebulaResourceSystem
+    @ingroup Resource
+    @brief A superclass of all resource related subclasses such as nMesh,
+    nFont2, nTexture2 and so on.
 
-    A superclass of all resource related subclasses such as nMesh, nFont2,
-    nTexture2 and so on.
-
-    See @ref NebulaResourceSystem for more details.
+    See @ref Resource for more details.
 
     (C) 2002 RadonLabs GmbH
 */

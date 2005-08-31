@@ -9,9 +9,9 @@
     represented by a nMeshBuilder object.
 
     @note
-    Do not partition a skinned mesh which is used for shadow. 
-    If you do, it does not work correctly. See @ref Shadow section for more details 
-    about how to the shadow system of Nebula2 works.
+    Do not partition a skinned mesh which is used for shadow.
+    If you do, it does not work correctly. See @ref Shadow2 section for
+    more details about how to the shadow system of Nebula2 works.
     
     (C) 2003 RadonLabs GmbH
 */

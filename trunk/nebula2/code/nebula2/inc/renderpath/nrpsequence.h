@@ -3,11 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpSequence
-    @ingroup Scene
-
-    Encapsulates a sequence shader in a render path. This is the lowest
+    @ingroup RenderPath
+    @brief Encapsulates a sequence shader in a render path. This is the lowest
     level component which defines the shader states for mesh rendering.
-    
+
     (C) 2004 RadonLabs GmbH
 */    
 #include "renderpath/nrpshader.h"

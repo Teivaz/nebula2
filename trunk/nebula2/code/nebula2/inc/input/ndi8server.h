@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nDI8Server
-    @ingroup NebulaDI8InputSystem
+    @ingroup Input
 
-    A DirectInput8 based input server class.
+    @brief A DirectInput8 based input server class.
 
     (C) 2002 RadonLabs GmbH
 */

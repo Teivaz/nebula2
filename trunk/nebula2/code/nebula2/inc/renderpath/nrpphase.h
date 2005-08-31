@@ -3,11 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpPhase
-    @ingroup Scene
+    @ingroup RenderPath
+    @brief A phase object inside a render path pass encapsulates sequence
+    shaders and sets common render state for sequence shaders.
 
-    A phase object inside a render path pass encapsulates sequence shaders
-    and sets common render state for sequence shaders.
-    
     (C) 2004 RadonLabs GmbH
 */
 #include "util/nstring.h"

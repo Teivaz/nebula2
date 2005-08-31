@@ -5,7 +5,7 @@
     @class nGuiHoriSliderGroup
     @ingroup Gui
 
-    A horizontal slider group consisting of a label, a horizontal slider,
+    @brief A horizontal slider group consisting of a label, a horizontal slider,
     and a text label which displays the current slider's numerical value
     as a printf-formatted string.
     

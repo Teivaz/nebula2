@@ -2,7 +2,9 @@
 #define N_ANIMEVENTHANDLER_H
 //------------------------------------------------------------------------------
 /**
-    User-derivable anim event handler class. Derive your own subclass
+    @class nAnimEventHandler
+    @ingroup Anim2
+    @brief User-derivable anim event handler class. Derive your own subclass
     and register it with an anim state array object to listen to
     animation events.
     

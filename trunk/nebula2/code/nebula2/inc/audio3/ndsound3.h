@@ -4,10 +4,9 @@
 /**
     @class nDSound3
     @ingroup Audio3
-
-    DirectSound based implementation of nSound3. Works together with
+    @brief DirectSound based implementation of nSound3. Works together with
     nDSoundServer3 and nDSoundResource.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "audio3/nsound3.h"

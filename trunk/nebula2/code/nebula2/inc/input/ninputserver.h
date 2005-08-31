@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nInputServer
-    @ingroup NebulaInputSystem
+    @ingroup Input
 
     Manage input devices, events and mappings.
 

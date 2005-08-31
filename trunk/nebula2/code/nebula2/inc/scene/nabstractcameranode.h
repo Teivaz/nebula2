@@ -2,10 +2,9 @@
 #define N_ABSTRACTCAMERANODE_H
 //------------------------------------------------------------------------------
 /**
-    @classnAbstraktCameraNode
+    @class nAbstractCameraNode
     @ingroup Camera
-
-    A scene camera node can render the current scene from a different
+    @brief A scene camera node can render the current scene from a different
     camera into a render target.
 
     (C) 2005 RadonLabs GmbH

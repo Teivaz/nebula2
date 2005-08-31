@@ -4,9 +4,8 @@
 /**
     @class nClippingCameraNode
     @ingroup Camera
-
-    Extends nCameraNode.
-    Special camera, witch computs a Clipplane in the Projectionmatrix.
+    @brief Extends nCameraNode.  Special camera, which computes a clipping
+    plane in the Projectionmatrix.
 
     author: matthias
     (C) 2004 RadonLabs GmbH

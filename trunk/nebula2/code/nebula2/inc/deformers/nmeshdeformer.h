@@ -2,7 +2,9 @@
 #define N_MESHDEFORMER_H
 //------------------------------------------------------------------------------
 /**
-    Base class for mesh deformers running on the CPU. While using vertex 
+    @class nMeshDeformer
+    @ingroup Deformers
+    @brief Base class for mesh deformers running on the CPU. While using vertex 
     shaders for mesh deformation is a good thing, it is not always an option, 
     and may be too inflexible. Mesh deformers take one or more input meshes,
     plus deformer-specific and write their result to one output mesh.

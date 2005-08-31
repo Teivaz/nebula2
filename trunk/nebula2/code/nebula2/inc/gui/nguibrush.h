@@ -5,7 +5,7 @@
     @class nGuiBrush
     @ingroup Gui
 
-    A brush object which caches the pointer to the GUI resource inside
+    @brief A brush object which caches the pointer to the GUI resource inside
     a skin object.
 
     (C) 2004 RadonLabs GmbH

@@ -4,8 +4,7 @@
 /**
     @class nObjectList
     @ingroup Util
-
-    A doubly linked list for object nodes.
+    @brief A doubly linked list for object nodes.
 
     (C) 2005 RadonLabs GmbH
 */

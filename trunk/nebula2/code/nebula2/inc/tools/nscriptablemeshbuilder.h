@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nScriptableMeshBuilder
-    @ingroup
+    @ingroup Tools
 
     The purpose of this class is to allow the use of nMeshBuilder from scripting 
     languages. Deriving from nRoot gives us this ability.

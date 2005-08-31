@@ -2,7 +2,9 @@
 #define N_AUDIOFILE_H
 //------------------------------------------------------------------------------
 /**
-    A generic base class for read access to audio files. Derive subclass
+    @class nAudioFile
+    @ingroup Audio3
+    @brief A generic base class for read access to audio files. Derive subclass
     for specific file formats/codecs.
     
     (C) 2005 Radon Labs GmbH

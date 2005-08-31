@@ -5,7 +5,7 @@
     @class nGuiSkyEditor
     @ingroup Gui
 
-    To edit nSkyNode on the fly...  
+    @brief To edit nSkyNode on the fly...
     
     (C) 2005 RadonLabs GmbH
 */

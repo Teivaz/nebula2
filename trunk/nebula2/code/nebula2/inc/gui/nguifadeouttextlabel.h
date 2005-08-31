@@ -5,7 +5,7 @@
     @class nGuiFadeOutTextLabel
     @ingroup Gui
 
-    FadeOut the Text.
+    @brief FadeOut the Text.
     
     (C) 2005 RadonLabs GmbH
 */
