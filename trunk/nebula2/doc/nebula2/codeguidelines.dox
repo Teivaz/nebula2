@@ -139,15 +139,15 @@
     - Always reference instance variables with 'this->', so it's easy to distinguish from locals. Don't use globals unless strictly necessary. 
     
     - In general, don't make functions that return allocated memory / objects, that must be deallocated explictly by the caller. This is a common source of memory leaks. Make the caller to allocate them if possible.
-    
-    - Methods returning objects are allowed. Modern compilers optimize return value optimization (RVO or NRVO). Example, imagine an object returning a string, you can define it to return it by value or be passed by reference. The first way is clearer and easier to use, and it is optimized correctly by the compiler.
-    
-    @verbatim
-    /// method 1
-    nString GetFileName();
-    /// method 2
-    void GetFileName(nString & filename);
-    @endverbatim
+
+   - Methods returning objects are allowed provided they are not worth for inlining. Modern compilers optimize return value optimization (RVO or NRVO). Example, imagine an object returning a string, you can define it to return it by value or be passed by reference. The first way is clearer and easier to use, and it is optimized correctly by the compiler.
+     @verbatim
+   /// method 1
+   nString GetFileName();
+   /// method 2
+   void GetFileName(nString & filename);
+   @endverbatim
+     Problem here is with MSVC 7.1 and 8.0 (not checked other compilers), which do RVO, but when applied it prevents any inlining optimization (even if forced manually). Normally methods returning objects have to build the object, which is normally costly, in this case the inline optimization is not so important.
 
     - Always declare the function body for constructors and destructors at the beginning of the _main file of the class, even if it is empty (put a comment in this case). The same holds true for virtual methods defined in abstract classes.
     
@@ -219,7 +219,7 @@
 
         Description of the purpose of the class.
 
-        (C) 2005 Tragnarion Studios
+        (C) 2005 Copyright holder
     */
     //------------------------------------------------------------------------------
     #include "nhashnode.h"
@@ -282,7 +282,7 @@
     @verbatim
     //-----------------------------------------------------------------------------
     //  nclass.cc
-    //  (C) 2005 Tragnarion Studios
+    //  (C) 2005 Copyright holder
     //-----------------------------------------------------------------------------    
     #include "precompiled/pchnkernel.h"
 
