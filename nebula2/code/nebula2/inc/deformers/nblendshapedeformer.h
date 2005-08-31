@@ -2,7 +2,9 @@
 #define N_BLENDSHAPEDEFORMER_H
 //------------------------------------------------------------------------------
 /**
-    A blend shape mesh deformer which blends several source meshes
+    @class nBlendShapeDeformer
+    @ingroup Deformers
+    @brief A blend shape mesh deformer which blends several source meshes
     into one output mesh based on weights.
     
     (C) 2004 RadonLabs GmbH

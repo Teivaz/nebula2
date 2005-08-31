@@ -23,14 +23,14 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
 @section Nebula2IntroSystems Systems
 
   - @ref Kernel
-  - @ref NebulaResourceSystem
-  - @ref NebulaGraphicsSystem
-  - @ref NebulaInputSystem
+  - @ref Resource
+  - @ref Gfx2
+  - @ref Input
   - @ref Scene
-  - @ref NebulaAnimationSystem
+  - @ref Anim2
   - @ref NebulaParticleSystem
   - @ref Gui
-  - @ref NebulaAudioSystem
+  - @ref Audio3
   - @ref NebulaSignals
 
   See also @ref NebulaContribModules.

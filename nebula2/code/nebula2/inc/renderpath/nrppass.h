@@ -3,10 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nRpPass
-    @ingroup Scene
+    @ingroup RenderPath
+    @brief Represents a pass in a render target.
 
-    Represents a pass in a render target.
-    
     (C) 2004 RadonLabs GmbH
 */
 #include "renderpath/nrpphase.h"

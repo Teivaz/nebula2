@@ -5,7 +5,7 @@
     @class nGuiTabbedLayout
     @ingroup Gui
 
-    A tabbed layout is a form layout which embeds several child form layouts
+    @brief A tabbed layout is a form layout which embeds several child form layouts
     which can be flipped through a row of tab buttons at the top.
 
     (C) 2004 RadonLabs GmbH

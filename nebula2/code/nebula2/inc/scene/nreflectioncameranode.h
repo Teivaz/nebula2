@@ -4,9 +4,8 @@
 /**
     @class nReflectionCameraNode
     @ingroup Camera
-
-    Extends nClippingCameraNode.
-    Special Clippingcamera witch computes a Reflectionviewmatrix.
+    @brief Extends nClippingCameraNode.  Special Clippingcamera which
+    computes a Reflectionviewmatrix.
 
     author: matthias
     (C) 2004 RadonLabs GmbH

@@ -6,8 +6,7 @@
     @ingroup Gui
 
     Controls for adjusting saturation, color balance, etc...
-    Required a nMRTSceneServer scene server.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

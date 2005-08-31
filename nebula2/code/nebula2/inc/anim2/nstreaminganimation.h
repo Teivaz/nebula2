@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nStreamingAnimation
-    @ingroup NebulaAnimationSystem
+    @ingroup Anim2
 
     @brief A streaming animation streams its animation data from disk into
     a small memory buffer. They can generally not be shared like 

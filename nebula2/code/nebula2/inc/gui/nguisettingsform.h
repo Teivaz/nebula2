@@ -5,7 +5,7 @@
     @class nGuiSettingsForm
     @ingroup Gui
 
-    Implements a form layout with user customizable settings widgets.
+    @brief Implements a form layout with user customizable settings widgets.
     Uses persistency server for storing the settings.
     
     (C) 2004 RadonLabs GmbH

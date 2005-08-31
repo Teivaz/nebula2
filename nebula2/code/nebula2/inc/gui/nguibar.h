@@ -5,7 +5,7 @@
     @class nGuiBar
     @ingroup Gui
 
-    Fillable GUI bars. May be filled from left to right or vice versa. Examples
+    @brief Fillable GUI bars. May be filled from left to right or vice versa. Examples
     are Healthbars, Progressbars, etc.
 
     (C) 2005 Radon Labs GmbH

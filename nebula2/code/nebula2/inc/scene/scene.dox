@@ -84,6 +84,7 @@
       - @ref SceneServers
       - @ref SceneNodes
       - @ref SceneAnimators
+      - @ref Camera
 
 */
 
@@ -97,3 +98,7 @@
     @ingroup Scene
 */
 
+/**
+    @defgroup Camera Scene Cameras
+    @ingroup Scene
+*/

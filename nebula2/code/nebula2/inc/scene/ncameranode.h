@@ -2,10 +2,9 @@
 #define N_CAMERANODE_H
 //------------------------------------------------------------------------------
 /**
-    @classnCameraNode
+    @class nCameraNode
     @ingroup Camera
-
-    Extends nCameraNode. Is a fixed camera with no intelligence.  
+    @brief Extends nAbstractCameraNode. Is a fixed camera with no intelligence.
 
     author: matthias
     (C) 2004 RadonLabs GmbH

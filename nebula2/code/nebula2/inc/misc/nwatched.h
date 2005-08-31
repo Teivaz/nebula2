@@ -4,10 +4,9 @@
 /**
     @class nWatched
     @ingroup NebulaWatchedVariables
-    @brief
-    Creates a nEnv variable under /sys/var which can be "watched"
-    through nConServer::Watch() method. Should only be used
-    for debugging!
+    @brief Creates a nEnv variable under /sys/var which can be "watched"
+    through nConServer::Watch() method and through the nGuiWatcherWindow.
+    This should only be used for debugging!
 
     (C) 2003 RadonLabs GmbH
 */

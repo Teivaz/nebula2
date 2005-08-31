@@ -3,11 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class nRenderPath2
-    @ingroup Scene
+    @ingroup RenderPath
 
-    A render path is an abstract description of HOW a scene should be rendered.
-    This includes things like what shaders to apply and in which order, what render 
-    targets to render to, highlevel differences between DX9 and DX7 scene rendering.
+    @brief A render path is an abstract description of HOW a scene
+    should be rendered.
+    This includes things like what shaders to apply and in which order,
+    what render targets to render to, highlevel differences between DX9
+    and DX7 scene rendering.
 
     (C) 2004 RadonLabs GmbH
 */

@@ -2,7 +2,9 @@
 #define N_OGGFILE_H
 //------------------------------------------------------------------------------
 /**
-    Provide read-access to a ogg file.
+    @class nOggFile
+    @ingroup Audio3
+    @brief Provide read-access to a ogg file.
     
     (C) 2005 Radon Labs GmbH
 */

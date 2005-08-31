@@ -5,7 +5,7 @@
     @class nGuiCheckButtonGroup2
     @ingroup Gui
 
-    A new style check button group which creates its check buttons and
+    @brief A new style check button group which creates its check buttons and
     places them in a horizontal row.
     
     (C) 2004 RadonLabs GmbH

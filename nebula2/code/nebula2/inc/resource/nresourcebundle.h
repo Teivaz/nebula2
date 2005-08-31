@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nResourceBundle
+    @ingroup Resource
+    @brief Load a resource bundle from disc and register all contained
+    resources.
 
-    Load a resource bundle from disc and register all contained resources.
-    
     (C) 2003 RadonLabs GmbH
 */
 #include "resource/nresource.h"

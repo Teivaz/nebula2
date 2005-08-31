@@ -4,9 +4,8 @@
 /**
     @class nRpXmlParser
     @ingroup Scene
+    @brief Configure a nRenderPath2 object from an XML file.
 
-    Configure a nRenderPath2 object from an XML file.
-    
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

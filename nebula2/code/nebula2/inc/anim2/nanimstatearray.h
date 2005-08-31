@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nAnimStateArray
-    @ingroup NebulaAnimationSystem
+    @ingroup Anim2
 
     @brief An anim state array holds several mutually exclusive nAnimState
     objects and allows switching between them.

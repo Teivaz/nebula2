@@ -5,7 +5,7 @@
     @class nGuiTextTable
     @ingroup Gui
 
-    A table layout which implements a grid of texts.
+    @brief A table layout which implements a grid of texts.
    
     (C) 2004 RadonLabs GmbH
 */

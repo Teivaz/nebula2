@@ -1,6 +1,6 @@
 /**
     @defgroup NebulaConsoleServer Console Server
-    @ingroup NebulaMiscModule
+    @ingroup Misc
 
     @section misc_con_gen Introduction
 

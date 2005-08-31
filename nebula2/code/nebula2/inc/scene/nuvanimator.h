@@ -129,7 +129,7 @@ nUvAnimator::GetNumScaleKeys(uint texLayer) const
     Obtain a position key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  index       [in]    index of key to get
+    @param  keyIndex    [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -148,7 +148,7 @@ nUvAnimator::GetPosKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key
     Obtain a euler key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  index       [in]    index of key to get
+    @param  keyIndex    [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -167,7 +167,7 @@ nUvAnimator::GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector2& k
     Obtain a scale key by its index.
 
     @param  texLayer    [in]    texture layer index
-    @param  index       [in]    index of key to get
+    @param  keyIndex    [in]    index of key to get
     @param  time        [out]   the time stamp of the key
     @param  key         [out]   the value of the key
 */
@@ -182,7 +182,4 @@ nUvAnimator::GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& k
 }
 //------------------------------------------------------------------------------
 #endif
-
-
-
 

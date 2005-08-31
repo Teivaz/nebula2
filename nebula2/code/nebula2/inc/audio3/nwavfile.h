@@ -2,7 +2,10 @@
 #define N_WAVFILE_H
 //------------------------------------------------------------------------------
 /**
-    Provide read-access to a wav file.
+    @class nWavFile
+    @ingroup Audio3
+    @brief Provide read-access to a wav file.
+
     NOTE: this is basically a cleaned-up rippoff of DSound-Framework's
     CWaveFile class.
     

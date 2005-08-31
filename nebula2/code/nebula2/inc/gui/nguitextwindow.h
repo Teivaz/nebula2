@@ -5,7 +5,7 @@
     @class nGuiTextWindow
     @ingroup Gui
 
-    A text viewer window which can display text from a text file.
+    @brief A text viewer window which can display text from a text file.
     
     (C) 2004 RadonLabs GmbH
 */

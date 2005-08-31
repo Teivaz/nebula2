@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nCharJoint
-    @ingroup NebulaCharacterAnimationSystem
+    @ingroup Character
 
     @brief A joint in a character skeleton.
 

@@ -5,9 +5,8 @@
     @class nGuiColorPicker
     @ingroup Gui
 
-    to choose and select a rgb-color
-    
-    
+    @brief to choose and select a rgb-color
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"

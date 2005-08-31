@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class nResourceLoader
-
+    @ingroup Resource
     @brief contains any custom load function data for an nresource
 
     In subclassing nResourceLoader, the user is intended to override the

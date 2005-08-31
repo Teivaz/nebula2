@@ -5,9 +5,9 @@
     @class nGuiColorSliderGroup
     @ingroup Gui
 
-    A complete color slider group, consisting of a horizontal intensity
+    @brief A complete color slider group, consisting of a horizontal intensity
     slider, and a color label.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"

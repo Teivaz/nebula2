@@ -4,8 +4,7 @@
 /**
     @class nNodeList
     @ingroup Tools
-
-    Manages a list of Scene Objects and the depending rendering contexts
+    @brief Manages a list of Scene Objects and the depending rendering contexts
 
     (C) 2004 RadonLabs GmbH
 */

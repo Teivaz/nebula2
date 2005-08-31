@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class nInputState
-    @ingroup NebulaInputSystem
+    @ingroup Input
 
     nInputState objects are named input 'slots' which are
     bound to input events (or a simple combination of ie's)

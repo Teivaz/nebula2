@@ -4,8 +4,8 @@
 /**
     @class nHashMap2
     @ingroup Util
-
-    A simple associative array, mapping strings (byte blocks) to arbitrary values.
+    @brief A simple associative array, mapping strings (byte blocks)
+    to arbitrary values.
 
     (C) 2005 RadonLabs GmbH
 */

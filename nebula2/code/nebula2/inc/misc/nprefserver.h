@@ -5,7 +5,7 @@
     @class nPrefServer
     @ingroup Misc
 
-    The pref server stores key/value pairs in a location where it will
+    @brief The pref server stores key/value pairs in a location where it will
     persist between application invocations (for instance by using the
     registry under Win32).
 

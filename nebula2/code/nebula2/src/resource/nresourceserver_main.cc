@@ -232,8 +232,8 @@ nResourceServer::UnloadResources(int rsrcTypeMask)
     before all other resource types, it is guaranteed that bundled
     resources are loaded before all others. 
 
-    @param  rsrcType    a resource type
-    @return             true if all resources loaded correctly
+    @param  rsrcTypeMask  a resource type
+    @return               true if all resources loaded correctly
 */
 bool
 nResourceServer::LoadResources(int rsrcTypeMask)
@@ -300,7 +300,7 @@ nResourceServer::OnLost(int rsrcTypeMask)
     Calls nResource::OnRestored() on all resources defined in the resource
     type mask.
 
-    @param  rsrcType    a resource type
+    @param  rsrcTypeMask    a resource type
 */
 void
 nResourceServer::OnRestored(int rsrcTypeMask)

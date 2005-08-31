@@ -4,8 +4,7 @@
 /**
     @class nAnimKey
     @ingroup Util
-
-    Associate a data value with a point in time.
+    @brief Associate a data value with a point in time.
 
     (C) 2005 Radon Labs GmbH
 */

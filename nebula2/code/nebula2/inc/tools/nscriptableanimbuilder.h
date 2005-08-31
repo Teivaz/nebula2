@@ -3,7 +3,7 @@
 //-----------------------------------------------------------------------------
 /**
     @class nScriptableAnimBuilder
-    @ingroup
+    @ingroup Tools
 
     The following lua script shows the way to add animation group to the 
     Nebula animation builder:

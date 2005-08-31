@@ -4,8 +4,7 @@
 /**
     @class nDSoundServer3
     @ingroup Audio3
-
-    nAudioServer3 implemention using DirectSound.
+    @brief nAudioServer3 implemention using DirectSound.
 
     (C) 2003 RadonLabs GmbH
 */

@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class nInputEvent
-    @ingroup NebulaInputSystem
+    @ingroup Input
     @brief Nebula Input Events
 
     nInputEvents are attached to the nInputServer from arbitrary sources.
