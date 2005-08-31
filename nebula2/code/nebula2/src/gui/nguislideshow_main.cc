@@ -19,7 +19,7 @@ nNebulaScriptClass(nGuiSlideShow, "nguiwidget");
 nGuiSlideShow::nGuiSlideShow() :
     loop(true),
     firstFrame(true),
-    intervall(2.0f),
+    interval(2.0f),
     currentPicIndex(-1),
     nextPicIndex(0),
     numLevels(5),
@@ -32,12 +32,12 @@ nGuiSlideShow::nGuiSlideShow() :
 }
 
 //------------------------------------------------------------------------------
-/** Constructor which takes the intervall between two pictures as an argument
+/** Constructor which takes the interval between two pictures as an argument
 */
 nGuiSlideShow::nGuiSlideShow(nTime seconds)
 {
     nGuiSlideShow();
-    this->intervall = seconds;
+    this->interval = seconds;
 }
 
 //------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ void nGuiSlideShow::OnFrame()
         }
 
         // Check if it's time for the next slide
-        if(time > (this->beginTime + intervall) || !this->refSlides[0]->HasPicture())
+        if(time > (this->beginTime + interval) || !this->refSlides[0]->HasPicture())
         {
             // Set new picture indices
             if((this->currentPicIndex + 1) >= this->pictures.Size())
