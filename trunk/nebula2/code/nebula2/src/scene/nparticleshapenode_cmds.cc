@@ -1177,7 +1177,7 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
         }
 
         //--- seteffectactive ---
-        cmd = ps->GetCmd(this, 'SACT');
+        cmd = ps->GetCmd(this, 'SEAC');
         cmd->In()->SetB(this->IsEffectActive());
         ps->PutCmd(cmd);
 
