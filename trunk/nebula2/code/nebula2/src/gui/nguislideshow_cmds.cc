@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguislideshow.h"
 
-static void n_setintervall(void* slf, nCmd* cmd);
+static void n_setinterval(void* slf, nCmd* cmd);
 static void n_addpicture(void* slf, nCmd* cmd);
 static void n_setloopmode(void* slf, nCmd* cmd);
 static void n_removeallpictures(void* slf, nCmd* cmd);
@@ -27,7 +27,7 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setintervall_f",                'SITV', n_setintervall);
+    cl->AddCmd("v_setinterval_f",                 'SITV', n_setinterval);
     cl->AddCmd("v_setloopmode_b",                 'SLMD', n_setloopmode);
     cl->AddCmd("v_addpicture_s",                  'APIC', n_addpicture);
     cl->AddCmd("v_removeallpictures_v",           'RMPX', n_removeallpictures);
@@ -37,20 +37,20 @@ n_initcmds(nClass* cl)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setintervall
+    setinterval
     @input
-    d (intervall)
+    d (interval)
     @output
     v
     @info
-    Set the intervall between two pictures
+    Set the interval between two pictures
 */
 static void
-n_setintervall(void* slf, nCmd* cmd)
+n_setinterval(void* slf, nCmd* cmd)
 {
     nGuiSlideShow* self = (nGuiSlideShow*) slf;
-    nTime intervall = cmd->In()->GetF();
-    self->SetIntervall(intervall);
+    nTime interval = cmd->In()->GetF();
+    self->SetInterval(interval);
 }
 
 //------------------------------------------------------------------------------

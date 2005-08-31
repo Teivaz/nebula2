@@ -5,7 +5,9 @@
 #include "gui/nguilabel.h"
 //------------------------------------------------------------------------------
 /**
-    A widget which implements a picture slideshow
+    @class nGuiSlideShow
+    @ingroup Gui
+    @brief A widget which implements a picture slideshow.
     
     (C) 2005 RadonLabs GmbH
 */
@@ -37,8 +39,8 @@ public:
     void SetLoopMode(bool b);
     /// Get if the slideshow loops
     bool GetLoopMode() const;
-    /// Sets the intervall between two slides
-    void SetIntervall(nTime seconds);
+    /// Sets the interval between two slides
+    void SetInterval(nTime seconds);
     /// Rendering
     virtual bool Render();
     /// Clear pictures array
@@ -53,8 +55,8 @@ private:
     nArray< nRef<nGuiSlide> > refSlides;
     /// Holds the names of the slideshow pictures
     nArray<nString> pictures;
-    /// The intervall between two pictures (in milliseconds)
-    nTime intervall;
+    /// The interval between two pictures (in milliseconds)
+    nTime interval;
     nTime beginTime;
     nTime nextSlideTime;
     nTime time;
@@ -137,10 +139,10 @@ nGuiSlideShow::SetLoopMode(bool b)
 */
 inline
 void
-nGuiSlideShow::SetIntervall(nTime seconds)
+nGuiSlideShow::SetInterval(nTime seconds)
 {
     n_assert(seconds >= 0);
-    this->intervall = seconds;
+    this->interval = seconds;
 }
 
 #endif
