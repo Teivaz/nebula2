@@ -374,7 +374,7 @@ void ParseParams(TiXmlElement* elemShader, nString& strParamBlock, nString &strR
     nString shdType = elemShader->Attribute("shaderType");
     nString meshType = elemShader->Attribute("meshType");
 
-    // Get .fx effect file name.
+    // Get .shader name.
     nString effectFileName = elemShader->Attribute("file");
 
     // 'Shader' parameter in parameter block.
@@ -529,7 +529,7 @@ bool EvalCustomMaterialPlugin()
         if (DoFilter(name))
             continue;
 
-        // get .fx effect file name.
+        // get shader name.
         nString effectFile;
         effectFile += "'";
         effectFile += child->Attribute("file");

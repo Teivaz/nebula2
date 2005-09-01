@@ -1274,7 +1274,8 @@ bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
             }
 
             n_maxlog(Low, "  - Build vertex tangents...");
-            meshBuilder.BuildVertexTangents();
+            // XXX: One day, we may want to make this configurable so that blendshape export can pass false.
+            meshBuilder.BuildVertexTangents(true);
         }
         else
         {

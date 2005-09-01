@@ -13,6 +13,7 @@
 
 #include "gfx2/nshaderstate.h"
 #include "scene/nvectoranimator.h"
+#include "util/nanimlooptype.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -89,11 +90,11 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
                 createdAnimator->AddKey(key.time, color);
             }
 
-            createdAnimator->SetVectorName(paramName);
+            createdAnimator->SetParamName(paramName);
             createdAnimator->SetChannel("time");
 
             //FIXME: 'oneshot' loop type should be available too.
-            createdAnimator->SetLoopType(nAnimator::Loop);
+            createdAnimator->SetLoopType(nAnimLoopType::Loop);
         }
     }
 
