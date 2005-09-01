@@ -13,6 +13,7 @@
 
 #include "gfx2/nshaderstate.h"
 #include "scene/nfloatanimator.h"
+#include "util/nanimlooptype.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -77,11 +78,11 @@ nAnimator* nMaxFloatAnimator::Export(const char* paramName, Control* control)
                 createdAnimator->AddKey(key.time, val);
             }
 
-            createdAnimator->SetFloatName(paramName);
+            createdAnimator->SetParamName(paramName);
             createdAnimator->SetChannel("time");
 
             //FIXME: 'oneshot' loop type should be available too.
-            createdAnimator->SetLoopType(nAnimator::Loop);
+            createdAnimator->SetLoopType(nAnimLoopType::Loop);
         }
     }
 

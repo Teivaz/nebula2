@@ -79,7 +79,7 @@ protected:
     // @}
 
     bool SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode);
-    void SetStatndardNebulaShader(nShapeNode* shapeNode);
+    void SetStandardNebulaShader(nShapeNode* shapeNode);
 
     nShaderState::Param GetShaderParam(const char* param);
 

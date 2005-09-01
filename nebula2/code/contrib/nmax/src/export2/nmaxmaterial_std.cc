@@ -101,7 +101,7 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
         //    }
         //}
 
-        this->SetStatndardNebulaShader(shapeNode);
+        this->SetStandardNebulaShader(shapeNode);
 
         nMaxTexture texture;
         for (int i=0; i<stdMat->NumSubTexmaps(); i++)

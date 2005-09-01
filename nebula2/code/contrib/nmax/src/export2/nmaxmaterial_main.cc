@@ -15,6 +15,7 @@
 
 #include "scene/nshapenode.h"
 #include "scene/nvectoranimator.h"
+#include "util/nanimlooptype.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -150,17 +151,17 @@ void nMaxMaterial::CreateDefaultMaterial(nShapeNode* shapeNode)
     nClass* clazz = shapeNode->GetClass();
     if (nString(clazz->GetName()) == "nskinshapenode")
     {
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:default_skinned.fx");
+        shapeNode->SetShader("skinned");
     }
     else
     if (nString(clazz->GetName()) == "nshapenode")
     {
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:default.fx");
+        shapeNode->SetShader("static");
     }
     else
     {
         n_maxlog(Error, "Unknown shape node type [%s]", shapeNode->GetFullName());
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:default.fx");
+        shapeNode->SetShader("static");
     }
 
     shapeNode->SetTexture(nShaderState::DiffMap0, "textures:examples/brick.bmp");
@@ -231,23 +232,23 @@ bool nMaxMaterial::SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxMaterial::SetStatndardNebulaShader(nShapeNode* shapeNode)
+void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode)
 {
     if (0 == strcmp(shapeNode->GetClass()->GetName(), "nshapenode"))
     {
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:default.fx");
+        shapeNode->SetShader("static");
     }
     else
     if (0 == strcmp(shapeNode->GetClass()->GetName(), "nskinshapenode"))
     {
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:default_skinned.fx");
+        shapeNode->SetShader("skinned");
     }
     else
     if (0 == strcmp(shapeNode->GetClass()->GetName(), "nswingshapenode"))
     {
-        //FIXME: we should have a method to determine what .fx file we will choose.
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:tree.fx");
-        shapeNode->SetShader(nShapeNode::StringToFourCC("colr"), "shaders:leaf.fx");
+        //FIXME: we should have a method to determine which shader we will choose.
+        shapeNode->SetShader("tree");
+        shapeNode->SetShader("leaf");
     }
     else
     {
@@ -399,11 +400,11 @@ void nMaxMaterial::CreateShaderAnimator(nShapeNode* shapeNode,
             animator->AddKey(colorKey.time, color);
         }
 
-        animator->SetVectorName(nShaderState::ParamToString(param));
+        animator->SetParamName(nShaderState::ParamToString(param));
         animator->SetChannel("time");
 
         //FIXME: 'oneshot' loop type should be available too.
-        animator->SetLoopType(nAnimator::Loop);
+        animator->SetLoopType(nAnimLoopType::Loop);
 
         shapeNode->AddAnimator(animator->GetName());
     }

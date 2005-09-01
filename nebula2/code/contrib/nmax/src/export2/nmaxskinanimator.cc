@@ -46,7 +46,7 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
         this->BuildJoints(animator, boneArray);
 
         animator->SetChannel("time");
-        animator->SetLoopType(nSkinAnimator::Loop);
+        animator->SetLoopType(nAnimLoopType::Loop);
 
         animator->SetAnim(animFilename);
         animator->SetStateChannel("chnCharState");
@@ -107,15 +107,17 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
         quaternion poseRotate (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);
         vector3 poseScale (ap.k.x, ap.k.z, ap.k.y);
 
+        const char * boneName = "";
+        if (nMaxOptions::Instance()->HasJointName())
+        {
+            boneName = bone.name.Get();
+        }
         animator->SetJoint(bone.id, 
                            bone.parentID,
                            poseTranlator,
                            poseRotate,
-                           poseScale);
-
-        // add joint name
-        if (nMaxOptions::Instance()->HasJointName())
-            animator->AddJointName(bone.id, bone.name.Get());
+                           poseScale,
+                           boneName);
     }
 
     animator->EndJoints();

@@ -13,6 +13,7 @@
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "scene/nuvanimator.h"
+#include "util/nanimlooptype.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -223,7 +224,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
 
         createdAnimator->SetChannel("time");
         //FIXME: 'oneshot' loop type should be available too.
-        createdAnimator->SetLoopType(nAnimator::Loop);
+        createdAnimator->SetLoopType(nAnimLoopType::Loop);
         return createdAnimator;
     }
     return NULL;
