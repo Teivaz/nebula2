@@ -8,12 +8,15 @@
 static void n_addposkey(void* slf, nCmd* cmd);
 static void n_addeulerkey(void* slf, nCmd* cmd);
 static void n_addscalekey(void* slf, nCmd* cmd);
+static void n_addquatkey(void* slf, nCmd* cmd);
 static void n_getnumposkeys(void* slf, nCmd* cmd);
 static void n_getnumeulerkeys(void* slf, nCmd* cmd);
 static void n_getnumscalekeys(void* slf, nCmd* cmd);
+static void n_getnumquatkeys(void* slf, nCmd* cmd);
 static void n_getposkeyat(void* slf, nCmd* cmd);
 static void n_geteulerkeyat(void* slf, nCmd* cmd);
 static void n_getscalekeyat(void* slf, nCmd* cmd);
+static void n_getquatkeyat(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -36,12 +39,15 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_addposkey_ffff",     'ADPK', n_addposkey);
     cl->AddCmd("v_addeulerkey_ffff",   'ADEK', n_addeulerkey);
     cl->AddCmd("v_addscalekey_ffff",   'ADSK', n_addscalekey);
+    cl->AddCmd("v_addquatkey_fffff",   'ADQK', n_addquatkey);
     cl->AddCmd("i_getnumposkeys_v",    'GNPK', n_getnumposkeys);
     cl->AddCmd("i_getnumeulerkeys_v",  'GNEK', n_getnumeulerkeys);
     cl->AddCmd("i_getnumscalekeys_v",  'GNSK', n_getnumscalekeys);
+    cl->AddCmd("i_getnumquatkeys_v",   'GNQK', n_getnumquatkeys);
     cl->AddCmd("ffff_getposkeyat_i",   'GPKA', n_getposkeyat);
     cl->AddCmd("ffff_geteulerkeyat_i", 'GEKA', n_geteulerkeyat);
     cl->AddCmd("ffff_getscalekeyat_i", 'GSKA', n_getscalekeyat);
+    cl->AddCmd("ffff_getquatkeyat_i",  'GQKA', n_getquatkeyat);
     cl->EndCmds();
 }
 
@@ -117,6 +123,31 @@ n_addscalekey(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    addquatkey
+    @input
+    f(Time), f(QuatX), f(QuatY), f(QuatZ), f(QuatW)
+    @output
+    v
+    @info
+    Add a quaternion key to the rotation key array.
+    Warning! DON'T mix quaternions and eulers!
+*/
+static void
+n_addquatkey(void* slf, nCmd* cmd)
+{
+    nTransformAnimator* self = (nTransformAnimator*) slf;
+    quaternion q0;
+    float f0 = cmd->In()->GetF();
+    q0.x = cmd->In()->GetF();
+    q0.y = cmd->In()->GetF();
+    q0.z = cmd->In()->GetF();
+    q0.w = cmd->In()->GetF();
+    self->AddQuatKey(f0, q0);
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     getnumposkeys
     @input
     v
@@ -166,6 +197,24 @@ n_getnumscalekeys(void* slf, nCmd* cmd)
 {
     nTransformAnimator* self = (nTransformAnimator*) slf;
     cmd->Out()->SetI(self->GetNumScaleKeys());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getnumquatkeys
+    @input
+    v
+    @output
+    i(NumQuatKeys)
+    @info
+    Return number of quaternion keys.
+*/
+static void
+n_getnumquatkeys(void* slf, nCmd* cmd)
+{
+    nTransformAnimator* self = (nTransformAnimator*) slf;
+    cmd->Out()->SetI(self->GetNumQuatKeys());
 }
 
 //------------------------------------------------------------------------------
@@ -242,6 +291,31 @@ n_getscalekeyat(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    @cmd
+    getquatkeyat
+    @input
+    i(Index)
+    @output
+    f(Time), f(QuatX), f(QuatY), f(QuatZ), f(QuatW)
+    @info
+    Get quaternion key attributes at given index.
+*/
+static void
+n_getquatkeyat(void* slf, nCmd* cmd)
+{
+    nTransformAnimator* self = (nTransformAnimator*) slf;
+    float f0;
+    quaternion q0;
+    self->GetQuatKeyAt(cmd->In()->GetI(), f0, q0);
+    cmd->Out()->SetF(f0);
+    cmd->Out()->SetF(q0.x);
+    cmd->Out()->SetF(q0.y);
+    cmd->Out()->SetF(q0.z);
+    cmd->Out()->SetF(q0.w);
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 nTransformAnimator::SaveCmds(nPersistServer* ps)
@@ -269,17 +343,38 @@ nTransformAnimator::SaveCmds(nPersistServer* ps)
 
         //--- addeulerkey ---
         numKeys = this->GetNumEulerKeys();
-        for (curKey = 0; curKey < numKeys; curKey++)
+        if (numKeys > 0)
         {
-            float time;
-            vector3 val;
-            cmd = ps->GetCmd(this, 'ADEK');
-            this->GetEulerKeyAt(curKey, time, val);
-            cmd->In()->SetF(time);
-            cmd->In()->SetF(n_rad2deg(val.x));
-            cmd->In()->SetF(n_rad2deg(val.y));
-            cmd->In()->SetF(n_rad2deg(val.z));
-            ps->PutCmd(cmd);
+            for (curKey = 0; curKey < numKeys; curKey++)
+            {
+                float time;
+                vector3 val;
+                cmd = ps->GetCmd(this, 'ADEK');
+                this->GetEulerKeyAt(curKey, time, val);
+                cmd->In()->SetF(time);
+                cmd->In()->SetF(n_rad2deg(val.x));
+                cmd->In()->SetF(n_rad2deg(val.y));
+                cmd->In()->SetF(n_rad2deg(val.z));
+                ps->PutCmd(cmd);
+            }
+        }
+        else
+        {
+            //--- addquatkey ---
+            numKeys = this->GetNumQuatKeys();
+            for (curKey = 0; curKey < numKeys; curKey++)
+            {
+                float time;
+                quaternion val;
+                cmd = ps->GetCmd(this, 'ADQK');
+                this->GetQuatKeyAt(curKey, time, val);
+                cmd->In()->SetF(time);
+                cmd->In()->SetF(val.x);
+                cmd->In()->SetF(val.y);
+                cmd->In()->SetF(val.z);
+                cmd->In()->SetF(val.w);
+                ps->PutCmd(cmd);
+            }
         }
 
 
