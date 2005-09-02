@@ -110,12 +110,14 @@ nAnimKey<TYPE>::GetValue() const
 
 //------------------------------------------------------------------------------
 /**
+     - 09-01-2005    bruce      Change to use lerp<TYPE>(...) to allow proper
+                                interpolation of quaternions.
 */
 template<class TYPE>
 void
 nAnimKey<TYPE>::Lerp(const TYPE& key0, const TYPE& key1, float l)
 {
-    this->value = (TYPE) (key0 + ((key1 - key0) * l));
+    lerp<TYPE>(this->value, key0, key1, l);
 }
 //------------------------------------------------------------------------------
 #endif
