@@ -14,7 +14,8 @@ nNebulaScriptClass(nTransformAnimator, "nanimator");
 nTransformAnimator::nTransformAnimator() :
     posArray(0, 4),
     eulerArray(0, 4),
-    scaleArray(0, 4)
+    scaleArray(0, 4),
+    quatArray(0, 4)
 {
     // empty
 }
@@ -67,9 +68,14 @@ nTransformAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext
 
     // sample key arrays and manipulate target object
     static nAnimKey<vector3> key;
+    static nAnimKey<quaternion> quatkey;
     if (this->posArray.Sample(curTime, this->loopType, key))
     {
         targetNode->SetPosition(key.GetValue());
+    }
+    if (this->quatArray.Sample(curTime, this->loopType, quatkey))
+    {
+        targetNode->SetQuat(quatkey.GetValue());
     }
     if (this->eulerArray.Sample(curTime, this->loopType, key))
     {

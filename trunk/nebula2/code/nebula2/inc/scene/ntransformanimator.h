@@ -48,11 +48,18 @@ public:
     int GetNumScaleKeys() const;
     /// get scale key at index
     void GetScaleKeyAt(int index, float& time, vector3& key) const;
+    /// add a quaternion key
+    void AddQuatKey(float time, const quaternion& key);
+    /// get number of quaternion keys
+    int GetNumQuatKeys() const;
+    /// get scale key at index
+    void GetQuatKeyAt(int index, float& time, quaternion& key) const;
 
 private:
     nAnimKeyArray<nAnimKey<vector3> > posArray;
     nAnimKeyArray<nAnimKey<vector3> > eulerArray;
     nAnimKeyArray<nAnimKey<vector3> > scaleArray;
+    nAnimKeyArray<nAnimKey<quaternion> > quatArray;
 };
 
 //------------------------------------------------------------------------------
@@ -92,6 +99,17 @@ nTransformAnimator::AddScaleKey(float time, const vector3& key)
 /**
 */
 inline
+void
+nTransformAnimator::AddQuatKey(float time, const quaternion& key)
+{
+    nAnimKey<quaternion> newKey(time, key);
+    this->quatArray.Append(newKey);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 int
 nTransformAnimator::GetNumPosKeys() const
 {
@@ -116,6 +134,16 @@ int
 nTransformAnimator::GetNumScaleKeys() const
 {
     return this->scaleArray.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nTransformAnimator::GetNumQuatKeys() const
+{
+    return this->quatArray.Size();
 }
 
 //------------------------------------------------------------------------------
@@ -169,6 +197,22 @@ nTransformAnimator::GetScaleKeyAt(int index, float& time, vector3& key) const
     key  = k.GetValue();
 }
 
+//------------------------------------------------------------------------------
+/**
+    Obtain a quaternion key by its index.
+
+    @param  index   [in]    index of key to get
+    @param  time    [out]   the time stamp of the key
+    @param  key     [out]   the value of the key
+*/
+inline
+void
+nTransformAnimator::GetQuatKeyAt(int index, float& time, quaternion& key) const
+{
+    const nAnimKey<quaternion>& k = this->quatArray[index];
+    time = k.GetTime();
+    key  = k.GetValue();
+}
 //------------------------------------------------------------------------------
 #endif
 
