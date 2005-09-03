@@ -441,9 +441,10 @@ class vstudio8:
             elif 'cpp' == module.modType:
                 compileAsFlag = 2
             
-            nebSyms = 'N_INIT=n_init_' + module.name + ';' \
-                      'N_NEW=n_new_' + module.name + ';' \
-                      'N_INITCMDS=n_initcmds_' + module.name
+            safeModName = module.GetFullNameNoColons()
+            nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
+                      'N_NEW=n_new_' + safeModName + ';' \
+                      'N_INITCMDS=n_initcmds_' + safeModName
                     
             projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
                            % module.name)
