@@ -437,7 +437,7 @@ class BldScanner(Scanner):
     letter = Range('AZaz')
     digit = Range('09')
     alphanum = letter | digit
-    name = letter + Rep(alphanum | Str('_') | Str('.'))
+    name = letter + Rep(alphanum | Str('_') | Str('.') | Str('::'))
     filename = Rep(alphanum | Any('_.-'))
     spaceortab = Any(' \t')
     globaldef = Alt(Rep1(alphanum | Str('_')),

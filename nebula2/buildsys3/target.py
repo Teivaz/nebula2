@@ -247,9 +247,10 @@ class Target:
                     platformDef = self.buildSys.platformTagDefMap[platformTag]
             if platformDef != '':
                 pkgFile.write('#ifdef ' + platformDef + '\n')
-            pkgFile.write('extern bool n_init_' + module.name \
-                          + ' (nClass *, nKernelServer *);\n')
-            pkgFile.write('extern void *n_new_' + module.name + ' (void);\n')
+            safeModName = module.GetFullNameNoColons()
+            pkgFile.write('extern bool n_init_%s (nClass *, nKernelServer *);\n' %
+                          safeModName)
+            pkgFile.write('extern void *n_new_%s (void);\n' % safeModName)
             if platformDef != '':
                 pkgFile.write('#endif //' + platformDef + '\n\n')
         pkgFile.write('\nvoid ' + self.name + '()\n{\n')
@@ -264,8 +265,9 @@ class Target:
                 pkgFile.write('#ifdef ' + platformDef + '\n')
             pkgFile.write('    nKernelServer::ks->AddModule("' \
                           + module.name + '",\n')
-            pkgFile.write((' ' * 33) + 'n_init_' + module.name + ',\n')
-            pkgFile.write((' ' * 33) + 'n_new_' + module.name + ');\n')
+            safeModName = module.GetFullNameNoColons()
+            pkgFile.write((' ' * 33) + 'n_init_%s,\n' % safeModName)
+            pkgFile.write((' ' * 33) + 'n_new_%s);\n' % safeModName)
             if platformDef != '':
                 pkgFile.write('#endif //' + platformDef + '\n')
         pkgFile.write('}\n\n')

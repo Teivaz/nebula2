@@ -35,6 +35,14 @@ class Module:
         self.resolvedFiles = []
         self.resolvedHeaders = []
         self.codeDir = ''
+        self.baseIncDir = ''
+    
+    #--------------------------------------------------------------------------
+    # Get the fully qualified name of the module, but replace all :: with _
+    # so the string can be safely used as part of a filename or as part of
+    # a C++ identifier.
+    def GetFullNameNoColons(self):
+        return self.name.replace('::', '_')
     
     #--------------------------------------------------------------------------
     def Clean(self):
@@ -47,52 +55,76 @@ class Module:
         self.headers.sort()
 
     #--------------------------------------------------------------------------
+    # Get the directory (relative to the Nebula home directory) that the 
+    # compiler will need to add to the list of include directories for any 
+    # source file that includes headers from this module.
+    def GetBaseIncDir(self):
+        return self.baseIncDir
+
+    #--------------------------------------------------------------------------
+    # Get the base directory of the project this module resides in, the path
+    # returned is absolute.
+    def GetProjectDir(self):
+        modProjectDir = ''
+        for projectDir in self.buildSys.projectDirs:
+            tempDir = os.path.commonprefix([projectDir, 
+                          self.buildSys.GetAbsPathFromRel(self.bldFile)])
+            if len(tempDir) > len(modProjectDir):
+                modProjectDir = tempDir
+        return modProjectDir
+
+    #--------------------------------------------------------------------------
     # Resolve the filenames in the module definition to real paths, relative
     # to the Nebula home directory.
     def ResolvePaths(self):
         #print 'Resolving paths for module ' + self.name
         
-        # get the trunk dir at home/baseDir/(inc/src)/dir
-        for projectDir in self.buildSys.projectDirs:
-            #print projectDir
+        projectDir = self.GetProjectDir()
+        ignore, projectDirName = os.path.split(string.rstrip(projectDir, os.sep))
+        mangaloreMod = False
         
-            # extract the last component of projectDir
-            head, tail = os.path.split(string.rstrip(projectDir, os.sep))
-            
+        if 'mangalore' == projectDirName:
+            # mangalore has a different directory structure
+            if os.path.isdir(os.path.join(projectDir, self.dir)):
+                self.codeDir = projectDirName
+                mangaloreMod = True
+        elif 'contrib' == projectDirName:
+            # search inside contrib
+            for contribDir in self.buildSys.contribDirs:
+                # extract the last component of contribDir
+                ignore, tail = os.path.split(string.rstrip(contribDir, os.sep))
+
+                if os.path.isdir(os.path.join(contribDir, 'inc', self.dir)):
+                    self.codeDir = os.path.join('contrib', tail)
+                    break
+
+                if os.path.isdir(os.path.join(contribDir, 'src', self.dir)):
+                    self.codeDir = os.path.join('contrib', tail)
+                    break
+        else:
+            # handle Nebula 2 and user projects
             if os.path.isdir(os.path.join(projectDir, 'inc', self.dir)):
-                self.codeDir = tail
-                break
-        
-            if os.path.isdir(os.path.join(projectDir, 'src', self.dir)):
-                self.codeDir = tail
-                break
-
-            # if current subdir is contrib search inside
-            if 'contrib' == tail:
-                contribMod = False
-                for contribDir in self.buildSys.contribDirs:
-                    #print contribDir
-                    
-                    # extract the last component of contribDir
-                    head, tail = os.path.split(string.rstrip(contribDir, os.sep))
-
-                    if os.path.isdir(os.path.join(contribDir, 'inc', self.dir)):
-                        self.codeDir = os.path.join('contrib', tail)
-                        contribMod = True
-                        break
-
-                    if os.path.isdir(os.path.join(contribDir, 'src', self.dir)):
-                        self.codeDir = os.path.join('contrib', tail)
-                        contribMod = True
-                        break
-                    
-                if contribMod:
-                    break;
+                self.codeDir = projectDirName
+            elif os.path.isdir(os.path.join(projectDir, 'src', self.dir)):
+                self.codeDir = projectDirName
+    
+        if '' == self.codeDir:
+            self.buildSys.logger.error('Failed to locate source code for '
+                                       'module %s defined in %s', 
+                                       self.name, self.bldFile)
     
         # special case to deal with dummy.cc >:|
         if '.' == self.dir:
             self.dir = ''
             self.codeDir = 'nebula2'
+    
+        baseSrcDir = ''
+        if mangaloreMod:
+            self.baseIncDir = os.path.join('code', self.codeDir)
+            baseSrcDir = os.path.join('code', self.codeDir)
+        else:
+            self.baseIncDir = os.path.join('code', self.codeDir, 'inc')
+            baseSrcDir = os.path.join('code', self.codeDir, 'src')
     
         self.resolvedFiles = []
         for srcFile in self.files:
@@ -100,8 +132,7 @@ class Module:
             # no extension? add the default .cc extension
             if '' == ext:
                 srcFile = srcFile + '.cc'
-            resolvedPath = os.path.join('code', self.codeDir, 'src', self.dir, 
-                                        srcFile)
+            resolvedPath = os.path.join(baseSrcDir, self.dir, srcFile)
             self.resolvedFiles.append(resolvedPath)
         
         self.resolvedHeaders = []
@@ -110,8 +141,7 @@ class Module:
             # no extension? add the default .cc extension
             if '' == ext:
                 hdrFile = hdrFile + '.h'
-            resolvedPath = os.path.join('code', self.codeDir, 'inc', self.dir, 
-                                        hdrFile)
+            resolvedPath = os.path.join(self.baseIncDir, self.dir, hdrFile)
             self.resolvedHeaders.append(resolvedPath)
             
         #print "Resolved Files:"
@@ -133,7 +163,7 @@ class Module:
                             'nNebulaClass|'
                             'nNebulaScriptClassStaticInit|'
                             'nNebulaScriptClass|)'
-                            '\(([a-zA-Z0-9_," ]+)\);?\s*$')
+                            '\(([a-zA-Z0-9:_," ]+)\);?\s*$')
         for fileName in self.resolvedFiles:
             if not os.path.exists(fileName):
                 self.buildSys.logger.warning('%s referenced in module %s'\
