@@ -72,6 +72,7 @@ nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
+nNebulaUsePackage(ndsound);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
 nNebulaUsePackage(npythonserver);
@@ -116,6 +117,7 @@ nPythonRegisterPackages(nKernelServer * kernelServer)
     kernelServer->AddPackage(ndinput8);
     kernelServer->AddPackage(ndirect3d9);
     kernelServer->AddPackage(ndshow);
+    kernelServer->AddPackage(ndsound);
     kernelServer->AddPackage(ngui);
     kernelServer->AddPackage(nnetwork);
     kernelServer->AddPackage(npythonserver);
@@ -215,20 +217,20 @@ main(int argc, const char** argv)
         title.Append(" - ");
     }
     title.Append("Nebula2 viewer");
+    const char* iconName = "NebulaIcon";
     nDisplayMode2 displayMode;
-    displayMode.SetIcon("NebulaIcon");
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false, true, iconName);
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false, true, iconName);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false, true, iconName);
     }
 
     // under Win32 check if we should read the project directory from the registry

@@ -110,6 +110,7 @@ beginworkspace pythonserver
         pynebula
         ntoollib
         ndshow
+        ndsound
         ngui
         npyviewer
     }
