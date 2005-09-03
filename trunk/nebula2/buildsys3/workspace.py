@@ -108,7 +108,7 @@ class Workspace:
     #  Returns a list of all valid include dir paths relative to the
     #  workspace path. This list is generated from a list of all modules used 
     #  within the workspace. The list is returned as a single string where each
-    #  entry is separate by a semicolon.
+    #  entry is separated by a semicolon.
     def GetIncSearchDirsString(self, defaultWorkspacePath):
         searchStr = ''
         incPaths = []
@@ -120,8 +120,7 @@ class Workspace:
                 module = self.buildSys.modules[moduleName]
                 if '' != module.codeDir:
                     incPath = self.buildSys.FindRelPath(workspacePath,
-                                                        os.path.join('code', 
-                                                        module.codeDir, 'inc'))
+                                                        module.GetBaseIncDir())
                     if incPath not in incPaths:
                         incPaths.append(incPath)
 
