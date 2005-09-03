@@ -1235,12 +1235,10 @@ void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)
 /**
     Build tangents for the given mesh.
 
-    If the mesh already has vertex normals, it builds triangle normals and tangent
-    by calling nMeshBuilder::BuildTriangleTangents() otherwise it builds
-    triangle normals then vertex normals. Finally, it builds vertex tangents.
+    Triangle normals, tangents and binormals will be built for the mesh. If vertex
+    are not present, they are built from the triangle normals.
 
-    Be sure that the given mesh has uv0 texture coordinate. Tangent needs it
-    for its calculations.
+    Be sure that the given mesh has uv0 texture coordinate.
 
     @param meshBuilder input to build its tangents.
     @return true, if it success.
@@ -1249,68 +1247,33 @@ bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
 {
     const nMeshBuilder::Vertex& v = meshBuilder.GetVertexAt(0);
 
-    if (nMaxOptions::Instance()->ExportTangents())
+    if (nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents())
     {
         // build triangle normals, vertex normals and tangents.
-        n_maxlog(Low, "Build tangents...");
+        n_maxlog(Low, "Build tangents and normals...");
 
-        if (v.HasComponent(nMeshBuilder::Vertex::UV0))
-        {
-            if (v.HasComponent(nMeshBuilder::Vertex::NORMAL))
-            {
-                // we already have vertex normal, so only need triangle normal and tangent.
-                n_maxlog(Low, "  - Build triangle tangents...");
-                meshBuilder.BuildTriangleTangents();
-            }
-            else
-            {
-                // there's no vertex normals. so we first build triangle normals then,
-                n_maxlog(Low, "  - Build triangle normals...");
-                meshBuilder.BuildTriangleNormals();
-
-                // build vertex normals by averaging triangle normals.
-                n_maxlog(Low, "  - Build vertex normals...");
-                meshBuilder.BuildVertexNormals();
-            }
-
-            n_maxlog(Low, "  - Build vertex tangents...");
-            // XXX: One day, we may want to make this configurable so that blendshape export can pass false.
-            meshBuilder.BuildVertexTangents(true);
-        }
-        else
+        if (false == v.HasComponent(nMeshBuilder::Vertex::UV0))
         {
             n_maxlog(Error, "The tangents require a valid uv-mapping in texcoord layer 0.");
             return false;
         }
+        n_maxlog(Low, "  - Build triangle normals, tangents, and binormals...");
+        meshBuilder.BuildTriangleNormals();
 
-        n_maxlog(Low, "Build mesh tangents done.");
-    }
-    else
-    if (nMaxOptions::Instance()->ExportNormals())
-    {
-        // build triangle normals, vertex normals.
-        n_maxlog(Low, "Build normals...");
-        
-        if (v.HasComponent(nMeshBuilder::Vertex::NORMAL))
+        if (false == v.HasComponent(nMeshBuilder::Vertex::NORMAL))
         {
-            // we already have vertex normal, so only need triangle normal and tangent.
-            n_maxlog(Low, "  - Build triangle normals...");
-            meshBuilder.BuildTriangleNormals();
-        }
-        else
-        {
-            // there's no vertex normals. so we first build triangle normals then,
-            n_maxlog(Low, "  - Build triangle normals...");
-            meshBuilder.BuildTriangleNormals();
-
             // build vertex normals by averaging triangle normals.
             n_maxlog(Low, "  - Build vertex normals...");
             meshBuilder.BuildVertexNormals();
         }
-
-        n_maxlog(Low, "Build mesh normals done.");
+        if (nMaxOptions::Instance()->ExportTangents())
+        {
+            n_maxlog(Low, "  - Build vertex tangents...");
+            // XXX: One day, we may want to make this configurable so that blendshape export can pass false.
+            meshBuilder.BuildVertexTangents(true);
+        }
+        n_maxlog(Low, "Building mesh tangents and normals done.");
     }
-
     return true;
 }
 
