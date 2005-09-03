@@ -193,7 +193,7 @@ nHashMap2<TYPE>::Hash(const void* key, size_t len)
 /**
 */
 template<class TYPE>
-nHashMap2<TYPE>::Node*
+typename nHashMap2<TYPE>::Node*
 nHashMap2<TYPE>::Find(unsigned int hash, const void* key, size_t len) const
 {
     Node* node = this->buckets[hash % this->capacity];
@@ -216,7 +216,7 @@ nHashMap2<TYPE>::Find(unsigned int hash, const void* key, size_t len) const
 */
 template<class TYPE>
 void
-nHashMap2<TYPE>::Insert(nHashMap2<TYPE>::Node* node)
+nHashMap2<TYPE>::Insert(typename nHashMap2<TYPE>::Node* node)
 {
     int bucket = node->hash % this->capacity;
 
