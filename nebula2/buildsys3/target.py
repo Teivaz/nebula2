@@ -44,6 +44,13 @@ class Target:
         self.uuid = '' # only used by Visual Studio generators atm
     
     #--------------------------------------------------------------------------
+    # Get the fully qualified name of the target, but replace all :: with _
+    # so the string can be safely used as part of a filename or as part of
+    # a C++ identifier.
+    def GetFullNameNoColons(self):
+        return self.name.replace('::', '_')
+    
+    #--------------------------------------------------------------------------
     def Clean(self):
         self.win32Resource = self.buildSys.CleanRelPath(self.win32Resource)
         self.modDefFile = self.buildSys.CleanRelPath(self.modDefFile)
@@ -223,7 +230,8 @@ class Target:
             sortedModIdx += 1
         pkgMods = sortedMods
         # write out the header
-        pkgShortFileName = 'pkg_' + self.name + '.cc'
+        safeTarName = self.GetFullNameNoColons()
+        pkgShortFileName = 'pkg_' + safeTarName + '.cc'
         pkgPath = os.path.join(pkgDirectory, pkgShortFileName)
         pkgFile = file(pkgPath, 'w')
         pkgFile.write('//' + ('-' * 77) + '\n')
@@ -237,7 +245,7 @@ class Target:
         pkgFile.write('#ifdef __XBxX__\n')
         pkgFile.write('#undef __WIN32__\n')
         pkgFile.write('#endif\n\n')
-        pkgFile.write('extern "C" void ' + self.name + '();\n\n')
+        pkgFile.write('extern "C" void ' + safeTarName + '();\n\n')
         # write out the extern declarations
         for module in pkgMods:
             platformTag = module.platform
@@ -253,7 +261,7 @@ class Target:
             pkgFile.write('extern void *n_new_%s (void);\n' % safeModName)
             if platformDef != '':
                 pkgFile.write('#endif //' + platformDef + '\n\n')
-        pkgFile.write('\nvoid ' + self.name + '()\n{\n')
+        pkgFile.write('\nvoid ' + safeTarName + '()\n{\n')
         # write out the AddModule(s)
         for module in pkgMods:
             platformTag = module.platform
@@ -294,8 +302,9 @@ class Target:
         relPath = self.buildSys.FindRelPath(os.path.join('build', 'pkg'), 
                                             os.path.join('code', 'nebula2',
                                                          'res'))
+        safeTarName = self.GetFullNameNoColons()
         absPath = os.path.join(self.buildSys.homeDir, 'build', 'pkg', 
-                               'res_' + self.name + '.rc')            
+                               'res_' + safeTarName + '.rc')            
         resFile = file(absPath, 'w')
         relPath = os.path.join(relPath, self.icon)
         relPath = string.replace(relPath, os.sep, '\\\\')
