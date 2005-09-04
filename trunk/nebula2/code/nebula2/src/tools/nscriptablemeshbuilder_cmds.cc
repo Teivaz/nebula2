@@ -24,7 +24,6 @@ static void n_addtriangle(void* slf, nCmd* cmd);
 static void n_transform(void* slf, nCmd* cmd);
 static void n_flipuvs(void* slf, nCmd* cmd);
 static void n_buildtrianglenormals(void* slf, nCmd* cmd);
-static void n_buildtriangletangents(void* slf, nCmd* cmd);
 static void n_buildvertexnormals(void* slf, nCmd* cmd);
 static void n_buildvertextangents(void* slf, nCmd* cmd);
 static void n_cleanup(void* slf, nCmd* cmd);
@@ -64,7 +63,6 @@ n_initcmds(nClass* cl)
 
     // building mesh components
     cl->AddCmd("v_buildtrianglenormals_v",  'BDTN', n_buildtrianglenormals);
-    cl->AddCmd("v_buildtriangletangents_v", 'BDTT', n_buildtriangletangents);
     cl->AddCmd("v_buildvertexnormals_v",    'BDVN', n_buildvertexnormals);
     cl->AddCmd("v_buildvertextangents_b",   'BDVT', n_buildvertextangents);
     
@@ -310,16 +308,6 @@ n_buildtrianglenormals(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     self->BuildTriangleNormals();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-static void
-n_buildtriangletangents(void* slf, nCmd* cmd)
-{
-    nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
-    self->BuildTriangleTangents();
 }
 
 //------------------------------------------------------------------------------

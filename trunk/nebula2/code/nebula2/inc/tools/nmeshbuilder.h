@@ -344,8 +344,6 @@ public:
     void BuildVertexTriangleMap(nArray< nArray<int> >& vertexTriangleMap) const;
     /// create face normals and tangents (requires a valid uv-mapping at layer 0)
     void BuildTriangleNormals();
-    /// create face tangents (requires a valid uv-mapping at layer 0)
-    void BuildTriangleTangents();
     /// generate averaged vertex tangents
     void BuildVertexTangents(bool allowVertexSplits);
     /// generate averaged vertex normals
