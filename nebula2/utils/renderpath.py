@@ -5,15 +5,17 @@
 # Contents are licensed under the Nebula license.
 #------------------------------------------------------------------------------
 
-import wx, os.path
+import wx, os.path, sys
 from xml.dom import minidom, Node
+# This is a bit ugly
+sys.path.append('..')
 from buildsys3.gui.xrcguiutils import *
 
 #--------------------------------------------------------------------------
 class MainFrame(wx.Frame):
     def __init__(self):
         self.xrcRootItem = None
-        xrcSetFile("buildsys3/gui/xrc/renderpath.xrc")
+        xrcSetFile("../buildsys3/gui/xrc/renderpath.xrc")
         xrcLoadFrame(self, None, 'RenderPathFrame')
     
         # extracting controls
@@ -33,6 +35,9 @@ class MainFrame(wx.Frame):
         self.rtRelSize    = xrcCTRLUnpack(self, "RTrelSize")
         self.rtWidth      = xrcCTRLUnpack(self, "RTwidth")
         self.rtHeight     = xrcCTRLUnpack(self, "RTheight")
+
+        # section controls
+        self.sectionList              = xrcCTRLUnpack(self, "RPSections", {EVT_LISTBOX:self.OnSelSection})
 
         # pass controls
         self.psList                   = xrcCTRLUnpack(self, "PSList", {EVT_LISTBOX:self.OnSelPS})
@@ -57,7 +62,6 @@ class MainFrame(wx.Frame):
         self.phList       = xrcCTRLUnpack(self, "PHList", {EVT_LISTBOX:self.OnSelPH})
         self.phName       = xrcCTRLUnpack(self, "PHname")
         self.phShader     = xrcCTRLUnpack(self, "PHshader")
-        self.phFourcc     = xrcCTRLUnpack(self, "PHfourcc")
         self.phSort       = xrcCTRLUnpack(self, "PHsort")
         self.phLights     = xrcCTRLUnpack(self, "PHlights")
         self.phTechnique  = xrcCTRLUnpack(self, "PHtechnique")
@@ -67,9 +71,9 @@ class MainFrame(wx.Frame):
 
         # configuring controls
         self.rpEl = None
-        files_list = os.listdir("data/shaders/")
+        files_list = os.listdir("../data/shaders/")
         files_list = [d for d in files_list\
-                      if os.path.isfile("data/shaders/" + d) and d.endswith('_renderpath.xml')]
+                      if os.path.isfile("../data/shaders/" + d) and d.endswith('_renderpath.xml')]
         files_list.sort()
 
         self.rpFileList.AppendItems(files_list)
@@ -77,7 +81,7 @@ class MainFrame(wx.Frame):
     def OnSelRPFile(self, evt):
         cb = evt.GetEventObject()
         self.rpFile = cb.GetString(cb.GetSelection())
-        self.rpEl = minidom.parse("data/shaders/" + self.rpFile).documentElement
+        self.rpEl = minidom.parse("../data/shaders/" + self.rpFile).documentElement
 
         self.UpdateRP()
 
@@ -86,6 +90,9 @@ class MainFrame(wx.Frame):
 
     def OnSelRPVar(self, evt):
         self.UpdateRPVar()
+
+    def OnSelSection(self, evt):
+        self.UpdateSection()
 
     def OnSelPS(self, evt):
         self.UpdatePS()
@@ -99,10 +106,11 @@ class MainFrame(wx.Frame):
     # -------------------------------------------------------------------------
     def UpdateRP(self):
         self.rpName.SetValue(self.rpEl.attributes.get('name').value)
-        self.rpShaderPath.SetValue(self.rpEl.attributes.get('shaderpath').value)
+        self.rpShaderPath.SetValue(self.rpEl.attributes.get('shaderPath').value)
 
         self.rtList.Clear()
         self.rpVarList.Clear()
+        self.sectionList.Clear()
         self.psList.Clear()
 
         for child in self.rpEl.childNodes:
@@ -112,8 +120,10 @@ class MainFrame(wx.Frame):
                 elif child.nodeName == "Float" or child.nodeName == "Float4" or\
                      child.nodeName == "Int" or child.nodeName == "Texture":
                     self.rpVarList.Append(child.nodeName + ' <' + child.attributes.get('name').value + '>', child)
-                elif child.nodeName == "Pass":
-                    self.psList.Append(child.attributes.get('name').value, child)
+                elif child.nodeName == "Shader":
+                    pass
+                elif child.nodeName == "Section":
+                    self.sectionList.Append(child.attributes.get('name').value, child)
 
         if self.rtList.GetCount() > 0:
             self.rtList.SetSelection(0)
@@ -123,9 +133,9 @@ class MainFrame(wx.Frame):
             self.rpVarList.SetSelection(0)
         self.UpdateRPVar()
 
-        if self.psList.GetCount() > 0:
-            self.psList.SetSelection(0)
-        self.UpdatePS()
+        if self.sectionList.GetCount() > 0:
+            self.sectionList.SetSelection(0)
+        self.UpdateSection()
 
     def UpdateRT(self):
         if self.rtList.GetCount() > 0:
@@ -159,6 +169,19 @@ class MainFrame(wx.Frame):
         else:
             self.rpVarName.SetValue('')
             self.rpVarValue.SetValue('')
+
+    def UpdateSection(self):
+        self.psList.Clear()
+        if self.sectionList.GetCount() > 0:
+            n = self.sectionList.GetSelection()
+            el = self.sectionList.GetClientData(n)
+            for child in el.childNodes:
+                if child.nodeType == Node.ELEMENT_NODE:
+                    if child.nodeName == 'Pass':
+                        self.psList.Append(child.attributes.get('name').value, child)
+        if self.psList.GetCount() > 0:
+            self.psList.SetSelection(0)
+        self.UpdatePS()
 
     def UpdatePS(self):
         self.psVarList.Clear()
@@ -267,7 +290,6 @@ class MainFrame(wx.Frame):
     
             self.phName.SetValue(el.attributes.get('name').value)
             self.phShader.SetValue(el.attributes.get('shader').value)
-            self.phFourcc.SetValue(el.attributes.get('fourcc').value)
             self.phSort.SetValue(el.attributes.get('sort').value)
             if el.attributes.get('lights') is not None:
                 self.phLights.SetValue(el.attributes.get('lights').value)
