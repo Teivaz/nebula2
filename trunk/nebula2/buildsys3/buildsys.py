@@ -375,6 +375,9 @@ class BuildSys:
         # we can only do this once all targets have been processed
         for target in self.targets.itervalues():
             target.CollectLibsFromDepends()
+        # second pass since the first pass may not have picked everything up
+        for target in self.targets.itervalues():
+            target.CollectLibsFromDepends()
         # finalize modules and targets
         for module in self.modules.itervalues():
             module.Finalize()
