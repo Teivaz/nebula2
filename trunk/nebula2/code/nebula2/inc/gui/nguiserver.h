@@ -435,4 +435,14 @@ nGuiServer::GetClipRect(rectangle& cr) const
 }
 
 //-----------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nGuiServer::IsSystemGuiEnabled() const
+{
+    return this->systemGuiActive;
+}
+
+//-----------------------------------------------------------------------------
 #endif
