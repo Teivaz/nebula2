@@ -34,10 +34,18 @@ STR_SRC_FILE = '''\
             <File
                 RelativePath="%(relPath)s">
                 <FileConfiguration Name="Debug|Win32">
-                    <Tool Name="VCCLCompilerTool" PreprocessorDefinitions="%(nebSyms)s" CompileAs="%(compileAsFlag)i"/>
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        PreprocessorDefinitions="%(nebSyms)s"
+                        ObjectFile="$(IntDir)/%(objectName)s.obj"
+                        CompileAs="%(compileAsFlag)i"/>
                 </FileConfiguration>
                 <FileConfiguration Name="Release|Win32">
-                    <Tool Name="VCCLCompilerTool" PreprocessorDefinitions="%(nebSyms)s" CompileAs="%(compileAsFlag)i"/>
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        PreprocessorDefinitions="%(nebSyms)s"
+                        ObjectFile="$(IntDir)/%(objectName)s.obj"
+                        CompileAs="%(compileAsFlag)i"/>
                 </FileConfiguration>
             </File>
 '''
@@ -450,8 +458,11 @@ class vstudio71:
             for fileName in module.resolvedFiles:
                 relPath = self.buildSys.FindRelPath(self.vcprojLocation, 
                                                     fileName)
+                ignore, shortFileName = os.path.split(fileName)
+                objectName, ignore = os.path.splitext(shortFileName)
                 args = { 'relPath' : relPath,
                          'nebSyms' : nebSyms,
+                         'objectName' : ('%s_%s' % (safeModName, objectName)),
                          'compileAsFlag' : compileAsFlag }
                 projFile.write(STR_SRC_FILE % args)
 
