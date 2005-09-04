@@ -257,7 +257,6 @@ class doxygen:
             
             self.collectModulesToDocument(workspaceNames)
             self.collectDoxygenInputDirs()
-            #self.findSrcDirs()
 
             keepGoing = True
             progressVal = 0
@@ -388,34 +387,32 @@ class doxygen:
         os.chdir(self.doxycfgDir)
         
         self.doxygenInputDirs = []
-        self.scriptDocDirs = []
-        incDirs = []
-        srcDirs = []
-        docDirs = []
         
         for moduleName in self.moduleNames:
             module = self.buildSys.modules[moduleName]
-            inDir = os.path.join(os.pardir, module.codeDir, 'inc', 
+            # directories with *.h files
+            inDir = os.path.join(os.pardir, os.pardir, module.GetBaseIncDir(), 
                                  module.dir)
-            if inDir not in incDirs:
+            if inDir not in self.doxygenInputDirs:
                 if os.path.isdir(inDir):
-                    incDirs.append(inDir)
-            inDir = os.path.join(os.pardir, module.codeDir, 'src',
+                    self.doxygenInputDirs.append(inDir)
+            # directories with *.cc files
+            inDir = os.path.join(os.pardir, os.pardir, module.GetBaseSrcDir(),
                                  module.dir)
-            if inDir not in srcDirs:
-                if os.path.isdir(inDir):
-                    srcDirs.append(inDir)
+            if os.path.isdir(inDir):
+                if inDir not in self.srcDirs:
                     self.srcDirs.append(os.path.join(self.buildSys.homeDir,
-                                                     'code', module.codeDir,
-                                                     'src', module.dir))
+                                                     module.GetBaseSrcDir(),
+                                                     module.dir))
+                if inDir not in self.doxygenInputDirs:
+                    self.doxygenInputDirs.append(inDir)
+                    
+            # directories with *.dox files
             inDir = os.path.join(os.pardir, module.codeDir, 'doc')
-            if inDir not in docDirs:
+            if inDir not in self.doxygenInputDirs:
                 if os.path.isdir(inDir):
-                    docDirs.append(inDir)
+                    self.doxygenInputDirs.append(inDir)
         
-        self.doxygenInputDirs = incDirs
-        self.doxygenInputDirs.extend(srcDirs)
-        self.doxygenInputDirs.extend(docDirs)
         #print 'src dirs ' + str(self.srcDirs)
         
         os.chdir(oldPath)
@@ -512,35 +509,6 @@ class doxygen:
     #--------------------------------------------------------------------------
     def getRootClass(self):
         return self.classes['nobject']
-
-    #--------------------------------------------------------------------------
-    def findSrcDirs(self):
-        #print 'Find Src Dirs:'
-        searchPath = os.path.join(self.buildSys.homeDir, 'code', '*', 'src') + os.sep
-        #print 'Search Path: ' + searchPath
-        projectSrcDirs = glob.glob(searchPath)
-        searchPath = os.path.join(self.buildSys.homeDir, 'code', 'contrib', 
-                                  '*', 'src') + os.sep
-        #print 'Search Path: ' + searchPath
-        contribSrcDirs = glob.glob(searchPath)
-        # merge the two path lists
-        self.srcDirs = projectSrcDirs
-        self.srcDirs.extend(contribSrcDirs)
-        # strip the trailing slash and remove CVS directories from the paths
-        while True:
-            matchIdx = -1
-            for i in range(len(self.srcDirs)):
-                self.srcDirs[i] = string.rstrip(self.srcDirs[i], os.sep)
-                head, tail = os.path.split(self.srcDirs[i])
-                if string.upper(tail) == 'CVS':
-                    matchIdx = i
-                    break;
-            if matchIdx != -1:
-                del self.srcDirs[matchIdx]
-            else:
-                break;
-        
-        #print self.srcDirs
 
     #--------------------------------------------------------------------------
     def parseFiles(self, pathname):

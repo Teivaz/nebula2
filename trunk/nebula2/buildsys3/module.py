@@ -36,6 +36,7 @@ class Module:
         self.resolvedHeaders = []
         self.codeDir = ''
         self.baseIncDir = ''
+        self.baseSrcDir = ''
     
     #--------------------------------------------------------------------------
     # Get the fully qualified name of the module, but replace all :: with _
@@ -58,8 +59,18 @@ class Module:
     # Get the directory (relative to the Nebula home directory) that the 
     # compiler will need to add to the list of include directories for any 
     # source file that includes headers from this module.
+    # Note that the result of os.path.join(self.GetBaseIncDir(), self.dir) is 
+    # the directory where the module *.h files live.
     def GetBaseIncDir(self):
         return self.baseIncDir
+        
+    #--------------------------------------------------------------------------
+    # Get the directory (relative to the Nebula home directory) that contains
+    # the module source directory.
+    # Note that the result of os.path.join(self.GetBaseSrcDir(), self.dir) is 
+    # the directory where the module *.cc files live.
+    def GetBaseSrcDir(self):
+        return self.baseSrcDir
 
     #--------------------------------------------------------------------------
     # Get the base directory of the project this module resides in, the path
@@ -118,13 +129,12 @@ class Module:
             self.dir = ''
             self.codeDir = 'nebula2'
     
-        baseSrcDir = ''
         if mangaloreMod:
             self.baseIncDir = os.path.join('code', self.codeDir)
-            baseSrcDir = os.path.join('code', self.codeDir)
+            self.baseSrcDir = os.path.join('code', self.codeDir)
         else:
             self.baseIncDir = os.path.join('code', self.codeDir, 'inc')
-            baseSrcDir = os.path.join('code', self.codeDir, 'src')
+            self.baseSrcDir = os.path.join('code', self.codeDir, 'src')
     
         self.resolvedFiles = []
         for srcFile in self.files:
@@ -132,7 +142,7 @@ class Module:
             # no extension? add the default .cc extension
             if '' == ext:
                 srcFile = srcFile + '.cc'
-            resolvedPath = os.path.join(baseSrcDir, self.dir, srcFile)
+            resolvedPath = os.path.join(self.baseSrcDir, self.dir, srcFile)
             self.resolvedFiles.append(resolvedPath)
         
         self.resolvedHeaders = []
