@@ -11,7 +11,7 @@
 #include "gfx2/ndisplaymode2.h"
 #include "gfx2/ncamera2.h"
 #include "gfx2/ngfxserver2.h"
-#include "scene/nstdsceneserver.h"
+#include "scene/nsceneserver.h"
 #include "scene/nrendercontext.h"
 #include "kernel/nscriptserver.h"
 #include "input/ninputserver.h"
@@ -26,7 +26,7 @@
 #include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
 #include "gui/nguitextlabel.h"
-#include "shadow/nshadowserver.h"
+#include "shadow2/nshadowserver2.h"
 
 #include "physdemo/simpleobject.h"
 
@@ -125,7 +125,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<nGuiServer> refGuiServer;
-    nRef<nShadowServer> refShadowServer;
+    nRef<nShadowServer2> refShadowServer;
 
     nString sceneFilename;
     nString projDir;
