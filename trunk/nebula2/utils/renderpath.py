@@ -36,6 +36,8 @@ class MainFrame(wx.Frame):
         self.rtWidth      = xrcCTRLUnpack(self, "RTwidth")
         self.rtHeight     = xrcCTRLUnpack(self, "RTheight")
 
+        self.shaderAliasList = xrcCTRLUnpack(self, "ShaderAliasList")
+
         # section controls
         self.sectionList              = xrcCTRLUnpack(self, "RPSections", {EVT_LISTBOX:self.OnSelSection})
 
@@ -51,7 +53,8 @@ class MainFrame(wx.Frame):
         self.psDrawShadowVolumes      = xrcCTRLUnpack(self, "PSdrawShadowVolumes")
         self.psDrawGui                = xrcCTRLUnpack(self, "PSdrawGui")
         self.psTechnique              = xrcCTRLUnpack(self, "PStechnique")
-        self.psShadowEnabledCondition = xrcCTRLUnpack(self, "PSshadowEnabledCondition ")
+        self.psShadowEnabledCondition = xrcCTRLUnpack(self, "PSshadowEnabledCondition")
+        self.psOcclusionQuery         = xrcCTRLUnpack(self, "PSocclusionQuery")
 
         self.psVarList                = xrcCTRLUnpack(self, "PSVarList", {EVT_LISTBOX:self.OnSelPSVar})
         self.psVarName                = xrcCTRLUnpack(self, "PSVar_name")
@@ -67,7 +70,17 @@ class MainFrame(wx.Frame):
         self.phTechnique  = xrcCTRLUnpack(self, "PHtechnique")
 
         # sequence controls
-        self.sList        = xrcCTRLUnpack(self, "SList")
+        self.seqList                    = xrcCTRLUnpack(self, "SeqList", {EVT_LISTBOX:self.OnSelSequence})
+        self.seqShader                  = xrcCTRLUnpack(self, "SEQshader")
+        self.seqTechnique               = xrcCTRLUnpack(self, "SEQtechnique")
+        self.seqFirstLightAlpha         = xrcCTRLUnpack(self, "SEQfirstLightAlpha")
+        self.seqShaderUpdatesEnabled    = xrcCTRLUnpack(self, "SEQshaderUpdatesEnabled")
+        self.seqMVPOnly                 = xrcCTRLUnpack(self, "SEQmvpOnly")
+
+        self.seqVarList                = xrcCTRLUnpack(self, "SeqVarList", {EVT_LISTBOX:self.OnSelSeqVar})
+        self.seqVarName                = xrcCTRLUnpack(self, "SeqVar_name")
+        self.seqVarValue               = xrcCTRLUnpack(self, "SeqVar_value")
+        self.seqVarVariable            = xrcCTRLUnpack(self, "SeqVar_variable")
 
         # configuring controls
         self.rpEl = None
@@ -103,6 +116,12 @@ class MainFrame(wx.Frame):
     def OnSelPH(self, evt):
         self.UpdatePH()
 
+    def OnSelSequence(self, evt):
+        self.UpdateSequence()
+
+    def OnSelSeqVar(self, evt):
+        self.UpdateSeqVar()
+
     # -------------------------------------------------------------------------
     def UpdateRP(self):
         self.rpName.SetValue(self.rpEl.attributes.get('name').value)
@@ -110,6 +129,7 @@ class MainFrame(wx.Frame):
 
         self.rtList.Clear()
         self.rpVarList.Clear()
+        self.shaderAliasList.Clear()
         self.sectionList.Clear()
         self.psList.Clear()
 
@@ -121,7 +141,9 @@ class MainFrame(wx.Frame):
                      child.nodeName == "Int" or child.nodeName == "Texture":
                     self.rpVarList.Append(child.nodeName + ' <' + child.attributes.get('name').value + '>', child)
                 elif child.nodeName == "Shader":
-                    pass
+                    shaderName = child.attributes.get('name').value
+                    filename = child.attributes.get('file').value
+                    self.shaderAliasList.Append('%s -> %s' % (shaderName, filename))
                 elif child.nodeName == "Section":
                     self.sectionList.Append(child.attributes.get('name').value, child)
 
@@ -132,6 +154,9 @@ class MainFrame(wx.Frame):
         if self.rpVarList.GetCount() > 0:
             self.rpVarList.SetSelection(0)
         self.UpdateRPVar()
+
+        if self.shaderAliasList.GetCount() > 0:
+            self.shaderAliasList.SetSelection(0)
 
         if self.sectionList.GetCount() > 0:
             self.sectionList.SetSelection(0)
@@ -225,6 +250,9 @@ class MainFrame(wx.Frame):
             if el.attributes.get('shadowEnabledCondition') is not None:
                 self.psShadowEnabledCondition.SetValue(el.attributes.get('shadowEnabledCondition').value)
             else: self.psShadowEnabledCondition.SetValue('No')
+            if el.attributes.get('occlusionQuery') is not None:
+                self.psOcclusionQuery.SetValue(el.attributes.get('occlusionQuery').value)
+            else: self.psOcclusionQuery.SetValue('No')
     
             for child in el.childNodes:
                 if child.nodeType == Node.ELEMENT_NODE:
@@ -282,7 +310,7 @@ class MainFrame(wx.Frame):
             self.psVarVariable.SetValue('')
 
     def UpdatePH(self):
-        self.sList.Clear()
+        self.seqList.Clear()
 
         if self.phList.GetCount() > 0:
             n = self.phList.GetSelection()
@@ -291,8 +319,8 @@ class MainFrame(wx.Frame):
             self.phName.SetValue(el.attributes.get('name').value)
             self.phShader.SetValue(el.attributes.get('shader').value)
             self.phSort.SetValue(el.attributes.get('sort').value)
-            if el.attributes.get('lights') is not None:
-                self.phLights.SetValue(el.attributes.get('lights').value)
+            if el.attributes.get('lightMode') is not None:
+                self.phLights.SetValue(el.attributes.get('lightMode').value)
             else: self.phLights.SetValue('Off')
             if el.attributes.get('technique') is not None:
                 self.phTechnique.SetValue(el.attributes.get('technique').value)
@@ -301,16 +329,74 @@ class MainFrame(wx.Frame):
             for child in el.childNodes:
                 if child.nodeType == Node.ELEMENT_NODE:
                     if child.nodeName == "Sequence":
-                        self.sList.Append(child.attributes.get('shader').value, child)
+                        self.seqList.Append(child.attributes.get('shader').value, child)
         else:
             self.phName.SetValue('')
             self.phShader.SetValue('')
-            self.phFourcc.SetValue('')
-            #self.phSort.SetValue('FrontToBack')
-            #self.phLights.SetValue('Off')
             self.phSort.SetSelection(-1)
             self.phLights.SetSelection(-1)
             self.phTechnique.SetValue('')
+        if self.seqList.GetCount() > 0:
+            self.seqList.SetSelection(0)
+        self.UpdateSequence()
+
+    def UpdateSequence(self):
+        self.seqVarList.Clear()
+
+        if self.seqList.GetCount() > 0:
+            n = self.seqList.GetSelection()
+            el = self.seqList.GetClientData(n)
+
+            self.seqShader.SetValue(el.attributes.get('shader').value)
+            self.seqTechnique.SetValue(el.attributes.get('technique').value)
+            if el.attributes.get('firstLightAlpha') is not None:
+                self.seqFirstLightAlpha.SetValue(el.attributes.get('firstLightAlpha').value)
+            else: self.seqFirstLightAlpha.SetValue('No')
+            if el.attributes.get('shaderUpdates') is not None:
+                self.seqShaderUpdatesEnabled.SetValue(el.attributes.get('shaderUpdates').value)
+            else: self.seqShaderUpdatesEnabled.SetValue('No')
+            if el.attributes.get('mvpOnly') is not None:
+                self.seqMVPOnly.SetValue(el.attributes.get('mvpOnly').value)
+            else: self.seqMVPOnly.SetValue('No')
+            for child in el.childNodes:
+                if child.nodeType == Node.ELEMENT_NODE:
+                    if child.nodeName == "Float" or child.nodeName == "Float4" or\
+                       child.nodeName == "Int" or child.nodeName == "Texture":
+                        self.seqVarList.Append(child.nodeName + ' <' + child.attributes.get('name').value + '>', child)
+
+        else:
+            self.seqShader.SetValue('')
+            self.seqTechnique.SetValue('')
+            self.seqFirstLightAlpha.SetSelection(-1)
+            self.seqShaderUpdatesEnabled.SetSelection(-1)
+            self.seqMVPOnly.SetSelection(-1)
+
+        if self.seqVarList.GetCount() > 0:
+            self.seqVarList.SetSelection(0)
+        self.UpdateSeqVar()
+
+    def UpdateSeqVar(self):
+        if self.seqVarList.GetCount() > 0:
+            n = self.seqVarList.GetSelection()
+            el = self.seqVarList.GetClientData(n)
+    
+            self.seqVarName.SetValue(el.attributes.get('name').value)
+            if el.attributes.get('value') is not None:
+                #self.seqVarVariable.Enable(False)
+                self.seqVarVariable.SetValue('')
+                #self.seqVarValue.Enable(True)
+                self.seqVarValue.SetValue(el.attributes.get('value').value)
+            else:
+                #self.seqVarValue.Enable(False)
+                self.seqVarValue.SetValue('')
+                #self.seqVarVariable.Enable(True)
+                self.seqVarVariable.SetValue(el.attributes.get('variable').value)
+        else:
+            self.seqVarName.SetValue('')
+            #self.seqVarValue.Enable(True)
+            self.seqVarValue.SetValue('')
+            #self.seqVarVariable.Enable(True)
+            self.seqVarVariable.SetValue('')
 
 #--------------------------------------------------------------------------
 class MainApp(wx.App):
