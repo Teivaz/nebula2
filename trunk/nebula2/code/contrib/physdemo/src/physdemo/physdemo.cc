@@ -8,7 +8,7 @@
 
     <dl>
      <dt>-input</dt>
-       <dd>input binding script to run, default is: home:bin/stdinput.tcl</dd>
+       <dd>input binding script to run, default is: proj:bin/stdinput.tcl</dd>
      <dt>-fullscreen</dt>
        <dd>if present, then nviewer will go fullscreen</dd>
      <dt>-alwaysontop</dt>
@@ -62,7 +62,7 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* inputArg  = args.GetStringArg("-input", "home:bin/stdinput.tcl");
+    const char* inputArg  = args.GetStringArg("-input", "proj:bin/stdinput.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg           = args.GetBoolArg("-help");
@@ -79,7 +79,7 @@ main(int argc, const char** argv)
                "Command line args:\n"
                "------------------\n"
                "-help                   show this help\n"
-               "-input                  input binding script to run, default is: home:bin/stdinput.tcl\n"
+               "-input                  input binding script to run, default is: proj:bin/stdinput.tcl\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
                "-alwaysontop            present the window will be allways on top\n"
                "-w                      width of window to open (default: 640)\n"
@@ -96,15 +96,15 @@ main(int argc, const char** argv)
     nDisplayMode2 displayMode;
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true, false, 0);
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, true, false, 0);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true, false, 0);
     }
 
     // initialize Nebula runtime

@@ -56,15 +56,19 @@ PhysDemoApp::Open()
     this->refGfxServer      = (nGfxServer2*)      kernelServer->New("nd3d9server", "/sys/servers/gfx");
     this->refConServer      = (nConServer*)       kernelServer->New("nconserver", "/sys/servers/console");
     this->refResourceServer = (nResourceServer*)  kernelServer->New("nresourceserver", "/sys/servers/resource");
-    this->refSceneServer    = (nSceneServer*)     kernelServer->New("nmrtsceneserver", "/sys/servers/scene");
+    this->refSceneServer    = (nSceneServer*)     kernelServer->New("nsceneserver", "/sys/servers/scene");
     this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
-    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
+    this->refShadowServer   = (nShadowServer2*)   kernelServer->New("nshadowserver2", "/sys/servers/shadow");
 
+    //  Set the proj: assign
+    nFileServer2*   fs = static_cast<nFileServer2*>(kernelServer->Lookup("/sys/servers/file2"));
+    fs->SetAssign("proj", "home:code/contrib/physdemo");
+    
     // run the startup script
-    this->refScriptServer->RunScript("home:bin/startup.tcl", result);
+    this->refScriptServer->RunScript("proj:bin/startup.tcl", result);
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -100,7 +104,6 @@ PhysDemoApp::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->camera.SetFarPlane(500.0f);
     this->refGfxServer->SetCamera(this->camera);
-    this->refGfxServer->OpenDisplay();
 
     // open the scene server
     if (!this->refSceneServer->Open())
@@ -1006,7 +1009,7 @@ void PhysDemoApp::RenderWorld(nTime time, uint frameId)
     // Complete the rendering of the scene
     this->refSceneServer->EndScene();
     this->refSceneServer->RenderScene();             // renders the 3d scene
-    this->refGuiServer->Render();                    // render the GUI elements
+    //this->refGuiServer->Render(); // jamba: this is private now?                   // render the GUI elements
     this->refConServer->Render();                    // render the console and watch variables
     this->refSceneServer->PresentScene();            // present the frame
 }

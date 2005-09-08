@@ -1,14 +1,20 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
-new nlightnode light
-    sel light
-    .setposition 0 8 5
-    .setvector LightDiffuse 1 0.8 0.7 1
-    .setvector LightSpecular 0.9 0.8 0.5 1
-    .setvector LightAmbient 0.5 0.4 0.4 1
-    .setvector LightDiffuse1  0.3 0.3 0.3 1.0
-    .setvector LightSpecular1 0.3 0.3 0.3 1.0
+new ntransformnode stdlight
+    sel stdlight
+    .seteuler -45.000000 45.000000 0.000000
+    new nlightnode l
+        sel l
+        .setlocalbox 0.000000 0.000000 0.000000 1000.000000 1000.000000 1000.000000
+        .setposition 0.000000 0.000000 150.000000
+        .setfloat "LightRange" 1000.000000
+        .setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightSpecular" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightAmbient" 0.250000 0.250000 0.250000 1.000000
+        .settype "Directional"
+        .setcastshadows true
+    sel ..
 sel ..
 # ---
 # Eof
