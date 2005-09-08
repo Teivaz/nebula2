@@ -13,22 +13,27 @@ set oldCwd [psel]
 #   set up resource assigns
 #-------------------------------------------------------------------------------
 sel /sys/servers/file2
-    set proj [.manglepath "proj:"]
     set home [.manglepath "home:"]
-    set nebhome [.manglepath "home:../../.."]
+    
+    .setassign "data"	  "proj:data/"
+    .setassign "meshes"   "proj:export/meshes/"
+    .setassign "textures" "proj:export/textures/"
+    .setassign "gfxlib"   "home:gfxlib/"
+    .setassign "lights"   "proj:export/lightdefs/"
+    .setassign "shapes"   "proj:export/shapedefs/"
     
     if {[exists /sys/servers/gfx]} {
         set featureSet [/sys/servers/gfx.getfeatureset]
         if {($featureSet =="dx9") || ($featureSet == "dx9flt")} {   
-            .setassign "shaders" "$nebhome/data/shaders/2.0/"
-            puts "Shader directory: $nebhome/data/shaders/2.0"
+            .setassign "shaders" "data:shaders/2.0/"
+            /sys/servers/scene.setrenderpathfilename "home:data/shaders/dx9hdr_renderpath.xml"
         } else {
-            .setassign "shaders" "$nebhome/data/shaders/fixed/"
-            puts "Shader directory: $nebhome/data/shaders/fixed"
+            .setassign "shaders" "data:shaders/fixed/"
+            /sys/servers/scene.setrenderpathfilename "home:data/shaders/dx7_renderpath.xml"
         }
     } else {
-        .setassign "shaders" "$nebhome/data/shaders/2.0/"
-        puts "Shader directory: $nebhome/data/shaders/2.0"
+        .setassign "shaders" "data:shaders/2.0/"
+        /sys/servers/scene.setrenderpathfilename "home:data/shaders/dx9_renderpath.xml")
     }
 
     # enable zFail shadow rendering
@@ -36,12 +41,6 @@ sel /sys/servers/file2
         /sys/servers/shadow.setusezfail true
     }
     
-    # stuff in export
-    .setassign "meshes"   "home:export/meshes/"
-    .setassign "textures" "home:export/textures/"
-    .setassign "gfxlib"   "$nebhome/gfxlib/"
-    .setassign "lights"   "home:export/lightdefs/"
-    .setassign "shapes"   "home:export/shapedefs/"
 
 #-------------------------------------------------------------------------------
 #   restore original directory
@@ -71,7 +70,7 @@ proc OnGuiServerOpen {} {
     set skin [/sys/servers/gui.newskin system]
     sel $skin
     # set texture path pre- and postfix (NOTE: don't change path to textures:system!!!)
-    .settextureprefix "home:../../../export/textures/system/"
+    .settextureprefix "home:export/textures/system/"
     .settexturepostfix ".dds"
 
     # active and inactive window modulation color
