@@ -71,7 +71,7 @@ begintarget npyviewer
         ndirect3d9
         ntoollib
         ndshow
-	  ndsound
+        ndsound
         ngui
         nnetwork
         npythonserver
