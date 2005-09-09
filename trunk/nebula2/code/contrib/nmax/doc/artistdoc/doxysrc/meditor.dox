@@ -120,8 +120,9 @@
     @section NMaxHowtoMEditorShaderXMLFile Shaders and the shader.xml file
 
     Shader files reside under <b>"home:data/shaders</b>. Each supported render path has its 
-    own subdirectory where the actual FX files are located (<b>2.0</b> for DX9 shaders, @b fixed  
-    for fixed function DX7 shaders). Common shader files are located in the @b lib subdirectory.
+    own subdirectory where the actual effect(.fx) files are located (<b>2.0</b> for DX9 shaders,  
+    @b fixed for fixed function DX7 shaders). Common shader files are located in the @b lib 
+    subdirectory.
     
     The <b>shaders.xml</b> file describes the shader properties for the 3DS Max toolkit plugin, 
     for instance which shader attributes exist, which shader attributes should be shown 
@@ -136,6 +137,15 @@
         - add a new entry to the renderpath.xml file in proj:data/shaders/2.0 and 
           proj:data/shaders/fixed
         - finally restart 3DS Max so that shaders.xml is re-parsed
+
+    You can also edit the properties of the <tt>shader.xml</tt> with <b>Simple Shader Browser</b> 
+    which can be found in the <tt>$nebula2/utils</tt> directory. Run <tt>shader.py</tt> and it will
+    brings the window like the following image: 
+
+    @image html shdbrowser.png "Simple Shader Browser"
+
+    Make sure you've aleady installed python 2.4 and wxpython 2.6.x (or higher for both of them) 
+    on your system before you run <tt>shader.py</tt>.
 
     That's all there is to adding a new shader. 
 
