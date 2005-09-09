@@ -18,6 +18,16 @@
         </dd>
     </dl>
 
+    <dl>
+      <dt>Q: When 3DS Max starts it fails with a message box which tells initialization of 
+          the plugin was failed. How do I solve it? 
+        <dd>
+        Make it sure that you copied all necessary files not only <tt>nmaxtoolbox.dlu</tt> 
+        but also all other files to <tt>$3dsmax/scripts</tt> directory.
+        See @ref NMaxInstallation page for more details about the installation.
+        </dd>
+      </dt>
+    </dl>
 
     @section NMaxFAQMaterial Material
 
