@@ -15,8 +15,32 @@
 ---------------------------------------------------------------------------------
 fn nPreview = 
 (
-    exportFileName = maxFileName
-    exportFileName = getFilenameFile exportFileName
+    needSave = getSaveRequired()
+
+    exportFileName = ""
+
+    if needSave == true then
+    (
+        -- displays standard 3ds max file save dialog.
+        filename = getMAXSaveFileName()
+        if filename != undefined do
+        (
+            -- save the scene with the given filename
+            -- and specify system 'dirty' flag to false
+            saveMaxFile filename clearNeedSaveFlag:true
+                
+            -- now, try to export it.
+            exportFileName = getFilenameFile filename
+            -- specify the extension.
+            exportFileName += ".n2"
+         )
+    )
+    else
+    (
+        exportFileName = maxFileName
+        exportFileName = getFilenameFile exportFileName
+    )
+
     exportFileName += ".n2"
 
     nExportScene exportFileName -1
