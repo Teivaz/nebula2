@@ -102,9 +102,7 @@ nD3D9Server::nD3D9Server() :
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
 
-    // open the app window
-    this->windowHandler.OpenWindow();
-
+    // HACK:
     // we used to open the window here, but we now do it lazily in OpenDisplay()
     // to give the calling app the chance to set (e.g.) the window's name and 
     // icon before it is opened.
