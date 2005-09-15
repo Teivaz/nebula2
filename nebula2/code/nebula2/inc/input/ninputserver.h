@@ -30,6 +30,8 @@ public:
     virtual ~nInputServer();
     /// get instance pointer
     static nInputServer* Instance();
+    /// open the input server
+    virtual void Open();
     /// per frame trigger 
     virtual void Trigger(double time);
     /// create a new input event object

@@ -23,6 +23,8 @@ public:
     nDI8Server();
     /// destructor
     virtual ~nDI8Server();
+    /// initialize DInput8
+    virtual void Open();
     /// trigger the input server
     virtual void Trigger(double time);
 
