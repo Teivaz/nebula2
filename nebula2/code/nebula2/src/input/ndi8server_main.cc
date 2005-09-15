@@ -20,10 +20,7 @@ nDI8Server::nDI8Server() :
     curJoystick(0),
     curKeyboard(0)
 {
-    if (!this->InitDirectInput())
-    {
-        n_error("nDI8Server: Could not initialize DirectInput8!\n");
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -33,5 +30,22 @@ nDI8Server::~nDI8Server()
 {
     this->KillDirectInput();
 }
+
+//------------------------------------------------------------------------------
+/**
+    InitDirectInput is not done in the constructor anymore. When using Mangalore, a window hasn't been created
+    yet at that point.
+*/
+void
+nDI8Server::Open()
+{
+    nInputServer::Open();
+    
+    if (!this->InitDirectInput())
+    {
+        n_error("nDI8Server: Could not initialize DirectInput8!\n");
+    }
+}
+
 
 //------------------------------------------------------------------------------

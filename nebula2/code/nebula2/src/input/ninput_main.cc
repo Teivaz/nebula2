@@ -289,6 +289,15 @@ nInputServer::~nInputServer()
 /**
 */
 void
+nInputServer::Open()
+{
+    //  empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 nInputServer::BeginScripts(void)
 {
     n_assert(this->act_script == 0);
