@@ -16,7 +16,7 @@
 #include "xbox/nxbwrapper.h"
 #elif defined(__WIN32__)
 #include <windows.h>
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__MACOSX__)
 #include <time.h>
 #include <dlfcn.h>
 #endif

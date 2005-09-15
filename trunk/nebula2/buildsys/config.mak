@@ -35,6 +35,9 @@ endif
 ifeq ($(OSTYPE),darwin)
   N_PLATFORM = __MACOSX__
 endif
+ifeq ($(OSTYPE),darwin8.0)
+  N_PLATFORM = __MACOSX__
+endif
 
 #---------------------------------------------------------------------
 # N_TARGETDIR - where the exe and the lib files should stay

@@ -105,7 +105,7 @@ nRemoteServer::IsOpen() const
 /**
 */
 inline
-nRemoteServer::nClientContext::nClientContext(int cid, nRemoteServer* owner) :
+nRemoteServer::nClientContext::nClientContext(int cid, nRemoteServer* /*owner*/) :
     clientId(cid)
 {
     // empty

@@ -115,7 +115,7 @@ nFileServer2::GetAssign(const nString& assignName)
     }
     else
     {
-        n_printf("Assign '%s' not defined!\n", assignName);
+        n_printf("Assign '%s' not defined!\n", assignName.Get());
         return NULL;
     }
 }
@@ -616,16 +616,16 @@ nFileServer2::CopyFile(const nString& from, const nString& to)
         return ::CopyFile(mangledFromPath.Get(), mangledToPath.Get(), FALSE) ? true : false;
     #else
         nFile* fromFile = this->NewFileObject();
-        if (!fromFile->Open(from, "rb"))
+        if (!fromFile->Open(from.Get(), "rb"))
         {
-            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from);
+            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from.Get());
             fromFile->Release();
             return false;
         }
         nFile* toFile = this->NewFileObject();
-        if (!toFile->Open(to, "wb"))
+        if (!toFile->Open(to.Get(), "wb"))
         {
-            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to);
+            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to.Get());
             fromFile->Close();
             fromFile->Release();
             toFile->Release();
@@ -700,7 +700,7 @@ nFileServer2::CreateFileNode(const nString& name)
     path += name;
     if (kernelServer->Lookup(path.Get()))
     {
-        n_error("nFileServer2: file node '%s' exists!", name);
+        n_error("nFileServer2: file node '%s' exists!", name.Get());
         return 0;
     }
     nFileNode* fileNode = (nFileNode*) kernelServer->New("nfilenode", path.Get());

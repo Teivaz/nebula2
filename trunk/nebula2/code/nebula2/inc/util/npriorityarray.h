@@ -84,11 +84,11 @@ nPriorityArray<TYPE>::nPriorityArray(int size) :
 */
 template<class TYPE>
 void
-nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src) :
-    numElements(src.numElements),
-    maxElements(src.maxElements),
-    minPriElementIndex(src.minPriElementIndex)
+nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src)
 {
+    numElements = src.numElements;
+    maxElements = src.maxElements;
+    minPriElementIndex = src.minPriElementIndex;
     n_assert(0 == this->elements);
     this->elements = n_new_array(Element, this->maxElements);
     for (int i = 0; i < this->numElements; i++)

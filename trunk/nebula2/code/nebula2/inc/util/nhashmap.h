@@ -105,7 +105,7 @@ nHashMap::GetHashSize() const
     The copy constructor is private and thus disabled.
 */
 inline
-nHashMap::nHashMap(const nHashMap& rhs)
+nHashMap::nHashMap(const nHashMap& /*rhs*/)
 {
     // empty
 }
@@ -116,7 +116,7 @@ nHashMap::nHashMap(const nHashMap& rhs)
 */
 inline
 void
-nHashMap::operator=(const nHashMap& rhs)
+nHashMap::operator=(const nHashMap& /*rhs*/)
 {
     // empty
 }
