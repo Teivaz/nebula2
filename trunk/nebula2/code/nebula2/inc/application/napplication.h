@@ -64,6 +64,10 @@ public:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// set optional render path (else autoselect)
+    void SetRenderPath(const nString& p);
+    /// get optional render path
+    const nString& GetRenderPath() const;
     /// open the application
     virtual bool Open();
     /// close the application
@@ -178,7 +182,8 @@ private:
     nString localeTable;
     nDisplayMode2 displayMode;
     nCamera2 gfxCamera;
-
+    nString renderPath;
+    
     nTime stateTransitionTime;
     nTime time;
     nTime stateTime;
@@ -307,6 +312,26 @@ const nDisplayMode2&
 nApplication::GetDisplayMode() const
 {
     return this->displayMode;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nApplication::SetRenderPath(const nString& p)
+{
+    this->renderPath = p;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nApplication::GetRenderPath() const
+{
+    return this->renderPath;
 }
 
 //------------------------------------------------------------------------------
