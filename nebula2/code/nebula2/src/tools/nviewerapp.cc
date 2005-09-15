@@ -134,6 +134,7 @@ nViewerApp::Open()
     // late initialization of input server, because it relies on 
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    this->refInputServer->Open();
     this->DefineInputMapping();
 
     this->refAudioServer->Open();
