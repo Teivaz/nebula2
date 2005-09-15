@@ -33,6 +33,7 @@ begintarget tutorialapp_exe
         microtcl
         ngui
         ndsound
+        ntoollib
     }
 endtarget
 
@@ -50,6 +51,7 @@ beginworkspace nApplicationIntroTutorial
         microtcl
         ngui
         ndsound
+        ntoollib
     }
 endworkspace
 
