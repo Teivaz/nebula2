@@ -7,7 +7,7 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(ndinput8);
-nNebulaUsePackage(ndsaudioserver3);
+nNebulaUsePackage(ndsound);
 nNebulaUsePackage(napplication);
 nNebulaUsePackage(tutorialapp_exe);
 
@@ -22,14 +22,14 @@ void main()
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(ndinput8);
-    kernelServer.AddPackage(ndsaudioserver3);
+    kernelServer.AddPackage(ndsound);
     kernelServer.AddPackage(napplication);
     kernelServer.AddPackage(tutorialapp_exe);
     
     n_printf("Go back to sleep, bruce.\n");
     
     nTutorialApp* theApp = static_cast<nTutorialApp*>(kernelServer.New("ntutorialapp", "theApp"));
-    nDisplayMode2 disp("HelloWorld!", nDisplayMode2::Windowed, 100, 100, 600, 400, false);
+    nDisplayMode2 disp("HelloWorld!", nDisplayMode2::Windowed, 100, 100, 600, 400, false, false, "Icon");
     theApp->SetDisplayMode(disp);
     // For this tutorial we want our project directory to be the nebula2 directory so 
     // we don't set one here since the default project directory is the nebula2 directory.
