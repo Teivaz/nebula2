@@ -74,6 +74,11 @@ proc OnGraphicsStartup {} {
         }
     }
     sel $oldCwd
+    
+    # enable zFail shadow rendering
+    if {[exists /sys/servers/shadow]} {
+        /sys/servers/shadow.setusezfail true
+    }
 }
 
 #-------------------------------------------------------------------------------
