@@ -88,7 +88,8 @@ nApplication::Open()
     this->refAudioServer     = this->CreateAudioServer();
     this->refPrefServer      = this->CreatePrefServer();
     this->refLocaleServer    = this->CreateLocaleServer();
-
+    this->refInputServer     = this->CreateInputServer();
+    
     // initialize preferences server
     this->refPrefServer->SetCompanyName(this->GetCompanyName());
     this->refPrefServer->SetApplicationName(this->GetAppName());
@@ -148,10 +149,8 @@ nApplication::Open()
 
     this->refVideoServer->Open();
 
-    // create the input server
     // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
-    this->refInputServer = this->CreateInputServer();
     this->refInputServer->Open();
     this->refScriptServer->RunFunction("OnMapInput", scriptResult);
 
