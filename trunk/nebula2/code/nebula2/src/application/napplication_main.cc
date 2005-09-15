@@ -132,6 +132,11 @@ nApplication::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->gfxCamera);
     this->refScriptServer->RunFunction("OnGraphicsStartup", scriptResult);
+    
+    if (!this->renderPath.IsEmpty())
+    {
+        this->refSceneServer->SetRenderPathFilename(this->renderPath);
+    }
 
     // open the scene server.
     // this also opens the display, which must be done before the input server is created
@@ -147,6 +152,7 @@ nApplication::Open()
     // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer = this->CreateInputServer();
+    this->refInputServer->Open();
     this->refScriptServer->RunFunction("OnMapInput", scriptResult);
 
     // initialize audio
@@ -520,7 +526,7 @@ nApplication::CreateResourceServer()
 nSceneServer*
 nApplication::CreateSceneServer()
 {
-    return (nSceneServer*) kernelServer->New("nmrtsceneserver", "/sys/servers/scene");
+    return (nSceneServer*) kernelServer->New("nsceneserver", "/sys/servers/scene");
 }
 
 //------------------------------------------------------------------------------
