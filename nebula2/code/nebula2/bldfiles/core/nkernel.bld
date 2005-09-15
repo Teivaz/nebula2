@@ -162,7 +162,7 @@ beginmodule nfileserver2
         nfile ndirectory
     }
     setheaders { nfileserver2 nfile ndirectory }
-    setframeworks_macosx { Carbon }
+    setframeworks_macosx { Carbon CoreFoundation }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nfilenode
@@ -225,6 +225,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nwin32wrapper
     setdir kernel
+    setplatform win32
     setfiles   { nwin32wrapper }
     setheaders { nwin32wrapper }
 endmodule

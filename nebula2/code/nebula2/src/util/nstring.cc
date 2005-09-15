@@ -116,8 +116,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
             case 'C':
             {
                 item_len = 2;
-                va_arg(argList, char);
-
+                va_arg(argList, int/*char promotion*/);
                 break;
             }
 
@@ -128,7 +127,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                 const char* next_arg = va_arg(argList, const char*);
                 if (next_arg == NULL)
                 {
-                                       item_len = 6;  // "(null)"
+                    item_len = 6;  // "(null)"
                 }
                 else
                 {
@@ -168,7 +167,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                     break;
                 }
 
-                                // floats
+                // floats
                 case 'e':
                 case 'g':
                 case 'G':
@@ -199,7 +198,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                     break;
                 }
 
-                                // pointer to void
+                // pointer to void
                 case 'p':
                 {
                     va_arg(argList, void*);
@@ -227,4 +226,3 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
 
     return max_len;
 }
-
