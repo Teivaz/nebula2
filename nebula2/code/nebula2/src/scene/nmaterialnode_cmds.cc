@@ -30,7 +30,7 @@ n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_setshader_s", 'SSHD', n_setshader);
-    cl->AddCmd("s_getshader_s", 'GSHD', n_getshader);
+    cl->AddCmd("s_getshader_v", 'GSHD', n_getshader);
     cl->EndCmds();
 }
 
