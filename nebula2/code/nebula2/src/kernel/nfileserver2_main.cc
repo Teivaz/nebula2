@@ -607,7 +607,7 @@ nFileServer2::CopyFile(const nString& from, const nString& to)
         nString mangledToPath   = this->ManglePath(to);
 
         // if the target file exists, remove the read/only file attribute
-        if (this->FileExists(mangledToPath.Get()))
+        if (this->FileExists(mangledToPath))
         {
             DWORD fileAttrs = GetFileAttributes(mangledToPath.Get());
             fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
