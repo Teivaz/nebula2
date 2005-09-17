@@ -113,7 +113,7 @@ inline
 void
 nShadowServer2::SetEnableShadows(bool b)
 {
-    this->shadowsEnabled = true;
+    this->shadowsEnabled = b;
 }
 
 //------------------------------------------------------------------------------
