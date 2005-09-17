@@ -1170,7 +1170,6 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
 void
 nSceneServer::DoRenderPath(nRpSection& rpSection)
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
     uint numPasses = rpSection.Begin();
     uint passIndex;
 

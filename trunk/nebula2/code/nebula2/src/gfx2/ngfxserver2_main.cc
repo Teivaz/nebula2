@@ -915,7 +915,7 @@ nGfxServer2::DrawShape(ShapeType /*type*/, const matrix44& /*model*/, const vect
     Render a shape without shader management.
 */
 void
-nGfxServer2::DrawShapeNS(ShapeType type, const matrix44& model)
+nGfxServer2::DrawShapeNS(ShapeType /*type*/, const matrix44& /*model*/)
 {
     // empty
 }
@@ -925,7 +925,7 @@ nGfxServer2::DrawShapeNS(ShapeType type, const matrix44& model)
     Draw prmitives with the given model matrix with given color.
 */
 void 
-nGfxServer2::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color)
+nGfxServer2::DrawShapePrimitives(PrimitiveType /*type*/, int /*numPrimitives*/, const vector3* /*vertexList*/, int /*vertexWidth*/, const matrix44& /*model*/, const vector4& /*color*/)
 {
     // empty
 }
@@ -935,7 +935,7 @@ nGfxServer2::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const ve
     Draw indexed prmitives with the given model matrix with given color.
 */
 void
-nGfxServer2::DrawShapeIndexedPrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int numVertices, int vertexWidth, void* indices, IndexType indexType, const matrix44& model, const vector4& color)
+nGfxServer2::DrawShapeIndexedPrimitives(PrimitiveType /*type*/, int /*numPrimitives*/, const vector3* /*vertexList*/, int /*numVertices*/, int /*vertexWidth*/, void* /*indices*/, IndexType /*indexType*/, const matrix44& /*model*/, const vector4& /*color*/)
 {
     // empty
 }

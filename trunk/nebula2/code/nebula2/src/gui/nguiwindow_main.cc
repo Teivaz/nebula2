@@ -461,7 +461,7 @@ nGuiWindow::Render()
     Set the close requested flag. This will start the fade out.
 */
 void
-nGuiWindow::SetCloseRequested(bool b)
+nGuiWindow::SetCloseRequested(bool /*b*/)
 {
     if (!this->closeRequested)
     {

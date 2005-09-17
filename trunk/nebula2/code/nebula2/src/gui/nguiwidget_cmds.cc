@@ -157,7 +157,7 @@ n_isshown(void* slf, nCmd* cmd)
     Enable the widget for user interaction.
 */
 static void
-n_enable(void* slf, nCmd* cmd)
+n_enable(void* slf, nCmd* /*cmd*/)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
     self->Enable();
@@ -175,7 +175,7 @@ n_enable(void* slf, nCmd* cmd)
     Disable the widget.
 */
 static void
-n_disable(void* slf, nCmd* cmd)
+n_disable(void* slf, nCmd* /*cmd*/)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
     self->Disable();

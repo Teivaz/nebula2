@@ -103,7 +103,7 @@ n_addpicture(void* slf, nCmd* cmd)
     Removes all pictures from the slideshow
 */
 static void
-n_removeallpictures(void* slf, nCmd* cmd)
+n_removeallpictures(void* slf, nCmd* /*cmd*/)
 {
     nGuiSlideShow* self = (nGuiSlideShow*) slf;
     self->RemoveAllPictures();

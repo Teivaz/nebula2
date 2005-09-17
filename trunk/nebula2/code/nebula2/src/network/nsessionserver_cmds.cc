@@ -275,7 +275,7 @@ n_open(void* slf, nCmd* cmd)
     Close the session. The session will no longer be visible in the network.
 */
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nSessionServer* self = (nSessionServer*) slf;
     self->Close();

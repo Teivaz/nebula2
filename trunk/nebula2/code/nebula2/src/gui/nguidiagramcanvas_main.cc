@@ -334,8 +334,6 @@ nGuiDiagramCanvas::OnShow()
 
     int i;
     rectangle canvasrect = this->GetRect();
-    const vector2& v0 = rect.v0;
-    const vector2& v1 = rect.v1;
 
     // Markers on the Y-Axis
     float yStride = (1.0f - this->curveOffset[Bottom] - this->curveOffset[Top]) / (numYMarkers + 1);

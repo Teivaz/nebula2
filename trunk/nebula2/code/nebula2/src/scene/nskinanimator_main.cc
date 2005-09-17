@@ -417,7 +417,7 @@ nSkinAnimator::SetAnimEvent(int stateIndex, int clipIndex, int trackIndex, int e
     End adding animation events.
 */
 void
-nSkinAnimator::EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex)
+nSkinAnimator::EndAnimEventTrack(int /*stateIndex*/, int /*clipIndex*/, int /*trackIndex*/)
 {
     // empty
 }
@@ -427,7 +427,7 @@ nSkinAnimator::EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex)
     End adding animation event tracks.
 */
 void
-nSkinAnimator::EndAnimEventTracks(int stateIndex, int clipIndex)
+nSkinAnimator::EndAnimEventTracks(int /*stateIndex*/, int /*clipIndex*/)
 {
     // empty
 }

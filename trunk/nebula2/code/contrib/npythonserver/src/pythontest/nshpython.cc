@@ -106,7 +106,7 @@ main(int argc, const char** argv)
             fflush(stdout);
 
             // get user input
-            bool lineOk = (gets(line) > 0);
+            lineOk = (gets(line) > 0);
             if (strlen(line) > 0)
             {
                 nString result;

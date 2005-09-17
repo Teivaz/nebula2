@@ -52,8 +52,6 @@ nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
     n_assert(nShaderState::InvalidParameter != this->shaderParam);
 
-    nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
-
     // get the active texture index from the render context
     nVariable* var = renderContext->GetVariable(this->channelVarHandle);
     n_assert(var);

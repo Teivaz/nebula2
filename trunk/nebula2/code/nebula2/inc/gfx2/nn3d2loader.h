@@ -124,7 +124,7 @@ nN3d2Loader::Open(nFileServer2* fs)
             // vertex components
             char* str;
             this->fileVertexComponents = 0;
-            while (str = strtok(0, N_WHITESPACE))
+            while ((str = strtok(0, N_WHITESPACE)))
             {
                 if (0 == strcmp(str, "coord"))          this->fileVertexComponents |= nMesh2::Coord;
                 else if (0 == strcmp(str, "normal"))    this->fileVertexComponents |= nMesh2::Normal;
@@ -218,7 +218,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
     n_assert(this->file);
 
     // check required buffer size
-    n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
+    n_assert((this->numVertices * this->vertexWidth * int(sizeof(float))) == bufferSize);
     float* endOfBuffer = ((float*)buffer) + (this->numVertices * this->vertexWidth);
 
     // load vertices
@@ -318,12 +318,12 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
     void* endOfBuffer = 0;
     if (Index16 == this->indexType)
     {
-        n_assert(bufferSize == (this->numIndices * sizeof(ushort)));
+        n_assert(bufferSize == (this->numIndices * int(sizeof(ushort))));
         endOfBuffer = ((ushort*)buffer) + this->numIndices;
     }
     else
     {
-        n_assert(bufferSize == (this->numIndices * sizeof(uint)));
+        n_assert(bufferSize == (this->numIndices * int(sizeof(uint))));
         endOfBuffer = ((uint*)buffer) + this->numIndices;
     }
 
@@ -383,7 +383,7 @@ nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
     n_assert(this->file);
 
     void* endOfBuffer = 0;
-    n_assert(bufferSize == (this->numEdges * 4 * sizeof(ushort)));
+    n_assert(bufferSize == (this->numEdges * 4 * int(sizeof(ushort))));
     endOfBuffer = ((ushort*)buffer) + this->numEdges * 4;
 
     nMesh2::Edge* edgeBuffer = (nMesh2::Edge*) buffer;

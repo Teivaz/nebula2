@@ -145,7 +145,7 @@ bool
 nMaterialNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     nShader2* shader = this->refShader;
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    // nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // FIXME FIXME FIXME
     // THIS IS A LARGE PERFORMANCE BOTTLENECK!

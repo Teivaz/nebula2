@@ -136,7 +136,7 @@ n_setclientguid(void* slf, nCmd* cmd)
     Finish configuring clients.
 */
 static void
-n_endclients(void* slf, nCmd* cmd)
+n_endclients(void* slf, nCmd* /*cmd*/)
 {
     nNetServer* self = (nNetServer*) slf;
     self->EndClients();
@@ -235,7 +235,7 @@ n_open(void* slf, nCmd* cmd)
     Close the server. The running session will be closed.
 */
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nNetServer* self = (nNetServer*) slf;
     self->Close();

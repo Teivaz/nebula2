@@ -34,7 +34,7 @@ nShader2::~nShader2()
     Override this method in a subclass.
 */
 int
-nShader2::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
+nShader2::UpdateInstanceStreamDecl(nInstanceStream::Declaration& /*decl*/)
 {
     return 0;
 }
@@ -196,7 +196,7 @@ nShader2::SetParams(const nShaderParams& /*params*/)
 /**
 */
 int
-nShader2::Begin(bool saveState)
+nShader2::Begin(bool /*saveState*/)
 {
     // empty, implement this method in a subclass
     return 0;
@@ -206,7 +206,7 @@ nShader2::Begin(bool saveState)
 /**
 */
 void
-nShader2::BeginPass(int pass)
+nShader2::BeginPass(int /*pass*/)
 {
     // empty, implement this method in a subclass
 }

@@ -141,7 +141,6 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
 
 //------------------------------------------------------------------------------
 /**
-/**
     This method must return the mesh usage flag combination required by
     this shape node class. Subclasses should override this method
     based on their requirements.

@@ -262,7 +262,7 @@ nGuiWidget::OnRButtonUp(const vector2& mousePos)
     events arrive within a double click time.
 */
 void
-nGuiWidget::OnDoubleClick(const vector2& mousePos)
+nGuiWidget::OnDoubleClick(const vector2& /*mousePos*/)
 {
     if (this->IsShown())
     {
@@ -478,7 +478,7 @@ nGuiWidget::OnRectChange(const rectangle& newRect)
     method is invoked on all registered event listeners.
 */
 void
-nGuiWidget::OnEvent(const nGuiEvent& event)
+nGuiWidget::OnEvent(const nGuiEvent& /*event*/)
 {
     // empty
 }

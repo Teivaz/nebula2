@@ -42,7 +42,7 @@ nOcclusionQuery::Begin()
 /**
 */
 void
-nOcclusionQuery::AddShapeQuery(nGfxServer2::ShapeType type, const matrix44& modelMatrix, const void* userData)
+nOcclusionQuery::AddShapeQuery(nGfxServer2::ShapeType /*type*/, const matrix44& /*modelMatrix*/, const void* /*userData*/)
 {
     // empty
 }
@@ -69,7 +69,7 @@ nOcclusionQuery::GetNumQueries() const
 /**
 */
 const void*
-nOcclusionQuery::GetUserData(int queryIndex)
+nOcclusionQuery::GetUserData(int /*queryIndex*/)
 {
     return 0;
 }
@@ -78,7 +78,7 @@ nOcclusionQuery::GetUserData(int queryIndex)
 /**
 */
 bool
-nOcclusionQuery::GetOcclusionStatus(int queryIndex)
+nOcclusionQuery::GetOcclusionStatus(int /*queryIndex*/)
 {
     return false;
 }

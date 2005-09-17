@@ -84,7 +84,6 @@ nGuiTickerWidget::RenderText()
         
         float endPositon = -this->textExtend.x;//screenSpaceRect.v0.x - this->textExtend.x;
         float startPosition = screenSpaceRect.v1.x;
-        float distance = startPosition - endPositon;
         
         float deltaDistance = unitsPerSecond * deltaTime;
 

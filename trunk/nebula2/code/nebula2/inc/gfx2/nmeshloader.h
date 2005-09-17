@@ -364,7 +364,7 @@ nMeshLoader::GetVertexComponents() const
 */
 inline
 bool
-nMeshLoader::ReadVertices(void* buffer, int bufferSize)
+nMeshLoader::ReadVertices(void* /*buffer*/, int /*bufferSize*/)
 {
     n_error("nMeshLoader::ReadVertices() called!");
     return false;
@@ -375,7 +375,7 @@ nMeshLoader::ReadVertices(void* buffer, int bufferSize)
 */
 inline
 bool
-nMeshLoader::ReadIndices(void* buffer, int bufferSize)
+nMeshLoader::ReadIndices(void* /*buffer*/, int /*bufferSize*/)
 {
     n_error("nMeshLoader::ReadIndices() called!");
     return false;
@@ -386,7 +386,7 @@ nMeshLoader::ReadIndices(void* buffer, int bufferSize)
 */
 inline
 bool
-nMeshLoader::ReadEdges(void* buffer, int bufferSize)
+nMeshLoader::ReadEdges(void* /*buffer*/, int /*bufferSize*/)
 {
     n_error("nMeshLoader::ReadEdges() called!");
     return false;

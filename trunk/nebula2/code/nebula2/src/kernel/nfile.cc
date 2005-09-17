@@ -223,7 +223,7 @@ nFile::Write(const void* buffer, int numBytes)
 /**
     reads a number of bytes from the file
 
-    @param buffer        buffer for data
+    @param buffer          buffer for data
     @param numBytes        number of bytes to read
     @return                number of bytes read
 

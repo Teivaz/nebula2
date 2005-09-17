@@ -327,7 +327,7 @@ nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
     Write start of persistent object with default constructor.
 */
 bool
-nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
+nPythonServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* /*owner*/)
 {
     n_assert(file);
     n_assert(o);
