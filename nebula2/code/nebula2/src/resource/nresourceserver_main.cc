@@ -306,7 +306,6 @@ void
 nResourceServer::OnRestored(int rsrcTypeMask)
 {
     int i;
-    bool retval = true;
     for (i = 1; i < nResource::InvalidResourceType; i <<= 1)
     {
         if (0 != (rsrcTypeMask & i))

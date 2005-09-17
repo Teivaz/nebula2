@@ -184,7 +184,7 @@ n_gettextcolor(void* slf, nCmd* cmd)
     Begin appending text.
 */
 static void
-n_beginappend(void* slf, nCmd* cmd)
+n_beginappend(void* slf, nCmd* /*cmd*/)
 {
     nGuiTextView* self = (nGuiTextView*) slf;
     self->BeginAppend();
@@ -220,7 +220,7 @@ n_appendline(void* slf, nCmd* cmd)
     Finish appending text.
 */
 static void
-n_endappend(void* slf, nCmd* cmd)
+n_endappend(void* slf, nCmd* /*cmd*/)
 {
     nGuiTextView* self = (nGuiTextView*) slf;
     self->EndAppend();

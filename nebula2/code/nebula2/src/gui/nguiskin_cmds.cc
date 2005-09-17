@@ -30,8 +30,6 @@ static void n_beginbrushes(void* slf, nCmd* cmd);
 static void n_addbrush(void* slf, nCmd* cmd);
 static void n_adddynamicbrush(void* slf, nCmd* cmd);
 static void n_endbrushes(void* slf, nCmd* cmd);
-static void n_setbuttonsound(void* slf, nCmd* cmd);
-static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
 static void n_setsoundvolume(void* slf, nCmd* cmd);
@@ -589,7 +587,7 @@ n_getwindowborder(void* slf, nCmd* cmd)
     Begin adding brushes. This will clear the current brush definitions.
 */
 static void
-n_beginbrushes(void* slf, nCmd* cmd)
+n_beginbrushes(void* slf, nCmd* /*cmd*/)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
     self->BeginBrushes();
@@ -660,7 +658,7 @@ n_adddynamicbrush(void* slf, nCmd* cmd)
     Finish adding brushes.
 */
 static void
-n_endbrushes(void* slf, nCmd* cmd)
+n_endbrushes(void* slf, nCmd* /*cmd*/)
 {
     nGuiSkin* self = (nGuiSkin*) slf;
     self->EndBrushes();

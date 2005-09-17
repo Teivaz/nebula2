@@ -605,8 +605,6 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
         rectUV.v1.y -= (rectMesh.v0.y - rect.v0.y) * heightScale;
     }
 
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-
     // compute modulated color
     vector4 modColor(color.x * this->globalColor.x,
                      color.y * this->globalColor.y,
@@ -1266,7 +1264,7 @@ nGuiServer::DiscardWindows(const char* className)
                 child->Release();
             }
         }
-        while (child = nextChild);
+        while ((child = nextChild));
     }
 }
 
@@ -1303,7 +1301,7 @@ nGuiServer::FindWindowByClass(const char* className, nGuiWindow* curWindow)
             {
                 return (nGuiWindow*) child;
             }
-        } while (child = nextChild);
+        } while ((child = nextChild));
     }
     return 0;
 }

@@ -38,7 +38,7 @@ nLightNode::HasLight() const
     instances which are lit by this light.
 */
 const nLight&
-nLightNode::ApplyLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform, const vector4& shadowLightMask)
+nLightNode::ApplyLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& lightTransform, const vector4& shadowLightMask)
 {
     this->light.SetTransform(lightTransform);
     this->light.SetRange(this->shaderParams.GetArg(nShaderState::LightRange).GetFloat());
@@ -57,7 +57,7 @@ nLightNode::ApplyLight(nSceneServer* sceneServer, nRenderContext* renderContext,
     when rendering with the lighting model "shader".
 */
 const nLight&
-nLightNode::RenderLight(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& lightTransform)
+nLightNode::RenderLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& lightTransform)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->SetTransform(nGfxServer2::Light, lightTransform);

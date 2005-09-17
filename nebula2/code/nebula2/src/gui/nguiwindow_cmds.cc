@@ -211,7 +211,7 @@ n_setfadeouttime(void* slf, nCmd* cmd)
     Send close request to the window
 +*/
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nGuiWindow* self = (nGuiWindow*) slf;
     self->SetCloseRequested(true);

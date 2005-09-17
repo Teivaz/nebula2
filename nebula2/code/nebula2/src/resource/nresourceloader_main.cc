@@ -29,7 +29,7 @@ nResourceLoader::~nResourceLoader()
 
     @return                 success/failure
 */
-bool nResourceLoader::Load(const char *filename, nResource *callingResource)
+bool nResourceLoader::Load(const char* /*filename*/, nResource* /*callingResource*/)
 {
     return false;
 }

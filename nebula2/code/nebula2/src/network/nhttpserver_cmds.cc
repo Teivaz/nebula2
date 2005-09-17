@@ -63,7 +63,7 @@ n_connect(void* slf, nCmd* cmd)
     Disconnect from http server.
 */
 static void
-n_disconnect(void* slf, nCmd* cmd)
+n_disconnect(void* slf, nCmd* /*cmd*/)
 {
     nHttpServer* self = (nHttpServer*) slf;
     self->Disconnect();

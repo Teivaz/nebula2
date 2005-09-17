@@ -337,7 +337,7 @@ n_getsystemskin(void* slf, nCmd* cmd)
     Toggle Nebula's system GUI.
 */
 static void
-n_togglesystemgui(void* slf, nCmd* cmd)
+n_togglesystemgui(void* slf, nCmd* /*cmd*/)
 {
     nGuiServer* self = (nGuiServer*) slf;
     self->ToggleSystemGui();

@@ -398,7 +398,7 @@ nShadowCaster2::EndWriteIndices()
     method in a derived class.
 */
 void
-nShadowCaster2::SetupShadowVolume(const nLight& light, const matrix44& invModelMatrix)
+nShadowCaster2::SetupShadowVolume(const nLight& /*light*/, const matrix44& /*invModelMatrix*/)
 {
     // empty
 }

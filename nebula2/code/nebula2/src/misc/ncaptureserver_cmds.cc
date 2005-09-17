@@ -126,7 +126,7 @@ n_getframetime(void* slf, nCmd* cmd)
     Start a new capture session.
 */
 static void
-n_start(void* slf, nCmd* cmd)
+n_start(void* slf, nCmd* /*cmd*/)
 {
     nCaptureServer* self = (nCaptureServer*) slf;
     self->Start();
@@ -144,7 +144,7 @@ n_start(void* slf, nCmd* cmd)
     Stop the current capture session.
 */
 static void
-n_stop(void* slf, nCmd* cmd)
+n_stop(void* slf, nCmd* /*cmd*/)
 {
     nCaptureServer* self = (nCaptureServer*) slf;
     self->Stop();
@@ -162,7 +162,7 @@ n_stop(void* slf, nCmd* cmd)
     Toggle the current capture session.
 */
 static void
-n_toggle(void* slf, nCmd* cmd)
+n_toggle(void* slf, nCmd* /*cmd*/)
 {
     nCaptureServer* self = (nCaptureServer*) slf;
     self->Toggle();

@@ -209,7 +209,6 @@ nViewerApp::Close()
 void
 nViewerApp::Run()
 {
-    nVariable::Handle timeHandle = this->refVarServer->GetVariableHandleByName("time");
     nWatched watchViewerPos("viewerPos", nArg::Float4);
     nWatched watchCamPos("camPos", nArg::Float4);
 

@@ -551,7 +551,7 @@ n_printf("nSessionServer::HandleLeaveSessionRequest(%d, %s)\n", ipcClientId, cli
     Handle a client attribute update.
 */
 void
-nSessionServer::HandleClientAttribute(int ipcClientId, const char* clientGuid, const char* attrName, const char* attrValue)
+nSessionServer::HandleClientAttribute(int /*ipcClientId*/, const char* clientGuid, const char* attrName, const char* attrValue)
 {
     n_assert(clientGuid && attrName && attrValue);
     nSessionClientContext* clientContext = this->FindClientContextByGuid(clientGuid);
@@ -600,7 +600,7 @@ nSessionServer::UpdateServerClientAttrs()
     }
 
     // fill the remaining Client status attributes with the value "free"
-    for (clientIndex; clientIndex < this->GetMaxNumClients(); clientIndex++)
+    for (; clientIndex < this->GetMaxNumClients(); clientIndex++)
     {
         sprintf(serverAttrName, "Client%d_Status", clientIndex);
         this->SetServerAttr(serverAttrName, "open");

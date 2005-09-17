@@ -128,7 +128,7 @@ NebulaObject_GetPointer(NebulaObject * self)
     @brief Delete the real Nebula object pointed to by the python object
 */
 PyObject *
-NebulaObject_Delete(NebulaObject *self, PyObject *args)
+NebulaObject_Delete(NebulaObject* self, PyObject* /*args*/)
 {
     PyObject * result = NULL;
     n_assert(NULL != self);
@@ -163,8 +163,6 @@ NebulaObject_Dealloc(NebulaObject *self)
     {
         PyObject_ClearWeakRefs((PyObject *) self);
     }
-
-    nRoot *neb_object = NebulaObject_GetPointer(self);
 
     // check for the existance of "deletenebula" in the dictionary
     if (self->internal_dict != NULL)
@@ -879,14 +877,14 @@ NebulaObjectIter_New(NebulaObject *nebulaObject)
 }
 
 static void
-NebulaObjectIter_Dealloc(NebulaObjectIter *iter)
+NebulaObjectIter_Dealloc(NebulaObjectIter* iter)
 {
     Py_DECREF(iter->ni_nebulaobject);
     PyObject_DEL(iter);
 }
 
 static PyObject*
-NebulaObjectIter_Next(NebulaObjectIter *iter, PyObject *args)
+NebulaObjectIter_Next(NebulaObjectIter* iter, PyObject* /*args*/)
 {
     if (NULL == iter->currentObject)
     {

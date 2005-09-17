@@ -298,7 +298,7 @@ n_open(void* slf, nCmd* cmd)
     Close the session client.
 */
 static void
-n_close(void* slf, nCmd* cmd)
+n_close(void* slf, nCmd* /*cmd*/)
 {
     nSessionClient* self = (nSessionClient*) slf;
     self->Close();

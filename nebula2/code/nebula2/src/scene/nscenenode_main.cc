@@ -517,7 +517,7 @@ nSceneNode::UpdateInstStreamDecl(nInstanceStream::Declaration& decl)
 /**
 */
 bool
-nSceneNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix)
+nSceneNode::RenderCamera(const matrix44& /*modelWorldMatrix*/, const matrix44& /*viewMatrix*/, const matrix44& /*projectionMatrix*/)
 {
     // empty
     return false;

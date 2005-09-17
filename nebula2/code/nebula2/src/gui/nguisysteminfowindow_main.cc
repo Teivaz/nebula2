@@ -94,7 +94,6 @@ nGuiSystemInfoWindow::OnFrame()
 void
 nGuiSystemInfoWindow::UpdateTextView()
 {
-    nFileServer2* fileServer = kernelServer->GetFileServer();
     nResourceServer* resServer = this->refResourceServer.get();
     nString str;
     nGuiTextView* textView = this->refTextView.get();

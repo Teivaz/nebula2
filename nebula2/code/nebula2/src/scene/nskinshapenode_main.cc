@@ -42,12 +42,11 @@ nSkinShapeNode::GetMeshUsage() const
 /**
 */
 bool
-nSkinShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+nSkinShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 {
     if (!this->charSkinRenderer.IsInitialized())
     {
         // never use cpu skinning
-        nGfxServer2* gfxServer = nGfxServer2::Instance();
         this->charSkinRenderer.Initialize(this->refMesh);
     }
     return true;

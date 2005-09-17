@@ -132,7 +132,7 @@ nNetServer::Trigger()
                     }
                 }
             } 
-            while (curMsg = recvMsg.GetNextString());
+            while ((curMsg = recvMsg.GetNextString()));
         }
     }
 
@@ -202,7 +202,7 @@ nNetServer::HandleJoinSessionRequest(int clientId, const char* clientGuid)
     subclasses to check to process specific custom messages.
 */
 bool
-nNetServer::HandleMessage(int fromClientId, const char* msg)
+nNetServer::HandleMessage(int /*fromClientId*/, const char* /*msg*/)
 {
     // n_printf("nNetServer::HandleMessage(%d, '%s'\n", fromClientId, msg);
     return true;

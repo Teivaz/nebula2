@@ -246,7 +246,7 @@ nNvx2Loader::ReadEdges(void* buffer, int bufferSize)
     n_assert(this->file);
     if (this->numEdges > 0)
     {
-        n_assert((this->numEdges * 4 * sizeof(ushort)) == bufferSize);
+        n_assert((this->numEdges * 4 * int(sizeof(ushort))) == bufferSize);
         file->Read(buffer, bufferSize);
         return true;
     }

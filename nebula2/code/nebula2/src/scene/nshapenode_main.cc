@@ -123,7 +123,7 @@ nShapeNode::HasGeometry() const
     actually rendered.
 */
 bool
-nShapeNode::ApplyGeometry(nSceneServer* sceneServer)
+nShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     n_assert(this->refMesh->IsValid());
@@ -144,7 +144,7 @@ nShapeNode::ApplyGeometry(nSceneServer* sceneServer)
     - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */
 bool
-nShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
+nShapeNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/)
 {
     nGfxServer2::Instance()->DrawIndexedNS(nGfxServer2::TriangleList);
     return true;
