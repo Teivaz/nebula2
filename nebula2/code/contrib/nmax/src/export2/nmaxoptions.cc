@@ -394,7 +394,7 @@ nMaxOptions::GetHomePath() const
 }
 //-----------------------------------------------------------------------------
 const nString& 
-nMaxOptions::GetAnimAssgin() const
+nMaxOptions::GetAnimAssign() const
 {
     return this->animsAssign;
 }
