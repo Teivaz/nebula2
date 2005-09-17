@@ -49,7 +49,7 @@ public:
     // @name assign and path access functions.
     // @{
     const nString& GetHomePath() const;
-    const nString& GetAnimAssgin() const;
+    const nString& GetAnimAssign() const;
     const nString& GetAnimPath() const;
 
     const nString& GetGfxLibAssign() const;
