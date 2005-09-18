@@ -103,6 +103,11 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
 {
     if (0 == texmap)
     {
+        // A common mistake on this warning is that:
+        // Usually there is more than one texmap object in Nebula2 custom material.
+        // For example, standard material has two texmap objects, one for diffuse map 
+        // and the other for bump map. 
+        // The warning will be shown If you set only diffuse map.
         n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
         return;
     }
