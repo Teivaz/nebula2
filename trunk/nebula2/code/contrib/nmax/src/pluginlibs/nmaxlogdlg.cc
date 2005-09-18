@@ -15,7 +15,7 @@
 
 nMaxLogDlg* nMaxLogDlg::Singleton = 0;
 
-static const char * sColorTables[MaxVerbosity + 1] = {
+static const char * sColorTables[NumVerboseLevel + 1] = {
     "{\\colortbl;\\red255\\green0\\blue0;}",
     "{\\colortbl;\\red255\\green126\\blue0;}",
     "{\\colortbl;\\red0\\green0\\blue0;}",
