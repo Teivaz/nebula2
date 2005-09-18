@@ -33,6 +33,8 @@
 #define IDC_VERTEX_TANGENT              1014
 #define IDC_EXT_ASSIGN_TEXTURES         1015
 #define IDC_HIDDEN_OBJ                  1015
+#define IDC_SELECT_SCRIPT_SERVER2       1016
+#define IDC_SELECT_VERBOSE_LEVEL        1016
 #define IDC_EXT_PATH_ANIM               1017
 #define IDC_EXT_PATH_GFXLIB             1018
 #define IDC_EXT_PATH_GUI                1019
