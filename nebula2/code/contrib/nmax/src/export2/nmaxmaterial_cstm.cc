@@ -138,10 +138,14 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         shapeNode->SetShader(value);
                                     }
                                     else
+                                    {
                                         n_maxlog(Error, "The parameter block has string type parameter but it is not effect filename.");
+                                    }
                                 }
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                {
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
+                                }
                             }
                             break;
 
@@ -173,7 +177,9 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         nKernelServer::Instance()->PopCwd();
                                     }
                                     else
+                                    {
                                         n_maxlog(Error, "Failed to create nFloatAnimator for the parameter %s", name);
+                                    }
                                 }
 
                             }
@@ -221,7 +227,9 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         nKernelServer::Instance()->PopCwd();
                                     }
                                     else
+                                    {
                                         n_maxlog(Error, "Failed to create nIntAnimator for the parameter %s", name);
+                                    }
                                 }
                             }
                             break;
@@ -294,7 +302,9 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         nKernelServer::Instance()->PopCwd();
                                     }
                                     else
+                                    {
                                         n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                    }
                                 }
                             }
                             break;
@@ -329,7 +339,9 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         nKernelServer::Instance()->PopCwd();
                                     }
                                     else
+                                    {
                                         n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                    }
                                 }
                             }
                             break;
@@ -348,7 +360,9 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     texture.Export(value, shaderParam, shapeNode);
                                 }
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                {
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
+                                }
                             }
                             break;
 
