@@ -95,7 +95,8 @@ public:
 
     bool UseIndivisualMesh() const;
 
-    int GetVerboseLevel();
+    int GetVerboseLevel() const;
+    void SetVerboseLevel(int level);
 
     bool OverwriteExistTexture() const;
 
@@ -252,12 +253,16 @@ nMaxOptions::GetSaveScriptServer()
     return this->saveScriptServer;
 }
 //-----------------------------------------------------------------------------
-/**
-*/
 inline
-int nMaxOptions::GetVerboseLevel()
+int nMaxOptions::GetVerboseLevel() const
 {
     return this->verboseLevel;
+}
+//-----------------------------------------------------------------------------
+inline
+void nMaxOptions::SetVerboseLevel(int level)
+{
+    this->verboseLevel = level;
 }
 //-----------------------------------------------------------------------------
 inline
