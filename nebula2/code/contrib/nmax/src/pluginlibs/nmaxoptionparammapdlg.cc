@@ -10,11 +10,23 @@
 #include "export2/nmaxoptions.h"
 
 // items of the script server combobox.
+static
 const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
     "Tcl",
     "Python",
     "Lua",
     "Ruby"
+};
+
+// verbose level. 
+// The index of the verbose_level array should be match enum in nmax.h.
+static
+const char* verbose_level[NumVerboseLevel] = {
+    "Error Only"
+    "Warning Only",
+    "Low",
+    "Medium",
+    "High",
 };
 
 //------------------------------------------------------------------------------
@@ -150,6 +162,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
         CheckDlgButton(hwnd, IDC_NAX2, BST_CHECKED);
     }
     
+    // hidden node.
     bool tmpExportHiddenNode = nMaxOptions::Instance()->ExportHiddenNodes();
     int exportHiddenNode = tmpExportHiddenNode ? 1 : 0;
     CheckDlgButton(hwnd, IDC_HIDDEN_OBJ, exportHiddenNode);
@@ -169,6 +182,27 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     const nString& name = nMaxOptions::Instance()->GetSaveScriptServer();
     int curSel = GetItemIndexFromScript(name.Get());
     SendMessage(hwndSelScript, CB_SETCURSEL, (WPARAM)curSel, 0);
+
+    // verbose level combobox setting.
+    HWND hwndVerbosity = GetDlgItem(hwnd, IDC_SELECT_VERBOSE_LEVEL);
+
+    SendMessage(hwndVerbosity, CB_RESETCONTENT, 0L, 0L);
+
+    //HACK: VC7.1 generates wrong code for the following for-loop.
+    //      It calles GetItemIndexFromScript() if the i has 4.
+    //for(int i=0; i<NumVerboseLevel; i++)
+    //{
+    //    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)verbose_level[i]);
+    //}
+    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"Error Only");
+    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"Warning and Error");
+    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"Low");
+    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"Medium");
+    SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"High");
+
+    int curVerboseLevel = nMaxOptions::Instance()->GetVerboseLevel();
+    //int  = GetItemIndexFromVerbose(verboseName.Get());
+    SendMessage(hwndVerbosity, CB_SETCURSEL, (WPARAM)curVerboseLevel, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -275,6 +309,12 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
         if (highParam == CBN_SELCHANGE)
         {
             OnSelectedScriptServer(hwnd);
+        }
+        break;
+    case IDC_SELECT_VERBOSE_LEVEL:
+        if (highParam == CBN_SELCHANGE)
+        {
+            OnSelectedVerboseLevel(hwnd);
         }
         break;
     }
@@ -470,4 +510,21 @@ nMaxOptionParamMapDlg::GetItemIndexFromScript(const char* name)
         return 3;
     else
         return -1; // empty string.
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieves verbose level and specifies it to the option.
+*/
+void nMaxOptionParamMapDlg::OnSelectedVerboseLevel(HWND hwnd)
+{
+    int selectedItem = SendDlgItemMessage(hwnd, IDC_SELECT_VERBOSE_LEVEL, 
+        CB_GETCURSEL, 0, 0);
+
+    if (selectedItem != CB_ERR)
+    {
+        n_assert2(selectedItem >= 0 && selectedItem < NumVerboseLevel, 
+                  "The item index should be between 0 and 4");
+        nMaxOptions::Instance()->SetVerboseLevel(selectedItem);
+    }
 }
