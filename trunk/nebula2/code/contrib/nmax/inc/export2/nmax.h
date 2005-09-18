@@ -127,12 +127,12 @@ enum
 //-----------------------------------------------------------------------------
 // verbose level of log message
 enum Verbose {
-    Error   = 0,
-    Warning = 1,
-    Low     = 2,
-    Medium  = 3,
-    High    = 4,
-    MaxVerbosity = 5
+    Error           = 0,
+    Warning         = 1,
+    Low             = 2,
+    Medium          = 3,
+    High            = 4,
+    NumVerboseLevel = 5
 };
 
 //-----------------------------------------------------------------------------
