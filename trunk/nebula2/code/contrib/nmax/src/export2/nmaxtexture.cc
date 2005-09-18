@@ -36,6 +36,12 @@ nMaxTexture::~nMaxTexture()
 */
 void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
 {
+    if (0 == texmap)
+    {
+        n_maxlog(Warning, "Warning: The texmap for '%s' is null.", this->SubMapIDToString(subID));
+        return;
+    }
+
     if (IsClassID(texmap, BMTEX_CLASS_ID))
     {
         StdUVGen* uvGen = ((BitmapTex*)texmap)->GetUVGen();
@@ -95,6 +101,12 @@ void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
 */
 void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* shapeNode)
 {
+    if (0 == texmap)
+    {
+        n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
+        return;
+    }
+
     if (IsClassID(texmap, BMTEX_CLASS_ID))
     {
         // get texture name.
