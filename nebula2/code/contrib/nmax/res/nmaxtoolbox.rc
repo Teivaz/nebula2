@@ -26,13 +26,12 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 // Dialog
 //
 
-IDD_UTILITY_OPTION DIALOGEX 0, 0, 108, 394
+IDD_UTILITY_OPTION DIALOGEX 0, 0, 108, 404
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Mesh",IDC_STATIC,3,1,102,213
     GROUPBOX        "Animation",IDC_STATIC,3,218,102,83
-    GROUPBOX        "Script Server",IDC_STATIC,3,332,101,46
     CONTROL         "Normal",IDC_VERTEX_NORMAL,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,25,78,8
     CONTROL         "Color",IDC_VERTEX_COLOR,"Button",BS_AUTOCHECKBOX | 
@@ -45,7 +44,7 @@ BEGIN
     CONTROL         "nanim2",IDC_NANIM2,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,11,240,45,11
     CONTROL         "nax2",IDC_NAX2,"Button",BS_AUTORADIOBUTTON,60,240,35,11
-    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,357,88,82,CBS_DROPDOWN | 
+    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,342,88,82,CBS_DROPDOWN | 
                     WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Save As",IDC_STATIC,7,184,95,25
     GROUPBOX        "Save As",IDC_STATIC,7,230,95,26
@@ -55,10 +54,10 @@ BEGIN
     LTEXT           "Weight Trash Hold:",IDC_STATIC,12,149,82,11
     CONTROL         "Tangent",IDC_VERTEX_TANGENT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,58,80,8
-    GROUPBOX        "Hidden Nodes",IDC_STATIC,3,304,102,24
+    GROUPBOX        "Misc",IDC_STATIC,3,304,102,91
     CONTROL         "Export Hidden Nodes",IDC_HIDDEN_OBJ,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,314,80,9
-    LTEXT           "Select Script Server:",IDC_STATIC,8,346,91,8
+    LTEXT           "Select Script Server:",IDC_STATIC,8,331,91,8
     CONTROL         "",IDC_EDIT_MAXJOINTPALETTE,"CustEdit",WS_TABSTOP,12,133,
                     69,10
     CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,133,
@@ -75,6 +74,9 @@ BEGIN
     GROUPBOX        "Scale Geometry By",IDC_STATIC,7,76,94,30
     CONTROL         "",IDC_EDIT_GEOMSCALE,"CustEdit",WS_TABSTOP,13,89,69,10
     CONTROL         "",IDC_SPIN_GEOMSCALE,"SpinnerControl",0x0,85,89,7,10
+    COMBOBOX        IDC_SELECT_VERBOSE_LEVEL,8,374,89,82,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Verbose Level:",IDC_STATIC,7,363,91,8
 END
 
 
@@ -88,7 +90,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_UTILITY_OPTION, DIALOG
     BEGIN
-        BOTTOMMARGIN, 393
+        BOTTOMMARGIN, 403
     END
 END
 #endif    // APSTUDIO_INVOKED
