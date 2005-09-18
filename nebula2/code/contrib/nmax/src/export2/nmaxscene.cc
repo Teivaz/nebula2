@@ -461,7 +461,7 @@ bool nMaxScene::Postprocess()
         nString animFilename;
         animFilename += nMaxOptions::Instance()->GetSaveFileName();
         animFilename += nMaxOptions::Instance()->GetAnimFileType();
-        animFilename = nMaxOptions::Instance()->GetAnimPath() + animFilename;
+        animFilename = nMaxOptions::Instance()->GetAnimAssign() + animFilename;
 
         //FIXME: we should add error handling code.
         if (!nMaxBoneManager::Instance()->Export(animFilename.Get()))
