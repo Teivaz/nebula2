@@ -51,9 +51,17 @@ private:
 
     void OnHiddenObject(HWND hwnd);
 
+    /// @name script serve combox
+    /// @{
     void OnSelectedScriptServer(HWND hwnd);
     const char* GetScriptServer(const char* item);
     int GetItemIndexFromScript(const char* name);
+    /// @}
+
+    /// @name verbose level combox
+    /// @{
+    void OnSelectedVerboseLevel(HWND hwnd);
+    /// @}
 
 private:
     /// spinner control for setting of geometry scaling.
