@@ -147,6 +147,6 @@
     Make sure you've aleady installed python 2.4 and wxpython 2.6.x (or higher for both of them) 
     on your system before you run <tt>shader.py</tt>.
 
-    That's all there is to adding a new shader. 
+    That's all to add a new shader. 
 
 */
