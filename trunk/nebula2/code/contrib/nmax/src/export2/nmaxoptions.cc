@@ -36,7 +36,7 @@ nMaxOptions::nMaxOptions() :
     runViewer(true),
     saveScriptServer("ntclserver"),
     useIndivisualMesh(false),
-    verboseLevel(4/*High*/),
+    verboseLevel(2/*Low*/),
     overwriteExistTexture(true),
     previewMode(false),
     useDefaultViewer(true)
@@ -233,6 +233,11 @@ bool nMaxOptions::Initialize()
 
 //-----------------------------------------------------------------------------
 /**
+    Load various utility options from nmaxtoolbox.ini file.
+
+    @note
+    If you add any optin in .ini file, don't forget to add code saves the option 
+    in nMaxOptions::SaveUtilityOptions() function.
 */
 bool nMaxOptions::LoadUtilityOptions()
 {
@@ -271,7 +276,15 @@ bool nMaxOptions::LoadUtilityOptions()
     iniFile.ReadInt("ExportHiddenNode", tmpExportHiddenNode, 0, "UtilityOptions");
     this->exportHiddenNodes = tmpExportHiddenNode ? true : false;
 
-    iniFile.ReadString("ScriptServer", this->saveScriptServer, "ntclserver", "UtilityOptions");
+    if (!iniFile.ReadString("ScriptServer", this->saveScriptServer, "ntclserver", "UtilityOptions"))
+    {
+        n_message("Faied to read script server option in nmaxtoolbox.ini. 'ntclserver' is used as default.");
+    }
+
+    if (!iniFile.ReadInt("Verbose", this->verboseLevel, 4, "UtilityOptions"))
+    {
+        n_message("Faied to read verbose option in nmaxtoolbox.ini. Set to 'high' for the default value.");
+    }
 
     return true;
 }
@@ -310,6 +323,7 @@ void nMaxOptions::SaveUtilityOptions()
     
     iniFile.WriteString("ScriptServer", this->saveScriptServer, "UtilityOptions");
 
+    iniFile.WriteInt("Verbose", this->verboseLevel, "UtilityOptions");
 }
 
 //-----------------------------------------------------------------------------
