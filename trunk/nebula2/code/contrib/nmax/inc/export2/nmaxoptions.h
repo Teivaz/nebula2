@@ -140,6 +140,7 @@ protected:
     /// @name assign and path variables.
     /// @{
     nString homeDir;
+    nString projDir;
     nString binaryPath;
 
     nString animsAssign;
