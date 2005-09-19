@@ -6,6 +6,11 @@
     <b>Nebula 3DS Max Toolkit</b>(aka. <tt>nmaxtoolbox</tt>) which used to create   
     contents and tools with 3DS Max.  
 
+      - @ref NMAXToolBoxOverview
+      - @ref NMaxToolBoxComponents
+      - @ref NMAXToolBoxInstallation
+      - @ref NMAXToolBoxDebugging
+      - @ref NMAXToolBoxAdditionalNotes
 
     @section NMAXToolBoxOverview Overview
 
@@ -24,6 +29,16 @@
     which are more easy to use than the appwizard of the SDK.
     You should use this feature to write a 3DS Max plugin for Nebula.
     See @ref registeredClassDesc for more details and its usages.
+
+    @section NMaxToolBoxComponents Components of the Toolkit
+
+    The toolkit consists of the followings for its components:
+
+        - <b>Exporter</b> - 3DS Max exporter plugin for Nebula.
+        - <b>Nebula Script Function Expose System</b> - plugin written based on 3DS Max 
+          Function Publishing System which enables to call Nebula script commands via MaxScript.
+        - <b>Max Script Generator</b> - plugin which generates max script based on the given
+          Nebula object.
 
 
     @section NMAXToolBoxInstallation Building the Plugin
@@ -59,15 +74,29 @@
         - copied plugin will automatically be loaded when you start up 3DS Max.
 
 
-    @section NMaxToolBoxComponents Components of the Toolkit
+    @section NMAXToolBoxDebugging Debugging the Plugin
 
-    The toolkit consists of the followings for its components:
+    There is two way to debug the plugin. One for startup of the plugin and 
+    the other for exporting of the plugin.
 
-        - <b>Exporter</b> - 3DS Max exporter plugin for Nebula.
-        - <b>Nebula Script Function Expose System</b> - plugin written based on 3DS Max 
-          Function Publishing System which enables to call Nebula script commands via MaxScript.
-        - <b>Max Script Generator</b> - plugin which generates max script based on the given
-          Nebula object.
+      - Open <i>Project Setting</i>. 
+      - Under <i>Configuration Properties</i> select <i>Debugging</i>.
+        - Set <i>Command</i> to point to <tt>3dsmax.exe</tt>.(which is found in the directory 
+          where you intalled 3dsmax. i.e. <tt>c:/3dsmax7/3dsmax.exe</tt>)
+
+    The above is useful when you debug and see what happens when the 3dsmax loads 
+    the plugin. But with this, you can't debug exporting of the plugin.
+    So there is other way to debug the plugin which enables you to debug process of exporing.
+
+     - First, set break point where you want to debug.
+     - Select <i>Debug</i> menu and click <i>Process</i> menu item.
+     - This will bring the <i>Process</i> dialog. 
+       - Select <tt>3dsmax.exe</tt> in the list view and click <i>Connect</i> button. 
+         - It brings the dialog which shows the list of programs to debug.
+         - Select 'Native' then click 'Ok' and close the process dialog.
+     - Start to export and the debugger will stop where you set the break point.
+
+    Now, you can set break point wherever you want to stop and debug the process of exporting.
 
 
     @section NMAXToolBoxAdditionalNotes Additional Notes 
