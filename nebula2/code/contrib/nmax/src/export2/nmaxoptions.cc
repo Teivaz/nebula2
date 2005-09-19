@@ -59,6 +59,8 @@ nMaxOptions::~nMaxOptions()
     paths to file server.
 
     @return true if the function call is success.
+
+    -19-Sep-05    kims    Added reading 'proj' assign from .ini file.
 */
 bool nMaxOptions::Initialize()
 {
@@ -79,6 +81,7 @@ bool nMaxOptions::Initialize()
 
     nIniFile iniFile(iniFilename);
     if (!iniFile.ReadString("HomeDir", homeDir, ".", "GeneralSettings")) return false;
+    if (!iniFile.ReadString("ProjDir", projDir, ".", "GeneralSettings")) return false;
     if (!iniFile.ReadString("BinaryPath", binaryPath, ".", "GeneralSettings")) return false;
 
     if (!iniFile.ReadString("AnimsAssign",    animsAssign,    N_MAXEXPORT_ANIMS_ASSIGN,    "GeneralSettings")) return false;
@@ -107,6 +110,16 @@ bool nMaxOptions::Initialize()
         nString tmp;
 
         fileServer->SetAssign("home", homeDir.Get());
+
+        if (this->projDir == ".")
+        {
+            // the 'proj' dir was not specified, set 'home' dir for it.
+            fileServer->SetAssign("proj", fileServer->GetAssign("home"));
+        }
+        else
+        {
+            fileServer->SetAssign("proj", projDir.Get());
+        }
 
         if (!fileServer->DirectoryExists(binaryPath.Get()))
         {
