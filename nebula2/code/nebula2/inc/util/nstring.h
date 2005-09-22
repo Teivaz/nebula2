@@ -122,7 +122,7 @@ public:
     /// tokenize string into a provided nString array
     int Tokenize(const char* whiteSpace, nArray<nString>& tokens) const;
     /// extract substring
-    nString ExtractRange(int from, int to) const;
+    nString ExtractRange(int from, int numChars) const;
     /// terminate string at first occurence of character in set
     void Strip(const char* charSet);
     /// Index of first appearance of `v' starting from index `startIndex'.
