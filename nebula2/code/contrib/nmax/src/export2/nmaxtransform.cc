@@ -177,9 +177,30 @@ nMaxTransform::Convert(matrix33 &m)
     return result;
 }
 */
+
 //------------------------------------------------------------------------------
 /**
     Retrieves local transformation from the given node.
+*/
+static
+Matrix3 UniformMatrix(Matrix3 sMatrix) 
+{
+    AffineParts sAP;
+    Matrix3 sResult;
+
+    decomp_affine( sMatrix, &sAP );
+    sAP.q.MakeMatrix(sResult);
+    sResult.SetRow(3, sAP.t);
+
+    return sResult;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieves local transformation from the given node.
+
+    -22-Sep-05    kims    Fixed wrong rotation problem of non-biped mirrored bone.(#322 on Bugzilla)
+                          Thanks Jind©ªich Rohlik for pointing it out.
 */
 Matrix3 nMaxTransform::GetLocalTM(INode *inode, TimeValue time)
 {
@@ -192,8 +213,10 @@ Matrix3 nMaxTransform::GetLocalTM(INode *inode, TimeValue time)
     // before we multiply two matrices to get correct result.
     if (nMaxBoneManager::Instance()->IsBone(inode))
     {
-        nodeTM.NoScale();
-        parentTM.NoScale();
+        //nodeTM.NoScale();
+        //parentTM.NoScale();
+        nodeTM   = UniformMatrix(nodeTM);
+        parentTM = UniformMatrix(parentTM);
     }
 
     result = nodeTM * Inverse(parentTM);
