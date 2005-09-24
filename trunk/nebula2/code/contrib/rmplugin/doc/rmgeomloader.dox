@@ -58,7 +58,7 @@
     to <tt>$RenderMonkey/plugin</tt> directory.
 
 
-    @section NRenderMonkeyPluginDebugging Proejct Debugging
+    @section NRenderMonkeyPluginDebugging Project Debugging
 
     Under Configuration Properties -> Debugging.
 
