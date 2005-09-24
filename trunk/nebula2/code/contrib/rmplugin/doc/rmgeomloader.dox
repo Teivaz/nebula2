@@ -20,7 +20,7 @@
     RenderMonkey version 1.6 must be installed with the SDK.
     You can download it from the following ATI's site - http://www.ati.com/developer/rendermonkey/downloads.html
 
-    @subsection NRenderMonkeyPluginProejectSettings Proeject Settings
+    @subsection NRenderMonkeyPluginProjectSettings Project Settings
 
     Due to the limitation of the Nebula's build system facilities(i.e. setting for MFC), 
     you need to manually set some of the project settings to build the plugin.
