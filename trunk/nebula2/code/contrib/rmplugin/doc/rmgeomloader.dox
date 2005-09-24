@@ -1,0 +1,74 @@
+/**
+    @defgroup NebulaRenderMonkeyPlugin RenderMonkey Plugins
+    @ingroup NebulaContribAssetToolchainModules 
+
+    @section NRenderMonkeyPluginOverview Overview
+
+    RenderMonkey is a rich shader development environment for both programmers 
+    and artists which facilitates the collaborative creation of real-time 
+    shader effects
+    See the following link for more details: http://www.ati.com/developer/rendermonkey/index.html
+
+    <b>Nebula RenderMonkey Plugins</b> provides seamless workflow between Nebula  
+    and RenderMokey.
+
+
+    @section NRenderMonkeyPluginInstallation Installation 
+
+    @subsection NRMGeomLoaderRequirements Requirements
+
+    RenderMonkey version 1.6 must be installed with the SDK.
+    You can download it from the following ATI's site - http://www.ati.com/developer/rendermonkey/downloads.html
+
+    @subsection NRenderMonkeyPluginProejectSettings Proeject Settings
+
+    Due to the limitation of the Nebula's build system facilities(i.e. setting for MFC), 
+    you need to manually set some of the project settings to build the plugin.
+
+    The following steps show the project settings of the plugin building setup for VC++ .NET
+    (Setup for Visual Studio 6.0 also can be found in the SDK document provided with RenderMonkey):
+
+    1) Open the project settings.
+
+    2) <i>Configuration Properties</i> -> <i>General</i> Properties 
+        - <i>Character Set</i> -> <b>"Use Unicode Character Set"</b> 
+          - RenderMonkey uses unicode. If the character set is not to set to unicode, 
+            wrong characters will be shown in file type combobox of file dialog. 
+            And Nebula2 uses ansi character set so any characters which passed from RenderMonkey - it is <i>wide character set</i> - 
+            to Nebula2 API should be converted to <i>MBCS(multi byte character set)</i>. 
+        - set <b>"Use MFC in shader DLL"</b>
+
+    3) <i>Configuration Properties</i> -> <i>C/C++</i> -> <i>General</i> Properties
+        - Additional Include Directories must contain RenderMonkey's SDK include 
+          directory.(This path can be an absolute path or relative path)
+
+    4) <i>Configuration Properties</i> -> <i>C/C++</i> -> <i>General</i> Properties
+        - Runtime library must be set to <b>"Multi-threaded DLL"</b>
+
+    5) <i>Configuration Properties</i> -> <i>C/C++</i> -> <i>Language</i> Properties
+        - <i>Treat wchar_t</i> as Built-in type must be set to <b>"No"</b>
+        - <i>Enable Run-Time</i> Type Info must be set to <b>"Yes"</b>
+
+    6) <i>Configuration Properties</i> -> <i>Linker</i> -> <i>General</i> Properties
+        - Additional Library Directories must include RenderMonkey's SDK 
+          library.(This path can be an absolute path or relative path)
+        - Set <tt>libcd.lib</tt> to ignore libarary.
+
+    Lastly build and copy the plugin from <tt>$nebula2/bin/win32/</tt>(or <tt>/win32d</tt>) 
+    to <tt>$RenderMonkey/plugin</tt> directory.
+
+
+    @section NRenderMonkeyPluginDebugging Proejct Debugging
+
+    Under Configuration Properties -> Debugging.
+
+    Set Command to point to RenderMonkey.exe (which is found in directory where you intalled RenderMonkey).
+
+    Set <i>Working Directory</i> to RenderMonkey's installed directory(the same directory as above).
+
+    See the SDK document provided with RenderMonkey for other setup such as
+    Visual Studio 6.0.
+
+    (c)2005 Kim, Hyoun Woo
+
+*/
