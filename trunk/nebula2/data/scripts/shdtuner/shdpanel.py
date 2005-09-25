@@ -130,6 +130,7 @@ class ShaderPanel(wx.Panel):
         return None
 
     def BuildFoldPanel(self, obj):
+        self.renderPanel.WaitLongTimeOp(True)
         self.DestroyFoldPanel()
         self.fpb = fpbar.FoldPanelBar(self, size = self.GetClientSize())
         for node in self.shader.childNodes:
@@ -156,6 +157,7 @@ class ShaderPanel(wx.Panel):
                     self.ctrlList[name] = ColorCurveParamCtrl(self.fpb, fp, node, obj, self.renderPanel)
                 elif type == 'Texture' or type == 'BumpTexture' or type == 'CubeTexture':
                     self.ctrlList[name] = TextureParamCtrl(self.fpb, fp, node, obj, self.renderPanel)
+        self.renderPanel.WaitLongTimeOp(False)
 
     def UpdateFoldPanel(self, obj):
         for node in self.shader.childNodes:

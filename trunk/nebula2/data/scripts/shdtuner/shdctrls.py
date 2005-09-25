@@ -69,8 +69,9 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def OnHelpAbout(self, event):
+        msg = "Shader Tuner v0.01\n\nfor Nebula2 Community SDK\n\nSeptember 2005"
         self.renderPanel.ShowInfoPopup(False)
-        dlg = AboutDialog(self)
+        dlg = wx.MessageDialog(self, msg, 'About', wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         self.renderPanel.ShowInfoPopup(True)
@@ -88,26 +89,31 @@ class RenderPanel(wx.Panel):
         self.infoPanel = infoPanel
         self.shdPanel = shdPanel
         self.infoPopup = None
+        self.waiting = False
 
     def Reset(self):
         self.DestroyInfoPopup()
 
+    def WaitLongTimeOp(self, waiting):
+        self.waiting = waiting
+
     def OnMouseClick(self, button, x, y):
-        self.DestroyInfoPopup()
-        id = napp.getpickedobject()
-        if id != 0:
-            if button == 0:
-                node = napp.getobjectnode(id)
-                pos = napp.getobjectposition(id)
-                size = napp.getobjectsize(id)
-                self.infoPopup = self.CreateInfoPopup(node.getname(), (x, y))
-                self.matNodelist = []
-                self.FindMaterialNode(node)
-                self.shdPanel.SetObject(self.matNodelist[0])
-            elif button == 1:
-                pass
-        else:
-            self.shdPanel.Reset()
+        if self.waiting == False:
+            self.DestroyInfoPopup()
+            id = napp.getpickedobject()
+            if id != 0:
+                if button == 0:
+                    node = napp.getobjectnode(id)
+                    pos = napp.getobjectposition(id)
+                    size = napp.getobjectsize(id)
+                    self.infoPopup = self.CreateInfoPopup(node.getname(), (x, y))
+                    self.matNodelist = []
+                    self.FindMaterialNode(node)
+                    self.shdPanel.SetObject(self.matNodelist[0])
+                elif button == 1:
+                    pass
+            else:
+                self.shdPanel.Reset()
 
     def CreateInfoPopup(self, text, pos):
         infoPopup = wx.PopupWindow(self, flags = wx.SIMPLE_BORDER)
@@ -147,22 +153,6 @@ class InfoPanel(wx.Panel):
 
     def Reset(self):
         pass
-
-#--------------------------------------
-
-class AboutDialog(wx.Dialog):
-    def __init__(self, parent):
-        pre = wx.PreDialog()
-        pre.Create(parent)
-        self.PostCreate(pre)
-
-        text = wx.StaticText(self, label = "Shader Tuner v0.01\n\nNebula2 Community SDK\n\nSeptember 2005", size = (200, 100), style = wx.ALIGN_CENTRE)
-        btn = wx.Button(self, wx.ID_OK)
-        btn.SetDefault()
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(text, 1, wx.ALIGN_CENTRE | wx.TOP, 25)
-        sizer.Add(btn, 0, wx.ALIGN_CENTRE | wx.BOTTOM, 25)
-        self.SetSizer(sizer)
 
 #--------------------------------------
 # Eof
