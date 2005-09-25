@@ -29,7 +29,7 @@ new nparticleshapenode particletest
     .setactivitydistance 100.000000
     .setspreadangle 20.000000
     .setbirthdelay 0.000000
-    .setstartrotation -24728977408.000000
+    .setstartrotation 24.000000
     .setrenderoldestfirst true
     .setglobalscale 1.000000
     .setparticlesfollownode false
