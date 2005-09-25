@@ -24,6 +24,8 @@ class MainFrame(wx.Frame):
         self.infoPanel = InfoPanel(self)
         self.shdPanel = ShaderPanel(self)
         self.renderPanel = RenderPanel(self, self.infoPanel, self.shdPanel)
+        self.infoPanel.SetRenderPanel(self.renderPanel)
+        self.shdPanel.SetRenderPanel(self.renderPanel)
 
         sizer1 = wx.BoxSizer(wx.VERTICAL)
         sizer1.Add(self.renderPanel, 0)
@@ -67,7 +69,11 @@ class MainFrame(wx.Frame):
         dlg.Destroy()
 
     def OnHelpAbout(self, event):
-        pass
+        self.renderPanel.ShowInfoPopup(False)
+        dlg = AboutDialog(self)
+        dlg.ShowModal()
+        dlg.Destroy()
+        self.renderPanel.ShowInfoPopup(True)
 
     def OnCloseWindow(self, event):
         self.wxApp.Shutdown()
@@ -113,7 +119,8 @@ class RenderPanel(wx.Panel):
         return infoPopup
 
     def ShowInfoPopup(self, show):
-        self.infoPopup.Show(show)
+        if self.infoPopup != None:
+            self.infoPopup.Show(show)
 
     def DestroyInfoPopup(self):
         if self.infoPopup != None:
@@ -135,8 +142,27 @@ class InfoPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
 
+    def SetRenderPanel(self, renderPanel):
+        self.renderPanel = renderPanel;
+
     def Reset(self):
         pass
+
+#--------------------------------------
+
+class AboutDialog(wx.Dialog):
+    def __init__(self, parent):
+        pre = wx.PreDialog()
+        pre.Create(parent)
+        self.PostCreate(pre)
+
+        text = wx.StaticText(self, label = "Shader Tuner v0.01\n\nNebula2 Community SDK\n\nSeptember 2005", size = (200, 100), style = wx.ALIGN_CENTRE)
+        btn = wx.Button(self, wx.ID_OK)
+        btn.SetDefault()
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(text, 1, wx.ALIGN_CENTRE | wx.TOP, 25)
+        sizer.Add(btn, 0, wx.ALIGN_CENTRE | wx.BOTTOM, 25)
+        self.SetSizer(sizer)
 
 #--------------------------------------
 # Eof

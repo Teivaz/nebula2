@@ -103,6 +103,9 @@ class ShaderPanel(wx.Panel):
         shdList.sort()
         return shdList
 
+    def SetRenderPanel(self, renderPanel):
+        self.renderPanel = renderPanel;
+
     def SetObject(self, obj):
         if obj != self.object:
             self.object = obj
@@ -148,11 +151,11 @@ class ShaderPanel(wx.Panel):
                 elif type == 'Color':
                     self.ctrlList[name] = ColorParamCtrl(self.fpb, fp, node, obj)
                 elif type == 'EnvelopeCurve':
-                    self.ctrlList[name] = CurveParamCtrl(self.fpb, fp, node, obj)
+                    self.ctrlList[name] = CurveParamCtrl(self.fpb, fp, node, obj, self.renderPanel)
                 elif type == 'ColorEnvelopeCurve':
-                    self.ctrlList[name] = ColorCurveParamCtrl(self.fpb, fp, node, obj)
+                    self.ctrlList[name] = ColorCurveParamCtrl(self.fpb, fp, node, obj, self.renderPanel)
                 elif type == 'Texture' or type == 'BumpTexture' or type == 'CubeTexture':
-                    self.ctrlList[name] = TextureParamCtrl(self.fpb, fp, node, obj)
+                    self.ctrlList[name] = TextureParamCtrl(self.fpb, fp, node, obj, self.renderPanel)
 
     def UpdateFoldPanel(self, obj):
         for node in self.shader.childNodes:
@@ -496,8 +499,9 @@ class ColorParamCtrl:
 #--------------------------------------
 
 class CurveParamCtrl:
-    def __init__(self, fpb, fp, param, obj):
+    def __init__(self, fpb, fp, param, obj, renderPanel):
         self.param = param
+        self.renderPanel = renderPanel
         keys = ['KeyFrameVal0', 'KeyFrameVal1', 'KeyFrameVal2', 'KeyFrameVal3', 'KeyFramePos1', 'KeyFramePos2', 'Frequency', 'Amplitude']
         min = self.param.attributes['min'].value
         max = self.param.attributes['max'].value
@@ -607,12 +611,14 @@ class CurveParamCtrl:
     def OnButton(self, event):
         min = float(self.param.attributes['min'].value)
         max = float(self.param.attributes['max'].value)
+        self.renderPanel.ShowInfoPopup(False)
         dlg = CurveDialog(self.panel, min, max, self.curveData)
         dlg.CenterOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.curveData = dlg.GetCurveData()
             self.ApplyParam()
         dlg.Destroy()
+        self.renderPanel.ShowInfoPopup(True)
         sel = self.keyChoice.GetSelection()
         self.floatNum.SetValue(self.curveData[sel])
 
@@ -681,8 +687,9 @@ class CurveDialog(wx.Dialog):
 #--------------------------------------
 
 class ColorCurveParamCtrl:
-    def __init__(self, fpb, fp, param, obj):
+    def __init__(self, fpb, fp, param, obj, renderPanel):
         self.param = param
+        self.renderPanel = renderPanel
         keys = ['keyFrameVal0.x', 'keyFrameVal0.y', 'keyFrameVal0.z', 'keyFrameVal1.x', 'keyFrameVal1.y', 'keyFrameVal1.z',
                 'keyFrameVal2.x', 'keyFrameVal2.y', 'keyFrameVal2.z', 'keyFrameVal3.x', 'keyFrameVal3.y', 'keyFrameVal3.z',
                 'KeyFramePos1', 'KeyFramePos2']
@@ -732,12 +739,14 @@ class ColorCurveParamCtrl:
         self.ApplyParam()
 
     def OnButton(self, event):
+        self.renderPanel.ShowInfoPopup(False)
         dlg = ColorCurveDialog(self.panel, self.curveData)
         dlg.CenterOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.curveData = dlg.GetCurveData()
             self.ApplyParam()
         dlg.Destroy()
+        self.renderPanel.ShowInfoPopup(True)
         sel = self.keyChoice.GetSelection()
         self.floatNum.SetValue(self.curveData[sel])
 
@@ -806,8 +815,9 @@ class ColorCurveDialog(wx.Dialog):
 #--------------------------------------
 
 class TextureParamCtrl:
-    def __init__(self, fpb, fp, param, obj):
+    def __init__(self, fpb, fp, param, obj, renderPanel):
         self.param = param
+        self.renderPanel = renderPanel
         self.homedir = os.path.abspath(fileSvr.manglepath('textures:1')).rstrip('1')
         txt = param.attributes['def'].value
         self.panel = wx.Panel(fp)
@@ -845,6 +855,7 @@ class TextureParamCtrl:
             else:
                 dir = '.'
                 file = ''
+        self.renderPanel.ShowInfoPopup(False)
         dlg = wx.FileDialog(self.panel, message = "Choose a texture file",
                             defaultDir = dir,
                             defaultFile = file,
@@ -854,6 +865,7 @@ class TextureParamCtrl:
             self.txtText.SetValue(vpath)
             self.ApplyParam()
         dlg.Destroy()
+        self.renderPanel.ShowInfoPopup(True)
 
 #--------------------------------------
 # Eof
