@@ -8,6 +8,32 @@
     Implements an nScriptServer that understands Tcl, extended
     by a few Nebula specific Tcl commands and the ability
     to route script cmds to Nebula C++ objects.
+
+    By default, nTclServer will be using MicroTcl, a custom
+    Radon Labs interpretter for TCL with a stripped-down selection
+    of Tcl version 8.4.  The removed commands include the file i/o,
+    networking, background jobs, event handling, etc - these
+    operations are done by calling to the appropriate portions
+    of Nebula.
+ 
+    MicroTCL does not need any external runtime environment files.
+    It can be linked statically into the application and has a code
+    size of about 160KB (vs. 660 KB @c tcl84.dll). Radon Labs derived
+    this version for the Nebula Xbox port, but it should prove excellent
+    for general use in Nebula 2 as well.
+
+    Nebula will compile with MicroTcl as default, but can be configured to
+    run under the classic Tcl environment as well (undef the
+    @c __MICROTCL__ define in <tt>kernel/system.h</tt>).
+
+    Note that MicroTCL takes advantage of byte-code compilation, and
+    will automatically compile any defined script procedures to byte
+    code the first time they are executed.  However, script outside
+    of a procedure will be parsed and executed through the normal
+    text fashion.  Given that bytecode-compiled script should be
+    substantially faster to execute, it is advised that you arrange
+    your code into procedures if your profiling suggests script
+    execution as a bottleneck.
 */
 #include "tcl.h"
 #include "kernel/nkernelserver.h"
