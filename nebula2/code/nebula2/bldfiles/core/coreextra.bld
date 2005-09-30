@@ -7,11 +7,15 @@
 #      nnpkfileserver
 #      nsharedmemory
 #      nramfileserver
+#      nnpkbuilder
 #      nresourceloader
 #      nresourcebundle
 #      nresourceserver
 #      nresource
+#      ncaptureserver
 #      nconserver
+#      nprefserver
+#      nwin32prefserver
 #      nipc
 #      nlocaleserver
 #      tinyxml
