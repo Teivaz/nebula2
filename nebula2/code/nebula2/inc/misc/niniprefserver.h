@@ -5,14 +5,40 @@
     @class nIniPrefServer
     @ingroup Misc
 
-    @brief A class for reading/writing INI file.
-
+    @brief A class for reading/writing INI file on win32 platform.
+    
+    A INI file consists of sections and each section has a pair of key and value 
+    like the following:
     @verbatim
     [section]
     key = value
     @endvebatim
 
-    (C) 2005 Kim, Hyoun Wo
+    The following code illustrates overall usage of the nIniPrefServer:
+    @code
+    // create the ini preference server.
+    nIniPrefServer* iniFile = (nIniPrefServer*)ks->New("niniprefserver", "/iniprefsrv");
+    // the .ini file which to be read should be set before retrieving any values.
+    iniFile->SetFile("nebula2/bin/win32/mypref.ini");
+
+    // read values of 'GraphicSetting' section with given keys.
+    iniFile->SetSection("GraphicSetting");
+    renderer = iniFile->ReadString ("renderer");
+    // specify default value. There is no value for the key or the key is not
+    // found, the specified default value is returned.
+    iniFile->SetDefault("640");
+    xres     = iniFile->ReadInt("width");
+    yres     = iniFile->ReadInt("height");
+
+    // switch section to read values of other section
+    iniFile->SetSection("GeneralSetting");
+    ...
+
+    // don't forget to release
+    iniFile->Release();
+    @endcode
+
+    (C) 2005 Kim, Hyoun Woo.
 */
 #include "misc/nprefserver.h"
 
