@@ -6,12 +6,13 @@
 #include "base/nmaxlistener.h"
 #include "export2/nmax.h"
 #include "export2/nmaxoptions.h"
-#include "pluginlibs/ninifile.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
+#include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "misc/niniprefserver.h"
 
 nMaxOptions* nMaxOptions::Singleton = 0;
 
@@ -79,26 +80,94 @@ bool nMaxOptions::Initialize()
         return false;
     }
 
-    nIniFile iniFile(iniFilename);
-    if (!iniFile.ReadString("HomeDir", homeDir, ".", "GeneralSettings")) return false;
-    if (!iniFile.ReadString("ProjDir", projDir, ".", "GeneralSettings")) return false;
-    if (!iniFile.ReadString("BinaryPath", binaryPath, ".", "GeneralSettings")) return false;
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("GeneralSettings");
+    iniFile->SetDefault(".");
+    
+    homeDir = iniFile->ReadString("HomeDir");
+    if (homeDir.IsEmpty()) 
+        return false;
+    
+    projDir = iniFile->ReadString("ProjDir");
+    if (projDir.IsEmpty()) 
+        return false;
+    
+    binaryPath = iniFile->ReadString("BinaryPath") ;
+    if (binaryPath.IsEmpty())    
+        return false;
 
-    if (!iniFile.ReadString("AnimsAssign",    animsAssign,    N_MAXEXPORT_ANIMS_ASSIGN,    "GeneralSettings")) return false;
-    if (!iniFile.ReadString("GfxlibAssign",   gfxlibAssign,   N_MAXEXPORT_GFXLIB_ASSIGN,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("GuiAssign",      guiAssign,      N_MAXEXPORT_GUI_ASSIGN,      "GeneralSettings")) return false;
-    if (!iniFile.ReadString("LightsAssign",   lightsAssign,   N_MAXEXPORT_LIGHTS_ASSIGN,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("MeshesAssign",   meshesAssign,   N_MAXEXPORT_MESHES_ASSIGN,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("ShadersAssign",  shadersAssign,  N_MAXEXPORT_SHADERS_ASSIGN,  "GeneralSettings")) return false;
-    if (!iniFile.ReadString("TexturesAssign", texturesAssign, N_MAXEXPORT_TEXTURES_ASSIGN, "GeneralSettings")) return false;
+    iniFile->SetDefault(N_MAXEXPORT_ANIMS_ASSIGN);
+    animsAssign = iniFile->ReadString("AnimsAssign");
+    if (animsAssign.IsEmpty())
+        return false;
+    
+    iniFile->SetDefault(N_MAXEXPORT_GFXLIB_ASSIGN);
+    gfxlibAssign = iniFile->ReadString("GfxlibAssign");
+    if (gfxlibAssign.IsEmpty())
+        return false;
+    
+    iniFile->SetDefault(N_MAXEXPORT_GUI_ASSIGN);
+    guiAssign = iniFile->ReadString("GuiAssign") ;
+    if (guiAssign.IsEmpty())
+        return false;
+    
+    iniFile->SetDefault(N_MAXEXPORT_LIGHTS_ASSIGN);
+    lightsAssign = iniFile->ReadString("LightsAssign");
+    if (lightsAssign.IsEmpty())
+        return false;
 
-    if (!iniFile.ReadString("AnimsPath",    animsPath,    N_MAXEXPORT_ANIMS_PATH,    "GeneralSettings")) return false;
-    if (!iniFile.ReadString("GfxlibPath",   gfxlibPath,   N_MAXEXPORT_GFXLIB_PATH,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("GuiPath",      guiPath,      N_MAXEXPORT_GUI_PATH,      "GeneralSettings")) return false;
-    if (!iniFile.ReadString("LightsPath",   lightsPath,   N_MAXEXPORT_LIGHTS_PATH,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("MeshesPath",   meshesPath,   N_MAXEXPORT_MESHES_PATH,   "GeneralSettings")) return false;
-    if (!iniFile.ReadString("ShadersPath",  shadersPath,  N_MAXEXPORT_SHADERS_PATH,  "GeneralSettings")) return false;
-    if (!iniFile.ReadString("TexturesPath", texturesPath, N_MAXEXPORT_TEXTURES_PATH, "GeneralSettings")) return false;
+    iniFile->SetDefault(N_MAXEXPORT_MESHES_ASSIGN);
+    meshesAssign = iniFile->ReadString("MeshesAssign");
+    if (meshesAssign.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_SHADERS_ASSIGN);
+    shadersAssign = iniFile->ReadString("ShadersAssign");
+    if (shadersAssign.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_TEXTURES_ASSIGN);
+    texturesAssign = iniFile->ReadString("TexturesAssign");
+    if (texturesAssign.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_ANIMS_PATH);
+    animsPath = iniFile->ReadString("AnimsPath");
+    if (animsPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_GFXLIB_PATH);
+    gfxlibPath = iniFile->ReadString("GfxlibPath");
+    if (gfxlibPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_GUI_PATH);
+    guiPath = iniFile->ReadString("GuiPath");
+    if (guiPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_LIGHTS_PATH);
+    lightsPath = iniFile->ReadString("LightsPath");
+    if (lightsPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_MESHES_PATH);
+    meshesPath = iniFile->ReadString("MeshesPath");
+    if (meshesPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_SHADERS_PATH);
+    shadersPath = iniFile->ReadString("ShadersPath");
+    if (shadersPath.IsEmpty())
+        return false;
+
+    iniFile->SetDefault(N_MAXEXPORT_TEXTURES_PATH);
+    texturesPath = iniFile->ReadString("TexturesPath");
+    if (texturesPath.IsEmpty())
+        return false;
+
+    iniFile->Release();
 
     if (!fileServer->DirectoryExists(this->homeDir.Get()))
     {
@@ -269,35 +338,55 @@ bool nMaxOptions::LoadUtilityOptions()
         return false;
     }
 
-    nIniFile iniFile(iniFilename);
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("UtilityOptions");
 
-    //
-    // read various settings for utility panel options.
-    //
+    iniFile->SetDefault("0.01f");
+    this->geomScale = iniFile->ReadFloat ("GeometryScale");
+
+    iniFile->SetDefault("24");
+    this->maxJointPaletteSize = iniFile->ReadInt ("MaxJointPalette");
+
+    iniFile->SetDefault("0.0001f");
+    this->weightThreshold = iniFile->ReadFloat ("WeightThreshold");
+
+    iniFile->SetDefault(".n3d2");
+    this->meshFileExtension = iniFile->ReadString("SaveMeshAs");
+
+    iniFile->SetDefault(".nanim2");
+    this->animFileExtension = iniFile->ReadString("SaveAnimAs");
+
+    iniFile->SetDefault("2");
+    this->sampleRate = iniFile->ReadInt ("SampleRate");
+
+    //FIXME: change it to use ReadBool()
     int tmpAddJointName, tmpExportHiddenNode;
 
-    iniFile.ReadFloat ("GeometryScale",   this->geomScale,           0.01f,     "UtilityOptions");
-    iniFile.ReadInt   ("MaxJointPalette", this->maxJointPaletteSize, 24,        "UtilityOptions");
-    iniFile.ReadFloat ("WeightThreshold", this->weightThreshold,     0.0001f,   "UtilityOptions");
-    iniFile.ReadString("SaveMeshAs",      this->meshFileExtension,   ".n3d2",   "UtilityOptions");
-    iniFile.ReadString("SaveAnimAs",      this->animFileExtension,   ".nanim2", "UtilityOptions");
-    iniFile.ReadInt   ("SampleRate",      this->sampleRate,          2,         "UtilityOptions");
+    iniFile->SetDefault("false");
+    tmpAddJointName = iniFile->ReadBool("AddJointName");
 
-    iniFile.ReadInt("AddJointName", tmpAddJointName, 0, "UtilityOptions");
-    this->addJointName = tmpAddJointName ? true : false;
+    iniFile->SetDefault("false");
+    tmpExportHiddenNode = iniFile->ReadBool("ExportHiddenNode");
 
-    iniFile.ReadInt("ExportHiddenNode", tmpExportHiddenNode, 0, "UtilityOptions");
-    this->exportHiddenNodes = tmpExportHiddenNode ? true : false;
-
-    if (!iniFile.ReadString("ScriptServer", this->saveScriptServer, "ntclserver", "UtilityOptions"))
+    iniFile->SetDefault("ntclserver");
+    this->saveScriptServer = iniFile->ReadString("ScriptServer");
+    if (this->saveScriptServer.IsEmpty())
     {
-        n_message("Faied to read script server option in nmaxtoolbox.ini. 'ntclserver' is used as default.");
+        n_message("Faied to read script server option in nmaxtoolbox.ini. \
+                  'ntclserver' is used as default.");
     }
 
-    if (!iniFile.ReadInt("Verbose", this->verboseLevel, 4, "UtilityOptions"))
+    iniFile->SetDefault("4");
+    this->verboseLevel= iniFile->ReadInt("Verbose");
+    if (this->verboseLevel <0 || this->verboseLevel > 5)
     {
-        n_message("Faied to read verbose option in nmaxtoolbox.ini. Set to 'high' for the default value.");
+        n_message("Faied to read verbose option in %s or \
+                   wrong verbose level in the ini file. \
+                   Set to 'high' for the default value.", iniFilename.Get());
     }
+
+    iniFile->Release();
 
     return true;
 }
@@ -319,24 +408,22 @@ void nMaxOptions::SaveUtilityOptions()
     iniFilename += "\\";
     iniFilename += N_MAXEXPORT_INIFILE;
 
-    nIniFile iniFile (iniFilename);
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("UtilityOptions");
 
-    iniFile.WriteFloat ("GeometryScale",   this->geomScale,           "UtilityOptions");
-    iniFile.WriteInt   ("MaxJointPalette", this->maxJointPaletteSize, "UtilityOptions");
-    iniFile.WriteFloat ("WeightThreshold", this->weightThreshold,     "UtilityOptions");
-    iniFile.WriteString("SaveMeshAs",      this->meshFileExtension,   "UtilityOptions");
-    iniFile.WriteString("SaveAnimAs",      this->animFileExtension,   "UtilityOptions");
-    iniFile.WriteInt   ("SampleRate",      this->sampleRate,          "UtilityOptions");
+    iniFile->WriteFloat ("GeometryScale",   this->geomScale);
+    iniFile->WriteInt   ("MaxJointPalette", this->maxJointPaletteSize);
+    iniFile->WriteFloat ("WeightThreshold", this->weightThreshold);
+    iniFile->WriteString("SaveMeshAs",      this->meshFileExtension);
+    iniFile->WriteString("SaveAnimAs",      this->animFileExtension);
+    iniFile->WriteInt   ("SampleRate",      this->sampleRate);
+    iniFile->WriteBool  ("AddJointName",    this->addJointName);
+    iniFile->WriteBool  ("ExportHiddenNode",this->exportHiddenNodes);
+    iniFile->WriteString("ScriptServer",    this->saveScriptServer);
+    iniFile->WriteInt   ("Verbose",         this->verboseLevel);
 
-    int tmpAddJointName  = this->addJointName ? 1 : 0;
-    iniFile.WriteInt   ("AddJointName", tmpAddJointName, "UtilityOptions");
-    
-    int tmpExportHiddenNode = this->exportHiddenNodes ? 1 : 0;
-    iniFile.WriteInt   ("ExportHiddenNode", tmpExportHiddenNode, "UtilityOptions");
-    
-    iniFile.WriteString("ScriptServer", this->saveScriptServer, "UtilityOptions");
-
-    iniFile.WriteInt("Verbose", this->verboseLevel, "UtilityOptions");
+    iniFile->Release();
 }
 
 //-----------------------------------------------------------------------------
