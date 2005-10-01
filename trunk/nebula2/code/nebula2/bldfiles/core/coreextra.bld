@@ -16,6 +16,7 @@
 #      nconserver
 #      nprefserver
 #      nwin32prefserver
+#      niniprefserver
 #      nipc
 #      nlocaleserver
 #      tinyxml
@@ -129,6 +130,13 @@ beginmodule nwin32prefserver
     setfiles { nwin32prefserver_main }
     setheaders { nwin32prefserver }
     setlibs_win32 { advapi32.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule niniprefserver
+    setdir misc
+    setplatform win32
+    setfiles { niniprefserver_main }
+    setheaders { niniprefserver }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nipc
