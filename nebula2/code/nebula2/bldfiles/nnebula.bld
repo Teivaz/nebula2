@@ -27,7 +27,7 @@ begintarget nnebula
         nswingshapenode nwindowhandler nwin32windowhandler
         nmousecursor nmesharray ninstancestream nocclusionquery
         ntransformcurveanimator nuvanimator
-        nprefserver nwin32prefserver ncaptureserver
+        nprefserver nwin32prefserver ncaptureserver niniprefserver
         nlocaleserver tinyxml xml
         nblendshapenode nblendshapeanimator
         nmeshdeformer nskinmeshdeformer nblendshapedeformer
