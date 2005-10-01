@@ -8,10 +8,11 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "pluginlibs/nmaxvieweroptions.h"
-#include "pluginlibs/ninifile.h"
 
+#include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "misc/niniprefserver.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -100,16 +101,20 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
 {
     nString scriptServer;
     nString x,y,w,h;
-    uint fullscreen, alwaysontop;
+    bool fullscreen, alwaysontop;
     nString projDir;
     nString featureset;
     nString gfxServer;
     nString sceneServer;
     nString stage;
 
-    nIniFile iniFile(iniFilename, sectionName);
+    //nIniFile iniFile(iniFilename, sectionName);
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("DefaultViewerSetting");
 
-    iniFile.ReadString("-scriptserver", scriptServer, "ntclserver");
+    iniFile->SetDefault("ntclserver");
+    scriptServer = iniFile->ReadString("-scriptserver");
     if (!scriptServer.IsEmpty())
     {
         this->arguments += "-scriptserver ";
@@ -117,38 +122,45 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
         this->arguments += " ";
     }
 
-    iniFile.ReadUINT("-fullscreen", fullscreen, 0);
-    if (fullscreen > 0)
+    iniFile->SetDefault("false");
+    fullscreen = iniFile->ReadBool("-fullscreen");
+    if (fullscreen)
         this->arguments += "-fullscreen ";
 
-    iniFile.ReadUINT("-alwaysontop", alwaysontop, 0);
-    if (alwaysontop > 0)
+    iniFile->SetDefault("false");
+    alwaysontop = iniFile->ReadBool("-alwaysontop");
+    if (alwaysontop)
         this->arguments += "-alwaysontop ";
 
-    iniFile.ReadString("-x", x, "0");
+    iniFile->SetDefault("0");
+    x = iniFile->ReadString("-x");
     this->arguments += "-x";
     this->arguments += " ";
     this->arguments += x;
     this->arguments += " ";
 
-    iniFile.ReadString("-y", y, "0");
+    iniFile->SetDefault("0");
+    y = iniFile->ReadString("-y");
     this->arguments += "-y";
     this->arguments += " ";
     this->arguments += y;
     this->arguments += " ";
 
-    iniFile.ReadString("-w", w, "640");
+    iniFile->SetDefault("640");
+    w = iniFile->ReadString("-w");
     this->arguments += "-w ";
     this->arguments += w;
     this->arguments += " ";
 
-    iniFile.ReadString("-h", h, "480");
+    iniFile->SetDefault("480");
+    h = iniFile->ReadString("-h");
     this->arguments += "-h ";
     this->arguments += h;
     this->arguments += " ";
 
-    // projdir arg.
-    iniFile.ReadString("-projdir", projDir, "");
+    // project directory arg.
+    iniFile->SetDefault("");
+    projDir = iniFile->ReadString("-projdir");
     this->arguments += "-projdir ";
     if (!projDir.IsEmpty())
     {
@@ -160,18 +172,21 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     }
     this->arguments += " ";
 
-    iniFile.ReadString("-sceneserver", sceneServer, "nsceneserver");
+    iniFile->SetDefault("nsceneserver");
+    sceneServer = iniFile->ReadString("-sceneserver");
     this->arguments += "-sceneserver ";
     this->arguments += sceneServer;
     this->arguments += " ";
 
-    iniFile.ReadString("-stage", stage, "home:export/gfxlib/stdlight.n2");
+    iniFile->SetDefault("home:export/gfxlib/stdlight.n2");
+    stage = iniFile->ReadString("-stage");
     this->arguments += "-stage ";
     this->arguments += stage;
     this->arguments += " ";
 
     // gfxserver arg.
-    iniFile.ReadString("-gfxserver", gfxServer, "");
+    iniFile->SetDefault("");
+    gfxServer = iniFile->ReadString("-gfxserver");
     if (!gfxServer.IsEmpty())
     {
         this->arguments += "-gfxserver ";
@@ -180,7 +195,8 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     }
 
     // featureset arg.
-    iniFile.ReadString("-featureset", featureset, "");
+    iniFile->SetDefault("");
+    featureset = iniFile->ReadString("-featureset");
     if (!featureset.IsEmpty())
     {
         this->arguments += "-featureset ";
@@ -191,6 +207,8 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     // specifies to use ram file in shared memory.
     if (nMaxOptions::Instance()->UsePreviewMode())
         this->arguments += "-useram "; //use ram file.
+
+    iniFile->Release();
 
     return true;
 }
@@ -206,17 +224,22 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
 bool nMaxViewerOptions::ReadCustomViewerOptions(const nString &iniFilename, 
                                                 const nString &sectionName)
 {
-    nIniFile iniFile(iniFilename, sectionName);
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("CustomViewerSetting");
 
     nString args;
 
-    if (!iniFile.ReadString("args", args, ""))
+    iniFile->SetDefault("");
+    args = iniFile->ReadString("args");
+    if (args.IsEmpty())
     {
-        n_maxlog(Warning, "Failed to read '-featureset' value from [%s] in ini file\n", sectionName.Get());
+        n_maxlog(Warning, "Failed to read 'CustomViewerSetting' in %s.ini file\n", iniFilename.Get());
         return false;
     }
     this->arguments += args;
 
-    return false;
+    iniFile->Release();
+    return true;
 }
 
