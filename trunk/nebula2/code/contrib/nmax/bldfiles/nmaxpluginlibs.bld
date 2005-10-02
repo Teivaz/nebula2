@@ -16,13 +16,11 @@ beginmodule nmaxdlg
         nmaxdlg
         nmaxdirdlg
         nmaxlogdlg
-        ninifile
     }
     setheaders {
         nmaxdlg
         nmaxdirdlg
         nmaxlogdlg
-        ninifile
     }
 endmodule
 #-------------------------------------------------------------------------------
