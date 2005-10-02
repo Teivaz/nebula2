@@ -11,10 +11,12 @@
 #include "export2/nmaxutil.h"
 #include "util/nstring.h"
 #include "export2/nmaxmaterial_ui.h"
-#include "pluginlibs/ninifile.h"
+#include "export2/nmaxoptions.h"
 
+#include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "misc/niniprefserver.h"
 #include "util/nstring.h"
 #include "tinyxml/tinyxml.h"
 
@@ -43,7 +45,7 @@ nString GetShaderXmlPath()
     if (!fileServer->FileExists(iniFilename.Get()))
     {
         // .ini file does not exist in '/plugcfg' directory.
-        n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
+        n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
             N_MAXEXPORT_INIFILE);
 
         // return a empty string.
@@ -53,22 +55,28 @@ nString GetShaderXmlPath()
     nString homeDir;
 
     // read 'home' path from existing .ini flle in '$3dsmax/plugcfg' directory.
-    nIniFile iniFile(iniFilename);
-    if (!iniFile.ReadString("HomeDir", homeDir, ".", "GeneralSettings")) 
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("GeneralSettings");
+    homeDir = iniFile->ReadString("HomeDir");
+    iniFile->Release();
+
+    if (homeDir.IsEmpty())
     {
-        n_listener("Home directory does not exist in .ini file.\n");
+        n_message("Home directory does not exist in %s file.\n", iniFilename.Get());
 
         // return a empty string.
-        return shdxml; 
+        return shdxml;
     }
 
     shdxml += homeDir;
     shdxml += "\\";
     shdxml += "data\\shaders\\shaders.xml";
 
-    if (!fileServer->FileExists(shdxml.Get()))
+    if (!nFileServer2::Instance()->FileExists(shdxml.Get()))
     {
-        n_listener("File %s does not exist.\n", shdxml.Get());
+        //n_listener("File %s does not exist.\n", shdxml.Get());
+        n_message("File %s does not exist.\n", shdxml.Get());
 
         // make the string to be empty then return.
         shdxml += "";
