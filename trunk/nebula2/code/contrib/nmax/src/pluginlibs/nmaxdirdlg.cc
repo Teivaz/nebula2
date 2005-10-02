@@ -17,9 +17,9 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxdirdlg.h"
 #include "util/nstring.h"
-#include "pluginlibs/ninifile.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "misc/niniprefserver.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -79,25 +79,60 @@ void nMaxDirDlg::OnInitDialog()
     }
 
     // read values from .ini file and specify those to dialog controls.
-    nIniFile iniFile(iniFilename);
-    iniFile.ReadString("HomeDir", homeDir, ".", "GeneralSettings");
-    iniFile.ReadString("BinaryPath", binaryPath, ".", "GeneralSettings");
+    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+    iniFile->SetFileName(iniFilename);
+    iniFile->SetSection("GeneralSettings");
+    iniFile->SetDefault(".");
 
-    iniFile.ReadString("AnimsAssign",    animsAssign,    N_MAXEXPORT_ANIMS_ASSIGN,    "GeneralSettings");
-    iniFile.ReadString("GfxlibAssign",   gfxlibAssign,   N_MAXEXPORT_GFXLIB_ASSIGN,   "GeneralSettings");
-    iniFile.ReadString("GuiAssign",      guiAssign,      N_MAXEXPORT_GUI_ASSIGN,      "GeneralSettings");
-    iniFile.ReadString("LightsAssign",   lightsAssign,   N_MAXEXPORT_LIGHTS_ASSIGN,   "GeneralSettings");
-    iniFile.ReadString("MeshesAssign",   meshesAssign,   N_MAXEXPORT_MESHES_ASSIGN,   "GeneralSettings");
-    iniFile.ReadString("ShadersAssign",  shadersAssign,  N_MAXEXPORT_SHADERS_ASSIGN,  "GeneralSettings");
-    iniFile.ReadString("TexturesAssign", texturesAssign, N_MAXEXPORT_TEXTURES_ASSIGN, "GeneralSettings");
+    homeDir = iniFile->ReadString("HomeDir");
 
-    iniFile.ReadString("AnimsPath",    animsPath,    N_MAXEXPORT_ANIMS_PATH,    "GeneralSettings");
-    iniFile.ReadString("GfxlibPath",   gfxlibPath,   N_MAXEXPORT_GFXLIB_PATH,   "GeneralSettings");
-    iniFile.ReadString("GuiPath",      guiPath,      N_MAXEXPORT_GUI_PATH,      "GeneralSettings");
-    iniFile.ReadString("LightsPath",   lightsPath,   N_MAXEXPORT_LIGHTS_PATH,   "GeneralSettings");
-    iniFile.ReadString("MeshesPath",   meshesPath,   N_MAXEXPORT_MESHES_PATH,   "GeneralSettings");
-    iniFile.ReadString("ShadersPath",  shadersPath,  N_MAXEXPORT_SHADERS_PATH,  "GeneralSettings");
-    iniFile.ReadString("TexturesPath", texturesPath, N_MAXEXPORT_TEXTURES_PATH, "GeneralSettings");
+    //projDir = iniFile->ReadString("ProjDir");
+
+    binaryPath = iniFile->ReadString("BinaryPath") ;
+
+    iniFile->SetDefault(N_MAXEXPORT_ANIMS_ASSIGN);
+    animsAssign = iniFile->ReadString("AnimsAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_GFXLIB_ASSIGN);
+    gfxlibAssign = iniFile->ReadString("GfxlibAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_GUI_ASSIGN);
+    guiAssign = iniFile->ReadString("GuiAssign") ;
+
+    iniFile->SetDefault(N_MAXEXPORT_LIGHTS_ASSIGN);
+    lightsAssign = iniFile->ReadString("LightsAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_MESHES_ASSIGN);
+    meshesAssign = iniFile->ReadString("MeshesAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_SHADERS_ASSIGN);
+    shadersAssign = iniFile->ReadString("ShadersAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_TEXTURES_ASSIGN);
+    texturesAssign = iniFile->ReadString("TexturesAssign");
+
+    iniFile->SetDefault(N_MAXEXPORT_ANIMS_PATH);
+    animsPath = iniFile->ReadString("AnimsPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_GFXLIB_PATH);
+    gfxlibPath = iniFile->ReadString("GfxlibPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_GUI_PATH);
+    guiPath = iniFile->ReadString("GuiPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_LIGHTS_PATH);
+    lightsPath = iniFile->ReadString("LightsPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_MESHES_PATH);
+    meshesPath = iniFile->ReadString("MeshesPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_SHADERS_PATH);
+    shadersPath = iniFile->ReadString("ShadersPath");
+
+    iniFile->SetDefault(N_MAXEXPORT_TEXTURES_PATH);
+    texturesPath = iniFile->ReadString("TexturesPath");
+
+    iniFile->Release();
 
     SetDlgItemText(hWnd, IDC_EXT_DIRNAME,     homeDir.Get());    // home dir
     SetDlgItemText(hWnd, IDC_EXT_BINARY_PATH, binaryPath.Get()); // binary path
@@ -223,26 +258,30 @@ bool nMaxDirDlg::OnOK()
         iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
         iniFilename += "\\";
         iniFilename += N_MAXEXPORT_INIFILE;
-        
-        nIniFile iniFile (iniFilename);
-        iniFile.WriteString("HomeDir", homeDir,  "GeneralSettings");
-        iniFile.WriteString("BinaryPath", binaryPath, "GeneralSettings");
 
-        iniFile.WriteString("AnimsAssign",    animsAssign,    "GeneralSettings");
-        iniFile.WriteString("GfxlibAssign",   gfxlibAssign,   "GeneralSettings");
-        iniFile.WriteString("GuiAssign",      guiAssign,      "GeneralSettings");
-        iniFile.WriteString("LightsAssign",   lightsAssign,   "GeneralSettings");
-        iniFile.WriteString("MeshesAssign",   meshesAssign,   "GeneralSettings");
-        iniFile.WriteString("ShadersAssign",  shadersAssign,  "GeneralSettings");
-        iniFile.WriteString("TexturesAssign", texturesAssign, "GeneralSettings");
+        nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
+        iniFile->SetFileName(iniFilename);
+        iniFile->SetSection("GeneralSettings");
 
-        iniFile.WriteString("AnimsPath",    animsPath,    "GeneralSettings");
-        iniFile.WriteString("GfxlibPath",   gfxlibPath,   "GeneralSettings");
-        iniFile.WriteString("GuiPath",      guiPath,      "GeneralSettings");
-        iniFile.WriteString("LightsPath",   lightsPath,   "GeneralSettings");
-        iniFile.WriteString("MeshesPath",   meshesPath,   "GeneralSettings");
-        iniFile.WriteString("ShadersPath",  shadersPath,  "GeneralSettings");
-        iniFile.WriteString("TexturesPath", texturesPath, "GeneralSettings");
+        iniFile->WriteString("HomeDir", homeDir);
+        //iniFile->WriteString("ProjDir", projDir);
+        iniFile->WriteString("BinaryPath", binaryPath) ;
+        iniFile->WriteString("AnimsAssign", animsAssign);
+        iniFile->WriteString("GfxlibAssign", gfxlibAssign);
+        iniFile->WriteString("GuiAssign", guiAssign) ;
+        iniFile->WriteString("LightsAssign", lightsAssign);
+        iniFile->WriteString("MeshesAssign", meshesAssign);
+        iniFile->WriteString("ShadersAssign", shadersAssign);
+        iniFile->WriteString("TexturesAssign", texturesAssign);
+        iniFile->WriteString("AnimsPath", animsPath);
+        iniFile->WriteString("GfxlibPath", gfxlibPath);
+        iniFile->WriteString("GuiPath", guiPath);
+        iniFile->WriteString("LightsPath", lightsPath);
+        iniFile->WriteString("MeshesPath", meshesPath);
+        iniFile->WriteString("ShadersPath", shadersPath);
+        iniFile->WriteString("TexturesPath", texturesPath);
+
+        iniFile->Release();
     }
 
     return true;
