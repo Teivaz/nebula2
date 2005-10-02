@@ -188,7 +188,7 @@ Matrix3 UniformMatrix(Matrix3 sMatrix)
     AffineParts sAP;
     Matrix3 sResult;
 
-    decomp_affine( sMatrix, &sAP );
+    decomp_affine(sMatrix, &sAP);
     sAP.q.MakeMatrix(sResult);
     sResult.SetRow(3, sAP.t);
 
@@ -213,8 +213,6 @@ Matrix3 nMaxTransform::GetLocalTM(INode *inode, TimeValue time)
     // before we multiply two matrices to get correct result.
     if (nMaxBoneManager::Instance()->IsBone(inode))
     {
-        //nodeTM.NoScale();
-        //parentTM.NoScale();
         nodeTM   = UniformMatrix(nodeTM);
         parentTM = UniformMatrix(parentTM);
     }
