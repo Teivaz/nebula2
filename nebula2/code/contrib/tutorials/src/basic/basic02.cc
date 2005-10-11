@@ -60,7 +60,7 @@ main(int /*argc*/, const char** /*argv*/)
         nDisplayMode2::Windowed, 
         0, 0, 
         640, 480, 
-        false);
+        false, false, "icon");
     refGfxServer->SetDisplayMode(DisplayMode);
     
     bool result;
@@ -75,11 +75,13 @@ main(int /*argc*/, const char** /*argv*/)
     // Trigger() returns false if you close the window
     while (gfxServer->Trigger())
     {
+        gfxServer->BeginFrame();
         gfxServer->BeginScene();
         gfxServer->Clear(nGfxServer2::AllBuffers, 0.0f, 0.8f, 0.6f, 0.4f, 0.0f, 0);
 
         gfxServer->EndScene();
         gfxServer->PresentScene();
+        gfxServer->EndFrame();
         
         // allow Windows to multitask
         n_sleep(0.0);
