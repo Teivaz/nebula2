@@ -107,17 +107,12 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
         quaternion poseRotate (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);
         vector3 poseScale (ap.k.x, ap.k.z, ap.k.y);
 
-        const char * boneName = "";
-        if (nMaxOptions::Instance()->HasJointName())
-        {
-            boneName = bone.name.Get();
-        }
         animator->SetJoint(bone.id, 
                            bone.parentID,
                            poseTranlator,
                            poseRotate,
                            poseScale,
-                           boneName);
+                           bone.name.Get());
     }
 
     animator->EndJoints();
