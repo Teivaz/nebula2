@@ -132,10 +132,6 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     spinSampleRate->SetResetValue(2);
     spinSampleRate->SetValue(sampleRate, TRUE);
 
-    bool hasJointName = nMaxOptions::Instance()->HasJointName();
-    int exportJointName = hasJointName ? 1 : 0;
-    CheckDlgButton(hwnd, IDC_ADDJOINTNAME, exportJointName);
-
     // mesh type radio button
     const nString& meshFileType = nMaxOptions::Instance()->GetMeshFileType();
     if (".n3d2" == meshFileType)
@@ -201,7 +197,6 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     SendMessage(hwndVerbosity, CB_ADDSTRING, 0L, (LPARAM)"High");
 
     int curVerboseLevel = nMaxOptions::Instance()->GetVerboseLevel();
-    //int  = GetItemIndexFromVerbose(verboseName.Get());
     SendMessage(hwndVerbosity, CB_SETCURSEL, (WPARAM)curVerboseLevel, 0);
 }
 
@@ -280,15 +275,6 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
     case IDC_VERTEX_UV:
     case IDC_VERTEX_TANGENT:
         OnVertexComponent(hwnd);
-        break;
-
-    case IDC_ADDJOINTNAME:
-        {
-            if (IsChecked(hwnd, IDC_ADDJOINTNAME))
-                nMaxOptions::Instance()->SetAddJointName(true);
-            else
-                nMaxOptions::Instance()->SetAddJointName(false);
-        }
         break;
 
     case IDC_N3D2:
