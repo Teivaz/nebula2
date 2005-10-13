@@ -69,8 +69,6 @@ public:
 
     void SetSampleRate(int val);
     int GetSampleRate() const;
-    void SetAddJointName(bool flag);
-    bool HasJointName() const;
 
     void SetMeshFileType(const char* type);
     const nString& GetMeshFileType() const;
@@ -326,18 +324,6 @@ inline
 float nMaxOptions::GetWeightThreshold() const
 {
     return this->weightThreshold;
-}
-//-----------------------------------------------------------------------------
-inline
-void nMaxOptions::SetAddJointName(bool flag)
-{
-    this->addJointName = flag;
-}
-//-----------------------------------------------------------------------------
-inline
-bool nMaxOptions::HasJointName() const
-{
-    return this->addJointName;
 }
 //-----------------------------------------------------------------------------
 inline
