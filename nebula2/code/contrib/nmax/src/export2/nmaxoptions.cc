@@ -361,10 +361,7 @@ bool nMaxOptions::LoadUtilityOptions()
     this->sampleRate = iniFile->ReadInt ("SampleRate");
 
     //FIXME: change it to use ReadBool()
-    int tmpAddJointName, tmpExportHiddenNode;
-
-    iniFile->SetDefault("false");
-    tmpAddJointName = iniFile->ReadBool("AddJointName");
+    int tmpExportHiddenNode;
 
     iniFile->SetDefault("false");
     tmpExportHiddenNode = iniFile->ReadBool("ExportHiddenNode");
@@ -418,7 +415,6 @@ void nMaxOptions::SaveUtilityOptions()
     iniFile->WriteString("SaveMeshAs",      this->meshFileExtension);
     iniFile->WriteString("SaveAnimAs",      this->animFileExtension);
     iniFile->WriteInt   ("SampleRate",      this->sampleRate);
-    iniFile->WriteBool  ("AddJointName",    this->addJointName);
     iniFile->WriteBool  ("ExportHiddenNode",this->exportHiddenNodes);
     iniFile->WriteString("ScriptServer",    this->saveScriptServer);
     iniFile->WriteInt   ("Verbose",         this->verboseLevel);
