@@ -302,7 +302,7 @@
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="Velocity" label="Wave Velocity" type="Vector" gui="1" export="1" def="0.05 0.05 0.0 0.0" />
         <param name="TexGenS" label="Texture Scale" type="Vector" gui="1" export="1" def="8.0 4.0 0.0 0.0" />
-        <param name="Insensity0" label="Water Depth Opacity" type="Float" gui="1" export="1" min="0.0" max="100.0" def="1.0" />
+        <param name="Intensity0" label="Water Depth Opacity" type="Float" gui="1" export="1" min="0.0" max="100.0" def="1.0" />
         <param name="FresnelBias" label="Fresnel Bias" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.1" />
         <param name="FresnelPower" label="Fresnel Exponent" type="Float" gui="1" export="1" min="1.0" max="10.0" def="4.0" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/alphazerowhite.dds" />
