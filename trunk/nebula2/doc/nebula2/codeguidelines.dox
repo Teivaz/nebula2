@@ -1,6 +1,6 @@
 /**
 
-    @defgroup Nebula2CodingGuideline Nebula 2 Coding Guidelines
+    @page Nebula2CodingGuideline Nebula 2 Coding Guidelines
 
     Here are summarized main conventions to have in mind when writing code for Nebula 2 engine. The goal is to write code  reliable, readable and with good performance. Most of them are common sense rules and conventions to make the source code looks similar independently on the programmer who wrote it, so in general follow the style of existing code. Don't use your own C++ idiom, use the Nebula 2 idiom.
     
