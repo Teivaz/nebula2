@@ -185,6 +185,8 @@ nArg::Copy(const nArg& rhs)
 
         case String:
             this->Delete();
+            // Delete() resets the type back to Void so need to set it again
+            this->type = rhs.type;
             if (rhs.s)
             {   
                 this->s = n_strdup(rhs.s);
@@ -201,6 +203,8 @@ nArg::Copy(const nArg& rhs)
 
         case List:
             this->Delete();
+            // Delete() resets the type back to Void so need to set it again
+            this->type = rhs.type;
             if (rhs.l)
             {
                 this->l = n_new_array(nArg, rhs.listLen);
