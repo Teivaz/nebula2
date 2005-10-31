@@ -15,7 +15,7 @@
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndirect3d9);
-nNebulaUsePackage(ndsaudioserver3);
+nNebulaUsePackage(ndsound);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
@@ -67,7 +67,7 @@ main(int argc, const char** argv)
     nDisplayMode2::Bpp bpp = %(bpp)s;
 
     nDisplayMode2 disp;
-    disp.Set(title, type, 0, 0, w, h, vsync);
+    disp.Set(title, type, 0, 0, w, h, vsync, false, "NEBULAICON");
     disp.SetBpp(bpp);
 
     app->SetAppName(appName);

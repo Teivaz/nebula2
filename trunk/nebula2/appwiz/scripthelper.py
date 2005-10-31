@@ -15,7 +15,7 @@ nPythonRegisterPackages(nKernelServer * kernelServer)
     kernelServer->AddPackage(nnebula);
     kernelServer->AddPackage(ndirect3d9);
     kernelServer->AddPackage(ndinput8);
-    kernelServer->AddPackage(ndsaudioserver3);
+    kernelServer->AddPackage(ndsound);
     kernelServer->AddPackage(ndshow);
     kernelServer->AddPackage(ngui);
     kernelServer->AddPackage(napplication);
@@ -28,7 +28,7 @@ STR_ADD_PACKAGES = '''
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(ndirect3d9);
     kernelServer.AddPackage(ndinput8);
-    kernelServer.AddPackage(ndsaudioserver3);
+    kernelServer.AddPackage(ndsound);
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(napplication);
