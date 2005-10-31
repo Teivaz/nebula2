@@ -413,5 +413,8 @@ begintarget ngui
         nguicolorlabel nguicolorpicker nguicolorslidergroup
         nguibar nguifadeouttextlabel nguislide nguislideshow
     }
+    settargetdeps {
+        ntoollib
+    }
 endtarget
 
