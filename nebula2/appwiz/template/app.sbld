@@ -43,7 +43,7 @@ begintarget %(targetName)s
         ndinput8
         ndirect3d9
         ndshow
-        ndsaudioserver3
+        ndsound
         ngui
         nnetwork
         napplication
@@ -60,7 +60,7 @@ beginworkspace %(targetName)s
         ndinput8
         ndirect3d9
         ndshow
-        ndsaudioserver3
+        ndsound
         ngui
         nnetwork
         napplication
