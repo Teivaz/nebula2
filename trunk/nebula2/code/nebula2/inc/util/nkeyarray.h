@@ -11,6 +11,7 @@
     (C) 2002 - 2005 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include "util/narray.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nKeyArray
