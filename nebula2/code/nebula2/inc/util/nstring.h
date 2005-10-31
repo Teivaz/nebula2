@@ -112,9 +112,9 @@ public:
     /// append float value
     void AppendFloat(float val);
     /// convert string to lower case
-	void ToLower();
+    void ToLower();
     /// convert string to upper case
-	void ToUpper();
+    void ToUpper();
     /// get first token (this will destroy the string)
     const char* GetFirstToken(const char* whiteSpace);
     /// get next token (this will destroy the string)
@@ -928,6 +928,14 @@ nString::TerminateAtIndex(int index)
     n_assert(index < this->Length());
     char* ptr = (char*) this->Get();
     ptr[index] = 0;
+    if (this->string != 0)
+    {
+        this->strLen = index;
+    }
+    else
+    {
+        this->localStrLen = index;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -945,6 +953,14 @@ nString::StripTrailingSlash()
         if ((str[pos] == '/') || (str[pos] == '\\'))
         {
             str[pos] = 0;
+            if (this->string != 0)
+            {
+                this->strLen--;
+            }
+            else
+            {
+                this->localStrLen--;
+            }
         }
     }
 }
@@ -1313,9 +1329,9 @@ nString::CheckExtension(const char* ext) const
 {
     n_assert(ext);
     const char* extStr = this->GetExtension();
-	if (0 == extStr)
+    if (0 == extStr)
     {
-		return false;
+        return false;
     }
     return (0 == (strcmp(ext, extStr)));
 }
