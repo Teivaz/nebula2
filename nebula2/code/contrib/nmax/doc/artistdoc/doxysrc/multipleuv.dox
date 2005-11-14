@@ -1,0 +1,36 @@
+/**
+    @defgroup NMaxHowtoMultipleUv Multiple Uvs
+
+
+    @section NMaxHowtoMultipleUvOverview Overview
+
+
+    @section NMaxHowtoMultipleUvStepByStep Step By Step
+
+    To use different uv coordinate sets in Nebula and 3ds max do:
+    Apply two different map channels to your model. 
+
+      @image html multipleuv_modpanel.png
+
+    Most common case:
+    Automatic Unwrapping for normal or lightmap (<b>channel 2</b>) and 
+
+      @image html uvwmap2bump.png "channel 2"
+
+    uvw unwrap for color / bump / specular (<b>channel 1</b>)
+
+      @image html multipleuv_diffuse.png "channel 1"
+
+    Assign shaders and textures (Hint: The map channel in the texture
+    rollout of the material editor has no meaning for nebula)
+
+      @image html uvwmap_meditor.png "Not relevant regardless of value. But still good to specify, because one can see the different mapping in 3dsmax then."
+
+    Write a hlsl shader, which uses uv0 and uv1 set ( 3dsmax map channel - 1)
+
+
+   
+   
+   
+
+*/
