@@ -28,9 +28,6 @@
 
     Write a hlsl shader, which uses uv0 and uv1 set ( 3dsmax map channel - 1)
 
-
-   
-   
-   
+    This page of the documentation was contibuted by <i>Tobias Lang</i>.
 
 */
