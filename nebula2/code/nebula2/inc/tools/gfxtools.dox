@@ -9,4 +9,17 @@ One of the good thing to use these tools is that it provides a unified way
 to generate mesh and animation data even if whatever you use for an asset tool. 
 (eg. 3DS Max, Maya etc.)
 
+@section NebulaGraphicsSystemToolAssistenceTool Tool Assistence tool
+
+The shader.xml can be found in <tt>home:data/shaders/shaders.xml</tt> is used  
+by the Nebula Toolkit for Maya(or 3DSMax) to setup the Material Editor.  
+So the Editor is able to create the right GUI fields for the different shaders.
+The intended usage is to provide a parseable description of the aviable 
+shaders in the Toolkit and the possible parameters that could be set for 
+this shader. So it defines what parameters a shader has, what the 
+default values are, and if they should be editable (gui) by artist tools.<br>
+The primary reason invented the shader.xml file not done by annotations is that 
+creating the required d3d3device to parse the annotations caused Maya to 
+crash randomly.
+
 */
