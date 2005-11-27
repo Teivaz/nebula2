@@ -210,6 +210,26 @@ CreateState("ncutsceneappstate", "/myappstates/cutscene");
     OnRedner3D() and OnRender2D() is for rendering of the state as its name represents.
     Put any code of 3D rendering stuff on OnRender3D() and 2D rendering stuff on OnRender2D().
 
+    @subsection rendeerloop_application Rendering Loops
+
+    There are two seperated rendering phases, 'Render3D' and 'Render2D' in nApplication
+    rendering loop. The following is description of the two rendering phases.
+
+    Render3d actually means "scene rendering" - in fact, "scene attaching", 
+    because the operation that is performed in this phase is attaching node 
+    hierarchies to the scene graph (scene server) system. These are rendered 
+    using a render path and operations are encapsulated in scene nodes, as 
+    you have done. The important thing with this rendering loop is that it 
+    happens between a pair of @ref nSceneServer::BeginScene and @ref nSceneServer::EndScene 
+    calls. <br>
+    After the scene rendering loop (the "Render3d") phase has finished, the 
+    gfxServer is guaranteed to remain in a state that allows additional 
+    rendering, before the frame buffer contents are swapped to the screen. 
+    This phase is called Render2D in the application loop because it's 
+    common to perform 2d rendering. But if you want to perform some 3d 
+    (debug or otherwise) rendering by yourself (that is, outside the scene 
+    graph), this is the place to do it.
+
 
     @section shutdown_application Shutting Down nApplication
 
