@@ -73,6 +73,14 @@
       -# Run 3DS Max.
         - copied plugin will automatically be loaded when you start up 3DS Max.
 
+    @note
+    You may meet compile time errors which causes by ndirectshow and nmaxtoolkit
+    package even nmaxtoolkit package does not use any ndirectshow functions.
+    This problem is because both directshow and the Max SDK have a header
+    file with the same name. In this case you need to rearrange your
+    include directories to make sure that the platform sdk stuff is
+    included before the Max SDK.
+
 
     @section NMAXToolBoxDebugging Debugging the Plugin
 
