@@ -44,7 +44,16 @@ class makefile:
     # Entrypoint
     def Generate(self, workspaceNames):  
         defaultLocation = os.path.join('build', 'makefile')
-        os.makedirs(defaultLocation)
+        releaseObjLocation = os.path.join('build', 'makefile', 'inter', 'linux')
+        debugObjLocation = os.path.join('build', 'makefile', 'inter', 'linuxd')
+        try:
+            os.makedirs(releaseObjLocation)
+        except OSError:
+            pass # in case the dir already exists
+        try:
+            os.makedirs(debugObjLocation)
+        except OSError:
+            pass # in case the dir already exists
         
         progressVal = 0
         self.buildSys.CreateProgressDialog('Generating Makefiles', '', 
@@ -93,12 +102,12 @@ class makefile:
             makeFile.write("all: ")
             for workspaceName in workspaceNames:
                 makeFile.write("%s " % workspaceName)
-            makeFile.write("\n")
+            makeFile.write("\n\n")
             
             # spring clean
             makeFile.write("clean: \n")
-            makeFile.write("\t\$(RM) \$(N_TARGETDIR)*\n")
-            makeFile.write("\t\$(RM) \$(N_INTERDIR)\n")
+            makeFile.write("\t$(RM) $(N_TARGETDIR)*\n")
+            makeFile.write("\t$(RM) $(N_INTERDIR)\n")
             
             makeFile.write("default: all\n")
             
@@ -106,8 +115,7 @@ class makefile:
             makeFile.write(".PHONY: all ")
             for workspaceName in workspaceNames:
                 makeFile.write("%s " % workspaceName)
-            makeFile.write("\n")
-            
+            makeFile.write("\n\n")
             
             makeFile.close()
         except:
@@ -165,24 +173,22 @@ class makefile:
         
         # Add modules we need to the files line
         for moduleName in target.modules:
-            '''
-            if len(self.buildSys.modules[moduleName].files) > 0:
-                # Module has sources, onto the platform...
-                if not self.buildSys.modules[moduleName].SupportsPlatform("all"):
-                    if self.buildSys.modules[moduleName].SupportsPlatform("win32"):
-                        filesWin32  += self.getModuleSources(module)
-                    elif self.buildSys.modules[moduleName].SupportsPlatform("linux"):
-                        filesLinux  += self.getModuleSources(module)
-                    elif self.buildSys.modules[moduleName].SupportsPlatform("macosx"):
-                        filesMacOSX += self.getModuleSources(module)
-                    else:
-                        print "Module %s not found on any regular platform! RUN!!!" % module.name
+            module = self.buildSys.modules[moduleName]
+            sources = self.getModuleSources(module)
+            # Module has sources, onto the platform...
+            if not module.SupportsPlatform("all"):
+                if module.SupportsPlatform("win32"):
+                    filesWin32  += sources
+                elif module.SupportsPlatform("linux"):
+                    filesLinux  += sources
+                elif module.SupportsPlatform("macosx"):
+                    filesMacOSX += sources
                 else:
-            '''
-            # Module seems to now be platform independant?
-            filesWin32  += " %s" % self.getModuleSources(self.buildSys.modules[moduleName])
-            filesLinux  += " %s" % self.getModuleSources(self.buildSys.modules[moduleName])
-            filesMacOSX += " %s" % self.getModuleSources(self.buildSys.modules[moduleName])
+                    print "Module %s not found on any regular platform! RUN!!!" % module.name
+            else:
+                filesWin32  += " %s" % sources
+                filesLinux  += " %s" % sources
+                filesMacOSX += " %s" % sources
 
         # handle resource files
         resourceFiles = ""
@@ -207,11 +213,11 @@ class makefile:
         libsMacOSX = ""
         #for lib in target.libsWin32DebugAll:
         for lib in target.libsWin32ReleaseAll:
-            libsWin32  += "$(LIB_OPT)%s(LIB_OPT_POST) " % lib
+            libsWin32  += "$(LIB_OPT)%s$(LIB_OPT_POST) " % lib
         for lib in target.libsLinux:
-            libsLinux  += "$(LIB_OPT)%s(LIB_OPT_POST) " % lib
+            libsLinux  += "$(LIB_OPT)%s$(LIB_OPT_POST) " % lib
         for lib in target.libsMacOSX:
-            libsMacOSX += "$(LIB_OPT)%s(LIB_OPT_POST) " % lib
+            libsMacOSX += "$(LIB_OPT)%s$(LIB_OPT_POST) " % lib
     
         # generate list of target dependencies for that target
         depsWin32 = ""
@@ -282,7 +288,14 @@ class makefile:
             makeFile.write("else\n")
             makeFile.write("%s : %s %s\n" % (target.name, depsLinux, endTarget))
             makeFile.write("%s : %s\n" % (endTarget, filesLinux))
-            makeFile.write("\t$(CXX) $^ -o $@ $(LIBDIR) $(LIBS) %s\n" % libsLinux)
+
+            # write depsLinux, which appears to be a list of nebula libs
+            # as libraries to be linked. write it twice, for circular deps.
+            # we could use a topological sort instead, but this is easier.
+            depsAsLibs = ''.join(["$(LIB_OPT)" + entry + "$(LIB_OPT_POST) "
+                                  for entry in depsLinux.split()])
+            makeFile.write("\t$(CXX) $^ -o $@ $(LIBDIR) $(LIBS) %s %s %s\n" %\
+                           (libsLinux, depsAsLibs, depsAsLibs))
             makeFile.write("endif\n")
             makeFile.write("endif\n")
         elif targetType == "lib":
@@ -339,11 +352,10 @@ class makefile:
                 targetsLinux  += " %s" % targetName
                 targetsMacOSX += " %s" % targetName
              
-             # Add this target's modules to a temp list (if it has source files)
+             # Add this target's modules to a temp list
             for moduleName in self.buildSys.targets[targetName].modules:
                  module = self.buildSys.modules[moduleName]
-                 if len(module.files) > 0:
-                    modulesList.append(module)
+                 modulesList.append(module)
     
         # Header...
         makeFile.write("#--------------------------------------------------------------------\n")

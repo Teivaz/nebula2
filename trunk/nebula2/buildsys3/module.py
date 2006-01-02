@@ -56,6 +56,14 @@ class Module:
         self.headers.sort()
 
     #--------------------------------------------------------------------------
+    # Returns True if the target can be built on the specified platform,
+    # false otherwise.
+    def SupportsPlatform(self, platform):
+        if self.platform == 'all' or self.platform == platform:
+            return True
+        return False
+
+    #--------------------------------------------------------------------------
     # Get the directory (relative to the Nebula home directory) that the 
     # compiler will need to add to the list of include directories for any 
     # source file that includes headers from this module.
