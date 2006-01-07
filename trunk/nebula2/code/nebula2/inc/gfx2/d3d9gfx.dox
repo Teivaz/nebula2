@@ -6,6 +6,7 @@ This page describes Nebula DirectX 9 graphics system and it's subsystems.
 
  - @ref NebulaD3D9GraphicsSystemServer
  - @ref NebulaD3D9GraphicsSystemShader
+ - @ref NebulaD3D9GraphicsSystemDialogBoxMode
  - @ref NebulaD3D9GraphicsSystemMesh
  - @ref NebulaD3D9GraphicsSystemTexture
 
@@ -46,6 +47,21 @@ Here are some links to information about effect files and HLSL:
    - <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnhlsl/html/shaderx2_introductionto.asp">Introduction to the High Level Shader Language</a>
    - <a href="http://www.fairyengine.com/articles/hlsl2sided.htm">Another Introduction</a>
    
+
+@section NebulaD3D9GraphicsSystemDialogBoxMode DialogBox Mode
+    
+DialogBox mode sets the display to allow the use of GDI dialog boxes
+(normal windows controls) in full screen mode. Once you have a display
+in dialog box mode you can call @ref nGfxServer::EnterDialogBoxMode() and
+@ref nGfxServer::LeaveDialogBoxMode().
+
+Setting DialogBoxMode in @ref nDisplayMode2 causes the d3d9 gfx server to
+make the back buffer lockable (D3DPRESENTFLAG_LOCKABLE_BACKBUFFER)
+this does cause a small performance hit.
+
+See D3D9 docs:
+http://msdn.microsoft.com/library/en-us/directx9_c/IDirect3DDevice9__SetDialogBoxMode.asp
+ 
 
 @section NebulaD3D9GraphicsSystemMesh Mesh support
 
