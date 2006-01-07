@@ -49,7 +49,7 @@ beginmodule nodeviewerapp
     setdir clodterrain
     setfiles      { nodeviewerapp nodeviewer }
     setheaders    { nodeviewerapp }
-    setlibs_win32 { ode.lib }
+    setlibs_win32 { devil.lib ilu.lib ilut.lib ode.lib }
 endmodule
 #-----------------------------------------------------------------------------
 begintarget nclodterrain
