@@ -318,7 +318,7 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
     {
         // we do not have any skinned mesh in the scene (only static meshes are exist)
         if (this->meshType == Shadow)
-            sceneNode =  (nShapeNode*)CreateNebulaObject("nshadowshapenode", nodename.Get());
+            sceneNode =  (nShapeNode*)CreateNebulaObject("nshadownode", nodename.Get());
         else
         if (this->meshType == Shape)
             sceneNode =  (nShapeNode*)CreateNebulaObject("nshapenode", nodename.Get());
