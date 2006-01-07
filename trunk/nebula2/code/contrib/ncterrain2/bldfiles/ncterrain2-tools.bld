@@ -29,6 +29,7 @@ beginmodule nmaketqt2
         ntqt2compressor
         ntqt2filemaker
     }
+    setlibs_win32 { devil.lib ilu.lib ilut.lib }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nbttotga
