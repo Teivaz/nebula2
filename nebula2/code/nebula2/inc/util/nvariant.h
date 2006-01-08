@@ -547,7 +547,7 @@ nVariant::operator==(const vector4& rhs) const
     return ((this->f[0] == rhs.x) &&
             (this->f[1] == rhs.y) &&
             (this->f[2] == rhs.z) &&
-            (this->f[4] == rhs.w));
+            (this->f[3] == rhs.w));
 }
 
 //------------------------------------------------------------------------------
@@ -699,7 +699,7 @@ nVariant::operator!=(const vector4& rhs) const
     return ((this->f[0] != rhs.x) ||
             (this->f[1] != rhs.y) ||
             (this->f[2] != rhs.z) ||
-            (this->f[4] != rhs.w));
+            (this->f[3] != rhs.w));
 }
 
 //------------------------------------------------------------------------------
