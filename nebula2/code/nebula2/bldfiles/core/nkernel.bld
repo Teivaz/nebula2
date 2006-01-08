@@ -127,6 +127,7 @@ beginmodule nutil
         nhashmap
         nquadtree
         nbuffer
+        nvariant
     }
     setfiles {
         nhttpformdatawrapper
