@@ -9,7 +9,7 @@
 /**
     @class nMaxCustAttrib
     @ingroup NebulaMaxExport2Contrib
-    
+
     @brief The class for handling 3dsmax custom attribute.
 
     @code
@@ -18,7 +18,7 @@
     nMaxCustAttrib custAttrib;
     custAttrib.Convert(obj, xmlDoc);
     ...
-    xmlDoc.SaveFile("c:\\nebula2\\custattr.xml");    
+    xmlDoc.SaveFile("c:\\nebula2\\custattr.xml");
     @endcode
 
     The fallowing sample max scripts shows how parameters block converted to
