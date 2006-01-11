@@ -5,7 +5,7 @@
     @class nArray2
     @ingroup NebulaDataTypes
     @brief Fixed size two-dimensional array.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 
@@ -145,7 +145,10 @@ void
 nArray2<TYPE>::SetSize(uint w, uint h)
 {
     this->Delete();
-    this->Alloc(w, h);
+    if ((w > 0) && (h > 0))
+    {
+        this->Alloc(w, h);
+    }
 }
 
 //------------------------------------------------------------------------------
