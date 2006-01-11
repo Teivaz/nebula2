@@ -50,8 +50,8 @@ public:
     nString(const vector3& v);
     /// set to vector4 value
     nString(const vector4& v);
-	/// set to matrix44 value
-	nString(const matrix44& m);
+    /// set to matrix44 value
+    nString(const matrix44& m);
     /// destructor
     ~nString();
     /// = operator
@@ -84,8 +84,8 @@ public:
     void SetVector3(const vector3& v);
     /// set as vector4 value
     void SetVector4(const vector4& v);
-	/// set as matrix44 value
-	void SetMatrix44(const matrix44& m);
+    /// set as matrix44 value
+    void SetMatrix44(const matrix44& m);
     /// get string as char ptr
     const char* Get() const;
     /// return contents as integer
@@ -98,8 +98,8 @@ public:
     vector3 AsVector3() const;
     /// return contents as vector4
     vector4 AsVector4() const;
-	/// return contents as matrix44
-	matrix44 AsMatrix44() const;
+    /// return contents as matrix44
+    matrix44 AsMatrix44() const;
     /// return length of string
     int Length() const;
     /// clear the string
@@ -181,8 +181,8 @@ public:
     void ReplaceIllegalFilenameChars(char replacement);
 
 public:
-	/// concatenate array of strings into new string
-	static nString Concatenate(const nArray<nString>& strArray, const nString& whiteSpace);
+    /// concatenate array of strings into new string
+    static nString Concatenate(const nArray<nString>& strArray, const nString& whiteSpace);
 
 protected:
     /// copy contents
@@ -355,14 +355,14 @@ inline
 void
 nString::SetMatrix44(const matrix44& m)
 {
-	this->Format("%.6f, %.6f, %.6f, %.6f, "
-		"%.6f, %.6f, %.6f, %.6f, "
-		"%.6f, %.6f, %.6f, %.6f, "
-		"%.6f, %.6f, %.6f, %.6f",
-		m.M11, m.M12, m.M13, m.M14,
-		m.M21, m.M22, m.M23, m.M24,
-		m.M31, m.M32, m.M33, m.M34,
-		m.M41, m.M42, m.M43, m.M44);
+    this->Format("%.6f, %.6f, %.6f, %.6f, "
+        "%.6f, %.6f, %.6f, %.6f, "
+        "%.6f, %.6f, %.6f, %.6f, "
+        "%.6f, %.6f, %.6f, %.6f",
+        m.M11, m.M12, m.M13, m.M14,
+        m.M21, m.M22, m.M23, m.M24,
+        m.M31, m.M32, m.M33, m.M34,
+        m.M41, m.M42, m.M43, m.M44);
 }
 
 //------------------------------------------------------------------------------
@@ -465,11 +465,11 @@ nString::nString(const vector4& v) :
 /**
 */
 inline
-	nString::nString(const matrix44& m) :
-	string(0),
-	strLen(0)
+    nString::nString(const matrix44& m) :
+    string(0),
+    strLen(0)
 {
-	this->SetMatrix44(m);
+    this->SetMatrix44(m);
 }
 
 //------------------------------------------------------------------------------
@@ -1212,22 +1212,22 @@ nString::AsVector4() const
 
 //------------------------------------------------------------------------------
 /**
-	Returns content as matrix44. Note: this method doesn't check whether the
-	contents is actually a valid matrix44. Use the IsValidMatrix44() method
-	for this!
+    Returns content as matrix44. Note: this method doesn't check whether the
+    contents is actually a valid matrix44. Use the IsValidMatrix44() method
+    for this!
 */
 inline
 matrix44
 nString::AsMatrix44() const
 {
-	nArray<nString> tokens;
-	this->Tokenize(", \t", tokens);
-	n_assert(tokens.Size() == 16);
-	matrix44 m(tokens[0].AsFloat(),  tokens[1].AsFloat(),  tokens[2].AsFloat(),  tokens[3].AsFloat(),
-		tokens[4].AsFloat(),  tokens[5].AsFloat(),  tokens[6].AsFloat(),  tokens[7].AsFloat(),
-		tokens[8].AsFloat(),  tokens[9].AsFloat(),  tokens[10].AsFloat(), tokens[11].AsFloat(),
-		tokens[12].AsFloat(), tokens[13].AsFloat(), tokens[14].AsFloat(), tokens[15].AsFloat());
-	return m;
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 16);
+    matrix44 m(tokens[0].AsFloat(),  tokens[1].AsFloat(),  tokens[2].AsFloat(),  tokens[3].AsFloat(),
+        tokens[4].AsFloat(),  tokens[5].AsFloat(),  tokens[6].AsFloat(),  tokens[7].AsFloat(),
+        tokens[8].AsFloat(),  tokens[9].AsFloat(),  tokens[10].AsFloat(), tokens[11].AsFloat(),
+        tokens[12].AsFloat(), tokens[13].AsFloat(), tokens[14].AsFloat(), tokens[15].AsFloat());
+    return m;
 }
 
 //------------------------------------------------------------------------------
@@ -1643,20 +1643,19 @@ inline
 nString
 nString::Concatenate(const nArray<nString>& strArray, const nString& whiteSpace)
 {
-	nString res;
-	int i;
-	int num = strArray.Size();
-	for (i = 0; i < num; i++)
-	{
-		res.Append(strArray[i]);
-		if ((i + 1) < num)
-		{
-			res.Append(whiteSpace);
-		}
-	}
-	return res;
+    nString res;
+    int i;
+    int num = strArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        res.Append(strArray[i]);
+        if ((i + 1) < num)
+        {
+            res.Append(whiteSpace);
+        }
+    }
+    return res;
 }
 
 //-----------------------------------------------------------------------------
 #endif
-
