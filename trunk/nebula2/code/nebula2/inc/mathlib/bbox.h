@@ -18,11 +18,11 @@
 //------------------------------------------------------------------------------
 //  bbox3
 //------------------------------------------------------------------------------
-class bbox3 
+class bbox3
 {
 public:
     /// clip codes
-    enum 
+    enum
     {
         ClipLeft   = (1<<0),
         ClipRight  = (1<<1),
@@ -32,7 +32,7 @@ public:
         ClipFar    = (1<<5),
     };
     /// clip status
-    enum ClipStatus 
+    enum ClipStatus
     {
         Outside,
         Inside,
@@ -77,6 +77,8 @@ public:
     void extend(const bbox3& box);
     /// transform axis aligned bounding box
     void transform(const matrix44& m);
+	/// transform bounding box with divide by w
+	void transform_divw(const matrix44& m);
     /// check for intersection with axis aligned bounding box
     bool intersects(const bbox3& box) const;
     /// check if this box completely contains the parameter box
@@ -86,7 +88,7 @@ public:
     /// check for intersection with other bounding box
     ClipStatus clipstatus(const bbox3& other) const;
     /// check for intersection with projection volume
-    ClipStatus clipstatus(const matrix44& viewProjection) const;  
+    ClipStatus clipstatus(const matrix44& viewProjection) const;
     /// create a matrix which transforms a unit cube to this bounding box
     matrix44 to_matrix44() const;
     /// return one of the 8 corner points
@@ -345,7 +347,7 @@ bbox3::corner_point(int index) const
         case 5:     return vector3(this->vmin.x, this->vmax.y, this->vmax.z);
         case 6:     return vector3(this->vmin.x, this->vmin.y, this->vmax.z);
         default:    return vector3(this->vmax.x, this->vmin.y, this->vmax.z);
-    }    
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -384,7 +386,7 @@ bbox3::get_clipplanes(const matrix44& viewProj, nArray<plane>& outPlanes) const
 
     E.g. if you have a bounding box in model space 'modelBox', and a
     'modelView' matrix, the operation
-    
+
     modelBox.transform(modelView)
 
     would transform the bounding box into view space.
@@ -399,7 +401,7 @@ bbox3::transform(const matrix44& m)
     vector3 center  = this->center();
 
     // Extent the matrix' (x,y,z) components by our own extent
-    // vector. 
+    // vector.
     matrix44 extentMatrix(
         m.M11 * extents.x, m.M12 * extents.x, m.M13 * extents.x, 0.0f,
         m.M21 * extents.y, m.M22 * extents.y, m.M23 * extents.y, 0.0f,
@@ -412,11 +414,11 @@ bbox3::transform(const matrix44& m)
     vector3 temp, min, max, corners[8];
     bool first = true;
     int i;
-        
+
     corners[0]   = this->vmin;
     corners[1].x = this->vmin.x; corners[1].y = this->vmax.y; corners[1].z = this->vmin.z;
     corners[2].x = this->vmax.x; corners[2].y = this->vmax.y; corners[2].z = this->vmin.z;
-    corners[3].x = this->vmax.x; corners[3].y = this->vmin.y; corners[3].z = this->vmin.z;            
+    corners[3].x = this->vmax.x; corners[3].y = this->vmin.y; corners[3].z = this->vmin.z;
     corners[4]   = this->vmax;
     corners[5].x = this->vmin.x; corners[5].y = this->vmax.y; corners[5].z = this->vmax.z;
     corners[6].x = this->vmin.x; corners[6].y = this->vmin.y; corners[6].z = this->vmax.z;
@@ -441,7 +443,46 @@ bbox3::transform(const matrix44& m)
 
 //------------------------------------------------------------------------------
 /**
-    Check for intersection of 2 axis aligned bounding boxes. The 
+	Same as transform() but does a div-by-w on the way (useful for transforming
+	to screen space).
+*/
+inline
+void
+bbox3::transform_divw(const matrix44& m)
+{
+	vector3 temp, min, max, corners[8];
+	bool first = true;
+	int i;
+
+	corners[0]   = this->vmin;
+	corners[1].x = this->vmin.x; corners[1].y = this->vmax.y; corners[1].z = this->vmin.z;
+	corners[2].x = this->vmax.x; corners[2].y = this->vmax.y; corners[2].z = this->vmin.z;
+	corners[3].x = this->vmax.x; corners[3].y = this->vmin.y; corners[3].z = this->vmin.z;
+	corners[4]   = this->vmax;
+	corners[5].x = this->vmin.x; corners[5].y = this->vmax.y; corners[5].z = this->vmax.z;
+	corners[6].x = this->vmin.x; corners[6].y = this->vmin.y; corners[6].z = this->vmax.z;
+	corners[7].x = this->vmax.x; corners[7].y = this->vmin.y; corners[7].z = this->vmax.z;
+
+	for(i = 0; i < 8; ++i)
+	{
+		// Transform and check extents
+		temp = m.mult_divw(corners[i]);
+		if (first || temp.x > max.x)   max.x = temp.x;
+		if (first || temp.y > max.y)   max.y = temp.y;
+		if (first || temp.z > max.z)   max.z = temp.z;
+		if (first || temp.x < min.x)   min.x = temp.x;
+		if (first || temp.y < min.y)   min.y = temp.y;
+		if (first || temp.z < min.z)   min.z = temp.z;
+		first = false;
+	}
+
+	this->vmin = min;
+	this->vmax = max;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Check for intersection of 2 axis aligned bounding boxes. The
     bounding boxes must live in the same coordinate space.
 */
 inline
@@ -508,7 +549,7 @@ bbox3::clipstatus(const bbox3& other) const
     {
         return Clipped;
     }
-    else 
+    else
     {
         return Outside;
     }
