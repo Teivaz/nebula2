@@ -29,6 +29,8 @@ distribution.
 #include <sstream>
 #endif
 
+#include "kernel/nfileserver2.h"
+#include "kernel/nfile.h"
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
@@ -972,20 +974,17 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
     value = filename;
 
     // reading in binary mode so that tinyxml can normalize the EOL
-    FILE* file = fopen( value.c_str (), "rb" );
-
-    if ( file )
+    nFile* file = nFileServer2::Instance()->NewFileObject();
+    if (file->Open(value.c_str(), "r"))
     {
         // Get the file size, so we can pre-allocate the string. HUGE speed impact.
-        long length = 0;
-        fseek( file, 0, SEEK_END );
-        length = ftell( file );
-        fseek( file, 0, SEEK_SET );
+        long length = file->GetSize();
 
         // Strange case, but good to handle up front.
         if ( length == 0 )
         {
-            fclose( file );
+            file->Close();
+            file->Release();
             return false;
         }
 
@@ -1018,13 +1017,17 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
         char* buf = new char[ length+1 ];
         buf[0] = 0;
 
-        if ( fread( buf, length, 1, file ) != 1 ) {
+        if ( file->Read( buf, length) != length ) {
         //if ( fread( buf, 1, length, file ) != (size_t)length ) {
             SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
-            fclose( file );
+            file->Close();
+            file->Release();
+            file = 0;
             return false;
         }
-        fclose( file );
+        file->Close();
+        file->Release();
+        file = 0;
 
         const char* lastPos = buf;
         const char* p = buf;
