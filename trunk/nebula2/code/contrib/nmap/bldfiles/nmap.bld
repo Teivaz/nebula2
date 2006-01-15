@@ -96,6 +96,7 @@ begintarget nmapviewer
         ngui
         nmap
         nnetwork
+        ndsound
     }
 endtarget
 #--------------------------------------------------------------------
@@ -112,5 +113,6 @@ beginworkspace nmap
         ngui
         nmap
         nnetwork
+        ndsound
     }
 endworkspace

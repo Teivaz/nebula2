@@ -265,7 +265,7 @@ MapBlock::EndRender(nGfxServer2::PrimitiveType primType)
 
     if (curVertex > 2)
     {
-        map->refGfxServer->SetMesh(meshTriStrip);
+        map->refGfxServer->SetMesh(meshTriStrip, meshTriStrip);
         map->refGfxServer->SetVertexRange(0, meshTriStrip->GetNumVertices());
         map->refGfxServer->SetIndexRange(0, meshTriStrip->GetNumIndices());
         map->refGfxServer->DrawIndexedNS(primType);

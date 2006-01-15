@@ -1,10 +1,18 @@
 //------------------------------------------------------------------------------
 /**
-    @page NebulaToolsMapviewer mapviewer
+    @page NebulaToolsnviewer nviewer
 
-    mapviewer
+    nviewer
 
-    Selfcontained viewer application for the nmap contrib module.
+    Selfcontained viewer application for Nebula.
+
+    The Nebula2 viewer displays Nebula2 3D objects in realtime. It can be invoked 
+    from the command line (nviewer.exe) or from the start menu.
+
+    The viewer offers an overlay 2D user interface which is activated by pressing 
+    the Escape key.
+    The GUI offers builtin command consoles, a texture browser window, a graphics 
+    object browser window, and 2 windows with runtime and debug information.
 
     <dl>
      <dt>-startup</dt>
@@ -31,6 +39,14 @@
        <dd>the y position of the window (default: 0)</dd>
      <dt>-projdir</dt>
        <dd>the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)</dd>
+     <dt>-useram</dt>
+       <dd>if present, then nviewer will use ram file</dd>
+     <dt>-eyeposx</dt>
+       <dd>position vector of camera matrix</dd>
+     <dt>-eyecoix</dt>
+       <dd>look vector of camera matrix</dd>
+     <dt>-eyeupx</dt>
+       <dd>up vector of camera matrix</dd>
     </dl>
 
     nviewer also defines some default input handling:
@@ -56,6 +72,7 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
+nNebulaUsePackage(ndsound);
 nNebulaUsePackage(nmap);
 
 //------------------------------------------------------------------------------
@@ -105,12 +122,14 @@ main(int argc, const char** argv)
 
     const char* scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
     const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
+    const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
     const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "export/gfxlib/stdlight.n2");
+    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool helpArg           = args.GetBoolArg("-help");
+    bool useRam           = args.GetBoolArg("-useram");    
+    bool noLightStage     = args.GetBoolArg("-nolightstage");
+    bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
@@ -119,7 +138,23 @@ main(int argc, const char** argv)
 
     const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
     const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    const char* renderPath       = args.GetStringArg("-renderpath", 0);
+    vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
+    vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
+    vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
 
+    // Don't allow window width smaller than 40 and height smaller than 30.
+    if (widthArg < 40)
+    {
+        n_printf("Invalid window width. Using width of 40.\n");
+        widthArg = 40;
+    }
+    if (heightArg < 30)
+    {
+        n_assert("Invalid window height. Using height of 30.\n");
+        heightArg = 30;
+    }
+    
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
     {
@@ -131,8 +166,8 @@ main(int argc, const char** argv)
                "-startup                startup script to run, default is: home:bin/startup.tcl\n"
                "-sceneserver            scene server to use, default is nmrtsceneserver\n"
                "-scriptserver           script server to use\n"
-               "-gfxserver              graphics server to use; default is platform dependent"
-               "-featureset             Which shader feature set to use; I'm not sure how this is expressed\n"
+               "-gfxserver              graphics server to use; default is platform dependent\n"
+               "-featureset             Which shader feature set to use; One of: dx7, dx8, dx8sb, dx9, dx9flt\n"
                "-view                   data to load and view with the lighting setup specified (either -stage or the default)\n"
                "-stage                  light stage to load, default is: home:export/gfxlib/stdlight.n2\n"
                "-fullscreen             if present, then nviewer will go fullscreen\n"
@@ -141,7 +176,11 @@ main(int argc, const char** argv)
                "-h                      height of window to open (default: 480)\n"
                "-x                      the x position of the window (default: 0)\n"
                "-y                      y position of the window (default: 0)\n"
-               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n");
+               "-projdir                the optional project directory (assigns it to the projdir: alias, for use in the user's scripts)\n"
+               "-useram                 if present, then nviewer will use ram file\n"
+               "-eyeposx                position vector of camera matrix\n"
+               "-eyecoix                look vector of camera matrix\n"
+               "-eyeupx                 up vector of camera matrix\n");
         return 5;
     }
 
@@ -157,6 +196,7 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nnetwork);
+    kernelServer.AddPackage(ndsound);
     kernelServer.AddPackage(nmap);
 
     // initialize a display mode object
@@ -172,15 +212,15 @@ main(int argc, const char** argv)
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
     }
 
     // under Win32 check if we should read the project directory from the registry
@@ -199,12 +239,19 @@ main(int argc, const char** argv)
     // initialize a viewer app object
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
+    viewerApp.SetUseRam(useRam);
+    viewerApp.SetLightStageEnabled(!noLightStage);
     if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
     if (viewArg)          viewerApp.SetSceneFile(viewArg);
     if (projDir)          viewerApp.SetProjDir(projDir);
+    if (renderPath)       viewerApp.SetRenderPath(renderPath);    
     if (featureSetArg)
     {
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
+        if (nGfxServer2::InvalidFeatureSet == featureSet)
+        {
+            n_error("Invalid feature set string specified: %s", featureSetArg);
+        }
         viewerApp.SetFeatureSetOverride(featureSet);
     }
     
@@ -212,6 +259,11 @@ main(int argc, const char** argv)
     if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
+
+    //set viewer propherties 
+    viewerApp.GetCamControl().SetDefaultCenterOfInterest(eyeCoi);
+    viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
+    viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);
 
     // open and run viewer
     if (viewerApp.Open())
