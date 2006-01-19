@@ -70,15 +70,15 @@ nGuiResource::GetRelUvRect()
 
     vector2 corrUvPos(this->absUvRect.v0.x, this->absUvRect.v0.y);
     vector2 absUvSize = this->absUvRect.size();
-    vector2 corrUvSize(absUvSize.x - 1.0f, absUvSize.y - 1.0f);
+    vector2 corrUvSize(absUvSize.x, absUvSize.y);
 
     float texHeight = float(this->GetTextureHeight()) * guiServer->GetTexelMappingRatio();
     float texWidth  = float(this->GetTextureWidth()) * guiServer->GetTexelMappingRatio();
 
-    this->relUvRect.v0.x = (corrUvPos.x + 0.5f) / texWidth;
-    this->relUvRect.v0.y = 1.0f - ((corrUvPos.y + corrUvSize.y + 1.0f) / texHeight);
-    this->relUvRect.v1.x = (corrUvPos.x + corrUvSize.x + 1.0f) / texWidth;
-    this->relUvRect.v1.y = 1.0f - ((corrUvPos.y + 0.5f) / texHeight);
+    this->relUvRect.v0.x = corrUvPos.x / texWidth;
+    this->relUvRect.v0.y = 1.0f - ((corrUvPos.y + corrUvSize.y) / texHeight);
+    this->relUvRect.v1.x = (corrUvPos.x + corrUvSize.x) / texWidth;
+    this->relUvRect.v1.y = 1.0f - (corrUvPos.y / texHeight);
 
     return this->relUvRect;
 }
