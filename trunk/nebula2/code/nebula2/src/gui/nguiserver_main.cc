@@ -659,6 +659,13 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
     r.v1.x = rectMesh.v1.x - 0.5f;
     r.v1.y = -(rectMesh.v1.y - 0.5f);
 
+    float x05 = 0.5f / this->displaySize.x;
+    float y05 = 0.5f / this->displaySize.y;
+    r.v0.x -= x05;
+    r.v0.y += y05;
+    r.v1.x -= x05;
+    r.v1.y += y05;
+    
     rectangle uv;
     uv.v0.x = rectUV.v0.x;
     uv.v0.y = 1.0f - rectUV.v1.y;
