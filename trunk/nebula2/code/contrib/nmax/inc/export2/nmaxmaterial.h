@@ -78,9 +78,11 @@ protected:
                               Control* ctrlColor, Control* ctrlAlpha);
     // @}
 
+    ///
     bool SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode);
-    void SetStandardNebulaShader(nShapeNode* shapeNode);
-
+    ///
+    void SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacityMap = false);
+    ///
     nShaderState::Param GetShaderParam(const char* param);
 
 protected:

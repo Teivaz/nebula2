@@ -399,7 +399,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
         // save group index for skin partitioning and mesh fragments.
         if (createdNode)
         {
-            SetSkinAnimator((nShapeNode*)createdNode, numMaterials);
+            SetSkinAnimator(inode, (nShapeNode*)createdNode, numMaterials);
 
             // specifies local bounding box.
             bbox3 localBox;
@@ -463,7 +463,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
             // save group index for skin partitioning and mesh fragments.
             if (createdNode)
             {
-                SetSkinAnimator((nShapeNode*)createdNode, numMaterials);
+                SetSkinAnimator(inode, (nShapeNode*)createdNode, numMaterials);
 
                 // specifies local bounding box.
                 bbox3 localBox;
@@ -521,7 +521,9 @@ bool nMaxMesh::UsePerVertexAlpha(Mesh* mesh)
     @param numMats number of the material of given node
     @param baseGroup
 */
-int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx, const int numMats)
+//int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx, const int numMats)
+int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, 
+                      const int matIdx, const int numMats, bool worldCoords)
 {
     n_assert(meshBuilder);
 
@@ -548,7 +550,7 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
     mesh->checkNormals(TRUE);
 
     this->pivMat.IdentityMatrix();
-    if (!IsPhysique() && !IsSkinned())
+    if (!IsPhysique() && !IsSkinned() && !worldCoords)
     {
         pivMat = (inode->GetObjectTM(0)*Inverse(inode->GetNodeTM(0))) * pivMat;
     }
@@ -1108,8 +1110,11 @@ nArray<int> nMaxMesh::GetUsedMapChannels(Mesh* mesh)
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxMesh::SetSkinAnimator(nSceneNode* createdNode, int numMaterials)
+void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMaterials)
 {
+    n_assert(inode);
+    n_assert(createdNode);
+
     if (this->IsSkinned() || this->IsPhysique())
     {
         if (this->meshType == Shape)
