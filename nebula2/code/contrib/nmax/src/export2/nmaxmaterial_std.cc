@@ -101,7 +101,8 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
         //    }
         //}
 
-        this->SetStandardNebulaShader(shapeNode);
+        Texmap* opacity_map  = stdMat->GetSubTexmap(ID_OP);
+        this->SetStandardNebulaShader(shapeNode, opacity_map != 0);
 
         nMaxTexture texture;
         for (int i=0; i<stdMat->NumSubTexmaps(); i++)
