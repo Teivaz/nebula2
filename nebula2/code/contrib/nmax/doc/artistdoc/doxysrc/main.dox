@@ -70,10 +70,12 @@
         - <tt>Kim, Hyoun Woo</tt> - principal author.
         - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
         - <tt>Bruce Mitchener</tt> - syntax coloring of the export log dialog.
+        - <tt>Ivan Tivonenko</tt> - various bug fixes and improvements.
 
     Thanks to:
         - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  
-          on the IGame libarary based 3DS Max exports. That gave many helps on this toolkit.
+          on the IGame libarary based Nebula 3DS Max exporter. 
+          That gave many helps on this toolkit.
 
 
     (C)2005 Kim, Hyoun Woo
