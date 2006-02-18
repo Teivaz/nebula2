@@ -78,7 +78,6 @@ protected:
     Mesh* GetMeshFromRenderMesh(INode* inode, BOOL &needDelete);
     Mesh* GetMeshFromTriObject(INode* inode, BOOL &needDelete);
 
-    //int GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx, const int numMats);
     int GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx, const int numMats, bool worldCoords = false);
 
     void GetMaterial(INode* inode, nShapeNode* shapeNode, int matID);
