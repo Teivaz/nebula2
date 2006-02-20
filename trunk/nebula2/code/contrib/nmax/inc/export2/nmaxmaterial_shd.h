@@ -7,10 +7,7 @@
 
 //-----------------------------------------------------------------------------
 /**
-    
-
 */
-//bool nSetCustomMaterial(const char* shdname);
 bool EvalCustomMaterialPlugin();
 
 #endif
