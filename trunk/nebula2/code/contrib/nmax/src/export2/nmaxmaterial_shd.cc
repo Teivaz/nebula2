@@ -472,29 +472,25 @@ nString AddPluginEventHandlers()
     max script expose function which to generate material script plugin based on 
     '$nebula2/data/shaders/shaders.xml' file.
 
-    The following max script generate nebula2 custom material plugin on 
-    material editor which represents 'standard' shader.
+    The following max script generate nebula2 custom material plugin. 
     @verbatim
-    nSetCustomMaterial "Standard"
+    nCreateCustomMaterialPlugin() 
     @endverbatim
 
     @note
-        Do not call this script explicitly when 3DS Max running.
-        This function should be called at once when 3DS Max start.
-        If not, all previously specified materials in the slot are reset.
+    Do not call this script explicitly when 3DS Max running.
+    This function should be called at once when 3DS Max start up.
+    If not, all previously specified materials in the slot will be reset.
 
     The generated file, "n2materialplugin.ms" can be found in the 
     '$3dsmax/scripts/' directory. Use it for the purpose of test or debugging.
     It is only available on the debug version of plugin.
 
-    @param shdname name attribute of shader element in shaders.xml. 
-                   @note It's case senstive.
     @return true if we success to generate scripted plug-in.
 */
-//bool nSetCustomMaterial(const char* shdname)
 bool EvalCustomMaterialPlugin()
 {
-    // Get the full path of '/data/shaders/shaders.xml' file.
+    // Get the full path of '$nebula/data/shaders/shaders.xml' file.
     nString shdXmlFilePath = GetShaderXmlPath();
     if (shdXmlFilePath.IsEmpty())
     {
@@ -771,11 +767,10 @@ bool EvalCustomMaterialPlugin()
     // execute the generated script.
     if (!nMaxScriptCall(script.Get()))
     {
-        n_listener("Failed to evaludate the generated script.\n");
-        n_listener("See '$3dsmax/script/mapplugin.debug' for generated script.\n");
+        n_listener("Failed to evaluate the generated script.\n");
+        n_listener("See '$3dsmax/scripts/mapplugin.debug' for generated script.\n");
 
-        // if we failed to evaluate the given script,
-        // put it to 3dsmax script directory.
+        // if we failed to evaluate the given script, put it to 3dsmax script directory
 
         nString debugFilePath;
         debugFilePath += scriptsPath;
@@ -790,7 +785,8 @@ bool EvalCustomMaterialPlugin()
             file->Release();
         }
 
-        // open 3dsmax script editor with the script which failed to be evaluated.
+        // open 3dsmax script editor with the script which failed to be evaluated
+        // for the purpose of debugging it.
         n_openeditor(debugFilePath.Get());
 
         return false;
