@@ -30,8 +30,9 @@ nMaxSkinAnimator::~nMaxSkinAnimator()
 //-----------------------------------------------------------------------------
 /**
 */
-nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFilename)
+nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, const char* animFilename) 
 {
+    n_assert(skelIndex >= 0);
     n_assert(animatorName);
     n_assert(animFilename);
 
@@ -41,7 +42,7 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
     {
         // build joints from bone array of the scene.
         nMaxBoneManager* boneManager = nMaxBoneManager::Instance();
-        nArray<nMaxBoneManager::Bone>& boneArray = boneManager->GetBoneArray();
+        nArray<nMaxBoneManager::Bone>& boneArray = boneManager->GetBoneArray(skelIndex);
 
         this->BuildJoints(animator, boneArray);
 
@@ -52,7 +53,7 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
         animator->SetStateChannel("chnCharState");
 
         // build animation states.
-        nMaxNoteTrack& noteTrack = boneManager->GetNoteTrack();
+        nMaxNoteTrack& noteTrack = boneManager->GetNoteTrack(skelIndex);
         this->BuildAnimStates(animator, noteTrack);
     }
     else
@@ -62,7 +63,6 @@ nAnimator* nMaxSkinAnimator::Export(const char* animatorName, const char* animFi
 
     return animator;
 }
-
 //-----------------------------------------------------------------------------
 /**
     Specifies joints of skin animator.
@@ -75,19 +75,20 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
     Matrix3 localTM;
     AffineParts ap;
 
-    int numJoints = nMaxBoneManager::Instance()->GetNumBones();
+    //int numJoints = nMaxBoneManager::Instance()->GetNumBones();
+    int numJoints = boneArray.Size();
 
     // build joints.
     animator->BeginJoints(numJoints);
 
+    float scale = nMaxOptions::Instance()->GetGeomScaleValue();
     for (int i=0; i<numJoints; i++)
     {
-        const nMaxBoneManager::Bone &bone = nMaxBoneManager::Instance()->GetBone(i);
+        const nMaxBoneManager::Bone &bone = boneArray[i];
 
         localTM = bone.localTransform;
 
         // transform scale.
-        float scale = nMaxOptions::Instance()->GetGeomScaleValue();
         if (scale != 0.0f)
         {
             Point3 scaleVal(scale, scale, scale);
@@ -149,3 +150,4 @@ void nMaxSkinAnimator::BuildAnimStates(nSkinAnimator* animator, nMaxNoteTrack& n
 
     animator->EndStates();
 }
+

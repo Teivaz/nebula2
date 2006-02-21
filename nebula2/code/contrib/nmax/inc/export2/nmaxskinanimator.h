@@ -26,7 +26,7 @@ public:
     nMaxSkinAnimator();
     virtual ~nMaxSkinAnimator();
 
-    nAnimator* Export(const char* animatorName, const char* animFilename);
+    nAnimator* Export(int skelIndex, const char* animatorName, const char* animFilename);
 
 protected:
     void BuildJoints(nSkinAnimator* animator, const nArray<nMaxBoneManager::Bone> &boneArray);

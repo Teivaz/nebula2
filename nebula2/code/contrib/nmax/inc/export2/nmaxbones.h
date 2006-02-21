@@ -26,12 +26,16 @@
     It happens at the start time of the export to provide easy access to the
     joint indexes when it is needed.
 
+    -16-Feb-06  kims  Added exporting of several skinned models.
+                      Thanks Ivan Tivonenko for the patch. 
+
 */
 #include "export2/nmaxnotetrack.h"
 
 #include "mathlib/vector.h"
 #include "util/narray.h"
 #include "util/nstring.h"
+#include <map>
 
 //---------------------------------------------------------------------------
 class nMaxBoneManager
@@ -61,11 +65,13 @@ public:
     // @name Primary methods for handling bones.
     // @{
     bool BuildBones(INode* node);
-    bool Export(const char* animFileName);
+    bool Export(int skelIndex, const char* animFileName);
     // @}
 
     /// Retrieves the number of bones which are actually used in the animation.
     int GetNumBones() const;
+    int GetNumBones(int skelIndex) const;
+    int GetNumSkeletons() const;
 
     static bool IsBone(INode *inode);
     static bool IsDummy(INode* inode);
@@ -80,11 +86,13 @@ public:
     // @}
 
     /// Retrieves bone by the given index.
-    const Bone& GetBone(int index);
+    const Bone& GetBone(int skelIndex, int index);
     /// Retrieves bone array.
-    nArray<nMaxBoneManager::Bone>& GetBoneArray();
-    /// Retrievs note track.
-    nMaxNoteTrack& GetNoteTrack();
+    nArray<nMaxBoneManager::Bone>& GetBoneArray(int skelIndex);
+    /// Retrieves note track.
+    nMaxNoteTrack& GetNoteTrack(int skelIndex);
+
+    int GetSkelForNode(INode* inode);
 
 protected:
     // @name Helper functions to collect bones in the scene.
@@ -99,16 +107,22 @@ protected:
     void ExtractSkinBones(INode* node, Modifier* skinMod,nArray<INode*> &boneNodeArray);
     bool IsGeomObject(INode *node);
 
-    INode* GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeArray);
-    void ReconstructBoneHierarchy(int parentID, INode* node, nArray<INode*> &boneNodeArray);
+    int GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArray, nArray<INode*> &rootBonesNodeArray);
+    void ReconstructBoneHierarchy(int parentID, int skeletion, INode* node, nArray<INode*> &boneNodeArray);
     // @}
+
+    void AddBoneToNode(INode* inode, INode* bone);
 
 protected:
     /// array for collected bones of the scene.
-    nArray<Bone>      boneArray;
+    typedef nArray<Bone>  Skeleton;
+    nArray<Skeleton>      skeletonsArray;
+    std::map<INode*, INode*>    nodeToBone;
+    std::map<INode*, int>       nodeToSkel;
+    std::map<INode*, int>       boneToSkel;
 
     /// note track object which we retrieves states and clips.
-    nMaxNoteTrack noteTrack;
+    nArray<nMaxNoteTrack> noteTracksArray;
 
 private:
     // @name Singleton
@@ -122,8 +136,7 @@ private:
 };
 //---------------------------------------------------------------------------
 inline
-nMaxBoneManager* 
-nMaxBoneManager::Instance()
+nMaxBoneManager* nMaxBoneManager::Instance()
 {
     if (0 == Singleton)
     {
@@ -133,32 +146,49 @@ nMaxBoneManager::Instance()
 }
 //---------------------------------------------------------------------------
 inline
-int 
-nMaxBoneManager::GetNumBones() const
+int nMaxBoneManager::GetNumBones() const
 {
-    return this->boneArray.Size();
+    int num = 0;
+    for (int i=0; i<skeletonsArray.Size(); i++) 
+    {
+        num += skeletonsArray[i].Size();
+    }
+    return num;
 }
 //---------------------------------------------------------------------------
-inline
-const nMaxBoneManager::Bone& 
-nMaxBoneManager::GetBone(int index)
+inline 
+int nMaxBoneManager::GetNumBones(int skelIndex) const 
+{
+    n_assert(skelIndex >= 0 && skelIndex < this->skeletonsArray.Size());
+    return this->skeletonsArray[skelIndex].Size();
+}
+//---------------------------------------------------------------------------
+inline 
+const nMaxBoneManager::Bone& nMaxBoneManager::GetBone(int skelIndex, int index) 
 {
     n_assert(index >= 0);
-    return this->boneArray[index];
+    n_assert(skelIndex >= 0);
+    return this->skeletonsArray[skelIndex][index];
 }
 //---------------------------------------------------------------------------
-inline
-nArray<nMaxBoneManager::Bone>& 
-nMaxBoneManager::GetBoneArray()
+inline 
+nArray<nMaxBoneManager::Bone>& nMaxBoneManager::GetBoneArray(int skelIndex) 
 {
-    return this->boneArray;
+    n_assert(skelIndex >= 0);
+    return this->skeletonsArray[skelIndex];
 }
 //---------------------------------------------------------------------------
-inline
-nMaxNoteTrack& 
-nMaxBoneManager::GetNoteTrack()
+inline 
+nMaxNoteTrack& nMaxBoneManager::GetNoteTrack(int skelIndex) 
 {
-    return this->noteTrack;
+    n_assert(skelIndex >= 0);
+    return this->noteTracksArray[skelIndex];
+}
+//---------------------------------------------------------------------------
+inline 
+int nMaxBoneManager::GetNumSkeletons() const 
+{
+    return this->skeletonsArray.Size();
 }
 //---------------------------------------------------------------------------
 #endif
