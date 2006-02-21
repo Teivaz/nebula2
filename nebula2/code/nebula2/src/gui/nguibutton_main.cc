@@ -37,7 +37,10 @@ nGuiButton::OnFrame()
     nGuiServer* guiServer = nGuiServer::Instance();
 
     // check if there exist a top most modal window
-    nGuiWindow* topMostWindow = guiServer->GetRootWindowPointer()->GetTopMostWindow();
+    nGuiWindow* topMostWindow = 0;
+    if (guiServer->GetRootWindowPointer()) {
+        topMostWindow = guiServer->GetRootWindowPointer()->GetTopMostWindow();
+    }
     bool modalTopMostWindow = false;
     if (topMostWindow && topMostWindow->IsModal())
     {
