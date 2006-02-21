@@ -515,25 +515,13 @@ bool nMaxMesh::UsePerVertexAlpha(Mesh* mesh)
 /**
     Get mesh from given 3dsmax node.
 
-    -16-Feb-06  kims  Changed it can be possible to export mesh in world 
-                      coordinate or local coordinate.
-                      Only local coordinate is used at the moment.
-                      Thanks Ivan Tivonenko for the change.
-
     @param inode 3dsmax's node.
     @param meshBuilder mesh builder which to be used to save mesh.
     @param matidx material index
     @param numMats number of the material of given node
-    @param worldCoords flag which indicate the mesh will be exported in world 
-                       coordinate or local coordinate. 
-                       Specifying it to true means that the mesh will be exported 
-                       world coordinate.
-
-    @return Base group index of the mesh
-
+    @param baseGroup
 */
-int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, 
-                      const int matIdx, const int numMats, bool worldCoords)
+int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx, const int numMats, bool worldCoords)
 {
     n_assert(meshBuilder);
 
@@ -1124,17 +1112,16 @@ void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMat
 {
     n_assert(inode);
     n_assert(createdNode);
-
     if (this->IsSkinned() || this->IsPhysique())
     {
+        int skelIndex = nMaxBoneManager::Instance()->GetSkelForNode(inode);
         if (this->meshType == Shape)
         {
             nSkinShapeNode *skinShapeNode = static_cast<nSkinShapeNode*>(createdNode);
-
             if (numMaterials > 1)
-                skinShapeNode->SetSkinAnimator("../../skinanimator");
+                skinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
             else
-                skinShapeNode->SetSkinAnimator("../skinanimator");
+                skinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../skinanimator", skelIndex).Get());
         }
         else
         if (this->meshType == Shadow)
@@ -1142,11 +1129,29 @@ void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMat
             nShadowSkinShapeNode *shadowSkinShapeNode = static_cast<nShadowSkinShapeNode*>(createdNode);
 
             if (numMaterials > 1)
-                shadowSkinShapeNode->SetSkinAnimator("../../skinanimator");
+                shadowSkinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
             else
-                shadowSkinShapeNode->SetSkinAnimator("../skinanimator");
+                shadowSkinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../skinanimator", skelIndex).Get());
         }
     }
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nString nMaxMesh::GetSkinAnimatorName(const char* baseName, int skelIndex) 
+{
+    n_assert(baseName);
+    nString name(baseName);
+    if (skelIndex != -1) 
+    {
+        name.AppendInt(skelIndex);
+    }
+    else
+    {
+        name.AppendInt(0);
+    }
+    return name;
 }
 
 //-----------------------------------------------------------------------------

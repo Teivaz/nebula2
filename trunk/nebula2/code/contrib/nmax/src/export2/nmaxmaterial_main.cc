@@ -231,8 +231,6 @@ bool nMaxMaterial::SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode)
 
 //-----------------------------------------------------------------------------
 /**
-    -16-Feb-06  kims  Changed to export shader for 'alpha' and 'skinned_alpha' 
-                      Thanks Ivan Tivonenko for the patch.
 */
 void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacityMap)
 {
@@ -240,8 +238,7 @@ void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacit
     {
         shapeNode->SetShader("static");
     }
-    else 
-    if (0 == strcmp(shapeNode->GetClass()->GetName(), "nshapenode") && hasOpacityMap)
+    else if (0 == strcmp(shapeNode->GetClass()->GetName(), "nshapenode") && hasOpacityMap)
     {
         shapeNode->SetShader("alpha");
     }
@@ -250,12 +247,11 @@ void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacit
     {
         shapeNode->SetShader("skinned");
     }
-    else 
+    else
     if (0 == strcmp(shapeNode->GetClass()->GetName(), "nskinshapenode") && hasOpacityMap)
     {
         shapeNode->SetShader("skinned_alpha");
     }
-    /*
     else
     if (0 == strcmp(shapeNode->GetClass()->GetName(), "nswingshapenode"))
     {
@@ -263,11 +259,10 @@ void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacit
         shapeNode->SetShader("tree");
         shapeNode->SetShader("leaf");
     }
-    */
     else
     {
         // unknwon shapenode.
-        n_maxlog(Error, "Failed to specify the shader of %s", shapeNode->GetName());
+        n_maxlog(Error, "Could not specify the shader of %s", shapeNode->GetName());
     }
 }
 

@@ -401,7 +401,6 @@ bool nMaxScene::Postprocess()
         if (this->globalMeshBuilder.GetNumVertices())
         {
             nString filename;
-
             filename = this->GetMeshFileNameToSave();
 
             // remove redundant vertices.
@@ -445,26 +444,28 @@ bool nMaxScene::Postprocess()
         }
     }
 
-    nMaxBoneManager* boneMgr = nMaxBoneManager::Instance();
-    if (boneMgr->GetNumBones() > 0) 
+    nMaxBoneManager *bm = nMaxBoneManager::Instance();
+    if (nMaxBoneManager::Instance()->GetNumBones() > 0) 
     {
-
-        nString animFilename = this->GetAnimFileNameToSave();
-
-        //FIXME: we should add error handling code.
-        if (!boneMgr->Export(animFilename.Get()))  
-            return false;
-
-        nSkinAnimator* createdAnimator = NULL;
-
-        nMaxSkinAnimator skinAnimator;
-        nString animatorName("skinanimator");
-        createdAnimator = (nSkinAnimator*)skinAnimator.Export(animatorName.Get(), 
-                                                              animFilename.Get());
-
-        if (createdAnimator)
+        for (int skelIndex = 0; skelIndex < bm->GetNumSkeletons(); skelIndex++) 
         {
-            nKernelServer::Instance()->PopCwd();
+            // export .anim2 and skin animator, if the exported scene has skinned mesh.
+            nString animFilename = this->GetAnimFileNameToSave(skelIndex);
+
+            //FIXME: we should add error handling code.
+            if (!nMaxBoneManager::Instance()->Export(skelIndex, animFilename.Get()))
+                return false;
+
+            nSkinAnimator* createdAnimator = NULL;
+
+            nMaxSkinAnimator skinAnimator;
+            nString animatorName("skinanimator");
+            animatorName.AppendInt(skelIndex);
+            createdAnimator = (nSkinAnimator*)skinAnimator.Export(skelIndex, animatorName.Get(), animFilename.Get());
+            if (createdAnimator)
+            {
+                nKernelServer::Instance()->PopCwd();
+            }
         }
     }
 
@@ -479,6 +480,7 @@ bool nMaxScene::Postprocess()
     exportNode->SetLocalBox(rootBBox);
 
     nString filename = this->GetFileNameToSave();
+
     if (!exportNode->SaveAs(filename.Get()))
     {
         n_maxlog(Error, "Failed to Save % file.", filename.Get());
@@ -486,6 +488,62 @@ bool nMaxScene::Postprocess()
     }
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Returns animation file name without extension.
+*/
+nString nMaxScene::GetAnimFileNameToSaveBase() 
+{
+    nString animFilename;
+    animFilename += nMaxOptions::Instance()->GetSaveFileName();
+    animFilename = nMaxOptions::Instance()->GetAnimAssign() + animFilename;
+
+    return animFilename;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nString nMaxScene::GetAnimFileNameToSave(int skelIndex) 
+{
+    nString animFilename;
+    animFilename += this->GetAnimFileNameToSaveBase();
+    animFilename.AppendInt(skelIndex);
+    animFilename += nMaxOptions::Instance()->GetAnimFileType();
+
+    return animFilename;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nString nMaxScene::GetMeshFileNameToSave() 
+{
+    nString filename;
+    filename += nMaxOptions::Instance()->GetMeshesAssign();
+
+    // add '_shadow' postfix for shadow node.
+    //if (isShadowMesh)
+    //    filename += "_shadow";
+
+    filename += nMaxOptions::Instance()->GetSaveFileName();
+    filename += nMaxOptions::Instance()->GetMeshFileType();
+    return filename;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nString nMaxScene::GetFileNameToSave() 
+{
+    nString tmp = nMaxOptions::Instance()->GetSaveFilePath().Get();
+
+    nString filename;
+    filename += nMaxOptions::Instance()->GetGfxLibPath();
+    filename += tmp.ExtractFileName();
+    return filename;
 }
 
 //-----------------------------------------------------------------------------
@@ -542,7 +600,6 @@ bool nMaxScene::ExportNodes(INode* inode)
             break;
 
         case GEOMOBJECT_CLASS_ID:
-            //if (obj->IsRenderable())
             {
                 createdNode = this->ExportGeomObject(inode, obj);
             }
@@ -569,14 +626,13 @@ bool nMaxScene::ExportNodes(INode* inode)
         nMaxAnimator animator;
         animator.Export(inode);
 
-        // HACK: do not export xform if there is skin animation.
-        //       skinned objects are exported in world coordinate with xform already applied.
+        
+        // HACK: do not export xform if there is skin animation
         nClass* clazz = createdNode->GetClass();
-        if (nString(clazz->GetName()) != "nskinshapenode") 
-        {
-            // export xform.
-            this->ExportXForm(inode, createdNode, animStart);
-        }
+        if (nString(clazz->GetName()) != "nskinshapenode") {
+        // export xform.
+        this->ExportXForm(inode, createdNode, animStart);
+    }
     }
 
     // recursively export the nodes.
@@ -606,8 +662,7 @@ bool nMaxScene::ExportNodes(INode* inode)
     @note
     To be derived in subclasses.
 */
-nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj) 
-{
+nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj) {
     return 0;
 }
 
@@ -633,8 +688,7 @@ nSceneNode* nMaxScene::ExportCamera(INode* inode, Object* obj)
 //-----------------------------------------------------------------------------
 /**
 */
-nSceneNode* nMaxScene::ExportLight(INode* inode, Object* obj) 
-{
+nSceneNode* nMaxScene::ExportLight(INode* inode, Object* obj) {
     nMaxLight light;
     return light.Export(inode, obj);
 }
@@ -814,15 +868,10 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     if (!(flag & SCL_IDENT))
     {
         vector3 scale (ap.k.x, ap.k.z, ap.k.y);
-
-        // make xform even to be correctly exported when the object is mirrored.
-        if (ap.f < 0.0f) 
-        {
+        if (ap.f < 0.0f) {
             tn->SetScale(scale * -1);
-        } 
-        else 
-        {
-            tn->SetScale(scale);
+        } else {
+        tn->SetScale(scale);
         }
 
         bXForm = true;
@@ -832,66 +881,5 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     {
         n_maxlog(High, "Exported XForm of the node '%s'", inode->GetName());
     }
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Override if needed.
-
-    @return Returns animation file name without extension.
-*/
-nString nMaxScene::GetAnimFileNameToSaveBase() 
-{
-    nString animFilename;
-    animFilename += nMaxOptions::Instance()->GetSaveFileName();
-    animFilename = nMaxOptions::Instance()->GetAnimAssign() + animFilename;
-    
-    return animFilename;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Override if needed.
-*/
-nString nMaxScene::GetAnimFileNameToSave() 
-{
-    nString animFilename;
-    animFilename += this->GetAnimFileNameToSaveBase();
-
-    animFilename += nMaxOptions::Instance()->GetAnimFileType();
-    
-    return animFilename;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Override if needed.
-*/
-nString nMaxScene::GetMeshFileNameToSave() 
-{
-    nString filename;
-    filename += nMaxOptions::Instance()->GetMeshesAssign();
-    
-    // add '_shadow' postfix for shadow node.
-    //if (isShadowMesh)
-    //    filename += "_shadow";
-    
-    filename += nMaxOptions::Instance()->GetSaveFileName();
-    filename += nMaxOptions::Instance()->GetMeshFileType();
-    return filename;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Override if needed.
-*/
-nString nMaxScene::GetFileNameToSave() 
-{
-    nString tmp = nMaxOptions::Instance()->GetSaveFilePath().Get();
-    
-    nString filename;
-    filename += nMaxOptions::Instance()->GetGfxLibPath();
-    filename += tmp.ExtractFileName();
-    return filename;
 }
 

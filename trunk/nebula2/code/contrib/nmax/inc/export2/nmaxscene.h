@@ -40,31 +40,31 @@ protected:
     virtual bool Begin(INode* root);
     ///
     virtual bool End();
+
     ///
     virtual bool OpenNebula();
     ///
     virtual bool CloseNebula();
+
     ///
     virtual bool Preprocess(INode* root);
     ///
     virtual bool Postprocess();
+
     ///
     void InitializeNodes(INode* inode);
     ///
     void UnInitializeNodes(INode* inode);
     // @}
 
-    /// @name
-    /// @{
-    /// 
+    /// To be overrided if needed.
     virtual nString GetFileNameToSave();
-    ///
+    /// To be overrided if needed.
     virtual nString GetMeshFileNameToSave();
-    ///
+    /// To be overrided if needed.
     virtual nString GetAnimFileNameToSaveBase();
     ///
-    virtual nString GetAnimFileNameToSave();
-    /// @}
+    virtual nString GetAnimFileNameToSave(int skelIndex);
 
     // @name Functions for export max's nodes
     // @{
@@ -86,12 +86,14 @@ protected:
     virtual nSceneNode* ExportDummy(INode* inode, Object* obj);
     ///
     virtual nSceneNode* ExportNodesHook(SClass_ID sID, INode* inode, Object* obj);
-    ///
-    void ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &animStart);
+
     ///
     void ExportBackgroudColor();
     ///
     Point3 GetBackgroundColor() const;
+
+    ///
+    void ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &animStart);
     // @}
 
     ///

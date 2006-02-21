@@ -214,40 +214,62 @@ bool nMaxBoneManager::BuildBones(INode* node)
 
     // get top most level of the bone in the bone array.
     // this bone will be used as the root bone.
-    INode* rootBone = GetRootBone(sceneRoot, boneNodeArray);
-    n_assert(rootBone);
+    nArray<INode*> rootBonesNodeArray;
+    this->GetRootBones(sceneRoot, boneNodeArray, rootBonesNodeArray);
 
+    for (int i=0; i<rootBonesNodeArray.Size(); i++) {
+        this->skeletonsArray.Append(Skeleton());
+        this->noteTracksArray.Append(nMaxNoteTrack());
     // build bone array.
-    this->ReconstructBoneHierarchy(-1, rootBone, boneNodeArray);
+        this->ReconstructBoneHierarchy(-1, i, rootBonesNodeArray[i], boneNodeArray);
 
     // extract animation state from note track.
-    for (int i=0; i<this->boneArray.Size(); i++)
+        for (int ai=0; ai<this->GetNumBones(i); ai++)
     {
-        Bone bone = this->boneArray[i];
+            Bone bone = this->GetBone(i, ai);
         n_maxlog(High, "%s ID:%d", bone.name.Get(), bone.id);
 
         // build animation states.
         INode* boneNode = bone.node;
 
-        noteTrack.GetAnimState(boneNode);
+            this->noteTracksArray[i].GetAnimState(boneNode);
     }
 
     // if there are no animation states, we add default one.
     // (skin animator needs it at least one)
-    if (noteTrack.GetNumStates() <= 0)
-    {
+        if (this->noteTracksArray[i].GetNumStates() <= 0) {
         //FIXME: fix to get proper first frame.
         int firstframe   = 0;
         int duration     = nMaxInterface::Instance()->GetNumFrames();
         float fadeintime = 0.0f;
-        noteTrack.AddAnimState(firstframe, duration, fadeintime);
+            this->noteTracksArray[i].AddAnimState(firstframe, duration, fadeintime);
     }
 
     n_maxlog(Medium, "Found %d bones", this->GetNumBones());
+    }
+
+    std::map<INode*, INode*>::iterator iter = nodeToBone.begin();
+    std::map<INode*, int>::iterator fj;
+    for (; iter != nodeToBone.end(); ++iter) {
+        fj = boneToSkel.find(iter->second);
+        if (fj != boneToSkel.end()) {
+            nodeToSkel[iter->first] = fj->second;
+        }
+    }
 
     return true;
 }
 
+//-----------------------------------------------------------------------------
+int nMaxBoneManager::GetSkelForNode(INode* inode) {
+    std::map<INode*, int>::iterator fj;
+    n_assert(inode);
+    fj = nodeToSkel.find(inode);
+    if (fj != nodeToSkel.end()) {
+       return fj->second;
+    }
+    return -1;
+}
 //-----------------------------------------------------------------------------
 struct BoneLevel
 {
@@ -255,19 +277,20 @@ struct BoneLevel
     int   depth;
 };
 
+
+
 //-----------------------------------------------------------------------------
 /**
 */
-INode* nMaxBoneManager::GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeArray)
-{
+int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArray, nArray<INode*> &rootBonesNodeArray) {
     int i, j, k;
 
-//#ifdef _DEBUG
-//    for (i=0; i<boneNodeArray.Size(); i++)
-//    {
-//        n_maxlog(Medium, "Before Sort: %s", boneNodeArray[i]->GetName());
-//    }
-//#endif
+    #ifdef _DEBUG
+        //for (i=0; i<boneNodeArray.Size(); i++)
+        //{
+        //    n_maxlog(Medium, "Before Sort: %s", boneNodeArray[i]->GetName());
+        //}
+    #endif
 
     nArray<BoneLevel> boneLevelArray;
     
@@ -313,38 +336,59 @@ INode* nMaxBoneManager::GetRootBone(INode *sceneRoot, nArray<INode*> &boneNodeAr
         boneLevelArray[k] = tmp;
     }
 
-//#ifdef _DEBUG
-//    for (i=0; i<boneLevelArray.Size(); i++)
-//    {
-//        n_maxlog(Medium, "After Sort: %s", boneLevelArray[i].node->GetName());
-//    }
-//#endif
+    #ifdef _DEBUG
+        //for (i=0; i<boneLevelArray.Size(); i++)
+        //{
+        //    n_maxlog(Medium, "After Sort: %s %d", boneLevelArray[i].node->GetName(), boneLevelArray[i].depth);
+        //}
+    #endif
 
     // the first node in boneLevelArray is the root bone node.
-    return boneLevelArray[0].node;
+    depth = boneLevelArray[0].depth;
+    for (int i=0; i<boneLevelArray.Size(); i++) {
+        if (boneLevelArray[i].depth == depth) {
+            rootBonesNodeArray.Append(boneLevelArray[i].node);
+        }
+    }
+    return rootBonesNodeArray.Size();
 }
+
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, INode* node, 
-                                               nArray<INode*> &boneNodeArray)
-{
+void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode* node, nArray<INode*> &boneNodeArray) {
     Bone bone;
 
     bone.localTransform = nMaxTransform::GetLocalTM(node, 0);
     bone.parentID       = parentID;
-    bone.id             = this->boneArray.Size();
+    bone.id             = this->skeletonsArray[skeleton].Size();
     bone.name           = nMaxUtil::CorrectName(node->GetName());
     bone.node           = node;
 
     // add only known bone.
-    if (boneNodeArray.Find(node))
-        this->boneArray.Append(bone);
+    if (boneNodeArray.Find(node)) {
+        this->skeletonsArray[skeleton].Append(bone);
+        if (this->boneToSkel.find(bone.node) == this->boneToSkel.end()) {
+            this->boneToSkel[bone.node] = skeleton;
+        }
+    }
 
     for (int i=0; i<node->NumberOfChildren(); i++)
     {
-        ReconstructBoneHierarchy(bone.id, node->GetChildNode(i), boneNodeArray);
+        this->ReconstructBoneHierarchy(bone.id, skeleton, node->GetChildNode(i), boneNodeArray);
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxBoneManager::AddBoneToNode(INode* inode, INode* bone) {
+    n_assert(inode);
+    n_assert(bone);
+    if (this->nodeToBone.find(inode) == this->nodeToBone.end()) {
+        this->nodeToBone[inode] = bone;
     }
 }
 
@@ -389,7 +433,11 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
                             // add found bone to the bones array.
                             if (!boneNodeArray.Find(bone))
                             {
+                                nString nodeName = node->GetName();
+                                nString boneName = bone->GetName();
+                                n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                                 boneNodeArray.Append(bone);
+                                this->AddBoneToNode(node, bone);
                             }
                         }
 
@@ -404,7 +452,11 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
                         // add found bone to the bones array.
                         if (!boneNodeArray.Find(bone))
                         {
+                            nString nodeName = node->GetName();
+                            nString boneName = bone->GetName();
+                            n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                             boneNodeArray.Append(bone);
+                            this->AddBoneToNode(node, bone);
                         }
 
                         mcExport->ReleaseVertexInterface(vtxExport);
@@ -456,7 +508,11 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
                 // add found bone to the bones array
                 if (!boneNodeArray.Find(bone))
                 {
+                    nString nodeName = node->GetName();
+                    nString boneName = bone->GetName();
+                    n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                     boneNodeArray.Append(bone);
+                    this->AddBoneToNode(node, bone);
                 }
             }
         }
@@ -572,11 +628,13 @@ bool nMaxBoneManager::IsDummy(INode* inode)
 */
 int nMaxBoneManager::FindBoneIDByNode(INode* inode)
 {
-    for (int i=0;i<this->boneArray.Size(); i++)
+    for (int s=0; s<this->skeletonsArray.Size(); s++) {
+        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
     {
-        if (boneArray[i].node == inode)
+            if (skeletonsArray[s][i].node == inode)
         {
-            return boneArray[i].id;
+                return skeletonsArray[s][i].id;
+            }
         }
     }
 
@@ -590,14 +648,15 @@ int nMaxBoneManager::FindBoneIDByNode(INode* inode)
 */
 int nMaxBoneManager::FindBoneIDByName(const nString &name)
 {
-    for (int i=0;i<this->boneArray.Size(); i++)
+    for (int s=0; s<this->skeletonsArray.Size(); s++) {
+        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
     {
-        if (this->boneArray[i].name == name)
+            if (this->skeletonsArray[s][i].name == name)
         {
-            return this->boneArray[i].id;
+                return this->skeletonsArray[s][i].id;
+            }
         }
     }
-
     return -1;
 }
 
@@ -608,9 +667,9 @@ int nMaxBoneManager::FindBoneIDByName(const nString &name)
 */
 int nMaxBoneManager::FindBoneIndexByNodeId(int nodeID)
 {
-    for (int i=0;i<this->boneArray.Size(); i++)
+    for (int i=0;i<this->skeletonsArray[0].Size(); i++)
     {
-        if (boneArray[i].id == nodeID)
+        if (skeletonsArray[0][i].id == nodeID)
         {
             return i;
         }
@@ -624,11 +683,11 @@ int nMaxBoneManager::FindBoneIndexByNodeId(int nodeID)
 */
 INode* nMaxBoneManager::FindBoneNodeByIndex(int index)
 {
-    for (int i=0; i<this->boneArray.Size(); i++)
+    for (int i=0; i<this->skeletonsArray[0].Size(); i++)
     {
-        if (boneArray[i].id == index)
+        if (skeletonsArray[0][i].id == index)
         {
-            return boneArray[i].node;
+            return skeletonsArray[0][i].node;
         }
     }
 
@@ -641,9 +700,9 @@ INode* nMaxBoneManager::FindBoneNodeByIndex(int index)
 
     @param animFileName .nanim2(or .nax2) file name
 */
-bool nMaxBoneManager::Export(const char* animFileName)
-{
+bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
     n_assert(animFileName);
+    n_assert(skelIndex >= 0);
 
     nAnimBuilder animBuilder;
 
@@ -652,7 +711,7 @@ bool nMaxBoneManager::Export(const char* animFileName)
     float keyDuration = (float)sampleRate / GetFrameRate();
     int sceneFirstKey = 0;
 
-    int numBones = this->GetNumBones();
+    int numBones = this->GetNumBones(skelIndex);
 
     typedef nArray<nMaxSampleKey> Keys;
     Keys keys;
@@ -663,13 +722,14 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
     for (int boneIndex=0; boneIndex<numBones; boneIndex++)
     {
-        const nMaxBoneManager::Bone &bone = this->GetBone(boneIndex);
+        const nMaxBoneManager::Bone &bone = this->GetBone(skelIndex, boneIndex);
         INode* boneNode = bone.node;
 
         nMaxControl::GetSampledKey(boneNode, keysArray[boneIndex], sampleRate, nMaxTM);
     }
 
     // builds skeletal animations.
+    nMaxNoteTrack& noteTrack = this->GetNoteTrack(skelIndex);
     int numAnimStates = noteTrack.GetNumStates();
 
     for (int state=0; state<numAnimStates; state++)
@@ -697,7 +757,7 @@ bool nMaxBoneManager::Export(const char* animFileName)
 
         for (int clip=0; clip<numClips; clip++)
         {
-            int numBones = this->GetNumBones();
+            int numBones = this->GetNumBones(skelIndex);
 
             for (int boneIdx=0; boneIdx<numBones; boneIdx++)
             {

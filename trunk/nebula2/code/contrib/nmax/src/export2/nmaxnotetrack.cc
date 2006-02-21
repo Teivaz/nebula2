@@ -66,6 +66,9 @@ nMaxNoteTrack::~nMaxNoteTrack()
 
     A note key is used for representing animation state.
 
+    -20-Feb-06  kims  Fixed to get correct index of ExtractRange().
+                      Thanks Ivan Tivonenko for the patch.
+
     @param inode A node which we collect animation states from.
                  The node should be bone.
 */
@@ -87,16 +90,19 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
             nString note = noteKey->note.data();
             if (!note.IsEmpty())
             {
-                int duration;
+                int duration = 0;
                 nString strNote, strDuration;
 
                 int idx = note.FindChar('\n', 0);
                 if (idx > 0)
                 {
-                    strNote     = nMaxUtil::CorrectName(note.ExtractRange(0, idx-1));
-                    strDuration = nMaxUtil::CorrectName(note.ExtractRange(idx, note.Length()));
-
-                    duration = atoi(strDuration.Get());
+                    strNote    = nMaxUtil::CorrectName(note.ExtractRange(0, idx));
+                    int durLen = note.Length() - idx - 1;
+                    if (durLen > 0) 
+                    {
+                        strDuration = nMaxUtil::CorrectName(note.ExtractRange(idx+1, durLen));
+                        duration = atoi(strDuration.Get());
+                    }
 
                     if (duration <= 0)
                     {
@@ -122,3 +128,4 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
         }// end of for each key in note track.
     }// end of for each note track.
 }
+
