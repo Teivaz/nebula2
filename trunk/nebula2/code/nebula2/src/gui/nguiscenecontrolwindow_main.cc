@@ -332,7 +332,8 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
                 {
                     if (event.GetWidget() == slider)
                     {
-                        nString rightText(((float)slider->GetValue())/100.0f);
+                        nString rightText;
+                        rightText.SetFloat(((float)slider->GetValue())/100.0f);
                         rightText.TerminateAtIndex(4);
                         slider->SetRightText(rightText.Get()); 
                         nVariableServer::Instance()->SetFloatVariable(this->chnHandles.At(countChnSlider),(float)slider->GetValue()/100.0f);
@@ -495,7 +496,8 @@ nGuiSceneControlWindow::UpdateChnSlider()
         slider->SetMinValue(0);
         slider->SetMaxValue(100);  
         slider->SetValue(100);
-        nString rightText((float)slider->GetValue()/100.0f);
+        nString rightText;
+        rightText.SetFloat(((float)slider->GetValue()/100.0f));
         rightText.TerminateAtIndex(4);
         slider->SetRightText(rightText.Get());          
         slider->SetKnobSize(float(knobSize));

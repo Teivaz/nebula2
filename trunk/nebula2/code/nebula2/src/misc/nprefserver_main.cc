@@ -70,7 +70,9 @@ nPrefServer::WriteString(const nString& key, const nString& value)
 bool
 nPrefServer::WriteInt(const nString& key, int value)
 {
-    return this->WriteGeneric(key, nString(value));
+    nString s;
+    s.SetInt(value);
+    return this->WriteGeneric(key, s);
 }
 
 //------------------------------------------------------------------------------
@@ -79,8 +81,9 @@ nPrefServer::WriteInt(const nString& key, int value)
 bool
 nPrefServer::WriteFloat(const nString& key, float value)
 {
-    nString valString(value);
-    return this->WriteGeneric(key, nString(value));
+    nString s;
+    s.SetFloat(value);
+    return this->WriteGeneric(key, s);
 }
 
 //------------------------------------------------------------------------------
@@ -105,9 +108,9 @@ nPrefServer::WriteBool(const nString& key, bool value)
 bool
 nPrefServer::WriteVector4(const nString& key, const vector4& value)
 {
-    char buf[256];
-    snprintf(buf, sizeof(buf), "%f,%f,%f,%f", value.x, value.y, value.z, value.w);
-    return this->WriteGeneric(key, buf);
+    nString s;
+    s.Format("%f,%f,%f,%f", value.x, value.y, value.z, value.w);
+    return this->WriteGeneric(key, s);
 }
 
 //------------------------------------------------------------------------------
@@ -116,9 +119,9 @@ nPrefServer::WriteVector4(const nString& key, const vector4& value)
 bool
 nPrefServer::WriteVector3(const nString& key, const vector3& value)
 {
-    char buf[256];
-    snprintf(buf, sizeof(buf), "%f,%f,%f", value.x, value.y, value.z);
-    return this->WriteGeneric(key, buf);
+    nString s;
+    s.Format("%f,%f,%f", value.x, value.y, value.z);
+    return this->WriteGeneric(key, s);
 }
 
 //------------------------------------------------------------------------------

@@ -33,11 +33,11 @@ nNpkFile::~nNpkFile()
     If this fails too, return false.
 */
 bool
-nNpkFile::Open(const char* filename, const char* accessMode)
+nNpkFile::Open(const nString& filename, const nString& accessMode)
 {
     n_assert(!this->IsOpen());
-    n_assert(filename);
-    n_assert(accessMode);
+    n_assert(filename.IsValid());
+    n_assert(accessMode.IsValid());
 
     // some inits
     this->isNpkFile     = false;
@@ -59,7 +59,7 @@ nNpkFile::Open(const char* filename, const char* accessMode)
     if (this->tocEntry && (nNpkTocEntry::FILE == this->tocEntry->GetType()))
     {
         this->isNpkFile     = true;
-        this->isAsciiAccess = !(strchr(accessMode, 'b'));
+        this->isAsciiAccess = !accessMode.ContainsCharFromSet("bB");
         this->filePos       = 0;
         this->isOpen        = true;
         return true;
@@ -71,7 +71,7 @@ nNpkFile::Open(const char* filename, const char* accessMode)
 /**
 */
 bool
-nNpkFile::Exists(const char* filename) const
+nNpkFile::Exists(const nString& filename) const
 {
     if (nFile::Exists(filename))
     {

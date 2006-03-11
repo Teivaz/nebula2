@@ -40,18 +40,6 @@ public:
     nString(const char* str);
     /// copy constructor
     nString(const nString& rhs);
-    /// set to int val
-    nString(int intVal);
-    /// set to float val
-    nString(float floatVal);
-    /// set to bool value
-    nString(bool boolVal);
-    /// set to vector3 value
-    nString(const vector3& v);
-    /// set to vector4 value
-    nString(const vector4& v);
-    /// set to matrix44 value
-    nString(const matrix44& m);
     /// destructor
     ~nString();
     /// = operator
@@ -66,6 +54,14 @@ public:
     friend bool operator == (const nString& a, const nString& b);
     /// Is `a' inequal to `b'?
     friend bool operator != (const nString& a, const nString& b);
+    /// Is `a' smaller than `b'?
+    friend bool operator < (const nString& a, const nString& b);
+    /// Is `a' greater than `b'?
+    friend bool operator > (const nString& a, const nString& b);
+    /// Is `a' smaller than or equal to `b'?
+    friend bool operator <= (const nString& a, const nString& b);
+    /// Is `a' greater than or equal to `b'?
+    friend bool operator >= (const nString& a, const nString& b);
     /// Subscript operator (read only).
     const char operator[](int i) const;
     /// Subscript operator (writeable).
@@ -100,6 +96,18 @@ public:
     vector4 AsVector4() const;
     /// return contents as matrix44
     matrix44 AsMatrix44() const;
+    /// return true if the content is a valid integer
+    bool IsValidInt() const;
+    /// return true if the content is a valid float
+    bool IsValidFloat() const;
+    /// return true if the content is a valid bool
+    bool IsValidBool() const;
+    /// return true if the content is a valid vector3
+    bool IsValidVector3() const;
+    /// return true if the content is a valid vector4
+    bool IsValidVector4() const;
+    /// return true if content is a valid matrix44
+    bool IsValidMatrix44() const;
     /// return length of string
     int Length() const;
     /// clear the string
@@ -122,22 +130,26 @@ public:
     void ToLower();
     /// convert string to upper case
     void ToUpper();
-    /// get first token (this will destroy the string)
+    /// *** OBSOLETE *** get first token (this will destroy the string)
     const char* GetFirstToken(const char* whiteSpace);
-    /// get next token (this will destroy the string)
+    /// *** OBSOLETE *** get next token (this will destroy the string)
     const char* GetNextToken(const char* whiteSpace);
     /// tokenize string into a provided nString array
     int Tokenize(const char* whiteSpace, nArray<nString>& tokens) const;
+    /// tokenize string, keep strings within fence characters intact
+    int Tokenize(const char* whiteSpace, uchar fence, nArray<nString>& tokens) const;
     /// extract substring
     nString ExtractRange(int from, int numChars) const;
     /// terminate string at first occurence of character in set
     void Strip(const char* charSet);
     /// Index of first appearance of `v' starting from index `startIndex'.
-    int IndexOf(const nString& v, int startIndex) const;
+    int FindStringIndex(const nString& v, int startIndex) const;
     /// return index of character in string
-    int FindChar(unsigned char c, int startIndex) const;
+    int FindCharIndex(unsigned char c, int startIndex) const;
     /// terminate string at given index
     void TerminateAtIndex(int index);
+    /// returns true if string contains character from set
+    bool ContainsCharFromSet(const char* charSet) const;
     /// strip slash at end of path, if exists
     void StripTrailingSlash();
     /// delete characters from charset at left side of string
@@ -179,10 +191,24 @@ public:
     void FormatWithArgs(const char* fmtString, va_list args);
     /// replace illegal filename characters
     void ReplaceIllegalFilenameChars(char replacement);
-
-public:
+    /// return true if string only contains characters from charSet argument
+    bool CheckValidCharSet(const nString& charSet) const;
+    /// replace characters within a srtring
+    void ReplaceChars(const char* charSet, char replacement);
     /// concatenate array of strings into new string
     static nString Concatenate(const nArray<nString>& strArray, const nString& whiteSpace);
+    /// construct a string from an int
+    static nString FromInt(int i);
+    /// construct a string from a float
+    static nString FromFloat(float f);
+    /// construct a string from a bool
+    static nString FromBool(bool b);
+    /// construct a string from vector3
+    static nString FromVector3(const vector3& v);
+    /// construct a string from vector4
+    static nString FromVector4(const vector4& v);
+    /// construct a string from matrix44
+    static nString FromMatrix44(const matrix44& m);
 
 protected:
     /// copy contents
@@ -193,9 +219,8 @@ protected:
     char* GetLastSlash() const;
     /// calculate required length for the result of a printf-style format
     size_t GetFormattedStringLength(const char* format, va_list argList) const;
-
-    static const nString ConstantTrue;
-    static const nString ConstantFalse;
+    /// Set the length, accounting for the union.
+    void SetLength(int);
 
     enum
     {
@@ -286,7 +311,7 @@ nString::Set(const char* str)
     int len = 0;
     if (str)
     {
-        len = strlen(str);
+        len = (int) strlen(str);
     }
     this->Set(str, len);
 }
@@ -320,11 +345,11 @@ nString::SetBool(bool val)
 {
     if (val)
     {
-        *this = ConstantTrue;
+        *this = "true";
     }
     else
     {
-        *this = ConstantFalse;
+        *this = "false";
     }
 }
 
@@ -398,78 +423,10 @@ nString::nString(const char* str) :
 inline
 nString::nString(const nString& rhs) :
     string(0),
-    strLen(0),
-    localStrLen(0)
+    strLen(0)
 {
+    this->localString[0] = 0;
     this->Copy(rhs);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(int intVal) :
-    string(0),
-    strLen(0),
-    localStrLen(0)
-{
-    this->SetInt(intVal);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(float floatVal) :
-    string(0),
-    strLen(0),
-    localStrLen(0)
-{
-    this->SetFloat(floatVal);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(bool boolVal) :
-    string(0),
-    strLen(0)
-{
-    this->SetBool(boolVal);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(const vector3& v) :
-    string(0),
-    strLen(0)
-{
-    this->SetVector3(v);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nString::nString(const vector4& v) :
-    string(0),
-    strLen(0)
-{
-    this->SetVector4(v);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-    nString::nString(const matrix44& m) :
-    string(0),
-    strLen(0)
-{
-    this->SetMatrix44(m);
 }
 
 //------------------------------------------------------------------------------
@@ -515,7 +472,10 @@ inline
 nString&
 nString::operator=(const char* rhs)
 {
-    this->Set(rhs);
+    if (rhs != this->Get())
+    {
+        this->Set(rhs);
+    }
     return *this;
 }
 
@@ -650,6 +610,46 @@ bool
 operator != (const nString& a, const nString& b)
 {
     return strcmp(a.Get(), b.Get()) != 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+operator < (const nString& a, const nString& b)
+{
+    return strcmp(a.Get(), b.Get()) < 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+operator > (const nString& a, const nString& b)
+{
+    return strcmp(a.Get(), b.Get()) > 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+operator <= (const nString& a, const nString& b)
+{
+    return strcmp(a.Get(), b.Get()) <= 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+operator >= (const nString& a, const nString& b)
+{
+    return strcmp(a.Get(), b.Get()) >= 0;
 }
 
 //------------------------------------------------------------------------------
@@ -869,6 +869,61 @@ nString::Tokenize(const char* whiteSpace, nArray<nString>& tokens) const
 
 //------------------------------------------------------------------------------
 /**
+    Tokenize a string, but keeps the string within the fence-character
+    intact. For instance for the sentence:
+
+    He said: "I don't know."
+
+    A Tokenize(" ", '"', tokens) would return:
+
+    token 0:    He
+    token 1:    said:
+    token 2:    I don't know.
+*/
+inline
+int
+nString::Tokenize(const char* whiteSpace, uchar fence, nArray<nString>& tokens) const
+{
+    // create a temporary string, which will be destroyed during the operation
+    nString str(*this);
+    char* ptr = (char*) str.Get();    
+    char* end = ptr + strlen(ptr);
+    while (ptr < end)
+    {
+        char* c;
+
+        // skip white space
+        while (*ptr && strchr(whiteSpace, *ptr))
+        {
+            ptr++;
+        }
+        if (*ptr)
+        {
+            // check for fenced area
+            if ((fence == *ptr) && (c = strchr(++ptr, fence)))
+            {
+                *c++ = 0;
+                tokens.Append(ptr);
+                ptr = c;
+            }
+            else if ((c = strpbrk(ptr, whiteSpace)))
+            {
+                *c++ = 0;
+                tokens.Append(ptr);
+                ptr = c;
+            }
+            else
+            {
+                tokens.Append(ptr);
+                break;
+            }
+        }
+    }
+    return tokens.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
     Extract sub string.
 */
 inline
@@ -898,15 +953,22 @@ nString::Strip(const char* charSet)
     if (ptr)
     {
         *ptr = 0;
-        if (this->string != 0)
-        {
-            this->strLen = strlen(str);
-        }
-        else
-        {
-            this->localStrLen = strlen(str);
-        }
     }
+    this->SetLength(strlen(str));
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true if string contains one of the characters from charset.
+*/
+inline
+bool
+nString::ContainsCharFromSet(const char* charSet) const
+{
+    n_assert(charSet);
+    char* str = (char*) this->Get();
+    char* ptr = strpbrk(str, charSet);
+    return (0 != ptr);
 }
 
 //------------------------------------------------------------------------------
@@ -915,7 +977,7 @@ nString::Strip(const char* charSet)
 */
 inline
 int
-nString::IndexOf(const nString& v, int startIndex) const
+nString::FindStringIndex(const nString& v, int startIndex) const
 {
     n_assert(0 <= startIndex && startIndex <= Length() - 1);
     n_assert(!v.IsEmpty());
@@ -942,7 +1004,7 @@ nString::IndexOf(const nString& v, int startIndex) const
 */
 inline
 int
-nString::FindChar(unsigned char c, int startIndex) const
+nString::FindCharIndex(unsigned char c, int startIndex) const
 {
     if (this->Length() > 0)
     {
@@ -967,14 +1029,7 @@ nString::TerminateAtIndex(int index)
     n_assert(index < this->Length());
     char* ptr = (char*) this->Get();
     ptr[index] = 0;
-    if (this->string != 0)
-    {
-        this->strLen = index;
-    }
-    else
-    {
-        this->localStrLen = index;
-    }
+    this->SetLength(strlen(this->Get()));
 }
 
 //------------------------------------------------------------------------------
@@ -1001,6 +1056,7 @@ nString::StripTrailingSlash()
                 this->localStrLen--;
             }
         }
+        this->SetLength(strlen(this->Get()));
     }
 }
 
@@ -1141,97 +1197,6 @@ nString::Substitute(const char* matchStr, const char* substStr) const
 
 //------------------------------------------------------------------------------
 /**
-    Returns content as integer.
-*/
-inline
-int
-nString::AsInt() const
-{
-    const char* ptr = this->Get();
-    return atoi(ptr);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns content as float.
-*/
-inline
-float
-nString::AsFloat() const
-{
-    const char* ptr = this->Get();
-    return float(atof(ptr));
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nString::AsBool() const
-{
-    if (*this == ConstantTrue)
-    {
-        return true;
-    }
-    if (*this == ConstantFalse)
-    {
-        return false;
-    }
-    n_assert(false);  // String does not contain a bool!
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-vector3
-nString::AsVector3() const
-{
-    nArray<nString> tokens;
-    this->Tokenize(", \t", tokens);
-    n_assert(tokens.Size() == 3);
-    vector3 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat());
-    return v;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-vector4
-nString::AsVector4() const
-{
-    nArray<nString> tokens;
-    this->Tokenize(", \t", tokens);
-    n_assert(tokens.Size() == 4);
-    vector4 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat(), tokens[3].AsFloat());
-    return v;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns content as matrix44. Note: this method doesn't check whether the
-    contents is actually a valid matrix44. Use the IsValidMatrix44() method
-    for this!
-*/
-inline
-matrix44
-nString::AsMatrix44() const
-{
-    nArray<nString> tokens;
-    this->Tokenize(", \t", tokens);
-    n_assert(tokens.Size() == 16);
-    matrix44 m(tokens[0].AsFloat(),  tokens[1].AsFloat(),  tokens[2].AsFloat(),  tokens[3].AsFloat(),
-        tokens[4].AsFloat(),  tokens[5].AsFloat(),  tokens[6].AsFloat(),  tokens[7].AsFloat(),
-        tokens[8].AsFloat(),  tokens[9].AsFloat(),  tokens[10].AsFloat(), tokens[11].AsFloat(),
-        tokens[12].AsFloat(), tokens[13].AsFloat(), tokens[14].AsFloat(), tokens[15].AsFloat());
-    return m;
-}
-
-//------------------------------------------------------------------------------
-/**
     This converts an UTF-8 string to 8-bit-ANSI. Note that only characters
     in the range 0 .. 255 are converted, all other characters will be converted
     to a question mark.
@@ -1291,6 +1256,7 @@ nString::UTF8toANSI()
     }
     *dst = 0;
 }
+
 //------------------------------------------------------------------------------
 /**
     Convert contained ANSI string to UTF-8 in place.
@@ -1408,14 +1374,7 @@ nString::StripExtension()
     {
         ext[-1] = 0;
     }
-    if (this->string != 0)
-    {
-        this->strLen = strlen(this->Get());
-    }
-    else
-    {
-        this->localStrLen = strlen(this->Get());
-    }
+    this->SetLength(strlen(this->Get()));
 }
 
 //------------------------------------------------------------------------------
@@ -1523,6 +1482,7 @@ nString::ExtractDirName() const
             *++lastSlash = 0;
         }
     }
+    pathString.SetLength(strlen(pathString.Get()));
     return pathString;
 }
 
@@ -1557,6 +1517,226 @@ bool
 nString::MatchPattern(const nString& pattern) const
 {
     return n_strmatch(this->Get(), pattern.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nString::ReplaceChars(const char* charSet, char replacement)
+{
+    n_assert(charSet);
+    char* ptr = (char*) this->Get();
+    char c;
+    while (0 != (c = *ptr))
+    {
+        if (strchr(charSet, c))
+        {
+            *ptr = replacement;
+        }
+        ptr++;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if the string only contains characters which are in the defined
+    character set.
+*/
+inline
+bool
+nString::CheckValidCharSet(const nString& charSet) const
+{
+    int i;
+    int len = this->Length();
+    for (i = 0; i < len; i++)
+    {
+        if (-1 == charSet.FindCharIndex((*this)[i], 0))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nString::IsValidInt() const
+{
+    return this->CheckValidCharSet(" \t-+01234567890");
+}
+
+//------------------------------------------------------------------------------
+/**
+    Note: this method is not 100% correct, it just checks for invalid characters.
+*/
+inline
+bool
+nString::IsValidFloat() const
+{
+    return this->CheckValidCharSet(" \t-+.e1234567890");
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nString::IsValidBool() const
+{
+    static const char* bools[] = {
+        "no", "yes", "off", "on", "false", "true", 0
+    };
+    int i = 0;
+    while (bools[i] != 0)
+    {
+        if (0 == n_stricmp(bools[i], this->Get()))
+        {
+            return true;
+        }
+        i++;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Note: this method is not 100% correct, it just checks for invalid characters.
+*/
+inline
+bool
+nString::IsValidVector3() const
+{
+    return this->CheckValidCharSet(" \t-+.,e1234567890");
+}
+
+//------------------------------------------------------------------------------
+/**
+    Note: this method is not 100% correct, it just checks for invalid characters.
+*/
+inline
+bool
+nString::IsValidVector4() const
+{
+    return this->CheckValidCharSet(" \t-+.,e1234567890");
+}
+
+//------------------------------------------------------------------------------
+/**
+    Note: this method is not 100% correct, it just checks for invalid characters.
+*/
+inline
+bool
+nString::IsValidMatrix44() const
+{
+    return this->CheckValidCharSet(" \t-+.,e1234567890");
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as integer. Note: this method doesn't check whether the
+    contents is actually a valid integer. Use the IsValidInteger() method
+    for this!
+*/
+inline
+int
+nString::AsInt() const
+{
+    return atoi(this->Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as float. Note: this method doesn't check whether the
+    contents is actually a valid float. Use the IsValidInt() method
+    for this!
+*/
+inline
+float
+nString::AsFloat() const
+{
+    return float(atof(this->Get()));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nString::AsBool() const
+{
+    static const char* bools[] = {
+        "no", "yes", "off", "on", "false", "true", 0
+    };
+    int i = 0;
+    while (bools[i] != 0)
+    {
+        if (0 == n_stricmp(bools[i], this->Get()))
+        {
+            return 1 == (i & 1);
+        }
+        i++;
+    }
+    n_assert2(false, "Invalid string value for bool!");
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as vector3. Note: this method doesn't check whether the
+    contents is actually a valid vector3. Use the IsValidVector3() method
+    for this!
+*/
+inline
+vector3
+nString::AsVector3() const
+{
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 3);
+    vector3 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat());
+    return v;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as matrix44. Note: this method doesn't check whether the
+    contents is actually a valid matrix44. Use the IsValidMatrix44() method
+    for this!
+*/
+inline
+matrix44
+nString::AsMatrix44() const
+{
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 16);
+    matrix44 m(tokens[0].AsFloat(),  tokens[1].AsFloat(),  tokens[2].AsFloat(),  tokens[3].AsFloat(),
+               tokens[4].AsFloat(),  tokens[5].AsFloat(),  tokens[6].AsFloat(),  tokens[7].AsFloat(),
+               tokens[8].AsFloat(),  tokens[9].AsFloat(),  tokens[10].AsFloat(), tokens[11].AsFloat(),
+               tokens[12].AsFloat(), tokens[13].AsFloat(), tokens[14].AsFloat(), tokens[15].AsFloat());
+    return m;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns content as vector4. Note: this method doesn't check whether the
+    contents is actually a valid vector4. Use the IsValidVector4() method
+    for this!
+*/
+inline
+vector4
+nString::AsVector4() const
+{
+    nArray<nString> tokens;
+    this->Tokenize(", \t", tokens);
+    n_assert(tokens.Size() == 4);
+    vector4 v(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat(), tokens[3].AsFloat());
+    return v;
 }
 
 //------------------------------------------------------------------------------
@@ -1614,26 +1794,26 @@ nString::FormatWithArgs(const char* fmtString, va_list args)
 */
 inline
 void
+nString::SetLength(int length)
+{
+    if (this->string != 0)
+    {
+        this->strLen = length;
+    }
+    else
+    {
+        this->localStrLen = length;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nString::ReplaceIllegalFilenameChars(char replacement)
 {
-    char* ptr = (char*) this->Get();
-    char c;
-    while (0 != (c = *ptr))
-    {
-        if ((c == '\\') ||
-            (c == '/') ||
-            (c == ':') ||
-            (c == '*') ||
-            (c == '?') ||
-            (c == '\"') ||
-            (c == '<') ||
-            (c == '>') ||
-            (c == '|'))
-        {
-            *ptr = replacement;
-        }
-        ptr++;
-    }
+    this->ReplaceChars("\\/:*?\"<>|", replacement);
 }
 
 //------------------------------------------------------------------------------
@@ -1657,5 +1837,77 @@ nString::Concatenate(const nArray<nString>& strArray, const nString& whiteSpace)
     return res;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromInt(int i)
+{
+    nString str;
+    str.SetInt(i);
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromFloat(float f)
+{
+    nString str;
+    str.SetFloat(f);
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromBool(bool b)
+{
+    nString str;
+    str.SetBool(b);
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromVector3(const vector3& v)
+{
+    nString str;
+    str.SetVector3(v);
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromVector4(const vector4& v)
+{
+    nString str;
+    str.SetVector4(v);
+    return str;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nString::FromMatrix44(const matrix44& m)
+{
+    nString str;
+    str.SetMatrix44(m);
+    return str;
+}
+
+//------------------------------------------------------------------------------
 #endif

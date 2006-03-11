@@ -9,6 +9,8 @@ static void n_getassign(void* slf, nCmd* cmd);
 static void n_manglepath(void* slf, nCmd* cmd);
 static void n_fileexists(void* slf, nCmd* cmd);
 static void n_createfilenode(void* slf, nCmd* cmd);
+static void n_copyfile(void* slf, nCmd* cmd);
+static void n_deletefile(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -17,7 +19,7 @@ static void n_createfilenode(void* slf, nCmd* cmd);
 
     @cppclass
     nFileServer2
-    
+
     @superclass
     nroot
 
@@ -33,6 +35,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("s_manglepath_s",        'MNGP', n_manglepath);
     cl->AddCmd("b_fileexists_s",        'FLEX', n_fileexists);
     cl->AddCmd("o_createfilenode_s",    'CFLN', n_createfilenode);
+    cl->AddCmd("b_copyfile_ss",         'CPFL', n_copyfile);
+    cl->AddCmd("b_deletefile_s",        'DLFL', n_deletefile);
     cl->EndCmds();
 }
 
@@ -78,7 +82,7 @@ static void
 n_getassign(void* slf, nCmd* cmd)
 {
     nFileServer2* self = (nFileServer2*) slf;
-    cmd->Out()->SetS(self->GetAssign(cmd->In()->GetS()));
+    cmd->Out()->SetS(self->GetAssign(cmd->In()->GetS()).Get());
 }
 
 //------------------------------------------------------------------------------
@@ -148,3 +152,40 @@ n_createfilenode(void* slf, nCmd* cmd)
     cmd->Out()->SetO(self->CreateFileNode(cmd->In()->GetS()));
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    copyfile
+    @input
+    s(FromName), s(ToName)
+    @output
+    b (Success)
+    @info
+    Copy a file.
+*/
+static void
+n_copyfile(void* slf, nCmd* cmd)
+{
+    nFileServer2* self = (nFileServer2*) slf;
+    nString from = cmd->In()->GetS();
+    nString to   = cmd->In()->GetS();
+    cmd->Out()->SetB(self->CopyFile(from, to));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    deletefile
+    @input
+    s(FileName)
+    @output
+    b (Success)
+    @info
+    Delete a file.
+*/
+static void
+n_deletefile(void* slf, nCmd* cmd)
+{
+    nFileServer2* self = (nFileServer2*) slf;
+    cmd->Out()->SetB(self->DeleteFile(cmd->In()->GetS()));
+}

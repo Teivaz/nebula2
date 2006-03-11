@@ -30,9 +30,9 @@ nNpkDirectory::~nNpkDirectory()
 /**
 */
 bool
-nNpkDirectory::Open(const char* dirName)
+nNpkDirectory::Open(const nString& dirName)
 {
-    n_assert(dirName);
+    n_assert(dirName.IsValid());
     n_assert(!this->IsOpen());
 
     // first check if the directory can be opened as a normal filesystem directory
@@ -40,7 +40,6 @@ nNpkDirectory::Open(const char* dirName)
     this->npkEntryOverride = false;
     this->tocEntry = 0;
     this->curSearchEntry = 0;
-    this->npkEntryAbsPath.Clear();
     if (nDirectory::Open(dirName))
     {
         return true;
@@ -73,7 +72,6 @@ nNpkDirectory::Close()
         this->npkEntryOverride = false;
         this->tocEntry = 0;
         this->curSearchEntry = 0;
-        this->npkEntryAbsPath.Clear();
     }
     else
     {
@@ -149,16 +147,13 @@ nNpkDirectory::SetToNextEntry()
 //------------------------------------------------------------------------------
 /**
 */
-const char*
+nString
 nNpkDirectory::GetEntryName()
 {
     if (this->isNpkDir || this->npkEntryOverride)
     {
         n_assert(this->curSearchEntry);
-        char buf[N_MAXPATH];
-        this->curSearchEntry->GetFullName(buf, sizeof(buf));
-        this->npkEntryAbsPath = buf;
-        return this->npkEntryAbsPath.Get();
+        return this->curSearchEntry->GetFullName();
     }
     else
     {
@@ -236,9 +231,9 @@ nNpkDirectory::CheckNpkEntryOverride()
     this->curSearchEntry = 0;
     this->npkEntryOverride = false;
 
-    const char* entryName = nDirectory::GetEntryName();
+    nString entryName = nDirectory::GetEntryName();
     EntryType entryType  = nDirectory::GetEntryType();
-    if (((nNpkFileServer*)nFileServer2::Instance())->CheckExtension(entryName, "npk") && FILE == entryType)
+    if (entryName.CheckExtension("npk") && (FILE == entryType))
     {
         // intercept!
         this->curSearchEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(entryName);

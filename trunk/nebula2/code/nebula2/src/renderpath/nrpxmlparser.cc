@@ -264,9 +264,8 @@ nRpXmlParser::ParsePass(TiXmlElement* elm, nRpSection* section)
     while (this->HasAttr(elm, renderTargetName.Get()))
     { 
         newPass.SetRenderTargetName(i, elm->Attribute(renderTargetName.Get()));
-        i++;
         renderTargetName.Set("renderTarget");
-        renderTargetName.Append(i);        
+        renderTargetName.AppendInt(++i);        
     }
     
     int clearFlags = 0;

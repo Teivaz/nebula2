@@ -37,7 +37,7 @@ nFile::nFile() :
 */
 nFile::~nFile()
 {
-    if(this->IsOpen())
+    if (this->IsOpen())
     {
         this->Close();
     }
@@ -49,21 +49,22 @@ nFile::~nFile()
     Close file if it was opened.
 
      - 05-Jan-05   floh    Bugfix: missing GENERIC_READ access mode didn't work in Win98
+     - 12-Oct-05   floh    access move back to 0, Win98 is no longer relevant
 */
 bool
-nFile::Exists(const char* fileName) const
+nFile::Exists(const nString& fileName) const
 {
-    n_assert(fileName != 0);
+    n_assert(fileName.IsValid());
 
     nString fullName = nFileServer2::Instance()->ManglePath(fileName);
 
 #ifdef __WIN32__
     HANDLE fh = CreateFile(fullName.Get(),       // filename
-                           GENERIC_READ,         // access mode
+                           0,                    // don't actually open the file, just check for existence
                            FILE_SHARE_READ,      // share mode
                            0,                    // security flags
                            OPEN_EXISTING,        // what to do if file doesn't exist
-                           FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,  // flags'n'attributes
+                           FILE_ATTRIBUTE_NORMAL,  // flags'n'attributes
                            0);                   // template file
     if (fh != INVALID_HANDLE_VALUE)
     {
@@ -100,14 +101,16 @@ nFile::Exists(const char* fileName) const
     history:
      - 30-Jan-2002   peter   created
      - 11-Feb-2002   floh    Linux stuff
+     - 12-Oct-2005   floh    fixed read mode to also open a file which is
+                             already open by another application for writing
 */
 bool
-nFile::Open(const char* fileName, const char* accessMode)
+nFile::Open(const nString& fileName, const nString& accessMode)
 {
     n_assert(!this->IsOpen());
 
-    n_assert(fileName);
-    n_assert(accessMode);
+    n_assert(fileName.IsValid());
+    n_assert(accessMode.IsValid());
 
     nString mangledPath = nFileServer2::Instance()->ManglePath(fileName);
     this->lineNumber = 0;
@@ -116,35 +119,31 @@ nFile::Open(const char* fileName, const char* accessMode)
     DWORD access = 0;
     DWORD disposition = 0;
     DWORD shareMode = 0;
-    const char* ptr = accessMode;
-    char c;
-    while (c = *ptr++)
+    if (accessMode.ContainsCharFromSet("rR"))
     {
-        if ((c == 'r') || (c == 'R'))
-        {
-            access |= GENERIC_READ;
-        }
-        else if ((c == 'w') || (c == 'W'))
-        {
-            access |= GENERIC_WRITE;
-        }
+        access |= GENERIC_READ;
+    }
+    if (accessMode.ContainsCharFromSet("wW"))
+    {
+        access |= GENERIC_WRITE;
     }
     if (access & GENERIC_WRITE)
     {
         disposition = CREATE_ALWAYS;
+        shareMode = FILE_SHARE_READ;    // allow reading the file in write mode
     }
     else
     {
-            disposition = OPEN_EXISTING;
-            shareMode   = FILE_SHARE_READ;
+        disposition = OPEN_EXISTING;
+        shareMode = FILE_SHARE_READ | FILE_SHARE_WRITE; // allow read/write in read mode
     }
     this->handle = CreateFile(mangledPath.Get(),    // filename
-                              access,           // access mode
-                              shareMode,        // share mode
-                              0,                // security flags
-                              disposition,      // what to do if file doesn't exist
-                              FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,  // flags'n'attributes
-                              0);               // template file
+                              access,               // access mode
+                              shareMode,            // share mode
+                              0,                    // security flags
+                              disposition,          // what to do if file doesn't exist
+                              FILE_ATTRIBUTE_NORMAL,   // flags'n'attributes
+                              0);                   // template file
     if (this->handle == INVALID_HANDLE_VALUE)
     {
         this->handle = 0;
@@ -194,9 +193,9 @@ nFile::Close()
 /**
     writes a number of bytes to the file
 
-    @param buffer        buffer with data
-    @param numBytes        number of bytes to write
-    @return                number of bytes written
+    @param buffer       buffer with data
+    @param numBytes     number of bytes to write
+    @return             number of bytes written
 
     history:
      - 30-Jan-2002   peter    created
@@ -333,7 +332,8 @@ nFile::Eof() const
     DWORD fpos = SetFilePointer(this->handle,0,NULL,FILE_CURRENT);
     DWORD size = GetFileSize(this->handle,NULL);
 
-    return (fpos == size)? true:false;
+    // NOTE: THE '>=' IS NOT A BUG!!!
+    return (fpos >= size)? true:false;
 #else
     return (!feof(this->fp))? false:true;
 #endif
@@ -398,12 +398,12 @@ nFile::GetLastWriteTime() const
      - 29-Jan-03   floh    the method suddenly wrote a newLine. WRONG!
 */
 bool
-nFile::PutS(const char* buffer)
+nFile::PutS(const nString& buffer)
 {
     n_assert(this->IsOpen());
 
-    int len = strlen(buffer);
-    int written = this->Write(buffer, len);
+    int len = buffer.Length();
+    int written = this->Write(buffer.Get(), len);
     if (written != len)
     {
         return false;
@@ -426,60 +426,71 @@ nFile::PutS(const char* buffer)
 
     history:
      - 30-Jan-2002   peter    created
+     - 28-Sep-2005   floh     complete rewrite, there were error if bufSize
+                              was below a line length
 */
 bool
-nFile::GetS(char* buffer, int numChars)
+nFile::GetS(char* buf, int bufSize)
 {
     n_assert(this->IsOpen());
-    n_assert(buffer);
-    n_assert(numChars > 0);
+    n_assert(buf);
+    n_assert(bufSize > 1);
+
+    if (this->Eof())
+    {
+        return false;
+    }
+    
+    // make room for final terminating 0
+    bufSize--;
 
     // store start filepointer position
-    int seekPos = this->Tell();
+    int startPos = this->Tell();
 
-    // read 64 bytes at once, and scan for newlines
-    const int chunkSize = 64;
-    int readSize  = chunkSize;
-    char* readPos = buffer;
-
-    bool retval = false;
-    int bytesRead = 0;
-    int curIndex = 0;
-    for (curIndex = 0; curIndex < (numChars - 1); curIndex++)
+    // read file contents in chunks of 64 bytes, not char by char
+    int chunkSize = 256;
+    if (chunkSize > bufSize)
+    {
+        chunkSize = bufSize;
+    }
+    char* readPos = buf;
+    int curIndex;
+    for (curIndex = 0; curIndex < bufSize; curIndex++)
     {
         // read next chunk of data?
         if (0 == (curIndex % chunkSize))
         {
-            readSize = chunkSize;
-            if ((curIndex + readSize) >= numChars)
+            // if we reached end-of-file before, break out
+            if (this->Eof())
             {
-                readSize = numChars - curIndex;
+                break;
             }
-            bytesRead = this->Read(readPos, readSize);
-            readPos[bytesRead] = 0;
-            readPos += readSize;
+
+            // now, read the next chunk of data
+            int readSize = chunkSize;
+            if ((curIndex + readSize) >= bufSize)
+            {
+                readSize = bufSize - curIndex;
+            }
+            int bytesRead = this->Read(readPos, readSize);
+            if (bytesRead != readSize)
+            {
+                // end of file reached
+                readPos[bytesRead] = 0;
+            }
+            readPos += bytesRead;
         }
 
-        // end of line reached?
-        if (0 == bytesRead)
+        // check for newline
+        if (buf[curIndex] == '\n')
         {
-            retval = false;
-            break;
-        }
-
-        // newline?
-        if ((buffer[curIndex] == '\n') || (buffer[curIndex] == 0))
-        {
-            retval = true;
-            this->Seek(seekPos + curIndex + 1, START);
+            // reset file pointer to position after new-line
+            this->Seek(startPos + curIndex + 1, START);
             break;
         }
     }
-
-    // terminate buffer
-    buffer[curIndex] = 0;
-    this->lineNumber++;
-    return retval;
+    buf[curIndex] = 0;
+    return true;
 }
 
 //------------------------------------------------------------------------------

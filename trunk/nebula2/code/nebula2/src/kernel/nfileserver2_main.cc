@@ -105,7 +105,7 @@ nFileServer2::SetAssign(const nString& assignName, const nString& pathName)
     history:
     - 30-Jan-2002   peter    created
 */
-const char*
+nString
 nFileServer2::GetAssign(const nString& assignName)
 {
     nEnv *env = (nEnv *) this->assignDir->Find(assignName.Get());
@@ -211,7 +211,7 @@ nFileServer2::ManglePath(const nString& pathName)
 
     // check for assigns
     int colonIndex;
-    while ((colonIndex = pathString.FindChar(':', 0)) > 0)
+    while ((colonIndex = pathString.FindCharIndex(':', 0)) > 0)
     {
         // special case: ignore one character "assigns" because they are
         // really DOS drive letters
@@ -475,6 +475,7 @@ nFileServer2::InitUserAssign()
 #error "IMPLEMENT ME!"
 #endif
 }
+
 //------------------------------------------------------------------------------
 /**
     Initialize the standard temp: assign.
@@ -597,35 +598,65 @@ nFileServer2::MakePath(const nString& dirName)
 
     - 09-Mar-04     floh    Win32 version now removes write protection on
                             target file before copying.
+    - 17-Oct-05     floh    Win32 version now uses nFile so that the source
+                            can also live in an NPK archive
 */
 bool
 nFileServer2::CopyFile(const nString& from, const nString& to)
 {
     #ifdef __WIN32__
-        // Win32 specific method is more efficient
-        nString mangledFromPath = this->ManglePath(from);
-        nString mangledToPath   = this->ManglePath(to);
+        // copy the file through Nebula2 file routines, this makes
+        // sure that we can also copy from archive files
+        bool success = false;
 
         // if the target file exists, remove the read/only file attribute
-        if (this->FileExists(mangledToPath))
+        if (this->FileExists(to))
         {
-            DWORD fileAttrs = GetFileAttributes(mangledToPath.Get());
+            DWORD fileAttrs = GetFileAttributes(to.Get());
             fileAttrs &= ~FILE_ATTRIBUTE_READONLY;
-            SetFileAttributes(mangledToPath.Get(), fileAttrs);
+            SetFileAttributes(to.Get(), fileAttrs);
         }
-        return ::CopyFile(mangledFromPath.Get(), mangledToPath.Get(), FALSE) ? true : false;
+        nFile* fromFile = this->NewFileObject();
+        if (fromFile->Open(from, "rb"))
+        {
+            nFile* toFile = this->NewFileObject();
+            if (toFile->Open(to, "wb"))
+            {
+                int bufSize = fromFile->GetSize();
+                void* buf = n_malloc(bufSize);
+                int bytesRead = fromFile->Read(buf, bufSize);
+                n_assert(bytesRead == bufSize);
+                int bytesWritten = toFile->Write(buf, bufSize);
+                n_assert(bytesWritten == bufSize);
+                n_free(buf);
+                toFile->Close();
+                success = true;
+            }
+            else
+            {
+                n_error("nFileServer2::CopyFile(%s, %s): could not open target file!", from.Get(), to.Get());
+            }
+            toFile->Release();
+            fromFile->Close();
+        }
+        else
+        {
+            n_error("nFileServer2::CopyFile(%s, %s): could not open source file!", from.Get(), to.Get());
+        }
+        fromFile->Release();
+        return success;
     #else
         nFile* fromFile = this->NewFileObject();
-        if (!fromFile->Open(from.Get(), "rb"))
+        if (!fromFile->Open(from, "rb"))
         {
-            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from.Get());
+            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from);
             fromFile->Release();
             return false;
         }
         nFile* toFile = this->NewFileObject();
-        if (!toFile->Open(to.Get(), "wb"))
+        if (!toFile->Open(to, "wb"))
         {
-            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to.Get());
+            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to);
             fromFile->Close();
             fromFile->Release();
             toFile->Release();
@@ -847,6 +878,31 @@ nFileServer2::ListFiles(const nString& dirName)
 
 //------------------------------------------------------------------------------
 /**
+    List all files in a directory matching given pattern, ignores subdirectories.
+*/
+nArray<nString>
+nFileServer2::ListMatchingFiles(const nString& dirName, const nString& pattern)
+{
+    nArray<nString> fileList;
+    nDirectory* dir = this->NewDirectoryObject();
+    if (dir->Open(dirName.Get()))
+    {
+        if (dir->SetToFirstEntry()) do
+        {
+            if ((dir->GetEntryType() == nDirectory::FILE) && dir->GetEntryName().MatchPattern(pattern))
+            {
+                fileList.Append(dir->GetEntryName());
+            }
+        }
+        while (dir->SetToNextEntry());
+        dir->Close();
+    }
+    n_delete(dir);
+    return fileList;
+}
+
+//------------------------------------------------------------------------------
+/**
     List all subdirectories in a directory, ignores files.
 */
 nArray<nString>
@@ -868,4 +924,48 @@ nFileServer2::ListDirectories(const nString& dirName)
     }
     n_delete(dir);
     return dirList;
+}
+
+//------------------------------------------------------------------------------
+/**
+    List all subdirectories in a directory matching the given pattern, ignores files.
+*/
+nArray<nString>
+nFileServer2::ListMatchingDirectories(const nString& dirName, const nString& pattern)
+{
+    nArray<nString> dirList;
+    nDirectory* dir = this->NewDirectoryObject();
+    if (dir->Open(dirName.Get()))
+    {
+        if (dir->SetToFirstEntry()) do
+        {
+            if ((dir->GetEntryType() == nDirectory::DIRECTORY) && dir->GetEntryName().MatchPattern(pattern))
+            {
+                dirList.Append(dir->GetEntryName());
+            }
+        }
+        while (dir->SetToNextEntry());
+        dir->Close();
+    }
+    n_delete(dir);
+    return dirList;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the timestamp when the file was last written to. If the file
+    doesn't exist, a default nFileTime object will be returned.
+*/
+nFileTime
+nFileServer2::GetFileWriteTime(const nString& pathName)
+{
+    nFileTime fileTime;
+    nFile* file = this->NewFileObject();
+    if (file->Open(pathName, "r"))
+    {
+        fileTime = file->GetLastWriteTime();
+        file->Close();
+    }
+    file->Release();
+    return fileTime;
 }

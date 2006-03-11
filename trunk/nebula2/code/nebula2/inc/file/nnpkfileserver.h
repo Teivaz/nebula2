@@ -80,10 +80,8 @@ public:
 private:
     /// add one npk file to the internal list
     bool AddNpkFile(const nString& rootPath, const nString& filename);
-    /// check extension of a filename
-    bool CheckExtension(const char* path, const char* ext);
     /// find a toc entry by name in the included npk file wrappers
-    nNpkTocEntry* FindTocEntry(const char* absPath);
+    nNpkTocEntry* FindTocEntry(const nString& absPath);
     
     nList npkFiles;         // list of nNpkFileWrapper objects
 };

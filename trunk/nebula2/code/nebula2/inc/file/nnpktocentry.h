@@ -53,7 +53,7 @@ public:
     /// get the next entry
     nNpkTocEntry* GetNextEntry(nNpkTocEntry* curEntry);
     /// get full entry path name
-    const char* GetFullName(char* buf, int bufSize);
+    nString GetFullName();
     /// set the file wrapper object which this tocEntry belongs to
     void SetFileWrapper(nNpkFileWrapper* wrapper);
     /// get the file wrapper object which this tocEntry belongs to
@@ -267,13 +267,12 @@ nNpkTocEntry::GetNextEntry(nNpkTocEntry* curEntry)
     Get the full entry path name.
 */
 inline
-const char*
-nNpkTocEntry::GetFullName(char* buf, int bufSize)
+nString
+nNpkTocEntry::GetFullName()
 {
-    n_assert(bufSize >= N_MAXPATH);
-    static const int maxDepth = 16;
+    const int maxDepth = 16;
     nNpkTocEntry* traceStack[maxDepth];
-
+    
     // fill trace stack with path to parent...
     int depth = 0;
     nNpkTocEntry* curEntry = this;
@@ -283,34 +282,22 @@ nNpkTocEntry::GetFullName(char* buf, int bufSize)
         curEntry = curEntry->GetParent();
     }
 
-    // fill buf with absolute path name to this entry
-    int curBufIndex = 0;
-    
+    nString result;
     if (this->rootPath)
     {
-        strcpy(buf, this->rootPath);
-        curBufIndex = strlen(this->rootPath);
-        buf[curBufIndex++] = '/';
+        result = this->rootPath;
+        result.Append("/");
     }
 
     for (--depth; depth >= 0; --depth)
     {
-        const char* curName = traceStack[depth]->GetName();
-        int curNameLen = strlen(curName);
-
-        n_assert((curBufIndex + curNameLen + 1) < bufSize);
-
-        strcpy(&(buf[curBufIndex]), curName);
-        curBufIndex += curNameLen;
+        result.Append(traceStack[depth]->GetName());
         if (depth > 0)
         {
-            buf[curBufIndex++] = '/';
+            result.Append("/");
         }
     }
-    n_assert(curBufIndex < bufSize);
-    buf[curBufIndex] = 0;
-
-    return buf;
+    return result;
 }
 
 //------------------------------------------------------------------------------

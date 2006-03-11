@@ -21,6 +21,7 @@
 #ifdef __WIN32__
 #include "kernel/nwin32wrapper.h"
 #endif
+#include "kernel/nfiletime.h"
 
 //------------------------------------------------------------------------------
 class nDirectory;
@@ -40,7 +41,7 @@ public:
     /// sets a path alias
     bool SetAssign(const nString& assignName, const nString& pathName);
     /// gets a path alias
-    const char* GetAssign(const nString& assignName);
+    nString GetAssign(const nString& assignName);
     /// Reset assign repository to default values.
     void ResetAssigns();
     /// expand path alias to real path
@@ -61,12 +62,18 @@ public:
     virtual bool IsFileReadOnly(const nString& filename);
     /// list all files in a directory (ignores directories)
     virtual nArray<nString> ListFiles(const nString& dirName);
+    /// list files in a directory matching pattern
+    virtual nArray<nString> ListMatchingFiles(const nString& dirName, const nString& pattern);
     /// list all subdirs in a directory (ignores files)
     virtual nArray<nString> ListDirectories(const nString& dirName);
+    ///  list subdirs in a directory matching pattern
+    virtual nArray<nString> ListMatchingDirectories(const nString& dirName, const nString& pattern);
     /// check if file exists
     virtual bool FileExists(const nString& pathName) const;
     /// check if directory exists
     virtual bool DirectoryExists(const nString& pathName) const;
+    /// return the time stamp when file was last written to
+    virtual nFileTime GetFileWriteTime(const nString& pathName);
 
     /// creates a new nDirectory object
     virtual nDirectory* NewDirectoryObject() const;

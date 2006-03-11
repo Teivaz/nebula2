@@ -237,7 +237,13 @@ convertToLower(const char* path, char* buf, int bufSize)
     @param  curFileOffset   [in/out] file offset tracker
 */
 bool
-generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& tocObject, int& curFileOffset, bool includeCVS)
+generateToc(nFileServer2* fs, 
+            nDirectory* dir, 
+            const char* dirName, 
+            nNpkToc& tocObject, 
+            int& curFileOffset, 
+            bool includeCVS,
+            const nArray<nString>& excludePatterns)
 {
     const nString cvs("CVS");
     nString cmpDirName(dirName);
@@ -251,68 +257,85 @@ generateToc(nFileServer2* fs, nDirectory* dir, const char* dirName, nNpkToc& toc
         if (!dir->IsEmpty()) do
         {
             nDirectory::EntryType entryType = dir->GetEntryType();
-            const char* fullEntryName = dir->GetEntryName();
+            nString fullEntryName = dir->GetEntryName();
             char buf[N_MAXPATH];
-            fullEntryName = convertToLower(fullEntryName, buf, sizeof(buf));
+            fullEntryName = convertToLower(fullEntryName.Get(), buf, sizeof(buf));
 
             // strip the parent path from the entry
-            const char* entryName = stripParentPath(fullEntryName);
+            const char* entryName = stripParentPath(fullEntryName.Get());
 
-            // add entry to toc
-            if (nDirectory::FILE == entryType)
+            // check exclusion pattern list
+            int patternIndex;
+            bool excludeEntry = false;
+            for (patternIndex = 0; patternIndex < excludePatterns.Size(); patternIndex++)
             {
-                // get length of file
-                nFile* file = fs->NewFileObject();
-                n_assert(file);
-                int fileLength = 0;
-                bool fileOk = false;
-                if (file->Open(fullEntryName, "rb"))
+                nString cur(entryName);
+                if (cur.MatchPattern(excludePatterns[patternIndex]))
                 {
-                    file->Seek(0, nFile::END);
-                    fileLength = file->Tell();
-                    file->Close();
-                    fileOk = true;
-                }
-                file->Release();
-
-                if (fileOk)
-                {
-                    //n_printf("-> adding file '%s' at %d len %d\n", entryName, curFileOffset, fileLength);
-                    tocObject.AddFileEntry(entryName, curFileOffset, fileLength);
-                    curFileOffset += fileLength;
-                }
-                else
-                {
-                    n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName);
+                    n_printf("*** Exclude '%s' because it matches pattern '%s'\n", entryName, excludePatterns[patternIndex].Get());
+                    excludeEntry = true;
+                    break;
                 }
             }
-            else if (nDirectory::DIRECTORY == entryType)
-            {
-                //n_printf("-> recursing into dir '%s'\n", entryName);
-                nString cmpEntryName(entryName);
-                cmpEntryName.ToUpper();
-                if (includeCVS || cvs != cmpEntryName)
-                {
-                    // start a new subdirectory entry
-                    nDirectory* subDir = fs->NewDirectoryObject();
-                    n_assert(subDir);
-                    bool subDirOk = false;
-                    if (subDir->Open(fullEntryName))
-                    {
-                        generateToc(fs, subDir, entryName, tocObject, curFileOffset, includeCVS);
-                        subDir->Close();
-                        subDirOk = true;
-                    }
-                    n_delete(subDir);
 
-                    if (!subDirOk)
+            // add entry to toc
+            if (!excludeEntry)
+            {
+                if (nDirectory::FILE == entryType)
+                {
+                    // get length of file
+                    nFile* file = fs->NewFileObject();
+                    n_assert(file);
+                    int fileLength = 0;
+                    bool fileOk = false;
+                    if (file->Open(fullEntryName, "rb"))
                     {
-                        n_printf("*** ERROR: Could not open directory '%s', skipping...\n", entryName);
+                        file->Seek(0, nFile::END);
+                        fileLength = file->Tell();
+                        file->Close();
+                        fileOk = true;
+                    }
+                    file->Release();
+
+                    if (fileOk)
+                    {
+        //                n_printf("-> adding file '%s' at %d len %d\n", entryName, curFileOffset, fileLength);
+                        tocObject.AddFileEntry(entryName, curFileOffset, fileLength);
+                        curFileOffset += fileLength;
+                    }
+                    else
+                    {
+                        n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName);
                     }
                 }
-                else
+                else if (nDirectory::DIRECTORY == entryType)
                 {
-                    n_printf("*** Skip entry '%s' because it's cvs!\n", fullEntryName);
+        //            n_printf("-> recursing into dir '%s'\n", entryName);
+                    nString cmpEntryName(entryName);
+                    cmpEntryName.ToUpper();
+                    if (includeCVS || cvs != cmpEntryName)
+                    {
+                        // start a new subdirectory entry
+                        nDirectory* subDir = fs->NewDirectoryObject();
+                        n_assert(subDir);
+                        bool subDirOk = false;
+                        if (subDir->Open(fullEntryName))
+                        {
+                            generateToc(fs, subDir, entryName, tocObject, curFileOffset, includeCVS, excludePatterns);
+                            subDir->Close();
+                            subDirOk = true;
+                        }
+                        n_delete(subDir);
+
+                        if (!subDirOk)
+                        {
+                            n_printf("*** ERROR: Could not open directory '%s', skipping...\n", entryName);
+                        }
+                    }
+                    else
+                    {
+                        n_printf("*** Skip entry '%s' because it's cvs!\n", fullEntryName);
+                    }
                 }
             }
         } while (dir->SetToNextEntry());
@@ -457,8 +480,7 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
         n_assert(file->Tell() == (dataBlockOffset + entryFileOffset));
 
         // get the full source path name
-        char fileName[N_MAXPATH];
-        tocEntry->GetFullName(fileName, sizeof(fileName));
+        nString fileName = tocEntry->GetFullName();
 
         // read source file data
         nFile* srcFile = fs->NewFileObject();
@@ -532,7 +554,7 @@ writeData(nFileServer2* fs, nFile* file, nNpkToc& tocObject)
     The global pack function.
 */
 bool
-packIt(nFileServer2* fs, const char* dirName, const char* outName, bool includeCVS)
+packIt(nFileServer2* fs, const char* dirName, const char* outName, bool includeCVS, const nArray<nString>& excludePatterns)
 {
     // create directory and file objects
     nDirectory* dir = fs->NewDirectoryObject();
@@ -564,7 +586,7 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName, bool includeC
     bool retval = true;
     n_printf("-> building table of contents...\n");
     int fileOffset = 0;
-    if (generateToc(fs, dir, stripParentPath(dirName), tocObject, fileOffset, includeCVS))
+    if (generateToc(fs, dir, stripParentPath(dirName), tocObject, fileOffset, includeCVS, excludePatterns))
     {
         n_printf("-> done\n");
 
@@ -737,10 +759,10 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
             nDirectory::EntryType t = dir->GetEntryType();
             if (nDirectory::DIRECTORY == t)
             {
-                bool empty = KillEmptyDirectories(fs, dir->GetEntryName());
+                bool empty = KillEmptyDirectories(fs, dir->GetEntryName().Get());
                 if (empty)
                 {
-                    rmdir(dir->GetEntryName());
+                    rmdir(dir->GetEntryName().Get());
                 }
             }
     
@@ -783,12 +805,12 @@ RemoveDir(nFileServer2* fs, const char* dirName)
             nDirectory::EntryType t = dir->GetEntryType();
             if (nDirectory::DIRECTORY == t)
             {
-                RemoveDir(fs, dir->GetEntryName());
+                RemoveDir(fs, dir->GetEntryName().Get());
             }
     
             if (nDirectory::FILE == t)
             {
-                remove(dir->GetEntryName());
+                remove(dir->GetEntryName().Get());
             }
     
             doLoop = dir->SetToNextEntry();
@@ -1277,7 +1299,8 @@ makeDiff(nFileServer2* fs,
     {
         outName = "diff.npk";
     }
-    packIt(fs, "temp.n", outName, includeCVS);
+    nArray<nString> excludePatterns;
+    packIt(fs, "temp.n", outName, includeCVS, excludePatterns);
 
     // delete old temp-dir
     RemoveDir(fs, "temp.n");
@@ -1295,12 +1318,13 @@ main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
     bool help, showDiff, diff, includeCVS;
-    const char* packName;
-    const char* listName;
-    const char* outName;
-    const char* oldName;
-    const char* newName;
-    const char* unPackName;
+    nString packName;
+    nString listName;
+    nString outName;
+    nString oldName;
+    nString newName;
+    nString unPackName;
+    nString excludePatternsArg;
 
     // get args
     help       = args.GetBoolArg("-help");
@@ -1313,6 +1337,7 @@ main(int argc, const char** argv)
     newName    = args.GetStringArg("-new", 0);
     unPackName = args.GetStringArg("-unpack", 0);
     includeCVS = args.GetBoolArg("-includeCVS");
+    excludePatternsArg = args.GetStringArg("-exclude", 0);
 
     // show help
     if (help)
@@ -1328,7 +1353,8 @@ main(int argc, const char** argv)
                "-old        the 'older' npk file to compare\n"
                "-new        the 'newer' npk file to compare\n"
                "-unpack     unpack given npk file\n"
-               "-includeCVS include CVS directories (ignored by default)\n");
+               "-includeCVS include CVS directories (ignored by default)\n"
+               "-exclude    one or more exclude patterns\n");
         return 0;
     }
 
@@ -1337,14 +1363,16 @@ main(int argc, const char** argv)
     nFileServer2* fs = kernelServer.GetFileServer();
 
     // what operation to do?
-    if (packName)
+    if (packName.IsValid())
     {
         // call pack function
-        if (!packIt(fs, packName, outName, includeCVS))
+        nArray<nString> excludePatterns;
+        excludePatternsArg.Tokenize(" \t", excludePatterns);
+        if (!packIt(fs, packName.Get(), outName.Get(), includeCVS, excludePatterns))
         {
             n_printf("ERROR IN FILE GENERATION, DELETING NPK FILE\n");
             char absOutName[N_MAXPATH];
-            nMakeAbsolute(outName, absOutName, sizeof(absOutName));
+            nMakeAbsolute(outName.Get(), absOutName, sizeof(absOutName));
             remove(absOutName);
         }
     }
@@ -1353,33 +1381,33 @@ main(int argc, const char** argv)
         // do not pack. hm. any other action?
         if (diff)
         {
-            n_assert((0 != oldName) && (0 != newName));
+            n_assert(oldName.IsValid() && newName.IsValid());
             
             // compare two files and build a new file with the difference
-            makeDiff(fs, oldName, newName, outName, includeCVS);
+            makeDiff(fs, oldName.Get(), newName.Get(), outName.Get(), includeCVS);
         }
         else
         {
             // Show content only
-            if (listName)
+            if (listName.IsValid())
             {
                 // call list function
-                listIt(fs, listName);
+                listIt(fs, listName.Get());
             }
             else
             {
                 // list difference of two npk files
                 if (showDiff)
                 {
-                    n_assert((0 != oldName) && (0 != newName));
+                    n_assert(oldName.IsValid() && newName.IsValid());
                     
-                    listDiff(fs, oldName, newName);
+                    listDiff(fs, oldName.Get(), newName.Get());
                 }
                 else
                 {
-                    if (0 != unPackName)
+                    if (unPackName.IsValid())
                     {
-                        unPack(fs, unPackName, outName, 0);
+                        unPack(fs, unPackName.Get(), outName.Get(), 0);
                     }
                 }
             }
