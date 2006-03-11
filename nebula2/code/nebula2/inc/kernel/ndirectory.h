@@ -36,13 +36,13 @@ public:
     virtual ~nDirectory();
 
     /// opens a directory
-    virtual bool Open(const char* dirName);
+    virtual bool Open(const nString& dirName);
     /// closes the directory
     virtual void Close();
     /// determines whether the directory is open
     virtual bool IsOpen() const;
     /// get the full path name of the directory itself
-    const char* GetPathName() const;
+    nString GetPathName() const;
     /// check if the directory is empty
     virtual bool IsEmpty();
     /// set first entry as current
@@ -50,7 +50,7 @@ public:
     /// set next entry as current
     virtual bool SetToNextEntry();
     /// get full path name of current entry
-    virtual const char* GetEntryName();
+    virtual nString GetEntryName();
     /// get type of current entry
     virtual EntryType GetEntryType();
 
@@ -86,11 +86,11 @@ nDirectory::IsOpen() const
 /**
 */
 inline
-const char*
+nString
 nDirectory::GetPathName() const
 {
     n_assert(this->IsOpen());
-    return this->path.Get();
+    return this->path;
 }
 
 //------------------------------------------------------------------------------

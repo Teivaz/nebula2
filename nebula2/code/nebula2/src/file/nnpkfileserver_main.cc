@@ -57,25 +57,6 @@ nNpkFileServer::NewDirectoryObject() const
 
 //------------------------------------------------------------------------------
 /**
-    Check the extension of a pathname.
-*/
-bool
-nNpkFileServer::CheckExtension(const char* path, const char* ext)
-{
-    n_assert(path);
-    const char* dot = strrchr(path, '.');
-    if (dot)
-    {
-        if (strcmp(dot + 1, ext) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
     Parses a single npk file and adds it to the list of npk files.
 */
 bool
@@ -117,9 +98,9 @@ nNpkFileServer::ParseDirectory(const nString& dirName, const nString& extension)
     {
         if (!dir->IsEmpty()) do
         {
-            const char* entryName = dir->GetEntryName();
+            nString entryName = dir->GetEntryName();
             nDirectory::EntryType entryType = dir->GetEntryType();
-            if ((entryType == nDirectory::FILE) && this->CheckExtension(entryName, extension.Get()))
+            if ((entryType == nDirectory::FILE) && entryName.CheckExtension(extension.Get()))
             {
                 n_printf("*** Reading npk file '%s'\n", entryName);
                 if (this->AddNpkFile(absPath, entryName))
@@ -182,7 +163,7 @@ nNpkFileServer::AddNpkFile(const nString& rootPath, const nString& absFilename)
     Find a nTocEntry by filename. The filename must be absolute.
 */
 nNpkTocEntry*
-nNpkFileServer::FindTocEntry(const char* absPath)
+nNpkFileServer::FindTocEntry(const nString& absPath)
 {
     nNpkFileWrapper* curWrapper;
     for (curWrapper = (nNpkFileWrapper*) this->npkFiles.GetHead(); 
@@ -190,7 +171,7 @@ nNpkFileServer::FindTocEntry(const char* absPath)
          curWrapper = (nNpkFileWrapper*) curWrapper->GetSucc())
     {
         nNpkToc& toc = curWrapper->GetTocObject();
-        nNpkTocEntry* tocEntry = toc.FindEntry(absPath);
+        nNpkTocEntry* tocEntry = toc.FindEntry(absPath.Get());
         if (tocEntry)
         {
             return tocEntry;

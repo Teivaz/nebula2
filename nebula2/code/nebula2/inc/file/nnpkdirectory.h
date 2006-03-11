@@ -24,7 +24,7 @@ public:
     /// destructor
     virtual ~nNpkDirectory();
     /// open directory
-    virtual bool Open(const char* dirName);
+    virtual bool Open(const nString& dirName);
     /// close directory
     virtual void Close();
     /// determines whether the directory is opened
@@ -36,7 +36,7 @@ public:
     /// set next entry as current
     virtual bool SetToNextEntry();
     /// get name of current entry
-    virtual const char* GetEntryName();
+    virtual nString GetEntryName();
     /// get type of current entry
     virtual EntryType GetEntryType();
 
@@ -52,7 +52,6 @@ private:
     bool npkEntryOverride;            ///< true if npk file entered during filesystem dir enum
     nNpkTocEntry* tocEntry;           ///< pointer to current npk entry, or 0 if current entry is a filesys entry
     nNpkTocEntry* curSearchEntry;     ///< current search entry inside npk file
-    nString npkEntryAbsPath;          ///< storage buffer for current entry name
 };
 
 //------------------------------------------------------------------------------

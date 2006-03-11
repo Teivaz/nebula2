@@ -225,8 +225,7 @@ nNpkBuilder::WriteEntryData(nNpkTocEntry* tocEntry)
         n_assert(this->npkFile->Tell() == (this->dataBlockOffset + entryFileOffset));
 
         // get the full source path name
-        char fileName[N_MAXPATH];
-        tocEntry->GetFullName(fileName, sizeof(fileName));
+        nString fileName = tocEntry->GetFullName();
 
         // read source file data
         nFile* srcFile = fileServer->NewFileObject();

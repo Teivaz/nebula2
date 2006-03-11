@@ -155,8 +155,9 @@ nNodeList::LoadObject(const nString& objPath)
     // load Object inside an individual Node
     nString tmpString = objPath.ExtractFileName();
     tmpString.StripExtension();
-    nString nodeName = tmpString + "." + ((int)numElements);
-    
+    nString nodeName;
+    nodeName.Format("%s.%d", tmpString.Get(), numElements);
+
     AddEntry(nodeName);
 
     // load new object

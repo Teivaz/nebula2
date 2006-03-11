@@ -38,12 +38,11 @@ nDirectory::~nDirectory()
      - 30-Jan-2002   peter    created
 */
 bool
-nDirectory::Open(const char* dirName)
+nDirectory::Open(const nString& dirName)
 {
     n_assert(!this->IsOpen());
 
-    n_assert(dirName);
-    n_assert(strlen(dirName)>0);
+    n_assert(dirName.IsValid());
 
     // mangle path name
     this->path = nFileServer2::Instance()->ManglePath(dirName);
@@ -193,7 +192,7 @@ nDirectory::SetToNextEntry()
     history:
      - 30-Jan-2002   peter    created
 */
-const char* 
+nString 
 nDirectory::GetEntryName()
 {
     n_assert(this->IsOpen());
@@ -205,7 +204,7 @@ nDirectory::GetEntryName()
     this->apath = this->path;
     this->apath.Append("/");
     this->apath.Append(this->findData.cFileName);
-    return this->apath.Get();
+    return this->apath;
 #else
     // FIXME: LINUX NOT IMPLEMENTED YET
     return 0;

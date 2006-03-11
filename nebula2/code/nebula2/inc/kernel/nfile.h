@@ -14,6 +14,7 @@
 #include "kernel/ntypes.h"
 #include "kernel/nfiletime.h"
 #include "kernel/nrefcounted.h"
+#include "util/nstring.h"
 
 #ifdef __XBxX__
 #include "xbox/nxbwrapper.h"
@@ -40,9 +41,9 @@ public:
     };
 
     /// does the file physically exist on disk?
-    virtual bool Exists(const char* fileName) const;
+    virtual bool Exists(const nString& fileName) const;
     /// opens a file
-    virtual bool Open(const char* fileName, const char* accessMode);
+    virtual bool Open(const nString& fileName, const nString& accessMode);
     /// closes the file
     virtual void Close();
     /// writes some bytes to the file
@@ -60,7 +61,7 @@ public:
     /// get the last write time
     virtual nFileTime GetLastWriteTime() const;
     /// writes a string to the file
-    bool PutS(const char* buffer);
+    bool PutS(const nString& buffer);
     /// reads a string from the file
     bool GetS(char* buffer, int numChars);
     /// get current line number (incremented by PutS() and GetS())
