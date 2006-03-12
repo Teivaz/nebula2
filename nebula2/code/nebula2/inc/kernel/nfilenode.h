@@ -26,13 +26,13 @@ public:
     /// destructor
     virtual ~nFileNode();
     /// open a file
-    bool Open(const char* fileName, const char* accessMode);
+    bool Open(const nString& fileName, const nString& accessMode);
     /// close file
     void Close();
     /// is file open?
     bool IsOpen() const;
     /// write string to file
-    bool PutS(const char* buffer);
+    bool PutS(const nString& buffer);
 
 private:
     nFile* file;

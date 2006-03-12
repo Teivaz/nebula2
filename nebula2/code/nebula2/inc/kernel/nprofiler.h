@@ -39,6 +39,8 @@ public:
     void StartAccum();
     /// stop accumulated profiling
     void StopAccum();
+    /// get the measured time
+    float GetTime();
 
 private:
     nRef<nEnv> refEnv;
@@ -181,6 +183,16 @@ nProfiler::StopAccum()
     this->accumTime += diff;
     this->refEnv->SetF(float(this->accumTime) * 1000.0f);
     this->isStarted = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nProfiler::GetTime()
+{
+    return this->refEnv->GetF();
 }
 
 //------------------------------------------------------------------------------

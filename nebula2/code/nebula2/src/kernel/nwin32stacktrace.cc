@@ -4,6 +4,7 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "kernel/nwin32stacktrace.h"
+#include "util/nstring.h"
 
 char nWin32StackTrace::CharBuffer[1<<15] = { 0 };
 

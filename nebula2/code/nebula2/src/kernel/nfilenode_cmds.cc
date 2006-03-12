@@ -55,8 +55,8 @@ static void
 n_open(void* slf, nCmd* cmd)
 {
     nFileNode* self = (nFileNode*) slf;
-    const char* s0 = cmd->In()->GetS();
-    const char* s1 = cmd->In()->GetS();
+    nString s0 = cmd->In()->GetS();
+    nString s1 = cmd->In()->GetS();
     cmd->Out()->SetB(self->Open(s0, s1));
 }
 

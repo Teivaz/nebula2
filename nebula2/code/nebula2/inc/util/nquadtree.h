@@ -240,8 +240,8 @@ inline
 int
 nQuadTree::GetNodeIndex(uchar level, ushort col, ushort row) const
 {
-    n_assert(col < (1 << level));
-    n_assert(row < (1 << level));
+    n_assert((col >= 0) && (col < (1 << level)));
+    n_assert((row >= 0) && (row < (1 << level)));
     return this->GetNumNodes(level) + (row << level) + col;
 }
 

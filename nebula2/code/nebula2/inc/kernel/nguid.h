@@ -15,6 +15,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include "util/nstring.h"
 
 #if __WIN32__
 #include <windows.h>

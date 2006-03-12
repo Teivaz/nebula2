@@ -99,7 +99,8 @@ nFixedArray<TYPE>::Copy(const nFixedArray<TYPE>& rhs)
     if (this != &rhs)
     {
         this->Allocate(rhs.size);
-        for (int i = 0; i < this->size; i++)
+        int i;
+        for (i = 0; i < this->size; i++)
         {
             this->elements[i] = rhs.elements[i];
         }
@@ -158,7 +159,11 @@ template<class TYPE>
 TYPE&
 nFixedArray<TYPE>::operator[](int index) const
 {
-    n_assert(this->elements && (index >= 0) && (index < this->size));
+    n_assert(this->elements);
+    if ((index < 0) || (index >= this->size))
+    {
+        n_error("nFixedArray::operator[]: index out of bounds: %d, array size is %d", index, this->size);
+    }
     return this->elements[index];
 }
 
@@ -195,7 +200,8 @@ nFixedArray<TYPE>::Clear(TYPE elm)
 {
     if (this->elements)
     {
-        for (int i = 0; i < this->size; i++)
+        int i;
+        for (i = 0; i < this->size; i++)
         {
             this->elements[i] = elm;
         }
@@ -211,7 +217,8 @@ template<class TYPE>
 int
 nFixedArray<TYPE>::Find(const TYPE& e) const
 {
-    for (int i = 0; i < this->size; i++)
+    int i;
+    for (i = 0; i < this->size; i++)
     {
         if (e == this->elements[i])
         {
