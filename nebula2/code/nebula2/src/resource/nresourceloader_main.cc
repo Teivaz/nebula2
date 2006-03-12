@@ -22,6 +22,14 @@ nResourceLoader::~nResourceLoader()
 
 //------------------------------------------------------------------------------
 /**
+*/
+bool nResourceLoader::InitResource(const char* /*sFilename*/, nResource* /*callingResource*/)
+{
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
     Base Load() function for the nResourceLoader.  This is to be redefined by child classes
 
     @param filename         the full path to the to-be-loaded file

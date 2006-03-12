@@ -64,6 +64,7 @@ private:
     
     bool                readEarlyLoopExit;  /* read:important to continue read-loop correctly */
     bool                endOfStream;        /* read:remember end of the stream */
+    int                 keepAlive;
 };
 //------------------------------------------------------------------------------
 #endif

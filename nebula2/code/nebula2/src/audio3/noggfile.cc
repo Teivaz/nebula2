@@ -217,7 +217,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                             /* tell libvorbis how many samples we actually consumed */
                             vorbis_synthesis_read(&vDecoderState, samplesOut); 
 
-                            if(samplesLeft == 0)
+                            if(samplesLeft <= 0)
                             {
                                 readEarlyLoopExit=true;
                                 int byteSize=2*vBitStreamInfo.channels*samplesWritten;
@@ -255,7 +255,14 @@ nOggFile::Read(void* buffer, uint bytesToRead)
         int byteSize=2*vBitStreamInfo.channels*samplesWritten;
         return byteSize;
     } 
-    
+
+    if(this->keepAlive > 0)
+    {
+        // fake that buffer got filled
+        this->keepAlive--;
+        return bytesToRead;
+    };
+
     return 0;
 }
 
@@ -270,6 +277,7 @@ nOggFile::InitOGG()
     this->readEarlyLoopExit=false;
     this->endOfStream=false;
     this->m_bFileEndReached = false;
+    this->keepAlive = 1;
 
     this->size=0;
     

@@ -43,12 +43,12 @@ nResource::~nResource()
 /**
     Sets a resource loader for the nResource
 
-    @param  resourceLoaderPath    nResourceLoader instance
+    @param  resourceLoader    nResourceLoader instance
 */
 void
-nResource::SetResourceLoader(const char* resourceLoaderPath)
+nResource::SetResourceLoader(const nString& resourceLoaderPath)
 {
-    this->refResourceLoader = resourceLoaderPath;
+    this->refResourceLoader = resourceLoaderPath.Get();
 }
 
 //------------------------------------------------------------------------------

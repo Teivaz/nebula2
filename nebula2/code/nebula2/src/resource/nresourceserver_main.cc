@@ -26,6 +26,7 @@ nResourceServer::nResourceServer() :
     this->sndInstPool = kernelServer->New("nroot", "/sys/share/rsrc/sndinst");
     this->fontPool    = kernelServer->New("nroot", "/sys/share/rsrc/font");
     this->bundlePool  = kernelServer->New("nroot", "/sys/share/rsrc/bundle");
+    this->dbPool      = kernelServer->New("nroot", "/sys/share/rsrc/db");
     this->otherPool   = kernelServer->New("nroot", "/sys/share/rsrc/other");
 
     this->resourceClass = kernelServer->FindClass("nresource");
@@ -58,48 +59,31 @@ nResourceServer::~nResourceServer()
     with underscores. It is valid to provide a 0-rsrcName for unshared resources.
     A unique rsrc identifier string will then be created.
 
-    @param  rsrcName    pointer to a resource name (usually a file path), or 0
-    @param  buf         pointer to a char buffer
-    @param  bufSize     size of char buffer
+    @param  rsrcName    a resource name (usually a file path), or an empty string
     @return             a pointer to buf, which contains the result
 */
-char*
-nResourceServer::GetResourceId(const char* rsrcName, char* buf, int bufSize)
+nString
+nResourceServer::GetResourceId(const nString& rsrcName)
 {
-    n_assert(buf);
-    n_assert(bufSize >= N_MAXNAMELEN);
-
-    if (!rsrcName)
+    nString str;
+    if (rsrcName.IsEmpty())
     {
-        sprintf(buf, "unique%d", this->uniqueId++);
+        str.Format("unique%d", this->uniqueId++);
     }
     else
     {
-        int len = strlen(rsrcName) + 1;
+        int len = rsrcName.Length();
+        int numChars = N_MAXNAMELEN;
         int offset = len - N_MAXNAMELEN;
         if (offset < 0)
         {
+            numChars += offset;
             offset = 0;
         }
-
-        // copy string and replace illegal characters, this also copies the terminating 0
-        char c;
-        const char* from = &(rsrcName[offset]);
-        char* to   = buf;
-        while ((c = *from++))
-        {
-            if (('.' == c) || (c == '/') || (c == ':') || (c == '\\'))
-            {
-                *to++ = '_';
-            }
-            else
-            {
-                *to++ = c;
-            }
-        }
-        *to = 0;
+        str = rsrcName.ExtractRange(offset, numChars);
+        str.ReplaceChars("\\/:*?\"<>|.", '_');
     }
-    return buf;
+    return str;
 }
 
 //------------------------------------------------------------------------------
@@ -122,6 +106,7 @@ nResourceServer::GetResourcePool(nResource::Type rsrcType)
         case nResource::SoundInstance:     return this->sndInstPool.get();
         case nResource::Font:              return this->fontPool.get();
         case nResource::Bundle:            return this->bundlePool.get();
+        case nResource::Database:          return this->dbPool.get();
         case nResource::Other:             return this->otherPool.get();
         default:
             // can't happen
@@ -139,18 +124,13 @@ nResourceServer::GetResourcePool(nResource::Type rsrcType)
     @return             pointer to resource object, or 0 if not found
 */
 nResource*
-nResourceServer::FindResource(const char* rsrcName, nResource::Type rsrcType)
+nResourceServer::FindResource(const nString& rsrcName, nResource::Type rsrcType)
 {
-    n_assert(rsrcName);
     n_assert(nResource::InvalidResourceType != rsrcType);
-
-    char rsrcId[N_MAXNAMELEN];
-
-    this->GetResourceId(rsrcName, rsrcId, sizeof(rsrcId));
+    nString rsrcId = this->GetResourceId(rsrcName);
     nRoot* rsrcPool = this->GetResourcePool(rsrcType);
     n_assert(rsrcPool);
-
-    return (nResource*) rsrcPool->Find(rsrcId);
+    return (nResource*) rsrcPool->Find(rsrcId.Get());
 }
 
 //------------------------------------------------------------------------------
@@ -165,18 +145,16 @@ nResourceServer::FindResource(const char* rsrcName, nResource::Type rsrcType)
     @return             pointer to resource object
 */
 nResource*
-nResourceServer::NewResource(const char* className, const char* rsrcName, nResource::Type rsrcType)
+nResourceServer::NewResource(const nString& className, const nString& rsrcName, nResource::Type rsrcType)
 {
-    n_assert(className);
     n_assert(nResource::InvalidResourceType != rsrcType);
 
-    char rsrcId[N_MAXNAMELEN];
-    this->GetResourceId(rsrcName, rsrcId, sizeof(rsrcId));
+    nString rsrcId = this->GetResourceId(rsrcName);
     nRoot* rsrcPool = this->GetResourcePool(rsrcType);
     n_assert(rsrcPool);
 
     // see if resource exist
-    nResource* obj = (nResource*) rsrcPool->Find(rsrcId);
+    nResource* obj = (nResource*) rsrcPool->Find(rsrcId.Get());
     if (obj)
     {
         // exists, bump refcount and return
@@ -186,7 +164,7 @@ nResourceServer::NewResource(const char* className, const char* rsrcName, nResou
     {
         // create new resource object
         kernelServer->PushCwd(rsrcPool);
-        obj = (nResource*) kernelServer->New(className, rsrcId);
+        obj = (nResource*) kernelServer->New(className.Get(), rsrcId.Get());
         kernelServer->PopCwd();
         n_assert(obj);
     }

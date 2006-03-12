@@ -48,6 +48,10 @@ public:
     void operator -=(const _vector4& v);
     /// inplace scalar mul
     void operator *=(const float s);
+    /// true if all elements are equal
+    bool operator ==(const _vector4& v0);
+	/// true if any of the elements is not equal
+    bool operator !=(const _vector4& v0);
     /// vector3 assignment operator (w set to 1.0f)
     _vector4& operator=(const _vector3& v);
     /// fuzzy compare
@@ -232,6 +236,40 @@ _vector4::operator *=(const float s)
     y *= s; 
     z *= s; 
     w *= s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+_vector4::operator ==(const _vector4& rhs)
+{
+    if ((this->x == rhs.x) && (this->y == rhs.y) && (this->z == rhs.z) && (this->w == rhs.w))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+_vector4::operator !=(const _vector4& rhs)
+{
+    if ((this->x != rhs.x) || (this->y != rhs.y) || (this->z != rhs.z) || (this->w != rhs.w))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 //------------------------------------------------------------------------------

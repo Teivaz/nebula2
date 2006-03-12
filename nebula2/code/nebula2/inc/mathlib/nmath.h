@@ -203,6 +203,18 @@ inline float n_rand()
 
 //------------------------------------------------------------------------------
 /**
+    Return a pseudo random number between min and max.
+*/
+inline float n_rand(float min, float max)
+{
+    float unit = float(rand()) / RAND_MAX;
+    float diff = max - min;
+
+    return min + unit * diff;
+}
+
+//------------------------------------------------------------------------------
+/**
     Chop float to int.
 */
 inline int n_fchop(float f)
@@ -227,6 +239,16 @@ inline int n_frnd(float f)
 inline float n_lerp(float x, float y, float l)
 {
     return x + l * (y - x);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+n_fmod(float x, float y)
+{
+    return fmodf(x, y);
 }
 
 //------------------------------------------------------------------------------
@@ -276,7 +298,7 @@ inline float n_normangle(float a)
     }
     if (a >= n_deg2rad(360.0f))
     {
-        a = fmodf(a, n_deg2rad(360.0f));
+        a = n_fmod(a, n_deg2rad(360.0f));
     }
     return a;
 }

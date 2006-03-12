@@ -42,9 +42,9 @@ nAnimationServer::~nAnimationServer()
     @param  rsrcName    the resource name for resource sharing
 */
 nAnimation*
-nAnimationServer::NewMemoryAnimation(const char* rsrcName)
+nAnimationServer::NewMemoryAnimation(const nString& rsrcName)
 {
-    n_assert(rsrcName);
+    n_assert(rsrcName.IsValid());
     return (nAnimation*) this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::Animation);
 }
 

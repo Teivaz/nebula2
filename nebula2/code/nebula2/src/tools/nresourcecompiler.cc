@@ -490,11 +490,10 @@ nResourceCompiler::WriteResEntry(nFile* file, const ResEntry& resEntry, int data
     }
 
     // convert filename to resource identifier
-    char resId[N_MAXNAMELEN] = { 0 };
-    this->refResourceServer->GetResourceId(resEntry.GetName(), resId, sizeof(resId));
+    nString resId = this->refResourceServer->GetResourceId(resEntry.GetName());
 
     // write resource identifier
-    file->Write(resId, sizeof(resId));
+    file->Write(resId.Get(), resId.Length());
 
     // write data offset and data length
     file->PutInt(resEntry.GetDataOffset() + dataBlockOffset);

@@ -86,8 +86,8 @@ public:
     void ObtainFocus(void);
     /// call when input focus lost
     void LoseFocus(void);
-	/// flush entire input mapping
-	void FlushInput();
+    /// flush entire input mapping
+    void FlushInput();
     /// set mute mode on/off
     void SetMute(bool b);
     /// get mute mode

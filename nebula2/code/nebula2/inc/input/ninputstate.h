@@ -164,8 +164,8 @@ public:
     float GetSlider(void) {
         return this->slider_val;
     };
-	/// clear buttonDown/Up flags
-	void Clear();
+    /// clear buttonDown/Up flags
+    void Clear();
 };
 
 //-------------------------------------------------------------------
@@ -175,8 +175,8 @@ inline
 void
 nInputMapping::Clear()
 {
-	this->flags = 0;
-	this->state = 0;
+    this->flags = 0;
+    this->state = 0;
 }
 
 //-------------------------------------------------------------------

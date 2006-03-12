@@ -27,9 +27,9 @@ public:
     /// return singleton instance pointer
     static nResourceServer* Instance();
     /// find a resource object by its name and type
-    virtual nResource* FindResource(const char* rsrcName, nResource::Type rsrcType);
+    virtual nResource* FindResource(const nString& rsrcName, nResource::Type rsrcType);
     /// create a resource object
-    virtual nResource* NewResource(const char* className, const char* rsrcName, nResource::Type rsrcType);
+    virtual nResource* NewResource(const nString& className, const nString& rsrcName, nResource::Type rsrcType);
     /// unload all resources matching resource type (OR'ed nResource::Type's)
     virtual void UnloadResources(int resTypeMask);
     /// reload all resources matching type
@@ -41,8 +41,7 @@ public:
     /// return the resource pool directory for a given resource type
     nRoot* GetResourcePool(nResource::Type rsrcType);
     /// generate a valid resource id from a resource path
-    char* GetResourceId(const char* rsrcName, char* buf, int bufSize);
-
+    nString GetResourceId(const nString& rsrcName);
     /// return number of resources of given type
     int GetNumResources(nResource::Type rsrcType);
     /// get number of bytes of RAM occupied by resource type
@@ -74,6 +73,7 @@ protected:
     nRef<nRoot> sndInstPool;
     nRef<nRoot> fontPool;
     nRef<nRoot> bundlePool;
+    nRef<nRoot> dbPool;
     nRef<nRoot> otherPool;
 
     nThreadSafeList jobList;    // list for outstanding background loader jobs
