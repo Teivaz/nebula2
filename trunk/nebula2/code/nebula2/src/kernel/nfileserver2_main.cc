@@ -559,7 +559,13 @@ nFileServer2::MakePath(const nString& dirName)
     while ((!path.IsEmpty()) && (!dir->Open(path.Get())))
     {
         pathStack.Append(path);
-        path = path.ExtractDirName();
+        nString nextPath = path.ExtractDirName().TrimRight("/\\");
+        if (nextPath == path)
+        {
+            // no more slashes in path, stop loop
+            break;
+        }
+        path = nextPath;
     }
     if (dir->IsOpen())
     {

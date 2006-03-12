@@ -42,7 +42,7 @@ public:
     void CopyInArgsFrom(va_list marker);
     /// Copy input arguments from another nCmd
     void CopyInArgsFrom(nCmd * cmd);
-
+    /// Retrieves index of the in-arg.
     int GetInArgIndex() const;
 
 private:

@@ -43,6 +43,10 @@ public:
     nArray<TYPE>& operator=(const nArray<TYPE>& rhs);
     /// [] operator
     TYPE& operator[](int index) const;
+    /// equality operator
+    bool operator==(const nArray<TYPE>& rhs) const;
+    /// inequality operator
+    bool operator!=(const nArray<TYPE>& rhs) const;
 
     /// set behaviour flags
     void SetFlags(int f);
@@ -54,6 +58,8 @@ public:
     TYPE& PushBack(const TYPE& elm);
     /// append element to array (synonym for PushBack())
     void Append(const TYPE& elm);
+    /// append the contents of an array to this array
+    void AppendArray(const nArray<TYPE>& rhs);
     /// reserve 'num' elements at end of array and return pointer to first element
     iterator Reserve(int num);
     /// get number of elements in array
@@ -96,6 +102,8 @@ public:
     void Fill(int first, int num, const TYPE& elm);
     /// clear contents and preallocate with new attributes
     void Reallocate(int initialSize, int grow);
+    /// returns new array with elements which are not in rhs (slow!)
+    nArray<TYPE> Difference(const nArray<TYPE>& rhs);
 
 private:
     /// check if index is in valid range, and grow array if necessary
@@ -510,6 +518,21 @@ nArray<TYPE>::Append(const TYPE& elm)
 
 //------------------------------------------------------------------------------
 /**
+*/
+template<class TYPE>
+void
+nArray<TYPE>::AppendArray(const nArray<TYPE>& rhs)
+{
+    int i;
+    int num = rhs.Size();
+    for (i = 0; i < num; i++)
+    {
+        this->Append(rhs[i]);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Make room for N new elements at the end of the array, and return a pointer 
     to the start of the reserved area. This can be (carefully!) used as a fast 
     shortcut to fill the array directly with data.
@@ -616,6 +639,46 @@ nArray<TYPE>::operator[](int index) const
 
 //------------------------------------------------------------------------------
 /**
+    The equality operator returns true if all elements are identical. The
+    TYPE class must support the equality operator.
+*/
+template<class TYPE>
+bool
+nArray<TYPE>::operator==(const nArray<TYPE>& rhs) const
+{
+    if (rhs.Size() == this->Size())
+    {
+        int i;
+        int num = this->Size();
+        for (i = 0; i < num; i++)
+        {
+            if (!(this->elements[i] == rhs.elements[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    The inequality operator returns true if at least one element in the 
+    array is different, or the array sizes are different.
+*/
+template<class TYPE>
+bool
+nArray<TYPE>::operator!=(const nArray<TYPE>& rhs) const
+{
+    return !(*this == rhs);
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 template<class TYPE>
 TYPE&
@@ -695,7 +758,7 @@ typename nArray<TYPE>::iterator
 nArray<TYPE>::Erase(typename nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
-    this->Erase(iter - this->elements);
+    this->Erase(int(iter - this->elements));
     return iter;
 }
 
@@ -709,7 +772,7 @@ typename nArray<TYPE>::iterator
 nArray<TYPE>::EraseQuick(typename nArray<TYPE>::iterator iter)
 {
     n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
-    this->EraseQuick(iter - this->elements);
+    this->EraseQuick(int(iter - this->elements));
     return iter;
 }
 
@@ -851,6 +914,28 @@ nArray<TYPE>::Fill(int first, int num, const TYPE& elm)
     {
         this->elements[i] = elm;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns a new array with all element which are in rhs, but not in this.
+    Carefull, this method may be very slow with large arrays!
+*/
+template<class TYPE>
+nArray<TYPE>
+nArray<TYPE>::Difference(const nArray<TYPE>& rhs)
+{
+    nArray<TYPE> diff;
+    int i;
+    int num = rhs.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (0 == this->Find(rhs[i]))
+        {
+            diff.Append(rhs[i]);
+        }
+    }
+    return diff;
 }
 
 //------------------------------------------------------------------------------

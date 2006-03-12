@@ -84,14 +84,15 @@ nPriorityArray<TYPE>::nPriorityArray(int size) :
 */
 template<class TYPE>
 void
-nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src)
+nPriorityArray<TYPE>::Copy(const nPriorityArray<TYPE>& src) :
+    numElements(src.numElements),
+    maxElements(src.maxElements),
+    minPriElementIndex(src.minPriElementIndex)
 {
-    numElements = src.numElements;
-    maxElements = src.maxElements;
-    minPriElementIndex = src.minPriElementIndex;
     n_assert(0 == this->elements);
     this->elements = n_new_array(Element, this->maxElements);
-    for (int i = 0; i < this->numElements; i++)
+    int i;
+    for (i = 0; i < this->numElements; i++)
     {
         this->elements[i] = src.elements[i];
     }
@@ -156,7 +157,8 @@ nPriorityArray<TYPE>::Clear()
     n_assert(this->elements);
 
     // call element destructors
-    for (int i = 0; i < this->numElements; i++)
+    int i;
+    for (i = 0; i < this->numElements; i++)
     {
         this->Destroy(&(this->elements[i].element));
     }
@@ -171,9 +173,10 @@ template<class TYPE>
 void
 nPriorityArray<TYPE>::UpdateMinPriElementIndex()
 {
+    int i;
     this->minPriElementIndex = 0;
     float minPri = this->elements[0].priority;
-    for (int i = 1; i < this->numElements; i++)
+    for (i = 1; i < this->numElements; i++)
     {
         if (this->elements[i].priority < minPri)
         {

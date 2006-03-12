@@ -26,9 +26,11 @@ public:
     _nFileTimePosix();
     /// operator ==
     friend bool operator ==(const _nFileTimePosix& a, const _nFileTimePosix& b);
-    /// operator >=
+        /// operator !=
+    friend bool operator !=(const _nFileTimePosix& a, const _nFileTimePosix& b);
+	/// operator >
     friend bool operator >(const _nFileTimePosix& a, const _nFileTimePosix& b);
-    /// operator <=
+    /// operator <
     friend bool operator <(const _nFileTimePosix& a, const _nFileTimePosix& b);
 
 private:
@@ -54,6 +56,17 @@ operator ==(const _nFileTimePosix& a, const _nFileTimePosix& b)
 {
     return (a.time == b.time);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+operator !=(const _nFileTimePosix& a, const _nFileTimePosix& b)
+{
+    return (a.time != b.time);
+}
+
 
 //------------------------------------------------------------------------------
 /**

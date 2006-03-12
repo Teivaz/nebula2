@@ -33,10 +33,10 @@ nFileNode::~nFileNode()
 /**
 */
 bool
-nFileNode::Open(const char* filename, const char* accessMode)
+nFileNode::Open(const nString& filename, const nString& accessMode)
 {
     n_assert(!this->file);
-    n_assert(filename && accessMode);
+    n_assert(filename.IsValid() && accessMode.IsValid());
     this->file = kernelServer->GetFileServer()->NewFileObject();
     n_assert(this->file);
     if (!this->file->Open(filename, accessMode))
@@ -73,10 +73,10 @@ nFileNode::IsOpen() const
 /**
 */
 bool
-nFileNode::PutS(const char* buffer)
+nFileNode::PutS(const nString& buffer)
 {
     n_assert(this->file);
-    n_assert(buffer);
+    n_assert(buffer.IsValid());
     return this->file->PutS(buffer);
 }
 

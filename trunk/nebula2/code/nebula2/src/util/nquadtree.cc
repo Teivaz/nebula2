@@ -178,8 +178,9 @@ nQuadTree::Node::Initialize(nQuadTree* tree, uchar _level, ushort _col, ushort _
 {
     n_assert(tree);
     n_assert(this->level == -1);
-    n_assert(_col < (1 << _level));
-    n_assert(_row < (1 << _level));
+    n_assert(_level >= 0);
+    n_assert((_col >= 0) && (_col < (1 << _level)));
+    n_assert((_row >= 0) && (_row < (1 << _level)));
 
     // store address
     this->level = _level;

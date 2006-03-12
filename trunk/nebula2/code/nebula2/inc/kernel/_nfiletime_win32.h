@@ -26,9 +26,11 @@ public:
     _nFileTimeWin32();
     /// operator ==
     friend bool operator ==(const _nFileTimeWin32& a, const _nFileTimeWin32& b);
-    /// operator >=
+    /// operator !=
+    friend bool operator !=(const _nFileTimeWin32& a, const _nFileTimeWin32& b);
+    /// operator >
     friend bool operator >(const _nFileTimeWin32& a, const _nFileTimeWin32& b);
-    /// operator <=
+    /// operator <
     friend bool operator <(const _nFileTimeWin32& a, const _nFileTimeWin32& b);
 
 private:
@@ -54,6 +56,16 @@ bool
 operator ==(const _nFileTimeWin32& a, const _nFileTimeWin32& b)
 {
     return (0 == CompareFileTime(&(a.time), &(b.time)));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+operator !=(const _nFileTimeWin32& a, const _nFileTimeWin32& b)
+{
+    return (0 != CompareFileTime(&(a.time), &(b.time)));
 }
 
 //------------------------------------------------------------------------------

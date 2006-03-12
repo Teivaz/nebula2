@@ -12,6 +12,8 @@
 #endif
 
 #define __NEBULA_STATS__ (1)
+//#define __NEBULA_NO_THREADS__ (1)
+//#define __NEBULA_NO_ASSERT__ (1)
 
 // use MicroTcl?
 #define __MICROTCL__ (1)
@@ -72,7 +74,7 @@
 #pragma warning( disable : 4786 )       // symbol truncated to 255 characters
 #pragma warning( disable : 4530 )       // C++ exception handler used, but unwind semantics not enabled
 #pragma warning( disable : 4995 )       // _OLD_IOSTREAMS_ARE_DEPRECATED
-#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE
+#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE, VS8: old string routines are deprecated
 #endif
 
 //------------------------------------------------------------------------------
