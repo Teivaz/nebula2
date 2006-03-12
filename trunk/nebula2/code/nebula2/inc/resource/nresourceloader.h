@@ -27,8 +27,10 @@ public:
     nResourceLoader();
     /// destructor
     virtual ~nResourceLoader();
+    /// initialize resource
+    virtual bool InitResource(const char* sFilename, nResource* callingResource);
     /// Primary load method, the one called by an nResource.
-    virtual bool Load(const char *sFilename, nResource *callingResource);
+    virtual bool Load(const char* sFilename, nResource* callingResource);
 };
 //------------------------------------------------------------------------------
 #endif

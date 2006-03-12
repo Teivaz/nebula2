@@ -42,6 +42,10 @@ public:
     bool operator >(const _vector3& rhs);
     /// true if any of the elements are smaller
     bool operator <(const _vector3& rhs);
+    /// true if all elements are equal
+    bool operator ==(const _vector3& v0);
+    /// true if any of the elements is not equal
+    bool operator !=(const _vector3& v0);
     /// fuzzy compare, return true/false
     bool isequal(const _vector3& v, float tol) const;
     /// fuzzy compare, returns -1, 0, +1
@@ -404,6 +408,40 @@ float
 _vector3::dot(const _vector3& v0) const
 {
     return x * v0.x + y * v0.y + z * v0.z;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+_vector3::operator ==(const _vector3& rhs)
+{
+    if ((this->x == rhs.x) && (this->y == rhs.y) && (this->z == rhs.z))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+_vector3::operator !=(const _vector3& rhs)
+{
+    if ((this->x != rhs.x) || (this->y != rhs.y) || (this->z != rhs.z))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 //------------------------------------------------------------------------------

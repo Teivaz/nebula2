@@ -27,7 +27,7 @@ public:
     /// return instance pointer
     static nAnimationServer* Instance();
     /// create an in-memory animation object (always shared)
-    virtual nAnimation* NewMemoryAnimation(const char* rsrcName);
+    virtual nAnimation* NewMemoryAnimation(const nString& rsrcName);
     /// create a new streaming animation object (never shared)
     virtual nAnimation* NewStreamingAnimation();
 

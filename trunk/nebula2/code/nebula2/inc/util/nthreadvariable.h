@@ -30,10 +30,10 @@ public:
     /// set value
     void Set(TYPE val);
     /// get content
-    TYPE Get();
+    TYPE Get() const;
 
 private:
-    nMutex mutex;
+    mutable nMutex mutex;
     TYPE value;
 };
 
@@ -54,7 +54,7 @@ nThreadVariable<TYPE>::Set(TYPE val)
 */
 template<class TYPE>
 TYPE
-nThreadVariable<TYPE>::Get()
+nThreadVariable<TYPE>::Get() const
 {
     this->mutex.Lock();
     TYPE retval = this->value;

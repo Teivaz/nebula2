@@ -36,6 +36,8 @@ public:
     virtual void Reset();
     /// begin an audio frame
     virtual bool BeginScene(nTime time);
+    /// is inside BeginScene()<->EndScene() ?
+    virtual bool IsInBeginScene() const;
     /// update listener attributes
     virtual void UpdateListener(const nListener3& l);
     /// start a sound
@@ -71,12 +73,12 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
-	/// mute all cateory volumes 
-	void Mute();
-	/// restore all muted cateory volumes
-	void Unmute();
-	/// is currently muted?
-	bool IsMuted() const;
+    /// mute all cateory volumes 
+    void Mute();
+    /// restore all muted cateory volumes
+    void Unmute();
+    /// is currently muted?
+    bool IsMuted() const;
 
 private:
     static nAudioServer3* Singleton;
@@ -87,8 +89,8 @@ protected:
     nFixedArray<float> masterVolume;
     nFixedArray<bool>  masterVolumeDirty;
     nFixedArray<nTime> masterVolumeChangedTime;
-	nFixedArray<float> masterVolumeMuted;
-	bool isMuted;
+    nFixedArray<float> masterVolumeMuted;
+    bool isMuted;
     nTime curTime;
 };
 
@@ -136,6 +138,17 @@ nAudioServer3::GetMasterVolume(Category category) const
     n_assert(category >= 0 && category < NumCategorys);
     return this->masterVolume[category];
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nAudioServer3::IsInBeginScene() const
+{
+    return this->inBeginScene;
+};
+
 
 //------------------------------------------------------------------------------
 #endif    

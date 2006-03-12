@@ -76,6 +76,9 @@ public:
     /// generate a prompt string
     virtual nString Prompt();
 
+    /// get the pointer of the tcl-interpreter
+    Tcl_Interp* GetInterp();
+
 #ifndef __MICROTCL__
     /// register Nebula as a Tcl extension
     virtual void InitAsExtension(Tcl_Interp *);

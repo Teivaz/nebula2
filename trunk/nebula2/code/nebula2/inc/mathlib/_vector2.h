@@ -41,6 +41,10 @@ public:
     void operator*=(const float s);
     /// in place scalar div
     void operator/=(const float s);
+    /// true if all elements are equal
+    bool operator ==(const _vector2& v0);
+    /// true if any of the elements is not equal
+    bool operator !=(const _vector2& v0);
     /// fuzzy compare operator
     bool isequal(const _vector2& v, const float tol) const;
     /// fuzzy compare, returns -1, 0, +1
@@ -206,6 +210,40 @@ _vector2::operator /=(const float s)
 */
 inline
 bool
+_vector2::operator ==(const _vector2& rhs)
+{
+    if ((this->x == rhs.x) && (this->y == rhs.y))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+_vector2::operator !=(const _vector2& rhs)
+{
+    if ((this->x != rhs.x) || (this->y != rhs.y))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
 _vector2::isequal(const _vector2& v, const float tol) const
 {
     if (fabs(v.x - x) > tol)      return false;

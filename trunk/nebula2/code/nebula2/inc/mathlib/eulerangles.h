@@ -66,7 +66,7 @@ public:
         EulGetOrd(EulOrdXYZs,i,j,k,h,n,s,f);
         if (s == EulRepYes)
         {
-            float sy = (float) sqrt(m.m[0][1]*m.m[0][1] + m.m[0][2]*m.m[0][2]);
+            double sy = (float) sqrt(m.m[0][1]*m.m[0][1] + m.m[0][2]*m.m[0][2]);
             if (sy > 16*FLT_EPSILON)
             {
                 this->x = (float) atan2(m.m[0][1], m.m[0][2]);
@@ -82,7 +82,7 @@ public:
         }
         else
         {
-            float cy = (float) sqrt(m.m[0][0]*m.m[0][0] + m.m[1][0]*m.m[1][0]);
+            double cy = sqrt(m.m[0][0]*m.m[0][0] + m.m[1][0]*m.m[1][0]);
             if (cy > 16*FLT_EPSILON)
             {
                 this->x = (float) atan2(m.m[2][1], m.m[2][2]);

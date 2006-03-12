@@ -205,6 +205,7 @@ bbox3::set(const matrix44& m)
     this->vmin = center - extent;
     this->vmax = center + extent;
 }
+
 //------------------------------------------------------------------------------
 /**
 */

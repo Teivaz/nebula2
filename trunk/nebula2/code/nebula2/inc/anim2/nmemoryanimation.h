@@ -28,8 +28,10 @@ public:
     virtual void SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* keyArray);
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
+    /// gets the keyArray
+    nArray<vector4>& GetKeyArray();
 
-private:
+protected:
     /// load the resource (sets the valid flag)
     virtual bool LoadResource();
     /// unload the resource (clears the valid flag)
@@ -41,5 +43,16 @@ private:
 
     nArray<vector4> keyArray;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nArray<vector4>&
+nMemoryAnimation::GetKeyArray()
+{
+    return this->keyArray;
+}
+
 //------------------------------------------------------------------------------
 #endif
