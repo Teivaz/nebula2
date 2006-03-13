@@ -146,8 +146,7 @@ technique tPhaseGui3D
         ZWriteEnable     = False;
         AlphaBlendEnable = True;
         AlphaTestEnable  = False;
-        Lighting         = False;
-        VertexShader     = 0;
+        Lighting         = True;
         FogEnable        = False;
     }
 }

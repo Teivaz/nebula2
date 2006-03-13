@@ -11,7 +11,8 @@ nNebulaScriptClass(nSkinShapeNode, "nshapenode");
 /**
 */
 nSkinShapeNode::nSkinShapeNode() :
-    extCharSkeleton(0)
+    extCharSkeleton(0),
+    isChar3AndBoundToVariation(false)
 {
     // empty
 }
@@ -22,6 +23,16 @@ nSkinShapeNode::nSkinShapeNode() :
 nSkinShapeNode::~nSkinShapeNode()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the character skeleton object
+*/
+const nCharSkeleton*
+nSkinShapeNode::GetCharSkeleton() const
+{
+    return this->extCharSkeleton;
 }
 
 //------------------------------------------------------------------------------
@@ -96,16 +107,6 @@ nSkinShapeNode::SetSkinAnimator(const char* path)
 {
     n_assert(path);
     this->refSkinAnimator = path;
-}
-
-//------------------------------------------------------------------------------
-/**
-Get the pointer to the currently-set character skeleton
-*/
-const nCharSkeleton*
-nSkinShapeNode::GetCharSkeleton()
-{
-    return this->extCharSkeleton;
 }
 
 //------------------------------------------------------------------------------

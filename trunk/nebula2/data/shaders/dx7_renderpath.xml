@@ -12,7 +12,10 @@
     <Shader name="environment" file="shaders:shaders.fx" />
     <Shader name="lightmapped" file="shaders:shaders.fx" />
     <Shader name="lightmapped2" file="shaders:shaders.fx" />
+    <Shader name="unlightedlightmapped2" file="shaders:shaders.fx" />
+    <Shader name="unlightedalphalightmapped2" file="shaders:shaders.fx" />
     <Shader name="skinned" file="shaders:shaders.fx" />
+    <Shader name="multitexskinned" file="shaders:shaders.fx" />
     <Shader name="blended" file="shaders:shaders.fx" />
     <Shader name="alpha" file="shaders:shaders.fx" />
     <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
@@ -29,7 +32,9 @@
     <Shader name="skybox" file="shaders:shaders.fx"/>
     <Shader name="default_nolight_nofog" file="shaders:shaders.fx" />
     <Shader name="layered" file="shaders:shaders.fx" />
+    <Shader name="multilayered" file="shaders:shaders.fx" />
     <Shader name="particle" file="shaders:shaders.fx" />
+    <Shader name="particle2" file="shaders:shaders.fx" />
     <Shader name="gui3d" file="shaders:shaders.fx" />
     <Shader name="water" file="shaders:water.fx" />
     <!-- ASIM -->
@@ -60,18 +65,22 @@
                 <Sequence shader="environment" technique="tEnvironment" />
                 <Sequence shader="lightmapped" technique="tLightmapped" />
                 <Sequence shader="lightmapped2" technique="tLightmapped2" />
-                <Sequence shader="ocean" technique="tStatic" />              
+                <Sequence shader="unlightedlightmapped2" technique="tUnlightedLightmapped2" />
+                <Sequence shader="ocean" technique="tStatic" />           
+                <Sequence shader="multitexskinned" technique="tSkinnedML" />   
             </Phase>
             <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
                 <Sequence shader="static_atest" technique="tStaticATest"    firstLightAlpha="No" />
             </Phase>        
             <Phase name="multipass" shader="phases" technique="tPhaseMultiPass" sort="FrontToBack" lightMode="FFP">
                 <Sequence shader="layered" technique="tLayered" />
+                <Sequence shader="multilayered" technique="tMultiLayered" />
                 <Sequence shader="underwaterground" technique="tUnderwaterGround" />
             </Phase>
             <Phase name="vsopaque" shader="phases" technique="tPhaseVsOpaque" sort="FrontToBack" lightMode="Shader">
                 <Sequence shader="blended" technique="tBlended" />
                 <Sequence shader="skinned" technique="tSkinned" />
+                
             </Phase>
             <Phase name="opaqueVsAlphaTest" shader="phases" technique="tPhaseVsOpaqueATest" sort="FrontToBack" lightMode="Shader">
                 <Sequence shader="leaf" technique="tLeaf" />
@@ -84,6 +93,7 @@
                 <Sequence shader="alpha2" technique="tStaticAlpha2" />
                 <Sequence shader="environment_alpha" technique="tEnvironmentAlpha" />
                 <Sequence shader="underwater" technique="tUnderwater" />
+                <Sequence shader="unlightedalphalightmapped2" technique="tUnlightedAlphaLightmapped2" />
             </Phase>
             <Phase name="vsalpha" shader="phases" technique="tPhaseVsAlpha" sort="BackToFront" lightMode="Shader">
                 <Sequence shader="water" technique="tWater" />
@@ -91,6 +101,7 @@
             </Phase>
             <Phase name="vsalpha_nolight" shader="phases" technique="tPhaseVsAlpha" sort="BackToFront" lightMode="Off">
                 <Sequence shader="particle" technique="tParticle" />        
+                <Sequence shader="particle2" technique="tParticle2" />        
             </Phase>
         </Pass>
         
@@ -102,7 +113,7 @@
         
         <!-- render 3d gui -->
         <Pass name="gui3d" shader="passes" technique="tPassGui3D" clearDepth="1.0" clearStencil="0">
-            <Phase name="gui3d" shader="phases" technique="tPhaseGui3D" sort="BackToFront" lightMode="Shader">
+            <Phase name="gui3d" shader="phases" technique="tPhaseGui3D" sort="None" lightMode="Shader">
                 <Sequence shader="gui3d" technique="tGui3DColor" />
             </Phase>
         </Pass>

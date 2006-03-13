@@ -17,6 +17,7 @@
 #include "kernel/ntypes.h"
 #include "mathlib/matrix.h"
 #include "mathlib/bbox.h"
+#include "mathlib/vector.h"
 
 //------------------------------------------------------------------------------
 class nCamera2
@@ -35,6 +36,7 @@ public:
     {
         Perspective,
         Orthogonal,
+        ProjMatrixSet,
     };
 
     /// default constructor
@@ -45,6 +47,8 @@ public:
     void SetPerspective(float aov, float aspect, float nearp, float farp);
     /// set orthogonal projection parameters
     void SetOrthogonal(float w, float h, float nearp, float farp);
+    /// set the maya projection matrix
+    void SetProjectionMatrix(const matrix44& projMatrix);
     /// set projection type
     void SetType(Type t);
     /// get projection type
@@ -98,6 +102,7 @@ private:
     float width;
     float height;
     float angleOfView;
+    float vertAngleOfView;
     float aspectRatio;
     float nearPlane;
     float farPlane;
@@ -178,6 +183,21 @@ nCamera2::SetOrthogonal(float w, float h, float nearp, float farp)
     this->farPlane = farp;
     this->projDirty = true;
     this->boxDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nCamera2::SetProjectionMatrix(const matrix44& projMatrix)
+{
+    this->type = ProjMatrixSet;
+    this->proj = projMatrix;
+    this->shadowProj = projMatrix;
+    this->projDirty = true;
+    this->boxDirty = true;
+    this->shadowOffset = 0.00007f;
 }
 
 //------------------------------------------------------------------------------
@@ -394,7 +414,7 @@ nCamera2::UpdateProjInvProj()
         this->proj.perspFovRh(this->angleOfView, this->aspectRatio, this->nearPlane, this->farPlane);
         this->shadowProj.perspFovRh(this->angleOfView, this->aspectRatio, this->nearPlane - this->shadowOffset, this->farPlane - this->shadowOffset);
     }
-    else
+    else if (Orthogonal == this->type)
     {
         this->proj.orthoRh(this->width, this->height, this->nearPlane, this->farPlane);
         this->shadowProj.orthoRh(this->width, this->height, this->nearPlane - this->shadowOffset, this->farPlane - this->shadowOffset);
@@ -505,7 +525,7 @@ nCamera2::GetBox()
     if (this->boxDirty)
     {
         this->boxDirty = false;
-        if (Perspective == this->type)
+        if (Perspective == this->type || ProjMatrixSet == this->type)
         {
             float tanAov = float(tan(this->angleOfView * 0.5f));
             this->box.vmin.z = this->nearPlane;

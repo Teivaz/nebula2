@@ -131,6 +131,7 @@ public:
         RenderTargetDepth = (1<<4),         // is render target, has depth buffer
         RenderTargetStencil = (1<<5),       // is render target, has stencil buffer
         Dynamic = (1<<6),                   // is a dynamic texture (for write access with CPU)
+        Video = (1<<7)                      // is a Video
     };
 
     // lock types
@@ -195,6 +196,8 @@ public:
     static Format StringToFormat(const char* str);
     /// convert pixel format to string
     static const char* FormatToString(Format fmt);
+    /// save Texture to file
+    virtual bool SaveTextureToFile(const nString& filename);
 
     /// @name Surface supporting functions
     /// @{

@@ -82,6 +82,31 @@ static const float4x4 OrthoProjection = {0.5,   0,      0,      0,
                                          0,     0,      -0.5,   0,
                                          0,     0,       0.5,   1};
 
+float4x4 UVStretch0 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+float4x4 UVStretch1 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+float4x4 UVStretch2 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+float4x4 UVStretch3 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+float4x4 UVStretch4 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+float4x4 UVStretch5 =    {1.0f,  0.0f,  0.0f,  0.0f,
+                          0.0f,  1.0f,  0.0f,  0.0f, 
+                          0.0f,  0.0f,  1.0f,  0.0f,
+                          0.0f,  0.0f,  0.0f,  1.0f };                                
+
 texture DiffMap0;
 texture DiffMap1;
 texture DiffMap2;
@@ -89,9 +114,20 @@ texture DiffMap3;
 texture CubeMap0;
 texture AmbientMap0;
 texture AmbientMap1;
+texture AmbientMap2;
+texture AmbientMap3;
+texture BumpMap0;
+texture BumpMap1;
+texture BumpMap2;
+texture BumpMap3;
+texture SpecMap0;
+texture SpecMap1;
+texture SpecMap2;
+texture SpecMap3;
 texture NoiseMap0;
 texture NoiseMap1;
 texture NoiseMap2;
+texture NoiseMap3;
 
 #include "shaders:../lib/lib.fx"
 
@@ -127,6 +163,16 @@ struct vsInputSkinned
     float4 indices  : BLENDINDICES; 
 };
 
+struct vsInputSkinnedML
+{
+    float4 position : POSITION;
+    float3 normal 	: NORMAL;  
+    float2 uv0 :      TEXCOORD0;
+    float4 weights  : BLENDWEIGHT;
+    float4 indices  : BLENDINDICES;
+    float4 mask     : COLOR0; 
+};
+
 struct vsInputLeaf
 {
     float4 position : POSITION;
@@ -151,6 +197,29 @@ struct vsInputParticle
 };
 
 struct vsOutputFFP
+{
+    float4 position : POSITION;
+    float2 uv0      : TEXCOORD0;
+    float4 diffuse  : COLOR0;
+};
+
+struct vsOutputVertexColorML
+{
+    float4 position : POSITION;
+    float2 uv0      : TEXCOORD0;
+    float3 cubeVec  : TEXCOORD1;
+    float4 diffuse  : COLOR0;
+};
+
+struct vsInputParticle2
+{
+    float4 position  : POSITION;    // the particle position in world space
+    float3 velocity  : NORMAL;      // the particle coded uv and corners,rotation and scale
+    float2 uv        : TEXCOORD0;   // the particle coded uv and corners,rotation and scale
+    float4 data      : COLOR0;      // the particle coded uv and corners,rotation and scale
+};
+
+struct vsOutputParticle2
 {
     float4 position : POSITION;
     float2 uv0      : TEXCOORD0;
@@ -287,6 +356,118 @@ sampler LayerSampler2 = sampler_state
     MipMapLodBias = -0.75;
 };
 
+sampler MultiLayerSampler0 = sampler_state
+{
+    Texture = <NoiseMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerSampler1 = sampler_state
+{
+    Texture = <BumpMap1>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerSampler2 = sampler_state
+{
+    Texture = <AmbientMap2>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerSampler3 = sampler_state
+{
+    Texture = <AmbientMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerSampler4 = sampler_state
+{
+    Texture = <BumpMap0>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler0 = sampler_state
+{
+    Texture = <SpecMap0>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler1 = sampler_state
+{
+    Texture = <SpecMap1>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler2 = sampler_state
+{
+    Texture = <SpecMap2>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler3 = sampler_state
+{
+    Texture = <SpecMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler4 = sampler_state
+{
+    Texture = <BumpMap2>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+sampler MultiLayerTextureSampler5 = sampler_state
+{
+    Texture = <BumpMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    MipMapLodBias = -0.75;    
+};
+
+
 //------------------------------------------------------------------------------
 /**
     Compute lighting for rendering through vertex shaders.
@@ -304,8 +485,37 @@ float4 vsLight(float3 pos, float3 normal)
         // directional lights
         L = normalize(ModelLightPos);
     }
-    float4 light = MatEmissive + LightAmbient + MatDiffuse * LightDiffuse * max(0, dot(normal, L)) ;
+    float4 light = float4(MatEmissive.rgb + LightAmbient.rgb + MatDiffuse.rgb * LightDiffuse.rgb * max(0, dot(normal, L)), MatDiffuse.a);
     return light;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Compute specular lighting for rendering through vertex shaders.
+*/
+float4 vsSpecularLight(float3 pos, float3 normal, float specPow, float4 specCol)
+{
+	float3 lVec;
+    if (LightType == 0)
+    {
+        // point lights
+        lVec = normalize(ModelLightPos - pos);
+    }
+    else
+    {
+        // directional lights
+        lVec = normalize(ModelLightPos);
+    }
+    float3 eVec = normalize(ModelEyePos - pos);
+    float3 hVec = normalize(lVec + eVec);
+    
+	float primSpecIntensity = pow(saturate(dot(normal, hVec)), specPow);
+	float primDiffIntensity = max(0, dot(normal, lVec));
+	
+	float4 specColor = primSpecIntensity * LightSpecular[0] * specCol * primDiffIntensity;
+	float4 light = float4(specColor.rgb + MatEmissive.rgb + LightAmbient.rgb + MatDiffuse.rgb * LightDiffuse.rgb * primDiffIntensity, MatDiffuse.a);
+	
+	return light;
 }
 
 //------------------------------------------------------------------------------
@@ -377,6 +587,66 @@ vsOutputFFP vsSkinned(const vsInputSkinned vsIn)
     vsOut.uv0 = vsIn.uv0;
     vsOut.diffuse = vsLight(skinPos, skinNormal);
 
+    return vsOut;
+}
+
+// //------------------------------------------------------------------------------
+// /**
+//     Emulated vertex shader for skinned geometry with specular lighting and
+//     vertexColor driven Multilayertexturing
+// */
+// vsOutputVertexColorML vsSkinnedML(const vsInputSkinnedML vsIn, uniform int layer)
+// {
+//     vsOutputVertexColorML vsOut;
+
+//     // get skinned position, normal and tangent    
+//     float3 skinPos     = skinnedPosition(vsIn.position, vsIn.weights, vsIn.indices, JointPalette);
+//     float3 skinNormal  = skinnedNormal(vsIn.normal, vsIn.weights, vsIn.indices, JointPalette);
+//     
+//     // transform vertex position
+//     vsOut.position = transformStatic(skinPos, ModelViewProjection);
+//     //vsOut.diffuse = vsSpecularLight(skinPos, skinNormal, MatSpecularPower, MatSpecular);
+//     vsOut.diffuse = vsSpecularLight(skinPos, skinNormal, 16, float4(1,1,1,1));
+//         
+//     if (layer == 0) {vsOut.diffuse.a *= 1;}
+//     else if (layer == 1) {vsOut.diffuse.a *= vsIn.mask.r;}
+//     else if (layer == 2) {vsOut.diffuse.a *= vsIn.mask.g;}
+//     else if (layer == 3) {vsOut.diffuse.a *= vsIn.mask.b;}
+//     else if (layer == 4) {vsOut.diffuse.a *= vsIn.mask.a;}
+//     //else if (layer == 4) {vsOut.diffuse = 1;}
+//     
+//     vsOut.uv0 = vsIn.uv0;
+//     
+//     return vsOut;
+// }
+
+//------------------------------------------------------------------------------
+/**
+    Emulated vertex shader for skinned geometry with specular lighting and
+    vertexColor driven Multilayertexturing
+*/
+vsOutputVertexColorML vsSkinnedML(const vsInputSkinnedML vsIn, uniform int layer)
+{
+    vsOutputVertexColorML vsOut;
+
+    // get skinned position, normal and tangent    
+    float3 skinPos     = skinnedPosition(vsIn.position, vsIn.weights, vsIn.indices, JointPalette);
+    float3 skinNormal  = skinnedNormal(vsIn.normal, vsIn.weights, vsIn.indices, JointPalette);
+    
+    // transform vertex position
+    vsOut.position = transformStatic(skinPos, ModelViewProjection);
+    vsOut.diffuse = vsSpecularLight(skinPos, skinNormal, MatSpecularPower, MatSpecular);
+    float3 viewVec = skinPos - ModelEyePos;
+    vsOut.cubeVec = reflect(skinNormal, viewVec);
+        
+    if (layer == 0) {}
+    else if (layer == 1) {vsOut.diffuse.a *= vsIn.mask.r;}
+    else if (layer == 2) {vsOut.diffuse.a *= vsIn.mask.g;}
+    else if (layer == 3) {vsOut.diffuse.a *= vsIn.mask.b;}
+    else if (layer == 4) {vsOut.diffuse.a *= vsIn.mask.a;}
+    
+    vsOut.uv0 = vsIn.uv0;
+    
     return vsOut;
 }
 
@@ -510,6 +780,63 @@ vsOutputFFP vsParticle(const vsInputParticle vsIn)
 
 //------------------------------------------------------------------------------
 /**
+    Emulated Vertex shader for particle2's.
+*/
+vsOutputParticle2 vsParticle2(const vsInputParticle2 vsIn)
+{
+    float code     = vsIn.data[0];
+    float rotation = vsIn.data[1];
+    float size     = vsIn.data[2];
+    float colorCode  = vsIn.data[3];
+
+    // build rotation matrix
+    float sinAng, cosAng;
+    sincos(rotation, sinAng, cosAng);
+    float3x3 rot = {
+        cosAng, -sinAng, 0.0f,
+        sinAng,  cosAng, 0.0f,
+        0.0f,    0.0f,   1.0f,
+    };
+
+    // decode color data
+    float4  rgba;
+    rgba.z = modf(colorCode/256.0f,colorCode);
+    rgba.y = modf(colorCode/256.0f,colorCode);
+    rgba.x = modf(colorCode/256.0f,colorCode);
+    rgba.w = modf(code/256.0f,code);
+    rgba *= 256.0f/255.0f;
+    
+    float4 position =  vsIn.position;
+
+
+    // the corner offset gets calculated from the velocity
+
+    float3 extrude = mul(InvModelView,vsIn.velocity);
+    if(code != 0.0f) 
+    {
+        extrude = normalize(extrude);
+        float vis = abs(extrude.z);
+        size *= cos(vis*3.14159f*0.5f);
+        rgba.w *= cos(vis*3.14159f*0.5f);
+    };
+    extrude.z = 0.0f;
+    extrude = normalize(extrude);    
+
+    extrude *= size;
+    extrude =  mul(rot, extrude);
+    extrude =  mul(extrude, (float3x3) InvModelView);
+    position.xyz += extrude.xyz;
+
+    vsOutputParticle2 vsOut;
+    vsOut.position = mul(position, ModelViewProjection);
+    vsOut.uv0      = vsIn.uv;
+    vsOut.diffuse  = rgba;
+
+    return vsOut;
+}
+
+//------------------------------------------------------------------------------
+/**
     Vertex shader: process vertices for 3d gui. This will be a orthogonal
     projection.
 */
@@ -518,8 +845,8 @@ vsOutputFFP vsGui3D(const vsInputStaticColor vsIn)
     vsOutputFFP vsOut;
     vsOut.position = mul(mul(vsIn.position, Model), OrthoProjection);
     vsOut.uv0 = vsIn.uv0;
-    vsOut.diffuse = vsLight(vsIn.position, vsIn.normal);
-    //vsOut.diffuse = MatDiffuse;
+    //vsOut.diffuse = vsLight(vsIn.position, vsIn.normal);
+    vsOut.diffuse = MatDiffuse;
     return vsOut;
 }
 
@@ -683,6 +1010,101 @@ technique tLightmapped2
         ColorArg2[1] = Current;
 
         ColorOp[2]   = Disable;
+    }
+}
+
+technique tUnlightedLightmapped2
+{
+    pass p0
+    {
+        WorldTransform[0]   = <Model>;
+        //TextureTransform[0] = <TextureTransform0>;
+        //TextureTransform[1] = <TextureTransform1>;
+        
+        AlphaRef            = <AlphaRef>;
+        CullMode            = <CullMode>;
+        MaterialDiffuse     = <MatDiffuse>;
+        MaterialEmissive    = <MatEmissive>;
+        MaterialAmbient     = {0.0, 0.0, 0.0, 1.0};                
+ 
+        Lighting = false;
+        
+        FVF = XYZ | NORMAL | TEX2;
+        
+        TexCoordIndex[0] = 1;
+        //TextureTransformFlags[0] = Count2;
+
+        TexCoordIndex[1] = 0;
+        //TextureTransformFlags[1] = Count2;
+                
+        Sampler[0] = <LightmapSampler>;
+        Sampler[1] = <DiffSampler>;
+        
+        // ADDSIGNED (Arg1 + Arg2 - 0.5) - shadow side becames black if lightmap is darker then 0.5
+        // ADDSMOOTH (Arg1 + Arg2 (1 - Arg1)) - shadow side never becomes black
+        
+        ColorOp[0]   = SelectArg1; 
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+        
+        ColorOp[1]   = Modulate;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+
+        ColorOp[2]   = Disable;
+    }
+}
+
+technique tUnlightedAlphaLightmapped2
+{
+    pass p0
+    {
+        WorldTransform[0]   = <Model>;
+        //TextureTransform[0] = <TextureTransform0>;
+        //TextureTransform[1] = <TextureTransform1>;
+        
+        AlphaRef            = <AlphaRef>;
+        CullMode            = <CullMode>;
+        SrcBlend            = <AlphaSrcBlend>;
+        DestBlend           = <AlphaDstBlend>; 
+        MaterialDiffuse     = <MatDiffuse>;
+        MaterialEmissive    = <MatEmissive>;
+        MaterialAmbient     = {0.0, 0.0, 0.0, 1.0};                
+ 
+        Lighting = false;
+        
+        FVF = XYZ | NORMAL | TEX2;
+        
+        TexCoordIndex[0] = 1;
+        //TextureTransformFlags[0] = Count2;
+
+        TexCoordIndex[1] = 0;
+        //TextureTransformFlags[1] = Count2;
+                
+        Sampler[0] = <LightmapSampler>;
+        Sampler[1] = <DiffSampler>;
+        
+        // ADDSIGNED (Arg1 + Arg2 - 0.5) - shadow side becames black if lightmap is darker then 0.5
+        // ADDSMOOTH (Arg1 + Arg2 (1 - Arg1)) - shadow side never becomes black
+        
+        ColorOp[0]   = SelectArg1; 
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+        
+        AlphaOp[0]   = SelectArg1;
+        AlphaArg1[0] = Diffuse;
+        AlphaArg2[0] = Diffuse;
+        
+        ColorOp[1]   = Modulate;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        
+        AlphaOp[1]   = Modulate;
+        AlphaArg1[1] = Texture;
+        AlphaArg2[1] = Current;
+
+        ColorOp[2]   = Disable;
+        AlphaOp[2]   = Disable;
     }
 }
 
@@ -1072,6 +1494,31 @@ technique tParticle
     }
 }
 
+technique tParticle2
+{
+    pass p0
+    {
+        //TextureTransformFlags[0] = 0;
+        CullMode  = None;
+        SrcBlend  = <AlphaSrcBlend>;
+        DestBlend = <AlphaDstBlend>;        
+
+        VertexShader = compile vs_2_0 vsParticle2();
+
+        Sampler[0] = <DiffSampler>;
+        
+        ColorOp[0]   = Modulate;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+        AlphaOp[0]   = Modulate;
+        AlphaArg1[0] = Texture;
+        AlphaArg2[0] = Diffuse;
+           
+        ColorOp[1] = Disable;        
+        AlphaOp[1] = Disable;
+    }
+}
+
 technique tLayered
 {
     pass p0
@@ -1145,9 +1592,250 @@ technique tLayered
         WorldTransform[0] = <Model>;
         Sampler[0]   = <Diff3Sampler>;
         Sampler[1]   = <LayerSampler2>; 
-    }
+    }       
+        
 }
 
+
+technique tMultiLayered
+{
+    pass p0
+    {        
+        WorldTransform[0] = <Model>;
+        CullMode          = <CullMode>;
+        MaterialDiffuse   = <MatDiffuse>;
+        MaterialEmissive  = <MatEmissive>;
+         
+        MaterialAmbient   = {1.0, 1.0, 1.0, 1.0};                
+        AlphaBlendEnable = True;
+        SrcBlend         = SrcAlpha;
+        DestBlend        = InvSrcAlpha;
+        AlphaTestEnable  = False;
+        AlphaRef         = 1;
+
+        FVF = XYZ | NORMAL | TEX2;
+
+        TexCoordIndex[0]         = 0;
+        TextureTransformFlags[0] = Count2;
+        TextureTransform[0]      = <Ident>;
+        TexCoordIndex[1]         = 0;
+        TextureTransformFlags[1] = Count2;
+        TextureTransform[1]      = <UVStretch0>;
+        
+        Sampler[0]               = <MultiLayerSampler0>;
+        Sampler[1]               = <MultiLayerTextureSampler0>;
+
+        // Load Transparency Map, includes lightmap
+        ColorOp[0]   = Modulate;
+        ColorArg1[0] = Current;
+        ColorArg2[0] = Texture;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg1[0] = Current;
+        AlphaArg2[0] = Texture;
+
+        // Load Texture Map
+        ColorOp[1]   = Modulate;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = Modulate;
+        AlphaArg1[1] = Current;
+        AlphaArg2[1] = Texture;
+
+        ColorOp[2]   = Disable;
+        AlphaOp[2]   = Disable;
+
+    }
+    
+    pass p1
+    {      
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch1>;
+        Sampler[0]               = <MultiLayerSampler1>;
+        Sampler[1]               = <MultiLayerTextureSampler1>;
+    }  
+    
+    pass p2
+    {      
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch2>;
+        Sampler[0]               = <MultiLayerSampler2>;
+        Sampler[1]               = <MultiLayerTextureSampler2>;
+    }  
+    pass p3
+    {      
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch3>;
+        Sampler[0]               = <MultiLayerSampler3>;
+        Sampler[1]               = <MultiLayerTextureSampler3>;
+    }  
+    pass p4
+    {      
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch4>;
+        Sampler[0]               = <MultiLayerSampler4>;
+        Sampler[1]               = <MultiLayerTextureSampler4>;
+    }  
+    
+};      
+
+technique tSkinnedML
+{
+    pass p0
+    {        
+        WorldTransform[0] = <Model>;
+        CullMode          = <CullMode>;
+        MaterialDiffuse   = <MatDiffuse>;
+        MaterialEmissive  = <MatEmissive>;
+         
+        MaterialAmbient   = {1.0, 1.0, 1.0, 1.0};                
+        AlphaBlendEnable = True;
+        SrcBlend         = SrcAlpha;
+        DestBlend        = InvSrcAlpha;
+        AlphaTestEnable  = False;
+        AlphaRef         = 1;
+
+        FVF = XYZ | NORMAL | TEX2;
+
+        TexCoordIndex[0]         = 0;
+        TextureTransformFlags[0] = Count2;
+        TextureTransform[0]      = <Ident>;
+        TexCoordIndex[1]         = 0;
+        TextureTransformFlags[1] = Count2;
+        TextureTransform[1]      = <UVStretch0>;
+        
+        VertexShader = compile vs_2_0 vsSkinnedML(0);
+
+        Sampler[1] = <DiffSampler>;
+        Sampler[0] = <DiffSampler>;       
+        
+        // Load Transparency Map, includes lightmap
+        ColorOp[0]   = Modulate;
+        ColorArg1[0] = Current;
+        ColorArg2[0] = Texture;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg1[0] = Current;
+        AlphaArg2[0] = Diffuse;
+
+        // Load Texture Map
+        ColorOp[1]   = Modulate;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = Modulate;
+        AlphaArg1[1] = Current;
+        AlphaArg2[1] = Texture;
+
+        ColorOp[1]   = Disable;
+        AlphaOp[1]   = Disable;
+
+    }
+    
+    pass p1
+    {      
+	    VertexShader = compile vs_2_0 vsSkinnedML(1);
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch1>;
+        Sampler[0]               = <Diff1Sampler>;
+        Sampler[1]               = <Diff1Sampler>;
+    }  
+    
+    pass p2
+    {      
+	    VertexShader = compile vs_2_0 vsSkinnedML(2);
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch2>;
+        Sampler[0]               = <Diff2Sampler>;
+        Sampler[1]               = <Diff2Sampler>;
+    }  
+    pass p3
+    {   
+	    VertexShader = compile vs_2_0 vsSkinnedML(3);
+        TextureTransform[0]      = <Ident>;
+        TextureTransform[1]      = <UVStretch3>;
+        Sampler[0]               = <Diff3Sampler>;
+        Sampler[1]               = <Diff3Sampler>;
+    } 
+    
+    pass p4
+    {   
+        VertexShader = compile vs_2_0 vsSkinnedML(4);       
+        
+        Sampler[0] = <DiffSampler>;
+        Sampler[1] = <EnvironmentSampler>;
+
+        // Load Transparency Map, includes lightmap
+        ColorOp[0]   = Modulate;
+        ColorArg1[0] = Current;
+        ColorArg2[0] = Texture;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg1[0] = Current;
+        AlphaArg2[0] = Diffuse;     
+
+        // Reflection Texture
+        ColorOp[1]   = BlendCurrentAlpha;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = SelectArg1;
+        AlphaArg1[1] = Current;
+
+        ColorOp[2]   = Disable;
+        AlphaOp[2]   = Disable;
+    } 
+      
+};      
+
+
+// technique tSkinnedML
+// {
+//     pass p0
+//     {        
+//         WorldTransform[0]   = <Model>;
+//         //TextureTransform[0] = <TextureTransform0>;
+//         //TextureTransform[1] = <Ident>;
+
+//         AlphaRef            = <AlphaRef>;
+//         CullMode            = <CullMode>;
+//         MaterialDiffuse     = <MatDiffuse>;
+//         MaterialEmissive    = <MatEmissive>;        
+//         MaterialAmbient     = {1.0, 1.0, 1.0, 1.0};                
+
+//         FVF = XYZ | NORMAL | TEX1;
+//         
+//         VertexShader = compile vs_2_0 vsSkinnedML(0);
+//         
+//         TexCoordIndex[0] = 0;
+//         //TextureTransformFlags[0] = Count2;
+//                 
+//         TexCoordIndex[1] = CameraSpaceReflectionVector;
+//         //TextureTransformFlags[1] = Count3;
+//        
+//         
+//         Sampler[0] = <DiffSampler>;
+//         Sampler[1] = <EnvironmentSampler>;
+
+//         // Base Texture
+//         ColorOp[0]   = SelectArg1;
+//         ColorArg1[0] = Texture;
+//         AlphaOp[0]   = SelectArg1;
+//         AlphaArg1[0] = Texture;        
+
+//         // Reflection Texture
+//         ColorOp[1]   = BlendCurrentAlpha;
+//         ColorArg1[1] = Texture;
+//         ColorArg2[1] = Current;
+//         AlphaOp[1]   = SelectArg1;
+//         AlphaArg1[1] = Current;
+
+//         // Lighting
+//         ColorOp[2]   = Modulate;
+//         ColorArg1[2] = Diffuse;
+//         ColorArg2[2] = Current;
+//         AlphaOp[2]   = SelectArg1;
+//         AlphaArg1[2] = Current;
+
+//         ColorOp[3]   = Disable;
+//         AlphaOp[3]   = Disable;
+//     } 
+// };      
 //------------------------------------------------------------------------------
 /**
     Techniques for shader "gui3d"
@@ -1159,10 +1847,6 @@ technique tGui3DColor
         CullMode            = <CullMode>;
         SrcBlend            = SRCALPHA;
         DestBlend           = INVSRCALPHA;
-        
-        MaterialDiffuse = <MatDiffuse>;        
-        MaterialEmissive = <MatEmissive>;
-        MaterialAmbient = { 1.0, 1.0, 1.0, 1.0 };
         
         TexCoordIndex[0] = 0;
         //TextureTransformFlags[0] = Disable;

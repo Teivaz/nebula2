@@ -15,6 +15,7 @@
 #include "kernel/nautoref.h"
 #include "kernel/nenv.h"
 #include <dshow.h>
+#include "resource/nresourceserver.h"
 
 //------------------------------------------------------------------------------
 class nDShowServer : public nVideoServer
@@ -34,6 +35,10 @@ public:
     virtual void Stop();
     /// per-frame trigger
     virtual void Trigger();
+    /// create new video player
+    virtual nVideoPlayer*   NewVideoPlayer(nString name);
+    /// delete video player
+    virtual void   DeleteVideoPlayer(nVideoPlayer* player);
 
 private:
     nAutoRef<nEnv> refHwnd;
@@ -44,6 +49,8 @@ private:
     IVideoWindow* videoWindow;
     IBasicVideo* basicVideo;
     bool firstFrame;
+    nTime  oldTime;
+    bool    timeSet;
 };
 
 //------------------------------------------------------------------------------

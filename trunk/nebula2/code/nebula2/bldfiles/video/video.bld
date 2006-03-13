@@ -4,6 +4,8 @@
 #
 #  Modules:
 #      nvideoserver
+#      nvideoplayer
+#      noggtheoraplayer
 #  Bundles:
 #      nvideo
 #===============================================================================
@@ -15,6 +17,19 @@ beginmodule nvideoserver
     setheaders { nvideoserver }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nvideoplayer
+    setdir video
+    setfiles { nvideoplayer_main }
+    setheaders { nvideoplayer }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule noggtheoraplayer
+    setdir video
+    setfiles { noggtheoraplayer_main }
+    setheaders { noggtheoraplayer }
+    setlibs_win32 { ogg.lib theora_static.lib }
+endmodule
+#-------------------------------------------------------------------------------
 
 #===============================================================================
 # nvideo bundles
@@ -22,6 +37,8 @@ endmodule
 beginbundle nvideo
     setmodules {
         nvideoserver
+        nvideoplayer
+        noggtheoraplayer
     }
 endbundle
 #-------------------------------------------------------------------------------

@@ -14,7 +14,6 @@
 */
 #include "mathlib/vector.h"
 #include "mathlib/matrix.h"
-#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nVariant
@@ -89,8 +88,6 @@ public:
     bool operator==(const vector3& rhs) const;
     /// vector4 equality operator
     bool operator==(const vector4& rhs) const;
-    /// matrix44 equality operator
-    bool operator==(const matrix44& rhs) const;
 
     /// inequality operator
     bool operator!=(const nVariant& rhs) const;
@@ -106,8 +103,6 @@ public:
     bool operator!=(const vector3& rhs) const;
     /// vector4 inequality operator
     bool operator!=(const vector4& rhs) const;
-    /// matrix44 inequality operator
-    bool operator!=(const matrix44& rhs) const;
 
     /// set integer content
     void SetInt(int val);
@@ -190,7 +185,6 @@ nVariant::Delete()
         n_delete(this->m);
         this->m = 0;
     }
-
     this->type = Void;
 }
 
@@ -248,7 +242,6 @@ nVariant::nVariant(const nVariant& rhs) :
 {
     this->Copy(rhs);
 }
-
 
 //------------------------------------------------------------------------------
 /**
@@ -327,8 +320,6 @@ nVariant::nVariant(const matrix44& rhs) :
     this->m = n_new(matrix44(rhs));
 }
 
-
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -368,8 +359,6 @@ nVariant::operator=(const nVariant& rhs)
     this->Delete();
     this->Copy(rhs);
 }
-
-
 
 //------------------------------------------------------------------------------
 /**
@@ -497,23 +486,6 @@ nVariant::operator==(const nVariant& rhs) const
                         (this->f[1] == rhs.f[1]) &&
                         (this->f[2] == rhs.f[2]) &&
                         (this->f[3] == rhs.f[3]));
-            case Matrix44:
-                return ((this->m->M11 == rhs.m->M11) &&
-                        (this->m->M12 == rhs.m->M12) &&
-                        (this->m->M13 == rhs.m->M13) &&
-                        (this->m->M14 == rhs.m->M14) &&
-                        (this->m->M21 == rhs.m->M21) &&
-                        (this->m->M22 == rhs.m->M22) &&
-                        (this->m->M23 == rhs.m->M23) &&
-                        (this->m->M24 == rhs.m->M24) &&
-                        (this->m->M31 == rhs.m->M31) &&
-                        (this->m->M32 == rhs.m->M32) &&
-                        (this->m->M33 == rhs.m->M33) &&
-                        (this->m->M34 == rhs.m->M34) &&
-                        (this->m->M41 == rhs.m->M41) &&
-                        (this->m->M42 == rhs.m->M42) &&
-                        (this->m->M43 == rhs.m->M43) &&
-                        (this->m->M44 == rhs.m->M44));
             default:
                 n_error("nVariant::operator==(): invalid variant type!");
                 return false;
@@ -598,32 +570,6 @@ nVariant::operator==(const vector4& rhs) const
 */
 inline
 bool
-nVariant::operator==(const matrix44& rhs) const
-{
-    n_assert(Matrix44 == this->type);
-    return ((this->m->M11 == rhs.M11) &&
-            (this->m->M12 == rhs.M12) &&
-            (this->m->M13 == rhs.M13) &&
-            (this->m->M14 == rhs.M14) &&
-            (this->m->M21 == rhs.M21) &&
-            (this->m->M22 == rhs.M22) &&
-            (this->m->M23 == rhs.M23) &&
-            (this->m->M24 == rhs.M24) &&
-            (this->m->M31 == rhs.M31) &&
-            (this->m->M32 == rhs.M32) &&
-            (this->m->M33 == rhs.M33) &&
-            (this->m->M34 == rhs.M34) &&
-            (this->m->M41 == rhs.M41) &&
-            (this->m->M42 == rhs.M42) &&
-            (this->m->M43 == rhs.M43) &&
-            (this->m->M44 == rhs.M44));
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
 nVariant::operator!=(const nVariant& rhs) const
 {
     if (rhs.type == this->type)
@@ -649,23 +595,6 @@ nVariant::operator!=(const nVariant& rhs) const
                         (this->f[1] != rhs.f[1]) ||
                         (this->f[2] != rhs.f[2]) ||
                         (this->f[3] != rhs.f[3]));
-            case Matrix44:
-                return ((this->m->M11 != rhs.mat->M11) ||
-                        (this->m->M12 != rhs.mat->M12) ||
-                        (this->m->M13 != rhs.mat->M13) ||
-                        (this->m->M14 != rhs.mat->M14) ||
-                        (this->m->M21 != rhs.mat->M21) ||
-                        (this->m->M22 != rhs.mat->M22) ||
-                        (this->m->M23 != rhs.mat->M23) ||
-                        (this->m->M24 != rhs.mat->M24) ||
-                        (this->m->M31 != rhs.mat->M31) ||
-                        (this->m->M32 != rhs.mat->M32) ||
-                        (this->m->M33 != rhs.mat->M33) ||
-                        (this->m->M34 != rhs.mat->M34) ||
-                        (this->m->M41 != rhs.mat->M41) ||
-                        (this->m->M42 != rhs.mat->M42) ||
-                        (this->m->M43 != rhs.mat->M43) ||
-                        (this->m->M44 != rhs.mat->M44));
             default:
                 n_error("nVariant::operator==(): invalid variant type!");
                 return true;
@@ -743,32 +672,6 @@ nVariant::operator!=(const vector4& rhs) const
             (this->f[1] != rhs.y) ||
             (this->f[2] != rhs.z) ||
             (this->f[3] != rhs.w));
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-nVariant::operator!=(const matrix44& rhs) const
-{
-    n_assert(Matrix44 == this->type);
-    return ((this->m->M11 != rhs.M11) ||
-            (this->m->M12 != rhs.M12) ||
-            (this->m->M13 != rhs.M13) ||
-            (this->m->M14 != rhs.M14) ||
-            (this->m->M21 != rhs.M21) ||
-            (this->m->M22 != rhs.M22) ||
-            (this->m->M23 != rhs.M23) ||
-            (this->m->M24 != rhs.M24) ||
-            (this->m->M31 != rhs.M31) ||
-            (this->m->M32 != rhs.M32) ||
-            (this->m->M33 != rhs.M33) ||
-            (this->m->M34 != rhs.M34) ||
-            (this->m->M41 != rhs.M41) ||
-            (this->m->M42 != rhs.M42) ||
-            (this->m->M43 != rhs.M43) ||
-            (this->m->M44 != rhs.M44));
 }
 
 //------------------------------------------------------------------------------
@@ -934,7 +837,6 @@ nVariant::TypeToString(Type t)
         case Bool:      return "bool";
         case Vector3:   return "vector3";
         case Vector4:   return "vector4";
-
         case String:    return "string";
         case Matrix44:  return "matrix44";
         default:

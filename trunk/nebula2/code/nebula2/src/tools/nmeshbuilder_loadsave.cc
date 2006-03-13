@@ -5,6 +5,7 @@
 #include "tools/nmeshbuilder.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "util/nstring.h"
 #include "gfx2/nnvx2loader.h"
 #include "gfx2/nn3d2loader.h"
 
@@ -301,7 +302,7 @@ nMeshBuilder::LoadFile(nFileServer2* fileServer, nMeshLoader* meshLoader, const 
 
     meshLoader->SetFilename(filename);
     meshLoader->SetIndexType(nMeshLoader::Index16);
-    if (meshLoader->Open(fileServer))
+    if (meshLoader->Open())
     {
         int numGroups        = meshLoader->GetNumGroups();
         int numVertices      = meshLoader->GetNumVertices();

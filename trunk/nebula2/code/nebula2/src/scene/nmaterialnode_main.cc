@@ -204,7 +204,7 @@ bool
 nMaterialNode::IsTextureUsed(nShaderState::Param param)
 {
     if (this->refShader.isvalid())
-    {        
+    {
         if (this->refShader->IsParameterUsed(param))
         {
             return true;

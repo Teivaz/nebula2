@@ -61,15 +61,14 @@ nSkinAnimator::LoadAnim()
 {
     if ((!this->refAnim.isvalid()) && (!this->animName.IsEmpty()))
     {
-        const char* fileName = this->animName.Get();
-        nAnimation* anim = this->refAnimServer->NewMemoryAnimation(fileName);
+        nAnimation* anim = this->refAnimServer->NewMemoryAnimation(this->animName);
         n_assert(anim);
         if (!anim->IsLoaded())
         {
-            anim->SetFilename(fileName);
+            anim->SetFilename(this->animName);
             if (!anim->Load())
             {
-                n_printf("nSkinAnimator: Error loading anim file '%s'\n", fileName);
+                n_printf("nSkinAnimator: Error loading anim file '%s'\n", this->animName.Get());
                 anim->Release();
                 return false;
             }
@@ -280,7 +279,6 @@ nSkinAnimator::SetState(int stateIndex, int animGroupIndex, float fadeInTime)
 /**
     @note Be sure that you should create a new animation state first by calling 
           nSkinAnimator::SetState() before you calling this function.
-          
 */
 void
 nSkinAnimator::SetStateName(int stateIndex, const nString& name)

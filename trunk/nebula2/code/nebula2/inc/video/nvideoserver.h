@@ -10,6 +10,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
+#include "video/nvideoplayer.h"
 
 //------------------------------------------------------------------------------
 class nVideoServer : public nRoot
@@ -39,9 +40,15 @@ public:
     bool IsPlaying() const;
     /// per-frame trigger
     virtual void Trigger();
+    /// create new video player
+    virtual nVideoPlayer*   NewVideoPlayer(nString name);
+    /// delete video player
+    virtual void   DeleteVideoPlayer(nVideoPlayer* player);
 
 protected:
     static nVideoServer* Singleton;
+
+    nArray<nVideoPlayer*>   videoPlayers;
 
     bool isOpen;
     bool isPlaying;

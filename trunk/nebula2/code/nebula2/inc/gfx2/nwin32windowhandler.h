@@ -42,8 +42,6 @@ public:
     HWND GetParentHwnd() const;
     /// called by WinProc on WM_SETCURSOR
     virtual bool OnSetCursor();
-    /// called when WM_MOUSEMOVE is received
-    virtual bool OnMouseMove();
     /// called by WinProc on WM_PAINT
     virtual void OnPaint();
     /// called when fullscreen/windowed should be toggled
@@ -52,6 +50,8 @@ public:
     virtual void OnSize(bool minimize);
     /// called when WM_CLOSE is received, return true if app should quit
     virtual bool OnClose();
+    /// called when WM_MOUSEMOVE is received
+    virtual void OnMouseMove(int x, int y);
 
     /// the WinProc
     static LONG WINAPI WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

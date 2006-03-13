@@ -17,7 +17,7 @@ nWin32WindowHandler::nWin32WindowHandler() :
     hAccel(0),
     windowedStyle(WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE),
     fullscreenStyle(WS_POPUP | WS_SYSMENU | WS_VISIBLE),
-	childStyle(WS_CHILD | WS_TABSTOP)
+    childStyle(WS_CHILD | WS_TABSTOP)
 {
     // get applications module handle
     this->hInst = GetModuleHandle(0);
@@ -92,18 +92,18 @@ nWin32WindowHandler::OpenWindow()
     RegisterClassEx(&wc);
 
     // open the window
-	DWORD windowStyle = (((this->parentHwnd != 0) ? this->childStyle : this->windowedStyle) | WS_MINIMIZE);
-    this->hWnd = CreateWindow("Nebula2 window class",               // lpClassName
-                              this->displayMode.GetWindowTitle(),   // lpWindowName
-                              windowStyle,							// dwStyle
-                              0,                                    // x
-                              0,                                    // y
-                              0,                                    // nWidth
-                              0,                                    // nHeight
-                              this->parentHwnd,                 	// hWndParent
-                              NULL,                                 // hMenu
-                              this->hInst,                          // hInstance
-                              NULL);                                // lpParam
+    DWORD windowStyle = (((this->parentHwnd != 0) ? this->childStyle : this->windowedStyle) | WS_MINIMIZE);
+    this->hWnd = CreateWindow("Nebula2 window class",                   // lpClassName
+                              this->displayMode.GetWindowTitle().Get(), // lpWindowName
+                              windowStyle,                              // dwStyle
+                              0,                                        // x
+                              0,                                        // y
+                              0,                                        // nWidth
+                              0,                                        // nHeight
+                              this->parentHwnd,                         // hWndParent
+                              NULL,                                     // hMenu
+                              this->hInst,                              // hInstance
+                              NULL);                                    // lpParam
     n_assert(this->hWnd);
 
     // initialize the user data field with this object's this pointer,
@@ -210,13 +210,13 @@ nWin32WindowHandler::RestoreWindow()
     n_assert(this->windowOpen);
 
     // set window title
-    SetWindowText(this->hWnd, this->displayMode.GetWindowTitle());
+    SetWindowText(this->hWnd, this->displayMode.GetWindowTitle().Get());
 
     // update icon (if exists)
-    const char* iconName = this->displayMode.GetIcon();
-    if (iconName)
+    const nString& iconName = this->displayMode.GetIcon();
+    if (iconName.IsValid())
     {
-        HICON icon = LoadIcon(this->hInst, iconName);
+        HICON icon = LoadIcon(this->hInst, iconName.Get());
         if (icon)
         {
             SetClassLong(this->hWnd, GCL_HICON, (LONG)icon);
@@ -226,7 +226,7 @@ nWin32WindowHandler::RestoreWindow()
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
     
-	int x, y, w, h;
+    int x, y, w, h;
     if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
     {
         x = 0;
@@ -239,7 +239,7 @@ nWin32WindowHandler::RestoreWindow()
         RECT parentRect;
         // We are child window, so get dimesion from parent
         GetClientRect(this->parentHwnd, &parentRect);
-		
+        
         //calculate the desired window size
         RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
         AdjustWindowRect(&r, this->childStyle, 0);
@@ -254,7 +254,7 @@ nWin32WindowHandler::RestoreWindow()
         {
             w = (r.right - r.left);
         }
-		
+        
         if (y + (r.bottom - r.top) > (parentRect.bottom - parentRect.top))
         {
             h = parentRect.bottom - parentRect.top - y; //scale to max size inside the parrent window
@@ -286,19 +286,19 @@ nWin32WindowHandler::RestoreWindow()
                     HWND_TOPMOST,           // placement order
                     x,                      // x position
                     y,                      // y position
-                    w,	                    // adjusted width
+                    w,                      // adjusted width
                     h,                      // adjusted height
-                    SWP_SHOWWINDOW);	
+                    SWP_SHOWWINDOW);
     }
     else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
     {
-        SetWindowPos(this->hWnd,             // the window handle
-                     this->parentHwnd,       // placement order
-                     x,                      // x position
-                     y,                      // y position
-                     w,	                     // adjusted width
-                     h,	                     // adjusted height
-                     SWP_SHOWWINDOW);
+        SetWindowPos(this->hWnd,            // the window handle
+                    this->parentHwnd,       // placement order
+                    x,                      // x position
+                    y,                      // y position
+                    w,                      // adjusted width
+                    h,                      // adjusted height
+                    SWP_SHOWWINDOW);
         //FIXME: For some reason, SetWindowPos doesn't work when in child mode
         MoveWindow(this->hWnd, x, y, w, h, 0);
     }
@@ -309,7 +309,7 @@ nWin32WindowHandler::RestoreWindow()
                     x,                      // x position
                     y,                      // y position
                     w,                      // adjusted width
-                    h,	                    // adjusted height
+                    h,                      // adjusted height
                     SWP_SHOWWINDOW);
     }
     this->windowMinimized = false;
@@ -363,7 +363,7 @@ nWin32WindowHandler::Trigger()
         {
             int w = LOWORD(msg.lParam);
             int h = HIWORD(msg.lParam);
-			///FIXME: whats to do with this w,h vars?
+            ///FIXME: whats to do with this w,h vars?
         }
     }
     while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) 
@@ -391,16 +391,6 @@ nWin32WindowHandler::Trigger()
 */
 bool
 nWin32WindowHandler::OnSetCursor()
-{
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Override this method in a derived class!
-*/
-bool
-nWin32WindowHandler::OnMouseMove()
 {
     return false;
 }
@@ -595,6 +585,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_SYSKEYDOWN:
+            /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
             if (self && self->refInputServer.isvalid()) 
             {
                 nKey key = self->TranslateKey((int)wParam);
@@ -609,6 +600,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 return(0);
             }
+            */
             break;
 
         case WM_KEYUP:
@@ -627,6 +619,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_SYSKEYUP:
+            /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
             if (self && self->refInputServer.isvalid()) 
             {
                 nKey key = self->TranslateKey((int)wParam);
@@ -641,6 +634,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 return(0);
             }
+            */
             break;
 
         case WM_CHAR:
@@ -745,10 +739,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     ie->SetRelPos(relX, relY);
                     self->refInputServer->LinkEvent(ie);
                 }
-                if (self->OnMouseMove())
-                {
-                    return TRUE;
-                }
+                self->OnMouseMove((UINT)x, (UINT)y);
             }
             break;
     }
@@ -891,6 +882,14 @@ nWin32WindowHandler::TranslateKey(int vkey)
         default:            nk=N_KEY_NONE; break;
     }
     return nk;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nWin32WindowHandler::OnMouseMove(int x, int y)
+{
 }
 
 #endif __WIN32__

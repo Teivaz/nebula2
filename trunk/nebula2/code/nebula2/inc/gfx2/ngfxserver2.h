@@ -141,6 +141,7 @@ public:
         None,               ///< no mouse cursor visible
         System,             ///< use Window's system mouse cursor
         Custom,             ///< use the custom mouse cursor
+        Gui,                ///< use a custom Software mouse cursor
     };
 
     enum
@@ -384,7 +385,7 @@ public:
     virtual void BeginShapes();
     /// draw a shape with the given model matrix with given color
     virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
-	/// draw a shape without shader management
+    /// draw a shape without shader management
     virtual void DrawShapeNS(ShapeType type, const matrix44& model);
     /// draw direct primitives
     virtual void DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color);

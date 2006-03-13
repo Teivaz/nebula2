@@ -21,6 +21,7 @@
 #include "gfx2/nshaderparams.h"
 #include "gfx2/ninstancestream.h"
 #include "gfx2/nlight.h"
+#include "util/nattr.h"
 
 class nSceneServer;
 class nRenderContext;
@@ -119,19 +120,49 @@ public:
     const char* GetAnimatorAt(int index);
     /// invoke all animators
     void InvokeAnimators(int animatorType, nRenderContext* renderContext);
-    /// get an instance stream object for this node hierarchy, create if not exists yet
-    // nInstanceStream* GetInstanceStream();
+    /// return true if attribute exists
+    bool HasAttr(const nString& name) const;
+    /// generic read access to attribute
+    const nAttr& GetAttr(const nString& name) const;
+    /// set int custom attribute
+    void SetIntAttr(const nString& name, int val);
+    /// get int custom  attribute
+    int GetIntAttr(const nString& name) const;
+    /// set float custom attribute
+    void SetFloatAttr(const nString& name, float val);
+    /// get float custom attribute
+    float GetFloatAttr(const nString& name) const;
+    /// set bool custom attribute
+    void SetBoolAttr(const nString& name, bool val);
+    /// get bool custom attribute
+    bool GetBoolAttr(const nString& name) const;
+    /// set string custom attribute
+    void SetStringAttr(const nString& name, const nString& val);
+    /// get string custom attribute
+    nString GetStringAttr(const nString& name) const;
+    /// set vector3 custom attribute 
+    void SetVector3Attr(const nString& name, const vector3& val);
+    /// get vector3 custom attribute
+    const vector3& GetVector3Attr(const nString& name) const;
+    /// set vector4 custom attribute
+    void SetVector4Attr(const nString& name, const vector4& val);
+    /// get vector4 custom attribute
+    const vector4& GetVector4Attr(const nString& name) const;
+
+private:
+    /// find generic attribute by name
+    int FindAttrIndex(const nString& name) const;
 
 protected:
     /// recursively append instance parameters to provided instance stream declaration
     virtual void UpdateInstStreamDecl(nInstanceStream::Declaration& decl);
 
     bbox3 localBox;
-    nArray< nDynAutoRef<nAnimator> > animatorArray;
+    nArray<nDynAutoRef<nAnimator> > animatorArray;
+    nArray<nAttr> attrs;
     int renderPri;
     bool resourcesValid;
     ushort hints;
-    // nRef<nInstanceStream> refInstanceStream;
 };
 
 //------------------------------------------------------------------------------
@@ -237,5 +268,165 @@ nSceneNode::HasHints(ushort h) const
 {
     return h == (this->hints & h);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nSceneNode::FindAttrIndex(const nString& name) const
+{
+    int i;
+    int num = this->attrs.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (name == this->attrs[i].GetName())
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneNode::HasAttr(const nString& name) const
+{
+    return this->FindAttrIndex(name) != -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nAttr&
+nSceneNode::GetAttr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetIntAttr(const nString& name, int val)
+{
+    this->attrs.Append(nAttr(name, val));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nSceneNode::GetIntAttr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetInt();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetFloatAttr(const nString& name, float val)
+{
+    this->attrs.Append(nAttr(name, val));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nSceneNode::GetFloatAttr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetFloat();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetBoolAttr(const nString& name, bool val)
+{
+    this->attrs.Append(nAttr(name, val));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneNode::GetBoolAttr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetBool();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetStringAttr(const nString& name, const nString& val)
+{
+    this->attrs.Append(nAttr(name, val.Get()));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nSceneNode::GetStringAttr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetString();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetVector3Attr(const nString& name, const vector3& val)
+{
+    this->attrs.Append(nAttr(name, val));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3&
+nSceneNode::GetVector3Attr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetVector3();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneNode::SetVector4Attr(const nString& name, const vector4& val)
+{
+    this->attrs.Append(nAttr(name, val));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector4&
+nSceneNode::GetVector4Attr(const nString& name) const
+{
+    return this->attrs[this->FindAttrIndex(name)].GetVector4();
+}
+
 //------------------------------------------------------------------------------
 #endif

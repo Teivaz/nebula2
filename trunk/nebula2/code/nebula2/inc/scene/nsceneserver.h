@@ -45,10 +45,6 @@ public:
     void SetRenderPathFilename(const nString& renderPathFilename);
     /// get the render path filename
     const nString& GetRenderPathFilename() const;
-    /// set obey light link mode
-    void SetObeyLightLinks(bool b);
-    /// get obey light link mode
-    bool GetObeyLightLinks() const;
     /// open the scene server, call after nGfxServer2::OpenDisplay()
     virtual bool Open();
     /// close the scene server;
@@ -79,12 +75,21 @@ public:
     void SetRenderDebug(bool b);
     /// get debug visualization flag
     bool GetRenderDebug() const;
+    /// set obey light link mode
+    void SetObeyLightLinks(bool b);
+    /// get obey light link mode
+    bool GetObeyLightLinks() const;
     /// enable/disable occlusion query
     void SetOcclusionQuery(bool b);
     /// get occlusion query status
     bool GetOcclusionQuery() const;
+    /// enable/disable clip plane fencing for point lights
+    void SetClipPlaneFencing(bool b);
+    /// get clip plane fencing mode
+    bool GetClipPlaneFencing() const;
 
 private:
+
     static nSceneServer* Singleton;
 
     class Group
@@ -174,6 +179,7 @@ private:
     bool isOpen;
     bool inBeginScene;
     bool obeyLightLinks;
+    bool clipPlaneFencing;
     bool gfxServerInBeginScene; // HACK
     bool ffpLightingApplied;
     bool renderDebug;
@@ -212,7 +218,6 @@ private:
     nProfiler profEndScene_TextBuffer;
     nProfiler profEndScene_EndScene;
     nProfiler profEndScene_PresentScene;
-    nProfiler profEndScene_EndFrame;
 #endif
 };
 
@@ -225,6 +230,26 @@ nSceneServer::Instance()
 {
     n_assert(Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneServer::SetClipPlaneFencing(bool b)
+{
+    this->clipPlaneFencing = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::GetClipPlaneFencing() const
+{
+    return this->clipPlaneFencing;
 }
 
 //------------------------------------------------------------------------------

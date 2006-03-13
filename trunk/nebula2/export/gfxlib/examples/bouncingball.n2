@@ -34,7 +34,7 @@ new ntransformnode model
 			.setshader "static"
 			.setmesh "meshes:examples/bouncingball_s_0.n3d2"
 			.setgroupindex 1
-			.setvertexshaderneed false
+			.setneedsvertexshader false
 		sel ..
 	sel ..
 	new nshapenode static_0_0
@@ -52,7 +52,7 @@ new ntransformnode model
 		.setshader "static"
 		.setmesh "meshes:examples/bouncingball_s_0.n3d2"
 		.setgroupindex 0
-		.setvertexshaderneed false
+		.setneedsvertexshader false
 	sel ..
 sel ..
 new ntransformnode shadow

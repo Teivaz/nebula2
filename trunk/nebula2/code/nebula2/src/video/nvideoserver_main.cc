@@ -84,3 +84,21 @@ nVideoServer::Trigger()
     n_assert(this->isOpen);
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+nVideoPlayer*
+nVideoServer::NewVideoPlayer(nString name)
+{
+//    n_assert(this->isOpen);
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+   delete video player
+*/
+void   
+nVideoServer::DeleteVideoPlayer(nVideoPlayer* player)
+{
+};

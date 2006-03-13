@@ -40,15 +40,22 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// get the mesh usage flags required by this shape node
-    virtual int GetMeshUsage() const;
     /// set the mesh usage flags required by this shape node
     void SetMeshUsage(int usage);
+    /// get the mesh usage flags required by this shape node
+    int GetMeshUsage() const;
+    /// explicitely set the "needs vertex shader" mesh usage flag
+    void SetNeedsVertexShader(bool b);
+    /// explicutely get the "needs vertex shader" mesh usage flag
+    bool GetNeedsVertexShader() const;
 
     /// set the mesh resource name
     void SetMesh(const char* name);
     /// get the mesh resource name
     const char* GetMesh() const;
+    /// get mesh2 object
+    nMesh2* GetMeshObject();
+
     /// set the mesh group index
     void SetGroupIndex(int i);
     /// get the mesh group index
@@ -93,11 +100,16 @@ nShapeNode::GetGroupIndex() const
 
 //------------------------------------------------------------------------------
 /**
-    This method must return the mesh usage flag combination required by
-    this shape node class. Subclasses should override this method
-    based on their requirements.
+*/
+inline
+void
+nShapeNode::SetMeshUsage(int usage)
+{
+    this->meshUsage = usage;
+}
 
-    @return     a combination on nMesh2::Usage flags
+//------------------------------------------------------------------------------
+/**
 */
 inline
 int
@@ -111,9 +123,26 @@ nShapeNode::GetMeshUsage() const
 */
 inline
 void
-nShapeNode::SetMeshUsage(int usage)
+nShapeNode::SetNeedsVertexShader(bool b)
 {
-    this->meshUsage = usage;
+    if (b)
+    {
+        this->meshUsage |= nMesh2::NeedsVertexShader;
+    }
+    else
+    {
+        this->meshUsage &= ~nMesh2::NeedsVertexShader;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nShapeNode::GetNeedsVertexShader() const
+{
+    return 0 != (this->meshUsage & nMesh2::NeedsVertexShader);
 }
 
 //------------------------------------------------------------------------------

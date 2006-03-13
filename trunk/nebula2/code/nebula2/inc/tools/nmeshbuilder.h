@@ -182,6 +182,8 @@ public:
         void SetBinormal(const vector3& v);
         /// get triangle binormal
         const vector3& GetBinormal() const;
+        /// returns whether the vertexIndices equal those of <other>
+        bool Equals(Triangle &other) const;
 
         int vertexIndex[3];
         int usageFlags;
@@ -352,6 +354,8 @@ public:
     void FlipUvs();
     /// checks the mesh for geometry errors
     nArray<nString> CheckForGeometryError();
+    /// checks the mesh for duplicated face
+    nArray<nString> CheckForDuplicatedFaces();
     /// @}
 
 private:
@@ -374,6 +378,8 @@ private:
     static int __cdecl GroupedEdgeSorter(const void* elm0, const void* elm1);
     /// do an inflated component copy using a source mesh and a collapseMap
     void InflateCopyComponents(const nMeshBuilder& src, const nArray< nArray<int> >& collapseMap, int compMask);
+    /// searches for duplicated faces
+    nArray<int> SearchDuplicatedFaces();
     /// generate averaged vertex tangents using vertex splitting
     void BuildVertexTangentsWithSplits();
     /// generate averaged vertex tangents without vertex splitting
@@ -1022,6 +1028,29 @@ nMeshBuilder::Triangle::GetBinormal() const
 {
     n_assert(BINORMAL & this->compMask);
     return this->binormal;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nMeshBuilder::Triangle::Equals(nMeshBuilder::Triangle &other) const
+{
+    if( ((this->vertexIndex[0] == other.vertexIndex[0])||
+         (this->vertexIndex[0] == other.vertexIndex[1])||
+         (this->vertexIndex[0] == other.vertexIndex[2])) &&
+        ((this->vertexIndex[1] == other.vertexIndex[0])||
+         (this->vertexIndex[1] == other.vertexIndex[1])||
+         (this->vertexIndex[1] == other.vertexIndex[2])) &&
+        ((this->vertexIndex[2] == other.vertexIndex[0])||
+         (this->vertexIndex[2] == other.vertexIndex[1])||
+         (this->vertexIndex[2] == other.vertexIndex[2])) )
+    {
+        // all vertexIndices of this triangle are also in the other
+        // that means that they are equal
+        return true;
+    };
+    return false;
 }
 
 //------------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #include "gfx2/ntexture2.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nTexture2, "nresource");
+nNebulaScriptClass(nTexture2, "nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -38,7 +38,7 @@ nTexture2::~nTexture2()
     {
         this->compoundFile->Release();
         this->compoundFile = 0;
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -81,6 +81,17 @@ nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
 {
     // empty
 }
+
+
+//------------------------------------------------------------------------------
+/**
+    Saves the texture to a file
+*/
+bool
+nTexture2::SaveTextureToFile(const nString &filename)
+{
+    return false;
+};
 
 //------------------------------------------------------------------------------
 /**

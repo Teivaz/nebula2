@@ -60,7 +60,7 @@ nStaticShadowCaster2::LoadResource()
         meshLoader->SetFilename(this->GetFilename().Get());
         meshLoader->SetIndexType(nMeshLoader::Index16);
         meshLoader->SetValidVertexComponents(nMesh2::Coord);
-        if (meshLoader->Open(nFileServer2::Instance()))
+        if (meshLoader->Open())
         {
             // initialize the mesh from the mesh loader
             newMesh->SetVertexUsage(nMesh2::WriteOnce | nMesh2::NeedsVertexShader);

@@ -29,14 +29,21 @@
     <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
     <Shader name="skybox" file="shaders:shaders.fx" />
     <Shader name="particle" file="shaders:shaders.fx" />
+    <Shader name="particle2" file="shaders:shaders.fx" />
     <Shader name="hdr" file="shaders:hdr.fx" />
     <Shader name="layered" file="shaders:shaders.fx" />
+    <Shader name="multilayered" file="shaders:shaders.fx" />
     <Shader name="copy_stencil" file="shaders:shadow_copy.fx" />
     <Shader name="gui3d" file="shaders:shaders.fx" />
     <Shader name="waterdepthcompose" file="shaders:shaders.fx" />
     <!-- ASIM -->
     <Shader name="underwaterground" file="shaders:asim.fx" />
     <Shader name="underwater" file="shaders:asim.fx" />
+    <!-- Speedtree -->
+    <Shader name="branch" file="shaders:treeshader.fx" />
+    <Shader name="frond" file="shaders:treeshader.fx" />
+    <Shader name="leaves" file="shaders:treeshader.fx" />
+    <Shader name="billboard" file="shaders:treeshader.fx" />
     
     <!-- define render targets -->
     <RenderTarget name="Scene"          format="X8R8G8B8" relSize="1.0" />
@@ -55,7 +62,7 @@
     <Float4 name="Luminance"              value="0.299 0.587 0.114 0.0" />
     <Float4 name="Balance"                value="1.0 1.0 1.0 1.0" />
     <Float  name="Saturation"             value="1.0" />
-    <Float  name="HdrBrightPassThreshold" value="0.7" />
+    <Float  name="HdrBrightPassThreshold" value="1.0" />
     <Float  name="HdrBrightPassOffset"    value="1.0" />
     <Float  name="HdrBloomScale"          value="1.0" />
     <Float4 name="FogDistances"           value="0.0 200.0 0.0 0.0" />
@@ -70,12 +77,13 @@
         <!-- depth pass -->
         <Pass name="depth" shader="passes" technique="tPassDepth" renderTarget="Depth" clearColor="0.0 0.0 0.0 1.0" clearDepth="1.0" clearStencil="0">
             <Phase name="depth" shader="phases" technique="tPhaseDepth" sort="FrontToBack" lightMode="Off">
-                <Sequence shader="static"       technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
+                <Sequence shader="static"       technique="tStaticDepth" shaderUpdates="Yes" mvpOnly="Yes" />
                 <Sequence shader="environment"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="lightmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundDepth" shaderUpdates="No" mvpOnly="Yes" />               
                 <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                 <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />
@@ -83,10 +91,13 @@
             <Phase name="depthAlphaTest" shader="phases" technique="tPhaseATestDepth" sort="FrontToBack" lightMode="Off">
                 <Sequence shader="static_atest" technique="tStaticDepthATest" mvpOnly="Yes" />
                 <Sequence shader="tree" technique="tTreeDepth" mvpOnly="Yes" />
-                <Sequence shader="leaf" technique="tLeafDepth" />
+                <Sequence shader="leaf" technique="tLeafDepth" />          
+                <Sequence shader="branch"    	technique="tBranchDepth" mvpOnly="Yes" />
+                <Sequence shader="frond"     	technique="tBranchDepth" mvpOnly="Yes" />            	
+                <Sequence shader="leaves"    	technique="tLeavesDepth" mvpOnly="Yes" />
+                <Sequence shader="billboard"    technique="tBillboardDepth" mvpOnly="Yes" />
             </Phase>
         </Pass>
-
         <!-- perform occlusion culling -->
         <Pass name="occlusionQuery" occlusionQuery="Yes" />
               
@@ -108,6 +119,7 @@
                 <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColorHDRShadow" firstLightAlpha="Yes" mvpOnly="Yes"/>
                 <Sequence shader="skinned"      technique="tSkinnedColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="layered"      technique="tLayeredColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
+                <Sequence shader="multilayered" technique="tMultiLayeredColorHDRShadow"   firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="blended"      technique="tBlendedColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundColorHDRShadow" firstLightAlpha="No" mvpOnly="Yes"/>
             </Phase>
@@ -117,7 +129,11 @@
                 </Sequence>
                 <Sequence shader="leaf"         technique="tLeafColorHDR"           firstLightAlpha="No" />
                 <Sequence shader="tree"         technique="tTreeColorHDRShadow"     firstLightAlpha="No" mvpOnly="Yes"/>        
-            </Phase>      
+                <Sequence shader="branch"       technique="tBranchColorHDRShadow"     	firstLightAlpha="No" mvpOnly="Yes"/>        
+                <Sequence shader="frond"        technique="tBranchColorHDRShadow"     	firstLightAlpha="No" mvpOnly="Yes"/>
+                <Sequence shader="leaves"       technique="tLeavesColorHDR"     		firstLightAlpha="No" mvpOnly="Yes"/>    
+                <Sequence shader="billboard"   technique="tBillboardColorHDRShadow"     firstLightAlpha="No" mvpOnly="Yes"/>                  	    
+            </Phase> 
             <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="Shader">
                 <Sequence shader="alpha" technique="tStaticAlphaColorHDRShadow"   firstLightAlpha="Yes" mvpOnly="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
@@ -134,6 +150,11 @@
             
             <Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
                 <Sequence shader="particle" technique="tParticleColorHDR" firstLightAlpha="Yes">
+                    <Texture name="AmbientMap1" value="Shadow" />
+                </Sequence>                
+            </Phase>
+            <Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
+                <Sequence shader="particle2" technique="tParticle2ColorHDR" firstLightAlpha="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
                 </Sequence>                
             </Phase>
@@ -207,6 +228,7 @@
                 <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundDepth" shaderUpdates="No" mvpOnly="Yes" />                
                 <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                 <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />
@@ -231,6 +253,7 @@
                 <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColor" firstLightAlpha="Yes" mvpOnly="Yes"/>
                 <Sequence shader="skinned"      technique="tSkinnedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="layered"      technique="tLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
+                <Sequence shader="multilayered" technique="tMultiLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundColor" firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>               
             </Phase>
@@ -267,6 +290,7 @@
                 <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                 <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />

@@ -14,7 +14,7 @@ new ntransformnode model
 		.setshader "particle"
 		.setmesh "meshes:examples/fire_pe_0.n3d2"
 		.setgroupindex 0
-		.setvertexshaderneed true
+		.setneedsvertexshader true
 		.setemissionfrequency 70.000000 70.000000 70.000000 70.000000 0.292857 0.721429 10.000000 10.000000 0
 		.setparticlelifetime 1.000000 1.000000 1.000000 1.000000 0.328571 0.721429 10.000000 0.500000 0
 		.setparticlestartvelocity 3.000000 3.000000 3.000000 3.000000 0.300000 0.700000 0.000000 0.000000 0

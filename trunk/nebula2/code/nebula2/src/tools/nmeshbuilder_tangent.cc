@@ -6,8 +6,10 @@
 
 //------------------------------------------------------------------------------
 /**
-    Build triangle normals, tangents and binormals.
-    The tangents require a valid uv-mapping in texcoord layer 0.
+    Build triangle normals and tangents. The tangents require a valid 
+    uv-mapping in texcoord layer 0.
+
+    02-Sep-03   floh    no longer generates Binormals
 */
 void
 nMeshBuilder::BuildTriangleNormals()
@@ -95,6 +97,8 @@ nMeshBuilder::BuildTriangleNormals()
                                 edges, but the number of vertices may
                                 change, this may be problematic for
                                 blendshapes
+
+    02-Sep-03   floh    no longer generates Binormals
 */
 void
 nMeshBuilder::BuildVertexTangents(bool allowVertexSplits)

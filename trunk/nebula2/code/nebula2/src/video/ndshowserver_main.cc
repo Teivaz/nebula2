@@ -3,7 +3,9 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "video/ndshowserver.h"
+#include "video/noggtheoraplayer.h"
 #include "kernel/nfileserver2.h"
+#include "kernel/ntimeserver.h"
 
 #include "gfx2/nd3d9server.h"
 
@@ -20,7 +22,8 @@ nDShowServer::nDShowServer() :
     mediaEvent(0),
     videoWindow(0),
     basicVideo(0),
-    firstFrame(false)
+    firstFrame(false),
+    timeSet(false)
 {
     HRESULT hr = CoInitialize(NULL);
 }
@@ -61,6 +64,10 @@ nDShowServer::Close()
 {
     n_assert(this->IsOpen());
 
+    while(videoPlayers.Size()>0)
+    {
+        this->DeleteVideoPlayer(videoPlayers.At(0));
+    }
     if (this->IsPlaying())
     {
         this->Stop();
@@ -88,6 +95,15 @@ nDShowServer::PlayFile(const char* filename)
     HRESULT hr;
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
+    gfxServer->BeginFrame();
+    gfxServer->BeginScene();
+    gfxServer->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
+    gfxServer->EndScene();
+    gfxServer->PresentScene();
+    gfxServer->EndFrame();
+
+    gfxServer->EnterDialogBoxMode();
+
     gfxServer->BeginFrame();
     gfxServer->BeginScene();
     gfxServer->Clear(nGfxServer2::AllBuffers, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0);
@@ -148,9 +164,6 @@ nDShowServer::PlayFile(const char* filename)
         videoLeft = ((rect.right + rect.left) - videoWidth) / 2;
         videoTop = ((rect.bottom + rect.top) - videoHeight) / 2;
     }
-
-    // enable dialog box mode in gfx server
-    nGfxServer2::Instance()->EnterDialogBoxMode();
 
     // setup video window
     hr = this->videoWindow->put_AutoShow(OATRUE);
@@ -224,6 +237,40 @@ void
 nDShowServer::Trigger()
 {
     n_assert(this->IsOpen());
+
+    nTime time = nTimeServer::Instance()->GetTime();
+    if(!timeSet)
+    {
+        oldTime=time;
+        timeSet = true;
+    };
+
+    // check if time-reset occured
+    if(time < oldTime)
+    {
+        oldTime = time;
+        // rewind players
+        int i;
+        for( i = 0; i<videoPlayers.Size() ; i++)
+        {
+            nVideoPlayer*   currentPlayer = videoPlayers.At(i);
+            if(currentPlayer->IsOpen())
+                currentPlayer->Rewind();
+        };
+
+    };
+
+    nTime deltaTime = time - oldTime;
+    oldTime = time;
+
+    int i;
+    for( i = 0; i<videoPlayers.Size() ; i++)
+    {
+        nVideoPlayer*   currentPlayer = videoPlayers.At(i);
+        if(currentPlayer->IsOpen())
+            currentPlayer->Decode(deltaTime);
+    };
+
     if (this->IsPlaying())
     {
         n_assert(this->mediaEvent);
@@ -272,3 +319,34 @@ nDShowServer::Trigger()
 }
 
 
+//------------------------------------------------------------------------------
+/**
+*/
+nVideoPlayer*
+nDShowServer::NewVideoPlayer(nString name)
+{
+    nVideoPlayer*   player = (nVideoPlayer*) nResourceServer::Instance()->NewResource("noggtheoraplayer", name.Get(), nResource::Other);
+    player->SetFilename(name);
+    videoPlayers.PushBack(player);
+    return player;
+}
+
+//------------------------------------------------------------------------------
+/**
+   delete video player
+*/
+void   
+nDShowServer::DeleteVideoPlayer(nVideoPlayer* player)
+{
+    n_assert(player);
+    int i;
+    for( i = 0; i<videoPlayers.Size() ; i++)
+        if(videoPlayers.At(i) == player)
+        {
+            videoPlayers.Erase(i);
+            break;
+        };
+    if(player->IsOpen())
+        player->Close();
+    player->Release();
+};

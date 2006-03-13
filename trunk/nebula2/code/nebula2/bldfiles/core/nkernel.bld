@@ -86,13 +86,18 @@ endmodule
 beginmodule nutil
     setdir util
     setheaders {
+        nangularpfeedbackloop
         nanimkey
         nanimkeyarray
         nanimlooptype
         narray
         narray2
+        nattr
+        natom
         nbitstream
         nbucket
+        nbuffer
+        ndie
         neditline
         nfixedarray
         nhashlist
@@ -100,6 +105,9 @@ beginmodule nutil
         nhashmap2
         nhashnode
         nhashtable
+        nhttpresponsecracker
+        nhttpformdatawrapper
+        nhttpsession
         nipolkeyarray
         nkeyarray
         nlinebuffer
@@ -108,25 +116,20 @@ beginmodule nutil
         nnode
         nobjectlist
         nobjectnode
+        npfeedbackloop
+        npidfeedbackloop
+        npquatfeedbackloop
         npriorityarray
+        nquadtree
         nringbuffer
         nstack
+        nstartupchecker
+        nstream
         nstring
         nstrlist
         nstrnode
         ntabcomplete
         nthreadvariable
-        nangularpfeedbackloop
-        npquatfeedbackloop
-        npfeedbackloop
-        natom
-        ndie
-        nhttpresponsecracker
-        nhttpformdatawrapper
-        nhttpsession
-        nhashmap
-        nquadtree
-        nbuffer
         nvariant
     }
     setfiles {

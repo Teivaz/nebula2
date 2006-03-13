@@ -237,6 +237,7 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         nD3D9Shader* shd = this->refSharedShader.get();
         bool mvpOnly = this->GetHint(MvpOnly);
         bool setMVP = false;
+        bool setEyeDir = false;
         bool setEyePos = false;
         bool setModelEyePos = false;
         switch (type)
@@ -263,6 +264,7 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
                     setEyePos = true;
                 }
                 setModelEyePos = true;
+                setEyeDir = true;
                 setMVP = true;
                 break;
 
@@ -318,6 +320,10 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         if (setModelEyePos)
         {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
+        }
+        if (setEyeDir)
+        {
+            shd->SetVector3(nShaderState::EyeDir, -this->transform[View].z_component());
         }
     }
 }

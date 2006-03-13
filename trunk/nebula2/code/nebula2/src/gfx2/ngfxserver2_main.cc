@@ -222,6 +222,8 @@ void
 nGfxServer2::SetCamera(nCamera2& camera)
 {
     this->camera = camera;
+    this->SetTransform(Projection, camera.GetProjection());
+    this->SetTransform(ShadowProjection, camera.GetShadowProjection());
 }
 
 //------------------------------------------------------------------------------
@@ -1022,6 +1024,11 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
     
     while (!finished)
     {
+        while (outString[lineEndTestMark] == ' ' && outString[lineEndTestMark] != '\0')
+        {
+           lineEndTestMark++;
+        }
+
         // search the next white space for test newline test
         while (!finished && (outString[lineEndTestMark] != ' '))
         {
@@ -1065,7 +1072,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
                     // insert the new line at the current test positon
                     lastLineBegin = lineEndTestMark;
                     previousLineEndTestMark = lastLineBegin;
-                    outString[lastLineBegin] = '\n';
+                    outString[lastLineBegin-1] = '\n';
                     
                     // debug
                     n_printf("nGfxServer2::BreakLines(): found a part in the text that don't fit into one line. Please insert a new line manual!\n\

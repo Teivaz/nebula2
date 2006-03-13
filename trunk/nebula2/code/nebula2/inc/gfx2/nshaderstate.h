@@ -47,6 +47,7 @@ enum Param
     InvModelView,                   // matrix: the inverse of the model view matrix
     ModelViewProjection,            // matrix: the model*view*projection matrix
     ModelShadowProjection,          // matrix: the model*shadow*projection matrix (shadow == shadow source)
+    EyeDir,                         // vector3: the eye direction, if no view matrix is set seperately
     EyePos,                         // vector: the eye position in world space
     ModelEyePos,                    // vector: the eye position in model space
     ModelLightPos,                  // vector: the light position in model space
@@ -158,7 +159,17 @@ enum Param
     Color2,                         // color: general color
     Color3,                         // color: general color
     HalfPixelSize,                  // half size of a pixel of the current display resolution
-    
+    MLPUVStretch,                   // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch0,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch1,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch2,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch3,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch4,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch5,                     // parameters for MultiLayer - Shader (UV-stretches)
+    LeafCluster,                    // float4[]: leaf cluster table for gpu leaf placement
+    LeafAngleMatrices,              // matrix44[]: leaf angle matrices for leaf rocking and billboarding
+    WindMatrices,                   // matrix44[]: wind matrices for moving branches, leaves, etc. in wind
+
     NumParameters,                  // keep this always at the end!
     InvalidParameter,
 };

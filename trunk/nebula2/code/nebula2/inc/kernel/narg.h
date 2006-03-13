@@ -262,7 +262,7 @@ nArg::Copy(va_list * marker)
             
         case Float:    
             // Compiler passes floats as double to variable argument functions 
-            this->f = static_cast<float> (va_arg(*marker, double)); 
+            this->f = float(va_arg(*marker, double)); 
             break;
 
         case String:

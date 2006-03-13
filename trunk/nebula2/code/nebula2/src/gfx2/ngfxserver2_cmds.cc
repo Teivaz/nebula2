@@ -112,7 +112,7 @@ n_getdisplaymode(void* slf, nCmd* cmd)
 {
     nGfxServer2* self = (nGfxServer2*) slf;
     const nDisplayMode2& mode = self->GetDisplayMode();
-    cmd->Out()->SetS(mode.GetWindowTitle());
+    cmd->Out()->SetS(mode.GetWindowTitle().Get());
     cmd->Out()->SetS(nDisplayMode2::TypeToString(mode.GetType()));
     cmd->Out()->SetI(mode.GetXPos());
     cmd->Out()->SetI(mode.GetYPos());

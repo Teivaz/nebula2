@@ -17,6 +17,7 @@ static void n_endfragments(void* slf, nCmd* cmd);
 static void n_getnumfragments(void* slf, nCmd* cmd);
 static void n_getjointpalettesize(void* slf, nCmd* cmd);
 static void n_getjointindex(void* slf, nCmd* cmd);
+static void n_setchar3variationflag(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -48,6 +49,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("i_getnumfragments_v",           'GNFR', n_getnumfragments);
     cl->AddCmd("i_getjointpalettesize_i",       'GJPS', n_getjointpalettesize);
     cl->AddCmd("i_getjointindex_ii",            'GJIX', n_getjointindex);
+    cl->AddCmd("v_setchar3variationflag_v",     'SCVF', n_setchar3variationflag);
     cl->EndCmds();
 }
 
@@ -230,6 +232,25 @@ n_endfragments(void* slf, nCmd* /*cmd*/)
 //------------------------------------------------------------------------------
 /**
     @cmd
+    setchar3variationflag
+    @input
+    v
+    @output
+    v
+    @info
+    Sets the character3 variation flag
+*/
+static void
+n_setchar3variationflag(void* slf, nCmd* /*cmd*/)
+{
+    nSkinShapeNode* self = (nSkinShapeNode*) slf;
+    self->SetChar3VariationFlag(true);
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
     getnumfragments
     @input
     v
@@ -292,6 +313,13 @@ nSkinShapeNode::SaveCmds(nPersistServer* ps)
     if (nShapeNode::SaveCmds(ps))
     {
         nCmd* cmd;
+
+        //--- setchar3variationflag ---
+        if(this->isChar3AndBoundToVariation)
+        {
+            cmd = ps->GetCmd(this, 'SCVF');
+            ps->PutCmd(cmd);
+        };
 
         //--- setskinanimator ---
         cmd = ps->GetCmd(this, 'SSKA');

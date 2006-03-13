@@ -25,6 +25,7 @@ shared float4   ShadowIndex;            // shadow light index
 
 shared float3   ModelEyePos;            // the eye pos in model space
 shared float3   EyePos;                 // the eye pos in world space
+shared float3   EyeDir;                 // the eye dir in world space
 shared float4x4 TextureTransform0;      // texture transform for uv set 0
 shared float4x4 TextureTransform1;      // texture transform for uv set 1
 shared float4x4 TextureTransform2;      // texture transform for uv set 0
