@@ -7,7 +7,6 @@
 #      nmesh2
 #      nmousecursor
 #      nshader2
-#      nshaderlist
 #      nsurface
 #      ntexture2
 #      nwindowhandler
@@ -28,8 +27,9 @@ beginmodule ngfxserver2
     setfiles { 
         ngfxserver2_main 
         ngfxserver2_cmds 
-        nshaderstate nshaderlist 
-        ndynamicmesh ndynamicshadermesh 
+        nshaderstate
+        ndynamicmesh
+        ndynamicshadermesh 
     }
     setheaders {
         ngfxserver2 
@@ -87,7 +87,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule ntexture2
     setdir gfx2
-    setfiles { ntexture2_main }
+    setfiles { ntexture2_main ntexture2_cmds }
     setheaders { ntexture2 }
 endmodule
 #-------------------------------------------------------------------------------

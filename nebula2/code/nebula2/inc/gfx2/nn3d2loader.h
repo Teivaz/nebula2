@@ -22,7 +22,7 @@ public:
     /// destructor
     virtual ~nN3d2Loader();
     /// open file and read header data
-    virtual bool Open(nFileServer2* fs);
+    virtual bool Open();
     /// close the file
     virtual void Close();
     /// read vertex data
@@ -58,13 +58,11 @@ nN3d2Loader::~nN3d2Loader()
 */
 inline
 bool
-nN3d2Loader::Open(nFileServer2* fs)
+nN3d2Loader::Open()
 {
     n_assert(!this->file);
-    n_assert(fs);
 
-    this->fileServer = fs;
-    this->file = this->fileServer->NewFileObject();
+    this->file = nFileServer2::Instance()->NewFileObject();
     n_assert(this->file);
 
     // open the file
@@ -185,7 +183,7 @@ nN3d2Loader::Open(nFileServer2* fs)
         }
     }
 
-    return nMeshLoader::Open(fileServer);
+    return nMeshLoader::Open();
 }
 
 //------------------------------------------------------------------------------

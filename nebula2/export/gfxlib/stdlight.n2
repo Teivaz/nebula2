@@ -26,7 +26,7 @@ new nshapenode skybox
     .setshader "skybox"
     .setmesh "meshes:skybox.n3d2"
     .setgroupindex 0
-    .setvertexshaderneed false
+    .setneedsvertexshader false
 sel ..
 # ---
 # Eof

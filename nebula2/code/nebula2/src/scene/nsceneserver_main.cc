@@ -44,7 +44,8 @@ nSceneServer::nSceneServer() :
     dbgNumNotOccluded("sceneNumNotOccluded", nArg::Int),
     dbgOccludeViewerInBox("sceneNumOccludeViewerInBox", nArg::Int),
     occlusionQuery(0),
-    occlusionQueryEnabled(true)
+    occlusionQueryEnabled(true),
+    clipPlaneFencing(true)
 #if __NEBULA_STATS__
     ,profFrame("profSceneFrame"),
     profAttach("profSceneAttach"),
@@ -56,8 +57,7 @@ nSceneServer::nSceneServer() :
     profOcclusion("profSceneOcclusion"),
     profEndScene_TextBuffer("profEndScene_TextBuffer"),
     profEndScene_EndScene("profEndScene_EndScene"),
-    profEndScene_PresentScene("profEndScene_PresentScene"),
-    profEndScene_EndFrame("profEndScene_EndFrame")
+    profEndScene_PresentScene("profEndScene_PresentScene")
 #endif
 {
     n_assert(0 == Singleton);
@@ -375,9 +375,9 @@ nSceneServer::RenderCameraScene()
 void
 nSceneServer::PresentScene()
 {
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     if (this->gfxServerInBeginScene)
     {
-        nGfxServer2* gfxServer = nGfxServer2::Instance();
         if (this->renderDebug)
         {
             this->DebugRenderLightScissors();
@@ -404,15 +404,10 @@ nSceneServer::PresentScene()
         
         #if __NEBULA_STATS__
         this->profEndScene_PresentScene.Stop();
-        this->profEndScene_EndFrame.Start();
-        #endif
-        
-        gfxServer->EndFrame();
-        
-        #if __NEBULA_STATS__
-        this->profEndScene_EndFrame.Stop();
         #endif
     }
+    gfxServer->EndFrame();
+
     #if __NEBULA_STATS__
     this->profFrame.Stop();
     #endif
@@ -1284,29 +1279,32 @@ nSceneServer::ComputeLightScissor(LightInfo& lightInfo)
 void
 nSceneServer::ComputeLightClipPlanes(LightInfo& lightInfo)
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-
-    const Group& lightGroup = this->groupArray[lightInfo.groupIndex];
-    nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
-
-    n_assert(0 != lightNode && lightNode->IsA(this->lightNodeClass));
-    
-    lightInfo.clipPlanes.Reset();
-
-    nLight::Type lightType = lightNode->GetType();
-    if (nLight::Point == lightType)
+    if (this->clipPlaneFencing)
     {
-        // get the point light's global space bounding box
-        matrix44 mvp = lightGroup.modelTransform * gfxServer->GetTransform(nGfxServer2::ViewProjection);
-        lightNode->GetLocalBox().get_clipplanes(mvp, lightInfo.clipPlanes);
-    }
-    else if (nLight::Directional == lightType)
-    {
-        // directional light have no user clip planes
-    }
-    else
-    {
-        n_error("nSceneServer::ComputeLightClipPlanes(): unsupported light type!");
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+        const Group& lightGroup = this->groupArray[lightInfo.groupIndex];
+        nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
+
+        n_assert(0 != lightNode && lightNode->IsA(this->lightNodeClass));
+        
+        lightInfo.clipPlanes.Reset();
+
+        nLight::Type lightType = lightNode->GetType();
+        if (nLight::Point == lightType)
+        {
+            // get the point light's global space bounding box
+            matrix44 mvp = lightGroup.modelTransform * gfxServer->GetTransform(nGfxServer2::ViewProjection);
+            lightNode->GetLocalBox().get_clipplanes(mvp, lightInfo.clipPlanes);
+        }
+        else if (nLight::Directional == lightType)
+        {
+            // directional light have no user clip planes
+        }
+        else
+        {
+            n_error("nSceneServer::ComputeLightClipPlanes(): unsupported light type!");
+        }
     }
 }
 
@@ -1345,8 +1343,11 @@ nSceneServer::ApplyLightScissors(const LightInfo& lightInfo)
 void
 nSceneServer::ApplyLightClipPlanes(const LightInfo& lightInfo)
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    gfxServer->SetClipPlanes(lightInfo.clipPlanes);
+    if (this->clipPlaneFencing)
+    {
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+        gfxServer->SetClipPlanes(lightInfo.clipPlanes);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1356,11 +1357,14 @@ nSceneServer::ApplyLightClipPlanes(const LightInfo& lightInfo)
 void
 nSceneServer::ResetLightScissorsAndClipPlanes()
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    static const rectangle fullScreenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
-    gfxServer->SetScissorRect(fullScreenRect);
-    nArray<plane> nullArray(0, 0);
-    gfxServer->SetClipPlanes(nullArray);
+    if (this->clipPlaneFencing)
+    {
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+        static const rectangle fullScreenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+        gfxServer->SetScissorRect(fullScreenRect);
+        nArray<plane> nullArray(0, 0);
+        gfxServer->SetClipPlanes(nullArray);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1641,19 +1645,3 @@ nSceneServer::GatherShadowLights()
         this->shadowLightArray.Append(lightInfo);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

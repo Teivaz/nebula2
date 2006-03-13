@@ -120,6 +120,52 @@ nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
 
 //------------------------------------------------------------------------------
 /**
+    Checks whether the requested multisample type is supported, and returns
+    a D3D-Multisample type which will definitely work.
+*/
+D3DMULTISAMPLE_TYPE
+nD3D9Server::CheckMultiSampleType(D3DFORMAT backbufferFormat,
+                                  D3DFORMAT depthFormat,
+                                  bool windowed)
+{
+    n_assert(this->d3d9);
+    HRESULT hr;
+    D3DMULTISAMPLE_TYPE d3dMsType = (D3DMULTISAMPLE_TYPE) this->GetDisplayMode().GetAntiAliasSamples();
+    if (D3DMULTISAMPLE_NONE != d3dMsType)
+    {
+        // need to check both back buffer and zbuffer
+        hr = this->d3d9->CheckDeviceMultiSampleType(N_D3D9_ADAPTER,
+                                                    N_D3D9_DEVICETYPE,
+                                                    backbufferFormat,
+                                                    windowed,
+                                                    d3dMsType,
+                                                    NULL);
+        if (FAILED(hr))
+        {
+            // not supported
+            d3dMsType = D3DMULTISAMPLE_NONE;
+        }
+        else
+        {
+            hr = this->d3d9->CheckDeviceMultiSampleType(N_D3D9_ADAPTER,
+                                                        N_D3D9_DEVICETYPE,
+                                                        depthFormat,
+                                                        windowed,
+                                                        d3dMsType,
+                                                        NULL);
+
+            if (FAILED(hr))
+            {
+                // not supported
+                d3dMsType = D3DMULTISAMPLE_NONE;
+            }
+        }
+    }
+    return d3dMsType;
+}
+
+//------------------------------------------------------------------------------
+/**
     Returns the number of bits in a d3d format.
 */
 int
@@ -331,20 +377,16 @@ nD3D9Server::DeviceOpen()
     D3DFORMAT zbufFormat;
     this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, backFormat, zbufFormat);
 
+    // get d3d multisample type
+    D3DMULTISAMPLE_TYPE d3dMultiSampleType = this->CheckMultiSampleType(backFormat, zbufFormat, this->windowHandler.GetDisplayMode().GetType() != nDisplayMode2::Fullscreen);
+
     // define device behaviour flags
-    #ifdef __NEBULA_NO_THREADS__
     this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
-    #else
-    //this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_MULTITHREADED;
-    this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
-    #endif
 
     #if N_D3D9_DEBUG
-
         this->deviceBehaviourFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL | D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
         n_printf("nD3D9Server: using enforced software vertex processing\n");
-
     #else 
         // check if hardware vertex shaders are supported, if not,
         // activate mixed vertex processing
@@ -361,10 +403,6 @@ nD3D9Server::DeviceOpen()
                 {        
                     this->deviceBehaviourFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
                     n_printf("nD3D9Server: using hardware vertex processing\n");
-                    if (this->devCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
-                    {
-                        this->deviceBehaviourFlags |= D3DCREATE_PUREDEVICE;
-                    }
                 }
                 else
                 {
@@ -382,10 +420,12 @@ nD3D9Server::DeviceOpen()
     #endif
 
     // check for dialog box mode
+/*
     if (this->windowHandler.GetDisplayMode().GetDialogBoxMode())
     {
         this->presentParams.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
     }
+*/
 
     // define presentation parameters
     if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
@@ -411,7 +451,7 @@ nD3D9Server::DeviceOpen()
     this->presentParams.BackBufferWidth                 = this->windowHandler.GetDisplayMode().GetWidth();
     this->presentParams.BackBufferHeight                = this->windowHandler.GetDisplayMode().GetHeight();
     this->presentParams.BackBufferFormat                = backFormat;
-    this->presentParams.MultiSampleType                 = D3DMULTISAMPLE_NONE;
+    this->presentParams.MultiSampleType                 = d3dMultiSampleType;
     this->presentParams.MultiSampleQuality              = 0;
     this->presentParams.SwapEffect                      = D3DSWAPEFFECT_DISCARD;
     this->presentParams.hDeviceWindow                   = this->windowHandler.GetHwnd();
@@ -717,6 +757,7 @@ nD3D9Server::UpdateCursor()
         switch (this->cursorVisibility)
         {
             case nGfxServer2::None:
+            case nGfxServer2::Gui:
                 SetCursor(NULL);
                 this->d3d9Device->ShowCursor(FALSE);
                 break;

@@ -55,6 +55,10 @@ public:
     int GetShaderIndex();
     /// get pointer to shader object
     nShader2* GetShaderObject();
+    /// set maya shader name
+    void SetMayaShaderName(nString name);
+    /// get maya shader name
+    nString GetMayaShaderName() const;
 
 protected:
     /// recursively append instance parameters to provided instance stream declaration
@@ -68,6 +72,7 @@ private:
     /// checks if shader uses texture passed in param
     virtual bool IsTextureUsed(nShaderState::Param param);
 
+    nString mayaShaderName;
     nString shaderName;
     int shaderIndex;
     nRef<nShader2> refShader;
@@ -99,6 +104,26 @@ nMaterialNode::GetShaderIndex()
         this->LoadResources();
     }
     return this->shaderIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMaterialNode::SetMayaShaderName(nString name)
+{
+    this->mayaShaderName = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+nMaterialNode::GetMayaShaderName() const
+{
+    return this->mayaShaderName;
 }
 
 

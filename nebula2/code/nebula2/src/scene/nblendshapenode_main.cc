@@ -189,7 +189,6 @@ nBlendShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
     return true;
 }
 
-
 //------------------------------------------------------------------------------
 /**
     Update geometry, set as current mesh in the gfx server and

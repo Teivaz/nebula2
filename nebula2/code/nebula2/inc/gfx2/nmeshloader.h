@@ -111,7 +111,7 @@ public:
     /// get the valid vertex components
     int GetValidVertexComponents();
     /// open the file and read header data
-    virtual bool Open(nFileServer2* fileServer);
+    virtual bool Open();
     /// close the file
     virtual void Close();
     /// get number of groups (valid after Open())
@@ -138,7 +138,6 @@ public:
     virtual bool ReadEdges(void* buffer, int bufferSize);
 
 protected:
-    nFileServer2* fileServer;
     nString filename;
     nFile* file;
     IndexType indexType;
@@ -160,7 +159,6 @@ protected:
 */
 inline
 nMeshLoader::nMeshLoader() :
-    fileServer(0),
     file(0),
     indexType(Index16),
     numGroups(0),
@@ -256,7 +254,7 @@ nMeshLoader::GetValidVertexComponents()
 */
 inline
 bool
-nMeshLoader::Open(nFileServer2* /*fileServer*/)
+nMeshLoader::Open()
 {
     n_assert(0 != this->fileVertexWidth);
     n_assert(0 != this->fileVertexComponents);

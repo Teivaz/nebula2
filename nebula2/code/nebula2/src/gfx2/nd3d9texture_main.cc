@@ -98,6 +98,11 @@ nD3D9Texture::UnloadResource()
         this->textureCube = 0;
     }
 
+    if( this->usage & Video )
+    {
+        nVideoServer::Instance()->DeleteVideoPlayer(this->videoPlayer);
+    };
+
     this->SetState(Unloaded);
 }
 
@@ -136,6 +141,11 @@ nD3D9Texture::LoadResource()
             this->SetState(Empty);
         }
         return true;
+    }
+    else if (filename.CheckExtension("ogg"))
+    {
+        // load file through D3DX, assume file has mip maps 
+        success = this->LoadOGGFile();
     }
     else if (filename.CheckExtension("dds"))
     {
@@ -364,6 +374,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
             case D3DFMT_X1R5G5B5:       this->SetFormat(R5G6B5); break;
             case D3DFMT_A1R5G5B5:       this->SetFormat(A1R5G5B5); break;
             case D3DFMT_A4R4G4B4:       this->SetFormat(A4R4G4B4); break;
+            case D3DFMT_G16R16:         this->SetFormat(G16R16); break;
             case D3DFMT_DXT1:           this->SetFormat(DXT1); break;
             case D3DFMT_DXT2:           this->SetFormat(DXT2); break;
             case D3DFMT_DXT3:           this->SetFormat(DXT3); break;
@@ -449,7 +460,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (!file->Open(this->GetFilename().Get(), "rb"))
     {
-        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", this->GetFilename().Get());
+        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", nFileServer2::Instance()->ManglePath(this->GetFilename().Get()).Get());
         file->Release();
         return false;
     }
@@ -644,6 +655,28 @@ nD3D9Texture::CreateEmptyTexture()
     this->QueryD3DTextureAttributes();
     return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Create an Ogg File.
+*/
+bool
+nD3D9Texture::LoadOGGFile()
+{
+    videoPlayer = nVideoServer::Instance()->NewVideoPlayer(this->GetFilename().Get());
+    videoPlayer->SetTexture(this);
+    videoPlayer->Open();
+
+    this->SetWidth(videoPlayer->getWidth());
+    this->SetHeight(videoPlayer->getHeight());
+    this->SetFormat(A8R8G8B8);
+    this->SetType(TEXTURE_2D);
+    this->SetUsage(Dynamic | Video);
+
+    this->CreateEmptyTexture();
+    return true;
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -948,6 +981,21 @@ nD3D9Texture::GetByteSize()
         return 0;
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Save texture to file
+*/
+bool
+nD3D9Texture::SaveTextureToFile(const nString &filename)
+{
+    n_assert(baseTexture);
+    n_assert(filename.IsValid());
+    nString physicalFileName = nFileServer2::Instance()->ManglePath(filename.Get());
+    HRESULT hr = D3DXSaveTextureToFile(physicalFileName.Get(),D3DXIFF_JPG,baseTexture,NULL);
+    n_dxtrace(hr, "Failed to save Texture (D3D)");
+    return true;
+};
 
 //------------------------------------------------------------------------------
 /**

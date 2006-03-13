@@ -58,7 +58,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setjoint_iiffffffffffs",          'SJNT', n_setjoint);
     cl->AddCmd("v_endjoints_v",                     'EJNT', n_endjoints);
     cl->AddCmd("i_getnumjoints_v",                  'GNJT', n_getnumjoints);
-    cl->AddCmd("iffffffffff_getjoint_i",            'GJNT', n_getjoint);
+    cl->AddCmd("iffffffffffs_getjoint_i",           'GJNT', n_getjoint);
     cl->AddCmd("v_setstatechannel_s",               'SSCN', n_setstatechannel);
     cl->AddCmd("s_getstatechannel_v",               'GSCN', n_getstatechannel);
     cl->AddCmd("v_beginstates_i",                   'BGST', n_beginstates);
@@ -66,7 +66,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setstatename_is",                 'SSNM', n_setstatename);
     cl->AddCmd("v_endstates_v",                     'ENDS', n_endstates);
     cl->AddCmd("i_getnumstates_v",                  'GNST', n_getnumstates);
-    cl->AddCmd("if_getstateat_i",                   'GSTA', n_getstateat);
+    cl->AddCmd("if_getstateat_i",                   'GSAT', n_getstateat);
     cl->AddCmd("s_getstatenameat_i",                'GSNA', n_getstatenameat);
     cl->AddCmd("v_beginclips_ii",                   'BGCL', n_beginclips);
     cl->AddCmd("v_setclip_iis",                     'STCL', n_setclip);

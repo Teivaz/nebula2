@@ -29,6 +29,7 @@ static const char* StateTable[nShaderState::NumParameters] =
     "InvModelView",
     "ModelViewProjection",
     "ModelShadowProjection",
+    "EyeDir",
     "EyePos",
     "ModelEyePos",
     "ModelLightPos",
@@ -140,6 +141,16 @@ static const char* StateTable[nShaderState::NumParameters] =
     "Color2",
     "Color3",
     "HalfPixelSize",
+    "MLPUVStretch",
+    "UVStretch0",
+    "UVStretch1",
+    "UVStretch2",
+    "UVStretch3",
+    "UVStretch4",
+    "UVStretch5",
+    "LeafCluster",
+    "LeafAngleMatrices",
+    "WindMatrices",
 };
 
 //------------------------------------------------------------------------------

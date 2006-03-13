@@ -45,6 +45,8 @@ public:
     const char* GetSkinAnimator() const;
     /// set pointer to an uptodate character skeleton object (called exclusively by nSkinAnimator)
     void SetCharSkeleton(const nCharSkeleton* charSkeleton);
+    /// get pointer to an uptodate character skeleton object
+    const nCharSkeleton* GetCharSkeleton() const;
     /// begin defining mesh fragments
     void BeginFragments(int num);
     /// set mesh group index of a skin fragment
@@ -67,8 +69,10 @@ public:
     int GetJointPaletteSize(int fragIndex) const;
     /// get a joint index from a fragment's joint palette
     int GetJointIndex(int fragIndex, int paletteIndex) const;
-    /// Get the character skeleton
-    const nCharSkeleton* GetCharSkeleton();
+    /// set a marker that this is a skin that is bound to a variation
+    void SetChar3VariationFlag(bool value);
+    /// get a marker if this is a skin that is bound to a variation
+    bool GetChar3VariationFlag() const;
 
 private:
     /// a private skin fragment class
@@ -93,6 +97,7 @@ private:
     const nCharSkeleton* extCharSkeleton;
     nArray<Fragment> fragmentArray;
     nCharSkinRenderer charSkinRenderer;
+    bool isChar3AndBoundToVariation;
 };
 
 //------------------------------------------------------------------------------
@@ -134,6 +139,28 @@ nSkinShapeNode::Fragment::GetJointPalette()
 {
     return this->jointPalette;
 }
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nSkinShapeNode::SetChar3VariationFlag(bool value)
+{
+    this->isChar3AndBoundToVariation = value;
+};
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nSkinShapeNode::GetChar3VariationFlag() const
+{
+    return this->isChar3AndBoundToVariation;
+};
 
 //------------------------------------------------------------------------------
 #endif

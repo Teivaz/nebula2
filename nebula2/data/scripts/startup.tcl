@@ -29,16 +29,17 @@ proc OnStartup {} {
     .setassign "data"     "$home/data/"
     .setassign "export"   "$proj/export/"
 
-    .setassign "shaders"  "data:shaders"
-    .setassign "scripts"  "data:scripts"
-    .setassign "physics"  "export:physics/"
-    .setassign "meshes"   "export:meshes/"
-    .setassign "textures" "export:textures/"
-    .setassign "anims"    "export:anims/"
-    .setassign "gfxlib"   "export:gfxlib/"
-    .setassign "lights"   "export:lightlib/"
-    .setassign "levels"   "export:levels/"
-    .setassign "sound"    "export:audio/"
+    .setassign "shaders"    "data:shaders"
+    .setassign "scripts"    "data:scripts"
+    .setassign "physics"    "export:physics/"
+    .setassign "meshes"     "export:meshes/"
+    .setassign "textures"   "export:textures/"
+    .setassign "anims"      "export:anims/"
+    .setassign "gfxlib"     "export:gfxlib/"
+    .setassign "lights"     "export:lightlib/"
+    .setassign "levels"     "export:levels/"
+    .setassign "sound"      "export:audio/"
+    .setassign "charlib"    "gfxlib:characters/"
 
     sel $oldCwd
 }
@@ -74,11 +75,6 @@ proc OnGraphicsStartup {} {
         }
     }
     sel $oldCwd
-    
-    # enable zFail shadow rendering
-    if {[exists /sys/servers/shadow]} {
-        /sys/servers/shadow.setusezfail true
-    }
 }
 
 #-------------------------------------------------------------------------------
@@ -107,6 +103,7 @@ proc OnViewerMapInput {} {
     .map "keyb0:f4.down"  "script:ToggleSceneVisualization"    
     .map "keyb0:f5.down" "script:/sys/servers/capture.toggle"
     .map "keyb0:f11.down" "console"
+    .map "keyb0:f12.down" "makescreenshot"
     .map "keyb0:t.down" "script:/sys/servers/time.resettime"
     .map "keyb0:1.down" "script:/sys/servers/time.stoptime"
     .map "keyb0:2.down" "script:/sys/servers/time.starttime"
@@ -190,6 +187,7 @@ proc OnMapInput {} {
     .map "relmouse0:+zbtn.down"         "ScrollDown"
     .map "relmouse0:-zbtn.down"         "ScrollUp"
     .map "keyb0:tab.up"                 "cycleFocus"    
+    .map "keyb0:t.down"                 "timeReset"
     
 #    .map "keyb0:1.down"                 "script:DebugRecordPosition"
 #    .map  keyb0:f1.down                 "script:/sys/servers/console.watch *"

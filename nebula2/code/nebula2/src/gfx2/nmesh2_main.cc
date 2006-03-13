@@ -251,7 +251,7 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     // configure a mesh loader and load header
     meshLoader->SetFilename(filename.Get());
     meshLoader->SetIndexType(nMeshLoader::Index16);
-    if (!meshLoader->Open(kernelServer->GetFileServer()))
+    if (!meshLoader->Open())
     {
         n_error("nMesh2: could not open file '%s'!\n", filename.Get());
         return false;

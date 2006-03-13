@@ -58,7 +58,7 @@ nBlendShapeAnimator::LoadAnimation()
 {
     if ((!this->refAnimation.isvalid()) && (!this->animationName.IsEmpty()))
     {
-        nAnimation* animation = this->refAnimationServer->NewMemoryAnimation(this->animationName.Get());
+        nAnimation* animation = this->refAnimationServer->NewMemoryAnimation(this->animationName);
         n_assert(animation);
         if (!animation->IsLoaded())
         {

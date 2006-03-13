@@ -12,6 +12,8 @@ static void n_setrenderdebug(void* slf, nCmd* cmd);
 static void n_getrenderdebug(void* slf, nCmd* cmd);
 static void n_setocclusionquery(void* slf, nCmd* cmd);
 static void n_getocclusionquery(void* slf, nCmd* cmd);
+static void n_setclipplanefencing(void* slf, nCmd* cmd);
+static void n_getclipplanefencing(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -40,6 +42,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("b_getrenderdebug_v",         'GDBG', n_getrenderdebug);
     cl->AddCmd("v_setocclusionquery_b",      'SOCQ', n_setocclusionquery);
     cl->AddCmd("b_getocclusionquery_v",      'GOCQ', n_getocclusionquery);
+    cl->AddCmd("v_setclipplanefencing_b",    'SCPF', n_setclipplanefencing);
+    cl->AddCmd("b_getclipplanefencing_v",    'GCPF', n_getclipplanefencing);
     cl->EndCmds();
 }
 
@@ -190,3 +194,38 @@ n_getocclusionquery(void* slf, nCmd* cmd)
     cmd->Out()->SetB(self->GetOcclusionQuery());
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setclipplanefencing
+    @input
+    b(ClipPlaneFencing)
+    @output
+    v
+    @info
+    Enable/disable clip plane fencing for point lights (default is on).
+*/
+static void
+n_setclipplanefencing(void* slf, nCmd* cmd)
+{
+    nSceneServer* self = (nSceneServer*) slf;
+    self->SetClipPlaneFencing(cmd->In()->GetB());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getclipplanefencing
+    @input
+    v
+    @output
+    b(ClipPlaneFencing)
+    @info
+    Get clip plane fencing mode.
+*/
+static void
+n_getclipplanefencing(void* slf, nCmd* cmd)
+{
+    nSceneServer* self = (nSceneServer*) slf;
+    cmd->Out()->SetB(self->GetClipPlaneFencing());
+}

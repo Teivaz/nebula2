@@ -28,7 +28,9 @@
     <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
     <Shader name="skybox" file="shaders:shaders.fx" />
     <Shader name="particle" file="shaders:shaders.fx" />
+    <Shader name="particle2" file="shaders:shaders.fx" />
     <Shader name="layered" file="shaders:shaders.fx" />
+    <Shader name="multilayered" file="shaders:shaders.fx" />
     <Shader name="copy_stencil" file="shaders:shadow_copy.fx" />
     <Shader name="gui3d" file="shaders:shaders.fx" />
     <Shader name="water" file="shaders:shaders.fx" />
@@ -57,6 +59,7 @@
                 <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                 <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                 <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />
             </Phase>
@@ -89,6 +92,7 @@
                 <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColorShadow" firstLightAlpha="Yes" mvpOnly="Yes"/>
                 <Sequence shader="skinned" technique="tSkinnedColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="layered" technique="tLayeredColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>
+                <Sequence shader="multilayered" technique="tMultiLayeredColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="blended" technique="tBlendedColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>
             </Phase>
             <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
@@ -120,6 +124,11 @@
             </Phase>
             <Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
                 <Sequence shader="particle" technique="tParticleColor" firstLightAlpha="Yes">
+                    <Texture name="AmbientMap1" value="Shadow" />
+                </Sequence>
+            </Phase>
+            <Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
+                <Sequence shader="particle2" technique="tParticle2Color" firstLightAlpha="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
                 </Sequence>
             </Phase>
@@ -155,6 +164,7 @@
                     <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                    <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                     <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />
                 </Phase>
@@ -178,6 +188,7 @@
                     <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColor" firstLightAlpha="Yes" mvpOnly="Yes"/>
                     <Sequence shader="skinned"      technique="tSkinnedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="layered"      technique="tLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
+                    <Sequence shader="multilayered" technique="tMultiLayeredColor"   firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>               
                 </Phase>
                 <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
@@ -216,6 +227,7 @@
                     <Sequence shader="lightmapped2"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="radiosity_normalmapped"  technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="layered"      technique="tLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
+                    <Sequence shader="multilayered" technique="tMultiLayeredDepth" shaderUpdates="No" mvpOnly="Yes" />
                     <Sequence shader="skinned"      technique="tSkinnedDepth" mvpOnly="Yes" />
                     <Sequence shader="blended"      technique="tBlendedDepth" mvpOnly="Yes" />
                 </Phase>
@@ -239,6 +251,7 @@
                     <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColor" firstLightAlpha="Yes" mvpOnly="Yes"/>
                     <Sequence shader="skinned"      technique="tSkinnedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="layered"      technique="tLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
+                    <Sequence shader="multilayered" technique="tMultiLayeredColor"   firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>           
                 </Phase>
                 <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">

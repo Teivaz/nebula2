@@ -1385,6 +1385,97 @@ nMeshBuilder::CheckForGeometryError()
 
 //------------------------------------------------------------------------------
 /**
+    checks the mesh for duplicated faces
+*/
+nArray<nString> 
+nMeshBuilder::CheckForDuplicatedFaces()
+{
+    nArray<nString> emptyArray;
+    return emptyArray;
+
+// FIXME: temporarly commented out because of error with quad geometry
+/*
+    // create temporary meshbuilder and erase any vertexcomponent but the COORD, then search for duplicated faces
+    nMeshBuilder tempBuilder = *this;
+    tempBuilder.ForceVertexComponents(Vertex::COORD);
+    tempBuilder.Cleanup(0);
+    nArray<int> dupFaces = tempBuilder.SearchDuplicatedFaces();
+
+    nArray<nString> errors;
+    char msg[1024];
+    int i;
+    int offset = 0;
+
+    // erase duplicated
+    for(i = 0;i < dupFaces.Size();i++)
+    {
+        this->triangleArray.Erase(dupFaces[i]-offset);
+        offset++;
+
+        sprintf(msg,"Erasing triangle %i",dupFaces[i]);
+        errors.Append(msg);
+    };
+
+    return errors;
+*/
+};
+
+//------------------------------------------------------------------------------
+/**
+    searches the mesh for duplicated faces
+*/
+nArray<int> 
+nMeshBuilder::SearchDuplicatedFaces()
+{
+    nArray<int> result;
+    int i;
+
+    // an array which holds 1 list for each vertex. 1 lists contains references to all faces that the vertice
+    // belongs to
+    nArray<nArray<Triangle*> > triangleReferences;
+    
+    // initialize lists
+    nArray<Triangle*> emptyDummy;    
+    triangleReferences.SetFixedSize(this->vertexArray.Size());
+
+    // now insert face references
+    for(i=0;i<this->triangleArray.Size();i++)
+    {
+        int index0 = this->triangleArray[i].vertexIndex[0];
+        int index1 = this->triangleArray[i].vertexIndex[1];
+        int index2 = this->triangleArray[i].vertexIndex[2];
+        
+        // now we check if there is a triangle in the list at index0 that equals the one we are currently working on
+        // the size of the list at index0 should be low for the average case
+        int k;
+        bool found = false;
+        for( k = 0; k < triangleReferences[index0].Size(); k++ )
+        {
+            if( triangleReferences[index0].At(k)->Equals( this->triangleArray[i] ) )
+            {
+                found = true;
+            };
+        };
+
+        if(found)
+        {
+            // ok, we found a triangle that is equal to the current
+            result.Append(i);
+        }
+        else 
+        {
+            // otherwise we store a reference to this triangle in the lists at the indices
+            triangleReferences[index0].PushBack(&this->triangleArray[i]);
+            triangleReferences[index1].PushBack(&this->triangleArray[i]);
+            triangleReferences[index2].PushBack(&this->triangleArray[i]);
+        };
+    };
+
+    return result;
+};
+
+//------------------------------------------------------------------------------
+/**
     This creates 3 unique vertices for each triangle in the mesh, generating
     redundant vertices. This is the opposite operation to Cleanup(). This will
     throw away any generated edges!

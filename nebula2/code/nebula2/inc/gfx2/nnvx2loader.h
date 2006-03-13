@@ -20,7 +20,7 @@ public:
     /// destructor
     virtual ~nNvx2Loader();
     /// open file and read header data
-    virtual bool Open(nFileServer2* fs);
+    virtual bool Open();
     /// close the file
     virtual void Close();
     /// read vertex data
@@ -54,13 +54,11 @@ nNvx2Loader::~nNvx2Loader()
 */
 inline
 bool
-nNvx2Loader::Open(nFileServer2* fs)
+nNvx2Loader::Open()
 {
     n_assert(!this->file);
-    n_assert(fs);
 
-    this->fileServer = fs;
-    this->file = this->fileServer->NewFileObject();
+    this->file = nFileServer2::Instance()->NewFileObject();
     n_assert(this->file);
 
     // open the file
@@ -107,7 +105,7 @@ nNvx2Loader::Open(nFileServer2* fs)
         this->groupArray.Append(group);
     }
 
-    return nMeshLoader::Open(fileServer);
+    return nMeshLoader::Open();
 }
 
 //------------------------------------------------------------------------------

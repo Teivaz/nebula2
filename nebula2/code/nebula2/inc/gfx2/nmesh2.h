@@ -5,6 +5,10 @@
     @class nMesh2
     @ingroup Gfx2
 
+    - 25-Sep-04     floh    I have removed the refill buffers mode, see 
+                            the nResource class for proper handling of externally
+                            filled resource objects
+
     Internally holds opaque vertex and index data to feed a vertex shader.
     Vertices in a mesh are simply an array of floats.
     Edges are stored in a system memory array with the Edge type.

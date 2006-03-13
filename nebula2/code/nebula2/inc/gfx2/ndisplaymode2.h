@@ -63,21 +63,25 @@ public:
     /// get bit depth
     Bpp GetBpp() const;
     /// set window title
-    void SetWindowTitle(const char* t);
+    void SetWindowTitle(const nString& t);
     /// get window title
-    const char* GetWindowTitle() const;
+    const nString& GetWindowTitle() const;
     /// set vertical sync flag
     void SetVerticalSync(bool b);
     /// get vertical sync flag
     bool GetVerticalSync() const;
     /// set optional window icon resource
-    void SetIcon(const char* resName);
+    void SetIcon(const nString& resName);
     /// get optional window icon resource
-    const char* GetIcon() const;
+    const nString& GetIcon() const;
     /// make this mode compatible with host system dialog boxes
     void SetDialogBoxMode(bool b);
     /// get dialog box mode
     bool GetDialogBoxMode() const;
+    /// set antialiasing mode
+    void SetAntiAliasSamples(int s);
+    /// get antialiasing mode
+    int GetAntiAliasSamples() const;
     /// convert type to string
     static const char* TypeToString(Type t);
     /// convert string to type
@@ -87,6 +91,7 @@ private:
     nString windowTitle;
     nString iconName;
     Type type;
+    int antiAliasSamples;
     ushort xpos;
     ushort ypos;
     ushort width;
@@ -101,14 +106,16 @@ private:
 */
 inline
 nDisplayMode2::nDisplayMode2() :
-    windowTitle("Nebula2 Viewer"),
+    windowTitle("Nebula2 Window"),
+    iconName("Icon"),
     type(Windowed),
+    antiAliasSamples(0),
     xpos(0),
     ypos(0),
     width(640),
     height(480),
     bitsPerPixel(Bpp32),
-    verticalSync(true),
+    verticalSync(false),
     dialogBoxMode(false)
 {
     // empty
@@ -264,7 +271,7 @@ nDisplayMode2::GetType() const
 */
 inline
 void
-nDisplayMode2::SetWindowTitle(const char* t)
+nDisplayMode2::SetWindowTitle(const nString& t)
 {
     this->windowTitle = t;
 }
@@ -273,10 +280,10 @@ nDisplayMode2::SetWindowTitle(const char* t)
 /**
 */
 inline
-const char*
+const nString&
 nDisplayMode2::GetWindowTitle() const
 {
-    return this->windowTitle.Get();
+    return this->windowTitle;
 }
 
 //------------------------------------------------------------------------------
@@ -346,7 +353,7 @@ nDisplayMode2::StringToType(const char* str)
 */
 inline
 void
-nDisplayMode2::SetIcon(const char* resName)
+nDisplayMode2::SetIcon(const nString& resName)
 {
     this->iconName = resName;
 }
@@ -355,10 +362,10 @@ nDisplayMode2::SetIcon(const char* resName)
 /**
 */
 inline
-const char*
+const nString&
 nDisplayMode2::GetIcon() const
 {
-    return this->iconName.IsEmpty() ? 0 : this->iconName.Get();
+    return this->iconName;
 }
 
 //------------------------------------------------------------------------------
@@ -399,6 +406,27 @@ nDisplayMode2::Bpp
 nDisplayMode2::GetBpp() const
 {
     return this->bitsPerPixel;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nDisplayMode2::SetAntiAliasSamples(int s)
+{
+    n_assert((s >= 0) && (s != 1) && (s <= 16));
+    this->antiAliasSamples = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nDisplayMode2::GetAntiAliasSamples() const
+{
+    return this->antiAliasSamples;
 }
 
 //------------------------------------------------------------------------------

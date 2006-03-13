@@ -11,7 +11,7 @@ new nparticleshapenode pemitter_0_0
 	.setshader "particle"
 	.setmesh "meshes:examples/smoke_pe_0.n3d2"
 	.setgroupindex 0
-	.setvertexshaderneed true
+	.setneedsvertexshader true
 	.setemissionfrequency 50.000000 50.000000 50.000000 50.000000 0.300000 0.685714 10.000000 5.000000 0
 	.setparticlelifetime 7.000000 7.000000 7.000000 7.000000 0.307143 0.700000 10.000000 0.500000 0
 	.setparticlestartvelocity 1.250000 1.250000 1.250000 1.250000 0.314286 0.707143 0.000000 0.000000 0

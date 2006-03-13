@@ -81,7 +81,7 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
         {
             char resName[128];
             strcpy(resName, "dyn_");
-            int charIndex = strlen(resName);
+            int charIndex = (int) strlen(resName);
             if (vertexComponents & nMesh2::Coord)       resName[charIndex++] = 'a';
             if (vertexComponents & nMesh2::Normal)      resName[charIndex++] = 'b';
             if (vertexComponents & nMesh2::Tangent)     resName[charIndex++] = 'c';

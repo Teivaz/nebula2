@@ -139,4 +139,3 @@ nShadowSkinShapeNode::SetCharSkeleton(const nCharSkeleton* charSkeleton)
 
 //------------------------------------------------------------------------------
 #endif
-

@@ -28,6 +28,20 @@ nShapeNode::~nShapeNode()
 
 //------------------------------------------------------------------------------
 /**
+    Returns mesh2 object. If not loaded yet, it will be loaded.
+*/
+nMesh2*
+nShapeNode::GetMeshObject()
+{
+    if (!this->refMesh.isvalid())
+    {
+        n_assert(this->LoadMesh());
+    }
+    return this->refMesh.get();
+}
+
+//------------------------------------------------------------------------------
+/**
     Unload mesh resource if valid.
 */
 void

@@ -7,6 +7,8 @@
 
 static void n_setshader(void* slf, nCmd* cmd);
 static void n_getshader(void* slf, nCmd* cmd);
+static void n_setmayashadername(void* slf, nCmd* cmd);
+static void n_getmayashadername(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -31,6 +33,8 @@ n_initcmds(nClass* cl)
     cl->BeginCmds();
     cl->AddCmd("v_setshader_s", 'SSHD', n_setshader);
     cl->AddCmd("s_getshader_v", 'GSHD', n_getshader);
+    cl->AddCmd("v_setmayashadername_s", 'SMSN', n_setmayashadername);
+    cl->AddCmd("s_getmayashadername_v", 'GMSN', n_getmayashadername);
     cl->EndCmds();
 }
 
@@ -69,6 +73,41 @@ n_getshader(void* slf, nCmd* cmd)
     nMaterialNode* self = (nMaterialNode*) slf;
     cmd->Out()->SetS(self->GetShader());
 }
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setmayashadername
+    @input
+    s(shadername)
+    @output
+    v
+    @info
+    Sets the name of the assigned mayashader
+*/
+static void
+n_setmayashadername(void* slf, nCmd* cmd)
+{
+    nMaterialNode* self = (nMaterialNode*) slf;
+    self->SetMayaShaderName(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getmayashadername
+    @input
+    v
+    @output
+    s(Shader name)
+    @info
+    Gets the name of the assigned mayashader
+*/
+static void
+n_getmayashadername(void* slf, nCmd* cmd)
+{
+    nMaterialNode* self = (nMaterialNode*) slf;
+    cmd->Out()->SetS(self->GetMayaShaderName().Get());
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -79,6 +118,14 @@ nMaterialNode::SaveCmds(nPersistServer* ps)
     if (nAbstractShaderNode::SaveCmds(ps))
     {
         nCmd* cmd;
+
+        //--- setmayashadername ---
+        if (this->GetMayaShaderName() != "")
+        {
+            cmd = ps->GetCmd(this, 'SMSN');
+            cmd->In()->SetS(this->GetMayaShaderName().Get());
+            ps->PutCmd(cmd);
+        }
 
         //--- setshader ---
         if (!this->shaderName.IsEmpty())

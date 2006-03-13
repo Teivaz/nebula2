@@ -43,18 +43,21 @@ technique tPassGui3D
     pass p0
     {
         ViewTransform       = <View>;
-    	ProjectionTransform = <Projection>;
+        ProjectionTransform = <Projection>;
         ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
         NormalizeNormals    = True;
         ZEnable             = True;
-        ZFunc               = LessEqual;
+        ZWriteEnable        = True;
         StencilEnable       = False;
         DepthBias           = 0.0f;
-        PixelShader         = 0;
-        SpecularEnable	    = False;
-        
         FogEnable           = False;
-        
+        AlphaBlendEnable    = True;
+        AlphaTestEnable     = False;
+        AlphaFunc           = GreaterEqual;                
+        SrcBlend            = SrcAlpha;
+        DestBlend           = InvSrcAlpha;
+        ScissorTestEnable   = False;
+
         TextureTransformFlags[0] = 0;
 
         //FillMode         = Wireframe;

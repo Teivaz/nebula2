@@ -122,7 +122,7 @@ new ntransformnode model
 		.setshader "skinned"
 		.setmesh "meshes:examples/eagle_sk_0.n3d2"
 		.setgroupindex 0
-		.setvertexshaderneed true
+		.setneedsvertexshader true
 		.setskinanimator "../skinanimator"
 		.beginfragments 2
 		.setfraggroupindex 0 0

@@ -20,7 +20,7 @@ new ntransformnode model
 		.setshader "static"
 		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 		.setgroupindex 0
-		.setvertexshaderneed false
+		.setneedsvertexshader false
 	sel ..
 	new nshapenode static_0_1
 		sel static_0_1
@@ -39,7 +39,7 @@ new ntransformnode model
 		.setshader "alpha"
 		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 		.setgroupindex 1
-		.setvertexshaderneed false
+		.setneedsvertexshader false
 	sel ..
 	new nshapenode static_0_2
 		sel static_0_2
@@ -56,7 +56,7 @@ new ntransformnode model
 		.setshader "static"
 		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 		.setgroupindex 2
-		.setvertexshaderneed false
+		.setneedsvertexshader false
 	sel ..
 sel ..
 # ---

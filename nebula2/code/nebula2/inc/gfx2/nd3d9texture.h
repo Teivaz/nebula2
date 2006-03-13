@@ -11,6 +11,7 @@
 */
 #include "gfx2/ntexture2.h"
 #include "gfx2/nd3d9server.h"
+#include "video/nvideoserver.h"
 
 //------------------------------------------------------------------------------
 class nD3D9Texture : public nTexture2
@@ -32,6 +33,8 @@ public:
     virtual void UnlockCubeFace(CubeFace face, int level);
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
+    /// save texture to file
+    virtual bool SaveTextureToFile(const nString &filename);
 
     /// retrieves a pointer to the surface.
     virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
@@ -79,6 +82,8 @@ private:
     bool LoadFromDDSCompoundFile();
     /// get attributes from d3d texture and update my own attributes from them
     void QueryD3DTextureAttributes();
+    /// loads an .ogg video file
+    bool LoadOGGFile();
 
     nAutoRef<nD3D9Server> refGfxServer;
     
@@ -88,6 +93,7 @@ private:
     IDirect3DSurface9* renderTargetSurface;
     IDirect3DSurface9* depthStencilSurface;
 
+    nVideoPlayer*   videoPlayer;
 };
 
 //------------------------------------------------------------------------------

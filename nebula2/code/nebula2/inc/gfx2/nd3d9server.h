@@ -252,6 +252,8 @@ private:
     void UpdateScissorRect();
     /// returns the current render target size in pixels
     vector2 GetCurrentRenderTargetSize() const;
+    /// check for multisample AA compatibility
+    D3DMULTISAMPLE_TYPE CheckMultiSampleType(D3DFORMAT backbufferFormat, D3DFORMAT depthFormat, bool windowed);
     /// add nEnvs describing display modes (for all adapters) to the NOH
     void CreateDisplayModeEnvVars();
 

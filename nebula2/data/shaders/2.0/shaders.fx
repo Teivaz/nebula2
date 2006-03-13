@@ -39,6 +39,11 @@ shared float4x4 Light;
 shared float4x4 TextureTransform0;
 shared float4x4 TextureTransform1;
 
+float4x4 MLPUVStretch = {40.0f,  0.0f,  0.0f,  0.0f,
+                         0.0f, 40.0f,  0.0f,  0.0f, 
+                         0.0f,  0.0f, 40.0f,  0.0f,
+                         0.0f,  0.0f,  0.0f, 40.0f };                                
+
 // detail texture scale for the layered shader, zoom by 40 as default
 static const float4x4 DetailTexture = {40.0f,  0.0f,  0.0f,  0.0f,
                                         0.0f, 40.0f,  0.0f,  0.0f, 
@@ -134,12 +139,16 @@ texture CubeMap0;
 texture NoiseMap0;
 texture NoiseMap1;
 texture NoiseMap2;
+texture NoiseMap3;
 texture AmbientMap0;
 texture LightModMap;
 shared texture AmbientMap1;
 
 #include "shaders:../lib/lib.fx"
 #include "shaders:../lib/randtable.fx"
+
+//#include "c:/radonlabs/data/shaders/lib/lib.fx"
+//#include "c:/radonlabs/data/shaders/lib/randtable.fx"
 
 //------------------------------------------------------------------------------
 /**
@@ -232,6 +241,29 @@ struct vsOutputStatic2Color
     float3 eyePos        : TEXCOORD5;    
     DECLARE_SCREENPOS(TEXCOORD6)
 };
+
+struct vsInputStatic3Color
+{
+    float4 position : POSITION;
+    float3 normal   : NORMAL;
+    float2 uv0      : TEXCOORD0;
+    float3 tangent  : TANGENT;
+    float3 binormal  : BINORMAL;
+};
+
+struct vsOutputStatic3Color
+{
+    float4 position      : POSITION;
+    float2 uv0           : TEXCOORD0;
+    float2 uv1           : TEXCOORD1;
+    float2 uv2           : TEXCOORD2;
+    float3 lightVec      : TEXCOORD3;
+    float3 modelLightVec : TEXCOORD4;
+    float3 halfVec       : TEXCOORD5;
+    float3 eyePos        : TEXCOORD6;    
+    DECLARE_SCREENPOS(TEXCOORD7)
+};
+
 
 struct vsOutputEnvironmentColor
 {
@@ -433,6 +465,21 @@ struct vsOutputParticleColor
     float4 diffuse  : COLOR0;
 };
 
+struct vsInputParticle2Color
+{
+    float4 position  : POSITION;    // the particle position in world space
+    float3 velocity  : NORMAL;      // the particle coded uv and corners,rotation and scale
+    float2 uv        : TEXCOORD0;   // the particle coded uv and corners,rotation and scale
+    float4 data      : COLOR0;      // the particle coded uv and corners,rotation and scale
+};
+
+struct vsOutputParticle2Color
+{
+    float4 position : POSITION;
+    float2 uv0      : TEXCOORD0;
+    float4 diffuse  : COLOR0;
+};
+
 struct vsInputCompose
 {
     float4 position : POSITION;
@@ -490,6 +537,17 @@ sampler Diff3Sampler = sampler_state
     MinFilter = Linear;
     MagFilter = Linear;
     MipFilter = Linear;
+    MipMapLodBias = -0.75;
+};
+
+sampler MultiLayeredLightmapSampler = sampler_state
+{
+    Texture = <NoiseMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Point;
     MipMapLodBias = -0.75;
 };
 
@@ -687,6 +745,17 @@ sampler Layer2Sampler = sampler_state
     MipMapLodBias = -0.75;
 };
 
+sampler Layer3Sampler = sampler_state
+{
+    Texture = <NoiseMap3>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Point;
+    MipMapLodBias = -0.75;
+};
+
 sampler SkySampler = sampler_state
 {
     Texture = <DiffMap0>;
@@ -697,6 +766,27 @@ sampler SkySampler = sampler_state
     MipFilter = None;
     MipMapLodBias = -0.75;
 };
+
+sampler Transparency1Sampler = sampler_state
+{
+    Texture = <DiffMap0>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = None;
+};
+
+sampler Transparency2Sampler = sampler_state
+{
+    Texture = <DiffMap1>;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = None;
+};
+
 
 //==============================================================================
 //  Helper functions
@@ -824,7 +914,7 @@ color4 psLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lig
     else
     {
         #if DIRLIGHTS_ENABLEOPPOSITECOLOR
-        color.rgb += saturate(-diffIntensity) * DIRLIGHTS_OPPOSITECOLOR * mapColor.rgb;
+        color.rgb += saturate(-diffIntensity) * DIRLIGHTS_OPPOSITECOLOR * mapColor.rgb * MatDiffuse.rgb;
         #endif    
         diffIntensity *= shadowValue;
     }    
@@ -1363,7 +1453,8 @@ vsOutputStaticColor vsSkinnedColor(const vsInputSkinnedColor vsIn)
     vsOut.uv0          = vsIn.uv0;
     float3 skinNormal  = skinnedNormal(vsIn.normal, vsIn.weights, vsIn.indices, JointPalette);
     float3 skinTangent = skinnedNormal(vsIn.tangent, vsIn.weights, vsIn.indices, JointPalette);
-    vsLight(skinPos, skinNormal, skinTangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
+    float3 skinBinormal = skinnedNormal(vsIn.binormal, vsIn.weights, vsIn.indices, JointPalette);
+    vsLight(skinPos, skinNormal, skinTangent, skinBinormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
     return vsOut;
 }
 
@@ -2040,6 +2131,63 @@ vsOutputParticleColor vsParticleColor(const vsInputParticleColor vsIn)
 
 //------------------------------------------------------------------------------
 /**
+    Vertex shader for particle2's.
+*/
+vsOutputParticle2Color vsParticle2Color(const vsInputParticle2Color vsIn)
+{
+    float code     = vsIn.data[0];
+    float rotation = vsIn.data[1];
+    float size     = vsIn.data[2];
+    float colorCode  = vsIn.data[3];
+
+    // build rotation matrix
+    float sinAng, cosAng;
+    sincos(rotation, sinAng, cosAng);
+    float3x3 rot = {
+        cosAng, -sinAng, 0.0f,
+        sinAng,  cosAng, 0.0f,
+        0.0f,    0.0f,   1.0f,
+    };
+
+    // decode color data
+    float4  rgba;
+    rgba.z = modf(colorCode/256.0f,colorCode);
+    rgba.y = modf(colorCode/256.0f,colorCode);
+    rgba.x = modf(colorCode/256.0f,colorCode);
+    rgba.w = modf(code/256.0f,code);
+    rgba *= 256.0f/255.0f;
+    
+    float4 position =  vsIn.position;
+
+
+    // the corner offset gets calculated from the velocity
+
+    float3 extrude = mul(InvModelView,vsIn.velocity);
+    if(code != 0.0f) 
+    {
+        extrude = normalize(extrude);
+        float vis = abs(extrude.z);
+        size *= cos(vis*3.14159f*0.5f);
+        rgba.w *= cos(vis*3.14159f*0.5f);
+    };
+    extrude.z = 0.0f;
+    extrude = normalize(extrude);    
+
+    extrude *= size;
+    extrude =  mul(rot, extrude);
+    extrude =  mul(extrude, (float3x3) InvModelView);
+    position.xyz += extrude.xyz;
+
+    vsOutputParticle2Color vsOut;
+    vsOut.position = mul(position, ModelViewProjection);
+    vsOut.uv0      = vsIn.uv;
+    vsOut.diffuse  = rgba;
+
+    return vsOut;
+}
+
+//------------------------------------------------------------------------------
+/**
     Pixel shader for particles.
 */
 color4 psParticleColor(const vsOutputParticleColor psIn, uniform bool hdr) : COLOR
@@ -2073,6 +2221,23 @@ vsOutputStatic2Color vsLayeredColor(const vsInputStatic2Color vsIn)
     vsLight(vsIn.position, vsIn.normal, vsIn.tangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
     return vsOut;
 }
+
+//------------------------------------------------------------------------------
+/**
+    Vertex shader for multi-layered shader.
+*/
+vsOutputStatic3Color vsMultiLayeredColor(const vsInputStatic3Color vsIn)
+{
+    vsOutputStatic3Color vsOut;
+    vsOut.position = mul(vsIn.position, ModelViewProjection);
+    VS_SETSCREENPOS(vsOut.position);
+    vsOut.uv0      = vsIn.uv0;
+    vsOut.uv1      = vsIn.uv0 * MLPUVStretch[0][0];
+    vsOut.uv2      = vsIn.uv0 * MLPUVStretch[0][1];
+    vsLight(vsIn.position, vsIn.normal, vsIn.tangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
+    return vsOut;
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -2113,6 +2278,61 @@ color4 psLayeredColor(const vsOutputStatic2Color psIn, uniform bool hdr, uniform
 
 //------------------------------------------------------------------------------
 /**
+    Pixel shader for Multi-layered shader.
+*/
+color4 psMultiLayeredColor(const vsOutputStatic3Color psIn, uniform bool hdr, uniform bool shadow) : COLOR
+{
+#if DEBUG_LIGHTCOMPLEXITY
+    return float4(0.05f, 0.0f, 0.0f, 1.0f);
+#else
+    half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
+    
+    // read tiled material colors
+    color4 material0 = tex2D(Diff2Sampler, psIn.uv1);
+    color4 material1 = tex2D(Diff3Sampler, psIn.uv2);
+    color4 material2 = tex2D(Layer0Sampler,psIn.uv0 * MLPUVStretch[0][2]);
+    color4 material3 = tex2D(Layer1Sampler,psIn.uv0 * MLPUVStretch[0][3]);
+    color4 material4 = tex2D(Layer2Sampler,psIn.uv0 * MLPUVStretch[1][0]);
+    
+    // read weight colors, rgb of trans1 is the lightmap
+    float4 trans1 = tex2D(DiffSampler, psIn.uv0); 
+    float4 trans2 = tex2D(Diff1Sampler, psIn.uv0); 
+    
+    half weight0 = trans1.w*material0.w;
+    half weight1 = trans2.r*material1.w;
+    half weight2 = trans2.g*material2.w;
+    half weight3 = trans2.b*material2.w;
+    half weight4 = trans2.w*material3.w;
+
+    material0.rgb *= weight0;
+
+    color4 color    = lerp(material0, material1, weight1);
+    color           = lerp(color,material2, weight2);
+    color           = lerp(color,material3, weight3);
+    color           = lerp(color,material4, weight4);
+
+    color.rgb *= trans1.rgb;
+    color4 finalColor = psLight(color, float3(0.0f, 0.0f, 1.0f), psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
+    
+    // the alpha channel of the transparency masks = (1-r)*(1-g)*(1-b)   , needed here for final blending
+    // the following line is equal to : <finalColor.w = (1-weight0)*(1-weight1)*(1-weight2)*(1-weight3)*(1-weight4);>
+    // the only difference is that it is 4 instructions smaller, so that the whole shader gets <=64 instructions
+    finalColor.w = lerp(lerp(lerp(lerp((1-weight4),0,weight3),0,weight2),0,weight1),0,weight0);
+    
+    if (hdr)
+    {
+        return EncodeHDR(finalColor);
+    }
+    else
+    {
+        return finalColor;
+    }
+#endif    
+}
+
+
+//------------------------------------------------------------------------------
+/**
     Vertex shader function for final image composing.
 */
 vsOutputCompose vsCompose(const vsInputCompose vsIn)
@@ -2139,14 +2359,11 @@ color4 psCompose(const vsOutputCompose psIn) : COLOR
     Vertex shader: process vertices for 3d gui. This will be a orthogonal
     projection.
 */
-vsOutputStaticColor vsGui3D(const vsInputStaticColor vsIn)
+vsOutputCompose vsGui3D(const vsInputCompose vsIn)
 {
-    vsOutputStaticColor vsOut;
+    vsOutputCompose vsOut;
     vsOut.position = mul(mul(vsIn.position, Model), OrthoProjection);
-    VS_SETSCREENPOS(vsOut.position);
     vsOut.uv0 = vsIn.uv0;
-    float3 modelEyePos = float3(0.0f, 0.0f, 10.0f);
-    vsLight(vsIn.position, vsIn.normal, vsIn.tangent,vsIn.binormal, modelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
     return vsOut;
 }
 
@@ -2154,12 +2371,11 @@ vsOutputStaticColor vsGui3D(const vsInputStaticColor vsIn)
 /**
     Pixel shader: generate color values for static geometry.
 */
-color4 psGui3D(const vsOutputStaticColor psIn) : COLOR
-{    
-    color4 diffColor = tex2D(DiffSampler, psIn.uv0);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0).rgb * 2.0f) - 1.0f;    
-    color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, 1.0f);
-    return baseColor;
+color4 psGui3D(const vsOutputCompose psIn) : COLOR
+{   
+    color4 color = tex2D(DiffSampler, psIn.uv0);
+    color.rgb *= (MatDiffuse.rgb + MatEmissive.rgb * MatEmissiveIntensity);
+    return color;
 }
 
 //------------------------------------------------------------------------------
@@ -3140,6 +3356,36 @@ technique tParticleColorHDR
 
 //------------------------------------------------------------------------------
 /**
+    Techniques for particle2's.
+*/
+technique tParticle2Color
+{
+    pass p0
+    {
+        CullMode     = None;
+        SrcBlend     = <AlphaSrcBlend>;
+        DestBlend    = <AlphaDstBlend>;
+        Sampler[0]   = <DiffSampler>;
+        VertexShader = compile VS_PROFILE vsParticle2Color();
+        PixelShader  = compile PS_PROFILE psParticleColor(false);
+    }
+}
+
+technique tParticle2ColorHDR
+{
+    pass p0
+    {
+        CullMode     = None;
+        SrcBlend     = <AlphaSrcBlend>;
+        DestBlend    = <AlphaDstBlend>;
+        Sampler[0]   = <DiffSampler>;
+        VertexShader = compile VS_PROFILE vsParticle2Color();
+        PixelShader  = compile PS_PROFILE psParticleColor(true);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Techniques for final frame compose.
 */
 technique tCompose
@@ -3215,6 +3461,78 @@ technique tLayeredColorHDRShadow
         PixelShader  = compile PS_PROFILE psLayeredColor(true, true);
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Techniques for shader "multilayered"
+*/
+technique tMultiLayeredDepth
+{
+    pass p0
+    {
+        CullMode     = <CullMode>;
+        VertexShader = compile VS_PROFILE vsStaticDepth();
+        PixelShader  = compile PS_PROFILE psStaticDepth();
+    }
+}
+
+technique tMultiLayeredColor
+{
+    pass p0
+    {
+        CullMode = <CullMode>;
+        AlphaBlendEnable = True;
+        SrcBlend = One;
+        DestBlend = SrcAlpha;
+        AlphaTestEnable  = True;
+        AlphaRef         = 1;
+        VertexShader = compile VS_PROFILE vsMultiLayeredColor();
+        PixelShader  = compile PS_PROFILE psMultiLayeredColor(false, false);
+    }
+}
+
+technique tMultiLayeredColorHDR
+{
+    pass p0
+    {
+        CullMode = <CullMode>;
+        AlphaBlendEnable = True;
+        SrcBlend = One;
+        DestBlend = SrcAlpha;
+        AlphaRef         = 1;
+        VertexShader = compile VS_PROFILE vsMultiLayeredColor();
+        PixelShader  = compile PS_PROFILE psMultiLayeredColor(true, false);
+    }
+}
+
+technique tMultiLayeredColorShadow
+{
+    pass p0
+    {
+        CullMode = <CullMode>;
+        AlphaBlendEnable = True;
+        SrcBlend = One;
+        DestBlend = SrcAlpha;
+        AlphaRef         = 1;
+        VertexShader = compile VS_PROFILE vsMultiLayeredColor();
+        PixelShader  = compile PS_PROFILE psMultiLayeredColor(false, true);
+    }
+}
+
+technique tMultiLayeredColorHDRShadow
+{
+    pass p0
+    {
+        CullMode = <CullMode>;
+        AlphaBlendEnable = True;
+        SrcBlend = One;
+        DestBlend = SrcAlpha;
+        AlphaRef         = 1;
+        VertexShader = compile VS_PROFILE vsMultiLayeredColor();
+        PixelShader  = compile PS_PROFILE psMultiLayeredColor(true, true);
+    }
+}
+
 
 //------------------------------------------------------------------------------
 /**
