@@ -93,7 +93,7 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
                 int duration = 0;
                 nString strNote, strDuration;
 
-                int idx = note.FindChar('\n', 0);
+                int idx = note.FindCharIndex('\n', 0);
                 if (idx > 0)
                 {
                     strNote    = nMaxUtil::CorrectName(note.ExtractRange(0, idx));
