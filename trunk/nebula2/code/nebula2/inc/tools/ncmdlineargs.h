@@ -23,6 +23,8 @@ public:
     nCmdLineArgs(int argc, const char** argv);
     /// initialize (use if default constructor was used
     void Initialize(int argc, const char** argv);
+    /// find out if an arg exists
+    bool HasArg(const char* option) const;
     /// get a float arg
     float GetFloatArg(const char* option, float defaultValue) const;
     /// get an integer arg
@@ -71,6 +73,17 @@ nCmdLineArgs::Initialize(int argc, const char** argv)
 {
     this->argCount = argc;
     this->argVector = argv;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nCmdLineArgs::HasArg(const char* option) const
+{
+    int index = FindArg(option);
+    return (index > 0);
 }
 
 //------------------------------------------------------------------------------
