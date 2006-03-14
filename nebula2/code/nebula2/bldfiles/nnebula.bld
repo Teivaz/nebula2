@@ -24,13 +24,15 @@ begintarget nnebula
         ntransformanimator nskinanimator nskinshapenode 
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
+        nparticle2 nparticleserver2 nparticle2emitter nparticleshapenode2
         nswingshapenode nwindowhandler nwin32windowhandler
         nmousecursor nmesharray ninstancestream nocclusionquery
         ntransformcurveanimator nuvanimator
         nprefserver nwin32prefserver ncaptureserver niniprefserver
         nlocaleserver tinyxml xml
-        nblendshapenode nblendshapeanimator
+        nblendshapenode nblendshapeanimator ncombinedanimation
         nmeshdeformer nskinmeshdeformer nblendshapedeformer
+        nmultilayerednode ncharacter3node ncharacter3skinanimator
     }
     setbundles {
         nshadow2

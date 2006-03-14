@@ -32,7 +32,8 @@ nGuiWidget::nGuiWidget() :
     blinking(false),
     blinkStarted(0.0),
     blinkTimeOut(0.0),
-    blinkRate(1.0)
+    blinkRate(1.0),
+    eventHandler(0)
 {
     this->widgetClass = kernelServer->FindClass("nguiwidget");
     this->windowClass = kernelServer->FindClass("nguiwindow");
@@ -118,7 +119,6 @@ nGuiWidget::Inside(const vector2& p)
         {
             return true;
         }
-        return false;
     }
     return false;
 }
@@ -478,9 +478,12 @@ nGuiWidget::OnRectChange(const rectangle& newRect)
     method is invoked on all registered event listeners.
 */
 void
-nGuiWidget::OnEvent(const nGuiEvent& /*event*/)
+nGuiWidget::OnEvent(const nGuiEvent& event)
 {
-    // empty
+    if (this->eventHandler)
+    {
+        this->eventHandler->HandleEvent(event);
+    }
 }
 
 //-----------------------------------------------------------------------------

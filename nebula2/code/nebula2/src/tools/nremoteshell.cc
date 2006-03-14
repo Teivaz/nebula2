@@ -54,8 +54,8 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     bool helpArg = args.GetBoolArg("-help");
-    const char* hostArg = args.GetStringArg("-host", "localhost");
-    const char* portArg = args.GetStringArg("-port", 0);
+    nString hostArg = args.GetStringArg("-host", "localhost");
+    nString portArg = args.GetStringArg("-port", 0);
 
     if (helpArg)
     {
@@ -68,7 +68,7 @@ main(int argc, const char** argv)
                "-port       a port name\n");
         return 5;
     }
-    if (!portArg)
+    if (!portArg.IsValid())
     {
         printf("nremoteshell Error: no portname defined ('nremoteshell -help' for help)!\n");
         return 5;
@@ -79,7 +79,7 @@ main(int argc, const char** argv)
     printf("(C) 2003 RadonLabs GmbH\n");
     printf("Trying host %s port %s...\n", hostArg, portArg);
     
-    nIpcAddress ipcAddress(hostArg, portArg);
+    nIpcAddress ipcAddress(hostArg.Get(), portArg.Get());
     nIpcClient ipcClient;
     ipcClient.SetBlocking(true);
     if (ipcClient.Connect(ipcAddress))

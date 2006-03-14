@@ -5,6 +5,7 @@
 #include "tools/nanimbuilder.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "util/nstring.h"
 #include "anim2/nanimation.h"
 
 //------------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 #include "input/ninputevent.h"
 #include "kernel/ndynautoref.h"
 #include "gui/nguibrush.h"
+#include "gui/nguieventhandler.h"
 
 class nGuiServer;
 class nGuiEvent;
@@ -165,9 +166,13 @@ public:
     void SetClickRectBorder(const vector2& b);
     /// get click rect border
     const vector2& GetClickRectBorder() const;
+    /// set an external event handler to the widget (not owned by widget!)
+    void SetEventHandler(nGuiEventHandler* h);
+    /// get external event handler
+    nGuiEventHandler* GetEventHandler() const;
 
 protected:
-    /// Get owner-window of widget
+    /// get owner-window of widget
     nGuiWidget* GetOwnerWindow();
 
     nString command;
@@ -180,6 +185,7 @@ protected:
     static nClass* windowClass;
     nTime lastButtonDownTime;
     nTime mouseWithinTime;
+    nGuiEventHandler* eventHandler;
 
     bool shown;
     bool enabled;
@@ -653,6 +659,26 @@ bool
 nGuiWidget::IsBackground() const
 {
     return this->backGround;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiWidget::SetEventHandler(nGuiEventHandler* h)
+{
+    this->eventHandler = h;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiEventHandler*
+nGuiWidget::GetEventHandler() const
+{
+    return this->eventHandler;
 }
 
 //-----------------------------------------------------------------------------

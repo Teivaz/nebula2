@@ -110,7 +110,7 @@ public:
     /// get the index of the nCharacter2 pointer used when accessing the render context in Animate()
     int GetCharacterVarIndex();
 
-private:
+protected:
     /// load anim resource
     bool LoadAnim();
     /// unload anim resource

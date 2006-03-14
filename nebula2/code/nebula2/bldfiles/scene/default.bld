@@ -33,6 +33,7 @@
 #      nreflectioncameranode
 #      nrenderpath
 #      nrendercontext
+#      nmultilayerednode
 #===============================================================================
 
 #===============================================================================
@@ -223,6 +224,12 @@ beginmodule nrenderpath
         nrenderpath2 nrppass nrpphase nrprendertarget nrpsection
         nrpsequence nrpshader nrpxmlparser
     }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmultilayerednode
+    setdir scene
+    setfiles { nmultilayerednode_main nmultilayerednode_cmds }
+    setheaders { nmultilayerednode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nrendercontext

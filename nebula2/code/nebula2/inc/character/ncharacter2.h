@@ -26,6 +26,8 @@ public:
     virtual ~nCharacter2();
     /// get the embedded character skeleton
     nCharSkeleton& GetSkeleton();
+    /// get the embedded variated character skeleton
+    nCharSkeleton& GetVariationSkeleton();
     /// set pointer to an anim state array (not owned)
     void SetAnimStateArray(nAnimStateArray* animStates);
     /// get pointer to anim state array
@@ -62,8 +64,11 @@ public:
     void SetLastEvaluationFrameId(uint id);
     /// get the frame id when the character was last evaluated
     uint GetLastEvaluationFrameId() const;
+    /// resets the current state
+    void ResetCurrentState();
 
 private:
+
     enum
     {
         MaxJoints = 1024,
@@ -96,6 +101,7 @@ private:
     };
 
     nCharSkeleton charSkeleton;
+    nCharSkeleton charVariatedSkeleton;
     nAnimStateArray* animStateArray;
     nRef<nAnimation> animation;
     nAnimEventHandler* animEventHandler;
@@ -200,6 +206,16 @@ nCharSkeleton&
 nCharacter2::GetSkeleton()
 {
     return this->charSkeleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCharSkeleton&
+nCharacter2::GetVariationSkeleton()
+{
+    return this->charVariatedSkeleton;
 }
 
 //------------------------------------------------------------------------------
@@ -331,6 +347,17 @@ nCharacter2::GetAnimEventHandler() const
 {
     return this->animEventHandler;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nCharacter2::ResetCurrentState()
+{
+    this->curStateInfo.SetStateIndex(-1);
+}
+
 
 //------------------------------------------------------------------------------
 #endif

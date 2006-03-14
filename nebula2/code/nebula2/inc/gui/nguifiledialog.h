@@ -80,12 +80,12 @@ public:
     void SetInitialFilename(const char* f);
     /// get the initial filename
     const char* GetInitialFilename() const;
+    /// get selected filename (valid during OnOk())
+    const char* GetFilename() const;
 
 protected:
     /// set selected filename
     void SetFilename(const char* s);
-    /// get selected filename (valid during OnOk())
-    const char* GetFilename() const;
     /// check if file exists and post a message box
     bool CheckFileExists();
     /// extracts filename either from selection or from text entry field

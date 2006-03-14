@@ -107,9 +107,9 @@ nOggFile::Read(void* buffer, uint bytesToRead)
     ogg_int16_t* bufferOut=(ogg_int16_t*)buffer;
 
     /* The rest is just a straight decode loop until end of stream */
-    while (!this->endOfStream||this->readEarlyLoopExit)
+    while (!this->endOfStream)
     {
-        while (!this->endOfStream||this->readEarlyLoopExit)
+        while (!this->endOfStream)
         {
             int result=1;
             
@@ -149,6 +149,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                     {
                         break;
                     }
+
                     /* need more data */
                     if (result < 0)
                     {
@@ -173,9 +174,8 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                         the size of each channel.  Convert the float values
                         (-1.<=range<=1.) to whatever PCM format and write it out */
                         float **pcm;
-                        int samples=0;
-
-                        while ((samples = vorbis_synthesis_pcmout(&vDecoderState, &pcm)) > 0)
+                        int samples = 0;
+                        while ( (samples = vorbis_synthesis_pcmout(&vDecoderState, &pcm)) > 0)
                         {
                             int i,j;
                             int clipFlag = 0;
@@ -201,6 +201,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                                         val =  - 32768;
                                         clipFlag = 1;
                                     }
+
                                     *ptr = val;
                                     ptr += vBitStreamInfo.channels;
                                 }
@@ -228,6 +229,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                         readEarlyLoopExit=false;
                     }
                 }
+
                 if (ogg_page_eos(&oBitStreamPage))
                 {
                     endOfStream = true;
@@ -239,21 +241,22 @@ nOggFile::Read(void* buffer, uint bytesToRead)
             bufferIn = ogg_sync_buffer(&oSyncState, INPUTBUFFER);
             bytesIn = this->file->Read(bufferIn, INPUTBUFFER);
             ogg_sync_wrote(&oSyncState, bytesIn);
+
             
             if (bytesIn == 0)
             {
                 endOfStream = true;
             }
+
         }
     }
     
     m_bFileEndReached = true;
-    
+
     // maybe there is still some data left which doesnt fill a block
     if(samplesWritten != 0)
     {
-        int byteSize=2*vBitStreamInfo.channels*samplesWritten;
-        return byteSize;
+        return bytesToRead;
     } 
 
     if(this->keepAlive > 0)

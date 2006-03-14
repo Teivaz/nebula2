@@ -98,8 +98,8 @@ nGuiBar::SegmentedFillState(float v) const
     n_assert(this->IsFillStateSegmented());
 
     float segmentSize = 1.0f / this->fillStateSegments;
-    int segmentCount = static_cast<int>(v / segmentSize);
-    return static_cast<float>(segmentCount * segmentSize);
+    int segmentCount = int(v / segmentSize);
+    return float(segmentCount * segmentSize);
 }
 
 

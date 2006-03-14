@@ -92,8 +92,10 @@ private:
     matrix44 poseMatrix;
     matrix44 invPoseMatrix;
 
-    matrix44 matrix;            // the current evaluated matrix in model space
-    matrix44 localMatrix;       // the current evaluated matrix in local (parent) space
+    matrix44 localUnscaledMatrix;
+    matrix44 localScaledMatrix;
+    matrix44 worldUnscaledMatrix;
+    matrix44 worldScaledMatrix;
     matrix44 skinMatrix44;
     matrix33 skinMatrix33;
     int parentJointIndex;
@@ -188,8 +190,8 @@ nCharJoint::SetPose(const vector3& t, const quaternion& q, const vector3& s)
     this->poseMatrix.translate(this->poseTranslate);
 
     // set the initial matrix so that it undoes the pose matrix
-    this->localMatrix = poseMatrix;
-    this->matrix = poseMatrix;
+    this->localScaledMatrix = poseMatrix;
+    this->worldScaledMatrix = poseMatrix;
 
     // globale pose matrix and compute global inverse pose matrix
     if (this->parentJoint)
@@ -332,28 +334,61 @@ nCharJoint::Evaluate()
         // any changes in position/rotation/etc ?
         if (this->matrixDirty)
         {
-            this->localMatrix.ident();
+            this->localScaledMatrix.ident();
+            this->localUnscaledMatrix.ident();
 
-            // FIXME: HMM --> Scale doesn't work too well... (with ragdolls)
-            this->localMatrix.scale(this->scale);
-            this->localMatrix.mult_simple(matrix44(this->rotate));
-            this->localMatrix.translate(this->translate);
+            this->rotate.normalize();
+            matrix44 rotateMatrix(this->rotate);
+
+            // we need 2 local matrices, one scaled, one unscaled
+            // the unscaled one is for our children, who need a parent matrix with uniform axis
+            // the scaled one is for calculating the correct skin matrix
+            this->localUnscaledMatrix.mult_simple(rotateMatrix);
+            this->localUnscaledMatrix.translate(this->translate);
+
+            this->localScaledMatrix.scale(this->scale);
+            this->localScaledMatrix.mult_simple(rotateMatrix);
+            this->localScaledMatrix.translate(this->translate);
+
             this->matrixDirty = false;
-        }
+        };
 
         if (!this->lockMatrix)
         {
-            this->matrix = this->localMatrix;
+            this->worldScaledMatrix = this->localScaledMatrix;
+            this->worldUnscaledMatrix = this->localUnscaledMatrix;
+
             if (this->parentJoint)
             {
                 if (!this->parentJoint->IsUptodate())
                 {
                     this->parentJoint->Evaluate();
                 }
-                this->matrix.mult_simple(this->parentJoint->matrix);
+
+                // joint translation is affected by parent scale while the actual axis are not
+                vector3 trans = this->worldUnscaledMatrix.pos_component();
+                trans.x *= this->parentJoint->scale.x;
+                trans.y *= this->parentJoint->scale.y;
+                trans.z *= this->parentJoint->scale.z;
+                this->worldUnscaledMatrix.set_translation(trans);
+
+                trans = this->worldScaledMatrix.pos_component();
+                trans.x *= this->parentJoint->scale.x;
+                trans.y *= this->parentJoint->scale.y;
+                trans.z *= this->parentJoint->scale.z;
+                this->worldScaledMatrix.set_translation(trans);
+
+                // we calculate 2 world matrices
+                // the unscaled one has uniform axis, which our children need to calculate their matrices
+                // the scaled one is the one used to calculate the skinmatrix (the applied scaling is the local,
+                // parent scaling which influences the translation of the joint has been handled above)
+                this->worldUnscaledMatrix.mult_simple(this->parentJoint->worldUnscaledMatrix);
+                this->worldScaledMatrix.mult_simple(this->parentJoint->worldUnscaledMatrix);
             }
         }
-        this->skinMatrix44 = this->invPoseMatrix * this->matrix;
+
+        this->skinMatrix44 = this->invPoseMatrix * this->worldScaledMatrix;
+
         this->skinMatrix33.set(this->skinMatrix44.M11, this->skinMatrix44.M12, this->skinMatrix44.M13,
                             this->skinMatrix44.M21, this->skinMatrix44.M22, this->skinMatrix44.M23,
                             this->skinMatrix44.M31, this->skinMatrix44.M32, this->skinMatrix44.M33);
@@ -436,7 +471,7 @@ inline
 void
 nCharJoint::SetMatrix(const matrix44& m)
 {
-    this->matrix = m;
+    this->worldScaledMatrix = m;
     this->lockMatrix = true;
 }
 
@@ -449,7 +484,7 @@ inline
 const matrix44&
 nCharJoint::GetMatrix() const
 {
-    return this->matrix;
+    return this->worldScaledMatrix;
 }
 
 //------------------------------------------------------------------------------
@@ -461,7 +496,7 @@ inline
 void
 nCharJoint::SetLocalMatrix(const matrix44& m)
 {
-    this->localMatrix = m;
+    this->localScaledMatrix = m;
     this->matrixDirty = false;
 }
 
@@ -474,7 +509,7 @@ inline
 const matrix44&
 nCharJoint::GetLocalMatrix() const
 {
-    return this->localMatrix;
+    return this->localScaledMatrix;
 }
 
 //------------------------------------------------------------------------------

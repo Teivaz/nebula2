@@ -130,7 +130,7 @@ nGuiTextButton::Render()
         else if (this->blinking)
         {
             nTime time = nGuiServer::Instance()->GetTime();
-            if (fmod(time, this->blinkRate) > this->blinkRate/2.0)
+            if (fmod(time, this->blinkRate) > this->blinkRate / 2.0)
             {
                 nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->highlightBrush);
             }

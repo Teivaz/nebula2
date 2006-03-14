@@ -7,6 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 #include "kernel/ntimeserver.h"
+#include "gui/nguimousecursor.h"
 
 nNebulaClass(nGuiToolTip, "nguitextlabel");
 
@@ -189,7 +190,16 @@ nGuiToolTip::UpdateRect()
     // compute tooltip offset to mouse hot spot
     // we assume a 32x32 mouse pointer
     const nDisplayMode2& mode = nGfxServer2::Instance()->GetDisplayMode();
-    vector2 offset(0.0f, 32.0f / mode.GetHeight());
+    vector2 cursorSize((32.0f / mode.GetWidth()) ,(32.0f / mode.GetHeight()));
+    if (nGfxServer2::Instance()->GetCursorVisibility() == nGfxServer2::Gui)
+    {
+        nGuiMouseCursor* cursor = nGuiServer::Instance()->GetGuiMouseCursor();
+        if (cursor)
+        {
+            cursorSize = cursor->GetBrushSize();
+        }
+    }
+    vector2 offset(0.0f, cursorSize.y);
 
     // update screen space rectangle
     rectangle r(mousePos + offset, mousePos + this->textSize + offset);

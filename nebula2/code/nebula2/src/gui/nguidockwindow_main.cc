@@ -94,6 +94,22 @@ nGuiDockWindow::OnShow()
     btn->OnShow();
     this->refGfxBrowserButton = btn;
 
+    // Hardpoint Object Attach button
+    btn = (nGuiButton*) kernelServer->New("nguibutton", "HardpointButton");
+    n_assert(btn);
+    btn->SetDefaultBrush("hardpoint_n");
+    btn->SetPressedBrush("hardpoint_p");
+    btn->SetHighlightBrush("hardpoint_h");
+    btn->SetMinSize(btnSize);
+    btn->SetMaxSize(btnSize);
+    btn->SetTooltip("Attach objects to Hardpoints");
+    layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
+    layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refGfxBrowserButton, 0.0f);
+    layout->AttachForm(btn, nGuiFormLayout::Right, 0.0f);
+    btn->OnShow();
+    this->refHardpointButton = btn;
+
     // scene control button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "SceneControlButton");
     n_assert(btn);
@@ -105,7 +121,7 @@ nGuiDockWindow::OnShow()
     btn->SetTooltip("Scene Control");
     layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
     layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
-    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refGfxBrowserButton, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refHardpointButton, 0.0f);
     btn->OnShow();
     this->refSceneControlButton = btn;
 
@@ -189,7 +205,7 @@ nGuiDockWindow::OnShow()
 
     // set window position and size
     rectangle rect;
-    const float width  = 9 * btnSize.x;
+    const float width  = 10 * btnSize.x;
     const float height = btnSize.y;
     rect.v0.set(0.5f - (width * 0.5f), 1.0f - height);
     rect.v1.set(0.5f + (width * 0.5f), 1.0f);
@@ -205,6 +221,7 @@ nGuiDockWindow::OnHide()
     this->refConsoleButton->Release();
     this->refTexBrowserButton->Release();
     this->refGfxBrowserButton->Release();
+    this->refHardpointButton->Release();
   //  this->refSceneControlButton->Release();
     this->refWatcherButton->Release();
     this->refSysInfoButton->Release();
@@ -238,6 +255,11 @@ nGuiDockWindow::OnEvent(const nGuiEvent& event)
         {
             // open a graphics browser window
             nGuiServer::Instance()->NewWindow("nguigraphicsbrowserwindow", true);
+        }
+        else if (event.GetWidget() == this->refHardpointButton)
+        {
+            // open a hardpoints browser window
+            nGuiServer::Instance()->NewWindow("nguihardpointsbrowserwindow", true);
         }
         else if (event.GetWidget() == this->refSceneControlButton)
         {

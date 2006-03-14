@@ -5,6 +5,7 @@
 #  Modules:
 #      nanimationserver
 #      nanimation
+#      ncombinedanimation
 #      nmemoryanimation
 #      ncharacter
 #===============================================================================
@@ -24,6 +25,12 @@ beginmodule nanimation
     setheaders { nanimation }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule ncombinedanimation
+    setdir anim2
+    setfiles { ncombinedanimation_main }
+    setheaders { ncombinedanimation }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nmemoryanimation
     setdir anim2
     setfiles { nmemoryanimation_main }
@@ -32,6 +39,22 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule ncharacter
     setdir character
-    setfiles { ncharacter2 ncharskinrenderer }
-    setheaders { ncharacter2 ncharskeleton ncharskinrenderer ncharjoint ncharjointpalette }
+    setfiles { ncharacter2 ncharskinrenderer ncharacter3set }
+    setheaders {
+        ncharacter2 ncharskeleton ncharskinrenderer
+        ncharjoint ncharjointpalette ncharacter3set
+    }
 endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncharacter3node
+    setdir scene
+    setfiles { ncharacter3node_main ncharacter3node_cmds }
+    setheaders { ncharacter3node }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ncharacter3skinanimator
+    setdir scene
+    setfiles { ncharacter3skinanimator_main ncharacter3skinanimator_cmds }
+    setheaders { ncharacter3skinanimator }
+endmodule
+#-------------------------------------------------------------------------------

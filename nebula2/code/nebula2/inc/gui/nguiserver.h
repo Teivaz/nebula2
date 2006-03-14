@@ -27,6 +27,7 @@ class nInputServer;
 class nGuiToolTip;
 class nScriptServer;
 class nGuiDragBox;
+class nGuiMouseCursor;
 
 //------------------------------------------------------------------------------
 class nGuiServer : public nRoot
@@ -149,6 +150,10 @@ public:
     void ShowToolTip(const char* text, const vector4& textColor);
     /// is gui system window enabled ?
     bool IsSystemGuiEnabled() const;
+    /// set gui mouse cursor
+    void SetGuiMouseCursor(nGuiMouseCursor* cursor);
+    /// get gui mouse cursor
+    nGuiMouseCursor* GetGuiMouseCursor();
 
 private:
     friend class nRpPass;
@@ -180,6 +185,7 @@ private:
     nRef<nRoot>             refSkins;
     nRef<nGuiSkin>          refCurrentSkin;
     nRef<nGuiDragBox>       refDragBox;
+    nRef<nGuiMouseCursor>   refMouseCursor;
     
     nClass* guiWindowClass;
 
@@ -193,6 +199,8 @@ private:
     bool toolTipSet;
     const nTime toolTipFadeInTime;
     const nTime toolTipActivationTime;
+
+    bool guiMouseCursorEnabled;
 
     nArray< nRef<nGuiWidget> > eventListeners;
 
@@ -361,7 +369,6 @@ nGuiServer::GetSystemSkin() const
     return this->refSystemSkin.isvalid() ? this->refSystemSkin.get() : 0;
 }
 
-
 //-----------------------------------------------------------------------------
 /**
 */
@@ -371,7 +378,6 @@ nGuiServer::SetToolTipEnable(bool enable)
 {
     this->toolTipEnabled = enable;
 }
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -383,7 +389,6 @@ nGuiServer::IsToolTipEnabled() const
     return this->toolTipEnabled;
 }
 
-
 //-----------------------------------------------------------------------------
 /**
 */
@@ -393,7 +398,6 @@ nGuiServer::GetToolTipActivationTime() const
 {
     return this->toolTipActivationTime;
 }
-
 
 //-----------------------------------------------------------------------------
 /**
@@ -442,6 +446,16 @@ bool
 nGuiServer::IsSystemGuiEnabled() const
 {
     return this->systemGuiActive;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nGuiServer::SetGuiMouseCursor(nGuiMouseCursor* cursor)
+{
+    this->refMouseCursor = cursor;
 }
 
 //-----------------------------------------------------------------------------

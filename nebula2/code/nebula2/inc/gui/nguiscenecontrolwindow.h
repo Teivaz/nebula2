@@ -10,6 +10,8 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
+#include "scene/ncharacter3node.h"
+#include "character/ncharacter3set.h"
 
 class nGuiHoriSliderGroup;
 class nGuiColorSliderGroup;
@@ -19,6 +21,7 @@ class nLightNode;
 class nSkinAnimator;
 class nGuiTextLabel;
 class nGuiTextView;
+//class nGuiSkyEditor;
 
 //------------------------------------------------------------------------------
 class nGuiSceneControlWindow : public nGuiClientWindow
@@ -67,10 +70,17 @@ private:
     nRef<nGuiTextLabel> refStatesLabel;
     nRef<nGuiTextLabel> refChnLabel;  
     nRef<nGuiTextView> refAnimStates;  
+    nRef<nGuiTextView> refCharacter3Skins;  
+    nRef<nGuiTextView> refCharacter3Animations;  
+    nRef<nGuiTextView> refCharacter3Variations;  
     nDynAutoRef<nTransformNode> refLightTransform;
     nDynAutoRef<nLightNode> refLight;
 
+//    nRef<nSkinAnimator> refSkinAnimator;
     nRef<nSkinAnimator> refSkinAnimator;
+    nRef<nCharacter3Node> refCharacter3Node;
+    nRenderContext* character3RCPtr;
+    nCharacter3Set* character3SetPtr;
 
     vector4 diffuseColor;
     vector4 specularColor;
@@ -80,8 +90,11 @@ private:
     vector3 lightAngles;
     int numAnimStates;
     bool skinAnimatorLoaded;
+    bool character3NodeLoaded;
     bool sliderChanged;    
     nArray<nVariable::Handle> chnHandles;
+
+//  nRef<nGuiSkyEditor> refSkyEditor;
 };
 
 //------------------------------------------------------------------------------
