@@ -14,9 +14,9 @@ main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
 
-    bool helpArg        = args.GetBoolArg("-help");
-    const char* fileArg = args.GetStringArg("-file", 0);
-    const char* cmpArg  = args.GetStringArg("-cmp", 0);
+    bool helpArg    = args.GetBoolArg("-help");
+    nString fileArg = args.GetStringArg("-file", 0);
+    nString cmpArg  = args.GetStringArg("-cmp", 0);
     
     if (helpArg)
     {
@@ -34,7 +34,7 @@ main(int argc, const char** argv)
     nFileServer2* fileServer = kernelServer.GetFileServer();
     uint crc0 = 0;
     uint crc1 = 0;
-    if (fileArg)
+    if (fileArg.IsValid())
     {
         bool success = fileServer->Checksum(fileArg, crc0);
         if (success)
@@ -43,7 +43,7 @@ main(int argc, const char** argv)
         }
         else
         {
-            printf("Error: Failed to open file '%s'!\n", fileArg);
+            printf("Error: Failed to open file '%s'!\n", fileArg.Get());
             return 10;
         }
     }
@@ -52,7 +52,7 @@ main(int argc, const char** argv)
         printf("Error: Filename argument expected!\n");
         return 10;
     }
-    if (cmpArg)
+    if (cmpArg.IsValid())
     {
         bool success = fileServer->Checksum(cmpArg, crc1);
         if (success)
@@ -61,7 +61,7 @@ main(int argc, const char** argv)
         }
         else
         {
-            printf("Error: Failed to open file '%s'!\n", fileArg);
+            printf("Error: Failed to open file '%s'!\n", fileArg.Get());
             return 10;
         } 
         if (crc0 == crc1)

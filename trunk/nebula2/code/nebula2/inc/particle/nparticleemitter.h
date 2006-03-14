@@ -83,14 +83,6 @@ public:
     void SetRenderOldestFirst(bool b);
     /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
-    /// scales the effect as a whole
-    void SetScale(float f);
-    /// scales the effect as a whole
-    float GetScale() const;
-    /// set whether particles, once created, follow the emitter if it moves
-    void SetParticlesFollowEmitter(bool b);
-    /// get whether particles, once created, follow the emitter if it moves
-    bool GetParticlesFollowEmitter() const;
 
     /// set one of the envelope curves
     void SetCurve(CurveType curveType, const nEnvelopeCurve& curve);
@@ -123,6 +115,8 @@ public:
     float GetParticleAirResistance(float) const;
     /// get the particle velocity factor from the envelope curve
     float GetParticleVelocityFactor(float) const;
+    /// get the lifetime of the particles
+    float GetParticleLifeTime() const;
 
     /// set the keep-alive flag
     void SetAlive(bool b);
@@ -132,10 +126,6 @@ public:
     void SetFatalException(bool b);
     /// get the fatal exception flag
     bool GetFatalException() const;
-    /// set whether the emitter is allowed to emit new particles
-    void SetActive(bool b);
-    /// get whether the emitter is allowed to emit new particles
-    bool IsActive() const;
 
     /// erase dead particles, create new
     virtual void Trigger(nTime curTime);
@@ -167,43 +157,45 @@ public:
 
     /// returns true if emitter is ready for emitting
     bool AreResourcesValid();
+    
+    /// Shall the emitter still emit particles?
+    void SetEmitting(bool emit);
 
 protected:
-    nRingBuffer<nParticle*>    particleBuffer;
-    nDynamicMesh               dynMesh;
-    nRef<nMesh2>               refEmitterMesh;
-    int                        meshGroupIndex;
-    bbox3                      box;
-    nFloat4                    wind;
+    nRingBuffer<nParticle*> particleBuffer;
+    nDynamicMesh dynMesh;
+    nRef<nMesh2> refEmitterMesh;
+    int meshGroupIndex;
+    bbox3 box;
+    nFloat4 wind;
 
-    matrix44        matrix;                 ///< the world space matrix
-    float           scale;                  ///< the scale of the effect itself
+    matrix44 matrix;                // the world space matrix
  
-    bool            alive;                  ///< is alive ?
-    bool            active;                 ///< still emitting ?
-    bool            fatalException;         ///< a fatal exception occured (emitter will be removed)                 
-    int             lastEmissionVertex;     ///< last vertex that emitted
-    int             randomKey;              ///< random number key
+    bool alive;                     // is alive ?
+    bool active;                    // still emitting ?
+    bool fatalException;            // a fatal exception occured (emitter will be removed)                 
+    int  lastEmissionVertex;        // last vertex that emitted
+    int  randomKey;                 // random number key
 
-    nTime           startTime;              ///< timestamp of creation
-    nTime           lastEmission;           ///< timestamp of last emission in visual time frame
-    nTime           prevTime;               ///< timestamp of preview frame
+    nTime startTime;                // timestamp of creation
+    nTime lastEmission;             // timestamp of last emission in visual time frame
+    nTime prevTime;                 // timestamp of preview frame
 
     // emitter settings
-    nTime           emissionDuration;       ///< how long shall be emitted ?
-    bool            loop;                   ///< loop emitter ?
-    float           activityDistance;       ///< distance between viewer and emitter beyond which emitter is inactive
-    float           spreadAngle;            ///< angle of emitted particle cone
-    float           birthDelay;             ///< maximum delay until particle starts to live
-    float           startRotation;          ///< maximum start rotation angle of a new particle
-    bool            renderOldestFirst;      ///< whether to render the oldest particles first or the youngest
-    bool            particlesFollowEmitter; ///< whether particles, once born, follow the emitter
+    nTime emissionDuration;         // how long shall be emitted ?
+    bool  loop;                     // loop emitter ?
+    float activityDistance;         // distance between viewer and emitter on witch emitter is active
+    float spreadAngle;              // angle of emitted particle cone   
+    float birthDelay;               // maximum delay until particle starts to live
+    float startRotation;            // maximum start rotation angle of a new particle
+    bool renderOldestFirst;         // wether to render the oldest particles first or the youngest
+    bool isEmitting;
 
-    int             key;                    ///< unique key identifying the emitter
-    static int      nextKey;
+    int key;                        // unique key identifying the emitter
+    static int nextKey;
 
     nArray<nEnvelopeCurve> curves;
-    nVector3EnvelopeCurve rgbCurve;     ///< curve for the color modulation of the particles
+    nVector3EnvelopeCurve rgbCurve;     // curve for the color modulation of the particles
 
 private:
     /// not implemented operator to prevent '=' - assignment
@@ -249,26 +241,6 @@ bool
 nParticleEmitter::IsAlive() const
 {
     return this->alive;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void 
-nParticleEmitter::SetActive(bool b)
-{
-    this->active = b;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool 
-nParticleEmitter::IsActive() const
-{
-    return this->active;
 }
 
 //------------------------------------------------------------------------------
@@ -395,6 +367,14 @@ float nParticleEmitter::GetStartRotation() const
 /**
 */
 inline
+float nParticleEmitter::GetParticleLifeTime() const
+{
+    return this->ParticleLifeTime;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 void nParticleEmitter::SetEmissionDuration(nTime time)
 {
     this->emissionDuration = time;
@@ -457,7 +437,6 @@ nParticleEmitter::SetRenderOldestFirst(bool b)
 {
     this->renderOldestFirst = b;
 }
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -466,56 +445,6 @@ bool
 nParticleEmitter::GetRenderOldestFirst() const
 {
     return this->renderOldestFirst;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-float
-nParticleEmitter::GetScale() const
-{
-    return this->scale;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nParticleEmitter::SetScale(float f)
-{
-    this->scale = f;
-}
-
-//------------------------------------------------------------------------------
-/**
-    @brief Whether particles, once born, follow the emitter.
-
-    Particles move about between their birth and death; this flag indicates
-    whether the movement occurs relative to their starting position, or
-    relative to the emitter's current position.  If the emitter is motionless,
-    these are equivalent and so the particlesFollowEmitter state is irrelevant.
-
-*/
-inline
-bool
-nParticleEmitter::GetParticlesFollowEmitter() const
-{
-    return this->particlesFollowEmitter;
-}
-
-//------------------------------------------------------------------------------
-/**
-    @brief Set whether particles follow the emitter around.
-
-    See GetParticlesFollowEmitter for details.
-*/
-inline
-void
-nParticleEmitter::SetParticlesFollowEmitter(bool b)
-{
-    this->particlesFollowEmitter = b;
 }
 
 //------------------------------------------------------------------------------
@@ -579,7 +508,7 @@ inline
 float
 nParticleEmitter::GetParticleScale(float pos) const
 {
-    return this->curves[ParticleScale].GetValue(pos) * this->scale;
+    return this->curves[ParticleScale].GetValue(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -710,6 +639,16 @@ const nFloat4&
 nParticleEmitter::GetWind() const
 {
     return this->wind;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline 
+void
+nParticleEmitter::SetEmitting(bool emit)
+{
+    this->isEmitting = emit;
 }
 
 //------------------------------------------------------------------------------

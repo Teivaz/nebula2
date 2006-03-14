@@ -395,6 +395,30 @@ beginmodule nguiskyeditor
     setheaders nguiskyeditor
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguieventhandler
+    setdir gui
+    setfiles { nguieventhandler }
+    setheaders { nguieventhandler }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguimousecursor
+    setdir gui
+    setfiles { nguimousecursor_main }
+    setheaders { nguimousecursor }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguihardpointsbrowserwindow
+    setdir gui
+    setfiles { nguihardpointsbrowserwindow_main }
+    setheaders { nguihardpointsbrowserwindow }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguihardpointslister
+    setdir gui
+    setfiles { nguihardpointslister_main }
+    setheaders { nguihardpointslister }
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
@@ -412,6 +436,8 @@ begintarget ngui
         nguiscenecontrolwindow nguicoloradjust nguicoloradjustwindow
         nguicolorlabel nguicolorpicker nguicolorslidergroup
         nguibar nguifadeouttextlabel nguislide nguislideshow
+        nguieventhandler nguimousecursor nguihardpointsbrowserwindow
+        nguihardpointslister
     }
     settargetdeps {
         ntoollib

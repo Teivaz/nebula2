@@ -59,6 +59,8 @@ public:
     void SetBorder(const rectangle& border);
     /// get border
     const rectangle& GetBorder() const;
+    /// get the window's form layout object
+    nGuiFormLayout* GetFormLayout() const;
 
 protected:
     /// update the child widget layout, when position or size changes
@@ -232,6 +234,16 @@ nGuiClientWindow::GetBorder() const
     nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
     return skin->GetWindowBorder();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGuiFormLayout*
+nGuiClientWindow::GetFormLayout() const
+{
+    return this->refFormLayout;
 }
 
 //------------------------------------------------------------------------------

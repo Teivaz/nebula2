@@ -1,0 +1,35 @@
+#===============================================================================
+#  particle.bld
+#  Particle system modules
+#
+#  Modules:
+#      nparticle2
+#      nparticleserver2
+#      nparticle2emitter
+#      nparticleshapenode2
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+beginmodule nparticle2
+    setdir particle
+    setheaders { nparticle2 }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticleserver2
+    setdir particle
+    setfiles { nparticleserver2_main nparticleserver2_cmds }
+    setheaders { nparticleserver2 }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticle2emitter
+    setdir particle
+    setfiles { nparticle2emitter_main }
+    setheaders { nparticle2emitter }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nparticleshapenode2
+    setdir scene
+    setfiles { nparticleshapenode2_main nparticleshapenode2_cmds }
+    setheaders { nparticleshapenode2 }
+endmodule
+#-------------------------------------------------------------------------------

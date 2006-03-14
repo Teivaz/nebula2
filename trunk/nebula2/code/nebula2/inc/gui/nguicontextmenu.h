@@ -38,20 +38,20 @@ public:
 
 protected:
     nArray<nString> entryArray;
-	nArray< nRef<nGuiTextButton> > buttonArray;
+    nArray< nRef<nGuiTextButton> > buttonArray;
     int selectedIndex;
 };
 
 //------------------------------------------------------------------------------
 /**
-	Creates a text button as a menu entry
+    Creates a text button as a menu entry
 */
 inline
 void
 nGuiContextMenu::AddEntry(const char* entry)
 {
-	n_assert(entry);
-	this->entryArray.Append(entry);
+    n_assert(entry);
+    this->entryArray.Append(entry);
 }
 
 //------------------------------------------------------------------------------

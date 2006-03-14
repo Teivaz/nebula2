@@ -11,10 +11,11 @@
 #include "tools/ncmdlineargs.h"
 #include "kernel/ndirectory.h"
 #include "kernel/nfile.h"
+#include "util/nstring.h"
 
-const char* NewDirPath = 0;
-const char* OldDirPath = 0;
-const char* DiffDirPath = 0;
+nString NewDirPath;
+nString OldDirPath;
+nString DiffDirPath;
 nFile* BatchFile = 0;
 bool Different = false;
 
@@ -30,7 +31,7 @@ HandleDiffFile(const nString& filename)
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // build corresponding filename in old dir
-    nString oldFileName = filename.Substitute(NewDirPath, OldDirPath);
+    nString oldFileName = filename.Substitute(NewDirPath.Get(), OldDirPath.Get());
 
     bool copyFile = false;
     if (fileServer->FileExists(oldFileName.Get()))
@@ -68,7 +69,7 @@ HandleDiffFile(const nString& filename)
     if (copyFile)
     {
         // copy new file to difference directory
-        nString diffFileName = filename.Substitute(NewDirPath, DiffDirPath).Get();
+        nString diffFileName = filename.Substitute(NewDirPath.Get(), DiffDirPath.Get());
         nString diffFileDir = diffFileName.ExtractDirName();
         fileServer->MakePath(diffFileDir.Get());
         fileServer->CopyFile(filename.Get(), diffFileName.Get());
@@ -89,11 +90,11 @@ CheckCleanupDirectory(const nString& dirName)
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // build corresponding filename in new dir
-    nString newDirName = dirName.Substitute(OldDirPath, NewDirPath);
+    nString newDirName = dirName.Substitute(OldDirPath.Get(), NewDirPath.Get());
     if (!fileServer->DirectoryExists(newDirName.Get()))
     {
         // directory no longer exists...
-        nString relativeDirName = dirName.Substitute(OldDirPath, "").Substitute("/", "\\").TrimLeft("\\");
+        nString relativeDirName = dirName.Substitute(OldDirPath.Get(), "").Substitute("/", "\\").TrimLeft("\\");
         char buf[N_MAXPATH];
         snprintf(buf, sizeof(buf), "if EXIST %%1\\%s (\necho Remove directory %%1\\%s\nrmdir /S /Q %%1\\%s )\n", relativeDirName.Get(), relativeDirName.Get(), relativeDirName.Get());
         BatchFile->PutS(buf);
@@ -117,13 +118,13 @@ HandleCleanupFile(const nString& filename)
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // build corresponding filename in new dir
-    nString newFileName = filename.Substitute(OldDirPath, NewDirPath);
+    nString newFileName = filename.Substitute(OldDirPath.Get(), NewDirPath.Get());
 
     // check if file does not exist in new dir
     if (!fileServer->FileExists(newFileName.Get()))
     {
         // add an entry to the batch file
-        nString relativeFilename = filename.Substitute(OldDirPath, "").Substitute("/", "\\").TrimLeft("\\");
+        nString relativeFilename = filename.Substitute(OldDirPath.Get(), "").Substitute("/", "\\").TrimLeft("\\");
         char buf[N_MAXPATH];
         snprintf(buf, sizeof(buf), "if EXIST %%1\\%s (\necho Delete %%1\\%s\ndel /F /Q %%1\\%s )\n", relativeFilename.Get(), relativeFilename.Get(), relativeFilename.Get());
         BatchFile->PutS(buf);

@@ -18,6 +18,7 @@
 #include "gui/nguiresource.h"
 #include "gui/nguibrush.h"
 #include "gui/nguidragbox.h"
+#include "gui/nguimousecursor.h"
 
 nNebulaScriptClass(nGuiServer, "nroot");
 nGuiServer* nGuiServer::Singleton = 0;
@@ -44,6 +45,7 @@ nGuiServer::nGuiServer() :
     toolTipEnabled(true),
     toolTipFadeInTime(0.15),
     toolTipActivationTime(0.2f),
+    guiMouseCursorEnabled(false),
     clipRectStack(0, 1)
 {
     n_assert(0 == Singleton);
@@ -199,7 +201,12 @@ nGuiServer::Open()
     this->refSkins = kernelServer->New("nroot", "/sys/share/rsrc/skins");
     n_assert(this->refSkins.isvalid());
 
-    // create a default root window
+    // create default user root window
+    kernelServer->PushCwd(this->refGui.get());
+    this->refUserRootWindow = (nGuiWindow*) kernelServer->New("nguiwindow", "UserRootWindow");
+    kernelServer->PopCwd();
+
+    // create a default system root window
     kernelServer->PushCwd(this->refGui.get());
     this->refSystemRootWindow = (nGuiWindow*) kernelServer->New("nguiwindow", "SystemRootWindow");
     kernelServer->PopCwd();
@@ -222,7 +229,7 @@ nGuiServer::Open()
 
     // set root window to 0, this will hide the GUI
     this->refCurrentRootWindow->Hide();
-    this->SetRootWindow(0);
+    this->SetRootWindow("UserRootWindow");
 
     return true;
 }
@@ -249,7 +256,12 @@ nGuiServer::Close()
     // clear root window
     this->SetRootWindow(0);
 
-    // clear default system root window
+    // clear root windows
+    if (this->refUserRootWindow.isvalid())
+    {
+        this->refUserRootWindow->Release();
+        n_assert(!this->refUserRootWindow.isvalid());
+    }
     if (this->refSystemRootWindow.isvalid())
     {
         this->refSystemRootWindow->Release();
@@ -404,6 +416,10 @@ nGuiServer::Trigger()
                     if (this->refDragBox.isvalid())
                     {
                         this->refDragBox->OnMouseMoved(this->curMousePos);
+                    }
+                    if (this->refMouseCursor.isvalid())
+                    {
+                        this->refMouseCursor->OnMouseMoved(this->curMousePos);
                     }
                 }
 
@@ -768,6 +784,23 @@ nGuiServer::Render()
                 this->refDragBox->Render();
             }
 
+            // render optional gui mouse cursor
+            if (nGfxServer2::Instance()->GetCursorVisibility() == nGfxServer2::Gui)
+            {
+                if (!this->refMouseCursor.isvalid())
+                {
+                    this->refMouseCursor = (nGuiMouseCursor*) this->refGui->Find("GuiMouseCursor");
+                }
+                if (this->refMouseCursor.isvalid())
+                {
+                    if (!this->refMouseCursor->IsShown())
+                    {
+                        this->refMouseCursor->Show();
+                    }
+                    this->refMouseCursor->Render();
+                }
+            }
+
             // finish dynamic mesh rendering
             this->dynMesh.End(this->curVertexIndex);
 
@@ -915,7 +948,7 @@ nGuiServer::ConvertScreenToViewSpace(const vector2& screenCoord)
 
     // get near plane
     float nearZ = nGfxServer2::Instance()->GetCamera().GetNearPlane();
-    return viewCoord * nearZ * 1.1f;
+    return viewCoord * nearZ * 10.0f;
 }
 
 //-----------------------------------------------------------------------------
@@ -1365,6 +1398,27 @@ nGuiServer::SetDragBox(nGuiDragBox* dragBox)
         n_assert(dragBox->IsA(kernelServer->FindClass("nguidragbox")));
     }
     this->refDragBox = dragBox;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nGuiMouseCursor*
+nGuiServer::GetGuiMouseCursor()
+{
+    if (!this->refMouseCursor.isvalid())
+    {
+        this->refMouseCursor = (nGuiMouseCursor*) this->refGui->Find("GuiMouseCursor");                 
+    }
+    if (this->refMouseCursor.isvalid())
+    {
+        if (!this->refMouseCursor->IsShown())
+        {
+            this->refMouseCursor->Show();
+        }
+        return this->refMouseCursor.get();
+    }
+    else return 0;
 }
 
 //-----------------------------------------------------------------------------

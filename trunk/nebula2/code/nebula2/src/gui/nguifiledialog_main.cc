@@ -25,6 +25,10 @@ nGuiFileDialog::nGuiFileDialog() :
 {
     this->SetText(Ok, "Ok");
     this->SetText(Cancel, "Cancel");
+    this->SetText(Delete, "Delete");
+    this->SetText(DeleteMessage, "Delete existing file?");
+    this->SetText(DeleteOk, "Ok");
+    this->SetText(DeleteCancel, "Cancel");
     this->SetText(OverwriteMessage, "Overwrite existing file?");
     this->SetText(OverwriteOk, "Ok");
     this->SetText(OverwriteCancel, "Cancel");
@@ -138,8 +142,8 @@ nGuiFileDialog::OnShow()
         textEntry->SetHighlightBrush("textentry_h");
         textEntry->SetCursorBrush("textcursor");
         textEntry->SetColor( this->entryTextColor );
-        textEntry->SetMinSize(vector2(0.0f, textSize.y));
-        textEntry->SetMaxSize(vector2(1.0f, textSize.y));
+        textEntry->SetMinSize(vector2(0.0f, textEntry->GetTextExtent().y * 1.5f));
+        textEntry->SetMaxSize(vector2(1.0f, textEntry->GetTextExtent().y * 1.5f));
         textEntry->SetFileMode(true);
         if (!this->initialFilename.IsEmpty())
         {
@@ -355,6 +359,8 @@ nGuiFileDialog::OnEvent(const nGuiEvent& event)
 bool
 nGuiFileDialog::OnOk()
 {
+    nGuiEvent okEvent(this, nGuiEvent::DialogOk);
+    nGuiServer::Instance()->PutEvent(okEvent);
     return true;
 }
 
@@ -367,6 +373,8 @@ nGuiFileDialog::OnOk()
 bool
 nGuiFileDialog::OnCancel()
 {
+    nGuiEvent cancelEvent(this, nGuiEvent::DialogCancel);
+    nGuiServer::Instance()->PutEvent(cancelEvent);
     return true;
 }
 

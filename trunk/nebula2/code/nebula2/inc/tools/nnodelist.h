@@ -15,6 +15,8 @@
 #include "scene/nrendercontext.h"
 #include "scene/ntransformnode.h"
 #include "variable/nvariableserver.h"
+#include "scene/nskinanimator.h"
+#include "character/ncharacter3set.h"
 
 //------------------------------------------------------------------------------
 class nNodeList 
@@ -42,8 +44,10 @@ public:
     void AddDefaultEntry();
     /// AddEntry
     void AddEntry(const nString& name);
-    /// Load Object
+    /// Load an object
     void LoadObject(const nString& objPath);
+    /// Load an object and animate it by the given hardpoint(jointIndex)
+    void LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex);
     /// update vars
     void Trigger(double time, uint frameId);
     
@@ -60,6 +64,11 @@ public:
     /// get transform node at index
     nTransformNode* GetNodeAt(uint index) const;
 
+    /// give a character3 set; from now on owned by this class
+    void GiveCharacter3Set(nCharacter3Set* charSet);
+    /// get character3set
+    nCharacter3Set* GetCharacter3Set();
+
 private:
 
     // Created Structure
@@ -68,6 +77,10 @@ private:
     //       +-loaded.obj.bla.1- ... 
     //       +-loaded.obj.bli.2- ... 
     //       +-loaded.obj.blu.3- ...
+
+    /// Get Pointer to the first nCharacter2 Object from the current rendercontexts
+    nCharacter2*    getCharacter();
+    nCharacter3Set* character3Set;
 
     static nNodeList* Singleton;
     uint numElements;
@@ -79,6 +92,10 @@ private:
     nVariable::Handle timeHandle;    
     bool lightStageEnabled;
     nString stageScript;
+    // FIXME: Quick and dirty
+    int                     hardpointObjectsCnt;
+    nArray<int>             hardpointJointIndex;
+    nArray<nSceneNode*>     hardpointPtr;
 };
 
 //-----------------------------------------------------------------------------
@@ -147,6 +164,29 @@ nNodeList::SetLightStageEnabled(bool b)
 {
     this->lightStageEnabled = b;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nNodeList::GiveCharacter3Set(nCharacter3Set* charSet)
+{
+    this->character3Set = charSet;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nCharacter3Set*
+nNodeList::GetCharacter3Set()
+{
+    return this->character3Set;
+}
+
+
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 /**

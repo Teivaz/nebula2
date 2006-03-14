@@ -19,10 +19,6 @@ static void n_setstartrotation(void* slf, nCmd* cmd);
 static void n_getstartrotation(void* slf, nCmd* cmd);
 static void n_setrenderoldestfirst(void* slf, nCmd* cmd);
 static void n_getrenderoldestfirst(void* slf, nCmd* cmd);
-static void n_getglobalscale(void* slf, nCmd* cmd);
-static void n_setglobalscale(void* slf, nCmd* cmd);
-static void n_getparticlesfollownode(void* slf, nCmd* cmd);
-static void n_setparticlesfollownode(void* slf, nCmd* cmd);
 
 static void n_setemissionfrequency(void* slf, nCmd* cmd);
 static void n_getemissionfrequency(void* slf, nCmd* cmd);
@@ -49,8 +45,6 @@ static void n_getparticleairresistance(void* slf, nCmd* cmd);
 static void n_setparticlevelocityfactor(void* slf, nCmd* cmd);
 static void n_getparticlevelocityfactor(void* slf, nCmd* cmd);
 
-static void n_reset(void* slf, nCmd* cmd);
-static void n_seteffectactive(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
@@ -83,10 +77,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getstartrotation_v", 'GSTR', n_getstartrotation);
     cl->AddCmd("v_setrenderoldestfirst_b", 'SROF', n_setrenderoldestfirst);
     cl->AddCmd("b_getrenderoldestfirst_v", 'GROF', n_getrenderoldestfirst);
-    cl->AddCmd("f_getglobalscale_v", 'GGSL', n_getglobalscale);
-    cl->AddCmd("v_setglobalscale_f", 'SGSL', n_setglobalscale);
-    cl->AddCmd("b_getparticlesfollownode_v", 'GPFN', n_getparticlesfollownode);
-    cl->AddCmd("v_setparticlesfollownode_b", 'SPFN', n_setparticlesfollownode);
 
     cl->AddCmd("v_setemissionfrequency_ffffffffi", 'SEFQ', n_setemissionfrequency);
     cl->AddCmd("ffffffffi_getemissionfrequency_v", 'GEFQ', n_getemissionfrequency);
@@ -112,8 +102,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("ffffffffi_getparticleairresistance_v", 'GPAR', n_getparticleairresistance);
     cl->AddCmd("v_setparticlevelocityfactor_ffffffffi", 'SPVF', n_setparticlevelocityfactor);
     cl->AddCmd("ffffffffi_getparticlevelocityfactor_v", 'GPVF', n_getparticlevelocityfactor);
-    cl->AddCmd("v_reset_v", 'RSET', n_reset);
-    cl->AddCmd("v_seteffectactive_b", 'SEAC', n_seteffectactive);
     cl->EndCmds();
 }
 
@@ -275,80 +263,6 @@ n_setrenderoldestfirst(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     self->SetRenderOldestFirst(cmd->In()->GetB());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getglobalscale
-    @input
-    v
-    @output
-    f(scale)
-    @info
-    Get the scale for the effect as a whole.
-*/
-static void
-n_getglobalscale(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetF(self->GetGlobalScale());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setglobalscale
-    @input
-    f(scale)
-    @output
-    v
-    @info
-    Set the scale for the effect as a whole.
-*/
-static void
-n_setglobalscale(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetGlobalScale(cmd->In()->GetF());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getparticlesfollownode
-    @input
-    v
-    @output
-    b
-    @info
-    Get whether particle trajectories are interpreted in nodespace (true)
-    or worldspace (false).
-*/
-static void
-n_getparticlesfollownode(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetB(self->GetParticlesFollowNode());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setparticlesfollownode
-    @input
-    b
-    @output
-    v
-    @info
-    Set whether particle trajectories are interpreted in nodespace (true)
-    or worldspace (false).
-*/
-static void
-n_setparticlesfollownode(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetParticlesFollowNode(cmd->In()->GetB());
 }
 
 //------------------------------------------------------------------------------
@@ -995,49 +909,6 @@ n_getparticlevelocityfactor(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    @cmd
-    reset
-    @input
-    v
-    @output
-    v
-    @info
-    Reset the effect to run from its initial state.
-    If the effect has been deactivated, it must be reactivated for
-    the reset to have any visible effect.
-*/
-static void
-n_reset(void* slf, nCmd* /*cmd*/)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->Reset();
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    seteffectactive
-    @input
-    b
-    @output
-    v
-    @info
-    Turns the effect on or off.  This is different from turning the node 
-    on and off!    
-    An effect that is deactivated doesn't disappear immediately: no new 
-    particles are created, but already living particles are 
-    allowed to die off naturally.  Conversely, an effect that is active may
-    not do anything visible -- for example, a one-shot whose time has expired.
-*/
-static void
-n_seteffectactive(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetEffectActive(cmd->In()->GetB());
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 bool
 nParticleShapeNode::SaveCmds(nPersistServer* ps)
@@ -1157,28 +1028,6 @@ nParticleShapeNode::SaveCmds(nPersistServer* ps)
         //--- setrenderoldestfirst ---
         cmd = ps->GetCmd(this, 'SROF');
         cmd->In()->SetB(this->GetRenderOldestFirst());
-        ps->PutCmd(cmd);
-
-        //--- setglobalscale ---
-        cmd = ps->GetCmd(this, 'SGSL');
-        cmd->In()->SetF(this->GetGlobalScale());
-        ps->PutCmd(cmd);
-
-        //--- setparticlesfollownode ---
-        cmd = ps->GetCmd(this, 'SPFN');
-        cmd->In()->SetB(this->GetParticlesFollowNode());
-        ps->PutCmd(cmd);
-
-        //--- reset ---
-        if(this->IsResetting())
-        {
-            cmd = ps->GetCmd(this, 'RSET');
-            ps->PutCmd(cmd);
-        }
-
-        //--- seteffectactive ---
-        cmd = ps->GetCmd(this, 'SEAC');
-        cmd->In()->SetB(this->IsEffectActive());
         ps->PutCmd(cmd);
 
         return true;

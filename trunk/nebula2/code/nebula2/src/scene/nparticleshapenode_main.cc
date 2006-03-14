@@ -22,11 +22,7 @@ nParticleShapeNode::nParticleShapeNode() :
     spreadAngle(0.0f),
     birthDelay(0.0f),
     emitterVarIndex(-1),
-    renderOldestFirst(true),
-    globalScale(1.0f),
-    particlesFollowNode(false),
-    doReset(false),
-    active(true)
+    renderOldestFirst(true)
 {
     int i;
     for (i=0; i<4; i++)
@@ -71,11 +67,6 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
     int emitterKey = varEmitter.GetInt();
     nParticleEmitter* emitter = this->refParticleServer->GetParticleEmitter(emitterKey);
-    if(this->IsResetting())
-    {
-        emitter = 0;
-        this->doReset = false;
-    }
 
     // keep emitter alive
     if (0 == emitter)
@@ -103,9 +94,6 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetBirthDelay(this->birthDelay);
     emitter->SetStartRotation(this->startRotation);
     emitter->SetRenderOldestFirst(this->renderOldestFirst);
-    emitter->SetScale(this->globalScale);
-    emitter->SetParticlesFollowEmitter(this->particlesFollowNode);
-    emitter->SetActive(this->IsEffectActive());
     int curveType;
     for (curveType = 0; curveType < nParticleEmitter::CurveTypeCount; curveType++)
     {

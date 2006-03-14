@@ -38,12 +38,12 @@ public:
     void SetSkyPath(const char* path);
     /// get the path from nSkyNode
     const char* GetSkyPath() const;
-	/// nskynode found?
-	bool SkyLoad();
+    /// nskynode found?
+    bool SkyLoad();
 
 private:
-	///
-	void FindSkyNode(nRoot* node);
+    ///
+    void FindSkyNode(nRoot* node);
     ///
     void ShowSky();
     ///
@@ -146,7 +146,7 @@ private:
     nRef<nGuiColorSliderGroup> refSunLightSpecularColSlider;
     
     //Stars
-	// FIXME: Not implemented
+    // FIXME: Not implemented
     
                 
     nDynAutoRef<nSkyNode> refSky;     
@@ -154,7 +154,7 @@ private:
     int oldElement;
     int activeElement;
     int activeState;
-	bool elementReady;
+    bool elementReady;
     bool stateReady;
     bool layoutChanged;
     bool refresh;
@@ -176,7 +176,7 @@ void
 nGuiSkyEditor::SetSkyPath(const char* path)
 {
     this->skyPath.Set(path);
-	this->skyPath.StripTrailingSlash();
+    this->skyPath.StripTrailingSlash();
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ inline
 bool
 nGuiSkyEditor::SkyLoad()
 {
-	return this->refSky.isvalid();
+    return this->refSky.isvalid();
 }
 
 #endif

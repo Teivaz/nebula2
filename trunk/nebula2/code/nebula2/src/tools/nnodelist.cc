@@ -1,7 +1,12 @@
 //------------------------------------------------------------------------------
-//  nnodelist.cc
-//  (C) 2005 RadonLabs GmbH
-//------------------------------------------------------------------------------
+/**
+    @class nNodeList
+    @ingroup ToolLib
+
+    Implements the Root Node of an Object and a depending render context
+
+    (C) 2004 RadonLabs GmbH
+*/
 #include "tools/nnodelist.h"
 
 nNodeList* nNodeList::Singleton = 0;
@@ -13,7 +18,9 @@ nNodeList::nNodeList(void):
     refScriptServer("/sys/servers/script"),
     numElements(0),
     isOpen(false),
-    lightStageEnabled(true)
+    lightStageEnabled(true),
+    hardpointObjectsCnt(0),
+    character3Set(0)
 {
     n_assert(nNodeList::Singleton == 0);
     this->Singleton = this;
@@ -56,7 +63,13 @@ nNodeList::Close ()
     {
         this->refUsrScene->Release();
     }
-        
+      
+    // if we have a character3set, we must delete it
+    if(this->character3Set)
+    {
+        delete this->character3Set;
+    };
+
     // verify if everything is clean
     n_assert(this->refUsrScene == 0);
     n_assert(renderContexts.Size() == 0);
@@ -87,10 +100,14 @@ nNodeList::Clear()
         this->refUsrScene->Release();
     }
 
+    this->hardpointObjectsCnt = 0;
+    this->hardpointJointIndex.Clear();
+    this->hardpointPtr.Clear();
+
     // create the /usr/scene object
     if (!this->refUsrScene.isvalid())
     {
-        this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("ntransformnode", "/usr/scene");
+        this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("nscenenode", "/usr/scene");
     }
     
     n_assert(this->refUsrScene.isvalid());
@@ -172,18 +189,97 @@ nNodeList::LoadObject(const nString& objPath)
     // reset time
     nTimeServer::Instance()->ResetTime();
 }
+
 //------------------------------------------------------------------------------
 /**
-    Updates global variables for all render contexts
+    Get Pointer to the first nCharacter2 Object from the current rendercontexts
+*/
+nCharacter2*    nNodeList::getCharacter()
+{
+    nVariable::Handle charHandle = nVariableServer::Instance()->GetVariableHandleByName("charPointer");
+    const nVariable* charVar = 0;
+    
+    int i;
+    for( i = 0 ; i < renderContexts.Size() ; i++)
+    {
+        charVar = renderContexts.At(i).FindLocalVar(charHandle);
+        if( 0 != charVar ) break;
+    };
+
+    // break if there is no characterVariable in the current context
+    if(charVar == 0) return 0;
+
+    nCharacter2* curCharacter = (nCharacter2*) charVar->GetObj();
+    n_assert(curCharacter);
+    return curCharacter;
+};
+
+//------------------------------------------------------------------------------
+/**
+    Loads an object and attaches it to the given animator
+*/
+void 
+nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex) 
+{ 
+    // load Object inside an individual Node
+    nString tmpString = objPath.ExtractFileName();
+    tmpString.StripExtension();
+    nString nodeName;
+    nodeName.Format("%s.%d", tmpString.Get(), numElements);
+
+    AddEntry(nodeName);
+
+    // load new object
+    nKernelServer* kernelServer = nKernelServer::Instance();
+    kernelServer->PushCwd(this->refUsrScene);
+    kernelServer->SetCwd( this->refNodes.Back() );
+    kernelServer->Load(objPath.Get());
+    kernelServer->PopCwd();
+    
+    refNodes.Back()->RenderContextCreated(&this->renderContexts.Back());
+
+    // Add the Object to the list of objects to animate
+    this->hardpointObjectsCnt++;
+    this->hardpointJointIndex.PushBack(jointIndex);
+    this->hardpointPtr.PushBack(refNodes.Back());
+
+    // reset time
+    nTimeServer::Instance()->ResetTime();
+}
+//------------------------------------------------------------------------------
+/**
+    Updates global varibles for all rendercontexts
 */
 void 
 nNodeList::Trigger(double time, uint frameId)
 {   
-    n_assert(this->refUsrScene.isvalid());
+    n_assert ( this->refUsrScene.isvalid() )
     
     // Update all Variables
-    for (uint index = 0; index < numElements; index++)
-        TransferGlobalVars(renderContexts[index], time, frameId);
+    uint index;
+    for( index=0 ; index < numElements ; index++ )
+        TransferGlobalVars(renderContexts[index],time,frameId);
+
+    // Apply animation on the Node that was attached to a Hardpoint
+    if(this->hardpointObjectsCnt > 0)
+    {
+        nCharacter2* curChar = getCharacter();
+        if( 0 != curChar )
+        {
+            nCharSkeleton& skel = curChar->GetSkeleton();
+            int i;
+            for( i = 0 ; i < hardpointObjectsCnt ; i++ )
+            {
+                nCharJoint joint = skel.GetJointAt(this->hardpointJointIndex.At(i));
+                nSceneNode* currentNode = this->hardpointPtr.At(i);
+                if(currentNode->HasTransform())
+                {
+                    nTransformNode* transformNode = (nTransformNode*) currentNode;
+                    transformNode->SetTransform(joint.GetMatrix());
+                };
+            };
+        };
+    };
 }
 //------------------------------------------------------------------------------
 /**

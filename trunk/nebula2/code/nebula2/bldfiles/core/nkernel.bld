@@ -133,11 +133,13 @@ beginmodule nutil
         nvariant
     }
     setfiles {
+        nbuffer
         nhttpformdatawrapper
         nhttpsession
         nquadtree
+        nstartupchecker
+        nstream
         nstring
-        nbuffer
     }
 endmodule
 #===============================================================================

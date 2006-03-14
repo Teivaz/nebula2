@@ -110,7 +110,7 @@ inline
 nGuiWidget*
 nGuiEvent::GetWidget() const
 {
-    return this->refWidget.get();
+    return this->refWidget;
 }
 
 //------------------------------------------------------------------------------

@@ -12,26 +12,24 @@ int nParticleEmitter::nextKey = 0;
 /**
 */
 nParticleEmitter::nParticleEmitter():
-    meshGroupIndex(0),
-    scale(1.0f),
+    key(nextKey++),
     alive(true),
     active(true),
-    fatalException(false),
-    lastEmissionVertex(0),
-    randomKey(0),
-    startTime(-1.0),
-    lastEmission(0.0),
-    prevTime(0.0),
-    emissionDuration(10.0),
     loop(true),
+    fatalException(false),
     activityDistance(100.0f),
+    emissionDuration(10.0),
     spreadAngle(0.0f),
     birthDelay(0.0f),
     startRotation(0.0f),
-    renderOldestFirst(true),
-    particlesFollowEmitter(false),
-    key(nextKey++),
-    curves(CurveTypeCount, 0, nEnvelopeCurve())
+    startTime(-1.0),
+    lastEmission(0.0),
+    prevTime(0.0),
+    randomKey(0),
+    lastEmissionVertex(0),
+    meshGroupIndex(0),
+    curves(CurveTypeCount, 0, nEnvelopeCurve()),
+    isEmitting(true)
 {
     int i;
     for (i = 0; i < 4; i++)
@@ -70,12 +68,7 @@ nParticleEmitter::Trigger(nTime curTime)
         return;
     }
 
-    vector3 globalAccel = particleServer->GetGlobalAccel();
-    if(!this->GetParticlesFollowEmitter())
-    {   // particle motion happens in worldspace, so we must scale it here
-        globalAccel *= this->GetScale();
-        // otherwise particle motion happens in emitter space, and we scale at render time
-    }
+    const vector3& globalAccel = particleServer->GetGlobalAccel();
     this->SetAlive(true);
 
     if (this->startTime < 0.0)  // called for the first time
@@ -121,7 +114,7 @@ nParticleEmitter::Trigger(nTime curTime)
         }
     }
 
-    if (this->alive && this->IsActive() && this->AreResourcesValid())
+    if (this->AreResourcesValid() && this->alive && isEmitting)
     {
         // do the emission
         if (!this->particleBuffer.IsValid())
@@ -172,19 +165,15 @@ nParticleEmitter::Trigger(nTime curTime)
                         curVertex = (particleServer->PseudoRandomInt(this->randomKey++) % (1 + lastIndex - firstIndex)) + firstIndex;
                         curIndex = srcIndices[curVertex] * vertexWidth;
 
-                        vector3 position = vector3(emitterVertices[curIndex+0], emitterVertices[curIndex+1], emitterVertices[curIndex+2]);
-                        vector3 normal = vector3(emitterVertices[curIndex+3], emitterVertices[curIndex+4], emitterVertices[curIndex+5]);
-                        if(!this->GetParticlesFollowEmitter())
-                        {   // create the particle with a worldspace position
-                            position = this->matrix * position;
+                        vector3 position = this->matrix * vector3(emitterVertices[curIndex+0],
+                            emitterVertices[curIndex+1], emitterVertices[curIndex+2]);
 
-                            matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13, 
-                                this->matrix.M21, this->matrix.M22, this->matrix.M23, 
-                                this->matrix.M31, this->matrix.M32, this->matrix.M33);
-                            normal = m33 * normal;
+                        matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13, 
+                            this->matrix.M21, this->matrix.M22, this->matrix.M23, 
+                            this->matrix.M31, this->matrix.M32, this->matrix.M33);
 
-                            // otherwise the particle's position is relative to the emitter
-                        }
+                        vector3 normal = m33 * vector3(emitterVertices[curIndex+3], 
+                            emitterVertices[curIndex+4], emitterVertices[curIndex+5]);
 
                         // find orthogonal vectors to spread normal vector
                         vector3 ortho1, ortho2;
@@ -289,14 +278,7 @@ void nParticleEmitter::Render(nTime curTime)
             curVertex += 6;
 
             float relParticleAge = particle->GetRelativeAge(float(curTime));
-            vector3 curPosition = particle->GetPosition();
-            if(this->GetParticlesFollowEmitter())
-            {
-                // position was stored relative to emitter, so we must convert to worldspace here
-                curPosition = this->matrix * curPosition;
-                // otherwise it is already in worldspace
-            }
-
+            const vector3& curPosition = particle->GetPosition();
             float curRotation = particle->GetRotation();
             float curScale = this->GetParticleScale(relParticleAge);
             const vector3& curRGB = this->GetParticleRGB(relParticleAge);

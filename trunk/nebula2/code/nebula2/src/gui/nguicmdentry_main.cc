@@ -161,12 +161,12 @@ nGuiCmdEntry::ExecuteCommand()
     n_printf(line.Get());
 
     // and run the command through the script server
-    nString result;
+    nString result = 0;
     bool failOnError = scriptServer->GetFailOnError();
     scriptServer->SetFailOnError(false);
     scriptServer->Run(this->editLine.GetContent(), result);
     scriptServer->SetFailOnError(failOnError);
-    if (false == result.IsEmpty())
+    if (result.IsValid())
     {
         n_printf("%s\n", result.Get());
     }

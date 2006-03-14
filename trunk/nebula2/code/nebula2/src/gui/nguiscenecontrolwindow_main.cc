@@ -9,11 +9,13 @@
 #include "gui/nguitextlabel.h"
 #include "gui/nguicolorslidergroup.h"
 #include "scene/nskinanimator.h"
+#include "scene/ncharacter3skinanimator.h"
 #include "gui/nguitextlabel.h"
 #include "gui/nguitextview.h"
 #include "anim2/nanimstate.h"
 #include "variable/nvariable.h"
 #include "variable/nvariableserver.h"
+#include "tools/nnodelist.h"
 
 nNebulaClass(nGuiSceneControlWindow, "nguiclientwindow");
 
@@ -30,7 +32,8 @@ nGuiSceneControlWindow::nGuiSceneControlWindow():
     sliderChanged(false),
     skinAnimatorLoaded(false),
     refLightTransform("/usr/scene/default/stdlight"),
-    refLight("/usr/scene/default/stdlight/l")
+    refLight("/usr/scene/default/stdlight/l"),
+    character3SetPtr(0)
 {
     // empty
 }
@@ -41,7 +44,7 @@ nGuiSceneControlWindow::nGuiSceneControlWindow():
 */
 nGuiSceneControlWindow::~nGuiSceneControlWindow()
 {
-    // empty
+    // make sure everything gets cleared    
 }
 
 //------------------------------------------------------------------------------
@@ -71,6 +74,56 @@ nGuiSceneControlWindow::OnShow()
     {
         this->lightAngles = this->refLightTransform->GetEuler();
     }
+    if (!this->refCharacter3Node.isvalid())
+    {
+        // Find nCharacter3Node Class
+        nClass* nCharacter3NodeClass = this->kernelServer->FindClass("ncharacter3node");
+
+        nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
+        nCharacter3Node* firstFoundNode = (nCharacter3Node*)this->FindFirstInstance(startNode, nCharacter3NodeClass);        
+
+        if(firstFoundNode)
+        {
+            // a character3node loaded from an .n2 file is always child of a child of a parent node in the nebula hierarchy
+            // we need this parent of the parent node to lookup the rendercontext, because only this node
+            // is registered in the nodelist
+            nRoot *parentOfChar3 = firstFoundNode->GetParent();
+            n_assert(parentOfChar3);
+            parentOfChar3 = parentOfChar3->GetParent();
+            n_assert(parentOfChar3);
+
+
+            int numObjects = nNodeList::Instance()->GetCount();
+            int i;
+            for( i = 0; i < numObjects; i++)
+            {
+                nTransformNode* node = nNodeList::Instance()->GetNodeAt(i);
+                if(node == parentOfChar3)
+                {
+                    this->refCharacter3Node = (nCharacter3Node*) firstFoundNode;
+                    this->character3RCPtr = nNodeList::Instance()->GetRenderContextAt(i);
+                    break;
+                };
+
+            };
+
+            if(this->refCharacter3Node.isvalid())
+            {
+                nVariable& varCharacter3Set = this->character3RCPtr->GetLocalVar(refCharacter3Node->GetRenderContextCharacterSetIndex());
+                nCharacter3Set* characterSet = (nCharacter3Set*) varCharacter3Set.GetObj();
+                if(characterSet == 0)
+                {
+                    characterSet = new nCharacter3Set();
+                    characterSet->Init(refCharacter3Node);
+                    characterSet->LoadCharacterSetFromXML(refCharacter3Node, nString("proj:export/gfxlib/characters/")+refCharacter3Node->GetName()+"/skinlists/_auto_default_.xml");
+                    varCharacter3Set.SetObj(characterSet);
+                    this->character3RCPtr->SetVariable(varCharacter3Set);
+                    nNodeList::Instance()->GiveCharacter3Set(characterSet);
+                };
+                this->character3SetPtr = characterSet;
+            };
+        };
+    }
 
     if (!this->refSkinAnimator.isvalid())
     {
@@ -78,8 +131,18 @@ nGuiSceneControlWindow::OnShow()
         nClass* skinAnimatorClass = this->kernelServer->FindClass("nskinanimator");
         nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
         this->refSkinAnimator = (nSkinAnimator*)this->FindFirstInstance(startNode, skinAnimatorClass);        
+
+        if(this->refSkinAnimator.isvalid())
+        {
+            nClass* nCharacter3SkinAnimatorClass = this->kernelServer->FindClass("ncharacter3skinanimator");
+            // avoid char3 beeing interpreted as normal skinanimator
+            if(this->refSkinAnimator->IsA(nCharacter3SkinAnimatorClass))
+            {
+                this->refSkinAnimator.invalidate();
+            };
+        };
     }
-    
+
     rectangle windowRect(vector2(0.0f, 0.0f), vector2(0.4f, 0.3f));
 
     // sliders and color labels ...
@@ -190,6 +253,7 @@ nGuiSceneControlWindow::OnShow()
         layout->AttachWidget(textLabel, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
         layout->AttachForm(textLabel, nGuiFormLayout::Left, border); 
         layout->AttachPos(textLabel, nGuiFormLayout::Right, 0.45f);        
+        layout->AttachForm(textLabel, nGuiFormLayout::Bottom, border);
         textLabel->OnShow();
         this->refStatesLabel = textLabel;     
 
@@ -218,12 +282,64 @@ nGuiSceneControlWindow::OnShow()
         layout->AttachWidget(textLabel, nGuiFormLayout::Left, this->refStatesLabel, border);
         layout->AttachWidget(textLabel, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
         layout->AttachForm(textLabel, nGuiFormLayout::Right, border);
+        layout->AttachForm(textLabel, nGuiFormLayout::Bottom, border);
         textLabel->OnShow();
         this->refChnLabel = textLabel;
         // Create Channel Sliders
         this->UpdateChnSlider();   
         windowRect.set(vector2(0.0f, 0.0f), vector2(0.4f, 0.5f));
     }
+/**/
+    // Create Animation Controls, if nCharacter3Node was found
+    if (this->refCharacter3Node.isvalid())
+    {
+        this->character3NodeLoaded = true;
+
+        // create text view field for skins
+        nGuiTextView* textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterSkins");
+        n_assert(textView);        
+        textView->SetSelectionEnabled(true);
+        textView->SetHighlightBrush("textentry_h");
+        textView->SetDefaultBrush("list_background");
+        textView->SetHighlightBrush("list_selection");
+        layout->AttachWidget(textView, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
+        layout->AttachForm(textView, nGuiFormLayout::Left, border);
+        layout->AttachPos(textView, nGuiFormLayout::Right, 0.3f);
+        layout->AttachForm(textView, nGuiFormLayout::Bottom, border);
+        textView->OnShow();
+        this->refCharacter3Skins = textView;
+
+        // create text view field for variations
+        textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterVariations");
+        n_assert(textView);        
+        textView->SetSelectionEnabled(true);
+        textView->SetHighlightBrush("textentry_h");
+        textView->SetDefaultBrush("list_background");
+        textView->SetHighlightBrush("list_selection");
+        layout->AttachWidget(textView, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
+        layout->AttachWidget(textView, nGuiFormLayout::Left, this->refCharacter3Skins, 0.025f);
+        layout->AttachPos(textView, nGuiFormLayout::Right, 0.6f);
+        layout->AttachForm(textView, nGuiFormLayout::Bottom, border);
+        textView->OnShow();
+        this->refCharacter3Variations = textView;
+
+        // create text view field for animations
+        textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterAnimations");
+        n_assert(textView);        
+        textView->SetSelectionEnabled(true);
+        textView->SetHighlightBrush("textentry_h");
+        textView->SetDefaultBrush("list_background");
+        textView->SetHighlightBrush("list_selection");
+        layout->AttachWidget(textView, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
+        layout->AttachWidget(textView, nGuiFormLayout::Left, this->refCharacter3Variations, 0.025f);
+        layout->AttachPos(textView, nGuiFormLayout::Right, 0.95f);
+        layout->AttachForm(textView, nGuiFormLayout::Bottom, border);
+        textView->OnShow();
+        this->refCharacter3Animations = textView;
+
+        windowRect.set(vector2(0.0f, 0.0f), vector2(0.4f, 0.5f));
+    }
+
 
     kernelServer->PopCwd();
 
@@ -249,6 +365,19 @@ nGuiSceneControlWindow::OnHide()
     {
         this->refSkinAnimator.invalidate();
     }
+    if (this->refCharacter3Node.isvalid())
+    {
+/*
+        // remove the character3set from the context
+        if(this->character3RCPtr)
+        {
+            nVariable& varCharacter3Set = this->character3RCPtr->GetLocalVar(refCharacter3Node->GetRenderContextCharacterSetIndex());
+            varCharacter3Set.SetObj(0);
+            this->character3RCPtr->SetVariable(varCharacter3Set);
+        };
+*/
+        this->refCharacter3Node.invalidate();
+    }
     if (this->refStatesLabel.isvalid())
     {
         this->refStatesLabel->Release();
@@ -261,8 +390,21 @@ nGuiSceneControlWindow::OnHide()
     {
         this->refAnimStates->Release();
     }
+    if (this->refCharacter3Skins.isvalid())
+    {
+        this->refCharacter3Skins->Release();
+    }
+    if (this->refCharacter3Animations.isvalid())
+    {
+        this->refCharacter3Animations->Release();
+    }
+    if (this->refCharacter3Variations.isvalid())
+    {
+        this->refCharacter3Variations->Release();
+    }
 
-    for (int countChn = 0; countChn < this->refWeightChnListSlider.Size(); countChn++)
+    int countChn = 0;
+    for (countChn; countChn < this->refWeightChnListSlider.Size(); countChn++)
     {
         if (this->refWeightChnListSlider.At(countChn))
         {
@@ -333,7 +475,7 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
                     if (event.GetWidget() == slider)
                     {
                         nString rightText;
-                        rightText.SetFloat(((float)slider->GetValue())/100.0f);
+                        rightText.SetFloat((((float)slider->GetValue())/100.0f));
                         rightText.TerminateAtIndex(4);
                         slider->SetRightText(rightText.Get()); 
                         nVariableServer::Instance()->SetFloatVariable(this->chnHandles.At(countChnSlider),(float)slider->GetValue()/100.0f);
@@ -356,7 +498,52 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             this->UpdateChnSlider();
         }
     }
+	
+    if ( (this->refCharacter3Skins.isvalid()) &&
+         (this->character3SetPtr))
+    {
+        if( (event.GetType() == nGuiEvent::SelectionDblClicked) && 
+            (event.GetWidget() == this->refCharacter3Skins)
+            )
+	    {
+            // switch state of selections
 
+            int selection = this->refCharacter3Skins->GetSelectionIndex();
+            if( (selection >= 0) && (selection < this->character3SetPtr->GetNumAvailableSkins()) )
+            {
+                this->character3SetPtr->SetSkinVisibleAtIndex(selection, !this->character3SetPtr->IsSkinVisibleAtIndex(selection) );
+            };
+	    }
+
+        if( (event.GetType() == nGuiEvent::SelectionChanged) && 
+            (event.GetWidget() == this->refCharacter3Animations)
+            )
+	    {
+            // switch animations
+
+            int selection = this->refCharacter3Animations->GetSelectionIndex();
+            if( (selection >= 0) && (selection < this->character3SetPtr->GetNumAvailableAnimations()) )
+            {
+                this->character3SetPtr->SetCurrentAnimation(selection);
+                n_printf("Switching to animation %i\n",selection);
+            };
+	    }
+
+        if( (event.GetType() == nGuiEvent::SelectionChanged) && 
+            (event.GetWidget() == this->refCharacter3Variations)
+            )
+	    {
+            // switch variation
+
+            int selection = this->refCharacter3Variations->GetSelectionIndex();
+            if( (selection >= 0) && (selection <= this->character3SetPtr->GetNumAvailableVariations()) )
+            {
+                selection--; 
+                this->character3SetPtr->SetCurrentVariationIndexed(selection);
+                n_printf("Switching to variation %i\n",selection);
+            };
+	    }
+    };
 /*
     if (this->refSkyEditor.isvalid())
     {
@@ -395,6 +582,49 @@ nGuiSceneControlWindow::OnFrame()
             this->refAnimStates->SetSelectionIndex(curState);
         }        
      }
+
+    // Build up textview for animstate selection
+    if (this->refCharacter3Node.isvalid())
+    {
+        this->refCharacter3Skins->BeginAppend();         
+        nArray<nString> names = this->character3SetPtr->GetNamesOfLoadedSkins();
+        
+        int i;
+        for( i = 0; i < names.Size(); i++)
+        {
+            if(this->character3SetPtr->IsSkinVisibleAtIndex(i))
+            {
+                this->refCharacter3Skins->AppendColoredLine(names[i].Get(),vector4(0,0.5,0,1));
+            }
+            else
+            {
+                this->refCharacter3Skins->AppendLine(names[i].Get());
+            };
+        }
+        this->refCharacter3Skins->EndAppend();
+
+
+        this->refCharacter3Animations->BeginAppend();         
+        names = this->character3SetPtr->GetNamesOfLoadedAnimations();
+        
+        for( i = 0; i < names.Size(); i++)
+        {
+            this->refCharacter3Animations->AppendLine(names[i].Get());
+        }
+        this->refCharacter3Animations->EndAppend();
+    
+
+        this->refCharacter3Variations->BeginAppend();         
+        names = this->character3SetPtr->GetNamesOfLoadedVariations();
+        
+        this->refCharacter3Variations->AppendLine("none");
+        for( i = 0; i < names.Size(); i++)
+        {
+            this->refCharacter3Variations->AppendLine(names[i].Get());
+        }
+        this->refCharacter3Variations->EndAppend();
+    }
+
 
     nGuiClientWindow::OnFrame();   
 

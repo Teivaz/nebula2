@@ -16,8 +16,8 @@ int main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
 
-    const char* projDirArg    = args.GetStringArg("-projdir", 0);
-    const char* toolkitDirArg = args.GetStringArg("-toolkitdir", 0);
+    nString projDirArg    = args.GetStringArg("-projdir", 0);
+    nString toolkitDirArg = args.GetStringArg("-toolkitdir", 0);
     bool helpArg = args.GetBoolArg("-help");
     if (helpArg)
     {
@@ -39,9 +39,9 @@ int main(int argc, const char** argv)
         printf("Failed to open the RadonLabs Toolkit registry key ('HKEY_LOCAL_MACHINE\\SOFTWARE\\RadonLabs\\Toolkit)!\n");
         return 10;
     }
-    if (projDirArg)
+    if (projDirArg.IsValid())
     {
-        err = RegSetValueEx(hKey, "project", 0, REG_SZ, (const BYTE*) projDirArg, strlen(projDirArg) + 1);
+        err = RegSetValueEx(hKey, "project", 0, REG_SZ, (const BYTE*) projDirArg.Get(), projDirArg.Length() + 1);
         if (err != ERROR_SUCCESS)
         {
             RegCloseKey(hKey);
@@ -49,9 +49,9 @@ int main(int argc, const char** argv)
             return 10;
         }
     }
-    if (toolkitDirArg)
+    if (toolkitDirArg.IsValid())
     {
-        err = RegSetValueEx(hKey, "path", 0, REG_SZ, (const BYTE*) toolkitDirArg, strlen(toolkitDirArg) + 1);
+        err = RegSetValueEx(hKey, "path", 0, REG_SZ, (const BYTE*) toolkitDirArg.Get(), toolkitDirArg.Length() + 1);
         if (err != ERROR_SUCCESS)
         {
             RegCloseKey(hKey);

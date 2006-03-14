@@ -250,7 +250,7 @@ nGuiWindow::SetCloseCommand(const char* cmd)
     - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
                            to provide fading and prevent crashes when a custom 
                            nguibutton tries to close parent window.
-+*/
+*/
 inline
 const char*
 nGuiWindow::GetCloseCommand() const
