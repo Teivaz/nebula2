@@ -1,0 +1,60 @@
+#-------------------------------------------------------------------------------
+# msg.bld
+#
+# (C) 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::msg
+    setdir msg
+    settype cpp
+    setfiles { 
+        animplay
+        animrewind
+        animstop
+        cameradistance
+        cameraorbit
+        camerareset
+        gfxaddattachment
+        gfxaddskin
+        gfxremattachment
+        gfxremskin
+        gfxsetanimation
+        movedirection
+        movefollow
+        movegoto
+        moverotate
+        movesetvelocity
+        movestop
+        moveturn
+        playshakeeffect
+        playsound
+        playvisualeffect
+        settransform
+        updatetransform
+    }
+    setheaders { 
+        animplay
+        animrewind
+        animstop
+        cameradistance
+        cameraorbit
+        camerareset
+        gfxaddattachment
+        gfxaddskin
+        gfxremattachment
+        gfxremskin
+        gfxsetanimation
+        movedirection
+        movefollow
+        movegoto
+        moverotate
+        movesetvelocity
+        movestop
+        moveturn
+        playshakeeffect
+        playsound
+        playvisualeffect
+        settransform
+        updatetransform
+    }
+endmodule
+#-------------------------------------------------------------------------------

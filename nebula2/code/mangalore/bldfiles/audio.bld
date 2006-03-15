@@ -1,0 +1,26 @@
+#-------------------------------------------------------------------------------
+# audio.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::audio
+    setdir audio
+    settype cpp
+    setfiles { 
+        entity
+        listener
+        server
+        soundfxhandler
+        wavebank
+        waveresource
+    }
+    setheaders { 
+        entity
+        listener
+        server
+        soundfxhandler
+        wavebank
+        waveresource
+    }
+endmodule
+#-------------------------------------------------------------------------------

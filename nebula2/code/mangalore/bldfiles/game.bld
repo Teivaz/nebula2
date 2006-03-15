@@ -1,0 +1,24 @@
+#-------------------------------------------------------------------------------
+# game.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::game
+    setdir game
+    settype cpp
+    setfiles { 
+        attrset
+        entity
+        manager
+        property
+        server
+    }
+    setheaders { 
+        attrset
+        entity
+        manager
+        property
+        server
+    }
+endmodule
+#-------------------------------------------------------------------------------

@@ -1,0 +1,33 @@
+#-------------------------------------------------------------------------------
+#   viewer.bld
+#
+#   (C) 2005 Vadim Macagon
+#-------------------------------------------------------------------------------
+beginmodule mangalore::viewerapp
+    setdir viewer
+    setfiles {
+        viewerapp
+    }
+    setheaders {
+        viewerapp
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule mangalore::viewer
+    setdir viewer
+    setfiles {
+        viewer
+    }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget mviewer
+    settype exe
+    setmodules {
+        mangalore::viewer
+        mangalore::viewerapp
+    }
+    settargetdeps {
+        mangalorelib
+    }
+endtarget
+#--------------------------------------------------------------------------------

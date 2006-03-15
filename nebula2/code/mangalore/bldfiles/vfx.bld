@@ -1,0 +1,26 @@
+#-------------------------------------------------------------------------------
+# vfx.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::vfx
+    setdir vfx
+    settype cpp
+    setfiles { 
+        bank
+        effect
+        effecthandler
+        server
+        shakeeffect
+        shakeeffecthelper
+    }
+    setheaders { 
+        bank
+        effect
+        effecthandler
+        server
+        shakeeffect
+        shakeeffecthelper
+    }
+endmodule
+#-------------------------------------------------------------------------------

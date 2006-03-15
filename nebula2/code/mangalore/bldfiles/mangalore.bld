@@ -1,0 +1,73 @@
+#-------------------------------------------------------------------------------
+# mangalore.bld
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+
+begintarget mangalorelib
+    settype lib
+    setmodules {
+        mangalore::attr
+        mangalore::foundation
+        mangalore::managers
+        mangalore::message
+        mangalore::msg
+        mangalore::properties
+        mangalore::graphics
+        mangalore::input
+        mangalore::loader
+        mangalore::physics
+        mangalore::game
+        mangalore::fsm
+        mangalore::audio
+        mangalore::navigation
+        mangalore::application
+        mangalore::vfx
+        mangalore::db
+        mangalore::ui
+    }
+    setbundles {
+        mangalore::util
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+        nsql
+    }
+endtarget
+
+#-------------------------------------------------------------------------------
+beginmodule mangalore
+    settype cpp
+    setdir tools
+    setfiles { 
+        mangalore 
+    }
+endmodule
+
+#-------------------------------------------------------------------------------
+begintarget mangalore
+    settype exe
+    setmodules { 
+        mangalore 
+    }
+    settargetdeps {
+        mangalorelib
+    }
+endtarget
+
+#-------------------------------------------------------------------------------
+beginworkspace Mangalore
+    annotate "Mangalore - the Nebula 2 based Game Framework from Radon Labs"
+    settargets {
+        mviewer
+        mangalorelib
+    }
+endworkspace

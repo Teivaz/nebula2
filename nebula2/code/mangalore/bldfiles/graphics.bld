@@ -1,0 +1,34 @@
+#-------------------------------------------------------------------------------
+# graphics.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::graphics
+    setdir graphics
+    settype cpp
+    setfiles {
+        animtable
+        cameraentity
+        cell
+        charanimeventhandler
+        charentity
+        entity
+        level
+        lightentity
+        resource
+        server
+    }
+    setheaders { 
+        animtable
+        cameraentity
+        cell
+        charanimeventhandler
+        charentity
+        entity
+        level
+        lightentity
+        resource
+        server
+    }
+endmodule
+#-------------------------------------------------------------------------------
