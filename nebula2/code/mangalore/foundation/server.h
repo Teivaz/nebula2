@@ -37,6 +37,7 @@ class nLocaleServer;
 class nCaptureServer;
 class nPrefServer;
 class nSqlServer;
+class nRoot;
 
 //------------------------------------------------------------------------------
 namespace Foundation
