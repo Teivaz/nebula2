@@ -10,6 +10,7 @@
 */
 #include "physics/joint.h"
 #include "physics/jointaxis.h"
+#include "util/nfixedarray.h"
 
 //------------------------------------------------------------------------------
 namespace Physics

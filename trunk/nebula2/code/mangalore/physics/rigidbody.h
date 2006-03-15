@@ -17,6 +17,7 @@
 #include "physics/materialtable.h"
 #include "physics/server.h"
 #include "ode/ode.h"
+#include "util/nfixedarray.h"
 
 //------------------------------------------------------------------------------
 namespace Physics

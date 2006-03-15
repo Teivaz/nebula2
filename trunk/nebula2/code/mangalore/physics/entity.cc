@@ -73,7 +73,7 @@ Entity::OnActivate()
         Ptr<Composite> newComposite = compLoader.Load(this->compositeName);
         newComposite->SetTransform(this->transform);        
         newComposite->Attach(physicsServer->GetOdeWorldId(), dynamicSpaceId, staticSpaceId);
-        n_assert2( 0 != newComposite, "Composite was created for PhysicsProperty" );
+        n_assert2( newComposite != 0, "Composite was created for PhysicsProperty" );
         this->SetComposite(newComposite);
     }
     else

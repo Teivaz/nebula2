@@ -15,6 +15,7 @@
 #include "physics/contactpoint.h"
 #include "physics/entity.h"
 #include "physics/ray.h"
+#include "util/nkeyarray.h"
 
 //------------------------------------------------------------------------------
 namespace Physics
