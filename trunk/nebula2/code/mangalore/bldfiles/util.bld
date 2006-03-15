@@ -10,6 +10,13 @@ beginmodule mangalore::util::celltreebuilder
     setheaders { celltreebuilder }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule mangalore::util::cmdlineargs
+    setdir util
+    settype cpp
+    setfiles { cmdlineargs }
+    setheaders { cmdlineargs }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule mangalore::util::physicsgfxutil
     setdir util
     settype cpp
@@ -34,6 +41,7 @@ endmodule
 beginbundle mangalore::util
     setmodules {
         mangalore::util::celltreebuilder
+        mangalore::util::cmdlineargs
         mangalore::util::physicsgfxutil
         mangalore::util::segmentedgfxutil
         mangalore::util::skinraycheckutil
