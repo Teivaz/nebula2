@@ -179,7 +179,3 @@ begintarget xml
     setmodules { tinyxml xml }
 endtarget
 #-------------------------------------------------------------------------------
-begintarget nsql
-    settype lib
-    setbundles { nsql nsqlite }
-endtarget

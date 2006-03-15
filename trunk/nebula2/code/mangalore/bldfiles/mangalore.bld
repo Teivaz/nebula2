@@ -39,7 +39,6 @@ begintarget mangalorelib
         ngui
         nnetwork
         ntoollib
-        nsql
     }
 endtarget
 
