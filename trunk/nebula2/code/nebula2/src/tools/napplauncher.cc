@@ -16,8 +16,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nAppLauncher::nAppLauncher(nKernelServer* ks) :
-    kernelServer(ks),
+nAppLauncher::nAppLauncher() :
     noConsoleWindow(false)
 {
     // empty
@@ -38,7 +37,6 @@ bool
 nAppLauncher::LaunchWait() const
 {
     n_assert(!this->exec.IsEmpty());
-    n_assert(this->kernelServer);
 
 #ifdef __WIN32__
     STARTUPINFO startupInfo = { sizeof(STARTUPINFO), 0 };
@@ -101,9 +99,6 @@ nAppLauncher::LaunchWait() const
 bool
 nAppLauncher::Launch() const
 {
-    n_assert(!this->exec.IsEmpty());
-    n_assert(this->kernelServer);
-
     nString execMangled;
     nString dirMangled;
 

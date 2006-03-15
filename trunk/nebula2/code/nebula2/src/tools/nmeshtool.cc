@@ -63,16 +63,16 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg               = args.GetBoolArg("-help");
-    const char* inFileArg      = args.GetStringArg("-in", 0);
-    const char* outFileArg     = args.GetStringArg("-out", 0);
+    nString inFileArg          = args.GetStringArg("-in", 0);
+    nString outFileArg         = args.GetStringArg("-out", 0);
     bool oldN3d2Loader         = args.GetBoolArg("-oldn3d2");
-    const char* appendFileArg  = args.GetStringArg("-append", 0);
+    nString appendFileArg      = args.GetStringArg("-append", 0);
     bool cleanArg              = args.GetBoolArg("-clean");
     bool tangentNoSplitArg     = args.GetBoolArg("-tangent");
     bool tangentSplitArg       = args.GetBoolArg("-tangentsplit");
     bool edgeArg               = args.GetBoolArg("-edge");
-    const char* groupArg       = args.GetStringArg("-group", 0);
-    const char* groupRenameArg = args.GetStringArg("-grename", 0);
+    nString groupArg           = args.GetStringArg("-group", 0);
+    nString groupRenameArg     = args.GetStringArg("-grename", 0);
     float txArg                = args.GetFloatArg("-tx", 0.0f);
     float tyArg                = args.GetFloatArg("-ty", 0.0f);
     float tzArg                = args.GetFloatArg("-tz", 0.0f);
@@ -149,28 +149,28 @@ main(int argc, const char** argv)
     if (oldN3d2Loader && (0 == strcmp(filename.GetExtension(), "n3d2")))
     {
         n_printf("-> using old n3d2 loader code\n");
-        if (!mesh.LoadOldN3d2(kernelServer->GetFileServer(), inFileArg))
+        if (!mesh.LoadOldN3d2(kernelServer->GetFileServer(), inFileArg.Get()))
         {
-            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
+            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg.Get());
             delete kernelServer;
             return 5;
         }
     }
     else
     {
-        if (!mesh.Load(kernelServer->GetFileServer(), inFileArg))
+        if (!mesh.Load(kernelServer->GetFileServer(), inFileArg.Get()))
         {
-            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg);
+            n_printf("nmeshtool error: Could not load '%s'\n", inFileArg.Get());
             delete kernelServer;
             return 5;
         }
     }
 
     // read optional append mesh
-    if (appendFileArg)
+    if (appendFileArg.IsValid())
     {
-        n_printf("-> loading append mesh '%s'\n", appendFileArg);
-        if (!appendMesh.Load(kernelServer->GetFileServer(), appendFileArg))
+        n_printf("-> loading append mesh '%s'\n", appendFileArg.Get());
+        if (!appendMesh.Load(kernelServer->GetFileServer(), appendFileArg.Get()))
         {
             n_printf("nmeshtool error: Could not load append mesh '%s'\n", appendFileArg);
             delete kernelServer;
@@ -228,12 +228,12 @@ main(int argc, const char** argv)
     // FIXME: group renaming
 
     // save output mesh
-    if (outFileArg)
+    if (outFileArg.IsValid())
     {
-        n_printf("-> saving '%s'\n", outFileArg);
-        if (!mesh.Save(kernelServer->GetFileServer(), outFileArg))
+        n_printf("-> saving '%s'\n", outFileArg.Get());
+        if (!mesh.Save(kernelServer->GetFileServer(), outFileArg.Get()))
         {
-            n_printf("Error: Could not save '%s'\n", outFileArg);
+            n_printf("Error: Could not save '%s'\n", outFileArg.Get());
             delete kernelServer;
             return 5;
         }

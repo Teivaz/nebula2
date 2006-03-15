@@ -324,10 +324,7 @@ void nInputServer::ObtainFocus(void)
          im;
          im = (nInputMapping *) im->GetSucc())
     {
-        if (im->GetButtonState())
-        {
-            im->SetButtonUp();
-        }
+        im->SetButtonUp();
         im->SetSlider(0.0f);
     }
 }

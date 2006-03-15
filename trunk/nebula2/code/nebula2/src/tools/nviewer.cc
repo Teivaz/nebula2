@@ -69,7 +69,6 @@
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndirect3d9);
-// nNebulaUsePackage(ncterrain2);
 nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
@@ -120,25 +119,25 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
-    const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
-    bool fullscreenArg    = args.GetBoolArg("-fullscreen");
-    bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool useRam           = args.GetBoolArg("-useram");    
-    bool noLightStage     = args.GetBoolArg("-nolightstage");
-    bool helpArg          = args.GetBoolArg("-help");
-    int xPosArg           = args.GetIntArg("-x", 0);
-    int yPosArg           = args.GetIntArg("-y", 0);
-    int widthArg          = args.GetIntArg("-w", 640);
-    int heightArg         = args.GetIntArg("-h", 480);
-    const char* projDir   = args.GetStringArg("-projdir", 0);
-
-    const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
-    const char* featureSetArg    = args.GetStringArg("-featureset", 0);
-    const char* renderPath       = args.GetStringArg("-renderpath", 0);
+    nString scriptServerClass    = args.GetStringArg("-scriptserver", "ntclserver");
+    nString startupArg           = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
+    nString viewArg              = args.GetStringArg("-view", "");
+    nString stageArg             = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
+    bool fullscreenArg           = args.GetBoolArg("-fullscreen");
+    bool alwaysOnTopArg          = args.GetBoolArg("-alwaysontop");
+    bool useRam                  = args.GetBoolArg("-useram");
+    bool noLightStage            = args.GetBoolArg("-nolightstage");
+    bool helpArg                 = args.GetBoolArg("-help");
+    int xPosArg                  = args.GetIntArg("-x", 0);
+    int yPosArg                  = args.GetIntArg("-y", 0);
+    int widthArg                 = args.GetIntArg("-w", 640);
+    int heightArg                = args.GetIntArg("-h", 480);
+    nString projDir              = args.GetStringArg("-projdir", "");
+    nString sceneServerClass     = args.GetStringArg("-sceneserver", "");
+    nString gfxServerClass       = args.GetStringArg("-gfxserver", "");
+    nString featureSetArg        = args.GetStringArg("-featureset", "");
+    nString renderPath           = args.GetStringArg("-renderpath", "");
+    int aaSamples                = args.GetIntArg("-aa", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
     vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
@@ -180,7 +179,8 @@ main(int argc, const char** argv)
                "-useram                 if present, then nviewer will use ram file\n"
                "-eyeposx                position vector of camera matrix\n"
                "-eyecoix                look vector of camera matrix\n"
-               "-eyeupx                 up vector of camera matrix\n");
+               "-eyeupx                 up vector of camera matrix\n"
+               "-aa                     number of aa samples\n");
         return 5;
     }
 
@@ -193,7 +193,6 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(ndinput8);
     kernelServer.AddPackage(ndirect3d9);
-    // kernelServer.AddPackage(ncterrain2);
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nnetwork);
@@ -201,26 +200,33 @@ main(int argc, const char** argv)
 
     // initialize a display mode object
     nString title;
-    if (viewArg)
+    if (viewArg.IsValid())
     {
         title.Append(viewArg);
         title.Append(" - ");
     }
     title.Append("Nebula2 viewer");
     nDisplayMode2 displayMode;
+    displayMode.SetWindowTitle("Nebula2 Viewer");
     displayMode.SetIcon("NebulaIcon");
     displayMode.SetDialogBoxMode(true);
+    displayMode.SetXPos(xPosArg);
+    displayMode.SetYPos(yPosArg);
+    displayMode.SetWidth(widthArg);
+    displayMode.SetHeight(heightArg);
+    displayMode.SetVerticalSync(false);
+    displayMode.SetAntiAliasSamples(aaSamples);
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
+        displayMode.SetType(nDisplayMode2::Fullscreen);
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
+        displayMode.SetType(nDisplayMode2::AlwaysOnTop);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false, true, "Icon");
+        displayMode.SetType(nDisplayMode2::Windowed);
     }
 
     // under Win32 check if we should read the project directory from the registry
@@ -241,13 +247,16 @@ main(int argc, const char** argv)
     viewerApp.SetDisplayMode(displayMode);
     viewerApp.SetUseRam(useRam);
     viewerApp.SetLightStageEnabled(!noLightStage);
-    if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
-    if (viewArg)          viewerApp.SetSceneFile(viewArg);
-    if (projDir)          viewerApp.SetProjDir(projDir);
-    if (renderPath)       viewerApp.SetRenderPath(renderPath);    
-    if (featureSetArg)
+    if (gfxServerClass.IsValid())   viewerApp.SetGfxServerClass(gfxServerClass);
+    if (sceneServerClass.IsValid()) viewerApp.SetSceneServerClass(sceneServerClass);
+    if (scriptServerClass.IsValid()) viewerApp.SetScriptServerClass(scriptServerClass);
+    if (viewArg.IsValid())          viewerApp.SetSceneFile(viewArg);
+    if (projDir.IsValid())          viewerApp.SetProjDir(projDir);
+    if (startupArg.IsValid())       viewerApp.SetStartupScript(startupArg);
+    if (renderPath.IsValid())       viewerApp.SetRenderPath(renderPath);    
+    if (featureSetArg.IsValid())
     {
-        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
+        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg.Get());
         if (nGfxServer2::InvalidFeatureSet == featureSet)
         {
             n_error("Invalid feature set string specified: %s", featureSetArg);
@@ -255,9 +264,6 @@ main(int argc, const char** argv)
         viewerApp.SetFeatureSetOverride(featureSet);
     }
     
-    viewerApp.SetScriptServerClass(scriptserverArg);
-    if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
-    viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
 
     //set viewer propherties 

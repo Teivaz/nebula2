@@ -36,28 +36,27 @@ class nAppLauncher
 {
 public:
     /// constructor
-    nAppLauncher(nKernelServer* kernelServer);
+    nAppLauncher();
     /// destructor
     ~nAppLauncher();
     /// set the name of the executable, including path, if not in search path
-    void SetExecutable(const char* path);
+    void SetExecutable(const nString& path);
     /// set optional URL path
-    void SetUrl(const char* url);
+    void SetUrl(const nString& url);
     /// set the working directory
-    void SetWorkingDirectory(const char* path);
+    void SetWorkingDirectory(const nString& path);
     /// do not open a console window for the new process
     void SetNoConsoleWindow(bool b);
     /// set the command line args (just the arg string, without the executable)
-    void SetArguments(const char* args);
+    void SetArguments(const nString& args);
     /// launch app and wait 
     bool LaunchWait() const;
     /// launch app and return
     bool Launch() const;
 
 private:
-    nKernelServer* kernelServer;
     bool noConsoleWindow;
-    nString exec;
+    nString exec;;
     nString dir;
     nString args;
     nString url;
@@ -72,9 +71,8 @@ private:
 */
 inline
 void
-nAppLauncher::SetUrl(const char* u)
+nAppLauncher::SetUrl(const nString& u)
 {
-    n_assert(u);
     this->url = u;
 }
 
@@ -93,9 +91,8 @@ nAppLauncher::SetNoConsoleWindow(bool b)
 */
 inline
 void
-nAppLauncher::SetExecutable(const char* path)
+nAppLauncher::SetExecutable(const nString& path)
 {
-    n_assert(path);
     this->exec = path;
 }
 
@@ -104,9 +101,8 @@ nAppLauncher::SetExecutable(const char* path)
 */
 inline
 void
-nAppLauncher::SetWorkingDirectory(const char* path)
+nAppLauncher::SetWorkingDirectory(const nString& path)
 {
-    n_assert(path);
     this->dir = path;
 }
 
@@ -115,9 +111,8 @@ nAppLauncher::SetWorkingDirectory(const char* path)
 */
 inline
 void
-nAppLauncher::SetArguments(const char* path)
+nAppLauncher::SetArguments(const nString& path)
 {
-    n_assert(path);
     this->args = path;
 }
 

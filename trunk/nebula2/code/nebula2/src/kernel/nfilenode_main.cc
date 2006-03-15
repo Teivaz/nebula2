@@ -36,7 +36,6 @@ bool
 nFileNode::Open(const nString& filename, const nString& accessMode)
 {
     n_assert(!this->file);
-    n_assert(filename.IsValid() && accessMode.IsValid());
     this->file = kernelServer->GetFileServer()->NewFileObject();
     n_assert(this->file);
     if (!this->file->Open(filename, accessMode))

@@ -37,9 +37,9 @@ main(int argc, const char** argv)
         kernelServer.SetLogHandler(&logHandler);
     #endif
 
-    const char* appArg = args.GetStringArg("-app", "bin:Setup.exe");
-    const char* dirArg = args.GetStringArg("-dir", "bin:");
-    bool helpArg       = args.GetBoolArg("-help");
+    nString appArg = args.GetStringArg("-app", "bin:Setup.exe");
+    nString dirArg = args.GetStringArg("-dir", "bin:");
+    bool helpArg   = args.GetBoolArg("-help");
     if (helpArg)
     {
         kernelServer.Message("nstub -- app launcher for CDROM installations\n"
@@ -49,23 +49,23 @@ main(int argc, const char** argv)
                              "-help - show this help\n");
         return 5;
     }
-    if (0 == appArg)
+    if (!appArg.IsValid())
     {
         kernelServer.Message("Error: -app arg expected (type 'nstub -help' for help)\n");
         return 10;
     }
 
     // configure an app launcher
-    nAppLauncher appLauncher(&kernelServer);
-    appLauncher.SetExecutable(appArg);
-    if (dirArg)
+    nAppLauncher appLauncher;
+    appLauncher.SetExecutable(appArg.Get());
+    if (dirArg.IsValid())
     {
-        appLauncher.SetWorkingDirectory(dirArg);
+        appLauncher.SetWorkingDirectory(dirArg.Get());
     }
     appLauncher.SetNoConsoleWindow(true);
     if (!appLauncher.Launch())
     {
-        kernelServer.Message("Error: failed to launch applicaion '%s'!\n", appArg, dirArg);
+        kernelServer.Message("Error: failed to launch applicaion '%s'!\n", appArg.Get());
         return 10;
     }
     return 0;
