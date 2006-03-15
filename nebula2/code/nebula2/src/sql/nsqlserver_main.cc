@@ -2,6 +2,7 @@
 //  sql/nsqlserver_main.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "sql/nsqlserver.h"
 
 nNebulaScriptClass(nSqlServer, "nroot");

@@ -1,0 +1,36 @@
+#-------------------------------------------------------------------------------
+#   sqlite.bld
+#-------------------------------------------------------------------------------
+
+beginmodule nsqlite3server
+    setdir sql
+    setfiles {
+        nsqlite3server_main
+    }
+    setheaders nsqlite3server
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsqlite3database
+    setdir sql
+    setfiles {
+        nsqlite3database_main
+    }
+    setheaders nsqlite3database
+    setlibs_win32_debug { sqlite.lib }
+    setlibs_win32_release { sqlite_d.lib }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsqlite3query
+    setdir sql
+    setfiles {
+        nsqlite3query
+    }
+    setheaders nsqlite3query
+endmodule
+#--------------------------------------------------------------------
+beginbundle nsqlite
+    annotate "The Nebula 2 sqlite modules"
+    setmodules {
+        nsqlite3server nsqlite3database nsqlite3query
+    }
+endbundle
