@@ -42,7 +42,7 @@ nSound3*
 WaveBank::CreateSoundObjectFromXmlTable(const nXmlTable& xmlTable, int rowIndex, const nString& fileColumnName)
 {
     nString filename;
-    filename.Format("sound:%s", xmlTable.Cell(rowIndex, fileColumnName).AsString().Get());
+    filename.Format("sound:%s", xmlTable.Cell(rowIndex, fileColumnName.Get()).AsString().Get());
     n_assert2(nFileServer2::Instance()->FileExists(filename), filename.Get());
 
     nSound3* snd = nAudioServer3::Instance()->NewSound();
