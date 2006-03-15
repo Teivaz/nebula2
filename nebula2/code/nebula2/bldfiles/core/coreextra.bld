@@ -34,14 +34,14 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nnpkfileserver
     setdir file
-    setfiles { 
-        nnpkfileserver_main 
-        nnpkfileserver_cmds 
-        nnpkfilewrapper 
+    setfiles {
+        nnpkfileserver_main
+        nnpkfileserver_cmds
+        nnpkfilewrapper
         nnpkfile
         nnpkdirectory
     }
-    setheaders { 
+    setheaders {
         nnpkfileserver
         nnpkfilewrapper
         nnpktoc
@@ -53,22 +53,22 @@ endmodule
 #------------------------------------------------------------------------------
 beginmodule nsharedmemory
     setdir file
-    setfiles { 
+    setfiles {
         nsharedmemory
     }
-    setheaders { 
+    setheaders {
         nsharedmemory
     }
 endmodule
 #------------------------------------------------------------------------------
 beginmodule nramfileserver
     setdir file
-    setfiles { 
-        nramfileserver_main 
-        nramfileserver_cmds 
+    setfiles {
+        nramfileserver_main
+        nramfileserver_cmds
         nramfile
     }
-    setheaders { 
+    setheaders {
         nramfileserver
         nramfile
     }
@@ -144,7 +144,7 @@ beginmodule nipc
     setfiles {
         nipcaddress nipcclient nipcminiserver
         nipcserver nipcpeer
-        
+
     }
     setheaders {
         nsocketdefs nipcaddress nipcbuffer
@@ -172,9 +172,14 @@ beginmodule xml
     setdir xml
     setfiles { nxmlspreadsheet }
     setheaders { nxmlspreadsheet nxmltable nxmltablecell }
-endmodule    
+endmodule
 #-------------------------------------------------------------------------------
 begintarget xml
     settype lib
     setmodules { tinyxml xml }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nsql
+    settype lib
+    setbundles { nsql nsqlite }
 endtarget
