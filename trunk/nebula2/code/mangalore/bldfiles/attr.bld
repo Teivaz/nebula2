@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+# attr.bld
+#
+# 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::attr
+    setdir attr
+    settype cpp
+    setfiles { 
+        _attrid
+        _attridtyped
+        attributeid
+        attributes
+    }
+    setheaders { 
+        _attrid
+        _attridtyped
+        attributeclasses
+        attributeid
+        attributes
+        boolattributeid
+        floatattributeid
+        intattributeid
+        matrix44attributeid
+        stringattributeid
+        vector3attributeid
+        vector4attributeid
+        voidattributeid
+    }
+endmodule
+#-------------------------------------------------------------------------------

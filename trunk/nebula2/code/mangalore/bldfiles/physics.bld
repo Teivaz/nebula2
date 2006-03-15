@@ -1,0 +1,81 @@
+#-------------------------------------------------------------------------------
+# physics.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::physics
+    setdir physics
+    settype cpp
+    setfiles {
+        amotor
+        areaimpulse
+        balljoint
+        boxshape
+        capsuleshape
+        charentity
+        composite
+        compositeloader
+        contactpoint
+        entity
+        explosionareaimpulse
+        filterset
+        hinge2joint
+        hingejoint
+        joint
+        level
+        materialtable
+        meshshape
+        mousegripper
+        physicsutil
+        ragdoll
+        ray
+        rigidbody
+        server
+        shape
+        sliderjoint
+        sphereshape
+        universaljoint
+    }
+    setheaders { 
+        amotor
+        areaimpulse
+        balljoint
+        boxshape
+        capsuleshape
+        charentity
+        collidecategory
+        composite
+        compositeloader
+        contactpoint
+        entity
+        explosionareaimpulse
+        filterset
+        hinge2joint
+        hingejoint
+        joint
+        jointaxis
+        level
+        materialtable
+        meshshape
+        mousegripper
+        physicsutil
+        ragdoll
+        ray
+        rigidbody
+        server
+        shape
+        sliderjoint
+        sphereshape
+        universaljoint
+        
+    }
+    setlibs_win32_release {
+        ode.lib 
+        OPCODE.lib
+    }
+    setlibs_win32_debug {
+        oded.lib 
+        OPCODE_D.lib
+    }
+endmodule
+#-------------------------------------------------------------------------------

@@ -1,0 +1,26 @@
+#-------------------------------------------------------------------------------
+# application.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::application
+    setdir application
+    settype cpp
+    setfiles { 
+        app 
+        gamestatehandler
+        guieventhandler
+        guistatehandler
+        playvideohandler
+        statehandler
+    }
+    setheaders { 
+        app 
+        gamestatehandler
+        guieventhandler
+        guistatehandler
+        playvideohandler
+        statehandler
+    }
+endmodule
+#-------------------------------------------------------------------------------

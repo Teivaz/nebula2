@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------
+# message.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::message
+    setdir message
+    settype cpp
+    setfiles { 
+        dispatcher
+        msg
+        port
+        server
+    }
+    setheaders { 
+        dispatcher
+        id
+        msg
+        port
+        server
+    }
+endmodule
+#-------------------------------------------------------------------------------
