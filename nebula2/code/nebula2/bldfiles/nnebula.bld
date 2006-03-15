@@ -36,6 +36,8 @@ begintarget nnebula
     }
     setbundles {
         nshadow2
+        nsql
+        nsqlite
         nvideo
     }
 endtarget

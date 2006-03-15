@@ -16,8 +16,7 @@ beginmodule nsqlite3database
         nsqlite3database_main
     }
     setheaders nsqlite3database
-    setlibs_win32_debug { sqlite.lib }
-    setlibs_win32_release { sqlite_d.lib }
+    setlibs_win32 { sqlite.lib }
 endmodule
 #--------------------------------------------------------------------
 beginmodule nsqlite3query

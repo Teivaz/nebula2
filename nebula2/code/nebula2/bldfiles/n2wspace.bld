@@ -31,6 +31,5 @@ beginworkspace Nebula2
         nnetwork
         napplication
         xml
-        nsql
     }
 endworkspace
