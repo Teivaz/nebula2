@@ -12,11 +12,14 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #ifndef _TCL
 #define _TCL
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4996 )       // VS8: old string routines are deprecated
+#endif
 
 /*
  * For C++ compilers, use extern "C"

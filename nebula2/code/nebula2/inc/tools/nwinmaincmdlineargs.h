@@ -18,7 +18,7 @@ class nWinMainCmdLineArgs : public nCmdLineArgs
 {
 public:
     /// constructor
-    nWinMainCmdLineArgs(const char* cmdLine);
+    nWinMainCmdLineArgs(const nString& cmdLine);
 
 private:
     enum
@@ -34,7 +34,7 @@ private:
 /**
 */
 inline
-nWinMainCmdLineArgs::nWinMainCmdLineArgs(const char* cmdLine)
+nWinMainCmdLineArgs::nWinMainCmdLineArgs(const nString& cmdLine)
 {
     memset(this->argv, 0, sizeof(this->argv));
 

@@ -11,7 +11,7 @@
 */
 #include <stdlib.h>
 #include <math.h>
-#include <string.h>
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 class nCmdLineArgs
@@ -23,20 +23,20 @@ public:
     nCmdLineArgs(int argc, const char** argv);
     /// initialize (use if default constructor was used
     void Initialize(int argc, const char** argv);
-    /// find out if an arg exists
-    bool HasArg(const char* option) const;
     /// get a float arg
-    float GetFloatArg(const char* option, float defaultValue) const;
+    float GetFloatArg(const nString& option, float defaultValue) const;
     /// get an integer arg
-    int GetIntArg(const char* option, int defaultValue) const;
+    int GetIntArg(const nString& option, int defaultValue) const;
     /// get a bool arg
-    bool GetBoolArg(const char* option) const;
+    bool GetBoolArg(const nString& option) const;
     /// get a string arg
-    const char* GetStringArg(const char* option, const char* defaultValue) const;
+    nString GetStringArg(const nString& option, const nString& defaultValue) const;
+    /// return true if argument exists
+    bool HasArg(const nString& option) const;
 
 private:
     /// find an argument index
-    int FindArg(const char* option) const;
+    int FindArg(const nString& option) const;
 
     int argCount;
     const char** argVector;
@@ -77,28 +77,17 @@ nCmdLineArgs::Initialize(int argc, const char** argv)
 
 //------------------------------------------------------------------------------
 /**
-*/
-inline
-bool
-nCmdLineArgs::HasArg(const char* option) const
-{
-    int index = FindArg(option);
-    return (index > 0);
-}
-
-//------------------------------------------------------------------------------
-/**
     Find argument index for an option string. Returns 0 if option not
     found.
 */
 inline
 int
-nCmdLineArgs::FindArg(const char* option) const
+nCmdLineArgs::FindArg(const nString& option) const
 {
     int i;
     for (i = 0; i < this->argCount; i++)
     {
-        if (strcmp(this->argVector[i], option) == 0)
+        if (strcmp(this->argVector[i], option.Get()) == 0)
         {
             return i;
         }
@@ -111,8 +100,18 @@ nCmdLineArgs::FindArg(const char* option) const
 /**
 */
 inline
+bool
+nCmdLineArgs::HasArg(const nString& option) const
+{
+    return this->FindArg(option) != 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 float
-nCmdLineArgs::GetFloatArg(const char* option, float defaultValue) const
+nCmdLineArgs::GetFloatArg(const nString& option, float defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)
@@ -135,7 +134,7 @@ nCmdLineArgs::GetFloatArg(const char* option, float defaultValue) const
 */
 inline
 int
-nCmdLineArgs::GetIntArg(const char* option, int defaultValue) const
+nCmdLineArgs::GetIntArg(const nString& option, int defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)
@@ -158,7 +157,7 @@ nCmdLineArgs::GetIntArg(const char* option, int defaultValue) const
 */
 inline
 bool
-nCmdLineArgs::GetBoolArg(const char* option) const
+nCmdLineArgs::GetBoolArg(const nString& option) const
 {
     if (this->FindArg(option) > 0)
     {
@@ -174,8 +173,8 @@ nCmdLineArgs::GetBoolArg(const char* option) const
 /**
 */
 inline
-const char* 
-nCmdLineArgs::GetStringArg(const char* option, const char* defaultValue) const
+nString
+nCmdLineArgs::GetStringArg(const nString& option, const nString& defaultValue) const
 {
     int i = this->FindArg(option);
     if (i == 0)

@@ -28,28 +28,30 @@ nXmlSpreadSheet::~nXmlSpreadSheet()
 
 //------------------------------------------------------------------------------
 /**
-    Open the spread sheet file. This will load the Excel-exported XML file
-    via TinyXML and create nXmlTable objects for each contained WorkSheet.
+    Open the spread sheet file. If a filename is set, this will load the 
+    Excel-exported XML file via TinyXML and create nXmlTable objects for each 
+    contained WorkSheet. If no filename is set, this will just set the 
+    object to the Open() status.
 */
 bool
 nXmlSpreadSheet::Open()
 {
-    n_assert(!this->filename.IsEmpty());
     n_assert(!this->isOpen);
-
-    // mangle Nebula path to native path
-    nString mangledPath = nFileServer2::Instance()->ManglePath(this->filename.Get());
+    n_assert(0 == this->tables.Size());
 
     // create a TinyXML document
-    TiXmlDocument doc(mangledPath.Get());
-    if (!doc.LoadFile())
+    if (this->filename.IsValid())
     {
-        n_error("nXmlSpreadSheet failed to open file '%s'!", mangledPath.Get());
-        return false;
-    }
+        TiXmlDocument doc(this->filename.Get());
+        if (!doc.LoadFile())
+        {
+            n_error("nXmlSpreadSheet failed to open file '%s'!", this->filename.Get());
+            return false;
+        }
 
-    // setup tables
-    this->SetupTables(&doc);
+        // setup tables
+        this->SetupTables(&doc);
+    }
 
     // return successfully
     this->isOpen = true;
@@ -74,7 +76,6 @@ nXmlSpreadSheet::Close()
         n_delete(this->tables[i]);
         this->tables[i] = 0;
     }
-    this->tables.SetSize(0);
     this->isOpen = false;
 }
 
@@ -137,28 +138,15 @@ nXmlSpreadSheet::CountCols(TiXmlElement* xmlTable)
 void
 nXmlSpreadSheet::SetupTables(TiXmlDocument* doc)
 {
-    // count number of worksheet (== tables) in the document
-    TiXmlHandle docHandle(doc);
-    TiXmlElement* workSheet = docHandle.FirstChildElement("Workbook").FirstChildElement("Worksheet").Element();
-    int numTables = 0;
-    for (; workSheet; workSheet = workSheet->NextSiblingElement("Worksheet"))
-    {
-        numTables++;
-    }
-
-    // allocate table array
-    n_assert(numTables > 0);
-    this->tables.SetSize(numTables);
-    this->tables.Clear(0);
-
     // for each table...
+    TiXmlHandle docHandle(doc);
     TiXmlElement* xmlWorkSheet = docHandle.FirstChildElement("Workbook").FirstChildElement("Worksheet").Element();
     int tableIndex = 0;
     for (; xmlWorkSheet; xmlWorkSheet = xmlWorkSheet->NextSiblingElement("Worksheet"), tableIndex++)
     {
         // create a table object
         nXmlTable* table = n_new(nXmlTable);
-        this->tables[tableIndex] = table;
+        this->tables.Append(table);
 
         // get table name
         const char* nameAttr = xmlWorkSheet->Attribute("ss:Name");
@@ -224,7 +212,7 @@ nXmlSpreadSheet::SetupTables(TiXmlDocument* doc)
                                     }
                                     if (!text.IsEmpty())
                                     {
-                                        table->Cell(curRow, curCol).Set(text.Get());
+                                        table->Cell(curRow, curCol).Set(text);
                                     }
                                 }
                             }
@@ -266,4 +254,18 @@ nXmlSpreadSheet::FindTable(const nString& name) const
     }
     // fallthrough: not found
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Add an external table to the spread sheet object. A copy of the
+    table will be created internally.
+*/
+void
+nXmlSpreadSheet::AddTable(nXmlTable* t)
+{
+    n_assert(t);
+    nXmlTable* table = n_new(nXmlTable);
+    *table = *t;
+    this->tables.Append(table);
 }

@@ -5,7 +5,7 @@
     @class nXmlTable
     @ingroup Xml
 
-    @brief A table in a nXmlSpreadSheet object.
+    A table in a nXmlSpreadSheet object.
 
     (C) 2004 RadonLabs GmbH
 */
@@ -33,11 +33,11 @@ public:
     /// access to cell in table
     nXmlTableCell& Cell(int row, int col) const;
     /// access to cell in table with column title name
-    nXmlTableCell& Cell(int row, const char* colName) const;
+    nXmlTableCell& Cell(int row, const nString& colName) const;
     /// get column index by name (return -1 if invalid column name)
-    int FindColIndex(const char* colName) const;
+    int FindColIndex(const nString& colName) const;
     /// return true if column title exists
-    bool HasColumn(const char* colName) const;
+    bool HasColumn(const nString& colName) const;
 
 private:
     nString name;
@@ -136,13 +136,12 @@ nXmlTable::Cell(int row, int col) const
 */
 inline
 int
-nXmlTable::FindColIndex(const char* colName) const
+nXmlTable::FindColIndex(const nString& colName) const
 {
-    n_assert(colName);
     int col;
     for (col = 0; col < this->numCols; col++)
     {
-        if (0 == strcmp(colName, this->Cell(0, col).Get()))
+        if (colName == this->Cell(0, col).AsString())
         {
             return col;
         }
@@ -156,7 +155,7 @@ nXmlTable::FindColIndex(const char* colName) const
 */
 inline
 bool
-nXmlTable::HasColumn(const char* colName) const
+nXmlTable::HasColumn(const nString& colName) const
 {
     return (this->FindColIndex(colName) != -1);
 }
@@ -168,9 +167,8 @@ nXmlTable::HasColumn(const char* colName) const
 */
 inline
 nXmlTableCell&
-nXmlTable::Cell(int row, const char* colName) const
+nXmlTable::Cell(int row, const nString& colName) const
 {
-    n_assert(colName);
     int col = this->FindColIndex(colName);
     if (-1 != col)
     {
@@ -185,4 +183,3 @@ nXmlTable::Cell(int row, const char* colName) const
 
 //------------------------------------------------------------------------------
 #endif
-

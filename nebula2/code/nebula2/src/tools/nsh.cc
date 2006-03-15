@@ -37,6 +37,8 @@
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
 #include "network/nhttpserver.h"
+#include "sql/nsqlserver.h"
+#include "resource/nresourceserver.h"
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(nnetwork);
@@ -51,10 +53,11 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     // get cmd line args
-    bool helpArg                = args.GetBoolArg("-help");
-    const char* startupArg      = args.GetStringArg("-startup", 0);
-    const char* runArg          = args.GetStringArg("-run", 0);
-    const char* scriptServerArg = args.GetStringArg("-scriptserver", "ntclserver");
+    bool helpArg            = args.GetBoolArg("-help");
+    nString startupArg      = args.GetStringArg("-startup", 0);
+    nString runArg          = args.GetStringArg("-run", 0);
+    nString scriptServerArg = args.GetStringArg("-scriptserver", "ntclserver");
+    nString sqlServerArg    = args.GetStringArg("-sqlserver", "nsqlite3server");
 
     if (helpArg)
     {
@@ -65,7 +68,8 @@ main(int argc, const char** argv)
                "-help                   show this help\n"
                "-startup                run script and go into interactive mode\n"
                "-run                    run script and exit\n"
-               "-scriptserver           define an alternative script server class (default is ntclserver)\n");
+               "-scriptserver           define an alternative script server class (default is ntclserver)\n"
+               "-sqlserver              define an alternative sql server class (default is nsqlite3server)\n");
         return 5;
     }
 
@@ -74,26 +78,26 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(nnetwork);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg, "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
     if (0 == scriptServer)
     {
-        n_printf("Could not create script server of class '%s'\n", scriptServerArg);
+        n_printf("Could not create script server of class '%s'\n", scriptServerArg.Get());
         return 10;
     }
     nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
-    n_assert(httpServer);
-
-    if (runArg)
+    nResourceServer* resServer = (nResourceServer*) kernelServer.New("nresourceserver", "/sys/servers/resource");
+    nSqlServer* sqlServer = (nSqlServer*) kernelServer.New("nsqlite3server", "/sys/servers/sql");
+    if (runArg.IsValid())
     {
         nString result;
-        scriptServer->RunScript(runArg, result);
+        scriptServer->RunScript(runArg.Get(), result);
     }
     else
     {
-        if (startupArg)
+        if (startupArg.IsValid())
         {
             nString result;
-            scriptServer->RunScript(startupArg, result);
+            scriptServer->RunScript(startupArg.Get(), result);
         }
 
         // interactively execute commands
@@ -113,16 +117,19 @@ main(int argc, const char** argv)
             lineOk = (gets(line) > 0);
             if (strlen(line) > 0)
             {
-                nString result;
+                nString result = 0;
                 scriptServer->Run(line, result);
-                if (false == result.IsEmpty())
+                if (result.IsValid())
                 {
                     printf("%s\n", result.Get());
                 }
             }
         }
     }
+    sqlServer->Release();
     httpServer->Release();
+    resServer->Release();
     scriptServer->Release();
+
     return 0;
 }

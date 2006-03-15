@@ -5,12 +5,13 @@
     @class nXmlTableCell
     @ingroup Xml
 
-    @brief A single cell in an XML table.
-
-    The primary representation is as string, but bool, int and float values
-    can be returned (converted values are cached for efficiency). Conversion
-    happens during Set().
-
+    A single cell in an XML table. The primary representation is as string,
+    but converted data types can be returned as well (such as int, float, etc...).
+    
+    If the XML table cell is empty, the method IsEmpty() returns true, and
+    all IsValidXXX() method return false. This differs from the previous
+    behaviour, where the string "<invalid>" was returned.
+    
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -24,12 +25,22 @@ public:
     nXmlTableCell();
     /// destructor
     ~nXmlTableCell();
-    /// return true if the content of the cell is valid
-    bool IsValid() const;
     /// set value
-    void Set(const char* s);
-    /// get value
-    const char* Get() const;
+    void Set(const nString& s);
+    /// return true if the content of the cell is empty
+    bool IsEmpty() const;
+    /// return true if the cell is not empty
+    bool IsValid() const;
+    /// return true if the content is a valid int
+    bool IsValidInt() const;
+    /// return true if the content is a valid float
+    bool IsValidFloat() const;
+    /// return true if the content is a valid bool
+    bool IsValidBool() const;
+    /// return true if the content is a valid vector3
+    bool IsValidVector3() const;
+    /// return true if the content is a valid vector4
+    bool IsValidVector4() const;
     /// get value as nString
     const nString& AsString() const;
     /// get value as int
@@ -39,33 +50,21 @@ public:
     /// get value as bool
     bool AsBool() const;
     /// get value as vector3
-    const vector3& AsVector3() const;
+    vector3 AsVector3() const;
     /// get value as vector4
-    const vector4& AsVector4() const;
+    vector4 AsVector4() const;
 
 private:
-    nString valueAsString;
-    int valueAsInt;
-    float valueAsFloat;
-    bool valueAsBool;
-    float valueAsVector[4];
+    nString value;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nXmlTableCell::nXmlTableCell() :
-    valueAsString("<invalid>"),
-    valueAsInt(0),
-    valueAsFloat(0),
-    valueAsBool(false)
+nXmlTableCell::nXmlTableCell()
 {
-    int i;
-    for (i = 0; i < 4; i++)
-    {
-        this->valueAsVector[i] = 0.0f;
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -79,69 +78,85 @@ nXmlTableCell::~nXmlTableCell()
 
 //------------------------------------------------------------------------------
 /**
+    Sets the value of the cell. NOTE: an automatic UTF8-conversion happens 
+    automatically on the new content of the cell.
+*/
+inline
+void
+nXmlTableCell::Set(const nString& str)
+{
+    this->value = str;
+    this->value.UTF8toANSI();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsEmpty() const
+{
+    return this->value.IsEmpty();
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 bool
 nXmlTableCell::IsValid() const
 {
-    return (this->valueAsString != nString("<invalid>"));
-}
-
-//------------------------------------------------------------------------------
-/**
-    01-Jun-04   added UTF-8 to ANSI-conversion
-*/
-inline
-void
-nXmlTableCell::Set(const char* str)
-{
-    n_assert(str);
-
-    this->valueAsString = str;
-    this->valueAsString.UTF8toANSI();
-
-    this->valueAsFloat  = float(atof(str));
-    this->valueAsInt    = atoi(str);
-    this->valueAsBool   = false;
-
-    nArray<nString> tokens;
-    this->valueAsString.Tokenize(" ,", tokens);
-    for (int i = 0; (i < 4) && (i < tokens.Size()); i++)
-    {
-        this->valueAsVector[i] = float(atof(tokens[i].Get()));
-    }
-
-    // NOTE: odd indices mean "false"
-    // FIXME: this could be a real performance killer
-    static const char* boolOptions[] = {
-        "ja", "nein", "yes", "no", "ein", "aus", "on", "off", "wahr", "falsch", "true", "false", 0
-    };
-    const char* cur;
-    int index = -1;
-    int boIdx = 0;
-    while ((cur = boolOptions[boIdx]) != 0)
-    {
-        if (0 == n_stricmp(cur, str))
-        {
-            index = boIdx;
-            break;
-        }
-        boIdx++;
-    }
-    if (index != -1)
-    {
-        this->valueAsBool = ((index & 1) == 0);
-    }
+    return this->value.IsValid();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const char*
-nXmlTableCell::Get() const
+bool
+nXmlTableCell::IsValidInt() const
 {
-    return this->valueAsString.Get();
+    return this->value.IsValidInt();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsValidFloat() const
+{
+    return this->value.IsValidFloat();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsValidBool() const
+{
+    return this->value.IsValidBool();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsValidVector3() const
+{
+    return this->value.IsValidVector3();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nXmlTableCell::IsValidVector4() const
+{
+    return this->value.IsValidVector4();
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +166,7 @@ inline
 const nString&
 nXmlTableCell::AsString() const
 {
-    return this->valueAsString;
+    return this->value;
 }
 
 //------------------------------------------------------------------------------
@@ -161,7 +176,7 @@ inline
 int
 nXmlTableCell::AsInt() const
 {
-    return this->valueAsInt;
+    return this->value.AsInt();;
 }
 
 //------------------------------------------------------------------------------
@@ -171,7 +186,7 @@ inline
 float
 nXmlTableCell::AsFloat() const
 {
-    return this->valueAsFloat;
+    return this->value.AsFloat();
 }
 
 //------------------------------------------------------------------------------
@@ -181,29 +196,28 @@ inline
 bool
 nXmlTableCell::AsBool() const
 {
-    return this->valueAsBool;
+    return this->value.AsBool();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const vector3&
+vector3
 nXmlTableCell::AsVector3() const
 {
-    return *(const vector3*)this->valueAsVector;
+    return this->value.AsVector3();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const vector4&
+vector4
 nXmlTableCell::AsVector4() const
 {
-    return *(const vector4*)this->valueAsVector;
+    return this->value.AsVector4();
 }
 
 //------------------------------------------------------------------------------
 #endif
-

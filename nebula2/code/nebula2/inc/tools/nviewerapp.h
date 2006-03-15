@@ -24,6 +24,7 @@
 #include "variable/nvariableserver.h"
 #include "anim2/nanimationserver.h"
 #include "particle/nparticleserver.h"
+#include "particle/nparticleserver2.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
@@ -39,7 +40,6 @@
 class nViewerApp
 {
 public:
-
     /// constructor
     nViewerApp();
     /// destructor
@@ -97,10 +97,8 @@ public:
     void SetUseRam(bool v);
     /// Load file from ram instead of disk?
     bool UseRam() const;
-    
     // get the Camera-Control instance
     nMayaCamControl& GetCamControl();
-
     /// get overlay enabled status
     bool GetOverlayEnabled() const;
     /// open the viewer
@@ -132,6 +130,7 @@ protected:
     nRef<nVariableServer> refVarServer;
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
+    nRef<nParticleServer2> refParticleServer2;
     nRef<nVideoServer> refVideoServer;
     nRef<nGuiServer> refGuiServer;
     nRef<nShadowServer2> refShadowServer;

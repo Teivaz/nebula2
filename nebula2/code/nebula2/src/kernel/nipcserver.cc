@@ -28,7 +28,7 @@ ListenerThreadFunc(nThread *thread)
         // this loop waits for a new client to connect, for each
         // new client, an nIpcMiniServer object is created 
         n_printf("nIpcServer: listening on port %d...\n", ipcServer->selfAddr.GetPortNum());
-		nIpcMiniServer* ipcMiniServer = n_new(nIpcMiniServer(ipcServer));
+        nIpcMiniServer* ipcMiniServer = n_new(nIpcMiniServer(ipcServer));
         if (ipcMiniServer->Listen()) 
         {
             // Some sort of connection has been established. This

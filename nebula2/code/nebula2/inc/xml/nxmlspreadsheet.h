@@ -5,7 +5,7 @@
     @class nXmlSpreadSheet
     @ingroup Xml
 
-    @brief A XML spreadsheet can load an XML-exported Excel spreadsheet file.
+    A XML spreadsheet can load an XML-exported Excel spreadsheet file.
 
     A database contains 1 or several XmlTable objects, which contain 
     XmlTableCell objects.
@@ -15,7 +15,7 @@
     
     (C) 2004 RadonLabs GmbH
 */
-#include "util/nfixedarray.h"
+#include "util/narray.h"
 #include "util/nstring.h"
 #include "xml/nxmltable.h"
 #include "tinyxml/tinyxml.h"
@@ -32,9 +32,9 @@ public:
     void SetFilename(const nString& name);
     /// get file name of XML file
     const nString& GetFilename() const;
-    /// open the spreadsheet (loads file)
+    /// open the spreadsheet
     bool Open();
-    /// close the spreadsheet (unloads file)
+    /// close the spreadsheet
     void Close();
     /// currently open?
     bool IsOpen() const;
@@ -44,6 +44,8 @@ public:
     nXmlTable& TableAt(int index) const;
     /// get table by name
     nXmlTable* FindTable(const nString& name) const;
+    /// manually add a table, the table will be copied
+    void AddTable(nXmlTable* t);
 
 private:
     /// count valid rows in table
@@ -55,7 +57,7 @@ private:
 
     nString filename;
     bool isOpen;
-    nFixedArray<nXmlTable*> tables;
+    nArray<nXmlTable*> tables;
 };
 
 //------------------------------------------------------------------------------
@@ -110,4 +112,3 @@ nXmlSpreadSheet::TableAt(int index) const
 
 //------------------------------------------------------------------------------
 #endif
-

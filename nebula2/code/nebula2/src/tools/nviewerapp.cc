@@ -59,6 +59,7 @@ nViewerApp::Open()
     this->refVarServer      = (nVariableServer*)  kernelServer->New("nvariableserver", "/sys/servers/variable");
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
+    this->refParticleServer2= (nParticleServer2*) kernelServer->New("nparticleserver2", "/sys/servers/particle2");
     this->refVideoServer    = (nVideoServer*)     kernelServer->New("ndshowserver", "/sys/servers/video");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
     this->refHttpServer     = (nHttpServer*)      kernelServer->New("nhttpserver", "/sys/servers/http");
@@ -177,8 +178,9 @@ void
 nViewerApp::Close()
 {
     n_assert(this->IsOpen());
-    
+
     this->nodeList.Close();
+
     this->refGuiServer->Close();
     this->refVideoServer->Close();
     this->refSceneServer->Close();
@@ -191,9 +193,10 @@ nViewerApp::Close()
     this->refGuiServer->Release();
     this->refVideoServer->Release();
     this->refParticleServer->Release();
+    this->refParticleServer2->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
-    this->refSceneServer->Release();    
+    this->refSceneServer->Release();
     this->refInputServer->Release();
     this->refGfxServer->Release();
     this->refScriptServer->Release();
@@ -240,6 +243,7 @@ nViewerApp::Run()
 
         // trigger particle server
         this->refParticleServer->Trigger();
+        this->refParticleServer2->Trigger();
 
         // handle input
         nInputServer* inputServer = nInputServer::Instance();
@@ -263,32 +267,31 @@ nViewerApp::Run()
                 this->refConServer->Toggle();
             }
 
-            // screenshot
-            if (this->refInputServer->GetButton("screenshot"))
+            // Make Screenshot
+            if (inputServer->GetButton("makescreenshot"))
             {
-                nString filename;
-                const char* sceneFile = this->GetSceneFile().Get();
-                if (sceneFile)
+                nString basename = this->GetSceneFile().Get();
+                if (basename.IsValid())
                 {
-                    filename = sceneFile;
-                    filename.StripExtension();
+                    basename.StripExtension();
                 }
                 else
                 {
-                    filename = "screenshot";
+                    basename = "screenshot";
                 }
 
                 int screenshotID = 0;
-                char buf[N_MAXPATH];
+                nString filename;
                 do
                 {
-                    snprintf(buf, sizeof(buf), "%s%03d.bmp", filename.Get(), screenshotID++);
+                    filename.Format("user:%s%03d.bmp", filename.Get(), screenshotID++);
                 } 
-                while (nFileServer2::Instance()->FileExists(buf));
+                while (nFileServer2::Instance()->FileExists(filename));
 
-                this->refGfxServer->SaveScreenshot(buf);
-            }
-
+                nTexture2* screenshotBuffer = (nTexture2*) nResourceServer::Instance()->FindResource("Screenshot",nResource::Texture);
+                n_assert(screenshotBuffer);
+                screenshotBuffer->SaveTextureToFile(filename);
+            };
             // update view and get the actual viewMatrix
             this->camControl.Update();
             this->viewMatrix = this->camControl.GetViewMatrix();
@@ -320,7 +323,6 @@ nViewerApp::Run()
                 this->refSceneServer->PresentScene();            // present the frame
             }
         }
-
         prevTime = time;
 
         // update watchers
@@ -333,8 +335,8 @@ nViewerApp::Run()
         // trigger kernel server at end of frame
         kernelServer->Trigger();
 
-        // Trigger Audioserver / important for streaming sounds        
-        this->refAudioServer->UpdateAllSounds();        
+        // Trigger Audioserver / important for streaming sounds
+        this->refAudioServer->UpdateAllSounds();
         this->refAudioServer->EndScene();
 
         // give up time slice

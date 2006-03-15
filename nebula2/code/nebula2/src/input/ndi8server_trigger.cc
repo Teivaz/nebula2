@@ -236,7 +236,7 @@ nDI8Server::Trigger(double time)
     }
 
     // invoke parent class Trigger, which maps input events to input states
-    nInputServer::Trigger(frameTime);
+    nInputServer::Trigger(time);
 }
 
 //------------------------------------------------------------------------------

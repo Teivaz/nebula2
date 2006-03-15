@@ -9,7 +9,6 @@
     
     (C) 2004 RadonLabs GmbH
 */
-
 #include "mathlib/polar.h"
 #include "mathlib/matrix.h"
 #include "input/ninputserver.h"
@@ -343,4 +342,3 @@ nMayaCamControl::GetCenterOfInterest() const
 
 //------------------------------------------------------------------------------
 #endif 
-
