@@ -39,7 +39,6 @@ nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndsound);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(ndshow);
-nNebulaUsePackage(nsql);
 
 //------------------------------------------------------------------------------
 /**
@@ -61,7 +60,6 @@ Server::Server(const nString& vendor, const nString& app, const nString& logName
     this->kernelServer->AddPackage(ndsound);
     this->kernelServer->AddPackage(ngui);
     this->kernelServer->AddPackage(ndshow);  
-    this->kernelServer->AddPackage(nsql);  
 
     this->kernelServer->SetLogHandler(&(this->logHandler));
 }
