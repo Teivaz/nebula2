@@ -66,7 +66,7 @@ PostEffectProperty::SetupDefaultAttributes()
     Property::SetupDefaultAttributes();
     GetEntity()->SetFloat(Attr::Saturation, 1.0f);
     GetEntity()->SetVector4(Attr::Luminance, vector4(0.299f, 0.587f, 0.114f, 0.0f));
-    GetEntity()->SetVector4(Attr::Balance, vector4(1.3, 1.092, 0.923, 0.0));
+    GetEntity()->SetVector4(Attr::Balance, vector4(1.3f, 1.092f, 0.923f, 0.0f));
     GetEntity()->SetFloat(Attr::BrightPassThreshold, 0.2f);
     GetEntity()->SetFloat(Attr::BrightPassOffset, 2.2f);
     GetEntity()->SetFloat(Attr::BloomScale, 0.3f);
