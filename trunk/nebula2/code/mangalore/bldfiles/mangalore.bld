@@ -24,6 +24,7 @@ begintarget mangalorelib
         mangalore::vfx
         mangalore::db
         mangalore::ui
+        mangalore::script
     }
     setbundles {
         mangalore::util
