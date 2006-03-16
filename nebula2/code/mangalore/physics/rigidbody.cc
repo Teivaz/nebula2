@@ -372,7 +372,7 @@ RigidBody::SetTransform(const matrix44& m)
 /**
     Get the body's current transformation in global space.
 
-    @param  m   [out] will be filled with the resulting matrix
+    @return the transformation matrix
 */
 const matrix44&
 RigidBody::GetTransform() const
@@ -398,7 +398,7 @@ RigidBody::SetLinearVelocity(const vector3& v)
 /**
     Get the body's current linear velocity.
 
-    @param  v   [out] linear velocity
+    @return linear velocity
 */
 vector3
 RigidBody::GetLinearVelocity() const
@@ -427,7 +427,7 @@ RigidBody::SetAngularVelocity(const vector3& v)
 /**
     Get the body's current angular velocity.
 
-    @param  v   [out] linear velocity
+    @return linear velocity
 */
 vector3
 RigidBody::GetAngularVelocity() const
@@ -455,7 +455,7 @@ RigidBody::GetLocalForce(vector3& force) const
 /**
     Get the current accumulated torque vector.
 
-    @param  force   [out] filled with torque vector
+    @param  torque  [out] filled with torque vector
 */
 void
 RigidBody::GetLocalTorque(vector3& torque) const

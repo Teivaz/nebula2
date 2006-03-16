@@ -2,6 +2,8 @@
 #define PROPERTIES_ACTORPHYSICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::ActorPhysicsProperty
+ 
     ActorPhysicsProperty adds "actor physics" to an entity. This is 
     mainly a capsule which is always kept upright and responds "immediately"
     to move messages. Attach the ActorPhysicsProperty instead of a 

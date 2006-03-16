@@ -2,7 +2,7 @@
 #define MSG_MOVEDIRECTION_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveDirection
+    @class Message::MoveDirection
         
     A MoveDirection message. Expected behaviour is that the entity
     starts to move into the specified direction. The direction vector

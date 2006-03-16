@@ -2,6 +2,8 @@
 #define PROPERTIES_ABSTRACTGRAPHICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::AbstractGraphicsProperty
+
     Abstract Graphics Property.
 
     Baseclass for all Graphics Propertys.

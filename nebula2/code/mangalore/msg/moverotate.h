@@ -2,7 +2,7 @@
 #define MSG_MOVEROTATE_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveRotate
+    @class Message::MoveRotate
 
     Commands an entity rotate around the y-axis for a new heading.
     

@@ -2,6 +2,8 @@
 #define PROPERTIES_CHASECAMERAPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::ChaseCameraProperty
+
     A chase camera for 3rd person camera control.
     
     (C) 2005 Radon Labs GmbH

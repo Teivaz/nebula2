@@ -2,6 +2,8 @@
 #define PROPERTIES_POINTNCLICKINPUTPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::PointNClickInputProperty
+
     An basic point'n'click third person input property which creates Goto 
     messages when clicking into the environment.
 

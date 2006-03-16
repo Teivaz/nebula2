@@ -820,7 +820,7 @@ nStream::GetAttrs() const
 //------------------------------------------------------------------------------
 /**
     Returns true if the current node has embedded text (in the form
-    <Node>Embedded Text</Node>)
+    \<Node\>Embedded Text\</Node\>)
 */
 bool
 nStream::HasText() const

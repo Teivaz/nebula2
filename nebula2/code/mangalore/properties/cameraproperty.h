@@ -2,6 +2,8 @@
 #define PROPERTIES_CAMERAPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::CameraProperty
+
     A camera property adds the ability to manipulate the camera to an entity.
     Please note that more advanced camera properties should always be 
     derived from the class camera property if camera focus handling is desired,

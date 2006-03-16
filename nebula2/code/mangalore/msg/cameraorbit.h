@@ -2,7 +2,7 @@
 #define MSG_CAMERAORBIT_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::CameraOrbit
+    @class Message::CameraOrbit
     
     A camera orbit rotation message.
     

@@ -85,7 +85,7 @@ Level::GetRootCell() const
     of the previous camera will be decremented, and the refcount of the
     new camera object incremented.
 
-    @param  camera  pointer to a camera entity (a 0 pointer is valid)
+    @param  newCamera  pointer to a camera entity (a 0 pointer is valid)
 */
 void
 Level::SetCamera(CameraEntity* newCamera)

@@ -2,7 +2,7 @@
 #define MSG_PLAYSHAKEEFFECT_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::PlayShakeEffect
+    @class Message::PlayShakeEffect
 
     Message to play a camera shake effect.
     

@@ -2,7 +2,7 @@
 #define MSG_CAMERARESET_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::CameraReset
+    @class Message::CameraReset
     
     A camera reset message.
     

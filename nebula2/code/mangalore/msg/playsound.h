@@ -2,7 +2,7 @@
 #define MSG_PLAYSOUND_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::PlaySound
+    @class Message::PlaySound
 
     Play a sound at the specific position.
     

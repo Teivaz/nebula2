@@ -53,7 +53,7 @@ BoxShape::Attach(dSpaceID spaceId)
 /**
     Render a debug visualization of the sphere shape.
 
-    @param  t   transform matrix of my parent rigid body
+    @param  parentTransform   transform matrix of my parent rigid body
 */
 void
 BoxShape::RenderDebug(const matrix44& parentTransform)

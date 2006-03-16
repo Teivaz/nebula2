@@ -2,7 +2,7 @@
 #define MSG_MOVESETVELOCITY_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveSetVelocity
+    @class Message::MoveSetVelocity
     
     Set the (relative) linear velocity of an entity between 0.0 and 1.0.
     The actual resulting velocity also depends on the MaxVelocity

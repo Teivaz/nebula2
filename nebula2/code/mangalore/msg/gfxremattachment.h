@@ -2,7 +2,7 @@
 #define MSG_GFXREMATTACHMENT_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::GfxRemAttachment
+    @class Message::GfxRemAttachment
 
     Remove an attachment from a joint.
     

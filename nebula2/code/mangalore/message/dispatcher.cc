@@ -87,7 +87,7 @@ Dispatcher::AttachPort(Port* port)
 /**
     Remove a message port object.
 
-    @param  handler     pointer to message port object to be removed
+    @param  port    pointer to message port object to be removed
 */
 void
 Dispatcher::RemovePort(Port* port)

@@ -111,7 +111,7 @@ Entity::OnDeactivate()
     This method is called when the physics entity is attached to a
     physics level object.
 
-    @param  level   pointer to a level object
+    @param  levl   pointer to a level object
 */
 void
 Entity::OnAttachedToLevel(Level* levl)

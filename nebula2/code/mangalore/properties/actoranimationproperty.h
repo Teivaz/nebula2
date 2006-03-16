@@ -2,6 +2,8 @@
 #define PROPERTIES_ACTORANIMATIONPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::ActorAnimationProperty
+
     Control the animations of a actor.
     
     (C) 2005 Radon Labs GmbH

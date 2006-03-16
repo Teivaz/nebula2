@@ -2,7 +2,7 @@
 #define MSG_MOVEFOLLOW_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveFollow
+    @class Message::MoveFollow
 
     A MoveFollow message. The expected behaviour is that the entity which
     receives this message follows the target entity (defined by the

@@ -1,12 +1,7 @@
 //------------------------------------------------------------------------------
-/**
-    @class nNodeList
-    @ingroup ToolLib
-
-    Implements the Root Node of an Object and a depending render context
-
-    (C) 2004 RadonLabs GmbH
-*/
+//  nnodelist.cc
+//  (C) 2005 RadonLabs GmbH
+//------------------------------------------------------------------------------
 #include "tools/nnodelist.h"
 
 nNodeList* nNodeList::Singleton = 0;

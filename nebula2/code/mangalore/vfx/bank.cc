@@ -77,7 +77,7 @@ Bank::Close()
 /**
     Find an effect template by name.
 
-    @param  effectName      name of effect to find
+    @param  name      name of effect to find
 */
 Effect*
 Bank::FindEffect(const nString& name)

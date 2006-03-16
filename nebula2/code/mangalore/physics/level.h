@@ -250,7 +250,7 @@ Level::GetTime() const
 /**
     Set the simulation step size.
 
-    @param  s   the step size in seconds
+    @param  t   the step size in seconds
 */
 inline
 void

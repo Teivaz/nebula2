@@ -182,7 +182,7 @@ public:
         void SetBinormal(const vector3& v);
         /// get triangle binormal
         const vector3& GetBinormal() const;
-        /// returns whether the vertexIndices equal those of <other>
+        /// returns whether the vertexIndices equal those of @c other
         bool Equals(Triangle &other) const;
 
         int vertexIndex[3];

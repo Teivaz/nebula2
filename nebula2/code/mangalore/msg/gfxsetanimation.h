@@ -2,7 +2,7 @@
 #define MSG_GFXSETANIMATION_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::GfxSetAnimation
+    @class Message::GfxSetAnimation
     
     Set base or overlay animation on an actor.
     

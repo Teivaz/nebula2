@@ -118,8 +118,6 @@ Entity::SaveAttributesToDatabase()
     This will attach contained subsystem entities to their respective
     subsystems.
 
-    @param  l   pointer to a level object to which the entity was attached
-
     - 01-Apr-05 floh    graphics entity now created after physics entity
 */
 void
