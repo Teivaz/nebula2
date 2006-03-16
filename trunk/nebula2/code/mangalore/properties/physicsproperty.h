@@ -2,6 +2,8 @@
 #define PROPERTIES_PHYSICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::PhysicsProperty
+
     A physics property adds basic physical behaviour to a game entity. 
     The default behaviour is that of a passive physics object which will
     just passively roll and bounce around. Implement more advanced behaviour

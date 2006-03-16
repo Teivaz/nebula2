@@ -2,7 +2,7 @@
 #define MSG_ANIMSTOP_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::AnimStop
+    @class Message::AnimStop
   
     Stop path animation playback.
     

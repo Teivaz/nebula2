@@ -2,7 +2,7 @@
 #define MSG_ANIMPLAY_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::AnimPlay
+    @class Message::AnimPlay
   
     Start path animation playback.
     

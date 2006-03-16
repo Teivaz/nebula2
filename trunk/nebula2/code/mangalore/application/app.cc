@@ -702,7 +702,7 @@ App::SetState(const nString& s)
 /**
     Register a state handler object with the application.
 
-    @param  state   pointer to a state handler object
+    @param  handler  pointer to a state handler object
 */
 void
 App::AddStateHandler(StateHandler* handler)

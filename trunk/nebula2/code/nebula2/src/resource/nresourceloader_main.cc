@@ -23,7 +23,7 @@ nResourceLoader::~nResourceLoader()
 //------------------------------------------------------------------------------
 /**
 */
-bool nResourceLoader::InitResource(const char* /*sFilename*/, nResource* /*callingResource*/)
+bool nResourceLoader::InitResource(const char* /*filename*/, nResource* /*callingResource*/)
 {
     return false;
 }

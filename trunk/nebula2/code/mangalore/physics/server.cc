@@ -425,7 +425,7 @@ Server::CreateRay(const vector3& orig, const vector3& vec) const
 
     @param  pos         starting position of ray
     @param  dir         direction and length of ray
-    @param  exludeSet   filter set defining objects to exclude
+    @param  excludeSet  filter set defining objects to exclude
     @return             pointer to closest ContactPoint, or 0 if no contact detected
 */
 const ContactPoint*

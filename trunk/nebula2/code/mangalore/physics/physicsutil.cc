@@ -21,7 +21,7 @@ namespace Physics
     @param  leftVec         the left-vector for bundle construction
     @param  bundleRadius    the radius of the ray bundle
     @param  excludeSet      exclusion set definition
-    @param  contactDist     [out] const distance if contact has happened
+    @param  outContactDist  [out] const distance if contact has happened
     @return                 true if a contact has happened
 */
 bool

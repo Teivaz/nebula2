@@ -2,7 +2,7 @@
 #define MSG_UPDATETRANSFORM_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::UpdateTransform
+    @class Message::UpdateTransform
     
     Updates the transform of a entity, does not set the physics tranform.
     All property that need to update when entity transformation changes need

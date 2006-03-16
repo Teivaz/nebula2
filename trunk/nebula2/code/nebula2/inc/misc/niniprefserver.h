@@ -12,7 +12,7 @@
     @verbatim
     [section]
     key = value
-    @endvebatim
+    @endverbatim
 
     The following code illustrates overall usage of the nIniPrefServer:
     @code

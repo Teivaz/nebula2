@@ -2,6 +2,8 @@
 #define PROPERTIES_VIDEOCAMERAPROPERTY2_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::VideoCameraProperty2
+
     A manually controlled camera property which implements different
     control models.
     

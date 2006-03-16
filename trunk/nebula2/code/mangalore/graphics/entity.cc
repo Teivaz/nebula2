@@ -201,7 +201,7 @@ Entity::OnRemovedFromCell()
 /**
     Set the graphics resource name.
 
-    @param  name    graphics resource name
+    @param  n    graphics resource name
 */
 void
 Entity::SetResourceName(const nString& n)
@@ -231,7 +231,7 @@ Entity::GetResourceName() const
     several rigid bodies, where each body defines the position of a 
     visual hierarchy node.
 
-    @param  name    graphics resource name
+    @param  n    graphics resource name
 */
 void
 Entity::SetShadowResourceName(const nString& n)

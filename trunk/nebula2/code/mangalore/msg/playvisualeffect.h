@@ -2,7 +2,7 @@
 #define MSG_PLAYVISUALEFFECT_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::PlayVisualEffect
+    @class Message::PlayVisualEffect
 
     Play a visual effect through the VFX subsystem.
     

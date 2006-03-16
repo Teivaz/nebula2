@@ -2,6 +2,8 @@
 #define PROPERTIES_ENVIRONMENTCOLLIDEPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::EnvironmentCollideProperty
+
     This property adds pieces of static collide geometry to the game world.
     It is very similar to the class EnvironmentGraphicsProperty, but instead
     of graphics it handles collision. All static collide geometry in a level

@@ -59,7 +59,7 @@ protected:
     /// looks up the skinanimator which belongs to this character3 node
     nCharacter3SkinAnimator* FindMySkinAnimator();
 
-    /// lookup first appearance of a specific class under <node>
+    /// lookup first appearance of a specific class under @c node
     nRoot* FindFirstInstance(nRoot* node, nClass* classType);
 
 

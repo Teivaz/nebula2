@@ -2,7 +2,7 @@
 #define MSG_GFXADDATTACHMENT_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::GfxAddAttachment
+    @class Message::GfxAddAttachment
 
     Attach a graphics entity defined by a resource name to a joint.
     

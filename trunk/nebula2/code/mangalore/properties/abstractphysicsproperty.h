@@ -2,6 +2,8 @@
 #define PROPERTIES_ABSTRACTPHYSICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::AbstractPhysicsProperty
+
     Abstract Physics property, provides a enable and disable mechanism.
   
     (C) 2005 Radon Labs GmbH

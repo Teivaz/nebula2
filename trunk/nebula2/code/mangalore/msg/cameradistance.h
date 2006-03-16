@@ -2,7 +2,7 @@
 #define MSG_CAMERADISTANCE_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::CameraDistance
+    @class Message::CameraDistance
     
     Change the distance of a 3rd camera to its lookat point.
     

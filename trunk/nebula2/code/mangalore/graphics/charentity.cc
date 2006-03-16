@@ -144,8 +144,8 @@ CharEntity::SetBaseAnimationByIndex(int i, float timeOffset)
     Set a new base animation. This is usually a looping animation, like
     Idle, Walking, Running, etc...
 
-    @param  anim        new base animation
-    @param  fromStart   flag defines if played from start or from random offset
+    @param  animName        new base animation
+    @param  timeOffset      flag defines if played from start or from random offset
 */
 void
 CharEntity::SetBaseAnimation(const nString& animName, float timeOffset)
@@ -196,7 +196,7 @@ CharEntity::SetBaseAnimation(const nString& animName, float timeOffset)
     Bash, Jump, etc... After the overlay animation has finished, the 
     current base animation will be re-activated.
 
-    @param  anim    new overlay animation
+    @param  animName    new overlay animation
 */
 void
 CharEntity::SetOverlayAnimation(const nString& animName)

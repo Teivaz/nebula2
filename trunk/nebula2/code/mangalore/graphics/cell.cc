@@ -449,8 +449,8 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
     create links between camera and shape entities, or light and shape
     entities (just tell the method what you want).
 
-    @param  observer        the observer entity (usually a camera or a light)
-    @param  observedTypes   the type of entities
+    @param  observerEntity  the observer entity (usually a camera or a light)
+    @param  observedType    the type of entities
     @param  linkType        link type (e.g. CameraLink, LightLink)
 */
 void

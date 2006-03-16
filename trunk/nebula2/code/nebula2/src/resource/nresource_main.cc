@@ -43,7 +43,7 @@ nResource::~nResource()
 /**
     Sets a resource loader for the nResource
 
-    @param  resourceLoader    nResourceLoader instance
+    @param  resourceLoaderPath    nResourceLoader instance
 */
 void
 nResource::SetResourceLoader(const nString& resourceLoaderPath)

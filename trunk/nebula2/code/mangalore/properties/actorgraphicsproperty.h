@@ -2,6 +2,8 @@
 #define PROPERTIES_ACTORGRAPHICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::ActorGraphicsProperty
+
     A specialized graphics property for actors. This creates a 
     Graphics::CharEntity, knows how to switch animations and
     manages attachments.

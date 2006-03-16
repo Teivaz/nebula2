@@ -2,6 +2,8 @@
 #define PROPERTIES_SIMPLEGRAPHICSPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::SimpleGraphicsProperty
+
     This is a simple graphics property which adds visibility to a game 
     entity. 
   

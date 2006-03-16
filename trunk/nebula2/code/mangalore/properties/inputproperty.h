@@ -2,6 +2,8 @@
 #define PROPERTIES_INPUTPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::InputProperty
+
     An input property adds the ability to handle user input to an entity.
     If an InputProperty is attached to an entity it can become the input
     focus entity. Global input focus is managed by the Game::FocusManager

@@ -2,7 +2,7 @@
 #define MSG_MOVEGOTO_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveGoto
+    @class Message::MoveGoto
 
     A highlevel MoveGoto message. The expected behaviour is that an entity
     should move to the target point defined by the move goto message

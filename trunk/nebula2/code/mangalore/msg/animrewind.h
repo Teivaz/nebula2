@@ -2,7 +2,7 @@
 #define MSG_ANIMREWIND_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::AnimRewind
+    @class Message::AnimRewind
   
     Rewind path animation.
     

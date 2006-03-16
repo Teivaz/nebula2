@@ -2,7 +2,7 @@
 #define MSG_MOVESTOP_H
 //------------------------------------------------------------------------------
 /**
-    @class Msg::MoveStop
+    @class Message::MoveStop
 
     A MoveStop message. The expected behaviour is that an entity which
     receives this messages stops immediately.

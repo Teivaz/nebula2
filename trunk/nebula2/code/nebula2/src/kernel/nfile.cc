@@ -420,9 +420,9 @@ nFile::PutS(const nString& buffer)
     reads a string from the file up to and including the first newline character
     or up to the end of the buffer
 
-    @param buffer            buffer for string
-    @param numChars          maximum number of chars to read
-    @return                  success (false if eof is reached)
+    @param buf            buffer for string
+    @param bufSize        maximum number of chars to read
+    @return               success (false if eof is reached)
 
     history:
      - 30-Jan-2002   peter    created

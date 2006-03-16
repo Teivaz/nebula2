@@ -89,7 +89,7 @@ Server::Close()
     Register a Command with the server. Only registered Commands
     will be callable from the Nebula-Console.
 
-    @param  Command    pointer to a Command object
+    @param  command    pointer to a Command object
 */
 void
 Server::RegisterCommand(Command *command)
@@ -130,7 +130,7 @@ Server::RegisterCommand(Command *command)
     DeRegister a Command from the server. The Command will no longer
     be callable from the Nebula-Console.
 
-    @param  Command    pointer to a Command object
+    @param  name    pointer to a Command object
 */
 void
 Server::DeRegisterCommand(const nString& name)

@@ -2,6 +2,8 @@
 #define PROPERTIES_LIGHTPROPERTY_H
 //------------------------------------------------------------------------------
 /**
+    @class Properties::LightProperty
+
     A light property adds a light source object (Graphics::LightEntity) 
     to a game entity.
     
