@@ -175,7 +175,7 @@ bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
     loader.SetFilename( fname );
     loader.SetIndexType( nMeshLoader::Index32 );
     
-    if ( loader.Open( fs ) )
+    if ( loader.Open() )
     {
         n_assert( group < loader.GetNumGroups() );
         // coord component must be present
@@ -237,7 +237,7 @@ bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
     loader.SetFilename( fname );
     loader.SetIndexType( nMeshLoader::Index32 );
     
-    if ( loader.Open( fs ) )
+    if ( loader.Open() )
     {
         n_assert( group < loader.GetNumGroups() );
         // coord component must be present
