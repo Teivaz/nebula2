@@ -145,12 +145,12 @@ App::DoStartupCheck()
 /**
     Setup the default settings for this application which are then overriden
     by SetupFromCmdLine() and SetupFromProfile() (the methods will be called
-    in this order by App::Open(). Override this method in your App subclass if 
+    in this order by App::Open(). Override this method in your App subclass if
     your application needs different defaults.
 */
 void
 App::SetupFromDefaults()
-{    
+{
     // setup display mode
     nDisplayMode2 mode;
     nString windowTitle = this->GetVendorName() + " - " + this->GetAppName() + " - " + this->GetAppVersion();
@@ -169,8 +169,8 @@ App::SetupFromDefaults()
 //------------------------------------------------------------------------------
 /**
     Change the app settings according to a user profile. This method is
-    called by App::Open() after SetupFromDefault() and before 
-    SetupFromCmdLineArgs(). 
+    called by App::Open() after SetupFromDefault() and before
+    SetupFromCmdLineArgs().
 */
 void
 App::SetupFromProfile()
@@ -180,14 +180,14 @@ App::SetupFromProfile()
 
 //------------------------------------------------------------------------------
 /**
-    Change the app settings from the provided command line args. This 
+    Change the app settings from the provided command line args. This
     parses the command line arguments as provided to the application by
     App::SetCmdLineArgs(). Override this method in your App subclass if you
     need different command line args. Please be aware though that every Mangalore
     application should accept the standard command line arguments as implemented
     in this method.
 
-    This method is called by App::Open() after SetupFromDefaults() and 
+    This method is called by App::Open() after SetupFromDefaults() and
     SetupFromProfile().
 */
 void
@@ -196,7 +196,7 @@ App::SetupFromCmdLineArgs()
     // setup optional startup savegame or level paths
     this->SetStartupSavegame(this->cmdLineArgs.GetStringArg("-loadgame", 0));
     this->SetStartupLevel(this->cmdLineArgs.GetStringArg("-level", 0));
-    
+
     // setup display mode
     nDisplayMode2 mode = this->GetDisplayMode();
     if (this->cmdLineArgs.HasArg("-fullscreen"))
@@ -242,7 +242,7 @@ App::SetupFromCmdLineArgs()
 //------------------------------------------------------------------------------
 /**
     Setup the Game subsystem. This is most likely to be different in
-    a derived application, so it lives in its own method which can 
+    a derived application, so it lives in its own method which can
     be overwritten by a subclass.
 */
 void
@@ -302,10 +302,6 @@ App::SetupSubsystems()
     // setup the db subsystem
 	this->dbServer = Db::Server::Create();
 
-    // setup the input subsystem
-	this->inputServer = Input::Server::Create();
-    this->inputServer->Open();
-
     // setup the physics subsystem
 	this->physicsServer = Physics::Server::Create();
     this->physicsServer->Open();
@@ -317,7 +313,11 @@ App::SetupSubsystems()
     this->graphicsServer->SetFeatureSet(this->featureSet);
     this->graphicsServer->Open();
 
-    // setup the audio subsystem
+	// setup the input subsystem
+	this->inputServer = Input::Server::Create();
+	this->inputServer->Open();
+
+	// setup the audio subsystem
 	this->audioServer = Audio::Server::Create();
     this->audioServer->Open();
     if (nFileServer2::Instance()->FileExists("proj:data/tables/sound.xml"))
@@ -426,7 +426,7 @@ App::CleanupSubsystems()
 /**
     Setup the application state handlers. This method is called by App::Open()
     after the Mangalore subsystems have been initialized. Override this method
-    to create and attach your application state handlers with the 
+    to create and attach your application state handlers with the
     application object.
 */
 void
@@ -438,7 +438,7 @@ App::SetupStateHandlers()
 //------------------------------------------------------------------------------
 /**
     Cleanup the application state handlers. This will call the
-    OnRemoveFromApplication() method on all attached state handlers 
+    OnRemoveFromApplication() method on all attached state handlers
     and release them. Usually you don't need to override this method in
     your app.
 */
@@ -464,7 +464,7 @@ App::CleanupStateHandlers()
 /**
     Open the application, this will initialize the runtime environment.
     Return true when successful. The next method call should be Run(),
-    which doesn't return until the application terminates.    
+    which doesn't return until the application terminates.
 */
 bool
 App::Open()
@@ -537,7 +537,7 @@ App::Close()
     then override this method. But please be aware that most per-frame
     work should be done in the App's state handlers.
 
-    NOTE: This method is called from App::Run() after the current state 
+    NOTE: This method is called from App::Run() after the current state
     handler's OnFrame() method has been called.
 */
 void
@@ -548,7 +548,7 @@ App::OnFrame()
 
 //------------------------------------------------------------------------------
 /**
-    Run the application. This method will return when the application wishes 
+    Run the application. This method will return when the application wishes
     to exist.
 */
 void
@@ -636,7 +636,7 @@ App::UpdateTimes()
         {
             diff = 0.5;
         }
-        
+
         this->time = this->time + diff;
         this->frameTime = diff;
         this->stateTime = this->time - this->stateTransitionTimeStamp;

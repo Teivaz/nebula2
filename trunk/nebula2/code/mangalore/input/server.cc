@@ -55,6 +55,9 @@ Server::Open()
     nString result;
     scriptServer->Run("OnMapInput", result);
 
+	nInputServer* inputServer = nInputServer::Instance();
+	inputServer->Open();
+
     this->isOpen = true;
     return true;
 }
