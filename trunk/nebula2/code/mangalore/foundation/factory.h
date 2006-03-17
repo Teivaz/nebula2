@@ -10,7 +10,7 @@
 #include "util/narray.h"
 #include "util/nstring.h"
 
-namespace Foundation 
+namespace Foundation
 {
 class RefCounted;
 
@@ -25,7 +25,7 @@ public:
 	/// The one and only instance.
 	static Factory* Instance();
 	/// Optional destructor.
-	static void Destroy();
+	/// static void Destroy();
 
 	/// Map factory function `function' to class name `className'.
 	void Add(FactoryFunction function, const nString& className);

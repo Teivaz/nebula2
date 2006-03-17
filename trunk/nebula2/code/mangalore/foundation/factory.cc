@@ -16,17 +16,18 @@ Factory* Factory::instance = 0;
 */
 Factory* Factory::Instance()
 {
-	if (instance == 0)
+/*	if (instance == 0)
 	{
 		instance = new Factory;
 		n_assert(instance != 0);
 	}
-	return instance;
+	return instance;*/
+	static Factory instance;
+	return &instance;
 }
 
 //------------------------------------------------------------------------------
 /**
-*/
 void
 Factory::Destroy()
 {
@@ -35,7 +36,7 @@ Factory::Destroy()
 		delete instance;
 		instance = 0;
 	}
-}
+}*/
 
 
 //------------------------------------------------------------------------------
