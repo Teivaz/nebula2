@@ -50,13 +50,13 @@ Server::Open()
 {
     n_assert(!this->isOpen);
 
+	nInputServer* inputServer = nInputServer::Instance();
+	inputServer->Open();
+
     // define input mapping by calling external script function
     nScriptServer* scriptServer = Foundation::Server::Instance()->GetScriptServer();
     nString result;
     scriptServer->Run("OnMapInput", result);
-
-	nInputServer* inputServer = nInputServer::Instance();
-	inputServer->Open();
 
     this->isOpen = true;
     return true;
