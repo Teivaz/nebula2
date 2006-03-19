@@ -23,9 +23,9 @@ public:
     virtual ~nRamFile();
 
     /// Does file physically exists?
-    virtual bool Exists(const char* fileName) const;
+    virtual bool Exists(const nString& fileName) const;
     /// opens a file
-    virtual bool Open(const char* fileName, const char* accessMode);
+    virtual bool Open(const nString& fileName, const nString& accessMode);
     /// closes the file
     virtual void Close();
     /// writes some bytes to the file

@@ -31,7 +31,7 @@ nRamFile::~nRamFile()
 /**
 */
 bool
-nRamFile::Exists(const char* fileName) const
+nRamFile::Exists(const nString& fileName) const
 {
     return nKernelServer::Instance()->Lookup(GetFullSharedMemoryObjectName(GetBaseName(fileName)).Get()) != 0 ||
            nFile::Exists(fileName);
@@ -41,16 +41,16 @@ nRamFile::Exists(const char* fileName) const
 /**
 */
 bool
-nRamFile::Open(const char* filename, const char* accessMode)
+nRamFile::Open(const nString& fileName, const nString& accessMode)
 {
-    n_assert(filename != 0);
-    n_assert(accessMode != 0);
+    n_assert(fileName.IsValid());
+    n_assert(accessMode.IsValid());
 
     // "Connect" to shared memory object.
     n_assert(!this->refSharedMemory.isvalid());
 
     // Determine object's name.
-    nString sharedMemoryObjectName = GetFullSharedMemoryObjectName(GetBaseName(filename));
+    nString sharedMemoryObjectName = GetFullSharedMemoryObjectName(GetBaseName(fileName));
 
     // Try a lookup.
     this->refSharedMemory = static_cast<nSharedMemory*>(nKernelServer::Instance()->Lookup(sharedMemoryObjectName.Get()));
@@ -62,19 +62,28 @@ nRamFile::Open(const char* filename, const char* accessMode)
     }
     n_assert(this->refSharedMemory.isvalid());
 
-    for (uint i = 0; i < strlen(accessMode); i++) 
+    //for (uint i = 0; i < strlen(accessMode); i++) 
+    //{
+    //    if (accessMode[i] == 'w')
+    //    {
+    //        this->refSharedMemory->Create();
+    //        break;
+    //    }
+    //    else if (accessMode[i] == 'r')
+    //    {
+    //        this->refSharedMemory->Open();
+    //        break;
+    //    }
+    //}
+    if (accessMode.ContainsCharFromSet("rR"))
     {
-        if (accessMode[i] == 'w')
-        {
-            this->refSharedMemory->Create();
-            break;
-        }
-        else if (accessMode[i] == 'r')
-        {
-            this->refSharedMemory->Open();
-            break;
-        }
+        this->refSharedMemory->Open();
     }
+    if (accessMode.ContainsCharFromSet("wW"))
+    {
+        this->refSharedMemory->Create();
+    }
+
     this->isOpen = this->refSharedMemory->IsOpen();
 
     // Fall back to nFile?
@@ -88,7 +97,7 @@ nRamFile::Open(const char* filename, const char* accessMode)
         this->fallBack = true;
         this->refSharedMemory->Release();
         this->refSharedMemory = 0;
-        return nFile::Open(filename, accessMode);
+        return nFile::Open(fileName, accessMode);
     }
 
     return this->isOpen;
