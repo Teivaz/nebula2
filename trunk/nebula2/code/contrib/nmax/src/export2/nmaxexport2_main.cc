@@ -121,7 +121,7 @@ bool LaunchViewer(const char* sceneFile)
 //end camera*/
 
     // launch the viewer application.
-    nAppLauncher appLauncher(nKernelServer::Instance());
+    nAppLauncher appLauncher;
 
     appLauncher.SetExecutable(viewerOptions.GetExecutable());
 
