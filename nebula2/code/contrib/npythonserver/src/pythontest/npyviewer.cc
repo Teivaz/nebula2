@@ -139,11 +139,11 @@ main(int argc, const char** argv)
 #endif
 
 
-    const char* scriptserverArg = args.GetStringArg("-scriptserver", "npythonserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.py");
-    const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
+    nString scriptserverArg = args.GetStringArg("-scriptserver", "npythonserver");
+    nString sceneserverArg = args.GetStringArg("-sceneserver", 0);
+    nString startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.py");
+    nString viewArg   = args.GetStringArg("-view", 0);
+    nString stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool useRam           = args.GetBoolArg("-useram");
@@ -152,10 +152,10 @@ main(int argc, const char** argv)
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
     int heightArg         = args.GetIntArg("-h", 480);
-    const char* projDir   = args.GetStringArg("-projdir", 0);
+    nString projDir   = args.GetStringArg("-projdir", 0);
 
-    const char* gfxServerClass   = args.GetStringArg("-gfxserver", 0);
-    const char* featureSetArg    = args.GetStringArg("-featureset", 0);
+    nString gfxServerClass   = args.GetStringArg("-gfxserver", 0);
+    nString featureSetArg    = args.GetStringArg("-featureset", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
     vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
@@ -211,7 +211,7 @@ main(int argc, const char** argv)
 
     // initialize a display mode object
     nString title;
-    if (viewArg)
+    if (viewArg.IsValid())
     {
         title.Append(viewArg);
         title.Append(" - ");
@@ -250,12 +250,12 @@ main(int argc, const char** argv)
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
     viewerApp.SetUseRam(useRam);
-    if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
-    if (viewArg)          viewerApp.SetSceneFile(viewArg);
-    if (projDir)          viewerApp.SetProjDir(projDir);
-    if (featureSetArg)
+    if (gfxServerClass.IsValid())   viewerApp.SetGfxServerClass(gfxServerClass);
+    if (viewArg.IsValid())          viewerApp.SetSceneFile(viewArg);
+    if (projDir.IsValid())          viewerApp.SetProjDir(projDir);
+    if (featureSetArg.IsValid())
     {
-        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
+        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg.Get());
         if (nGfxServer2::InvalidFeatureSet == featureSet)
         {
             n_error("Invalid feature set string specified: %s", featureSetArg);
@@ -264,7 +264,7 @@ main(int argc, const char** argv)
     }
 
     viewerApp.SetScriptServerClass(scriptserverArg);
-    if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
+    if (sceneserverArg.IsValid())   viewerApp.SetSceneServerClass(sceneserverArg);
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
 
