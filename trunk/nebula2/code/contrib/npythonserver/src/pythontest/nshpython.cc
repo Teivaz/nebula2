@@ -50,9 +50,9 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     // get cmd line args
-    bool helpArg                = args.GetBoolArg("-help");
-    const char* startupArg      = args.GetStringArg("-startup", 0);
-    const char* runArg          = args.GetStringArg("-run", 0);
+    bool helpArg            = args.GetBoolArg("-help");
+    nString startupArg      = args.GetStringArg("-startup", 0);
+    nString runArg          = args.GetStringArg("-run", 0);
 
     if (helpArg)
     {
@@ -79,17 +79,17 @@ main(int argc, const char** argv)
     nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
     n_assert(httpServer);
 
-    if (runArg)
+    if (runArg.IsValid())
     {
         nString result;
-        scriptServer->RunScript(runArg, result);
+        scriptServer->RunScript(runArg.Get(), result);
     }
     else
     {
-        if (startupArg)
+        if (startupArg.IsValid())
         {
             nString result;
-            scriptServer->RunScript(startupArg, result);
+            scriptServer->RunScript(startupArg.Get(), result);
         }
 
         // interactively execute commands
