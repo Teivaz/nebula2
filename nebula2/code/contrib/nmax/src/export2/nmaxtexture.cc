@@ -183,7 +183,6 @@ bool nMaxTexture::CopyTexture(const char* textureName)
 
     nString tmp = textureName;
     nString dest = nMaxOptions::Instance()->GetTextureAssign().Get();
-    dest += "\\";
     dest += tmp.ExtractFileName();
 
     const char* to = dest.Get();
