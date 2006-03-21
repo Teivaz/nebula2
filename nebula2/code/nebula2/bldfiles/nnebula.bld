@@ -33,6 +33,7 @@ begintarget nnebula
         nblendshapenode nblendshapeanimator ncombinedanimation
         nmeshdeformer nskinmeshdeformer nblendshapedeformer
         nmultilayerednode ncharacter3node ncharacter3skinanimator
+        ntoolkitserver
     }
     setbundles {
         nshadow2
