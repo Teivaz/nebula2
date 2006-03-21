@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ascii" standalone="yes" ?>
+<MangaloreLevel AppName="Mangalore" Version="1.0">
+    <Global currentLevel = "stage1" />
+    <Level center="0.000 8.061 -17.254" extents="26.350 12.105 37.769" startLevel="true" id = "stage1">
+        <Objects>
+            <Object name="Eagle" loc="db:Actor:Eagle" pos="0.000 1.139 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" Graphics="examples/eagle" AnimSet="Eagle" Name="The Eagle." InputFocus="true" CameraFocus="true" MaxVelocity="4.000" />
+            <Object name="Camera" loc="db:Camera:Camera" pos="0.000 6.905 11.455" rot="-0.223 0.000 0.000 0.975" scale="1.000 1.000 1.000" InputFocus="true" CameraFocus="true" FieldOfView="60.000" />
+        </Objects>
+        <Environment>
+            <EnvObject name="opelblitz" res="examples/opelblitz" pos="-7.222 0.000 -4.397" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="bouncingball" res="examples/bouncingball" pos="0.000 0.000 -14.337" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+        </Environment>
+        <Lights>
+            <Light name="pointlight" type="Point" color="1.000 1.000 1.000 1.000" ambient="1.000 1.000 1.000 1.000" pos="0.000 0.000 0.000" range="13.374" castShadows="false" />
+        </Lights>
+    </Level>
+</MangaloreLevel>
