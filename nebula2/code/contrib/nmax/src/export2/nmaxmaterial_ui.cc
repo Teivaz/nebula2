@@ -14,6 +14,8 @@
 //-----------------------------------------------------------------------------
 /**
     Retrieves default value which descriped in 'def'.
+
+    -14-Mar-06  kims  changed to get proper range for value of color picker.
 */
 nString 
 GetDefault(TiXmlElement* elemParam)
@@ -46,7 +48,16 @@ GetDefault(TiXmlElement* elemParam)
         defScript += "[";
         for (int i=0; i<numValues; i++)
         {
-            defScript += tokens[i];
+            // A Color value of 3dsmax are normally in the range 0.0 to 255.0 and 
+            // Nebula uses 0.0 to 1.0 for its range.
+            // so it needs to be converted to the proper range.
+            nString tmp = tokens[i];
+            float fval = tmp.AsFloat();
+            tmp.Clear();
+            tmp.SetFloat(fval * 255.0f);
+
+            defScript += tmp;
+            
             if (i < numValues - 1)
                 defScript += ", ";
         }

@@ -134,3 +134,109 @@ Value* nGetProjDir_cf(Value** arg_list, int count)
     function registering macro for nGetPorjDir_cf.
 */
 def_visible_primitive(nGetProjDir, "nGetProjDir");
+
+
+//-----------------------------------------------------------------------------
+/**
+    @verbatim
+    nChangeShaderParameter ('Standard', 'common', 'MatDiffuse', '1.0, 0.0, 0.0, 1.0')
+    @endvebatim
+*/
+Value* nChangeShaderParameter_cf(Value** arg_list, int count)
+{
+    check_arg_count(nChangeShaderParameter, 4, count);
+
+	char* toolkitShaderName = arg_list[0]->to_string();
+	char* shaderHandling    = arg_list[1]->to_string();
+	char* paramID           = arg_list[2]->to_string();
+	char* value             = arg_list[3]->to_string();
+
+	if (!nChangeShaderParameter(toolkitShaderName, shaderHandling, paramID, value))
+    {
+        return &false_value;
+    }
+
+	return &true_value;
+}
+
+def_visible_primitive(nChangeShaderParameter, "nChangeShaderParameter");
+
+//-----------------------------------------------------------------------------
+/**
+    @verbatim
+    nconnectipc "localhost" "nviewer"
+    @endvebatim
+*/
+Value* nConnectIpc_cf(Value** arg_list, int count)
+{
+    check_arg_count(nConnectIpc, 2, count);
+
+	char* host = arg_list[0]->to_string();
+	char* port = arg_list[1]->to_string();
+
+    if (!nConnectIpc(host, port))
+    {
+        return &false_value;
+    }
+
+    return &true_value;
+}
+
+def_visible_primitive(nConnectIpc, "nConnectIpc");
+
+//-----------------------------------------------------------------------------
+/**
+    @verbatim
+    ndisconnectipc()
+    @endvebatim
+*/
+Value* nDisconnectIpc_cf(Value** arg_list, int count)
+{
+    one_typed_value_local(Value* result);
+    //Value* result = &undefined;
+    
+    nDisConnectIpc();
+
+    return &ok;
+}
+
+def_visible_primitive(nDisconnectIpc, "nDisconnectIpc");
+
+//-----------------------------------------------------------------------------
+/**
+    @verbatim
+nsendmsgipc "/sys/servers/mayatoolkit.changemayashaderparameter \"Standard\" \"common\" \"MatDiffuse\" \".2, .2, .5, .6\""
+    @endvebatim
+
+*/
+Value* nSendMsgIpc_cf(Value** arg_list, int count)
+{
+    check_arg_count(nSendIpc, 1, count);
+
+	char* msg = arg_list[0]->to_string();
+
+    if (!nSendMsgIpc(msg))
+    {
+        return &false_value;
+    }
+
+    return &true_value;
+}
+
+def_visible_primitive(nSendMsgIpc, "nSendMsgIpc");
+
+//-----------------------------------------------------------------------------
+/**
+*/
+Value* nIsConnectedIpc_cf(Value** arg_list, int count)
+{
+    one_typed_value_local(Value* result);
+
+    if (!nIsConnectedIpc())
+        return &false_value;
+
+    return &true_value;
+}
+
+def_visible_primitive(nIsConnectedIpc, "nIsConnectedIpc");
+

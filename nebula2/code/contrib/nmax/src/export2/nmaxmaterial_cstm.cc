@@ -81,6 +81,8 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                 if (IsPredefinedCA(caName))
                     continue;
 
+                shapeNode->SetMayaShaderName(caName);
+
                 int numParamBlocks = custAttr->NumParamBlocks();
 
                 for (int i=0; i<numParamBlocks; i++)
