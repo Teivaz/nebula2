@@ -1,0 +1,16 @@
+#===============================================================================
+#  toolkitserver.bld
+#  toolkitserver modules
+#
+#  Modules:
+#      ntoolkitserver
+#
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+beginmodule ntoolkitserver
+    setdir toolkit
+    setfiles { ntoolkitserver_main ntoolkitserver_cmds }
+    setheaders { ntoolkitserver }
+endmodule
+#-------------------------------------------------------------------------------
