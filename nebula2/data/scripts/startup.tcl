@@ -95,12 +95,12 @@ proc OnViewerMapInput {} {
     set cwd [psel]
     sel /sys/servers/input
     .beginmap
-    
+
     .map "keyb0:space.down" "reset"
     .map "keyb0:esc.down" "script:/sys/servers/gui.togglesystemgui"
     .map "keyb0:f1.down" "mayacontrols"
     .map "keyb0:f2.down" "flycontrols"
-    .map "keyb0:f4.down"  "script:ToggleSceneVisualization"    
+    .map "keyb0:f4.down"  "script:ToggleSceneVisualization"
     .map "keyb0:f5.down" "script:/sys/servers/capture.toggle"
     .map "keyb0:f11.down" "console"
     .map "keyb0:f12.down" "makescreenshot"
@@ -130,17 +130,17 @@ proc OnViewerMapInput {} {
 proc OnMapInput {} {
     set oldCwd [psel]
     sel /sys/servers/input
-    
+
     .beginmap
     .map "keyb0:f1.down"                "script:/sys/servers/gui.togglesystemgui"
     .map "keyb0:f2.down"                "togglePhysicsVisualization"
     .map "keyb0:f3.down"                "toggleGraphicsVisualization"
-    .map "keyb0:f4.down"                "script:ToggleSceneVisualization"    
+    .map "keyb0:f4.down"                "script:ToggleSceneVisualization"
     .map "keyb0:f5.down"                "script:/sys/servers/capture.toggle"
     .map "keyb0:f9.down"                "toggleFOVVisualization"
     .map "keyb0:f12.down"               "script:DoScreenCapture "
     .map "keyb0:esc.down"               "escape"
-    
+
     .map "relmouse0:btn2.down"          "vwrOn"
     .map "relmouse0:btn2.up"            "vwrOff"
     .map "relmouse0:-x"                 "vwrLeft"
@@ -148,7 +148,7 @@ proc OnMapInput {} {
     .map "relmouse0:-y"                 "vwrUp"
     .map "relmouse0:+y"                 "vwrDown"
     .map "keyb0:space.down"             "vwrReset"
-    
+
     .map "relmouse0:btn0.down"          "lmbDown"
     .map "relmouse0:btn0.up"            "lmbUp"
     .map "relmouse0:btn0.pressed"       "lmbPressed"
@@ -158,7 +158,7 @@ proc OnMapInput {} {
     .map "relmouse0:btn2.down"          "mmbDown"
     .map "relmouse0:btn2.up"            "mmbUp"
     .map "relmouse0:btn2.pressed"       "mmbPressed"
-    
+
     .map "keyb0:ctrl.pressed"           "ctrlPressed"
     .map "keyb0:shift.pressed"          "shiftPressed"
     .map "keyb0:home.pressed"           "zoomIn"
@@ -182,19 +182,19 @@ proc OnMapInput {} {
     .map "keyb0:space.down"             "moveJump"
     .map "keyb0:e.down"                 "use"
     .map "keyb0:r.down"                 "reload"
-    .map "keyb0:shift.down"             "inventoryOn"    
-    .map "keyb0:shift.up"             	"inventoryOff"    
+    .map "keyb0:shift.down"             "inventoryOn"
+    .map "keyb0:shift.up"             	"inventoryOff"
     .map "relmouse0:+zbtn.down"         "ScrollDown"
     .map "relmouse0:-zbtn.down"         "ScrollUp"
-    .map "keyb0:tab.up"                 "cycleFocus"    
+    .map "keyb0:tab.up"                 "cycleFocus"
     .map "keyb0:t.down"                 "timeReset"
-    
+
 #    .map "keyb0:1.down"                 "script:DebugRecordPosition"
 #    .map  keyb0:f1.down                 "script:/sys/servers/console.watch *"
 #    .map  keyb0:f1.up                   "script:/sys/servers/console.unwatch"
-    
+
     .endmap
-    
+
     sel $oldCwd
 }
 
@@ -362,13 +362,15 @@ proc OnGuiServerOpen {} {
     .addbrush hardpoint_n skin       0  188 48 48 1.0 1.0 1.0 1.0
     .addbrush hardpoint_p skin       0  188 48 48 0.5 0.5 0.5 1.0
     .addbrush hardpoint_h skin       48 188 48 48 1.0 1.0 1.0 1.0
-    
+
     .addbrush disp_n skin       384  56 48 48 1.0 1.0 1.0 1.0
     .addbrush disp_p skin       384  56 48 48 0.5 0.5 0.5 1.0
     .addbrush disp_h skin       384 104 48 48 1.0 1.0 1.0 1.0
 
     # the left and right logos
     .addbrush n2logo n2logo 0 0 64 64 1.0 1.0 1.0 0.5
+    .addbrush leftlogo  radonlabs 0 0 128 64 1.0 1.0 1.0 1.0
+    .addbrush rightlogo n2toolkit 0 0 64 64 1.0 1.0 1.0 1.0
 
     # the color hexagon for the colorpicker
     .addbrush colorhex colorhexagon  0 0 170 141 1.0 1.0 1.0 1.0
