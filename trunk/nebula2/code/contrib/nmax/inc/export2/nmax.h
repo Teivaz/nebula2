@@ -139,4 +139,14 @@ enum Verbose {
 // function declaration for exposing it to max script.
 int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode);
 
+// @name IPC Functions
+// @{
+bool nChangeShaderParameter(const char* toolkitShaderName, const char* shaderHandling, 
+                            const char* paramID, const char* value);
+bool nConnectIpc(const char* host, const char* port);
+void nDisConnectIpc();
+bool nSendMsgIpc(const char* msg);
+bool nIsConnectedIpc();
+// @}
+
 #endif
