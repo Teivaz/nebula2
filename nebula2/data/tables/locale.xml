@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Johannes</Author>
+  <LastAuthor> </LastAuthor>
+  <Created>2004-06-29T11:56:25Z</Created>
+  <LastSaved>2005-03-11T14:16:54Z</LastSaved>
+  <Company>MasterSoft</Company>
+  <Version>11.6360</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <DownloadComponents/>
+  <LocationOfComponents HRef="file:///D:\"/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>9855</WindowHeight>
+  <WindowWidth>11580</WindowWidth>
+  <WindowTopX>360</WindowTopX>
+  <WindowTopY>15</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s21">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+  </Style>
+  <Style ss:ID="s22">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="deutsch">
+  <Table ss:ExpandedColumnCount="3" ss:ExpandedRowCount="1" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="201.75"/>
+   <Column ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="313.5"/>
+   <Column ss:StyleID="s21" ss:AutoFitWidth="0" ss:Width="243"/>
+   <Row>
+    <Cell ss:StyleID="s22"><Data ss:Type="String">ID</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String">Text</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String">Comment</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <VerticalResolution>0</VerticalResolution>
+   </Print>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>1</ActiveRow>
+     <RangeSelection>R2C1:R6C2</RangeSelection>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <Sorting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Sort>ID</Sort>
+  </Sorting>
+ </Worksheet>
+</Workbook>

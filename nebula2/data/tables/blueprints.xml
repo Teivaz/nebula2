@@ -1,0 +1,31 @@
+<!-- an automatic entity with optional static mesh collision or passive physics -->
+<BluePrints>
+    <!-- a light entity -->
+    <Entity type="Light" cppclass="Entity">
+        <Property type="TimeProperty"/>
+        <Property type="LightProperty"/>
+        <Property type="PathAnimProperty"/>
+    </Entity>
+
+    <!-- a camera entity with like maya input -->
+    <Entity type="Camera" cppclass="Entity">
+        <Property type="VideoCameraProperty"/>
+        <Property type="InputProperty"/>
+        <Property type="PathAnimProperty"/>
+    </Entity>
+
+    <!-- a simple entity -->
+    <Entity type="Simple" cppclass="Entity">
+        <Property type="PhysicsProperty" />
+        <Property type="GraphicsProperty" />
+    </Entity>
+
+    <!-- a ready-made actor entity -->
+    <Entity type="Actor" cppclass="Entity">
+        <Property type="ActorGraphicsProperty" />
+        <Property type="ActorPhysicsProperty" />
+        <Property type="ActorAnimationProperty"/>
+        <Property type="ActorInputProperty" />
+        <Property type="ChaseCameraProperty" />
+    </Entity>
+</BluePrints>
