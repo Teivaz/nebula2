@@ -192,6 +192,173 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
 
 //-----------------------------------------------------------------------------
 /**
+    The followinig maxscript is generated:
+    @verbatim
+    param = "" 
+    param += (val.r/255.0) as string 
+    param += " "
+    param += (val.g/255.0) as string
+    param += " "
+    param += (val.b/255.0) as string
+    param += " "
+    param += (val.a/255.0) as string
+    param += " "
+    nChangeShaderParameter "Standard" "common" "MatSpecular" param
+    @endverbatim
+*/
+static
+nString GetStringForColorPicker(const nString &shdName, const nString &type, const nString &paramName)
+{
+    nString str;
+
+    nString indent = "\t\t\t\t";
+
+    str += indent + "param = \"\" \n";
+    str += indent + "param += (val.r/255.0) as string \n";
+    str += indent + "param += \" \"\n";
+    str += indent + "param += (val.g/255.0) as string\n";
+    str += indent + "param += \" \"\n";
+    str += indent + "param += (val.b/255.0) as string\n";
+    str += indent + "param += \" \"\n";
+    str += indent + "param += (val.a/255.0) as string\n";
+    str += indent + "param += \" \"\n";
+
+    str += indent + "nChangeShaderParameter ";
+    str += "\""; str += shdName; str += "\""; //e.g. "Standard"
+    str += " ";
+    str += "\""; str += type; str += "\"";
+    str += " ";
+    str += "\""; str += paramName; str += "\""; // e.g. "MatDiffuse"
+    str += " ";
+    str += "param\n";
+
+    return str;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    The followinig maxscript is generated:
+    @verbatim
+    nChangeShaderParameter "Standard" "common" "DiffMap0" val.filename
+    @endverbatim
+*/
+static
+nString GetStringForMapButton(const nString &shdName, const nString &type, const nString &paramName)
+{
+    nString str;
+
+    str += "\t\t\t\tnChangeShaderParameter ";
+    str += "\""; str += shdName; str += "\"";
+    str += " ";
+    str += "\""; str += type; str += "\"";
+    str += " ";
+    str += "\""; str += paramName; str += "\"";
+    str += " ";
+    str += "val.filename";
+    str += "\n";
+
+    return str;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    The followinig maxscript is generated:
+    @verbatim
+    param = "" 
+    param += val as string 
+    nChangeShaderParameter "Standard" "common" "MatEmissiveIntensity" param
+    @endverbatim
+*/
+static
+nString GetStringForDefault(const nString &shdName, const nString &type, const nString &paramName)
+{
+    nString str;
+
+    nString indent = "\t\t\t\t";
+
+    str += indent + "param = \"\" \n";
+    str += indent + "param += val as string \n";
+
+    str += "\t\t\t\tnChangeShaderParameter ";
+    str += "\""; str += shdName; str += "\"";
+    str += " ";
+    str += "\""; str += type; str += "\"";
+    str += " ";
+    str += "\""; str += paramName; str += "\"";
+    str += " ";
+    str += "param";
+    str += "\n";
+
+    return str;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Generate max script code for a event which occurred a value of a control is
+    changed.
+
+    The following maxscript is one of an example which might be generated:
+    @verbatim
+    on RenderPri changed val do 
+    (
+        nChangeShaderParameter "Standard", "common", "RenderPri", "1.0 1.0 1.0 1.0"
+    )
+    @endverbatim
+*/
+static
+nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
+{
+    nString handler;
+
+    handler += "\t\t\tif nIsConnectedIpc() do\n";
+    handler += "\t\t\t(\n";
+
+    //color picker
+    if (paramName == "MatDiffuse"  ||
+        paramName == "MatEmissive" ||
+        paramName == "MatSpecular") 
+    {
+        handler += GetStringForColorPicker(shdName, "common", paramName);
+    }
+    else
+    if (paramName == "MatEmissiveIntensity" ||
+        paramName == "MatSpecularPower"     ||
+        paramName == "BumpScale")
+    {
+        handler += GetStringForDefault(shdName, "common", paramName);
+    }
+    else
+    if (paramName == "AlphaSrcBlend" ||
+        paramName == "AlphaDstBlend")
+    {
+        handler += GetStringForDefault(shdName, "common", paramName);
+    }
+    //texture map
+    else
+    if (paramName == "DiffMap0" || 
+        paramName == "BumpMap0") 
+    {
+        handler += GetStringForMapButton(shdName, "common", paramName);
+    }
+    else
+    {
+        // print "Unknown material type: shader name: xxx parameter name: yyy"
+        handler += "\t\t\tprint ";
+        handler += "\"Unknown material type: shader name: ";
+        handler += shdName.Get();
+        handler += " ";
+        handler += "parameter name: ";
+        handler += paramName.Get();
+        handler += "\"\n";
+    }
+
+    handler += "\t\t\t)\n";
+
+    return handler;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Retrieves event handler for each parameters.
 
     @note
@@ -215,7 +382,7 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
     @return string which to be appended for parameter's event handler.
 */
 static
-nString GetEventHandler(const nString &paramName)
+nString GetEventHandler(const nString &shdName, const nString &paramName)
 {
     nString handler;
 
@@ -229,6 +396,8 @@ nString GetEventHandler(const nString &paramName)
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.ambient = val\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "MatDiffuse")
@@ -236,6 +405,8 @@ nString GetEventHandler(const nString &paramName)
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.diffuse = val\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "MatSpecular")
@@ -243,6 +414,29 @@ nString GetEventHandler(const nString &paramName)
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.specular = val\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
+    }
+    else
+    if (paramName == "MatEmissive")
+    {
+        handler += GetIpcEventHandler(shdName, paramName);
+    }
+    else
+    if (paramName == "MatEmissiveIntensity")
+    {
+        handler += GetIpcEventHandler(shdName, paramName);
+    }
+    else
+    if (paramName == "MatSpecularPower")
+    {
+        handler += GetIpcEventHandler(shdName, paramName);
+    }
+    else
+    if (paramName == "AlphaSrcBlend" ||
+        paramName == "AlphaDstBlend")
+    {
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "DiffMap0")
@@ -257,6 +451,8 @@ nString GetEventHandler(const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.diffuseMap = val\n";
         //handler += "\t\t\tif curMaterial.delegate.diffuseMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.diffuseMapEnable = true\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "BumpMap0")
@@ -269,6 +465,8 @@ nString GetEventHandler(const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.bumpMap = val\n";
         //handler += "\t\t\tif curMaterial.delegate.bumpMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.bumpMapEnable = true\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "CubeMap")
@@ -284,6 +482,8 @@ nString GetEventHandler(const nString &paramName)
         //handler += "if delegate.diffuseMap != undefined do\n";
         //handler += "\t\t\t\t";
         //handler += "delegate.diffuseMapEnable = true\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     if (paramName == "SpecMap0")
@@ -296,6 +496,8 @@ nString GetEventHandler(const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.specularMap  = val\n";
         //handler += "\t\t\tif curMaterial.delegate.specularMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.specularMapEnable = true\n";
+
+        handler += GetIpcEventHandler(shdName, paramName);
     }
     else
     {
@@ -310,14 +512,14 @@ nString GetEventHandler(const nString &paramName)
 
 //-----------------------------------------------------------------------------
 /**
-    Generate script plug-in script.
-
+    Generate script plug-in script.(part of 'param' element in xml)
+    
     @param name 'name' attribute in param element
                  The followings are known names:
                  'name', 'label', 'type', 'gui', 'export', 'min', 'max', 'def', 'enum'
 */
 static
-void GenerateScript(TiXmlElement* elemParam,
+void GenerateScript(TiXmlElement* elemParam, nString& shdName,
                     nString& strParamBlock, nString &strRollout)
 {
     // start to generate script for param block clause.
@@ -338,7 +540,8 @@ void GenerateScript(TiXmlElement* elemParam,
     // default setting is 'true' on animatable parameter.
     if (strstr(paramType.Get(), "Texture"))
     {
-        strParamBlock += "animatable:false";
+        //strParamBlock += "animatable:false";
+        strParamBlock += "animatable:true";
         strParamBlock += " ";
     }
 
@@ -365,7 +568,9 @@ void GenerateScript(TiXmlElement* elemParam,
     }
 
     // append event handler.
-    strParamBlock += GetEventHandler (paramName);
+    strParamBlock += GetEventHandler (shdName, paramName);
+
+    //strParamBlock += GetIpcEventHandler(shdName, paramName);
 }
 
 //-----------------------------------------------------------------------------
@@ -377,7 +582,7 @@ void GenerateScript(TiXmlElement* elemParam,
     @param strRollout rollout script which to be generated.
 */
 static
-void ParseParams(TiXmlElement* elemShader, nString& strParamBlock, nString &strRollout)
+void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBlock, nString &strRollout)
 {
     nString shdType = elemShader->Attribute("shaderType");
     nString meshType = elemShader->Attribute("meshType");
@@ -396,7 +601,7 @@ void ParseParams(TiXmlElement* elemShader, nString& strParamBlock, nString &strR
     TiXmlElement* elemParam = elemShader->FirstChild("param")->ToElement();
     for (elemParam; elemParam; elemParam = elemParam->NextSiblingElement())
     {
-        GenerateScript(elemParam, strParamBlock, strRollout);
+        GenerateScript(elemParam, shdName, strParamBlock, strRollout);
     }
 }
 
@@ -533,6 +738,8 @@ bool EvalCustomMaterialPlugin()
         if (DoFilter(name))
             continue;
 
+		nString caName = name;
+
         // get shader name.
         nString effectFile;
         effectFile += "'";
@@ -555,7 +762,7 @@ bool EvalCustomMaterialPlugin()
         custattrib += "attributes";
         custattrib += " ";
         custattrib += "\"";
-        custattrib += name;
+        custattrib += caName;//name;
         custattrib += "\"";
         custattrib += "\n";
         custattrib += "(\n";
@@ -563,7 +770,7 @@ bool EvalCustomMaterialPlugin()
         // parameter block and rollout clause.
         nString paramBlock, rollout;
 
-        nString shdName= nMaxUtil::CorrectName(name);
+        nString shdName = nMaxUtil::CorrectName(name);
 
         nString rolloutName = "r" + shdName; //e.g. "rStandard"
 
@@ -593,7 +800,7 @@ bool EvalCustomMaterialPlugin()
         rollout += "\t(\n";
 
         // parse each param elements in shader element.
-        ParseParams(child, paramBlock, rollout);
+        ParseParams(child, caName, paramBlock, rollout);
 
         paramBlock += "\t)\n";
         rollout += "\t)\n";;
@@ -768,7 +975,7 @@ bool EvalCustomMaterialPlugin()
     if (!nMaxScriptCall(script.Get()))
     {
         n_listener("Failed to evaluate the generated script.\n");
-        n_listener("See '$3dsmax/scripts/mapplugin.debug' for generated script.\n");
+        n_listener("See '$3dsmax/scripts/materialplugintemp.ms' for generated script.\n");
 
         // if we failed to evaluate the given script, put it to 3dsmax script directory
 
