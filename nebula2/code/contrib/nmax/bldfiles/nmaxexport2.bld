@@ -30,6 +30,7 @@ beginmodule nmaxexport2
     setfiles { 
         nmaxexport2_main
         nmaxexport2_script
+        nmaxexport2_ipc
         nmaxinterface
         nmaxutil
         nmaxscriptcall
