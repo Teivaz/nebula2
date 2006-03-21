@@ -35,6 +35,7 @@
 #include "tools/nnodelist.h"
 #include "audio3/naudioserver3.h"
 #include "misc/ncaptureserver.h"
+#include "toolkit/ntoolkitserver.h"
 
 //------------------------------------------------------------------------------
 class nViewerApp
@@ -138,6 +139,7 @@ protected:
     nRef<nPrefServer> refPrefServer;
     nRef<nAudioServer3> refAudioServer;
     nRef<nCaptureServer> refCaptureServer;
+    nRef<nToolkitServer> refToolkitServer;
 
     nMayaCamControl camControl;
 

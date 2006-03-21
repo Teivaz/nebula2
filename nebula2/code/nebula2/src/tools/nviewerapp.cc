@@ -67,6 +67,7 @@ nViewerApp::Open()
     this->refAudioServer    = (nAudioServer3*)    kernelServer->New("ndsoundserver3",  "/sys/servers/audio");
     this->refCaptureServer  = (nCaptureServer*)   kernelServer->New("ncaptureserver", "/sys/servers/capture");
     this->refShadowServer   = (nShadowServer2*)   kernelServer->New("nshadowserver2", "/sys/servers/shadow2");
+    this->refToolkitServer  = (nToolkitServer*)   kernelServer->New("ntoolkitserver", "/sys/servers/toolkit");
 
     // initialize the preferences server
     this->refPrefServer->SetCompanyName("Radon Labs GmbH");
@@ -202,6 +203,7 @@ nViewerApp::Close()
     this->refScriptServer->Release();
     this->refResourceServer->Release();
     this->refConServer->Release();
+    this->refToolkitServer->Release();
 
     this->isOpen = false;
 }
