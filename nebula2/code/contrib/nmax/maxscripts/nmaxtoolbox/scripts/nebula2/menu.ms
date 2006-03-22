@@ -176,6 +176,38 @@ tooltip:"specifies assignes and paths"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Connect IPC' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_ConnectIPC
+category:"nmaxtoolbox" 
+buttonText:"Connect IPC"
+tooltip:"IPC for remote access" 
+( 
+    on execute do 
+    (
+        include "nebula2/ipc.ms"
+        
+        nIPCConnect()
+    )
+)
+
+---------------------------------------------------------------------------------
+-- macro script for 'Disconnect IPC' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_DisonnectIPC
+category:"nmaxtoolbox" 
+buttonText:"Disconnect IPC"
+tooltip:"IPC for remote access" 
+( 
+    on execute do 
+    (
+        include "nebula2/ipc.ms"
+        
+        nIPCDisconnect()
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Help' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Help
@@ -247,7 +279,11 @@ fn AddMenu =
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_SetDirectory" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())
-        
+
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_ConnectIPC" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_DisonnectIPC" "nmaxtoolbox") 
+        append ItemsTemp (menuMan.createSeparatorItem())
+
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Help" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_About" "nmaxtoolbox")
 					
