@@ -5,7 +5,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -18,7 +18,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -32,7 +32,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -45,7 +45,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -60,7 +60,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -75,7 +75,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Velocity" label="UV Animation (2D)" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
@@ -91,7 +91,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -106,7 +106,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -123,7 +123,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -136,7 +136,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="DiffMap0" label="Tile Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap1" label="Tile Map 2" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap2" label="Tile Map 3" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
@@ -150,7 +150,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -165,7 +165,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -174,13 +174,13 @@
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
-    </shader> 
+    </shader>
     <shader name="Standard Radiosity Parallax Lightmapped" shaderType="default" meshType="default bsp" file="radiosity_normalmapped">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -198,7 +198,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -211,17 +211,17 @@
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
-        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />    
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
-    </shader>  
+    </shader>
     <shader name="Leaf" shaderType="default" meshType="sprite" file="leaf">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
@@ -235,7 +235,7 @@
         <param name="MatTranslucency" label="Leaf Translucency" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.5" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -252,7 +252,7 @@
         <param name="SwingTime" label="Tree Swing Time" type="Float" gui="1" export="0" min="0.5" max="10.0" def="3.0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -280,7 +280,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Deep Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.1 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Shallow Water Color" type="Color" gui="1" export="1" def="0.0 0.5 0.5 1.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="100.0" def="3.0" />
         <param name="Intensity1" label="Reflection Amount" type="Float" gui="1" export="1" min="0.0" max="2.0" def="1.0" />
@@ -308,8 +308,8 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/alphazerowhite.dds" />
         <param name="BumpScale" label="Bump Scale" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.1" />
         <param name="BumpMap0" label="Wave Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
-        <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />        
-    </shader>    
+        <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+    </shader>
     <shader name="Particle" shaderType="default" meshType="particleemitter" file="particle">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
@@ -389,7 +389,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="1" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -408,7 +408,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="1" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -428,7 +428,7 @@
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -440,7 +440,7 @@
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -454,7 +454,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />   
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="Velocity" label="Caustics Velocity" type="Vector" gui="1" export="1" def="0.05 0.05 0.0 0.0" />
         <param name="TexGenS" label="Caustics Texture Scale" type="Vector" gui="1" export="1" def="8.0 4.0 0.0 0.0" />
         <param name="DiffMap0" label="Tile Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
@@ -471,5 +471,5 @@
         <param name="MatAmbient" label="Ambient Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
     </shader>
- 
+
 </NebulaShaderDatabase>

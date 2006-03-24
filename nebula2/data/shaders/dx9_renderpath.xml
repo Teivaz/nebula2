@@ -6,7 +6,7 @@
     <!-- declare shaders and technique aliases -->
     <Shader name="passes" file="shaders:passes.fx" />
     <Shader name="phases" file="shaders:phases.fx" />
-    <Shader name="compose" file="shaders:shaders.fx" />    
+    <Shader name="compose" file="shaders:shaders.fx" />
     <Shader name="static" file="shaders:shaders.fx" />
     <Shader name="static_atest" file="shaders:shaders.fx" />
     <Shader name="environment" file="shaders:shaders.fx" />
@@ -42,7 +42,7 @@
     <RenderTarget name="Depth"          format="R32F"     relSize="1.0" />
     <RenderTarget name="Reflection"     format="A8R8G8B8" relSize="1.0" />
     <RenderTarget name="Refraction"     format="A8R8G8B8" relSize="1.0" />
-    
+
     <!-- declare variables -->
     <Float4 name="Luminance" value="0.299 0.587 0.114 0.0" />
     <Float4 name="Balance" value="1.0 1.0 1.0 1.0" />
@@ -100,15 +100,15 @@
                     <Texture name="AmbientMap1" value="Shadow" />
                 </Sequence>
                 <Sequence shader="leaf" technique="tLeafColor" firstLightAlpha="No" />
-                <Sequence shader="tree" technique="tTreeColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>        
-            </Phase>        
-            <!--  
+                <Sequence shader="tree" technique="tTreeColorShadow" firstLightAlpha="No" mvpOnly="Yes"/>
+            </Phase>
+            <!--
             <Phase name="pointsprites" shader="phases" technique="tPhasePointSprites" sort="BackToFront" lightMode="Shader">
                 <Sequence shader="grass" technique="tGrassColor" firstLightAlpha="Yes" mvpOnly="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
                 </Sequence>
                 <Sequence shader="grass_lightmapped" technique="tGrassLightmappedColor" firstLightAlpha="Yes" mvpOnly="Yes"/>
-            </Phase>      
+            </Phase>
             -->
             <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="Shader">
                 <Sequence shader="alpha" technique="tStaticAlphaColorShadow" firstLightAlpha="Yes" mvpOnly="Yes">
@@ -146,15 +146,15 @@
         <Pass name="gui3d" shader="passes" technique="tPassGui3D" clearDepth="1.0" clearStencil="0">
             <Phase name="gui3d" shader="phases" technique="tPhaseGui3D" sort="None" lightMode="Shader">
                 <Sequence shader="gui3d" technique="tGui3DColor" />
-            </Phase>        
+            </Phase>
         </Pass>
 
         <!-- post-draw stuff -->
         <Pass name="gui" drawGui="Yes"/>
     </Section>
-    
+
         <!-- the reflection section for camera nodes, this is a simplified version of the default section (no shadows e.g.) -->
-        <Section name="reflection">       
+        <Section name="reflection">
             <!-- depth pass -->
             <Pass name="depth" shader="passes" technique="tPassDepth" renderTarget="Depth" clearColor="0.0 0.0 0.0 1.0" clearDepth="1.0" clearStencil="0">
                 <Phase name="depth" shader="phases" technique="tPhaseDepth" sort="FrontToBack" lightMode="Off">
@@ -174,7 +174,7 @@
                     <Sequence shader="leaf" technique="tLeafDepth" />
                 </Phase>
             </Pass>
-        
+
             <!-- render the scene into the reflection/refraction render target without HDR & shadow rendering -->
             <Pass name="SceneOpaque" shader="passes" technique="tPassColor" renderTarget="Reflection" clearColor="0.0 0.0 0.0 1.0">
                 <Phase name="nolight" shader="phases" technique="tPhaseNoLight" sort="FrontToBack" lightMode="Off">
@@ -189,13 +189,13 @@
                     <Sequence shader="skinned"      technique="tSkinnedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="layered"      technique="tLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="multilayered" technique="tMultiLayeredColor"   firstLightAlpha="No" mvpOnly="Yes"/>
-                    <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>               
+                    <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                 </Phase>
                 <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
                     <Sequence shader="static_atest" technique="tStaticColorATest"    firstLightAlpha="No" />
                     <Sequence shader="leaf"         technique="tLeafColor"           firstLightAlpha="No" />
-                    <Sequence shader="tree"         technique="tTreeColor"           firstLightAlpha="No" mvpOnly="Yes"/>        
-                </Phase>      
+                    <Sequence shader="tree"         technique="tTreeColor"           firstLightAlpha="No" mvpOnly="Yes"/>
+                </Phase>
                 <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="Shader">
                     <Sequence shader="alpha" technique="tStaticAlphaColor"   firstLightAlpha="Yes" mvpOnly="Yes" />
                     <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="Yes" />
@@ -207,18 +207,18 @@
             <!--<Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
                     <Sequence shader="particle" technique="tParticleColor" firstLightAlpha="Yes"/>
                 </Phase>-->
-            </Pass>    
-            
+            </Pass>
+
             <!-- compose the final frame -->
             <Pass name="DepthCompose" shader="waterdepthcompose" technique="tWaterDepthCompose" renderTarget="Reflection" drawQuad="Yes">
                 <Texture name="DiffMap0" value="Reflection" />
                 <Texture name="DiffMap1" value="Depth" />
             </Pass>
         </Section>
-    
+
         <!-- the refraction section for camera nodes, this is a simplified version of the default section (no shadows e.g.) -->
         <Section name="refraction">
-            <!-- depth pass --> 
+            <!-- depth pass -->
             <Pass name="depth" shader="passes" technique="tPassDepth" renderTarget="Depth" clearColor="0.0 0.0 0.0 1.0" clearDepth="1.0" clearStencil="0">
                 <Phase name="depth" shader="phases" technique="tPhaseDepth" sort="FrontToBack" lightMode="Off">
                     <Sequence shader="static"       technique="tStaticDepth" shaderUpdates="No" mvpOnly="Yes" />
@@ -237,10 +237,10 @@
                     <Sequence shader="leaf" technique="tLeafDepth" />
                 </Phase>
             </Pass>
-        
+
             <!-- render the scene into the reflection/refraction render target without HDR & shadow rendering -->
             <Pass name="SceneOpaque" shader="passes" technique="tPassColor" renderTarget="Refraction" clearColor="0.0 0.0 0.0 1.0">
-            <!-- uncomment for refraction support -->        
+            <!-- uncomment for refraction support -->
             <!--<Phase name="nolight" shader="phases" technique="tPhaseNoLight" sort="FrontToBack" lightMode="Off">
                     <Sequence shader="skybox" technique="tSkyboxColor" firstLightAlpha="No" mvpOnly="Yes" />
                 </Phase>
@@ -252,13 +252,13 @@
                     <Sequence shader="skinned"      technique="tSkinnedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="layered"      technique="tLayeredColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                     <Sequence shader="multilayered" technique="tMultiLayeredColor"   firstLightAlpha="No" mvpOnly="Yes"/>
-                    <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>           
+                    <Sequence shader="blended"      technique="tBlendedColor"        firstLightAlpha="No" mvpOnly="Yes"/>
                 </Phase>
                 <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
                     <Sequence shader="static_atest" technique="tStaticColorATest"    firstLightAlpha="No" />
                     <Sequence shader="leaf"         technique="tLeafColor"           firstLightAlpha="No" />
-                    <Sequence shader="tree"         technique="tTreeColor"           firstLightAlpha="No" mvpOnly="Yes"/>        
-                </Phase>      
+                    <Sequence shader="tree"         technique="tTreeColor"           firstLightAlpha="No" mvpOnly="Yes"/>
+                </Phase>
                 <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="Shader">
                     <Sequence shader="alpha" technique="tStaticAlphaColor"   firstLightAlpha="Yes" mvpOnly="Yes" />
                     <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="Yes" />
@@ -271,12 +271,12 @@
                     <Sequence shader="particle" technique="tParticleColor" firstLightAlpha="Yes"/>
                 </Phase>-->
             </Pass>
-            
+
             <!-- compose the final frame -->
             <Pass name="DepthCompose" shader="waterdepthcompose" technique="tWaterDepthCompose" renderTarget="Refraction" drawQuad="Yes">
                 <Texture name="DiffMap0" value="Refraction" />
                 <Texture name="DiffMap1" value="Depth" />
             </Pass>
     </Section>
-    
+
 </RenderPath>
