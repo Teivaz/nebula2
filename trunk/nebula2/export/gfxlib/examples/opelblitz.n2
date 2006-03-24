@@ -1,62 +1,65 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
-.setlocalbox -0.000562 1.660894 0.004646 1.188505 1.668984 3.115660
-new ntransformnode model
-	sel model
+new ntransformnode opelblitz
+	sel opelblitz
 	.setlocalbox -0.000562 1.660894 0.004646 1.188505 1.668984 3.115660
-	new nshapenode static_0_0
-		sel static_0_0
-		.setlocalbox 0.011750 1.201899 0.004646 1.160638 1.209989 3.115660
-		.settexture "DiffMap0" "textures:examples/blitz_fahrgestell.dds"
-		.settexture "BumpMap0" "textures:examples/blitz_fahrgestell_bump.dds"
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 0.643000 0.631238 0.482250 1.000000
-		.setfloat "MatSpecularPower" 16.000000
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "static"
-		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
-		.setgroupindex 0
-		.setneedsvertexshader false
-	sel ..
-	new nshapenode static_0_1
-		sel static_0_1
-		.setlocalbox 0.000678 1.847497 1.202148 0.947368 0.235322 0.480977
-		.settexture "DiffMap0" "textures:examples/glas.dds"
-		.settexture "BumpMap0" "textures:system/nobump.dds"
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 0.643000 0.631238 0.482250 1.000000
-		.setfloat "MatSpecularPower" 128.000000
-		.setint "AlphaSrcBlend" 5
-		.setint "AlphaDstBlend" 6
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "alpha"
-		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
-		.setgroupindex 1
-		.setneedsvertexshader false
-	sel ..
-	new nshapenode static_0_2
-		sel static_0_2
-		.setlocalbox -0.000562 2.023419 -1.193026 1.188505 1.306459 1.905804
-		.settexture "DiffMap0" "textures:examples/blitz_aufbau.dds"
-		.settexture "BumpMap0" "textures:examples/blitz_aufbau_bump.dds"
-		.setvector "MatDiffuse" 1.875000 1.875000 1.875000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 0.205680 0.201918 0.154260 1.000000
-		.setfloat "MatSpecularPower" 16.000000
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "static"
-		.setmesh "meshes:examples/opelblitz_s_0.n3d2"
-		.setgroupindex 2
-		.setneedsvertexshader false
+	new ntransformnode model
+		sel model
+		.setlocalbox -0.000562 1.660894 0.004646 1.188505 1.668984 3.115660
+		new nshapenode static_0_0
+			sel static_0_0
+			.setlocalbox 0.011750 1.201899 0.004646 1.160638 1.209989 3.115660
+			.settexture "DiffMap0" "textures:examples/blitz_fahrgestell.dds"
+			.settexture "BumpMap0" "textures:examples/blitz_fahrgestell_bump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.643000 0.631238 0.482250 1.000000
+			.setfloat "MatSpecularPower" 16.000000
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "static"
+			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+		sel ..
+		new nshapenode static_0_1
+			sel static_0_1
+			.setlocalbox 0.000678 1.847497 1.202148 0.947368 0.235322 0.480977
+			.settexture "DiffMap0" "textures:examples/glas.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.643000 0.631238 0.482250 1.000000
+			.setfloat "MatSpecularPower" 128.000000
+			.setint "AlphaSrcBlend" 5
+			.setint "AlphaDstBlend" 6
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "alpha"
+			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setgroupindex 1
+			.setneedsvertexshader false
+		sel ..
+		new nshapenode static_0_2
+			sel static_0_2
+			.setlocalbox -0.000562 2.023419 -1.193026 1.188505 1.306459 1.905804
+			.settexture "DiffMap0" "textures:examples/blitz_aufbau.dds"
+			.settexture "BumpMap0" "textures:examples/blitz_aufbau_bump.dds"
+			.setvector "MatDiffuse" 1.875000 1.875000 1.875000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.205680 0.201918 0.154260 1.000000
+			.setfloat "MatSpecularPower" 16.000000
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "static"
+			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setgroupindex 2
+			.setneedsvertexshader false
+		sel ..
 	sel ..
 sel ..
 # ---

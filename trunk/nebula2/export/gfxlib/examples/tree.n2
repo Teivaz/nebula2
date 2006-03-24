@@ -1,58 +1,61 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
-.setlocalbox -3.530618 5.604538 10.599811 8.057648 5.897840 11.602090
-new ntransformnode model
-	sel model
-	.setlocalbox -1.548051 4.714909 9.537987 3.532994 3.632621 4.885418
-	.setposition 0.000000 -2.050479 -12.051388
-	.setscale 2.280686 1.623577 2.374840
-	new nswingshapenode swing_0_0
-		sel swing_0_0
-		.setlocalbox -1.701244 4.191013 9.596778 2.888069 3.108725 4.462875
-		.settexture "DiffMap0" "textures:materials/holz_rinde.dds"
-		.settexture "BumpMap0" "textures:materials/holz_rinde_bump.dds"
-		.settexture "AmbientMap0" "textures:system/defcube.dds"
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 0.000000 0.000000 0.000000 1.000000
-		.setfloat "MatSpecularPower" 32.000000
-		.setint "AlphaRef" 100
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "tree"
-		.setmesh "meshes:examples/tree_swg_0.n3d2"
-		.setgroupindex 0
-		.setneedsvertexshader true
-		.setswingangle 10.000000
-		.setswingtime 8.000000
-	sel ..
-	new nswingshapenode sprite_0_0
-		sel sprite_0_0
-		.setlocalbox -1.548051 6.321769 9.537987 3.532994 2.025760 4.885418
-		.settexture "DiffMap0" "textures:materials/blaetter.dds"
-		.settexture "BumpMap0" "textures:system/nobump.dds"
-		.settexture "AmbientMap0" "textures:system/defcube.dds"
-		.setfloat "SpriteSwingAngle" 0.500000
-		.setfloat "SpriteSwingTime" 7.000000
-		.setfloat "InnerLightIntensity" 0.000000
-		.setfloat "OuterLightIntensity" 1.000000
-		.setfloat "MatTranslucency" 1.000000
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 0.141840 0.141840 0.141840 1.000000
-		.setfloat "MatSpecularPower" 38.127998
-		.setint "AlphaRef" 100
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "leaf"
-		.setmesh "meshes:examples/tree_spr_0.n3d2"
-		.setgroupindex 0
-		.setneedsvertexshader true
-		.setswingangle 10.000000
-		.setswingtime 8.000000
+new ntransformnode tree
+	sel tree
+	.setlocalbox -3.530618 5.604538 10.599811 8.057648 5.897840 11.602090
+	new ntransformnode model
+		sel model
+		.setlocalbox -1.548051 4.714909 9.537987 3.532994 3.632621 4.885418
+		.setposition 0.000000 -2.050479 -12.051388
+		.setscale 2.280686 1.623577 2.374840
+		new nswingshapenode swing_0_0
+			sel swing_0_0
+			.setlocalbox -0.850622 4.191013 4.798389 1.444034 3.108725 2.231438
+			.settexture "DiffMap0" "textures:materials/holz_rinde.dds"
+			.settexture "BumpMap0" "textures:materials/holz_rinde_bump.dds"
+			.settexture "AmbientMap0" "textures:system/defcube.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.000000 0.000000 0.000000 1.000000
+			.setfloat "MatSpecularPower" 32.000000
+			.setint "AlphaRef" 100
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "tree"
+			.setmesh "meshes:examples/tree_swg_0.nvx2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+			.setswingangle 10.000000
+			.setswingtime 8.000000
+		sel ..
+		new nswingshapenode sprite_0_0
+			sel sprite_0_0
+			.setlocalbox -0.774026 6.321769 4.768993 1.766497 2.025760 2.442709
+			.settexture "DiffMap0" "textures:materials/blaetter.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.settexture "AmbientMap0" "textures:system/defcube.dds"
+			.setfloat "SpriteSwingAngle" 0.500000
+			.setfloat "SpriteSwingTime" 7.000000
+			.setfloat "InnerLightIntensity" 0.000000
+			.setfloat "OuterLightIntensity" 1.000000
+			.setfloat "MatTranslucency" 1.000000
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.141840 0.141840 0.141840 1.000000
+			.setfloat "MatSpecularPower" 38.127998
+			.setint "AlphaRef" 100
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "leaf"
+			.setmesh "meshes:examples/tree_spr_0.nvx2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+			.setswingangle 10.000000
+			.setswingtime 8.000000
+		sel ..
 	sel ..
 sel ..
 # ---
