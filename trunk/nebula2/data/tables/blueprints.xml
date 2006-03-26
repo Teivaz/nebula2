@@ -25,7 +25,7 @@
         <Property type="ActorGraphicsProperty" />
         <Property type="ActorPhysicsProperty" />
         <Property type="ActorAnimationProperty"/>
-        <Property type="ActorInputProperty" />
+        <Property type="PointNClickInputProperty" />
         <Property type="ChaseCameraProperty" />
     </Entity>
 </BluePrints>
