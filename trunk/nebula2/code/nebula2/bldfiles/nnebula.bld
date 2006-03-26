@@ -12,16 +12,16 @@
 begintarget nnebula
     settype lib
     setmodules {
-        nbinscriptserver ntclserver 
-        nnpkfileserver nsharedmemory nramfileserver nvariableserver 
+        nbinscriptserver ntclserver
+        nnpkfileserver nsharedmemory nramfileserver nvariableserver
         ninputserver nresourceloader nresourceserver nresource nresourcebundle
         nmesh2 ntexture2 nsurface nfont2 nshader2 ngfxserver2
         naudioserver3 nsound3 nlistener3 nsoundresource
         nsceneserver nrenderpath nrendercontext nshadowskinshapenode nshadownode
-        nscenenode ntransformnode nabstractshadernode 
-        nmaterialnode nshapenode nattachmentnode nanimator nshaderanimator 
+        nscenenode ntransformnode nabstractshadernode
+        nmaterialnode nshapenode nattachmentnode nanimator nshaderanimator
         nvectoranimator nintanimator ntextureanimator nlightnode nfloatanimator
-        ntransformanimator nskinanimator nskinshapenode 
+        ntransformanimator nskinanimator nskinshapenode nlodnode
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
         nparticle2 nparticleserver2 nparticle2emitter nparticleshapenode2
