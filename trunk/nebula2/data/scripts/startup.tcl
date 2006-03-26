@@ -140,6 +140,7 @@ proc OnMapInput {} {
     .map "keyb0:f9.down"                "toggleFOVVisualization"
     .map "keyb0:f12.down"               "script:DoScreenCapture "
     .map "keyb0:esc.down"               "escape"
+    .map "keyb0:tab.down"               "tabDown"
 
     .map "relmouse0:btn2.down"          "vwrOn"
     .map "relmouse0:btn2.up"            "vwrOff"
