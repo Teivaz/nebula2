@@ -33,7 +33,7 @@ new ntransformnode multilayer
 			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
 			.setfloat "MatSpecularPower" 32.000000
 			.setshader "multilayered"
-			.setmesh "meshes:examples/multilayer_mlp_0.nvx2"
+			.setmesh "meshes:examples/multilayer_mlp_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setpartindex 0
@@ -76,7 +76,7 @@ new ntransformnode multilayer
 			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
 			.setfloat "MatSpecularPower" 32.000000
 			.setshader "multilayered"
-			.setmesh "meshes:examples/multilayer_mlp_0.nvx2"
+			.setmesh "meshes:examples/multilayer_mlp_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setpartindex 1
