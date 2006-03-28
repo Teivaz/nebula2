@@ -13,6 +13,7 @@
 #      nmayacamcontrol
 #  Targets:
 #      ntoollib
+#      nanimtool
 #      nmeshtool
 #      nnpktool
 #===============================================================================
@@ -20,10 +21,19 @@
 #===============================================================================
 #  toolchain modules
 #===============================================================================
+beginmodule nanimtool
+    annotate "Required module nanimtool.exe"
+    setdir tools
+    setfiles {
+        nanimtool
+    }
+    setmoduledeps  { nanimbuilder }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nmeshtool
     annotate "Required module nmeshtool.exe"
     setdir tools
-    setfiles { 
+    setfiles {
         nmeshtool
     }
     setmoduledeps  { nmeshbuilder }
@@ -31,10 +41,10 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmeshbuilder
     setdir tools
-    setfiles { 
-        nmeshbuilder 
-        nmeshbuilder_loadsave 
-        nmeshbuilder_tangent 
+    setfiles {
+        nmeshbuilder
+        nmeshbuilder_loadsave
+        nmeshbuilder_tangent
         nskinpartitioner
         nbspbuilder
     }
@@ -93,6 +103,15 @@ begintarget ntoollib
         nmeshbuilder nanimbuilder nresourcecompiler
         napplauncher nviewerapp nmayacamcontrol nnvx2loader
         nn3d2loader nnodelist
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nanimtool
+    settype exe
+    setmodules { nanimtool }
+    settargetdeps {
+        nkernel
+        ntoollib
     }
 endtarget
 #-------------------------------------------------------------------------------
