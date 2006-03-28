@@ -20,7 +20,7 @@ new ntransformnode opelblitz
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "static"
-			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 		sel ..
@@ -39,7 +39,7 @@ new ntransformnode opelblitz
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "alpha"
-			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 			.setgroupindex 1
 			.setneedsvertexshader false
 		sel ..
@@ -56,7 +56,7 @@ new ntransformnode opelblitz
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "static"
-			.setmesh "meshes:examples/opelblitz_s_0.nvx2"
+			.setmesh "meshes:examples/opelblitz_s_0.n3d2"
 			.setgroupindex 2
 			.setneedsvertexshader false
 		sel ..

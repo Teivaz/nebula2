@@ -14,7 +14,7 @@ new ntransformnode fire
 			.setint "AlphaSrcBlend" 2
 			.setint "AlphaDstBlend" 2
 			.setshader "particle"
-			.setmesh "meshes:examples/fire_pe_0.nvx2"
+			.setmesh "meshes:examples/fire_pe_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setemissionfrequency 70.000000 70.000000 70.000000 70.000000 0.292857 0.721429 10.000000 10.000000 0

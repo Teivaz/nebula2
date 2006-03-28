@@ -1,6 +1,7 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
+.setlocalbox 0.000000 20.465082 0.000000 500.000000 30.465086 500.000000
 new ntransformnode multilayer
 	sel multilayer
 	.setlocalbox 0.000000 20.465082 0.000000 500.000000 30.465086 500.000000

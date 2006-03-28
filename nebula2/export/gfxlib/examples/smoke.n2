@@ -11,7 +11,7 @@ new ntransformnode smoke
 		.setint "AlphaSrcBlend" 5
 		.setint "AlphaDstBlend" 6
 		.setshader "particle"
-		.setmesh "meshes:examples/smoke_pe_0.nvx2"
+		.setmesh "meshes:examples/smoke_pe_0.n3d2"
 		.setgroupindex 0
 		.setneedsvertexshader false
 		.setemissionfrequency 50.000000 50.000000 50.000000 50.000000 0.300000 0.685714 10.000000 5.000000 0

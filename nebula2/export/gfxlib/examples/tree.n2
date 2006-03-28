@@ -24,7 +24,7 @@ new ntransformnode tree
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "tree"
-			.setmesh "meshes:examples/tree_swg_0.nvx2"
+			.setmesh "meshes:examples/tree_swg_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setswingangle 10.000000
@@ -50,7 +50,7 @@ new ntransformnode tree
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "leaf"
-			.setmesh "meshes:examples/tree_spr_0.nvx2"
+			.setmesh "meshes:examples/tree_spr_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setswingangle 10.000000
