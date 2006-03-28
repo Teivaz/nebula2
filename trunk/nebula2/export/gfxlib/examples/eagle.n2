@@ -13,7 +13,7 @@ new ntransformnode eagle
 			sel skinanimator
 			.setchannel "time"
 			.setlooptype "loop"
-			.setanim "anims:examples/eagle.nax2"
+			.setanim "anims:examples/eagle.nanim2"
 			.beginjoints 79
 			.setjoint 0 -1 0.000000 0.051875 0.316360 0.009157 -0.707048 -0.009157 0.707048 1.000000 1.000000 1.000000 "spine_01"
 			.setjoint 1 0 -0.223303 0.018931 0.000000 0.000000 0.000000 -0.006724 0.999977 1.000000 1.000000 1.000000 "spine_02"
@@ -122,7 +122,7 @@ new ntransformnode eagle
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "skinned"
-			.setmesh "meshes:examples/eagle_sk_0.nvx2"
+			.setmesh "meshes:examples/eagle_sk_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setskinanimator "../skinanimator"

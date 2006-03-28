@@ -23,7 +23,7 @@ new ntransformnode envmapping
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "environment"
-			.setmesh "meshes:examples/envmapping_s_0.nvx2"
+			.setmesh "meshes:examples/envmapping_s_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 		sel ..

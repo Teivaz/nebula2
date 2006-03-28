@@ -13,7 +13,7 @@ new ntransformnode facialanim
 			sel skinanimator
 			.setchannel "time"
 			.setlooptype "loop"
-			.setanim "anims:examples/facialanim.nax2"
+			.setanim "anims:examples/facialanim.nanim2"
 			.beginjoints 66
 			.setjoint 0 -1 0.000070 0.175491 0.123992 0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 "MarkerJoint_CHIN"
 			.setjoint 1 -1 0.037773 0.200006 0.096770 0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 "MarkerJoint_LBCH"
@@ -104,7 +104,7 @@ new ntransformnode facialanim
 			.setint "CullMode" 2
 			.setfloat "BumpScale" 0.000000
 			.setshader "skinned"
-			.setmesh "meshes:examples/facialanim_sk_0.nvx2"
+			.setmesh "meshes:examples/facialanim_sk_0.n3d2"
 			.setgroupindex 0
 			.setneedsvertexshader false
 			.setskinanimator "../skinanimator"
