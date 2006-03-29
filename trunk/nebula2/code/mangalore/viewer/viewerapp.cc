@@ -2,14 +2,14 @@
 //  viewer/viewerapp.cc
 //  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "viewer/viewerapp.h" 
-#include "gui/nguiserver.h" 
-#include "gui/nguiwindow.h" 
+#include "viewer/viewerapp.h"
+#include "gui/nguiserver.h"
+#include "gui/nguiwindow.h"
 #include "gui/nguilabel.h"
-#include "gui/nguitextlabel.h" 
-#include "application/gamestatehandler.h" 
-#include "kernel/nfileserver2.h" 
-#include "physics/materialtable.h" 
+#include "gui/nguitextlabel.h"
+#include "application/gamestatehandler.h"
+#include "kernel/nfileserver2.h"
+#include "physics/materialtable.h"
 #include "physics/level.h"
 #include "properties/videocameraproperty.h"
 #include "properties/lightproperty.h"
@@ -61,7 +61,7 @@ ViewerApp::GetAppName() const
 nString
 ViewerApp::GetAppVersion() const
 {
-    return "1.0"; 
+    return "1.0";
 }
 
 //------------------------------------------------------------------------------
@@ -91,16 +91,16 @@ ViewerApp::SetupFromDefaults()
 */
 bool
 ViewerApp::Open()
-{   
+{
     //DebugBreak();
     this->SetupFromCmdLineArgs();
     if (App::Open())
     {
-        // FIXME: turn off clip plane fencing and occlusion query (FOR NOW) 
+        // FIXME: turn off clip plane fencing and occlusion query (FOR NOW)
         // because of compatibility problems on Radeon cards
         nSceneServer::Instance()->SetClipPlaneFencing(false);
         nSceneServer::Instance()->SetOcclusionQuery(false);
-     
+
         //Setup GUI
         SetupGui();
 
@@ -110,12 +110,15 @@ ViewerApp::Open()
         {
             this->RedirectResourceForPreview();
         }
-        this->SetupCamera();
-        this->SetupLightsInScene();
-        this->SetupGround();
-        if (!this->CreateViewedEntity())
+        if (0 != App::GetCmdLineArgs().GetStringArg("-obj", 0))
         {
-            return false;
+            this->SetupCamera();
+            this->SetupLightsInScene();
+            this->SetupGround();
+            if (!this->CreateViewedEntity())
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -135,7 +138,7 @@ ViewerApp::Close()
 //------------------------------------------------------------------------------
 /*
     Win32 specific method which checks the registry for the Nebula2
-    Toolkit's project path. If the reg keys are not found, the 
+    Toolkit's project path. If the reg keys are not found, the
     routine just returns 0.
 */
 const char*
@@ -170,16 +173,16 @@ ViewerApp::SetupFromCmdLineArgs()
 	App::SetupFromCmdLineArgs();
 	const nCmdLineArgs& args = App::GetCmdLineArgs();
 
-	nString objArg = args.GetStringArg("-obj", 0); 
+	nString objArg = args.GetStringArg("-obj", 0);
     bool forceTempAssigns = args.GetBoolArg("-forcetemp");
-    nString projDirArg = args.GetStringArg("-projdir", 0); 
+    nString projDirArg = args.GetStringArg("-projdir", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
     vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
 
     if (0 == projDirArg)
     {
-        nString regProjDir = this->ReadProjRegistryKey(); 
+        nString regProjDir = this->ReadProjRegistryKey();
         if (regProjDir != "")
         {
             projDirArg = regProjDir;
@@ -201,12 +204,12 @@ ViewerApp::SetupFromCmdLineArgs()
 void
 ViewerApp::OnFrame()
 {
-    Input::Server* inputServer = Input::Server::Instance(); 
+    Input::Server* inputServer = Input::Server::Instance();
     if (inputServer->GetButton("timeReset"))
     {
         if (this->loadedEntity)
         {
-            //delete old entity 
+            //delete old entity
             Managers::EntityManager::Instance()->RemoveEntity(this->loadedEntity);
             //recreate entity
             CreateViewedEntity();
@@ -223,22 +226,29 @@ ViewerApp::SetupStateHandlers()
     Ptr<Application::GameStateHandler> gameStateHandler = n_new(Application::GameStateHandler);
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
-	gameStateHandler->SetSetupMode(Application::GameStateHandler::EmptyWorld);
+    if (0 != App::GetCmdLineArgs().GetStringArg("-obj", 0))
+    {
+        gameStateHandler->SetSetupMode(Application::GameStateHandler::EmptyWorld);
+    }
+    else
+    {
+        gameStateHandler->SetSetupMode(Application::GameStateHandler::NewGame);
+    }
     this->AddStateHandler(gameStateHandler);
-	this->SetState("Game");	
+	this->SetState("Game");
 
     // if a startup level has been set, directly start with the location state
     if (this->GetStartupLevel().IsValid())
     {
 		gameStateHandler->SetLevelName(this->GetStartupLevel());
-    }        
+    }
 }
 //------------------------------------------------------------------------------
 /**
 */
 void
 ViewerApp::SetupLightsInScene()
-{    
+{
     //create new Entity for light in scene, create lightProperty and attach it to the entity
 	Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
     Ptr<Game::Property> lightProperty = Managers::FactoryManager::Instance()->CreateProperty("LightProperty");
@@ -265,12 +275,12 @@ ViewerApp::SetupLightsInScene()
 */
 void ViewerApp::SetupCamera()
 {
-    //create new Entity as a camera, attach a videocameraporperty 
+    //create new Entity as a camera, attach a videocameraporperty
 	Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
     Ptr<Game::Property> cameraProperty = Managers::FactoryManager::Instance()->CreateProperty("VideoCameraProperty");
     Ptr<Game::Property> inputProperty = Managers::FactoryManager::Instance()->CreateProperty("InputProperty");
     Ptr<Game::Property> mouseGripperProperty = Managers::FactoryManager::Instance()->CreateProperty("MouseGripperProperty");
-    entity->AttachProperty(cameraProperty);        
+    entity->AttachProperty(cameraProperty);
     entity->AttachProperty(inputProperty);
     entity->AttachProperty(mouseGripperProperty);
 
@@ -280,7 +290,7 @@ void ViewerApp::SetupCamera()
     entity->SetMatrix44(Attr::Transform, cameraTransform);
     entity->SetVector3(Attr::VideoCameraCenterOfInterest, this->GetCameraCoi());
     entity->SetVector3(Attr::VideoCameraDefaultUpVec, this->GetCameraUpVec());
-    
+
     //attach camera property to entity
     Managers::EntityManager::Instance()->AttachEntity(entity);
     Managers::FocusManager::Instance()->SetFocusEntity(entity);
@@ -292,13 +302,13 @@ bool ViewerApp::CreateViewedEntity()
 {
     // create a simple entity
     if (this->GetObjectResourceName().IsValid())
-    {   
+    {
         // create a new game entity and the properties to attach
     	Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
         Ptr<Properties::PhysicsProperty> physicsProperty = (Properties::PhysicsProperty*) Managers::FactoryManager::Instance()->CreateProperty("PhysicsProperty");
         Ptr<Game::Property> graphicProperty = Managers::FactoryManager::Instance()->CreateProperty("GraphicsProperty");
 
-        //make sure that there is a physics file available 
+        //make sure that there is a physics file available
         nFileServer2* fileServer = nFileServer2::Instance();
         nString filename;
         filename.Append("physics:");
@@ -307,15 +317,15 @@ bool ViewerApp::CreateViewedEntity()
 
         if (fileServer->FileExists(filename))
         {
-            //if there is physic attach the physics property to the entity 
+            //if there is physic attach the physics property to the entity
             entity->AttachProperty(physicsProperty);
             //configure physics attribute
             entity->SetString(Attr::Physics, this->GetObjectResourceName());
         }
 
         // attach properties
-        entity->AttachProperty(graphicProperty); 
-  
+        entity->AttachProperty(graphicProperty);
+
         // configure graphics attribute
         entity->SetString(Attr::Graphics, this->GetObjectResourceName());
         matrix44 entityTransform;
@@ -344,14 +354,14 @@ void ViewerApp::SetupGround()
 {
     // create a box shape as ground plane
     // FIXME: this is currently invisible... better make a entity with graphic and implement a new physics property for this task
-    Physics::Server* physicsServer = Physics::Server::Instance(); 
+    Physics::Server* physicsServer = Physics::Server::Instance();
 
     //create a box as ground
     matrix44 m;
     m.translate(vector3(0.0f, -0.5f, 0.0f));
     Ptr<Physics::BoxShape> ground = physicsServer->CreateBoxShape(m, Physics::MaterialTable::StringToMaterialType("Soil"), vector3(100.0f, 0.1f, 100.0f));
-    
-    //attach gound to level
+
+    //attach ground to level
     physicsServer->GetLevel()->AttachShape(ground);
 
 }
@@ -385,7 +395,7 @@ ViewerApp::SetupGui()
     nKernelServer* kernelServer = nKernelServer::Instance();
     guiServer->SetRootPath("/res/gui");
     guiServer->SetDisplaySize(vector2(float(this->displayMode.GetWidth()), float(this->displayMode.GetHeight())));
-   
+
     // initialize the overlay gui
     const float borderSize = 0.02f;
 
