@@ -107,7 +107,7 @@ rollout rBatchExport "Batch Export" width:350 height:380
         else
         (
             -- we still exporting, so query to finish or not
-            result = queryBox "Abort to export" title:"Warning"
+            result = queryBox "Abort batch export?" title:"Warning"
             if result == true do
                 DestroyDialog rBatchExport
         )
