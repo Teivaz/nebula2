@@ -53,7 +53,7 @@ nBuffer::Reset()
 
 //------------------------------------------------------------------------------
 /**
-    Do not loose any previously entered items.
+    Do not lose any previously entered items.
 */
 void
 nBuffer::Resize(int newSize)
