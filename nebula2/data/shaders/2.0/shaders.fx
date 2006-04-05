@@ -3152,8 +3152,6 @@ technique tLeafColorHDR
         CullMode = None;
         AlphaBlendEnable = <AlphaBlendEnable>;
         AlphaRef     = <AlphaRef>;
-        ZWriteEnable      = false;
-        ZEnable           = false;
         VertexShader = compile VS_PROFILE vsLeafColor();
         PixelShader  = compile PS_PROFILE psLeafColor(true, true);
     }
@@ -3217,8 +3215,6 @@ technique tTreeColorHDRShadow
         CullMode = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
         AlphaRef     = <AlphaRef>;
-        ZWriteEnable      = false;
-        ZEnable           = false;
         VertexShader = compile VS_PROFILE vsTreeColor();
         PixelShader  = compile PS_PROFILE psStaticColor(true, true);
     }
