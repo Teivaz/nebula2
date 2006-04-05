@@ -16,17 +16,17 @@ new ntransformnode stdlight
         .setcastshadows true
     sel ..
 sel ..
-new nshapenode skybox
-    sel skybox
-    .setlocalbox 0.000000 0.000000 0.000000 225.000000 225.000000 225.000000
-    .setlockviewer true
-    .settexture "DiffMap0" "textures:system/white.dds"
-    .setfloat "Intensity0" 1.000000
-    .setvector "MatDiffuse" 0.290780 0.290780 0.290780 1.000000
-    .setshader "skybox"
-    .setmesh "meshes:skybox.n3d2"
-    .setgroupindex 0
-    .setneedsvertexshader false
-sel ..
+#new nshapenode skybox
+#    sel skybox
+#    .setlocalbox 0.000000 0.000000 0.000000 225.000000 225.000000 225.000000
+#    .setlockviewer true
+#    .settexture "DiffMap0" "textures:system/white.dds"
+#    .setfloat "Intensity0" 1.000000
+#    .setvector "MatDiffuse" 0.290780 0.290780 0.290780 1.000000
+#    .setshader "skybox"
+#    .setmesh "meshes:skybox.n3d2"
+#    .setgroupindex 0
+#    .setneedsvertexshader false
+#sel ..
 # ---
 # Eof
