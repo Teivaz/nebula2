@@ -21,7 +21,7 @@ class nLightNode;
 class nSkinAnimator;
 class nGuiTextLabel;
 class nGuiTextView;
-//class nGuiSkyEditor;
+class nGuiSkyEditor;
 
 //------------------------------------------------------------------------------
 class nGuiSceneControlWindow : public nGuiClientWindow
@@ -94,7 +94,7 @@ private:
     bool sliderChanged;    
     nArray<nVariable::Handle> chnHandles;
 
-//  nRef<nGuiSkyEditor> refSkyEditor;
+    nRef<nGuiSkyEditor> refSkyEditor;
 };
 
 //------------------------------------------------------------------------------
