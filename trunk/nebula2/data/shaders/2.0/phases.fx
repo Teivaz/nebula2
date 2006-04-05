@@ -57,7 +57,7 @@ technique tPhaseOpaqueATest
     pass p0
     {
         AlphaTestEnable = True;
-        ZFunc           = Equal;
+        ZFunc           = LessEqual;
     }
 }
 
