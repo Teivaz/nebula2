@@ -437,7 +437,7 @@ begintarget ngui
         nguicolorlabel nguicolorpicker nguicolorslidergroup
         nguibar nguifadeouttextlabel nguislide nguislideshow
         nguieventhandler nguimousecursor nguihardpointsbrowserwindow
-        nguihardpointslister
+        nguihardpointslister nguiskyeditor
     }
     settargetdeps {
         ntoollib

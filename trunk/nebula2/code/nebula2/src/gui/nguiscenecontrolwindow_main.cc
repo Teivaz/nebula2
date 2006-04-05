@@ -16,6 +16,7 @@
 #include "variable/nvariable.h"
 #include "variable/nvariableserver.h"
 #include "tools/nnodelist.h"
+#include "gui/nguiskyeditor.h"
 
 nNebulaClass(nGuiSceneControlWindow, "nguiclientwindow");
 
@@ -221,7 +222,6 @@ nGuiSceneControlWindow::OnShow()
     this->refAmbientSlider = colorSlider;
 
     // Create SkyEditor
-/*
     nGuiSkyEditor* skyEditor = (nGuiSkyEditor*) kernelServer->New("nguiskyeditor","SkyEditor");
     layout->AttachWidget(skyEditor, nGuiFormLayout::Top, this->refAmbientSlider, 2*border);
     layout->AttachForm(skyEditor, nGuiFormLayout::Left, border);
@@ -232,7 +232,6 @@ nGuiSceneControlWindow::OnShow()
     {
         windowRect = rectangle(vector2(0.0f, 0.0f), vector2(0.4f, 0.8f));
     }
-*/
 
     // Create Animation Controls, if nSkinAnimator was found
     if (this->refSkinAnimator.isvalid())
@@ -411,12 +410,10 @@ nGuiSceneControlWindow::OnHide()
             this->refWeightChnListSlider.At(countChn)->Release();
         }
     }
-/*
     if (this->refSkyEditor.isvalid())
     {
         this->refSkyEditor->Release();
     }
-*/
     
     nGuiClientWindow::OnHide();
 }
@@ -544,12 +541,10 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             };
 	    }
     };
-/*
     if (this->refSkyEditor.isvalid())
     {
         this->refSkyEditor->OnEvent(event);
     }
-*/
     
     nGuiClientWindow::OnEvent(event);
 }
