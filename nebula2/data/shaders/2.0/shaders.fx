@@ -314,10 +314,10 @@ struct vsInputSkinnedDepth
 struct vsInputSkinnedColor
 {
     float4 position : POSITION;
-    float3 normal :   NORMAL;
-    float3 tangent :  TANGENT;
-    float3 binormal  : BINORMAL;
-    float2 uv0 :      TEXCOORD0;
+    float3 normal   : NORMAL;
+    float3 tangent  : TANGENT;
+    float3 binormal : BINORMAL;
+    float2 uv0      : TEXCOORD0;
     float4 weights  : BLENDWEIGHT;
     float4 indices  : BLENDINDICES;
 };
@@ -332,7 +332,7 @@ struct vsInputBlendedDepth
     float4 position5 : POSITION5;
     float4 position6 : POSITION6;
     float4 position7 : POSITION7;
-    //float2 uv0       : TEXCOORD0;
+    //float2 uv0     : TEXCOORD0;
 };
 
 struct vsInputBlendedColor
@@ -3152,6 +3152,8 @@ technique tLeafColorHDR
         CullMode = None;
         AlphaBlendEnable = <AlphaBlendEnable>;
         AlphaRef     = <AlphaRef>;
+        ZWriteEnable      = false;
+        ZEnable           = false;
         VertexShader = compile VS_PROFILE vsLeafColor();
         PixelShader  = compile PS_PROFILE psLeafColor(true, true);
     }
@@ -3215,6 +3217,8 @@ technique tTreeColorHDRShadow
         CullMode = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
         AlphaRef     = <AlphaRef>;
+        ZWriteEnable      = false;
+        ZEnable           = false;
         VertexShader = compile VS_PROFILE vsTreeColor();
         PixelShader  = compile PS_PROFILE psStaticColor(true, true);
     }
