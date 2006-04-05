@@ -1,6 +1,7 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
+.setlocalbox -3.530618 5.604538 10.599811 8.057648 5.897840 11.602090
 new ntransformnode tree
 	sel tree
 	.setlocalbox -3.530618 5.604538 10.599811 8.057648 5.897840 11.602090
