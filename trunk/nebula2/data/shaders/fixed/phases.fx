@@ -22,18 +22,18 @@ technique tPhaseMultiPass
 {
     pass p0
     {
-        ZWriteEnable     = True;        
+        ZWriteEnable     = True;
         VertexShader     = 0;
         FogEnable        = True;
         Lighting         = True;
-        
+
         // set zero texture transforms, so the layered shader won't change the default alpha
         TexCoordIndex[0] = 0;
         TexCoordIndex[1] = 0;
-        
+
         TextureTransformFlags[0] = 0;
         TextureTransformFlags[1] = 0;
-        
+
         TextureTransform[0] = 0;
         TextureTransform[1] = 0;
     }
@@ -49,7 +49,7 @@ technique tPhaseOpaque
         AlphaFunc        = GreaterEqual;
         VertexShader     = 0;
         FogEnable        = True;
-        LightEnable[0]   = True;            
+        LightEnable[0]   = True;
         Lighting         = True;
     }
 }
@@ -63,7 +63,7 @@ technique tPhaseOpaqueNoFog
         AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
         VertexShader     = 0;
-        FogEnable        = False;      
+        FogEnable        = False;
         LightEnable[0]   = True;
         Lighting         = True;
     }
@@ -79,7 +79,7 @@ technique tPhaseOpaqueATest
         AlphaFunc        = GreaterEqual;
         VertexShader     = 0;
         FogEnable        = True;
-        LightEnable[0]   = True;            
+        LightEnable[0]   = True;
         Lighting         = True;
     }
 }
@@ -93,7 +93,7 @@ technique tPhaseOpaqueNoLightNoFog
         AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
         VertexShader     = 0;
-        FogEnable        = False;      
+        FogEnable        = False;
         LightEnable[0]   = False;
         Lighting         = False;
     }
@@ -131,7 +131,7 @@ technique tPhaseVsOpaqueATest
     {
         ZWriteEnable     = True;
         SrcBlend         = One;
-        DestBlend        = One;        
+        DestBlend        = One;
         AlphaTestEnable  = True;
         AlphaFunc        = GreaterEqual;
         Lighting         = False;

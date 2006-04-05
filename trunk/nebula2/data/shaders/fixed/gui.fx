@@ -35,7 +35,7 @@ technique t0
         ZWriteEnable     = False;
         ZEnable          = False;
         // ZFunc            = Always;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = True;
         SrcBlend         = SrcAlpha;
         DestBlend        = InvSrcAlpha;
@@ -61,20 +61,20 @@ technique t0
         Ambient = <MatDiffuse>;
 
         FVF = XYZ | TEX1;
-        
+
         TexCoordIndex[0] = 0;
         TextureTransformFlags[0] = Disable;
-   
+
         ColorOp[0]   = Modulate;
         ColorArg1[0] = Texture;
         ColorArg2[0] = Diffuse;
-        
+
         ColorOp[1]   = Disable;
-        
+
         AlphaOp[0]   = Modulate;
         AlphaArg1[0] = Texture;
         AlphaArg2[0] = Diffuse;
-        
+
         AlphaOp[1] = Disable;
     }
 }

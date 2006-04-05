@@ -15,8 +15,8 @@ technique tPassColor
     pass p0
     {
         ViewTransform       = <View>;
-    	ProjectionTransform = <Projection>;    
-        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;  
+    	ProjectionTransform = <Projection>;
+        ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
         NormalizeNormals    = True;
         ZEnable             = True;
         ZFunc               = LessEqual;
@@ -31,9 +31,9 @@ technique tPassColor
         FogTableMode        = Linear;
         FogStart            = <FogDistances.x>;
         FogEnd              = <FogDistances.y>;
-        
+
         TextureTransformFlags[0] = 0;
-        
+
         // FillMode         = Wireframe;
     }
 }
@@ -53,7 +53,7 @@ technique tPassGui3D
         FogEnable           = False;
         AlphaBlendEnable    = True;
         AlphaTestEnable     = False;
-        AlphaFunc           = GreaterEqual;                
+        AlphaFunc           = GreaterEqual;
         SrcBlend            = SrcAlpha;
         DestBlend           = InvSrcAlpha;
         ScissorTestEnable   = False;

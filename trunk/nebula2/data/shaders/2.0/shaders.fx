@@ -12,7 +12,7 @@
 
     NOTE: VS_PROFILE and PS_PROFILE macros are usually provided by the
     application and contain the highest supported shader models.
-*/    
+*/
 /*
 #define VS_PROFILE vs_2_0
 #define PS_PROFILE ps_2_0
@@ -40,15 +40,15 @@ shared float4x4 TextureTransform0;
 shared float4x4 TextureTransform1;
 
 float4x4 MLPUVStretch = {40.0f,  0.0f,  0.0f,  0.0f,
-                         0.0f, 40.0f,  0.0f,  0.0f, 
+                         0.0f, 40.0f,  0.0f,  0.0f,
                          0.0f,  0.0f, 40.0f,  0.0f,
-                         0.0f,  0.0f,  0.0f, 40.0f };                                
+                         0.0f,  0.0f,  0.0f, 40.0f };
 
 // detail texture scale for the layered shader, zoom by 40 as default
 static const float4x4 DetailTexture = {40.0f,  0.0f,  0.0f,  0.0f,
-                                        0.0f, 40.0f,  0.0f,  0.0f, 
+                                        0.0f, 40.0f,  0.0f,  0.0f,
                                         0.0f,  0.0f, 40.0f,  0.0f,
-                                        0.0f,  0.0f,  0.0f, 40.0f };                                
+                                        0.0f,  0.0f,  0.0f, 40.0f };
 
 //static float w = 4.0f;      // width  for orthogonal projection
 //static float h = 3.0f;      // height for orthogonal projection
@@ -238,7 +238,7 @@ struct vsOutputStatic2Color
     float3 lightVec      : TEXCOORD2;
     float3 modelLightVec : TEXCOORD3;
     float3 halfVec       : TEXCOORD4;
-    float3 eyePos        : TEXCOORD5;    
+    float3 eyePos        : TEXCOORD5;
     DECLARE_SCREENPOS(TEXCOORD6)
 };
 
@@ -260,7 +260,7 @@ struct vsOutputStatic3Color
     float3 lightVec      : TEXCOORD3;
     float3 modelLightVec : TEXCOORD4;
     float3 halfVec       : TEXCOORD5;
-    float3 eyePos        : TEXCOORD6;    
+    float3 eyePos        : TEXCOORD6;
     DECLARE_SCREENPOS(TEXCOORD7)
 };
 
@@ -273,9 +273,9 @@ struct vsOutputEnvironmentColor
     float3 modelLightVec : TEXCOORD2;
     float3 halfVec       : TEXCOORD3;
     float3 worldReflect  : TEXCOORD4;
-    float3 eyePos        : TEXCOORD5;    
+    float3 eyePos        : TEXCOORD5;
     DECLARE_SCREENPOS(TEXCOORD6)
-};    
+};
 
 struct vsInputLightmappedColor
 {
@@ -804,7 +804,7 @@ float4 EncodeHDR(in float4 rgba)
     const float hdrSpace = 1 - colorSpace;
     const float hdrPow = 10;
     const float hdrRt = 0.1;
-    
+
     float3 col = clamp(rgba.rgb,0,1) * colorSpace;
     float3 hdr = pow(clamp(rgba.rgb,1,10),hdrRt)-1;
     float4 result;
@@ -846,8 +846,8 @@ float2 psComputeScreenCoord(float4 pos)
     and half vector in tangent space which are then passed to the
     interpolators.
 */
-void vsLight(in float3 position, 
-             in float3 normal, 
+void vsLight(in float3 position,
+             in float3 normal,
              in float3 tangent,
              in float3 binormal,
              in float3 modelEyePos,
@@ -885,19 +885,19 @@ half psShadow(in float2 screenCoord)
     // determine if pixel is in shadow
     color4 shadow = tex2D(ShadowSampler, screenCoord);
     half shadowValue = 1.0 - saturate(length(ShadowIndex * shadow));
-    return shadowValue;    
+    return shadowValue;
 }
 
 //------------------------------------------------------------------------------
 /**
     Compute per-pixel lighting.
-    
+
     NOTE: lightVec.w contains the distance to the light source
 */
 color4 psLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lightVec, in float3 modelLightVec, in float3 halfVec, in half shadowValue)
 {
     color4 color = mapColor * color4(LightAmbient.rgb + MatEmissive.rgb * MatEmissiveIntensity, MatDiffuse.a);
-        
+
     // light intensities
     half specIntensity = pow(saturate(dot(tangentSurfaceNormal, normalize(halfVec))), MatSpecularPower); // Specular-Modulation * mapColor.a;
     half diffIntensity = dot(tangentSurfaceNormal, normalize(lightVec));
@@ -915,9 +915,9 @@ color4 psLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lig
     {
         #if DIRLIGHTS_ENABLEOPPOSITECOLOR
         color.rgb += saturate(-diffIntensity) * DIRLIGHTS_OPPOSITECOLOR * mapColor.rgb * MatDiffuse.rgb;
-        #endif    
+        #endif
         diffIntensity *= shadowValue;
-    }    
+    }
     color.rgb += saturate(diffIntensity) * (diffColor.rgb + specColor.rgb);
     return color;
 }
@@ -942,7 +942,7 @@ color4 psLight2(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 po
     // compute light intensities
     half diffIntensity = saturate(dot(tangentSurfaceNormal, lightVec));
     half specIntensity = pow(saturate(dot(tangentSurfaceNormal, halfVec)), MatSpecularPower);
-    
+
     // attenuation
     half att;
     if (LightType == 0)
@@ -955,7 +955,7 @@ color4 psLight2(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 po
         // directional light source
         att = 1.0f;
     }
-    
+
     // compute light color
     color4 diffColor = diffIntensity * mapColor * LightDiffuse * MatDiffuse;
     color4 specColor = specIntensity * LightSpecular * MatSpecular * diffIntensity;
@@ -1076,7 +1076,7 @@ vsOutputStaticDepth vsStaticDepth(const vsInputStaticDepth vsIn)
 
 //------------------------------------------------------------------------------
 /**
-    Vertex shader: generate depth values for static geometry with uv 
+    Vertex shader: generate depth values for static geometry with uv
     coordinates.
 */
 vsOutputUvDepth vsStaticUvDepth(const vsInputUvDepth vsIn)
@@ -1132,7 +1132,7 @@ vsOutputStaticColor vsUVAnimColor(const vsInputStaticColor vsIn)
     vsOutputStaticColor vsOut;
     vsOut.position = mul(vsIn.position, ModelViewProjection);
     VS_SETSCREENPOS(vsOut.position);
-    
+
     // animate uv
     vsOut.uv0 = vsIn.uv0 + (Velocity.xy * Time);
 
@@ -1143,26 +1143,26 @@ vsOutputStaticColor vsUVAnimColor(const vsInputStaticColor vsIn)
 //------------------------------------------------------------------------------
 /**
     Vertex shader: generate color values for static geometry.
-    Modified for Radiosity Parallax Mapping. 
+    Modified for Radiosity Parallax Mapping.
     Add the tangentEyePos.
 */
 vsOutputRPLStaticColor vsRPLStaticColor(const vsInputStaticColor vsIn)
 {
      vsOutputRPLStaticColor vsOut;
      vsOut.position = mul(vsIn.position, ModelViewProjection);
-        
-    // The x axis of the UV-coordinates needs to be switched for parallaxmapping 
-    
+
+    // The x axis of the UV-coordinates needs to be switched for parallaxmapping
+
     float2 tmpUv = vsIn.uv0;
     tmpUv.x = 1- tmpUv.x;
     vsOut.uv0 = tmpUv;
-    
+
     //vsOut.uv0 = vsIn.uv0;
-        
+
     // Compute the binormal and the tangentMatrix
     float3 binormal = cross(vsIn.normal, vsIn.tangent);
     float3x3 mytangentMatrix = float3x3(vsIn.tangent, binormal, vsIn.normal);
-        
+
     // The ViewVector is needed for Parallaxmapping
     float3 ePos = ModelEyePos - vsIn.position;
     // Compute the Eyeposition in tangentspace
@@ -1182,13 +1182,13 @@ color4 psStaticColor(const vsOutputStaticColor psIn, uniform bool hdr, uniform b
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }    
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
-    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
+
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
     {
@@ -1212,12 +1212,12 @@ vsOutputSoftSilhouette vsSoftSilhouette(const vsInputStaticColor vsIn)
     VS_SETSCREENPOS(vsOut.position);
     vsOut.uv0silhouette.xy = vsIn.uv0;
     vsLight(vsIn.position, vsIn.normal, vsIn.tangent,vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
-    
+
     // compute silhouette modulation color
     float3 eVec = normalize(ModelEyePos - vsIn.position);
     vsOut.uv0silhouette.z = abs(dot(vsIn.normal, eVec));
     vsOut.uv0silhouette.z *= vsOut.uv0silhouette.z;
-    
+
     return vsOut;
 }
 
@@ -1232,13 +1232,13 @@ color4 psSoftSilhouette(const vsOutputSoftSilhouette psIn, uniform bool hdr, uni
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0silhouette.xy, BumpSampler, psIn.eyePos);
-    }    
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0silhouette.xy + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0silhouette.xy + uvOffset).rgb * 2.0f) - 1.0f;    
-    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0silhouette.xy + uvOffset).rgb * 2.0f) - 1.0f;
+
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     baseColor *= psIn.uv0silhouette.z;
     if (hdr)
@@ -1264,12 +1264,12 @@ color4 psRPLStaticColor(const vsOutputRPLStaticColor psIn, uniform bool hdr, uni
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = float2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }       
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.halfVec, psIn.modelLightVec, shadowIntensity);
     if (hdr)
     {
@@ -1293,7 +1293,7 @@ vsOutputEnvironmentColor vsEnvironmentColor(const vsInputStaticColor vsIn)
     VS_SETSCREENPOS(vsOut.position);
     vsOut.uv0 = vsIn.uv0;
     vsLight(vsIn.position, vsIn.normal, vsIn.tangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
-               
+
     // compute a model space reflection vector
     float3 modelEyeVec = normalize(vsIn.position.xyz - ModelEyePos);
     float3 modelReflect = reflect(modelEyeVec, vsIn.normal);
@@ -1315,10 +1315,10 @@ color4 psEnvironmentColor(const vsOutputEnvironmentColor psIn, uniform bool hdr,
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }        
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
     float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
     color4 reflectColor = tex2D(EnvironmentSampler, psIn.worldReflect);
@@ -1376,14 +1376,14 @@ color4 psLightmappedColor2(const vsOutputStatic2Color psIn, uniform bool hdr, un
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }        
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
     color4 lmColor   = tex2D(Diff1Sampler, psIn.uv1);
     diffColor.rgb *= lmColor.rgb * Intensity0;
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
     {
@@ -1404,22 +1404,22 @@ vsOutputRNLightmappedColor vsRNLightmappedColor(const vsInputLightmappedColor vs
 {
     vsOutputRNLightmappedColor vsOut;
     vsOut.position = mul(vsIn.position, ModelViewProjection);
-        
-    // The x axis of the UV-coordinates needs to be switched for parallaxmapping 
+
+    // The x axis of the UV-coordinates needs to be switched for parallaxmapping
     float2 tmpUv = vsIn.uv0;
     tmpUv.x = 1- tmpUv.x;
     vsOut.uv0 = tmpUv;
     vsOut.uv1 = vsIn.uv1;
-    
+
     // Compute the binormal and the tangentMatrix
     float3 binormal = cross(vsIn.normal, vsIn.tangent);
     float3x3 mytangentMatrix = float3x3(vsIn.tangent, binormal, vsIn.normal);
-        
+
     // The ViewVector is needed for Parallaxmapping
     float3 ePos = ModelEyePos - vsIn.position;
     // Compute the Eyeposition in tangentspace
     vsOut.eyePos = normalize(mul(mytangentMatrix, normalize(ePos)));
-    
+
     // The Screenpos for debuging
     VS_SETSCREENPOS(vsOut.position);
     return vsOut;
@@ -1484,71 +1484,71 @@ color4 psLightmappedColor(const vsOutputLightmappedColor psIn, uniform bool hdr)
 
 //------------------------------------------------------------------------------
 /**
-    Pixel shader for Radiosity Normalmapping. 
+    Pixel shader for Radiosity Normalmapping.
 */
 color4 psRNLightmappedColor(const vsOutputRNLightmappedColor psIn, uniform bool hdr) : COLOR
-{                         
+{
 #if DEBUG_LIGHTCOMPLEXITY
     return float4(0.05, 0.0f, 0.0f, 1.0f);
 #else
     // The three Axes of our Bumpbasis for Radiosity Parallax Lightmapping
     // with switched y and z Axis!!!
-     
-     float3 bumpBasisX =float3(0.70710678118654752440084436210485   
-                              , 0                                 
+
+     float3 bumpBasisX =float3(0.70710678118654752440084436210485
+                              , 0
                               , 0.57735026918962576450914878050196);
-     float3 bumpBasisY =float3(-0.40824829046386301636621401245098  
+     float3 bumpBasisY =float3(-0.40824829046386301636621401245098
                               ,-0.70710678118654752440084436210485
                               , 0.57735026918962576450914878050196);
-     float3 bumpBasisZ =float3( -0.40824829046386301636621401245098 
+     float3 bumpBasisZ =float3( -0.40824829046386301636621401245098
                               , 0.70710678118654752440084436210485
                               , 0.57735026918962576450914878050196  );
-    
+
     float2 uvOffset = float2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
-    {   // Compute the new uv Coordinates based on the Heightmap. 
+    if (BumpScale != 0.0f)
+    {   // Compute the new uv Coordinates based on the Heightmap.
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
     }
-        
-    // The Diffuse Texture    
+
+    // The Diffuse Texture
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
-    
+
     // The LightmapColors for the three Axes
     color4 lightmapColorX =     tex2D(RadiosityNMSampler1, psIn.uv1);
     color4 lightmapColorY =     tex2D(RadiosityNMSampler2, psIn.uv1);
     color4 lightmapColorZ =     tex2D(RadiosityNMSampler3, psIn.uv1);
-        
+
     // The Surface-Normal in our bump basis for the radiosity normalmapping
     float3 bumpSurfaceNormal= (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f)-1.0f;
-            
+
     bumpSurfaceNormal.x = -bumpSurfaceNormal.x;
     bumpSurfaceNormal.y = -bumpSurfaceNormal.y;
-    
-    
+
+
     // The main calculation for the radiosity normal mapping
     float3 BumpFactor;
     BumpFactor.x = saturate(dot(bumpSurfaceNormal, bumpBasisX ));
     BumpFactor.y = saturate(dot(bumpSurfaceNormal, bumpBasisY ));
     BumpFactor.z = saturate(dot(bumpSurfaceNormal, bumpBasisZ ));
-    
+
     color4 lightmapColor =  (pow(BumpFactor.x,1)) * lightmapColorX +
                             (pow(BumpFactor.y,1)) * lightmapColorY +
                             (pow(BumpFactor.z,1)) * lightmapColorZ;
-                            
-    // The Map with the pure Radiosity 
+
+    // The Map with the pure Radiosity
     color4 radiosityColor = tex2D(RadiosityNMSampler4, psIn.uv1);
-    //return (lightmapColor+radiosityColor)*diffColor;   
+    //return (lightmapColor+radiosityColor)*diffColor;
     if (hdr)
     {
-        return EncodeHDR(lightmapColor+radiosityColor)*diffColor; 
+        return EncodeHDR(lightmapColor+radiosityColor)*diffColor;
     }
     else
     {
-        return (lightmapColor+radiosityColor)*diffColor; 
+        return (lightmapColor+radiosityColor)*diffColor;
     }
-    //return (lightmapColor+radiosityColor)*diffColor;  
-    // Without Radiosity 
-    //return (lightmapColor)*diffColor;  
+    //return (lightmapColor+radiosityColor)*diffColor;
+    // Without Radiosity
+    //return (lightmapColor)*diffColor;
 #endif
 }
 
@@ -1656,19 +1656,19 @@ color4 psEnvironmentAlphaColor(const vsOutputEnvironmentColor psIn, uniform bool
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }        
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
     color4 reflectColor = tex2D(EnvironmentSampler, psIn.worldReflect);
-    
+
     // FIXME: this throws a compiler error that the target and source
     // of a lerp() cannot be the same...
-    //color4 color = lerp(diffColor, reflectColor, diffColor.a);    
+    //color4 color = lerp(diffColor, reflectColor, diffColor.a);
     color4 color = diffColor;
-    
+
     color.a = diffColor.a;
     color4 baseColor = psLight(color, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
@@ -1708,15 +1708,15 @@ color4 psStaticAlpha2Color(const vsOutputStatic2Color psIn, uniform bool hdr, un
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }        
+    }
     color4 diffColor0 = tex2D(DiffSampler, psIn.uv0 + uvOffset);
     color4 diffColor1 = tex2D(Diff1Sampler, psIn.uv1 + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
     color4 diffColor;
-    diffColor = lerp(diffColor0, diffColor1, diffColor0.a);    
+    diffColor = lerp(diffColor0, diffColor1, diffColor0.a);
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
     {
@@ -1793,7 +1793,7 @@ vsOutputUvDepth vsLeafDepth(const vsInputLeafDepth vsIn)
     vsOut.position = mul(position, ModelViewProjection);
     vsOut.uv0depth.xy = vsIn.uv0;
     vsOut.uv0depth.z  = vsOut.position.z;
-    
+
     return vsOut;
 }
 
@@ -1827,7 +1827,7 @@ vsOutputLeafColor vsLeafColor(const vsInputLeafColor vsIn)
     float relDistToCenter = dot(posCenter, posCenter) / dot(BoxCenter-BoxMaxPos*0.8f, BoxCenter-BoxMaxPos*0.8f);
     float selfShadow = lerp(InnerLightIntensity, OuterLightIntensity, relDistToCenter);
     vsOut.uv0intensity.z = selfShadow;
-    
+
     vsLight(vsIn.position, normal, tangent, binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
 
     return vsOut;
@@ -1845,13 +1845,13 @@ color4 psLeafColor(const vsOutputLeafColor psIn, uniform bool hdr, uniform bool 
 
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0intensity.xy, BumpSampler, psIn.eyePos);
-    }    
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0intensity.xy + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0intensity.xy + uvOffset).rgb * 2.0f) - 1.0f;    
-    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0intensity.xy + uvOffset).rgb * 2.0f) - 1.0f;
+
     color4 baseColor = psLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     baseColor *= psIn.uv0intensity.z;
     if (hdr)
@@ -1922,7 +1922,7 @@ vsOutputSpriteColor vsGrassColor(const vsInputStaticColor vsIn)
 
     // get a random number
     float4 rnd = RandArray[fmod(dot(RandPosScale, abs(vsIn.position.xyz)), 16.0f)];
- 
+
     // compute a randomized size
     float size = lerp(MinSpriteSize, MaxSpriteSize, abs(rnd.x));
 
@@ -2156,14 +2156,14 @@ vsOutputParticle2Color vsParticle2Color(const vsInputParticle2Color vsIn)
     rgba.x = modf(colorCode/256.0f,colorCode);
     rgba.w = modf(code/256.0f,code);
     rgba *= 256.0f/255.0f;
-    
+
     float4 position =  vsIn.position;
 
 
     // the corner offset gets calculated from the velocity
 
     float3 extrude = mul(InvModelView,vsIn.velocity);
-    if(code != 0.0f) 
+    if(code != 0.0f)
     {
         extrude = normalize(extrude);
         float vis = abs(extrude.z);
@@ -2171,7 +2171,7 @@ vsOutputParticle2Color vsParticle2Color(const vsInputParticle2Color vsIn)
         rgba.w *= cos(vis*3.14159f*0.5f);
     };
     extrude.z = 0.0f;
-    extrude = normalize(extrude);    
+    extrude = normalize(extrude);
 
     extrude *= size;
     extrude =  mul(rot, extrude);
@@ -2249,7 +2249,7 @@ color4 psLayeredColor(const vsOutputStatic2Color psIn, uniform bool hdr, uniform
     return float4(0.05f, 0.0f, 0.0f, 1.0f);
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
-    
+
     // read tiled material colors
     color4 material0 = tex2D(DiffSampler,  psIn.uv0);
     color4 material1 = tex2D(Diff1Sampler, psIn.uv0);
@@ -2273,7 +2273,7 @@ color4 psLayeredColor(const vsOutputStatic2Color psIn, uniform bool hdr, uniform
     {
         return finalColor;
     }
-#endif    
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -2286,18 +2286,18 @@ color4 psMultiLayeredColor(const vsOutputStatic3Color psIn, uniform bool hdr, un
     return float4(0.05f, 0.0f, 0.0f, 1.0f);
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
-    
+
     // read tiled material colors
     color4 material0 = tex2D(Diff2Sampler, psIn.uv1);
     color4 material1 = tex2D(Diff3Sampler, psIn.uv2);
     color4 material2 = tex2D(Layer0Sampler,psIn.uv0 * MLPUVStretch[0][2]);
     color4 material3 = tex2D(Layer1Sampler,psIn.uv0 * MLPUVStretch[0][3]);
     color4 material4 = tex2D(Layer2Sampler,psIn.uv0 * MLPUVStretch[1][0]);
-    
+
     // read weight colors, rgb of trans1 is the lightmap
-    float4 trans1 = tex2D(DiffSampler, psIn.uv0); 
-    float4 trans2 = tex2D(Diff1Sampler, psIn.uv0); 
-    
+    float4 trans1 = tex2D(DiffSampler, psIn.uv0);
+    float4 trans2 = tex2D(Diff1Sampler, psIn.uv0);
+
     half weight0 = trans1.w*material0.w;
     half weight1 = trans2.r*material1.w;
     half weight2 = trans2.g*material2.w;
@@ -2313,12 +2313,12 @@ color4 psMultiLayeredColor(const vsOutputStatic3Color psIn, uniform bool hdr, un
 
     color.rgb *= trans1.rgb;
     color4 finalColor = psLight(color, float3(0.0f, 0.0f, 1.0f), psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
-    
+
     // the alpha channel of the transparency masks = (1-r)*(1-g)*(1-b)   , needed here for final blending
     // the following line is equal to : <finalColor.w = (1-weight0)*(1-weight1)*(1-weight2)*(1-weight3)*(1-weight4);>
     // the only difference is that it is 4 instructions smaller, so that the whole shader gets <=64 instructions
     finalColor.w = lerp(lerp(lerp(lerp((1-weight4),0,weight3),0,weight2),0,weight1),0,weight0);
-    
+
     if (hdr)
     {
         return EncodeHDR(finalColor);
@@ -2327,7 +2327,7 @@ color4 psMultiLayeredColor(const vsOutputStatic3Color psIn, uniform bool hdr, un
     {
         return finalColor;
     }
-#endif    
+#endif
 }
 
 
@@ -2372,7 +2372,7 @@ vsOutputCompose vsGui3D(const vsInputCompose vsIn)
     Pixel shader: generate color values for static geometry.
 */
 color4 psGui3D(const vsOutputCompose psIn) : COLOR
-{   
+{
     color4 color = tex2D(DiffSampler, psIn.uv0);
     color.rgb *= (MatDiffuse.rgb + MatEmissive.rgb * MatEmissiveIntensity);
     return color;
@@ -2710,7 +2710,7 @@ technique tSkinnedDepth
     {
         CullMode = <CullMode>;
         VertexShader = compile VS_PROFILE vsSkinnedDepth();
-        PixelShader  = compile PS_PROFILE psStaticDepth();        
+        PixelShader  = compile PS_PROFILE psStaticDepth();
     }
 }
 
@@ -2820,7 +2820,7 @@ technique tBlendedDepth
     {
         CullMode = <CullMode>;
         VertexShader = compile VS_PROFILE vsBlendedDepth();
-        PixelShader  = compile PS_PROFILE psStaticDepth();        
+        PixelShader  = compile PS_PROFILE psStaticDepth();
     }
 }
 
@@ -3131,8 +3131,8 @@ technique tLeafDepth
         VertexShader = compile VS_PROFILE vsLeafDepth();
         PixelShader  = compile PS_PROFILE psStaticDepthATest();
     }
-}   
-     
+}
+
 technique tLeafColor
 {
     pass p0
@@ -3557,7 +3557,7 @@ technique tWaterDepthCompose
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -3584,10 +3584,10 @@ float FresnelPower;
 struct vsInputWater
 {
     float4 position : POSITION;
-    float3 normal   : NORMAL;  
+    float3 normal   : NORMAL;
     float2 uv0      : TEXCOORD0;
     float3 tangent  : TANGENT;
-    float3 binormal : BINORMAL;  
+    float3 binormal : BINORMAL;
 };
 
 struct vsOutputWater
@@ -3608,22 +3608,22 @@ struct vsOutputWater
 vsOutputWater vsWater(const vsInputWater vsIn)
 {
     vsOutputWater vsOut;
-        
+
     float4 pos = vsIn.position;
-        
-    // compute output vertex position   
+
+    // compute output vertex position
     vsOut.position = mul(pos, ModelViewProjection);
-    
-    //position for calculate texture in screenspace (pixelshader) 
+
+    //position for calculate texture in screenspace (pixelshader)
     vsOut.pos = vsOut.position;
-    
+
     // pass texture coordinates for fetching the normal map
     vsOut.uv0.xy = vsIn.uv0;
-    
+
     float modTime = fmod(Time, 100.0f);
     vsOut.bumpCoord0.xy = vsIn.uv0 * TexGenS.xy + modTime * Velocity.xy;
     vsOut.bumpCoord0.zw = vsIn.uv0 * TexGenS.xy + modTime * Velocity.xy * -1.0f;
-    
+
     // compute the 3x3 tranform from tangent space to object space
     // first rows are the tangent and binormal scaled by the bump scale
     float3x3 objToTangentSpace;
@@ -3631,16 +3631,16 @@ vsOutputWater vsWater(const vsInputWater vsIn)
     objToTangentSpace[0] = BumpScale * vsIn.tangent;
     objToTangentSpace[1] = BumpScale * cross(vsIn.normal, vsIn.tangent);
     objToTangentSpace[2] = vsIn.normal;
-    
+
     vsOut.row0.xyz = mul(objToTangentSpace, Model[0].xyz);
     vsOut.row1.xyz = mul(objToTangentSpace, Model[1].xyz);
     vsOut.row2.xyz = mul(objToTangentSpace, Model[2].xyz);
-    
+
     // compute the eye vector (going from shaded point to eye) in cube space
     float4 worldPos = mul(pos, Model);
-    
+
     vsOut.eyeVector = InvView[3] - worldPos; // view inv. transpose contains eye position in world space in last row
-       
+
     return vsOut;
 }
 
@@ -3653,81 +3653,81 @@ float4 psWater(vsOutputWater psIn, uniform bool hdr, uniform bool refraction) : 
     // with 2 texture it looks more intressting
     float4 N0 = tex2D(BumpSampler, psIn.bumpCoord0.xy) * 2.0 - 1.0;
     float4 N1 = tex2D(BumpSampler, psIn.bumpCoord0.zw) * 2.0 - 1.0;
- 
+
     // add both normals
     float3 N = N0.xyz + N1.xyz;
 
     // bring normals in worldspace
-    half3x3 m; 
+    half3x3 m;
     m[0] = psIn.row0;
     m[1] = psIn.row1;
     m[2] = psIn.row2;
     float3 Nw = mul(m, N.xyz);
     Nw = normalize(Nw);
-    
+
     // compute screen pos for the reflection refraction texture because both textures are in screencoordinates
     float4 pos = psIn.pos;
-    
+
     // prepare pos - pos is in model view projection when pos.x and pos.y get divided with pos.w
     // you get a value between -1 and 1 but you need a number between 0 and 1
     // later pos.x and pos.y will divided with pos.w so here we precalculate
-    pos.x += psIn.pos.w;    
+    pos.x += psIn.pos.w;
     pos.w  = 2 * psIn.pos.w;
-            
+
     // compute the distortion and prepare pos for texture lookup
     float3 E = normalize(psIn.eyeVector);
 
     // angle between eyevector and normal important for fresnel and distortion
     float angle = dot(E, Nw);
-    
+
     //compute fresnel
-    float facing = 1.0 - max(angle, 0); 
+    float facing = 1.0 - max(angle, 0);
     float fresnel = FresnelBias + (1.0 - FresnelBias) * pow(facing , FresnelPower);
 
     // compute distortion - the math is not correct but this is more faster information in my document
     // is computed with angle, because when you look from the side the distortion is stronger then you look from over the water
     // is computed with pos.z, because the distortions are in screencoordinates so the distortions have to get smaller with the distance
     float4 disVecRefract    = float4(Nw.x, Nw.y, Nw.z, 0.0) * (1 - angle) * 0.4 / pos.z * pos.w;
-           
+
     // refraction rotate the refraction texture with 180 degree
     pos.y  = -psIn.pos.y + psIn.pos.w;
 
     float refractLookUp;
     float4 refractionComp;
     if(refraction)
-    { 
-        // read the depth from the water with full distortion - this is pasted in the alpha value   
+    {
+        // read the depth from the water with full distortion - this is pasted in the alpha value
         refractLookUp   = tex2Dproj(Diff2Sampler, pos + disVecRefract).a;
         // read the refractioncolor with distortion multiplied with the depth of the water so the distortion is at the strand smaller
         refractionComp  = tex2Dproj(Diff2Sampler, pos + disVecRefract * refractLookUp);
-        // apply water color in deep direction 
+        // apply water color in deep direction
         refractionComp.rgb = lerp(refractionComp.rgb, MatDiffuse.rgb, saturate(refractionComp.a));
     }
     else
     {
-        // read the depth from the water WITHOUT distortion - this is pasted in the alpha value   
+        // read the depth from the water WITHOUT distortion - this is pasted in the alpha value
         refractLookUp   = tex2Dproj(Diff2Sampler, pos).a;
-        // init the refractioncolor 
+        // init the refractioncolor
         refractionComp  = float4(0.0, 0.0, 0.0, refractLookUp);
-        // apply water color in deep direction 
+        // apply water color in deep direction
         refractionComp.rgb = MatDiffuse.rgb;
     }
-    
+
     // apply water color in shallow direction
     refractionComp.rgb = lerp(refractionComp.rgb, MatSpecular.rgb, facing * refractionComp.a);
 
-    // reflection 
+    // reflection
     pos.y = psIn.pos.y + psIn.pos.w;
-    
-    // same as refraction
-    float reflectionLookUp  = tex2Dproj(Diff1Sampler, pos + disVecRefract).a;       
-    float4 reflectionComp   = tex2Dproj(Diff1Sampler, pos + disVecRefract * reflectionLookUp);  
 
-    // compute all together    
+    // same as refraction
+    float reflectionLookUp  = tex2Dproj(Diff1Sampler, pos + disVecRefract).a;
+    float4 reflectionComp   = tex2Dproj(Diff1Sampler, pos + disVecRefract * reflectionLookUp);
+
+    // compute all together
     float4 colorWater;
 
     // reflection is multiplied with deep because so the reflection is on the strand less and you get soft edges
-    colorWater = (1 - refractionComp.a) * refractionComp + refractionComp.a * reflectionComp * fresnel;   
+    colorWater = (1 - refractionComp.a) * refractionComp + refractionComp.a * reflectionComp * fresnel;
     colorWater.a = refraction ? 1.0f : refractLookUp;
 
     if (hdr)
@@ -3736,7 +3736,7 @@ float4 psWater(vsOutputWater psIn, uniform bool hdr, uniform bool refraction) : 
     }
     else
     {
-        return colorWater;                
+        return colorWater;
     }
 }
 
@@ -3745,8 +3745,8 @@ technique tWater
 {
     pass p0
     {
-        CullMode = <CullMode>;      
-        AlphaBlendEnable = true;        
+        CullMode = <CullMode>;
+        AlphaBlendEnable = true;
         SrcBlend  = SrcAlpha;
         DestBlend = InvSrcAlpha;
         VertexShader = compile vs_2_0 vsWater();
@@ -3758,7 +3758,7 @@ technique tWaterHDR
 {
     pass p0
     {
-        CullMode = <CullMode>;      
+        CullMode = <CullMode>;
         AlphaBlendEnable = true;
         SrcBlend  = SrcAlpha;
         DestBlend = InvSrcAlpha;
@@ -3771,8 +3771,8 @@ technique tWaterHDRRefraction
 {
     pass p0
     {
-        CullMode = <CullMode>;      
-        AlphaBlendEnable = <AlphaBlendEnable>;        
+        CullMode = <CullMode>;
+        AlphaBlendEnable = <AlphaBlendEnable>;
         VertexShader = compile vs_2_0 vsWater();
         PixelShader  = compile ps_2_0 psWater(true, true);
     }

@@ -21,7 +21,7 @@ begintarget nnebula
         nscenenode ntransformnode nabstractshadernode
         nmaterialnode nshapenode nattachmentnode nanimator nshaderanimator
         nvectoranimator nintanimator ntextureanimator nlightnode nfloatanimator
-        ntransformanimator nskinanimator nskinshapenode nlodnode
+        ntransformanimator nskinanimator nskinshapenode nlodnode nskynode nskystate
         ncharacter nanimationserver nanimation nmemoryanimation nconserver
         nparticle nparticleserver nparticleemitter nparticleshapenode
         nparticle2 nparticleserver2 nparticle2emitter nparticleshapenode2

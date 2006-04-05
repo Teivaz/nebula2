@@ -110,7 +110,7 @@ sampler BlurSampler = sampler_state
     MinFilter = Linear;
     MagFilter = Linear;
     MipFilter = None;
-};    
+};
 
 sampler NoiseSampler = sampler_state
 {
@@ -142,11 +142,11 @@ float3 DecodeRGBE8(in float4 rgbe)
 //------------------------------------------------------------------------------
 /**
     Scale up pseudo-HDR-value encoded by EncodeHDR() in shaders.fx.
-*/   
+*/
 float4 DecodeHDR(in float4 rgba)
 {
     return rgba * float4(2.0f, 2.0f, 2.0f, 1.0f);
-}   
+}
 
 /*
 float4 DecodeHDR(in float4 rgba)
@@ -158,7 +158,7 @@ float4 DecodeHDR(in float4 rgba)
     const float hdrPow = 10;
     //const float hdrRt = 1/hdrPow;
     const float hdrRt = 0.1;
-        
+
     float3 col = clamp(rgba.rgb,0,colorSpace) * (1/colorSpace);
     float3 hdr = pow(clamp(rgba.rgb - colorSpace, 0, hdrSpace)+1,hdrPow)-1;
     float4 result;
@@ -170,7 +170,7 @@ float4 DecodeHDR(in float4 rgba)
 
 //------------------------------------------------------------------------------
 /**
-*/    
+*/
 float
 GaussianDistribution(in const float x, in const float y, in const float rho)
 {
@@ -183,16 +183,16 @@ GaussianDistribution(in const float x, in const float y, in const float rho)
 //------------------------------------------------------------------------------
 /**
     UpdateSamplesDownscale4x4
-    
+
     Create filter kernel for a 4x4 downscale operation.
-    This is normally executed pre-shader.    
+    This is normally executed pre-shader.
 */
 void
 UpdateSamplesDownscale4x4(in int texWidth, in int texHeight, out float3 sampleOffsetsWeights[MaxSamples])
 {
     float tu = 1.0f / texWidth;
     float tv = 1.0f / texHeight;
-    
+
     int index = 0;
     int y;
     for (y = 0; y < 4; y++)
@@ -208,7 +208,7 @@ UpdateSamplesDownscale4x4(in int texWidth, in int texHeight, out float3 sampleOf
 //------------------------------------------------------------------------------
 /**
     UpdateSamplesFilter2x2
-    
+
     Create a filter kernel for a 2x2 linear filter.
 */
 void
@@ -216,17 +216,17 @@ UpdateSamplesFilter2x2(in int texWidth, in int texHeight)
 {
     float tu = 1.0f / texWidth;
     float tv = 1.0f / texHeight;
-    
+
     SampleOffsetsWeights[0] = float3(-tu, -tv, 0.0f);
     SampleOffsetsWeights[1] = float3(+tu, -tv, 0.0f);
     SampleOffsetsWeights[2] = float3(+tu, +tv, 0.0f);
     SampleOffsetsWeights[3] = float3(-tu, +tv, 0.0f);
-}    
+}
 
 //------------------------------------------------------------------------------
 /**
     UpdateSamplesLuminance
-    
+
     Create a filter kernel for a 3x3 luminance filter.
     This is normally executed pre-shader.
 */
@@ -235,7 +235,7 @@ UpdateSamplesLuminance(in int texWidth, in int texHeight, out float3 sampleOffse
 {
     float tu = 1.0f / (3.0f * texWidth);
     float tv = 1.0f / (3.0f * texHeight);
-    
+
     int index = 0;
     int x;
     for (x = -1; x <= 1; x++)
@@ -255,7 +255,7 @@ UpdateSamplesLuminance(in int texWidth, in int texHeight, out float3 sampleOffse
 //------------------------------------------------------------------------------
 /**
     UpdateSamplesGaussBlur5x5
-    
+
     Update the sample offsets and weights for a horizontal or vertical blur.
     This is normally executed in the pre-shader.
 */
@@ -264,7 +264,7 @@ UpdateSamplesGaussBlur5x5(in int texWidth, in int texHeight, float multiplier, o
 {
     float tu = 1.0f / (float) texWidth;
     float tv = 1.0f / (float) texHeight;
-    
+
     float totalWeight = 0.0f;
     int index = 0;
     int x;
@@ -287,14 +287,14 @@ UpdateSamplesGaussBlur5x5(in int texWidth, in int texHeight, float multiplier, o
             }
         }
     }
-    
+
     // normalize weights
     int i;
     float invTotalWeightMultiplier = (1.0f / totalWeight) * multiplier;
     for (i = 0; i < index; i++)
     {
         sampleOffsetsWeights[i].z *= invTotalWeightMultiplier;
-    }             
+    }
 
     // make sure the extra samples dont influence the result
     for (; index < MaxSamples; index++)
@@ -306,7 +306,7 @@ UpdateSamplesGaussBlur5x5(in int texWidth, in int texHeight, float multiplier, o
 //------------------------------------------------------------------------------
 /**
     UpdateSamplesBloom
-    
+
     Get sample offsets and weights for a horizontal or vertical bloom filter.
     This is normally executed in the pre-shader.
 */
@@ -314,7 +314,7 @@ void
 UpdateSamplesBloom(in bool horizontal, in int texSize, in float deviation, in float multiplier, out float3 sampleOffsetsWeights[MaxSamples])
 {
     float tu = 1.0f / (float) texSize;
-    
+
     // fill center texel
     float weight = multiplier * GaussianDistribution(0.0f, 0.0f, deviation);
     sampleOffsetsWeights[0]  = float3(0.0f, 0.0f, weight);
@@ -379,13 +379,13 @@ float4 psBrightPassFilter(const vsOutput psIn) : COLOR
     float4 sample = DecodeHDR(tex2D(SourceSampler, psIn.uv0));
     float brightPassThreshold = Intensity1;
     float brightPassOffset    = Intensity2;
-    
+
     // subtract out dark pixels
     sample.rgb -= brightPassThreshold;
-    
+
     // clamp to 0
     sample.rgb = max(sample.rgb, 0.0f);
-    
+
     // map value to 0..1
     sample.rgb /= brightPassOffset + sample.rgb;
 
@@ -399,7 +399,7 @@ float4 psGaussBlur5x5(const vsOutput psIn) : COLOR
 {
     // preshader
     UpdateSamplesGaussBlur5x5(DisplayResolution.x, DisplayResolution.y, 1.5f, SampleOffsetsWeights);
-    
+
     // shader
     float4 sample = 0.0f;
     int i;
@@ -457,12 +457,12 @@ float4 psFinalScene(const vsOutput psIn) : COLOR
     //float adaptedLum = tex2D(Lum1x1Sampler, float2(0.5f, 0.5f));
     // float middleGray = Intensity0;
     float bloomScale = Intensity1;
-    
+
     // FIXME: handle blue shift
-    
+
     // add bloom effect
     sample += bloomScale * bloom;
-    
+
     return sample;
 }
 
@@ -488,7 +488,7 @@ float4 psDepthBlur(sampler focusTexture, sampler blurTexture, float2 uv)
     float focusLength = CameraFocus.y;
     float focus = saturate(abs(d - focusDist) / focusLength);
     return lerp(tex2D(focusTexture, uv), tex2D(blurTexture, uv), focus);
-}   
+}
 
 //------------------------------------------------------------------------------
 //  Add film grain to color.
@@ -517,9 +517,9 @@ float4 psHdrCompose(const vsOutput psIn) : COLOR
     sample += bloomScale * bloom;
     float luminance = dot(sample.xyz, lumiVec.xyz);
     float4 color = balance * lerp(float4(luminance, luminance, luminance, luminance), sample, saturation);
-    
+
     // add noise
-    color = psFilmGrain(color, psIn.uv0);    
+    color = psFilmGrain(color, psIn.uv0);
     return color;
 }
 
@@ -575,7 +575,7 @@ technique tDownscale4x4
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -594,7 +594,7 @@ technique tBrightPassFilter
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -613,7 +613,7 @@ technique tGaussBlur5x5
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -632,7 +632,7 @@ technique tBloomHori
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -640,7 +640,7 @@ technique tBloomHori
         VertexShader     = compile VS_PROFILE vsQuad();
         PixelShader      = compile PS_PROFILE psBloomHori();
     }
-}        
+}
 
 //------------------------------------------------------------------------------
 //  Technique to perform the horizontal bloom effect.
@@ -651,7 +651,7 @@ technique tBloomVert
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -659,10 +659,10 @@ technique tBloomVert
         VertexShader     = compile VS_PROFILE vsQuad();
         PixelShader      = compile PS_PROFILE psBloomVert();
     }
-}        
+}
 
 //------------------------------------------------------------------------------
-//  Final scene composition (pre-alpha) for adaptive eye model 
+//  Final scene composition (pre-alpha) for adaptive eye model
 //  renderer.
 //------------------------------------------------------------------------------
 technique tFinalScene
@@ -671,7 +671,7 @@ technique tFinalScene
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -690,7 +690,7 @@ technique tHoriBlur
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -709,7 +709,7 @@ technique tVertBlur
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -728,7 +728,7 @@ technique tCombine
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -748,7 +748,7 @@ technique tCopy
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -768,7 +768,7 @@ technique tCompose
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -789,7 +789,7 @@ technique tBlurAndFog
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;
@@ -806,7 +806,7 @@ technique tBlurAndFogHDR
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         CullMode         = None;

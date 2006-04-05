@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------
 //  shared.fx
-//   
+//
 //  A pseudo-shader which lists all shared effect parameters.
 //
 //  (C) 2004 RadonLabs GmbH
@@ -38,6 +38,6 @@ technique t0
 {
     pass p0
     {
-    
+
     }
 }

@@ -9,9 +9,9 @@
 //------------------------------------------------------------------------------
 /**
 	transformStatic()
-	
+
 	Transform position into modelview-projection space without deformations.
-	
+
 	@param	pos		a position in model space
 	@param	mvp		the modelViewProjection matrix
 	@return         transformed position
@@ -25,9 +25,9 @@ transformStatic(const float3 pos, const float4x4 mvp)
 //------------------------------------------------------------------------------
 /**
     skinnedPosition()
-    
+
     Compute a skinned position.
-    
+
     @param  inPos           input vertex position
     @param  weights         4 weights
     @param  indices         4 joint indices into the joint palette
@@ -38,7 +38,7 @@ float4
 skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, const matrix<float,4,3> jointPalette[72])
 {
     float3 pos[4];
-    
+
     int i;
     for (i = 0; i < 4; i++)
     {
@@ -50,9 +50,9 @@ skinnedPosition(const float4 inPos, const float4 weights, const float4 indices, 
 //------------------------------------------------------------------------------
 /**
     skinnedNormal()
-    
+
     Compute a skinned normal vector (without renormalization).
-    
+
     @param  inNormal        input normal vector
     @param  weights         4 weights
     @param  indices         4 joint indices into the joint palette
@@ -74,8 +74,8 @@ skinnedNormal(const float3 inNormal, const float4 weights, const float4 indices,
 //------------------------------------------------------------------------------
 /**
 	tangentSpaceVector()
-	
-	Compute an unnormalized tangent space vector from a vertex position, reference 
+
+	Compute an unnormalized tangent space vector from a vertex position, reference
 	position, normal and tangent (all in model space). This will compute
 	an unnormalized light vector, and a binormal behind the scene.
 */
@@ -84,7 +84,7 @@ tangentSpaceVector(const float3 pos, const float3 refPos, const float3 normal, c
 {
     // compute the light vector in model space
     float3 vec = refPos - pos;
-    
+
     // compute the binormal
     float3 binormal = cross(normal, tangent);
 
@@ -96,17 +96,17 @@ tangentSpaceVector(const float3 pos, const float3 refPos, const float3 normal, c
 //------------------------------------------------------------------------------
 /**
 	tangentSpaceHalfVector()
-	
-	Compute the unnormalized tangent space half vector from a vertex position, light 
+
+	Compute the unnormalized tangent space half vector from a vertex position, light
 	position, eye position, normal and tangent (all in model space). This
 	will compute a normalized lightVec, a normalized eyeVec, an unnormalized
 	half vector and a binormal behind the scenes.
 */
 float3
-tangentSpaceHalfVector(const float3 pos, 
-                       const float3 lightPos, 
-                       const float3 eyePos, 
-                       const float3 normal, 
+tangentSpaceHalfVector(const float3 pos,
+                       const float3 lightPos,
+                       const float3 eyePos,
+                       const float3 normal,
                        const float3 tangent)
 {
     // compute the light vector, eye vector and half vector in model space
@@ -125,7 +125,7 @@ tangentSpaceHalfVector(const float3 pos,
 //------------------------------------------------------------------------------
 /**
 	tangentSpaceEyeHalfVector()
-	
+
 	Compute tangent space eye and half vectors.
 */
 void
@@ -141,7 +141,7 @@ tangentSpaceEyeHalfVector(in const float3 pos,
     float3 lVec = normalize(lightPos - pos);
     float3 eVec = normalize(eyePos - pos);
     float3 hVec = lVec + eVec;
-                                
+
     // compute the binormal and tangent matrix
     float3 binormal = cross(normal, tangent);
     float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
@@ -154,7 +154,7 @@ tangentSpaceEyeHalfVector(in const float3 pos,
 //------------------------------------------------------------------------------
 /**
 	tangentSpaceLightHalfEyeVector()
-	
+
 	Compute tangent space light and half vectors.
 */
 void
@@ -171,7 +171,7 @@ tangentSpaceLightHalfEyeVector(in const float3 pos,
     float3 lVec = normalize(lightPos - pos);
     float3 eVec = normalize(eyePos - pos);
     float3 hVec = lVec + eVec;
-                                
+
     // compute the binormal and tangent matrix
     float3 binormal = cross(normal, tangent);
     float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
@@ -185,7 +185,7 @@ tangentSpaceLightHalfEyeVector(in const float3 pos,
 //------------------------------------------------------------------------------
 /**
     reflectionVector()
-    
+
     Returns the eye vector reflected around the surface normal in world space.
 */
 float3
@@ -203,9 +203,9 @@ reflectionVector(const float3 pos,
 //------------------------------------------------------------------------------
 /**
     fog()
-    
+
     Compute a distance/layer fog.
-    
+
     @param  pos                     the current vertex position in model space
     @param  worldPos,               the current vertex position in world space
     @param  modelEyePos             the eye position in model space
@@ -231,11 +231,11 @@ fog(const float3 pos,
     dist.y = clamp(worldPos.y, fogDistances.z, fogDistances.w);
     dist.x = (dist.x - fogDistances.x) / (fogDistances.y - fogDistances.x);
     dist.y = (dist.y - fogDistances.z) / (fogDistances.w - fogDistances.z);
-    
+
     // get 2 horizontal interpolated colors
     float4 topColor = lerp(fogNearTopColor, fogFarTopColor, dist.x);
     float4 bottomColor = lerp(fogNearBottomColor, fogFarBottomColor, dist.x);
-    
+
     // get resulting fog color
     float4 fogColor = lerp(bottomColor, topColor, dist.y);
     return fogColor;
@@ -244,9 +244,9 @@ fog(const float3 pos,
 //------------------------------------------------------------------------------
 /**
     shadow()
-    
+
     Compute the shadow modulation color.
-    
+
     @param  shadowPos           position in shadow space
     @param  noiseSampler        sampler with a noise texture
     @param  shadowMapSampler    sampler with shadow map
@@ -258,16 +258,16 @@ shadow(const float4 shadowPos, float distOffset, sampler shadowMapSampler)
 {
     // get projected position in shadow space
     float3 projShadowPos = shadowPos.xyz / shadowPos.w;
-    
+
     // jitter shadow map position using noise texture lookup
 //    projShadowPos.xy += tex2D(noiseSampler, projShadowPos.xy * 1234.5f).xy * 0.0005f;
-    
+
     // sample shadow depth from shadow map
     float4 shadowDepth = tex2D(shadowMapSampler, projShadowPos.xy) + distOffset;
-    
+
     // in/out test
     float4 shadowModulate;
-    if ((projShadowPos.x < 0.0f) || 
+    if ((projShadowPos.x < 0.0f) ||
         (projShadowPos.x > 1.0f) ||
         (projShadowPos.y < 0.0f) ||
         (projShadowPos.y > 1.0f))
@@ -281,9 +281,9 @@ shadow(const float4 shadowPos, float distOffset, sampler shadowMapSampler)
         shadowModulate = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
     else
-    {    
+    {
         shadowModulate = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    
+
         // in shadow
         //shadowModulate = tex2D(shadowModSampler, projShadowPos.xy);
         //float4 shadowColor = tex2D(shadowModSampler, projShadowPos.xy);
@@ -313,12 +313,12 @@ vsLighting(in const float4 pos,
            in const float3 eyePos,
            out float3 lightVec,
            out float3 halfVec)
-{           
+{
     // compute the light vector, eye vector and half vector in model space
     float3 lVec = lightPos - pos;
     float3 eVec = eyePos - pos;
     float3 hVec = normalize(normalize(lVec) + normalize(eVec));
-                                
+
     // compute the binormal and tangent matrix
     float3 binormal = cross(normal, tangent);
     float3x3 tangentMatrix = float3x3(tangent, binormal, normal);
@@ -347,7 +347,7 @@ psLighting(in float4 mapColor,
     // compute light intensities
     float primDiffIntensity = saturate(dot(tangentSurfaceNormal, normalize(primLightVec)));
     float primSpecIntensity = pow(saturate(dot(tangentSurfaceNormal, normalize(primHalfVec))), MatSpecularPower);
-    
+
     // compute light colors
     float4 diffColor = primDiffIntensity * mapColor * LightDiffuse[0] * MatDiffuse;
     float4 specColor = primSpecIntensity * LightSpecular[0] * MatSpecular * primDiffIntensity;
@@ -387,7 +387,7 @@ psLightingAlpha(in const float4 mapColor,
     float dotNH = dot(tangentSurfaceNormal, normalize(primHalfVec));
     float primDiffIntensity = saturate(dotNL);
     float primSpecIntensity = pow(saturate(dotNH), MatSpecularPower);
-    
+
     // compute light colors
     float4 diffColor = (primDiffIntensity * LightDiffuse[0] * MatDiffuse) * mapColor;
     float4 specColor = primSpecIntensity * LightSpecular[0] * MatSpecular * primDiffIntensity * specModulate;
@@ -413,7 +413,7 @@ psLightingLeaf(in sampler diffSampler,
                in const float2 uv,
                in const float4 primDiffuse,
                in const float4 primAmbient)
-{              
+{
     // sample diffuse and bump texture
     float4 mapColor = tex2D(diffSampler, uv);
 
@@ -429,27 +429,26 @@ psLightingLeaf(in sampler diffSampler,
 //------------------------------------------------------------------------------
 /**
     vsExpFog()
-    
+
     Compute exponential fog in vertex shader. Returns fog color in rgb and
     fog density in a.
-    
+
     legend:
     fogParams.x     -> fog layer ground height
     fogParams.y     -> fog horizontal density (EXP)
     fogParams.z     -> fog vertical density (EXP)
 */
 float
-vsExpFog(in const float3 modelVertexPos, 
+vsExpFog(in const float3 modelVertexPos,
          in const float3 worldVertexPos,
          in const float3 modelEyePos,
          in const float4 fogParams)
 {
     const float e = 2.71828;
     float eyeDist = distance(modelVertexPos, modelEyePos);
-    float vertDist = max(worldVertexPos.y - fogParams.x, 0); 
+    float vertDist = max(worldVertexPos.y - fogParams.x, 0);
     float heightModulate = 1.0 / pow(e, vertDist * fogParams.z);
     float fogDensity = 1.0 / pow(e, eyeDist * fogParams.y);
     return heightModulate * (1.0 - fogDensity);
 }
 
-    

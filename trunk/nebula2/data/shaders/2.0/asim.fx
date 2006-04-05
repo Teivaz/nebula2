@@ -106,7 +106,7 @@ struct vsOutputStatic2Color
     float3 lightVec      : TEXCOORD3;
     float3 modelLightVec : TEXCOORD4;
     float3 halfVec       : TEXCOORD5;
-    float3 eyePos        : TEXCOORD6;    
+    float3 eyePos        : TEXCOORD6;
     DECLARE_SCREENPOS(TEXCOORD7)
 };
 
@@ -206,9 +206,9 @@ sampler ShadowSampler = sampler_state
 
 // detail texture scale for the layered shader, zoom by 40 as default
 static const float4x4 DetailTexture = {40.0f,  0.0f,  0.0f,  0.0f,
-                                        0.0f, 40.0f,  0.0f,  0.0f, 
+                                        0.0f, 40.0f,  0.0f,  0.0f,
                                         0.0f,  0.0f, 40.0f,  0.0f,
-                                        0.0f,  0.0f,  0.0f, 40.0f };                                
+                                        0.0f,  0.0f,  0.0f, 40.0f };
 
 
 color4 EncodeHDR(in color4 rgba)
@@ -247,8 +247,8 @@ float2 psComputeScreenCoord(float4 pos)
     and half vector in tangent space which are then passed to the
     interpolators.
 */
-void vsLight(in float3 position, 
-             in float3 normal, 
+void vsLight(in float3 position,
+             in float3 normal,
              in float3 tangent,
              in float3 binormal,
              in float3 modelEyePos,
@@ -279,16 +279,16 @@ void vsLight(in float3 position,
 //------------------------------------------------------------------------------
 /**
     Compute per-pixel lighting.
-    
+
     NOTE: lightVec.w contains the distance to the light source
 */
 color4 psLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lightVec, in float3 modelLightVec, in float3 halfVec, in half shadowValue)
 {
-    color4 emm  = MatEmissive * MatEmissiveIntensity;    
+    color4 emm  = MatEmissive * MatEmissiveIntensity;
     color4 emColor   = mapColor * emm * tangentSurfaceNormal.z;
     color4 ambColor  = mapColor * LightAmbient * tangentSurfaceNormal.z;
     color4 color = color4(ambColor.rgb + emColor.rgb, mapColor.a * MatDiffuse.a);
-    
+
     if (shadowValue > 0.1f)
     {
         // light intensities
@@ -311,7 +311,7 @@ color4 psLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lig
         color4 spec = LightSpecular * MatSpecular;
         color4 diffColor = mapColor * diff;
         color4 specColor = specIntensity * spec;
-        
+
         color.rgb += att * diffIntensity * (diffColor.rgb + specColor.rgb);
     }
     return color;
@@ -327,7 +327,7 @@ half psShadow(in float2 screenCoord)
     // determine if pixel is in shadow
     color4 shadow = tex2D(ShadowSampler, screenCoord);
     half shadowValue = 1.0 - saturate(length(ShadowIndex * shadow));
-    return shadowValue;    
+    return shadowValue;
 }
 
 //------------------------------------------------------------------------------
@@ -361,8 +361,8 @@ vsOutputStatic2Color vsUnderwaterGroundColor(const vsInputStatic2Color vsIn)
     vsOut.uv0      = mul(vsIn.uv0, DetailTexture);
     vsOut.uv1      = vsIn.uv0;
 
-    float modTime = fmod(Time, 100.0f);    
-    float scale = TexGenS.xy + WaterMovement(amplitude, periode);  
+    float modTime = fmod(Time, 100.0f);
+    float scale = TexGenS.xy + WaterMovement(amplitude, periode);
     vsOut.uv2.xy = vsIn.uv0 * scale + modTime * Velocity.xy;
 
     vsLight(vsIn.position, vsIn.normal, vsIn.tangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
@@ -379,7 +379,7 @@ color4 psUnderwaterGroundColor(const vsOutputStatic2Color psIn, uniform bool hdr
     return float4(0.05f, 0.0f, 0.0f, 1.0f);
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
-    
+
     // read tiled material colors
     color4 material0 = tex2D(DiffSampler,  psIn.uv0);
     color4 material1 = tex2D(Diff1Sampler, psIn.uv0);
@@ -393,9 +393,9 @@ color4 psUnderwaterGroundColor(const vsOutputStatic2Color psIn, uniform bool hdr
     color4 color;
     color = lerp(material0, material1, weight0);
     color = lerp(color, material2, weight1);
-    color = color + material3;   
+    color = color + material3;
     color = psLight(color, float3(0.0f, 0.0f, 1.0f), psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
-    
+
     if (hdr)
     {
         return EncodeHDR(color);
@@ -404,7 +404,7 @@ color4 psUnderwaterGroundColor(const vsOutputStatic2Color psIn, uniform bool hdr
     {
         return color;
     }
-#endif    
+#endif
 }
 
 
@@ -418,10 +418,10 @@ vsOutputStaticColor vsUnderwater(const vsInputStaticColor vsIn)
     vsOut.position = mul(vsIn.position, ModelViewProjection);
     vsOut.uv0 = vsIn.uv0;
 
-    //float modTime = fmod(Time, 100.0f);    
+    //float modTime = fmod(Time, 100.0f);
     //float scale = 1.0 + WaterMovement(amplitude, periode);
     //vsOut.uv0.xy = vsIn.uv0 * scale + modTime * Velocity.xy;
-    
+
     return vsOut;
 }
 
