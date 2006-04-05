@@ -16,7 +16,7 @@ shared float3   ModelEyePos;
 shared float Time;
 
 static const float4x4 Ident = { 1.0f, 0.0f, 0.0f, 0.0f,
-                                0.0f, 1.0f, 0.0f, 0.0f, 
+                                0.0f, 1.0f, 0.0f, 0.0f,
                                 0.0f, 0.0f, 1.0f, 0.0f,
                                 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -27,8 +27,8 @@ int CullMode = 2;       // CW
 float4 MatDiffuse;
 float4 MatSpecular;
 
-texture DiffMap0;       
-texture BumpMap0;       
+texture DiffMap0;
+texture BumpMap0;
 texture CubeMap0;
 
 //------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ sampler DiffSampler = sampler_state
     MinFilter = Linear;
     MagFilter = Linear;
     MipFilter = Linear;
-    //MipMapLodBias = -0.75;    
+    //MipMapLodBias = -0.75;
 };
 
 sampler NoiseSampler = sampler_state
@@ -69,7 +69,7 @@ samplerCUBE EnvironmentSampler = sampler_state
 
 struct vsInputWater
 {
-    float4 position  : POSITION; 
+    float4 position  : POSITION;
     float3 normal    : NORMAL;
     float2 uv0       : TEXCOORD0;
 };
@@ -86,7 +86,7 @@ struct vsOutputWater
     Emulated vertex shader for dx7 water reflection.
 */
 vsOutputWater vsWater(const vsInputWater vsIn)
-{   
+{
     vsOutputWater vsOut;
 
     // transform the position and normal
@@ -97,16 +97,16 @@ vsOutputWater vsWater(const vsInputWater vsIn)
     //float3 view = worldPos - worldEye;
     float3 view = vsIn.position - ModelEyePos;
     view.x = -view.x;
-    
+
     // transform normal to world space
     // OPTIMIZATION: see above
     //float3 normal = normalize(mul(vsIn.normal, transpose(InvModel)));
     float3 reflView = reflect(view, vsIn.normal);
-    
+
     // Reflection Envoronment Map UV Coords
     vsOut.position  = mul(vsIn.position, ModelViewProjection);          // position (projected)
     vsOut.uv0       = reflView;                                         // cube map lookup by reflected view vector
-    
+
     // Detail Texture UV Coords
     static float2 UVAnimFactor = {0.05, 0.0};
     float2 UVAnimation = Time * UVAnimFactor;
@@ -121,7 +121,7 @@ technique tWater
     pass p0
     {
         CullMode  = <CullMode>;
-        
+
         TextureTransform[0] = 0;
         TextureTransform[1] = 0;
         TextureTransformFlags[0] = 0;
@@ -140,7 +140,7 @@ technique tWater
         ColorArg1[0] = Texture;
         AlphaOp[0] = SelectArg1;
         AlphaArg1[0] = Texture;
-        
+
         // Blend Detail Texture
         Sampler[1] = <DiffSampler>;
         ColorOp[1]   = BLENDCURRENTALPHA;
@@ -150,7 +150,7 @@ technique tWater
         AlphaOp[1] = SelectArg1;
         AlphaArg1[1] = Texture;
         AlphaArg2[1] = Current;
-        
+
         // END
         ColorOp[2] = Disable;
         AlphaOp[2] = Disable;

@@ -32,16 +32,16 @@ typedef half4 color4;
 
 
 static const float4x4 Ident = { 1.0f, 0.0f, 0.0f, 0.0f,
-                                0.0f, 1.0f, 0.0f, 0.0f, 
+                                0.0f, 1.0f, 0.0f, 0.0f,
                                 0.0f, 0.0f, 1.0f, 0.0f,
                                 0.0f, 0.0f, 0.0f, 1.0f };
-   
+
 // detail texture scale for the layered shader, zoom by 40 as default
 static const float4x4 DetailTexture = {40.0f,  0.0f,  0.0f,  0.0f,
-                                        0.0f, 40.0f,  0.0f,  0.0f, 
+                                        0.0f, 40.0f,  0.0f,  0.0f,
                                         0.0f,  0.0f, 40.0f,  0.0f,
-                                        0.0f,  0.0f,  0.0f, 40.0f };                                
-                             
+                                        0.0f,  0.0f,  0.0f, 40.0f };
+
 
 struct vsInputStatic2Color
 {
@@ -153,9 +153,9 @@ vsOutputStatic2Color vsUnderwaterGroundColor(const vsInputStatic2Color vsIn)
     vsOut.uv1      = vsIn.uv0;
 
     const float periode = 5.0;
-    float modTime = fmod(Time, 100.0f);    
+    float modTime = fmod(Time, 100.0f);
     float scale = TexGenS.xy + 0.05f * (sin( fmod(Time, periode) * 6.28318531 / periode ) + 0.5);
-    
+
     vsOut.uv2.xy = vsIn.uv0 * scale + modTime * Velocity.xy;
 
     return vsOut;
@@ -166,14 +166,14 @@ vsOutputStatic2Color vsUnderwaterGroundColor(const vsInputStatic2Color vsIn)
 technique tUnderwaterGround
 {
     pass p0
-    {        
+    {
         VertexShader = compile vs_2_0 vsUnderwaterGroundColor();
-      
+
         CullMode          = <CullMode>;
         AlphaTestEnable   = False;
         MaterialDiffuse   = <MatDiffuse>;
-        MaterialEmissive  = <MatEmissive>;        
-        MaterialAmbient   = {1.0, 1.0, 1.0, 1.0};                
+        MaterialEmissive  = <MatEmissive>;
+        MaterialAmbient   = {1.0, 1.0, 1.0, 1.0};
 
         TextureTransform[0] = <Ident>;
         TexCoordIndex[0]    = 0;
@@ -183,7 +183,7 @@ technique tUnderwaterGround
         TexCoordIndex[2]    = 2;
 
         Sampler[0]        = <DiffSampler>;
-               
+
         ColorOp[0]   = Modulate;
         ColorArg1[0] = Texture;
         ColorArg2[0] = Current;
@@ -192,7 +192,7 @@ technique tUnderwaterGround
         ColorArg2[0] = Current;
 
         ColorOp[1]   = Disable;
-        AlphaOp[1]   = Disable; 
+        AlphaOp[1]   = Disable;
     }
     pass p1
     {
@@ -201,17 +201,17 @@ technique tUnderwaterGround
         DestBlend        = InvSrcAlpha;
         AlphaTestEnable  = True;
         AlphaRef         = 1;
-        
+
         Sampler[0]   = <Diff1Sampler>;
         Sampler[1]   = <Layer0Sampler>;
-                
+
         ColorOp[0]   = Modulate;
         ColorArg1[0] = Texture;
         ColorArg2[0] = Current;
         AlphaOp[0]   = SelectArg2;
         AlphaArg1[0] = Texture;
         AlphaArg2[0] = Current;
-       
+
         ColorOp[1]   = SelectArg1;
         ColorArg1[1] = Current;
         ColorArg2[1] = Current;
@@ -220,18 +220,18 @@ technique tUnderwaterGround
         AlphaArg2[1] = Current;
 
         ColorOp[2]   = Disable;
-        AlphaOp[2]   = Disable; 
+        AlphaOp[2]   = Disable;
     }
     pass p2
     {
         Sampler[0]   = <Diff2Sampler>;
         Sampler[1]   = <Layer1Sampler>;
         Sampler[2]   = <Diff3Sampler>;
-        
+
         ColorOp[2]   = Add;
         ColorArg1[2] = Current;
         ColorArg2[2] = Texture;
- 
-        AlphaOp[2]   = Disable; 
+
+        AlphaOp[2]   = Disable;
     }
 }

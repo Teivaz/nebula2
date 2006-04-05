@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  randtable.fx
-//  
+//
 //  A random number table with 16 entries for vertex shaders.
 //
 //  (C) 2003 RadonLabs GmbH

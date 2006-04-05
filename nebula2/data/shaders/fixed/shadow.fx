@@ -23,13 +23,13 @@ static float DirExtrudeLen = 1000.0f;
     Vertex shader for static shadow volumes. This will do the extrusion
     on the GPU. The extrude vector's x component is either 0.0 if the vector
     should not be extruded, or 1.0 if the vector should be extruded.
-    
+
     If the light is a directional light, ModelLightPos does not contain a
     position, but instead the light direction in model space.
-    
+
     NOTE: the non-extruded component could also be a very small number to
     shift the shadow volume a little bit away from the light source.
-    
+
     NOTE: the extrusion may clip against the far plane, this case is not
     currently handled at all (should we even care??).
 */
@@ -57,10 +57,10 @@ float4 vsMain(float4 position : POSITION) : POSITION
 //------------------------------------------------------------------------------
 /**
     2-Pass-Technique for older GPUs.
-    
+
     NOTE: because of the "Old NVIDIA cards don't validate shader files with
-    vertex shaders even if software vertexprocessing is on" bug and 
-    Nebula workaround, we cannot have 2 technique in the fixed function 
+    vertex shaders even if software vertexprocessing is on" bug and
+    Nebula workaround, we cannot have 2 technique in the fixed function
     pipeline. Thus only the "safe" TwoPass technique exists in this file.
 */
 technique TwoPass
@@ -79,11 +79,11 @@ technique TwoPass
 
         CullMode            = Cw;
 
-        StencilFunc         = Always;        
+        StencilFunc         = Always;
         StencilZFail        = <StencilFrontZFailOp>;
         StencilPass         = <StencilFrontPassOp>;
 
-        VertexShader        = compile vs_2_0 vsMain();        
+        VertexShader        = compile vs_2_0 vsMain();
         ColorOp[0] = SelectArg1;
         ColorArg1[0] = Current;
         AlphaOp[0] = Disable;

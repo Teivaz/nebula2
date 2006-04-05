@@ -44,8 +44,18 @@
     <Shader name="frond" file="shaders:treeshader.fx" />
     <Shader name="leaves" file="shaders:treeshader.fx" />
     <Shader name="billboard" file="shaders:treeshader.fx" />
+    <!-- sky systems -->
+    <Shader name="cubeskybox" file="shaders:shaders.fx" />
+    <Shader name="terrain" file="shaders:shaders.fx" />
+    <Shader name="sky" file="shaders:sky.fx" />
+    <Shader name="sun" file="shaders:sky.fx" />
+    <Shader name="stars" file="shaders:sky.fx" />
+    <Shader name="cloud" file="shaders:sky.fx" />
+    <Shader name="horizon" file="shaders:sky.fx" />
+    <Shader name="copytexture_rgb" file="shaders:sky.fx" />
 
     <!-- define render targets -->
+    <RenderTarget name="SkyScene"    	format="X8R8G8B8"  relSize="1.0" />
     <RenderTarget name="Scene"          format="X8R8G8B8" relSize="1.0" />
     <RenderTarget name="Shadow"         format="A8R8G8B8" relSize="1.0" />
     <RenderTarget name="SceneScaled"    format="X8R8G8B8" relSize="0.5" />
@@ -104,10 +114,25 @@
         <!-- render shadow volumes and downscale into blurred buffer -->
         <Pass name="shadow" shader="copy_stencil" drawShadows="MultiLight" renderTarget="Shadow" />
 
+        <!-- sky systems -->
+        <Pass name="SkyScene" shader="passes" technique="tPassColor" renderTarget="SkyScene" clearColor="0.0 0.0 0.0 0.0">
+            <Phase name="skyscene" shader="phases" technique="tPhaseSky" sort="None" lightMode="Off">
+                <Sequence shader="sky"          technique="tGradientSkyHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="sun"	        technique="tSunHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="stars"        technique="tStarsHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="cloud"        technique="tCloudHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="horizon"    	technique="tHorizonHDR" firstLightAlpha="No" mvpOnly="Yes" />
+            </Phase>
+        </Pass>
+        <Pass name="CopySky" shader="copytexture_rgb" technique="tCopyTexture_rgb" renderTarget="Scene" drawQuad="Yes" clearColor="0.3 0.3 0.3 0.0" clearDepth="1.0" clearStencil="0">
+            <Texture name="DiffMap0" value="SkyScene" />
+        </Pass>
+
         <!-- render scene into hdr render target -->
-        <Pass name="SceneOpaque" shader="passes" technique="tPassColor" renderTarget="Scene" clearColor="0.0 0.0 0.0 1.0">
+        <Pass name="SceneOpaque" shader="passes" technique="tPassEnvironment" renderTarget="Scene">
             <Phase name="nolight" shader="phases" technique="tPhaseNoLight" sort="FrontToBack" lightMode="Off">
-                <Sequence shader="skybox" technique="tSkyboxColorHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="skybox"     	technique="tSkyboxColorHDR" firstLightAlpha="No" mvpOnly="Yes" />
+                <Sequence shader="cubeskybox" 	technique="tCubeSkyboxColorHDR" firstLightAlpha="No" mvpOnly="Yes" />
             </Phase>
             <Phase name="opaque" shader="phases" technique="tPhaseOpaque" sort="FrontToBack" lightMode="Shader">
                 <Sequence shader="static" technique="tStaticColorHDRShadow"         firstLightAlpha="No" mvpOnly="Yes">
@@ -117,9 +142,9 @@
                 <Sequence shader="lightmapped"  technique="tLightmappedLitColorHDRShadow" firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="lightmapped2" technique="tLightmappedLitColorHDRShadow" firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="radiosity_normalmapped"  technique="tRNLightmappedLitColorHDRShadow" firstLightAlpha="Yes" mvpOnly="Yes"/>
-                <Sequence shader="skinned"      technique="tSkinnedColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="layered"      technique="tLayeredColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="multilayered" technique="tMultiLayeredColorHDRShadow"   firstLightAlpha="No" mvpOnly="Yes"/>
+                <Sequence shader="skinned"      technique="tSkinnedColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="blended"      technique="tBlendedColorHDRShadow"        firstLightAlpha="No" mvpOnly="Yes"/>
                 <Sequence shader="underwaterground" technique="tUnderwaterGroundColorHDRShadow" firstLightAlpha="No" mvpOnly="Yes"/>
             </Phase>

@@ -26,11 +26,19 @@ technique tPhaseATestDepth
     }
 }
 
+technique tPhaseSky
+{
+    pass p0
+    {
+        ZWriteEnable = False;
+    }
+}
+
 technique tPhaseTerrain
 {
     pass p0
     {
-        AlphaTestEnable = False;        
+        AlphaTestEnable = False;
         ZFunc           = LessEqual;
     }
 }
@@ -39,8 +47,8 @@ technique tPhaseOpaque
 {
     pass p0
     {
-        AlphaTestEnable = False;  
-        ZFunc           = LessEqual;              
+        AlphaTestEnable = False;
+        ZFunc           = LessEqual;
     }
 }
 
@@ -48,8 +56,8 @@ technique tPhaseOpaqueATest
 {
     pass p0
     {
-        AlphaTestEnable = True;        
-        ZFunc           = Equal;        
+        AlphaTestEnable = True;
+        ZFunc           = Equal;
     }
 }
 
@@ -79,9 +87,9 @@ technique tPhasePointSprites
     {
         AlphaBlendEnable  = True;
         PointSpriteEnable = True;
-        PointScaleEnable  = False;        
+        PointScaleEnable  = False;
         AlphaTestEnable   = False;
-        ZFunc             = LessEqual;        
+        ZFunc             = LessEqual;
     }
 }
 

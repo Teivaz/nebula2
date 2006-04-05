@@ -12,7 +12,7 @@
 
     NOTE: VS_PROFILE and PS_PROFILE macros are usually provided by the
     application and contain the highest supported shader models.
-*/    
+*/
 /*
 #define VS_PROFILE vs_2_0
 #define PS_PROFILE ps_2_0
@@ -147,7 +147,7 @@ struct vsOutputBranchColor
 
 struct vsInputLeavesDepth
 {
-	float4 position				: POSITION; 
+	float4 position				: POSITION;
 	float3 normal				: NORMAL;
 	float2 uv0					: TEXCOORD0;
 	float2 windAttribs			: TEXCOORD1;
@@ -156,7 +156,7 @@ struct vsInputLeavesDepth
 
 struct vsInputLeavesColor
 {
-	float4 position				: POSITION; 
+	float4 position				: POSITION;
 	float3 normal				: NORMAL;
 	float2 uv0					: TEXCOORD0;
 	float2 windAttribs			: TEXCOORD1;
@@ -174,14 +174,14 @@ struct vsOutputLeavesColor
 struct vsInputBillboardColor
 {
 	float4 position : POSITION;
-	float2 uv0 		: TEXCOORD0;		
+	float2 uv0 		: TEXCOORD0;
 };
 
 struct vsOutputBillboardColor
 {
 	float4 position : POSITION;
-	float2 uv0 		: TEXCOORD0;	
-	float3 normalPos 	: TEXCOORD1;		
+	float2 uv0 		: TEXCOORD0;
+	float3 normalPos 	: TEXCOORD1;
 };
 //------------------------------------------------------------------------------
 /**
@@ -246,7 +246,7 @@ float4 EncodeHDR(in float4 rgba)
     const float hdrSpace = 1 - colorSpace;
     const float hdrPow = 10;
     const float hdrRt = 0.1;
-    
+
     float3 col = clamp(rgba.rgb,0,1) * colorSpace;
     float3 hdr = pow(clamp(rgba.rgb,1,10),hdrRt)-1;
     float4 result;
@@ -288,8 +288,8 @@ float2 psComputeScreenCoord(float4 pos)
     and half vector in tangent space which are then passed to the
     interpolators.
 */
-void vsLight(in float3 position, 
-             in float3 normal, 
+void vsLight(in float3 position,
+             in float3 normal,
              in float3 tangent,
              in float3 binormal,
              in float3 modelEyePos,
@@ -327,24 +327,24 @@ half psShadow(in float2 screenCoord)
     // determine if pixel is in shadow
     color4 shadow = tex2D(ShadowSampler, screenCoord);
     half shadowValue = 1.0 - saturate(length(ShadowIndex * shadow));
-    return shadowValue;    
+    return shadowValue;
 }
 
 //------------------------------------------------------------------------------
 /**
     Compute per-pixel lighting.
-    
+
     NOTE: lightVec.w contains the distance to the light source
 */
 color4 psTreeLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3 lightVec, in float3 modelLightVec, in float3 halfVec, in half shadowValue)
 {
     color4 color = mapColor * color4(/*LightAmbient.rgb + */MatEmissive.rgb * MatEmissiveIntensity, MatDiffuse.a);
-        
+
     // light intensities
     //half specIntensity = pow(saturate(dot(tangentSurfaceNormal, normalize(halfVec))), MatSpecularPower); // Specular-Modulation * mapColor.a;
     half diffIntensity = dot(tangentSurfaceNormal, normalize(lightVec));
 
-    
+
     color3 diffColor = mapColor.rgb * LightDiffuse.rgb * MatDiffuse.rgb;
     //color3 specColor = specIntensity * LightSpecular.rgb * MatSpecular.rgb;
 
@@ -358,9 +358,9 @@ color4 psTreeLight(in color4 mapColor, in float3 tangentSurfaceNormal, in float3
     {
         #if DIRLIGHTS_ENABLEOPPOSITECOLOR
         color.rgb += saturate(1-diffIntensity) * DIRLIGHTS_OPPOSITECOLOR * mapColor.rgb * MatDiffuse.rgb;
-        #endif    
+        #endif
         diffIntensity *= shadowValue;
-    }    
+    }
     color.rgb += saturate(diffIntensity) * (diffColor.rgb);
     return color;
 }
@@ -388,7 +388,7 @@ vsOutputStaticDepth vsBranchDepth(const vsInputStaticDepth vsIn)
     vsOutputStaticDepth vsOut;
 	float4 windyPoint = lerp(vsIn.position,										// interpolate between original position
 						mul(vsIn.position, WindMatrices[vsIn.windAttribs.x]),	//	and full wind-blown position
-						vsIn.windAttribs.y);	
+						vsIn.windAttribs.y);
     vsOut.position = mul(windyPoint, ModelViewProjection);
     vsOut.depth = vsOut.position.z;
     return vsOut;
@@ -396,24 +396,24 @@ vsOutputStaticDepth vsBranchDepth(const vsInputStaticDepth vsIn)
 
 //------------------------------------------------------------------------------
 /**
-    Vertex shader: generate depth values for static geometry with uv 
+    Vertex shader: generate depth values for static geometry with uv
     coordinates.
 */
 vsOutputUvDepth vsLeafUvDepth(const vsInputLeavesDepth vsIn)
 {
     vsOutputUvDepth vsOut;
-    
+
    	//float posLen = length(vsIn.position);
     float4 windyPoint = lerp(vsIn.position,										// interpolate between original position
 						mul(vsIn.position, WindMatrices[vsIn.windAttribs.x]),	//	and full wind-blown position
 						vsIn.windAttribs.y);
 	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight
 
-    windyPoint.xyz = mul(windyPoint.xyz, Swing); 	
+    windyPoint.xyz = mul(windyPoint.xyz, Swing);
 	windyPoint.xyz += mul(LeafCluster[vsIn.leafAttribs.x] * vsIn.leafAttribs.y,
  						LeafAngleMatrices[vsIn.leafAttribs.z]);						// leaf placement using SpeedWind leaf rocking
 
-	vsOut.position = mul(windyPoint, ModelViewProjection);	
+	vsOut.position = mul(windyPoint, ModelViewProjection);
     vsOut.uv0depth.xy = vsIn.uv0;
     vsOut.uv0depth.z = vsOut.position.z;
     return vsOut;
@@ -441,7 +441,7 @@ color4 psBranchDepthATest(const vsOutputUvDepth psIn) : COLOR
 
 //------------------------------------------------------------------------------
 /**
-    Vertex shader: generate depth values for static geometry with uv 
+    Vertex shader: generate depth values for static geometry with uv
     coordinates.
 */
 vsOutputUvDepth vsWindUvDepth(const vsInputUvDepth vsIn)
@@ -450,9 +450,9 @@ vsOutputUvDepth vsWindUvDepth(const vsInputUvDepth vsIn)
    	//float posLen = max(length(vsIn.position),0);
     float4 windyPoint = lerp(vsIn.position,										// interpolate between original position
 						mul(vsIn.position, WindMatrices[vsIn.windAttribs.x]),	//	and full wind-blown position
-						vsIn.windAttribs.y);	
-	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight			
-    vsOut.position = mul(windyPoint, ModelViewProjection);	
+						vsIn.windAttribs.y);
+	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight
+    vsOut.position = mul(windyPoint, ModelViewProjection);
     vsOut.uv0depth.xy = vsIn.uv0;
     vsOut.uv0depth.z = vsOut.position.z;
     return vsOut;
@@ -460,7 +460,7 @@ vsOutputUvDepth vsWindUvDepth(const vsInputUvDepth vsIn)
 
 //------------------------------------------------------------------------------
 /**
-    Vertex shader: generate depth values for static geometry with uv 
+    Vertex shader: generate depth values for static geometry with uv
     coordinates.
 */
 vsOutputUvDepth vsStaticUvDepth(const vsInputStaticUvDepth vsIn)
@@ -472,11 +472,11 @@ vsOutputUvDepth vsStaticUvDepth(const vsInputStaticUvDepth vsIn)
 	float3x3 rotM = { cosV, 0.0f, sinV,
 			 		  0.0f, 1.0f, 0.0f,
 			 		  -sinV, 0, cosV};
-			 
+
 	float3 posRot = mul(vsIn.position.xyz, rotM);
 	vsOut.position = mul(float4(posRot, 1), ModelViewProjection);							// project to screen
-	
-    
+
+
     vsOut.uv0depth.xy = vsIn.uv0;
     vsOut.uv0depth.z = vsOut.position.z;
     return vsOut;
@@ -491,8 +491,8 @@ vsOutputBranchColor vsBranchColor(const vsInputBranchColor vsIn)
    	//float posLen = max(length(vsIn.position),0);
     float4 windyPoint = lerp(vsIn.position,										// interpolate between original position
 						mul(vsIn.position, WindMatrices[vsIn.windAttribs.x]),	//	and full wind-blown position
-						vsIn.windAttribs.y);	
-	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight			
+						vsIn.windAttribs.y);
+	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight
     vsOut.position = mul(windyPoint, ModelViewProjection);
     VS_SETSCREENPOS(vsOut.position);
     vsOut.uv0 = vsIn.uv0;
@@ -511,13 +511,13 @@ color4 psBranchColor(const vsOutputBranchColor psIn, uniform bool hdr, uniform b
 #else
     half shadowIntensity = shadow ? psShadow(PS_SCREENPOS) : 1.0;
     half2 uvOffset = half2(0.0f, 0.0f);
-    if (BumpScale != 0.0f) 
+    if (BumpScale != 0.0f)
     {
         uvOffset = ParallaxUv(psIn.uv0, BumpSampler, psIn.eyePos);
-    }    
+    }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
-    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;    
-    
+    float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
+
     color4 baseColor = psTreeLight(diffColor, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
     {
@@ -531,48 +531,48 @@ color4 psBranchColor(const vsOutputBranchColor psIn, uniform bool hdr, uniform b
 };
 
 
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 // Leaf Vertex Shader
 
 vsOutputLeavesColor vsLeafColor(const vsInputLeavesColor vsIn)
 {
 	vsOutputLeavesColor vsOut;
-	   	  	
+
    	//float posLen = length(vsIn.position);
     float4 windyPoint = lerp(vsIn.position,										// interpolate between original position
 						mul(vsIn.position, WindMatrices[vsIn.windAttribs.x]),	//	and full wind-blown position
-						vsIn.windAttribs.y);	
+						vsIn.windAttribs.y);
 	//windyPoint.xyz = normalize(windyPoint.xyz).xyz * posLen;									//	using the wind weight
 
 	windyPoint.xyz = mul(windyPoint.xyz, Swing);
 
-	float3 originPos = windyPoint;	
+	float3 originPos = windyPoint;
 	windyPoint.xyz += mul(LeafCluster[vsIn.leafAttribs.x] * vsIn.leafAttribs.y,
  						LeafAngleMatrices[vsIn.leafAttribs.z]);						// leaf placement using SpeedWind leaf rocking
-						
+
 	vsOut.pos = windyPoint;
 	vsOut.position = mul(windyPoint, ModelViewProjection);  // project to screen
-	
+
 	vsOut.uv0 = vsIn.uv0;		// pass texcoords through
-	float veclen = length(originPos);		
+	float veclen = length(originPos);
 	originPos.y -= veclen * 0.5f;
 	originPos = originPos/veclen;
-	
+
 	float3 movedNormal = originPos;
 	vsOut.color.rgb = movedNormal.rgb;
  	vsOut.color.a = 1.0f;															// we only want the texture alpha
-	
+
 	return vsOut;
 }
 
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 // Leaf Pixel Shader
 
 float4 psLeafColor(vsOutputLeavesColor psIn) : COLOR
 {
     float4 texLeaf = tex2D(DiffSampler, psIn.uv0);
-    
-    float intensity = dot(psIn.color, ModelLightPos);    
+
+    float intensity = dot(psIn.color, ModelLightPos);
     clip(texLeaf.a - (AlphaRef / 256.0f));
     float4 vOutputColor;
     if (LightType == 0)
@@ -584,12 +584,12 @@ float4 psLeafColor(vsOutputLeavesColor psIn) : COLOR
     vOutputColor.rgb = texLeaf.rgb * MatDiffuse.rgb * (intensity * LightDiffuse.rgb + (1-intensity) * DIRLIGHTS_OPPOSITECOLOR);					// compute the color due to lighting
     vOutputColor.a = texLeaf.a;
     //vOutputColor.rgb *= g_fGlobalSaturation;					// saturation
-	//vOutputColor.rgb += texLeaf * g_fGlobalAmbient;				// ambient (add the texture back in so it doesn't get washed out)										
-    
+	//vOutputColor.rgb += texLeaf * g_fGlobalAmbient;				// ambient (add the texture back in so it doesn't get washed out)
+
 	return vOutputColor;
 }
 
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 // Billboard Vertex Shader
 
 vsOutputBillboardColor vsBillboardColor(const vsInputBillboardColor vsIn)
@@ -602,29 +602,29 @@ vsOutputBillboardColor vsBillboardColor(const vsInputBillboardColor vsIn)
 	float3x3 rotM = { cosV, 0.0f, sinV,
 			 		  0.0f, 1.0f, 0.0f,
 			 		  -sinV, 0, cosV};
-			 
+
 	float3 posRot = mul(vsIn.position.xyz, rotM);
 	vsOut.position = mul(float4(posRot, 1), ModelViewProjection);							// project to screen
-	
+
 	vsOut.uv0 = vsIn.uv0;															// pass texcoords through
 	float3 pos = vsIn.position;
 	vsOut.normalPos = normalize(pos + normalize(EyeDir));
 						//LightAmbient * g_vMaterialAmbient;						// ambient color
-	
+
 	return vsOut;
 }
 
-///////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////
 // Leaf Pixel Shader
 
 float4 psBillboardColor(vsOutputBillboardColor psIn) : COLOR
 {
     float4 tex = tex2D(DiffSampler, psIn.uv0);
-    
+
     clip(tex.a - (AlphaRef / 256.0f));
-    float lightIntensity = dot(psIn.normalPos, ModelLightPos);		
+    float lightIntensity = dot(psIn.normalPos, ModelLightPos);
     float4 vOutputColor = tex * lightIntensity * LightDiffuse * MatDiffuse;		// diffuse lighting
-    
+
 	return vOutputColor;
 }
 //------------------------------------------------------------------------------
@@ -637,7 +637,7 @@ technique tBranchDepth
     {
         CullMode     = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
-        
+
         VertexShader = compile VS_PROFILE vsWindUvDepth();
         PixelShader  = compile PS_PROFILE psBranchDepthATest();
     }
@@ -648,8 +648,8 @@ technique tBranchColor
     pass p0
     {
         CullMode = <CullMode>;
-        AlphaBlendEnable = <AlphaBlendEnable>;        
-        
+        AlphaBlendEnable = <AlphaBlendEnable>;
+
         VertexShader = compile VS_PROFILE vsBranchColor();
         PixelShader  = compile PS_PROFILE psBranchColor(false, false);
     }
@@ -661,7 +661,7 @@ technique tBranchColorHDR
     {
         CullMode = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
-        
+
         VertexShader = compile VS_PROFILE vsBranchColor();
         PixelShader  = compile PS_PROFILE psBranchColor(true, false);
     }
@@ -671,9 +671,9 @@ technique tBranchColorShadow
 {
     pass p0
     {
-        CullMode = <CullMode>; 
-        AlphaBlendEnable = <AlphaBlendEnable>;       
-        
+        CullMode = <CullMode>;
+        AlphaBlendEnable = <AlphaBlendEnable>;
+
         VertexShader = compile VS_PROFILE vsBranchColor();
         PixelShader  = compile PS_PROFILE psBranchColor(false, true);
     }
@@ -684,9 +684,9 @@ technique tBranchColorHDRShadow
     pass p0
     {
 	    //ZEnable = false;
-        CullMode = <CullMode>; 
-        AlphaBlendEnable = <AlphaBlendEnable>;       
-        
+        CullMode = <CullMode>;
+        AlphaBlendEnable = <AlphaBlendEnable>;
+
         VertexShader = compile VS_PROFILE vsBranchColor();
         PixelShader  = compile PS_PROFILE psBranchColor(true, true);
     }
@@ -698,20 +698,20 @@ technique tLeavesDepth
     {
         CullMode = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
-        
+
         VertexShader = compile VS_PROFILE vsLeafUvDepth();
         PixelShader  = compile PS_PROFILE psBranchDepthATest();
     }
 }
-        
+
 technique tLeavesColorHDR
 {
     pass p0
     {
 	    //ZEnable = false;
         CullMode = <CullMode>;
-        AlphaBlendEnable = <AlphaBlendEnable>;       
-        
+        AlphaBlendEnable = <AlphaBlendEnable>;
+
         VertexShader = compile VS_PROFILE vsLeafColor();
         PixelShader  = compile PS_PROFILE psLeafColor();
     }
@@ -723,19 +723,19 @@ technique tBillboardDepth
     {
         CullMode = <CullMode>;
         AlphaBlendEnable = <AlphaBlendEnable>;
-        
+
         VertexShader = compile VS_PROFILE vsStaticUvDepth();
         PixelShader  = compile PS_PROFILE psBranchDepthATest();
     }
 }
-        
+
 technique tBillboardColorHDRShadow
 {
     pass p0
     {
-        CullMode = <CullMode>;   
-        AlphaBlendEnable = <AlphaBlendEnable>;     
-        
+        CullMode = <CullMode>;
+        AlphaBlendEnable = <AlphaBlendEnable>;
+
         VertexShader = compile VS_PROFILE vsBillboardColor();
         PixelShader  = compile PS_PROFILE psBillboardColor();
     }
@@ -750,7 +750,7 @@ technique tBillboardColorHDRShadow
 //     pass p0
 //     {
 //         CullMode     = <CullMode>;
-//         
+//
 //         VertexShader = compile VS_PROFILE vsStaticUvDepth();
 //         PixelShader  = compile PS_PROFILE psBranchDepthATest();
 //     }

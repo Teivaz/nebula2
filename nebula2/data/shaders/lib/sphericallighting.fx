@@ -23,9 +23,9 @@ float4 DirAmbient[6] =          // directional ambient colors
     { 0.7f, 0.7f, 0.7f, 1.0f },
     { 0.7f, 0.7f, 0.7f, 1.0f },
     { 0.7f, 0.7f, 0.7f, 1.0f},
-};           
+};
 
-const float3 AmbientDirections[6] = 
+const float3 AmbientDirections[6] =
 {
     { 0.0f, 1.0f, 0.0f },       // up
     { 0.0f, -1.0f, 0.0f },      // down
@@ -59,9 +59,9 @@ const float3 AmbientDirections[6] =
 //  @param  specular    [out] resulting specular color
 //------------------------------------------------------------------------------
 void
-vsSphericalLighting(in const float4 pos, 
-                    in const float3 normal, 
-                    in const float3 tangent,  
+vsSphericalLighting(in const float4 pos,
+                    in const float3 normal,
+                    in const float3 tangent,
                     out float3 lightVec,
                     out float3 halfVec,
                     out float4 lightPos,
@@ -110,11 +110,11 @@ psSphericalLighting(float3 lightVec,
 {
     float3 surfNormal = 2.0f * (bumpColor.rgb - 0.5f);
     float specScale = bumpColor.a;
-    
+
     // compute diffuse and specular intensity
     float diffIntensity = saturate(dot(surfNormal, normalize(lightVec)));
     float specIntensity = specScale * pow(saturate(dot(surfNormal, normalize(halfVec))), MatSpecularPower);
-    
+
     // compute final color
     float4 outColor;
     outColor.rgb = (diffIntensity * diffLightColor * mapColor) + (specIntensity * specLightColor);
@@ -140,11 +140,11 @@ psSphericalLightingLeaf(float3 lightVec,
                         float4 bumpColor)
 {
     float3 surfNormal = 2.0f * (bumpColor.rgb - 0.5f);
-    
+
     // compute diffuse and specular intensity
 //    float diffIntensity = abs(dot(surfNormal, normalize(lightVec)));
     float diffIntensity = saturate(dot(surfNormal, float3(0.0f, 0.0f, 1.0f)));
-    
+
     // compute final color
     float4 outColor;
     outColor.rgb = (diffIntensity * lightColor * mapColor);

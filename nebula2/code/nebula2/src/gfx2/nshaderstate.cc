@@ -6,7 +6,7 @@
 #include <string.h>
 
 /// the shader parameter type string table
-static const char* TypeTable[nShaderState::NumTypes] = 
+static const char* TypeTable[nShaderState::NumTypes] =
 {
     "v",
     "b",
@@ -18,7 +18,7 @@ static const char* TypeTable[nShaderState::NumTypes] =
 };
 
 /// the shader parameter name string table
-static const char* StateTable[nShaderState::NumParameters] = 
+static const char* StateTable[nShaderState::NumParameters] =
 {
     "Model",
     "InvModel",
@@ -110,7 +110,7 @@ static const char* StateTable[nShaderState::NumParameters] =
     "TextureTransform1",
     "TextureTransform2",
     "TextureTransform3",
-    "SampleOffsets", 
+    "SampleOffsets",
     "SampleWeights",
     "VertexStreams",
     "VertexWeights1",
@@ -151,6 +151,26 @@ static const char* StateTable[nShaderState::NumParameters] =
     "LeafCluster",
     "LeafAngleMatrices",
     "WindMatrices",
+    "SkyBottom",
+    "SunFlat",
+    "SunRange",
+    "SunColor",
+    "CloudMod",
+    "CloudPos",
+    "CloudGrad",
+    "Brightness",
+    "Lightness",
+    "Density",
+    "Glow",
+    "Saturation",
+    "Weight",
+    "TopColor",
+    "BottomColor",
+    "Move",
+    "Position",
+    "ScaleVector",
+    "Map0uvRes",
+    "Map1uvRes",
 };
 
 //------------------------------------------------------------------------------
@@ -178,7 +198,7 @@ nShaderState::StringToType(const char* str)
             return (nShaderState::Type) i;
         }
     }
-    // fallthrough: state not found 
+    // fallthrough: state not found
     return nShaderState::InvalidType;
 }
 
@@ -207,6 +227,6 @@ nShaderState::StringToParam(const char* str)
             return (nShaderState::Param) i;
         }
     }
-    // fallthrough: state not found 
+    // fallthrough: state not found
     return nShaderState::InvalidParameter;
 }

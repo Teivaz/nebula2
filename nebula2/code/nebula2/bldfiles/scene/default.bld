@@ -27,6 +27,8 @@
 #      nblendshapeanimator
 #      nintanimator
 #      nlodnode
+#      nskynode
+#      nskystate
 #      nabstractcameranode
 #      ncameranode
 #      nclippingcameranode
@@ -188,6 +190,18 @@ beginmodule nlodnode
     setdir scene
     setfiles { nlodnode_main nlodnode_cmds }
     setheaders { nlodnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskynode
+    setdir scene
+    setfiles { nskynode_main nskynode_cmds }
+    setheaders { nskynode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskystate
+    setdir scene
+    setfiles { nskystate_main }
+    setheaders { nskystate }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nabstractcameranode
