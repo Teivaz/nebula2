@@ -886,7 +886,7 @@ nString::Tokenize(const char* whiteSpace, uchar fence, nArray<nString>& tokens) 
 {
     // create a temporary string, which will be destroyed during the operation
     nString str(*this);
-    char* ptr = (char*) str.Get();    
+    char* ptr = (char*) str.Get();
     char* end = ptr + strlen(ptr);
     while (ptr < end)
     {
