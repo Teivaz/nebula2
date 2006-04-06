@@ -18,6 +18,7 @@
     <Entity type="Simple" cppclass="Entity">
         <Property type="PhysicsProperty" />
         <Property type="GraphicsProperty" />
+        <Property type="MouseGripperProperty" />
     </Entity>
 
     <!-- a ready-made actor entity -->
