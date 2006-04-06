@@ -70,7 +70,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_optimize_v",  'OPTI', n_optimize);
     cl->AddCmd("v_createedges_v",  'CRED', n_createedges);
     
-    cl->AddCmd("v_append_o", 'APND', n_append);
+    cl->AddCmd("i_append_o", 'APND', n_append);
     cl->AddCmd("v_clear_v",  'CLEA', n_clear);
 
     cl->AddCmd("v_checkforgeometryerror_v",  'CHKG', n_checkforgeometryerror);
@@ -340,7 +340,8 @@ n_append(void* slf, nCmd* cmd)
     
     nScriptableMeshBuilder* src = static_cast<nScriptableMeshBuilder*>(cmd->In()->GetO());
     
-    self->Append(*src);
+    int index = self->Append(*src);
+    cmd->Out()->SetI(index);
 }
 
 //------------------------------------------------------------------------------
