@@ -66,7 +66,7 @@ FactoryManager::~FactoryManager()
 
 //------------------------------------------------------------------------------
 /**
-    Create a raw entity by its C++ class name name. This method should be 
+    Create a raw entity by its C++ class name name. This method should be
     extended by subclasses if a Mangalore application implements new
     Game::Entity subclasses.
 */
@@ -102,7 +102,7 @@ FactoryManager::CreateEntityByCategory(const nString& categoryName, Entity::Enti
         // create raw entity
         Entity* entity = this->CreateEntityByClassName(this->bluePrints[i].cppClass);
         entity->SetEntityPool(entityPool);
-        
+
         // add properties as described in blueprints.xml
         this->AddProperties(entity, categoryName);
 
@@ -123,17 +123,17 @@ FactoryManager::CreateEntityByCategory(const nString& categoryName, Entity::Enti
 //------------------------------------------------------------------------------
 /**
     Create an entity from a template in the database. The template is
-    defined by category name and the template name. This will create 
+    defined by category name and the template name. This will create
     a complete entity with properties and attributes initialized to the
     values from the template.
 
-    The template database entry is identified by the following SQL 
+    The template database entry is identified by the following SQL
     statement:
 
-    SELECT * 
-    FROM '_Entities' 
-    WHERE ROWTYPE='TEMPLATE' AND 
-    _Category='[categoryName]' AND 
+    SELECT *
+    FROM '_Entities'
+    WHERE ROWTYPE='TEMPLATE' AND
+    _Category='[categoryName]' AND
     Id='[templateName]'
 
     A new GUID will be assigned to the entity.
@@ -180,7 +180,7 @@ FactoryManager::CreateEntityByTemplate(const nString& categoryName, const nStrin
 
             // setup as instance
             newEntity->SetString(Attr::_Type, "INSTANCE");
-            
+
             // set current level
             newEntity->SetString(Attr::_Level, Managers::SetupManager::Instance()->GetCurrentLevel());
 
@@ -199,9 +199,9 @@ FactoryManager::CreateEntityByTemplate(const nString& categoryName, const nStrin
 //------------------------------------------------------------------------------
 /**
     This will 'load' a new entity from the world database (AKA making the
-    entity 'live') and place it in the given entity pool (Live or Sleeping). 
-    This will create a new entity, attach properties as described by 
-    blueprints.xml, and update the entity attributes from the database. 
+    entity 'live') and place it in the given entity pool (Live or Sleeping).
+    This will create a new entity, attach properties as described by
+    blueprints.xml, and update the entity attributes from the database.
     Changes to attributes can later be written back to the
     database by calling the Entity::Save() method.
 
@@ -240,7 +240,7 @@ FactoryManager::CreateEntityByKeyAttr(const Db::Attribute& key, Entity::EntityPo
             // get the category (blueprint) from the query result
             nString categoryName = dbQuery->GetString(Attr::_Category, 0);
             nString guid = dbQuery->GetString(Attr::GUID, 0);
-            
+
             // create entity by category, this will attach properties and
             // initialize attributes to their initial state
             Entity* newEntity = this->CreateEntityByCategory(categoryName, entityPool);
@@ -268,7 +268,7 @@ FactoryManager::CreateEntityByKeyAttr(const Db::Attribute& key, Entity::EntityPo
 Entity*
 FactoryManager::CreateEntityByGuid(const nString& guid, Entity::EntityPool entityPool) const
 {
-    return this->CreateEntityByKeyAttr(Db::Attribute(Attr::GUID, guid));
+    return this->CreateEntityByKeyAttr(Db::Attribute(Attr::GUID, guid), entityPool);
 }
 
 //------------------------------------------------------------------------------
@@ -361,7 +361,7 @@ void
 FactoryManager::AddProperties(Entity* entity, const nString& categoryName) const
 {
     n_assert(entity);
-    
+
     int index = this->FindBluePrint(categoryName);
     if (-1 != index)
     {
