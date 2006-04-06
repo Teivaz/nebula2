@@ -172,7 +172,8 @@
                 <Sequence shader="water" technique="tWaterHDR" firstLightAlpha="Yes" mvpOnly="No"/>
                 <Sequence shader="underwater" technique="tUnderwater" firstLightAlpha="No" mvpOnly="Yes"/>
             </Phase>
-
+        </Pass>
+        <Pass name="SceneOpaque" shader="passes" technique="tPassColor" renderTarget="Scene">
             <Phase name="alpha" shader="phases" techniqe="tPhaseAlpha" sort="BackToFront" lightMode="Off">
                 <Sequence shader="particle" technique="tParticleColorHDR" firstLightAlpha="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
