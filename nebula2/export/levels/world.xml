@@ -9,7 +9,8 @@
         <Environment>
             <EnvObject name="X_Dawn" res="examples/X_Dawn" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
             <EnvObject name="multilayer" res="examples/multilayer" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
-            <EnvObject name="tree" res="examples/tree" pos="10.000 0.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="tree" res="examples/tree" pos="-10.000 0.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="fire" res="examples/fire" pos="10.000 1.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
         </Environment>
         <Lights>
             <Light name="pointlight1" type="Point" color="1.000 1.000 1.000 1.000" pos="0.000 1000.000 1000.000" range="4000.000" castShadows="true" />

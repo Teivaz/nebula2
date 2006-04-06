@@ -1,6 +1,7 @@
 # ---
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
+.setlocalbox 0.000000 0.000000 0.000000 10.000000 10.000000 10.000000
 new ntransformnode fire
 	sel fire
 	.setlocalbox 0.000000 0.000000 0.000000 10.000000 10.000000 10.000000
