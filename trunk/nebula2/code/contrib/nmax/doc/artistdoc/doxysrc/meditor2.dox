@@ -1,0 +1,28 @@
+/**
+    @defgroup NMaxHowtoChangeShaderParams How to change shader parameters in real time
+
+    With Nebula2 3DS Max Toolkit(aka. nmaxtoolbox), a shader parameter 
+    can be adjusted and changed in realtime.
+
+    The following image illustrates that changing diffuse color in 
+    material editor of 3dsmax directly reflects its changes on the Nebula2 
+    viewer in realtime.
+
+    @image html shaderparams.png "changing shader parameters"
+
+    The following steps explain how to use it:
+      - First, export a scene
+      - select 'connect IPC' menu item in 'Nebula2' menu
+      - open material editor
+      - change some values of color pickers or spinners (currently, color 
+        picker value and emissive, specular power value are supoorted - 
+        Diffuse, Emissive, Specular color, Emssive, Specular Power)
+      - the change is immediately shown on the Nebula2 viewer.
+      - all changed values are also saved within max file. 
+      
+    @note
+    changing texture file does not directly reflected on the viewer at the moment.
+
+    Enjoy!
+
+*/
