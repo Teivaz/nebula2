@@ -10,6 +10,7 @@
     - @ref NMaxHowtoStaticScene 
     - @ref NMaxHowtoGlobalOptions 
     - @ref NMaxHowtoUsingMaterialEditor
+    - @ref NMaxHowtoChangeShaderParams
     - @ref NMaxHowtoMultipleUv
     - @ref NMaxWorkingNebulaMaterialWithMaxScript
     - @ref NMaxPerMeshOptions
