@@ -36,6 +36,7 @@ fn getBipedRootNode =
 -------------------------------------------------------------------------------
 --  Return animation state array which is created based on clips in motion flow
 --  
+--  -12-Apr-06  kims  fixed to extract exact start-frame and duraion 
 -------------------------------------------------------------------------------
 fn createAnimStatesFromMotionFlow = 
 (
@@ -105,7 +106,8 @@ fn createAnimStatesFromMotionFlow =
             anim.startFrame = 0
 
         anim.fadeinTime = 0.0
-        anim.duration = ti.sourceStart - prevDestStart + 1 
+        -- not always the first clip start from 0
+        anim.duration = ti.sourceStart - snippetFrom.start - prevDestStart + 1 
         anim.repeat = 1
         anim.clipArray = #()
 		       
@@ -113,7 +115,7 @@ fn createAnimStatesFromMotionFlow =
         append collectedAnimStates anim
 		
         prevDestStart = ti.destStart
-        lengthAccum += ti.sourceStart
+        lengthAccum += anim.duration
     )
     
     return collectedAnimStates
