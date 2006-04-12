@@ -61,6 +61,15 @@
     Now, you can see the created animation states which corresponds to each clip of 
     the motion flow editor in <i>'Nebula2 Animation State'</i> dialog.
 
+    If you create 'Create Multiple Clips' and do 'Nebula2/Animation Editor' menu item, 
+    'Create Clips' should be used when it loads '*.bip' files and '*.bip' should be 
+    added to the browser of clip feature.
+
+    @note
+    With 3DS Max7, you can save and load biped and bone infomations when it be saved 
+    by '*.bip' format. But bone animation does not work from 2nd motion.
+    (it only works on 1st motion) All bipeds works on every motion.
+
     The Nebula 3DSMax Toolkit only refers to the <tt>'Note Track'</tt> when
     it exports skinned animation objects.
     This means that you need to create note track to export animation states.
@@ -76,7 +85,7 @@
     @image html dopetrackview01.png
 
     @note
-    You don't need to use the motion flow editor to create animation states.
+    You don't have to use the motion flow editor to create animation states.
     You can manually create it by creating <tt>Note Tracks</tt>.
 
 
