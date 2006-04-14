@@ -93,7 +93,7 @@ bool
 ViewerApp::Open()
 {
     //DebugBreak();
-    this->SetupFromCmdLineArgs();
+    //this->SetupFromCmdLineArgs();
     if (App::Open())
     {
         // FIXME: turn off clip plane fencing and occlusion query (FOR NOW)
@@ -147,7 +147,7 @@ ViewerApp::ReadProjRegistryKey()
     // read the project directory from the registry
     HKEY hKey;
     LONG err;
-    err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\RadonLabs\\Toolkit", 0, KEY_QUERY_VALUE, &hKey);
+    err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\RadonLabs\\Nebula2", 0, KEY_QUERY_VALUE, &hKey);
     if (ERROR_SUCCESS != err)
     {
         return 0;
