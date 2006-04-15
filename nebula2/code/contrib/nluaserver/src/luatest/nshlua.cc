@@ -20,6 +20,7 @@
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
 #include "network/nhttpserver.h"
+#include "variable/nvariableserver.h"
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(nnetwork);
@@ -38,9 +39,9 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     // get cmd line args
-    bool helpArg                = args.GetBoolArg("-help");
-    const char* startupArg      = args.GetStringArg("-startup", 0);
-    const char* runArg          = args.GetStringArg("-run", 0);
+    bool helpArg            = args.GetBoolArg("-help");
+    nString startupArg      = args.GetStringArg("-startup", 0);
+    nString runArg          = args.GetStringArg("-run", 0);
 
     if (helpArg)
     {
@@ -69,20 +70,21 @@ main(int argc, const char** argv)
         n_printf("Could not create script server of class 'nluaserver'\n");
         return 10;
     }
+    nVariableServer* variableServer = (nVariableServer*) kernelServer.New("nvariableserver", "/sys/servers/variable");
     nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
     n_assert(httpServer);
 
-    if (runArg)
+    if (runArg.IsValid())
     {
         nString result;
-        scriptServer->RunScript(runArg, result);
+        scriptServer->RunScript(runArg.Get(), result);
     }
     else
     {
-        if (startupArg)
+        if (startupArg.IsValid())
         {
             nString result;
-            scriptServer->RunScript(startupArg, result);
+            scriptServer->RunScript(startupArg.Get(), result);
         }
 
         // interactively execute commands
@@ -112,6 +114,7 @@ main(int argc, const char** argv)
             }
         }
     }
+    variableServer->Release();
     httpServer->Release();
     scriptServer->Release();
     return 0;
