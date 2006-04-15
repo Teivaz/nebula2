@@ -20,6 +20,7 @@
 #include "kernel/nscriptserver.h"
 #include "tools/ncmdlineargs.h"
 #include "network/nhttpserver.h"
+#include "variable/nvariableserver.h"
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(nnetwork);
@@ -76,6 +77,7 @@ main(int argc, const char** argv)
         n_printf("Could not create script server of class 'npythonserver'\n");
         return 10;
     }
+    nVariableServer* variableServer = (nVariableServer*) kernelServer.New("nvariableserver", "/sys/servers/variable");
     nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
     n_assert(httpServer);
 
@@ -118,6 +120,7 @@ main(int argc, const char** argv)
             }
         }
     }
+    variableServer->Release();
     httpServer->Release();
     scriptServer->Release();
     return 0;
