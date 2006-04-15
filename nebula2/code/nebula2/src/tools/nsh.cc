@@ -4,17 +4,17 @@
 
     nsh
 
-    The Nebula2 Shell (nsh.exe) can be used to execute Nebula2 scripts or to 
+    The Nebula2 Shell (nsh.exe) can be used to execute Nebula2 scripts or to
     interactively browse a minimal Nebula2 environment.
-    Nebula2 has a pluggable scripting architecture. The default scripting 
-    language is <b>MicroTCL</b>, which is a stripped down TCL dialect, with some 
+    Nebula2 has a pluggable scripting architecture. The default scripting
+    language is <b>MicroTCL</b>, which is a stripped down TCL dialect, with some
     Nebula specific extensions.
 
-    Alternative scripting languages provided by the Open Source community 
+    Alternative scripting languages provided by the Open Source community
     include Lua, Python, Ruby, and others...
 
-    The default Nebula2 shell looks very much like a Tcl shell which allows to 
-    navigate the hierarchy of live Nebula2 C++ objects like a filesystem 
+    The default Nebula2 shell looks very much like a Tcl shell which allows to
+    navigate the hierarchy of live Nebula2 C++ objects like a filesystem
     hierarchy and invoke commands on them.
 
     Use the command <b>exit</b> to quit a running nsh instance.
@@ -39,6 +39,7 @@
 #include "network/nhttpserver.h"
 #include "sql/nsqlserver.h"
 #include "resource/nresourceserver.h"
+#include "variable/nvariableserver.h"
 
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(nnetwork);
@@ -84,6 +85,7 @@ main(int argc, const char** argv)
         n_printf("Could not create script server of class '%s'\n", scriptServerArg.Get());
         return 10;
     }
+    nVariableServer* variableServer = (nVariableServer*) kernelServer.New("nvariableserver", "/sys/servers/variable");
     nHttpServer* httpServer = (nHttpServer*) kernelServer.New("nhttpserver", "/sys/servers/http");
     nResourceServer* resServer = (nResourceServer*) kernelServer.New("nresourceserver", "/sys/servers/resource");
     nSqlServer* sqlServer = (nSqlServer*) kernelServer.New("nsqlite3server", "/sys/servers/sql");
@@ -129,6 +131,7 @@ main(int argc, const char** argv)
     sqlServer->Release();
     httpServer->Release();
     resServer->Release();
+    variableServer->Release();
     scriptServer->Release();
 
     return 0;
