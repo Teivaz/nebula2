@@ -21,6 +21,7 @@ beginworkspace Nebula2
         ndirect3d9
         ndsound
         ntoollib
+        ngfxtool
         nanimtool
         nmeshtool
         nremoteshell

@@ -3,6 +3,8 @@
 #  The Nebula2 toolchain for managing meshes and textures
 #
 #  Modules:
+#      ngfxtool
+#      nanimtool
 #      nmeshtool
 #      nmeshbuilder
 #      nanimbuilder
@@ -13,6 +15,7 @@
 #      nmayacamcontrol
 #  Targets:
 #      ntoollib
+#      ngfxtool
 #      nanimtool
 #      nmeshtool
 #      nnpktool
@@ -21,6 +24,14 @@
 #===============================================================================
 #  toolchain modules
 #===============================================================================
+beginmodule ngfxtool
+    annotate "Required module ngfxtool.exe"
+    setdir tools
+    setfiles {
+        ngfxtool
+    }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nanimtool
     annotate "Required module nanimtool.exe"
     setdir tools
@@ -103,6 +114,18 @@ begintarget ntoollib
         nmeshbuilder nanimbuilder nresourcecompiler
         napplauncher nviewerapp nmayacamcontrol nnvx2loader
         nn3d2loader nnodelist
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget ngfxtool
+    settype exe
+    setmodules { ngfxtool }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ntoollib
+        ngui        
     }
 endtarget
 #-------------------------------------------------------------------------------
