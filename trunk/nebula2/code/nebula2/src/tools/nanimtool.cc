@@ -38,8 +38,8 @@ main(int argc, const char** argv)
             "Command line args:\n"
             "------------------\n"
             "-help                 show this help\n"
-            "-in [filename]        input anim file (.obj, .n3d, .n3d2, .nvx or .nvx2 extension)\n"
-            "-out [filename]       output anim file (.n3d2 or .nvx2 extension)\n");
+            "-in [filename]        input anim file (.nanim2 or .nax2 extension)\n"
+            "-out [filename]       output anim file (.nanim2 or .nax2 extension)\n");
         return 5;
     }
 

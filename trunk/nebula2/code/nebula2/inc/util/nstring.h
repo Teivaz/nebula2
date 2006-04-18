@@ -955,6 +955,7 @@ nString::Strip(const char* charSet)
         *ptr = 0;
     }
     this->SetLength(strlen(str));
+
 }
 
 //------------------------------------------------------------------------------
