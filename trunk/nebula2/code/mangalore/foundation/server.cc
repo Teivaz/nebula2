@@ -59,7 +59,7 @@ Server::Server(const nString& vendor, const nString& app, const nString& logName
     this->kernelServer->AddPackage(ndirect3d9);
     this->kernelServer->AddPackage(ndsound);
     this->kernelServer->AddPackage(ngui);
-    this->kernelServer->AddPackage(ndshow);  
+    this->kernelServer->AddPackage(ndshow);
 
     this->kernelServer->SetLogHandler(&(this->logHandler));
 }
@@ -76,7 +76,7 @@ Server::~Server()
     int numRefLeaks = 0;
     while (curObj = (RefCounted*) refCountedList.RemHead())
     {
-        n_printf("Object at address '%lx' still referenced (refcount = %d), class '%s'\n", 
+        n_printf("Object at address '%lx' still referenced (refcount = %d), class '%s'\n",
             curObj, curObj->GetRefCount(), curObj->GetClassName());
         numRefLeaks++;
     }
@@ -86,9 +86,9 @@ Server::~Server()
         n_message("There were %d objects still referenced, check log for details!", numRefLeaks);
     }
     */
-    
+
     this->kernelServer->SetLogHandler(0);
-    n_delete(this->kernelServer);    
+    n_delete(this->kernelServer);
     this->kernelServer = 0;
 
     n_assert(0 != Server::Singleton);
@@ -176,7 +176,7 @@ Server::Open()
     this->resourcePools[GraphicsPool] = this->kernelServer->New("nroot", "/res/gfx");
     this->resourcePools[GuiPool]      = this->kernelServer->New("nroot", "/res/gui");
 
-    // setup the "proj:" assign    
+    // setup the "proj:" assign
     if (this->GetProjectDir().IsValid())
     {
         fileServer->SetAssign("proj", this->GetProjectDir().Get());
@@ -191,7 +191,14 @@ Server::Open()
 
     // run startup script
     nString result;
-    this->scriptServer->RunScript("home:data/scripts/startup.tcl", result);    
+    if (this->GetProjectDir().IsValid())
+    {
+        this->scriptServer->RunScript("proj:data/scripts/startup.tcl", result);
+    }
+    else
+    {
+        this->scriptServer->RunScript("home:data/scripts/startup.tcl", result);
+    }
 
     // call OnStartup script function
     this->scriptServer->Run("OnStartup", result);
