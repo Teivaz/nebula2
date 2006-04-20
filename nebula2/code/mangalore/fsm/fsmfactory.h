@@ -26,11 +26,11 @@ public:
     virtual ~FSMFactory();
 
     /// Create an Action object
-    virtual Action* CreateAction(const char* type, const char* param);
+    virtual Action* CreateAction(const nString& type, const nString& param);
     /// Create a Condition object
-    virtual Condition* CreateCondition(const char* type);
+    virtual Condition* CreateCondition(const nString& type);
     /// Create a State object
-    virtual State* CreateState(const char* type);
+    virtual State* CreateState(const nString& type);
 };
 
 };

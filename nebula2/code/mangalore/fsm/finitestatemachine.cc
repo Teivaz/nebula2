@@ -34,7 +34,7 @@ FiniteStateMachine::~FiniteStateMachine()
 /**
     Get the name of the current state for debug purposes.
 */
-const char*
+const nString&
 FiniteStateMachine::GetCurrentState()
 {
     n_assert(0 != this->currentState);
@@ -45,9 +45,9 @@ FiniteStateMachine::GetCurrentState()
 /**
 */
 FiniteStateMachine::Transition*
-FiniteStateMachine::ParseTransition(const char* condition, const char* targetAndActions, const nHashMap2<StateTableEntry*>& stateMap)
+FiniteStateMachine::ParseTransition(const nString& condition, const nString& targetAndActions, const nHashMap2<StateTableEntry*>& stateMap)
 {
-    if (!strcmp(targetAndActions, "-/-"))
+    if (targetAndActions == "-/-")
     {
         return 0;
     }
@@ -56,17 +56,17 @@ FiniteStateMachine::ParseTransition(const char* condition, const char* targetAnd
     transition->condition = this->factory->CreateCondition(condition);
 
 	nArray<nString> transitionTokens;
-	int transitionTokenCount = nString(targetAndActions).Tokenize("/", transitionTokens);
+	int transitionTokenCount = targetAndActions.Tokenize("/", transitionTokens);
 
     n_assert(2 == transitionTokenCount);
 
     // set target state
-    if (!strcmp(transitionTokens[0].Get(), "last"))
+    if (transitionTokens[0] == "last")
     {
         transition->nextState = 0;
         transition->backToLastState = true;
     }
-    else if (strcmp(transitionTokens[0].Get(), "-"))
+    else if (transitionTokens[0] != "-")
     {
         if (!stateMap.Contains(transitionTokens[0].Get()))
         {
@@ -82,7 +82,7 @@ FiniteStateMachine::ParseTransition(const char* condition, const char* targetAnd
     }
 
     // set actions
-    if (strcmp(transitionTokens[1].Get(), "-"))
+    if (transitionTokens[1] != "-")
     {
     	nArray<nString> actionTokens;
         int actionTokenCount = transitionTokens[1].Tokenize("; \t\n", actionTokens);
@@ -95,11 +95,11 @@ FiniteStateMachine::ParseTransition(const char* condition, const char* targetAnd
             Action* action = 0;
             if (typeAndArg.Size() >= 2)
             {
-                action = this->factory->CreateAction(typeAndArg[0].Get(), typeAndArg[1].Get());
+                action = this->factory->CreateAction(typeAndArg[0], typeAndArg[1]);
             }
             else
             {
-                action = this->factory->CreateAction(typeAndArg[0].Get(), 0);
+                action = this->factory->CreateAction(typeAndArg[0], 0);
             }
 
             n_assert(0 != action);
@@ -159,7 +159,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
         const nXmlTableCell& idCell = xmlTable->Cell(row, 0);
 
         this->states[stateIndex].create();
-        this->states[stateIndex]->state = this->factory->CreateState(idCell.AsString().Get());
+        this->states[stateIndex]->state = this->factory->CreateState(idCell.AsString());
 
         stateTable.Add(idCell.AsString().Get(), this->states[stateIndex]);
     }
@@ -168,12 +168,12 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
     for (row = 1; row < numRows; row++)
     {
 		int stateIndex = row - 1;
-        
+
 		const nXmlTableCell& updateActionCell = xmlTable->Cell(row, 1);
         const nXmlTableCell& timeOutTimeCell = xmlTable->Cell(row, 2);
         const nXmlTableCell& timeOutTransitionCell = xmlTable->Cell(row, 3);
 
-        if (strcmp(updateActionCell.AsString().Get(), "-"))
+        if (updateActionCell.AsString() != "-")
         {
             n_error("Update Actions are not supported anymore");
         }
@@ -196,7 +196,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
 			const nXmlTableCell& conditionCell = xmlTable->Cell(0, column);
 			const nXmlTableCell& transitionCell = xmlTable->Cell(row, column);
 
-            Transition* transition = this->ParseTransition(conditionCell.AsString().Get(), transitionCell.AsString().Get(), stateTable);
+            Transition* transition = this->ParseTransition(conditionCell.AsString(), transitionCell.AsString(), stateTable);
             if (0 != transition)
             {
                 this->states[stateIndex]->transitions.Append(transition);

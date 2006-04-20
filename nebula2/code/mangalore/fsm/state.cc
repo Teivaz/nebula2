@@ -13,7 +13,7 @@ ImplementRtti(FSM::State, Foundation::RefCounted);
 //------------------------------------------------------------------------------
 /**
 */
-State::State(const char* name) :
+State::State(const nString& name) :
     name(name)
 {
     // empty
@@ -29,7 +29,7 @@ State::~State()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 State::Trigger()
 {
     // empty
@@ -47,7 +47,7 @@ State::OnEnter()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 State::OnLeave()
 {
     // empty
@@ -56,10 +56,10 @@ State::OnLeave()
 //------------------------------------------------------------------------------
 /**
 */
-const char*
+const nString&
 State::GetName() const
 {
-    return this->name.Get();
+    return this->name;
 }
 
 } // namespace FSM

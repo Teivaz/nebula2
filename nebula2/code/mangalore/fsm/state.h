@@ -20,7 +20,7 @@ class State : public Foundation::RefCounted
 
 public:
     /// constructor
-    State(const char* name);
+    State(const nString& name);
     /// destructor
     virtual ~State();
 
@@ -33,7 +33,7 @@ public:
     virtual void OnLeave();
 
     /// Get state name
-    const char* GetName() const;
+    const nString& GetName() const;
 
 protected:
     nString name;
