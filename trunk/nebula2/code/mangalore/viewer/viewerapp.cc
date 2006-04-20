@@ -141,7 +141,7 @@ ViewerApp::Close()
     Toolkit's project path. If the reg keys are not found, the
     routine just returns 0.
 */
-const char*
+nString
 ViewerApp::ReadProjRegistryKey()
 {
     // read the project directory from the registry
@@ -150,17 +150,17 @@ ViewerApp::ReadProjRegistryKey()
     err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\RadonLabs\\Nebula2", 0, KEY_QUERY_VALUE, &hKey);
     if (ERROR_SUCCESS != err)
     {
-        return 0;
+        return nString();
     }
     DWORD keyType;
-    static char projectDir[512];
-    DWORD projectDirSize = sizeof(projectDir);
-    err = RegQueryValueEx(hKey, "project", 0, &keyType, (LPBYTE) &projectDir, &projectDirSize);
+    char projectDir[512];
+    size_t projectDirSize = sizeof(projectDir);
+    err = RegQueryValueEx(hKey, "project", 0, &keyType, (LPBYTE) &projectDir, (LPDWORD)&projectDirSize);
     if (ERROR_SUCCESS != err)
     {
-        return 0;
+        return nString();
     }
-    return projectDir;
+    return nString(projectDir);
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ ViewerApp::SetupFromCmdLineArgs()
     if (0 == projDirArg)
     {
         nString regProjDir = this->ReadProjRegistryKey();
-        if (regProjDir != "")
+        if (regProjDir.IsValid())
         {
             projDirArg = regProjDir;
         }
@@ -312,7 +312,7 @@ bool ViewerApp::CreateViewedEntity()
         nFileServer2* fileServer = nFileServer2::Instance();
         nString filename;
         filename.Append("physics:");
-        filename.Append(this->GetObjectResourceName().Get());
+        filename.Append(this->GetObjectResourceName());
         filename.Append(".xml");
 
         if (fileServer->FileExists(filename))

@@ -6,7 +6,7 @@
 
     A generic Mangalore viewer application, similar to the Nebula2 viewer,
     but which also supports Physics.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "application/app.h"
@@ -47,7 +47,7 @@ private:
     /// setup application state handlers
     virtual void SetupStateHandlers();
 	/// read the project registry key
-    const char* ReadProjRegistryKey();
+    nString ReadProjRegistryKey();
 	/// set resource name of display object
 	void SetObjectResourceName(const nString& p);
     /// get resource name of display object
@@ -200,4 +200,3 @@ ViewerApp::GetForceTempAssigns() const
 //------------------------------------------------------------------------------
 #endif
 
-    
