@@ -3,7 +3,6 @@
 //  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "fsm/fsmfactory.h"
-
 #include "fsm/timeoutcondition.h"
 
 namespace FSM
@@ -30,7 +29,7 @@ FSMFactory::~FSMFactory()
 /**
 */
 Action*
-FSMFactory::CreateAction(const char* type, const char* param)
+FSMFactory::CreateAction(const nString& type, const nString& param)
 {
     n_error("Unknown fsm action type '%s'", type);
     return 0;
@@ -39,10 +38,10 @@ FSMFactory::CreateAction(const char* type, const char* param)
 //------------------------------------------------------------------------------
 /**
 */
-Condition* 
-FSMFactory::CreateCondition(const char* type)
+Condition*
+FSMFactory::CreateCondition(const nString& type)
 {
-    if (!strcmp(type, "TimeOut"))
+    if (type == "TimeOut")
     {
         return n_new(TimeOutCondition);
     }
@@ -54,8 +53,8 @@ FSMFactory::CreateCondition(const char* type)
 //------------------------------------------------------------------------------
 /**
 */
-State* 
-FSMFactory::CreateState(const char* type)
+State*
+FSMFactory::CreateState(const nString& type)
 {
     n_error("Unknown fsm state type '%s'", type);
     return 0;

@@ -26,7 +26,7 @@ public:
     virtual ~FiniteStateMachine();
 
     /// Return the current state name
-    const char* GetCurrentState();
+    const nString& GetCurrentState();
 
     /// Load state machine from XML table
     bool Load(const nString& filename, const nString& tablename);
@@ -53,7 +53,7 @@ private:
         StateTableEntry* nextState;
     };
 
-    Transition* ParseTransition(const char* condition, const char* targetAndActions, const nHashMap2<StateTableEntry*>& stateMap);
+    Transition* ParseTransition(const nString& condition, const nString& targetAndActions, const nHashMap2<StateTableEntry*>& stateMap);
 
     void LeaveState();
     void EnterState(StateTableEntry* newState);
