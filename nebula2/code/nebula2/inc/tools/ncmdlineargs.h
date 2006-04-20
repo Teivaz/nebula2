@@ -24,13 +24,13 @@ public:
     /// initialize (use if default constructor was used
     void Initialize(int argc, const char** argv);
     /// get a float arg
-    float GetFloatArg(const nString& option, float defaultValue) const;
+    float GetFloatArg(const nString& option, float defaultValue = 0.0f) const;
     /// get an integer arg
-    int GetIntArg(const nString& option, int defaultValue) const;
+    int GetIntArg(const nString& option, int defaultValue = 0) const;
     /// get a bool arg
     bool GetBoolArg(const nString& option) const;
     /// get a string arg
-    nString GetStringArg(const nString& option, const nString& defaultValue) const;
+    nString GetStringArg(const nString& option, const nString& defaultValue = 0) const;
     /// return true if argument exists
     bool HasArg(const nString& option) const;
 
