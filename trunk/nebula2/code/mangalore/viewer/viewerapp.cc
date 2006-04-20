@@ -110,7 +110,7 @@ ViewerApp::Open()
         {
             this->RedirectResourceForPreview();
         }
-        if (0 != App::GetCmdLineArgs().GetStringArg("-obj", 0))
+        if (0 != App::GetCmdLineArgs().GetStringArg("-obj"))
         {
             this->SetupCamera();
             this->SetupLightsInScene();
@@ -173,12 +173,12 @@ ViewerApp::SetupFromCmdLineArgs()
 	App::SetupFromCmdLineArgs();
 	const nCmdLineArgs& args = App::GetCmdLineArgs();
 
-	nString objArg = args.GetStringArg("-obj", 0);
+	nString objArg = args.GetStringArg("-obj");
     bool forceTempAssigns = args.GetBoolArg("-forcetemp");
-    nString projDirArg = args.GetStringArg("-projdir", 0);
-    vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
-    vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
-    vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
+    nString projDirArg = args.GetStringArg("-projdir");
+    vector3 eyePos(args.GetFloatArg("-eyeposx"), args.GetFloatArg("-eyeposy"), args.GetFloatArg("-eyeposz", 9.0f));
+    vector3 eyeCoi(args.GetFloatArg("-eyecoix"), args.GetFloatArg("-eyecoiy"), args.GetFloatArg("-eyecoiz"));
+    vector3 eyeUp(args.GetFloatArg("-eyeupx"), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz"));
 
     if (0 == projDirArg)
     {
@@ -226,7 +226,7 @@ ViewerApp::SetupStateHandlers()
     Ptr<Application::GameStateHandler> gameStateHandler = n_new(Application::GameStateHandler);
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
-    if (0 != App::GetCmdLineArgs().GetStringArg("-obj", 0))
+    if (0 != App::GetCmdLineArgs().GetStringArg("-obj"))
     {
         gameStateHandler->SetSetupMode(Application::GameStateHandler::EmptyWorld);
     }
