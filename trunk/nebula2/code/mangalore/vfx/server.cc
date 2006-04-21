@@ -65,7 +65,7 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-    
+
     // unregister the effect handler
     Message::Server::Instance()->UnregisterPort(this->effectHandler);
 
@@ -118,12 +118,12 @@ Server::GetEffectBank() const
 
 //------------------------------------------------------------------------------
 /**
-    Start playing a visual effect. An effect under this name must exist as a 
+    Start playing a visual effect. An effect under this name must exist as a
     template in the currently set effect bank. This will create a new effect object
     which renders itself until the effect has expired. Once expired, the
     effect will remove itself. Make sure to call the Trigger() method
     once per frame for correct garbage collection!
-    
+
     @param  effectName      name of effect to play
     @param  transform       position/orientation at which to place the effect
 */
@@ -222,6 +222,22 @@ Server::EndScene()
     // update statistics
     this->statsNumActiveEffects->SetI(this->activeEffects.Size());
     this->statsNumActiveShakeEffects->SetI(this->activeShakeEffects.Size());
+}
+
+//------------------------------------------------------------------------------
+/**
+    Find active effect by name
+*/
+Effect* Server::FindActiveEffect(const nString& effectName) const {
+    for (int i = 0; i < activeEffects.Size(); i++)
+    {
+        Effect* effect = activeEffects[i];
+        if (effect->GetName() == effectName)
+        {
+            return effect;
+        }
+    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
