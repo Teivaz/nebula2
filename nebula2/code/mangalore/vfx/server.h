@@ -50,19 +50,23 @@ public:
     /// get pointer to effect handler
     EffectHandler* GetEffectHandler();
     /// play a visual effect
-    virtual void PlayEffect(const nString& effectName, const matrix44& transform);
+    void PlayEffect(const nString& effectName, const matrix44& transform);
     /// play a shake effect
-    virtual void PlayShakeEffect(const vector3& pos, float range, float duration, float intensity);
+    void PlayShakeEffect(const vector3& pos, float range, float duration, float intensity);
     /// call before rendering happens
-    virtual void BeginScene();
+    void BeginScene();
     /// call after rendering has happened
-    virtual void EndScene();
+    void EndScene();
+    /// create a particle effect
+    Effect* CreateEffect();
+    /// attach a particle effect
+    void AttachEffect(Effect* effect);
+    /// remove a particle effect
+    void RemoveEffect(Effect* effect);
     /// get number of currently active effects
     int GetNumActiveEffects() const;
     /// get active effect at index
     Effect* GetActiveEffectAt(int index) const;
-    /// find active effect by name
-    Effect* FindActiveEffect(const nString& effectName) const;
     /// compute shake intensity at a given position
     float ComputeShakeIntensityAtPosition(const vector3& pos);
 
