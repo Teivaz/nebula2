@@ -47,6 +47,8 @@ public:
     void SetTime(nTime time);
     /// get the current time
     nTime GetTime() const;
+    /// get pointer to effect handler
+    EffectHandler* GetEffectHandler();
     /// play a visual effect
     virtual void PlayEffect(const nString& effectName, const matrix44& transform);
     /// play a shake effect
@@ -108,6 +110,15 @@ nTime
 Server::GetTime() const
 {
     return this->curTime;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+EffectHandler*
+Server::GetEffectHandler() {
+    return this->effectHandler;
 }
 
 //------------------------------------------------------------------------------
