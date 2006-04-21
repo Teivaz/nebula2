@@ -8,7 +8,7 @@
     are created and can remove themselves after they have played. The system
     works similar to the audio subsystem. VisualFX use simple graphics entities
     to render themselves.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -59,6 +59,8 @@ public:
     int GetNumActiveEffects() const;
     /// get active effect at index
     Effect* GetActiveEffectAt(int index) const;
+    /// find active effect by name
+    Effect* FindActiveEffect(const nString& effectName) const;
     /// compute shake intensity at a given position
     float ComputeShakeIntensityAtPosition(const vector3& pos);
 
@@ -135,4 +137,3 @@ Server::GetActiveEffectAt(int index) const
 
 //------------------------------------------------------------------------------
 #endif
-    
