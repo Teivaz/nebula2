@@ -226,18 +226,40 @@ Server::EndScene()
 
 //------------------------------------------------------------------------------
 /**
-    Find active effect by name
+    Create a new particle effect
 */
-Effect* Server::FindActiveEffect(const nString& effectName) const {
-    for (int i = 0; i < activeEffects.Size(); i++)
-    {
-        Effect* effect = activeEffects[i];
-        if (effect->GetName() == effectName)
-        {
-            return effect;
-        }
-    }
-    return 0;
+Effect*
+Server::CreateEffect()
+{
+	return Effect::Create();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Attach a particle effect to the server. Attached effect entities will
+    have their Update() method called during Trigger().
+*/
+void
+Server::AttachEffect(Effect* effect)
+{
+    n_assert(effect);
+    effect->Activate();
+    this->activeEffects.Append(effect);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Remove a particle effect from the server. Removed effect entities will stop
+    emitting and will no longer be updated during Trigger().
+*/
+void
+Server::RemoveEffect(Effect* effect)
+{
+    n_assert(effect);
+    effect->Deactivate();
+    nArray<Ptr<Effect> >::iterator iter = this->activeEffects.Find(effect);
+    n_assert(iter);
+    this->activeEffects.Erase(iter);
 }
 
 //------------------------------------------------------------------------------
