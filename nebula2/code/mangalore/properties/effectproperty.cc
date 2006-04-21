@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------------
-//  properties/audioproperty.h
+//  properties/effectproperty.h
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
-#include "properties/audioproperty.h"
+#include "properties/effectproperty.h"
 
 namespace Properties
 {
-ImplementRtti(Properties::AudioProperty, Game::Property);
-ImplementFactory(Properties::AudioProperty);
+    ImplementRtti(Properties::EffectProperty, Game::Property);
+    ImplementFactory(Properties::EffectProperty);
 
 
 }; // namespace Properties

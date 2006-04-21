@@ -6,7 +6,7 @@
 beginmodule mangalore::properties
     setdir properties
     settype cpp
-    setfiles { 
+    setfiles {
         abstractgraphicsproperty
         abstractphysicsproperty
         actoranimationproperty
@@ -15,6 +15,7 @@ beginmodule mangalore::properties
         audioproperty
         cameraproperty
         chasecameraproperty
+        effectproperty
         environmentcollideproperty
         environmentgraphicsproperty
         graphicsproperty
@@ -31,7 +32,7 @@ beginmodule mangalore::properties
         videocameraproperty
         videocameraproperty2
     }
-    setheaders { 
+    setheaders {
         abstractgraphicsproperty
         abstractphysicsproperty
         actoranimationproperty
@@ -40,6 +41,7 @@ beginmodule mangalore::properties
         audioproperty
         cameraproperty
         chasecameraproperty
+        effectproperty
         environmentcollideproperty
         environmentgraphicsproperty
         graphicsproperty
