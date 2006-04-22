@@ -1,0 +1,23 @@
+/**
+    @defgroup nBlenderContrib Blender
+    @ingroup NebulaContribAssetToolchainModules
+      
+    <h2>Installation</h2>
+    This module should be checked out to home:code/contrib/nblender.
+    Run update.py and build the nBlender project. An nBlender library
+    (nblender.dll on Windows) will be built in the home:bin/ directory for your
+    system. Copy this library to your Blender application folder.
+
+    <h2>Usage</h2>
+    The nblender module allows Python scripts in Blender to use Nebula. A simple
+    script to set a Nebula assign would look like this:
+
+    @verbatim   
+    import nblender
+
+    fileServer = nblender.lookup("/sys/servers/file2")
+    fileserver.setassign("export", "/some/path")
+    @endverbatim
+
+    (C)2006 James Mastro
+*/
