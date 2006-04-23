@@ -39,8 +39,8 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setterrainname_s",            'SMSN', n_setterrainname);
-    cl->AddCmd("s_getterrainname_v",            'GMSN', n_getterrainname);
+    cl->AddCmd("v_setterrainname_s",            'STRN', n_setterrainname);
+    cl->AddCmd("s_getterrainname_v",            'GTRN', n_getterrainname);
     cl->AddCmd("v_settqtname_s",                'STQN', n_settqtname);
     cl->AddCmd("s_gettqtname_v",                'GTQN', n_gettqtname);
     cl->AddCmd("v_setterrainresourceloader_s",  'SMRL', n_setterrainresourceloader);

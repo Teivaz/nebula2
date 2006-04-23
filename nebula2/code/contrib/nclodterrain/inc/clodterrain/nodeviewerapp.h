@@ -18,7 +18,7 @@
 #include "variable/nvariableserver.h"
 #include "anim2/nanimationserver.h"
 #include "particle/nparticleserver.h"
-#include "shadow/nshadowserver.h"
+#include "shadow2/nshadowserver2.h"
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
@@ -132,7 +132,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<nGuiServer> refGuiServer;
-    nRef<nShadowServer> refShadowServer;
+    nRef<nShadowServer2> refShadowServer;
 
     nRef<nTransformNode> refRootNode;
 

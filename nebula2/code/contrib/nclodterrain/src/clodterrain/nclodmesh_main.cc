@@ -45,10 +45,10 @@ void nCLODMesh::DrawMesh(nGfxServer2 *gfx2) const
     n_assert(meshData.isvalid());
 
     // render the mesh in normal mode (always at stream 0)
-    gfx2->SetMesh(this->meshData.get());
+    gfx2->SetMesh(this->meshData.get(), this->meshData.get());
 
     // set the vertex and index range
-    const nMeshGroup& curGroup = this->meshData->GetGroup(0);
+    const nMeshGroup& curGroup = this->meshData->Group(0);
     gfx2->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfx2->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
     gfx2->DrawIndexedNS(nGfxServer2::TriangleStrip);
@@ -192,7 +192,7 @@ bool nCLODMesh::LoadResource()
     meshData->UnlockIndices();
 
     // setup the group info
-    nMeshGroup &meshgroup = meshData->GetGroup(0);
+    nMeshGroup &meshgroup = meshData->Group(0);
     meshgroup.SetFirstVertex(0);
     meshgroup.SetNumVertices(vertexcount);
     meshgroup.SetFirstIndex(0);
@@ -272,7 +272,7 @@ bool nCLODMesh::LoadResource()
         realfacecount
         );
 
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -299,6 +299,5 @@ void nCLODMesh::UnloadResource()
 
 //  n_printf("unloading clod chunk %s\n", this->GetName());
 
-
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
