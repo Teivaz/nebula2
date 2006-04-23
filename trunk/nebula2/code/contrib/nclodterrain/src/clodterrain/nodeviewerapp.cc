@@ -103,7 +103,7 @@ nODEViewerApp::Open()
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
-    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
+    this->refShadowServer   = (nShadowServer2*)   kernelServer->New("nshadowserver2", "/sys/servers/shadow");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -127,21 +127,32 @@ nODEViewerApp::Open()
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("nodeviewer");
 
+    // initialize graphics
+    this->refGfxServer->SetDisplayMode(this->displayMode);
 
     // run startup script
     if (this->GetStartupScript())
     {
         nString result;
-        this->refScriptServer->RunScript(this->GetStartupScript(), result);
+        bool r;
+        r = this->refScriptServer->RunScript(this->GetStartupScript(), result);
+        if (false == r)
+        {
+            n_error("Executing startup script failed: %s",
+                !result.IsEmpty() ? result.Get() : "Unknown error");
+        }
     }
 
-    // initialize graphics
-    this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->camera);
+
+    this->refSceneServer->SetOcclusionQuery(false);
+    this->refSceneServer->SetObeyLightLinks(false);
+
     this->refGfxServer->OpenDisplay();
 
     nString renderpathpath(kernelServer->GetFileServer()->ManglePath("nclodshaders:renderpath.xml"));
     this->refSceneServer->SetRenderPathFilename(renderpathpath);
+
     this->refSceneServer->Open();
 
     // define the input mapping
@@ -300,7 +311,7 @@ void nODEViewerApp::Run()
 
             this->refSceneServer->EndScene();
             this->refSceneServer->RenderScene();             // renders the 3d scene
-            this->refGuiServer->Render();                    // do additional rendering before presenting the frame
+            //this->refGuiServer->Render();                    // do additional rendering before presenting the frame
             this->refConServer->Render();
 
             this->refSceneServer->PresentScene();            // present the frame

@@ -1090,7 +1090,7 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
     }
 
     // remove the mesh from the gfx thingy
-    gfx->SetMesh(0);
+    gfx->SetMesh(0, 0);
     
 //  RenderDebug(sceneServer, renderContext);
 

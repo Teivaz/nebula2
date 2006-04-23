@@ -25,7 +25,12 @@ nCLODTile::nCLODTile() :
 */
 nCLODTile::~nCLODTile()
 {
-    n_assert(!this->IsValid());
+    //n_assert(!this->IsValid());
+    if (this->IsLoaded())
+    {
+        this->Unload();
+    }
+
     for (texArray::iterator curtex = chunkTextures.Begin();
         curtex != chunkTextures.End();
         curtex++)
@@ -72,7 +77,7 @@ bool nCLODTile::CanLoadAsync() const
 bool nCLODTile::Load()
 {
 //  n_assert(!this->tileData.isvalid());
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());//n_assert(!this->IsValid());
 
     // create texture if we haven't already
     if (!chunkTextures[0].isvalid())
@@ -168,7 +173,7 @@ bool nCLODTile::LoadResource()
     }
     delete [] filedata;
 
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -178,7 +183,9 @@ bool nCLODTile::LoadResource()
 */
 void nCLODTile::UnloadResource()
 {
-    n_assert(this->IsValid());
+    //n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
+
     n_assert(chunkTextures[0].isvalid());
 
     for (unsigned int iindex=0; iindex < this->texturecount; iindex++)
@@ -187,5 +194,5 @@ void nCLODTile::UnloadResource()
             chunkTextures[iindex]->Unload();
     }
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }

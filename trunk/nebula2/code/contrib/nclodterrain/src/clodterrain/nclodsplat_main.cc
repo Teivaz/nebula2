@@ -38,7 +38,7 @@ void nCLODSplat::DrawSplat(nGfxServer2 *gfx2, int splatindex) const
     n_assert(meshData.isvalid());
 
     // render the mesh in normal mode (always at stream 0)
-    gfx2->SetMesh(this->meshData.get());
+    gfx2->SetMesh(this->meshData.get(), this->meshData.get());
 
     // map from splatindex to a specific group
 /*    int mappedsplatindex = -1;
@@ -55,7 +55,7 @@ void nCLODSplat::DrawSplat(nGfxServer2 *gfx2, int splatindex) const
     n_assert(mappedsplatindex >= 0);
 
     // set the vertex and index range
-    const nMeshGroup& curGroup = this->meshData->GetGroup(mappedsplatindex);
+    const nMeshGroup& curGroup = this->meshData->Group(mappedsplatindex);
     gfx2->SetVertexRange(curGroup.GetFirstVertex(), curGroup.GetNumVertices());
     gfx2->SetIndexRange(curGroup.GetFirstIndex(), curGroup.GetNumIndices());
     // strip or triangle list?
@@ -227,7 +227,7 @@ bool nCLODSplat::LoadResource()
     meshData->UnlockIndices();
 
     // setup the base group info
-    nMeshGroup &meshgroup = meshData->GetGroup(0);
+    nMeshGroup &meshgroup = meshData->Group(0);
     meshgroup.SetFirstVertex(0);
     meshgroup.SetNumVertices(vertexcount);
     meshgroup.SetFirstIndex(0);
@@ -237,7 +237,7 @@ bool nCLODSplat::LoadResource()
     // setup the splat group info
     for (six=0; six < splatcount; six++)
     {
-        nMeshGroup &splatgroup = meshData->GetGroup(six+1);
+        nMeshGroup &splatgroup = meshData->Group(six+1);
         splatgroup.SetFirstVertex(0);
         splatgroup.SetNumVertices(vertexcount);
         splatgroup.SetFirstIndex(splatindexstart[six]);
@@ -315,7 +315,7 @@ bool nCLODSplat::LoadResource()
 #endif
 
 //    n_printf("loaded clod chunk %s\n", this->GetName());
-    this->SetValid(true);
+    this->SetState(Valid);
     return true;
 }
 
@@ -345,5 +345,5 @@ void nCLODSplat::UnloadResource()
 
 //  n_printf("unloading clod chunk %s\n", this->GetName());
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
 }
