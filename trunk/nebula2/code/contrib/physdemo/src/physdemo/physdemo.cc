@@ -62,10 +62,10 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* inputArg  = args.GetStringArg("-input", "proj:bin/stdinput.tcl");
+    nString inputArg      = args.GetStringArg("-input", "proj:bin/stdinput.tcl");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
-    bool helpArg           = args.GetBoolArg("-help");
+    bool helpArg          = args.GetBoolArg("-help");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
