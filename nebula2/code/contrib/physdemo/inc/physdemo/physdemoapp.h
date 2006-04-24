@@ -69,7 +69,7 @@ public:
     /// get camera parameters
     const nCamera2& GetCamera() const;
     /// set the input binding script (required)
-    void SetInputScript(const char* name);
+    void SetInputScript(const nString& name);
     /// get the input binding script
     const char* GetInputScript() const;
     /// open the viewer
@@ -275,7 +275,7 @@ PhysDemoApp::GetCamera() const
 */
 inline
 void
-PhysDemoApp::SetInputScript(const char* script)
+PhysDemoApp::SetInputScript(const nString& script)
 {
     this->inputScript = script;
 }
