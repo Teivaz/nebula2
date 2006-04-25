@@ -260,7 +260,7 @@ class doxygen:
 
             keepGoing = True
             progressVal = 0
-            self.buildSys.CreateProgressDialog('Extracing Script Docs From Source', 
+            self.buildSys.CreateProgressDialog('Extracting Script Docs From Source', 
                                                ' ' * 130, 
                                                len(self.srcDirs))
             for srcDir in self.srcDirs:
