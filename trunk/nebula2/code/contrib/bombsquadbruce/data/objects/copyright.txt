@@ -1,5 +1,0 @@
-Except as noted, all graphics files (.dds, .n3d2, .psys, .bmp, .nanim) in this (objects) directory and its subdirectories are (c) 2004 Gryphon Arts (Christian Kleinsteinberg).
-You may use them in conjunction with noncommercial use of the Bombsquad Bruce game, as long as this notice is preserved, but that's it: 
-you may not sell Bombsquad Bruce (with these graphics), you may not incorporate these graphics into your own projects, display them on your web page, etc.
-
-You can contact Christian at http://www.gryphon-arts.com
