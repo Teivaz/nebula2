@@ -155,7 +155,7 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
     // path. Otherwise we will use `execvp' to resolve executable name
     // using `PATH' enviroment variable.
     nString execCmd;
-    if (this->exec.FindChar('/', 0) != -1 && this->exec.Get()[0] != '/')
+    if (this->exec.FindCharIndex('/', 0) != -1 && this->exec.Get()[0] != '/')
     {
         // NOTE: This is `glibc' exstension to `POSIX.1'.
         char *cwd = getcwd(NULL, 0);

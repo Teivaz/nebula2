@@ -176,7 +176,7 @@ nXmlTable::Cell(int row, const nString& colName) const
     }
     else
     {
-        n_error("nXmlTable::Cell: invalid column title '%s'!", colName);
+        n_error("nXmlTable::Cell: invalid column title '%s'!", colName.Get());
         return this->Cell(0, 0);
     }
 }

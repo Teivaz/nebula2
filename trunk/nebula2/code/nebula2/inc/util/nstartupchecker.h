@@ -12,6 +12,7 @@
     
     (C) 2005 Radon Labs GmbH
 */
+#if defined(__WIN32__) || defined(DOXYGEN)
 #include "kernel/ntypes.h"
 #include "util/nstring.h"
 #include <windows.h>
@@ -36,5 +37,5 @@ private:
 };
 //------------------------------------------------------------------------------
 #endif
-    
-    
+#endif
+

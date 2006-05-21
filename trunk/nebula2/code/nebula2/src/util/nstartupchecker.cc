@@ -2,6 +2,7 @@
 //  nstartupchecker.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
+#if defined(__WIN32__) || defined(DOXYGEN)
 #include "util/nstartupchecker.h"
 #include <d3d9.h>
 #include <mmsystem.h>
@@ -148,6 +149,4 @@ nStartupChecker::CheckDirectSound(const nString& errorTitle, const nString& erro
     }
 }
 
-
-
-
+#endif

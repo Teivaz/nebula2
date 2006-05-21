@@ -93,6 +93,7 @@
 //------------------------------------------------------------------------------
 class nFileServer2;
 class nFile;
+class nResourceServer;
 class nResource : public nRoot
 {
 public:

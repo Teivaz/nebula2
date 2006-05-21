@@ -126,6 +126,7 @@ nCharacter3Node::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rende
 {
     return nSceneNode::RenderGeometry(sceneServer, renderContext);
 };
+*/
 
 //------------------------------------------------------------------------------
 /**
