@@ -402,8 +402,7 @@ nGuiSceneControlWindow::OnHide()
         this->refCharacter3Variations->Release();
     }
 
-    int countChn = 0;
-    for (countChn; countChn < this->refWeightChnListSlider.Size(); countChn++)
+    for (int countChn = 0; countChn < this->refWeightChnListSlider.Size(); countChn++)
     {
         if (this->refWeightChnListSlider.At(countChn))
         {

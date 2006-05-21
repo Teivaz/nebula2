@@ -102,7 +102,7 @@ nNpkFileServer::ParseDirectory(const nString& dirName, const nString& extension)
             nDirectory::EntryType entryType = dir->GetEntryType();
             if ((entryType == nDirectory::FILE) && entryName.CheckExtension(extension.Get()))
             {
-                n_printf("*** Reading npk file '%s'\n", entryName);
+                n_printf("*** Reading npk file '%s'\n", entryName.Get());
                 if (this->AddNpkFile(absPath, entryName))
                 {
                     numNpks++;

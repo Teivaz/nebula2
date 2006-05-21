@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguihardpointsbrowserwindow.h"
 #include "kernel/ntimeserver.h"
-#include "tools/nNodeList.h"
+#include "tools/nnodelist.h"
 
 nNebulaClass(nGuiHardpointsBrowserWindow, "nguiclientwindow");
 

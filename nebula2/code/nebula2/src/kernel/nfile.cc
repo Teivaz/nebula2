@@ -150,7 +150,7 @@ nFile::Open(const nString& fileName, const nString& accessMode)
         return false;
     }
 #else
-    this->fp = fopen(mangledPath.Get(), accessMode);
+    this->fp = fopen(mangledPath.Get(), accessMode.Get());
     if (!this->fp)
     {
         return false;

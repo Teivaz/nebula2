@@ -43,7 +43,7 @@ nOggTheoraPlayer::buffer_data(nFile *in,ogg_sync_state *oy)
     helper: push a page into the steam for packetization 
 */
 int 
-nOggTheoraPlayer::queue_page(ogg_page *page)
+nOggTheoraPlayer::queue_page(ogg_page * /*page*/)
 {
     if(theora_p)ogg_stream_pagein(&to,&og);
     return 0;

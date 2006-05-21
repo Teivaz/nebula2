@@ -813,7 +813,7 @@ nStream::GetAttrs() const
     {
         attrs.Append(attr->Name());
     } 
-    while (attr = attr->Next());
+    while ((attr = attr->Next()));
     return attrs;
 }
 

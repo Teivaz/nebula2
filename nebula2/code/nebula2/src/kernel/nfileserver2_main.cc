@@ -411,21 +411,15 @@ nFileServer2::InitBinAssign()
 
     #elif defined(__LINUX__)
 
-        char buf[N_MAXPATH];
-        const char *home_dir = this->GetAssign("home");
-        n_assert(home_dir);
-        n_strncpy2(buf,home_dir,sizeof(buf));
-        strcat(buf,"bin/linux/");
-        this->SetAssign("bin",buf);
+        nString home_dir = this->GetAssign("home");
+        home_dir += "bin/linux/";
+        this->SetAssign("bin", home_dir);
 
     #elif defined(__MACOSX__)
 
-        char buf[N_MAXPATH];
-        const char *home_dir = this->GetAssign("home");
-        n_assert(home_dir);
-        n_strncpy2(buf,home_dir,sizeof(buf));
-        strcat(buf, "bin/macosx/");
-        this->SetAssign("bin",buf);
+        nString home_dir = this->GetAssign("home");
+        home_dir += "bin/macosx/";
+        this->SetAssign("bin", home_dir);
 
     #else
     #error nFileServer::initBinAssign() not implemented!
@@ -655,14 +649,14 @@ nFileServer2::CopyFile(const nString& from, const nString& to)
         nFile* fromFile = this->NewFileObject();
         if (!fromFile->Open(from, "rb"))
         {
-            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from);
+            n_printf("nFileServer2::Copy(): could not open source file '%s'\n", from.Get());
             fromFile->Release();
             return false;
         }
         nFile* toFile = this->NewFileObject();
         if (!toFile->Open(to, "wb"))
         {
-            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to);
+            n_printf("nFileServer2::Copy(): could not open dest file '%s'\n", to.Get());
             fromFile->Close();
             fromFile->Release();
             toFile->Release();

@@ -16,8 +16,8 @@
 #include "kernel/ndynautoref.h"
 #include "scene/nshapenode.h"
 #include "scene/nlightnode.h"
-#include "scene/nSkyState.h"
-#include "gfx2/nd3d9texture.h"
+#include "scene/nskystate.h"
+#include "gfx2/ntexture2.h"
 #include "variable/nvariable.h"
 
 //------------------------------------------------------------------------------
