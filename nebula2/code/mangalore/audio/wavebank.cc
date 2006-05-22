@@ -72,7 +72,7 @@ WaveBank::Open()
 {
     if (!this->xmlSpreadSheet.Open())
     {
-		n_error("Audio::WaveBank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename());
+		n_error("Audio::WaveBank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename().Get());
         return false;
     }
 

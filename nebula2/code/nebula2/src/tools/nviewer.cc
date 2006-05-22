@@ -67,12 +67,16 @@
 #endif
 
 nNebulaUsePackage(nnebula);
+#ifdef __WIN32__
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndshow);
+#endif
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
+#ifdef __WIN32__
 nNebulaUsePackage(ndsound);
+#endif
 
 //------------------------------------------------------------------------------
 /*
@@ -191,12 +195,16 @@ main(int argc, const char** argv)
         kernelServer.SetLogHandler(&logHandler);
     #endif
     kernelServer.AddPackage(nnebula);
+    #ifdef __WIN32__
     kernelServer.AddPackage(ndinput8);
     kernelServer.AddPackage(ndirect3d9);
     kernelServer.AddPackage(ndshow);
+    #endif
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nnetwork);
+    #ifdef __WIN32__
     kernelServer.AddPackage(ndsound);
+    #endif
 
     // initialize a display mode object
     nString title;
@@ -259,7 +267,7 @@ main(int argc, const char** argv)
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg.Get());
         if (nGfxServer2::InvalidFeatureSet == featureSet)
         {
-            n_error("Invalid feature set string specified: %s", featureSetArg);
+            n_error("Invalid feature set string specified: %s", featureSetArg.Get());
         }
         viewerApp.SetFeatureSetOverride(featureSet);
     }

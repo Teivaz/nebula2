@@ -134,19 +134,20 @@ class makefile:
     #--------------------------------------------------------------------------
     # Writes each module section
     def writeModule(self, module, makeFile):
-        more_syms = "$(SYM_OPT)N_INIT=n_init_%s $(SYM_OPT)N_NEW=n_new_%s $(SYM_OPT)N_INITCMDS=n_initcmds_%s" % (module.name, module.name, module.name)
+        safeModName = module.GetFullNameNoColons()
+        more_syms = "$(SYM_OPT)N_INIT=n_init_%s $(SYM_OPT)N_NEW=n_new_%s $(SYM_OPT)N_INITCMDS=n_initcmds_%s" % (safeModName, safeModName, safeModName)
         
         if module.modType == "c":
-            makeFile.write("DO_COMPILE_%s = $(CC) $(NOLINK_OPT) $(CFLAGS) %s $< $(OBJ_OPT) $@\n" % (module.name, more_syms))
+            makeFile.write("DO_COMPILE_%s = $(CC) $(NOLINK_OPT) $(CFLAGS) %s $< $(OBJ_OPT) $@\n" % (safeModName, more_syms))
         elif module.modType == "cpp":
-            makeFile.write("DO_COMPILE_%s = $(CXX) $(NOLINK_OPT) $(CXXFLAGS) %s $< $(OBJ_OPT) $@\n" % (module.name, more_syms))
+            makeFile.write("DO_COMPILE_%s = $(CXX) $(NOLINK_OPT) $(CXXFLAGS) %s $< $(OBJ_OPT) $@\n" % (safeModName, more_syms))
         else:
-            makeFile.write("DO_COMPILE_%s = @echo ""Warning: Dummy Target for %s!""\n" % module.name)
+            makeFile.write("DO_COMPILE_%s = @echo ""Warning: Dummy Target for %s!""\n" % safeModName)
             
         for fileName in module.resolvedFiles:
             base_name = string.join(string.split(os.path.split(fileName)[-1], '.')[0:-1])
             relPath = self.buildSys.FindRelPath(self.workspacePath, fileName)
-            makeFile.write("$(N_INTERDIR)%s$(OBJ): %s\n\t$(DO_COMPILE_%s)\n" % (base_name, relPath, module.name))
+            makeFile.write("$(N_INTERDIR)%s$(OBJ): %s\n\t$(DO_COMPILE_%s)\n" % (base_name, relPath, safeModName))
         makeFile.write("\n")
     
     #--------------------------------------------------------------------------

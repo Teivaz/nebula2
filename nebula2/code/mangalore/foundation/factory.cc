@@ -5,8 +5,6 @@
 #include "foundation/factory.h"
 #include "foundation/refcounted.h"
 
-#include <windows.h>
-
 namespace Foundation
 {
 Factory* Factory::instance = 0;

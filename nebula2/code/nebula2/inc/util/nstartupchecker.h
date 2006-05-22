@@ -12,10 +12,11 @@
     
     (C) 2005 Radon Labs GmbH
 */
-#if defined(__WIN32__) || defined(DOXYGEN)
 #include "kernel/ntypes.h"
 #include "util/nstring.h"
+#if defined(__WIN32__)
 #include <windows.h>
+#endif
 
 //------------------------------------------------------------------------------
 class nStartupChecker
@@ -27,15 +28,18 @@ public:
     ~nStartupChecker();
     /// check if the app is alreading running
     bool CheckAlreadyRunning(const nString& vendorName, const nString& appName, const nString& appWindowTitle, const nString& errorTitle, const nString& errorMsg);
+#if defined(__WIN32__) || defined(DOXYGEN)
     /// check for correct Direct3D version
     bool CheckDirect3D(const nString& errorTitle, const nString& errorMsg);
     /// check for working sound
     bool CheckDirectSound(const nString& errorTitle, const nString& errorMsg);
+#endif
 
 private:
+#if defined(__WIN32__) || defined(DOXYGEN)
     HANDLE globalMutex;         // required for the check whether the app is alreading running
+#endif
 };
 //------------------------------------------------------------------------------
-#endif
 #endif
 

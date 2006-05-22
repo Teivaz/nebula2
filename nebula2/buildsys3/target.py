@@ -196,6 +196,15 @@ class Target:
             for libName in target.libsWin32ReleaseAll:
                 if libName not in self.libsWin32ReleaseAll:
                     self.libsWin32ReleaseAll.append(libName)
+            for libName in target.libsLinux:
+                if libName not in self.libsLinux:
+                    self.libsLinux.append(libName)
+            for libName in target.libsMacOSX:
+                if libName not in self.libsMacOSX:
+                    self.libsMacOSX.append(libName)
+            for libName in target.frameworksMacOSX:
+                if libName not in self.frameworksMacOSX:
+                    self.frameworksMacOSX.append(libName)
 
     #--------------------------------------------------------------------------
     # Sort modules

@@ -36,10 +36,10 @@ public:
     /// clip status 
     enum ClipStatus
     {
-        InvalidClipStatus,
-        Inside,
-        Outside,
-        Clipped,
+        InvalidClipStatus,  ///< visibility status invalid
+        Inside,             ///< cell is inside clip volume
+        Outside,            ///< cell is outside clip volume
+        Clipped,            ///< cell is partly in clip volume
     };
 
     /// entity types

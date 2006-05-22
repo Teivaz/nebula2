@@ -29,42 +29,42 @@
 	#define	SetIceError(a,b)	false
 	#define	EC_OUTOFMEMORY	"Out of memory"
 
-	#include "Ice/IcePreprocessor.h"
+	#include "ice/IcePreprocessor.h"
 
 	#undef ICECORE_API
 	#define ICECORE_API	OPCODE_API
 
-	#include "Ice/IceTypes.h"
-	#include "Ice/IceFPU.h"
-	#include "Ice/IceMemoryMacros.h"
+	#include "ice/IceTypes.h"
+	#include "ice/IceFPU.h"
+	#include "ice/IceMemoryMacros.h"
 
 	namespace IceCore
 	{
-		#include "Ice/IceUtils.h"
-		#include "Ice/IceContainer.h"
-		#include "Ice/IcePairs.h"
-		#include "Ice/IceRevisitedRadix.h"
-		#include "Ice/IceRandom.h"
+		#include "ice/IceUtils.h"
+		#include "ice/IceContainer.h"
+		#include "ice/IcePairs.h"
+		#include "ice/IceRevisitedRadix.h"
+		#include "ice/IceRandom.h"
 	}
 	using namespace IceCore;
 
 	#define ICEMATHS_API	OPCODE_API
 	namespace IceMaths
 	{
-		#include "Ice/IceAxes.h"
-		#include "Ice/IcePoint.h"
-		#include "Ice/IceHPoint.h"
-		#include "Ice/IceMatrix3x3.h"
-		#include "Ice/IceMatrix4x4.h"
-		#include "Ice/IcePlane.h"
-		#include "Ice/IceRay.h"
-		#include "Ice/IceIndexedTriangle.h"
-		#include "Ice/IceTriangle.h"
-		#include "Ice/IceTriList.h"
-		#include "Ice/IceAABB.h"
-		#include "Ice/IceOBB.h"
-		#include "Ice/IceBoundingSphere.h"
-		#include "Ice/IceSegment.h"
-		#include "Ice/IceLSS.h"
+		#include "ice/IceAxes.h"
+		#include "ice/IcePoint.h"
+		#include "ice/IceHPoint.h"
+		#include "ice/IceMatrix3x3.h"
+		#include "ice/IceMatrix4x4.h"
+		#include "ice/IcePlane.h"
+		#include "ice/IceRay.h"
+		#include "ice/IceIndexedTriangle.h"
+		#include "ice/IceTriangle.h"
+		#include "ice/IceTriList.h"
+		#include "ice/IceAABB.h"
+		#include "ice/IceOBB.h"
+		#include "ice/IceBoundingSphere.h"
+		#include "ice/IceSegment.h"
+		#include "ice/IceLSS.h"
 	}
 	using namespace IceMaths;

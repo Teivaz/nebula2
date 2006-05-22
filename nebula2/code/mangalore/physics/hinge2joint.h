@@ -112,7 +112,7 @@ inline
 void
 Hinge2Joint::SetSuspensionCFM(float f)
 {
-    this->suspCfm;
+    this->suspCfm = f;
 }
 
 //------------------------------------------------------------------------------

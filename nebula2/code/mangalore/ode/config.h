@@ -42,10 +42,12 @@ typedef unsigned int intP;
 #define dTRIMESH_ENABLED 1
 
 /* available functions */
+#ifdef __WIN32__
 #define copysignf _copysign
 #define copysign _copysign
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
+#endif
 
 #ifdef __cplusplus
 }

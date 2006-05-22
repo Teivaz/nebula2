@@ -14,7 +14,7 @@
 #include "physics/filterset.h"
 #include "ode/ode.h"
 #define BAN_OPCODE_AUTOLINK
-#include "opcode/opcode.h"
+#include "opcode/Opcode.h"
 
 //------------------------------------------------------------------------------
 namespace Physics

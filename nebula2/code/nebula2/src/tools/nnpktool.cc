@@ -218,7 +218,7 @@ convertToLower(const char* path, char* buf, int bufSize)
     const char* from = path;
     char* to = buf;     
     char c;
-    while (c = *from++)
+    while ((c = *from++))
     {
         *to++ = tolower(c);
     }
@@ -305,7 +305,7 @@ generateToc(nFileServer2* fs,
                     }
                     else
                     {
-                        n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName);
+                        n_printf("*** ERROR: Could not open file '%s', skipping...\n", fullEntryName.Get());
                     }
                 }
                 else if (nDirectory::DIRECTORY == entryType)
@@ -334,7 +334,7 @@ generateToc(nFileServer2* fs,
                     }
                     else
                     {
-                        n_printf("*** Skip entry '%s' because it's cvs!\n", fullEntryName);
+                        n_printf("*** Skip entry '%s' because it's cvs!\n", fullEntryName.Get());
                     }
                 }
             }
@@ -495,7 +495,7 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
             {
                 srcFile->Release();
                 n_delete(buffer);
-                n_printf("Error reading file '%s'!\n", fileName);
+                n_printf("Error reading file '%s'!\n", fileName.Get());
                 return false;
             }
 
@@ -513,7 +513,7 @@ writeEntryData(nFileServer2* fs, nFile* file, nNpkTocEntry* tocEntry, int dataBl
         else
         {
             srcFile->Release();
-            n_printf("Failed to open source file '%s'!\n", fileName);
+            n_printf("Failed to open source file '%s'!\n", fileName.Get());
             return false;
         }
         srcFile->Release();
@@ -640,7 +640,6 @@ printTocEntry(nNpkTocEntry* entry, int& recursionDepth)
     const char* name = entry->GetName();
     nNpkTocEntry::Type type = entry->GetType();
     int length = entry->GetFileLength();
-    int offset = entry->GetFileOffset();
 
     // print recursion depth spaces...
     int i = 0;
@@ -661,7 +660,7 @@ printTocEntry(nNpkTocEntry* entry, int& recursionDepth)
         if (childEntry) do
         {
             printTocEntry(childEntry, recursionDepth);
-        } while (childEntry = entry->GetNextEntry(childEntry));
+        } while ((childEntry = entry->GetNextEntry(childEntry)));
 
         recursionDepth--;
     }
@@ -873,7 +872,7 @@ AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
             {
                 numDiff++;
                 
-                if (firstDiff = -1)
+                if (firstDiff == -1)
                 {
                     firstDiff = i;
                 }
@@ -1018,7 +1017,7 @@ listIt(nFileServer2* fs, const char* listName)
         // print out file contents
         int recursionDepth = 0;
         n_printf("TYPE\tNAME\tLENGTH\n");
-        printTocEntry(wrapper.GetTocObject().GetRootEntry(), recursionDepth);
+        printTocEntry(toc.GetRootEntry(), recursionDepth);
         
         wrapper.Close();
         return true;
@@ -1064,8 +1063,8 @@ GenerateDifferenceList(nFileServer2* fs,
 
             // build two tables
             nList oldList, newList;
-            FillList(oldWrapper.GetTocObject().GetRootEntry(), oldList);
-            FillList(newWrapper.GetTocObject().GetRootEntry(), newList);
+            FillList(oldToc.GetRootEntry(), oldList);
+            FillList(newToc.GetRootEntry(), newList);
             
             // print out file contents
             BuildDifferenceList(oldList, newList, diffList);
@@ -1178,9 +1177,9 @@ unPackFile(nFileServer2* fs,
         char absDir[N_MAXPATH];
         nMakeAbsolute(dName, absDir, sizeof(absDir));
 #ifdef __WIN32__
-        int err = _mkdir(dName);
+        _mkdir(dName);
 #else
-        int err = mkdir(dName, S_IRWXU|S_IRWXG);
+        mkdir(dName, S_IRWXU|S_IRWXG);
 #endif
         if (dir->Open(absDir))
         {

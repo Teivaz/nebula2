@@ -370,7 +370,7 @@ inline
 void
 JointAxis::SetStopCFM(float f)
 {
-    this->stopCfm;
+    this->stopCfm = f;
 }
 
 //------------------------------------------------------------------------------

@@ -120,6 +120,7 @@ App::DoStartupCheck()
         return false;
     }
 
+#ifdef __WIN32__
     // check if D3D can be initialized
     // FIXME: LOCALIZE!
     nString errorMsgD3D("Cannot initialize Direct3D!");
@@ -136,6 +137,7 @@ App::DoStartupCheck()
         // could not initialize DirectSound
         return false;
     }
+#endif
 
     // all ok
     return true;

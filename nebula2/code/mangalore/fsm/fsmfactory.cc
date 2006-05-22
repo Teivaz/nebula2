@@ -31,7 +31,7 @@ FSMFactory::~FSMFactory()
 Action*
 FSMFactory::CreateAction(const nString& type, const nString& param)
 {
-    n_error("Unknown fsm action type '%s'", type);
+    n_error("Unknown fsm action type '%s'", type.Get());
     return 0;
 }
 
@@ -46,7 +46,7 @@ FSMFactory::CreateCondition(const nString& type)
         return n_new(TimeOutCondition);
     }
 
-    n_error("Unknown fsm condition type '%s'", type);
+    n_error("Unknown fsm condition type '%s'", type.Get());
     return 0;
 }
 
@@ -56,7 +56,7 @@ FSMFactory::CreateCondition(const nString& type)
 State*
 FSMFactory::CreateState(const nString& type)
 {
-    n_error("Unknown fsm state type '%s'", type);
+    n_error("Unknown fsm state type '%s'", type.Get());
     return 0;
 }
 
