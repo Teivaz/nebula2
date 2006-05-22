@@ -13,7 +13,11 @@
 #include "kernel/ntypes.h"
 #include "kernel/nref.h"
 #include "util/nlist.h"
+#ifdef __WIN32__
 #include "kernel/nwin32loghandler.h"
+#else
+#include "kernel/ndefaultloghandler.h"
+#endif
 
 class nKernelServer;
 class nTimeServer;
@@ -86,7 +90,11 @@ private:
     nString vendorName;
 
     nKernelServer* kernelServer;
+#ifdef __WIN32__
     nWin32LogHandler logHandler;
+#else
+    nDefaultLogHandler logHandler;
+#endif
     nRef<nScriptServer>     scriptServer;
     nRef<nConServer>        consoleServer;
     nRef<nGfxServer2>       gfxServer;

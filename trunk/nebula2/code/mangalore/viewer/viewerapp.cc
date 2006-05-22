@@ -135,6 +135,7 @@ ViewerApp::Close()
     App::Close();
 }
 
+#ifdef __WIN32__
 //------------------------------------------------------------------------------
 /*
     Win32 specific method which checks the registry for the Nebula2
@@ -162,6 +163,7 @@ ViewerApp::ReadProjRegistryKey()
     }
     return nString(projectDir);
 }
+#endif
 
 //------------------------------------------------------------------------------
 /**
@@ -180,6 +182,7 @@ ViewerApp::SetupFromCmdLineArgs()
     vector3 eyeCoi(args.GetFloatArg("-eyecoix"), args.GetFloatArg("-eyecoiy"), args.GetFloatArg("-eyecoiz"));
     vector3 eyeUp(args.GetFloatArg("-eyeupx"), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz"));
 
+#ifdef __WIN32__
     if (0 == projDirArg)
     {
         nString regProjDir = this->ReadProjRegistryKey();
@@ -188,6 +191,7 @@ ViewerApp::SetupFromCmdLineArgs()
             projDirArg = regProjDir;
         }
     }
+#endif
     this->SetProjectDirectory(projDirArg);
     this->SetObjectResourceName(objArg);
     this->SetCameraPos(eyePos);

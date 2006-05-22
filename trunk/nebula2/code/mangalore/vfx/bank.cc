@@ -38,7 +38,7 @@ Bank::Open()
 {
     if (!this->xmlSpreadSheet.Open())
     {
-		n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename());
+		n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename().Get());
         return false;
     }
 

@@ -200,7 +200,7 @@ inline
 void
 Attribute::PutWriteError() const
 {
-    n_error("Trying to write read-only attribute '%s'!", this->GetName());
+    n_error("Trying to write read-only attribute '%s'!", this->GetName().Get());
 }
 
 //------------------------------------------------------------------------------
@@ -917,6 +917,8 @@ Attribute::AsString() const
 
         case Matrix44:
             str.SetMatrix44(this->GetMatrix44());
+            break;
+        case Void:
             break;
     }
     return str;

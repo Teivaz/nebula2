@@ -86,7 +86,7 @@ WaveBank::SetFilename(const nString& fileName)
 {
 	if(fileName.IsEmpty())
 	{
-		n_error("Audio::WaveBank::SetFilename(): got no filename!", fileName);
+		n_error("Audio::WaveBank::SetFilename(): got no filename!");
 	}
 
 	this->xmlSpreadSheet.SetFilename(fileName);

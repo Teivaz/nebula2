@@ -13,7 +13,7 @@
 #include "mathlib/sphere.h"
 #include "mathlib/line.h"
 #define BAN_OPCODE_AUTOLINK
-#include "opcode/opcode.h"
+#include "opcode/Opcode.h"
 
 //------------------------------------------------------------------------------
 namespace Physics

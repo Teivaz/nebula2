@@ -145,7 +145,7 @@ _attridTyped<_AttrIdType>::RemoveFromRegistry()
 {
     n_assert(0 != attrIdRegistry);
 
-    nArray<_attridTyped<_AttrIdType>*>::iterator iter = attrIdRegistry->Find(this);
+    typename nArray<_attridTyped<_AttrIdType>*>::iterator iter = attrIdRegistry->Find(this);
     n_assert(iter);
     attrIdRegistry->Erase(iter);
 

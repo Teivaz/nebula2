@@ -2,7 +2,7 @@
 //  attr/_attrid.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
-#include "attr/_attridTyped.h"
+#include "attr/_attridtyped.h"
 
 // explicitely instantiate template classes for all possible types:
 

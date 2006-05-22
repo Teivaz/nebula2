@@ -44,15 +44,6 @@ class Cell : public Foundation::RefCounted
 	DeclareFactory(Cell);
 
 public:
-    /// visibility status
-    enum ClipStatus
-    {
-        InvalidClipStatus,  ///< visibility status invalid
-        Inside,             ///< cell is inside clip volume
-        Outside,            ///< cell is outside clip volume
-        Clipped,            ///< cell is partly in clip volume
-    };
-
     /// constructor
     Cell();
     /// destructor

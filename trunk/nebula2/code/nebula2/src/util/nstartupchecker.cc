@@ -2,17 +2,20 @@
 //  nstartupchecker.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
-#if defined(__WIN32__) || defined(DOXYGEN)
 #include "util/nstartupchecker.h"
+#if defined(__WIN32__)
 #include <d3d9.h>
 #include <mmsystem.h>
 #include <dsound.h>
+#endif
 
 //------------------------------------------------------------------------------
 /**
 */
-nStartupChecker::nStartupChecker() :
-    globalMutex(0)
+nStartupChecker::nStartupChecker()
+#ifdef __WIN32__
+    : globalMutex(0)
+#endif
 {
     // empty
 }
@@ -22,12 +25,14 @@ nStartupChecker::nStartupChecker() :
 */
 nStartupChecker::~nStartupChecker()
 {
+#ifdef __WIN32__
     // release the global mutex (used for the run-once-check)
     if (0 != this->globalMutex)
     {
         CloseHandle(this->globalMutex);
         this->globalMutex = 0;
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +63,7 @@ nStartupChecker::CheckAlreadyRunning(const nString& vendorName,
                                      const nString& errorTitle,
                                      const nString& errorMsg)
 {
+#ifdef __WIN32__
     n_assert(0 == this->globalMutex);
 
     // construct a mutex name from the vendor and app name
@@ -96,8 +102,12 @@ nStartupChecker::CheckAlreadyRunning(const nString& vendorName,
         // the app was not already running
         return false;
     }
+#else
+    return false;
+#endif
 }
 
+#if defined(__WIN32__) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 /**
     This method checks if D3D can be opened at all. If D3D can not be opened,
@@ -122,7 +132,9 @@ nStartupChecker::CheckDirect3D(const nString& errorTitle, const nString& errorMs
         return false;
     }
 }
+#endif
 
+#if defined(__WIN32__) || defined(DOXYGEN)
 //------------------------------------------------------------------------------
 /**
     This method checks if DirectSound can be opened at all. If not, an
@@ -148,5 +160,4 @@ nStartupChecker::CheckDirectSound(const nString& errorTitle, const nString& erro
         return false;
     }
 }
-
 #endif

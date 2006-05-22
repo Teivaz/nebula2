@@ -174,7 +174,7 @@ Resource::Load()
         // make sure root node doesn't exist, this may happen if the
         // same graphics object is loaded without using sub-nodes
         nRoot* oldRoot;
-        while (oldRoot = this->FindRootNode())
+        while ((oldRoot = this->FindRootNode()))
         {
             oldRoot->Release();
         }

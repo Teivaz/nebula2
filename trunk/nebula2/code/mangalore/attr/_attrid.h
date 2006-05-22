@@ -57,7 +57,7 @@ public:
 
 protected:
     /// default constructor is protected
-    _attrid() = 0;
+    _attrid() {};
 
     nString name;
     Type type;

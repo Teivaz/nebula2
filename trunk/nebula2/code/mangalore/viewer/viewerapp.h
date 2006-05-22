@@ -46,8 +46,10 @@ private:
     virtual void SetupGui();
     /// setup application state handlers
     virtual void SetupStateHandlers();
+#ifdef __WIN32__
 	/// read the project registry key
     nString ReadProjRegistryKey();
+#endif
 	/// set resource name of display object
 	void SetObjectResourceName(const nString& p);
     /// get resource name of display object

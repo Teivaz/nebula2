@@ -74,7 +74,7 @@ Cell::UpdateNumEntitiesInHierarchy(Entity::Type type, int num)
         p->numEntitiesInHierarchy[type] += num;
         n_assert(p->numEntitiesInHierarchyAllTypes >= 0);
     }
-    while (p = p->parentCell);
+    while ((p = p->parentCell));
 }
 
 //------------------------------------------------------------------------------
@@ -344,7 +344,7 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
     graphicsServer->AddNumVisitedCells(linkType, 1);
 
     // if clip status unknown or clipped, get clip status of this cell against observer entity
-    if ((InvalidClipStatus == clipStatus) || (Clipped == clipStatus))
+    if ((Entity::InvalidClipStatus == clipStatus) || (Entity::Clipped == clipStatus))
     {
         const bbox3& cellBox = this->GetBox();
         clipStatus = observerEntity->GetBoxClipStatus(cellBox);

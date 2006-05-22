@@ -35,6 +35,7 @@ beginmodule nsessionclient
         nsessionclient_main nsessionclient_cmds
     }
     setheaders nsessionclient
+    setlibs_linux { uuid }
 endmodule
 #--------------------------------------------------------------------
 beginmodule nsessionclientcontext
@@ -51,6 +52,7 @@ beginmodule nsessionserver
         nsessionserver_main nsessionserver_cmds
     }
     setheaders nsessionserver
+    setlibs_linux { uuid }
 endmodule
 #--------------------------------------------------------------------
 beginmodule nsessionservercontext
