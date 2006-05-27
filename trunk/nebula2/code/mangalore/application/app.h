@@ -6,13 +6,13 @@
 
     The App class is where specific application classes are derived
     from. The Application class defines the highlevel runtime environment
-    wrapper for a specific game. It goes through specific application states 
+    wrapper for a specific game. It goes through specific application states
     which may display UI screens to the user, load and start a level,
     manage game options.
-    
+
     A game application should derive a subclass from class Application and
     create an object of that class in its main() function.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -30,9 +30,12 @@
 #include "vfx/server.h"
 #include "db/server.h"
 #include "ui/server.h"
+#include "ceui/server.h"
 #include "script/server.h"
 #include "tools/ncmdlineargs.h"
 #include "util/nstartupchecker.h"
+
+#define MANGALORE_USE_CEGUI
 
 //------------------------------------------------------------------------------
 namespace Application
@@ -122,7 +125,7 @@ public:
     void StopFrameCapture();
     /// return true if currently capturing
     bool IsCapturing() const;
-    
+
 protected:
     /// called per frame by Run(), override in subclass as needed
     virtual void OnFrame();
@@ -179,6 +182,9 @@ protected:
     Ptr<VFX::Server> vfxServer;
     Ptr<Db::Server> dbServer;
     Ptr<UI::Server> uiServer;
+#ifdef MANGALORE_USE_CEGUI
+    Ptr<CEUI::Server> ceuiServer;
+#endif
     Ptr<Script::Server> scriptServer;
 
     nStartupChecker startupChecker;
@@ -251,7 +257,7 @@ App::GetStateHandlerAt(int index) const
 
 //------------------------------------------------------------------------------
 /**
-    Returns the currently active application state. Can be 0 if no valid 
+    Returns the currently active application state. Can be 0 if no valid
     state is set.
 */
 inline
@@ -465,4 +471,4 @@ App::GetCmdLineArgs() const
 
 };
 //------------------------------------------------------------------------------
-#endif   
+#endif
