@@ -90,6 +90,10 @@ GuiStateHandler::OnFrame()
     Audio::Server::Instance()->SetTime(time);
     UI::Server::Instance()->SetTime(time);
     UI::Server::Instance()->SetFrameTime(frameTime);
+#ifdef MANGALORE_USE_CEGUI
+    CEUI::Server::Instance()->SetTime(time);
+    CEUI::Server::Instance()->SetFrameTime(frameTime);
+#endif
     nGuiServer::Instance()->SetTime(time);
 
     // trigger subsystem and Nebula servers
@@ -108,6 +112,9 @@ GuiStateHandler::OnFrame()
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
+#ifdef MANGALORE_USE_CEGUI
+        CEUI::Server::Instance()->Render();
+#endif
         Graphics::Server::Instance()->EndRender();
     }
     VFX::Server::Instance()->EndScene();
