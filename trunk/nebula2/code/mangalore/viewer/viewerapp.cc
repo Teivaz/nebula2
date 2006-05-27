@@ -19,7 +19,6 @@
 #include "managers/entitymanager.h"
 #include "managers/factorymanager.h"
 #include "managers/focusmanager.h"
-#include "cegui/CEGUI.h"
 
 namespace Viewer
 {
@@ -104,7 +103,6 @@ ViewerApp::Open()
 
         //Setup GUI
         SetupGui();
-        SetupCeGui();
 
         // redirect resource assigns if necessary, this
         // is the case if the viewer acts as toolkit previewer
@@ -446,24 +444,6 @@ ViewerApp::SetupGui()
     textLabel->OnShow();
 
     kernelServer->PopCwd();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-ViewerApp::SetupCeGui()
-{
-    CEGUI::Logger::getSingleton().setLogFilename("ceguilog.txt");
-    CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
-
-    CEGUI::SchemeManager::getSingleton().loadScheme("cegui:schemes/TaharezLook.scheme");
-    CEGUI::FontManager::getSingleton().createFont("cegui:fonts/Commonwealth-10.font");
-    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
-
-
-    CEGUI::Window* rootWindow = CEGUI::WindowManager::getSingleton().loadWindowLayout("cegui:layouts/Demo7Windows.layout");
-    CEGUI::System::getSingleton().setGUISheet(rootWindow);
 }
 
 }; // namespace Viewer
