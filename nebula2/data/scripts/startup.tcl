@@ -39,6 +39,7 @@ proc OnStartup {} {
     .setassign "lights"     "export:lightlib/"
     .setassign "levels"     "export:levels/"
     .setassign "sound"      "export:audio/"
+    .setassign "cegui"      "export:cegui/"
     .setassign "charlib"    "gfxlib:characters/"
 
     sel $oldCwd

@@ -24,6 +24,7 @@ begintarget mangalorelib
         mangalore::vfx
         mangalore::db
         mangalore::ui
+        mangalore::ceui
         mangalore::script
     }
     setbundles {
@@ -47,16 +48,16 @@ endtarget
 beginmodule mangalore
     settype cpp
     setdir tools
-    setfiles { 
-        mangalore 
+    setfiles {
+        mangalore
     }
 endmodule
 
 #-------------------------------------------------------------------------------
 begintarget mangalore
     settype exe
-    setmodules { 
-        mangalore 
+    setmodules {
+        mangalore
     }
     settargetdeps {
         mangalorelib
