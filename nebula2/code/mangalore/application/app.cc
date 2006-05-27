@@ -364,6 +364,10 @@ App::SetupSubsystems()
     guiServer->Open();
 	this->uiServer = UI::Server::Create();
     this->uiServer->Open();
+#ifdef MANGALORE_USE_CEGUI
+    this->ceuiServer = CEUI::Server::Create();
+    this->ceuiServer->Open();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -377,6 +381,10 @@ App::CleanupSubsystems()
     nGuiServer::Instance()->Close();
     this->uiServer->Close();
     this->uiServer = 0;
+#ifdef MANGALORE_USE_CEGUI
+    this->ceuiServer->Close();
+    this->ceuiServer = 0;
+#endif
 
     // cleanup loader subsystem
     this->loaderServer->Close();
