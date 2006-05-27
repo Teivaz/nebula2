@@ -6,7 +6,7 @@
 
     Attach this property to an entity to move the entity along an 
     animation path. Take care that the property won't collide
-    with other properties which influence an entitie's position.
+    with other properties which influence an entity's position.
 
     (C) 2005 Radon Labs GmbH
 */
