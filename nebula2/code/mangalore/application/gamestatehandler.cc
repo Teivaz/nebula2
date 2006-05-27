@@ -74,13 +74,13 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     else if (LoadLevel == this->setupMode)
     {
         setupManager->SetCurrentLevel(this->GetLevelName());
-        
+
         // notify application state handler
         this->OnLoadBefore();
-        
+
         // setup world from current game
         setupManager->SetupWorldFromCurrentLevel();
-        
+
         // notify application state handler
         this->OnLoadAfter();
     }
@@ -123,6 +123,10 @@ GameStateHandler::UpdateSubsystemTimes()
     Graphics::Server::Instance()->SetFrameTime(frameTime);
     UI::Server::Instance()->SetTime(time);
     UI::Server::Instance()->SetFrameTime(frameTime);
+#ifdef MANGALORE_USE_CEGUI
+    CEUI::Server::Instance()->SetTime(time);
+    CEUI::Server::Instance()->SetFrameTime(frameTime);
+#endif
     nGuiServer::Instance()->SetTime(time);
     TimeManager::Instance()->SetTime(time);
     TimeManager::Instance()->SetFrameTime(frameTime);
@@ -153,10 +157,13 @@ GameStateHandler::OnFrame()
     {
         this->fovVisualization = !this->fovVisualization;
     }
-    
+
     // trigger subsystem and Nebula servers
     nVideoServer::Instance()->Trigger();
     Input::Server::Instance()->Trigger();
+#ifdef MANGALORE_USE_CEGUI
+    CEUI::Server::Instance()->Trigger();
+#endif
     running &= Foundation::Server::Instance()->GetScriptServer()->Trigger();
 
     // trigger the audio and game subsystems
@@ -167,11 +174,14 @@ GameStateHandler::OnFrame()
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
     running &= Graphics::Server::Instance()->Trigger();
-    
+
     if (Graphics::Server::Instance()->BeginRender())
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
+#ifdef MANGALORE_USE_CEGUI
+        CEUI::Server::Instance()->Render();
+#endif
         if (this->graphicsVisualizationEnabled)
         {
             Graphics::Server::Instance()->RenderDebug();
