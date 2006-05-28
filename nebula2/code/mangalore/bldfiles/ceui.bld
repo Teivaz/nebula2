@@ -24,11 +24,15 @@ beginmodule mangalore::ceui
         CEGUIBase.lib
         CEGUIFalagardWRBase.lib
         CEGUITinyXMLParser.lib
+        freetype221MT.lib
+        pcre.lib
     }
     setlibs_win32_debug {
         CEGUIBase_d.lib
         CEGUIFalagardWRBase_d.lib
         CEGUITinyXMLParser_d.lib
+        freetype221MT_D.lib
+        pcre_d.lib
     }
 endmodule
 #-------------------------------------------------------------------------------

@@ -31,15 +31,15 @@
 #include "cegui/CEGUIExceptions.h"
 #include "cegui/CEGUIWindowFactoryManager.h"
 
-#if defined( __WIN32__ ) || defined( _WIN32 )
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
 #   ifdef CEGUIWIDGETMODULE_EXPORTS
 #       define CEGUIWIDGETMODULE_API __declspec(dllexport)
 #   else
 #       define CEGUIWIDGETMODULE_API __declspec(dllimport)
 #   endif
-#else
+#else*/
 #   define CEGUIWIDGETMODULE_API
-#endif
+//#endif
 
 #define CEGUI_DECLARE_WIDGET_MODULE( moduleName )\
 \

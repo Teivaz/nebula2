@@ -33,15 +33,15 @@
 #include "cegui/CEGUIWindowRendererManager.h"
 #include "cegui/CEGUILogger.h"
 
-#if defined( __WIN32__ ) || defined( _WIN32 )
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
 #   ifdef CEGUIWRMODULE_EXPORTS
 #       define CEGUIWRMODULE_API __declspec(dllexport)
 #   else
 #       define CEGUIWRMODULE_API __declspec(dllimport)
 #   endif
-#else
+#else*/
 #   define CEGUIWRMODULE_API
-#endif
+//#endif
 
 // declare module
 #define CEGUI_DECLARE_WR_MODULE( moduleName )\
