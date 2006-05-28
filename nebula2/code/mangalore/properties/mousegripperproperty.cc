@@ -85,7 +85,7 @@ MouseGripperProperty::OnMoveBefore()
     //get Mouse position
     SetMousePos(inputServer->GetMousePos());
 
-    //if left mouse button ist pressed, pick up physic entity
+    //if left mouse button is pressed, pick up physic entity
     if(!inputServer->GetButton("ctrlPressed") && inputServer->GetButton("lmbDown"))
     {
         CloseGrip();
