@@ -86,6 +86,13 @@ Nebula2.  These tools are of high quality and can be found on their site:
 We are currently working on supporting Blender.  Please check back soon
 or ask us how you can help out!
 
+@subsection Nebula2FAQ_Lightwave Lightwave 3D
+
+A Lightwave exporter is currently in development, and already provides some
+basic functionality. Information about it can be found at:
+
+    - @ref N2Exp4LWContribModule
+
 @subsection Nebula2FAQ_Collada Collada
 
 We are currently working on supporting the COLLADA format.  COLLADA is
