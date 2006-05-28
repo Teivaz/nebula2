@@ -10,16 +10,16 @@
     This is an example of how to use the @ref nAppLauncher class.
     @code
     // create nAppLauncher object instance.
-    nAppLauncher appLauncher(nKernelServer::Instance());
+    nAppLauncher appLauncher;
 
     nString app = "nviewer.exe";
     nString cwd = "c:\nebula2\bin\win32";
     nString args = "-view home:export/gfxlib/examples/torus.n2";
 
     // specify the path of executable file and working directory.
-    appLauncher.SetExecutable(app.Get());
-    appLauncher.SetWorkingDirectory(cwd.Get());
-    appLauncher.SetArguments(args.Get());
+    appLauncher.SetExecutable(app);
+    appLauncher.SetWorkingDirectory(cwd);
+    appLauncher.SetArguments(args);
 
     // execute the application.
     appLauncher.Launch();
