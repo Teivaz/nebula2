@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ascii" ?>
+<NebulaExporterSettings>
+    <General>
+        <setting name="geometryScale" type="Float" value="1.000000" />
+        <setting name="scriptServer" type="String" value="nTclServer" />
+        <setting name="previewRenderer" type="String" value="DX7" />
+        <setting name="previewWidth" type="Int" value="640" />
+        <setting name="previewHeight" type="Int" value="480" />
+        <setting name="previewFullScreen" type="Bool" value="0" />
+        <setting name="outputBinarySceneNode" type="Bool" value="0" />
+        <setting name="outputBinaryMesh" type="Bool" value="1" />
+        <setting name="outputBinaryAnimation" type="Bool" value="1" />
+    </General>
+    <Preview>
+        <Renderers>
+            <Renderer name="Default" featureset="" />
+            <Renderer name="DX9 HDR" featureset="dx9hdr" />
+            <Renderer name="DX9 non-HDR" featureset="dx9" />
+            <Renderer name="DX7" featureset="dx7" />
+        </Renderers>
+        <Sizes>
+            <Size name="320x240" />
+            <Size name="640x480" />
+            <Size name="800x600" />
+            <Size name="1024x768" />
+            <Size name="1280x1024" />
+            <Size name="1600x1200" />
+        </Sizes>
+    </Preview>
+    <SceneNodeTypes>
+        <SceneNodeType name="none" />
+        <SceneNodeType name="nshapenode" />
+        <SceneNodeType name="nskinshapenode" />
+    </SceneNodeTypes>
+    <ExportNodeTypes>
+        <ExportNodeType name="Static Mesh (with UV0)">
+            <setting name="SceneNode" type="String" value="nshapenode" />
+            <setting name="Textures" type="Bool" value="1" />
+            <setting name="Animation" type="Bool" value="0" />
+            <setting name="VertexComponents" type="String" value="coord|tangent|binormal|normal|uv0" />
+        </ExportNodeType>
+        <ExportNodeType name="Animated Character (with UV0)">
+            <setting name="SceneNode" type="String" value="nskinshapenode" />
+            <setting name="Textures" type="Bool" value="1" />
+            <setting name="Animation" type="Bool" value="1" />
+            <setting name="VertexComponents" type="String" value="coord|tangent|binormal|normal|uv0|jointweights" />
+        </ExportNodeType>
+        <ExportNodeType name="Collision Mesh">
+            <setting name="SceneNode" type="String" value="none" />
+            <setting name="Textures" type="Bool" value="0" />
+            <setting name="Animation" type="Bool" value="0" />
+            <setting name="VertexComponents" type="String" value="coord" />
+        </ExportNodeType>
+    </ExportNodeTypes>
+</NebulaExporterSettings>
