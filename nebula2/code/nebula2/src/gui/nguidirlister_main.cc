@@ -84,7 +84,8 @@ nGuiDirLister::UpdateContent()
             }
             if ((0 == strcmp(entryName.Get(), ".")) || 
                 (0 == strcmp(entryName.Get(), "..")) ||
-                (0 == strcmp(entryName.Get(), "CVS")))
+                (0 == strcmp(entryName.Get(), "CVS")) ||
+                (0 == strcmp(entryName.Get(), ".svn")))
             {
                 continue;
             }
