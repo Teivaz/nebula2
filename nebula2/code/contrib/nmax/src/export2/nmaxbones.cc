@@ -778,7 +778,7 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
                     nAnimBuilder::Key keyScale;
 
                     int key_idx = firstKey - sceneFirstKey + clip * numClipKeys + clipKey;
-                    n_iclamp(key_idx, 0, tmpSampleArray.Size());
+                    key_idx = n_iclamp(key_idx, 0, tmpSampleArray.Size() - 1);
 
                     nMaxSampleKey& skey = tmpSampleArray[key_idx];
 
