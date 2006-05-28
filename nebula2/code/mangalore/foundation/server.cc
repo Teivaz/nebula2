@@ -148,7 +148,7 @@ Server::Open()
     this->animationServer = (nAnimationServer*)  this->kernelServer->New("nanimationserver",  "/sys/servers/anim");
     this->audioServer     = (nAudioServer3*)     this->kernelServer->New("ndsoundserver3",    "/sys/servers/audio");
     this->particleServer  = (nParticleServer*)   this->kernelServer->New("nparticleserver",   "/sys/servers/particle");
-    this->particleServer2 = (nParticleServer2*)  this->kernelServer->New("nparticleserver2",   "/sys/servers/particle2");
+    this->particleServer2 = (nParticleServer2*)  this->kernelServer->New("nparticleserver2",  "/sys/servers/particle2");
     this->guiServer       = (nGuiServer*)        this->kernelServer->New("nguiserver",        "/sys/servers/gui");
     this->shadowServer    = (nShadowServer2*)    this->kernelServer->New("nshadowserver2",    "/sys/servers/shadow");
     this->videoServer     = (nVideoServer*)      this->kernelServer->New("ndshowserver",      "/sys/servers/video");
@@ -165,7 +165,7 @@ Server::Open()
     nFileServer2* fileServer = this->kernelServer->GetFileServer();
     nString appdata;
     appdata.Format("user:%s/%s", this->vendorName.Get(), this->appName.Get());
-    fileServer->SetAssign("appdata", appdata.Get());
+    fileServer->SetAssign("appdata", appdata);
 
     // setup capture server
     nString captureDir;
@@ -179,7 +179,7 @@ Server::Open()
     // setup the "proj:" assign
     if (this->GetProjectDir().IsValid())
     {
-        fileServer->SetAssign("proj", this->GetProjectDir().Get());
+        fileServer->SetAssign("proj", this->GetProjectDir());
     }
     else
     {

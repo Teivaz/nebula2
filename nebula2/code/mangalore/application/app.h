@@ -80,8 +80,8 @@ public:
     const nDisplayMode2& GetDisplayMode() const;
     /// get path to current level
     const nString& GetStartupLevel() const;
-	// get startup save game
-	const nString& GetStartupSavegame() const;
+    // get startup save game
+    const nString& GetStartupSavegame() const;
     /// get optional feature set string
     const nString& GetFeatureSet() const;
     /// get optional render path override
@@ -110,9 +110,9 @@ public:
     nTime GetFrameTime() const;
     /// get the current state time
     nTime GetStateTime() const;
-    /// get time factor
-    void SetTimeFactor(float f);
     /// set time factor
+    void SetTimeFactor(float f);
+    /// get time factor
     float GetTimeFactor() const;
     /// pause the game
     virtual void SetPaused(bool b);
@@ -133,8 +133,8 @@ protected:
     virtual bool DoStartupCheck();
     /// setup application defaults, override in subclass
     virtual void SetupFromDefaults();
-	/// parse command line args, override in subclass if new args are desired
-	virtual void SetupFromCmdLineArgs();
+    /// parse command line args, override in subclass if new args are desired
+    virtual void SetupFromCmdLineArgs();
     /// setup the application from a user profile
     virtual void SetupFromProfile();
     /// setup the Game subsystem
@@ -161,8 +161,8 @@ protected:
     void SetDisplayMode(const nDisplayMode2& mode);
     /// set startup level path
     void SetStartupLevel(const nString& path);
-	// set startup save game
-	void SetStartupSavegame(const nString& savegame);
+    // set startup save game
+    void SetStartupSavegame(const nString& savegame);
     /// set optional graphics feature set feature set string
     void SetFeatureSet(const nString& s);
     /// set optional graphics render path override
@@ -191,7 +191,7 @@ protected:
     nCmdLineArgs cmdLineArgs;
     nString projDir;
     nString startupLevel;
-	nString startupSavegame;
+    nString startupSavegame;
     nString featureSet;
     nString renderPath;
     nDisplayMode2 displayMode;

@@ -98,7 +98,7 @@ App::GetForceFullscreen() const
 //------------------------------------------------------------------------------
 /**
     This method checks whether all startup conditions for the application
-    are met (like the propert Direct3D version installed, etc..). The
+    are met (like the proper Direct3D version installed, etc..). The
     method is called from App::Open(). Override this method in a subclass
     if different checks are needed.
 */
@@ -250,16 +250,16 @@ App::SetupFromCmdLineArgs()
 void
 App::SetupGameSubsystem()
 {
-	this->gameServer = Game::Server::Create();
+    this->gameServer = Game::Server::Create();
     this->gameServer->Open();
 
-	Ptr<Managers::EntityManager> entityManager = Managers::EntityManager::Create();
-	Ptr<Managers::EnvQueryManager> envQueryManager = Managers::EnvQueryManager::Create();
-	Ptr<Managers::FocusManager> focusManager = Managers::FocusManager::Create();
-	Ptr<Managers::SaveGameManager> saveGameManager = Managers::SaveGameManager::Create();
-	Ptr<Managers::SetupManager> setupManager = Managers::SetupManager::Create();
-	Ptr<Managers::TimeManager> timeManager = Managers::TimeManager::Create();
-	Ptr<Managers::FactoryManager> factoryManager = Managers::FactoryManager::Create();
+    Ptr<Managers::EntityManager> entityManager = Managers::EntityManager::Create();
+    Ptr<Managers::EnvQueryManager> envQueryManager = Managers::EnvQueryManager::Create();
+    Ptr<Managers::FocusManager> focusManager = Managers::FocusManager::Create();
+    Ptr<Managers::SaveGameManager> saveGameManager = Managers::SaveGameManager::Create();
+    Ptr<Managers::SetupManager> setupManager = Managers::SetupManager::Create();
+    Ptr<Managers::TimeManager> timeManager = Managers::TimeManager::Create();
+    Ptr<Managers::FactoryManager> factoryManager = Managers::FactoryManager::Create();
 
     this->gameServer->AttachManager(entityManager);
     this->gameServer->AttachManager(envQueryManager);
@@ -298,29 +298,29 @@ App::SetupSubsystems()
     this->scriptServer->Open();
 
     // setup the message subsystem
-	this->messageServer = Message::Server::Create();
+    this->messageServer = Message::Server::Create();
     this->messageServer->Open();
 
     // setup the db subsystem
-	this->dbServer = Db::Server::Create();
+    this->dbServer = Db::Server::Create();
 
     // setup the physics subsystem
-	this->physicsServer = Physics::Server::Create();
+    this->physicsServer = Physics::Server::Create();
     this->physicsServer->Open();
 
     // setup the graphics subsystem
-	this->graphicsServer = Graphics::Server::Create();
+    this->graphicsServer = Graphics::Server::Create();
     this->graphicsServer->SetDisplayMode(this->displayMode);
     this->graphicsServer->SetRenderPath(this->renderPath);
     this->graphicsServer->SetFeatureSet(this->featureSet);
     this->graphicsServer->Open();
 
-	// setup the input subsystem
-	this->inputServer = Input::Server::Create();
-	this->inputServer->Open();
+    // setup the input subsystem
+    this->inputServer = Input::Server::Create();
+    this->inputServer->Open();
 
-	// setup the audio subsystem
-	this->audioServer = Audio::Server::Create();
+    // setup the audio subsystem
+    this->audioServer = Audio::Server::Create();
     this->audioServer->Open();
     if (nFileServer2::Instance()->FileExists("proj:data/tables/sound.xml"))
     {
@@ -332,7 +332,7 @@ App::SetupSubsystems()
     }
 
     // setup the vfx subsystem
-	this->vfxServer = VFX::Server::Create();
+    this->vfxServer = VFX::Server::Create();
     this->vfxServer->Open();
     if (nFileServer2::Instance()->FileExists("proj:data/tables/effects.xml"))
     {
@@ -344,10 +344,10 @@ App::SetupSubsystems()
     }
 
     // setup the navigation subsystem
-	this->navigationServer = Navigation::Server::Create();
+    this->navigationServer = Navigation::Server::Create();
 
     // setup the loader subsystem
-	this->loaderServer = Loader::Server::Create();
+    this->loaderServer = Loader::Server::Create();
     this->loaderServer->Open();
 
     // attach loader to Loader::Server
@@ -362,7 +362,7 @@ App::SetupSubsystems()
     guiServer->SetRootPath("/res/gui");
     guiServer->SetDisplaySize(vector2(1024.0f, 768.0f));
     guiServer->Open();
-	this->uiServer = UI::Server::Create();
+    this->uiServer = UI::Server::Create();
     this->uiServer->Open();
 #ifdef MANGALORE_USE_CEGUI
     this->ceuiServer = CEUI::Server::Create();
