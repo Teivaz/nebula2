@@ -467,7 +467,7 @@ Server::GetClosestContactAlongRay(const vector3& pos, const vector3& dir, const 
     Shoots a 3d ray through the current mouse position and returns the
     closest contact, or a null pointer if no contact.
     NOTE: This gets the current view matrix from the Nebula gfx server.
-    This means the check could be one frame of, if the "previous" view matrix
+    This means the check could be one frame off, if the "previous" view matrix
     is used.
 
     @param  mousePos        the current 2d mouse position (or any other 2d screen pos)
