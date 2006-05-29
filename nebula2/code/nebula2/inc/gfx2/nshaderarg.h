@@ -132,7 +132,7 @@ void
 nShaderArg::Clear()
 {
     this->type = nShaderState::Void;
-    memset(&(this->m), 0, sizeof(this->m));  // make shure that the largest data type is used
+    memset(&(this->m), 0, sizeof(this->m));  // make sure that the largest data type is used
 }
 
 //------------------------------------------------------------------------------
