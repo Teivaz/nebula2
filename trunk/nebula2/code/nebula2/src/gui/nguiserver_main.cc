@@ -1203,7 +1203,7 @@ nGuiServer::ToggleSystemGui()
         // restore userSkin cursor visibility
         if (userSkinCursorVisibilityKown)
         {
-            userSkinCursorVisibilityKown = false; // make shure we forget, to never set unintialized
+            userSkinCursorVisibilityKown = false; // make sure we forget, to never set unintialized
             gfxServer->SetCursorVisibility(userSkinCursorVisibility);
         }
 

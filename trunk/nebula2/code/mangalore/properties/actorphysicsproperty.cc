@@ -82,7 +82,7 @@ ActorPhysicsProperty::EnablePhysics()
     n_assert(physicsLevel);
     physicsLevel->AttachEntity(this->charPhysicsEntity);
 
-    // make shure we are standing still
+    // make sure we are standing still
     this->Stop();
 
     // initialize feedback loops for motion smoothing

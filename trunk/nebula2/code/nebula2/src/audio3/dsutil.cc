@@ -252,7 +252,7 @@ HRESULT CSoundManager::Create( CSound** ppSound,
         // It might also fail if hardware buffer mixing was requested
         // on a device that doesn't support it.
         nString msg;
-        msg.Format("CSoundManager::Create(): CreateSoundBuffer for '%' failed! Make shure you do not try to play a stereo sound as 3D sound!", strWaveFileName);
+        msg.Format("CSoundManager::Create(): CreateSoundBuffer for '%' failed! Make sure you do not try to play a stereo sound as 3D sound!", strWaveFileName);
         n_dxtrace(hr, msg.Get());
                     
         goto LFail;
