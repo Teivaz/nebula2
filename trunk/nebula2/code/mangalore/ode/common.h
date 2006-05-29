@@ -22,9 +22,9 @@
 
 #ifndef _ODE_COMMON_H_
 #define _ODE_COMMON_H_
-
 #include <ode/config.h>
 #include <ode/error.h>
+#include <math.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -122,15 +122,35 @@ typedef dReal dQuaternion[4];
 #if defined(dSINGLE)
 
 #define REAL(x) (x ## f)					/* form a constant */
-#define dRecip(x) ((float)(1.0f/(x)))				/* reciprocal */
-#define dSqrt(x) ((float)sqrtf(float(x)))			/* square root */
-#define dRecipSqrt(x) ((float)(1.0f/sqrtf(float(x))))		/* reciprocal square root */
-#define dSin(x) ((float)sinf(float(x)))				/* sine */
-#define dCos(x) ((float)cosf(float(x)))				/* cosine */
-#define dFabs(x) ((float)fabsf(float(x)))			/* absolute value */
-#define dAtan2(y,x) ((float)atan2f(float(y),float(x)))		/* arc tangent with 2 args */
-#define dFMod(a,b) ((float)fmodf(float(a),float(b)))		/* modulo */
-#define dCopySign(a,b) ((float)copysignf(float(a),float(b)))
+#define dRecip(x) ((1.0f/(x)))				/* reciprocal */
+#define dSqrt(x) (sqrtf(x))			/* square root */
+#define dRecipSqrt(x) ((1.0f/sqrtf(x)))		/* reciprocal square root */
+#define dSin(x) (sinf(x))				/* sine */
+#define dCos(x) (cosf(x))				/* cosine */
+#define dFabs(x) (fabsf(x))			/* absolute value */
+#define dAtan2(y,x) (atan2f(y,x))		/* arc tangent with 2 args */
+#define dFMod(a,b) (fmodf(a,b))		/* modulo */
+
+#ifdef HAVE___ISNANF
+#define dIsNan(x) (__isnanf(x))
+#elif defined(HAVE__ISNANF)
+#define dIsNan(x) (_isnanf(x))
+#elif defined(HAVE_ISNANF)
+#define dIsNan(x) (isnanf(x))
+#else
+  /* 
+     fall back to _isnanf which is the VC way,
+     this may seem redundant since we already checked
+     for _isnan before, but if isnan is detected by
+     configure but is not found during compilation
+     we should always make sure we check for __isnanf,
+     _isnan and isnan in that order before falling
+     back to a default
+  */
+#define dIsNan(x) (_isnanf(x))
+#endif
+
+#define dCopySign(a,b) ((dReal)copysignf(a,b))
 
 #elif defined(dDOUBLE)
 
@@ -143,6 +163,16 @@ typedef dReal dQuaternion[4];
 #define dFabs(x) fabs(x)
 #define dAtan2(y,x) atan2((y),(x))
 #define dFMod(a,b) (fmod((a),(b)))
+#ifdef HAVE___ISNAN
+#define dIsNan(x) (__isnan(x))
+#elif defined(HAVE__ISNAN)
+#define dIsNan(x) (_isnan(x))
+#elif defined(HAVE_ISNAN)
+#define dIsNan(x) (isnan(x))
+#else
+#define dIsNan(x) (_isnan(x))
+#endif
+
 #define dCopySign(a,b) (copysign((a),(b)))
 
 #else
@@ -164,6 +194,23 @@ typedef dReal dQuaternion[4];
 
 #define dALLOCA16(n) \
   ((char*)dEFFICIENT_SIZE(((size_t)(alloca((n)+(EFFICIENT_ALIGNMENT-1))))))
+
+
+// Use the error-checking memory allocation system.  Becuase this system uses heap
+//  (malloc) instead of stack (alloca), it is slower.  However, it allows you to
+//  simulate larger scenes, as well as handle out-of-memory errors in a somewhat
+//  graceful manner
+
+// #define dUSE_MALLOC_FOR_ALLOCA
+
+#ifdef dUSE_MALLOC_FOR_ALLOCA
+enum {
+  d_MEMORY_OK = 0,		/* no memory errors */
+  d_MEMORY_OUT_OF_MEMORY	/* malloc failed due to out of memory error */
+};
+
+#endif
+
 
 
 /* internal object types (all prefixed with `dx') */
@@ -206,7 +253,8 @@ enum {
   dJointTypeHinge2,
   dJointTypeFixed,
   dJointTypeNull,
-  dJointTypeAMotor
+  dJointTypeAMotor,
+  dJointTypeLMotor
 };
 
 

@@ -313,6 +313,11 @@ public:
 
   dBodyID getBody (int index) const
     { return dJointGetBody (_id, index); }
+
+  void setFeedback(dJointFeedback *fb)
+    { dJointSetFeedback(_id, fb); }
+  dJointFeedback *getFeedback() const
+    { return dJointGetFeedback(_id); }
 };
 
 
@@ -615,6 +620,39 @@ public:
   void addTorques(dReal torque1, dReal torque2, dReal torque3)
 	{ dJointAddAMotorTorques(_id, torque1, torque2, torque3); }
 };
+
+
+class dLMotorJoint : public dJoint {
+  // intentionally undefined, don't use these
+  dLMotorJoint (const dLMotorJoint &);
+  void operator = (const dLMotorJoint &);
+
+public:
+  dLMotorJoint() { }
+  dLMotorJoint (dWorldID world, dJointGroupID group=0)
+    { _id = dJointCreateLMotor (world, group); }
+
+  void create (dWorldID world, dJointGroupID group=0) {
+    if (_id) dJointDestroy (_id);
+    _id = dJointCreateLMotor (world, group);
+  }
+
+  void setNumAxes (int num)
+    { dJointSetLMotorNumAxes (_id, num); }
+  int getNumAxes() const
+    { return dJointGetLMotorNumAxes (_id); }
+
+  void setAxis (int anum, int rel, dReal x, dReal y, dReal z)
+    { dJointSetLMotorAxis (_id, anum, rel, x, y, z); }
+  void getAxis (int anum, dVector3 result) const
+    { dJointGetLMotorAxis (_id, anum, result); }
+
+  void setParam (int parameter, dReal value)
+    { dJointSetLMotorParam (_id, parameter, value); }
+  dReal getParam (int parameter) const
+    { return dJointGetLMotorParam (_id, parameter); }
+};
+
 
 
 #endif
