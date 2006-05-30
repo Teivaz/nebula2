@@ -81,7 +81,7 @@ nStream::FileCreated() const
     Open the stream in read, write or read/write mode. In Read mode the
     stream file must exist, otherwise the method will fail hard with an error. In
     Write mode an existing file will be overwritten. In ReadWrite mode
-    an existing file will be read, may be modified and will be 
+    an existing file will be read, may be modified and will be
     written back on Close().
 */
 bool
@@ -118,7 +118,7 @@ nStream::Open(Mode m)
     {
         // when in write mode, we add a declaration to the XML stream
         // (this creates the line <?xml version="1.0" encoding="UTF-8"?> to the file
-        this->xmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", 0));
+        this->xmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", ""));
     }
 
     return true;
@@ -265,7 +265,7 @@ nStream::BeginNode(const nString& name)
 
 //------------------------------------------------------------------------------
 /**
-    End a node in write mode. This will set the parent of the current node as 
+    End a node in write mode. This will set the parent of the current node as
     new current node so that correct hierarchical behaviour is implemented.
 */
 void
@@ -353,7 +353,7 @@ nStream::GetCurrentNodePath() const
 //------------------------------------------------------------------------------
 /**
     Set the node pointed to by the path string as current node. The path
-    may be absolute or relative, following the usual filesystem path 
+    may be absolute or relative, following the usual filesystem path
     conventions. Separator is a slash.
 */
 void
@@ -372,7 +372,7 @@ nStream::SetToNode(const nString& p)
 /**
     Sets the current node to the first child node. If no child node exists,
     the current node will remain unchanged and the method will return false.
-    If name is a valid string, only child element matching the name will 
+    If name is a valid string, only child element matching the name will
     be returned. If name is empty, all child nodes will be considered.
 */
 bool
@@ -403,8 +403,8 @@ nStream::SetToFirstChild(const nString& name)
 //------------------------------------------------------------------------------
 /**
     Sets the current node to the next sibling. If no more children exist,
-    the current node will be reset to the parent node and the method will 
-    return false. If name is a valid string, only child element matching the 
+    the current node will be reset to the parent node and the method will
+    return false. If name is a valid string, only child element matching the
     name will be returned. If name is empty, all child nodes will be considered.
 */
 bool
@@ -482,7 +482,7 @@ nStream::GetString(const nString& name) const
     n_assert(this->curNode);
     n_assert(name.IsValid());
     nString str;
-    const char* val = this->curNode->Attribute(name.Get());    
+    const char* val = this->curNode->Attribute(name.Get());
     if (0 == val)
     {
         n_error("Stream: attribute '%s' doesn't exist on node '%s'!", name.Get(), this->curNode->Value());
@@ -812,7 +812,7 @@ nStream::GetAttrs() const
     if (attr) do
     {
         attrs.Append(attr->Name());
-    } 
+    }
     while ((attr = attr->Next()));
     return attrs;
 }
