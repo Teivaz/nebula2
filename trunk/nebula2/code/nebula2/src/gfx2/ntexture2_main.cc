@@ -2,7 +2,6 @@
 //  ntexture2_main.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "gfx2/nsurface.h"
 #include "gfx2/ntexture2.h"
 #include "kernel/nkernelserver.h"
 
@@ -92,15 +91,6 @@ nTexture2::SaveTextureToFile(const nString &filename)
 {
     return false;
 };
-
-//------------------------------------------------------------------------------
-/**
-    - Feb-04 Kim, H.W. added to support ngameswf.
-*/
-void nTexture2::GetSurfaceLevel(const char* /*objName*/, uint /*level*/, nSurface** /*surface*/)
-{
-    // reimplemented in derived class's member function.
-}
 
 //------------------------------------------------------------------------------
 /**
