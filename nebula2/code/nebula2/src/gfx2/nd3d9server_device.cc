@@ -89,9 +89,9 @@ nD3D9Server::InitDeviceState()
     and depth buffer.
 */
 bool
-nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat, 
+nD3D9Server::CheckDepthFormat(D3DFORMAT adapterFormat,
                               D3DFORMAT backbufferFormat,
-                              D3DFORMAT depthFormat) 
+                              D3DFORMAT depthFormat)
 {
     n_assert(this->d3d9);
 
@@ -202,7 +202,7 @@ nD3D9Server::GetD3DFormatNumBits(D3DFORMAT fmt)
         case D3DFMT_L8:
         case D3DFMT_R3G3B2:
             return 8;
-    
+
         default:
             return 0;
     }
@@ -289,7 +289,7 @@ nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3
     {
         n_error("nD3D9Server: No valid Direct3D display format found!\n");
     }
-}    
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -365,9 +365,9 @@ nD3D9Server::DeviceOpen()
     #endif
 
     n_printf("nD3D9Server::DeviceOpen()\n");
-    
+
     HRESULT hr;
-    
+
     // prepare window...
     this->windowHandler.AdjustWindowForChange();
 
@@ -387,7 +387,7 @@ nD3D9Server::DeviceOpen()
         this->deviceBehaviourFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
         this->presentParams.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL | D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
         n_printf("nD3D9Server: using enforced software vertex processing\n");
-    #else 
+    #else
         // check if hardware vertex shaders are supported, if not,
         // activate mixed vertex processing
         #if N_D3D9_FORCEMIXEDVERTEXPROCESSING
@@ -400,7 +400,7 @@ nD3D9Server::DeviceOpen()
             if (this->devCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
             {
                 if (this->GetFeatureSet() >= DX9)
-                {        
+                {
                     this->deviceBehaviourFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
                     n_printf("nD3D9Server: using hardware vertex processing\n");
                 }
@@ -777,7 +777,7 @@ nD3D9Server::UpdateCursor()
 
 //------------------------------------------------------------------------------
 /**
-    This method should return the number of currently available stencil bits 
+    This method should return the number of currently available stencil bits
     (override in subclass).
 */
 int
@@ -828,7 +828,7 @@ nD3D9Server::OnDeviceCleanup(bool shutdown)
     if (shutdown)
     {
         // the display is about to be closed, do a real unload
-        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
     }
     else
     {
@@ -906,10 +906,10 @@ nD3D9Server::OnDeviceInit(bool startup)
     n_assert(this->depthStencilSurface);
 
     // create an offscreen surface for capturing data
-    hr = this->d3d9Device->CreateOffscreenPlainSurface(this->presentParams.BackBufferWidth, 
+    hr = this->d3d9Device->CreateOffscreenPlainSurface(this->presentParams.BackBufferWidth,
                                                        this->presentParams.BackBufferHeight,
-                                                       this->presentParams.BackBufferFormat, 
-                                                       D3DPOOL_SYSTEMMEM, 
+                                                       this->presentParams.BackBufferFormat,
+                                                       D3DPOOL_SYSTEMMEM,
                                                        &(this->captureSurface), NULL);
     n_dxtrace(hr, "CreateOffscreenPlainSurface() failed.");
     n_assert(this->captureSurface);
@@ -1037,7 +1037,7 @@ nD3D9Server::GetCurrentRenderTargetSize() const
         size.y = (float) mode.GetHeight();
     }
     return size;
-}   
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -1046,7 +1046,7 @@ nD3D9Server::GetCurrentRenderTargetSize() const
 */
 void
 nD3D9Server::SetScissorRect(const rectangle& r)
-{   
+{
     n_assert(this->d3d9Device);
     nGfxServer2::SetScissorRect(r);
     this->UpdateScissorRect();
@@ -1078,7 +1078,7 @@ nD3D9Server::UpdateScissorRect()
     outgoing vertex shader vertices live in. Up to 6 clip planes
     can be defined. Provide an empty array to clear all clip planes.
 
-    NOTE: this method does not work in the DX7 render path (check the D3D docs why)    
+    NOTE: this method does not work in the DX7 render path (check the D3D docs why)
 */
 void
 nD3D9Server::SetClipPlanes(const nArray<plane>& planes)
@@ -1088,7 +1088,7 @@ nD3D9Server::SetClipPlanes(const nArray<plane>& planes)
     if (this->GetFeatureSet() > DX7)
     {
         HRESULT hr;
-        DWORD clipPlaneMask = 0;     
+        DWORD clipPlaneMask = 0;
         uint num = planes.Size();
         if (num > this->devCaps.MaxUserClipPlanes)
         {
@@ -1142,6 +1142,7 @@ void nD3D9Server::AdjustGamma()
         HWND hwnd = this->windowHandler.GetHwnd();
         HDC hdc = GetDC(hwnd);
         SetDeviceGammaRamp(hdc, &ramp);
+        ReleaseDC(hwnd, hdc);
     }
 }
 
@@ -1167,7 +1168,12 @@ void nD3D9Server::RestoreGamma()
         this->d3d9Device->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
     }
     else
-        SetDeviceGammaRamp(GetDC(GetDesktopWindow()), &ramp );
+    {
+        HWND hwnd = GetDesktopWindow();
+        HDC hdc = GetDC(hwnd);
+        SetDeviceGammaRamp(hdc, &ramp );
+        ReleaseDC(hwnd, hdc);
+    }
 }
 
 //------------------------------------------------------------------------------
