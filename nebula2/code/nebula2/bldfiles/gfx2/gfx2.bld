@@ -7,7 +7,6 @@
 #      nmesh2
 #      nmousecursor
 #      nshader2
-#      nsurface
 #      ntexture2
 #      nwindowhandler
 #      nwin32windowhandler
@@ -78,12 +77,6 @@ beginmodule nshader2
     setdir gfx2
     setfiles { nshader2_main }
     setheaders { nshader2 }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nsurface
-    setdir gfx2
-    setfiles   { nsurface }
-    setheaders { nsurface }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule ntexture2

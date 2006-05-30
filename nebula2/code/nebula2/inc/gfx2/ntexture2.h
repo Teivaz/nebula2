@@ -63,14 +63,10 @@
     ...
     @endcode
 
-    See @ref nSurface class for more details about the surface and its usage.
-
     (C) 2002 RadonLabs GmbH
 */
 #include "resource/nresource.h"
 #include "kernel/nfile.h"
-
-class nSurface;
 
 //------------------------------------------------------------------------------
 class nTexture2 : public nResource
@@ -199,11 +195,7 @@ public:
     /// save Texture to file
     virtual bool SaveTextureToFile(const nString& filename);
 
-    /// @name Surface supporting functions
-    /// @{
-    virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
     virtual void GenerateMipMaps();
-    /// @}
 
 protected:
     /// set number of mipmaps

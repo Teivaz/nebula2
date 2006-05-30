@@ -2,8 +2,6 @@
 //  nd3d9texture_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "gfx2/nsurface.h"
-#include "gfx2/nd3d9surface.h"
 #include "gfx2/nd3d9texture.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
@@ -996,28 +994,6 @@ nD3D9Texture::SaveTextureToFile(const nString &filename)
     n_dxtrace(hr, "Failed to save Texture (D3D)");
     return true;
 };
-
-//------------------------------------------------------------------------------
-/**
-
-    @param objName  name of nSurafce which to be created.
-    @param level    mipmap level
-    @param surface
-
-    - Feb-04 Kim, H.W. added to support ngameswf.
-*/
-void nD3D9Texture::GetSurfaceLevel(const char* objName, uint level, nSurface** surface)
-{
-    n_assert(this->texture2D);
-
-    HRESULT hr;
-
-    *surface = (nSurface*)this->kernelServer->New ("nd3d9surface", objName);
-    n_assert(*surface != NULL);
-
-    hr = this->texture2D->GetSurfaceLevel(level, &((nD3D9Surface*)*surface)->baseSurface);
-    n_assert(SUCCEEDED(hr));
-}
 
 //------------------------------------------------------------------------------
 /**

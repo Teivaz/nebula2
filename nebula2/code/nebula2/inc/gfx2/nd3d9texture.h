@@ -36,8 +36,6 @@ public:
     /// save texture to file
     virtual bool SaveTextureToFile(const nString &filename);
 
-    /// retrieves a pointer to the surface.
-    virtual void GetSurfaceLevel(const char* objName, uint level, nSurface** surface);
     /// filters mipmap levels of a texture.
     virtual void GenerateMipMaps();
     /// convert nTexture2 format to D3D9FORMAT.
