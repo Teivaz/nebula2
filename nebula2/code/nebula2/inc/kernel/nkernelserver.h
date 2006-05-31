@@ -192,6 +192,16 @@ nKernelServer::Unlock()
 /**
 */
 inline
+const nHashList*
+nKernelServer::GetClassList() const
+{
+    return &(this->classList);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 bool
 nKernelServer::IsAbsolutePath(const char* path)
 {
