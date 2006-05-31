@@ -39,9 +39,9 @@ CapsuleShape::Attach(dSpaceID spaceId)
 {
     if (Shape::Attach(spaceId))
     {
-        dGeomID capsule = dCreateCapsule(0, this->radius, this->length);
+        dGeomID capsule = dCreateCCylinder(0, this->radius, this->length);
         this->AttachGeom(capsule, spaceId);
-        dMassSetCapsule(&(this->odeMass), Physics::MaterialTable::GetDensity(this->materialType), 3, this->radius, this->length);
+        dMassSetCappedCylinder(&(this->odeMass), Physics::MaterialTable::GetDensity(this->materialType), 3, this->radius, this->length);
         this->TransformMass();
         return true;
     }
