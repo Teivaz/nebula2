@@ -69,9 +69,13 @@ beginmodule mangalore::physics
         universaljoint
         
     }
-    setlibs_win32 {
+    setlibs_win32_debug {
+        ode_d.lib 
+        OPCODE_d.lib
+    }
+    setlibs_win32_release {
         ode.lib 
         OPCODE.lib
-    }
+    }    
 endmodule
 #-------------------------------------------------------------------------------
