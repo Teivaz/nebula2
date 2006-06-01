@@ -98,16 +98,6 @@ void Renderer::destroyAllTextures() {
 /**
 */
 void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Texture* texture, const CEGUI::Rect& texRect, const CEGUI::ColourRect& colors, CEGUI::QuadSplitMode quadSplitMode) {
-    CeGuiRectangle* rect;
-    if (!isQueueingEnabled()) {
-        mesh.GetShader()->SetTexture(nShaderState::DiffMap0, ((Texture*)texture)->getTexture2());
-        int maxVertices;
-        mesh.Begin((float*&)rect, maxVertices);
-        n_assert2(maxVertices >= 6, "Must have enough vertices for a single quad");
-    } else {
-        rect = ((Texture*)texture)->getRenderList().Reserve(1);
-    }
-
     if (!isQueueingEnabled()) {
         z = 0.0f;
     }
@@ -153,6 +143,13 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
     vertices[3].color[2] = colors.d_top_right.getBlue();
     vertices[3].color[3] = colors.d_top_right.getAlpha();
 
+    CeGuiRectangle* rect;
+    if (!isQueueingEnabled()) {
+        rect = &((Texture*)texture)->cursorRect;
+        ((Texture*)texture)->hasCursorRect = true;
+    } else {
+        rect = ((Texture*)texture)->widgetRects.Reserve(1);
+    }
     if (quadSplitMode == CEGUI::TopLeftToBottomRight) {
         rect->tri[0].vert[0] = vertices[0];
         rect->tri[0].vert[1] = vertices[1];
@@ -167,9 +164,6 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
         rect->tri[1].vert[0] = vertices[0];
         rect->tri[1].vert[1] = vertices[1];
         rect->tri[1].vert[2] = vertices[3];
-    }
-    if (!isQueueingEnabled()) {
-        mesh.End(6);
     }
 }
 
@@ -187,24 +181,29 @@ void Renderer::doRender() {
     gfxServer->PushTransform(nGfxServer2::View, transform);
     gfxServer->PushTransform(nGfxServer2::Projection, matrix44());
 
-    float* vertexPointer;
-    int verticesInBatch;
-    mesh.Begin(vertexPointer, verticesInBatch);
+    float* vertices;
+    int maxVetices;
+    mesh.Begin(vertices, maxVetices);
     for(nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
-        nArray<CeGuiRectangle>& renderList = (*i)->getRenderList();
-        if (renderList.Empty()) {
+        nArray<CeGuiRectangle>& widgetRects = (*i)->widgetRects;
+        if (widgetRects.Empty()) {
             continue;
         }
         mesh.GetShader()->SetTexture(nShaderState::DiffMap0, (*i)->getTexture2());
         int curRect = 0;
-        while (curRect < renderList.Size()) {
-            int rectsInBatch = min(verticesInBatch/6, renderList.Size() - curRect);
-            memcpy(vertexPointer, &renderList[curRect], sizeof(CeGuiRectangle)*rectsInBatch);
-            mesh.Swap(rectsInBatch*6, vertexPointer);
-            curRect += rectsInBatch;
+        while (curRect < widgetRects.Size()) {
+            int numRects = min(maxVetices/6, widgetRects.Size() - curRect);
+            memcpy(vertices, &widgetRects[curRect], sizeof(CeGuiRectangle)*numRects);
+            mesh.Swap(6*numRects, vertices);
+            curRect += numRects;
+        }
+        if ((*i)->hasCursorRect) {
+            memcpy(vertices, &(*i)->cursorRect, sizeof(CeGuiRectangle));
+            mesh.Swap(6, vertices);
         }
     }
     mesh.End(0);
+
     gfxServer->PopTransform(nGfxServer2::Model);
     gfxServer->PopTransform(nGfxServer2::View);
     gfxServer->PopTransform(nGfxServer2::Projection);
@@ -215,7 +214,8 @@ void Renderer::doRender() {
 */
 void Renderer::clearRenderList() {
     for(nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
-        (*i)->getRenderList().Reset();
+        (*i)->widgetRects.Reset();
+        (*i)->hasCursorRect = false;
     }
 }
 

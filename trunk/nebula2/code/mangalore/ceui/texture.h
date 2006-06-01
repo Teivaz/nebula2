@@ -28,6 +28,8 @@ class Renderer;
 
 class Texture : public CEGUI::Texture
 {
+    friend class Renderer;
+
 public:
     /// constructor
     Texture(CEGUI::Renderer* renderer);
@@ -44,15 +46,17 @@ public:
     ///
     nTexture2* getTexture2();
     ///
-    nArray<CeGuiRectangle>& getRenderList();
-    ///
     bool isLoadFromFile() const;
     ///
     bool isLoadFromMemory() const;
 
+protected:
+    nArray<CeGuiRectangle> widgetRects;
+    CeGuiRectangle cursorRect;
+    bool hasCursorRect;
+
 private:
     nRef<nTexture2> texture;
-    nArray<CeGuiRectangle> renderList;
     bool fromFile;
     bool fromMemory;
 };
@@ -79,14 +83,6 @@ CEGUI::ushort Texture::getHeight() const {
 inline
 nTexture2* Texture::getTexture2() {
     return texture.get();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nArray<CeGuiRectangle>& Texture::getRenderList() {
-    return renderList;
 }
 
 //------------------------------------------------------------------------------
