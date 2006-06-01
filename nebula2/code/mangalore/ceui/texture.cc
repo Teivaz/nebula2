@@ -8,8 +8,9 @@ namespace CEUI
 //------------------------------------------------------------------------------
 /**
 */
-Texture::Texture(CEGUI::Renderer* renderer) : CEGUI::Texture(renderer), renderList(0, 16) {
-    renderList.SetFlags(nArray<CeGuiRectangle>::DoubleGrowSize);
+Texture::Texture(CEGUI::Renderer* renderer) : CEGUI::Texture(renderer), widgetRects(0, 16) {
+    widgetRects.SetFlags(nArray<CeGuiRectangle>::DoubleGrowSize);
+    hasCursorRect = false;
     fromFile = false;
     fromMemory = false;
 }
