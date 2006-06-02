@@ -52,8 +52,6 @@ public:
 
 protected:
     nArray<CeGuiRectangle> widgetRects;
-    CeGuiRectangle cursorRect;
-    bool hasCursorRect;
 
 private:
     nRef<nTexture2> texture;
