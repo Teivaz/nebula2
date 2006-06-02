@@ -7,6 +7,7 @@
 namespace CEUI
 {
 
+struct CeGuiRectangle;
 class Texture;
 class ResourceProvider;
 
@@ -28,7 +29,7 @@ public:
     ///
     virtual void destroyAllTextures();
     ///
-    void addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Texture* texture, const CEGUI::Rect& texRect, const CEGUI::ColourRect& colors, CEGUI::QuadSplitMode quadSplitMode);
+    virtual void addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Texture* texture, const CEGUI::Rect& texRect, const CEGUI::ColourRect& colors, CEGUI::QuadSplitMode quadSplitMode);
     ///
     virtual void doRender();
     ///
@@ -55,6 +56,8 @@ public:
     virtual bool isQueueingEnabled() const;
 
 protected:
+    ///
+    void renderCursor(const CEGUI::Texture* texture, CeGuiRectangle* rect);
     ///
     void sortTextures();
 
