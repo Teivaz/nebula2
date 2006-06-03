@@ -101,13 +101,8 @@ class Module:
         projectDir = self.GetProjectDir()
         ignore, projectDirName = os.path.split(string.rstrip(projectDir, os.sep))
         mangaloreMod = False
-        
-        if 'mangalore' == projectDirName:
-            # mangalore has a different directory structure
-            if os.path.isdir(os.path.join(projectDir, self.dir)):
-                self.codeDir = projectDirName
-                mangaloreMod = True
-        elif 'contrib' == projectDirName:
+
+        if 'contrib' == projectDirName:
             # search inside contrib
             for contribDir in self.buildSys.contribDirs:
                 # extract the last component of contribDir
@@ -125,7 +120,11 @@ class Module:
             if os.path.isdir(os.path.join(projectDir, 'inc', self.dir)):
                 self.codeDir = projectDirName
             elif os.path.isdir(os.path.join(projectDir, 'src', self.dir)):
+                self.codeDir = projectDirName            
+            # try mangalore style directory layout
+            elif os.path.isdir(os.path.join(projectDir, self.dir)):
                 self.codeDir = projectDirName
+                mangaloreMod = True
     
         if '' == self.codeDir:
             self.buildSys.logger.error('Failed to locate source code for '
@@ -148,18 +147,27 @@ class Module:
         for srcFile in self.files:
             root, ext = os.path.splitext(srcFile)
             # no extension? add the default .cc extension
-            if '' == ext:
-                srcFile = srcFile + '.cc'
             resolvedPath = os.path.join(self.baseSrcDir, self.dir, srcFile)
+            if '' == ext:
+                if os.path.exists(resolvedPath + '.cc'):
+                    resolvedPath = resolvedPath + '.cc'
+                elif os.path.exists(resolvedPath + '.cpp'):
+                    resolvedPath = resolvedPath + '.cpp'
+                elif os.path.exists(resolvedPath + '.c'):
+                    resolvedPath = resolvedPath + '.c'
+            
             self.resolvedFiles.append(resolvedPath)
         
         self.resolvedHeaders = []
         for hdrFile in self.headers:
             root, ext = os.path.splitext(hdrFile)
-            # no extension? add the default .cc extension
-            if '' == ext:
-                hdrFile = hdrFile + '.h'
+            # no extension? add the default .h extension
             resolvedPath = os.path.join(self.baseIncDir, self.dir, hdrFile)
+            if '' == ext:
+                if os.path.exists(resolvedPath + '.h'):
+                    resolvedPath = resolvedPath + '.h'
+                elif os.path.exists(resolvedPath + '.hpp'):
+                    resolvedPath = resolvedPath + '.hpp'
             self.resolvedHeaders.append(resolvedPath)
             
         #print "Resolved Files:"
