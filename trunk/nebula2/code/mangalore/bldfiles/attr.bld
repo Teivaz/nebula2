@@ -6,13 +6,12 @@
 beginmodule mangalore::attr
     setdir attr
     settype cpp
-    setfiles { 
-        _attrid
+    setfiles {
         _attridtyped
         attributeid
         attributes
     }
-    setheaders { 
+    setheaders {
         _attrid
         _attridtyped
         attributeclasses
