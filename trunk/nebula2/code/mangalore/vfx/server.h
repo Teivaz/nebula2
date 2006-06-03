@@ -24,7 +24,7 @@ namespace VFX
 class Server : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Server);
+    DeclareFactory(Server);
 
 public:
     /// constructor
@@ -121,7 +121,8 @@ Server::GetTime() const
 */
 inline
 EffectHandler*
-Server::GetEffectHandler() {
+Server::GetEffectHandler() 
+{
     return this->effectHandler;
 }
 

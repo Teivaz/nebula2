@@ -18,7 +18,7 @@ namespace Audio
 class Entity : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Entity);
+    DeclareFactory(Entity);
 
 public:
     /// constructor
@@ -64,7 +64,7 @@ private:
     float volume;
     float maxVolume;
     nSound3* sound;
-    bool fistFrameAfterStart;
+    bool firstFrameAfterStart;
     bool fadeOutActive;
     nTime fadeOutStarted;
     nTime fadeOutTime;
@@ -173,7 +173,7 @@ Entity::IsPlaying() const
 {
     if (this->sound)
     {
-        if (this->fistFrameAfterStart)
+        if (this->firstFrameAfterStart)
         {
             // the sound has been started but never updated,
             // dsound will return false, but the sound will start

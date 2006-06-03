@@ -18,22 +18,24 @@ class BoolAttributeID : public AttributeID
 {
 public:
     BoolAttributeID();
-    BoolAttributeID( const _attridTyped<attr::BoolT>* );
-    BoolAttributeID( const nString& name ); // must exist!
+    BoolAttributeID(const _attridTyped<attr::BoolT>*);
+    BoolAttributeID(const nString& name); // must exist!
     virtual ~BoolAttributeID();
 
     /// equality operator
-    friend bool operator==(const BoolAttributeID& lhs, const BoolAttributeID& rhs );
+    friend bool operator==(const BoolAttributeID& lhs, const BoolAttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const BoolAttributeID& lhs, const BoolAttributeID& rhs );
+    friend bool operator!=(const BoolAttributeID& lhs, const BoolAttributeID& rhs);
 
-    static BoolAttributeID FindBoolAttributeID( const nString& name );
+    static BoolAttributeID FindBoolAttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const BoolAttributeID& lhs, const BoolAttributeID& rhs )
+inline 
+bool 
+operator==(const BoolAttributeID& lhs, const BoolAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const BoolAttributeID& lhs, const BoolAttributeID& rhs )
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const BoolAttributeID& lhs, const BoolAttributeID& rhs )
+inline 
+bool 
+operator!=(const BoolAttributeID& lhs, const BoolAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const BoolAttributeID& lhs, const BoolAttributeID& rhs )
 /**
 */
 inline 
-BoolAttributeID::BoolAttributeID( const _attridTyped<attr::BoolT>* aip ) :
-    AttributeID( aip )
+BoolAttributeID::BoolAttributeID(const _attridTyped<attr::BoolT>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ BoolAttributeID::BoolAttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-BoolAttributeID::BoolAttributeID( const nString& name )
+BoolAttributeID::BoolAttributeID(const nString& name)
 {
-    const BoolAttributeID& existingID = BoolAttributeID::FindBoolAttributeID( name );
+    const BoolAttributeID& existingID = BoolAttributeID::FindBoolAttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -92,18 +96,5 @@ BoolAttributeID::~BoolAttributeID()
 
 } // namespace
 
-//typedef const _attridTyped<attr::BoolT>* BoolAttributeID;
-//
-//namespace attr
-//{
-//    /// find Bool attribute id by name
-//    BoolAttributeID FindBoolAttributeID( const nString& name );
-//}
-
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

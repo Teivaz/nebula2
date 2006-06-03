@@ -39,21 +39,30 @@ public:
     /// return true if scene server open
     bool IsOpen() const;
     /// change Maya Shader Parameter (called by remoteControl)
-    nString ChangeShaderParameter(nString mayaShaderName,nString shaderHandling,nString parameterID,nString value);
+    nString ChangeShaderParameter(const nString& mayaShaderName, 
+                                  const nString& shaderHandling,
+                                  const nString& paramID, 
+                                  const nString& paramValue);
 
 private:
     /// @name Toolkit Remote Shader-Parameter-Change-Functions 
     /// @{
-    /// recursivly called to apply changes
-    bool ChangeShaderParameterOnNode(nRoot* node,nString mayaShaderName,nString shaderHandling,nString parameterID,nString value);
+    /// recursively called to apply changes
+    bool ChangeShaderParameterOnNode(nRoot* node, 
+                                     const nString& mayaShaderName,
+                                     const nString& shaderHandler,
+                                     const nString& paramID,
+                                     const nString& paramValue);
     /// attribute handler 0 (Common Attributes)
-    bool ChangeTypeCommon(nMaterialNode* node,nString parameterID,nString value);
+    bool ChangeTypeCommon(nMaterialNode* node, const nString& paramID, 
+                          const nString& paramValue);
     /// attribute handler 1 (Particle2)
-    bool ChangeTypeParticle2(nMaterialNode* node,nString parameterID,nString value);
+    bool ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
+                             const nString& paramValue);
     /// helper function, converts a string to an envelope curve
-    nEnvelopeCurve AsEnvelopeCurve(nString value);
+    nEnvelopeCurve AsEnvelopeCurve(const nString& value);
     /// helper function, converts a string to a color envelope curve
-    nVector3EnvelopeCurve AsColorCurve(nString value);
+    nVector3EnvelopeCurve AsColorCurve(const nString& value);
     /// @}
 
     static nToolkitServer* Singleton;

@@ -38,9 +38,6 @@ Entity::~Entity()
 
 //------------------------------------------------------------------------------
 /**
-    This method sets up the entity properties. Overwrite this method
-    in entity subclasses to create 
-
     This method sets up the entity. The method is called from within
     OnActivate(). Override the method for different or additional setup tasks.
 */
@@ -70,7 +67,7 @@ Entity::CleanupProperties()
 //------------------------------------------------------------------------------
 /**
     This method loads the entity attributes from the world database
-    and attached them to the entity. To identify the entity in the database,
+    and attaches them to the entity. To identify the entity in the database,
     a valid GUID attribute must be attached to the entity.
     Existing attributes will be overwritten (if they are in the database) or 
     left untouched (if they are not in the database). To implement post-loading 
@@ -150,7 +147,7 @@ Entity::OnDeactivate()
 
 //------------------------------------------------------------------------------
 /**
-    Called on game entities at the begin of the frame.
+    Called on game entities at the start of the frame.
 */
 void
 Entity::OnBeginFrame()
@@ -277,7 +274,7 @@ Entity::AttachProperty(Property* prop)
     if (prop->GetActiveEntityPools() & this->GetEntityPool())
     {
         this->properties.Append(prop);
-	    prop->SetEntity(this);
+        prop->SetEntity(this);
         prop->SetupDefaultAttributes();
     }
 }
@@ -298,7 +295,7 @@ Entity::RemoveProperty(Property* prop)
         {
             this->properties[index]->OnDeactivate();
         }
-		this->properties[index]->ClearEntity();
+        this->properties[index]->ClearEntity();
         this->properties.Erase(index);
     }
     else

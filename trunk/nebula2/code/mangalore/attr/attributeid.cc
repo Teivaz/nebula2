@@ -57,7 +57,7 @@ AttributeID::FindAttributeID( const nString& name )
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
@@ -71,7 +71,7 @@ VoidAttributeID::FindVoidAttributeID( const nString& name )
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
@@ -85,7 +85,7 @@ BoolAttributeID::FindBoolAttributeID( const nString& name )
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
@@ -99,7 +99,7 @@ IntAttributeID::FindIntAttributeID( const nString& name )
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
@@ -113,7 +113,7 @@ FloatAttributeID::FindFloatAttributeID( const nString& name )
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
@@ -178,147 +178,147 @@ Matrix44AttributeID::FindMatrix44AttributeID( const nString& name )
     FIXME: [np] slow and ugly for now. will get changed if needed.
 */
 AttributeID
-attr::FindAttributeID( const nString& name )
+attr::FindAttributeID(const nString& name)
 {
     AttributeID attributeID;
 
-    attributeID = _attridTyped<VoidT>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<VoidT>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<BoolT>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<BoolT>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<IntT>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<IntT>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<FloatT>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<FloatT>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<StringT>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<StringT>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<Vector3T>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<Vector3T>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<Vector4T>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<Vector4T>::Find(name);
+    if (0 != attributeID) return attributeID;
 
-    attributeID = _attridTyped<Matrix44T>::Find( name );
-    if ( 0 != attributeID ) return attributeID;
+    attributeID = _attridTyped<Matrix44T>::Find(name);
+    if (0 != attributeID) return attributeID;
 
     // not found, let caller decide if this is an error
     return 0;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 VoidAttributeID
-attr::FindVoidAttributeID( const nString& name )
+attr::FindVoidAttributeID(const nString& name)
 {
     VoidAttributeID attributeID;
 
-    attributeID = _attridTyped<VoidT>::Find( name );
+    attributeID = _attridTyped<VoidT>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 BoolAttributeID
-attr::FindBoolAttributeID( const nString& name )
+attr::FindBoolAttributeID(const nString& name)
 {
     BoolAttributeID attributeID;
 
-    attributeID = _attridTyped<BoolT>::Find( name );
+    attributeID = _attridTyped<BoolT>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 IntAttributeID
-attr::FindIntAttributeID( const nString& name )
+attr::FindIntAttributeID(const nString& name)
 {
     IntAttributeID attributeID;
 
-    attributeID = _attridTyped<IntT>::Find( name );
+    attributeID = _attridTyped<IntT>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 FloatAttributeID
-attr::FindFloatAttributeID( const nString& name )
+attr::FindFloatAttributeID(const nString& name)
 {
     FloatAttributeID attributeID;
 
-    attributeID = _attridTyped<FloatT>::Find( name );
+    attributeID = _attridTyped<FloatT>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 StringAttributeID
-attr::FindStringAttributeID( const nString& name )
+attr::FindStringAttributeID(const nString& name)
 {
     StringAttributeID attributeID;
 
-    attributeID = _attridTyped<StringT>::Find( name );
+    attributeID = _attridTyped<StringT>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 Vector3AttributeID
-attr::FindVector3AttributeID( const nString& name )
+attr::FindVector3AttributeID(const nString& name)
 {
     Vector3AttributeID attributeID;
 
-    attributeID = _attridTyped<Vector3T>::Find( name );
+    attributeID = _attridTyped<Vector3T>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 Vector4AttributeID
-attr::FindVector4AttributeID( const nString& name )
+attr::FindVector4AttributeID(const nString& name)
 {
     Vector4AttributeID attributeID;
 
-    attributeID = _attridTyped<Vector4T>::Find( name );
+    attributeID = _attridTyped<Vector4T>::Find(name);
     return attributeID;
 }
 
-    //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
     @param  name    attribute name as string
     @return         attribute if found, 0 otherwise
 */
 Matrix44AttributeID
-attr::FindMatrix44AttributeID( const nString& name )
+attr::FindMatrix44AttributeID(const nString& name)
 {
     Matrix44AttributeID attributeID;
 
-    attributeID = _attridTyped<Matrix44T>::Find( name );
+    attributeID = _attridTyped<Matrix44T>::Find(name);
     return attributeID;
 }
 

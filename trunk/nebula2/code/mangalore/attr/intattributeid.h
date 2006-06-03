@@ -18,22 +18,24 @@ class IntAttributeID : public AttributeID
 {
 public:
     IntAttributeID();
-    IntAttributeID( const _attridTyped<attr::IntT>* );
-    IntAttributeID( const nString& name ); // must exist!
+    IntAttributeID(const _attridTyped<attr::IntT>*);
+    IntAttributeID(const nString& name); // must exist!
     virtual ~IntAttributeID();
 
     /// equality operator
-    friend bool operator==(const IntAttributeID& lhs, const IntAttributeID& rhs );
+    friend bool operator==(const IntAttributeID& lhs, const IntAttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const IntAttributeID& lhs, const IntAttributeID& rhs );
+    friend bool operator!=(const IntAttributeID& lhs, const IntAttributeID& rhs);
 
-    static IntAttributeID FindIntAttributeID( const nString& name );
+    static IntAttributeID FindIntAttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const IntAttributeID& lhs, const IntAttributeID& rhs )
+inline 
+bool 
+operator==(const IntAttributeID& lhs, const IntAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const IntAttributeID& lhs, const IntAttributeID& rhs )
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const IntAttributeID& lhs, const IntAttributeID& rhs )
+inline 
+bool 
+operator!=(const IntAttributeID& lhs, const IntAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const IntAttributeID& lhs, const IntAttributeID& rhs )
 /**
 */
 inline 
-IntAttributeID::IntAttributeID( const _attridTyped<attr::IntT>* aip ) :
-    AttributeID( aip )
+IntAttributeID::IntAttributeID(const _attridTyped<attr::IntT>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ IntAttributeID::IntAttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-IntAttributeID::IntAttributeID( const nString& name )
+IntAttributeID::IntAttributeID(const nString& name)
 {
-    const IntAttributeID& existingID = IntAttributeID::FindIntAttributeID( name );
+    const IntAttributeID& existingID = IntAttributeID::FindIntAttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -91,18 +95,6 @@ IntAttributeID::~IntAttributeID()
 }
 
 } // namespace
-//typedef const _attridTyped<attr::IntT>* IntAttributeID;
-//
-//namespace attr
-//{
-//    /// find Int attribute id by name
-//    IntAttributeID FindIntAttributeID( const nString& name );
-//}
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

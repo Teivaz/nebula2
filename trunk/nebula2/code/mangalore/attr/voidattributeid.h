@@ -18,22 +18,24 @@ class VoidAttributeID : public AttributeID
 {
 public:
     VoidAttributeID();
-    VoidAttributeID( const _attridTyped<attr::VoidT>* );
-    VoidAttributeID( const nString& name ); // must exist!
+    VoidAttributeID(const _attridTyped<attr::VoidT>*);
+    VoidAttributeID(const nString& name); // must exist!
     virtual ~VoidAttributeID();
 
     /// equality operator
-    friend bool operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs );
+    friend bool operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs );
+    friend bool operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs);
 
-    static VoidAttributeID FindVoidAttributeID( const nString& name );
+    static VoidAttributeID FindVoidAttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs )
+inline 
+bool 
+operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs )
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs )
+inline 
+bool 
+operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs )
 /**
 */
 inline 
-VoidAttributeID::VoidAttributeID( const _attridTyped<attr::VoidT>* aip ) :
-    AttributeID( aip )
+VoidAttributeID::VoidAttributeID(const _attridTyped<attr::VoidT>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ VoidAttributeID::VoidAttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-VoidAttributeID::VoidAttributeID( const nString& name )
+VoidAttributeID::VoidAttributeID(const nString& name)
 {
-    const VoidAttributeID& existingID = VoidAttributeID::FindVoidAttributeID( name );
+    const VoidAttributeID& existingID = VoidAttributeID::FindVoidAttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -91,18 +95,6 @@ VoidAttributeID::~VoidAttributeID()
 }
 
 } // namespace
-//typedef const _attridTyped<attr::VoidT>* VoidAttributeID;
-//
-//namespace attr
-//{
-//    /// find Void attribute id by name
-//    VoidAttributeID FindVoidAttributeID( const nString& name );
-//}
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

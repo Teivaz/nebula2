@@ -5,7 +5,7 @@
     @class Db::Server
     
     The DB server is a comfortable wrapper around the world database as
-    created by the level exporter. It provides highlevel services which
+    created by the level exporter. It provides high-level services which
     require a specific database layout, but also allows low level access
     directly to the database using SQL statements.
     
@@ -27,7 +27,7 @@ class Query;
 class Server : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Server);
+    DeclareFactory(Server);
 
 public:
     /// constructor
@@ -123,8 +123,8 @@ public:
     virtual Query* CreateLevelCategoryQuery(const nString& levelName, const nString& categoryName) const;
     /// create specialized query which returns all templates of given category
     virtual Query* CreateCategoryTemplateQuery(const nString& categoryName) const;
-	/// create specialized query which returns all templates of given category and a given id
-	virtual Query* CreateCategoryTemplateIdQuery(const nString& categoryName, const nString& templateName) const;
+    /// create specialized query which returns all templates of given category and a given id
+    virtual Query* CreateCategoryTemplateIdQuery(const nString& categoryName, const nString& templateName) const;
     /// create a specialized query which returns all attributes for a given entity GUID
     virtual Query* CreateGuidQuery(const nString& guid) const;
 

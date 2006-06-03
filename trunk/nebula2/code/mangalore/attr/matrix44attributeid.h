@@ -18,22 +18,24 @@ class Matrix44AttributeID : public AttributeID
 {
 public:
     Matrix44AttributeID();
-    Matrix44AttributeID( const _attridTyped<attr::Matrix44T>* );
-    Matrix44AttributeID( const nString& name ); // must exist!
+    Matrix44AttributeID(const _attridTyped<attr::Matrix44T>*);
+    Matrix44AttributeID(const nString& name); // must exist!
     virtual ~Matrix44AttributeID();
 
     /// equality operator
-    friend bool operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs );
+    friend bool operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs );
+    friend bool operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs);
 
-    static Matrix44AttributeID FindMatrix44AttributeID( const nString& name );
+    static Matrix44AttributeID FindMatrix44AttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs )
+inline 
+bool 
+operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs )
+inline 
+bool 
+operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID
 /**
 */
 inline 
-Matrix44AttributeID::Matrix44AttributeID( const _attridTyped<attr::Matrix44T>* aip ) :
-    AttributeID( aip )
+Matrix44AttributeID::Matrix44AttributeID(const _attridTyped<attr::Matrix44T>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ Matrix44AttributeID::Matrix44AttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-Matrix44AttributeID::Matrix44AttributeID( const nString& name )
+Matrix44AttributeID::Matrix44AttributeID(const nString& name)
 {
-    const Matrix44AttributeID& existingID = Matrix44AttributeID::FindMatrix44AttributeID( name );
+    const Matrix44AttributeID& existingID = Matrix44AttributeID::FindMatrix44AttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -91,18 +95,6 @@ Matrix44AttributeID::~Matrix44AttributeID()
 }
 
 } // namespace
-//typedef const _attridTyped<attr::Matrix44T>* Matrix44AttributeID;
-//
-//namespace attr
-//{
-//    /// find Matrix44 attribute id by name
-//    Matrix44AttributeID FindMatrix44AttributeID( const nString& name );
-//}
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    
