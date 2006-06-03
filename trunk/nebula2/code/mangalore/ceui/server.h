@@ -40,6 +40,10 @@ public:
     void Trigger();
     /// render the user interface
     void Render();
+    /// create and display a user interface
+    void DisplayGui(const nString& resName);
+    /// hide the current user interface
+    void HideGui();
     /// is mouse over a UI element
     bool IsMouseOverGui() const;
 

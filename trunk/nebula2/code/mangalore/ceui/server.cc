@@ -2,6 +2,8 @@
 #include "ceui/renderer.h"
 #include "ceui/logger.h"
 #include "input/ninputserver.h"
+#include "cegui/CEGUILogger.h"
+#include "cegui/CEGUIWindowManager.h"
 
 namespace CEUI
 {
@@ -38,6 +40,8 @@ bool Server::Open() {
     n_new(CEUI::Logger);
     renderer = n_new(CEUI::Renderer);
     ceGuiSystem = n_new(CEGUI::System(renderer));
+    CEGUI::Logger::getSingleton().setLogFilename("ceguilog.txt");
+    CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
     nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::None);
     isOpen = true;
     return isOpen;
@@ -218,6 +222,24 @@ void Server::Trigger() {
 void Server::Render() {
     nGfxServer2::Instance()->Clear(nGfxServer2::DepthBuffer, 0, 0, 0, 0, 1, 0);
     ceGuiSystem->renderGUI();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Displays a new gui defined by a Nebula2 resource and sets
+    the (optional) associated event handler.
+*/
+void Server::DisplayGui(const nString& resName) {
+    CEGUI::Window* rootWindow = CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
+    ceGuiSystem->setGUISheet(rootWindow);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Hides the currently displayed 2D GUI.
+*/
+void Server::HideGui() {
+    ceGuiSystem->setGUISheet(NULL);
 }
 
 //-----------------------------------------------------------------------------
