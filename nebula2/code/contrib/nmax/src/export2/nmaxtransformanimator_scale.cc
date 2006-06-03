@@ -68,8 +68,12 @@ int nMaxTransformAnimator::ExportScale(Control *control, nTransformAnimator* ani
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
+
     @note
-        Only scale value is exported. The quaternion value is not exported.
+    Only scale value is exported. The quaternion value is not exported.
 
     @return the number of the keys which to be used for the actual animation.
 */
@@ -89,6 +93,16 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
         scale.z = key.val.s.z;
 
         float time = key.time * SECONDSPERTICK;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
+        {
+            animator->AddScaleKey(0.0f, scale);
+        }
+
         animator->AddScaleKey(time, scale);
     }
 
@@ -97,9 +111,13 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
+
     @note
-        Only scale value is exported. Any tangent or in/out length values are
-        not exported.
+    Only scale value is exported. Any tangent or in/out length values are
+    not exported.
 
     @return the number of the keys which to be used for the actual animation.
 */
@@ -119,6 +137,16 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
         scale.z = key.val.s.z;
 
         float time = key.time * SECONDSPERTICK;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
+        {
+            animator->AddScaleKey(0.0f, scale);
+        }
+
         animator->AddScaleKey(time, scale);
     }
 
@@ -127,10 +155,14 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-     Interpolates between animation keys by evenly dividing the change from 
-     one key value to the next by the amount of time between the keys.
+    Interpolates between animation keys by evenly dividing the change from 
+    one key value to the next by the amount of time between the keys.
 
-     @return the number of the keys which to be used for the actual animation.
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
+
+    @return the number of the keys which to be used for the actual animation.
 */
 int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys, 
                                              nTransformAnimator* animator)
@@ -146,6 +178,16 @@ int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
         scale.z = key.val.s.z;
 
         float time = key.time * SECONDSPERTICK;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
+        {
+            animator->AddScaleKey(0.0f, scale);
+        }
+
         animator->AddScaleKey(time, scale);
     }
 
@@ -155,6 +197,10 @@ int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
 //-----------------------------------------------------------------------------
 /**
     Export sampled key scale animation.
+
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
 
     @return the number of the keys which to be used for the actual animation.
 */
@@ -178,6 +224,15 @@ int nMaxTransformAnimator::ExportSampledScale(nTransformAnimator* animator)
         scale.x = sampleKey.pos.x;
         scale.y = sampleKey.pos.y;
         scale.z = sampleKey.pos.z;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
+        {
+            animator->AddScaleKey(0.0f, scale);
+        }
 
         animator->AddScaleKey(time, scale);
     }
