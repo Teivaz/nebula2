@@ -66,7 +66,6 @@ private:
     /// @}
 
     static nToolkitServer* Singleton;
-    static nToolkitServer* self;
     bool isOpen;
 
 };

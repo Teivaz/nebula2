@@ -7,7 +7,6 @@
 
 nNebulaScriptClass(nToolkitServer, "nroot");
 nToolkitServer* nToolkitServer::Singleton = 0;
-nToolkitServer* nToolkitServer::self = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -17,7 +16,6 @@ nToolkitServer::nToolkitServer():
 {
     n_assert(0 == Singleton);
     Singleton = this;
-    self = this;
 }
 
 //------------------------------------------------------------------------------
