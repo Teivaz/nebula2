@@ -2,12 +2,16 @@
 //  managers/envquerymanager.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
+#define MANGALORE_USE_CEGUI
 #include "managers/envquerymanager.h"
 #include "managers/entitymanager.h"
 #include "physics/server.h"
 #include "input/server.h"
 #include "gui/nguiserver.h"
 #include "ui/server.h"
+#ifdef MANGALORE_USE_CEGUI
+#include "ceui/server.h"
+#endif
 
 namespace Managers
 {
@@ -40,7 +44,7 @@ EnvQueryManager::~EnvQueryManager()
 
 //------------------------------------------------------------------------------
 /**
-    This returns a pointer to the entity under the mouse, or 0 if mouse is 
+    This returns a pointer to the entity under the mouse, or 0 if mouse is
     not over an entity.
 */
 Entity*
@@ -51,7 +55,7 @@ EnvQueryManager::GetEntityUnderMouse() const
 
 //------------------------------------------------------------------------------
 /**
-    This returns the position where a vector through the mouse position 
+    This returns the position where a vector through the mouse position
     intersects the 3d world (or the nearest entity). If the mouse doesn't
     intersect, the result will be undefined, and the method
     HasMouseIntersection() returns false.
@@ -65,7 +69,7 @@ EnvQueryManager::GetMousePos3d() const
 //------------------------------------------------------------------------------
 /**
     This returns the upvector of the face under the mousecursor.
-    If the mouse doesn't intersect, the result will be undefined, 
+    If the mouse doesn't intersect, the result will be undefined,
     and the method HasMouseIntersection() returns false.
 */
 const vector3&
@@ -102,8 +106,11 @@ EnvQueryManager::OnFrame()
     this->mouseIntersection = false;
 
     // get 3d contact under mouse
-    if (!nGuiServer::Instance()->IsMouseOverGui() && !UI::Server::Instance()->IsMouseOverGui())
-    {
+    if (!nGuiServer::Instance()->IsMouseOverGui() && !UI::Server::Instance()->IsMouseOverGui()
+#ifdef MANGALORE_USE_CEGUI
+        && !CEUI::Server::Instance()->IsMouseOverGui()
+#endif
+    ) {
         const vector2& mousePos = inputServer->GetMousePos();
         const float rayLength = 5000.0f;
         const Physics::ContactPoint* contact = 0;
