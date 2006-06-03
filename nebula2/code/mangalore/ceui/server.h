@@ -40,6 +40,8 @@ public:
     void Trigger();
     /// render the user interface
     void Render();
+    /// is mouse over a UI element
+    bool IsMouseOverGui() const;
 
 private:
     static Server* Singleton;

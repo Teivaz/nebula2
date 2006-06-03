@@ -174,36 +174,37 @@ static CEGUI::uint Key2CeGuiKey(nKey key) {
 
 //------------------------------------------------------------------------------
 /**
+    Trigger the ceui server. This distributes input to the current canvas
 */
 void Server::Trigger() {
     // inject time pulse
-    CEGUI::System::getSingleton().injectTimePulse((float)frameTime);
+    ceGuiSystem->injectTimePulse((float)frameTime);
     // inject input
     for(nInputEvent* inputEvent = nInputServer::Instance()->FirstEvent(); inputEvent != NULL; inputEvent = nInputServer::Instance()->NextEvent(inputEvent)) {
         switch(inputEvent->GetDeviceId()) {
         case N_INPUT_MOUSE(0):
             switch(inputEvent->GetType()) {
             case N_INPUT_MOUSE_MOVE:
-                CEGUI::System::getSingleton().injectMousePosition((float)inputEvent->GetAbsXPos(), (float)inputEvent->GetAbsYPos());
+                ceGuiSystem->injectMousePosition((float)inputEvent->GetAbsXPos(), (float)inputEvent->GetAbsYPos());
                 break;
             case N_INPUT_BUTTON_DOWN:
-                CEGUI::System::getSingleton().injectMouseButtonDown(Button2CeGuiButton(inputEvent->GetButton()));
+                ceGuiSystem->injectMouseButtonDown(Button2CeGuiButton(inputEvent->GetButton()));
                 break;
             case N_INPUT_BUTTON_UP:
-                CEGUI::System::getSingleton().injectMouseButtonUp(Button2CeGuiButton(inputEvent->GetButton()));
+                ceGuiSystem->injectMouseButtonUp(Button2CeGuiButton(inputEvent->GetButton()));
                 break;
             }
             break;
         case N_INPUT_KEYBOARD(0):
             switch(inputEvent->GetType()) {
             case N_INPUT_KEY_DOWN:
-                CEGUI::System::getSingleton().injectKeyDown(Key2CeGuiKey(inputEvent->GetKey()));
+                ceGuiSystem->injectKeyDown(Key2CeGuiKey(inputEvent->GetKey()));
                 break;
             case N_INPUT_KEY_UP:
-                CEGUI::System::getSingleton().injectKeyUp(Key2CeGuiKey(inputEvent->GetKey()));
+                ceGuiSystem->injectKeyUp(Key2CeGuiKey(inputEvent->GetKey()));
                 break;
             case N_INPUT_KEY_CHAR:
-                CEGUI::System::getSingleton().injectChar(inputEvent->GetKey());
+                ceGuiSystem->injectChar(inputEvent->GetKey());
                 break;
             }
             break;
@@ -216,7 +217,15 @@ void Server::Trigger() {
 */
 void Server::Render() {
     nGfxServer2::Instance()->Clear(nGfxServer2::DepthBuffer, 0, 0, 0, 0, 1, 0);
-    CEGUI::System::getSingleton().renderGUI();
+    ceGuiSystem->renderGUI();
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Check if the mouse is currently over an GUI element.
+*/
+bool Server::IsMouseOverGui() const {
+    return ceGuiSystem->getWindowContainingMouse() != ceGuiSystem->getGUISheet();
 }
 
 }
