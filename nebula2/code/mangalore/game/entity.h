@@ -15,7 +15,7 @@
 
     Entities are organized into pools (at the moment there is a LivePool
     and a SleepingPool). LivePool entities are part of the current
-    level and function as usual. SleepingPool entities just server as an
+    level and function as usual. SleepingPool entities just serve as an
     interface to "sleeping" data in the database. The idea is that live
     entities can just as well be manipulated as entities which exist in
     another location and are not active at the moment, this is also
@@ -52,7 +52,7 @@ class AttrSet;
 class Entity : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Entity);
+    DeclareFactory(Entity);
 
 public:
     /// an Id type, used to identify entities
@@ -189,7 +189,7 @@ private:
 
     static EntityId uniqueIdCounter;
     
-    /// the entity was created from template, forces the save of all atrributes
+    /// the entity was created from template, forces the save of all attributes
     bool createdFromTemplate;
 };
 

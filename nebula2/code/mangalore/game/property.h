@@ -45,7 +45,7 @@ public:
     virtual void OnLoad();
     /// called from within Entity::Save() before attributes are saved back to database
     virtual void OnSave();
-    /// called on begin of frame
+    /// called at the start of a frame
     virtual void OnBeginFrame();
     /// called before movement happens
     virtual void OnMoveBefore();
@@ -59,18 +59,18 @@ public:
     virtual void HandleMessage(Message::Msg* msg);
     /// Entity this is attached to.
     Entity* GetEntity() const;
-	/// Is this attached to an entity?
-	bool HasEntity() const;
+    /// Is this attached to an entity?
+    bool HasEntity() const;
 
 protected:
-	friend class Entity;
-	/// Set entity, this is attached to, to `v'.
-	void SetEntity(Entity* v);
-	/// Remove entity.
-	void ClearEntity();
+    friend class Entity;
+    /// Set entity, this is attached to, to `v'.
+    void SetEntity(Entity* v);
+    /// Remove entity.
+    void ClearEntity();
 
     Ptr<Entity> entity;
-	bool active;
+    bool active;
 };
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ inline
 Entity*
 Property::GetEntity() const
 {
-	n_assert(HasEntity());
+    n_assert(HasEntity());
     return this->entity;
 }
 
@@ -101,7 +101,7 @@ inline
 bool
 Property::HasEntity() const
 {
-	return this->entity != 0;
+    return this->entity != 0;
 }
 
 }; // namespace Property

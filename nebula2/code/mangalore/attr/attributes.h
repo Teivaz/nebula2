@@ -48,7 +48,7 @@ namespace Attr
     DeclareString(File);
     DeclareString(EntityGroup);
 
-    // PhysicsProprty
+    // PhysicsProperty
     DeclareVector3(VelocityVector);    // the current absolute velocity vector
 
     // ActorPhysicsProperty

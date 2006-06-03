@@ -50,7 +50,7 @@ Server::Open()
 
     // setup Nebula path assigns
     nString audioAssign = fileServer->ManglePath("proj:export/audio");
-    fileServer->SetAssign("audio", audioAssign.Get());
+    fileServer->SetAssign("audio", audioAssign);
 
     // open the Nebula audio server
     if (!nAudioServer3::Instance()->Open())
@@ -106,7 +106,7 @@ Server::Close()
 Entity*
 Server::CreateEntity()
 {
-	return Audio::Entity::Create();
+    return Audio::Entity::Create();
 }
 
 //------------------------------------------------------------------------------

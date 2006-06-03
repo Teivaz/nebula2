@@ -18,22 +18,24 @@ class Vector4AttributeID : public AttributeID
 {
 public:
     Vector4AttributeID();
-    Vector4AttributeID( const _attridTyped<attr::Vector4T>* );
-    Vector4AttributeID( const nString& name ); // must exist!
+    Vector4AttributeID(const _attridTyped<attr::Vector4T>*);
+    Vector4AttributeID(const nString& name); // must exist!
     virtual ~Vector4AttributeID();
 
     /// equality operator
-    friend bool operator==(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs );
+    friend bool operator==(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs );
+    friend bool operator!=(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs);
 
-    static Vector4AttributeID FindVector4AttributeID( const nString& name );
+    static Vector4AttributeID FindVector4AttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs )
+inline 
+bool 
+operator==(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const Vector4AttributeID& lhs, const Vector4AttributeID& 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs )
+inline 
+bool 
+operator!=(const Vector4AttributeID& lhs, const Vector4AttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const Vector4AttributeID& lhs, const Vector4AttributeID& 
 /**
 */
 inline 
-Vector4AttributeID::Vector4AttributeID( const _attridTyped<attr::Vector4T>* aip ) :
-    AttributeID( aip )
+Vector4AttributeID::Vector4AttributeID(const _attridTyped<attr::Vector4T>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ Vector4AttributeID::Vector4AttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-Vector4AttributeID::Vector4AttributeID( const nString& name )
+Vector4AttributeID::Vector4AttributeID(const nString& name)
 {
-    const Vector4AttributeID& existingID = Vector4AttributeID::FindVector4AttributeID( name );
+    const Vector4AttributeID& existingID = Vector4AttributeID::FindVector4AttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -91,18 +95,6 @@ Vector4AttributeID::~Vector4AttributeID()
 }
 
 } // namespace
-//typedef const _attridTyped<attr::Vector4T>* Vector4AttributeID;
-//
-//namespace attr
-//{
-//    /// find Vector4 attribute id by name
-//    Vector4AttributeID FindVector4AttributeID( const nString& name );
-//}
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

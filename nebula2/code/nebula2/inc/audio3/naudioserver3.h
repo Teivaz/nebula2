@@ -73,9 +73,9 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
-    /// mute all cateory volumes 
+    /// mute all category volumes 
     void Mute();
-    /// restore all muted cateory volumes
+    /// restore all muted category volumes
     void Unmute();
     /// is currently muted?
     bool IsMuted() const;

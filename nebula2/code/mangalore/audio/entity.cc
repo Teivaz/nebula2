@@ -22,7 +22,7 @@ Entity::Entity() :
     fadeOutActive(false),
     fadeOutStarted(0.0),
     fadeOutTime(0.0),
-    fistFrameAfterStart(false)
+    firstFrameAfterStart(false)
 {
 }
 
@@ -65,7 +65,7 @@ Entity::OnActivate()
     {
         this->maxVolume = 0.0f;
     }
-    this->volume = maxVolume;
+    this->volume = this->maxVolume;
     this->active = true;
 }
 
@@ -101,7 +101,7 @@ Entity::Start()
     {
         this->sound->SetVolume(this->volume);
         nAudioServer3::Instance()->StartSound(this->sound);
-        this->fistFrameAfterStart = true;
+        this->firstFrameAfterStart = true;
     }
 }
 
@@ -151,7 +151,7 @@ Entity::Update()
             }
             nAudioServer3::Instance()->UpdateSound(this->sound);
         }
-        this->fistFrameAfterStart = false;
+        this->firstFrameAfterStart = false;
     }
 }
 

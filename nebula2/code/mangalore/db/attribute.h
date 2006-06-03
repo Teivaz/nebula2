@@ -10,16 +10,19 @@
 
     Things to know:
 
-    - All attributes are readable
-    - Attributes can be writable and/or storable, use IsWritable() or IsStorable() to find out.
-    - db.xml instance attribute are writable and storable, class attributes are only readable.
+    - All attributes are readable.
+    - Attributes can be writable and/or storable, use IsWritable() or 
+      IsStorable() to find out.
+    - db.xml instance attributes are writable and storable, class attributes 
+      are only readable.
     - Attributes can be empty if no value has been set yet, empty attributes can
       still have a data type and id, use Clear() to make an attribute empty
-      without changing its type or id, use IsEmpty() to check whether an attribute is
-      empty.  
-    - Empty db.xml table cells have empty attributes of the correct type and id assigned
-      to them.
-    - Assigning a value will fail hard if the attribute is not writable or is not of the same type.
+      without changing its type or id, use IsEmpty() to check whether an 
+      attribute is empty.  
+    - Empty db.xml table cells have empty attributes of the correct type and id 
+      assigned to them.
+    - Assigning a value will fail hard if the attribute is not writable or is 
+      not of the same type.
 
     (C) 2005 Radon Labs GmbH
 */
@@ -608,7 +611,7 @@ inline
 const nString&
 Attribute::GetName() const
 {
-    n_assert2( this->attrId.IsValid(), "Valid attribute id" );
+    n_assert2(this->attrId.IsValid(), "Valid attribute id");
     return this->attrId.GetName();
 }
 
@@ -619,7 +622,7 @@ inline
 Attribute::Type
 Attribute::GetType() const
 {
-    n_assert2( this->attrId.IsValid(), "Valid attribute id" );
+    n_assert2(this->attrId.IsValid(), "Valid attribute id");
     return (Attribute::Type) this->attrId.GetType();
 }
 
@@ -630,7 +633,7 @@ inline
 bool
 Attribute::IsWritable() const
 {
-    n_assert2( this->attrId.IsValid(), "Valid attribute id" );
+    n_assert2(this->attrId.IsValid(), "Valid attribute id");
     return this->attrId.IsWritable();
 }
 
@@ -641,7 +644,7 @@ inline
 bool
 Attribute::IsStorable() const
 {
-    n_assert2( this->attrId.IsValid(), "Valid attribute id" );
+    n_assert2(this->attrId.IsValid(), "Valid attribute id");
     return this->attrId.IsStorable();
 }
 

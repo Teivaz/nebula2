@@ -58,17 +58,17 @@ class AttributeID
 {
 public:
     AttributeID();
-    AttributeID( const AttributeID& );
-    AttributeID( const _attrid* );
-    AttributeID( const nString& name ); // must exist!
+    AttributeID(const AttributeID&);
+    AttributeID(const _attrid*);
+    AttributeID(const nString& name); // must exist!
     virtual ~AttributeID();
 
     /// assignment operator
     void operator=(const AttributeID& rhs);
     /// equality operator
-    friend bool operator==(const AttributeID& lhs, const AttributeID& rhs );
+    friend bool operator==(const AttributeID& lhs, const AttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const AttributeID& lhs, const AttributeID& rhs );
+    friend bool operator!=(const AttributeID& lhs, const AttributeID& rhs);
     /// check for valid ID
     bool IsValid() const;
 
@@ -84,7 +84,7 @@ public:
 
 
     /// find untyped attribute id by name
-    static AttributeID FindAttributeID( const nString& name );
+    static AttributeID FindAttributeID(const nString& name);
 
 protected:
     const _attrid* attridPtr;
@@ -94,7 +94,7 @@ protected:
 /**
 */
 inline
-bool operator==(const AttributeID& lhs, const AttributeID& rhs )
+bool operator==(const AttributeID& lhs, const AttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -103,7 +103,7 @@ bool operator==(const AttributeID& lhs, const AttributeID& rhs )
 /**
 */
 inline
-bool operator!=(const AttributeID& lhs, const AttributeID& rhs )
+bool operator!=(const AttributeID& lhs, const AttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -149,8 +149,8 @@ AttributeID::AttributeID() :
 /**
 */
 inline
-AttributeID::AttributeID( const _attrid* aip ) :
-    attridPtr( aip )
+AttributeID::AttributeID(const _attrid* aip) :
+    attridPtr(aip)
 {
 }
 
@@ -158,7 +158,7 @@ AttributeID::AttributeID( const _attrid* aip ) :
 /**
 */
 inline
-AttributeID::AttributeID( const AttributeID& aId )
+AttributeID::AttributeID(const AttributeID& aId)
 {
     this->attridPtr = aId.attridPtr;
 }
@@ -167,13 +167,13 @@ AttributeID::AttributeID( const AttributeID& aId )
 /**
 */
 inline
-AttributeID::AttributeID( const nString& name )
+AttributeID::AttributeID(const nString& name)
 {
-    const AttributeID& existingID = AttributeID::FindAttributeID( name );
+    const AttributeID& existingID = AttributeID::FindAttributeID(name);
     
     if ( !existingID.IsValid() )
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -225,8 +225,3 @@ AttributeID::IsWritable() const
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

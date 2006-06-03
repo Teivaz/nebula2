@@ -12,7 +12,7 @@ static void n_changeshaderparameter(void*, nCmd*);
     ntoolkitserver
     
     @cppclass
-    nMayaToolkitServer
+    nToolkitServer
     
     @superclass
     nroot
@@ -51,6 +51,6 @@ n_changeshaderparameter(void *o, nCmd *cmd)
     nString handlerID = cmd->In()->GetS();
     nString parameterID = cmd->In()->GetS();
     nString value = cmd->In()->GetS();
-    cmd->Out()->SetS(self->ChangeShaderParameter(shaderName,handlerID,parameterID,value).Get());
+    cmd->Out()->SetS(self->ChangeShaderParameter(shaderName, handlerID, parameterID, value).Get());
 }
 

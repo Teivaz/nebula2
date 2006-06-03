@@ -162,7 +162,7 @@ Server::PlayShakeEffect(const vector3& pos, float range, float duration, float i
 //------------------------------------------------------------------------------
 /**
     The BeginScene() method should be called once per frame. Before rendering
-    happend.
+    happens.
 */
 void
 Server::BeginScene()
@@ -231,7 +231,7 @@ Server::EndScene()
 Effect*
 Server::CreateEffect()
 {
-	return Effect::Create();
+    return Effect::Create();
 }
 
 //------------------------------------------------------------------------------

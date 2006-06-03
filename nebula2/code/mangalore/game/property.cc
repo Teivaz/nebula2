@@ -31,7 +31,7 @@ Property::~Property()
     property is active. By default, the property is active in all
     entity pools (Live and Sleeping), if your subclassed property is
     only active in the Live pool, override this method and only return
-    Entity::SleepingPool.
+    Entity::LivePool.
 
     During AttachProperty() the entity will ask the property with this
     method whether it is active in the entity's current pool, if not,
@@ -64,8 +64,8 @@ Property::SetupDefaultAttributes()
 void
 Property::OnActivate()
 {
-	n_assert(!this->IsActive());
-	this->active = true;
+    n_assert(!this->IsActive());
+    this->active = true;
 }
 
 //------------------------------------------------------------------------------
@@ -180,17 +180,17 @@ Property::Accepts(Message::Msg* msg)
     not be called "automagically" because the Property doesn't know at which
     point in the frame you want to handle pending messages.
 
-    Thus, you must call the HandlePendingMessages() yourself from either OnBeginFrame(),
-    OnMoveBefore(), OnMoveAfter() or OnRender().
+    Thus, you must call the HandlePendingMessages() yourself from either 
+    OnBeginFrame(), OnMoveBefore(), OnMoveAfter() or OnRender().
 
     The simple rule is: if you override the Accepts() method, you must also call
-    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(), OnMoveAfter() 
-    or OnRender()
+    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(), 
+    OnMoveAfter() or OnRender().
 */
 void
 Property::HandleMessage(Message::Msg* msg)
 {
-	n_assert(Accepts(msg));
+    n_assert(Accepts(msg));
     // empty
 }
 
@@ -200,9 +200,9 @@ Property::HandleMessage(Message::Msg* msg)
 void
 Property::SetEntity(Entity* v)
 {
-	n_assert(v != 0);
-	n_assert(!HasEntity());
-	this->entity = v;
+    n_assert(v != 0);
+    n_assert(!HasEntity());
+    this->entity = v;
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ Property::SetEntity(Entity* v)
 void
 Property::ClearEntity()
 {
-	this->entity = 0;
+    this->entity = 0;
 }
 
 }; // namespace Game

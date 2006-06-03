@@ -6,13 +6,13 @@
     
     Managers are Singleton objects which care about some "specific global 
     stuff". They should be subclassed by Mangalore applications to implement
-    globals aspects of the application (mainly global game play related stuff).
+    global aspects of the application (mainly global game play related stuff).
     
     Managers are created directly through Factory<> and attached to the
     Game::Server object which will call several predefined virtual methods
     which are overridden by the subclasses.
     
-    Standard-Mangalore uses several Managers to offer timing information
+    Standard Mangalore uses several Managers to offer timing information
     (TimeManager), setup the game world (SetupManager), create entities
     and properties (FactoryManager), manage game entities (EntityManager)
     and so forth.

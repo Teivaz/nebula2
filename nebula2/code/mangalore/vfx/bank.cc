@@ -29,16 +29,16 @@ Bank::~Bank()
 
 //------------------------------------------------------------------------------
 /**
-	Open an effect xls table and parse it.
+    Open an effect xls table and parse it.
 
-    @return         true if succed, false if not
+    @return         true if succeeded, false if not
 */
 bool
 Bank::Open()
 {
     if (!this->xmlSpreadSheet.Open())
     {
-		n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename().Get());
+        n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename().Get());
         return false;
     }
 
@@ -52,9 +52,9 @@ Bank::Open()
     {
         int rowIndex = effectIndex + 1;
 
-		// create a new effect resource
+        // create a new effect resource
         const nString& name = xmlTable.Cell(rowIndex, "Name").AsString();
-		const nString& gfxResource = xmlTable.Cell(rowIndex, "File").AsString();
+        const nString& gfxResource = xmlTable.Cell(rowIndex, "File").AsString();
         float timeout = xmlTable.Cell(rowIndex, "Timeout").AsFloat();
         this->AddEffect(name, gfxResource, timeout);
     }
@@ -64,12 +64,12 @@ Bank::Open()
 
 //------------------------------------------------------------------------------
 /**
-	Close the audio xls table.
+    Close the audio xls table.
 */
 void
 Bank::Close()
 {
-	this->xmlSpreadSheet.Close();
+    this->xmlSpreadSheet.Close();
 }
 
 

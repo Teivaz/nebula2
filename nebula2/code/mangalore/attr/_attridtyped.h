@@ -2,11 +2,13 @@
 #define ATTR__ATTRID_TYPED_H
 //------------------------------------------------------------------------------
 /**
-    @brief template class to add compile time type information to the _attrid class
+    @brief Template class to add compile time type information to the _attrid 
+           class
 
-    template class to add compile time type information to the _attrid class.
+    Template class to add compile time type information to the _attrid class.
     while all type data is stored in the base class objects, functionality for
-    storing the objects in a global registry (one for each id type) is provided in here.
+    storing the objects in a global registry (one for each id type) is provided 
+    in here.
     
     (C) 2005 Radon Labs GmbH
 */

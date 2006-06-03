@@ -18,22 +18,24 @@ class FloatAttributeID : public AttributeID
 {
 public:
     FloatAttributeID();
-    FloatAttributeID( const _attridTyped<attr::FloatT>* );
-    FloatAttributeID( const nString& name ); // must exist!
+    FloatAttributeID(const _attridTyped<attr::FloatT>*);
+    FloatAttributeID(const nString& name); // must exist!
     virtual ~FloatAttributeID();
 
     /// equality operator
-    friend bool operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs );
+    friend bool operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs);
     /// inequality operator
-    friend bool operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs );
+    friend bool operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs);
 
-    static FloatAttributeID FindFloatAttributeID( const nString& name );
+    static FloatAttributeID FindFloatAttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs )
+inline 
+bool 
+operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
 }
@@ -41,7 +43,9 @@ inline bool operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs 
 //------------------------------------------------------------------------------
 /**
 */
-inline bool operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs )
+inline 
+bool 
+operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
 }
@@ -50,8 +54,8 @@ inline bool operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs 
 /**
 */
 inline 
-FloatAttributeID::FloatAttributeID( const _attridTyped<attr::FloatT>* aip ) :
-    AttributeID( aip )
+FloatAttributeID::FloatAttributeID(const _attridTyped<attr::FloatT>* aip) :
+    AttributeID(aip)
 {
 }
 
@@ -66,17 +70,17 @@ FloatAttributeID::FloatAttributeID() :
 
 //------------------------------------------------------------------------------
 /**
-    gives the AttributeID "name".
-    will fail hard if AttributeID doesnt exist.
+    Gives the AttributeID "name".
+    Will fail hard if AttributeID doesn't exist.
 */
 inline 
-FloatAttributeID::FloatAttributeID( const nString& name )
+FloatAttributeID::FloatAttributeID(const nString& name)
 {
-    const FloatAttributeID& existingID = FloatAttributeID::FindFloatAttributeID( name );
+    const FloatAttributeID& existingID = FloatAttributeID::FindFloatAttributeID(name);
     
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
-        n_error( "Error: Attribute ID of name \"%s\" not found!", name.Get() );
+        n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }
 
     this->attridPtr = existingID.attridPtr;
@@ -91,18 +95,6 @@ FloatAttributeID::~FloatAttributeID()
 }
 
 } // namespace
-//typedef const _attridTyped<attr::FloatT>* FloatAttributeID;
-//
-//namespace attr
-//{
-//    /// find Float attribute id by name
-//    FloatAttributeID FindFloatAttributeID( const nString& name );
-//}
 
 //------------------------------------------------------------------------------
 #endif
-
-
-
-
-    

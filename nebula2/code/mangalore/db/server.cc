@@ -97,7 +97,7 @@ Server::EndTransaction()
 /**
     This method will write a row of data to the database.
     A new table is created if necessary, and the table layout will be updated
-    if necessary, so this is an extremly flexible way to store data in the
+    if necessary, so this is an extremely flexible way to store data in the
     database.
 */
 bool
@@ -225,7 +225,7 @@ Server::ReadAttr(const nString& tableName, const Attribute& key, Attribute& inOu
 Query*
 Server::CreateQuery() const
 {
-	return Query::Create();
+    return Query::Create();
 }
 
 //------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ Server::CreateQuery() const
 Query*
 Server::CreateQuery(const nString& sqlStatement) const
 {
-	Query* query = Query::Create();
+    Query* query = Query::Create();
     query->SetSqlStatement(sqlStatement);
     return query;
 }
@@ -351,12 +351,12 @@ Server::CreateCategoryTemplateQuery(const nString& categoryName) const
 Query*
 Server::CreateCategoryTemplateIdQuery(const nString& categoryName, const nString& templateName) const
 {
-	n_assert(categoryName.IsValid());
-	Db::Query* query = Db::Query::Create();
+    n_assert(categoryName.IsValid());
+    Db::Query* query = Db::Query::Create();
     nString sql;
     sql.Format("SELECT * FROM '_Entities' WHERE _Type='TEMPLATE' AND _Category='%s' AND Id='%s'", categoryName.Get(),templateName.Get());
     query->SetSqlStatement(sql);
-	return query;
+    return query;
 }
 
 //------------------------------------------------------------------------------

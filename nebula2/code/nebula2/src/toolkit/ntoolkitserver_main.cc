@@ -9,7 +9,6 @@ nNebulaScriptClass(nToolkitServer, "nroot");
 nToolkitServer* nToolkitServer::Singleton = 0;
 nToolkitServer* nToolkitServer::self = 0;
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -56,76 +55,84 @@ nToolkitServer::Close()
     this->isOpen = false;
 }
 
-
 //------------------------------------------------------------------------------
 /**
-    ChangeShaderParameter
-
     This method is called by the "changeshaderparameter"-tcl-command and is used
-    by the toolkit remote control to change attributes within the nviewer
+    by the toolkit remote control to change attributes within the nviewer.
 
-    @param mayaShaderName:
-        this is the name of the mayashader. it it used to identify the materialnodes where
-        the parameter changes should be applied
-
-    @param shaderHandling:
-        Used to identify the handling function
-        0 - Standard parameters (this->ChangeTypeCommon() is called for handling)
-        1 - Particle2 parameters (this->ChangeTypeParticle2() is called for handling)
-        ...
-
-    @param parameterID:
-        a unique identifier for the parameter that should be changed
-        does not need to be globally unique, but unique for one parameterhandler
-
-    @value:
-        a string containing the value of the parameter
+    @param mayaShaderName The Maya name of the shader. It it used to identify 
+                          the nMaterialNode(s) to which the parameter changes 
+                          should be applied.
+    @param shaderHandler Used to identify the handling function to use, can be
+                         "common" or "particle2".
+    @param paramID A unique identifier for the parameter that should be 
+                   changed, does not need to be globally unique, but unique 
+                   for one shader.
+    @param paramValue A string containing the new value for the parameter.
 */
 nString
-nToolkitServer::ChangeShaderParameter(nString mayaShaderName,nString shaderHandling,nString parameterID,nString value)
+nToolkitServer::ChangeShaderParameter(const nString& mayaShaderName,
+                                      const nString& shaderHandler,
+                                      const nString& paramID,
+                                      const nString& paramValue)
 {
     // iterate through nodelist and apply changes
     bool result = true;
-    nNodeList *nodeList = nNodeList::Instance();
+    nNodeList* nodeList = nNodeList::Instance();
     uint nodeCount = nodeList->GetCount();
     uint i;
-    for( i=0; i<nodeCount; i++)
+    for (i = 0; i < nodeCount; i++)
     {
-        nTransformNode *node = nodeList->GetNodeAt(i);
-        result &= ChangeShaderParameterOnNode(node,mayaShaderName,shaderHandling,parameterID,value);
-    };
-    if(!result) return "false";
+        nTransformNode* node = nodeList->GetNodeAt(i);
+        result &= this->ChangeShaderParameterOnNode(node, mayaShaderName, 
+                                                    shaderHandler, paramID, 
+                                                    paramValue);
+    }
+    if (!result) 
+    {
+        return "false";
+    }
     return "true";
 };
 
 //------------------------------------------------------------------------------
 /**
-    recursive iteration through node hirarchy
+    Recursive iteration through the node hierarchy.
 */
 bool
-nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,nString mayaShaderName,nString shaderHandling,nString parameterID,nString value)
+nToolkitServer::ChangeShaderParameterOnNode(nRoot* node, 
+                                            const nString& mayaShaderName,
+                                            const nString& shaderHandler,
+                                            const nString& paramID,
+                                            const nString& paramValue)
 {
     bool result = true;
-    if(node->IsA(nKernelServer::Instance()->FindClass("nmaterialnode")))
+    if (node->IsA(nKernelServer::Instance()->FindClass("nmaterialnode")))
     {
-        nMaterialNode *matNode = (nMaterialNode*) node;
-        if(matNode->GetMayaShaderName() == mayaShaderName)
+        nMaterialNode* matNode = (nMaterialNode*) node;
+        if (matNode->GetMayaShaderName() == mayaShaderName)
         {
-            // ok, we found a material node which has the given mayashadername assigned
-
-            // common shader attributes
-            if(shaderHandling == "common")      this->ChangeTypeCommon(matNode,parameterID,value);
-            // particle2 shader attributes
-            if(shaderHandling == "particle2")   this->ChangeTypeParticle2(matNode,parameterID,value);
-        };
-    };
-    // apply changes on subnodes
+            if ("common" == shaderHandler)
+            {
+                // common shader attributes
+                this->ChangeTypeCommon(matNode, paramID, paramValue);
+            }
+            else if ("particle2" == shaderHandler)
+            {
+                // particle2 shader attributes
+                this->ChangeTypeParticle2(matNode, paramID, paramValue);
+            }
+        }
+    }
+    // apply changes to sub-nodes
     nRoot* curChild;
     for (curChild = (nRoot*) node->GetHead();
          curChild;
          curChild = (nRoot*) curChild->GetSucc())
     {
-        result &= this->ChangeShaderParameterOnNode(curChild,mayaShaderName,shaderHandling,parameterID,value);
+        result &= this->ChangeShaderParameterOnNode(curChild, mayaShaderName, 
+                                                    shaderHandler, paramID,
+                                                    paramValue);
     }
     return result;
 };
@@ -134,106 +141,124 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,nString mayaShaderName,n
 /**
 */
 bool 
-nToolkitServer::ChangeTypeCommon(nMaterialNode* node,nString parameterID,nString value)
+nToolkitServer::ChangeTypeCommon(nMaterialNode* node, 
+                                 const nString& paramID, 
+                                 const nString& paramValue)
 {
     bool result = true;
     
     nString fileName;
 
-    n_printf("Received remote command : %s %s\n",parameterID.Get(),value.Get());
+    n_printf("Received remote command : %s %s\n", 
+             paramID.Get(), paramValue.Get());
 
-    // Material Diffuse
-    if(parameterID == "MatDiffuse")
+    if ("MatDiffuse" == paramID)
     {
-        if(node->HasParam(nShaderState::MatDiffuse))
-                node->SetVector(nShaderState::MatDiffuse,value.AsVector4());  
-    };
-    // Emissive Color
-    if(parameterID == "MatEmissive")
-    {
-        if(node->HasParam(nShaderState::MatEmissive))
-                node->SetVector(nShaderState::MatEmissive,value.AsVector4());  
-    };
-    // Specular Color
-    if(parameterID == "MatSpecular")
-    {
-        if(node->HasParam(nShaderState::MatSpecular))
-                node->SetVector(nShaderState::MatSpecular,value.AsVector4());  
-    };
-    // Emissive Intensity
-    if(parameterID == "MatEmissiveIntensity")
-    {
-        if(node->HasParam(nShaderState::MatEmissiveIntensity))
-                node->SetFloat(nShaderState::MatEmissiveIntensity,value.AsFloat());  
-    };
-    // Specular Intensity
-    if(parameterID == "MatSpecularPower")
-    {
-        if(node->HasParam(nShaderState::MatSpecularPower))
-                node->SetFloat(nShaderState::MatSpecularPower,value.AsFloat());  
-    };
-    // Bump Scale
-    if(parameterID == "BumpScale")
-    {
-        if(node->HasParam(nShaderState::BumpScale))
-                node->SetFloat(nShaderState::BumpScale,value.AsFloat());  
-    };
-    // Alpha Src Blend
-    if(parameterID == "AlphaSrcBlend")
-    {
-        if(node->HasParam(nShaderState::AlphaSrcBlend))
-                node->SetInt(nShaderState::AlphaSrcBlend,value.AsInt());  
-    };
-    // Alpha Dst Blend
-    if(parameterID == "AlphaDstBlend")
-    {
-        if(node->HasParam(nShaderState::AlphaDstBlend))
-                node->SetInt(nShaderState::AlphaDstBlend,value.AsInt());  
-    };
-    // DiffMap 0
-    if(parameterID == "DiffMap0")
-    {
-        fileName = nFileServer2::Instance()->ManglePath(value.Get());
-        if(nFileServer2::Instance()->FileExists(fileName))
+        // Material Diffuse
+        if (node->HasParam(nShaderState::MatDiffuse))
         {
-            if(node->HasParam(nShaderState::DiffMap0))
-                    node->SetTexture(nShaderState::DiffMap0,fileName.Get());  
-        };
-    };
-    // BumpMap 0
-    if(parameterID == "BumpMap0")
+            node->SetVector(nShaderState::MatDiffuse, paramValue.AsVector4());  
+        }
+    }
+    else if ("MatEmissive" == paramID)
     {
-        fileName = nFileServer2::Instance()->ManglePath(value.Get());
-        if(nFileServer2::Instance()->FileExists(fileName))
+        // Emissive Color
+        if (node->HasParam(nShaderState::MatEmissive))
         {
-            if(node->HasParam(nShaderState::BumpMap0))
-                    node->SetTexture(nShaderState::BumpMap0,fileName.Get());  
-        };
-    };
-
-    // UV Stretch of MultiLayeredShader , FIXME : currently only working with dx9
-    if(parameterID.FindStringIndex("rlUVStretch",0) != -1)
+            node->SetVector(nShaderState::MatEmissive, paramValue.AsVector4());
+        }
+    }
+    else if ("MatSpecular" == paramID)
     {
-        if(node->IsA(nKernelServer::Instance()->FindClass("nmultilayerednode")))
+        // Specular Color
+        if (node->HasParam(nShaderState::MatSpecular))
+        {
+            node->SetVector(nShaderState::MatSpecular, paramValue.AsVector4());
+        }
+    }
+    else if ("MatEmissiveIntensity" == paramID)
+    {
+        // Emissive Intensity
+        if (node->HasParam(nShaderState::MatEmissiveIntensity))
+        {
+            node->SetFloat(nShaderState::MatEmissiveIntensity, paramValue.AsFloat());
+        }
+    }
+    else if ("MatSpecularPower" == paramID)
+    {
+        // Specular Intensity
+        if (node->HasParam(nShaderState::MatSpecularPower))
+        {
+            node->SetFloat(nShaderState::MatSpecularPower, paramValue.AsFloat());
+        }
+    }
+    else if ("BumpScale" == paramID)
+    {
+        if (node->HasParam(nShaderState::BumpScale))
+        {
+            node->SetFloat(nShaderState::BumpScale, paramValue.AsFloat());
+        }
+    }
+    else if ("AlphaSrcBlend" == paramID)
+    {
+        if (node->HasParam(nShaderState::AlphaSrcBlend))
+        {
+            node->SetInt(nShaderState::AlphaSrcBlend, paramValue.AsInt());
+        }
+    }
+    else if ("AlphaDstBlend" == paramID)
+    {
+        if (node->HasParam(nShaderState::AlphaDstBlend))
+        {
+            node->SetInt(nShaderState::AlphaDstBlend, paramValue.AsInt());
+        }
+    }
+    else if ("DiffMap0" == paramID)
+    {
+        fileName = nFileServer2::Instance()->ManglePath(paramValue.Get());
+        if (nFileServer2::Instance()->FileExists(fileName))
+        {
+            if (node->HasParam(nShaderState::DiffMap0))
+            {
+                node->SetTexture(nShaderState::DiffMap0, fileName.Get());
+            }
+        }
+    }
+    else if ("BumpMap0" == paramID)
+    {
+        fileName = nFileServer2::Instance()->ManglePath(paramValue.Get());
+        if (nFileServer2::Instance()->FileExists(fileName))
+        {
+            if (node->HasParam(nShaderState::BumpMap0))
+            {
+                node->SetTexture(nShaderState::BumpMap0, fileName.Get());
+            }
+        }
+    }
+    else if (paramID.FindStringIndex("rlUVStretch", 0) != -1)
+    {
+        // UV Stretch of MultiLayeredShader
+        // FIXME: currently only working with dx9
+        if (node->IsA(nKernelServer::Instance()->FindClass("nmultilayerednode")))
         {
             int maxTexturesPerShader = 5;
-            nMultiLayeredNode *mlNode = (nMultiLayeredNode*) node;
+            nMultiLayeredNode* mlNode = (nMultiLayeredNode*) node;
 
             // extract map index from parameterID
-            int mapIndex = (parameterID.ExtractRange(11,parameterID.Length()-11)).AsInt();
-            float uv = value.AsFloat();
+            int mapIndex = (paramID.ExtractRange(11, paramID.Length() - 11)).AsInt();
+            float uv = paramValue.AsFloat();
 
-            n_printf("setting to %4.4f\n",uv);
+            n_printf("setting to %4.4f\n", uv);
 
             // now we need to recalculate the correct index
             int dx9pass = mapIndex / maxTexturesPerShader;
             int dx9offset = mapIndex % maxTexturesPerShader;
-            if(mlNode->GetPartIndex() == dx9pass)
+            if (mlNode->GetPartIndex() == dx9pass)
             {
-                mlNode->SetUVStretch(dx9offset,uv);
-            };
-        };
-    };
+                mlNode->SetUVStretch(dx9offset, uv);
+            }
+        }
+    }
 
     return result;
 };
@@ -242,28 +267,31 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,nString parameterID,nString
 /**
 */
 nEnvelopeCurve 
-nToolkitServer::AsEnvelopeCurve(nString value)
+nToolkitServer::AsEnvelopeCurve(const nString& value)
 {
     nArray<nString> tokens;
-    value.Tokenize(" ",tokens);
+    value.Tokenize(" ", tokens);
     n_assert(tokens.Size() == 9);
-    return nEnvelopeCurve(tokens[0].AsFloat(),tokens[1].AsFloat(),tokens[2].AsFloat(),tokens[3].AsFloat(),
-                            tokens[4].AsFloat(),tokens[5].AsFloat(),tokens[6].AsFloat(),tokens[7].AsFloat(),tokens[8].AsInt());
+    return nEnvelopeCurve(tokens[0].AsFloat(), tokens[1].AsFloat(), 
+                          tokens[2].AsFloat(), tokens[3].AsFloat(),
+                          tokens[4].AsFloat(), tokens[5].AsFloat(),
+                          tokens[6].AsFloat(), tokens[7].AsFloat(),
+                          tokens[8].AsInt());
 };
 //------------------------------------------------------------------------------
 /**
 */
 nVector3EnvelopeCurve
-nToolkitServer::AsColorCurve(nString value)
+nToolkitServer::AsColorCurve(const nString& value)
 {
     nArray<nString> tokens;
-    value.Tokenize(" ",tokens);
+    value.Tokenize(" ", tokens);
     n_assert(tokens.Size() == 14);
-    return nVector3EnvelopeCurve(vector3(tokens[0].AsFloat(),tokens[1].AsFloat(),tokens[2].AsFloat()),
-                                 vector3(tokens[3].AsFloat(),tokens[4].AsFloat(),tokens[5].AsFloat()),
-                                 vector3(tokens[6].AsFloat(),tokens[7].AsFloat(),tokens[8].AsFloat()),
-                                 vector3(tokens[9].AsFloat(),tokens[10].AsFloat(),tokens[11].AsFloat()),
-                                 tokens[12].AsFloat(),tokens[13].AsFloat());
+    return nVector3EnvelopeCurve(vector3(tokens[0].AsFloat(), tokens[1].AsFloat(), tokens[2].AsFloat()),
+                                 vector3(tokens[3].AsFloat(), tokens[4].AsFloat(), tokens[5].AsFloat()),
+                                 vector3(tokens[6].AsFloat(), tokens[7].AsFloat(), tokens[8].AsFloat()),
+                                 vector3(tokens[9].AsFloat(), tokens[10].AsFloat(), tokens[11].AsFloat()),
+                                 tokens[12].AsFloat(), tokens[13].AsFloat());
 };
 
 
@@ -271,172 +299,155 @@ nToolkitServer::AsColorCurve(nString value)
 /**
 */
 bool 
-nToolkitServer::ChangeTypeParticle2(nMaterialNode* node,nString parameterID,nString value)
+nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
+                                    const nString& paramValue)
 {
     bool result = true;
 
-    if(node->IsA(nKernelServer::Instance()->FindClass("nparticleshapenode2")))
+    if (node->IsA(nKernelServer::Instance()->FindClass("nparticleshapenode2")))
     {
-        nParticleShapeNode2 *partNode = (nParticleShapeNode2*) node;
+        nParticleShapeNode2* partNode = (nParticleShapeNode2*) node;
 
-        // Gravity
-        if(parameterID == "ParticleGravity")
+        if ("ParticleGravity" == paramID)
         {
-            partNode->SetGravity(value.AsFloat());
-        };
-        // Activity Distance
-        if(parameterID == "ActivityDistance")
+            partNode->SetGravity(paramValue.AsFloat());
+        }
+        else if ("ActivityDistance" == paramID)
         {
-            partNode->SetActivityDistance(value.AsFloat());
-        };
-        // Particle Stretch
-        if(parameterID == "ParticleStretch")
+            partNode->SetActivityDistance(paramValue.AsFloat());
+        }
+        else if ("ParticleStretch" == paramID)
         {
-            partNode->SetParticleStretch(value.AsFloat());
-        };
-        // Stretch Detail
-        if(parameterID == "StretchDetail")
+            partNode->SetParticleStretch(paramValue.AsFloat());
+        }
+        else if ("StretchDetail" == paramID)
         {
-            partNode->SetStretchDetail(value.AsInt());
-        };
-        // ParticleStartVelocityRandomize
-        if(parameterID == "ParticleStartVelocityRandomize")
+            partNode->SetStretchDetail(paramValue.AsInt());
+        }
+        else if ("ParticleStartVelocityRandomize" == paramID)
         {
-            partNode->SetParticleVelocityRandomize(value.AsFloat());
-        };
-        // ParticleInitialRotationMin
-        if(parameterID == "ParticleInitialRotationMin")
+            partNode->SetParticleVelocityRandomize(paramValue.AsFloat());
+        }
+        else if ("ParticleInitialRotationMin" == paramID)
         {
-            partNode->SetStartRotationMin(value.AsFloat());
-        };
-        // ParticleInitialRotationMax
-        if(parameterID == "ParticleInitialRotationMax")
+            partNode->SetStartRotationMin(paramValue.AsFloat());
+        }
+        else if ("ParticleInitialRotationMax" == paramID)
         {
-            partNode->SetStartRotationMax(value.AsFloat());
-        };
-        // ParticleRotationRandomize
-        if(parameterID == "ParticleRotationRandomize")
+            partNode->SetStartRotationMax(paramValue.AsFloat());
+        }
+        else if ("ParticleRotationRandomize" == paramID)
         {
-            partNode->SetParticleRotationRandomize(value.AsFloat());
-        };
-        // ParticleSizeRandomize
-        if(parameterID == "ParticleSizeRandomize")
+            partNode->SetParticleRotationRandomize(paramValue.AsFloat());
+        }
+        else if ("ParticleSizeRandomize" == paramID)
         {
-            partNode->SetParticleSizeRandomize(value.AsFloat());
-        };
-        // EmissionFrequency
-        if(parameterID == "rlEmissionFrequency")
+            partNode->SetParticleSizeRandomize(paramValue.AsFloat());
+        }
+        else if ("rlEmissionFrequency" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::EmissionFrequency,this->AsEnvelopeCurve(value));
-        };
-        // ParticleLifeTime
-        if(parameterID == "rlParticleLifeTime")
+            partNode->SetCurve(nParticle2Emitter::EmissionFrequency,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleLifeTime" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleLifeTime,this->AsEnvelopeCurve(value));
-        };
-        // ParticleStartVelocity
-        if(parameterID == "rlParticleStartVelocity")
+            partNode->SetCurve(nParticle2Emitter::ParticleLifeTime,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleStartVelocity" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleStartVelocity,this->AsEnvelopeCurve(value));
-        };
-        // ParticleSpreadMax
-        if(parameterID == "rlParticleSpreadMax")
+            partNode->SetCurve(nParticle2Emitter::ParticleStartVelocity,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleSpreadMax" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleSpreadMax,this->AsEnvelopeCurve(value));
-        };
-        // ParticleSpreadMin
-        if(parameterID == "rlParticleSpreadMin")
+            partNode->SetCurve(nParticle2Emitter::ParticleSpreadMax,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleSpreadMin" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleSpreadMin,this->AsEnvelopeCurve(value));
-        };
-        // ParticleRotationVelocity
-        if(parameterID == "rlParticleRotationVelocity")
+            partNode->SetCurve(nParticle2Emitter::ParticleSpreadMin,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleRotationVelocity" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleRotationVelocity,this->AsEnvelopeCurve(value));
-        };
-        // ParticleScale
-        if(parameterID == "rlParticleSize")
+            partNode->SetCurve(nParticle2Emitter::ParticleRotationVelocity,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleSize" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleScale,this->AsEnvelopeCurve(value));
-        };
-        // ParticleAlpha
-        if(parameterID == "rlParticleAlpha")
+            partNode->SetCurve(nParticle2Emitter::ParticleScale,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleAlpha" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleAlpha,this->AsEnvelopeCurve(value));
-        };
-        // ParticleAirResistance
-        if(parameterID == "rlParticleAirResistance")
+            partNode->SetCurve(nParticle2Emitter::ParticleAlpha,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleAirResistance" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleAirResistance,this->AsEnvelopeCurve(value));
-        };
-        // ParticleVelocityFactor
-        if(parameterID == "rlParticleVelocityFactor")
+            partNode->SetCurve(nParticle2Emitter::ParticleAirResistance,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleVelocityFactor" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleVelocityFactor,this->AsEnvelopeCurve(value));
-        };
-        // ParticleMass
-        if(parameterID == "rlParticleMass")
+            partNode->SetCurve(nParticle2Emitter::ParticleVelocityFactor,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlParticleMass" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::ParticleMass,this->AsEnvelopeCurve(value));
-        };
-        // TimeManipulator
-        if(parameterID == "rlTimeManipulator")
+            partNode->SetCurve(nParticle2Emitter::ParticleMass,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("rlTimeManipulator" == paramID)
         {
-            partNode->SetCurve(nParticle2Emitter::TimeManipulator,this->AsEnvelopeCurve(value));
-        };
-        // TileTexture
-        if(parameterID == "TileTexture")
+            partNode->SetCurve(nParticle2Emitter::TimeManipulator,
+                               this->AsEnvelopeCurve(paramValue));
+        }
+        else if ("TileTexture" == paramID)
         {
-            partNode->SetTileTexture(value.AsBool());
-        };
-        // StretchToStart
-        if(parameterID == "StretchToStart")
+            partNode->SetTileTexture(paramValue.AsBool());
+        }
+        else if ("StretchToStart" == paramID)
         {
-            partNode->SetStretchToStart(value.AsBool());
-        };
-        // ViewAngleFade
-        if(parameterID == "ViewAngleFade")
+            partNode->SetStretchToStart(paramValue.AsBool());
+        }
+        else if ("ViewAngleFade" == paramID)
         {
-            partNode->SetViewAngleFade(value.AsBool());
-        };
-        // RenderOldestFirst
-        if(parameterID == "RenderOldestFirst")
+            partNode->SetViewAngleFade(paramValue.AsBool());
+        }
+        else if ("RenderOldestFirst" == paramID)
         {
-            partNode->SetRenderOldestFirst(value.AsBool());
-        };
-        // RandomRotDir
-        if(parameterID == "RandomRotDir")
+            partNode->SetRenderOldestFirst(paramValue.AsBool());
+        }
+        else if ("RandomRotDir" == paramID)
         {
-            partNode->SetRandomRotDir(value.AsBool());
-        };
-        // ColorCurve
-        if(parameterID == "rlParticleColor")
+            partNode->SetRandomRotDir(paramValue.AsBool());
+        }
+        else if ("rlParticleColor" == paramID)
         {
-            partNode->SetRGBCurve(this->AsColorCurve(value));
-        };
-        // Loop
-        if(parameterID == "Loop")
+            partNode->SetRGBCurve(this->AsColorCurve(paramValue));
+        }
+        else if ("Loop" == paramID)
         {
-            partNode->SetLoop(value.AsBool());
-        };
-        // Emission Duration
-        if(parameterID == "EmissionDuration")
+            partNode->SetLoop(paramValue.AsBool());
+        }
+        else if ("EmissionDuration" == paramID)
         {
-            partNode->SetEmissionDuration(value.AsFloat());
-        };
-        // Precalc Time
-        if(parameterID == "PrecalcTime")
+            partNode->SetEmissionDuration(paramValue.AsFloat());
+        }
+        else if ("PrecalcTime" == paramID)
         {
-            partNode->SetPrecalcTime(value.AsFloat());
-        };
-        // Start Delay
-        if(parameterID == "ParticleStartDelay")
+            partNode->SetPrecalcTime(paramValue.AsFloat());
+        }
+        else if ("ParticleStartDelay" == paramID)
         {
-            partNode->SetStartDelay(value.AsFloat());
-        };
-
-    } else {
+            partNode->SetStartDelay(paramValue.AsFloat());
+        }
+    } 
+    else 
+    {
         result = false;
-    };
+    }
     return result;
 };

@@ -37,7 +37,7 @@ namespace Message
 class Dispatcher : public Port
 {
     DeclareRtti;
-	DeclareFactory(Dispatcher);
+    DeclareFactory(Dispatcher);
 
 public:
     /// constructor
@@ -48,7 +48,7 @@ public:
     virtual void Put(Msg* msg);
     /// handle a single message (distribute to ports)
     virtual void HandleMessage(Msg* msg);
-    /// attach a message
+    /// attach a message port
     void AttachPort(Port* port);
     /// remove a message port
     void RemovePort(Port* port);
