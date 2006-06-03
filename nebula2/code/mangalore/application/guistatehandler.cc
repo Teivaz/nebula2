@@ -57,6 +57,9 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
     this->eventHandler = GuiEventHandler::Create();
     this->eventHandler->SetGuiStateHandler(this);
     UI::Server::Instance()->DisplayGui(this->resName, this->eventHandler);
+#ifdef MANGALORE_USE_CEGUI
+    CEUI::Server::Instance()->DisplayGui(this->resName);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -68,6 +71,9 @@ void
 GuiStateHandler::OnStateLeave(const nString& nextState)
 {
     UI::Server::Instance()->HideGui();
+#ifdef MANGALORE_USE_CEGUI
+    CEUI::Server::Instance()->HideGui();
+#endif
     this->eventHandler = 0;
     Managers::SetupManager::Instance()->CleanupWorld();
 }
@@ -106,7 +112,7 @@ GuiStateHandler::OnFrame()
     VFX::Server::Instance()->BeginScene();
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
-    
+
     running &= Graphics::Server::Instance()->Trigger();
     if (Graphics::Server::Instance()->BeginRender())
     {
