@@ -394,6 +394,14 @@ void nMaxBoneManager::AddBoneToNode(INode* inode, INode* bone) {
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator 
+                      when there are more than one root bones. (The case that
+                      two or more nskinanimator is created)
+                      When multiple nskinanimator are created, already added 
+                      bone has -1 so it always fails to find correct skinanimator 
+                      because nskinshapenode always find the first skinanimaotr0 
+                      when it try to find nskinanimator.
+                      Thanks Kim, Seung Hoon for this fix.
 */
 void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os, 
                                      nArray<INode*> &boneNodeArray)
@@ -437,8 +445,9 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
                                 nString boneName = bone->GetName();
                                 n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                                 boneNodeArray.Append(bone);
-                                this->AddBoneToNode(node, bone);
                             }
+
+                            this->AddBoneToNode(node, bone);
                         }
 
                         mcExport->ReleaseVertexInterface(vtxExport);
@@ -456,8 +465,9 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
                             nString boneName = bone->GetName();
                             n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                             boneNodeArray.Append(bone);
-                            this->AddBoneToNode(node, bone);
                         }
+
+                        this->AddBoneToNode(node, bone);
 
                         mcExport->ReleaseVertexInterface(vtxExport);
                         vtxExport = NULL;
@@ -474,6 +484,15 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator 
+                      when there are more than one root bones. (The case that
+                      two or more nskinanimator is created)
+                      When multiple nskinanimator are created, already added 
+                      bone has -1 so it always fails to find correct skinanimator 
+                      because nskinshapenode always find the first skinanimaotr0 
+                      when it try to find nskinanimator.
+                      Thanks Kim, Seung Hoon for this fix.
+
 */
 void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod, 
                                        nArray<INode*> &boneNodeArray)
@@ -512,8 +531,8 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
                     nString boneName = bone->GetName();
                     n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
                     boneNodeArray.Append(bone);
-                    this->AddBoneToNode(node, bone);
                 }
+                this->AddBoneToNode(node, bone);
             }
         }
     }

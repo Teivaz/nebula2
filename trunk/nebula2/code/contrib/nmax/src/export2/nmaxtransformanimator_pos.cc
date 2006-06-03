@@ -118,6 +118,10 @@ int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
+
     @return the number of the keys which to be used for the actual aniamtion.
 */
 int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
@@ -134,6 +138,16 @@ int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
         pos.z = key.val.y;
 
         float time = key.time * SECONDSPERTICK;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumPosKeys() == 0)
+        {
+            animator->AddPosKey(0.0f, pos);
+        }
+
         animator->AddPosKey(time, pos);
     }
 
@@ -142,6 +156,10 @@ int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+                      when its start time.
+                      Thanks Kim, Seung Hoon for this fix.
+
     @return the number of the keys which to be used for the actual aniamtion.
 */
 int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
@@ -163,6 +181,15 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
         pos.x = -(sampleKey.pos.x);
         pos.y = sampleKey.pos.z;
         pos.z = sampleKey.pos.y;
+
+        // There should be any value at 0.0 sec, the start time.
+        // If the value is not exist the second key value can be used for it 
+        // because 3dsmax uses the second key instead of the first 
+        // if the first one is not exist.
+        if (time > 0.0f && animator->GetNumPosKeys() == 0)
+        {
+            animator->AddPosKey(0.0f, pos);
+        }
 
         animator->AddPosKey(time, pos);
     }
