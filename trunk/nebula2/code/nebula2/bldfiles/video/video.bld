@@ -27,7 +27,8 @@ beginmodule noggtheoraplayer
     setdir video
     setfiles { noggtheoraplayer_main }
     setheaders { noggtheoraplayer }
-    setlibs_win32 { ogg.lib theora_static.lib }
+    setlibs_win32_release { ogg.lib theora.lib }
+    setlibs_win32_debug { ogg_d.lib theora_d.lib }
     setlibs_linux { ogg theora }
 endmodule
 #-------------------------------------------------------------------------------

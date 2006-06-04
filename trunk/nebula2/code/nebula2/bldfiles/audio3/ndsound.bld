@@ -27,10 +27,10 @@ endmodule
 beginmodule dsutil
     setdir audio3
     setplatform win32
-    setfiles { 
+    setfiles {
         dsutil
     }
-    setheaders { 
+    setheaders {
         dsutil
         dxutil
     }
@@ -70,7 +70,8 @@ beginmodule noggfile
     setplatform win32
     setfiles { noggfile }
     setheaders { noggfile }
-    setlibs_win32 { ogg.lib vorbis.lib }
+    setlibs_win32_release { ogg.lib vorbis.lib }
+    setlibs_win32_debug { ogg_d.lib vorbis_d.lib }
 endmodule
 beginmodule nwavfile
     setdir audio3
