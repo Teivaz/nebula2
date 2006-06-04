@@ -67,7 +67,6 @@ private:
     nArray<Texture*> textures;
     ResourceProvider* resourceProvider;
     bool queueingEnabled;
-    bool textureSorted;
 };
 
 //------------------------------------------------------------------------------

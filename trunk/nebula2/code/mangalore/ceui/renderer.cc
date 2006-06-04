@@ -2,7 +2,6 @@
 #include "ceui/texture.h"
 #include "ceui/resourceprovider.h"
 #include "gfx2/nshader2.h"
-#include <algorithm>
 
 namespace CEUI
 {
@@ -30,7 +29,6 @@ Renderer::Renderer() {
     transform.set_translation(vector3(-1.0f/getWidth() - 1.0f, -1.0f/getHeight() + 1.0f, 0.0f));
     resourceProvider = 0;
     queueingEnabled = false;
-    textureSorted = true;
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +45,6 @@ Renderer::~Renderer() {
 CEGUI::Texture* Renderer::createTexture() {
     Texture* texture = n_new(Texture(this));
     textures.Append(texture);
-    textureSorted = false;
     return texture;
 }
 
@@ -56,8 +53,7 @@ CEGUI::Texture* Renderer::createTexture() {
 */
 CEGUI::Texture* Renderer::createTexture(float size) {
     Texture* texture = n_new(Texture(this));
-    textures.Append(texture);
-    textureSorted = false;
+    textures.PushBack(texture);
     return texture;
 }
 
@@ -67,8 +63,7 @@ CEGUI::Texture* Renderer::createTexture(float size) {
 CEGUI::Texture* Renderer::createTexture(const CEGUI::String& fileName, const CEGUI::String& resGroup) {
     Texture* texture = n_new(Texture(this));
     texture->loadFromFile(fileName, resGroup);
-    textures.Append(texture);
-    textureSorted = false;
+    textures.Insert(0, texture);
     return texture;
 }
 
@@ -91,7 +86,6 @@ void Renderer::destroyAllTextures() {
         delete *i;
     }
     textures.Clear();
-    textureSorted = true;
 }
 
 //------------------------------------------------------------------------------
@@ -144,40 +138,25 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
     vertices[3].color[2] = colors.d_top_right.getBlue();
     vertices[3].color[3] = colors.d_top_right.getAlpha();
 
-    if (isQueueingEnabled()) {
-        CeGuiRectangle* rect = ((Texture*)texture)->widgetRects.Reserve(1);
-        if (quadSplitMode == CEGUI::TopLeftToBottomRight) {
-            rect->tri[0].vert[0] = vertices[0];
-            rect->tri[0].vert[1] = vertices[1];
-            rect->tri[0].vert[2] = vertices[2];
-            rect->tri[1].vert[0] = vertices[0];
-            rect->tri[1].vert[1] = vertices[2];
-            rect->tri[1].vert[2] = vertices[3];
-        } else {
-            rect->tri[0].vert[0] = vertices[3];
-            rect->tri[0].vert[1] = vertices[0];
-            rect->tri[0].vert[2] = vertices[1];
-            rect->tri[1].vert[0] = vertices[0];
-            rect->tri[1].vert[1] = vertices[1];
-            rect->tri[1].vert[2] = vertices[3];
-        }
+    CeGuiRectangle rect;
+    if (quadSplitMode == CEGUI::TopLeftToBottomRight) {
+        rect.tri[0].vert[0] = vertices[0];
+        rect.tri[0].vert[1] = vertices[1];
+        rect.tri[0].vert[2] = vertices[2];
+        rect.tri[1].vert[0] = vertices[0];
+        rect.tri[1].vert[1] = vertices[2];
+        rect.tri[1].vert[2] = vertices[3];
     } else {
-        CeGuiRectangle rect;
-        if (quadSplitMode == CEGUI::TopLeftToBottomRight) {
-            rect.tri[0].vert[0] = vertices[0];
-            rect.tri[0].vert[1] = vertices[1];
-            rect.tri[0].vert[2] = vertices[2];
-            rect.tri[1].vert[0] = vertices[0];
-            rect.tri[1].vert[1] = vertices[2];
-            rect.tri[1].vert[2] = vertices[3];
-        } else {
-            rect.tri[0].vert[0] = vertices[3];
-            rect.tri[0].vert[1] = vertices[0];
-            rect.tri[0].vert[2] = vertices[1];
-            rect.tri[1].vert[0] = vertices[0];
-            rect.tri[1].vert[1] = vertices[1];
-            rect.tri[1].vert[2] = vertices[3];
-        }
+        rect.tri[0].vert[0] = vertices[3];
+        rect.tri[0].vert[1] = vertices[0];
+        rect.tri[0].vert[2] = vertices[1];
+        rect.tri[1].vert[0] = vertices[0];
+        rect.tri[1].vert[1] = vertices[1];
+        rect.tri[1].vert[2] = vertices[3];
+    }
+    if (isQueueingEnabled()) {
+        ((Texture*)texture)->widgetRects.PushBack(rect);
+    } else {
         renderCursor(texture, &rect);
     }
 }
@@ -186,11 +165,6 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
 /**
 */
 void Renderer::doRender() {
-    if (!textureSorted) {
-        sortTextures();
-        textureSorted = true;
-    }
-
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->PushTransform(nGfxServer2::Model, matrix44());
     gfxServer->PushTransform(nGfxServer2::View, transform);
@@ -257,27 +231,6 @@ void Renderer::renderCursor(const CEGUI::Texture* texture, CeGuiRectangle* rect)
     gfxServer->PopTransform(nGfxServer2::Model);
     gfxServer->PopTransform(nGfxServer2::View);
     gfxServer->PopTransform(nGfxServer2::Projection);
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-namespace
-{
-    class TextureSorter
-    {
-    public:
-        bool operator()(const CEUI::Texture* const& a, const CEUI::Texture* const& b) {
-            return a->isLoadFromFile() && b->isLoadFromMemory();
-        }
-    };
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void Renderer::sortTextures() {
-    std::sort((Texture**)textures.Begin(), (Texture**)textures.End(), TextureSorter());
 }
 
 }
