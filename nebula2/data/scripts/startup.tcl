@@ -150,6 +150,8 @@ proc OnMapInput {} {
     .map "relmouse0:-y"                 "vwrUp"
     .map "relmouse0:+y"                 "vwrDown"
     .map "keyb0:space.down"             "vwrReset"
+    .map "relmouse0:+zbtn.down"         "vwrZoomOut"
+    .map "relmouse0:-zbtn.down"         "vwrZoomIn"
 
     .map "relmouse0:btn0.down"          "lmbDown"
     .map "relmouse0:btn0.up"            "lmbUp"
