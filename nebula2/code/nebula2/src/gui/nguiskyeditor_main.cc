@@ -22,14 +22,12 @@
 #include "kernel/ntimeserver.h"
 
 nNebulaClass(nGuiSkyEditor, "nguiformlayout");
-                     
+
 //------------------------------------------------------------------------------
 /**
 */
 nGuiSkyEditor::nGuiSkyEditor():
-    sliderChanged(false),	// ???
-    skyPath("/usr/scene"),
-    refSky("/usr/scene"),
+    sliderChanged(false),
     layoutChanged(false),
     elementReady(true),
     activeElement(-1),
@@ -41,7 +39,8 @@ nGuiSkyEditor::nGuiSkyEditor():
     updateSkyTime(true),
     activeType(nSkyNode::InvalidElement)
 {
-	this->FindSkyNode(refSky);
+    nAutoRef<nRoot> sceneRoot = "/usr/scene";
+	this->FindSkyNode(sceneRoot);
 }
 
 
@@ -74,7 +73,7 @@ nGuiSkyEditor::OnShow()
 void
 nGuiSkyEditor::OnHide()
 {
-    this->HideSky();    
+    this->HideSky();
     nGuiFormLayout::OnHide();
 }
 
@@ -83,9 +82,9 @@ nGuiSkyEditor::OnHide()
 */
 void
 nGuiSkyEditor::OnEvent(const nGuiEvent& event)
-{   
+{
     this->EventSky(event);
-    
+
     nGuiFormLayout::OnEvent(event);
 }
 
@@ -103,13 +102,13 @@ nGuiSkyEditor::ShowSky()
     const float maxHeight = 90;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
-    
+
     kernelServer->PushCwd(this);
-        
+
     nGuiHoriSliderGroup* slider;
-      
+
     if (this->refSky.isvalid())
-    {   
+    {
         vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
         nGuiTextButton* button = (nGuiTextButton*) kernelServer->New("nguitextbutton", "refreshButton");
         n_assert(button);
@@ -142,14 +141,18 @@ nGuiSkyEditor::ShowSky()
 		this->AttachForm(button, nGuiFormLayout::Top, 3 * border);
 		button->OnShow();
         this->refSaveButton = button;
-        
+
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyStartTimeSlider");
         slider->SetLeftText("Skytime start");
         slider->SetRightText("%f");
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(0.0f);
-        slider->SetMaxValue(this->refSky->GetTimePeriode()); 
-        slider->SetValue(this->refSky->GetSkyTime());
+        if (this->refSky.isvalid()) {
+            slider->SetMaxValue(this->refSky->GetTimePeriode());
+        }
+        if (this->refSky.isvalid()) {
+            slider->SetValue(this->refSky->GetSkyTime());
+        }
         slider->SetKnobSize(this->refSky->GetTimePeriode()/10);
         slider->SetIncrement(1.0f);
         slider->SetLeftWidth(leftWidth);
@@ -159,14 +162,16 @@ nGuiSkyEditor::ShowSky()
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         this->refSkyTimeSlider = slider;
-        
+
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyTimeFactorSlider");
         slider->SetLeftText("Skytime Factor");
         slider->SetRightText("%f");
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(-1000.0f);
-        slider->SetMaxValue(1000.0f); 
-        slider->SetValue(this->refSky->GetTimeFactor());
+        slider->SetMaxValue(1000.0f);
+        if (this->refSky.isvalid()) {
+            slider->SetValue(this->refSky->GetTimeFactor());
+        }
         slider->SetKnobSize(200);
         slider->SetKnobSize(100.0f);
         slider->SetIncrement(1.0f);
@@ -177,12 +182,14 @@ nGuiSkyEditor::ShowSky()
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         this->refTimeFactorSlider = slider;
-        
+
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyElementSlider");
         slider->SetLeftText("Sky Element");
         slider->SetRightText("%d");
         slider->SetMinValue(0);
-        slider->SetMaxValue((float)this->refSky->GetNumElements()); 
+        if (this->refSky.isvalid()) {
+            slider->SetMaxValue((float)this->refSky->GetNumElements());
+        }
         slider->SetValue(0);
         slider->SetKnobSize(1);
         slider->SetIncrement(1);
@@ -193,12 +200,12 @@ nGuiSkyEditor::ShowSky()
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         this->refElementSlider = slider;
-        
+
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyStateSlider");
         slider->SetLeftText("Sky States");
         slider->SetRightText("%d");
         slider->SetMinValue(0);
-        slider->SetMaxValue(0); 
+        slider->SetMaxValue(0);
         slider->SetValue(0);
         slider->SetKnobSize(1);
         slider->SetIncrement(1);
@@ -209,13 +216,13 @@ nGuiSkyEditor::ShowSky()
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         this->refStateSlider = slider;
-        
+
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyStateTimeSlider");
         slider->SetLeftText("StateTime");
         slider->SetRightText("%f");
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(0);
-        slider->SetMaxValue(0); 
+        slider->SetMaxValue(0);
         slider->SetValue(1);
         slider->SetKnobSize(1);
         slider->SetIncrement(1);
@@ -226,7 +233,7 @@ nGuiSkyEditor::ShowSky()
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         this->refStateTimeSlider = slider;
-        
+
         nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "nSkyElementLabel");
         n_assert(textLabel);
         textLabel->SetText("Element");
@@ -239,13 +246,13 @@ nGuiSkyEditor::ShowSky()
         textLabel->SetMinSize(textMinSize);
         textLabel->SetMaxSize(textMaxSize);
         this->AttachWidget(textLabel, nGuiFormLayout::Top, this->refStateTimeSlider, border);
-        this->AttachForm(textLabel, nGuiFormLayout::Left, border); 
-        this->AttachPos(textLabel, nGuiFormLayout::Right, 0.45f);        
+        this->AttachForm(textLabel, nGuiFormLayout::Left, border);
+        this->AttachPos(textLabel, nGuiFormLayout::Right, 0.45f);
         textLabel->OnShow();
         this->refElementLabel = textLabel;
-     
+
     this->CreateCloud();
-    this->CreateSkycolor(); 
+    this->CreateSkycolor();
     this->CreateSun();
     this->CreateSunlight();
     }
@@ -282,7 +289,7 @@ void
 nGuiSkyEditor::EventSky(const nGuiEvent& event)
 {
 
-    if (this->refSky.isvalid() && 
+    if (this->refSky.isvalid() &&
         this->refSkyTimeSlider.isvalid() &&
         this->refTimeFactorSlider.isvalid() &&
         this->refElementSlider.isvalid() &&
@@ -297,7 +304,7 @@ nGuiSkyEditor::EventSky(const nGuiEvent& event)
         }
         else if ((event.GetType() == nGuiEvent::ButtonUp) && (event.GetWidget() == this->refSaveButton))
         {
-            this->saveSky = true;   
+            this->saveSky = true;
         }
         if (event.GetWidget() == this->refSkyTimeSlider)
         {
@@ -307,12 +314,12 @@ nGuiSkyEditor::EventSky(const nGuiEvent& event)
                 this->updateSkyTime = false;
             }
         }
-        
+
         if (event.GetWidget() == this->refTimeFactorSlider)
         {
             this->refSky->SetTimeFactor(this->refTimeFactorSlider->GetValue());
         }
-        
+
         if (event.GetWidget() == this->refElementSlider)
         {
             int actualElement = (int)floor(this->refElementSlider->GetValue() - 1);
@@ -324,7 +331,7 @@ nGuiSkyEditor::EventSky(const nGuiEvent& event)
                 this->layoutChanged = true;
             }
         }
-        
+
         if (event.GetWidget() == this->refStateSlider)
         {
             int actualState = (int)floor(this->refStateSlider->GetValue() - 1);
@@ -341,8 +348,8 @@ nGuiSkyEditor::EventSky(const nGuiEvent& event)
             {
                 int actualState = this->refSky->SetStateTime(this->activeElement, this->activeState, this->refStateTimeSlider->GetValue());
                 this->refStateSlider->SetValue((float)actualState + 1);
-            }  
-        }      
+            }
+        }
     }
 
     this->EventCloud(event);
@@ -365,9 +372,9 @@ nGuiSkyEditor::CreateCloud()
     const float maxHeight = 90;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
-    
+
     kernelServer->PushCwd(this);
-        
+
     nGuiHoriSliderGroup* slider;
     nGuiColorSliderGroup* colorSlider;
 
@@ -386,7 +393,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudAddSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudMulSlider");
     slider->SetLeftText("Cloud Mul");
     slider->SetRightText("%f");
@@ -402,7 +409,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudMulSlider = slider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "CloudColSlider");
     colorSlider->SetLabelText("Cloud Col");
     colorSlider->SetMaxIntensity(2.0f);
@@ -412,7 +419,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refCloudColSlider = colorSlider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudGlowSlider");
     slider->SetLeftText("Cloud Glow");
     slider->SetRightText("%f");
@@ -428,7 +435,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudGlowSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudRangeSlider");
     slider->SetLeftText("Cloud Range");
     slider->SetRightText("%f");
@@ -444,7 +451,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudRangeSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudDensSlider");
     slider->SetLeftText("Cloud Dens");
     slider->SetRightText("%f");
@@ -460,7 +467,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudDensSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudMapResSlider");
     slider->SetLeftText("Cloud MapRes");
     slider->SetRightText("%f");
@@ -476,7 +483,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudMapResSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudStrucResSlider");
     slider->SetLeftText("Cloud StrucRes");
     slider->SetRightText("%f");
@@ -492,7 +499,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudStrucResSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudMapDirSlider");
     slider->SetLeftText("Cloud Dir");
     slider->SetRightText("%f°");
@@ -508,7 +515,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudMapDirSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudMapSpeedSlider");
     slider->SetLeftText("Cloud MapSpeed");
     slider->SetRightText("%f");
@@ -524,7 +531,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudMapSpeedSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudStrucSpeedSlider");
     slider->SetLeftText("Cloud StrucSpeed");
     slider->SetRightText("%f");
@@ -540,7 +547,7 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudStrucSpeedSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudWeightSlider");
     slider->SetLeftText("Cloud Bumpweight");
     slider->SetRightText("%f");
@@ -556,8 +563,8 @@ nGuiSkyEditor::CreateCloud()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refCloudWeightSlider = slider;
-    
-    kernelServer->PopCwd();  
+
+    kernelServer->PopCwd();
 }
 
 //------------------------------------------------------------------------------
@@ -570,12 +577,12 @@ nGuiSkyEditor::ShowCloud()
     {
         if (this->refCloudAddSlider.isvalid())
         {
-            this->UpdateSliderFromElement(this->refCloudAddSlider, nShaderState::CloudMod, -3, 3, 1); 
+            this->UpdateSliderFromElement(this->refCloudAddSlider, nShaderState::CloudMod, -3, 3, 1);
             this->refCloudAddSlider->Show();
         }
         if (this->refCloudMulSlider.isvalid())
         {
-            this->UpdateSliderFromElement(this->refCloudMulSlider, nShaderState::CloudMod, 0, 10, 2);   
+            this->UpdateSliderFromElement(this->refCloudMulSlider, nShaderState::CloudMod, 0, 10, 2);
             this->refCloudMulSlider->Show();
         }
         if (this->refCloudColSlider.isvalid())
@@ -631,7 +638,7 @@ nGuiSkyEditor::ShowCloud()
                 this->refCloudMapDirSlider->SetMinValue(0);
                 this->refCloudMapDirSlider->SetMaxValue(0);
                 this->refCloudMapDirSlider->SetKnobSize(1);
-                this->refCloudMapDirSlider->SetValue(0);                
+                this->refCloudMapDirSlider->SetValue(0);
             }
             this->refCloudMapDirSlider->Show();
         }
@@ -725,11 +732,11 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec(0,1,0,0);
                     vec.x = this->refCloudAddSlider->GetValue();
                     this->refElement->SetVector(nShaderState::CloudMod, vec);
-                    this->ShowCloud(); 
+                    this->ShowCloud();
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudMulSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudMulSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -745,11 +752,11 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec(0,1,0,0);
                     vec.y = this->refCloudMulSlider->GetValue();
                     this->refElement->SetVector(nShaderState::CloudMod, vec);
-                    this->ShowCloud(); 
+                    this->ShowCloud();
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudColSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudColSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -761,11 +768,11 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 else
                 {
                     this->refElement->SetVector(nShaderState::MatDiffuse, this->refCloudColSlider->GetColor());
-                    this->ShowCloud(); 
+                    this->ShowCloud();
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudGlowSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudGlowSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -797,7 +804,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudDensSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudDensSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -813,7 +820,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudMapResSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudMapResSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -829,7 +836,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudStrucResSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudStrucResSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -845,7 +852,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudMapDirSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudMapDirSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -868,7 +875,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     this->refElement->SetVector(nShaderState::Move, vec);
                 }
                 else
-                {   
+                {
                     vector4 vec(0.0f,0.1f,0.0f,0.1f);
                     float dir = this->refCloudMapDirSlider->GetValue();
                     dir = (dir*N_PI)/180;
@@ -887,7 +894,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudMapSpeedSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudMapSpeedSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -903,7 +910,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     this->refElement->SetVector(nShaderState::Move, vec);
                 }
                 else
-                {   
+                {
                     vector4 vec(0.0f,0.1f,0.0f,0.1f);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
@@ -915,7 +922,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudStrucSpeedSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudStrucSpeedSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -931,7 +938,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     this->refElement->SetVector(nShaderState::Move, vec);
                 }
                 else
-                {   
+                {
                     vector4 vec(0.0f,0.1f,0.0f,0.1f);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
@@ -943,7 +950,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refCloudWeightSlider)
         {
             if (this->refElement.isvalid() && (this->refCloudWeightSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -972,7 +979,7 @@ nGuiSkyEditor::HideCloud()
     {
         if (this->refCloudAddSlider.isvalid())
             this->refCloudAddSlider->Hide();
-        if (this->refCloudMulSlider.isvalid())    
+        if (this->refCloudMulSlider.isvalid())
             this->refCloudMulSlider->Hide();
         if (this->refCloudColSlider.isvalid())
             this->refCloudColSlider->Hide();
@@ -993,7 +1000,7 @@ nGuiSkyEditor::HideCloud()
         if (this->refCloudStrucSpeedSlider.isvalid())
             this->refCloudStrucSpeedSlider->Hide();
         if (this->refCloudWeightSlider.isvalid())
-            this->refCloudWeightSlider->Hide();   
+            this->refCloudWeightSlider->Hide();
     }
 }
 
@@ -1031,12 +1038,12 @@ nGuiSkyEditor::CreateSkycolor()
     const float rightWidth = 0.15f;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
-    
+
     kernelServer->PushCwd(this);
-        
+
     nGuiHoriSliderGroup* slider;
     nGuiColorSliderGroup* colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SkyTopColSlider");
     colorSlider->SetLabelText("Sky TopCol");
     colorSlider->SetMaxIntensity(1.0f);
@@ -1046,7 +1053,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSkyTopColSlider = colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SkyBotColSlider");
     colorSlider->SetLabelText("Sky BotCol");
     colorSlider->SetMaxIntensity(1.0f);
@@ -1056,7 +1063,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSkyBotColSlider = colorSlider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyBottomSlider");
     slider->SetLeftText("Sky Bottom");
     slider->SetRightText("%f");
@@ -1072,7 +1079,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSkyBottomSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyBrightSlider");
     slider->SetLeftText("Sky Brightness");
     slider->SetRightText("%f");
@@ -1088,7 +1095,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSkyBrightSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkySatSlider");
     slider->SetLeftText("Sky Saturation");
     slider->SetRightText("%f");
@@ -1114,7 +1121,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSkySunColSlider = colorSlider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkySunRangeSlider");
     slider->SetLeftText("Sky Sunrange");
     slider->SetRightText("%f");
@@ -1130,7 +1137,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSkySunRangeSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkySunIntensSlider");
     slider->SetLeftText("Sky Sunintensity");
     slider->SetRightText("%f");
@@ -1146,7 +1153,7 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSkySunIntensSlider = slider;
-    
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkySunFlatSlider");
     slider->SetLeftText("Sky Sunflatness");
     slider->SetRightText("%f");
@@ -1162,8 +1169,8 @@ nGuiSkyEditor::CreateSkycolor()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSkySunFlatSlider = slider;
-    
-    kernelServer->PopCwd(); 
+
+    kernelServer->PopCwd();
 }
 
 //------------------------------------------------------------------------------
@@ -1258,7 +1265,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkyBotColSlider)
         {
             if (this->refElement.isvalid() && (this->refSkyBotColSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1274,7 +1281,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkyBottomSlider)
         {
             if (this->refElement.isvalid() && (this->refSkyBottomSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1306,7 +1313,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkySatSlider)
         {
             if (this->refElement.isvalid() && (this->refSkySatSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1322,7 +1329,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkySunColSlider)
         {
             if (this->refElement.isvalid() && (this->refSkySunColSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1338,7 +1345,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkySunRangeSlider)
         {
             if (this->refElement.isvalid() && (this->refSkySunRangeSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1354,7 +1361,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkySunIntensSlider)
         {
             if (this->refElement.isvalid() && (this->refSkySunIntensSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1370,7 +1377,7 @@ nGuiSkyEditor::EventSkycolor(const nGuiEvent& event)
                 }
             }
         }
-        
+
         if (event.GetWidget() == this->refSkySunFlatSlider)
         {
             if (this->refElement.isvalid() && (this->refSkySunFlatSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1397,7 +1404,7 @@ nGuiSkyEditor::HideSkycolor()
 {
     if (this->refSkyTopColSlider.isvalid())
         this->refSkyTopColSlider->Hide();
-    if (this->refSkyBotColSlider.isvalid())    
+    if (this->refSkyBotColSlider.isvalid())
         this->refSkyBotColSlider->Hide();
     if (this->refSkySunColSlider.isvalid())
         this->refSkySunColSlider->Hide();
@@ -1445,12 +1452,12 @@ nGuiSkyEditor::CreateSun()
     const float rightWidth = 0.15f;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
-    
+
     kernelServer->PushCwd(this);
-        
+
     nGuiHoriSliderGroup* slider;
     nGuiColorSliderGroup* colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunColSlider");
     colorSlider->SetLabelText("Sun Color");
     colorSlider->SetMaxIntensity(10.0f);
@@ -1460,7 +1467,7 @@ nGuiSkyEditor::CreateSun()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSunColSlider = colorSlider;
-     
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SunScaleSlider");
     slider->SetLeftText("Sun Scale");
     slider->SetRightText("%f");
@@ -1476,8 +1483,8 @@ nGuiSkyEditor::CreateSun()
     this->AttachForm(slider, nGuiFormLayout::Left, border);
     this->AttachForm(slider, nGuiFormLayout::Right, border);
     this->refSunScaleSlider = slider;
-    
-    kernelServer->PopCwd(); 
+
+    kernelServer->PopCwd();
 }
 
 //------------------------------------------------------------------------------
@@ -1493,7 +1500,7 @@ nGuiSkyEditor::ShowSun()
             this->UpdateColorSliderFromElement(this->refSunColSlider,nShaderState::MatDiffuse, 10);
             this->refSunColSlider->Show();
         }
-        
+
         if (this->refSunScaleSlider.isvalid())
         {
             UpdateSliderFromElement(refSunScaleSlider,nShaderState::ScaleVector, 0, 5, 4);
@@ -1531,7 +1538,7 @@ nGuiSkyEditor::EventSun(const nGuiEvent& event)
                 }
             }
         }
-         
+
         if (event.GetWidget() == this->refSunScaleSlider)
         {
             if (this->refElement.isvalid() && (this->refSunScaleSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1558,7 +1565,7 @@ nGuiSkyEditor::HideSun()
 {
     if (this->refSunColSlider.isvalid())
         this->refSunColSlider->Hide();
-    if (this->refSunScaleSlider.isvalid())    
+    if (this->refSunScaleSlider.isvalid())
         this->refSunScaleSlider->Hide();
 }
 
@@ -1588,11 +1595,11 @@ nGuiSkyEditor::CreateSunlight()
     const float maxHeight = 90;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
-    
+
     kernelServer->PushCwd(this);
-        
+
     nGuiColorSliderGroup* colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunlightDiffColSlider");
     colorSlider->SetLabelText("Sunlight Diffuse");
     colorSlider->SetMaxIntensity(3.0f);
@@ -1602,7 +1609,7 @@ nGuiSkyEditor::CreateSunlight()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSunLightDiffuseColSlider = colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunlightDiff1ColSlider");
     colorSlider->SetLabelText("Sunlight Diffuse1");
     colorSlider->SetMaxIntensity(3.0f);
@@ -1612,7 +1619,7 @@ nGuiSkyEditor::CreateSunlight()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSunLightDiffuse1ColSlider = colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunlightAmbiColSlider");
     colorSlider->SetLabelText("Sunlight Ambient");
     colorSlider->SetMaxIntensity(3.0f);
@@ -1622,7 +1629,7 @@ nGuiSkyEditor::CreateSunlight()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSunLightAmbientColSlider = colorSlider;
-    
+
     colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunlightSpecColSlider");
     colorSlider->SetLabelText("Sunlight Specular");
     colorSlider->SetMaxIntensity(3.0f);
@@ -1632,8 +1639,8 @@ nGuiSkyEditor::CreateSunlight()
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
     this->refSunLightSpecularColSlider = colorSlider;
-     
-    kernelServer->PopCwd(); 
+
+    kernelServer->PopCwd();
 }
 
 //------------------------------------------------------------------------------
@@ -1698,7 +1705,7 @@ nGuiSkyEditor::EventSunlight(const nGuiEvent& event)
                 }
             }
         }
-         
+
         if (event.GetWidget() == this->refSunLightDiffuse1ColSlider)
         {
             if (this->refElement.isvalid() && (this->refSunLightDiffuse1ColSlider->Inside(nGuiServer::Instance()->GetMousePos())))
@@ -1755,11 +1762,11 @@ nGuiSkyEditor::HideSunlight()
 {
     if (this->refSunLightDiffuseColSlider.isvalid())
         this->refSunLightDiffuseColSlider->Hide();
-    if (this->refSunLightDiffuse1ColSlider.isvalid())    
+    if (this->refSunLightDiffuse1ColSlider.isvalid())
         this->refSunLightDiffuse1ColSlider->Hide();
     if (this->refSunLightAmbientColSlider.isvalid())
         this->refSunLightAmbientColSlider->Hide();
-    if (this->refSunLightSpecularColSlider.isvalid())    
+    if (this->refSunLightSpecularColSlider.isvalid())
         this->refSunLightSpecularColSlider->Hide();
 }
 
@@ -1781,39 +1788,39 @@ nGuiSkyEditor::ReleaseSunlight()
 
 //------------------------------------------------------------------------------
 /**
-    called per frame when parent widget is visible   
+    called per frame when parent widget is visible
 */
 void
 nGuiSkyEditor::OnFrame()
-{   
+{
     nSkyNode::ElementType type;
-    if (this->layoutChanged) 
-    {   
+    if (this->layoutChanged)
+    {
         // Element
         if (!this->elementReady)
         {
-        
+
             if (this->oldElement > -1)
             {
                 type = this->refSky->GetElementType(this->oldElement);
                 switch (type)
                 {
-                    case nSkyNode::CloudElement: this->HideCloud(); break;    
+                    case nSkyNode::CloudElement: this->HideCloud(); break;
                     case nSkyNode::SkyElement: this->HideSkycolor(); break;
                     case nSkyNode::SunElement: this->HideSun(); break;
                     case nSkyNode::LightElement: this->HideSunlight(); break;
                 }
                 this->activeType = nSkyNode::InvalidElement;
             }
-            
-            
+
+
             if (this->activeElement > -1)
             {
                 this->refElement = this->refSky->GetElement(this->activeElement);
                 type = this->refSky->GetElementType(this->activeElement);
                 switch (type)
                 {
-                    case nSkyNode::CloudElement: this->ShowCloud(); break;      
+                    case nSkyNode::CloudElement: this->ShowCloud(); break;
                     case nSkyNode::SkyElement: this->ShowSkycolor(); break;
                     case nSkyNode::SunElement: this->ShowSun(); break;
                     case nSkyNode::LightElement: this->ShowSunlight(); break;
@@ -1850,21 +1857,21 @@ nGuiSkyEditor::OnFrame()
                 type = this->refSky->GetElementType(this->activeElement);
                 switch (type)
                 {
-                    case nSkyNode::CloudElement: this->HideCloud(); break;    
+                    case nSkyNode::CloudElement: this->HideCloud(); break;
                     case nSkyNode::SkyElement: this->HideSkycolor(); break;
                     case nSkyNode::SunElement: this->HideSun(); break;
                     case nSkyNode::LightElement: this->HideSunlight(); break;
                 }
                 this->activeType = nSkyNode::InvalidElement;
             }
-            
+
             if ((this->activeState > -1) && (this->activeElement > -1))
             {
                 this->refElement = this->refSky->GetState(this->activeElement, this->activeState);
                 type = this->refSky->GetElementType(this->activeElement);
                 switch (type)
                 {
-                    case nSkyNode::CloudElement: this->ShowCloud(); break;      
+                    case nSkyNode::CloudElement: this->ShowCloud(); break;
                     case nSkyNode::SkyElement: this->ShowSkycolor(); break;
                     case nSkyNode::SunElement: this->ShowSun(); break;
                     case nSkyNode::LightElement: this->ShowSunlight(); break;
@@ -1882,7 +1889,7 @@ nGuiSkyEditor::OnFrame()
                 type = this->refSky->GetElementType(this->activeElement);
                 switch (type)
                 {
-                    case nSkyNode::CloudElement: this->ShowCloud(); break;      
+                    case nSkyNode::CloudElement: this->ShowCloud(); break;
                     case nSkyNode::SkyElement: this->ShowSkycolor(); break;
                     case nSkyNode::SunElement: this->ShowSun(); break;
                     case nSkyNode::LightElement: this->ShowSunlight(); break;
@@ -1897,31 +1904,31 @@ nGuiSkyEditor::OnFrame()
                 this->refStateTimeSlider->SetMaxValue(0);
                 this->refStateTimeSlider->OnShow();
             }
-            
+
             this->stateReady = true;
         }
-        
-        
+
+
         this->layoutChanged = false;
         this->UpdateLayout(this->GetRect());
     }
-    
+
 	// Refresh Button was pressed
     if (this->refresh && (this->activeElement > -1) && (this->refSky.isvalid()))
     {
         type = this->refSky->GetElementType(this->activeElement);
         switch (type)
         {
-            case nSkyNode::CloudElement: this->ShowCloud(); break;      
+            case nSkyNode::CloudElement: this->ShowCloud(); break;
             case nSkyNode::SkyElement: this->ShowSkycolor(); break;
-            case nSkyNode::SunElement: this->ShowSun(); break;  
+            case nSkyNode::SunElement: this->ShowSun(); break;
             case nSkyNode::LightElement: this->ShowSunlight(); break;
         }
         this->refStateTimeSlider->OnShow();
-                
+
         this->refresh = false;
     }
-    
+
 	// Don't update skytime slider, if it was moved
     if (this->updateSkyTime && this->refSkyTimeSlider.isvalid() && this->refSky.isvalid() )
     {
@@ -1931,22 +1938,22 @@ nGuiSkyEditor::OnFrame()
     {
         this->updateSkyTime = true;
     }
-    
+
 	// Save Button was pressed
     if (this->saveSky)
     {   // FIXME: Hardcoded...
 		nDynAutoRef<nRoot> refPath(this->skyPath.ExtractToLastSlash().Get());
-        refPath->SaveAs("proj:export/gfxlib/examples/SkySave.n2");        
+        refPath->SaveAs("proj:export/gfxlib/examples/SkySave.n2");
         this->saveSky = false;
     }
-    
-    nGuiFormLayout::OnFrame();   
+
+    nGuiFormLayout::OnFrame();
 
 }
 
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 void
 nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider,nShaderState::Param param, float min, float max, int vectornr)
@@ -1968,7 +1975,7 @@ nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider,nShaderState:
                 case 2: slider->SetValue(this->refElement->GetVector(param).y); break;
                 case 3: slider->SetValue(this->refElement->GetVector(param).z); break;
                 case 4: slider->SetValue(this->refElement->GetVector(param).w); break;
-            }  
+            }
         }
         else n_assert(false);
     }
@@ -1982,7 +1989,7 @@ nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider,nShaderState:
 }
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 void
 nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShaderState::Param param, float max)
@@ -2001,7 +2008,7 @@ nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShader
 
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 void
 nGuiSkyEditor::FindSkyNode(nRoot* node)
