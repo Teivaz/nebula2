@@ -559,7 +559,7 @@ App::OnFrame()
 //------------------------------------------------------------------------------
 /**
     Run the application. This method will return when the application wishes
-    to exist.
+    to exit.
 */
 void
 App::Run()
