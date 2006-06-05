@@ -17,8 +17,9 @@ STR_PROJECT_HEADER = '''\
     ProjectType="Visual C++"
     Version="8.00"
     Name="%(targetName)s"
-    Keyword="Win32Proj"
-    ProjectGUID="%(targetUUID)s">
+    ProjectGUID="%(targetUUID)s"
+    RootNamespace="%(targetName)s"
+    Keyword="Win32Proj">
     <Platforms>
         <Platform Name="Win32"/>
     </Platforms>
@@ -89,10 +90,10 @@ STR_PROJ_CONFIG_S1 = '''\
 
 STR_PROJ_CONFIG_S2_DEBUG = '''\
                 Optimization="0"
-                StringPooling="TRUE"
+                StringPooling="true"
                 ExceptionHandling="%(exceptions)s"
                 RuntimeTypeInfo="%(rtti)s"
-                MinimalRebuild="TRUE"
+                MinimalRebuild="true"
                 BasicRuntimeChecks="3"
                 RuntimeLibrary="1"
                 UsePrecompiledHeader="0"
@@ -101,16 +102,16 @@ STR_PROJ_CONFIG_S2_DEBUG = '''\
 '''
 
 STR_PROJ_CONFIG_S2_RELEASE = '''\
-                StringPooling="TRUE"
-                GlobalOptimizations="FALSE"
+                StringPooling="true"
+                GlobalOptimizations="false"
                 ExceptionHandling="%(exceptions)s"
                 RuntimeTypeInfo="%(rtti)s"
                 BasicRuntimeChecks="0"
                 RuntimeLibrary="0"
                 UsePrecompiledHeader="0"
                 WarningLevel="3"
-                Detect64BitPortabilityProblems="FALSE"
-                BufferSecurityCheck="FALSE"
+                Detect64BitPortabilityProblems="false"
+                BufferSecurityCheck="false"
                 DebugInformationFormat="0"/>
 '''
 
@@ -397,13 +398,16 @@ class vstudio8:
                  'defs'       : defStr }
         projFile.write(STR_PROJ_CONFIG_S1 % args)
 
+        exceptions = '0'
+        if target.exceptions:
+            exceptions = '1'
         if debugMode:
-            args = { 'exceptions' : string.upper(str(target.exceptions)),
-                     'rtti'       : string.upper(str(target.rtti)) }
+            args = { 'exceptions' : exceptions,
+                     'rtti'       : string.lower(str(target.rtti)) }
             projFile.write(STR_PROJ_CONFIG_S2_DEBUG % args)
         else:
-            args = { 'exceptions' : string.upper(str(target.exceptions)),
-                     'rtti'       : string.upper(str(target.rtti)) }
+            args = { 'exceptions' : exceptions,
+                     'rtti'       : string.lower(str(target.rtti)) }
             projFile.write(STR_PROJ_CONFIG_S2_RELEASE % args)
     
         projFile.write('            <Tool Name="VCCustomBuildTool"/>\n')
