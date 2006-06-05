@@ -27,7 +27,7 @@ class CmdEditorPanel(wx.Panel):
 ##                                        #wx.TR_DEFAULT_STYLE
 ##                                        wx.TR_TWIST_BUTTONS
 ##                                        #| wx.TR_ROW_LINES
-##                                        #| wx.TR_NO_LINES 
+##                                        #| wx.TR_NO_LINES
 ##                                        #| wx.TR_AQUA_BUTTONS
 ##                                        | wx.TR_HIDE_ROOT
 ##                                        | wx.TR_FULL_ROW_HIGHLIGHT
@@ -42,7 +42,7 @@ class CmdEditorPanel(wx.Panel):
 
         self.xrcRootItem = None
         xrcLoadPanel(self, parent, 'CmdEditorPanel')
-    
+
         # extracting controls
         treePanel       = xrcCTRLUnpack(self, "TreePanel")
         self.fileName   = xrcCTRLUnpack(self, "FileName")
@@ -76,7 +76,7 @@ class CmdEditorPanel(wx.Panel):
         self.parser = CmdFileProcessor(self.codeDir)
         self.cmd_configs = []
         self.active_cmdfile = None
-        
+
         self.parsing_dlg = None
 
     def InitTree(self):
@@ -108,7 +108,7 @@ class CmdEditorPanel(wx.Panel):
 
         main_modules_list = os.listdir(self.codeDir)
         main_modules_list = [d for d in main_modules_list\
-                             if d.upper() != "CVS" and\
+                             if d.upper() != "CVS" and d.lower() != ".svn" and\
                                 d.lower() != "contrib" and\
                                 d.lower() != "doxycfg" and\
                                 os.path.isdir(os.path.join(self.codeDir, d))]
@@ -124,7 +124,7 @@ class CmdEditorPanel(wx.Panel):
         contrib_path = os.path.join(self.codeDir, 'contrib')
         contrib_modules_list = os.listdir(contrib_path)
         contrib_modules_list = [d for d in contrib_modules_list\
-                                if d.upper() != "CVS" and\
+                                if d.upper() != "CVS" and d.lower() != ".svn" and\
                                    os.path.isdir(os.path.join(contrib_path, d))]
         contrib_modules_list.sort()
 
@@ -141,32 +141,32 @@ class CmdEditorPanel(wx.Panel):
                 self.tree.SetItemHasChildren(mod, True)
 
                 packages_list = os.listdir(packages_path)
-                
+
                 packages_list = [d for d in packages_list\
-                                 if d.upper() != "CVS" and\
+                                 if d.upper() != "CVS" and d.lower() != ".svn" and\
                                     os.path.isdir(os.path.join(packages_path, d))]
                 packages_list.sort()
-    
+
                 self.tree.SetItemText(mod, repr(len(packages_list)) + " packages", 1)
                 self.tree.SetItemImage(mod, fldridx, which = wx.TreeItemIcon_Normal)
                 self.tree.SetItemImage(mod, fldropenidx, which = wx.TreeItemIcon_Expanded)
 
                 #self.tree.Expand(mod)
-                
+
                 for pkg_name in packages_list:
                     pkg = self.tree.AppendItem(mod, pkg_name)
                     self.tree.SetItemHasChildren(pkg, True)
                     files_path = os.path.join(packages_path, pkg_name + os.sep)
                     files_list = os.listdir(files_path)
-    
+
                     files_list = [d for d in files_list\
                                   if os.path.isfile(os.path.join(files_path, d)) and d.endswith('_cmds.cc')]
                     files_list.sort()
-    
+
                     self.tree.SetItemText(pkg, repr(len(files_list)) + " files", 1)
                     self.tree.SetItemImage(pkg, fldridx, which = wx.TreeItemIcon_Normal)
                     self.tree.SetItemImage(pkg, fldropenidx, which = wx.TreeItemIcon_Expanded)
-                    
+
                     for file_name in files_list:
                         file = self.tree.AppendItem(pkg, file_name)
                         self.tree.SetItemHasChildren(file, True)
@@ -199,7 +199,7 @@ class CmdEditorPanel(wx.Panel):
                     dlg = wx.MessageDialog(self, 'Command was changed. Save changes?',
                                            'Save changes', wx.OK | wx.CANCEL | wx.ICON_QUESTION)
                     val = dlg.ShowModal()
-                
+
                     if val == wx.ID_OK:
                         self.log.WriteText("You pressed OK\n")
                     else:
@@ -280,7 +280,7 @@ class CmdEditorPanel(wx.Panel):
 
     def OnSelChanged(self, evt):
         item = evt.GetItem()
-        
+
         items = []
         tree_path = []
         while item:
@@ -292,7 +292,7 @@ class CmdEditorPanel(wx.Panel):
         del items[0]
 
         l = len(tree_path)
-        
+
         if l > 3:
             self.active_cmdfile = items[3]
             self.fileName.SetLabel(tree_path[3])
@@ -340,10 +340,10 @@ class CmdEditorPanel(wx.Panel):
                         #print " - " + self.tree.GetItemText(child, 0)
                         self.active_cmdfile = child
                         fname = self.tree.GetItemText(child, 0)
-                
+
                         is_contrib = False
                         if tree_path[0] == "<contrib>": is_contrib = True
-                
+
                         #self.statusLine.SetLabel('Parsing ' + tree_path[3] + '...')
                         #print str(tree_path) + fname
                         self.tree.DeleteChildren(self.active_cmdfile)
@@ -370,7 +370,7 @@ class CmdEditorPanel(wx.Panel):
     def OnRightUp(self, evt):
         pos = evt.GetPosition()
         item, flags, col = self.tree.HitTest(pos)
-        
+
         items = []
         while item:
             items.insert(0, item)
@@ -397,7 +397,7 @@ class CmdEditorPanel(wx.Panel):
 
     def OnPopupParse(self, evt):
 ##        print 'OnPopupParse'
-        
+
         item = self.active_cmdfile
         tree_path = []
         while item:
@@ -457,7 +457,7 @@ class CmdEditorPanel(wx.Panel):
         # SaveCmds function
 ##        if config.saveCmdsFunc:
 ##            self.tree.AppendItem(self.active_cmdfile, "[SaveCmds]")
-        
+
         if expand:
             self.tree.Expand(self.active_cmdfile)
 ##            self.tree.SelectItem(gi, True)
