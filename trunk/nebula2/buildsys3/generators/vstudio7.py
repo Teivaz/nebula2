@@ -89,7 +89,7 @@ STR_PROJ_CONFIG_S1 = '''\
                 AdditionalOptions=""
                 Optimization="0"
                 AdditionalIncludeDirectories="%(incDirs)s"
-                PreprocessorDefinitions="__WIN32__;%(defs)s"
+                PreprocessorDefinitions="__WIN32__;_WIN32_WINNT=WINVER;%(defs)s"
                 ExceptionHandling="%(exceptions)s"
                 BasicRuntimeChecks="0"
                 RuntimeLibrary="1"

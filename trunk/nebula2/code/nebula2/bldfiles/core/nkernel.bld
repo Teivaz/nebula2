@@ -165,9 +165,9 @@ beginmodule nfileserver2
     setfiles {
         nfileserver2_main
         nfileserver2_cmds
-        nfile ndirectory
+        nfile ndirectory ndirectorywatchhandler
     }
-    setheaders { nfileserver2 nfile ndirectory }
+    setheaders { nfileserver2 nfile ndirectory ndirectorywatchhandler }
     setframeworks_macosx { Carbon CoreFoundation }
 endmodule
 #-------------------------------------------------------------------------------

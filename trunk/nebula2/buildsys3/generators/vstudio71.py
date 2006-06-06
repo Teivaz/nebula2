@@ -85,7 +85,7 @@ STR_PROJ_CONFIG_S1 = '''\
             <Tool
                 Name="VCCLCompilerTool"
                 AdditionalIncludeDirectories="%(incDirs)s"
-                PreprocessorDefinitions="__WIN32__;%(defs)s"
+                PreprocessorDefinitions="__WIN32__;_WIN32_WINNT=WINVER;%(defs)s"
 '''
 
 STR_PROJ_CONFIG_S2_DEBUG = '''\
