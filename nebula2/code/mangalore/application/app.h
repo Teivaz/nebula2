@@ -78,6 +78,8 @@ public:
     const nString& GetProjectDirectory() const;
     /// get display mode
     const nDisplayMode2& GetDisplayMode() const;
+    /// get path to current db
+    const nString& GetWorldDb() const;
     /// get path to current level
     const nString& GetStartupLevel() const;
     // get startup save game
@@ -159,6 +161,8 @@ protected:
     void SetProjectDirectory(const nString& dir);
     /// set display mode
     void SetDisplayMode(const nDisplayMode2& mode);
+    /// set world database path
+    void SetWorldDb(const nString& path);
     /// set startup level path
     void SetStartupLevel(const nString& path);
     // set startup save game
@@ -190,6 +194,7 @@ protected:
     nStartupChecker startupChecker;
     nCmdLineArgs cmdLineArgs;
     nString projDir;
+    nString startupDb;
     nString startupLevel;
     nString startupSavegame;
     nString featureSet;
@@ -305,6 +310,26 @@ const nDisplayMode2&
 App::GetDisplayMode() const
 {
     return this->displayMode;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+App::SetWorldDb(const nString& l)
+{
+    this->startupDb = l;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+App::GetWorldDb() const
+{
+    return this->startupDb;
 }
 
 //------------------------------------------------------------------------------

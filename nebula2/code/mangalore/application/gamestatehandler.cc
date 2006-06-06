@@ -64,6 +64,7 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     else if (NewGame == this->setupMode)
     {
         // use override start level, or the startup level from the world database?
+        saveGameManager->SetWorldDbOverride(this->GetDbName());
         saveGameManager->SetStartLevelOverride(this->GetLevelName());
         saveGameManager->NewGame();
     }
@@ -90,6 +91,7 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     }
 
     // clear the startup level and save game name
+    this->SetDbName("");
     this->SetLevelName("");
     this->SetSaveGame("");
 

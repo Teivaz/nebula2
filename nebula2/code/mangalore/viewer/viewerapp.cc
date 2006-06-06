@@ -232,6 +232,18 @@ ViewerApp::SetupStateHandlers()
     Ptr<Application::GameStateHandler> gameStateHandler = n_new(Application::GameStateHandler);
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
+
+    if (this->GetWorldDb().IsValid())
+    {
+		gameStateHandler->SetDbName(this->GetWorldDb());
+    }
+
+    // if a startup level has been set, directly start with the location state
+    if (this->GetStartupLevel().IsValid())
+    {
+		gameStateHandler->SetLevelName(this->GetStartupLevel());
+    }
+
     if (0 != App::GetCmdLineArgs().GetStringArg("-obj"))
     {
         gameStateHandler->SetSetupMode(Application::GameStateHandler::EmptyWorld);
@@ -242,12 +254,6 @@ ViewerApp::SetupStateHandlers()
     }
     this->AddStateHandler(gameStateHandler);
 	this->SetState("Game");
-
-    // if a startup level has been set, directly start with the location state
-    if (this->GetStartupLevel().IsValid())
-    {
-		gameStateHandler->SetLevelName(this->GetStartupLevel());
-    }
 }
 //------------------------------------------------------------------------------
 /**
