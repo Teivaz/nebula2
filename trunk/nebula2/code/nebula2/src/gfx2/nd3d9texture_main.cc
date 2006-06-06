@@ -483,10 +483,17 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     }
 
     // Generate mipmaps?
+    DWORD mipmapLevels = imgInfo.MipLevels;
     DWORD mipmapFilter = D3DX_FILTER_NONE;
     if (genMipMaps)
     {
         mipmapFilter = D3DX_DEFAULT;
+
+        if (1 == mipmapLevels)
+        {
+            // Force generation of a full chain of mipmaps.
+            mipmapLevels = D3DX_DEFAULT;
+        }
     }
 
     // D3D usage flags
@@ -507,7 +514,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
                 fileSize,                   // SrcDataSize
                 D3DX_DEFAULT,               // Width
                 D3DX_DEFAULT,               // Height
-                D3DX_DEFAULT,               // MipLevels
+                mipmapLevels,               // MipLevels
                 d3dUsage,                   // Usage
                 D3DFMT_UNKNOWN,             // Format
                 d3dPool,                    // Pool
@@ -536,7 +543,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
                 fileBuffer,                 // pSrcData
                 fileSize,                   // SrcDataSize
                 D3DX_DEFAULT,               // Size
-                D3DX_DEFAULT,               // MipLevels
+                mipmapLevels,               // MipLevels
                 d3dUsage,                   // Usage
                 D3DFMT_UNKNOWN,             // Format
                 d3dPool,                    // Pool
