@@ -55,12 +55,6 @@ public:
     ///
     virtual bool isQueueingEnabled() const;
 
-protected:
-    ///
-    void renderCursor(const CEGUI::Texture* texture, CeGuiRectangle* rect);
-    ///
-    void sortTextures();
-
 private:
     nDynamicShaderMesh mesh;
     matrix44 transform;
