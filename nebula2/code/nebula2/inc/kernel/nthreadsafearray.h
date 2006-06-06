@@ -1,23 +1,24 @@
-#ifndef N_THREADSAFELIST_H
-#define N_THREADSAFELIST_H
+#ifndef N_THREADSAFEARRAY_H
+#define N_THREADSAFEARRAY_H
 //------------------------------------------------------------------------------
 /**
-    @class nThreadSafeList
+    @class nThreadSafeArray
     @ingroup Threading
-    @brief A thread safe doubly linked list.
+    @brief A thread safe array dynamic array template class.
 
-    Offers method to manipulate lists in a thread safe way,
-    so that the list can be used as a communication point between
+    Offers method to manipulate dynamic arrays in a thread safe way,
+    so that the array can be used as a communication point between
     threads.
 
     (C) 2002 RadonLabs GmbH
 */
-#include "util/nlist.h"
+#include "util/narray.h"
 #include "kernel/nmutex.h"
 #include "kernel/nevent.h"
 
 //------------------------------------------------------------------------------
-class nThreadSafeList : public nList 
+template<class TYPE>
+class nThreadSafeArray : public nArray<TYPE>
 {
 public:
     /// signal event object
@@ -39,9 +40,9 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+template<class TYPE>
 void 
-nThreadSafeList::SignalEvent()
+nThreadSafeArray<TYPE>::SignalEvent()
 {
     this->event.Signal();
 }
@@ -49,9 +50,9 @@ nThreadSafeList::SignalEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+template<class TYPE>
 void 
-nThreadSafeList::WaitEvent()
+nThreadSafeArray<TYPE>::WaitEvent()
 {
     this->event.Wait();
 }
@@ -59,9 +60,9 @@ nThreadSafeList::WaitEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+template<class TYPE>
 void 
-nThreadSafeList::TimedWaitEvent(int ms)
+nThreadSafeArray<TYPE>::TimedWaitEvent(int ms)
 {
     this->event.TimedWait(ms);
 }
@@ -69,9 +70,9 @@ nThreadSafeList::TimedWaitEvent(int ms)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+template<class TYPE>
 void 
-nThreadSafeList::Lock()
+nThreadSafeArray<TYPE>::Lock()
 {
     this->mutex.Lock();
 }
@@ -79,9 +80,9 @@ nThreadSafeList::Lock()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+template<class TYPE>
 void 
-nThreadSafeList::Unlock()
+nThreadSafeArray<TYPE>::Unlock()
 {
     this->mutex.Unlock();
 }

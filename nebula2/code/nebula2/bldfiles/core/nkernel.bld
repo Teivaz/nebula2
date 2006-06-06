@@ -219,7 +219,7 @@ beginmodule nkernel
     setheaders {
         nsystem ntypes ndebug nkernelserver nprofiler nclass
         ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
-        ndynautoref nhardref nevent nmutex nthread nthreadsafelist
+        ndynautoref nhardref nevent nmutex nthread nthreadsafelist nthreadsafearray
         nloghandler ndefaultloghandler nwin32loghandler
         nrefcounted nguid ncrc nreferenced
         ndefclass ncmdprotonativecpp ncmdprototraits
