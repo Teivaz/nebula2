@@ -464,7 +464,7 @@ ViewerApp::SetupCeGui()
     CEGUI::FontManager::getSingleton().createFont("cegui:fonts/Commonwealth-10.font");
     CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
 
-    ceuiServer->DisplayGui("cegui:layouts/Demo7Windows.layout");
+    ceuiServer->DisplayGui("cegui:layouts/mviewer.layout");
 }
 
 }; // namespace Viewer
