@@ -103,6 +103,22 @@ nMouseCursor::Unload()
     this->refTexture.invalidate();
 }
 
+
+//------------------------------------------------------------------------------
+/**
+/* create empty mouse cursor
+*/
+void
+nMouseCursor::CreateEmpty(int width, int height) {
+    this->refTexture = nGfxServer2::Instance()->NewTexture(0);
+    this->refTexture->SetUsage(nTexture2::CreateEmpty);
+    this->refTexture->SetType(nTexture2::TEXTURE_2D);
+    this->refTexture->SetFormat(nTexture2::A8R8G8B8);
+    this->refTexture->SetWidth(width);
+    this->refTexture->SetHeight(height);
+    this->refTexture->Load();
+}
+
 //------------------------------------------------------------------------------
 /**
 */

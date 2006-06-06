@@ -42,7 +42,7 @@ bool Server::Open() {
     ceGuiSystem = n_new(CEGUI::System(renderer));
     CEGUI::Logger::getSingleton().setLogFilename("ceguilog.txt");
     CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
-    nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::None);
+    nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::Custom);
     isOpen = true;
     return isOpen;
 }

@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     Holds mouse cursor attributes.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -26,6 +26,8 @@ public:
     ~nMouseCursor();
     /// copy operator
     void operator=(const nMouseCursor& rhs);
+    /// create empty mouse cursor
+    void CreateEmpty(int width, int height);
     /// set cursor image filename
     void SetFilename(const char* path);
     /// get cursor image filename
