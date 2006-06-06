@@ -19,8 +19,7 @@ Server* Server::Singleton = 0;
 /**
 */
 Server::Server() :
-    isOpen(false),
-    dbFilename("db:world.db3")
+    isOpen(false)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -48,7 +47,7 @@ Server::Open()
 {
     n_assert(!this->IsOpen());
     this->refSqlDatabase = nSqlServer::Instance()->NewDatabase(this->dbFilename);
-    this->isOpen = this->refSqlDatabase.isvalid();    
+    this->isOpen = this->refSqlDatabase.isvalid();
     this->LoadGlobalAttributes();
     return this->isOpen;
 }
@@ -152,7 +151,7 @@ Server::WriteAttr(const nString& tableName, const Attribute& key, const Attribut
 
 //------------------------------------------------------------------------------
 /**
-    This method reads a row of attributes from the database. An empty 
+    This method reads a row of attributes from the database. An empty
     array is returned if the table or row doesn't exist in the database.
 */
 nArray<Attribute>
@@ -170,7 +169,7 @@ Server::ReadAttrs(const nString& tableName, const Attribute& key)
             if (query->GetNumRows() > 1)
             {
                 // more then one result row, this could be an incosistent database
-                n_error("Server::ReadAttrs(): query for key '%s'='%s' in table '%s' has more then one match!", 
+                n_error("Server::ReadAttrs(): query for key '%s'='%s' in table '%s' has more then one match!",
                     tableName.Get(), key.GetName().Get(), key.AsString().Get());
             }
             else
@@ -205,7 +204,7 @@ Server::ReadAttr(const nString& tableName, const Attribute& key, Attribute& inOu
             if (query->GetNumRows() > 1)
             {
                 // more then one result row, this could be an incosistent database
-                n_error("Server::ReadAttr(): query for key '%s'='%s' in table '%s' has more then one match!", 
+                n_error("Server::ReadAttr(): query for key '%s'='%s' in table '%s' has more then one match!",
                     tableName.Get(), key.GetName().Get(), key.AsString().Get());
             }
             else
@@ -255,7 +254,7 @@ Server::CreateLevelsQuery() const
 
 //------------------------------------------------------------------------------
 /**
-    Create a predefined query object which returns the data for a specific 
+    Create a predefined query object which returns the data for a specific
     level.
 */
 Query*
@@ -298,7 +297,7 @@ Server::CreateCategoryQuery(const nString& categoryName) const
 
 //------------------------------------------------------------------------------
 /**
-    Create a predefined query object which returns the guids for all entities in 
+    Create a predefined query object which returns the guids for all entities in
     a level which belong to a specific category.
 */
 Query*
@@ -314,7 +313,7 @@ Server::CreateLevelCategoryGuidQuery(const nString &levelName, const nString &ca
 
 //------------------------------------------------------------------------------
 /**
-    Create a predefined query object which returns all data for all entities in 
+    Create a predefined query object which returns all data for all entities in
     a level which belong to a specific category.
 */
 Query*

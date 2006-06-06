@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Managers::SaveGameManager
-    
+
     Manages savegames.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
@@ -27,13 +27,17 @@ public:
     static SaveGameManager* Instance();
     /// return true if a current game exists
     static bool CurrentGameExists();
+    /// optional method to override world database for NewGame()
+    void SetWorldDbOverride(const nString& dbName);
+    /// get optional override world database
+    const nString& GetWorldDbOverride() const;
     /// optional method to override start level for NewGame()
     void SetStartLevelOverride(const nString& levelName);
     /// get optional override start level
     const nString& GetStartLevelOverride() const;
     /// setup a new game
     virtual bool NewGame();
-    /// continue game 
+    /// continue game
     virtual bool ContinueGame();
     /// create a new save game
     virtual bool SaveGame(const nString& saveGameName);
@@ -41,10 +45,13 @@ public:
     virtual bool LoadGame(const nString& saveGameName);
 
 private:
+    /// get world database
+    nString GetWorldDb();
     /// query the world database for the startup level
     nString QueryStartupLevel();
 
     static SaveGameManager* Singleton;
+    nString overrideWorldDb;
     nString overrideStartLevel;
 };
 
@@ -59,6 +66,28 @@ SaveGameManager::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Override the world database
+*/
+inline
+void
+SaveGameManager::SetWorldDbOverride(const nString& dbName)
+{
+    this->overrideWorldDb = dbName;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Override the world database
+*/
+inline
+const nString&
+SaveGameManager::GetWorldDbOverride() const
+{
+    return this->overrideWorldDb;
 }
 
 //------------------------------------------------------------------------------

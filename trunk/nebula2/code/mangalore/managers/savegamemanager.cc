@@ -41,6 +41,25 @@ SaveGameManager::~SaveGameManager()
 
 //------------------------------------------------------------------------------
 /**
+    This method get the world database.
+*/
+nString
+SaveGameManager::GetWorldDb()
+{
+    if (this->overrideWorldDb.IsValid())
+    {
+        // override database set, use this
+        return nString("db:") + this->overrideWorldDb;
+    }
+    else
+    {
+        // return default database
+        return nString("db:world.db3");
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     This method queries the world database for the startup level.
 */
 nString
@@ -73,7 +92,7 @@ SaveGameManager::QueryStartupLevel()
 //------------------------------------------------------------------------------
 /**
     This method starts a new game by creating a copy of the initial
-    world database into the current user profile's directory. This copy is 
+    world database into the current user profile's directory. This copy is
     the mutable world database where is game is played from. After the copy
     has been created, SetupManager::SetupWorldFromLevel() will be called with
     the given initialLevel.
@@ -82,7 +101,7 @@ bool
 SaveGameManager::NewGame()
 {
     nFileServer2* fileServer = nFileServer2::Instance();
-    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();    
+    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     Db::Server* dbServer = Db::Server::Instance();
     Application::StateHandler* curAppStateHandler = Application::App::Instance()->GetCurrentStateHandler();
     n_assert(curAppStateHandler);
@@ -99,7 +118,7 @@ SaveGameManager::NewGame()
     {
         fileServer->DeleteFile(dbPath);
     }
-    fileServer->CopyFile("export:db/world.db3", dbPath);
+    fileServer->CopyFile(this->GetWorldDb(), dbPath);
 
     // open database with new file
     dbServer->SetDatabaseFilename(dbPath);
@@ -128,7 +147,7 @@ bool
 SaveGameManager::CurrentGameExists()
 {
     nFileServer2* fileServer = nFileServer2::Instance();
-    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();    
+    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     return fileServer->FileExists(userProfile->GetDatabasePath());
 }
 
@@ -153,7 +172,7 @@ SaveGameManager::ContinueGame()
     {
         dbServer->Close();
     }
-    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();    
+    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     dbServer->SetDatabaseFilename(userProfile->GetDatabasePath());
     dbServer->Open();
 
@@ -183,7 +202,7 @@ SaveGameManager::SaveGame(const nString& saveGameName)
     Game::Server::Instance()->Save();
 
     // create a copy of the current world database
-    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();    
+    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     fileServer->MakePath(userProfile->GetSaveGameDirectory());
     nString dbPath = userProfile->GetDatabasePath();
     nString saveGamePath = userProfile->GetSaveGamePath(saveGameName);
@@ -198,14 +217,14 @@ SaveGameManager::SaveGame(const nString& saveGameName)
 //------------------------------------------------------------------------------
 /**
     Load a saved game. This will overwrite the current world database
-    with the saved game database file then call 
+    with the saved game database file then call
     SetupManager::SetupWorldFromCurrentLevel(). If the savegame file
     doesn't exist the method returns false and nothing will change.
 */
 bool
 SaveGameManager::LoadGame(const nString& saveGameName)
 {
-    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();    
+    Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     nFileServer2* fileServer = nFileServer2::Instance();
     Application::StateHandler* curAppStateHandler = Application::App::Instance()->GetCurrentStateHandler();
     n_assert(curAppStateHandler);
@@ -213,7 +232,7 @@ SaveGameManager::LoadGame(const nString& saveGameName)
     // get relevant filenames
     nString dbPath  = userProfile->GetDatabasePath();
     nString saveGamePath = userProfile->GetSaveGamePath(saveGameName);
-    
+
     // check if savegame file exists
     if (!fileServer->FileExists(saveGamePath))
     {

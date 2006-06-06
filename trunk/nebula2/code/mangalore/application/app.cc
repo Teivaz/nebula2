@@ -198,6 +198,7 @@ App::SetupFromCmdLineArgs()
     // setup optional startup savegame or level paths
     this->SetStartupSavegame(this->cmdLineArgs.GetStringArg("-loadgame", 0));
     this->SetStartupLevel(this->cmdLineArgs.GetStringArg("-level", 0));
+    this->SetWorldDb(this->cmdLineArgs.GetStringArg("-db", 0));
 
     // setup display mode
     nDisplayMode2 mode = this->GetDisplayMode();
