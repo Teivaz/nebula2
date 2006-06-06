@@ -5,6 +5,7 @@
 
 begintarget mangalorelib
     settype lib
+    setexceptions true
     setmodules {
         mangalore::attr
         mangalore::foundation
