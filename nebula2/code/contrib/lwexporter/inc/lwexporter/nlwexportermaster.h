@@ -11,6 +11,7 @@ extern "C" {
 
 class nKernelServer;
 class nLogHandler;
+class nLWViewerRemote;
 
 //----------------------------------------------------------------------------
 class nLWExporterMaster : public nRefCounted
@@ -57,6 +58,7 @@ private:
 
     nKernelServer* kernelServer;
     nLogHandler* logHandler;
+    nLWViewerRemote* viewerRemote;
 
     static nLWExporterMaster* singleton;
 };

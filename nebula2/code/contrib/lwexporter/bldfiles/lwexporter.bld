@@ -75,6 +75,7 @@ beginmodule nlwwxui
         wxintsliderctrl
         wxtexturefilectrl
         wxfloatctrl
+        wxcustomevents
     }
     setfiles {
         wxanimlistctrl
@@ -84,6 +85,7 @@ beginmodule nlwwxui
         wxintsliderctrl
         wxtexturefilectrl
         wxfloatctrl
+        wxcustomevents
     }
 endmodule
 
@@ -207,6 +209,7 @@ beginmodule nlwcommon
         nlwtextureexport
         nlwsettingsregistry
         nlwbonejointmap
+        nlwviewerremote
     }
     setfiles {
         nlwexporter
@@ -215,6 +218,7 @@ beginmodule nlwcommon
         nlwtextureexport
         nlwsettingsregistry
         nlwbonejointmap
+        nlwviewerremote
     }
 endmodule
 

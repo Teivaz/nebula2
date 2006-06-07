@@ -22,10 +22,11 @@ class wxTextureFileCtrl;
 //----------------------------------------------------------------------------
 /**
 */
-class nLWShaderPanelParam
+class nLWShaderPanelParam : public wxEvtHandler
 {
 public:
-    nLWShaderPanelParam();
+    nLWShaderPanelParam(const nString& shaderName);
+    nLWShaderPanelParam(const nLWShaderPanelParam&);
     virtual ~nLWShaderPanelParam();
 
     const nString& GetLabel() const;
@@ -36,11 +37,15 @@ public:
     virtual void CopyParamFrom(nLWShaderExportSettings*) = 0;
     virtual wxWindow* CreateControl(wxWindow* parent) = 0;
     virtual nLWShaderPanelParam* Clone() = 0;
+    virtual void SendParamToViewer();
 
 protected:
+    void OnChange(wxCommandEvent&);
+
     nString label;
     nShaderState::Param shaderParam;
     bool visible;
+    nString shaderName;
 };
 
 //----------------------------------------------------------------------------
@@ -49,7 +54,7 @@ protected:
 class nLWShaderPanelPlaceHolderParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelPlaceHolderParam();
+    nLWShaderPanelPlaceHolderParam(const nString& shaderName);
     virtual ~nLWShaderPanelPlaceHolderParam();
 
     void Load(const TiXmlElement* paramElem);
@@ -68,13 +73,15 @@ protected:
 class nLWShaderPanelEnumParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelEnumParam();
+    nLWShaderPanelEnumParam(const nString& shaderName);
+    nLWShaderPanelEnumParam(const nLWShaderPanelEnumParam&);
     ~nLWShaderPanelEnumParam();
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
     wxWindow* CreateControl(wxWindow* parent);
     nLWShaderPanelParam* Clone();
+    void SendParamToViewer();
 
 private:
     nArray<nString> enumMembers;
@@ -89,12 +96,14 @@ private:
 class nLWShaderPanelIntParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelIntParam();
+    nLWShaderPanelIntParam(const nString& shaderName);
+    nLWShaderPanelIntParam(const nLWShaderPanelIntParam&);
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
     wxWindow* CreateControl(wxWindow* parent);
     nLWShaderPanelParam* Clone();
+    void SendParamToViewer();
 
 private:
     int valueLowerBound;
@@ -109,12 +118,14 @@ private:
 class nLWShaderPanelFloatParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelFloatParam();
+    nLWShaderPanelFloatParam(const nString& shaderName);
+    nLWShaderPanelFloatParam(const nLWShaderPanelFloatParam&);
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
     wxWindow* CreateControl(wxWindow* parent);
     nLWShaderPanelParam* Clone();
+    void SendParamToViewer();
 
 private:
     float valueLowerBound;
@@ -129,13 +140,15 @@ private:
 class nLWShaderPanelBoolParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelBoolParam();
+    nLWShaderPanelBoolParam(const nString& shaderName);
+    nLWShaderPanelBoolParam(const nLWShaderPanelBoolParam&);
     bool NeedsLabelControl() const;
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
     wxWindow* CreateControl(wxWindow*);
     nLWShaderPanelParam* Clone();
+    void SendParamToViewer();
 
 private:
     bool defValue;
@@ -148,12 +161,14 @@ private:
 class nLWShaderPanelColorParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelColorParam();
+    nLWShaderPanelColorParam(const nString& shaderName);
+    nLWShaderPanelColorParam(const nLWShaderPanelColorParam&);
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
     wxWindow* CreateControl(wxWindow* parent);
     nLWShaderPanelParam* Clone();
+    void SendParamToViewer();
 
 private:
     vector4 defValue;
@@ -166,7 +181,8 @@ private:
 class nLWShaderPanelTextureParam : public nLWShaderPanelParam
 {
 public:
-    nLWShaderPanelTextureParam();
+    nLWShaderPanelTextureParam(const nString& shaderName);
+    nLWShaderPanelTextureParam(const nLWShaderPanelTextureParam&);
     void Load(const TiXmlElement* paramElem);
     void CopyParamTo(nLWShaderExportSettings*);
     void CopyParamFrom(nLWShaderExportSettings*);
@@ -174,11 +190,7 @@ public:
     nLWShaderPanelParam* Clone();
 
 private:
-    //void OnValueChanged(wxCommandEvent&);
-
     nString defValue;
-    //nLWFilePathControl* ctrl;
-    //wxTextCtrl* ctrl;
     wxTextureFileCtrl* ctrl;
 };
 

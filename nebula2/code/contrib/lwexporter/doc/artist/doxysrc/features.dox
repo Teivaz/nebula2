@@ -8,9 +8,8 @@
     - <b>Preview and export</b> any of the following:
        - static meshes, with one or more surfaces
        - smooth-skinned, animated characters with one or more surfaces
-       - shadow geometry for stencil buffer shadows (todo)
     - Assign Nebula 2 shaders from your DX9 HLSL shader library to surfaces
-      and control the shader attributes.
+      and control the shader attributes in real-time.
     - <b>Automatic tangent generation</b> for <b>per-pixel-lighting</b>.
 
 

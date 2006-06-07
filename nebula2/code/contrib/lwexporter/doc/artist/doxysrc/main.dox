@@ -32,6 +32,7 @@
     
     Common exporter usage is covered in the following sections:
     - @ref N2Exp4LWCharacters
+    - @ref N2Exp4LWShaderTweaking
 
 
     @section N2Exp4LWIntroSamples Samples

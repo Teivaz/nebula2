@@ -8,12 +8,27 @@
 #include "lwwxui/wxfloatsliderctrl.h"
 #include "lwwxui/wxintsliderctrl.h"
 #include "lwwxui/wxtexturefilectrl.h"
+#include "lwexporter/nlwviewerremote.h"
+#include "lwwxui/wxcustomevents.h"
 
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelParam::nLWShaderPanelParam() :
-    visible(false)
+nLWShaderPanelParam::nLWShaderPanelParam(const nString& shaderName) :
+    visible(false),
+    shaderName(shaderName)
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelParam::nLWShaderPanelParam(const nLWShaderPanelParam& other) :
+    label(other.label),
+    shaderParam(other.shaderParam),
+    visible(other.visible),
+    shaderName(other.shaderName)
 {
     // empty
 }
@@ -79,8 +94,29 @@ nLWShaderPanelParam::Load(const TiXmlElement* paramElem)
 
 //----------------------------------------------------------------------------
 /**
+    Override in sub-classes if the shader parameter value needs to be
+    sent to nViewer.
 */
-nLWShaderPanelPlaceHolderParam::nLWShaderPanelPlaceHolderParam()
+void 
+nLWShaderPanelParam::SendParamToViewer()
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+void 
+nLWShaderPanelParam::OnChange(wxCommandEvent& WXUNUSED(event))
+{
+    this->SendParamToViewer();
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelPlaceHolderParam::nLWShaderPanelPlaceHolderParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName)
 {
     // empty
 }
@@ -143,12 +179,26 @@ nLWShaderPanelPlaceHolderParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelEnumParam::nLWShaderPanelEnumParam() :
+nLWShaderPanelEnumParam::nLWShaderPanelEnumParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
     firstMemberId(0),
     defMemberId(0),
     ctrl(0)
 {
+    // empty
+}
 
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelEnumParam::nLWShaderPanelEnumParam(const nLWShaderPanelEnumParam& other) :
+    nLWShaderPanelParam(other),
+    enumMembers(other.enumMembers),
+    firstMemberId(other.firstMemberId),
+    defMemberId(other.defMemberId),
+    ctrl(0)
+{
+    // empty
 }
 
 //----------------------------------------------------------------------------
@@ -156,7 +206,7 @@ nLWShaderPanelEnumParam::nLWShaderPanelEnumParam() :
 */
 nLWShaderPanelEnumParam::~nLWShaderPanelEnumParam()
 {
-
+    // empty
 }
 
 //----------------------------------------------------------------------------
@@ -223,12 +273,20 @@ wxWindow*
 nLWShaderPanelEnumParam::CreateControl(wxWindow* parent)
 {
     this->ctrl = new wxChoice(parent, wxID_ANY);
-    for (int memberIdx = 0; memberIdx < this->enumMembers.Size(); memberIdx++)
+    if (this->ctrl)
     {
-        this->ctrl->AppendString(this->enumMembers[memberIdx].Get());
+        for (int memberIdx = 0; memberIdx < this->enumMembers.Size(); memberIdx++)
+        {
+            this->ctrl->AppendString(this->enumMembers[memberIdx].Get());
+        }
+        // select the default item
+        this->ctrl->SetSelection(this->defMemberId - this->firstMemberId);
+        // hook up the change event handler so we can send changes to the 
+        // preview window
+        this->ctrl->Connect(wxEVT_CUSTOM_CHANGE, 
+                            wxCommandEventHandler(nLWShaderPanelEnumParam::OnChange),
+                            0, this);
     }
-    // select the default item
-    this->ctrl->SetSelection(this->defMemberId - this->firstMemberId);
     return this->ctrl;
 }
 
@@ -244,13 +302,43 @@ nLWShaderPanelEnumParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelIntParam::nLWShaderPanelIntParam() : 
+void 
+nLWShaderPanelEnumParam::SendParamToViewer()
+{
+    if (this->ctrl && nLWViewerRemote::Instance()->IsOpen())
+    {
+        int paramValue = this->firstMemberId + this->ctrl->GetSelection();
+        nLWViewerRemote::Instance()->ChangeShaderParam(this->shaderName, 
+                                                       "common", 
+                                                       this->shaderParam, 
+                                                       paramValue);
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelIntParam::nLWShaderPanelIntParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
     valueLowerBound(0),
     valueUpperBound(0),
     defValue(0),
     ctrl(0)
 {
     // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelIntParam::nLWShaderPanelIntParam(const nLWShaderPanelIntParam& other) :
+    nLWShaderPanelParam(other),
+    valueLowerBound(other.valueLowerBound),
+    valueUpperBound(other.valueUpperBound),
+    defValue(other.defValue),
+    ctrl(0)
+{
+    
 }
 
 //----------------------------------------------------------------------------
@@ -301,7 +389,15 @@ nLWShaderPanelIntParam::CreateControl(wxWindow* parent)
     this->ctrl = new wxIntSliderCtrl(parent, wxID_ANY, 
                                      this->valueLowerBound, 
                                      this->valueUpperBound);
-    this->ctrl->SetValue(this->defValue);
+    if (this->ctrl)
+    {
+        this->ctrl->SetValue(this->defValue);
+        // hook up the change event handler so we can send changes to the 
+        // preview window
+        this->ctrl->Connect(wxEVT_CUSTOM_CHANGE, 
+                            wxCommandEventHandler(nLWShaderPanelIntParam::OnChange),
+                            0, this);
+    }
     return this->ctrl;
 }
 
@@ -317,10 +413,39 @@ nLWShaderPanelIntParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelFloatParam::nLWShaderPanelFloatParam() :
+void 
+nLWShaderPanelIntParam::SendParamToViewer()
+{
+    if (this->ctrl && nLWViewerRemote::Instance()->IsOpen())
+    {
+        nLWViewerRemote::Instance()->ChangeShaderParam(this->shaderName, 
+                                                       "common", 
+                                                       this->shaderParam, 
+                                                       this->ctrl->GetValue());
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelFloatParam::nLWShaderPanelFloatParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
     valueLowerBound(0.0f),
     valueUpperBound(0.0f),
     defValue(0.0f),
+    ctrl(0)
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelFloatParam::nLWShaderPanelFloatParam(const nLWShaderPanelFloatParam& other) :
+    nLWShaderPanelParam(other),
+    valueLowerBound(other.valueLowerBound),
+    valueUpperBound(other.valueUpperBound),
+    defValue(other.defValue),
     ctrl(0)
 {
     // empty
@@ -378,7 +503,15 @@ nLWShaderPanelFloatParam::CreateControl(wxWindow* parent)
     this->ctrl = new wxFloatSliderCtrl(parent, wxID_ANY, 
                                        this->valueLowerBound, 
                                        this->valueUpperBound);
-    this->ctrl->SetValue(this->defValue);
+    if (this->ctrl)
+    {
+        this->ctrl->SetValue(this->defValue);
+        // hook up the change event handler so we can send changes to the 
+        // preview window
+        this->ctrl->Connect(wxEVT_CUSTOM_CHANGE, 
+                            wxCommandEventHandler(nLWShaderPanelFloatParam::OnChange),
+                            0, this);
+    }
     return this->ctrl;
 }
 
@@ -394,8 +527,35 @@ nLWShaderPanelFloatParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelBoolParam::nLWShaderPanelBoolParam() :
+void 
+nLWShaderPanelFloatParam::SendParamToViewer()
+{
+    if (this->ctrl && nLWViewerRemote::Instance()->IsOpen())
+    {
+        nLWViewerRemote::Instance()->ChangeShaderParam(this->shaderName, 
+                                                       "common", 
+                                                       this->shaderParam, 
+                                                       this->ctrl->GetValue());
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelBoolParam::nLWShaderPanelBoolParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
     defValue(false),
+    ctrl(0)
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelBoolParam::nLWShaderPanelBoolParam(const nLWShaderPanelBoolParam& other) :
+    nLWShaderPanelParam(other),
+    defValue(other.defValue),
     ctrl(0)
 {
     // empty
@@ -458,7 +618,15 @@ wxWindow*
 nLWShaderPanelBoolParam::CreateControl(wxWindow* parent)
 {
     this->ctrl = new wxCheckBox(parent, wxID_ANY, this->label.Get());
-    this->ctrl->SetValue(this->defValue);
+    if (this->ctrl)
+    {
+        this->ctrl->SetValue(this->defValue);
+        // hook up the change event handler so we can send changes to the 
+        // preview window
+        this->ctrl->Connect(wxEVT_CUSTOM_CHANGE, 
+                            wxCommandEventHandler(nLWShaderPanelBoolParam::OnChange),
+                            0, this);
+    }
     return this->ctrl;
 }
 
@@ -474,7 +642,34 @@ nLWShaderPanelBoolParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelColorParam::nLWShaderPanelColorParam() :
+void 
+nLWShaderPanelBoolParam::SendParamToViewer()
+{
+    if (this->ctrl && nLWViewerRemote::Instance()->IsOpen())
+    {
+        nLWViewerRemote::Instance()->ChangeShaderParam(this->shaderName, 
+                                                       "common", 
+                                                       this->shaderParam, 
+                                                       this->ctrl->GetValue());
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelColorParam::nLWShaderPanelColorParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
+    ctrl(0)
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelColorParam::nLWShaderPanelColorParam(const nLWShaderPanelColorParam& other) :
+    nLWShaderPanelParam(other),
+    defValue(other.defValue),
     ctrl(0)
 {
     // empty
@@ -538,6 +733,11 @@ nLWShaderPanelColorParam::CreateControl(wxWindow* parent)
                              this->defValue.y, 
                              this->defValue.z, 
                              this->defValue.w);
+        // hook up the change event handler so we can send changes to the 
+        // preview window
+        this->ctrl->Connect(wxEVT_CUSTOM_CHANGE, 
+                            wxCommandEventHandler(nLWShaderPanelColorParam::OnChange),
+                            0, this);
     }
     return this->ctrl;
 }
@@ -554,7 +754,42 @@ nLWShaderPanelColorParam::Clone()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelTextureParam::nLWShaderPanelTextureParam() :
+void 
+nLWShaderPanelColorParam::SendParamToViewer()
+{
+    if (this->ctrl && nLWViewerRemote::Instance()->IsOpen())
+    {
+        int r, g, b;
+        float a;
+        this->ctrl->GetValue(&r, &g, &b, &a);
+        nFloat4 f4;
+        f4.x = r;
+        f4.y = g;
+        f4.z = b;
+        f4.w = a;
+        nLWViewerRemote::Instance()->ChangeShaderParam(this->shaderName, 
+                                                       "common", 
+                                                       this->shaderParam, 
+                                                       f4);
+    }
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelTextureParam::nLWShaderPanelTextureParam(const nString& shaderName) :
+    nLWShaderPanelParam(shaderName),
+    ctrl(0)
+{
+    // empty
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+nLWShaderPanelTextureParam::nLWShaderPanelTextureParam(const nLWShaderPanelTextureParam& other) :
+    nLWShaderPanelParam(other),
+    defValue(other.defValue),
     ctrl(0)
 {
     // empty
@@ -603,13 +838,10 @@ nLWShaderPanelTextureParam::CopyParamFrom(nLWShaderExportSettings* settings)
 wxWindow* 
 nLWShaderPanelTextureParam::CreateControl(wxWindow* parent)
 {
-    //this->ctrl = panel->NewFilePathBox(50, nLWFilePathControl::LOAD);
-    //this->ctrl = new wxTextCtrl(parent, wxID_ANY);
     this->ctrl = new wxTextureFileCtrl(parent, wxID_ANY);
     if (this->ctrl)
     {
         this->ctrl->SetValue(this->defValue);
-        //this->ctrl->SetEventHandler(nLWShaderPanelTextureParam::OnValueChanged);
     }
     return this->ctrl;
 }
@@ -622,88 +854,6 @@ nLWShaderPanelTextureParam::Clone()
 {
     return n_new(nLWShaderPanelTextureParam(*this));
 }
-
-//----------------------------------------------------------------------------
-/**
-*/
-/*
-void
-nLWShaderPanelTextureParam::OnValueChanged(wxCommandEvent& WXUNUSED(event))
-{
-    nString origPath(this->ctrl->GetValue());
-    if (origPath.IsEmpty())
-    {
-        return;
-    }
-    origPath.ConvertBackslashes();
-
-    nString absPath(origPath);    
-    absPath.StripTrailingSlash();
-    absPath.ToLower();
-
-    nLWGlobals::DirInfoFunc dirInfo;
-
-    nString lwImagesDir(dirInfo.GetImagesDir());
-    lwImagesDir.ToLower();
-    lwImagesDir.ConvertBackslashes();
-    lwImagesDir.StripTrailingSlash();
-    lwImagesDir += "/";
-
-    nString textureExportDir(dirInfo.GetContentDir());
-    textureExportDir.ToLower();
-    textureExportDir.ConvertBackslashes();
-    textureExportDir.StripTrailingSlash();
-    // get the base Nebula 2 dir
-    textureExportDir = textureExportDir.ExtractToLastSlash();
-    textureExportDir.StripTrailingSlash();
-    // this will be path_to_nebula2/export/textures/
-    textureExportDir += "/export/textures/";
-
-    if ((absPath.Length() > lwImagesDir.Length()) &&
-        strncmp(absPath.Get(), lwImagesDir.Get(), lwImagesDir.Length()) == 0)
-    {
-        // set the path relative to the Lightwave images dir
-        ctrl->SetValue(&(origPath.Get()[lwImagesDir.Length()]));
-        return;
-    }
-
-    nString texturesAssign("textures:");
-
-    if ((absPath.Length() > textureExportDir.Length()) &&
-        strncmp(absPath.Get(), textureExportDir.Get(), textureExportDir.Length()) == 0)
-    {
-        // set the path relative to the dir where textures will be exported
-        nString resolvedPath(texturesAssign);
-        resolvedPath += &(origPath.Get()[textureExportDir.Length()]);
-        ctrl->SetValue(resolvedPath.Get());
-        return;
-    }
-    
-    if ((absPath.Length() > 3) && 
-        strncmp(&(absPath.Get()[1]), ":/", 2) != 0)
-    {
-        // assume that if the path is relative it's relative to the images
-        // dir and therefore valid, this doesn't work with UNC paths... 
-        // but who cares?
-        // TODO: check the file actually exists
-        return;
-    }
-
-    if ((absPath.Length() > texturesAssign.Length()) && 
-        strncmp(absPath.Get(), texturesAssign.Get(), texturesAssign.Length()) == 0)
-    {
-        // assume that if it starts with "textures:" it's a valid path,
-        // this will be correct in most cases
-        // TODO: check the file actually exists
-        return;
-    }
-    
-    wxMessageBox("The texture must be in the proj:work/images " \
-                 "directory or the proj:export/textures " \
-                 "directory, please pick another texture.", 
-                 "Error");
-}
-*/
 
 //----------------------------------------------------------------------------
 // EOF

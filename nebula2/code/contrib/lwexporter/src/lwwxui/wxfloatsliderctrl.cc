@@ -2,6 +2,7 @@
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
 #include "lwwxui/wxfloatsliderctrl.h"
+#include "lwwxui/wxcustomevents.h"
 
 //----------------------------------------------------------------------------
 /**
@@ -30,6 +31,11 @@ public:
                 this->parent->floatCtrl->SetFloatValue(clampedVal);
                 int sliderPos = this->parent->ScaleFloatToInt(clampedVal);
                 this->parent->sliderCtrl->SetValue(sliderPos);
+                // fire off a custom event to let anyone interested know the
+                // value of the control probably changed
+                wxCommandEvent changeEvent(wxEVT_CUSTOM_CHANGE, parent->GetId());
+                changeEvent.SetEventObject(parent);
+                parent->GetEventHandler()->ProcessEvent(changeEvent);
             }
         }
         else
@@ -216,6 +222,11 @@ wxFloatSliderCtrl::OnScroll(wxScrollEvent& event)
     {
         this->curValue = this->ScaleIntToFloat(event.GetPosition());
         this->floatCtrl->SetFloatValue(this->curValue);
+        // fire off a custom event to let anyone interested know the
+        // value of the control probably changed
+        wxCommandEvent changeEvent(wxEVT_CUSTOM_CHANGE, this->GetId());
+        changeEvent.SetEventObject(this);
+        this->GetEventHandler()->ProcessEvent(changeEvent);
     }
 }
 

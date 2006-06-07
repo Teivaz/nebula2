@@ -2,8 +2,20 @@
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
 #include "lwwxui/wxcoloralphactrl.h"
+#include "lwwxui/wxcustomevents.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxColorAlphaCtrl, wxPanel)
+
+enum
+{
+    ID_COLOR_CTRL = wxID_HIGHEST + 1,
+    ID_SLIDER_CTRL,
+};
+
+BEGIN_EVENT_TABLE(wxColorAlphaCtrl, wxPanel)
+    EVT_COMMAND(ID_COLOR_CTRL, wxEVT_CUSTOM_CHANGE, wxColorAlphaCtrl::OnCustomChange)
+    EVT_COMMAND(ID_SLIDER_CTRL, wxEVT_CUSTOM_CHANGE, wxColorAlphaCtrl::OnCustomChange)
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -36,9 +48,9 @@ wxColorAlphaCtrl::Create(wxWindow* parent, wxWindowID id,
 {
     if (wxPanel::Create(parent, id, pos, size, style, name))
     {
-        this->colorCtrl = new wxColorCtrl(this, wxID_ANY/*, wxDefaultPosition, wxSize(20, 20)*/);
+        this->colorCtrl = new wxColorCtrl(this, ID_COLOR_CTRL);
         wxStaticText* alphaLbl = new wxStaticText(this, wxID_ANY, "Alpha");
-        this->alphaCtrl = new wxFloatSliderCtrl(this, wxID_ANY, 0.0f, 1.0f);
+        this->alphaCtrl = new wxFloatSliderCtrl(this, ID_SLIDER_CTRL, 0.0f, 1.0f);
 
         wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
         if (topSizer)
@@ -74,6 +86,19 @@ wxSize
 wxColorAlphaCtrl::DoGetBestSize() const
 {
     return this->bestSize;
+}
+
+//----------------------------------------------------------------------------
+/**
+*/
+void 
+wxColorAlphaCtrl::OnCustomChange(wxCommandEvent& WXUNUSED(event))
+{
+    // fire off a custom event to let anyone interested know the
+    // color or alpha probably changed
+    wxCommandEvent event(wxEVT_CUSTOM_CHANGE, this->GetId());
+    event.SetEventObject(this);
+    this->GetEventHandler()->ProcessEvent(event);
 }
 
 //----------------------------------------------------------------------------

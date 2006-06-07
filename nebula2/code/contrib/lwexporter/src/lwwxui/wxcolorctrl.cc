@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------------
 #include "lwwxui/wxcolorctrl.h"
 #include "wx/colordlg.h"
+#include "lwwxui/wxcustomevents.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxColorCtrl, wxControl)
 
@@ -40,10 +41,6 @@ wxColorCtrl::Create(wxWindow* parent, wxWindowID id,
                     long style, const wxValidator& val, const wxString& name)
 {
     this->created = wxControl::Create(parent, id, pos, size, style, val, name);
-    //if (this->created)
-    //{
-    //    this->SetMinSize(size);
-    //}
     return this->created;
 }
 
@@ -93,6 +90,11 @@ wxColorCtrl::OnLeftUp(wxMouseEvent& WXUNUSED(event))
     if (dialog.ShowModal() == wxID_OK)
     {
         this->curColor = dialog.GetColourData().GetColour();
+        // fire off a custom event to let anyone interested know the
+        // color probably changed
+        wxCommandEvent event(wxEVT_CUSTOM_CHANGE, this->GetId());
+        event.SetEventObject(this);
+        this->GetEventHandler()->ProcessEvent(event);
     }
 
     this->Refresh();

@@ -3,7 +3,7 @@
     <General>
         <setting name="geometryScale" type="Float" value="1.000000" />
         <setting name="scriptServer" type="String" value="nTclServer" />
-        <setting name="previewRenderer" type="String" value="DX7" />
+        <setting name="previewRenderer" type="String" value="Default" />
         <setting name="previewWidth" type="Int" value="640" />
         <setting name="previewHeight" type="Int" value="480" />
         <setting name="previewFullScreen" type="Bool" value="0" />
@@ -14,9 +14,11 @@
     <Preview>
         <Renderers>
             <Renderer name="Default" featureset="" />
-            <Renderer name="DX9 HDR" featureset="dx9hdr" />
-            <Renderer name="DX9 non-HDR" featureset="dx9" />
             <Renderer name="DX7" featureset="dx7" />
+            <Renderer name="DX8 vs/ps 1.1" featureset="dx8" />
+            <Renderer name="DX8 with Shadow Buffers" featureset="dx8sb" /> 
+            <Renderer name="DX9 vs/ps 2.0" featureset="dx9" />
+            <Renderer name="DX9 with Render Targets" featureset="dx9flt" />
         </Renderers>
         <Sizes>
             <Size name="320x240" />

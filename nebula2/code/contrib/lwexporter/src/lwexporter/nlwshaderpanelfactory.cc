@@ -8,6 +8,7 @@
 #include "lwexporter/nlwsettingsregistry.h"
 #include "tinyxml/tinyxml.h"
 #include "lwexporter/nlwshaderexportsettings.h"
+#include "lwexporter/nlwviewerremote.h"
 
 nLWShaderPanelFactory* nLWShaderPanelFactory::singleton = 0;
 
@@ -196,10 +197,18 @@ nLWShaderPanelFactory::DisplayNextPanel(nLWShaderExportSettings* settings)
         wxWindow parent;
         parent.SetHWND(hdi->window);
         parent.Enable(false);
+        if (!nLWViewerRemote::Instance()->IsOpen())
+        {
+            nLWViewerRemote::Instance()->Open();
+        }
         nLWShaderPanel shaderPanel(&parent, panelTemplate, this->shaderNames);
         shaderPanel.SetShaderSettings(settings);
         shaderPanel.ResetShaderPopup();
         shaderPanel.ShowModal();
+        if (nLWViewerRemote::Instance()->IsOpen())
+        {
+            nLWViewerRemote::Instance()->Close();
+        }
         parent.Enable(true);
         parent.SetHWND(0);
     }

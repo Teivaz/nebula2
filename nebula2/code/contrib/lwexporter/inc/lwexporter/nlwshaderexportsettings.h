@@ -7,6 +7,11 @@
 
 //----------------------------------------------------------------------------
 /**
+    @class nLWShaderExportSettings
+    @brief Stores all shader parameters for a particular shader.
+
+    This class can copy the stored shader parameters directly into an 
+    nMaterialNode.
 */
 class nLWShaderExportSettings
 {
@@ -289,28 +294,28 @@ void
 nLWShaderExportSettings::CopyNonTextureParamsTo(nMaterialNode* node)
 {
     node->SetShader(this->shaderFile.Get());
-
+    node->SetMayaShaderName(this->shaderName);
     for (int i = 0; i < this->shaderParams.GetNumValidParams(); i++)
     {
         nShaderState::Param param = this->shaderParams.GetParamByIndex(i);
         const nShaderArg& value = this->shaderParams.GetArgByIndex(i);
         switch (value.GetType())
         {
-        case nShaderState::Bool:
-            node->SetBool(param, value.GetBool());
-            break;
+            case nShaderState::Bool:
+                node->SetBool(param, value.GetBool());
+                break;
 
-        case nShaderState::Int:
-            node->SetInt(param, value.GetInt());
-            break;
+            case nShaderState::Int:
+                node->SetInt(param, value.GetInt());
+                break;
 
-        case nShaderState::Float:
-            node->SetFloat(param, value.GetFloat());
-            break;
+            case nShaderState::Float:
+                node->SetFloat(param, value.GetFloat());
+                break;
 
-        case nShaderState::Float4:
-            node->SetVector(param, value.GetVector4());
-            break;
+            case nShaderState::Float4:
+                node->SetVector(param, value.GetVector4());
+                break;
         }
     }
 }
