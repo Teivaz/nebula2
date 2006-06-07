@@ -2,6 +2,7 @@
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
 #include "lwwxui/wxintsliderctrl.h"
+#include "lwwxui/wxcustomevents.h"
 
 //----------------------------------------------------------------------------
 /**
@@ -40,6 +41,11 @@ public:
                     this->parent->textCtrl->SetValue(tempStr.Get());
                 }
                 this->parent->sliderCtrl->SetValue(clampedVal);
+                // fire off a custom event to let anyone interested know the
+                // value of the control probably changed
+                wxCommandEvent changeEvent(wxEVT_CUSTOM_CHANGE, parent->GetId());
+                changeEvent.SetEventObject(parent);
+                parent->GetEventHandler()->ProcessEvent(changeEvent);
             }
         }
         else if (event.GetEventType() == wxEVT_CHAR)
@@ -198,6 +204,11 @@ wxIntSliderCtrl::OnScroll(wxScrollEvent& event)
     {
         this->textCtrl->SetValue(nString::FromInt(event.GetPosition()).Get());
     }
+    // fire off a custom event to let anyone interested know the
+    // value of the control probably changed
+    wxCommandEvent changeEvent(wxEVT_CUSTOM_CHANGE, this->GetId());
+    changeEvent.SetEventObject(this);
+    this->GetEventHandler()->ProcessEvent(changeEvent);
 }
 
 //----------------------------------------------------------------------------

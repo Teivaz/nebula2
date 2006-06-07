@@ -43,11 +43,14 @@ public:
 protected:
     /// Get the absolute minimum size of the control.
     virtual wxSize DoGetBestSize() const;
+    void OnCustomChange(wxCommandEvent&);
 
 private:
     wxColorCtrl* colorCtrl;
     wxFloatSliderCtrl* alphaCtrl;
     wxSize bestSize;
+
+    DECLARE_EVENT_TABLE()
 };
 
 //----------------------------------------------------------------------------

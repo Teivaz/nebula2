@@ -49,9 +49,9 @@ nLWExporterSettingsPanel::nLWExporterSettingsPanel(wxWindow* parent) :
 
     wxStaticBox* previewBox = new wxStaticBox(this, wxID_ANY, "Preview");
     wxStaticText* rendererLabel = new wxStaticText(this, wxID_ANY, "Renderer");
-    this->rendererPopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(100, 0));
+    this->rendererPopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(160, 0));
     wxStaticText* renderSizeLabel = new wxStaticText(this, wxID_ANY, "Size");
-    this->renderSizePopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(100, 0));    
+    this->renderSizePopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(160, 0));    
     this->renderFullScreenCheckBox = new wxCheckBox(this, wxID_ANY, "Full Screen");
     
     this->PopulateControls();

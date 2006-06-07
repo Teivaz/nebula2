@@ -7,6 +7,7 @@
 #include "lwexporter/nlwshaderexportsettings.h"
 #include "lwexporter/nlwshaderpanelparam.h"
 #include "wx/gbsizer.h"
+#include "lwexporter/nlwviewerremote.h"
 
 //----------------------------------------------------------------------------
 enum
@@ -127,6 +128,15 @@ nLWShaderPanel::SetShaderSettings(nLWShaderExportSettings* shaderSettings)
             this->shaderParamArray[i]->CopyParamFrom(shaderSettings);
         }
     }
+
+    // update nViewer to match current shader settings if necessary
+    if (nLWViewerRemote::Instance()->IsOpen())
+    {
+        for (int i = 0; i < this->shaderParamArray.Size(); i++)
+        {
+            this->shaderParamArray[i]->SendParamToViewer();
+        }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -173,6 +183,7 @@ nLWShaderPanel::OnOKBtn(wxCommandEvent& WXUNUSED(event))
 void
 nLWShaderPanel::OnCancelBtn(wxCommandEvent& WXUNUSED(event))
 {
+    // TODO: update nViewer with the original settings for the shader
     this->EndModal(wxCANCEL);
 }
 

@@ -21,6 +21,7 @@ extern "C"
 #include "lwexporter/nlwshaderpanelfactory.h"
 #include "lwexporter/nlwsettingsregistry.h"
 #include "lwexporter/nlwexportersettings.h"
+#include "lwexporter/nlwviewerremote.h"
 
 //----------------------------------------------------------------------------
 nLWExporterMaster* nLWExporterMaster::singleton = 0;
@@ -32,7 +33,8 @@ nNebulaUsePackage(nnebula);
 */
 nLWExporterMaster::nLWExporterMaster() :
     kernelServer(0),
-    logHandler(0)
+    logHandler(0),
+    viewerRemote(0)
 {
     nLWExporterMaster::singleton = this;
 
@@ -67,6 +69,8 @@ nLWExporterMaster::nLWExporterMaster() :
         // this will fail if the user didn't get a chance to set the project dir
         shaderPanelFactory->Load();
     }
+
+    this->viewerRemote = n_new(nLWViewerRemote);
 }
 
 //----------------------------------------------------------------------------
@@ -74,6 +78,12 @@ nLWExporterMaster::nLWExporterMaster() :
 */
 nLWExporterMaster::~nLWExporterMaster()
 {
+    if (this->viewerRemote)
+    {
+        n_delete(this->viewerRemote);
+        this->viewerRemote = 0;
+    }
+
     // kill the singletons
     nLWSettingsRegistry::FreeInstance();
     nLWShaderPanelFactory::FreeInstance();

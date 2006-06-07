@@ -52,39 +52,39 @@ nLWShaderPanelTemplate::AddShaderParam(const TiXmlElement* paramElem)
 
     if ("enum" == paramType)
     {
-        param = n_new(nLWShaderPanelEnumParam);
+        param = n_new(nLWShaderPanelEnumParam(this->shaderName));
     }
     else if ("int" == paramType)
     {
-        param = n_new(nLWShaderPanelIntParam);
+        param = n_new(nLWShaderPanelIntParam(this->shaderName));
     }
     else if ("float" == paramType)
     {
-        param = n_new(nLWShaderPanelFloatParam);
+        param = n_new(nLWShaderPanelFloatParam(this->shaderName));
     }
     else if ("bool" == paramType)
     {
-        param = n_new(nLWShaderPanelBoolParam);
+        param = n_new(nLWShaderPanelBoolParam(this->shaderName));
     }
     else if ("color" == paramType)
     {
-        param = n_new(nLWShaderPanelColorParam);
+        param = n_new(nLWShaderPanelColorParam(this->shaderName));
     }
     else if ("texture" == paramType)
     {
-        param = n_new(nLWShaderPanelTextureParam);
+        param = n_new(nLWShaderPanelTextureParam(this->shaderName));
     }
     else if ("bumptexture" == paramType)
     {
-        param = n_new(nLWShaderPanelTextureParam);
+        param = n_new(nLWShaderPanelTextureParam(this->shaderName));
     }
     else if ("cubetexture" == paramType)
     {
-        param = n_new(nLWShaderPanelTextureParam);
+        param = n_new(nLWShaderPanelTextureParam(this->shaderName));
     }
     else
     {
-        param = n_new(nLWShaderPanelPlaceHolderParam);
+        param = n_new(nLWShaderPanelPlaceHolderParam(this->shaderName));
     }
 
     if (param)
