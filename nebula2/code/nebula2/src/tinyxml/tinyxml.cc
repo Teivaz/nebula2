@@ -1146,7 +1146,8 @@ bool TiXmlDocument::LoadFile( nFile* file, TiXmlEncoding encoding )
 bool TiXmlDocument::SaveFile( const char * filename ) const
 {
 	// The old c stuff lives on...
-    FILE* file = fopen( filename, "w" );
+	nString mangledPath = nFileServer2::Instance()->ManglePath( filename );
+	FILE* file = fopen( mangledPath.Get(), "w" );
 	if ( file )
 	{
 		bool result = SaveFile( file );
