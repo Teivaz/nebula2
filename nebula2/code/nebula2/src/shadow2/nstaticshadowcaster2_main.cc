@@ -53,9 +53,13 @@ nStaticShadowCaster2::LoadResource()
         {
             meshLoader = n_new(nNvx2Loader);
         }
-        else
+        else if (this->GetFilename().CheckExtension("n3d2"))
         {
             meshLoader = n_new(nN3d2Loader);
+        }
+        else
+        {
+            n_error("nStaticShadowCaster2::LoadResource: filetype not supported!\n");
         }
         meshLoader->SetFilename(this->GetFilename().Get());
         meshLoader->SetIndexType(nMeshLoader::Index16);
@@ -122,7 +126,7 @@ nStaticShadowCaster2::LoadResource()
             }
             newMesh->UnlockIndices();
             indices = 0;
-            
+
             // read edges directly, and fix them for the new vertex layout
             nMesh2::Edge* edges = newMesh->LockEdges();
             meshLoader->ReadEdges(edges, newMesh->GetEdgeBufferByteSize());
