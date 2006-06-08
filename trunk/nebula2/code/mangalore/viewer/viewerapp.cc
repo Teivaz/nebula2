@@ -19,7 +19,6 @@
 #include "managers/entitymanager.h"
 #include "managers/factorymanager.h"
 #include "managers/focusmanager.h"
-#include "cegui/CEGUI.h"
 
 namespace Viewer
 {
@@ -460,10 +459,9 @@ ViewerApp::SetupGui()
 void
 ViewerApp::SetupCeGui()
 {
-    CEGUI::SchemeManager::getSingleton().loadScheme("cegui:schemes/TaharezLook.scheme");
-    CEGUI::FontManager::getSingleton().createFont("cegui:fonts/Commonwealth-10.font");
-    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
-
+    ceuiServer->CreateFont("cegui:fonts/Commonwealth-10.font");
+    ceuiServer->LoadScheme("cegui:schemes/TaharezLook.scheme");
+    ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
     ceuiServer->DisplayGui("cegui:layouts/mviewer.layout");
 }
 
