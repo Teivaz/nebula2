@@ -26,7 +26,7 @@ ViewerApp* ViewerApp::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
-	Constructor
+    Constructor
 */
 ViewerApp::ViewerApp()
 {
@@ -36,7 +36,7 @@ ViewerApp::ViewerApp()
 
 //------------------------------------------------------------------------------
 /**
-	Destructor
+    Destructor
 */
 ViewerApp::~ViewerApp()
 {
@@ -173,10 +173,10 @@ ViewerApp::ReadProjRegistryKey()
 void
 ViewerApp::SetupFromCmdLineArgs()
 {
-	App::SetupFromCmdLineArgs();
-	const nCmdLineArgs& args = App::GetCmdLineArgs();
+    App::SetupFromCmdLineArgs();
+    const nCmdLineArgs& args = App::GetCmdLineArgs();
 
-	nString objArg = args.GetStringArg("-obj");
+    nString objArg = args.GetStringArg("-obj");
     bool forceTempAssigns = args.GetBoolArg("-forcetemp");
     nString projDirArg = args.GetStringArg("-projdir");
     vector3 eyePos(args.GetFloatArg("-eyeposx"), args.GetFloatArg("-eyeposy"), args.GetFloatArg("-eyeposz", 9.0f));
@@ -227,20 +227,20 @@ ViewerApp::OnFrame()
 void
 ViewerApp::SetupStateHandlers()
 {
-	// initialize application state handlers
+    // initialize application state handlers
     Ptr<Application::GameStateHandler> gameStateHandler = n_new(Application::GameStateHandler);
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
 
     if (this->GetWorldDb().IsValid())
     {
-		gameStateHandler->SetDbName(this->GetWorldDb());
+        gameStateHandler->SetDbName(this->GetWorldDb());
     }
 
     // if a startup level has been set, directly start with the location state
     if (this->GetStartupLevel().IsValid())
     {
-		gameStateHandler->SetLevelName(this->GetStartupLevel());
+        gameStateHandler->SetLevelName(this->GetStartupLevel());
     }
 
     if (0 != App::GetCmdLineArgs().GetStringArg("-obj"))
@@ -252,7 +252,7 @@ ViewerApp::SetupStateHandlers()
         gameStateHandler->SetSetupMode(Application::GameStateHandler::NewGame);
     }
     this->AddStateHandler(gameStateHandler);
-	this->SetState("Game");
+    this->SetState("Game");
 }
 //------------------------------------------------------------------------------
 /**
@@ -261,7 +261,7 @@ void
 ViewerApp::SetupLightsInScene()
 {
     //create new Entity for light in scene, create lightProperty and attach it to the entity
-	Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
+    Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
     Ptr<Game::Property> lightProperty = Managers::FactoryManager::Instance()->CreateProperty("LightProperty");
     entity->AttachProperty(lightProperty);
 
@@ -287,7 +287,7 @@ ViewerApp::SetupLightsInScene()
 void ViewerApp::SetupCamera()
 {
     //create new Entity as a camera, attach a videocameraporperty
-	Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
+    Ptr<Game::Entity> entity = Managers::FactoryManager::Instance()->CreateEntityByClassName("Entity");
     Ptr<Game::Property> cameraProperty = Managers::FactoryManager::Instance()->CreateProperty("VideoCameraProperty");
     Ptr<Game::Property> inputProperty = Managers::FactoryManager::Instance()->CreateProperty("InputProperty");
     Ptr<Game::Property> mouseGripperProperty = Managers::FactoryManager::Instance()->CreateProperty("MouseGripperProperty");
