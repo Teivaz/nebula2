@@ -57,13 +57,13 @@ Map::Open(const nString& fname)
     this->filename = fname;
 
     nMeshLoader* meshLoader = 0;
-    if (this->filename.CheckExtension("n3d2"))
-    {
-        meshLoader = n_new(nN3d2Loader);
-    }
-    else if (this->filename.CheckExtension("nvx2"))
+    if (this->filename.CheckExtension("nvx2"))
     {
         meshLoader = n_new(nNvx2Loader);
+    }
+    else if (this->filename.CheckExtension("n3d2"))
+    {
+        meshLoader = n_new(nN3d2Loader);
     }
     else
     {
@@ -98,7 +98,7 @@ Map::Open(const nString& fname)
     // destroy mesh loader
     meshLoader->Close();
     n_delete(meshLoader);
-    
+
     // build temporary corner and edge buffers
     vector3* vertices   = n_new_array(vector3, numVertices);
     Corner* corners     = n_new_array(Corner, numIndices);

@@ -51,7 +51,11 @@ EnvironmentLoader::HasCollide(const nString& resName)
 {
     nString filename;
     filename.Format("meshes:%s_c_0.nvx2", resName.Get());
-    return nFileServer2::Instance()->FileExists(filename);
+    if (nFileServer2::Instance()->FileExists(filename)) {
+        return true;
+    }
+    filename.Format("meshes:%s_c_0.n3d2", resName.Get());
+    return (nFileServer2::Instance()->FileExists(filename));
 }
 
 //------------------------------------------------------------------------------
@@ -119,15 +123,17 @@ EnvironmentLoader::Load(const nString& levelName)
                 // FIXME: material type should be assignable in Maya!!
                 nString collideFilename;
                 collideFilename.Format("meshes:%s_c_0.nvx2", resName.Get());
-                Ptr<Physics::MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(worldMatrix, 
-                                                    Physics::MaterialTable::StringToMaterialType("Soil"),
-                                                    collideFilename);
+                if (!nFileServer2::Instance()->FileExists(collideFilename)) {
+                    collideFilename.Format("meshes:%s_c_0.n3d2", resName.Get());
+                }
+                Ptr<Physics::MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(worldMatrix,
+                    Physics::MaterialTable::StringToMaterialType("Soil"), collideFilename);
                 collideProperty->AddShape(meshShape);
             }
         }
     }
 
-    // create a single game entity for all static environment objects 
+    // create a single game entity for all static environment objects
     // and add the two environment properties
     if (hasEnvironmentNodes)
     {
@@ -136,7 +142,7 @@ EnvironmentLoader::Load(const nString& levelName)
         gameEntity->AttachProperty(collideProperty);
         EntityManager::Instance()->AttachEntity(gameEntity);
     }
-    return true;    
+    return true;
 }
 
 //------------------------------------------------------------------------------
