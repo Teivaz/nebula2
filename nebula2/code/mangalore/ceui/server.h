@@ -40,6 +40,12 @@ public:
     void Trigger();
     /// render the user interface
     void Render();
+    /// create gui font
+    bool CreateFont(const nString& fontName);
+    /// load gui scheme
+    bool LoadScheme(const nString& schemeName);
+    /// set default mouse cursor
+    void SetDefaultMouseCursor(const nString& schemeName, const nString& cursorName);
     /// create and display a user interface
     void DisplayGui(const nString& resName);
     /// hide the current user interface

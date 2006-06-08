@@ -3,6 +3,8 @@
 #include "ceui/logger.h"
 #include "input/ninputserver.h"
 #include "cegui/CEGUILogger.h"
+#include "cegui/CEGUIFontManager.h"
+#include "cegui/CEGUISchemeManager.h"
 #include "cegui/CEGUIWindowManager.h"
 
 namespace CEUI
@@ -222,6 +224,30 @@ void Server::Trigger() {
 void Server::Render() {
     nGfxServer2::Instance()->Clear(nGfxServer2::DepthBuffer, 0, 0, 0, 0, 1, 0);
     ceGuiSystem->renderGUI();
+}
+
+//------------------------------------------------------------------------------
+/**
+    create gui font
+*/
+bool Server::CreateFont(const nString& fontName) {
+    return CEGUI::FontManager::getSingleton().createFont(fontName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    load gui scheme
+*/
+bool Server::LoadScheme(const nString& schemeName) {
+    return CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    set default mouse cursor
+*/
+void Server::SetDefaultMouseCursor(const nString& schemeName, const nString& cursorName) {
+    ceGuiSystem->setDefaultMouseCursor(schemeName.Get(), cursorName.Get());
 }
 
 //------------------------------------------------------------------------------
