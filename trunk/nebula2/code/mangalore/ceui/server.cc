@@ -230,16 +230,16 @@ void Server::Render() {
 /**
     create gui font
 */
-bool Server::CreateFont(const nString& fontName) {
-    return CEGUI::FontManager::getSingleton().createFont(fontName.Get());
+void Server::CreateFont(const nString& fontName) {
+    CEGUI::FontManager::getSingleton().createFont(fontName.Get());
 }
 
 //------------------------------------------------------------------------------
 /**
     load gui scheme
 */
-bool Server::LoadScheme(const nString& schemeName) {
-    return CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
+void Server::LoadScheme(const nString& schemeName) {
+    CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
 }
 
 //------------------------------------------------------------------------------

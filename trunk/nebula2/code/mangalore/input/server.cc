@@ -7,7 +7,6 @@
 #include "message/server.h"
 #include "kernel/nscriptserver.h"
 #include "gui/nguiserver.h"
-#include "gui/nguidragbox.h"
 #include "ui/server.h"
 #include "ceui/server.h"
 
@@ -51,8 +50,7 @@ Server::Open()
 {
     n_assert(!this->isOpen);
 
-	nInputServer* inputServer = nInputServer::Instance();
-	inputServer->Open();
+    nInputServer::Instance()->Open();
 
     // define input mapping by calling external script function
     nScriptServer* scriptServer = Foundation::Server::Instance()->GetScriptServer();
