@@ -71,13 +71,13 @@ MeshShape::Attach(dSpaceID spaceId)
 
         // load the vertices and indices
         bool loadResult = false;
-        if (this->filename.CheckExtension("n3d2"))
-        {
-            loadResult = this->LoadN3d2();
-        }
-        else if (this->filename.CheckExtension("nvx2"))
+        if (this->filename.CheckExtension("nvx2"))
         {
             loadResult = this->LoadNvx2();
+        }
+        else if (this->filename.CheckExtension("n3d2"))
+        {
+            loadResult = this->LoadN3d2();
         }
         else
         {
@@ -173,7 +173,7 @@ MeshShape::LoadN3d2()
 
     return true;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Load vertex and index buffer from a nvx2 file.
@@ -295,7 +295,7 @@ MeshShape::DoRayCheck(const line3& l, vector3& contact)
 
 //------------------------------------------------------------------------------
 /**
-    Render debug visualization of the mesh.  
+    Render debug visualization of the mesh.
 */
 void
 MeshShape::RenderDebug(const matrix44& t)
@@ -303,7 +303,7 @@ MeshShape::RenderDebug(const matrix44& t)
     if (this->IsAttached())
     {
         matrix44 m = this->GetTransform() * t;
-        nGfxServer2::Instance()->DrawShapeIndexedPrimitives(nGfxServer2::TriangleList, 
+        nGfxServer2::Instance()->DrawShapeIndexedPrimitives(nGfxServer2::TriangleList,
                                                             this->numIndices / 3,
                                                             (vector3*) this->vertexBuffer,
                                                             this->numVertices,

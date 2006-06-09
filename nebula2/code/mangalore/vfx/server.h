@@ -51,18 +51,14 @@ public:
     EffectHandler* GetEffectHandler();
     /// play a visual effect
     void PlayEffect(const nString& effectName, const matrix44& transform);
+    /// create a particle effect
+    Effect* CreateEffect(const nString& effectName, const matrix44& transform);
     /// play a shake effect
     void PlayShakeEffect(const vector3& pos, float range, float duration, float intensity);
     /// call before rendering happens
     void BeginScene();
     /// call after rendering has happened
     void EndScene();
-    /// create a particle effect
-    Effect* CreateEffect();
-    /// attach a particle effect
-    void AttachEffect(Effect* effect);
-    /// remove a particle effect
-    void RemoveEffect(Effect* effect);
     /// get number of currently active effects
     int GetNumActiveEffects() const;
     /// get active effect at index
@@ -121,7 +117,7 @@ Server::GetTime() const
 */
 inline
 EffectHandler*
-Server::GetEffectHandler() 
+Server::GetEffectHandler()
 {
     return this->effectHandler;
 }

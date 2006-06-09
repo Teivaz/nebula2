@@ -144,6 +144,27 @@ Server::PlayEffect(const nString& effectName, const matrix44& transform)
 
 //------------------------------------------------------------------------------
 /**
+    Create a new particle effect
+*/
+Effect*
+Server::CreateEffect(const nString& effectName, const matrix44& transform)
+{
+    n_assert(this->effectBank.isvalid());
+
+    // create a new effect object and add it to the currently active effects
+    Effect* newEffect = this->effectBank->CreateEffect(effectName, transform);
+    if (newEffect)
+    {
+        newEffect->SetTime(this->curTime);
+        newEffect->Activate();
+        this->activeEffects.Append(newEffect);
+        return newEffect;
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
     Start playing a shake effect.
 */
 void
@@ -191,11 +212,14 @@ Server::EndScene()
     nArray<Ptr<Effect> >::iterator effectIter;
     for (effectIter = this->activeEffects.Begin(); effectIter != this->activeEffects.End();)
     {
-        (*effectIter)->SetTime(this->curTime);
-        bool active = (*effectIter)->Update();
-        if (!active)
+        if ((*effectIter)->IsActive())
         {
-            n_assert(1 == (*effectIter)->GetRefCount());
+            (*effectIter)->SetTime(this->curTime);
+            bool active = (*effectIter)->Update();
+            effectIter++;
+        }
+        else if (1 == (*effectIter)->GetRefCount())
+        {
             effectIter = this->activeEffects.Erase(effectIter);
         }
         else
@@ -222,44 +246,6 @@ Server::EndScene()
     // update statistics
     this->statsNumActiveEffects->SetI(this->activeEffects.Size());
     this->statsNumActiveShakeEffects->SetI(this->activeShakeEffects.Size());
-}
-
-//------------------------------------------------------------------------------
-/**
-    Create a new particle effect
-*/
-Effect*
-Server::CreateEffect()
-{
-    return Effect::Create();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Attach a particle effect to the server. Attached effect entities will
-    have their Update() method called during Trigger().
-*/
-void
-Server::AttachEffect(Effect* effect)
-{
-    n_assert(effect);
-    effect->Activate();
-    this->activeEffects.Append(effect);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Remove a particle effect from the server. Removed effect entities will stop
-    emitting and will no longer be updated during Trigger().
-*/
-void
-Server::RemoveEffect(Effect* effect)
-{
-    n_assert(effect);
-    effect->Deactivate();
-    nArray<Ptr<Effect> >::iterator iter = this->activeEffects.Find(effect);
-    n_assert(iter);
-    this->activeEffects.Erase(iter);
 }
 
 //------------------------------------------------------------------------------
