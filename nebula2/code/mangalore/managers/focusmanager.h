@@ -5,7 +5,7 @@
     @class Managers::FocusManager
 
     The FocusManager singleton object manages the global input and camera focus
-    entities. There may only be one input and camera focus entity at any 
+    entities. There may only be one input and camera focus entity at any
     time, the input focus entity can be different from the camera focus entity.
 
     The input focus entity will be the entity which receives input, the camera
@@ -16,14 +16,13 @@
     and/or CameraProperty (or a derived class thereof) attached.
 
     Please note that an actual focus switch will happen only once per-frame.
-    This is to avoid chain-reactions when 2 or more objects per frame 
+    This is to avoid chain-reactions when 2 or more objects per frame
     think they currently have the input focus.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
 #include "game/entity.h"
-#include "foundation/ptr.h"
 
 //------------------------------------------------------------------------------
 namespace Managers

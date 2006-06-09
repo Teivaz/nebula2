@@ -124,7 +124,7 @@ EnvQueryManager::OnFrame()
             this->mouseIntersection = true;
 
             // new entity under mouse?
-            Physics::Entity* physicsEntity = physicsServer->FindEntityByUniqueId(contact->GetEntityId());
+            Physics::Entity* physicsEntity = contact->GetEntity();
             Game::Entity::EntityId gameEntityUnderMouse = 0;
             if (physicsEntity)
             {

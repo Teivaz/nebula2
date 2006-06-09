@@ -156,8 +156,8 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
         ((Texture*)texture)->widgetRects.PushBack(rect);
     } else if (texRect != cursorRect) {
         cursorRect = texRect;
-        int width = texture->getWidth()*texRect.getWidth();
-        int height = texture->getHeight()*texRect.getHeight();
+        uint width = uint(texture->getWidth()*texRect.getWidth());
+        uint height = uint(texture->getHeight()*texRect.getHeight());
         nTexture2* srcTexture = ((Texture*)texture)->getTexture2();
         nMouseCursor cursor;
         cursor.CreateEmpty(32, 32);
@@ -166,8 +166,8 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
         struct nTexture2::LockInfo srcLockInfo;
         struct nTexture2::LockInfo dstLockInfo;
         if (srcTexture->Lock(nTexture2::ReadOnly, 0, srcLockInfo), dstTexture->Lock(nTexture2::WriteOnly, 0, dstLockInfo)) {
-            int startX = texture->getWidth()*texRect.d_left;
-            int startY = texture->getHeight()*texRect.d_top;
+            uint startX = uint(texture->getWidth()*texRect.d_left);
+            uint startY = uint(texture->getHeight()*texRect.d_top);
             for (uint y = 0; y < height; y++) {
                 memcpy((CEGUI::uint8*)dstLockInfo.surfPointer + dstLockInfo.surfPitch*y,
                     (CEGUI::uint8*)srcLockInfo.surfPointer + srcLockInfo.surfPitch*(startY + y) + sizeof(CEGUI::uint32)*startX,
