@@ -215,7 +215,7 @@ Server::EndScene()
         if ((*effectIter)->IsActive())
         {
             (*effectIter)->SetTime(this->curTime);
-            bool active = (*effectIter)->Update();
+            (*effectIter)->Update();
             effectIter++;
         }
         else if (1 == (*effectIter)->GetRefCount())
