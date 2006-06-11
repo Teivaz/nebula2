@@ -14,6 +14,7 @@
 #include "physics/sliderjoint.h"
 #include "physics/balljoint.h"
 #include "physics/hinge2joint.h"
+#include "physics/amotor.h"
 
 namespace Physics
 {
@@ -75,7 +76,7 @@ CompositeLoader::Load(const nString& filename)
     nString path("physics:");
     path.Append(filename);
     path.Append(".xml");
-    
+
     nStream stream(path);
     if (stream.Open(nStream::Read))
     {
@@ -141,7 +142,7 @@ CompositeLoader::Load(const nString& filename)
                 body->SetLinkName(RigidBody::JointNode, stream.GetString("joint"));
             }
             body->BeginShapes(stream.GetInt("numShapes"));
-           
+
             vector3 initialPos;
             vector4 initialRot(0.0f, 0.0f, 0.0f, 1.0f);
             if (stream.HasAttr("pos"))
@@ -200,7 +201,7 @@ CompositeLoader::Load(const nString& filename)
 
                 matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
                 m.translate(pos);
-                
+
                 Ptr<CapsuleShape> shape = Server::Instance()->CreateCapsuleShape(m, matType, radius, length);
                 n_assert(shape != 0);
                 body->AddShape(shape);
@@ -372,8 +373,8 @@ CompositeLoader::Load(const nString& filename)
             }
             joint->SetAnchor(stream.GetVector3("anchor"));
 
-            JointAxis& axis0 = joint->AxisParams(0);            
-            axis0.SetAxis(stream.GetVector3("axis1"));            
+            JointAxis& axis0 = joint->AxisParams(0);
+            axis0.SetAxis(stream.GetVector3("axis1"));
             if (stream.HasAttr("lostop0"))
             {
                 axis0.SetLoStopEnabled(true);
@@ -418,6 +419,41 @@ CompositeLoader::Load(const nString& filename)
             composite->AddJoint(joint);
         }
         while (stream.SetToNextChild("Hinge2"));
+
+        // iterate AMotor joints
+        if (stream.SetToFirstChild("AMotor")) do
+        {
+            // create an AMotor joint
+            Ptr<AMotor> joint = Physics::Server::Instance()->CreateAMotor();
+            this->ParseJointRigidBodies(composite, stream, joint);
+            if (stream.HasAttr("joint"))
+            {
+                joint->SetLinkName(stream.GetString("joint"));
+            }
+            joint->SetNumAxes(stream.GetInt("numAxis"));
+            JointAxis& axis0 = joint->AxisParams(0);
+            axis0.SetAxis(stream.GetVector3("axis1"));
+            axis0.SetVelocity(n_deg2rad(stream.GetFloat("vel0")));
+            axis0.SetFMax(stream.GetFloat("fmax0"));
+            axis0.SetFudgeFactor(stream.GetFloat("fudge0"));
+            axis0.SetBounce(stream.GetFloat("bounce0"));
+            axis0.SetCFM(stream.GetFloat("cfm0"));
+            axis0.SetStopERP(stream.GetFloat("stopErp0"));
+            axis0.SetStopCFM(stream.GetFloat("stopCfm0"));
+
+            JointAxis& axis1 = joint->AxisParams(1);
+            axis1.SetAxis(stream.GetVector3("axis2"));
+            axis1.SetVelocity(n_deg2rad(stream.GetFloat("vel1")));
+            axis1.SetFMax(stream.GetFloat("fmax1"));
+            axis1.SetFudgeFactor(stream.GetFloat("fudge1"));
+            axis1.SetBounce(stream.GetFloat("bounce1"));
+            axis1.SetCFM(stream.GetFloat("cfm1"));
+            axis1.SetStopERP(stream.GetFloat("stopErp1"));
+            axis1.SetStopCFM(stream.GetFloat("stopCfm1"));
+
+            composite->AddJoint(joint);
+        }
+        while (stream.SetToNextChild("AMotor"));
 
         // iterate shapes
         if (stream.SetToFirstChild("MeshShape"))
