@@ -60,12 +60,12 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
         float opacity    = stdMat->GetOpacity(animStart);
         float shinStr    = stdMat->GetShinStr(animStart);
 
-        vector4 nAmbient  (ambient.r, ambient.g, ambient.b, opacity);
-        vector4 nDiffuse  (diffuse.r, diffuse.g, diffuse.b, opacity);
-        vector4 nSpecular (specular.r, specular.g, specular.b, opacity);
+        vector4 nAmbient  (ambient.r,  ambient.g,  ambient.b,  opacity); ClampColor(nAmbient);
+        vector4 nDiffuse  (diffuse.r,  diffuse.g,  diffuse.b,  opacity); ClampColor(nDiffuse);
+        vector4 nSpecular (specular.r, specular.g, specular.b, opacity); ClampColor(nSpecular);
 
-        shapeNode->SetVector(nShaderState::MatAmbient, nAmbient);
-        shapeNode->SetVector(nShaderState::MatDiffuse, nDiffuse);
+        shapeNode->SetVector(nShaderState::MatAmbient,  nAmbient);
+        shapeNode->SetVector(nShaderState::MatDiffuse,  nDiffuse);
         shapeNode->SetVector(nShaderState::MatSpecular, nSpecular);
 
         // we use shininess strength for specular power.

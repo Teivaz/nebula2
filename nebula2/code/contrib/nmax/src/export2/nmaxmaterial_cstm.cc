@@ -258,6 +258,8 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 
                                 vector4 color;
                                 color.set(value.r, value.g, value.b, alpha);
+                                ClampColor(color);
+
                                 if (result0 && result1)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
@@ -283,6 +285,8 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                                 vector4 color;
                                 color.set(value.r, value.g, value.b, value.a);
+                                ClampColor(color);
+
                                 if (result)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
