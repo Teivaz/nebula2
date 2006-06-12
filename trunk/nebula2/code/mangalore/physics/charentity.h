@@ -8,10 +8,9 @@
     physics subsystem, a character is just a sphere rolling on the
     ground with a very high friction. An angular motor is attached
     to the sphere.
-    
+
     (C) 2003 RadonLabs GmbH
 */
-#include "foundation/ptr.h"
 #include "physics/entity.h"
 #include "physics/materialtable.h"
 #include "physics/filterset.h"
@@ -88,7 +87,7 @@ public:
     MaterialType GetGroundMaterial() const;
     /// get ground exclude set
     FilterSet& GetGroundExcludeSet();
-    
+
 protected:
     /// return distance to ground (only within ball radius)
     bool CheckGround(float& dist);
@@ -301,4 +300,4 @@ CharEntity::GetGroundExcludeSet()
 }; // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-    
+

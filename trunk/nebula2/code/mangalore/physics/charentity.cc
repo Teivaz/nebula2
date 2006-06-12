@@ -14,8 +14,6 @@
 #include "physics/ragdoll.h"
 #include "physics/compositeloader.h"
 
-using namespace Foundation;
-
 namespace Physics
 {
 ImplementRtti(Physics::CharEntity, Physics::Entity);
@@ -115,7 +113,6 @@ CharEntity::OnActivate()
 {
     n_assert(this->baseBody == 0);
     Server* physicsServer = Physics::Server::Instance();
-    this->active = true;
 
     // create the default composite object (when the character is alive)
     this->CreateDefaultComposite();
@@ -170,7 +167,7 @@ CharEntity::SetTransform(const matrix44& m)
 //------------------------------------------------------------------------------
 /**
     Get world space transform. The returned matrix will always be
-    in the upright position (local y axis aligned with global y axis), 
+    in the upright position (local y axis aligned with global y axis),
     and the -z axis will look into the velocity direction.
 
     @return     a 4x4 transformation matrix in world space
@@ -220,7 +217,7 @@ CharEntity::CheckGround(float& dist)
 
     FilterSet excludeSet = this->groundExcludeSet;
     excludeSet.AddEntityId(this->GetUniqueId());
-    const ContactPoint* contact = Physics::Server::Instance()->GetClosestContactAlongRay(from, dir, excludeSet);    
+    const ContactPoint* contact = Physics::Server::Instance()->GetClosestContactAlongRay(from, dir, excludeSet);
     if (contact)
     {
         dist = vector3(contact->GetPosition() - from).len() - this->radius * 2.0f;
@@ -252,7 +249,7 @@ CharEntity::OnStepBefore()
         // get "touching ground status" and determine ground material
         float distToGround;
         bool nearGround = this->CheckGround(distToGround);
- 
+
         // enable/disable the body based on desired velocity
         vector3 desVel(this->desiredVelocity.x, -distToGround * 50.0f, this->desiredVelocity.z);
         this->SetEnabled(true);
@@ -262,7 +259,7 @@ CharEntity::OnStepBefore()
         vector3 curVel = body->GetLinearVelocity();
 
         // compute resulting impulse
-        vector3 p = -(curVel - desVel) * m;
+        vector3 p = (desVel - curVel) * m;
 
         // convert impulse to force
         dVector3 odeForce;
@@ -271,7 +268,7 @@ CharEntity::OnStepBefore()
         // set new force
         dBodyAddForce(odeBodyId, odeForce[0], odeForce[1], odeForce[2]);
     }
-    
+
     // call parent class
     Entity::OnStepBefore();
 }
@@ -318,7 +315,7 @@ CharEntity::ActivateRagdoll()
         if (this->ragdollImpulse.isvalid())
         {
             Server::Instance()->ApplyAreaImpulse(this->ragdollImpulse);
-        }    
+        }
         this->ragdollImpulse = 0;
     }
 }
