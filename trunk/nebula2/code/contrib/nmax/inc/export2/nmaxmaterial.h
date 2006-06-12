@@ -86,7 +86,7 @@ protected:
     ///
     nShaderState::Param GetShaderParam(const char* param);
 
-protected:
+    void nMaxMaterial::ClampColor(vector4 &val);
 
 };
 //-----------------------------------------------------------------------------
@@ -103,6 +103,24 @@ bool nMaxMaterial::IsClassID(Mtl* mtl, ulong classID)
         return true;
 
     return false;
+}
+
+//-----------------------------------------------------------------------------
+/**
+Nebula uses color value for [0, 1] but 3dsmax uses that for [0, 255]. 
+So it is needed to clamp
+*/
+inline
+void nMaxMaterial::ClampColor(vector4 &val)
+{
+    if (val.x > 1.0f)
+        val.x = 1.0f;
+    if (val.y > 1.0f)
+        val.y = 1.0f;
+    if (val.z > 1.0f)
+        val.z = 1.0f;
+    if (val.w > 1.0f)
+        val.w = 1.0f;
 }
 //-----------------------------------------------------------------------------
 #endif
