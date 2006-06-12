@@ -99,7 +99,7 @@ Server::GetOdeCommonSpaceId() const
 
 //------------------------------------------------------------------------------
 /**
-    Set the current physics level. The refcount of the level will be 
+    Set the current physics level. The refcount of the level will be
     incremented, the refcount of the previous level will be decremented
     (if exists). A 0 pointer is valid and will just release the
     previous level.
@@ -240,7 +240,7 @@ Server::CreateComposite() const
 
 //------------------------------------------------------------------------------
 /**
-    Create a new Ragdoll object. Ragdolls are a specialization of 
+    Create a new Ragdoll object. Ragdolls are a specialization of
     class Composite.
 
     @return     pointer to a new Composite object
@@ -350,7 +350,7 @@ Server::CreateBoxShape(const matrix44& m, MaterialType matType, const vector3& s
     @param  m           locale transformation of shape
     @param  matType     MaterialType of the shape
     @param  radius      radius of sphere
-    @return             pointer to new sphere shape object    
+    @return             pointer to new sphere shape object
 */
 SphereShape*
 Server::CreateSphereShape(const matrix44& m, MaterialType matType, float radius) const
@@ -433,7 +433,7 @@ Server::GetClosestContactAlongRay(const vector3& pos, const vector3& dir, const 
 {
     // do the actual ray check (returns all contacts)
     this->RayCheck(pos, dir, excludeSet);
-    
+
     // find closest contact
     const nArray<ContactPoint>& contacts = this->GetContactPoints();
     int closestContactIndex = -1;
@@ -540,11 +540,11 @@ Server::GetMouseGripper() const
 
 //------------------------------------------------------------------------------
 /**
-    This method returns all physics entities touching the given spherical 
+    This method returns all physics entities touching the given spherical
     area. The method creates a sphere shape and calls its collide
     method, so it's quite fast. Note that entities will be appended to the
     array, so usually you should make sure to pass an empty array. This method
-    will also overwrite the internal contactPoints array which can be 
+    will also overwrite the internal contactPoints array which can be
     queried after the method has returned, but note that there will only
     be one contact per physics shape.
 
@@ -569,6 +569,54 @@ Server::GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& e
     this->contactPoints.Reset();
     sphereShape->Collide(excludeSet, this->contactPoints);
     sphereShape->Detach();
+
+    // convert contacts to unique entities
+    uint stamp = this->GetUniqueStamp();
+    int i;
+    int numContacts = this->contactPoints.Size();
+    for (i = 0; i < numContacts; i++)
+    {
+        Entity* entity = this->contactPoints[i].GetEntity();
+        if (entity && (entity->GetStamp() != stamp))
+        {
+            entity->SetStamp(stamp);
+            result.Append(entity);
+        }
+    }
+    return result.Size() - oldResultSize;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method returns all physics entities touching the given box
+    area. The method creates a box shape and calls its collide
+    method, so it's quite fast. Note that entities will be appended to the
+    array, so usually you should make sure to pass an empty array. This method
+    will also overwrite the internal contactPoints array which can be
+    queried after the method has returned, but note that there will only
+    be one contact per physics shape.
+
+    @param  pos         center of the box
+    @param  size        size of the box
+    @param  excludeSet  what contacts should be ignored?
+    @param  result      array which will be filled with entity pointers
+    @return             number of entities touching the box
+*/
+int
+Server::GetEntitiesInBox(const vector3& pos, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result)
+{
+    n_assert(size.x >= 0.0f && size.y >= 0.0f && size.z >= 0.0f);
+    n_assert(this->GetLevel());
+    int oldResultSize = result.Size();
+
+    // create a sphere shape and perform collision check
+    matrix44 m;
+    m.translate(pos);
+    Ptr<BoxShape> boxShape = this->CreateBoxShape(m, MaterialTable::StringToMaterialType("Wood"), size);
+    boxShape->Attach(this->GetLevel()->GetOdeDynamicSpaceId());
+    this->contactPoints.Reset();
+    boxShape->Collide(excludeSet, this->contactPoints);
+    boxShape->Detach();
 
     // convert contacts to unique entities
     uint stamp = this->GetUniqueStamp();
