@@ -118,7 +118,7 @@ public:
     /// return all entities within a spherical area
     int GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result);
     /// return all entities within a box area
-    int GetEntitiesInBox(const vector3& pos, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result);
+    int GetEntitiesInBox(const matrix44& m, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result);
     /// render a debug visualization of the level
     virtual void RenderDebug();
     /// convert matrix44 to Ode matrix

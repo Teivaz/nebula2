@@ -596,22 +596,20 @@ Server::GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& e
     queried after the method has returned, but note that there will only
     be one contact per physics shape.
 
-    @param  pos         center of the box
+    @param  m           transform matrix of the box
     @param  size        size of the box
     @param  excludeSet  what contacts should be ignored?
     @param  result      array which will be filled with entity pointers
     @return             number of entities touching the box
 */
 int
-Server::GetEntitiesInBox(const vector3& pos, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result)
+Server::GetEntitiesInBox(const matrix44& m, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result)
 {
     n_assert(size.x >= 0.0f && size.y >= 0.0f && size.z >= 0.0f);
     n_assert(this->GetLevel());
     int oldResultSize = result.Size();
 
     // create a sphere shape and perform collision check
-    matrix44 m;
-    m.translate(pos);
     Ptr<BoxShape> boxShape = this->CreateBoxShape(m, MaterialTable::StringToMaterialType("Wood"), size);
     boxShape->Attach(this->GetLevel()->GetOdeDynamicSpaceId());
     this->contactPoints.Reset();

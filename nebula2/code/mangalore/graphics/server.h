@@ -91,6 +91,8 @@ public:
     CameraEntity* GetCamera() const;
     /// get current frame id
     uint GetFrameId() const;
+    /// drag drop select
+    void DragDropSelect(const vector3& lookAt, float angleOfView, float aspectRatio, nArray<Ptr<Entity> >& entities);
 
 private:
     friend class LightEntity;
@@ -283,7 +285,7 @@ Server::GetFrameTime() const
 */
 #if __NEBULA_STATS__
 inline
-void 
+void
 Server::AddNumVisibleEntities(Entity::Type observedType, Entity::LinkType linkType, int incr)
 {
     if (observedType == Entity::Light)

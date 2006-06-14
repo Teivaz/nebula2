@@ -33,7 +33,7 @@ Server* Server::Singleton = 0;
 /**
 */
 Server::Server() :
-    #if __NEBULA_STATS__    
+    #if __NEBULA_STATS__
     profMangaRender_GfxEndRender_LevelEndRender("profMangaRender_GfxEndRender_LevelEndRender"),
     profMangaRender_GfxEndRender_CaptureTrigger("profMangaRender_GfxEndRender_CaptureTrigger"),
     profMangaRender_GfxEndRender_PresentScene("profMangaRender_GfxEndRender_PresentScene"),
@@ -178,7 +178,7 @@ Server::Close()
     // run graphics startup script function
     nString result;
     scriptServer->Run("OnGraphicsShutdown", result);
-    
+
     // close the anim table object
     if (nFileServer2::Instance()->FileExists("data:tables/anims.xml"))
     {
@@ -197,7 +197,7 @@ Server::Close()
 //------------------------------------------------------------------------------
 /**
     Trigger the graphics subsystem. This will not perform any rendering,
-    instead, the Windows message pump will be "pumped" in order to 
+    instead, the Windows message pump will be "pumped" in order to
     process any outstanding window system messages. The method returns
     false if the window system asks the application to quit (either because
     the user has pressed the Close button, or hits Alt-F4).
@@ -293,19 +293,45 @@ Server::EndRender()
 
     this->profMangaRender_GfxEndRender_CaptureTrigger.Start();
     #endif
-    
+
     nCaptureServer::Instance()->Trigger();
-    
+
     #if __NEBULA_STATS__
     this->profMangaRender_GfxEndRender_CaptureTrigger.Stop();
 
     this->profMangaRender_GfxEndRender_PresentScene.Start();
     #endif
     nSceneServer::Instance()->PresentScene();
-    
+
     #if __NEBULA_STATS__
     this->profMangaRender_GfxEndRender_PresentScene.Stop();
     #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+    Drag drop select
+*/
+void Server::DragDropSelect(const vector3& lookAt, float angleOfView, float aspectRatio, nArray<Ptr<Entity> >& entities) {
+    if (this->curLevel != 0)
+    {
+        CameraEntity* cameraEntity = this->curLevel->GetCamera();
+        matrix44 transform = cameraEntity->GetTransform();
+        transform.lookatLh(lookAt, vector3(0.0f, 1.0f, 0.0f));
+        nCamera2 camera = cameraEntity->GetCamera();
+        camera.SetAngleOfView(angleOfView);
+        camera.SetAspectRatio(aspectRatio);
+
+        Ptr<CameraEntity> dragDropCameraEntity = CameraEntity::Create();
+        dragDropCameraEntity->SetTransform(transform);
+        dragDropCameraEntity->SetCamera(camera);
+
+        this->curLevel->GetRootCell()->ClearLinks(Entity::SelectLink);
+        this->curLevel->GetRootCell()->UpdateLinks(dragDropCameraEntity, Entity::Shape, Entity::SelectLink);
+        for (int i = 0; i < dragDropCameraEntity->GetNumLinks(Entity::SelectLink); i++) {
+            entities.PushBack(dragDropCameraEntity->GetLinkAt(Entity::SelectLink, i));
+        }
+    }
 }
 
 } // namespace Graphics
