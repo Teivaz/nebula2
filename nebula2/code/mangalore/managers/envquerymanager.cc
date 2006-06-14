@@ -85,8 +85,9 @@ EnvQueryManager::GetEntitiesUnderMouseDragDropRect(vector2 dragPosition, vector2
         center.y = dropPosition.y + height*0.5f;
     }
     line3 ray = nGfxServer2::Instance()->ComputeWorldMouseRay(center, 5000.0f);
+    float angleOfView = nGfxServer2::Instance()->GetCamera().GetAngleOfView();
 
-    Graphics::Server::Instance()->DragDropSelect(ray.end(), 60.0f*width, width/height, graphicsEntities);
+    Graphics::Server::Instance()->DragDropSelect(ray.end(), angleOfView*width, width/height, graphicsEntities);
 
     EntityManager* entityMgr = EntityManager::Instance();
     for (int i = 0; i < graphicsEntities.Size(); i++)
