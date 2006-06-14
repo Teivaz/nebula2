@@ -20,7 +20,7 @@ Renderer::Renderer() {
         shader->SetFilename("shaders:cegui.fx");
         break;
     default:
-        n_error("Undefined feature set\n");
+        shader->SetFilename("shaders:fixed/cegui.fx");
     }
     n_verify(shader->Load());
     mesh.SetShader(shader);
