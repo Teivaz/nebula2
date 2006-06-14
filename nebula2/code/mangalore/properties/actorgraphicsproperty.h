@@ -4,10 +4,10 @@
 /**
     @class Properties::ActorGraphicsProperty
 
-    A specialized graphics property for actors. This creates a 
+    A specialized graphics property for actors. This creates a
     Graphics::CharEntity, knows how to switch animations and
     manages attachments.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "properties/graphicsproperty.h"
@@ -25,8 +25,6 @@ public:
     /// destructor
     virtual ~ActorGraphicsProperty();
 
-    /// called from Entity::DeactivateProperties()
-    virtual void OnDeactivate();
     /// called before rendering happens
     virtual void OnRender();
 
@@ -43,12 +41,14 @@ protected:
     Graphics::CharEntity* GetGraphicsEntity() const;
     /// setup graphics entities
     virtual void SetupGraphicsEntities();
+    /// cleanup graphics entities
+    virtual void CleanupGraphicsEntities();
     /// set base or overlay animation
     void SetAnimation(const nString& baseAnim, const nString& overlayAnim, float baseAnimTimeOffset);
     /// add attachment definition
     void AddAttachment(const nString& jointName, const nString& gfxResName, const matrix44& offset);
     /// remove attachment definition
-    void RemAttachment(const nString& jointName); 
+    void RemAttachment(const nString& jointName);
     /// find attachment index by joint name, return -1 if not found
     int FindAttachment(const nString& jointName);
     /// update attachment positions

@@ -35,16 +35,6 @@ GraphicsProperty::~GraphicsProperty()
 
 //------------------------------------------------------------------------------
 /**
-    Get a reference to the array of graphics entities
-*/
-const nArray<Ptr<Graphics::Entity> >&
-GraphicsProperty::GetGraphicsEntities() const
-{
-    return this->graphicsEntities;
-}
-
-//------------------------------------------------------------------------------
-/** 
 */
 void
 GraphicsProperty::SetupDefaultAttributes()
@@ -54,7 +44,7 @@ GraphicsProperty::SetupDefaultAttributes()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Attach the property to a game entity. This will create and setup
     the required graphics entities.
 */
@@ -62,39 +52,26 @@ void
 GraphicsProperty::OnActivate()
 {
     AbstractGraphicsProperty::OnActivate();
+
     this->SetupGraphicsEntities();
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Remove the property from its game entity. This will release the
     graphics entities owned by the property.
 */
 void
 GraphicsProperty::OnDeactivate()
 {
-    Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
-
-    // release graphics entities
-    int i;
-    int num = this->graphicsEntities.Size();
-    for (i = 0;  i < num; i++)
-    {
-        Graphics::Entity* gfxEntity = this->graphicsEntities[i];
-        if (gfxEntity->GetCell())
-        {
-            gfxLevel->RemoveEntity(gfxEntity);
-        }
-        this->graphicsEntities[i] = 0;
-    }
-    this->graphicsEntities.Clear();
+    this->CleanupGraphicsEntities();
 
     // up to parent class
     AbstractGraphicsProperty::OnDeactivate();
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     This method is called before rendering happens and updates the
     positions of the graphics entity.
 */
@@ -102,7 +79,7 @@ void
 GraphicsProperty::OnRender()
 {
     // TODO: DO NOT SEARCH FOR A ATTACHED PHYSICS PROERTY!
-    // if we have a physics property, transfer physics transforms to 
+    // if we have a physics property, transfer physics transforms to
     // the graphics entities
     AbstractPhysicsProperty* physProperty = (AbstractPhysicsProperty*) GetEntity()->FindProperty(AbstractPhysicsProperty::RTTI);
     if (physProperty && physProperty->IsEnabled())
@@ -119,7 +96,7 @@ GraphicsProperty::OnRender()
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Setup the graphics entities. You may override this method in a subclass
     if different setup is needed.
 */
@@ -127,7 +104,7 @@ void
 GraphicsProperty::SetupGraphicsEntities()
 {
     // get some entity attributes
-    nString resName = GetEntity()->GetString(Attr::Graphics); 
+    nString resName = GetEntity()->GetString(Attr::Graphics);
     const matrix44& worldMatrix = GetEntity()->GetMatrix44(Attr::Transform);
 
     // TODO: DO NOT SEARCH FOR A ATTACHED PHYSICS PROERTY!
@@ -151,7 +128,30 @@ GraphicsProperty::SetupGraphicsEntities()
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
+    Cleanup graphics entities
+*/
+void
+GraphicsProperty::CleanupGraphicsEntities() {
+    Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
+
+    // release graphics entities
+    int i;
+    int num = this->graphicsEntities.Size();
+    for (i = 0;  i < num; i++)
+    {
+        Graphics::Entity* gfxEntity = this->graphicsEntities[i];
+        if (gfxEntity->GetCell())
+        {
+            gfxLevel->RemoveEntity(gfxEntity);
+        }
+        this->graphicsEntities[i] = 0;
+    }
+    this->graphicsEntities.Clear();
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 bool
 GraphicsProperty::Accepts(Message::Msg* msg)
@@ -162,7 +162,7 @@ GraphicsProperty::Accepts(Message::Msg* msg)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
 */
 void
 GraphicsProperty::HandleMessage(Message::Msg* msg)

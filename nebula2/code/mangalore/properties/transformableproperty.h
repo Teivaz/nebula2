@@ -5,11 +5,10 @@
     @class Properties::TransformableProperty
 
     Entites with this property can be transformed.
-  
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
-#include "attr/attributes.h"
 
 //------------------------------------------------------------------------------
 namespace Properties
@@ -24,7 +23,7 @@ public:
     TransformableProperty();
     /// destructor
     virtual ~TransformableProperty();
-    
+
     /// setup default entity attributes
     virtual void SetupDefaultAttributes();
 
