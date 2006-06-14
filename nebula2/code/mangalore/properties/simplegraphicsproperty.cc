@@ -84,13 +84,13 @@ SimpleGraphicsProperty::OnDeactivate()
 void
 SimpleGraphicsProperty::SetupGraphicsEntity()
 {
-    n_assert(this->GetEntity()->HasAttr(Attr::Transform));
+    n_assert(GetEntity()->HasAttr(Attr::Transform));
     n_assert(this->graphicsEntity == 0);
 
     // create graphics entity
     this->graphicsEntity = Graphics::Entity::Create();
-    this->graphicsEntity->SetResourceName(this->GetEntity()->GetString(Attr::Graphics));
-    this->graphicsEntity->SetTransform(this->GetEntity()->GetMatrix44(Attr::Transform));
+    this->graphicsEntity->SetResourceName(GetEntity()->GetString(Attr::Graphics));
+    this->graphicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
 
     // attach to level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();

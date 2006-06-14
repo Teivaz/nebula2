@@ -52,11 +52,11 @@ void
 ActorPhysicsProperty::SetupDefaultAttributes()
 {
     AbstractPhysicsProperty::SetupDefaultAttributes();
-    this->GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
-    this->GetEntity()->SetFloat(Attr::RelVelocity, 1.0f);
-    this->GetEntity()->SetFloat(Attr::MaxVelocity, 2.5f);
-    this->GetEntity()->SetBool(Attr::Following, false);
-    this->GetEntity()->SetBool(Attr::Moving, false);
+    GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
+    GetEntity()->SetFloat(Attr::RelVelocity, 1.0f);
+    GetEntity()->SetFloat(Attr::MaxVelocity, 2.5f);
+    GetEntity()->SetBool(Attr::Following, false);
+    GetEntity()->SetBool(Attr::Moving, false);
 }
 
 //------------------------------------------------------------------------------
@@ -70,12 +70,12 @@ ActorPhysicsProperty::EnablePhysics()
     
     // create a char physics entity
 	this->charPhysicsEntity = Physics::CharEntity::Create();
-    this->charPhysicsEntity->SetUserData(this->GetEntity()->GetUniqueId());
-    if (this->GetEntity()->HasAttr(Attr::Physics))
+    this->charPhysicsEntity->SetUserData(GetEntity()->GetUniqueId());
+    if (GetEntity()->HasAttr(Attr::Physics))
     {
-        this->charPhysicsEntity->SetCompositeName(this->GetEntity()->GetString(Attr::Physics));
+        this->charPhysicsEntity->SetCompositeName(GetEntity()->GetString(Attr::Physics));
     }
-    this->charPhysicsEntity->SetTransform(this->GetEntity()->GetMatrix44(Attr::Transform));
+    this->charPhysicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
 
     // attach physics entity to physics level
     Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
@@ -87,7 +87,7 @@ ActorPhysicsProperty::EnablePhysics()
 
     // initialize feedback loops for motion smoothing
     nTime time = TimeManager::Instance()->GetTime();
-    const matrix44& entityMatrix = this->GetEntity()->GetMatrix44(Attr::Transform);
+    const matrix44& entityMatrix = GetEntity()->GetMatrix44(Attr::Transform);
     this->smoothedPosition.Reset(time, 0.0001f, this->positionGain, entityMatrix.pos_component());
 
     polar2 headingAngle(entityMatrix.z_component());
@@ -178,7 +178,7 @@ ActorPhysicsProperty::HandleMessage(Message::Msg* msg)
     }
     else if (msg->CheckId(MoveSetVelocity::Id))
     {
-        this->GetEntity()->SetFloat(Attr::RelVelocity, ((MoveSetVelocity*)msg)->GetRelVelocity());
+        GetEntity()->SetFloat(Attr::RelVelocity, ((MoveSetVelocity*)msg)->GetRelVelocity());
     }
     else
     {
@@ -202,7 +202,7 @@ ActorPhysicsProperty::OnMoveBefore()
         {
             this->ContinueGoto();
         }
-        if (this->GetEntity()->GetBool(Attr::Following))
+        if (GetEntity()->GetBool(Attr::Following))
         {
             this->ContinueFollow();
         }
@@ -241,8 +241,8 @@ ActorPhysicsProperty::OnMoveAfter()
         // update game entity
         Ptr<Message::UpdateTransform> msg = Message::UpdateTransform::Create();
         msg->SetMatrix(entityMatrix);
-        this->GetEntity()->SendSync(msg);
-        this->GetEntity()->SetVector3(Attr::VelocityVector, physicsEntityVelocity);
+        GetEntity()->SendSync(msg);
+        GetEntity()->SetVector3(Attr::VelocityVector, physicsEntityVelocity);
     }
 }
 
@@ -256,7 +256,7 @@ void
 ActorPhysicsProperty::SendStop()
 {
     Ptr<MoveStop> msg = MoveStop::Create();
-    this->GetEntity()->SendSync(msg);
+    GetEntity()->SendSync(msg);
 }
 
 //------------------------------------------------------------------------------
@@ -270,8 +270,8 @@ ActorPhysicsProperty::Stop()
 {
     this->charPhysicsEntity->SetDesiredVelocity(vector3(0.0f, 0.0f, 0.0f));
     this->gotoPath = 0;
-    this->GetEntity()->SetBool(Attr::Moving, false);
-    this->GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
+    GetEntity()->SetBool(Attr::Moving, false);
+    GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
 }
 
 //------------------------------------------------------------------------------
@@ -297,10 +297,10 @@ ActorPhysicsProperty::HandleMoveDirection(MoveDirection* msg)
     dir.y = 0.0f;
     dir.norm();
 
-    vector3 desiredVelocity = dir * this->GetEntity()->GetFloat(Attr::RelVelocity) * this->GetEntity()->GetFloat(Attr::MaxVelocity);
+    vector3 desiredVelocity = dir * GetEntity()->GetFloat(Attr::RelVelocity) * GetEntity()->GetFloat(Attr::MaxVelocity);
     this->charPhysicsEntity->SetDesiredVelocity(desiredVelocity);
     this->charPhysicsEntity->SetDesiredLookat(dir);
-    this->GetEntity()->SetBool(Attr::Moving, true);
+    GetEntity()->SetBool(Attr::Moving, true);
 }
 
 //------------------------------------------------------------------------------
@@ -353,13 +353,13 @@ ActorPhysicsProperty::HandleMoveGoto(MoveGoto* msg)
     n_assert(msg);
 
     // make a navigation path from current to target position
-    const vector3& from = this->GetEntity()->GetMatrix44(Attr::Transform).pos_component();
+    const vector3& from = GetEntity()->GetMatrix44(Attr::Transform).pos_component();
     const vector3& to = msg->GetPosition();
     this->gotoPath = Navigation::Server::Instance()->MakePath(from, to);
     this->curGotoSegment = 0;
 
     this->gotoTimeStamp = TimeManager::Instance()->GetTime();
-    this->GetEntity()->SetBool(Attr::Moving, true);
+    GetEntity()->SetBool(Attr::Moving, true);
 }
 
 //------------------------------------------------------------------------------
@@ -381,12 +381,12 @@ void
 ActorPhysicsProperty::HandleMoveFollow(MoveFollow* msg)
 {
     n_assert(msg);
-    this->GetEntity()->SetInt(Attr::TargetEntityId, msg->GetTargetEntityId());
-    Entity* targetEntity = EntityManager::Instance()->FindEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId));
+    GetEntity()->SetInt(Attr::TargetEntityId, msg->GetTargetEntityId());
+    Entity* targetEntity = EntityManager::Instance()->FindEntityById(GetEntity()->GetInt(Attr::TargetEntityId));
     if (targetEntity)
     {
         this->followTargetDist = msg->GetDistance();
-        this->GetEntity()->SetBool(Attr::Following, true);
+        GetEntity()->SetBool(Attr::Following, true);
     }
 }
 
@@ -399,7 +399,7 @@ ActorPhysicsProperty::ContinueGoto()
 {
     n_assert(this->gotoPath.isvalid());
 
-    const vector3 curPos = this->GetEntity()->GetMatrix44(Attr::Transform).pos_component();
+    const vector3 curPos = GetEntity()->GetMatrix44(Attr::Transform).pos_component();
     vector3 targetVec = this->gotoPath->GetPoints()[this->curGotoSegment] - curPos;
     targetVec.y = 0.0f; // ignore vertical dimension
     float dist = targetVec.len();
@@ -423,7 +423,7 @@ ActorPhysicsProperty::ContinueGoto()
         // just continue to go towards current segment position
         Ptr<MoveDirection> msg = MoveDirection::Create();
         msg->SetDirection(targetVec);
-        this->GetEntity()->SendSync(msg);
+        GetEntity()->SendSync(msg);
     }
 }
 
@@ -434,9 +434,9 @@ ActorPhysicsProperty::ContinueGoto()
 void
 ActorPhysicsProperty::ContinueFollow()
 {
-    n_assert(this->GetEntity()->GetBool(Attr::Following));
+    n_assert(GetEntity()->GetBool(Attr::Following));
 
-    Game::Entity* targetEntity = EntityManager::Instance()->FindEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId));
+    Game::Entity* targetEntity = EntityManager::Instance()->FindEntityById(GetEntity()->GetInt(Attr::TargetEntityId));
     if (0 == targetEntity)
     {
         // our target entity has gone...
@@ -446,7 +446,7 @@ ActorPhysicsProperty::ContinueFollow()
 
     // compute positions in world coordinates
     const vector3 targetPos = targetEntity->GetMatrix44(Attr::Transform).pos_component();
-    const vector3 curPos = this->GetEntity()->GetMatrix44(Attr::Transform).pos_component();
+    const vector3 curPos = GetEntity()->GetMatrix44(Attr::Transform).pos_component();
     vector3 targetVec = targetPos - curPos;
     targetVec.y = 0.0f; // ignore vertical dimension
     float targetDist = targetVec.len();

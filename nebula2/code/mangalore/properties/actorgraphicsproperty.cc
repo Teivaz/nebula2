@@ -104,13 +104,13 @@ ActorGraphicsProperty::SetupDefaultAttributes()
 void
 ActorGraphicsProperty::SetupGraphicsEntities()
 {
-    n_assert(this->GetEntity()->HasAttr(Attr::Transform));
+    n_assert(GetEntity()->HasAttr(Attr::Transform));
 
     // create and setup graphics property
 	Ptr<Graphics::CharEntity> ge = Graphics::CharEntity::Create();
-    ge->SetResourceName(this->GetEntity()->GetString(Attr::Graphics));
-    ge->SetTransform(this->GetEntity()->GetMatrix44(Attr::Transform));
-    nString animSet = this->GetEntity()->GetString(Attr::AnimSet);
+    ge->SetResourceName(GetEntity()->GetString(Attr::Graphics));
+    ge->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
+    nString animSet = GetEntity()->GetString(Attr::AnimSet);
     if (animSet.IsValid())
     {
         ge->SetAnimationSet(animSet);
@@ -118,7 +118,7 @@ ActorGraphicsProperty::SetupGraphicsEntities()
     else
     {
         n_error("ActorGraphicsProperty::SetupGraphicsEntity(): entity '%s' has empty AnimSet attribute!",
-            this->GetEntity()->GetString(Attr::Id).Get());
+        GetEntity()->GetString(Attr::Id).Get());
     }
 
     // attach graphics property to level
@@ -157,6 +157,13 @@ ActorGraphicsProperty::CleanupGraphicsEntities()
         graphicsLevel->RemoveEntity(this->attachments[i].graphicsEntity);
     }
     this->attachments.Clear();
+    Graphics::Entity* gfxEntity = this->graphicsEntities[0];
+    if (gfxEntity->GetCell())
+    {
+        graphicsLevel->RemoveEntity(gfxEntity);
+    }
+    this->graphicsEntities[0] = 0;
+    this->graphicsEntities.Clear();
 }
 
 //------------------------------------------------------------------------------
