@@ -11,17 +11,7 @@ namespace CEUI
 */
 Renderer::Renderer() {
     nShader2* shader = nGfxServer2::Instance()->NewShader(0);
-    switch (nGfxServer2::Instance()->GetFeatureSet()) {
-    case nGfxServer2::DX7:
-        shader->SetFilename("shaders:fixed/cegui.fx");
-        break;
-    case nGfxServer2::DX9:
-    case nGfxServer2::DX9FLT:
-        shader->SetFilename("shaders:cegui.fx");
-        break;
-    default:
-        shader->SetFilename("shaders:fixed/cegui.fx");
-    }
+    shader->SetFilename("shaders:cegui.fx");
     n_verify(shader->Load());
     mesh.SetShader(shader);
     mesh.Initialize(nGfxServer2::TriangleList, nMesh2::Coord | nMesh2::Uv0 | nMesh2::Color, nMesh2::WriteOnly, false);
