@@ -70,7 +70,7 @@ public:
     /// called each frame as long as state is current, return new state
     virtual nString OnFrame();
 
-private:
+protected:
     /// update timestamps for subsystems
     void UpdateSubsystemTimes();
 
